@@ -39,9 +39,12 @@ namespace Layout {
 class InlineContainer : public Container {
     WTF_MAKE_ISO_ALLOCATED(InlineContainer);
 public:
-    InlineContainer(RenderStyle&&);
+    InlineContainer(RenderStyle&&, BaseTypeFlags);
 };
 
 }
 }
+
+SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(InlineContainer, isInlineContainer())
+
 #endif

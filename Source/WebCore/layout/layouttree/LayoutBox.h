@@ -42,8 +42,9 @@ class Box {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
     friend class TreeBuilder;
+    typedef unsigned BaseTypeFlags;
 
-    Box(RenderStyle&&);
+    Box(RenderStyle&&, BaseTypeFlags);
     virtual ~Box();
 
     bool establishesFormattingContext() const;
@@ -81,9 +82,21 @@ public:
     const Box* previousInFlowSibling() const;
     const Box* previousInFlowOrFloatingSibling() const;
 
+    bool isContainer() const { return m_baseTypeFlags & ContainerFlag; }
+    bool isBlockContainer() const { return m_baseTypeFlags & BlockContainerFlag; }
+    bool isInlineBox() const { return m_baseTypeFlags & InlineBoxFlag; }
+    bool isInlineContainer() const { return m_baseTypeFlags & InlineContainerFlag; }
+
     auto& weakPtrFactory() const { return m_weakFactory; }
 
 protected:
+    enum BaseTypeFlag {
+        ContainerFlag         = 1 << 0,
+        BlockContainerFlag    = 1 << 1,
+        InlineBoxFlag         = 1 << 2,
+        InlineContainerFlag   = 1 << 3
+    };
+
     bool isOverflowVisible() const;
 
 private:
@@ -99,9 +112,17 @@ private:
     Box* m_previousSibling { nullptr };
     Box* m_nextSibling { nullptr };
 
-    bool m_isAnonymous { false };
+    unsigned m_baseTypeFlags : 3;
+    unsigned m_isAnonymous : 1;
+
 };
 
 }
 }
+
+#define SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Layout::ToValueTypeName) \
+    static bool isType(const WebCore::Layout::Box& box) { return box.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif

@@ -42,7 +42,7 @@ class Container : public Box {
 public:
     friend class TreeBuilder;
 
-    Container(RenderStyle&&);
+    Container(RenderStyle&&, BaseTypeFlags);
 
     const Box* firstChild() const { return m_firstChild; }
     const Box* firstInFlowChild() const;
@@ -69,4 +69,7 @@ private:
 
 }
 }
+
+SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(Container, isContainer())
+
 #endif

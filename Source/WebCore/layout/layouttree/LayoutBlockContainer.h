@@ -39,11 +39,14 @@ namespace Layout {
 class BlockContainer : public Container {
     WTF_MAKE_ISO_ALLOCATED(BlockContainer);
 public:
-    BlockContainer(RenderStyle&&);
+    BlockContainer(RenderStyle&&, BaseTypeFlags);
 
     bool establishesInlineFormattingContext() const final;
 };
 
 }
 }
+
+SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(BlockContainer, isBlockContainer())
+
 #endif

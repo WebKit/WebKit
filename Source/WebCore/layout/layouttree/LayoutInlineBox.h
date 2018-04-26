@@ -39,9 +39,12 @@ namespace Layout {
 class InlineBox : public Box {
     WTF_MAKE_ISO_ALLOCATED(InlineBox);
 public:
-    InlineBox(RenderStyle&&);
+    InlineBox(RenderStyle&&, BaseTypeFlags);
 };
 
 }
 }
+
+SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(InlineBox, isInlineBox())
+
 #endif

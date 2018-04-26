@@ -25,3 +25,23 @@
 
 #include "config.h"
 #include "LayoutInlineContainer.h"
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+
+#include "RenderStyle.h"
+#include <wtf/IsoMallocInlines.h>
+
+namespace WebCore {
+namespace Layout {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(InlineContainer);
+
+InlineContainer::InlineContainer(RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+    : Container(WTFMove(style), baseTypeFlags | InlineContainerFlag)
+{
+}
+
+}
+}
+
+#endif

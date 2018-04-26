@@ -1,3 +1,30 @@
+2018-04-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add support for is<> and downcast<>
+        https://bugs.webkit.org/show_bug.cgi?id=185016
+
+        Reviewed by Antti Koivisto.
+
+        * layout/layouttree/LayoutBlockContainer.cpp:
+        (WebCore::Layout::BlockContainer::BlockContainer):
+        * layout/layouttree/LayoutBlockContainer.h:
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::Box):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::isContainer const):
+        (WebCore::Layout::Box::isBlockContainer const):
+        (WebCore::Layout::Box::isInlineBox const):
+        (WebCore::Layout::Box::isInlineContainer const):
+        * layout/layouttree/LayoutContainer.cpp:
+        (WebCore::Layout::Container::Container):
+        * layout/layouttree/LayoutContainer.h:
+        * layout/layouttree/LayoutInlineBox.cpp:
+        (WebCore::Layout::InlineBox::InlineBox):
+        * layout/layouttree/LayoutInlineBox.h:
+        * layout/layouttree/LayoutInlineContainer.cpp:
+        (WebCore::Layout::InlineContainer::InlineContainer):
+        * layout/layouttree/LayoutInlineContainer.h:
+
 2018-04-25  Chris Dumez  <cdumez@apple.com>
 
         window.postMessage() / focus() / blur() throw a TypeError when called on a RemoteDOMWindow

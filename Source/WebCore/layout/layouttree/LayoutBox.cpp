@@ -36,8 +36,10 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Box);
 
-Box::Box(RenderStyle&& style)
+Box::Box(RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : m_style(WTFMove(style))
+    , m_baseTypeFlags(baseTypeFlags)
+    , m_isAnonymous(false)
 {
 }
 
