@@ -126,7 +126,9 @@ OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS);
 SUPPORTS_TEXT_BASED_API[sdk=iphone*] = $(USE_INTERNAL_SDK);
 SUPPORTS_TEXT_BASED_API[sdk=appletv*] = NO;
 SUPPORTS_TEXT_BASED_API[sdk=watch*] = NO;
-OTHER_TAPI_FLAGS[sdk=iphone*] = -x objective-c++ -std=c++14 -fno-rtti -DRELEASE_WITHOUT_OPTIMIZATIONS;
+
+OTHER_TAPI_FLAGS = $(OTHER_TAPI_FLAGS_$(WK_COCOA_TOUCH));
+OTHER_TAPI_FLAGS_cocoatouch = -x objective-c++ -std=c++14 -fno-rtti -DRELEASE_WITHOUT_OPTIMIZATIONS;
 TAPI_VERIFY_MODE[sdk=iphone*] = Pedantic;
 
 // This is required to make LLVM_TARGET_TRIPLE_SUFFIX propagate into scripts.
