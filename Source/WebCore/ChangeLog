@@ -1,3 +1,29 @@
+2018-04-26  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r231002. rdar://problem/39762191
+
+    [iOS] Set route sharing policy when setting audio session category
+    https://bugs.webkit.org/show_bug.cgi?id=184979
+    <rdar://problem/39709577>
+    
+    Reviewed by Jer Noble.
+    
+    * platform/audio/ios/AudioSessionIOS.mm:
+    (WebCore::AudioSession::setCategory):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@231002 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-04-25  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] Set route sharing policy when setting audio session category
+            https://bugs.webkit.org/show_bug.cgi?id=184979
+            <rdar://problem/39709577>
+
+            Reviewed by Jer Noble.
+
+            * platform/audio/ios/AudioSessionIOS.mm:
+            (WebCore::AudioSession::setCategory):
+
 2018-04-17  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r230530. rdar://problem/39462749
