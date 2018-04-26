@@ -1,3 +1,26 @@
+2018-04-25  Saam Barati  <sbarati@apple.com>
+
+        dlopen the bundle's executable before calling -[NSBundle load] since that will also do a bunch of other things we don't need
+        https://bugs.webkit.org/show_bug.cgi?id=184904
+
+        Reviewed by Geoffrey Garen.
+
+        Loading an NSBundle does a lot of work to find the principal class inside
+        the bundle. This means it walks all the objective C class names loaded
+        by the bundle. Doing this is *really* expensive.
+        
+        Some users of the injected bundle define a WKBundleInitialize function.
+        In such a case, we don't need the principal class, so we can skip loading
+        the NSBundle. Now, before we load the bundle, we dlopen and dlsym looking
+        for the WKBundleInitialize function. If we find it, we skip loading
+        the bundle. If we don't find the WKBundleInitialize function, we fall
+        back to loading the bundle and finding the principal class.
+        
+        This speeds up initializeWebProcess by ~70ms on my MBP.
+
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::initialize):
+
 2018-04-25  Youenn Fablet  <youenn@apple.com>
 
         Use NetworkLoadChecker for all subresource loads except fetch/XHR

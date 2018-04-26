@@ -33,7 +33,9 @@
 #import "WKWebProcessBundleParameters.h"
 #import "WKWebProcessPlugInInternal.h"
 #import "WebProcessCreationParameters.h"
+#import <CoreFoundation/CFURL.h>
 #import <Foundation/NSBundle.h>
+#import <dlfcn.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <stdio.h>
 #import <wtf/RetainPtr.h>
@@ -76,10 +78,23 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         WTFLogAlways("InjectedBundle::load failed - Could not create the bundle.\n");
         return false;
     }
+
+    WKBundleInitializeFunctionPtr initializeFunction = nullptr;
+    if (RetainPtr<CFURLRef> executableURL = adoptCF(CFBundleCopyExecutableURL([m_platformBundle _cfBundle]))) {
+        static constexpr size_t maxPathSize = 4096;
+        char pathToExecutable[maxPathSize];
+        if (CFURLGetFileSystemRepresentation(executableURL.get(), true, bitwise_cast<uint8_t*>(pathToExecutable), maxPathSize)) {
+            // We don't hold onto this handle anywhere more permanent since we never dlcose.
+            if (void* handle = dlopen(pathToExecutable, RTLD_LAZY | RTLD_GLOBAL | RTLD_FIRST))
+                initializeFunction = bitwise_cast<WKBundleInitializeFunctionPtr>(dlsym(handle, "WKBundleInitialize"));
+        }
+    }
         
-    if (![m_platformBundle load]) {
-        WTFLogAlways("InjectedBundle::load failed - Could not load the executable from the bundle.\n");
-        return false;
+    if (!initializeFunction) {
+        if (![m_platformBundle load]) {
+            WTFLogAlways("InjectedBundle::load failed - Could not load the executable from the bundle.\n");
+            return false;
+        }
     }
 
 #if WK_API_ENABLED
@@ -100,9 +115,11 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:dictionary]);
     }
 #endif
+    
+    if (!initializeFunction)
+        initializeFunction = bitwise_cast<WKBundleInitializeFunctionPtr>(CFBundleGetFunctionPointerForName([m_platformBundle _cfBundle], CFSTR("WKBundleInitialize")));
 
     // First check to see if the bundle has a WKBundleInitialize function.
-    WKBundleInitializeFunctionPtr initializeFunction = reinterpret_cast<WKBundleInitializeFunctionPtr>(CFBundleGetFunctionPointerForName([m_platformBundle _cfBundle], CFSTR("WKBundleInitialize")));
     if (initializeFunction) {
         initializeFunction(toAPI(this), toAPI(initializationUserData));
         return true;
