@@ -140,7 +140,6 @@ page/mac/ServicesOverlayController.mm
 page/mac/TextIndicatorWindow.mm
 page/mac/WheelEventDeltaFilterMac.mm
 
-page/scrolling/AsyncScrollingCoordinator.cpp
 page/scrolling/ScrollingMomentumCalculator.cpp
 
 page/scrolling/cocoa/ScrollingStateNode.mm

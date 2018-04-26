@@ -30,9 +30,6 @@ if (USE_COORDINATED_GRAPHICS)
         "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
     )
     list(APPEND WebCore_SOURCES
-        page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp
-        page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp
-
         platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp
         platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp
 

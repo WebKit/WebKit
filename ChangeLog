@@ -1,3 +1,13 @@
+2018-04-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Initial ASYNC_SCROLLING support
+        https://bugs.webkit.org/show_bug.cgi?id=184961
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsGTK.cmake: Enable ASYNC_SCROLLING as a private option.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+
 2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Build and link against latest WPEBackend and WPEBackend-fdo

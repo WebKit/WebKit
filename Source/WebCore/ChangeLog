@@ -1,3 +1,81 @@
+2018-04-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Initial ASYNC_SCROLLING support
+        https://bugs.webkit.org/show_bug.cgi?id=184961
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add CoordinatedGraphics-specific code that will be required for async
+        scrolling support. The ScrollingCoordinatorCoordinatedGraphics and
+        ScrollingTreeCoordinatedGraphics classes are mostly complete already,
+        but the new ScrollingTreeNode-inheriting classes will need further
+        work that will have to be done in parallel with other improvements
+        planned for the CoordinatedGraphics subsystem.
+
+        While the build-time flag is enabled, the feature is still not enabled
+        at runtime due to being marked as unsupported by the DrawingArea
+        implementation in the WebKit layer. It would also not work yet if it
+        were enabled due to the before-mentioned pending changes.
+
+        Various build fixes that address non-Cocoa usage of ASYNC_SCROLLING
+        code are included.
+
+        * Sources.txt: Add AsyncScrollingCoordinator.cpp to build.
+        * SourcesCocoa.txt:
+        * SourcesGTK.txt: Add new files to build.
+        * SourcesWPE.txt: Ditto.
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        Guard setStateScrollingNodeSnapOffsetsAsFloat() with CSS_SCROLL_SNAP.
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        * page/scrolling/ThreadedScrollingTree.h:
+        currentSnapPointIndicesDidChange() method is only invoked in
+        Cocoa-specific code, and its implementation calls Cocoa-specific method
+        on the AsyncScrollingCoordinator class.
+        * page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp:
+        (WebCore::ScrollingCoordinator::create):
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::ScrollingCoordinatorCoordinatedGraphics):
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::~ScrollingCoordinatorCoordinatedGraphics):
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::pageDestroyed):
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::commitTreeStateIfNeeded):
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::handleWheelEvent):
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::scheduleTreeStateCommit):
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::commitTreeState):
+        * page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.h: Added.
+        * page/scrolling/coordinatedgraphics/ScrollingTreeCoordinatedGraphics.cpp: Added.
+        (WebCore::ScrollingTreeCoordinatedGraphics::create):
+        (WebCore::ScrollingTreeCoordinatedGraphics::ScrollingTreeCoordinatedGraphics):
+        (WebCore::ScrollingTreeCoordinatedGraphics::createScrollingTreeNode):
+        * page/scrolling/coordinatedgraphics/ScrollingTreeCoordinatedGraphics.h: Added.
+        * page/scrolling/coordinatedgraphics/ScrollingTreeFixedNode.cpp: Added.
+        (WebCore::ScrollingTreeFixedNode::create):
+        (WebCore::ScrollingTreeFixedNode::ScrollingTreeFixedNode):
+        (WebCore::ScrollingTreeFixedNode::~ScrollingTreeFixedNode):
+        (WebCore::ScrollingTreeFixedNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFixedNode::updateLayersAfterAncestorChange):
+        * page/scrolling/coordinatedgraphics/ScrollingTreeFixedNode.h: Added.
+        * page/scrolling/coordinatedgraphics/ScrollingTreeFrameScrollingNodeCoordinatedGraphics.cpp: Added.
+        (WebCore::ScrollingTreeFrameScrollingNodeCoordinatedGraphics::create):
+        (WebCore::ScrollingTreeFrameScrollingNodeCoordinatedGraphics::ScrollingTreeFrameScrollingNodeCoordinatedGraphics):
+        (WebCore::ScrollingTreeFrameScrollingNodeCoordinatedGraphics::handleWheelEvent):
+        (WebCore::ScrollingTreeFrameScrollingNodeCoordinatedGraphics::scrollPosition const):
+        (WebCore::ScrollingTreeFrameScrollingNodeCoordinatedGraphics::setScrollPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeCoordinatedGraphics::setScrollPositionWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeFrameScrollingNodeCoordinatedGraphics::setScrollLayerPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeCoordinatedGraphics::updateLayersAfterViewportChange):
+        * page/scrolling/coordinatedgraphics/ScrollingTreeFrameScrollingNodeCoordinatedGraphics.h: Added.
+        * page/scrolling/coordinatedgraphics/ScrollingTreeStickyNode.cpp: Added.
+        (WebCore::ScrollingTreeStickyNode::create):
+        (WebCore::ScrollingTreeStickyNode::ScrollingTreeStickyNode):
+        (WebCore::ScrollingTreeStickyNode::~ScrollingTreeStickyNode):
+        (WebCore::ScrollingTreeStickyNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeStickyNode::updateLayersAfterAncestorChange):
+        * page/scrolling/coordinatedgraphics/ScrollingTreeStickyNode.h: Added.
+        * platform/PlatformWheelEvent.h: Enable PlatformWheelEventPhase code
+        for WPE. Guard latching-specific methods under ASYNC_SCROLLING.
+        * platform/TextureMapper.cmake: Two build targets have been moved to
+        SourcesGTK.txt and SourcesWPE.txt.
+
 2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Build and link against latest WPEBackend and WPEBackend-fdo

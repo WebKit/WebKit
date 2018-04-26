@@ -31,10 +31,8 @@
 #include "AsyncScrollingCoordinator.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollingThread.h"
-#include "ScrollingTreeFixedNode.h"
 #include "ScrollingTreeNode.h"
 #include "ScrollingTreeScrollingNode.h"
-#include "ScrollingTreeStickyNode.h"
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
@@ -119,6 +117,7 @@ void ThreadedScrollingTree::reportExposedUnfilledArea(MonotonicTime timestamp, u
     });
 }
 
+#if PLATFORM(COCOA)
 void ThreadedScrollingTree::currentSnapPointIndicesDidChange(ScrollingNodeID nodeID, unsigned horizontal, unsigned vertical)
 {
     if (!m_scrollingCoordinator)
@@ -128,6 +127,7 @@ void ThreadedScrollingTree::currentSnapPointIndicesDidChange(ScrollingNodeID nod
         scrollingCoordinator->setActiveScrollSnapIndices(nodeID, horizontal, vertical);
     });
 }
+#endif
 
 #if PLATFORM(MAC)
 void ThreadedScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)

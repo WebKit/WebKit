@@ -1436,6 +1436,7 @@ page/csp/ContentSecurityPolicySource.cpp
 page/csp/ContentSecurityPolicySourceList.cpp
 page/csp/ContentSecurityPolicySourceListDirective.cpp
 
+page/scrolling/AsyncScrollingCoordinator.cpp
 page/scrolling/AxisScrollSnapOffsets.cpp
 page/scrolling/ScrollLatchingState.cpp
 page/scrolling/ScrollingConstraints.cpp
