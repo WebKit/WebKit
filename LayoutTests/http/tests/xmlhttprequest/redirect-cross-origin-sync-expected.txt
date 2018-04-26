@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 26: Cross-origin redirection to http://localhost:8000/xmlhttprequest/resources/reply.xml denied by Cross-Origin Resource Sharing policy: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 26: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 26: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/reply.xml due to access control checks.
 Test that a cross-origin redirect to a server that responds is indistinguishable from one that does not. Should say PASS:
 

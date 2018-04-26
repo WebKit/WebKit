@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 54: Cross-origin redirection to http://localhost:8080/xmlhttprequest/resources/forbidden.txt denied by Cross-Origin Resource Sharing policy: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 54: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 54: XMLHttpRequest cannot load http://localhost:8080/xmlhttprequest/resources/forbidden.txt due to access control checks.
 CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8080/xmlhttprequest/resources/forbidden.txt due to access control checks.
