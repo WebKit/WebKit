@@ -15,28 +15,29 @@
                 return;
 
             var output = '';
-            var noneditableTargetRect = document.getElementById('noneditableTapPoint').getBoundingClientRect();
-            
-            var noneditableTapPointX = noneditableTargetRect.x + noneditableTargetRect.width / 2;
-            var noneditableTapPointY = noneditableTargetRect.y + noneditableTargetRect.height / 2;
-            
-            await doubleTapAtPoint(noneditableTapPointX, noneditableTapPointY);
-            if (document.getSelection().type == "None")
-                output += 'PASS: No Selection';
+            var editableTargetRect = document.getElementById('editable').getBoundingClientRect();
+            var firstTargetRect = document.getElementById('firstSelection').getBoundingClientRect();
+            var noneditableToEditableOffset = document.getElementById('editable').getBoundingClientRect().y - document.getElementById('noneditable').getBoundingClientRect().y;
+
+            var tapPointX = editableTargetRect.x + editableTargetRect.width / 2;
+            var tapPointY = editableTargetRect.y + editableTargetRect.height / 2;
+            var doubleTapPointX = firstTargetRect.x + firstTargetRect.width / 2;
+            var doubleTapPointY = firstTargetRect.y + firstTargetRect.height / 2 + noneditableToEditableOffset;
+        
+            await tapAtPoint(tapPointX, tapPointY);
+            if (document.getSelection().type == "Caret")
+                output += 'PASS: Has Caret Selection';
             else
-                output += 'FAIL: Has selection even though we should not. Incorrect Selection: ' + document.getSelection().toString();
+                output += 'FAIL: failed to activate caret as a result of a tap. Incorrect Selection: ' + document.getSelection().toString();
             output += '<br>';
 
-            var editableTargetRect = document.getElementById('editable').getBoundingClientRect();
+            await didShowKeyboard();
 
-            var editableTapPointX = editableTargetRect.x + editableTargetRect.width / 2;
-            var editableTapPointY = editableTargetRect.y + editableTargetRect.height / 2;
-
-            await doubleTapAtPoint(editableTapPointX, editableTapPointY);
-            if (document.getSelection().type != "None")
-                output += 'PASS: Has Selection';
+            await doubleTapAtPoint(doubleTapPointX, doubleTapPointY);
+            if (document.getSelection().toString() == "magna")
+                output += 'PASS: Correct Selection';
             else
-                output += 'FAIL: No selection even though we should have one.';
+                output += 'FAIL: failed to select a word as a result of a long press. Incorrect Selection: ' + document.getSelection().toString();
             output += '<br>';
 
             var noneditableElement = document.getElementById('noneditable');
@@ -76,7 +77,7 @@
 </head>
 <body>
     <div id="noneditable">
-        <p>Lorem ipsum dolor sit amet, <span id="noneditableTapPoint">consectetur</span> adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore <span id="firstSelection">magna</span> aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
     </div>
     <div id="editable" contenteditable>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>

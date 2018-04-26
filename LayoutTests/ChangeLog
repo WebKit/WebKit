@@ -1,3 +1,20 @@
+2018-04-25  Megan Gardner  <megan_gardner@apple.com>
+
+        Activate selection when interacting with editable content
+        https://bugs.webkit.org/show_bug.cgi?id=185017
+
+        Reviewed by Tim Horton.
+        
+        Fixed double-tap-on-editable-and-noneditable test, as it was not actually written correctly.
+        Should actually double tap on correct content and check for the correct output now.
+        Added two more tests to make sure that selections really are happening in editable content. 
+
+        * fast/events/touch/ios/double-tap-on-editable-and-noneditable.html:
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-expected.txt: Added.
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-right-to-change-selected-text-expected.txt: Added.
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-right-to-change-selected-text.html: Added.
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection.html: Added.
+        
 2018-04-25  Brent Fulgham  <bfulgham@apple.com>
 
         Add port 548 (afpovertcp) to port blacklist

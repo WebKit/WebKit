@@ -3967,6 +3967,9 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 - (void)_startAssistingKeyboard
 {
     [self useSelectionAssistantWithGranularity:WKSelectionGranularityCharacter];
+    
+    if (self.isFirstResponder && !self.suppressAssistantSelectionView)
+        [_textSelectionAssistant activateSelection];
 
 #if !ENABLE(EXTRA_ZOOM_MODE)
     [self reloadInputViews];
@@ -3976,6 +3979,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 - (void)_stopAssistingKeyboard
 {
     [self useSelectionAssistantWithGranularity:_webView._selectionGranularity];
+    
+    [_textSelectionAssistant deactivateSelection];
 }
 
 - (const AssistedNodeInformation&)assistedNodeInformation

@@ -1,3 +1,19 @@
+2018-04-25  Megan Gardner  <megan_gardner@apple.com>
+
+        Activate selection when interacting with editable content
+        https://bugs.webkit.org/show_bug.cgi?id=185017
+
+        Reviewed by Tim Horton.
+        
+        Fixes a regression from r231016 where selection now does not work when interacting with
+        editable content. When we go into editable content, we should turn on the assistant.
+        This fulfills the requirement of user interaction as well, so any javascript selections
+        after this point should be valid.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startAssistingKeyboard]):
+        (-[WKContentView _stopAssistingKeyboard]):
+
 2018-04-26  Per Arne Vollan  <pvollan@apple.com>
 
         Disable content filtering in minimal simulator mode
