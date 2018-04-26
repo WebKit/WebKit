@@ -983,6 +983,7 @@ bool portAllowed(const URL& url)
         531,  // Chat
         532,  // netnews
         540,  // UUCP
+        548,  // afpovertcp [Apple addition]
         556,  // remotefs
         563,  // NNTP+SSL
         587,  // ESMTP

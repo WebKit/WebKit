@@ -1,3 +1,19 @@
+2018-04-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Add port 548 (afpovertcp) to port blacklist
+        https://bugs.webkit.org/show_bug.cgi?id=185000
+        <rdar://problem/39540481>
+
+        Reviewed by David Kilzer.
+
+        Update test and expectations for new port.
+
+        * platform/gtk/security/block-test-expected.txt:
+        * platform/mac/security/block-test-expected.txt:
+        * platform/wpe/security/block-test-expected.txt:
+        * security/block-test-expected.txt:
+        * security/block-test.html:
+
 2018-04-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE] Gardening of tests for the WPE Debug bot.

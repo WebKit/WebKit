@@ -1,3 +1,16 @@
+2018-04-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Add port 548 (afpovertcp) to port blacklist
+        https://bugs.webkit.org/show_bug.cgi?id=185000
+        <rdar://problem/39540481>
+
+        Reviewed by David Kilzer.
+
+        Tested by security/block-test.html.
+
+        * platform/URL.cpp:
+        (WebCore::portAllowed):Also block port 548.
+
 2018-04-26  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement Intl.PluralRules
