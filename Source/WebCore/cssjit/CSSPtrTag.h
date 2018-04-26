@@ -35,7 +35,16 @@ namespace WebCore {
     v(CSSSelectorPtrTag) \
     v(CSSOperationPtrTag) \
 
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable:4307)
+#endif
+
 FOR_EACH_CSS_PTRTAG(WTF_DECLARE_PTRTAG)
+
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 
 } // namespace WebCore
 

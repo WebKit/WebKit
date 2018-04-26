@@ -48,16 +48,9 @@ enum PtrTag : uintptr_t {
 template<size_t N>
 constexpr uintptr_t makePtrTagHash(const char (&str)[N])
 {
-    // The only reason for the following dance with casting to result64Bit and
-    // back is because, on 32-bit, MSVC will complain about "C4307: integral
-    // constant overflow" but not allow us to disable the warning for all clients
-    // of this function.
     uintptr_t result = 134775813;
-    for (size_t i = 0; i < N; ++i) {
-        uint64_t result64Bit = static_cast<uint64_t>(result);
-        result64Bit += ((result64Bit * str[i]) ^ (result64Bit >> 16));
-        result = static_cast<uintptr_t>(result64Bit);
-    }
+    for (size_t i = 0; i < N; ++i)
+        result += ((result * str[i]) ^ (result >> 16));
     return result & 0xffff;
 }
 
@@ -71,7 +64,16 @@ constexpr uintptr_t makePtrTagHash(const char (&str)[N])
 static_assert(static_cast<uintptr_t>(NoPtrTag) == static_cast<uintptr_t>(0), "");
 static_assert(static_cast<uintptr_t>(CFunctionPtrTag) == static_cast<uintptr_t>(1), "");
 
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable:4307)
+#endif
+
 FOR_EACH_ADDITIONAL_WTF_PTRTAG(WTF_DECLARE_PTRTAG)
+
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 
 #if !USE(POINTER_PROFILING)
 

@@ -1,3 +1,14 @@
+2018-04-26  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: Speculative build fix for Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=184976
+        <rdar://problem/39723901>
+
+        Not reviewed.
+
+        * wtf/PtrTag.h:
+        (WTF::makePtrTagHash): Undo last speculative build fix that did not work for 64-bit.
+
 2018-04-26  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement Intl.PluralRules

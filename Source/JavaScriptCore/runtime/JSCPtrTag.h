@@ -53,7 +53,16 @@ using PtrTag = WTF::PtrTag;
     v(YarrMatchOnly16BitPtrTag) \
     v(YarrBacktrackPtrTag) \
 
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable:4307)
+#endif
+
 FOR_EACH_JSC_PTRTAG(WTF_DECLARE_PTRTAG)
+
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 
 } // namespace JSC
 
