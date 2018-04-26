@@ -1737,7 +1737,7 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
         // If we are loading the main resource of a subframe, use the cache partition of the main document.
         mainResourceRequest.setDomainForCachePartition(*m_frame->document());
     } else {
-        auto origin = SecurityOrigin::create(mainResourceRequest.url());
+        auto origin = SecurityOrigin::create(mainResourceRequest.resourceRequest().url());
         origin->setStorageBlockingPolicy(frameLoader()->frame().settings().storageBlockingPolicy());
         mainResourceRequest.setDomainForCachePartition(origin->domainForCachePartition());
     }

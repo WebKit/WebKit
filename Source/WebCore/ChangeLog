@@ -1,5 +1,16 @@
 2018-04-26  Daniel Bates  <dabates@apple.com>
 
+        Fix the build following r231068
+        (https://bugs.webkit.org/show_bug.cgi?id=185002)
+
+        Substitute mainResourceRequest.resourceRequest().url() for mainResourceRequest.url() as the
+        latter does not exist.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::loadMainResource):
+
+2018-04-26  Daniel Bates  <dabates@apple.com>
+
         DocumentLoader::loadMainResource() should WTFMove() the passed ResourceRequest
         https://bugs.webkit.org/show_bug.cgi?id=185002
 
