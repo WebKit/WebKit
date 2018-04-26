@@ -2039,7 +2039,8 @@ Bug(GTK) http/tests/misc/large-js-program.php [ Pass Slow ]
 [ Debug ] editing/selection/move-by-word-visually-multi-line.html [ Pass Timeout ]
 [ Debug ] editing/selection/move-by-word-visually-multi-space.html [ Failure Timeout ]
 
-webkit.org/b/159754 workers/bomb.html [ Slow ]
+webkit.org/b/159754 [ Release ] workers/bomb.html [ Slow ]
+webkit.org/b/159754 [ Debug ] workers/bomb.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_007.htm [ Slow ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_010.htm [ Slow ]

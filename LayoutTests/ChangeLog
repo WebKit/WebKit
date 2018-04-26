@@ -1,3 +1,15 @@
+2018-04-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE] Gardening of tests for the WPE Debug bot.
+
+        Mark tests timing out.
+        An attempt to make the new WPE debug bot not abort early.
+
+        * platform/gtk/TestExpectations: workers/bomb.html for debug was skipped in the root expectations file,
+          but we were overriding it to simply "slow" here because we missed the tag for release.
+          Let's put both expectations together to make this clearer.
+        * platform/wpe/TestExpectations: Ditto.
+
 2018-04-26  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement Intl.PluralRules
