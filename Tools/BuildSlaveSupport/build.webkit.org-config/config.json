@@ -304,7 +304,7 @@
                       "slavenames": ["wincairo-wkl-debug-build-01"]
                     },
                     {
-                      "name": "WinCairo 64-bit WKL Debug (Tests)", "type": "Test", "builddir": "wincairo-wkl-debug-tests",
+                      "name": "WinCairo 64-bit WKL Debug (Tests)", "type": "TestWebKit1", "builddir": "wincairo-wkl-debug-tests",
                       "platform": "wincairo", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["wincairo-wkl-debug-tests-01", "wincairo-wkl-debug-tests-02"]
                     },
