@@ -163,10 +163,11 @@ class Manager(object):
             self._stream.writeln('')
 
         successful = runner.result_map_by_status(runner.STATUS_PASSED)
-        _log.info('Ran {} tests of {} with {} successful'.format(len(runner.results), len(test_names), len(successful)))
+        disabled = len(runner.result_map_by_status(runner.STATUS_DISABLED))
+        _log.info('Ran {} tests of {} with {} successful'.format(len(runner.results) - disabled, len(test_names), len(successful)))
 
         self._stream.writeln('------------------------------')
-        if len(successful) + len(runner.result_map_by_status(runner.STATUS_DISABLED)) == len(test_names):
+        if len(successful) + disabled == len(test_names):
             self._stream.writeln('All tests successfully passed!')
             return Manager.SUCCESS
 

@@ -228,111 +228,162 @@ class RunUnitTestsTest(unittest.TestCase):
         self.assertEqual(expected_text, actual_text)
 
     def test_no_failures_or_timeouts(self):
-        self.assertFailures(0, """Note: Google Test filter = WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
-[==========] Running 1 test from 1 test case.
-[----------] Global test environment set-up.
-[----------] 1 test from WebViewDestructionWithHostWindow
-[ RUN      ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
-[       OK ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose (127 ms)
-[----------] 1 test from WebViewDestructionWithHostWindow (127 ms total)
-
-[----------] Global test environment tear-down
-[==========] 1 test from 1 test case ran. (127 ms total)
-[  PASSED  ] 1 test.
+        self.assertFailures(0, """...
+worker/0 TestWTF.WTF_Variant.OperatorAmpersand Passed
+worker/0 TestWTF.WTF_Variant.Ref Passed
+worker/0 TestWTF.WTF_Variant.RefPtr Passed
+worker/0 TestWTF.WTF_Variant.RetainPtr Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingMakeVisitor Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingSwitchOn Passed
+worker/0 exiting
+Ran 1888 tests of 1888 with 1888 successful
+------------------------------
+All tests successfully passed!
 """)
 
     def test_one_failure(self):
-        self.assertFailures(1, """Note: Google Test filter = WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
-[==========] Running 1 test from 1 test case.
-[----------] Global test environment set-up.
-[----------] 1 test from WebViewDestructionWithHostWindow
-[ RUN      ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
-[       OK ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose (127 ms)
-[----------] 1 test from WebViewDestructionWithHostWindow (127 ms total)
+        self.assertFailures(1, """...
+worker/0 TestWTF.WTF_Variant.OperatorAmpersand Passed
+worker/0 TestWTF.WTF_Variant.Ref Passed
+worker/0 TestWTF.WTF_Variant.RefPtr Passed
+worker/0 TestWTF.WTF_Variant.RetainPtr Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingMakeVisitor Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingSwitchOn Passed
+worker/0 exiting
+Ran 1888 tests of 1888 with 1887 successful
+------------------------------
+Test suite failed
 
-[----------] Global test environment tear-down
-[==========] 1 test from 1 test case ran. (127 ms total)
-[  PASSED  ] 1 test.
-Tests that failed:
-  WebKit2.WebKit2.CanHandleRequest
+Crashed
+
+    TestWTF.WTF.StringConcatenate_Unsigned
+        **FAIL** WTF.StringConcatenate_Unsigned
+
+        C:\\cygwin\\home\\buildbot\\slave\\win-release\\build\\Tools\\TestWebKitAPI\\Tests\\WTF\\StringConcatenate.cpp:84
+        Value of: makeString("hello ", static_cast<unsigned short>(42) , " world")
+          Actual: hello 42 world
+        Expected: "hello * world"
+        Which is: 74B00C9C
+
+Testing completed, Exit status: 3
 """)
 
     def test_multiple_failures(self):
-        self.assertFailures(4, """Note: Google Test filter = WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
-[==========] Running 1 test from 1 test case.
-[----------] Global test environment set-up.
-[----------] 1 test from WebViewDestructionWithHostWindow
-[ RUN      ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
-[       OK ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose (127 ms)
-[----------] 1 test from WebViewDestructionWithHostWindow (127 ms total)
+        self.assertFailures(2, """...
+worker/0 TestWTF.WTF_Variant.OperatorAmpersand Passed
+worker/0 TestWTF.WTF_Variant.Ref Passed
+worker/0 TestWTF.WTF_Variant.RefPtr Passed
+worker/0 TestWTF.WTF_Variant.RetainPtr Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingMakeVisitor Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingSwitchOn Passed
+worker/0 exiting
+Ran 1888 tests of 1888 with 1886 successful
+------------------------------
+Test suite failed
 
-[----------] Global test environment tear-down
-[==========] 1 test from 1 test case ran. (127 ms total)
-[  PASSED  ] 1 test.
-Tests that failed:
-  WebKit2.WebKit2.CanHandleRequest
-  WebKit2.WebKit2.DocumentStartUserScriptAlertCrashTest
-  WebKit2.WebKit2.HitTestResultNodeHandle
-  WebKit2.WebKit2.InjectedBundleBasic
+Crashed
+
+    TestWTF.WTF.StringConcatenate_Unsigned
+        **FAIL** WTF.StringConcatenate_Unsigned
+
+        C:\\cygwin\\home\\buildbot\\slave\\win-release\\build\\Tools\\TestWebKitAPI\\Tests\\WTF\\StringConcatenate.cpp:84
+        Value of: makeString("hello ", static_cast<unsigned short>(42) , " world")
+          Actual: hello 42 world
+        Expected: "hello * world"
+        Which is: 74B00C9C
+
+    TestWTF.WTF_Expected.Unexpected
+        **FAIL** WTF_Expected.Unexpected
+
+        C:\cygwin\home\buildbot\slave\win-release\build\Tools\TestWebKitAPI\Tests\WTF\Expected.cpp:96
+        Value of: s1
+          Actual: oops
+        Expected: s0
+        Which is: oops
+
+Testing completed, Exit status: 3
 """)
 
     def test_one_timeout(self):
-        self.assertFailures(1, """Note: Google Test filter = WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
-[==========] Running 1 test from 1 test case.
-[----------] Global test environment set-up.
-[----------] 1 test from WebViewDestructionWithHostWindow
-[ RUN      ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
-[       OK ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose (127 ms)
-[----------] 1 test from WebViewDestructionWithHostWindow (127 ms total)
+        self.assertFailures(1, """...
+worker/0 TestWTF.WTF_Variant.OperatorAmpersand Passed
+worker/0 TestWTF.WTF_Variant.Ref Passed
+worker/0 TestWTF.WTF_Variant.RefPtr Passed
+worker/0 TestWTF.WTF_Variant.RetainPtr Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingMakeVisitor Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingSwitchOn Passed
+worker/0 exiting
+Ran 1888 tests of 1888 with 1887 successful
+------------------------------
+Test suite failed
 
-[----------] Global test environment tear-down
-[==========] 1 test from 1 test case ran. (127 ms total)
-[  PASSED  ] 1 test.
-Tests that timed out:
-  WebKit2.WebKit2.CanHandleRequest
+Timeout
+
+     TestWTF.WTF_PoisonedUniquePtrForTriviallyDestructibleArrays.Assignment
+
+Testing completed, Exit status: 3
 """)
 
     def test_multiple_timeouts(self):
-        self.assertFailures(4, """Note: Google Test filter = WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
-[==========] Running 1 test from 1 test case.
-[----------] Global test environment set-up.
-[----------] 1 test from WebViewDestructionWithHostWindow
-[ RUN      ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
-[       OK ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose (127 ms)
-[----------] 1 test from WebViewDestructionWithHostWindow (127 ms total)
+        self.assertFailures(2, """...
+worker/0 TestWTF.WTF_Variant.OperatorAmpersand Passed
+worker/0 TestWTF.WTF_Variant.Ref Passed
+worker/0 TestWTF.WTF_Variant.RefPtr Passed
+worker/0 TestWTF.WTF_Variant.RetainPtr Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingMakeVisitor Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingSwitchOn Passed
+worker/0 exiting
+Ran 1888 tests of 1888 with 1886 successful
+------------------------------
+Test suite failed
 
-[----------] Global test environment tear-down
-[==========] 1 test from 1 test case ran. (127 ms total)
-[  PASSED  ] 1 test.
-Tests that timed out:
-  WebKit2.WebKit2.CanHandleRequest
-  WebKit2.WebKit2.DocumentStartUserScriptAlertCrashTest
-  WebKit2.WebKit2.HitTestResultNodeHandle
-  WebKit2.WebKit2.InjectedBundleBasic
+Timeout
+
+    TestWTF.WTF_PoisonedUniquePtrForTriviallyDestructibleArrays.Assignment
+    TestWTF.WTF_Lock.ContendedShortSection
+
+Testing completed, Exit status: 3
 """)
 
     def test_multiple_failures_and_timeouts(self):
-        self.assertFailures(8, """Note: Google Test filter = WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
-[==========] Running 1 test from 1 test case.
-[----------] Global test environment set-up.
-[----------] 1 test from WebViewDestructionWithHostWindow
-[ RUN      ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
-[       OK ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose (127 ms)
-[----------] 1 test from WebViewDestructionWithHostWindow (127 ms total)
+        self.assertFailures(4, """...
+worker/0 TestWTF.WTF_Variant.OperatorAmpersand Passed
+worker/0 TestWTF.WTF_Variant.Ref Passed
+worker/0 TestWTF.WTF_Variant.RefPtr Passed
+worker/0 TestWTF.WTF_Variant.RetainPtr Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingMakeVisitor Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingSwitchOn Passed
+worker/0 exiting
+Ran 1888 tests of 1888 with 1884 successful
+------------------------------
+Test suite failed
 
-[----------] Global test environment tear-down
-[==========] 1 test from 1 test case ran. (127 ms total)
-[  PASSED  ] 1 test.
-Tests that failed:
-  WebKit2.WebKit2.CanHandleRequest
-  WebKit2.WebKit2.DocumentStartUserScriptAlertCrashTest
-  WebKit2.WebKit2.HitTestResultNodeHandle
-Tests that timed out:
-  WebKit2.WebKit2.InjectedBundleBasic
-  WebKit2.WebKit2.LoadCanceledNoServerRedirectCallback
-  WebKit2.WebKit2.MouseMoveAfterCrash
-  WebKit2.WebKit2.ResponsivenessTimerDoesntFireEarly
-  WebKit2.WebKit2.WebArchive
+Crashed
+
+    TestWTF.WTF.StringConcatenate_Unsigned
+        **FAIL** WTF.StringConcatenate_Unsigned
+
+        C:\\cygwin\\home\\buildbot\\slave\\win-release\\build\\Tools\\TestWebKitAPI\\Tests\\WTF\\StringConcatenate.cpp:84
+        Value of: makeString("hello ", static_cast<unsigned short>(42) , " world")
+          Actual: hello 42 world
+        Expected: "hello * world"
+        Which is: 74B00C9C
+
+    TestWTF.WTF_Expected.Unexpected
+        **FAIL** WTF_Expected.Unexpected
+
+        C:\cygwin\home\buildbot\slave\win-release\build\Tools\TestWebKitAPI\Tests\WTF\Expected.cpp:96
+        Value of: s1
+          Actual: oops
+        Expected: s0
+        Which is: oops
+
+Timeout
+
+    TestWTF.WTF_PoisonedUniquePtrForTriviallyDestructibleArrays.Assignment
+    TestWTF.WTF_Lock.ContendedShortSection
+
+Testing completed, Exit status: 3
 """)
 
 

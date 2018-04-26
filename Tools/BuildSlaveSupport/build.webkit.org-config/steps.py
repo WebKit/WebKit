@@ -496,15 +496,10 @@ class RunUnitTests(TestWithFailureCount):
         log_text = cmd.logs['stdio'].getText()
         count = 0
 
-        split = re.split(r'\sTests that timed out:\s', log_text)
-        if len(split) > 1:
-            count += len(re.findall(r'^\s+\S+$', split[1], flags=re.MULTILINE))
-
-        split = re.split(r'\sTests that failed:\s', split[0])
-        if len(split) > 1:
-            count += len(re.findall(r'^\s+\S+$', split[1], flags=re.MULTILINE))
-
-        return count
+        match = re.search(r'Ran (?P<ran>\d+) tests of (?P<total>\d+) with (?P<passed>\d+) successful', log_text)
+        if not match:
+            return -1
+        return int(match.group('total')) - int(match.group('passed'))
 
 
 class RunPythonTests(TestWithFailureCount):
