@@ -1,3 +1,23 @@
+2018-04-26  Per Arne Vollan  <pvollan@apple.com>
+
+        Add lazy initialization of caption display mode for videos.
+        https://bugs.webkit.org/show_bug.cgi?id=184993
+
+        The call to MACaptionAppearanceGetDisplayType in CaptionUserPreferencesMediaAF::captionDisplayMode()
+        is showing up in samples when called from HTMLMediaElement::finishInitialization().
+
+        Reviewed by Eric Carlson.
+
+        No new tests, covered by existing tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::finishInitialization):
+        (WebCore::HTMLMediaElement::setSelectedTextTrack):
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged):
+        (WebCore::HTMLMediaElement::captionPreferencesChanged):
+        (WebCore::HTMLMediaElement::captionDisplayMode):
+        * html/HTMLMediaElement.h:
+
 2018-04-26  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] Initial ASYNC_SCROLLING support

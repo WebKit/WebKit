@@ -772,6 +772,7 @@ private:
     };
     void markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMode);
     void captionPreferencesChanged() override;
+    CaptionUserPreferences::CaptionDisplayMode captionDisplayMode();
 #endif
 
     // These "internal" functions do not check user gesture restrictions.
@@ -1087,7 +1088,7 @@ private:
     String m_subtitleTrackLanguage;
     MediaTime m_lastTextTrackUpdateTime { -1, 1 };
 
-    CaptionUserPreferences::CaptionDisplayMode m_captionDisplayMode { CaptionUserPreferences::Automatic };
+    std::optional<CaptionUserPreferences::CaptionDisplayMode> m_captionDisplayMode;
 
     RefPtr<AudioTrackList> m_audioTracks;
     RefPtr<TextTrackList> m_textTracks;

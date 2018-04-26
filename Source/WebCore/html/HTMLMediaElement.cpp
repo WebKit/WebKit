@@ -560,11 +560,6 @@ void HTMLMediaElement::finishInitialization()
     }
 #endif
 
-#if ENABLE(VIDEO_TRACK)
-    if (page)
-        m_captionDisplayMode = page->group().captionPreferences().captionDisplayMode();
-#endif
-
 #if ENABLE(MEDIA_SESSION)
     m_elementID = nextElementID();
     elementIDsToElements().add(m_elementID, this);
@@ -4376,13 +4371,13 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
         return;
 
     if (trackToSelect == TextTrack::captionMenuAutomaticItem()) {
-        if (m_captionDisplayMode != CaptionUserPreferences::Automatic)
+        if (captionDisplayMode() != CaptionUserPreferences::Automatic)
             m_textTracks->scheduleChangeEvent();
     } else if (trackToSelect == TextTrack::captionMenuOffItem()) {
         for (int i = 0, length = trackList.length(); i < length; ++i)
             trackList.item(i)->setMode(TextTrack::Mode::Disabled);
 
-        if (m_captionDisplayMode != CaptionUserPreferences::ForcedOnly && !trackList.isChangeEventScheduled())
+        if (captionDisplayMode() != CaptionUserPreferences::ForcedOnly && !trackList.isChangeEventScheduled())
             m_textTracks->scheduleChangeEvent();
     } else {
         if (!trackToSelect || !trackList.contains(*trackToSelect))
@@ -5016,7 +5011,7 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged(MediaPlayer*)
     beginProcessingMediaPlayerCallback();
 
 #if ENABLE(VIDEO_TRACK)
-    if (m_captionDisplayMode == CaptionUserPreferences::Automatic && m_subtitleTrackLanguage != m_player->languageOfPrimaryAudioTrack())
+    if (captionDisplayMode() == CaptionUserPreferences::Automatic && m_subtitleTrackLanguage != m_player->languageOfPrimaryAudioTrack())
         markCaptionAndSubtitleTracksAsUnconfigured(AfterDelay);
 #endif
 
@@ -6424,11 +6419,23 @@ void HTMLMediaElement::captionPreferencesChanged()
         return;
 
     CaptionUserPreferences::CaptionDisplayMode displayMode = document().page()->group().captionPreferences().captionDisplayMode();
-    if (m_captionDisplayMode == displayMode)
+    if (captionDisplayMode() == displayMode)
         return;
 
     m_captionDisplayMode = displayMode;
-    setWebkitClosedCaptionsVisible(m_captionDisplayMode == CaptionUserPreferences::AlwaysOn);
+    setWebkitClosedCaptionsVisible(captionDisplayMode() == CaptionUserPreferences::AlwaysOn);
+}
+
+CaptionUserPreferences::CaptionDisplayMode HTMLMediaElement::captionDisplayMode()
+{
+    if (!m_captionDisplayMode.has_value()) {
+        if (document().page())
+            m_captionDisplayMode = document().page()->group().captionPreferences().captionDisplayMode();
+        else
+            m_captionDisplayMode = CaptionUserPreferences::Automatic;
+    }
+
+    return m_captionDisplayMode.value();
 }
 
 void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMode mode)
