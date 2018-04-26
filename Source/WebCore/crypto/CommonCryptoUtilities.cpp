@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,11 +28,12 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#if !HAVE(CCRSAGetCRTComponents)
+
 #if USE(APPLE_INTERNAL_SDK)
 #include <CommonCrypto/CommonBigNum.h>
 #endif
 
-typedef CCCryptorStatus CCStatus;
 extern "C" CCBigNumRef CCBigNumFromData(CCStatus *status, const void *s, size_t len);
 extern "C" size_t CCBigNumToData(CCStatus *status, const CCBigNumRef bn, void *to);
 extern "C" uint32_t CCBigNumByteCount(const CCBigNumRef bn);
@@ -42,6 +43,8 @@ extern "C" CCBigNumRef CCBigNumCopy(CCStatus *status, const CCBigNumRef bn);
 extern "C" CCStatus CCBigNumSubI(CCBigNumRef result, const CCBigNumRef a, const uint32_t b);
 extern "C" CCStatus CCBigNumMod(CCBigNumRef result, CCBigNumRef dividend, CCBigNumRef modulus);
 extern "C" CCStatus CCBigNumInverseMod(CCBigNumRef result, const CCBigNumRef a, const CCBigNumRef modulus);
+
+#endif
 
 namespace WebCore {
 
@@ -67,6 +70,8 @@ bool getCommonCryptoDigestAlgorithm(CryptoAlgorithmIdentifier hashFunction, CCDi
         return false;
     }
 }
+
+#if !HAVE(CCRSAGetCRTComponents)
 
 CCBigNum::CCBigNum(CCBigNumRef number)
     : m_number(number)
@@ -167,6 +172,8 @@ CCBigNum CCBigNum::inverse(const CCBigNum& modulus) const
 
     return result;
 }
+
+#endif
 
 } // namespace WebCore
 

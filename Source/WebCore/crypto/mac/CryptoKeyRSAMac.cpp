@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,6 +102,23 @@ static CCCryptorStatus getPrivateKeyComponents(CCRSACryptorRef rsaKey, Vector<ui
     firstPrimeInfo.primeFactor.shrink(pLength);
     secondPrimeInfo.primeFactor.shrink(qLength);
 
+#if HAVE(CCRSAGetCRTComponents)
+    size_t dpSize;
+    size_t dqSize;
+    size_t qinvSize;
+    if (auto status = CCRSAGetCRTComponentsSizes(rsaKey, &dpSize, &dqSize, &qinvSize))
+        return status;
+
+    Vector<uint8_t> dp(dpSize);
+    Vector<uint8_t> dq(dqSize);
+    Vector<uint8_t> qinv(qinvSize);
+    if (auto status = CCRSAGetCRTComponents(rsaKey, dp.data(), dpSize, dq.data(), dqSize, qinv.data(), qinvSize))
+        return status;
+
+    firstPrimeInfo.factorCRTExponent = WTFMove(dp);
+    secondPrimeInfo.factorCRTExponent = WTFMove(dq);
+    secondPrimeInfo.factorCRTCoefficient = WTFMove(qinv);
+#else
     CCBigNum d(privateExponent.data(), privateExponent.size());
     CCBigNum p(firstPrimeInfo.primeFactor.data(), firstPrimeInfo.primeFactor.size());
     CCBigNum q(secondPrimeInfo.primeFactor.data(), secondPrimeInfo.primeFactor.size());
@@ -113,6 +130,7 @@ static CCCryptorStatus getPrivateKeyComponents(CCRSACryptorRef rsaKey, Vector<ui
     firstPrimeInfo.factorCRTExponent = dp.data();
     secondPrimeInfo.factorCRTExponent = dq.data();
     secondPrimeInfo.factorCRTCoefficient = qi.data();
+#endif
 
     return status;
 }

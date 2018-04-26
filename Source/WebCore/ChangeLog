@@ -1,3 +1,21 @@
+2018-04-15  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Adopt CCRSAGetCRTComponents and stop using CCBigNum
+        https://bugs.webkit.org/show_bug.cgi?id=184637
+
+        Reviewed by Alexey Proskuryakov.
+
+        * crypto/CommonCryptoUtilities.cpp: Compile out WebCore::CCBigNum class if
+        HAVE(CCRSAGetCRTComponents) is true.
+
+        * crypto/CommonCryptoUtilities.h: Define HAVE(CCRSAGetCRTComponents) on new
+        enough versions of iOS and macOS that have it and add declarations of the
+        function for the non-Apple-internal-SDK case. Also don't define the
+        WebCore::CCBigNum class if HAVE(CCRSAGetCRTComponents) is true.
+
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::getPrivateKeyComponents): Use CCRSAGetCRTComponents if present.
+
 2018-04-26  Per Arne Vollan  <pvollan@apple.com>
 
         Add lazy initialization of caption display mode for videos.

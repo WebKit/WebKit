@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,10 @@
 
 #pragma once
 
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
+#define HAVE_CCRSAGetCRTComponents 1
+#endif
+
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithmIdentifier.h"
@@ -38,6 +42,10 @@
 // #include <CommonCrypto/CommonKeyDerivationSPI.h>
 #include <CommonCrypto/CommonRSACryptor.h>
 #include <CommonCrypto/CommonRandomSPI.h>
+#endif
+
+#if USE(APPLE_INTERNAL_SDK) && HAVE(CCRSAGetCRTComponents)
+#include <CommonCrypto/CommonRSACryptorSPI.h>
 #endif
 
 #ifndef _CC_RSACRYPTOR_H_
@@ -88,6 +96,11 @@ extern "C" CCRSAKeyType CCRSAGetKeyType(CCRSACryptorRef key);
 extern "C" CCCryptorStatus CCRSACryptorImport(const void *keyPackage, size_t keyPackageLen, CCRSACryptorRef *key);
 extern "C" CCCryptorStatus CCRSACryptorExport(CCRSACryptorRef key, void *out, size_t *outLen);
 
+#if HAVE(CCRSAGetCRTComponents)
+extern "C" CCCryptorStatus CCRSAGetCRTComponentsSizes(CCRSACryptorRef rsaKey, size_t *dpSize, size_t *dqSize, size_t *qinvSize);
+extern "C" CCCryptorStatus CCRSAGetCRTComponents(CCRSACryptorRef rsaKey, void *dp, size_t dpSize, void *dq, size_t dqSize, void *qinv, size_t qinvSize);
+#endif
+
 #ifndef _CC_ECCRYPTOR_H_
 enum {
     ccECKeyPublic = 0,
@@ -113,8 +126,6 @@ extern "C" CCCryptorStatus CCECCryptorComputeSharedSecret(CCECCryptorRef private
 extern "C" CCCryptorStatus CCECCryptorSignHash(CCECCryptorRef privateKey, const void *hashToSign, size_t hashSignLen, void *signedData, size_t *signedDataLen);
 extern "C" CCCryptorStatus CCECCryptorVerifyHash(CCECCryptorRef publicKey, const void *hash, size_t hashLen, const void *signedData, size_t signedDataLen, uint32_t *valid);
 
-
-
 #ifndef CommonCrypto_CommonNistKeyDerivation_h
 enum {
     kCCKDFAlgorithmHKDF = 6
@@ -131,6 +142,9 @@ extern "C" CCCryptorStatus CCRSACryptorCreateFromData(CCRSAKeyType keyType, cons
 
 namespace WebCore {
 
+#if !HAVE(CCRSAGetCRTComponents)
+
+// Only need CCBigNum for the code used when we don't have CCRSAGetCRTComponents.
 class CCBigNum {
 public:
     CCBigNum(const uint8_t*, size_t);
@@ -152,6 +166,8 @@ private:
 
     CCBigNumRef m_number;
 };
+
+#endif
 
 bool getCommonCryptoDigestAlgorithm(CryptoAlgorithmIdentifier, CCDigestAlgorithm&);
 
