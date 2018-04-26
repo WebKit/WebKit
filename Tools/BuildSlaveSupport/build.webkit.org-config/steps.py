@@ -318,6 +318,10 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
         # Check: https://bugs.webkit.org/show_bug.cgi?id=175140
         if platform in ('gtk', 'wpe'):
             self.setCommand(self.command + ['--memory-limited'])
+        # WinCairo uses the Windows command prompt, not Cygwin.
+        elif platform == 'wincairo':
+            self.setCommand(self.command + ['--ruby-runner', '--test-writer=ruby'])
+
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
         return shell.Test.start(self)
 
