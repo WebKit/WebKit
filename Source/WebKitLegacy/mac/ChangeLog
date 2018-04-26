@@ -1,3 +1,31 @@
+2018-04-26  Daniel Bates  <dabates@apple.com>
+
+        ASSERTION FAILED: ASSERT(!containsImage || MIMETypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType])) in -[NSPasteboard(WebExtras) _web_writePromisedRTFDFromArchive:containsImage:]
+        https://bugs.webkit.org/show_bug.cgi?id=184161
+        <rdar://problem/39051645>
+
+        Reviewed by Dan Bernstein.
+
+        Fixes an assertion failure when quitting an app that uses a Legacy WebKit web view after dragging-and-
+        dropping a PDF embedded using an HTML image element into the same web view.
+
+        When performing a drag-and-drop of a PDF document image (WebCore::PDFDocumentImage) we create a WebArchive
+        from the main frame's WebHTMLView and promise AppKit that we will provide a Rich Text Format (RTF) document
+        from this archive if needed. For some reason, on app termination AppKit requests that the WebHTMLView
+        fulfill its RTF document promise for the WebArchive created at the start of the drag operation. To do this,
+        we need to extract the image resource from the Web Archive. Currently we query MIMETypeRegistry::isSupportedImageResourceMIMEType()
+        to see if the contained image is one that we can handle. However MIMETypeRegistry::isSupportedImageResourceMIMEType()
+        only returns true if WebKit supports creating an image document for the specified MIME type. Disregarding
+        the iOS motivated setting Settings::useImageDocumentForSubframePDF, PDFs and PostScripts do not create an
+        image document when navigated to directly. Since we can support dragging PDF document images we need to
+        query if MIMETypeRegistry::isPDFOrPostScriptMIMEType() in addition to querying MIMETypeRegistry::isSupportedImageResourceMIMEType().
+        We need to do both such queries before falling back to using the main resource of the Web Archive as
+        the image. Otherwise, we will cause an assertion failure if the main resource of the Web Archive is
+        not an image document.
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_writePromisedRTFDFromArchive:containsImage:]):
+
 2018-04-26  Per Arne Vollan  <pvollan@apple.com>
 
         Disable content filtering in minimal simulator mode

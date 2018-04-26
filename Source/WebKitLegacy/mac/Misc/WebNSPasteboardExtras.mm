@@ -212,13 +212,16 @@ static NSArray *_writableTypesForImageWithArchive (void)
     // or the main resource (standalone image case).
     NSArray *subresources = [archive subresources];
     WebResource *resource = [archive mainResource];
-    if (containsImage && [subresources count] > 0 
-        && MIMETypeRegistry::isSupportedImageResourceMIMEType([[subresources objectAtIndex:0] MIMEType]))
-        resource = (WebResource *)[subresources objectAtIndex:0];
+    if (containsImage && [subresources count] > 0) {
+        WebResource *subresource = [subresources objectAtIndex:0];
+        NSString *subresourceMIMEType = [subresource MIMEType];
+        if (MIMETypeRegistry::isSupportedImageResourceMIMEType(subresourceMIMEType) || MIMETypeRegistry::isPDFOrPostScriptMIMEType(subresourceMIMEType))
+            resource = subresource;
+    }
     ASSERT(resource != nil);
     
-    ASSERT(!containsImage || MIMETypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType]));
-    if (!containsImage || MIMETypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType]))
+    ASSERT(!containsImage || MIMETypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType]) || MIMETypeRegistry::isPDFOrPostScriptMIMEType([resource MIMEType]));
+    if (!containsImage || MIMETypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType]) || MIMETypeRegistry::isPDFOrPostScriptMIMEType([resource MIMEType]))
         [self _web_writeFileWrapperAsRTFDAttachment:[resource _fileWrapperRepresentation]];
     
 }
