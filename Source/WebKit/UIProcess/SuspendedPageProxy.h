@@ -54,6 +54,7 @@ public:
     bool finishedSuspending() const { return m_finishedSuspending; }
 
     void webProcessDidClose(WebProcessProxy&);
+    void destroyWebPageInWebProcess();
 
 #if !LOG_DISABLED
     const char* loggingString() const;

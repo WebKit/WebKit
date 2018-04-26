@@ -138,6 +138,9 @@ public:
     bool processSwapsOnNavigation() const { return m_processSwapsOnNavigation; }
     void setProcessSwapsOnNavigation(bool swaps) { m_processSwapsOnNavigation = swaps; }
 
+    bool alwaysKeepAndReuseSwappedProcesses() const { return m_alwaysKeepAndReuseSwappedProcesses; }
+    void setAlwaysKeepAndReuseSwappedProcesses(bool keepAndReuse) { m_alwaysKeepAndReuseSwappedProcesses = keepAndReuse; }
+
     bool processSwapsOnWindowOpenWithOpener() const { return m_processSwapsOnWindowOpenWithOpener; }
     void setProcessSwapsOnWindowOpenWithOpener(bool swaps) { m_processSwapsOnWindowOpenWithOpener = swaps; }
 
@@ -173,6 +176,7 @@ private:
     bool m_shouldCaptureAudioInUIProcess { false };
     ProcessID m_presentingApplicationPID { getCurrentProcessID() };
     bool m_processSwapsOnNavigation { false };
+    bool m_alwaysKeepAndReuseSwappedProcesses { false };
     bool m_processSwapsOnWindowOpenWithOpener { false };
 
 #if PLATFORM(IOS)

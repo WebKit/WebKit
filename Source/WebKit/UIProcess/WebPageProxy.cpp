@@ -687,7 +687,7 @@ SuspendedPageProxy* WebPageProxy::maybeCreateSuspendedPage(WebProcessProxy& proc
     return m_suspendedPage.get();
 }
 
-void WebPageProxy::suspendedPageProcessClosed(SuspendedPageProxy& page)
+void WebPageProxy::suspendedPageClosed(SuspendedPageProxy& page)
 {
     ASSERT_UNUSED(page, &page == m_suspendedPage.get());
     m_suspendedPage = nullptr;

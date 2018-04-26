@@ -168,6 +168,16 @@ void WKContextConfigurationSetProcessSwapsOnNavigation(WKContextConfigurationRef
     toImpl(configuration)->setProcessSwapsOnNavigation(swaps);
 }
 
+bool WKContextConfigurationAlwaysKeepAndReuseSwappedProcesses(WKContextConfigurationRef configuration)
+{
+    return toImpl(configuration)->alwaysKeepAndReuseSwappedProcesses();
+}
+
+void WKContextConfigurationSetAlwaysKeepAndReuseSwappedProcesses(WKContextConfigurationRef configuration, bool keepAndReuse)
+{
+    toImpl(configuration)->setAlwaysKeepAndReuseSwappedProcesses(keepAndReuse);
+}
+
 bool WKContextConfigurationProcessSwapsOnWindowOpenWithOpener(WKContextConfigurationRef configuration)
 {
     return toImpl(configuration)->processSwapsOnWindowOpenWithOpener();

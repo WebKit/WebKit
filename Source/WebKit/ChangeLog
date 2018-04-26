@@ -1,3 +1,47 @@
+2018-04-26  Brady Eidson  <beidson@apple.com>
+
+        Add a setting for keeping around all processes and always reusing them per-origin.
+        <rdar://problem/39695798> and https://bugs.webkit.org/show_bug.cgi?id=185020
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationAlwaysKeepAndReuseSwappedProcesses):
+        (WKContextConfigurationSetAlwaysKeepAndReuseSwappedProcesses):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration setAlwaysKeepAndReuseSwappedProcesses:]):
+        (-[_WKProcessPoolConfiguration alwaysKeepAndReuseSwappedProcesses]):
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::webProcessDidClose):
+        (WebKit::SuspendedPageProxy::destroyWebPageInWebProcess):
+        * UIProcess/SuspendedPageProxy.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::suspendedPageClosed):
+        (WebKit::WebPageProxy::suspendedPageProcessClosed): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::suspendedPage const):
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::shouldTerminate):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::addProcessToOriginCacheSet):
+        (WebKit::WebProcessPool::removeProcessFromOriginCacheSet):
+        (WebKit::WebProcessPool::processForNavigation): If a swap will occur, cache the old process.
+        (WebKit::WebProcessPool::processForNavigationInternal): Consider re-using a previously cached process.
+        * UIProcess/WebProcessPool.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_credentialsMessenger):
+
 2018-04-26  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement Intl.PluralRules

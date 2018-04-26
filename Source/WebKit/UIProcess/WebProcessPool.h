@@ -456,6 +456,8 @@ private:
     void platformInitializeWebProcess(WebProcessCreationParameters&);
     void platformInvalidateContext();
 
+    Ref<WebProcessProxy> processForNavigationInternal(WebPageProxy&, const API::Navigation&, WebCore::PolicyAction&);
+
     RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&);
 
     WebProcessProxy& createNewWebProcess(WebsiteDataStore&, WebProcessProxy::IsInPrewarmedPool = WebProcessProxy::IsInPrewarmedPool::No);
@@ -512,6 +514,9 @@ private:
 
     void resolvePathsForSandboxExtensions();
     void platformResolvePathsForSandboxExtensions();
+
+    void addProcessToOriginCacheSet(WebPageProxy&);
+    void removeProcessFromOriginCacheSet(WebProcessProxy&);
 
     Ref<API::ProcessPoolConfiguration> m_configuration;
 
@@ -688,6 +693,7 @@ private:
 #endif
 
     HashMap<WebCore::SecurityOriginData, Vector<SuspendedPageProxy*>> m_suspendedPages;
+    HashMap<WebCore::SecurityOriginData, RefPtr<WebProcessProxy>> m_swappedProcesses;
 };
 
 template<typename T>

@@ -128,6 +128,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
 #endif
     copy->m_presentingApplicationPID = this->m_presentingApplicationPID;
     copy->m_processSwapsOnNavigation = this->m_processSwapsOnNavigation;
+    copy->m_alwaysKeepAndReuseSwappedProcesses = this->m_alwaysKeepAndReuseSwappedProcesses;
     copy->m_processSwapsOnWindowOpenWithOpener = this->m_processSwapsOnWindowOpenWithOpener;
 
     return copy;

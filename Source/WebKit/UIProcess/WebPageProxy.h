@@ -1298,7 +1298,8 @@ public:
     WebPreferencesStore preferencesStore() const;
 
     SuspendedPageProxy* maybeCreateSuspendedPage(WebProcessProxy&, API::Navigation&);
-    void suspendedPageProcessClosed(SuspendedPageProxy&);
+    SuspendedPageProxy* suspendedPage() const { return m_suspendedPage.get(); }
+    void suspendedPageClosed(SuspendedPageProxy&);
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);

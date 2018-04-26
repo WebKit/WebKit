@@ -102,8 +102,14 @@ void SuspendedPageProxy::webProcessDidClose(WebProcessProxy& process)
     m_process->processPool().unregisterSuspendedPageProxy(*this);
     m_process = nullptr;
 
-    m_page.suspendedPageProcessClosed(*this);
+    m_page.suspendedPageClosed(*this);
     m_backForwardListItem->setSuspendedPage(nullptr);
+}
+
+void SuspendedPageProxy::destroyWebPageInWebProcess()
+{
+    m_process->send(Messages::WebPage::Close(), m_page.pageID());
+    m_page.suspendedPageClosed(*this);
 }
 
 void SuspendedPageProxy::didFinishLoad()

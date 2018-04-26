@@ -975,7 +975,7 @@ bool WebProcessPool::shouldTerminate(WebProcessProxy* process)
 {
     ASSERT(m_processes.contains(process));
 
-    if (!m_processTerminationEnabled)
+    if (!m_processTerminationEnabled || m_configuration->alwaysKeepAndReuseSwappedProcesses())
         return false;
 
     return true;
@@ -1039,6 +1039,8 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
     if (m_processesUsingGamepads.contains(process))
         processStoppedUsingGamepads(*process);
 #endif
+
+    removeProcessFromOriginCacheSet(*process);
 
 #if ENABLE(SERVICE_WORKER)
     // FIXME: We should do better than this. For now, we just destroy the ServiceWorker process
@@ -2016,7 +2018,52 @@ ServiceWorkerProcessProxy* WebProcessPool::serviceWorkerProcessProxyFromPageID(u
 }
 #endif
 
+void WebProcessPool::addProcessToOriginCacheSet(WebPageProxy& page)
+{
+    auto origin = SecurityOriginData::fromURL({ ParsedURLString, page.pageLoadState().url() });
+    auto result = m_swappedProcesses.add(origin, &page.process());
+    if (!result.isNewEntry)
+        result.iterator->value = &page.process();
+
+    LOG(ProcessSwapping, "(ProcessSwapping) Security origin %s just saved a cached process with pid %i", origin.debugString().utf8().data(), page.process().processIdentifier());
+    if (!result.isNewEntry)
+        LOG(ProcessSwapping, "(ProcessSwapping) Note: It already had one saved");
+}
+
+void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
+{
+    LOG(ProcessSwapping, "(ProcessSwapping) Removing process with pid %i from the origin cache set", process.processIdentifier());
+
+    // FIXME: This can be very inefficient as the number of remembered origins and processes grows
+    Vector<SecurityOriginData> originsToRemove;
+    for (auto entry : m_swappedProcesses) {
+        if (entry.value == &process)
+            originsToRemove.append(entry.key);
+    }
+
+    for (auto& origin : originsToRemove)
+        m_swappedProcesses.remove(origin);
+}
+
 Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigation& navigation, PolicyAction& action)
+{
+    auto process = processForNavigationInternal(page, navigation, action);
+
+    if (m_configuration->alwaysKeepAndReuseSwappedProcesses() && process.ptr() != &page.process()) {
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [] {
+            WTFLogAlways("WARNING: The option to always keep swapped web processes alive is active. This is meant for debugging and testing only.");
+        });
+
+        addProcessToOriginCacheSet(page);
+
+        LOG(ProcessSwapping, "(ProcessSwapping) Navigating from %s to %s, keeping around old process. Now holding on to old processes for %u origins.", page.currentURL().utf8().data(), navigation.currentRequest().url().string().utf8().data(), m_swappedProcesses.size());
+    }
+
+    return process;
+}
+
+Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API::Navigation& navigation, PolicyAction& action)
 {
     if (!m_configuration->processSwapsOnNavigation())
         return page.process();
@@ -2051,6 +2098,28 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, co
     auto url = URL { ParsedURLString, page.pageLoadState().url() };
     if (!url.isValid() || url.isEmpty() || url.isBlankURL() ||protocolHostAndPortAreEqual(url, targetURL))
         return page.process();
+
+    if (m_configuration->alwaysKeepAndReuseSwappedProcesses()) {
+        auto origin = SecurityOriginData::fromURL(targetURL);
+        LOG(ProcessSwapping, "(ProcessSwapping) Considering re-use of a previously cached process to URL %s", origin.debugString().utf8().data());
+
+        if (auto* process = m_swappedProcesses.get(origin)) {
+            if (&process->websiteDataStore() == &page.websiteDataStore()) {
+                LOG(ProcessSwapping, "(ProcessSwapping) Reusing a previously cached process with pid %i to continue navigation to URL %s", process->processIdentifier(), targetURL.string().utf8().data());
+
+                // FIXME: Architecturally we do not currently support multiple WebPage's with the same ID in a given WebProcess.
+                // In the case where this WebProcess has a SuspendedPageProxy for this WebPage, we can throw it away to support
+                // WebProcess re-use.
+                // In the future it would be great to refactor-out this limitation.
+                if (auto* suspendedPage = page.suspendedPage()) {
+                    LOG(ProcessSwapping, "(ProcessSwapping) Destroying suspended page for that swap");
+                    suspendedPage->destroyWebPageInWebProcess();
+                }
+
+                return makeRef(*process);
+            }
+        }
+    }
 
     action = PolicyAction::Suspend;
     if (RefPtr<WebProcessProxy> process = tryTakePrewarmedProcess(page.websiteDataStore()))
