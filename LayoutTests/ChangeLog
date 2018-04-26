@@ -1,3 +1,14 @@
+2018-04-26  Brent Fulgham  <bfulgham@apple.com>
+
+        Show punycode if URL contains Latin small letter o with dot below character
+        https://bugs.webkit.org/show_bug.cgi?id=185051
+        <rdar://problem/39459297>
+
+        Reviewed by David Kilzer.
+
+        * fast/url/host-expected.txt:
+        * fast/url/host.html:
+
 2018-04-26  Sihui Liu  <sihui_liu@apple.com>
 
         [iOS] LayoutTest http/tests/quicklook/hide-referer-on-navigation.html is failing

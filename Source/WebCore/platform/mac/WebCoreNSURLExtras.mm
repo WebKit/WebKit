@@ -147,6 +147,7 @@ static BOOL isLookalikeCharacter(std::optional<UChar32> previousCodePoint, UChar
         case 0x1D20: /* LATIN LETTER SMALL CAPITAL V */
         case 0x1D21: /* LATIN LETTER SMALL CAPITAL W */
         case 0x1D22: /* LATIN LETTER SMALL CAPITAL Z */
+        case 0x1ECD: /* LATIN SMALL LETTER O WITH DOT BELOW */
         case 0x2010: /* HYPHEN */
         case 0x2011: /* NON-BREAKING HYPHEN */
         case 0x2024: /* ONE DOT LEADER */
