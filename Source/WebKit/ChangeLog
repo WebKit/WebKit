@@ -1,3 +1,17 @@
+2018-04-26  Megan Gardner  <megan_gardner@apple.com>
+
+        Add timeout for ensurePositionInformationIsUpToDate
+        https://bugs.webkit.org/show_bug.cgi?id=184567
+
+        Reviewed by Wenson Hsieh.
+        
+        We are having long hang times for WebKit, and this is one of the culprits.
+        If we do not get an answer for positionInformation in a reasonable amount of time, we should timeout,
+        so as to not hang the UI.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView ensurePositionInformationIsUpToDate:]):
+
 2018-04-26  Andy Estes  <aestes@apple.com>
 
         Try again to fix the iOS build after r231063.
