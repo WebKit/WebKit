@@ -1,3 +1,24 @@
+2018-04-25  Chris Dumez  <cdumez@apple.com>
+
+        window.postMessage() / focus() / blur() throw a TypeError when called on a RemoteDOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=184981
+
+        Reviewed by Sam Weinig.
+
+        window.postMessage() / focus() / blur() was throwing a TypeError when called on a RemoteDOMWindow,
+        complaining that |this| is not a Window. This was caused by a copy & paste mistake in
+        JSDOMWindowCustom where we were calling the JSDOMWindow methods instead of the JSRemoteDOMWindow
+        ones.
+
+        No new tests, updated existing tests.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowGetOwnPropertySlotRestrictedAccess):
+        * page/RemoteDOMWindow.cpp:
+        (WebCore::RemoteDOMWindow::postMessage):
+        * page/RemoteDOMWindow.h:
+        * page/RemoteDOMWindow.idl:
+
 2018-04-25  Simon Fraser  <simon.fraser@apple.com>
 
         brightness() filter should default to 1, and not allow negative values

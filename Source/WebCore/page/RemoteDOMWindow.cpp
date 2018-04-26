@@ -115,14 +115,13 @@ WindowProxy* RemoteDOMWindow::parent() const
     return &m_frame->windowProxy();
 }
 
-ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::ExecState&, DOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&)
+void RemoteDOMWindow::postMessage(JSC::ExecState&, DOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&)
 {
     UNUSED_PARAM(incumbentWindow);
     UNUSED_PARAM(message);
     UNUSED_PARAM(targetOrigin);
 
     // FIXME: Implemented this.
-    return Exception { NotSupportedError };
 }
 
 } // namespace WebCore
