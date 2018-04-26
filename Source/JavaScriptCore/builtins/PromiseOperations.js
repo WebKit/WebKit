@@ -88,7 +88,7 @@ function newPromiseCapability(constructor)
 function newHandledRejectedPromise(error)
 {
     let promise = @Promise.@reject(error);
-    promise.@promiseIsHandled = true;
+    @putByIdDirectPrivate(promise, "promiseIsHandled", true);
     return promise;
 }
 
@@ -107,9 +107,9 @@ function rejectPromise(promise, reason)
     "use strict";
 
     var reactions = @getByIdDirectPrivate(promise, "promiseReactions");
-    promise.@promiseResult = reason;
-    promise.@promiseReactions = @undefined;
-    promise.@promiseState = @promiseStateRejected;
+    @putByIdDirectPrivate(promise, "promiseResult", reason);
+    @putByIdDirectPrivate(promise, "promiseReactions", @undefined);
+    @putByIdDirectPrivate(promise, "promiseState", @promiseStateRejected);
 
     @InspectorInstrumentation.promiseRejected(promise, reason, reactions);
 
@@ -125,9 +125,9 @@ function fulfillPromise(promise, value)
     "use strict";
 
     var reactions = @getByIdDirectPrivate(promise, "promiseReactions");
-    promise.@promiseResult = value;
-    promise.@promiseReactions = @undefined;
-    promise.@promiseState = @promiseStateFulfilled;
+    @putByIdDirectPrivate(promise, "promiseResult", value);
+    @putByIdDirectPrivate(promise, "promiseReactions", @undefined);
+    @putByIdDirectPrivate(promise, "promiseState", @promiseStateFulfilled);
 
     @InspectorInstrumentation.promiseFulfilled(promise, value, reactions);
 
@@ -218,9 +218,9 @@ function initializePromise(executor)
     if (typeof executor !== 'function')
         @throwTypeError("Promise constructor takes a function argument");
 
-    this.@promiseState = @promiseStatePending;
-    this.@promiseReactions = [];
-    this.@promiseIsHandled = false;
+    @putByIdDirectPrivate(this, "promiseState", @promiseStatePending);
+    @putByIdDirectPrivate(this, "promiseReactions", []);
+    @putByIdDirectPrivate(this, "promiseIsHandled", false);
 
     var resolvingFunctions = @createResolvingFunctions(this);
     try {

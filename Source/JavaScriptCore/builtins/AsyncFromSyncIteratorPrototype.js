@@ -161,6 +161,6 @@ function createAsyncFromSyncIterator(syncIterator, nextMethod)
 @constructor
 function AsyncFromSyncIteratorConstructor(syncIterator, nextMethod)
 {
-    this.@syncIterator = syncIterator;
-    this.@nextMethod = nextMethod;
+    @putByIdDirectPrivate(this, "syncIterator", syncIterator);
+    @putByIdDirectPrivate(this, "nextMethod", nextMethod);
 }

@@ -30,9 +30,9 @@ function createMapIterator(iteratedObject, kind)
     "use strict";
 
     @assert(@isMap(iteratedObject));
-    this.@iteratedObject = iteratedObject;
-    this.@mapIteratorKind = kind;
-    this.@mapBucket = @mapBucketHead(iteratedObject);
+    @putByIdDirectPrivate(this, "iteratedObject", iteratedObject);
+    @putByIdDirectPrivate(this, "mapIteratorKind", kind);
+    @putByIdDirectPrivate(this, "mapBucket", @mapBucketHead(iteratedObject));
 }
 
 function values()

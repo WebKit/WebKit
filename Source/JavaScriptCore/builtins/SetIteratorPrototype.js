@@ -31,7 +31,7 @@ function setIteratorNext(bucket, kind)
     var value;
 
     bucket = @setBucketNext(bucket);
-    this.@setBucket = bucket;
+    @putByIdDirectPrivate(this, "setBucket", bucket);
     var done = bucket === @sentinelSetBucket;
     if (!done) {
         value = @setBucketKey(bucket);

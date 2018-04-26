@@ -30,9 +30,9 @@ function createSetIterator(iteratedObject, kind)
     "use strict";
 
     @assert(@isSet(iteratedObject));
-    this.@iteratedObject = iteratedObject;
-    this.@setIteratorKind = kind;
-    this.@setBucket = @setBucketHead(iteratedObject);
+    @putByIdDirectPrivate(this, "iteratedObject", iteratedObject);
+    @putByIdDirectPrivate(this, "setIteratorKind", kind);
+    @putByIdDirectPrivate(this, "setBucket", @setBucketHead(iteratedObject));
 }
 
 function values()

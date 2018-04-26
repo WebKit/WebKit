@@ -55,6 +55,8 @@ class Identifier;
     macro(throwRangeError) \
     macro(throwOutOfMemoryError) \
     macro(tryGetById) \
+    macro(putByIdDirect) \
+    macro(putByIdDirectPrivate) \
     macro(putByValDirect) \
     macro(toNumber) \
     macro(toString) \

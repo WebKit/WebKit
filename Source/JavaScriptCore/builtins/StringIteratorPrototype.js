@@ -40,9 +40,9 @@ function next()
     var string = @getByIdDirectPrivate(this, "iteratedString");
     if (string !== @undefined) {
         var length = string.length >>> 0;
-        if (position >= length) {
-            this.@iteratedString = @undefined;
-        } else {
+        if (position >= length)
+            @putByIdDirectPrivate(this, "iteratedString", @undefined);
+        else {
             done = false;
 
             var first = string.@charCodeAt(position);
@@ -56,7 +56,7 @@ function next()
                     value = string[position] + string[position + 1];
             }
 
-            this.@stringIteratorNextIndex = position + value.length;
+            @putByIdDirectPrivate(this, "stringIteratorNextIndex", position + value.length);
         }
     }
 
