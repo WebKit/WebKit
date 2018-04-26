@@ -1,3 +1,17 @@
+2018-04-25  Youenn Fablet  <youenn@apple.com>
+
+        Use NetworkLoadChecker for all subresource loads except fetch/XHR
+        https://bugs.webkit.org/show_bug.cgi?id=184870
+        <rdar://problem/39370034>
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior.
+        Update CachedResourceLoader error messages to match NetworkProcess error messages.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::printAccessDeniedMessage const):
+
 2018-04-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add support for is<> and downcast<>

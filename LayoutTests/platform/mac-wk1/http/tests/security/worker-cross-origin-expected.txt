@@ -1,6 +1,5 @@
 CONSOLE MESSAGE: Unsafe attempt to load URL http://localhost:8000/security/resources/worker-message-pass.js from origin http://127.0.0.1:8000. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: Cannot load http://localhost:8000/security/resources/worker-message-pass.js due to access control checks.
 This tests that Web Worker script redirects are blocked if cross origin.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

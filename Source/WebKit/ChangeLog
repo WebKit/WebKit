@@ -1,3 +1,28 @@
+2018-04-25  Youenn Fablet  <youenn@apple.com>
+
+        Use NetworkLoadChecker for all subresource loads except fetch/XHR
+        https://bugs.webkit.org/show_bug.cgi?id=184870
+        <rdar://problem/39370034>
+
+        Reviewed by Chris Dumez.
+
+        Relax rules to check for non HTTP(s) redirections to throw only when WebProcess says to load it after redirection.
+        This allows WebProcess to load redirected non HTTP(s) URLs, such as data URLs.
+        We keep these checks when WebProcess asks to continue the load and for all PingLoads.
+
+        Update error messages to be more consistent with WK1.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::checkRedirection):
+        (WebKit::NetworkLoadChecker::continueCheckingRequest):
+        (WebKit::NetworkLoadChecker::validateResourceResponse):
+        (WebKit::NetworkLoadChecker::continueCheckingRequest):
+        * NetworkProcess/NetworkLoadChecker.h:
+        (WebKit::NetworkLoadChecker::validateResponse):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::shouldUseNetworkLoadChecker):
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+
 2018-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         PSON: Don't create a new process when navigating to a blob URL, data URL, and about:blank

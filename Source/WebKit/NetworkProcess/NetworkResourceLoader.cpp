@@ -98,15 +98,8 @@ static inline bool shouldUseNetworkLoadChecker(bool isSynchronous, const Network
     if (!parameters.shouldRestrictHTTPResponseAccess)
         return false;
 
-    // FIXME: Add support for other destinations.
-    switch (parameters.options.destination) {
-    case FetchOptions::Destination::Audio:
-    case FetchOptions::Destination::Video:
-        return true;
-    default:
-        break;
-    }
-    return false;
+    // FIXME: Add support for Document and EmptyString.
+    return parameters.options.destination != FetchOptions::Destination::Document && parameters.options.destination != FetchOptions::Destination::EmptyString;
 }
 
 NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&& synchronousReply)
@@ -628,6 +621,14 @@ ResourceResponse NetworkResourceLoader::sanitizeResponseIfPossible(ResourceRespo
 
 void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials)
 {
+    if (m_networkLoadChecker) {
+        // FIXME: We should be doing this check when receiving the redirection.
+        if (!newRequest.url().protocolIsInHTTPFamily() && m_redirectCount) {
+            didFailLoading(ResourceError { String { }, 0, newRequest.url(), ASCIILiteral("Redirection to URL with a scheme that is not HTTP(S)"), ResourceError::Type::AccessControl });
+            return;
+        }
+    }
+
     RELEASE_LOG_IF_ALLOWED("continueWillSendRequest: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
 
     if (m_networkLoadChecker)

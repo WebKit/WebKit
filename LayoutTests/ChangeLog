@@ -1,3 +1,45 @@
+2018-04-25  Youenn Fablet  <youenn@apple.com>
+
+        Use NetworkLoadChecker for all subresource loads except fetch/XHR
+        https://bugs.webkit.org/show_bug.cgi?id=184870
+        <rdar://problem/39370034>
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-redirect-blocked-expected.txt:
+        * http/tests/security/cross-origin-xsl-BLOCKED-expected.txt:
+        * http/tests/security/cross-origin-xsl-redirect-BLOCKED-expected.txt:
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-redirect-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-redirect-expected.txt:
+        * http/tests/security/shape-image-cors-redirect-error-message-logging-1-expected.txt:
+        * http/tests/security/shape-image-cors-redirect-error-message-logging-2-expected.txt:
+        * http/tests/security/worker-cross-origin-expected.txt:
+        * http/tests/security/xss-DENIED-xml-external-entity-expected.txt:
+        * http/tests/security/xss-DENIED-xsl-document-expected.txt:
+        * http/tests/security/xss-DENIED-xsl-external-entity-expected.txt:
+        * http/tests/workers/worker-redirect-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects-expected.txt:
+        * http/tests/xmlhttprequest/redirect-cross-origin-post-sync-expected.txt:
+        * http/tests/xmlhttprequest/redirect-cross-origin-sync-expected.txt:
+        * http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect-expected.txt:
+        * platform/mac-wk1/http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-redirect-expected.txt: Added.
+        * platform/mac-wk1/http/tests/security/shape-image-cors-redirect-error-message-logging-1-expected.txt: Added.
+        * platform/mac-wk1/http/tests/security/shape-image-cors-redirect-error-message-logging-2-expected.txt: Added.
+        * platform/mac-wk1/http/tests/workers/worker-redirect-expected.txt: Added.
+        * platform/mac-wk1/http/tests/security/contentSecurityPolicy/1.1/child-src/worker-redirect-blocked-expected.txt: Added.
+        * platform/mac-wk1/http/tests/security/isolatedWorld/bypass-main-world-csp-worker-redirect-expected.txt: Added.
+        * platform/mac-wk1/http/tests/security/worker-cross-origin-expected.txt: Added.
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-redirect-expected.txt: Added.
+        * platform/win/http/tests/security/shape-image-cors-redirect-error-message-logging-1-expected.txt: Added.
+        * platform/win/http/tests/security/shape-image-cors-redirect-error-message-logging-2-expected.txt: Added.
+        * platform/win/http/tests/workers/worker-redirect-expected.txt: Added.
+        * platform/win/http/tests/security/contentSecurityPolicy/1.1/child-src/worker-redirect-blocked-expected.txt: Added.
+        * platform/win/http/tests/security/isolatedWorld/bypass-main-world-csp-worker-redirect-expected.txt: Added.
+        * platform/win/http/tests/security/worker-cross-origin-expected.txt: Added.
+
+
 2018-04-25  Chris Dumez  <cdumez@apple.com>
 
         window.postMessage() / focus() / blur() throw a TypeError when called on a RemoteDOMWindow

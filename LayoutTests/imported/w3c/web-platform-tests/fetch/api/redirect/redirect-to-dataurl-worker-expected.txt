@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Cross-origin redirection to data:text/plain;base64,cmVzcG9uc2UncyBib2R5 denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
-CONSOLE MESSAGE: Unsafe attempt to load URL data:text/plain;base64,cmVzcG9uc2UncyBib2R5 from frame with URL http://localhost:8800/fetch/api/redirect/redirect-to-dataurl-worker.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe attempt to load URL data:text/plain;base64,cmVzcG9uc2UncyBib2R5 from origin http://localhost:8800. Domains, protocols and ports must match.
 
 CONSOLE MESSAGE: Cross-origin redirection to data:text/plain;base64,cmVzcG9uc2UncyBib2R5 denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
 

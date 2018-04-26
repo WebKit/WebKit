@@ -1,4 +1,5 @@
-CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/subresource-redirect-blocked.html from loading a resource from http://127.0.0.1:8000/resources/square128.png
+CONSOLE MESSAGE: Blocked by content extension
+CONSOLE MESSAGE: Cannot load image http://127.0.0.1:8000/contentextensions/resources/subresource-redirect.php due to access control checks.
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

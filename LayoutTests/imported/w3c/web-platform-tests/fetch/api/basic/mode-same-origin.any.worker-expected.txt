@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: Unsafe attempt to load URL https://localhost:9443/fetch/api/resources/top.txt?location=https%3A%2F%2Flocalhost%3A9443%2Ffetch%2Fapi%2Fresources%2Ftop.txt&count=1 from frame with URL http://localhost:8800/fetch/api/basic/mode-same-origin.any.worker.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe attempt to load URL https://localhost:9443/fetch/api/resources/top.txt?location=https%3A%2F%2Flocalhost%3A9443%2Ffetch%2Fapi%2Fresources%2Ftop.txt&count=1 from origin http://localhost:8800. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: Unsafe attempt to load URL http://127.0.0.1:8800/fetch/api/resources/top.txt?location=http%3A%2F%2F127.0.0.1%3A8800%2Ffetch%2Fapi%2Fresources%2Ftop.txt&count=1 from frame with URL http://localhost:8800/fetch/api/basic/mode-same-origin.any.worker.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe attempt to load URL http://127.0.0.1:8800/fetch/api/resources/top.txt?location=http%3A%2F%2F127.0.0.1%3A8800%2Ffetch%2Fapi%2Fresources%2Ftop.txt&count=1 from origin http://localhost:8800. Domains, protocols and ports must match.
 
 
 PASS Fetch ../resources/top.txt with same-origin mode 

@@ -91,27 +91,25 @@ void NetworkLoadChecker::checkRedirection(WebCore::ResourceResponse& redirectRes
 {
     ASSERT(!isChecking());
 
-    auto error = validateResponse(redirectResponse);
-    if (!error.isNull()) {
-        handler(makeUnexpected(WTFMove(error)));
-        return;
-    }
-
-    m_previousURL = WTFMove(m_url);
-    m_url = request.url();
-
     if (m_options.redirect != FetchOptions::Redirect::Follow) {
-        handler(returnError(ASCIILiteral("Load parameters do not allow following redirections")));
+        handler(returnError(ASCIILiteral("Redirections are not allowed")));
         return;
     }
+
+    // FIXME: We should check that redirections are only HTTP(s) as per fetch spec.
+    // See https://github.com/whatwg/fetch/issues/393
 
     if (++m_redirectCount > 20) {
         handler(returnError(ASCIILiteral("Load cannot follow more than 20 redirections")));
         return;
     }
 
-    if (!m_url.protocolIsInHTTPFamily()) {
-        handler(returnError(ASCIILiteral("Redirection to URL with a scheme that is not HTTP(S)")));
+    m_previousURL = WTFMove(m_url);
+    m_url = request.url();
+
+    auto error = validateResponse(redirectResponse);
+    if (!error.isNull()) {
+        handler(makeUnexpected(WTFMove(error)));
         return;
     }
 
@@ -136,8 +134,11 @@ ResourceError NetworkLoadChecker::validateResponse(ResourceResponse& response)
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
 
     String errorMessage;
-    if (!WebCore::passesAccessControlCheck(response, m_storedCredentialsPolicy, *m_origin, errorMessage))
+    if (!WebCore::passesAccessControlCheck(response, m_storedCredentialsPolicy, *m_origin, errorMessage)) {
+        if (m_redirectCount)
+            errorMessage = makeString("Cross-origin redirection to ", m_url.string(), " denied by Cross-Origin Resource Sharing policy: ", errorMessage);
         return ResourceError { errorDomainWebKitInternal, 0, m_url, WTFMove(errorMessage), ResourceError::Type::AccessControl };
+    }
 
     response.setTainting(ResourceResponse::Tainting::Cors);
     return { };
@@ -173,8 +174,9 @@ void NetworkLoadChecker::continueCheckingRequest(ResourceRequest&& request, Vali
             if (url != request.url())
                 request.setURL(url);
         }
-        if (!contentSecurityPolicy->allowConnectToSource(request.url(), isRedirected() ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No)) {
-            handler(returnError(ASCIILiteral("Blocked by Content Security Policy")));
+        if (m_options.destination == FetchOptions::Destination::EmptyString && !contentSecurityPolicy->allowConnectToSource(request.url(), isRedirected() ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No)) {
+            String error = !isRedirected() ? ASCIILiteral("Blocked by Content Security Policy") : makeString("Blocked ", request.url().string(), " by Content Security Policy");
+            handler(returnError(WTFMove(error)));
             return;
         }
     }
@@ -188,7 +190,8 @@ void NetworkLoadChecker::continueCheckingRequest(ResourceRequest&& request, Vali
     }
 
     if (m_options.mode == FetchOptions::Mode::SameOrigin) {
-        handler(returnError(ASCIILiteral("SameOrigin mode does not allow cross origin requests")));
+        String message = makeString("Unsafe attempt to load URL ", request.url().stringCenterEllipsizedToLength(), " from origin ", m_origin->toString(), ". Domains, protocols and ports must match.\n");
+        handler(returnError(WTFMove(message)));
         return;
     }
 

@@ -102,6 +102,11 @@ void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, R
         auto request = WTFMove(result.value());
         m_networkLoadChecker->prepareRedirectedRequest(request);
 
+        if (!result.value().url().protocolIsInHTTPFamily()) {
+            this->didFinish(ResourceError { String { }, 0, result.value().url(), ASCIILiteral("Redirection to URL with a scheme that is not HTTP(S)"), ResourceError::Type::AccessControl });
+            return;
+        }
+
         completionHandler(WTFMove(request));
     });
 }
