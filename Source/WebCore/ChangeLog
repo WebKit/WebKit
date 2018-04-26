@@ -1,3 +1,13 @@
+2018-04-26  Per Arne Vollan  <pvollan@apple.com>
+
+        Disable content filtering in minimal simulator mode
+        https://bugs.webkit.org/show_bug.cgi?id=185027
+        <rdar://problem/39736091>
+
+        Reviewed by Jer Noble.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-04-25  Brent Fulgham  <bfulgham@apple.com>
 
         Add port 548 (afpovertcp) to port blacklist
