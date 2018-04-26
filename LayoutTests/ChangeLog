@@ -1,3 +1,15 @@
+2018-04-26  Sihui Liu  <sihui_liu@apple.com>
+
+        [iOS] LayoutTest http/tests/quicklook/hide-referer-on-navigation.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=184825
+        <rdar://problem/38924997>
+
+        Reviewed by Geoffrey Garen.
+
+        Policy decisions are made asynchronously now, so we need to set the async flag of this test. 
+
+        * http/tests/quicklook/hide-referer-on-navigation.html:
+
 2018-04-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/tests/workers/worker-importScripts-banned-mimetype.html as flaky.

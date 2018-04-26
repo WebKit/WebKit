@@ -7,10 +7,11 @@
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
 }
 </script>
 </head>
-<body onload="runTest(document.querySelector('iframe'))">
+<body onload="runTest(document.querySelector('iframe'), undefined, true /* runAsync */)">
 <p>This test verifies that the HTTP referrer is hidden when navigating from a Microsoft Word QuickLook preview. This test PASSED only if nothing is printed below.</p>
 
 <iframe src="resources/hide-referer-on-navigation.docx"></iframe>
