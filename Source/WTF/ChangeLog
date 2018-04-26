@@ -1,5 +1,20 @@
 2018-04-25  Mark Lam  <mark.lam@apple.com>
 
+        Gardening: Speculative build fix for Windows 32-bit to compensate for MSVC's lack of smarts.
+        https://bugs.webkit.org/show_bug.cgi?id=184976
+        <rdar://problem/39723901>
+
+        Not reviewed.
+
+        According to https://stackoverflow.com/questions/37658794/integer-constant-overflow-warning-in-constexpr,
+        disabling the warning around the definition of the function will not disable it
+        for all clients of the function.
+
+        * wtf/PtrTag.h:
+        (WTF::makePtrTagHash):
+
+2018-04-25  Mark Lam  <mark.lam@apple.com>
+
         Push the definition of PtrTag down to the WTF layer.
         https://bugs.webkit.org/show_bug.cgi?id=184976
         <rdar://problem/39723901>
