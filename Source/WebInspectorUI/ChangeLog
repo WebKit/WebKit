@@ -1,5 +1,11 @@
 2018-04-26  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed build fix; fix WebInspectorUI copy resources step after r231063.
+
+        * Configurations/Base.xcconfig:
+
+2018-04-26  Jer Noble  <jer.noble@apple.com>
+
         WK_COCOA_TOUCH all the things.
         https://bugs.webkit.org/show_bug.cgi?id=185006
 
