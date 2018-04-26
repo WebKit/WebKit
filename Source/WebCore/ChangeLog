@@ -1,3 +1,12 @@
+2018-04-26  Jer Noble  <jer.noble@apple.com>
+
+        WK_COCOA_TOUCH all the things.
+        https://bugs.webkit.org/show_bug.cgi?id=185006
+
+        Reviewed by Tim Horton.
+
+        * Configurations/WebCore.xcconfig:
+
 2018-04-26  David Kilzer  <ddkilzer@apple.com>
 
         Make WAKScrollView delegate a weak property

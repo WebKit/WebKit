@@ -117,8 +117,9 @@ FRAMEWORK_AND_LIBRARY_LDFLAGS = -lobjc -framework CFNetwork -framework CoreAudio
 // Prevent C++ standard library operator new, delete and their related exception types from being exported as weak symbols.
 UNEXPORTED_SYMBOL_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv -Wl,-unexported_symbol -Wl,__Znwm -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEEC2EOS4_ -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEEC1EOS4_ -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEEaSEDn -Wl,-unexported_symbol, -Wl,__ZNKSt3__18functionIFvN7WebCore12PolicyActionEEEclES2_ -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEE4swapERS4_ -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEEC1ERKS4_ -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEEC2ERKS4_ -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEED1Ev -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEED2Ev -Wl,-unexported_symbol, -Wl,__ZNSt3__18functionIFvN7WebCore12PolicyActionEEEaSERKS4_ -Wl,-unexported_symbol, -Wl,__ZTVNSt3__117bad_function_callE;
 
-LIBWEBRTC_LIBRARY_DIR = $(WEBCORE_FRAMEWORKS_DIR)/WebCore.framework/Frameworks
-LIBWEBRTC_LIBRARY_DIR[sdk=macosx*] = $(LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_$(WK_USE_OVERRIDE_FRAMEWORKS_DIR));
+LIBWEBRTC_LIBRARY_DIR = $(LIBWEBRTC_LIBRARY_DIR_COCOA_TOUCH_$(WK_IS_COCOA_TOUCH));
+LIBWEBRTC_LIBRARY_DIR_COCOA_TOUCH_YES = $(WEBCORE_FRAMEWORKS_DIR)/WebCore.framework/Frameworks
+LIBWEBRTC_LIBRARY_DIR_COCOA_TOUCH_NO = $(LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_$(WK_USE_OVERRIDE_FRAMEWORKS_DIR));
 LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_NO = $(WEBCORE_FRAMEWORKS_DIR)/WebCore.framework/Versions/A/Frameworks;
 LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_YES = $(WK_OVERRIDE_FRAMEWORKS_DIR);
 
@@ -128,7 +129,8 @@ REEXPORTED_FRAMEWORK_NAMES = WebKitLegacy;
 REEXPORTED_FRAMEWORK_NAMES[sdk=macosx*] = $(inherited) WebCore;
 
 // FIXME: Remove -reexport_install_name once rdar://problem/30820233 is fixed.
-OTHER_TAPI_FLAGS[sdk=iphone*] = $(inherited) -reexport_install_name /System/Library/PrivateFrameworks/WebKitLegacy.framework/WebKitLegacy -extra-private-header $(SRCROOT)/Platform/ExtraPrivateSymbolsForTAPI.h -extra-public-header $(SRCROOT)/Platform/ExtraPublicSymbolsForTAPI.h;
+OTHER_TAPI_FLAGS = $(OTHER_TAPI_FLAGS_COCOA_TOUCH_$(WK_COCOA_TOUCH));
+OTHER_TAPI_FLAGS_cocoatouch = $(inherited) -reexport_install_name $(WK_ALTERNATE_WEBKIT_SDK_PATH)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks/WebKitLegacy.framework/WebKitLegacy -extra-private-header $(SRCROOT)/Platform/ExtraPrivateSymbolsForTAPI.h -extra-public-header $(SRCROOT)/Platform/ExtraPublicSymbolsForTAPI.h;
 
 SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION));
 SECTORDER_FLAGS_Production[sdk=iphoneos*] = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/WebKit.order;
