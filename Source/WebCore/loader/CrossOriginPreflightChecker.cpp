@@ -92,6 +92,8 @@ void CrossOriginPreflightChecker::notifyFinished(CachedResource& resource)
         if (preflightError.isNull() || preflightError.isCancellation() || preflightError.isGeneral())
             preflightError.setType(ResourceError::Type::AccessControl);
 
+        if (!preflightError.isTimeout())
+            m_loader.document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, ASCIILiteral("CORS-preflight request was blocked"));
         m_loader.preflightFailure(m_resource->identifier(), preflightError);
         return;
     }
@@ -140,6 +142,10 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
         // FIXME:: According fetch, we should just pass the error to the layer above. But this may impact some clients like XHR or EventSource.
         if (error.isCancellation() || error.isGeneral())
             error.setType(ResourceError::Type::AccessControl);
+
+        if (!error.isTimeout())
+            loader.document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, ASCIILiteral("CORS-preflight request was blocked"));
+
         loader.preflightFailure(identifier, error);
         return;
     }

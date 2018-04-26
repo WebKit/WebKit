@@ -1,3 +1,18 @@
+2018-04-26  Youenn Fablet  <youenn@apple.com>
+
+        CORS preflight checker should add a console message when preflight load is blocked
+        https://bugs.webkit.org/show_bug.cgi?id=185021
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior, adding a JS console message when preflight load is blocked.
+        This mirrors what is being done in preflighting done from NetworkProcess.
+        Covered by existing tests.
+
+        * loader/CrossOriginPreflightChecker.cpp:
+        (WebCore::CrossOriginPreflightChecker::notifyFinished):
+        (WebCore::CrossOriginPreflightChecker::doPreflight):
+
 2018-04-26  Daniel Bates  <dabates@apple.com>
 
         DocumentLoader::loadMainResource() should WTFMove() the passed ResourceRequest

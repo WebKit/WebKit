@@ -1,5 +1,22 @@
 2018-04-26  Youenn Fablet  <youenn@apple.com>
 
+        CORS preflight checker should add a console message when preflight load is blocked
+        https://bugs.webkit.org/show_bug.cgi?id=185021
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations: Skipping console JS logging for some WPT tests to keep them consistent between WK1 and WK2.
+        * http/tests/xmlhttprequest/redirect-cross-origin-post-expected.txt:
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/XMLHttpRequest/send-authentication-cors-basic-setrequestheader-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/XMLHttpRequest/send-authentication-cors-setrequestheader-no-cred-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/cors/request-headers-expected.txt: Removed.
+        * platform/win/imported/w3c/web-platform-tests/XMLHttpRequest/send-authentication-cors-basic-setrequestheader-expected.txt: Removed.
+        * platform/win/imported/w3c/web-platform-tests/XMLHttpRequest/send-authentication-cors-setrequestheader-no-cred-expected.txt: Removed.
+        * platform/win/imported/w3c/web-platform-tests/cors/request-headers-expected.txt: Removed.
+
+2018-04-26  Youenn Fablet  <youenn@apple.com>
+
         Make cross origin redirection error messages consistent between SubresourceLoader and NetworkLoadChecker
         https://bugs.webkit.org/show_bug.cgi?id=185023
 

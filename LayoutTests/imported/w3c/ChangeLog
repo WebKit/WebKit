@@ -1,5 +1,15 @@
 2018-04-26  Youenn Fablet  <youenn@apple.com>
 
+        preflight checker should add a console message when preflight load is blocked
+        https://bugs.webkit.org/show_bug.cgi?id=185021
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic-cors-expected.txt:
+        * web-platform-tests/cors/late-upload-events-expected.txt:
+
+2018-04-26  Youenn Fablet  <youenn@apple.com>
+
         Mak cross origin redirection error messages consistent between SubresourceLoader and NetworkLoadChecker
         https://bugs.webkit.org/show_bug.cgi?id=185023
 

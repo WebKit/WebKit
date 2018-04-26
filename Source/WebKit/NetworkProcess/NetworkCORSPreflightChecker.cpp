@@ -123,7 +123,7 @@ void NetworkCORSPreflightChecker::didSendData(uint64_t totalBytesSent, uint64_t 
 void NetworkCORSPreflightChecker::wasBlocked()
 {
     RELEASE_LOG_IF_ALLOWED("wasBlocked");
-    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), ASCIILiteral("Preflight request was blocked"), ResourceError::Type::AccessControl });
+    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), ASCIILiteral("CORS-preflight request was blocked"), ResourceError::Type::AccessControl });
 }
 
 void NetworkCORSPreflightChecker::cannotShowURL()

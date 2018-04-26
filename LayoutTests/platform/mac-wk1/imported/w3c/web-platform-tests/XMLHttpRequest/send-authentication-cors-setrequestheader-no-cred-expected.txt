@@ -1,8 +1,0 @@
-Blocked access to external URL http://www1.localhost:8800/XMLHttpRequest/resources/auth7/corsenabled.py
-CONSOLE MESSAGE: line 33: XMLHttpRequest cannot load http://www1.localhost:8800/XMLHttpRequest/resources/auth7/corsenabled.py due to access control checks.
-Blocked access to external URL http://www1.localhost:8800/XMLHttpRequest/resources/auth8/corsenabled-no-authorize.py
-CONSOLE MESSAGE: line 33: XMLHttpRequest cannot load http://www1.localhost:8800/XMLHttpRequest/resources/auth8/corsenabled-no-authorize.py due to access control checks.
-
-FAIL CORS request with setRequestHeader auth to URL accepting Authorization header assert_true: responseText should contain the right user and password expected true got false
-PASS CORS request with setRequestHeader auth to URL NOT accepting Authorization header 
-

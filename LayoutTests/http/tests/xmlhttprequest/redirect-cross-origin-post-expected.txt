@@ -1,5 +1,6 @@
 CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/reply.xml due to access control checks.
+CONSOLE MESSAGE: CORS-preflight request was blocked
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:7/ due to access control checks.
 Test that a cross-origin redirect to a server that responds is indistinguishable from one that does not. Should say PASS:
 
