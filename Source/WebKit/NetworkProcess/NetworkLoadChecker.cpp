@@ -42,7 +42,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-NetworkLoadChecker::NetworkLoadChecker(WebCore::FetchOptions&& options, PAL::SessionID sessionID, WebCore::HTTPHeaderMap&& originalRequestHeaders, URL&& url, RefPtr<SecurityOrigin>&& sourceOrigin, PreflightPolicy preflightPolicy)
+NetworkLoadChecker::NetworkLoadChecker(FetchOptions&& options, PAL::SessionID sessionID, HTTPHeaderMap&& originalRequestHeaders, URL&& url, RefPtr<SecurityOrigin>&& sourceOrigin, PreflightPolicy preflightPolicy)
     : m_options(WTFMove(options))
     , m_sessionID(sessionID)
     , m_originalRequestHeaders(WTFMove(originalRequestHeaders))
@@ -87,7 +87,7 @@ void NetworkLoadChecker::prepareRedirectedRequest(ResourceRequest& request)
         request.setHTTPHeaderField(HTTPHeaderName::DNT, m_dntHeaderValue);
 }
 
-void NetworkLoadChecker::checkRedirection(WebCore::ResourceResponse& redirectResponse, ResourceRequest&& request, ValidationHandler&& handler)
+void NetworkLoadChecker::checkRedirection(ResourceResponse& redirectResponse, ResourceRequest&& request, ValidationHandler&& handler)
 {
     ASSERT(!isChecking());
 
@@ -135,7 +135,7 @@ ResourceError NetworkLoadChecker::validateResponse(ResourceResponse& response)
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
 
     String errorMessage;
-    if (!WebCore::passesAccessControlCheck(response, m_storedCredentialsPolicy, *m_origin, errorMessage))
+    if (!passesAccessControlCheck(response, m_storedCredentialsPolicy, *m_origin, errorMessage))
         return ResourceError { String { }, 0, m_url, WTFMove(errorMessage), ResourceError::Type::AccessControl };
 
     response.setTainting(ResourceResponse::Tainting::Cors);
@@ -180,7 +180,7 @@ void NetworkLoadChecker::continueCheckingRequest(ResourceRequest&& request, Vali
     }
 
     if (m_options.credentials == FetchOptions::Credentials::SameOrigin)
-        m_storedCredentialsPolicy =  (m_isSameOriginRequest && m_origin->canRequest(request.url())) ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
+        m_storedCredentialsPolicy = m_isSameOriginRequest && m_origin->canRequest(request.url()) ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
 
     if (doesNotNeedCORSCheck(request.url())) {
         handler(WTFMove(request));
@@ -308,7 +308,7 @@ ContentSecurityPolicy* NetworkLoadChecker::contentSecurityPolicy() const
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void NetworkLoadChecker::processContentExtensionRulesForLoad(ResourceRequest&& request, CompletionHandler<void(WebCore::ResourceRequest&&, const ContentExtensions::BlockedStatus&)>&& callback)
+void NetworkLoadChecker::processContentExtensionRulesForLoad(ResourceRequest&& request, CompletionHandler<void(ResourceRequest&&, const ContentExtensions::BlockedStatus&)>&& callback)
 {
     if (!m_userContentControllerIdentifier) {
         ContentExtensions::BlockedStatus status;
