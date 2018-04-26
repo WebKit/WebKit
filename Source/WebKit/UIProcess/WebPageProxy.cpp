@@ -3743,11 +3743,15 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
     MESSAGE_CHECK_URL(originalRequest.url());
     
     Ref<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
-    if (!navigationID && frame->isMainFrame()) {
+    if (!navigationID) {
         auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request));
         newNavigationID = navigation->navigationID();
         navigation->setShouldForceDownload(!navigationActionData.downloadAttribute.isNull());
         listener->setNavigation(WTFMove(navigation));
+    } else {
+        auto& navigation = m_navigationState->navigation(navigationID);
+        navigation.setShouldForceDownload(!navigationActionData.downloadAttribute.isNull());
+        listener->setNavigation(navigation);
     }
 
 #if ENABLE(CONTENT_FILTERING)

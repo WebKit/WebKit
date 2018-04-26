@@ -1,3 +1,26 @@
+2018-04-26  Jason Marcell  <jmarcell@apple.com>
+
+        Apply patch. rdar://problem/39532926
+
+    2018-04-26  Chris Dumez  <cdumez@apple.com>
+
+            Regression(r230733): imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html is failing
+            <rdar://problem/39532926>
+
+            Reviewed by Ryosuke Niwa.
+
+            Update r230733 to do a more conservative roll out of r222468, since the download attribute code is relying
+            on some of the code.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+            Revert changes made to this method in r230733 as the download attribute code relies on
+            it.
+
+            * WebProcess/WebPage/WebFrame.cpp:
+            (WebKit::WebFrame::documentLoaderDetached):
+            Reintroduce null check that was dropped in r230733.
+
 2018-04-17  Kocsen Chung  <kocsen_chung@apple.com>
 
         Apply patch. rdar://problem/39305046
