@@ -1,3 +1,15 @@
+2018-04-26  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [MIPS] Fix branch offsets in branchNeg32
+        https://bugs.webkit.org/show_bug.cgi?id=185025
+
+        Reviewed by Yusuke Suzuki.
+
+        Two nops were removed in branch(Not)Equal in #183130 but the offset wasn't adjusted.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branchNeg32):
+
 2018-04-25  Robin Morisset  <rmorisset@apple.com>
 
         In FTLLowerDFGToB3.cpp::compileCreateRest, always use a contiguous array as the indexing type when under isWatchingHavingABadTimeWatchpoint

@@ -2457,9 +2457,9 @@ public:
                 nop
             No_overflow:
             */
-            m_assembler.bgez(srcDest, 11);
-            m_assembler.subu(srcDest, MIPSRegisters::zero, srcDest);
             m_assembler.bgez(srcDest, 9);
+            m_assembler.subu(srcDest, MIPSRegisters::zero, srcDest);
+            m_assembler.bgez(srcDest, 7);
             m_assembler.nop();
             return jump();
         }
