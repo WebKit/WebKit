@@ -1,3 +1,24 @@
+2018-04-26  Sihui Liu  <sihui_liu@apple.com>
+
+        -[WKHTTPCookieStore deleteCookie:completionHandler:] doesn't delete cookies
+        https://bugs.webkit.org/show_bug.cgi?id=184938
+        <rdar://problem/34737395>
+
+        Reviewed by Geoffrey Garen.
+
+        When a Cookie object was converted to NSHTTPCookie object, the HTTPOnly property information
+        was lost so the delete function cannot find the proper cookie to delete.
+        This patch implements a workaround that compares Cookie object instead of NSHTTPCookie 
+        object. We might want to add the ability to set HTTPOnly header during conversion if there
+        is an easy way to do it later.
+        
+        New API test: WebKit.WKHTTPCookieStoreHttpOnly
+
+        * platform/network/cocoa/CookieCocoa.mm:
+        (WebCore::Cookie::operator== const):
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::NetworkStorageSession::deleteCookie):
+
 2018-04-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r231052.

@@ -132,8 +132,18 @@ bool Cookie::operator==(const Cookie& other) const
     if (thisNull || otherNull)
         return thisNull == otherNull;
     
-    NSHTTPCookie *nsCookie(*this);
-    return [nsCookie isEqual:other];
+    return name == other.name
+    && value == other.value
+    && domain == other.domain
+    && path == other.path
+    && created == other.created
+    && expires == other.expires
+    && httpOnly == other.httpOnly
+    && secure == other.secure
+    && session == other.session
+    && comment == other.comment
+    && commentURL == other.commentURL
+    && ports == other.ports;
 }
     
 unsigned Cookie::hash() const

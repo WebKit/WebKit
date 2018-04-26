@@ -192,6 +192,90 @@ TEST(WebKit, WKHTTPCookieStore)
     runTestWithWebsiteDataStore([WKWebsiteDataStore defaultDataStore]);
 }
 
+TEST(WebKit, WKHTTPCookieStoreHttpOnly) 
+{
+    WKWebsiteDataStore* dataStore = [WKWebsiteDataStore defaultDataStore];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = dataStore;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView loadHTMLString:@"WebKit Test" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:[] {
+        gotFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+
+    id pool = [WKProcessPool _sharedProcessPool];
+    EXPECT_EQ([pool _pluginProcessCount], static_cast<size_t>(0));
+
+    globalCookieStore = dataStore.httpCookieStore;
+
+    NSArray<NSHTTPCookie *> *cookies = nil;
+    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
+        *cookiesPtr = [nsCookies retain];
+        gotFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+
+    ASSERT_EQ(cookies.count, 0u);
+    [cookies release];
+
+    CFMutableDictionaryRef cookieProperties = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    CFDictionarySetValue(cookieProperties, CFSTR("Name"), CFSTR("httpCookie"));
+    CFDictionarySetValue(cookieProperties, CFSTR("Value"), CFSTR("httpCookieValue"));
+    CFDictionarySetValue(cookieProperties, CFSTR("Domain"), CFSTR(".www.webkit.org"));
+    CFDictionarySetValue(cookieProperties, CFSTR("Path"), CFSTR("/httpPath"));
+    CFDictionarySetValue(cookieProperties, CFSTR("HttpOnly"), kCFBooleanTrue);
+    RetainPtr<NSHTTPCookie> httpOnlyCookie = [NSHTTPCookie cookieWithProperties:(NSDictionary*) cookieProperties];
+    CFDictionaryRemoveValue(cookieProperties, CFSTR("HttpOnly"));
+    RetainPtr<NSHTTPCookie> notHttpOnlyCookie = [NSHTTPCookie cookieWithProperties:(NSDictionary*) cookieProperties];
+    EXPECT_TRUE(httpOnlyCookie.get().HTTPOnly);
+    EXPECT_FALSE(notHttpOnlyCookie.get().HTTPOnly);
+
+    [globalCookieStore setCookie:notHttpOnlyCookie.get() completionHandler:[]() {
+        gotFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+
+    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
+        *cookiesPtr = [nsCookies retain];
+        gotFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+
+    ASSERT_EQ(cookies.count, 1u);
+    [cookies release];
+
+    [globalCookieStore deleteCookie:httpOnlyCookie.get() completionHandler:[]() {
+        gotFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
+        *cookiesPtr = [nsCookies retain];
+        gotFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+
+    // Delete httpOnlyCookie should fail because it is different from notHttpOnlyCookie. 
+    ASSERT_EQ(cookies.count, 1u);
+    [cookies release];
+}
+
 // FIXME: This should be removed once <rdar://problem/35344202> is resolved and bots are updated.
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED <= 101301) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED <= 110102)
 TEST(WebKit, WKHTTPCookieStoreNonPersistent)

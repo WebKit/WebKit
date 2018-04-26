@@ -1,3 +1,16 @@
+2018-04-26  Sihui Liu  <sihui_liu@apple.com>
+
+        -[WKHTTPCookieStore deleteCookie:completionHandler:] doesn't delete cookies
+        https://bugs.webkit.org/show_bug.cgi?id=184938
+        <rdar://problem/34737395>
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        (TEST):
+
 2018-04-26  Ross Kirsling  <ross.kirsling@sony.com>
 
         WinCairo test bots should run JSC tests with options for Windows command prompt.
