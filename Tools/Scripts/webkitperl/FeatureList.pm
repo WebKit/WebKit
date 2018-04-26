@@ -91,6 +91,7 @@ my (
     $inputTypeTimeSupport,
     $inputTypeWeekSupport,
     $intlSupport,
+    $intlPluralRulesSupport,
     $jitSupport,
     $legacyEncryptedMediaSupport,
     $legacyNotificationsSupport,
@@ -261,6 +262,9 @@ my @features = (
 
     { option => "intl", desc => "Toggle Intl support",
       define => "ENABLE_INTL", value => \$intlSupport },
+
+    { option => "intlPluralRules", desc => "Toggle Intl.PluralRules support",
+      define => "ENABLE_INTL_PLURAL_RULES", value => \$intlPluralRulesSupport },
 
     { option => "jit", desc => "Enable just-in-time JavaScript support",
       define => "ENABLE_JIT", value => \$jitSupport },

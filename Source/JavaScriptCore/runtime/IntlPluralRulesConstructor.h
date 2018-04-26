@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2017 Caio Lima <ticaiolima@gmail.com>.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Andy VanWagoner (thetalecrafter@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,33 +25,43 @@
 
 #pragma once
 
-#include "JSBigInt.h"
-#include "JSWrapperObject.h"
+#if ENABLE(INTL)
+
+#include "InternalFunction.h"
 
 namespace JSC {
 
-class BigIntObject final : public JSWrapperObject {
+class IntlPluralRules;
+class IntlPluralRulesPrototype;
+
+class IntlPluralRulesConstructor final : public InternalFunction {
 public:
-    using Base = JSWrapperObject;
+    typedef InternalFunction Base;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    static BigIntObject* create(VM&, JSGlobalObject*, JSBigInt*);
-
-    DECLARE_EXPORT_INFO;
-
-    JSBigInt* internalValue() const { return asBigInt(JSWrapperObject::internalValue()); }
-
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    template<typename CellType>
+    static IsoSubspace* subspaceFor(VM& vm)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+        return &vm.intlPluralRulesConstructorSpace;
     }
 
-    static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
+    static IntlPluralRulesConstructor* create(VM&, Structure*, IntlPluralRulesPrototype*, Structure*);
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static String toStringName(const JSObject*, ExecState*);
+    DECLARE_INFO;
+
+    Structure* pluralRulesStructure() const { return m_pluralRulesStructure.get(); }
 
 protected:
-    JS_EXPORT_PRIVATE void finishCreation(VM&, JSBigInt*);
-    JS_EXPORT_PRIVATE BigIntObject(VM&, Structure*);
+    void finishCreation(VM&, IntlPluralRulesPrototype*, Structure*);
+
+private:
+    IntlPluralRulesConstructor(VM&, Structure*);
+    static void visitChildren(JSCell*, SlotVisitor&);
+    
+    WriteBarrier<Structure> m_pluralRulesStructure;
 };
 
 } // namespace JSC
+
+#endif // ENABLE(INTL)

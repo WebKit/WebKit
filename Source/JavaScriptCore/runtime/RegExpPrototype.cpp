@@ -37,6 +37,7 @@
 #include "RegExpCache.h"
 #include "RegExpConstructor.h"
 #include "RegExpObject.h"
+#include "RegExpObjectInlines.h"
 #include "StringObject.h"
 #include "StringRecursionChecker.h"
 #include <wtf/text/StringBuilder.h>

@@ -1,0 +1,169 @@
+This test checks the behavior of Intl.PluralRules as described in the ECMAScript Internationalization API Specification.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Intl.PluralRules is an instance of Function
+PASS Intl.PluralRules() threw exception TypeError: calling PluralRules constructor without new is invalid.
+PASS Intl.PluralRules.call({}) threw exception TypeError: calling PluralRules constructor without new is invalid.
+PASS new Intl.PluralRules('$') threw exception RangeError: invalid language tag: $.
+PASS new Intl.PluralRules('en', null) threw exception TypeError: null is not an object (evaluating 'new Intl.PluralRules('en', null)').
+PASS new Intl.PluralRules() is an instance of Intl.PluralRules
+PASS class DerivedPluralRules extends Intl.PluralRules {};(new DerivedPluralRules) instanceof DerivedPluralRules is true
+PASS class DerivedPluralRules extends Intl.PluralRules {};(new DerivedPluralRules) instanceof Intl.PluralRules is true
+PASS class DerivedPluralRules extends Intl.PluralRules {};new DerivedPluralRules().select(1) === 'one' is true
+PASS class DerivedPluralRules extends Intl.PluralRules {};Object.getPrototypeOf(new DerivedPluralRules) === DerivedPluralRules.prototype is true
+PASS class DerivedPluralRules extends Intl.PluralRules {};Object.getPrototypeOf(Object.getPrototypeOf(new DerivedPluralRules)) === Intl.PluralRules.prototype is true
+PASS Intl.PluralRules.length is 0
+PASS Object.getOwnPropertyDescriptor(Intl.PluralRules, 'prototype').writable is false
+PASS Object.getOwnPropertyDescriptor(Intl.PluralRules, 'prototype').enumerable is false
+PASS Object.getOwnPropertyDescriptor(Intl.PluralRules, 'prototype').configurable is false
+PASS Intl.PluralRules.supportedLocalesOf.length is 1
+PASS Intl.PluralRules.supportedLocalesOf() is an instance of Array
+PASS Intl.PluralRules.supportedLocalesOf.call(null, 'en') is [ 'en' ]
+PASS Intl.PluralRules.supportedLocalesOf.call({}, 'en') is [ 'en' ]
+PASS Intl.PluralRules.supportedLocalesOf.call(1, 'en') is [ 'en' ]
+PASS Intl.PluralRules.supportedLocalesOf(9) is []
+PASS Intl.PluralRules.supportedLocalesOf('en') is [ 'en' ]
+PASS Intl.PluralRules.supportedLocalesOf({ length: 4, 1: 'en', 0: 'es', 3: 'de' }) is [ 'es', 'en', 'de' ]
+PASS Intl.PluralRules.supportedLocalesOf([ 'en', 'pt', 'en', 'es' ]) is [ 'en', 'pt', 'es' ]
+PASS Intl.PluralRules.supportedLocalesOf('En-laTn-us-variant2-variant1-1abc-U-ko-tRue-A-aa-aaa-x-RESERVED') is [ 'en-Latn-US-variant2-variant1-1abc-a-aa-aaa-u-ko-true-x-reserved' ]
+PASS Intl.PluralRules.supportedLocalesOf('no-bok') is [ 'nb' ]
+PASS Intl.PluralRules.supportedLocalesOf('x-some-thing') is []
+PASS Intl.PluralRules.supportedLocalesOf(Object.create(null, { length: { get() { throw Error('a') } } })) threw exception Error: a.
+PASS Intl.PluralRules.supportedLocalesOf(Object.create(null, { length: { value: 1 }, 0: { get() { throw Error('b') } } })) threw exception Error: b.
+PASS Intl.PluralRules.supportedLocalesOf([ { toString() { throw Error('c') } } ]) threw exception Error: c.
+PASS Intl.PluralRules.supportedLocalesOf([ 5 ]) threw exception TypeError: locale value must be a string or object.
+PASS Intl.PluralRules.supportedLocalesOf('') threw exception RangeError: invalid language tag: .
+PASS Intl.PluralRules.supportedLocalesOf('a') threw exception RangeError: invalid language tag: a.
+PASS Intl.PluralRules.supportedLocalesOf('abcdefghij') threw exception RangeError: invalid language tag: abcdefghij.
+PASS Intl.PluralRules.supportedLocalesOf('#$') threw exception RangeError: invalid language tag: #$.
+PASS Intl.PluralRules.supportedLocalesOf('en-@-abc') threw exception RangeError: invalid language tag: en-@-abc.
+PASS Intl.PluralRules.supportedLocalesOf('en-u') threw exception RangeError: invalid language tag: en-u.
+PASS Intl.PluralRules.supportedLocalesOf('en-u-kn-true-u-ko-true') threw exception RangeError: invalid language tag: en-u-kn-true-u-ko-true.
+PASS Intl.PluralRules.supportedLocalesOf('en-x') threw exception RangeError: invalid language tag: en-x.
+PASS Intl.PluralRules.supportedLocalesOf('en-*') threw exception RangeError: invalid language tag: en-*.
+PASS Intl.PluralRules.supportedLocalesOf('en-') threw exception RangeError: invalid language tag: en-.
+PASS Intl.PluralRules.supportedLocalesOf('en--US') threw exception RangeError: invalid language tag: en--US.
+PASS Intl.PluralRules.supportedLocalesOf('de') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('de-DE') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('DE-de') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('cmn') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('cmn-Hans') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('CMN-hANS') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('cmn-hans-cn') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('es-419') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('es-419-u-nu-latn-cu-bob') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('i-klingon') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('cmn-hans-cn-t-ca-u-ca-x-t-u') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('enochian-enochian') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('de-gregory-u-ca-gregory') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('aa-a-foo-x-a-foo-bar') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('x-en-US-12345') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('x-12345-12345-en-US') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('x-en-US-12345-12345') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('x-en-u-foo') did not throw exception.
+PASS Intl.PluralRules.supportedLocalesOf('x-en-u-foo-u-bar') did not throw exception.
+PASS Object.getPrototypeOf(Intl.PluralRules.prototype) is Object.prototype
+PASS Intl.PluralRules.prototype.constructor is Intl.PluralRules
+PASS Intl.PluralRules.prototype[Symbol.toStringTag] is 'Object'
+PASS Object.prototype.toString.call(Intl.PluralRules.prototype) is '[object Object]'
+PASS Object.getOwnPropertyDescriptor(Intl.PluralRules.prototype, Symbol.toStringTag).writable is false
+PASS Object.getOwnPropertyDescriptor(Intl.PluralRules.prototype, Symbol.toStringTag).enumerable is false
+PASS Object.getOwnPropertyDescriptor(Intl.PluralRules.prototype, Symbol.toStringTag).configurable is true
+PASS Object.getOwnPropertyDescriptor(Intl.PluralRules.prototype, 'select').value is an instance of Function
+PASS Object.getOwnPropertyDescriptor(Intl.PluralRules.prototype, 'select').writable is true
+PASS Object.getOwnPropertyDescriptor(Intl.PluralRules.prototype, 'select').enumerable is false
+PASS Object.getOwnPropertyDescriptor(Intl.PluralRules.prototype, 'select').configurable is true
+PASS new Intl.PluralRules().select === new Intl.PluralRules().select is true
+PASS Intl.PluralRules.prototype.select.length is 1
+PASS Intl.PluralRules.prototype.select.call(1) threw exception TypeError: Intl.PluralRules.prototype.select called on value that's not an object initialized as a PluralRules.
+PASS Intl.PluralRules.prototype.select.call({}) threw exception TypeError: Intl.PluralRules.prototype.select called on value that's not an object initialized as a PluralRules.
+PASS defaultPluralRules.select({ valueOf() { throw Error('4') } }) threw exception Error: 4.
+PASS defaultPluralRules.select(1) is 'one'
+PASS Intl.PluralRules.prototype.select.call(defaultPluralRules, 1) is 'one'
+PASS defaultPluralRules.select(0) is 'other'
+PASS defaultPluralRules.select(-1) is 'one'
+PASS defaultPluralRules.select(2) is 'other'
+PASS englishOrdinals.select(0) is 'other'
+PASS englishOrdinals.select(1) is 'one'
+PASS englishOrdinals.select(2) is 'two'
+PASS englishOrdinals.select(3) is 'few'
+PASS englishOrdinals.select(4) is 'other'
+PASS englishOrdinals.select(11) is 'other'
+PASS englishOrdinals.select(12) is 'other'
+PASS englishOrdinals.select(13) is 'other'
+PASS englishOrdinals.select(14) is 'other'
+PASS englishOrdinals.select(21) is 'one'
+PASS englishOrdinals.select(22) is 'two'
+PASS englishOrdinals.select(23) is 'few'
+PASS englishOrdinals.select(24) is 'other'
+PASS englishOrdinals.select(101) is 'one'
+PASS englishOrdinals.select(102) is 'two'
+PASS englishOrdinals.select(103) is 'few'
+PASS englishOrdinals.select(104) is 'other'
+PASS arabicCardinals.select(0) is 'zero'
+PASS arabicCardinals.select(1) is 'one'
+PASS arabicCardinals.select(2) is 'two'
+PASS arabicCardinals.select(3) is 'few'
+PASS arabicCardinals.select(11) is 'many'
+PASS Intl.PluralRules.prototype.resolvedOptions.length is 0
+PASS Intl.PluralRules.prototype.resolvedOptions.call(5) threw exception TypeError: Intl.PluralRules.prototype.resolvedOptions called on value that's not an object initialized as a PluralRules.
+PASS Intl.PluralRules.prototype.resolvedOptions.call({}) threw exception TypeError: Intl.PluralRules.prototype.resolvedOptions called on value that's not an object initialized as a PluralRules.
+PASS defaultPluralRules.resolvedOptions() is an instance of Object
+PASS defaultPluralRules.resolvedOptions() === defaultPluralRules.resolvedOptions() is false
+PASS defaultPluralRules.resolvedOptions().locale is 'en-US'
+PASS defaultPluralRules.resolvedOptions().type is 'cardinal'
+PASS defaultPluralRules.resolvedOptions().minimumIntegerDigits is 1
+PASS defaultPluralRules.resolvedOptions().minimumFractionDigits is 0
+PASS defaultPluralRules.resolvedOptions().maximumFractionDigits is 3
+PASS defaultPluralRules.resolvedOptions().minimumSignificantDigits is undefined
+PASS defaultPluralRules.resolvedOptions().maximumSignificantDigits is undefined
+PASS new Intl.PluralRules('en', { localeMatcher: { toString() { throw 'nope' } } }) threw exception nope.
+PASS new Intl.PluralRules('en', { localeMatcher:'bad' }) threw exception RangeError: localeMatcher must be either "lookup" or "best fit".
+PASS new Intl.PluralRules('en', { localeMatcher:'lookup' }) did not throw exception.
+PASS new Intl.PluralRules('en', { localeMatcher:'best fit' }) did not throw exception.
+PASS new Intl.PluralRules('en', {type: 'cardinal'}).resolvedOptions().type is 'cardinal'
+PASS new Intl.PluralRules('en', {type: 'ordinal'}).resolvedOptions().type is 'ordinal'
+PASS new Intl.PluralRules('en', {type: 'bad'}) threw exception RangeError: type must be "cardinal" or "ordinal".
+PASS new Intl.PluralRules('en', {type: { toString() { throw 'badtype' } }}) threw exception badtype.
+PASS new Intl.PluralRules('en', {minimumIntegerDigits: 1}).resolvedOptions().minimumIntegerDigits is 1
+PASS new Intl.PluralRules('en', {minimumIntegerDigits: '2'}).resolvedOptions().minimumIntegerDigits is 2
+PASS new Intl.PluralRules('en', {minimumIntegerDigits: {valueOf() { return 3; }}}).resolvedOptions().minimumIntegerDigits is 3
+PASS new Intl.PluralRules('en', {minimumIntegerDigits: 4.9}).resolvedOptions().minimumIntegerDigits is 4
+PASS new Intl.PluralRules('en', {minimumIntegerDigits: 21}).resolvedOptions().minimumIntegerDigits is 21
+PASS new Intl.PluralRules('en', {minimumIntegerDigits: 0}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS new Intl.PluralRules('en', {minimumIntegerDigits: 22}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS new Intl.PluralRules('en', {minimumIntegerDigits: 0.9}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS new Intl.PluralRules('en', {minimumIntegerDigits: 21.1}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS new Intl.PluralRules('en', {minimumIntegerDigits: NaN}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS new Intl.PluralRules('en', {minimumIntegerDigits: Infinity}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS new Intl.PluralRules('en', { get minimumIntegerDigits() { throw 42; } }) threw exception 42.
+PASS new Intl.PluralRules('en', {minimumIntegerDigits: {valueOf() { throw 42; }}}) threw exception 42.
+PASS new Intl.PluralRules('en', {minimumFractionDigits: 0}).resolvedOptions().minimumFractionDigits is 0
+PASS new Intl.PluralRules('en', {minimumFractionDigits: 0}).resolvedOptions().maximumFractionDigits is 3
+PASS new Intl.PluralRules('en', {minimumFractionDigits: 6}).resolvedOptions().minimumFractionDigits is 6
+PASS new Intl.PluralRules('en', {minimumFractionDigits: 6}).resolvedOptions().maximumFractionDigits is 6
+PASS new Intl.PluralRules('en', {minimumFractionDigits: -1}) threw exception RangeError: minimumFractionDigits is out of range.
+PASS new Intl.PluralRules('en', {minimumFractionDigits: 21}) threw exception RangeError: minimumFractionDigits is out of range.
+PASS new Intl.PluralRules('en', {maximumFractionDigits: 6}).resolvedOptions().maximumFractionDigits is 6
+PASS new Intl.PluralRules('en', {minimumFractionDigits: 7, maximumFractionDigits: 6}) threw exception RangeError: maximumFractionDigits is out of range.
+PASS new Intl.PluralRules('en', {maximumFractionDigits: -1}) threw exception RangeError: maximumFractionDigits is out of range.
+PASS new Intl.PluralRules('en', {maximumFractionDigits: 21}) threw exception RangeError: maximumFractionDigits is out of range.
+PASS new Intl.PluralRules('en', {minimumSignificantDigits: 6}).resolvedOptions().minimumSignificantDigits is 6
+PASS new Intl.PluralRules('en', {minimumSignificantDigits: 6}).resolvedOptions().maximumSignificantDigits is 21
+PASS new Intl.PluralRules('en', {minimumSignificantDigits: 0}) threw exception RangeError: minimumSignificantDigits is out of range.
+PASS new Intl.PluralRules('en', {minimumSignificantDigits: 22}) threw exception RangeError: minimumSignificantDigits is out of range.
+PASS new Intl.PluralRules('en', {maximumSignificantDigits: 6}).resolvedOptions().minimumSignificantDigits is 1
+PASS new Intl.PluralRules('en', {maximumSignificantDigits: 6}).resolvedOptions().maximumSignificantDigits is 6
+PASS new Intl.PluralRules('en', {minimumSignificantDigits: 7, maximumSignificantDigits: 6}) threw exception RangeError: maximumSignificantDigits is out of range.
+PASS new Intl.PluralRules('en', {maximumSignificantDigits: 0}) threw exception RangeError: maximumSignificantDigits is out of range.
+PASS new Intl.PluralRules('en', {maximumSignificantDigits: 22}) threw exception RangeError: maximumSignificantDigits is out of range.
+PASS new Intl.PluralRules('en', {maximumFractionDigits: 0}).select(1.4) is 'one'
+PASS new Intl.PluralRules('en', {maximumSignificantDigits: 1}).select(1.4) is 'one'
+PASS new Intl.PluralRules('en', {type: 'ordinal', maximumSignificantDigits: 2}).select(123) is 'other'
+PASS new Intl.PluralRules('en', {type: 'ordinal', maximumSignificantDigits: 3}).select(123.4) is 'few'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

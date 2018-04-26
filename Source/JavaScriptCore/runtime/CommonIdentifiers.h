@@ -53,6 +53,7 @@
     macro(Number) \
     macro(NumberFormat) \
     macro(Object) \
+    macro(PluralRules) \
     macro(Promise) \
     macro(Proxy) \
     macro(RangeError) \

@@ -367,6 +367,7 @@ public:
     IsoSubspace intlCollatorConstructorSpace;
     IsoSubspace intlDateTimeFormatConstructorSpace;
     IsoSubspace intlNumberFormatConstructorSpace;
+    IsoSubspace intlPluralRulesConstructorSpace;
 #endif
     IsoSubspace moduleProgramExecutableSpace;
     IsoSubspace nativeErrorConstructorSpace;

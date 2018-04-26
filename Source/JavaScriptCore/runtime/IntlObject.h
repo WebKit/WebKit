@@ -38,6 +38,8 @@ class IntlDateTimeFormatConstructor;
 class IntlDateTimeFormatPrototype;
 class IntlNumberFormatConstructor;
 class IntlNumberFormatPrototype;
+class IntlPluralRulesConstructor;
+class IntlPluralRulesPrototype;
 
 class IntlObject final : public JSNonFinalObject {
 public:

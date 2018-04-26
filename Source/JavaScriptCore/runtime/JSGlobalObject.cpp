@@ -900,6 +900,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         GlobalPropertyInfo(vm.propertyNames->builtinNames().CollatorPrivateName(), intl->getDirect(vm, vm.propertyNames->Collator), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().DateTimeFormatPrivateName(), intl->getDirect(vm, vm.propertyNames->DateTimeFormat), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().NumberFormatPrivateName(), intl->getDirect(vm, vm.propertyNames->NumberFormat), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().PluralRulesPrivateName(), intl->getDirect(vm, vm.propertyNames->PluralRules), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
 #endif // ENABLE(INTL)
 
         GlobalPropertyInfo(vm.propertyNames->builtinNames().isConstructorPrivateName(), JSFunction::create(vm, this, 1, String(), esSpecIsConstructor, NoIntrinsic), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
@@ -1575,6 +1576,19 @@ const HashSet<String>& JSGlobalObject::intlNumberFormatAvailableLocales()
         }
     }
     return m_intlNumberFormatAvailableLocales;
+}
+
+const HashSet<String>& JSGlobalObject::intlPluralRulesAvailableLocales()
+{
+    if (m_intlPluralRulesAvailableLocales.isEmpty()) {
+        int32_t count = uloc_countAvailable();
+        for (int32_t i = 0; i < count; ++i) {
+            String locale(uloc_getAvailable(i));
+            convertICULocaleToBCP47LanguageTag(locale);
+            m_intlPluralRulesAvailableLocales.add(locale);
+        }
+    }
+    return m_intlPluralRulesAvailableLocales;
 }
 #endif // ENABLE(INTL)
 

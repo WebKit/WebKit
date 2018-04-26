@@ -112,6 +112,12 @@ constexpr bool enableAsyncIteration = true;
 constexpr bool enableAsyncIteration = false;
 #endif
 
+#if ENABLE(INTL_PLURAL_RULES)
+constexpr bool enableIntlPluralRules = true;
+#else
+constexpr bool enableIntlPluralRules = false;
+#endif
+
 #define JSC_OPTIONS(v) \
     v(bool, validateOptions, false, Normal, "crashes if mis-typed JSC options were passed to the VM") \
     v(unsigned, dumpOptions, 0, Normal, "dumps JSC options (0 = None, 1 = Overridden only, 2 = All, 3 = Verbose)") \
@@ -488,6 +494,7 @@ constexpr bool enableAsyncIteration = false;
     v(bool, useEagerWebAssemblyModuleHashing, false, Normal, "Unnamed WebAssembly modules are identified in backtraces through their hash, if available.") \
     v(bool, useObjectRestSpread, true, Normal, "If true, we will enable Object Rest/Spread feature.") \
     v(bool, useBigInt, false, Normal, "If true, we will enable BigInt support.") \
+    v(bool, useIntlPluralRules, enableIntlPluralRules, Normal, "If true, we will enable Intl.PluralRules.") \
     v(bool, useArrayAllocationProfiling, true, Normal, "If true, we will use our normal array allocation profiling. If false, the allocation profile will always claim to be undecided.")\
     v(bool, forcePolyProto, false, Normal, "If true, create_this will always create an object with a poly proto structure.")
 

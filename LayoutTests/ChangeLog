@@ -1,3 +1,15 @@
+2018-04-26  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Implement Intl.PluralRules
+        https://bugs.webkit.org/show_bug.cgi?id=184312
+
+        Reviewed by JF Bastien.
+
+        * js/intl-pluralrules-expected.txt: Added.
+        * js/intl-pluralrules.html: Added.
+        * js/script-tests/intl-pluralrules.js: Added.
+        * platform/win/TestExpectations: Disabled Intl.PluralRules tests on win.
+
 2018-04-25  Youenn Fablet  <youenn@apple.com>
 
         Use NetworkLoadChecker for all subresource loads except fetch/XHR

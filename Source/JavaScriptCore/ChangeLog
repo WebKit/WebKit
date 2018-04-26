@@ -1,3 +1,71 @@
+2018-04-26  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Implement Intl.PluralRules
+        https://bugs.webkit.org/show_bug.cgi?id=184312
+
+        Reviewed by JF Bastien.
+
+        Use UNumberFormat to enforce formatting, and then UPluralRules to find
+        the correct plural rule for the given number. Relies on ICU v59+ for
+        resolvedOptions().pluralCategories and trailing 0 detection.
+        Behind the useIntlPluralRules option and INTL_PLURAL_RULES flag.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * builtins/BuiltinNames.h:
+        * runtime/BigIntObject.cpp:
+        (JSC::BigIntObject::create): Moved to ensure complete JSGlobalObject definition.
+        * runtime/BigIntObject.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/IntlObject.cpp:
+        (JSC::IntlObject::finishCreation):
+        * runtime/IntlObject.h:
+        * runtime/IntlPluralRules.cpp: Added.
+        (JSC::IntlPluralRules::UPluralRulesDeleter::operator() const):
+        (JSC::IntlPluralRules::UNumberFormatDeleter::operator() const):
+        (JSC::UEnumerationDeleter::operator() const):
+        (JSC::IntlPluralRules::create):
+        (JSC::IntlPluralRules::createStructure):
+        (JSC::IntlPluralRules::IntlPluralRules):
+        (JSC::IntlPluralRules::finishCreation):
+        (JSC::IntlPluralRules::destroy):
+        (JSC::IntlPluralRules::visitChildren):
+        (JSC::IntlPRInternal::localeData):
+        (JSC::IntlPluralRules::initializePluralRules):
+        (JSC::IntlPluralRules::resolvedOptions):
+        (JSC::IntlPluralRules::select):
+        * runtime/IntlPluralRules.h: Added.
+        * runtime/IntlPluralRulesConstructor.cpp: Added.
+        (JSC::IntlPluralRulesConstructor::create):
+        (JSC::IntlPluralRulesConstructor::createStructure):
+        (JSC::IntlPluralRulesConstructor::IntlPluralRulesConstructor):
+        (JSC::IntlPluralRulesConstructor::finishCreation):
+        (JSC::constructIntlPluralRules):
+        (JSC::callIntlPluralRules):
+        (JSC::IntlPluralRulesConstructorFuncSupportedLocalesOf):
+        (JSC::IntlPluralRulesConstructor::visitChildren):
+        * runtime/IntlPluralRulesConstructor.h: Added.
+        * runtime/IntlPluralRulesPrototype.cpp: Added.
+        (JSC::IntlPluralRulesPrototype::create):
+        (JSC::IntlPluralRulesPrototype::createStructure):
+        (JSC::IntlPluralRulesPrototype::IntlPluralRulesPrototype):
+        (JSC::IntlPluralRulesPrototype::finishCreation):
+        (JSC::IntlPluralRulesPrototypeFuncSelect):
+        (JSC::IntlPluralRulesPrototypeFuncResolvedOptions):
+        * runtime/IntlPluralRulesPrototype.h: Added.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::intlPluralRulesAvailableLocales):
+        * runtime/JSGlobalObject.h:
+        * runtime/Options.h:
+        * runtime/RegExpPrototype.cpp: Added inlines header.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2018-04-26  Dominik Infuehr  <dinfuehr@igalia.com>
 
         [MIPS] Fix branch offsets in branchNeg32

@@ -69,6 +69,7 @@
 #include "IntlCollatorConstructor.h"
 #include "IntlDateTimeFormatConstructor.h"
 #include "IntlNumberFormatConstructor.h"
+#include "IntlPluralRulesConstructor.h"
 #include "JITCode.h"
 #include "JITWorklist.h"
 #include "JSAPIValueWrapper.h"
@@ -285,6 +286,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , intlCollatorConstructorSpace ISO_SUBSPACE_INIT(heap, destructibleObjectHeapCellType.get(), IntlCollatorConstructor)
     , intlDateTimeFormatConstructorSpace ISO_SUBSPACE_INIT(heap, destructibleObjectHeapCellType.get(), IntlDateTimeFormatConstructor)
     , intlNumberFormatConstructorSpace ISO_SUBSPACE_INIT(heap, destructibleObjectHeapCellType.get(), IntlNumberFormatConstructor)
+    , intlPluralRulesConstructorSpace ISO_SUBSPACE_INIT(heap, destructibleObjectHeapCellType.get(), IntlPluralRulesConstructor)
 #endif
     , moduleProgramExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), ModuleProgramExecutable)
     , nativeErrorConstructorSpace ISO_SUBSPACE_INIT(heap, destructibleObjectHeapCellType.get(), NativeErrorConstructor)

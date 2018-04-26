@@ -417,6 +417,7 @@ public:
     HashSet<String> m_intlCollatorAvailableLocales;
     HashSet<String> m_intlDateTimeFormatAvailableLocales;
     HashSet<String> m_intlNumberFormatAvailableLocales;
+    HashSet<String> m_intlPluralRulesAvailableLocales;
 #endif // ENABLE(INTL)
 
     RefPtr<WatchpointSet> m_masqueradesAsUndefinedWatchpoint;
@@ -696,6 +697,7 @@ public:
     const HashSet<String>& intlCollatorAvailableLocales();
     const HashSet<String>& intlDateTimeFormatAvailableLocales();
     const HashSet<String>& intlNumberFormatAvailableLocales();
+    const HashSet<String>& intlPluralRulesAvailableLocales();
 #endif // ENABLE(INTL)
 
     void setConsoleClient(ConsoleClient* consoleClient) { m_consoleClient = consoleClient; }

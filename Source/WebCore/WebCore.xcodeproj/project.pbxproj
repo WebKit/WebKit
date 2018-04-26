@@ -31016,7 +31016,8 @@
 		1C09D0501E31C32900725F18 /* libPAL.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libPAL.a;
+			name = libPAL.a;
+			path = lib.a;
 			remoteRef = 1C09D04F1E31C32900725F18 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};

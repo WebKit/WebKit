@@ -3684,6 +3684,12 @@
 		7CF9BC601B65D9B1009DB1EF /* StringConstructor.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = StringConstructor.js; sourceTree = "<group>"; };
 		7CF9BC611B65D9B1009DB1EF /* StringIteratorPrototype.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = StringIteratorPrototype.js; sourceTree = "<group>"; };
 		7CFBAC1C18B535E500D00750 /* PromisePrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = PromisePrototype.js; sourceTree = "<group>"; };
+		7D5FB18D20744AE8005DDF64 /* IntlPluralRulesPrototype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlPluralRulesPrototype.h; sourceTree = "<group>"; };
+		7D5FB18E20744BF0005DDF64 /* IntlPluralRulesConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlPluralRulesConstructor.cpp; sourceTree = "<group>"; };
+		7D5FB18F20744BF1005DDF64 /* IntlPluralRules.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlPluralRules.cpp; sourceTree = "<group>"; };
+		7D5FB19020744BF1005DDF64 /* IntlPluralRulesConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlPluralRulesConstructor.h; sourceTree = "<group>"; };
+		7D5FB19120744BF1005DDF64 /* IntlPluralRulesPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlPluralRulesPrototype.cpp; sourceTree = "<group>"; };
+		7D5FB19220744BF2005DDF64 /* IntlPluralRules.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlPluralRules.h; sourceTree = "<group>"; };
 		7E4EE7080EBB7963005934AA /* StructureChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureChain.h; sourceTree = "<group>"; };
 		7E4EE70E0EBB7A5B005934AA /* StructureChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureChain.cpp; sourceTree = "<group>"; };
 		860161DF0F3A83C100F84710 /* AbstractMacroAssembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractMacroAssembler.h; sourceTree = "<group>"; };
@@ -6181,6 +6187,7 @@
 				996B730A1BD9FA2C00331B84 /* JSDataViewPrototype.lut.h */,
 				996B730B1BD9FA2C00331B84 /* JSGlobalObject.lut.h */,
 				E33F50861B8449EF00413856 /* JSInternalPromiseConstructor.lut.h */,
+				996B730C1BD9FA2C00331B84 /* JSModuleLoader.lut.h */,
 				BC87CDB810712ACA000614CF /* JSONObject.lut.h */,
 				7C184E2417BFFA36007CB63A /* JSPromiseConstructor.lut.h */,
 				7C184E2517BFFA36007CB63A /* JSPromisePrototype.lut.h */,
@@ -6188,7 +6195,6 @@
 				BC18C52D0E16FCE100B34460 /* Lexer.lut.h */,
 				70DE9A081BE7D670005D89D9 /* LLIntAssembly.h */,
 				7035587E1C418458004BD7BF /* MapPrototype.lut.h */,
-				996B730C1BD9FA2C00331B84 /* ModuleLoader.lut.h */,
 				BC2680E60E16D52300A06E92 /* NumberConstructor.lut.h */,
 				996B730D1BD9FA2C00331B84 /* NumberPrototype.lut.h */,
 				996B730E1BD9FA2C00331B84 /* ObjectConstructor.lut.h */,
@@ -6618,6 +6624,12 @@
 				A12BBFF31B044A9800664B69 /* IntlObject.cpp */,
 				A12BBFF11B044A8B00664B69 /* IntlObject.h */,
 				708EBE231CE8F35000453146 /* IntlObjectInlines.h */,
+				7D5FB18F20744BF1005DDF64 /* IntlPluralRules.cpp */,
+				7D5FB19220744BF2005DDF64 /* IntlPluralRules.h */,
+				7D5FB18E20744BF0005DDF64 /* IntlPluralRulesConstructor.cpp */,
+				7D5FB19020744BF1005DDF64 /* IntlPluralRulesConstructor.h */,
+				7D5FB19120744BF1005DDF64 /* IntlPluralRulesPrototype.cpp */,
+				7D5FB18D20744AE8005DDF64 /* IntlPluralRulesPrototype.h */,
 				0F275F2C1ECE079600620D47 /* Intrinsic.cpp */,
 				86BF642A148DB2B5004DE36A /* Intrinsic.h */,
 				8B9F6D551D5912FA001C739F /* IterationKind.h */,
@@ -8914,6 +8926,7 @@
 				0FB467801FDDA6F1003FCB09 /* IsoCellSet.h in Headers */,
 				0FB467811FDDA6F7003FCB09 /* IsoCellSetInlines.h in Headers */,
 				0FDCE12D1FAFB4E5006F3901 /* IsoSubspace.h in Headers */,
+				0F5E0FE72086AD480097F0DE /* IsoSubspacePerVM.h in Headers */,
 				8B9F6D561D5912FA001C739F /* IterationKind.h in Headers */,
 				FE4D55B81AE716CA0052E459 /* IterationStatus.h in Headers */,
 				70113D4C1A8DB093003848C4 /* IteratorOperations.h in Headers */,
@@ -9046,6 +9059,7 @@
 				9959E92D1BD17FA4001AA413 /* jsmin.py in Headers */,
 				E3D239C91B829C1C00BBEF67 /* JSModuleEnvironment.h in Headers */,
 				D9722752DC54459B9125B539 /* JSModuleLoader.h in Headers */,
+				996B73201BDA08EF00331B84 /* JSModuleLoader.lut.h in Headers */,
 				E318CBC11B8AEF5100A2929D /* JSModuleNamespaceObject.h in Headers */,
 				E39DA4A71B7E8B7C0084F33A /* JSModuleRecord.h in Headers */,
 				E33E8D1D1B9013C300346B52 /* JSNativeStdFunction.h in Headers */,
@@ -9196,7 +9210,6 @@
 				86C568E211A213EE0007F7F0 /* MIPSAssembler.h in Headers */,
 				C4703CD7192844CC0013FBEA /* models.py in Headers */,
 				E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */,
-				996B73201BDA08EF00331B84 /* ModuleLoader.lut.h in Headers */,
 				9F63434577274FAFB9336C38 /* ModuleNamespaceAccessCase.h in Headers */,
 				14AD910F1DCA92940014F9FE /* ModuleProgramCodeBlock.h in Headers */,
 				147341D61DC02EB900AA29BA /* ModuleProgramExecutable.h in Headers */,
@@ -9490,7 +9503,6 @@
 				53F8D2001E8387D400D21116 /* WasmBBQPlanInlines.h in Headers */,
 				AD4B1DFA1DF244E20071AE32 /* WasmBinding.h in Headers */,
 				525C0DDA1E935847002184CD /* WasmCallee.h in Headers */,
-				0F5E0FE72086AD480097F0DE /* IsoSubspacePerVM.h in Headers */,
 				53FD04D41D7AB291003287D3 /* WasmCallingConvention.h in Headers */,
 				526AC4B71E977C5D003500E1 /* WasmCodeBlock.h in Headers */,
 				AD412B341E7B2E9E008AF157 /* WasmContext.h in Headers */,

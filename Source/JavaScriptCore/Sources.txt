@@ -774,6 +774,9 @@ runtime/IntlNumberFormat.cpp
 runtime/IntlNumberFormatConstructor.cpp
 runtime/IntlNumberFormatPrototype.cpp
 runtime/IntlObject.cpp
+runtime/IntlPluralRules.cpp
+runtime/IntlPluralRulesConstructor.cpp
+runtime/IntlPluralRulesPrototype.cpp
 runtime/IteratorOperations.cpp
 runtime/IteratorPrototype.cpp
 runtime/JSAPIValueWrapper.cpp

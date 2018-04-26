@@ -132,6 +132,7 @@ namespace JSC {
     macro(Collator) \
     macro(DateTimeFormat) \
     macro(NumberFormat) \
+    macro(PluralRules) \
     macro(intlSubstituteValue) \
     macro(thisTimeValue) \
     macro(thisNumberValue) \
