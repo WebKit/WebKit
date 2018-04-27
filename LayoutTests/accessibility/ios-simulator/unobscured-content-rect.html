@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html>
+<body id="body">
+<script src="../../resources/js-test-pre.js"></script>
+<div id="content">
+<button id="button">test</button>
+
+<iframe id="iframe" onload="startTest();" width="200" height="200" src="data:text/html,<body><button id='frame-button'>Click me</button><a href='#' id='frame-link'>a</a></body>"></iframe>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that unobscured content rect is exposed to accessibility.");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        var button = accessibilityController.accessibleElementById("button");
+        shouldBe("button.stringAttributeValue('AXVisibleContentRect')", "'{0.00, 0.00, 800.00, 600.00}'");
+
+        var frameButton;
+        function startTest() {
+        	var iframe = document.getElementById("iframe");
+        	frameButton = iframe.contentWindow.accessibilityController.accessibleElementById("frame-button");
+            shouldBe("frameButton.stringAttributeValue('AXVisibleContentRect')", "'{60.00, 10.00, 200.00, 200.00}'");
+        	finishJSTest();
+        }
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

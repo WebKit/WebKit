@@ -1666,6 +1666,18 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     return CGRectMake(rect.x(), rect.y(), rect.width(), rect.height());
 }
 
+- (CGRect)accessibilityVisibleContentRect
+{
+    if (![self _prepareAccessibilityCall])
+        return CGRectZero;
+    
+    Document* document = m_object->document();
+    if (!document || !document->view())
+        return CGRectZero;
+    IntRect rect = snappedIntRect(document->view()->unobscuredContentRect());
+    return [self convertRectToScreenSpace:rect];
+}
+
 // The "center point" is where VoiceOver will "press" an object. This may not be the actual
 // center of the accessibilityFrame
 - (CGPoint)accessibilityActivationPoint

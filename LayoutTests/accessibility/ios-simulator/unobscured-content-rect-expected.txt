@@ -1,0 +1,12 @@
+test  
+This tests that unobscured content rect is exposed to accessibility.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS button.stringAttributeValue('AXVisibleContentRect') is '{0.00, 0.00, 800.00, 600.00}'
+PASS frameButton.stringAttributeValue('AXVisibleContentRect') is '{60.00, 10.00, 200.00, 200.00}'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

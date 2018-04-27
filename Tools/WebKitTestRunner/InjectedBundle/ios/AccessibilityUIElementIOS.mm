@@ -81,6 +81,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSArray *)accessibilityFindMatchingObjects:(NSDictionary *)parameters;
 - (NSArray<NSString *> *)accessibilitySpeechHint;
 - (BOOL)_accessibilityIsStrongPasswordField;
+- (CGRect)accessibilityVisibleContentRect;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -356,6 +357,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
     
     if (JSStringIsEqualToUTF8CString(attribute, "AXSortDirection"))
         return [[m_element accessibilitySortDirection] createJSStringRef];
+    
+    if (JSStringIsEqualToUTF8CString(attribute, "AXVisibleContentRect")) {
+        CGRect screenRect = [m_element accessibilityVisibleContentRect];
+        NSString *rectStr = [NSString stringWithFormat:@"{%.2f, %.2f, %.2f, %.2f}", screenRect.origin.x, screenRect.origin.y, screenRect.size.width, screenRect.size.height];
+        return [rectStr createJSStringRef];
+    }
 
     return JSStringCreateWithCharacters(0, 0);
 }
