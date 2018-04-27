@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include <wtf/IsoMalloc.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -36,10 +37,13 @@ namespace Layout {
 class FormattingState;
 
 // FloatingState holds the floating boxes per formatting context.
-class FloatingState {
+class FloatingState : public RefCounted<FloatingState> {
     WTF_MAKE_ISO_ALLOCATED(FloatingState);
 public:
-    FloatingState(FormattingState& parentFormattingState);
+    static Ref<FloatingState> create() { return adoptRef(*new FloatingState()); }
+
+private:
+    FloatingState();
 };
 
 }

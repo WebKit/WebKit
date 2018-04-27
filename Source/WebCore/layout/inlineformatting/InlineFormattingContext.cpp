@@ -28,7 +28,10 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FloatingState.h"
 #include "InlineFormattingState.h"
+#include "LayoutBox.h"
+#include "LayoutContext.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -36,8 +39,8 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineFormattingContext);
 
-InlineFormattingContext::InlineFormattingContext(const Box& formattingContextRoot)
-    : FormattingContext(formattingContextRoot)
+InlineFormattingContext::InlineFormattingContext(const Box& formattingContextRoot, LayoutContext& layoutContext)
+    : FormattingContext(formattingContextRoot, layoutContext)
 {
 }
 
@@ -45,9 +48,22 @@ void InlineFormattingContext::layout(FormattingState&)
 {
 }
 
-std::unique_ptr<FormattingState> InlineFormattingContext::formattingState() const
+std::unique_ptr<FormattingState> InlineFormattingContext::createFormattingState(Ref<FloatingState>&& floatingState) const
 {
-    return std::make_unique<InlineFormattingState>();
+    return std::make_unique<InlineFormattingState>(WTFMove(floatingState));
+}
+
+Ref<FloatingState> InlineFormattingContext::createOrFindFloatingState() const
+{
+    // If the block container box that initiates this inline formatting context also establishes a block context, the floats outside of the formatting root
+    // should not interfere with the content inside.
+    // <div style="float: left"></div><div style="overflow: hidden"> <- is a non-intrusive float, because overflow: hidden triggers new block formatting context.</div>
+    if (root().establishesBlockFormattingContext())
+        return FloatingState::create();
+    // Otherwise, the formatting context inherits the floats from the parent formatting context.
+    // Find the formatting state in which this formatting root lives, not the one it creates (this) and use its floating state.
+    auto& formattingState = layoutContext().formattingStateForBox(root());
+    return formattingState.floatingState();
 }
 
 }

@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BlockFormattingState.h"
+#include "FloatingState.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -36,8 +37,8 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(BlockFormattingContext);
 
-BlockFormattingContext::BlockFormattingContext(const Box& formattingContextRoot)
-    : FormattingContext(formattingContextRoot)
+BlockFormattingContext::BlockFormattingContext(const Box& formattingContextRoot, LayoutContext& layoutContext)
+    : FormattingContext(formattingContextRoot, layoutContext)
 {
 }
 
@@ -45,9 +46,15 @@ void BlockFormattingContext::layout(FormattingState&)
 {
 }
 
-std::unique_ptr<FormattingState> BlockFormattingContext::formattingState() const
+std::unique_ptr<FormattingState> BlockFormattingContext::createFormattingState(Ref<FloatingState>&& floatingState) const
 {
-    return std::make_unique<BlockFormattingState>();
+    return std::make_unique<BlockFormattingState>(WTFMove(floatingState));
+}
+
+Ref<FloatingState> BlockFormattingContext::createOrFindFloatingState() const
+{
+    // Block formatting context always establishes a new floating state.
+    return FloatingState::create();
 }
 
 void BlockFormattingContext::computeStaticPosition(const Box&) const

@@ -25,3 +25,20 @@
 
 #include "config.h"
 #include "FloatingState.h"
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+
+#include <wtf/IsoMallocInlines.h>
+
+namespace WebCore {
+namespace Layout {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingState);
+
+FloatingState::FloatingState()
+{
+}
+
+}
+}
+#endif

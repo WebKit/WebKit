@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FloatingState.h"
 #include "LayoutUnit.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -35,21 +36,24 @@ namespace WebCore {
 
 namespace Layout {
 
-class FormattingState;
 class Box;
+class FormattingState;
+class LayoutContext;
 
 class FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(FormattingContext);
 public:
-    FormattingContext(const Box& formattingContextRoot);
+    FormattingContext(const Box& formattingContextRoot, LayoutContext&);
     virtual ~FormattingContext();
 
     virtual void layout(FormattingState&) = 0;
-    virtual std::unique_ptr<FormattingState> formattingState() const = 0;
-
-    const Box& root() const { return *m_root; }
+    virtual std::unique_ptr<FormattingState> createFormattingState(Ref<FloatingState>&&) const = 0;
+    virtual Ref<FloatingState> createOrFindFloatingState() const = 0;
 
 protected:
+    const Box& root() const { return *m_root; }
+    const LayoutContext& layoutContext() const { return m_layoutContext; }
+
     virtual void computeStaticPosition(const Box&) const;
     virtual void computeInFlowPositionedPosition(const Box&) const;
     virtual void computeOutOfFlowPosition(const Box&) const;
@@ -64,6 +68,7 @@ protected:
 
 private:
     WeakPtr<Box> m_root;
+    LayoutContext& m_layoutContext;
 };
 
 }

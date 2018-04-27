@@ -33,6 +33,7 @@
 #include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
 #include "LayoutBox.h"
+#include "LayoutContainer.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -48,24 +49,31 @@ LayoutContext::LayoutContext(const Box& root)
 void LayoutContext::updateLayout()
 {
     auto context = formattingContext(*m_root);
-    auto state = formattingState(*context);
+    auto& state = establishedFormattingState(*m_root, *context);
     context->layout(state);
 }
 
-FormattingState& LayoutContext::formattingState(const FormattingContext& context)
+FormattingState& LayoutContext::formattingStateForBox(const Box& layoutBox) const
 {
-    return *m_formattingStates.ensure(&context.root(), [&context] {
-        return context.formattingState();
+    auto& root = layoutBox.formattingContextRoot();
+    RELEASE_ASSERT(m_formattingStates.contains(&root));
+    return *m_formattingStates.get(&root);
+}
+
+FormattingState& LayoutContext::establishedFormattingState(Box& formattingContextRoot, const FormattingContext& context)
+{
+    return *m_formattingStates.ensure(&formattingContextRoot, [this, &context] {
+        return context.createFormattingState(context.createOrFindFloatingState());
     }).iterator->value;
 }
 
 std::unique_ptr<FormattingContext> LayoutContext::formattingContext(const Box& formattingContextRoot)
 {
     if (formattingContextRoot.establishesBlockFormattingContext())
-        return std::make_unique<BlockFormattingContext>(formattingContextRoot);
+        return std::make_unique<BlockFormattingContext>(formattingContextRoot, *this);
 
     if (formattingContextRoot.establishesInlineFormattingContext())
-        return std::make_unique<InlineFormattingContext>(formattingContextRoot);
+        return std::make_unique<InlineFormattingContext>(formattingContextRoot, *this);
 
     ASSERT_NOT_REACHED();
     return nullptr;

@@ -60,8 +60,10 @@ public:
     void markNeedsLayout(const Box&, StyleDiff);
     bool needsLayout(const Box&) const;
 
+    FormattingState& formattingStateForBox(const Box&) const;
+
 private:
-    FormattingState& formattingState(const FormattingContext&);
+    FormattingState& establishedFormattingState(Box& formattingContextRoot, const FormattingContext&);
     std::unique_ptr<FormattingContext> formattingContext(const Box& formattingContextRoot);
 
     WeakPtr<Box> m_root;

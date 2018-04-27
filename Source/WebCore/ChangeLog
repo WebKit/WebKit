@@ -1,3 +1,55 @@
+2018-04-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Formatting contexts should create floating states.
+        https://bugs.webkit.org/show_bug.cgi?id=185032
+
+        Reviewed by Antti Koivisto.
+
+        This patch implements the logic for sharing floating states across multiple formatting contexts.
+        At this point this is mostly about inline formatting contexts. They either create a new floating state
+        or inherit it from the parent formatting context.
+
+        * layout/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::FloatingState):
+        * layout/FloatingState.h:
+        (WebCore::Layout::FloatingState::create):
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::FormattingContext):
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::layoutContext const):
+        * layout/FormattingState.cpp:
+        (WebCore::Layout::FormattingState::FormattingState):
+        * layout/FormattingState.h:
+        (WebCore::Layout::FormattingState::floatingState const):
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::updateLayout):
+        (WebCore::Layout::LayoutContext::formattingStateForBox const):
+        (WebCore::Layout::LayoutContext::establishedFormattingState):
+        (WebCore::Layout::LayoutContext::formattingContext):
+        (WebCore::Layout::LayoutContext::formattingState): Deleted.
+        * layout/LayoutContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::BlockFormattingContext):
+        (WebCore::Layout::BlockFormattingContext::createFormattingState const):
+        (WebCore::Layout::BlockFormattingContext::createOrFindFloatingState const):
+        (WebCore::Layout::BlockFormattingContext::formattingState const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingState.cpp:
+        (WebCore::Layout::BlockFormattingState::BlockFormattingState):
+        * layout/blockformatting/BlockFormattingState.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineFormattingContext):
+        (WebCore::Layout::InlineFormattingContext::createFormattingState const):
+        (WebCore::Layout::InlineFormattingContext::createOrFindFloatingState const):
+        (WebCore::Layout::InlineFormattingContext::formattingState const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingState.cpp:
+        (WebCore::Layout::InlineFormattingState::InlineFormattingState):
+        * layout/inlineformatting/InlineFormattingState.h:
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::formattingContextRoot const):
+        * layout/layouttree/LayoutBox.h:
+
 2018-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Add a mechanism to override default viewport behaviors in extra zoom mode

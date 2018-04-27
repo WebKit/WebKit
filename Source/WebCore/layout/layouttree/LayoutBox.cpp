@@ -128,6 +128,19 @@ const Container* Box::containingBlock() const
     return nullptr;
 }
 
+const Container& Box::formattingContextRoot() const
+{
+    for (auto* ancestor = containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+        if (ancestor->establishesFormattingContext())
+            return *ancestor;
+    }
+
+    // Initial containing block always establishes a formatting context.
+    if (isInitialContainingBlock())
+        return downcast<Container>(*this);
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 bool Box::isDescendantOf(Container& container) const
 {
     auto* ancestor = parent();

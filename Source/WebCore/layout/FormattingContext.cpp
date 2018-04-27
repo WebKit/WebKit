@@ -35,8 +35,9 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingContext);
 
-FormattingContext::FormattingContext(const Box& formattingContextRoot)
+FormattingContext::FormattingContext(const Box& formattingContextRoot, LayoutContext& layoutContext)
     : m_root(makeWeakPtr(const_cast<Box&>(formattingContextRoot)))
+    , m_layoutContext(layoutContext)
 {
 }
 

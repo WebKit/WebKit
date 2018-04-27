@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FloatingState.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -34,18 +35,20 @@ namespace WebCore {
 namespace Layout {
 
 class Box;
-class FloatingState;
 class StyleDiff;
 
 class FormattingState {
     WTF_MAKE_ISO_ALLOCATED(FormattingState);
 public:
-    FormattingState();
+    FormattingState(Ref<FloatingState>&&);
 
-    FloatingState& floatingState();
+    FloatingState& floatingState() const { return m_floatingState; }
 
     void markNeedsLayout(const Box&, StyleDiff);
     bool needsLayout(const Box&);
+
+private:
+    Ref<FloatingState> m_floatingState;
 };
 
 }
