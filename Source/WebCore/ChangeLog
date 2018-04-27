@@ -1,3 +1,18 @@
+2018-04-26  Justin Fan  <justin_fan@apple.com>
+
+        tex[Sub]Image2D slow when passing in a <canvas>, faster with ImageData.
+        https://bugs.webkit.org/show_bug.cgi?id=184843
+        <rdar://problem/34898868>
+
+        Reviewed by Simon Fraser.
+
+        On certain test pages passing 2d canvas objects to gl.texSubImage2D, we spend significant time doing an alpha unpremultiplication in FormatConverter::convert on a single thread. 
+        For now, I am introducing use of the Accelerate framework to do canvas alpha unpremultiplication, specifically for RGBA8 > RGBA8.
+        This improves this rendering path by a factor of ~4. The rest of FormatConverter could use similar improvements; filed https://bugs.webkit.org/show_bug.cgi?id=185064 for these. 
+
+        * platform/graphics/FormatConverter.cpp:
+        (WebCore::FormatConverter::convert):
+
 2018-04-26  Simon Fraser  <simon.fraser@apple.com>
 
         Implement rendering support for the color-filter CSS property
