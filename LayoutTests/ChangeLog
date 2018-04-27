@@ -1,3 +1,15 @@
+2018-04-27  Christopher Reid  <chris.reid@sony.com>
+
+        URL::appendEncodedHostName is using the deprecated uidna_IDNToASCII function
+        https://bugs.webkit.org/show_bug.cgi?id=184836
+
+        Reviewed by Alex Christensen.
+
+        Verify that setting the host or hostname of URL objects will use IDNA2008.
+
+        * fast/url/url-hostname-encoding-expected.txt: Added.
+        * fast/url/url-hostname-encoding.html: Added.
+
 2018-04-27  Youenn Fablet  <youenn@apple.com>
 
         Use NetworkLoadChecker for XHR/fetch loads

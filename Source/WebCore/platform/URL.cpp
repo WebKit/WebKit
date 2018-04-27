@@ -415,18 +415,11 @@ static bool appendEncodedHostname(UCharBuffer& buffer, StringView string)
     
     UChar hostnameBuffer[hostnameBufferLength];
     UErrorCode error = U_ZERO_ERROR;
+    UIDNAInfo processingDetails = UIDNA_INFO_INITIALIZER;
+    int32_t numCharactersConverted = uidna_nameToASCII(&URLParser::internationalDomainNameTranscoder(),
+        string.upconvertedCharacters(), string.length(), hostnameBuffer, hostnameBufferLength, &processingDetails, &error);
     
-#if COMPILER(GCC_OR_CLANG)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-    int32_t numCharactersConverted = uidna_IDNToASCII(string.upconvertedCharacters(), string.length(), hostnameBuffer,
-        hostnameBufferLength, UIDNA_ALLOW_UNASSIGNED, 0, &error);
-#if COMPILER(GCC_OR_CLANG)
-#pragma GCC diagnostic pop
-#endif
-    
-    if (error == U_ZERO_ERROR) {
+    if (U_SUCCESS(error) && !processingDetails.errors) {
         buffer.append(hostnameBuffer, numCharactersConverted);
         return true;
     }
