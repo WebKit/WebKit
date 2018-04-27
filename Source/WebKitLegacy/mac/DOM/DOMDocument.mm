@@ -162,7 +162,7 @@
 - (DOMAbstractView *)defaultView
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->defaultView()));
+    return kit(WTF::getPtr(IMPL->windowProxy()));
 }
 
 - (DOMStyleSheetList *)styleSheets
@@ -684,7 +684,7 @@ static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
     WebCore::JSMainThreadNullState state;
     if (!element)
         raiseTypeErrorException();
-    WebCore::DOMWindow* dv = IMPL->defaultView();
+    WebCore::DOMWindow* dv = IMPL->domWindow();
     if (!dv)
         return nil;
     return kit(WTF::getPtr(dv->getComputedStyle(*core(element), pseudoElement)));
@@ -698,7 +698,7 @@ static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
 - (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)element pseudoElement:(NSString *)pseudoElement authorOnly:(BOOL)authorOnly
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::DOMWindow* dv = IMPL->defaultView();
+    WebCore::DOMWindow* dv = IMPL->domWindow();
     if (!dv)
         return nil;
     return kit(WTF::getPtr(dv->getMatchedCSSRules(core(element), pseudoElement, authorOnly)));

@@ -20,11 +20,11 @@
 [
     Constructor(DOMString type, optional UIEventInit eventInitDict)
 ] interface UIEvent : Event {
-    readonly attribute DOMWindow view;
+    readonly attribute WindowProxy view;
     readonly attribute long detail;
     
     // FIXME: Using "undefined" as default parameter value is wrong.
-    void initUIEvent(optional DOMString type = "undefined", optional boolean canBubble = false, optional boolean cancelable = false, optional DOMWindow? view = null, optional long detail = 0);
+    void initUIEvent(optional DOMString type = "undefined", optional boolean canBubble = false, optional boolean cancelable = false, optional WindowProxy? view = null, optional long detail = 0);
 
     readonly attribute long layerX;
     readonly attribute long layerY;

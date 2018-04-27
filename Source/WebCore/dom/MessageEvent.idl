@@ -27,9 +27,9 @@
  */
 
 #if defined(ENABLE_SERVICE_WORKER) && ENABLE_SERVICE_WORKER
-typedef (DOMWindow or MessagePort or ServiceWorker) MessageEventSource;
+typedef (WindowProxy or MessagePort or ServiceWorker) MessageEventSource;
 #else
-typedef (DOMWindow or MessagePort) MessageEventSource;
+typedef (WindowProxy or MessagePort) MessageEventSource;
 #endif
 
 [

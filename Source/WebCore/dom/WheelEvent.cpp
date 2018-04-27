@@ -47,8 +47,8 @@ inline WheelEvent::WheelEvent(const AtomicString& type, const Init& initializer,
 {
 }
 
-inline WheelEvent::WheelEvent(const PlatformWheelEvent& event, DOMWindow* view)
-    : MouseEvent(eventNames().wheelEvent, true, true, event.timestamp().approximateMonotonicTime(), view, 0, event.globalPosition(), event.position()
+inline WheelEvent::WheelEvent(const PlatformWheelEvent& event, RefPtr<WindowProxy>&& view)
+    : MouseEvent(eventNames().wheelEvent, true, true, event.timestamp().approximateMonotonicTime(), WTFMove(view), 0, event.globalPosition(), event.position()
 #if ENABLE(POINTER_LOCK)
         , { }
 #endif
@@ -61,9 +61,9 @@ inline WheelEvent::WheelEvent(const PlatformWheelEvent& event, DOMWindow* view)
 {
 }
 
-Ref<WheelEvent> WheelEvent::create(const PlatformWheelEvent& event, DOMWindow* view)
+Ref<WheelEvent> WheelEvent::create(const PlatformWheelEvent& event, RefPtr<WindowProxy>&& view)
 {
-    return adoptRef(*new WheelEvent(event, view));
+    return adoptRef(*new WheelEvent(event, WTFMove(view)));
 }
 
 Ref<WheelEvent> WheelEvent::createForBindings()
@@ -76,12 +76,12 @@ Ref<WheelEvent> WheelEvent::create(const AtomicString& type, const Init& initial
     return adoptRef(*new WheelEvent(type, initializer, isTrusted));
 }
 
-void WheelEvent::initWebKitWheelEvent(int rawDeltaX, int rawDeltaY, DOMWindow* view, int screenX, int screenY, int pageX, int pageY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
+void WheelEvent::initWebKitWheelEvent(int rawDeltaX, int rawDeltaY, RefPtr<WindowProxy>&& view, int screenX, int screenY, int pageX, int pageY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
 {
     if (isBeingDispatched())
         return;
     
-    initMouseEvent(eventNames().wheelEvent, true, true, view, 0, screenX, screenY, pageX, pageY, ctrlKey, altKey, shiftKey, metaKey, 0, nullptr);
+    initMouseEvent(eventNames().wheelEvent, true, true, WTFMove(view), 0, screenX, screenY, pageX, pageY, ctrlKey, altKey, shiftKey, metaKey, 0, nullptr);
 
     // Normalize to 120 multiple for compatibility with IE.
     m_wheelDelta = { rawDeltaX * TickMultiplier, rawDeltaY * TickMultiplier };

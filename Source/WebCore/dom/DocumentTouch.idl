@@ -22,7 +22,7 @@
     Conditional=TOUCH_EVENTS
 ] partial interface Document {
     // FIXME: This has been dropped from the standard now that Touch has a constructor.
-    [NewObject] Touch createTouch(optional DOMWindow? window = null, optional EventTarget? target = null,
+    [NewObject] Touch createTouch(optional WindowProxy? window = null, optional EventTarget? target = null,
         optional long identifier = 0,
         optional long pageX = 0, optional long pageY = 0, optional long screenX = 0, optional long screenY = 0,
         optional long webkitRadiusX = 0, optional long webkitRadiusY = 0,

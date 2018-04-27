@@ -38,7 +38,7 @@ interface HTMLIFrameElement : HTMLElement {
 
     [CheckSecurityForNode] readonly attribute Document contentDocument;
 
-    readonly attribute DOMWindow contentWindow;
+    readonly attribute WindowProxy contentWindow;
 
     [CheckSecurityForNode, MayThrowException] Document getSVGDocument();
 };

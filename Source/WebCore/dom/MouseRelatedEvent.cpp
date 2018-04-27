@@ -32,13 +32,13 @@
 
 namespace WebCore {
 
-MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubble, bool cancelable, MonotonicTime timestamp, DOMWindow* DOMWindow,
+MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubble, bool cancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view,
                                      int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
 #if ENABLE(POINTER_LOCK)
                                      const IntPoint& movementDelta,
 #endif
                                      bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated)
-    : UIEventWithKeyState(eventType, canBubble, cancelable, timestamp, DOMWindow, detail, ctrlKey, altKey, shiftKey, metaKey, false, false)
+    : UIEventWithKeyState(eventType, canBubble, cancelable, timestamp, WTFMove(view), detail, ctrlKey, altKey, shiftKey, metaKey, false, false)
     , m_screenLocation(screenLocation)
 #if ENABLE(POINTER_LOCK)
     , m_movementDelta(movementDelta)
@@ -61,7 +61,7 @@ MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, const MouseR
 void MouseRelatedEvent::init(bool isSimulated, const IntPoint& windowLocation)
 {
     if (!isSimulated) {
-        if (auto* frameView = frameViewFromDOMWindow(view())) {
+        if (auto* frameView = frameViewFromWindowProxy(view())) {
             FloatPoint absolutePoint = frameView->windowToContents(windowLocation);
             FloatPoint documentPoint = frameView->absoluteToDocumentPoint(absolutePoint);
             m_pageLocation = flooredLayoutPoint(documentPoint);
@@ -83,13 +83,13 @@ void MouseRelatedEvent::initCoordinates()
     m_hasCachedRelativePosition = false;
 }
 
-FrameView* MouseRelatedEvent::frameViewFromDOMWindow(DOMWindow* window)
+FrameView* MouseRelatedEvent::frameViewFromWindowProxy(WindowProxy* windowProxy)
 {
-    auto* frame = window ? window->frame() : nullptr;
-    if (!frame)
+    if (!windowProxy || !is<DOMWindow>(windowProxy->window()))
         return nullptr;
 
-    return frame->view();
+    auto* frame = downcast<DOMWindow>(*windowProxy->window()).frame();
+    return frame ? frame->view() : nullptr;
 }
 
 LayoutPoint MouseRelatedEvent::pagePointToClientPoint(LayoutPoint pagePoint, FrameView* frameView)
@@ -113,7 +113,7 @@ void MouseRelatedEvent::initCoordinates(const LayoutPoint& clientLocation)
     // Set up initial values for coordinates.
     // Correct values are computed lazily, see computeRelativePosition.
     FloatSize documentToClientOffset;
-    if (auto* frameView = frameViewFromDOMWindow(view()))
+    if (auto* frameView = frameViewFromWindowProxy(view()))
         documentToClientOffset = frameView->documentToClientOffset();
 
     m_clientLocation = clientLocation;
@@ -128,7 +128,7 @@ void MouseRelatedEvent::initCoordinates(const LayoutPoint& clientLocation)
 
 float MouseRelatedEvent::documentToAbsoluteScaleFactor() const
 {
-    if (auto* frameView = frameViewFromDOMWindow(view()))
+    if (auto* frameView = frameViewFromWindowProxy(view()))
         return frameView->documentToAbsoluteScaleFactor();
 
     return 1;
@@ -136,7 +136,7 @@ float MouseRelatedEvent::documentToAbsoluteScaleFactor() const
 
 void MouseRelatedEvent::computePageLocation()
 {
-    m_absoluteLocation = pagePointToAbsolutePoint(m_pageLocation, frameViewFromDOMWindow(view()));
+    m_absoluteLocation = pagePointToAbsolutePoint(m_pageLocation, frameViewFromWindowProxy(view()));
 }
 
 void MouseRelatedEvent::receivedTarget()
@@ -185,7 +185,7 @@ void MouseRelatedEvent::computeRelativePosition()
     
 FloatPoint MouseRelatedEvent::locationInRootViewCoordinates() const
 {
-    if (auto* frameView = frameViewFromDOMWindow(view()))
+    if (auto* frameView = frameViewFromWindowProxy(view()))
         return frameView->contentsToRootView(roundedIntPoint(m_absoluteLocation));
 
     return m_absoluteLocation;

@@ -64,6 +64,22 @@ WebKitDOMDOMWindow* kit(WebCore::DOMWindow* obj)
     return wrapDOMWindow(obj);
 }
 
+WebKitDOMDOMWindow* kit(WebCore::WindowProxy* windowProxy)
+{
+    if (!windowProxy || !is<WebCore::DOMWindow>(windowProxy->window()))
+        return nullptr;
+
+    return kit(downcast<WebCore::DOMWindow>(windowProxy->window()));
+}
+
+WebCore::WindowProxy* toWindowProxy(WebKitDOMDOMWindow* view)
+{
+    auto* window = core(view);
+    if (!window || !window->frame())
+        return nullptr;
+    return &window->frame()->windowProxy();
+}
+
 WebCore::DOMWindow* core(WebKitDOMDOMWindow* request)
 {
     return request ? static_cast<WebCore::DOMWindow*>(WEBKIT_DOM_OBJECT(request)->coreObject) : 0;

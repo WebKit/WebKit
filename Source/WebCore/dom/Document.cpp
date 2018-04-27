@@ -4280,6 +4280,13 @@ void Document::takeDOMWindowFrom(Document* document)
     ASSERT(m_domWindow->frame() == m_frame);
 }
 
+WindowProxy* Document::windowProxy() const
+{
+    if (!m_frame)
+        return nullptr;
+    return &m_frame->windowProxy();
+}
+
 Document& Document::contextDocument() const
 {
     if (m_contextDocument)

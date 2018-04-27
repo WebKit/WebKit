@@ -1494,8 +1494,7 @@ WebKitDOMDOMWindow* webkit_dom_document_get_default_view(WebKitDOMDocument* self
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), 0);
     WebCore::Document* item = WebKit::core(self);
-    RefPtr<WebCore::DOMWindow> gobjectResult = WTF::getPtr(item->defaultView());
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(item->windowProxy());
 }
 
 WebKitDOMStyleSheetList* webkit_dom_document_get_style_sheets(WebKitDOMDocument* self)

@@ -26,7 +26,7 @@ interface HTMLFrameElement : HTMLElement {
     [Reflect, URL] attribute USVString longDesc;
     [Reflect] attribute boolean noResize;
     [CheckSecurityForNode] readonly attribute Document contentDocument;
-    readonly attribute DOMWindow contentWindow;
+    readonly attribute WindowProxy contentWindow;
 
     [Reflect] attribute [TreatNullAs=EmptyString] DOMString marginHeight;
     [Reflect] attribute [TreatNullAs=EmptyString] DOMString marginWidth;

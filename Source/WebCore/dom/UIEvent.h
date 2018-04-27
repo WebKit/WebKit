@@ -23,20 +23,20 @@
 
 #pragma once
 
-#include "DOMWindow.h"
 #include "Event.h"
 #include "UIEventInit.h"
+#include "WindowProxy.h"
 
 namespace WebCore {
 
 // FIXME: Remove this when no one is depending on it anymore.
-typedef DOMWindow AbstractView;
+typedef WindowProxy AbstractView;
 
 class UIEvent : public Event {
 public:
-    static Ref<UIEvent> create(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow* view, int detail)
+    static Ref<UIEvent> create(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, int detail)
     {
-        return adoptRef(*new UIEvent(type, canBubble, cancelable, view, detail));
+        return adoptRef(*new UIEvent(type, canBubble, cancelable, WTFMove(view), detail));
     }
     static Ref<UIEvent> createForBindings()
     {
@@ -48,9 +48,9 @@ public:
     }
     virtual ~UIEvent();
 
-    WEBCORE_EXPORT void initUIEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow*, int detail);
+    WEBCORE_EXPORT void initUIEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&, int detail);
 
-    DOMWindow* view() const { return m_view.get(); }
+    WindowProxy* view() const { return m_view.get(); }
     int detail() const { return m_detail; }
 
     EventInterface eventInterface() const override;
@@ -65,14 +65,14 @@ public:
 
 protected:
     UIEvent();
-    UIEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow*, int detail);
-    UIEvent(const AtomicString& type, bool canBubble, bool cancelable, MonotonicTime timestamp, DOMWindow*, int detail);
+    UIEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&, int detail);
+    UIEvent(const AtomicString& type, bool canBubble, bool cancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail);
     UIEvent(const AtomicString&, const UIEventInit&, IsTrusted);
 
 private:
     bool isUIEvent() const final;
 
-    RefPtr<DOMWindow> m_view;
+    RefPtr<WindowProxy> m_view;
     int m_detail;
 };
 

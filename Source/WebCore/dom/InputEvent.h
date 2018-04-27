@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-class DOMWindow;
 class DataTransfer;
+class WindowProxy;
 
 class InputEvent final : public UIEvent {
 public:
@@ -39,13 +39,13 @@ public:
         String data;
     };
 
-    static Ref<InputEvent> create(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, DOMWindow* view, const String& data, RefPtr<DataTransfer>&&, const Vector<RefPtr<StaticRange>>& targetRanges, int detail);
+    static Ref<InputEvent> create(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, const String& data, RefPtr<DataTransfer>&&, const Vector<RefPtr<StaticRange>>& targetRanges, int detail);
     static Ref<InputEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new InputEvent(type, initializer, isTrusted));
     }
 
-    InputEvent(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, DOMWindow*, const String& data, RefPtr<DataTransfer>&&, const Vector<RefPtr<StaticRange>>& targetRanges, int detail);
+    InputEvent(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&, const String& data, RefPtr<DataTransfer>&&, const Vector<RefPtr<StaticRange>>& targetRanges, int detail);
     InputEvent(const AtomicString& eventType, const Init&, IsTrusted);
 
     bool isInputEvent() const override { return true; }

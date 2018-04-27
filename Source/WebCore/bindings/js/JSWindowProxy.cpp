@@ -119,6 +119,12 @@ void JSWindowProxy::setWindow(AbstractDOMWindow& domWindow)
     ASSERT(prototype->globalObject() == window);
 }
 
+WindowProxy* JSWindowProxy::windowProxy() const
+{
+    auto& window = wrapped();
+    return window.frame() ? &window.frame()->windowProxy() : nullptr;
+}
+
 void JSWindowProxy::attachDebugger(JSC::Debugger* debugger)
 {
     auto* globalObject = window();
@@ -138,12 +144,6 @@ AbstractDOMWindow& JSWindowProxy::wrapped() const
     return jsCast<JSDOMWindowBase*>(window)->wrapped();
 }
 
-AbstractDOMWindow* JSWindowProxy::toWrapped(VM& vm, JSObject* value)
-{
-    auto* wrapper = jsDynamicCast<JSWindowProxy*>(vm, value);
-    return wrapper ? &wrapper->wrapped() : nullptr;
-}
-
 JSValue toJS(ExecState* state, WindowProxy& windowProxy)
 {
     return &windowProxy.jsWindowProxy(currentWorld(*state));
@@ -152,6 +152,16 @@ JSValue toJS(ExecState* state, WindowProxy& windowProxy)
 JSWindowProxy& toJSWindowProxy(WindowProxy& windowProxy, DOMWrapperWorld& world)
 {
     return windowProxy.jsWindowProxy(world);
+}
+
+WindowProxy* JSWindowProxy::toWrapped(VM& vm, JSValue value)
+{
+    if (!value.isObject())
+        return nullptr;
+    JSObject* object = asObject(value);
+    if (object->inherits<JSWindowProxy>(vm))
+        return jsCast<JSWindowProxy*>(object)->windowProxy();
+    return nullptr;
 }
 
 } // namespace WebCore

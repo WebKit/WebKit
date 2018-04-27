@@ -40,7 +40,7 @@
                         optional TouchList? targetTouches = null,
                         optional TouchList? changedTouches = null,
                         optional DOMString type = "undefined",
-                        optional DOMWindow? view = null,
+                        optional WindowProxy? view = null,
                         optional long screenX = 0,
                         optional long screenY = 0,
                         optional long clientX = 0,

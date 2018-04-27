@@ -799,7 +799,7 @@ public:
 
     DOMWindow* domWindow() const { return m_domWindow.get(); }
     // In DOM Level 2, the Document's DOMWindow is called the defaultView.
-    DOMWindow* defaultView() const { return domWindow(); } 
+    WEBCORE_EXPORT WindowProxy* windowProxy() const;
 
     Document& contextDocument() const;
     void setContextDocument(Document& document) { m_contextDocument = document.createWeakPtr(); }

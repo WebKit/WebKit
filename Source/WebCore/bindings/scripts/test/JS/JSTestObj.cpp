@@ -55,7 +55,6 @@
 #include "JSDOMOperation.h"
 #include "JSDOMOperationReturningPromise.h"
 #include "JSDOMStringList.h"
-#include "JSDOMWindow.h"
 #include "JSDOMWindowBase.h"
 #include "JSDOMWrapperCache.h"
 #include "JSDocument.h"
@@ -6957,7 +6956,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod9Bod
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    auto window = convert<IDLInterface<DOMWindow>>(*state, state->uncheckedArgument(0), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentTypeError(state, scope, 0, "window", "TestObject", "overloadedMethod", "DOMWindow"); });
+    auto window = convert<IDLInterface<WindowProxy>>(*state, state->uncheckedArgument(0), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentTypeError(state, scope, 0, "window", "TestObject", "overloadedMethod", "WindowProxy"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.overloadedMethod(*window);
     return JSValue::encode(jsUndefined());
@@ -7029,7 +7028,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodOver
             return jsTestObjPrototypeFunctionOverloadedMethod6Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>(vm))
             return jsTestObjPrototypeFunctionOverloadedMethod8Body(state, castedThis, throwScope);
-        if (distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits<JSWindowProxy>(vm) || asObject(distinguishingArg)->inherits<JSDOMWindow>(vm)))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSWindowProxy>(vm))
             return jsTestObjPrototypeFunctionOverloadedMethod9Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSBlob>(vm))
             return jsTestObjPrototypeFunctionOverloadedMethod13Body(state, castedThis, throwScope);

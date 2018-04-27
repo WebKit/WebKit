@@ -1,3 +1,148 @@
+2018-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Use WindowProxy instead of DOMWindow in our IDL
+        https://bugs.webkit.org/show_bug.cgi?id=185022
+
+        Reviewed by Sam Weinig.
+
+        Stop using DOMWindow in all of our IDL files and use WindowProxy as
+        per their respective specifications. As a result, the implementation
+        as also updated to use WindowProxy type instead of DOMWindow.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMConvertWindowProxy.h: Removed.
+        * bindings/js/JSWindowProxy.cpp:
+        (WebCore::JSWindowProxy::windowProxy const):
+        (WebCore::JSWindowProxy::toWrapped):
+        * bindings/js/JSWindowProxy.h:
+        (WebCore::window):
+        Use static_cast<>() instead of jsCast<>() because jsCast<>()
+        relies on classInfo() which is not allowed to be called during
+        JS sweep due to an assertion inside classInfo(). The JSWindowProxy
+        objects are held strongly by the WindowProxy so we know the JSWindowProxy
+        object is not getting destroyed here.
+
+        (WebCore::toJS):
+        * bindings/js/WindowProxy.cpp:
+        (WebCore::WindowProxy::globalObject):
+        * bindings/js/WindowProxy.h:
+        (WebCore::WindowProxy::frame const):
+        * bindings/scripts/CodeGenerator.pm:
+        (IsBuiltinType):
+        (ComputeIsCallbackInterface):
+        (ComputeIsCallbackFunction):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToIncludesForIDLType):
+        (GetBaseIDLType):
+        (NativeToJSValueDOMConvertNeedsState):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod9Body):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodOverloadDispatcher):
+        * bindings/scripts/test/TestObj.idl:
+        * dom/CompositionEvent.cpp:
+        (WebCore::CompositionEvent::CompositionEvent):
+        (WebCore::CompositionEvent::initCompositionEvent):
+        * dom/CompositionEvent.h:
+        * dom/CompositionEvent.idl:
+        * dom/Document.cpp:
+        (WebCore::Document::defaultView const):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/DocumentTouch.cpp:
+        (WebCore::DocumentTouch::createTouch):
+        * dom/DocumentTouch.h:
+        * dom/DocumentTouch.idl:
+        * dom/FocusEvent.cpp:
+        (WebCore::FocusEvent::FocusEvent):
+        * dom/FocusEvent.h:
+        * dom/InputEvent.cpp:
+        (WebCore::InputEvent::create):
+        (WebCore::InputEvent::InputEvent):
+        * dom/InputEvent.h:
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        (WebCore::KeyboardEvent::create):
+        (WebCore::KeyboardEvent::initKeyboardEvent):
+        (WebCore::KeyboardEvent::charCode const):
+        * dom/KeyboardEvent.h:
+        * dom/KeyboardEvent.idl:
+        * dom/MessageEvent.h:
+        * dom/MessageEvent.idl:
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create):
+        (WebCore::MouseEvent::MouseEvent):
+        (WebCore::MouseEvent::initMouseEvent):
+        (WebCore::MouseEvent::initMouseEventQuirk):
+        * dom/MouseEvent.h:
+        * dom/MouseEvent.idl:
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        (WebCore::MouseRelatedEvent::init):
+        (WebCore::MouseRelatedEvent::frameViewFromWindowProxy):
+        (WebCore::MouseRelatedEvent::initCoordinates):
+        (WebCore::MouseRelatedEvent::documentToAbsoluteScaleFactor const):
+        (WebCore::MouseRelatedEvent::computePageLocation):
+        (WebCore::MouseRelatedEvent::locationInRootViewCoordinates const):
+        * dom/MouseRelatedEvent.h:
+        * dom/Node.cpp:
+        * dom/SimulatedClick.cpp:
+        * dom/TextEvent.cpp:
+        (WebCore::TextEvent::create):
+        (WebCore::TextEvent::createForPlainTextPaste):
+        (WebCore::TextEvent::createForFragmentPaste):
+        (WebCore::TextEvent::createForDrop):
+        (WebCore::TextEvent::createForDictation):
+        (WebCore::TextEvent::TextEvent):
+        (WebCore::TextEvent::initTextEvent):
+        * dom/TextEvent.h:
+        * dom/TextEvent.idl:
+        * dom/TouchEvent.idl:
+        * dom/UIEvent.cpp:
+        (WebCore::UIEvent::UIEvent):
+        (WebCore::UIEvent::initUIEvent):
+        * dom/UIEvent.h:
+        (WebCore::UIEvent::create):
+        (WebCore::UIEvent::view const):
+        * dom/UIEvent.idl:
+        * dom/UIEventInit.h:
+        * dom/UIEventInit.idl:
+        * dom/UIEventWithKeyState.h:
+        (WebCore::UIEventWithKeyState::UIEventWithKeyState):
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+        (WebCore::WheelEvent::create):
+        (WebCore::WheelEvent::initWebKitWheelEvent):
+        * dom/WheelEvent.h:
+        * dom/WheelEvent.idl:
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::insertDictatedText):
+        * editing/Editor.cpp:
+        (WebCore::Editor::pasteAsPlainText):
+        (WebCore::Editor::pasteAsFragment):
+        (WebCore::Editor::setComposition):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::namedItem):
+        * html/HTMLDocument.h:
+        * html/HTMLDocument.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::contentWindow const):
+        * html/HTMLFrameOwnerElement.h:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::namedItem):
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLFrameSetElement.idl:
+        * html/HTMLIFrameElement.idl:
+        * html/ImageDocument.cpp:
+        * page/DOMWindow.cpp:
+        (WebCore::PostMessageTimer::PostMessageTimer):
+        (WebCore::PostMessageTimer::event):
+        (WebCore::DOMWindow::postMessage):
+        * page/DragController.cpp:
+        (WebCore::DragController::dispatchTextInputEventFor):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTextInputEvent):
+
 2018-04-27  Nan Wang  <n_wang@apple.com>
 
         AX: Accessibility needs to know which part of the content view is visible on iOS

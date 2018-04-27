@@ -99,9 +99,9 @@ Document* HTMLFrameOwnerElement::contentDocument() const
     return m_contentFrame ? m_contentFrame->document() : nullptr;
 }
 
-DOMWindow* HTMLFrameOwnerElement::contentWindow() const
+WindowProxy* HTMLFrameOwnerElement::contentWindow() const
 {
-    return m_contentFrame ? m_contentFrame->document()->domWindow() : nullptr;
+    return m_contentFrame ? &m_contentFrame->windowProxy() : nullptr;
 }
 
 void HTMLFrameOwnerElement::setSandboxFlags(SandboxFlags flags)

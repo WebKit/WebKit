@@ -23,5 +23,5 @@
     NewImpurePropertyFiresWatchpoints,
     OverrideBuiltins,
 ] interface HTMLDocument : Document {    
-    getter (DOMWindow or Element or HTMLCollection) (DOMString name);
+    getter (WindowProxy or Element or HTMLCollection) (DOMString name);
 };

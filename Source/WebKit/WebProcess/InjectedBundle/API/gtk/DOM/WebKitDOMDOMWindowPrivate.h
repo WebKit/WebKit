@@ -21,12 +21,15 @@
 #define WebKitDOMDOMWindowPrivate_h
 
 #include <WebCore/DOMWindow.h>
+#include <WebCore/WindowProxy.h>
 #include <webkitdom/WebKitDOMDOMWindow.h>
 
 namespace WebKit {
 WebKitDOMDOMWindow* wrapDOMWindow(WebCore::DOMWindow*);
 WebKitDOMDOMWindow* kit(WebCore::DOMWindow*);
+WebKitDOMDOMWindow* kit(WebCore::WindowProxy*);
 WebCore::DOMWindow* core(WebKitDOMDOMWindow*);
+WebCore::WindowProxy* toWindowProxy(WebKitDOMDOMWindow*);
 } // namespace WebKit
 
 #endif /* WebKitDOMDOMWindowPrivate_h */

@@ -28,7 +28,9 @@
 
 #pragma once
 
+#include "JSDOMConvertInterface.h"
 #include "JSDOMWindow.h"
+#include "WindowProxy.h"
 #include <JavaScriptCore/JSProxy.h>
 
 namespace JSC {
@@ -39,7 +41,6 @@ namespace WebCore {
 
 class AbstractDOMWindow;
 class AbstractFrame;
-class WindowProxy;
 
 class JSWindowProxy final : public JSC::JSProxy {
     using Base = JSC::JSProxy;
@@ -49,12 +50,14 @@ public:
 
     DECLARE_INFO;
 
-    JSDOMGlobalObject* window() const { return JSC::jsCast<JSDOMGlobalObject*>(target()); }
+    JSDOMGlobalObject* window() const { return static_cast<JSDOMGlobalObject*>(target()); }
     void setWindow(JSC::VM&, JSDOMGlobalObject&);
     void setWindow(AbstractDOMWindow&);
 
+    WindowProxy* windowProxy() const;
+
     AbstractDOMWindow& wrapped() const;
-    static WEBCORE_EXPORT AbstractDOMWindow* toWrapped(JSC::VM&, JSC::JSObject*);
+    static WEBCORE_EXPORT WindowProxy* toWrapped(JSC::VM&, JSC::JSValue);
 
     DOMWrapperWorld& world() { return m_world; }
 
@@ -71,10 +74,16 @@ private:
 // It is, however, strongly owned by AbstractFrame via its WindowProxy, so we can get one from a WindowProxy.
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, WindowProxy&);
 inline JSC::JSValue toJS(JSC::ExecState* state, WindowProxy* windowProxy) { return windowProxy ? toJS(state, *windowProxy) : JSC::jsNull(); }
-inline JSC::JSValue toJS(JSC::ExecState* state, const RefPtr<WindowProxy>& windowProxy) { return toJS(state, windowProxy.get()); }
+inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject*, WindowProxy& windowProxy) { return toJS(state, windowProxy); }
+inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, WindowProxy* windowProxy) { return windowProxy ? toJS(state, globalObject, *windowProxy) : JSC::jsNull(); }
 
 JSWindowProxy& toJSWindowProxy(WindowProxy&, DOMWrapperWorld&);
 inline JSWindowProxy* toJSWindowProxy(WindowProxy* windowProxy, DOMWrapperWorld& world) { return windowProxy ? &toJSWindowProxy(*windowProxy, world) : nullptr; }
 
+
+template<> struct JSDOMWrapperConverterTraits<WindowProxy> {
+    using WrapperClass = JSWindowProxy;
+    using ToWrappedReturnType = WindowProxy*;
+};
 
 } // namespace WebCore

@@ -37,7 +37,7 @@ public:
     virtual ~HTMLFrameOwnerElement();
 
     Frame* contentFrame() const { return m_contentFrame; }
-    WEBCORE_EXPORT DOMWindow* contentWindow() const;
+    WEBCORE_EXPORT WindowProxy* contentWindow() const;
     WEBCORE_EXPORT Document* contentDocument() const;
 
     void setContentFrame(Frame*);

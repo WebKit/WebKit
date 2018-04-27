@@ -26,20 +26,20 @@
 #include "config.h"
 #include "InputEvent.h"
 
-#include "DOMWindow.h"
 #include "DataTransfer.h"
 #include "Node.h"
+#include "WindowProxy.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-Ref<InputEvent> InputEvent::create(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, WebCore::DOMWindow *view, const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
+Ref<InputEvent> InputEvent::create(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
 {
-    return adoptRef(*new InputEvent(eventType, inputType, canBubble, cancelable, view, data, WTFMove(dataTransfer), targetRanges, detail));
+    return adoptRef(*new InputEvent(eventType, inputType, canBubble, cancelable, WTFMove(view), data, WTFMove(dataTransfer), targetRanges, detail));
 }
 
-InputEvent::InputEvent(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, DOMWindow* view, const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
-    : UIEvent(eventType, canBubble, cancelable, view, detail)
+InputEvent::InputEvent(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
+    : UIEvent(eventType, canBubble, cancelable, WTFMove(view), detail)
     , m_inputType(inputType)
     , m_data(data)
     , m_dataTransfer(dataTransfer)

@@ -48,7 +48,7 @@ public:
     static RefPtr<HTMLFrameSetElement> findContaining(Element* descendant);
     
     Vector<AtomicString> supportedPropertyNames() const;
-    DOMWindow* namedItem(const AtomicString&);
+    WindowProxy* namedItem(const AtomicString&);
 
 private:
     HTMLFrameSetElement(const QualifiedName&, Document&);

@@ -32,16 +32,16 @@ UIEvent::UIEvent()
 {
 }
 
-UIEvent::UIEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg, DOMWindow* viewArg, int detailArg)
+UIEvent::UIEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg, RefPtr<WindowProxy>&& viewArg, int detailArg)
     : Event(eventType, canBubbleArg, cancelableArg)
-    , m_view(viewArg)
+    , m_view(WTFMove(viewArg))
     , m_detail(detailArg)
 {
 }
 
-UIEvent::UIEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg, MonotonicTime timestamp, DOMWindow* viewArg, int detailArg)
+UIEvent::UIEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg, MonotonicTime timestamp, RefPtr<WindowProxy>&& viewArg, int detailArg)
     : Event(eventType, canBubbleArg, cancelableArg, timestamp)
-    , m_view(viewArg)
+    , m_view(WTFMove(viewArg))
     , m_detail(detailArg)
 {
 }
@@ -55,7 +55,7 @@ UIEvent::UIEvent(const AtomicString& eventType, const UIEventInit& initializer, 
 
 UIEvent::~UIEvent() = default;
 
-void UIEvent::initUIEvent(const AtomicString& typeArg, bool canBubbleArg, bool cancelableArg, DOMWindow* viewArg, int detailArg)
+void UIEvent::initUIEvent(const AtomicString& typeArg, bool canBubbleArg, bool cancelableArg, RefPtr<WindowProxy>&& viewArg, int detailArg)
 {
     if (isBeingDispatched())
         return;

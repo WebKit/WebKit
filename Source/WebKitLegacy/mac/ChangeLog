@@ -1,3 +1,37 @@
+2018-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Use WindowProxy instead of DOMWindow in our IDL
+        https://bugs.webkit.org/show_bug.cgi?id=185022
+
+        Reviewed by Sam Weinig.
+
+        * DOM/DOMAbstractView.mm:
+        (kit):
+        (toWindowProxy):
+        * DOM/DOMAbstractViewInternal.h:
+        * DOM/DOMDocument.mm:
+        (-[DOMDocument defaultView]):
+        (-[DOMDocument getComputedStyle:pseudoElement:]):
+        (-[DOMDocument getMatchedCSSRules:pseudoElement:authorOnly:]):
+        * DOM/DOMHTMLFrameElement.mm:
+        (-[DOMHTMLFrameElement contentWindow]):
+        * DOM/DOMHTMLIFrameElement.mm:
+        (-[DOMHTMLIFrameElement contentWindow]):
+        * DOM/DOMKeyboardEvent.mm:
+        (-[DOMKeyboardEvent initKeyboardEvent:canBubble:cancelable:view:keyIdentifier:location:ctrlKey:altKey:shiftKey:metaKey:altGraphKey:]):
+        (-[DOMKeyboardEvent initKeyboardEvent:canBubble:cancelable:view:keyIdentifier:location:ctrlKey:altKey:shiftKey:metaKey:]):
+        (-[DOMKeyboardEvent initKeyboardEvent:canBubble:cancelable:view:keyIdentifier:keyLocation:ctrlKey:altKey:shiftKey:metaKey:altGraphKey:]):
+        (-[DOMKeyboardEvent initKeyboardEvent:canBubble:cancelable:view:keyIdentifier:keyLocation:ctrlKey:altKey:shiftKey:metaKey:]):
+        * DOM/DOMMouseEvent.mm:
+        (-[DOMMouseEvent initMouseEvent:canBubble:cancelable:view:detail:screenX:screenY:clientX:clientY:ctrlKey:altKey:shiftKey:metaKey:button:relatedTarget:]):
+        * DOM/DOMTextEvent.mm:
+        (-[DOMTextEvent initTextEvent:canBubbleArg:cancelableArg:viewArg:dataArg:]):
+        * DOM/DOMUIEvent.mm:
+        (-[DOMUIEvent view]):
+        (-[DOMUIEvent initUIEvent:canBubble:cancelable:view:detail:]):
+        * DOM/DOMWheelEvent.mm:
+        (-[DOMWheelEvent initWheelEvent:wheelDeltaY:view:screenX:screenY:clientX:clientY:ctrlKey:altKey:shiftKey:metaKey:]):
+
 2018-04-26  Simon Fraser  <simon.fraser@apple.com>
 
         Implement rendering support for the color-filter CSS property

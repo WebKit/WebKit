@@ -32,7 +32,7 @@ interface TextEvent : UIEvent {
     void initTextEvent(optional DOMString typeArg = "undefined",
                        optional boolean canBubbleArg = false,
                        optional boolean cancelableArg = false,
-                       optional DOMWindow? viewArg = null,
+                       optional WindowProxy? viewArg = null,
                        optional DOMString dataArg = "undefined");
 
 };

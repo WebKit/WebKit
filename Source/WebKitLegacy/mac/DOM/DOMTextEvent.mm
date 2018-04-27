@@ -50,7 +50,7 @@
 - (void)initTextEvent:(NSString *)typeArg canBubbleArg:(BOOL)canBubbleArg cancelableArg:(BOOL)cancelableArg viewArg:(DOMAbstractView *)viewArg dataArg:(NSString *)dataArg
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->initTextEvent(typeArg, canBubbleArg, cancelableArg, core(viewArg), dataArg);
+    IMPL->initTextEvent(typeArg, canBubbleArg, cancelableArg, toWindowProxy(viewArg), dataArg);
 }
 
 @end

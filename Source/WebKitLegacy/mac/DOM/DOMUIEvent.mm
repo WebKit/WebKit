@@ -103,7 +103,7 @@
 - (void)initUIEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)inView detail:(int)inDetail
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->initUIEvent(type, canBubble, cancelable, core(inView), inDetail);
+    IMPL->initUIEvent(type, canBubble, cancelable, toWindowProxy(inView), inDetail);
 }
 
 @end

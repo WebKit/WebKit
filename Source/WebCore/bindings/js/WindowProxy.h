@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "JSWindowProxy.h"
+#include "DOMWrapperWorld.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/HashMap.h>
 
@@ -30,7 +30,10 @@ class Debugger;
 
 namespace WebCore {
 
+class AbstractDOMWindow;
 class AbstractFrame;
+class JSDOMGlobalObject;
+class JSWindowProxy;
 
 class WindowProxy {
     WTF_MAKE_FAST_ALLOCATED;
@@ -39,6 +42,8 @@ public:
 
     explicit WindowProxy(AbstractFrame&);
     ~WindowProxy();
+
+    AbstractFrame& frame() const { return m_frame; }
 
     void destroyJSWindowProxy(DOMWrapperWorld&);
 
@@ -63,10 +68,7 @@ public:
         return (it != m_jsWindowProxies.end()) ? it->value.get() : nullptr;
     }
 
-    JSDOMGlobalObject* globalObject(DOMWrapperWorld& world)
-    {
-        return jsWindowProxy(world).window();
-    }
+    WEBCORE_EXPORT JSDOMGlobalObject* globalObject(DOMWrapperWorld&);
 
     void clearJSWindowProxiesNotMatchingDOMWindow(AbstractDOMWindow*, bool goingIntoPageCache);
 

@@ -24,6 +24,7 @@
 #include "CommonVM.h"
 #include "Frame.h"
 #include "GCController.h"
+#include "JSWindowProxy.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
@@ -89,6 +90,11 @@ JSWindowProxy& WindowProxy::createJSWindowProxy(DOMWrapperWorld& world)
 Vector<JSC::Strong<JSWindowProxy>> WindowProxy::jsWindowProxiesAsVector() const
 {
     return copyToVector(m_jsWindowProxies.values());
+}
+
+JSDOMGlobalObject* WindowProxy::globalObject(DOMWrapperWorld& world)
+{
+    return jsWindowProxy(world).window();
 }
 
 JSWindowProxy& WindowProxy::createJSWindowProxyWithInitializedScript(DOMWrapperWorld& world)

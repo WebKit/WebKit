@@ -27,12 +27,12 @@
 
 #pragma once
 
-#include "DOMWindow.h"
 #include "Event.h"
 #include "JSValueInWrappedObject.h"
 #include "MessagePort.h"
 #include "SerializedScriptValue.h"
 #include "ServiceWorker.h"
+#include "WindowProxy.h"
 #include <wtf/Variant.h>
 
 namespace WebCore {
@@ -40,9 +40,9 @@ namespace WebCore {
 class Blob;
 
 #if ENABLE(SERVICE_WORKER)
-using MessageEventSource = Variant<RefPtr<DOMWindow>, RefPtr<MessagePort>, RefPtr<ServiceWorker>>;
+using MessageEventSource = Variant<RefPtr<WindowProxy>, RefPtr<MessagePort>, RefPtr<ServiceWorker>>;
 #else
-using MessageEventSource = Variant<RefPtr<DOMWindow>, RefPtr<MessagePort>>;
+using MessageEventSource = Variant<RefPtr<WindowProxy>, RefPtr<MessagePort>>;
 #endif
 
 class MessageEvent final : public Event {

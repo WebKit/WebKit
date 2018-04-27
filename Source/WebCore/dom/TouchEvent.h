@@ -41,12 +41,12 @@ public:
 
     static Ref<TouchEvent> create(TouchList* touches, 
             TouchList* targetTouches, TouchList* changedTouches, 
-            const AtomicString& type, DOMWindow* view,
+            const AtomicString& type, RefPtr<WindowProxy>&& view,
             int screenX, int screenY, int pageX, int pageY,
             bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
     {
         return adoptRef(*new TouchEvent(touches, targetTouches, changedTouches,
-                type, view, screenX, screenY, pageX, pageY,
+                type, WTFMove(view), screenX, screenY, pageX, pageY,
                 ctrlKey, altKey, shiftKey, metaKey));
     }
     static Ref<TouchEvent> createForBindings()
@@ -67,7 +67,7 @@ public:
 
     void initTouchEvent(TouchList* touches, TouchList* targetTouches,
             TouchList* changedTouches, const AtomicString& type, 
-            DOMWindow*, int screenX, int screenY,
+            RefPtr<WindowProxy>&&, int screenX, int screenY,
             int clientX, int clientY,
             bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
@@ -87,7 +87,7 @@ private:
     TouchEvent();
     TouchEvent(TouchList* touches, TouchList* targetTouches,
             TouchList* changedTouches, const AtomicString& type,
-            DOMWindow*, int screenX, int screenY, int pageX,
+            RefPtr<WindowProxy>&&, int screenX, int screenY, int pageX,
             int pageY,
             bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
     TouchEvent(const AtomicString&, const Init&, IsTrusted);

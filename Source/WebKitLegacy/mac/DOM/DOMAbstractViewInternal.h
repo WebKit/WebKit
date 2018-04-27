@@ -28,11 +28,14 @@
 namespace WebCore {
 class AbstractDOMWindow;
 class DOMWindow;
+class WindowProxy;
 }
 
 WebCore::DOMWindow* core(DOMAbstractView *);
 DOMAbstractView *kit(WebCore::DOMWindow*);
 DOMAbstractView *kit(WebCore::AbstractDOMWindow*);
+DOMAbstractView *kit(WebCore::WindowProxy*);
+WebCore::WindowProxy* toWindowProxy(DOMAbstractView *);
 
 @interface DOMAbstractView (WebKitLegacyInternal)
 - (void)_disconnectFrame;

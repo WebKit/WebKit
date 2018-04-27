@@ -231,15 +231,13 @@ void HTMLFrameSetElement::removedFromAncestor(RemovalType removalType, Container
     }
 }
 
-DOMWindow* HTMLFrameSetElement::namedItem(const AtomicString& name)
+WindowProxy* HTMLFrameSetElement::namedItem(const AtomicString& name)
 {
     auto frameElement = makeRefPtr(children()->namedItem(name));
     if (!is<HTMLFrameElement>(frameElement))
         return nullptr;
 
-    if (auto document = makeRefPtr(downcast<HTMLFrameElement>(frameElement.get())->contentDocument()))
-        return document->domWindow();
-    return nullptr;
+    return downcast<HTMLFrameElement>(*frameElement).contentWindow();
 }
 
 Vector<AtomicString> HTMLFrameSetElement::supportedPropertyNames() const

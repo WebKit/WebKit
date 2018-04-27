@@ -538,8 +538,7 @@ WebKitDOMDOMWindow* webkit_dom_html_iframe_element_get_content_window(WebKitDOMH
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_IFRAME_ELEMENT(self), 0);
     WebCore::HTMLIFrameElement* item = WebKit::core(self);
-    RefPtr<WebCore::DOMWindow> gobjectResult = WTF::getPtr(item->contentWindow());
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(item->contentWindow());
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

@@ -25,14 +25,14 @@
 
 #pragma once
 
-#include "DOMWindow.h"
 #include "EventInit.h"
+#include "WindowProxy.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 struct UIEventInit : public EventInit {
-    RefPtr<DOMWindow> view;
+    RefPtr<WindowProxy> view;
     int detail { 0 };
 };
 

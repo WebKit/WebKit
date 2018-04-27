@@ -43,7 +43,7 @@ public:
         DOM_KEY_LOCATION_NUMPAD = 0x03
     };
 
-    WEBCORE_EXPORT static Ref<KeyboardEvent> create(const PlatformKeyboardEvent&, DOMWindow*);
+    WEBCORE_EXPORT static Ref<KeyboardEvent> create(const PlatformKeyboardEvent&, RefPtr<WindowProxy>&&);
     static Ref<KeyboardEvent> createForBindings();
 
     struct Init : public EventModifierInit {
@@ -65,7 +65,7 @@ public:
 
     virtual ~KeyboardEvent();
     
-    WEBCORE_EXPORT void initKeyboardEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow*,
+    WEBCORE_EXPORT void initKeyboardEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&,
         const String& keyIdentifier, unsigned location,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey = false);
     
@@ -102,7 +102,7 @@ public:
 
 private:
     KeyboardEvent();
-    KeyboardEvent(const PlatformKeyboardEvent&, DOMWindow*);
+    KeyboardEvent(const PlatformKeyboardEvent&, RefPtr<WindowProxy>&&);
     KeyboardEvent(const AtomicString&, const Init&, IsTrusted);
 
     std::unique_ptr<PlatformKeyboardEvent> m_underlyingPlatformEvent;

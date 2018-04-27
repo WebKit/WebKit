@@ -113,7 +113,7 @@ typedef (
     [CEReactions, CallWith=ResponsibleDocument, MayThrowException] void writeln(DOMString... text);
 
     // User interaction.
-    readonly attribute DOMWindow? defaultView;
+    [ImplementedAs=windowProxy] readonly attribute WindowProxy? defaultView;
     boolean hasFocus();
     [CEReactions] attribute DOMString designMode;
     [CEReactions] boolean execCommand(DOMString commandId, optional boolean showUI = false, optional DOMString? value = null); // FIXME: value should not be nullable.

@@ -286,7 +286,7 @@ enum TestConfidence { "high", "kinda-low" };
     void    overloadedMethod(DOMStringList? listArg);
     void    overloadedMethod(sequence<DOMString>? arrayArg);
     void    overloadedMethod(TestObj objArg);
-    void    overloadedMethod(DOMWindow window);
+    void    overloadedMethod(WindowProxy window);
     void    overloadedMethod(sequence<DOMString> arrayArg);
     void    overloadedMethod(sequence<unsigned long> arrayArg);
     void    overloadedMethod(DOMString strArg);

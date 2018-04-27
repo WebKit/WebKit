@@ -2198,7 +2198,7 @@ bool EventHandler::dispatchDragEvent(const AtomicString& eventType, Element& dra
 
     view->disableLayerFlushThrottlingTemporarilyForInteraction();
     Ref<MouseEvent> me = MouseEvent::create(eventType,
-        true, true, event.timestamp().approximateMonotonicTime(), m_frame.document()->defaultView(),
+        true, true, event.timestamp().approximateMonotonicTime(), &m_frame.windowProxy(),
         0, event.globalPosition().x(), event.globalPosition().y(), event.position().x(), event.position().y(),
 #if ENABLE(POINTER_LOCK)
         event.movementDelta().x(), event.movementDelta().y(),
@@ -3248,7 +3248,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     PlatformKeyboardEvent keyDownEvent = initialKeyEvent;    
     if (keyDownEvent.type() != PlatformEvent::RawKeyDown)
         keyDownEvent.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown, backwardCompatibilityMode);
-    auto keydown = KeyboardEvent::create(keyDownEvent, m_frame.document()->defaultView());
+    auto keydown = KeyboardEvent::create(keyDownEvent, &m_frame.windowProxy());
     if (matchedAnAccessKey)
         keydown->preventDefault();
     keydown->setTarget(element);
@@ -3271,7 +3271,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     
     if (handledByInputMethod) {
         keyDownEvent.setWindowsVirtualKeyCode(CompositionEventKeyCode);
-        keydown = KeyboardEvent::create(keyDownEvent, m_frame.document()->defaultView());
+        keydown = KeyboardEvent::create(keyDownEvent, &m_frame.windowProxy());
         keydown->setTarget(element);
         keydown->setDefaultHandled();
     }
@@ -3301,7 +3301,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     keyPressEvent.disambiguateKeyDownEvent(PlatformEvent::Char, backwardCompatibilityMode);
     if (keyPressEvent.text().isEmpty())
         return keydownResult;
-    auto keypress = KeyboardEvent::create(keyPressEvent, m_frame.document()->defaultView());
+    auto keypress = KeyboardEvent::create(keyPressEvent, &m_frame.windowProxy());
     keypress->setTarget(element);
     if (keydownResult)
         keypress->preventDefault();
@@ -3802,7 +3802,7 @@ bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEve
     if (FrameView* view = m_frame.view())
         view->disableLayerFlushThrottlingTemporarilyForInteraction();
 
-    Ref<TextEvent> event = TextEvent::create(m_frame.document()->domWindow(), text, inputType);
+    auto event = TextEvent::create(&m_frame.windowProxy(), text, inputType);
     event->setUnderlyingEvent(underlyingEvent);
 
     target->dispatchEvent(event);
@@ -4211,7 +4211,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 
             Ref<TouchEvent> touchEvent =
                 TouchEvent::create(effectiveTouches.get(), targetTouches.get(), changedTouches[state].m_touches.get(),
-                    stateName, downcast<Node>(*target).document().defaultView(),
+                    stateName, downcast<Node>(*target).document().windowProxy(),
                     0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey());
             target->dispatchEvent(touchEvent);
             swallowedEvent = swallowedEvent || touchEvent->defaultPrevented() || touchEvent->defaultHandled();

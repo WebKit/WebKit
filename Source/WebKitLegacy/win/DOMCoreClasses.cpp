@@ -802,7 +802,7 @@ HRESULT DOMDocument::getComputedStyle(_In_opt_ IDOMElement* elt, _In_ BSTR pseud
     if (!element)
         return E_FAIL;
 
-    WebCore::DOMWindow* dv = m_document->defaultView();
+    auto* dv = m_document->domWindow();
     String pseudoEltString(pseudoElt);
     
     if (!dv)

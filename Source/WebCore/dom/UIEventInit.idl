@@ -24,6 +24,6 @@
  */
 
 dictionary UIEventInit : EventInit {
-    DOMWindow? view = null;
+    WindowProxy? view = null;
     long detail = 0;
 };
