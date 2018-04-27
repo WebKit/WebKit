@@ -422,7 +422,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
         itemText = downcast<HTMLOptGroupElement>(*listItemElement).groupLabelText();
     itemText = applyTextTransform(style(), itemText, ' ');
 
-    Color textColor = itemStyle.visitedDependentColor(CSSPropertyColor);
+    Color textColor = itemStyle.visitedDependentColorWithColorFilter(CSSPropertyColor);
     if (isOptionElement && downcast<HTMLOptionElement>(*listItemElement).selected()) {
         if (frame().selection().isFocusedAndActive() && document().focusedElement() == &selectElement())
             textColor = theme().activeListBoxSelectionForegroundColor();
@@ -462,7 +462,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
         else
             backColor = theme().inactiveListBoxSelectionBackgroundColor(document().useSystemAppearance());
     } else
-        backColor = itemStyle.visitedDependentColor(CSSPropertyBackgroundColor);
+        backColor = itemStyle.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
 
     // Draw the background for this list box item
     if (itemStyle.visibility() == HIDDEN)

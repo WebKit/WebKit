@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: color-filter affects the color of a list item bullet</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="color-filter-color-property-list-item-expected.html">
+
+        <meta name="assert" content="color-filter affects the color of a list item bullet">
+        <style type="text/css">
+            div.test
+            {
+				font: 200px Ahem;
+				color: rgb(255, 128, 255);
+				color-filter: invert();
+            }
+			ul {
+				margin: 0;
+			}
+			li {
+				margin-left: 100px;
+			}
+        </style>
+		<script>
+			if (window.internals)
+			    internals.settings.setColorFilterEnabled(true);
+		</script>
+    </head>
+    <body>
+        <p>Test passes if there is a green circle.</p>
+        <div class="test">
+			<ul>
+				<li></li>
+			</ul>
+		</div>
+    </body>
+</html>

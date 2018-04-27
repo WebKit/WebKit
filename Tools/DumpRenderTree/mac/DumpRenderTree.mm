@@ -861,6 +861,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     preferences.encryptedMediaAPIEnabled = YES;
     [preferences setAccessibilityObjectModelEnabled:YES];
     [preferences setVisualViewportAPIEnabled:YES];
+    [preferences setColorFilterEnabled:YES];
 }
 
 // Called before each test.

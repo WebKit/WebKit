@@ -50,13 +50,13 @@ void BorderEdge::getBorderEdgeInfo(BorderEdge edges[], const RenderStyle& style,
 {
     bool horizontal = style.isHorizontalWritingMode();
 
-    edges[BSTop] = BorderEdge(style.borderTopWidth(), style.visitedDependentColor(CSSPropertyBorderTopColor), style.borderTopStyle(), style.borderTopIsTransparent(),
+    edges[BSTop] = BorderEdge(style.borderTopWidth(), style.visitedDependentColorWithColorFilter(CSSPropertyBorderTopColor), style.borderTopStyle(), style.borderTopIsTransparent(),
         horizontal || includeLogicalLeftEdge, deviceScaleFactor);
-    edges[BSRight] = BorderEdge(style.borderRightWidth(), style.visitedDependentColor(CSSPropertyBorderRightColor), style.borderRightStyle(), style.borderRightIsTransparent(),
+    edges[BSRight] = BorderEdge(style.borderRightWidth(), style.visitedDependentColorWithColorFilter(CSSPropertyBorderRightColor), style.borderRightStyle(), style.borderRightIsTransparent(),
         !horizontal || includeLogicalRightEdge, deviceScaleFactor);
-    edges[BSBottom] = BorderEdge(style.borderBottomWidth(), style.visitedDependentColor(CSSPropertyBorderBottomColor), style.borderBottomStyle(), style.borderBottomIsTransparent(),
+    edges[BSBottom] = BorderEdge(style.borderBottomWidth(), style.visitedDependentColorWithColorFilter(CSSPropertyBorderBottomColor), style.borderBottomStyle(), style.borderBottomIsTransparent(),
         horizontal || includeLogicalRightEdge, deviceScaleFactor);
-    edges[BSLeft] = BorderEdge(style.borderLeftWidth(), style.visitedDependentColor(CSSPropertyBorderLeftColor), style.borderLeftStyle(), style.borderLeftIsTransparent(),
+    edges[BSLeft] = BorderEdge(style.borderLeftWidth(), style.visitedDependentColorWithColorFilter(CSSPropertyBorderLeftColor), style.borderLeftStyle(), style.borderLeftIsTransparent(),
         !horizontal || includeLogicalLeftEdge, deviceScaleFactor);
     }
 

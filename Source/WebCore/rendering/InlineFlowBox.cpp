@@ -1360,7 +1360,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
     if (!renderer().boxShadowShouldBeAppliedToBackground(adjustedPaintoffset, BackgroundBleedNone, this))
         paintBoxShadow(paintInfo, lineStyle, Normal, paintRect);
 
-    const Color& color = lineStyle.visitedDependentColor(CSSPropertyBackgroundColor);
+    const Color& color = lineStyle.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
     paintFillLayers(paintInfo, color, lineStyle.backgroundLayers(), paintRect);
     paintBoxShadow(paintInfo, lineStyle, Inset, paintRect);
 

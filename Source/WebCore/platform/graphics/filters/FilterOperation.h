@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FilterOperation_h
-#define FilterOperation_h
+#pragma once
 
 #include "Color.h"
 #include "LayoutSize.h"
@@ -45,6 +44,7 @@ namespace WebCore {
 class CachedResourceLoader;
 class CachedSVGDocumentReference;
 class FilterEffect;
+struct FloatComponents;
 struct ResourceLoaderOptions;
 
 class FilterOperation : public RefCounted<FilterOperation> {
@@ -77,6 +77,8 @@ public:
     {
         return nullptr;
     }
+    
+    virtual bool transformColor(FloatComponents&) const { return false; }
 
     OperationType type() const { return m_type; }
 
@@ -228,6 +230,8 @@ private:
     {
     }
 
+    bool transformColor(FloatComponents&) const override;
+
     double m_amount;
 };
 
@@ -260,6 +264,8 @@ private:
         , m_amount(amount)
     {
     }
+
+    bool transformColor(FloatComponents&) const override;
 
     double m_amount;
 };
@@ -351,4 +357,3 @@ SPECIALIZE_TYPE_TRAITS_FILTEROPERATION(BasicComponentTransferFilterOperation, is
 SPECIALIZE_TYPE_TRAITS_FILTEROPERATION(BlurFilterOperation, type() == WebCore::FilterOperation::BLUR)
 SPECIALIZE_TYPE_TRAITS_FILTEROPERATION(DropShadowFilterOperation, type() == WebCore::FilterOperation::DROP_SHADOW)
 
-#endif // FilterOperation_h

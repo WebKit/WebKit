@@ -359,7 +359,7 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
 static Color decorationColor(const RenderStyle& style)
 {
     // Check for text decoration color first.
-    Color result = style.visitedDependentColor(CSSPropertyWebkitTextDecorationColor);
+    Color result = style.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextDecorationColor);
     if (result.isValid())
         return result;
     if (style.hasPositiveStrokeWidth()) {
@@ -369,7 +369,7 @@ static Color decorationColor(const RenderStyle& style)
             return result;
     }
     
-    return style.visitedDependentColor(CSSPropertyWebkitTextFillColor);
+    return style.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor);
 }
 
 static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, OptionSet<TextDecoration> remainingDecorations, bool firstLineStyle, PseudoId pseudoId)

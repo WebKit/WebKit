@@ -3065,6 +3065,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setViewportFitEnabled([preferences viewportFitEnabled]);
     settings.setConstantPropertiesEnabled([preferences constantPropertiesEnabled]);
+    settings.setColorFilterEnabled([preferences colorFilterEnabled]);
 
 #if ENABLE(GAMEPAD)
     RuntimeEnabledFeatures::sharedFeatures().setGamepadsEnabled([preferences gamepadsEnabled]);
@@ -9921,8 +9922,9 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const RenderStyle* style)
                 } else
                     [_private->_textTouchBarItemController setTextIsUnderlined:(style->textDecorationsInEffect() & TextDecorationUnderline)];
 
-                if (style->visitedDependentColor(CSSPropertyColor).isValid())
-                    [_private->_textTouchBarItemController setTextColor:nsColor(style->visitedDependentColor(CSSPropertyColor))];
+                Color textColor = style->visitedDependentColor(CSSPropertyColor);
+                if (textColor.isValid())
+                    [_private->_textTouchBarItemController setTextColor:nsColor(textColor)];
 
                 [_private->_textTouchBarItemController setCurrentTextAlignment:nsTextAlignmentFromRenderStyle(style)];
 

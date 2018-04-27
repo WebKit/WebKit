@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: color-filter affects the color of text</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="color-filter-color-property-expected.html">
+
+        <meta name="assert" content="color-filter affects the color of text">
+        <style type="text/css">
+            div.test
+            {
+				font: 40px Ahem;
+				color: rgb(255, 128, 255);
+				color-filter: invert();
+            }
+        </style>
+		<script>
+			if (window.internals)
+			    internals.settings.setColorFilterEnabled(true);
+		</script>
+    </head>
+    <body>
+        <p>Test passes if there is a green square.</p>
+        <div class="test">A</div>
+    </body>
+</html>

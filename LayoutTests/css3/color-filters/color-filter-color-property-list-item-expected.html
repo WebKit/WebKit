@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: color-filter reference</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+
+        <meta name="assert" content="color-filter affects the color of text">
+        <style type="text/css">
+            div.test
+            {
+				font: 200px Ahem;
+				color: green
+            }
+			ul {
+				margin: 0;
+			}
+			li {
+				margin-left: 100px;
+			}
+        </style>
+		<script>
+			if (window.internals)
+			    internals.settings.setColorFilterEnabled(true);
+		</script>
+    </head>
+    <body>
+        <p>Test passes if there is a green circle.</p>
+        <div class="test">
+			<ul>
+				<li></li>
+			</ul>
+		</div>
+    </body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: color-filter reference</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+
+        <style type="text/css">
+            .test
+            {
+				width: 200px;
+				height: 200px;
+				background-color: green;
+				margin: 10px;
+				float: left;
+            }
+			
+			.test > div {
+				width: 100px;
+				height: 100px;
+				margin: 50px;
+				background-color: blue;
+			}
+        </style>
+    </head>
+    <body>
+        <div class="test">
+			<div></div>
+		</div>
+        <div class="test">
+			<div></div>
+		</div>
+        <div class="test">
+			<div></div>
+		</div>
+        <div class="test" style="background-color: rgba(0, 128, 0, 0.50196)">
+			<div style="background-color: rgba(0, 0, 255, 0.5)"></div>
+		</div>
+        <div class="test" style="background-color: transparent">
+			<div style="background-color: transparent"></div>
+		</div>
+        <div class="test">
+			<div></div>
+		</div>
+    </body>
+</html>

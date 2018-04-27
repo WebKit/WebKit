@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: contrast color-filter</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="color-filter-contrast-expected.html">
+
+        <meta name="assert" content="contrast color-filter">
+        <style type="text/css">
+            .test
+            {
+				width: 100px;
+				height: 100px;
+				background-color: blue;
+				border: 50px solid green;
+				margin: 10px;
+				float: left;
+            }
+        </style>
+		<script>
+			if (window.internals)
+			    internals.settings.setColorFilterEnabled(true);
+		</script>
+    </head>
+    <body>
+        <div class="test" style="color-filter: contrast()"></div>
+        <div class="test" style="color-filter: contrast(2)"></div>
+        <div class="test" style="color-filter: contrast(1)"></div>
+        <div class="test" style="color-filter: contrast(0.5)"></div>
+        <div class="test" style="color-filter: contrast(0)"></div>
+        <div class="test" style="color-filter: contrast(-0.5)"></div>
+    </body>
+</html>

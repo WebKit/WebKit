@@ -1,3 +1,18 @@
+2018-04-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement rendering support for the color-filter CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=185047
+        rdar://problem/39664967
+
+        Reviewed by Tim Horton.
+        
+        The body background should reflect the filtered color.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _bodyBackgroundColor]):
+        * WebView/WebView.mm:
+        (-[WebView updateTextTouchBar]): No logic change, just cleanup.
+
 2018-04-26  Jer Noble  <jer.noble@apple.com>
 
         WK_COCOA_TOUCH all the things.

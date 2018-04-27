@@ -1221,7 +1221,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         context.fillRect(snappedIntRect(selRect), m_listItem.selectionBackgroundColor());
     }
 
-    const Color color(style().visitedDependentColor(CSSPropertyColor));
+    const Color color(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
     context.setStrokeColor(color);
     context.setStrokeStyle(SolidStroke);
     context.setStrokeThickness(1.0f);

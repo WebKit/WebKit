@@ -289,7 +289,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 
     info.context().setStrokeThickness(ruleThickness);
     info.context().setStrokeStyle(SolidStroke);
-    info.context().setStrokeColor(style().visitedDependentColor(CSSPropertyColor));
+    info.context().setStrokeColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
     LayoutPoint ruleOffsetFrom = paintOffset + location() + LayoutPoint(0, m_radicalOperatorTop + ruleThickness / 2);
     LayoutPoint ruleOffsetTo = ruleOffsetFrom;
     horizontalOffset += m_radicalOperator.width();

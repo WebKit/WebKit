@@ -1414,6 +1414,10 @@ public:
     void setLastChildState() { setUnique(); m_nonInheritedFlags.lastChildState = true; }
 
     WEBCORE_EXPORT Color visitedDependentColor(CSSPropertyID) const;
+    WEBCORE_EXPORT Color visitedDependentColorWithColorFilter(CSSPropertyID) const;
+
+    WEBCORE_EXPORT Color colorByApplyingColorFilter(const Color&) const;
+
     bool backgroundColorEqualsToColorIgnoringVisited(const Color& color) const { return color == backgroundColor(); }
 
     void setHasExplicitlyInheritedProperties() { m_nonInheritedFlags.hasExplicitlyInheritedProperties = true; }

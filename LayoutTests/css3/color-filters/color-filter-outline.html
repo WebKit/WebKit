@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: color-filter affects outline color</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="color-filter-outline-expected.html">
+
+        <meta name="assert" content="color-filter affects outline color">
+        <style type="text/css">
+            .test
+            {
+				width: 200px;
+				height: 200px;
+				margin: 50px;
+				background-color: rgb(255, 128, 255);
+				outline: 20px solid yellow;
+				color-filter: invert();
+            }
+        </style>
+		<script>
+			if (window.internals)
+			    internals.settings.setColorFilterEnabled(true);
+		</script>
+    </head>
+    <body>
+        <p>Test passes if there is a green square with a blue outline.</p>
+        <div class="test"></div>
+    </body>
+</html>

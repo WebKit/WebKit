@@ -155,5 +155,22 @@ float sRGBToLinearColorComponent(float);
 Color linearToSRGBColor(const Color&);
 Color sRGBToLinearColor(const Color&);
 
+class ColorMatrix {
+public:
+    static ColorMatrix grayscaleMatrix(float);
+    static ColorMatrix saturationMatrix(float);
+    static ColorMatrix hueRotateMatrix(float angleInDegrees);
+    static ColorMatrix sepiaMatrix(float);
+
+    ColorMatrix();
+    
+    void transformColorComponents(FloatComponents&) const;
+
+private:
+    void makeIdentity();
+
+    float m_matrix[4][5];
+};
+
 } // namespace WebCore
 

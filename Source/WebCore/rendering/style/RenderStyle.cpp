@@ -1846,6 +1846,21 @@ Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty) const
     return visitedColor.colorWithAlpha(unvisitedColor.alphaAsFloat());
 }
 
+Color RenderStyle::visitedDependentColorWithColorFilter(CSSPropertyID colorProperty) const
+{
+    if (!hasColorFilter())
+        return visitedDependentColor(colorProperty);
+
+    return colorByApplyingColorFilter(visitedDependentColor(colorProperty));
+}
+
+Color RenderStyle::colorByApplyingColorFilter(const Color& color) const
+{
+    Color transformedColor = color;
+    colorFilter().transformColor(transformedColor);
+    return transformedColor;
+}
+
 const BorderValue& RenderStyle::borderBefore() const
 {
     switch (writingMode()) {

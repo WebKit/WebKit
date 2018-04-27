@@ -602,7 +602,7 @@ void RenderMathMLToken::paint(PaintInfo& info, const LayoutPoint& paintOffset)
         return;
 
     GraphicsContextStateSaver stateSaver(info.context());
-    info.context().setFillColor(style().visitedDependentColor(CSSPropertyColor));
+    info.context().setFillColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
 
     GlyphBuffer buffer;
     buffer.add(mathVariantGlyph.glyph, mathVariantGlyph.font, mathVariantGlyph.font->widthForGlyph(mathVariantGlyph.glyph));

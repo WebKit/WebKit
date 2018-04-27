@@ -29,6 +29,7 @@
 #include "AnimationUtilities.h"
 #include "CachedResourceLoader.h"
 #include "CachedSVGDocumentReference.h"
+#include "ColorUtilities.h"
 #include "FilterEffect.h"
 #include "SVGURIReference.h"
 #include <wtf/text/TextStream.h>
@@ -88,6 +89,37 @@ RefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterOpera
     return BasicColorMatrixFilterOperation::create(WebCore::blend(fromAmount, m_amount, progress), m_type);
 }
 
+bool BasicColorMatrixFilterOperation::transformColor(FloatComponents& colorComponents) const
+{
+    switch (m_type) {
+    case GRAYSCALE: {
+        ColorMatrix matrix = ColorMatrix::grayscaleMatrix(m_amount);
+        matrix.transformColorComponents(colorComponents);
+        return true;
+    }
+    case SEPIA: {
+        ColorMatrix matrix = ColorMatrix::sepiaMatrix(m_amount);
+        matrix.transformColorComponents(colorComponents);
+        return true;
+    }
+    case HUE_ROTATE: {
+        ColorMatrix matrix = ColorMatrix::hueRotateMatrix(m_amount);
+        matrix.transformColorComponents(colorComponents);
+        return true;
+    }
+    case SATURATE: {
+        ColorMatrix matrix = ColorMatrix::saturationMatrix(m_amount);
+        matrix.transformColorComponents(colorComponents);
+        return true;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    return false;
+}
+
 inline bool BasicColorMatrixFilterOperation::operator==(const FilterOperation& operation) const
 {
     if (!isSameType(operation))
@@ -122,6 +154,38 @@ RefPtr<FilterOperation> BasicComponentTransferFilterOperation::blend(const Filte
     const BasicComponentTransferFilterOperation* fromOperation = downcast<BasicComponentTransferFilterOperation>(from);
     double fromAmount = fromOperation ? fromOperation->amount() : passthroughAmount();
     return BasicComponentTransferFilterOperation::create(WebCore::blend(fromAmount, m_amount, progress), m_type);
+}
+
+bool BasicComponentTransferFilterOperation::transformColor(FloatComponents& colorComponents) const
+{
+    switch (m_type) {
+    case OPACITY:
+        colorComponents.components[3] *= m_amount;
+        return true;
+    case INVERT: {
+        float oneMinusAmount = 1.f - m_amount;
+        colorComponents.components[0] = 1 - (oneMinusAmount + colorComponents.components[0] * (m_amount - oneMinusAmount));
+        colorComponents.components[1] = 1 - (oneMinusAmount + colorComponents.components[1] * (m_amount - oneMinusAmount));
+        colorComponents.components[2] = 1 - (oneMinusAmount + colorComponents.components[2] * (m_amount - oneMinusAmount));
+        return true;
+    }
+    case CONTRAST: {
+        float intercept = -(0.5f * m_amount) + 0.5f;
+        colorComponents.components[0] = clampTo<float>(intercept + m_amount * colorComponents.components[0], 0, 1);
+        colorComponents.components[1] = clampTo<float>(intercept + m_amount * colorComponents.components[1], 0, 1);
+        colorComponents.components[2] = clampTo<float>(intercept + m_amount * colorComponents.components[2], 0, 1);
+        return true;
+    }
+    case BRIGHTNESS:
+        colorComponents.components[0] = std::max<float>(m_amount * colorComponents.components[0], 0);
+        colorComponents.components[1] = std::max<float>(m_amount * colorComponents.components[1], 0);
+        colorComponents.components[2] = std::max<float>(m_amount * colorComponents.components[2], 0);
+        return true;
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    return false;
 }
 
 inline bool BasicComponentTransferFilterOperation::operator==(const FilterOperation& operation) const

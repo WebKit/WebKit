@@ -1,3 +1,153 @@
+2018-04-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement rendering support for the color-filter CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=185047
+        rdar://problem/39664967
+
+        Reviewed by Tim Horton.
+        
+        The color-filter property transforms CSS colors just before painting. To support this,
+        add to RenderStyle colorByApplyingColorFilter() and visitedDependentColorWithColorFilter().
+        At most calls sites that transform colors for rendering, replace calls to
+        visitedDependentColor() with visitedDependentColorWithColorFilter(). The few locations
+        that don't use visitedDependentColor() (e.g. for shadows) call colorByApplyingColorFilter().
+        
+        Color transformation is implemented via a new virtual function on FilterOperation;
+        BasicColorMatrixFilterOperation overrides this to use a new ColorMatrix class to
+        do color math, and BasicComponentTransferFilterOperation to do the equivalent of component
+        transfer operations. The math in both cases matches that for SVG filters, with the exception
+        that color components are stored as floats through multiple filters and then mapped to
+        normal 0-255 color components at the end.
+
+        Tests: css3/color-filters/color-filter-backgrounds-borders.html
+               css3/color-filters/color-filter-box-shadow.html
+               css3/color-filters/color-filter-brightness.html
+               css3/color-filters/color-filter-color-property-list-item.html
+               css3/color-filters/color-filter-color-property.html
+               css3/color-filters/color-filter-color-text-decorations.html
+               css3/color-filters/color-filter-column-rule.html
+               css3/color-filters/color-filter-contrast.html
+               css3/color-filters/color-filter-current-color.html
+               css3/color-filters/color-filter-filter-list.html
+               css3/color-filters/color-filter-grayscale.html
+               css3/color-filters/color-filter-hue-rotate.html
+               css3/color-filters/color-filter-inherits.html
+               css3/color-filters/color-filter-invert.html
+               css3/color-filters/color-filter-opacity.html
+               css3/color-filters/color-filter-outline.html
+               css3/color-filters/color-filter-saturate.html
+               css3/color-filters/color-filter-sepia.html
+               css3/color-filters/color-filter-text-emphasis.html
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::adjustInnerTextStyle const):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::documentBackgroundColor const):
+        * platform/graphics/ColorUtilities.cpp:
+        (WebCore::ColorMatrix::ColorMatrix):
+        (WebCore::ColorMatrix::makeIdentity):
+        (WebCore::ColorMatrix::grayscaleMatrix):
+        (WebCore::ColorMatrix::saturationMatrix):
+        (WebCore::ColorMatrix::hueRotateMatrix):
+        (WebCore::ColorMatrix::sepiaMatrix):
+        (WebCore::ColorMatrix::transformColorComponents const):
+        * platform/graphics/ColorUtilities.h:
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::BasicColorMatrixFilterOperation::transformColor const):
+        (WebCore::BasicComponentTransferFilterOperation::transformColor const):
+        * platform/graphics/filters/FilterOperation.h:
+        (WebCore::FilterOperation::transformColor const):
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::transformColor const):
+        * platform/graphics/filters/FilterOperations.h:
+        * rendering/BorderEdge.cpp:
+        (WebCore::BorderEdge::getBorderEdgeInfo):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        (WebCore::EllipsisBox::paintSelection):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintMarkedTextForeground):
+        (WebCore::InlineTextBox::paintMarkedTextDecoration):
+        (WebCore::InlineTextBox::paintCompositionUnderline const):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintRootBoxFillLayers):
+        (WebCore::RenderBox::paintBackground):
+        (WebCore::RenderBox::getBackgroundPaintedExtent const):
+        (WebCore::RenderBox::backgroundIsKnownToBeOpaqueInRect const):
+        (WebCore::RenderBox::backgroundHasOpaqueTopLayer const):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::applyBoxShadowForBackground):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::boxShadowShouldBeAppliedToBackground const):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderDetailsMarker.cpp:
+        (WebCore::RenderDetailsMarker::paint):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::selectionColor const):
+        (WebCore::RenderElement::selectionBackgroundColor const):
+        (WebCore::RenderElement::paintFocusRing):
+        (WebCore::RenderElement::paintOutline):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::paintColumnBorder):
+        (WebCore::RenderFrameSet::paintRowBorder):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paintAreaElementFocusRing):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutline):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::canDirectlyCompositeBackgroundBackgroundImage):
+        (WebCore::RenderLayerBacking::rendererBackgroundColor const):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::rootOrBodyStyleChanged):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::itemStyle const):
+        (RenderMenuList::getItemBackgroundColor const):
+        (RenderMenuList::menuStyle const):
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::paintColumnRules):
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::menuStyle const):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::bgColor const):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeCollapsedStartBorder const):
+        (WebCore::RenderTableCell::computeCollapsedEndBorder const):
+        (WebCore::RenderTableCell::computeCollapsedBeforeBorder const):
+        (WebCore::RenderTableCell::computeCollapsedAfterBorder const):
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paintRowGroupBorder):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paintSliderTicks):
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::decorationColor):
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::computeTextPaintStyle):
+        * rendering/mathml/MathOperator.cpp:
+        (WebCore::MathOperator::paint):
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::paint):
+        * rendering/mathml/RenderMathMLMenclose.cpp:
+        (WebCore::RenderMathMLMenclose::paint):
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::paint):
+        * rendering/mathml/RenderMathMLToken.cpp:
+        (WebCore::RenderMathMLToken::paint):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::visitedDependentColorWithColorFilter const):
+        (WebCore::RenderStyle::colorByApplyingColorFilter const):
+        * rendering/style/RenderStyle.h:
+
 2018-04-26  Mark Lam  <mark.lam@apple.com>
 
         Gardening: Speculative build fix for Windows.

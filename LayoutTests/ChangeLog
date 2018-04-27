@@ -1,3 +1,52 @@
+2018-04-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement rendering support for the color-filter CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=185047
+        rdar://problem/39664967
+
+        Reviewed by Tim Horton.
+        
+        Tests for color-filter rendering.
+
+        * css3/color-filters/color-filter-backgrounds-borders-expected.html: Added.
+        * css3/color-filters/color-filter-backgrounds-borders.html: Added.
+        * css3/color-filters/color-filter-box-shadow-expected.html: Added.
+        * css3/color-filters/color-filter-box-shadow.html: Added.
+        * css3/color-filters/color-filter-brightness-expected.html: Added.
+        * css3/color-filters/color-filter-brightness.html: Added.
+        * css3/color-filters/color-filter-color-property-expected.html: Added.
+        * css3/color-filters/color-filter-color-property-list-item-expected.html: Added.
+        * css3/color-filters/color-filter-color-property-list-item.html: Added.
+        * css3/color-filters/color-filter-color-property.html: Added.
+        * css3/color-filters/color-filter-color-text-decorations-expected.html: Added.
+        * css3/color-filters/color-filter-color-text-decorations.html: Added.
+        * css3/color-filters/color-filter-column-rule-expected.html: Added.
+        * css3/color-filters/color-filter-column-rule.html: Added.
+        * css3/color-filters/color-filter-contrast-expected.html: Added.
+        * css3/color-filters/color-filter-contrast.html: Added.
+        * css3/color-filters/color-filter-current-color-expected.html: Added.
+        * css3/color-filters/color-filter-current-color.html: Added.
+        * css3/color-filters/color-filter-filter-list-expected.html: Added.
+        * css3/color-filters/color-filter-filter-list.html: Added.
+        * css3/color-filters/color-filter-grayscale-expected.html: Added.
+        * css3/color-filters/color-filter-grayscale.html: Added.
+        * css3/color-filters/color-filter-hue-rotate-expected.html: Added.
+        * css3/color-filters/color-filter-hue-rotate.html: Added.
+        * css3/color-filters/color-filter-inherits-expected.html: Added.
+        * css3/color-filters/color-filter-inherits.html: Added.
+        * css3/color-filters/color-filter-invert-expected.html: Added.
+        * css3/color-filters/color-filter-invert.html: Added.
+        * css3/color-filters/color-filter-opacity-expected.html: Added.
+        * css3/color-filters/color-filter-opacity.html: Added.
+        * css3/color-filters/color-filter-outline-expected.html: Added.
+        * css3/color-filters/color-filter-outline.html: Added.
+        * css3/color-filters/color-filter-saturate-expected.html: Added.
+        * css3/color-filters/color-filter-saturate.html: Added.
+        * css3/color-filters/color-filter-sepia-expected.html: Added.
+        * css3/color-filters/color-filter-sepia.html: Added.
+        * css3/color-filters/color-filter-text-emphasis-expected.html: Added.
+        * css3/color-filters/color-filter-text-emphasis.html: Added.
+
 2018-04-26  Brent Fulgham  <bfulgham@apple.com>
 
         Show punycode if URL contains Latin small letter o with dot below character

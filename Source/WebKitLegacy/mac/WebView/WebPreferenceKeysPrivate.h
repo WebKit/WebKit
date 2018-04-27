@@ -193,6 +193,7 @@
 #define WebKitIsSecureContextAttributeEnabledPreferenceKey @"WebKitIsSecureContextAttributeEnabled"
 #define WebKitViewportFitEnabledPreferenceKey @"WebKitViewportFitEnabled"
 #define WebKitConstantPropertiesEnabledPreferenceKey @"WebKitConstantPropertiesEnabled"
+#define WebKitColorFilterEnabledPreferenceKey @"WebKitColorFilterEnabled"
 #define WebKitFetchAPIKeepAliveEnabledPreferenceKey @"WebKitFetchAPIKeepAliveEnabled"
 #define WebKitCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabledPreferenceKey @"WebKitCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled"
 

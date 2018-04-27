@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: color-filter affects column-rule color</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="color-filter-column-rule-expected.html">
+
+        <meta name="assert" content="color-filter affects column-rule color">
+        <style type="text/css">
+            .test
+            {
+				font: 100px Ahem;
+				color: black;
+				width: 200px;
+				height: 200px;
+				columns: 2;
+				column-rule-width: 100px;
+				column-rule-color: rgb(255, 128, 255);
+				column-rule-style: solid;
+				color-filter: invert();
+            }
+        </style>
+		<script>
+			if (window.internals)
+			    internals.settings.setColorFilterEnabled(true);
+		</script>
+    </head>
+    <body>
+        <p>Test passes if there is a vertical green bar below.</p>
+        <div class="test">A A</div>
+    </body>
+</html>

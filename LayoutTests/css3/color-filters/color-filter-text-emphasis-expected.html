@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: color-filter reference</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+
+        <style type="text/css">
+            .test
+            {
+				font: 120px Ahem;
+				color: green;
+				margin: 10px;
+            }
+
+			.over
+			{
+				-webkit-text-emphasis: "m";
+				-webkit-text-emphasis-position: over;
+			}
+			
+			.under
+			{
+				-webkit-text-emphasis: "m";
+				-webkit-text-emphasis-position: under;
+			}
+        </style>
+    </head>
+    <body>
+        <p>Test passes if there are two shapes which are entirely green.</p>
+        <div class="test over">A</div>
+        <div class="test under">A</div>
+    </body>
+</html>

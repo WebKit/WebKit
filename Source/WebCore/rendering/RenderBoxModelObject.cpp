@@ -703,17 +703,17 @@ RoundedRect RenderBoxModelObject::backgroundRoundedRectAdjustedForBleedAvoidance
     return getBackgroundRoundedRect(borderRect, box, boxSize.width(), boxSize.height(), includeLogicalLeftEdge, includeLogicalRightEdge);
 }
 
-static void applyBoxShadowForBackground(GraphicsContext& context, const RenderStyle* style)
+static void applyBoxShadowForBackground(GraphicsContext& context, const RenderStyle& style)
 {
-    const ShadowData* boxShadow = style->boxShadow();
+    const ShadowData* boxShadow = style.boxShadow();
     while (boxShadow->style() != Normal)
         boxShadow = boxShadow->next();
 
     FloatSize shadowOffset(boxShadow->x(), boxShadow->y());
     if (!boxShadow->isWebkitBoxShadow())
-        context.setShadow(shadowOffset, boxShadow->radius(), boxShadow->color());
+        context.setShadow(shadowOffset, boxShadow->radius(), style.colorByApplyingColorFilter(boxShadow->color()));
     else
-        context.setLegacyShadow(shadowOffset, boxShadow->radius(), boxShadow->color());
+        context.setLegacyShadow(shadowOffset, boxShadow->radius(), style.colorByApplyingColorFilter(boxShadow->color()));
 }
 
 InterpolationQuality RenderBoxModelObject::chooseInterpolationQuality(GraphicsContext& context, Image& image, const void* layer, const LayoutSize& size)
@@ -797,7 +797,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         bool boxShadowShouldBeAppliedToBackground = this->boxShadowShouldBeAppliedToBackground(rect.location(), bleedAvoidance, box);
         GraphicsContextStateSaver shadowStateSaver(context, boxShadowShouldBeAppliedToBackground);
         if (boxShadowShouldBeAppliedToBackground)
-            applyBoxShadowForBackground(context, &style());
+            applyBoxShadowForBackground(context, style());
 
         if (hasRoundedBorder && bleedAvoidance != BackgroundBleedUseTransparencyLayer) {
             FloatRoundedRect pixelSnappedBorder = backgroundRoundedRectAdjustedForBleedAvoidance(context, rect, bleedAvoidance, box, boxSize,
@@ -932,7 +932,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 
             GraphicsContextStateSaver shadowStateSaver(context, boxShadowShouldBeAppliedToBackground);
             if (boxShadowShouldBeAppliedToBackground)
-                applyBoxShadowForBackground(context, &style());
+                applyBoxShadowForBackground(context, style());
 
             FloatRect backgroundRectForPainting = snapRectToDevicePixels(backgroundRect, deviceScaleFactor);
             if (baseColor.isVisible()) {
@@ -2297,7 +2297,7 @@ bool RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(const LayoutPoin
     if (!hasOneNormalBoxShadow)
         return false;
 
-    Color backgroundColor = style().visitedDependentColor(CSSPropertyBackgroundColor);
+    Color backgroundColor = style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
     if (!backgroundColor.isOpaque())
         return false;
 
@@ -2348,7 +2348,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
     bool isHorizontal = style.isHorizontalWritingMode();
     float deviceScaleFactor = document().deviceScaleFactor();
 
-    bool hasOpaqueBackground = style.visitedDependentColor(CSSPropertyBackgroundColor).isOpaque();
+    bool hasOpaqueBackground = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor).isOpaque();
     for (const ShadowData* shadow = style.boxShadow(); shadow; shadow = shadow->next()) {
         if (shadow->style() != shadowStyle)
             continue;
@@ -2363,7 +2363,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
         if (shadowOffset.isZero() && !shadowRadius && !shadowSpread)
             continue;
         
-        const Color& shadowColor = shadow->color();
+        Color shadowColor = style.colorByApplyingColorFilter(shadow->color());
 
         if (shadow->style() == Normal) {
             RoundedRect fillRect = border;

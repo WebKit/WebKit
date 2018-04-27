@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: color-filter affects the color of text</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="color-filter-color-text-decorations-expected.html">
+
+        <meta name="assert" content="color-filter affects the color of text decorations">
+        <style type="text/css">
+            div.test
+            {
+				font: 140px sans-serif;
+				color: rgb(255, 128, 255);
+				-webkit-text-decoration: underline overline yellow;
+				color-filter: invert();
+            }
+
+			p
+			{
+				margin: 8px;
+			}
+
+            .wavy
+            {
+				-webkit-text-decoration: underline overline wavy yellow;
+            }
+
+            .dotted
+            {
+				-webkit-text-decoration: underline overline dotted yellow;
+            }
+        </style>
+		<script>
+			if (window.internals)
+			    internals.settings.setColorFilterEnabled(true);
+		</script>
+    </head>
+    <body>
+        <p>You hsould see three green letter A. The top should have a solid bar overline and underline. The second should have a wavy overline and underline. The bottom should have a dotted overline and underline.</p>
+        <div class="test">
+			<p>A<p>
+			<p class="wavy">A<p>
+			<p class="dotted">A<p>
+		</div>
+    </body>
+</html>

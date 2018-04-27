@@ -160,7 +160,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
         else
             textY = baselinePosition(AlphabeticBaseline, true, HorizontalLine, PositionOnContainingLine);
 
-        paintInfo.context().setFillColor(style().visitedDependentColor(CSSPropertyColor));
+        paintInfo.context().setFillColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
         
         // Draw the filename
         paintInfo.context().drawBidiText(font, textRun, IntPoint(roundToInt(textX), roundToInt(textY)));

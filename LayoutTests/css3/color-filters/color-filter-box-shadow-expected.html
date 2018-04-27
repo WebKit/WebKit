@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: color-filter affects box-shadow color</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+
+        <meta name="assert" content="color-filter affects backgrounds and borders">
+        <style type="text/css">
+            .test
+            {
+				width: 200px;
+				height: 200px;
+				background-color: green;
+				box-shadow: 50px 50px 0 blue;
+            }
+        </style>
+		<script>
+			if (window.internals)
+			    internals.settings.setColorFilterEnabled(true);
+		</script>
+    </head>
+    <body>
+        <p>Test passes if there is a green square with an offset blue square behind it.</p>
+        <div class="test"></div>
+    </body>
+</html>

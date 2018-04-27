@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: color-filter affects currentColor</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="color-filter-current-color-expected.html">
+
+        <meta name="assert" content="color-filter affects currentColor">
+        <style type="text/css">
+            .test
+            {
+				height: 200px;
+				width: 200px;
+				margin: 10px;
+				color: rgb(255, 128, 255);
+				border: 4px solid yellow;
+				color-filter: invert();
+            }
+			
+			.first
+			{
+				background-color: currentColor;
+			}
+			
+			.second > div {
+				width: 100%;
+				height: 100%;
+				background-color: currentColor;
+			}
+        </style>
+		<script>
+			if (window.internals)
+			    internals.settings.setColorFilterEnabled(true);
+		</script>
+    </head>
+    <body>
+        <p>Test passes if there are two green squares with a blue border.</p>
+        <div class="test first"></div>
+        <div class="test second"><div></div></div>
+    </body>
+</html>

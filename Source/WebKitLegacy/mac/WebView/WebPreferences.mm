@@ -676,6 +676,7 @@ public:
         @NO, WebKitEncryptedMediaAPIEnabledKey,
         @YES, WebKitViewportFitEnabledPreferenceKey,
         @YES, WebKitConstantPropertiesEnabledPreferenceKey,
+        @NO, WebKitColorFilterEnabledPreferenceKey,
         @YES, WebKitAllowMediaContentTypesRequiringHardwareSupportAsFallbackKey,
         @NO, WebKitInspectorAdditionsEnabledPreferenceKey,
         (NSString *)Settings::defaultMediaContentTypesRequiringHardwareSupport(), WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey,
@@ -3077,6 +3078,7 @@ static NSString *classIBCreatorID = nil;
 {
     [self _setBoolValue:flag forKey:WebKitVisualViewportAPIEnabledPreferenceKey];
 }
+
 - (BOOL)webAnimationsEnabled
 {
     return [self _boolValueForKey:WebKitWebAnimationsEnabledPreferenceKey];
@@ -3257,6 +3259,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setConstantPropertiesEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitConstantPropertiesEnabledPreferenceKey];
+}
+
+- (BOOL)colorFilterEnabled
+{
+    return [self _boolValueForKey:WebKitColorFilterEnabledPreferenceKey];
+}
+
+- (void)setColorFilterEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitColorFilterEnabledPreferenceKey];
 }
 
 - (BOOL)allowMediaContentTypesRequiringHardwareSupportAsFallback

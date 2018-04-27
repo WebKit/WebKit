@@ -1845,7 +1845,7 @@ static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderStyle& sty
 
     // FIXME: Allow color+image compositing when it makes sense.
     // For now bailing out.
-    if (style.visitedDependentColor(CSSPropertyBackgroundColor).isVisible())
+    if (style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor).isVisible())
         return false;
 
     // FIXME: support gradients with isGeneratedImage.
@@ -1885,7 +1885,7 @@ Color RenderLayerBacking::rendererBackgroundColor() const
     if (!backgroundRenderer)
         backgroundRenderer = &renderer();
 
-    return backgroundRenderer->style().visitedDependentColor(CSSPropertyBackgroundColor);
+    return backgroundRenderer->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
 }
 
 void RenderLayerBacking::updateDirectlyCompositedBackgroundColor(PaintedContentsInfo& contentsInfo, bool& didUpdateContentsRect)

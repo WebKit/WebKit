@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: color-filter lists</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="color-filter-filter-list-expected.html">
+
+        <meta name="assert" content="color-filter lists">
+        <style type="text/css">
+            .test
+            {
+				width: 100px;
+				height: 100px;
+				background-color: purple;
+				outline: 50px solid green;
+				margin: 60px;
+				float: left;
+            }
+        </style>
+		<script>
+			if (window.internals)
+			    internals.settings.setColorFilterEnabled(true);
+		</script>
+    </head>
+    <body>
+        <div class="test"></div>
+        <div class="test" style="color-filter: brightness(2) brightness(0.5)"></div>
+        <div class="test" style="color-filter: invert() hue-rotate(180deg)"></div>
+        <div class="test" style="color-filter: opacity(0.5) saturate(200%)"></div>
+        <div class="test" style="color-filter: grayscale(0.2) brightness(2)"></div>
+        <div class="test" style="color-filter: sepia() brightness(2)"></div>
+    </body>
+</html>

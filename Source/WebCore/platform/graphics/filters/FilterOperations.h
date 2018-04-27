@@ -60,6 +60,8 @@ public:
 
     bool hasReferenceFilter() const;
 
+    bool transformColor(Color&) const;
+
 private:
     Vector<RefPtr<FilterOperation>> m_operations;
 };

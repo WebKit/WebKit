@@ -1365,9 +1365,9 @@ Color RenderElement::selectionColor(CSSPropertyID colorProperty) const
         return Color();
 
     if (std::unique_ptr<RenderStyle> pseudoStyle = selectionPseudoStyle()) {
-        Color color = pseudoStyle->visitedDependentColor(colorProperty);
+        Color color = pseudoStyle->visitedDependentColorWithColorFilter(colorProperty);
         if (!color.isValid())
-            color = pseudoStyle->visitedDependentColor(CSSPropertyColor);
+            color = pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyColor);
         return color;
     }
 
@@ -1407,11 +1407,11 @@ Color RenderElement::selectionBackgroundColor() const
         return Color();
 
     if (frame().selection().shouldShowBlockCursor() && frame().selection().isCaret())
-        return style().visitedDependentColor(CSSPropertyColor).blendWithWhite();
+        return style().visitedDependentColorWithColorFilter(CSSPropertyColor).blendWithWhite();
 
     std::unique_ptr<RenderStyle> pseudoStyle = selectionPseudoStyle();
-    if (pseudoStyle && pseudoStyle->visitedDependentColor(CSSPropertyBackgroundColor).isValid())
-        return pseudoStyle->visitedDependentColor(CSSPropertyBackgroundColor).blendWithWhite();
+    if (pseudoStyle && pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor).isValid())
+        return pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor).blendWithWhite();
 
     if (frame().selection().isFocusedAndActive())
         return theme().activeSelectionBackgroundColor();
@@ -1842,7 +1842,7 @@ void RenderElement::paintFocusRing(PaintInfo& paintInfo, const RenderStyle& styl
     if (needsRepaint)
         page().focusController().setFocusedElementNeedsRepaint();
 #else
-    paintInfo.context().drawFocusRing(pixelSnappedFocusRingRects, style.outlineWidth(), style.outlineOffset(), style.visitedDependentColor(CSSPropertyOutlineColor));
+    paintInfo.context().drawFocusRing(pixelSnappedFocusRingRects, style.outlineWidth(), style.outlineOffset(), style.visitedDependentColorWithColorFilter(CSSPropertyOutlineColor));
 #endif
 }
 
@@ -1882,7 +1882,7 @@ void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRe
         return;
 
     EBorderStyle outlineStyle = styleToUse.outlineStyle();
-    Color outlineColor = styleToUse.visitedDependentColor(CSSPropertyOutlineColor);
+    Color outlineColor = styleToUse.visitedDependentColorWithColorFilter(CSSPropertyOutlineColor);
 
     bool useTransparencyLayer = !outlineColor.isOpaque();
     if (useTransparencyLayer) {
