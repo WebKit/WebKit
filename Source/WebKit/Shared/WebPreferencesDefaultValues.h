@@ -177,6 +177,12 @@
 #define DEFAULT_VISUAL_VIEWPORT_HEIGHT_EXPANSION_FACTOR 0
 #endif
 
+#if ENABLE(EXTRA_ZOOM_MODE)
+#define DEFAULT_MIN_DEVICE_WIDTH_ENABLED 1
+#else
+#define DEFAULT_MIN_DEVICE_WIDTH_ENABLED 0
+#endif
+
 // Cocoa ports must disable experimental features on release branches for now.
 #if ENABLE(EXPERIMENTAL_FEATURES) || PLATFORM(COCOA)
 #define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED true

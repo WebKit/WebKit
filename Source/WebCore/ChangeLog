@@ -1,3 +1,22 @@
+2018-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add an experimental feature flag for viewport "min-device-width"
+        https://bugs.webkit.org/show_bug.cgi?id=185050
+        <rdar://problem/39624038>
+
+        Reviewed by Tim Horton.
+
+        Add MinDeviceWidthEnabled as a new runtime-enabled feature.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::setViewportFeature):
+
+        Gate the parsing of "min-device-width" on the runtime-enabled feature being flipped on.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setMinDeviceWidthEnabled):
+        (WebCore::RuntimeEnabledFeatures::minDeviceWidthEnabled const):
+
 2018-04-27  Simon Fraser  <simon.fraser@apple.com>
 
         Make color-filter transform gradient colors

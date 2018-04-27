@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "IntSize.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include <wtf/text/TextStream.h>
@@ -420,7 +421,7 @@ void setViewportFeature(ViewportArguments& arguments, Document& document, String
         arguments.shrinkToFit = findBooleanValue(document, key, value);
     else if (equalLettersIgnoringASCIICase(key, "viewport-fit") && document.settings().viewportFitEnabled())
         arguments.viewportFit = parseViewportFitValue(document, key, value);
-    else if (equalLettersIgnoringASCIICase(key, "min-device-width"))
+    else if (equalLettersIgnoringASCIICase(key, "min-device-width") && RuntimeEnabledFeatures::sharedFeatures().minDeviceWidthEnabled())
         arguments.minDeviceWidth = numericPrefix(document, key, value);
     else
         reportViewportWarning(document, UnrecognizedViewportArgumentKeyError, key);
