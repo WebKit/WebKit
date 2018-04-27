@@ -100,11 +100,11 @@ Ref<DeprecatedCSSOMValue> CSSImageValue::createDeprecatedCSSOMWrapper(CSSStyleDe
     return DeprecatedCSSOMPrimitiveValue::create(CSSPrimitiveValue::create(m_url, CSSPrimitiveValue::CSS_URI), styleDeclaration);
 }
 
-bool CSSImageValue::knownToBeOpaque(const RenderElement* renderer) const
+bool CSSImageValue::knownToBeOpaque(const RenderElement& renderer) const
 {
     if (!m_cachedImage)
         return false;
-    return m_cachedImage->currentFrameKnownToBeOpaque(renderer);
+    return m_cachedImage->currentFrameKnownToBeOpaque(&renderer);
 }
 
 } // namespace WebCore

@@ -54,7 +54,7 @@ public:
 
     bool equals(const CSSImageValue&) const;
 
-    bool knownToBeOpaque(const RenderElement*) const;
+    bool knownToBeOpaque(const RenderElement&) const;
 
     void setInitiator(const AtomicString& name) { m_initiatorName = name; }
 

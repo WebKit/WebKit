@@ -76,7 +76,7 @@ bool CSSFilterImageValue::isPending() const
     return CSSImageGeneratorValue::subimageIsPending(m_imageValue);
 }
 
-bool CSSFilterImageValue::knownToBeOpaque(const RenderElement*) const
+bool CSSFilterImageValue::knownToBeOpaque(const RenderElement&) const
 {
     return false;
 }

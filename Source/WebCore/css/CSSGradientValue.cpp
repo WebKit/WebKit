@@ -52,7 +52,7 @@ RefPtr<Image> CSSGradientValue::image(RenderElement& renderer, const FloatSize& 
 {
     if (size.isEmpty())
         return nullptr;
-    bool cacheable = isCacheable();
+    bool cacheable = isCacheable() && !renderer.style().hasColorFilter();
     if (cacheable) {
         if (!clients().contains(&renderer))
             return nullptr;
@@ -225,7 +225,7 @@ private:
 };
 
 template<typename GradientAdapter>
-Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradient, const CSSToLengthConversionData& conversionData, float maxLengthForRepeat)
+Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradient, const CSSToLengthConversionData& conversionData, const RenderStyle& style, float maxLengthForRepeat)
 {
     if (m_gradientType == CSSDeprecatedLinearGradient || m_gradientType == CSSDeprecatedRadialGradient) {
         sortStopsIfNeeded();
@@ -240,7 +240,10 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
             else
                 offset = stop.m_position->floatValue(CSSPrimitiveValue::CSS_NUMBER);
 
-            result.uncheckedAppend({ offset, stop.m_resolvedColor });
+            Color color = stop.m_resolvedColor;
+            if (style.hasColorFilter())
+                style.colorFilter().transformColor(color);
+            result.uncheckedAppend({ offset, color });
         }
 
         return result;
@@ -259,7 +262,12 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
         auto& stop = m_stops[i];
 
         stops[i].isMidpoint = stop.isMidpoint;
-        stops[i].color = stop.m_resolvedColor;
+
+        Color color = stop.m_resolvedColor;
+        if (style.hasColorFilter())
+            style.colorFilter().transformColor(color);
+
+        stops[i].color = color;
 
         if (stop.m_position) {
             auto& positionValue = *stop.m_position;
@@ -569,9 +577,18 @@ bool CSSGradientValue::isCacheable() const
     return true;
 }
 
-bool CSSGradientValue::knownToBeOpaque() const
+bool CSSGradientValue::knownToBeOpaque(const RenderElement& renderer) const
 {
+    bool hasColorFilter = renderer.style().hasColorFilter();
+
     for (auto& stop : m_stops) {
+        if (hasColorFilter) {
+            Color stopColor = stop.m_resolvedColor;
+            renderer.style().colorFilter().transformColor(stopColor);
+            if (!stopColor.isOpaque())
+                return false;
+        }
+
         if (!stop.m_resolvedColor.isOpaque())
             return false;
     }
@@ -814,7 +831,7 @@ Ref<Gradient> CSSLinearGradientValue::createGradient(RenderElement& renderer, co
 
     Gradient::LinearData data { firstPoint, secondPoint };
     LinearGradientAdapter adapter { data };
-    auto stops = computeStops(adapter, conversionData, 1);
+    auto stops = computeStops(adapter, conversionData, renderer.style(), 1);
 
     auto gradient = Gradient::create(WTFMove(data));
     gradient->setSortedColorStops(WTFMove(stops));
@@ -1231,7 +1248,7 @@ Ref<Gradient> CSSRadialGradientValue::createGradient(RenderElement& renderer, co
 
     Gradient::RadialData data { firstPoint, secondPoint, firstRadius, secondRadius, aspectRatio };
     RadialGradientAdapter adapter { data };
-    auto stops = computeStops(adapter, conversionData, maxExtent);
+    auto stops = computeStops(adapter, conversionData, renderer.style(), maxExtent);
 
     auto gradient = Gradient::create(WTFMove(data));
     gradient->setSortedColorStops(WTFMove(stops));

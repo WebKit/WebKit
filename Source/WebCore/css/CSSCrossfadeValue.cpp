@@ -46,7 +46,7 @@ static inline double blendFunc(double from, double to, double progress)
 static bool subimageKnownToBeOpaque(const CSSValue& value, const RenderElement& renderer)
 {
     if (is<CSSImageValue>(value))
-        return downcast<CSSImageValue>(value).knownToBeOpaque(&renderer);
+        return downcast<CSSImageValue>(value).knownToBeOpaque(renderer);
 
     if (is<CSSImageGeneratorValue>(value))
         return downcast<CSSImageGeneratorValue>(value).knownToBeOpaque(renderer);

@@ -233,13 +233,13 @@ bool CSSImageGeneratorValue::knownToBeOpaque(const RenderElement& renderer) cons
     case NamedImageClass:
         return false;
     case FilterImageClass:
-        return downcast<CSSFilterImageValue>(*this).knownToBeOpaque(&renderer);
+        return downcast<CSSFilterImageValue>(*this).knownToBeOpaque(renderer);
     case LinearGradientClass:
-        return downcast<CSSLinearGradientValue>(*this).knownToBeOpaque();
+        return downcast<CSSLinearGradientValue>(*this).knownToBeOpaque(renderer);
     case RadialGradientClass:
-        return downcast<CSSRadialGradientValue>(*this).knownToBeOpaque();
+        return downcast<CSSRadialGradientValue>(*this).knownToBeOpaque(renderer);
     case ConicGradientClass:
-        return downcast<CSSConicGradientValue>(*this).knownToBeOpaque();
+        return downcast<CSSConicGradientValue>(*this).knownToBeOpaque(renderer);
     default:
         ASSERT_NOT_REACHED();
     }

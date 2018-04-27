@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: color-filter affects gradients</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="color-filter-grayscale-expected.html">
+
+        <meta name="assert" content="color-filter affects gradients">
+        <style type="text/css">
+            .test
+            {
+				width: 200px;
+				height: 200px;
+				margin: 10px;
+				float: left;
+				color-filter: invert();
+            }
+        </style>
+		<script>
+			if (window.internals)
+			    internals.settings.setColorFilterEnabled(true);
+		</script>
+    </head>
+    <body>
+        <div class="test" style="background-image: linear-gradient(yellow, cyan);"></div>
+        <div class="test" style="background-image: radial-gradient(yellow, cyan);"></div>
+        <div class="test" style="background-image: repeating-linear-gradient(yellow, cyan 50px);"></div>
+        <div class="test" style="background-image: repeating-radial-gradient(yellow, cyan 50px);"></div>
+    </body>
+</html>
