@@ -51,9 +51,8 @@ public:
 
 protected:
     void computeStaticPosition(const Box&) const override;
-
-    void computeWidth(const Box&) const override;
-    void computeHeight(const Box&) const override;
+    void computeInFlowWidth(const Box&) const override;
+    void computeInFlowHeight(const Box&) const override;
 
     LayoutUnit marginTop(const Box&) const override;
     LayoutUnit marginBottom(const Box&) const override;

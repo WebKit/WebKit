@@ -120,11 +120,11 @@ void BlockFormattingContext::computeStaticPosition(const Box&) const
 {
 }
 
-void BlockFormattingContext::computeWidth(const Box&) const
+void BlockFormattingContext::computeInFlowWidth(const Box&) const
 {
 }
 
-void BlockFormattingContext::computeHeight(const Box&) const
+void BlockFormattingContext::computeInFlowHeight(const Box&) const
 {
 }
 

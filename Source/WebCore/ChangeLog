@@ -1,3 +1,31 @@
+2018-04-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add FormattingContext::computeWidth/computeHeight logic.
+        https://bugs.webkit.org/show_bug.cgi?id=185091
+
+        Reviewed by Antti Koivisto.
+
+        Inflow width and height can't really be computed without knowing the exact context. 
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeWidth const):
+        (WebCore::Layout::FormattingContext::computeHeight const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowWidth const):
+        (WebCore::Layout::FormattingContext::computeFloatingWidth const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHeight const):
+        (WebCore::Layout::FormattingContext::computeFloatingHeight const):
+        * layout/FormattingContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeInFlowWidth const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowHeight const):
+        (WebCore::Layout::BlockFormattingContext::computeWidth const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeHeight const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeInFlowWidth const):
+        (WebCore::Layout::InlineFormattingContext::computeInFlowHeight const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+
 2018-04-27  Chris Dumez  <cdumez@apple.com>
 
         Use WindowProxy instead of DOMWindow in our IDL

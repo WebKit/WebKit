@@ -46,6 +46,11 @@ public:
     void layout(LayoutContext&, FormattingState&) const override;
     std::unique_ptr<FormattingState> createFormattingState(Ref<FloatingState>&&) const override;
     Ref<FloatingState> createOrFindFloatingState() const override;
+
+private:
+    void computeInFlowWidth(const Box&) const override;
+    void computeInFlowHeight(const Box&) const override;
+
 };
 
 }

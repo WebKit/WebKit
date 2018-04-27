@@ -62,6 +62,14 @@ protected:
     virtual void computeWidth(const Box&) const;
     virtual void computeHeight(const Box&) const;
 
+    virtual void computeOutOfFlowWidth(const Box&) const;
+    virtual void computeFloatingWidth(const Box&) const;
+    virtual void computeInFlowWidth(const Box&) const = 0;
+
+    virtual void computeOutOfFlowHeight(const Box&) const;
+    virtual void computeFloatingHeight(const Box&) const;
+    virtual void computeInFlowHeight(const Box&) const = 0;
+
     virtual LayoutUnit marginTop(const Box&) const;
     virtual LayoutUnit marginLeft(const Box&) const;
     virtual LayoutUnit marginBottom(const Box&) const;

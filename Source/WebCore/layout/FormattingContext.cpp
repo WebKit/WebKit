@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutBox.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -57,11 +58,37 @@ void FormattingContext::computeOutOfFlowPosition(const Box&) const
 {
 }
 
-void FormattingContext::computeWidth(const Box&) const
+void FormattingContext::computeWidth(const Box& layoutBox) const
+{
+    if (layoutBox.isOutOfFlowPositioned())
+        return computeOutOfFlowWidth(layoutBox);
+    if (layoutBox.isFloatingPositioned())
+        return computeFloatingWidth(layoutBox);
+    return computeInFlowWidth(layoutBox);
+}
+
+void FormattingContext::computeHeight(const Box& layoutBox) const
+{
+    if (layoutBox.isOutOfFlowPositioned())
+        return computeOutOfFlowHeight(layoutBox);
+    if (layoutBox.isFloatingPositioned())
+        return computeFloatingHeight(layoutBox);
+    return computeInFlowHeight(layoutBox);
+}
+
+void FormattingContext::computeOutOfFlowWidth(const Box&) const
 {
 }
 
-void FormattingContext::computeHeight(const Box&) const
+void FormattingContext::computeFloatingWidth(const Box&) const
+{
+}
+
+void FormattingContext::computeOutOfFlowHeight(const Box&) const
+{
+}
+
+void FormattingContext::computeFloatingHeight(const Box&) const
 {
 }
 
