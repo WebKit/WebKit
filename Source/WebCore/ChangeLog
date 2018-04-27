@@ -1,3 +1,18 @@
+2018-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r222392?): Events can have a negative timestamp which causes app breakage
+        https://bugs.webkit.org/show_bug.cgi?id=185040
+        <rdar://problem/39638051>
+
+        Reviewed by Wenson Hsieh.
+
+        The real fix is in UIKit when generating the touch timestamps. However, this patch
+        does some hardening to make sure that Event.timestamp can never return a negative
+        value even if something goes wrong.
+
+        * dom/Event.cpp:
+        (WebCore::Event::timeStampForBindings const):
+
 2018-04-27  Christopher Reid  <chris.reid@sony.com>
 
         URL::appendEncodedHostName is using the deprecated uidna_IDNToASCII function
