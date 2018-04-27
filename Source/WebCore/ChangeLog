@@ -1,3 +1,18 @@
+2018-04-27  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r231089.
+        https://bugs.webkit.org/show_bug.cgi?id=185071
+
+        Broke and made crash some WPE EME tests (Requested by calvaris
+        on #webkit).
+
+        Reverted changeset:
+
+        "[EME][GStreamer] Move the decryptor from AppendPipeline to
+        PlaybackPipeline."
+        https://bugs.webkit.org/show_bug.cgi?id=181855
+        https://trac.webkit.org/changeset/231089
+
 2018-04-27  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [EME][GStreamer] Move the decryptor from AppendPipeline to PlaybackPipeline.
