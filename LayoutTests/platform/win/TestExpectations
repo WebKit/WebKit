@@ -116,6 +116,9 @@ webkit.org/b/74716 css3/masking/clip-path-filter.html [ Skip ]
 webkit.org/b/74716 css3/filters/backdrop [ Skip ]
 webkit.org/b/74716 legacy-animation-engine/css3/filters/backdrop [ Skip ]
 
+# color-filters are off by default
+webkit.org/b/185076 css3/color-filters [ Skip ]
+
 # TODO Should be moved to platform/mac <rdar://5621425>
 http/tests/misc/willCacheResponse-delegate-callback.html [ Skip ]
 

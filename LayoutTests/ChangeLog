@@ -1,3 +1,13 @@
+2018-04-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Disable color-filter tests on Windows for now
+        https://bugs.webkit.org/show_bug.cgi?id=185076
+
+        The experimental feature for color-filter is off by default, and Windows WebKit API
+        would have to change to enable it, so just skip the tests for now.
+
+        * platform/win/TestExpectations:
+
 2018-04-26  Simon Fraser  <simon.fraser@apple.com>
 
         Fix color-filter to apply to text decorations
