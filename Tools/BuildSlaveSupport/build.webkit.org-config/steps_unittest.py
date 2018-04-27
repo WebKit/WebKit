@@ -241,6 +241,20 @@ Ran 1888 tests of 1888 with 1888 successful
 All tests successfully passed!
 """)
 
+    def test_no_failures_or_timeouts_with_disabled(self):
+        self.assertFailures(0, """...
+worker/0 TestWTF.WTF_Variant.OperatorAmpersand Passed
+worker/0 TestWTF.WTF_Variant.Ref Passed
+worker/0 TestWTF.WTF_Variant.RefPtr Passed
+worker/0 TestWTF.WTF_Variant.RetainPtr Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingMakeVisitor Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingSwitchOn Passed
+worker/0 exiting
+Ran 1881 tests of 1888 with 1881 successful
+------------------------------
+All tests successfully passed!
+""")
+
     def test_one_failure(self):
         self.assertFailures(1, """...
 worker/0 TestWTF.WTF_Variant.OperatorAmpersand Passed

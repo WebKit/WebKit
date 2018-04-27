@@ -1,3 +1,14 @@
+2018-04-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (r231039): RunUnitTests step reports disabled tests as failures
+        https://bugs.webkit.org/show_bug.cgi?id=185061
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (RunUnitTests.countFailures): Return the difference between the total number of tests run and the number that passed.
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py: Add a test.
+
 2018-04-26  Ross Kirsling  <ross.kirsling@sony.com>
 
         Add release bots for WinCairo.

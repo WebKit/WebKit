@@ -498,12 +498,11 @@ class RunUnitTests(TestWithFailureCount):
 
     def countFailures(self, cmd):
         log_text = cmd.logs['stdio'].getText()
-        count = 0
 
         match = re.search(r'Ran (?P<ran>\d+) tests of (?P<total>\d+) with (?P<passed>\d+) successful', log_text)
         if not match:
             return -1
-        return int(match.group('total')) - int(match.group('passed'))
+        return int(match.group('ran')) - int(match.group('passed'))
 
 
 class RunPythonTests(TestWithFailureCount):
