@@ -1244,6 +1244,13 @@ void MediaPlayerPrivateGStreamerBase::dispatchDecryptionKey(GstBuffer* buffer)
     GST_TRACE("emitted decryption cipher key on pipeline, event handled %s, need to resend credentials %s", boolForPrinting(eventHandled), boolForPrinting(m_needToResendCredentials));
 }
 
+void MediaPlayerPrivateGStreamerBase::dispatchCDMInstance()
+{
+    // This function dispatches the CDMInstance in GStreamer playback pipeline.
+    if (m_cdmInstance)
+        m_player->attemptToDecryptWithInstance(const_cast<CDMInstance&>(*m_cdmInstance.get()));
+}
+
 void MediaPlayerPrivateGStreamerBase::handleProtectionEvent(GstEvent* event)
 {
     if (m_handledProtectionEvents.contains(GST_EVENT_SEQNUM(event))) {

@@ -1,3 +1,27 @@
+2018-04-27  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
+        [EME][GStreamer] Add a new message "decrypt-key-needed" send from the decryptor to the application.
+        https://bugs.webkit.org/show_bug.cgi?id=181858
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add a new message "decrypt-key-needed" that the decryptor can send when it doesn't have an available key.
+        This message should be handled by the application in order to dispatch or send the key to the decryptor.
+        This patch is a preparation for the patch 181855.
+        With the patch 181855, the decryptor will be in the PlaybackPipeline instead of AppendPipeline, thus we can
+        get the DRM license or key before to instantiate or load the decryptor plugin in PlaybackPipeline.
+        When the decryptor plugin is instantiated or loaded, it should able to ask the application to resend
+        the DRM license or key by using this new message "decrypt-key-needed".
+
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::dispatchCDMInstance):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (webkitMediaCommonEncryptionDecryptTransformInPlace):
+
 2018-04-26  Justin Fan  <justin_fan@apple.com>
 
         tex[Sub]Image2D slow when passing in a <canvas>, faster with ImageData.

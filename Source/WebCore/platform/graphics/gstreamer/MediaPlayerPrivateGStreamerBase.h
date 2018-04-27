@@ -143,6 +143,7 @@ public:
     void handleProtectionEvent(GstEvent*);
     void attemptToDecryptWithLocalInstance();
     void attemptToDecryptWithInstance(CDMInstance&) override;
+    void dispatchCDMInstance();
 #endif
 
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);

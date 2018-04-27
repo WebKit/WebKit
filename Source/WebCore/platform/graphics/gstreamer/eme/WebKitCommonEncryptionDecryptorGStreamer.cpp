@@ -197,6 +197,9 @@ static GstFlowReturn webkitMediaCommonEncryptionDecryptTransformInPlace(GstBaseT
             GST_ERROR_OBJECT(self, "can't process key requests in less than PAUSED state");
             return GST_FLOW_NOT_SUPPORTED;
         }
+        // Send "decrypt-key-needed" message to the application in order to resend the key if it is available in the application.
+        gst_element_post_message(GST_ELEMENT(self), gst_message_new_element(GST_OBJECT(self), gst_structure_new_empty("decrypt-key-needed")));
+
         priv->condition.waitFor(priv->mutex, Seconds(5), [priv] {
             return priv->keyReceived;
         });
