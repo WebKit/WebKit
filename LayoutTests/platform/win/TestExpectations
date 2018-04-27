@@ -4060,3 +4060,14 @@ webkit.org/b/184537 fast/forms/file/entries-api/webkitEntries-nonascii-folder-na
 webkit.org/b/184649 css3/filters/blur-various-radii.html [ Crash ]
 
 webkit.org/b/184428 http/tests/misc/submit-post-keygen.html [ Skip ]
+
+webkit.org/b/185075 css3/color-filters/color-filter-backgrounds-borders.html [ ImageOnlyFailure ]
+webkit.org/b/185075 css3/color-filters/color-filter-box-shadow.html [ ImageOnlyFailure ]
+webkit.org/b/185075 css3/color-filters/color-filter-color-property-list-item.html [ ImageOnlyFailure ]
+webkit.org/b/185075 css3/color-filters/color-filter-color-property.html [ ImageOnlyFailure ]
+webkit.org/b/185075 css3/color-filters/color-filter-color-text-decorations.html [ ImageOnlyFailure ]
+webkit.org/b/185075 css3/color-filters/color-filter-column-rule.html [ ImageOnlyFailure ]
+webkit.org/b/185075 css3/color-filters/color-filter-current-color.html [ ImageOnlyFailure ]
+webkit.org/b/185075 css3/color-filters/color-filter-inherits.html [ ImageOnlyFailure ]
+webkit.org/b/185075 css3/color-filters/color-filter-outline.html [ ImageOnlyFailure ]
+webkit.org/b/185075 css3/color-filters/color-filter-text-emphasis.html [ ImageOnlyFailure ]

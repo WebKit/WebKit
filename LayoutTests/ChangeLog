@@ -1,3 +1,12 @@
+2018-04-27  Per Arne Vollan  <pvollan@apple.com>
+
+        Mark CSS color filters tests as failing on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=185075
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Add a mechanism to override default viewport behaviors in extra zoom mode
