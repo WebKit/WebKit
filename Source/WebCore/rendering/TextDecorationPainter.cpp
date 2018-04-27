@@ -325,7 +325,11 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
             }
             int shadowX = m_isHorizontal ? shadow->x() : shadow->y();
             int shadowY = m_isHorizontal ? shadow->y() : -shadow->x();
-            m_context.setShadow(FloatSize(shadowX, shadowY - extraOffset), shadow->radius(), shadow->color());
+            
+            Color shadowColor = shadow->color();
+            if (m_shadowColorFilter)
+                m_shadowColorFilter->transformColor(shadowColor);
+            m_context.setShadow(FloatSize(shadowX, shadowY - extraOffset), shadow->radius(), shadowColor);
             shadow = shadow->next();
         }
 

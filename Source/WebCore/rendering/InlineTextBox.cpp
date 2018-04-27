@@ -1012,8 +1012,9 @@ void InlineTextBox::paintMarkedTextForeground(PaintInfo& paintInfo, const FloatR
     textPainter.setStyle(markedText.style.textStyles);
     textPainter.setIsHorizontal(isHorizontal());
     if (markedText.style.textShadow) {
-        // FIXME: need to transform shadow color here.
         textPainter.setShadow(&markedText.style.textShadow.value());
+        if (lineStyle.hasColorFilter())
+            textPainter.setShadowColorFilter(&lineStyle.colorFilter());
     }
     textPainter.setEmphasisMark(emphasisMark, emphasisMarkOffset, combinedText());
 
@@ -1067,8 +1068,9 @@ void InlineTextBox::paintMarkedTextDecoration(PaintInfo& paintInfo, const FloatR
     decorationPainter.setBaseline(lineStyle().fontMetrics().ascent());
     decorationPainter.setIsHorizontal(isHorizontal());
     if (markedText.style.textShadow) {
-        // FIXME: transform shadow color.
-        decorationPainter.addTextShadow(&markedText.style.textShadow.value());
+        decorationPainter.setTextShadow(&markedText.style.textShadow.value());
+        if (lineStyle().hasColorFilter())
+            decorationPainter.setShadowColorFilter(&lineStyle().colorFilter());
     }
 
     {

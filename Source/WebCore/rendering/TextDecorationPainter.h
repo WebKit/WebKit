@@ -50,7 +50,8 @@ public:
     void setIsHorizontal(bool isHorizontal) { m_isHorizontal = isHorizontal; }
     void setWidth(float width) { m_width = width; }
     void setBaseline(float baseline) { m_baseline = baseline; }
-    void addTextShadow(const ShadowData* textShadow) { m_shadow = textShadow; }
+    void setTextShadow(const ShadowData* textShadow) { m_shadow = textShadow; }
+    void setShadowColorFilter(const FilterOperations* colorFilter) { m_shadowColorFilter = colorFilter; }
 
     void paintTextDecoration(const TextRun&, const FloatPoint& textOrigin, const FloatPoint& boxOrigin);
 
@@ -78,6 +79,7 @@ private:
     bool m_isPrinting;
     bool m_isHorizontal { true };
     const ShadowData* m_shadow { nullptr };
+    const FilterOperations* m_shadowColorFilter { nullptr };
     const InlineTextBox* m_inlineTextBox { nullptr };
     const FontCascade* m_font { nullptr };
 

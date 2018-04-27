@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: color-filter affects the text shadow</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="color-filter-text-shadow-expected.html">
+
+        <meta name="assert" content="color-filter affects the color of text-shadow">
+        <style type="text/css">
+            .test
+            {
+				font: 120px Ahem;
+				color: rgb(255, 128, 255);
+				color-filter: invert();
+				margin: 100px 20px;
+            }
+
+            .single
+            {
+				text-shadow: 50px 50px 0 blue;
+            }
+
+            .multiple
+            {
+				text-shadow: 50px 50px 0 blue, 100px 100px 0 red;
+            }
+        </style>
+		<script>
+			if (window.internals)
+			    internals.settings.setColorFilterEnabled(true);
+		</script>
+    </head>
+    <body>
+        <p>At the top you should see a green square with a yellow shadow.</p>
+        <p>Below is a green square with a yellow shadow and a cyan shadow.</p>
+        <div class="test single">A</div>
+        <div class="test multiple">A</div>
+    </body>
+</html>

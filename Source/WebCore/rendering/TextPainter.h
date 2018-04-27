@@ -52,6 +52,7 @@ public:
 
     void setStyle(const TextPaintStyle& textPaintStyle) { m_style = textPaintStyle; }
     void setShadow(const ShadowData* shadow) { m_shadow = shadow; }
+    void setShadowColorFilter(const FilterOperations* colorFilter) { m_shadowColorFilter = colorFilter; }
     void setFont(const FontCascade& font) { m_font = &font; }
     void setIsHorizontal(bool isHorizontal) { m_textBoxIsHorizontal = isHorizontal; }
     void setEmphasisMark(const AtomicString& mark, float offset, const RenderCombineText*);
@@ -77,20 +78,21 @@ public:
 private:
     void paintTextOrEmphasisMarks(const FontCascade&, const TextRun&, const AtomicString& emphasisMark, float emphasisMarkOffset,
         const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset);
-    void paintTextWithShadows(const ShadowData*, const FontCascade&, const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin,
+    void paintTextWithShadows(const ShadowData*, const FilterOperations*, const FontCascade&, const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin,
         unsigned startOffset, unsigned endOffset, const AtomicString& emphasisMark, float emphasisMarkOffset, bool stroked);
     void paintTextAndEmphasisMarksIfNeeded(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset,
-        const TextPaintStyle&, const ShadowData*);
+        const TextPaintStyle&, const ShadowData*, const FilterOperations*);
 
     GraphicsContext& m_context;
     const FontCascade* m_font { nullptr };
     TextPaintStyle m_style;
-    const ShadowData* m_shadow { nullptr };
     AtomicString m_emphasisMark;
+    const ShadowData* m_shadow { nullptr };
+    const FilterOperations* m_shadowColorFilter { nullptr };
     const RenderCombineText* m_combinedText { nullptr };
+    DisplayList::DisplayList* m_glyphDisplayList { nullptr };
     float m_emphasisMarkOffset { 0 };
     bool m_textBoxIsHorizontal { true };
-    DisplayList::DisplayList* m_glyphDisplayList { nullptr };
 };
 
 inline void TextPainter::setEmphasisMark(const AtomicString& mark, float offset, const RenderCombineText* combinedText)
@@ -102,7 +104,7 @@ inline void TextPainter::setEmphasisMark(const AtomicString& mark, float offset,
 
 class ShadowApplier {
 public:
-    ShadowApplier(GraphicsContext&, const ShadowData*, const FloatRect& textRect, bool lastShadowIterationShouldDrawText = true, bool opaque = false, FontOrientation = Horizontal);
+    ShadowApplier(GraphicsContext&, const ShadowData*, const FilterOperations* colorFilter, const FloatRect& textRect, bool lastShadowIterationShouldDrawText = true, bool opaque = false, FontOrientation = Horizontal);
     FloatSize extraOffset() const { return m_extraOffset; }
     bool nothingToDraw() const { return m_nothingToDraw; }
     bool didSaveContext() const { return m_didSaveContext; }

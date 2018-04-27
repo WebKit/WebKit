@@ -1,3 +1,48 @@
+2018-04-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix color-filter to apply to text decorations
+        https://bugs.webkit.org/show_bug.cgi?id=185068
+        <rdar://problem/39782136>
+
+        Reviewed by Alan Bujtas.
+        
+        Transform the colors of text shadows, and the shadows of text-decorations through
+        the color-filter.
+        
+        Rather than clone the ShadowData stored on TextPainter and TextDecorationPainter
+        (which would have awkward ownership implications) we pass the color filters through
+        and just map the color through it before painting.
+        
+        Re-order the members of TextPainter a little to optimize padding.
+        
+        Also fix a bug where FilterOperations::transformColor() could transform an invalid
+        color to a valid one; we never want this.
+
+        Tests: css3/color-filters/color-filter-text-decoration-shadow.html
+               css3/color-filters/color-filter-text-shadow.html
+
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::transformColor const):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintMarkedTextForeground):
+        (WebCore::InlineTextBox::paintMarkedTextDecoration):
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+        * rendering/TextDecorationPainter.h:
+        (WebCore::TextDecorationPainter::setTextShadow):
+        (WebCore::TextDecorationPainter::setShadowColorFilter):
+        (WebCore::TextDecorationPainter::addTextShadow): Deleted.
+        * rendering/TextPainter.cpp:
+        (WebCore::ShadowApplier::ShadowApplier):
+        (WebCore::TextPainter::paintTextWithShadows):
+        (WebCore::TextPainter::paintTextAndEmphasisMarksIfNeeded): Simplify the logic that only paints the shadow
+        on the first iteration.
+        (WebCore::TextPainter::paintRange):
+        * rendering/TextPainter.h:
+        (WebCore::TextPainter::setShadowColorFilter):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintTextWithShadows):
+
 2018-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Rename minimumLayoutSize to viewLayoutSize

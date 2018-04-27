@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: color-filter affects text decoration shadows</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="color-filter-text-decoration-shadow-expected.html">
+
+        <meta name="assert" content="color-filter affects text decoration shadows">
+        <style type="text/css">
+            .test
+            {
+				font: 120px sans-serif;
+				color: rgb(255, 128, 255);
+				color-filter: invert();
+				margin: 100px 20px;
+				text-decoration: underline overline line-through;
+            }
+
+            .single
+            {
+				text-shadow: 150px 0 0 blue;
+            }
+
+            .multiple
+            {
+				text-shadow: 150px 0 0 blue, 300px 0 0 red;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="test single">O</div>
+        <div class="test multiple">O</div>
+    </body>
+</html>

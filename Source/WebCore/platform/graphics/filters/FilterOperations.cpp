@@ -122,7 +122,7 @@ FilterOutsets FilterOperations::outsets() const
 
 bool FilterOperations::transformColor(Color& color) const
 {
-    if (isEmpty())
+    if (isEmpty() || !color.isValid())
         return false;
 
     FloatComponents components;

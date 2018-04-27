@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: color-filter reference</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+
+        <style type="text/css">
+            .test
+            {
+				font: 120px Ahem;
+				color: green;
+				margin: 100px 20px;
+            }
+
+            .single
+            {
+				text-shadow: 50px 50px 0 yellow;
+            }
+
+            .multiple
+            {
+				text-shadow: 50px 50px 0 yellow, 100px 100px 0 cyan;
+            }
+        </style>
+    </head>
+    <body>
+        <p>At the top you should see a green square with a yellow shadow.</p>
+        <p>Below is a green square with a yellow shadow and a cyan shadow.</p>
+        <div class="test single">A</div>
+        <div class="test multiple">A</div>
+    </body>
+</html>

@@ -1,3 +1,16 @@
+2018-04-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix color-filter to apply to text decorations
+        https://bugs.webkit.org/show_bug.cgi?id=185068
+        <rdar://problem/39782136>
+
+        Reviewed by Alan Bujtas.
+
+        * css3/color-filters/color-filter-text-decoration-shadow-expected.html: Added.
+        * css3/color-filters/color-filter-text-decoration-shadow.html: Added.
+        * css3/color-filters/color-filter-text-shadow-expected.html: Added.
+        * css3/color-filters/color-filter-text-shadow.html: Added.
+
 2018-04-27  Per Arne Vollan  <pvollan@apple.com>
 
         Mark CSS color filters tests as failing on Windows.
