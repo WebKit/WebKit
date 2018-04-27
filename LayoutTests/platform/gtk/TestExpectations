@@ -3367,6 +3367,10 @@ webkit.org/b/184778 inspector/canvas/setShaderProgramHighlighted.html [ Failure 
 webkit.org/b/184779 transitions/clip-path-path-transitions.html [ Failure ]
 webkit.org/b/184779 transitions/clip-path-transitions.html [ Failure ]
 
+webkit.org/b/185072 fast/events/mouse-click-events.html [ Failure ]
+webkit.org/b/185072 fast/events/context-activated-by-key-event.html [ Failure ]
+webkit.org/b/185072 fast/events/mouse-cursor-change.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

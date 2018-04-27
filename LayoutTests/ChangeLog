@@ -1,3 +1,10 @@
+2018-04-27  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Mark a few new test failures
+
+        Unreviewed gardening.
+        * platform/gtk/TestExpectations: Related to r230817
+
 2018-04-26  Simon Fraser  <simon.fraser@apple.com>
 
         Implement rendering support for the color-filter CSS property
