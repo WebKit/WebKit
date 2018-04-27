@@ -1,3 +1,17 @@
+2018-04-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        PSON: Triggering a navigation to an invalid URL creates a new WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=185066
+
+        Reviewed by Youenn Fablet.
+
+        Added a new test case (ProcessSwap.NavigateToInvalidURL) for navigating to an invalid URL.
+        WebKit should not swap WebContent process in this case.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (-[PSONNavigationDelegate webView:didFailProvisionalNavigation:withError:]):
+        (-[PSONUIDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+
 2018-04-27  Nan Wang  <n_wang@apple.com>
 
         AX: Accessibility needs to know which part of the content view is visible on iOS

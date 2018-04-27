@@ -54,10 +54,12 @@
 #if WK_API_ENABLED
 
 static bool done;
+static bool failed;
 static bool didCreateWebView;
 static int numberOfDecidePolicyCalls;
 
 static RetainPtr<NSMutableArray> receivedMessages = adoptNS([@[] mutableCopy]);
+bool didReceiveAlert;
 static bool receivedMessage;
 static bool serverRedirected;
 static HashSet<pid_t> seenPIDs;
@@ -82,6 +84,12 @@ static HashSet<pid_t> seenPIDs;
 @end
 
 @implementation PSONNavigationDelegate
+
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
+{
+    seenPIDs.add([webView _webProcessIdentifier]);
+    failed = true;
+}
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
@@ -129,6 +137,12 @@ static RetainPtr<WKWebView> createdWebView;
     [createdWebView setNavigationDelegate:_navigationDelegate.get()];
     didCreateWebView = true;
     return createdWebView.get();
+}
+
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler
+{
+    didReceiveAlert = true;
+    completionHandler();
 }
 
 @end
@@ -1273,6 +1287,45 @@ TEST(ProcessSwap, ProcessReuse)
     EXPECT_NE(pid1, pid2);
     EXPECT_NE(pid2, pid3);
     EXPECT_EQ(pid1, pid3);
+}
+
+static const char* navigateToInvalidURLTestBytes = R"PSONRESOURCE(
+<!DOCTYPE html>
+<html>
+<body onload="setTimeout(() => alert('DONE'), 0); location.href = 'http://A=a%B=b'">
+)PSONRESOURCE";
+
+TEST(ProcessSwap, NavigateToInvalidURL)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] initWithBytes:navigateToInvalidURLTestBytes]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    auto uiDelegate = adoptNS([[PSONUIDelegate alloc] initWithNavigationDelegate:navigationDelegate.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    numberOfDecidePolicyCalls = 0;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main1.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pid1 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid1);
+
+    TestWebKitAPI::Util::run(&didReceiveAlert);
+    didReceiveAlert = false;
+    auto pid2 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid2);
+
+    EXPECT_EQ(2, numberOfDecidePolicyCalls);
+    EXPECT_EQ(pid1, pid2);
 }
 
 #endif // WK_API_ENABLED

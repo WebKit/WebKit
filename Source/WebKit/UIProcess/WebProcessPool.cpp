@@ -2096,7 +2096,7 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
 
     auto targetURL = navigation.currentRequest().url();
     auto url = URL { ParsedURLString, page.pageLoadState().url() };
-    if (!url.isValid() || url.isEmpty() || url.isBlankURL() ||protocolHostAndPortAreEqual(url, targetURL))
+    if (!url.isValid() || !targetURL.isValid() || url.isEmpty() || url.isBlankURL() || protocolHostAndPortAreEqual(url, targetURL))
         return page.process();
 
     if (m_configuration->alwaysKeepAndReuseSwappedProcesses()) {
