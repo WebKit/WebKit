@@ -59,7 +59,7 @@ static float computedMinDeviceWidth(float minDeviceWidth)
 
 ViewportConfiguration::ViewportConfiguration()
     : m_minimumLayoutSize(1024, 768)
-    , m_viewSize(1024, 768)
+    , m_viewLayoutSize(1024, 768)
     , m_canIgnoreScalingConstraints(false)
     , m_forceAlwaysUserScalable(false)
 {
@@ -95,14 +95,12 @@ bool ViewportConfiguration::setContentsSize(const IntSize& contentSize)
     return true;
 }
 
-// FIXME: ViewportConfiguration::setMinimumLayoutSize is no longer an accurate name, since the minimum layout size
-// is not necessarily the size of the view.
-bool ViewportConfiguration::setMinimumLayoutSize(const FloatSize& minimumLayoutSize)
+bool ViewportConfiguration::setViewLayoutSize(const FloatSize& viewLayoutSize)
 {
-    if (m_viewSize == minimumLayoutSize)
+    if (m_viewLayoutSize == viewLayoutSize)
         return false;
 
-    m_viewSize = minimumLayoutSize;
+    m_viewLayoutSize = viewLayoutSize;
 
     updateMinimumLayoutSize();
     updateConfiguration();
@@ -139,7 +137,7 @@ IntSize ViewportConfiguration::layoutSize() const
 
 bool ViewportConfiguration::shouldOverrideDeviceWidthWithMinDeviceWidth() const
 {
-    return m_viewSize.width() < computedMinDeviceWidth(m_viewportArguments.minDeviceWidth);
+    return m_viewLayoutSize.width() < computedMinDeviceWidth(m_viewportArguments.minDeviceWidth);
 }
 
 bool ViewportConfiguration::shouldIgnoreHorizontalScalingConstraints() const
@@ -201,11 +199,11 @@ double ViewportConfiguration::initialScaleFromSize(double width, double height, 
     // We want a scale small enough to fit the document width-wise.
     double initialScale = 0;
     if (width > 0 && !shouldIgnoreVerticalScalingConstraints())
-        initialScale = m_viewSize.width() / width;
+        initialScale = m_viewLayoutSize.width() / width;
 
     // Prevent the initial scale from shrinking to a height smaller than our view's minimum height.
-    if (height > 0 && height * initialScale < m_viewSize.height() && !shouldIgnoreHorizontalScalingConstraints())
-        initialScale = m_viewSize.height() / height;
+    if (height > 0 && height * initialScale < m_viewLayoutSize.height() && !shouldIgnoreHorizontalScalingConstraints())
+        initialScale = m_viewLayoutSize.height() / height;
 
     return std::min(std::max(initialScale, shouldIgnoreScalingConstraints ? m_defaultConfiguration.minimumScale : m_configuration.minimumScale), m_configuration.maximumScale);
 }
@@ -233,12 +231,12 @@ double ViewportConfiguration::minimumScale() const
         minimumScale = std::min(minimumScale, forceAlwaysUserScalableMinimumScale);
 
     double contentWidth = m_contentSize.width();
-    if (contentWidth > 0 && contentWidth * minimumScale < m_viewSize.width() && !shouldIgnoreVerticalScalingConstraints())
-        minimumScale = m_viewSize.width() / contentWidth;
+    if (contentWidth > 0 && contentWidth * minimumScale < m_viewLayoutSize.width() && !shouldIgnoreVerticalScalingConstraints())
+        minimumScale = m_viewLayoutSize.width() / contentWidth;
 
     double contentHeight = m_contentSize.height();
-    if (contentHeight > 0 && contentHeight * minimumScale < m_viewSize.height() && !shouldIgnoreHorizontalScalingConstraints())
-        minimumScale = m_viewSize.height() / contentHeight;
+    if (contentHeight > 0 && contentHeight * minimumScale < m_viewLayoutSize.height() && !shouldIgnoreHorizontalScalingConstraints())
+        minimumScale = m_viewLayoutSize.height() / contentHeight;
 
     minimumScale = std::min(std::max(minimumScale, m_configuration.minimumScale), m_configuration.maximumScale);
 
@@ -382,13 +380,13 @@ void ViewportConfiguration::updateConfiguration()
 
 void ViewportConfiguration::updateMinimumLayoutSize()
 {
-    if (!m_viewSize.width() || !shouldOverrideDeviceWidthWithMinDeviceWidth()) {
-        m_minimumLayoutSize = m_viewSize;
+    if (!m_viewLayoutSize.width() || !shouldOverrideDeviceWidthWithMinDeviceWidth()) {
+        m_minimumLayoutSize = m_viewLayoutSize;
         return;
     }
 
     auto minDeviceWidth = computedMinDeviceWidth(m_viewportArguments.minDeviceWidth);
-    m_minimumLayoutSize = FloatSize(minDeviceWidth, std::roundf(m_viewSize.height() * (minDeviceWidth / m_viewSize.width())));
+    m_minimumLayoutSize = FloatSize(minDeviceWidth, std::roundf(m_viewLayoutSize.height() * (minDeviceWidth / m_viewLayoutSize.width())));
 }
 
 double ViewportConfiguration::viewportArgumentsLength(double length) const

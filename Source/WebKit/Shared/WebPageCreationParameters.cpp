@@ -64,7 +64,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << mediaVolume;
     encoder << muted;
     encoder << mayStartMediaWhenInWindow;
-    encoder << minimumLayoutSize;
+    encoder << viewLayoutSize;
     encoder << autoSizingShouldExpandToViewHeight;
     encoder << viewportSizeForCSSViewportUnits;
     encoder.encodeEnum(scrollPinningBehavior);
@@ -89,7 +89,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << overrideScreenSize;
     encoder << textAutosizingWidth;
     encoder << ignoresViewportScaleLimits;
-    encoder << viewportConfigurationMinimumLayoutSize;
+    encoder << viewportConfigurationViewLayoutSize;
     encoder << viewportConfigurationViewSize;
     encoder << maximumUnobscuredSize;
 #endif
@@ -203,7 +203,7 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
     if (!decoder.decode(parameters.mayStartMediaWhenInWindow))
         return std::nullopt;
-    if (!decoder.decode(parameters.minimumLayoutSize))
+    if (!decoder.decode(parameters.viewLayoutSize))
         return std::nullopt;
     if (!decoder.decode(parameters.autoSizingShouldExpandToViewHeight))
         return std::nullopt;
@@ -254,7 +254,7 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
     if (!decoder.decode(parameters.ignoresViewportScaleLimits))
         return std::nullopt;
-    if (!decoder.decode(parameters.viewportConfigurationMinimumLayoutSize))
+    if (!decoder.decode(parameters.viewportConfigurationViewLayoutSize))
         return std::nullopt;
     if (!decoder.decode(parameters.viewportConfigurationViewSize))
         return std::nullopt;

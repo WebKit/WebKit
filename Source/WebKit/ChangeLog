@@ -1,5 +1,88 @@
 2018-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Rename minimumLayoutSize to viewLayoutSize
+        https://bugs.webkit.org/show_bug.cgi?id=185050
+        <rdar://problem/39624038>
+
+        Reviewed by Tim Horton.
+
+        Renames minimumLayoutSize to viewLayoutSize, since the minimum layout size in ViewportConfiguration is now
+        different from the minimum layout size that is currently pushed down from the UI process (e.g. WKWebView SPI) in
+        the case where `min-device-width` is used to override the minimum layout size.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _processDidExit]):
+        (-[WKWebView activeViewLayoutSize:]):
+        (-[WKWebView _dispatchSetViewLayoutSize:]):
+        (-[WKWebView _frameOrBoundsChanged]):
+        (-[WKWebView _minimumLayoutSizeOverride]):
+        (-[WKWebView _setViewLayoutSizeOverride:]):
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        (-[WKWebView _endAnimatedResize]):
+        (-[WKWebView _overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride:]):
+        (-[WKWebView _clearOverrideLayoutParameters]):
+        (-[WKWebView _minimumLayoutWidth]):
+        (-[WKWebView _setMinimumLayoutWidth:]):
+        (-[WKWebView activeMinimumLayoutSize:]): Deleted.
+        (-[WKWebView _dispatchSetMinimumLayoutSize:]): Deleted.
+        (-[WKWebView _setMinimumLayoutSizeOverride:]): Deleted.
+        (-[WKWebView _overrideLayoutParametersWithMinimumLayoutSize:minimumLayoutSizeForMinimalUI:maximumUnobscuredSizeOverride:]): Deleted.
+
+        Remove unused SPI that has been deprecated since iOS 9, has a simple drop-in replacement, and no longer has any
+        internal clients.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setMinimumSizeForAutoLayout):
+        (WebKit::WebViewImpl::minimumSizeForAutoLayout const):
+        (WebKit::WebViewImpl::setIntrinsicContentSize):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::viewLayoutSizeDidChange):
+        (WebKit::DrawingAreaProxy::minimumLayoutSizeDidChange): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::setViewLayoutSize):
+        (WebKit::WebPageProxy::setMinimumLayoutSize): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::viewLayoutSize const):
+        (WebKit::WebPageProxy::minimumLayoutSize const): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+        (WebKit::WebPageProxy::setViewportConfigurationViewLayoutSize):
+        (WebKit::WebPageProxy::setViewportConfigurationMinimumLayoutSize): Deleted.
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::viewLayoutSizeDidChange):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::intrinsicContentSizeDidChange):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::willSendUpdateGeometry):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::minimumLayoutSizeDidChange): Deleted.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_credentialsMessenger):
+        (WebKit::WebPage::setViewLayoutSize):
+        (WebKit::WebPage::setMinimumLayoutSize): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::viewLayoutSize const):
+        (WebKit::WebPage::minimumLayoutSize const): Deleted.
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setViewportConfigurationViewLayoutSize):
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::setViewportConfigurationMinimumLayoutSize): Deleted.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeIfNeeded):
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+
+2018-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [Extra zoom mode] Add a mechanism to override default viewport behaviors in extra zoom mode
         https://bugs.webkit.org/show_bug.cgi?id=185050
         <rdar://problem/39624038>

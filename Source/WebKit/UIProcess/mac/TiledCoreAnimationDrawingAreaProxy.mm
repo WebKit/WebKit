@@ -77,7 +77,7 @@ void TiledCoreAnimationDrawingAreaProxy::colorSpaceDidChange()
     m_webPageProxy.process().send(Messages::DrawingArea::SetColorSpace(m_webPageProxy.colorSpace()), m_webPageProxy.pageID());
 }
 
-void TiledCoreAnimationDrawingAreaProxy::minimumLayoutSizeDidChange()
+void TiledCoreAnimationDrawingAreaProxy::viewLayoutSizeDidChange()
 {
     if (!m_webPageProxy.isValid())
         return;
@@ -112,11 +112,11 @@ void TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry()
 
     m_isWaitingForDidUpdateGeometry = false;
 
-    IntSize minimumLayoutSize = m_webPageProxy.minimumLayoutSize();
+    IntSize viewLayoutSize = m_webPageProxy.viewLayoutSize();
 
     // If the WKView was resized while we were waiting for a DidUpdateGeometry reply from the web process,
     // we need to resend the new size here.
-    if (m_lastSentSize != m_size || m_lastSentMinimumLayoutSize != minimumLayoutSize)
+    if (m_lastSentSize != m_size || m_lastSentViewLayoutSize != viewLayoutSize)
         sendUpdateGeometry();
 }
 
@@ -128,13 +128,13 @@ void TiledCoreAnimationDrawingAreaProxy::waitForDidUpdateActivityState()
 
 void TiledCoreAnimationDrawingAreaProxy::intrinsicContentSizeDidChange(const IntSize& newIntrinsicContentSize)
 {
-    if (m_webPageProxy.minimumLayoutSize().width() > 0)
+    if (m_webPageProxy.viewLayoutSize().width() > 0)
         m_webPageProxy.intrinsicContentSizeDidChange(newIntrinsicContentSize);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::willSendUpdateGeometry()
 {
-    m_lastSentMinimumLayoutSize = m_webPageProxy.minimumLayoutSize();
+    m_lastSentViewLayoutSize = m_webPageProxy.viewLayoutSize();
     m_lastSentSize = m_size;
     m_isWaitingForDidUpdateGeometry = true;
 }

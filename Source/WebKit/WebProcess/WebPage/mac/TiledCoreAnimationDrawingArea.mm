@@ -249,7 +249,7 @@ void TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged(const IntSize& s
 
 void TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeIfNeeded()
 {
-    if (!m_webPage.minimumLayoutSize().width())
+    if (!m_webPage.viewLayoutSize().width())
         return;
 
     FrameView* frameView = m_webPage.mainFrameView();
@@ -552,7 +552,7 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, bool
     IntSize size = viewSize;
     IntSize contentSize = IntSize(-1, -1);
 
-    if (!m_webPage.minimumLayoutSize().width() || m_webPage.autoSizingShouldExpandToViewHeight())
+    if (!m_webPage.viewLayoutSize().width() || m_webPage.autoSizingShouldExpandToViewHeight())
         m_webPage.setSize(size);
 
     FrameView* frameView = m_webPage.mainFrameView();
@@ -562,7 +562,7 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, bool
 
     m_webPage.layoutIfNeeded();
 
-    if (m_webPage.minimumLayoutSize().width() && frameView) {
+    if (m_webPage.viewLayoutSize().width() && frameView) {
         contentSize = frameView->autoSizingIntrinsicContentSize();
         size = contentSize;
     }

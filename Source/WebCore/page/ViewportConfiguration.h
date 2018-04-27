@@ -74,10 +74,10 @@ public:
     const IntSize& contentsSize() const { return m_contentSize; }
     WEBCORE_EXPORT bool setContentsSize(const IntSize&);
 
-    FloatSize viewSize() const { return m_viewSize; }
+    FloatSize viewLayoutSize() const { return m_viewLayoutSize; }
 
     const FloatSize& minimumLayoutSize() const { return m_minimumLayoutSize; }
-    WEBCORE_EXPORT bool setMinimumLayoutSize(const FloatSize&);
+    WEBCORE_EXPORT bool setViewLayoutSize(const FloatSize&);
 
     const ViewportArguments& viewportArguments() const { return m_viewportArguments; }
     WEBCORE_EXPORT bool setViewportArguments(const ViewportArguments&);
@@ -127,7 +127,7 @@ private:
     Parameters m_defaultConfiguration;
     IntSize m_contentSize;
     FloatSize m_minimumLayoutSize;
-    FloatSize m_viewSize;
+    FloatSize m_viewLayoutSize;
     ViewportArguments m_viewportArguments;
 
     bool m_canIgnoreScalingConstraints;

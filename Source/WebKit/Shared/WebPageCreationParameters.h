@@ -112,7 +112,7 @@ struct WebPageCreationParameters {
     WebCore::MediaProducer::MutedStateFlags muted;
     bool mayStartMediaWhenInWindow;
 
-    WebCore::IntSize minimumLayoutSize;
+    WebCore::IntSize viewLayoutSize;
     bool autoSizingShouldExpandToViewHeight;
     std::optional<WebCore::IntSize> viewportSizeForCSSViewportUnits;
     
@@ -146,7 +146,7 @@ struct WebPageCreationParameters {
     WebCore::FloatSize overrideScreenSize;
     float textAutosizingWidth;
     bool ignoresViewportScaleLimits;
-    WebCore::FloatSize viewportConfigurationMinimumLayoutSize;
+    WebCore::FloatSize viewportConfigurationViewLayoutSize;
     WebCore::FloatSize viewportConfigurationViewSize;
     WebCore::FloatSize maximumUnobscuredSize;
 #endif

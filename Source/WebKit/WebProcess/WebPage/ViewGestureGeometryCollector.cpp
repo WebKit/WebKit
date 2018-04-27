@@ -106,7 +106,7 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
             targetScale = textLegibilityScales->second;
 
         FloatRect targetRectInContentCoordinates { origin, FloatSize() };
-        targetRectInContentCoordinates.inflate(m_webPage.viewportConfiguration().viewSize() / (2 * targetScale));
+        targetRectInContentCoordinates.inflate(m_webPage.viewportConfiguration().viewLayoutSize() / (2 * targetScale));
 
         dispatchDidCollectGeometryForSmartMagnificationGesture(origin, targetRectInContentCoordinates, visibleContentRect, true, viewportMinimumScale, viewportMaximumScale);
         return;

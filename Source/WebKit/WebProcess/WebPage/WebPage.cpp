@@ -510,7 +510,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 
     updateIsInWindow(true);
 
-    setMinimumLayoutSize(parameters.minimumLayoutSize);
+    setViewLayoutSize(parameters.viewLayoutSize);
     setAutoSizingShouldExpandToViewHeight(parameters.autoSizingShouldExpandToViewHeight);
     setViewportSizeForCSSViewportUnits(parameters.viewportSizeForCSSViewportUnits);
     
@@ -612,7 +612,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #endif
 
 #if PLATFORM(IOS)
-    setViewportConfigurationMinimumLayoutSize(parameters.viewportConfigurationMinimumLayoutSize);
+    setViewportConfigurationViewLayoutSize(parameters.viewportConfigurationViewLayoutSize);
     setMaximumUnobscuredSize(parameters.maximumUnobscuredSize);
 #endif
 }
@@ -4997,23 +4997,23 @@ void WebPage::setAlwaysShowsVerticalScroller(bool alwaysShowsVerticalScroller)
     view->setVerticalScrollbarMode(alwaysShowsVerticalScroller ? ScrollbarAlwaysOn : m_mainFrameIsScrollable ? ScrollbarAuto : ScrollbarAlwaysOff, alwaysShowsVerticalScroller || !m_mainFrameIsScrollable);
 }
 
-void WebPage::setMinimumLayoutSize(const IntSize& minimumLayoutSize)
+void WebPage::setViewLayoutSize(const IntSize& viewLayoutSize)
 {
-    if (m_minimumLayoutSize == minimumLayoutSize)
+    if (m_viewLayoutSize == viewLayoutSize)
         return;
 
-    m_minimumLayoutSize = minimumLayoutSize;
-    if (minimumLayoutSize.width() <= 0) {
+    m_viewLayoutSize = viewLayoutSize;
+    if (viewLayoutSize.width() <= 0) {
         corePage()->mainFrame().view()->enableAutoSizeMode(false, IntSize(), IntSize());
         return;
     }
 
-    int minimumLayoutWidth = minimumLayoutSize.width();
-    int minimumLayoutHeight = std::max(minimumLayoutSize.height(), 1);
+    int viewLayoutWidth = viewLayoutSize.width();
+    int viewLayoutHeight = std::max(viewLayoutSize.height(), 1);
 
     int maximumSize = std::numeric_limits<int>::max();
 
-    corePage()->mainFrame().view()->enableAutoSizeMode(true, IntSize(minimumLayoutWidth, minimumLayoutHeight), IntSize(maximumSize, maximumSize));
+    corePage()->mainFrame().view()->enableAutoSizeMode(true, IntSize(viewLayoutWidth, viewLayoutHeight), IntSize(maximumSize, maximumSize));
 }
 
 void WebPage::setAutoSizingShouldExpandToViewHeight(bool shouldExpand)

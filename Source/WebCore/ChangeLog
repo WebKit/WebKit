@@ -1,3 +1,28 @@
+2018-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Rename minimumLayoutSize to viewLayoutSize
+        https://bugs.webkit.org/show_bug.cgi?id=185050
+        <rdar://problem/39624038>
+
+        Reviewed by Tim Horton.
+
+        See WebKit/ChangeLog for more information. No change in behavior.
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::ViewportConfiguration):
+        (WebCore::ViewportConfiguration::setViewLayoutSize):
+
+        Remove a FIXME comment that is addressed by this refactoring.
+
+        (WebCore::ViewportConfiguration::shouldOverrideDeviceWidthWithMinDeviceWidth const):
+        (WebCore::ViewportConfiguration::initialScaleFromSize const):
+        (WebCore::ViewportConfiguration::minimumScale const):
+        (WebCore::ViewportConfiguration::updateMinimumLayoutSize):
+        (WebCore::ViewportConfiguration::setMinimumLayoutSize): Deleted.
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::viewLayoutSize const):
+        (WebCore::ViewportConfiguration::viewSize const): Deleted.
+
 2018-04-27  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Formatting contexts should create floating states.

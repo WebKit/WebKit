@@ -1420,10 +1420,10 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
         webPage->fixedLayoutSize(), fixedVisibleContentRect, shouldUseFixedLayout,
         horizontalScrollbarMode, horizontalLock, verticalScrollbarMode, verticalLock);
 
-    if (int minimumLayoutWidth = webPage->minimumLayoutSize().width()) {
-        int minimumLayoutHeight = std::max(webPage->minimumLayoutSize().height(), 1);
+    if (int viewLayoutWidth = webPage->viewLayoutSize().width()) {
+        int viewLayoutHeight = std::max(webPage->viewLayoutSize().height(), 1);
         int maximumSize = std::numeric_limits<int>::max();
-        m_frame->coreFrame()->view()->enableAutoSizeMode(true, IntSize(minimumLayoutWidth, minimumLayoutHeight), IntSize(maximumSize, maximumSize));
+        m_frame->coreFrame()->view()->enableAutoSizeMode(true, IntSize(viewLayoutWidth, viewLayoutHeight), IntSize(maximumSize, maximumSize));
 
         if (webPage->autoSizingShouldExpandToViewHeight())
             m_frame->coreFrame()->view()->setAutoSizeFixedMinimumHeight(webPage->size().height());
