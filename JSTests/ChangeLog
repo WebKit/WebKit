@@ -1,5 +1,17 @@
 2018-04-27  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed, rolling out r231086.
+
+        Caused JSC test failures due to an unchecked exception.
+
+        Reverted changeset:
+
+        "[ESNext][BigInt] Implement support for "*" operation"
+        https://bugs.webkit.org/show_bug.cgi?id=183721
+        https://trac.webkit.org/changeset/231086
+
+2018-04-27  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed test gardening, update expectations for test262/intl402/PluralRules tests after r231047.
 
         * test262.yaml: Mark tests as passing.
