@@ -85,6 +85,14 @@ LayoutUnit FormattingContext::marginRight(const Box&) const
     return 0;
 }
 
+void FormattingContext::placeInFlowPositionedChildren(const Container&) const
+{
+}
+
+void FormattingContext::layoutOutOfFlowDescendants() const
+{
+}
+
 }
 }
 #endif

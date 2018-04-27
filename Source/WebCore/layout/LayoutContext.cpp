@@ -50,7 +50,7 @@ void LayoutContext::updateLayout()
 {
     auto context = formattingContext(*m_root);
     auto& state = establishedFormattingState(*m_root, *context);
-    context->layout(state);
+    context->layout(*this, state);
 }
 
 FormattingState& LayoutContext::formattingStateForBox(const Box& layoutBox) const
@@ -60,7 +60,7 @@ FormattingState& LayoutContext::formattingStateForBox(const Box& layoutBox) cons
     return *m_formattingStates.get(&root);
 }
 
-FormattingState& LayoutContext::establishedFormattingState(Box& formattingContextRoot, const FormattingContext& context)
+FormattingState& LayoutContext::establishedFormattingState(const Box& formattingContextRoot, const FormattingContext& context)
 {
     return *m_formattingStates.ensure(&formattingContextRoot, [this, &context] {
         return context.createFormattingState(context.createOrFindFloatingState());

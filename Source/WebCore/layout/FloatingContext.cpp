@@ -25,3 +25,24 @@
 
 #include "config.h"
 #include "FloatingContext.h"
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+
+#include <wtf/IsoMallocInlines.h>
+
+namespace WebCore {
+namespace Layout {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingContext);
+
+FloatingContext::FloatingContext(FloatingState&)
+{
+}
+
+void FloatingContext::computePosition(const Box&)
+{
+}
+
+}
+}
+#endif

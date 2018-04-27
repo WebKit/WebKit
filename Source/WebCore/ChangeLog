@@ -1,3 +1,43 @@
+2018-04-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement BlockFormattingContext::layout logic and its dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=185024
+
+        Reviewed by Antti Koivisto.
+
+        This patch implements the logic for block formatting context according to
+        https://www.w3.org/TR/CSS22/visuren.html#block-formatting
+
+        1. Traverse the tree iteratively (in post-order fashion) and compute the width/static position for the containers as
+        we visit the descendant nodes until we hit a leaf node.
+        2. Compute the position/geometry of the leaf node and move over to its sibling(s).
+        3. Finalize the container's height/final position as we climb back on the tree.
+        4. Run layout on the out-of-flow descendants.  
+
+        Note that subtrees with a formatting context root need to be laid out completely before moving on to the next box.
+        The formatting root box is laid out in the formatting context it lives in, however its descendants get laid out
+        in a separate formatting context (excluding out-of-flow boxes that don't belong to the root). 
+
+        * layout/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::FloatingContext):
+        (WebCore::Layout::FloatingContext::computePosition):
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::placeInFlowPositionedChildren const):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const):
+        * layout/FormattingContext.h:
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::updateLayout):
+        (WebCore::Layout::LayoutContext::establishedFormattingState):
+        * layout/LayoutContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        (WebCore::Layout::BlockFormattingContext::layout): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout const):
+        (WebCore::Layout::InlineFormattingContext::layout): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+
 2018-04-27  Youenn Fablet  <youenn@apple.com>
 
         Use NetworkLoadChecker for XHR/fetch loads

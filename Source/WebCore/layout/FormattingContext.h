@@ -37,6 +37,7 @@ namespace WebCore {
 namespace Layout {
 
 class Box;
+class Container;
 class FormattingState;
 class LayoutContext;
 
@@ -46,7 +47,7 @@ public:
     FormattingContext(const Box& formattingContextRoot, LayoutContext&);
     virtual ~FormattingContext();
 
-    virtual void layout(FormattingState&) = 0;
+    virtual void layout(LayoutContext&, FormattingState&) const = 0;
     virtual std::unique_ptr<FormattingState> createFormattingState(Ref<FloatingState>&&) const = 0;
     virtual Ref<FloatingState> createOrFindFloatingState() const = 0;
 
@@ -65,6 +66,9 @@ protected:
     virtual LayoutUnit marginLeft(const Box&) const;
     virtual LayoutUnit marginBottom(const Box&) const;
     virtual LayoutUnit marginRight(const Box&) const;
+
+    void placeInFlowPositionedChildren(const Container&) const;
+    void layoutOutOfFlowDescendants() const;
 
 private:
     WeakPtr<Box> m_root;

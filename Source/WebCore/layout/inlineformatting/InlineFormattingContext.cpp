@@ -44,7 +44,7 @@ InlineFormattingContext::InlineFormattingContext(const Box& formattingContextRoo
 {
 }
 
-void InlineFormattingContext::layout(FormattingState&)
+void InlineFormattingContext::layout(LayoutContext&, FormattingState&) const
 {
 }
 

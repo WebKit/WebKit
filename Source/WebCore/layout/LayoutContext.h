@@ -61,11 +61,10 @@ public:
     bool needsLayout(const Box&) const;
 
     FormattingState& formattingStateForBox(const Box&) const;
-
-private:
-    FormattingState& establishedFormattingState(Box& formattingContextRoot, const FormattingContext&);
+    FormattingState& establishedFormattingState(const Box& formattingContextRoot, const FormattingContext&);
     std::unique_ptr<FormattingContext> formattingContext(const Box& formattingContextRoot);
 
+private:
     WeakPtr<Box> m_root;
     HashMap<const Box*, std::unique_ptr<FormattingState>> m_formattingStates;
 };
