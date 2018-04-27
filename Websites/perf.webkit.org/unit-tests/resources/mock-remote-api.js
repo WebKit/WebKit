@@ -65,7 +65,8 @@ var MockRemoteAPI = {
         console.assert(privilegedAPIType === 'browser' || privilegedAPIType === 'node');
         let originalRemoteAPI = global.RemoteAPI;
         let originalPrivilegedAPI = global.PrivilegedAPI;
-        const PrivilegedAPI = privilegedAPIType === 'node' ? NodePrivilegedAPI: BrowserPrivilegedAPI;
+        const useNodePrivilegedAPI = privilegedAPIType === 'node';
+        const PrivilegedAPI = useNodePrivilegedAPI ? NodePrivilegedAPI: BrowserPrivilegedAPI;
 
         beforeEach(() => {
             MockRemoteAPI.reset(urlPrefix);
@@ -73,6 +74,8 @@ var MockRemoteAPI = {
             global.RemoteAPI = MockRemoteAPI;
             originalPrivilegedAPI = global.PrivilegedAPI;
             global.PrivilegedAPI = PrivilegedAPI;
+            if (!useNodePrivilegedAPI)
+                PrivilegedAPI._token = null;
         });
 
         afterEach(() => {

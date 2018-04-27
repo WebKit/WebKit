@@ -387,6 +387,15 @@ describe('CommitSet', () => {
             assert.equal(CommitSet.diff(oneCommitSet(), commitSetWithAnotherCommitPatchAndRoot()), 'WebKit: webkit-commit-0 with none - webkit-commit-1 with patch.dat Roots: none - root.dat, root.dat (2)');
         });
     });
+
+    describe('revisionSetsFromCommitSets', () => {
+        it('should create revision sets from commit sets', () => {
+            assert.deepEqual(CommitSet.revisionSetsFromCommitSets([oneCommitSet(), commitSetWithRoot(), commitSetWithTwoRoots()]),
+                [{'11': { revision: 'webkit-commit-0', ownerRevision: null, patch: null}},
+                    {'11': { revision: 'webkit-commit-0', ownerRevision: null, patch: null}, customRoots: [456]},
+                    {'11': { revision: 'webkit-commit-0', ownerRevision: null, patch: null}, customRoots: [456, 458]}]);
+        });
+    });
 });
 
 describe('IntermediateCommitSet', () => {

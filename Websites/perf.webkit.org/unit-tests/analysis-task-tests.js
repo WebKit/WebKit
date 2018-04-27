@@ -121,9 +121,15 @@ function measurementCluster()
 
 describe('AnalysisTask', () => {
     MockModels.inject();
-    let requests = MockRemoteAPI.inject();
+    function makeMockPoints(id, commitSet) {
+        return {
+            id,
+            commitSet: () => commitSet
+        }
+    }
 
     describe('fetchAll', () => {
+        const requests = MockRemoteAPI.inject();
         it('should request all analysis tasks', () => {
             let callCount = 0;
             AnalysisTask.fetchAll().then(() => { callCount++; });
@@ -222,6 +228,91 @@ describe('AnalysisTask', () => {
                 assert.equal(commit.repository(), MockModels.webkit);
                 assert.equal(+commit.time(), 1454481246108);
             });
+        });
+    });
+
+
+    function mockStartAndEndPoints() {
+        const startPoint = makeMockPoints(1, new MeasurementCommitSet(1, [
+            [1, MockModels.ios.id(), 'ios-revision-1', null, 0],
+            [3, MockModels.webkit.id(), 'webkit-revision-1', null, 0]
+        ]));
+        const endPoint = makeMockPoints(2, new MeasurementCommitSet(2, [
+            [2, MockModels.ios.id(), 'ios-revision-2', null, 0],
+            [4, MockModels.webkit.id(), 'webkit-revision-2', null, 0]
+        ]));
+        return [startPoint, endPoint];
+    }
+
+    describe('create with browser privilege api', () => {
+        const requests = MockRemoteAPI.inject();
+
+        it('should create analysis task with confirming repetition count zero as default with browser privilege api', async () => {
+            const [startPoint, endPoint] = mockStartAndEndPoints();
+            AnalysisTask.create('confirm', startPoint, endPoint);
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '/privileged-api/generate-csrf-token');
+            requests[0].resolve({
+                token: 'abc',
+                expiration: Date.now() + 3600 * 1000,
+            });
+
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests[1].url, '/privileged-api/create-analysis-task');
+            assert.equal(requests.length, 2);
+            assert.deepEqual(requests[1].data, {name: 'confirm', startRun: 1, endRun: 2, token: 'abc'});
+        });
+
+        it('should create analysis task with confirming repetition count specified', async () => {
+            const [startPoint, endPoint] = mockStartAndEndPoints();
+            AnalysisTask.create('confirm', startPoint, endPoint, 'Confirm', 4);
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '/privileged-api/generate-csrf-token');
+            requests[0].resolve({
+                token: 'abc',
+                expiration: Date.now() + 3600 * 1000,
+            });
+
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests[1].url, '/privileged-api/create-analysis-task');
+            assert.equal(requests.length, 2);
+            assert.deepEqual(requests[1].data, {name: 'confirm', repetitionCount: 4,
+                startRun: 1, endRun: 2, testGroupName: 'Confirm', token: 'abc', revisionSets: [
+                    {'11': {revision: 'webkit-revision-1', ownerRevision: null, patch: null},
+                        '22': {revision: 'ios-revision-1', ownerRevision: null, patch: null}},
+                    {'11': {revision: 'webkit-revision-2', ownerRevision: null, patch: null},
+                        '22': { revision: 'ios-revision-2', ownerRevision: null, patch: null}}]}
+            );
+        });
+    });
+
+    describe('create with node privilege api', () => {
+        const requests = MockRemoteAPI.inject(null, 'node');
+        beforeEach(() => {
+            PrivilegedAPI.configure('worker', 'password');
+        });
+
+        it('should create analysis task with confirming repetition count zero as default with browser privilege api', () => {
+            const [startPoint, endPoint] = mockStartAndEndPoints();
+            AnalysisTask.create('confirm', startPoint, endPoint);
+            assert.equal(requests[0].url, '/privileged-api/create-analysis-task');
+            assert.equal(requests.length, 1);
+            assert.deepEqual(requests[0].data, {name: 'confirm', startRun: 1, endRun: 2, slaveName: 'worker', slavePassword: 'password'});
+        });
+
+        it('should create analysis task with confirming repetition count specified', () => {
+            const [startPoint, endPoint] = mockStartAndEndPoints();
+            AnalysisTask.create('confirm', startPoint, endPoint, 'Confirm', 4);
+            assert.equal(requests[0].url, '/privileged-api/create-analysis-task');
+            assert.equal(requests.length, 1);
+            assert.deepEqual(requests[0].data, {name: 'confirm', repetitionCount: 4,
+                startRun: 1, endRun: 2, slaveName: 'worker', slavePassword: 'password',
+                testGroupName: 'Confirm', revisionSets: [
+                    {'11': {revision: 'webkit-revision-1', ownerRevision: null, patch: null},
+                        '22': {revision: 'ios-revision-1', ownerRevision: null, patch: null}},
+                    {'11': {revision: 'webkit-revision-2', ownerRevision: null, patch: null},
+                        '22': { revision: 'ios-revision-2', ownerRevision: null, patch: null}}]}
+            );
         });
     });
 });

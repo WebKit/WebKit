@@ -1,6 +1,7 @@
 <?php
 
 require_once('../include/json-header.php');
+require_once('../include/commit-sets-helpers.php');
 
 function main() {
     $db = connect();
@@ -8,6 +9,9 @@ function main() {
 
     $author = remote_user_name($data);
     $name = array_get($data, 'name');
+    $repetition_count = array_get($data, 'repetitionCount');
+    $test_group_name = array_get($data, 'testGroupName');
+    $revision_set_list = array_get($data, 'revisionSets');
 
     $segmentation_name = array_get($data, 'segmentationStrategy');
     $test_range_name = array_get($data, 'testRangeStrategy');
@@ -66,6 +70,23 @@ function main() {
         'end_run_time' => $end_run_time,
         'segmentation' => $segmentation_id,
         'test_range' => $test_range_id));
+
+    if ($repetition_count) {
+        $triggerable = find_triggerable_for_task($db, $task_id);
+        if (!$triggerable || !$triggerable['id']) {
+            $db->rollback_transaction();
+            exit_with_error('TriggerableNotFoundForTask', array('task' => $task_id, 'platform' => $config['config_platform']));
+        }
+        if ($triggerable['platform'] != $config['config_platform']) {
+            $db->rollback_transaction();
+            exit_with_error('InconsistentPlatform', array('configPlatform' => $config['config_platform'], 'taskPlatform' => $triggerable['platform']));
+        }
+        $triggerable_id = $triggerable['id'];
+        $test_id = $triggerable['test'];
+        $commit_sets = commit_sets_from_revision_sets($db, $triggerable_id, $revision_set_list);
+        create_test_group_and_build_requests($db, $commit_sets, $task_id, $test_group_name, $author, $triggerable_id, $config['config_platform'], $test_id, $repetition_count);
+    }
+
     $db->commit_transaction();
 
     exit_with_success(array('taskId' => $task_id));

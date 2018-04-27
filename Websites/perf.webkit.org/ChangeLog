@@ -1,3 +1,49 @@
+2018-04-26  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Extend create-analysis-test API to be able to create with confirming test group.
+        https://bugs.webkit.org/show_bug.cgi?id=184958
+
+        Reviewed by Ryosuke Niwa.
+
+        Extend create-analysis-test API to be able to create an analysis task with confirming test group.
+        Update create analysis task UI in chart pane to adapt this new API.
+        Refactored '/privileged-api/create-test-group' API to share some creating test group logic with '/privileged-api/create-analysis-task' API.
+        Moved the shared logic to commit-sets-helpers.php.
+
+        * public/api/analysis-tasks.php: Use 'require_once' instead of 'require'.
+        * public/include/commit-sets-helpers.php: Added.
+        (create_test_group_and_build_requests): A helper function that creates test group and build requests for a analysis
+        task. In long term, this should be a class to avoid passing long argument list around.
+        (insert_commit_sets_and_construct_configuration_list): Based on commit sets returns build and test configurations.
+        (insert_build_request_for_configuration): Insert build requests based on configuration.
+        (commit_sets_from_revision_sets): Returns commit sets from given revision set list.
+        * public/privileged-api/create-analysis-task.php: Added the ability to create analysis task with confirming test
+        groups when repetition count is specified.
+        * public/privileged-api/create-test-group.php: Moved shared function to commit-sets-helpers.php.
+        * public/v3/models/analysis-task.js:
+        (AnalysisTask.create): Instead of accepting run ids, it now accepts points and test group name and confirming iterations.
+        It will conditionally add test group information into parameter when confirming iterations is a positive number.
+        (AnalysisTask):
+        * public/v3/models/commit-set.js:
+        (CommitSet.revisionSetsFromCommitSets): Move 'TestGroup._revisionSetsFromCommitSets' since CommitSet class is more
+        appropriate place and it will be shared by both TestGroup and AnalysisTask
+        (CommitSet):
+        * public/v3/models/test-group.js:
+        (TestGroup.createWithTask): Adapt 'CommitSet.revisionSetsFromCommitSets'.
+        (TestGroup.createWithCustomConfiguration): Adapt 'CommitSet.revisionSetsFromCommitSets'.
+        (TestGroup.createAndRefetchTestGroups): Adapt 'CommitSet.revisionSetsFromCommitSets'.
+        (TestGroup._revisionSetsFromCommitSets): Deleted and moved to 'CommitSet.revisionSetsFromCommitSets'.
+        * public/v3/pages/chart-pane.js:
+        (ChartPane.prototype.didConstructShadowTree): Added the logic to disable options when checkbox for creating confirming
+        test group is unchecked.
+        (ChartPane.prototype._analyzeRange): Conditionally create confirming test group from UI.
+        (ChartPane.cssTemplate):
+        * server-tests/privileged-api-create-analysis-task-tests.js: Added unit tests. Added a unit test for 'NodePrivilegedAPI'.
+        * unit-tests/analysis-task-tests.js: Added unit tests.
+        * unit-tests/commit-set-tests.js: Added unit test for 'CommitSet.revisionSetsFromCommitSets'.
+        * unit-tests/resources/mock-remote-api.js: Reset csrf token when BrowserPrivilegedAPI is used.
+        (MockRemoteAPI.inject):
+
 2018-04-23  Dewei Zhu  <dewei_zhu@apple.com>
 
         Tool scripts should not use PrivilegedAPI from 'public/v3/privileged-api.js'.

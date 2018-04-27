@@ -242,6 +242,26 @@ class CommitSet extends DataModelObject {
 
         return nameParts.join(' ');
     }
+
+    static revisionSetsFromCommitSets(commitSets)
+    {
+        return commitSets.map((commitSet) => {
+            console.assert(commitSet instanceof CustomCommitSet || commitSet instanceof CommitSet);
+            const revisionSet = {};
+            for (let repository of commitSet.repositories()) {
+                const patchFile = commitSet.patchForRepository(repository);
+                revisionSet[repository.id()] = {
+                    revision: commitSet.revisionForRepository(repository),
+                    ownerRevision: commitSet.ownerRevisionForRepository(repository),
+                    patch: patchFile ? patchFile.id() : null,
+                };
+            }
+            const customRoots = commitSet.customRoots();
+            if (customRoots && customRoots.length)
+                revisionSet['customRoots'] = customRoots.map((uploadedFile) => uploadedFile.id());
+            return revisionSet;
+        });
+    }
 }
 
 class MeasurementCommitSet extends CommitSet {

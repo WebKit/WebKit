@@ -116,7 +116,10 @@ class ChartPane extends ChartPaneBase {
     {
         this.part('close').listenToAction('activate', () => {
             this._chartsPage.closePane(this);
-        })
+        });
+        const createWithTestGroupCheckbox = this.content('create-with-test-group');
+        const repetitionCount = this.content('confirm-repetition');
+        createWithTestGroupCheckbox.onchange = () => repetitionCount.disabled = !createWithTestGroupCheckbox.checked;
     }
 
     serializeState()
@@ -226,19 +229,23 @@ class ChartPane extends ChartPaneBase {
         super._indicatorDidChange(indicatorID, isLocked);
     }
 
-    _analyzeRange(startPoint, endPoint)
+    async _analyzeRange(startPoint, endPoint)
     {
         const router = this._chartsPage.router();
         const newWindow = window.open(router.url('analysis/task/create', {inProgress: true}), '_blank');
 
-        const analyzePopover = this.content().querySelector('.chart-pane-analyze-popover');
-        const name = analyzePopover.querySelector('input').value;
-        AnalysisTask.create(name, startPoint.id, endPoint.id).then((data) => {
+        const name = this.content('task-name').value;
+        const createWithTestGroup = this.content('create-with-test-group').checked;
+        const repetitionCount = this.content('confirm-repetition').value;
+
+        try {
+            const data = await (createWithTestGroup ?
+                AnalysisTask.create(name, startPoint, endPoint, 'Confirm', repetitionCount) : AnalysisTask.create(name, startPoint, endPoint));
             newWindow.location.href = router.url('analysis/task/' + data['taskId']);
             this.fetchAnalysisTasks(true);
-        }, (error) => {
+        } catch(error) {
             newWindow.location.href = router.url('analysis/task/create', {error: error});
-        });
+        }
     }
 
     _markAsOutlier(markAsOutlier, points)
@@ -558,8 +565,25 @@ class ChartPane extends ChartPaneBase {
                     <ul class="chart-pane-action-buttons buttoned-toolbar"></ul>
                     <ul class="chart-pane-alternative-platforms popover" style="display:none"></ul>
                     <form class="chart-pane-analyze-popover popover" style="display:none">
-                        <input type="text" required>
+                        <input type="text" id="task-name" required>
                         <button>Create</button>
+                        <li>
+                            <label><input type="checkbox" id="create-with-test-group" checked></label>
+                            <label>Confirm with</label>
+                                <select id="confirm-repetition">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option selected>4</option>
+                                    <option>5</option>
+                                    <option>6</option>
+                                    <option>7</option>
+                                    <option>8</option>
+                                    <option>9</option>
+                                    <option>10</option>
+                                </select>
+                            <label>iterations</label>
+                        </li>
                     </form>
                     <ul class="chart-pane-filtering-options popover" style="display:none">
                         <li><label><input type="checkbox" class="enable-sampling">Sampling</label></li>
@@ -619,7 +643,7 @@ class ChartPane extends ChartPaneBase {
                 padding: 0 0;
             }
 
-            .chart-pane-actions ul {
+            .chart-pane-actions ul, form {
                 display: block;
                 padding: 0;
                 margin: 0 0.5rem;

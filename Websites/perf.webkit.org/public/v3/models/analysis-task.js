@@ -303,13 +303,16 @@ class AnalysisTask extends LabeledObject {
         return results;
     }
 
-    static create(name, startRunId, endRunId)
+    static create(name, startPoint, endPoint, testGroupName=null, repetitionCount=0)
     {
-        return PrivilegedAPI.sendRequest('create-analysis-task', {
-            name: name,
-            startRun: startRunId,
-            endRun: endRunId,
-        });
+        const parameters = {name, startRun: startPoint.id, endRun: endPoint.id};
+        if (testGroupName) {
+            console.assert(repetitionCount);
+            parameters['revisionSets'] = CommitSet.revisionSetsFromCommitSets([startPoint.commitSet(), endPoint.commitSet()]);
+            parameters['repetitionCount'] = repetitionCount;
+            parameters['testGroupName'] = testGroupName;
+        }
+        return PrivilegedAPI.sendRequest('create-analysis-task', parameters);
     }
 }
 

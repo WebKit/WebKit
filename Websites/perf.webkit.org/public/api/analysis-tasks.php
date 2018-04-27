@@ -1,7 +1,7 @@
 <?php
 
-require('../include/json-header.php');
-require('../include/commit-log-fetcher.php');
+require_once('../include/json-header.php');
+require_once('../include/commit-log-fetcher.php');
 
 function main($path) {
     $db = new Database;
