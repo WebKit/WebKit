@@ -1,5 +1,30 @@
 2018-04-27  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Formatting contexts should take const Box&
+        https://bugs.webkit.org/show_bug.cgi?id=185031
+
+        Reviewed by Sam Weinig.
+
+        The formatting root boxes are supposed to be all const. The only reason why
+        they are not is because WeakPtr<> does not support const objects yet.
+        Use const_cast instead (remove it when WeakPtr<> gains const support).
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::FormattingContext):
+        * layout/FormattingContext.h:
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::LayoutContext):
+        (WebCore::Layout::LayoutContext::formattingContext):
+        * layout/LayoutContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::BlockFormattingContext):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineFormattingContext):
+        * layout/inlineformatting/InlineFormattingContext.h:
+
+2018-04-27  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Add layout tree iterators.
         https://bugs.webkit.org/show_bug.cgi?id=185058
 

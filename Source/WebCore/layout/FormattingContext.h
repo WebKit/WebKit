@@ -41,7 +41,7 @@ class Box;
 class FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(FormattingContext);
 public:
-    FormattingContext(Box& formattingContextRoot);
+    FormattingContext(const Box& formattingContextRoot);
     virtual ~FormattingContext();
 
     virtual void layout(FormattingState&) = 0;

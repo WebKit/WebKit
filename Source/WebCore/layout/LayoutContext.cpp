@@ -40,8 +40,8 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutContext);
 
-LayoutContext::LayoutContext(Box& root)
-    : m_root(makeWeakPtr(root))
+LayoutContext::LayoutContext(const Box& root)
+    : m_root(makeWeakPtr(const_cast<Box&>(root)))
 {
 }
 
@@ -59,7 +59,7 @@ FormattingState& LayoutContext::formattingState(const FormattingContext& context
     }).iterator->value;
 }
 
-std::unique_ptr<FormattingContext> LayoutContext::formattingContext(Box& formattingContextRoot)
+std::unique_ptr<FormattingContext> LayoutContext::formattingContext(const Box& formattingContextRoot)
 {
     if (formattingContextRoot.establishesBlockFormattingContext())
         return std::make_unique<BlockFormattingContext>(formattingContextRoot);

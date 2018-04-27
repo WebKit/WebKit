@@ -50,7 +50,7 @@ class StyleDiff;
 class LayoutContext {
     WTF_MAKE_ISO_ALLOCATED(LayoutContext);
 public:
-    LayoutContext(Box& root);
+    LayoutContext(const Box& root);
 
     void updateLayout();
 
@@ -62,7 +62,7 @@ public:
 
 private:
     FormattingState& formattingState(const FormattingContext&);
-    std::unique_ptr<FormattingContext> formattingContext(Box& formattingContextRoot);
+    std::unique_ptr<FormattingContext> formattingContext(const Box& formattingContextRoot);
 
     WeakPtr<Box> m_root;
     HashMap<const Box*, std::unique_ptr<FormattingState>> m_formattingStates;

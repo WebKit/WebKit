@@ -36,7 +36,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineFormattingContext);
 
-InlineFormattingContext::InlineFormattingContext(Box& formattingContextRoot)
+InlineFormattingContext::InlineFormattingContext(const Box& formattingContextRoot)
     : FormattingContext(formattingContextRoot)
 {
 }

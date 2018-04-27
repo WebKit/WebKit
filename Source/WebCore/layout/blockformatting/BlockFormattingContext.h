@@ -43,7 +43,7 @@ class Box;
 class BlockFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(BlockFormattingContext);
 public:
-    BlockFormattingContext(Box& formattingContextRoot);
+    BlockFormattingContext(const Box& formattingContextRoot);
 
     void layout(FormattingState&) override;
     std::unique_ptr<FormattingState> formattingState() const override;
