@@ -1,3 +1,52 @@
+2018-04-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add layout tree iterators.
+        https://bugs.webkit.org/show_bug.cgi?id=185058
+
+        Reviewed by Antti Koivisto.
+
+        They work exactly like the renderer tree iterators.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/layouttree/LayoutAncestorIterator.h: Added.
+        (WebCore::Layout::LayoutAncestorIterator<T>::LayoutAncestorIterator):
+        (WebCore::Layout::LayoutAncestorIterator<T>::operator):
+        (WebCore::Layout::LayoutAncestorIteratorAdapter<T>::LayoutAncestorIteratorAdapter):
+        (WebCore::Layout::LayoutAncestorIteratorAdapter<T>::begin const):
+        (WebCore::Layout::LayoutAncestorIteratorAdapter<T>::end const):
+        (WebCore::Layout::LayoutAncestorIteratorAdapter<T>::first const):
+        (WebCore::Layout::ancestorsOfType):
+        (WebCore::Layout::lineageOfType):
+        * layout/layouttree/LayoutBox.cpp:
+        * layout/layouttree/LayoutChildIterator.h: Added.
+        (WebCore::Layout::LayoutChildtIterator<T>::LayoutChildtIterator):
+        (WebCore::Layout::LayoutChildtIterator<T>::operator):
+        (WebCore::Layout::LayoutChildtIteratorAdapter<T>::LayoutChildtIteratorAdapter):
+        (WebCore::Layout::LayoutChildtIteratorAdapter<T>::begin const):
+        (WebCore::Layout::LayoutChildtIteratorAdapter<T>::end const):
+        (WebCore::Layout::LayoutChildtIteratorAdapter<T>::first const):
+        (WebCore::Layout::LayoutChildtIteratorAdapter<T>::last const):
+        (WebCore::Layout::childrenOfType):
+        * layout/layouttree/LayoutIterator.h: Added.
+        (WebCore::Layout::isLayoutBoxOfType):
+        (WebCore::Layout::Traversal::firstChild):
+        (WebCore::Layout::Traversal::lastChild):
+        (WebCore::Layout::Traversal::nextSibling):
+        (WebCore::Layout::Traversal::previousSibling):
+        (WebCore::Layout::Traversal::findAncestorOfType):
+        (WebCore::Layout::Traversal::nextAncestorSibling):
+        (WebCore::Layout::Traversal::nextWithin):
+        (WebCore::Layout::Traversal::firstWithin):
+        (WebCore::Layout::Traversal::next):
+        (WebCore::Layout::LayoutIterator<T>::LayoutIterator):
+        (WebCore::Layout::LayoutIterator<T>::traverseNextSibling):
+        (WebCore::Layout::LayoutIterator<T>::traverseNext):
+        (WebCore::Layout::LayoutIterator<T>::traversePreviousSibling):
+        (WebCore::Layout::LayoutIterator<T>::traverseAncestor):
+        (WebCore::Layout::LayoutIterator<T>::operator const):
+        (WebCore::Layout:: const):
+        (WebCore::Layout::= const):
+
 2018-04-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r231089.

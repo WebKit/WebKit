@@ -5717,6 +5717,9 @@
 		0FFD4D5F18651FA300512F6E /* AsyncScrollingCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncScrollingCoordinator.h; sourceTree = "<group>"; };
 		10FB084A14E15C7E00A3DB98 /* PublicURLManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublicURLManager.h; sourceTree = "<group>"; };
 		1100FC6E1FDB3C4D00DD961B /* TrailingFloatsRootInlineBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TrailingFloatsRootInlineBox.cpp; sourceTree = "<group>"; };
+		11100FC72092764C0081AA6C /* LayoutIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutIterator.h; sourceTree = "<group>"; };
+		11100FC920927CBC0081AA6C /* LayoutChildIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutChildIterator.h; sourceTree = "<group>"; };
+		11100FCA2092868D0081AA6C /* LayoutAncestorIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutAncestorIterator.h; sourceTree = "<group>"; };
 		112B34D01E60B8A700BB310A /* SimpleLineLayoutPagination.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutPagination.cpp; sourceTree = "<group>"; };
 		112B34D41E60B98300BB310A /* SimpleLineLayoutPagination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutPagination.h; sourceTree = "<group>"; };
 		113409D7203E038000C66915 /* RenderTreeBuilderContinuation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderContinuation.cpp; sourceTree = "<group>"; };
@@ -15655,16 +15658,19 @@
 		115CFA90208B9441001E6991 /* layouttree */ = {
 			isa = PBXGroup;
 			children = (
+				11100FCA2092868D0081AA6C /* LayoutAncestorIterator.h */,
 				1199FA4A208E37B6002358CC /* LayoutBlockContainer.cpp */,
 				1199FA49208E37B6002358CC /* LayoutBlockContainer.h */,
 				115CFA96208B952B001E6991 /* LayoutBox.cpp */,
 				115CFA95208B952B001E6991 /* LayoutBox.h */,
+				11100FC920927CBC0081AA6C /* LayoutChildIterator.h */,
 				1199FA45208E35A3002358CC /* LayoutContainer.cpp */,
 				1199FA44208E35A3002358CC /* LayoutContainer.h */,
 				1199FA52208E38D3002358CC /* LayoutInlineBox.cpp */,
 				1199FA51208E38D3002358CC /* LayoutInlineBox.h */,
 				1199FA4E208E3899002358CC /* LayoutInlineContainer.cpp */,
 				1199FA4D208E3899002358CC /* LayoutInlineContainer.h */,
+				11100FC72092764C0081AA6C /* LayoutIterator.h */,
 			);
 			path = layouttree;
 			sourceTree = "<group>";
@@ -27851,6 +27857,7 @@
 				C4CD629B18383766007EBAF1 /* FrameSnapshotting.h in Headers */,
 				65A21485097A3F5300B9050A /* FrameTree.h in Headers */,
 				65CBFEFA0974F607001DAC25 /* FrameView.h in Headers */,
+				113D0B521F9FDD2B00F611BB /* FrameViewLayoutContext.h in Headers */,
 				97205AB0123928CA00B17380 /* FTPDirectoryDocument.h in Headers */,
 				51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */,
 				26B999931803B9D900D01121 /* FunctionCall.h in Headers */,
@@ -29105,7 +29112,6 @@
 				1199FA4B208E37B6002358CC /* LayoutBlockContainer.h in Headers */,
 				115CFA97208B952B001E6991 /* LayoutBox.h in Headers */,
 				1199FA46208E35A3002358CC /* LayoutContainer.h in Headers */,
-				113D0B521F9FDD2B00F611BB /* FrameViewLayoutContext.h in Headers */,
 				6F7CA3C6208C2957002F29AB /* LayoutContext.h in Headers */,
 				1199FA53208E38D3002358CC /* LayoutInlineBox.h in Headers */,
 				1199FA4F208E3899002358CC /* LayoutInlineContainer.h in Headers */,
