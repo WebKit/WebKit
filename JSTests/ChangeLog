@@ -1,3 +1,9 @@
+2018-04-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, update expectations for test262/intl402/PluralRules tests after r231047.
+
+        * test262.yaml: Mark tests as passing.
+
 2018-04-26  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "*" operation
