@@ -71,7 +71,7 @@ void CachedRawResource::updateBuffer(SharedBuffer& data)
 
         SetForScope<bool> notifyScope(m_inIncrementalDataNotify, true);
         notifyClientsDataWasReceived(incrementalData.data(), incrementalData.size());
-    };
+    }
     setEncodedSize(data.size());
 
     if (dataBufferingPolicy() == DoNotBufferData) {
