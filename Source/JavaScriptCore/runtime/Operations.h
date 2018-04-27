@@ -23,6 +23,7 @@
 
 #include "CallFrame.h"
 #include "ExceptionHelpers.h"
+#include "JSBigInt.h"
 #include "JSCJSValue.h"
 
 namespace JSC {
@@ -254,6 +255,29 @@ ALWAYS_INLINE JSValue jsAdd(CallFrame* callFrame, JSValue v1, JSValue v2)
 
     // All other cases are pretty uncommon
     return jsAddSlowCase(callFrame, v1, v2);
+}
+
+ALWAYS_INLINE JSValue jsMul(ExecState* state, JSValue v1, JSValue v2)
+{
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue leftNumber = v1.toPrimitive(state, PreferNumber);
+    RETURN_IF_EXCEPTION(scope, { });
+    JSValue rightNumber = v2.toPrimitive(state, PreferNumber);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (leftNumber.isBigInt() || rightNumber.isBigInt()) {
+        if (leftNumber.isBigInt() && rightNumber.isBigInt())
+            return JSBigInt::multiply(state, asBigInt(leftNumber), asBigInt(rightNumber));
+
+        throwTypeError(state, scope, ASCIILiteral("Invalid mix of BigInt and other type in multiplication."));
+        return { };
+    }
+
+    double leftValue =  leftNumber.toNumber(state);
+    double rightValue =  rightNumber.toNumber(state);
+    return jsNumber(leftValue * rightValue);
 }
 
 inline bool scribbleFreeCells()
