@@ -442,79 +442,54 @@ void KeyframeAnimation::validateTransformFunctionList()
     m_transformFunctionListsMatch = true;
 }
 
-void KeyframeAnimation::checkForMatchingFilterFunctionLists()
+bool KeyframeAnimation::checkForMatchingFilterFunctionLists(CSSPropertyID propertyID, const std::function<const FilterOperations& (const RenderStyle&)>& filtersGetter) const
 {
-    m_filterFunctionListsMatch = false;
-
-    if (m_keyframes.size() < 2 || !m_keyframes.containsProperty(CSSPropertyFilter))
-        return;
+    if (m_keyframes.size() < 2 || !m_keyframes.containsProperty(propertyID))
+        return false;
 
     // Empty filters match anything, so find the first non-empty entry as the reference
     size_t numKeyframes = m_keyframes.size();
-    size_t firstNonEmptyFilterKeyframeIndex = numKeyframes;
+    size_t firstNonEmptyKeyframeIndex = numKeyframes;
 
     for (size_t i = 0; i < numKeyframes; ++i) {
-        if (m_keyframes[i].style()->filter().operations().size()) {
-            firstNonEmptyFilterKeyframeIndex = i;
+        if (filtersGetter(*m_keyframes[i].style()).operations().size()) {
+            firstNonEmptyKeyframeIndex = i;
             break;
         }
     }
     
-    if (firstNonEmptyFilterKeyframeIndex == numKeyframes)
-        return;
+    if (firstNonEmptyKeyframeIndex == numKeyframes)
+        return false;
 
-    auto& firstVal = m_keyframes[firstNonEmptyFilterKeyframeIndex].style()->filter();
+    auto& firstVal = filtersGetter(*m_keyframes[firstNonEmptyKeyframeIndex].style());
     
-    for (size_t i = firstNonEmptyFilterKeyframeIndex + 1; i < numKeyframes; ++i) {
-        auto& value = m_keyframes[i].style()->filter();
+    for (size_t i = firstNonEmptyKeyframeIndex + 1; i < numKeyframes; ++i) {
+        auto& value = filtersGetter(*m_keyframes[i].style());
 
         // An emtpy filter list matches anything.
         if (value.operations().isEmpty())
             continue;
 
         if (!firstVal.operationsMatch(value))
-            return;
+            return false;
     }
 
-    m_filterFunctionListsMatch = true;
+    return true;
+}
+
+void KeyframeAnimation::checkForMatchingFilterFunctionLists()
+{
+    m_filterFunctionListsMatch = checkForMatchingFilterFunctionLists(CSSPropertyFilter, [] (const RenderStyle& style) -> const FilterOperations& {
+        return style.filter();
+    });
 }
 
 #if ENABLE(FILTERS_LEVEL_2)
 void KeyframeAnimation::checkForMatchingBackdropFilterFunctionLists()
 {
-    m_backdropFilterFunctionListsMatch = false;
-
-    if (m_keyframes.size() < 2 || !m_keyframes.containsProperty(CSSPropertyWebkitBackdropFilter))
-        return;
-
-    // Empty filters match anything, so find the first non-empty entry as the reference
-    size_t numKeyframes = m_keyframes.size();
-    size_t firstNonEmptyFilterKeyframeIndex = numKeyframes;
-
-    for (size_t i = 0; i < numKeyframes; ++i) {
-        if (m_keyframes[i].style()->backdropFilter().operations().size()) {
-            firstNonEmptyFilterKeyframeIndex = i;
-            break;
-        }
-    }
-
-    if (firstNonEmptyFilterKeyframeIndex == numKeyframes)
-        return;
-
-    auto& firstVal = m_keyframes[firstNonEmptyFilterKeyframeIndex].style()->backdropFilter();
-
-    for (size_t i = firstNonEmptyFilterKeyframeIndex + 1; i < numKeyframes; ++i) {
-        auto& value = m_keyframes[i].style()->backdropFilter();
-
-        // An emtpy filter list matches anything.
-        if (value.operations().isEmpty())
-            continue;
-
-        if (!firstVal.operationsMatch(value))
-            return;
-    }
-
-    m_backdropFilterFunctionListsMatch = true;
+    m_backdropFilterFunctionListsMatch = checkForMatchingFilterFunctionLists(CSSPropertyWebkitBackdropFilter, [] (const RenderStyle& style) -> const FilterOperations& {
+        return style.backdropFilter();
+    });
 }
 #endif
 

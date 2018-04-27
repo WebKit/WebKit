@@ -150,6 +150,8 @@ private:
     void checkForMatchingBackdropFilterFunctionLists();
 #endif
 
+    bool checkForMatchingFilterFunctionLists(CSSPropertyID, const std::function<const FilterOperations& (const RenderStyle&)>&) const;
+
     bool m_shouldRunAccelerated { false };
     bool m_needsForcedLayout { false };
     bool m_triggersStackingContext { false };
