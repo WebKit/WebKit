@@ -1,3 +1,44 @@
+2018-04-27  Youenn Fablet  <youenn@apple.com>
+
+        Use NetworkLoadChecker for XHR/fetch loads
+        https://bugs.webkit.org/show_bug.cgi?id=184741
+
+        Reviewed by Chris Dumez.
+
+        Covered by existing tests.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::shouldSetHTTPHeadersToKeep const):
+        We need to set this option for CORS done in NetworkProcess.
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        Set httpHeadersTokeep when needed (service worker or CORS loads).
+        Remove the synchronous disabling of preflight since this is now also done for asynchronous loads.
+        (WebCore::DocumentThreadableLoader::checkURLSchemeAsCORSEnabled):
+        Helper routine to make the same check for both simple and preflight case.
+        This allows more consistent error logging between WK1 and WK2.
+        (WebCore::DocumentThreadableLoader::makeCrossOriginAccessRequest):
+        Skip preflight in case this is done in NetworkProcess.
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest):
+        (WebCore::isResponseComingFromNetworkProcess):
+        (WebCore::DocumentThreadableLoader::redirectReceived):
+        Bypass security checks when they are already done in NetworkProcess.
+        (WebCore::DocumentThreadableLoader::didFail):
+        In case of AccessControl error, it might be due to a CSP check done in NetworkProcess.
+        Check it again to enable specific CSP console logging and error reporting.
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        Recreating the error in case of synchronous loads to be able to log it adequately.
+        (WebCore::DocumentThreadableLoader::isDoingSecurityChecksInNetworkProcess const):
+        * loader/DocumentThreadableLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::checkResponseCrossOriginAccessControl):
+        Specific handling of SameOrigin credential mode for which cross-origin load will not use any credential.
+        (WebCore::SubresourceLoader::checkRedirectionCrossOriginAccessControl):
+        We keep the application headers so that DocumentThreadableLoader does not have to restart a brand new load.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        DocumentThreadableLoader is setting referrer and origin directly. Until we fix that, we remove them from the original requests
+        as applications are not supposed to set these headers.
+
 2018-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add an experimental feature flag for viewport "min-device-width"

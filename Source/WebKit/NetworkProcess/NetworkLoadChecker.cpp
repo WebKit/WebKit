@@ -35,6 +35,7 @@
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/HTTPParsers.h>
+#include <WebCore/SchemeRegistry.h>
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_sessionID.isAlwaysOnLoggingAllowed(), Network, "%p - NetworkLoadChecker::" fmt, this, ##__VA_ARGS__)
 
@@ -121,6 +122,11 @@ ResourceError NetworkLoadChecker::validateResponse(ResourceResponse& response)
 {
     if (m_redirectCount)
         response.setRedirected(true);
+
+    if (response.type() == ResourceResponse::Type::Opaqueredirect) {
+        response.setTainting(ResourceResponse::Tainting::Opaqueredirect);
+        return { };
+    }
 
     if (m_isSameOriginRequest) {
         response.setTainting(ResourceResponse::Tainting::Basic);
@@ -237,13 +243,13 @@ void NetworkLoadChecker::checkCORSRedirectedRequest(ResourceRequest&& request, V
         // https://fetch.spec.whatwg.org/#concept-http-redirect-fetch (Step 10).
         if (!m_origin || !m_origin->isUnique())
             m_origin = SecurityOrigin::createUnique();
-
-        // FIXME: Add support for SameOrigin credentials.
     }
 
     // FIXME: We should set the request referrer according the referrer policy.
 
     // Let's fetch the request with the original headers (equivalent to request cloning specified by fetch algorithm).
+    if (!request.httpHeaderFields().contains(HTTPHeaderName::Authorization))
+        m_firstRequestHeaders.remove(HTTPHeaderName::Authorization);
     request.setHTTPHeaderFields(m_firstRequestHeaders);
 
     checkCORSRequest(WTFMove(request), WTFMove(handler));
@@ -272,11 +278,8 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
         m_sessionID,
         m_storedCredentialsPolicy
     };
-    m_corsPreflightChecker = std::make_unique<NetworkCORSPreflightChecker>(WTFMove(parameters), [this, request = WTFMove(request), handler = WTFMove(handler)](auto&& error) mutable {
-        if (error.isCancellation())
-            return;
-
-        RELEASE_LOG_IF_ALLOWED("checkCORSRequestWithPreflight - makeCrossOriginAccessRequestWithPreflight preflight complete, success: %d forRedirect? %d", error.isNull(), isRedirected());
+    m_corsPreflightChecker = std::make_unique<NetworkCORSPreflightChecker>(WTFMove(parameters), [this, request = WTFMove(request), handler = WTFMove(handler), isRedirected = isRedirected()](auto&& error) mutable {
+        RELEASE_LOG_IF_ALLOWED("checkCORSRequestWithPreflight - makeCrossOriginAccessRequestWithPreflight preflight complete, success: %d forRedirect? %d", error.isNull(), isRedirected);
 
         if (!error.isNull()) {
             handler(makeUnexpected(WTFMove(error)));
@@ -293,6 +296,9 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
 bool NetworkLoadChecker::doesNotNeedCORSCheck(const URL& url) const
 {
     if (m_options.mode == FetchOptions::Mode::NoCors || m_options.mode == FetchOptions::Mode::Navigate)
+        return true;
+
+    if (!SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(url.protocol().toStringWithoutCopying()))
         return true;
 
     return m_isSameOriginRequest && m_origin->canRequest(url);

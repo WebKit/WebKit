@@ -118,6 +118,9 @@ namespace WebCore {
         void reportIntegrityMetadataError(const URL&);
         void logErrorAndFail(const ResourceError&);
 
+        bool shouldSetHTTPHeadersToKeep() const;
+        bool checkURLSchemeAsCORSEnabled(const URL&);
+
         CachedResourceHandle<CachedRawResource> m_resource;
         ThreadableLoaderClient* m_client;
         Document& m_document;

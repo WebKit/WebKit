@@ -530,7 +530,8 @@ bool SubresourceLoader::checkResponseCrossOriginAccessControl(const ResourceResp
 #endif
 
     ASSERT(m_origin);
-    return passesAccessControlCheck(response, options().storedCredentialsPolicy, *m_origin, errorDescription);
+
+    return passesAccessControlCheck(response, options().credentials == FetchOptions::Credentials::Include ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse, *m_origin, errorDescription);
 }
 
 bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse& redirectResponse, ResourceRequest& newRequest, String& errorMessage)
@@ -571,7 +572,7 @@ bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceR
     updateReferrerPolicy(redirectResponse.httpHeaderField(HTTPHeaderName::ReferrerPolicy));
     
     if (redirectingToNewOrigin) {
-        cleanHTTPRequestHeadersForAccessControl(newRequest);
+        cleanHTTPRequestHeadersForAccessControl(newRequest, options().httpHeadersToKeep);
         updateRequestForAccessControl(newRequest, *m_origin, options().storedCredentialsPolicy);
     }
     

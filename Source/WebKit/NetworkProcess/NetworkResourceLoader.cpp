@@ -90,18 +90,6 @@ static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoad
     data.delayedReply = nullptr;
 }
 
-static inline bool shouldUseNetworkLoadChecker(bool isSynchronous, const NetworkResourceLoadParameters& parameters)
-{
-    if (isSynchronous)
-        return true;
-
-    if (!parameters.shouldRestrictHTTPResponseAccess)
-        return false;
-
-    // FIXME: Add support for Document and EmptyString.
-    return parameters.options.destination != FetchOptions::Destination::Document && parameters.options.destination != FetchOptions::Destination::EmptyString;
-}
-
 NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&& synchronousReply)
     : m_parameters { WTFMove(parameters) }
     , m_connection { connection }
@@ -122,7 +110,7 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
         }
     }
 
-    if (shouldUseNetworkLoadChecker(!!synchronousReply, m_parameters)) {
+    if (synchronousReply || parameters.shouldRestrictHTTPResponseAccess) {
         m_networkLoadChecker = NetworkLoadChecker::create(FetchOptions { m_parameters.options }, m_parameters.sessionID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef(), m_parameters.preflightPolicy);
         if (m_parameters.cspResponseHeaders)
             m_networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { m_parameters.cspResponseHeaders.value() });
@@ -561,6 +549,14 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
             if (!result.has_value()) {
                 if (result.error().isCancellation())
                     return;
+
+                if (m_parameters.options.redirect == FetchOptions::Redirect::Manual) {
+                    redirectResponse.setType(ResourceResponse::Type::Opaqueredirect);
+                    this->didReceiveResponse(WTFMove(redirectResponse));
+                    this->didFinishLoading({ });
+                    return;
+                }
+
                 this->didFailLoading(result.error());
                 return;
             }

@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: CORS-preflight request was blocked
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/XMLHttpRequest/resources/auth1/corsenabled.py due to access control checks.
+
+PASS XMLHttpRequest: send() - "Basic" authenticated CORS requests with user name and password passed to open() (asserts failure) 
+

@@ -82,7 +82,7 @@ public:
 
     // Allow non-HTTP schemes to be registered to allow CORS requests.
     WEBCORE_EXPORT static void registerURLSchemeAsCORSEnabled(const String& scheme);
-    static bool shouldTreatURLSchemeAsCORSEnabled(const String& scheme);
+    WEBCORE_EXPORT static bool shouldTreatURLSchemeAsCORSEnabled(const String& scheme);
 
     // Allow resources from some schemes to load on a page, regardless of its
     // Content Security Policy.

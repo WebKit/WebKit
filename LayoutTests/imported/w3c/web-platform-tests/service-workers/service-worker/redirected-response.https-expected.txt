@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Redirections are not allowed
 CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Fsimple.txt%3F&error due to access control checks.
 CONSOLE MESSAGE: Response served by service worker has redirections
 CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/service-workers/service-worker/resources/simple.txt? due to access control checks.

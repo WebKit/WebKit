@@ -239,6 +239,7 @@ void NetworkLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse
     ASSERT(RunLoop::isMain());
     ASSERT(!m_redirectCompletionHandler);
 
+    redirectResponse.setSource(ResourceResponse::Source::Network);
     m_redirectCompletionHandler = WTFMove(completionHandler);
 
 #if ENABLE(NETWORK_CAPTURE)

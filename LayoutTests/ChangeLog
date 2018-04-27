@@ -1,3 +1,31 @@
+2018-04-27  Youenn Fablet  <youenn@apple.com>
+
+        Use NetworkLoadChecker for XHR/fetch loads
+        https://bugs.webkit.org/show_bug.cgi?id=184741
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/connect-src-eventsource-redirect-to-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-redirect-to-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-csp-blocks-xhr-redirect-cross-origin-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects-async-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects-expected.txt:
+        * platform/mac-wk1/http/tests/security/contentSecurityPolicy/connect-src-eventsource-redirect-to-blocked-expected.txt: Added.
+        * platform/mac-wk1/http/tests/security/contentSecurityPolicy/worker-csp-blocks-xhr-redirect-cross-origin-expected.txt: Added.
+        * platform/mac-wk1/http/tests/xmlhttprequest/access-control-and-redirects-async-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/XMLHttpRequest/late-upload-events-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/XMLHttpRequest/send-authentication-basic-cors-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/XMLHttpRequest/send-network-error-async-events.sub-expected.txt: Added.
+        * platform/win/http/tests/security/contentSecurityPolicy/connect-src-eventsource-redirect-to-blocked-expected.txt: Added.
+        * platform/win/http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-redirect-to-blocked-expected.txt: Added.
+        * platform/win/http/tests/security/contentSecurityPolicy/worker-csp-blocks-xhr-redirect-cross-origin-expected.txt: Added.
+        * platform/win/http/tests/xmlhttprequest/access-control-and-redirects-async-expected.txt: Added.
+        * platform/win/imported/w3c/web-platform-tests/XMLHttpRequest/late-upload-events-expected.txt: Added.
+        * platform/win/imported/w3c/web-platform-tests/XMLHttpRequest/send-authentication-basic-cors-expected.txt: Added.
+        * platform/win/imported/w3c/web-platform-tests/XMLHttpRequest/send-network-error-async-events.sub-expected.txt: Added.
+
 2018-04-27  Simon Fraser  <simon.fraser@apple.com>
 
         Make color-filter transform gradient colors

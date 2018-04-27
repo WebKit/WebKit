@@ -203,6 +203,12 @@ imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/loc
 http/tests/security/frame-loading-via-document-write.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/frame-loading-via-document-write-async-delegates.html [ DumpJSConsoleLogInStdErr ]
 
+imported/w3c/web-platform-tests/fetch/api/basic/mode-same-origin.any.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.worker.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode-worker.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/fetch/api/redirect/redirect-to-dataurl.html [ DumpJSConsoleLogInStdErr ]
+
 webkit.org/b/181901 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/181897 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/181900 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https.html [ DumpJSConsoleLogInStdErr ]

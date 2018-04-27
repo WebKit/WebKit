@@ -1,3 +1,19 @@
+2018-04-27  Youenn Fablet  <youenn@apple.com>
+
+        Use NetworkLoadChecker for XHR/fetch loads
+        https://bugs.webkit.org/show_bug.cgi?id=184741
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic-cors-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-network-error-async-events.sub-expected.txt:
+        * web-platform-tests/cors/late-upload-events-expected.txt:
+        * web-platform-tests/fetch/api/basic/mode-same-origin.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-about.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-about.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-to-dataurl-expected.txt:
+        * web-platform-tests/service-workers/service-worker/redirected-response.https-expected.txt:
+
 2018-04-26  Youenn Fablet  <youenn@apple.com>
 
         preflight checker should add a console message when preflight load is blocked

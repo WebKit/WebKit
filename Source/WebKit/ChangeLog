@@ -1,3 +1,31 @@
+2018-04-27  Youenn Fablet  <youenn@apple.com>
+
+        Use NetworkLoadChecker for XHR/fetch loads
+        https://bugs.webkit.org/show_bug.cgi?id=184741
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::didCompleteWithError):
+        Pass the preflight error as completion error if any.
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::willPerformHTTPRedirection):
+        Set response source to Network so that checks relying on that are correct.
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::validateResponse):
+        Adding Oppaqueredirect tainting.
+        (NetworkLoadChecker::doesNotNeedCORSCheck):
+        Adding a check to only activate CORS checks for CORS enabled schemes.
+        Non CORS enabled schemes loads should have failed in WebProcess already.
+        (WebKit::NetworkLoadChecker::checkCORSRedirectedRequest):
+        Remove Authorization header as done by SubresourceLoader.
+        (WebKit::NetworkLoadChecker::checkCORSRequestWithPreflight):
+        If error is cancellation, we still want to call the completion handler.
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        Activate network load checker for all types of loads.
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        Handle manual redirection by directly calling didReceiveResponse.
+
 2018-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add an experimental feature flag for viewport "min-device-width"

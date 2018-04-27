@@ -776,8 +776,11 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     // Entry point to https://fetch.spec.whatwg.org/#main-fetch.
     std::unique_ptr<ResourceRequest> originalRequest;
-    if (CachedResource::shouldUsePingLoad(type))
+    if (CachedResource::shouldUsePingLoad(type) || request.options().destination == FetchOptions::Destination::EmptyString) {
         originalRequest = std::make_unique<ResourceRequest>(request.resourceRequest());
+        originalRequest->clearHTTPReferrer();
+        originalRequest->clearHTTPOrigin();
+    }
 
     if (Document* document = this->document())
         request.upgradeInsecureRequestIfNeeded(*document);

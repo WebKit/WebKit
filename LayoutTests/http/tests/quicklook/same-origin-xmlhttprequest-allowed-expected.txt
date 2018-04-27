@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: Blocked by Content Security Policy
+CONSOLE MESSAGE: XMLHttpRequest cannot load about: due to access control checks.
 CONSOLE MESSAGE: line 1: PASS: XMLHttpRequest allowed
 
 
