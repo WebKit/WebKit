@@ -1,3 +1,24 @@
+2018-04-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Also run foldPathConstants before mussing up SSA
+        https://bugs.webkit.org/show_bug.cgi?id=185069
+
+        Reviewed by Saam Barati.
+        
+        This isn't needed now, but will be once I implement the phase in bug 185060.
+        
+        This could be a speed-up, or a slow-down, independent of that phase. Most likely it's neutral.
+        Local testing seems to suggest that it's neutral. Anyway, whatever it ends up being, I want it to
+        be landed separately and measured separately from that phase.
+        
+        It's probably nice for sanity to have this and reduceStrength run before tail duplication and
+        another round of reduceStrength, since that make for something that is closer to a fixpoint. But
+        it will increase FTL compile times. So, there's no way to guess if this change is good, bad, or
+        neutral. It all depends on what programs typically look like.
+
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+
 2018-04-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r231086.
