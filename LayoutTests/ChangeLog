@@ -1,3 +1,22 @@
+2018-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Add a mechanism to override default viewport behaviors in extra zoom mode
+        https://bugs.webkit.org/show_bug.cgi?id=185050
+        <rdar://problem/39624038>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to check that:
+        • By default (with no `min-device-width` override), shrink-to-fit and expanded minimum layout sizes takes effect.
+        • `min-device-width` can be used to bail out of shrink-to-fit and viewport behaviors.
+        • A large `min-device-width` can be used to make extra zoom mode viewport heuristics even more aggressive.
+
+        * TestExpectations:
+        * fast/viewport/extrazoom/viewport-change-min-device-width.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.zoomScale):
+        (window.UIHelper):
+
 2018-04-27  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Mark a few new test failures

@@ -208,4 +208,13 @@ window.UIHelper = class UIHelper {
             })()`, resolve);
         });
     }
+
+    static zoomScale()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.uiScriptComplete(uiController.zoomScale);
+            })()`, resolve);
+        });
+    }
 }

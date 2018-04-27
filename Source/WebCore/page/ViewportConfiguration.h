@@ -77,12 +77,12 @@ public:
     FloatSize viewSize() const { return m_viewSize; }
 
     const FloatSize& minimumLayoutSize() const { return m_minimumLayoutSize; }
-    WEBCORE_EXPORT bool setMinimumLayoutSize(const FloatSize&, const FloatSize& viewSize);
+    WEBCORE_EXPORT bool setMinimumLayoutSize(const FloatSize&);
 
     const ViewportArguments& viewportArguments() const { return m_viewportArguments; }
     WEBCORE_EXPORT bool setViewportArguments(const ViewportArguments&);
 
-    WEBCORE_EXPORT bool setForceHorizontalShrinkToFit(bool);
+    bool shouldOverrideDeviceWidthWithMinDeviceWidth() const;
 
     WEBCORE_EXPORT bool setCanIgnoreScalingConstraints(bool);
     void setForceAlwaysUserScalable(bool forceAlwaysUserScalable) { m_forceAlwaysUserScalable = forceAlwaysUserScalable; }
@@ -121,6 +121,8 @@ private:
     bool shouldIgnoreVerticalScalingConstraints() const;
     bool shouldIgnoreHorizontalScalingConstraints() const;
 
+    void updateMinimumLayoutSize();
+
     Parameters m_configuration;
     Parameters m_defaultConfiguration;
     IntSize m_contentSize;
@@ -130,7 +132,6 @@ private:
 
     bool m_canIgnoreScalingConstraints;
     bool m_forceAlwaysUserScalable;
-    bool m_forceHorizontalShrinkToFit;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ViewportConfiguration::Parameters&);

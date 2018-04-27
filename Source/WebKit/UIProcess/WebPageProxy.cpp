@@ -6060,7 +6060,6 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.mimeTypesWithCustomContentProviders = m_pageClient.mimeTypesWithCustomContentProviders();
     parameters.ignoresViewportScaleLimits = m_forceAlwaysUserScalable;
     parameters.viewportConfigurationMinimumLayoutSize = m_viewportConfigurationMinimumLayoutSize;
-    parameters.viewportConfigurationViewSize = m_viewportConfigurationViewSize;
     parameters.maximumUnobscuredSize = m_maximumUnobscuredSize;
 #endif
 

@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" id="meta">
+<head>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script>
+        jsTestIsAsync = true;
+
+        function logWindowDimensionsAfterSettingViewportContent(content) {
+            return new Promise(async resolve => {
+                meta.setAttribute("content", content);
+                await UIHelper.ensurePresentationUpdate();
+                debug(`[${meta.getAttribute("content")}] (${innerWidth}, ${innerHeight})`);
+                resolve();
+            });
+        }
+
+        async function runTest() {
+            if (!window.testRunner) {
+                description("Please use WebKitTestRunner to run this test.");
+                return;
+            }
+
+            debug("1. Initial min-device-width");
+            await logWindowDimensionsAfterSettingViewportContent("width=150");
+            await logWindowDimensionsAfterSettingViewportContent("width=device-width");
+            scaleAtDeviceWidthForInitialMinDeviceWidth = parseFloat(await UIHelper.zoomScale()).toFixed(3);
+            await logWindowDimensionsAfterSettingViewportContent("width=600");
+
+            debug("\n2. min-device-width=0");
+            await logWindowDimensionsAfterSettingViewportContent("width=150, min-device-width=0");
+            await logWindowDimensionsAfterSettingViewportContent("width=device-width, min-device-width=0");
+            scaleAtDeviceWidthForMinDeviceWidth0 = parseFloat(await UIHelper.zoomScale()).toFixed(3);
+            await logWindowDimensionsAfterSettingViewportContent("width=600, min-device-width=0");
+
+            debug("\n3. min-device-width=500");
+            await logWindowDimensionsAfterSettingViewportContent("width=150, min-device-width=500");
+            await logWindowDimensionsAfterSettingViewportContent("width=device-width, min-device-width=500");
+            scaleAtDeviceWidthForMinDeviceWidth500 = parseFloat(await UIHelper.zoomScale()).toFixed(3);
+            await logWindowDimensionsAfterSettingViewportContent("width=600, min-device-width=500");
+
+            shouldBe("scaleAtDeviceWidthForInitialMinDeviceWidth", "'0.488'");
+            shouldBe("scaleAtDeviceWidthForMinDeviceWidth0", "'1.000'");
+            shouldBe("scaleAtDeviceWidthForMinDeviceWidth500", "'0.312'");
+
+            finishJSTest();
+        }
+    </script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

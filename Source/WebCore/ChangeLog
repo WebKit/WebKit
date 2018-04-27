@@ -1,3 +1,55 @@
+2018-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Add a mechanism to override default viewport behaviors in extra zoom mode
+        https://bugs.webkit.org/show_bug.cgi?id=185050
+        <rdar://problem/39624038>
+
+        Reviewed by Tim Horton.
+
+        Currently, in extra zoom mode, there's no way for web pages to opt out of the default viewport behaviors
+        (namely, laying out at a larger width and shrinking to fit) when the web view is very tall and narrow. This
+        patch adds a new experimental viewport attribute, "min-device-width", that can be used to prevent WebKit from
+        automatically clamping the web view width to a greater value for the device width in this scenario.
+
+        Note that after this patch, logic that plumbs a minimumLayoutSize from WKWebView to the viewport configuration
+        will need to be renamed to reflect that this size is no longer the minimum layout size, but rather, the view
+        size that is used for viewport device dimensions by default. This refactoring will be done in a followup part.
+
+        See per-method comments below for more detail.
+
+        Test: fast/viewport/extrazoom/viewport-change-min-device-width.html
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::setViewportFeature):
+        (WebCore::operator<<):
+        * dom/ViewportArguments.h:
+
+        Removes `m_forceHorizontalShrinkToFit` (more detail below).
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::computedMinDeviceWidth):
+        (WebCore::ViewportConfiguration::ViewportConfiguration):
+        (WebCore::ViewportConfiguration::setMinimumLayoutSize):
+
+        Instead of directly setting the minimum layout size, setMinimumLayoutSize now first sets the view size (i.e. the
+        size we use for `device-width` in the viewport meta tag), and then updates the minimum layout size.
+
+        (WebCore::ViewportConfiguration::shouldOverrideDeviceWidthWithMinDeviceWidth const):
+
+        Replaces `m_forceHorizontalShrinkToFit`. Whether or not we shrink to fit is now determined by whether the
+        min-device-width attribute is actively clamping the width of the view.
+
+        (WebCore::ViewportConfiguration::shouldIgnoreHorizontalScalingConstraints const):
+        (WebCore::ViewportConfiguration::shouldIgnoreScalingConstraintsRegardlessOfContentSize const):
+        (WebCore::ViewportConfiguration::updateMinimumLayoutSize):
+
+        Computes and sets the minimum layout size using the view size, taking the minimum device width into account if
+        needed.
+
+        (WebCore::ViewportConfiguration::description const):
+        (WebCore::ViewportConfiguration::setForceHorizontalShrinkToFit): Deleted.
+        * page/ViewportConfiguration.h:
+
 2018-04-27  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Formatting contexts should take const Box&

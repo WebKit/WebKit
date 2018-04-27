@@ -420,6 +420,8 @@ void setViewportFeature(ViewportArguments& arguments, Document& document, String
         arguments.shrinkToFit = findBooleanValue(document, key, value);
     else if (equalLettersIgnoringASCIICase(key, "viewport-fit") && document.settings().viewportFitEnabled())
         arguments.viewportFit = parseViewportFitValue(document, key, value);
+    else if (equalLettersIgnoringASCIICase(key, "min-device-width"))
+        arguments.minDeviceWidth = numericPrefix(document, key, value);
     else
         reportViewportWarning(document, UnrecognizedViewportArgumentKeyError, key);
 }
@@ -475,7 +477,7 @@ TextStream& operator<<(TextStream& ts, const ViewportArguments& viewportArgument
 {
     TextStream::IndentScope indentScope(ts);
 
-    ts << "\n" << indent << "(width " << viewportArguments.width << ", minWidth " << viewportArguments.minWidth << ", maxWidth " << viewportArguments.maxWidth << ")";
+    ts << "\n" << indent << "(width " << viewportArguments.width << ", minWidth " << viewportArguments.minWidth << ", maxWidth " << viewportArguments.maxWidth << ", minDeviceWidth " << viewportArguments.minDeviceWidth << ")";
     ts << "\n" << indent << "(height " << viewportArguments.height << ", minHeight " << viewportArguments.minHeight << ", maxHeight " << viewportArguments.maxHeight << ")";
     ts << "\n" << indent << "(zoom " << viewportArguments.zoom << ", minZoom " << viewportArguments.minZoom << ", maxZoom " << viewportArguments.maxZoom << ")";
 

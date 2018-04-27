@@ -204,8 +204,6 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @property (nonatomic, setter=_setInterfaceOrientationOverride:) UIInterfaceOrientation _interfaceOrientationOverride;
 
 @property (nonatomic, setter=_setAllowsViewportShrinkToFit:) BOOL _allowsViewportShrinkToFit;
-@property (nonatomic, setter=_setForceHorizontalViewportShrinkToFit:) BOOL _forceHorizontalViewportShrinkToFit WK_API_AVAILABLE(ios(WK_IOS_TBA));
-@property (nonatomic, setter=_setMinimumAllowedLayoutWidth:) CGFloat _minimumAllowedLayoutWidth WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 // FIXME: Remove these three properties once we expose WKWebViewContentProvider as API.
 @property (nonatomic, readonly, getter=_isDisplayingPDF) BOOL _displayingPDF;
