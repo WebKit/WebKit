@@ -90,4 +90,5 @@
 (allow mach-lookup
     (global-name "com.apple.lsd.mapdb")
     (global-name "com.apple.analyticsd")
-    (global-name "com.apple.WirelessCoexManager"))
+    (global-name "com.apple.WirelessCoexManager")
+    (global-name "com.apple.wifi.manager"))
