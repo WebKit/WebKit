@@ -886,8 +886,6 @@ webkit.org/b/183860 [ Sierra Release ] http/wpt/service-workers/third-party-regi
 
 webkit.org/b/184245 http/tests/workers/service/service-worker-cache-api.https.html [ Pass Failure ]
 
-webkit.org/b/184051 fast/loader/submit-form-while-parsing-2.html [ Pass Timeout ]
-
 webkit.org/b/177380 http/tests/cache-storage/cache-records-persistency.https.html [ Pass Failure ]
 
 webkit.org/b/184469 http/wpt/service-workers/header-filtering.https.html [ Pass Failure ]
