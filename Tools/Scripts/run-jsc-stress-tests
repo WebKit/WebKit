@@ -1579,7 +1579,7 @@ def prepareBundle
 
     if $doNotMessWithVMPath
         if !$remote and !$tarball
-            $testingFrameworkPath = frameworkFromJSCPath($jscPath).realpath
+            $testingFrameworkPath = (frameworkFromJSCPath($jscPath) || $jscPath.dirname).realpath
             $jscPath = Pathname.new($jscPath).realpath
         else
             $testingFrameworkPath = frameworkFromJSCPath($jscPath)
@@ -1599,7 +1599,19 @@ def prepareBundle
             destination = Pathname.new(".vm")
         elsif $hostOS == "windows"
             # Make sure to copy dll along with jsc on Windows
-            source = [originalJSCPath] + Dir.glob(File.dirname(originalJSCPath) + "/jscLib.dll")
+            originalJSCDir = File.dirname(originalJSCPath)
+            source = [originalJSCPath] + [originalJSCDir + "/jscLib.dll"]
+
+            # Check for and copy JavaScriptCore.dll and WTF.dll for dynamic builds
+            javaScriptCoreDLLPath = File.join(originalJSCDir, "JavaScriptCore.dll")
+            wtfDLLPath = File.join(originalJSCDir, "WTF.dll")
+            if (File.exists?(javaScriptCoreDLLPath))
+                source = source + [javaScriptCoreDLLPath]
+            end
+            if (File.exists?(wtfDLLPath))
+                source = source + [wtfDLLPath]
+            end
+
             destination = $jscPath.dirname
 
             Dir.chdir($outputDir) {

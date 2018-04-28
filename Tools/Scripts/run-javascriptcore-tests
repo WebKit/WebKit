@@ -58,6 +58,7 @@ my $testWriter;
 my $memoryLimited;
 
 my $buildJSC = 1;
+my $copyJSC = 1;
 
 use constant {
     ENV_VAR_SAYS_DO_RUN => 4,
@@ -148,6 +149,17 @@ if ($ENV{RUN_JAVASCRIPTCORE_TESTS_BUILD}) {
     }
 }
 
+if ($ENV{RUN_JAVASCRIPTCORE_TESTS_COPY}) {
+    if ($ENV{RUN_JAVASCRIPTCORE_TESTS_COPY} eq "true") {
+        $copyJSC = 1;
+    } elsif ($ENV{RUN_JAVASCRIPTCORE_TESTS_COPY} eq "false") {
+        $copyJSC = 0;
+    } else {
+        print "Don't recognize value for RUN_JAVASCRIPTCORE_TESTS_COPY environment variable: '"
+            . $ENV{RUN_JAVASCRIPTCORE_TESTS_COPY} . "'. Should be set to 'true' or 'false'.\n";
+    }
+}
+
 if ($ENV{RUN_JAVASCRIPTCORE_TESTS_EXTRA_TESTS}) {
     push @extraTests, $ENV{RUN_JAVASCRIPTCORE_TESTS_EXTRA_TESTS};
 }
@@ -174,6 +186,7 @@ my $mozillaTestsDefault = defaultStringForTestState($runMozillaTests);
 my $jitStressTestsDefault = $runJITStressTests ? "will run" : " will not run";
 my $quickModeDefault = $runQuickMode ? "some" : "all";
 my $failFastDefault = $failFast ? "fail fast" : "don't fail fast";
+my $copyJSCDefault = $copyJSC ? "copy" : "do not copy";
 my $filter;
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
@@ -194,6 +207,7 @@ Usage: $programName [options] [options to pass to build system]
 
   --[no-]fail-fast              Stop this script when a test family reports an error or failure (default: $failFastDefault)
   --[no-]force-collectContinuously Enable the collectContinuously mode even if it was disabled on this platform.
+  --[no-]copy                   Copy (or don't copy) the JavaScriptCore build product before testing (default: $copyJSCDefault)
   --json-output=                Create a file at specified path, listing failed stress tests in JSON format.
   --tarball                     Create a tarball of the bundle produced by running the JSC stress tests.
   --remote=                     Run the JSC stress tests on the specified remote host. Implies --tarball.
@@ -248,6 +262,7 @@ GetOptions(
     'quick!' => \$runQuickMode,
     'fail-fast!' => \$failFast,
     'force-collectContinuously!' => \$forceCollectContinuously,
+    'copy!' => \$copyJSC,
     'json-output=s' => \$jsonFileName,
     'tarball!' => \$createTarball,
     'remote=s' => \$remoteHost,
@@ -437,6 +452,10 @@ sub runJSCStressTests
         push(@jscStressDriverCmd, "--debug");
     }
     
+    if (!$copyJSC) {
+        push(@jscStressDriverCmd, "--no-copy");
+    }
+
     if ($forceCollectContinuously) {
         push(@jscStressDriverCmd, "--force-collectContinuously");
     }
