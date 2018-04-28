@@ -78,6 +78,7 @@ WEBCORE_EXPORT bool isMobileSafari();
 WEBCORE_EXPORT bool isWebBookmarksD();
 bool isDumpRenderTree();
 bool isMobileStore();
+bool isSpringBoard();
 WEBCORE_EXPORT bool isWebApp();
 WEBCORE_EXPORT bool isWebProcess();
 bool isIBooks();

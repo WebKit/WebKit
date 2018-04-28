@@ -1,3 +1,17 @@
+2018-04-27  David Kilzer  <ddkilzer@apple.com>
+
+        Add logging when SpringBoard enables WebThread
+        <https://webkit.org/b/185100>
+        <rdar://problem/39746542>
+
+        Reviewed by Daniel Bates.
+
+        * wtf/Assertions.h:
+        (RELEASE_LOG_FAULT): Add macro to call os_log_fault().
+        * wtf/Platform.h: Drive-by fix to enable USE(OS_LOG) on
+        public iOS SDKs since <rdar://problem/27758343> was
+        fixed in iOS 11.0.
+
 2018-04-26  Mark Lam  <mark.lam@apple.com>
 
         Gardening: Speculative build fix for Windows.

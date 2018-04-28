@@ -1263,8 +1263,7 @@
 #define USE_MEDIATOOLBOX 1
 #endif
 
-/* FIXME: Enable USE_OS_LOG when building with the public iOS 10 SDK once we fix <rdar://problem/27758343>. */
-#if PLATFORM(MAC) || (PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK))
+#if PLATFORM(MAC) || PLATFORM(IOS)
 #define USE_OS_LOG 1
 #if USE(APPLE_INTERNAL_SDK)
 #define USE_OS_STATE 1

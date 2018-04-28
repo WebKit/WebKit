@@ -206,6 +206,12 @@ bool IOSApplication::isMobileStore()
     return isMobileStore;
 }
 
+bool IOSApplication::isSpringBoard()
+{
+    static bool isSpringBoard = applicationBundleIsEqualTo("com.apple.springboard");
+    return isSpringBoard;
+}
+
 bool IOSApplication::isWebApp()
 {
     static bool isWebApp = applicationBundleIsEqualTo("com.apple.webapp");
