@@ -1674,6 +1674,8 @@ void DocumentLoader::startLoadingMainResource(ShouldContinue shouldContinue)
     ASSERT(!m_loadingMainResource);
     m_loadingMainResource = true;
 
+    Ref<DocumentLoader> protectedThis(*this);
+
     if (maybeLoadEmpty()) {
         RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Returning empty document (frame = %p, main = %d)", m_frame, m_frame ? m_frame->isMainFrame() : false);
         return;
@@ -1694,7 +1696,7 @@ void DocumentLoader::startLoadingMainResource(ShouldContinue shouldContinue)
     ASSERT(timing().startTime());
     ASSERT(timing().fetchStart());
 
-    willSendRequest(ResourceRequest(m_request), ResourceResponse(), shouldContinue, [this, protectedThis = makeRef(*this)] (ResourceRequest&& request) mutable {
+    willSendRequest(ResourceRequest(m_request), ResourceResponse(), shouldContinue, [this, protectedThis = WTFMove(protectedThis)] (ResourceRequest&& request) mutable {
         m_request = request;
 
         // willSendRequest() may lead to our Frame being detached or cancelling the load via nulling the ResourceRequest.

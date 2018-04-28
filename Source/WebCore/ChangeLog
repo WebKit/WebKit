@@ -1,3 +1,19 @@
+2018-04-27  Keith Rollin  <krollin@apple.com>
+
+        Fix crash in DocumentLoader::startLoadingMainResource
+        https://bugs.webkit.org/show_bug.cgi?id=185088
+        rdar://problem/39689263
+
+        Reviewed by Chris Dumez.
+
+        Add a "protectedThis" to address a case where a deleted "this" was
+        accessed in a RELEASE_LOG statement.
+
+        No new tests -- covered by existing tests, which now pass.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startLoadingMainResource):
+
 2018-04-27  Simon Fraser  <simon.fraser@apple.com>
 
         Implement color-filter for text stroke
