@@ -40,6 +40,10 @@ FormattingState::FormattingState(Ref<FloatingState>&& floatingState)
 {
 }
 
+FormattingState::~FormattingState()
+{
+}
+
 }
 }
 #endif

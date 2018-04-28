@@ -27,31 +27,29 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FloatingState.h"
-#include <wtf/IsoMalloc.h>
-
 namespace WebCore {
+
+class RenderElement;
+class RenderView;
 
 namespace Layout {
 
-class Box;
-class StyleDiff;
+class Container;
 
-class FormattingState {
-    WTF_MAKE_ISO_ALLOCATED(FormattingState);
+class TreeBuilder {
 public:
-    FormattingState(Ref<FloatingState>&&);
-    virtual ~FormattingState();
-
-    FloatingState& floatingState() const { return m_floatingState; }
-
-    void markNeedsLayout(const Box&, StyleDiff);
-    bool needsLayout(const Box&);
+    static std::unique_ptr<Container> createLayoutTree(const RenderView&);
+    static void showLayoutTree(const Container&);
 
 private:
-    Ref<FloatingState> m_floatingState;
+    static void createSubTree(const RenderElement& rootRenderer, Container& rootContainer);
 };
+
+#if ENABLE(TREE_DEBUGGING)
+void printLayoutTreeForLiveDocuments();
+#endif
 
 }
 }
+
 #endif

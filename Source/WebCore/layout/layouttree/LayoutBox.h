@@ -42,9 +42,7 @@ class Box {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
     friend class TreeBuilder;
-    typedef unsigned BaseTypeFlags;
 
-    Box(RenderStyle&&, BaseTypeFlags);
     virtual ~Box();
 
     bool establishesFormattingContext() const;
@@ -83,6 +81,7 @@ public:
     const Box* previousInFlowSibling() const;
     const Box* previousInFlowOrFloatingSibling() const;
 
+    typedef unsigned BaseTypeFlags;
     bool isContainer() const { return m_baseTypeFlags & ContainerFlag; }
     bool isBlockContainer() const { return m_baseTypeFlags & BlockContainerFlag; }
     bool isInlineBox() const { return m_baseTypeFlags & InlineBoxFlag; }
@@ -98,6 +97,7 @@ protected:
         InlineBoxFlag         = 1 << 2,
         InlineContainerFlag   = 1 << 3
     };
+    Box(RenderStyle&&, BaseTypeFlags);
 
     bool isOverflowVisible() const;
 
@@ -114,7 +114,7 @@ private:
     Box* m_previousSibling { nullptr };
     Box* m_nextSibling { nullptr };
 
-    unsigned m_baseTypeFlags : 3;
+    unsigned m_baseTypeFlags : 4;
     unsigned m_isAnonymous : 1;
 
 };

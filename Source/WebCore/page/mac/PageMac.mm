@@ -33,6 +33,7 @@
 #import "Frame.h"
 #import "FrameLoader.h"
 #import "FrameTree.h"
+#import "LayoutTreeBuilder.h"
 #import "Logging.h"
 #import "RenderObject.h"
 #import <pal/Logging.h>
@@ -56,6 +57,9 @@ void Page::platformInitialize()
     std::call_once(onceFlag, [] {
         PAL::registerNotifyCallback("com.apple.WebKit.showRenderTree", printRenderTreeForLiveDocuments);
         PAL::registerNotifyCallback("com.apple.WebKit.showLayerTree", printLayerTreeForLiveDocuments);
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+        PAL::registerNotifyCallback("com.apple.WebKit.showLayoutTree", Layout::printLayoutTreeForLiveDocuments);
+#endif
     });
 #endif
 }

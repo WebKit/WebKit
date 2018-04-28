@@ -39,6 +39,7 @@ class InlineFormattingState : public FormattingState {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingState);
 public:
     InlineFormattingState(Ref<FloatingState>&&);
+    virtual ~InlineFormattingState();
 };
 
 }

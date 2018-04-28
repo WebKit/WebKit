@@ -40,6 +40,10 @@ BlockFormattingState::BlockFormattingState(Ref<FloatingState>&& floatingState)
 {
 }
 
+BlockFormattingState::~BlockFormattingState()
+{
+}
+
 }
 }
 #endif

@@ -27,6 +27,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FormattingContext.h"
+#include "FormattingState.h"
 #include "LayoutBox.h"
 #include <wtf/IsoMalloc.h>
 
@@ -38,8 +40,6 @@ class Box;
 
 namespace Layout {
 
-class FormattingContext;
-class FormattingState;
 class StyleDiff;
 
 // LayoutContext is the entry point for layout. It takes a (formatting root)container which acts as the root of the layout context.

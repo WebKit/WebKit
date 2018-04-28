@@ -5719,6 +5719,8 @@
 		11100FC72092764C0081AA6C /* LayoutIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutIterator.h; sourceTree = "<group>"; };
 		11100FC920927CBC0081AA6C /* LayoutChildIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutChildIterator.h; sourceTree = "<group>"; };
 		11100FCA2092868D0081AA6C /* LayoutAncestorIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutAncestorIterator.h; sourceTree = "<group>"; };
+		11100FD5209514DE0081AA6C /* LayoutTreeBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutTreeBuilder.cpp; sourceTree = "<group>"; };
+		11100FD7209514DF0081AA6C /* LayoutTreeBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutTreeBuilder.h; sourceTree = "<group>"; };
 		112B34D01E60B8A700BB310A /* SimpleLineLayoutPagination.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutPagination.cpp; sourceTree = "<group>"; };
 		112B34D41E60B98300BB310A /* SimpleLineLayoutPagination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutPagination.h; sourceTree = "<group>"; };
 		113409D7203E038000C66915 /* RenderTreeBuilderContinuation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderContinuation.cpp; sourceTree = "<group>"; };
@@ -15669,6 +15671,8 @@
 				1199FA4E208E3899002358CC /* LayoutInlineContainer.cpp */,
 				1199FA4D208E3899002358CC /* LayoutInlineContainer.h */,
 				11100FC72092764C0081AA6C /* LayoutIterator.h */,
+				11100FD5209514DE0081AA6C /* LayoutTreeBuilder.cpp */,
+				11100FD7209514DF0081AA6C /* LayoutTreeBuilder.h */,
 			);
 			path = layouttree;
 			sourceTree = "<group>";
@@ -31018,8 +31022,7 @@
 		1C09D0501E31C32900725F18 /* libPAL.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			name = libPAL.a;
-			path = lib.a;
+			path = libPAL.a;
 			remoteRef = 1C09D04F1E31C32900725F18 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};

@@ -39,6 +39,7 @@ class BlockFormattingState : public FormattingState {
     WTF_MAKE_ISO_ALLOCATED(BlockFormattingState);
 public:
     BlockFormattingState(Ref<FloatingState>&&);
+    virtual ~BlockFormattingState();
 };
 
 }

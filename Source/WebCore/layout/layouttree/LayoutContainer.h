@@ -42,8 +42,6 @@ class Container : public Box {
 public:
     friend class TreeBuilder;
 
-    Container(RenderStyle&&, BaseTypeFlags);
-
     const Box* firstChild() const { return m_firstChild; }
     const Box* firstInFlowChild() const;
     const Box* firstInFlowOrFloatingChild() const;
@@ -56,6 +54,9 @@ public:
     bool hasInFlowOrFloatingChild() const { return firstInFlowOrFloatingChild(); }
 
     const Vector<WeakPtr<Box>>& outOfFlowDescendants() { return m_outOfFlowDescendants; }
+
+protected:
+    Container(RenderStyle&&, BaseTypeFlags);
 
 private:
     void setFirstChild(Box&);
