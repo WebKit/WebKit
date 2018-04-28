@@ -1,3 +1,21 @@
+2018-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebProcess from WebKitGtk+ 2.19.92 SIGSEVs in WebCore::TextureMapperGL::~TextureMapperGL
+        https://bugs.webkit.org/show_bug.cgi?id=184040
+
+        Reviewed by Michael Catanzaro.
+
+        This can happen when using single shared process model or when the process limit is reached in multiple process
+        model. In this case, all pages in the same web process with accelerated compositing enabled share the same
+        compositing thread. Every page sets its GL context as current when rendering a frame, but not when invalidating
+        the threaded compositor when the page is closed. So, if a hidden tab is closed, the threaded compositor is
+        invalidated and the GL resources of the current context (the visible page) are destroyed. This is also causing
+        the blank pages issue when closing a tab related to another one, the current one stops rendering anything because
+        its GL context has been released. We should make the threaded compositor context current when invalidating it.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::invalidate):
+
 2018-04-27  Timothy Hatcher  <timothy@apple.com>
 
         REGRESSION: Touch events fail to dispatch to the page in all cases.
