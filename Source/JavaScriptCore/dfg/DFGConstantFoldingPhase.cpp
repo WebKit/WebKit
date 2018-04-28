@@ -146,14 +146,14 @@ private:
                     JSValue child2Constant = m_state.forNode(node->child2().node()).value();
 
                     // FIXME: Revisit this condition when introducing BigInt to JSC.
-                    auto isNonStringCellConstant = [] (JSValue value) {
-                        return value && value.isCell() && !value.isString();
+                    auto isNonStringOrBigIntCellConstant = [] (JSValue value) {
+                        return value && value.isCell() && !value.isString() && !value.isBigInt();
                     };
 
-                    if (isNonStringCellConstant(child1Constant)) {
+                    if (isNonStringOrBigIntCellConstant(child1Constant)) {
                         node->convertToCompareEqPtr(m_graph.freezeStrong(child1Constant.asCell()), node->child2());
                         changed = true;
-                    } else if (isNonStringCellConstant(child2Constant)) {
+                    } else if (isNonStringOrBigIntCellConstant(child2Constant)) {
                         node->convertToCompareEqPtr(m_graph.freezeStrong(child2Constant.asCell()), node->child1());
                         changed = true;
                     }

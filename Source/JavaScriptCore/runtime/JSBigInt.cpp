@@ -69,7 +69,7 @@ void JSBigInt::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
 }
 
-JSBigInt::JSBigInt(VM& vm, Structure* structure, int length)
+JSBigInt::JSBigInt(VM& vm, Structure* structure, unsigned length)
     : Base(vm, structure)
     , m_length(length)
 { }
@@ -93,13 +93,13 @@ JSBigInt* JSBigInt::createZero(VM& vm)
     return zeroBigInt;
 }
 
-size_t JSBigInt::allocationSize(int length)
+size_t JSBigInt::allocationSize(unsigned length)
 {
     size_t sizeWithPadding = WTF::roundUpToMultipleOf<sizeof(size_t)>(sizeof(JSBigInt));
     return sizeWithPadding + length * sizeof(Digit);
 }
 
-JSBigInt* JSBigInt::createWithLength(VM& vm, int length)
+JSBigInt* JSBigInt::createWithLength(VM& vm, unsigned length)
 {
     JSBigInt* bigInt = new (NotNull, allocateCell<JSBigInt>(vm.heap, allocationSize(length))) JSBigInt(vm, vm.bigIntStructure.get(), length);
     bigInt->finishCreation(vm);
@@ -223,7 +223,7 @@ JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, StringView s, uint8_t rad
     return parseInt(state, vm, s.characters16(), s.length(), 0, radix, false);
 }
 
-String JSBigInt::toString(ExecState& state, int radix)
+String JSBigInt::toString(ExecState& state, unsigned radix)
 {
     if (this->isZero())
         return state.vm().smallStrings.singleCharacterStringRep('0');
@@ -244,6 +244,26 @@ void JSBigInt::inplaceMultiplyAdd(uintptr_t factor, uintptr_t summand)
     STATIC_ASSERT(sizeof(summand) == sizeof(Digit));
 
     internalMultiplyAdd(this, factor, summand, length(), this);
+}
+
+JSBigInt* JSBigInt::multiply(ExecState* state, JSBigInt* x, JSBigInt* y)
+{
+    VM& vm = state->vm();
+
+    if (x->isZero())
+        return x;
+    if (y->isZero())
+        return y;
+
+    unsigned resultLength = x->length() + y->length();
+    JSBigInt* result = JSBigInt::createWithLength(vm, resultLength);
+    result->initialize(InitializationType::WithZero);
+
+    for (unsigned i = 0; i < x->length(); i++)
+        multiplyAccumulate(y, x->digit(i), result, i);
+
+    result->setSign(x->sign() != y->sign());
+    return result->rightTrim(vm);
 }
 
 #if USE(JSVALUE32_64)
@@ -378,9 +398,9 @@ JSBigInt::Digit JSBigInt::digitDiv(Digit high, Digit low, Digit divisor, Digit& 
     static const Digit kHalfDigitBase = 1ull << halfDigitBits;
     // Adapted from Warren, Hacker's Delight, p. 152.
 #if USE(JSVALUE64)
-    int s = clz64(divisor);
+    unsigned s = clz64(divisor);
 #else
-    int s = clz32(divisor);
+    unsigned s = clz32(divisor);
 #endif
     divisor <<= s;
     
@@ -423,14 +443,14 @@ JSBigInt::Digit JSBigInt::digitDiv(Digit high, Digit low, Digit divisor, Digit& 
 
 // Multiplies {source} with {factor} and adds {summand} to the result.
 // {result} and {source} may be the same BigInt for inplace modification.
-void JSBigInt::internalMultiplyAdd(JSBigInt* source, Digit factor, Digit summand, int n, JSBigInt* result)
+void JSBigInt::internalMultiplyAdd(JSBigInt* source, Digit factor, Digit summand, unsigned n, JSBigInt* result)
 {
     ASSERT(source->length() >= n);
     ASSERT(result->length() >= n);
 
     Digit carry = summand;
     Digit high = 0;
-    for (int i = 0; i < n; i++) {
+    for (unsigned i = 0; i < n; i++) {
         Digit current = source->digit(i);
         Digit newCarry = 0;
 
@@ -458,6 +478,49 @@ void JSBigInt::internalMultiplyAdd(JSBigInt* source, Digit factor, Digit summand
         ASSERT(!(carry + high));
 }
 
+// Multiplies {multiplicand} with {multiplier} and adds the result to
+// {accumulator}, starting at {accumulatorIndex} for the least-significant
+// digit.
+// Callers must ensure that {accumulator} is big enough to hold the result.
+void JSBigInt::multiplyAccumulate(JSBigInt* multiplicand, Digit multiplier, JSBigInt* accumulator, unsigned accumulatorIndex)
+{
+    ASSERT(accumulator->length() > multiplicand->length() + accumulatorIndex);
+    if (!multiplier)
+        return;
+    
+    Digit carry = 0;
+    Digit high = 0;
+    for (unsigned i = 0; i < multiplicand->length(); i++, accumulatorIndex++) {
+        Digit acc = accumulator->digit(accumulatorIndex);
+        Digit newCarry = 0;
+        
+        // Add last round's carryovers.
+        acc = digitAdd(acc, high, newCarry);
+        acc = digitAdd(acc, carry, newCarry);
+        
+        // Compute this round's multiplication.
+        Digit multiplicandDigit = multiplicand->digit(i);
+        Digit low = digitMul(multiplier, multiplicandDigit, high);
+        acc = digitAdd(acc, low, newCarry);
+        
+        // Store result and prepare for next round.
+        accumulator->setDigit(accumulatorIndex, acc);
+        carry = newCarry;
+    }
+    
+    while (carry || high) {
+        ASSERT(accumulatorIndex < accumulator->length());
+        Digit acc = accumulator->digit(accumulatorIndex);
+        Digit newCarry = 0;
+        acc = digitAdd(acc, high, newCarry);
+        high = 0;
+        acc = digitAdd(acc, carry, newCarry);
+        accumulator->setDigit(accumulatorIndex, acc);
+        carry = newCarry;
+        accumulatorIndex++;
+    }
+}
+
 bool JSBigInt::equals(JSBigInt* x, JSBigInt* y)
 {
     if (x->sign() != y->sign())
@@ -466,7 +529,7 @@ bool JSBigInt::equals(JSBigInt* x, JSBigInt* y)
     if (x->length() != y->length())
         return false;
 
-    for (int i = 0; i < x->length(); i++) {
+    for (unsigned i = 0; i < x->length(); i++) {
         if (x->digit(i) != y->digit(i))
             return false;
     }
@@ -494,7 +557,7 @@ void JSBigInt::absoluteDivSmall(ExecState& state, JSBigInt* x, Digit divisor, JS
         return;
     }
 
-    int length = x->length();
+    unsigned length = x->length();
     if (quotient != nullptr) {
         if (*quotient == nullptr)
             *quotient = JSBigInt::createWithLength(vm, length);
@@ -521,14 +584,14 @@ constexpr uint8_t maxBitsPerCharTable[] = {
     162, 163, 165, 166,                         // 33..36
 };
 
-static const int bitsPerCharTableShift = 5;
+static const unsigned bitsPerCharTableShift = 5;
 static const size_t bitsPerCharTableMultiplier = 1u << bitsPerCharTableShift;
 
 // Compute (an overapproximation of) the length of the resulting string:
 // Divide bit length of the BigInt by bits representable per character.
-uint64_t JSBigInt::calculateMaximumCharactersRequired(int length, int radix, Digit lastDigit, bool sign)
+uint64_t JSBigInt::calculateMaximumCharactersRequired(unsigned length, unsigned radix, Digit lastDigit, bool sign)
 {
-    int leadingZeros;
+    unsigned leadingZeros;
     if (sizeof(lastDigit) == 8)
         leadingZeros = clz64(lastDigit);
     else
@@ -556,7 +619,7 @@ uint64_t JSBigInt::calculateMaximumCharactersRequired(int length, int radix, Dig
     return maximumCharactersRequired;
 }
 
-String JSBigInt::toStringGeneric(ExecState& state, JSBigInt* x, int radix)
+String JSBigInt::toStringGeneric(ExecState& state, JSBigInt* x, unsigned radix)
 {
     // FIXME: [JSC] Revisit usage of StringVector into JSBigInt::toString
     // https://bugs.webkit.org/show_bug.cgi?id=18067
@@ -565,7 +628,7 @@ String JSBigInt::toStringGeneric(ExecState& state, JSBigInt* x, int radix)
     ASSERT(radix >= 2 && radix <= 36);
     ASSERT(!x->isZero());
 
-    int length = x->length();
+    unsigned length = x->length();
     bool sign = x->sign();
 
     uint8_t maxBitsPerChar = maxBitsPerCharTable[radix];
@@ -581,12 +644,12 @@ String JSBigInt::toStringGeneric(ExecState& state, JSBigInt* x, int radix)
     if (length == 1)
         lastDigit = x->digit(0);
     else {
-        int chunkChars = digitBits * bitsPerCharTableMultiplier / maxBitsPerChar;
+        unsigned chunkChars = digitBits * bitsPerCharTableMultiplier / maxBitsPerChar;
         Digit chunkDivisor = digitPow(radix, chunkChars);
 
         // By construction of chunkChars, there can't have been overflow.
         ASSERT(chunkDivisor);
-        int nonZeroDigit = length - 1;
+        unsigned nonZeroDigit = length - 1;
         ASSERT(x->digit(nonZeroDigit));
 
         // {rest} holds the part of the BigInt that we haven't looked at yet.
@@ -602,7 +665,7 @@ String JSBigInt::toStringGeneric(ExecState& state, JSBigInt* x, int radix)
             ASSERT(rest);
 
             dividend = &rest;
-            for (int i = 0; i < chunkChars; i++) {
+            for (unsigned i = 0; i < chunkChars; i++) {
                 resultString.append(radixDigits[chunk % radix]);
                 chunk /= radix;
             }
@@ -627,7 +690,7 @@ String JSBigInt::toStringGeneric(ExecState& state, JSBigInt* x, int radix)
     ASSERT(resultString.size() <= static_cast<size_t>(maximumCharactersRequired));
 
     // Remove leading zeroes.
-    int newSizeNoLeadingZeroes = resultString.size();
+    unsigned newSizeNoLeadingZeroes = resultString.size();
     while (newSizeNoLeadingZeroes  > 1 && resultString[newSizeNoLeadingZeroes - 1] == '0')
         newSizeNoLeadingZeroes--;
 
@@ -646,14 +709,16 @@ JSBigInt* JSBigInt::rightTrim(VM& vm)
     if (isZero())
         return this;
 
+    ASSERT(m_length);
+
     int nonZeroIndex = m_length - 1;
     while (nonZeroIndex >= 0 && !digit(nonZeroIndex))
         nonZeroIndex--;
 
-    if (nonZeroIndex == m_length - 1)
+    if (nonZeroIndex == static_cast<int>(m_length - 1))
         return this;
 
-    int newLength = nonZeroIndex + 1;
+    unsigned newLength = nonZeroIndex + 1;
     JSBigInt* trimmedBigInt = createWithLength(vm, newLength);
     RELEASE_ASSERT(trimmedBigInt);
     std::copy(dataStorage(), dataStorage() + newLength, trimmedBigInt->dataStorage()); 
@@ -663,14 +728,14 @@ JSBigInt* JSBigInt::rightTrim(VM& vm)
     return trimmedBigInt;
 }
 
-JSBigInt* JSBigInt::allocateFor(ExecState* state, VM& vm, int radix, int charcount)
+JSBigInt* JSBigInt::allocateFor(ExecState* state, VM& vm, unsigned radix, unsigned charcount)
 {
     ASSERT(2 <= radix && radix <= 36);
     ASSERT(charcount >= 0);
 
     size_t bitsPerChar = maxBitsPerCharTable[radix];
     size_t chars = charcount;
-    const int roundup = bitsPerCharTableMultiplier - 1;
+    const unsigned roundup = bitsPerCharTableMultiplier - 1;
     if (chars <= (std::numeric_limits<size_t>::max() - roundup) / bitsPerChar) {
         size_t bitsMin = bitsPerChar * chars;
 
@@ -678,7 +743,7 @@ JSBigInt* JSBigInt::allocateFor(ExecState* state, VM& vm, int radix, int charcou
         bitsMin = (bitsMin + roundup) >> bitsPerCharTableShift;
         if (bitsMin <= static_cast<size_t>(maxInt)) {
             // Divide by kDigitsBits, rounding up.
-            int length = (static_cast<int>(bitsMin) + digitBits - 1) / digitBits;
+            unsigned length = (bitsMin + digitBits - 1) / digitBits;
             if (length <= maxLength) {
                 JSBigInt* result = JSBigInt::createWithLength(vm, length);
                 return result;
@@ -719,11 +784,11 @@ size_t JSBigInt::offsetOfData()
 }
 
 template <typename CharType>
-JSBigInt* JSBigInt::parseInt(ExecState* state, CharType*  data, int length)
+JSBigInt* JSBigInt::parseInt(ExecState* state, CharType*  data, unsigned length)
 {
     VM& vm = state->vm();
 
-    int p = 0;
+    unsigned p = 0;
     while (p < length && isStrWhiteSpace(data[p]))
         ++p;
 
@@ -758,10 +823,10 @@ JSBigInt* JSBigInt::parseInt(ExecState* state, CharType*  data, int length)
 }
 
 template <typename CharType>
-JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, CharType* data, int length, int startIndex, int radix, bool allowEmptyString)
+JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, CharType* data, unsigned length, unsigned startIndex, unsigned radix, bool allowEmptyString)
 {
     ASSERT(length >= 0);
-    int p = startIndex;
+    unsigned p = startIndex;
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -777,7 +842,7 @@ JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, CharType* data, int lengt
 
     int endIndex = length - 1;
     // Removing trailing spaces
-    while (endIndex >= p && isStrWhiteSpace(data[endIndex]))
+    while (endIndex >= static_cast<int>(p) && isStrWhiteSpace(data[endIndex]))
         --endIndex;
 
     length = endIndex + 1;
@@ -785,16 +850,16 @@ JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, CharType* data, int lengt
     if (p == length)
         return createZero(vm);
 
-    int limit0 = '0' + (radix < 10 ? radix : 10);
-    int limita = 'a' + (radix - 10);
-    int limitA = 'A' + (radix - 10);
+    unsigned limit0 = '0' + (radix < 10 ? radix : 10);
+    unsigned limita = 'a' + (radix - 10);
+    unsigned limitA = 'A' + (radix - 10);
 
     JSBigInt* result = allocateFor(state, vm, radix, length - p);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     result->initialize(InitializationType::WithZero);
 
-    for (int i = p; i < length; i++, p++) {
+    for (unsigned i = p; i < length; i++, p++) {
         uint32_t digit;
         if (data[i] >= '0' && data[i] < limit0)
             digit = data[i] - '0';
@@ -822,13 +887,13 @@ JSBigInt::Digit* JSBigInt::dataStorage()
     return reinterpret_cast<Digit*>(reinterpret_cast<char*>(this) + offsetOfData());
 }
 
-JSBigInt::Digit JSBigInt::digit(int n)
+JSBigInt::Digit JSBigInt::digit(unsigned n)
 {
     ASSERT(n >= 0 && n < length());
     return dataStorage()[n];
 }
 
-void JSBigInt::setDigit(int n, Digit value)
+void JSBigInt::setDigit(unsigned n, Digit value)
 {
     ASSERT(n >= 0 && n < length());
     dataStorage()[n] = value;
