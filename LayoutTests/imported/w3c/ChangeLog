@@ -1,3 +1,11 @@
+2018-04-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline imported/w3c/web-platform-tests/url/url-setters.html after r231110.
+
+        Unreviewed test gardening..
+
+        * web-platform-tests/url/url-setters-expected.txt:
+
 2018-04-27  Youenn Fablet  <youenn@apple.com>
 
         Use NetworkLoadChecker for XHR/fetch loads
