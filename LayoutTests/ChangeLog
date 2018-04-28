@@ -1,3 +1,12 @@
+2018-04-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening for iOS and macOS.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-04-27  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up color-filter tests.
