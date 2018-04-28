@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: color-filter affects text stroke</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="color-filter-text-stroke-expected.html">
+
+        <meta name="assert" content="color-filter affects text stroke">
+        <style type="text/css">
+            .test
+            {
+                margin: 50px 20px;
+                font: 120px Ahem;
+                color: rgb(255, 128, 255);
+                color-filter: invert();
+            }
+        </style>
+        <script>
+            if (window.internals)
+                internals.settings.setColorFilterEnabled(true);
+        </script>
+    </head>
+    <body>
+        <div class="test" style="stroke-color: yellow; stroke-width: 20px;">O</div>
+        <div class="test" style="-webkit-text-stroke: 20px yellow;">O</div>
+    </body>
+</html>

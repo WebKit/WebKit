@@ -120,7 +120,7 @@ TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& line
     if (forceBackgroundToWhite)
         paintStyle.fillColor = adjustColorForVisibilityOnBackground(paintStyle.fillColor, Color::white);
 
-    paintStyle.strokeColor = lineStyle.computedStrokeColor();
+    paintStyle.strokeColor = lineStyle.colorByApplyingColorFilter(lineStyle.computedStrokeColor());
 
     // Make the text stroke color legible against a white background
     if (forceBackgroundToWhite)

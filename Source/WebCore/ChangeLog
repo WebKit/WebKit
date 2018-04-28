@@ -1,5 +1,19 @@
 2018-04-27  Simon Fraser  <simon.fraser@apple.com>
 
+        Implement color-filter for text stroke
+        https://bugs.webkit.org/show_bug.cgi?id=185098
+
+        Reviewed by Alan Bujtas.
+        
+        Transform the text stroke color through color-filter.
+
+        Test: css3/color-filters/color-filter-text-stroke.html
+
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::computeTextPaintStyle):
+
+2018-04-27  Simon Fraser  <simon.fraser@apple.com>
+
         Implement animation for color-filter
         https://bugs.webkit.org/show_bug.cgi?id=185092
         rdar://problem/39773810
