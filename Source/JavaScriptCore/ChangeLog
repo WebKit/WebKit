@@ -1,3 +1,42 @@
+2018-04-27  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement support for "*" operation
+        https://bugs.webkit.org/show_bug.cgi?id=183721
+
+        Reviewed by Saam Barati.
+
+        Added BigInt support into times binary operator into LLInt and on
+        JITOperations profiledMul and unprofiledMul. We are also replacing all
+        uses of int to unsigned when there is no negative values for
+        variables.
+
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * jit/JITOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::JSBigInt):
+        (JSC::JSBigInt::allocationSize):
+        (JSC::JSBigInt::createWithLength):
+        (JSC::JSBigInt::toString):
+        (JSC::JSBigInt::multiply):
+        (JSC::JSBigInt::digitDiv):
+        (JSC::JSBigInt::internalMultiplyAdd):
+        (JSC::JSBigInt::multiplyAccumulate):
+        (JSC::JSBigInt::equals):
+        (JSC::JSBigInt::absoluteDivSmall):
+        (JSC::JSBigInt::calculateMaximumCharactersRequired):
+        (JSC::JSBigInt::toStringGeneric):
+        (JSC::JSBigInt::rightTrim):
+        (JSC::JSBigInt::allocateFor):
+        (JSC::JSBigInt::parseInt):
+        (JSC::JSBigInt::digit):
+        (JSC::JSBigInt::setDigit):
+        * runtime/JSBigInt.h:
+        * runtime/Operations.h:
+        (JSC::jsMul):
+
 2018-04-27  JF Bastien  <jfbastien@apple.com>
 
         Make the first 64 bits of JSString look like a double JSValue
