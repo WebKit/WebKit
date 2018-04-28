@@ -5,7 +5,7 @@ try {
     error = e;
 }
 
-if (!error || error.message !== "Unexpected escaped characters in keyword tocken: 'i\\u{006E}'")
+if (!error || error.message !== "Unexpected escaped characters in keyword token: 'i\\u{006E}'")
     throw new Error("Bad");
 
 error = null;
@@ -15,7 +15,7 @@ try {
     error = e;
 }
 
-if (!error || error.message !== "Unexpected escaped characters in keyword tocken: 'i\\u006E'")
+if (!error || error.message !== "Unexpected escaped characters in keyword token: 'i\\u006E'")
     throw new Error("Bad");
 
 // This test should not crash.

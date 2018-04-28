@@ -4173,10 +4173,10 @@ test/language/statements/labeled/decl-gen.js:
 test/language/statements/labeled/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/labeled/value-await-non-module-escaped.js:
-  default: "SyntaxError: Unexpected escaped characters in keyword tocken: 'aw\\u0061it'"
-  strict mode: "SyntaxError: Unexpected escaped characters in keyword tocken: 'aw\\u0061it'"
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
 test/language/statements/labeled/value-yield-non-strict-escaped.js:
-  default: "SyntaxError: Unexpected escaped characters in keyword tocken: 'yi\\u0065ld'"
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'yi\\u0065ld'"
 test/language/statements/labeled/value-yield-non-strict.js:
   strict mode: "SyntaxError: Cannot use 'yield' as a label in strict mode."
 test/language/statements/labeled/value-yield-strict.js:
@@ -4192,7 +4192,7 @@ test/language/statements/let/syntax/attempt-to-redeclare-let-binding-with-var.js
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/let/syntax/escaped-let.js:
-  default: "SyntaxError: Unexpected escaped characters in keyword tocken: 'l\\u0065t'"
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'l\\u0065t'"
 test/language/statements/switch/syntax/redeclaration/async-function-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/async-function-declaration-attempt-to-redeclare-with-async-generator-declaration.js:

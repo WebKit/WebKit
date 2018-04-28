@@ -1,3 +1,49 @@
+2018-04-28  Rick Waldron  <waldron.rick@gmail.com>
+
+        Token misspelled "tocken" in error message string
+        https://bugs.webkit.org/show_bug.cgi?id=185030
+
+        Reviewed by Saam Barati.
+
+        * parser/Parser.cpp: Fix typo "tocken" => "token" in SyntaxError message string
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::didFinishParsing):
+        (JSC::Parser<LexerType>::parseSourceElements):
+        (JSC::Parser<LexerType>::parseAsyncGeneratorFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseVariableDeclaration):
+        (JSC::Parser<LexerType>::parseWhileStatement):
+        (JSC::Parser<LexerType>::parseVariableDeclarationList):
+        (JSC::Parser<LexerType>::createBindingPattern):
+        (JSC::Parser<LexerType>::parseArrowFunctionSingleExpressionBodySourceElements):
+        (JSC::Parser<LexerType>::parseObjectRestElement):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseForStatement):
+        (JSC::Parser<LexerType>::parseBreakStatement):
+        (JSC::Parser<LexerType>::parseContinueStatement):
+        (JSC::Parser<LexerType>::parseThrowStatement):
+        (JSC::Parser<LexerType>::parseWithStatement):
+        (JSC::Parser<LexerType>::parseSwitchStatement):
+        (JSC::Parser<LexerType>::parseSwitchClauses):
+        (JSC::Parser<LexerType>::parseTryStatement):
+        (JSC::Parser<LexerType>::parseBlockStatement):
+        (JSC::Parser<LexerType>::parseFormalParameters):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseExpressionOrLabelStatement):
+        (JSC::Parser<LexerType>::parseExpressionStatement):
+        (JSC::Parser<LexerType>::parseIfStatement):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parseConditionalExpression):
+        (JSC::Parser<LexerType>::parseBinaryExpression):
+        (JSC::Parser<LexerType>::parseObjectLiteral):
+        (JSC::Parser<LexerType>::parseStrictObjectLiteral):
+        (JSC::Parser<LexerType>::parseArrayLiteral):
+        (JSC::Parser<LexerType>::parseArguments):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        (JSC::operatorString):
+        (JSC::Parser<LexerType>::parseUnaryExpression):
+        (JSC::Parser<LexerType>::printUnexpectedTokenText):
+
 2018-04-28  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "*" operation

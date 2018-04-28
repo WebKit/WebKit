@@ -1,3 +1,18 @@
+2018-04-28  Rick Waldron  <waldron.rick@gmail.com>
+
+        Token misspelled "tocken" in error message string
+        https://bugs.webkit.org/show_bug.cgi?id=185030
+
+        Reviewed by Saam Barati.
+
+        * ChakraCore/test/Basics/IdsWithEscapes.baseline-jsc: Fix typo "tocken" => "token"
+        * stress/destructuring-assignment-syntax.js: Fix typo "tocken" => "token"
+        * stress/error-messages-for-in-operator-should-not-crash.js: Fix typo "tocken" => "token"
+        * stress/reserved-word-with-escape.js: Fix typo "tocken" => "token"
+        (testSyntaxError.String.raw.v):
+        (String.raw.SyntaxError.Cannot.use.the.keyword.string_appeared_here.as.a.name):
+        (testSyntaxError.String.raw.a):
+
 2018-04-28  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "*" operation

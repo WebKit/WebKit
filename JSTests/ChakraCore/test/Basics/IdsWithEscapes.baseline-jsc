@@ -3,20 +3,20 @@
 20
 20
 ReferenceError: Can't find variable: hello2
-SyntaxError: Unexpected escaped characters in keyword tocken: 'fals\u0065'
-SyntaxError: Unexpected escaped characters in keyword tocken: 'fals\u0065'
-SyntaxError: Unexpected escaped characters in keyword tocken: 'tru\u0065'
+SyntaxError: Unexpected escaped characters in keyword token: 'fals\u0065'
+SyntaxError: Unexpected escaped characters in keyword token: 'fals\u0065'
+SyntaxError: Unexpected escaped characters in keyword token: 'tru\u0065'
 SyntaxError: Unexpected keyword 'var'
-SyntaxError: Unexpected escaped characters in keyword tocken: 'v\u0061r'
+SyntaxError: Unexpected escaped characters in keyword token: 'v\u0061r'
 SyntaxError: Unexpected keyword 'else'
-SyntaxError: Unexpected escaped characters in keyword tocken: 'els\u0065'
+SyntaxError: Unexpected escaped characters in keyword token: 'els\u0065'
 SyntaxError: Cannot use the keyword 'false' as a variable name.
 SyntaxError: Cannot use the keyword 'var' as a variable name.
-SyntaxError: Unexpected escaped characters in keyword tocken: 'fals\u0065'
-SyntaxError: Unexpected escaped characters in keyword tocken: 'v\u0061r'
+SyntaxError: Unexpected escaped characters in keyword token: 'fals\u0065'
+SyntaxError: Unexpected escaped characters in keyword token: 'v\u0061r'
 10
 10
 10
 10
 SyntaxError: Cannot use the keyword 'else' as a function name.
-SyntaxError: Unexpected escaped characters in keyword tocken: 'els\u0065'
+SyntaxError: Unexpected escaped characters in keyword token: 'els\u0065'
