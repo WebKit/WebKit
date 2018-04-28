@@ -6165,16 +6165,16 @@ private:
             m_out.storePtr(kids[i], result, m_heaps.JSRopeString_fibers[i]);
         for (unsigned i = numKids; i < JSRopeString::s_maxInternalRopeLength; ++i)
             m_out.storePtr(m_out.intPtrZero, result, m_heaps.JSRopeString_fibers[i]);
-        LValue flags = m_out.load32(kids[0], m_heaps.JSString_flags);
+        LValue flags = m_out.load16ZeroExt32(kids[0], m_heaps.JSString_flags);
         LValue length = m_out.load32(kids[0], m_heaps.JSString_length);
         for (unsigned i = 1; i < numKids; ++i) {
-            flags = m_out.bitAnd(flags, m_out.load32(kids[i], m_heaps.JSString_flags));
+            flags = m_out.bitAnd(flags, m_out.load16ZeroExt32(kids[i], m_heaps.JSString_flags));
             CheckValue* lengthCheck = m_out.speculateAdd(
                 length, m_out.load32(kids[i], m_heaps.JSString_length));
             blessSpeculation(lengthCheck, Uncountable, noValue(), nullptr, m_origin);
             length = lengthCheck;
         }
-        m_out.store32(
+        m_out.store32As16(
             m_out.bitAnd(m_out.constInt32(JSString::Is8Bit), flags),
             result, m_heaps.JSString_flags);
         m_out.store32(length, result, m_heaps.JSString_length);

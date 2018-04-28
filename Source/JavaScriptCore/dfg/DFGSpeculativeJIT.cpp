@@ -4268,7 +4268,7 @@ void SpeculativeJIT::compileMakeRope(Node* node)
         m_jit.storePtr(opGPRs[i], JITCompiler::Address(resultGPR, JSRopeString::offsetOfFibers() + sizeof(WriteBarrier<JSString>) * i));
     for (unsigned i = numOpGPRs; i < JSRopeString::s_maxInternalRopeLength; ++i)
         m_jit.storePtr(TrustedImmPtr(nullptr), JITCompiler::Address(resultGPR, JSRopeString::offsetOfFibers() + sizeof(WriteBarrier<JSString>) * i));
-    m_jit.load32(JITCompiler::Address(opGPRs[0], JSString::offsetOfFlags()), scratchGPR);
+    m_jit.load16(JITCompiler::Address(opGPRs[0], JSString::offsetOfFlags()), scratchGPR);
     m_jit.load32(JITCompiler::Address(opGPRs[0], JSString::offsetOfLength()), allocatorGPR);
     if (!ASSERT_DISABLED) {
         JITCompiler::Jump ok = m_jit.branch32(
@@ -4277,7 +4277,7 @@ void SpeculativeJIT::compileMakeRope(Node* node)
         ok.link(&m_jit);
     }
     for (unsigned i = 1; i < numOpGPRs; ++i) {
-        m_jit.and32(JITCompiler::Address(opGPRs[i], JSString::offsetOfFlags()), scratchGPR);
+        m_jit.and16(JITCompiler::Address(opGPRs[i], JSString::offsetOfFlags()), scratchGPR);
         speculationCheck(
             Uncountable, JSValueSource(), nullptr,
             m_jit.branchAdd32(
@@ -4285,7 +4285,7 @@ void SpeculativeJIT::compileMakeRope(Node* node)
                 JITCompiler::Address(opGPRs[i], JSString::offsetOfLength()), allocatorGPR));
     }
     m_jit.and32(JITCompiler::TrustedImm32(JSString::Is8Bit), scratchGPR);
-    m_jit.store32(scratchGPR, JITCompiler::Address(resultGPR, JSString::offsetOfFlags()));
+    m_jit.store16(scratchGPR, JITCompiler::Address(resultGPR, JSString::offsetOfFlags()));
     if (!ASSERT_DISABLED) {
         JITCompiler::Jump ok = m_jit.branch32(
             JITCompiler::GreaterThanOrEqual, allocatorGPR, TrustedImm32(0));

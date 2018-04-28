@@ -372,6 +372,12 @@ public:
         and32(dataTempRegister, dest);
     }
 
+    void and16(Address src, RegisterID dest)
+    {
+        load16(src, getCachedDataTempRegisterIDAndInvalidate());
+        and32(dataTempRegister, dest);
+    }
+
     void and64(RegisterID src1, RegisterID src2, RegisterID dest)
     {
         m_assembler.and_<64>(dest, src1, src2);

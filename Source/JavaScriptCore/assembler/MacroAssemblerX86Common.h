@@ -290,6 +290,16 @@ public:
         m_assembler.andl_mr(src.offset, src.base, src.index, src.scale, dest);
     }
 
+    void and16(Address src, RegisterID dest)
+    {
+        m_assembler.andw_mr(src.offset, src.base, dest);
+    }
+
+    void and16(BaseIndex src, RegisterID dest)
+    {
+        m_assembler.andw_mr(src.offset, src.base, src.index, src.scale, dest);
+    }
+
     void and32(TrustedImm32 imm, Address address)
     {
         m_assembler.andl_im(imm.m_value, address.offset, address.base);

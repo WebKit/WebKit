@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -683,6 +683,18 @@ public:
     void andl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
     {
         m_formatter.oneByteOp(OP_AND_GvEv, dst, base, index, scale, offset);
+    }
+
+    void andw_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+        andl_mr(offset, base, dst);
+    }
+
+    void andw_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
+    {
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+        andl_mr(offset, base, index, scale, dst);
     }
 
     void andl_rm(RegisterID src, int offset, RegisterID base)

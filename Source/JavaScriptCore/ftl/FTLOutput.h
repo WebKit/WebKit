@@ -322,6 +322,8 @@ public:
     LValue load64(LValue base, const AbstractHeap& field) { return load64(address(base, field)); }
     LValue loadPtr(LValue base, const AbstractHeap& field) { return loadPtr(address(base, field)); }
     LValue loadDouble(LValue base, const AbstractHeap& field) { return loadDouble(address(base, field)); }
+    void store32As8(LValue value, LValue base, const AbstractHeap& field) { store32As8(value, address(base, field)); }
+    void store32As16(LValue value, LValue base, const AbstractHeap& field) { store32As16(value, address(base, field)); }
     void store32(LValue value, LValue base, const AbstractHeap& field) { store32(value, address(base, field)); }
     void store64(LValue value, LValue base, const AbstractHeap& field) { store64(value, address(base, field)); }
     void storePtr(LValue value, LValue base, const AbstractHeap& field) { storePtr(value, address(base, field)); }

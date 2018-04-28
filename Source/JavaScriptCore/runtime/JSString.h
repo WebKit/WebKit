@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -101,14 +101,12 @@ public:
 private:
     JSString(VM& vm, Ref<StringImpl>&& value)
         : JSCell(vm, vm.stringStructure.get())
-        , m_flags(0)
         , m_value(WTFMove(value))
     {
     }
 
     JSString(VM& vm)
         : JSCell(vm, vm.stringStructure.get())
-        , m_flags(0)
     {
     }
 
@@ -218,10 +216,12 @@ protected:
     }
 
 private:
-    mutable unsigned m_flags;
-
     // A string is represented either by a String or a rope of fibers.
-    unsigned m_length;
+    unsigned m_length { 0 };
+    mutable uint16_t m_flags { 0 };
+    // The poison is strategically placed and holds a value such that the first
+    // 64 bits of JSString look like a double JSValue.
+    uint16_t m_poison { 1 };
     mutable String m_value;
 
     friend class LLIntOffsetsExtractor;
