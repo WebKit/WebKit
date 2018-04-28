@@ -55,7 +55,6 @@ private:
     LayoutUnit nonCollapsedMarginBottom(const Box&) const;
     LayoutUnit collapsedMarginTopFromFirstChild(const Box&) const;
     LayoutUnit collapsedMarginBottomFromLastChild(const Box&) const;
-    LayoutUnit marginValue(LayoutUnit currentMarginValue, LayoutUnit candidateMarginValue) const;
 
     bool hasAdjoiningMarginTopAndBottom(const Box&) const;
 };

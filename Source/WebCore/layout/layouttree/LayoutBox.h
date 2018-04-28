@@ -88,6 +88,7 @@ public:
     bool isInlineBox() const { return m_baseTypeFlags & InlineBoxFlag; }
     bool isInlineContainer() const { return m_baseTypeFlags & InlineContainerFlag; }
 
+    const RenderStyle& style() const { return m_style; }
     auto& weakPtrFactory() const { return m_weakFactory; }
 
 protected:
