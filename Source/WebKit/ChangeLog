@@ -1,3 +1,16 @@
+2018-04-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Revise sandboxes to allow additional IOKit property access
+        https://bugs.webkit.org/show_bug.cgi?id=185095
+        <rdar://problem/39809455>
+
+        Reviewed by Eric Carlson.
+
+        Update the WebContent and Plugin processes to allow additional IOKit property access.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebProcess from WebKitGtk+ 2.19.92 SIGSEVs in WebCore::TextureMapperGL::~TextureMapperGL
