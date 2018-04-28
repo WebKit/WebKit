@@ -724,6 +724,7 @@ void KeyframeEffectReadOnly::setBlendingKeyframes(KeyframeList& blendingKeyframe
 #if ENABLE(FILTERS_LEVEL_2)
     checkForMatchingBackdropFilterFunctionLists();
 #endif
+    checkForMatchingColorFilterFunctionLists();
 }
 
 void KeyframeEffectReadOnly::checkForMatchingTransformFunctionLists()
@@ -813,6 +814,13 @@ void KeyframeEffectReadOnly::checkForMatchingBackdropFilterFunctionLists()
     });
 }
 #endif
+
+void KeyframeEffectReadOnly::checkForMatchingColorFilterFunctionLists()
+{
+    m_colorFilterFunctionListsMatch = checkForMatchingFilterFunctionLists(CSSPropertyColorFilter, [] (const RenderStyle& style) -> const FilterOperations& {
+        return style.colorFilter();
+    });
+}
 
 void KeyframeEffectReadOnly::computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {

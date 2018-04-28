@@ -58,6 +58,8 @@ KeyframeAnimation::KeyframeAnimation(const Animation& animation, Element& elemen
 #if ENABLE(FILTERS_LEVEL_2)
     checkForMatchingBackdropFilterFunctionLists();
 #endif
+    checkForMatchingColorFilterFunctionLists();
+
     computeStackingContextImpact();
     computeLayoutDependency();
 }
@@ -492,6 +494,13 @@ void KeyframeAnimation::checkForMatchingBackdropFilterFunctionLists()
     });
 }
 #endif
+
+void KeyframeAnimation::checkForMatchingColorFilterFunctionLists()
+{
+    m_colorFilterFunctionListsMatch = checkForMatchingFilterFunctionLists(CSSPropertyColorFilter, [] (const RenderStyle& style) -> const FilterOperations& {
+        return style.colorFilter();
+    });
+}
 
 std::optional<Seconds> KeyframeAnimation::timeToNextService()
 {

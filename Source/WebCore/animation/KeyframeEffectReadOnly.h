@@ -111,6 +111,7 @@ public:
 #if ENABLE(FILTERS_LEVEL_2)
     bool backdropFilterFunctionListsMatch() const override { return m_backdropFilterFunctionListsMatch; }
 #endif
+    bool colorFilterFunctionListsMatch() const override { return m_colorFilterFunctionListsMatch; }
 
     void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
     bool stylesWouldYieldNewCSSTransitionsBlendingKeyframes(const RenderStyle& oldStyle, const RenderStyle& newStyle) const;
@@ -149,6 +150,7 @@ private:
 #if ENABLE(FILTERS_LEVEL_2)
     void checkForMatchingBackdropFilterFunctionLists();
 #endif
+    void checkForMatchingColorFilterFunctionLists();
 
     bool checkForMatchingFilterFunctionLists(CSSPropertyID, const std::function<const FilterOperations& (const RenderStyle&)>&) const;
 
@@ -162,6 +164,7 @@ private:
 #if ENABLE(FILTERS_LEVEL_2)
     bool m_backdropFilterFunctionListsMatch { false };
 #endif
+    bool m_colorFilterFunctionListsMatch { false };
 
     RefPtr<Element> m_target;
     KeyframeList m_blendingKeyframes;

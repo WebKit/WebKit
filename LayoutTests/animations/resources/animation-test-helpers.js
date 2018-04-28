@@ -430,6 +430,8 @@ function getPropertyValue(property, elementId, iframeId)
                || property == "listStyleImage"
                || property == "webkitMaskImage"
                || property == "webkitMaskBoxImage"
+               || property == "filter"
+               || property == "colorFilter"
                || property == "webkitFilter"
                || property == "webkitBackdropFilter"
                || property == "webkitClipPath"
@@ -469,7 +471,7 @@ function comparePropertyValue(property, computedValue, expectedValue, tolerance)
                     break;
             }
         }
-    } else if (property == "webkitFilter" || property == "webkitBackdropFilter") {
+    } else if (property == "webkitFilter" || property == "webkitBackdropFilter" || property == "filter" || property == "colorFilter") {
         var filterParameters = parseFilterFunctionList(computedValue);
         var filter2Parameters = parseFilterFunctionList(expectedValue);
         result = compareFilterFunctions(filterParameters, filter2Parameters, tolerance);

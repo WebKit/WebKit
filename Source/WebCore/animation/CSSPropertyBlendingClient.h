@@ -41,6 +41,7 @@ public:
 #if ENABLE(FILTERS_LEVEL_2)
     virtual bool backdropFilterFunctionListsMatch() const = 0;
 #endif
+    virtual bool colorFilterFunctionListsMatch() const = 0;
 
     virtual ~CSSPropertyBlendingClient() = default;
 };

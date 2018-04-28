@@ -86,6 +86,7 @@ protected:
 #if ENABLE(FILTERS_LEVEL_2)
     void checkForMatchingBackdropFilterFunctionLists();
 #endif
+    void checkForMatchingColorFilterFunctionLists();
 
 private:
     ImplicitAnimation(const Animation&, CSSPropertyID, Element&, CompositeAnimation&, const RenderStyle&);

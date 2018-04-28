@@ -1,3 +1,45 @@
+2018-04-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement animation for color-filter
+        https://bugs.webkit.org/show_bug.cgi?id=185092
+        rdar://problem/39773810
+
+        Reviewed by Tim Horton.
+        
+        Implement animation of color-filter.
+        
+        This requires tracking whether the color-filter function lists match for both old and new
+        animation code paths.
+        
+        The filter-related ProperyWappers in CSSPropertyAnimation are cleaned up to use a single wrapper,
+        which has to pass the propertyID to the blend function so we know which "lists match" to check.
+        This wrapper reports that its accelerated for filter and backdrop-filter, but not color-filter.
+
+        Test: css3/color-filters/color-filter-animation.html
+
+        * animation/CSSPropertyBlendingClient.h:
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::setBlendingKeyframes):
+        (WebCore::KeyframeEffectReadOnly::checkForMatchingColorFilterFunctionLists):
+        * animation/KeyframeEffectReadOnly.h:
+        * page/animation/AnimationBase.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::PropertyWrapperFilter::PropertyWrapperFilter):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        (WebCore::PropertyWrapperAcceleratedFilter::PropertyWrapperAcceleratedFilter): Deleted.
+        (WebCore::PropertyWrapperAcceleratedBackdropFilter::PropertyWrapperAcceleratedBackdropFilter): Deleted.
+        (WebCore::PropertyWrapperAcceleratedBackdropFilter::animationIsAccelerated const): Deleted.
+        (WebCore::PropertyWrapperAcceleratedBackdropFilter::blend const): Deleted.
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::reset):
+        (WebCore::ImplicitAnimation::checkForMatchingColorFilterFunctionLists):
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::checkForMatchingColorFilterFunctionLists):
+        * page/animation/KeyframeAnimation.h:
+
 2018-04-27  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add FormattingContext::computeWidth/computeHeight logic.

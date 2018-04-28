@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .box {
+        height: 100px;
+        width: 100px;
+        margin: 10px;
+        background-color: blue;
+        display: inline-block;
+    }
+
+    #grayscale-box {
+      animation: grayscale-anim 2s linear
+    }
+
+    #sepia-box {
+      animation: sepia-anim 2s linear
+    }
+
+    #saturate-box {
+      animation: saturate-anim 2s linear
+    }
+
+    #huerotate-box {
+      animation: huerotate-anim 2s linear
+    }
+
+    #invert-box {
+      animation: invert-anim 2s linear
+    }
+
+    #opacity-box {
+      animation: opacity-anim 2s linear
+    }
+
+    #brightness-box {
+      animation: brightness-anim 2s linear
+    }
+
+    #contrast-box {
+      animation: contrast-anim 2s linear
+    }
+
+
+    @keyframes grayscale-anim {
+        from { color-filter: grayscale(0); }
+        to   { color-filter: grayscale(1); }
+    }
+
+    @keyframes sepia-anim {
+        from { color-filter: sepia(0); }
+        to   { color-filter: sepia(1); }
+    }
+
+    @keyframes saturate-anim {
+        from { color-filter: saturate(0); }
+        to   { color-filter: saturate(1); }
+    }
+
+    @keyframes huerotate-anim {
+        from { color-filter: hue-rotate(0); }
+        to   { color-filter: hue-rotate(180deg); }
+    }
+
+    @keyframes invert-anim {
+        from { color-filter: invert(0); }
+        to   { color-filter: invert(1); }
+    }
+
+    @keyframes opacity-anim {
+        from { color-filter: opacity(1); }
+        to   { color-filter: opacity(0); }
+    }
+
+    @keyframes brightness-anim {
+        from { color-filter: brightness(1); }
+        to   { color-filter: brightness(0); }
+    }
+
+    @keyframes contrast-anim {
+        from { color-filter: contrast(1); }
+        to   { color-filter: contrast(0); }
+    }
+
+  </style>
+  <script src="../../animations/resources/animation-test-helpers.js"></script>
+  <script type="text/javascript">
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["grayscale-anim",  1, "grayscale-box", "colorFilter", 'grayscale(0.5)', 0.05],
+      ["sepia-anim",  1, "sepia-box", "colorFilter", 'sepia(0.5)', 0.05],
+      ["saturate-anim",  1, "saturate-box", "colorFilter", 'saturate(0.5)', 0.05],
+      ["huerotate-anim",  1, "huerotate-box", "colorFilter", 'hue-rotate(90deg)', 2],
+      ["invert-anim",  1, "invert-box", "colorFilter", 'invert(0.5)', 0.05],
+      ["opacity-anim",  1, "opacity-box", "colorFilter", 'opacity(0.5)', 0.05],
+      ["brightness-anim",  1, "brightness-box", "colorFilter", 'brightness(0.5)', 0.05],
+      ["contrast-anim",  1, "contrast-box", "colorFilter", 'contrast(0.5)', 0.05],
+    ];
+    
+    runAnimationTest(expectedValues);
+  </script>
+</head>
+<body>
+
+<div class="box" id="grayscale-box"></div>
+<div class="box" id="sepia-box"></div>
+<div class="box" id="saturate-box"></div>
+<div class="box" id="huerotate-box"></div>
+<div class="box" id="invert-box"></div>
+<div class="box" id="opacity-box"></div>
+<div class="box" id="brightness-box"></div>
+<div class="box" id="contrast-box"></div>
+
+<div id="result">
+</div>
+</body>
+</html>

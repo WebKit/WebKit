@@ -91,6 +91,7 @@ protected:
 #if ENABLE(FILTERS_LEVEL_2)
     void checkForMatchingBackdropFilterFunctionLists();
 #endif
+    void checkForMatchingColorFilterFunctionLists();
     bool checkForMatchingFilterFunctionLists(CSSPropertyID, const std::function<const FilterOperations& (const RenderStyle&)>&) const;
 
 private:
