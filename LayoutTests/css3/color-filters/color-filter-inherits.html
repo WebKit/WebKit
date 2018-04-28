@@ -9,23 +9,19 @@
         <style type="text/css">
             .test
             {
-				font: 120px Ahem;
-				color-filter: invert();
+                font: 120px Ahem;
+                color-filter: invert();
             }
-			
-			.test > div {
-				color: rgb(255, 128, 255);
-			}
+            
+            .test > div {
+                color: rgb(255, 128, 255);
+            }
         </style>
-		<script>
-			if (window.internals)
-			    internals.settings.setColorFilterEnabled(true);
-		</script>
     </head>
     <body>
         <p>Test passes if there is a green square.</p>
         <div class="test">
-			<div>A</div>
-		</div>
+            <div>A</div>
+        </div>
     </body>
 </html>

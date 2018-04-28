@@ -9,28 +9,24 @@
         <style type="text/css">
             .test
             {
-				font: 120px Ahem;
-				color: rgb(255, 128, 255);
-				color-filter: invert();
-				margin: 10px;
+                font: 120px Ahem;
+                color: rgb(255, 128, 255);
+                color-filter: invert();
+                margin: 10px;
             }
 
-			.over
-			{
-				-webkit-text-emphasis: "m";
-				-webkit-text-emphasis-position: over;
-			}
-			
-			.under
-			{
-				-webkit-text-emphasis: "m";
-				-webkit-text-emphasis-position: under;
-			}
+            .over
+            {
+                -webkit-text-emphasis: "m";
+                -webkit-text-emphasis-position: over;
+            }
+            
+            .under
+            {
+                -webkit-text-emphasis: "m";
+                -webkit-text-emphasis-position: under;
+            }
         </style>
-		<script>
-			if (window.internals)
-			    internals.settings.setColorFilterEnabled(true);
-		</script>
     </head>
     <body>
         <p>Test passes if there are two shapes which are entirely green.</p>

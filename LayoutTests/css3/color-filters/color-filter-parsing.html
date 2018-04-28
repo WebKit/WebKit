@@ -4,17 +4,14 @@
 
 <script>
 
-if (window.internals)
-    internals.settings.setColorFilterEnabled(true);
-
 var testDiv = document.querySelector('#test');
 
 function testColorFilterParsing(value, expected, name)
 {
     test(() => {
-		testDiv.style.colorFilter = '';
-		testDiv.style.colorFilter = value;
-		var computedStyle = getComputedStyle(testDiv).colorFilter;
+        testDiv.style.colorFilter = '';
+        testDiv.style.colorFilter = value;
+        var computedStyle = getComputedStyle(testDiv).colorFilter;
         assert_equals(computedStyle, expected);
     }, name);
 }

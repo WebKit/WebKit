@@ -9,24 +9,20 @@
         <style type="text/css">
             .test
             {
-				width: 200px;
-				height: 200px;
-				background-color: green;
-				margin: 10px;
-				float: left;
+                width: 200px;
+                height: 200px;
+                background-color: green;
+                margin: 10px;
+                float: left;
             }
-			
-			.test > div {
-				width: 100px;
-				height: 100px;
-				margin: 50px;
-				background-color: blue;
-			}
+            
+            .test > div {
+                width: 100px;
+                height: 100px;
+                margin: 50px;
+                background-color: blue;
+            }
         </style>
-		<script>
-			if (window.internals)
-			    internals.settings.setColorFilterEnabled(true);
-		</script>
     </head>
     <body>
         <div class="test" style="color-filter: opacity()"><div></div></div>

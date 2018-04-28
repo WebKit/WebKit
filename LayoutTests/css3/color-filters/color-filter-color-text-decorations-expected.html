@@ -7,37 +7,33 @@
         <style type="text/css">
             div.test
             {
-				font: 140px sans-serif;
-				color: green;
-				-webkit-text-decoration: underline overline blue;
+                font: 140px sans-serif;
+                color: green;
+                -webkit-text-decoration: underline overline blue;
             }
 
-			p
-			{
-				margin: 8px;
-			}
+            p
+            {
+                margin: 8px;
+            }
 
             .wavy
             {
-				-webkit-text-decoration: underline overline wavy blue;
+                -webkit-text-decoration: underline overline wavy blue;
             }
 
             .dotted
             {
-				-webkit-text-decoration: underline overline dotted blue;
+                -webkit-text-decoration: underline overline dotted blue;
             }
         </style>
-		<script>
-			if (window.internals)
-			    internals.settings.setColorFilterEnabled(true);
-		</script>
     </head>
     <body>
         <p>You hsould see three green letter A. The top should have a solid bar overline and underline. The second should have a wavy overline and underline. The bottom should have a dotted overline and underline.</p>
         <div class="test">
-			<p>A<p>
-			<p class="wavy">A<p>
-			<p class="dotted">A<p>
-		</div>
+            <p>A<p>
+            <p class="wavy">A<p>
+            <p class="dotted">A<p>
+        </div>
     </body>
 </html>
