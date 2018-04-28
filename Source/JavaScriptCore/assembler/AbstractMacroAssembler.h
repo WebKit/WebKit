@@ -82,6 +82,12 @@ public:
     template<PtrTag tag> using CodePtr = MacroAssemblerCodePtr<tag>;
     template<PtrTag tag> using CodeRef = MacroAssemblerCodeRef<tag>;
 
+    enum class CPUIDCheckState {
+        NotChecked,
+        Clear,
+        Set
+    };
+
     class Jump;
 
     typedef typename AssemblerType::RegisterID RegisterID;

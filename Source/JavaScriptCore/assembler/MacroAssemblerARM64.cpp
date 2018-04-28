@@ -31,6 +31,11 @@
 #include "ProbeContext.h"
 #include <wtf/InlineASM.h>
 
+#if OS(LINUX)
+#include <asm/hwcap.h>
+#include <sys/auxv.h>
+#endif
+
 namespace JSC {
 
 #if ENABLE(MASM_PROBE)
@@ -525,6 +530,34 @@ void MacroAssembler::probe(Probe::Function function, void* arg)
 }
 
 #endif // ENABLE(MASM_PROBE)
+
+void MacroAssemblerARM64::collectCPUFeatures()
+{
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+#if OS(LINUX)
+        // A register for describing ARM64 CPU features are only accessible in kernel mode.
+        // Thus, some kernel support is necessary to collect CPU features. In Linux, the
+        // kernel passes CPU feature flags in AT_HWCAP auxiliary vector which is passed
+        // when the process starts. While this may pose a bit conservative information
+        // (for example, the Linux kernel may add a flag for a feature after the feature
+        // is shipped and implemented in some CPUs. In that case, even if the CPU has
+        // that feature, the kernel does not tell it to users.), it is a stable approach.
+        // https://www.kernel.org/doc/Documentation/arm64/elf_hwcaps.txt
+        unsigned long hwcaps = getauxval(AT_HWCAP);
+
+#if !defined(HWCAP_JSCVT)
+#define HWCAP_JSCVT (1 << 13)
+#endif
+
+        s_jscvtCheckState = (hwcaps & HWCAP_JSCVT) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+#else
+        s_jscvtCheckState = CPUIDCheckState::Clear;
+#endif
+    });
+}
+
+MacroAssemblerARM64::CPUIDCheckState MacroAssemblerARM64::s_jscvtCheckState = CPUIDCheckState::NotChecked;
 
 } // namespace JSC
 

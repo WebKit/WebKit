@@ -1,3 +1,28 @@
+2018-04-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][ARM64][Linux] Add collectCPUFeatures using auxiliary vector
+        https://bugs.webkit.org/show_bug.cgi?id=185055
+
+        Reviewed by JF Bastien.
+
+        This patch is paving the way to emitting jscvt instruction if possible.
+        To do that, we need to determine jscvt instruction is supported in the
+        given CPU.
+
+        We add a function collectCPUFeatures, which is responsible to collect
+        CPU features if necessary. In Linux, we can use auxiliary vector to get
+        the information without parsing /proc/cpuinfo.
+
+        Currently, nobody calls this function. It is later called when we emit
+        jscvt instruction. To make it possible, we also need to add disassembler
+        support too.
+
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/MacroAssemblerARM64.cpp:
+        (JSC::MacroAssemblerARM64::collectCPUFeatures):
+        * assembler/MacroAssemblerARM64.h:
+        * assembler/MacroAssemblerX86Common.h:
+
 2018-04-26  Filip Pizlo  <fpizlo@apple.com>
 
         Also run foldPathConstants before mussing up SSA
