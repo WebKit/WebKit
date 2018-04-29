@@ -1,3 +1,23 @@
+2018-04-28  Sihui Liu  <sihui_liu@apple.com>
+
+        [Cocoa] Set HTTPOnly flag when converting Cookie to NSHTTPCookie
+        https://bugs.webkit.org/show_bug.cgi?id=185052
+
+        Reviewed by Geoffrey Garen.
+
+        Set HTTPOnly for NSHTTPCookie when it's converted from Cookie, so the WebKit APIs could 
+        create NSHTTPCookie with correct HTTPOnly flag. Also, reverted the change made to operator
+        function because we want the Cookie class to act as a wrapper for NSHTTPCookie and leverage
+        its equal function. 
+
+        Modified API test: WebKit.WKHTTPCookieStoreHttpOnly
+
+        * platform/network/cocoa/CookieCocoa.mm:
+        (WebCore::Cookie::operator NSHTTPCookie * const):
+        (WebCore::Cookie::operator== const):
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::NetworkStorageSession::deleteCookie):
+
 2018-04-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add LayoutTreeBuilder class to generate the layout tree

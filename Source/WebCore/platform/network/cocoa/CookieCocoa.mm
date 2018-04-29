@@ -82,9 +82,7 @@ Cookie::operator NSHTTPCookie *() const
     if (isNull())
         return nil;
 
-    // FIXME: existing APIs do not provide a way to set httpOnly without parsing headers from scratch.
-
-    NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithCapacity:11];
+    NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithCapacity:12];
 
     if (!comment.isNull())
         [properties setObject:(NSString *)comment forKey:NSHTTPCookieComment];
@@ -118,6 +116,9 @@ Cookie::operator NSHTTPCookie *() const
 
     if (session)
         [properties setObject:@YES forKey:NSHTTPCookieDiscard];
+    
+    if (httpOnly)
+        [properties setObject:@YES forKey:@"HttpOnly"];
 
     [properties setObject:@"1" forKey:NSHTTPCookieVersion];
 
@@ -132,18 +133,8 @@ bool Cookie::operator==(const Cookie& other) const
     if (thisNull || otherNull)
         return thisNull == otherNull;
     
-    return name == other.name
-    && value == other.value
-    && domain == other.domain
-    && path == other.path
-    && created == other.created
-    && expires == other.expires
-    && httpOnly == other.httpOnly
-    && secure == other.secure
-    && session == other.session
-    && comment == other.comment
-    && commentURL == other.commentURL
-    && ports == other.ports;
+    NSHTTPCookie *nsCookie(*this);
+    return [nsCookie isEqual:other];
 }
     
 unsigned Cookie::hash() const

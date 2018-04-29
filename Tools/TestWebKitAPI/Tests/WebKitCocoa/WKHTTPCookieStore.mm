@@ -206,12 +206,8 @@ TEST(WebKit, WKHTTPCookieStoreHttpOnly)
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:[] {
         gotFlag = true;
     }];
-
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
-
-    id pool = [WKProcessPool _sharedProcessPool];
-    EXPECT_EQ([pool _pluginProcessCount], static_cast<size_t>(0));
 
     globalCookieStore = dataStore.httpCookieStore;
 
@@ -220,29 +216,54 @@ TEST(WebKit, WKHTTPCookieStoreHttpOnly)
         *cookiesPtr = [nsCookies retain];
         gotFlag = true;
     }];
-
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
-
     ASSERT_EQ(cookies.count, 0u);
     [cookies release];
 
-    CFMutableDictionaryRef cookieProperties = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    CFDictionarySetValue(cookieProperties, CFSTR("Name"), CFSTR("httpCookie"));
-    CFDictionarySetValue(cookieProperties, CFSTR("Value"), CFSTR("httpCookieValue"));
-    CFDictionarySetValue(cookieProperties, CFSTR("Domain"), CFSTR(".www.webkit.org"));
-    CFDictionarySetValue(cookieProperties, CFSTR("Path"), CFSTR("/httpPath"));
-    CFDictionarySetValue(cookieProperties, CFSTR("HttpOnly"), kCFBooleanTrue);
-    RetainPtr<NSHTTPCookie> httpOnlyCookie = [NSHTTPCookie cookieWithProperties:(NSDictionary*) cookieProperties];
-    CFDictionaryRemoveValue(cookieProperties, CFSTR("HttpOnly"));
-    RetainPtr<NSHTTPCookie> notHttpOnlyCookie = [NSHTTPCookie cookieWithProperties:(NSDictionary*) cookieProperties];
+    NSMutableDictionary *cookieProperties = [[NSMutableDictionary alloc] init];
+    [cookieProperties setObject:@"cookieName" forKey:NSHTTPCookieName];
+    [cookieProperties setObject:@"cookieValue" forKey:NSHTTPCookieValue];
+    [cookieProperties setObject:@".www.webkit.org" forKey:NSHTTPCookieDomain];
+    [cookieProperties setObject:@"/path" forKey:NSHTTPCookiePath];
+    [cookieProperties setObject:@YES forKey:@"HttpOnly"];
+    RetainPtr<NSHTTPCookie> httpOnlyCookie = [NSHTTPCookie cookieWithProperties:cookieProperties];
+    [cookieProperties setObject:@"cookieValue2" forKey:NSHTTPCookieValue];
+    RetainPtr<NSHTTPCookie> httpOnlyCookie2 = [NSHTTPCookie cookieWithProperties:cookieProperties];
+    [cookieProperties removeObjectForKey:@"HttpOnly"];
+    RetainPtr<NSHTTPCookie> notHttpOnlyCookie = [NSHTTPCookie cookieWithProperties:cookieProperties];
+
     EXPECT_TRUE(httpOnlyCookie.get().HTTPOnly);
     EXPECT_FALSE(notHttpOnlyCookie.get().HTTPOnly);
 
+    // Setting httpOnlyCookie should succeed.
+    [globalCookieStore setCookie:httpOnlyCookie.get() completionHandler:[]() {
+        gotFlag = true;
+    }];
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+
+    // Setting httpOnlyCookie2 should succeed.
+    [globalCookieStore setCookie:httpOnlyCookie2.get() completionHandler:[]() {
+        gotFlag = true;
+    }];
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+
+    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
+        *cookiesPtr = [nsCookies retain];
+        gotFlag = true;
+    }];
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+    ASSERT_EQ(cookies.count, 1u);
+    EXPECT_TRUE([[[cookies objectAtIndex:0] value] isEqual:@"cookieValue2"]);
+    [cookies release];
+
+    // Setting notHttpOnlyCookie should fail because we cannot overwrite HTTPOnly property using public API.
     [globalCookieStore setCookie:notHttpOnlyCookie.get() completionHandler:[]() {
         gotFlag = true;
     }];
-
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 
@@ -250,29 +271,42 @@ TEST(WebKit, WKHTTPCookieStoreHttpOnly)
         *cookiesPtr = [nsCookies retain];
         gotFlag = true;
     }];
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+    ASSERT_EQ(cookies.count, 1u);
+    EXPECT_TRUE([[cookies objectAtIndex:0] isHTTPOnly]);
+    [cookies release];
 
+    // Deleting notHttpOnlyCookie should fail because the cookie stored is HTTPOnly.
+    [globalCookieStore deleteCookie:notHttpOnlyCookie.get() completionHandler:[]() {
+        gotFlag = true;
+    }];
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 
+    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
+        *cookiesPtr = [nsCookies retain];
+        gotFlag = true;
+    }];
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
     ASSERT_EQ(cookies.count, 1u);
     [cookies release];
 
+    // Deleting httpOnlyCookie should succeed. 
     [globalCookieStore deleteCookie:httpOnlyCookie.get() completionHandler:[]() {
         gotFlag = true;
     }];
-
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
+
     [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
         *cookiesPtr = [nsCookies retain];
         gotFlag = true;
     }];
-
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
-
-    // Delete httpOnlyCookie should fail because it is different from notHttpOnlyCookie. 
-    ASSERT_EQ(cookies.count, 1u);
+    ASSERT_EQ(cookies.count, 0u);
     [cookies release];
 }
 

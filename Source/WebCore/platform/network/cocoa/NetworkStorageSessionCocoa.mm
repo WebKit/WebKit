@@ -60,14 +60,7 @@ void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL&
 void NetworkStorageSession::deleteCookie(const Cookie& cookie)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-    
-    NSArray *nsCookies = [nsCookieStorage() cookies];
-    for (NSHTTPCookie *nsCookie in nsCookies) {
-        if (Cookie(nsCookie) == cookie) {
-            [nsCookieStorage() deleteCookie:nsCookie];
-            break;
-        }
-    }
+    [nsCookieStorage() deleteCookie:(NSHTTPCookie *)cookie];
 }
 
 static Vector<Cookie> nsCookiesToCookieVector(NSArray<NSHTTPCookie *> *nsCookies)
