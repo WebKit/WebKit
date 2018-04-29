@@ -388,7 +388,7 @@ private:
 
     bool m_resourceLoadStatisticsDebugMode { false };
 
-    bool m_isRestrictedHTTPResponseAccess { false };
+    bool m_isRestrictedHTTPResponseAccess { true };
 
     bool m_fromOriginResponseHeaderEnabled { false };
 
