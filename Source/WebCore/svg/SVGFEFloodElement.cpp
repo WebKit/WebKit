@@ -66,7 +66,7 @@ RefPtr<FilterEffect> SVGFEFloodElement::build(SVGFilterBuilder*, Filter& filter)
     
     const SVGRenderStyle& svgStyle = renderer->style().svgStyle();
 
-    const Color& color = svgStyle.floodColor();
+    Color color = renderer->style().colorByApplyingColorFilter(svgStyle.floodColor());
     float opacity = svgStyle.floodOpacity();
 
     return FEFlood::create(filter, color, opacity);

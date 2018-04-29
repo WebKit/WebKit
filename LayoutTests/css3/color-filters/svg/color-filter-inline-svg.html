@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html >
+    <head>
+        <title>CSS Test: color-filter affects colors in inline SVG</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="color-filter-inline-svg-expected.html">
+
+        <meta name="assert" content="color-filter affects colors in inline SVG">
+        <style>
+            html {
+                color-filter: invert();
+            }
+
+            body {
+                margin: 0;
+            }
+        </style>
+    </head>
+<body>
+
+<svg viewBox="0 0 800 600" style="width: 800px; height: 600px">
+    <defs>
+        <radialGradient id="grad">
+            <stop offset="0" stop-color="red" />
+            <stop offset="0.5" stop-color="rgb(255, 128, 255)" />
+            <stop offset="0.75" stop-color="yellow" />
+        </radialGradient>
+
+        <filter id="flood" filterUnits="objectBoundingBox" x="0" y="0" width="100%" height="100%">
+            <feFlood flood-color="rgb(255, 128, 255)" />
+        </filter>
+
+        <filter id="diffuse-light" filterUnits="objectBoundingBox" x="0" y="0" width="100%" height="100%">
+            <feDiffuseLighting lighting-color="rgb(255, 128, 255)">
+                <feDistantLight azimuth="100" elevation="100"/>
+            </feDiffuseLighting>
+        </filter>
+
+        <filter id="specular-light" filterUnits="objectBoundingBox" x="0" y="0" width="100%" height="100%">
+            <feSpecularLighting surfaceScale="2" specularExponent="2" specularConstant="2" lighting-color="rgb(255, 128, 255)">
+                <fePointLight x="20" y="20" z="2"/>
+            </feSpecularLighting>
+        </filter>
+
+        <filter id="shadow" x="0" y="0" width="160%" height="160%">
+            <feDropShadow dx="50" dy="50" stdDeviation="0" flood-color="rgb(255, 128, 255)" flood-opacity="1" />
+        </filter>
+
+        <pattern id="pattern" patternUnits="userSpaceOnUse" x="20" y="0" width="50" height="50">
+           <rect x="5" y="5" width="30" height="30" fill="rgb(255, 128, 255)"/>
+        </pattern>
+    </defs>
+
+    <rect x="20" y="10" width="150" height="150" fill="url(#grad)" />
+
+    <rect x="200" y="10" width="150" height="150" fill="rgb(255, 128, 255)" />
+    <rect x="400" y="10" width="150" height="150" fill="rgb(255, 128, 255)" stroke="yellow" stroke-width="15" />
+
+    <rect x="20" y="200" width="150" height="150" filter="url(#flood)"/>
+    <rect x="200" y="200" width="150" height="150" filter="url(#diffuse-light)"/>
+    <rect x="400" y="200" width="150" height="150" filter="url(#specular-light)"/>
+
+    <rect x="20" y="400" width="150" height="150" fill="url(#pattern)"/>
+
+    <rect x="200" y="400" width="100" height="100" fill="yellow" filter="url(#shadow)"/>
+</svg>
+
+</body>
+</html>

@@ -39,7 +39,7 @@ public:
     SVGUnitTypes::SVGUnitType gradientUnits() const override { return m_attributes.gradientUnits(); }
     void calculateGradientTransform(AffineTransform& transform) override { transform = m_attributes.gradientTransform(); }
     bool collectGradientAttributes() override;
-    void buildGradient(GradientData*) const override;
+    void buildGradient(GradientData*, const RenderStyle&) const override;
 
     FloatPoint startPoint(const LinearGradientAttributes&) const;
     FloatPoint endPoint(const LinearGradientAttributes&) const;

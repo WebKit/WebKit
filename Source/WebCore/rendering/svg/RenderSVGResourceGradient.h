@@ -56,12 +56,12 @@ protected:
 
     void element() const = delete;
 
-    void addStops(GradientData*, const Vector<Gradient::ColorStop>&) const;
+    void addStops(GradientData*, const Vector<Gradient::ColorStop>&, const RenderStyle&) const;
 
     virtual SVGUnitTypes::SVGUnitType gradientUnits() const = 0;
     virtual void calculateGradientTransform(AffineTransform&) = 0;
     virtual bool collectGradientAttributes() = 0;
-    virtual void buildGradient(GradientData*) const = 0;
+    virtual void buildGradient(GradientData*, const RenderStyle&) const = 0;
 
     GradientSpreadMethod platformSpreadMethodFromSVGType(SVGSpreadMethodType) const;
 

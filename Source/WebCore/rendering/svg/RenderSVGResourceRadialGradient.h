@@ -40,7 +40,7 @@ public:
 
     SVGUnitTypes::SVGUnitType gradientUnits() const override { return m_attributes.gradientUnits(); }
     void calculateGradientTransform(AffineTransform& transform) override { transform = m_attributes.gradientTransform(); }
-    void buildGradient(GradientData*) const override;
+    void buildGradient(GradientData*, const RenderStyle&) const override;
 
     FloatPoint centerPoint(const RadialGradientAttributes&) const;
     FloatPoint focalPoint(const RadialGradientAttributes&) const;

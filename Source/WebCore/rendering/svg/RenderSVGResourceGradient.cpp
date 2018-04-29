@@ -125,7 +125,7 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
 
     // Create gradient object
     if (!gradientData->gradient) {
-        buildGradient(gradientData.get());
+        buildGradient(gradientData.get(), style);
 
         // CG platforms will handle the gradient space transform for text after applying the
         // resource, so don't apply it here. For non-CG platforms, we want the text bounding
@@ -232,13 +232,14 @@ void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, Graph
     context->restore();
 }
 
-void RenderSVGResourceGradient::addStops(GradientData* gradientData, const Vector<Gradient::ColorStop>& stops) const
+void RenderSVGResourceGradient::addStops(GradientData* gradientData, const Vector<Gradient::ColorStop>& stops, const RenderStyle& style) const
 {
     ASSERT(gradientData->gradient);
 
-    const Vector<Gradient::ColorStop>::const_iterator end = stops.end();
-    for (Vector<Gradient::ColorStop>::const_iterator it = stops.begin(); it != end; ++it)
-        gradientData->gradient->addColorStop(*it);
+    for (Gradient::ColorStop stop : stops) {
+        stop.color = style.colorByApplyingColorFilter(stop.color);
+        gradientData->gradient->addColorStop(stop);
+    }
 }
 
 GradientSpreadMethod RenderSVGResourceGradient::platformSpreadMethodFromSVGType(SVGSpreadMethodType method) const
