@@ -486,26 +486,10 @@ SLOW_PATH_DECL(slow_path_mul)
     BEGIN();
     JSValue left = OP_C(2).jsValue();
     JSValue right = OP_C(3).jsValue();
-    JSValue leftPrimitive = left.toPrimitive(exec, PreferNumber); 
-    CHECK_EXCEPTION();
-    JSValue rightPrimitive = right.toPrimitive(exec, PreferNumber);
-    CHECK_EXCEPTION();
-    
-    if (leftPrimitive.isBigInt() || rightPrimitive.isBigInt()) {
-        if (leftPrimitive.isBigInt() && rightPrimitive.isBigInt()) {
-            JSValue result(JSBigInt::multiply(exec, asBigInt(leftPrimitive), asBigInt(rightPrimitive)));
-            RETURN_WITH_PROFILING(result, {
-                updateArithProfileForBinaryArithOp(exec, pc, result, left, right);
-            });
-        }
-
-        THROW(createTypeError(exec, "Invalid mix of BigInt and other type in multiplication."));
-    }
-
-    double a = leftPrimitive.toNumber(exec);
-    CHECK_EXCEPTION();
-    double b = rightPrimitive.toNumber(exec);
-    CHECK_EXCEPTION();
+    double a = left.toNumber(exec);
+    if (UNLIKELY(throwScope.exception()))
+        RETURN(JSValue());
+    double b = right.toNumber(exec);
     JSValue result = jsNumber(a * b);
     RETURN_WITH_PROFILING(result, {
         updateArithProfileForBinaryArithOp(exec, pc, result, left, right);

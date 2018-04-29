@@ -41,7 +41,7 @@ class JSBigInt final : public JSCell {
 
 public:
 
-    JSBigInt(VM&, Structure*, unsigned length);
+    JSBigInt(VM&, Structure*, int length);
 
     enum class InitializationType { None, WithZero };
     void initialize(InitializationType);
@@ -49,11 +49,12 @@ public:
     static void visitChildren(JSCell*, SlotVisitor&);
 
     static size_t estimatedSize(JSCell*);
-    static size_t allocationSize(unsigned length);
+    static size_t allocationSize(int length);
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
+
     static JSBigInt* createZero(VM&);
-    static JSBigInt* createWithLength(VM&, unsigned length);
+    static JSBigInt* createWithLength(VM&, int length);
 
     static JSBigInt* createFrom(VM&, int32_t value);
     static JSBigInt* createFrom(VM&, uint32_t value);
@@ -69,14 +70,14 @@ public:
     void setSign(bool sign) { m_sign = sign; }
     bool sign() const { return m_sign; }
 
-    void setLength(unsigned length) { m_length = length; }
-    unsigned length() const { return m_length; }
+    void setLength(int length) { m_length = length; }
+    int length() const { return m_length; }
 
     static JSBigInt* parseInt(ExecState*, VM&, StringView, uint8_t radix);
     static JSBigInt* parseInt(ExecState*, StringView);
 
     std::optional<uint8_t> singleDigitValueForString();
-    String toString(ExecState&, unsigned radix);
+    String toString(ExecState&, int radix);
     
     JS_EXPORT_PRIVATE static bool equals(JSBigInt*, JSBigInt*);
 
@@ -84,14 +85,12 @@ public:
     double toNumber(ExecState*) const;
 
     JSObject* toObject(ExecState*, JSGlobalObject*) const;
-
-    static JSBigInt* multiply(ExecState*, JSBigInt* x, JSBigInt* y);
     
 private:
     using Digit = uintptr_t;
-    static constexpr const unsigned bitsPerByte = 8;
-    static constexpr const unsigned digitBits = sizeof(Digit) * bitsPerByte;
-    static constexpr const unsigned halfDigitBits = digitBits / 2;
+    static constexpr const int bitsPerByte = 8;
+    static constexpr const int digitBits = sizeof(Digit) * bitsPerByte;
+    static constexpr const int halfDigitBits = digitBits / 2;
     static constexpr const Digit halfDigitMask = (1ull << halfDigitBits) - 1;
     static constexpr const int maxInt = 0x7FFFFFFF;
     
@@ -99,13 +98,12 @@ private:
     // maxInt / digitBits. However, we use a lower limit for now, because
     // raising it later is easier than lowering it.
     // Support up to 1 million bits.
-    static const unsigned maxLength = 1024 * 1024 / (sizeof(void*) * bitsPerByte);
+    static const int maxLength = 1024 * 1024 / (sizeof(void*) * bitsPerByte);
     
-    static uint64_t calculateMaximumCharactersRequired(unsigned length, unsigned radix, Digit lastDigit, bool sign);
+    static uint64_t calculateMaximumCharactersRequired(int length, int radix, Digit lastDigit, bool sign);
     
     static void absoluteDivSmall(ExecState&, JSBigInt* x, Digit divisor, JSBigInt** quotient, Digit& remainder);
-    static void internalMultiplyAdd(JSBigInt* source, Digit factor, Digit summand, unsigned, JSBigInt* result);
-    static void multiplyAccumulate(JSBigInt* multiplicand, Digit multiplier, JSBigInt* accumulator, unsigned accumulatorIndex);
+    static void internalMultiplyAdd(JSBigInt* source, Digit factor, Digit summand, int, JSBigInt* result);
 
     // Digit arithmetic helpers.
     static Digit digitAdd(Digit a, Digit b, Digit& carry);
@@ -114,17 +112,17 @@ private:
     static Digit digitDiv(Digit high, Digit low, Digit divisor, Digit& remainder);
     static Digit digitPow(Digit base, Digit exponent);
 
-    static String toStringGeneric(ExecState&, JSBigInt*, unsigned radix);
+    static String toStringGeneric(ExecState&, JSBigInt*, int radix);
 
     bool isZero();
 
     template <typename CharType>
-    static JSBigInt* parseInt(ExecState*, CharType*  data, unsigned length);
+    static JSBigInt* parseInt(ExecState*, CharType*  data, int length);
 
     template <typename CharType>
-    static JSBigInt* parseInt(ExecState*, VM&, CharType* data, unsigned length, unsigned startIndex, unsigned radix, bool allowEmptyString = true);
+    static JSBigInt* parseInt(ExecState*, VM&, CharType* data, int length, int startIndex, int radix, bool allowEmptyString = true);
 
-    static JSBigInt* allocateFor(ExecState*, VM&, unsigned radix, unsigned charcount);
+    static JSBigInt* allocateFor(ExecState*, VM&, int radix, int charcount);
 
     JSBigInt* rightTrim(VM&);
 
@@ -133,10 +131,10 @@ private:
     static size_t offsetOfData();
     Digit* dataStorage();
 
-    Digit digit(unsigned);
-    void setDigit(unsigned, Digit);
+    Digit digit(int);
+    void setDigit(int, Digit);
         
-    unsigned m_length;
+    int m_length;
     bool m_sign;
 };
 
