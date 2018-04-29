@@ -92,10 +92,6 @@
 #define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 #define GCC_VERSION_AT_LEAST(major, minor, patch) (GCC_VERSION >= (major * 10000 + minor * 100 + patch))
 
-#if !GCC_VERSION_AT_LEAST(5, 0, 0)
-#error "Please use a newer version of GCC. WebKit requires GCC 5.0.0 or newer to compile."
-#endif
-
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
 #define WTF_COMPILER_SUPPORTS_C_STATIC_ASSERT 1
 #endif

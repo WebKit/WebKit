@@ -1,3 +1,15 @@
+2018-04-29  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Require GCC 6
+        https://bugs.webkit.org/show_bug.cgi?id=184985
+
+        Reviewed by Alex Christensen.
+
+        Remove a GCC 5 fallback path. This seems to be the only such fallback path in WebKit.
+
+        * platform/graphics/FourCC.h:
+        (WebCore::FourCC::FourCC):
+
 2018-04-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement Display::Box functions

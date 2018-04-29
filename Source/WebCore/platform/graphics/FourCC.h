@@ -27,46 +27,17 @@
 
 #include <wtf/text/WTFString.h>
 
-// FIXME: Remove this messy fallback path and require GCC 6 in May 2018.
-#if COMPILER(GCC)
-#if !GCC_VERSION_AT_LEAST(6, 0, 0)
-#define NEED_FOURCC_LEGACY_CONSTRUCTOR
-#include <cstring>
-#endif
-#endif
-
 namespace WebCore {
 
 struct FourCC {
     WEBCORE_EXPORT FourCC(uint32_t value) : value(value) { }
 
-#ifdef NEED_FOURCC_LEGACY_CONSTRUCTOR
-    // This constructor is risky because it creates ambiguous function
-    // calls that will not exist except with old versions of GCC: the
-    // initialization FourCC { 0 } is valid only when this legacy
-    // constructor is not enabled, because the uint32_t constructor and
-    // this constructor are equally-appropriate options. So the more
-    // verbose initialization FourCC { uint32_t { 0 } } is required, but
-    // developers will not realize this unless they use an old version of
-    // GCC. Bad.
-    FourCC(const char* data)
-    {
-        if (!data) {
-            value = 0;
-            return;
-        }
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(strlen(data) == 4);
-        value = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
-    }
-#undef NEED_FOURCC_LEGACY_CONSTRUCTOR
-#else
     template<std::size_t N>
     constexpr FourCC(const char (&data)[N])
     {
         static_assert((N - 1) == 4, "FourCC literals must be exactly 4 characters long");
         value = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
     }
-#endif
 
     String toString() const;
     WEBCORE_EXPORT static std::optional<FourCC> fromString(const String&);
