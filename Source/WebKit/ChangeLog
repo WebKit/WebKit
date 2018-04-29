@@ -1,5 +1,74 @@
 2018-04-28  Andy Estes  <aestes@apple.com>
 
+        [iOS] Present an action sheet when long-pressing on PDF links
+        https://bugs.webkit.org/show_bug.cgi?id=185093
+        <rdar://problem/39356651>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView dealloc]):
+
+        Called -[WKActionSheetAssistant cleanupSheet].
+
+        (-[WKPDFView web_setContentProviderData:suggestedFilename:]):
+
+        Created a WKActionSheetAssistant with the host view as the assistant view and
+        ourselves as the delegate.
+
+        (-[WKPDFView _URLWithPageIndex:]):
+
+        Added. Creates a URL to the current page with a page number fragment appended.
+
+        (-[WKPDFView _goToURL:atLocation:]):
+
+        Added. Navigates to a URL with a synthetic mouse click at a location in host view
+        coordinates.
+
+        (-[WKPDFView pdfHostViewController:goToURL:]):
+        (-[WKPDFView pdfHostViewController:goToPageIndex:withViewFrustum:]):
+
+        Called -_goToURL:atLocation:. Used -_URLWithPageIndex: to construct an NSURL from
+        a page index.
+
+        (-[WKPDFView _showActionSheetForURL:atLocation:]):
+
+        Added. Populates _positionInformation with a URL and location and calls
+        -[WKActionSheetAssistant showLinkSheet].
+
+        (-[WKPDFView pdfHostViewController:didLongPressURL:atLocation:]):
+        (-[WKPDFView pdfHostViewController:didLongPressPageIndex:atLocation:]):
+
+        Called -_showActionSheetForURL:atLocation:. Used -_URLWithPageIndex: to construct
+        an NSURL from a page index.
+
+        (-[WKPDFView positionInformationForActionSheetAssistant:]):
+
+        Returned _positionInformation.
+
+        (-[WKPDFView actionSheetAssistant:performAction:]):
+
+        Populated the pasteboard with plain text and URL representations of
+        _positionInformation.url.
+
+        (-[WKPDFView actionSheetAssistant:openElementAtLocation:]):
+
+        Called -_goToURL:atLocation.
+
+        (-[WKPDFView actionSheetAssistant:shareElementWithURL:rect:]):
+
+        Created a UIWKSelectionAssistant and called -showShareSheetFor:fromRect:.
+
+        (-[WKPDFView actionSheetAssistant:shouldIncludeAppLinkActionsForElement:]):
+
+        Returned API::UIClient::shouldIncludeAppLinkActionsForElement().
+
+        (-[WKPDFView actionSheetAssistant:decideActionsForElement:defaultActions:]):
+
+        Returned API::UIClient::actionsForElement()l
+
+2018-04-28  Andy Estes  <aestes@apple.com>
+
         [iOS] Allow com.apple.WebKit.Networking to look up com.apple.wifi.manager
         https://bugs.webkit.org/show_bug.cgi?id=185114
         <rdar://problem/39808763>
