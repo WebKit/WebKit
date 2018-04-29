@@ -1,3 +1,21 @@
+2018-04-29  Geoffrey Garen  <ggaren@apple.com>
+
+        WordLock doesn't need per-thread data
+        https://bugs.webkit.org/show_bug.cgi?id=185119
+
+        Reviewed by Yusuke Suzuki.
+
+        The stack is per-thread data, so we can stack-allocate our ThreadData.
+
+        This eliminates malloc() and high-level WTF threading primitives from
+        WordLock, making WordLock more portable to non-WTF code, including
+        bmalloc.
+
+        (NOTE: This patch makes the bug fixed in r231148 100% reproducible.)
+
+        * wtf/WordLock.cpp:
+        (WTF::WordLock::lockSlow): Allocate ThreadData on the stack.
+
 2018-04-28  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed a very unlikely race condition in WTF::WordLock
