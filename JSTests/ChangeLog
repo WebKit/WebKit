@@ -1,3 +1,17 @@
+2018-04-28  Saam Barati  <sbarati@apple.com>
+
+        We don't model regexp effects properly
+        https://bugs.webkit.org/show_bug.cgi?id=185059
+        <rdar://problem/39736150>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/regexp-exec-test-effectful-last-index.js: Added.
+        (assert):
+        (foo):
+        (i.regexLastIndex.toString):
+        (bar):
+
 2018-04-28  Rick Waldron  <waldron.rick@gmail.com>
 
         Token misspelled "tocken" in error message string
