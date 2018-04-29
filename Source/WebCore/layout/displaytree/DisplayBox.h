@@ -33,60 +33,99 @@
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
-
 namespace Display {
 
 class Box {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
-    void setRect(const LayoutRect&);
-    void setTopLeft(const LayoutPoint&);
-    void setTop(LayoutUnit);
-    void setLeft(LayoutUnit);
-    void setSize(const LayoutSize&);
-    void setWidth(LayoutUnit);
-    void setHeight(LayoutUnit);
+    friend class FormattingContext;
 
-    LayoutRect rect() const;
+    ~Box();
 
-    LayoutUnit top() const;
-    LayoutUnit left() const;
-    LayoutUnit bottom() const;
-    LayoutUnit right() const;
+    LayoutRect rect() const { return m_rect; }
 
-    LayoutPoint topLeft() const;
-    LayoutPoint bottomRight() const;
+    LayoutUnit top() const { return m_rect.y(); }
+    LayoutUnit left() const { return m_rect.x(); }
+    LayoutUnit bottom() const { return m_rect.maxY(); }
+    LayoutUnit right() const { return m_rect.maxX(); }
 
-    LayoutSize size() const;
-    LayoutUnit width() const;
-    LayoutUnit height() const;
+    LayoutPoint topLeft() const { return m_rect.location(); }
+    LayoutPoint bottomRight() const { return m_rect.location(); }
 
-    void setMarginTop(LayoutUnit);
-    void setMarginLeft(LayoutUnit);
-    void setMarginBottom(LayoutUnit);
-    void setMarginRight(LayoutUnit);
+    LayoutSize size() const { return m_rect.size(); }
+    LayoutUnit width() const { return m_rect.width(); }
+    LayoutUnit height() const { return m_rect.height(); }
 
-    LayoutUnit marginTop() const;
-    LayoutUnit marginLeft() const;
-    LayoutUnit marginBottom() const;
-    LayoutUnit marginRight() const;
+    LayoutUnit marginTop() const { return m_marginTop; }
+    LayoutUnit marginLeft() const { return m_marginLeft; }
+    LayoutUnit marginBottom() const { return m_marginBottom; }
+    LayoutUnit marginRight() const { return m_marginRight; }
 
     LayoutRect marginBox() const;
     LayoutRect borderBox() const;
     LayoutRect paddingBox() const;
     LayoutRect contentBox() const;
 
-    void setParent(Box&);
-    void setNextSibling(Box&);
-    void setPreviousSibling(Box&);
-    void setFirstChild(Box&);
-    void setLastChild(Box&);
+    const Box* parent() const { return m_parent; }
+    const Box* nextSibling() const { return m_parent; }
+    const Box* previousSibling() const { return m_parent; }
+    const Box* firstChild() const { return m_firstChild; }
+    const Box* lastChild() const { return m_lastChild; }
+    
+private:
+    Box();
 
-    Box* parent() const;
-    Box* nextSibling() const;
-    Box* previousSibling() const;
-    Box* firstChild() const;
-    Box* lastChild() const;
+    void setRect(const LayoutRect& rect) { m_rect = rect; }
+    void setTopLeft(const LayoutPoint& topLeft) { m_rect.setLocation(topLeft); }
+    void setTop(LayoutUnit top) { m_rect.setY(top); }
+    void setLeft(LayoutUnit left) { m_rect.setX(left); }
+    void setSize(const LayoutSize& size) { m_rect.setSize(size); }
+    void setWidth(LayoutUnit width) { m_rect.setWidth(width); }
+    void setHeight(LayoutUnit height) { m_rect.setHeight(height); }
+
+    void setMarginTop(LayoutUnit marginTop) { m_marginTop = marginTop; }
+    void setMarginLeft(LayoutUnit marginLeft) { m_marginLeft = marginLeft; }
+    void setMarginBottom(LayoutUnit marginBottom) { m_marginBottom = marginBottom; }
+    void setMarginRight(LayoutUnit marginRight) { m_marginRight = marginRight; }
+
+    void setBorderTop(LayoutUnit borderTop) { m_borderTop = borderTop; }
+    void setBorderLeft(LayoutUnit borderLeft) { m_borderLeft = borderLeft; }
+    void setBorderBottom(LayoutUnit borderBottom) { m_borderBottom = borderBottom; }
+    void setBorderRight(LayoutUnit borderRight) { m_borderRight = borderRight; }
+
+    void setPaddingTop(LayoutUnit paddingTop) { m_paddingTop = paddingTop; }
+    void setPaddingLeft(LayoutUnit paddingLeft) { m_paddingLeft = paddingLeft; }
+    void setPaddingBottom(LayoutUnit paddingBottom) { m_paddingBottom = paddingBottom; }
+    void setPaddingRight(LayoutUnit paddingRight) { m_paddingRight = paddingRight; }
+
+    void setParent(Box& parent) { m_parent = &parent; }
+    void setNextSibling(Box& nextSibling) { m_nextSibling = &nextSibling; }
+    void setPreviousSibling(Box& previousSibling) { m_previousSibling = &previousSibling; }
+    void setFirstChild(Box& firstChild) { m_firstChild = &firstChild; }
+    void setLastChild(Box& lastChild) { m_lastChild = &lastChild; }
+
+    LayoutRect m_rect;
+    LayoutUnit m_marginTop;
+    LayoutUnit m_marginLeft;
+    LayoutUnit m_marginBottom;
+    LayoutUnit m_marginRight;
+
+    LayoutUnit m_borderTop;
+    LayoutUnit m_borderLeft;
+    LayoutUnit m_borderBottom;
+    LayoutUnit m_borderRight;
+
+    LayoutUnit m_paddingTop;
+    LayoutUnit m_paddingLeft;
+    LayoutUnit m_paddingBottom;
+    LayoutUnit m_paddingRight;
+
+    const Box* m_parent { nullptr };
+    const Box* m_nextSibling { nullptr };
+    const Box* m_previousSibling { nullptr };
+    const Box* m_firstChild { nullptr };
+    const Box* m_lastChild { nullptr };
+
 };
 
 }

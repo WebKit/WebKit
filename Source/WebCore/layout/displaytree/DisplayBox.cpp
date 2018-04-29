@@ -25,3 +25,63 @@
 
 #include "config.h"
 #include "DisplayBox.h"
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+
+#include <wtf/IsoMallocInlines.h>
+
+namespace WebCore {
+namespace Display {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(Box);
+
+Box::Box()
+{
+}
+
+Box::~Box()
+{
+}
+
+LayoutRect Box::marginBox() const
+{
+    auto marginBox = rect();
+    auto topLeftMargin = LayoutSize(m_marginLeft, m_marginTop);
+    marginBox.inflate(topLeftMargin);
+
+    auto bottomRightMargin = LayoutSize(m_marginRight, m_marginBottom);
+    marginBox.expand(bottomRightMargin);
+    return marginBox;
+}
+
+LayoutRect Box::borderBox() const
+{
+    return LayoutRect(LayoutPoint(0, 0), size());
+}
+
+LayoutRect Box::paddingBox() const
+{
+    auto paddingBox = borderBox();
+    auto topLeftBorder = LayoutSize(m_borderLeft, m_borderTop);
+    paddingBox.inflate(-topLeftBorder);
+
+    auto bottomRightBorder = LayoutSize(m_borderRight, m_borderBottom);
+    paddingBox.expand(-bottomRightBorder);
+    return paddingBox;
+}
+
+LayoutRect Box::contentBox() const
+{
+    auto contentBox = paddingBox();
+    auto topLeftPadding = LayoutSize(m_paddingLeft, m_paddingTop);
+    contentBox.inflate(-topLeftPadding);
+    
+    auto bottomRightPadding = LayoutSize(m_paddingRight, m_paddingBottom);
+    contentBox.expand(-bottomRightPadding);
+    return contentBox;
+}
+
+}
+}
+
+#endif

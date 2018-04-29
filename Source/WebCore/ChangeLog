@@ -1,3 +1,62 @@
+2018-04-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement Display::Box functions
+        https://bugs.webkit.org/show_bug.cgi?id=185116
+
+        Reviewed by Antti Koivisto.
+
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::Box):
+        (WebCore::Display::Box::~Box):
+        (WebCore::Display::Box::marginBox const):
+        (WebCore::Display::Box::borderBox const):
+        (WebCore::Display::Box::paddingBox const):
+        (WebCore::Display::Box::contentBox const):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::rect const):
+        (WebCore::Display::Box::top const):
+        (WebCore::Display::Box::left const):
+        (WebCore::Display::Box::bottom const):
+        (WebCore::Display::Box::right const):
+        (WebCore::Display::Box::topLeft const):
+        (WebCore::Display::Box::bottomRight const):
+        (WebCore::Display::Box::size const):
+        (WebCore::Display::Box::width const):
+        (WebCore::Display::Box::height const):
+        (WebCore::Display::Box::marginTop const):
+        (WebCore::Display::Box::marginLeft const):
+        (WebCore::Display::Box::marginBottom const):
+        (WebCore::Display::Box::marginRight const):
+        (WebCore::Display::Box::parent const):
+        (WebCore::Display::Box::nextSibling const):
+        (WebCore::Display::Box::previousSibling const):
+        (WebCore::Display::Box::firstChild const):
+        (WebCore::Display::Box::lastChild const):
+        (WebCore::Display::Box::setRect):
+        (WebCore::Display::Box::setTopLeft):
+        (WebCore::Display::Box::setTop):
+        (WebCore::Display::Box::setLeft):
+        (WebCore::Display::Box::setSize):
+        (WebCore::Display::Box::setWidth):
+        (WebCore::Display::Box::setHeight):
+        (WebCore::Display::Box::setMarginTop):
+        (WebCore::Display::Box::setMarginLeft):
+        (WebCore::Display::Box::setMarginBottom):
+        (WebCore::Display::Box::setMarginRight):
+        (WebCore::Display::Box::setBorderTop):
+        (WebCore::Display::Box::setBorderLeft):
+        (WebCore::Display::Box::setBorderBottom):
+        (WebCore::Display::Box::setBorderRight):
+        (WebCore::Display::Box::setPaddingTop):
+        (WebCore::Display::Box::setPaddingLeft):
+        (WebCore::Display::Box::setPaddingBottom):
+        (WebCore::Display::Box::setPaddingRight):
+        (WebCore::Display::Box::setParent):
+        (WebCore::Display::Box::setNextSibling):
+        (WebCore::Display::Box::setPreviousSibling):
+        (WebCore::Display::Box::setFirstChild):
+        (WebCore::Display::Box::setLastChild):
+
 2018-04-29  Youenn Fablet  <youenn@apple.com>
 
         Make RestrictedHTTPResponseAccess flag true by default
