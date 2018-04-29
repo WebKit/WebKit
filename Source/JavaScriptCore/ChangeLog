@@ -1,3 +1,20 @@
+2018-04-29  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should run tail duplication at the bitter end
+        https://bugs.webkit.org/show_bug.cgi?id=185123
+
+        Reviewed by Geoffrey Garen.
+        
+        Also added an option to disable taildup. This appears to be a 1% AsmBench speed-up. It's neutral
+        everywhere else.
+        
+        The goal of this change is to allow us to run path specialization after switch lowering but
+        before tail duplication.
+
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * runtime/Options.h:
+
 2018-04-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r231137.
