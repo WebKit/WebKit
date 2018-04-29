@@ -1,3 +1,36 @@
+2018-04-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Fixed a very unlikely race condition in WTF::WordLock
+        https://bugs.webkit.org/show_bug.cgi?id=185117
+
+        Reviewed by Saam Barati.
+
+        The race goes like this:
+
+        Thread L is in lockSlowCase() and thread U is in unlockSlowCase();
+
+        - U acquires queueHead->parkingLock.
+        - U sets queueHead->shouldPark = false
+        - U releases queueHead->parkingLock.
+        - L spuriously wakes up from queueHead->parkingLock.wait()
+        - L acquires queueHead->parkingLock.
+        - L notices that queueHead->shouldPark = false, and acquires the WordLock
+        - L finishes all its work and exits, freeing queueHead
+        - U notifies queueHead->parkingLock (after free) and crashes or deadlocks
+
+        These conditions are currently so unlikely that I don't know how to test
+        them. I noticed this race because I changed WordLock's allocation pattern
+        to allow queueHead to be freed more often, and I crashed / deadlocked 100%.
+
+        Shout out to <http://en.cppreference.com/w/cpp/thread/condition_variable/notify_one>
+        for explaining this.
+
+        * benchmarks/ToyLocks.h: Fixed build.
+
+        * wtf/WordLock.cpp:
+        (WTF::WordLock::unlockSlow): Hold the lock a little longer to avoid
+        this race.
+
 2018-04-27  David Kilzer  <ddkilzer@apple.com>
 
         Add logging when SpringBoard enables WebThread

@@ -31,6 +31,7 @@
 #include <wtf/Atomics.h>
 #include <wtf/Lock.h>
 #include <wtf/ParkingLot.h>
+#include <wtf/Threading.h>
 #include <wtf/WordLock.h>
 
 #if __has_include(<os/lock.h>)
