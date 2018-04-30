@@ -45,11 +45,8 @@ static bool constraintsAreAllRelative(const ViewportConfiguration::Parameters& c
 }
 #endif
 
-static float computedMinDeviceWidth(float minDeviceWidth)
+static float platformDeviceWidthOverride()
 {
-    if (minDeviceWidth != ViewportArguments::ValueAuto)
-        return minDeviceWidth;
-
 #if ENABLE(EXTRA_ZOOM_MODE)
     return 320;
 #else
@@ -135,9 +132,10 @@ IntSize ViewportConfiguration::layoutSize() const
     return IntSize(layoutWidth(), layoutHeight());
 }
 
-bool ViewportConfiguration::shouldOverrideDeviceWidthWithMinDeviceWidth() const
+bool ViewportConfiguration::shouldOverrideDeviceWidthAndShrinkToFit() const
 {
-    return m_viewLayoutSize.width() < computedMinDeviceWidth(m_viewportArguments.minDeviceWidth);
+    auto viewWidth = m_viewLayoutSize.width();
+    return m_viewportArguments.shrinkToFit != 0. && 0 < viewWidth && viewWidth < platformDeviceWidthOverride();
 }
 
 bool ViewportConfiguration::shouldIgnoreHorizontalScalingConstraints() const
@@ -145,7 +143,7 @@ bool ViewportConfiguration::shouldIgnoreHorizontalScalingConstraints() const
     if (!m_canIgnoreScalingConstraints)
         return false;
 
-    if (shouldOverrideDeviceWidthWithMinDeviceWidth())
+    if (shouldOverrideDeviceWidthAndShrinkToFit())
         return true;
 
     if (!m_configuration.allowsShrinkToFit)
@@ -183,7 +181,7 @@ bool ViewportConfiguration::shouldIgnoreScalingConstraints() const
 
 bool ViewportConfiguration::shouldIgnoreScalingConstraintsRegardlessOfContentSize() const
 {
-    return m_canIgnoreScalingConstraints && shouldOverrideDeviceWidthWithMinDeviceWidth();
+    return m_canIgnoreScalingConstraints && shouldOverrideDeviceWidthAndShrinkToFit();
 }
 
 double ViewportConfiguration::initialScaleFromSize(double width, double height, bool shouldIgnoreScalingConstraints) const
@@ -371,7 +369,7 @@ void ViewportConfiguration::updateConfiguration()
         m_configuration.allowsUserScaling = m_viewportArguments.userZoom != 0.;
 
     if (booleanViewportArgumentIsSet(m_viewportArguments.shrinkToFit))
-        m_configuration.allowsShrinkToFit = shouldOverrideDeviceWidthWithMinDeviceWidth() || m_viewportArguments.shrinkToFit != 0.;
+        m_configuration.allowsShrinkToFit = m_viewportArguments.shrinkToFit != 0.;
 
     m_configuration.avoidsUnsafeArea = m_viewportArguments.viewportFit != ViewportFit::Cover;
 
@@ -380,12 +378,12 @@ void ViewportConfiguration::updateConfiguration()
 
 void ViewportConfiguration::updateMinimumLayoutSize()
 {
-    if (!m_viewLayoutSize.width() || !shouldOverrideDeviceWidthWithMinDeviceWidth()) {
+    if (!shouldOverrideDeviceWidthAndShrinkToFit()) {
         m_minimumLayoutSize = m_viewLayoutSize;
         return;
     }
 
-    auto minDeviceWidth = computedMinDeviceWidth(m_viewportArguments.minDeviceWidth);
+    float minDeviceWidth = platformDeviceWidthOverride();
     m_minimumLayoutSize = FloatSize(minDeviceWidth, std::roundf(m_viewLayoutSize.height() * (minDeviceWidth / m_viewLayoutSize.width())));
 }
 

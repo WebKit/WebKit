@@ -82,7 +82,7 @@ public:
     const ViewportArguments& viewportArguments() const { return m_viewportArguments; }
     WEBCORE_EXPORT bool setViewportArguments(const ViewportArguments&);
 
-    bool shouldOverrideDeviceWidthWithMinDeviceWidth() const;
+    bool shouldOverrideDeviceWidthAndShrinkToFit() const;
 
     WEBCORE_EXPORT bool setCanIgnoreScalingConstraints(bool);
     void setForceAlwaysUserScalable(bool forceAlwaysUserScalable) { m_forceAlwaysUserScalable = forceAlwaysUserScalable; }

@@ -1,3 +1,52 @@
+2018-04-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Respect the existing shrink-to-fit attribute instead of using min-device-width
+        https://bugs.webkit.org/show_bug.cgi?id=185132
+        <rdar://problem/39834562>
+
+        Reviewed by Tim Horton.
+
+        Removes the `min-device-width` attribute added in r231095. Instead, we key this behavior off of the
+        `shrink-to-fit` attribute introduced for multitasking on iPad, such that `shrink-to-fit=no` achieves the same
+        behavior as `min-device-width=0` in extra zoom mode. See comments below for more detail.
+
+        Adjusted an existing layout test: fast/viewport/extrazoom/viewport-change-min-device-width.html.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::setViewportFeature):
+        (WebCore::operator<<):
+        * dom/ViewportArguments.h:
+
+        Removes the `minDeviceWidth` viewport argument.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setMinDeviceWidthEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::minDeviceWidthEnabled const): Deleted.
+
+        Removes the runtime switch for `min-device-width`.
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::platformDeviceWidthOverride):
+
+        Hard-code the override device width in extra zoom mode.
+
+        (WebCore::ViewportConfiguration::shouldOverrideDeviceWidthAndShrinkToFit const):
+
+        In extra zoom mode, override the device width only if shrink-to-fit has not been expliticly disabled, and the
+        device width is less than the override device width.
+
+        (WebCore::ViewportConfiguration::shouldIgnoreHorizontalScalingConstraints const):
+        (WebCore::ViewportConfiguration::shouldIgnoreScalingConstraintsRegardlessOfContentSize const):
+        (WebCore::ViewportConfiguration::updateConfiguration):
+        (WebCore::ViewportConfiguration::updateMinimumLayoutSize):
+
+        Do not override the minimum layout size if `shrink-to-fit` has been explicitly explicitly disabled, or if the
+        device width is greater than the override device width.
+
+        (WebCore::computedMinDeviceWidth): Deleted.
+        (WebCore::ViewportConfiguration::shouldOverrideDeviceWidthWithMinDeviceWidth const): Deleted.
+        * page/ViewportConfiguration.h:
+
 2018-04-30  Chris Nardi  <cnardi@chromium.org>
 
         Serialize font-variation-settings with double-quotes per spec

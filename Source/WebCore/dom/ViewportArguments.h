@@ -93,7 +93,6 @@ struct ViewportArguments {
     float width { ValueAuto };
     float minWidth { ValueAuto };
     float maxWidth { ValueAuto };
-    float minDeviceWidth { ValueAuto };
     float height { ValueAuto };
     float minHeight { ValueAuto };
     float maxHeight { ValueAuto };

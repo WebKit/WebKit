@@ -1,3 +1,19 @@
+2018-04-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Respect the existing shrink-to-fit attribute instead of using min-device-width
+        https://bugs.webkit.org/show_bug.cgi?id=185132
+        <rdar://problem/39834562>
+
+        Reviewed by Tim Horton.
+
+        Modifies an existing layout test to try out different values of `shrink-to-fit` instead of using the
+        `min-device-width` attribute. This test now begins with the default viewport configuration, then explicitly
+        disables `shrink-to-fit` by setting the attribute to a few different values (which should all achieve the same
+        effect), and lastly explicitly re-enables `shrink-to-fit` by setting the attribute value to several values that
+        should behave the same as `shrink-to-fit=yes`.
+
+        * fast/viewport/extrazoom/viewport-change-min-device-width.html:
+
 2018-04-30  Chris Nardi  <cnardi@chromium.org>
 
         Serialize font-variation-settings with double-quotes per spec

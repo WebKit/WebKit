@@ -253,9 +253,6 @@ public:
     void setFromOriginResponseHeaderEnabled(bool isEnabled) { m_fromOriginResponseHeaderEnabled = isEnabled; }
     bool fromOriginResponseHeaderEnabled() const { return m_fromOriginResponseHeaderEnabled; }
 
-    void setMinDeviceWidthEnabled(bool isEnabled) { m_minDeviceWidthEnabled = isEnabled; }
-    bool minDeviceWidthEnabled() const { return m_minDeviceWidthEnabled; }
-
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:

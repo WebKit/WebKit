@@ -1248,11 +1248,3 @@ FromOriginResponseHeaderEnabled:
     humanReadableDescription: "Support for the From-Origin Response Header"
     category: experimental
     webcoreBinding: RuntimeEnabledFeatures
-
-MinDeviceWidthEnabled:
-  type: bool
-  defaultValue: DEFAULT_MIN_DEVICE_WIDTH_ENABLED
-  humanReadableName: "Minimum device width"
-  humanReadableDescription: "Enable the min-device-width viewport parameter"
-  category: experimental
-  webcoreBinding: RuntimeEnabledFeatures
