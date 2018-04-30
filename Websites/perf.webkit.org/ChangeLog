@@ -1,5 +1,30 @@
 2018-04-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Creating a custom analysis task after fetching all analysis tasks fail
+        https://bugs.webkit.org/show_bug.cgi?id=184641
+
+        Reviewed by Saam Barati.
+
+        The bug was caused by AnalysisTask._fetchSubset not fetching the analysis task when all analysis tasks
+        had previously been fetched (AnlaysisTask._fetchAllPromise is set) even when noCache is set to true.
+        Fixed it by ignornig _fetchAllPromise when noCache is set to true.
+
+        This patch also adds noCache argument to AnalysisTask.fetchById and reverts the inadvertent change in
+        r226836 to always set noCache to true in this function.
+
+        * public/v3/models/analysis-task.js:
+        (AnalysisTask.fetchById): Added noCache argument instead of always specifying true, and modernized the code.
+        (AnalysisTask._fetchSubset): Fixed the bug. See above description.
+        * public/v3/models/test-group.js:
+        (TestGroup.createWithTask): Set noCache to true when calling AnalysisTask.fetchById here.
+        * unit-tests/analysis-task-tests.js: Added test cases for AnalysisTask.fetchById, including a test
+        to make sure it doesn't fetch the specified analysis task when noCache is set to false and all analysis
+        tasks had previously been fetched for the aforementioned revert of the inadvertent change in r226836.
+        (sampleAnalysisTasks): Renamed from sampleAnalysisTasks as the result contains multiple analysis tasks.
+        * unit-tests/test-groups-tests.js: Added a test case for TestGroup.createWithTask
+
+2018-04-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION(r230960): Browser tests under TimeSeriesChart fetchMeasurementSets all fail
         https://bugs.webkit.org/show_bug.cgi?id=185125
 

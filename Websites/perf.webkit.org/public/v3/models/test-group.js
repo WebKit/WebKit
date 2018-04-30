@@ -191,7 +191,7 @@ class TestGroup extends LabeledObject {
         const revisionSets = CommitSet.revisionSetsFromCommitSets(commitSets);
         const params = {taskName, name: groupName, platform: platform.id(), test: test.id(), repetitionCount, revisionSets};
         return PrivilegedAPI.sendRequest('create-test-group', params).then((data) => {
-            return AnalysisTask.fetchById(data['taskId']);
+            return AnalysisTask.fetchById(data['taskId'], true);
         }).then((task) => {
             return this.fetchForTask(task.id()).then(() => task);
         });

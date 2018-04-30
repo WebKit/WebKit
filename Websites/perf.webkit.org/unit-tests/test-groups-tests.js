@@ -106,10 +106,9 @@ function sampleTestGroup() {
 
 describe('TestGroup', function () {
     MockModels.inject();
+    const requests = MockRemoteAPI.inject('https://perf.webkit.org', BrowserPrivilegedAPI);
 
     describe('fetchForTask', () => {
-        const requests = MockRemoteAPI.inject('https://perf.webkit.org', BrowserPrivilegedAPI);
-
         it('should be able to fetch the list of test groups for the same task twice using cache', () => {
             const fetchPromise = TestGroup.fetchForTask(1376);
             assert.equal(requests.length, 1);
@@ -342,5 +341,46 @@ describe('TestGroup', function () {
             assert.ok(!testGroupWithStatusList(['completed', 'completed', 'completed', 'scheduled']).hasPending());
         });
     });
+
+    describe('createWithTask', () => {
+        it('should fetch the newly created analysis task even when all analysis tasks had previously been fetched', async () => {
+            const allAnalysisTasks = AnalysisTask.fetchAll();
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '/api/analysis-tasks');
+            requests[0].resolve({
+                'analysisTasks': [],
+                'bugs': [],
+                'commits': [],
+                'status': 'OK'
+            });
+
+            const set1 = new CustomCommitSet;
+            set1.setRevisionForRepository(MockModels.webkit, '191622');
+            set1.setRevisionForRepository(MockModels.sharedRepository, '80229');
+            const set2 = new CustomCommitSet;
+            set2.setRevisionForRepository(MockModels.webkit, '191623');
+            set2.setRevisionForRepository(MockModels.sharedRepository, '80229');
+
+            const promise = TestGroup.createWithTask('some-task', MockModels.somePlatform, MockModels.someTest, 'some-group', 4, [set1, set2]);
+            assert.equal(requests.length, 2);
+            assert.equal(requests[1].url, '/privileged-api/generate-csrf-token');
+            requests[1].resolve({
+                token: 'abc',
+                expiration: Date.now() + 100 * 1000,
+            });
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 3);
+            assert.equal(requests[2].method, 'POST');
+            assert.equal(requests[2].url, '/privileged-api/create-test-group');
+            requests[2].resolve({
+                taskId: 123,
+                testGroupId: 456,
+            });
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 4);
+            assert.equal(requests[3].method, 'GET');
+            assert.equal(requests[3].url, '/api/analysis-tasks?id=123');
+        });
+    })
 
 });

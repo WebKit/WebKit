@@ -202,9 +202,9 @@ class AnalysisTask extends LabeledObject {
         ];
     }
 
-    static fetchById(id)
+    static fetchById(id, noCache)
     {
-        return this._fetchSubset({id: id}, true).then(function (data) { return AnalysisTask.findById(id); });
+        return this._fetchSubset({id: id}, noCache).then((data) => AnalysisTask.findById(id));
     }
 
     static fetchByBuildRequestId(id)
@@ -248,7 +248,7 @@ class AnalysisTask extends LabeledObject {
 
     static _fetchSubset(params, noCache)
     {
-        if (this._fetchAllPromise)
+        if (this._fetchAllPromise && !noCache)
             return this._fetchAllPromise;
         return this.cachedFetch('/api/analysis-tasks', params, noCache).then(this._constructAnalysisTasksFromRawData.bind(this));
     }

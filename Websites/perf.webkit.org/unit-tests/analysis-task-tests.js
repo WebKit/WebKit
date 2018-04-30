@@ -8,7 +8,7 @@ const MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
 const BrowserPrivilegedAPI = require('../public/v3/privileged-api.js').PrivilegedAPI;
 const NodePrivilegedAPI = require('../tools/js/privileged-api').PrivilegedAPI;
 
-function sampleAnalysisTask()
+function sampleAnalysisTasks()
 {
     return {
         'analysisTasks': [
@@ -123,12 +123,49 @@ function measurementCluster()
 
 describe('AnalysisTask', () => {
     MockModels.inject();
+
     function makeMockPoints(id, commitSet) {
         return {
             id,
             commitSet: () => commitSet
         }
     }
+
+    describe('fetchById', () => {
+        const requests = MockRemoteAPI.inject(null, BrowserPrivilegedAPI);
+        it('should fetch the specified analysis task', () => {
+            let callCount = 0;
+            AnalysisTask.fetchById(1).then(() => { callCount++; });
+            assert.equal(callCount, 0);
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '/api/analysis-tasks?id=1');
+        });
+
+        it('should not fetch the specified analysis task if all analysis task had been fetched', async () => {
+            const fetchAll = AnalysisTask.fetchAll();
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '/api/analysis-tasks');
+            requests[0].resolve(sampleAnalysisTasks());
+
+            await fetchAll;
+            AnalysisTask.fetchById(sampleAnalysisTasks().analysisTasks[0].id);
+            assert.equal(requests.length, 1);
+        });
+
+        it('should fetch the specified analysis task if all analysis task had been fetched but noCache is set to true', async () => {
+            const fetchAll = AnalysisTask.fetchAll();
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '/api/analysis-tasks');
+            requests[0].resolve(sampleAnalysisTasks());
+
+            await fetchAll;
+            const taskId = sampleAnalysisTasks().analysisTasks[0].id;
+            AnalysisTask.fetchById(taskId, true);
+            assert.equal(requests.length, 2);
+            assert.equal(requests[1].url, `/api/analysis-tasks?id=${taskId}`);
+        });
+
+    })
 
     describe('fetchAll', () => {
         const requests = MockRemoteAPI.inject(null, BrowserPrivilegedAPI);
@@ -159,7 +196,7 @@ describe('AnalysisTask', () => {
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '/api/analysis-tasks');
 
-            requests[0].resolve(sampleAnalysisTask());
+            requests[0].resolve(sampleAnalysisTasks());
 
             let anotherCallCount = 0;
             return promise.then(() => {
@@ -174,7 +211,7 @@ describe('AnalysisTask', () => {
 
         it('should create AnalysisTask objects', () => {
             const promise = AnalysisTask.fetchAll();
-            requests[0].resolve(sampleAnalysisTask());
+            requests[0].resolve(sampleAnalysisTasks());
 
             return promise.then(() => {
                 assert.equal(AnalysisTask.all().length, 1);
@@ -196,7 +233,7 @@ describe('AnalysisTask', () => {
 
         it('should create CommitLog objects for `causes`', () => {
             const promise = AnalysisTask.fetchAll();
-            requests[0].resolve(sampleAnalysisTask());
+            requests[0].resolve(sampleAnalysisTasks());
 
             return promise.then(() => {
                 assert.equal(AnalysisTask.all().length, 1);
@@ -218,7 +255,7 @@ describe('AnalysisTask', () => {
             assert.equal(adaptedMeasurement.commitSet().commitForRepository(MockModels.webkit).revision(), '196051');
 
             const promise = AnalysisTask.fetchAll();
-            requests[0].resolve(sampleAnalysisTask());
+            requests[0].resolve(sampleAnalysisTasks());
 
             return promise.then(() => {
                 assert.equal(AnalysisTask.all().length, 1);
