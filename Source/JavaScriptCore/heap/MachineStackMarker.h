@@ -50,7 +50,7 @@ public:
     // Only needs to be called by clients that can use the same heap from multiple threads.
     void addCurrentThread() { m_threadGroup->addCurrentThread(); }
 
-    std::mutex& getLock() { return m_threadGroup->getLock(); }
+    WordLock& getLock() { return m_threadGroup->getLock(); }
     const ListHashSet<Ref<Thread>>& threads(const AbstractLocker& locker) const { return m_threadGroup->threads(locker); }
 
 private:

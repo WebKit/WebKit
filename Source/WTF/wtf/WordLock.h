@@ -50,7 +50,7 @@ class WordLock {
     WTF_MAKE_NONCOPYABLE(WordLock);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WordLock() = default;
+    constexpr WordLock() = default;
 
     void lock()
     {

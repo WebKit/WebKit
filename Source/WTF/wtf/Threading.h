@@ -45,6 +45,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Vector.h>
+#include <wtf/WordLock.h>
 
 #if USE(PTHREADS) && !OS(DARWIN)
 #include <signal.h>
@@ -273,8 +274,9 @@ protected:
     bool m_didExit { false };
     bool m_isDestroyedOnce { false };
 
-    // WordLock & Lock rely on ThreadSpecific. But Thread object can be destroyed even after ThreadSpecific things are destroyed.
-    std::mutex m_mutex;
+    // Lock & ParkingLot rely on ThreadSpecific. But Thread object can be destroyed even after ThreadSpecific things are destroyed.
+    // Use WordLock since WordLock does not depend on ThreadSpecific and this "Thread".
+    WordLock m_mutex;
     StackBounds m_stack { StackBounds::emptyBounds() };
     Vector<std::weak_ptr<ThreadGroup>> m_threadGroups;
     PlatformThreadHandle m_handle;

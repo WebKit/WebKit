@@ -180,7 +180,7 @@ void Thread::didExit()
     if (shouldRemoveThreadFromThreadGroup()) {
         Vector<std::shared_ptr<ThreadGroup>> threadGroups;
         {
-            std::lock_guard<std::mutex> locker(m_mutex);
+            auto locker = holdLock(m_mutex);
             for (auto& threadGroup : m_threadGroups) {
                 // If ThreadGroup is just being destroyed,
                 // we do not need to perform unregistering.
@@ -190,8 +190,8 @@ void Thread::didExit()
             m_isShuttingDown = true;
         }
         for (auto& threadGroup : threadGroups) {
-            std::lock_guard<std::mutex> threadGroupLocker(threadGroup->getLock());
-            std::lock_guard<std::mutex> locker(m_mutex);
+            auto threadGroupLocker = holdLock(threadGroup->getLock());
+            auto locker = holdLock(m_mutex);
             threadGroup->m_threads.remove(*this);
         }
     }
@@ -200,14 +200,14 @@ void Thread::didExit()
 
     // We would like to say "thread is exited" after unregistering threads from thread groups.
     // So we need to separate m_isShuttingDown from m_didExit.
-    std::lock_guard<std::mutex> locker(m_mutex);
+    auto locker = holdLock(m_mutex);
     m_didExit = true;
 }
 
 ThreadGroupAddResult Thread::addToThreadGroup(const AbstractLocker& threadGroupLocker, ThreadGroup& threadGroup)
 {
     UNUSED_PARAM(threadGroupLocker);
-    std::lock_guard<std::mutex> locker(m_mutex);
+    auto locker = holdLock(m_mutex);
     if (m_isShuttingDown)
         return ThreadGroupAddResult::NotAdded;
     if (threadGroup.m_threads.add(*this).isNewEntry) {
@@ -220,7 +220,7 @@ ThreadGroupAddResult Thread::addToThreadGroup(const AbstractLocker& threadGroupL
 void Thread::removeFromThreadGroup(const AbstractLocker& threadGroupLocker, ThreadGroup& threadGroup)
 {
     UNUSED_PARAM(threadGroupLocker);
-    std::lock_guard<std::mutex> locker(m_mutex);
+    auto locker = holdLock(m_mutex);
     if (m_isShuttingDown)
         return;
     m_threadGroups.removeFirstMatching([&] (auto weakPtr) {

@@ -170,7 +170,7 @@ bool Thread::establishHandle(NewThreadContext* data)
 
 void Thread::changePriority(int delta)
 {
-    std::lock_guard<std::mutex> locker(m_mutex);
+    auto locker = holdLock(m_mutex);
     SetThreadPriority(m_handle, THREAD_PRIORITY_NORMAL + delta);
 }
 
@@ -178,7 +178,7 @@ int Thread::waitForCompletion()
 {
     HANDLE handle;
     {
-        std::lock_guard<std::mutex> locker(m_mutex);
+        auto locker = holdLock(m_mutex);
         handle = m_handle;
     }
 
@@ -186,7 +186,7 @@ int Thread::waitForCompletion()
     if (joinResult == WAIT_FAILED)
         LOG_ERROR("Thread %p was found to be deadlocked trying to quit", this);
 
-    std::lock_guard<std::mutex> locker(m_mutex);
+    auto locker = holdLock(m_mutex);
     ASSERT(joinableState() == Joinable);
 
     // The thread has already exited, do nothing.
@@ -208,7 +208,7 @@ void Thread::detach()
     // FlsCallback automatically. FlsCallback will call CloseHandle to clean up
     // resource. So in this function, we just mark the thread as detached to
     // avoid calling waitForCompletion for this thread.
-    std::lock_guard<std::mutex> locker(m_mutex);
+    auto locker = holdLock(m_mutex);
     if (!hasExited())
         didBecomeDetached();
 }
@@ -261,18 +261,14 @@ ThreadIdentifier Thread::currentID()
 
 void Thread::establishPlatformSpecificHandle(HANDLE handle, ThreadIdentifier threadID)
 {
-    std::lock_guard<std::mutex> locker(m_mutex);
+    auto locker = holdLock(m_mutex);
     m_handle = handle;
     m_id = threadID;
 }
 
 #define InvalidThread reinterpret_cast<Thread*>(static_cast<uintptr_t>(0xbbadbeef))
 
-static std::mutex& threadMapMutex()
-{
-    static NeverDestroyed<std::mutex> mutex;
-    return mutex.get();
-}
+static WordLock threadMapMutex;
 
 static HashMap<ThreadIdentifier, Thread*>& threadMap()
 {
@@ -282,7 +278,6 @@ static HashMap<ThreadIdentifier, Thread*>& threadMap()
 
 void Thread::initializeTLSKey()
 {
-    threadMapMutex();
     threadMap();
     threadSpecificKeyCreate(&s_key, destructTLS);
 }
@@ -291,14 +286,14 @@ Thread* Thread::currentDying()
 {
     ASSERT(s_key != InvalidThreadSpecificKey);
     // After FLS is destroyed, this map offers the value until the second thread exit callback is called.
-    std::lock_guard<std::mutex> locker(threadMapMutex());
+    auto locker = holdLock(threadMapMutex);
     return threadMap().get(currentID());
 }
 
 // FIXME: Remove this workaround code once <rdar://problem/31793213> is fixed.
 RefPtr<Thread> Thread::get(ThreadIdentifier id)
 {
-    std::lock_guard<std::mutex> locker(threadMapMutex());
+    auto locker = holdLock(threadMapMutex);
     Thread* thread = threadMap().get(id);
     if (thread)
         return thread;
@@ -314,7 +309,7 @@ Thread& Thread::initializeTLS(Ref<Thread>&& thread)
     auto& threadInTLS = thread.leakRef();
     threadSpecificSet(s_key, &threadInTLS);
     {
-        std::lock_guard<std::mutex> locker(threadMapMutex());
+        auto locker = holdLock(threadMapMutex);
         threadMap().add(id, &threadInTLS);
     }
     return threadInTLS;
@@ -348,7 +343,7 @@ void Thread::destructTLS(void* data)
 
     if (thread->m_isDestroyedOnce) {
         {
-            std::lock_guard<std::mutex> locker(threadMapMutex());
+            auto locker = holdLock(threadMapMutex);
             ASSERT(threadMap().contains(thread->id()));
             threadMap().remove(thread->id());
         }

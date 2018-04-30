@@ -51,7 +51,7 @@ public:
 
     const ListHashSet<Ref<Thread>>& threads(const AbstractLocker&) const { return m_threads; }
 
-    std::mutex& getLock() { return m_lock; }
+    WordLock& getLock() { return m_lock; }
 
     WTF_EXPORT_PRIVATE ~ThreadGroup();
 
@@ -63,8 +63,8 @@ private:
         return shared_from_this();
     }
 
-    // We use std::mutex since it can be used when deallocating TLS.
-    std::mutex m_lock;
+    // We use WordLock since it can be used when deallocating TLS.
+    WordLock m_lock;
     ListHashSet<Ref<Thread>> m_threads;
 };
 

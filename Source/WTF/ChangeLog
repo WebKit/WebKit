@@ -1,3 +1,49 @@
+2018-04-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use WordLock instead of std::mutex for Threading
+        https://bugs.webkit.org/show_bug.cgi?id=185121
+
+        Reviewed by Geoffrey Garen.
+
+        Before r231151, WordLock depends on ThreadSpecific. It means that our Threading implementation
+        cannot use this lock since Threading primitives could touch these locks after ThreadSpecific
+        for that WordLock is destroyed.
+
+        Now WordLock is changed not to use ThreadSpecific. So it does not depend on our Threading
+        mechanism and our Threading can start using WordLock internally.
+
+        This patch changes WTF::Thread and WTF::ThreadGroup to use WordLock instead of std::mutex.
+
+        And add constexpr to explicitly describe that Lock, Condition, and WordLock constructors are constexpr.
+
+        * wtf/Condition.h:
+        * wtf/Lock.h:
+        * wtf/ThreadGroup.h:
+        (WTF::ThreadGroup::getLock):
+        * wtf/Threading.cpp:
+        (WTF::Thread::didExit):
+        (WTF::Thread::addToThreadGroup):
+        (WTF::Thread::removeFromThreadGroup):
+        * wtf/Threading.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::changePriority):
+        (WTF::Thread::waitForCompletion):
+        (WTF::Thread::detach):
+        (WTF::Thread::signal):
+        (WTF::Thread::establishPlatformSpecificHandle):
+        * wtf/ThreadingWin.cpp:
+        (WTF::Thread::changePriority):
+        (WTF::Thread::waitForCompletion):
+        (WTF::Thread::detach):
+        (WTF::Thread::establishPlatformSpecificHandle):
+        (WTF::Thread::initializeTLSKey):
+        (WTF::Thread::currentDying):
+        (WTF::Thread::get):
+        (WTF::Thread::initializeTLS):
+        (WTF::Thread::destructTLS):
+        (WTF::threadMapMutex): Deleted.
+        * wtf/WordLock.h:
+
 2018-04-29  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Require GCC 6

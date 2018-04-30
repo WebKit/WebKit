@@ -37,7 +37,7 @@ namespace bmalloc {
 
 class Mutex {
 public:
-    Mutex() = default;
+    constexpr Mutex() = default;
 
     void lock();
     bool try_lock();

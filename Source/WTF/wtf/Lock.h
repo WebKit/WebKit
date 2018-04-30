@@ -52,7 +52,7 @@ class Lock {
     WTF_MAKE_NONCOPYABLE(Lock);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Lock() = default;
+    constexpr Lock() = default;
 
     void lock()
     {
