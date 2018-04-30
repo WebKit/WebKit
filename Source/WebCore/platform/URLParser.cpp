@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2495,9 +2495,9 @@ std::optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator
 }
 
 template<typename CharacterType>
-Vector<LChar, URLParser::defaultInlineBufferSize> URLParser::percentDecode(const LChar* input, size_t length, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
+URLParser::LCharBuffer URLParser::percentDecode(const LChar* input, size_t length, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
 {
-    Vector<LChar, defaultInlineBufferSize> output;
+    LCharBuffer output;
     output.reserveInitialCapacity(length);
     
     for (size_t i = 0; i < length; ++i) {
@@ -2517,9 +2517,9 @@ Vector<LChar, URLParser::defaultInlineBufferSize> URLParser::percentDecode(const
     return output;
 }
     
-Vector<LChar, URLParser::defaultInlineBufferSize> URLParser::percentDecode(const LChar* input, size_t length)
+URLParser::LCharBuffer URLParser::percentDecode(const LChar* input, size_t length)
 {
-    Vector<LChar, defaultInlineBufferSize> output;
+    LCharBuffer output;
     output.reserveInitialCapacity(length);
     
     for (size_t i = 0; i < length; ++i) {
@@ -2538,9 +2538,9 @@ Vector<LChar, URLParser::defaultInlineBufferSize> URLParser::percentDecode(const
     return output;
 }
 
-template<typename CharacterType> std::optional<Vector<LChar, URLParser::defaultInlineBufferSize>> URLParser::domainToASCII(StringImpl& domain, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
+template<typename CharacterType> std::optional<URLParser::LCharBuffer> URLParser::domainToASCII(StringImpl& domain, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
 {
-    Vector<LChar, defaultInlineBufferSize> ascii;
+    LCharBuffer ascii;
     if (domain.isAllASCII()) {
         size_t length = domain.length();
         if (domain.is8Bit()) {
@@ -2584,7 +2584,7 @@ template<typename CharacterType> std::optional<Vector<LChar, URLParser::defaultI
     return std::nullopt;
 }
 
-bool URLParser::hasForbiddenHostCodePoint(const Vector<LChar, URLParser::defaultInlineBufferSize>& asciiDomain)
+bool URLParser::hasForbiddenHostCodePoint(const URLParser::LCharBuffer& asciiDomain)
 {
     for (size_t i = 0; i < asciiDomain.size(); ++i) {
         if (isForbiddenHostCodePoint(asciiDomain[i]))
@@ -2733,7 +2733,7 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
     
     const auto hostBegin = iterator;
     
-    Vector<LChar, defaultInlineBufferSize> utf8Encoded;
+    LCharBuffer utf8Encoded;
     for (; !iterator.atEnd(); ++iterator) {
         if (UNLIKELY(isTabOrNewline(*iterator))) {
             syntaxViolation(hostBegin);
@@ -2752,7 +2752,7 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
         // FIXME: Check error.
         utf8Encoded.append(buffer, offset);
     }
-    Vector<LChar, defaultInlineBufferSize> percentDecoded = percentDecode(utf8Encoded.data(), utf8Encoded.size(), hostBegin);
+    LCharBuffer percentDecoded = percentDecode(utf8Encoded.data(), utf8Encoded.size(), hostBegin);
     String domain = String::fromUTF8(percentDecoded.data(), percentDecoded.size());
     if (domain.isNull())
         return false;
@@ -2761,7 +2761,7 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
     auto asciiDomain = domainToASCII(*domain.impl(), hostBegin);
     if (!asciiDomain || hasForbiddenHostCodePoint(asciiDomain.value()))
         return false;
-    Vector<LChar, defaultInlineBufferSize>& asciiDomainValue = asciiDomain.value();
+    LCharBuffer& asciiDomainValue = asciiDomain.value();
     const LChar* asciiDomainCharacters = asciiDomainValue.data();
 
     auto address = parseIPv4Host(hostBegin, CodePointIterator<LChar>(asciiDomainValue.begin(), asciiDomainValue.end()));

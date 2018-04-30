@@ -1,3 +1,14 @@
+2018-04-30  JF Bastien  <jfbastien@apple.com>
+
+        Use some C++17 features
+        https://bugs.webkit.org/show_bug.cgi?id=185135
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/PlatformMac.cmake:
+        * gtk/ycm_extra_conf.py:
+        (FlagsForFile):
+
 2018-04-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use WordLock instead of std::mutex for Threading

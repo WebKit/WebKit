@@ -1,3 +1,41 @@
+2018-04-30  JF Bastien  <jfbastien@apple.com>
+
+        Use some C++17 features
+        https://bugs.webkit.org/show_bug.cgi?id=185135
+
+        Reviewed by Alex Christensen.
+
+        As discussed here [0] let's move WebKit to a subset of C++17. We
+        now require GCC 6 [1] which means that, according to [2] we can
+        use the following C++17 language features (I removed some
+        uninteresting ones):
+
+         - New auto rules for direct-list-initialization
+         - static_assert with no message
+         - typename in a template template parameter
+         - Nested namespace definition
+         - Attributes for namespaces and enumerators
+         - u8 character literals
+         - Allow constant evaluation for all non-type template arguments
+         - Fold Expressions
+         - Unary fold expressions and empty parameter packs
+         - __has_include in preprocessor conditional
+         - Differing begin and end types in range-based for
+         - Improving std::pair and std::tuple
+
+        Consult the Tony Tables [3] to see before / after examples.
+
+        Of course we can use any library feature if we're willing to
+        import them to WTF (and they don't require language support).
+
+
+          [0]: https://lists.webkit.org/pipermail/webkit-dev/2018-March/029922.html
+          [1]: https://trac.webkit.org/changeset/231152/webkit
+          [2]: https://en.cppreference.com/w/cpp/compiler_support
+          [3]: https://github.com/tvaneerd/cpp17_in_TTs/blob/master/ALL_IN_ONE.md
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
 2018-04-29  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Require GCC 6

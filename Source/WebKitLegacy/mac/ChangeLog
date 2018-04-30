@@ -1,3 +1,12 @@
+2018-04-30  JF Bastien  <jfbastien@apple.com>
+
+        Use some C++17 features
+        https://bugs.webkit.org/show_bug.cgi?id=185135
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/WebKitLegacy.xcconfig:
+
 2018-04-27  Chris Dumez  <cdumez@apple.com>
 
         Use WindowProxy instead of DOMWindow in our IDL

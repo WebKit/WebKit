@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,7 +67,8 @@ private:
     const void* m_inputBegin { nullptr };
 
     bool m_didSeeSyntaxViolation { false };
-    const static size_t defaultInlineBufferSize = 2048;
+    static constexpr size_t defaultInlineBufferSize = 2048;
+    using LCharBuffer = Vector<LChar, defaultInlineBufferSize>;
 
     template<typename CharacterType> void parse(const CharacterType*, const unsigned length, const URL&, const TextEncoding&);
     template<typename CharacterType> void parseAuthority(CodePointIterator<CharacterType>);
@@ -97,11 +98,11 @@ private:
     template<typename UnsignedIntegerType> void appendNumberToASCIIBuffer(UnsignedIntegerType);
     template<bool(*isInCodeSet)(UChar32), typename CharacterType> void utf8PercentEncode(const CodePointIterator<CharacterType>&);
     template<typename CharacterType> void utf8QueryEncode(const CodePointIterator<CharacterType>&);
-    template<typename CharacterType> std::optional<Vector<LChar, defaultInlineBufferSize>> domainToASCII(StringImpl&, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
-    template<typename CharacterType> Vector<LChar, defaultInlineBufferSize> percentDecode(const LChar*, size_t, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
-    static Vector<LChar, defaultInlineBufferSize> percentDecode(const LChar*, size_t);
+    template<typename CharacterType> std::optional<LCharBuffer> domainToASCII(StringImpl&, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
+    template<typename CharacterType> LCharBuffer percentDecode(const LChar*, size_t, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
+    static LCharBuffer percentDecode(const LChar*, size_t);
     static std::optional<String> formURLDecode(StringView input);
-    static bool hasForbiddenHostCodePoint(const Vector<LChar, defaultInlineBufferSize>&);
+    static bool hasForbiddenHostCodePoint(const LCharBuffer&);
     void percentEncodeByte(uint8_t);
     void appendToASCIIBuffer(UChar32);
     void appendToASCIIBuffer(const char*, size_t);

@@ -396,7 +396,7 @@ set(C99_FILES
 foreach (_file ${WebKitLegacy_SOURCES})
     list(FIND C99_FILES ${_file} _c99_index)
     if (${_c99_index} EQUAL -1)
-        set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS "-ObjC++ -std=c++14")
+        set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS "-ObjC++ -std=c++17")
     else ()
         set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS -std=c99)
     endif ()

@@ -93,7 +93,7 @@ def FlagsForFile(filename, **kwargs):
         'do_cache': (Boolean) True if the result should be cached.
     """
 
-    result = {'flags': ['-std=c++11', '-x', 'c++'], 'do_cache': True}
+    result = {'flags': ['-std=c++17', '-x', 'c++'], 'do_cache': True}
 
     # Headers can't be built, so we get the source file flags instead.
     if filename.endswith('.h'):
