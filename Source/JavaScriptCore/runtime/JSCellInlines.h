@@ -230,7 +230,7 @@ ALWAYS_INLINE void JSCell::setStructure(VM& vm, Structure* structure)
         || this->structure()->transitionWatchpointSetHasBeenInvalidated()
         || Heap::heap(this)->structureIDTable().get(structure->id()) == structure);
     m_structureID = structure->id();
-    m_flags = structure->typeInfo().inlineTypeFlags();
+    m_flags = TypeInfo::mergeInlineTypeFlags(structure->typeInfo().inlineTypeFlags(), m_flags);
     m_type = structure->typeInfo().type();
     IndexingType newIndexingType = structure->indexingTypeIncludingHistory();
     if (m_indexingTypeAndMisc != newIndexingType) {
@@ -342,14 +342,14 @@ inline bool JSCellLock::isLocked() const
 
 inline bool JSCell::mayBePrototype() const
 {
-    return m_indexingTypeAndMisc & IndexingTypeMayBePrototype;
+    return TypeInfo::mayBePrototype(inlineTypeFlags());
 }
 
 inline void JSCell::didBecomePrototype()
 {
     if (mayBePrototype())
         return;
-    WTF::atomicExchangeOr(&m_indexingTypeAndMisc, IndexingTypeMayBePrototype);
+    m_flags |= static_cast<TypeInfo::InlineTypeFlags>(TypeInfoMayBePrototype);
 }
 
 inline JSObject* JSCell::toObject(ExecState* exec, JSGlobalObject* globalObject) const

@@ -1,5 +1,21 @@
 2018-04-30  Keith Miller  <keith_miller@apple.com>
 
+        Move the MayBePrototype JSCell header bit to InlineTypeFlags
+        https://bugs.webkit.org/show_bug.cgi?id=185143
+
+        Reviewed by Mark Lam.
+
+        * runtime/IndexingType.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::setStructure):
+        (JSC::JSCell::mayBePrototype const):
+        (JSC::JSCell::didBecomePrototype):
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::mayBePrototype):
+        (JSC::TypeInfo::mergeInlineTypeFlags):
+
+2018-04-30  Keith Miller  <keith_miller@apple.com>
+
         Remove unneeded exception check from String.fromCharCode
         https://bugs.webkit.org/show_bug.cgi?id=185083
 
