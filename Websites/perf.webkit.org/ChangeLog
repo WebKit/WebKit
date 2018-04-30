@@ -1,3 +1,17 @@
+2018-04-30  Dewei Zhu  <dewei_zhu@apple.com>
+
+        MeasurementSet._constructUrl should construct absolute url.
+        https://bugs.webkit.org/show_bug.cgi?id=185137
+
+        Reviewed by Ryosuke Niwa.
+
+        MeasurementSet._constructUrl should not construct an url with relative path.
+
+        * public/v3/models/measurement-set.js: Should use '/api/measurement-set...' and '/data/measurement-set-...'
+        for uncached and cached fetching.
+        * unit-tests/measurement-set-tests.js: Updated unit tests.
+        (const.set MeasurementSet):
+
 2018-04-26  Dewei Zhu  <dewei_zhu@apple.com>
 
         Extend create-analysis-test API to be able to create with confirming test group.
