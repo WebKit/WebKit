@@ -292,22 +292,25 @@ bool canUseForLineBoxTree(RenderBlockFlow& flow, const Layout& layout)
     return true;
 }
 
-static void initializeInlineBox(InlineBox& inlineBox, const RunResolver::Run& run)
+static void initializeInlineTextBox(RenderBlockFlow& flow, InlineTextBox& inlineTextBox, const RunResolver::Run& run)
 {
-    inlineBox.setLogicalLeft(run.logicalLeft());
-    inlineBox.setLogicalTop(run.rect().y());
-    inlineBox.setLogicalWidth(run.logicalRight() - run.logicalLeft());
+    inlineTextBox.setLogicalLeft(run.logicalLeft());
+    inlineTextBox.setLogicalTop(run.rect().y());
+    inlineTextBox.setLogicalWidth(run.logicalRight() - run.logicalLeft());
+    auto overflowRect = computeOverflow(const_cast<RenderBlockFlow&>(flow), run.rect());
+    if (overflowRect != run.rect())
+        inlineTextBox.setLogicalOverflowRect(LayoutRect(overflowRect));
 
-    inlineBox.setHasHyphen(run.hasHyphen());
-    inlineBox.setExpansionWithoutGrowing(run.expansion());
+    inlineTextBox.setHasHyphen(run.hasHyphen());
+    inlineTextBox.setExpansionWithoutGrowing(run.expansion());
 
     auto expansionBehavior = run.expansionBehavior();
-    inlineBox.setCanHaveLeadingExpansion(expansionBehavior & AllowLeadingExpansion);
-    inlineBox.setCanHaveTrailingExpansion(expansionBehavior & AllowTrailingExpansion);
+    inlineTextBox.setCanHaveLeadingExpansion(expansionBehavior & AllowLeadingExpansion);
+    inlineTextBox.setCanHaveTrailingExpansion(expansionBehavior & AllowTrailingExpansion);
     if (expansionBehavior & ForceTrailingExpansion)
-        inlineBox.setForceTrailingExpansion();
+        inlineTextBox.setForceTrailingExpansion();
     if (expansionBehavior & ForceLeadingExpansion)
-        inlineBox.setForceLeadingExpansion();
+        inlineTextBox.setForceLeadingExpansion();
 }
 
 void generateLineBoxTree(RenderBlockFlow& flow, const Layout& layout)
@@ -348,7 +351,7 @@ void generateLineBoxTree(RenderBlockFlow& flow, const Layout& layout)
         // Set the geometry for the inlineboxes.
         for (auto* inlineBox = rootLineBox.firstChild(); inlineBox && it != range.end(); inlineBox = inlineBox->nextOnLine(), ++it) {
             auto run = *it;
-            initializeInlineBox(*inlineBox, run);
+            initializeInlineTextBox(flow, downcast<InlineTextBox>(*inlineBox), run);
             lineWidth += inlineBox->logicalWidth();
         }
 

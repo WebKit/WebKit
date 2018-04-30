@@ -1,0 +1,17 @@
+<style>
+body{
+    letter-spacing: -1px;
+    font-height: 10px;
+}
+</style>
+<div id=textWithLetterSpacing>Pass if text does not disappear after the range selection.</div>
+<script>
+if (window.internals)
+    internals.settings.setSimpleLineLayoutEnabled(false);
+document.body.offsetHeight;
+
+var range = document.createRange();
+range.setStart(textWithLetterSpacing.firstChild, 0);
+range.setEnd(textWithLetterSpacing.firstChild, 5);
+window.getSelection().addRange(range);
+</script>
