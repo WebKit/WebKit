@@ -1045,6 +1045,7 @@ fast/css/caret-color-inherit.html [ Skip ]
 fast/css/caret-color-span-inside-editable-parent.html [ Skip ]
 fast/css/caret-color.html [ Skip ]
 fast/history/visited-link-caret-color.html [ Skip ]
+css3/color-filters/color-filter-caret-color [ Skip ]
 
 # Run webrtc tests on iOS 11
 imported/w3c/web-platform-tests/webrtc [ Pass ]

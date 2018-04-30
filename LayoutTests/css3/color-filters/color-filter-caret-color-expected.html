@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: color-filter reference</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+
+        <style>
+        #test-container {
+            height: 50px;
+            width: 50px;
+            overflow: hidden;
+            border: 1px solid black;
+        }
+
+        #test {
+            background-color: white;
+            transform-origin: left top;
+            transform: scale(50, 50);
+            font-size: 10px; /* Needed for the caret to render in Firefox. */
+            caret-color: green;
+        }
+
+        </style>
+    </head>
+    <body>
+        <p>The caret should show as a green flashing square below.</p>
+        <div id="test-container">
+            <div id="test" contenteditable="true">
+                <span>&nbsp;<!-- Needed for the caret to render in Firefox. --></span>
+            </div>
+        </div>
+        <script>
+            document.getElementById("test").focus();
+            window.getSelection().modify("move", "left", "character"); // Place the caret at the start of the <span>.
+        </script>
+    </body>
+</html>

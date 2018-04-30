@@ -1754,13 +1754,13 @@ void CaretBase::paintCaret(Node* node, GraphicsContext& context, const LayoutPoi
         auto computeCaretColor = [] (const RenderStyle& elementStyle, const RenderStyle* rootEditableStyle) {
             // CSS value "auto" is treated as an invalid color.
             if (!elementStyle.caretColor().isValid() && rootEditableStyle) {
-                auto rootEditableBackgroundColor = rootEditableStyle->visitedDependentColor(CSSPropertyBackgroundColor);
-                auto elementBackgroundColor = elementStyle.visitedDependentColor(CSSPropertyBackgroundColor);
+                auto rootEditableBackgroundColor = rootEditableStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+                auto elementBackgroundColor = elementStyle.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
                 auto disappearsIntoBackground = rootEditableBackgroundColor.blend(elementBackgroundColor) == rootEditableBackgroundColor;
                 if (disappearsIntoBackground)
-                    return rootEditableStyle->visitedDependentColor(CSSPropertyCaretColor);
+                    return rootEditableStyle->visitedDependentColorWithColorFilter(CSSPropertyCaretColor);
             }
-            return elementStyle.visitedDependentColor(CSSPropertyCaretColor);
+            return elementStyle.visitedDependentColorWithColorFilter(CSSPropertyCaretColor);
         };
         auto* rootEditableElement = node->rootEditableElement();
         auto* rootEditableStyle = rootEditableElement && rootEditableElement->renderer() ? &rootEditableElement->renderer()->style() : nullptr;
