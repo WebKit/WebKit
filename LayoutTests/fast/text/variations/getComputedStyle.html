@@ -20,14 +20,14 @@
 <div id="test6" style="font-family: 'Boxis'; font-variation-settings: 'abc한국어e' 500;">a</div>
 <div id="test7" style="font-family: 'Boxis'; font-variation-settings: 'hght' 999999;">a</div>
 <script>
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test0')).getPropertyValue('font-variation-settings')", "'hght' 400");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test1')).getPropertyValue('font-variation-settings')", "'hght' 500");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test2')).getPropertyValue('font-variation-settings')", "'wdth' 500, 'hght' 400");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test0')).getPropertyValue('font-variation-settings')", "\"hght\" 400");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test1')).getPropertyValue('font-variation-settings')", "\"hght\" 500");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test2')).getPropertyValue('font-variation-settings')", "\"wdth\" 500, \"hght\" 400");
 shouldBe("window.getComputedStyle(document.getElementById('test3')).getPropertyValue('font-variation-settings')", "window.getComputedStyle(document.getElementById('test2')).getPropertyValue('font-variation-settings')");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test4')).getPropertyValue('font-variation-settings')", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test5')).getPropertyValue('font-variation-settings')", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test6')).getPropertyValue('font-variation-settings')", "normal");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test7')).getPropertyValue('font-variation-settings')", "'hght' 999999");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test7')).getPropertyValue('font-variation-settings')", "\"hght\" 999999");
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

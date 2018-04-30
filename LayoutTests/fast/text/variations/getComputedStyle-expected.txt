@@ -1,11 +1,11 @@
-PASS window.getComputedStyle(document.getElementById('test0')).getPropertyValue('font-variation-settings') is "'hght' 400"
-PASS window.getComputedStyle(document.getElementById('test1')).getPropertyValue('font-variation-settings') is "'hght' 500"
-PASS window.getComputedStyle(document.getElementById('test2')).getPropertyValue('font-variation-settings') is "'wdth' 500, 'hght' 400"
+PASS window.getComputedStyle(document.getElementById('test0')).getPropertyValue('font-variation-settings') is "\"hght\" 400"
+PASS window.getComputedStyle(document.getElementById('test1')).getPropertyValue('font-variation-settings') is "\"hght\" 500"
+PASS window.getComputedStyle(document.getElementById('test2')).getPropertyValue('font-variation-settings') is "\"wdth\" 500, \"hght\" 400"
 PASS window.getComputedStyle(document.getElementById('test3')).getPropertyValue('font-variation-settings') is window.getComputedStyle(document.getElementById('test2')).getPropertyValue('font-variation-settings')
 PASS window.getComputedStyle(document.getElementById('test4')).getPropertyValue('font-variation-settings') is "normal"
 PASS window.getComputedStyle(document.getElementById('test5')).getPropertyValue('font-variation-settings') is "normal"
 PASS window.getComputedStyle(document.getElementById('test6')).getPropertyValue('font-variation-settings') is "normal"
-PASS window.getComputedStyle(document.getElementById('test7')).getPropertyValue('font-variation-settings') is "'hght' 999999"
+PASS window.getComputedStyle(document.getElementById('test7')).getPropertyValue('font-variation-settings') is "\"hght\" 999999"
 PASS successfullyParsed is true
 
 TEST COMPLETE

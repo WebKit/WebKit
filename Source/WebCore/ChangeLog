@@ -1,3 +1,21 @@
+2018-04-30  Chris Nardi  <cnardi@chromium.org>
+
+        Serialize font-variation-settings with double-quotes per spec
+        https://bugs.webkit.org/show_bug.cgi?id=182542
+
+        Reviewed by Myles C. Maxfield.
+
+        According to the CSSOM spec [1], all strings should be serialized with double-quotes.
+        The axis name in font-variation-settings was previously serialized with single-quotes;
+        change this to double-quotes to match the spec and non-WebKit browsers.
+
+        [1]: https://drafts.csswg.org/cssom/#common-serializing-idioms
+
+        Updated fast/text/variations/getComputedStyle.html to test the change.
+
+        * css/CSSFontVariationValue.cpp:
+        (WebCore::CSSFontVariationValue::customCSSText const):
+
 2018-04-30  Chris Dumez  <cdumez@apple.com>
 
         Fix bad use of RunLoop::main().dispatch() in MessagePort::dispatchMessages()
