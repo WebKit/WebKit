@@ -396,4 +396,12 @@ void NetworkLoad::cannotShowURL()
     m_client.get().didFailLoading(cannotShowURLError(m_currentRequest));
 }
 
+
+String NetworkLoad::description() const
+{
+    if (m_task.get())
+        return m_task->description();
+    return emptyString();
+}
+
 } // namespace WebKit

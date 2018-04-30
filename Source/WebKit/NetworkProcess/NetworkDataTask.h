@@ -128,6 +128,8 @@ public:
 
     bool isTopLevelNavigation() const { return m_dataTaskIsForMainFrameNavigation; }
 
+    virtual String description() const;
+
 protected:
     NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation);
 

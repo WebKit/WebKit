@@ -144,4 +144,9 @@ void NetworkDataTask::failureTimerFired()
     ASSERT_NOT_REACHED();
 }
 
+String NetworkDataTask::description() const
+{
+    return emptyString();
+}
+
 } // namespace WebKit

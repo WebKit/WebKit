@@ -1,3 +1,30 @@
+2018-04-30  Keith Rollin  <krollin@apple.com>
+
+        Include breadcrumb for tracking resource loading into CFNetwork
+        https://bugs.webkit.org/show_bug.cgi?id=184837
+        rdar://problem/39575411
+
+        Reviewed by Brent Fulgham.
+
+        When starting the network-based loading of a resource, log the
+        description provided by NetworkDataTask. On Cocoa, this is implemented
+        to return the description property in NSURLSessionTask. This
+        information better allows us to track a resource load through the
+        WebContent process, the Networking process, and the Cocoa networking
+        layers.
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::description const):
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::description const):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::description const):
+
 2018-04-30  Andy Estes  <aestes@apple.com>
 
         [iOS] Try to unlock PDF documents before printing them

@@ -276,6 +276,8 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     parameters.request = WTFMove(request);
     m_networkLoad = std::make_unique<NetworkLoad>(*this, WTFMove(parameters), *networkSession);
 
+    RELEASE_LOG_IF_ALLOWED("startNetworkLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", description = %{public}s)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, m_networkLoad->description().utf8().data());
+
     if (m_defersLoading) {
         RELEASE_LOG_IF_ALLOWED("startNetworkLoad: Created, but deferred (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")",
             m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);

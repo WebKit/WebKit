@@ -32,6 +32,7 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(NETWORK_CAPTURE)
 #include "NetworkCaptureRecorder.h"
@@ -71,6 +72,8 @@ public:
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void continueCanAuthenticateAgainstProtectionSpace(bool);
 #endif
+
+    String description() const;
 
 private:
 #if ENABLE(NETWORK_CAPTURE)

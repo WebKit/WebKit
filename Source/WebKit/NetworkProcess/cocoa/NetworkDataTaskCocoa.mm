@@ -523,4 +523,9 @@ bool NetworkDataTaskCocoa::isAlwaysOnLoggingAllowed() const
     return m_session->sessionID().isAlwaysOnLoggingAllowed();
 }
 
+String NetworkDataTaskCocoa::description() const
+{
+    return String([m_task description]);
+}
+
 }
