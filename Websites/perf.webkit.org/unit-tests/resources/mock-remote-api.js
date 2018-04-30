@@ -1,5 +1,3 @@
-const BrowserPrivilegedAPI = require('../../public/v3/privileged-api.js').PrivilegedAPI;
-const NodePrivilegedAPI = require('../../tools/js/privileged-api').PrivilegedAPI;
 
 var MockRemoteAPI = {
     url: function (path)
@@ -60,27 +58,26 @@ var MockRemoteAPI = {
         }
         return this._waitingPromise;
     },
-    inject: function (urlPrefix, privilegedAPIType='browser')
+    inject: function (urlPrefix, privilegedAPI)
     {
-        console.assert(privilegedAPIType === 'browser' || privilegedAPIType === 'node');
-        let originalRemoteAPI = global.RemoteAPI;
-        let originalPrivilegedAPI = global.PrivilegedAPI;
-        const useNodePrivilegedAPI = privilegedAPIType === 'node';
-        const PrivilegedAPI = useNodePrivilegedAPI ? NodePrivilegedAPI: BrowserPrivilegedAPI;
+        let originalRemoteAPI;
+        let originalPrivilegedAPI;
 
         beforeEach(() => {
             MockRemoteAPI.reset(urlPrefix);
             originalRemoteAPI = global.RemoteAPI;
             global.RemoteAPI = MockRemoteAPI;
             originalPrivilegedAPI = global.PrivilegedAPI;
-            global.PrivilegedAPI = PrivilegedAPI;
-            if (!useNodePrivilegedAPI)
-                PrivilegedAPI._token = null;
+            global.PrivilegedAPI = privilegedAPI;
+            if (privilegedAPI._token)
+                privilegedAPI._token = null;
         });
 
         afterEach(() => {
             global.RemoteAPI = originalRemoteAPI;
             global.PrivilegedAPI = originalPrivilegedAPI;
+            if (privilegedAPI._token)
+                privilegedAPI._token = null;
         });
 
         return MockRemoteAPI.requests;

@@ -3,11 +3,13 @@
 let assert = require('assert');
 
 require('../tools/js/v3-models.js');
-let MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
-let MockModels = require('./resources/mock-v3-models.js').MockModels;
+const BrowserPrivilegedAPI = require('../public/v3/privileged-api.js').PrivilegedAPI;
 
-let BuildbotBuildEntry = require('../tools/js/buildbot-syncer.js').BuildbotBuildEntry;
-let BuildbotSyncer = require('../tools/js/buildbot-syncer.js').BuildbotSyncer;
+const MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
+const MockModels = require('./resources/mock-v3-models.js').MockModels;
+
+const BuildbotBuildEntry = require('../tools/js/buildbot-syncer.js').BuildbotBuildEntry;
+const BuildbotSyncer = require('../tools/js/buildbot-syncer.js').BuildbotSyncer;
 
 function sampleiOSConfig()
 {
@@ -331,7 +333,7 @@ function sampleFinishedBuild(buildRequestId, workerName, builderName)
 
 describe('BuildbotSyncer', () => {
     MockModels.inject();
-    let requests = MockRemoteAPI.inject('http://build.webkit.org');
+    const requests = MockRemoteAPI.inject('http://build.webkit.org', BrowserPrivilegedAPI);
 
     describe('_loadConfig', () => {
 

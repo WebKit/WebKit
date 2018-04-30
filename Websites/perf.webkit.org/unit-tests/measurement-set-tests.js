@@ -3,14 +3,14 @@
 const assert = require('assert');
 if (!assert.almostEqual)
     assert.almostEqual = require('./resources/almost-equal.js');
-
-const MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
 require('../tools/js/v3-models.js');
+const BrowserPrivilegedAPI = require('../public/v3/privileged-api.js').PrivilegedAPI;
+const MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
 const MockModels = require('./resources/mock-v3-models.js').MockModels;
 
 describe('MeasurementSet', () => {
     MockModels.inject();
-    let requests = MockRemoteAPI.inject();
+    const requests = MockRemoteAPI.inject(null, BrowserPrivilegedAPI);
 
     beforeEach(() => {
         MeasurementSet._set = null;

@@ -3,6 +3,7 @@
 const assert = require('assert');
 
 require('../tools/js/v3-models.js');
+const BrowserPrivilegedAPI = require('../public/v3/privileged-api.js').PrivilegedAPI;
 const MockModels = require('./resources/mock-v3-models.js').MockModels;
 const MockRemoteAPI = require('../unit-tests/resources/mock-remote-api.js').MockRemoteAPI;
 
@@ -257,7 +258,7 @@ describe('CommitLog', function () {
 
     describe('fetchOwnedCommits', () => {
         beforeEach(() => {
-            MockRemoteAPI.inject();
+            MockRemoteAPI.inject(null, BrowserPrivilegedAPI);
         });
 
         it('should reject if repository of the commit does not own other repositories', () => {

@@ -1,8 +1,8 @@
 'use strict';
 
 const assert = require('assert');
-
 require('../tools/js/v3-models.js');
+const BrowserPrivilegedAPI = require('../public/v3/privileged-api.js').PrivilegedAPI;
 const MockModels = require('./resources/mock-v3-models.js').MockModels;
 const MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
 
@@ -108,7 +108,7 @@ describe('TestGroup', function () {
     MockModels.inject();
 
     describe('fetchForTask', () => {
-        const requests = MockRemoteAPI.inject('https://perf.webkit.org');
+        const requests = MockRemoteAPI.inject('https://perf.webkit.org', BrowserPrivilegedAPI);
 
         it('should be able to fetch the list of test groups for the same task twice using cache', () => {
             const fetchPromise = TestGroup.fetchForTask(1376);

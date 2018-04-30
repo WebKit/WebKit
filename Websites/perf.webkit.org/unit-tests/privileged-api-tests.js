@@ -1,12 +1,13 @@
 'use strict';
 
 const assert = require('assert');
-
-const MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
 require('../tools/js/v3-models.js');
+const BrowserPrivilegedAPI = require('../public/v3/privileged-api.js').PrivilegedAPI;
+const NodePrivilegedAPI = require('../tools/js/privileged-api').PrivilegedAPI;
+const MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
 
 describe('BrowserPrivilegedAPI', () => {
-    let requests = MockRemoteAPI.inject();
+    const requests = MockRemoteAPI.inject(null, BrowserPrivilegedAPI);
 
     beforeEach(() => {
         PrivilegedAPI._token = null;
@@ -169,7 +170,7 @@ describe('BrowserPrivilegedAPI', () => {
 });
 
 describe('NodePrivilegedAPI', () => {
-    let requests = MockRemoteAPI.inject(null, 'node');
+    let requests = MockRemoteAPI.inject(null, NodePrivilegedAPI);
     beforeEach(() => {
         PrivilegedAPI.configure('slave_name', 'password');
     });

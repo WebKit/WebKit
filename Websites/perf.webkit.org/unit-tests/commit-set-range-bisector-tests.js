@@ -3,6 +3,7 @@
 const assert = require('assert');
 
 require('../tools/js/v3-models.js');
+const BrowserPrivilegedAPI = require('../public/v3/privileged-api.js').PrivilegedAPI;
 const MockModels = require('./resources/mock-v3-models.js').MockModels;
 const MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
 
@@ -271,7 +272,7 @@ describe('CommitSetRangeBisector', () => {
 
     describe('commitSetClosestToMiddleOfAllCommits', () => {
         MockModels.inject();
-        const requests = MockRemoteAPI.inject();
+        const requests = MockRemoteAPI.inject(null, BrowserPrivilegedAPI);
 
         it('should return "null" if no common repository found', async () => {
             const middleCommitSet = await CommitSetRangeBisector.commitSetClosestToMiddleOfAllCommits(commitSetsWithNoCommonRepository().splice(0, 2));

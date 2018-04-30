@@ -1,3 +1,25 @@
+2018-04-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r230960): Browser tests under TimeSeriesChart fetchMeasurementSets all fail
+        https://bugs.webkit.org/show_bug.cgi?id=185125
+
+        Reviewed by Saam Barati.
+
+        The bug was caused by mock-remote-api.js always loading PrivilegedAPI using require, which doesn't work in a browser.
+        Fixed the bug by explicitly requiring the right kind of PrivilegedAPI in each unit test instead.
+
+        * unit-tests/analysis-task-tests.js:
+        * unit-tests/buildbot-syncer-tests.js:
+        * unit-tests/commit-log-tests.js:
+        * unit-tests/commit-set-range-bisector-tests.js:
+        * unit-tests/commit-set-tests.js:
+        * unit-tests/measurement-set-tests.js:
+        * unit-tests/privileged-api-tests.js:
+        * unit-tests/resources/mock-remote-api.js:
+        (MockRemoteAPI.inject): Take PrivilegedAPI instead of the type string. Also fixed a bug that _token wasn't unset
+        after each unit test, and superfluous initializations of originalRemoteAPI and originalPrivilegedAPI.
+        * unit-tests/test-groups-tests.js:
+
 2018-04-30  Dewei Zhu  <dewei_zhu@apple.com>
 
         MeasurementSet._constructUrl should construct absolute url.

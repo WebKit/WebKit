@@ -3,8 +3,10 @@
 const assert = require('assert');
 
 require('../tools/js/v3-models.js');
-let MockModels = require('./resources/mock-v3-models.js').MockModels;
-let MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
+const MockModels = require('./resources/mock-v3-models.js').MockModels;
+const MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
+const BrowserPrivilegedAPI = require('../public/v3/privileged-api.js').PrivilegedAPI;
+const NodePrivilegedAPI = require('../tools/js/privileged-api').PrivilegedAPI;
 
 function sampleAnalysisTask()
 {
@@ -129,7 +131,7 @@ describe('AnalysisTask', () => {
     }
 
     describe('fetchAll', () => {
-        const requests = MockRemoteAPI.inject();
+        const requests = MockRemoteAPI.inject(null, BrowserPrivilegedAPI);
         it('should request all analysis tasks', () => {
             let callCount = 0;
             AnalysisTask.fetchAll().then(() => { callCount++; });
@@ -245,7 +247,7 @@ describe('AnalysisTask', () => {
     }
 
     describe('create with browser privilege api', () => {
-        const requests = MockRemoteAPI.inject();
+        const requests = MockRemoteAPI.inject(null, BrowserPrivilegedAPI);
 
         it('should create analysis task with confirming repetition count zero as default with browser privilege api', async () => {
             const [startPoint, endPoint] = mockStartAndEndPoints();
@@ -287,7 +289,7 @@ describe('AnalysisTask', () => {
     });
 
     describe('create with node privilege api', () => {
-        const requests = MockRemoteAPI.inject(null, 'node');
+        const requests = MockRemoteAPI.inject(null, NodePrivilegedAPI);
         beforeEach(() => {
             PrivilegedAPI.configure('worker', 'password');
         });
