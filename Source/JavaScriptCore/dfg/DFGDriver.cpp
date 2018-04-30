@@ -89,6 +89,7 @@ static CompilationResult compileImpl(
     
     // Make sure that any stubs that the DFG is going to use are initialized. We want to
     // make sure that all JIT code generation does finalization on the main thread.
+    vm.getCTIStub(arityFixupGenerator);
     vm.getCTIStub(osrExitThunkGenerator);
     vm.getCTIStub(osrExitGenerationThunkGenerator);
     vm.getCTIStub(throwExceptionFromCallSlowPathGenerator);

@@ -446,6 +446,7 @@ void JITCompiler::compileFunction()
     makeCatchOSREntryBuffer();
 
     setStartOfCode();
+    Label entryLabel(this);
     compileEntry();
 
     // === Function header code generation ===
@@ -492,22 +493,28 @@ void JITCompiler::compileFunction()
     // determine the correct number of arguments have been passed, or have already checked).
     // In cases where an arity check is necessary, we enter here.
     // FIXME: change this from a cti call to a DFG style operation (normal C calling conventions).
-    m_arityCheck = label();
-    compileEntry();
+    Call callArityFixup;
+    Label arityCheck;
+    bool requiresArityFixup = m_codeBlock->numParameters() != 1;
+    if (requiresArityFixup) {
+        arityCheck = label();
+        compileEntry();
 
-    load32(AssemblyHelpers::payloadFor((VirtualRegister)CallFrameSlot::argumentCount), GPRInfo::regT1);
-    branch32(AboveOrEqual, GPRInfo::regT1, TrustedImm32(m_codeBlock->numParameters())).linkTo(fromArityCheck, this);
-    emitStoreCodeOrigin(CodeOrigin(0));
-    if (maxFrameExtentForSlowPathCall)
-        addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
-    m_speculative->callOperationWithCallFrameRollbackOnException(m_codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck, GPRInfo::regT0);
-    if (maxFrameExtentForSlowPathCall)
-        addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
-    branchTest32(Zero, GPRInfo::returnValueGPR).linkTo(fromArityCheck, this);
-    emitStoreCodeOrigin(CodeOrigin(0));
-    move(GPRInfo::returnValueGPR, GPRInfo::argumentGPR0);
-    Call callArityFixup = nearCall();
-    jump(fromArityCheck);
+        load32(AssemblyHelpers::payloadFor((VirtualRegister)CallFrameSlot::argumentCount), GPRInfo::regT1);
+        branch32(AboveOrEqual, GPRInfo::regT1, TrustedImm32(m_codeBlock->numParameters())).linkTo(fromArityCheck, this);
+        emitStoreCodeOrigin(CodeOrigin(0));
+        if (maxFrameExtentForSlowPathCall)
+            addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
+        m_speculative->callOperationWithCallFrameRollbackOnException(m_codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck, GPRInfo::regT0);
+        if (maxFrameExtentForSlowPathCall)
+            addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
+        branchTest32(Zero, GPRInfo::returnValueGPR).linkTo(fromArityCheck, this);
+        emitStoreCodeOrigin(CodeOrigin(0));
+        move(GPRInfo::returnValueGPR, GPRInfo::argumentGPR0);
+        callArityFixup = nearCall();
+        jump(fromArityCheck);
+    } else
+        arityCheck = entryLabel;
 
     // Generate slow path code.
     m_speculative->runSlowPathGenerators(m_pcToCodeOriginMapBuilder);
@@ -532,11 +539,12 @@ void JITCompiler::compileFunction()
     m_jitCode->shrinkToFit();
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
 
-    linkBuffer->link(callArityFixup, FunctionPtr<JITThunkPtrTag>(vm()->getCTIStub(arityFixupGenerator).code()));
+    if (requiresArityFixup)
+        linkBuffer->link(callArityFixup, FunctionPtr<JITThunkPtrTag>(vm()->getCTIStub(arityFixupGenerator).code()));
 
     disassemble(*linkBuffer);
 
-    MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck = linkBuffer->locationOf<JSEntryPtrTag>(m_arityCheck);
+    MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck = linkBuffer->locationOf<JSEntryPtrTag>(arityCheck);
 
     m_graph.m_plan.finalizer = std::make_unique<JITFinalizer>(
         m_graph.m_plan, m_jitCode.releaseNonNull(), WTFMove(linkBuffer), withArityCheck);

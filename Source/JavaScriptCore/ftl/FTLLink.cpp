@@ -128,7 +128,8 @@ void link(State& state)
     
     switch (graph.m_plan.mode) {
     case FTLMode: {
-        if (codeBlock->codeType() == FunctionCode) {
+        bool requiresArityFixup = codeBlock->numParameters() != 1;
+        if (codeBlock->codeType() == FunctionCode && requiresArityFixup) {
             CCallHelpers::JumpList mainPathJumps;
     
             jit.load32(

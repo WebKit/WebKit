@@ -1,5 +1,25 @@
 2018-04-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Remove arity fixup check if the number of parameters is 1
+        https://bugs.webkit.org/show_bug.cgi?id=183984
+
+        Reviewed by Mark Lam.
+
+        If the number of parameters is one (|this|), we never hit arity fixup check.
+        We do not need to emit arity fixup check code.
+
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+
+2018-04-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Use WordLock instead of std::mutex for Threading
         https://bugs.webkit.org/show_bug.cgi?id=185121
 
