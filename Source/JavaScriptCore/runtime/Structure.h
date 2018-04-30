@@ -248,7 +248,7 @@ public:
     }
     
     // Type accessors.
-    TypeInfo typeInfo() const { ASSERT(structure()->classInfo() == info()); return m_blob.typeInfo(m_outOfLineTypeFlags); }
+    TypeInfo typeInfo() const { return m_blob.typeInfo(m_outOfLineTypeFlags); }
     bool isObject() const { return typeInfo().isObject(); }
 
     IndexingType indexingType() const { return m_blob.indexingTypeIncludingHistory() & AllArrayTypes; }

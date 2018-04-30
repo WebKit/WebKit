@@ -1,3 +1,28 @@
+2018-04-30  Keith Miller  <keith_miller@apple.com>
+
+        Move StructureIsImmortal to out of line flags.
+        https://bugs.webkit.org/show_bug.cgi?id=185101
+
+        Reviewed by Saam Barati.
+
+        This will free up a bit in the inline flags where we can move the
+        isPrototype bit to. This will, in turn, free a bit for use in
+        implementing copy on write butterflies.
+
+        Also, this patch removes an assertion from Structure::typeInfo()
+        that inadvertently makes the function invalid to call while
+        cleaning up the vm.
+
+        * heap/HeapCellType.cpp:
+        (JSC::DefaultDestroyFunc::operator() const):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::callDestructor): Deleted.
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::hasStaticPropertyTable):
+        (JSC::TypeInfo::structureIsImmortal const):
+        * runtime/Structure.h:
+
 2018-04-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove arity fixup check if the number of parameters is 1

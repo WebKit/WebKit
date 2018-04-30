@@ -39,8 +39,8 @@ struct DefaultDestroyFunc {
     ALWAYS_INLINE void operator()(VM& vm, JSCell* cell) const
     {
         ASSERT(cell->structureID());
-        ASSERT(cell->inlineTypeFlags() & StructureIsImmortal);
         Structure* structure = cell->structure(vm);
+        ASSERT(structure->typeInfo().structureIsImmortal());
         const ClassInfo* classInfo = structure->classInfo();
         MethodTable::DestroyFunctionPtr destroy = classInfo->methodTable.destroy;
         destroy(cell);

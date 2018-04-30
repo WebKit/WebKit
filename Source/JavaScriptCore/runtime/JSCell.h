@@ -242,8 +242,6 @@ public:
         return OBJECT_OFFSETOF(JSCell, m_cellState);
     }
     
-    void callDestructor(VM&);
-
     static const TypedArrayType TypedArrayStorageType = NotTypedArray;
 protected:
 

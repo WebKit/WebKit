@@ -314,21 +314,6 @@ inline TriState JSCell::pureToBoolean() const
     return MixedTriState;
 }
 
-inline void JSCell::callDestructor(VM& vm)
-{
-    if (isZapped())
-        return;
-    ASSERT(structureID());
-    if (inlineTypeFlags() & StructureIsImmortal) {
-        Structure* structure = this->structure(vm);
-        const ClassInfo* classInfo = structure->classInfo();
-        MethodTable::DestroyFunctionPtr destroy = classInfo->methodTable.destroy;
-        destroy(this);
-    } else
-        static_cast<JSDestructibleObject*>(this)->classInfo()->methodTable.destroy(this);
-    zap();
-}
-
 inline void JSCellLock::lock()
 {
     Atomic<IndexingType>* lock = bitwise_cast<Atomic<IndexingType>*>(&m_indexingTypeAndMisc);

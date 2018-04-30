@@ -35,13 +35,16 @@ namespace JSC {
 
 class LLIntOffsetsExtractor;
 
+// Inline flags.
+
 static const unsigned MasqueradesAsUndefined = 1; // WebCore uses MasqueradesAsUndefined to make document.all undetectable.
 static const unsigned ImplementsDefaultHasInstance = 1 << 1;
 static const unsigned TypeOfShouldCallGetCallData = 1 << 2; // Need this flag if you override getCallData() and you want typeof to use this to determine if it should say "function". Currently we always set this flag when we override getCallData().
 static const unsigned OverridesGetOwnPropertySlot = 1 << 3;
-static const unsigned StructureIsImmortal = 1 << 5;
-static const unsigned OverridesToThis = 1 << 6; // If this is false then this returns something other than 'this'. Non-object cells that are visible to JS have this set as do some exotic objects.
-static const unsigned HasStaticPropertyTable = 1 << 7;
+static const unsigned OverridesToThis = 1 << 4; // If this is false then this returns something other than 'this'. Non-object cells that are visible to JS have this set as do some exotic objects.
+static const unsigned HasStaticPropertyTable = 1 << 5;
+
+// Out of line flags.
 
 static const unsigned ImplementsHasInstance = 1 << 8;
 static const unsigned OverridesGetPropertyNames = 1 << 9;
@@ -51,6 +54,7 @@ static const unsigned NewImpurePropertyFiresWatchpoints = 1 << 12;
 static const unsigned IsImmutablePrototypeExoticObject = 1 << 13;
 static const unsigned GetOwnPropertySlotIsImpureForPropertyAbsence = 1 << 14;
 static const unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero = 1 << 15;
+static const unsigned StructureIsImmortal = 1 << 16;
 
 class TypeInfo {
 public:
@@ -84,8 +88,8 @@ public:
     bool overridesGetOwnPropertySlot() const { return overridesGetOwnPropertySlot(inlineTypeFlags()); }
     static bool overridesGetOwnPropertySlot(InlineTypeFlags flags) { return flags & OverridesGetOwnPropertySlot; }
     static bool hasStaticPropertyTable(InlineTypeFlags flags) { return flags & HasStaticPropertyTable; }
-    bool structureIsImmortal() const { return isSetOnFlags1(StructureIsImmortal); }
     bool overridesToThis() const { return isSetOnFlags1(OverridesToThis); }
+    bool structureIsImmortal() const { return isSetOnFlags2(StructureIsImmortal); }
     bool overridesGetPropertyNames() const { return isSetOnFlags2(OverridesGetPropertyNames); }
     bool prohibitsPropertyCaching() const { return isSetOnFlags2(ProhibitsPropertyCaching); }
     bool getOwnPropertySlotIsImpure() const { return isSetOnFlags2(GetOwnPropertySlotIsImpure); }
