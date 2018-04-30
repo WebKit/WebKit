@@ -160,6 +160,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 #if ENABLE(CONTEXT_MENUS)
     m_delegateMethods.webViewContextMenuForElement = [delegate respondsToSelector:@selector(_webView:contextMenu:forElement:)];
     m_delegateMethods.webViewContextMenuForElementUserInfo = [delegate respondsToSelector:@selector(_webView:contextMenu:forElement:userInfo:)];
+    m_delegateMethods.webViewGetContextMenuFromProposedMenuForElementUserInfoCompletionHandler = [delegate respondsToSelector:@selector(_webView:getContextMenuFromProposedMenu:forElement:userInfo:completionHandler:)];
 #endif
     
     m_delegateMethods.webViewHasVideoInPictureInPictureDidChange = [delegate respondsToSelector:@selector(_webView:hasVideoInPictureInPictureDidChange:)];
@@ -175,21 +176,34 @@ UIDelegate::ContextMenuClient::~ContextMenuClient()
 {
 }
 
-RetainPtr<NSMenu> UIDelegate::ContextMenuClient::menuFromProposedMenu(WebPageProxy&, NSMenu *menu, const WebHitTestResultData&, API::Object* userInfo)
+void UIDelegate::ContextMenuClient::menuFromProposedMenu(WebPageProxy&, NSMenu *menu, const WebHitTestResultData&, API::Object* userInfo, CompletionHandler<void(RetainPtr<NSMenu>&&)>&& completionHandler)
 {
-    if (!m_uiDelegate.m_delegateMethods.webViewContextMenuForElement && !m_uiDelegate.m_delegateMethods.webViewContextMenuForElementUserInfo)
-        return menu;
+    if (!m_uiDelegate.m_delegateMethods.webViewContextMenuForElement
+        && !m_uiDelegate.m_delegateMethods.webViewContextMenuForElementUserInfo
+        && !m_uiDelegate.m_delegateMethods.webViewGetContextMenuFromProposedMenuForElementUserInfoCompletionHandler)
+        return completionHandler(menu);
 
     auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate)
-        return menu;
+        return completionHandler(menu);
 
     auto contextMenuElementInfo = adoptNS([[_WKContextMenuElementInfo alloc] init]);
 
+    if (m_uiDelegate.m_delegateMethods.webViewGetContextMenuFromProposedMenuForElementUserInfoCompletionHandler) {
+        auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:getContextMenuFromProposedMenu:forElement:userInfo:completionHandler:));
+        [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView getContextMenuFromProposedMenu:menu forElement:contextMenuElementInfo.get() userInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil completionHandler:BlockPtr<void(NSMenu *)>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (NSMenu *menu) {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
+            completionHandler(menu);
+        }).get()];
+        return;
+    }
+    
     if (m_uiDelegate.m_delegateMethods.webViewContextMenuForElement)
-        return [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView contextMenu:menu forElement:contextMenuElementInfo.get()];
+        return completionHandler([(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView contextMenu:menu forElement:contextMenuElementInfo.get()]);
 
-    return [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView contextMenu:menu forElement:contextMenuElementInfo.get() userInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil];
+    completionHandler([(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView contextMenu:menu forElement:contextMenuElementInfo.get() userInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil]);
 }
 #endif
 

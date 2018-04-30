@@ -67,7 +67,7 @@ private:
 
     private:
         // API::ContextMenuClient
-        RetainPtr<NSMenu> menuFromProposedMenu(WebPageProxy&, NSMenu *, const WebHitTestResultData&, API::Object*) override;
+        void menuFromProposedMenu(WebPageProxy&, NSMenu *, const WebHitTestResultData&, API::Object*, CompletionHandler<void(RetainPtr<NSMenu>&&)>&&) override;
 
         UIDelegate& m_uiDelegate;
     };
@@ -212,6 +212,7 @@ private:
 #if ENABLE(CONTEXT_MENUS)
         bool webViewContextMenuForElement : 1;
         bool webViewContextMenuForElementUserInfo : 1;
+        bool webViewGetContextMenuFromProposedMenuForElementUserInfoCompletionHandler : 1;
 #endif
         bool webViewHasVideoInPictureInPictureDidChange : 1;
     } m_delegateMethods;

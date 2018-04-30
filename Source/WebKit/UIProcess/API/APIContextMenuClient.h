@@ -31,6 +31,7 @@
 #include "WebContextMenuListenerProxy.h"
 #include "WebHitTestResultData.h"
 #include <WebKit/WKBase.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
@@ -57,7 +58,7 @@ public:
     virtual bool hideContextMenu(WebKit::WebPageProxy&) { return false; }
 
 #if PLATFORM(MAC)
-    virtual RetainPtr<NSMenu> menuFromProposedMenu(WebKit::WebPageProxy&, NSMenu *menu, const WebKit::WebHitTestResultData&, API::Object*) { return menu; }
+    virtual void menuFromProposedMenu(WebKit::WebPageProxy&, NSMenu *menu, const WebKit::WebHitTestResultData&, API::Object*, CompletionHandler<void(RetainPtr<NSMenu>&&)>&& completionHandler) { completionHandler(menu); }
 #endif
 };
 

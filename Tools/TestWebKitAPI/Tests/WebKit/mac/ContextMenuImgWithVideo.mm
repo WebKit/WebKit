@@ -42,9 +42,15 @@ static bool contextMenuShown = false;
 @implementation ContextMenuImgWithVideoDelegate
 - (NSMenu*)_webView:(WKWebView*)webView contextMenu:(NSMenu*)menu forElement:(_WKContextMenuElementInfo*)element
 {
-    contextMenuShown = true;
     return nil;
 }
+
+- (void)_webView:(WKWebView *)webView getContextMenuFromProposedMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo completionHandler:(void (^)(NSMenu *))completionHandler
+{
+    contextMenuShown = true;
+    completionHandler(nil);
+}
+
 @end
 
 namespace TestWebKitAPI {

@@ -466,16 +466,17 @@ void WebContextMenuProxyMac::showContextMenuWithItems(Vector<Ref<WebContextMenuI
     
     auto menu = createContextMenuFromItems(data);
     [[WKMenuTarget sharedMenuTarget] setMenuProxy:this];
-    m_menu = m_page.contextMenuClient().menuFromProposedMenu(m_page, menu.get(), m_context.webHitTestResultData(), m_userData.object());
-
-    NSPoint menuLocation = [m_webView convertPoint:m_context.menuLocation() toView:nil];
-    NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeRightMouseUp location:menuLocation modifierFlags:0 timestamp:0 windowNumber:m_webView.window.windowNumber context:nil eventNumber:0 clickCount:0 pressure:0];
-    [NSMenu popUpContextMenu:m_menu.get() withEvent:event forView:m_webView];
-
-    if (m_contextMenuListener) {
-        m_contextMenuListener->invalidate();
-        m_contextMenuListener = nullptr;
-    }
+    m_page.contextMenuClient().menuFromProposedMenu(m_page, menu.get(), m_context.webHitTestResultData(), m_userData.object(), [this, protectedThis = makeRef(*this)] (RetainPtr<NSMenu>&& menu) {
+        m_menu = WTFMove(menu);
+        NSPoint menuLocation = [m_webView convertPoint:m_context.menuLocation() toView:nil];
+        NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeRightMouseUp location:menuLocation modifierFlags:0 timestamp:0 windowNumber:m_webView.window.windowNumber context:nil eventNumber:0 clickCount:0 pressure:0];
+        [NSMenu popUpContextMenu:m_menu.get() withEvent:event forView:m_webView];
+        
+        if (m_contextMenuListener) {
+            m_contextMenuListener->invalidate();
+            m_contextMenuListener = nullptr;
+        }
+    });
 }
 
 void WebContextMenuProxyMac::showContextMenu()
