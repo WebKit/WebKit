@@ -284,7 +284,7 @@ void MessagePort::dispatchMessages()
         }
         workerThread->runLoop().postTaskForMode([innerHandler = WTFMove(innerHandler), messages = WTFMove(messages), completionCallback = WTFMove(completionCallback)](auto&) mutable {
             innerHandler(WTFMove(messages));
-            RunLoop::main().dispatch([completionCallback = WTFMove(completionCallback)] {
+            callOnMainThread([completionCallback = WTFMove(completionCallback)] {
                 completionCallback();
             });
         }, WorkerRunLoop::defaultMode());

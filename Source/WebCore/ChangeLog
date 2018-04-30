@@ -1,3 +1,17 @@
+2018-04-30  Chris Dumez  <cdumez@apple.com>
+
+        Fix bad use of RunLoop::main().dispatch() in MessagePort::dispatchMessages()
+        https://bugs.webkit.org/show_bug.cgi?id=185134
+
+        Reviewed by Geoffrey Garen.
+
+        Fix bad use of RunLoop::main().dispatch() in MessagePort::dispatchMessages(). This code runs on iOS WebKitLegacy
+        and it is therefore unsafe to use RunLoop::main() here. We want to use callOnMainThread() instead to run code on
+        the WebThread.
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::dispatchMessages):
+
 2018-04-30  Simon Fraser  <simon.fraser@apple.com>
 
         Make color-filter affect caret-color
