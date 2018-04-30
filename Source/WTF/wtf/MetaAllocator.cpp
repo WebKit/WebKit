@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,8 +62,10 @@ ALWAYS_INLINE void MetaAllocator::release(MetaAllocatorHandle* handle)
 {
     LockHolder locker(&m_lock);
     if (handle->sizeInBytes()) {
-        decrementPageOccupancy(handle->start(), handle->sizeInBytes());
-        addFreeSpaceFromReleasedHandle(handle->start(), handle->sizeInBytes());
+        void* start = handle->start().untaggedPtr();
+        size_t sizeInBytes = handle->sizeInBytes();
+        decrementPageOccupancy(start, sizeInBytes);
+        addFreeSpaceFromReleasedHandle(FreeSpacePtr(start), sizeInBytes);
     }
 
     if (UNLIKELY(!!m_tracker))
@@ -73,7 +75,7 @@ ALWAYS_INLINE void MetaAllocator::release(MetaAllocatorHandle* handle)
 MetaAllocatorHandle::MetaAllocatorHandle(MetaAllocator* allocator, void* start, size_t sizeInBytes, void* ownerUID)
     : m_allocator(allocator)
     , m_start(start)
-    , m_sizeInBytes(sizeInBytes)
+    , m_end(reinterpret_cast<char*>(start) + sizeInBytes)
     , m_ownerUID(ownerUID)
 {
     ASSERT(allocator);
@@ -89,33 +91,34 @@ MetaAllocatorHandle::~MetaAllocatorHandle()
 
 void MetaAllocatorHandle::shrink(size_t newSizeInBytes)
 {
-    ASSERT(newSizeInBytes <= m_sizeInBytes);
-    
+    size_t sizeInBytes = this->sizeInBytes();
+    ASSERT(newSizeInBytes <= sizeInBytes);
+
     LockHolder locker(&m_allocator->m_lock);
 
     newSizeInBytes = m_allocator->roundUp(newSizeInBytes);
     
-    ASSERT(newSizeInBytes <= m_sizeInBytes);
-    
-    if (newSizeInBytes == m_sizeInBytes)
+    ASSERT(newSizeInBytes <= sizeInBytes);
+
+    if (newSizeInBytes == sizeInBytes)
         return;
-    
-    uintptr_t freeStart = reinterpret_cast<uintptr_t>(m_start) + newSizeInBytes;
-    size_t freeSize = m_sizeInBytes - newSizeInBytes;
+
+    uintptr_t freeStart = m_start.untaggedPtr<uintptr_t>() + newSizeInBytes;
+    size_t freeSize = sizeInBytes - newSizeInBytes;
     uintptr_t freeEnd = freeStart + freeSize;
     
     uintptr_t firstCompletelyFreePage = (freeStart + m_allocator->m_pageSize - 1) & ~(m_allocator->m_pageSize - 1);
     if (firstCompletelyFreePage < freeEnd)
         m_allocator->decrementPageOccupancy(reinterpret_cast<void*>(firstCompletelyFreePage), freeSize - (firstCompletelyFreePage - freeStart));
-    
-    m_allocator->addFreeSpaceFromReleasedHandle(reinterpret_cast<void*>(freeStart), freeSize);
-    
-    m_sizeInBytes = newSizeInBytes;
+
+    m_allocator->addFreeSpaceFromReleasedHandle(MetaAllocator::FreeSpacePtr(freeStart), freeSize);
+
+    m_end = m_start + newSizeInBytes;
 }
 
 void MetaAllocatorHandle::dump(PrintStream& out) const
 {
-    out.print(RawPointer(start()), "...", RawPointer(end()));
+    out.print(RawPointer(start().untaggedPtr()), "...", RawPointer(end().untaggedPtr()));
 }
 
 MetaAllocator::MetaAllocator(size_t allocationGranule, size_t pageSize)
@@ -156,8 +159,8 @@ RefPtr<MetaAllocatorHandle> MetaAllocator::allocate(size_t sizeInBytes, void* ow
         return nullptr;
     
     sizeInBytes = roundUp(sizeInBytes);
-    
-    void* start = findAndRemoveFreeSpace(sizeInBytes);
+
+    FreeSpacePtr start = findAndRemoveFreeSpace(sizeInBytes);
     if (!start) {
         size_t requestedNumberOfPages = (sizeInBytes + m_pageSize - 1) >> m_logPageSize;
         size_t numberOfPages = requestedNumberOfPages;
@@ -175,18 +178,18 @@ RefPtr<MetaAllocatorHandle> MetaAllocator::allocate(size_t sizeInBytes, void* ow
         m_bytesReserved += roundedUpSize;
         
         if (roundedUpSize > sizeInBytes) {
-            void* freeSpaceStart = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(start) + sizeInBytes);
+            FreeSpacePtr freeSpaceStart = start + sizeInBytes;
             size_t freeSpaceSize = roundedUpSize - sizeInBytes;
             addFreeSpace(freeSpaceStart, freeSpaceSize);
         }
     }
-    incrementPageOccupancy(start, sizeInBytes);
+    incrementPageOccupancy(start.untaggedPtr(), sizeInBytes);
     m_bytesAllocated += sizeInBytes;
 #if ENABLE(META_ALLOCATOR_PROFILE)
     m_numAllocations++;
 #endif
 
-    auto handle = adoptRef(*new MetaAllocatorHandle(this, start, sizeInBytes, ownerUID));
+    auto handle = adoptRef(*new MetaAllocatorHandle(this, start.untaggedPtr(), sizeInBytes, ownerUID));
 
     if (UNLIKELY(!!m_tracker))
         m_tracker->notify(handle.ptr());
@@ -204,25 +207,26 @@ MetaAllocator::Statistics MetaAllocator::currentStatistics()
     return result;
 }
 
-void* MetaAllocator::findAndRemoveFreeSpace(size_t sizeInBytes)
+MetaAllocator::FreeSpacePtr MetaAllocator::findAndRemoveFreeSpace(size_t sizeInBytes)
 {
     FreeSpaceNode* node = m_freeSpaceSizeMap.findLeastGreaterThanOrEqual(sizeInBytes);
     
     if (!node)
         return 0;
     
-    ASSERT(node->m_sizeInBytes >= sizeInBytes);
-    
+    size_t nodeSizeInBytes = node->sizeInBytes();
+    ASSERT(nodeSizeInBytes >= sizeInBytes);
+
     m_freeSpaceSizeMap.remove(node);
-    
-    void* result;
-    
-    if (node->m_sizeInBytes == sizeInBytes) {
+
+    FreeSpacePtr result;
+
+    if (nodeSizeInBytes == sizeInBytes) {
         // Easy case: perfect fit, so just remove the node entirely.
         result = node->m_start;
         
         m_freeSpaceStartAddressMap.remove(node->m_start);
-        m_freeSpaceEndAddressMap.remove(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(node->m_start) + node->m_sizeInBytes));
+        m_freeSpaceEndAddressMap.remove(node->m_end);
         freeFreeSpaceNode(node);
     } else {
         // Try to be a good citizen and ensure that the returned chunk of memory
@@ -232,32 +236,32 @@ void* MetaAllocator::findAndRemoveFreeSpace(size_t sizeInBytes)
         // of committed pages, since in the long run, smaller fragmentation means
         // fewer committed pages and fewer failures in general.
         
-        uintptr_t firstPage = reinterpret_cast<uintptr_t>(node->m_start) >> m_logPageSize;
-        uintptr_t lastPage = (reinterpret_cast<uintptr_t>(node->m_start) + node->m_sizeInBytes - 1) >> m_logPageSize;
-    
-        uintptr_t lastPageForLeftAllocation = (reinterpret_cast<uintptr_t>(node->m_start) + sizeInBytes - 1) >> m_logPageSize;
-        uintptr_t firstPageForRightAllocation = (reinterpret_cast<uintptr_t>(node->m_start) + node->m_sizeInBytes - sizeInBytes) >> m_logPageSize;
+        uintptr_t nodeStartAsInt = node->m_start.untaggedPtr<uintptr_t>();
+        uintptr_t firstPage = nodeStartAsInt >> m_logPageSize;
+        uintptr_t lastPage = (nodeStartAsInt + nodeSizeInBytes - 1) >> m_logPageSize;
+
+        uintptr_t lastPageForLeftAllocation = (nodeStartAsInt + sizeInBytes - 1) >> m_logPageSize;
+        uintptr_t firstPageForRightAllocation = (nodeStartAsInt + nodeSizeInBytes - sizeInBytes) >> m_logPageSize;
         
         if (lastPageForLeftAllocation - firstPage + 1 <= lastPage - firstPageForRightAllocation + 1) {
             // Allocate in the left side of the returned chunk, and slide the node to the right.
             result = node->m_start;
             
             m_freeSpaceStartAddressMap.remove(node->m_start);
-            
-            node->m_sizeInBytes -= sizeInBytes;
-            node->m_start = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(node->m_start) + sizeInBytes);
-            
+
+            node->m_start += sizeInBytes;
+
             m_freeSpaceSizeMap.insert(node);
             m_freeSpaceStartAddressMap.add(node->m_start, node);
         } else {
             // Allocate in the right size of the returned chunk, and slide the node to the left;
-            
-            result = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(node->m_start) + node->m_sizeInBytes - sizeInBytes);
-            
-            m_freeSpaceEndAddressMap.remove(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(node->m_start) + node->m_sizeInBytes));
-            
-            node->m_sizeInBytes -= sizeInBytes;
-            
+
+            result = node->m_end - sizeInBytes;
+
+            m_freeSpaceEndAddressMap.remove(node->m_end);
+
+            node->m_end = result;
+
             m_freeSpaceSizeMap.insert(node);
             m_freeSpaceEndAddressMap.add(result, node);
         }
@@ -270,7 +274,7 @@ void* MetaAllocator::findAndRemoveFreeSpace(size_t sizeInBytes)
     return result;
 }
 
-void MetaAllocator::addFreeSpaceFromReleasedHandle(void* start, size_t sizeInBytes)
+void MetaAllocator::addFreeSpaceFromReleasedHandle(FreeSpacePtr start, size_t sizeInBytes)
 {
 #if ENABLE(META_ALLOCATOR_PROFILE)
     m_numFrees++;
@@ -283,7 +287,7 @@ void MetaAllocator::addFreshFreeSpace(void* start, size_t sizeInBytes)
 {
     LockHolder locker(&m_lock);
     m_bytesReserved += sizeInBytes;
-    addFreeSpace(start, sizeInBytes);
+    addFreeSpace(FreeSpacePtr(start), sizeInBytes);
 }
 
 size_t MetaAllocator::debugFreeSpaceSize()
@@ -292,7 +296,7 @@ size_t MetaAllocator::debugFreeSpaceSize()
     LockHolder locker(&m_lock);
     size_t result = 0;
     for (FreeSpaceNode* node = m_freeSpaceSizeMap.first(); node; node = node->successor())
-        result += node->m_sizeInBytes;
+        result += node->sizeInBytes();
     return result;
 #else
     CRASH();
@@ -300,25 +304,23 @@ size_t MetaAllocator::debugFreeSpaceSize()
 #endif
 }
 
-void MetaAllocator::addFreeSpace(void* start, size_t sizeInBytes)
+void MetaAllocator::addFreeSpace(FreeSpacePtr start, size_t sizeInBytes)
 {
-    void* end = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(start) + sizeInBytes);
-    
-    HashMap<void*, FreeSpaceNode*>::iterator leftNeighbor = m_freeSpaceEndAddressMap.find(start);
-    HashMap<void*, FreeSpaceNode*>::iterator rightNeighbor = m_freeSpaceStartAddressMap.find(end);
-    
+    FreeSpacePtr end = start + sizeInBytes;
+
+    HashMap<FreeSpacePtr, FreeSpaceNode*>::iterator leftNeighbor = m_freeSpaceEndAddressMap.find(start);
+    HashMap<FreeSpacePtr, FreeSpaceNode*>::iterator rightNeighbor = m_freeSpaceStartAddressMap.find(end);
+
     if (leftNeighbor != m_freeSpaceEndAddressMap.end()) {
         // We have something we can coalesce with on the left. Remove it from the tree, and
         // remove its end from the end address map.
         
-        ASSERT(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(leftNeighbor->value->m_start) + leftNeighbor->value->m_sizeInBytes) == leftNeighbor->key);
-        
+        ASSERT(leftNeighbor->value->m_end == leftNeighbor->key);
+
         FreeSpaceNode* leftNode = leftNeighbor->value;
-        
-        void* leftStart = leftNode->m_start;
-        size_t leftSize = leftNode->m_sizeInBytes;
-        void* leftEnd = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(leftStart) + leftSize);
-        
+
+        FreeSpacePtr leftEnd = leftNode->m_end;
+
         ASSERT(leftEnd == start);
         
         m_freeSpaceSizeMap.remove(leftNode);
@@ -332,26 +334,26 @@ void MetaAllocator::addFreeSpace(void* start, size_t sizeInBytes)
             ASSERT(rightNeighbor->value->m_start == rightNeighbor->key);
             
             FreeSpaceNode* rightNode = rightNeighbor->value;
-            void* rightStart = rightNeighbor->key;
-            size_t rightSize = rightNode->m_sizeInBytes;
-            void* rightEnd = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(rightStart) + rightSize);
-            
+            FreeSpacePtr rightStart = rightNeighbor->key;
+            size_t rightSize = rightNode->sizeInBytes();
+            FreeSpacePtr rightEnd = rightNode->m_end;
+
             ASSERT(rightStart == end);
-            ASSERT(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(leftStart) + leftSize + sizeInBytes + rightSize) == rightEnd);
-            
+            ASSERT(leftNode->m_start + (leftNode->sizeInBytes() + sizeInBytes + rightSize) == rightEnd);
+
             m_freeSpaceSizeMap.remove(rightNode);
             m_freeSpaceStartAddressMap.remove(rightStart);
             m_freeSpaceEndAddressMap.remove(rightEnd);
             
             freeFreeSpaceNode(rightNode);
-            
-            leftNode->m_sizeInBytes += sizeInBytes + rightSize;
-            
+
+            leftNode->m_end += (sizeInBytes + rightSize);
+
             m_freeSpaceSizeMap.insert(leftNode);
             m_freeSpaceEndAddressMap.add(rightEnd, leftNode);
         } else {
-            leftNode->m_sizeInBytes += sizeInBytes;
-            
+            leftNode->m_end += sizeInBytes;
+
             m_freeSpaceSizeMap.insert(leftNode);
             m_freeSpaceEndAddressMap.add(end, leftNode);
         }
@@ -360,29 +362,26 @@ void MetaAllocator::addFreeSpace(void* start, size_t sizeInBytes)
         
         if (rightNeighbor != m_freeSpaceStartAddressMap.end()) {
             FreeSpaceNode* rightNode = rightNeighbor->value;
-            void* rightStart = rightNeighbor->key;
-            size_t rightSize = rightNode->m_sizeInBytes;
-            void* rightEnd = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(rightStart) + rightSize);
-            
+            FreeSpacePtr rightStart = rightNeighbor->key;
+
             ASSERT(rightStart == end);
-            ASSERT_UNUSED(rightEnd, reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(start) + sizeInBytes + rightSize) == rightEnd);
-            
+            ASSERT(start + (sizeInBytes + rightNode->sizeInBytes()) == rightNode->m_end);
+
             m_freeSpaceSizeMap.remove(rightNode);
             m_freeSpaceStartAddressMap.remove(rightStart);
-            
-            rightNode->m_sizeInBytes += sizeInBytes;
+
             rightNode->m_start = start;
-            
+
             m_freeSpaceSizeMap.insert(rightNode);
             m_freeSpaceStartAddressMap.add(start, rightNode);
         } else {
             // Nothing to coalesce with, so create a new free space node and add it.
             
             FreeSpaceNode* node = allocFreeSpaceNode();
-            
-            node->m_sizeInBytes = sizeInBytes;
+
             node->m_start = start;
-            
+            node->m_end = start + sizeInBytes;
+
             m_freeSpaceSizeMap.insert(node);
             m_freeSpaceStartAddressMap.add(start, node);
             m_freeSpaceEndAddressMap.add(end, node);
@@ -445,7 +444,7 @@ MetaAllocator::FreeSpaceNode* MetaAllocator::allocFreeSpaceNode()
 #ifndef NDEBUG
     m_mallocBalance++;
 #endif
-    return new (NotNull, fastMalloc(sizeof(FreeSpaceNode))) FreeSpaceNode(0, 0);
+    return new (NotNull, fastMalloc(sizeof(FreeSpaceNode))) FreeSpaceNode();
 }
 
 void MetaAllocator::freeFreeSpaceNode(FreeSpaceNode* node)

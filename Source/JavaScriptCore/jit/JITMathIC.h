@@ -137,7 +137,7 @@ public:
             // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
             bool needsBranchCompaction = false;
             RELEASE_ASSERT(jit.m_assembler.buffer().codeSize() <= static_cast<size_t>(m_inlineSize));
-            LinkBuffer linkBuffer(jit, m_inlineStart.dataLocation(), jit.m_assembler.buffer().codeSize(), JITCompilationMustSucceed, needsBranchCompaction);
+            LinkBuffer linkBuffer(jit, m_inlineStart, jit.m_assembler.buffer().codeSize(), JITCompilationMustSucceed, needsBranchCompaction);
             RELEASE_ASSERT(linkBuffer.isValid());
             linkBuffer.link(jump, CodeLocationLabel<JITStubRoutinePtrTag>(m_code.code()));
             FINALIZE_CODE(linkBuffer, NoPtrTag, "JITMathIC: linking constant jump to out of line stub");

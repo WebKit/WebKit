@@ -61,13 +61,24 @@ typedef WTF::MetaAllocatorHandle ExecutableMemoryHandle;
 
 #if ENABLE(ASSEMBLER)
 
-extern JS_EXPORT_PRIVATE uintptr_t startOfFixedExecutableMemoryPool;
-extern JS_EXPORT_PRIVATE uintptr_t endOfFixedExecutableMemoryPool;
+extern JS_EXPORT_PRIVATE void* taggedStartOfFixedExecutableMemoryPool;
+extern JS_EXPORT_PRIVATE void* taggedEndOfFixedExecutableMemoryPool;
+
+template<typename T = void*>
+T startOfFixedExecutableMemoryPool()
+{
+    return untagCodePtr<T, ExecutableMemoryPtrTag>(taggedStartOfFixedExecutableMemoryPool);
+}
+
+template<typename T = void*>
+T endOfFixedExecutableMemoryPool()
+{
+    return untagCodePtr<T, ExecutableMemoryPtrTag>(taggedEndOfFixedExecutableMemoryPool);
+}
 
 inline bool isJITPC(void* pc)
 {
-    return reinterpret_cast<void*>(startOfFixedExecutableMemoryPool) <= pc
-        && pc < reinterpret_cast<void*>(endOfFixedExecutableMemoryPool);
+    return startOfFixedExecutableMemoryPool() <= pc && pc < endOfFixedExecutableMemoryPool();
 }
 
 typedef void (*JITWriteSeparateHeapsFunction)(off_t, const void*, size_t);
@@ -77,7 +88,7 @@ extern JS_EXPORT_PRIVATE bool useFastPermisionsJITCopy;
 
 static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
 {
-    if (reinterpret_cast<uintptr_t>(dst) >= startOfFixedExecutableMemoryPool && reinterpret_cast<uintptr_t>(dst) < endOfFixedExecutableMemoryPool) {
+    if (dst >= startOfFixedExecutableMemoryPool() && dst < endOfFixedExecutableMemoryPool()) {
 #if ENABLE(FAST_JIT_PERMISSIONS)
         if (useFastPermisionsJITCopy) {
             os_thread_self_restrict_rwx_to_rw();
@@ -90,7 +101,7 @@ static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
         if (jitWriteSeparateHeapsFunction) {
             // Use execute-only write thunk for writes inside the JIT region. This is a variant of
             // memcpy that takes an offset into the JIT region as its destination (first) parameter.
-            off_t offset = (off_t)((uintptr_t)dst - startOfFixedExecutableMemoryPool);
+            off_t offset = (off_t)((uintptr_t)dst - startOfFixedExecutableMemoryPool<uintptr_t>());
             retagCodePtr<JITThunkPtrTag, CFunctionPtrTag>(jitWriteSeparateHeapsFunction)(offset, src, n);
             return dst;
         }

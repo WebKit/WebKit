@@ -1,3 +1,18 @@
+2018-04-30  Mark Lam  <mark.lam@apple.com>
+
+        Apply PtrTags to the MetaAllocator and friends.
+        https://bugs.webkit.org/show_bug.cgi?id=185110
+        <rdar://problem/39533895>
+
+        Reviewed by Saam Barati.
+
+        Update the test to match MetaAllocator changes in WTF.
+
+        * TestWebKitAPI/Tests/WTF/MetaAllocator.cpp:
+        (TestWebKitAPI::TEST_F):
+        (WTF::tagForPtr):
+        (WTF::ptrTagName):
+
 2018-04-30  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate equivalent of WKPageContextMenuClient getContextMenuFromProposedMenuAsync

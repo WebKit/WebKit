@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,11 +64,11 @@ public:
             m_parent->allocatorDestroyed = true;
         }
         
-        virtual void* allocateNewSpace(size_t& numPages)
+        virtual FreeSpacePtr allocateNewSpace(size_t& numPages)
         {
             switch (m_parent->currentHeapGrowthMode) {
             case DontGrowHeap:
-                return 0;
+                return nullptr;
                 
             case ForTestDemandAllocCoalesce:
             case ForTestDemandAllocDontCoalesce: {
@@ -96,12 +96,12 @@ public:
                 
                 m_parent->additionalPagesInHeap += numPages;
         
-                return result;
+                return FreeSpacePtr(result);
             }
                 
             default:
                 CRASH();
-                return 0;
+                return nullptr;
             }
         }
         
@@ -190,8 +190,8 @@ public:
         EXPECT_TRUE(handle);
         EXPECT_EQ(handle->sizeInBytes(), sizeInBytes);
         
-        uintptr_t startByte = reinterpret_cast<uintptr_t>(handle->start());
-        uintptr_t endByte = startByte + sizeInBytes;
+        uintptr_t startByte = handle->start().untaggedPtr<uintptr_t>();
+        uintptr_t endByte = handle->end().untaggedPtr<uintptr_t>();
         for (uintptr_t currentByte = startByte; currentByte < endByte; ++currentByte) {
             EXPECT_TRUE(!byteState(currentByte));
             byteState(currentByte) = true;
@@ -208,7 +208,7 @@ public:
     {
         EXPECT_TRUE(handle);
         
-        notifyFree(handle->start(), handle->sizeInBytes());
+        notifyFree(handle->start().untaggedPtr(), handle->sizeInBytes());
         handle->deref();
         
         if (sanityCheckMode == RunSanityCheck)
@@ -237,13 +237,13 @@ public:
     
     void confirm(MetaAllocatorHandle* handle)
     {
-        uintptr_t startByte = reinterpret_cast<uintptr_t>(handle->start());
+        uintptr_t startByte = handle->start().untaggedPtr<uintptr_t>();
         confirm(startByte, startByte + handle->sizeInBytes(), true);
     }
     
     void confirmHighWatermark(MetaAllocatorHandle* handle)
     {
-        confirm(reinterpret_cast<uintptr_t>(handle->end()), (basePage + defaultPagesInHeap) * pageSize(), false);
+        confirm(handle->end().untaggedPtr<uintptr_t>(), (basePage + defaultPagesInHeap) * pageSize(), false);
     }
                 
     void confirm(uintptr_t startByte, uintptr_t endByte, bool value)
@@ -306,7 +306,7 @@ public:
         // verifies that the state of pages is correct.
         
         MetaAllocatorHandle* handle = allocate(size);
-        EXPECT_EQ(handle->start(), reinterpret_cast<void*>(basePage * pageSize()));
+        EXPECT_EQ(handle->start().untaggedPtr(), reinterpret_cast<void*>(basePage * pageSize()));
         EXPECT_EQ(handle->sizeInBytes(), size);
         EXPECT_TRUE(pageState(basePage));
         
@@ -325,7 +325,7 @@ public:
         // allocations should behave the same as the first one.
         
         MetaAllocatorHandle* handle = allocate(firstSize);
-        EXPECT_EQ(handle->start(), reinterpret_cast<void*>(basePage * pageSize()));
+        EXPECT_EQ(handle->start().untaggedPtr(), reinterpret_cast<void*>(basePage * pageSize()));
         EXPECT_EQ(handle->sizeInBytes(), firstSize);
         
         confirm(handle);
@@ -337,7 +337,7 @@ public:
         va_start(argList, firstSize);
         while (size_t sizeInBytes = va_arg(argList, int)) {
             handle = allocate(sizeInBytes);
-            EXPECT_EQ(handle->start(), reinterpret_cast<void*>(basePage * pageSize()));
+            EXPECT_EQ(handle->start().untaggedPtr(), reinterpret_cast<void*>(basePage * pageSize()));
             EXPECT_EQ(handle->sizeInBytes(), sizeInBytes);
             
             confirm(handle);
@@ -359,14 +359,14 @@ public:
         // picked in such a way that it never straddles a page.
         
         MetaAllocatorHandle* firstHandle = allocate(firstSize);
-        EXPECT_EQ(firstHandle->start(), reinterpret_cast<void*>(basePage * pageSize()));
+        EXPECT_EQ(firstHandle->start().untaggedPtr(), reinterpret_cast<void*>(basePage * pageSize()));
         EXPECT_EQ(firstHandle->sizeInBytes(), firstSize);
         
         confirm(firstHandle);
         confirmHighWatermark(firstHandle);
 
         MetaAllocatorHandle* secondHandle = allocate(secondSize);
-        EXPECT_EQ(secondHandle->start(), reinterpret_cast<void*>(basePage * pageSize() + firstSize));
+        EXPECT_EQ(secondHandle->start().untaggedPtr(), reinterpret_cast<void*>(basePage * pageSize() + firstSize));
         EXPECT_EQ(secondHandle->sizeInBytes(), secondSize);
         
         confirm(firstHandle);
@@ -383,7 +383,7 @@ public:
         confirm(basePage * pageSize(), (basePage + defaultPagesInHeap) * pageSize(), false);
         
         MetaAllocatorHandle* thirdHandle = allocate(thirdSize);
-        EXPECT_EQ(thirdHandle->start(), reinterpret_cast<void*>(basePage * pageSize()));
+        EXPECT_EQ(thirdHandle->start().untaggedPtr(), reinterpret_cast<void*>(basePage * pageSize()));
         EXPECT_EQ(thirdHandle->sizeInBytes(), thirdSize);
         
         confirm(thirdHandle);
@@ -408,7 +408,7 @@ public:
         va_start(argList, mode);
         while (size_t sizeInBytes = va_arg(argList, int)) {
             MetaAllocatorHandle* handle = allocate(sizeInBytes);
-            EXPECT_EQ(handle->start(), reinterpret_cast<void*>(basePage * pageSize() + totalSize));
+            EXPECT_EQ(handle->start().untaggedPtr(), reinterpret_cast<void*>(basePage * pageSize() + totalSize));
             EXPECT_EQ(handle->sizeInBytes(), sizeInBytes);
             
             confirm(handle);
@@ -428,7 +428,7 @@ public:
             free(handles.at(index));
             if (mode == TestFIFOAllocMode::EagerFill) {
                 MetaAllocatorHandle* handle = allocate(sizeSoFar);
-                EXPECT_EQ(handle->start(), reinterpret_cast<void*>(basePage * pageSize()));
+                EXPECT_EQ(handle->start().untaggedPtr(), reinterpret_cast<void*>(basePage * pageSize()));
                 EXPECT_EQ(handle->sizeInBytes(), sizeSoFar);
                 
                 confirm(basePage * pageSize(), basePage * pageSize() + totalSize, true);
@@ -449,7 +449,7 @@ public:
         
         if (mode == TestFIFOAllocMode::FillAtEnd) {
             MetaAllocatorHandle* finalHandle = allocate(totalSize);
-            EXPECT_EQ(finalHandle->start(), reinterpret_cast<void*>(basePage * pageSize()));
+            EXPECT_EQ(finalHandle->start().untaggedPtr(), reinterpret_cast<void*>(basePage * pageSize()));
             EXPECT_EQ(finalHandle->sizeInBytes(), totalSize);
             
             confirm(finalHandle);
@@ -479,16 +479,16 @@ public:
     void testRightAllocation(size_t firstLeftSize, size_t firstRightSize, size_t secondLeftSize, size_t secondRightSize)
     {
         MetaAllocatorHandle* firstLeft = allocate(firstLeftSize);
-        EXPECT_EQ(firstLeft->start(), reinterpret_cast<void*>(basePage * pageSize()));
+        EXPECT_EQ(firstLeft->start().untaggedPtr(), reinterpret_cast<void*>(basePage * pageSize()));
         
         MetaAllocatorHandle* firstRight = allocate(firstRightSize);
-        EXPECT_EQ(firstRight->end(), reinterpret_cast<void*>((basePage + defaultPagesInHeap) * pageSize()));
+        EXPECT_EQ(firstRight->end().untaggedPtr(), reinterpret_cast<void*>((basePage + defaultPagesInHeap) * pageSize()));
         
         MetaAllocatorHandle* secondLeft = allocate(secondLeftSize);
-        EXPECT_EQ(secondLeft->start(), reinterpret_cast<void*>(basePage * pageSize() + firstLeft->sizeInBytes()));
+        EXPECT_EQ(secondLeft->start().untaggedPtr(), reinterpret_cast<void*>(basePage * pageSize() + firstLeft->sizeInBytes()));
         
         MetaAllocatorHandle* secondRight = allocate(secondRightSize);
-        EXPECT_EQ(secondRight->end(), reinterpret_cast<void*>((basePage + defaultPagesInHeap) * pageSize() - firstRight->sizeInBytes()));
+        EXPECT_EQ(secondRight->end().untaggedPtr(), reinterpret_cast<void*>((basePage + defaultPagesInHeap) * pageSize() - firstRight->sizeInBytes()));
         
         free(firstLeft);
         free(firstRight);
@@ -496,7 +496,7 @@ public:
         free(secondRight);
         
         MetaAllocatorHandle* final = allocate(defaultPagesInHeap * pageSize());
-        EXPECT_EQ(final->start(), reinterpret_cast<void*>(basePage * pageSize()));
+        EXPECT_EQ(final->start().untaggedPtr(), reinterpret_cast<void*>(basePage * pageSize()));
         
         free(final);
     }
@@ -511,16 +511,16 @@ public:
         for (unsigned index = 0; index < numSlots; ++index) {
             MetaAllocatorHandle* toFree = allocate(size, sanityCheckMode);
             if (!handles.isEmpty()) {
-                while (toFree->start() != handles.last()->end()) {
+                while (toFree->start().untaggedPtr() != handles.last()->end().untaggedPtr()) {
                     handlesToFree.append(toFree);
                     toFree = allocate(size, sanityCheckMode);
                 }
             }
 
             MetaAllocatorHandle* fragger = allocate(32, sanityCheckMode);
-            EXPECT_EQ(fragger->start(), toFree->end());
+            EXPECT_EQ(fragger->start().untaggedPtr(), toFree->end().untaggedPtr());
             
-            locations.append(toFree->start());
+            locations.append(toFree->start().untaggedPtr());
 
             handlesToFree.append(toFree);
             handles.append(fragger);
@@ -537,14 +537,14 @@ public:
         for (unsigned index = 0; index < numSlots; ++index) {
             MetaAllocatorHandle* bestFit = allocate(size - 32, sanityCheckMode);
             
-            EXPECT_TRUE(bestFit->start() == locations.at(index)
-                        || bestFit->end() == reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(locations.at(index)) + size));
+            EXPECT_TRUE(bestFit->start().untaggedPtr() == locations.at(index)
+                || bestFit->end().untaggedPtr() == reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(locations.at(index)) + size));
             
             MetaAllocatorHandle* small = allocate(32, sanityCheckMode);
-            if (bestFit->start() == locations.at(index))
-                EXPECT_EQ(small->start(), bestFit->end());
+            if (bestFit->start().untaggedPtr() == locations.at(index))
+                EXPECT_EQ(small->start().untaggedPtr(), bestFit->end().untaggedPtr());
             else
-                EXPECT_EQ(small->end(), bestFit->start());
+                EXPECT_EQ(small->end().untaggedPtr(), bestFit->start().untaggedPtr());
             
             free(bestFit, sanityCheckMode);
             free(small, sanityCheckMode);
@@ -556,7 +556,7 @@ public:
             free(handles.at(index), sanityCheckMode);
         
         MetaAllocatorHandle* final = allocate(defaultPagesInHeap * pageSize(), sanityCheckMode);
-        EXPECT_EQ(final->start(), reinterpret_cast<void*>(basePage * pageSize()));
+        EXPECT_EQ(final->start().untaggedPtr(), reinterpret_cast<void*>(basePage * pageSize()));
         
         free(final, sanityCheckMode);
     }
@@ -567,7 +567,7 @@ public:
         MetaAllocatorHandle* handle = allocate(firstSize);
         
         // Shrink it, and make sure that our state reflects the shrinkage.
-        notifyFree(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(handle->start()) + secondSize), firstSize - secondSize);
+        notifyFree(reinterpret_cast<void*>(handle->start().untaggedPtr<uintptr_t>() + secondSize), firstSize - secondSize);
         
         handle->shrink(secondSize);
         EXPECT_EQ(handle->sizeInBytes(), secondSize);
@@ -579,14 +579,14 @@ public:
         
         // Allocate the remainder of the heap.
         MetaAllocatorHandle* remainder = allocate(defaultPagesInHeap * pageSize() - secondSize);
-        EXPECT_EQ(remainder->start(), handle->end());
+        EXPECT_EQ(remainder->start().untaggedPtr(), handle->end().untaggedPtr());
         
         free(remainder);
         free(handle);
         
         // Assert that the heap is empty and finish up.
         MetaAllocatorHandle* final = allocate(defaultPagesInHeap * pageSize());
-        EXPECT_EQ(final->start(), reinterpret_cast<void*>(basePage * pageSize()));
+        EXPECT_EQ(final->start().untaggedPtr(), reinterpret_cast<void*>(basePage * pageSize()));
         
         free(final);
     }
@@ -608,7 +608,7 @@ public:
         EXPECT_TRUE(currentHeapGrowthMode == DontGrowHeap);
         EXPECT_EQ(allowAllocatePages, static_cast<size_t>(0));
         EXPECT_EQ(requestedNumPages, (secondSize + pageSize() - 1) / pageSize());
-        EXPECT_EQ(secondHandle->start(), reinterpret_cast<void*>((basePage + defaultPagesInHeap) * pageSize()));
+        EXPECT_EQ(secondHandle->start().untaggedPtr(), reinterpret_cast<void*>((basePage + defaultPagesInHeap) * pageSize()));
         
         requestedNumPages = 0;
         
@@ -637,7 +637,7 @@ public:
         EXPECT_TRUE(currentHeapGrowthMode == DontGrowHeap);
         EXPECT_EQ(allowAllocatePages, static_cast<size_t>(0));
         EXPECT_EQ(requestedNumPages, (secondSize + pageSize() - 1) / pageSize());
-        EXPECT_EQ(secondHandle->start(), reinterpret_cast<void*>((basePage + defaultPagesInHeap + 1) * pageSize()));
+        EXPECT_EQ(secondHandle->start().untaggedPtr(), reinterpret_cast<void*>((basePage + defaultPagesInHeap + 1) * pageSize()));
         
         requestedNumPages = 0;
         
@@ -650,8 +650,8 @@ public:
         
         firstHandle = allocate(firstSize);
         secondHandle = allocate(secondSize);
-        EXPECT_EQ(firstHandle->start(), reinterpret_cast<void*>(basePage * pageSize()));
-        EXPECT_EQ(secondHandle->start(), reinterpret_cast<void*>((basePage + defaultPagesInHeap + 1) * pageSize()));
+        EXPECT_EQ(firstHandle->start().untaggedPtr(), reinterpret_cast<void*>(basePage * pageSize()));
+        EXPECT_EQ(secondHandle->start().untaggedPtr(), reinterpret_cast<void*>((basePage + defaultPagesInHeap + 1) * pageSize()));
         free(firstHandle);
         free(secondHandle);
     }
@@ -670,7 +670,7 @@ TEST_F(MetaAllocatorTest, AllocZero)
     ASSERT(!allocator->allocate(0, 0));
     
     MetaAllocatorHandle* final = allocate(defaultPagesInHeap * pageSize());
-    EXPECT_EQ(final->start(), reinterpret_cast<void*>(basePage * pageSize()));
+    EXPECT_EQ(final->start().untaggedPtr(), reinterpret_cast<void*>(basePage * pageSize()));
     free(final);
 }
 
@@ -955,3 +955,14 @@ TEST_F(MetaAllocatorTest, DemandAllocDontCoalescePageThenDoubleHeap)
 }
 
 } // namespace TestWebKitAPI
+
+#if USE(POINTER_PROFILING)
+
+namespace WTF {
+
+const char* tagForPtr(const void*) { return "<unknown>"; }
+const char* ptrTagName(PtrTag) { return "<unknown>"; }
+
+} // namespace WTF
+
+#endif // USE(POINTER_PROFILING)

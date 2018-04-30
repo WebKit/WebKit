@@ -1,3 +1,51 @@
+2018-04-30  Mark Lam  <mark.lam@apple.com>
+
+        Apply PtrTags to the MetaAllocator and friends.
+        https://bugs.webkit.org/show_bug.cgi?id=185110
+        <rdar://problem/39533895>
+
+        Reviewed by Saam Barati.
+
+        1. LinkBuffer now takes a MacroAssemblerCodePtr instead of a void* pointer.
+        2. Apply pointer tagging to the boundary pointers of the FixedExecutableMemoryPool,
+           and add a sanity check to verify that allocated code buffers are within those
+           bounds.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithoutDisassemblyImpl):
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        (JSC::LinkBuffer::linkCode):
+        (JSC::LinkBuffer::allocate):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::LinkBuffer):
+        (JSC::LinkBuffer::debugAddress):
+        (JSC::LinkBuffer::code):
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodeRef::MacroAssemblerCodeRef):
+        * bytecode/InlineAccess.cpp:
+        (JSC::linkCodeInline):
+        (JSC::InlineAccess::rewireStubAsJump):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::findPC):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::findPC):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::FixedVMPoolExecutableAllocator):
+        (JSC::FixedVMPoolExecutableAllocator::jitWriteThunkGenerator):
+        (JSC::ExecutableAllocator::allocate):
+        * jit/ExecutableAllocator.h:
+        (JSC::isJITPC):
+        (JSC::performJITMemcpy):
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        * jit/JITMathIC.h:
+        (JSC::isProfileEmpty):
+        * runtime/JSCPtrTag.h:
+        * wasm/WasmCallee.cpp:
+        (JSC::Wasm::Callee::Callee):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+
 2018-04-30  Keith Miller  <keith_miller@apple.com>
 
         Move the MayBePrototype JSCell header bit to InlineTypeFlags

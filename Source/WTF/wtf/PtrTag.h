@@ -34,6 +34,8 @@ namespace WTF {
     v(CFunctionPtrTag) \
 
 #define FOR_EACH_ADDITIONAL_WTF_PTRTAG(v) \
+    v(FreeSpacePtrTag) \
+    v(HandleMemoryPtrTag) \
 
 #define FOR_EACH_WTF_PTRTAG(v) \
     FOR_EACH_BASE_WTF_PTRTAG(v) \

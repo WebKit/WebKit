@@ -37,6 +37,7 @@ using PtrTag = WTF::PtrTag;
     v(BytecodePtrTag) \
     v(DisassemblyPtrTag) \
     v(ExceptionHandlerPtrTag) \
+    v(ExecutableMemoryPtrTag) \
     v(JITThunkPtrTag) \
     v(JITStubRoutinePtrTag) \
     v(JSEntryPtrTag) \

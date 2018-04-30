@@ -100,8 +100,8 @@ static const double executablePoolReservationFraction = 0.15;
 static const double executablePoolReservationFraction = 0.25;
 #endif
 
-JS_EXPORT_PRIVATE uintptr_t startOfFixedExecutableMemoryPool;
-JS_EXPORT_PRIVATE uintptr_t endOfFixedExecutableMemoryPool;
+JS_EXPORT_PRIVATE void* taggedStartOfFixedExecutableMemoryPool;
+JS_EXPORT_PRIVATE void* taggedEndOfFixedExecutableMemoryPool;
 JS_EXPORT_PRIVATE bool useFastPermisionsJITCopy { false };
 
 JS_EXPORT_PRIVATE JITWriteSeparateHeapsFunction jitWriteSeparateHeapsFunction;
@@ -143,18 +143,19 @@ public:
 
             addFreshFreeSpace(reservationBase, reservationSize);
 
-            startOfFixedExecutableMemoryPool = reinterpret_cast<uintptr_t>(reservationBase);
-            endOfFixedExecutableMemoryPool = startOfFixedExecutableMemoryPool + reservationSize;
+            void* reservationEnd = reinterpret_cast<uint8_t*>(reservationBase) + reservationSize;
+            taggedStartOfFixedExecutableMemoryPool = tagCodePtr<ExecutableMemoryPtrTag>(reservationBase);
+            taggedEndOfFixedExecutableMemoryPool = tagCodePtr<ExecutableMemoryPtrTag>(reservationEnd);
         }
     }
 
     virtual ~FixedVMPoolExecutableAllocator();
 
 protected:
-    void* allocateNewSpace(size_t&) override
+    FreeSpacePtr allocateNewSpace(size_t&) override
     {
         // We're operating in a fixed pool, so new allocation is always prohibited.
-        return 0;
+        return nullptr;
     }
 
     void notifyNeedPage(void* page) override
@@ -293,7 +294,8 @@ private:
         local2.link(&jit);
         jit.ret();
 
-        LinkBuffer linkBuffer(jit, stubBase, stubSize);
+        auto stubBaseCodePtr = MacroAssemblerCodePtr<LinkBufferPtrTag>(tagCodePtr<LinkBufferPtrTag>(stubBase));
+        LinkBuffer linkBuffer(jit, stubBaseCodePtr, stubSize);
         // We don't use FINALIZE_CODE() for two reasons.
         // The first is that we don't want the writeable address, as disassembled instructions,
         // to appear in the console or anywhere in memory, via the PrintStream buffer.
@@ -431,6 +433,17 @@ RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes,
         }
         return nullptr;
     }
+
+#if USE(POINTER_PROFILING)
+    void* start = startOfFixedExecutableMemoryPool();
+    void* end = endOfFixedExecutableMemoryPool();
+    void* resultStart = result->start().untaggedPtr();
+    void* resultEnd = result->end().untaggedPtr();
+    RELEASE_ASSERT(start == removeCodePtrTag(taggedStartOfFixedExecutableMemoryPool));
+    RELEASE_ASSERT(end == removeCodePtrTag(taggedEndOfFixedExecutableMemoryPool));
+    RELEASE_ASSERT(start <= resultStart && resultStart < end);
+    RELEASE_ASSERT(start < resultEnd && resultEnd <= end);
+#endif
     return result;
 }
 

@@ -132,7 +132,7 @@ ALWAYS_INLINE static bool linkCodeInline(const char* name, CCallHelpers& jit, St
 {
     if (jit.m_assembler.buffer().codeSize() <= stubInfo.patch.inlineSize) {
         bool needsBranchCompaction = false;
-        LinkBuffer linkBuffer(jit, stubInfo.patch.start.dataLocation(), stubInfo.patch.inlineSize, JITCompilationMustSucceed, needsBranchCompaction);
+        LinkBuffer linkBuffer(jit, stubInfo.patch.start, stubInfo.patch.inlineSize, JITCompilationMustSucceed, needsBranchCompaction);
         ASSERT(linkBuffer.isValid());
         function(linkBuffer);
         FINALIZE_CODE(linkBuffer, NoPtrTag, "InlineAccessType: '%s'", name);
@@ -286,7 +286,7 @@ void InlineAccess::rewireStubAsJump(StructureStubInfo& stubInfo, CodeLocationLab
 
     // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
     bool needsBranchCompaction = false;
-    LinkBuffer linkBuffer(jit, stubInfo.patch.start.dataLocation(), jit.m_assembler.buffer().codeSize(), JITCompilationMustSucceed, needsBranchCompaction);
+    LinkBuffer linkBuffer(jit, stubInfo.patch.start, jit.m_assembler.buffer().codeSize(), JITCompilationMustSucceed, needsBranchCompaction);
     RELEASE_ASSERT(linkBuffer.isValid());
     linkBuffer.link(jump, target);
 

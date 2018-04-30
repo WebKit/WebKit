@@ -214,6 +214,8 @@ protected:
     static void dumpWithName(void* executableAddress, void* dataLocation, const char* name, PrintStream& out);
 };
 
+// FIXME: Make JSC MacroAssemblerCodePtr injerit from MetaAllocatorPtr.
+// https://bugs.webkit.org/show_bug.cgi?id=185145
 template<PtrTag tag>
 class MacroAssemblerCodePtr : private MacroAssemblerCodePtrBase {
 public:
@@ -402,7 +404,7 @@ public:
     MacroAssemblerCodeRef() = default;
 
     MacroAssemblerCodeRef(Ref<ExecutableMemoryHandle>&& executableMemory)
-        : m_codePtr(tagCodePtr<tag>(executableMemory->start()))
+        : m_codePtr(executableMemory->start().retaggedPtr<tag>())
         , m_executableMemory(WTFMove(executableMemory))
     {
         ASSERT(m_executableMemory->isManaged());

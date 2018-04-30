@@ -36,6 +36,7 @@
 
 #include "JITCompilationEffort.h"
 #include "MacroAssembler.h"
+#include "MacroAssemblerCodeRef.h"
 #include <wtf/DataLog.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
@@ -81,7 +82,6 @@ public:
     LinkBuffer(MacroAssembler& macroAssembler, void* ownerUID, JITCompilationEffort effort = JITCompilationMustSucceed)
         : m_size(0)
         , m_didAllocate(false)
-        , m_code(0)
 #ifndef NDEBUG
         , m_completed(false)
 #endif
@@ -89,10 +89,11 @@ public:
         linkCode(macroAssembler, ownerUID, effort);
     }
 
-    LinkBuffer(MacroAssembler& macroAssembler, void* code, size_t size, JITCompilationEffort effort = JITCompilationMustSucceed, bool shouldPerformBranchCompaction = true)
+    template<PtrTag tag>
+    LinkBuffer(MacroAssembler& macroAssembler, MacroAssemblerCodePtr<tag> code, size_t size, JITCompilationEffort effort = JITCompilationMustSucceed, bool shouldPerformBranchCompaction = true)
         : m_size(size)
         , m_didAllocate(false)
-        , m_code(code)
+        , m_code(code.template retagged<LinkBufferPtrTag>())
 #ifndef NDEBUG
         , m_completed(false)
 #endif
@@ -281,7 +282,7 @@ public:
 
     void* debugAddress()
     {
-        return m_code;
+        return m_code.dataLocation();
     }
 
     size_t size() const { return m_size; }
@@ -313,7 +314,7 @@ private:
     // Keep this private! - the underlying code should only be obtained externally via finalizeCode().
     void* code()
     {
-        return m_code;
+        return m_code.dataLocation();
     }
     
     void allocate(MacroAssembler&, void* ownerUID, JITCompilationEffort);
@@ -341,7 +342,7 @@ private:
     bool m_shouldPerformBranchCompaction { true };
 #endif
     bool m_didAllocate;
-    void* m_code;
+    MacroAssemblerCodePtr<LinkBufferPtrTag> m_code;
 #ifndef NDEBUG
     bool m_completed;
 #endif

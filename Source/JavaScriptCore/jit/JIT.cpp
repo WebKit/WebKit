@@ -903,7 +903,7 @@ CompilationResult JIT::link()
         adoptRef(*new DirectJITCode(result, withArityCheck, JITCode::BaselineJIT)));
 
     if (JITInternal::verbose)
-        dataLogF("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start(), result.executableMemory()->end());
+        dataLogF("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start().untaggedPtr(), result.executableMemory()->end().untaggedPtr());
 
     return CompilationSuccessful;
 }

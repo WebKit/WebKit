@@ -1,3 +1,61 @@
+2018-04-30  Mark Lam  <mark.lam@apple.com>
+
+        Apply PtrTags to the MetaAllocator and friends.
+        https://bugs.webkit.org/show_bug.cgi?id=185110
+        <rdar://problem/39533895>
+
+        Reviewed by Saam Barati.
+
+        1. Introduce a MetaAllocatorPtr smart pointer to do pointer tagging.
+        2. Use MetaAllocatorPtr in MetaAllocator and MetaAllocatorHandle.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::release):
+        (WTF::MetaAllocatorHandle::MetaAllocatorHandle):
+        (WTF::MetaAllocatorHandle::shrink):
+        (WTF::MetaAllocatorHandle::dump const):
+        (WTF::MetaAllocator::allocate):
+        (WTF::MetaAllocator::findAndRemoveFreeSpace):
+        (WTF::MetaAllocator::addFreeSpaceFromReleasedHandle):
+        (WTF::MetaAllocator::addFreshFreeSpace):
+        (WTF::MetaAllocator::debugFreeSpaceSize):
+        (WTF::MetaAllocator::addFreeSpace):
+        (WTF::MetaAllocator::allocFreeSpaceNode):
+        * wtf/MetaAllocator.h:
+        (WTF::MetaAllocatorTracker::find):
+        (WTF::MetaAllocator::FreeSpaceNode::FreeSpaceNode):
+        (WTF::MetaAllocator::FreeSpaceNode::sizeInBytes):
+        (WTF::MetaAllocator::FreeSpaceNode::key):
+        * wtf/MetaAllocatorHandle.h:
+        (WTF::MetaAllocatorHandle::start const):
+        (WTF::MetaAllocatorHandle::end const):
+        (WTF::MetaAllocatorHandle::startAsInteger const):
+        (WTF::MetaAllocatorHandle::endAsInteger const):
+        (WTF::MetaAllocatorHandle::sizeInBytes const):
+        (WTF::MetaAllocatorHandle::containsIntegerAddress const):
+        (WTF::MetaAllocatorHandle::key):
+        * wtf/MetaAllocatorPtr.h: Added.
+        (WTF::MetaAllocatorPtr::MetaAllocatorPtr):
+        (WTF::MetaAllocatorPtr:: const):
+        (WTF::MetaAllocatorPtr::operator bool const):
+        (WTF::MetaAllocatorPtr::operator! const):
+        (WTF::MetaAllocatorPtr::operator== const):
+        (WTF::MetaAllocatorPtr::operator!= const):
+        (WTF::MetaAllocatorPtr::operator+ const):
+        (WTF::MetaAllocatorPtr::operator- const):
+        (WTF::MetaAllocatorPtr::operator+=):
+        (WTF::MetaAllocatorPtr::operator-=):
+        (WTF::MetaAllocatorPtr::isEmptyValue const):
+        (WTF::MetaAllocatorPtr::isDeletedValue const):
+        (WTF::MetaAllocatorPtr::hash const):
+        (WTF::MetaAllocatorPtr::emptyValue):
+        (WTF::MetaAllocatorPtr::deletedValue):
+        (WTF::MetaAllocatorPtrHash::hash):
+        (WTF::MetaAllocatorPtrHash::equal):
+        * wtf/PtrTag.h:
+
 2018-04-30  JF Bastien  <jfbastien@apple.com>
 
         Use some C++17 features
