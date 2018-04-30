@@ -77,9 +77,9 @@ static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec)
 
     unsigned length = exec->argumentCount();
     if (LIKELY(length == 1)) {
-        unsigned code = exec->uncheckedArgument(0).toUInt32(exec);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
         scope.release();
+        unsigned code = exec->uncheckedArgument(0).toUInt32(exec);
+        // Not checking for an exception here is ok because jsSingleCharacterString will just fetch an unused string if there's an exception.
         return JSValue::encode(jsSingleCharacterString(exec, code));
     }
 
