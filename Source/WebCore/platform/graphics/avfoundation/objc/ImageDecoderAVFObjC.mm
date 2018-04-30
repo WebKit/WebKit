@@ -203,7 +203,7 @@ SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVURLAssetUsesNoPersistentCacheKey, NSS
     if ([self canFulfillRequest:loadingRequest]) {
         [self fulfillRequest:loadingRequest];
         if (loadingRequest.finished)
-            return NO;
+            return YES;
     }
 
     [self enqueueRequest:loadingRequest];

@@ -1,3 +1,18 @@
+2018-04-30  Jer Noble  <jer.noble@apple.com>
+
+        <img src=mp4> does not display on ios despite Accept: video/* advertisement
+        https://bugs.webkit.org/show_bug.cgi?id=185029
+        <rdar://problem/39771989>
+
+        Reviewed by Eric Carlson.
+
+        Returning "NO" from resourceLoader:shouldWaitForLoadingOfResource: signals that the load failed,
+        even if the resource request is successfully fulfilled prior to the return. Always return YES in
+        the case that loading succeeded.
+
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (-[WebCoreSharedBufferResourceLoaderDelegate resourceLoader:shouldWaitForLoadingOfRequestedResource:]):
+
 2018-04-30  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r230914) Selecting text on this apple.com page makes it vanish
