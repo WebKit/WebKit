@@ -93,6 +93,11 @@ static bool urlRequiresMacintoshPlatform(const URL& url)
     if (baseDomain == "whatsapp.com")
         return true;
 
+    // chase.com displays a huge "please update your browser" warning with
+    // WebKitGTK+'s standard user agent.
+    if (baseDomain == "chase.com")
+        return true;
+
     // Microsoft Outlook Web App forces users with WebKitGTK+'s standard user
     // agent to use the light version. Earlier versions even blocks users from
     // accessing the calendar.
@@ -133,7 +138,6 @@ String UserAgentQuirks::stringForQuirk(UserAgentQuirk quirk)
         // Get versions from https://chromium.googlesource.com/chromium/src.git
         return ASCIILiteral("Chrome/58.0.3029.81");
     case NeedsMacintoshPlatform:
-        // Frozen per https://bugs.webkit.org/show_bug.cgi?id=180365
         return ASCIILiteral("Macintosh; Intel Mac OS X 10_13_4");
     case NeedsLinuxDesktopPlatform:
         return ASCIILiteral("X11; Linux x86_64");

@@ -1,3 +1,13 @@
+2018-04-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Webkit should spoof as Safari on a Mac when on Chase.com
+        https://bugs.webkit.org/show_bug.cgi?id=185103
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-04-28  Sihui Liu  <sihui_liu@apple.com>
 
         [Cocoa] Set HTTPOnly flag when converting Cookie to NSHTTPCookie
