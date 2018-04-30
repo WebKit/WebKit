@@ -57,6 +57,7 @@
     RetainPtr<PDFHostViewController> _hostViewController;
     CGSize _overlaidAccessoryViewsInset;
     RetainPtr<UIView> _pageNumberIndicator;
+    RetainPtr<NSString> _password;
     WebKit::InteractionInformationAtPosition _positionInformation;
     RetainPtr<NSString> _suggestedFilename;
     WebKit::WeakObjCPtr<WKWebView> _webView;
@@ -359,6 +360,11 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
     [self _scrollToURLFragment:[_webView URL].fragment];
 }
 
+- (void)pdfHostViewController:(PDFHostViewController *)controller documentDidUnlockWithPassword:(NSString *)password
+{
+    _password = adoptNS([password copy]);
+}
+
 - (void)pdfHostViewController:(PDFHostViewController *)controller findStringUpdate:(NSUInteger)numFound done:(BOOL)done
 {
     // FIXME: We should stop searching once numFound exceeds _findStringMaxCount, but PDFKit doesn't
@@ -498,7 +504,10 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 - (CGPDFDocumentRef)_wk_printedDocument
 {
     auto dataProvider = adoptCF(CGDataProviderCreateWithCFData((CFDataRef)_data.get()));
-    return adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get())).autorelease();
+    auto pdfDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
+    if (!CGPDFDocumentIsUnlocked(pdfDocument.get()))
+        CGPDFDocumentUnlockWithPassword(pdfDocument.get(), [_password UTF8String]);
+    return pdfDocument.autorelease();
 }
 
 @end
