@@ -2164,15 +2164,18 @@ private:
     void addTitleLine(CTLineRef, CGFloat& yOffset, Vector<CGPoint> origins, CFIndex lineIndex, const RenderAttachment&);
 };
 
-static NSColor *titleTextColorForAttachment(const RenderAttachment& attachment)
+static Color titleTextColorForAttachment(const RenderAttachment& attachment)
 {
+    Color result = Color::black;
+    
     if (attachment.selectionState() != RenderObject::SelectionNone) {
         if (attachment.frame().selection().isFocusedAndActive())
-            return [NSColor alternateSelectedControlTextColor];    
-        return (NSColor *)cachedCGColor(attachmentTitleInactiveTextColor());
+            result = colorFromNSColor([NSColor alternateSelectedControlTextColor]);
+        else
+            result = attachmentTitleInactiveTextColor();
     }
 
-    return [NSColor blackColor];
+    return attachment.style().colorByApplyingColorFilter(result);
 }
 
 void AttachmentLayout::addTitleLine(CTLineRef line, CGFloat& yOffset, Vector<CGPoint> origins, CFIndex lineIndex, const RenderAttachment& attachment)
@@ -2221,7 +2224,7 @@ void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
 
     NSDictionary *textAttributes = @{
         (id)kCTFontAttributeName: (id)font.get(),
-        (id)kCTForegroundColorAttributeName: titleTextColorForAttachment(attachment)
+        (id)kCTForegroundColorAttributeName: (NSColor *)cachedCGColor(titleTextColorForAttachment(attachment))
     };
     RetainPtr<NSAttributedString> attributedTitle = adoptNS([[NSAttributedString alloc] initWithString:title attributes:textAttributes]);
     RetainPtr<CTFramesetterRef> titleFramesetter = adoptCF(CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedTitle.get()));
@@ -2274,11 +2277,12 @@ void AttachmentLayout::layOutSubtitle(const RenderAttachment& attachment)
     if (subtitleText.isEmpty())
         return;
 
+    Color subtitleColor = attachment.style().colorByApplyingColorFilter(attachmentSubtitleTextColor());
     CFStringRef language = 0; // By not specifying a language we use the system language.
     RetainPtr<CTFontRef> font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, attachmentSubtitleFontSize, language));
     NSDictionary *textAttributes = @{
         (id)kCTFontAttributeName: (id)font.get(),
-        (id)kCTForegroundColorAttributeName: (NSColor *)cachedCGColor(attachmentSubtitleTextColor())
+        (id)kCTForegroundColorAttributeName: (NSColor *)cachedCGColor(subtitleColor)
     };
     RetainPtr<NSAttributedString> attributedSubtitleText = adoptNS([[NSAttributedString alloc] initWithString:subtitleText attributes:textAttributes]);
     subtitleLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)attributedSubtitleText.get()));
@@ -2333,7 +2337,7 @@ int RenderThemeMac::attachmentBaseline(const RenderAttachment& attachment) const
     return layout.baseline;
 }
 
-static void paintAttachmentIconBackground(const RenderAttachment&, GraphicsContext& context, AttachmentLayout& layout)
+static void paintAttachmentIconBackground(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {
     // FIXME: Finder has a discontinuous behavior here when you have a background color other than white,
     // where it switches into 'bordered mode' and the border pops in on top of the background.
@@ -2343,7 +2347,8 @@ static void paintAttachmentIconBackground(const RenderAttachment&, GraphicsConte
     if (paintBorder)
         backgroundRect.inflate(-attachmentIconSelectionBorderThickness);
 
-    context.fillRoundedRect(FloatRoundedRect(backgroundRect, FloatRoundedRect::Radii(attachmentIconBackgroundRadius)), attachmentIconBackgroundColor());
+    Color backgroundColor = attachment.style().colorByApplyingColorFilter(attachmentIconBackgroundColor());
+    context.fillRoundedRect(FloatRoundedRect(backgroundRect, FloatRoundedRect::Radii(attachmentIconBackgroundRadius)), backgroundColor);
 
     if (paintBorder) {
         FloatRect borderRect = layout.iconBackgroundRect;
@@ -2352,7 +2357,9 @@ static void paintAttachmentIconBackground(const RenderAttachment&, GraphicsConte
         FloatSize iconBackgroundRadiusSize(attachmentIconBackgroundRadius, attachmentIconBackgroundRadius);
         Path borderPath;
         borderPath.addRoundedRect(borderRect, iconBackgroundRadiusSize);
-        context.setStrokeColor(attachmentIconBorderColor());
+
+        Color borderColor = attachment.style().colorByApplyingColorFilter(attachmentIconBorderColor());
+        context.setStrokeColor(borderColor);
         context.setStrokeThickness(attachmentIconSelectionBorderThickness);
         context.strokePath(borderPath);
     }
@@ -2434,6 +2441,7 @@ static void paintAttachmentTitleBackground(const RenderAttachment& attachment, G
     else
         backgroundColor = attachmentTitleInactiveBackgroundColor();
 
+    backgroundColor = attachment.style().colorByApplyingColorFilter(backgroundColor);
     context.setFillColor(backgroundColor);
 
     Path backgroundPath = PathUtilities::pathWithShrinkWrappedRects(backgroundRects, attachmentTitleBackgroundRadius);
@@ -2497,11 +2505,13 @@ static void paintAttachmentProgress(const RenderAttachment& attachment, Graphics
     context.strokePath(borderPath);
 }
 
-static void paintAttachmentPlaceholderBorder(const RenderAttachment&, GraphicsContext& context, AttachmentLayout& layout)
+static void paintAttachmentPlaceholderBorder(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {
     Path borderPath;
     borderPath.addRoundedRect(layout.attachmentRect, FloatSize(attachmentPlaceholderBorderRadius, attachmentPlaceholderBorderRadius));
-    context.setStrokeColor(attachmentPlaceholderBorderColor());
+
+    Color placeholderBorderColor = attachment.style().colorByApplyingColorFilter(attachmentPlaceholderBorderColor());
+    context.setStrokeColor(placeholderBorderColor);
     context.setStrokeThickness(attachmentPlaceholderBorderWidth);
     context.setStrokeStyle(DashedStroke);
     context.setLineDash({attachmentPlaceholderBorderDashLength}, 0);
