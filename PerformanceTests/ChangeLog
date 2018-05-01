@@ -1,3 +1,16 @@
+2018-04-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Improve the performance of FontCascadeDescription's effectiveFamilies
+        https://bugs.webkit.org/show_bug.cgi?id=184720
+
+        Reviewed by Simon Fraser.
+
+        This performance test calls SystemFontDatabase::systemFontCascadeList() around 2,000,000 times (before
+        this patch is applied), which is roughly equivalent to the page we found the performance problem on.
+        The calling pattern is roughly equivalent in this test.
+
+        * Layout/system-ui.html: Added.
+
 2018-03-08  Antti Koivisto  <antti@apple.com>
 
         Update StyleBench version number in page title to 0.3

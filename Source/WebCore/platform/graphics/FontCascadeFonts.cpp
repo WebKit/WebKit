@@ -389,14 +389,8 @@ static void opportunisticallyStartFontDataURLLoading(const FontCascadeDescriptio
     // asynchronous, and this code doesn't actually fix the race - it just makes it more likely for the two fonts to tie in the race.
     if (!fontSelector)
         return;
-    for (unsigned i = 0; i < description.effectiveFamilyCount(); ++i) {
-        auto visitor = WTF::makeVisitor([&](const AtomicString& family) {
-            fontSelector->opportunisticallyStartFontDataURLLoading(description, family);
-        }, [&](const FontFamilyPlatformSpecification&) {
-        });
-        const auto& currentFamily = description.effectiveFamilyAt(i);
-        WTF::visit(visitor, currentFamily);
-    }
+    for (unsigned i = 0; i < description.familyCount(); ++i)
+        fontSelector->opportunisticallyStartFontDataURLLoading(description, description.familyAt(i));
 }
 
 GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 character, const FontCascadeDescription& description, FontVariant variant, unsigned fallbackIndex)
