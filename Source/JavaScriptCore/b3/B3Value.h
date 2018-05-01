@@ -260,6 +260,8 @@ public:
     // empty ValueKey if this Value is impure. Note that an operation that returns Void could still
     // have a non-empty ValueKey. This happens for example with Check operations.
     ValueKey key() const;
+    
+    Value* foldIdentity() const;
 
     // Makes sure that none of the children are Identity's. If a child points to Identity, this will
     // repoint it at the Identity's child. For simplicity, this will follow arbitrarily long chains

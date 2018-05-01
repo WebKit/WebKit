@@ -1,3 +1,46 @@
+2018-04-30  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::demoteValues should be able to handle patchpoint terminals
+        https://bugs.webkit.org/show_bug.cgi?id=185151
+
+        Reviewed by Saam Barati.
+        
+        If we try to demote a patchpoint terminal then prior to this change we would append a Set to
+        the basic block that the patchpoint terminated. That's wrong because then the terminal is no
+        longer the last thing in the block.
+        
+        Air encounters this problem in spilling and solves it by doing a fixup afterwards. We can't
+        really do that because demotion happens as a prerequisite to other transformations.
+        
+        One solution might have been to make demoteValues insert a basic block whenever it encounters
+        this problem. But that would break clients that do CFG analysis before demoteValues and use
+        the results of the CFG analysis after demoteValues. Taildup does this. Fortunately, taildup
+        also runs breakCriticalEdges. Probably anyone using demoteValues will use breakCriticalEdges,
+        so it's not bad to introduce that requirement.
+        
+        So, this patch solves the problem by ensuring that breakCriticalEdges treats any patchpoint
+        terminal as if it had multiple successors. This means that a patchpoint terminal's successors
+        will only have it as their predecessor. Then, demoteValues just prepends the Set to the
+        successors of the patchpoint terminal.
+        
+        This was probably asymptomatic. It's hard to write a JS test that triggers this, so I added
+        a unit test in testb3.
+
+        * b3/B3BreakCriticalEdges.cpp:
+        (JSC::B3::breakCriticalEdges):
+        * b3/B3BreakCriticalEdges.h:
+        * b3/B3FixSSA.cpp:
+        (JSC::B3::demoteValues):
+        (JSC::B3::fixSSA):
+        * b3/B3FixSSA.h:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::foldIdentity const):
+        (JSC::B3::Value::performSubstitution):
+        * b3/B3Value.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testDemotePatchpointTerminal):
+        (JSC::B3::run):
+
 2018-05-01  Robin Morisset  <rmorisset@apple.com>
 
         Use CheckedArithmetic for length computation in JSArray::unshiftCountWithAnyIndexingType

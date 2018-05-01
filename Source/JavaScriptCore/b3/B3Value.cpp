@@ -778,13 +778,21 @@ ValueKey Value::key() const
     }
 }
 
+Value* Value::foldIdentity() const
+{
+    Value* current = const_cast<Value*>(this);
+    while (current->opcode() == Identity)
+        current = current->child(0);
+    return current;
+}
+
 bool Value::performSubstitution()
 {
     bool result = false;
     for (Value*& child : children()) {
-        while (child->opcode() == Identity) {
+        if (child->opcode() == Identity) {
             result = true;
-            child = child->child(0);
+            child = child->foldIdentity();
         }
     }
     return result;

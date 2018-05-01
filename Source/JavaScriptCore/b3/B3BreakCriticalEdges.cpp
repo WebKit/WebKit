@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,10 @@ void breakCriticalEdges(Procedure& proc)
     BlockInsertionSet insertionSet(proc);
     
     for (BasicBlock* block : proc) {
-        if (block->numSuccessors() <= 1)
+        // Non-void terminals that are the moral equivalent of jumps trigger critical edge breaking
+        // because of fixSSA's demoteValues.
+        if (block->numSuccessors() <= 1
+            && block->last()->type() == Void)
             continue;
 
         for (BasicBlock*& successor : block->successorBlocks()) {
@@ -57,8 +60,8 @@ void breakCriticalEdges(Procedure& proc)
         }
     }
 
-    insertionSet.execute();
-    proc.invalidateCFG();
+    if (insertionSet.execute())
+        proc.invalidateCFG();
 }
 
 } } // namespace JSC::B3

@@ -32,6 +32,7 @@
 #include "B3ArgumentRegValue.h"
 #include "B3AtomicValue.h"
 #include "B3BasicBlockInlines.h"
+#include "B3BreakCriticalEdges.h"
 #include "B3CCallValue.h"
 #include "B3Compilation.h"
 #include "B3Compile.h"
@@ -40,6 +41,7 @@
 #include "B3ConstPtrValue.h"
 #include "B3Effects.h"
 #include "B3FenceValue.h"
+#include "B3FixSSA.h"
 #include "B3Generate.h"
 #include "B3LowerToAir.h"
 #include "B3MathExtras.h"
@@ -69,6 +71,7 @@
 #include <cmath>
 #include <string>
 #include <wtf/FastTLS.h>
+#include <wtf/IndexSet.h>
 #include <wtf/ListDump.h>
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
@@ -16210,6 +16213,27 @@ void testShuffleDoesntTrashCalleeSaves()
     fastFree(inputPtr);
 }
 
+void testDemotePatchpointTerminal()
+{
+    Procedure proc;
+    
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* done = proc.addBlock();
+    
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
+    patchpoint->effects.terminal = true;
+    root->setSuccessors(done);
+    
+    done->appendNew<Value>(proc, Return, Origin(), patchpoint);
+    
+    proc.resetReachability();
+    breakCriticalEdges(proc);
+    IndexSet<Value*> valuesToDemote;
+    valuesToDemote.add(patchpoint);
+    demoteValues(proc, valuesToDemote);
+    validate(proc);
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -17777,6 +17801,7 @@ void run(const char* filter)
     RUN(testFloatEqualOrUnorderedDontFold());
     
     RUN(testShuffleDoesntTrashCalleeSaves());
+    RUN(testDemotePatchpointTerminal());
 
     if (isX86()) {
         RUN(testBranchBitAndImmFusion(Identity, Int64, 1, Air::BranchTest32, Air::Arg::Tmp));
