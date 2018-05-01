@@ -875,7 +875,6 @@
 		37A709A91E3EA40C00CA5969 /* WKDataDetectorTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A709A81E3EA40C00CA5969 /* WKDataDetectorTypesInternal.h */; };
 		37B0D1841C1E499A00D40D64 /* PluginProcessShim.dylib in Copy Shims */ = {isa = PBXBuildFile; fileRef = 1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */; };
 		37B0D1851C1E499A00D40D64 /* SecItemShim.dylib in Copy Shims */ = {isa = PBXBuildFile; fileRef = 510031F61379CACB00C8DFE4 /* SecItemShim.dylib */; };
-		37B0D1861C1E499A00D40D64 /* WebProcessShim.dylib in Copy Shims */ = {isa = PBXBuildFile; fileRef = CDC3830617211799008A2FC3 /* WebProcessShim.dylib */; };
 		37B47E2D1D64DB76005F4EFF /* objcSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 37B47E2C1D64DB76005F4EFF /* objcSPI.h */; };
 		37B5045219EEF31300CE2CF8 /* WKErrorPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 37B5045119EEF31300CE2CF8 /* WKErrorPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37BEC4DD1948FC6A008B4286 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C79A100E7FC50078DEBC /* WebCore.framework */; };
@@ -2245,13 +2244,6 @@
 			remoteGlobalIDString = 510031EA1379CACB00C8DFE4;
 			remoteInfo = SecItemShim;
 		};
-		37B1D0171C1E421100D67FE9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CDC382FB17211799008A2FC3;
-			remoteInfo = WebProcessShim;
-		};
 		37F7407812721F740093869B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -2319,7 +2311,6 @@
 			files = (
 				37B0D1841C1E499A00D40D64 /* PluginProcessShim.dylib in Copy Shims */,
 				37B0D1851C1E499A00D40D64 /* SecItemShim.dylib in Copy Shims */,
-				37B0D1861C1E499A00D40D64 /* WebProcessShim.dylib in Copy Shims */,
 			);
 			name = "Copy Shims";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4812,13 +4803,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CDC382FF17211799008A2FC3 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -4834,7 +4818,6 @@
 				1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */,
 				510031F61379CACB00C8DFE4 /* SecItemShim.dylib */,
 				8DC2EF5B0486A6940098B216 /* WebKit.framework */,
-				CDC3830617211799008A2FC3 /* WebProcessShim.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -9803,13 +9786,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CDC382FC17211799008A2FC3 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -9916,7 +9892,6 @@
 				37F7407912721F740093869B /* PBXTargetDependency */,
 				37B1D0141C1E421100D67FE9 /* PBXTargetDependency */,
 				37B1D0161C1E421100D67FE9 /* PBXTargetDependency */,
-				37B1D0181C1E421100D67FE9 /* PBXTargetDependency */,
 			);
 			name = WebKit;
 			productInstallPath = "$(HOME)/Library/Frameworks";
@@ -9996,23 +9971,6 @@
 			productReference = BC82841F16B4FDF600A278FE /* com.apple.WebKit.Plugin.64.xpc */;
 			productType = "com.apple.product-type.xpc-service";
 		};
-		CDC382FB17211799008A2FC3 /* WebProcessShim */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CDC3830217211799008A2FC3 /* Build configuration list for PBXNativeTarget "WebProcessShim" */;
-			buildPhases = (
-				CDC382FC17211799008A2FC3 /* Headers */,
-				CDC382FD17211799008A2FC3 /* Sources */,
-				CDC382FF17211799008A2FC3 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = WebProcessShim;
-			productName = PluginProcessShim;
-			productReference = CDC3830617211799008A2FC3 /* WebProcessShim.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -10043,7 +10001,6 @@
 				C0CE72851247E66800BC0EC4 /* Derived Sources */,
 				1AC25FAF12A48EA700BD2671 /* PluginProcessShim */,
 				510031EA1379CACB00C8DFE4 /* SecItemShim */,
-				CDC382FB17211799008A2FC3 /* WebProcessShim */,
 				BC3DE46515A91763008D26FC /* WebContent */,
 				372EBB382017E64300085064 /* WebContent.Development */,
 				BC8283B016B4BF7700A278FE /* Networking */,
@@ -11533,11 +11490,6 @@
 			target = 510031EA1379CACB00C8DFE4 /* SecItemShim */;
 			targetProxy = 37B1D0151C1E421100D67FE9 /* PBXContainerItemProxy */;
 		};
-		37B1D0181C1E421100D67FE9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CDC382FB17211799008A2FC3 /* WebProcessShim */;
-			targetProxy = 37B1D0171C1E421100D67FE9 /* PBXContainerItemProxy */;
-		};
 		37F7407912721F740093869B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C0CE72851247E66800BC0EC4 /* Derived Sources */;
@@ -11883,30 +11835,6 @@
 			};
 			name = Production;
 		};
-		CDC3830317211799008A2FC3 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A1EDD2DD1884B9E300BBFE98 /* WebProcessShim.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = WebProcessShim;
-			};
-			name = Debug;
-		};
-		CDC3830417211799008A2FC3 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A1EDD2DD1884B9E300BBFE98 /* WebProcessShim.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = WebProcessShim;
-			};
-			name = Release;
-		};
-		CDC3830517211799008A2FC3 /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A1EDD2DD1884B9E300BBFE98 /* WebProcessShim.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = WebProcessShim;
-			};
-			name = Production;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -12036,16 +11964,6 @@
 				C0CE72861247E66800BC0EC4 /* Debug */,
 				C0CE72871247E66800BC0EC4 /* Release */,
 				C0CE72881247E66800BC0EC4 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		CDC3830217211799008A2FC3 /* Build configuration list for PBXNativeTarget "WebProcessShim" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CDC3830317211799008A2FC3 /* Debug */,
-				CDC3830417211799008A2FC3 /* Release */,
-				CDC3830517211799008A2FC3 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
