@@ -1,3 +1,13 @@
+2018-05-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] remove WK1 support
+        https://bugs.webkit.org/show_bug.cgi?id=185136
+
+        Reviewed by Youenn Fablet.
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:decidePolicyForUserMediaRequestFromOrigin:listener:]): Deleted.
+
 2018-05-01  Chris Dumez  <cdumez@apple.com>
 
         [WKTR] Move navigation policy for response decision from InjectedBundle to UIProcess

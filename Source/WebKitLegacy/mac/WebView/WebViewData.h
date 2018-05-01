@@ -77,9 +77,6 @@ class PlaybackSessionModelMediaElement;
 #if ENABLE(FULLSCREEN_API)
 @class WebFullScreenController;
 #endif
-#if ENABLE(MEDIA_STREAM)
-@protocol WebUserMediaClient;
-#endif
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(IOS)
 @class WebIndicateLayer;
 #endif
@@ -355,10 +352,6 @@ private:
     id<WebGeolocationProvider> _geolocationProvider;
     id<WebDeviceOrientationProvider> m_deviceOrientationProvider;
     id<WebNotificationProvider> _notificationProvider;
-
-#if ENABLE(MEDIA_STREAM)
-    id<WebUserMediaClient> m_userMediaClient;
-#endif
 
 #if ENABLE(SERVICE_CONTROLS)
     std::unique_ptr<WebSelectionServiceController> _selectionServiceController;

@@ -356,12 +356,6 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     }
 }
 
-- (void)webView:(WebView *)webView decidePolicyForUserMediaRequestFromOrigin:(WebSecurityOrigin *)origin listener:(id<WebAllowDenyPolicyListener>)listener
-{
-    // Allow all user media requests for now.
-    [listener allow];
-}
-
 - (NSData *)webCryptoMasterKeyForWebView:(WebView *)sender
 {
     // Any 128 bit key would do, all we need for testing is to implement the callback.

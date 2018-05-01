@@ -1,3 +1,20 @@
+2018-05-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] remove WK1 support
+        https://bugs.webkit.org/show_bug.cgi?id=185136
+
+        Reviewed by Youenn Fablet.
+
+        * WebCoreSupport/WebUserMediaClient.h: Removed.
+        * WebCoreSupport/WebUserMediaClient.mm: Removed.
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView _preferencesChanged:]):
+        (-[WebView _setUserMediaClient:]): Deleted.
+        (-[WebView _userMediaClient]): Deleted.
+        * WebView/WebViewData.h:
+        * WebView/WebViewPrivate.h:
+
 2018-05-01  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         WebAssembly: add support for stream APIs - JavaScript API

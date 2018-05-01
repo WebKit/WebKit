@@ -11,8 +11,6 @@
 		065AD5A40B0C32C7005A2B1D /* WebContextMenuClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 065AD5A20B0C32C7005A2B1D /* WebContextMenuClient.mm */; };
 		06693DDC0BFBA85200216072 /* WebInspectorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 06693DDA0BFBA85200216072 /* WebInspectorClient.h */; };
 		06693DDD0BFBA85200216072 /* WebInspectorClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06693DDB0BFBA85200216072 /* WebInspectorClient.mm */; };
-		070F549B17F1E42B00169E04 /* WebUserMediaClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 070F549917F1E42B00169E04 /* WebUserMediaClient.h */; };
-		070F549C17F1E42B00169E04 /* WebUserMediaClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 070F549A17F1E42B00169E04 /* WebUserMediaClient.mm */; };
 		072E5F451ABF88750003B164 /* WebMediaPlaybackTargetPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 072E5F431ABF88750003B164 /* WebMediaPlaybackTargetPicker.h */; };
 		072E5F461ABF88750003B164 /* WebMediaPlaybackTargetPicker.mm in Sources */ = {isa = PBXBuildFile; fileRef = 072E5F441ABF88750003B164 /* WebMediaPlaybackTargetPicker.mm */; };
 		1430C12C1B2C5DF700DEA01D /* WebViewGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1430C12A1B2C5DF700DEA01D /* WebViewGroup.cpp */; };
@@ -806,8 +804,6 @@
 		065AD5A20B0C32C7005A2B1D /* WebContextMenuClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClient.mm; sourceTree = "<group>"; };
 		06693DDA0BFBA85200216072 /* WebInspectorClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebInspectorClient.h; sourceTree = "<group>"; };
 		06693DDB0BFBA85200216072 /* WebInspectorClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorClient.mm; sourceTree = "<group>"; };
-		070F549917F1E42B00169E04 /* WebUserMediaClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUserMediaClient.h; sourceTree = "<group>"; };
-		070F549A17F1E42B00169E04 /* WebUserMediaClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebUserMediaClient.mm; sourceTree = "<group>"; };
 		072E5F431ABF88750003B164 /* WebMediaPlaybackTargetPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMediaPlaybackTargetPicker.h; sourceTree = "<group>"; };
 		072E5F441ABF88750003B164 /* WebMediaPlaybackTargetPicker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebMediaPlaybackTargetPicker.mm; sourceTree = "<group>"; };
 		1430C12A1B2C5DF700DEA01D /* WebViewGroup.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = WebViewGroup.cpp; path = WebCoreSupport/WebViewGroup.cpp; sourceTree = SOURCE_ROOT; };
@@ -2618,8 +2614,6 @@
 				A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */,
 				2DD632C019E5D1F0002E9C7B /* WebSelectionServiceController.h */,
 				2DD632C119E5D1F0002E9C7B /* WebSelectionServiceController.mm */,
-				070F549917F1E42B00169E04 /* WebUserMediaClient.h */,
-				070F549A17F1E42B00169E04 /* WebUserMediaClient.mm */,
 				4618DFF61DEF760A0033C3AA /* WebValidationMessageClient.h */,
 				4618DFF71DEF760A0033C3AA /* WebValidationMessageClient.mm */,
 				1430C12A1B2C5DF700DEA01D /* WebViewGroup.cpp */,
@@ -3175,7 +3169,6 @@
 				A10C1D3D18202FC50036883A /* WebUIKitSupport.h in Headers */,
 				939810150824BF01008DF038 /* WebURLsWithTitles.h in Headers */,
 				C0C5B3EE1177A4A0002B0AEF /* WebUserContentURLPattern.h in Headers */,
-				070F549B17F1E42B00169E04 /* WebUserMediaClient.h in Headers */,
 				4618DFF81DEF760A0033C3AA /* WebValidationMessageClient.h in Headers */,
 				939810700824BF01008DF038 /* WebView.h in Headers */,
 				BC2E464D0FD8A96800A9D9DE /* WebViewData.h in Headers */,
@@ -3689,7 +3682,6 @@
 				A10C1D3E18202FC50036883A /* WebUIKitSupport.mm in Sources */,
 				939810BE0824BF01008DF038 /* WebURLsWithTitles.m in Sources */,
 				C0C5B3EF1177A4A0002B0AEF /* WebUserContentURLPattern.mm in Sources */,
-				070F549C17F1E42B00169E04 /* WebUserMediaClient.mm in Sources */,
 				4618DFF91DEF760A0033C3AA /* WebValidationMessageClient.mm in Sources */,
 				C1D81128202CD80000EE74F9 /* WebVideoFullscreenController.mm in Sources */,
 				C1D8112B202CDCC400EE74F9 /* WebVideoFullscreenHUDWindowController.mm in Sources */,

@@ -75,7 +75,6 @@
 #endif
 @protocol WebDeviceOrientationProvider;
 @protocol WebFormDelegate;
-@protocol WebUserMediaClient;
 
 #if !TARGET_OS_IPHONE
 extern NSString *_WebCanGoBackKey;
@@ -1008,11 +1007,6 @@ typedef struct WebEdgeInsets {
 @end
 
 #endif
-
-@interface WebView (WebViewUserMedia)
-- (void)_setUserMediaClient:(id<WebUserMediaClient>)userMediaClient;
-- (id<WebUserMediaClient>)_userMediaClient;
-@end
 
 @protocol WebGeolocationProvider <NSObject>
 - (void)registerWebView:(WebView *)webView;
