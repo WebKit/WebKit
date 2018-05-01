@@ -1,3 +1,12 @@
+2018-05-01  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas tab: determine hasVisibleEffect for all actions immediately after recording is added
+        https://bugs.webkit.org/show_bug.cgi?id=182995
+
+        Reviewed by Matt Baker.
+
+        * inspector/canvas/resources/recording-utilities.js:
+
 2018-05-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, correct a typo in the iOS TestExpectation file.

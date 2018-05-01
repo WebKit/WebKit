@@ -71,3 +71,7 @@
 .sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.folder-icon > .status {
     line-height: 16px;
 }
+
+.sidebar > .panel.navigation.canvas > .content > .recording-content > .indeterminate-progress-spinner {
+    margin: 16px auto;
+}

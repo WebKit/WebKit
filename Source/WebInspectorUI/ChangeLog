@@ -1,3 +1,77 @@
+2018-05-01  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas tab: determine hasVisibleEffect for all actions immediately after recording is added
+        https://bugs.webkit.org/show_bug.cgi?id=182995
+
+        Reviewed by Matt Baker.
+
+        Previously, we'd swizzle the entirety of the `WI.Recording` in one, which would usually
+        freeze the UI, especially for larger recordings. This patch uses `WI.YieldableTask` to split
+        the work and allow the rest of the UI to still be usable while `WI.Recording` are processing.
+        Additionally, since we no longer have to worry about hangs, we can do more work upfront,
+        such as calculating `hasVisibleEffect` and the current state of 2D canvases.
+
+        These changes require that all uses of `WI.Recording` call `process()` before attempting to
+        use any `frames`/`actions`/`initialState`, as they will have their original payload values
+        and will have not been swizzled or applied.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording):
+        (WI.Recording.prototype.process):
+        (WI.Recording.prototype.createContext): Added.
+        (WI.Recording.prototype.async yieldableTaskWillProcessItem): Added.
+        (WI.Recording.prototype.async yieldableTaskDidFinish): Added.
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction):
+        (WI.RecordingAction.prototype.process): Added.
+        (WI.RecordingAction.prototype.async swizzle): Added.
+        (WI.RecordingAction.prototype.apply):
+        (WI.RecordingAction.prototype.toJSON):
+        (WI.RecordingAction.prototype.set state): Deleted.
+        (WI.RecordingAction.prototype.swizzle): Deleted.
+        (WI.RecordingAction.prototype.apply.getContent): Deleted.
+        (WI.RecordingAction.prototype.async _swizzle): Deleted.
+        * UserInterface/Models/RecordingInitialStateAction.js:
+        (WI.RecordingInitialStateAction):
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel):
+        (WI.CanvasSidebarPanel.prototype.set action):
+        (WI.CanvasSidebarPanel.prototype._treeOutlineSelectionDidChange):
+        (WI.CanvasSidebarPanel.prototype._recordingChanged):
+
+        * UserInterface/Views/CanvasSidebarPanel.css:
+        (.sidebar > .panel.navigation.canvas > .content > .recording-content > .indeterminate-progress-spinner):
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement):
+        (WI.RecordingActionTreeElement.prototype.onattach):
+        (WI.RecordingActionTreeElement.prototype._handleHasVisibleEffectChanged): Deleted.
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView):
+        (WI.RecordingContentView.prototype.get navigationItems):
+        (WI.RecordingContentView.prototype.updateActionIndex):
+        (WI.RecordingContentView.prototype.initialLayout):
+        (WI.RecordingContentView.prototype._generateContentCanvas2D): Added.
+        (WI.RecordingContentView.prototype._generateContentCanvasWebGL): Added.
+        (WI.RecordingContentView.prototype._updateCanvasPath):
+        (WI.RecordingContentView.prototype._updateProcessProgress): Added.
+        (WI.RecordingContentView.prototype._handleRecordingProcessedActionSwizzle): Added.
+        (WI.RecordingContentView.prototype._handleRecordingProcessedActionApply): Added.
+        (WI.RecordingContentView.supportsCanvasPathDebugging): Deleted.
+        (WI.RecordingContentView.prototype.async _generateContentCanvas2D): Deleted.
+        (WI.RecordingContentView.prototype.async _generateContentCanvasWebGL): Deleted.
+
+        * UserInterface/Views/RecordingContentView.css:
+        (.content-view:not(.tab).recording > .preview-container):
+
+        * UserInterface/Base/ImageUtilities.js:
+        (WI.ImageUtilities.supportsCanvasPathDebugging):
+
 2018-04-26  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; fix WebInspectorUI copy resources step after r231063.

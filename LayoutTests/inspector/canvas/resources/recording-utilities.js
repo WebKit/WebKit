@@ -124,7 +124,7 @@ TestPage.registerInitializer(() => {
             InspectorTest.assert(recording.source.recordingCollection.items.has(recording), "Recording should be in the canvas' list of recordings.");
             InspectorTest.assert(recording.frames.length === frameCount, `Recording should have ${frameCount} frames.`)
 
-            return recording.actions.then(() => {
+            return Promise.all(recording.actions.map((action) => action.swizzle(recording))).then(() => {
                 logRecording(recording, type);
             });
         }).then(resolve, reject);

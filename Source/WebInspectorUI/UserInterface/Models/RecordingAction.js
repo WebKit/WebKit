@@ -41,12 +41,12 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         this._snapshot = "";
 
         this._valid = true;
-        this._swizzledPromise = null;
-
         this._isFunction = false;
         this._isGetter = false;
         this._isVisual = false;
         this._hasVisibleEffect = undefined;
+
+        this._state = null;
         this._stateModifiers = new Set;
     }
 
@@ -97,31 +97,19 @@ WI.RecordingAction = class RecordingAction extends WI.Object
     get isGetter() { return this._isGetter; }
     get isVisual() { return this._isVisual; }
     get hasVisibleEffect() { return this._hasVisibleEffect; }
+    get state() { return this._state; }
     get stateModifiers() { return this._stateModifiers; }
 
-    get state() { return this._state; }
-    set state(state) { this._state = state; }
-
-    markInvalid()
+    process(recording, context)
     {
-        let wasValid = this._valid;
-        this._valid = false;
-
-        if (wasValid)
-            this.dispatchEventToListeners(WI.RecordingAction.Event.ValidityChanged);
-    }
-
-    swizzle(recording)
-    {
-        if (!this._swizzledPromise)
-            this._swizzledPromise = this._swizzle(recording);
-        return this._swizzledPromise;
-    }
-
-    apply(context, options = {})
-    {
-        if (!this.valid)
+        if (recording.type === WI.Recording.Type.CanvasWebGL) {
+            // We add each RecordingAction to the list of visualActionIndexes after it is processed.
+            if (this._valid && this._isVisual) {
+                let contentBefore = recording.visualActionIndexes.length ? recording.visualActionIndexes.lastValue.snapshot : recording.initialState.content;
+                this._hasVisibleEffect = this._snapshot !== contentBefore;
+            }
             return;
+        }
 
         function getContent() {
             if (context instanceof CanvasRenderingContext2D) {
@@ -143,45 +131,56 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         }
 
         let contentBefore = null;
-        let shouldCheckForChange = this._isVisual && this._hasVisibleEffect === undefined;
-        if (shouldCheckForChange)
+        if (this._valid && this._isVisual)
             contentBefore = getContent();
 
-        try {
-            let name = options.nameOverride || this._name;
-            if (this.isFunction)
-                context[name](...this._parameters);
-            else {
-                if (this.isGetter)
-                    context[name];
-                else
-                    context[name] = this._parameters[0];
-            }
+        this.apply(context);
 
-            if (shouldCheckForChange) {
-                this._hasVisibleEffect = !Array.shallowEqual(contentBefore, getContent());
-                if (!this._hasVisibleEffect)
-                    this.dispatchEventToListeners(WI.RecordingAction.Event.HasVisibleEffectChanged);
-            }
-        } catch {
-            this.markInvalid();
+        if (this._valid && this._isVisual)
+            this._hasVisibleEffect = !Array.shallowEqual(contentBefore, getContent());
 
-            WI.Recording.synthesizeError(WI.UIString("“%s” threw an error.").format(this._name));
+        if (recording.type === WI.Recording.Type.Canvas2D) {
+            let matrix = context.getTransform();
+
+            this._state = {
+                currentX: context.currentX,
+                currentY: context.currentY,
+                direction: context.direction,
+                fillStyle: context.fillStyle,
+                font: context.font,
+                globalAlpha: context.globalAlpha,
+                globalCompositeOperation: context.globalCompositeOperation,
+                imageSmoothingEnabled: context.imageSmoothingEnabled,
+                imageSmoothingQuality: context.imageSmoothingQuality,
+                lineCap: context.lineCap,
+                lineDash: context.getLineDash(),
+                lineDashOffset: context.lineDashOffset,
+                lineJoin: context.lineJoin,
+                lineWidth: context.lineWidth,
+                miterLimit: context.miterLimit,
+                shadowBlur: context.shadowBlur,
+                shadowColor: context.shadowColor,
+                shadowOffsetX: context.shadowOffsetX,
+                shadowOffsetY: context.shadowOffsetY,
+                strokeStyle: context.strokeStyle,
+                textAlign: context.textAlign,
+                textBaseline: context.textBaseline,
+                transform: [matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f],
+                webkitImageSmoothingEnabled: context.webkitImageSmoothingEnabled,
+                webkitLineDash: context.webkitLineDash,
+                webkitLineDashOffset: context.webkitLineDashOffset,
+            };
+
+            if (WI.ImageUtilities.supportsCanvasPathDebugging())
+                this._state.setPath = [context.getPath()];
         }
     }
 
-    toJSON()
+    async swizzle(recording)
     {
-        let json = [this._payloadName, this._payloadParameters, this._payloadSwizzleTypes, this._payloadTrace];
-        if (this._payloadSnapshot >= 0)
-            json.push(this._payloadSnapshot);
-        return json;
-    }
+        if (!this._valid)
+            return;
 
-    // Private
-
-    async _swizzle(recording)
-    {
         let swizzleParameter = (item, index) => {
             return recording.swizzle(item, this._payloadSwizzleTypes[index]);
         };
@@ -215,6 +214,30 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         if (this._payloadSnapshot >= 0)
             this._snapshot = snapshot;
 
+        this._isFunction = WI.RecordingAction.isFunctionForType(recording.type, this._name);
+        this._isGetter = !this._isFunction && !this._parameters.length;
+
+        let visualNames = WI.RecordingAction._visualNames[recording.type];
+        this._isVisual = visualNames ? visualNames.has(this._name) : false;
+
+        if (this._valid) {
+            let prototype = null;
+            if (recording.type === WI.Recording.Type.Canvas2D)
+                prototype = CanvasRenderingContext2D.prototype;
+            else if (recording.type === WI.Recording.Type.CanvasWebGL)
+                prototype = WebGLRenderingContext.prototype;
+
+            if (prototype) {
+                let validName = name in prototype;
+                let validFunction = !this._isFunction || typeof prototype[name] === "function";
+                if (!validName || !validFunction) {
+                    this.markInvalid();
+
+                    WI.Recording.synthesizeError(WI.UIString("“%s” is invalid.").format(name));
+                }
+            }
+        }
+
         if (this._valid) {
             let parametersSpecified = this._parameters.every((parameter) => parameter !== undefined);
             let parametersCanBeSwizzled = this._payloadSwizzleTypes.every((swizzleType) => swizzleType !== WI.Recording.Swizzle.None);
@@ -222,19 +245,47 @@ WI.RecordingAction = class RecordingAction extends WI.Object
                 this.markInvalid();
         }
 
-        this._isFunction = WI.RecordingAction.isFunctionForType(recording.type, this._name);
-        this._isGetter = !this._isFunction && !this._parameters.length;
-
-        let visualNames = WI.RecordingAction._visualNames[recording.type];
-        this._isVisual = visualNames ? visualNames.has(this._name) : false;
-
-        this._stateModifiers = new Set([this._name]);
-        let stateModifiers = WI.RecordingAction._stateModifiers[recording.type];
-        if (stateModifiers) {
-            let modifiedByAction = stateModifiers[this._name] || [];
-            for (let item of modifiedByAction)
-                this._stateModifiers.add(item);
+        if (this._valid) {
+            let stateModifiers = WI.RecordingAction._stateModifiers[recording.type];
+            if (stateModifiers) {
+                this._stateModifiers.add(this._name);
+                let modifiedByAction = stateModifiers[this._name] || [];
+                for (let item of modifiedByAction)
+                    this._stateModifiers.add(item);
+            }
         }
+    }
+
+    apply(context, options = {})
+    {
+        if (!this.valid)
+            return;
+
+        try {
+            let name = options.nameOverride || this._name;
+            if (this.isFunction)
+                context[name](...this._parameters);
+            else {
+                if (this.isGetter)
+                    context[name];
+                else
+                    context[name] = this._parameters[0];
+            }
+        } catch {
+            this.markInvalid();
+
+            WI.Recording.synthesizeError(WI.UIString("“%s” threw an error.").format(this._name));
+        }
+    }
+
+    markInvalid()
+    {
+        if (!this._valid)
+            return;
+
+        this._valid = false;
+
+        this.dispatchEventToListeners(WI.RecordingAction.Event.ValidityChanged);
     }
 
     getColorParameters()
@@ -277,6 +328,14 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
         return [];
     }
+
+    toJSON()
+    {
+        let json = [this._payloadName, this._payloadParameters, this._payloadSwizzleTypes, this._payloadTrace];
+        if (this._payloadSnapshot >= 0)
+            json.push(this._payloadSnapshot);
+        return json;
+    }
 };
 
 WI.RecordingAction.Event = {
@@ -310,6 +369,7 @@ WI.RecordingAction._functionNames = {
         "fillText",
         "getImageData",
         "getLineDash",
+        "getPath",
         "isPointInPath",
         "isPointInPath",
         "isPointInStroke",
@@ -333,6 +393,7 @@ WI.RecordingAction._functionNames = {
         "setLineJoin",
         "setLineWidth",
         "setMiterLimit",
+        "setPath",
         "setShadow",
         "setStrokeColor",
         "setTransform",

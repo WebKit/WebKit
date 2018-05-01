@@ -52,20 +52,23 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         this._recordingNavigationBar.element.classList.add("hidden");
         this.contentView.addSubview(this._recordingNavigationBar);
 
-        let recordingContent = this.contentView.element.appendChild(document.createElement("div"));
-        recordingContent.className = "recording-content";
+        this._recordingContentContainer = this.contentView.element.appendChild(document.createElement("div"));
+        this._recordingContentContainer.className = "recording-content";
 
         this._recordingTreeOutline = this.contentTreeOutline;
-        recordingContent.appendChild(this._recordingTreeOutline.element);
+        this._recordingContentContainer.appendChild(this._recordingTreeOutline.element);
 
         this._recordingTreeOutline.customIndent = true;
-        this._recordingTreeOutline.registerScrollVirtualizer(recordingContent, 20);
+        this._recordingTreeOutline.registerScrollVirtualizer(this._recordingContentContainer, 20);
 
         this._canvasTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeOutlineSelectionDidChange, this);
         this._recordingTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeOutlineSelectionDidChange, this);
 
         WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStarted, this._updateRecordNavigationItem, this);
         WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStopped, this._updateRecordNavigationItem, this);
+
+        this._recordingProcessPromise = null;
+        this._recordingProcessSpinner = null;
     }
 
     // Public
@@ -108,7 +111,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
     set action(action)
     {
-        if (!this._recording)
+        if (!this._recording || this._recordingProcessPromise)
             return;
 
         let selectedTreeElement = this._recordingTreeOutline.selectedTreeElement;
@@ -286,7 +289,8 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         console.assert(this._recording, "Missing recording for action tree element.", treeElement);
         this._recording[WI.CanvasSidebarPanel.SelectedActionSymbol] = treeElement.representedObject;
 
-        let recordingContentView = this.contentBrowser.showContentViewForRepresentedObject(this._recording);
+        const onlyExisting = true;
+        let recordingContentView = this.contentBrowser.contentViewForRepresentedObject(this._recording, onlyExisting);
         if (recordingContentView)
             recordingContentView.updateActionIndex(treeElement.index);
     }
@@ -327,16 +331,28 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         if (!this._recording)
             return;
 
+        if (!this._recordingProcessSpinner) {
+            this._recordingProcessSpinner = new WI.IndeterminateProgressSpinner;
+            this._recordingContentContainer.appendChild(this._recordingProcessSpinner.element);
+        }
+
+        this.contentBrowser.showContentViewForRepresentedObject(this._recording);
+
         let recording = this._recording;
 
-        this._recording.actions.then((actions) => {
-            if (recording !== this._recording)
+        let promise = this._recording.process().then(() => {
+            if (recording !== this._recording || promise !== this._recordingProcessPromise)
                 return;
 
-            this._recordingTreeOutline.element.dataset.indent = Number.countDigits(actions.length);
+            if (this._recordingProcessSpinner) {
+                this._recordingProcessSpinner.element.remove();
+                this._recordingProcessSpinner = null;
+            }
 
-            if (actions[0] instanceof WI.RecordingInitialStateAction)
-                this._recordingTreeOutline.appendChild(new WI.RecordingActionTreeElement(actions[0], 0, this._recording.type));
+            this._recordingTreeOutline.element.dataset.indent = Number.countDigits(this._recording.actions.length);
+
+            if (this._recording.actions[0] instanceof WI.RecordingInitialStateAction)
+                this._recordingTreeOutline.appendChild(new WI.RecordingActionTreeElement(this._recording.actions[0], 0, this._recording.type));
 
             let cumulativeActionIndex = 1;
             this._recording.frames.forEach((frame, frameIndex) => {
@@ -366,8 +382,12 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
                 scopeBarItem.selected = true;
             }
 
-            this.action = this._recording[WI.CanvasSidebarPanel.SelectedActionSymbol] || actions[0];
+            this.action = this._recording[WI.CanvasSidebarPanel.SelectedActionSymbol] || this._recording.actions[0];
+
+            this._recordingProcessPromise = null;
         });
+
+        this._recordingProcessPromise = promise;
     }
 
     _updateRecordNavigationItem()

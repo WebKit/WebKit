@@ -39,7 +39,6 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         this._copyText = copyText;
 
         this.representedObject.addEventListener(WI.RecordingAction.Event.ValidityChanged, this._handleValidityChanged, this);
-        this.representedObject.addEventListener(WI.RecordingAction.Event.HasVisibleEffectChanged, this._handleHasVisibleEffectChanged, this);
     }
 
     // Static
@@ -399,6 +398,13 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         super.onattach();
 
         this.element.dataset.index = this._index.toLocaleString();
+
+        if (this.representedObject.valid && this.representedObject.isVisual && !this.representedObject.hasVisibleEffect) {
+            this.addClassName("no-visible-effect");
+
+            const title = WI.UIString("This action causes no visual change");
+            this.status = WI.ImageUtilities.useSVGSymbol("Images/Warning.svg", "warning", title);
+        }
     }
 
     populateContextMenu(contextMenu, event)
@@ -429,14 +435,6 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
     _handleValidityChanged(event)
     {
         this.addClassName("invalid");
-    }
-
-    _handleHasVisibleEffectChanged(event)
-    {
-        this.addClassName("no-visible-effect");
-
-        this.status = WI.ImageUtilities.useSVGSymbol("Images/Warning.svg", "warning");
-        this.status.title = WI.UIString("This action causes no visual change");
     }
 };
 

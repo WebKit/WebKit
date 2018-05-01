@@ -126,6 +126,14 @@ WI.ImageUtilities = class ImageUtilities {
         });
         return image;
     }
+
+    static supportsCanvasPathDebugging()
+    {
+        return "getPath" in CanvasRenderingContext2D.prototype
+            && "setPath" in CanvasRenderingContext2D.prototype
+            && "currentX" in CanvasRenderingContext2D.prototype
+            && "currentY" in CanvasRenderingContext2D.prototype;
+    }
 };
 
 WI.ImageUtilities._scratchContext2D = null;
