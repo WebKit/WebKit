@@ -1,3 +1,12 @@
+2018-05-01  Jer Noble  <jer.noble@apple.com>
+
+        Production build error in Migrate Header phase when WK_ALTERNATE_FRAMEWORKS_DIR is set to non-empty value
+        https://bugs.webkit.org/show_bug.cgi?id=185171
+
+        Reviewed by Timothy Hatcher.
+
+        * Configurations/BaseTarget.xcconfig:
+
 2018-05-01  Per Arne Vollan  <pvollan@apple.com>
 
         Use correct runloop type in the WebContent process.
