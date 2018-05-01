@@ -1,3 +1,14 @@
+2018-05-01  Per Arne Vollan  <pvollan@apple.com>
+
+        Use correct runloop type in the WebContent process.
+        https://bugs.webkit.org/show_bug.cgi?id=185140
+
+        Reviewed by Brent Fulgham.
+
+        Use WK_MACOS_* machinery to determine runloop type for the WebContent process.
+
+        * Configurations/WebContentService.xcconfig:
+
 2018-05-01  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         WebAssembly: add support for stream APIs - JavaScript API
