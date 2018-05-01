@@ -1,3 +1,10 @@
+2018-05-01  Leo Balter  <leonardo.balter@gmail.com>
+
+        Auto save the results for Test262
+        https://bugs.webkit.org/show_bug.cgi?id=184926
+
+        Reviewed by Michael Saboff.
+
 2018-05-01  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         WebAssembly: add support for stream APIs - JavaScript API

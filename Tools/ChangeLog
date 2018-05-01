@@ -1,3 +1,18 @@
+2018-05-01  Leo Balter  <leonardo.balter@gmail.com>
+
+        Auto save the results for Test262
+        https://bugs.webkit.org/show_bug.cgi?id=184926
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/test262/Runner.pm:
+        (processCLI):
+        (main):
+        (parseError):
+        (processResult):
+        (summarizeResults):
+        * Scripts/test262/config.yaml: Renamed from Tools/Scripts/test262/test262-config.yaml.
+
 2018-05-01  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: SIGKILL right after SIGTERM causes orphaned processes with 'xcrun simctl spawn'

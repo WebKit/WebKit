@@ -785,9 +785,6 @@ test/built-ins/ArrayBuffer/prototype/slice/start-exceeds-length.js:
 test/built-ins/ArrayIteratorPrototype/next/detach-typedarray-in-progress.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/ArrayIteratorPrototype/next/non-own-slots.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/AsyncGeneratorFunction/has-instance.js:
   default: 'SyntaxError: Unexpected end of script'
   strict mode: 'SyntaxError: Unexpected end of script'
@@ -821,255 +818,6 @@ test/built-ins/AsyncGeneratorFunction/invoked-as-function-no-arguments.js:
 test/built-ins/AsyncGeneratorFunction/invoked-as-function-single-argument.js:
   default: "SyntaxError: Unexpected token '*'. Expected a parenthesis for argument list."
   strict mode: "SyntaxError: Unexpected token '*'. Expected a parenthesis for argument list."
-test/built-ins/Atomics/Symbol.toStringTag.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/add/descriptor.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/add/length.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/add/name.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/add/nonshared-int-views.js:
-  default: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-  strict mode: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-test/built-ins/Atomics/add/shared-nonint-views.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/and/descriptor.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/and/length.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/and/name.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/and/nonshared-int-views.js:
-  default: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-  strict mode: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-test/built-ins/Atomics/and/shared-nonint-views.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/compareExchange/descriptor.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/compareExchange/length.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/compareExchange/name.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/compareExchange/nonshared-int-views.js:
-  default: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-  strict mode: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-test/built-ins/Atomics/compareExchange/shared-nonint-views.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/exchange/descriptor.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/exchange/length.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/exchange/name.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/exchange/nonshared-int-views.js:
-  default: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-  strict mode: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-test/built-ins/Atomics/exchange/shared-nonint-views.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/isLockFree/corner-cases.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/isLockFree/descriptor.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/isLockFree/length.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/isLockFree/name.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/isLockFree/value.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/load/descriptor.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/load/length.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/load/name.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/load/nonshared-int-views.js:
-  default: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-  strict mode: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-test/built-ins/Atomics/load/shared-nonint-views.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/or/descriptor.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/or/length.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/or/name.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/or/nonshared-int-views.js:
-  default: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-  strict mode: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-test/built-ins/Atomics/or/shared-nonint-views.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/prop-desc.js:
-  default: 'Test262Error: no [[Call]] Expected SameValue(Â«undefinedÂ», Â«objectÂ») to be true'
-  strict mode: 'Test262Error: no [[Call]] Expected SameValue(Â«undefinedÂ», Â«objectÂ») to be true'
-test/built-ins/Atomics/proto.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/store/descriptor.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/store/length.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/store/name.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/store/nonshared-int-views.js:
-  default: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-  strict mode: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-test/built-ins/Atomics/store/shared-nonint-views.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/sub/descriptor.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/sub/length.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/sub/name.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/sub/nonshared-int-views.js:
-  default: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-  strict mode: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-test/built-ins/Atomics/sub/shared-nonint-views.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wait/descriptor.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/wait/did-timeout.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wait/good-views.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wait/length.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/wait/name.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/wait/negative-timeout.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wait/no-spurious-wakeup.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wait/non-int32-typedarray-throws.js:
-  default: 'Test262Error: Float64Array Expected a TypeError but got a ReferenceError'
-  strict mode: 'Test262Error: Float64Array Expected a TypeError but got a ReferenceError'
-test/built-ins/Atomics/wait/nonshared-bufferdata-throws.js:
-  default: 'Test262Error: Expected a TypeError but got a ReferenceError'
-  strict mode: 'Test262Error: Expected a TypeError but got a ReferenceError'
-test/built-ins/Atomics/wait/not-a-typedarray-throws.js:
-  default: 'Test262Error: Expected a TypeError but got a ReferenceError'
-  strict mode: 'Test262Error: Expected a TypeError but got a ReferenceError'
-test/built-ins/Atomics/wait/not-an-object-throws.js:
-  default: 'Test262Error: null Expected a TypeError but got a ReferenceError'
-  strict mode: 'Test262Error: null Expected a TypeError but got a ReferenceError'
-test/built-ins/Atomics/wait/null-bufferdata-throws.js:
-  default: 'Test262Error: Expected a TypeError but got a ReferenceError'
-  strict mode: 'Test262Error: Expected a TypeError but got a ReferenceError'
-test/built-ins/Atomics/wait/null-for-timeout.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wait/object-for-timeout.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wait/poisoned-object-for-timeout-throws.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wait/was-woken.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wake/counts.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wake/descriptor.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/wake/length.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/wake/name.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/wake/nonshared-int-views.js:
-  default: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-  strict mode: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-test/built-ins/Atomics/wake/shared-nonint-views.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wake/wake-all-on-loc.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wake/wake-all.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wake/wake-in-order.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wake/wake-nan.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wake/wake-negative.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wake/wake-one.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wake/wake-two.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/wake/wake-zero.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
-test/built-ins/Atomics/xor/descriptor.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/xor/length.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/xor/name.js:
-  default: "ReferenceError: Can't find variable: Atomics"
-  strict mode: "ReferenceError: Can't find variable: Atomics"
-test/built-ins/Atomics/xor/nonshared-int-views.js:
-  default: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-  strict mode: 'Test262Error: Expected a TypeError but got a ReferenceError (Testing with Int8Array.)'
-test/built-ins/Atomics/xor/shared-nonint-views.js:
-  default: "ReferenceError: Can't find variable: SharedArrayBuffer"
-  strict mode: "ReferenceError: Can't find variable: SharedArrayBuffer"
 test/built-ins/Boolean/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«falseÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«falseÂ», Â«falseÂ») to be true'
@@ -1649,9 +1397,6 @@ test/built-ins/String/proto-from-ctor-realm.js:
 test/built-ins/String/prototype/trim/u180e.js:
   default: 'Test262Error: Expected SameValue(Â«_Â», Â«_á Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«_Â», Â«_á Â») to be true'
-test/built-ins/StringIteratorPrototype/next/next-missing-internal-slots.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/ThrowTypeError/extensible.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
@@ -1957,8 +1702,8 @@ test/intl402/DateTimeFormat/prototype/format/time-clip-near-time-boundaries.js:
   default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/DateTimeFormat/prototype/format/time-clip-to-integer.js:
-  default: 'Test262Error: format(-0.9) Expected SameValue(Â«6:59:59 PMÂ», Â«7:00:00 PMÂ») to be true'
-  strict mode: 'Test262Error: format(-0.9) Expected SameValue(Â«6:59:59 PMÂ», Â«7:00:00 PMÂ») to be true'
+  default: 'Test262Error: format(-0.9) Expected SameValue(Â«8:59:59 PMÂ», Â«9:00:00 PMÂ») to be true'
+  strict mode: 'Test262Error: format(-0.9) Expected SameValue(Â«8:59:59 PMÂ», Â«9:00:00 PMÂ») to be true'
 test/intl402/DateTimeFormat/prototype/formatToParts/length.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
@@ -1966,8 +1711,8 @@ test/intl402/DateTimeFormat/prototype/formatToParts/time-clip-near-time-boundari
   default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/DateTimeFormat/prototype/formatToParts/time-clip-to-integer.js:
-  default: 'Test262Error: formatToParts(-0.9) Expected SameValue(Â«6:59:59 PMÂ», Â«7:00:00 PMÂ») to be true'
-  strict mode: 'Test262Error: formatToParts(-0.9) Expected SameValue(Â«6:59:59 PMÂ», Â«7:00:00 PMÂ») to be true'
+  default: 'Test262Error: formatToParts(-0.9) Expected SameValue(Â«8:59:59 PMÂ», Â«9:00:00 PMÂ») to be true'
+  strict mode: 'Test262Error: formatToParts(-0.9) Expected SameValue(Â«8:59:59 PMÂ», Â«9:00:00 PMÂ») to be true'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/basic.js:
   default: 'Test262Error: Invalid calendar: gregorian Expected SameValue(Â«-1Â», Â«-1Â») to be false'
   strict mode: 'Test262Error: Invalid calendar: gregorian Expected SameValue(Â«-1Â», Â«-1Â») to be false'

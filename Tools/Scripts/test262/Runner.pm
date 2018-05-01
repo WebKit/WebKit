@@ -75,13 +75,14 @@ my $ignoreConfig;
 my $config;
 my %configSkipHash;
 my $expect;
-my $saveCurrentResults;
+my $saveExpectations;
 my $failingOnly;
 my $latestImport;
+my $runningAllTests;
 
-my $expectationsFile = abs_path("$Bin/test262-expectations.yaml");
-my $configFile = abs_path("$Bin/test262-config.yaml");
-my $resultsFile = abs_path("$Bin/test262-results.yaml");
+my $expectationsFile = abs_path("$Bin/expectations.yaml");
+my $configFile = abs_path("$Bin/config.yaml");
+my $resultsFile = abs_path("$Bin/results.yaml");
 
 processCLI();
 
@@ -124,7 +125,7 @@ sub processCLI {
         'f|features=s@' => \@features,
         'c|config=s' => \$configFile,
         'i|ignore-config' => \$ignoreConfig,
-        's|save' => \$saveCurrentResults,
+        's|save' => \$saveExpectations,
         'x|ignore-expectations' => \$ignoreExpectations,
         'failing-files' => \$failingOnly,
         'l|latest-import' => \$latestImport,
@@ -228,6 +229,7 @@ sub main {
         # If we only want to re-run failure, only run tests in expectation file
         @files = map { qq($test262Dir/$_) } keys %{$expect};
     } else {
+        $runningAllTests = 1;
         # Otherwise, get all files from directory
         foreach my $testsDir (@cliTestDirs) {
             find(
@@ -299,33 +301,38 @@ sub main {
         }
     }
 
-    if ($saveCurrentResults) {
-        DumpFile($resultsFile, \@res);
+    if ($saveExpectations) {
         DumpFile($expectationsFile, \%failed);
+        print "\nSaved results in: $expectationsFile\n";
+    } else {
+        print "\nRun with --save to save a new expectations file\n";
     }
 
-    my $endTime = time();
-    my $totalTime = $endTime - $startTime;
+    if ($runningAllTests) {
+        DumpFile($resultsFile, \@res);
+        print "Saved all the results in the $resultsFile.";
+        print "Summarizing results...\n\n";
+        summarizeResults();
+    }
+
     my $total = scalar @res - $skipfilecount;
     print "\n" . $total . " tests ran\n";
 
     if ( !$expect ) {
         print $failcount . " tests failed\n";
-    }
-    else {
+    } else {
         print $failcount . " expected tests failed\n";
         print $newfailcount . " tests newly fail\n";
         print $newpasscount . " tests newly pass\n";
     }
 
     print $skipfilecount . " test files skipped\n";
+
+    my $endTime = time();
+    my $totalTime = $endTime - $startTime;
     print "Done in $totalTime seconds!\n";
-    if ($saveCurrentResults) {
-        print "\nSaved results in:\n$expectationsFile\n$resultsFile\n";
-    }
-    else {
-        print "\nRun with --save to saved new test262-expectation.yaml and test262-results.yaml files\n";
-    }
+
+    exit $newfailcount ? 1 : 0;
 }
 
 sub loadImportFile {
@@ -368,8 +375,7 @@ sub parseError {
 
     if ($error =~ /^Exception: ([\w\d]+: .*)/m) {
         return $1;
-    }
-    else {
+    } else {
         # Unusual error format. Save the first line instead.
         my @errors = split("\n", $error);
         return $errors[0];
@@ -580,16 +586,14 @@ sub processResult {
 
         $resultdata{result} = 'FAIL';
         $resultdata{error} = $currentfailure;
-    }
-    elsif ($scenario ne 'skip' && !$currentfailure) {
+    } elsif ($scenario ne 'skip' && !$currentfailure) {
         if ($expectedfailure) {
             print "NEW PASS $file ($scenario)\n";
             print "\n" if $verbose;
         }
 
         $resultdata{result} = 'PASS';
-    }
-    else {
+    } else {
         $resultdata{result} = 'SKIP';
     }
 
@@ -650,7 +654,6 @@ sub getHarness {
     return $content;
 }
 
-
 sub summarizeResults {
     my @rawresults = LoadFile($resultsFile) or die $!;
 
@@ -658,7 +661,6 @@ sub summarizeResults {
     my %bypath;
 
     foreach my $test (@{$rawresults[0]}) {
-
         my $result = $test->{result};
 
         if ($test->{features}) {
@@ -701,11 +703,10 @@ sub summarizeResults {
 
     }
 
-
     print sprintf("%-6s %-6s %-6s %-6s %s\n", '% PASS', 'PASS', 'FAIL', 'SKIP', 'FOLDER');
     foreach my $key (sort keys %bypath) {
-        my $c = 'black';
-        $c = 'red' if $bypath{$key}->[1];
+        my $c = 'bold';
+        $c = 'clear' if $bypath{$key}->[1];
 
         my $per = ($bypath{$key}->[0] / (
             $bypath{$key}->[0]
@@ -724,8 +725,8 @@ sub summarizeResults {
     print sprintf("%-6s %-6s %-6s %-6s %s\n", '% PASS', 'PASS', 'FAIL', 'SKIP', 'FEATURE');
 
     foreach my $key (sort keys %byfeature) {
-        my $c = 'black';
-        $c = 'red' if $byfeature{$key}->[1];
+        my $c = 'bold';
+        $c = 'clear' if $byfeature{$key}->[1];
 
         my $per = ($byfeature{$key}->[0] / (
             $byfeature{$key}->[0]
@@ -739,8 +740,6 @@ sub summarizeResults {
                       $byfeature{$key}->[1],
                       $byfeature{$key}->[2], $key));
     }
-
-
 }
 
 __END__

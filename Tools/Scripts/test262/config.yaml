@@ -6,6 +6,7 @@ skip:
   #   - test/built-ins/Atomics
   features:
     - SharedArrayBuffer
+    - Atomics
     - BigInt
   files:
     - test/built-ins/Array/prototype/reverse/length-exceeding-integer-limit-with-object.js
