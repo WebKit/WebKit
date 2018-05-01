@@ -1387,11 +1387,7 @@ WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForResponse(WKBundlePag
         InjectedBundle::singleton().outputText(stringBuilder.toString());
     }
 
-    if (injectedBundle.testRunner() && injectedBundle.testRunner()->shouldDecideResponsePolicyAfterDelay())
-        return WKBundlePagePolicyActionPassThrough;
-
-    WKRetainPtr<WKStringRef> mimeType = adoptWK(WKURLResponseCopyMIMEType(response));
-    return WKBundlePageCanShowMIMEType(page, mimeType.get()) ? WKBundlePagePolicyActionUse : WKBundlePagePolicyActionPassThrough;
+    return WKBundlePagePolicyActionPassThrough;
 }
 
 void InjectedBundlePage::unableToImplementPolicy(WKBundlePageRef, WKBundleFrameRef, WKErrorRef, WKTypeRef*)

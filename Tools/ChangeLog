@@ -1,3 +1,16 @@
+2018-05-01  Chris Dumez  <cdumez@apple.com>
+
+        [WKTR] Move navigation policy for response decision from InjectedBundle to UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=185157
+
+        Reviewed by Geoffrey Garen.
+
+        Move navigation policy for response decision from InjectedBundle to UIProcess. This is a more
+        common configuration and should therefore be the configuration we test by default.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::decidePolicyForResponse):
+
 2018-05-01  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         WebAssembly: add support for stream APIs - JavaScript API
