@@ -1,5 +1,19 @@
 2018-05-01  Robin Morisset  <rmorisset@apple.com>
 
+        Use CheckedArithmetic for length computation in JSArray::unshiftCountWithAnyIndexingType
+        https://bugs.webkit.org/show_bug.cgi?id=184772
+        <rdar://problem/39146327>
+
+        Reviewed by Filip Pizlo.
+
+        Related to https://bugs.webkit.org/show_bug.cgi?id=183657 (<rdar://problem/38464399), where a check was missing.
+        This patch now makes sure that the check correctly detects if there is an integer overflow.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCountWithAnyIndexingType):
+
+2018-05-01  Robin Morisset  <rmorisset@apple.com>
+
         Correctly detect string overflow when using the 'Function' constructor
         https://bugs.webkit.org/show_bug.cgi?id=184883
         <rdar://problem/36320331>
