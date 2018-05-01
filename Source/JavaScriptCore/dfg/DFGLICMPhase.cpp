@@ -281,7 +281,7 @@ private:
             && !m_graph.m_controlEquivalenceAnalysis->dominatesEquivalently(data.preHeader, fromBlock);
         
         if (addsBlindSpeculation
-            && m_graph.hasExitSite(originalOrigin.semantic, HoistingFailed)) {
+            && m_graph.hasGlobalExitSite(originalOrigin.semantic, HoistingFailed)) {
             if (verbose) {
                 dataLog(
                     "    Not hoisting ", node, " because it may exit and the pre-header (",
