@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+<script>
+
+  promise_test(async function() {
+      var response = await fetch('resources/incrementer.wasm');
+      const module = await WebAssembly.compileStreaming(response);
+      assert_true(module instanceof WebAssembly.Module);
+  }, "compileStreaming using resolved response");
+
+  promise_test(async function() {
+      var response = await fetch('resources/incrementer.wasm');
+      const module = await WebAssembly.compileStreaming(response);
+      const instance = new WebAssembly.Instance(module);
+      assert_true(instance instanceof WebAssembly.Instance);
+  }, "compileStreaming using resolved response and check instantiate");
+
+  promise_test(async function() {
+      var result = fetch('resources/incrementer.wasm');
+      const module = await WebAssembly.compileStreaming(result);
+      const instance = new WebAssembly.Instance(module);
+      assert_true(instance instanceof WebAssembly.Instance);
+  }, "compileStreaming using promise response from fetch and check instantiate");
+
+  promise_test(async function() {
+    try {
+      var result = fetch('resources/incrementer.wrong_mime_type.wasm');
+      const module = await WebAssembly.compileStreaming(result);
+      assert_true(false);
+    } catch (e) {
+      assert_true(e.message.includes('MIME type'));
+      assert_true(e instanceof Error);
+    }
+  }, "compileStreaming raise error if wrong mime type");
+
+  promise_test(async function() {
+    try {
+      var result = fetch('resources/incrementer.no_mime_type.wasm');
+      const module = await WebAssembly.compileStreaming(result);
+      assert_true(false);
+    } catch (e) {
+      assert_true(e.message.includes('MIME type'));
+      assert_true(e instanceof Error);
+    }
+  }, "compileStreaming raise error if no mime type");
+
+  promise_test(async function() {
+    try {
+      var result = fetch('resources/incrementer1.wasm');
+      const module = await WebAssembly.compileStreaming(result);
+      assert_true(false);
+    } catch (e) {
+      assert_equals(e.message, "Response has not returned OK status");
+      assert_true(e instanceof Error);
+    }
+  }, "compileStreaming raise error if 404 status");
+
+  const getWasmUrl = fileName => { 
+    var host_info = get_host_info();
+    var url = host_info.HTTP_ORIGIN_WITH_DIFFERENT_PORT  +  '/wasm/';
+    return url + fileName + "?pipe=header(Access-Control-Allow-Origin,*)";
+  };
+
+  promise_test(async function() {
+      var result = fetch(getWasmUrl('resources/incrementer.wasm'), {"mode": "cors"} );
+      const module = await WebAssembly.compileStreaming(result);
+      assert_true(module instanceof WebAssembly.Module);
+  }, "compileStreaming check CORS");
+
+  promise_test(async function() {
+    try {
+      var result = fetch(getWasmUrl('resources/incrementer.wasm'), {"mode": "no-cors"} );
+      const module = await WebAssembly.compileStreaming(result);
+      assert_true(false);
+    } catch (e) {
+      assert_equals(e.message, "Response is not CORS-same-origin");
+      assert_true(e instanceof Error);
+    }
+  }, "compileStreaming raise error if no-cors");
+
+  promise_test(async function() {
+    const module = await fetch('resources/incrementer.wasm')
+      .then(v => v.arrayBuffer())
+      .then(v => WebAssembly.compileStreaming(new Response(v, { headers: { "Content-Type" : "application/wasm" }})));
+    assert_true(module instanceof WebAssembly.Module);
+  }, "compileStreaming receive promise with response created from ArrayBuffer");
+
+  promise_test(async function() {
+    const module = await fetch('resources/incrementer.wasm')
+      .then(v => v.arrayBuffer())
+      .then(buffer => {
+        const stream = new ReadableStream({ 
+          start(controller) {
+            (async () => {
+              await Promise.resolve().then(() => controller.enqueue(buffer.slice(0, 20)));
+              await Promise.resolve().then(() => controller.enqueue(buffer.slice(20, buffer.byteLength)));
+              await Promise.resolve().then(() => controller.close());
+            })();
+          }
+        });
+        return stream; 
+      }) 
+      .then(stream => WebAssembly.compileStreaming(new Response(stream, { headers: { "Content-Type" : "application/wasm" }})));
+    assert_true(module instanceof WebAssembly.Module);
+  }, "compileStreaming receive response that deliver data by chunks as bufferArray");
+</script>
+

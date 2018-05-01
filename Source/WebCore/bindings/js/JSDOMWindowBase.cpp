@@ -29,11 +29,13 @@
 #include "CommonVM.h"
 #include "DOMWindow.h"
 #include "Document.h"
+#include "FetchResponse.h"
 #include "Frame.h"
 #include "InspectorController.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMGlobalObjectTask.h"
 #include "JSDOMWindowCustom.h"
+#include "JSFetchResponse.h"
 #include "JSMainThreadExecState.h"
 #include "JSNode.h"
 #include "Logging.h"
@@ -49,7 +51,9 @@
 #include <JavaScriptCore/JSInternalPromise.h>
 #include <JavaScriptCore/JSInternalPromiseDeferred.h>
 #include <JavaScriptCore/Microtask.h>
+#include <JavaScriptCore/PromiseDeferredTimer.h>
 #include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/WebAssemblyPrototype.h>
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>
 
@@ -75,7 +79,9 @@ const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = {
     &moduleLoaderCreateImportMetaProperties,
     &moduleLoaderEvaluate,
     &promiseRejectionTracker,
-    &defaultLanguage
+    &defaultLanguage,
+    &compileStreaming,
+    &instantiateStreaming
 };
 
 JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, RefPtr<DOMWindow>&& window, JSWindowProxy* proxy)
@@ -363,6 +369,137 @@ JSC::JSObject* JSDOMWindowBase::moduleLoaderCreateImportMetaProperties(JSC::JSGl
         return document->moduleLoader()->createImportMetaProperties(globalObject, exec, moduleLoader, moduleKey, moduleRecord, scriptFetcher);
     return constructEmptyObject(exec, globalObject->nullPrototypeObjectStructure());
 }
+
+#if ENABLE(WEBASSEMBLY)
+static std::optional<Vector<uint8_t>> tryAllocate(JSC::ExecState* exec, JSC::JSPromiseDeferred* promise, const char* data, size_t byteSize)
+{
+    Vector<uint8_t> arrayBuffer;
+    if (!arrayBuffer.tryReserveCapacity(byteSize)) {
+        promise->reject(exec, createOutOfMemoryError(exec));
+        return std::nullopt;
+    }
+
+    arrayBuffer.grow(byteSize);
+    memcpy(arrayBuffer.data(), data, byteSize);
+
+    return arrayBuffer;
+}
+
+static bool isResponseCorrect(JSC::ExecState* exec, FetchResponse* inputResponse, JSC::JSPromiseDeferred* promise)
+{
+    bool isResponseCorsSameOrigin = inputResponse->type() == ResourceResponse::Type::Basic || inputResponse->type() == ResourceResponse::Type::Cors || inputResponse->type() == ResourceResponse::Type::Default;
+
+    if (!isResponseCorsSameOrigin) {
+        promise->reject(exec, createTypeError(exec, ASCIILiteral("Response is not CORS-same-origin")));
+        return false;
+    }
+
+    if (!inputResponse->ok()) {
+        promise->reject(exec, createTypeError(exec, ASCIILiteral("Response has not returned OK status")));
+        return false;
+    }
+
+    auto contentType = inputResponse->headers().fastGet(HTTPHeaderName::ContentType);
+    if (!equalLettersIgnoringASCIICase(contentType, "application/wasm")) {
+        promise->reject(exec, createTypeError(exec, ASCIILiteral("Unexpected response MIME type. Expected 'application/wasm'")));
+        return false;
+    }
+
+    return true;
+}
+
+static void handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, FetchResponse* inputResponse, JSC::JSPromiseDeferred* promise, Function<void(JSC::ExecState* exec, const char* data, size_t byteSize)>&& actionCallback)
+{
+    if (!isResponseCorrect(exec, inputResponse, promise))
+        return;
+
+    if (inputResponse->isBodyReceivedByChunk()) {
+        inputResponse->consumeBodyReceivedByChunk([promise, callback = WTFMove(actionCallback), globalObject, data = SharedBuffer::create()] (auto&& result) mutable {
+            ExecState* exec = globalObject->globalExec();
+            if (result.hasException()) {
+                promise->reject(exec, createTypeError(exec, result.exception().message()));
+                return;
+            }
+
+            if (auto chunk = result.returnValue())
+                data->append(reinterpret_cast<const char*>(chunk->data), chunk->size);
+            else {
+                VM& vm = exec->vm();
+                JSLockHolder lock(vm);
+
+                callback(exec, data->data(), data->size());
+            }
+        });
+        return;
+    }
+
+    auto body = inputResponse->consumeBody();
+    WTF::switchOn(body, [&] (Ref<FormData>& formData) {
+        if (auto buffer = formData->asSharedBuffer()) {
+            VM& vm = exec->vm();
+            JSLockHolder lock(vm);
+
+            actionCallback(exec, buffer->data(), buffer->size());
+            return;
+        }
+        // FIXME: http://webkit.org/b/184886> Implement loading for the Blob type
+        promise->reject(exec, createTypeError(exec, ASCIILiteral("Unexpected Response's Content-type")));
+    }, [&] (Ref<SharedBuffer>& buffer) {
+        VM& vm = exec->vm();
+        JSLockHolder lock(vm);
+
+        actionCallback(exec, buffer->data(), buffer->size());
+    }, [&] (std::nullptr_t&) {
+        promise->reject(exec, createTypeError(exec, ASCIILiteral("Unexpected Response's Content-type")));
+    });
+}
+
+void JSDOMWindowBase::compileStreaming(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSPromiseDeferred* promise, JSC::JSValue source)
+{
+    ASSERT(source);
+
+    VM& vm = exec->vm();
+
+    ASSERT(vm.promiseDeferredTimer->hasPendingPromise(promise));
+    ASSERT(vm.promiseDeferredTimer->hasDependancyInPendingPromise(promise, globalObject));
+
+    if (auto inputResponse = JSFetchResponse::toWrapped(vm, source)) {
+        handleResponseOnStreamingAction(globalObject, exec, inputResponse, promise, [promise] (JSC::ExecState* exec, const char* data, size_t byteSize) mutable {
+            if (auto arrayBuffer = tryAllocate(exec, promise, data, byteSize))
+                JSC::WebAssemblyPrototype::webAssemblyModuleValidateAsync(exec, promise, WTFMove(*arrayBuffer));
+        });
+    } else
+        promise->reject(exec, createTypeError(exec, ASCIILiteral("first argument must be an Response or Promise for Response")));
+}
+
+void JSDOMWindowBase::instantiateStreaming(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSPromiseDeferred* promise, JSC::JSValue source, JSC::JSObject* importedObject)
+{
+    ASSERT(source);
+
+    VM& vm = exec->vm();
+
+    ASSERT(vm.promiseDeferredTimer->hasPendingPromise(promise));
+    ASSERT(vm.promiseDeferredTimer->hasDependancyInPendingPromise(promise, globalObject));
+    ASSERT(vm.promiseDeferredTimer->hasDependancyInPendingPromise(promise, importedObject));
+
+    if (auto inputResponse = JSFetchResponse::toWrapped(vm, source)) {
+        handleResponseOnStreamingAction(globalObject, exec, inputResponse, promise, [promise, importedObject] (JSC::ExecState* exec, const char* data, size_t byteSize) mutable {
+            if (auto arrayBuffer = tryAllocate(exec, promise, data, byteSize))
+                JSC::WebAssemblyPrototype::webAssemblyModuleInstantinateAsync(exec, promise, WTFMove(*arrayBuffer), importedObject);
+        });
+    } else
+        promise->reject(exec, createTypeError(exec, ASCIILiteral("first argument must be an Response or Promise for Response")));
+}
+#else
+void JSDOMWindowBase::compileStreaming(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromiseDeferred*, JSC::JSValue)
+{
+    ASSERT_NOT_REACHED();
+}
+void JSDOMWindowBase::instantiateStreaming(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromiseDeferred*, JSC::JSValue, JSC::JSObject*)
+{
+    ASSERT_NOT_REACHED();
+}
+#endif
 
 void JSDOMWindowBase::promiseRejectionTracker(JSGlobalObject* jsGlobalObject, ExecState* exec, JSPromise* promise, JSPromiseRejectionOperation operation)
 {

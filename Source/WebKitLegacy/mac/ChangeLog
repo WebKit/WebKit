@@ -1,3 +1,14 @@
+2018-05-01  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        WebAssembly: add support for stream APIs - JavaScript API
+        https://bugs.webkit.org/show_bug.cgi?id=183442
+
+        Reviewed by Yusuke Suzuki and JF Bastien.
+
+        Add WEBASSEMBLY_STREAMINNG_API feature flag
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-04-30  JF Bastien  <jfbastien@apple.com>
 
         Use some C++17 features

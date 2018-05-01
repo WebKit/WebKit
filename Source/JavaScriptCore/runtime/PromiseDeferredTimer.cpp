@@ -120,6 +120,21 @@ void PromiseDeferredTimer::addPendingPromise(JSPromiseDeferred* ticket, Vector<S
 #endif
 }
 
+bool PromiseDeferredTimer::hasPendingPromise(JSPromiseDeferred* ticket)
+{
+    ASSERT(m_vm->currentThreadIsHoldingAPILock());
+    return m_pendingPromises.contains(ticket);
+}
+
+bool PromiseDeferredTimer::hasDependancyInPendingPromise(JSPromiseDeferred* ticket, JSCell* dependency)
+{
+    ASSERT(m_vm->currentThreadIsHoldingAPILock());
+    ASSERT(m_pendingPromises.contains(ticket));
+
+    auto result = m_pendingPromises.get(ticket);
+    return result.contains(dependency);
+}
+
 bool PromiseDeferredTimer::cancelPendingPromise(JSPromiseDeferred* ticket)
 {
     ASSERT(m_vm->currentThreadIsHoldingAPILock());

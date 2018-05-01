@@ -642,6 +642,8 @@ const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = {
     nullptr, // moduleLoaderEvaluate
     nullptr, // promiseRejectionTracker
     nullptr, // defaultLanguage
+    nullptr, // compileStreaming
+    nullptr, // instantinateStreaming
 };
 
 GlobalObject::GlobalObject(VM& vm, Structure* structure)

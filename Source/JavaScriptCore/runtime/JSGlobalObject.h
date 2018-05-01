@@ -32,6 +32,7 @@
 #include "JSCPoison.h"
 #include "JSClassRef.h"
 #include "JSGlobalLexicalEnvironment.h"
+#include "JSPromiseDeferred.h"
 #include "JSSegmentedVariableObject.h"
 #include "JSWeakObjectMapRefInternal.h"
 #include "LazyProperty.h"
@@ -217,6 +218,12 @@ struct GlobalObjectMethodTable {
 
     typedef String (*DefaultLanguageFunctionPtr)();
     DefaultLanguageFunctionPtr defaultLanguage;
+
+    typedef void (*CompileStreamingPtr)(JSGlobalObject*, ExecState*, JSPromiseDeferred*, JSValue);
+    CompileStreamingPtr compileStreaming;
+
+    typedef void (*InstantiateStreamingPtr)(JSGlobalObject*, ExecState*, JSPromiseDeferred*, JSValue, JSObject*);
+    InstantiateStreamingPtr instantiateStreaming;
 };
 
 class JSGlobalObject : public JSSegmentedVariableObject {

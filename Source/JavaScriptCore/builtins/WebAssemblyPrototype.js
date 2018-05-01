@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2018 Oleksandr Skachkov <gskachkov@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,39 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+function compileStreaming(argument) {
+    "use strict";
 
-#if ENABLE(WEBASSEMBLY)
+    return @Promise.@resolve(argument).@then(@webAssemblyCompileStreamingInternal);
+}
 
-#include "JSDestructibleObject.h"
-#include "JSObject.h"
+function instantiateStreaming(argument) {
+    "use strict";
 
-namespace JSC {
+    return @Promise.@resolve(argument).@then(@webAssemblyInstantiateStreamingInternal);
+}
 
-class WebAssemblyPrototype final : public JSNonFinalObject {
-public:
-    typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
-
-    static WebAssemblyPrototype* create(VM&, JSGlobalObject*, Structure*);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-    JS_EXPORT_PRIVATE static void webAssemblyModuleValidateAsync(ExecState*, JSPromiseDeferred*, Vector<uint8_t>&&);
-    JS_EXPORT_PRIVATE static void webAssemblyModuleInstantinateAsync(ExecState*, JSPromiseDeferred*, Vector<uint8_t>&&, JSObject*);
-
-    DECLARE_INFO;
-
-    static JSValue instantiate(ExecState*, JSPromiseDeferred*, const Identifier&, JSValue);
-
-protected:
-    void finishCreation(VM&, JSGlobalObject*);
-
-private:
-    WebAssemblyPrototype(VM&, Structure*);
-};
-
-EncodedJSValue JSC_HOST_CALL webAssemblyCompileStreamingInternal(ExecState*);
-EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateStreamingInternal(ExecState*);
-
-} // namespace JSC
-
-#endif // ENABLE(WEBASSEMBLY)
