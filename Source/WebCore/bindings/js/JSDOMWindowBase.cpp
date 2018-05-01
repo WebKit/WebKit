@@ -491,10 +491,13 @@ void JSDOMWindowBase::instantiateStreaming(JSC::JSGlobalObject* globalObject, JS
         promise->reject(exec, createTypeError(exec, ASCIILiteral("first argument must be an Response or Promise for Response")));
 }
 #else
+NO_RETURN_DUE_TO_ASSERT
 void JSDOMWindowBase::compileStreaming(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromiseDeferred*, JSC::JSValue)
 {
     ASSERT_NOT_REACHED();
 }
+
+NO_RETURN_DUE_TO_ASSERT
 void JSDOMWindowBase::instantiateStreaming(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromiseDeferred*, JSC::JSValue, JSC::JSObject*)
 {
     ASSERT_NOT_REACHED();

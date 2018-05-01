@@ -1,5 +1,19 @@
 2018-05-01  Oleksandr Skachkov  <gskachkov@gmail.com>
 
+        Fix build error after r231194
+        https://bugs.webkit.org/show_bug.cgi?id=185169
+
+        Reviewed by JF Bastien.
+
+        Prevent compile error in iOS Simulator debug build
+        by tagging function
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::compileStreaming):
+        (WebCore::JSDOMWindowBase::instantiateStreaming):
+
+2018-05-01  Oleksandr Skachkov  <gskachkov@gmail.com>
+
         WebAssembly: add support for stream APIs - JavaScript API
         https://bugs.webkit.org/show_bug.cgi?id=183442
 
