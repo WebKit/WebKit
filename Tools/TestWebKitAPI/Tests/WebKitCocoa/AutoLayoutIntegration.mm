@@ -71,6 +71,7 @@ static bool didEvaluateJavaScript;
     "</style>";
 
     [self loadHTMLString:[baseHTML stringByAppendingString:HTMLString] baseURL:nil];
+    [self _test_waitForDidStartProvisionalNavigation];
     [self beginLayoutAtMinimumWidth:width andExpectContentSizeChange:size];
     [self _test_waitForDidFinishNavigation];
 

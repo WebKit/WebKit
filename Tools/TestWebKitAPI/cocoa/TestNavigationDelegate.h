@@ -33,15 +33,18 @@
 @interface TestNavigationDelegate : NSObject <WKNavigationDelegate>
 
 @property (nonatomic, copy) void (^didFailProvisionalNavigation)(WKWebView *, WKNavigation *, NSError *);
+@property (nonatomic, copy) void (^didStartProvisionalNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^didFinishNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^renderingProgressDidChange)(WKWebView *, _WKRenderingProgressEvents);
 @property (nonatomic, copy) void (^webContentProcessDidTerminate)(WKWebView *);
 
+- (void)waitForDidStartProvisionalNavigation;
 - (void)waitForDidFinishNavigation;
 
 @end
 
 @interface WKWebView (TestWebKitAPIExtras)
+- (void)_test_waitForDidStartProvisionalNavigation;
 - (void)_test_waitForDidFinishNavigation;
 @end
 

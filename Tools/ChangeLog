@@ -1,3 +1,24 @@
+2018-05-01  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r230919): API test WebKit.AutoLayoutIntegration is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=184918
+        <rdar://problem/39705516>
+
+        Reviewed by Wenson Hsieh.
+
+        Make sure provisional load has started before calling beginLayoutAtMinimumWidth
+        on the AutoLayoutWKWebView to restore pre-r230919 behavior. The load now starts
+        asynchronously because we ask the client if it is OK to do the load and the policy
+        delegates are asynchronous nowadays.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AutoLayoutIntegration.mm:
+        (-[AutoLayoutWKWebView load:withWidth:expectingContentSize:resettingWidth:]):
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.h:
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.mm:
+        (-[TestNavigationDelegate webView:didStartProvisionalNavigation:]):
+        (-[TestNavigationDelegate waitForDidStartProvisionalNavigation]):
+        (-[WKWebView _test_waitForDidStartProvisionalNavigation]):
+
 2018-05-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Align buildbot test stages with AppleWin.
