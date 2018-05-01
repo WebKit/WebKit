@@ -126,10 +126,17 @@ void StringBuilder::allocateBuffer(const UChar* currentCharacters, unsigned requ
 // from either m_string or m_buffer, neither will be reassigned until the copy has completed).
 void StringBuilder::allocateBufferUpConvert(const LChar* currentCharacters, unsigned requiredLength)
 {
+    if (!tryAllocateBufferUpConvert(currentCharacters, requiredLength))
+        CRASH();
+}
+bool StringBuilder::tryAllocateBufferUpConvert(const LChar* currentCharacters, unsigned requiredLength)
+{
     ASSERT(m_is8Bit);
     ASSERT(requiredLength >= m_length);
     // Copy the existing data into a new buffer, set result to point to the end of the existing data.
-    auto buffer = StringImpl::createUninitialized(requiredLength, m_bufferCharacters16);
+    auto buffer = StringImpl::tryCreateUninitialized(requiredLength, m_bufferCharacters16);
+    if (!buffer)
+        return false;
     for (unsigned i = 0; i < m_length; ++i)
         m_bufferCharacters16[i] = currentCharacters[i];
     
@@ -139,6 +146,7 @@ void StringBuilder::allocateBufferUpConvert(const LChar* currentCharacters, unsi
     m_buffer = WTFMove(buffer);
     m_string = String();
     ASSERT(m_buffer->length() == requiredLength);
+    return true;
 }
 
 template <>
@@ -201,6 +209,7 @@ void StringBuilder::reserveCapacity(unsigned newCapacity)
 
 // Make 'length' additional capacity be available in m_buffer, update m_string & m_length,
 // return a pointer to the newly allocated storage.
+// Returns nullptr if the size of the new builder would have overflowed
 template <typename CharType>
 ALWAYS_INLINE CharType* StringBuilder::appendUninitialized(unsigned length)
 {
@@ -209,7 +218,7 @@ ALWAYS_INLINE CharType* StringBuilder::appendUninitialized(unsigned length)
     // Calculate the new size of the builder after appending.
     unsigned requiredLength = length + m_length;
     if (requiredLength < length)
-        CRASH();
+        return nullptr;
 
     if ((m_buffer) && (requiredLength <= m_buffer->length())) {
         // If the buffer is valid it must be at least as long as the current builder contents!
@@ -248,8 +257,14 @@ CharType* StringBuilder::appendUninitializedSlow(unsigned requiredLength)
 
 void StringBuilder::append(const UChar* characters, unsigned length)
 {
+    if (!tryAppend(characters, length))
+        CRASH();
+}
+
+bool StringBuilder::tryAppend(const UChar* characters, unsigned length)
+{
     if (!length)
-        return;
+        return true;
 
     ASSERT(characters);
 
@@ -257,40 +272,54 @@ void StringBuilder::append(const UChar* characters, unsigned length)
         if (length == 1 && !(*characters & ~0xff)) {
             // Append as 8 bit character
             LChar lChar = static_cast<LChar>(*characters);
-            append(&lChar, 1);
-            return;
+            return tryAppend(&lChar, 1);
         }
 
         // Calculate the new size of the builder after appending.
         unsigned requiredLength = length + m_length;
         if (requiredLength < length)
-            CRASH();
+            return false;
         
         if (m_buffer) {
             // If the buffer is valid it must be at least as long as the current builder contents!
             ASSERT(m_buffer->length() >= m_length);
-            
-            allocateBufferUpConvert(m_buffer->characters8(), expandedCapacity(capacity(), requiredLength));
+            if (!tryAllocateBufferUpConvert(m_buffer->characters8(), expandedCapacity(capacity(), requiredLength)))
+                return false;
         } else {
             ASSERT(m_string.length() == m_length);
-            allocateBufferUpConvert(m_string.isNull() ? 0 : m_string.characters8(), expandedCapacity(capacity(), requiredLength));
+            if (!tryAllocateBufferUpConvert(m_string.isNull() ? 0 : m_string.characters8(), expandedCapacity(capacity(), requiredLength)))
+                return false;
         }
 
         memcpy(m_bufferCharacters16 + m_length, characters, static_cast<size_t>(length) * sizeof(UChar));
         m_length = requiredLength;
-    } else
-        memcpy(appendUninitialized<UChar>(length), characters, static_cast<size_t>(length) * sizeof(UChar));
+    } else {
+        UChar* dest = appendUninitialized<UChar>(length);
+        if (!dest)
+            return false;
+        memcpy(dest, characters, static_cast<size_t>(length) * sizeof(UChar));
+    }
     ASSERT(m_buffer->length() >= m_length);
+    return true;
 }
 
 void StringBuilder::append(const LChar* characters, unsigned length)
 {
+    if (!tryAppend(characters, length))
+        CRASH();
+}
+
+bool StringBuilder::tryAppend(const LChar* characters, unsigned length)
+{
     if (!length)
-        return;
+        return true;
+
     ASSERT(characters);
 
     if (m_is8Bit) {
         LChar* dest = appendUninitialized<LChar>(length);
+        if (!dest)
+            return false;
         if (length > 8)
             memcpy(dest, characters, static_cast<size_t>(length) * sizeof(LChar));
         else {
@@ -300,10 +329,13 @@ void StringBuilder::append(const LChar* characters, unsigned length)
         }
     } else {
         UChar* dest = appendUninitialized<UChar>(length);
+        if (!dest)
+            return false;
         const LChar* end = characters + length;
         while (characters < end)
             *(dest++) = *(characters++);
     }
+    return true;
 }
 
 #if USE(CF)

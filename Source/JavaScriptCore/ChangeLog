@@ -1,5 +1,25 @@
 2018-05-01  Robin Morisset  <rmorisset@apple.com>
 
+        Correctly detect string overflow when using the 'Function' constructor
+        https://bugs.webkit.org/show_bug.cgi?id=184883
+        <rdar://problem/36320331>
+
+        Reviewed by Filip Pizlo.
+
+        The 'Function' constructor creates a string containing the source code of the new function through repeated string concatenation.
+        Because there was no way for the string concatenation routines in WTF to return an error, they just crashed in that case.
+
+        I added new tryAppend methods alongside the old append methods, that return a boolean (true means success, false means an overflow happened).
+        In this way, it becomes possible for the Function constructor to just throw a proper JS exception when asked to create a string > 4GB.
+        I made new methods instead of just adapting the existing ones (and reverted such a change on appendQuotedJSONString) so that callers that rely on the old behaviour (a hard CRASH() on overflow) don't silently start failing.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue):
+
+2018-05-01  Robin Morisset  <rmorisset@apple.com>
+
         IntlObject.cpp::removeUnicodeLocaleExtension() should not touch locales that end in '-u'
         https://bugs.webkit.org/show_bug.cgi?id=185162
 

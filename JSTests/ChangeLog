@@ -1,5 +1,18 @@
 2018-05-01  Robin Morisset  <rmorisset@apple.com>
 
+        Correctly detect string overflow when using the 'Function' constructor
+        https://bugs.webkit.org/show_bug.cgi?id=184883
+        <rdar://problem/36320331>
+
+        Reviewed by Filip Pizlo.
+
+        I put this regression test in the 'slowMicrobenchmarks' directory because it takes nearly 30s to run, and I am not sure where else to put it.
+
+        * slowMicrobenchmarks/function-constructor-with-huge-strings.js: Added.
+        (catch):
+
+2018-05-01  Robin Morisset  <rmorisset@apple.com>
+
         IntlObject.cpp::removeUnicodeLocaleExtension() should not touch locales that end in '-u'
         https://bugs.webkit.org/show_bug.cgi?id=185162
 

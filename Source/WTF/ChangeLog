@@ -1,3 +1,28 @@
+2018-05-01  Robin Morisset  <rmorisset@apple.com>
+
+        Correctly detect string overflow when using the 'Function' constructor
+        https://bugs.webkit.org/show_bug.cgi?id=184883
+        <rdar://problem/36320331>
+
+        Reviewed by Filip Pizlo.
+
+        I added new tryAppend methods alongside the old append methods in StringBuilder, that return a boolean (true means success, false means an overflow happened).
+        I made new methods instead of just adapting the existing ones (and reverted such a change on appendQuotedJSONString) so that callers that rely on the old behaviour (a hard CRASH() on overflow) don't silently start failing.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::allocateBufferUpConvert):
+        (WTF::StringBuilder::tryAllocateBufferUpConvert):
+        (WTF::StringBuilder::appendUninitialized):
+        (WTF::StringBuilder::append):
+        (WTF::StringBuilder::tryAppend):
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::tryAppend):
+        (WTF::StringBuilder::append):
+        (WTF::StringBuilder::tryAppendLiteral):
+        * wtf/text/StringBuilderJSON.cpp:
+        (WTF::StringBuilder::appendQuotedJSONString):
+        (WTF::StringBuilder::tryAppendQuotedJSONString):
+
 2018-04-30  Mark Lam  <mark.lam@apple.com>
 
         Apply PtrTags to the MetaAllocator and friends.

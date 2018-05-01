@@ -74,7 +74,13 @@ ALWAYS_INLINE static void appendQuotedJSONStringInternal(OutputCharacterType*& o
     }
 }
 
-bool StringBuilder::appendQuotedJSONString(const String& string)
+void StringBuilder::appendQuotedJSONString(const String& string)
+{
+    if (!tryAppendQuotedJSONString(string))
+        CRASH();
+}
+
+bool StringBuilder::tryAppendQuotedJSONString(const String& string)
 {
     // Make sure we have enough buffer space to append this string without having
     // to worry about reallocating in the middle.
