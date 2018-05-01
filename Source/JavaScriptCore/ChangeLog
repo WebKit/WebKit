@@ -1,3 +1,13 @@
+2018-05-01  Robin Morisset  <rmorisset@apple.com>
+
+        IntlObject.cpp::removeUnicodeLocaleExtension() should not touch locales that end in '-u'
+        https://bugs.webkit.org/show_bug.cgi?id=185162
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/IntlObject.cpp:
+        (JSC::removeUnicodeLocaleExtension):
+
 2018-05-01  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Add SetCallee as DFG-Operation

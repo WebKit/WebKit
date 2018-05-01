@@ -614,7 +614,7 @@ String removeUnicodeLocaleExtension(const String& locale)
     if (partsSize > 0)
         builder.append(parts[0]);
     for (size_t p = 1; p < partsSize; ++p) {
-        if (parts[p] == "u") {
+        if (parts[p] == "u" && p + 1 < partsSize) {
             // Skip the u- and anything that follows until another singleton.
             // While the next part is part of the unicode extension, skip it.
             while (p + 1 < partsSize && parts[p + 1].length() > 1)
