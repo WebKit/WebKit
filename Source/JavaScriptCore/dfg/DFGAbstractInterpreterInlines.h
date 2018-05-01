@@ -2448,6 +2448,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).setType(SpecInt32Only);
         break;
 
+    case SetCallee:
     case SetArgumentCountIncludingThis:
         break;
         

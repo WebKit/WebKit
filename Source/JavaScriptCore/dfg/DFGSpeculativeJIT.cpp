@@ -11866,6 +11866,13 @@ void SpeculativeJIT::compileGetCallee(Node* node)
     cellResult(result.gpr(), node);
 }
 
+void SpeculativeJIT::compileSetCallee(Node* node)
+{
+    SpeculateCellOperand callee(this, node->child1());
+    m_jit.storeCell(callee.gpr(), JITCompiler::payloadFor(CallFrameSlot::callee));
+    noResult(node);
+}
+
 void SpeculativeJIT::compileGetArgumentCountIncludingThis(Node* node)
 {
     GPRTemporary result(this);

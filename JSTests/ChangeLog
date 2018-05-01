@@ -1,3 +1,20 @@
+2018-05-01  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Add SetCallee as DFG-Operation
+        https://bugs.webkit.org/show_bug.cgi?id=184582
+
+        Reviewed by Filip Pizlo.
+
+        Added test that runs into infinite loop without updating the callee and
+        therefore emitting SetCallee in DFG for recursive tail calls.
+
+        * stress/closure-recursive-tail-call-infinite-loop.js: Added.
+        (Foo):
+        (second):
+        (first):
+        (return.closure):
+        (createClosure):
+
 2018-04-30  Saam Barati  <sbarati@apple.com>
 
         ToString constant folds without preserving checks, causing us to break assumptions that the code would OSR exit

@@ -156,7 +156,7 @@ private:
     void emitArgumentPhantoms(int registerOffset, int argumentCountIncludingThis);
     Node* getArgumentCount();
     template<typename ChecksFunctor>
-    bool handleRecursiveTailCall(CallVariant, int registerOffset, int argumentCountIncludingThis, const ChecksFunctor& emitFunctionCheckIfNeeded);
+    bool handleRecursiveTailCall(Node* callTargetNode, CallVariant, int registerOffset, int argumentCountIncludingThis, const ChecksFunctor& emitFunctionCheckIfNeeded);
     unsigned inliningCost(CallVariant, int argumentCountIncludingThis, InlineCallFrame::Kind); // Return UINT_MAX if it's not an inlining candidate. By convention, intrinsics have a cost of 1.
     // Handle inlining. Return true if it succeeded, false if we need to plant a call.
     bool handleVarargsInlining(Node* callTargetNode, int resultOperand, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, VirtualRegister argumentsArgument, unsigned argumentsOffset, NodeType callOp, InlineCallFrame::Kind);
@@ -1356,14 +1356,9 @@ void ByteCodeParser::emitArgumentPhantoms(int registerOffset, int argumentCountI
 }
 
 template<typename ChecksFunctor>
-bool ByteCodeParser::handleRecursiveTailCall(CallVariant callVariant, int registerOffset, int argumentCountIncludingThis, const ChecksFunctor& emitFunctionCheckIfNeeded)
+bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant callVariant, int registerOffset, int argumentCountIncludingThis, const ChecksFunctor& emitFunctionCheckIfNeeded)
 {
     if (UNLIKELY(!Options::optimizeRecursiveTailCalls()))
-        return false;
-
-    // Currently we cannot do this optimisation for closures. The problem is that "emitFunctionChecks" which we use later is too coarse, only checking the executable
-    // and not the value of captured variables.
-    if (callVariant.isClosureCall())
         return false;
 
     auto targetExecutable = callVariant.executable();
@@ -1385,10 +1380,24 @@ bool ByteCodeParser::handleRecursiveTailCall(CallVariant callVariant, int regist
                 return false;
         }
 
+        // If an InlineCallFrame is not a closure, it was optimized using a constant callee.
+        // Check if this is the same callee that we try to inline here.
+        if (stackEntry->m_inlineCallFrame && !stackEntry->m_inlineCallFrame->isClosureCall) {
+            if (stackEntry->m_inlineCallFrame->calleeConstant() != callVariant.function())
+                continue;
+        }
+
         // We must add some check that the profiling information was correct and the target of this call is what we thought.
         emitFunctionCheckIfNeeded();
         // We flush everything, as if we were in the backedge of a loop (see treatment of op_jmp in parseBlock).
         flushForTerminal();
+
+        // We must set the callee to the right value
+        if (stackEntry->m_inlineCallFrame) {
+            if (stackEntry->m_inlineCallFrame->isClosureCall)
+                setDirect(stackEntry->remapOperand(VirtualRegister(CallFrameSlot::callee)), callTargetNode, NormalSet);
+        } else
+            addToGraph(SetCallee, callTargetNode);
 
         // We must set the arguments to the right values
         if (!stackEntry->m_inlineCallFrame)
@@ -1683,7 +1692,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* c
         didInsertChecks = true;
     };
 
-    if (kind == InlineCallFrame::TailCall && ByteCodeParser::handleRecursiveTailCall(callee, registerOffset, argumentCountIncludingThis, insertChecksWithAccounting)) {
+    if (kind == InlineCallFrame::TailCall && ByteCodeParser::handleRecursiveTailCall(callTargetNode, callee, registerOffset, argumentCountIncludingThis, insertChecksWithAccounting)) {
         RELEASE_ASSERT(didInsertChecks);
         return CallOptimizationResult::OptimizedToJump;
     }
