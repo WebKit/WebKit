@@ -137,6 +137,12 @@ class WinPort(ApplePort):
         env['XML_CATALOG_FILES'] = ''  # work around missing /etc/catalog <rdar://problem/4292995>
         return env
 
+    def environment_for_api_tests(self):
+        env = super(WinPort, self).environment_for_api_tests()
+        for variable in ['SYSTEMROOT', 'WEBKIT_LIBRARIES']:
+            self._copy_value_from_environ_if_set(env, variable)
+        return env
+
     def operating_system(self):
         return 'win'
 

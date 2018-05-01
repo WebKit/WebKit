@@ -489,7 +489,7 @@ class RunUnitTests(TestWithFailureCount):
     name = "run-api-tests"
     description = ["unit tests running"]
     descriptionDone = ["unit-tests"]
-    command = ["perl", "./Tools/Scripts/run-api-tests", "--no-build", WithProperties("--%(configuration)s"), "--verbose"]
+    command = ["python", "./Tools/Scripts/run-api-tests", "--no-build", WithProperties("--%(configuration)s"), "--verbose"]
     failedTestsFormatString = "%d unit test%s failed or timed out"
 
     def start(self):

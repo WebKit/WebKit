@@ -80,13 +80,13 @@ class TestFactory(Factory):
         if self.LayoutTestClass:
             self.addStep(self.LayoutTestClass())
 
-        if platform == 'win' or platform.startswith('mac') or platform.startswith('ios-simulator'):
+        if platform.startswith('win') or platform.startswith('mac') or platform.startswith('ios-simulator'):
             self.addStep(RunUnitTests())
         self.addStep(RunPythonTests())
         self.addStep(RunPerlTests())
         self.addStep(RunBindingsTests())
         self.addStep(RunBuiltinsTests())
-        if platform != 'win':
+        if not platform.startswith('win'):
             self.addStep(RunDashboardTests())
         if self.LayoutTestClass:
             self.addStep(ArchiveTestResults())

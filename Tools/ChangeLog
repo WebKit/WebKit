@@ -1,3 +1,22 @@
+2018-05-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Align buildbot test stages with AppleWin.
+        https://bugs.webkit.org/show_bug.cgi?id=185094
+
+        Reviewed by Brent Fulgham.
+
+        * BuildSlaveSupport/build.webkit.org-config/factories.py:
+        (TestFactory.__init__):
+        Do run API tests, don't run dashboard tests.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (RunUnitTests):
+        Call run-api-tests with Python, not Perl (bugfix for r230998).
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.environment_for_api_tests):
+        Retrieve necessary Windows environment variables.
+
 2018-05-01  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] remove WK1 support
