@@ -267,6 +267,8 @@ void NetworkLoad::sharedWillSendRedirectedRequest(ResourceRequest&& request, Res
 #endif
 
     auto oldRequest = WTFMove(m_currentRequest);
+    request.setRequester(oldRequest.requester());
+
     m_currentRequest = request;
     m_client.get().willSendRedirectedRequest(WTFMove(oldRequest), WTFMove(request), WTFMove(redirectResponse));
 }

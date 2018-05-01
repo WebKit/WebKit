@@ -89,6 +89,7 @@ void PingLoad::loadRequest(ResourceRequest&& request)
     if (auto* networkSession = SessionTracker::networkSession(m_parameters.sessionID)) {
         auto loadParameters = m_parameters;
         loadParameters.request = WTFMove(request);
+        loadParameters.isMainFrameNavigation = m_parameters.mode == FetchOptions::Mode::Navigate;
         m_task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
         m_task->resume();
     } else

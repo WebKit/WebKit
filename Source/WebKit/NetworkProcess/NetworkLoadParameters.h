@@ -48,6 +48,7 @@ public:
     bool shouldFollowRedirects { true };
     bool shouldClearReferrerOnHTTPSToHTTPRedirect { true };
     bool defersLoading { false };
+    bool isMainFrameNavigation { false };
     bool needsCertificateInfo { false };
 #if USE(NETWORK_SESSION)
     Vector<RefPtr<WebCore::BlobDataFileReference>> blobFileReferences;
