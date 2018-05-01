@@ -361,8 +361,7 @@ private:
                 StringBuilder builder;
                 builder.append(leftString);
                 builder.append(rightString);
-                m_node->convertToLazyJSConstant(
-                    m_graph, LazyJSValue::newString(m_graph, builder.toString()));
+                convertToLazyJSValue(m_node, LazyJSValue::newString(m_graph, builder.toString()));
                 m_changed = true;
             }
             break;
@@ -389,8 +388,7 @@ private:
             if (!!extraString)
                 builder.append(extraString);
 
-            m_node->convertToLazyJSConstant(
-                m_graph, LazyJSValue::newString(m_graph, builder.toString()));
+            convertToLazyJSValue(m_node, LazyJSValue::newString(m_graph, builder.toString()));
             m_changed = true;
             break;
         }
@@ -412,7 +410,7 @@ private:
                             result = String::numberToStringECMAScript(value.asNumber());
 
                         if (!result.isNull()) {
-                            m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, result));
+                            convertToLazyJSValue(m_node, LazyJSValue::newString(m_graph, result));
                             m_changed = true;
                         }
                     }
@@ -432,7 +430,7 @@ private:
                 JSValue value = child1->constant()->value();
                 if (value && value.isNumber()) {
                     String result = toStringWithRadix(value.asNumber(), m_node->validRadixConstant());
-                    m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, result));
+                    convertToLazyJSValue(m_node, LazyJSValue::newString(m_graph, result));
                     m_changed = true;
                 }
             }
@@ -866,6 +864,10 @@ private:
 
             NodeOrigin origin = m_node->origin;
 
+            // Preserve any checks we have.
+            m_insertionSet.insertNode(
+                m_nodeIndex, SpecNone, Check, origin, m_node->children.justChecks());
+
             if (regExp->global()) {
                 m_insertionSet.insertNode(
                     m_nodeIndex, SpecNone, SetRegExpObjectLastIndex, origin,
@@ -883,8 +885,7 @@ private:
                 if (lastIndex < string.length())
                     builder.append(string, lastIndex, string.length() - lastIndex);
                 
-                m_node->convertToLazyJSConstant(
-                    m_graph, LazyJSValue::newString(m_graph, builder.toString()));
+                m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, builder.toString()));
             }
 
             m_node->origin = origin;
@@ -945,6 +946,12 @@ private:
     void convertToIdentityOverChild2()
     {
         convertToIdentityOverChild(1);
+    }
+
+    void convertToLazyJSValue(Node* node, LazyJSValue value)
+    {
+        m_insertionSet.insertCheck(m_graph, m_nodeIndex, node);
+        node->convertToLazyJSConstant(m_graph, value);
     }
     
     void handleCommutativity()

@@ -1,3 +1,24 @@
+2018-04-30  Saam Barati  <sbarati@apple.com>
+
+        ToString constant folds without preserving checks, causing us to break assumptions that the code would OSR exit
+        https://bugs.webkit.org/show_bug.cgi?id=185149
+        <rdar://problem/39455917>
+
+        Reviewed by Filip Pizlo.
+
+        The bug was that we were deleting checks that we shouldn't have deleted.
+        This patch makes a helper inside strength reduction that converts to
+        a LazyJSConstant while maintaining checks, and switches users of the
+        node API inside strength reduction to instead call the helper function.
+        
+        This patch also fixes a potential bug where StringReplace and
+        StringReplaceRegExp may not preserve all their checks.
+
+
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        (JSC::DFG::StrengthReductionPhase::convertToLazyJSValue):
+
 2018-04-29  Filip Pizlo  <fpizlo@apple.com>
 
         LICM shouldn't hoist nodes if hoisted nodes exited in that code block
