@@ -1,3 +1,29 @@
+2018-04-30  Megan Gardner  <megan_gardner@apple.com>
+
+        Add tests for selection in content editable
+        https://bugs.webkit.org/show_bug.cgi?id=185144
+
+        Reviewed by Wenson Hsieh.
+        
+        Tests that should cover selection in content editable, both with and without a keyboard present. Also fixing two tests that had errors.
+
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-down-to-change-selected-text-expected.txt: Added.
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-down-to-change-selected-text.html: Added.
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-left-to-change-selected-text-expected.txt: Added.
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-left-to-change-selected-text.html: Added.
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-up-to-change-selected-text-expected.txt: Added.
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-up-to-change-selected-text.html: Added.
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-down-to-change-selected-text-expected.txt: Added.
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-down-to-change-selected-text.html: Added.
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-left-to-change-selected-text-expected.txt: Added.
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-left-to-change-selected-text.html: Added.
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-right-to-change-selected-text-expected.txt: Added.
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-right-to-change-selected-text.html: Added.
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text-expected.txt: Added.
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text.html: Added.
+        * fast/events/touch/ios/long-press-then-drag-right-to-change-selected-text.html:
+        * fast/events/touch/ios/long-press-then-drag-up-to-change-selected-text.html:
+
 2018-04-30  Jer Noble  <jer.noble@apple.com>
 
         <img src=mp4> does not display on ios despite Accept: video/* advertisement

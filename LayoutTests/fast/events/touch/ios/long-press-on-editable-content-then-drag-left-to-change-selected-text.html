@@ -13,83 +13,108 @@
         {
             if (!testRunner.runUIScript)
                 return;
-
+        
             var output = '';
+            var editableTargetRect = document.getElementById('editable').getBoundingClientRect();
             var firstTargetRect = document.getElementById('firstSelection').getBoundingClientRect();
             var secondTargetRect = document.getElementById('secondSelection').getBoundingClientRect();
             var thirdTargetRect = document.getElementById('thirdSelection').getBoundingClientRect();
-
+            var noneditableToEditableOffset = document.getElementById('editable').getBoundingClientRect().y - document.getElementById('noneditable').getBoundingClientRect().y;
+        
             var pressPointX = firstTargetRect.x + firstTargetRect.width / 2;
-            var pressPointY = firstTargetRect.y + firstTargetRect.height / 2;
-            var dragY = firstTargetRect.y + firstTargetRect.height;
-            var dragX = firstTargetRect.x + firstTargetRect.width;
+            var pressPointY = firstTargetRect.y + firstTargetRect.height / 2 + noneditableToEditableOffset;
+            var dragY = firstTargetRect.y + noneditableToEditableOffset;
+            var dragX = firstTargetRect.x;
             var dragX2 = secondTargetRect.x;
             var dragX3 = thirdTargetRect.x;
-            var dragX4 = firstTargetRect.x - firstTargetRect.width;
-        
+            var dragX4 = firstTargetRect.x + firstTargetRect.width;
+
             await longPressAtPoint(pressPointX, pressPointY);
-            if (document.getSelection().toString() == "magna")
+            if (document.getSelection().toString() == "aliqua")
                 output += 'PASS: Correct Selection';
             else
                 output += 'FAIL: failed to select a word as a result of a long press. Incorrect Selection: ' + document.getSelection().toString();
             output += '<br>';
 
             await touchAndDragFromPointToPoint(dragX, dragY, dragX2, dragY);
-            if (document.getSelection().toString() == "magna aliqua.")
+            if (document.getSelection().toString() == "magna aliqua")
                 output += 'PASS: Correct Selection';
             else
                 output += 'FAIL: failed to select additional word after a drag. Incorrect Selection: ' + document.getSelection().toString();
             output += '<br>';
 
             await touchAndDragFromPointToPoint(dragX2, dragY, dragX3, dragY);
-            if (document.getSelection().toString() == "magna aliqua. Ut")
+            if (document.getSelection().toString() == "dolore magna aliqua")
                 output += 'PASS: Correct Selection';
             else
                 output += 'FAIL: failed to select additional word after a drag. Incorrect Selection: ' + document.getSelection().toString();
             output += '<br>';
 
             await touchAndDragFromPointToPoint(dragX3, dragY, dragX2, dragY);
-            if (document.getSelection().toString() == "magna aliqua.")
+            if (document.getSelection().toString() == "magna aliqua")
                 output += 'PASS: Correct Selection';
             else
                 output += 'FAIL: failed to deselect word after a drag. Incorrect Selection: ' + document.getSelection().toString();
             output += '<br>';
 
             await touchAndDragFromPointToPoint(dragX2, dragY, dragX, dragY);
-            if (document.getSelection().toString() == "magna")
-                output += 'PASS: Correct Selection';
+            if (document.getSelection().toString() == "aliqua")
+                 output += 'PASS: Correct Selection';
             else
                 output += 'FAIL: failed to deselect word after a drag. Incorrect Selection: ' + document.getSelection().toString();
             output += '<br>';
 
             var result = await touchAndDragFromPointToPoint(dragX, dragY, dragX4, dragY);
-            if (document.getSelection().toString() == "m")
+            if (document.getSelection().toString() == "a")
                 output += 'PASS: Correct Selection';
             else
-                output += 'FAIL: failed to reduce selection to a single character by dragging left. Incorrect Selection: ' + document.getSelection().toString();
+                output += 'FAIL: failed to reduce selection to a single character by dragging right. Incorrect Selection: ' + document.getSelection().toString();
             output += '<br>';
             output += result;
+
+            var noneditableElement = document.getElementById('noneditable');
+            noneditableElement.parentNode.removeChild(noneditableElement);
+            var editableElement = document.getElementById('editable');
+            editableElement.parentNode.removeChild(editableElement);
             document.getElementById('target').innerHTML = output;
             testRunner.notifyDone();
         }
-
+    
         window.addEventListener('load', runTest, false);
     </script>
     <style>
+        #noneditable {
+            height: 200px;
+            width: 300px;
+            background-color: silver;
+            font-family: monospace;
+            font-size: 18px;
+        }
+        #editable {
+            height: 200px;
+            width: 300px;
+            background-color: silver;
+            font-family: monospace;
+            font-size: 18px;
+        }
         #target {
-            height: 400px;
+            height: 50px;
             width: 300px;
             background-color: silver;
             font-family: monospace;
             font-size: 18px;
         }
     </style>
-    <meta name="viewport" content="initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
+    <div id="noneditable">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et <span id="thirdSelection"></span>dolore <span id="secondSelection"></span>magna <span id="firstSelection">aliqua</span>. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+    <div id="editable" contenteditable>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>     
     <div id="target">
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore <span id="firstSelection">magna</span> aliqua.<span id="secondSelection"></span> Ut<span id="thirdSelection"></span> enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-
         This test requires UIScriptController to run.
     </div>
 </body>

@@ -15,13 +15,15 @@
                 return;
 
             var output = '';
+            var editableTargetRect = document.getElementById('editable').getBoundingClientRect();
             var firstTargetRect = document.getElementById('firstSelection').getBoundingClientRect();
             var secondTargetRect = document.getElementById('secondSelection').getBoundingClientRect();
             var thirdTargetRect = document.getElementById('thirdSelection').getBoundingClientRect();
+            var noneditableToEditableOffset = document.getElementById('editable').getBoundingClientRect().y - document.getElementById('noneditable').getBoundingClientRect().y;
 
             var pressPointX = firstTargetRect.x + firstTargetRect.width / 2;
-            var pressPointY = firstTargetRect.y + firstTargetRect.height / 2;
-            var dragY = firstTargetRect.y + firstTargetRect.height;
+            var pressPointY = firstTargetRect.y + firstTargetRect.height / 2 + noneditableToEditableOffset;
+            var dragY = firstTargetRect.y + firstTargetRect.height + noneditableToEditableOffset;
             var dragX = firstTargetRect.x + firstTargetRect.width;
             var dragX2 = secondTargetRect.x;
             var dragX3 = thirdTargetRect.x;
@@ -69,27 +71,50 @@
                 output += 'FAIL: failed to reduce selection to a single character by dragging left. Incorrect Selection: ' + document.getSelection().toString();
             output += '<br>';
             output += result;
+
+            var noneditableElement = document.getElementById('noneditable');
+            noneditableElement.parentNode.removeChild(noneditableElement);
+            var editableElement = document.getElementById('editable');
+            editableElement.parentNode.removeChild(editableElement);
             document.getElementById('target').innerHTML = output;
             testRunner.notifyDone();
         }
 
         window.addEventListener('load', runTest, false);
     </script>
-    <style>
+        <style>
+        #noneditable {
+            height: 200px;
+            width: 300px;
+            background-color: silver;
+            font-family: monospace;
+            font-size: 18px;
+        }
+        #editable {
+            height: 200px;
+            width: 300px;
+            background-color: silver;
+            font-family: monospace;
+            font-size: 18px;
+        }
         #target {
-            height: 400px;
+            height: 50px;
             width: 300px;
             background-color: silver;
             font-family: monospace;
             font-size: 18px;
         }
     </style>
-    <meta name="viewport" content="initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
+    <div id="noneditable">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore <span id="firstSelection">magna</span> aliqua.<span id="secondSelection"></span> Ut<span id="thirdSelection"></span> enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+    <div id="editable" contenteditable>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div> 
     <div id="target">
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore <span id="firstSelection">magna</span> aliqua.<span id="secondSelection"></span> Ut<span id="thirdSelection"></span> enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-
         This test requires UIScriptController to run.
     </div>
 </body>

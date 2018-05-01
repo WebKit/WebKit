@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../../../resources/basic-gestures.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+    
+        async function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+        
+            var output = '';
+            var editableTargetRect = document.getElementById('editable').getBoundingClientRect();
+            var firstTargetRect = document.getElementById('firstSelection').getBoundingClientRect();
+            var secondTargetRect = document.getElementById('secondSelection').getBoundingClientRect();
+            var thirdTargetRect = document.getElementById('thirdSelection').getBoundingClientRect();
+            var noneditableToEditableOffset = document.getElementById('editable').getBoundingClientRect().y - document.getElementById('noneditable').getBoundingClientRect().y;
+        
+            var tapPointX = editableTargetRect.x + editableTargetRect.width / 2;
+            var tapPointY = editableTargetRect.y + editableTargetRect.height / 2;
+            var doubleTapPointX = firstTargetRect.x + firstTargetRect.width / 2;
+            var doubleTapPointY = firstTargetRect.y + firstTargetRect.height / 2 + noneditableToEditableOffset;
+            var dragY = firstTargetRect.y + noneditableToEditableOffset;
+            var dragX = firstTargetRect.x;
+            var dragX2 = secondTargetRect.x;
+            var dragX3 = thirdTargetRect.x;
+            var dragX4 = firstTargetRect.x + firstTargetRect.width;
+        
+            await tapAtPoint(tapPointX, tapPointY);
+            if (document.getSelection().type == "Caret")
+                output += 'PASS: Has Caret Selection';
+            else
+                output += 'FAIL: failed to activate caret as a result of a tap. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+
+            await didShowKeyboard();
+
+            await doubleTapAtPoint(doubleTapPointX, doubleTapPointY);
+            if (document.getSelection().toString() == "magna")
+                output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to select a word as a result of a long press. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+
+            await touchAndDragFromPointToPoint(dragX, dragY, dragX2, dragY);
+            if (document.getSelection().toString() == "aliqua magna")
+                output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to select additional word after a drag. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+
+            await touchAndDragFromPointToPoint(dragX2, dragY, dragX3, dragY);
+            if (document.getSelection().toString() == "dolore aliqua magna")
+                output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to select additional word after a drag. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+
+            await touchAndDragFromPointToPoint(dragX3, dragY, dragX2, dragY);
+            if (document.getSelection().toString() == "aliqua magna")
+                output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to deselect word after a drag. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+
+            await touchAndDragFromPointToPoint(dragX2, dragY, dragX, dragY);
+            if (document.getSelection().toString() == "magna")
+                 output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to deselect word after a drag. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+
+            var result = await touchAndDragFromPointToPoint(dragX, dragY, dragX4, dragY);
+            if (document.getSelection().toString() == "a")
+                output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to reduce selection to a single character by dragging right. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+            output += result;
+
+            var noneditableElement = document.getElementById('noneditable');
+            noneditableElement.parentNode.removeChild(noneditableElement);
+            var editableElement = document.getElementById('editable');
+            editableElement.parentNode.removeChild(editableElement);
+            document.getElementById('target').innerHTML = output;
+            testRunner.notifyDone();
+        }
+    
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        #noneditable {
+            height: 200px;
+            width: 300px;
+            background-color: silver;
+            font-family: monospace;
+            font-size: 18px;
+        }
+        #editable {
+            height: 200px;
+            width: 300px;
+            background-color: silver;
+            font-family: monospace;
+            font-size: 18px;
+        }
+        #target {
+            height: 50px;
+            width: 300px;
+            background-color: silver;
+            font-family: monospace;
+            font-size: 18px;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div id="noneditable">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et <span id="thirdSelection"></span>dolore <span id="secondSelection"></span>aliqua <span id="firstSelection">magna</span>. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+    <div id="editable" contenteditable>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore aliqua magna. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>     
+    <div id="target">
+        This test requires UIScriptController to run.
+    </div>
+</body>
+</html>
