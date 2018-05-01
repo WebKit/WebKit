@@ -833,9 +833,6 @@ webkit.org/b/178553 [ HighSierra Release ] imported/w3c/web-platform-tests/html/
 
 webkit.org/b/177501 webrtc/video-mute.html [ Pass Timeout ]
 
-webkit.org/b/177828 http/tests/appcache/decide-navigation-policy-after-delay.html [ Skip ]
-webkit.org/b/177828 http/tests/contentfiltering/load-substitute-data-from-appcache.html [ Skip ]
-
 webkit.org/b/165620 [ ElCapitan Sierra ] http/tests/cache/disk-cache/disk-cache-request-headers.html [ Pass Failure ]
 
 webkit.org/b/179176 [ Release ] svg/wicd/test-rightsizing-a.xhtml [ Pass Failure ]

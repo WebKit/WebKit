@@ -1,3 +1,11 @@
+2018-04-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed test gardening
+
+        Update test expectations since the crash reported on Bug 177828 is no longer reproducible.
+
+        * platform/mac-wk2/TestExpectations:
+
 2018-04-30  Megan Gardner  <megan_gardner@apple.com>
 
         Add tests for selection in content editable
