@@ -1,3 +1,25 @@
+2018-05-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline tests after r231165.
+        https://bugs.webkit.org/show_bug.cgi?id=185166
+
+        Unreviewed test gardening.
+
+        * animations/font-variations/font-variation-settings-expected.txt:
+        * animations/font-variations/font-variation-settings-order-expected.txt:
+        * animations/font-variations/font-variation-settings-order.html:
+        * animations/font-variations/font-variation-settings.html:
+        * legacy-animation-engine/animations/font-variations/font-variation-settings-expected.txt:
+        * legacy-animation-engine/animations/font-variations/font-variation-settings-order-expected.txt:
+        * legacy-animation-engine/animations/font-variations/font-variation-settings-order.html:
+        * legacy-animation-engine/animations/font-variations/font-variation-settings.html:
+        * platform/ios/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt: Added.
+
 2018-05-01  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         WebAssembly: add support for stream APIs - JavaScript API
