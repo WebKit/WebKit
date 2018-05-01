@@ -180,31 +180,33 @@ class Executive(AbstractExecutive):
         # According to http://docs.python.org/library/os.html
         # os.kill isn't available on Windows. python 2.5.5 os.kill appears
         # to work in cygwin, however it occasionally raises EAGAIN.
-        retries_left = 10 if sys.platform == "cygwin" else 1
-        while retries_left > 0:
+        retries_left = 10 if sys.platform == "cygwin" else 2
+        current_signal = signal.SIGTERM
+        while retries_left > 0 and self.check_running_pid(pid):
             try:
                 retries_left -= 1
-                # Give processes one change to clean up quickly before exiting.
-                # Following up with a kill should have no effect if the process
-                # already exited, and forcefully kill it if SIGTERM wasn't enough.
-                os.kill(pid, signal.SIGTERM)
-                os.kill(pid, signal.SIGKILL)
+                os.kill(pid, current_signal)
             except OSError as e:
-                if e.errno == errno.EAGAIN:
+                if current_signal == signal.SIGTERM:
+                    pass
+                elif e.errno == errno.EAGAIN:
                     if retries_left <= 0:
                         _log.warn("Failed to kill pid %s.  Too many EAGAIN errors." % pid)
-                    continue
-                if e.errno == errno.ESRCH:  # The process does not exist.
+                elif e.errno == errno.ESRCH:  # The process does not exist.
                     return
-                if e.errno == errno.EPIPE:  # The process has exited already on cygwin
+                elif e.errno == errno.EPIPE:  # The process has exited already on cygwin
                     return
-                if e.errno == errno.ECHILD:
+                elif e.errno == errno.ECHILD:
                     # Can't wait on a non-child process, but the kill worked.
                     return
-                if e.errno == errno.EACCES and sys.platform == 'cygwin':
+                elif e.errno == errno.EACCES and sys.platform == 'cygwin':
                     # Cygwin python sometimes can't kill native processes.
                     return
-                raise
+                else:
+                    raise
+
+            # Give processes one chance to clean up quickly before exiting.
+            current_signal = signal.SIGKILL
 
     def _win32_check_running_pid(self, pid):
         # importing ctypes at the top-level seems to cause weird crashes at

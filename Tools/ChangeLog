@@ -1,3 +1,14 @@
+2018-05-01  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: SIGKILL right after SIGTERM causes orphaned processes with 'xcrun simctl spawn'
+        https://bugs.webkit.org/show_bug.cgi?id=185164
+
+        Reviewed by David Kilzer.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.kill_process): First attempt will always send a SIGTERM, all subsequent attempts will
+        send a SIGKILL. A SIGKILL with not be sent if the process is not running to avoid orphaning childen.
+
 2018-05-01  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r230919): API test WebKit.AutoLayoutIntegration is a flaky failure
