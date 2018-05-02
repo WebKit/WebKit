@@ -82,6 +82,7 @@
 #include <type_traits>
 #include <wtf/CommaPrinter.h>
 #include <wtf/MainThread.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/WallTime.h>
@@ -340,6 +341,7 @@ static EncodedJSValue JSC_HOST_CALL functionDollarAgentSleep(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDollarAgentBroadcast(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDollarAgentGetReport(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDollarAgentLeaving(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionDollarAgentMonotonicNow(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionWaitForReport(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionHeapCapacity(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionFlashHeapAccess(ExecState*);
@@ -595,7 +597,8 @@ protected:
         addFunction(vm, agent, "broadcast", functionDollarAgentBroadcast, 1);
         addFunction(vm, agent, "getReport", functionDollarAgentGetReport, 0);
         addFunction(vm, agent, "leaving", functionDollarAgentLeaving, 0);
-        
+        addFunction(vm, agent, "monotonicNow", functionDollarAgentMonotonicNow, 0);
+
         addFunction(vm, "waitForReport", functionWaitForReport, 0);
 
         addFunction(vm, "heapCapacity", functionHeapCapacity, 0);
@@ -1744,6 +1747,11 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentGetReport(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionDollarAgentLeaving(ExecState*)
 {
     return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL functionDollarAgentMonotonicNow(ExecState*)
+{
+    return JSValue::encode(jsNumber(MonotonicTime::now().secondsSinceEpoch().milliseconds()));
 }
 
 EncodedJSValue JSC_HOST_CALL functionWaitForReport(ExecState* exec)

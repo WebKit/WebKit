@@ -1,3 +1,14 @@
+2018-05-02  Rick Waldron  <waldron.rick@gmail.com>
+
+        Expose "$262.agent.monotonicNow()" for use in testing Atomic operation timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=185043
+
+        Reviewed by Filip Pizlo.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionDollarAgentMonotonicNow):
+
 2018-05-02  Dominik Infuehr  <dinfuehr@igalia.com>
 
         [ARM] Implement and16 and store16 for MacroAssemblerARMv7
