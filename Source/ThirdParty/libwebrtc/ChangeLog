@@ -1,3 +1,26 @@
+2018-05-02  Youenn Fablet  <youenn@apple.com>
+
+        Disable VCP for iOS until it is fully working
+        https://bugs.webkit.org/show_bug.cgi?id=185201
+        <rdar://problem/39773857>
+
+        Reviewed by Eric Carlson.
+
+        Disable VCP for iOS unconditionally.
+        Add check to getkVTVideoEncoderSpecification_Usage to not set this property if not defined as it is optional soft linked.
+        Replace use of VTSessionSetProperty by CompressionSessionSetProperty as the latter is a macro
+        that works for both VT and VCP.
+
+        * Source/webrtc/sdk/WebKit/EncoderUtilities.h:
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+        (-[RTCVideoEncoderH264 configureCompressionSession]):
+        (-[RTCVideoEncoderH264 setEncoderBitrateBps:]):
+        (-[RTCVideoEncoderH264 frameWasEncoded:flags:sampleBuffer:codecSpecificInfo:width:height:renderTimeMs:timestamp:rotation:]):
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/helpers.cc:
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/helpers.h:
+
 2018-04-30  Youenn Fablet  <youenn@apple.com>
 
         Mandate H264 hardware encoder for Mac in libwebrtc

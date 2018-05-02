@@ -612,8 +612,8 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
   auto useHardwareEncoder = webrtc::isH264HardwareEncoderAllowed() ? kCFBooleanTrue : kCFBooleanFalse;
   // Currently hw accl is supported above 360p on mac, below 360p
   // the compression session will be created with hw accl disabled.
-  CFTypeRef sessionKeys[] = {kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder, kVTCompressionPropertyKey_RealTime };
-  CFTypeRef sessionValues[] = {  useHardwareEncoder, useHardwareEncoder, kCFBooleanTrue };
+  CFTypeRef sessionKeys[] = { kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder, kVTCompressionPropertyKey_RealTime };
+  CFTypeRef sessionValues[] = { useHardwareEncoder, useHardwareEncoder, kCFBooleanTrue };
   encoderSpecs = CFDictionaryCreate(kCFAllocatorDefault, sessionKeys, sessionValues, 3, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 #endif
   OSStatus status =
@@ -738,7 +738,8 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
   SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_ProfileLevel, _profile);
   SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_AllowFrameReordering, false);
 #if ENABLE_VCP_ENCODER
-  SetVTSessionProperty(_compressionSession, (__bridge CFStringRef)getkVTVideoEncoderSpecification_Usage(), 1);
+  if (auto key = getkVTVideoEncoderSpecification_Usage())
+      SetVTSessionProperty(_compressionSession, (__bridge CFStringRef)key, 1);
 #endif
   [self setEncoderBitrateBps:_targetBitrateBps];
   // TODO(tkchin): Look at entropy mode and colorspace matrices.
@@ -787,7 +788,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
         CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &oneSecondValue);
     const void *nums[2] = {bytesPerSecond, oneSecond};
     CFArrayRef dataRateLimits = CFArrayCreate(nullptr, nums, 2, &kCFTypeArrayCallBacks);
-    OSStatus status = VTSessionSetProperty(
+    OSStatus status = CompressionSessionSetProperty(
         _compressionSession, kVTCompressionPropertyKey_DataRateLimits, dataRateLimits);
     if (bytesPerSecond) {
       CFRelease(bytesPerSecond);
@@ -816,7 +817,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
               timestamp:(uint32_t)timestamp
                rotation:(RTCVideoRotation)rotation {
   if (status != noErr) {
-    RTC_LOG(LS_ERROR) << "H264 encode failed.";
+    RTC_LOG(LS_ERROR) << "H264 encode failed: " << status;
     return;
   }
   if (infoFlags & kVTEncodeInfo_FrameDropped) {

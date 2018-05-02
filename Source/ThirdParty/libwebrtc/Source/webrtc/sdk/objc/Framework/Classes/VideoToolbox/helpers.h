@@ -16,6 +16,8 @@
 #include <VideoToolbox/VideoToolbox.h>
 #include <string>
 
+#include "sdk/WebKit/EncoderUtilities.h"
+
 // Convenience function for creating a dictionary.
 inline CFDictionaryRef CreateCFTypeDictionary(CFTypeRef* keys,
                                               CFTypeRef* values,
@@ -29,18 +31,18 @@ inline CFDictionaryRef CreateCFTypeDictionary(CFTypeRef* keys,
 std::string CFStringToString(const CFStringRef cf_string);
 
 // Convenience function for setting a VT property.
-void SetVTSessionProperty(VTSessionRef session, CFStringRef key, int32_t value);
+void SetVTSessionProperty(CompressionSessionRef session, CFStringRef key, int32_t value);
 
 // Convenience function for setting a VT property.
-void SetVTSessionProperty(VTSessionRef session,
+void SetVTSessionProperty(CompressionSessionRef session,
                           CFStringRef key,
                           uint32_t value);
 
 // Convenience function for setting a VT property.
-void SetVTSessionProperty(VTSessionRef session, CFStringRef key, bool value);
+void SetVTSessionProperty(CompressionSessionRef session, CFStringRef key, bool value);
 
 // Convenience function for setting a VT property.
-void SetVTSessionProperty(VTSessionRef session,
+void SetVTSessionProperty(CompressionSessionRef session,
                           CFStringRef key,
                           CFStringRef value);
 

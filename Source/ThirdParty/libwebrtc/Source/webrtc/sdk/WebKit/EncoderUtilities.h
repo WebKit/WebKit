@@ -40,7 +40,7 @@
 #else
 
 #define CompressionSessionRef VTCompressionSessionRef
-#define CompressionSessionSetProperty VTCompressionSessionSetProperty
+#define CompressionSessionSetProperty VTSessionSetProperty
 #define CompressionSessionGetPixelBufferPool VTCompressionSessionGetPixelBufferPool
 #define CompressionSessionEncodeFrame VTCompressionSessionEncodeFrame
 #define CompressionSessionCreate VTCompressionSessionCreate
