@@ -1,3 +1,15 @@
+2018-05-02  Chris Dumez  <cdumez@apple.com>
+
+        document.open() event listener removal is not immediate
+        https://bugs.webkit.org/show_bug.cgi?id=185191
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * fast/dom/Document/document-open-removes-all-listeners-expected.txt: Added.
+        * fast/dom/Document/document-open-removes-all-listeners.html: Added.
+
 2018-05-01  Brent Fulgham  <bfulgham@apple.com>
 
         Prevent assertion when changing forms

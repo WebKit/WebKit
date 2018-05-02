@@ -86,6 +86,11 @@ void EventListenerMap::clear()
     
     assertNoActiveIterators();
 
+    for (auto& entry : m_entries) {
+        for (auto& listener : *entry.second)
+            listener->markAsRemoved();
+    }
+
     m_entries.clear();
 }
 

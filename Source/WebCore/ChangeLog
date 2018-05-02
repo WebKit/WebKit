@@ -1,3 +1,24 @@
+2018-05-02  Chris Dumez  <cdumez@apple.com>
+
+        document.open() event listener removal is not immediate
+        https://bugs.webkit.org/show_bug.cgi?id=185191
+
+        Reviewed by Darin Adler.
+
+        We need to make sure we set the 'wasremoved' flag on RegisteredEventListeners
+        whenever they get removed from the EventListenerMap. We were doing so correctly
+        in EventListenerMap:remove() but not EventListenerMap::clear(). This patch
+        updates clear() accordingly.
+
+        The reason we need to set this flag is that RegisteredEventListeners is RefCounted
+        and EventTarget::fireEventListeners() may be currently running and calling
+        each listener one by one, holding a reference to all listener of a given event.
+
+        Test: fast/dom/Document/document-open-removes-all-listeners.html
+
+        * dom/EventListenerMap.cpp:
+        (WebCore::EventListenerMap::clear):
+
 2018-05-02  Zalan Bujtas <zalan@apple.com>
 
         Use WeakPtr in GridCell
