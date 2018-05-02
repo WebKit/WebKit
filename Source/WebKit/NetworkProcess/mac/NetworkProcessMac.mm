@@ -36,6 +36,7 @@
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
 #import "StringUtilities.h"
+#import "WKFoundation.h"
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
@@ -119,8 +120,13 @@ void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo&
 void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
     // Need to overide the default, because service has a different bundle ID.
-    NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
-    sandboxParameters.setOverrideSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebKit.NetworkProcess" ofType:@"sb"]);
+#if WK_API_ENABLED
+    NSBundle *webKit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
+#else
+    NSBundle *webKit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
+#endif
+
+    sandboxParameters.setOverrideSandboxProfilePath([webKit2Bundle pathForResource:@"com.apple.WebKit.NetworkProcess" ofType:@"sb"]);
 
     ChildProcess::initializeSandbox(parameters, sandboxParameters);
 }

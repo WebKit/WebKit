@@ -1,3 +1,17 @@
+2018-05-02  Jer Noble  <jer.noble@apple.com>
+
+        Get the WebKit.framework bundle by asking for WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=185175
+
+        Reviewed by Tim Horton.
+
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::initializeSandbox):
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+        * StorageProcess/mac/StorageProcessMac.mm:
+        (WebKit::StorageProcess::initializeSandbox):
+
 2018-05-02  Youenn Fablet  <youenn@apple.com>
 
         Cannot gather srflx or relay ICE candidates on IPv6 network (ICE agent hangs?)

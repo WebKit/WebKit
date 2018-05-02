@@ -31,6 +31,7 @@
 #import "CodeSigning.h"
 #import "QuarantineSPI.h"
 #import "SandboxInitializationParameters.h"
+#import "WKFoundation.h"
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/FileSystem.h>
 #import <WebCore/SystemVersion.h>
@@ -111,8 +112,12 @@ static OSStatus enableSandboxStyleFileQuarantine()
 
 void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
-    NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
-    String defaultProfilePath = [webkit2Bundle pathForResource:[[NSBundle mainBundle] bundleIdentifier] ofType:@"sb"];
+#if WK_API_ENABLED
+    NSBundle *webKit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
+#else
+    NSBundle *webKit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
+#endif
+    String defaultProfilePath = [webKit2Bundle pathForResource:[[NSBundle mainBundle] bundleIdentifier] ofType:@"sb"];
 
     if (sandboxParameters.userDirectorySuffix().isNull()) {
         auto userDirectorySuffix = parameters.extraInitializationData.find("user-directory-suffix");
@@ -146,7 +151,7 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     }
     setenv("TMPDIR", temporaryDirectory, 1);
 
-    sandboxParameters.addPathParameter("WEBKIT2_FRAMEWORK_DIR", [[webkit2Bundle bundlePath] stringByDeletingLastPathComponent]);
+    sandboxParameters.addPathParameter("WEBKIT2_FRAMEWORK_DIR", [[webKit2Bundle bundlePath] stringByDeletingLastPathComponent]);
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_TEMP_DIR", _CS_DARWIN_USER_TEMP_DIR);
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_CACHE_DIR", _CS_DARWIN_USER_CACHE_DIR);
 
