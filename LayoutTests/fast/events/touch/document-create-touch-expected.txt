@@ -28,7 +28,7 @@ PASS emptyTouch.webkitRotationAngle is NaN
 PASS emptyTouch.webkitForce is NaN
 PASS function () {
   document.createTouch(function(x) { return x; }, 12, 'a', 'b', 'c', function(x) { return x; }, 104, 'a', 'b', 'c', 'd');
-} threw exception TypeError: Argument 1 ('window') to Document.createTouch must be an instance of DOMWindow.
+} threw exception TypeError: Argument 1 ('window') to Document.createTouch must be an instance of WindowProxy.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -52,7 +52,7 @@ shouldBeNaN("emptyTouch.webkitForce");
 // Try invoking with incorrect parameter types.
 shouldThrow(function() {
   document.createTouch(function(x) { return x; }, 12, 'a', 'b', 'c', function(x) { return x; }, 104, 'a', 'b', 'c', 'd');
-}, "\"TypeError: Argument 1 ('window') to Document.createTouch must be an instance of DOMWindow\"");
+}, "\"TypeError: Argument 1 ('window') to Document.createTouch must be an instance of WindowProxy\"");
 isSuccessfullyParsed();
 </script>
 </body>
