@@ -1,3 +1,15 @@
+2018-05-02  Per Arne Vollan  <pvollan@apple.com>
+
+        Disable Media capture rules in sandbox for simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=185206
+        <rdar://problem/39910015>
+
+        Reviewed by Eric Carlson.
+
+        These rules are not relevant in this case.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-05-02  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Provide audio route information when invoking AirPlay picker

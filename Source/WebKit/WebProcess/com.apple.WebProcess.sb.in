@@ -711,6 +711,7 @@
 ;; Data Detectors
 (allow file-read* (subpath "/private/var/db/datadetectors/sys"))
 
+#if PLATFORM(MAC)
 ;; Media capture, utilities
 (if (not (defined? 'sbpl-filter?))
   (define (sbpl-filter? x)
@@ -791,3 +792,4 @@
         (iokit-user-client-class "IOUSBDeviceUserClientV2")
         (iokit-user-client-class "IOUSBInterfaceUserClientV2"))
     (allow device-camera))
+#endif // PLATFORM(MAC)
