@@ -97,8 +97,10 @@ private:
     static JSC::JSInternalPromise* moduleLoaderImportModule(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSString*, JSC::JSValue, const JSC::SourceOrigin&);
     static JSC::JSObject* moduleLoaderCreateImportMetaProperties(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSModuleRecord*, JSC::JSValue);
 
+#if ENABLE(WEBASSEMBLY)
     static void compileStreaming(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromiseDeferred*, JSC::JSValue);
     static void instantiateStreaming(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromiseDeferred*, JSC::JSValue, JSC::JSObject*);
+#endif
 
     static void promiseRejectionTracker(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromise*, JSC::JSPromiseRejectionOperation);
 

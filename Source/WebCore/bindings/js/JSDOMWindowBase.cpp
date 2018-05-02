@@ -80,8 +80,13 @@ const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = {
     &moduleLoaderEvaluate,
     &promiseRejectionTracker,
     &defaultLanguage,
+#if ENABLE(WEBASSEMBLY)
     &compileStreaming,
-    &instantiateStreaming
+    &instantiateStreaming,
+#else
+    nullptr,
+    nullptr,
+#endif
 };
 
 JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, RefPtr<DOMWindow>&& window, JSWindowProxy* proxy)
@@ -489,18 +494,6 @@ void JSDOMWindowBase::instantiateStreaming(JSC::JSGlobalObject* globalObject, JS
         });
     } else
         promise->reject(exec, createTypeError(exec, ASCIILiteral("first argument must be an Response or Promise for Response")));
-}
-#else
-NO_RETURN_DUE_TO_ASSERT
-void JSDOMWindowBase::compileStreaming(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromiseDeferred*, JSC::JSValue)
-{
-    ASSERT_NOT_REACHED();
-}
-
-NO_RETURN_DUE_TO_ASSERT
-void JSDOMWindowBase::instantiateStreaming(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromiseDeferred*, JSC::JSValue, JSC::JSObject*)
-{
-    ASSERT_NOT_REACHED();
 }
 #endif
 
