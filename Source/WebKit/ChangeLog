@@ -1,3 +1,25 @@
+2018-05-02  Daniel Bates  <dabates@apple.com>
+
+        Cleanup NetworkResourceLoader::didReceiveResponse()
+        https://bugs.webkit.org/show_bug.cgi?id=185209
+
+        Reviewed by Chris Dumez.
+
+        Use early returns to make the control flow easier to read and reason about. Disregarding a
+        From-Origin violation, NetworkResourceLoader::didReceiveResponse() only returns NetworkLoadClient::ShouldContinueDidReceiveResponse::No
+        when the load is for a main resource and hence it must wait for the embedding client to allow
+        the load before continuing with it. With regards to a From-Origin violation, the network
+        process schedules to fail the load in a subsequent turn of the event loop before returning
+        NetworkLoadClient::ShouldContinueDidReceiveResponse::No. It return NetworkLoadClient::ShouldContinueDidReceiveResponse::No
+        solely to tell the NetworkLoadClient to defer assuming the load is allowed (because we will
+        fail it on the next turn of the event loop).
+
+        Additionally, remove all logging about the return value as we no longer have a need for
+        such logging.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+
 2018-05-02  Alex Christensen  <achristensen@webkit.org>
 
         Add WKWebsiteDataStorePrivate._proxyConfiguration SPI

@@ -413,43 +413,36 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         } else
             m_cacheEntryForValidation = nullptr;
     }
-    bool shouldSendDidReceiveResponse = !m_cacheEntryForValidation;
+    if (m_cacheEntryForValidation)
+        return ShouldContinueDidReceiveResponse::Yes;
 
-    bool shouldWaitContinueDidReceiveResponse = isMainResource();
-    if (shouldSendDidReceiveResponse) {
-
-        ResourceError error;
-        if (m_parameters.shouldEnableFromOriginResponseHeader && shouldCancelCrossOriginLoad(m_response, m_parameters.frameAncestorOrigins))
-            error = fromOriginResourceError(m_response.url());
-
-        if (error.isNull() && m_networkLoadChecker)
-            error = m_networkLoadChecker->validateResponse(m_response);
-
-        if (!error.isNull()) {
-            RunLoop::main().dispatch([protectedThis = makeRef(*this), error = WTFMove(error)] {
-                if (protectedThis->m_networkLoad)
-                    protectedThis->didFailLoading(error);
-            });
-            return ShouldContinueDidReceiveResponse::No;
-        }
-
-        auto response = sanitizeResponseIfPossible(ResourceResponse { m_response }, ResourceResponse::SanitizationType::CrossOriginSafe);
-        if (isSynchronous())
-            m_synchronousLoadData->response = WTFMove(response);
-        else
-            send(Messages::WebResourceLoader::DidReceiveResponse { response, shouldWaitContinueDidReceiveResponse });
+    ResourceError error;
+    if (m_parameters.shouldEnableFromOriginResponseHeader && shouldCancelCrossOriginLoad(m_response, m_parameters.frameAncestorOrigins))
+        error = fromOriginResourceError(m_response.url());
+    if (error.isNull() && m_networkLoadChecker)
+        error = m_networkLoadChecker->validateResponse(m_response);
+    if (!error.isNull()) {
+        // FIXME: We need to make a main resource load look successful to prevent leaking its existence. See <https://bugs.webkit.org/show_bug.cgi?id=185120>.
+        RunLoop::main().dispatch([protectedThis = makeRef(*this), error = WTFMove(error)] {
+            if (protectedThis->m_networkLoad)
+                protectedThis->didFailLoading(error);
+        });
+        // FIXME: We know that we are not going to continue this load. ShouldContinueDidReceiveResponse::No should only be returned when
+        // the network process is waiting to receive message NetworkResourceLoader::ContinueDidReceiveResponse to continue a load.
+        return ShouldContinueDidReceiveResponse::No;
     }
 
-    // For main resources, the web process is responsible for sending back a NetworkResourceLoader::ContinueDidReceiveResponse message.
-    bool shouldContinueDidReceiveResponse = !shouldWaitContinueDidReceiveResponse || m_cacheEntryForValidation;
-
-    if (shouldContinueDidReceiveResponse) {
-        RELEASE_LOG_IF_ALLOWED("didReceiveResponse: Should not wait for message from WebContent process before continuing resource load (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
+    auto response = sanitizeResponseIfPossible(ResourceResponse { m_response }, ResourceResponse::SanitizationType::CrossOriginSafe);
+    if (isSynchronous()) {
+        m_synchronousLoadData->response = WTFMove(response);
         return ShouldContinueDidReceiveResponse::Yes;
     }
 
-    RELEASE_LOG_IF_ALLOWED("didReceiveResponse: Should wait for message from WebContent process before continuing resource load (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
-    return ShouldContinueDidReceiveResponse::No;
+    // We wait to receive message NetworkResourceLoader::ContinueDidReceiveResponse before continuing a load for
+    // a main resource because the embedding client must decide whether to allow the load.
+    bool willWaitForContinueDidReceiveResponse = isMainResource();
+    send(Messages::WebResourceLoader::DidReceiveResponse { response, willWaitForContinueDidReceiveResponse });
+    return willWaitForContinueDidReceiveResponse ? ShouldContinueDidReceiveResponse::No : ShouldContinueDidReceiveResponse::Yes;
 }
 
 void NetworkResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)
