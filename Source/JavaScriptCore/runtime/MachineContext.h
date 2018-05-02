@@ -158,7 +158,7 @@ inline void setStackPointer(PlatformRegisters& regs, T value)
 #else // not OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 
 template<typename T>
-inline void* stackPointer(const PlatformRegisters& regs)
+inline T stackPointer(const PlatformRegisters& regs)
 {
     return bitwise_cast<T>(regs.stackPointer);
 }
