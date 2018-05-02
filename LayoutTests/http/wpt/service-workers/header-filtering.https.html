@@ -40,24 +40,31 @@ async function registerServiceWorker(scope)
     });
 }
 
+var processMessage;
 promise_test(async (test) => {
     registration = await registerServiceWorker(scope);
     registration.active.postMessage("ready?");
-    return new Promise((resolve) => {
-        navigator.serviceWorker.onmessage = (event) => {
-            assert_equals(event.data, "ready");
-            navigator.serviceWorker.onmessage = undefined;
-            resolve();
-        };
-    });
-}, "Prepare tests: setup worker and register the client");
 
-var processMessage;
-promise_test(async (test) => {
-    frame = await withFrame(scope + "/header-filtering-iframe.html");
     navigator.serviceWorker.onmessage = (event) => {
         processMessage(event.data);
     };
+
+    return new Promise((resolve) => {
+        processMessage = (data) => {
+            assert_equals(event.data, "ready");
+            resolve();
+        }
+    });
+}, "Prepare tests: setup worker and register the client");
+
+promise_test(async (test) => {
+    const promise = new Promise((resolve) => {
+        processMessage = (data) => {
+            resolve(data);
+        };
+    });
+    frame = await withFrame(scope + "/header-filtering-iframe.html");
+    await promise;
 }, "Prepare tests: Add a frame controlled by service worker");
 
 promise_test(async (test) => {
