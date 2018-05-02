@@ -1,3 +1,23 @@
+2018-05-02  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: opt out of process swap on navigation if a Web Inspector frontend is connected
+        https://bugs.webkit.org/show_bug.cgi?id=184861
+        <rdar://problem/39153768>
+
+        Reviewed by Ryosuke Niwa.
+
+        Notify the client of the current connection count whenever a frontend connects or disconnects.
+
+        Covered by new API test.
+
+        * inspector/InspectorClient.h:
+        (WebCore::InspectorClient::frontendCountChanged):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::disconnectAllFrontends):
+        * inspector/InspectorController.h:
+
 2018-05-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GStreamer] Remove unneeded include of gstgldisplay_wayland.h after r228866 and r229022

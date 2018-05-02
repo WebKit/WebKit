@@ -84,6 +84,11 @@ void WebInspectorClient::inspectedPageDestroyed()
     delete this;
 }
 
+void WebInspectorClient::frontendCountChanged(unsigned count)
+{
+    m_page->inspectorFrontendCountChanged(count);
+}
+
 Inspector::FrontendChannel* WebInspectorClient::openLocalFrontend(InspectorController* controller)
 {
     m_page->inspector()->openFrontendConnection(controller->isUnderTest());

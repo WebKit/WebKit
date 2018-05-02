@@ -50,6 +50,7 @@ public:
 private:
     // WebCore::InspectorClient
     void inspectedPageDestroyed() override;
+    void frontendCountChanged(unsigned) override;
 
     Inspector::FrontendChannel* openLocalFrontend(WebCore::InspectorController*) override;
     void bringFrontendToFront() override;

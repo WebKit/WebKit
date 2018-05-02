@@ -410,6 +410,8 @@ messages -> WebPageProxy {
     DisableInspectorNodeSearch()
 #endif
 
+    DidChangeInspectorFrontendCount(uint64_t count)
+
     # Search popup menus
     SaveRecentSearches(String name, Vector<WebCore::RecentSearch> searchItems)
     LoadRecentSearches(String name) -> (Vector<WebCore::RecentSearch> result)
