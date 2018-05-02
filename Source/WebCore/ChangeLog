@@ -1,3 +1,33 @@
+2018-05-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r225868): Release assert when removing an SVGUseElement from Document::m_svgUseElements
+        https://bugs.webkit.org/show_bug.cgi?id=182188
+        <rdar://problem/36689240>
+
+        Reviewed by Antti Koivisto.
+
+        Fixed the crash by removing up the release assert.
+
+        The crash is likely caused by re-entrancy to Document::resolveStyle during SVGUseElement::updateShadowTree.
+        Because Document::resolveStyle invokes updateShadowTree on SVG use elements in Document::m_svgUseElements
+        without clearing the map, the nested call to resolveStyle ends up calling updateShadowTree() for all elements
+        in m_svgUseElements and removing them all from the map. When the stack frame eventually comes back to the outer
+        invocation of Document::resolveStyle, updateShadowTree gets invoked for the second time on SVG use elements
+        whose shadow tree had already been updated within the inner invocation to updateShadowTree, and release-asserts.
+
+        There is an alternative fix: avoid calling updateShadowTree on a svg element when shadowTreeNeedsUpdate returns
+        true on the element in resolveStyle. However, removing the release assert is a sure way to fix the crash so
+        this patch opts for that fix instead especially since we don't have any reproducible test case for this crash.
+
+        This release assertion was added in r225868 as a cautious measure to catch any use-after-frees of SVGUseElement's
+        since m_svgUseElements stored raw pointes to SVG use elements but this crash is not an indicative of any UAF,
+        and there is no evidence that r225868 has led to new UAFs even after five months.
+
+        No new tests. I couldn't find a way to trigger a nested style update inside SVGUseElement::updateShadowTree.
+
+        * dom/Document.cpp:
+        (WebCore::Document::removeSVGUseElement):
+
 2018-05-02  Dirk Schulze  <dschulze@chromium.org>
 
         getCharNumAtPosition should take DOMPointInit as argument

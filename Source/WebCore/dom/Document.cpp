@@ -5322,8 +5322,8 @@ void Document::addSVGUseElement(SVGUseElement& element)
 
 void Document::removeSVGUseElement(SVGUseElement& element)
 {
-    bool didRemove = m_svgUseElements.remove(&element);
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(didRemove);
+    m_svgUseElements.remove(&element);
+    // FIXME: Assert that element was in m_svgUseElements once re-entrancy to update style and layout have been removed.
 }
 
 bool Document::hasSVGRootNode() const
