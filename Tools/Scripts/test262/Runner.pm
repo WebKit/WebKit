@@ -58,6 +58,7 @@ BEGIN {
 }
 
 use YAML qw(Load LoadFile Dump DumpFile Bless);
+use JSON;
 use Parallel::ForkManager;
 use Getopt::Long qw(GetOptions);
 use Pod::Usage;
@@ -79,10 +80,13 @@ my $saveExpectations;
 my $failingOnly;
 my $latestImport;
 my $runningAllTests;
+my @results;
 
 my $expectationsFile = abs_path("$Bin/expectations.yaml");
 my $configFile = abs_path("$Bin/config.yaml");
 my $resultsFile = abs_path("$Bin/results.yaml");
+my $summaryTxtFile = abs_path("$Bin/results-summary.txt");
+my $summaryFile = abs_path("$Bin/results-summary.yaml");
 
 processCLI();
 
@@ -137,7 +141,6 @@ sub processCLI {
     }
 
     if ($stats) {
-        print "Summarizing results...\n\n";
         summarizeResults();
         exit;
     }
@@ -256,10 +259,10 @@ sub main {
     close $deffh;
 
     seek($resfh, 0, 0);
-    my @res = LoadFile($resfh);
+    @results = LoadFile($resfh);
     close $resfh;
 
-    @res = sort { "$a->{path} . $a->{mode}" cmp "$b->{path} . $b->{mode}" } @res;
+    @results = sort { "$a->{path} . $a->{mode}" cmp "$b->{path} . $b->{mode}" } @results;
 
     my %failed;
     my $failcount = 0;
@@ -268,7 +271,7 @@ sub main {
     my $skipfilecount = 0;
 
     # Create expectation file and calculate results
-    foreach my $test (@res) {
+    foreach my $test (@results) {
 
         my $expectedFailure = 0;
         if ($expect && $expect->{$test->{path}}) {
@@ -309,13 +312,12 @@ sub main {
     }
 
     if ($runningAllTests) {
-        DumpFile($resultsFile, \@res);
-        print "Saved all the results in the $resultsFile.";
-        print "Summarizing results...\n\n";
+        DumpFile($resultsFile, \@results);
+        print "Saved all the results in $resultsFile\n";
         summarizeResults();
     }
 
-    my $total = scalar @res - $skipfilecount;
+    my $total = scalar @results - $skipfilecount;
     print "\n" . $total . " tests ran\n";
 
     if ( !$expect ) {
@@ -655,12 +657,16 @@ sub getHarness {
 }
 
 sub summarizeResults {
-    my @rawresults = LoadFile($resultsFile) or die $!;
+    print "Summarizing results...\n";
 
+    if (not @results) {
+        my @rawresults = LoadFile($resultsFile) or die $!;
+        @results = @{$rawresults[0]};
+    }
     my %byfeature;
     my %bypath;
 
-    foreach my $test (@{$rawresults[0]}) {
+    foreach my $test (@results) {
         my $result = $test->{result};
 
         if ($test->{features}) {
@@ -703,11 +709,10 @@ sub summarizeResults {
 
     }
 
-    print sprintf("%-6s %-6s %-6s %-6s %s\n", '% PASS', 'PASS', 'FAIL', 'SKIP', 'FOLDER');
-    foreach my $key (sort keys %bypath) {
-        my $c = 'bold';
-        $c = 'clear' if $bypath{$key}->[1];
+    open(my $sfh, '>', $summaryTxtFile) or die $!;
 
+    print $sfh sprintf("%-6s %-6s %-6s %-6s %s\n", '%PASS', 'PASS', 'FAIL', 'SKIP', 'FOLDER');
+    foreach my $key (sort keys %bypath) {
         my $per = ($bypath{$key}->[0] / (
             $bypath{$key}->[0]
             + $bypath{$key}->[1]
@@ -715,19 +720,16 @@ sub summarizeResults {
 
         $per = sprintf("%.0f", $per) . "%";
 
-        print colored([$c], sprintf("%-6s %-6d %-6d %-6d %s \n", $per,
-                      $bypath{$key}->[0],
-                      $bypath{$key}->[1],
-                      $bypath{$key}->[2], $key,));
+        print $sfh sprintf("%-6s %-6d %-6d %-6d %s \n", $per,
+                           $bypath{$key}->[0],
+                           $bypath{$key}->[1],
+                           $bypath{$key}->[2], $key,);
     }
 
-    print "\n\n";
-    print sprintf("%-6s %-6s %-6s %-6s %s\n", '% PASS', 'PASS', 'FAIL', 'SKIP', 'FEATURE');
+    print $sfh "\n\n";
+    print $sfh sprintf("%-6s %-6s %-6s %-6s %s\n", '%PASS', 'PASS', 'FAIL', 'SKIP', 'FEATURE');
 
     foreach my $key (sort keys %byfeature) {
-        my $c = 'bold';
-        $c = 'clear' if $byfeature{$key}->[1];
-
         my $per = ($byfeature{$key}->[0] / (
             $byfeature{$key}->[0]
             + $byfeature{$key}->[1]
@@ -735,11 +737,22 @@ sub summarizeResults {
 
         $per = sprintf("%.0f", $per) . "%";
 
-        print colored([$c], sprintf("%-6s %-6d %-6d %-6d %s\n", $per,
-                      $byfeature{$key}->[0],
-                      $byfeature{$key}->[1],
-                      $byfeature{$key}->[2], $key));
+        print $sfh sprintf("%-6s %-6d %-6d %-6d %s\n", $per,
+                           $byfeature{$key}->[0],
+                           $byfeature{$key}->[1],
+                           $byfeature{$key}->[2], $key);
     }
+
+    close($sfh);
+
+    my %resultsyaml = (
+        byFolder => \%bypath,
+        byFeature => \%byfeature,
+    );
+
+    DumpFile($summaryFile, \%resultsyaml);
+
+    print "See summarized results in $summaryTxtFile\n";
 }
 
 __END__
@@ -828,7 +841,7 @@ Runs the test files listed in the last import (./JSTests/test262/latest-changes-
 
 =item B<--stats>
 
-Calculate conformance statistics from test262-results.yaml file.
+Calculate conformance statistics from JSTests/test262-results.yaml file. Saves results in JSTests/test262/results-summary.txt and JSTests/test262/results-summary.yaml.
 
 =back
 

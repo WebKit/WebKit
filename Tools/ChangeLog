@@ -1,3 +1,15 @@
+2018-05-02  Valerie R Young  <valerie@bocoup.com>
+
+        test262/Runner.pm: save summary to file
+        https://bugs.webkit.org/show_bug.cgi?id=185200
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/test262/Runner.pm:
+        (processCLI):
+        (main):
+        (summarizeResults):
+
 2018-05-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Generate a JSC bundle on the 64 and 32 bit release bots and upload it to webkitgtk.org
