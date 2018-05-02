@@ -318,6 +318,12 @@ public:
             add32(TrustedImm32(address.offset), dest);
     }
 
+    void and16(Address src, RegisterID dest)
+    {
+        load16(src, dataTempRegister);
+        and32(dataTempRegister, dest);
+    }
+
     void and32(Address src, RegisterID dest)
     {
         load32(src, dataTempRegister);
@@ -1356,6 +1362,23 @@ public:
                 move(imm8, immTempRegister);
                 m_assembler.sb(immTempRegister, addrTempRegister, address.offset);
             }
+        }
+    }
+
+    void store16(RegisterID src, ImplicitAddress address)
+    {
+        if (address.offset >= -32768 && address.offset <= 32767
+            && !m_fixedWidth) {
+            m_assembler.sh(src, address.base, address.offset);
+        } else {
+            /*
+                lui     addrTemp, (offset + 0x8000) >> 16
+                addu    addrTemp, addrTemp, base
+                sh      src, (offset & 0xffff)(addrTemp)
+              */
+            m_assembler.lui(addrTempRegister, (address.offset + 0x8000) >> 16);
+            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+            m_assembler.sh(src, addrTempRegister, address.offset);
         }
     }
 
