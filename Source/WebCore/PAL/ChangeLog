@@ -4,6 +4,16 @@
         https://bugs.webkit.org/show_bug.cgi?id=185199
         <rdar://problem/39853103>
 
+        Unreviewed build fix.
+
+        * pal/spi/mac/AVFoundationSPI.h:
+
+2018-05-02  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Provide audio route information when invoking AirPlay picker
+        https://bugs.webkit.org/show_bug.cgi?id=185199
+        <rdar://problem/39853103>
+
         Reviewed by Jer Noble.
 
         * pal/spi/mac/AVFoundationSPI.h: Add additional AVAudioSession SPI.
