@@ -667,6 +667,9 @@ MenuItemElementEnabled:
 EncryptedMediaAPIEnabled:
   type: bool
   defaultValue: false
+  humanReadableName: "Modern Encrypted Media API"
+  humanReadableDescription: "Modern Encrypted Media API"
+  category: experimental
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(ENCRYPTED_MEDIA)
 
