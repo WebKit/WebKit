@@ -86,7 +86,7 @@ def generate_wrapper_script(bundleTmpDir, interpreter):
         scriptHandle.write('#!/bin/sh\n')
         scriptHandle.write('MYDIR="$(dirname $(readlink -f $0))"\n')
         scriptHandle.write('export LD_LIBRARY_PATH="${MYDIR}/lib"\n')
-        scriptHandle.write('exec "${MYDIR}/lib/%s" "${MYDIR}/bin/jsc" $@\n' % os.path.basename(interpreter))
+        scriptHandle.write('exec "${MYDIR}/lib/%s" "${MYDIR}/bin/jsc" "$@"\n' % os.path.basename(interpreter))
     os.chmod(scriptFile, 0755)
 
 

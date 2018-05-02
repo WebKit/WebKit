@@ -1,3 +1,13 @@
+2018-05-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Generate a JSC bundle on the 64 and 32 bit release bots and upload it to webkitgtk.org (follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=184699
+
+        Unreviewed follow-up fix after r231230.
+
+        * Scripts/generate-jsc-bundle:
+        (generate_wrapper_script): Quote the arguments passed to jsc.
+
 2018-05-02  Brian Burg  <bburg@apple.com>
 
         Web Inspector: opt out of process swap on navigation if a Web Inspector frontend is connected
