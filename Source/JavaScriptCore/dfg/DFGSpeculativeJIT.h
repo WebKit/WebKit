@@ -1263,6 +1263,8 @@ public:
     void compileStringIdentCompare(Node*, MacroAssembler::RelationalCondition);
     
     bool compileStrictEq(Node*);
+
+    void compileSameValue(Node*);
     
     void compileAllocatePropertyStorage(Node*);
     void compileReallocatePropertyStorage(Node*);

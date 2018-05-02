@@ -1673,7 +1673,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
             
-    case CompareStrictEq: {
+    case CompareStrictEq:
+    case SameValue: {
         Node* leftNode = node->child1().node();
         Node* rightNode = node->child2().node();
         JSValue left = forNode(leftNode).value();
@@ -1689,7 +1690,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     break;
                 }
             } else {
-                setConstant(node, jsBoolean(JSValue::strictEqual(0, left, right)));
+                if (node->op() == CompareStrictEq)
+                    setConstant(node, jsBoolean(JSValue::strictEqual(nullptr, left, right)));
+                else
+                    setConstant(node, jsBoolean(sameValue(nullptr, left, right)));
                 break;
             }
         }

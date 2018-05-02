@@ -589,106 +589,12 @@ private:
             break;
         }
             
-        case CompareStrictEq: {
-            if (Node::shouldSpeculateBoolean(node->child1().node(), node->child2().node())) {
-                fixEdge<BooleanUse>(node->child1());
-                fixEdge<BooleanUse>(node->child2());
-                break;
-            }
-            if (Node::shouldSpeculateInt32(node->child1().node(), node->child2().node())) {
-                fixEdge<Int32Use>(node->child1());
-                fixEdge<Int32Use>(node->child2());
-                break;
-            }
-            if (enableInt52()
-                && Node::shouldSpeculateAnyInt(node->child1().node(), node->child2().node())) {
-                fixEdge<Int52RepUse>(node->child1());
-                fixEdge<Int52RepUse>(node->child2());
-                break;
-            }
-            if (Node::shouldSpeculateNumber(node->child1().node(), node->child2().node())) {
-                fixEdge<DoubleRepUse>(node->child1());
-                fixEdge<DoubleRepUse>(node->child2());
-                break;
-            }
-            if (Node::shouldSpeculateSymbol(node->child1().node(), node->child2().node())) {
-                fixEdge<SymbolUse>(node->child1());
-                fixEdge<SymbolUse>(node->child2());
-                break;
-            }
-            if (Node::shouldSpeculateBigInt(node->child1().node(), node->child2().node())) {
-                fixEdge<BigIntUse>(node->child1());
-                fixEdge<BigIntUse>(node->child2());
-                break;
-            }
-            if (node->child1()->shouldSpeculateStringIdent() && node->child2()->shouldSpeculateStringIdent()) {
-                fixEdge<StringIdentUse>(node->child1());
-                fixEdge<StringIdentUse>(node->child2());
-                break;
-            }
-            if (node->child1()->shouldSpeculateString() && node->child2()->shouldSpeculateString() && ((GPRInfo::numberOfRegisters >= 7) || isFTL(m_graph.m_plan.mode))) {
-                fixEdge<StringUse>(node->child1());
-                fixEdge<StringUse>(node->child2());
-                break;
-            }
-            WatchpointSet* masqueradesAsUndefinedWatchpoint = m_graph.globalObjectFor(node->origin.semantic)->masqueradesAsUndefinedWatchpoint();
-            if (masqueradesAsUndefinedWatchpoint->isStillValid()) {
-                
-                if (node->child1()->shouldSpeculateObject()) {
-                    m_graph.watchpoints().addLazily(masqueradesAsUndefinedWatchpoint);
-                    fixEdge<ObjectUse>(node->child1());
-                    break;
-                }
-                if (node->child2()->shouldSpeculateObject()) {
-                    m_graph.watchpoints().addLazily(masqueradesAsUndefinedWatchpoint);
-                    fixEdge<ObjectUse>(node->child2());
-                    break;
-                }
-                
-            } else if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObject()) {
-                fixEdge<ObjectUse>(node->child1());
-                fixEdge<ObjectUse>(node->child2());
-                break;
-            }
-            if (node->child1()->shouldSpeculateSymbol()) {
-                fixEdge<SymbolUse>(node->child1());
-                break;
-            }
-            if (node->child2()->shouldSpeculateSymbol()) {
-                fixEdge<SymbolUse>(node->child2());
-                break;
-            }
-            if (node->child1()->shouldSpeculateMisc()) {
-                fixEdge<MiscUse>(node->child1());
-                break;
-            }
-            if (node->child2()->shouldSpeculateMisc()) {
-                fixEdge<MiscUse>(node->child2());
-                break;
-            }
-            if (node->child1()->shouldSpeculateStringIdent()
-                && node->child2()->shouldSpeculateNotStringVar()) {
-                fixEdge<StringIdentUse>(node->child1());
-                fixEdge<NotStringVarUse>(node->child2());
-                break;
-            }
-            if (node->child2()->shouldSpeculateStringIdent()
-                && node->child1()->shouldSpeculateNotStringVar()) {
-                fixEdge<StringIdentUse>(node->child2());
-                fixEdge<NotStringVarUse>(node->child1());
-                break;
-            }
-            if (node->child1()->shouldSpeculateString() && ((GPRInfo::numberOfRegisters >= 8) || isFTL(m_graph.m_plan.mode))) {
-                fixEdge<StringUse>(node->child1());
-                break;
-            }
-            if (node->child2()->shouldSpeculateString() && ((GPRInfo::numberOfRegisters >= 8) || isFTL(m_graph.m_plan.mode))) {
-                fixEdge<StringUse>(node->child2());
-                break;
-            }
+        case CompareStrictEq:
+        case SameValue: {
+            fixupCompareStrictEqAndSameValue(node);
             break;
         }
-            
+
         case StringFromCharCode:
             if (node->child1()->shouldSpeculateInt32()) {
                 fixEdge<Int32Use>(node->child1());
@@ -3474,6 +3380,138 @@ private:
         }
         default:
             RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+    }
+
+    void fixupCompareStrictEqAndSameValue(Node* node)
+    {
+        ASSERT(node->op() == SameValue || node->op() == CompareStrictEq);
+
+        if (Node::shouldSpeculateBoolean(node->child1().node(), node->child2().node())) {
+            fixEdge<BooleanUse>(node->child1());
+            fixEdge<BooleanUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (Node::shouldSpeculateInt32(node->child1().node(), node->child2().node())) {
+            fixEdge<Int32Use>(node->child1());
+            fixEdge<Int32Use>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (enableInt52()
+            && Node::shouldSpeculateAnyInt(node->child1().node(), node->child2().node())) {
+            fixEdge<Int52RepUse>(node->child1());
+            fixEdge<Int52RepUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (Node::shouldSpeculateNumber(node->child1().node(), node->child2().node())) {
+            fixEdge<DoubleRepUse>(node->child1());
+            fixEdge<DoubleRepUse>(node->child2());
+            // Do not convert SameValue to CompareStrictEq in this case since SameValue(NaN, NaN) and SameValue(-0, +0)
+            // are not the same to CompareStrictEq(NaN, NaN) and CompareStrictEq(-0, +0).
+            return;
+        }
+        if (Node::shouldSpeculateSymbol(node->child1().node(), node->child2().node())) {
+            fixEdge<SymbolUse>(node->child1());
+            fixEdge<SymbolUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (Node::shouldSpeculateBigInt(node->child1().node(), node->child2().node())) {
+            fixEdge<BigIntUse>(node->child1());
+            fixEdge<BigIntUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (node->child1()->shouldSpeculateStringIdent() && node->child2()->shouldSpeculateStringIdent()) {
+            fixEdge<StringIdentUse>(node->child1());
+            fixEdge<StringIdentUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (node->child1()->shouldSpeculateString() && node->child2()->shouldSpeculateString() && ((GPRInfo::numberOfRegisters >= 7) || isFTL(m_graph.m_plan.mode))) {
+            fixEdge<StringUse>(node->child1());
+            fixEdge<StringUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+
+        if (node->op() == SameValue) {
+            if (node->child1()->shouldSpeculateObject()) {
+                fixEdge<ObjectUse>(node->child1());
+                node->setOpAndDefaultFlags(CompareStrictEq);
+                return;
+            }
+            if (node->child2()->shouldSpeculateObject()) {
+                fixEdge<ObjectUse>(node->child2());
+                node->setOpAndDefaultFlags(CompareStrictEq);
+                return;
+            }
+        } else {
+            WatchpointSet* masqueradesAsUndefinedWatchpoint = m_graph.globalObjectFor(node->origin.semantic)->masqueradesAsUndefinedWatchpoint();
+            if (masqueradesAsUndefinedWatchpoint->isStillValid()) {
+                if (node->child1()->shouldSpeculateObject()) {
+                    m_graph.watchpoints().addLazily(masqueradesAsUndefinedWatchpoint);
+                    fixEdge<ObjectUse>(node->child1());
+                    return;
+                }
+                if (node->child2()->shouldSpeculateObject()) {
+                    m_graph.watchpoints().addLazily(masqueradesAsUndefinedWatchpoint);
+                    fixEdge<ObjectUse>(node->child2());
+                    return;
+                }
+            } else if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObject()) {
+                fixEdge<ObjectUse>(node->child1());
+                fixEdge<ObjectUse>(node->child2());
+                return;
+            }
+        }
+
+        if (node->child1()->shouldSpeculateSymbol()) {
+            fixEdge<SymbolUse>(node->child1());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (node->child2()->shouldSpeculateSymbol()) {
+            fixEdge<SymbolUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (node->child1()->shouldSpeculateMisc()) {
+            fixEdge<MiscUse>(node->child1());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (node->child2()->shouldSpeculateMisc()) {
+            fixEdge<MiscUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (node->child1()->shouldSpeculateStringIdent()
+            && node->child2()->shouldSpeculateNotStringVar()) {
+            fixEdge<StringIdentUse>(node->child1());
+            fixEdge<NotStringVarUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (node->child2()->shouldSpeculateStringIdent()
+            && node->child1()->shouldSpeculateNotStringVar()) {
+            fixEdge<StringIdentUse>(node->child2());
+            fixEdge<NotStringVarUse>(node->child1());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (node->child1()->shouldSpeculateString() && ((GPRInfo::numberOfRegisters >= 8) || isFTL(m_graph.m_plan.mode))) {
+            fixEdge<StringUse>(node->child1());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (node->child2()->shouldSpeculateString() && ((GPRInfo::numberOfRegisters >= 8) || isFTL(m_graph.m_plan.mode))) {
+            fixEdge<StringUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
             return;
         }
     }

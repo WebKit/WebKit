@@ -279,6 +279,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case CompareEq:
     case CompareStrictEq:
     case CompareEqPtr:
+    case SameValue:
     case Call:
     case DirectCall:
     case TailCallInlinedCaller:

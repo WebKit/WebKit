@@ -165,6 +165,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case GetGlobalObject:
     case StringCharCodeAt:
     case CompareStrictEq:
+    case SameValue:
     case IsEmpty:
     case IsUndefined:
     case IsBoolean:

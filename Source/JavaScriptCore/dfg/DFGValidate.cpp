@@ -271,6 +271,7 @@ public:
                 case CompareBelowEq:
                 case CompareEq:
                 case CompareStrictEq:
+                case SameValue:
                 case StrCat:
                     VALIDATE((node), !!node->child1());
                     VALIDATE((node), !!node->child2());

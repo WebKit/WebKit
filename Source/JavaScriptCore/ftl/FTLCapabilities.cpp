@@ -314,6 +314,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CompareBelow:
     case CompareBelowEq:
     case CompareStrictEq:
+    case SameValue:
     case DefineDataProperty:
     case DefineAccessorProperty:
     case StringSlice:

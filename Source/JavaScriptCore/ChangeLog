@@ -1,3 +1,73 @@
+2018-05-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add SameValue DFG node
+        https://bugs.webkit.org/show_bug.cgi?id=185065
+
+        Reviewed by Saam Barati.
+
+        This patch adds Object.is handling in DFG and FTL. Object.is is converted to SameValue DFG node.
+        And DFG fixup phase attempts to convert SameValue node to CompareStrictEq with type filter edges
+        if possible. Since SameValue(Untyped, Untyped) and SameValue(Double, Double) have different semantics
+        from CompareStrictEq, we do not convert SameValue to CompareStrictEq for them. DFG and FTL have
+        implementations for these SameValue nodes.
+
+        This old MacroAssemblerX86Common::compareDouble was dead code since the derived class, "MacroAssembler"
+        has a generalized compareDouble, which just uses branchDouble. Since this was not used, this function
+        was broken. This patch fixes issues and move compareDouble to MacroAssemblerX86Common, and remove a
+        generalized compareDouble for x86 arch to use this specialized efficient version instead. The fixes are
+        correctly using set32 to zero-extending the result, and setting the initial value of `dest` register
+        correctly for DoubleEqual and DoubleNotEqualOrUnordered cases.
+
+        Added microbenchmark shows performance improvement.
+
+            object-is           651.0053+-38.8204    ^    241.3467+-15.8753       ^ definitely 2.6974x faster
+
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::compareDouble):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::compareDouble): Deleted.
+        * assembler/testmasm.cpp:
+        (JSC::doubleOperands):
+        (JSC::testCompareDouble):
+        (JSC::run):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupCompareStrictEqAndSameValue):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSameValue):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSameValue):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/ObjectConstructor.cpp:
+
 2018-04-30  Filip Pizlo  <fpizlo@apple.com>
 
         B3::demoteValues should be able to handle patchpoint terminals

@@ -1459,9 +1459,10 @@ public:
 
 #endif // !CPU(X86_64)
 
-#if ENABLE(B3_JIT)
     // We should implement this the right way eventually, but for now, it's fine because it arises so
     // infrequently.
+
+#if !CPU(X86) && !CPU(X86_64)
     void compareDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
     {
         move(TrustedImm32(0), dest);
@@ -1469,6 +1470,9 @@ public:
         move(TrustedImm32(1), dest);
         falseCase.link(this);
     }
+#endif
+
+#if ENABLE(B3_JIT)
     void compareFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
     {
         move(TrustedImm32(0), dest);

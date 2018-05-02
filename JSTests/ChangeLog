@@ -1,3 +1,37 @@
+2018-05-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add SameValue DFG node
+        https://bugs.webkit.org/show_bug.cgi?id=185065
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/object-is.js: Added.
+        (incognito):
+        (sameValue):
+        (test1):
+        (test2):
+        (test3):
+        (test4):
+        (test5):
+        (test6):
+        * stress/object-is.js: Added.
+        (shouldBe):
+        (is1):
+        (is2):
+        (is3):
+        (is4):
+        (is5):
+        (is6):
+        (is7):
+        (is8):
+        (is9):
+        (is10):
+        (is11):
+        (is12):
+        (is13):
+        (is14):
+        (is15):
+
 2018-05-01  Robin Morisset  <rmorisset@apple.com>
 
         Correctly detect string overflow when using the 'Function' constructor

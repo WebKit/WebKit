@@ -295,6 +295,7 @@ namespace JSC { namespace DFG {
     macro(CompareEq, NodeResultBoolean | NodeMustGenerate) \
     macro(CompareStrictEq, NodeResultBoolean) \
     macro(CompareEqPtr, NodeResultBoolean) \
+    macro(SameValue, NodeResultBoolean) \
     \
     /* Calls. */\
     macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \

@@ -2377,6 +2377,10 @@ void SpeculativeJIT::compile(Node* node)
         compileCompareEqPtr(node);
         break;
 
+    case SameValue:
+        compileSameValue(node);
+        break;
+
     case StringCharCodeAt: {
         compileGetCharCodeAt(node);
         break;

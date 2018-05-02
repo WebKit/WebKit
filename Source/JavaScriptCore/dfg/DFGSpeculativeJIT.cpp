@@ -6365,6 +6365,72 @@ void SpeculativeJIT::compileStringIdentCompare(Node* node, MacroAssembler::Relat
     unblessedBooleanResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileSameValue(Node* node)
+{
+    if (node->isBinaryUseKind(DoubleRepUse)) {
+        SpeculateDoubleOperand arg1(this, node->child1());
+        SpeculateDoubleOperand arg2(this, node->child2());
+        GPRTemporary result(this);
+        GPRTemporary temp(this);
+        GPRTemporary temp2(this);
+
+        FPRReg arg1FPR = arg1.fpr();
+        FPRReg arg2FPR = arg2.fpr();
+        GPRReg resultGPR = result.gpr();
+        GPRReg tempGPR = temp.gpr();
+        GPRReg temp2GPR = temp2.gpr();
+
+#if USE(JSVALUE64)
+        m_jit.moveDoubleTo64(arg1FPR, tempGPR);
+        m_jit.moveDoubleTo64(arg2FPR, temp2GPR);
+        auto trueCase = m_jit.branch64(CCallHelpers::Equal, tempGPR, temp2GPR);
+#else
+        GPRTemporary temp3(this);
+        GPRTemporary temp4(this);
+
+        GPRReg temp3GPR = temp.gpr();
+        GPRReg temp4GPR = temp2.gpr();
+
+        m_jit.moveDoubleToInts(arg1FPR, tempGPR, temp2GPR);
+        m_jit.moveDoubleToInts(arg2FPR, temp3GPR, temp4GPR);
+        auto notEqual = m_jit.branch32(CCallHelpers::NotEqual, tempGPR, temp3GPR);
+        auto trueCase = m_jit.branch32(CCallHelpers::Equal, temp2GPR, temp4GPR);
+        notEqual.link(&m_jit);
+#endif
+
+        m_jit.compareDouble(CCallHelpers::DoubleNotEqualOrUnordered, arg1FPR, arg1FPR, tempGPR);
+        m_jit.compareDouble(CCallHelpers::DoubleNotEqualOrUnordered, arg2FPR, arg2FPR, temp2GPR);
+        m_jit.and32(tempGPR, temp2GPR, resultGPR);
+        auto done = m_jit.jump();
+
+        trueCase.link(&m_jit);
+        m_jit.move(CCallHelpers::TrustedImm32(1), resultGPR);
+        done.link(&m_jit);
+
+        unblessedBooleanResult(resultGPR, node);
+        return;
+    }
+
+    ASSERT(node->isBinaryUseKind(UntypedUse));
+
+    JSValueOperand arg1(this, node->child1());
+    JSValueOperand arg2(this, node->child2());
+    JSValueRegs arg1Regs = arg1.jsValueRegs();
+    JSValueRegs arg2Regs = arg2.jsValueRegs();
+
+    arg1.use();
+    arg2.use();
+
+    flushRegisters();
+
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    callOperation(operationSameValue, resultGPR, arg1Regs, arg2Regs);
+    m_jit.exceptionCheck();
+
+    unblessedBooleanResult(resultGPR, node, UseChildrenCalledExplicitly);
+}
+
 void SpeculativeJIT::compileStringZeroLength(Node* node)
 {
     SpeculateCellOperand str(this, node->child1());

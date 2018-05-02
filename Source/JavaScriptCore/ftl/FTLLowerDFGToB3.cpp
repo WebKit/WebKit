@@ -987,6 +987,9 @@ private:
         case CompareEqPtr:
             compileCompareEqPtr();
             break;
+        case SameValue:
+            compileSameValue();
+            break;
         case LogicalNot:
             compileLogicalNot();
             break;
@@ -7071,6 +7074,45 @@ private:
     void compileCompareBelowEq()
     {
         setBoolean(m_out.belowOrEqual(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
+    }
+
+    void compileSameValue()
+    {
+        if (m_node->isBinaryUseKind(DoubleRepUse)) {
+            LValue arg1 = lowDouble(m_node->child1());
+            LValue arg2 = lowDouble(m_node->child2());
+
+            LBasicBlock numberCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            PatchpointValue* patchpoint = m_out.patchpoint(Int32);
+            patchpoint->append(arg1, ValueRep::SomeRegister);
+            patchpoint->append(arg2, ValueRep::SomeRegister);
+            patchpoint->numGPScratchRegisters = 1;
+            patchpoint->setGenerator(
+                [] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                    GPRReg scratchGPR = params.gpScratch(0);
+                    jit.moveDoubleTo64(params[1].fpr(), scratchGPR);
+                    jit.moveDoubleTo64(params[2].fpr(), params[0].gpr());
+                    jit.compare64(CCallHelpers::Equal, scratchGPR, params[0].gpr(), params[0].gpr());
+                });
+            patchpoint->effects = Effects::none();
+            ValueFromBlock compareResult = m_out.anchor(patchpoint);
+            m_out.branch(patchpoint, unsure(continuation), unsure(numberCase));
+
+            LBasicBlock lastNext = m_out.appendTo(numberCase, continuation);
+            LValue isArg1NaN = m_out.doubleNotEqualOrUnordered(arg1, arg1);
+            LValue isArg2NaN = m_out.doubleNotEqualOrUnordered(arg2, arg2);
+            ValueFromBlock nanResult = m_out.anchor(m_out.bitAnd(isArg1NaN, isArg2NaN));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setBoolean(m_out.phi(Int32, compareResult, nanResult));
+            return;
+        }
+
+        ASSERT(m_node->isBinaryUseKind(UntypedUse));
+        setBoolean(vmCall(Int32, m_out.operation(operationSameValue), m_callFrame, lowJSValue(m_node->child1()), lowJSValue(m_node->child2())));
     }
     
     void compileLogicalNot()

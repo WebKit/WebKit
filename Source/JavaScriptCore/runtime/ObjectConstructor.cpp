@@ -83,7 +83,7 @@ const ClassInfo ObjectConstructor::s_info = { "Function", &InternalFunction::s_i
   isSealed                  objectConstructorIsSealed                   DontEnum|Function 1
   isFrozen                  objectConstructorIsFrozen                   DontEnum|Function 1
   isExtensible              objectConstructorIsExtensible               DontEnum|Function 1
-  is                        objectConstructorIs                         DontEnum|Function 2
+  is                        objectConstructorIs                         DontEnum|Function 2 ObjectIsIntrinsic
   assign                    objectConstructorAssign                     DontEnum|Function 2
   values                    objectConstructorValues                     DontEnum|Function 1
   entries                   JSBuiltin                                   DontEnum|Function 1

@@ -140,7 +140,8 @@ private:
                 break;
             }
 
-            case CompareStrictEq: {
+            case CompareStrictEq:
+            case SameValue: {
                 if (node->isBinaryUseKind(UntypedUse)) {
                     JSValue child1Constant = m_state.forNode(node->child1().node()).value();
                     JSValue child2Constant = m_state.forNode(node->child2().node()).value();

@@ -983,40 +983,6 @@ public:
         set32(x86Condition(cond), dest);
     }
 
-    void compareDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
-    {
-        if (cond & DoubleConditionBitInvert)
-            m_assembler.ucomisd_rr(left, right);
-        else
-            m_assembler.ucomisd_rr(right, left);
-
-        if (cond == DoubleEqual) {
-            if (left == right) {
-                m_assembler.setnp_r(dest);
-                return;
-            }
-
-            Jump isUnordered(m_assembler.jp());
-            m_assembler.sete_r(dest);
-            isUnordered.link(this);
-            return;
-        }
-
-        if (cond == DoubleNotEqualOrUnordered) {
-            if (left == right) {
-                m_assembler.setp_r(dest);
-                return;
-            }
-
-            m_assembler.setp_r(dest);
-            m_assembler.setne_r(dest);
-            return;
-        }
-
-        ASSERT(!(cond & DoubleConditionBitSpecial));
-        m_assembler.setCC_r(static_cast<X86Assembler::Condition>(cond & ~DoubleConditionBits), dest);
-    }
-
     Jump branch64(RelationalCondition cond, RegisterID left, RegisterID right)
     {
         m_assembler.cmpq_rr(right, left);

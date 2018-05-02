@@ -70,6 +70,7 @@ enum Intrinsic {
     RegExpTestFastIntrinsic,
     RegExpMatchFastIntrinsic,
     ObjectGetPrototypeOfIntrinsic,
+    ObjectIsIntrinsic,
     ReflectGetPrototypeOfIntrinsic,
     StringPrototypeValueOfIntrinsic,
     StringPrototypeReplaceIntrinsic,

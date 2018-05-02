@@ -1237,6 +1237,14 @@ size_t JIT_OPERATION operationCompareStrictEqCell(ExecState* exec, JSCell* op1, 
     return JSValue::strictEqualSlowCaseInline(exec, op1, op2);
 }
 
+size_t JIT_OPERATION operationSameValue(ExecState* exec, EncodedJSValue arg1, EncodedJSValue arg2)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    return sameValue(exec, JSValue::decode(arg1), JSValue::decode(arg2));
+}
+
 EncodedJSValue JIT_OPERATION operationToPrimitive(ExecState* exec, EncodedJSValue value)
 {
     VM* vm = &exec->vm();

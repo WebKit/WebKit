@@ -227,6 +227,67 @@ void testBranchTruncateDoubleToInt32(double val, int32_t expected)
 }
 
 
+static Vector<double> doubleOperands()
+{
+    return Vector<double> {
+        0,
+        -0,
+        1,
+        -1,
+        42,
+        -42,
+        std::numeric_limits<double>::max(),
+        std::numeric_limits<double>::min(),
+        std::numeric_limits<double>::lowest(),
+        std::numeric_limits<double>::quiet_NaN(),
+        std::numeric_limits<double>::infinity(),
+        -std::numeric_limits<double>::infinity(),
+    };
+}
+
+
+void testCompareDouble(MacroAssembler::DoubleCondition condition)
+{
+    double arg1 = 0;
+    double arg2 = 0;
+
+    auto compareDouble = compile([&, condition] (CCallHelpers& jit) {
+        jit.emitFunctionPrologue();
+
+        jit.loadDouble(CCallHelpers::TrustedImmPtr(&arg1), FPRInfo::fpRegT0);
+        jit.loadDouble(CCallHelpers::TrustedImmPtr(&arg2), FPRInfo::fpRegT1);
+        jit.move(CCallHelpers::TrustedImm32(-1), GPRInfo::returnValueGPR);
+        jit.compareDouble(condition, FPRInfo::fpRegT0, FPRInfo::fpRegT1, GPRInfo::returnValueGPR);
+
+        jit.emitFunctionEpilogue();
+        jit.ret();
+    });
+
+    auto compareDoubleGeneric = compile([&, condition] (CCallHelpers& jit) {
+        jit.emitFunctionPrologue();
+
+        jit.loadDouble(CCallHelpers::TrustedImmPtr(&arg1), FPRInfo::fpRegT0);
+        jit.loadDouble(CCallHelpers::TrustedImmPtr(&arg2), FPRInfo::fpRegT1);
+        jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+        auto jump = jit.branchDouble(condition, FPRInfo::fpRegT0, FPRInfo::fpRegT1);
+        jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+        jump.link(&jit);
+
+        jit.emitFunctionEpilogue();
+        jit.ret();
+    });
+
+    auto operands = doubleOperands();
+    for (auto a : operands) {
+        for (auto b : operands) {
+            arg1 = a;
+            arg2 = b;
+            CHECK_EQ(invoke<int>(compareDouble), invoke<int>(compareDoubleGeneric));
+        }
+    }
+}
+
+
 #if ENABLE(MASM_PROBE)
 void testProbeReadsArgumentRegisters()
 {
@@ -786,6 +847,19 @@ void run(const char* filter)
     // We run this last one to make sure that we don't use flags that were not
     // reset to check a conversion result
     RUN(testBranchTruncateDoubleToInt32(123, 123));
+
+    RUN(testCompareDouble(MacroAssembler::DoubleEqual));
+    RUN(testCompareDouble(MacroAssembler::DoubleNotEqual));
+    RUN(testCompareDouble(MacroAssembler::DoubleGreaterThan));
+    RUN(testCompareDouble(MacroAssembler::DoubleGreaterThanOrEqual));
+    RUN(testCompareDouble(MacroAssembler::DoubleLessThan));
+    RUN(testCompareDouble(MacroAssembler::DoubleLessThanOrEqual));
+    RUN(testCompareDouble(MacroAssembler::DoubleEqualOrUnordered));
+    RUN(testCompareDouble(MacroAssembler::DoubleNotEqualOrUnordered));
+    RUN(testCompareDouble(MacroAssembler::DoubleGreaterThanOrUnordered));
+    RUN(testCompareDouble(MacroAssembler::DoubleGreaterThanOrEqualOrUnordered));
+    RUN(testCompareDouble(MacroAssembler::DoubleLessThanOrUnordered));
+    RUN(testCompareDouble(MacroAssembler::DoubleLessThanOrEqualOrUnordered));
 
 #if ENABLE(MASM_PROBE)
     RUN(testProbeReadsArgumentRegisters());

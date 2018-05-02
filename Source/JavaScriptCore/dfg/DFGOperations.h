@@ -161,6 +161,7 @@ size_t JIT_OPERATION operationRegExpTestString(ExecState*, JSGlobalObject*, RegE
 size_t JIT_OPERATION operationRegExpTest(ExecState*, JSGlobalObject*, RegExpObject*, EncodedJSValue) WTF_INTERNAL;
 size_t JIT_OPERATION operationRegExpTestGeneric(ExecState*, JSGlobalObject*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 size_t JIT_OPERATION operationCompareStrictEqCell(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+size_t JIT_OPERATION operationSameValue(ExecState*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationCreateActivationDirect(ExecState*, Structure*, JSScope*, SymbolTable*, EncodedJSValue);
 JSCell* JIT_OPERATION operationCreateDirectArguments(ExecState*, Structure*, uint32_t length, uint32_t minCapacity);
 JSCell* JIT_OPERATION operationCreateDirectArgumentsDuringExit(ExecState*, InlineCallFrame*, JSFunction*, uint32_t argumentCount);

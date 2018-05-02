@@ -2014,6 +2014,48 @@ public:
         return jumpAfterFloatingPointCompare(cond, left, right);
     }
 
+    void compareDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
+    {
+        if (cond & DoubleConditionBitSpecial) {
+            ASSERT(!(cond & DoubleConditionBitInvert));
+            if (cond == DoubleEqual) {
+                if (left == right) {
+                    m_assembler.ucomisd_rr(right, left);
+                    set32(X86Assembler::ConditionNP, dest);
+                    return;
+                }
+
+                move(TrustedImm32(0), dest);
+                m_assembler.ucomisd_rr(right, left);
+                Jump isUnordered = m_assembler.jp();
+                set32(X86Assembler::ConditionE, dest);
+                isUnordered.link(this);
+                return;
+            }
+            if (cond == DoubleNotEqualOrUnordered) {
+                if (left == right) {
+                    m_assembler.ucomisd_rr(right, left);
+                    set32(X86Assembler::ConditionP, dest);
+                    return;
+                }
+
+                move(TrustedImm32(1), dest);
+                m_assembler.ucomisd_rr(right, left);
+                Jump isUnordered = m_assembler.jp();
+                set32(X86Assembler::ConditionNE, dest);
+                isUnordered.link(this);
+                return;
+            }
+            return;
+        }
+
+        if (cond & DoubleConditionBitInvert)
+            m_assembler.ucomisd_rr(left, right);
+        else
+            m_assembler.ucomisd_rr(right, left);
+        set32(static_cast<X86Assembler::Condition>(cond & ~DoubleConditionBits), dest);
+    }
+
     // Truncates 'src' to an integer, and places the resulting 'dest'.
     // If the result is not representable as a 32 bit value, branch.
     // May also branch for some values that are representable in 32 bits
