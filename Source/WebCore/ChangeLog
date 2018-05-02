@@ -1,3 +1,32 @@
+2018-05-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Prevent Debug ASSERT when changing forms
+        https://bugs.webkit.org/show_bug.cgi?id=185173
+        <rdar://problem/39738669>
+
+        Reviewed by Ryosuke Niwa.
+
+        Form submission could trigger a debug assertion during validation when
+        a form is changed during an input submission. Fix this by cleaning up
+        the event handling logic and make it more consistent with modern WebKit
+        coding style.
+
+        Test: fast/forms/form-submission-crash-3.html
+
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::defaultEventHandler): Make sure layout runs before
+        attempting to perform event handling.
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::reportValidity): Ditto.
+        (WebCore::HTMLFormElement::validateInteractively): Remove call to perform layout here,
+        since we expect this to happen earlier in the layout pass. Add an assertion that the
+        tree is not dirty.
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::handleDOMActivateEvent): Make sure layout runs before
+        attempting to perform event handling.
+        * html/SubmitInputType.cpp:
+        (WebCore::SubmitInputType::handleDOMActivateEvent): Ditto.
+
 2018-05-02  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed; address review comments made before landing r231231.
