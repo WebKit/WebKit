@@ -1,3 +1,23 @@
+2018-05-02  Dean Jackson  <dino@apple.com>
+
+        Draw SystemPreview badge to specification on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=185203
+        <rdar://problem/39908855>
+
+        Reviewed by Tim Horton.
+
+        Use CoreImage to render a badge with a blurred background,
+        at particular sizes.
+
+        This will be tested internally while we're getting artwork
+        from WebKitAdditions.
+
+        * Configurations/WebCore.xcconfig: Link against CoreImage.
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintSystemPreviewBadge): New function
+        in the iOS platform RenderTheme that draws the system preview.
+
 2018-05-01  Brent Fulgham  <bfulgham@apple.com>
 
         Prevent Debug ASSERT when changing forms

@@ -29,6 +29,10 @@
 
 #include "RenderThemeCocoa.h"
 
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS CIContext;
+
 namespace WebCore {
     
 class RenderStyle;
@@ -45,6 +49,10 @@ public:
     static CFStringRef contentSizeCategory();
 
     WEBCORE_EXPORT static void setContentSizeCategory(const String&);
+
+#if USE(SYSTEM_PREVIEW)
+    void paintSystemPreviewBadge(Image&, const PaintInfo&, const FloatRect&) override;
+#endif
 
 protected:
     LengthBox popupInternalPaddingBox(const RenderStyle&) const override;
@@ -143,6 +151,10 @@ private:
     String m_mediaControlsStyleSheet;
 
     mutable HashMap<int, Color> m_systemColorCache;
+
+#if USE(SYSTEM_PREVIEW)
+    RetainPtr<CIContext> m_ciContext;
+#endif
 
     bool m_shouldMockBoldSystemFontForAccessibility { false };
 };

@@ -67,6 +67,7 @@
 #import "UserAgentStyleSheets.h"
 #import "WebCoreThreadRun.h"
 #import <CoreGraphics/CoreGraphics.h>
+#import <CoreImage/CoreImage.h>
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/CoreTextSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
@@ -74,6 +75,10 @@
 #import <wtf/RefPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/StdLibExtras.h>
+
+#if USE(SYSTEM_PREVIEW) && USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/SystemPreviewArtwork.cpp>
+#endif
 
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIApplication)
@@ -1816,6 +1821,100 @@ String RenderThemeIOS::extraDefaultStyleSheet()
     return ASCIILiteral("* { -webkit-text-size-adjust: auto; -webkit-hyphens: auto !important; }");
 }
 
+#endif
+
+#if USE(SYSTEM_PREVIEW)
+void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& paintInfo, const FloatRect& rect)
+{
+    static const float largeBadgeDimension = 70;
+    static const float largeBadgeOffset = 20;
+
+    static const float smallBadgeDimension = 35;
+    static const float smallBadgeOffset = 8;
+
+    static const float minimumSizeForLargeBadge = 240;
+
+    bool useSmallBadge = rect.width() < minimumSizeForLargeBadge || rect.height() < minimumSizeForLargeBadge;
+    float badgeOffset = useSmallBadge ? smallBadgeOffset : largeBadgeOffset;
+    float badgeDimension = useSmallBadge ? smallBadgeDimension : largeBadgeDimension;
+
+    float minimumDimension = badgeDimension + 2 * badgeOffset;
+    if (rect.width() < minimumDimension || rect.height() < minimumDimension)
+        return;
+
+    CIImage *inputImage = [CIImage imageWithCGImage:image.nativeImage().get()];
+
+    // Scale from intrinsic size to render size.
+    CGAffineTransform transform = CGAffineTransformIdentity;
+    transform = CGAffineTransformScale(transform, rect.width() / image.width(), rect.height() / image.height());
+    CIImage *scaledImage = [inputImage imageByApplyingTransform:transform];
+
+    CGRect absoluteBadgeRect = CGRectMake(rect.x() + rect.width() - badgeDimension - badgeOffset, rect.y() + badgeOffset, badgeDimension, badgeDimension);
+    CGRect insetBadgeRect = CGRectMake(rect.width() - badgeDimension - badgeOffset, badgeOffset, badgeDimension, badgeDimension);
+    CGRect badgeRect = CGRectMake(0, 0, badgeDimension, badgeDimension);
+
+    // CI coordinates are y-up, so we need to flip the badge rectangle within the image frame.
+    CGRect flippedInsetBadgeRect = CGRectMake(insetBadgeRect.origin.x, rect.height() - insetBadgeRect.origin.y - insetBadgeRect.size.height, badgeDimension, badgeDimension);
+
+    // Create a cropped region with pixel values extending outwards.
+    CIImage *clampedImage = [scaledImage imageByClampingToRect:flippedInsetBadgeRect];
+
+    // Blur.
+    CIFilter *blurFilter = [CIFilter filterWithName:@"CIGaussianBlur"];
+    [blurFilter setDefaults];
+    [blurFilter setValue:@(10) forKey:kCIInputRadiusKey];
+    [blurFilter setValue:clampedImage forKey:kCIInputImageKey];
+
+    // Saturate.
+    CIFilter *saturationFilter = [CIFilter filterWithName:@"CIColorControls"];
+    [saturationFilter setValue:blurFilter.outputImage forKey:kCIInputImageKey];
+    [saturationFilter setValue:@1.8 forKey:kCIInputSaturationKey];
+
+    // Tint.
+    CIFilter *tintFilter1 = [CIFilter filterWithName:@"CIConstantColorGenerator"];
+    CIColor *tintColor1 = [CIColor colorWithRed:1 green:1 blue:1 alpha:0.18];
+    [tintFilter1 setValue:tintColor1 forKey:kCIInputColorKey];
+
+    // Blend the tint with the saturated output.
+    CIFilter *sourceOverFilter = [CIFilter filterWithName:@"CISourceOverCompositing"];
+    [sourceOverFilter setValue:tintFilter1.outputImage forKey:kCIInputImageKey];
+    [sourceOverFilter setValue:saturationFilter.outputImage forKey:kCIInputBackgroundImageKey];
+
+    // Before we render the result, we should clip to a circle around the badge rectangle.
+    CGContextRef ctx = paintInfo.context().platformContext();
+    CGContextSaveGState(ctx);
+    CGContextBeginPath(ctx);
+    CGPathRef circle = CGPathCreateWithRoundedRect(absoluteBadgeRect, badgeDimension / 2, badgeDimension / 2, nil);
+    CGContextAddPath(ctx, circle);
+    CGContextClosePath(ctx);
+    CGContextClip(ctx);
+    CGPathRelease(circle);
+
+    if (!m_ciContext)
+        m_ciContext = [CIContext context];
+    RetainPtr<CGImageRef> cgImage = adoptCF([m_ciContext.get() createCGImage:sourceOverFilter.outputImage fromRect:flippedInsetBadgeRect]);
+
+    CGContextSaveGState(ctx);
+    CGContextTranslateCTM(ctx, absoluteBadgeRect.origin.x, absoluteBadgeRect.origin.y);
+    CGContextTranslateCTM(ctx, 0, badgeDimension);
+    CGContextScaleCTM(ctx, 1, -1);
+    CGContextDrawImage(ctx, badgeRect, cgImage.get());
+    CGContextRestoreGState(ctx);
+
+#if USE(APPLE_INTERNAL_SDK)
+    if (auto logo = systemPreviewLogo()) {
+        // FIXME: Do we need to flip here too?
+        CGContextTranslateCTM(ctx, absoluteBadgeRect.origin.x, absoluteBadgeRect.origin.y);
+        CGSize pdfSize = CGPDFPageGetBoxRect(logo, kCGPDFMediaBox).size;
+        CGFloat scaleX = badgeDimension / pdfSize.width;
+        CGFloat scaleY = badgeDimension / pdfSize.height;
+        CGContextScaleCTM(ctx, scaleX, scaleY);
+        CGContextDrawPDFPage(ctx, logo);
+    }
+#endif
+
+    CGContextRestoreGState(ctx);
+}
 #endif
 
 } // namespace WebCore
