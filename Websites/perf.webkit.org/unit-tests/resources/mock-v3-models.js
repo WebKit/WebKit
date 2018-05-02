@@ -14,6 +14,7 @@ var MockModels = {
             TestGroup.clearStaticMap();
             BuildRequest.clearStaticMap();
             Triggerable.clearStaticMap();
+            MeasurementSet._set = null;
 
             MockModels.osx = Repository.ensureSingleton(9, {name: 'OS X'});
             MockModels.ios = Repository.ensureSingleton(22, {name: 'iOS'});
@@ -27,7 +28,8 @@ var MockModels = {
 
             MockModels.someTest = Test.ensureSingleton(1, {name: 'Some test'});
             MockModels.someMetric = Metric.ensureSingleton(2884, {name: 'Some metric', test: MockModels.someTest});
-            MockModels.somePlatform = Platform.ensureSingleton(65, {name: 'Some platform', metrics: [MockModels.someMetric]});
+            MockModels.somePlatform = Platform.ensureSingleton(65, {name: 'Some platform', metrics: [MockModels.someMetric],
+                lastModifiedByMetric: {'2884': 5000, '1158': 5000}});
 
             MockModels.speedometer = Test.ensureSingleton(1928, {name: 'Speedometer'});
             MockModels.jetstream = Test.ensureSingleton(1886, {name: 'JetStream'});

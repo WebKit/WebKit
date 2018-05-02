@@ -15,6 +15,7 @@ mocha.setup('bdd');
 </head>
 <body>
 <div id="mocha"></div>
+<script src="async-task-tests.js"></script>
 <script src="component-base-tests.js"></script>
 <script src="page-tests.js"></script>
 <script src="page-router-tests.js"></script>
@@ -208,6 +209,7 @@ const ChartTest = {
     importChartScripts(context)
     {
         return context.importScripts([
+            'async-task.js',
             '../shared/statistics.js',
             'lazily-evaluated-function.js',
             'instrumentation.js',
@@ -226,7 +228,7 @@ const ChartTest = {
             'components/time-series-chart.js',
             'components/interactive-time-series-chart.js'],
             'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart',
-            'Platform', 'Metric', 'Test', 'Repository', 'MeasurementSet', 'MockRemoteAPI').then(() => {
+            'Platform', 'Metric', 'Test', 'Repository', 'MeasurementSet', 'MockRemoteAPI', 'AsyncTask').then(() => {
                 return context.symbols.TimeSeriesChart;
             })
     },

@@ -110,7 +110,7 @@ var Statistics = new (function () {
         };
     }
 
-    this.findRangesForChangeDetectionsWithWelchsTTest = function (values, segmentations, oneSidedPossibility) {
+    this.findRangesForChangeDetectionsWithWelchsTTest = function (values, segmentations, oneSidedPossibility=0.99) {
         if (!values.length)
             return [];
 

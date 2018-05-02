@@ -29,6 +29,10 @@ class AsyncTask {
         });
     }
 
+    static isAvailable()
+    {
+        return typeof Worker !== 'undefined';
+    }
 }
 
 AsyncTask._asyncMessageId = 0;
@@ -149,3 +153,6 @@ if (typeof module == 'undefined' && typeof window == 'undefined' && typeof impor
     importScripts('/shared/statistics.js');
     onmessage = AsyncTaskWorker.workerDidRecieveMessage.bind(AsyncTaskWorker);
 }
+
+if (typeof module != 'undefined')
+    module.exports.AsyncTask = AsyncTask;

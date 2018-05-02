@@ -1,3 +1,40 @@
+2018-05-01  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Write a script that detects chart changes by using v3 API.
+        https://bugs.webkit.org/show_bug.cgi?id=184419
+
+        Reviewed by Ryosuke Niwa.
+
+        Added a script that detects chart changes and schedule confirming analysis task.
+
+        * browser-tests/async-task-tests.js: Added a unit test for 'AsyncTask'.
+        * browser-tests/index.html: Added import for 'AsyncTask' for testing.
+        * public/shared/statistics.js: Make 'findRangesForChangeDetectionsWithWelchsTTest' defaults to 0.99 one sided possibility.
+        (Statistics.new.this.findRangesForChangeDetectionsWithWelchsTTest):
+        * public/v3/async-task.js:
+        (AsyncTask.isAvailable): Helper function to determine whether AsyncTask is available or not as 'Worker' is
+        not available in nodejs.
+        (AsyncTask):
+        * public/v3/models/bug.js: Export as a module.
+        * public/v3/models/measurement-set.js:
+        (MeasurementSet.prototype._invokeSegmentationAlgorithm): Added a check to avoid using AsyncTask when running in NodeJs.
+        (MeasurementSet):
+        * server-tests/resources/common-operations.js: Added a helper function to assert certain exception is thrown.
+        (async.assertThrows):
+        * tools/js/measurement-set-analyzer.js: Added 'MeasurementSetAnalyzer' module for analyzing measurement set.
+        (MeasurementSetAnalyzer):
+        (MeasurementSetAnalyzer.prototype.async.analyzeOnce):
+        (MeasurementSetAnalyzer.measurementSetListForAnalysis):
+        (MeasurementSetAnalyzer.prototype.async._analyzeMeasurementSet):
+        * tools/js/v3-models.js: Added import for 'Bug' object.
+        * tools/run-analysis.js: Added this script to detect measurement set changes.
+        (main):
+        (async.analysisLoop):
+        * unit-tests/measurement-set-analyzer-tests.js: Added unit tests for 'MeasurementSetAnalyzer'.
+        * unit-tests/resources/mock-v3-models.js: Reset 'MeasurementSet._set' every time.
+        Update mock platform to include lastModifiedByMetric information.
+        (MockModels.inject):
+
 2018-04-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Creating a custom analysis task after fetching all analysis tasks fail

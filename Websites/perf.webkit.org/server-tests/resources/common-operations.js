@@ -1,4 +1,4 @@
-
+const assert = require('assert');
 const crypto = require('crypto');
 
 function addBuilderForReport(report)
@@ -49,9 +49,22 @@ function submitReport(report)
     });
 }
 
+async function assertThrows(expectedError, testFunction)
+{
+    let thrownException = false;
+    try {
+            await testFunction()
+    } catch(error) {
+        thrownException = true;
+        assert.equal(error, expectedError);
+    }
+    assert.ok(thrownException);
+}
+
 if (typeof module != 'undefined') {
     module.exports.addBuilderForReport = addBuilderForReport;
     module.exports.addSlaveForReport = addSlaveForReport;
     module.exports.prepareServerTest = prepareServerTest;
     module.exports.submitReport = submitReport;
+    module.exports.assertThrows = assertThrows;
 }

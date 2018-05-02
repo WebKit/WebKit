@@ -29,3 +29,6 @@ class Bug extends DataModelObject {
     label() { return this.bugNumber(); }
     title() { return `${this._bugTracker.label()}: ${this.bugNumber()}`; }
 }
+
+if (typeof module != 'undefined')
+    module.exports.Bug = Bug;

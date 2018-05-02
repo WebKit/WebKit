@@ -290,7 +290,7 @@ class MeasurementSet {
         var args = [timeSeriesValues].concat(parameters || []);
 
         var timeSeriesIsShortEnoughForSyncComputation = timeSeriesValues.length < 100;
-        if (timeSeriesIsShortEnoughForSyncComputation) {
+        if (timeSeriesIsShortEnoughForSyncComputation || !AsyncTask.isAvailable()) {
             Instrumentation.startMeasuringTime('_invokeSegmentationAlgorithm', 'syncSegmentation');
             var segmentation = Statistics[segmentationName].apply(timeSeriesValues, args);
             Instrumentation.endMeasuringTime('_invokeSegmentationAlgorithm', 'syncSegmentation');
