@@ -52,20 +52,25 @@ PASS svgText.getRotationOfChar(3).toFixed(1) is "0.0"
 Test getCharNumAtPosition() API
 > Testing point=(0.0,10.0)
 PASS svgText.getCharNumAtPosition(point) is -1
+PASS svgText.getCharNumAtPosition(pointDict) is -1
 > Testing point=(9.9,10.0)
 PASS svgText.getCharNumAtPosition(point) is -1
+PASS svgText.getCharNumAtPosition(pointDict) is -1
 > Testing point=(10.1,10.0)
 PASS svgText.getCharNumAtPosition(point) is 0
+PASS svgText.getCharNumAtPosition(pointDict) is 0
 > Testing point=(71.4,10.0)
 PASS svgText.getCharNumAtPosition(point) is 0
 > Testing point=(71.6,10.0)
 PASS svgText.getCharNumAtPosition(point) is 0
 > Testing point=(127.8,10.0)
 PASS svgText.getCharNumAtPosition(point) is 1
+PASS svgText.getCharNumAtPosition(pointDict) is 1
 > Testing point=(128.0,10.0)
 PASS svgText.getCharNumAtPosition(point) is 1
 > Testing point=(179.1,10.0)
 PASS svgText.getCharNumAtPosition(point) is 3
+PASS svgText.getCharNumAtPosition(pointDict) is 3
 > Testing point=(179.3,10.0)
 PASS svgText.getCharNumAtPosition(point) is 3
 > Testing point=(209.9,10.0)

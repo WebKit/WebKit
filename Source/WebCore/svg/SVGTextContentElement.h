@@ -28,6 +28,8 @@
 
 namespace WebCore {
 
+struct DOMPointInit;
+
 enum SVGLengthAdjustType {
     SVGLengthAdjustUnknown,
     SVGLengthAdjustSpacing,
@@ -78,7 +80,7 @@ public:
     ExceptionOr<Ref<SVGPoint>> getEndPositionOfChar(unsigned charnum);
     ExceptionOr<Ref<SVGRect>> getExtentOfChar(unsigned charnum);
     ExceptionOr<float> getRotationOfChar(unsigned charnum);
-    int getCharNumAtPosition(SVGPoint&);
+    int getCharNumAtPosition(DOMPointInit&&);
     ExceptionOr<void> selectSubString(unsigned charnum, unsigned nchars);
 
     static SVGTextContentElement* elementFromRenderer(RenderObject*);

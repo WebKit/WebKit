@@ -131,6 +131,7 @@ shouldBeEqualToString("svgText.getRotationOfChar(2).toFixed(1)", "0.0");
 shouldBeEqualToString("svgText.getRotationOfChar(3).toFixed(1)", "0.0");
 
 var point = svgRoot.createSVGPoint();
+var pointDict;
 point.y = 10.0;
 
 debug("");
@@ -140,16 +141,22 @@ point.x = 0.0;
 point = point.matrixTransform(inverseScaleMatrix);
 debug("> Testing point=" + pointToString(point));
 shouldBe("svgText.getCharNumAtPosition(point)", "-1");
+pointDict = {x: point.x, y: point.y};
+shouldBe("svgText.getCharNumAtPosition(pointDict)", "-1");
 
 point.x = 9.9;
 point = point.matrixTransform(inverseScaleMatrix);
 debug("> Testing point=" + pointToString(point));
 shouldBe("svgText.getCharNumAtPosition(point)", "-1");
+pointDict = {x: point.x, y: point.y};
+shouldBe("svgText.getCharNumAtPosition(pointDict)", "-1");
 
 point.x = 10.1;
 point = point.matrixTransform(inverseScaleMatrix);
 debug("> Testing point=" + pointToString(point));
 shouldBe("svgText.getCharNumAtPosition(point)", "0");
+pointDict = {x: point.x, y: point.y};
+shouldBe("svgText.getCharNumAtPosition(pointDict)", "0");
 
 point.x = 71.4;
 point = point.matrixTransform(inverseScaleMatrix);
@@ -165,6 +172,8 @@ point.x = 127.8;
 point = point.matrixTransform(inverseScaleMatrix);
 debug("> Testing point=" + pointToString(point));
 shouldBe("svgText.getCharNumAtPosition(point)", "1");
+pointDict = {x: point.x, y: point.y};
+shouldBe("svgText.getCharNumAtPosition(pointDict)", "1");
 
 point.x = 128.0;
 point = point.matrixTransform(inverseScaleMatrix);
@@ -175,6 +184,8 @@ point.x = 179.1;
 point = point.matrixTransform(inverseScaleMatrix);
 debug("> Testing point=" + pointToString(point));
 shouldBe("svgText.getCharNumAtPosition(point)", "3");
+pointDict = {x: point.x, y: point.y};
+shouldBe("svgText.getCharNumAtPosition(pointDict)", "3");
 
 point.x = 179.3;
 point = point.matrixTransform(inverseScaleMatrix);
