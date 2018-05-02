@@ -149,7 +149,9 @@ public:
 
     ObjectPropertyConditionSet conditionSet() const { return m_conditionSet; }
 
-    virtual JSObject* alternateBase() const { return conditionSet().slotBaseCondition().object(); }
+    virtual bool hasAlternateBase() const;
+    virtual JSObject* alternateBase() const;
+    
     virtual WatchpointSet* additionalSet() const { return nullptr; }
     virtual bool viaProxy() const { return false; }
 

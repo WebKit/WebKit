@@ -1,3 +1,37 @@
+2018-05-01  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should be able to cache custom setter calls on the prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=185174
+
+        Reviewed by Saam Barati.
+
+        We broke custom-setter-on-the-prototype-chain caching when we fixed a bug involving the conditionSet.isEmpty()
+        condition being used to determine if we have an alternateBase. The fix in r222671 incorrectly tried to add
+        impossible-to-validate conditions to the conditionSet by calling generateConditionsForPrototypePropertyHit() instead
+        of generateConditionsForPrototypePropertyHitCustom(). The problem is that the former function will always fail for
+        custom accessors because it won't find the custom property in the structure.
+
+        The fix is to add a virtual hasAlternateBase() function and use that instead of conditionSet.isEmpty().
+
+        This is a 4x speed-up on assign-custom-setter.js.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::hasAlternateBase const):
+        (JSC::AccessCase::alternateBase const):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/AccessCase.h:
+        (JSC::AccessCase::alternateBase const): Deleted.
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::hasAlternateBase const):
+        (JSC::GetterSetterAccessCase::alternateBase const):
+        * bytecode/GetterSetterAccessCase.h:
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::generateConditionsForPrototypePropertyHitCustom):
+        * bytecode/ObjectPropertyConditionSet.h:
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::tryCachePutByID):
+
 2018-05-02  Dominik Infuehr  <dinfuehr@igalia.com>
 
         [MIPS] Implement and16 and store16 for MacroAssemblerMIPS

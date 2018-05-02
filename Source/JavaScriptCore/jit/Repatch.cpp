@@ -359,7 +359,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
                     newCase = GetterSetterAccessCase::create(
                         vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy,
                         slot.watchpointSet(), slot.isCacheableCustom() ? slot.customGetter() : nullptr,
-                        slot.isCacheableCustom() ? slot.slotBase() : nullptr,
+                        slot.isCacheableCustom() && slot.slotBase() != baseValue ? slot.slotBase() : nullptr,
                         domAttribute, WTFMove(prototypeAccessChain));
                 }
             }
@@ -529,7 +529,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                     if (!usesPolyProto) {
                         prototypeAccessChain = nullptr;
                         conditionSet =
-                            generateConditionsForPrototypePropertyHit(
+                            generateConditionsForPrototypePropertyHitCustom(
                                 vm, codeBlock, exec, structure, slot.base(), ident.impl());
                         if (!conditionSet.isValid())
                             return GiveUpOnCache;
@@ -538,7 +538,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
 
                 newCase = GetterSetterAccessCase::create(
                     vm, codeBlock, slot.isCustomAccessor() ? AccessCase::CustomAccessorSetter : AccessCase::CustomValueSetter, structure, invalidOffset,
-                    conditionSet, WTFMove(prototypeAccessChain), slot.customSetter(), slot.base());
+                    conditionSet, WTFMove(prototypeAccessChain), slot.customSetter(), slot.base() != baseValue ? slot.base() : nullptr);
             } else {
                 ObjectPropertyConditionSet conditionSet;
                 std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;

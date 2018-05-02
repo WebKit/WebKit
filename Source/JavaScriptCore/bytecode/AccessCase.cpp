@@ -121,6 +121,16 @@ std::unique_ptr<AccessCase> AccessCase::fromStructureStubInfo(
     }
 }
 
+bool AccessCase::hasAlternateBase() const
+{
+    return !conditionSet().isEmpty();
+}
+
+JSObject* AccessCase::alternateBase() const
+{
+    return conditionSet().slotBaseCondition().object();
+}
+
 std::unique_ptr<AccessCase> AccessCase::clone() const
 {
     std::unique_ptr<AccessCase> result(new AccessCase(*this));
@@ -572,10 +582,10 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 
         if (isValidOffset(m_offset)) {
             Structure* currStructure;
-            if (m_conditionSet.isEmpty())
+            if (!hasAlternateBase())
                 currStructure = structure();
             else
-                currStructure = m_conditionSet.slotBaseCondition().object()->structure();
+                currStructure = alternateBase()->structure();
             currStructure->startWatchingPropertyForReplacements(vm, offset());
         }
 
@@ -603,7 +613,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             // but it'd require emitting the same code to load the base twice.
             baseForAccessGPR = scratchGPR;
         } else {
-            if (!m_conditionSet.isEmpty()) {
+            if (hasAlternateBase()) {
                 jit.move(
                     CCallHelpers::TrustedImmPtr(alternateBase()), scratchGPR);
                 baseForAccessGPR = scratchGPR;
@@ -1101,10 +1111,10 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         // We need to ensure the getter value does not move from under us. Note that GetterSetters
         // are immutable so we just need to watch the property not any value inside it.
         Structure* currStructure;
-        if (m_conditionSet.isEmpty())
+        if (!hasAlternateBase())
             currStructure = structure();
         else
-            currStructure = m_conditionSet.slotBaseCondition().object()->structure();
+            currStructure = alternateBase()->structure();
         currStructure->startWatchingPropertyForReplacements(vm, offset());
         
         this->as<IntrinsicGetterAccessCase>().emitIntrinsicGetter(state);

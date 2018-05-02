@@ -43,6 +43,7 @@ public:
     JSObject* customSlotBase() const { return m_customSlotBase.get(); }
     std::optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; }
 
+    bool hasAlternateBase() const override;
     JSObject* alternateBase() const override;
 
     void emitDOMJITGetter(AccessGenerationState&, const DOMJIT::GetterSetter*, GPRReg baseForGetGPR);

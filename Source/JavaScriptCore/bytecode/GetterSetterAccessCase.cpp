@@ -100,11 +100,18 @@ std::unique_ptr<AccessCase> GetterSetterAccessCase::clone() const
     return WTFMove(result);
 }
 
+bool GetterSetterAccessCase::hasAlternateBase() const
+{
+    if (customSlotBase())
+        return true;
+    return Base::hasAlternateBase();
+}
+
 JSObject* GetterSetterAccessCase::alternateBase() const
 {
     if (customSlotBase())
         return customSlotBase();
-    return conditionSet().slotBaseCondition().object();
+    return Base::alternateBase();
 }
 
 void GetterSetterAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma) const

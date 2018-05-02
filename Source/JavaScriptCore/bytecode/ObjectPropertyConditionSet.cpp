@@ -374,6 +374,24 @@ ObjectPropertyConditionSet generateConditionsForPrototypePropertyHit(
         });
 }
 
+ObjectPropertyConditionSet generateConditionsForPrototypePropertyHitCustom(
+    VM& vm, JSCell* owner, ExecState* exec, Structure* headStructure, JSObject* prototype,
+    UniquedStringImpl* uid)
+{
+    return generateConditions(
+        vm, exec->lexicalGlobalObject(), headStructure, prototype,
+        [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
+            if (object == prototype)
+                return true;
+            ObjectPropertyCondition result =
+                generateCondition(vm, owner, object, uid, PropertyCondition::Absence);
+            if (!result)
+                return false;
+            conditions.append(result);
+            return true;
+        });
+}
+
 ObjectPropertyConditionSet generateConditionsForPrototypeEquivalenceConcurrently(
     VM& vm, JSGlobalObject* globalObject, Structure* headStructure, JSObject* prototype, UniquedStringImpl* uid)
 {
