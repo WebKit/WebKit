@@ -1033,9 +1033,9 @@ void WebPageProxy::setAcceleratedCompositingRootLayer(LayerOrView* rootLayer)
     m_pageClient.setAcceleratedCompositingRootLayer(rootLayer);
 }
 
-void WebPageProxy::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect)
+void WebPageProxy::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect, WebCore::RouteSharingPolicy policy, const String& contextUID)
 {
-    m_pageClient.showPlaybackTargetPicker(hasVideo, elementRect);
+    m_pageClient.showPlaybackTargetPicker(hasVideo, elementRect, policy, contextUID);
 }
 
 void WebPageProxy::commitPotentialTapFailed()

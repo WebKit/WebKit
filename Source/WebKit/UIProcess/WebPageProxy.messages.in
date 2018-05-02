@@ -188,7 +188,7 @@ messages -> WebPageProxy {
     InterpretKeyEvent(struct WebKit::EditorState state, bool isCharEvent) -> (bool handled)
     DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information)
     SaveImageToLibrary(WebKit::SharedMemory::Handle handle, uint64_t size)
-    ShowPlaybackTargetPicker(bool hasVideo, WebCore::IntRect elementRect)
+    ShowPlaybackTargetPicker(bool hasVideo, WebCore::IntRect elementRect, enum WebCore::RouteSharingPolicy policy, String routingContextUID)
     CommitPotentialTapFailed()
     DidNotHandleTapAsClick(WebCore::IntPoint point)
     DidCompleteSyntheticClick()

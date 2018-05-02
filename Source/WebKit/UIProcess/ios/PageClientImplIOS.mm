@@ -562,9 +562,9 @@ void PageClientImpl::stopAssistingNode()
     [m_contentView _stopAssistingNode];
 }
 
-void PageClientImpl::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect)
+void PageClientImpl::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect, WebCore::RouteSharingPolicy policy, const String& contextUID)
 {
-    [m_contentView _showPlaybackTargetPicker:hasVideo fromRect:elementRect];
+    [m_contentView _showPlaybackTargetPicker:hasVideo fromRect:elementRect routeSharingPolicy:policy routingContextUID:contextUID];
 }
 
 bool PageClientImpl::handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, API::OpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener)

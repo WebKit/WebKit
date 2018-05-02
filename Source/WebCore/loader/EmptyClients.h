@@ -177,7 +177,7 @@ class EmptyChromeClient : public ChromeClient {
     void removeScrollingLayer(Node*, PlatformLayer*, PlatformLayer*) final { }
 
     void webAppOrientationsUpdated() final { };
-    void showPlaybackTargetPicker(bool) final { };
+    void showPlaybackTargetPicker(bool, RouteSharingPolicy, const String&) final { };
 #endif // PLATFORM(IOS)
 
 #if ENABLE(ORIENTATION_EVENTS)

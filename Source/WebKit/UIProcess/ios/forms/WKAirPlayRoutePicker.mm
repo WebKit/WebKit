@@ -29,6 +29,7 @@
 #if PLATFORM(IOS) && ENABLE(AIRPLAY_PICKER)
 
 #import "UIKitSPI.h"
+#import <WebCore/AudioSession.h>
 #import <pal/spi/ios/MediaPlayerSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
@@ -167,6 +168,17 @@ SOFT_LINK_FRAMEWORK(MediaPlayer)
 SOFT_LINK_CLASS(MediaPlayer, MPAVRoutingController)
 SOFT_LINK_CLASS(MediaPlayer, MPMediaControlsViewController)
 
+enum {
+    WKAirPlayRoutePickerRouteSharingPolicyDefault = 0,
+    WKAirPlayRoutePickerRouteSharingPolicyLongForm = 1,
+    WKAirPlayRoutePickerRouteSharingPolicyIndependent = 2,
+};
+typedef NSInteger WKAirPlayRoutePickerRouteSharingPolicy;
+
+@interface MPMediaControlsViewController (WKMPMediaControlsViewControllerPrivate)
+- (void)setOverrideRouteSharingPolicy:(WKAirPlayRoutePickerRouteSharingPolicy)routeSharingPolicy routingContextUID:(NSString *)routingContextUID;
+@end
+
 @implementation WKAirPlayRoutePicker {
     RetainPtr<MPMediaControlsViewController> _actionSheet;
 }
@@ -177,8 +189,12 @@ SOFT_LINK_CLASS(MediaPlayer, MPMediaControlsViewController)
     [super dealloc];
 }
 
-- (void)showFromView:(UIView *)view
+- (void)showFromView:(UIView *)view routeSharingPolicy:(WebCore::RouteSharingPolicy)routeSharingPolicy routingContextUID:(NSString *)routingContextUID
 {
+    static_assert(static_cast<size_t>(WebCore::RouteSharingPolicy::Default) == static_cast<size_t>(WKAirPlayRoutePickerRouteSharingPolicyDefault), "RouteSharingPolicy::Default is not WKAirPlayRoutePickerRouteSharingPolicyDefault as expected");
+    static_assert(static_cast<size_t>(WebCore::RouteSharingPolicy::LongForm) == static_cast<size_t>(WKAirPlayRoutePickerRouteSharingPolicyLongForm), "RouteSharingPolicy::LongForm is not WKAirPlayRoutePickerRouteSharingPolicyLongForm as expected");
+    static_assert(static_cast<size_t>(WebCore::RouteSharingPolicy::Independent) == static_cast<size_t>(WKAirPlayRoutePickerRouteSharingPolicyIndependent), "RouteSharingPolicy::Independent is not WKAirPlayRoutePickerRouteSharingPolicyIndependent as expected");
+
     if (_actionSheet)
         return;
 
@@ -186,6 +202,10 @@ SOFT_LINK_CLASS(MediaPlayer, MPMediaControlsViewController)
     [routingController setDiscoveryMode:MPRouteDiscoveryModeDetailed];
 
     _actionSheet = adoptNS([allocMPMediaControlsViewControllerInstance() init]);
+
+    if ([_actionSheet respondsToSelector:@selector(setOverrideRouteSharingPolicy:routingContextUID:)])
+        [_actionSheet setOverrideRouteSharingPolicy:static_cast<WKAirPlayRoutePickerRouteSharingPolicy>(routeSharingPolicy) routingContextUID:routingContextUID];
+
     _actionSheet.get().didDismissHandler = ^ {
         [routingController setDiscoveryMode:MPRouteDiscoveryModeDisabled];
         routingController = nil;

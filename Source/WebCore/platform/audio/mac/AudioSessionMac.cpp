@@ -131,6 +131,16 @@ bool AudioSession::tryToSetActive(bool)
     return true;
 }
 
+RouteSharingPolicy AudioSession::routeSharingPolicy() const
+{
+    return RouteSharingPolicy::Default;
+}
+
+String AudioSession::routingContextUID() const
+{
+    return emptyString();
+}
+
 size_t AudioSession::preferredBufferSize() const
 {
     UInt32 bufferSize;

@@ -434,7 +434,8 @@ void MediaElementSession::showPlaybackTargetPicker()
     }
 #endif
 
-    document.showPlaybackTargetPicker(*this, is<HTMLVideoElement>(m_element));
+    auto& audioSession = AudioSession::sharedSession();
+    document.showPlaybackTargetPicker(*this, is<HTMLVideoElement>(m_element), audioSession.routeSharingPolicy(), audioSession.routingContextUID());
 }
 
 bool MediaElementSession::hasWirelessPlaybackTargets() const

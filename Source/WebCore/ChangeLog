@@ -1,3 +1,36 @@
+2018-05-02  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Provide audio route information when invoking AirPlay picker
+        https://bugs.webkit.org/show_bug.cgi?id=185199
+        <rdar://problem/39853103>
+
+        Reviewed by Jer Noble.
+
+        No new tests, this requires a specific hardware setup.
+
+        * dom/Document.cpp:
+        (WebCore::Document::showPlaybackTargetPicker): Pass route sharing policy and routing context UID.
+        * dom/Document.h:
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::showPlaybackTargetPicker): Ditto.
+
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+
+        * page/Page.cpp:
+        (WebCore::Page::showPlaybackTargetPicker): Ditto.
+        * page/Page.h:
+
+        * platform/audio/AudioSession.cpp:
+        (WebCore::AudioSession::routeSharingPolicy const): Empty implementation for non-iOS ports.
+        (WebCore::routingContextUID const): Ditto.
+        * platform/audio/AudioSession.h:
+
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSession::routeSharingPolicy const): Return the route sharing policy.
+        (WebCore::AudioSession::routingContextUID const): Return the route context UID.
+
 2018-05-02  Dean Jackson  <dino@apple.com>
 
         Draw SystemPreview badge to specification on iOS

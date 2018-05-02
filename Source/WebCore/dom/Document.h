@@ -196,6 +196,8 @@ template<typename> class ExceptionOr;
 enum CollectionType;
 enum class ShouldOpenExternalURLsPolicy;
 
+enum class RouteSharingPolicy;
+
 using PlatformDisplayID = uint32_t;
 
 #if ENABLE(XSLT)
@@ -1317,7 +1319,7 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void addPlaybackTargetPickerClient(MediaPlaybackTargetClient&);
     void removePlaybackTargetPickerClient(MediaPlaybackTargetClient&);
-    void showPlaybackTargetPicker(MediaPlaybackTargetClient&, bool);
+    void showPlaybackTargetPicker(MediaPlaybackTargetClient&, bool, RouteSharingPolicy, const String&);
     void playbackTargetPickerClientStateDidChange(MediaPlaybackTargetClient&, MediaProducer::MediaStateFlags);
 
     void setPlaybackTarget(uint64_t, Ref<MediaPlaybackTarget>&&);
