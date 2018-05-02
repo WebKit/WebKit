@@ -534,6 +534,11 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
     [self finishedExitFullScreenAnimation:YES];
 }
 
+- (NSWindow *)destinationWindowToExitFullScreenForWindow:(NSWindow *)window
+{
+    return self.webViewPlaceholder.window;
+}
+
 #pragma mark -
 #pragma mark Internal Interface
 

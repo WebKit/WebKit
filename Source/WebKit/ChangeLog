@@ -1,3 +1,14 @@
+2018-05-02  Jer Noble  <jer.noble@apple.com>
+
+        Adopt -destinationWindowToExitFullScreenForWindow:
+        https://bugs.webkit.org/show_bug.cgi?id=185204
+        <rdar://problem/22486621>
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController destinationWindowToExitFullScreenForWindow:]):
+
 2018-05-02  Per Arne Vollan  <pvollan@apple.com>
 
         Disable Media capture rules in sandbox for simulator.
