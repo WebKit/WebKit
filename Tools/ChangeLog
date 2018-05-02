@@ -1,3 +1,17 @@
+2018-05-02  Aditya Keerthi  <akeerthi@apple.com>
+
+        Can't copy and paste URLs that have no title into Mail (macOS)
+        https://bugs.webkit.org/show_bug.cgi?id=185205
+        <rdar://problem/36352406>
+
+        Reviewed by Tim Horton.
+
+        Added test to verify behavior when copying and pasting a URL without a title.
+
+        * TestWebKitAPI/Tests/mac/ContextMenuCanCopyURL.html:
+        * TestWebKitAPI/Tests/mac/ContextMenuCanCopyURL.mm:
+        (TestWebKitAPI::TEST):
+
 2018-05-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Generate a JSC bundle on the 64 and 32 bit release bots and upload it to webkitgtk.org (follow-up fix)

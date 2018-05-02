@@ -199,7 +199,7 @@ static long writeURLForTypes(const Vector<String>& types, const String& pasteboa
     if (types.contains(WebURLsWithTitlesPboardType)) {
         Vector<String> paths;
         paths.append([cocoaURL absoluteString]);
-        paths.append(pasteboardURL.title.stripWhiteSpace());
+        paths.append(String(title).stripWhiteSpace());
         newChangeCount = platformStrategies()->pasteboardStrategy()->setPathnamesForType(paths, WebURLsWithTitlesPboardType, pasteboardName);
     }
     if (types.contains(String(legacyURLPasteboardType())))

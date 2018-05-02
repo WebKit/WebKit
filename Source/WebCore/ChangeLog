@@ -1,3 +1,20 @@
+2018-05-02  Aditya Keerthi  <akeerthi@apple.com>
+
+        Can't copy and paste URLs that have no title into Mail (macOS)
+        https://bugs.webkit.org/show_bug.cgi?id=185205
+        <rdar://problem/36352406>
+
+        Reviewed by Tim Horton.
+
+        The pasteboardURL generated has an empty title for URLs without titles. Currently, the pasteboardURL.title is being saved to the pasteboard.
+
+        To fix the error, we check whether the title is empty and instead save the lastPathComponent to the pasteboard. This matches current behavior as the fallback title.
+
+        Augmented WebKitLegacy.ContextMenuCanCopyURL test
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::writeURLForTypes):
+
 2018-05-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r225868): Release assert when removing an SVGUseElement from Document::m_svgUseElements

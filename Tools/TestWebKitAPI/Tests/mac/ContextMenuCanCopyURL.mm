@@ -110,6 +110,13 @@ TEST(WebKitLegacy, ContextMenuCanCopyURL)
     NSArray * titles = [WebURLsWithTitles titlesFromPasteboard: [NSPasteboard generalPasteboard]];
     EXPECT_WK_STREQ(@"http://xn--ls8h.la/", [[urls objectAtIndex:0] absoluteString]);
     EXPECT_WK_STREQ(@"http://💩.la", [titles objectAtIndex:0]);
+
+    contextMenuCopyLink(webView.get(), 2);
+
+    urls = [WebURLsWithTitles URLsFromPasteboard:[NSPasteboard generalPasteboard]];
+    titles = [WebURLsWithTitles titlesFromPasteboard:[NSPasteboard generalPasteboard]];
+    EXPECT_WK_STREQ(@"https://www.quirksmode.org/html5/videos/big_buck_bunny.mp4", [[urls objectAtIndex:0] absoluteString]);
+    EXPECT_WK_STREQ(@"big_buck_bunny.mp4", [titles objectAtIndex:0]);
 }
 
 } // namespace TestWebKitAPI
