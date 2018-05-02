@@ -1,3 +1,12 @@
+2018-05-02  Youenn Fablet  <youenn@apple.com>
+
+        Rebase imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html expectation
+        https://bugs.webkit.org/show_bug.cgi?id=185221
+
+        Unreviewed.
+
+        * web-platform-tests/service-workers/service-worker/fetch-request-redirect.https-expected.txt:
+
 2018-05-01  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         WebAssembly: add support for stream APIs - JavaScript API
