@@ -25,7 +25,7 @@
 (deny default (with partial-symbolication))
 (allow system-audit file-read-metadata)
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
 (import "system.sb")
 #else
 ;;;
@@ -337,7 +337,7 @@
     (iokit-property "saved-config")
     (iokit-property "startup-timing")
     (iokit-property "touch-size-id")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     (iokit-property "ATY,cbits")
     (iokit-property "ATY,intrev")
     (iokit-property "AccelNativeDMARowByteAlignment")
@@ -624,7 +624,7 @@
 (system-graphics)
 
 ;; Networking
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
 (system-network)
 #endif
 (allow network-outbound
@@ -634,7 +634,7 @@
        (literal "/private/var/run/mDNSResponder")
        (remote tcp))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 ;; CFNetwork
 (allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
 #endif
@@ -645,7 +645,7 @@
        (global-name "com.apple.GSSCred")
        (global-name "com.apple.system.logger")
        (global-name "com.apple.system.notification_center"))
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
 (allow network-outbound
        (remote udp))
 #endif

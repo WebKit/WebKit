@@ -1,3 +1,15 @@
+2018-05-02  Per Arne Vollan  <pvollan@apple.com>
+
+        Adjust sandbox profile in simulator mode.
+        https://bugs.webkit.org/show_bug.cgi?id=185172
+        <rdar://problem/39876860>
+
+        Reviewed by Brent Fulgham.
+
+        Fix some sandbox violations.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-05-02  Brian Burg  <bburg@apple.com>
 
         Web Inspector: opt out of process swap on navigation if a Web Inspector frontend is connected
