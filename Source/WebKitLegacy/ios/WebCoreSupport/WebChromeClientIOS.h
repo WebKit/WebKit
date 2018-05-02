@@ -88,7 +88,7 @@ private:
 
     void webAppOrientationsUpdated() final;
     void focusedElementChanged(WebCore::Element*) final;
-    void showPlaybackTargetPicker(bool hasVideo) final;
+    void showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy, const String&) final;
     RefPtr<WebCore::Icon> createIconForFiles(const Vector<String>& filenames) final;
 
 #if ENABLE(ORIENTATION_EVENTS)

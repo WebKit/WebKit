@@ -7160,7 +7160,7 @@ void Document::removePlaybackTargetPickerClient(MediaPlaybackTargetClient& clien
     page->removePlaybackTargetPickerClient(clientId);
 }
 
-void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool isVideo)
+void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool isVideo, RouteSharingPolicy routeSharingPolicy, const String& routingContextUID)
 {
     Page* page = this->page();
     if (!page)
@@ -7170,7 +7170,7 @@ void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool 
     if (it == m_clientToIDMap.end())
         return;
 
-    page->showPlaybackTargetPicker(it->value, view()->lastKnownMousePosition(), isVideo);
+    page->showPlaybackTargetPicker(it->value, view()->lastKnownMousePosition(), isVideo, routeSharingPolicy, routingContextUID);
 }
 
 void Document::playbackTargetPickerClientStateDidChange(MediaPlaybackTargetClient& client, MediaProducer::MediaStateFlags state)

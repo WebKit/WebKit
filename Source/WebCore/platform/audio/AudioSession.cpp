@@ -107,6 +107,17 @@ void AudioSession::setPreferredBufferSize(size_t)
 {
     notImplemented();
 }
+
+RouteSharingPolicy AudioSession::routeSharingPolicy() const
+{
+    return RouteSharingPolicy::Default;
+}
+
+String AudioSession::routingContextUID() const
+{
+    return emptyString();
+}
+
 #endif // !PLATFORM(COCOA)
 
 }

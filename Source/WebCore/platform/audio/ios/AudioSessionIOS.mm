@@ -31,10 +31,9 @@
 #import "Logging.h"
 #import <AVFoundation/AVAudioSession.h>
 #import <objc/runtime.h>
+#import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
-
-typedef AVAudioSession AVAudioSessionType;
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVAudioSession)
@@ -164,6 +163,26 @@ AudioSession::CategoryType AudioSession::category() const
     if ([categoryString isEqual:AVAudioSessionCategoryAudioProcessing])
         return AudioProcessing;
     return None;
+}
+
+RouteSharingPolicy AudioSession::routeSharingPolicy() const
+{
+    static_assert(static_cast<size_t>(RouteSharingPolicy::Default) == static_cast<size_t>(AVAudioSessionRouteSharingPolicyDefault), "RouteSharingPolicy::Default is not AVAudioSessionRouteSharingPolicyDefault as expected");
+    static_assert(static_cast<size_t>(RouteSharingPolicy::LongForm) == static_cast<size_t>(AVAudioSessionRouteSharingPolicyLongForm), "RouteSharingPolicy::LongForm is not AVAudioSessionRouteSharingPolicyLongForm as expected");
+    static_assert(static_cast<size_t>(RouteSharingPolicy::Independent) == static_cast<size_t>(AVAudioSessionRouteSharingPolicyIndependent), "RouteSharingPolicy::Independent is not AVAudioSessionRouteSharingPolicyIndependent as expected");
+
+    AVAudioSessionRouteSharingPolicy policy = [[AVAudioSession sharedInstance] routeSharingPolicy];
+    ASSERT(static_cast<RouteSharingPolicy>(policy) <= RouteSharingPolicy::Independent);
+    return static_cast<RouteSharingPolicy>(policy);
+}
+
+String AudioSession::routingContextUID() const
+{
+#if !PLATFORM(IOS_SIMULATOR) && !ENABLE(MINIMAL_SIMULATOR) && !PLATFORM(WATCHOS)
+    return [[AVAudioSession sharedInstance] routingContextUID];
+#else
+    return emptyString();
+#endif
 }
 
 void AudioSession::setCategoryOverride(CategoryType category)

@@ -101,6 +101,8 @@ struct GraphicsDeviceAdapter;
 struct ViewportArguments;
 struct WindowFeatures;
 
+enum class RouteSharingPolicy;
+
 class WEBCORE_EXPORT ChromeClient {
 public:
     virtual void chromeDestroyed() = 0;
@@ -264,7 +266,7 @@ public:
     virtual void removeScrollingLayer(Node*, PlatformLayer* scrollingLayer, PlatformLayer* contentsLayer) = 0;
 
     virtual void webAppOrientationsUpdated() = 0;
-    virtual void showPlaybackTargetPicker(bool hasVideo) = 0;
+    virtual void showPlaybackTargetPicker(bool hasVideo, RouteSharingPolicy, const String&) = 0;
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS)

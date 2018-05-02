@@ -136,7 +136,7 @@ private:
 #if __IPHONE_OS_VERSION_MAX_ALLOWED < 120000
     void didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold) override;
 #endif
-    void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect) override;
+    void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, const String&) override;
 
     bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) override;
     void disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID) override;
