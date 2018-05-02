@@ -1,3 +1,20 @@
+2018-05-01  Chris Dumez  <cdumez@apple.com>
+
+        Add release assertions in CFNetwork's SocketStreamHandleImpl to help debug a threading issue
+        https://bugs.webkit.org/show_bug.cgi?id=185181
+
+        Reviewed by Geoffrey Garen.
+
+        Add release assertions in CFNetwork's SocketStreamHandleImpl to help debug a threading issue
+        on iOS WebKitLegacy (Bug 185073). It appears readStreamCallback() can get called on the UIThread,
+        which should not be possible if scheduleStreams() was called on the WebThread, as it is supposed
+        to. The new release assertion in scheduleStreams() should tell us if somebody is calling it from
+        the UIthread instead of the WebThread on iOS WebKitLegacy.
+
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::scheduleStreams):
+        (WebCore::SocketStreamHandleImpl::readStreamCallback):
+
 2018-05-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, remove an unused variable in RuntimeEnabledFeatures.h

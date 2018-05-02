@@ -123,6 +123,7 @@ void SocketStreamHandleImpl::scheduleStreams()
     CFReadStreamScheduleWithRunLoop(m_readStream.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
     CFWriteStreamScheduleWithRunLoop(m_writeStream.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
 #else
+    RELEASE_ASSERT(isMainThread());
     CFReadStreamScheduleWithRunLoop(m_readStream.get(), CFRunLoopGetCurrent(), kCFRunLoopCommonModes);
     CFWriteStreamScheduleWithRunLoop(m_writeStream.get(), CFRunLoopGetCurrent(), kCFRunLoopCommonModes);
 #endif
@@ -469,7 +470,7 @@ void SocketStreamHandleImpl::readStreamCallback(CFReadStreamRef stream, CFStream
             handle->readStreamCallback(type);
     });
 #else
-    ASSERT(isMainThread());
+    RELEASE_ASSERT(isMainThread());
     handle->readStreamCallback(type);
 #endif
 }
