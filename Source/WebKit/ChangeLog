@@ -1,3 +1,14 @@
+2018-05-02  Jer Noble  <jer.noble@apple.com>
+
+        Open audio/video sandbox services for minimal simulator
+        https://bugs.webkit.org/show_bug.cgi?id=185217
+        <rdar://problem/39918909>
+
+        Reviewed by Per Arne Vollan.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-05-02  Daniel Bates  <dabates@apple.com>
 
         Cleanup NetworkResourceLoader::didReceiveResponse()

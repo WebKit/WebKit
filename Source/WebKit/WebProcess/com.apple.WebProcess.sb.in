@@ -358,7 +358,7 @@
 #endif
 )
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 (deny mach-lookup (xpc-service-name-prefix ""))
 (allow mach-lookup
     (xpc-service-name "com.apple.PerformanceAnalysis.animationperfd")
@@ -557,7 +557,7 @@
        (global-name "com.apple.SystemConfiguration.configd")
        (global-name "com.apple.SystemConfiguration.PPPController")
        (global-name "com.apple.audio.SystemSoundServer-OSX")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
        (global-name "com.apple.analyticsd")
        (global-name "com.apple.audio.AudioComponentRegistrar")
 #endif
