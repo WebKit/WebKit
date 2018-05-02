@@ -56,7 +56,13 @@ static void resolvedName(CFHostRef hostRef, CFHostInfoType typeInfo, const CFStr
     for (size_t index = 0; index < count; ++index) {
         CFDataRef data = (CFDataRef)CFArrayGetValueAtIndex(resolvedAddresses, index);
         auto* address = reinterpret_cast<const struct sockaddr_in*>(CFDataGetBytePtr(data));
-        addresses.uncheckedAppend(WebCore::IPAddress(*address));
+        if (address->sin_family == AF_INET)
+            addresses.uncheckedAppend(WebCore::IPAddress(*address));
+        // FIXME: We should probably return AF_INET6 addresses as well.
+    }
+    if (addresses.isEmpty()) {
+        resolver->completed(makeUnexpected(WebCore::DNSError::CannotResolve));
+        return;
     }
     resolver->completed(WTFMove(addresses));
 }

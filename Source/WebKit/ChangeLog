@@ -1,5 +1,26 @@
 2018-05-02  Youenn Fablet  <youenn@apple.com>
 
+        Cannot gather srflx or relay ICE candidates on IPv6 network (ICE agent hangs?)
+        https://bugs.webkit.org/show_bug.cgi?id=181009
+        <rdar://problem/36144555>
+
+        Reviewed by Eric Carlson.
+
+        On iOS/IPv6 networks, STUN servers name resolution returns a zero IPv6 IP address.
+        No error is raised which leads to sending STUN requests with that IP address.
+        Once the request times out, the ICE candidate gathering finishes with host candidates only.
+
+        This patch makes WebRTC DNS resolver to send only IPv4 resolved addresses.
+        STUN is used for NAT traversal which is for IPv4 addresses.
+        Not sending IPv6 addresses allows terminating ICE candidate gathering sooner.
+
+        Manually tested on iOS with IPv4/IPv6 and IPv6 networks.
+
+        * NetworkProcess/webrtc/NetworkRTCResolverCocoa.cpp:
+        (WebKit::resolvedName):
+
+2018-05-02  Youenn Fablet  <youenn@apple.com>
+
         CacheStorage::Engine should keep a list of initialization callback
         https://bugs.webkit.org/show_bug.cgi?id=185184
         <rdar://problem/38875651>
