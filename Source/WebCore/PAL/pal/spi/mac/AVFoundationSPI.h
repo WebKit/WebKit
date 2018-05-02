@@ -274,6 +274,8 @@ NS_ASSUME_NONNULL_END
 #endif // __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)
 
 #if !USE(APPLE_INTERNAL_SDK) && PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR) && !ENABLE(MINIMAL_SIMULATOR)
+#import <AVFoundation/AVAudioSession.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface AVAudioSession (AVAudioSessionPrivate)
