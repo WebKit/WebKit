@@ -237,12 +237,12 @@
                       "slavenames": ["bot507", "bot504"]
                     },
                     {
-                      "name": "GTK Linux 32-bit Release", "type": "BuildAndNonLayoutTest", "builddir": "gtk-linux-32-release",
+                      "name": "GTK Linux 32-bit Release", "type": "BuildAndNonLayoutTestAndGenerateJSCBundle", "builddir": "gtk-linux-32-release",
                       "platform": "gtk", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["gtk-linux-slave-1"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release (Build)", "type": "Build", "builddir": "gtk-linux-64-release",
+                      "name": "GTK Linux 64-bit Release (Build)", "type": "BuildAndGenerateJSCBundle", "builddir": "gtk-linux-64-release",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["gtk-linux-64-release-tests", "gtk-linux-64-release-wayland-tests", "gtk-linux-64-release-perf-tests"],
                       "slavenames": ["gtk-linux-slave-2"]

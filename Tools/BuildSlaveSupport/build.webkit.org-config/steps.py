@@ -260,6 +260,15 @@ class ArchiveMinifiedBuiltProduct(ArchiveBuiltProduct):
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "archive", "--minify"]
 
 
+class GenerateJSCBundle(shell.ShellCommand):
+    command = ["python", "./Tools/Scripts/generate-jsc-bundle", "--builder-name", WithProperties("%(buildername)s"),
+               WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"),
+               WithProperties("--revision=%(got_revision)s"), "--remote-config-file", "../../remote-jsc-bundle-upload-config.json"]
+    name = "generate-jsc-bundle"
+    description = ["generating jsc bundle"]
+    descriptionDone = ["generated jsc bundle"]
+    haltOnFailure = False
+
 class ExtractBuiltProduct(shell.ShellCommand):
     command = ["python", "./Tools/BuildSlaveSupport/built-product-archive",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "extract"]

@@ -46,6 +46,8 @@ class Factory(factory.BuildFactory):
 
 
 class BuildFactory(Factory):
+    ShouldRunJSCBundleStep = False
+
     def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, SVNMirror=None):
         Factory.__init__(self, platform, configuration, architectures, True, additionalArguments, SVNMirror)
 
@@ -60,6 +62,8 @@ class BuildFactory(Factory):
             if platform.startswith('mac') or platform.startswith('ios-simulator'):
                 self.addStep(ArchiveMinifiedBuiltProduct())
                 self.addStep(UploadMinifiedBuiltProduct())
+            if self.ShouldRunJSCBundleStep:
+                self.addStep(GenerateJSCBundle())
             self.addStep(TransferToS3())
             self.addStep(trigger.Trigger(schedulerNames=triggers))
 
@@ -67,6 +71,7 @@ class BuildFactory(Factory):
 class TestFactory(Factory):
     JSCTestClass = RunJavaScriptCoreTests
     LayoutTestClass = RunWebKitTests
+    ShouldRunJSCBundleStep = False
 
     def getProduct(self):
         self.addStep(DownloadBuiltProduct())
@@ -92,6 +97,8 @@ class TestFactory(Factory):
             self.addStep(ArchiveTestResults())
             self.addStep(UploadTestResults())
             self.addStep(ExtractTestResults())
+        if self.ShouldRunJSCBundleStep:
+            self.addStep(GenerateJSCBundle())
         if platform == "gtk":
             self.addStep(RunGtkAPITests())
             self.addStep(RunWebDriverTests())
@@ -149,6 +156,14 @@ class TestWebKit1LeaksFactory(Factory):
 
 class TestAllButJSCFactory(TestFactory):
     JSCTestClass = None
+
+
+class BuildAndGenerateJSCBundleFactory(BuildFactory):
+    ShouldRunJSCBundleStep = True
+
+
+class BuildAndNonLayoutTestAndGenerateJSCBundleFactory(BuildAndNonLayoutTestFactory):
+    ShouldRunJSCBundleStep = True
 
 
 class TestJSCFactory(Factory):

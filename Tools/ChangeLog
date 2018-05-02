@@ -1,3 +1,52 @@
+2018-05-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Generate a JSC bundle on the 64 and 32 bit release bots and upload it to webkitgtk.org
+        https://bugs.webkit.org/show_bug.cgi?id=184699
+
+        Reviewed by Gustavo Noronha Silva.
+
+        This adds a new step for the GTK 64-bit release build bot and the
+        GTK 32-bit release build&test bot.
+
+        This step will be run as one of the lasts ones (after the product
+        is built) and will execute the script generate-jsc-bundle.
+        This script will take care of creating a JSC bundle and uploading
+        it to a server defined on a configuration file that has to be
+        deployed on the bots with the required server data and credentials
+        for this upload.
+
+        In this case, the built products should then be accessible at
+        <https://webkitgtk.org/jsc-built-products>. But the implementation
+        is not tied to any specific server. All the details about where
+        to upload the file is done in configuration file that is kept
+        private on each bot outside of the WebKit source tree.
+
+        The script also supports generating a JSC bundle locally and not
+        uploading it anywhere. This is the default mode of running.
+        The remote upload will only be activated if a --remote-config-file
+        parameter is passed (which is done from the buildbot config)
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/factories.py:
+        (BuildFactory):
+        (BuildFactory.__init__):
+        (TestFactory):
+        (TestFactory.__init__):
+        (BuildAndGenerateJSCBundleFactory):
+        (BuildAndNonLayoutTestAndGenerateJSCBundleFactory):
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (GenerateJSCBundle):
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+        * Scripts/generate-jsc-bundle: Added.
+        (ldd_get_libs_and_interpreter):
+        (generate_readme):
+        (generate_wrapper_script):
+        (copy_and_remove_rpath):
+        (createJSCBundle):
+        (sha256sum):
+        (uploadJSCBundle):
+        (main):
+
 2018-05-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         PSON: Make WebKitTestRunner work with process swap on navigation turned on
