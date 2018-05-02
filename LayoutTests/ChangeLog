@@ -1,3 +1,9 @@
+2018-05-02  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Unreviewed gardening. Add missing Skip for http/wpt.
+
+        * platform/wincairo/TestExpectations:
+
 2018-05-02  Dirk Schulze  <dschulze@chromium.org>
 
         getCharNumAtPosition should take DOMPointInit as argument
