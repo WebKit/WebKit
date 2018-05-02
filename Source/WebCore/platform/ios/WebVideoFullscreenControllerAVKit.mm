@@ -618,7 +618,7 @@ bool VideoFullscreenControllerContext::isMuted() const
 double VideoFullscreenControllerContext::volume() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->volume() : false;
+    return m_playbackModel ? m_playbackModel->volume() : 0;
 }
 
 bool VideoFullscreenControllerContext::isPictureInPictureActive() const

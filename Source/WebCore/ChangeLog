@@ -1,5 +1,12 @@
 2018-05-02  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed; address review comments made before landing r231231.
+
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::volume const):
+
+2018-05-02  Jer Noble  <jer.noble@apple.com>
+
         Pipe volume through PlaybackSessionManager/Proxy.
         https://bugs.webkit.org/show_bug.cgi?id=185182
 
