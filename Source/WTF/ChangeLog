@@ -1,3 +1,12 @@
+2018-05-02  Jer Noble  <jer.noble@apple.com>
+
+        Enable HAVE_AVKIT for the MINIMAL_SIMULATOR
+        https://bugs.webkit.org/show_bug.cgi?id=185183
+
+        Reviewed by Daniel Bates.
+
+        * wtf/Platform.h:
+
 2018-05-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use default std::optional if it is provided
