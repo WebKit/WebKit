@@ -35,6 +35,7 @@
 #import "WebIconUtilities.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
+#import <WebCore/AudioSession.h>
 #import <WebCore/Icon.h>
 #import <WebCore/NotImplemented.h>
 #import <wtf/RefPtr.h>
@@ -134,9 +135,9 @@ void WebChromeClient::webAppOrientationsUpdated()
     notImplemented();
 }
 
-void WebChromeClient::showPlaybackTargetPicker(bool hasVideo)
+void WebChromeClient::showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy policy, const String& routingContextUID)
 {
-    m_page.send(Messages::WebPageProxy::ShowPlaybackTargetPicker(hasVideo, m_page.rectForElementAtInteractionLocation()));
+    m_page.send(Messages::WebPageProxy::ShowPlaybackTargetPicker(hasVideo, m_page.rectForElementAtInteractionLocation(), policy, routingContextUID));
 }
 
 Seconds WebChromeClient::eventThrottlingDelay()

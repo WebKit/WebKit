@@ -1,3 +1,89 @@
+2018-05-02  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r231242. rdar://problem/39860939
+
+    [iOS] Provide audio route information when invoking AirPlay picker
+    https://bugs.webkit.org/show_bug.cgi?id=185199
+    <rdar://problem/39853103>
+    
+    Reviewed by Jer Noble.
+    
+    Source/WebCore:
+    
+    No new tests, this requires a specific hardware setup.
+    
+    * dom/Document.cpp:
+    (WebCore::Document::showPlaybackTargetPicker): Pass route sharing policy and routing context UID.
+    * dom/Document.h:
+    
+    * html/MediaElementSession.cpp:
+    (WebCore::MediaElementSession::showPlaybackTargetPicker): Ditto.
+    
+    * loader/EmptyClients.h:
+    * page/ChromeClient.h:
+    
+    * page/Page.cpp:
+    (WebCore::Page::showPlaybackTargetPicker): Ditto.
+    * page/Page.h:
+    
+    * platform/audio/AudioSession.cpp:
+    (WebCore::AudioSession::routeSharingPolicy const): Empty implementation for non-iOS ports.
+    (WebCore::routingContextUID const): Ditto.
+    * platform/audio/AudioSession.h:
+    
+    * platform/audio/ios/AudioSessionIOS.mm:
+    (WebCore::AudioSession::routeSharingPolicy const): Return the route sharing policy.
+    (WebCore::AudioSession::routingContextUID const): Return the route context UID.
+    
+    Source/WebCore/PAL:
+    
+    * pal/spi/mac/AVFoundationSPI.h: Add additional AVAudioSession SPI.
+    
+    Source/WebKit:
+    
+    * Scripts/webkit/messages.py:
+    * UIProcess/PageClient.h:
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebPageProxy.messages.in:
+    * UIProcess/ios/PageClientImplIOS.h:
+    * UIProcess/ios/PageClientImplIOS.mm:
+    (WebKit::PageClientImpl::showPlaybackTargetPicker):  Pass route sharing policy and routing context UID.
+    
+    * UIProcess/ios/WKContentViewInteraction.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView _showPlaybackTargetPicker:fromRect:routeSharingPolicy:routingContextUID:]): Take same.
+    (-[WKContentView _showPlaybackTargetPicker:fromRect:]): Deleted.
+    
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::showPlaybackTargetPicker): Pass route sharing policy and routing context UID.
+    
+    * UIProcess/ios/forms/WKAirPlayRoutePicker.h:
+    * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+    (-[WKAirPlayRoutePicker showFromView:routeSharingPolicy:routingContextUID:]): Take same.
+    (-[WKAirPlayRoutePicker showFromView:]): Deleted.
+    
+    * WebProcess/WebCoreSupport/WebChromeClient.h:
+    * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+    (WebKit::WebChromeClient::showPlaybackTargetPicker):
+    
+    Source/WebKitLegacy/ios:
+    
+    * WebCoreSupport/WebChromeClientIOS.h:
+    * WebCoreSupport/WebChromeClientIOS.mm:
+    (WebChromeClientIOS::showPlaybackTargetPicker): Pass route sharing policy and routing context UID.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@231242 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-05-02  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] Provide audio route information when invoking AirPlay picker
+            https://bugs.webkit.org/show_bug.cgi?id=185199
+            <rdar://problem/39853103>
+
+            Reviewed by Jer Noble.
+
+            * pal/spi/mac/AVFoundationSPI.h: Add additional AVAudioSession SPI.
+
 2018-04-10  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r230467. rdar://problem/39317878

@@ -271,4 +271,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR) && !ENABLE(MINIMAL_SIMULATOR)
+NS_ASSUME_NONNULL_BEGIN
+
+@interface AVAudioSession (AVAudioSessionPrivate)
+@property (readonly) NSString* routingContextUID;
+@end
+
+NS_ASSUME_NONNULL_END
+#endif
+
 #endif // __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)

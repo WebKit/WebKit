@@ -29,10 +29,14 @@
 
 #import <Foundation/Foundation.h>
 
+namespace WebCore {
+enum class RouteSharingPolicy;
+}
+
 @class UIView;
 
 @interface WKAirPlayRoutePicker : NSObject
-- (void)showFromView:(UIView *)view;
+- (void)showFromView:(UIView *)view routeSharingPolicy:(WebCore::RouteSharingPolicy)policy routingContextUID:(NSString *)contextUID;
 @end
 
 #else

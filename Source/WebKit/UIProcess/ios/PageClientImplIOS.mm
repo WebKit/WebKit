@@ -575,9 +575,9 @@ void PageClientImpl::didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t f
 #endif
     
 
-void PageClientImpl::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect)
+void PageClientImpl::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect, WebCore::RouteSharingPolicy policy, const String& contextUID)
 {
-    [m_contentView _showPlaybackTargetPicker:hasVideo fromRect:elementRect];
+    [m_contentView _showPlaybackTargetPicker:hasVideo fromRect:elementRect routeSharingPolicy:policy routingContextUID:contextUID];
 }
 
 bool PageClientImpl::handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, API::OpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener)
