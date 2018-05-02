@@ -1755,3 +1755,6 @@ webkit.org/b/177616 [ HighSierra+ ] http/tests/media/video-buffered-range-contai
 webkit.org/b/184610 media/video-volume-slider-drag.html [ Pass Timeout ]
 
 webkit.org/b/184612 [ Debug ] media/audio-concurrent-supported.html [ Pass Failure ]
+
+# Font collections are not supported on every OS.
+webkit.org/b/184624 [ Sierra ] fast/text/font-collection.html [ ImageOnlyFailure ]

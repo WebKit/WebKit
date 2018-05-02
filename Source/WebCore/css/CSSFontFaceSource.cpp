@@ -159,7 +159,7 @@ void CSSFontFaceSource::load(CSSFontSelector* fontSelector)
                 if (auto otfFont = convertSVGToOTFFont(fontElement))
                     m_generatedOTFBuffer = SharedBuffer::create(WTFMove(otfFont.value()));
                 if (m_generatedOTFBuffer) {
-                    m_inDocumentCustomPlatformData = createFontCustomPlatformData(*m_generatedOTFBuffer, 0);
+                    m_inDocumentCustomPlatformData = createFontCustomPlatformData(*m_generatedOTFBuffer, String());
                     success = static_cast<bool>(m_inDocumentCustomPlatformData);
                 }
             }
@@ -170,7 +170,7 @@ void CSSFontFaceSource::load(CSSFontSelector* fontSelector)
             bool wrapping;
             RefPtr<SharedBuffer> buffer = SharedBuffer::create(static_cast<const char*>(m_immediateSource->baseAddress()), m_immediateSource->byteLength());
             ASSERT(buffer);
-            m_immediateFontCustomPlatformData = CachedFont::createCustomFontData(*buffer, 0, wrapping);
+            m_immediateFontCustomPlatformData = CachedFont::createCustomFontData(*buffer, String(), wrapping);
             success = static_cast<bool>(m_immediateFontCustomPlatformData);
         } else {
             // We are only interested in whether or not fontForFamily() returns null or not. Luckily, none of

@@ -1,3 +1,31 @@
+2018-05-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Collection fragment identifiers don't use PostScript names
+        https://bugs.webkit.org/show_bug.cgi?id=184624
+        <rdar://problem/39432089>
+
+        Reviewed by Simon Fraser.
+
+        In a previous version of the CSS Fonts spec, there was text saying that items in font collections
+        should be 1-indexed (so the first item would be MyFonts.ttc#1). However, this is unfortunate because
+        inserting an item into the middle of a collection would throw off all content that uses the file.
+        Instead, the spec has since changed to use PostScript names (so the content instead would say
+        MyFonts.ttc#MyFont-Regular).
+
+        Test: fast/text/font-collection.html
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::load):
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::calculateItemInCollection const):
+        (WebCore::CachedFont::ensureCustomFontData):
+        (WebCore::CachedFont::createCustomFontData):
+        (WebCore::CachedFont::calculateIndex const): Deleted.
+        * loader/cache/CachedFont.h:
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/mac/FontCustomPlatformData.h:
+
 2018-05-02  Brian Burg  <bburg@apple.com>
 
         Web Inspector: opt out of process swap on navigation if a Web Inspector frontend is connected

@@ -1,3 +1,15 @@
+2018-05-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Collection fragment identifiers don't use PostScript names
+        https://bugs.webkit.org/show_bug.cgi?id=184624
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/font-collection-expected.html:
+        * fast/text/font-collection.html:
+        * fast/text/resources/collection.ttc: I generated this font collection by hand. The "Ahemerator" font inside it is missing the
+        "A" glyph.
+
 2018-05-02  Youenn Fablet  <youenn@apple.com>
 
         Layout Test http/wpt/service-workers/header-filtering.https.html is a flaky failure
