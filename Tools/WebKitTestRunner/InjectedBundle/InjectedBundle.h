@@ -161,7 +161,8 @@ private:
     void platformInitialize(WKTypeRef initializationUserData);
     void resetLocalSettings();
 
-    void beginTesting(WKDictionaryRef initialSettings);
+    enum class BegingTestingMode { New, Resume };
+    void beginTesting(WKDictionaryRef initialSettings, BegingTestingMode);
 
     bool booleanForKey(WKDictionaryRef, const char* key);
 

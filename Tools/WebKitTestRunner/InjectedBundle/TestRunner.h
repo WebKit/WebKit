@@ -27,6 +27,7 @@
 
 #include "JSWrappable.h"
 #include "StringFunctions.h"
+#include "WhatToDump.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit/WKBundleScriptWorld.h>
 #include <WebKit/WKRetainPtr.h>
@@ -65,7 +66,7 @@ public:
     void setTestURL(WKURLRef url) { m_testURL = url; }
     void dumpAsText(bool dumpPixels);
     void waitForPolicyDelegate();
-    void dumpChildFramesAsText() { m_whatToDump = AllFramesText; }
+    void dumpChildFramesAsText() { setWhatToDump(WhatToDump::AllFramesText); }
     void waitUntilDownloadFinished();
     void waitUntilDone();
     void notifyDone();
@@ -87,10 +88,10 @@ public:
     void dumpWillCacheResponse() { m_dumpWillCacheResponse = true; }
     void dumpApplicationCacheDelegateCallbacks() { m_dumpApplicationCacheDelegateCallbacks = true; }
     void dumpDatabaseCallbacks() { m_dumpDatabaseCallbacks = true; }
-    void dumpDOMAsWebArchive() { m_whatToDump = DOMAsWebArchive; }
+    void dumpDOMAsWebArchive() { setWhatToDump(WhatToDump::DOMAsWebArchive); }
     void dumpPolicyDelegateCallbacks() { m_dumpPolicyCallbacks = true; }
 
-    void setShouldDumpFrameLoadCallbacks(bool value) { m_dumpFrameLoadCallbacks = value; }
+    void setShouldDumpFrameLoadCallbacks(bool value);
     void setShouldDumpProgressFinishedCallback(bool value) { m_dumpProgressFinishedCallback = value; }
 
     // Special options.
@@ -192,18 +193,18 @@ public:
     void setBlockAllPlugins(bool);
     void setPluginSupportedMode(JSStringRef);
 
-    enum WhatToDump { RenderTree, MainFrameText, AllFramesText, Audio, DOMAsWebArchive };
-    WhatToDump whatToDump() const { return m_whatToDump; }
+    WhatToDump whatToDump() const;
+    void setWhatToDump(WhatToDump);
 
     bool shouldDumpAllFrameScrollPositions() const { return m_shouldDumpAllFrameScrollPositions; }
     bool shouldDumpBackForwardListsForAllWindows() const { return m_shouldDumpBackForwardListsForAllWindows; }
     bool shouldDumpEditingCallbacks() const { return m_dumpEditingCallbacks; }
-    bool shouldDumpMainFrameScrollPosition() const { return m_whatToDump == RenderTree; }
+    bool shouldDumpMainFrameScrollPosition() const { return whatToDump() == WhatToDump::RenderTree; }
     bool shouldDumpStatusCallbacks() const { return m_dumpStatusCallbacks; }
     bool shouldDumpTitleChanges() const { return m_dumpTitleChanges; }
-    bool shouldDumpPixels() const { return m_dumpPixels; }
+    bool shouldDumpPixels() const;
     bool shouldDumpFullScreenCallbacks() const { return m_dumpFullScreenCallbacks; }
-    bool shouldDumpFrameLoadCallbacks() const { return m_dumpFrameLoadCallbacks; }
+    bool shouldDumpFrameLoadCallbacks();
     bool shouldDumpProgressFinishedCallback() const { return m_dumpProgressFinishedCallback; }
     bool shouldDumpResourceLoadCallbacks() const { return m_dumpResourceLoadCallbacks; }
     bool shouldDumpResourceResponseMIMETypes() const { return m_dumpResourceResponseMIMETypes; }
@@ -219,7 +220,7 @@ public:
     bool didReceiveServerRedirectForProvisionalNavigation() const;
     void clearDidReceiveServerRedirectForProvisionalNavigation();
 
-    bool waitToDump() const { return m_waitToDump; }
+    bool shouldWaitUntilDone() const;
     void waitToDumpWatchdogTimerFired();
     void invalidateWaitToDumpWatchdogTimer();
 
@@ -449,9 +450,11 @@ private:
     void platformInitialize();
     void initializeWaitToDumpWatchdogTimerIfNeeded();
 
+    void setDumpPixels(bool);
+    void setWaitUntilDone(bool);
+
     WKRetainPtr<WKURLRef> m_testURL; // Set by InjectedBundlePage once provisional load starts.
 
-    WhatToDump m_whatToDump;
     bool m_shouldDumpAllFrameScrollPositions;
     bool m_shouldDumpBackForwardListsForAllWindows;
 
@@ -464,7 +467,6 @@ private:
     bool m_dumpPixels;
     bool m_dumpSelectionRect;
     bool m_dumpFullScreenCallbacks;
-    bool m_dumpFrameLoadCallbacks;
     bool m_dumpProgressFinishedCallback;
     bool m_dumpResourceLoadCallbacks;
     bool m_dumpResourceResponseMIMETypes;
@@ -473,7 +475,6 @@ private:
     bool m_dumpDatabaseCallbacks;
     bool m_dumpPolicyCallbacks { false };
     bool m_disallowIncreaseForApplicationCacheQuota;
-    bool m_waitToDump; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.
     bool m_testRepaint;
     bool m_testRepaintSweepHorizontally;
     bool m_isPrinting;

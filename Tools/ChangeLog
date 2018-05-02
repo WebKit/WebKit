@@ -1,3 +1,72 @@
+2018-05-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        PSON: Make WebKitTestRunner work with process swap on navigation turned on
+        https://bugs.webkit.org/show_bug.cgi?id=185111
+
+        Reviewed by Chris Dumez.
+
+        Add the basic support for running layout tests with process-swap-on-navigation turned on.
+
+        First, move m_whatToDump, m_dumpPixels, m_waitToDump, and m_dumpFrameLoadCallbacks from WebContent process
+        to UI process so that calls to waitUntilDone, dumpAsText, etc... persist across process swaps.
+
+        In addition, initialize the injected bundle inside a new WebContent process when the first page is created.
+        This instantiates objects such as TestRunner, GCController, etc... in the new process. The initialization
+        can't be done in InjectedBundle::beginTesting because some steps in InjectedBundle::initialize require
+        the current PageGroup and Page objects. We avoid clearing databases and app cache in this case.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didCreatePage): Send "Initialization" message to UI process. This message returns
+        all the dictionary values usually present in "BeginTest" message from UI process as well as "ResumeTesting"
+        boolean which is set when this process was created as a result of a process swap on navgation. Invoke
+        beginTesting with BegingTestingMode::Resume when this boolean is set.
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        (WTR::InjectedBundle::beginTesting): Don't clear database, app cache, etc... when initializing an injected
+        bundle after a process swap on navigation.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dump):
+        (WTR::InjectedBundlePage::frameDidChangeLocation):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::TestRunner):
+        (WTR::TestRunner::shouldDumpPixels const): Added.
+        (WTR::TestRunner::setDumpPixels): Added.
+        (WTR::TestRunner::dumpAsText):
+        (WTR::TestRunner::whatToDump const): Added.
+        (WTR::TestRunner::setWhatToDump): Added.
+        (WTR::TestRunner::waitUntilDone):
+        (WTR::TestRunner::setWaitUntilDone): Added.
+        (WTR::TestRunner::shouldWaitUntilDone): Added.
+        (WTR::TestRunner::notifyDone):
+        (WTR::TestRunner::forceImmediateCompletion):
+        (WTR::TestRunner::setShouldDumpFrameLoadCallbacks): Added.
+        (WTR::TestRunner::shouldDumpFrameLoadCallbacks): Added.
+        (WTR::TestRunner::setAudioResult):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::dumpChildFramesAsText):
+        (WTR::TestRunner::dumpDOMAsWebArchive):
+        (WTR::TestRunner::setShouldDumpFrameLoadCallbacks): Moved to cpp.
+        (WTR::TestRunner::whatToDump const): Moved to cpp.
+        (WTR::TestRunner::shouldDumpMainFrameScrollPosition const):
+        (WTR::TestRunner::shouldDumpPixels const): Moved to cpp.
+        (WTR::TestRunner::shouldDumpFrameLoadCallbacks const): Moved to cpp.
+        (WTR::TestRunner::waitToDump const): Renamed to shouldWaitUntilDone and moved to cpp.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::TestInvocation): Initialize m_dumpFrameLoadCallbacks here.
+        (WTR::TestInvocation::shouldLogFrameLoadDelegates const): Deleted.
+        (WTR::TestInvocation::createTestSettingsDictionary): Extracted from invoke().
+        (WTR::TestInvocation::invoke): Sets m_startedTesting to true immediately afte sending "BeginTest" message.
+        m_startedTesting is later used in didReceiveSynchronousMessageFromInjectedBundle to detect whether a given
+        "Initialization" message is sent from a regular WebContent process (m_startedTesting is false) or the one
+        started as a result of a process swap on navigation (m_startedTesting is true).
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle): Added a bunch of new messgaes to
+        support initializing the injected bundle in a process swapped after navigation and set/get messages for
+        the states which must persist across process swaps within a test.
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * Tools/WebKitTestRunner/WhatToDump.h:
+        (WTR::WhatToDump): Added.
+
 2018-05-01  Leo Balter  <leonardo.balter@gmail.com>
 
         Auto save the results for Test262

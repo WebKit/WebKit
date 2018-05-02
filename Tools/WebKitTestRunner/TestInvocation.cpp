@@ -74,6 +74,9 @@ TestInvocation::TestInvocation(WKURLRef url, const TestOptions& options)
     WKStringGetUTF8CString(urlString.get(), urlVector.data(), stringLength + 1);
 
     m_urlString = String(urlVector.data(), stringLength);
+
+    // FIXME: Avoid mutating the setting via a test directory like this.
+    m_dumpFrameLoadCallbacks = urlContains("loading/");
 }
 
 TestInvocation::~TestInvocation()
@@ -112,36 +115,14 @@ double TestInvocation::shortTimeout() const
     return m_timeout / 1000. / 4;
 }
 
-bool TestInvocation::shouldLogFrameLoadDelegates() const
-{
-    return urlContains("loading/");
-}
-
 bool TestInvocation::shouldLogHistoryClientCallbacks() const
 {
     return urlContains("globalhistory/");
 }
 
-void TestInvocation::invoke()
+WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary()
 {
-    TestController::singleton().configureViewForTest(*this);
-
-    WKPageSetAddsVisitedLinks(TestController::singleton().mainWebView()->page(), false);
-
-    m_textOutput.clear();
-
-    TestController::singleton().setShouldLogHistoryClientCallbacks(shouldLogHistoryClientCallbacks());
-
-    WKCookieManagerSetHTTPCookieAcceptPolicy(WKContextGetCookieManager(TestController::singleton().context()), kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain);
-
-    // FIXME: We should clear out visited links here.
-
-    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("BeginTest"));
     WKRetainPtr<WKMutableDictionaryRef> beginTestMessageBody = adoptWK(WKMutableDictionaryCreate());
-
-    WKRetainPtr<WKStringRef> dumpFrameLoadDelegatesKey = adoptWK(WKStringCreateWithUTF8CString("DumpFrameLoadDelegates"));
-    WKRetainPtr<WKBooleanRef> dumpFrameLoadDelegatesValue = adoptWK(WKBooleanCreate(shouldLogFrameLoadDelegates()));
-    WKDictionarySetItem(beginTestMessageBody.get(), dumpFrameLoadDelegatesKey.get(), dumpFrameLoadDelegatesValue.get());
 
     WKRetainPtr<WKStringRef> useFlexibleViewportKey = adoptWK(WKStringCreateWithUTF8CString("UseFlexibleViewport"));
     WKRetainPtr<WKBooleanRef> useFlexibleViewportValue = adoptWK(WKBooleanCreate(options().useFlexibleViewport));
@@ -162,8 +143,29 @@ void TestInvocation::invoke()
     WKRetainPtr<WKStringRef> dumpJSConsoleLogInStdErrKey = adoptWK(WKStringCreateWithUTF8CString("DumpJSConsoleLogInStdErr"));
     WKRetainPtr<WKBooleanRef> dumpJSConsoleLogInStdErrValue = adoptWK(WKBooleanCreate(m_dumpJSConsoleLogInStdErr));
     WKDictionarySetItem(beginTestMessageBody.get(), dumpJSConsoleLogInStdErrKey.get(), dumpJSConsoleLogInStdErrValue.get());
+    
+    return beginTestMessageBody;
+}
 
+void TestInvocation::invoke()
+{
+    TestController::singleton().configureViewForTest(*this);
+
+    WKPageSetAddsVisitedLinks(TestController::singleton().mainWebView()->page(), false);
+
+    m_textOutput.clear();
+
+    TestController::singleton().setShouldLogHistoryClientCallbacks(shouldLogHistoryClientCallbacks());
+
+    WKCookieManagerSetHTTPCookieAcceptPolicy(WKContextGetCookieManager(TestController::singleton().context()), kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain);
+
+    // FIXME: We should clear out visited links here.
+
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("BeginTest"));
+    auto beginTestMessageBody = createTestSettingsDictionary();
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), beginTestMessageBody.get());
+
+    m_startedTesting = true;
 
     bool shouldOpenExternalURLs = false;
 
@@ -769,6 +771,46 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
 
 WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
 {
+    if (WKStringIsEqualToUTF8CString(messageName, "Initialization")) {
+        auto settings = createTestSettingsDictionary();
+        WKRetainPtr<WKStringRef> resumeTestingKey = adoptWK(WKStringCreateWithUTF8CString("ResumeTesting"));
+        WKRetainPtr<WKBooleanRef> resumeTestingValue = adoptWK(WKBooleanCreate(m_startedTesting));
+        WKDictionarySetItem(settings.get(), resumeTestingKey.get(), resumeTestingValue.get());
+        return settings;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetDumpPixels")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        m_dumpPixels = WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody));
+        return nullptr;
+    }
+    if (WKStringIsEqualToUTF8CString(messageName, "GetDumpPixels"))
+        return WKRetainPtr<WKTypeRef>(AdoptWK, WKBooleanCreate(m_dumpPixels));
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetWhatToDump")) {
+        ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());
+        m_whatToDump = static_cast<WhatToDump>(WKUInt64GetValue(static_cast<WKUInt64Ref>(messageBody)));
+        return nullptr;
+    }
+    if (WKStringIsEqualToUTF8CString(messageName, "GetWhatToDump"))
+        return WKRetainPtr<WKTypeRef>(AdoptWK, WKUInt64Create(static_cast<uint64_t>(m_whatToDump)));
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetWaitUntilDone")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        m_waitUntilDone = static_cast<unsigned char>(WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody)));
+        return nullptr;
+    }
+    if (WKStringIsEqualToUTF8CString(messageName, "GetWaitUntilDone"))
+        return WKRetainPtr<WKTypeRef>(AdoptWK, WKBooleanCreate(m_waitUntilDone));
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetDumpFrameLoadCallbacks")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        m_dumpFrameLoadCallbacks = static_cast<unsigned char>(WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody)));
+        return nullptr;
+    }
+    if (WKStringIsEqualToUTF8CString(messageName, "GetDumpFrameLoadCallbacks"))
+        return WKRetainPtr<WKTypeRef>(AdoptWK, WKBooleanCreate(m_dumpFrameLoadCallbacks));
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetWindowIsKey")) {
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
         WKBooleanRef isKeyValue = static_cast<WKBooleanRef>(messageBody);

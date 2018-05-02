@@ -62,18 +62,15 @@ Ref<TestRunner> TestRunner::create()
 }
 
 TestRunner::TestRunner()
-    : m_whatToDump(RenderTree)
-    , m_shouldDumpAllFrameScrollPositions(false)
+    : m_shouldDumpAllFrameScrollPositions(false)
     , m_shouldDumpBackForwardListsForAllWindows(false)
     , m_shouldAllowEditing(true)
     , m_shouldCloseExtraWindows(false)
     , m_dumpEditingCallbacks(false)
     , m_dumpStatusCallbacks(false)
     , m_dumpTitleChanges(false)
-    , m_dumpPixels(true)
     , m_dumpSelectionRect(false)
     , m_dumpFullScreenCallbacks(false)
-    , m_dumpFrameLoadCallbacks(false)
     , m_dumpProgressFinishedCallback(false)
     , m_dumpResourceLoadCallbacks(false)
     , m_dumpResourceResponseMIMETypes(false)
@@ -81,7 +78,6 @@ TestRunner::TestRunner()
     , m_dumpApplicationCacheDelegateCallbacks(false)
     , m_dumpDatabaseCallbacks(false)
     , m_disallowIncreaseForApplicationCacheQuota(false)
-    , m_waitToDump(false)
     , m_testRepaint(false)
     , m_testRepaintSweepHorizontally(false)
     , m_isPrinting(false)
@@ -127,11 +123,44 @@ void TestRunner::displayAndTrackRepaints()
     WKBundlePageResetTrackedRepaints(page);
 }
 
+bool TestRunner::shouldDumpPixels() const
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("GetDumpPixels"));
+    WKTypeRef result = 0;
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, &result);
+    ASSERT(WKGetTypeID(result) == WKBooleanGetTypeID());
+    return WKBooleanGetValue(static_cast<WKBooleanRef>(result));
+}
+
+void TestRunner::setDumpPixels(bool dumpPixels)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetDumpPixels"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(dumpPixels));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
 void TestRunner::dumpAsText(bool dumpPixels)
 {
-    if (m_whatToDump < MainFrameText)
-        m_whatToDump = MainFrameText;
-    m_dumpPixels = dumpPixels;
+    if (whatToDump() < WhatToDump::MainFrameText)
+        setWhatToDump(WhatToDump::MainFrameText);
+    setDumpPixels(dumpPixels);
+}
+    
+WhatToDump TestRunner::whatToDump() const
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("GetWhatToDump"));
+    WKTypeRef result = 0;
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, &result);
+    ASSERT(WKGetTypeID(result) == WKUInt64GetTypeID());
+    auto uint64value = WKUInt64GetValue(static_cast<WKUInt64Ref>(result));
+    return static_cast<WhatToDump>(uint64value);
+}
+
+void TestRunner::setWhatToDump(WhatToDump whatToDump)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetWhatToDump"));
+    WKRetainPtr<WKUInt64Ref> messageBody(AdoptWK, WKUInt64Create(static_cast<uint64_t>(whatToDump)));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
 void TestRunner::setCustomPolicyDelegate(bool enabled, bool permissive)
@@ -156,9 +185,26 @@ void TestRunner::waitUntilDownloadFinished()
 
 void TestRunner::waitUntilDone()
 {
-    m_waitToDump = true;
+    setWaitUntilDone(true);
+    // FIXME: Watchdog timer should be moved to UI process in order to take the elapsed time in anotehr process into account.
     if (InjectedBundle::singleton().useWaitToDumpWatchdogTimer())
         initializeWaitToDumpWatchdogTimerIfNeeded();
+}
+
+void TestRunner::setWaitUntilDone(bool value)
+{
+    WKRetainPtr<WKStringRef> messsageName(AdoptWK, WKStringCreateWithUTF8CString("SetWaitUntilDone"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(value));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messsageName.get(), messageBody.get(), nullptr);
+}
+
+bool TestRunner::shouldWaitUntilDone() const
+{
+    WKRetainPtr<WKStringRef> messsageName(AdoptWK, WKStringCreateWithUTF8CString("GetWaitUntilDone"));
+    WKTypeRef result = 0;
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messsageName.get(), 0, &result);
+    ASSERT(WKGetTypeID(result) == WKBooleanGetTypeID());
+    return WKBooleanGetValue(static_cast<WKBooleanRef>(result));
 }
 
 void TestRunner::waitToDumpWatchdogTimerFired()
@@ -180,14 +226,14 @@ void TestRunner::notifyDone()
     if (!injectedBundle.isTestRunning())
         return;
 
-    if (m_waitToDump && !injectedBundle.topLoadingFrame())
+    if (shouldWaitUntilDone() && !injectedBundle.topLoadingFrame())
         injectedBundle.page()->dump();
 
     // We don't call invalidateWaitToDumpWatchdogTimer() here, even if we continue to wait for a load to finish.
     // The test is still subject to timeout checking - it is better to detect an async timeout inside WebKitTestRunner
     // than to let webkitpy do that, because WebKitTestRunner will dump partial results.
 
-    m_waitToDump = false;
+    setWaitUntilDone(false);
 }
 
 void TestRunner::forceImmediateCompletion()
@@ -196,10 +242,26 @@ void TestRunner::forceImmediateCompletion()
     if (!injectedBundle.isTestRunning())
         return;
 
-    if (m_waitToDump && injectedBundle.page())
+    if (shouldWaitUntilDone() && injectedBundle.page())
         injectedBundle.page()->dump();
 
-    m_waitToDump = false;
+    setWaitUntilDone(false);
+}
+
+void TestRunner::setShouldDumpFrameLoadCallbacks(bool value)
+{
+    WKRetainPtr<WKStringRef> messsageName(AdoptWK, WKStringCreateWithUTF8CString("SetDumpFrameLoadCallbacks"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(value));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messsageName.get(), messageBody.get(), nullptr);
+}
+
+bool TestRunner::shouldDumpFrameLoadCallbacks()
+{
+    WKRetainPtr<WKStringRef> messsageName(AdoptWK, WKStringCreateWithUTF8CString("GetDumpFrameLoadCallbacks"));
+    WKTypeRef result = 0;
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messsageName.get(), 0, &result);
+    ASSERT(WKGetTypeID(result) == WKBooleanGetTypeID());
+    return WKBooleanGetValue(static_cast<WKBooleanRef>(result));
 }
 
 unsigned TestRunner::imageCountInGeneralPasteboard() const
@@ -527,8 +589,8 @@ void TestRunner::setAudioResult(JSContextRef context, JSValueRef data)
     // FIXME (123058): Use a JSC API to get buffer contents once such is exposed.
     WKRetainPtr<WKDataRef> audioData(AdoptWK, WKBundleCreateWKDataFromUInt8Array(injectedBundle.bundle(), context, data));
     injectedBundle.setAudioResult(audioData.get());
-    m_whatToDump = Audio;
-    m_dumpPixels = false;
+    setWhatToDump(WhatToDump::Audio);
+    setDumpPixels(false);
 }
 
 unsigned TestRunner::windowCount()

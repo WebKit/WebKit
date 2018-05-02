@@ -890,22 +890,22 @@ void InjectedBundlePage::dump()
     StringBuilder stringBuilder;
 
     switch (injectedBundle.testRunner()->whatToDump()) {
-    case TestRunner::RenderTree: {
+    case WhatToDump::RenderTree: {
         if (injectedBundle.testRunner()->isPrinting())
             stringBuilder.append(toWTFString(adoptWK(WKBundlePageCopyRenderTreeExternalRepresentationForPrinting(m_page)).get()));
         else
             stringBuilder.append(toWTFString(adoptWK(WKBundlePageCopyRenderTreeExternalRepresentation(m_page)).get()));
         break;
     }
-    case TestRunner::MainFrameText:
+    case WhatToDump::MainFrameText:
         dumpFrameText(WKBundlePageGetMainFrame(m_page), stringBuilder);
         break;
-    case TestRunner::AllFramesText:
+    case WhatToDump::AllFramesText:
         dumpAllFramesText(stringBuilder);
         break;
-    case TestRunner::Audio:
+    case WhatToDump::Audio:
         break;
-    case TestRunner::DOMAsWebArchive:
+    case WhatToDump::DOMAsWebArchive:
         dumpDOMAsWebArchive(frame, stringBuilder);
         break;
     }
@@ -2031,7 +2031,7 @@ void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
 
     injectedBundle.setTopLoadingFrame(nullptr);
 
-    if (injectedBundle.testRunner()->waitToDump())
+    if (injectedBundle.testRunner()->shouldWaitUntilDone())
         return;
 
     if (injectedBundle.shouldProcessWorkQueue()) {

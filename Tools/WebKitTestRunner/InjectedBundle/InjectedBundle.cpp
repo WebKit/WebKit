@@ -120,9 +120,25 @@ void InjectedBundle::initialize(WKBundleRef bundle, WKTypeRef initializationUser
 
 void InjectedBundle::didCreatePage(WKBundlePageRef page)
 {
+    bool isMainPage = m_pages.isEmpty();
     m_pages.append(std::make_unique<InjectedBundlePage>(page));
 
     setUpInjectedBundleClients(page);
+
+    if (!isMainPage)
+        return;
+
+    WKRetainPtr<WKStringRef> messsageName(AdoptWK, WKStringCreateWithUTF8CString("Initialization"));
+    WKTypeRef result = 0;
+    WKBundlePostSynchronousMessage(m_bundle, messsageName.get(), 0, &result);
+    ASSERT(WKGetTypeID(result) == WKDictionaryGetTypeID());
+    WKDictionaryRef initializationDictionary = static_cast<WKDictionaryRef>(result);
+
+    WKRetainPtr<WKStringRef> resumeTestingKey(AdoptWK, WKStringCreateWithUTF8CString("ResumeTesting"));
+    WKTypeRef resumeTestingValue = WKDictionaryGetItemForKey(initializationDictionary, resumeTestingKey.get());
+    ASSERT(WKGetTypeID(resumeTestingValue) == WKBooleanGetTypeID());
+    if (WKBooleanGetValue(static_cast<WKBooleanRef>(resumeTestingValue)))
+        beginTesting(initializationDictionary, BegingTestingMode::Resume);
 }
 
 void InjectedBundle::willDestroyPage(WKBundlePageRef page)
@@ -197,7 +213,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         WKRetainPtr<WKStringRef> ackMessageBody(AdoptWK, WKStringCreateWithUTF8CString("BeginTest"));
         WKBundlePagePostMessage(page, ackMessageName.get(), ackMessageBody.get());
 
-        beginTesting(messageBodyDictionary);
+        beginTesting(messageBodyDictionary, BegingTestingMode::New);
         return;
     }
 
@@ -332,7 +348,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "WorkQueueProcessedCallback")) {
-        if (!topLoadingFrame() && !m_testRunner->waitToDump())
+        if (!topLoadingFrame() && !m_testRunner->shouldWaitUntilDone())
             InjectedBundle::page()->dump();
         return;
     }
@@ -379,7 +395,7 @@ bool InjectedBundle::booleanForKey(WKDictionaryRef dictionary, const char* key)
     return WKBooleanGetValue(static_cast<WKBooleanRef>(value));
 }
 
-void InjectedBundle::beginTesting(WKDictionaryRef settings)
+void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode testingMode)
 {
     m_state = Testing;
 
@@ -413,7 +429,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
 
     m_testRunner->setPluginsEnabled(true);
 
-    m_testRunner->setShouldDumpFrameLoadCallbacks(booleanForKey(settings, "DumpFrameLoadDelegates"));
     m_testRunner->setUserStyleSheetEnabled(false);
     m_testRunner->setXSSAuditorEnabled(false);
 
@@ -434,6 +449,9 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
         m_testRunner->setCustomTimeout(m_timeout);
 
     page()->prepare();
+
+    if (testingMode != BegingTestingMode::New)
+        return;
 
     WKBundleClearAllDatabases(m_bundle);
     WKBundlePageClearApplicationCache(page()->page());
