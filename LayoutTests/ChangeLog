@@ -1,3 +1,18 @@
+2018-05-02  Youenn Fablet  <youenn@apple.com>
+
+        Use NetworkLoadChecker for navigation loads
+        https://bugs.webkit.org/show_bug.cgi?id=184892
+        <rdar://problem/39652686>
+
+        Reviewed by Chris Dumez.
+
+        Updated header-filtering.https.html to expect full headers except cookie-related for same origin loads.
+        Updated expected.txt files accordingly.
+
+        * http/wpt/service-workers/header-filtering.https-expected.txt:
+        * http/wpt/service-workers/header-filtering.https.html:
+        * platform/mac/http/tests/webarchive/test-preload-resources-expected.txt:
+
 2018-05-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Collection fragment identifiers don't use PostScript names

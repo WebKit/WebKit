@@ -100,7 +100,7 @@ promise_test(async (test) => {
     frame.contentWindow.fetch(url2 + "?fetch-no-cors", { mode : "no-cors" });
     assert_array_equals(await data, ["Access-Control-Allow-Credentials","Access-Control-Allow-Methods","Access-Control-Allow-Origin",
         "Access-Control-Expose-Headers","Cache-Control","Content-Length","Content-Type","Date","Referrer-Policy",
-        "SourceMap","Timing-Allow-Origin","X-SourceMap","x-Header1"]);
+        "SourceMap","Timing-Allow-Origin","X-SourceMap"]);
 }, "Test no-cors cross-origin fetch");
 
 promise_test(async (test) => {
@@ -112,7 +112,7 @@ promise_test(async (test) => {
     frame.contentWindow.loadScript(url1 + "?script");
     assert_array_equals(await data, ["Access-Control-Allow-Credentials","Access-Control-Allow-Methods","Access-Control-Allow-Origin",
         "Access-Control-Expose-Headers","Cache-Control","Content-Length","Content-Type","Date","Referrer-Policy",
-        "SourceMap","Timing-Allow-Origin","X-SourceMap","x-Header1"]);
+        "Server","SourceMap","Timing-Allow-Origin","X-SourceMap","x-header1","x-header2"]);
 }, "Test same-origin script load");
 
 promise_test(async (test) => {
@@ -124,7 +124,7 @@ promise_test(async (test) => {
     frame.contentWindow.loadScript(url2 + "?script-nocors");
     assert_array_equals(await data, ["Access-Control-Allow-Credentials","Access-Control-Allow-Methods","Access-Control-Allow-Origin",
         "Access-Control-Expose-Headers","Cache-Control","Content-Length","Content-Type","Date","Referrer-Policy",
-        "SourceMap","Timing-Allow-Origin","X-SourceMap","x-Header1"]);
+        "SourceMap","Timing-Allow-Origin","X-SourceMap"]);
 }, "Test no-cors script load");
 
 promise_test(async (test) => {
@@ -148,7 +148,7 @@ promise_test(async (test) => {
     let frame = await withFrame(url1 + "?html");
     assert_array_equals(await data, ["Access-Control-Allow-Credentials","Access-Control-Allow-Methods","Access-Control-Allow-Origin",
         "Access-Control-Expose-Headers","Cache-Control","Content-Length","Content-Type","Date","Referrer-Policy",
-        "SourceMap","Timing-Allow-Origin","X-SourceMap","x-Header1"]);
+        "Server", "SourceMap","Timing-Allow-Origin","X-SourceMap","x-header1", "x-header2"]);
     frame.remove();
 }, "Test HTML load");
 

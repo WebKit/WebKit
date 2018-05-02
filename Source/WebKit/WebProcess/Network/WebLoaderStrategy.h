@@ -83,8 +83,6 @@ public:
     void addOnlineStateChangeListener(Function<void(bool)>&&) final;
     void setOnLineState(bool);
 
-    bool isDoingLoadingSecurityChecks() const final { return true; }
-
 private:
     void scheduleLoad(WebCore::ResourceLoader&, WebCore::CachedResource*, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
     void scheduleInternallyFailedLoad(WebCore::ResourceLoader&);
@@ -94,6 +92,8 @@ private:
 
     WebCore::ResourceResponse responseFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier) final;
     WebCore::NetworkLoadMetrics networkMetricsFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier) final;
+
+    bool isDoingLoadingSecurityChecks() const final;
 
     HashSet<RefPtr<WebCore::ResourceLoader>> m_internallyFailedResourceLoaders;
     RunLoop::Timer<WebLoaderStrategy> m_internallyFailedLoadTimer;

@@ -43,6 +43,11 @@ namespace WebKit {
 
 using namespace WebCore;
 
+static inline bool isSameOrigin(const URL& url, const SecurityOrigin* origin)
+{
+    return url.protocolIsData() || url.protocolIsBlob() || !origin || origin->canRequest(url);
+}
+
 NetworkLoadChecker::NetworkLoadChecker(FetchOptions&& options, PAL::SessionID sessionID, HTTPHeaderMap&& originalRequestHeaders, URL&& url, RefPtr<SecurityOrigin>&& sourceOrigin, PreflightPolicy preflightPolicy)
     : m_options(WTFMove(options))
     , m_sessionID(sessionID)
@@ -51,8 +56,7 @@ NetworkLoadChecker::NetworkLoadChecker(FetchOptions&& options, PAL::SessionID se
     , m_origin(WTFMove(sourceOrigin))
     , m_preflightPolicy(preflightPolicy)
 {
-    if (m_options.mode == FetchOptions::Mode::Cors || m_options.mode == FetchOptions::Mode::SameOrigin)
-        m_isSameOriginRequest = m_url.protocolIsData() || m_url.protocolIsBlob() || m_origin->canRequest(m_url);
+    m_isSameOriginRequest = isSameOrigin(m_url, m_origin.get());
     switch (options.credentials) {
     case FetchOptions::Credentials::Include:
         m_storedCredentialsPolicy = StoredCredentialsPolicy::Use;
@@ -128,7 +132,7 @@ ResourceError NetworkLoadChecker::validateResponse(ResourceResponse& response)
         return { };
     }
 
-    if (m_isSameOriginRequest) {
+    if (m_options.mode == FetchOptions::Mode::Navigate || m_isSameOriginRequest) {
         response.setTainting(ResourceResponse::Tainting::Basic);
         return { };
     }
@@ -187,6 +191,8 @@ void NetworkLoadChecker::continueCheckingRequest(ResourceRequest&& request, Vali
 
     if (m_options.credentials == FetchOptions::Credentials::SameOrigin)
         m_storedCredentialsPolicy = m_isSameOriginRequest && m_origin->canRequest(request.url()) ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
+
+    m_isSameOriginRequest = m_isSameOriginRequest && isSameOrigin(request.url(), m_origin.get());
 
     if (doesNotNeedCORSCheck(request.url())) {
         handler(WTFMove(request));
@@ -301,7 +307,7 @@ bool NetworkLoadChecker::doesNotNeedCORSCheck(const URL& url) const
     if (!SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(url.protocol().toStringWithoutCopying()))
         return true;
 
-    return m_isSameOriginRequest && m_origin->canRequest(url);
+    return m_isSameOriginRequest;
 }
 
 ContentSecurityPolicy* NetworkLoadChecker::contentSecurityPolicy() const
@@ -316,7 +322,8 @@ ContentSecurityPolicy* NetworkLoadChecker::contentSecurityPolicy() const
 #if ENABLE(CONTENT_EXTENSIONS)
 void NetworkLoadChecker::processContentExtensionRulesForLoad(ResourceRequest&& request, CompletionHandler<void(ResourceRequest&&, const ContentExtensions::BlockedStatus&)>&& callback)
 {
-    if (!m_userContentControllerIdentifier) {
+    // FIXME: Enable content blockers for navigation loads.
+    if (!m_userContentControllerIdentifier || m_options.mode == FetchOptions::Mode::Navigate) {
         ContentExtensions::BlockedStatus status;
         callback(WTFMove(request), status);
         return;

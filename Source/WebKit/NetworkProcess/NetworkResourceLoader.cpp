@@ -604,24 +604,17 @@ void NetworkResourceLoader::continueWillSendRedirectedRequest(WebCore::ResourceR
 
 ResourceResponse NetworkResourceLoader::sanitizeResponseIfPossible(ResourceResponse&& response, ResourceResponse::SanitizationType type)
 {
-    if (m_parameters.shouldRestrictHTTPResponseAccess) {
-        if (type == ResourceResponse::SanitizationType::CrossOriginSafe) {
-            // We reduce filtering when it would otherwise be visible to scripts.
-            // FIXME: We should use response tainting once computed in Network Process.
-            bool isSameOrigin = m_parameters.sourceOrigin ? m_parameters.sourceOrigin->canRequest(response.url()) : protocolHostAndPortAreEqual(response.url(), m_parameters.request.url());
-            if (isSameOrigin && m_parameters.options.destination == FetchOptions::Destination::EmptyString)
-                type = ResourceResponse::SanitizationType::RemoveCookies;
-        }
+    if (m_parameters.shouldRestrictHTTPResponseAccess)
         response.sanitizeHTTPHeaderFields(type);
-    }
+
     return WTFMove(response);
 }
 
 void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials)
 {
     if (m_networkLoadChecker) {
-        // FIXME: We should be doing this check when receiving the redirection.
-        if (!newRequest.url().protocolIsInHTTPFamily() && m_redirectCount) {
+        // FIXME: We should be doing this check when receiving the redirection and not allow about protocol as per fetch spec.
+        if (!newRequest.url().protocolIsInHTTPFamily() && !newRequest.url().isBlankURL() && m_redirectCount) {
             didFailLoading(ResourceError { String { }, 0, newRequest.url(), ASCIILiteral("Redirection to URL with a scheme that is not HTTP(S)"), ResourceError::Type::AccessControl });
             return;
         }

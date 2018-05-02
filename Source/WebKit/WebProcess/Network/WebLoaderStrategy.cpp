@@ -301,20 +301,20 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     }
 #endif
 
-    if (loadParameters.options.mode != FetchOptions::Mode::Navigate) {
-        // FIXME: All loaders should provide their origin if navigation mode is cors/no-cors/same-origin.
-        // As a temporary approach, we use the document origin if available or the HTTP Origin header otherwise.
-        if (resourceLoader.isSubresourceLoader())
-            loadParameters.sourceOrigin = static_cast<SubresourceLoader&>(resourceLoader).origin();
+    // FIXME: All loaders should provide their origin if navigation mode is cors/no-cors/same-origin.
+    // As a temporary approach, we use the document origin if available or the HTTP Origin header otherwise.
+    if (resourceLoader.isSubresourceLoader())
+        loadParameters.sourceOrigin = static_cast<SubresourceLoader&>(resourceLoader).origin();
 
-        auto* document = resourceLoader.frame() ? resourceLoader.frame()->document() : nullptr;
-        if (!loadParameters.sourceOrigin && document)
-            loadParameters.sourceOrigin = &document->securityOrigin();
-        if (!loadParameters.sourceOrigin) {
-            auto origin = request.httpOrigin();
-            if (!origin.isNull())
-                loadParameters.sourceOrigin = SecurityOrigin::createFromString(origin);
-        }
+    if (!loadParameters.sourceOrigin && document)
+        loadParameters.sourceOrigin = &document->securityOrigin();
+    if (!loadParameters.sourceOrigin) {
+        auto origin = request.httpOrigin();
+        if (!origin.isNull())
+            loadParameters.sourceOrigin = SecurityOrigin::createFromString(origin);
+    }
+
+    if (loadParameters.options.mode != FetchOptions::Mode::Navigate) {
         ASSERT(loadParameters.sourceOrigin);
         if (!loadParameters.sourceOrigin) {
             scheduleInternallyFailedLoad(resourceLoader);
@@ -322,8 +322,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         }
     }
 
-    // FIXME: We should also sanitize redirect response for navigations.
-    loadParameters.shouldRestrictHTTPResponseAccess = RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess() && resourceLoader.options().mode != FetchOptions::Mode::Navigate;
+    loadParameters.shouldRestrictHTTPResponseAccess = RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess();
 
     loadParameters.isMainFrameNavigation = resourceLoader.frame() && resourceLoader.frame()->isMainFrame() && resourceLoader.options().mode == FetchOptions::Mode::Navigate;
 
@@ -661,6 +660,11 @@ NetworkLoadMetrics WebLoaderStrategy::networkMetricsFromResourceLoadIdentifier(u
     NetworkLoadMetrics networkMetrics;
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationMetrics { resourceLoadIdentifier }, Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationMetrics::Reply { networkMetrics }, 0, Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply);
     return networkMetrics;
+}
+
+bool WebLoaderStrategy::isDoingLoadingSecurityChecks() const
+{
+    return RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess();
 }
 
 } // namespace WebKit

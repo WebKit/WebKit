@@ -199,6 +199,7 @@ protected:
 private:
     void parseCacheControlDirectives() const;
     void updateHeaderParsedState(HTTPHeaderName);
+    void sanitizeHTTPHeaderFieldsAccordingToTainting();
 
 protected:
     bool m_isNull;

@@ -389,6 +389,46 @@ static bool isSafeCrossOriginResponseHeader(HTTPHeaderName name)
         || name == HTTPHeaderName::XXSSProtection;
 }
 
+void ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting()
+{
+    switch (m_tainting) {
+    case ResourceResponse::Tainting::Basic:
+        return;
+    case ResourceResponse::Tainting::Cors: {
+        HTTPHeaderMap filteredHeaders;
+        for (auto& header : m_httpHeaderFields.commonHeaders()) {
+            if (isSafeCrossOriginResponseHeader(header.key))
+                filteredHeaders.add(header.key, WTFMove(header.value));
+        }
+        if (auto corsSafeHeaderSet = parseAccessControlAllowList(httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders))) {
+            for (auto& headerName : *corsSafeHeaderSet) {
+                if (!filteredHeaders.contains(headerName)) {
+                    auto value = m_httpHeaderFields.get(headerName);
+                    if (!value.isNull())
+                        filteredHeaders.add(headerName, value);
+                }
+            }
+        }
+        m_httpHeaderFields = WTFMove(filteredHeaders);
+        return;
+    }
+    case ResourceResponse::Tainting::Opaque: {
+        HTTPHeaderMap filteredHeaders;
+        for (auto& header : m_httpHeaderFields.commonHeaders()) {
+            if (isSafeCrossOriginResponseHeader(header.key))
+                filteredHeaders.add(header.key, WTFMove(header.value));
+        }
+        m_httpHeaderFields = WTFMove(filteredHeaders);
+        return;
+    }
+    case ResourceResponse::Tainting::Opaqueredirect: {
+        auto location = httpHeaderField(HTTPHeaderName::Location);
+        m_httpHeaderFields.clear();
+        m_httpHeaderFields.add(HTTPHeaderName::Location, WTFMove(location));
+    }
+    }
+}
+
 void ResourceResponseBase::sanitizeHTTPHeaderFields(SanitizationType type)
 {
     lazyInit(AllFields);
@@ -408,23 +448,8 @@ void ResourceResponseBase::sanitizeHTTPHeaderFields(SanitizationType type)
         m_httpHeaderFields.uncommonHeaders().clear();
         return;
     }
-    case SanitizationType::CrossOriginSafe: {
-        HTTPHeaderMap filteredHeaders;
-        for (auto& header : m_httpHeaderFields.commonHeaders()) {
-            if (isSafeCrossOriginResponseHeader(header.key))
-                filteredHeaders.add(header.key, WTFMove(header.value));
-        }
-        if (auto corsSafeHeaderSet = parseAccessControlAllowList(httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders))) {
-            for (auto& headerName : *corsSafeHeaderSet) {
-                if (!filteredHeaders.contains(headerName)) {
-                    auto value = m_httpHeaderFields.get(headerName);
-                    if (!value.isNull())
-                        filteredHeaders.add(headerName, value);
-                }
-            }
-        }
-        m_httpHeaderFields = WTFMove(filteredHeaders);
-    }
+    case SanitizationType::CrossOriginSafe:
+        sanitizeHTTPHeaderFieldsAccordingToTainting();
     }
 }
 

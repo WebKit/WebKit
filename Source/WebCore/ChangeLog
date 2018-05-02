@@ -1,3 +1,22 @@
+2018-05-02  Youenn Fablet  <youenn@apple.com>
+
+        Use NetworkLoadChecker for navigation loads
+        https://bugs.webkit.org/show_bug.cgi?id=184892
+        <rdar://problem/39652686>
+
+        Reviewed by Chris Dumez.
+
+        Sanitize headers according response tainting.
+        If tainting is basic, it means same origin load in which case we only filter Cookie related headers.
+        If tainting is Opaque, we filter all uncommon headers.
+        If tainting is CORS, we filter all uncommon headers except the one explicitely allowed by CORS headers.
+        Covered by updated test.
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting):
+        (WebCore::ResourceResponseBase::sanitizeHTTPHeaderFields):
+        * platform/network/ResourceResponseBase.h:
+
 2018-05-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Collection fragment identifiers don't use PostScript names
