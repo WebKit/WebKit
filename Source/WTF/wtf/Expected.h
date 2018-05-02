@@ -573,5 +573,5 @@ template<typename T, typename E> void swap(expected<T, E>& x, expected<T, E>& y)
 
 }}} // namespace std::experimental::fundamentals_v3
 
-__EXPECTED_INLINE_VARIABLE constexpr std::experimental::unexpected_t& unexpect = std::experimental::unexpect;
+__EXPECTED_INLINE_VARIABLE constexpr auto& unexpect = std::experimental::unexpect;
 template<class T, class E> using Expected = std::experimental::expected<T, E>;

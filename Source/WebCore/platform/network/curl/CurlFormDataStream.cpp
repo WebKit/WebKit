@@ -69,7 +69,7 @@ void CurlFormDataStream::clean()
     }
 }
 
-std::optional<const Vector<char>&> CurlFormDataStream::getPostData()
+std::optional<std::reference_wrapper<const Vector<char>>> CurlFormDataStream::getPostData()
 {
     if (!m_formData)
         return std::nullopt;
@@ -77,7 +77,7 @@ std::optional<const Vector<char>&> CurlFormDataStream::getPostData()
     if (!m_postData)
         m_postData = std::make_unique<Vector<char>>(m_formData->flatten());
 
-    return *m_postData;
+    return std::cref(*m_postData);
 }
 
 bool CurlFormDataStream::shouldUseChunkTransfer()

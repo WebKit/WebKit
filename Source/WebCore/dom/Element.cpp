@@ -3733,7 +3733,7 @@ static ExceptionOr<Ref<Element>> contextElementForInsertion(const String& where,
 }
 
 // https://w3c.github.io/DOM-Parsing/#dom-element-insertadjacenthtml
-ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String& markup, std::optional<NodeVector&> addedNodes)
+ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String& markup, std::optional<std::reference_wrapper<NodeVector>> addedNodes)
 {
     // Steps 1 and 2.
     auto contextElement = contextElementForInsertion(where, *this);
@@ -3747,7 +3747,7 @@ ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String&
     if (UNLIKELY(addedNodes)) {
         // Must be called before insertAdjacent, as otherwise the children of fragment will be moved
         // to their new parent and will be harder to keep track of.
-        *addedNodes = collectChildNodes(fragment.returnValue());
+        addedNodes->get() = collectChildNodes(fragment.returnValue());
     }
 
     // Step 4.

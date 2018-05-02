@@ -178,14 +178,14 @@ Color CSSParser::parseColor(const String& string, bool strict)
     return primitiveValue.color();
 }
 
-Color CSSParser::parseSystemColor(const String& string, std::optional<const CSSParserContext&> context)
+Color CSSParser::parseSystemColor(const String& string, std::optional<std::reference_wrapper<const CSSParserContext>> context)
 {
     CSSValueID id = cssValueKeywordID(string);
     if (!StyleColor::isSystemColor(id))
         return Color();
 
     OptionSet<StyleColor::Options> options;
-    if (context && context.value().useSystemAppearance)
+    if (context && context->get().useSystemAppearance)
         options |= StyleColor::Options::UseSystemAppearance;
     return RenderTheme::singleton().systemColor(id, options);
 }

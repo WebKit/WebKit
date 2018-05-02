@@ -78,7 +78,7 @@ public:
     RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, const CustomPropertyValueMap& customProperties, TextDirection, WritingMode);
 
     static Color parseColor(const String&, bool strict = false);
-    static Color parseSystemColor(const String&, std::optional<const CSSParserContext&>);
+    static Color parseSystemColor(const String&, std::optional<std::reference_wrapper<const CSSParserContext>>);
 
 private:
     ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important);

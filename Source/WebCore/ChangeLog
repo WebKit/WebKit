@@ -1,3 +1,35 @@
+2018-05-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use default std::optional if it is provided
+        https://bugs.webkit.org/show_bug.cgi?id=185159
+
+        Reviewed by JF Bastien.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::iceServersFromConfiguration):
+        (WebCore::RTCPeerConnection::setConfiguration):
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseSystemColor):
+        * css/parser/CSSParser.h:
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::DatasetDOMStringMap::item const):
+        (WebCore::DatasetDOMStringMap::namedItem const):
+        (WebCore:: const): Deleted.
+        * dom/DatasetDOMStringMap.h:
+        * dom/Element.cpp:
+        (WebCore::Element::insertAdjacentHTML):
+        * dom/Element.h:
+        * inspector/DOMEditor.cpp:
+        * platform/network/curl/CurlFormDataStream.cpp:
+        (WebCore::CurlFormDataStream::getPostData):
+        (): Deleted.
+        * platform/network/curl/CurlFormDataStream.h:
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMFactory::keysForSessionWithID const):
+        (WebCore::MockCDMInstance::updateLicense):
+        (WebCore:: const): Deleted.
+        * testing/MockCDMFactory.h:
+
 2018-05-01  Chris Dumez  <cdumez@apple.com>
 
         Add release assertions in CFNetwork's SocketStreamHandleImpl to help debug a threading issue

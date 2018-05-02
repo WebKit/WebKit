@@ -1,3 +1,27 @@
+2018-05-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use default std::optional if it is provided
+        https://bugs.webkit.org/show_bug.cgi?id=185159
+
+        Reviewed by JF Bastien.
+
+        Now C++17 flag is enabled. It means that any standard libraries can use <optional> internally.
+        If we define std::optional regardless of the existence of the standard library's <optional>,
+        it causes compile errors. For example, in GCC 7 (specifically GCC 7.3.0) environment,
+        <optional> is included in <unordered_map>.
+        We do not define std::optional in WebKit side if <optional> is offered.
+
+        And we also remove std::optional<T&> use since this is not accepted in C++17. Use
+        std::optional<std::reference_wrapper<T>> instead.
+
+        * wtf/Expected.h:
+        constexpr does not mean const in C++17.
+
+        * wtf/Optional.h:
+        Do not define std::optional if <optional> is provided.
+
+        (WTF::valueOrCompute):
+
 2018-05-01  Robin Morisset  <rmorisset@apple.com>
 
         Correctly detect string overflow when using the 'Function' constructor
