@@ -92,7 +92,6 @@
 
 #if PLATFORM(WAYLAND)
 #include "PlatformDisplayWayland.h"
-#include <gst/gl/wayland/gstgldisplay_wayland.h>
 #elif PLATFORM(WPE)
 #include "PlatformDisplayWPE.h"
 #endif
