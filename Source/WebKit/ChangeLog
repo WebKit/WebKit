@@ -1,3 +1,24 @@
+2018-05-02  Jer Noble  <jer.noble@apple.com>
+
+        Pipe volume through PlaybackSessionManager/Proxy.
+        https://bugs.webkit.org/show_bug.cgi?id=185182
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        (WebKit::PlaybackSessionModelContext::setVolume):
+        (WebKit::PlaybackSessionModelContext::volumeChanged):
+        (WebKit::PlaybackSessionManagerProxy::volumeChanged):
+        (WebKit::PlaybackSessionManagerProxy::setVolume):
+        * WebProcess/cocoa/PlaybackSessionManager.h:
+        * WebProcess/cocoa/PlaybackSessionManager.messages.in:
+        * WebProcess/cocoa/PlaybackSessionManager.mm:
+        (WebKit::PlaybackSessionInterfaceContext::volumeChanged):
+        (WebKit::PlaybackSessionManager::volumeChanged):
+        (WebKit::PlaybackSessionManager::setVolume):
+
 2018-05-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use default std::optional if it is provided

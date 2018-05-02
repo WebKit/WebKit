@@ -88,6 +88,7 @@ private:
     void externalPlaybackChanged(bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) final;
     void wirelessVideoPlaybackDisabledChanged(bool) final;
     void mutedChanged(bool) final;
+    void volumeChanged(double) final;
 
     PlaybackSessionInterfaceContext(PlaybackSessionManager&, uint64_t contextId);
 
@@ -139,6 +140,7 @@ protected:
     void externalPlaybackChanged(uint64_t contextId, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, String localizedDeviceName);
     void wirelessVideoPlaybackDisabledChanged(uint64_t contextId, bool);
     void mutedChanged(uint64_t contextId, bool);
+    void volumeChanged(uint64_t contextId, double);
 
     // Messages from PlaybackSessionManagerProxy
     void play(uint64_t contextId);
@@ -157,6 +159,7 @@ protected:
     void togglePictureInPicture(uint64_t contextId);
     void toggleMuted(uint64_t contextId);
     void setMuted(uint64_t contextId, bool muted);
+    void setVolume(uint64_t contextId, double volume);
 
     WebPage* m_page;
     HashMap<WebCore::HTMLMediaElement*, uint64_t> m_mediaElements;

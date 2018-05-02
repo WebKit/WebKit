@@ -71,6 +71,8 @@ class PlaybackSessionInterfaceAVKit;
 @property (retain) AVValueTiming *timing;
 @property (retain) NSArray *seekableTimeRanges;
 @property (getter=isMuted) BOOL muted;
+@property double volume;
+- (void)volumeChanged:(double)volume;
 
 @property (readonly) BOOL hasMediaSelectionOptions;
 @property (readonly) BOOL hasAudioMediaSelectionOptions;

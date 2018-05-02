@@ -79,6 +79,7 @@ public:
     WEBCORE_EXPORT void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
     WEBCORE_EXPORT void wirelessVideoPlaybackDisabledChanged(bool) override;
     WEBCORE_EXPORT void mutedChanged(bool) override;
+    WEBCORE_EXPORT void volumeChanged(double) override;
 
     WEBCORE_EXPORT virtual void invalidate();
 

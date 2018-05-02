@@ -58,6 +58,7 @@ public:
     virtual void togglePictureInPicture() = 0;
     virtual void toggleMuted() = 0;
     virtual void setMuted(bool) = 0;
+    virtual void setVolume(double) = 0;
 
     enum ExternalPlaybackTargetType { TargetTypeNone, TargetTypeAirPlay, TargetTypeTVOut };
 
@@ -81,6 +82,7 @@ public:
     virtual String externalPlaybackLocalizedDeviceName() const = 0;
     virtual bool wirelessVideoPlaybackDisabled() const = 0;
     virtual bool isMuted() const = 0;
+    virtual double volume() const = 0;
     virtual bool isPictureInPictureActive() const = 0;
 };
 
@@ -101,6 +103,7 @@ public:
     virtual void externalPlaybackChanged(bool /* enabled */, PlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */) { }
     virtual void wirelessVideoPlaybackDisabledChanged(bool) { }
     virtual void mutedChanged(bool) { }
+    virtual void volumeChanged(double) { }
     virtual void pictureInPictureActiveChanged(bool) { }
     virtual void ensureControlsManager() { }
 };

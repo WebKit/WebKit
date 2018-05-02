@@ -39,5 +39,6 @@ messages -> PlaybackSessionManager {
     TogglePictureInPicture(uint64_t contextId)
     ToggleMuted(uint64_t contextId)
     SetMuted(uint64_t contextId, bool muted)
+    SetVolume(uint64_t contextId, double volume)
 }
 #endif

@@ -155,6 +155,12 @@ void PlaybackSessionInterfaceContext::mutedChanged(bool muted)
         m_manager->mutedChanged(m_contextId, muted);
 }
 
+void PlaybackSessionInterfaceContext::volumeChanged(double volume)
+{
+    if (m_manager)
+        m_manager->volumeChanged(m_contextId, volume);
+}
+
 #pragma mark - PlaybackSessionManager
 
 Ref<PlaybackSessionManager> PlaybackSessionManager::create(WebPage& page)
@@ -378,6 +384,11 @@ void PlaybackSessionManager::mutedChanged(uint64_t contextId, bool muted)
     m_page->send(Messages::PlaybackSessionManagerProxy::MutedChanged(contextId, muted));
 }
 
+void PlaybackSessionManager::volumeChanged(uint64_t contextId, double volume)
+{
+    m_page->send(Messages::PlaybackSessionManagerProxy::VolumeChanged(contextId, volume));
+}
+
 #pragma mark Messages from PlaybackSessionManagerProxy:
 
 void PlaybackSessionManager::play(uint64_t contextId)
@@ -475,6 +486,12 @@ void PlaybackSessionManager::setMuted(uint64_t contextId, bool muted)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).setMuted(muted);
+}
+
+void PlaybackSessionManager::setVolume(uint64_t contextId, double volume)
+{
+    UserGestureIndicator indicator(ProcessingUserGesture);
+    ensureModel(contextId).setVolume(volume);
 }
 
 } // namespace WebKit

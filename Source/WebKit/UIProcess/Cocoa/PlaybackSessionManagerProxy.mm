@@ -146,6 +146,12 @@ void PlaybackSessionModelContext::setMuted(bool muted)
         m_manager->setMuted(m_contextId, muted);
 }
 
+void PlaybackSessionModelContext::setVolume(double volume)
+{
+    if (m_manager)
+        m_manager->setVolume(m_contextId, volume);
+}
+
 void PlaybackSessionModelContext::playbackStartedTimeChanged(double playbackStartedTime)
 {
     m_playbackStartedTime = playbackStartedTime;
@@ -256,6 +262,13 @@ void PlaybackSessionModelContext::mutedChanged(bool muted)
     m_muted = muted;
     for (auto* client : m_clients)
         client->mutedChanged(muted);
+}
+
+void PlaybackSessionModelContext::volumeChanged(double volume)
+{
+    m_volume = volume;
+    for (auto* client : m_clients)
+        client->volumeChanged(volume);
 }
 
 void PlaybackSessionModelContext::pictureInPictureActiveChanged(bool active)
@@ -440,6 +453,11 @@ void PlaybackSessionManagerProxy::mutedChanged(uint64_t contextId, bool muted)
     ensureModel(contextId).mutedChanged(muted);
 }
 
+void PlaybackSessionManagerProxy::volumeChanged(uint64_t contextId, double volume)
+{
+    ensureModel(contextId).volumeChanged(volume);
+}
+
 void PlaybackSessionManagerProxy::durationChanged(uint64_t contextId, double duration)
 {
     ensureModel(contextId).durationChanged(duration);
@@ -547,6 +565,11 @@ void PlaybackSessionManagerProxy::toggleMuted(uint64_t contextId)
 void PlaybackSessionManagerProxy::setMuted(uint64_t contextId, bool muted)
 {
     m_page->send(Messages::PlaybackSessionManager::SetMuted(contextId, muted), m_page->pageID());
+}
+
+void PlaybackSessionManagerProxy::setVolume(uint64_t contextId, double volume)
+{
+    m_page->send(Messages::PlaybackSessionManager::SetVolume(contextId, volume), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::requestControlledElementID()

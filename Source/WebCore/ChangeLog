@@ -1,3 +1,33 @@
+2018-05-02  Jer Noble  <jer.noble@apple.com>
+
+        Pipe volume through PlaybackSessionManager/Proxy.
+        https://bugs.webkit.org/show_bug.cgi?id=185182
+
+        Reviewed by Eric Carlson.
+
+        Add support for the volume property to PlaybackSessionModel, and all its clients.
+
+        * platform/cocoa/PlaybackSessionModel.h:
+        (WebCore::PlaybackSessionModelClient::volumeChanged):
+        * platform/cocoa/PlaybackSessionModelMediaElement.h:
+        * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+        (WebCore::PlaybackSessionModelMediaElement::updateForEventName):
+        (WebCore::PlaybackSessionModelMediaElement::setVolume):
+        (WebCore::PlaybackSessionModelMediaElement::volume const):
+        * platform/ios/PlaybackSessionInterfaceAVKit.h:
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        (WebCore::PlaybackSessionInterfaceAVKit::volumeChanged):
+        * platform/ios/WebAVPlayerController.h:
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController volume]):
+        (-[WebAVPlayerController setVolume:]):
+        (-[WebAVPlayerController volumeChanged:]):
+        (-[WebAVPlayerController resetMediaState]):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::volumeChanged):
+        (VideoFullscreenControllerContext::volume const):
+        (VideoFullscreenControllerContext::setVolume):
+
 2018-05-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, fix build in WinCairo

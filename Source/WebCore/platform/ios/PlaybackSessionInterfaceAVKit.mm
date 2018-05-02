@@ -201,6 +201,11 @@ void PlaybackSessionInterfaceAVKit::mutedChanged(bool muted)
     [m_playerController setMuted:muted];
 }
 
+void PlaybackSessionInterfaceAVKit::volumeChanged(double volume)
+{
+    [m_playerController volumeChanged:volume];
+}
+
 void PlaybackSessionInterfaceAVKit::invalidate()
 {
     if (!m_playbackSessionModel)

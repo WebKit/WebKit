@@ -173,6 +173,7 @@ private:
     void togglePictureInPicture() override { }
     void toggleMuted() override;
     void setMuted(bool) final;
+    void setVolume(double) final;
 
     // PlaybackSessionModelClient
     void durationChanged(double) override;
@@ -186,6 +187,7 @@ private:
     void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
     void wirelessVideoPlaybackDisabledChanged(bool) override;
     void mutedChanged(bool) override;
+    void volumeChanged(double) override;
 
     // VideoFullscreenModel
     void addClient(VideoFullscreenModelClient&) override;
@@ -198,6 +200,7 @@ private:
     bool hasVideo() const override;
     FloatSize videoDimensions() const override;
     bool isMuted() const override;
+    double volume() const override;
     bool isPictureInPictureActive() const override;
 
     HashSet<PlaybackSessionModelClient*> m_playbackClients;
@@ -520,6 +523,18 @@ void VideoFullscreenControllerContext::mutedChanged(bool muted)
         client->mutedChanged(muted);
 }
 
+void VideoFullscreenControllerContext::volumeChanged(double volume)
+{
+    if (WebThreadIsCurrent()) {
+        dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), volume] {
+            protectedThis->volumeChanged(volume);
+        });
+        return;
+    }
+
+    for (auto& client : m_playbackClients)
+        client->volumeChanged(volume);
+}
 #pragma mark VideoFullscreenModel
 
 void VideoFullscreenControllerContext::addClient(VideoFullscreenModelClient& client)
@@ -600,6 +615,12 @@ bool VideoFullscreenControllerContext::isMuted() const
     return m_playbackModel ? m_playbackModel->isMuted() : false;
 }
 
+double VideoFullscreenControllerContext::volume() const
+{
+    ASSERT(isUIThread());
+    return m_playbackModel ? m_playbackModel->volume() : false;
+}
+
 bool VideoFullscreenControllerContext::isPictureInPictureActive() const
 {
     ASSERT(isUIThread());
@@ -668,6 +689,15 @@ void VideoFullscreenControllerContext::setMuted(bool muted)
     WebThreadRun([protectedThis = makeRefPtr(this), this, muted] {
         if (m_playbackModel)
             m_playbackModel->setMuted(muted);
+    });
+}
+
+void VideoFullscreenControllerContext::setVolume(double volume)
+{
+    ASSERT(isUIThread());
+    WebThreadRun([protectedThis = makeRefPtr(this), this, volume] {
+        if (m_playbackModel)
+            m_playbackModel->setVolume(volume);
     });
 }
 
