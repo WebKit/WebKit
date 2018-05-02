@@ -1,3 +1,9 @@
+2018-05-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, remove an unused variable in RuntimeEnabledFeatures.h
+
+        * page/RuntimeEnabledFeatures.h:
+
 2018-05-01  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         Fix build error after r231194

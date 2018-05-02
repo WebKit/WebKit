@@ -389,8 +389,6 @@ private:
 
     bool m_fromOriginResponseHeaderEnabled { false };
 
-    bool m_minDeviceWidthEnabled { false };
-
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };
 
