@@ -67,8 +67,9 @@ Engine::~Engine()
     for (auto& caches : m_caches.values())
         caches->detach();
 
-    if (m_initializationCallback)
-        m_initializationCallback(Error::Internal);
+    auto initializationCallbacks = WTFMove(m_initializationCallbacks);
+    for (auto& callback : initializationCallbacks)
+        callback(Error::Internal);
 
     auto writeCallbacks = WTFMove(m_pendingWriteCallbacks);
     for (auto& callback : writeCallbacks.values())
@@ -204,7 +205,11 @@ void Engine::initialize(CompletionCallback&& callback)
         return;
     }
 
-    m_initializationCallback = WTFMove(callback);
+    bool shouldComputeSalt = m_initializationCallbacks.isEmpty();
+    m_initializationCallbacks.append(WTFMove(callback));
+
+    if (!shouldComputeSalt)
+        return;
 
     String saltPath = WebCore::FileSystem::pathByAppendingComponent(m_rootPath, ASCIILiteral("salt"));
     m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), saltPath = WTFMove(saltPath)] () mutable {
@@ -213,12 +218,11 @@ void Engine::initialize(CompletionCallback&& callback)
             if (!weakThis)
                 return;
 
-            if (!salt) {
-                m_initializationCallback(Error::WriteDisk);
-                return;
-            }
             m_salt = WTFMove(salt);
-            m_initializationCallback(std::nullopt);
+
+            auto callbacks = WTFMove(m_initializationCallbacks);
+            for (auto& callback : callbacks)
+                callback(m_salt ? std::nullopt : std::make_optional(Error::WriteDisk));
         });
     });
 }

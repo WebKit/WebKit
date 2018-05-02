@@ -1,3 +1,19 @@
+2018-05-02  Youenn Fablet  <youenn@apple.com>
+
+        CacheStorage::Engine should keep a list of initialization callback
+        https://bugs.webkit.org/show_bug.cgi?id=185184
+        <rdar://problem/38875651>
+
+        Reviewed by Antti Koivisto.
+
+        Keep each initialize callback in a Vector so as to compute the salt only once.
+        Call all callbacks then in a loop.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::~Engine):
+        (WebKit::CacheStorage::Engine::initialize):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+
 2018-05-02  Jer Noble  <jer.noble@apple.com>
 
         Pipe volume through PlaybackSessionManager/Proxy.

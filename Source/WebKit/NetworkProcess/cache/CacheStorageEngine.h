@@ -118,7 +118,7 @@ private:
     RefPtr<WorkQueue> m_ioQueue;
     std::optional<NetworkCache::Salt> m_salt;
     HashMap<CacheIdentifier, LockCount> m_cacheLocks;
-    WebCore::DOMCacheEngine::CompletionCallback m_initializationCallback;
+    Vector<WebCore::DOMCacheEngine::CompletionCallback> m_initializationCallbacks;
     WeakPtrFactory<Engine> m_weakFactory;
     HashMap<uint64_t, WebCore::DOMCacheEngine::CompletionCallback> m_pendingWriteCallbacks;
     HashMap<uint64_t, CompletionHandler<void(const NetworkCache::Data&, int error)>> m_pendingReadCallbacks;
