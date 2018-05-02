@@ -1,3 +1,23 @@
+2018-05-02  Zalan Bujtas <zalan@apple.com>
+
+        Use WeakPtr in GridCell
+        https://bugs.webkit.org/show_bug.cgi?id=185180
+        <rdar://problem/39432165>
+
+        Reviewed by Antti Koivisto.
+
+        Since GridCell does not own the renderers, it should
+        construct weak pointers.
+
+        Unable to create a reliably reproducible test case.
+
+        * rendering/Grid.cpp:
+        (WebCore::Grid::insert):
+        (WebCore::GridIterator::nextGridItem):
+        * rendering/Grid.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::firstLineBaseline const):
+
 2018-05-02  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Provide audio route information when invoking AirPlay picker

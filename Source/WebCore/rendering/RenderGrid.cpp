@@ -1176,15 +1176,16 @@ std::optional<int> RenderGrid::firstLineBaseline() const
     // Finding the first grid item in grid order.
     unsigned numColumns = m_grid.numTracks(ForColumns);
     for (size_t column = 0; column < numColumns; column++) {
-        for (const auto* child : m_grid.cell(0, column)) {
+        for (auto& child : m_grid.cell(0, column)) {
+            ASSERT(child.get());
             // If an item participates in baseline alignment, we select such item.
             if (isInlineBaselineAlignedChild(*child)) {
                 // FIXME: self-baseline and content-baseline alignment not implemented yet.
-                baselineChild = child;
+                baselineChild = child.get();
                 break;
             }
             if (!baselineChild)
-                baselineChild = child;
+                baselineChild = child.get();
         }
     }
 

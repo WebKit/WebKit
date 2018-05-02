@@ -68,7 +68,7 @@ void Grid::insert(RenderBox& child, const GridArea& area)
 
     for (auto row : area.rows) {
         for (auto column : area.columns)
-            m_grid[row][column].append(&child);
+            m_grid[row][column].append(makeWeakPtr(child));
     }
 
     setGridItemArea(child, area);
@@ -189,7 +189,7 @@ RenderBox* GridIterator::nextGridItem()
     for (; varyingTrackIndex < endOfVaryingTrackIndex; ++varyingTrackIndex) {
         const auto& children = m_grid[m_rowIndex][m_columnIndex];
         if (m_childIndex < children.size())
-            return children[m_childIndex++];
+            return children[m_childIndex++].get();
 
         m_childIndex = 0;
     }

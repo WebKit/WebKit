@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-typedef Vector<RenderBox*, 1> GridCell;
+typedef Vector<WeakPtr<RenderBox>, 1> GridCell;
 typedef Vector<Vector<GridCell>> GridAsMatrix;
 typedef ListHashSet<size_t> OrderedTrackIndexSet;
 
