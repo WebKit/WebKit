@@ -655,6 +655,7 @@ Ref<NetworkSession> NetworkSessionCocoa::create(NetworkSessionCreationParameters
 NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& parameters)
     : NetworkSession(parameters.sessionID)
     , m_boundInterfaceIdentifier(parameters.boundInterfaceIdentifier)
+    , m_proxyConfiguration(parameters.proxyConfiguration)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 

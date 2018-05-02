@@ -97,7 +97,7 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 + (void)setAllowsSpecificHTTPSCertificate:(NSArray *)allow forHost:(NSString *)host;
 + (void)setDefaultTimeoutInterval:(NSTimeInterval)seconds;
 - (NSArray *)contentDispositionEncodingFallbackArray;
-- (CFURLRequestRef)_CFURLRequest;
+- (CFMutableURLRequestRef)_CFURLRequest;
 - (id)_initWithCFURLRequest:(CFURLRequestRef)request;
 - (id)_propertyForKey:(NSString *)key;
 - (void)_setProperty:(id)value forKey:(NSString *)key;
@@ -265,6 +265,7 @@ CFStringRef _CFURLCacheCopyCacheDirectory(CFURLCacheRef);
 Boolean _CFHostIsDomainTopLevel(CFStringRef domain);
 void _CFURLRequestCreateArchiveList(CFAllocatorRef, CFURLRequestRef, CFIndex* version, CFTypeRef** objects, CFIndex* objectCount, CFDictionaryRef* protocolProperties);
 CFMutableURLRequestRef _CFURLRequestCreateFromArchiveList(CFAllocatorRef, CFIndex version, CFTypeRef* objects, CFIndex objectCount, CFDictionaryRef protocolProperties);
+void CFURLRequestSetProxySettings(CFMutableURLRequestRef, CFDictionaryRef);
 
 #endif // !PLATFORM(WIN)
 

@@ -409,6 +409,12 @@ bool decode(Decoder& decoder, RetainPtr<CFDateRef>& result)
 
 void encode(Encoder& encoder, CFDictionaryRef dictionary)
 {
+    if (!dictionary) {
+        encoder << true;
+        return;
+    }
+    encoder << false;
+
     CFIndex size = CFDictionaryGetCount(dictionary);
     Vector<CFTypeRef, 32> keys(size);
     Vector<CFTypeRef, 32> values(size);
@@ -433,6 +439,14 @@ void encode(Encoder& encoder, CFDictionaryRef dictionary)
 
 bool decode(Decoder& decoder, RetainPtr<CFDictionaryRef>& result)
 {
+    bool isNull = false;
+    if (!decoder.decode(isNull))
+        return false;
+    if (isNull) {
+        result = nullptr;
+        return true;
+    }
+
     uint64_t size;
     if (!decoder.decode(size))
         return false;
