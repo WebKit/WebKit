@@ -1,3 +1,15 @@
+2018-05-02  Robin Morisset  <rmorisset@apple.com>
+
+        emitCodeToGetArgumentsArrayLength should not crash on PhantomNewArrayWithSpread
+        https://bugs.webkit.org/show_bug.cgi?id=183172
+
+        Reviewed by Filip Pizlo.
+
+        * stress/length-of-new-array-with-spread.js: Added.
+        (foo):
+        (bar):
+        (baz):
+
 2018-05-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Add SameValue DFG node

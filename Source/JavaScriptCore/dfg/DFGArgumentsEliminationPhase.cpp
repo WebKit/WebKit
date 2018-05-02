@@ -128,7 +128,7 @@ private:
                 case NewArrayWithSpread: {
                     if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
                         BitVector* bitVector = node->bitVector();
-                        // We only allow for Spreads to be of rest nodes for now.
+                        // We only allow for Spreads to be of CreateRest or NewArrayBuffer nodes for now.
                         bool isOK = true;
                         for (unsigned i = 0; i < node->numChildren(); i++) {
                             if (bitVector->get(i)) {
@@ -320,8 +320,11 @@ private:
                     break;
 
                 case GetArrayLength:
-                    // FIXME: It would not be hard to support NewArrayWithSpread here if it is only over Spread(CreateRest) nodes.
                     escape(node->child2(), node);
+                    // Computing the length of a NewArrayWithSpread can require some additions.
+                    // These additions can overflow if the array is sufficiently enormous, and in that case we will need to exit.
+                    if ((node->child1()->op() == NewArrayWithSpread) && !node->origin.exitOK)
+                        escape(node->child1(), node);
                     break;
 
                 case NewArrayWithSpread: {

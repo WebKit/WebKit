@@ -1,3 +1,21 @@
+2018-05-02  Robin Morisset  <rmorisset@apple.com>
+
+        emitCodeToGetArgumentsArrayLength should not crash on PhantomNewArrayWithSpread
+        https://bugs.webkit.org/show_bug.cgi?id=183172
+
+        Reviewed by Filip Pizlo.
+
+        DFGArgumentsEliminationPhase.cpp currently believes that allocations of NewArrayWithSpread can be deleted if they are only used by GetArrayLength,
+        but when it then calls emitCodeToGetArgumentsArrayLength, the latter has no idea what to do with GetArrayLength.
+
+        I fix the problem by teaching emitCodeToGetArgumentsArrayLength how to deal with GetArrayLength.
+        Because this requires emitting an Add that can overflow and thus exit, we also tell DFGArgumentsEliminationPhase to give up on eliminating
+        a NewArrayWithSpread when it is used by a GetArrayLength that is not allowed to exit.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGArgumentsUtilities.cpp:
+        (JSC::DFG::emitCodeToGetArgumentsArrayLength):
+
 2018-05-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, stackPointer signature is different from declaration

@@ -65,10 +65,41 @@ Node* emitCodeToGetArgumentsArrayLength(
     DFG_ASSERT(
         graph, arguments,
         arguments->op() == CreateDirectArguments || arguments->op() == CreateScopedArguments
-        || arguments->op() == CreateClonedArguments || arguments->op() == CreateRest || arguments->op() == NewArrayBuffer
+        || arguments->op() == CreateClonedArguments || arguments->op() == CreateRest
+        || arguments->op() == NewArrayBuffer
         || arguments->op() == PhantomDirectArguments || arguments->op() == PhantomClonedArguments
-        || arguments->op() == PhantomCreateRest || arguments->op() == PhantomNewArrayBuffer,
+        || arguments->op() == PhantomCreateRest || arguments->op() == PhantomNewArrayBuffer
+        || arguments->op() == PhantomNewArrayWithSpread,
         arguments->op());
+
+    if (arguments->op() == PhantomNewArrayWithSpread) {
+        unsigned numberOfNonSpreadArguments = 0;
+        BitVector* bitVector = arguments->bitVector();
+        Node* currentSum = nullptr;
+        for (unsigned i = 0; i < arguments->numChildren(); i++) {
+            if (bitVector->get(i)) {
+                Node* child = graph.varArgChild(arguments, i).node();
+                DFG_ASSERT(graph, child, child->op() == PhantomSpread, child->op());
+                DFG_ASSERT(graph, child->child1().node(),
+                    child->child1()->op() == PhantomCreateRest || child->child1()->op() == PhantomNewArrayBuffer,
+                    child->child1()->op());
+                Node* lengthOfChild = emitCodeToGetArgumentsArrayLength(insertionSet, child->child1().node(), nodeIndex, origin);
+                if (currentSum)
+                    currentSum = insertionSet.insertNode(nodeIndex, SpecInt32Only, ArithAdd, origin, OpInfo(Arith::CheckOverflow), Edge(currentSum, Int32Use), Edge(lengthOfChild, Int32Use));
+                else
+                    currentSum = lengthOfChild;
+            } else
+                numberOfNonSpreadArguments++;
+        }
+        if (currentSum) {
+            if (!numberOfNonSpreadArguments)
+                return currentSum;
+            return insertionSet.insertNode(
+                nodeIndex, SpecInt32Only, ArithAdd, origin, OpInfo(Arith::CheckOverflow), Edge(currentSum, Int32Use),
+                insertionSet.insertConstantForUse(nodeIndex, origin, jsNumber(numberOfNonSpreadArguments), Int32Use));
+        }
+        return insertionSet.insertConstant(nodeIndex, origin, jsNumber(numberOfNonSpreadArguments));
+    }
 
     if (arguments->op() == NewArrayBuffer || arguments->op() == PhantomNewArrayBuffer) {
         return insertionSet.insertConstant(
