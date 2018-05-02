@@ -1,3 +1,16 @@
+2018-05-02  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [ARM] Implement and16 and store16 for MacroAssemblerARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=185196
+
+        Reviewed by Mark Lam.
+
+        This implements and16 and store16 for MacroAssemblerARMv7 such that JSC builds again.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::and16):
+        (JSC::MacroAssemblerARMv7::store16):
+
 2018-05-02  Robin Morisset  <rmorisset@apple.com>
 
         emitCodeToGetArgumentsArrayLength should not crash on PhantomNewArrayWithSpread

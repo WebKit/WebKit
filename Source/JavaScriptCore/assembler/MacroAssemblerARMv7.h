@@ -267,6 +267,12 @@ public:
         m_assembler.str(dataTempRegister, addressTempRegister, ARMThumbImmediate::makeUInt12(4));
     }
 
+    void and16(Address src, RegisterID dest)
+    {
+        load16(src, dataTempRegister);
+        and32(dataTempRegister, dest);
+    }
+
     void and32(RegisterID op1, RegisterID op2, RegisterID dest)
     {
         m_assembler.ARM_and(dest, op1, op2);
@@ -868,7 +874,12 @@ public:
         move(imm8, dataTempRegister);
         store8(dataTempRegister, address);
     }
-    
+
+    void store16(RegisterID src, ImplicitAddress address)
+    {
+        store16(src, setupArmAddress(address));
+    }
+
     void store16(RegisterID src, BaseIndex address)
     {
         store16(src, setupArmAddress(address));
