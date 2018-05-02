@@ -1,3 +1,15 @@
+2018-05-02  Jonathan Bedard  <jbedard@apple.com>
+
+        Follow-up build fix for r231223
+        https://bugs.webkit.org/show_bug.cgi?id=185159
+        <rdar://problem/39891074>
+
+        Unreviewed build fix.
+
+        We should be consistent about when we include <optional> vs define our own.
+
+        * wtf/Optional.h:
+
 2018-05-02  Jer Noble  <jer.noble@apple.com>
 
         Enable HAVE_AVKIT for the MINIMAL_SIMULATOR
