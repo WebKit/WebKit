@@ -1455,6 +1455,17 @@ public:
         m_assembler.movsd_mr(address.offset, address.base, address.index, address.scale, dest);
     }
 
+    void loadFloat(TrustedImmPtr address, FPRegisterID dest)
+    {
+#if CPU(X86)
+        ASSERT(isSSE2Present());
+        m_assembler.movss_mr(address.asPtr(), dest);
+#else
+        move(address, scratchRegister());
+        loadFloat(scratchRegister(), dest);
+#endif
+    }
+
     void loadFloat(ImplicitAddress address, FPRegisterID dest)
     {
         ASSERT(isSSE2Present());
@@ -2016,44 +2027,18 @@ public:
 
     void compareDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
     {
-        if (cond & DoubleConditionBitSpecial) {
-            ASSERT(!(cond & DoubleConditionBitInvert));
-            if (cond == DoubleEqual) {
-                if (left == right) {
-                    m_assembler.ucomisd_rr(right, left);
-                    set32(X86Assembler::ConditionNP, dest);
-                    return;
-                }
+        ASSERT(isSSE2Present());
+        floatingPointCompare(cond, left, right, dest, [this] (FPRegisterID arg1, FPRegisterID arg2) {
+            m_assembler.ucomisd_rr(arg1, arg2);
+        });
+    }
 
-                move(TrustedImm32(0), dest);
-                m_assembler.ucomisd_rr(right, left);
-                Jump isUnordered = m_assembler.jp();
-                set32(X86Assembler::ConditionE, dest);
-                isUnordered.link(this);
-                return;
-            }
-            if (cond == DoubleNotEqualOrUnordered) {
-                if (left == right) {
-                    m_assembler.ucomisd_rr(right, left);
-                    set32(X86Assembler::ConditionP, dest);
-                    return;
-                }
-
-                move(TrustedImm32(1), dest);
-                m_assembler.ucomisd_rr(right, left);
-                Jump isUnordered = m_assembler.jp();
-                set32(X86Assembler::ConditionNE, dest);
-                isUnordered.link(this);
-                return;
-            }
-            return;
-        }
-
-        if (cond & DoubleConditionBitInvert)
-            m_assembler.ucomisd_rr(left, right);
-        else
-            m_assembler.ucomisd_rr(right, left);
-        set32(static_cast<X86Assembler::Condition>(cond & ~DoubleConditionBits), dest);
+    void compareFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        floatingPointCompare(cond, left, right, dest, [this] (FPRegisterID arg1, FPRegisterID arg2) {
+            m_assembler.ucomiss_rr(arg1, arg2);
+        });
     }
 
     // Truncates 'src' to an integer, and places the resulting 'dest'.
@@ -4139,6 +4124,51 @@ private:
         srcIsNonZero.link(this);
         xor32(TrustedImm32(0x1f), dst);
         skipNonZeroCase.link(this);
+    }
+
+    template<typename Function>
+    void floatingPointCompare(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest, Function compare)
+    {
+        if (cond & DoubleConditionBitSpecial) {
+            ASSERT(!(cond & DoubleConditionBitInvert));
+            if (cond == DoubleEqual) {
+                if (left == right) {
+                    compare(right, left);
+                    set32(X86Assembler::ConditionNP, dest);
+                    return;
+                }
+
+                move(TrustedImm32(0), dest);
+                compare(right, left);
+                Jump isUnordered = m_assembler.jp();
+                set32(X86Assembler::ConditionE, dest);
+                isUnordered.link(this);
+                return;
+            }
+            if (cond == DoubleNotEqualOrUnordered) {
+                if (left == right) {
+                    compare(right, left);
+                    set32(X86Assembler::ConditionP, dest);
+                    return;
+                }
+
+                move(TrustedImm32(1), dest);
+                compare(right, left);
+                Jump isUnordered = m_assembler.jp();
+                set32(X86Assembler::ConditionNE, dest);
+                isUnordered.link(this);
+                return;
+            }
+
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+
+        if (cond & DoubleConditionBitInvert)
+            compare(left, right);
+        else
+            compare(right, left);
+        set32(static_cast<X86Assembler::Condition>(cond & ~DoubleConditionBits), dest);
     }
 
     Jump jumpAfterFloatingPointCompare(DoubleCondition cond, FPRegisterID left, FPRegisterID right)

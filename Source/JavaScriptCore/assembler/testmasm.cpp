@@ -246,6 +246,25 @@ static Vector<double> doubleOperands()
 }
 
 
+static Vector<float> floatOperands()
+{
+    return Vector<float> {
+        0,
+        -0,
+        1,
+        -1,
+        42,
+        -42,
+        std::numeric_limits<float>::max(),
+        std::numeric_limits<float>::min(),
+        std::numeric_limits<float>::lowest(),
+        std::numeric_limits<float>::quiet_NaN(),
+        std::numeric_limits<float>::infinity(),
+        -std::numeric_limits<float>::infinity(),
+    };
+}
+
+
 void testCompareDouble(MacroAssembler::DoubleCondition condition)
 {
     double arg1 = 0;
@@ -287,6 +306,48 @@ void testCompareDouble(MacroAssembler::DoubleCondition condition)
     }
 }
 
+#if CPU(X86) || CPU(X86_64) || CPU(ARM64)
+void testCompareFloat(MacroAssembler::DoubleCondition condition)
+{
+    float arg1 = 0;
+    float arg2 = 0;
+
+    auto compareFloat = compile([&, condition] (CCallHelpers& jit) {
+        jit.emitFunctionPrologue();
+
+        jit.loadFloat(CCallHelpers::TrustedImmPtr(&arg1), FPRInfo::fpRegT0);
+        jit.loadFloat(CCallHelpers::TrustedImmPtr(&arg2), FPRInfo::fpRegT1);
+        jit.move(CCallHelpers::TrustedImm32(-1), GPRInfo::returnValueGPR);
+        jit.compareFloat(condition, FPRInfo::fpRegT0, FPRInfo::fpRegT1, GPRInfo::returnValueGPR);
+
+        jit.emitFunctionEpilogue();
+        jit.ret();
+    });
+
+    auto compareFloatGeneric = compile([&, condition] (CCallHelpers& jit) {
+        jit.emitFunctionPrologue();
+
+        jit.loadFloat(CCallHelpers::TrustedImmPtr(&arg1), FPRInfo::fpRegT0);
+        jit.loadFloat(CCallHelpers::TrustedImmPtr(&arg2), FPRInfo::fpRegT1);
+        jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+        auto jump = jit.branchFloat(condition, FPRInfo::fpRegT0, FPRInfo::fpRegT1);
+        jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+        jump.link(&jit);
+
+        jit.emitFunctionEpilogue();
+        jit.ret();
+    });
+
+    auto operands = floatOperands();
+    for (auto a : operands) {
+        for (auto b : operands) {
+            arg1 = a;
+            arg2 = b;
+            CHECK_EQ(invoke<int>(compareFloat), invoke<int>(compareFloatGeneric));
+        }
+    }
+}
+#endif
 
 #if ENABLE(MASM_PROBE)
 void testProbeReadsArgumentRegisters()
@@ -860,6 +921,21 @@ void run(const char* filter)
     RUN(testCompareDouble(MacroAssembler::DoubleGreaterThanOrEqualOrUnordered));
     RUN(testCompareDouble(MacroAssembler::DoubleLessThanOrUnordered));
     RUN(testCompareDouble(MacroAssembler::DoubleLessThanOrEqualOrUnordered));
+
+#if CPU(X86) || CPU(X86_64) || CPU(ARM64)
+    RUN(testCompareFloat(MacroAssembler::DoubleEqual));
+    RUN(testCompareFloat(MacroAssembler::DoubleNotEqual));
+    RUN(testCompareFloat(MacroAssembler::DoubleGreaterThan));
+    RUN(testCompareFloat(MacroAssembler::DoubleGreaterThanOrEqual));
+    RUN(testCompareFloat(MacroAssembler::DoubleLessThan));
+    RUN(testCompareFloat(MacroAssembler::DoubleLessThanOrEqual));
+    RUN(testCompareFloat(MacroAssembler::DoubleEqualOrUnordered));
+    RUN(testCompareFloat(MacroAssembler::DoubleNotEqualOrUnordered));
+    RUN(testCompareFloat(MacroAssembler::DoubleGreaterThanOrUnordered));
+    RUN(testCompareFloat(MacroAssembler::DoubleGreaterThanOrEqualOrUnordered));
+    RUN(testCompareFloat(MacroAssembler::DoubleLessThanOrUnordered));
+    RUN(testCompareFloat(MacroAssembler::DoubleLessThanOrEqualOrUnordered));
+#endif
 
 #if ENABLE(MASM_PROBE)
     RUN(testProbeReadsArgumentRegisters());

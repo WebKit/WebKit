@@ -1697,6 +1697,20 @@ public:
         return jumpAfterFloatingPointCompare(cond);
     }
 
+    void compareDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
+    {
+        floatingPointCompare(cond, left, right, dest, [this] (FPRegisterID arg1, FPRegisterID arg2) {
+            m_assembler.fcmp<64>(arg1, arg2);
+        });
+    }
+
+    void compareFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
+    {
+        floatingPointCompare(cond, left, right, dest, [this] (FPRegisterID arg1, FPRegisterID arg2) {
+            m_assembler.fcmp<32>(arg1, arg2);
+        });
+    }
+
     Jump branchDoubleNonZero(FPRegisterID reg, FPRegisterID)
     {
         m_assembler.fcmp_0<64>(reg);
@@ -1847,6 +1861,12 @@ public:
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
         m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, Assembler::UXTX, address.scale);
         m_assembler.ldr<32>(dest, address.base, memoryTempRegister);
+    }
+
+    void loadFloat(TrustedImmPtr address, FPRegisterID dest)
+    {
+        moveToCachedReg(address, cachedMemoryTempRegister());
+        m_assembler.ldr<32>(dest, memoryTempRegister, ARM64Registers::zr);
     }
 
     void moveDouble(FPRegisterID src, FPRegisterID dest)
@@ -4451,6 +4471,31 @@ protected:
             return result;
         }
         return makeBranch(cond);
+    }
+
+    template<typename Function>
+    void floatingPointCompare(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest, Function compare)
+    {
+        if (cond == DoubleNotEqual) {
+            // ConditionNE sets 1 if NotEqual *or* unordered - force the unordered cases not to set 1.
+            move(TrustedImm32(0), dest);
+            compare(left, right);
+            Jump unordered = makeBranch(Assembler::ConditionVS);
+            m_assembler.cset<32>(dest, Assembler::ConditionNE);
+            unordered.link(this);
+            return;
+        }
+        if (cond == DoubleEqualOrUnordered) {
+            // ConditionEQ sets 1 only if Equal - force the unordered cases to set 1 too.
+            move(TrustedImm32(1), dest);
+            compare(left, right);
+            Jump unordered = makeBranch(Assembler::ConditionVS);
+            m_assembler.cset<32>(dest, Assembler::ConditionEQ);
+            unordered.link(this);
+            return;
+        }
+        compare(left, right);
+        m_assembler.cset<32>(dest, ARM64Condition(cond));
     }
 
     friend class LinkBuffer;

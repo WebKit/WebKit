@@ -1462,26 +1462,6 @@ public:
     // We should implement this the right way eventually, but for now, it's fine because it arises so
     // infrequently.
 
-#if !CPU(X86) && !CPU(X86_64)
-    void compareDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
-    {
-        move(TrustedImm32(0), dest);
-        Jump falseCase = branchDouble(invert(cond), left, right);
-        move(TrustedImm32(1), dest);
-        falseCase.link(this);
-    }
-#endif
-
-#if ENABLE(B3_JIT)
-    void compareFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
-    {
-        move(TrustedImm32(0), dest);
-        Jump falseCase = branchFloat(invert(cond), left, right);
-        move(TrustedImm32(1), dest);
-        falseCase.link(this);
-    }
-#endif
-
     void lea32(Address address, RegisterID dest)
     {
         add32(TrustedImm32(address.offset), address.base, dest);
