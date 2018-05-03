@@ -252,6 +252,9 @@ public:
 
     void setFromOriginResponseHeaderEnabled(bool isEnabled) { m_fromOriginResponseHeaderEnabled = isEnabled; }
     bool fromOriginResponseHeaderEnabled() const { return m_fromOriginResponseHeaderEnabled; }
+    
+    void setWebGLCompressedTextureASTCSupportEnabled(bool isEnabled) { m_isWebGLCompressedTextureASTCSupportEnabled = isEnabled; }
+    bool webGLCompressedTextureASTCSupportEnabled() const { return m_isWebGLCompressedTextureASTCSupportEnabled; }
 
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
@@ -388,6 +391,8 @@ private:
     bool m_isRestrictedHTTPResponseAccess { true };
 
     bool m_fromOriginResponseHeaderEnabled { false };
+    
+    bool m_isWebGLCompressedTextureASTCSupportEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

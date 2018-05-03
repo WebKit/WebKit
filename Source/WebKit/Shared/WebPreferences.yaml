@@ -1251,3 +1251,11 @@ FromOriginResponseHeaderEnabled:
     humanReadableDescription: "Support for the From-Origin Response Header"
     category: experimental
     webcoreBinding: RuntimeEnabledFeatures
+
+WebGLCompressedTextureASTCSupportEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "ASTC Texture Support"
+  humanReadableDescription: "Support for ASTC compressed texture formats in WebGL"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures

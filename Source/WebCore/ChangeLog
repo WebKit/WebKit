@@ -1,3 +1,16 @@
+2018-05-03  Justin Fan  <justin_fan@apple.com>
+
+        [WebGL] Add runtime flag for enabling ASTC support in WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=184840
+
+        Reviewed by Myles C. Maxfield.
+
+        Added runtime flag for ASTC support in WebGL, to turn on/off when extension is implemented.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebGLCompressedTextureASTCSupportEnabled):
+        (WebCore::RuntimeEnabledFeatures::webGLCompressedTextureASTCSupportEnabled const):
+
 2018-05-03  Chris Nardi  <cnardi@chromium.org>
 
         Remove [NoInterfaceObject] from DOMRectList
