@@ -94,6 +94,7 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasMacPlatformQuirk("http://web.whatsapp.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://outlook.live.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://www.chase.com/");
+    assertUserAgentForURLHasMacPlatformQuirk("http://docs.google.com/");
 }
 
 } // namespace TestWebKitAPI
