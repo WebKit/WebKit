@@ -25,6 +25,7 @@
 #include "TextureMapper.h"
 #include "TextureMapperAnimation.h"
 #include "TextureMapperBackingStore.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -39,6 +40,7 @@ class WEBCORE_EXPORT TextureMapperLayer {
 public:
     TextureMapperLayer();
     virtual ~TextureMapperLayer();
+    WeakPtr<TextureMapperLayer> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
 
     void setID(uint32_t id) { m_id = id; }
     uint32_t id() { return m_id; }
@@ -139,9 +141,10 @@ private:
         return FloatRect(FloatPoint::zero(), m_state.size);
     }
 
+    WeakPtrFactory<TextureMapperLayer> m_weakFactory;
     Vector<TextureMapperLayer*> m_children;
     TextureMapperLayer* m_parent { nullptr };
-    TextureMapperLayer* m_effectTarget { nullptr };
+    WeakPtr<TextureMapperLayer> m_effectTarget;
     TextureMapperBackingStore* m_backingStore { nullptr };
     TextureMapperPlatformLayer* m_contentsLayer { nullptr };
     float m_currentOpacity { 1.0 };
@@ -158,8 +161,8 @@ private:
         FloatRect contentsRect;
         FloatSize contentsTileSize;
         FloatSize contentsTilePhase;
-        TextureMapperLayer* maskLayer;
-        TextureMapperLayer* replicaLayer;
+        WeakPtr<TextureMapperLayer> maskLayer;
+        WeakPtr<TextureMapperLayer> replicaLayer;
         Color solidColor;
         FilterOperations filters;
         Color debugBorderColor;
@@ -179,8 +182,6 @@ private:
         State()
             : anchorPoint(0.5, 0.5, 0)
             , opacity(1)
-            , maskLayer(0)
-            , replicaLayer(0)
             , debugBorderWidth(0)
             , repaintCount(0)
             , preserves3D(false)
