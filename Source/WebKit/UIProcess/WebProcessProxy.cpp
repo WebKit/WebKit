@@ -174,6 +174,11 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
     }
 
     launchOptions.nonValidInjectedCodeAllowed = shouldAllowNonValidInjectedCode();
+
+    if (processPool().shouldMakeNextWebProcessLaunchFailForTesting()) {
+        processPool().setShouldMakeNextWebProcessLaunchFailForTesting(false);
+        launchOptions.shouldMakeProcessLaunchFailForTesting = true;
+    }
 }
 
 void WebProcessProxy::connectionWillOpen(IPC::Connection& connection)
@@ -652,11 +657,17 @@ void WebProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::De
 
 void WebProcessProxy::didClose(IPC::Connection&)
 {
+    processDidTerminateOrFailedToLaunch();
+}
+
+void WebProcessProxy::processDidTerminateOrFailedToLaunch()
+{
     // Protect ourselves, as the call to disconnect() below may otherwise cause us
     // to be deleted before we can finish our work.
     Ref<WebProcessProxy> protect(*this);
 
-    webConnection()->didClose();
+    if (auto* webConnection = this->webConnection())
+        webConnection->didClose();
 
     auto pages = copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values());
 
@@ -671,13 +682,13 @@ void WebProcessProxy::didClose(IPC::Connection&)
     }
 #endif
 
-    for (auto& page : pages)
-        page->processDidTerminate(ProcessTerminationReason::Crash);
-
     for (auto* suspendedPage : copyToVectorOf<SuspendedPageProxy*>(m_suspendedPageMap.values()))
         suspendedPage->webProcessDidClose(*this);
 
     m_suspendedPageMap.clear();
+
+    for (auto& page : pages)
+        page->processDidTerminate(ProcessTerminationReason::Crash);
 }
 
 void WebProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
@@ -736,6 +747,11 @@ bool WebProcessProxy::mayBecomeUnresponsive()
 void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
 {
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
+
+    if (!IPC::Connection::identifierIsValid(connectionIdentifier)) {
+        processDidTerminateOrFailedToLaunch();
+        return;
+    }
 
     for (WebPageProxy* page : m_pageMap.values()) {
         ASSERT(this == &page->process());

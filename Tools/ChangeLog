@@ -1,3 +1,20 @@
+2018-05-03  Chris Dumez  <cdumez@apple.com>
+
+        Load hangs if the WebProcess fails to launch
+        https://bugs.webkit.org/show_bug.cgi?id=185225
+        <rdar://problem/38249058>
+
+        Reviewed by Geoff Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebContentProcessDidTerminate.mm: Added.
+        (-[CrashOnStartNavigationDelegate _webView:webContentProcessDidTerminateWithReason:]):
+        (-[CrashOnStartNavigationDelegate webView:didFinishNavigation:]):
+        (-[CrashRecoveryScriptMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TEST):
+
 2018-05-03  Don Olmstead  <don.olmstead@sony.com>
 
         [WinCairo] Add JSC test bots

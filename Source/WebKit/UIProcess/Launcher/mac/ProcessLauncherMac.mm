@@ -202,8 +202,8 @@ void ProcessLauncher::launchProcess()
     xpc_dictionary_set_value(bootstrapMessage.get(), "extra-initialization-data", extraInitializationData.get());
 
     auto weakProcessLauncher = m_weakPtrFactory.createWeakPtr(*this);
-    xpc_connection_set_event_handler(m_xpcConnection.get(), [weakProcessLauncher, listeningPort](xpc_object_t event) {
-        ASSERT(xpc_get_type(event) == XPC_TYPE_ERROR);
+    auto errorHandler = [weakProcessLauncher, listeningPort](xpc_object_t event) {
+        ASSERT(!event || xpc_get_type(event) == XPC_TYPE_ERROR);
 
         auto processLauncher = weakProcessLauncher.get();
         if (!processLauncher)
@@ -229,9 +229,18 @@ void ProcessLauncher::launchProcess()
         processLauncher->m_xpcConnection = nullptr;
 
         processLauncher->didFinishLaunchingProcess(0, IPC::Connection::Identifier());
-    });
+    };
+
+    xpc_connection_set_event_handler(m_xpcConnection.get(), errorHandler);
 
     xpc_connection_resume(m_xpcConnection.get());
+
+    if (UNLIKELY(m_launchOptions.shouldMakeProcessLaunchFailForTesting)) {
+        RunLoop::main().dispatch([errorHandler = WTFMove(errorHandler)] {
+            errorHandler(nullptr);
+        });
+        return;
+    }
 
     ref();
     xpc_connection_send_message_with_reply(m_xpcConnection.get(), bootstrapMessage.get(), dispatch_get_main_queue(), ^(xpc_object_t reply) {

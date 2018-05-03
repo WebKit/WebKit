@@ -94,6 +94,7 @@
 - (size_t)_pluginProcessCount WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 - (size_t)_serviceWorkerProcessCount WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_syncNetworkProcessCookies WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_makeNextWebProcessLaunchFailForTesting WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 // Test only. Returns web processes running web pages (does not include web processes running service workers)
 - (size_t)_webPageContentProcessCount WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
