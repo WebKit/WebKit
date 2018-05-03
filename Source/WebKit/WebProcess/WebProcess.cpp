@@ -1148,8 +1148,18 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
     if (!m_networkProcessConnection) {
         IPC::Attachment encodedConnectionIdentifier;
 
-        if (!parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(encodedConnectionIdentifier), 0, Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply))
+        if (!parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(encodedConnectionIdentifier), 0, Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply)) {
+#if PLATFORM(GTK) || PLATFORM(WPE)
+            // GTK+ and WPE ports don't exit on send sync message failure.
+            // In this particular case, the network process can be terminated by the UI process while the
+            // Web process is still initializing, so we always want to exit instead of crashing. This can
+            // happen when the WebView is created and then destroyed quickly.
+            // See https://bugs.webkit.org/show_bug.cgi?id=183348.
+            exit(0);
+#else
             CRASH();
+#endif
+        }
 
 #if USE(UNIX_DOMAIN_SOCKETS)
         IPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.releaseFileDescriptor();
@@ -1222,8 +1232,16 @@ WebToStorageProcessConnection& WebProcess::ensureWebToStorageProcessConnection(P
     if (!m_webToStorageProcessConnection) {
         IPC::Attachment encodedConnectionIdentifier;
 
-        if (!parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetStorageProcessConnection(initialSessionID), Messages::WebProcessProxy::GetStorageProcessConnection::Reply(encodedConnectionIdentifier), 0))
+        if (!parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetStorageProcessConnection(initialSessionID), Messages::WebProcessProxy::GetStorageProcessConnection::Reply(encodedConnectionIdentifier), 0)) {
+#if PLATFORM(GTK) || PLATFORM(WPE)
+            // GTK+ and WPE ports don't exit on send sync message failure.
+            // In this particular case, the storage process can be terminated by the UI process while the
+            // connection is being done, so we always want to exit instead of crashing.
+            // See https://bugs.webkit.org/show_bug.cgi?id=183348.
+#else
             CRASH();
+#endif
+        }
 
 #if USE(UNIX_DOMAIN_SOCKETS)
         IPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.releaseFileDescriptor();

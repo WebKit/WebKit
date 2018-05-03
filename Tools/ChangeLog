@@ -1,3 +1,16 @@
+2018-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r222772): [GTK][WPE] WebProcess from WebKitGtk+ 2.19.9x SIGSEVs in WebKit::WebProcess::ensureNetworkProcessConnection() at Source/WebKit/WebProcess/WebProcess.cpp:1127
+        https://bugs.webkit.org/show_bug.cgi?id=183348
+
+        Reviewed by Michael Catanzaro.
+
+        Add a test case to reproduce the crash.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewCloseQuickly):
+        (beforeAll):
+
 2018-05-02  Aditya Keerthi  <akeerthi@apple.com>
 
         Can't copy and paste URLs that have no title into Mail (macOS)

@@ -1,3 +1,18 @@
+2018-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r222772): [GTK][WPE] WebProcess from WebKitGtk+ 2.19.9x SIGSEVs in WebKit::WebProcess::ensureNetworkProcessConnection() at Source/WebKit/WebProcess/WebProcess.cpp:1127
+        https://bugs.webkit.org/show_bug.cgi?id=183348
+
+        Reviewed by Michael Catanzaro.
+
+        When connection doesn't exit in case of sync message failure, always exit in case of failing to send
+        GetNetworkProcessConnection or GetStorageProcessConnection messages. This can happen when the WebView is created
+        and destroyed quickly.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+        (WebKit::WebProcess::ensureWebToStorageProcessConnection):
+
 2018-05-02  Nan Wang  <n_wang@apple.com>
 
         AX: Missing kAXSWebAccessibilityEventsEnabledNotification causes a crash
