@@ -290,8 +290,6 @@ public:
     RemoteWebInspectorUI* remoteInspectorUI();
     bool isInspectorPage() { return !!m_inspectorUI || !!m_remoteInspectorUI; }
 
-    void inspectorFrontendCountChanged(unsigned);
-
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     PlaybackSessionManager& playbackSessionManager();
     VideoFullscreenManager& videoFullscreenManager();
