@@ -1,3 +1,22 @@
+2018-05-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Hiding then showing an <object> of type image makes the underlaying image disappear
+        https://bugs.webkit.org/show_bug.cgi?id=185216
+        <rdar://problem/39055630>
+
+        Reviewed by Youenn Fablet.
+
+        Ensure the HTMLPlugInImageElement updates the RenderImageResource of its
+        RenderImage with the CachedImage of its ImageLoader when the RenderImage
+        is recreated.
+
+        Test: fast/images/object-image-hide-show.html
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didAttachRenderers):
+        This is very similar to what we do in HTMLImageElement::didAttachRenderers().
+
+
 2018-05-02  Brent Fulgham  <bfulgham@apple.com>
 
         Use RetainPtr for form input type
