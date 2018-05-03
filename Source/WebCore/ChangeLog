@@ -1,3 +1,15 @@
+2018-05-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove superfluous check for a null attribute value check in Element::removeAttributeInternal
+        https://bugs.webkit.org/show_bug.cgi?id=185227
+
+        Reviewed by Chris Dumez.
+
+        Removed the check. The attribute value string can never be null.
+
+        * dom/Element.cpp:
+        (WebCore::Element::removeAttributeInternal):
+
 2018-05-02  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement LayoutContext::createDisplayBox

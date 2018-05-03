@@ -2363,9 +2363,8 @@ void Element::removeAttributeInternal(unsigned index, SynchronizationOfLazyAttri
         return;
     }
 
-    if (!valueBeingRemoved.isNull())
-        willModifyAttribute(name, valueBeingRemoved, nullAtom());
-
+    ASSERT(!valueBeingRemoved.isNull());
+    willModifyAttribute(name, valueBeingRemoved, nullAtom());
     {
         Style::AttributeChangeInvalidation styleInvalidation(*this, name, valueBeingRemoved, nullAtom());
         elementData.removeAttribute(index);
