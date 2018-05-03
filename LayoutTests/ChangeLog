@@ -1,3 +1,13 @@
+2018-05-03  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: Layout Test http/tests/security/location-cross-origin.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=185259
+
+        Unreviewed, stop relying on a setImeout(100) and epect the frame navigation to have completed. Instead,
+        use a setInterval() to poll until the cross-origin frame has navigated.
+
+        * http/tests/security/location-cross-origin.html:
+
 2018-05-03  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening after r231300.

@@ -60,10 +60,15 @@ onload = function() {
 
     // Setting 'href' cross origin should be allowed.
     shouldNotThrow("frames[0].location.href = 'about:blank'");
-    setTimeout(function() {
-        shouldBeEqualToString("frames[0].location.href", "about:blank");
-        finishJSTest();
-    }, 100);
+    handle = setInterval(function() {
+        try {
+            frames[0].location.href; // Should throw if still cross-origin.
+
+            shouldBeEqualToString("frames[0].location.href", "about:blank");
+            clearInterval(handle);
+            finishJSTest();
+        } catch (e) { }
+    }, 5);
 };
 </script>
 <script src="../../../resources/js-test-post.js"></script>
