@@ -1420,7 +1420,7 @@ _llint_op_get_by_id:
     loadi 4[PC], t2
     storei t0, TagOffset[cfr, t2, 8]
     storei t1, PayloadOffset[cfr, t2, 8]
-    valueProfile(t0, t1, 32, t2)
+    valueProfile(t0, t1, 28, t2)
     dispatch(constexpr op_get_by_id_length)
 
 .opGetByIdSlow:
@@ -1441,7 +1441,7 @@ _llint_op_get_array_length:
     loadp JSObject::m_butterfly[t3], t0
     loadi -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], t0
     bilt t0, 0, .opGetArrayLengthSlow
-    valueProfile(Int32Tag, t0, 32, t2)
+    valueProfile(Int32Tag, t0, 28, t2)
     storep t0, PayloadOffset[cfr, t1, 8]
     storep Int32Tag, TagOffset[cfr, t1, 8]
     dispatch(constexpr op_get_array_length_length)

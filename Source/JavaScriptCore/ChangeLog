@@ -1,3 +1,10 @@
+2018-05-03  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, fix 32-bit profile offset for change in bytecode
+        length of the get_by_id and get_array_length opcodes.
+
+        * llint/LowLevelInterpreter32_64.asm:
+
 2018-05-03  Michael Saboff  <msaboff@apple.com>
 
         WebContent crash loading page on seas.upenn.edu @ JavaScriptCore: vmEntryToJavaScript
