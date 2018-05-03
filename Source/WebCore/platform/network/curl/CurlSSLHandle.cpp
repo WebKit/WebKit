@@ -37,6 +37,10 @@
 #include <wtf/RetainPtr.h>
 #endif
 
+#if NEED_OPENSSL_THREAD_SUPPORT && OS(WINDOWS)
+#include <wtf/Threading.h>
+#endif
+
 namespace WebCore {
 
 CurlSSLHandle::CurlSSLHandle()
@@ -45,6 +49,10 @@ CurlSSLHandle::CurlSSLHandle()
     char* ignoreSSLErrors = getenv("WEBKIT_IGNORE_SSL_ERRORS");
     if (ignoreSSLErrors)
         m_ignoreSSLErrors = true;
+
+#if NEED_OPENSSL_THREAD_SUPPORT
+    ThreadSupport::setup();
+#endif
 }
 
 CString CurlSSLHandle::getCACertPathEnv()
@@ -119,6 +127,46 @@ std::optional<CurlSSLHandle::ClientCertificate> CurlSSLHandle::getSSLClientCerti
 
     return it->value;
 }
+
+#if NEED_OPENSSL_THREAD_SUPPORT
+
+void CurlSSLHandle::ThreadSupport::setup()
+{
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        singleton();
+    });
+}
+
+CurlSSLHandle::ThreadSupport::ThreadSupport()
+{
+    CRYPTO_set_locking_callback(lockingCallback);
+#if OS(WINDOWS)
+    CRYPTO_THREADID_set_callback(threadIdCallback);
+#endif
+}
+
+void CurlSSLHandle::ThreadSupport::lockingCallback(int mode, int type, const char*, int)
+{
+    RELEASE_ASSERT(type >= 0 && type < CRYPTO_NUM_LOCKS);
+    auto& locker = ThreadSupport::singleton();
+
+    if (mode & CRYPTO_LOCK)
+        locker.lock(type);
+    else
+        locker.unlock(type);
+}
+
+#if OS(WINDOWS)
+
+void CurlSSLHandle::ThreadSupport::threadIdCallback(CRYPTO_THREADID* threadId)
+{
+    CRYPTO_THREADID_set_numeric(threadId, static_cast<unsigned long>(Thread::currentID()));
+}
+
+#endif
+
+#endif
 
 }
 

@@ -1,3 +1,31 @@
+2018-05-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Add OpenSSL/LibreSSL multi-threading support
+        https://bugs.webkit.org/show_bug.cgi?id=185138
+
+        The older OpenSSL manual says the locking_function and threadid_function should
+        be set when use it in multi-threading environment. This applies to LibreSSL also.
+        https://www.openssl.org/docs/man1.0.2/crypto/threads.html
+
+        For unix and other similar os, the default threadId_function implementation is
+        good enough. We'll set custom callback only for Windows OS.
+
+        Note it's not required for OpenSSL 1.1.0 and after.
+        https://www.openssl.org/blog/blog/2017/02/21/threads/
+
+        Reviewed by Per Arne Vollan.
+
+        * platform/network/curl/CurlSSLHandle.cpp:
+        (WebCore::CurlSSLHandle::CurlSSLHandle):
+        (WebCore::CurlSSLHandle::ThreadSupport::ThreadSupport):
+        (WebCore::CurlSSLHandle::ThreadSupport::lockingCallback):
+        (WebCore::CurlSSLHandle::ThreadSupport::threadIdCallback):
+        * platform/network/curl/CurlSSLHandle.h:
+        (WebCore::CurlSSLHandle::ThreadSupport::setup):
+        (WebCore::CurlSSLHandle::ThreadSupport::singleton):
+        (WebCore::CurlSSLHandle::ThreadSupport::lock):
+        (WebCore::CurlSSLHandle::ThreadSupport::unlock):
+
 2018-05-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove superfluous check for a null attribute value check in Element::removeAttributeInternal
