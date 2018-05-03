@@ -1834,6 +1834,93 @@ void testX86VMULSDBaseIndexNeedRex()
 }
 #endif // #if CPU(X86) || CPU(X86_64)
 
+#if CPU(ARM64)
+void testInvalidateCachedTempRegisters()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+    BasicBlock* root = code.addBlock();
+
+    int32_t things[4];
+    things[0] = 0x12000000;
+    things[1] = 0x340000;
+    things[2] = 0x5600;
+    things[3] = 0x78;
+    Tmp base = code.newTmp(GP);
+    GPRReg tmp = GPRInfo::regT1;
+    proc.pinRegister(tmp);
+
+    root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
+
+    B3::BasicBlock* patchPoint1Root = proc.addBlock();
+    B3::Air::Special* patchpointSpecial = code.addSpecial(std::make_unique<B3::PatchpointSpecial>());
+
+    // In Patchpoint, Load things[0] -> tmp. This will materialize the address in x17 (dataMemoryRegister).
+    B3::PatchpointValue* patchpoint1 = patchPoint1Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
+    patchpoint1->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint1->setGenerator(
+        [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.load32(&things, tmp);
+        });
+    root->append(Patch, patchpoint1, Arg::special(patchpointSpecial));
+
+    // Load things[1] -> x17, trashing dataMemoryRegister.
+    root->append(Move32, nullptr, Arg::addr(base, 1 * sizeof(int32_t)), Tmp(ARM64Registers::x17));
+    root->append(Add32, nullptr, Tmp(tmp), Tmp(ARM64Registers::x17), Tmp(GPRInfo::returnValueGPR));
+
+    // In Patchpoint, Load things[2] -> tmp. This should not reuse the prior contents of x17.
+    B3::BasicBlock* patchPoint2Root = proc.addBlock();
+    B3::PatchpointValue* patchpoint2 = patchPoint2Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
+    patchpoint2->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint2->setGenerator(
+        [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.load32(&things[2], tmp);
+        });
+    root->append(Patch, patchpoint2, Arg::special(patchpointSpecial));
+
+    root->append(Add32, nullptr, Tmp(tmp), Tmp(GPRInfo::returnValueGPR), Tmp(GPRInfo::returnValueGPR));
+
+    // In patchpoint, Store 0x78 -> things[3].
+    // This will use and cache both x16 (dataMemoryRegister) and x17 (dataTempRegister).
+    B3::BasicBlock* patchPoint3Root = proc.addBlock();
+    B3::PatchpointValue* patchpoint3 = patchPoint3Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
+    patchpoint3->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint3->setGenerator(
+        [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.store32(CCallHelpers::TrustedImm32(0x78), &things[3]);
+        });
+    root->append(Patch, patchpoint3, Arg::special(patchpointSpecial));
+
+    // Set x16 to 0xdead, trashing x16.
+    root->append(Move, nullptr, Arg::bigImm(0xdead), Tmp(ARM64Registers::x16));
+    root->append(Xor32, nullptr, Tmp(ARM64Registers::x16), Tmp(GPRInfo::returnValueGPR));
+
+    // In patchpoint, again Store 0x78 -> things[3].
+    // This should rematerialize both x16 (dataMemoryRegister) and x17 (dataTempRegister).
+    B3::BasicBlock* patchPoint4Root = proc.addBlock();
+    B3::PatchpointValue* patchpoint4 = patchPoint4Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
+    patchpoint4->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint4->setGenerator(
+        [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.store32(CCallHelpers::TrustedImm32(0x78), &things[3]);
+        });
+    root->append(Patch, patchpoint4, Arg::special(patchpointSpecial));
+
+    root->append(Move, nullptr, Arg::bigImm(0xdead), Tmp(tmp));
+    root->append(Xor32, nullptr, Tmp(tmp), Tmp(GPRInfo::returnValueGPR));
+    root->append(Move32, nullptr, Arg::addr(base, 3 * sizeof(int32_t)), Tmp(tmp));
+    root->append(Add32, nullptr, Tmp(tmp), Tmp(GPRInfo::returnValueGPR), Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret32, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    int32_t r = compileAndRun<int32_t>(proc);
+    CHECK(r == 0x12345678);
+}
+#endif // #if CPU(ARM64)
+
 void testArgumentRegPinned()
 {
     B3::Procedure proc;
@@ -2015,6 +2102,10 @@ void run(const char* filter)
     RUN(testX86VMULSDBaseNeedsRex());
     RUN(testX86VMULSDIndexNeedsRex());
     RUN(testX86VMULSDBaseIndexNeedRex());
+#endif
+
+#if CPU(ARM64)
+    RUN(testInvalidateCachedTempRegisters());
 #endif
 
     RUN(testArgumentRegPinned());
