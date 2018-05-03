@@ -301,11 +301,17 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
                         // We use ObjectPropertyConditionSet instead for faster accesses.
                         prototypeAccessChain = nullptr;
 
+                        // FIXME: Maybe this `if` should be inside generateConditionsForPropertyBlah.
+                        // https://bugs.webkit.org/show_bug.cgi?id=185215
                         if (slot.isUnset()) {
                             conditionSet = generateConditionsForPropertyMiss(
                                 vm, codeBlock, exec, structure, propertyName.impl());
-                        } else {
+                        } else if (!slot.isCacheableCustom()) {
                             conditionSet = generateConditionsForPrototypePropertyHit(
+                                vm, codeBlock, exec, structure, slot.slotBase(),
+                                propertyName.impl());
+                        } else {
+                            conditionSet = generateConditionsForPrototypePropertyHitCustom(
                                 vm, codeBlock, exec, structure, slot.slotBase(),
                                 propertyName.impl());
                         }

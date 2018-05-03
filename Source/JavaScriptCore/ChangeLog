@@ -1,3 +1,15 @@
+2018-05-02  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should know how to cache custom getter accesses on the prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=185213
+
+        Reviewed by Keith Miller.
+
+        This was a simple fix after the work I did for bug 185174. >4x speed-up on the new get-custom-getter.js test.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+
 2018-05-01  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should be able to cache custom setter calls on the prototype chain

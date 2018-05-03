@@ -1,3 +1,13 @@
+2018-05-02  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should know how to cache custom getter accesses on the prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=185213
+
+        Reviewed by Keith Miller.
+
+        * microbenchmarks/get-custom-getter.js: Added.
+        (test):
+
 2018-05-02  Robin Morisset  <rmorisset@apple.com>
 
         emitCodeToGetArgumentsArrayLength should not crash on PhantomNewArrayWithSpread
