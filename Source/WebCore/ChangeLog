@@ -1,3 +1,16 @@
+2018-05-03  Youenn Fablet  <youenn@apple.com>
+
+        A MediaStream being played should allow removing some of its tracks
+        https://bugs.webkit.org/show_bug.cgi?id=185233
+
+        Reviewed by Eric Carlson.
+
+        Update the tracks out of the for loop.
+        Test: fast/mediastream/change-tracks-media-stream-being-played.html
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::updateTracksOfType):
+
 2018-05-03  Miguel Gomez  <magomez@igalia.com>
 
         WebCore::TextureMapperLayer object used after freed

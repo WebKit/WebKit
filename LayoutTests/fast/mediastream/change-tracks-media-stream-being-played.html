@@ -1,0 +1,36 @@
+<html>
+<head>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script type="application/javascript">
+function waitFor(duration)
+{
+    return new Promise((resolve) => setTimeout(resolve, duration));
+}
+
+promise_test(async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    const localTracks = stream.getTracks();
+    video = document.createElement('video');
+    video.autoplay = true;
+    video.playsInline = true;
+    const videoStream = new MediaStream();
+    localTracks.forEach(track => videoStream.addTrack(track));
+    video.srcObject = videoStream;
+    document.body.appendChild(video);
+    video.play();
+
+    await waitFor(100);
+
+    videoStream.getTracks().forEach(track => {
+        videoStream.removeTrack(track);
+        video.srcObject = videoStream;
+    });
+    video.srcObject = null;
+    video.remove();
+}, "Remove tracks in a being played MediaStream");
+</script>
+</body>
+</html>

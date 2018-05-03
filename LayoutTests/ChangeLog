@@ -1,3 +1,13 @@
+2018-05-03  Youenn Fablet  <youenn@apple.com>
+
+        A MediaStream being played should allow removing some of its tracks
+        https://bugs.webkit.org/show_bug.cgi?id=185233
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/change-tracks-media-stream-being-played-expected.txt: Added.
+        * fast/mediastream/change-tracks-media-stream-being-played.html: Added.
+
 2018-05-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Hiding then showing an <object> of type image makes the underlaying image disappear

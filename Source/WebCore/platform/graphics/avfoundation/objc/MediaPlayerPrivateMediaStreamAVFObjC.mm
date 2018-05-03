@@ -935,8 +935,9 @@ void updateTracksOfType(HashMap<String, RefT>& trackMap, RealtimeMediaSource::Ty
             continue;
 
         removedTracks.append(track);
-        trackMap.remove(streamTrack.id());
     }
+    for (auto& track : removedTracks)
+        trackMap.remove(track->streamTrack().id());
 
     for (auto& track : addedPrivateTracks) {
         RefT newTrack = itemFactory(*track.get());
