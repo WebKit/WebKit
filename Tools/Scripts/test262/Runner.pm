@@ -58,14 +58,13 @@ BEGIN {
 }
 
 use YAML qw(Load LoadFile Dump DumpFile Bless);
-use JSON;
 use Parallel::ForkManager;
 use Getopt::Long qw(GetOptions);
 use Pod::Usage;
 use Term::ANSIColor;
 
 # Commandline args
-my $cliProcesses;
+my $max_process;
 my @cliTestDirs;
 my $verbose;
 my $JSC;
@@ -100,7 +99,6 @@ my @default_harnesses = (
 );
 
 my @files;
-my ($resfh, $resfilename) = getTempFile();
 
 my ($deffh, $deffile) = getTempFile();
 print $deffh getHarness(<@default_harnesses>);
@@ -122,7 +120,7 @@ sub processCLI {
         'j|jsc=s' => \$JSC,
         't|t262=s' => \$test262Dir,
         'o|test-only=s@' => \@cliTestDirs,
-        'p|child-processes=i' => \$cliProcesses,
+        'p|child-processes=i' => \$max_process,
         'h|help' => \$help,
         'd|debug' => \$debug,
         'v|verbose' => \$verbose,
@@ -200,13 +198,13 @@ sub processCLI {
         %filterFeatures = map { $_ => 1 } @features;
     }
 
-    $cliProcesses ||= getProcesses();
+    $max_process ||= getProcesses();
 
     print "\n-------------------------Settings------------------------\n"
         . "Test262 Dir: $test262Dir\n"
         . "JSC: $JSC\n"
         . "DYLD_FRAMEWORK_PATH: $DYLD_FRAMEWORK_PATH\n"
-        . "Child Processes: $cliProcesses\n";
+        . "Child Processes: $max_process\n";
 
     print "Features to include: " . join(', ', @features) . "\n" if @features;
     print "Paths:  " . join(', ', @cliTestDirs) . "\n" if @cliTestDirs;
@@ -222,9 +220,6 @@ sub processCLI {
 
 sub main {
     push(@cliTestDirs, 'test') if not @cliTestDirs;
-
-    my $max_process = $cliProcesses;
-    my $pm = Parallel::ForkManager->new($max_process);
 
     if ($latestImport) {
         @files = loadImportFile();
@@ -245,22 +240,56 @@ sub main {
         }
     }
 
-    FILES:
-    foreach my $file (@files) {
-        $pm->start and next FILES; # do the fork
-        srand(time ^ $$); # Creates a new seed for each fork
-        processFile($file);
 
-        $pm->finish; # do the exit in the child process
-    };
+    # If we are processing many files, fork process
+    if (scalar @files > $max_process * 10) {
 
-    $pm->wait_all_children;
+        # Make temporary files to record results
+        my @resultsfhs;
+        for (my $i = 0; $i <= $max_process-1; $i++) {
+            my ($fh, $filename) = getTempFile();
+            $resultsfhs[$i] = $fh;
+        }
+
+        my $pm = Parallel::ForkManager->new($max_process);
+        my $filesperprocess = int(scalar @files / $max_process);
+
+        FILES:
+        for (my $i = 0; $i <= $max_process-1; $i++) {
+            $pm->start and next FILES; # do the fork
+            srand(time ^ $$); # Creates a new seed for each fork
+
+            my $first = $filesperprocess * $i;
+            my $last = $i == $max_process-1 ? scalar @files : $filesperprocess * ($i+1);
+
+            for (my $j = $first; $j < $last; $j++) {
+                processFile($files[$j], $resultsfhs[$i]);
+            };
+
+            $pm->finish; # do the exit in the child process
+        };
+
+        $pm->wait_all_children;
+
+        # Read results from file into @results and close
+        for (my $i = 0; $i <= $max_process-1; $i++) {
+            seek($resultsfhs[$i], 0, 0);
+            push @results, LoadFile($resultsfhs[$i]);
+            close $resultsfhs[$i];
+        }
+    }
+    # Otherwising, running sequentially is fine
+    else {
+        my ($resfh, $resfilename) = getTempFile();
+        foreach my $file (@files) {
+            processFile($file, $resfh);
+        };
+        seek($resfh, 0, 0);
+        @results = LoadFile($resfh);
+        close $resfh;
+    }
 
     close $deffh;
-
-    seek($resfh, 0, 0);
-    @results = LoadFile($resfh);
-    close $resfh;
 
     @results = sort { "$a->{path} . $a->{mode}" cmp "$b->{path} . $b->{mode}" } @results;
 
@@ -418,14 +447,16 @@ sub getBuildPath {
 }
 
 sub processFile {
-    my $filename = shift;
+    my ($filename, $resultsfh) = @_;
     my $contents = getContents($filename);
     my $data = parseData($contents, $filename);
+    my $resultsdata;
 
     # Check test against filters in config file
     my $file = abs2rel( $filename, $test262Dir );
     if (shouldSkip($file, $data)) {
-        processResult($filename, $data, "skip");
+        $resultsdata = processResult($filename, $data, "skip");
+        DumpFile($resultsfh, $resultsdata);
         return;
     }
 
@@ -439,7 +470,8 @@ sub processFile {
     foreach my $scenario (@scenarios) {
         my $result = runTest($includesfile, $filename, $scenario, $data);
 
-        processResult($filename, $data, $scenario, $result);
+        $resultsdata = processResult($filename, $data, $scenario, $result);
+        DumpFile($resultsfh, $resultsdata);
     }
 
     close $includesfh if defined $includesfh;
@@ -601,7 +633,7 @@ sub processResult {
 
     $resultdata{features} = $data->{features} if $data->{features};
 
-    DumpFile($resfh, \%resultdata);
+    return \%resultdata;
 }
 
 sub getTempFile {

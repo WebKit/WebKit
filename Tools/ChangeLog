@@ -1,3 +1,20 @@
+2018-05-03  Valerie R Young  <valerie@bocoup.com>
+
+        test262/Runner.pm: performance improvements
+        https://bugs.webkit.org/show_bug.cgi?id=185202
+
+        Reviewed by Michael Saboff.
+
+        Batch the tests by the number of processes, and give each process
+        a file to save results to to avoid threading. Do not parallelize
+        when running small sets of tests.
+
+        * Scripts/test262/Runner.pm:
+        (processCLI):
+        (main):
+        (processFile):
+        (processResult):
+
 2018-05-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r231253.
