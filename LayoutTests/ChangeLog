@@ -1,3 +1,10 @@
+2018-05-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Revert the unitended changes in r231329.
+
+        * http/tests/media/video-play-stall.html: Replaced with LayoutTests/http/tests/media/video-play-stall.html.
+        * platform/mac/TestExpectations:
+
 2018-05-03  Chris Dumez  <cdumez@apple.com>
 
         Stop using an iframe's id as fallback if its name attribute is not set
