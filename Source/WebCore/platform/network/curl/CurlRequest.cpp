@@ -489,9 +489,9 @@ void CurlRequest::setupPOST(ResourceRequest& request)
 
     // Do not stream for simple POST data
     if (elementSize == 1) {
-        auto postData = m_formDataStream.getPostData();
-        if (postData && postData->get().size())
-            m_curlHandle->setPostFields(postData->get().data(), postData->get().size());
+        const auto* postData = m_formDataStream.getPostData();
+        if (postData && postData->size())
+            m_curlHandle->setPostFields(postData->data(), postData->size());
     } else
         setupSendData(false);
 }

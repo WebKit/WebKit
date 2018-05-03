@@ -188,7 +188,7 @@ Vector<String> DatasetDOMStringMap::supportedPropertyNames() const
     return names;
 }
 
-std::optional<std::reference_wrapper<const AtomicString>> DatasetDOMStringMap::item(const String& propertyName) const
+const AtomicString* DatasetDOMStringMap::item(const String& propertyName) const
 {
     if (m_element.hasAttributes()) {
         AttributeIteratorAccessor attributeIteratorAccessor = m_element.attributesIterator();
@@ -198,23 +198,23 @@ std::optional<std::reference_wrapper<const AtomicString>> DatasetDOMStringMap::i
             // Building a new AtomicString in that case is overkill so we do a direct character comparison.
             const Attribute& attribute = *attributeIteratorAccessor.begin();
             if (propertyNameMatchesAttributeName(propertyName, attribute.localName()))
-                return std::cref(attribute.value());
+                return &attribute.value();
         } else {
             AtomicString attributeName = convertPropertyNameToAttributeName(propertyName);
             for (const Attribute& attribute : attributeIteratorAccessor) {
                 if (attribute.localName() == attributeName)
-                    return std::cref(attribute.value());
+                    return &attribute.value();
             }
         }
     }
 
-    return std::nullopt;
+    return nullptr;
 }
 
 String DatasetDOMStringMap::namedItem(const AtomicString& name) const
 {
-    if (auto value = item(name))
-        return value->get();
+    if (const auto* value = item(name))
+        return *value;
     return String { };
 }
 

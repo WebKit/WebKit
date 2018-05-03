@@ -301,12 +301,12 @@ void RTCPeerConnection::queuedAddIceCandidate(RTCIceCandidate* rtcCandidate, DOM
 }
 
 // Implementation of https://w3c.github.io/webrtc-pc/#set-pc-configuration
-static inline ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> iceServersFromConfiguration(RTCConfiguration& newConfiguration, std::optional<std::reference_wrapper<const RTCConfiguration>> existingConfiguration, bool isLocalDescriptionSet)
+static inline ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> iceServersFromConfiguration(RTCConfiguration& newConfiguration, const RTCConfiguration* existingConfiguration, bool isLocalDescriptionSet)
 {
-    if (existingConfiguration && newConfiguration.bundlePolicy != existingConfiguration->get().bundlePolicy)
+    if (existingConfiguration && newConfiguration.bundlePolicy != existingConfiguration->bundlePolicy)
         return Exception { InvalidModificationError, "IceTransportPolicy does not match existing policy" };
 
-    if (existingConfiguration && newConfiguration.iceCandidatePoolSize != existingConfiguration->get().iceCandidatePoolSize && isLocalDescriptionSet)
+    if (existingConfiguration && newConfiguration.iceCandidatePoolSize != existingConfiguration->iceCandidatePoolSize && isLocalDescriptionSet)
         return Exception { InvalidModificationError, "IceTransportPolicy pool size does not match existing pool size" };
 
     Vector<MediaEndpointConfiguration::IceServerInfo> servers;
@@ -342,7 +342,7 @@ ExceptionOr<void> RTCPeerConnection::initializeConfiguration(RTCConfiguration&& 
 {
     INFO_LOG(LOGIDENTIFIER);
 
-    auto servers = iceServersFromConfiguration(configuration, std::nullopt, false);
+    auto servers = iceServersFromConfiguration(configuration, nullptr, false);
     if (servers.hasException())
         return servers.releaseException();
 
@@ -360,7 +360,7 @@ ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configu
 
     INFO_LOG(LOGIDENTIFIER);
 
-    auto servers = iceServersFromConfiguration(configuration, std::cref(m_configuration), m_backend->isLocalDescriptionSet());
+    auto servers = iceServersFromConfiguration(configuration, &m_configuration, m_backend->isLocalDescriptionSet());
     if (servers.hasException())
         return servers.releaseException();
 
