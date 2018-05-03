@@ -31,7 +31,6 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AVFoundation/AVAssetCache_Private.h>
-#import <AVFoundation/AVAudioSession_Private.h>
 #import <AVFoundation/AVOutputContext_Private.h>
 #import <AVFoundation/AVPlayerItem_Private.h>
 #import <AVFoundation/AVPlayerLayer_Private.h>
@@ -43,6 +42,10 @@
 
 #if !PLATFORM(IOS)
 #import <AVFoundation/AVStreamDataParser.h>
+#endif
+
+#if PLATFORM(IOS)
+#import <AVFoundation/AVAudioSession_Private.h>
 #endif
 
 #else

@@ -1,3 +1,13 @@
+2018-05-03  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Provide audio route information when invoking AirPlay picker
+        https://bugs.webkit.org/show_bug.cgi?id=185199
+        <rdar://problem/39853103>
+
+        Another attempt at an unreviewed build fix.
+
+        * pal/spi/mac/AVFoundationSPI.h:
+
 2018-05-02  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Provide audio route information when invoking AirPlay picker
