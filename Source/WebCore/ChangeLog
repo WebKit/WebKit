@@ -1,3 +1,19 @@
+2018-05-02  Brent Fulgham  <bfulgham@apple.com>
+
+        Widgets should hold a WeakPtr to their parents
+        https://bugs.webkit.org/show_bug.cgi?id=185239
+        <rdar://problem/39741250>
+
+        Reviewed by Zalan Bujtas.
+
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::weakPtrFactory): Added.
+        * platform/Widget.cpp:
+        (WebCore::Widget::init): Don't perform an unnecessary assignment.
+        (WebCore::Widget::setParent): Grab a WeakPtr to the parent ScrollView.
+        * platform/Widget.h:
+        (WebCore::Widget::parent const): Change type to a WeakPtr.
+
 2018-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use pointer instead of std::optional<T&>
