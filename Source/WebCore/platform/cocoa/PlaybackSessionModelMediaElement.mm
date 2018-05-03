@@ -61,11 +61,20 @@ void PlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaEl
     if (m_mediaElement == mediaElement)
         return;
 
+    auto& events = eventNames();
+
     if (m_mediaElement && m_isListening) {
         for (auto& eventName : observedEventNames())
             m_mediaElement->removeEventListener(eventName, *this, false);
-        m_mediaElement->audioTracks().removeEventListener(eventNames().changeEvent, *this, false);
-        m_mediaElement->textTracks().removeEventListener(eventNames().changeEvent, *this, false);
+        auto& audioTracks = m_mediaElement->audioTracks();
+        audioTracks.removeEventListener(events.addtrackEvent, *this, false);
+        audioTracks.removeEventListener(events.changeEvent, *this, false);
+        audioTracks.removeEventListener(events.removetrackEvent, *this, false);
+
+        auto& textTracks = m_mediaElement->audioTracks();
+        textTracks.removeEventListener(events.addtrackEvent, *this, false);
+        textTracks.removeEventListener(events.changeEvent, *this, false);
+        textTracks.removeEventListener(events.removetrackEvent, *this, false);
     }
     m_isListening = false;
 
@@ -77,9 +86,16 @@ void PlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaEl
     if (m_mediaElement) {
         for (auto& eventName : observedEventNames())
             m_mediaElement->addEventListener(eventName, *this, false);
-        m_mediaElement->audioTracks().addEventListener(eventNames().changeEvent, *this, false);
-        m_mediaElement->textTracks().addEventListener(eventNames().changeEvent, *this, false);
-        m_isListening = true;
+
+        auto& audioTracks = m_mediaElement->audioTracks();
+        audioTracks.addEventListener(events.addtrackEvent, *this, false);
+        audioTracks.addEventListener(events.changeEvent, *this, false);
+        audioTracks.addEventListener(events.removetrackEvent, *this, false);
+
+        auto& textTracks = m_mediaElement->audioTracks();
+        textTracks.addEventListener(events.addtrackEvent, *this, false);
+        textTracks.addEventListener(events.changeEvent, *this, false);
+        textTracks.addEventListener(events.removetrackEvent, *this, false);
     }
 
     updateForEventName(eventNameAll());
@@ -368,8 +384,6 @@ const Vector<AtomicString>& PlaybackSessionModelMediaElement::observedEventNames
         eventNames().ratechangeEvent,
         eventNames().timeupdateEvent,
         eventNames().progressEvent,
-        eventNames().addtrackEvent,
-        eventNames().removetrackEvent,
         eventNames().volumechangeEvent,
         eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent,
     });

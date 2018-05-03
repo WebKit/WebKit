@@ -1,3 +1,15 @@
+2018-05-03  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Internal text and audio tracks not in fullscreen menu
+        https://bugs.webkit.org/show_bug.cgi?id=185268
+        <rdar://problem/38673440>
+
+        Reviewed by Jer Noble.
+
+        * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+        (WebCore::PlaybackSessionModelMediaElement::setMediaElement): 'addtrack' and 'removetrack'
+        events are fired at the track lists, not the media element.
+
 2018-05-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Using image map inside a shadow tree results hits a release assert in DocumentOrderedMap::add
