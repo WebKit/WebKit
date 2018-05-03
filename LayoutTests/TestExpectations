@@ -739,8 +739,6 @@ webkit.org/b/137883 transitions/multiple-shadow-transitions.html [ Pass Failure 
 webkit.org/b/137883 legacy-animation-engine/transitions/multiple-shadow-transitions.html [ Pass Failure ]
 webkit.org/b/137883 transitions/negative-delay.html [ Pass Failure ]
 webkit.org/b/137883 legacy-animation-engine/transitions/negative-delay.html [ Pass Failure ]
-webkit.org/b/137883 transitions/opacity-transition-zindex.html [ Pass Failure ]
-webkit.org/b/137883 legacy-animation-engine/transitions/opacity-transition-zindex.html [ Pass Failure ]
 webkit.org/b/137883 transitions/repeated-firing-background-color.html [ Pass Failure ]
 webkit.org/b/137883 legacy-animation-engine/transitions/repeated-firing-background-color.html [ Pass Failure ]
 webkit.org/b/137883 transitions/retargetted-transition.html [ Pass Failure ]

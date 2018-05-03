@@ -1,3 +1,13 @@
+2018-05-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip transitions/opacity-transition-zindex.html.
+        https://bugs.webkit.org/show_bug.cgi?id=184947
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Remove old expectation that is no longer applicable.
+        * platform/mac-wk2/TestExpectations:
+
 2018-05-02  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Unreviewed gardening. Add missing Skip for http/wpt.
