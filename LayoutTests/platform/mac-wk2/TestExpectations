@@ -555,7 +555,7 @@ webkit.org/b/158237 fast/scrolling/scroll-container-horizontally.html [ Pass Tim
 # PiP tests are only enabled for Sierra WebKit2.
 # rdar://problem/27574303
 [ Sierra+ ] media/controls/picture-in-picture.html [ Pass ]
-[ Sierra+ ] media/controls/pip-placeholder-without-video-controls.html [ Pass ]
+webkit.org/b/170620 [ Sierra+ ] media/controls/pip-placeholder-without-video-controls.html [ Pass Failure ]
 [ Sierra+ ] media/element-containing-pip-video-going-into-fullscreen.html [ Pass Timeout ]
 webkit.org/b/172998 [ Sierra+ ] media/fullscreen-api-enabled-media-with-presentation-mode.html [ Failure ]
 [ Sierra+ ] media/fullscreen-video-going-into-pip.html [ Pass ]

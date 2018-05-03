@@ -1,3 +1,12 @@
+2018-05-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark media/controls/pip-placeholder-without-video-controls.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=170620
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2018-05-03  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: Layout Test http/tests/security/location-cross-origin.html is a flaky failure
