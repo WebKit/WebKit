@@ -298,6 +298,20 @@ void WebProcess::registerWithStateDumper()
 
 void WebProcess::platformInitializeProcess(const ChildProcessInitializationParameters&)
 {
+#if PLATFORM(MAC)
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    // Deny the WebContent process access to the WindowServer.
+    // This call will not succeed if there are open WindowServer connections at this point.
+    setApplicationIsDaemon();
+#else
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    // This call is needed when the WebProcess is not running the NSApplication event loop.
+    // Otherwise, calling enableSandboxStyleFileQuarantine() will fail.
+    launchServicesCheckIn();
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#endif // PLATFORM(MAC)
+
     registerWithAccessibility();
 
 #if USE(OS_STATE)

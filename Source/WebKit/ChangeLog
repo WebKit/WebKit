@@ -1,3 +1,20 @@
+2018-05-03  Per Arne Vollan  <pvollan@apple.com>
+
+        An error message is written to stderr when the WebContent process is blocking WindowServer access.
+        https://bugs.webkit.org/show_bug.cgi?id=184701
+
+        Reviewed by Brent Fulgham.
+
+        Calling 'setApplicationIsDaemon(true)' instead of 'CGSSetDenyWindowServerConnections(true)' to disable
+        access to the WindowServer in the WebContent process, will remove this error message. After this change,
+        the url of the WebContent process is still showing up in Activity Monitor, which previously was a
+        problem when calling 'setApplicationIsDaemon(true)'.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2018-05-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r231253.

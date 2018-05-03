@@ -224,23 +224,6 @@ void WebProcess::initializeProcess(const ChildProcessInitializationParameters& p
 
     MessagePortChannelProvider::setSharedProvider(WebMessagePortChannelProvider::singleton());
     
-#if PLATFORM(MAC)
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    // Deny the WebContent process access to the WindowServer.
-    // We cannot call setApplicationIsDaemon here, since Activity Monitor will not show the
-    // url of the WebContent process, then.
-    // This call will not succeed if there are open WindowServer connections at this point.
-    CGError error = CGSSetDenyWindowServerConnections(true);
-    ASSERT(error == kCGErrorSuccess);
-    if (error != kCGErrorSuccess)
-        WTFLogAlways("Failed to deny WindowServer connections, error = %d", error);
-#endif
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    // This call is needed when the WebProcess is not running the NSApplication event loop.
-    // Otherwise, calling enableSandboxStyleFileQuarantine() will fail.
-    launchServicesCheckIn();
-#endif
-#endif
     platformInitializeProcess(parameters);
 }
 
