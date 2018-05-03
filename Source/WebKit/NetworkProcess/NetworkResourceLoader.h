@@ -134,7 +134,13 @@ private:
     void startNetworkLoad(WebCore::ResourceRequest&&, FirstLoad);
     void continueDidReceiveResponse();
 
-    void cleanup();
+    enum class LoadResult {
+        Unknown,
+        Success,
+        Failure,
+        Cancel
+    };
+    void cleanup(LoadResult);
     
     void platformDidReceiveResponse(const WebCore::ResourceResponse&);
 
@@ -184,6 +190,8 @@ private:
     bool m_isWaitingContinueWillSendRequestForCachedRedirect { false };
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryWaitingForContinueDidReceiveResponse;
     RefPtr<NetworkLoadChecker> m_networkLoadChecker;
+
+    std::optional<NetworkActivityTracker> m_networkActivityTracker;
 };
 
 } // namespace WebKit

@@ -111,6 +111,10 @@ void WebResourceLoadScheduler::loadResourceSynchronously(FrameLoader& frameLoade
     ResourceHandle::loadResourceSynchronously(frameLoader.networkingContext(), request, options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use, error, response, data);
 }
 
+void WebResourceLoadScheduler::pageLoadCompleted(uint64_t /*webPageID*/)
+{
+}
+
 void WebResourceLoadScheduler::schedulePluginStreamLoad(Frame& frame, NetscapePlugInStreamLoaderClient& client, ResourceRequest&& request, CompletionHandler<void(RefPtr<WebCore::NetscapePlugInStreamLoader>&&)>&& completionHandler)
 {
     NetscapePlugInStreamLoader::create(frame, client, WTFMove(request), [this, completionHandler = WTFMove(completionHandler)] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) mutable {

@@ -130,6 +130,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_processSwapsOnNavigation = this->m_processSwapsOnNavigation;
     copy->m_alwaysKeepAndReuseSwappedProcesses = this->m_alwaysKeepAndReuseSwappedProcesses;
     copy->m_processSwapsOnWindowOpenWithOpener = this->m_processSwapsOnWindowOpenWithOpener;
+    copy->m_trackNetworkActivity = this->m_trackNetworkActivity;
 
     return copy;
 }

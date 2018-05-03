@@ -29,6 +29,7 @@
 #include "CacheStorageEngineConnection.h"
 #include "Connection.h"
 #include "DownloadID.h"
+#include "NetworkActivityTracker.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkMDNSRegister.h"
 #include "NetworkRTCProvider.h"
@@ -111,6 +112,9 @@ public:
         m_networkLoadInformationByID.remove(identifier);
     }
 
+    std::optional<NetworkActivityTracker> startTrackingResourceLoad(uint64_t pageID, ResourceLoadIdentifier resourceID, bool isMainResource);
+    void stopTrackingResourceLoad(ResourceLoadIdentifier resourceID, NetworkActivityTracker::CompletionCode);
+
 private:
     NetworkConnectionToWebProcess(IPC::Connection::Identifier);
 
@@ -133,6 +137,7 @@ private:
     void preconnectTo(uint64_t preconnectionIdentifier, NetworkResourceLoadParameters&&);
 
     void removeLoadIdentifier(ResourceLoadIdentifier);
+    void pageLoadCompleted(uint64_t webPageID);
     void setDefersLoading(ResourceLoadIdentifier, bool);
     void crossOriginRedirectReceived(ResourceLoadIdentifier, const WebCore::URL& redirectURL);
     void startDownload(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const String& suggestedName = { });
@@ -180,11 +185,41 @@ private:
     void removeOriginAccessWhitelistEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains);
     void resetOriginAccessWhitelists();
 
+    struct ResourceNetworkActivityTracker {
+        ResourceNetworkActivityTracker() = default;
+        ResourceNetworkActivityTracker(const ResourceNetworkActivityTracker&) = default;
+        ResourceNetworkActivityTracker(ResourceNetworkActivityTracker&&) = default;
+        ResourceNetworkActivityTracker(uint64_t pageID)
+            : pageID { pageID }
+            , isRootActivity { true }
+            , networkActivity { NetworkActivityTracker::Label::LoadPage }
+        {
+        }
+
+        ResourceNetworkActivityTracker(uint64_t pageID, ResourceLoadIdentifier resourceID)
+            : pageID { pageID }
+            , resourceID { resourceID }
+            , networkActivity { NetworkActivityTracker::Label::LoadResource }
+        {
+        }
+
+        uint64_t pageID { 0 };
+        ResourceLoadIdentifier resourceID { 0 };
+        bool isRootActivity { false };
+        NetworkActivityTracker networkActivity;
+    };
+
+    void stopAllNetworkActivityTracking();
+    void stopAllNetworkActivityTrackingForPage(uint64_t pageID);
+    size_t findRootNetworkActivity(uint64_t pageID);
+    size_t findNetworkActivityTracker(ResourceLoadIdentifier resourceID);
+
     Ref<IPC::Connection> m_connection;
 
     HashMap<uint64_t, RefPtr<NetworkSocketStream>> m_networkSocketStreams;
     HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader>> m_networkResourceLoaders;
     HashMap<String, RefPtr<WebCore::BlobDataFileReference>> m_blobDataFileReferences;
+    Vector<ResourceNetworkActivityTracker> m_networkActivityTrackers;
 
     HashMap<ResourceLoadIdentifier, NetworkLoadInformation> m_networkLoadInformationByID;
 

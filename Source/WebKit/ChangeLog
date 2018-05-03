@@ -1,3 +1,90 @@
+2018-05-02  Keith Rollin  <krollin@apple.com>
+
+        Add facility for tracking times and results of page and resource loading
+        https://bugs.webkit.org/show_bug.cgi?id=184838
+        <rdar://problem/36548974>
+
+        Reviewed by Brent Fulgham.
+
+        Add NetworkActivityTracker. The idea behind this facility is to create
+        and destroy them around networking activity that we want to track for
+        the purpose of measuring overall network health. They can be created
+        around the loading of pages or individual resources, and can be
+        arranged in a parent/child hierarchy to indicate what pages the
+        resources are part of. The NetworkActivity tracker tracks load times
+        and results. On Cocoa, it can be integrated with CFNetwork in order to
+        associate WebKit activity with low-level networking activity.
+
+        * CMakeLists.txt:
+        * Configurations/WebKit.xcconfig:
+        * NetworkProcess/NetworkActivityTracker.cpp: Copied from Source/WebKit/NetworkProcess/NetworkLoadParameters.h.
+        (WebKit::NetworkActivityTracker::NetworkActivityTracker):
+        (WebKit::NetworkActivityTracker::~NetworkActivityTracker):
+        (WebKit::NetworkActivityTracker::setParent):
+        (WebKit::NetworkActivityTracker::start):
+        (WebKit::NetworkActivityTracker::complete):
+        * NetworkProcess/NetworkActivityTracker.h: Added.
+        (WebKit::NetworkActivityTracker::getPlatformObject):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::pageLoadCompleted):
+        (WebKit::networkActivityTrackingEnabled):
+        (WebKit::NetworkConnectionToWebProcess::startTrackingResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::stopTrackingResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::stopAllNetworkActivityTracking):
+        (WebKit::NetworkConnectionToWebProcess::stopAllNetworkActivityTrackingForPage):
+        (WebKit::NetworkConnectionToWebProcess::findRootNetworkActivity):
+        (WebKit::NetworkConnectionToWebProcess::findNetworkActivityTracker):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (WebKit::NetworkConnectionToWebProcess::ResourceNetworkActivityTracker::ResourceNetworkActivityTracker):
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::create):
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::trackNetworkActivity const):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+        (WebKit::NetworkResourceLoader::cleanup):
+        (WebKit::NetworkResourceLoader::abort):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::didFailLoading):
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::continueProcessingCachedEntryAfterDidReceiveResponse):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/cocoa/NetworkActivityTrackerCocoa.mm: Added.
+        (WebKit::NetworkActivityTracker::NetworkActivityTracker):
+        (WebKit::NetworkActivityTracker::~NetworkActivityTracker):
+        (WebKit::NetworkActivityTracker::setParent):
+        (WebKit::NetworkActivityTracker::start):
+        (WebKit::NetworkActivityTracker::complete):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationTrackNetworkActivity):
+        (WKContextConfigurationSetTrackNetworkActivity):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration trackNetworkActivity]):
+        (-[_WKProcessPoolConfiguration setTrackNetworkActivity:]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::pageLoadCompleted):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
 2018-05-02  Jer Noble  <jer.noble@apple.com>
 
         Open audio/video sandbox services for minimal simulator

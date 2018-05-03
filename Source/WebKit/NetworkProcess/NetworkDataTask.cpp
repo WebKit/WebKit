@@ -54,7 +54,7 @@ Ref<NetworkDataTask> NetworkDataTask::create(NetworkSession& session, NetworkDat
         return NetworkDataTaskBlob::create(session, client, parameters.request, parameters.contentSniffingPolicy, parameters.blobFileReferences);
 
 #if PLATFORM(COCOA)
-    return NetworkDataTaskCocoa::create(session, client, parameters.request, parameters.webFrameID, parameters.webPageID, parameters.storedCredentialsPolicy, parameters.contentSniffingPolicy, parameters.contentEncodingSniffingPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect, parameters.shouldPreconnectOnly, parameters.isMainFrameNavigation);
+    return NetworkDataTaskCocoa::create(session, client, parameters.request, parameters.webFrameID, parameters.webPageID, parameters.storedCredentialsPolicy, parameters.contentSniffingPolicy, parameters.contentEncodingSniffingPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect, parameters.shouldPreconnectOnly, parameters.isMainFrameNavigation, parameters.networkActivityTracker);
 #endif
 #if USE(SOUP)
     return NetworkDataTaskSoup::create(session, client, parameters.request, parameters.storedCredentialsPolicy, parameters.contentSniffingPolicy, parameters.contentEncodingSniffingPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect, parameters.isMainFrameNavigation);

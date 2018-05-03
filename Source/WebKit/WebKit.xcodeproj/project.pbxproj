@@ -1210,10 +1210,13 @@
 		530258451DCBBD2200DA89C2 /* NetworkCaptureReplayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 530258381DCBBD1D00DA89C2 /* NetworkCaptureReplayer.h */; };
 		530258461DCBBD2200DA89C2 /* NetworkDataTaskReplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530258391DCBBD1D00DA89C2 /* NetworkDataTaskReplay.cpp */; };
 		530258471DCBBD2200DA89C2 /* NetworkDataTaskReplay.h in Headers */ = {isa = PBXBuildFile; fileRef = 5302583A1DCBBD1D00DA89C2 /* NetworkDataTaskReplay.h */; };
+		5315876C2076B762004BF9F3 /* NetworkActivityTrackerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5315876B2076B713004BF9F3 /* NetworkActivityTrackerCocoa.mm */; };
 		532159531DBAE7180054AA3C /* NetworkSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532159521DBAE6FC0054AA3C /* NetworkSession.cpp */; };
 		532159541DBAE71D0054AA3C /* NetworkDataTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532159511DBAE6FC0054AA3C /* NetworkDataTask.cpp */; };
 		532159551DBAE7290054AA3C /* NetworkSessionCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 532159501DBAE6D70054AA3C /* NetworkSessionCocoa.h */; };
 		532159561DBAE72D0054AA3C /* NetworkDataTaskCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 5321594F1DBAE6D70054AA3C /* NetworkDataTaskCocoa.h */; };
+		535BCB922069C49C00CCCE02 /* NetworkActivityTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 535BCB902069C49C00CCCE02 /* NetworkActivityTracker.h */; };
+		5379DB72207E9470007D8C33 /* NetworkActivityTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53F3CAA5206C443E0086490E /* NetworkActivityTracker.cpp */; };
 		53BA47D01DC2EF5E004DF4AD /* NetworkDataTaskBlob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539EB5461DC2EE40009D48CF /* NetworkDataTaskBlob.cpp */; };
 		53BA47D11DC2EF5E004DF4AD /* NetworkDataTaskBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 539EB5471DC2EE40009D48CF /* NetworkDataTaskBlob.h */; };
 		53DEA3661DDE423100E82648 /* json.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 53DEA3651DDE422E00E82648 /* json.hpp */; };
@@ -3648,13 +3651,16 @@
 		530258381DCBBD1D00DA89C2 /* NetworkCaptureReplayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkCaptureReplayer.h; path = NetworkProcess/capture/NetworkCaptureReplayer.h; sourceTree = "<group>"; };
 		530258391DCBBD1D00DA89C2 /* NetworkDataTaskReplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkDataTaskReplay.cpp; path = NetworkProcess/capture/NetworkDataTaskReplay.cpp; sourceTree = "<group>"; };
 		5302583A1DCBBD1D00DA89C2 /* NetworkDataTaskReplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkDataTaskReplay.h; path = NetworkProcess/capture/NetworkDataTaskReplay.h; sourceTree = "<group>"; };
+		5315876B2076B713004BF9F3 /* NetworkActivityTrackerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkActivityTrackerCocoa.mm; path = NetworkProcess/cocoa/NetworkActivityTrackerCocoa.mm; sourceTree = "<group>"; };
 		5321594F1DBAE6D70054AA3C /* NetworkDataTaskCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkDataTaskCocoa.h; path = NetworkProcess/cocoa/NetworkDataTaskCocoa.h; sourceTree = "<group>"; };
 		532159501DBAE6D70054AA3C /* NetworkSessionCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkSessionCocoa.h; path = NetworkProcess/cocoa/NetworkSessionCocoa.h; sourceTree = "<group>"; };
 		532159511DBAE6FC0054AA3C /* NetworkDataTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkDataTask.cpp; path = NetworkProcess/NetworkDataTask.cpp; sourceTree = "<group>"; };
 		532159521DBAE6FC0054AA3C /* NetworkSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkSession.cpp; path = NetworkProcess/NetworkSession.cpp; sourceTree = "<group>"; };
+		535BCB902069C49C00CCCE02 /* NetworkActivityTracker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NetworkActivityTracker.h; path = NetworkProcess/NetworkActivityTracker.h; sourceTree = "<group>"; };
 		539EB5461DC2EE40009D48CF /* NetworkDataTaskBlob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkDataTaskBlob.cpp; path = NetworkProcess/NetworkDataTaskBlob.cpp; sourceTree = "<group>"; };
 		539EB5471DC2EE40009D48CF /* NetworkDataTaskBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkDataTaskBlob.h; path = NetworkProcess/NetworkDataTaskBlob.h; sourceTree = "<group>"; };
 		53DEA3651DDE422E00E82648 /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = json.hpp; path = NetworkProcess/capture/json.hpp; sourceTree = "<group>"; };
+		53F3CAA5206C443E0086490E /* NetworkActivityTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkActivityTracker.cpp; path = NetworkProcess/NetworkActivityTracker.cpp; sourceTree = "<group>"; };
 		5750F32A2032D4E500389347 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
 		5760828B2029854200116678 /* WebCredentialsMessenger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCredentialsMessenger.h; sourceTree = "<group>"; };
 		5760828C2029854200116678 /* WebCredentialsMessenger.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCredentialsMessenger.cpp; sourceTree = "<group>"; };
@@ -6379,6 +6385,8 @@
 				2DA944BB188511DD00ED86DB /* ios */,
 				510CC7DC16138E2900D03ED3 /* mac */,
 				413075971DE84ED70039EC69 /* webrtc */,
+				53F3CAA5206C443E0086490E /* NetworkActivityTracker.cpp */,
+				535BCB902069C49C00CCCE02 /* NetworkActivityTracker.h */,
 				513A16491630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp */,
 				513A164A1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h */,
 				513A164B1630A9BF005D7D22 /* NetworkConnectionToWebProcess.messages.in */,
@@ -6905,6 +6913,7 @@
 		7EC4F0F818E4A922008056AF /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				5315876B2076B713004BF9F3 /* NetworkActivityTrackerCocoa.mm */,
 				5321594F1DBAE6D70054AA3C /* NetworkDataTaskCocoa.h */,
 				5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */,
 				7EC4F0F918E4A945008056AF /* NetworkProcessCocoa.mm */,
@@ -8991,6 +9000,7 @@
 				1A6FBD2811E69BC200DB1371 /* NetscapePlugin.h in Headers */,
 				1A4A9C5612B816CF008FE984 /* NetscapePluginModule.h in Headers */,
 				1AA5889211EE70400061B882 /* NetscapePluginStream.h in Headers */,
+				535BCB922069C49C00CCCE02 /* NetworkActivityTracker.h in Headers */,
 				E1798C7A16E6818800240139 /* NetworkBlobRegistry.h in Headers */,
 				E4436ECC1A0D040B00EAD204 /* NetworkCache.h in Headers */,
 				E49D40D71AD3FB170066B7B9 /* NetworkCacheBlobStorage.h in Headers */,
@@ -10632,6 +10642,7 @@
 				2D50365E1BCC793F00E20BB3 /* NativeWebGestureEventMac.mm in Sources */,
 				2DA9449E1884E4F000ED86DB /* NativeWebKeyboardEventIOS.mm in Sources */,
 				C02BFF1E1251502E009CCBEA /* NativeWebKeyboardEventMac.mm in Sources */,
+				1C9EBA5C2087E74F00054429 /* NativeWebMouseEventIOS.mm in Sources */,
 				31EA25D2134F78C0005B1452 /* NativeWebMouseEventMac.mm in Sources */,
 				2DA9449F1884E4F000ED86DB /* NativeWebTouchEventIOS.mm in Sources */,
 				DF58C6361371ACA000F9A37C /* NativeWebWheelEventMac.mm in Sources */,
@@ -10643,6 +10654,8 @@
 				1A4A9C5512B816CF008FE984 /* NetscapePluginModule.cpp in Sources */,
 				1A4A9C9A12B821CD008FE984 /* NetscapePluginModuleMac.mm in Sources */,
 				1AA5889311EE70400061B882 /* NetscapePluginStream.cpp in Sources */,
+				5379DB72207E9470007D8C33 /* NetworkActivityTracker.cpp in Sources */,
+				5315876C2076B762004BF9F3 /* NetworkActivityTrackerCocoa.mm in Sources */,
 				E1798C7916E6818800240139 /* NetworkBlobRegistry.cpp in Sources */,
 				E4436ECA1A0D03FA00EAD204 /* NetworkCache.cpp in Sources */,
 				E49D40D91AD3FB210066B7B9 /* NetworkCacheBlobStorage.cpp in Sources */,
@@ -10658,7 +10671,6 @@
 				832AE2531BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.cpp in Sources */,
 				83BDCCB91AC5FDB6003F6441 /* NetworkCacheStatistics.cpp in Sources */,
 				E4436ED01A0D040B00EAD204 /* NetworkCacheStorage.cpp in Sources */,
-				1C9EBA5C2087E74F00054429 /* NativeWebMouseEventIOS.mm in Sources */,
 				8310428C1BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.cpp in Sources */,
 				5302583D1DCBBD2200DA89C2 /* NetworkCaptureEvent.cpp in Sources */,
 				530258401DCBBD2200DA89C2 /* NetworkCaptureManager.cpp in Sources */,

@@ -55,6 +55,10 @@
 @end
 #endif
 
+#if HAVE(NW_ACTIVITY)
+#import <CFNetwork/CFNSURLConnection.h>
+#endif
+
 namespace WebKit {
 
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
@@ -181,7 +185,7 @@ static void updateTaskWithFirstPartyForSameSiteCookies(NSURLSessionDataTask* tas
 #endif
 }
 
-NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, uint64_t frameID, uint64_t pageID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly, bool dataTaskIsForMainFrameNavigation)
+NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, uint64_t frameID, uint64_t pageID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly, bool dataTaskIsForMainFrameNavigation, std::optional<NetworkActivityTracker> networkActivityTracker)
     : NetworkDataTask(session, client, requestWithCredentials, storedCredentialsPolicy, shouldClearReferrerOnHTTPSToHTTPRedirect, dataTaskIsForMainFrameNavigation)
     , m_frameID(frameID)
     , m_pageID(pageID)
@@ -273,6 +277,11 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         m_task.get().priority = toNSURLSessionTaskPriority(request.priority());
 
     updateTaskWithFirstPartyForSameSiteCookies(m_task.get(), request);
+
+#if HAVE(NW_ACTIVITY)
+    if (networkActivityTracker)
+        m_task.get()._nw_activity = networkActivityTracker.value().getPlatformObject();
+#endif
 }
 
 NetworkDataTaskCocoa::~NetworkDataTaskCocoa()

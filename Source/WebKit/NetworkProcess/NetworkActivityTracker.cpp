@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
+#include "config.h"
 #include "NetworkActivityTracker.h"
-#include <WebCore/BlobDataFileReference.h>
-#include <WebCore/ResourceLoaderOptions.h>
-#include <WebCore/ResourceRequest.h>
-#include <pal/SessionID.h>
+
+#if !HAVE(NW_ACTIVITY)
 
 namespace WebKit {
 
-enum class PreconnectOnly { No, Yes };
+NetworkActivityTracker::NetworkActivityTracker(Label, Domain)
+{
+}
 
-class NetworkLoadParameters {
-public:
-    uint64_t webPageID { 0 };
-    uint64_t webFrameID { 0 };
-    PAL::SessionID sessionID { PAL::SessionID::emptySessionID() };
-    WebCore::ResourceRequest request;
-    WebCore::ContentSniffingPolicy contentSniffingPolicy { WebCore::SniffContent };
-    WebCore::ContentEncodingSniffingPolicy contentEncodingSniffingPolicy { WebCore::ContentEncodingSniffingPolicy::Sniff };
-    WebCore::StoredCredentialsPolicy storedCredentialsPolicy { WebCore::StoredCredentialsPolicy::DoNotUse };
-    WebCore::ClientCredentialPolicy clientCredentialPolicy { WebCore::ClientCredentialPolicy::CannotAskClientForCredentials };
-    bool shouldFollowRedirects { true };
-    bool shouldClearReferrerOnHTTPSToHTTPRedirect { true };
-    bool defersLoading { false };
-    bool needsCertificateInfo { false };
-    bool isMainFrameNavigation { false };
-    Vector<RefPtr<WebCore::BlobDataFileReference>> blobFileReferences;
-    PreconnectOnly shouldPreconnectOnly { PreconnectOnly::No };
-    std::optional<NetworkActivityTracker> networkActivityTracker;
-};
+NetworkActivityTracker::~NetworkActivityTracker()
+{
+}
+
+void NetworkActivityTracker::setParent(NetworkActivityTracker&)
+{
+}
+
+void NetworkActivityTracker::start()
+{
+}
+
+void NetworkActivityTracker::complete(CompletionCode)
+{
+}
 
 } // namespace WebKit
+
+#endif // !HAVE(NW_ACTIVITY)

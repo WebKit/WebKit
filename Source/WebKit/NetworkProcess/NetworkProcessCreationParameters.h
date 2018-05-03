@@ -132,6 +132,8 @@ struct NetworkProcessCreationParameters {
     Vector<String> urlSchemesRegisteredAsDisplayIsolated;
     Vector<String> urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
     Vector<String> urlSchemesRegisteredAsCORSEnabled;
+
+    bool trackNetworkActivity { false };
 };
 
 } // namespace WebKit

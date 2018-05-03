@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
+#include "config.h"
 #include "NetworkActivityTracker.h"
-#include <WebCore/BlobDataFileReference.h>
-#include <WebCore/ResourceLoaderOptions.h>
-#include <WebCore/ResourceRequest.h>
-#include <pal/SessionID.h>
+
+#if HAVE(NW_ACTIVITY)
 
 namespace WebKit {
 
-enum class PreconnectOnly { No, Yes };
+NetworkActivityTracker::NetworkActivityTracker(Label label, Domain domain)
+    : m_domain(domain)
+    , m_label(label)
+    , m_networkActivity(adoptNS(nw_activity_create(static_cast<uint32_t>(m_domain), static_cast<uint32_t>(m_label))))
+{
+}
 
-class NetworkLoadParameters {
-public:
-    uint64_t webPageID { 0 };
-    uint64_t webFrameID { 0 };
-    PAL::SessionID sessionID { PAL::SessionID::emptySessionID() };
-    WebCore::ResourceRequest request;
-    WebCore::ContentSniffingPolicy contentSniffingPolicy { WebCore::SniffContent };
-    WebCore::ContentEncodingSniffingPolicy contentEncodingSniffingPolicy { WebCore::ContentEncodingSniffingPolicy::Sniff };
-    WebCore::StoredCredentialsPolicy storedCredentialsPolicy { WebCore::StoredCredentialsPolicy::DoNotUse };
-    WebCore::ClientCredentialPolicy clientCredentialPolicy { WebCore::ClientCredentialPolicy::CannotAskClientForCredentials };
-    bool shouldFollowRedirects { true };
-    bool shouldClearReferrerOnHTTPSToHTTPRedirect { true };
-    bool defersLoading { false };
-    bool needsCertificateInfo { false };
-    bool isMainFrameNavigation { false };
-    Vector<RefPtr<WebCore::BlobDataFileReference>> blobFileReferences;
-    PreconnectOnly shouldPreconnectOnly { PreconnectOnly::No };
-    std::optional<NetworkActivityTracker> networkActivityTracker;
-};
+NetworkActivityTracker::~NetworkActivityTracker()
+{
+}
+
+void NetworkActivityTracker::setParent(NetworkActivityTracker& parent)
+{
+    ASSERT(m_networkActivity.get());
+    ASSERT(parent.m_networkActivity.get());
+    nw_activity_set_parent_activity(m_networkActivity.get(), parent.m_networkActivity.get());
+}
+
+void NetworkActivityTracker::start()
+{
+    ASSERT(m_networkActivity.get());
+    nw_activity_activate(m_networkActivity.get());
+}
+
+void NetworkActivityTracker::complete(CompletionCode code)
+{
+    if (m_isCompleted)
+        return;
+
+    m_isCompleted = true;
+
+    ASSERT(m_networkActivity.get());
+    auto reason =
+        code == CompletionCode::None ? nw_activity_completion_reason_none :
+        code == CompletionCode::Success ? nw_activity_completion_reason_success :
+        code == CompletionCode::Failure ? nw_activity_completion_reason_failure :
+        nw_activity_completion_reason_invalid;
+    nw_activity_complete_with_reason(m_networkActivity.get(), reason);
+    m_networkActivity.clear();
+}
 
 } // namespace WebKit
+
+#endif // HAVE(NW_ACTIVITY)

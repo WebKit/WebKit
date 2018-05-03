@@ -257,6 +257,16 @@
     return _processPoolConfiguration->processSwapsOnWindowOpenWithOpener();
 }
 
+- (BOOL)trackNetworkActivity
+{
+    return _processPoolConfiguration->trackNetworkActivity();
+}
+
+- (void)setTrackNetworkActivity:(BOOL)track
+{
+    _processPoolConfiguration->setTrackNetworkActivity(track);
+}
+
 #if PLATFORM(IOS)
 - (NSString *)CTDataConnectionServiceType
 {

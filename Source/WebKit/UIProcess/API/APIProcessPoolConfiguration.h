@@ -144,6 +144,9 @@ public:
     bool processSwapsOnWindowOpenWithOpener() const { return m_processSwapsOnWindowOpenWithOpener; }
     void setProcessSwapsOnWindowOpenWithOpener(bool swaps) { m_processSwapsOnWindowOpenWithOpener = swaps; }
 
+    bool trackNetworkActivity() const { return m_trackNetworkActivity; }
+    void setTrackNetworkActivity(bool track) { m_trackNetworkActivity = track; }
+
 private:
     bool m_shouldHaveLegacyDataStore { false };
 
@@ -178,6 +181,7 @@ private:
     bool m_processSwapsOnNavigation { false };
     bool m_alwaysKeepAndReuseSwappedProcesses { false };
     bool m_processSwapsOnWindowOpenWithOpener { false };
+    bool m_trackNetworkActivity { false };
 
 #if PLATFORM(IOS)
     WTF::String m_ctDataConnectionServiceType;

@@ -165,6 +165,8 @@ void NetworkResourceLoader::start()
 {
     ASSERT(RunLoop::isMain());
 
+    m_networkActivityTracker = m_connection->startTrackingResourceLoad(m_parameters.webPageID, m_parameters.identifier, isMainResource());
+
     if (m_defersLoading) {
         RELEASE_LOG_IF_ALLOWED("start: Loading is deferred (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
         return;
@@ -254,6 +256,7 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
 
     NetworkLoadParameters parameters = m_parameters;
     parameters.defersLoading = m_defersLoading;
+    parameters.networkActivityTracker = m_networkActivityTracker;
     if (m_networkLoadChecker)
         parameters.storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy();
 
@@ -306,9 +309,14 @@ void NetworkResourceLoader::setDefersLoading(bool defers)
         RELEASE_LOG_IF_ALLOWED("setDefersLoading: defers = %d, but nothing to do (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_defersLoading, m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
 }
 
-void NetworkResourceLoader::cleanup()
+void NetworkResourceLoader::cleanup(LoadResult result)
 {
     ASSERT(RunLoop::isMain());
+
+    m_connection->stopTrackingResourceLoad(m_parameters.identifier,
+        result == LoadResult::Success ? NetworkActivityTracker::CompletionCode::Success :
+        result == LoadResult::Failure ? NetworkActivityTracker::CompletionCode::Failure :
+        NetworkActivityTracker::CompletionCode::None);
 
     m_bufferingTimer.stop();
 
@@ -342,7 +350,7 @@ void NetworkResourceLoader::abort()
         m_networkLoad->cancel();
     }
 
-    cleanup();
+    cleanup(LoadResult::Cancel);
 }
 
 static bool areFrameAncestorsSameSite(const ResourceResponse& response, const Vector<RefPtr<SecurityOrigin>>& frameAncestorOrigins)
@@ -507,7 +515,7 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
 
     tryStoreAsCacheEntry();
 
-    cleanup();
+    cleanup(LoadResult::Success);
 }
 
 void NetworkResourceLoader::didFailLoading(const ResourceError& error)
@@ -527,7 +535,7 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
     } else if (auto* connection = messageSenderConnection())
         connection->send(Messages::WebResourceLoader::DidFailResourceLoad(error), messageSenderDestinationID());
 
-    cleanup();
+    cleanup(LoadResult::Failure);
 }
 
 void NetworkResourceLoader::didBlockAuthenticationChallenge()
@@ -731,7 +739,7 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
     if (isSynchronous()) {
         m_synchronousLoadData->response = WTFMove(response);
         sendReplyToSynchronousRequest(*m_synchronousLoadData, entry->buffer());
-        cleanup();
+        cleanup(LoadResult::Success);
         return;
     }
 
@@ -765,7 +773,7 @@ void NetworkResourceLoader::continueProcessingCachedEntryAfterDidReceiveResponse
                 }
                 if (retrievedAll) {
                     loader->sendResultForCacheEntry(WTFMove(entry));
-                    loader->cleanup();
+                    loader->cleanup(LoadResult::Success);
                 }
             });
         }
@@ -774,7 +782,7 @@ void NetworkResourceLoader::continueProcessingCachedEntryAfterDidReceiveResponse
 
     sendResultForCacheEntry(WTFMove(entry));
 
-    cleanup();
+    cleanup(LoadResult::Success);
 }
 
 void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)

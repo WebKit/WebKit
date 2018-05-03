@@ -162,6 +162,8 @@ public:
     NetworkContentRuleListManager& networkContentRuleListManager() { return m_NetworkContentRuleListManager; }
 #endif
 
+    bool trackNetworkActivity() const { return m_trackNetworkActivity; }
+
 private:
     NetworkProcess();
     ~NetworkProcess();
@@ -300,6 +302,8 @@ private:
 #if ENABLE(CONTENT_EXTENSIONS)
     NetworkContentRuleListManager m_NetworkContentRuleListManager;
 #endif
+
+    bool m_trackNetworkActivity { false };
 };
 
 } // namespace WebKit

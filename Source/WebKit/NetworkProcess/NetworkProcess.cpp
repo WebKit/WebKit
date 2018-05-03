@@ -298,6 +298,8 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     for (auto& scheme : parameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest)
         registerURLSchemeAsCanDisplayOnlyIfCanRequest(scheme);
 
+    m_trackNetworkActivity = parameters.trackNetworkActivity;
+
     RELEASE_LOG(Process, "%p - NetworkProcess::initializeNetworkProcess: Presenting process = %d", this, WebCore::presentingApplicationPID());
 }
 

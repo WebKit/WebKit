@@ -29,6 +29,7 @@
 #include "BlobDataFileReferenceWithSandboxExtension.h"
 #include "CacheStorageEngineConnectionMessages.h"
 #include "DataReference.h"
+#include "Logging.h"
 #include "NetworkBlobRegistry.h"
 #include "NetworkCache.h"
 #include "NetworkConnectionToWebProcessMessages.h"
@@ -60,6 +61,9 @@
 #include <pal/SessionID.h>
 
 using namespace WebCore;
+
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(true, Network, "%p - NetworkConnectionToWebProcess::" fmt, this, ##__VA_ARGS__)
+#define RELEASE_LOG_ERROR_IF_ALLOWED(fmt, ...) RELEASE_LOG_ERROR_IF(true, Network, "%p - NetworkConnectionToWebProcess::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
 
@@ -180,6 +184,11 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection&)
         loader->abort();
     ASSERT(m_networkResourceLoaders.isEmpty());
 
+    // All trackers of resources that were in the middle of being loaded were
+    // stopped with the abort() calls above, but we still need to sweep up the
+    // root activity trackers.
+    stopAllNetworkActivityTracking();
+
     NetworkBlobRegistry::singleton().connectionToWebProcessDidClose(this);
     NetworkProcess::singleton().removeNetworkConnectionToWebProcess(this);
 
@@ -285,6 +294,11 @@ void NetworkConnectionToWebProcess::removeLoadIdentifier(ResourceLoadIdentifier 
     // to leaked loader resources (connections, threads, etc).
     loader->abort();
     ASSERT(!m_networkResourceLoaders.contains(identifier));
+}
+
+void NetworkConnectionToWebProcess::pageLoadCompleted(uint64_t webPageID)
+{
+    stopAllNetworkActivityTrackingForPage(webPageID);
 }
 
 void NetworkConnectionToWebProcess::setDefersLoading(ResourceLoadIdentifier identifier, bool defers)
@@ -530,6 +544,117 @@ void NetworkConnectionToWebProcess::removeOriginAccessWhitelistEntry(const Strin
 void NetworkConnectionToWebProcess::resetOriginAccessWhitelists()
 {
     SecurityPolicy::resetOriginAccessWhitelists();
+}
+
+static bool networkActivityTrackingEnabled()
+{
+    return NetworkProcess::singleton().trackNetworkActivity();
+}
+
+std::optional<NetworkActivityTracker> NetworkConnectionToWebProcess::startTrackingResourceLoad(uint64_t pageID, ResourceLoadIdentifier resourceID, bool isMainResource)
+{
+    if (!networkActivityTrackingEnabled())
+        return std::nullopt;
+
+    // Either get the existing root activity tracker for this page or create a
+    // new one if this is the main resource.
+
+    size_t rootActivityIndex;
+    if (isMainResource) {
+        // If we're loading a page from the top, make sure any tracking of
+        // previous activity for this page is stopped.
+
+        stopAllNetworkActivityTrackingForPage(pageID);
+
+        rootActivityIndex = m_networkActivityTrackers.size();
+        m_networkActivityTrackers.constructAndAppend(pageID);
+        m_networkActivityTrackers[rootActivityIndex].networkActivity.start();
+
+#if HAVE(NW_ACTIVITY)
+        ASSERT(m_networkActivityTrackers[rootActivityIndex].networkActivity.getPlatformObject());
+#endif
+    } else {
+        rootActivityIndex = findRootNetworkActivity(pageID);
+
+        // This could happen if the Networking process crashes, taking its
+        // previous state with it.
+        if (rootActivityIndex == notFound)
+            return std::nullopt;
+
+#if HAVE(NW_ACTIVITY)
+        ASSERT(m_networkActivityTrackers[rootActivityIndex].networkActivity.getPlatformObject());
+#endif
+    }
+
+    // Create a tracker for the loading of the new resource, setting the root
+    // activity tracker as its parent.
+
+    size_t newActivityIndex = m_networkActivityTrackers.size();
+    m_networkActivityTrackers.constructAndAppend(pageID, resourceID);
+#if HAVE(NW_ACTIVITY)
+    ASSERT(m_networkActivityTrackers[newActivityIndex].networkActivity.getPlatformObject());
+#endif
+
+    auto& newActivityTracker = m_networkActivityTrackers[newActivityIndex];
+    newActivityTracker.networkActivity.setParent(m_networkActivityTrackers[rootActivityIndex].networkActivity);
+    newActivityTracker.networkActivity.start();
+
+    return newActivityTracker.networkActivity;
+}
+
+void NetworkConnectionToWebProcess::stopTrackingResourceLoad(ResourceLoadIdentifier resourceID, NetworkActivityTracker::CompletionCode code)
+{
+    if (!networkActivityTrackingEnabled())
+        return;
+
+    auto itemIndex = findNetworkActivityTracker(resourceID);
+    if (itemIndex == notFound) {
+        RELEASE_LOG_ERROR(Network, "stopTrackingResourceLoad: Unable to find network activity for resource: %d", static_cast<int>(resourceID));
+        return;
+    }
+
+    m_networkActivityTrackers[itemIndex].networkActivity.complete(code);
+    m_networkActivityTrackers.remove(itemIndex);
+}
+
+void NetworkConnectionToWebProcess::stopAllNetworkActivityTracking()
+{
+    if (!networkActivityTrackingEnabled())
+        return;
+
+    for (auto& activityTracker : m_networkActivityTrackers)
+        activityTracker.networkActivity.complete(NetworkActivityTracker::CompletionCode::None);
+
+    m_networkActivityTrackers.clear();
+}
+
+void NetworkConnectionToWebProcess::stopAllNetworkActivityTrackingForPage(uint64_t pageID)
+{
+    if (!networkActivityTrackingEnabled())
+        return;
+
+    for (auto& activityTracker : m_networkActivityTrackers) {
+        if (activityTracker.pageID == pageID)
+            activityTracker.networkActivity.complete(NetworkActivityTracker::CompletionCode::None);
+    }
+
+    m_networkActivityTrackers.removeAllMatching([&](const auto& activityTracker) {
+        return activityTracker.pageID == pageID;
+    });
+}
+
+size_t NetworkConnectionToWebProcess::findRootNetworkActivity(uint64_t pageID)
+{
+    return m_networkActivityTrackers.findMatching([&](const auto& item) {
+        return item.isRootActivity && item.pageID == pageID;
+    });
+}
+
+size_t NetworkConnectionToWebProcess::findNetworkActivityTracker(ResourceLoadIdentifier resourceID)
+{
+    return m_networkActivityTrackers.findMatching([&](const auto& item) {
+        return item.resourceID == resourceID;
+    });
 }
 
 } // namespace WebKit

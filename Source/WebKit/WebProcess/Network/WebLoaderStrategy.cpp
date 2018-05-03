@@ -521,6 +521,11 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
     }
 }
 
+void WebLoaderStrategy::pageLoadCompleted(uint64_t webPageID)
+{
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::PageLoadCompleted(webPageID), 0);
+}
+
 static uint64_t generateLoadIdentifier()
 {
     static uint64_t identifier = 0;

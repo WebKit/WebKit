@@ -187,3 +187,13 @@ void WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(WKContextConfig
 {
     toImpl(configuration)->setProcessSwapsOnWindowOpenWithOpener(swaps);
 }
+
+bool WKContextConfigurationTrackNetworkActivity(WKContextConfigurationRef configuration)
+{
+    return toImpl(configuration)->trackNetworkActivity();
+}
+
+void WKContextConfigurationSetTrackNetworkActivity(WKContextConfigurationRef configuration, bool track)
+{
+    toImpl(configuration)->setTrackNetworkActivity(track);
+}

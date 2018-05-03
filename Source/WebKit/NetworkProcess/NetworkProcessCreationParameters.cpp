@@ -115,6 +115,8 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << urlSchemesRegisteredAsDisplayIsolated;
     encoder << urlSchemesRegisteredAsCORSEnabled;
     encoder << urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
+
+    encoder << trackNetworkActivity;
 }
 
 bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProcessCreationParameters& result)
@@ -273,6 +275,9 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.urlSchemesRegisteredAsCORSEnabled))
         return false;
     if (!decoder.decode(result.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest))
+        return false;
+
+    if (!decoder.decode(result.trackNetworkActivity))
         return false;
 
     return true;

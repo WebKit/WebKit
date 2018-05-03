@@ -494,6 +494,8 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     parameters.urlSchemesRegisteredAsCORSEnabled = copyToVector(m_schemesToRegisterAsCORSEnabled);
     parameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest = copyToVector(m_schemesToRegisterAsCanDisplayOnlyIfCanRequest);
 
+    parameters.trackNetworkActivity = m_configuration->trackNetworkActivity();
+
     // Add any platform specific parameters
     platformInitializeNetworkProcess(parameters);
 
