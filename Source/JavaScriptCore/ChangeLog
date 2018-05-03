@@ -1,3 +1,16 @@
+2018-05-03  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Disable usage of fused multiply-add instructions for JSC with compiler flag
+        https://bugs.webkit.org/show_bug.cgi?id=184909
+
+        Reviewed by Yusuke Suzuki.
+
+        Adds -ffp-contract as compiler flag for building JSC. This ensures that functions
+        like parseInt() do not return slightly different results depending on whether the
+        compiler was able to use fused multiply-add instructions or not.
+
+        * CMakeLists.txt:
+
 2018-05-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, fix build failure in ARM, ARMv7 and MIPS
