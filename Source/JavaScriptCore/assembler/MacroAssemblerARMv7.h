@@ -1197,14 +1197,6 @@ public:
         return makeBranch(cond);
     }
 
-    void compareDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
-    {
-        move(TrustedImm32(0), dest);
-        Jump falseCase = branchDouble(invert(cond), left, right);
-        move(TrustedImm32(1), dest);
-        falseCase.link(this);
-    }
-
     enum BranchTruncateType { BranchIfTruncateFailed, BranchIfTruncateSuccessful };
     Jump branchTruncateDoubleToInt32(FPRegisterID src, RegisterID dest, BranchTruncateType branchType = BranchIfTruncateFailed)
     {
