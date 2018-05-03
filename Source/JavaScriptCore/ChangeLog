@@ -1,3 +1,49 @@
+2018-05-03  Keith Miller  <keith_miller@apple.com>
+
+        Remove the prototype caching for get_by_id in the LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=185226
+
+        Reviewed by Michael Saboff.
+
+        There is no evidence that this is actually a speedup and we keep
+        getting bugs with it. At this point it seems like we should just
+        remove this code.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::printGetByIdOp):
+        (JSC::BytecodeDumper<Block>::printGetByIdCacheStatus):
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::llintGetByIdWatchpointMap): Deleted.
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp: Removed.
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h: Removed.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetById):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::setupGetByIdPrototypeCache): Deleted.
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/Options.h:
+
 2018-05-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r231197.

@@ -458,8 +458,6 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     \
     v(bool, useICStats, false, Normal, nullptr) \
     \
-    v(unsigned, prototypeHitCountForLLIntCaching, 2, Normal, "Number of prototype property hits before caching a prototype in the LLInt. A count of 0 means never cache.") \
-    \
     v(bool, dumpCompiledRegExpPatterns, false, Normal, nullptr) \
     \
     v(bool, dumpModuleRecord, false, Normal, nullptr) \

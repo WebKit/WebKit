@@ -1428,43 +1428,6 @@ _llint_op_get_by_id:
     dispatch(constexpr op_get_by_id_length)
 
 
-_llint_op_get_by_id_proto_load:
-    traceExecution()
-    loadi 8[PC], t0
-    loadi 16[PC], t1
-    loadConstantOrVariablePayload(t0, CellTag, t3, .opGetByIdProtoSlow)
-    loadi 20[PC], t2
-    bineq JSCell::m_structureID[t3], t1, .opGetByIdProtoSlow
-    loadpFromInstruction(6, t3)
-    loadPropertyAtVariableOffset(t2, t3, t0, t1)
-    loadi 4[PC], t2
-    storei t0, TagOffset[cfr, t2, 8]
-    storei t1, PayloadOffset[cfr, t2, 8]
-    valueProfile(t0, t1, 32, t2)
-    dispatch(constexpr op_get_by_id_proto_load_length)
-
-.opGetByIdProtoSlow:
-    callSlowPath(_llint_slow_path_get_by_id)
-    dispatch(constexpr op_get_by_id_proto_load_length)
-
-
-_llint_op_get_by_id_unset:
-    traceExecution()
-    loadi 8[PC], t0
-    loadi 16[PC], t1
-    loadConstantOrVariablePayload(t0, CellTag, t3, .opGetByIdUnsetSlow)
-    bineq JSCell::m_structureID[t3], t1, .opGetByIdUnsetSlow
-    loadi 4[PC], t2
-    storei UndefinedTag, TagOffset[cfr, t2, 8]
-    storei 0, PayloadOffset[cfr, t2, 8]
-    valueProfile(UndefinedTag, 0, 32, t2)
-    dispatch(constexpr op_get_by_id_unset_length)
-
-.opGetByIdUnsetSlow:
-    callSlowPath(_llint_slow_path_get_by_id)
-    dispatch(constexpr op_get_by_id_unset_length)
-
-
 _llint_op_get_array_length:
     traceExecution()
     loadi 8[PC], t0
