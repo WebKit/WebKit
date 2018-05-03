@@ -1,5 +1,19 @@
 2018-05-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Add MacroAssembler::and16 and store16
+        https://bugs.webkit.org/show_bug.cgi?id=185188
+
+        Reviewed by Mark Lam.
+
+        r231129 requires and16(ImplicitAddress, RegisterID) and store16(RegisterID, ImplicitAddress) implementations.
+        This patch adds these methods for ARM.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::and16):
+        (JSC::MacroAssemblerARM::store16):
+
+2018-05-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DFG] Unify compare related code in 32bit and 64bit
         https://bugs.webkit.org/show_bug.cgi?id=185189
 

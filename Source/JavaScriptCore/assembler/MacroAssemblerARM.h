@@ -176,6 +176,12 @@ public:
         and32(dataTempRegister, dest);
     }
 
+    void and16(Address src, RegisterID dest)
+    {
+        load16(src, dataTempRegister);
+        and32(dataTempRegister, dest);
+    }
+
     void lshift32(RegisterID shiftAmount, RegisterID dest)
     {
         lshift32(dest, shiftAmount, dest);
@@ -561,6 +567,11 @@ public:
     void store16(RegisterID src, BaseIndex address)
     {
         m_assembler.baseIndexTransfer16(ARMAssembler::StoreUint16, src, address.base, address.index, static_cast<int>(address.scale), address.offset);
+    }
+
+    void store16(RegisterID src, ImplicitAddress address)
+    {
+        m_assembler.dataTransfer16(ARMAssembler::StoreUint16, src, address.base, address.offset);
     }
 
     void store32(RegisterID src, ImplicitAddress address)
