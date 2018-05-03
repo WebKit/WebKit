@@ -47,9 +47,13 @@
 # include <wtf/Compiler.h>
 # include <wtf/StdLibExtras.h>
 
+#if !COMPILER(MSVC) && __has_include(<optional>)
+# include <optional>
+#endif
+
 #if !COMPILER(MSVC) && defined(__cpp_lib_optional) && __cpp_lib_optional >= 201603
 
-# include <optional>
+// Use default std::optional.
 
 #else
 
