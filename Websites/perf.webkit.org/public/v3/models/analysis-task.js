@@ -303,7 +303,7 @@ class AnalysisTask extends LabeledObject {
         return results;
     }
 
-    static create(name, startPoint, endPoint, testGroupName=null, repetitionCount=0)
+    static async create(name, startPoint, endPoint, testGroupName=null, repetitionCount=0)
     {
         const parameters = {name, startRun: startPoint.id, endRun: endPoint.id};
         if (testGroupName) {
@@ -312,7 +312,8 @@ class AnalysisTask extends LabeledObject {
             parameters['repetitionCount'] = repetitionCount;
             parameters['testGroupName'] = testGroupName;
         }
-        return PrivilegedAPI.sendRequest('create-analysis-task', parameters);
+        const response = await PrivilegedAPI.sendRequest('create-analysis-task', parameters);
+        return AnalysisTask.fetchById(response.taskId, true);
     }
 }
 

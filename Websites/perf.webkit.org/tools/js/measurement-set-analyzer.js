@@ -103,9 +103,10 @@ class MeasurementSetAnalyzer {
         const summary = `Potential ${rangeWithMostSignificantChange.valueChangeSummary.changeLabel} on ${platform.name()} between ${CommitSet.diff(startCommitSet, endCommitSet)}`;
 
         // FIXME: The iteration count should be smarter than hard-coding.
-        const response = await AnalysisTask.create(summary, rangeWithMostSignificantChange.startPoint,
+        const analysisTask = await AnalysisTask.create(summary, rangeWithMostSignificantChange.startPoint,
             rangeWithMostSignificantChange.endPoint, 'Confirm', 4);
-        this._logger.info(`Created analysis task with id "${response.taskId}" to confirm: "${summary}".`);
+
+        this._logger.info(`Created analysis task with id "${analysisTask.id()}" to confirm: "${summary}".`);
     }
 }
 

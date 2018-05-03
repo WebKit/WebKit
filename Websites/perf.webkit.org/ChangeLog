@@ -1,3 +1,23 @@
+2018-05-02  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Create analysis task should sync analysis task status after creation.
+        https://bugs.webkit.org/show_bug.cgi?id=185222
+
+        Reviewed by Ryosuke Niwa.
+
+        * public/v3/models/analysis-task.js:
+        (AnalysisTask.async.create): Fetch newly-created analysis task right about its creation.
+        (AnalysisTask):
+        * tools/js/measurement-set-analyzer.js:
+        (MeasurementSetAnalyzer.prototype.async._analyzeMeasurementSet): Adjust as 'AnalysisTask.create' now
+        returns an anlysis task instance.
+        (MeasurementSetAnalyzer):
+        * unit-tests/analysis-task-tests.js: Added a unit test for this change.
+        (async):
+        * unit-tests/measurement-set-analyzer-tests.js: Update unit tests accordingly.
+        Fix a typo in one previous unit test.
+        (async):
+
 2018-05-01  Dewei Zhu  <dewei_zhu@apple.com>
 
         Write a script that detects chart changes by using v3 API.

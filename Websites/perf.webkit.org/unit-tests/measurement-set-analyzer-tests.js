@@ -247,6 +247,38 @@ describe('MeasurementSetAnalyzer', () => {
             });
             requests[2].resolve({taskId: '5255', status: 'OK'});
 
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 4);
+            assert.equal(requests[3].url, '/api/analysis-tasks?id=5255');
+
+            requests[3].resolve({
+                analysisTasks: [{
+                    author: null,
+                    bugs: [],
+                    buildRequestCount: 8,
+                    finishedBuildRequestCount: 0,
+                    category: 'identified',
+                    causes: [],
+                    createdAt: 4500,
+                    endRun: 6448,
+                    endRunTime:  5000,
+                    fixes: [],
+                    id: 5255,
+                    metric: MockModels.someMetric.id(),
+                    name: 'Potential 2.38% regression on Some platform between WebKit: r40-r49',
+                    needed: null,
+                    platform: MockModels.somePlatform.id(),
+                    result: 'regression',
+                    segmentationStrategy: 1,
+                    startRun: 6439,
+                    startRunTime: 4000,
+                    testRangeStrategy: 2
+                }],
+                bugs: [],
+                commits: [],
+                status: 'OK'
+            });
+
             await analysisPromise;
             assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====',
                 'Created analysis task with id "5255" to confirm: "Potential 2.38% regression on Some platform between WebKit: r35-r44".']);
@@ -297,7 +329,7 @@ describe('MeasurementSetAnalyzer', () => {
                     result: 'regression',
                     segmentationStrategy: 1,
                     startRun: 6434,
-                    statrRunTime: 4000,
+                    startRunTime: 4000,
                     testRangeStrategy: 2
                 }],
                 bugs: [],
@@ -359,6 +391,38 @@ describe('MeasurementSetAnalyzer', () => {
             });
             requests[2].resolve({taskId: '5255', status: 'OK'});
 
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 4);
+            assert.equal(requests[3].url, '/api/analysis-tasks?id=5255');
+
+            requests[3].resolve({
+                analysisTasks: [{
+                    author: null,
+                    bugs: [],
+                    buildRequestCount: 8,
+                    finishedBuildRequestCount: 0,
+                    category: 'identified',
+                    causes: [],
+                    createdAt: 4500,
+                    endRun: 6448,
+                    endRunTime:  5000,
+                    fixes: [],
+                    id: 5255,
+                    metric: MockModels.someMetric.id(),
+                    name: 'Potential 2.38% regression on Some platform between WebKit: r40-r49',
+                    needed: null,
+                    platform: MockModels.somePlatform.id(),
+                    result: 'regression',
+                    segmentationStrategy: 1,
+                    startRun: 6439,
+                    startRunTime: 4000,
+                    testRangeStrategy: 2
+                }],
+                bugs: [],
+                commits: [],
+                status: 'OK'
+            });
+
             await analysisPromise;
             assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====',
                 'Created analysis task with id "5255" to confirm: "Potential 2.38% regression on Some platform between WebKit: r40-r49".']);
@@ -412,6 +476,38 @@ describe('MeasurementSetAnalyzer', () => {
                     {'11': {revision: 8, ownerRevision: null, patch: null}}]
             });
             requests[2].resolve({taskId: '5255', status: 'OK'});
+
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 4);
+            assert.equal(requests[3].url, '/api/analysis-tasks?id=5255');
+
+            requests[3].resolve({
+                analysisTasks: [{
+                    author: null,
+                    bugs: [],
+                    buildRequestCount: 8,
+                    finishedBuildRequestCount: 0,
+                    category: 'identified',
+                    causes: [],
+                    createdAt: 4500,
+                    endRun: 6407,
+                    endRunTime:  5000,
+                    fixes: [],
+                    id: 5255,
+                    metric: MockModels.someMetric.id(),
+                    name: 'Potential 9.15% progression on Some platform between WebKit: r3-r8',
+                    needed: null,
+                    platform: MockModels.somePlatform.id(),
+                    result: 'progression',
+                    segmentationStrategy: 1,
+                    startRun: 6402,
+                    startRunTime: 4000,
+                    testRangeStrategy: 2
+                }],
+                bugs: [],
+                commits: [],
+                status: 'OK'
+            });
 
             await analysisPromise;
             assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====',
