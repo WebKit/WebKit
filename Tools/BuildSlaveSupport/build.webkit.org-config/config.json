@@ -57,9 +57,11 @@
                     { "name": "wincairo-wkl-release-build-01", "platform": "wincairo" },
                     { "name": "wincairo-wkl-release-tests-01", "platform": "wincairo" },
                     { "name": "wincairo-wkl-release-tests-02", "platform": "wincairo" },
+                    { "name": "wincairo-jsc-release-tests-01", "platform": "wincairo" },
                     { "name": "wincairo-wkl-debug-build-01", "platform": "wincairo" },
                     { "name": "wincairo-wkl-debug-tests-01", "platform": "wincairo" },
                     { "name": "wincairo-wkl-debug-tests-02", "platform": "wincairo" },
+                    { "name": "wincairo-jsc-debug-tests-01", "platform": "wincairo" },
 
                     { "name": "gtk-linux-slave-1", "platform": "gtk" },
                     { "name": "gtk-linux-slave-2", "platform": "gtk" },
@@ -295,24 +297,34 @@
                     {
                       "name": "WinCairo 64-bit WKL Release (Build)", "type": "Build", "builddir": "wincairo-wkl-release",
                       "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["wincairo-wkl-release-tests"],
+                      "triggers": ["wincairo-wkl-release-tests", "wincairo-jsc-release-tests"],
                       "slavenames": ["wincairo-wkl-release-build-01"]
                     },
                     {
-                      "name": "WinCairo 64-bit WKL Release (Tests)", "type": "TestWebKit1", "builddir": "wincairo-wkl-release-tests",
+                      "name": "WinCairo 64-bit WKL Release (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "wincairo-wkl-release-tests",
                       "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["wincairo-wkl-release-tests-01", "wincairo-wkl-release-tests-02"]
                     },
                     {
+                      "name": "WinCairo 64-bit JSC Release (Tests)", "type": "TestJSC", "builddir": "wincairo-jsc-release-tests",
+                      "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["wincairo-jsc-release-tests-01"]
+                    },
+                    {
                       "name": "WinCairo 64-bit WKL Debug (Build)", "type": "Build", "builddir": "wincairo-wkl-debug",
                       "platform": "wincairo", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["wincairo-wkl-debug-tests"],
+                      "triggers": ["wincairo-wkl-debug-tests", "wincairo-jsc-debug-tests"],
                       "slavenames": ["wincairo-wkl-debug-build-01"]
                     },
                     {
-                      "name": "WinCairo 64-bit WKL Debug (Tests)", "type": "TestWebKit1", "builddir": "wincairo-wkl-debug-tests",
+                      "name": "WinCairo 64-bit WKL Debug (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "wincairo-wkl-debug-tests",
                       "platform": "wincairo", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["wincairo-wkl-debug-tests-01", "wincairo-wkl-debug-tests-02"]
+                    },
+                    {
+                      "name": "WinCairo 64-bit JSC Debug (Tests)", "type": "TestJSC", "builddir": "wincairo-jsc-debug-tests",
+                      "platform": "wincairo", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["wincairo-jsc-debug-tests-01"]
                     },
                     {
                       "name": "JSCOnly Linux AArch64 Release", "type": "BuildAndRemoteJSCTests", "builddir": "jsconly-linux-aarch64-release",
@@ -449,8 +461,14 @@
                     { "type": "Triggerable", "name": "wincairo-wkl-release-tests",
                       "builderNames": ["WinCairo 64-bit WKL Release (Tests)"]
                     },
+                    { "type": "Triggerable", "name": "wincairo-jsc-release-tests",
+                      "builderNames": ["WinCairo 64-bit JSC Release (Tests)"]
+                    },
                     { "type": "Triggerable", "name": "wincairo-wkl-debug-tests",
                       "builderNames": ["WinCairo 64-bit WKL Debug (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "wincairo-jsc-debug-tests",
+                      "builderNames": ["WinCairo 64-bit JSC Debug (Tests)"]
                     },
                     { "type": "Triggerable", "name": "wpe-linux-64-release-tests",
                       "builderNames": ["WPE Linux 64-bit Release (Tests)"]

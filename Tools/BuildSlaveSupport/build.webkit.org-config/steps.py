@@ -329,7 +329,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
             self.setCommand(self.command + ['--memory-limited'])
         # WinCairo uses the Windows command prompt, not Cygwin.
         elif platform == 'wincairo':
-            self.setCommand(self.command + ['--ruby-runner', '--test-writer=ruby'])
+            self.setCommand(self.command + ['--test-writer=ruby'])
 
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
         return shell.Test.start(self)
