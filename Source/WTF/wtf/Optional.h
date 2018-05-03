@@ -47,16 +47,6 @@
 # include <wtf/Compiler.h>
 # include <wtf/StdLibExtras.h>
 
-#if !COMPILER(MSVC) && __has_include(<optional>)
-# include <optional>
-#endif
-
-#if !COMPILER(MSVC) && defined(__cpp_lib_optional) && __cpp_lib_optional >= 201603
-
-// Use default std::optional.
-
-#else
-
 # define TR2_OPTIONAL_REQUIRES(...) typename std::enable_if<__VA_ARGS__::value, bool>::type = false
 
 # if defined __GNUC__ // NOTE: GNUC is also defined for Clang
@@ -1022,6 +1012,20 @@ constexpr optional<X&> make_optional(std::reference_wrapper<X> v)
 
 } // namespace std
 
+namespace WTF {
+
+// -- WebKit Additions --
+template <class OptionalType, class Callback>
+ALWAYS_INLINE
+auto valueOrCompute(OptionalType optional, Callback callback) -> typename OptionalType::value_type
+{
+    if (optional)
+        return *optional;
+    return callback();
+}
+
+} // namespace WTF
+
 namespace std
 {
   template <typename T>
@@ -1049,21 +1053,5 @@ namespace std
 
 # undef TR2_OPTIONAL_REQUIRES
 # undef TR2_OPTIONAL_ASSERTED_EXPRESSION
-
-#endif // defined(__cpp_lib_optional)
-
-namespace WTF {
-
-// -- WebKit Additions --
-template <class OptionalType, class Callback>
-ALWAYS_INLINE
-auto valueOrCompute(OptionalType optional, Callback callback) -> typename OptionalType::value_type
-{
-    if (optional)
-        return *optional;
-    return callback();
-}
-
-} // namespace WTF
 
 using WTF::valueOrCompute;

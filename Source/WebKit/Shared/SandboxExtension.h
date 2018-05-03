@@ -120,7 +120,7 @@ private:
 inline SandboxExtension::Handle::Handle() { }
 inline SandboxExtension::Handle::~Handle() { }
 inline void SandboxExtension::Handle::encode(IPC::Encoder&) const { }
-inline std::optional<SandboxExtension::Handle> SandboxExtension::Handle::decode(IPC::Decoder&) { return SandboxExtension::Handle { }; }
+inline std::optional<SandboxExtension::Handle> SandboxExtension::Handle::decode(IPC::Decoder&) { return {{ }}; }
 inline SandboxExtension::HandleArray::HandleArray() { }
 inline SandboxExtension::HandleArray::~HandleArray() { }
 inline void SandboxExtension::HandleArray::allocate(size_t) { }

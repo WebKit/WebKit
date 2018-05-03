@@ -3732,7 +3732,7 @@ static ExceptionOr<Ref<Element>> contextElementForInsertion(const String& where,
 }
 
 // https://w3c.github.io/DOM-Parsing/#dom-element-insertadjacenthtml
-ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String& markup, NodeVector* addedNodes)
+ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String& markup, std::optional<NodeVector&> addedNodes)
 {
     // Steps 1 and 2.
     auto contextElement = contextElementForInsertion(where, *this);
@@ -3758,7 +3758,7 @@ ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String&
 
 ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String& markup)
 {
-    return insertAdjacentHTML(where, markup, nullptr);
+    return insertAdjacentHTML(where, markup, std::nullopt);
 }
 
 ExceptionOr<void> Element::insertAdjacentText(const String& where, const String& text)

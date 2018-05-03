@@ -53,7 +53,7 @@ public:
     Element& element() { return m_element; }
 
 private:
-    const AtomicString* item(const String& name) const;
+    std::optional<const AtomicString&> item(const String& name) const;
 
     Element& m_element;
 };

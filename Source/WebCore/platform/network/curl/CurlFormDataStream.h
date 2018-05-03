@@ -41,7 +41,7 @@ public:
 
     size_t elementSize() { return m_formData ? m_formData->elements().size() : 0; }
 
-    const Vector<char>* getPostData();
+    std::optional<const Vector<char>&> getPostData();
     bool shouldUseChunkTransfer();
     unsigned long long totalSize();
 
