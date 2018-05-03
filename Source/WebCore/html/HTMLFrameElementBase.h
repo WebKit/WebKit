@@ -70,11 +70,9 @@ private:
 
     bool isFrameElementBase() const final { return true; }
 
-    void setNameAndOpenURL();
     void openURL(LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
 
     AtomicString m_URL;
-    AtomicString m_frameName;
 
     ScrollbarMode m_scrolling;
 

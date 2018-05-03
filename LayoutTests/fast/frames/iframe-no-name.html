@@ -11,7 +11,7 @@
 <iframe name="name" id="id"></iframe>
 <script>
 description("Checks that the id of an iframe does not set the contentWindow's name if the iframe's name is not set.");
-shouldBeEqualToString("frames[0].name", "id");
+shouldBeEqualToString("frames[0].name", "");
 shouldBeEqualToString("frames[1].name", "name");
 shouldBeEqualToString("frames[2].name", "name");
 shouldBeEqualToString("frames[3].name", "name");

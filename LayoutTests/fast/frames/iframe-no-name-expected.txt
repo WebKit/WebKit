@@ -3,7 +3,7 @@ Checks that the id of an iframe does not set the contentWindow's name if the ifr
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS frames[0].name is "id"
+PASS frames[0].name is ""
 PASS frames[1].name is "name"
 PASS frames[2].name is "name"
 PASS frames[3].name is "name"

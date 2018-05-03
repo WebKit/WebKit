@@ -1,3 +1,32 @@
+2018-05-03  Chris Dumez  <cdumez@apple.com>
+
+        Stop using an iframe's id as fallback if its name attribute is not set
+        https://bugs.webkit.org/show_bug.cgi?id=11388
+
+        Reviewed by Geoff Garen.
+
+        * fast/dom/Window/named-getter-frame-id-expected.txt: Added.
+        * fast/dom/Window/named-getter-frame-id.html: Added.
+        Add layout test coverage.
+
+        * fast/dom/Geolocation/srcdoc-getCurrentPosition-expected.txt:
+        * fast/dom/Geolocation/srcdoc-watchPosition-expected.txt:
+        * fast/dom/HTMLAnchorElement/anchor-in-noscroll-iframe-crash.html:
+        * fast/dom/Window/window-special-properties-expected.txt:
+        * fast/frames/iframe-no-name-expected.txt:
+        * fast/frames/iframe-no-name.html:
+        * fast/layers/prevent-hit-test-during-layout.html:
+        * fast/xmlhttprequest/xmlhttprequest-no-file-access-expected.txt:
+        * http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html:
+        * http/tests/security/contentSecurityPolicy/iframe-blank-url-programmatically-add-external-script-expected.txt:
+        * http/tests/security/cross-origin-reified-window-property-access.html:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-and-try-access-from-right-frame-expected.txt:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-but-try-access-from-wrong-frame-expected.txt:
+        * http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html:
+        * http/wpt/beacon/keepalive-after-navigation-expected.txt:
+        * http/wpt/cache-storage/cache-remove-twice.html:
+        Update some layout tests that relied on our old (non-standard) behavior.
+
 2018-05-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Using image map inside a shadow tree results hits a release assert in DocumentOrderedMap::add
