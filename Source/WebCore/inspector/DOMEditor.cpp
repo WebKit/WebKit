@@ -266,7 +266,7 @@ private:
 
     ExceptionOr<void> redo() final
     {
-        auto result = m_element->insertAdjacentHTML(m_position, m_html, m_addedNodes);
+        auto result = m_element->insertAdjacentHTML(m_position, m_html, &m_addedNodes);
         if (result.hasException())
             return result.releaseException();
         return { };

@@ -1,3 +1,44 @@
+2018-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use pointer instead of std::optional<T&>
+        https://bugs.webkit.org/show_bug.cgi?id=185186
+
+        Reviewed by Alex Christensen.
+
+        std::optional<T&> is not accepted in C++17 spec.
+        In this patch, we replace it with T*, which is well-aligned to
+        WebKit's convention.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::iceServersFromConfiguration):
+        (WebCore::RTCPeerConnection::initializeConfiguration):
+        (WebCore::RTCPeerConnection::setConfiguration):
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseSystemColor):
+        * css/parser/CSSParser.h:
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::DatasetDOMStringMap::item const):
+        (WebCore::DatasetDOMStringMap::namedItem const):
+        (WebCore:: const): Deleted.
+        * dom/DatasetDOMStringMap.h:
+        * dom/Element.cpp:
+        (WebCore::Element::insertAdjacentHTML):
+        * dom/Element.h:
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::parseColor):
+        * inspector/DOMEditor.cpp:
+        * platform/network/curl/CurlFormDataStream.cpp:
+        (WebCore::CurlFormDataStream::getPostData):
+        (): Deleted.
+        * platform/network/curl/CurlFormDataStream.h:
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::setupPOST):
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMFactory::keysForSessionWithID const):
+        (WebCore::MockCDMInstance::updateLicense):
+        (WebCore:: const): Deleted.
+        * testing/MockCDMFactory.h:
+
 2018-05-03  Chris Dumez  <cdumez@apple.com>
 
         Stop using an iframe's id as fallback if its name attribute is not set

@@ -81,12 +81,12 @@ Vector<Ref<SharedBuffer>> MockCDMFactory::removeKeysFromSessionWithID(const Stri
     return WTFMove(it->value);
 }
 
-std::optional<const Vector<Ref<SharedBuffer>>&> MockCDMFactory::keysForSessionWithID(const String& id) const
+const Vector<Ref<SharedBuffer>>* MockCDMFactory::keysForSessionWithID(const String& id) const
 {
     auto it = m_sessions.find(id);
     if (it == m_sessions.end())
-        return std::nullopt;
-    return it->value;
+        return nullptr;
+    return &it->value;
 }
 
 void MockCDMFactory::setSupportedDataTypes(Vector<String>&& types)
@@ -314,7 +314,7 @@ void MockCDMInstance::updateLicense(const String& sessionID, LicenseType, const 
 
     std::optional<KeyStatusVector> changedKeys;
     if (responseVector.contains(String(ASCIILiteral("keys-changed")))) {
-        std::optional<const Vector<Ref<SharedBuffer>>&> keys = factory->keysForSessionWithID(sessionID);
+        const auto* keys = factory->keysForSessionWithID(sessionID);
         if (keys) {
             KeyStatusVector keyStatusVector;
             keyStatusVector.reserveInitialCapacity(keys->size());
