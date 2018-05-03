@@ -39,11 +39,15 @@ use File::Basename qw(dirname);
 use Cwd qw(abs_path);
 use FindBin;
 use Env qw(DYLD_FRAMEWORK_PATH);
-my $Bin;
-
 use Config;
-use Encode;
 
+my $podIsAvailable;
+if  (eval {require Pod::Usage; 1;}) {
+    Pod::Usage->import();
+    $podIsAvailable = 1;
+}
+
+my $Bin;
 BEGIN {
     $ENV{DBIC_OVERWRITE_HELPER_METHODS_OK} = 1;
 
@@ -60,7 +64,6 @@ BEGIN {
 use YAML qw(Load LoadFile Dump DumpFile Bless);
 use Parallel::ForkManager;
 use Getopt::Long qw(GetOptions);
-use Pod::Usage;
 
 # Commandline settings
 my $max_process;
@@ -79,16 +82,14 @@ my $failingOnly;
 my $latestImport;
 my $runningAllTests;
 
-processCLI();
-
-my @results;
-my @files;
-
 my $expectationsFile = abs_path("$Bin/expectations.yaml");
 my $configFile = abs_path("$Bin/config.yaml");
 my $resultsFile = abs_path("$Bin/results.yaml");
 my $summaryTxtFile = abs_path("$Bin/results-summary.txt");
 my $summaryFile = abs_path("$Bin/results-summary.yaml");
+
+my @results;
+my @files;
 
 my $tempdir = tempdir();
 
@@ -104,6 +105,7 @@ print $deffh getHarness(<@default_harnesses>);
 
 my $startTime = time();
 
+processCLI();
 main();
 
 sub processCLI {
@@ -134,7 +136,12 @@ sub processCLI {
     );
 
     if ($help) {
-        pod2usage(-exitstatus => 0, -verbose => 2, -input => __FILE__);
+        if ($podIsAvailable) {
+            pod2usage(-exitstatus => 0, -verbose => 2, -input => __FILE__);
+        } else {
+            print "Pod::Usage is not available to print the help options\n";
+            exit;
+        }
     }
 
     if ($stats) {

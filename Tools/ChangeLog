@@ -1,3 +1,14 @@
+2018-05-03  Leo Balter  <leonardo.balter@gmail.com>
+
+        cleanup modules usage for the Test262-Runner
+        https://bugs.webkit.org/show_bug.cgi?id=185263
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/test262-runner:
+        * Scripts/test262/Runner.pm:
+        (processCLI):
+
 2018-05-03  Valerie R Young  <valerie@bocoup.com>
 
         test262/Runner.pm: minor fixes
