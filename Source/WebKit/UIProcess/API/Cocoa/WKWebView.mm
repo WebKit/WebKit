@@ -1617,6 +1617,12 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
 - (UIEdgeInsets)_computedObscuredInset
 {
+    if (!linkedOnOrAfter(WebKit::SDKVersion::FirstWhereScrollViewContentInsetsAreNotObscuringInsets)) {
+        // For binary compability with third party apps, treat scroll view content insets as obscuring insets when the app is compiled
+        // against a WebKit version without the fix in r229641.
+        return [self _computedContentInset];
+    }
+
     if (_haveSetObscuredInsets)
         return _obscuredInsets;
 

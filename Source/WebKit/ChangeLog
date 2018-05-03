@@ -1,3 +1,29 @@
+2018-05-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Ads in NYTimes app are shifted downwards by the scroll view's top content inset
+        https://bugs.webkit.org/show_bug.cgi?id=185251
+        <rdar://problem/39062357>
+
+        Reviewed by Tim Horton.
+
+        The NYTimes app embeds advertisements in each article's WKWebView by adding views in the WKScrollView's view
+        hierarchy. These views are positioned using the bounding client rects of elements in the DOM (via Element
+        ::getBoundingClientRect). Prior to r229641, WebKit would report bounding client rects inset by the content
+        insets of WKScrollView, which means that if a top content inset X is specified on the scroll view, an element
+        that is flush against the top of the viewport will have a bounding client rect top of -X (when it should really
+        be 0).
+
+        To account for this, NYTimes adds the scroll view content insets back to the bounding client rect when
+        determining the position of each advertisement which, after r229641, causes these views to be shifted downwards
+        by an amount equal to the scroll view content inset top.
+
+        This new behavior does not affect Safari, since Safari uses SPI to explicitly set obscured insets. As such, we
+        address this by gating the scroll view content inset fix with a linked-on-or-after check.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _computedObscuredInset]):
+        * UIProcess/Cocoa/VersionChecks.h:
+
 2018-05-03  Chris Dumez  <cdumez@apple.com>
 
         Load hangs if the WebProcess fails to launch

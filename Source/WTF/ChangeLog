@@ -1,3 +1,15 @@
+2018-05-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Ads in NYTimes app are shifted downwards by the scroll view's top content inset
+        https://bugs.webkit.org/show_bug.cgi?id=185251
+        <rdar://problem/39062357>
+
+        Reviewed by Tim Horton.
+
+        Add a new DYLD_IOS_VERSION macro definition for previous or non-internal SDKs.
+
+        * wtf/spi/darwin/dyldSPI.h:
+
 2018-05-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r231197.
