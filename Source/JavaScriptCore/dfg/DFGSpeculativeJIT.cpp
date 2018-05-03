@@ -6386,15 +6386,12 @@ void SpeculativeJIT::compileSameValue(Node* node)
         auto trueCase = m_jit.branch64(CCallHelpers::Equal, tempGPR, temp2GPR);
 #else
         GPRTemporary temp3(this);
-        GPRTemporary temp4(this);
-
-        GPRReg temp3GPR = temp.gpr();
-        GPRReg temp4GPR = temp2.gpr();
+        GPRReg temp3GPR = temp3.gpr();
 
         m_jit.moveDoubleToInts(arg1FPR, tempGPR, temp2GPR);
-        m_jit.moveDoubleToInts(arg2FPR, temp3GPR, temp4GPR);
+        m_jit.moveDoubleToInts(arg2FPR, temp3GPR, resultGPR);
         auto notEqual = m_jit.branch32(CCallHelpers::NotEqual, tempGPR, temp3GPR);
-        auto trueCase = m_jit.branch32(CCallHelpers::Equal, temp2GPR, temp4GPR);
+        auto trueCase = m_jit.branch32(CCallHelpers::Equal, temp2GPR, resultGPR);
         notEqual.link(&m_jit);
 #endif
 
