@@ -49,12 +49,9 @@ public:
     StringBuilder& operator=(StringBuilder&&) = default;
 
     WTF_EXPORT_PRIVATE void append(const UChar*, unsigned);
-    WTF_EXPORT_PRIVATE bool tryAppend(const UChar*, unsigned);
     WTF_EXPORT_PRIVATE void append(const LChar*, unsigned);
-    WTF_EXPORT_PRIVATE bool tryAppend(const LChar*, unsigned);
 
     ALWAYS_INLINE void append(const char* characters, unsigned length) { append(reinterpret_cast<const LChar*>(characters), length); }
-    ALWAYS_INLINE bool tryAppend(const char* characters, unsigned length) { return tryAppend(reinterpret_cast<const LChar*>(characters), length); }
 
     void append(const AtomicString& atomicString)
     {
@@ -63,13 +60,8 @@ public:
 
     void append(const String& string)
     {
-        if (!tryAppend(string))
-            CRASH();
-    }
-    bool tryAppend(const String& string)
-    {
         if (!string.length())
-            return true;
+            return;
 
         // If we're appending to an empty string, and there is not a buffer (reserveCapacity has not been called)
         // then just retain the string.
@@ -77,50 +69,40 @@ public:
             m_string = string;
             m_length = string.length();
             m_is8Bit = m_string.is8Bit();
-            return true;
+            return;
         }
 
         if (string.is8Bit())
-            return tryAppend(string.characters8(), string.length());
+            append(string.characters8(), string.length());
         else
-            return tryAppend(string.characters16(), string.length());
+            append(string.characters16(), string.length());
     }
 
     void append(const StringBuilder& other)
     {
-        if (!tryAppend(other))
-            CRASH();
-    }
-    bool tryAppend(const StringBuilder& other)
-    {
         if (!other.m_length)
-            return true;
+            return;
 
         // If we're appending to an empty string, and there is not a buffer (reserveCapacity has not been called)
         // then just retain the string.
         if (!m_length && !m_buffer && !other.m_string.isNull()) {
             m_string = other.m_string;
             m_length = other.m_length;
-            return true;
+            return;
         }
 
         if (other.is8Bit())
-            return tryAppend(other.characters8(), other.m_length);
+            append(other.characters8(), other.m_length);
         else
-            return tryAppend(other.characters16(), other.m_length);
+            append(other.characters16(), other.m_length);
     }
 
     void append(StringView stringView)
     {
-        if (!tryAppend(stringView))
-            CRASH();
-    }
-    bool tryAppend(StringView stringView)
-    {
         if (stringView.is8Bit())
-            return tryAppend(stringView.characters8(), stringView.length());
+            append(stringView.characters8(), stringView.length());
         else
-            return tryAppend(stringView.characters16(), stringView.length());
+            append(stringView.characters16(), stringView.length());
     }
 
 #if USE(CF)
@@ -149,12 +131,6 @@ public:
         if (characters)
             append(characters, strlen(characters));
     }
-    bool tryAppend(const char* characters)
-    {
-        if (characters)
-            return tryAppend(characters, strlen(characters));
-        return true;
-    }
 
     void append(UChar c)
     {
@@ -174,23 +150,19 @@ public:
 
     void append(LChar c)
     {
-        if (!tryAppend(c))
-            CRASH();
-    }
-    bool tryAppend(LChar c)
-    {
         if (m_buffer && m_length < m_buffer->length() && m_string.isNull()) {
             if (m_is8Bit)
                 m_bufferCharacters8[m_length++] = c;
             else
                 m_bufferCharacters16[m_length++] = c;
-            return true;
         } else
-            return tryAppend(&c, 1);
+            append(&c, 1);
     }
 
-    void append(char c) { append(static_cast<LChar>(c)); }
-    bool tryAppend(char c) { return tryAppend(static_cast<LChar>(c)); }
+    void append(char c)
+    {
+        append(static_cast<LChar>(c));
+    }
 
     void append(UChar32 c)
     {
@@ -202,13 +174,10 @@ public:
         append(U16_TRAIL(c));
     }
 
-    WTF_EXPORT_PRIVATE void appendQuotedJSONString(const String&);
-    WTF_EXPORT_PRIVATE bool tryAppendQuotedJSONString(const String&);
+    WTF_EXPORT_PRIVATE bool appendQuotedJSONString(const String&);
 
     template<unsigned characterCount>
     ALWAYS_INLINE void appendLiteral(const char (&characters)[characterCount]) { append(characters, characterCount - 1); }
-    template<unsigned characterCount>
-    ALWAYS_INLINE bool tryAppendLiteral(const char (&characters)[characterCount]) { return tryAppend(characters, characterCount - 1); }
 
     WTF_EXPORT_PRIVATE void appendNumber(int);
     WTF_EXPORT_PRIVATE void appendNumber(unsigned int);
@@ -329,7 +298,6 @@ private:
     void allocateBuffer(const LChar* currentCharacters, unsigned requiredLength);
     void allocateBuffer(const UChar* currentCharacters, unsigned requiredLength);
     void allocateBufferUpConvert(const LChar* currentCharacters, unsigned requiredLength);
-    bool tryAllocateBufferUpConvert(const LChar* currentCharacters, unsigned requiredLength);
     template <typename CharType>
     void reallocateBuffer(unsigned requiredLength);
     template <typename CharType>

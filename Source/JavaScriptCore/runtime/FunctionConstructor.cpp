@@ -125,24 +125,19 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
         program = makeString("{", prefix, functionName.string(), "() {\n", body, "\n}}");
     } else {
         StringBuilder builder;
-        bool success = true;
-        success &= builder.tryAppend('{');
-        success &= builder.tryAppend(prefix);
-        success &= builder.tryAppend(functionName.string());
-        success &= builder.tryAppend('(');
+        builder.append('{');
+        builder.append(prefix);
+        builder.append(functionName.string());
+        builder.append('(');
         StringBuilder parameterBuilder;
         auto viewWithString = args.at(0).toString(exec)->viewWithUnderlyingString(exec);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        success &= parameterBuilder.tryAppend(viewWithString.view);
+        parameterBuilder.append(viewWithString.view);
         for (size_t i = 1; i < args.size() - 1; i++) {
-            success &= parameterBuilder.tryAppendLiteral(", ");
+            parameterBuilder.appendLiteral(", ");
             auto viewWithString = args.at(i).toString(exec)->viewWithUnderlyingString(exec);
             RETURN_IF_EXCEPTION(scope, nullptr);
-            success &= parameterBuilder.tryAppend(viewWithString.view);
-        }
-        if (!success) {
-            throwOutOfMemoryError(exec, scope);
-            return nullptr;
+            parameterBuilder.append(viewWithString.view);
         }
 
         {
@@ -158,18 +153,14 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
             }
         }
 
-        success &= builder.tryAppend(parameterBuilder);
-        success &= builder.tryAppendLiteral(") {\n");
+        builder.append(parameterBuilder);
+        builder.appendLiteral(") {\n");
         auto body = args.at(args.size() - 1).toWTFString(exec);
         RETURN_IF_EXCEPTION(scope, nullptr);
         checkBody(body);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        success &= builder.tryAppend(body);
-        success &= builder.tryAppendLiteral("\n}}");
-        if (!success) {
-            throwOutOfMemoryError(exec, scope);
-            return nullptr;
-        }
+        builder.append(body);
+        builder.appendLiteral("\n}}");
         program = builder.toString();
     }
 

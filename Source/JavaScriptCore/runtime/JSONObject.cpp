@@ -357,7 +357,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     if (value.isString()) {
         const String& string = asString(value)->value(m_exec);
         RETURN_IF_EXCEPTION(scope, StringifyFailed);
-        if (builder.tryAppendQuotedJSONString(string))
+        if (builder.appendQuotedJSONString(string))
             return StringifySucceeded;
         throwOutOfMemoryError(m_exec, scope);
         return StringifyFailed;
