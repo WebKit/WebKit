@@ -1,5 +1,28 @@
 2018-05-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Unify compare related code in 32bit and 64bit
+        https://bugs.webkit.org/show_bug.cgi?id=185189
+
+        Reviewed by Mark Lam.
+
+        This patch unifies some part of compare related code in 32bit and 64bit
+        to reduce the size of 32bit specific DFG code.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInt32Compare):
+        (JSC::DFG::SpeculativeJIT::compileDoubleCompare):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileInt32Compare): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileDoubleCompare): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileInt32Compare): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileDoubleCompare): Deleted.
+
+2018-05-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Add compareDouble and compareFloat for ARM64, X86, and X86_64
         https://bugs.webkit.org/show_bug.cgi?id=185192
 
