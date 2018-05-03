@@ -46,7 +46,8 @@ enum class StyleDiff;
 // LayoutContext is the entry point for layout. It takes a (formatting root)container which acts as the root of the layout context.
 // LayoutContext::layout() generates the display tree for the root container's subtree (it does not run layout on the root though).
 // Note, while the root container is suppposed to be the entry point for the initial layout, it does not necessarily need to be the entry point of any
-// subsequent layouts (subtree layout).
+// subsequent layouts (subtree layout). A non-initial, subtree layout could be initiated on multiple formatting contexts.
+// Each formatting context has an entry point for layout, which potenitally means multiple entry points per layout frame.
 // LayoutContext also holds the formatting states. They cache formatting context specific data to enable performant incremental layouts.
 class LayoutContext {
     WTF_MAKE_ISO_ALLOCATED(LayoutContext);
@@ -75,6 +76,7 @@ public:
 
 private:
     WeakPtr<Box> m_root;
+    Vector<WeakPtr<Box>> m_formattingContextRootListForLayout;
     HashMap<const Box*, std::unique_ptr<FormattingState>> m_formattingStates;
     HashMap<const Box*, std::unique_ptr<Display::Box>> m_layoutToDisplayBox;
 };

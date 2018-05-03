@@ -1,5 +1,22 @@
 2018-05-03  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Enable multiple layout roots for incremental layout.
+        https://bugs.webkit.org/show_bug.cgi?id=185185
+
+        Reviewed by Antti Koivisto.
+
+        With certain type of style changes, we can stop the box invalidation at the formatting context boundary.
+        When multiple boxes need updating in different formatting contexts, instead of marking the parent containing block chain all
+        the way up to a common ancestor, we could just work with a list of layout entry points per layout frame.
+
+        * layout/FormattingState.h:
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::updateLayout):
+        (WebCore::Layout::LayoutContext::addLayoutEntryPoint):
+        * layout/LayoutContext.h:
+
+2018-05-03  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Box invalidation logic should go to dedicated classes.
         https://bugs.webkit.org/show_bug.cgi?id=185249
 

@@ -51,9 +51,15 @@ LayoutContext::LayoutContext(const Box& root)
 
 void LayoutContext::updateLayout()
 {
-    auto context = formattingContext(*m_root);
-    auto& state = establishedFormattingState(*m_root, *context);
-    context->layout(*this, state);
+    ASSERT(!m_formattingContextRootListForLayout.isEmpty());
+    for (auto layoutRoot : m_formattingContextRootListForLayout) {
+        RELEASE_ASSERT(layoutRoot.get());
+        RELEASE_ASSERT(layoutRoot->establishesFormattingContext());
+        auto context = formattingContext(*layoutRoot);
+        auto& state = establishedFormattingState(*layoutRoot, *context);
+        context->layout(*this, state);
+    }
+    m_formattingContextRootListForLayout.clear();
 }
 
 Display::Box& LayoutContext::createDisplayBox(const Box& layoutBox)
