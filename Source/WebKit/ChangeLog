@@ -1,3 +1,9 @@
+2018-05-03  Keith Rollin  <krollin@apple.com>
+
+        Unreviewed build fix after <https://trac.webkit.org/changeset/231282>.
+
+        * NetworkProcess/NetworkActivityTracker.h:
+
 2018-05-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Ads in NYTimes app are shifted downwards by the scroll view's top content inset
