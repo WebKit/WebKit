@@ -1,3 +1,32 @@
+2018-05-03  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(iOS 11.3): Crashes in TimerBase::~TimerBase() in Tencent x5gamehelper
+        https://bugs.webkit.org/show_bug.cgi?id=185073
+        <rdar://problem/39821223>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The following changes were made:
+        - Make sure SocketStream callbacks are always scheduled on the right runloop:
+          WebThreadRunLoop() on WebKitLegacy iOS, loaderRunLoop() on Windows and
+          main runloop otherwise.
+        - When the SocketStream callbacks are called, unconditionally call callOnMainThreadAndWait()
+          before calling methods on the SocketStream client. Previously, this code path
+          was specific to Windows but there is no reason to have platform-specific code here.
+          callOnMainThreadAndWait() calls the function right away if we're already on the main
+          thread, which will be the case on other platform than Windows.
+
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::callbacksRunLoop):
+        (WebCore::callbacksRunLoopMode):
+        (WebCore::SocketStreamHandleImpl::scheduleStreams):
+        (WebCore::SocketStreamHandleImpl::pacExecutionCallback):
+        (WebCore::SocketStreamHandleImpl::executePACFileURL):
+        (WebCore::SocketStreamHandleImpl::removePACRunLoopSource):
+        (WebCore::SocketStreamHandleImpl::readStreamCallback):
+        (WebCore::SocketStreamHandleImpl::writeStreamCallback):
+        (WebCore::SocketStreamHandleImpl::platformClose):
+
 2018-05-03  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Enable multiple layout roots for incremental layout.
