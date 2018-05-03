@@ -1,3 +1,28 @@
+2018-05-02  Brent Fulgham  <bfulgham@apple.com>
+
+        Use RetainPtr for form input type
+        https://bugs.webkit.org/show_bug.cgi?id=185210
+        <rdar://problem/39734040>
+
+        Reviewed by Ryosuke Niwa.
+
+        Refactor our HTMLInputElement class to store its InputType member as a RefPtr.
+
+        Test: fast/forms/access-key-mutation-2.html.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        (WebCore::HTMLInputElement::didAddUserAgentShadowRoot):
+        (WebCore::HTMLInputElement::accessKeyAction):
+        (WebCore::HTMLInputElement::parseAttribute):
+        (WebCore::HTMLInputElement::appendFormData):
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        (WebCore::createInputType):
+        (WebCore::InputType::create):
+        (WebCore::InputType::createText):
+        * html/InputType.h:
+
 2018-05-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use pointer instead of std::optional<std::reference_wrapper<>>

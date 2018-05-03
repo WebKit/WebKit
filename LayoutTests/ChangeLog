@@ -1,3 +1,14 @@
+2018-05-02  Brent Fulgham  <bfulgham@apple.com>
+
+        Use RetainPtr for form input type
+        https://bugs.webkit.org/show_bug.cgi?id=185210
+        <rdar://problem/39734040>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/forms/access-key-mutation-2-expected.txt: Added.
+        * fast/forms/access-key-mutation-2.html: Added.
+
 2018-05-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip transitions/opacity-transition-zindex.html.
