@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class HTMLFormElement;
+class HTMLMapElement;
 
 struct ImageCandidate;
 
@@ -63,6 +64,7 @@ public:
     void setLoadManually(bool loadManually) { m_imageLoader.setLoadManually(loadManually); }
 
     bool matchesUsemap(const AtomicStringImpl&) const;
+    HTMLMapElement* associatedMapElement() const;
 
     WEBCORE_EXPORT const AtomicString& alt() const;
 

@@ -381,10 +381,6 @@ public:
     Element* getElementByAccessKey(const String& key);
     void invalidateAccessKeyMap();
 
-    void addImageElementByUsemap(const AtomicStringImpl&, HTMLImageElement&);
-    void removeImageElementByUsemap(const AtomicStringImpl&, HTMLImageElement&);
-    HTMLImageElement* imageElementByUsemap(const AtomicStringImpl&) const;
-
     ExceptionOr<SelectorQuery&> selectorQueryForString(const String&);
     void clearSelectorQueryCache();
 
@@ -1681,8 +1677,6 @@ private:
 #endif
 
     HashMap<StringImpl*, Element*, ASCIICaseInsensitiveHash> m_elementsByAccessKey;
-
-    DocumentOrderedMap m_imagesByUsemap;
 
     std::unique_ptr<ConstantPropertyMap> m_constantPropertyMap;
 

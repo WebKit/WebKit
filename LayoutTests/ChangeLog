@@ -1,3 +1,15 @@
+2018-05-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Using image map inside a shadow tree results hits a release assert in DocumentOrderedMap::add
+        https://bugs.webkit.org/show_bug.cgi?id=185238
+
+        Reviewed by Antti Koivisto.
+
+        * fast/images/imagemap-in-nested-shadow-tree-expected.txt: Added.
+        * fast/images/imagemap-in-nested-shadow-tree.html: Added.
+        * fast/images/imagemap-in-shadow-tree-expected.txt: Added.
+        * fast/images/imagemap-in-shadow-tree.html: Added.
+
 2018-05-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/controls/pip-placeholder-without-video-controls.html as flaky.

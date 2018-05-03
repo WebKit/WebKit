@@ -80,7 +80,7 @@ HTMLImageElement* HTMLMapElement::imageElement()
 {
     if (m_name.isEmpty())
         return nullptr;
-    return document().imageElementByUsemap(*m_name.impl());
+    return treeScope().imageElementByUsemap(*m_name.impl());
 }
 
 void HTMLMapElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

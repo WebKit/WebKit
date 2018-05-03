@@ -32,6 +32,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLPictureElement.h"
+#include "HTMLMapElement.h"
 #include "HTMLSourceElement.h"
 #include "HTMLSrcsetParser.h"
 #include "Logging.h"
@@ -211,12 +212,12 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
         selectImageSource();
     else if (name == usemapAttr) {
         if (isConnected() && !m_parsedUsemap.isNull())
-            document().removeImageElementByUsemap(*m_parsedUsemap.impl(), *this);
+            treeScope().removeImageElementByUsemap(*m_parsedUsemap.impl(), *this);
 
         m_parsedUsemap = parseHTMLHashNameReference(value);
 
         if (isConnected() && !m_parsedUsemap.isNull())
-            document().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
+            treeScope().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
     } else if (name == compositeAttr) {
         // FIXME: images don't support blend modes in their compositing attribute.
         BlendMode blendOp = BlendModeNormal;
@@ -320,7 +321,7 @@ Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(Insertio
     Node::InsertedIntoAncestorResult insertNotificationRequest = HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 
     if (insertionType.connectedToDocument && !m_parsedUsemap.isNull())
-        document().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
+        treeScope().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
 
     if (is<HTMLPictureElement>(parentNode())) {
         setPictureElement(&downcast<HTMLPictureElement>(*parentNode()));
@@ -341,7 +342,7 @@ void HTMLImageElement::removedFromAncestor(RemovalType removalType, ContainerNod
         m_form->removeImgElement(this);
 
     if (removalType.disconnectedFromDocument && !m_parsedUsemap.isNull())
-        document().removeImageElementByUsemap(*m_parsedUsemap.impl(), *this);
+        treeScope().removeImageElementByUsemap(*m_parsedUsemap.impl(), *this);
 
     if (is<HTMLPictureElement>(parentNode()))
         setPictureElement(nullptr);
@@ -482,6 +483,11 @@ String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Att
 bool HTMLImageElement::matchesUsemap(const AtomicStringImpl& name) const
 {
     return m_parsedUsemap.impl() == &name;
+}
+
+HTMLMapElement* HTMLImageElement::associatedMapElement() const
+{
+    return treeScope().getImageMap(m_parsedUsemap);
 }
 
 const AtomicString& HTMLImageElement::alt() const

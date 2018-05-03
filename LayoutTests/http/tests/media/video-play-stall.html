@@ -1,45 +1,127 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>'stalled' event test</title>
-        <script src=../../media-resources/media-file.js></script>
-        <script src=../../media-resources/video-test.js></script>
-        <script>
+<head>
+<title>'stalled' event test</title>
+<script src="../resources/js-test-pre.js"></script>
+<xscript src=../../media-resources/media-file.js></script>
+<xscript src=../../media-resources/video-test.js></script>
+<script>
 
-            var playCount = 0;
+    var playCount = 0;
 
-            function start() 
-            {
-                findMediaElement();
-                waitForEvent('durationchange');
-                waitForEvent('loadedmetadata');
-                waitForEvent('loadeddata');
+    function start() 
+    {
+        return;
+        alert('loaded!');
+        findMediaElement();
+        waitForEvent('durationchange');
+        waitForEvent('loadedmetadata');
+        waitForEvent('loadeddata');
 
-                mediaElement.addEventListener('canplay', function () {
-                    // 'stalled' takes three seconds to fire, so 'canplay' may fire more than once
-                    // depending on how the engine parses incoming media data.
-                    if (++playCount > 1)
-                        return;
-                    consoleWrite("EVENT(canplay)");
-                    run("video.play()");
-                } );
+        mediaElement.addEventListener('canplay', function () {
+            // 'stalled' takes three seconds to fire, so 'canplay' may fire more than once
+            // depending on how the engine parses incoming media data.
+            if (++playCount > 1)
+                return;
+            consoleWrite("EVENT(canplay)");
+            run("video.play()");
+        } );
 
-                waitForEvent('stalled', function () {
-                    testExpected("video.currentTime", 0, "!=");
-                    testExpected("video.playbackRate", 1, "===");
-                    testExpected("video.paused", false, "===");
-                    endTest();
-                } );
+        waitForEvent('stalled', function () {
+            testExpected("video.currentTime", 0, "!=");
+            testExpected("video.playbackRate", 1, "===");
+            testExpected("video.paused", false, "===");
+            endTest();
+        } );
 
-                var mediaFile = findMediaFile("video", "../../../../media/content/long-test");
-                var mimeType = mimeTypeForFile(mediaFile);
-                video.src = "http://127.0.0.1:8000/media/resources/serve-video.php?name=" + mediaFile + "&type=" + mimeType + "&stallOffset=100000&stallDuration=60&chunkSize=1024";
-            }
+        var mediaFile = findMediaFile("video", "../../../../media/content/long-test");
+        var mimeType = mimeTypeForFile(mediaFile);
+        alert("http://127.0.0.1:8000/media/resources/serve-video.php?name=" + mediaFile + "&type=" + mimeType + "&stallOffset=100000&stallDuration=60&chunkSize=1024");
+        video.src = "http://127.0.0.1:8000/media/resources/serve-video.php?name=" + mediaFile + "&type=" + mimeType + "&stallOffset=100000&stallDuration=60&chunkSize=1024";
+    }
 
-        </script>
-    </head>
-    <body onload="setTimeout(start, 0)">
-        <video controls></video>
-        <p>Test that a stalled event is sent when media loading stalls.</p>
-    </body>
+</script>
+</head>
+<body onload="setTimeout(start, 0)">
+<!--<video autoplay controls>
+    <source src="http://127.0.0.1:8000/media/resources/serve-video.php?name=../../../../media/content/long-test.mp4&type=video/mp4&stallOffset=100000&stallDuration=60&chunkSize=1024">
+</video>-->
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    setTimeout(() => testRunner.notifyDone(), 3000);
+}
+
+const source = `<!DOCTYPE html>
+<video autoplay controls>
+    <source src="http://127.0.0.1:8000/media/resources/serve-video.php?name=../../../../media/content/long-test.mp4&type=video/mp4&stallOffset=100000&stallDuration=60&chunkSize=1024">
+</video>`;
+
+function insertFrameWithVideo() {
+    const iframe = document.createElement('iframe');
+    document.body.append(iframe);
+    iframe.contentDocument.open();
+    iframe.contentDocument.write(source);
+    iframe.contentDocument.write(`<script>
+        document.querySelector('video').addEventListener('stalled', () => top.deleteFrame(window.frameElement));
+</scr` + `ipt>`);
+    iframe.contentDocument.close();
+}
+
+const maxFrameCount = 5;
+let remainigFrameCount;
+function addFrames() {
+    remainigFrameCount = maxFrameCount;
+    for (let i = 0; i < maxFrameCount; i++)
+        insertFrameWithVideo();
+}
+
+function deleteFrame(iframe) {
+    iframe.contentDocument.open();
+    iframe.contentDocument.write('');
+    iframe.contentDocument.close('');
+    setTimeout(() => iframe.remove(), 5000);
+//    iframe.remove();
+    remainigFrameCount--;
+    if (!remainigFrameCount)
+        addFrames();
+}
+
+addFrames();
+
+/*
+
+function gcAndFinish() {
+    for (let i = 0; i < 5000; i++) {
+        document.createElement('video');
+        document.createElement('source');
+    }
+    if (window.GCController)
+        GCController.collect();
+    if (window.GCController)
+        GCController.collect();
+    if (window.GCController)
+        GCController.collect();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function prepare() {
+    document.querySelector('video').addEventListener('stalled', deleteVideo);
+}
+
+function deleteVideo() {
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+    iframe.contentDocument.body.appendChild(this);
+    iframe.remove();
+    setTimeout(gcAndFinish, 0);
+}
+
+prepare();*/
+
+</script>
+<p>Test that a stalled event is sent when media loading stalls.</p>
+</body>
 </html>

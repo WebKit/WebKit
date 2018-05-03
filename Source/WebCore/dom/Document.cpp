@@ -743,21 +743,6 @@ void Document::invalidateAccessKeyMap()
     m_elementsByAccessKey.clear();
 }
 
-void Document::addImageElementByUsemap(const AtomicStringImpl& name, HTMLImageElement& element)
-{
-    return m_imagesByUsemap.add(name, element, *this);
-}
-
-void Document::removeImageElementByUsemap(const AtomicStringImpl& name, HTMLImageElement& element)
-{
-    return m_imagesByUsemap.remove(name, element);
-}
-
-HTMLImageElement* Document::imageElementByUsemap(const AtomicStringImpl& name) const
-{
-    return m_imagesByUsemap.getElementByUsemap(name, *this);
-}
-
 ExceptionOr<SelectorQuery&> Document::selectorQueryForString(const String& selectorString)
 {
     if (selectorString.isEmpty())

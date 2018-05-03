@@ -1,3 +1,42 @@
+2018-05-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Using image map inside a shadow tree results hits a release assert in DocumentOrderedMap::add
+        https://bugs.webkit.org/show_bug.cgi?id=185238
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by DocumentOrderedMap for the image elements with usemap being stored in Document
+        even if those image elements were in a shadow tree. Fixed the bug by moving the map to TreeScope.
+
+        Test: fast/images/imagemap-in-nested-shadow-tree.html
+              fast/images/imagemap-in-shadow-tree.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::addImageElementByUsemap): Moved to TreeScope.
+        (WebCore::Document::removeImageElementByUsemap): Ditto.
+        (WebCore::Document::imageElementByUsemap const): Ditto.
+        * dom/Document.h:
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::destroyTreeScopeData): Clear m_imagesByUsemap as well as m_elementsByName.
+        (WebCore::TreeScope::getImageMap const): Removed the code to parse usemap. RenderImage::imageMap()
+        which used to call this function with the raw value of the usemap content attribute now calls it
+        via HTMLImageElement::associatedMapElement(), which uses the parsed usemap.
+        (WebCore::TreeScope::addImageElementByUsemap): Moved from Document.
+        (WebCore::TreeScope::removeImageElementByUsemap): Ditto.
+        (WebCore::TreeScope::imageElementByUsemap const): Ditto.
+        * dom/TreeScope.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+        (WebCore::HTMLImageElement::insertedIntoAncestor): This image element can be associated with a map element
+        if it's connected to a document.
+        (WebCore::HTMLImageElement::removedFromAncestor):
+        (WebCore::HTMLImageElement::associatedMapElement const):
+        * html/HTMLImageElement.h:
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::imageElement):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageMap const):
+
 2018-05-03  Justin Fan  <justin_fan@apple.com>
 
         [WebGL] Add runtime flag for enabling ASTC support in WebGL

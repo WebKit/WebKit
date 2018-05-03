@@ -35,6 +35,7 @@
 #include "FrameView.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLMapElement.h"
 #include "HitTestResult.h"
@@ -52,7 +53,7 @@
 namespace WebCore {
 
 struct SameSizeAsTreeScope {
-    void* pointers[8];
+    void* pointers[9];
 };
 
 COMPILE_ASSERT(sizeof(TreeScope) == sizeof(SameSizeAsTreeScope), treescope_should_stay_small);
@@ -82,7 +83,9 @@ TreeScope::~TreeScope() = default;
 void TreeScope::destroyTreeScopeData()
 {
     m_elementsById = nullptr;
+    m_elementsByName = nullptr;
     m_imageMapsByName = nullptr;
+    m_imagesByUsemap = nullptr;
     m_labelsByForAttribute = nullptr;
 }
 
@@ -250,17 +253,32 @@ void TreeScope::removeImageMap(HTMLMapElement& imageMap)
     m_imageMapsByName->remove(*name, imageMap);
 }
 
-HTMLMapElement* TreeScope::getImageMap(const String& url) const
+HTMLMapElement* TreeScope::getImageMap(const AtomicString& name) const
 {
-    if (!m_imageMapsByName)
+    if (!m_imageMapsByName || !name.impl())
         return nullptr;
-    auto hashPosition = url.find('#');
-    if (hashPosition == notFound)
+    return m_imageMapsByName->getElementByMapName(*name.impl(), *this);
+}
+
+void TreeScope::addImageElementByUsemap(const AtomicStringImpl& name, HTMLImageElement& element)
+{
+    if (!m_imagesByUsemap)
+        m_imagesByUsemap = std::make_unique<DocumentOrderedMap>();
+    return m_imagesByUsemap->add(name, element, *this);
+}
+
+void TreeScope::removeImageElementByUsemap(const AtomicStringImpl& name, HTMLImageElement& element)
+{
+    if (!m_imagesByUsemap)
+        return;
+    m_imagesByUsemap->remove(name, element);
+}
+
+HTMLImageElement* TreeScope::imageElementByUsemap(const AtomicStringImpl& name) const
+{
+    if (!m_imagesByUsemap)
         return nullptr;
-    String name = url.substring(hashPosition + 1);
-    if (name.isEmpty())
-        return nullptr;
-    return m_imageMapsByName->getElementByMapName(*AtomicString(name).impl(), *this);
+    return m_imagesByUsemap->getElementByUsemap(name, *this);
 }
 
 void TreeScope::addLabel(const AtomicStringImpl& forAttributeValue, HTMLLabelElement& element)

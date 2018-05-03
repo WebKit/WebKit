@@ -37,6 +37,7 @@ namespace WebCore {
 class ContainerNode;
 class Document;
 class Element;
+class HTMLImageElement;
 class HTMLLabelElement;
 class HTMLMapElement;
 class LayoutPoint;
@@ -80,7 +81,11 @@ public:
 
     void addImageMap(HTMLMapElement&);
     void removeImageMap(HTMLMapElement&);
-    HTMLMapElement* getImageMap(const String& url) const;
+    HTMLMapElement* getImageMap(const AtomicString&) const;
+
+    void addImageElementByUsemap(const AtomicStringImpl&, HTMLImageElement&);
+    void removeImageElementByUsemap(const AtomicStringImpl&, HTMLImageElement&);
+    HTMLImageElement* imageElementByUsemap(const AtomicStringImpl&) const;
 
     // For accessibility.
     bool shouldCacheLabelsByForAttribute() const { return !!m_labelsByForAttribute; }
@@ -124,6 +129,7 @@ private:
     std::unique_ptr<DocumentOrderedMap> m_elementsById;
     std::unique_ptr<DocumentOrderedMap> m_elementsByName;
     std::unique_ptr<DocumentOrderedMap> m_imageMapsByName;
+    std::unique_ptr<DocumentOrderedMap> m_imagesByUsemap;
     std::unique_ptr<DocumentOrderedMap> m_labelsByForAttribute;
 
     std::unique_ptr<IdTargetObserverRegistry> m_idTargetObserverRegistry;
