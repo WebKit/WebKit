@@ -1,3 +1,12 @@
+2018-05-03  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening after r231300.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/compositing/layer-creation/overlap-animation-expected.txt: Removed.
+        * platform/gtk/editing/selection/select-all-004-expected.png:
+        * platform/gtk/editing/selection/select-all-004-expected.txt: Added.
+
 2018-05-03  Youenn Fablet  <youenn@apple.com>
 
         A MediaStream being played should allow removing some of its tracks

@@ -3371,6 +3371,20 @@ webkit.org/b/185072 fast/events/mouse-click-events.html [ Failure ]
 webkit.org/b/185072 fast/events/context-activated-by-key-event.html [ Failure ]
 webkit.org/b/185072 fast/events/mouse-cursor-change.html [ Failure ]
 
+webkit.org/b/185252 http/tests/media/hls/hls-audio-tracks.html [ Failure ]
+
+webkit.org/b/185254 http/tests/cache/disk-cache/redirect-chain-limits.html [ Failure ]
+webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-error.html [ Failure ]
+webkit.org/b/185254 http/tests/xmlhttprequest/response-access-on-error.html [ Failure ]
+webkit.org/b/185254 http/tests/xmlhttprequest/state-after-network-error.html [ Failure ]
+webkit.org/b/185254 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-infinite.htm [ Failure ]
+webkit.org/b/185254 imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-network-error.htm [ Failure ]
+webkit.org/b/185254 http/tests/cache/network-error-during-revalidation.html [ Failure ]
+webkit.org/b/185254 http/tests/xmlhttprequest/XMLHttpRequestException.html [ Failure ]
+webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-sync-requests.html [ Failure ]
+webkit.org/b/185254 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-infinite-sync.htm [ Failure ]
+webkit.org/b/185254 imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-network-error-sync.htm [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
