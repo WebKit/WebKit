@@ -18,6 +18,8 @@ PASS DOMPointReadOnly interface: attribute w
 PASS Unscopable handled correctly for w property on DOMPointReadOnly 
 PASS DOMPointReadOnly interface: operation matrixTransform(DOMMatrixInit) 
 PASS Unscopable handled correctly for matrixTransform(DOMMatrixInit) on DOMPointReadOnly 
+PASS DOMPointReadOnly interface: operation toJSON() 
+PASS Unscopable handled correctly for toJSON() on DOMPointReadOnly 
 PASS DOMPointReadOnly must be primary interface of new DOMPointReadOnly() 
 PASS Stringification of new DOMPointReadOnly() 
 PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "fromPoint(DOMPointInit)" with the proper type 
@@ -28,6 +30,8 @@ PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "z
 PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "w" with the proper type 
 PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "matrixTransform(DOMMatrixInit)" with the proper type 
 PASS DOMPointReadOnly interface: calling matrixTransform(DOMMatrixInit) on new DOMPointReadOnly() with too few arguments must throw TypeError 
+PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "toJSON()" with the proper type 
+PASS Test default toJSON operation of DOMPointReadOnly 
 PASS DOMPoint interface: existence and properties of interface object 
 PASS DOMPoint interface object length 
 PASS DOMPoint interface object name 
@@ -65,6 +69,8 @@ PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "z" with t
 PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "w" with the proper type 
 PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "matrixTransform(DOMMatrixInit)" with the proper type 
 PASS DOMPointReadOnly interface: calling matrixTransform(DOMMatrixInit) on new DOMPoint() with too few arguments must throw TypeError 
+PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "toJSON()" with the proper type 
+PASS Test default toJSON operation of DOMPoint 
 PASS DOMRectReadOnly interface: existence and properties of interface object 
 PASS DOMRectReadOnly interface object length 
 PASS DOMRectReadOnly interface object name 
@@ -89,6 +95,8 @@ PASS DOMRectReadOnly interface: attribute bottom
 PASS Unscopable handled correctly for bottom property on DOMRectReadOnly 
 PASS DOMRectReadOnly interface: attribute left 
 PASS Unscopable handled correctly for left property on DOMRectReadOnly 
+PASS DOMRectReadOnly interface: operation toJSON() 
+PASS Unscopable handled correctly for toJSON() on DOMRectReadOnly 
 PASS DOMRectReadOnly must be primary interface of new DOMRectReadOnly() 
 PASS Stringification of new DOMRectReadOnly() 
 PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "fromRect(DOMRectInit)" with the proper type 
@@ -101,6 +109,8 @@ PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "top
 PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "right" with the proper type 
 PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "bottom" with the proper type 
 PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "left" with the proper type 
+PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "toJSON()" with the proper type 
+PASS Test default toJSON operation of DOMRectReadOnly 
 PASS DOMRect interface: existence and properties of interface object 
 PASS DOMRect interface object length 
 PASS DOMRect interface object name 
@@ -140,6 +150,19 @@ PASS DOMRectReadOnly interface: new DOMRect() must inherit property "top" with t
 PASS DOMRectReadOnly interface: new DOMRect() must inherit property "right" with the proper type 
 PASS DOMRectReadOnly interface: new DOMRect() must inherit property "bottom" with the proper type 
 PASS DOMRectReadOnly interface: new DOMRect() must inherit property "left" with the proper type 
+PASS DOMRectReadOnly interface: new DOMRect() must inherit property "toJSON()" with the proper type 
+PASS Test default toJSON operation of DOMRect 
+PASS DOMRectList interface: existence and properties of interface object 
+PASS DOMRectList interface object length 
+PASS DOMRectList interface object name 
+PASS DOMRectList interface: existence and properties of interface prototype object 
+PASS DOMRectList interface: existence and properties of interface prototype object's "constructor" property 
+PASS DOMRectList interface: existence and properties of interface prototype object's @@unscopables property 
+PASS DOMRectList interface: attribute length 
+PASS Unscopable handled correctly for length property on DOMRectList 
+PASS DOMRectList interface: operation item(unsigned long) 
+PASS Unscopable handled correctly for item(unsigned long) on DOMRectList 
+PASS DOMRectList must be primary interface of [object DOMRectList] 
 PASS Stringification of [object DOMRectList] 
 PASS DOMRectList interface: [object DOMRectList] must inherit property "length" with the proper type 
 PASS DOMRectList interface: [object DOMRectList] must inherit property "item(unsigned long)" with the proper type 
@@ -164,6 +187,8 @@ PASS DOMQuad interface: attribute p4
 PASS Unscopable handled correctly for p4 property on DOMQuad 
 PASS DOMQuad interface: operation getBounds() 
 PASS Unscopable handled correctly for getBounds() on DOMQuad 
+PASS DOMQuad interface: operation toJSON() 
+PASS Unscopable handled correctly for toJSON() on DOMQuad 
 PASS DOMQuad must be primary interface of new DOMQuad() 
 PASS Stringification of new DOMQuad() 
 PASS DOMQuad interface: new DOMQuad() must inherit property "fromRect(DOMRectInit)" with the proper type 
@@ -175,6 +200,8 @@ PASS DOMQuad interface: new DOMQuad() must inherit property "p2" with the proper
 PASS DOMQuad interface: new DOMQuad() must inherit property "p3" with the proper type 
 PASS DOMQuad interface: new DOMQuad() must inherit property "p4" with the proper type 
 PASS DOMQuad interface: new DOMQuad() must inherit property "getBounds()" with the proper type 
+PASS DOMQuad interface: new DOMQuad() must inherit property "toJSON()" with the proper type 
+FAIL Test default toJSON operation of DOMQuad assert_true: instanceof DOMPoint expected true got false
 PASS DOMMatrixReadOnly interface: existence and properties of interface object 
 PASS DOMMatrixReadOnly interface object length 
 PASS DOMMatrixReadOnly interface object name 
@@ -266,6 +293,8 @@ PASS Unscopable handled correctly for toFloat32Array() on DOMMatrixReadOnly
 PASS DOMMatrixReadOnly interface: operation toFloat64Array() 
 PASS Unscopable handled correctly for toFloat64Array() on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: stringifier 
+PASS DOMMatrixReadOnly interface: operation toJSON() 
+PASS Unscopable handled correctly for toJSON() on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly must be primary interface of new DOMMatrixReadOnly() 
 PASS Stringification of new DOMMatrixReadOnly() 
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromMatrix(DOMMatrixInit)" with the proper type 
@@ -323,6 +352,8 @@ PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property 
 PASS DOMMatrixReadOnly interface: calling transformPoint(DOMPointInit) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "toFloat32Array()" with the proper type 
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "toFloat64Array()" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "toJSON()" with the proper type 
+PASS Test default toJSON operation of DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly must be primary interface of DOMMatrixReadOnly.fromMatrix({is2D: false}) 
 PASS Stringification of DOMMatrixReadOnly.fromMatrix({is2D: false}) 
 PASS DOMMatrix interface: existence and properties of interface object 

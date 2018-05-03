@@ -1,3 +1,18 @@
+2018-05-03  Chris Nardi  <cnardi@chromium.org>
+
+        Remove [NoInterfaceObject] from DOMRectList
+        https://bugs.webkit.org/show_bug.cgi?id=185255
+
+        Reviewed by Chris Dumez.
+
+        In https://github.com/w3c/fxtf-drafts/issues/233, [NoInterfaceObject] was removed
+        from DOMRectList. Remove it from our implementation to match the spec, as well as
+        Chrome and Firefox.
+
+        Updated web platform tests IDL test for the Geometry spec.
+
+        * dom/DOMRectList.idl:
+
 2018-05-03  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(iOS 11.3): Crashes in TimerBase::~TimerBase() in Tencent x5gamehelper

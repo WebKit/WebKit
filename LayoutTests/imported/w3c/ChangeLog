@@ -1,3 +1,16 @@
+2018-05-03  Chris Nardi  <cnardi@chromium.org>
+
+        Remove [NoInterfaceObject] from DOMRectList
+        https://bugs.webkit.org/show_bug.cgi?id=185255
+
+        Reviewed by Chris Dumez.
+
+        Update Geometry IDL test from upstream and update expectations.
+
+        * web-platform-tests/css/geometry/interfaces-expected.txt:
+        * web-platform-tests/css/geometry/interfaces.worker-expected.txt:
+        * web-platform-tests/interfaces/geometry.idl:
+
 2018-05-02  Youenn Fablet  <youenn@apple.com>
 
         Rebase imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html expectation
