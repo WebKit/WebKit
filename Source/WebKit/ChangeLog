@@ -1,3 +1,18 @@
+2018-05-02  Nan Wang  <n_wang@apple.com>
+
+        AX: Missing kAXSWebAccessibilityEventsEnabledNotification causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=185237
+
+        Reviewed by Dan Bernstein.
+
+        When libAccessibility.dylib is missing, the compiler would optimize out the global
+        notification and lead to a crash. Fixed it by using the isNullFunction check instead,
+        since we are sure the global notification would be there when the corresponding function 
+        is available.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+
 2018-05-02  Keith Rollin  <krollin@apple.com>
 
         Add facility for tracking times and results of page and resource loading

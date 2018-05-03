@@ -694,8 +694,9 @@ static void validate(WKWebViewConfiguration *configuration)
 #endif
 
 #if ENABLE(ACCESSIBILITY_EVENTS)
-    const auto* notificationPtr = &kAXSWebAccessibilityEventsEnabledNotification;
-    if (notificationPtr)
+    // Check _AXSWebAccessibilityEventsEnabled here to avoid compiler optimizing
+    // out the null check of kAXSWebAccessibilityEventsEnabledNotification.
+    if (!isNullFunctionPointer(_AXSWebAccessibilityEventsEnabled))
         CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), accessibilityEventsEnabledChangedCallback, kAXSWebAccessibilityEventsEnabledNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
     [self _updateAccessibilityEventsEnabled];
 #endif
