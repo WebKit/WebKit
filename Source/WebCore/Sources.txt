@@ -1221,9 +1221,11 @@ layout/LayoutContext.cpp
 layout/blockformatting/BlockFormattingContext.cpp
 layout/blockformatting/BlockFormattingState.cpp
 layout/blockformatting/BlockMarginCollapse.cpp
+layout/blockformatting/BlockInvalidation.cpp
 layout/displaytree/DisplayBox.cpp
 layout/inlineformatting/InlineFormattingContext.cpp
 layout/inlineformatting/InlineFormattingState.cpp
+layout/inlineformatting/InlineInvalidation.cpp
 layout/layouttree/LayoutBlockContainer.cpp
 layout/layouttree/LayoutBox.cpp
 layout/layouttree/LayoutContainer.cpp

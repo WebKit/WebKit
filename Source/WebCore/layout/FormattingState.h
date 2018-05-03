@@ -35,12 +35,11 @@ namespace WebCore {
 namespace Layout {
 
 class Box;
-class StyleDiff;
+enum class StyleDiff;
 
 class FormattingState {
     WTF_MAKE_ISO_ALLOCATED(FormattingState);
 public:
-    FormattingState(Ref<FloatingState>&&);
     virtual ~FormattingState();
 
     FloatingState& floatingState() const { return m_floatingState; }
@@ -48,10 +47,24 @@ public:
     void markNeedsLayout(const Box&, StyleDiff);
     bool needsLayout(const Box&);
 
+    bool isBlockFormattingState() const { return m_type == Type::Block; }
+    bool isInlineFormattingState() const { return m_type == Type::Inline; }
+
+protected:
+    enum class Type { Block, Inline };
+    FormattingState(Ref<FloatingState>&&, Type);
+
 private:
     Ref<FloatingState> m_floatingState;
+    Type m_type;
 };
 
 }
 }
+
+#define SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_STATE(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Layout::ToValueTypeName) \
+    static bool isType(const WebCore::Layout::FormattingState& formattingState) { return formattingState.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif

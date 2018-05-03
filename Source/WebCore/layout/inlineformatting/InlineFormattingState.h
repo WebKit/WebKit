@@ -44,4 +44,7 @@ public:
 
 }
 }
+
+SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_STATE(InlineFormattingState, isInlineFormattingState())
+
 #endif

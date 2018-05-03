@@ -5721,6 +5721,10 @@
 		11100FCA2092868D0081AA6C /* LayoutAncestorIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutAncestorIterator.h; sourceTree = "<group>"; };
 		11100FD5209514DE0081AA6C /* LayoutTreeBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutTreeBuilder.cpp; sourceTree = "<group>"; };
 		11100FD7209514DF0081AA6C /* LayoutTreeBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutTreeBuilder.h; sourceTree = "<group>"; };
+		1123AFD9209ABB2000736ACC /* BlockInvalidation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlockInvalidation.h; sourceTree = "<group>"; };
+		1123AFDA209ABB2000736ACC /* BlockInvalidation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlockInvalidation.cpp; sourceTree = "<group>"; };
+		1123AFDC209ABBBA00736ACC /* InlineInvalidation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InlineInvalidation.h; sourceTree = "<group>"; };
+		1123AFDD209ABBBA00736ACC /* InlineInvalidation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineInvalidation.cpp; sourceTree = "<group>"; };
 		112B34D01E60B8A700BB310A /* SimpleLineLayoutPagination.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutPagination.cpp; sourceTree = "<group>"; };
 		112B34D41E60B98300BB310A /* SimpleLineLayoutPagination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutPagination.h; sourceTree = "<group>"; };
 		113409D7203E038000C66915 /* RenderTreeBuilderContinuation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderContinuation.cpp; sourceTree = "<group>"; };
@@ -15684,6 +15688,8 @@
 				115CFA6C208AFAB6001E6991 /* BlockFormattingContext.h */,
 				115CFA79208B8D9D001E6991 /* BlockFormattingState.cpp */,
 				115CFA78208B8D9D001E6991 /* BlockFormattingState.h */,
+				1123AFDA209ABB2000736ACC /* BlockInvalidation.cpp */,
+				1123AFD9209ABB2000736ACC /* BlockInvalidation.h */,
 				115CFA89208B921A001E6991 /* BlockMarginCollapse.cpp */,
 				115CFA88208B921A001E6991 /* BlockMarginCollapse.h */,
 			);
@@ -15697,6 +15703,8 @@
 				6F7CA3C8208C2B2E002F29AB /* InlineFormattingContext.h */,
 				115CFA7D208B8E10001E6991 /* InlineFormattingState.cpp */,
 				115CFA7C208B8E10001E6991 /* InlineFormattingState.h */,
+				1123AFDD209ABBBA00736ACC /* InlineInvalidation.cpp */,
+				1123AFDC209ABBBA00736ACC /* InlineInvalidation.h */,
 			);
 			path = inlineformatting;
 			sourceTree = "<group>";

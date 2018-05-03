@@ -30,9 +30,11 @@
 
 #include "BlockFormattingContext.h"
 #include "BlockFormattingState.h"
+#include "BlockInvalidation.h"
 #include "DisplayBox.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
+#include "InlineInvalidation.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
 #include <wtf/IsoMallocInlines.h>
@@ -60,6 +62,21 @@ Display::Box& LayoutContext::createDisplayBox(const Box& layoutBox)
     auto* displayBoxPtr = displayBox.get();
     m_layoutToDisplayBox.add(&layoutBox, WTFMove(displayBox));
     return *displayBoxPtr;
+}
+
+void LayoutContext::styleChanged(const Box& layoutBox, StyleDiff styleDiff)
+{
+    auto& formattingState = formattingStateForBox(layoutBox);
+    if (is<BlockFormattingState>(formattingState))
+        BlockInvalidation::invalidate(layoutBox, styleDiff, *this, downcast<BlockFormattingState>(formattingState));
+    else if (is<InlineFormattingState>(formattingState))
+        InlineInvalidation::invalidate(layoutBox, styleDiff, *this, downcast<InlineFormattingState>(formattingState));
+    else
+        ASSERT_NOT_REACHED();
+}
+
+void LayoutContext::markNeedsUpdate(const Box&, OptionSet<UpdateType>)
+{
 }
 
 FormattingState& LayoutContext::formattingStateForBox(const Box& layoutBox) const

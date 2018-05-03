@@ -24,25 +24,23 @@
  */
 
 #include "config.h"
-#include "FormattingState.h"
+#include "InlineInvalidation.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "InlineFormattingState.h"
+#include "LayoutBox.h"
+#include "LayoutContext.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingState);
+WTF_MAKE_ISO_ALLOCATED_IMPL(InlineInvalidation);
 
-FormattingState::FormattingState(Ref<FloatingState>&& floatingState, Type type)
-    : m_floatingState(WTFMove(floatingState))
-    , m_type(type)
+void InlineInvalidation::invalidate(const Box& layoutBox, StyleDiff, LayoutContext& layoutContext, InlineFormattingState&)
 {
-}
-
-FormattingState::~FormattingState()
-{
+    layoutContext.markNeedsUpdate(layoutBox, LayoutContext::UpdateType::All);
 }
 
 }

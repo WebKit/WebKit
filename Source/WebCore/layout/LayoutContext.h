@@ -31,6 +31,7 @@
 #include "FormattingState.h"
 #include "LayoutBox.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ class Box;
 
 namespace Layout {
 
-class StyleDiff;
+enum class StyleDiff;
 
 // LayoutContext is the entry point for layout. It takes a (formatting root)container which acts as the root of the layout context.
 // LayoutContext::layout() generates the display tree for the root container's subtree (it does not run layout on the root though).
@@ -57,8 +58,16 @@ public:
     Display::Box& createDisplayBox(const Box&);
     Display::Box* displayBoxForLayoutBox(const Box& layoutBox) const { return m_layoutToDisplayBox.get(&layoutBox); }
 
-    void markNeedsLayout(const Box&, StyleDiff);
-    bool needsLayout(const Box&) const;
+    void styleChanged(const Box&, StyleDiff);
+
+    enum class UpdateType {
+        Overflow = 1 << 0,
+        Position = 1 << 1,
+        Size     = 1 << 2,
+        All      = Overflow | Position | Size
+    };
+    void markNeedsUpdate(const Box&, OptionSet<UpdateType>);
+    bool needsUpdate(const Box&) const;
 
     FormattingState& formattingStateForBox(const Box&) const;
     FormattingState& establishedFormattingState(const Box& formattingContextRoot, const FormattingContext&);

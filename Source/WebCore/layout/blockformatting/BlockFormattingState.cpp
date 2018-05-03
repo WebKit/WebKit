@@ -36,7 +36,7 @@ namespace Layout {
 WTF_MAKE_ISO_ALLOCATED_IMPL(BlockFormattingState);
 
 BlockFormattingState::BlockFormattingState(Ref<FloatingState>&& floatingState)
-    : FormattingState(WTFMove(floatingState))
+    : FormattingState(WTFMove(floatingState), Type::Block)
 {
 }
 

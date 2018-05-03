@@ -1,3 +1,37 @@
+2018-05-03  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Box invalidation logic should go to dedicated classes.
+        https://bugs.webkit.org/show_bug.cgi?id=185249
+
+        Reviewed by Antti Koivisto.
+
+        Each formatting context can initiate a different type of invalidation when
+        style attribute changes in a box.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/FormattingState.cpp:
+        (WebCore::Layout::FormattingState::FormattingState):
+        * layout/FormattingState.h:
+        (WebCore::Layout::FormattingState::isBlockFormattingState const):
+        (WebCore::Layout::FormattingState::isInlineFormattingState const):
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::styleChanged):
+        (WebCore::Layout::LayoutContext::markNeedsUpdate):
+        * layout/LayoutContext.h:
+        * layout/blockformatting/BlockFormattingState.cpp:
+        (WebCore::Layout::BlockFormattingState::BlockFormattingState):
+        * layout/blockformatting/BlockFormattingState.h:
+        * layout/blockformatting/BlockInvalidation.cpp: Copied from Source/WebCore/layout/blockformatting/BlockFormattingState.cpp.
+        (WebCore::Layout::BlockInvalidation::invalidate):
+        * layout/blockformatting/BlockInvalidation.h: Copied from Source/WebCore/layout/inlineformatting/InlineFormattingState.h.
+        * layout/inlineformatting/InlineFormattingState.cpp:
+        (WebCore::Layout::InlineFormattingState::InlineFormattingState):
+        * layout/inlineformatting/InlineFormattingState.h:
+        * layout/inlineformatting/InlineInvalidation.cpp: Copied from Source/WebCore/layout/inlineformatting/InlineFormattingState.cpp.
+        (WebCore::Layout::InlineInvalidation::invalidate):
+        * layout/inlineformatting/InlineInvalidation.h: Copied from Source/WebCore/layout/blockformatting/BlockFormattingState.h.
+
 2018-05-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         WebKit should send fake macOS user agent to docs.google.com

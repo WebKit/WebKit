@@ -23,27 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FormattingState.h"
+#pragma once
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/IsoMalloc.h>
 
 namespace WebCore {
+
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingState);
+class Box;
+class BlockFormattingState;
+class LayoutContext;
+enum class StyleDiff;
 
-FormattingState::FormattingState(Ref<FloatingState>&& floatingState, Type type)
-    : m_floatingState(WTFMove(floatingState))
-    , m_type(type)
-{
-}
-
-FormattingState::~FormattingState()
-{
-}
+// This class implements box invalidation for block formatting context.
+class BlockInvalidation {
+    WTF_MAKE_ISO_ALLOCATED(BlockInvalidation);
+public:
+    static void invalidate(const Box&, StyleDiff, LayoutContext&, BlockFormattingState&);
+};
 
 }
 }
