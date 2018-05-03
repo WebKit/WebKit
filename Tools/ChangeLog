@@ -1,3 +1,14 @@
+2018-05-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Test archive must use Python zipfile, just like build product.
+        https://bugs.webkit.org/show_bug.cgi?id=185265
+
+        Reviewed by Per Arne Vollan.
+
+        * BuildSlaveSupport/test-result-archive:
+        (archive_test_results):
+        Copy over Win32-oriented archiving logic from built-product-archive.
+
 2018-05-03  Leo Balter  <leonardo.balter@gmail.com>
 
         cleanup modules usage for the Test262-Runner

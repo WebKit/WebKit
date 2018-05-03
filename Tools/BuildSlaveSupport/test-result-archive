@@ -23,7 +23,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import gzip, optparse, os, shutil, subprocess, sys
+import gzip, optparse, os, shutil, subprocess, sys, zipfile
 
 sourceRootDirectory = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 archiveFile = os.path.join(sourceRootDirectory, "layout-test-results.zip")
@@ -80,9 +80,15 @@ def archive_test_results(configuration, platform, layoutTestResultsDir):
         compress_spindumps(layoutTestResultsDir)
         if subprocess.call(["ditto", "-c", "-k", "--sequesterRsrc", "--zlibCompressionLevel", "2", layoutTestResultsDir, archiveFile]):
             return 1
-    elif platform in ('win', 'gtk', 'wincairo', 'wpe'):
+    elif platform in ('win', 'gtk', 'wpe'):
         if subprocess.call(["zip", "-r", "-2", archiveFile, "."], cwd=layoutTestResultsDir):
             return 1
+    elif platform == 'wincairo':
+        with zipfile.ZipFile(archiveFile, 'w', zipfile.ZIP_DEFLATED) as archiveZip:
+            for path, dirNames, fileNames in os.walk(layoutTestResultsDir):
+                relativePath = os.path.relpath(path, layoutTestResultsDir)
+                for fileName in fileNames:
+                    archiveZip.write(os.path.join(path, fileName), os.path.join(relativePath, fileName))
 
     try:
         shutil.rmtree(layoutTestResultsDir)
