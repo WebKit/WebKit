@@ -48,8 +48,8 @@ public:
     Ref<FloatingState> createOrFindFloatingState() const override;
 
 private:
-    void computeInFlowWidth(const Box&) const override;
-    void computeInFlowHeight(const Box&) const override;
+    void computeInFlowWidth(const Box&, Display::Box&) const override;
+    void computeInFlowHeight(const Box&, Display::Box&) const override;
 
 };
 

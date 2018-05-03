@@ -1,3 +1,55 @@
+2018-05-02  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement LayoutContext::createDisplayBox
+        https://bugs.webkit.org/show_bug.cgi?id=185158
+
+        Reviewed by Antti Koivisto.
+
+        Now compute*() functions take both the const layout and the corresponding non-const display boxes.
+        Display boxes are owned by the LayoutContext and they don't form a tree structure (only implicitly through the layout tree).
+        (This might need to change in the future if we decide to arrange them in some sort of painting order)
+
+        * layout/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::computePosition):
+        * layout/FloatingContext.h:
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeStaticPosition const):
+        (WebCore::Layout::FormattingContext::computeInFlowPositionedPosition const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowPosition const):
+        (WebCore::Layout::FormattingContext::computeWidth const):
+        (WebCore::Layout::FormattingContext::computeHeight const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowWidth const):
+        (WebCore::Layout::FormattingContext::computeFloatingWidth const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHeight const):
+        (WebCore::Layout::FormattingContext::computeFloatingHeight const):
+        * layout/FormattingContext.h:
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::createDisplayBox):
+        * layout/LayoutContext.h:
+        (WebCore::Layout::LayoutContext::displayBoxForLayoutBox const):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        (WebCore::Layout::BlockFormattingContext::computeStaticPosition const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowWidth const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowHeight const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::parent const): Deleted.
+        (WebCore::Display::Box::nextSibling const): Deleted.
+        (WebCore::Display::Box::previousSibling const): Deleted.
+        (WebCore::Display::Box::firstChild const): Deleted.
+        (WebCore::Display::Box::lastChild const): Deleted.
+        (WebCore::Display::Box::setParent): Deleted.
+        (WebCore::Display::Box::setNextSibling): Deleted.
+        (WebCore::Display::Box::setPreviousSibling): Deleted.
+        (WebCore::Display::Box::setFirstChild): Deleted.
+        (WebCore::Display::Box::setLastChild): Deleted.
+        (): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeInFlowWidth const):
+        (WebCore::Layout::InlineFormattingContext::computeInFlowHeight const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+
 2018-05-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Hiding then showing an <object> of type image makes the underlaying image disappear

@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BlockFormattingState.h"
+#include "DisplayBox.h"
 #include "FloatingContext.h"
 #include "FloatingState.h"
 #include "LayoutBox.h"
@@ -55,12 +56,12 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
     if (!is<Container>(root()))
         return;
     auto& formattingRoot = downcast<Container>(root());
-    Vector<const Box*> layoutQueue;
+    LayoutQueue layoutQueue;
     FloatingContext floatingContext(formattingState.floatingState());
     // This is a post-order tree traversal layout.
     // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
-    if (formattingRoot.hasInFlowOrFloatingChild())
-        layoutQueue.append(formattingRoot.firstInFlowOrFloatingChild());
+    if (auto* firstChild = formattingRoot.firstInFlowOrFloatingChild())
+        layoutQueue.append(std::make_unique<LayoutPair>(LayoutPair {*firstChild, layoutContext.createDisplayBox(*firstChild)}));
     // 1. Go all the way down to the leaf node
     // 2. Compute static position and width as we traverse down
     // 3. As we climb back on the tree, compute height and finialize position
@@ -68,9 +69,12 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
     while (!layoutQueue.isEmpty()) {
         // Traverse down on the descendants and compute width/static position until we find a leaf node.
         while (true) {
-            auto& layoutBox = *layoutQueue.last();
-            computeWidth(layoutBox);
-            computeStaticPosition(layoutBox);
+            auto& layoutPair = *layoutQueue.last();
+            auto& layoutBox = layoutPair.layoutBox;
+            auto& displayBox = layoutPair.displayBox;
+            
+            computeWidth(layoutBox, displayBox);
+            computeStaticPosition(layoutBox, layoutPair.displayBox);
             if (layoutBox.establishesFormattingContext()) {
                 auto formattingContext = layoutContext.formattingContext(layoutBox);
                 formattingContext->layout(layoutContext, layoutContext.establishedFormattingState(layoutBox, *formattingContext));
@@ -78,23 +82,27 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             }
             if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
                 break;
-            layoutQueue.append(downcast<Container>(layoutBox).firstInFlowOrFloatingChild());
+            auto& firstChild = *downcast<Container>(layoutBox).firstInFlowOrFloatingChild();
+            layoutQueue.append(std::make_unique<LayoutPair>(LayoutPair {firstChild, layoutContext.createDisplayBox(firstChild)}));
         }
 
         // Climb back on the ancestors and compute height/final position.
         while (!layoutQueue.isEmpty()) {
             // All inflow descendants (if there are any) are laid out by now. Let's compute the box's height.
-            auto& layoutBox = *layoutQueue.takeLast();
-            computeHeight(layoutBox);
+            auto layoutPair = layoutQueue.takeLast();
+            auto& layoutBox = layoutPair->layoutBox;
+            auto& displayBox = layoutPair->displayBox;
+
+            computeHeight(layoutBox, displayBox);
             // Adjust position now that we have all the previous floats placed in this context -if needed.
-            floatingContext.computePosition(layoutBox);
+            floatingContext.computePosition(layoutBox, displayBox);
             if (!is<Container>(layoutBox))
                 continue;
             auto& container = downcast<Container>(layoutBox);
             // Move in-flow positioned children to their final position.
             placeInFlowPositionedChildren(container);
             if (auto* nextSibling = container.nextInFlowOrFloatingSibling()) {
-                layoutQueue.append(nextSibling);
+                layoutQueue.append(std::make_unique<LayoutPair>(LayoutPair {*nextSibling, layoutContext.createDisplayBox(*nextSibling)}));
                 break;
             }
         }
@@ -116,15 +124,15 @@ Ref<FloatingState> BlockFormattingContext::createOrFindFloatingState() const
     return FloatingState::create();
 }
 
-void BlockFormattingContext::computeStaticPosition(const Box&) const
+void BlockFormattingContext::computeStaticPosition(const Box&, Display::Box&) const
 {
 }
 
-void BlockFormattingContext::computeInFlowWidth(const Box&) const
+void BlockFormattingContext::computeInFlowWidth(const Box&, Display::Box&) const
 {
 }
 
-void BlockFormattingContext::computeInFlowHeight(const Box&) const
+void BlockFormattingContext::computeInFlowHeight(const Box&, Display::Box&) const
 {
 }
 

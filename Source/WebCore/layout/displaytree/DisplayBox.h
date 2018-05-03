@@ -33,12 +33,17 @@
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
+
+namespace Layout {
+class LayoutContext;
+}
+
 namespace Display {
 
 class Box {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
-    friend class FormattingContext;
+    friend class Layout::LayoutContext;
 
     ~Box();
 
@@ -66,12 +71,6 @@ public:
     LayoutRect paddingBox() const;
     LayoutRect contentBox() const;
 
-    const Box* parent() const { return m_parent; }
-    const Box* nextSibling() const { return m_parent; }
-    const Box* previousSibling() const { return m_parent; }
-    const Box* firstChild() const { return m_firstChild; }
-    const Box* lastChild() const { return m_lastChild; }
-    
 private:
     Box();
 
@@ -98,12 +97,6 @@ private:
     void setPaddingBottom(LayoutUnit paddingBottom) { m_paddingBottom = paddingBottom; }
     void setPaddingRight(LayoutUnit paddingRight) { m_paddingRight = paddingRight; }
 
-    void setParent(Box& parent) { m_parent = &parent; }
-    void setNextSibling(Box& nextSibling) { m_nextSibling = &nextSibling; }
-    void setPreviousSibling(Box& previousSibling) { m_previousSibling = &previousSibling; }
-    void setFirstChild(Box& firstChild) { m_firstChild = &firstChild; }
-    void setLastChild(Box& lastChild) { m_lastChild = &lastChild; }
-
     LayoutRect m_rect;
     LayoutUnit m_marginTop;
     LayoutUnit m_marginLeft;
@@ -119,13 +112,6 @@ private:
     LayoutUnit m_paddingLeft;
     LayoutUnit m_paddingBottom;
     LayoutUnit m_paddingRight;
-
-    const Box* m_parent { nullptr };
-    const Box* m_nextSibling { nullptr };
-    const Box* m_previousSibling { nullptr };
-    const Box* m_firstChild { nullptr };
-    const Box* m_lastChild { nullptr };
-
 };
 
 }

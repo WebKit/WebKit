@@ -32,6 +32,10 @@
 
 namespace WebCore {
 
+namespace Display {
+class Box;
+}
+
 namespace Layout {
 
 class Box;
@@ -44,7 +48,7 @@ class FloatingContext {
 public:
     FloatingContext(FloatingState&);
 
-    void computePosition(const Box&);
+    void computePosition(const Box&, Display::Box&);
     LayoutUnit left(LayoutUnit verticalPosition);
     LayoutUnit right(LayoutUnit verticalPosition);
     LayoutUnit bottom();

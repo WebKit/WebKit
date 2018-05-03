@@ -46,49 +46,49 @@ FormattingContext::~FormattingContext()
 {
 }
 
-void FormattingContext::computeStaticPosition(const Box&) const
+void FormattingContext::computeStaticPosition(const Box&, Display::Box&) const
 {
 }
 
-void FormattingContext::computeInFlowPositionedPosition(const Box&) const
+void FormattingContext::computeInFlowPositionedPosition(const Box&, Display::Box&) const
 {
 }
 
-void FormattingContext::computeOutOfFlowPosition(const Box&) const
+void FormattingContext::computeOutOfFlowPosition(const Box&, Display::Box&) const
 {
 }
 
-void FormattingContext::computeWidth(const Box& layoutBox) const
-{
-    if (layoutBox.isOutOfFlowPositioned())
-        return computeOutOfFlowWidth(layoutBox);
-    if (layoutBox.isFloatingPositioned())
-        return computeFloatingWidth(layoutBox);
-    return computeInFlowWidth(layoutBox);
-}
-
-void FormattingContext::computeHeight(const Box& layoutBox) const
+void FormattingContext::computeWidth(const Box& layoutBox, Display::Box& displayBox) const
 {
     if (layoutBox.isOutOfFlowPositioned())
-        return computeOutOfFlowHeight(layoutBox);
+        return computeOutOfFlowWidth(layoutBox, displayBox);
     if (layoutBox.isFloatingPositioned())
-        return computeFloatingHeight(layoutBox);
-    return computeInFlowHeight(layoutBox);
+        return computeFloatingWidth(layoutBox, displayBox);
+    return computeInFlowWidth(layoutBox, displayBox);
 }
 
-void FormattingContext::computeOutOfFlowWidth(const Box&) const
+void FormattingContext::computeHeight(const Box& layoutBox, Display::Box& displayBox) const
+{
+    if (layoutBox.isOutOfFlowPositioned())
+        return computeOutOfFlowHeight(layoutBox, displayBox);
+    if (layoutBox.isFloatingPositioned())
+        return computeFloatingHeight(layoutBox, displayBox);
+    return computeInFlowHeight(layoutBox, displayBox);
+}
+
+void FormattingContext::computeOutOfFlowWidth(const Box&, Display::Box&) const
 {
 }
 
-void FormattingContext::computeFloatingWidth(const Box&) const
+void FormattingContext::computeFloatingWidth(const Box&, Display::Box&) const
 {
 }
 
-void FormattingContext::computeOutOfFlowHeight(const Box&) const
+void FormattingContext::computeOutOfFlowHeight(const Box&, Display::Box&) const
 {
 }
 
-void FormattingContext::computeFloatingHeight(const Box&) const
+void FormattingContext::computeFloatingHeight(const Box&, Display::Box&) const
 {
 }
 

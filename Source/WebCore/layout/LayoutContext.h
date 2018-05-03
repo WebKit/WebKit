@@ -54,8 +54,8 @@ public:
 
     void updateLayout();
 
-    void addDisplayBox(const Box&, Display::Box&);
-    Display::Box* displayBox(const Box&) const;
+    Display::Box& createDisplayBox(const Box&);
+    Display::Box* displayBoxForLayoutBox(const Box& layoutBox) const { return m_layoutToDisplayBox.get(&layoutBox); }
 
     void markNeedsLayout(const Box&, StyleDiff);
     bool needsLayout(const Box&) const;
@@ -67,6 +67,7 @@ public:
 private:
     WeakPtr<Box> m_root;
     HashMap<const Box*, std::unique_ptr<FormattingState>> m_formattingStates;
+    HashMap<const Box*, std::unique_ptr<Display::Box>> m_layoutToDisplayBox;
 };
 
 }

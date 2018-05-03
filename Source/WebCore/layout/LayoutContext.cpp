@@ -30,6 +30,7 @@
 
 #include "BlockFormattingContext.h"
 #include "BlockFormattingState.h"
+#include "DisplayBox.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
 #include "LayoutBox.h"
@@ -51,6 +52,14 @@ void LayoutContext::updateLayout()
     auto context = formattingContext(*m_root);
     auto& state = establishedFormattingState(*m_root, *context);
     context->layout(*this, state);
+}
+
+Display::Box& LayoutContext::createDisplayBox(const Box& layoutBox)
+{
+    std::unique_ptr<Display::Box> displayBox(new Display::Box());
+    auto* displayBoxPtr = displayBox.get();
+    m_layoutToDisplayBox.add(&layoutBox, WTFMove(displayBox));
+    return *displayBoxPtr;
 }
 
 FormattingState& LayoutContext::formattingStateForBox(const Box& layoutBox) const

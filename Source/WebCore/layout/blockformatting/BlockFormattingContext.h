@@ -50,9 +50,9 @@ public:
     Ref<FloatingState> createOrFindFloatingState() const override;
 
 protected:
-    void computeStaticPosition(const Box&) const override;
-    void computeInFlowWidth(const Box&) const override;
-    void computeInFlowHeight(const Box&) const override;
+    void computeStaticPosition(const Box&, Display::Box&) const override;
+    void computeInFlowWidth(const Box&, Display::Box&) const override;
+    void computeInFlowHeight(const Box&, Display::Box&) const override;
 
     LayoutUnit marginTop(const Box&) const override;
     LayoutUnit marginBottom(const Box&) const override;

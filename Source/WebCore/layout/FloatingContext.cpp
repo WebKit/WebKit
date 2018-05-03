@@ -39,7 +39,7 @@ FloatingContext::FloatingContext(FloatingState&)
 {
 }
 
-void FloatingContext::computePosition(const Box&)
+void FloatingContext::computePosition(const Box&, Display::Box&)
 {
 }
 
