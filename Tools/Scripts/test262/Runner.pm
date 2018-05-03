@@ -61,9 +61,8 @@ use YAML qw(Load LoadFile Dump DumpFile Bless);
 use Parallel::ForkManager;
 use Getopt::Long qw(GetOptions);
 use Pod::Usage;
-use Term::ANSIColor;
 
-# Commandline args
+# Commandline settings
 my $max_process;
 my @cliTestDirs;
 my $verbose;
@@ -79,15 +78,17 @@ my $saveExpectations;
 my $failingOnly;
 my $latestImport;
 my $runningAllTests;
+
+processCLI();
+
 my @results;
+my @files;
 
 my $expectationsFile = abs_path("$Bin/expectations.yaml");
 my $configFile = abs_path("$Bin/config.yaml");
 my $resultsFile = abs_path("$Bin/results.yaml");
 my $summaryTxtFile = abs_path("$Bin/results-summary.txt");
 my $summaryFile = abs_path("$Bin/results-summary.yaml");
-
-processCLI();
 
 my $tempdir = tempdir();
 
@@ -97,8 +98,6 @@ my @default_harnesses = (
     "$harnessDir/doneprintHandle.js",
     "$Bin/agent.js"
 );
-
-my @files;
 
 my ($deffh, $deffile) = getTempFile();
 print $deffh getHarness(<@default_harnesses>);
@@ -156,8 +155,6 @@ sub processCLI {
         }
     } else {
         $JSC = getBuildPath($debug);
-
-        print("Using the following jsc path: $JSC\n");
     }
 
     if ($latestImport) {
@@ -219,6 +216,8 @@ sub processCLI {
 }
 
 sub main {
+
+    # If not commandline test path supplied, use the root directory of all tests.
     push(@cliTestDirs, 'test') if not @cliTestDirs;
 
     if ($latestImport) {
@@ -242,7 +241,7 @@ sub main {
 
 
     # If we are processing many files, fork process
-    if (scalar @files > $max_process * 10) {
+    if (scalar @files > $max_process * 5) {
 
         # Make temporary files to record results
         my @resultsfhs;
@@ -578,7 +577,7 @@ sub runTest {
     my $defaultHarness = '';
     $defaultHarness = $deffile if $scenario ne 'raw';
 
-    my $result = qx/$JSC $args $defaultHarness $includesfile $prefixFile$filename/;
+    my $result = qx/$JSC $args $defaultHarness $includesfile '$prefixFile$filename'/;
 
     chomp $result;
 
@@ -857,7 +856,7 @@ Specify one or more specific test262 directory of test to run, relative to the r
 
 =item B<--save, -s>
 
-Overwrites the test262-expectations.yaml and test262-results.yaml file with the current list of test262 files and test results.
+Overwrites the test262-expectations.yaml file with the current list of test262 files and test results.
 
 =item B<--ignore-expectations, -x>
 

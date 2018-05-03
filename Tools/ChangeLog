@@ -1,3 +1,18 @@
+2018-05-03  Valerie R Young  <valerie@bocoup.com>
+
+        test262/Runner.pm: minor fixes
+        https://bugs.webkit.org/show_bug.cgi?id=185250
+
+        Reviewed by Michael Saboff.
+
+        Add comments, change output and fix bug: unintended interpolation
+        of filename when running jsc.
+
+        * Scripts/test262/Runner.pm:
+        (processCLI):
+        (main):
+        (runTest):
+
 2018-05-03  Chris Dumez  <cdumez@apple.com>
 
         Load hangs if the WebProcess fails to launch
