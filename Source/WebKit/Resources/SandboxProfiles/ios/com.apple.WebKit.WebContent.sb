@@ -111,6 +111,10 @@
 ;; Permit reading assets via MobileAsset framework.
 (asset-access 'with-media-playback)
 
+;; Network Extensions / VPN helper.
+(allow mach-lookup
+    (global-name "com.apple.nehelper"))
+
 ;; allow 3rd party applications to access nsurlstoraged's top level domain data cache
 (allow-well-known-system-group-container-literal-read
     "/systemgroup.com.apple.nsurlstoragedresources/Library/dafsaData.bin")

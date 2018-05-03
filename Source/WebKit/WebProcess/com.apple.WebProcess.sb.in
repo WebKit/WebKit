@@ -639,6 +639,10 @@
 (allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
 #endif
 
+;; Network Extensions / VPN helper.
+(allow mach-lookup
+    (global-name "com.apple.nehelper"))
+
 ;; FIXME should be removed when <rdar://problem/9347205> + related radar in Safari is fixed
 (allow mach-lookup
        (global-name "org.h5l.kcm")
