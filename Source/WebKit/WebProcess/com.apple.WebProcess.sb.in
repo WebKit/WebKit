@@ -643,13 +643,14 @@
 (allow mach-lookup
     (global-name "com.apple.nehelper"))
 
+#if PLATFORM(MAC)
 ;; FIXME should be removed when <rdar://problem/9347205> + related radar in Safari is fixed
 (allow mach-lookup
        (global-name "org.h5l.kcm")
        (global-name "com.apple.GSSCred")
        (global-name "com.apple.system.logger")
        (global-name "com.apple.system.notification_center"))
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
 (allow network-outbound
        (remote udp))
 #endif
@@ -664,6 +665,7 @@
         (literal "/private/etc/host")
         (subpath "/Library/KerberosPlugins/GSSAPI")
         (subpath "/Library/KerberosPlugins/KerberosFrameworkPlugins"))
+#endif
 
 (if (defined? 'vnode-type)
         (deny file-write-create (vnode-type SYMLINK)))
@@ -687,6 +689,7 @@
        (global-name "com.apple.coreservices.appleevents")
        (global-name "com.apple.pasteboard.1")
        (global-name "com.apple.speech.recognitionserver"))
+#if PLATFORM(MAC)
 ;; Also part of unnecessary NSApplication initialization, but we can't block access to these yet, see <rdar://problem/13869765>.
 (allow file-read*
        (subpath "/Library/Components")
@@ -695,6 +698,7 @@
        (home-subpath "/Library/Components")
        (home-subpath "/Library/Keyboard Layouts")
        (home-subpath "/Library/Input Methods"))
+#endif
 
 ;; AirPlay
 (allow mach-lookup
