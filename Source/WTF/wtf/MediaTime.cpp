@@ -577,28 +577,33 @@ String MediaTime::toString() const
     return builder.toString();
 }
 
-String MediaTime::toJSONString() const
+static Ref<JSON::Object> toJSONStringInternal(const MediaTime& time)
 {
     auto object = JSON::Object::create();
 
-    if (hasDoubleValue())
-        object->setDouble(ASCIILiteral("value"), toDouble());
+    if (time.hasDoubleValue())
+        object->setDouble(ASCIILiteral("value"), time.toDouble());
     else {
-        if (isInvalid() || isIndefinite())
+        if (time.isInvalid() || time.isIndefinite())
             object->setString(ASCIILiteral("value"), ASCIILiteral("NaN"));
-        else if (isPositiveInfinite())
+        else if (time.isPositiveInfinite())
             object->setString(ASCIILiteral("value"), ASCIILiteral("POSITIVE_INFINITY"));
-        else if (isNegativeInfinite())
+        else if (time.isNegativeInfinite())
             object->setString(ASCIILiteral("value"), ASCIILiteral("NEGATIVE_INFINITY"));
         else
-            object->setDouble(ASCIILiteral("value"), toDouble());
+            object->setDouble(ASCIILiteral("value"), time.toDouble());
 
-        object->setInteger(ASCIILiteral("numerator"), static_cast<int>(m_timeValue));
-        object->setInteger(ASCIILiteral("denominator"), m_timeScale);
-        object->setInteger(ASCIILiteral("flags"), m_timeFlags);
+        object->setInteger(ASCIILiteral("numerator"), static_cast<int>(time.timeValue()));
+        object->setInteger(ASCIILiteral("denominator"), time.timeScale());
+        object->setInteger(ASCIILiteral("flags"), time.timeFlags());
     }
 
-    return object->toJSONString();
+    return object;
+}
+
+String MediaTime::toJSONString() const
+{
+    return toJSONStringInternal(*this)->toJSONString();
 }
 
 MediaTime abs(const MediaTime& rhs)
@@ -615,5 +620,14 @@ MediaTime abs(const MediaTime& rhs)
     return val;
 }
 
+String MediaTimeRange::toJSONString() const
+{
+    auto object = JSON::Object::create();
+
+    object->setObject(ASCIILiteral("start"), toJSONStringInternal(start));
+    object->setObject(ASCIILiteral("end"), toJSONStringInternal(end));
+
+    return object->toJSONString();
 }
 
+}

@@ -383,7 +383,7 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
                 }
             }
         } else
-            ERROR_LOG(LOGIDENTIFIER, "negative length cue(s): start ", m_currentCueStartTime, ", end ", m_currentCueEndTime);
+            ERROR_LOG(LOGIDENTIFIER, "negative length cue(s): ", MediaTimeRange { m_currentCueStartTime, m_currentCueEndTime });
 
         removeCompletedCues();
     }

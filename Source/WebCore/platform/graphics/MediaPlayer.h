@@ -694,9 +694,18 @@ template <>
 struct LogArgument<MediaTime> {
     static String toString(const MediaTime& time)
     {
-        return time.toString();
+        return time.toJSONString();
     }
 };
+
+template <>
+struct LogArgument<MediaTimeRange> {
+    static String toString(const MediaTimeRange& range)
+    {
+        return range.toJSONString();
+    }
+};
+
 }
 
 #endif // ENABLE(VIDEO)

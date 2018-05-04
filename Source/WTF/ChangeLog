@@ -1,3 +1,18 @@
+2018-05-04  Eric Carlson  <eric.carlson@apple.com>
+
+        Log media time range as JSON
+        https://bugs.webkit.org/show_bug.cgi?id=185321
+        <rdar://problem/39986746>
+
+        Reviewed by Youenn Fablet.
+
+        * wtf/MediaTime.cpp:
+        (WTF::toJSONStringInternal): Extract guts of MediaTime::toJSONString to this static function
+        so it can be used by MediaTimeRange::toJSONString as well.
+        (WTF::MediaTime::toJSONString const):
+        (WTF::MediaTimeRange::toJSONString const):
+        * wtf/MediaTime.h:
+
 2018-05-04  Antti Koivisto  <antti@apple.com>
 
         OptionsSet initializer list constructor should be constexpr
