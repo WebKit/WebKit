@@ -58,12 +58,20 @@ public:
         WTF::loadLoadFence();
         return structure;
     }
+    JSObject* prototype()
+    {
+        JSObject* prototype = m_prototype.get();
+        WTF::loadLoadFence();
+        return prototype;
+    }
     unsigned inlineCapacity() { return m_inlineCapacity; }
+
 
     void clear()
     {
         m_allocator = Allocator();
         m_structure.clear();
+        m_prototype.clear();
         m_inlineCapacity = 0;
         ASSERT(isNull());
     }
@@ -71,6 +79,7 @@ public:
     void visitAggregate(SlotVisitor& visitor)
     {
         visitor.append(m_structure);
+        visitor.append(m_prototype);
     }
 
 private:
@@ -78,6 +87,7 @@ private:
 
     Allocator m_allocator; // Precomputed to make things easier for generated code.
     WriteBarrier<Structure> m_structure;
+    WriteBarrier<JSObject> m_prototype;
     unsigned m_inlineCapacity;
 };
 

@@ -71,6 +71,7 @@ public:
     }
 
     Structure* objectAllocationStructure() { return m_objectAllocationProfile.structure(); }
+    JSObject* objectAllocationPrototype() { return m_objectAllocationProfile.prototype(); }
 
     InlineWatchpointSet& allocationProfileWatchpointSet()
     {

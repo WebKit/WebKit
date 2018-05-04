@@ -250,10 +250,12 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
     if (constructor->type() == JSFunctionType && jsCast<JSFunction*>(constructor)->canUseAllocationProfile()) {
         auto rareData = jsCast<JSFunction*>(constructor)->ensureRareDataAndAllocationProfile(exec, inlineCapacity);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        Structure* structure = rareData->objectAllocationProfile()->structure();
+        ObjectAllocationProfile* allocationProfile = rareData->objectAllocationProfile();
+        Structure* structure = allocationProfile->structure();
         JSObject* result = constructEmptyObject(exec, structure);
         if (structure->hasPolyProto()) {
-            JSObject* prototype = jsCast<JSFunction*>(constructor)->prototypeForConstruction(vm, exec);
+            JSObject* prototype = allocationProfile->prototype();
+            ASSERT(prototype == jsCast<JSFunction*>(constructor)->prototypeForConstruction(vm, exec));
             result->putDirect(vm, knownPolyProtoOffset, prototype);
             prototype->didBecomePrototype();
             ASSERT_WITH_MESSAGE(!hasIndexedProperties(result->indexingType()), "We rely on JSFinalObject not starting out with an indexing type otherwise we would potentially need to convert to slow put storage");

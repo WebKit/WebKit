@@ -306,7 +306,7 @@ Structure* Structure::create(PolyProtoTag, VM& vm, JSGlobalObject* globalObject,
 
     unsigned oldOutOfLineCapacity = result->outOfLineCapacity();
     result->addPropertyWithoutTransition(
-        vm, vm.propertyNames->builtinNames().underscoreProtoPrivateName(), static_cast<unsigned>(PropertyAttribute::DontEnum),
+        vm, vm.propertyNames->builtinNames().polyProtoName(), static_cast<unsigned>(PropertyAttribute::DontEnum),
         [&] (const GCSafeConcurrentJSLocker&, PropertyOffset offset, PropertyOffset newLastOffset) {
             RELEASE_ASSERT(Structure::outOfLineCapacity(newLastOffset) == oldOutOfLineCapacity);
             RELEASE_ASSERT(offset == knownPolyProtoOffset);

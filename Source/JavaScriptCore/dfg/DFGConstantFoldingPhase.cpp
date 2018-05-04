@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "BuiltinNames.h"
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGArgumentsUtilities.h"
 #include "DFGBasicBlockInlines.h"
@@ -643,15 +644,37 @@ private:
                 if (JSValue base = m_state.forNode(node->child1()).m_value) {
                     if (auto* function = jsDynamicCast<JSFunction*>(m_graph.m_vm, base)) {
                         if (FunctionRareData* rareData = function->rareData()) {
-                            if (Structure* structure = rareData->objectAllocationStructure()) {
-                                // FIXME: we should be able to allocate a poly proto object here:
-                                // https://bugs.webkit.org/show_bug.cgi?id=177517
-                                if (structure->hasMonoProto()) {
+                            if (rareData->allocationProfileWatchpointSet().isStillValid()) {
+                                Structure* structure = rareData->objectAllocationStructure();
+                                JSObject* prototype = rareData->objectAllocationPrototype();
+                                if (structure
+                                    && (structure->hasMonoProto() || prototype)
+                                    && rareData->allocationProfileWatchpointSet().isStillValid()) {
+
                                     m_graph.freeze(rareData);
                                     m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                                     node->convertToNewObject(m_graph.registerStructure(structure));
+
+                                    if (structure->hasPolyProto()) {
+                                        StorageAccessData* data = m_graph.m_storageAccessData.add();
+                                        data->offset = knownPolyProtoOffset;
+                                        data->identifierNumber = m_graph.identifiers().ensure(m_graph.m_vm.propertyNames->builtinNames().polyProtoName().impl());
+                                        InferredType::Descriptor inferredType = InferredType::Top;
+                                        data->inferredType = inferredType;
+                                        m_graph.registerInferredType(inferredType);
+
+                                        NodeOrigin origin = node->origin.withInvalidExit();
+                                        Node* prototypeNode = m_insertionSet.insertConstant(
+                                            indexInBlock + 1, origin, m_graph.freeze(prototype));
+
+                                        ASSERT(isInlineOffset(knownPolyProtoOffset));
+                                        m_insertionSet.insertNode(
+                                            indexInBlock + 1, SpecNone, PutByOffset, origin, OpInfo(data),
+                                            Edge(node, KnownCellUse), Edge(node, KnownCellUse), Edge(prototypeNode, UntypedUse));
+                                    }
                                     changed = true;
                                     break;
+
                                 }
                             }
                         }

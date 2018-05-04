@@ -224,10 +224,12 @@ SLOW_PATH_DECL(slow_path_create_this)
             cachedCallee.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
 
         size_t inlineCapacity = bytecode.inlineCapacity();
-        Structure* structure = constructor->ensureRareDataAndAllocationProfile(exec, inlineCapacity)->objectAllocationProfile()->structure();
+        ObjectAllocationProfile* allocationProfile = constructor->ensureRareDataAndAllocationProfile(exec, inlineCapacity)->objectAllocationProfile();
+        Structure* structure = allocationProfile->structure();
         result = constructEmptyObject(exec, structure);
         if (structure->hasPolyProto()) {
-            JSObject* prototype = constructor->prototypeForConstruction(vm, exec);
+            JSObject* prototype = allocationProfile->prototype();
+            ASSERT(prototype == constructor->prototypeForConstruction(vm, exec));
             result->putDirect(vm, knownPolyProtoOffset, prototype);
             prototype->didBecomePrototype();
             ASSERT_WITH_MESSAGE(!hasIndexedProperties(result->indexingType()), "We rely on JSFinalObject not starting out with an indexing type otherwise we would potentially need to convert to slow put storage");

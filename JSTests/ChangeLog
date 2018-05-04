@@ -1,3 +1,20 @@
+2018-05-03  Saam Barati  <sbarati@apple.com>
+
+        Don't prevent CreateThis being folded to NewObject when the structure is poly proto
+        https://bugs.webkit.org/show_bug.cgi?id=185177
+
+        Reviewed by Filip Pizlo.
+
+        * microbenchmarks/construct-poly-proto-object.js: Added.
+        (foo.A):
+        (foo):
+        * stress/allocation-sinking-new-object-with-poly-proto.js: Added.
+        (foo.A):
+        (foo):
+        (makePolyProto):
+        (bar):
+        (baz):
+
 2018-05-03  Michael Saboff  <msaboff@apple.com>
 
         OSR entry pruning of Program Bytecodes doesn't take into account try/catch

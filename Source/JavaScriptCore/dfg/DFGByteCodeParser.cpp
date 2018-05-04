@@ -31,6 +31,7 @@
 #include "ArithProfile.h"
 #include "ArrayConstructor.h"
 #include "BasicBlockLocation.h"
+#include "BuiltinNames.h"
 #include "BytecodeStructs.h"
 #include "CallLinkStatus.h"
 #include "CodeBlock.h"
@@ -4485,15 +4486,29 @@ void ByteCodeParser::parseBlock(unsigned limit)
             bool alreadyEmitted = false;
             if (function) {
                 if (FunctionRareData* rareData = function->rareData()) {
-                    if (Structure* structure = rareData->objectAllocationStructure()) {
-                        // FIXME: we should be able to allocate a poly proto object here:
-                        // https://bugs.webkit.org/show_bug.cgi?id=177517
-                        if (structure->hasMonoProto()) {
+                    if (rareData->allocationProfileWatchpointSet().isStillValid()) {
+                        Structure* structure = rareData->objectAllocationStructure();
+                        JSObject* prototype = rareData->objectAllocationPrototype();
+                        if (structure
+                            && (structure->hasMonoProto() || prototype)
+                            && rareData->allocationProfileWatchpointSet().isStillValid()) {
+
                             m_graph.freeze(rareData);
                             m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                             // The callee is still live up to this point.
                             addToGraph(Phantom, callee);
-                            set(VirtualRegister(bytecode.dst()), addToGraph(NewObject, OpInfo(m_graph.registerStructure(structure))));
+                            Node* object = addToGraph(NewObject, OpInfo(m_graph.registerStructure(structure)));
+                            if (structure->hasPolyProto()) {
+                                StorageAccessData* data = m_graph.m_storageAccessData.add();
+                                data->offset = knownPolyProtoOffset;
+                                data->identifierNumber = m_graph.identifiers().ensure(m_graph.m_vm.propertyNames->builtinNames().polyProtoName().impl());
+                                InferredType::Descriptor inferredType = InferredType::Top;
+                                data->inferredType = inferredType;
+                                m_graph.registerInferredType(inferredType);
+                                ASSERT(isInlineOffset(knownPolyProtoOffset));
+                                addToGraph(PutByOffset, OpInfo(data), object, object, weakJSConstant(prototype));
+                            }
+                            set(VirtualRegister(bytecode.dst()), object);
                             alreadyEmitted = true;
                         }
                     }

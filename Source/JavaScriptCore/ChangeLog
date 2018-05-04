@@ -1,3 +1,48 @@
+2018-05-03  Saam Barati  <sbarati@apple.com>
+
+        Don't prevent CreateThis being folded to NewObject when the structure is poly proto
+        https://bugs.webkit.org/show_bug.cgi?id=185177
+
+        Reviewed by Filip Pizlo.
+
+        This patch teaches the DFG/FTL how to constant fold CreateThis with
+        a known poly proto Structure to NewObject. We do it by emitting a NewObject
+        followed by a PutByOffset for the prototype value.
+        
+        We make it so that ObjectAllocationProfile holds the prototype value.
+        This is sound because JSFunction clears that profile when its 'prototype'
+        field changes.
+        
+        This patch also renames underscoreProtoPrivateName to polyProtoName since
+        that name was nonsensical: it was only used for poly proto.
+        
+        This is a 2x speedup on the get_callee_polymorphic microbenchmark. I had
+        regressed that benchmark when I first introduced poly proto.
+
+        * builtins/BuiltinNames.cpp:
+        * builtins/BuiltinNames.h:
+        (JSC::BuiltinNames::BuiltinNames):
+        (JSC::BuiltinNames::polyProtoName const):
+        (JSC::BuiltinNames::underscoreProtoPrivateName const): Deleted.
+        * bytecode/ObjectAllocationProfile.h:
+        (JSC::ObjectAllocationProfile::prototype):
+        (JSC::ObjectAllocationProfile::clear):
+        (JSC::ObjectAllocationProfile::visitAggregate):
+        * bytecode/ObjectAllocationProfileInlines.h:
+        (JSC::ObjectAllocationProfile::initializeProfile):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/FunctionRareData.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::create):
+
 2018-05-03  Michael Saboff  <msaboff@apple.com>
 
         OSR entry pruning of Program Bytecodes doesn't take into account try/catch

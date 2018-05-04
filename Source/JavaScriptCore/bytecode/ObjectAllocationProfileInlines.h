@@ -35,11 +35,12 @@ ALWAYS_INLINE void ObjectAllocationProfile::initializeProfile(VM& vm, JSGlobalOb
 {
     ASSERT(!m_allocator);
     ASSERT(!m_structure);
+    ASSERT(!m_prototype);
     ASSERT(!m_inlineCapacity);
 
-    // FIXME: When going poly proto, we should make an allocator and teach
-    // create_this' fast path how to allocate a poly proto object.
-    // https://bugs.webkit.org/show_bug.cgi?id=177517
+    // FIXME: Teach create_this's fast path how to allocate poly
+    // proto objects: https://bugs.webkit.org/show_bug.cgi?id=177517
+
     bool isPolyProto = false;
     FunctionExecutable* executable = nullptr;
     if (constructor) {
@@ -55,6 +56,7 @@ ALWAYS_INLINE void ObjectAllocationProfile::initializeProfile(VM& vm, JSGlobalOb
             RELEASE_ASSERT(structure->typeInfo().type() == FinalObjectType);
             m_allocator = Allocator();
             m_structure.set(vm, owner, structure);
+            m_prototype.set(vm, owner, prototype);
             m_inlineCapacity = structure->inlineCapacity();
             return;
         }
@@ -132,10 +134,11 @@ ALWAYS_INLINE void ObjectAllocationProfile::initializeProfile(VM& vm, JSGlobalOb
         m_allocator = allocator;
     }
 
-    // Ensure that if another thread sees the structure, it will see it properly created
+    // Ensure that if another thread sees the structure and prototype, it will see it properly created.
     WTF::storeStoreFence();
 
     m_structure.set(vm, owner, structure);
+    m_prototype.set(vm, owner, prototype);
     m_inlineCapacity = inlineCapacity;
 }
 

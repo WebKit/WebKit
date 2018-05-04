@@ -2318,16 +2318,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (auto* function = jsDynamicCast<JSFunction*>(m_vm, base)) {
                 if (FunctionRareData* rareData = function->rareData()) {
                     if (Structure* structure = rareData->objectAllocationStructure()) {
-                        // FIXME: we should be able to allocate a poly proto object here:
-                        // https://bugs.webkit.org/show_bug.cgi?id=177517
-                        if (structure->hasMonoProto()) {
-                            m_graph.freeze(rareData);
-                            m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
-                            m_state.setFoundConstants(true);
-                            didFoldClobberWorld();
-                            forNode(node).set(m_graph, structure);
-                            break;
-                        }
+                        m_graph.freeze(rareData);
+                        m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+                        m_state.setFoundConstants(true);
+                        didFoldClobberWorld();
+                        forNode(node).set(m_graph, structure);
+                        break;
                     }
                 }
             }
