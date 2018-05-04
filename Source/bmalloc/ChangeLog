@@ -1,3 +1,33 @@
+2018-05-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Strings should not be allocated in a gigacage
+        https://bugs.webkit.org/show_bug.cgi?id=185218
+
+        Reviewed by Saam Barati.
+        
+        This removes the string gigacage.
+        
+        Putting strings in a gigacage prevents read gadgets. The other things that get to be in gigacages
+        are there to prevent read-write gadgets.
+        
+        Also, putting strings in a gigacage seems to have been a bigger regression than putting other
+        things in gigacages.
+        
+        Therefore, to maximize the benefit/cost ratio of gigacages, we should evict strings from them. If
+        we want to throw away perf for security, there are more beneficial things to sacrifice.
+
+        * bmalloc/Gigacage.h:
+        (Gigacage::name):
+        (Gigacage::basePtr):
+        (Gigacage::size):
+        (Gigacage::forEachKind):
+        * bmalloc/HeapKind.h:
+        (bmalloc::isGigacage):
+        (bmalloc::gigacageKind):
+        (bmalloc::heapKind):
+        (bmalloc::isActiveHeapKindAfterEnsuringGigacage):
+        (bmalloc::mapToActiveHeapKindAfterEnsuringGigacage):
+
 2018-04-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use WordLock instead of std::mutex for Threading

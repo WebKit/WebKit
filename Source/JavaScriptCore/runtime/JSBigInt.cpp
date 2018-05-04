@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 Caio Lima <ticaiolima@gmail.com>
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,6 @@
 #include "MathCommon.h"
 #include "ParseInt.h"
 #include <algorithm>
-#include <wtf/text/StringVector.h>
 
 #define STATIC_ASSERT(cond) static_assert(cond, "JSBigInt assumes " #cond)
 
@@ -558,9 +557,9 @@ uint64_t JSBigInt::calculateMaximumCharactersRequired(int length, int radix, Dig
 
 String JSBigInt::toStringGeneric(ExecState& state, JSBigInt* x, int radix)
 {
-    // FIXME: [JSC] Revisit usage of StringVector into JSBigInt::toString
+    // FIXME: [JSC] Revisit usage of Vector into JSBigInt::toString
     // https://bugs.webkit.org/show_bug.cgi?id=18067
-    StringVector<LChar> resultString;
+    Vector<LChar> resultString;
 
     ASSERT(radix >= 2 && radix <= 36);
     ASSERT(!x->isZero());

@@ -1,3 +1,21 @@
+2018-05-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Strings should not be allocated in a gigacage
+        https://bugs.webkit.org/show_bug.cgi?id=185218
+
+        Reviewed by Saam Barati.
+
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::toStringGeneric):
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::resolveRopeToAtomicString const):
+        (JSC::JSRopeString::resolveRope const):
+        * runtime/JSString.h:
+        (JSC::JSString::create):
+        (JSC::JSString::createHasOtherOwner):
+        * runtime/VM.h:
+        (JSC::VM::gigacageAuxiliarySpace):
+
 2018-05-03  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, fix 32-bit profile offset for change in bytecode

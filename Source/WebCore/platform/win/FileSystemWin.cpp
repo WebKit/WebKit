@@ -150,7 +150,7 @@ static String getFinalPathName(const String& path)
     if (!isHandleValid(handle))
         return String();
 
-    StringVector<UChar> buffer(MAX_PATH);
+    Vector<UChar> buffer(MAX_PATH);
     if (::GetFinalPathNameByHandleW(handle, buffer.data(), buffer.size(), VOLUME_NAME_NT) >= MAX_PATH) {
         closeFile(handle);
         return String();
@@ -250,7 +250,7 @@ bool moveFile(const String& oldPath, const String& newPath)
 
 String pathByAppendingComponent(const String& path, const String& component)
 {
-    StringVector<UChar> buffer(MAX_PATH);
+    Vector<UChar> buffer(MAX_PATH);
 
     if (path.length() + 1 > buffer.size())
         return String();
@@ -349,7 +349,7 @@ static String bundleName()
 
 static String storageDirectory(DWORD pathIdentifier)
 {
-    StringVector<UChar> buffer(MAX_PATH);
+    Vector<UChar> buffer(MAX_PATH);
     if (FAILED(SHGetFolderPathW(0, pathIdentifier | CSIDL_FLAG_CREATE, 0, 0, buffer.data())))
         return String();
     buffer.resize(wcslen(buffer.data()));

@@ -34,7 +34,6 @@
 #include <wtf/text/ConversionMode.h>
 #include <wtf/text/StringCommon.h>
 #include <wtf/text/StringHasher.h>
-#include <wtf/text/StringVector.h>
 
 #if USE(CF)
 typedef const struct __CFString * CFStringRef;
@@ -157,7 +156,7 @@ protected:
 // Right now we use a mix of both, which makes code more confusing and has no benefit.
 
 class StringImpl : private StringImplShape {
-    WTF_MAKE_NONCOPYABLE(StringImpl); WTF_MAKE_STRING_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(StringImpl); WTF_MAKE_FAST_ALLOCATED;
 
     friend class AtomicStringImpl;
     friend class JSC::LLInt::Data;
@@ -257,7 +256,7 @@ public:
     static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
 
     template<typename CharacterType, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
-    static Ref<StringImpl> adopt(StringVector<CharacterType, inlineCapacity, OverflowHandler, minCapacity>&&);
+    static Ref<StringImpl> adopt(Vector<CharacterType, inlineCapacity, OverflowHandler, minCapacity>&&);
 
     WTF_EXPORT_PRIVATE static Ref<StringImpl> adopt(StringBuffer<UChar>&&);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> adopt(StringBuffer<LChar>&&);
@@ -470,9 +469,6 @@ public:
 
     BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
     
-    void assertCaged() const;
-    WTF_EXPORT_PRIVATE void releaseAssertCaged() const;
-
 protected:
     ~StringImpl();
 
@@ -526,7 +522,7 @@ static_assert(sizeof(StringImpl) == sizeof(StaticStringImpl), "");
 #if !ASSERT_DISABLED
 
 // StringImpls created from StaticStringImpl will ASSERT in the generic ValueCheck<T>::checkConsistency
-// as they are not allocated by stringMalloc. We don't currently have any way to detect that case
+// as they are not allocated by fastMalloc. We don't currently have any way to detect that case
 // so we ignore the consistency check for all StringImpl*.
 template<> struct ValueCheck<StringImpl*> {
     static void checkConsistency(const StringImpl*) { }
@@ -924,7 +920,7 @@ ALWAYS_INLINE Ref<StringImpl> StringImpl::createSubstringSharingImpl(StringImpl&
     auto* ownerRep = ((rep.bufferOwnership() == BufferSubstring) ? rep.substringBuffer() : &rep);
 
     // We allocate a buffer that contains both the StringImpl struct as well as the pointer to the owner string.
-    auto* stringImpl = static_cast<StringImpl*>(stringMalloc(allocationSize<StringImpl*>(1)));
+    auto* stringImpl = static_cast<StringImpl*>(fastMalloc(allocationSize<StringImpl*>(1)));
     if (rep.is8Bit())
         return adoptRef(*new (NotNull, stringImpl) StringImpl(rep.m_data8 + offset, length, *ownerRep));
     return adoptRef(*new (NotNull, stringImpl) StringImpl(rep.m_data16 + offset, length, *ownerRep));
@@ -949,8 +945,8 @@ template<typename CharacterType> ALWAYS_INLINE RefPtr<StringImpl> StringImpl::tr
         output = nullptr;
         return nullptr;
     }
-    auto* result = static_cast<StringImpl*>(tryStringMalloc(allocationSize<CharacterType>(length)));
-    if (!result) {
+    StringImpl* result;
+    if (!tryFastMalloc(allocationSize<CharacterType>(length)).getValue(result)) {
         output = nullptr;
         return nullptr;
     }
@@ -960,7 +956,7 @@ template<typename CharacterType> ALWAYS_INLINE RefPtr<StringImpl> StringImpl::tr
 }
 
 template<typename CharacterType, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
-inline Ref<StringImpl> StringImpl::adopt(StringVector<CharacterType, inlineCapacity, OverflowHandler, minCapacity>&& vector)
+inline Ref<StringImpl> StringImpl::adopt(Vector<CharacterType, inlineCapacity, OverflowHandler, minCapacity>&& vector)
 {
     if (size_t size = vector.size()) {
         ASSERT(vector.data());
@@ -1072,12 +1068,6 @@ inline UChar StringImpl::at(unsigned i) const
 {
     ASSERT_WITH_SECURITY_IMPLICATION(i < m_length);
     return is8Bit() ? m_data8[i] : m_data16[i];
-}
-
-inline void StringImpl::assertCaged() const
-{
-    if (!ASSERT_DISABLED)
-        releaseAssertCaged();
 }
 
 inline StringImpl::StringImpl(CreateSymbolTag, const LChar* characters, unsigned length)

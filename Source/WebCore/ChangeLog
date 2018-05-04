@@ -1,3 +1,40 @@
+2018-05-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Strings should not be allocated in a gigacage
+        https://bugs.webkit.org/show_bug.cgi?id=185218
+
+        Reviewed by Saam Barati.
+
+        No new tests because no new behavior.
+
+        * Modules/indexeddb/server/IDBSerialization.cpp:
+        (WebCore::decodeKey):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readString):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::normalizeSpaces):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::takeRemainingWhitespace):
+        * platform/URLParser.cpp:
+        (WebCore::percentEncodeByte):
+        (WebCore::serializeURLEncodedForm):
+        (WebCore::URLParser::serialize):
+        * platform/URLParser.h:
+        * platform/graphics/FourCC.cpp:
+        (WebCore::FourCC::toString const):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::ReplicaState::cloneID const):
+        * platform/text/LocaleICU.cpp:
+        (WebCore::LocaleICU::decimalSymbol):
+        (WebCore::LocaleICU::decimalTextAttribute):
+        (WebCore::getDateFormatPattern):
+        (WebCore::LocaleICU::createLabelVector):
+        (WebCore::getFormatForSkeleton):
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::FileSystem::getFinalPathName):
+        (WebCore::FileSystem::pathByAppendingComponent):
+        (WebCore::FileSystem::storageDirectory):
+
 2018-05-02  Brent Fulgham  <bfulgham@apple.com>
 
         Widgets should hold a WeakPtr to their parents

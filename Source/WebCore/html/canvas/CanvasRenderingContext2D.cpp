@@ -349,7 +349,7 @@ static void normalizeSpaces(String& text)
         return;
 
     unsigned textLength = text.length();
-    StringVector<UChar> charVector(textLength);
+    Vector<UChar> charVector(textLength);
     StringView(text).getCharactersWithUpconvert(charVector.data());
 
     charVector[i++] = ' ';

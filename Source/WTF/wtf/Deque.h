@@ -120,7 +120,7 @@ public:
 private:
     friend class DequeIteratorBase<T, inlineCapacity>;
 
-    typedef VectorBuffer<T, inlineCapacity, FastMalloc> Buffer;
+    typedef VectorBuffer<T, inlineCapacity> Buffer;
     typedef VectorTypeOperations<T> TypeOperations;
     typedef DequeIteratorBase<T, inlineCapacity> IteratorBase;
 

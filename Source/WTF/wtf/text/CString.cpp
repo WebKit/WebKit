@@ -29,7 +29,6 @@
 
 #include <string.h>
 #include <wtf/text/StringHasher.h>
-#include <wtf/text/StringMalloc.h>
 
 namespace WTF {
 
@@ -39,7 +38,7 @@ Ref<CStringBuffer> CStringBuffer::createUninitialized(size_t length)
 
     // The +1 is for the terminating null character.
     size_t size = sizeof(CStringBuffer) + length + 1;
-    CStringBuffer* stringBuffer = static_cast<CStringBuffer*>(stringMalloc(size));
+    CStringBuffer* stringBuffer = static_cast<CStringBuffer*>(fastMalloc(size));
     return adoptRef(*new (NotNull, stringBuffer) CStringBuffer(length));
 }
 

@@ -59,7 +59,7 @@ private:
     friend std::optional<uint16_t> defaultPortForProtocol(StringView);
 
     URL m_url;
-    StringVector<LChar> m_asciiBuffer;
+    Vector<LChar> m_asciiBuffer;
     bool m_urlIsSpecial { false };
     bool m_urlIsFile { false };
     bool m_hostHasPercentOrNonASCII { false };

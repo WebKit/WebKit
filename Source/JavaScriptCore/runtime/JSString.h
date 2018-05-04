@@ -138,7 +138,6 @@ protected:
 public:
     static JSString* create(VM& vm, Ref<StringImpl>&& value)
     {
-        value->assertCaged();
         unsigned length = value->length();
         size_t cost = value->cost();
         JSString* newString = new (NotNull, allocateCell<JSString>(vm.heap)) JSString(vm, WTFMove(value));
@@ -147,7 +146,6 @@ public:
     }
     static JSString* createHasOtherOwner(VM& vm, Ref<StringImpl>&& value)
     {
-        value->assertCaged();
         size_t length = value->length();
         JSString* newString = new (NotNull, allocateCell<JSString>(vm.heap)) JSString(vm, WTFMove(value));
         newString->finishCreation(vm, length);

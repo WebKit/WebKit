@@ -140,7 +140,7 @@ public:
     static String adopt(StringBuffer<LChar>&& buffer) { return StringImpl::adopt(WTFMove(buffer)); }
     static String adopt(StringBuffer<UChar>&& buffer) { return StringImpl::adopt(WTFMove(buffer)); }
     template<typename CharacterType, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
-    static String adopt(StringVector<CharacterType, inlineCapacity, OverflowHandler, minCapacity>&& vector) { return StringImpl::adopt(WTFMove(vector)); }
+    static String adopt(Vector<CharacterType, inlineCapacity, OverflowHandler, minCapacity>&& vector) { return StringImpl::adopt(WTFMove(vector)); }
 
     bool isNull() const { return !m_impl; }
     bool isEmpty() const { return !m_impl || m_impl->isEmpty(); }
@@ -364,9 +364,6 @@ public:
     // This is useful for clearing String-based caches.
     void clearImplIfNotShared();
 
-    void assertCaged() const;
-    void releaseAssertCaged() const;
-
 private:
     template<typename CharacterType> void removeInternal(const CharacterType*, unsigned, unsigned);
     template<typename CharacterType> void appendInternal(CharacterType);
@@ -570,18 +567,6 @@ inline void String::clearImplIfNotShared()
 {
     if (m_impl && m_impl->hasOneRef())
         m_impl = nullptr;
-}
-
-inline void String::assertCaged() const
-{
-    if (m_impl)
-        m_impl->assertCaged();
-}
-
-inline void String::releaseAssertCaged() const
-{
-    if (m_impl)
-        m_impl->releaseAssertCaged();
 }
 
 #ifdef __OBJC__

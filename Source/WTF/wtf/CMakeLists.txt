@@ -296,9 +296,7 @@ set(WTF_PUBLIC_HEADERS
     text/StringHash.h
     text/StringHasher.h
     text/StringImpl.h
-    text/StringMalloc.h
     text/StringOperators.h
-    text/StringVector.h
     text/StringView.h
     text/SymbolImpl.h
     text/SymbolRegistry.h
@@ -415,7 +413,6 @@ set(WTF_SOURCES
     text/StringBuilder.cpp
     text/StringBuilderJSON.cpp
     text/StringImpl.cpp
-    text/StringMalloc.cpp
     text/StringView.cpp
     text/SymbolImpl.cpp
     text/SymbolRegistry.cpp

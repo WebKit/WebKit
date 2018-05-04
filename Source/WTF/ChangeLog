@@ -1,3 +1,137 @@
+2018-05-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Strings should not be allocated in a gigacage
+        https://bugs.webkit.org/show_bug.cgi?id=185218
+
+        Reviewed by Saam Barati.
+        
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Deque.h:
+        * wtf/Forward.h:
+        * wtf/Gigacage.h:
+        (Gigacage::name):
+        (Gigacage::basePtr):
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::allocateBuffer):
+        (WTF::VectorBufferBase::tryAllocateBuffer):
+        (WTF::VectorBufferBase::reallocateBuffer):
+        (WTF::VectorBufferBase::deallocateBuffer):
+        (WTF::minCapacity>::Vector):
+        (WTF::=):
+        (WTF::minCapacity>::contains const):
+        (WTF::minCapacity>::findMatching const):
+        (WTF::minCapacity>::find const):
+        (WTF::minCapacity>::reverseFind const):
+        (WTF::minCapacity>::appendIfNotContains):
+        (WTF::minCapacity>::fill):
+        (WTF::minCapacity>::appendRange):
+        (WTF::minCapacity>::expandCapacity):
+        (WTF::minCapacity>::tryExpandCapacity):
+        (WTF::minCapacity>::resize):
+        (WTF::minCapacity>::resizeToFit):
+        (WTF::minCapacity>::shrink):
+        (WTF::minCapacity>::grow):
+        (WTF::minCapacity>::asanSetInitialBufferSizeTo):
+        (WTF::minCapacity>::asanSetBufferSizeToFullCapacity):
+        (WTF::minCapacity>::asanBufferSizeWillChangeTo):
+        (WTF::minCapacity>::reserveCapacity):
+        (WTF::minCapacity>::tryReserveCapacity):
+        (WTF::minCapacity>::reserveInitialCapacity):
+        (WTF::minCapacity>::shrinkCapacity):
+        (WTF::minCapacity>::append):
+        (WTF::minCapacity>::tryAppend):
+        (WTF::minCapacity>::constructAndAppend):
+        (WTF::minCapacity>::tryConstructAndAppend):
+        (WTF::minCapacity>::appendSlowCase):
+        (WTF::minCapacity>::constructAndAppendSlowCase):
+        (WTF::minCapacity>::tryConstructAndAppendSlowCase):
+        (WTF::minCapacity>::uncheckedAppend):
+        (WTF::minCapacity>::appendVector):
+        (WTF::minCapacity>::insert):
+        (WTF::minCapacity>::insertVector):
+        (WTF::minCapacity>::remove):
+        (WTF::minCapacity>::removeFirst):
+        (WTF::minCapacity>::removeFirstMatching):
+        (WTF::minCapacity>::removeAll):
+        (WTF::minCapacity>::removeAllMatching):
+        (WTF::minCapacity>::reverse):
+        (WTF::minCapacity>::map const):
+        (WTF::minCapacity>::releaseBuffer):
+        (WTF::minCapacity>::checkConsistency):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::removeRepeatedElements):
+        (WTF::Malloc>::Vector): Deleted.
+        (WTF::Malloc>::contains const): Deleted.
+        (WTF::Malloc>::findMatching const): Deleted.
+        (WTF::Malloc>::find const): Deleted.
+        (WTF::Malloc>::reverseFind const): Deleted.
+        (WTF::Malloc>::appendIfNotContains): Deleted.
+        (WTF::Malloc>::fill): Deleted.
+        (WTF::Malloc>::appendRange): Deleted.
+        (WTF::Malloc>::expandCapacity): Deleted.
+        (WTF::Malloc>::tryExpandCapacity): Deleted.
+        (WTF::Malloc>::resize): Deleted.
+        (WTF::Malloc>::resizeToFit): Deleted.
+        (WTF::Malloc>::shrink): Deleted.
+        (WTF::Malloc>::grow): Deleted.
+        (WTF::Malloc>::asanSetInitialBufferSizeTo): Deleted.
+        (WTF::Malloc>::asanSetBufferSizeToFullCapacity): Deleted.
+        (WTF::Malloc>::asanBufferSizeWillChangeTo): Deleted.
+        (WTF::Malloc>::reserveCapacity): Deleted.
+        (WTF::Malloc>::tryReserveCapacity): Deleted.
+        (WTF::Malloc>::reserveInitialCapacity): Deleted.
+        (WTF::Malloc>::shrinkCapacity): Deleted.
+        (WTF::Malloc>::append): Deleted.
+        (WTF::Malloc>::tryAppend): Deleted.
+        (WTF::Malloc>::constructAndAppend): Deleted.
+        (WTF::Malloc>::tryConstructAndAppend): Deleted.
+        (WTF::Malloc>::appendSlowCase): Deleted.
+        (WTF::Malloc>::constructAndAppendSlowCase): Deleted.
+        (WTF::Malloc>::tryConstructAndAppendSlowCase): Deleted.
+        (WTF::Malloc>::uncheckedAppend): Deleted.
+        (WTF::Malloc>::appendVector): Deleted.
+        (WTF::Malloc>::insert): Deleted.
+        (WTF::Malloc>::insertVector): Deleted.
+        (WTF::Malloc>::remove): Deleted.
+        (WTF::Malloc>::removeFirst): Deleted.
+        (WTF::Malloc>::removeFirstMatching): Deleted.
+        (WTF::Malloc>::removeAll): Deleted.
+        (WTF::Malloc>::removeAllMatching): Deleted.
+        (WTF::Malloc>::reverse): Deleted.
+        (WTF::Malloc>::map const): Deleted.
+        (WTF::Malloc>::releaseBuffer): Deleted.
+        (WTF::Malloc>::checkConsistency): Deleted.
+        * wtf/text/AtomicStringImpl.h:
+        * wtf/text/CString.cpp:
+        (WTF::CStringBuffer::createUninitialized):
+        * wtf/text/CString.h:
+        * wtf/text/StringBuffer.h:
+        (WTF::StringBuffer::StringBuffer):
+        (WTF::StringBuffer::~StringBuffer):
+        (WTF::StringBuffer::resize):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl):
+        (WTF::StringImpl::destroy):
+        (WTF::StringImpl::createUninitializedInternalNonEmpty):
+        (WTF::StringImpl::reallocateInternal):
+        (WTF::StringImpl::releaseAssertCaged const): Deleted.
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::createSubstringSharingImpl):
+        (WTF::StringImpl::tryCreateUninitialized):
+        (WTF::StringImpl::adopt):
+        (WTF::StringImpl::assertCaged const): Deleted.
+        * wtf/text/StringMalloc.cpp: Removed.
+        * wtf/text/StringMalloc.h: Removed.
+        * wtf/text/StringVector.h: Removed.
+        * wtf/text/SymbolImpl.h:
+        * wtf/text/UniquedStringImpl.h:
+        * wtf/text/WTFString.h:
+        (WTF::String::adopt):
+        (WTF::String::assertCaged const): Deleted.
+        (WTF::String::releaseAssertCaged const): Deleted.
+
 2018-05-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Ads in NYTimes app are shifted downwards by the scroll view's top content inset

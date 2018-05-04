@@ -104,7 +104,7 @@ private:
 #if !ASSERT_DISABLED
 // AtomicStringImpls created from StaticStringImpl will ASSERT
 // in the generic ValueCheck<T>::checkConsistency
-// as they are not allocated by StringMalloc.
+// as they are not allocated by fastMalloc.
 // We don't currently have any way to detect that case
 // so we ignore the consistency check for all AtomicStringImpls*.
 template<> struct
