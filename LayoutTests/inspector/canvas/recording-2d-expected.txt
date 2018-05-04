@@ -526,7 +526,7 @@ frames:
         1: (anonymous function) - inspector/canvas/recording-2d.html:184:28 (172)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:393:24 (20)
   24: (duration)
-    0: getTransform
+    0: getTransform()
       trace:
         0: getTransform - [native code] (174)
         1: (anonymous function) - inspector/canvas/recording-2d.html:187:29 (175)

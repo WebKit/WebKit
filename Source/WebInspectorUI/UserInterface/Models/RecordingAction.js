@@ -78,11 +78,19 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
     static isFunctionForType(type, name)
     {
-        let functionNames = WI.RecordingAction._functionNames[type];
-        if (!functionNames)
+        let prototype = WI.RecordingAction._prototypeForType(type);
+        if (!prototype)
             return false;
+        return typeof Object.getOwnPropertyDescriptor(prototype, name).value === "function";
+    }
 
-        return functionNames.has(name);
+    static _prototypeForType(type)
+    {
+        if (type === WI.Recording.Type.Canvas2D)
+            return CanvasRenderingContext2D.prototype;
+        if (type === WI.Recording.Type.CanvasWebGL)
+            return WebGLRenderingContext.prototype;
+        return null;
     }
 
     // Public
@@ -221,20 +229,11 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         this._isVisual = visualNames ? visualNames.has(this._name) : false;
 
         if (this._valid) {
-            let prototype = null;
-            if (recording.type === WI.Recording.Type.Canvas2D)
-                prototype = CanvasRenderingContext2D.prototype;
-            else if (recording.type === WI.Recording.Type.CanvasWebGL)
-                prototype = WebGLRenderingContext.prototype;
+            let prototype = WI.RecordingAction._prototypeForType(recording.type);
+            if (prototype && !(name in prototype)) {
+                this.markInvalid();
 
-            if (prototype) {
-                let validName = name in prototype;
-                let validFunction = !this._isFunction || typeof prototype[name] === "function";
-                if (!validName || !validFunction) {
-                    this.markInvalid();
-
-                    WI.Recording.synthesizeError(WI.UIString("“%s” is invalid.").format(name));
-                }
+                WI.Recording.synthesizeError(WI.UIString("“%s” is invalid.").format(name));
             }
         }
 
@@ -341,209 +340,6 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 WI.RecordingAction.Event = {
     ValidityChanged: "recording-action-marked-invalid",
     HasVisibleEffectChanged: "recording-action-has-visible-effect-changed",
-};
-
-WI.RecordingAction._functionNames = {
-    [WI.Recording.Type.Canvas2D]: new Set([
-        "arc",
-        "arcTo",
-        "beginPath",
-        "bezierCurveTo",
-        "clearRect",
-        "clearShadow",
-        "clip",
-        "clip",
-        "closePath",
-        "commit",
-        "createImageData",
-        "createLinearGradient",
-        "createPattern",
-        "createRadialGradient",
-        "drawFocusIfNeeded",
-        "drawImage",
-        "drawImageFromRect",
-        "ellipse",
-        "fill",
-        "fill",
-        "fillRect",
-        "fillText",
-        "getImageData",
-        "getLineDash",
-        "getPath",
-        "isPointInPath",
-        "isPointInPath",
-        "isPointInStroke",
-        "isPointInStroke",
-        "lineTo",
-        "measureText",
-        "moveTo",
-        "putImageData",
-        "quadraticCurveTo",
-        "rect",
-        "resetTransform",
-        "restore",
-        "rotate",
-        "save",
-        "scale",
-        "setAlpha",
-        "setCompositeOperation",
-        "setFillColor",
-        "setLineCap",
-        "setLineDash",
-        "setLineJoin",
-        "setLineWidth",
-        "setMiterLimit",
-        "setPath",
-        "setShadow",
-        "setStrokeColor",
-        "setTransform",
-        "stroke",
-        "stroke",
-        "strokeRect",
-        "strokeText",
-        "transform",
-        "translate",
-    ]),
-    [WI.Recording.Type.CanvasWebGL]: new Set([
-        "activeTexture",
-        "attachShader",
-        "bindAttribLocation",
-        "bindBuffer",
-        "bindFramebuffer",
-        "bindRenderbuffer",
-        "bindTexture",
-        "blendColor",
-        "blendEquation",
-        "blendEquationSeparate",
-        "blendFunc",
-        "blendFuncSeparate",
-        "bufferData",
-        "bufferData",
-        "bufferSubData",
-        "checkFramebufferStatus",
-        "clear",
-        "clearColor",
-        "clearDepth",
-        "clearStencil",
-        "colorMask",
-        "compileShader",
-        "compressedTexImage2D",
-        "compressedTexSubImage2D",
-        "copyTexImage2D",
-        "copyTexSubImage2D",
-        "createBuffer",
-        "createFramebuffer",
-        "createProgram",
-        "createRenderbuffer",
-        "createShader",
-        "createTexture",
-        "cullFace",
-        "deleteBuffer",
-        "deleteFramebuffer",
-        "deleteProgram",
-        "deleteRenderbuffer",
-        "deleteShader",
-        "deleteTexture",
-        "depthFunc",
-        "depthMask",
-        "depthRange",
-        "detachShader",
-        "disable",
-        "disableVertexAttribArray",
-        "drawArrays",
-        "drawElements",
-        "enable",
-        "enableVertexAttribArray",
-        "finish",
-        "flush",
-        "framebufferRenderbuffer",
-        "framebufferTexture2D",
-        "frontFace",
-        "generateMipmap",
-        "getActiveAttrib",
-        "getActiveUniform",
-        "getAttachedShaders",
-        "getAttribLocation",
-        "getBufferParameter",
-        "getContextAttributes",
-        "getError",
-        "getExtension",
-        "getFramebufferAttachmentParameter",
-        "getParameter",
-        "getProgramInfoLog",
-        "getProgramParameter",
-        "getRenderbufferParameter",
-        "getShaderInfoLog",
-        "getShaderParameter",
-        "getShaderPrecisionFormat",
-        "getShaderSource",
-        "getSupportedExtensions",
-        "getTexParameter",
-        "getUniform",
-        "getUniformLocation",
-        "getVertexAttrib",
-        "getVertexAttribOffset",
-        "hint",
-        "isBuffer",
-        "isContextLost",
-        "isEnabled",
-        "isFramebuffer",
-        "isProgram",
-        "isRenderbuffer",
-        "isShader",
-        "isTexture",
-        "lineWidth",
-        "linkProgram",
-        "pixelStorei",
-        "polygonOffset",
-        "readPixels",
-        "releaseShaderCompiler",
-        "renderbufferStorage",
-        "sampleCoverage",
-        "scissor",
-        "shaderSource",
-        "stencilFunc",
-        "stencilFuncSeparate",
-        "stencilMask",
-        "stencilMaskSeparate",
-        "stencilOp",
-        "stencilOpSeparate",
-        "texImage2D",
-        "texParameterf",
-        "texParameteri",
-        "texSubImage2D",
-        "uniform1f",
-        "uniform1fv",
-        "uniform1i",
-        "uniform1iv",
-        "uniform2f",
-        "uniform2fv",
-        "uniform2i",
-        "uniform2iv",
-        "uniform3f",
-        "uniform3fv",
-        "uniform3i",
-        "uniform3iv",
-        "uniform4f",
-        "uniform4fv",
-        "uniform4i",
-        "uniform4iv",
-        "uniformMatrix2fv",
-        "uniformMatrix3fv",
-        "uniformMatrix4fv",
-        "useProgram",
-        "validateProgram",
-        "vertexAttrib1f",
-        "vertexAttrib1fv",
-        "vertexAttrib2f",
-        "vertexAttrib2fv",
-        "vertexAttrib3f",
-        "vertexAttrib3fv",
-        "vertexAttrib4f",
-        "vertexAttrib4fv",
-        "vertexAttribPointer",
-        "viewport",
-    ]),
 };
 
 WI.RecordingAction._visualNames = {

@@ -1,3 +1,12 @@
+2018-05-04  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas tab: Determine isFunction by looking at the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=184990
+
+        Reviewed by Brian Burg.
+
+        * inspector/canvas/recording-2d-expected.txt:
+
 2018-05-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r231331.
