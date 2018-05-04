@@ -7,9 +7,9 @@ PASS background-color supports animating as color of #RGBa
 PASS background-color supports animating as color of rgba() 
 PASS background-color supports animating as color of hsla() 
 PASS background-image (type: discrete) has testInterpolation function 
-FAIL background-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(http://localhost/test-1)"
-FAIL background-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(http://localhost/test-1)"
-FAIL background-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(http://localhost/test-1)"
+FAIL background-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 499ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+FAIL background-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+FAIL background-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
 PASS border-bottom-color (type: color) has testInterpolation function 
 PASS border-bottom-color supports animating as color of rgb() 
 PASS border-bottom-color supports animating as color of #RGB 
@@ -29,9 +29,9 @@ FAIL border-image-slice uses discrete animation when animating between "1 2 3 4"
 FAIL border-image-slice uses discrete animation when animating between "1 2 3 4" and "5 6 7 8" with effect easing assert_equals: The value should be 1 2 3 4 at 940ms expected "1 2 3 4" but got "2.711512804031372 3.711512804031372 4.711513042449951 5.711513042449951"
 FAIL border-image-slice uses discrete animation when animating between "1 2 3 4" and "5 6 7 8" with keyframe easing assert_equals: The value should be 1 2 3 4 at 940ms expected "1 2 3 4" but got "2.711512804031372 3.711512804031372 4.711513042449951 5.711513042449951"
 PASS border-image-source (type: discrete) has testInterpolation function 
-FAIL border-image-source uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(http://localhost/test-1)"
-FAIL border-image-source uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(http://localhost/test-1)"
-FAIL border-image-source uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(http://localhost/test-1)"
+FAIL border-image-source uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 499ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+FAIL border-image-source uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+FAIL border-image-source uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
 PASS border-image-width (type: discrete) has testInterpolation function 
 FAIL border-image-width uses discrete animation when animating between "1 2 3 4" and "5 6 7 8" with linear easing assert_equals: The value should be 1 2 3 4 at 499ms expected "1 2 3 4" but got "2.996000051498413 3.996000051498413 4.995999813079834 5.995999813079834"
 FAIL border-image-width uses discrete animation when animating between "1 2 3 4" and "5 6 7 8" with effect easing assert_equals: The value should be 1 2 3 4 at 940ms expected "1 2 3 4" but got "2.711512804031372 3.711512804031372 4.711513042449951 5.711513042449951"
@@ -143,7 +143,7 @@ FAIL filter: interpolate different length of filter-function-list with function 
 FAIL filter: interpolate different length of filter-function-list with function which lacuna value is 0 assert_equals: The value should be opacity(0.5) grayscale(0.5) invert(0.5) sepia(0.5) blur(5px) at 500ms expected "opacity(0.5) grayscale(0.5) invert(0.5) sepia(0.5) blur(5px)" but got "opacity(0.25) grayscale(0.75) invert(0.75) sepia(0.75) blur(7.5px)"
 FAIL filter: interpolate different length of filter-function-list with drop-shadow function assert_equals: The value should be blur(5px) drop-shadow(rgba(85, 0, 170, 0.6) 5px 5px 5px at 500ms expected "blur(5px) drop-shadow(rgba(85, 0, 170, 0.6) 5px 5px 5px" but got "blur(10px) drop-shadow(rgba(0, 0, 255, 0.8) 10px 10px 10px)"
 PASS filter: interpolate from none 
-FAIL filter: url function (interpoalte as discrete) assert_equals: The value should be blur(0px) url("#f1") at 499ms expected "blur(0px) url(\"#f1\")" but got "blur(4.989999771118164px) url(#f1)"
+FAIL filter: url function (interpoalte as discrete) assert_equals: The value should be blur(0px) url("#f1") at 499ms expected "blur(0px) url(\"#f1\")" but got "blur(4.989999771118164px) url(\"#f1\")"
 PASS flood-color (type: color) has testInterpolation function 
 PASS flood-color supports animating as color of rgb() 
 PASS flood-color supports animating as color of #RGB 
@@ -182,9 +182,9 @@ PASS lighting-color supports animating as color of #RGBa
 PASS lighting-color supports animating as color of rgba() 
 PASS lighting-color supports animating as color of hsla() 
 PASS list-style-image (type: discrete) has testInterpolation function 
-FAIL list-style-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(http://localhost/test-1)"
-FAIL list-style-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(http://localhost/test-1)"
-FAIL list-style-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(http://localhost/test-1)"
+FAIL list-style-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 499ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+FAIL list-style-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+FAIL list-style-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
 PASS outline-color (type: color) has testInterpolation function 
 PASS outline-color supports animating as color of rgb() 
 PASS outline-color supports animating as color of #RGB 
@@ -202,9 +202,9 @@ PASS perspective (type: length) has testInterpolation function
 PASS perspective supports animating as a length 
 FAIL perspective supports animating as a length of rem assert_equals: The value should be 30px at 500ms expected "30px" but got "3px"
 PASS shape-outside (type: discrete) has testInterpolation function 
-FAIL shape-outside uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(http://localhost/test-2)"
-FAIL shape-outside uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(http://localhost/test-2)"
-FAIL shape-outside uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(http://localhost/test-2)"
+FAIL shape-outside uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+FAIL shape-outside uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+FAIL shape-outside uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
 PASS stop-color (type: color) has testInterpolation function 
 PASS stop-color supports animating as color of rgb() 
 PASS stop-color supports animating as color of #RGB 
