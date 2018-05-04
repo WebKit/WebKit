@@ -1,3 +1,21 @@
+2018-05-04  Zalan Bujtas  <zalan@apple.com>
+
+        [Simple line layout] Add support for line layout box generation with multiple text renderers.
+        https://bugs.webkit.org/show_bug.cgi?id=185276
+
+        Reviewed by Antti Koivisto.
+
+        Covered by existing tests.
+
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::canUseForLineBoxTree):
+        (WebCore::SimpleLineLayout::generateLineBoxTree):
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::Run::renderer const):
+        (WebCore::SimpleLineLayout::RunResolver::Run::localStart const):
+        (WebCore::SimpleLineLayout::RunResolver::Run::localEnd const):
+        * rendering/SimpleLineLayoutResolver.h:
+
 2018-05-04  Timothy Hatcher  <timothy@apple.com>
 
         Deprecate legacy WebView and friends

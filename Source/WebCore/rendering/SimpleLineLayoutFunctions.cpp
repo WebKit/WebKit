@@ -38,6 +38,7 @@
 #include "LineInfo.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
+#include "RenderChildIterator.h"
 #include "RenderIterator.h"
 #include "RenderStyle.h"
 #include "RenderText.h"
@@ -283,12 +284,13 @@ bool canUseForLineBoxTree(RenderBlockFlow& flow, const Layout& layout)
     if (!flow.firstChild())
         return false;
     
-    if (flow.firstChild() != flow.lastChild())
-        return false;
-
-    if (!is<RenderText>(*flow.firstChild()))
-        return false;
-
+    for (auto& child : childrenOfType<RenderObject>(flow)) {
+        if (!is<RenderText>(child))
+            return false;
+        // Simple line layout iterator can't handle renderers with zero length properly.
+        if (!downcast<RenderText>(child).length())
+            return false;
+    }
     return true;
 }
 
@@ -331,7 +333,7 @@ void generateLineBoxTree(RenderBlockFlow& flow, const Layout& layout)
         BidiRunList<BidiRun> bidiRuns;
         for (auto it = range.begin(); it != range.end(); ++it) {
             auto run = *it;
-            bidiRuns.appendRun(std::make_unique<BidiRun>(run.start(), run.end(), *flow.firstChild(), bidiContext.ptr(), U_LEFT_TO_RIGHT));
+            bidiRuns.appendRun(std::make_unique<BidiRun>(run.localStart(), run.localEnd(), const_cast<RenderObject&>(run.renderer()), bidiContext.ptr(), U_LEFT_TO_RIGHT));
         }
 
         LineInfo lineInfo;
