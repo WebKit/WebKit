@@ -1,5 +1,19 @@
 2018-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Use subprocess.call instead of os.system to handle path with spaces
+        https://bugs.webkit.org/show_bug.cgi?id=185291
+
+        Reviewed by Darin Adler.
+
+        If gperf path includes spaces, these python scripts fail to execute gperf.
+        We use subprocess module instead of os.system to invoke gperf.
+
+        * css/makeSelectorPseudoClassAndCompatibilityElementMap.py:
+        * css/makeSelectorPseudoElementsMap.py:
+        * platform/network/create-http-header-name-table:
+
+2018-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, attempt to fix WinCairo build failure
         https://bugs.webkit.org/show_bug.cgi?id=185218
 

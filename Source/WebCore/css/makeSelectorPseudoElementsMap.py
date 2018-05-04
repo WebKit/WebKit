@@ -25,6 +25,7 @@
 
 import os
 import sys
+import subprocess
 
 
 def enumerablePseudoType(stringPseudoType):
@@ -206,7 +207,6 @@ gperf_command = sys.argv[2]
 if 'GPERF' in os.environ:
     gperf_command = os.environ['GPERF']
 
-gperf_return = os.system("%s --key-positions=\"*\" -m 10 -s 2 SelectorPseudoElementTypeMap.gperf --output-file=SelectorPseudoElementTypeMap.cpp" % gperf_command)
-if gperf_return != 0:
+if subprocess.call([gperf_command, '--key-positions=*', '-m', '10', '-s', '2', 'SelectorPseudoElementTypeMap.gperf', '--output-file=SelectorPseudoElementTypeMap.cpp']) != 0:
     print("Error when generating SelectorPseudoElementTypeMap.cpp from SelectorPseudoElementTypeMap.gperf :(")
     sys.exit(gperf_return)

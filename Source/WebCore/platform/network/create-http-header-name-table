@@ -29,6 +29,7 @@
 
 import os
 import sys
+import subprocess
 
 program_name = os.path.basename(__file__)
 if len(sys.argv) < 2:
@@ -240,6 +241,6 @@ header_file.close()
 
 gperf = os.getenv('GPERF') or sys.argv[2]
 
-if os.system('%s --key-positions="*" -D -n -s 2 HTTPHeaderNames.gperf --output-file=HTTPHeaderNames.cpp' % gperf):
+if subprocess.call([gperf, '--key-positions=*', '-D', '-n', '-s', '2', 'HTTPHeaderNames.gperf', '--output-file=HTTPHeaderNames.cpp']) != 0:
     sys.stderr.write('Failed to run gperf.')
     exit(1)
