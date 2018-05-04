@@ -1,28 +1,6 @@
-http://127.0.0.1:8000/try_to_promote - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/try_to_promote, main document URL http://127.0.0.1:8000/contentextensions/make-https.html, http method GET> redirectResponse (null)
-http://127.0.0.1:8000/contentextensions/make-https.html - didFinishLoading
-http://127.0.0.1:8000/try_to_promote - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/try_to_promote, http status code 404>
-http://127.0.0.1:8000/try_to_promote - didFinishLoading
-http://127.0.0.1/nope - willSendRequest <NSURLRequest URL http://127.0.0.1/nope, main document URL http://127.0.0.1:8000/contentextensions/make-https.html, http method GET> redirectResponse (null)
-http://127.0.0.1/nope - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1004, failing URL "http://127.0.0.1/nope">
-CONSOLE MESSAGE: line 30: Content blocker promoted URL from http://127.0.0.1/promote to https
-https://127.0.0.1/promote - willSendRequest <NSURLRequest URL https://127.0.0.1/promote, main document URL http://127.0.0.1:8000/contentextensions/make-https.html, http method GET> redirectResponse (null)
-https://127.0.0.1/promote - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1200, failing URL "https://127.0.0.1/promote">
-CONSOLE MESSAGE: line 30: Content blocker promoted URL from http://127.0.0.1/promote to https
-https://127.0.0.1/promote - willSendRequest <NSURLRequest URL https://127.0.0.1/promote, main document URL http://127.0.0.1:8000/contentextensions/make-https.html, http method GET> redirectResponse (null)
-https://127.0.0.1/promote - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1200, failing URL "https://127.0.0.1/promote">
-CONSOLE MESSAGE: line 30: Content blocker promoted URL from http://127.0.0.1/promote to https
-https://127.0.0.1/promote - willSendRequest <NSURLRequest URL https://127.0.0.1/promote, main document URL http://127.0.0.1:8000/contentextensions/make-https.html, http method GET> redirectResponse (null)
-https://127.0.0.1/promote - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1200, failing URL "https://127.0.0.1/promote">
-http://127.0.0.1:443/try_to_promote - willSendRequest <NSURLRequest URL http://127.0.0.1:443/try_to_promote, main document URL http://127.0.0.1:8000/contentextensions/make-https.html, http method GET> redirectResponse (null)
-http://127.0.0.1:443/try_to_promote - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1004, failing URL "http://127.0.0.1:443/try_to_promote">
-http://127.0.0.1:1443/try_to_promote - willSendRequest <NSURLRequest URL http://127.0.0.1:1443/try_to_promote, main document URL http://127.0.0.1:8000/contentextensions/make-https.html, http method GET> redirectResponse (null)
-http://127.0.0.1:1443/try_to_promote - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1004, failing URL "http://127.0.0.1:1443/try_to_promote">
-CONSOLE MESSAGE: line 30: Content blocker promoted URL from http://promote/ to https
-https://promote/ - willSendRequest <NSURLRequest URL https://promote/, main document URL http://127.0.0.1:8000/contentextensions/make-https.html, http method GET> redirectResponse (null)
+CONSOLE MESSAGE: line 29: Content blocker promoted URL from http://127.0.0.1/promote to https
+CONSOLE MESSAGE: line 29: Content blocker promoted URL from http://127.0.0.1/promote to https
+CONSOLE MESSAGE: line 29: Content blocker promoted URL from http://127.0.0.1/promote to https
+CONSOLE MESSAGE: line 29: Content blocker promoted URL from http://promote/ to https
 Blocked access to external URL https://promote/
-https://promote/ - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999>
-protocol://try_to_promote - willSendRequest <NSURLRequest URL protocol://try_to_promote, main document URL http://127.0.0.1:8000/contentextensions/make-https.html, http method GET> redirectResponse (null)
-protocol://try_to_promote - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1002, failing URL "protocol://try_to_promote">
-https://127.0.0.1/already_promoted - willSendRequest <NSURLRequest URL https://127.0.0.1/already_promoted, main document URL http://127.0.0.1:8000/contentextensions/make-https.html, http method GET> redirectResponse (null)
-https://127.0.0.1/already_promoted - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1200, failing URL "https://127.0.0.1/already_promoted">
-URLs with http, port 80, and promote in the url should be promoted to https with port 443.
+URLs with http, port 80, and promote in the url should be promoted to https with port 443. Four URLs should be promoted as should be shown by four CONSOLE MESSAGE lines.

@@ -1,7 +1,6 @@
 <head>
 <script>
 if(window.testRunner) {
-    testRunner.dumpResourceLoadCallbacks();
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
 }
@@ -37,4 +36,5 @@ function bodyLoaded() {
 </head>
 <body onload="bodyLoaded();">
 URLs with http, port 80, and promote in the url should be promoted to https with port 443.
+Four URLs should be promoted as should be shown by four CONSOLE MESSAGE lines.
 </body>

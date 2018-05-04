@@ -888,5 +888,3 @@ webkit.org/b/177380 http/tests/cache-storage/cache-records-persistency.https.htm
 webkit.org/b/184469 http/wpt/service-workers/header-filtering.https.html [ Pass Failure ]
 
 webkit.org/b/184937 transitions/opacity-transition-zindex.html [ Skip ]
-
-webkit.org/b/184476 [ HighSierra+ ] http/tests/contentextensions/make-https.html [ Pass Failure ]

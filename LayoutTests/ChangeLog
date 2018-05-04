@@ -1,3 +1,21 @@
+2018-05-04  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r230326?): Layout Test http/tests/contentextensions/make-https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=184476
+        <rdar://problem/39384226>
+
+        Reviewed by Ryosuke Niwa.
+
+        Removed flakiness expectation.
+        Updated test to no longer log load callbacks.
+        Instead, we rely on the fact that the four content extension upgrades
+        are also logged as console log messages.
+
+        * http/tests/contentextensions/make-https-expected.txt:
+        * http/tests/contentextensions/make-https.html:
+        * platform/mac-sierra-wk2/http/tests/contentextensions/make-https-expected.txt: Removed.
+        * platform/mac-wk2/TestExpectations:
+
 2018-05-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark animations/duplicate-keys.html as flaky on iOS.
