@@ -1,3 +1,16 @@
+2018-05-03  Michael Saboff  <msaboff@apple.com>
+
+        OSR entry pruning of Program Bytecodes doesn't take into account try/catch
+        https://bugs.webkit.org/show_bug.cgi?id=185281
+
+        Reviewed by Saam Barati.
+
+        When we compute bytecode block reachability, we need to take into account blocks
+        containing try/catch.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+
 2018-05-03  Dominik Infuehr  <dinfuehr@igalia.com>
 
         ARM: Wrong offset for operand rt in disassembler

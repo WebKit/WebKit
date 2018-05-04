@@ -30,6 +30,7 @@
 #include "JIT.h"
 
 #include "BytecodeGraph.h"
+#include "BytecodeLivenessAnalysis.h"
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
 #include "DFGCapabilities.h"
@@ -219,9 +220,22 @@ void JIT::privateCompileMainPass()
             GraphNodeWorklist<BytecodeBasicBlock*> worklist;
             startBytecodeOffset = UINT_MAX;
             worklist.push(block);
+
             while (BytecodeBasicBlock* block = worklist.pop()) {
                 startBytecodeOffset = std::min(startBytecodeOffset, block->leaderOffset());
                 worklist.pushAll(block->successors());
+
+                // Also add catch blocks for bytecodes that throw.
+                if (m_codeBlock->numberOfExceptionHandlers()) {
+                    for (unsigned bytecodeOffset = block->leaderOffset(); bytecodeOffset < block->leaderOffset() + block->totalLength();) {
+                        OpcodeID opcodeID = Interpreter::getOpcodeID(instructionsBegin[bytecodeOffset].u.opcode);
+                        if (auto* handler = m_codeBlock->handlerForBytecodeOffset(bytecodeOffset))
+                            worklist.push(graph.findBasicBlockWithLeaderOffset(handler->target));
+
+                        unsigned opcodeLength = opcodeLengths[opcodeID];
+                        bytecodeOffset += opcodeLength;
+                    }
+                }
             }
         }
     }

@@ -1,3 +1,15 @@
+2018-05-03  Michael Saboff  <msaboff@apple.com>
+
+        OSR entry pruning of Program Bytecodes doesn't take into account try/catch
+        https://bugs.webkit.org/show_bug.cgi?id=185281
+
+        Reviewed by Saam Barati.
+
+        New regression test.
+
+        * stress/baseline-osrentry-catch-is-reachable.js: Added.
+        (i.j.catch):
+
 2018-05-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r231197.
