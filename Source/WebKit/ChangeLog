@@ -1,3 +1,16 @@
+2018-05-04  Wenson Hsieh  <whsieh@berkeley.edu>
+
+        REGRESSION: [ios-simulator] 3 WKWebViewAutofillTests API test failures seen with 11.3 SDK
+        https://bugs.webkit.org/show_bug.cgi?id=184196
+        <rdar://problem/39054481>
+
+        Reviewed by Tim Horton.
+
+        Remove an unnecessary call to NSClassFromString, now that trunk WebKit only supports iOS 11.3+.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView insertTextSuggestion:]):
+
 2018-05-04  Youenn Fablet  <youenn@apple.com>
 
         NetworkProcessProxy::didReceiveAuthenticationChallenge should take an AuthenticationChallenge r-value

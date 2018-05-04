@@ -1,3 +1,19 @@
+2018-05-04  Wenson Hsieh  <whsieh@berkeley.edu>
+
+        REGRESSION: [ios-simulator] 3 WKWebViewAutofillTests API test failures seen with 11.3 SDK
+        https://bugs.webkit.org/show_bug.cgi?id=184196
+        <rdar://problem/39054481>
+
+        Reviewed by Tim Horton.
+
+        Removes some unnecessary workarounds to enable running app autofill tests against iOS versions
+        earlier than 11.3. Also re-enables these tests.
+
+        * TestWebKitAPI/Tests/ios/WKWebViewAutofillTests.mm:
+        (TestWebKitAPI::TEST):
+        (-[UITextAutofillSuggestion initWithUsername:password:]): Deleted.
+        (+[UITextAutofillSuggestion autofillSuggestionWithUsername:password:]): Deleted.
+
 2018-05-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Text shaping in the simple path is flipped in the y direction

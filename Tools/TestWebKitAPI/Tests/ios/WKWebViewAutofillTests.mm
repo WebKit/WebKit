@@ -35,26 +35,6 @@
 #import <WebKit/_WKInputDelegate.h>
 #import <wtf/BlockPtr.h>
 
-#if !__has_include(<UIKit/UITextAutofillSuggestion.h>)
-// FIXME: This can be safely removed once <rdar://problem/34583628> lands in the SDK.
-@implementation UITextAutofillSuggestion
-- (instancetype)initWithUsername:(NSString *)username password:(NSString *)password
-{
-    self = [super init];
-    if (self) {
-        _username = username;
-        _password = password;
-    }
-    return self;
-}
-
-+ (instancetype)autofillSuggestionWithUsername:(NSString *)username password:(NSString *)password
-{
-    return [[self alloc] initWithUsername:username password:password];
-}
-@end
-#endif
-
 typedef UIView <UITextInputTraits_Private_Proposed_SPI_34583628> AutofillInputView;
 
 @interface TestInputDelegate : NSObject <_WKInputDelegate>
@@ -115,7 +95,7 @@ typedef UIView <UITextInputTraits_Private_Proposed_SPI_34583628> AutofillInputVi
 
 namespace TestWebKitAPI {
 
-TEST(WKWebViewAutofillTests, DISABLED_UsernameAndPasswordField)
+TEST(WKWebViewAutofillTests, UsernameAndPasswordField)
 {
     auto webView = adoptNS([[AutofillTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadHTMLString:@"<input id='user' type='email'><input id='password' type='password'>"];
@@ -134,7 +114,7 @@ TEST(WKWebViewAutofillTests, DISABLED_UsernameAndPasswordField)
     EXPECT_FALSE([webView textInputHasAutofillContext]);
 }
 
-TEST(WKWebViewAutofillTests, DISABLED_UsernameAndPasswordFieldSeparatedByRadioButton)
+TEST(WKWebViewAutofillTests, UsernameAndPasswordFieldSeparatedByRadioButton)
 {
     auto webView = adoptNS([[AutofillTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadHTMLString:@"<input id='user' type='email'><input type='radio' name='radio_button' value='radio'><input id='password' type='password'>"];
@@ -165,7 +145,7 @@ TEST(WKWebViewAutofillTests, TwoTextFields)
     EXPECT_FALSE([webView textInputHasAutofillContext]);
 }
 
-TEST(WKWebViewAutofillTests, DISABLED_StandalonePasswordField)
+TEST(WKWebViewAutofillTests, StandalonePasswordField)
 {
     auto webView = adoptNS([[AutofillTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadHTMLString:@"<input id='password' type='password'>"];
