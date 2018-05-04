@@ -1,3 +1,14 @@
+2018-05-04  Tim Horton  <timothy_horton@apple.com>
+
+        Don't use GSFont* in minimal simulator mode
+        https://bugs.webkit.org/show_bug.cgi?id=185320
+        <rdar://problem/39734478>
+
+        Reviewed by Beth Dakin.
+
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        (WebCore::platformReleaseMemory):
+
 2018-05-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r231331.
