@@ -87,7 +87,6 @@ private:
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    void didClose(IPC::Connection&) override;
 
     // Message handlers.
     void didReceivePluginProcessMessage(IPC::Connection&, IPC::Decoder&);

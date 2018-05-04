@@ -97,19 +97,6 @@ WebSWServerToContextConnection* StorageProcess::connectionToContextProcessFromIP
 }
 #endif
 
-void StorageProcess::didClose(IPC::Connection& connection)
-{
-#if ENABLE(SERVICE_WORKER)
-    if (RefPtr<WebSWServerToContextConnection> serverToContextConnection = connectionToContextProcessFromIPCConnection(connection)) {
-        connectionToContextProcessWasClosed(serverToContextConnection.releaseNonNull());
-        return;
-    }
-#else
-    UNUSED_PARAM(connection);
-#endif
-    stopRunLoop();
-}
-
 #if ENABLE(SERVICE_WORKER)
 void StorageProcess::connectionToContextProcessWasClosed(Ref<WebSWServerToContextConnection>&& serverToContextConnection)
 {

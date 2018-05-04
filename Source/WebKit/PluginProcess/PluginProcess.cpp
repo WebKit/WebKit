@@ -119,13 +119,6 @@ void PluginProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder&
     didReceivePluginProcessMessage(connection, decoder);
 }
 
-void PluginProcess::didClose(IPC::Connection&)
-{
-    // The UI process has crashed, just quit.
-    // FIXME: If the plug-in is spinning in the main loop, we'll never get this message.
-    stopRunLoop();
-}
-
 void PluginProcess::initializePluginProcess(PluginProcessCreationParameters&& parameters)
 {
     ASSERT(!m_pluginModule);

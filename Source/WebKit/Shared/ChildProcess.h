@@ -115,6 +115,7 @@ private:
 
     // IPC::Connection::Client.
     void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) final;
+    void didClose(IPC::Connection&) final;
 
     void shutDown();
 

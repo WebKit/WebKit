@@ -190,12 +190,6 @@ void NetworkProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Dec
     didReceiveSyncNetworkProcessMessage(connection, decoder, replyEncoder);
 }
 
-void NetworkProcess::didClose(IPC::Connection&)
-{
-    // The UIProcess just exited.
-    stopRunLoop();
-}
-
 void NetworkProcess::didCreateDownload()
 {
     disableTermination();

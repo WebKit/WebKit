@@ -670,29 +670,6 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
     LOG_ERROR("Unhandled web process message '%s:%s'", decoder.messageReceiverName().toString().data(), decoder.messageName().toString().data());
 }
 
-void WebProcess::didClose(IPC::Connection&)
-{
-#if !defined(NDEBUG) || PLATFORM(GTK) || PLATFORM(WPE)
-    for (auto& page : copyToVector(m_pageMap.values()))
-        page->close();
-#endif
-
-#ifndef NDEBUG
-    GCController::singleton().garbageCollectSoon();
-    FontCache::singleton().invalidate();
-    MemoryCache::singleton().setDisabled(true);
-#endif
-
-#if ENABLE(VIDEO)
-    // FIXME(146657): This explicit media stop command should not be necessary
-    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->stopAllMediaPlaybackForProcess();
-#endif
-
-    // The UI process closed this connection, shut down.
-    stopRunLoop();
-}
-
 WebFrame* WebProcess::webFrame(uint64_t frameID) const
 {
     return m_frameMap.get(frameID);
