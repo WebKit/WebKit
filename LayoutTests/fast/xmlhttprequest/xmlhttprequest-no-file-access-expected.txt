@@ -16,6 +16,6 @@ Exception: Blocked a frame with origin "null" from accessing a cross-origin fram
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+Frame: 'f'
 --------
 Successful write into iframe

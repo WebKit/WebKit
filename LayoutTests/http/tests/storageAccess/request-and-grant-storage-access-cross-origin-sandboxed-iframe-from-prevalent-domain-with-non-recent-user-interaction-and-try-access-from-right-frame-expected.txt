@@ -10,7 +10,7 @@ TEST COMPLETE
   
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: 'TheIframeThatRequestsStorageAccess'
 --------
 After the top frame navigates the sub frame, the sub frame should no longer have access to first-party cookies.
 Did not receive cookie named 'firstPartyCookie'.

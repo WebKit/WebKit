@@ -1,19 +1,19 @@
 main frame - didStartProvisionalLoadForFrame
 main frame - didCommitLoadForFrame
 main frame - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+frame "frame" - didStartProvisionalLoadForFrame
 127.0.0.1:8000 - didReceiveAuthenticationChallenge - Responding with webkit:rocks
-frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - willPerformClientRedirectToURL: http://127.0.0.1:8000/a//b/non-existent-file.html 
-frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
+frame "frame" - didCommitLoadForFrame
+frame "frame" - didFinishDocumentLoadForFrame
+frame "frame" - willPerformClientRedirectToURL: http://127.0.0.1:8000/a//b/non-existent-file.html 
+frame "frame" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishLoadForFrame
+frame "frame" - didFinishLoadForFrame
 main frame - didFinishLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didCancelClientRedirectForFrame
-frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didReceiveTitle: 404 Not Found
-frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFailLoadWithError
+frame "frame" - didStartProvisionalLoadForFrame
+frame "frame" - didCancelClientRedirectForFrame
+frame "frame" - didCommitLoadForFrame
+frame "frame" - didReceiveTitle: 404 Not Found
+frame "frame" - didFinishDocumentLoadForFrame
+frame "frame" - didFailLoadWithError
 PASS did not cause assertion failure.

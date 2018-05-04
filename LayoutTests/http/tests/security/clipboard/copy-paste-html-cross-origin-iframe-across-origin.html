@@ -33,7 +33,7 @@ function runTest() {
     document.execCommand('copy');
     getSelection().removeAllRanges();
     setTimeout(() => {
-        destinationFrame.contentWindow.postMessage({type: 'paste'}, '*');
+        destinationFrame.postMessage({type: 'paste'}, '*');
     }, 0);
 }
 
