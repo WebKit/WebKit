@@ -1,3 +1,21 @@
+2018-05-04  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: Newly added unsupported properties sometimes don't have warnings
+        https://bugs.webkit.org/show_bug.cgi?id=183097
+        <rdar://problem/37843816>
+
+        Reviewed by Matt Baker.
+
+        Update status of properties warnings every time focus moves.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.layout):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyFocusMoved):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._propertiesChanged):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._updatePropertiesStatus):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidBlur):
+
 2018-05-04  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Styles Redesign: ensure that tabbing through the last section wraps back to the first

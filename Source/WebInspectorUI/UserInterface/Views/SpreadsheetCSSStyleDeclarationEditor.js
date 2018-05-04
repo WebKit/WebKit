@@ -232,6 +232,11 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
     spreadsheetStylePropertyFocusMoved(propertyView, {direction, willRemoveProperty})
     {
+        this._updatePropertiesStatus();
+
+        if (!direction)
+            return;
+
         let movedFromIndex = this._propertyViews.indexOf(propertyView);
         console.assert(movedFromIndex !== -1, "Property doesn't exist, focusing on a selector as a fallback.");
         if (movedFromIndex === -1) {
@@ -351,11 +356,16 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
     _propertiesChanged(event)
     {
-        if (this.editing && isNaN(this._pendingAddBlankPropertyIndexOffset)) {
-            for (let propertyView of this._propertyViews)
-                propertyView.updateStatus();
-        } else
+        if (this.editing && isNaN(this._pendingAddBlankPropertyIndexOffset))
+            this._updatePropertiesStatus();
+        else
             this.needsLayout();
+    }
+
+    _updatePropertiesStatus()
+    {
+        for (let propertyView of this._propertyViews)
+            propertyView.updateStatus();
     }
 
     _updateStyleLock()
