@@ -1,3 +1,13 @@
+2018-05-04  Youenn Fablet  <youenn@apple.com>
+
+        PeerConnection should have its connectionState closed even if doing gathering
+        https://bugs.webkit.org/show_bug.cgi?id=185267
+
+        Reviewed by Darin Adler.
+
+        * webrtc/addICECandidate-closed-expected.txt: Added.
+        * webrtc/addICECandidate-closed.html: Added.
+
 2018-05-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Some event tests failing after r230817

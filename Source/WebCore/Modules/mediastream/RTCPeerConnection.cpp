@@ -423,6 +423,7 @@ void RTCPeerConnection::close()
         return;
 
     updateConnectionState();
+    ASSERT(isClosed());
     scriptExecutionContext()->postTask([protectedThis = makeRef(*this)](ScriptExecutionContext&) {
         protectedThis->doStop();
     });
@@ -524,19 +525,18 @@ void RTCPeerConnection::updateConnectionState()
 {
     RTCPeerConnectionState state;
 
-    // FIXME: In case m_iceGatheringState is RTCIceGatheringState::Gathering, and m_iceConnectionState is Closed, we should have the connection state be Closed.
-    if (m_iceConnectionState == RTCIceConnectionState::New && m_iceGatheringState == RTCIceGatheringState::New)
+    if (m_iceConnectionState == RTCIceConnectionState::Closed)
+        state = RTCPeerConnectionState::Closed;
+    else if (m_iceConnectionState == RTCIceConnectionState::Disconnected)
+        state = RTCPeerConnectionState::Disconnected;
+    else if (m_iceConnectionState == RTCIceConnectionState::Failed)
+        state = RTCPeerConnectionState::Failed;
+    else if (m_iceConnectionState == RTCIceConnectionState::New && m_iceGatheringState == RTCIceGatheringState::New)
         state = RTCPeerConnectionState::New;
     else if (m_iceConnectionState == RTCIceConnectionState::Checking || m_iceGatheringState == RTCIceGatheringState::Gathering)
         state = RTCPeerConnectionState::Connecting;
     else if ((m_iceConnectionState == RTCIceConnectionState::Completed || m_iceConnectionState == RTCIceConnectionState::Connected) && m_iceGatheringState == RTCIceGatheringState::Complete)
         state = RTCPeerConnectionState::Connected;
-    else if (m_iceConnectionState == RTCIceConnectionState::Disconnected)
-        state = RTCPeerConnectionState::Disconnected;
-    else if (m_iceConnectionState == RTCIceConnectionState::Failed)
-        state = RTCPeerConnectionState::Failed;
-    else if (m_iceConnectionState == RTCIceConnectionState::Closed)
-        state = RTCPeerConnectionState::Closed;
     else
         return;
 
