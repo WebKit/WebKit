@@ -41,9 +41,9 @@ class WebProtectionSpace;
 
 class AuthenticationChallengeProxy : public API::ObjectImpl<API::Object::Type::AuthenticationChallenge> {
 public:
-    static Ref<AuthenticationChallengeProxy> create(const WebCore::AuthenticationChallenge& authenticationChallenge, uint64_t challengeID, IPC::Connection* connection)
+    static Ref<AuthenticationChallengeProxy> create(WebCore::AuthenticationChallenge&& authenticationChallenge, uint64_t challengeID, IPC::Connection* connection)
     {
-        return adoptRef(*new AuthenticationChallengeProxy(authenticationChallenge, challengeID, connection));
+        return adoptRef(*new AuthenticationChallengeProxy(WTFMove(authenticationChallenge), challengeID, connection));
     }
     
     ~AuthenticationChallengeProxy();
@@ -60,7 +60,7 @@ public:
     const WebCore::AuthenticationChallenge& core() { return m_coreAuthenticationChallenge; }
 
 private:
-    AuthenticationChallengeProxy(const WebCore::AuthenticationChallenge&, uint64_t challengeID, IPC::Connection*);
+    AuthenticationChallengeProxy(WebCore::AuthenticationChallenge&&, uint64_t challengeID, IPC::Connection*);
 
     WebCore::AuthenticationChallenge m_coreAuthenticationChallenge;
     uint64_t m_challengeID;

@@ -1,3 +1,24 @@
+2018-05-04  Youenn Fablet  <youenn@apple.com>
+
+        NetworkProcessProxy::didReceiveAuthenticationChallenge should take an AuthenticationChallenge r-value
+        https://bugs.webkit.org/show_bug.cgi?id=185302
+
+        Reviewed by Geoffrey Garen.
+
+        Pass AuthenticationChallenge as an r-value since it comes from IPC.
+        No change of behavior.
+
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        (WebKit::AuthenticationChallengeProxy::AuthenticationChallengeProxy):
+        * UIProcess/Authentication/AuthenticationChallengeProxy.h:
+        (WebKit::AuthenticationChallengeProxy::create):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didReceiveAuthenticationChallenge):
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveAuthenticationChallenge):
+        * UIProcess/Network/NetworkProcessProxy.h:
+
 2018-05-04  Sihui Liu  <sihui_liu@apple.com>
 
         Assertion failure in NetworkStorageSession::setCookie: privilege of UI process is not set

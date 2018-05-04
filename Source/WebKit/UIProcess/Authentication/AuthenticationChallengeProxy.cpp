@@ -37,8 +37,8 @@
 
 namespace WebKit {
 
-AuthenticationChallengeProxy::AuthenticationChallengeProxy(const WebCore::AuthenticationChallenge& authenticationChallenge, uint64_t challengeID, IPC::Connection* connection)
-    : m_coreAuthenticationChallenge(authenticationChallenge)
+AuthenticationChallengeProxy::AuthenticationChallengeProxy(WebCore::AuthenticationChallenge&& authenticationChallenge, uint64_t challengeID, IPC::Connection* connection)
+    : m_coreAuthenticationChallenge(WTFMove(authenticationChallenge))
     , m_challengeID(challengeID)
     , m_connection(connection)
 {
