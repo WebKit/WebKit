@@ -1193,7 +1193,7 @@ protected:
 
     unsigned op() { return (m_opcode >> 20) & 0x1; }
     unsigned rt2() { return (m_opcode >> 16) & 0xf; }
-    unsigned rt() { return (m_opcode >> 16) & 0xf; }
+    unsigned rt() { return (m_opcode >> 12) & 0xf; }
     unsigned vm() { return (m_opcode & 0xf) | ((m_opcode >> 1) & 0x10); }
 };
 
@@ -1209,7 +1209,7 @@ protected:
 
     unsigned op() { return (m_opcode >> 20) & 0x1; }
     unsigned rt2() { return (m_opcode >> 16) & 0xf; }
-    unsigned rt() { return (m_opcode >> 16) & 0xf; }
+    unsigned rt() { return (m_opcode >> 12) & 0xf; }
     unsigned vm() { return ((m_opcode << 1) & 0x1e) | ((m_opcode >> 5) & 0x1); }
 };
 

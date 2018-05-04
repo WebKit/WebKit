@@ -1,5 +1,16 @@
 2018-05-03  Dominik Infuehr  <dinfuehr@igalia.com>
 
+        ARM: Wrong offset for operand rt in disassembler
+        https://bugs.webkit.org/show_bug.cgi?id=184083
+
+        Reviewed by Yusuke Suzuki.
+
+        * disassembler/ARMv7/ARMv7DOpcode.h:
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVMOVDoublePrecision::rt):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVMOVSinglePrecision::rt):
+
+2018-05-03  Dominik Infuehr  <dinfuehr@igalia.com>
+
         ARM: Support vstr in disassembler
         https://bugs.webkit.org/show_bug.cgi?id=184084
 
