@@ -1,3 +1,14 @@
+2018-05-04  Zalan Bujtas  <zalan@apple.com>
+
+        Use the containing block to compute the pagination gap when the container is inline.
+        https://bugs.webkit.org/show_bug.cgi?id=184724
+        <rdar://problem/39521800>
+
+        Reviewed by Simon Fraser.
+
+        * fast/overflow/page-overflow-with-inline-body-crash-expected.txt: Added.
+        * fast/overflow/page-overflow-with-inline-body-crash.html: Added.
+
 2018-05-04  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas tab: Determine isFunction by looking at the prototype
