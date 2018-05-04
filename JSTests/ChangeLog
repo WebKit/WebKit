@@ -1,3 +1,15 @@
+2018-05-04  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Disable tests on systems with limited memory
+        https://bugs.webkit.org/show_bug.cgi?id=185296
+
+        Reviewed by Saam Barati.
+
+        Test doesn't work with a limited amount of memory. I tried to reduce memory usage
+        but then it was hard to reproduce the failure the test was originally made to test.
+
+        * stress/array-reverse-doesnt-clobber.js:
+
 2018-05-03  Saam Barati  <sbarati@apple.com>
 
         Don't prevent CreateThis being folded to NewObject when the structure is poly proto
