@@ -3294,3 +3294,5 @@ webkit.org/b/184787 http/wpt/cache-storage/cache-quota.any.html [ Pass Failure ]
 webkit.org/b/180260 http/wpt/resource-timing/rt-resources-per-worker.html [ Pass Failure ]
 
 webkit.org/b/185028 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Failure ]
+
+webkit.org/b/185332 animations/duplicate-keys.html [ Pass ImageOnlyFailure ]
