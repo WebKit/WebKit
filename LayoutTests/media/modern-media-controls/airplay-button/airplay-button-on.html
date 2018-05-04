@@ -13,7 +13,11 @@ airplayButton.on = true;
 
 document.body.appendChild(airplayButton.element);
 
-const airplayColor = window.navigator.platform === "MacIntel" ? "rgb(27, 173, 248)" : "rgb(0, 122, 255)";
+// Obtain the plaform-specific color by creating an element using -apple-wireless-playback-target-active.
+const airplayColorButton = document.body.appendChild(document.createElement("div"));
+airplayColorButton.style.color = "-apple-wireless-playback-target-active";
+const airplayColor = getComputedStyle(airplayColorButton).color;
+airplayColorButton.remove();
 
 shouldBecomeEqual('airplayButton.element.classList.contains("on")', "true", () => {
     shouldBecomeEqualToString("window.getComputedStyle(airplayButton.element).backgroundColor", "rgba(0, 0, 0, 0)", () => {

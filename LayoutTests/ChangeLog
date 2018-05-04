@@ -1,3 +1,16 @@
+2018-05-04  Antoine Quint  <graouts@apple.com>
+
+        Improve test at media/modern-media-controls/airplay-button/airplay-button-on.html to not hardcode the -apple-wireless-playback-target-active color
+        https://bugs.webkit.org/show_bug.cgi?id=185297
+        <rdar://problem/39737716>
+
+        Reviewed by Dean Jackson.
+
+        Create an element and set its "color" property to "-apple-wireless-playback-target-active" so we can use
+        getComputedStyle() to query the applied value instead of hard-coding the expected color.
+
+        * media/modern-media-controls/airplay-button/airplay-button-on.html:
+
 2018-05-04  Youenn Fablet  <youenn@apple.com>
 
         PeerConnection should have its connectionState closed even if doing gathering
