@@ -159,7 +159,6 @@ b3/B3StackmapValue.cpp
 b3/B3StackSlot.cpp
 b3/B3SwitchCase.cpp
 b3/B3SwitchValue.cpp
-b3/B3TimingScope.cpp
 b3/B3Type.cpp
 b3/B3UpsilonValue.cpp
 b3/B3UseCounts.cpp
@@ -708,6 +707,7 @@ runtime/CommonIdentifiers.cpp
 runtime/CommonSlowPaths.cpp
 runtime/CommonSlowPathsExceptions.cpp
 runtime/CompilationResult.cpp
+tools/CompilerTimingScope.cpp
 runtime/Completion.cpp
 runtime/ConfigFile.cpp
 runtime/ConsoleClient.cpp

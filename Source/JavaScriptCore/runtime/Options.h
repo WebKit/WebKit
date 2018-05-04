@@ -205,7 +205,6 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(bool, reportBaselineCompileTimes, false, Normal, "dumps JS function signature and the time it took to BaselineJIT compile") \
     v(bool, reportDFGCompileTimes, false, Normal, "dumps JS function signature and the time it took to DFG and FTL compile") \
     v(bool, reportFTLCompileTimes, false, Normal, "dumps JS function signature and the time it took to FTL compile") \
-    v(bool, reportDFGPhaseTimes, false, Normal, "dumps JS function name and the time is took for each DFG phase") \
     v(bool, reportTotalCompileTimes, false, Normal, nullptr) \
     v(bool, reportParseTimes, false, Normal, "dumps JS function signature and the time it took to parse") \
     v(bool, reportBytecodeCompileTimes, false, Normal, "dumps JS function signature and the time it took to bytecode compile") \
@@ -434,7 +433,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(unsigned, fireOSRExitFuzzAt, 0, Normal, nullptr) \
     v(unsigned, fireOSRExitFuzzAtOrAfter, 0, Normal, nullptr) \
     \
-    v(bool, logB3PhaseTimes, false, Normal, nullptr) \
+    v(bool, logPhaseTimes, false, Normal, nullptr) \
     v(double, rareBlockPenalty, 0.001, Normal, nullptr) \
     v(bool, airLinearScanVerbose, false, Normal, nullptr) \
     v(bool, airLinearScanSpillsEverything, false, Normal, nullptr) \

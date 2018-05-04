@@ -1,5 +1,39 @@
 2018-05-03  Filip Pizlo  <fpizlo@apple.com>
 
+        Make it easy to log compile times for all optimizing tiers
+        https://bugs.webkit.org/show_bug.cgi?id=185270
+
+        Reviewed by Keith Miller.
+        
+        This makes --logPhaseTimes=true enable logging of phase times for DFG and B3 using a common
+        helper class, CompilerTimingScope. This used to be called B3::TimingScope and only B3 used
+        it.
+        
+        This should help us reduce compile times by telling us where to look. So, far, it looks like
+        CFA is the worst.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * b3/B3Common.cpp:
+        (JSC::B3::shouldMeasurePhaseTiming): Deleted.
+        * b3/B3Common.h:
+        * b3/B3TimingScope.cpp: Removed.
+        * b3/B3TimingScope.h:
+        (JSC::B3::TimingScope::TimingScope):
+        * dfg/DFGPhase.h:
+        (JSC::DFG::runAndLog):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThread):
+        * tools/CompilerTimingScope.cpp: Added.
+        (JSC::CompilerTimingScope::CompilerTimingScope):
+        (JSC::CompilerTimingScope::~CompilerTimingScope):
+        * tools/CompilerTimingScope.h: Added.
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+
+2018-05-03  Filip Pizlo  <fpizlo@apple.com>
+
         Strings should not be allocated in a gigacage
         https://bugs.webkit.org/show_bug.cgi?id=185218
 

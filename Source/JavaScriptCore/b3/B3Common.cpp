@@ -65,11 +65,6 @@ bool shouldSaveIRBeforePhase()
     return Options::verboseValidationFailure();
 }
 
-bool shouldMeasurePhaseTiming()
-{
-    return Options::logB3PhaseTimes();
-}
-
 std::optional<GPRReg> pinnedExtendedOffsetAddrRegister()
 {
 #if CPU(ARM64)

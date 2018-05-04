@@ -45,7 +45,6 @@ bool shouldDumpIRAtEachPhase(B3ComplitationMode);
 bool shouldValidateIR();
 bool shouldValidateIRAtEachPhase();
 bool shouldSaveIRBeforePhase();
-bool shouldMeasurePhaseTiming();
 
 template<typename BitsType, typename InputType>
 inline bool isIdentical(InputType left, InputType right)

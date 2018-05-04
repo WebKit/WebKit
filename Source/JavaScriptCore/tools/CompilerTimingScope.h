@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,63 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "B3TimingScope.h"
+#pragma once
 
-#if ENABLE(B3_JIT)
+#include <wtf/MonotonicTime.h>
+#include <wtf/Noncopyable.h>
 
-#include "B3Common.h"
-#include <wtf/DataLog.h>
-#include <wtf/HashMap.h>
-#include <wtf/Lock.h>
+namespace JSC {
 
-namespace JSC { namespace B3 {
+// FIXME: We should find some way of reconciling the differences between WTF::TimingScope and this class. The differences
+// are:
+// - CompilerTimingScope knows to only do work when --logPhaseTimes=true, while TimingScope is unconditional.
+// - CompilerTimingScope reports totals on every run, while TimingScope reports averages periodically.
 
-namespace {
-
-class State {
-    WTF_MAKE_NONCOPYABLE(State);
-    WTF_MAKE_FAST_ALLOCATED;
+class CompilerTimingScope {
+    WTF_MAKE_NONCOPYABLE(CompilerTimingScope);
 public:
-    State() { }
-    
-    Seconds addToTotal(const char* name, Seconds duration)
-    {
-        auto locker = holdLock(lock);
-        return totals.add(name, Seconds(0)).iterator->value += duration;
-    }
-    
+    CompilerTimingScope(const char* compilerName, const char* name);
+    ~CompilerTimingScope();
+
 private:
-    HashMap<const char*, Seconds> totals;
-    Lock lock;
+    const char* m_compilerName;
+    const char* m_name;
+    MonotonicTime m_before;
 };
 
-State& state()
-{
-    static Atomic<State*> s_state;
-    return ensurePointer(s_state, [] { return new State(); });
-}
-
-} // anonymous namespace
-
-TimingScope::TimingScope(const char* name)
-    : m_name(name)
-{
-    if (shouldMeasurePhaseTiming())
-        m_before = MonotonicTime::now();
-}
-
-TimingScope::~TimingScope()
-{
-    if (shouldMeasurePhaseTiming()) {
-        Seconds duration = MonotonicTime::now() - m_before;
-        dataLog(
-            "[B3] ", m_name, " took: ", duration.milliseconds(), " ms ",
-            "(total: ", state().addToTotal(m_name, duration).milliseconds(), " ms).\n");
-    }
-}
-
-} } // namespace JSC::B3
-
-#endif // ENABLE(B3_JIT)
+} // namespace JSC
 

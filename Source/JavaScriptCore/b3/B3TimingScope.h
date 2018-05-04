@@ -27,20 +27,16 @@
 
 #if ENABLE(B3_JIT)
 
-#include <wtf/MonotonicTime.h>
-#include <wtf/Noncopyable.h>
+#include "CompilerTimingScope.h"
 
 namespace JSC { namespace B3 {
 
-class TimingScope {
-    WTF_MAKE_NONCOPYABLE(TimingScope);
+class TimingScope : public CompilerTimingScope {
 public:
-    TimingScope(const char* name);
-    ~TimingScope();
-
-private:
-    const char* m_name;
-    MonotonicTime m_before;
+    TimingScope(const char* name)
+        : CompilerTimingScope("B3", name)
+    {
+    }
 };
 
 } } // namespace JSC::B3
