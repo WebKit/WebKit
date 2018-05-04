@@ -1,3 +1,15 @@
+2018-05-03  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Invoke ensureArrayStorage for all arguments
+        https://bugs.webkit.org/show_bug.cgi?id=185247
+
+        Reviewed by Yusuke Suzuki.
+
+        ensureArrayStorage was only invoked for first argument in each loop iteration.
+
+        * jsc.cpp:
+        (functionEnsureArrayStorage):
+
 2018-05-03  Filip Pizlo  <fpizlo@apple.com>
 
         Make it easy to log compile times for all optimizing tiers
