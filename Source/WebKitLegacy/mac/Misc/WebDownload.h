@@ -26,6 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
+#import <WebKitLegacy/WebKitAvailability.h>
+
 #ifndef WebDownload_h
 #define WebDownload_h
 
@@ -54,8 +57,7 @@
     panel, as either a sheet or window. It provides no extra methods,
     but does have one additional delegate method.
 */
-
-
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface WebDownload : NSURLDownload
 {
 @package
@@ -69,6 +71,7 @@
     @discussion The WebDownloadDelegate delegate has one extra method used to choose
     the right window when automatically prompting with a sheet.
 */
+WEBKIT_DEPRECATED_MAC(10_4, 10_14)
 @protocol WebDownloadDelegate <NSURLDownloadDelegate>
 
 @optional

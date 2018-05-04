@@ -44,6 +44,7 @@
     representation of the data.  WebDataSources manage a hierarchy of WebFrames.
     WebDataSources are typically related to a view by their containing WebFrame.
 */
+WEBKIT_CLASS_DEPRECATED_MAC(10_3, 10_14)
 @interface WebDataSource : NSObject
 {
 @package

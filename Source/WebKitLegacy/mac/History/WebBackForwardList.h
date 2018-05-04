@@ -27,6 +27,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <WebKitLegacy/WebKitAvailability.h>
 
 @class WebHistoryItem;
 @class WebBackForwardListPrivate;
@@ -40,6 +41,7 @@
     navigation to happen in other layers of the stack;  they are only for maintaining this data
     structure.
 */
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface WebBackForwardList : NSObject {
 @package
     WebBackForwardListPrivate *_private;

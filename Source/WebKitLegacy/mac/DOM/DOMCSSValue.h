@@ -32,9 +32,9 @@ enum {
     DOM_CSS_PRIMITIVE_VALUE = 1,
     DOM_CSS_VALUE_LIST = 2,
     DOM_CSS_CUSTOM = 3
-} WEBKIT_ENUM_AVAILABLE_MAC(10_4);
+} WEBKIT_ENUM_DEPRECATED_MAC(10_4, 10_14);
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMCSSValue : DOMObject
 @property (copy) NSString *cssText;
 @property (readonly) unsigned short cssValueType;

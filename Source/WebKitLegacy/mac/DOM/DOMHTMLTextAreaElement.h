@@ -27,7 +27,7 @@
 
 @class DOMHTMLFormElement;
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMHTMLTextAreaElement : DOMHTMLElement
 @property BOOL autofocus WEBKIT_AVAILABLE_MAC(10_6);
 @property BOOL disabled;

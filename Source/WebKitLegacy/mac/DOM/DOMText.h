@@ -28,7 +28,7 @@
 @class DOMText;
 @class NSString;
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMText : DOMCharacterData
 @property (readonly, copy) NSString *wholeText WEBKIT_AVAILABLE_MAC(10_6);
 

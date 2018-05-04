@@ -77,7 +77,7 @@ enum {
     WebMenuItemPDFContinuous,
     WebMenuItemPDFNextPage,
     WebMenuItemPDFPreviousPage,
-};
+} WEBKIT_ENUM_DEPRECATED_MAC(10_3, 10_14);
 
 /*!
     @enum WebDragDestinationAction
@@ -94,7 +94,7 @@ typedef NS_OPTIONS(NSUInteger, WebDragDestinationAction) {
     WebDragDestinationActionEdit    = 2,
     WebDragDestinationActionLoad    = 4,
     WebDragDestinationActionAny     = UINT_MAX
-};
+} WEBKIT_ENUM_DEPRECATED_MAC(10_3, 10_14);
 
 /*!
     @enum WebDragSourceAction
@@ -113,13 +113,14 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
     WebDragSourceActionLink         = 4,
     WebDragSourceActionSelection    = 8,
     WebDragSourceActionAny          = UINT_MAX
-};
+} WEBKIT_ENUM_DEPRECATED_MAC(10_3, 10_14);
 
 /*!
     @protocol WebOpenPanelResultListener
     @discussion This protocol is used to call back with the results of
     the file open panel requested by runOpenPanelForFileButtonWithResultListener:
 */
+WEBKIT_DEPRECATED_MAC(10_3, 10_14)
 @protocol WebOpenPanelResultListener <NSObject>
 
 /*!
@@ -160,6 +161,7 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
     other aspects of web pages. These methods are used to open new
     windows and control aspects of existing windows.
 */
+WEBKIT_DEPRECATED_MAC(10_3, 10_14)
 @protocol WebUIDelegate <NSObject>
 
 @optional

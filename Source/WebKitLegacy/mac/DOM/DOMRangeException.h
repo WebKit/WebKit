@@ -28,9 +28,9 @@
 
 @class NSString;
 
-extern NSString * const DOMRangeException WEBKIT_AVAILABLE_MAC(10_4);
+extern NSString * const DOMRangeException WEBKIT_DEPRECATED_MAC(10_4, 10_14);
 
 enum DOMRangeExceptionCode {
     DOM_BAD_BOUNDARYPOINTS_ERR        = 1,
     DOM_INVALID_NODE_TYPE_ERR         = 2
-} WEBKIT_ENUM_AVAILABLE_MAC(10_4);
+} WEBKIT_ENUM_DEPRECATED_MAC(10_4, 10_14);

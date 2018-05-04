@@ -28,7 +28,7 @@
 @class DOMHTMLCollection;
 @class NSString;
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMHTMLDocument : DOMDocument
 @property (readonly, strong) DOMHTMLCollection *embeds WEBKIT_AVAILABLE_MAC(10_5);
 @property (readonly, strong) DOMHTMLCollection *plugins WEBKIT_AVAILABLE_MAC(10_5);

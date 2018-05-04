@@ -1,3 +1,167 @@
+2018-05-04  Timothy Hatcher  <timothy@apple.com>
+
+        Deprecate legacy WebView and friends
+        https://bugs.webkit.org/show_bug.cgi?id=185279
+        rdar://problem/33268700
+
+        Reviewed by Tim Horton.
+
+        Added deprecation macros to all the classes, extern strings, and enums.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        Added BUILDING_WEBKIT define to disable the deprecation macros.
+        * DOM/DOMAbstractView.h:
+        * DOM/DOMAttr.h:
+        * DOM/DOMBlob.h:
+        * DOM/DOMCDATASection.h:
+        * DOM/DOMCSSCharsetRule.h:
+        * DOM/DOMCSSFontFaceRule.h:
+        * DOM/DOMCSSImportRule.h:
+        * DOM/DOMCSSMediaRule.h:
+        * DOM/DOMCSSPageRule.h:
+        * DOM/DOMCSSPrimitiveValue.h:
+        * DOM/DOMCSSRule.h:
+        * DOM/DOMCSSRuleList.h:
+        * DOM/DOMCSSStyleDeclaration.h:
+        * DOM/DOMCSSStyleRule.h:
+        * DOM/DOMCSSStyleSheet.h:
+        * DOM/DOMCSSUnknownRule.h:
+        * DOM/DOMCSSValue.h:
+        * DOM/DOMCSSValueList.h:
+        * DOM/DOMCharacterData.h:
+        * DOM/DOMComment.h:
+        * DOM/DOMCounter.h:
+        * DOM/DOMDocument.h:
+        * DOM/DOMDocumentFragment.h:
+        * DOM/DOMDocumentType.h:
+        * DOM/DOMElement.h:
+        * DOM/DOMEntity.h:
+        * DOM/DOMEntityReference.h:
+        * DOM/DOMEvent.h:
+        * DOM/DOMEventException.h:
+        * DOM/DOMEventListener.h:
+        * DOM/DOMEventTarget.h:
+        * DOM/DOMException.h:
+        * DOM/DOMFile.h:
+        * DOM/DOMFileList.h:
+        * DOM/DOMHTMLAnchorElement.h:
+        * DOM/DOMHTMLAppletElement.h:
+        * DOM/DOMHTMLAreaElement.h:
+        * DOM/DOMHTMLBRElement.h:
+        * DOM/DOMHTMLBaseElement.h:
+        * DOM/DOMHTMLBaseFontElement.h:
+        * DOM/DOMHTMLBodyElement.h:
+        * DOM/DOMHTMLButtonElement.h:
+        * DOM/DOMHTMLCanvasElement.h:
+        * DOM/DOMHTMLCollection.h:
+        * DOM/DOMHTMLDListElement.h:
+        * DOM/DOMHTMLDirectoryElement.h:
+        * DOM/DOMHTMLDivElement.h:
+        * DOM/DOMHTMLDocument.h:
+        * DOM/DOMHTMLElement.h:
+        * DOM/DOMHTMLEmbedElement.h:
+        * DOM/DOMHTMLFieldSetElement.h:
+        * DOM/DOMHTMLFontElement.h:
+        * DOM/DOMHTMLFormElement.h:
+        * DOM/DOMHTMLFrameElement.h:
+        * DOM/DOMHTMLFrameSetElement.h:
+        * DOM/DOMHTMLHRElement.h:
+        * DOM/DOMHTMLHeadElement.h:
+        * DOM/DOMHTMLHeadingElement.h:
+        * DOM/DOMHTMLHtmlElement.h:
+        * DOM/DOMHTMLIFrameElement.h:
+        * DOM/DOMHTMLImageElement.h:
+        * DOM/DOMHTMLInputElement.h:
+        * DOM/DOMHTMLLIElement.h:
+        * DOM/DOMHTMLLabelElement.h:
+        * DOM/DOMHTMLLegendElement.h:
+        * DOM/DOMHTMLLinkElement.h:
+        * DOM/DOMHTMLMapElement.h:
+        * DOM/DOMHTMLMarqueeElement.h:
+        * DOM/DOMHTMLMediaElement.h:
+        * DOM/DOMHTMLMenuElement.h:
+        * DOM/DOMHTMLMetaElement.h:
+        * DOM/DOMHTMLModElement.h:
+        * DOM/DOMHTMLOListElement.h:
+        * DOM/DOMHTMLObjectElement.h:
+        * DOM/DOMHTMLOptGroupElement.h:
+        * DOM/DOMHTMLOptionElement.h:
+        * DOM/DOMHTMLOptionsCollection.h:
+        * DOM/DOMHTMLParagraphElement.h:
+        * DOM/DOMHTMLParamElement.h:
+        * DOM/DOMHTMLPreElement.h:
+        * DOM/DOMHTMLQuoteElement.h:
+        * DOM/DOMHTMLScriptElement.h:
+        * DOM/DOMHTMLSelectElement.h:
+        * DOM/DOMHTMLStyleElement.h:
+        * DOM/DOMHTMLTableCaptionElement.h:
+        * DOM/DOMHTMLTableCellElement.h:
+        * DOM/DOMHTMLTableColElement.h:
+        * DOM/DOMHTMLTableElement.h:
+        * DOM/DOMHTMLTableRowElement.h:
+        * DOM/DOMHTMLTableSectionElement.h:
+        * DOM/DOMHTMLTextAreaElement.h:
+        * DOM/DOMHTMLTitleElement.h:
+        * DOM/DOMHTMLUListElement.h:
+        * DOM/DOMHTMLVideoElement.h:
+        * DOM/DOMImplementation.h:
+        * DOM/DOMKeyboardEvent.h:
+        * DOM/DOMMediaError.h:
+        * DOM/DOMMediaList.h:
+        * DOM/DOMMouseEvent.h:
+        * DOM/DOMMutationEvent.h:
+        * DOM/DOMNamedNodeMap.h:
+        * DOM/DOMNode.h:
+        * DOM/DOMNodeFilter.h:
+        * DOM/DOMNodeIterator.h:
+        * DOM/DOMNodeList.h:
+        * DOM/DOMObject.h:
+        * DOM/DOMOverflowEvent.h:
+        * DOM/DOMProcessingInstruction.h:
+        * DOM/DOMProgressEvent.h:
+        * DOM/DOMRGBColor.h:
+        * DOM/DOMRange.h:
+        * DOM/DOMRangeException.h:
+        * DOM/DOMRect.h:
+        * DOM/DOMStyleSheet.h:
+        * DOM/DOMStyleSheetList.h:
+        * DOM/DOMText.h:
+        * DOM/DOMTextEvent.h:
+        * DOM/DOMTimeRanges.h:
+        * DOM/DOMTokenList.h:
+        * DOM/DOMTreeWalker.h:
+        * DOM/DOMUIEvent.h:
+        * DOM/DOMWheelEvent.h:
+        * DOM/DOMXPathException.h:
+        * DOM/DOMXPathExpression.h:
+        * DOM/DOMXPathNSResolver.h:
+        * DOM/DOMXPathResult.h:
+        * History/WebBackForwardList.h:
+        * History/WebHistory.h:
+        * History/WebHistoryItem.h:
+        * Misc/WebDownload.h:
+        * Misc/WebKitErrors.h:
+        * Plugins/WebPluginViewFactory.h:
+        * WebView/WebArchive.h:
+        * WebView/WebDataSource.h:
+        * WebView/WebDocument.h:
+        * WebView/WebEditingDelegate.h:
+        * WebView/WebFormDelegate.h:
+        * WebView/WebFrame.h:
+        * WebView/WebFrameLoadDelegate.h:
+        * WebView/WebFrameView.h:
+        * WebView/WebPolicyDelegate.h:
+        * WebView/WebPreferences.h:
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebResourceLoadDelegate.h:
+        * WebView/WebUIDelegate.h:
+        * WebView/WebUIDelegatePrivate.h:
+        * WebView/WebView.h:
+        * WebView/WebViewPrivate.h:
+        * postprocess-headers.sh:
+        Remove step that converts WEBKIT macros to NS macros.
+        Change it to just remove the macros on iOS builds.
+
 2018-05-01  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] remove WK1 support

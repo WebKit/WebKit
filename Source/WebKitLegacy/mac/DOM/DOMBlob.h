@@ -25,7 +25,7 @@
 
 #import <WebKitLegacy/DOMObject.h>
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_6)
+WEBKIT_CLASS_DEPRECATED_MAC(10_6, 10_14)
 @interface DOMBlob : DOMObject
 @property (readonly) unsigned long long size;
 @end

@@ -27,7 +27,7 @@
 
 @class NSString;
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_6)
+WEBKIT_CLASS_DEPRECATED_MAC(10_6, 10_14)
 @interface DOMFile : DOMBlob
 @property (readonly, copy) NSString *name;
 @end

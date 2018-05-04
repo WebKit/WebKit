@@ -27,6 +27,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <WebKitLegacy/WebKitAvailability.h>
 
 @class WebArchivePrivate;
 @class WebResource;
@@ -35,7 +36,7 @@
     @const WebArchivePboardType
     @abstract The pasteboard type constant used when adding or accessing a WebArchive on the pasteboard.
 */
-extern NSString *WebArchivePboardType;
+extern NSString *WebArchivePboardType WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 
 /*!
     @class WebArchive
@@ -44,6 +45,7 @@ extern NSString *WebArchivePboardType;
     This class can be used for saving standalone web pages, representing portions of a web page on the pasteboard, or any other
     application where one class is needed to represent rich web content. 
 */
+WEBKIT_CLASS_DEPRECATED_MAC(10_3, 10_14)
 @interface WebArchive : NSObject <NSCoding, NSCopying>
 {
 @package

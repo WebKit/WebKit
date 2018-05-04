@@ -42,9 +42,9 @@ enum {
     DOM_NODE_AFTER = 1,
     DOM_NODE_BEFORE_AND_AFTER = 2,
     DOM_NODE_INSIDE = 3
-} WEBKIT_ENUM_AVAILABLE_MAC(10_4);
+} WEBKIT_ENUM_DEPRECATED_MAC(10_4, 10_14);
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMRange : DOMObject
 @property (readonly, strong) DOMNode *startContainer;
 @property (readonly) int startOffset;

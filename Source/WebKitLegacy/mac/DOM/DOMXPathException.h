@@ -28,9 +28,9 @@
 
 @class NSString;
 
-extern NSString * const DOMXPathException WEBKIT_AVAILABLE_MAC(10_4);
+extern NSString * const DOMXPathException WEBKIT_DEPRECATED_MAC(10_4, 10_14);
 
 enum DOMXPathExceptionCode {
     DOM_INVALID_EXPRESSION_ERR      = 51,
     DOM_TYPE_ERR                    = 52
-} WEBKIT_ENUM_AVAILABLE_MAC(10_4);
+} WEBKIT_ENUM_DEPRECATED_MAC(10_4, 10_14);

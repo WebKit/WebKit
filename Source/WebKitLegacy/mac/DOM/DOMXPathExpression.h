@@ -28,7 +28,7 @@
 @class DOMNode;
 @class DOMXPathResult;
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_5)
+WEBKIT_CLASS_DEPRECATED_MAC(10_5, 10_14)
 @interface DOMXPathExpression : DOMObject
 - (DOMXPathResult *)evaluate:(DOMNode *)contextNode type:(unsigned short)type inResult:(DOMXPathResult *)inResult WEBKIT_AVAILABLE_MAC(10_5);
 @end

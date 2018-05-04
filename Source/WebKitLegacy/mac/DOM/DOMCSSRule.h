@@ -44,9 +44,9 @@ enum {
     DOM_WEBKIT_REGION_RULE = 16,
     DOM_WEBKIT_KEYFRAMES_RULE = 7,
     DOM_WEBKIT_KEYFRAME_RULE = 8
-} WEBKIT_ENUM_AVAILABLE_MAC(10_4);
+} WEBKIT_ENUM_DEPRECATED_MAC(10_4, 10_14);
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMCSSRule : DOMObject
 @property (readonly) unsigned short type;
 @property (copy) NSString *cssText;

@@ -33,9 +33,9 @@ enum {
     DOM_CAPTURING_PHASE = 1,
     DOM_AT_TARGET = 2,
     DOM_BUBBLING_PHASE = 3
-} WEBKIT_ENUM_AVAILABLE_MAC(10_4);
+} WEBKIT_ENUM_DEPRECATED_MAC(10_4, 10_14);
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMEvent : DOMObject
 @property (readonly, copy) NSString *type;
 @property (readonly, strong) id <DOMEventTarget> target;

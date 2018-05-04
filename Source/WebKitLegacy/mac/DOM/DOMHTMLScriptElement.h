@@ -27,7 +27,7 @@
 
 @class NSString;
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMHTMLScriptElement : DOMHTMLElement
 @property (copy) NSString *text;
 @property (copy) NSString *htmlFor;

@@ -25,7 +25,7 @@
 
 #import <WebKitLegacy/DOMHTMLElement.h>
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_5)
+WEBKIT_CLASS_DEPRECATED_MAC(10_5, 10_14)
 @interface DOMHTMLCanvasElement : DOMHTMLElement
 @property int width;
 @property int height;

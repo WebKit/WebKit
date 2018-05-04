@@ -31,7 +31,7 @@
 @class DOMHTMLDocument;
 @class NSString;
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMImplementation : DOMObject
 - (BOOL)hasFeature:(NSString *)feature version:(NSString *)version WEBKIT_AVAILABLE_MAC(10_5);
 - (DOMDocumentType *)createDocumentType:(NSString *)qualifiedName publicId:(NSString *)publicId systemId:(NSString *)systemId WEBKIT_AVAILABLE_MAC(10_5);

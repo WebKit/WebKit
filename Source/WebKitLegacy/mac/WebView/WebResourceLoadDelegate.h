@@ -27,6 +27,7 @@
  */
 
 #import <Foundation/NSObjCRuntime.h>
+#import <WebKitLegacy/WebKitAvailability.h>
 
 @class WebView;
 @class WebDataSource;
@@ -48,6 +49,7 @@
     resource.  For example, a single resource may generate multiple 
     resource:willSendRequest:redirectResponse:fromDataSource: messages as it's URL is redirected.
 */
+WEBKIT_DEPRECATED_MAC(10_3, 10_14)
 @protocol WebResourceLoadDelegate <NSObject>
 
 @optional

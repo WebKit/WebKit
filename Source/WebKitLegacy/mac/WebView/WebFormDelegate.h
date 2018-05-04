@@ -27,6 +27,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <WebKitLegacy/WebKitAvailability.h>
 
 #if !TARGET_OS_IPHONE
 #import <AppKit/AppKit.h>
@@ -51,6 +52,7 @@
 /*!
     @protocol  WebFormDelegate
 */
+WEBKIT_DEPRECATED_MAC(10_3, 10_14)
 @protocol WebFormDelegate <NSObject>
 
 // Various methods send by controls that edit text to their delegates, which are all

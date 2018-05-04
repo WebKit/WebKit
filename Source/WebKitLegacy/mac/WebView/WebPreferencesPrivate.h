@@ -62,10 +62,10 @@ typedef enum {
     WebKitFrameFlatteningFullyEnabled
 } WebKitFrameFlattening;
 
-extern NSString *WebPreferencesChangedNotification;
-extern NSString *WebPreferencesRemovedNotification;
-extern NSString *WebPreferencesChangedInternalNotification;
-extern NSString *WebPreferencesCacheModelChangedInternalNotification;
+extern NSString *WebPreferencesChangedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString *WebPreferencesRemovedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString *WebPreferencesChangedInternalNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPRECATED_MAC(10_5, 10_14);
 
 @interface WebPreferences (WebPrivate)
 

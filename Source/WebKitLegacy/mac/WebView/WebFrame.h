@@ -28,6 +28,7 @@
 
 #import <Foundation/Foundation.h>
 #import <JavaScriptCore/JSBase.h>
+#import <WebKitLegacy/WebKitAvailability.h>
 
 @class DOMDocument;
 @class DOMHTMLElement;
@@ -45,6 +46,7 @@
     @discussion Every web page is represented by at least one WebFrame.  A WebFrame
     has a WebFrameView and a WebDataSource.
 */
+WEBKIT_CLASS_DEPRECATED_MAC(10_3, 10_14)
 @interface WebFrame : NSObject
 {
 @package

@@ -32,9 +32,9 @@ enum {
     DOM_MODIFICATION = 1,
     DOM_ADDITION = 2,
     DOM_REMOVAL = 3
-} WEBKIT_ENUM_AVAILABLE_MAC(10_4);
+} WEBKIT_ENUM_DEPRECATED_MAC(10_4, 10_14);
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMMutationEvent : DOMEvent
 @property (readonly, strong) DOMNode *relatedNode;
 @property (readonly, copy) NSString *prevValue;

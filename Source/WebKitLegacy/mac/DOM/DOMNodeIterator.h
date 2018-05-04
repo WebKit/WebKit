@@ -28,7 +28,7 @@
 @class DOMNode;
 @protocol DOMNodeFilter;
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMNodeIterator : DOMObject
 @property (readonly, strong) DOMNode *root;
 @property (readonly) unsigned whatToShow;

@@ -29,7 +29,7 @@
 @class DOMHTMLElement;
 @class NSString;
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMHTMLTableSectionElement : DOMHTMLElement
 @property (copy) NSString *align;
 @property (copy) NSString *ch;

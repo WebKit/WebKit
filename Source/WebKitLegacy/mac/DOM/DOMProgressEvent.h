@@ -25,7 +25,7 @@
 
 #import <WebKitLegacy/DOMEvent.h>
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_6)
+WEBKIT_CLASS_DEPRECATED_MAC(10_6, 10_14)
 @interface DOMProgressEvent : DOMEvent
 @property (readonly) BOOL lengthComputable;
 @property (readonly) unsigned long long loaded;

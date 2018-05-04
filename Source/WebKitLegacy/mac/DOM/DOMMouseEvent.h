@@ -30,7 +30,7 @@
 @class NSString;
 @protocol DOMEventTarget;
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMMouseEvent : DOMUIEvent
 @property (readonly) int screenX;
 @property (readonly) int screenY;

@@ -1,3 +1,14 @@
+2018-05-04  Timothy Hatcher  <timothy@apple.com>
+
+        Deprecate legacy WebView and friends
+        https://bugs.webkit.org/show_bug.cgi?id=185279
+        rdar://problem/33268700
+
+        Reviewed by Tim Horton.
+
+        * MiniBrowser/Configurations/Base.xcconfig: Added GCC_PREPROCESSOR_DEFINITIONS
+        to define DISABLE_LEGACY_WEBKIT_DEPRECATIONS.
+
 2018-05-04  Leo Balter  <leonardo.balter@gmail.com>
 
         Test262-Runner: Add base module to the local deps - unicore/PVA.pl

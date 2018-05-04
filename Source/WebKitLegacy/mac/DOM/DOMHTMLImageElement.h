@@ -28,7 +28,7 @@
 @class NSString;
 @class NSURL;
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMHTMLImageElement : DOMHTMLElement
 @property (copy) NSString *name;
 @property (copy) NSString *align;

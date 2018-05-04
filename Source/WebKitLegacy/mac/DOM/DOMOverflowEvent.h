@@ -29,9 +29,9 @@ enum {
     DOM_HORIZONTAL = 0,
     DOM_VERTICAL = 1,
     DOM_BOTH = 2
-} WEBKIT_ENUM_AVAILABLE_MAC(10_5);
+} WEBKIT_ENUM_DEPRECATED_MAC(10_5, 10_14);
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_5)
+WEBKIT_CLASS_DEPRECATED_MAC(10_5, 10_14)
 @interface DOMOverflowEvent : DOMEvent
 @property (readonly) unsigned short orient;
 @property (readonly) BOOL horizontalOverflow;

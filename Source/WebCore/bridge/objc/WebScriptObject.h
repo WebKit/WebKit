@@ -218,7 +218,7 @@
         - (id)webScriptValueAtIndex:(unsigned)index;
         - (void)setWebScriptValueAtIndex:(unsigned)index value:(id)value;
 */
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 WEBCORE_EXPORT @interface WebScriptObject : NSObject
 {
     WebScriptObjectPrivate *_private;
@@ -319,7 +319,7 @@ WEBCORE_EXPORT @interface WebScriptObject : NSObject
 /*!
     @class WebUndefined
 */
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 WEBCORE_EXPORT @interface WebUndefined : NSObject <NSCoding, NSCopying>
 
 /*!

@@ -28,7 +28,7 @@
 @class DOMNamedNodeMap;
 @class NSString;
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMDocumentType : DOMNode
 @property (readonly, copy) NSString *name;
 @property (readonly, strong) DOMNamedNodeMap *entities;

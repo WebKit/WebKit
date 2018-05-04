@@ -26,13 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKitLegacy/WebKitAvailability.h>
+
 @class NSString;
 
-extern NSString *WebKitErrorDomain;
+extern NSString *WebKitErrorDomain WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 
-extern NSString * const WebKitErrorMIMETypeKey;
-extern NSString * const WebKitErrorPlugInNameKey;
-extern NSString * const WebKitErrorPlugInPageURLStringKey;
+extern NSString * const WebKitErrorMIMETypeKey WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebKitErrorPlugInNameKey WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebKitErrorPlugInPageURLStringKey WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 
 /*!
     @enum
@@ -45,7 +47,7 @@ enum {
     WebKitErrorCannotShowMIMEType =                             100,
     WebKitErrorCannotShowURL =                                  101,
     WebKitErrorFrameLoadInterruptedByPolicyChange =             102,
-};
+} WEBKIT_ENUM_DEPRECATED_MAC(10_3, 10_14);
 
 /*!
     @enum
@@ -60,4 +62,4 @@ enum {
     WebKitErrorCannotLoadPlugIn =                               201,
     WebKitErrorJavaUnavailable =                                202,
     WebKitErrorBlockedPlugInVersion =                           203,
-};
+} WEBKIT_ENUM_DEPRECATED_MAC(10_3, 10_14);

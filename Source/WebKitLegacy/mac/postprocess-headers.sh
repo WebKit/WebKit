@@ -6,7 +6,7 @@ postProcessInDirectory()
 
     cd "$1"
 
-    local unifdefOptions sedExpression
+    local unifdefOptions
 
     if [[ ${USE_INTERNAL_SDK} == "YES" ]]; then
         USE_APPLE_INTERNAL_SDK=1
@@ -36,12 +36,6 @@ postProcessInDirectory()
         fi
     done
 
-    if [[ ${WK_PLATFORM_NAME} == macosx ]]; then
-        sedExpression='s/WEBKIT_((CLASS_|ENUM_)?AVAILABLE|DEPRECATED)/NS_\1/g';
-    else
-        sedExpression='s/ *WEBKIT_((CLASS_|ENUM_)?AVAILABLE|DEPRECATED)_MAC\([^)]+\)//g';
-    fi
-
     for header in $(find . -name '*.h' -type f); do
         unifdef -B ${unifdefOptions} -o ${header}.unifdef ${header}
         case $? in
@@ -60,11 +54,13 @@ postProcessInDirectory()
             continue
         fi
 
-        sed -E -e "${sedExpression}" < ${header} > ${header}.sed
-        if cmp -s ${header} ${header}.sed; then
-            rm ${header}.sed
-        else
-            mv ${header}.sed ${header}
+        if [[ ${WK_PLATFORM_NAME} != macosx ]]; then
+            sed -E -e "s/ *WEBKIT_((CLASS_|ENUM_)?(AVAILABLE|DEPRECATED))_MAC\([^)]+\)//g" < ${header} > ${header}.sed
+            if cmp -s ${header} ${header}.sed; then
+                rm ${header}.sed
+            else
+                mv ${header}.sed ${header}
+            fi
         fi
     done
 

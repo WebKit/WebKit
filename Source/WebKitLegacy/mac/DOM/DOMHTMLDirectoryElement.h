@@ -25,7 +25,7 @@
 
 #import <WebKitLegacy/DOMHTMLElement.h>
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMHTMLDirectoryElement : DOMHTMLElement
 @property BOOL compact;
 @end

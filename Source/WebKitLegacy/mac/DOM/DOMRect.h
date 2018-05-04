@@ -27,7 +27,7 @@
 
 @class DOMCSSPrimitiveValue;
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMRect : DOMObject
 @property (readonly, strong) DOMCSSPrimitiveValue *top;
 @property (readonly, strong) DOMCSSPrimitiveValue *right;

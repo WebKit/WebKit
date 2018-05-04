@@ -39,9 +39,9 @@ enum {
     DOM_ORDERED_NODE_SNAPSHOT_TYPE = 7,
     DOM_ANY_UNORDERED_NODE_TYPE = 8,
     DOM_FIRST_ORDERED_NODE_TYPE = 9
-} WEBKIT_ENUM_AVAILABLE_MAC(10_5);
+} WEBKIT_ENUM_DEPRECATED_MAC(10_5, 10_14);
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_5)
+WEBKIT_CLASS_DEPRECATED_MAC(10_5, 10_14)
 @interface DOMXPathResult : DOMObject
 @property (readonly) unsigned short resultType;
 @property (readonly) double numberValue;

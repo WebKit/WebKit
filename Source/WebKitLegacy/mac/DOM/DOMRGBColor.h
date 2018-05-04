@@ -32,7 +32,7 @@
 typedef struct CGColor* CGColorRef;
 #endif
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMRGBColor : DOMObject
 @property (readonly, strong) DOMCSSPrimitiveValue *red;
 @property (readonly, strong) DOMCSSPrimitiveValue *green;

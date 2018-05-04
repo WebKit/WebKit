@@ -27,6 +27,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <WebKitLegacy/WebKitAvailability.h>
 
 #if !TARGET_OS_IPHONE
 #import <AppKit/AppKit.h>
@@ -62,17 +63,17 @@
 @protocol WebUIDelegate;
 
 // Element dictionary keys
-extern NSString *WebElementDOMNodeKey;          // DOMNode of the element
-extern NSString *WebElementFrameKey;            // WebFrame of the element
-extern NSString *WebElementImageAltStringKey;   // NSString of the ALT attribute of the image element
-extern NSString *WebElementImageKey;            // NSImage of the image element
-extern NSString *WebElementImageRectKey;        // NSValue of an NSRect, the rect of the image element
-extern NSString *WebElementImageURLKey;         // NSURL of the image element
-extern NSString *WebElementIsSelectedKey;       // NSNumber of BOOL indicating whether the element is selected or not 
-extern NSString *WebElementLinkURLKey;          // NSURL of the link if the element is within an anchor
-extern NSString *WebElementLinkTargetFrameKey;  // WebFrame of the target of the anchor
-extern NSString *WebElementLinkTitleKey;        // NSString of the title of the anchor
-extern NSString *WebElementLinkLabelKey;        // NSString of the text within the anchor
+extern NSString *WebElementDOMNodeKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // DOMNode of the element
+extern NSString *WebElementFrameKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // WebFrame of the element
+extern NSString *WebElementImageAltStringKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSString of the ALT attribute of the image element
+extern NSString *WebElementImageKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSImage of the image element
+extern NSString *WebElementImageRectKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSValue of an NSRect, the rect of the image element
+extern NSString *WebElementImageURLKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSURL of the image element
+extern NSString *WebElementIsSelectedKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSNumber of BOOL indicating whether the element is selected or not
+extern NSString *WebElementLinkURLKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSURL of the link if the element is within an anchor
+extern NSString *WebElementLinkTargetFrameKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // WebFrame of the target of the anchor
+extern NSString *WebElementLinkTitleKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSString of the title of the anchor
+extern NSString *WebElementLinkLabelKey WEBKIT_DEPRECATED_MAC(10_3, 10_14); // NSString of the text within the anchor
 
 /*
     @discussion Notifications sent by WebView to mark the progress of loads.
@@ -84,10 +85,10 @@ extern NSString *WebElementLinkLabelKey;        // NSString of the text within t
     @constant WebViewProgressFinishedNotification Posted when the load for a WebView has finished.
     The userInfo will be nil.
 */
-extern NSString *WebViewProgressStartedNotification;
-extern NSString *WebViewProgressEstimateChangedNotification;
+extern NSString *WebViewProgressStartedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString *WebViewProgressEstimateChangedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 #if !TARGET_OS_IPHONE
-extern NSString *WebViewProgressFinishedNotification;
+extern NSString *WebViewProgressFinishedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 #endif
 
 /*!
@@ -124,6 +125,7 @@ extern NSString *WebViewProgressFinishedNotification;
     WebView's WebPolicyDelegate can make determinations about how
     content should be handled, based on the resource's URL and MIME type.
 */
+WEBKIT_CLASS_DEPRECATED_MAC(10_3, 10_14, "No longer supported; please adopt WKWebView.")
 @interface WebView : NSView
 {
 @private

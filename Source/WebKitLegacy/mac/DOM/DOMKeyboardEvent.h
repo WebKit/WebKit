@@ -33,9 +33,9 @@ enum {
     DOM_KEY_LOCATION_LEFT = 0x01,
     DOM_KEY_LOCATION_RIGHT = 0x02,
     DOM_KEY_LOCATION_NUMPAD = 0x03
-} WEBKIT_ENUM_AVAILABLE_MAC(10_5);
+} WEBKIT_ENUM_DEPRECATED_MAC(10_5, 10_14);
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_5)
+WEBKIT_CLASS_DEPRECATED_MAC(10_5, 10_14)
 @interface DOMKeyboardEvent : DOMUIEvent
 @property (readonly, copy) NSString *keyIdentifier;
 @property (readonly) unsigned location WEBKIT_AVAILABLE_MAC(10_8);

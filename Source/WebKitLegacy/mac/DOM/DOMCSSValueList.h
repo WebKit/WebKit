@@ -27,7 +27,7 @@
 
 @class DOMCSSValue;
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMCSSValueList : DOMCSSValue
 @property (readonly) unsigned length;
 

@@ -61,9 +61,9 @@ enum {
     DOM_CSS_VH = 27,
     DOM_CSS_VMIN = 28,
     DOM_CSS_VMAX = 29
-} WEBKIT_ENUM_AVAILABLE_MAC(10_4);
+} WEBKIT_ENUM_DEPRECATED_MAC(10_4, 10_14);
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMCSSPrimitiveValue : DOMCSSValue
 @property (readonly) unsigned short primitiveType;
 

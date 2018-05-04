@@ -31,9 +31,9 @@ enum {
     DOM_MEDIA_ERR_DECODE = 3,
     DOM_MEDIA_ERR_SRC_NOT_SUPPORTED = 4,
     DOM_MEDIA_ERR_ENCRYPTED = 5
-};
+} WEBKIT_ENUM_DEPRECATED_MAC(10_5, 10_14);
 
-__attribute__((visibility("default")))
+WEBKIT_CLASS_DEPRECATED_MAC(10_5, 10_14)
 @interface DOMMediaError : DOMObject
 @property (readonly) unsigned short code;
 @end

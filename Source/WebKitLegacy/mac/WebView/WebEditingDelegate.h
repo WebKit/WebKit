@@ -27,6 +27,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <WebKitLegacy/WebKitAvailability.h>
 
 #if !TARGET_OS_IPHONE
 #import <AppKit/AppKit.h>
@@ -43,8 +44,9 @@ typedef NS_ENUM(NSInteger, WebViewInsertAction) {
     WebViewInsertActionTyped,
     WebViewInsertActionPasted,
     WebViewInsertActionDropped,
-};
+} WEBKIT_ENUM_DEPRECATED_MAC(10_3, 10_14);
 
+WEBKIT_DEPRECATED_MAC(10_3, 10_14)
 @protocol WebEditingDelegate <NSObject>
 
 @optional

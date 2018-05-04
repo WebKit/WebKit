@@ -27,8 +27,7 @@
  */
 
 #import <Foundation/Foundation.h>
-
-#pragma GCC system_header
+#import <WebKitLegacy/WebKitAvailability.h>
 
 @class NSError;
 
@@ -46,19 +45,20 @@
     @constant WebHistoryAllItemsRemovedNotification Posted from removeAllItems
     @constant WebHistoryLoadedNotification Posted from loadFromURL:error:.
 */
-extern NSString *WebHistoryItemsAddedNotification;
-extern NSString *WebHistoryItemsRemovedNotification;
-extern NSString *WebHistoryAllItemsRemovedNotification;
-extern NSString *WebHistoryLoadedNotification;
-extern NSString *WebHistorySavedNotification;
+extern NSString *WebHistoryItemsAddedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString *WebHistoryItemsRemovedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString *WebHistoryAllItemsRemovedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString *WebHistoryLoadedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString *WebHistorySavedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 
-extern NSString *WebHistoryItemsKey;
+extern NSString *WebHistoryItemsKey WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 
 /*!
     @class WebHistory
     @discussion WebHistory is used to track pages that have been loaded
     by WebKit.
 */
+WEBKIT_CLASS_DEPRECATED_MAC(10_3, 10_14)
 @interface WebHistory : NSObject {
 @package
     WebHistoryPrivate *_historyPrivate;

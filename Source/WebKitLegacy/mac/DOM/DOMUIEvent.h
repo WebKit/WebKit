@@ -28,7 +28,7 @@
 @class DOMAbstractView;
 @class NSString;
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMUIEvent : DOMEvent
 @property (readonly, strong) DOMAbstractView *view;
 @property (readonly) int detail;

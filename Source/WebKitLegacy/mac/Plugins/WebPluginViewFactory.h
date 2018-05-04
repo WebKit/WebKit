@@ -37,7 +37,7 @@
     @constant WebPlugInBaseURLKey REQUIRED. The base URL of the document containing
     the plug-in's view.
 */
-extern NSString *WebPlugInBaseURLKey;
+extern NSString *WebPlugInBaseURLKey WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 
 /*!
     @constant WebPlugInAttributesKey REQUIRED. The dictionary containing the names
@@ -47,7 +47,7 @@ extern NSString *WebPlugInBaseURLKey;
     the attributes of an element take precedence over any PARAMs.  All of the keys
     and values in this NSDictionary must be NSStrings.
 */
-extern NSString *WebPlugInAttributesKey;
+extern NSString *WebPlugInAttributesKey WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 
 /*!
     @constant WebPlugInContainer OPTIONAL. An object that conforms to the
@@ -55,13 +55,13 @@ extern NSString *WebPlugInAttributesKey;
     callbacks from the plug-in to the app. if this argument is nil, no callbacks will
     occur.
 */
-extern NSString *WebPlugInContainerKey;
+extern NSString *WebPlugInContainerKey WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 
 /*!
     @constant WebPlugInContainingElementKey The DOMElement that was used to specify
     the plug-in.  May be nil.
 */
-extern NSString *WebPlugInContainingElementKey;
+extern NSString *WebPlugInContainingElementKey WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 
 /*!
  @constant WebPlugInShouldLoadMainResourceKey REQUIRED. NSNumber (BOOL) indicating whether the plug-in should load its
@@ -70,7 +70,7 @@ extern NSString *WebPlugInContainingElementKey;
  For compatibility with older versions of WebKit, the plug-in should assume that the value for
  WebPlugInShouldLoadMainResourceKey is NO if it is absent from the arguments dictionary.
  */
-extern NSString *WebPlugInShouldLoadMainResourceKey WEBKIT_AVAILABLE_MAC(10_6);
+extern NSString *WebPlugInShouldLoadMainResourceKey WEBKIT_DEPRECATED_MAC(10_6, 10_14);
 
 /*!
     @protocol WebPlugInViewFactory
@@ -78,6 +78,7 @@ extern NSString *WebPlugInShouldLoadMainResourceKey WEBKIT_AVAILABLE_MAC(10_6);
     The principal class of the plug-in bundle must implement this protocol.
 */
 
+WEBKIT_DEPRECATED_MAC(10_3, 10_14)
 @protocol WebPlugInViewFactory <NSObject>
 
 /*!

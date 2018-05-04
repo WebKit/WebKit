@@ -50,6 +50,7 @@
     Once at least one byte is received, the data source is considered "committed". This is done
     so the contents of the frame will not be lost if the new data source fails to successfully load.
 */
+WEBKIT_DEPRECATED_MAC(10_3, 10_14)
 @protocol WebFrameLoadDelegate <NSObject>
 
 @optional

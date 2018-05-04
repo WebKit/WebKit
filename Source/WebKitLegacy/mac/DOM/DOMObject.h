@@ -33,7 +33,7 @@ typedef unsigned long long DOMTimeStamp;
 
 typedef struct DOMObjectInternal DOMObjectInternal;
 
-WEBKIT_CLASS_AVAILABLE_MAC(10_4)
+WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @interface DOMObject : WebScriptObject <NSCopying> {
 @package
     DOMObjectInternal *_internal;

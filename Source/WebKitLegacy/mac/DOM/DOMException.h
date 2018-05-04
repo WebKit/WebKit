@@ -28,7 +28,7 @@
 
 @class NSString;
 
-extern NSString * const DOMException WEBKIT_AVAILABLE_MAC(10_4);
+extern NSString * const DOMException WEBKIT_DEPRECATED_MAC(10_4, 10_14);
 
 enum DOMExceptionCode {
     DOM_INDEX_SIZE_ERR                = 1,
@@ -46,4 +46,4 @@ enum DOMExceptionCode {
     DOM_INVALID_MODIFICATION_ERR      = 13,
     DOM_NAMESPACE_ERR                 = 14,
     DOM_INVALID_ACCESS_ERR            = 15
-} WEBKIT_ENUM_AVAILABLE_MAC(10_4);
+} WEBKIT_ENUM_DEPRECATED_MAC(10_4, 10_14);

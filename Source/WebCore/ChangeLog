@@ -1,3 +1,19 @@
+2018-05-04  Timothy Hatcher  <timothy@apple.com>
+
+        Deprecate legacy WebView and friends
+        https://bugs.webkit.org/show_bug.cgi?id=185279
+        rdar://problem/33268700
+
+        Reviewed by Tim Horton.
+
+        * Configurations/WebCore.xcconfig:
+        Added BUILDING_WEBKIT define to disable the deprecation macros.
+        * bridge/objc/WebScriptObject.h:
+        Added deprecation macros to WebScriptObject and WebUndefined.
+        * platform/cocoa/WebKitAvailability.h:
+        Added more macros and a way to disable deprecation warnings for
+        WebKit build and in clients like Safari.
+
 2018-05-04  Eric Carlson  <eric.carlson@apple.com>
 
         Log media time range as JSON

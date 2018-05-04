@@ -28,8 +28,8 @@
 
 @class NSString;
 
-extern NSString * const DOMEventException WEBKIT_AVAILABLE_MAC(10_4);
+extern NSString * const DOMEventException WEBKIT_DEPRECATED_MAC(10_4, 10_14);
 
 enum DOMEventExceptionCode {
     DOM_UNSPECIFIED_EVENT_TYPE_ERR = 0
-} WEBKIT_ENUM_AVAILABLE_MAC(10_4);
+} WEBKIT_ENUM_DEPRECATED_MAC(10_4, 10_14);
