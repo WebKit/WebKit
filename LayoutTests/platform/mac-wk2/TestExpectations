@@ -559,7 +559,7 @@ webkit.org/b/170620 [ Sierra+ ] media/controls/pip-placeholder-without-video-con
 [ Sierra+ ] media/element-containing-pip-video-going-into-fullscreen.html [ Pass Timeout ]
 webkit.org/b/172998 [ Sierra+ ] media/fullscreen-api-enabled-media-with-presentation-mode.html [ Failure ]
 [ Sierra+ ] media/fullscreen-video-going-into-pip.html [ Pass ]
-[ Sierra+ ] media/navigate-with-pip-should-not-crash.html [ Pass ]
+webkit.org/b/173199 [ Sierra+ ] media/navigate-with-pip-should-not-crash.html [ Pass Failure ]
 [ Sierra+ ] media/pip-video-going-into-fullscreen.html [ Pass ]
 [ Sierra+ ] media/video-contained-in-fullscreen-element-going-into-pip.html [ Pass ]
 
