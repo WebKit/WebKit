@@ -1,3 +1,23 @@
+2018-05-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Text shaping in the simple path is flipped in the y direction
+        https://bugs.webkit.org/show_bug.cgi?id=185062
+        <rdar://problem/39778678>
+
+        Reviewed by Simon Fraser.
+
+        Shaping in our simple codepath occurs in an "increasing-y-goes-up" coordinate system, but our painting
+        code uses an "increasing-y-goes-down" coordinate system. We weren't fixing up the coordinate systems
+        because we never noticed. This is because the simple codepath is only designed for kerning and ligatures,
+        neither of which move glyphs vertically in the common case.
+
+        Test: fast/text/vertical-displacement-simple-codepath.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::applyTransforms const):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::applyFontTransforms):
+
 2018-05-04  Chris Nardi  <cnardi@chromium.org>
 
         Serialize all URLs with double-quotes per CSSOM spec

@@ -1,3 +1,15 @@
+2018-05-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Text shaping in the simple path is flipped in the y direction
+        https://bugs.webkit.org/show_bug.cgi?id=185062
+        <rdar://problem/39778678>
+
+        Reviewed by Simon Fraser.
+
+        Huge thanks to Ulrike Rausch of LiebeFonts for contributing the test fonts!!!
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-05-04  Leo Balter  <leonardo.balter@gmail.com>
 
         Test262-Runner: place the processCLI inside the main call

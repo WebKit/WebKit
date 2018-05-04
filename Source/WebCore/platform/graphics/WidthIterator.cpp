@@ -114,6 +114,9 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer* glyphBuffer, bool l
 
     font->applyTransforms(glyphBuffer->glyphs(lastGlyphCount), advances + lastGlyphCount, glyphBufferSize - lastGlyphCount, m_enableKerning, m_requiresShaping);
 
+    for (unsigned i = lastGlyphCount; i < glyphBufferSize; ++i)
+        advances[i].setHeight(-advances[i].height());
+
     if (!ltr)
         glyphBuffer->reverse(lastGlyphCount, glyphBufferSize - lastGlyphCount);
 
