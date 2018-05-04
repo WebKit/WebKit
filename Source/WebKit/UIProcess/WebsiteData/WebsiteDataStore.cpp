@@ -48,6 +48,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -90,6 +91,7 @@ WebsiteDataStore::WebsiteDataStore(Configuration configuration, PAL::SessionID s
     , m_storageManager(StorageManager::create(m_configuration.localStorageDirectory))
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
 {
+    WTF::setProcessPrivileges(allPrivileges());
     maybeRegisterWithSessionIDMap();
     platformInitialize();
 }

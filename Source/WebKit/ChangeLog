@@ -1,3 +1,16 @@
+2018-05-04  Sihui Liu  <sihui_liu@apple.com>
+
+        Assertion failure in NetworkStorageSession::setCookie: privilege of UI process is not set
+        https://bugs.webkit.org/show_bug.cgi?id=185262
+
+        Reviewed by Chris Dumez.
+
+        Fix an assertion failure by setting UI process privileges in constructor of WebsiteDataStore
+        because UI process may use the cookie API before creating a WebView.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+
 2018-05-04  Per Arne Vollan  <pvollan@apple.com>
 
         Adjust sandbox rules for simulator.
