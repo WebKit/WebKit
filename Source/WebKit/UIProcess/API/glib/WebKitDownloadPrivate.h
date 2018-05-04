@@ -24,6 +24,7 @@
 #include <WebCore/ResourceRequest.h>
 
 WebKitDownload* webkitDownloadCreate(WebKit::DownloadProxy*);
+void webkitDownloadStarted(WebKitDownload*);
 bool webkitDownloadIsCancelled(WebKitDownload*);
 void webkitDownloadSetResponse(WebKitDownload*, WebKitURIResponse*);
 void webkitDownloadSetWebView(WebKitDownload*, WebKitWebView*);

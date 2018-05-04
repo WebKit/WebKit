@@ -1,3 +1,14 @@
+2018-05-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Epiphany (GNOME Web) says "Error downloading: Service Unavailable." when trying to download an image from discogs.com
+        https://bugs.webkit.org/show_bug.cgi?id=174730
+
+        Reviewed by Michael Catanzaro.
+
+        Export ResourceRequestBase::hasHTTPHeaderField().
+
+        * platform/network/ResourceRequestBase.h:
+
 2018-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use subprocess.call instead of os.system to handle path with spaces

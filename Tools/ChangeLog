@@ -1,3 +1,20 @@
+2018-05-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Epiphany (GNOME Web) says "Error downloading: Service Unavailable." when trying to download an image from discogs.com
+        https://bugs.webkit.org/show_bug.cgi?id=174730
+
+        Reviewed by Michael Catanzaro.
+
+        Update unit tests to check that User-Agent header is included in HTTP download requests.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestDownloads.cpp:
+        (testDownloadRemoteFile):
+        (testWebViewDownloadURI):
+        (testPolicyResponseDownload):
+        (testPolicyResponseDownloadCancel):
+        (testDownloadMIMEType):
+        (testContextMenuDownloadActions):
+
 2018-05-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Test archive must use Python zipfile, just like build product.

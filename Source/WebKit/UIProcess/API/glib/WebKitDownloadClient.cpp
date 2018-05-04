@@ -43,6 +43,7 @@ private:
     void didStart(WebProcessPool&, DownloadProxy& downloadProxy) override
     {
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
+        webkitDownloadStarted(download.get());
         webkitWebContextDownloadStarted(m_webContext, download.get());
     }
 

@@ -453,6 +453,9 @@ static void testDownloadRemoteFile(DownloadTest* test, gconstpointer)
     g_assert(request);
     ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/test.pdf"));
 
+    auto headers = webkit_uri_request_get_http_headers(request);
+    g_assert_nonnull(soup_message_headers_get_one(headers, "User-Agent"));
+
     g_assert(webkit_download_get_destination(download.get()));
     g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), ==, 1);
     GUniquePtr<char> expectedFilename(g_strdup_printf("%s.pdf", kServerSuggestedFilename));
@@ -566,6 +569,13 @@ static void testWebViewDownloadURI(WebViewDownloadTest* test, gconstpointer)
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download.get()));
     test->waitUntilDownloadStarted();
     g_assert(test->m_webView == webkit_download_get_web_view(download.get()));
+
+    WebKitURIRequest* request = webkit_download_get_request(download.get());
+    g_assert(request);
+    ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/test.pdf"));
+
+    auto headers = webkit_uri_request_get_http_headers(request);
+    g_assert_nonnull(soup_message_headers_get_one(headers, "User-Agent"));
     test->waitUntilDownloadFinished();
 
     GRefPtr<GFile> downloadFile = adoptGRef(g_file_new_for_uri(webkit_download_get_destination(download.get())));
@@ -619,6 +629,9 @@ static void testPolicyResponseDownload(PolicyResponseDownloadTest* test, gconstp
     ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, requestURI);
 
     g_assert(test->m_webView == webkit_download_get_web_view(test->m_download.get()));
+
+    auto headers = webkit_uri_request_get_http_headers(request);
+    g_assert_nonnull(soup_message_headers_get_one(headers, "User-Agent"));
     test->waitUntilDownloadFinished();
 
     GRefPtr<GFile> downloadFile = adoptGRef(g_file_new_for_uri(webkit_download_get_destination(test->m_download.get())));
@@ -638,6 +651,9 @@ static void testPolicyResponseDownloadCancel(PolicyResponseDownloadTest* test, g
     ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, requestURI);
 
     g_assert(test->m_webView == webkit_download_get_web_view(test->m_download.get()));
+
+    auto headers = webkit_uri_request_get_http_headers(request);
+    g_assert_nonnull(soup_message_headers_get_one(headers, "User-Agent"));
     test->cancelDownloadAndWaitUntilFinished();
 }
 
@@ -658,6 +674,9 @@ static void testDownloadMIMEType(DownloadTest* test, gconstpointer)
     WebKitURIRequest* request = webkit_download_get_request(download.get());
     WEBKIT_IS_URI_REQUEST(request);
     ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/unknown"));
+
+    auto headers = webkit_uri_request_get_http_headers(request);
+    g_assert_nonnull(soup_message_headers_get_one(headers, "User-Agent"));
 
     WebKitURIResponse* response = webkit_download_get_response(download.get());
     WEBKIT_IS_URI_RESPONSE(response);
@@ -718,6 +737,14 @@ static void testContextMenuDownloadActions(WebViewDownloadTest* test, gconstpoin
     test->waitUntilDownloadStarted();
 
     g_assert(test->m_webView == webkit_download_get_web_view(test->m_download.get()));
+
+    WebKitURIRequest* request = webkit_download_get_request(test->m_download.get());
+    WEBKIT_IS_URI_REQUEST(request);
+    ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/test.pdf"));
+
+    auto headers = webkit_uri_request_get_http_headers(request);
+    g_assert_nonnull(soup_message_headers_get_one(headers, "User-Agent"));
+
     test->waitUntilDownloadFinished();
 
     GRefPtr<GFile> downloadFile = adoptGRef(g_file_new_for_uri(webkit_download_get_destination(test->m_download.get())));

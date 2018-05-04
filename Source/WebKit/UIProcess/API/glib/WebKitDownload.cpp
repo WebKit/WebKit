@@ -323,6 +323,18 @@ WebKitDownload* webkitDownloadCreate(DownloadProxy* downloadProxy)
     return download;
 }
 
+static void webkitDownloadUpdateRequest(WebKitDownload* download)
+{
+    download->priv->request = adoptGRef(webkitURIRequestCreateForResourceRequest(download->priv->download->request()));
+}
+
+void webkitDownloadStarted(WebKitDownload* download)
+{
+    // Update with the final request if needed.
+    if (download->priv->request)
+        webkitDownloadUpdateRequest(download);
+}
+
 void webkitDownloadSetResponse(WebKitDownload* download, WebKitURIResponse* response)
 {
     download->priv->response = response;
@@ -436,11 +448,11 @@ void webkitDownloadDestinationCreated(WebKitDownload* download, const String& de
  */
 WebKitURIRequest* webkit_download_get_request(WebKitDownload* download)
 {
-    g_return_val_if_fail(WEBKIT_IS_DOWNLOAD(download), 0);
+    g_return_val_if_fail(WEBKIT_IS_DOWNLOAD(download), nullptr);
 
     WebKitDownloadPrivate* priv = download->priv;
     if (!priv->request)
-        priv->request = adoptGRef(webkitURIRequestCreateForResourceRequest(priv->download->request()));
+        webkitDownloadUpdateRequest(download);
     return priv->request.get();
 }
 

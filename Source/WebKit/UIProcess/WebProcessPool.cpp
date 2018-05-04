@@ -1215,9 +1215,13 @@ DownloadProxy* WebProcessPool::download(WebPageProxy* initiatingPage, const Reso
             URL initiatingPageURL = URL { URL { }, initiatingPage->pageLoadState().url() };
             updatedRequest.setFirstPartyForCookies(initiatingPageURL);
             updatedRequest.setIsSameSite(registrableDomainsAreEqual(initiatingPageURL, request.url()));
+            if (!updatedRequest.hasHTTPHeaderField(HTTPHeaderName::UserAgent))
+                updatedRequest.setHTTPUserAgent(initiatingPage->userAgent());
         } else {
             updatedRequest.setFirstPartyForCookies(URL());
             updatedRequest.setIsSameSite(false);
+            if (!updatedRequest.hasHTTPHeaderField(HTTPHeaderName::UserAgent))
+                updatedRequest.setHTTPUserAgent(WebPageProxy::standardUserAgent());
         }
         updatedRequest.setIsTopSite(false);
         networkProcess()->send(Messages::NetworkProcess::DownloadRequest(sessionID, downloadProxy->downloadID(), updatedRequest, suggestedFilename), 0);
