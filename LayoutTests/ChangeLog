@@ -1,3 +1,14 @@
+2018-05-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Some event tests failing after r230817
+        https://bugs.webkit.org/show_bug.cgi?id=185072
+
+        Reviewed by Michael Catanzaro.
+
+        Remove expectations for tests that are passing now.
+
+        * platform/gtk/TestExpectations:
+
 2018-05-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert the unitended changes in r231329.

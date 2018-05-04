@@ -1,3 +1,24 @@
+2018-05-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Some event tests failing after r230817
+        https://bugs.webkit.org/show_bug.cgi?id=185072
+
+        Reviewed by Michael Catanzaro.
+
+        Do not send mouse move events to the WebProcess for crossing events during testing. WTR never generates crossing
+        events and they can confuse tests.
+
+        Fixes: editing/pasteboard/drag-link-with-data-transfer-adds-trusted-link-to-pasteboard.html
+               fast/css/user-drag-none.html
+               fast/events/context-activated-by-key-event.html
+               fast/events/drag-selects-image.html
+               fast/events/dropzone-005.html
+               fast/events/mouse-click-events.html
+               fast/events/mouse-cursor-change.html
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseCrossingNotifyEvent):
+
 2018-05-03  Chris Dumez  <cdumez@apple.com>
 
         More aggressively terminate child processes when the connection to their parent process is severed
