@@ -1,3 +1,15 @@
+2018-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use default std::optional if it is provided
+        https://bugs.webkit.org/show_bug.cgi?id=185159
+
+        Reviewed by Michael Catanzaro.
+
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::Handle::decode):
+        * Shared/TouchBarMenuItemData.cpp:
+        (WebKit::TouchBarMenuItemData::decode):
+
 2018-05-03  Justin Fan  <justin_fan@apple.com>
 
         [WebGL] Add runtime flag for enabling ASTC support in WebGL

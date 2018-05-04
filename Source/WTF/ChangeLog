@@ -1,3 +1,15 @@
+2018-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use default std::optional if it is provided
+        https://bugs.webkit.org/show_bug.cgi?id=185159
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/Expected.h:
+        * wtf/Optional.h:
+        Do not use <optional> for clang currently.
+        (WTF::valueOrCompute):
+
 2018-05-03  Filip Pizlo  <fpizlo@apple.com>
 
         Strings should not be allocated in a gigacage

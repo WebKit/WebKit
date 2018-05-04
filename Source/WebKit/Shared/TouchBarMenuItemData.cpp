@@ -65,7 +65,7 @@ std::optional<TouchBarMenuItemData> TouchBarMenuItemData::decode(IPC::Decoder& d
     if (!decoder.decode(result.priority))
         return std::nullopt;
     
-    return WTFMove(result);
+    return std::make_optional(WTFMove(result));
 }
 
 }
