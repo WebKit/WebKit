@@ -1,3 +1,13 @@
+2018-05-04  Antti Koivisto  <antti@apple.com>
+
+        OptionsSet initializer list constructor should be constexpr
+        https://bugs.webkit.org/show_bug.cgi?id=185298
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/OptionSet.h:
+        (WTF::OptionSet::OptionSet):
+
 2018-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use default std::optional if it is provided
