@@ -1,3 +1,16 @@
+2018-05-04  Keith Miller  <keith_miller@apple.com>
+
+        isCacheableArrayLength should return true for undecided arrays
+        https://bugs.webkit.org/show_bug.cgi?id=185309
+
+        Reviewed by Michael Saboff.
+
+        Undecided arrays have butterflies so there is no reason why we
+        should not be able to cache their length.
+
+        * bytecode/InlineAccess.cpp:
+        (JSC::InlineAccess::isCacheableArrayLength):
+
 2018-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove std::random_shuffle

@@ -1,3 +1,13 @@
+2018-05-04  Keith Miller  <keith_miller@apple.com>
+
+        isCacheableArrayLength should return true for undecided arrays
+        https://bugs.webkit.org/show_bug.cgi?id=185309
+
+        Reviewed by Michael Saboff.
+
+        * stress/get-array-length-undecided.js: Added.
+        (test):
+
 2018-05-04  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Disable tests on systems with limited memory

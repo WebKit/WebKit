@@ -249,9 +249,7 @@ bool InlineAccess::isCacheableArrayLength(StructureStubInfo& stubInfo, JSArray* 
     if (!hasFreeRegister(stubInfo))
         return false;
 
-    return array->indexingType() == ArrayWithInt32
-        || array->indexingType() == ArrayWithDouble
-        || array->indexingType() == ArrayWithContiguous;
+    return !hasAnyArrayStorage(array->indexingType()) && array->indexingType() != ArrayClass;
 }
 
 bool InlineAccess::generateArrayLength(StructureStubInfo& stubInfo, JSArray* array)
