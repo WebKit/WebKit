@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef WKProcessTerminationReason_h
+#define WKProcessTerminationReason_h
 
 #include <stdint.h>
 
@@ -42,3 +43,5 @@ typedef uint32_t WKProcessTerminationReason;
 #ifdef __cplusplus
 }
 #endif
+
+#endif // WKProcessTerminationReason_h

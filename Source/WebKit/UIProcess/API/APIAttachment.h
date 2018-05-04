@@ -26,8 +26,8 @@
 #pragma once
 
 #include "APIObject.h"
-#include <WebKit/WKBase.h>
-#include <WebKit/WebPageProxy.h>
+#include "WKBase.h"
+#include "WebPageProxy.h"
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>

@@ -36,10 +36,10 @@
 #include "WKSharedAPICast.h"
 #include "WKStringPrivate.h"
 #include "WebPage.h"
+#include "WebPageOverlay.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PlatformMouseEvent.h>
-#include <WebKit/WebPageOverlay.h>
 
 namespace API {
 

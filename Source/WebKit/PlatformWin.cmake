@@ -189,16 +189,6 @@ set(SharedWebKitLibraries
 WEBKIT_WRAP_SOURCELIST(${WebKit_SOURCES})
 
 set(WebKit_FORWARDING_HEADERS_DIRECTORIES
-    Platform
-    Shared
-    UIProcess
-
-    NetworkProcess/Downloads
-
-    Platform/IPC
-
-    Shared/API
-
     Shared/API/c
 
     Shared/API/c/cf
@@ -208,8 +198,6 @@ set(WebKit_FORWARDING_HEADERS_DIRECTORIES
     UIProcess/API/cpp
 
     UIProcess/API/C/win
-
-    WebProcess/WebPage
 
     WebProcess/InjectedBundle/API/c
 )

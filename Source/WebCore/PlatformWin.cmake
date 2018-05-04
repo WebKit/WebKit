@@ -129,6 +129,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     bindings
     bridge
     contentextensions
+    crypto
     css
     dom
     editing
@@ -141,6 +142,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     platform
     plugins
     rendering
+    replay
     storage
     style
     svg

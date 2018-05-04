@@ -1,3 +1,16 @@
+2018-05-04  Don Olmstead  <don.olmstead@sony.com>
+
+        [Win][WebKit] Fix forwarding headers for Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=184412
+
+        Reviewed by Alex Christensen.
+
+        * PlatformWin.cmake:
+        * UIProcess/API/APIAttachment.h:
+        * UIProcess/API/APIContextMenuClient.h:
+        * UIProcess/API/C/WKProcessTerminationReason.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+
 2018-05-04  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Apps that are not visible may not get suspended if they trigger page loads while in the background
