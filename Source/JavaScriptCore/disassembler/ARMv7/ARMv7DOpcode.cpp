@@ -116,7 +116,7 @@ static Opcode32GroupInitializer opcode32BitGroupList[] = {
     OPCODE_GROUP_ENTRY(0x4, ARMv7DOpcodeDataPopMultiple),
     OPCODE_GROUP_ENTRY(0x4, ARMv7DOpcodeDataPushMultiple),
     OPCODE_GROUP_ENTRY(0x5, ARMv7DOpcodeDataProcessingShiftedReg),
-    OPCODE_GROUP_ENTRY(0x6, ARMv7DOpcodeVLDR),
+    OPCODE_GROUP_ENTRY(0x6, ARMv7DOpcodeVLDRSTR),
     OPCODE_GROUP_ENTRY(0x6, ARMv7DOpcodeVMOVSinglePrecision),
     OPCODE_GROUP_ENTRY(0x6, ARMv7DOpcodeVMOVDoublePrecision),
     OPCODE_GROUP_ENTRY(0x7, ARMv7DOpcodeFPTransfer),
@@ -150,7 +150,7 @@ static Opcode32GroupInitializer opcode32BitGroupList[] = {
     OPCODE_GROUP_ENTRY(0xd, ARMv7DOpcodeDataProcessingRegExtend),
     OPCODE_GROUP_ENTRY(0xd, ARMv7DOpcodeDataProcessingRegParallel),
     OPCODE_GROUP_ENTRY(0xd, ARMv7DOpcodeDataProcessingRegMisc),
-    OPCODE_GROUP_ENTRY(0xe, ARMv7DOpcodeVLDR),
+    OPCODE_GROUP_ENTRY(0xe, ARMv7DOpcodeVLDRSTR),
     OPCODE_GROUP_ENTRY(0xf, ARMv7DOpcodeVCMP),
     OPCODE_GROUP_ENTRY(0xf, ARMv7DOpcodeVCVTBetweenFPAndInt),
 };
@@ -1628,12 +1628,12 @@ const char* ARMv7DOpcodeVCVTBetweenFPAndInt::format()
     return m_formatBuffer;
 }
 
-const char* ARMv7DOpcodeVLDR::format()
+const char* ARMv7DOpcodeVLDRSTR::format()
 {
     if (condition() != 0xe)
-        bufferPrintf("   vldr%-3.3s", conditionName(condition()));
+        bufferPrintf("   %s%-3.3s", opName(), conditionName(condition()));
     else
-        appendInstructionName("vldr");
+        appendInstructionName(opName());
 
     appendFPRegisterName(doubleReg() ? 'd' : 's', vd());
     appendSeparator();

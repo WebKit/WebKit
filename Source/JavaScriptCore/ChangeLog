@@ -1,5 +1,24 @@
 2018-05-03  Dominik Infuehr  <dinfuehr@igalia.com>
 
+        ARM: Support vstr in disassembler
+        https://bugs.webkit.org/show_bug.cgi?id=184084
+
+        Reviewed by Yusuke Suzuki.
+
+        * disassembler/ARMv7/ARMv7DOpcode.cpp:
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVLDRSTR::format):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVLDR::format): Deleted.
+        * disassembler/ARMv7/ARMv7DOpcode.h:
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVLDRSTR::opName):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVLDR::condition): Deleted.
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVLDR::uBit): Deleted.
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVLDR::rn): Deleted.
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVLDR::vd): Deleted.
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVLDR::doubleReg): Deleted.
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVLDR::immediate8): Deleted.
+
+2018-05-03  Dominik Infuehr  <dinfuehr@igalia.com>
+
         Invoke ensureArrayStorage for all arguments
         https://bugs.webkit.org/show_bug.cgi?id=185247
 
