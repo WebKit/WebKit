@@ -48,19 +48,19 @@ testInner(
 testInner(
     "background-image",
     "filter(none, url(#a))",
-    "filter(none, url(#a))");
+    "filter(none, url(\"#a\"))");
 testInner(
     "background-image",
     "filter(none, url(#a))",
-    "filter(none, url(#a))");
+    "filter(none, url(\"#a\"))");
 testInner(
     "background-image",
     "filter(none, url(#a) url(#b))",
-    "filter(none, url(#a) url(#b))");
+    "filter(none, url(\"#a\") url(\"#b\"))");
 testInner(
     "background-image",
     "filter(none, grayscale(1) url(#a))",
-    "filter(none, grayscale(1) url(#a))");
+    "filter(none, grayscale(1) url(\"#a\"))");
 testInner(
     "background-image",
     "filter(none, grayscale(1))",
@@ -346,33 +346,33 @@ testInner(
 testInner(
     "background-image",
     "filter(-webkit-cross-fade(url(http://image1.png), url(http://image2.png), 50%), contrast(0.5))",
-    "filter(-webkit-cross-fade(url(http://image1.png/), url(http://image2.png/), 0.5), contrast(0.5))");
+    "filter(-webkit-cross-fade(url(\"http://image1.png/\"), url(\"http://image2.png/\"), 0.5), contrast(0.5))");
 testInner(
     "background-image",
     "filter(url(http://image1.png), brightness(50%))",
-    "filter(url(http://image1.png/), brightness(50%))");
+    "filter(url(\"http://image1.png/\"), brightness(50%))");
 testInner(
     "background-image",
     "filter(url('http://image1.png'), brightness(50%))",
-    "filter(url(http://image1.png/), brightness(50%))");
+    "filter(url(\"http://image1.png/\"), brightness(50%))");
 
 // Test different properties, taking CSS Image values.
 testInner(
     "border-image-source",
     "filter(url(http://image1.png), invert(50%))",
-    "filter(url(http://image1.png/), invert(50%))");
+    "filter(url(\"http://image1.png/\"), invert(50%))");
 testInner(
     "-webkit-mask-image",
     "filter(url(http://image1.png), invert(50%))",
-    "filter(url(http://image1.png/), invert(50%))");
+    "filter(url(\"http://image1.png/\"), invert(50%))");
 testInner(
     "-webkit-mask-box-image-source",
     "filter(url(http://image1.png), invert(50%))",
-    "filter(url(http://image1.png/), invert(50%))");
+    "filter(url(\"http://image1.png/\"), invert(50%))");
 testInner(
     "content",
     "filter(url(http://image1.png), invert(50%))",
-    "filter(url(http://image1.png/), invert(50%))");
+    "filter(url(\"http://image1.png/\"), invert(50%))");
 
 // negative tests
 negativeTest("background-image", "filter()");

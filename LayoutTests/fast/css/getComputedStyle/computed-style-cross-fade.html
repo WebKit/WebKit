@@ -25,32 +25,32 @@ shouldBe('testCrossfade("opacity: 500%", "opacity")', '"1"');
 
 debug('Prefixed');
 
-shouldBe('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 50%)", "background-image")', '"-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 0.5)"');
-shouldBe('testCrossfade("background-image: -webkit-cross-fade(-webkit-cross-fade(url(dummy://a.png), url(dummy://b.png), 25%), url(dummy://example.png), 50%)", "background-image")', '"-webkit-cross-fade(-webkit-cross-fade(url(dummy://a.png), url(dummy://b.png), 0.25), url(dummy://example.png), 0.5)"');
-shouldBe('testCrossfade("background-image: -webkit-cross-fade(url(dummy://c.png), -webkit-cross-fade(url(dummy://a.png), url(dummy://b.png), 25%), 50%)", "background-image")',
-    '"-webkit-cross-fade(url(dummy://c.png), -webkit-cross-fade(url(dummy://a.png), url(dummy://b.png), 0.25), 0.5)"');
-shouldBe('testCrossfade("background-image: -webkit-cross-fade(-webkit-linear-gradient(black, white), url(dummy://example.png), 10%)", "background-image")', '"-webkit-cross-fade(-webkit-linear-gradient(top, black, white), url(dummy://example.png), 0.1)"');
-shouldBe('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 1.0)", "background-image")', '"-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 1)"');
-shouldBe('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 0.5)", "background-image")', '"-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 0.5)"');
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 50%)", "background-image")', "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0.5)");
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(-webkit-cross-fade(url(dummy://a.png), url(dummy://b.png), 25%), url(dummy://example.png), 50%)", "background-image")', "-webkit-cross-fade(-webkit-cross-fade(url(\"dummy://a.png\"), url(\"dummy://b.png\"), 0.25), url(\"dummy://example.png\"), 0.5)");
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(dummy://c.png), -webkit-cross-fade(url(dummy://a.png), url(dummy://b.png), 25%), 50%)", "background-image")',
+    "-webkit-cross-fade(url(\"dummy://c.png\"), -webkit-cross-fade(url(\"dummy://a.png\"), url(\"dummy://b.png\"), 0.25), 0.5)");
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(-webkit-linear-gradient(black, white), url(dummy://example.png), 10%)", "background-image")', "-webkit-cross-fade(-webkit-linear-gradient(top, black, white), url(\"dummy://example.png\"), 0.1)");
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 1.0)", "background-image")', "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 1)");
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 0.5)", "background-image")', "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0.5)");
 
-shouldBe('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 5.0)", "background-image")', '"-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 1)"');
-shouldBe('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 700%)", "background-image")', '"-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 1)"');
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 5.0)", "background-image")', "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 1)");
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 700%)", "background-image")', "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 1)");
 
-shouldBe('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), -20)", "background-image")', '"-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 0)"');
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), -20)", "background-image")', "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0)");
 
 debug('<h2>Unprefixed</h2>');
 
-shouldBe('testCrossfade("background-image: cross-fade(url(dummy://example.png), url(dummy://example.png), 50%)", "background-image")', '"cross-fade(url(dummy://example.png), url(dummy://example.png), 0.5)"');
-shouldBe('testCrossfade("background-image: cross-fade(url(dummy://example.png), url(dummy://example.png), 1.0)", "background-image")', '"cross-fade(url(dummy://example.png), url(dummy://example.png), 1)"');
+shouldBeEqualToString('testCrossfade("background-image: cross-fade(url(dummy://example.png), url(dummy://example.png), 50%)", "background-image")', "cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0.5)");
+shouldBeEqualToString('testCrossfade("background-image: cross-fade(url(dummy://example.png), url(dummy://example.png), 1.0)", "background-image")', "cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 1)");
 
 debug('<h2>Mixed</h2>');
 
-shouldBe('testCrossfade("background-image: -webkit-cross-fade(cross-fade(url(dummy://a.png), url(dummy://b.png), 25%), url(dummy://example.png), 50%)", "background-image")',
-    '"-webkit-cross-fade(cross-fade(url(dummy://a.png), url(dummy://b.png), 0.25), url(dummy://example.png), 0.5)"');
-shouldBe('testCrossfade("background-image: -webkit-cross-fade(cross-fade(url(dummy://a.png), url(dummy://b.png), 25%), cross-fade(url(dummy://a.png), url(dummy://b.png), 25%), 50%)", "background-image")',
-    '"-webkit-cross-fade(cross-fade(url(dummy://a.png), url(dummy://b.png), 0.25), cross-fade(url(dummy://a.png), url(dummy://b.png), 0.25), 0.5)"');
-shouldBe('testCrossfade("background-image: cross-fade(cross-fade(url(dummy://a.png), url(dummy://b.png), 25%), -webkit-cross-fade(url(dummy://a.png), url(dummy://b.png), 25%), 50%)", "background-image")',
-        '"cross-fade(cross-fade(url(dummy://a.png), url(dummy://b.png), 0.25), -webkit-cross-fade(url(dummy://a.png), url(dummy://b.png), 0.25), 0.5)"');
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(cross-fade(url(dummy://a.png), url(dummy://b.png), 25%), url(dummy://example.png), 50%)", "background-image")',
+    "-webkit-cross-fade(cross-fade(url(\"dummy://a.png\"), url(\"dummy://b.png\"), 0.25), url(\"dummy://example.png\"), 0.5)");
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(cross-fade(url(dummy://a.png), url(dummy://b.png), 25%), cross-fade(url(dummy://a.png), url(dummy://b.png), 25%), 50%)", "background-image")',
+    "-webkit-cross-fade(cross-fade(url(\"dummy://a.png\"), url(\"dummy://b.png\"), 0.25), cross-fade(url(\"dummy://a.png\"), url(\"dummy://b.png\"), 0.25), 0.5)");
+shouldBeEqualToString('testCrossfade("background-image: cross-fade(cross-fade(url(dummy://a.png), url(dummy://b.png), 25%), -webkit-cross-fade(url(dummy://a.png), url(dummy://b.png), 25%), 50%)", "background-image")',
+        "cross-fade(cross-fade(url(\"dummy://a.png\"), url(\"dummy://b.png\"), 0.25), -webkit-cross-fade(url(\"dummy://a.png\"), url(\"dummy://b.png\"), 0.25), 0.5)");
 
 debug('<h2>Invalid values</h2>');
 

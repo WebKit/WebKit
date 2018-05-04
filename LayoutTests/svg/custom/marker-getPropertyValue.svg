@@ -16,7 +16,7 @@
         testRunner.dumpAsText();
 
       var e = document.getElementById("rect");
-      expect(e.style.getPropertyValue("marker"), "url(#test)");
+      expect(e.style.getPropertyValue("marker"), 'url("#test")');
     }
   ]]></script>  
     <rect visibility="hidden" width="100" height="100" id="rect" style="marker: url(#test)"/>

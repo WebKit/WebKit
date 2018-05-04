@@ -9,6 +9,8 @@
 <script>
 description("Test the parsing of the cursor property.");
 
+var style;
+
 function makeCursorRule(rule)
 {
     return "cursor: " + rule + ";";
@@ -17,12 +19,13 @@ function makeCursorRule(rule)
 function testCursorRule(rule)
 {
     var cssText = makeCursorRule(rule);
-    shouldBeEqualToString('roundtripCssRule("' + cssText + '")', cssText);
+    style = roundtripCssRule(cssText);
+    shouldBeEqualToString('style.cssText', cssText);
 }
 
 function testInvalidCursorRule(rule)
 {
-    shouldBeEqualToString('roundtripCssRule("' + makeCursorRule(rule) + '")', '');
+    shouldBeEqualToString('roundtripCssRule("' + makeCursorRule(rule) + '").cssText', '');
 }
 
 function roundtripCssRule(cssText)
@@ -30,7 +33,7 @@ function roundtripCssRule(cssText)
     var div = document.createElement("div");
     div.setAttribute("style", cssText);
     document.body.appendChild(div);
-    var result = div.style.cssText;
+    var result = div.style;
     document.body.removeChild(div);
     return result;
 }
@@ -82,14 +85,14 @@ testCursorRule('-webkit-grabbing');
 testCursorRule('-webkit-zoom-in');
 testCursorRule('-webkit-zoom-out');
 
-testCursorRule('url(file:///foo.png), crosshair');
-testCursorRule('url(file:///foo.png), url(file:///foo2.png), pointer');
-testCursorRule('url(file:///foo.png) 12 3, pointer');
-testCursorRule('url(file:///foo.png) 0 0, pointer');
-testCursorRule('url(file:///foo.png) 12 3, url(file:///foo2.png), url(file:///foo3.png) 6 7, crosshair');
-testCursorRule('url(file:///foo.png) -2 3, pointer');
-testCursorRule('url(file:///foo.png) 2 -3, pointer');
-testCursorRule('url(file:///foo.png) -1 -1, pointer');
+testCursorRule('url("file:///foo.png"), crosshair');
+testCursorRule('url("file:///foo.png"), url("file:///foo2.png"), pointer');
+testCursorRule('url("file:///foo.png") 12 3, pointer');
+testCursorRule('url("file:///foo.png") 0 0, pointer');
+testCursorRule('url("file:///foo.png") 12 3, url("file:///foo2.png"), url("file:///foo3.png") 6 7, crosshair');
+testCursorRule('url("file:///foo.png") -2 3, pointer');
+testCursorRule('url("file:///foo.png") 2 -3, pointer');
+testCursorRule('url("file:///foo.png") -1 -1, pointer');
 
 debug('');
 debug('Test a bunch of invalid cursor rules which shouldn\'t parse at all.');

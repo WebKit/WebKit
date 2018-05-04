@@ -35,11 +35,11 @@ function testInner(property, value, expected) {
         shouldBeEqualToString('innerStyle("' + property + '", "' + value + '")', expected);
 }
 
-testInner("-webkit-clip-path", "url(#clip1)", "url(#clip1)");
-testInner("-webkit-clip-path", "url(clip.svg#clip1)", "url(clip.svg#clip1)");
+testInner("-webkit-clip-path", "url(#clip1)", "url(\"#clip1\")");
+testInner("-webkit-clip-path", "url(clip.svg#clip1)", "url(\"clip.svg#clip1\")");
 
-testComputed("-webkit-clip-path", "url(#clip1)", "url(#clip1)");
-testComputed("-webkit-clip-path", "url(clip.svg#clip1)", "url(clip.svg#clip1)");
+testComputed("-webkit-clip-path", "url(#clip1)", "url(\"#clip1\")");
+testComputed("-webkit-clip-path", "url(clip.svg#clip1)", "url(\"clip.svg#clip1\")");
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

@@ -13,7 +13,7 @@ function preloadImagesFromStyle(rootNode, imageCount, onComplete, failPattern) {
     var imagesToLoad = [];
     var seenUrls = {};
     for (var i = 0; i < nodes.length; i++) {
-        var urls = nodes[i].style.cssText.split(/url\w*\(([^)]*)\)/);
+        var urls = nodes[i].style.cssText.split(/url\w*\("([^)]*)"\)/);
         for (var j = 1; j < urls.length; j += 2) {
             // Attempt to convert URL to a relative path in order to have deterministic error messages.
             var url = urls[j];

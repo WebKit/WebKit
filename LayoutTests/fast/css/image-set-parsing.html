@@ -58,7 +58,7 @@ function testImageSetRule(description, property, rule, expectedLength, expectedT
         for (var i = 0; i < expectedLength; i++) {
             string = imageSetRule[i];
             if (i % 2 == 0) {
-                subRule = string.cssText.split('#')[1];
+                subRule = string.cssText.split('#')[1].replace('"', "");
                 subRule = subRule.split(')')[0];
                 shouldBe("subRule", "'" + expectedTexts[i] + "'");
             } else {

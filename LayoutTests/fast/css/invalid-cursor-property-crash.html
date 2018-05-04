@@ -8,7 +8,7 @@
         var d = document.getElementById('theDiv');
         var style = document.defaultView.getComputedStyle(d, '');
         
-        if (style && style.cursor == 'url(' + document.location + '), auto')
+        if (style && style.cursor == 'url("' + document.location + '"), auto')
             document.getElementById('result').innerHTML = 'SUCCESS';            
     }
     </script>

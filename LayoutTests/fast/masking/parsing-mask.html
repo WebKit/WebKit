@@ -44,8 +44,8 @@ function negativeTest(property, value) {
 testInner("-webkit-mask", "none", "none");
 testInner("-webkit-mask", "none, none", "none, none");
 testInner("-webkit-mask", "none, none, none", "none, none, none");
-testInner("-webkit-mask", "url(file:///image.png), none", "url(file:///image.png), none");
-testInner("-webkit-mask", "none, url(file:///image.png)", "none, url(file:///image.png)");
+testInner("-webkit-mask", "url(file:///image.png), none", "url(\"file:///image.png\"), none");
+testInner("-webkit-mask", "none, url(file:///image.png)", "none, url(\"file:///image.png\")");
 
 
 // test mask-position

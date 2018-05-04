@@ -47,9 +47,9 @@ shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(2).getStr
 shouldBe("checkComputedStyleValue()", "true");
 
 e.style.backgroundImage = "url(dummy://test.png)";
-shouldBe("computedStyle.getPropertyValue('background')", "'rgb(255, 0, 0) url(dummy://test.png) repeat scroll 0% 0% / auto padding-box border-box'");
+shouldBe("computedStyle.getPropertyValue('background')", "'rgb(255, 0, 0) url(\"dummy://test.png\") repeat scroll 0% 0% / auto padding-box border-box'");
 shouldBe("computedStyle.getPropertyCSSValue('background').toString()", "'[object CSSValueList]'");
-shouldBe("computedStyle.getPropertyCSSValue('background').cssText", "'rgb(255, 0, 0) url(dummy://test.png) repeat scroll 0% 0% / auto padding-box border-box'");
+shouldBe("computedStyle.getPropertyCSSValue('background').cssText", "'rgb(255, 0, 0) url(\"dummy://test.png\") repeat scroll 0% 0% / auto padding-box border-box'");
 shouldBe("computedStyle.getPropertyCSSValue('background').length", "2");
 shouldBe("computedStyle.getPropertyCSSValue('background').item(0).length", "5");
 shouldBe("computedStyle.getPropertyCSSValue('background').item(1).length", "3");
@@ -68,9 +68,9 @@ shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(2).getStr
 shouldBe("checkComputedStyleValue()", "true");
 
 e.style.backgroundRepeat = "no-repeat";
-shouldBe("computedStyle.getPropertyValue('background')", "'rgb(255, 0, 0) url(dummy://test.png) no-repeat scroll 0% 0% / auto padding-box border-box'");
+shouldBe("computedStyle.getPropertyValue('background')", "'rgb(255, 0, 0) url(\"dummy://test.png\") no-repeat scroll 0% 0% / auto padding-box border-box'");
 shouldBe("computedStyle.getPropertyCSSValue('background').toString()", "'[object CSSValueList]'");
-shouldBe("computedStyle.getPropertyCSSValue('background').cssText", "'rgb(255, 0, 0) url(dummy://test.png) no-repeat scroll 0% 0% / auto padding-box border-box'");
+shouldBe("computedStyle.getPropertyCSSValue('background').cssText", "'rgb(255, 0, 0) url(\"dummy://test.png\") no-repeat scroll 0% 0% / auto padding-box border-box'");
 shouldBe("computedStyle.getPropertyCSSValue('background').length", "2");
 shouldBe("computedStyle.getPropertyCSSValue('background').item(0).length", "5");
 shouldBe("computedStyle.getPropertyCSSValue('background').item(1).length", "3");
@@ -89,9 +89,9 @@ shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(2).getStr
 shouldBe("checkComputedStyleValue()", "true");
 
 e.style.backgroundAttachment = "fixed";
-shouldBe("computedStyle.getPropertyValue('background')", "'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 0% 0% / auto padding-box border-box'");
+shouldBe("computedStyle.getPropertyValue('background')", "'rgb(255, 0, 0) url(\"dummy://test.png\") no-repeat fixed 0% 0% / auto padding-box border-box'");
 shouldBe("computedStyle.getPropertyCSSValue('background').toString()", "'[object CSSValueList]'");
-shouldBe("computedStyle.getPropertyCSSValue('background').cssText", "'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 0% 0% / auto padding-box border-box'");
+shouldBe("computedStyle.getPropertyCSSValue('background').cssText", "'rgb(255, 0, 0) url(\"dummy://test.png\") no-repeat fixed 0% 0% / auto padding-box border-box'");
 shouldBe("computedStyle.getPropertyCSSValue('background').length", "2");
 shouldBe("computedStyle.getPropertyCSSValue('background').item(0).length", "5");
 shouldBe("computedStyle.getPropertyCSSValue('background').item(1).length", "3");
@@ -110,9 +110,9 @@ shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(2).getStr
 shouldBe("checkComputedStyleValue()", "true");
 
 e.style.backgroundPosition = "right bottom";
-shouldBe("computedStyle.getPropertyValue('background')", "'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 100% 100% / auto padding-box border-box'");
+shouldBe("computedStyle.getPropertyValue('background')", "'rgb(255, 0, 0) url(\"dummy://test.png\") no-repeat fixed 100% 100% / auto padding-box border-box'");
 shouldBe("computedStyle.getPropertyCSSValue('background').toString()", "'[object CSSValueList]'");
-shouldBe("computedStyle.getPropertyCSSValue('background').cssText", "'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 100% 100% / auto padding-box border-box'");
+shouldBe("computedStyle.getPropertyCSSValue('background').cssText", "'rgb(255, 0, 0) url(\"dummy://test.png\") no-repeat fixed 100% 100% / auto padding-box border-box'");
 shouldBe("computedStyle.getPropertyCSSValue('background').length", "2");
 shouldBe("computedStyle.getPropertyCSSValue('background').item(0).length", "5");
 shouldBe("computedStyle.getPropertyCSSValue('background').item(1).length", "3");
@@ -131,9 +131,9 @@ shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(2).getStr
 shouldBe("checkComputedStyleValue()", "true");
 
 e.style.backgroundSize = "cover";
-shouldBe("computedStyle.getPropertyValue('background')", "'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 100% 100% / cover padding-box border-box'");
+shouldBe("computedStyle.getPropertyValue('background')", "'rgb(255, 0, 0) url(\"dummy://test.png\") no-repeat fixed 100% 100% / cover padding-box border-box'");
 shouldBe("computedStyle.getPropertyCSSValue('background').toString()", "'[object CSSValueList]'");
-shouldBe("computedStyle.getPropertyCSSValue('background').cssText", "'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 100% 100% / cover padding-box border-box'");
+shouldBe("computedStyle.getPropertyCSSValue('background').cssText", "'rgb(255, 0, 0) url(\"dummy://test.png\") no-repeat fixed 100% 100% / cover padding-box border-box'");
 shouldBe("computedStyle.getPropertyCSSValue('background').length", "2");
 shouldBe("computedStyle.getPropertyCSSValue('background').item(0).length", "5");
 shouldBe("computedStyle.getPropertyCSSValue('background').item(1).length", "3");
@@ -152,9 +152,9 @@ shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(2).getStr
 shouldBe("checkComputedStyleValue()", "true");
 
 e.style.backgroundOrigin = "content-box";
-shouldBe("computedStyle.getPropertyValue('background')", "'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 100% 100% / cover content-box border-box'");
+shouldBe("computedStyle.getPropertyValue('background')", "'rgb(255, 0, 0) url(\"dummy://test.png\") no-repeat fixed 100% 100% / cover content-box border-box'");
 shouldBe("computedStyle.getPropertyCSSValue('background').toString()", "'[object CSSValueList]'");
-shouldBe("computedStyle.getPropertyCSSValue('background').cssText", "'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 100% 100% / cover content-box border-box'");
+shouldBe("computedStyle.getPropertyCSSValue('background').cssText", "'rgb(255, 0, 0) url(\"dummy://test.png\") no-repeat fixed 100% 100% / cover content-box border-box'");
 shouldBe("computedStyle.getPropertyCSSValue('background').length", "2");
 shouldBe("computedStyle.getPropertyCSSValue('background').item(0).length", "5");
 shouldBe("computedStyle.getPropertyCSSValue('background').item(1).length", "3");
@@ -173,9 +173,9 @@ shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(2).getStr
 shouldBe("checkComputedStyleValue()", "true");
 
 e.style.backgroundClip = "padding-box";
-shouldBe("computedStyle.getPropertyValue('background')", "'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 100% 100% / cover content-box padding-box'");
+shouldBe("computedStyle.getPropertyValue('background')", "'rgb(255, 0, 0) url(\"dummy://test.png\") no-repeat fixed 100% 100% / cover content-box padding-box'");
 shouldBe("computedStyle.getPropertyCSSValue('background').toString()", "'[object CSSValueList]'");
-shouldBe("computedStyle.getPropertyCSSValue('background').cssText", "'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 100% 100% / cover content-box padding-box'");
+shouldBe("computedStyle.getPropertyCSSValue('background').cssText", "'rgb(255, 0, 0) url(\"dummy://test.png\") no-repeat fixed 100% 100% / cover content-box padding-box'");
 shouldBe("computedStyle.getPropertyCSSValue('background').length", "2");
 shouldBe("computedStyle.getPropertyCSSValue('background').item(0).length", "5");
 shouldBe("computedStyle.getPropertyCSSValue('background').item(1).length", "3");
@@ -194,9 +194,9 @@ shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(2).getStr
 shouldBe("checkComputedStyleValue()", "true");
 
 e.style.background = "border-box padding-box url(dummy://test.png) green 45% / contain repeat fixed";
-shouldBe("computedStyle.getPropertyValue('background')", "'rgb(0, 128, 0) url(dummy://test.png) repeat fixed 45% 50% / contain border-box padding-box'");
+shouldBe("computedStyle.getPropertyValue('background')", "'rgb(0, 128, 0) url(\"dummy://test.png\") repeat fixed 45% 50% / contain border-box padding-box'");
 shouldBe("computedStyle.getPropertyCSSValue('background').toString()", "'[object CSSValueList]'");
-shouldBe("computedStyle.getPropertyCSSValue('background').cssText", "'rgb(0, 128, 0) url(dummy://test.png) repeat fixed 45% 50% / contain border-box padding-box'");
+shouldBe("computedStyle.getPropertyCSSValue('background').cssText", "'rgb(0, 128, 0) url(\"dummy://test.png\") repeat fixed 45% 50% / contain border-box padding-box'");
 shouldBe("computedStyle.getPropertyCSSValue('background').length", "2");
 shouldBe("computedStyle.getPropertyCSSValue('background').item(0).length", "5");
 shouldBe("computedStyle.getPropertyCSSValue('background').item(1).length", "3");

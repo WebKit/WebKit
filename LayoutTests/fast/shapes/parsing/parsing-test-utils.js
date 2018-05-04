@@ -252,9 +252,9 @@ function testNotInheritedShapeChildProperty(property, parentValue, childValue, e
 
 // Need to remove the base URL to avoid having local paths in the expected results.
 function removeBaseURL(src) {
-    var urlRegexp = /url\(([^\)]*)\)/g;
+    var urlRegexp = /url\("([^\)]*)"\)/g;
     return src.replace(urlRegexp, function(match, url) {
-        return "url(" + url.substr(url.lastIndexOf("/") + 1) + ")";
+        return "url(\"" + url.substr(url.lastIndexOf("/") + 1) + "\")";
     });
 }
 

@@ -1,3 +1,17 @@
+2018-05-04  Chris Nardi  <cnardi@chromium.org>
+
+        Serialize all URLs with double-quotes per CSSOM spec
+        https://bugs.webkit.org/show_bug.cgi?id=184935
+
+        Reviewed by Antti Koivisto.
+
+        Update expectations for using double quotes when serializing URLs.
+
+        * web-platform-tests/cssom/serialize-values-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+
 2018-05-03  Chris Nardi  <cnardi@chromium.org>
 
         Remove [NoInterfaceObject] from DOMRectList

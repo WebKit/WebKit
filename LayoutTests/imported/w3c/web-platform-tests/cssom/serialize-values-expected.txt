@@ -8,8 +8,8 @@ PASS background-color: rgb(50, 75, 100)
 FAIL background-color: rgba(5, 7, 10, 0.5) assert_equals: background-color raw inline style declaration expected "rgba(5, 7, 10, 0.5)" but got "rgba(5, 7, 10, 0.498039)"
 PASS background-color: transparent 
 PASS background-color: inherit 
-FAIL background-image: url("http://localhost/") assert_equals: background-image raw inline style declaration expected "url(\"http://localhost/\")" but got "url(http://localhost/)"
-FAIL background-image: url(http://localhost/) assert_equals: background-image raw inline style declaration expected "url(\"http://localhost/\")" but got "url(http://localhost/)"
+PASS background-image: url("http://localhost/") 
+PASS background-image: url(http://localhost/) 
 PASS background-image: none 
 PASS background-image: inherit 
 PASS background-position: 5% 5% 
@@ -317,8 +317,8 @@ PASS content: normal
 PASS content: none 
 FAIL content: "string" assert_equals: content raw inline style declaration expected "\"string\"" but got "string"
 FAIL content: 'string' assert_equals: content raw inline style declaration expected "\"string\"" but got "string"
-FAIL content: url("http://localhost/") assert_equals: content raw inline style declaration expected "url(\"http://localhost/\")" but got "url(http://localhost/)"
-FAIL content: url(http://localhost/) assert_equals: content raw inline style declaration expected "url(\"http://localhost/\")" but got "url(http://localhost/)"
+PASS content: url("http://localhost/") 
+PASS content: url(http://localhost/) 
 PASS content: counter(par-num) 
 PASS content: counter(par-num, upper-roman) 
 PASS content: attr(foo-bar) 
@@ -439,8 +439,8 @@ PASS line-height: .1em
 PASS line-height: 5% 
 PASS line-height: .5% 
 PASS line-height: inherit 
-FAIL list-style-image: url("http://localhost/") assert_equals: list-style-image raw inline style declaration expected "url(\"http://localhost/\")" but got "url(http://localhost/)"
-FAIL list-style-image: url(http://localhost/) assert_equals: list-style-image raw inline style declaration expected "url(\"http://localhost/\")" but got "url(http://localhost/)"
+PASS list-style-image: url("http://localhost/") 
+PASS list-style-image: url(http://localhost/) 
 PASS list-style-image: none 
 PASS list-style-image: inherit 
 PASS list-style-position: inside 

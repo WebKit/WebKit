@@ -1,3 +1,20 @@
+2018-05-04  Chris Nardi  <cnardi@chromium.org>
+
+        Serialize all URLs with double-quotes per CSSOM spec
+        https://bugs.webkit.org/show_bug.cgi?id=184935
+
+        Reviewed by Antti Koivisto.
+
+        According to https://drafts.csswg.org/cssom/#serialize-a-url, all URLs should be serialized as strings,
+        which means they should have double quotes around the text of the URL. Update our implementation to match
+        this (and Firefox/Chrome). Also remove isCSSTokenizerURL() as this method is no longer needed.
+
+        Tests: Many LayoutTests updated to use double quotes.
+
+        * css/CSSMarkup.cpp:
+        (WebCore::serializeString): Remove FIXME as this was already fixed in a previous patch.
+        (WebCore::serializeURL): Remove FIXME and update implementation.
+
 2018-05-04  Youenn Fablet  <youenn@apple.com>
 
         LayoutTests/fast/mediastream/change-tracks-media-stream-being-played.html is crashing after r231304

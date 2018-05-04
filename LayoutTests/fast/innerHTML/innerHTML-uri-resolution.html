@@ -13,7 +13,7 @@
   
   var currentUri = document.location.href;
   var currentPath = currentUri.substring(0, currentUri.lastIndexOf('/'));
-  var cssUriWasResolvedAgainstDocumentUri = document.getElementById("test-span").style.backgroundImage == 'url(' + currentPath + '/image.png)';
+  var cssUriWasResolvedAgainstDocumentUri = document.getElementById("test-span").style.backgroundImage == 'url("' + currentPath + '/image.png")';
   
   // Can't log the actual path since it's different depending on where the test is run.
   shouldBeTrue('cssUriWasResolvedAgainstDocumentUri');

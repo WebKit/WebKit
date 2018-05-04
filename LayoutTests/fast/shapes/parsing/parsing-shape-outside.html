@@ -17,7 +17,7 @@ validShapeValues.forEach(function(elt, i, a) {
     testShapeComputedProperty("-webkit-shape-outside", value, computedValue);
 });
 
-testLocalURLShapeProperty("-webkit-shape-outside", "url(\'image\')", "url(image)");
+testLocalURLShapeProperty("-webkit-shape-outside", "url(\'image\')", 'url("image")');
 
 invalidShapeValues.forEach(function(value, i, a) { 
     testShapePropertyParsingFailure("-webkit-shape-outside", value, "none")

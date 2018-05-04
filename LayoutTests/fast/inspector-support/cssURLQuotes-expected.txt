@@ -1,4 +1,4 @@
-ALERT: url(file:///unquoted) (URL should not be quoted)
-ALERT: url(file:///noQuotesNeeded) (URL should not be quoted)
+ALERT: url("file:///unquoted") (URL should be quoted)
+ALERT: url("file:///quoted") (URL should be quoted)
 ALERT: url("file:///should(Quote)") (URL should be quoted)
 

@@ -1,3 +1,88 @@
+2018-05-04  Chris Nardi  <cnardi@chromium.org>
+
+        Serialize all URLs with double-quotes per CSSOM spec
+        https://bugs.webkit.org/show_bug.cgi?id=184935
+
+        Reviewed by Antti Koivisto.
+
+        Update tests to use double quotes when serializing URLs, and fixes for using double quotes in the test.
+
+        * css3/calc/cross-fade-calc.html:
+        * css3/filters/backdrop/backdropfilter-property-computed-style-expected.txt:
+        * css3/filters/backdrop/backdropfilter-property-computed-style.html:
+        * css3/filters/backdrop/backdropfilter-property-parsing-expected.txt:
+        * css3/filters/backdrop/backdropfilter-property-parsing.html:
+        * css3/filters/filter-property-computed-style-expected.txt:
+        * css3/filters/filter-property-computed-style.html:
+        * css3/filters/filter-property-expected.txt:
+        * css3/filters/filter-property-parsing-expected.txt:
+        * css3/filters/filter-property-parsing.html:
+        * css3/filters/filter-property.html:
+        * css3/filters/unprefixed-expected.txt:
+        * css3/filters/unprefixed.html:
+        * fast/backgrounds/background-shorthand-after-set-backgroundSize-expected.txt:
+        * fast/backgrounds/background-shorthand-after-set-backgroundSize.html:
+        * fast/backgrounds/background-shorthand-with-backgroundSize-style-expected.txt:
+        * fast/backgrounds/background-shorthand-with-backgroundSize-style.html:
+        * fast/backgrounds/multiple-backgrounds-computed-style-expected.txt:
+        * fast/backgrounds/multiple-backgrounds-computed-style.html:
+        * fast/css/background-position-serialize-expected.txt:
+        * fast/css/cursor-parsing-expected.txt:
+        * fast/css/cursor-parsing-image-set-expected.txt:
+        * fast/css/cursor-parsing-image-set.html:
+        * fast/css/cursor-parsing.html:
+        * fast/css/getComputedStyle/computed-style-border-image-expected.txt:
+        * fast/css/getComputedStyle/computed-style-border-image.html:
+        * fast/css/getComputedStyle/computed-style-cross-fade-expected.txt:
+        * fast/css/getComputedStyle/computed-style-cross-fade.html:
+        * fast/css/getComputedStyle/computed-style-properties-expected.txt:
+        * fast/css/getComputedStyle/computed-style-properties.html:
+        * fast/css/getComputedStyle/getComputedStyle-background-shorthand-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-background-shorthand.html:
+        * fast/css/getComputedStyle/getComputedStyle-list-style-shorthand-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-list-style-shorthand.html:
+        * fast/css/image-set-parsing.html:
+        * fast/css/image-set-setting-expected.txt:
+        * fast/css/image-set-setting.html:
+        * fast/css/image-set-unprefixed-expected.txt:
+        * fast/css/image-set-unprefixed.html:
+        * fast/css/invalid-cursor-property-crash.html:
+        * fast/css/parse-border-image-repeat-null-crash-expected.txt:
+        * fast/css/uri-token-parsing-expected.txt:
+        * fast/css/uri-token-parsing.html:
+        * fast/css/url-with-multi-byte-unicode-escape-expected.txt:
+        * fast/css/url-with-multi-byte-unicode-escape.html:
+        * fast/filter-image/parse-filter-image-expected.txt:
+        * fast/filter-image/parse-filter-image.html:
+        * fast/innerHTML/innerHTML-uri-resolution.html:
+        * fast/inspector-support/cssURLQuotes-expected.txt:
+        * fast/inspector-support/cssURLQuotes.html:
+        * fast/masking/parsing-clip-path-iri-expected.txt:
+        * fast/masking/parsing-clip-path-iri.html:
+        * fast/masking/parsing-mask-expected.txt:
+        * fast/masking/parsing-mask.html:
+        * fast/shapes/parsing/parsing-shape-outside-expected.txt:
+        * fast/shapes/parsing/parsing-shape-outside.html:
+        * fast/shapes/parsing/parsing-test-utils.js:
+        (removeBaseURL):
+        * platform/gtk/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+        * platform/ios/fast/css/image-set-unprefixed-expected.txt: Removed.
+        * platform/mac-sierra/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt:
+        * platform/mac-sierra/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * platform/mac-sierra/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+        * platform/win/fast/css/parse-border-image-repeat-null-crash-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+        * resources/image-preload-helper.js:
+        (preloadImagesFromStyle):
+        * svg/css/svg-attribute-parser-mode-expected.txt:
+        * svg/css/svg-attribute-parser-mode.html:
+        * svg/custom/marker-getPropertyValue-expected.txt:
+        * svg/custom/marker-getPropertyValue.svg:
+
 2018-05-04  Antoine Quint  <graouts@apple.com>
 
         Improve test at media/modern-media-controls/airplay-button/airplay-button-on.html to not hardcode the -apple-wireless-playback-target-active color

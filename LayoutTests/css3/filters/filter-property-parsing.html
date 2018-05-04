@@ -46,7 +46,7 @@ function testFilterRule(description, rule, expectedLength, expectedValue, expect
 
     declaration = cssRule.style;
     shouldBe("declaration.length", "1");
-    shouldBe("declaration.getPropertyValue('filter')", `"${expectedValue}"`);
+    shouldBeEqualToString("declaration.getPropertyValue('filter')", expectedValue);
 
     filterRule = declaration.getPropertyCSSValue("filter");
     shouldBeType("filterRule", "CSSValueList");
@@ -56,7 +56,7 @@ function testFilterRule(description, rule, expectedLength, expectedValue, expect
     if (filterRule) {
         for (var i = 0; i < expectedLength; i++) {
             subRule = filterRule[i];
-            shouldBe("subRule.cssText", `"${expectedTexts[i]}"`);
+            shouldBeEqualToString("subRule.cssText", expectedTexts[i]);
         }
     }
     
@@ -81,20 +81,20 @@ function testInvalidFilterRule(description, rule)
 }
 
 testFilterRule("Basic reference",
-               "url('#a')", 1, "url(#a)",
-               ["url(#a)"]);
+               "url('#a')", 1, 'url("#a")',
+               ['url("#a")']);
 
 testFilterRule("Bare unquoted reference converting to quoted form",
-               "url(#a)", 1, "url(#a)",
-               ["url(#a)"]);
+               "url(#a)", 1, 'url("#a")',
+               ['url("#a")']);
 
 testFilterRule("Multiple references",
-               "url('#a') url('#b')", 2, "url(#a) url(#b)",
-               ["url(#a)", "url(#b)"]);
+               "url('#a') url('#b')", 2, 'url("#a") url("#b")',
+               ['url("#a")', 'url("#b")']);
 
 testFilterRule("Reference as 2nd value",
-               "grayscale(1) url('#a')", 2, "grayscale(1) url(#a)",
-               ["grayscale(1)", "url(#a)"]);
+               "grayscale(1) url('#a')", 2, 'grayscale(1) url("#a")',
+               ["grayscale(1)", 'url("#a")']);
 
 testFilterRule("Integer value",
                "grayscale(1)", 1, "grayscale(1)",

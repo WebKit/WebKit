@@ -10,6 +10,8 @@
 <script>
 description("Test the parsing of the cursor property when used with -webkit-image-set.");
 
+var style;
+
 function makeCursorRule(rule)
 {
     return "cursor: " + rule + ";";
@@ -18,7 +20,8 @@ function makeCursorRule(rule)
 function testCursorRule(rule)
 {
     var cssText = makeCursorRule(rule);
-    shouldBeEqualToString('roundtripCssRule("' + cssText + '")', cssText);
+    style = roundtripCssRule(cssText);
+    shouldBeEqualToString('style.cssText', cssText);
 }
 
 function roundtripCssRule(cssText)
@@ -26,7 +29,7 @@ function roundtripCssRule(cssText)
     var div = document.createElement("div");
     div.setAttribute("style", cssText);
     document.body.appendChild(div);
-    var result = div.style.cssText;
+    var result = div.style;
     document.body.removeChild(div);
     return result;
 }
@@ -36,10 +39,10 @@ function roundtripCssRule(cssText)
 // to avoid triggering any network activity.
 
 debug('Test a bunch of cursor rules which should round-trip exactly.');
-testCursorRule('image-set(url(file:///foo.png) 1x), auto');
-testCursorRule('image-set(url(file:///foo.png) 1x, url(file:///foo2x.png) 2x), auto');
-testCursorRule('image-set(url(file:///foo.png) 1x, url(file:///foo2x.png) 2x) 2 3, auto');
-testCursorRule('image-set(url(file:///foo03.png) 0.3x, url(file:///foo5x.png) 5x) 6 5, url(file:///foo.png) 12 3, pointer');
+testCursorRule('image-set(url("file:///foo.png") 1x), auto');
+testCursorRule('image-set(url("file:///foo.png") 1x, url("file:///foo2x.png") 2x), auto');
+testCursorRule('image-set(url("file:///foo.png") 1x, url("file:///foo2x.png") 2x) 2 3, auto');
+testCursorRule('image-set(url("file:///foo03.png") 0.3x, url("file:///foo5x.png") 5x) 6 5, url("file:///foo.png") 12 3, pointer');
 
 successfullyParsed = true;
 </script>
