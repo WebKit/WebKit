@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "DocumentOrderedMap.h"
+#include "TreeScopeOrderedMap.h"
 
 #include "ContainerNodeAlgorithms.h"
 #include "ElementIterator.h"
@@ -42,12 +42,12 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void DocumentOrderedMap::clear()
+void TreeScopeOrderedMap::clear()
 {
     m_map.clear();
 }
 
-void DocumentOrderedMap::add(const AtomicStringImpl& key, Element& element, const TreeScope& treeScope)
+void TreeScopeOrderedMap::add(const AtomicStringImpl& key, Element& element, const TreeScope& treeScope)
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&element.treeScope() == &treeScope);
     ASSERT_WITH_SECURITY_IMPLICATION(treeScope.rootNode().containsIncludingShadowDOM(&element));
@@ -73,7 +73,7 @@ void DocumentOrderedMap::add(const AtomicStringImpl& key, Element& element, cons
     entry.orderedList.clear();
 }
 
-void DocumentOrderedMap::remove(const AtomicStringImpl& key, Element& element)
+void TreeScopeOrderedMap::remove(const AtomicStringImpl& key, Element& element)
 {
     m_map.checkConsistency();
     auto it = m_map.find(&key);
@@ -95,7 +95,7 @@ void DocumentOrderedMap::remove(const AtomicStringImpl& key, Element& element)
 }
 
 template <typename KeyMatchingFunction>
-inline Element* DocumentOrderedMap::get(const AtomicStringImpl& key, const TreeScope& scope, const KeyMatchingFunction& keyMatches) const
+inline Element* TreeScopeOrderedMap::get(const AtomicStringImpl& key, const TreeScope& scope, const KeyMatchingFunction& keyMatches) const
 {
     m_map.checkConsistency();
 
@@ -142,28 +142,28 @@ inline Element* DocumentOrderedMap::get(const AtomicStringImpl& key, const TreeS
     return nullptr;
 }
 
-Element* DocumentOrderedMap::getElementById(const AtomicStringImpl& key, const TreeScope& scope) const
+Element* TreeScopeOrderedMap::getElementById(const AtomicStringImpl& key, const TreeScope& scope) const
 {
     return get(key, scope, [] (const AtomicStringImpl& key, const Element& element) {
         return element.getIdAttribute().impl() == &key;
     });
 }
 
-Element* DocumentOrderedMap::getElementByName(const AtomicStringImpl& key, const TreeScope& scope) const
+Element* TreeScopeOrderedMap::getElementByName(const AtomicStringImpl& key, const TreeScope& scope) const
 {
     return get(key, scope, [] (const AtomicStringImpl& key, const Element& element) {
         return element.getNameAttribute().impl() == &key;
     });
 }
 
-HTMLMapElement* DocumentOrderedMap::getElementByMapName(const AtomicStringImpl& key, const TreeScope& scope) const
+HTMLMapElement* TreeScopeOrderedMap::getElementByMapName(const AtomicStringImpl& key, const TreeScope& scope) const
 {
     return downcast<HTMLMapElement>(get(key, scope, [] (const AtomicStringImpl& key, const Element& element) {
         return is<HTMLMapElement>(element) && downcast<HTMLMapElement>(element).getName().impl() == &key;
     }));
 }
 
-HTMLImageElement* DocumentOrderedMap::getElementByUsemap(const AtomicStringImpl& key, const TreeScope& scope) const
+HTMLImageElement* TreeScopeOrderedMap::getElementByUsemap(const AtomicStringImpl& key, const TreeScope& scope) const
 {
     return downcast<HTMLImageElement>(get(key, scope, [] (const AtomicStringImpl& key, const Element& element) {
         // FIXME: HTML5 specification says we should match both image and object elements.
@@ -171,28 +171,28 @@ HTMLImageElement* DocumentOrderedMap::getElementByUsemap(const AtomicStringImpl&
     }));
 }
 
-HTMLLabelElement* DocumentOrderedMap::getElementByLabelForAttribute(const AtomicStringImpl& key, const TreeScope& scope) const
+HTMLLabelElement* TreeScopeOrderedMap::getElementByLabelForAttribute(const AtomicStringImpl& key, const TreeScope& scope) const
 {
     return downcast<HTMLLabelElement>(get(key, scope, [] (const AtomicStringImpl& key, const Element& element) {
         return is<HTMLLabelElement>(element) && element.attributeWithoutSynchronization(forAttr).impl() == &key;
     }));
 }
 
-Element* DocumentOrderedMap::getElementByWindowNamedItem(const AtomicStringImpl& key, const TreeScope& scope) const
+Element* TreeScopeOrderedMap::getElementByWindowNamedItem(const AtomicStringImpl& key, const TreeScope& scope) const
 {
     return get(key, scope, [] (const AtomicStringImpl& key, const Element& element) {
         return WindowNameCollection::elementMatches(element, &key);
     });
 }
 
-Element* DocumentOrderedMap::getElementByDocumentNamedItem(const AtomicStringImpl& key, const TreeScope& scope) const
+Element* TreeScopeOrderedMap::getElementByDocumentNamedItem(const AtomicStringImpl& key, const TreeScope& scope) const
 {
     return get(key, scope, [] (const AtomicStringImpl& key, const Element& element) {
         return DocumentNameCollection::elementMatches(element, &key);
     });
 }
 
-const Vector<Element*>* DocumentOrderedMap::getAllElementsById(const AtomicStringImpl& key, const TreeScope& scope) const
+const Vector<Element*>* TreeScopeOrderedMap::getAllElementsById(const AtomicStringImpl& key, const TreeScope& scope) const
 {
     m_map.checkConsistency();
 

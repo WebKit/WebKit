@@ -1,3 +1,26 @@
+2018-05-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename DocumentOrderedMap to TreeScopeOrderedMap
+        https://bugs.webkit.org/show_bug.cgi?id=185290
+
+        Reviewed by Zalan Bujtas.
+
+        Renamed the class since it's almost always a mistake to use this class as a member variable of Document.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/MouseRelatedEvent.cpp: Include the forgotten DOMWindow.h. Unified build files bit us here.
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::addElementById):
+        (WebCore::TreeScope::addElementByName):
+        (WebCore::TreeScope::addImageMap):
+        (WebCore::TreeScope::addImageElementByUsemap):
+        (WebCore::TreeScope::labelElementForId):
+        * dom/TreeScope.h:
+        * dom/TreeScopeOrderedMap.cpp: Renamed from DocumentOrderedMap.cpp
+        * dom/TreeScopeOrderedMap.h: Renamed from DocumentOrderedMap.h
+        * html/HTMLDocument.h:
+
 2018-05-04  Don Olmstead  <don.olmstead@sony.com>
 
         [Win][WebKit] Fix forwarding headers for Windows build

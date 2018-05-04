@@ -69,8 +69,8 @@ private:
     Ref<DocumentParser> createParser() override;
     Ref<Document> cloneDocumentWithoutChildren() const final;
 
-    DocumentOrderedMap m_documentNamedItem;
-    DocumentOrderedMap m_windowNamedItem;
+    TreeScopeOrderedMap m_documentNamedItem;
+    TreeScopeOrderedMap m_windowNamedItem;
 };
 
 } // namespace WebCore

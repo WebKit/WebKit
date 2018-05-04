@@ -729,7 +729,6 @@ dom/Document.cpp
 dom/DocumentEventQueue.cpp
 dom/DocumentFragment.cpp
 dom/DocumentMarkerController.cpp
-dom/DocumentOrderedMap.cpp
 dom/DocumentParser.cpp
 dom/DocumentSharedObjectPool.cpp
 dom/DocumentTouch.cpp @no-unify
@@ -826,6 +825,7 @@ dom/TransformSourceLibxslt.cpp
 dom/TransitionEvent.cpp
 dom/Traversal.cpp
 dom/TreeScope.cpp
+dom/TreeScopeOrderedMap.cpp
 dom/TreeWalker.cpp
 dom/UIEvent.cpp
 dom/UIEventWithKeyState.cpp

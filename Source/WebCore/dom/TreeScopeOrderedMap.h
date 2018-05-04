@@ -43,7 +43,7 @@ class HTMLLabelElement;
 class HTMLMapElement;
 class TreeScope;
 
-class DocumentOrderedMap {
+class TreeScopeOrderedMap {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     void add(const AtomicStringImpl&, Element&, const TreeScope&);
@@ -89,18 +89,18 @@ private:
     mutable Map m_map;
 };
 
-inline bool DocumentOrderedMap::containsSingle(const AtomicStringImpl& id) const
+inline bool TreeScopeOrderedMap::containsSingle(const AtomicStringImpl& id) const
 {
     auto it = m_map.find(&id);
     return it != m_map.end() && it->value.count == 1;
 }
 
-inline bool DocumentOrderedMap::contains(const AtomicStringImpl& id) const
+inline bool TreeScopeOrderedMap::contains(const AtomicStringImpl& id) const
 {
     return m_map.contains(&id);
 }
 
-inline bool DocumentOrderedMap::containsMultiple(const AtomicStringImpl& id) const
+inline bool TreeScopeOrderedMap::containsMultiple(const AtomicStringImpl& id) const
 {
     auto it = m_map.find(&id);
     return it != m_map.end() && it->value.count > 1;

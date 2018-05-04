@@ -141,7 +141,7 @@ const Vector<Element*>* TreeScope::getAllElementsById(const AtomicString& elemen
 void TreeScope::addElementById(const AtomicStringImpl& elementId, Element& element, bool notifyObservers)
 {
     if (!m_elementsById)
-        m_elementsById = std::make_unique<DocumentOrderedMap>();
+        m_elementsById = std::make_unique<TreeScopeOrderedMap>();
     m_elementsById->add(elementId, element, *this);
     if (notifyObservers)
         m_idTargetObserverRegistry->notifyObservers(elementId);
@@ -168,7 +168,7 @@ Element* TreeScope::getElementByName(const AtomicString& name) const
 void TreeScope::addElementByName(const AtomicStringImpl& name, Element& element)
 {
     if (!m_elementsByName)
-        m_elementsByName = std::make_unique<DocumentOrderedMap>();
+        m_elementsByName = std::make_unique<TreeScopeOrderedMap>();
     m_elementsByName->add(name, element, *this);
 }
 
@@ -239,7 +239,7 @@ void TreeScope::addImageMap(HTMLMapElement& imageMap)
     if (!name)
         return;
     if (!m_imageMapsByName)
-        m_imageMapsByName = std::make_unique<DocumentOrderedMap>();
+        m_imageMapsByName = std::make_unique<TreeScopeOrderedMap>();
     m_imageMapsByName->add(*name, imageMap, *this);
 }
 
@@ -263,7 +263,7 @@ HTMLMapElement* TreeScope::getImageMap(const AtomicString& name) const
 void TreeScope::addImageElementByUsemap(const AtomicStringImpl& name, HTMLImageElement& element)
 {
     if (!m_imagesByUsemap)
-        m_imagesByUsemap = std::make_unique<DocumentOrderedMap>();
+        m_imagesByUsemap = std::make_unique<TreeScopeOrderedMap>();
     return m_imagesByUsemap->add(name, element, *this);
 }
 
@@ -300,7 +300,7 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeV
 
     if (!m_labelsByForAttribute) {
         // Populate the map on first access.
-        m_labelsByForAttribute = std::make_unique<DocumentOrderedMap>();
+        m_labelsByForAttribute = std::make_unique<TreeScopeOrderedMap>();
 
         for (auto& label : descendantsOfType<HTMLLabelElement>(m_rootNode)) {
             const AtomicString& forValue = label.attributeWithoutSynchronization(forAttr);
