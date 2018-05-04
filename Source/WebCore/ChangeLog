@@ -1,3 +1,16 @@
+2018-05-04  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTests/fast/mediastream/change-tracks-media-stream-being-played.html is crashing after r231304
+        https://bugs.webkit.org/show_bug.cgi?id=185303
+
+        Reviewed by Eric Carlson.
+
+        We need to stop observing the audio track like we do for video track once we are no longer interested in it.
+        Covered by test no longer crashing.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateTracks):
+
 2018-05-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Set the invalidation root as the result of style change.

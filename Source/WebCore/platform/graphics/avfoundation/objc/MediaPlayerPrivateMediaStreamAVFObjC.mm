@@ -996,6 +996,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
     {
         switch (state) {
         case TrackState::Remove:
+            track->streamTrack().removeObserver(*this);
             m_player->removeAudioTrack(*track);
             break;
         case TrackState::Add:
