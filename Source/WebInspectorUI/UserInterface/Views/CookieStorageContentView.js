@@ -158,8 +158,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         let allResources = [];
         for (let frame of WI.frameResourceManager.frames) {
             // The main resource isn't in the list of resources, so add it as a candidate.
-            allResources.push(frame.mainResource);
-            allResources = allResources.concat(frame.resourceCollection.toArray());
+            allResources.push(frame.mainResource, ...frame.resourceCollection);
         }
 
         let resourcesForDomain = allResources.filter(resourceMatchesStorageDomain);

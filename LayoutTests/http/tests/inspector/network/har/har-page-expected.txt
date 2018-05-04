@@ -43,10 +43,10 @@ HAR Page Test.
           "cookies": [],
           "headers": "<filtered>",
           "content": {
-            "size": 3042,
+            "size": "<filtered>",
             "compression": 0,
             "mimeType": "text/html",
-            "text": "<filtered text (3042)>"
+            "text": "<filtered>"
           },
           "redirectURL": "",
           "headersSize": "<filtered>",
@@ -84,10 +84,10 @@ HAR Page Test.
           "cookies": [],
           "headers": "<filtered>",
           "content": {
-            "size": 0,
+            "size": "<filtered>",
             "compression": 0,
             "mimeType": "application/x-javascript",
-            "text": "<filtered text (7039)>"
+            "text": "<filtered>"
           },
           "redirectURL": "",
           "headersSize": "<filtered>",

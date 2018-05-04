@@ -75,11 +75,11 @@ WI.CanvasTreeElement = class CanvasTreeElement extends WI.FolderizedTreeElement
 
         this.removeChildren();
 
-        for (let program of this.representedObject.shaderProgramCollection.items)
+        for (let program of this.representedObject.shaderProgramCollection)
             this.addChildForRepresentedObject(program);
 
         if (this._showRecordings) {
-            for (let recording of this.representedObject.recordingCollection.items)
+            for (let recording of this.representedObject.recordingCollection)
                 this.addChildForRepresentedObject(recording);
         }
     }

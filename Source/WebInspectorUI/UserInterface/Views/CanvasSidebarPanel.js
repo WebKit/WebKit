@@ -213,7 +213,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
     {
         let recording = event.data.item;
         if (recording === this.recording)
-            this.recording = this._canvas ? this._canvas.recordingCollection.toArray().lastValue : null;
+            this.recording = this._canvas ? Array.from(this._canvas.recordingCollection).lastValue : null;
 
         this._updateRecordingScopeBar();
     }
@@ -317,8 +317,8 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
             this._recordButtonNavigationItem.enabled = true;
 
         let defaultSelectedRecording = null;
-        if (this._canvas.recordingCollection.items.size)
-            defaultSelectedRecording = this._canvas.recordingCollection.toArray().lastValue;
+        if (this._canvas.recordingCollection.size)
+            defaultSelectedRecording = Array.from(this._canvas.recordingCollection).lastValue;
 
         this.recording = defaultSelectedRecording;
     }
@@ -415,7 +415,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
         let scopeBarItems = [];
         let selectedScopeBarItem = null;
-        for (let recording of this._canvas.recordingCollection.items) {
+        for (let recording of this._canvas.recordingCollection) {
             let scopeBarItem = new WI.ScopeBarItem(recording.displayName, recording.displayName);
             if (recording === this._recording)
                 selectedScopeBarItem = scopeBarItem;

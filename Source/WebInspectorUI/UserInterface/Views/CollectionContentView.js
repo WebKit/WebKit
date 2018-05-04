@@ -186,8 +186,7 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
 
     initialLayout()
     {
-        let items = this.representedObject.items;
-        if (!items.size || !this._contentViewConstructor) {
+        if (!this.representedObject.size || !this._contentViewConstructor) {
             this._showContentPlaceholder();
             return;
         }
@@ -201,7 +200,7 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
         this.representedObject.addEventListener(WI.Collection.Event.ItemRemoved, this._handleItemRemoved, this);
 
         for (let item of this._contentViewMap.keys()) {
-            if (this.representedObject.items.has(item))
+            if (this.representedObject.has(item))
                 continue;
 
             this.removeContentViewForItem(item);
@@ -209,7 +208,7 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
                 this._selectItem(null);
         }
 
-        for (let item of this.representedObject.items) {
+        for (let item of this.representedObject) {
             if (!this._contentViewMap.has(item))
                 this.addContentViewForItem(item);
         }

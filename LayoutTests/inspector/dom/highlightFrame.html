@@ -8,7 +8,7 @@ function test()
     let suite = InspectorTest.createAsyncSuite("DOM.highlightFrame");
 
     let mainFrame = WI.frameResourceManager.mainFrame;
-    let childFrames = mainFrame.childFrameCollection.toArray();
+    let childFrames = Array.from(mainFrame.childFrameCollection);
     InspectorTest.expectEqual(childFrames.length, 2, "Page should have subframes.");
 
     function getHighlight(callback) {

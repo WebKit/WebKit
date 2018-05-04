@@ -87,10 +87,10 @@ WI.WorkerTreeElement = class WorkerTreeElement extends WI.ScriptTreeElement
         this.removeChildren();
         this.prepareToPopulate();
 
-        for (let resource of this._target.resourceCollection.items)
+        for (let resource of this._target.resourceCollection)
             this.addChildForRepresentedObject(resource);
 
-        for (let script of this._target.extraScriptCollection.items)
+        for (let script of this._target.extraScriptCollection)
             this.addChildForRepresentedObject(script);
 
         let sourceMaps = this._target.mainResource.sourceMaps;

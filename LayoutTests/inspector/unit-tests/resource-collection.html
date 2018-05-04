@@ -12,8 +12,7 @@ function test()
     }
 
     function logResourceNames(collection) {
-        let items = Array.from(collection.items);
-        InspectorTest.log(items.map((resource) => resource.displayName));
+        InspectorTest.log(Array.from(collection).map((resource) => resource.displayName));
     }
 
     suite.addTestCase({

@@ -881,17 +881,17 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             else if (frame.mainResource)
                 this._pendingInsertions.push(frame.mainResource);
 
-            for (let resource of frame.resourceCollection.items)
+            for (let resource of frame.resourceCollection)
                 this._pendingInsertions.push(resource);
 
-            for (let childFrame of frame.childFrameCollection.items)
+            for (let childFrame of frame.childFrameCollection)
                 populateResourcesForFrame(childFrame);
         };
 
         let populateResourcesForTarget = (target) => {
             if (target.mainResource instanceof WI.Resource)
                 this._pendingInsertions.push(target.mainResource);
-            for (let resource of target.resourceCollection.items)
+            for (let resource of target.resourceCollection)
                 this._pendingInsertions.push(resource);
         };
 

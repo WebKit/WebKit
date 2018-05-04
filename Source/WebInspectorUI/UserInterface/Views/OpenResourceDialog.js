@@ -285,11 +285,11 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
         let frames = [frame];
         while (frames.length) {
             let currentFrame = frames.shift();
-            let resources = [currentFrame.mainResource].concat(Array.from(currentFrame.resourceCollection.items));
-            for (let resource of resources)
+            this._addResource(currentFrame.mainResource, suppressFilterUpdate);
+            for (let resource of currentFrame.resourceCollection)
                 this._addResource(resource, suppressFilterUpdate);
 
-            frames = frames.concat(currentFrame.childFrameCollection.toArray());
+            frames.push(...currentFrame.childFrameCollection);
         }
     }
 
@@ -299,7 +299,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
 
         this._addResource(target.mainResource);
 
-        for (let resource of target.resourceCollection.items)
+        for (let resource of target.resourceCollection)
             this._addResource(resource, suppressFilterUpdate);
 
         let targetData = WI.debuggerManager.dataForTarget(target);

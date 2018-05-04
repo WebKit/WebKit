@@ -55,7 +55,7 @@ WI.Script = class Script extends WI.SourceCode
             this._resource = null;
             this._dynamicallyAddedScriptElement = true;
             documentResource.parentFrame.addExtraScript(this);
-            this._dynamicallyAddedScriptElementNumber = documentResource.parentFrame.extraScriptCollection.items.size;
+            this._dynamicallyAddedScriptElementNumber = documentResource.parentFrame.extraScriptCollection.size;
         } else if (this._resource)
             this._resource.associateWithScript(this);
 

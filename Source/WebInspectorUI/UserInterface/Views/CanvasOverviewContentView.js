@@ -121,7 +121,7 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
     _updateNavigationItems()
     {
-        let hasItems = !!this.representedObject.items.size;
+        let hasItems = !!this.representedObject.size;
         this._refreshButtonNavigationItem.enabled = hasItems;
         this._showGridButtonNavigationItem.enabled = hasItems;
     }

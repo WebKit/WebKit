@@ -30,13 +30,13 @@ function test()
             InspectorTest.log("DOMTree instance count: " + instances.size);
 
             // Force creation of child DOM trees.
-            let childrenLevel1 = mainFrame.childFrameCollection.toArray();
+            let childrenLevel1 = Array.from(mainFrame.childFrameCollection);
             childrenLevel1[0].domTree;
 
-            let childrenLevel2 = childrenLevel1[0].childFrameCollection.toArray();
+            let childrenLevel2 = Array.from(childrenLevel1[0].childFrameCollection);
             childrenLevel2[0].domTree;
 
-            let childrenLevel3 = childrenLevel2[0].childFrameCollection.toArray();
+            let childrenLevel3 = Array.from(childrenLevel2[0].childFrameCollection);
             childrenLevel3[0].domTree;
 
             instances = WI.domTreeManager.retainedObjectsWithPrototype(WI.DOMTree);

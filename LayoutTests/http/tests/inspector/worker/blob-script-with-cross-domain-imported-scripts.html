@@ -46,7 +46,7 @@ function test()
     function dumpWorkerResources() {
         InspectorTest.log("RESOURCES:");
         let urls = [];
-        for (let resource of workerTarget.resourceCollection.items)
+        for (let resource of workerTarget.resourceCollection)
             urls.push(sanitizeURL(resource.url));
         dumpURLs(urls);
     }

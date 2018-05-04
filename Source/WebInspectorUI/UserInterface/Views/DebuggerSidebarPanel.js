@@ -495,10 +495,10 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
     {
         this._addResource(frame.mainResource);
 
-        for (let resource of frame.resourceCollection.items)
+        for (let resource of frame.resourceCollection)
             this._addResource(resource);
 
-        for (let childFrame of frame.childFrameCollection.items)
+        for (let childFrame of frame.childFrameCollection)
             this._addResourcesRecursivelyForFrame(childFrame);
     }
 

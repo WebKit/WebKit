@@ -37,7 +37,10 @@ WI.Collection = class Collection extends WI.Object
 
     // Public
 
-    get items() { return this._items; }
+    get size()
+    {
+        return this._items.size;
+    }
 
     get displayName()
     {
@@ -74,6 +77,11 @@ WI.Collection = class Collection extends WI.Object
         this.dispatchEventToListeners(WI.Collection.Event.ItemRemoved, {item});
     }
 
+    has(...args)
+    {
+        return this._items.has(...args);
+    }
+
     clear()
     {
         let items = new Set(this._items);
@@ -86,14 +94,14 @@ WI.Collection = class Collection extends WI.Object
             this.dispatchEventToListeners(WI.Collection.Event.ItemRemoved, {item});
     }
 
-    toArray()
-    {
-        return Array.from(this._items);
-    }
-
     toJSON()
     {
-        return this.toArray();
+        return Array.from(this);
+    }
+
+    [Symbol.iterator]()
+    {
+        return this._items[Symbol.iterator]();
     }
 
      // Protected

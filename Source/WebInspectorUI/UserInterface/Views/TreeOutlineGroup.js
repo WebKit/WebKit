@@ -41,7 +41,7 @@ WI.TreeOutlineGroup = class TreeOutlineGroup extends WI.Collection
 
     get selectedTreeElement()
     {
-        for (let treeOutline of this.items) {
+        for (let treeOutline of this) {
             if (treeOutline.selectedTreeElement)
                 return treeOutline.selectedTreeElement;
         }
@@ -83,7 +83,7 @@ WI.TreeOutlineGroup = class TreeOutlineGroup extends WI.Collection
         let selectedTreeOutline = treeElement.treeOutline;
         console.assert(selectedTreeOutline, "Should have a parent tree outline.");
 
-        for (let treeOutline of this.items) {
+        for (let treeOutline of this) {
             if (selectedTreeOutline === treeOutline)
                 continue;
 

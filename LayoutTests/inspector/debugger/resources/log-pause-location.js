@@ -7,8 +7,7 @@ TestPage.registerInitializer(() => {
     }
 
     window.findScript = function(regex) {
-        let resources = WI.frameResourceManager.mainFrame.resourceCollection.items;
-        for (let resource of resources) {
+        for (let resource of WI.frameResourceManager.mainFrame.resourceCollection) {
             if (regex.test(resource.url))
                 return resource.scripts[0];
         }

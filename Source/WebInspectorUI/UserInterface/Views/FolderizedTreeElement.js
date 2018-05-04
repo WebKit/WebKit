@@ -148,7 +148,7 @@ WI.FolderizedTreeElement = class FolderizedTreeElement extends WI.GeneralTreeEle
     {
         let hasChildren = false;
         for (let settings of this._folderizeSettingsMap.values()) {
-            if (settings.representedObject.items.size) {
+            if (settings.representedObject.size) {
                 hasChildren = true;
                 break;
             }
@@ -380,7 +380,7 @@ WI.FolderizedTreeElement = class FolderizedTreeElement extends WI.GeneralTreeEle
 
         // Iterate over all the available child object types.
         for (var settings of this._folderizeSettingsMap.values()) {
-            if (pushCategory(settings.representedObject.items.size))
+            if (pushCategory(settings.representedObject.size))
                 return true;
         }
         return false;

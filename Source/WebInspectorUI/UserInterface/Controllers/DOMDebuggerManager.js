@@ -96,7 +96,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
                     resolvedBreakpoints = resolvedBreakpoints.concat(breakpoints);
             }
 
-            frames = frames.concat(frame.childFrameCollection.toArray());
+            frames.push(...frame.childFrameCollection);
         }
 
         return resolvedBreakpoints;

@@ -135,7 +135,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this._recordingSelectElement = this._recordingSelectContainer.appendChild(document.createElement("select"));
         this._recordingSelectElement.addEventListener("change", this._handleRecordingSelectElementChange.bind(this));
 
-        for (let recording of this.representedObject.recordingCollection.items)
+        for (let recording of this.representedObject.recordingCollection)
             this._addRecording(recording);
 
         let flexibleSpaceElement = footer.appendChild(document.createElement("div"));

@@ -1,3 +1,33 @@
+2018-05-04  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: simplify the WI.Collection interface
+        https://bugs.webkit.org/show_bug.cgi?id=185187
+
+        Reviewed by Brian Burg.
+
+        * http/tests/inspector/dom/cross-domain-inspected-node-access.html:
+        * http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html:
+        * http/tests/inspector/network/har/har-page.html:
+        * http/tests/inspector/network/har/har-page-expected.txt:
+        * http/tests/inspector/network/resource-response-source-memory-cache-revalidate-expired-only.html:
+        * http/tests/inspector/network/resource-response-source-memory-cache.html:
+        * http/tests/inspector/network/resource-sizes-memory-cache.html:
+        * http/tests/inspector/network/set-resource-caching-disabled-memory-cache.html:
+        * http/tests/inspector/worker/blob-script-with-cross-domain-imported-scripts.html:
+        * http/tests/websocket/tests/hybi/inspector/before-load.html:
+        * inspector/canvas/resources/recording-utilities.js:
+        * inspector/css/manager-preferredInspectorStyleSheetForFrame.html:
+        * inspector/debugger/resources/log-pause-location.js:
+        (TestPage.registerInitializer.window.findScript):
+        * inspector/dom/highlightFrame.html:
+        * inspector/dom/highlightNode.html:
+        * inspector/dom/highlightNodeList.html:
+        * inspector/dom/highlightSelector.html:
+        * inspector/model/frame-extra-scripts.html:
+        * inspector/page/empty-or-missing-resources.html:
+        * inspector/unit-tests/resource-collection.html:
+        * inspector/worker/resources-in-worker.html:
+
 2018-05-04  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r230326?): Layout Test http/tests/contentextensions/make-https.html is a flaky failure

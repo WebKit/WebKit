@@ -35,13 +35,19 @@ function test()
         if (key.endsWith("DateTime"))
             return "<filtered>";
 
+        // If any files are modified, we'd need to update the test without this filter.
+        if (key == "size")
+            return "<filtered>";
+
         // Size data may or may not be available, but could change based on headers.
         if (key.endsWith("Size"))
             return "<filtered>";
 
         // Reduce the file contents.
-        if (key === "text")
-            return "<filtered text (" + value.length + ")>";
+        if (key === "text") {
+            InspectorTest.assert(value.length > 0, "The file should have contents.");
+            return "<filtered>";
+        }
 
         // Since cache may or may not be used, timing data may be variable.
         // NOTE: SSL should always be -1 for this test case.
@@ -72,11 +78,7 @@ function test()
             InspectorTest.reloadPage({ignoreCache: true});
             await InspectorTest.awaitEvent("LoadComplete");
 
-            let resources = [];
-            resources.push(WI.frameResourceManager.mainFrame.mainResource);
-            for (let resource of WI.frameResourceManager.mainFrame.resourceCollection.items)
-                resources.push(resource);
-
+            let resources = [WI.frameResourceManager.mainFrame.mainResource, ...WI.frameResourceManager.mainFrame.resourceCollection];
             let har = await WI.HARBuilder.buildArchive(resources);
             InspectorTest.json(har, HARJSONFilter);
         }

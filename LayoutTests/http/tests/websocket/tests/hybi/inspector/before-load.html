@@ -46,9 +46,9 @@ function test()
         test(resolve, reject) {
             const url = "ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo";
             let webSocketResources = WI.frameResourceManager.mainFrame.resourceCollectionForType(WI.Resource.Type.WebSocket);
-            InspectorTest.expectEqual(webSocketResources.items.size, 1, "Should have 1 WebSocketResource");
+            InspectorTest.expectEqual(webSocketResources.size, 1, "Should have 1 WebSocketResource");
 
-            let webSocketResource = webSocketResources.toArray()[0];
+            let webSocketResource = Array.from(webSocketResources)[0];
             if (!webSocketResource) {
                 reject("Missing WebSocket resource.");
                 return;

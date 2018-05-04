@@ -41,9 +41,9 @@ function test()
 
     function dumpWorkerResources() {
         InspectorTest.log("RESOURCES:");
-        for (let resource of workerTarget.resourceCollection.items)
+        for (let resource of workerTarget.resourceCollection)
             InspectorTest.log(sanitizeURL(resource.url));
-        if (!workerTarget.resourceCollection.items.size)
+        if (!workerTarget.resourceCollection.size)
             InspectorTest.log("-- No Resources --");
     }
 
@@ -71,7 +71,7 @@ function test()
         name: "Worker.Resource.XHR",
         description: "Worker XHRs are tied to the Worker Target.",
         test(resolve, reject) {
-            InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 1, "Worker Target should have 1 resource.");
+            InspectorTest.expectEqual(workerTarget.resourceCollection.size, 1, "Worker Target should have 1 resource.");
             InspectorTest.evaluateInPage("triggerWorkerResourceLoadXHR()");
             workerTarget.awaitEvent(WI.Target.Event.ResourceAdded)
                 .then((event) => {
@@ -80,7 +80,7 @@ function test()
                     InspectorTest.expectEqual(resource.type, WI.Resource.Type.XHR, "Resource should be XHR.");
                     InspectorTest.expectEqual(resource.target, workerTarget, "Resource should be tied to the Worker Target.");
                     InspectorTest.expectNull(resource.parentFrame, "Resource has no parent frame.");
-                    InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 2, "Worker Target should have 2 resources.");
+                    InspectorTest.expectEqual(workerTarget.resourceCollection.size, 2, "Worker Target should have 2 resources.");
                     dumpWorkerResources();
                     resolve();
                 }).catch(reject);
@@ -92,7 +92,7 @@ function test()
         description: "Main XHRs are tied to the Main Target and not affect the Worker Target",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerMainResourceLoadXHR()");
-            InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 2, "Worker Target should still have 2 resources.");
+            InspectorTest.expectEqual(workerTarget.resourceCollection.size, 2, "Worker Target should still have 2 resources.");
             WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
                 .then((event) => {
                     let resource = event.data.resource;
@@ -100,7 +100,7 @@ function test()
                     InspectorTest.expectEqual(resource.type, WI.Resource.Type.XHR, "Resource should be XHR.");
                     InspectorTest.expectEqual(resource.target, mainTarget, "Resource should be tied to the Main Target.");
                     InspectorTest.expectEqual(resource.parentFrame, WI.frameResourceManager.mainFrame, "Resource parentFrame is the main frame.");
-                    InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 2, "Worker Target should still have 2 resources.");
+                    InspectorTest.expectEqual(workerTarget.resourceCollection.size, 2, "Worker Target should still have 2 resources.");
                     dumpWorkerResources();
                     resolve();
                 }).catch(reject);
@@ -111,7 +111,7 @@ function test()
         name: "Worker.Resource.Fetch",
         description: "Worker fetch requests are tied to the Worker Target.",
         test(resolve, reject) {
-            InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 2, "Worker Target should have 2 resources.");
+            InspectorTest.expectEqual(workerTarget.resourceCollection.size, 2, "Worker Target should have 2 resources.");
             InspectorTest.evaluateInPage("triggerWorkerResourceLoadFetch()");
             workerTarget.awaitEvent(WI.Target.Event.ResourceAdded)
                 .then((event) => {
@@ -120,7 +120,7 @@ function test()
                     // FIXME: Add resource type for Fetch that is not XHR?
                     InspectorTest.expectEqual(resource.target, workerTarget, "Resource should be tied to the Worker Target.");
                     InspectorTest.expectNull(resource.parentFrame, "Resource has no parent frame.");
-                    InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 3, "Worker Target should have 3 resources.");
+                    InspectorTest.expectEqual(workerTarget.resourceCollection.size, 3, "Worker Target should have 3 resources.");
                     dumpWorkerResources();
                     resolve();
                 }).catch(reject);
@@ -132,7 +132,7 @@ function test()
         description: "Main fetch requests are tied to the Main Target and not affect the Worker Target",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerMainResourceLoadFetch()");
-            InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 3, "Worker Target should still have 3 resources.");
+            InspectorTest.expectEqual(workerTarget.resourceCollection.size, 3, "Worker Target should still have 3 resources.");
             WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
                 .then((event) => {
                     let resource = event.data.resource;
@@ -140,7 +140,7 @@ function test()
                     // FIXME: Add resource type for Fetch that is not XHR?
                     InspectorTest.expectEqual(resource.target, mainTarget, "Resource should be tied to the Main Target.");
                     InspectorTest.expectEqual(resource.parentFrame, WI.frameResourceManager.mainFrame, "Resource parentFrame is the main frame.");
-                    InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 3, "Worker Target should still have 3 resources.");
+                    InspectorTest.expectEqual(workerTarget.resourceCollection.size, 3, "Worker Target should still have 3 resources.");
                     dumpWorkerResources();
                     resolve();
                 }).catch(reject);
@@ -151,7 +151,7 @@ function test()
         name: "Worker.Resource.ImportScript",
         description: "Worker imported scripts are Resources tied to the Worker Target.",
         test(resolve, reject) {
-            InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 3, "Worker Target should still have 3 resources.");
+            InspectorTest.expectEqual(workerTarget.resourceCollection.size, 3, "Worker Target should still have 3 resources.");
             InspectorTest.evaluateInPage("triggerWorkerImportScript()");
             workerTarget.awaitEvent(WI.Target.Event.ResourceAdded)
                 .then((event) => {
@@ -160,7 +160,7 @@ function test()
                     // FIXME: <https://webkit.org/b/164425> Worker Script Loads (new Worker(...), importScripts(...)) should be classified as Scripts not Raw requests
                     InspectorTest.expectEqual(resource.target, workerTarget, "Resource should be tied to the Worker Target.");
                     InspectorTest.expectNull(resource.parentFrame, "Resource has no parent frame.");
-                    InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 4, "Worker Target should have 4 resources.");
+                    InspectorTest.expectEqual(workerTarget.resourceCollection.size, 4, "Worker Target should have 4 resources.");
                     dumpWorkerResources();
                     resolve();
                 }).catch(reject);

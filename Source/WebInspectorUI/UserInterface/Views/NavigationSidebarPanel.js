@@ -95,7 +95,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
 
     get contentTreeOutlines()
     {
-        return this._contentTreeOutlineGroup.items;
+        return Array.from(this._contentTreeOutlineGroup);
     }
 
     get currentRepresentedObject()

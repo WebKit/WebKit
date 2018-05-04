@@ -341,7 +341,7 @@ WI.Frame = class Frame extends WI.Object
     {
         this._detachFromParentFrame();
 
-        for (let childFrame of this._childFrameCollection.items)
+        for (let childFrame of this._childFrameCollection)
             childFrame.removeAllChildFrames();
 
         this._childFrameCollection.clear();
@@ -357,7 +357,7 @@ WI.Frame = class Frame extends WI.Object
             return resource;
 
         // Check the main resources of the child frames for the requested URL.
-        for (let childFrame of this._childFrameCollection.items) {
+        for (let childFrame of this._childFrameCollection) {
             resource = childFrame.mainResource;
             if (resource.url === url)
                 return resource;
@@ -367,7 +367,7 @@ WI.Frame = class Frame extends WI.Object
             return null;
 
         // Recursively search resources of child frames.
-        for (let childFrame of this._childFrameCollection.items) {
+        for (let childFrame of this._childFrameCollection) {
             resource = childFrame.resourceForURL(url, true);
             if (resource)
                 return resource;
@@ -419,11 +419,10 @@ WI.Frame = class Frame extends WI.Object
     {
         // This does not remove provisional resources, use clearProvisionalLoad for that.
 
-        let resources = this._resourceCollection.items;
-        if (!resources.size)
+        if (!this._resourceCollection.size)
             return;
 
-        for (let resource of resources)
+        for (let resource of this._resourceCollection)
             this._disassociateWithResource(resource);
 
         this._resourceCollection.clear();

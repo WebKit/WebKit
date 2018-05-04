@@ -268,7 +268,7 @@ WI.CanvasManager = class CanvasManager extends WI.Object
 
     _removeCanvas(canvas)
     {
-        for (let program of canvas.shaderProgramCollection.items) {
+        for (let program of canvas.shaderProgramCollection) {
             this._shaderProgramIdentifierMap.delete(program.identifier);
             this._dispatchShaderProgramRemoved(program);
         }

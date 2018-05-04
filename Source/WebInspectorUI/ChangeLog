@@ -1,3 +1,67 @@
+2018-05-04  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: simplify the WI.Collection interface
+        https://bugs.webkit.org/show_bug.cgi?id=185187
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/Collection.js:
+        (WI.Collection.prototype.get size): Added.
+        (WI.Collection.prototype.has): Added.
+        (WI.Collection.prototype.toJSON):
+        (WI.Collection.prototype.[Symbol.iterator]): Added.
+        (WI.Collection.prototype.get items): Deleted.
+        (WI.Collection.prototype.toArray): Deleted.
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype._removeCanvas):
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WebInspector.DOMDebuggerManager.prototype.get domBreakpoints):
+        * UserInterface/Models/Frame.js:
+        (WI.Frame.prototype.removeAllChildFrames):
+        (WI.Frame.prototype.resourceForURL):
+        (WI.Frame.prototype.removeAllResources):
+        * UserInterface/Models/Script.js:
+        (WI.Script):
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView.prototype.initialLayout):
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView.prototype._updateNavigationItems):
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype._recordingRemoved):
+        (WI.CanvasSidebarPanel.prototype._canvasChanged):
+        (WI.CanvasSidebarPanel.prototype._updateRecordingScopeBar):
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView.prototype.attached):
+        (WI.CanvasTabContentView.prototype._addCanvas):
+        (WI.CanvasTabContentView.prototype._removeCanvas):
+        * UserInterface/Views/CanvasTreeElement.js:
+        (WI.CanvasTreeElement.prototype.onpopulate):
+        * UserInterface/Views/CollectionContentView.js:
+        (WI.CollectionContentView.prototype.initialLayout):
+        (WI.CollectionContentView.prototype.attached):
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WI.CookieStorageContentView.prototype._filterCookies):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype._addResourcesRecursivelyForFrame):
+        * UserInterface/Views/FolderizedTreeElement.js:
+        (WI.FolderizedTreeElement.prototype.updateParentStatus):
+        (WI.FolderizedTreeElement.prototype._shouldGroupIntoFolders):
+        * UserInterface/Views/FrameTreeElement.js:
+        (WI.FrameTreeElement.prototype.onpopulate):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WI.NavigationSidebarPanel.prototype.get contentTreeOutlines):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._populateWithInitialResourcesIfNeeded):
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WI.OpenResourceDialog.prototype._addResourcesForFrame):
+        (WI.OpenResourceDialog.prototype._addResourcesForTarget):
+        * UserInterface/Views/TreeOutlineGroup.js:
+        (WI.TreeOutlineGroup.prototype.get selectedTreeElement):
+        (WI.TreeOutlineGroup.prototype._removeConflictingTreeSelections):
+        * UserInterface/Views/WorkerTreeElement.js:
+        (WI.WorkerTreeElement.prototype.onpopulate):
+
 2018-05-04  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: Newly added unsupported properties sometimes don't have warnings

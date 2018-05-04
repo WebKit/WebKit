@@ -19,7 +19,7 @@ function test()
         name: "FrameHasNoExtraScriptsYet",
         description: "No extra scripts yet.",
         test(resolve, reject) {
-            InspectorTest.expectEqual(mainFrame.extraScriptCollection.items.size, 0, "Main frame should have no dynamic scripts.");
+            InspectorTest.expectEqual(mainFrame.extraScriptCollection.size, 0, "Main frame should have no dynamic scripts.");
             resolve();
         }
     });
@@ -32,7 +32,7 @@ function test()
             .then((event) => {
                 InspectorTest.pass("ExtraScriptAdded event fired.");
                 InspectorTest.expectThat(event.data.script.dynamicallyAddedScriptElement, "Script should identify as dynamic.");
-                InspectorTest.expectEqual(mainFrame.extraScriptCollection.items.size, 1, "Main frame should have 1 dynamic script.");
+                InspectorTest.expectEqual(mainFrame.extraScriptCollection.size, 1, "Main frame should have 1 dynamic script.");
             })
             .then(resolve, reject);
 

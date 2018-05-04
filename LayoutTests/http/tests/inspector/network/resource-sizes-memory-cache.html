@@ -29,7 +29,7 @@ function test()
             InspectorTest.reloadPage({ignoreCache, revalidateAllResources});
             return InspectorTest.awaitEvent("LoadComplete").then((event) => {
                 let resource = null;
-                for (let item of WI.frameResourceManager.mainFrame.resourceCollection.items) {
+                for (let item of WI.frameResourceManager.mainFrame.resourceCollection) {
                     if (pattern.test(item.url)) {
                         resource = item;
                         break;

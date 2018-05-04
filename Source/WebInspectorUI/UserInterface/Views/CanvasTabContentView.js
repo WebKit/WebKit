@@ -127,15 +127,15 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingImported, this._recordingImportedOrStopped, this);
         WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStopped, this._recordingImportedOrStopped, this);
 
-        let canvases = new Set(Array.from(this._canvasCollection.items).concat(WI.canvasManager.canvases));
+        let canvases = new Set([...this._canvasCollection, ...WI.canvasManager.canvases]);
 
-        for (let canvas of this._canvasCollection.items) {
+        for (let canvas of this._canvasCollection) {
             if (!canvases.has(canvas))
                 this._removeCanvas(canvas);
         }
 
         for (let canvas of canvases) {
-            if (!this._canvasCollection.items.has(canvas))
+            if (!this._canvasCollection.has(canvas))
                 this._addCanvas(canvas);
         }
     }
@@ -155,7 +155,7 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         this._overviewTreeElement.appendChild(new WI.CanvasTreeElement(canvas));
         this._canvasCollection.add(canvas);
 
-        for (let recording of canvas.recordingCollection.items)
+        for (let recording of canvas.recordingCollection)
             this._recordingAdded(recording, {suppressShowRecording: true});
     }
 
@@ -169,7 +169,7 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         this._canvasCollection.remove(canvas);
 
         let currentContentView = this.contentBrowser.currentContentView;
-        if (currentContentView instanceof WI.RecordingContentView && canvas.recordingCollection.items.has(currentContentView.representedObject))
+        if (currentContentView instanceof WI.RecordingContentView && canvas.recordingCollection.has(currentContentView.representedObject))
             this.contentBrowser.updateHierarchicalPathForCurrentContentView();
     }
 
