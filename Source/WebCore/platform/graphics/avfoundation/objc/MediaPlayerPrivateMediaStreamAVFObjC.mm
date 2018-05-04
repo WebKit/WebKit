@@ -915,7 +915,7 @@ typedef enum {
 } TrackState;
 
 template <typename RefT>
-void updateTracksOfType(HashMap<String, RefT>& trackMap, RealtimeMediaSource::Type trackType, MediaStreamTrackPrivateVector& currentTracks, RefT (*itemFactory)(MediaStreamTrackPrivate&), const Function<void(RefT, int, TrackState)>& configureTrack)
+void updateTracksOfType(HashMap<String, RefT>& trackMap, RealtimeMediaSource::Type trackType, MediaStreamTrackPrivateVector& currentTracks, RefT (*itemFactory)(MediaStreamTrackPrivate&), const Function<void(typename RefT::ValueType&, int, TrackState)>& configureTrack)
 {
     Vector<RefT> removedTracks;
     Vector<RefT> addedTracks;
@@ -947,15 +947,15 @@ void updateTracksOfType(HashMap<String, RefT>& trackMap, RealtimeMediaSource::Ty
 
     int index = 0;
     for (auto& track : removedTracks)
-        configureTrack(track, index++, TrackState::Remove);
+        configureTrack(*track, index++, TrackState::Remove);
 
     index = 0;
     for (auto& track : addedTracks)
-        configureTrack(track, index++, TrackState::Add);
+        configureTrack(*track, index++, TrackState::Add);
 
     index = 0;
     for (const auto& track : trackMap.values())
-        configureTrack(track, index++, TrackState::Configure);
+        configureTrack(*track, index++, TrackState::Configure);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack()
@@ -992,47 +992,47 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
 {
     MediaStreamTrackPrivateVector currentTracks = m_mediaStreamPrivate->tracks();
 
-    Function<void(RefPtr<AudioTrackPrivateMediaStreamCocoa>, int, TrackState)>  setAudioTrackState = [this](auto track, int index, TrackState state)
+    auto setAudioTrackState = [this](AudioTrackPrivateMediaStreamCocoa& track, int index, TrackState state)
     {
         switch (state) {
         case TrackState::Remove:
-            track->streamTrack().removeObserver(*this);
-            m_player->removeAudioTrack(*track);
+            track.streamTrack().removeObserver(*this);
+            m_player->removeAudioTrack(track);
             break;
         case TrackState::Add:
-            track->streamTrack().addObserver(*this);
-            m_player->addAudioTrack(*track);
+            track.streamTrack().addObserver(*this);
+            m_player->addAudioTrack(track);
             break;
         case TrackState::Configure:
-            track->setTrackIndex(index);
-            bool enabled = track->streamTrack().enabled() && !track->streamTrack().muted();
-            track->setEnabled(enabled);
+            track.setTrackIndex(index);
+            bool enabled = track.streamTrack().enabled() && !track.streamTrack().muted();
+            track.setEnabled(enabled);
             break;
         }
     };
-    updateTracksOfType(m_audioTrackMap, RealtimeMediaSource::Type::Audio, currentTracks, &AudioTrackPrivateMediaStreamCocoa::create, setAudioTrackState);
+    updateTracksOfType(m_audioTrackMap, RealtimeMediaSource::Type::Audio, currentTracks, &AudioTrackPrivateMediaStreamCocoa::create, WTFMove(setAudioTrackState));
 
-    Function<void(RefPtr<VideoTrackPrivateMediaStream>, int, TrackState)> setVideoTrackState = [&](auto track, int index, TrackState state)
+    auto setVideoTrackState = [this](VideoTrackPrivateMediaStream& track, int index, TrackState state)
     {
         switch (state) {
         case TrackState::Remove:
-            track->streamTrack().removeObserver(*this);
-            m_player->removeVideoTrack(*track);
+            track.streamTrack().removeObserver(*this);
+            m_player->removeVideoTrack(track);
             checkSelectedVideoTrack();
             break;
         case TrackState::Add:
-            track->streamTrack().addObserver(*this);
-            m_player->addVideoTrack(*track);
+            track.streamTrack().addObserver(*this);
+            m_player->addVideoTrack(track);
             break;
         case TrackState::Configure:
-            track->setTrackIndex(index);
-            bool selected = &track->streamTrack() == m_mediaStreamPrivate->activeVideoTrack();
-            track->setSelected(selected);
+            track.setTrackIndex(index);
+            bool selected = &track.streamTrack() == m_mediaStreamPrivate->activeVideoTrack();
+            track.setSelected(selected);
             checkSelectedVideoTrack();
             break;
         }
     };
-    updateTracksOfType(m_videoTrackMap, RealtimeMediaSource::Type::Video, currentTracks, &VideoTrackPrivateMediaStream::create, setVideoTrackState);
+    updateTracksOfType(m_videoTrackMap, RealtimeMediaSource::Type::Video, currentTracks, &VideoTrackPrivateMediaStream::create, WTFMove(setVideoTrackState));
 }
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaStreamAVFObjC::seekable() const
