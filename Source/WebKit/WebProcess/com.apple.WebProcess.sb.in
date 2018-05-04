@@ -705,7 +705,7 @@
     (global-name "com.apple.coremedia.endpointpicker.xpc")
     ; <rdar://problem/35509194>
     (global-name "com.apple.coremedia.endpointremotecontrolsession.xpc")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     (global-name "com.apple.coremedia.routediscoverer.xpc")
     (global-name "com.apple.coremedia.routingcontext.xpc")
     (global-name "com.apple.coremedia.volumecontroller.xpc")

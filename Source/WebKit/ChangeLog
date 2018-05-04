@@ -1,3 +1,14 @@
+2018-05-04  Per Arne Vollan  <pvollan@apple.com>
+
+        Adjust sandbox rules for simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=185275
+
+        Reviewed by Brent Fulgham.
+
+        Enable rules related to CoreMedia for minimal simulator.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-05-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Epiphany (GNOME Web) says "Error downloading: Service Unavailable." when trying to download an image from discogs.com
