@@ -1,3 +1,11 @@
+2018-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, attempt to fix WinCairo build failure
+        https://bugs.webkit.org/show_bug.cgi?id=185218
+
+        * platform/text/win/LocaleWin.cpp:
+        (WebCore::LocaleWin::getLocaleInfoString):
+
 2018-05-03  Filip Pizlo  <fpizlo@apple.com>
 
         Strings should not be allocated in a gigacage

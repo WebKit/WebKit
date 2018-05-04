@@ -95,7 +95,7 @@ String LocaleWin::getLocaleInfoString(LCTYPE type)
     int bufferSizeWithNUL = ::GetLocaleInfo(m_lcid, type, 0, 0);
     if (bufferSizeWithNUL <= 0)
         return String();
-    StringVector<UChar> buffer(bufferSizeWithNUL);
+    Vector<UChar> buffer(bufferSizeWithNUL);
     ::GetLocaleInfo(m_lcid, type, buffer.data(), bufferSizeWithNUL);
     buffer.shrink(bufferSizeWithNUL - 1);
     return String::adopt(WTFMove(buffer));
