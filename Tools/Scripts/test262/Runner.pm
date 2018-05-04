@@ -92,20 +92,12 @@ my @results;
 my @files;
 
 my $tempdir = tempdir();
-
-my @default_harnesses = (
-    "$harnessDir/sta.js",
-    "$harnessDir/assert.js",
-    "$harnessDir/doneprintHandle.js",
-    "$Bin/agent.js"
-);
-
 my ($deffh, $deffile) = getTempFile();
-print $deffh getHarness(<@default_harnesses>);
+
+my @default_harnesses;
 
 my $startTime = time();
 
-processCLI();
 main();
 
 sub processCLI {
@@ -223,6 +215,15 @@ sub processCLI {
 }
 
 sub main {
+    processCLI();
+
+    @default_harnesses = (
+        "$harnessDir/sta.js",
+        "$harnessDir/assert.js",
+        "$harnessDir/doneprintHandle.js",
+        "$Bin/agent.js"
+    );
+    print $deffh getHarness(<@default_harnesses>);
 
     # If not commandline test path supplied, use the root directory of all tests.
     push(@cliTestDirs, 'test') if not @cliTestDirs;

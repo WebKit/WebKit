@@ -1,3 +1,13 @@
+2018-05-04  Leo Balter  <leonardo.balter@gmail.com>
+
+        Test262-Runner: place the processCLI inside the main call
+        https://bugs.webkit.org/show_bug.cgi?id=185304
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/test262/Runner.pm:
+        (main):
+
 2018-05-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Epiphany (GNOME Web) says "Error downloading: Service Unavailable." when trying to download an image from discogs.com
