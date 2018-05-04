@@ -1758,3 +1758,5 @@ webkit.org/b/184612 [ Debug ] media/audio-concurrent-supported.html [ Pass Failu
 
 # Font collections are not supported on every OS.
 webkit.org/b/184624 [ Sierra ] fast/text/font-collection.html [ ImageOnlyFailure ]
+
+webkit.org/b/184457 media/video-aspect-ratio.html [ Pass Failure ]
