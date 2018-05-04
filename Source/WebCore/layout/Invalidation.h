@@ -23,27 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InlineInvalidation.h"
+#pragma once
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
-#include "InlineFormattingState.h"
-#include "Invalidation.h"
-#include "LayoutBox.h"
-#include "LayoutContext.h"
-#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(InlineInvalidation);
+class Container;
 
-InvalidationResult InlineInvalidation::invalidate(const Box& layoutBox, StyleDiff, LayoutContext& layoutContext, InlineFormattingState&)
-{
-    layoutContext.markNeedsUpdate(layoutBox, LayoutContext::UpdateType::All);
-    return { nullptr };
-}
+struct InvalidationResult {
+    const Container* root;
+};
 
 }
 }

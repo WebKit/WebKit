@@ -35,6 +35,8 @@ namespace Layout {
 
 class Box;
 class BlockFormattingState;
+class Container;
+struct InvalidationResult;
 class LayoutContext;
 enum class StyleDiff;
 
@@ -42,7 +44,7 @@ enum class StyleDiff;
 class BlockInvalidation {
     WTF_MAKE_ISO_ALLOCATED(BlockInvalidation);
 public:
-    static void invalidate(const Box&, StyleDiff, LayoutContext&, BlockFormattingState&);
+    static InvalidationResult invalidate(const Box&, StyleDiff, LayoutContext&, BlockFormattingState&);
 };
 
 }

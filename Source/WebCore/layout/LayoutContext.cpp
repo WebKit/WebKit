@@ -35,6 +35,7 @@
 #include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
 #include "InlineInvalidation.h"
+#include "Invalidation.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
 #include <wtf/IsoMallocInlines.h>
@@ -52,8 +53,7 @@ LayoutContext::LayoutContext(const Box& root)
 void LayoutContext::updateLayout()
 {
     ASSERT(!m_formattingContextRootListForLayout.isEmpty());
-    for (auto layoutRoot : m_formattingContextRootListForLayout) {
-        RELEASE_ASSERT(layoutRoot.get());
+    for (auto* layoutRoot : m_formattingContextRootListForLayout) {
         RELEASE_ASSERT(layoutRoot->establishesFormattingContext());
         auto context = formattingContext(*layoutRoot);
         auto& state = establishedFormattingState(*layoutRoot, *context);
@@ -73,12 +73,15 @@ Display::Box& LayoutContext::createDisplayBox(const Box& layoutBox)
 void LayoutContext::styleChanged(const Box& layoutBox, StyleDiff styleDiff)
 {
     auto& formattingState = formattingStateForBox(layoutBox);
+    const Container* invalidationRoot = nullptr;
     if (is<BlockFormattingState>(formattingState))
-        BlockInvalidation::invalidate(layoutBox, styleDiff, *this, downcast<BlockFormattingState>(formattingState));
+        invalidationRoot = BlockInvalidation::invalidate(layoutBox, styleDiff, *this, downcast<BlockFormattingState>(formattingState)).root;
     else if (is<InlineFormattingState>(formattingState))
-        InlineInvalidation::invalidate(layoutBox, styleDiff, *this, downcast<InlineFormattingState>(formattingState));
+        invalidationRoot = InlineInvalidation::invalidate(layoutBox, styleDiff, *this, downcast<InlineFormattingState>(formattingState)).root;
     else
         ASSERT_NOT_REACHED();
+    ASSERT(invalidationRoot);
+    m_formattingContextRootListForLayout.addVoid(invalidationRoot);
 }
 
 void LayoutContext::markNeedsUpdate(const Box&, OptionSet<UpdateType>)

@@ -1,3 +1,27 @@
+2018-05-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Set the invalidation root as the result of style change.
+        https://bugs.webkit.org/show_bug.cgi?id=185301
+
+        Reviewed by Antti Koivisto.
+
+        Compute/propagate the update type on the ancestor chain and return the invalidation root
+        so that LayoutContext could use it as the entry point for the next layout frame.
+
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::updateLayout):
+        (WebCore::Layout::LayoutContext::styleChanged):
+        * layout/LayoutContext.h: order is not important.
+        * layout/blockformatting/BlockInvalidation.cpp:
+        (WebCore::Layout::invalidationStopsAtFormattingContextBoundary):
+        (WebCore::Layout::computeUpdateType):
+        (WebCore::Layout::computeUpdateTypeForAncestor):
+        (WebCore::Layout::BlockInvalidation::invalidate):
+        * layout/blockformatting/BlockInvalidation.h:
+        * layout/inlineformatting/InlineInvalidation.cpp:
+        (WebCore::Layout::InlineInvalidation::invalidate):
+        * layout/inlineformatting/InlineInvalidation.h:
+
 2018-05-04  Youenn Fablet  <youenn@apple.com>
 
         PeerConnection should have its connectionState closed even if doing gathering

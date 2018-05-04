@@ -29,7 +29,9 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BlockFormattingState.h"
+#include "Invalidation.h"
 #include "LayoutBox.h"
+#include "LayoutContainer.h"
 #include "LayoutContext.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -38,9 +40,35 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(BlockInvalidation);
 
-void BlockInvalidation::invalidate(const Box& layoutBox, StyleDiff, LayoutContext& layoutContext, BlockFormattingState&)
+static bool invalidationStopsAtFormattingContextBoundary(const Container& formattingContextRoot, const Box&, StyleDiff)
 {
-    layoutContext.markNeedsUpdate(layoutBox, LayoutContext::UpdateType::All);
+    ASSERT(formattingContextRoot.establishesFormattingContext());
+    return true;
+}
+
+static LayoutContext::UpdateType computeUpdateType(const Box&, StyleDiff, BlockFormattingState&)
+{
+    return LayoutContext::UpdateType::All;
+}
+
+static LayoutContext::UpdateType computeUpdateTypeForAncestor(const Container&, StyleDiff, BlockFormattingState&)
+{
+    return LayoutContext::UpdateType::All;
+}
+
+InvalidationResult BlockInvalidation::invalidate(const Box& layoutBox, StyleDiff styleDiff, LayoutContext& layoutContext,
+    BlockFormattingState& formattingState)
+{
+    // Invalidate this box and the containing block chain all the way up to the formatting context root (and beyond if needed).
+    layoutContext.markNeedsUpdate(layoutBox, computeUpdateType(layoutBox, styleDiff, formattingState));
+    for (auto* containingBlock = layoutBox.containingBlock(); containingBlock; containingBlock = containingBlock->containingBlock()) {
+        if (containingBlock->establishesFormattingContext() && invalidationStopsAtFormattingContextBoundary(*containingBlock, layoutBox, styleDiff))
+            return { containingBlock };
+        layoutContext.markNeedsUpdate(*containingBlock, computeUpdateTypeForAncestor(*containingBlock, styleDiff, formattingState));
+    }
+    // Invalidation always stops at the initial containing block.
+    ASSERT_NOT_REACHED();
+    return { nullptr };
 }
 
 }

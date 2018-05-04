@@ -29,7 +29,7 @@
 
 #include "FormattingContext.h"
 #include "FormattingState.h"
-#include "LayoutBox.h"
+#include <wtf/HashSet.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
 
@@ -42,6 +42,8 @@ class Box;
 namespace Layout {
 
 enum class StyleDiff;
+class Box;
+class Container;
 
 // LayoutContext is the entry point for layout. It takes a (formatting root)container which acts as the root of the layout context.
 // LayoutContext::layout() generates the display tree for the root container's subtree (it does not run layout on the root though).
@@ -76,7 +78,7 @@ public:
 
 private:
     WeakPtr<Box> m_root;
-    Vector<WeakPtr<Box>> m_formattingContextRootListForLayout;
+    HashSet<const Container*> m_formattingContextRootListForLayout;
     HashMap<const Box*, std::unique_ptr<FormattingState>> m_formattingStates;
     HashMap<const Box*, std::unique_ptr<Display::Box>> m_layoutToDisplayBox;
 };
