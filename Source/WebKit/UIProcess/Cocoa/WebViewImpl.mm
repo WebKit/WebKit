@@ -186,13 +186,15 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 @interface WKWindowVisibilityObserver : NSObject {
     NSView *_view;
     WebKit::WebViewImpl *_impl;
+
+    BOOL _didRegisterForLookupPopoverCloseNotifications;
 }
 
 - (instancetype)initWithView:(NSView *)view impl:(WebKit::WebViewImpl&)impl;
 - (void)startObserving:(NSWindow *)window;
 - (void)stopObserving:(NSWindow *)window;
 - (void)startObservingFontPanel;
-- (void)startObservingLookupDismissal;
+- (void)startObservingLookupDismissalIfNeeded;
 @end
 
 @implementation WKWindowVisibilityObserver
@@ -214,7 +216,7 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 
 - (void)dealloc
 {
-    if (canLoadLUNotificationPopoverWillClose())
+    if (_didRegisterForLookupPopoverCloseNotifications && canLoadLUNotificationPopoverWillClose())
         [[NSNotificationCenter defaultCenter] removeObserver:self name:getLUNotificationPopoverWillClose() object:nil];
 
     NSNotificationCenter *workspaceNotificationCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
@@ -283,8 +285,13 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [[NSFontPanel sharedFontPanel] addObserver:self forKeyPath:@"visible" options:0 context:keyValueObservingContext];
 }
 
-- (void)startObservingLookupDismissal
+- (void)startObservingLookupDismissalIfNeeded
 {
+    if (_didRegisterForLookupPopoverCloseNotifications)
+        return;
+
+    _didRegisterForLookupPopoverCloseNotifications = YES;
+
     if (canLoadLUNotificationPopoverWillClose())
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_dictionaryLookupPopoverWillClose:) name:getLUNotificationPopoverWillClose() object:nil];
 }
@@ -3216,12 +3223,7 @@ void WebViewImpl::quickLookWithEvent(NSEvent *event)
 
 void WebViewImpl::prepareForDictionaryLookup()
 {
-    if (m_didRegisterForLookupPopoverCloseNotifications)
-        return;
-
-    m_didRegisterForLookupPopoverCloseNotifications = true;
-
-    [m_windowVisibilityObserver startObservingLookupDismissal];
+    [m_windowVisibilityObserver startObservingLookupDismissalIfNeeded];
 }
 
 void WebViewImpl::setAllowsLinkPreview(bool allowsLinkPreview)

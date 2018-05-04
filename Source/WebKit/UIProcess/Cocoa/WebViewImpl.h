@@ -680,7 +680,6 @@ private:
     RetainPtr<NSImmediateActionGestureRecognizer> m_immediateActionGestureRecognizer;
 
     bool m_allowsLinkPreview { true };
-    bool m_didRegisterForLookupPopoverCloseNotifications { false };
 
     RetainPtr<NSTrackingArea> m_primaryTrackingArea;
 
