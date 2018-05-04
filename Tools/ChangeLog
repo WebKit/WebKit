@@ -1,3 +1,12 @@
+2018-05-04  Leo Balter  <leonardo.balter@gmail.com>
+
+        Test262-Runner: Add base module to the local deps - unicore/PVA.pl
+        https://bugs.webkit.org/show_bug.cgi?id=185314
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/test262/local/lib/perl5/unicore/PVA.pl: Added.
+
 2018-05-04  Wenson Hsieh  <whsieh@berkeley.edu>
 
         REGRESSION: [ios-simulator] 3 WKWebViewAutofillTests API test failures seen with 11.3 SDK
