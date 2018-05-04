@@ -1,3 +1,21 @@
+2018-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove std::random_shuffle
+        https://bugs.webkit.org/show_bug.cgi?id=185292
+
+        Reviewed by Darin Adler.
+
+        std::random_shuffle is deprecated in C++14 and removed in C++17,
+        since std::random_shuffle relies on rand and srand.
+        Use std::shuffle instead.
+
+        * jit/BinarySwitch.cpp:
+        (JSC::RandomNumberGenerator::RandomNumberGenerator):
+        (JSC::RandomNumberGenerator::operator()):
+        (JSC::RandomNumberGenerator::min):
+        (JSC::RandomNumberGenerator::max):
+        (JSC::BinarySwitch::build):
+
 2018-05-03  Saam Barati  <sbarati@apple.com>
 
         Don't prevent CreateThis being folded to NewObject when the structure is poly proto
