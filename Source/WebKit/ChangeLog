@@ -1,3 +1,22 @@
+2018-05-04  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Apps that are not visible may not get suspended if they trigger page loads while in the background
+        https://bugs.webkit.org/show_bug.cgi?id=185318
+
+        Reviewed by Geoffrey Garen.
+
+        Whenever there is a page load going on, we take a background process assertion to delay process
+        suspension until this load completes. However, there is also a 3 seconds grace period after
+        a load is complete to allow the app to trigger a new load shortly after. This grace period was
+        introduced to support use cases where a visible app does loads in an offscreen view. However,
+        it can be abused by apps running in the background as they could trigger new page loads while
+        in the background to delay process suspension. This patch tightens the policy so that only
+        apps that are currently visible get to use this grace period. Apps that are in the background
+        get to finish their current load and will then get suspended.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::didChangeIsLoading):
+
 2018-05-04  Per Arne Vollan  <pvollan@apple.com>
 
         Adjust sandbox profile for simulator.
