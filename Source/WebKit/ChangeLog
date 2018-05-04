@@ -1,3 +1,17 @@
+2018-05-04  Per Arne Vollan  <pvollan@apple.com>
+
+        Shutdown WindowServer connections after checking in with launch services
+        https://bugs.webkit.org/show_bug.cgi?id=185082
+        <rdar://problem/39613173>
+
+        Reviewed by Brent Fulgham.
+
+        When WindowServer access is blocked in the WebContent process, we should shutdown all connections
+        after checking in with launch services.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2018-05-04  Don Olmstead  <don.olmstead@sony.com>
 
         [Win][WebKit] Fix forwarding headers for Windows build

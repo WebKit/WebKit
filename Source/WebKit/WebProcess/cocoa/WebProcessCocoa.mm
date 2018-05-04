@@ -303,6 +303,8 @@ void WebProcess::platformInitializeProcess(const ChildProcessInitializationParam
     // Deny the WebContent process access to the WindowServer.
     // This call will not succeed if there are open WindowServer connections at this point.
     setApplicationIsDaemon();
+    // Make sure that we close any WindowServer connections after checking in with Launch Services.
+    CGSShutdownServerConnections();
 #else
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     // This call is needed when the WebProcess is not running the NSApplication event loop.
