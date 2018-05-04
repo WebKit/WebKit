@@ -1,5 +1,50 @@
 2018-05-04  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: Styles Redesign: ensure that tabbing through the last section wraps back to the first
+        https://bugs.webkit.org/show_bug.cgi?id=181973
+
+        Reviewed by Matt Baker.
+
+        Unified delegate functions to start editing previous/next rules into a single function for
+        simplicity.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetCSSStyleDeclarationEditorFocusMoved):
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.startEditingRuleSelector):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetSelectorFieldDidChange):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetCSSStyleDeclarationEditorStartEditingAdjacentRule):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.cssStyleDeclarationEditorStartEditingAdjacentRule): Deleted.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.focusFirstSection):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.focusLastSection):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.spreadsheetCSSStyleDeclarationSectionStartEditingAdjacentRule):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.cssStyleDeclarationSectionStartEditingNextRule): Deleted.
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.cssStyleDeclarationSectionStartEditingPreviousRule): Deleted.
+
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.js:
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.styleDetailsPanelFocusLastPseudoClassCheckbox):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.styleDetailsPanelFocusFilterBar):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.initialLayout):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype._handleForcedPseudoClassCheckboxKeydown):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype._forcedPseudoClassCheckboxChanged):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype._handleFilterBarInputFieldKeyDown):
+
+        Drive-by fix: provide tabbing support for the Computed styles panel.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WI.CSSStyleDeclarationTextEditor.prototype._handleShiftTabKey.switchRule):
+        (WI.CSSStyleDeclarationTextEditor.prototype._handleTabKey.switchRule):
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WI.ComputedStyleDetailsPanel.prototype.focusFirstSection):
+        (WI.ComputedStyleDetailsPanel.prototype.focusLastSection):
+        (WI.ComputedStyleDetailsPanel.prototype.cssStyleDeclarationTextEditorStartEditingAdjacentRule):
+
+2018-05-04  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: Canvas tab: Determine isFunction by looking at the prototype
         https://bugs.webkit.org/show_bug.cgi?id=184990
 

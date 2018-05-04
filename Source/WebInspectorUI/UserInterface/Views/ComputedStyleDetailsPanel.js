@@ -98,6 +98,37 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         this._variablesTextEditor.removeNonMatchingProperties(filterText);
     }
 
+    focusFirstSection()
+    {
+        this._propertiesTextEditor.focus();
+    }
+
+    focusLastSection()
+    {
+        this._variablesTextEditor.focus();
+    }
+
+    // CSSStyleDeclarationTextEditor delegate
+
+    cssStyleDeclarationTextEditorStartEditingAdjacentRule(cssStyleDeclarationTextEditor, backward)
+    {
+        if (cssStyleDeclarationTextEditor === this._propertiesTextEditor) {
+            if (backward && this._delegate && this._delegate.styleDetailsPanelFocusLastPseudoClassCheckbox) {
+                this._delegate.styleDetailsPanelFocusLastPseudoClassCheckbox(this);
+                return;
+            }
+
+            this._variablesTextEditor.focus();
+        } else if (cssStyleDeclarationTextEditor === this._variablesTextEditor) {
+            if (!backward && this._delegate && this._delegate.styleDetailsPanelFocusFilterBar) {
+                this._delegate.styleDetailsPanelFocusFilterBar(this);
+                return;
+            }
+
+            this._propertiesTextEditor.focus();
+        }
+    }
+
     // Protected
 
     initialLayout()

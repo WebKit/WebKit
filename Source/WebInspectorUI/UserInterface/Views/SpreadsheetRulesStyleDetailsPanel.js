@@ -130,31 +130,6 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         }
     }
 
-    cssStyleDeclarationSectionStartEditingNextRule(currentSection)
-    {
-        let currentIndex = this._sections.indexOf(currentSection);
-        let index = currentIndex < this._sections.length - 1 ? currentIndex + 1 : 0;
-        this._sections[index].startEditingRuleSelector();
-    }
-
-    cssStyleDeclarationSectionStartEditingPreviousRule(currentSection)
-    {
-        let index = this._sections.indexOf(currentSection);
-        console.assert(index > -1);
-
-        while (true) {
-            index--;
-            if (index < 0)
-                break;
-
-            let section = this._sections[index];
-            if (section.editable) {
-                section._propertiesEditor.startEditingLastProperty();
-                break;
-            }
-        }
-    }
-
     applyFilter(filterText)
     {
         this._filterText = filterText;
@@ -170,6 +145,61 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
 
         for (let section of this._sections)
             section.applyFilter(this._filterText);
+    }
+
+    focusFirstSection()
+    {
+        this.spreadsheetCSSStyleDeclarationSectionStartEditingAdjacentRule(null, 1);
+    }
+
+    focusLastSection()
+    {
+        this.spreadsheetCSSStyleDeclarationSectionStartEditingAdjacentRule(null, -1);
+    }
+
+    // SpreadsheetCSSStyleDeclarationSection delegate
+
+    spreadsheetCSSStyleDeclarationSectionStartEditingAdjacentRule(currentSection, delta)
+    {
+        console.assert(delta !== 0);
+
+        let index = this._sections.indexOf(currentSection);
+        if (index < 0) {
+            if (delta < 0)
+                index = this._sections.length;
+            else if (delta > 0)
+                index = -1;
+        }
+        index += delta;
+
+        while (this._sections[index] !== currentSection) {
+            if (index < 0) {
+                if (this._delegate && this._delegate.styleDetailsPanelFocusLastPseudoClassCheckbox) {
+                    this._delegate.styleDetailsPanelFocusLastPseudoClassCheckbox(this);
+                    break;
+                }
+
+                index = this._sections.length - 1;
+            } else if (index >= this._sections.length) {
+                if (this._delegate && this._delegate.styleDetailsPanelFocusFilterBar) {
+                    this._delegate.styleDetailsPanelFocusFilterBar(this);
+                    break;
+                }
+
+                index = 0;
+            }
+
+            let section = this._sections[index];
+            if (section.editable) {
+                if (delta < 0)
+                    section._propertiesEditor.startEditingLastProperty();
+                else
+                    section.startEditingRuleSelector();
+                break;
+            }
+
+            index += delta;
+        }
     }
 
     // Protected

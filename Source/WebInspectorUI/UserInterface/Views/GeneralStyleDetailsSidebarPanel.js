@@ -80,6 +80,18 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         styleRulesPanel.panel.scrollToSectionAndHighlightProperty(property);
     }
 
+    // StyleDetailsPanel delegate
+
+    styleDetailsPanelFocusLastPseudoClassCheckbox(styleDetailsPanel)
+    {
+        this._forcedPseudoClassCheckboxes[WI.CSSStyleManager.ForceablePseudoClasses.lastValue].focus();
+    }
+
+    styleDetailsPanelFocusFilterBar(styleDetailsPanel)
+    {
+        this._filterBar.inputField.focus();
+    }
+
     // Protected
 
     layout()
@@ -132,6 +144,7 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
                 let labelElement = document.createElement("label");
 
                 let checkboxElement = document.createElement("input");
+                checkboxElement.addEventListener("keydown", this._handleForcedPseudoClassCheckboxKeydown.bind(this, pseudoClass));
                 checkboxElement.addEventListener("change", this._forcedPseudoClassCheckboxChanged.bind(this, pseudoClass));
                 checkboxElement.type = "checkbox";
 
@@ -165,6 +178,7 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
 
         this._filterBar = new WI.FilterBar;
         this._filterBar.addEventListener(WI.FilterBar.Event.FilterDidChange, this._filterDidChange, this);
+        this._filterBar.inputField.addEventListener("keydown", this._handleFilterBarInputFieldKeyDown.bind(this));
         optionsContainer.appendChild(this._filterBar.element);
 
         this._classToggleButton = optionsContainer.createChild("button", "toggle-class-toggle");
@@ -229,6 +243,32 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         this._panel.shown();
     }
 
+    _handleForcedPseudoClassCheckboxKeydown(pseudoClass, event)
+    {
+        if (event.key !== "Tab")
+            return;
+
+        let pseudoClasses = WI.CSSStyleManager.ForceablePseudoClasses;
+        let index = pseudoClasses.indexOf(pseudoClass);
+        if (event.shiftKey) {
+            if (index > 0) {
+                this._forcedPseudoClassCheckboxes[pseudoClasses[index - 1]].focus();
+                event.preventDefault();
+            } else {
+                this._filterBar.inputField.focus();
+                event.preventDefault();
+            }
+        } else {
+            if (index < pseudoClasses.length - 1) {
+                this._forcedPseudoClassCheckboxes[pseudoClasses[index + 1]].focus();
+                event.preventDefault();
+            } else if (this._panel.focusFirstSection) {
+                this._panel.focusFirstSection();
+                event.preventDefault();
+            }
+        }
+    }
+
     _forcedPseudoClassCheckboxChanged(pseudoClass, event)
     {
         if (!this.domNode)
@@ -237,6 +277,8 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         let effectiveDOMNode = this.domNode.isPseudoElement() ? this.domNode.parentNode : this.domNode;
 
         effectiveDOMNode.setPseudoClassEnabled(pseudoClass, event.target.checked);
+
+        this._forcedPseudoClassCheckboxes[pseudoClass].focus();
     }
 
     _updatePseudoClassCheckboxes()
@@ -384,6 +426,22 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         this.contentView.element.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.FilterInProgressClassName, this._filterBar.hasActiveFilters());
 
         this._panel.filterDidChange(this._filterBar);
+    }
+
+    _handleFilterBarInputFieldKeyDown(event)
+    {
+        if (event.key !== "Tab")
+            return;
+
+        if (event.shiftKey) {
+            if (this._panel.focusLastSection) {
+                this._panel.focusLastSection();
+                event.preventDefault();
+            }
+        } else {
+            this._forcedPseudoClassCheckboxes[WI.CSSStyleManager.ForceablePseudoClasses[0]].focus();
+            event.preventDefault();
+        }
     }
 
     _styleSheetAddedOrRemoved()

@@ -581,8 +581,9 @@ WI.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor extends W
     {
         function switchRule()
         {
-            if (this._delegate && typeof this._delegate.cssStyleDeclarationEditorStartEditingAdjacentRule === "function") {
-                this._delegate.cssStyleDeclarationEditorStartEditingAdjacentRule(true);
+            if (this._delegate && typeof this._delegate.cssStyleDeclarationTextEditorStartEditingAdjacentRule === "function") {
+                const backward = true;
+                this._delegate.cssStyleDeclarationTextEditorStartEditingAdjacentRule(this, backward);
                 return;
             }
 
@@ -637,8 +638,8 @@ WI.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor extends W
     _handleTabKey(codeMirror)
     {
         function switchRule() {
-            if (this._delegate && typeof this._delegate.cssStyleDeclarationEditorStartEditingAdjacentRule === "function") {
-                this._delegate.cssStyleDeclarationEditorStartEditingAdjacentRule();
+            if (this._delegate && typeof this._delegate.cssStyleDeclarationTextEditorStartEditingAdjacentRule === "function") {
+                this._delegate.cssStyleDeclarationTextEditorStartEditingAdjacentRule(this);
                 return;
             }
 

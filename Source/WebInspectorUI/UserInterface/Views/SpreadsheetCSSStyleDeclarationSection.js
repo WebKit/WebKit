@@ -131,8 +131,12 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             return;
         }
 
-        this._selectorElement.focus();
         this._shouldFocusSelectorElement = false;
+
+        if (this._style.selectorEditable)
+            this._selectorElement.focus();
+        else
+            this._propertiesEditor.startEditingFirstProperty();
     }
 
     highlightProperty(property)
@@ -176,8 +180,11 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         if (direction === "forward")
             this._propertiesEditor.startEditingFirstProperty();
         else if (direction === "backward") {
-            if (typeof this._delegate.cssStyleDeclarationSectionStartEditingPreviousRule === "function")
-                this._delegate.cssStyleDeclarationSectionStartEditingPreviousRule(this);
+            if (this._delegate.spreadsheetCSSStyleDeclarationSectionStartEditingAdjacentRule) {
+                const delta = -1;
+                this._delegate.spreadsheetCSSStyleDeclarationSectionStartEditingAdjacentRule(this, delta);
+            } else
+                this._propertiesEditor.startEditingLastProperty();
         }
     }
 
@@ -188,15 +195,13 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
     // SpreadsheetCSSStyleDeclarationEditor delegate
 
-    cssStyleDeclarationEditorStartEditingAdjacentRule(toPreviousRule)
+    spreadsheetCSSStyleDeclarationEditorStartEditingAdjacentRule(propertiesEditor, delta)
     {
         if (!this._delegate)
             return;
 
-        if (toPreviousRule && typeof this._delegate.cssStyleDeclarationSectionStartEditingPreviousRule === "function")
-            this._delegate.cssStyleDeclarationSectionStartEditingPreviousRule(this);
-        else if (!toPreviousRule && typeof this._delegate.cssStyleDeclarationSectionStartEditingNextRule === "function")
-            this._delegate.cssStyleDeclarationSectionStartEditingNextRule(this);
+        if (this._delegate.spreadsheetCSSStyleDeclarationSectionStartEditingAdjacentRule)
+            this._delegate.spreadsheetCSSStyleDeclarationSectionStartEditingAdjacentRule(this, delta);
     }
 
     applyFilter(filterText)

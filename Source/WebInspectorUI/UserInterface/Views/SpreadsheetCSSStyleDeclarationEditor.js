@@ -248,9 +248,8 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
                 propertyView.nameTextField.startEditing();
             else {
                 if (willRemoveProperty) {
-                    // Move from the last value in the rule to the next rule's selector.
-                    let reverse = false;
-                    this._delegate.cssStyleDeclarationEditorStartEditingAdjacentRule(reverse);
+                    const delta = 1;
+                    this._delegate.spreadsheetCSSStyleDeclarationEditorStartEditingAdjacentRule(this, delta);
                 } else {
                     const appendAfterLast = -1;
                     this.addBlankProperty(appendAfterLast);
@@ -260,11 +259,15 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             let propertyView = this._editablePropertyBefore(movedFromIndex);
             if (propertyView) {
                 // Move from the property's name to the previous enabled property's value.
-                propertyView.valueTextField.startEditing()
+                propertyView.valueTextField.startEditing();
             } else {
                 // Move from the first property's name to the rule's selector.
                 if (this._style.selectorEditable)
                     this._delegate.cssStyleDeclarationTextEditorStartEditingRuleSelector();
+                else {
+                    const delta = -1;
+                    this._delegate.spreadsheetCSSStyleDeclarationEditorStartEditingAdjacentRule(this, delta);
+                }
             }
         }
     }
