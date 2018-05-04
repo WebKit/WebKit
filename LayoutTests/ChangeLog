@@ -1,5 +1,15 @@
 2018-05-04  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline tests for iOS after r231359.
+
+        Unreviewed test gardening.
+
+        * platform/ios/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+
+2018-05-04  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline tests after r231359.
 
         Unreviewed test gardening.
