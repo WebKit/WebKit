@@ -34,11 +34,8 @@
 
 namespace WebCore {
 
-XMLHttpRequestUpload::XMLHttpRequestUpload(XMLHttpRequest* xmlHttpRequest)
+XMLHttpRequestUpload::XMLHttpRequestUpload(XMLHttpRequest& xmlHttpRequest)
     : m_xmlHttpRequest(xmlHttpRequest)
-    , m_lengthComputable(false)
-    , m_loaded(0)
-    , m_total(0)
 {
 }
 
@@ -51,7 +48,7 @@ void XMLHttpRequestUpload::dispatchThrottledProgressEvent(bool lengthComputable,
     dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().progressEvent, lengthComputable, loaded, total));
 }
 
-void XMLHttpRequestUpload::dispatchProgressEvent(const AtomicString &type)
+void XMLHttpRequestUpload::dispatchProgressEvent(const AtomicString& type)
 {
     ASSERT(type == eventNames().loadstartEvent || type == eventNames().progressEvent || type == eventNames().loadEvent || type == eventNames().loadendEvent || type == eventNames().abortEvent || type == eventNames().errorEvent || type == eventNames().timeoutEvent);
 

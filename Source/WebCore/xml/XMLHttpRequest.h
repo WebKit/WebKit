@@ -108,7 +108,7 @@ public:
 
     String responseURL() const;
 
-    XMLHttpRequestUpload* upload();
+    XMLHttpRequestUpload& upload();
     XMLHttpRequestUpload* optionalUpload() const { return m_upload.get(); }
 
     const ResourceResponse& resourceResponse() const { return m_response; }

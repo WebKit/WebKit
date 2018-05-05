@@ -59,7 +59,6 @@
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
-#include <mutex>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
@@ -280,11 +279,11 @@ String XMLHttpRequest::responseURL() const
     return responseURL.string();
 }
 
-XMLHttpRequestUpload* XMLHttpRequest::upload()
+XMLHttpRequestUpload& XMLHttpRequest::upload()
 {
     if (!m_upload)
-        m_upload = std::make_unique<XMLHttpRequestUpload>(this);
-    return m_upload.get();
+        m_upload = std::make_unique<XMLHttpRequestUpload>(*this);
+    return *m_upload;
 }
 
 void XMLHttpRequest::changeState(State newState)

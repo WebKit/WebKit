@@ -32,32 +32,29 @@
 
 namespace WebCore {
 
-    class ScriptExecutionContext;
-    class XMLHttpRequest;
+class XMLHttpRequestUpload final : public XMLHttpRequestEventTarget {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit XMLHttpRequestUpload(XMLHttpRequest&);
 
-    class XMLHttpRequestUpload final : public XMLHttpRequestEventTarget {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        explicit XMLHttpRequestUpload(XMLHttpRequest*);
+    void ref() { m_xmlHttpRequest.ref(); }
+    void deref() { m_xmlHttpRequest.deref(); }
+    XMLHttpRequest& xmlHttpRequest() const { return m_xmlHttpRequest; }
 
-        void ref() { m_xmlHttpRequest->ref(); }
-        void deref() { m_xmlHttpRequest->deref(); }
-        XMLHttpRequest* xmlHttpRequest() const { return m_xmlHttpRequest; }
+    EventTargetInterface eventTargetInterface() const override { return XMLHttpRequestUploadEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const override { return m_xmlHttpRequest.scriptExecutionContext(); }
 
-        EventTargetInterface eventTargetInterface() const override { return XMLHttpRequestUploadEventTargetInterfaceType; }
-        ScriptExecutionContext* scriptExecutionContext() const override { return m_xmlHttpRequest->scriptExecutionContext(); }
+    void dispatchThrottledProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total);
+    void dispatchProgressEvent(const AtomicString& type);
 
-        void dispatchThrottledProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total);
-        void dispatchProgressEvent(const AtomicString &type);
+private:
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
 
-    private:
-        void refEventTarget() final { ref(); }
-        void derefEventTarget() final { deref(); }
-
-        XMLHttpRequest* m_xmlHttpRequest;
-        bool m_lengthComputable;
-        unsigned long long m_loaded;
-        unsigned long long m_total;
-    };
+    XMLHttpRequest& m_xmlHttpRequest;
+    bool m_lengthComputable { false };
+    unsigned long long m_loaded { 0 };
+    unsigned long long m_total { 0 };
+};
     
 } // namespace WebCore

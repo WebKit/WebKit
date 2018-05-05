@@ -1,3 +1,26 @@
+2018-05-05  Sam Weinig  <sam@webkit.org>
+
+        Cleanup XMLHttpRequestUpload a little
+        https://bugs.webkit.org/show_bug.cgi?id=185344
+
+        Reviewed by Yusuke Suzuki.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::visitAdditionalChildren):
+        Use auto to reduce redundancy.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::upload):
+        * xml/XMLHttpRequest.h:
+        Switch upload() to return a reference.
+        
+        * xml/XMLHttpRequestUpload.cpp:
+        (WebCore::XMLHttpRequestUpload::XMLHttpRequestUpload):
+        (WebCore::XMLHttpRequestUpload::dispatchProgressEvent):
+        * xml/XMLHttpRequestUpload.h:
+        Cleanup formatting, modernize and switch XMLHttpRequest member from a pointer
+        to a reference.
+
 2018-05-05  Dean Jackson  <dino@apple.com>
 
         Draw a drop-shadow behind the system preview badge

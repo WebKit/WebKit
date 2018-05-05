@@ -43,10 +43,10 @@ using namespace JSC;
 
 void JSXMLHttpRequest::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    if (XMLHttpRequestUpload* upload = wrapped().optionalUpload())
+    if (auto* upload = wrapped().optionalUpload())
         visitor.addOpaqueRoot(upload);
 
-    if (Document* responseDocument = wrapped().optionalResponseXML())
+    if (auto* responseDocument = wrapped().optionalResponseXML())
         visitor.addOpaqueRoot(responseDocument);
 }
 
