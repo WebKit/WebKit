@@ -1,3 +1,20 @@
+2018-05-02  Dean Jackson  <dino@apple.com>
+
+        Use IOSurfaces for CoreImage operations where possible
+        https://bugs.webkit.org/show_bug.cgi?id=185230
+        <rdar://problem/39926929>
+
+        Reviewed by Jon Lee.
+
+        On iOS hardware, we can use IOSurfaces as a rendering destination
+        for CoreImage, which means we're keeping data on the GPU
+        for rendering.
+
+        As a drive-by fix, I used a convenience method for Gaussian blurs.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintSystemPreviewBadge):
+
 2018-05-04  Tim Horton  <timothy_horton@apple.com>
 
         Shift to a lower-level framework for simplifying URLs

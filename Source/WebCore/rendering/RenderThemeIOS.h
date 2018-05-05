@@ -29,7 +29,12 @@
 
 #include "RenderThemeCocoa.h"
 
+#if USE(SYSTEM_PREVIEW)
+#if HAVE(IOSURFACE)
+#include "IOSurface.h"
+#endif
 #include <wtf/RetainPtr.h>
+#endif
 
 OBJC_CLASS CIContext;
 
@@ -154,6 +159,10 @@ private:
 
 #if USE(SYSTEM_PREVIEW)
     RetainPtr<CIContext> m_ciContext;
+#if HAVE(IOSURFACE)
+    std::unique_ptr<IOSurface> m_largeBadgeSurface;
+    std::unique_ptr<IOSurface> m_smallBadgeSurface;
+#endif
 #endif
 
     bool m_shouldMockBoldSystemFontForAccessibility { false };

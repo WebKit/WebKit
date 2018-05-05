@@ -49,6 +49,7 @@
 #import "HTMLInputElement.h"
 #import "HTMLNames.h"
 #import "HTMLSelectElement.h"
+#import "IOSurface.h"
 #import "Icon.h"
 #import "LocalizedDateCache.h"
 #import "NodeRenderStyle.h"
@@ -1826,19 +1827,19 @@ String RenderThemeIOS::extraDefaultStyleSheet()
 #if USE(SYSTEM_PREVIEW)
 void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    static const float largeBadgeDimension = 70;
-    static const float largeBadgeOffset = 20;
+    static const int largeBadgeDimension = 70;
+    static const int largeBadgeOffset = 20;
 
-    static const float smallBadgeDimension = 35;
-    static const float smallBadgeOffset = 8;
+    static const int smallBadgeDimension = 35;
+    static const int smallBadgeOffset = 8;
 
-    static const float minimumSizeForLargeBadge = 240;
+    static const int minimumSizeForLargeBadge = 240;
 
     bool useSmallBadge = rect.width() < minimumSizeForLargeBadge || rect.height() < minimumSizeForLargeBadge;
-    float badgeOffset = useSmallBadge ? smallBadgeOffset : largeBadgeOffset;
-    float badgeDimension = useSmallBadge ? smallBadgeDimension : largeBadgeDimension;
+    int badgeOffset = useSmallBadge ? smallBadgeOffset : largeBadgeOffset;
+    int badgeDimension = useSmallBadge ? smallBadgeDimension : largeBadgeDimension;
 
-    float minimumDimension = badgeDimension + 2 * badgeOffset;
+    int minimumDimension = badgeDimension + 2 * badgeOffset;
     if (rect.width() < minimumDimension || rect.height() < minimumDimension)
         return;
 
@@ -1860,14 +1861,11 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
     CIImage *clampedImage = [scaledImage imageByClampingToRect:flippedInsetBadgeRect];
 
     // Blur.
-    CIFilter *blurFilter = [CIFilter filterWithName:@"CIGaussianBlur"];
-    [blurFilter setDefaults];
-    [blurFilter setValue:@(10) forKey:kCIInputRadiusKey];
-    [blurFilter setValue:clampedImage forKey:kCIInputImageKey];
+    CIImage *blurredImage = [clampedImage imageByApplyingGaussianBlurWithSigma:10];
 
     // Saturate.
     CIFilter *saturationFilter = [CIFilter filterWithName:@"CIColorControls"];
-    [saturationFilter setValue:blurFilter.outputImage forKey:kCIInputImageKey];
+    [saturationFilter setValue:blurredImage forKey:kCIInputImageKey];
     [saturationFilter setValue:@1.8 forKey:kCIInputSaturationKey];
 
     // Tint.
@@ -1892,7 +1890,27 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
 
     if (!m_ciContext)
         m_ciContext = [CIContext context];
-    RetainPtr<CGImageRef> cgImage = adoptCF([m_ciContext.get() createCGImage:sourceOverFilter.outputImage fromRect:flippedInsetBadgeRect]);
+
+    RetainPtr<CGImageRef> cgImage;
+#if HAVE(IOSURFACE)
+    // Crop the result to the badge location.
+    CIImage *croppedImage = [sourceOverFilter.outputImage imageByCroppingToRect:flippedInsetBadgeRect];
+    CIImage *translatedImage = [croppedImage imageByApplyingTransform:CGAffineTransformMakeTranslation(-flippedInsetBadgeRect.origin.x, -flippedInsetBadgeRect.origin.y)];
+    IOSurfaceRef surface;
+    if (useSmallBadge) {
+        if (!m_smallBadgeSurface)
+            m_smallBadgeSurface = IOSurface::create({ smallBadgeDimension, smallBadgeDimension }, sRGBColorSpaceRef());
+        surface = m_smallBadgeSurface->surface();
+    } else {
+        if (!m_largeBadgeSurface)
+            m_largeBadgeSurface = IOSurface::create({ largeBadgeDimension, largeBadgeDimension }, sRGBColorSpaceRef());
+        surface = m_largeBadgeSurface->surface();
+    }
+    [m_ciContext.get() render:translatedImage toIOSurface:surface bounds:badgeRect colorSpace:sRGBColorSpaceRef()];
+    cgImage = useSmallBadge ? m_smallBadgeSurface->createImage() : m_largeBadgeSurface->createImage();
+#else
+    cgImage = adoptCF([m_ciContext.get() createCGImage:sourceOverFilter.outputImage fromRect:flippedInsetBadgeRect]);
+#endif
 
     CGContextSaveGState(ctx);
     CGContextTranslateCTM(ctx, absoluteBadgeRect.origin.x, absoluteBadgeRect.origin.y);
@@ -1913,6 +1931,7 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
     }
 #endif
 
+    CGContextFlush(ctx);
     CGContextRestoreGState(ctx);
 }
 #endif
