@@ -1,3 +1,12 @@
+2018-05-04  Youenn Fablet  <youenn@apple.com>
+
+        webrtc/addICECandidate-closed.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=185336
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/addICECandidate-closed.html:
+
 2018-05-04  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: simplify the WI.Collection interface

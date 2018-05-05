@@ -28,13 +28,21 @@ promise_test(async (test) => {
         await receiver.setRemoteDescription(offer1);
         const answer1 = await receiver.createAnswer();
         await receiver.setLocalDescription(answer1);
-        await sender.setRemoteDescription(answer1);
-        const offer2 = await sender.createOffer();
-        await sender.setLocalDescription(offer2);
-        await receiver.setRemoteDescription(offer2);
-        const answer2 = await receiver.createAnswer();
-        await receiver.setLocalDescription(answer2);
-        await sender.setRemoteDescription(answer2);
+        await new Promise (async (resolve) => {
+            // RTCPeerConnection does not resolve promises when it gets closed, hence the timeout here to make sure we execute some if not all these operations.
+            test.step_timeout(resolve, 100);
+            try {
+                await sender.setRemoteDescription(answer1);
+                const offer2 = await sender.createOffer();
+                await sender.setLocalDescription(offer2);
+                await receiver.setRemoteDescription(offer2);
+                const answer2 = await receiver.createAnswer();
+                await receiver.setLocalDescription(answer2);
+                await sender.setRemoteDescription(answer2);
+            } finally {
+                resolve();
+            }
+        });
     } catch (e) {
     }
 }, "Close a peer connection in the middle of gathering");
