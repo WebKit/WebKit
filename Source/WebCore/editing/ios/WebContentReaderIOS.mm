@@ -28,24 +28,14 @@
 
 #if PLATFORM(IOS)
 
-#import "ArchiveResource.h"
 #import "Document.h"
 #import "DocumentFragment.h"
-#import "DocumentLoader.h"
 #import "Editor.h"
 #import "EditorClient.h"
-#import "FragmentScriptingPermission.h"
-#import "FrameLoader.h"
-#import "FrameLoaderClient.h"
 #import "HTMLAnchorElement.h"
+#import "HTMLBRElement.h"
 #import "HTMLNames.h"
-#import "LegacyWebArchive.h"
-#import "MIMETypeRegistry.h"
 #import "Text.h"
-#import "UTIUtilities.h"
-#import "markup.h"
-#import <MobileCoreServices/MobileCoreServices.h>
-#import <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -63,15 +53,16 @@ bool WebContentReader::readURL(const URL& url, const String& title)
     if ([(NSURL *)url isFileURL])
         return false;
 
-    auto anchor = HTMLAnchorElement::create(*frame.document());
+    auto document = makeRef(*frame.document());
+    auto anchor = HTMLAnchorElement::create(document.get());
     anchor->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, url.string());
 
     String linkText = title.length() ? title : String([[(NSURL *)url absoluteString] precomposedStringWithCanonicalMapping]);
-    anchor->appendChild(frame.document()->createTextNode(linkText));
+    anchor->appendChild(document->createTextNode(linkText));
 
-    auto newFragment = frame.document()->createDocumentFragment();
+    auto newFragment = document->createDocumentFragment();
     if (fragment)
-        newFragment->appendChild(Text::create(*frame.document(), { &space, 1 }));
+        newFragment->appendChild(HTMLBRElement::create(document.get()));
     newFragment->appendChild(anchor);
     addFragment(WTFMove(newFragment));
     return true;

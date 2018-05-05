@@ -1,3 +1,24 @@
+2018-05-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Multiple links in Mail are dropped in a single line, and are difficult to tell apart
+        https://bugs.webkit.org/show_bug.cgi?id=185289
+        <rdar://problem/35756912>
+
+        Reviewed by Tim Horton and Darin Adler.
+
+        When inserting multiple URLs as individual items in a single drop, we currently separate each item with a space
+        (see r217284). However, it still seems difficult to tell dropped links apart. This patch makes some slight
+        tweaks to WebContentReader::readURL so that it inserts line breaks before dropped URLs, if the dropped URL isn't
+        the first item to be inserted in the resulting document fragment.
+
+        Augments existing API tests in DataInteractionTests.
+
+        * editing/ios/WebContentReaderIOS.mm:
+
+        Additionally remove some extraneous header imports from this implementation file.
+
+        (WebCore::WebContentReader::readURL):
+
 2018-05-02  Dean Jackson  <dino@apple.com>
 
         Use IOSurfaces for CoreImage operations where possible
