@@ -1,3 +1,21 @@
+2018-05-05  Dean Jackson  <dino@apple.com>
+
+        Draw a drop-shadow behind the system preview badge
+        https://bugs.webkit.org/show_bug.cgi?id=185356
+        <rdar://problem/40004936>
+
+        Reviewed by Wenson Hsieh.
+
+        Draw a very subtle drop-shadow under the system
+        preview badge so that it is more visible on a pure
+        white background.
+
+        I also moved some code around to make it more clear
+        and improved comments.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintSystemPreviewBadge):
+
 2018-05-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Multiple links in Mail are dropped in a single line, and are difficult to tell apart

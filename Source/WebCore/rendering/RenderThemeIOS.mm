@@ -1843,18 +1843,45 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
     if (rect.width() < minimumDimension || rect.height() < minimumDimension)
         return;
 
-    CIImage *inputImage = [CIImage imageWithCGImage:image.nativeImage().get()];
-
-    // Scale from intrinsic size to render size.
-    CGAffineTransform transform = CGAffineTransformIdentity;
-    transform = CGAffineTransformScale(transform, rect.width() / image.width(), rect.height() / image.height());
-    CIImage *scaledImage = [inputImage imageByApplyingTransform:transform];
-
     CGRect absoluteBadgeRect = CGRectMake(rect.x() + rect.width() - badgeDimension - badgeOffset, rect.y() + badgeOffset, badgeDimension, badgeDimension);
     CGRect insetBadgeRect = CGRectMake(rect.width() - badgeDimension - badgeOffset, badgeOffset, badgeDimension, badgeDimension);
     CGRect badgeRect = CGRectMake(0, 0, badgeDimension, badgeDimension);
 
-    // CI coordinates are y-up, so we need to flip the badge rectangle within the image frame.
+    CIImage *inputImage = [CIImage imageWithCGImage:image.nativeImage().get()];
+
+    // Create a circle to be used for the clipping path in the badge, as well as the drop shadow.
+    RetainPtr<CGPathRef> circle = adoptCF(CGPathCreateWithRoundedRect(absoluteBadgeRect, badgeDimension / 2, badgeDimension / 2, nullptr));
+
+    CGContextRef ctx = paintInfo.context().platformContext();
+
+    CGContextSaveGState(ctx);
+
+    // Draw a drop shadow around the circle.
+    CGFloat shadowColorComponents[4] = { 0, 0, 0, 0.1 };
+    RetainPtr<CGColorRef> shadowColor = adoptCF(CGColorCreate(sRGBColorSpaceRef(), shadowColorComponents));
+    // The circle must have an alpha channel value of 1 for the shadow color to appear.
+    CGFloat circleColorComponents[4] = { 0, 0, 0, 1 };
+    RetainPtr<CGColorRef> circleColor = adoptCF(CGColorCreate(sRGBColorSpaceRef(), circleColorComponents));
+    CGContextSetFillColorWithColor(ctx, circleColor.get());
+    CGContextSetShadowWithColor(ctx, CGSizeZero, 16, shadowColor.get());
+
+    // Draw a slightly smaller circle with a shadow, otherwise we'll see a fringe of the solid
+    // black circle around the edges of the cliped path below.
+    CGContextBeginPath(ctx);
+    CGRect slightlySmallerAbsoluteBadgeRect = CGRectMake(absoluteBadgeRect.origin.x + 0.5, absoluteBadgeRect.origin.y + 0.5, badgeDimension - 1, badgeDimension - 1);
+    RetainPtr<CGPathRef> slightlySmallerCircle = adoptCF(CGPathCreateWithRoundedRect(slightlySmallerAbsoluteBadgeRect, slightlySmallerAbsoluteBadgeRect.size.width / 2, slightlySmallerAbsoluteBadgeRect.size.height / 2, nullptr));
+    CGContextAddPath(ctx, slightlySmallerCircle.get());
+    CGContextClosePath(ctx);
+    CGContextFillPath(ctx);
+
+    CGContextRestoreGState(ctx);
+
+    // Draw the blurred backdrop. Scale from intrinsic size to render size.
+    CGAffineTransform transform = CGAffineTransformIdentity;
+    transform = CGAffineTransformScale(transform, rect.width() / image.width(), rect.height() / image.height());
+    CIImage *scaledImage = [inputImage imageByApplyingTransform:transform];
+
+    // CoreImage coordinates are y-up, so we need to flip the badge rectangle within the image frame.
     CGRect flippedInsetBadgeRect = CGRectMake(insetBadgeRect.origin.x, rect.height() - insetBadgeRect.origin.y - insetBadgeRect.size.height, badgeDimension, badgeDimension);
 
     // Create a cropped region with pixel values extending outwards.
@@ -1877,16 +1904,6 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
     CIFilter *sourceOverFilter = [CIFilter filterWithName:@"CISourceOverCompositing"];
     [sourceOverFilter setValue:tintFilter1.outputImage forKey:kCIInputImageKey];
     [sourceOverFilter setValue:saturationFilter.outputImage forKey:kCIInputBackgroundImageKey];
-
-    // Before we render the result, we should clip to a circle around the badge rectangle.
-    CGContextRef ctx = paintInfo.context().platformContext();
-    CGContextSaveGState(ctx);
-    CGContextBeginPath(ctx);
-    CGPathRef circle = CGPathCreateWithRoundedRect(absoluteBadgeRect, badgeDimension / 2, badgeDimension / 2, nil);
-    CGContextAddPath(ctx, circle);
-    CGContextClosePath(ctx);
-    CGContextClip(ctx);
-    CGPathRelease(circle);
 
     if (!m_ciContext)
         m_ciContext = [CIContext context];
@@ -1912,17 +1929,20 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
     cgImage = adoptCF([m_ciContext.get() createCGImage:sourceOverFilter.outputImage fromRect:flippedInsetBadgeRect]);
 #endif
 
+    // Before we render the result, we should clip to a circle around the badge rectangle.
     CGContextSaveGState(ctx);
+    CGContextBeginPath(ctx);
+    CGContextAddPath(ctx, circle.get());
+    CGContextClosePath(ctx);
+    CGContextClip(ctx);
+
     CGContextTranslateCTM(ctx, absoluteBadgeRect.origin.x, absoluteBadgeRect.origin.y);
     CGContextTranslateCTM(ctx, 0, badgeDimension);
     CGContextScaleCTM(ctx, 1, -1);
     CGContextDrawImage(ctx, badgeRect, cgImage.get());
-    CGContextRestoreGState(ctx);
 
 #if USE(APPLE_INTERNAL_SDK)
     if (auto logo = systemPreviewLogo()) {
-        // FIXME: Do we need to flip here too?
-        CGContextTranslateCTM(ctx, absoluteBadgeRect.origin.x, absoluteBadgeRect.origin.y);
         CGSize pdfSize = CGPDFPageGetBoxRect(logo, kCGPDFMediaBox).size;
         CGFloat scaleX = badgeDimension / pdfSize.width;
         CGFloat scaleY = badgeDimension / pdfSize.height;
