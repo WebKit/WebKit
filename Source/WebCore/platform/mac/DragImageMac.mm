@@ -41,10 +41,10 @@
 #import "URL.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/CoreTextSPI.h>
-#import <pal/spi/cocoa/LinkPresentationSPI.h>
+#import <pal/spi/cocoa/URLFormattingSPI.h>
 #import <wtf/SoftLinking.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#if !HAVE(URL_FORMATTING) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(LinkPresentation)
 #endif
 
@@ -199,7 +199,9 @@ LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
     NSString *absoluteURLString = [cocoaURL absoluteString];
 
     NSString *domain = absoluteURLString;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#if HAVE(URL_FORMATTING)
+    domain = [cocoaURL _lp_simplifiedDisplayString];
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     if (LinkPresentationLibrary())
         domain = [cocoaURL _lp_simplifiedDisplayString];
 #endif

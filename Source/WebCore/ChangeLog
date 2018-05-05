@@ -1,3 +1,14 @@
+2018-05-04  Tim Horton  <timothy_horton@apple.com>
+
+        Shift to a lower-level framework for simplifying URLs
+        https://bugs.webkit.org/show_bug.cgi?id=185334
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/WebCore.xcconfig:
+        * platform/mac/DragImageMac.mm:
+        (WebCore::LinkImageLayout::LinkImageLayout):
+
 2018-05-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Release assert in ScriptController::canExecuteScripts via HTMLMediaElement::~HTMLMediaElement()

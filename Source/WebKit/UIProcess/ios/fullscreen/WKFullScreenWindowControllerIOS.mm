@@ -46,16 +46,18 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
-#import <pal/spi/cocoa/LinkPresentationSPI.h>
 #import <pal/spi/cocoa/NSStringSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <pal/spi/cocoa/URLFormattingSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 
 using namespace WebKit;
 using namespace WebCore;
 
+#if !HAVE(URL_FORMATTING)
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(LinkPresentation)
+#endif
 
 namespace WebKit {
 
@@ -800,10 +802,14 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     NSString *domain = nil;
 
+#if HAVE(URL_FORMATTING)
+    domain = [url _lp_simplifiedDisplayString];
+#else
     if (LinkPresentationLibrary())
         domain = [url _lp_simplifiedDisplayString];
     else
         domain = userVisibleString(url);
+#endif
 
     NSString *text = nil;
     if ([[url scheme] caseInsensitiveCompare:@"data"] == NSOrderedSame)

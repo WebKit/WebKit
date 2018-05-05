@@ -40,7 +40,7 @@
 		0C2DA1441F3BEB4900DBC317 /* IOReturnSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA1281F3BEB4900DBC317 /* IOReturnSPI.h */; };
 		0C2DA1451F3BEB4900DBC317 /* IOSurfaceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA1291F3BEB4900DBC317 /* IOSurfaceSPI.h */; };
 		0C2DA1461F3BEB4900DBC317 /* IOTypesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA12A1F3BEB4900DBC317 /* IOTypesSPI.h */; };
-		0C2DA1471F3BEB4900DBC317 /* LinkPresentationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA12B1F3BEB4900DBC317 /* LinkPresentationSPI.h */; };
+		0C2DA1471F3BEB4900DBC317 /* URLFormattingSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA12B1F3BEB4900DBC317 /* URLFormattingSPI.h */; };
 		0C2DA1481F3BEB4900DBC317 /* MachVMSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA12C1F3BEB4900DBC317 /* MachVMSPI.h */; };
 		0C2DA1491F3BEB4900DBC317 /* NEFilterSourceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA12D1F3BEB4900DBC317 /* NEFilterSourceSPI.h */; };
 		0C2DA14A1F3BEB4900DBC317 /* NSAttributedStringSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA12E1F3BEB4900DBC317 /* NSAttributedStringSPI.h */; };
@@ -179,7 +179,7 @@
 		0C2DA1281F3BEB4900DBC317 /* IOReturnSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOReturnSPI.h; sourceTree = "<group>"; };
 		0C2DA1291F3BEB4900DBC317 /* IOSurfaceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOSurfaceSPI.h; sourceTree = "<group>"; };
 		0C2DA12A1F3BEB4900DBC317 /* IOTypesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOTypesSPI.h; sourceTree = "<group>"; };
-		0C2DA12B1F3BEB4900DBC317 /* LinkPresentationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkPresentationSPI.h; sourceTree = "<group>"; };
+		0C2DA12B1F3BEB4900DBC317 /* URLFormattingSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLFormattingSPI.h; sourceTree = "<group>"; };
 		0C2DA12C1F3BEB4900DBC317 /* MachVMSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachVMSPI.h; sourceTree = "<group>"; };
 		0C2DA12D1F3BEB4900DBC317 /* NEFilterSourceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEFilterSourceSPI.h; sourceTree = "<group>"; };
 		0C2DA12E1F3BEB4900DBC317 /* NSAttributedStringSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAttributedStringSPI.h; sourceTree = "<group>"; };
@@ -366,7 +366,6 @@
 				0C2DA1291F3BEB4900DBC317 /* IOSurfaceSPI.h */,
 				0C2DA12A1F3BEB4900DBC317 /* IOTypesSPI.h */,
 				0C5AF9121F43A4C7002EAC02 /* LaunchServicesSPI.h */,
-				0C2DA12B1F3BEB4900DBC317 /* LinkPresentationSPI.h */,
 				0C2DA12C1F3BEB4900DBC317 /* MachVMSPI.h */,
 				0C2DA12D1F3BEB4900DBC317 /* NEFilterSourceSPI.h */,
 				0C2DA12E1F3BEB4900DBC317 /* NSAttributedStringSPI.h */,
@@ -386,6 +385,7 @@
 				0C2DA13A1F3BEB4900DBC317 /* pthreadSPI.h */,
 				0C2DA13B1F3BEB4900DBC317 /* QuartzCoreSPI.h */,
 				0C2DA13C1F3BEB4900DBC317 /* ServersSPI.h */,
+				0C2DA12B1F3BEB4900DBC317 /* URLFormattingSPI.h */,
 				0C2DA13D1F3BEB4900DBC317 /* WebFilterEvaluatorSPI.h */,
 			);
 			path = cocoa;
@@ -645,7 +645,6 @@
 				0C2DA1461F3BEB4900DBC317 /* IOTypesSPI.h in Headers */,
 				A30D41211F0DD0EA00B71954 /* KillRing.h in Headers */,
 				0C5AF91C1F43A4C7002EAC02 /* LaunchServicesSPI.h in Headers */,
-				0C2DA1471F3BEB4900DBC317 /* LinkPresentationSPI.h in Headers */,
 				1C4876D91F8D7F4E00CCEEBD /* Logging.h in Headers */,
 				0C77858B1F45130F00F4EBB6 /* LookupSPI.h in Headers */,
 				0C2DA1481F3BEB4900DBC317 /* MachVMSPI.h in Headers */,
@@ -710,6 +709,7 @@
 				A3AB6E641F3D217F009C14B1 /* SystemSleepListenerMac.h in Headers */,
 				0C7785A11F45130F00F4EBB6 /* TUCallSPI.h in Headers */,
 				0C5AF9221F43A4C7002EAC02 /* UIKitSPI.h in Headers */,
+				0C2DA1471F3BEB4900DBC317 /* URLFormattingSPI.h in Headers */,
 				0C2DA1591F3BEB4900DBC317 /* WebFilterEvaluatorSPI.h in Headers */,
 				A10826F91F576292004772AC /* WebPanel.h in Headers */,
 			);

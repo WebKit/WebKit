@@ -23,11 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS)
-
 #if USE(APPLE_INTERNAL_SDK)
 
+#if HAVE(URL_FORMATTING)
+#import <URLFormatting/LPNSURLExtras.h>
+#else
 #import <LinkPresentation/LPNSURLExtras.h>
+#endif
 
 #else
 
@@ -36,5 +38,3 @@
 @end
 
 #endif
-
-#endif // (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS)

@@ -24,7 +24,6 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/IOSurfaceSPI.h
     spi/cocoa/IOTypesSPI.h
     spi/cocoa/LaunchServicesSPI.h
-    spi/cocoa/LinkPresentationSPI.h
     spi/cocoa/MachVMSPI.h
     spi/cocoa/NEFilterSourceSPI.h
     spi/cocoa/NSAttributedStringSPI.h
@@ -43,6 +42,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/PassKitSPI.h
     spi/cocoa/QuartzCoreSPI.h
     spi/cocoa/ServersSPI.h
+    spi/cocoa/URLFormattingSPI.h
     spi/cocoa/WebFilterEvaluatorSPI.h
     spi/cocoa/pthreadSPI.h
 
