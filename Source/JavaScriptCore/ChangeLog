@@ -1,3 +1,16 @@
+2018-05-05  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CFA phase should only do clobber asserts in debug
+        https://bugs.webkit.org/show_bug.cgi?id=185354
+
+        Reviewed by Saam Barati.
+        
+        Clobber asserts are responsible for 1% of compile time. That's too much. This disables them
+        unless asserts are enabled.
+
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::performBlockCFA):
+
 2018-05-04  Keith Miller  <keith_miller@apple.com>
 
         isCacheableArrayLength should return true for undecided arrays
