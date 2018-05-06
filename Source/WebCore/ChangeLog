@@ -1,3 +1,16 @@
+2018-05-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add BlockFormattingContext::computeStaticPosition
+        https://bugs.webkit.org/show_bug.cgi?id=185352
+
+        Reviewed by Antti Koivisto.
+
+        This is the core logic for positioning inflow boxes in a block formatting context (very naive though).
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeStaticPosition const):
+        * layout/displaytree/DisplayBox.h:
+
 2018-05-05  Sam Weinig  <sam@webkit.org>
 
         Cleanup XMLHttpRequestUpload a little
