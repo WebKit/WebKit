@@ -35,7 +35,8 @@ namespace WebCore {
 
 class PlatformDisplayWPE final : public PlatformDisplay {
 public:
-    PlatformDisplayWPE();
+    static std::unique_ptr<PlatformDisplayWPE> create();
+
     virtual ~PlatformDisplayWPE();
 
     void initialize(int);
@@ -43,6 +44,8 @@ public:
     struct wpe_renderer_backend_egl* backend() const { return m_backend; }
 
 private:
+    PlatformDisplayWPE();
+
     Type type() const override { return PlatformDisplay::Type::WPE; }
 
     struct wpe_renderer_backend_egl* m_backend;

@@ -73,7 +73,7 @@ public:
 
 protected:
     enum class NativeDisplayOwned { No, Yes };
-    explicit PlatformDisplay(NativeDisplayOwned = NativeDisplayOwned::No);
+    explicit PlatformDisplay(NativeDisplayOwned);
 
     static void setSharedDisplayForCompositing(PlatformDisplay&);
 

@@ -48,7 +48,12 @@ std::unique_ptr<PlatformDisplay> PlatformDisplayX11::create()
     if (!display)
         return nullptr;
 
-    return std::make_unique<PlatformDisplayX11>(display, NativeDisplayOwned::Yes);
+    return std::unique_ptr<PlatformDisplayX11>(new PlatformDisplayX11(display, NativeDisplayOwned::Yes));
+}
+
+std::unique_ptr<PlatformDisplay> PlatformDisplayX11::create(Display* display)
+{
+    return std::unique_ptr<PlatformDisplayX11>(new PlatformDisplayX11(display, NativeDisplayOwned::No));
 }
 
 PlatformDisplayX11::PlatformDisplayX11(Display* display, NativeDisplayOwned displayOwned)
