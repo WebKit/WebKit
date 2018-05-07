@@ -70,21 +70,27 @@ void StringConstructor::finishCreation(VM& vm, StringPrototype* stringPrototype)
 
 // ------------------------------ Functions --------------------------------
 
-static NEVER_INLINE JSValue stringFromCharCodeSlowCase(ExecState* exec)
-{
-    unsigned length = exec->argumentCount();
-    UChar* buf;
-    auto impl = StringImpl::createUninitialized(length, buf);
-    for (unsigned i = 0; i < length; ++i)
-        buf[i] = static_cast<UChar>(exec->uncheckedArgument(i).toUInt32(exec));
-    return jsString(exec, WTFMove(impl));
-}
-
 static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec)
 {
-    if (LIKELY(exec->argumentCount() == 1))
-        return JSValue::encode(jsSingleCharacterString(exec, exec->uncheckedArgument(0).toUInt32(exec)));
-    return JSValue::encode(stringFromCharCodeSlowCase(exec));
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    unsigned length = exec->argumentCount();
+    if (LIKELY(length == 1)) {
+        unsigned code = exec->uncheckedArgument(0).toUInt32(exec);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        scope.release();
+        return JSValue::encode(jsSingleCharacterString(exec, code));
+    }
+
+    UChar* buf;
+    auto impl = StringImpl::createUninitialized(length, buf);
+    for (unsigned i = 0; i < length; ++i) {
+        buf[i] = static_cast<UChar>(exec->uncheckedArgument(i).toUInt32(exec));
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    }
+    scope.release();
+    return JSValue::encode(jsString(exec, WTFMove(impl)));
 }
 
 JSCell* JSC_HOST_CALL stringFromCharCode(ExecState* exec, int32_t arg)
