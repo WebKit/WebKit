@@ -272,7 +272,7 @@ String TextTrackCueGeneric::toJSONString() const
 {
     auto object = JSON::Object::create();
 
-    VTTCue::toJSON(object.get());
+    toJSON(object.get());
 
     if (m_foregroundColor.isValid())
         object->setString(ASCIILiteral("foregroundColor"), m_foregroundColor.serialized());

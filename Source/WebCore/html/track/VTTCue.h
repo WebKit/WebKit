@@ -177,6 +177,8 @@ protected:
     virtual Ref<VTTCueBox> createDisplayTree();
     VTTCueBox& displayTreeInternal();
 
+    void toJSON(JSON::Object&) const final;
+
 private:
     void initialize(ScriptExecutionContext&);
     void createWebVTTNodeTree();

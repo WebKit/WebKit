@@ -114,6 +114,7 @@ String ISOWebVTTCue::toJSONString() const
 {
     auto object = JSON::Object::create();
 
+    object->setString(ASCIILiteral("text"), m_cueText);
     object->setString(ASCIILiteral("sourceId"), m_sourceID);
     object->setString(ASCIILiteral("id"), m_identifier);
 

@@ -1,3 +1,24 @@
+2018-05-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Text track cue logging should include cue text
+        https://bugs.webkit.org/show_bug.cgi?id=185353
+        <rdar://problem/40003565>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, tested manually.
+
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::toJSONString const): Use toJSON.
+        (WebCore::VTTCue::toJSON const): New.
+        * html/track/VTTCue.h:
+
+        * platform/graphics/InbandTextTrackPrivateClient.h:
+        (WebCore::GenericCueData::toJSONString const): Log m_content.
+
+        * platform/graphics/iso/ISOVTTCue.cpp:
+        (WebCore::ISOWebVTTCue::toJSONString const): Log m_cueText.
+
 2018-05-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add assertions for stale Display::Box geometry
