@@ -1,3 +1,22 @@
+2018-05-06  Dean Jackson  <dino@apple.com>
+
+        WebGL: Reset simulated values after validation fails
+        https://bugs.webkit.org/show_bug.cgi?id=185363
+        <rdar://problem/39733417>
+
+        Reviewed by Anders Carlsson.
+
+        While fixing a previous bug, I forgot to reset some values
+        when validation fails. This caused a bug where a subsequent
+        invalid call might use those values and escape detection.
+
+        Test: fast/canvas/webgl/index-validation-with-subsequent-draws.html
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::simulateVertexAttrib0): Reset the
+        sizes when validation fails.
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2018-05-07  Ms2ger  <Ms2ger@igalia.com>
 
         Support negative sw/sh values in createImageBitmap().

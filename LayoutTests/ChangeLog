@@ -1,3 +1,14 @@
+2018-05-06  Dean Jackson  <dino@apple.com>
+
+        WebGL: Reset simulated values after validation fails
+        https://bugs.webkit.org/show_bug.cgi?id=185363
+        <rdar://problem/39733417>
+
+        Reviewed by Anders Carlsson.
+
+        * fast/canvas/webgl/index-validation-with-subsequent-draws-expected.txt: Added.
+        * fast/canvas/webgl/index-validation-with-subsequent-draws.html: Added.
+
 2018-05-07  Ms2ger  <Ms2ger@igalia.com>
 
         Support negative sw/sh values in createImageBitmap().

@@ -1701,9 +1701,10 @@ webkit.org/b/181479 http/tests/misc/slow-loading-animated-image.html [ Pass Imag
 
 webkit.org/b/181494 accessibility/mac/aria-multiple-liveregions-notification.html [ Pass Failure ]
 
-# A lot of GPU hardware simply crashes with this test, since it allocates a lot of memory.
-# It is enabled on systems that instead return GL_OUT_OF_MEMORY.
+# A lot of GPU hardware simply crashes with these tests, since they allocate a lot of memory.
+# They are enabled on systems that instead return GL_OUT_OF_MEMORY.
 [ ElCapitan Sierra ] fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]
+[ ElCapitan Sierra ] fast/canvas/webgl/index-validation-with-subsequent-draws.html [ Skip ]
 
 webkit.org/b/181100 inspector/worker/worker-recover-if-inspector-close.html [ Pass Failure ]
 
