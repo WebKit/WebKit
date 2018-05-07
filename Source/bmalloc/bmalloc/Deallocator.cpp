@@ -35,8 +35,6 @@
 #include <cstdlib>
 #include <sys/mman.h>
 
-using namespace std;
-
 namespace bmalloc {
 
 Deallocator::Deallocator(Heap& heap)

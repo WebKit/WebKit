@@ -35,9 +35,6 @@
 #include "TypeError.h"
 #include <wtf/Assertions.h>
 
-using namespace std;
-using namespace WTF;
-
 namespace JSC {
 
 const char* const LengthExceededTheMaximumArrayLengthError = "Length exceeded the maximum array length";

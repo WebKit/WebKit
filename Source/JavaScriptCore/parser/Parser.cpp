@@ -86,8 +86,6 @@
 
 #define semanticFailureDueToKeyword(...) semanticFailureDueToKeywordCheckingToken(m_token, __VA_ARGS__);
 
-using namespace std;
-
 namespace JSC {
 
 ALWAYS_INLINE static SourceParseMode getAsynFunctionBodyParseMode(SourceParseMode parseMode)

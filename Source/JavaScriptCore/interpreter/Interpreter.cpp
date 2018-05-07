@@ -90,8 +90,6 @@
 #include "JIT.h"
 #endif
 
-using namespace std;
-
 namespace JSC {
 
 JSValue eval(CallFrame* callFrame)

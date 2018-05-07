@@ -1,3 +1,13 @@
+2018-05-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove "using namespace std;" from JSC, bmalloc, WTF
+        https://bugs.webkit.org/show_bug.cgi?id=185362
+
+        Reviewed by Sam Weinig.
+
+        * bmalloc/Allocator.cpp:
+        * bmalloc/Deallocator.cpp:
+
 2018-05-03  Filip Pizlo  <fpizlo@apple.com>
 
         Strings should not be allocated in a gigacage

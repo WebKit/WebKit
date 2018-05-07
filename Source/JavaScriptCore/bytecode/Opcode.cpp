@@ -37,8 +37,6 @@
 #include <wtf/DataLog.h>
 #endif
 
-using namespace std;
-
 namespace JSC {
 
 const char* const opcodeNames[] = {

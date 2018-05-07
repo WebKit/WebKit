@@ -34,8 +34,6 @@
 #include "JSFunction.h"
 #include "JSCInlines.h"
 
-using namespace std;
-
 namespace JSC {
 
 const ClassInfo JSLexicalEnvironment::s_info = { "JSLexicalEnvironment", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSLexicalEnvironment) };

@@ -46,9 +46,6 @@
 
 #define DUMP_STRUCTURE_ID_STATISTICS 0
 
-using namespace std;
-using namespace WTF;
-
 namespace JSC {
 
 #if DUMP_STRUCTURE_ID_STATISTICS

@@ -34,8 +34,6 @@
 #include "JSCInlines.h"
 #include "JSFunction.h"
 
-using namespace std;
-
 namespace JSC {
 
 const ClassInfo JSModuleEnvironment::s_info = { "JSModuleEnvironment", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSModuleEnvironment) };

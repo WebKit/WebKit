@@ -1,3 +1,41 @@
+2018-05-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove "using namespace std;" from JSC, bmalloc, WTF
+        https://bugs.webkit.org/show_bug.cgi?id=185362
+
+        Reviewed by Sam Weinig.
+
+        "namespace std" may include many names. It can conflict with names defined by our code,
+        and the other platform provided headers. For example, std::byte conflicts with Windows'
+        ::byte.
+        This patch removes "using namespace std;" from JSC and bmalloc.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::create):
+        * bytecode/Opcode.cpp:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::newRegister):
+        * heap/Heap.cpp:
+        (JSC::Heap::updateAllocationLimits):
+        * interpreter/Interpreter.cpp:
+        * jit/JIT.cpp:
+        * parser/Parser.cpp:
+        * runtime/JSArray.cpp:
+        * runtime/JSLexicalEnvironment.cpp:
+        * runtime/JSModuleEnvironment.cpp:
+        * runtime/Structure.cpp:
+        * shell/DLLLauncherMain.cpp:
+        (getStringValue):
+        (applePathFromRegistry):
+        (appleApplicationSupportDirectory):
+        (copyEnvironmentVariable):
+        (prependPath):
+        (fatalError):
+        (directoryExists):
+        (modifyPath):
+        (getLastErrorString):
+        (wWinMain):
+
 2018-05-05  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CFA phase should only do clobber asserts in debug

@@ -55,8 +55,6 @@
 #include <wtf/GraphNodeWorklist.h>
 #include <wtf/SimpleStats.h>
 
-using namespace std;
-
 namespace JSC {
 namespace JITInternal {
 static constexpr const bool verbose = false;

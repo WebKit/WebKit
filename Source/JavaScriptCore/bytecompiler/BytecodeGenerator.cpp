@@ -64,8 +64,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
-using namespace std;
-
 namespace JSC {
 
 template<typename T>
@@ -1196,7 +1194,7 @@ UniquedStringImpl* BytecodeGenerator::visibleNameForParameter(DestructuringPatte
 RegisterID* BytecodeGenerator::newRegister()
 {
     m_calleeLocals.append(virtualRegisterForLocal(m_calleeLocals.size()));
-    int numCalleeLocals = max<int>(m_codeBlock->m_numCalleeLocals, m_calleeLocals.size());
+    int numCalleeLocals = std::max<int>(m_codeBlock->m_numCalleeLocals, m_calleeLocals.size());
     numCalleeLocals = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), numCalleeLocals);
     m_codeBlock->m_numCalleeLocals = numCalleeLocals;
     return &m_calleeLocals.last();

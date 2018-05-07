@@ -34,8 +34,6 @@
 #include <algorithm>
 #include <cstdlib>
 
-using namespace std;
-
 namespace bmalloc {
 
 Allocator::Allocator(Heap& heap, Deallocator& deallocator)

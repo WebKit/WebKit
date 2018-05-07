@@ -102,8 +102,6 @@ extern "C" void objc_autoreleasePoolPop(void *context);
 #include "JSCGLibWrapperObject.h"
 #endif
 
-using namespace std;
-
 namespace JSC {
 
 namespace {
@@ -120,7 +118,7 @@ double maxPauseMS(double thisPauseMS)
 size_t minHeapSize(HeapType heapType, size_t ramSize)
 {
     if (heapType == LargeHeap) {
-        double result = min(
+        double result = std::min(
             static_cast<double>(Options::largeHeapSize()),
             ramSize * Options::smallHeapRAMFraction());
         return static_cast<size_t>(result);
@@ -2231,7 +2229,7 @@ void Heap::updateAllocationLimits()
         // To avoid pathological GC churn in very small and very large heaps, we set
         // the new allocation limit based on the current size of the heap, with a
         // fixed minimum.
-        m_maxHeapSize = max(minHeapSize(m_heapType, m_ramSize), proportionalHeapSize(currentHeapSize, m_ramSize));
+        m_maxHeapSize = std::max(minHeapSize(m_heapType, m_ramSize), proportionalHeapSize(currentHeapSize, m_ramSize));
         if (verbose)
             dataLog("Full: maxHeapSize = ", m_maxHeapSize, "\n");
         m_maxEdenSize = m_maxHeapSize - currentHeapSize;
