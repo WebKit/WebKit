@@ -1,3 +1,16 @@
+2018-05-07  Dean Jackson  <dino@apple.com>
+
+        Use a dark gray for system preview bbackground
+        https://bugs.webkit.org/show_bug.cgi?id=185391
+        <rdar://problem/40035120>
+
+        Reviewed by Eric Carlson.
+
+        Throw some darker shade at this view.
+
+        * UIProcess/ios/WKSystemPreviewView.mm:
+        (-[WKSystemPreviewView web_initWithFrame:webView:]):
+
 2018-05-07  Don Olmstead  <don.olmstead@sony.com>
 
         [Win] Add missing methods to WebChromeClient

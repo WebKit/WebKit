@@ -61,14 +61,15 @@ SOFT_LINK_CLASS(QuickLook, QLPreviewController);
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
-    self.backgroundColor = [UIColor lightGrayColor];
+    UIColor *backgroundColor = [UIColor colorWithRed:(38. / 255) green:(38. / 255) blue:(38. / 255) alpha:1];
+    self.backgroundColor = backgroundColor;
 
     _webView = webView;
 
     UIScrollView *scrollView = webView.scrollView;
     [scrollView setMinimumZoomScale:1];
     [scrollView setMaximumZoomScale:1];
-    [scrollView setBackgroundColor:[UIColor lightGrayColor]];
+    [scrollView setBackgroundColor:backgroundColor];
 
     return self;
 }
