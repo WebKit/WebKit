@@ -1,3 +1,12 @@
+2018-05-07  Don Olmstead  <don.olmstead@sony.com>
+
+        [Win] Add missing methods to WebChromeClient
+        https://bugs.webkit.org/show_bug.cgi?id=185325
+
+        Reviewed by Brent Fulgham.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2018-05-07  Megan Gardner  <megan_gardner@apple.com>
 
         Allow Web Touch events to timeout

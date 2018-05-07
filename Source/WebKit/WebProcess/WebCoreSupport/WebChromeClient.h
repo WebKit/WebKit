@@ -211,7 +211,13 @@ private:
     bool adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags) final;
 
     void contentRuleListNotification(const WebCore::URL&, const HashSet<std::pair<String, String>>&) final;
-    
+
+#if PLATFORM(WIN)
+    void setLastSetCursorToCurrentCursor() final { }
+    void AXStartFrameLoad() final { }
+    void AXFinishFrameLoad() final { }
+#endif
+
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) const final;
 #endif
