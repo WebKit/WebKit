@@ -1,3 +1,12 @@
+2018-05-07  Don Olmstead  <don.olmstead@sony.com>
+
+        [WinCairo] Disable plugin api when building modern WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=185312
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsWin.cmake:
+
 2018-05-02  Valerie R Young  <valerie@bocoup.com>
 
         test262/Runner.pm: save summary to file
