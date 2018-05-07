@@ -504,10 +504,6 @@ bool LayoutContext::handleLayoutWithFrameFlatteningIfNeeded()
     if (!view().isInChildFrameWithFrameFlattening())
         return false;
     
-    if (!view().frameFlatteningViewSizeForMediaQueryIsSet()) {
-        LOG_WITH_STREAM(MediaQueries, stream << "FrameView " << this << " snapshotting size " <<  view().layoutSize() << " for media queries");
-        view().setFrameFlatteningViewSizeForMediaQuery();
-    }
     startLayoutAtMainFrameViewIfNeeded();
     auto* layoutRoot = subtreeLayoutRoot() ? subtreeLayoutRoot() : frame().document()->renderView();
     return !layoutRoot || !layoutRoot->needsLayout();

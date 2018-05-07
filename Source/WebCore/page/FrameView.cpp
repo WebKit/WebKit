@@ -5076,10 +5076,5 @@ bool FrameView::shouldPlaceBlockDirectionScrollbarOnLeft() const
 {
     return renderView() && renderView()->shouldPlaceBlockDirectionScrollbarOnLeft();
 }
-
-IntSize FrameView::layoutSizeForMediaQuery() const
-{
-    return m_frameFlatteningViewSizeForMediaQuery.value_or(ScrollView::layoutSize());
-}
-
+    
 } // namespace WebCore

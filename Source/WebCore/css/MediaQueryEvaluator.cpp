@@ -334,20 +334,22 @@ static bool orientationEvaluate(CSSValue* value, const CSSToLengthConversionData
     if (!view)
         return false;
 
-    auto viewSize = view->layoutSizeForMediaQuery();
+    auto width = view->layoutWidth();
+    auto height = view->layoutHeight();
+
     if (!is<CSSPrimitiveValue>(value)) {
         // Expression (orientation) evaluates to true if width and height >= 0.
-        return viewSize.height() >= 0 && viewSize.width() >= 0;
+        return height >= 0 && width >= 0;
     }
 
     auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
     bool result;
-    if (viewSize.width() > viewSize.height()) // Square viewport is portrait.
+    if (width > height) // Square viewport is portrait.
         result = keyword == CSSValueLandscape;
     else
         result = keyword == CSSValuePortrait;
 
-    LOG_WITH_STREAM(MediaQueries, stream << "  orientationEvaluate: view size " << viewSize.width() << "x" << viewSize.height() << " is " << value->cssText() << ": " << result);
+    LOG_WITH_STREAM(MediaQueries, stream << "  orientationEvaluate: view size " << width << "x" << height << " is " << value->cssText() << ": " << result);
     return result;
 }
 
@@ -360,9 +362,8 @@ static bool aspectRatioEvaluate(CSSValue* value, const CSSToLengthConversionData
     FrameView* view = frame.view();
     if (!view)
         return true;
-    auto viewSize = view->layoutSizeForMediaQuery();
-    bool result = compareAspectRatioValue(value, viewSize.width(), viewSize.height(), op);
-    LOG_WITH_STREAM(MediaQueries, stream << "  aspectRatioEvaluate: " << op << " " << aspectRatioValueAsString(value) << " actual view size " << viewSize << ": " << result);
+    bool result = compareAspectRatioValue(value, view->layoutWidth(), view->layoutHeight(), op);
+    LOG_WITH_STREAM(MediaQueries, stream << "  aspectRatioEvaluate: " << op << " " << aspectRatioValueAsString(value) << " actual view size " << view->layoutWidth() << "x" << view->layoutHeight() << " : " << result);
     return result;
 }
 
@@ -494,7 +495,7 @@ static bool heightEvaluate(CSSValue* value, const CSSToLengthConversionData& con
     FrameView* view = frame.view();
     if (!view)
         return false;
-    int height = view->layoutSizeForMediaQuery().height();
+    int height = view->layoutHeight();
     if (!value)
         return height;
     if (auto* renderView = frame.document()->renderView())
@@ -514,7 +515,7 @@ static bool widthEvaluate(CSSValue* value, const CSSToLengthConversionData& conv
     FrameView* view = frame.view();
     if (!view)
         return false;
-    int width = view->layoutSizeForMediaQuery().width();
+    int width = view->layoutWidth();
     if (!value)
         return width;
     if (auto* renderView = frame.document()->renderView())
