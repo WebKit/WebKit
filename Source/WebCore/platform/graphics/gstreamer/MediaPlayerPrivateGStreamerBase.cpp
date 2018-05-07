@@ -241,6 +241,9 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
 
 MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 {
+    // Flag the player as being destroyed, so triggerRepaint will ignore incoming samples.
+    m_destroying = true;
+
 #if ENABLE(ENCRYPTED_MEDIA)
     m_protectionCondition.notifyAll();
 #endif
@@ -259,7 +262,7 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
     if (m_volumeElement)
         g_signal_handlers_disconnect_matched(m_volumeElement.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 
-    // This will release the GStreamer thread from m_drawCondition if AC is disabled.
+    // This will release the GStreamer thread from m_drawCondition in non AC mode in case there's an ongoing triggerRepaint call.
     cancelRepaint();
 
     // The change to GST_STATE_NULL state is always synchronous. So after this gets executed we don't need to worry
@@ -789,6 +792,10 @@ void MediaPlayerPrivateGStreamerBase::repaint()
 
 void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
 {
+    // Do not try to process new frames if the player is being destroyed by the main thread.
+    if (m_destroying)
+        return;
+
     bool triggerResize;
     {
         WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
@@ -803,8 +810,6 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
 
     if (!m_renderingCanBeAccelerated) {
         LockHolder locker(m_drawMutex);
-        if (m_drawCancelled)
-            return;
         m_drawTimer.startOneShot(0_s);
         m_drawCondition.wait(m_drawMutex);
         return;
@@ -816,8 +821,6 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
 #else
     {
         LockHolder lock(m_drawMutex);
-        if (m_drawCancelled)
-            return;
         if (!m_platformLayerProxy->scheduleUpdateOnCompositorThread([this] { this->pushTextureToCompositor(); }))
             return;
         m_drawCondition.wait(m_drawMutex);
@@ -833,14 +836,16 @@ void MediaPlayerPrivateGStreamerBase::repaintCallback(MediaPlayerPrivateGStreame
 
 void MediaPlayerPrivateGStreamerBase::cancelRepaint()
 {
-    LockHolder locker(m_drawMutex);
-
+    // The goal of this function is to release the GStreamer thread from m_drawCondition in triggerRepaint() in non-AC case,
+    // to avoid a deadlock if the player gets paused while waiting for drawing (see https://bugs.webkit.org/show_bug.cgi?id=170003):
+    // the main thread is waiting for the GStreamer thread to pause, but the GStreamer thread is locked waiting for the
+    // main thread to draw. This deadlock doesn't happen when using AC because the sample is processed (not painted) in the compositor
+    // thread, so the main thread can request the pause and wait if the GStreamer thread is waiting for the compositor thread.
     if (!m_renderingCanBeAccelerated) {
         m_drawTimer.stop();
+        LockHolder locker(m_drawMutex);
+        m_drawCondition.notifyOne();
     }
-
-    m_drawCancelled = true;
-    m_drawCondition.notifyOne();
 }
 
 void MediaPlayerPrivateGStreamerBase::repaintCancelledCallback(MediaPlayerPrivateGStreamerBase* player)
