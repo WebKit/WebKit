@@ -232,7 +232,7 @@ struct ScratchBuffer {
         double pad; // Make sure m_buffer is double aligned.
     } u;
 #if CPU(MIPS) && (defined WTF_MIPS_ARCH_REV && WTF_MIPS_ARCH_REV == 2)
-    void* m_buffer[0] __attribute__((aligned(8)));
+    alignas(8) void* m_buffer[0];
 #else
     void* m_buffer[0];
 #endif

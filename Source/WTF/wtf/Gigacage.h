@@ -34,7 +34,7 @@
 #define GIGACAGE_BASE_PTRS_SIZE 8192
 
 extern "C" {
-extern WTF_EXPORTDATA char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE];
+alignas(GIGACAGE_BASE_PTRS_SIZE) extern WTF_EXPORTDATA char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE];
 }
 
 namespace Gigacage {
@@ -94,7 +94,7 @@ ALWAYS_INLINE void*& basePtr(BasePtrs& basePtrs, Kind kind)
 
 ALWAYS_INLINE BasePtrs& basePtrs()
 {
-    return *reinterpret_cast<BasePtrs*>(g_gigacageBasePtrs);
+    return *reinterpret_cast<BasePtrs*>(reinterpret_cast<void*>(g_gigacageBasePtrs));
 }
 
 ALWAYS_INLINE void*& basePtr(Kind kind)

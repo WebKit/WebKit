@@ -35,7 +35,7 @@ namespace WebCore {
 //   ALPHAX_Q ALPHAY_Q REMAPX_D REMAPY_D
 
 
-static short s_FELightingConstantsForNeon[] __attribute__((__aligned__(16))) = {
+static alignas(16) short s_FELightingConstantsForNeon[] = {
     // Alpha coefficients.
     -2, 1, 0, -1, 2, 1, 0, -1,
     0, -1, -2, -1, 0, 1, 2, 1,
