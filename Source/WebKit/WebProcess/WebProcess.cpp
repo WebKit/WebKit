@@ -757,7 +757,7 @@ void WebProcess::clearResourceCaches(ResourceCachesToClear resourceCachesToClear
     MemoryCache::singleton().evictResources();
 
     // Empty the cross-origin preflight cache.
-    CrossOriginPreflightResultCache::singleton().empty();
+    CrossOriginPreflightResultCache::singleton().clear();
 }
 
 static inline void addCaseFoldedCharacters(StringHasher& hasher, const String& string)
@@ -1288,7 +1288,7 @@ void WebProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDa
         PageCache::singleton().pruneToSizeNow(0, PruningReason::None);
         MemoryCache::singleton().evictResources(sessionID);
 
-        CrossOriginPreflightResultCache::singleton().empty();
+        CrossOriginPreflightResultCache::singleton().clear();
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {

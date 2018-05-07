@@ -223,7 +223,7 @@ HRESULT WebCache::empty()
     WebApplicationCache::storage().empty();
 
     // Empty the Cross-Origin Preflight cache
-    WebCore::CrossOriginPreflightResultCache::singleton().empty();
+    WebCore::CrossOriginPreflightResultCache::singleton().clear();
 
     return S_OK;
 }

@@ -118,7 +118,7 @@
     webApplicationCacheStorage().empty();
 
     // Empty the Cross-Origin Preflight cache
-    WebCore::CrossOriginPreflightResultCache::singleton().empty();
+    WebCore::CrossOriginPreflightResultCache::singleton().clear();
 }
 
 #if PLATFORM(IOS)

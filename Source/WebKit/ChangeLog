@@ -1,3 +1,14 @@
+2018-05-07  Daniel Bates  <dabates@apple.com>
+
+        Substitute CrossOriginPreflightResultCache::clear() for CrossOriginPreflightResultCache::empty()
+        https://bugs.webkit.org/show_bug.cgi?id=185170
+
+        Reviewed by Per Arne Vollan.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::clearResourceCaches):
+        (WebKit::WebProcess::deleteWebsiteData):
+
 2018-05-07  Brian Burg  <bburg@apple.com>
 
         Web Inspector: opt out of process swap on navigation if a Web Inspector frontend is connected

@@ -1,3 +1,13 @@
+2018-05-07  Daniel Bates  <dabates@apple.com>
+
+        Substitute CrossOriginPreflightResultCache::clear() for CrossOriginPreflightResultCache::empty()
+        https://bugs.webkit.org/show_bug.cgi?id=185170
+
+        Reviewed by Per Arne Vollan.
+
+        * WebCache.cpp:
+        (WebCache::empty):
+
 2018-04-27  Chris Dumez  <cdumez@apple.com>
 
         Use WindowProxy instead of DOMWindow in our IDL

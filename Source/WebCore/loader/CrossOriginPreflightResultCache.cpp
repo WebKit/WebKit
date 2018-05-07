@@ -145,7 +145,7 @@ bool CrossOriginPreflightResultCache::canSkipPreflight(const String& origin, con
     return false;
 }
 
-void CrossOriginPreflightResultCache::empty()
+void CrossOriginPreflightResultCache::clear()
 {
     ASSERT(isMainThread());
     m_preflightHashMap.clear();

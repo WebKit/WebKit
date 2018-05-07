@@ -1,3 +1,13 @@
+2018-05-07  Daniel Bates  <dabates@apple.com>
+
+        Substitute CrossOriginPreflightResultCache::clear() for CrossOriginPreflightResultCache::empty()
+        https://bugs.webkit.org/show_bug.cgi?id=185170
+
+        Reviewed by Per Arne Vollan.
+
+        * Misc/WebCache.mm:
+        (+[WebCache empty]):
+
 2018-05-04  Timothy Hatcher  <timothy@apple.com>
 
         Deprecate legacy WebView and friends

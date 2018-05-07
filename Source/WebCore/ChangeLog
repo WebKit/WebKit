@@ -1,3 +1,22 @@
+2018-05-07  Daniel Bates  <dabates@apple.com>
+
+        Substitute CrossOriginPreflightResultCache::clear() for CrossOriginPreflightResultCache::empty()
+        https://bugs.webkit.org/show_bug.cgi?id=185170
+
+        Reviewed by Per Arne Vollan.
+
+        Rename CrossOriginPreflightResultCache::empty() to CrossOriginPreflightResultCache::clear() make
+        it consistent with the terminology we use in WebKit to signify a function that clears a collection.
+        A member function named "empty" is expected to return an instance of a class in its "empty state".
+        For example, StringImpl::empty() returns a StringImpl instance that represents the empty string.
+        However CrossOriginPreflightResultCache::empty() clears out the cache in-place. We should rename
+        this function to better describe its purpose.
+
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCache::clear):
+        (WebCore::CrossOriginPreflightResultCache::empty): Deleted.
+        * loader/CrossOriginPreflightResultCache.h:
+
 2018-05-06  Dean Jackson  <dino@apple.com>
 
         WebGL: Reset simulated values after validation fails
