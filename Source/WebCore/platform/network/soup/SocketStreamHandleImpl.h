@@ -50,6 +50,8 @@ public:
     static Ref<SocketStreamHandleImpl> create(const URL&, SocketStreamHandleClient&, PAL::SessionID, const String&, SourceApplicationAuditToken&&);
     virtual ~SocketStreamHandleImpl();
 
+    const URL& url() const { return m_url; }
+
     void platformSend(const char* data, size_t length, Function<void(bool)>&&) final;
     void platformClose() final;
 private:

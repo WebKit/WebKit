@@ -50,35 +50,36 @@
 
 namespace WebCore {
 
-static gboolean wssConnectionAcceptCertificateCallback(GTlsConnection*, GTlsCertificate*, GTlsCertificateFlags)
+static gboolean acceptCertificateCallback(GTlsConnection*, GTlsCertificate* certificate, GTlsCertificateFlags errors, SocketStreamHandleImpl* handle)
 {
-    return TRUE;
+    // FIXME: Using DeprecatedGlobalSettings from here is a layering violation.
+    if (DeprecatedGlobalSettings::allowsAnySSLCertificate())
+        return TRUE;
+
+    return !SoupNetworkSession::checkTLSErrors(handle->url(), certificate, errors);
 }
 
 #if SOUP_CHECK_VERSION(2, 61, 90)
-static void wssSocketClientEventCallback(SoupSession*, GSocketClientEvent event, GIOStream* connection)
+static void connectProgressCallback(SoupSession*, GSocketClientEvent event, GIOStream* connection, SocketStreamHandleImpl* handle)
 {
     if (event != G_SOCKET_CLIENT_TLS_HANDSHAKING)
         return;
 
-    g_signal_connect(connection, "accept-certificate", G_CALLBACK(wssConnectionAcceptCertificateCallback), nullptr);
+    g_signal_connect(connection, "accept-certificate", G_CALLBACK(acceptCertificateCallback), handle);
 }
 #else
-static void wssSocketClientEventCallback(GSocketClient*, GSocketClientEvent event, GSocketConnectable*, GIOStream* connection)
+static void socketClientEventCallback(GSocketClient*, GSocketClientEvent event, GSocketConnectable*, GIOStream* connection, SocketStreamHandleImpl* handle)
 {
     if (event != G_SOCKET_CLIENT_TLS_HANDSHAKING)
         return;
 
-    g_signal_connect(connection, "accept-certificate", G_CALLBACK(wssConnectionAcceptCertificateCallback), nullptr);
+    g_signal_connect(connection, "accept-certificate", G_CALLBACK(acceptCertificateCallback), handle);
 }
 #endif
 
 Ref<SocketStreamHandleImpl> SocketStreamHandleImpl::create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String&, SourceApplicationAuditToken&&)
 {
     Ref<SocketStreamHandleImpl> socket = adoptRef(*new SocketStreamHandleImpl(url, client));
-
-    // FIXME: Using DeprecatedGlobalSettings from here is a layering violation.
-    bool allowsAnySSLCertificate = url.protocolIs("wss") && DeprecatedGlobalSettings::allowsAnySSLCertificate();
 
 #if SOUP_CHECK_VERSION(2, 61, 90)
     auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID);
@@ -88,7 +89,7 @@ Ref<SocketStreamHandleImpl> SocketStreamHandleImpl::create(const URL& url, Socke
     auto uri = url.createSoupURI();
     Ref<SocketStreamHandle> protectedSocketStreamHandle = socket.copyRef();
     soup_session_connect_async(networkStorageSession->getOrCreateSoupNetworkSession().soupSession(), uri.get(), socket->m_cancellable.get(),
-        allowsAnySSLCertificate ? reinterpret_cast<SoupSessionConnectProgressCallback>(wssSocketClientEventCallback) : nullptr,
+        url.protocolIs("wss") ? reinterpret_cast<SoupSessionConnectProgressCallback>(connectProgressCallback) : nullptr,
         reinterpret_cast<GAsyncReadyCallback>(connectedCallback), &protectedSocketStreamHandle.leakRef());
 #else
     UNUSED_PARAM(sessionID);
@@ -96,8 +97,7 @@ Ref<SocketStreamHandleImpl> SocketStreamHandleImpl::create(const URL& url, Socke
     GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
     if (url.protocolIs("wss")) {
         g_socket_client_set_tls(socketClient.get(), TRUE);
-        if (allowsAnySSLCertificate)
-            g_signal_connect(socketClient.get(), "event", G_CALLBACK(wssSocketClientEventCallback), nullptr);
+        g_signal_connect(socketClient.get(), "event", G_CALLBACK(socketClientEventCallback), socket.ptr());
     }
     Ref<SocketStreamHandle> protectedSocketStreamHandle = socket.copyRef();
     g_socket_client_connect_to_host_async(socketClient.get(), url.host().utf8().data(), port, socket->m_cancellable.get(),
