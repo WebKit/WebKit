@@ -4,11 +4,11 @@ This test checks if frameElement is accessible from the same or cross origin ifr
  
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 [object HTMLIFrameElement]
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame2-->'
 --------
 null

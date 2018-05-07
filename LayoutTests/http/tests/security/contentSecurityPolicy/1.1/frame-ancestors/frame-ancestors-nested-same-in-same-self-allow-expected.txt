@@ -3,13 +3,13 @@ A 'frame-ancestors' CSP directive with a value 'same' should block render in sam
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Testing a same-origin child with a policy of "'self'" nested in a same-origin parent.
 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+Frame: '<!--frame2-->'
 --------
 This is an IFrame sending a Content Security Policy header containing "frame-ancestors 'self'".

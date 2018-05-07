@@ -1,6 +1,6 @@
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS document.domain is .

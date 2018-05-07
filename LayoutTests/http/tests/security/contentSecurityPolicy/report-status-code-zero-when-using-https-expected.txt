@@ -4,7 +4,7 @@ This tests that the status-code is 0 in the Content Security Policy violation re
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 CSP report received:
 CONTENT_TYPE: application/csp-report

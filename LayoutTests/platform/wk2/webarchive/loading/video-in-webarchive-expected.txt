@@ -7,11 +7,8 @@ main frame - didStartProvisionalLoadForFrame
 main frame - didCancelClientRedirectForFrame
 main frame - didCommitLoadForFrame
 main frame - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 main frame - didHandleOnloadEventsForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFailLoadWithError
+frame "<!--frame1-->" - didFailProvisionalLoadWithError
 main frame - didFinishLoadForFrame
 

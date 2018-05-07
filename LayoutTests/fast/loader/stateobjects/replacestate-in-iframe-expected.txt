@@ -1,7 +1,7 @@
 main frame - has 1 onunload handler(s)
-frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)
+frame "<!--frame1-->" - has 1 onunload handler(s)
 ALERT: Navigating back...
 main frame - has 1 onunload handler(s)
-frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)
+frame "<!--frame1-->" - has 1 onunload handler(s)
 ALERT: onpopstate
 PASS

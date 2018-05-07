@@ -1,17 +1,17 @@
-frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishLoadForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
 main frame - didFinishLoadForFrame
 This test loads a secure iframe that loads an insecure image. We should *not* trigger a mixed content block even though the child frame has CSP directive block-all-mixed-content because the insecure image is upgraded to a secure image as the child frame has CSP directive upgrade-insecure-requests.
 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 
 PASS did load image.

@@ -7,21 +7,21 @@ If not running under DRT, enter any credentials when asked.
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Resource loaded with HTTP authentication username '' and password ''
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame2-->'
 --------
 Resource loaded with HTTP authentication username '' and password ''
 
 --------
-Frame: '<!--framePath //<!--frame2-->-->'
+Frame: '<!--frame3-->'
 --------
 Resource loaded with HTTP authentication username '' and password ''
 
 --------
-Frame: '<!--framePath //<!--frame3-->-->'
+Frame: '<!--frame4-->'
 --------
 Resource loaded with HTTP authentication username '' and password ''

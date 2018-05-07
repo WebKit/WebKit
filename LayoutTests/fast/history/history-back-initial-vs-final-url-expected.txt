@@ -11,12 +11,12 @@ Final URL loaded.
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 final page contents
 
 ============== Back Forward List ==============
 curr->  (file test):fast/history/history-back-initial-vs-final-url.html  **nav target**
-            (file test):fast/history/resources/frame-final-url.html (in frame "<!--framePath //<!--frame0-->-->")
+            (file test):fast/history/resources/frame-final-url.html (in frame "<!--frame1-->")
         data:text/html,<script>alert("Going back.");history.back();</script>  **nav target**
 ===============================================

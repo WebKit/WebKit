@@ -7,7 +7,7 @@ PASS did not execute script.
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 CSP report received:
 CONTENT_TYPE: application/csp-report

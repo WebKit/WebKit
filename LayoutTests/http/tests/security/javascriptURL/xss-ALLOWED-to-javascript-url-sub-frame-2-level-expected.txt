@@ -11,7 +11,7 @@ Frame: 'aFrame'
 Inner iframe.
 
 --------
-Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS: Cross frame access to a javascript: URL 2 levels deep was allowed!
 

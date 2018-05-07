@@ -6,6 +6,6 @@ This test passes if the application cache does not load while in private browsin
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 

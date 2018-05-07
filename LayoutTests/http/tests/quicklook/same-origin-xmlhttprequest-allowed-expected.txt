@@ -4,6 +4,6 @@ CONSOLE MESSAGE: line 1: PASS: XMLHttpRequest allowed
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Run test

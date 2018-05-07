@@ -3,7 +3,7 @@ This test navigates a frame by clicking on a link with rel=noreferrer. It passes
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 HTTP Referer header is empty
 Referrer is empty

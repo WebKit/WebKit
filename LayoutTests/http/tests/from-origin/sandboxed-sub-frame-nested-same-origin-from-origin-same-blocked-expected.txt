@@ -10,13 +10,13 @@ TEST COMPLETE
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 The outer iframe, loading a nested 127.0.0.1 iframe.
 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+Frame: '<!--frame2-->'
 --------
 

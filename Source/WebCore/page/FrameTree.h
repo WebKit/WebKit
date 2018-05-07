@@ -50,7 +50,6 @@ public:
     WEBCORE_EXPORT void setName(const AtomicString&);
     WEBCORE_EXPORT void clearName();
     WEBCORE_EXPORT Frame* parent() const;
-    void setParent(Frame* parent) { m_parent = parent; }
     
     Frame* nextSibling() const { return m_nextSibling.get(); }
     Frame* previousSibling() const { return m_previousSibling; }
@@ -78,16 +77,13 @@ public:
     Frame* child(const AtomicString& name) const;
     WEBCORE_EXPORT Frame* find(const AtomicString& name) const;
     WEBCORE_EXPORT unsigned childCount() const;
-
-    AtomicString uniqueChildName(const AtomicString& requestedName) const;
-
     WEBCORE_EXPORT Frame& top() const;
 
     WEBCORE_EXPORT Frame* scopedChild(unsigned index) const;
     WEBCORE_EXPORT Frame* scopedChild(const AtomicString& name) const;
     unsigned scopedChildCount() const;
 
-    unsigned indexInParent() const;
+    void resetFrameIdentifiers() { m_frameIDGenerator = 0; }
 
 private:
     Frame* deepFirstChild() const;
@@ -97,6 +93,9 @@ private:
     Frame* scopedChild(unsigned index, TreeScope*) const;
     Frame* scopedChild(const AtomicString& name, TreeScope*) const;
     unsigned scopedChildCount(TreeScope*) const;
+
+    AtomicString uniqueChildName(const AtomicString& requestedName) const;
+    AtomicString generateUniqueName() const;
 
     Frame& m_thisFrame;
 
@@ -109,6 +108,7 @@ private:
     RefPtr<Frame> m_firstChild;
     Frame* m_lastChild;
     mutable unsigned m_scopedChildCount;
+    mutable uint64_t m_frameIDGenerator { 0 };
 };
 
 } // namespace WebCore

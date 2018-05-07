@@ -5,11 +5,11 @@ Loads an iframe (a) which loads an iframe (b) which in turns tries to load an ex
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+Frame: '<!--frame2-->'
 --------
 PASS

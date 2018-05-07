@@ -5,12 +5,12 @@ This test verifies that loading a cross-origin iframe is blocked when created by
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Run test
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+Frame: '<!--frame2-->'
 --------
 

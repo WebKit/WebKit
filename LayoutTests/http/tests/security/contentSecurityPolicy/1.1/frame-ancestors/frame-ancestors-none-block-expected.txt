@@ -4,6 +4,6 @@ A 'frame-ancestors' CSP directive with a value 'none' should block rendering. Th
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 

@@ -6,7 +6,7 @@ SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessin
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 
 ----- tests for putting window.history and its properties -----

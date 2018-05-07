@@ -5,11 +5,11 @@ Code injected into window:
  
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 This page doesn't do anything special (except signal that it has finished loading).
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame2-->'
 --------
 SUCCESS: Window remained in original SecurityOrigin.

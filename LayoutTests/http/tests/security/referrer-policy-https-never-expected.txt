@@ -3,7 +3,7 @@ This test checks the never referrer policy when navigating from a secure URL to 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 HTTP Referer header is empty
 Referrer is empty

@@ -4,6 +4,6 @@ A 'frame-ancestors' CSP directive with a URL which doesn't match this origin sho
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 

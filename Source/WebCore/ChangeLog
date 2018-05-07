@@ -1,3 +1,32 @@
+2018-05-07  Chris Dumez  <cdumez@apple.com>
+
+        ASSERT(!childItemWithTarget(child->target())) is hit in HistoryItem::addChildItem()
+        https://bugs.webkit.org/show_bug.cgi?id=185322
+
+        Reviewed by Geoff Garen.
+
+        We generate unique names for Frame to be used in HistoryItem. Those names not only
+        need to be unique, they also need to be repeatable to avoid layout tests flakiness
+        and for things like restoring form state from a HistoryItem.
+
+        The previously generated frame names were relying on the Frame's index among a
+        parent Frame's children. The issue was that we could end up with duplicate names
+        because one could insert a Frame *before* an existing one. This is because the code
+        would not take care of updating existing Frames' unique name on frame tree mutation.
+
+        Updating frame tree names on mutation would be inefficient and is also not necessary.
+        The approach chosen in this patch is to stop using the Frame's index and instead rely
+        on an increasing counter stored on the top-frame's FrameTree. To make the names
+        repeatable, we reset the counter on page navigation.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument):
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::uniqueChildName const):
+        (WebCore::FrameTree::generateUniqueName const):
+        * page/FrameTree.h:
+        (WebCore::FrameTree::resetFrameIdentifiers):
+
 2018-05-07  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [EME][GStreamer] Fix wrong subsample parsing on r227067

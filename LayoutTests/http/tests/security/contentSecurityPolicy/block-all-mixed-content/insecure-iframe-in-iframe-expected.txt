@@ -1,25 +1,25 @@
-frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
-frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+frame "<!--frame2-->" - didStartProvisionalLoadForFrame
 CONSOLE MESSAGE: Blocked mixed content http://127.0.0.1:8000/security/contentSecurityPolicy/block-all-mixed-content/resources/fail.html because 'block-all-mixed-content' appears in the Content Security Policy.
-frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - didFailProvisionalLoadWithError
-frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
+frame "<!--frame2-->" - didFailProvisionalLoadWithError
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishLoadForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
 main frame - didFinishLoadForFrame
 This test loads a secure iframe that loads an insecure iframe. We should trigger a mixed content block because the child frame has CSP directive block-all-mixed-content.
 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+Frame: '<!--frame2-->'
 --------
 

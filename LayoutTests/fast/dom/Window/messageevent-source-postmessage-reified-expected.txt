@@ -21,7 +21,7 @@ TEST COMPLETE
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 * Child received message 1 from parent
 PASS messageEvent.source is parent

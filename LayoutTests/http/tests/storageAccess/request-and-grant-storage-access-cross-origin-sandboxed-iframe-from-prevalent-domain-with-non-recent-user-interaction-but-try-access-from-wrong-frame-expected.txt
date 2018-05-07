@@ -15,7 +15,7 @@ Frame: 'theIframe'
 
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame1-->'
 --------
 Should receive first-party cookie.
 Received cookie named 'firstPartyCookie'.
@@ -23,7 +23,7 @@ Did not receive cookie named 'partitionedCookie'.
 Client-side document.cookie: firstPartyCookie=value
 
 --------
-Frame: '<!--framePath //<!--frame2-->-->'
+Frame: '<!--frame2-->'
 --------
 Should not receive cookies.
 Did not receive cookie named 'firstPartyCookie'.
@@ -31,13 +31,13 @@ Did not receive cookie named 'partitionedCookie'.
 Client-side document.cookie:
 
 --------
-Frame: '<!--framePath //<!--frame3-->-->'
+Frame: '<!--frame3-->'
 --------
 
 
 
 --------
-Frame: '<!--framePath //<!--frame4-->-->'
+Frame: '<!--frame4-->'
 --------
 Should receive partitioned cookie.
 Did not receive cookie named 'firstPartyCookie'.
@@ -45,7 +45,7 @@ Received cookie named 'partitionedCookie'.
 Client-side document.cookie: partitionedCookie=value
 
 --------
-Frame: '<!--framePath //<!--frame5-->-->'
+Frame: '<!--frame5-->'
 --------
 Should receive partitioned cookie.
 Did not receive cookie named 'firstPartyCookie'.

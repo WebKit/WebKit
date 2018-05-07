@@ -1,30 +1,30 @@
 main frame - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - willPerformClientRedirectToURL: resources/fail.html 
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
+frame "<!--frame1-->" - willPerformClientRedirectToURL: resources/fail.html 
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didCancelClientRedirectForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFailProvisionalLoadWithError
-frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - willPerformClientRedirectToURL: x-apple-content-filter://mock-unblock 
-frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didCancelClientRedirectForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didCancelClientRedirectForFrame
+frame "<!--frame1-->" - didFailProvisionalLoadWithError
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - willPerformClientRedirectToURL: x-apple-content-filter://mock-unblock 
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
+frame "<!--frame1-->" - didCancelClientRedirectForFrame
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS
 
 ============== Back Forward List ==============
 curr->  (file test):contentfiltering/block-after-will-send-request-then-deny-unblock.html  **nav target**
-            about:blank (in frame "<!--framePath //<!--frame0-->-->")
+            about:blank (in frame "<!--frame1-->")
 ===============================================

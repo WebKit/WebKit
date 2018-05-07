@@ -3,7 +3,7 @@ This test checks the referrer policy is obeyed along the redirect chain. The tes
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 HTTP Referer header is http://127.0.0.1:8000/
 Referrer is http://127.0.0.1:8000/

@@ -1,4 +1,4 @@
-frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - has 1 onunload handler(s)
+frame "<!--frame2-->" - has 1 onunload handler(s)
 ALERT: Subframe onload
 ALERT: Subframe onpageshow
 CONSOLE MESSAGE: line 16: Use of window.alert is not allowed while unloading a page.

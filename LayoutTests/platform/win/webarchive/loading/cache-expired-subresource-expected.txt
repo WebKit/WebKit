@@ -1,19 +1,19 @@
 main frame - didStartProvisionalLoadForFrame
 main frame - didCommitLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 resources/cache-expired-subresource.webarchive - willSendRequest <NSURLRequest URL resources/cache-expired-subresource.webarchive, main document URL cache-expired-subresource.html, http method GET> redirectResponse (null)
 main frame - didFinishDocumentLoadForFrame
 cache-expired-subresource.html - didFinishLoading
 resources/cache-expired-subresource.webarchive - didReceiveResponse <NSURLResponse resources/cache-expired-subresource.webarchive, http status code 0>
-frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
 http://localhost/pink-bullet.png - willSendRequest <NSURLRequest URL http://localhost/pink-bullet.png, main document URL cache-expired-subresource.html, http method GET> redirectResponse (null)
-frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
 resources/cache-expired-subresource.webarchive - didFinishLoading
 http://localhost/pink-bullet.png - didReceiveResponse <NSURLResponse http://localhost/test.php, http status code 200>
 http://localhost/pink-bullet.png - didFinishLoading
-frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishLoadForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
 main frame - didFinishLoadForFrame
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600

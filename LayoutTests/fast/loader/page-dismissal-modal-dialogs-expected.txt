@@ -1,4 +1,4 @@
-frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)
+frame "<!--frame1-->" - has 1 onunload handler(s)
 CONSOLE MESSAGE: line 8: Use of window.alert is not allowed while unloading a page.
 CONSOLE MESSAGE: line 9: Use of window.confirm is not allowed while unloading a page.
 CONSOLE MESSAGE: line 10: Use of window.prompt is not allowed while unloading a page.

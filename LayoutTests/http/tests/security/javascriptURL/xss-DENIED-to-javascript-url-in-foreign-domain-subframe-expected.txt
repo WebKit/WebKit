@@ -6,7 +6,7 @@ PASS: Cross frame access to a javascript: URL embed in a frame on a foreign doma
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Inner iframe on a foreign domain.
 

@@ -8,6 +8,6 @@ The frame below should not load, and a console message should be generated that 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 

@@ -91,7 +91,7 @@ CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhtt
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Check that exact matching is used when comparing a request's originating url and the value provided by Access-Control-Allow-Origin.
 

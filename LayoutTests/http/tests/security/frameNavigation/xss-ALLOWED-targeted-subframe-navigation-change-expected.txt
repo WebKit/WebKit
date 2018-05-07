@@ -5,7 +5,7 @@ This tests that documents can navigate the location of any of it's sub-frames re
   Perform Test
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 localhost
 

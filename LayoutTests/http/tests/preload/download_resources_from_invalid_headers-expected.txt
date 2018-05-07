@@ -3,7 +3,7 @@ CONSOLE MESSAGE: <link rel=preload> must have a valid `as` value
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS internals.isPreloaded('../resources/dummy.js'); is true
 PASS internals.isPreloaded('../×ž×©××‘×™×/dummy.css'); is false

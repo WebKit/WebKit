@@ -9,6 +9,6 @@ The frame below should not load, proving that 'sameorigin, sameorigin' === 'same
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 

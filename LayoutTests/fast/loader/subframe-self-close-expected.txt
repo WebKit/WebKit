@@ -4,7 +4,7 @@ That self.close() call should not close this window.
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 This subframe calls "self.close()" as it's very first action.
 That self.close() call should not close the window.

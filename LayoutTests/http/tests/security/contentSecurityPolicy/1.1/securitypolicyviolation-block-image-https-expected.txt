@@ -2,7 +2,7 @@ CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/resources/abe.pn
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Check that a SecurityPolicyViolationEvent is fired upon blocking an image.
 

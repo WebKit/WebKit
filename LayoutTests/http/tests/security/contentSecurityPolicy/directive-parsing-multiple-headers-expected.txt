@@ -5,6 +5,6 @@ This script should not execute even through the second CSP header would allow it
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS

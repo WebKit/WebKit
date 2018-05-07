@@ -1,4 +1,4 @@
-frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)
+frame "<!--frame1-->" - has 1 onunload handler(s)
 Test for bug 11450 REGRESSION: XMLHttpRequest::didFinishLoading() should immediately return if the request has already been aborted
 
 If a frame has an active XMLHttpRequest that is still receiving data, and that frame is destroyed

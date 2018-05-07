@@ -1,7 +1,7 @@
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Tests that Same-Site cookies for 127.0.0.1 are not sent with a request initiated from a iframe with a different origin.
 

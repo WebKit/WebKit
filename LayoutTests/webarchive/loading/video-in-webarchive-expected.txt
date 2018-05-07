@@ -6,12 +6,9 @@ main frame - didFinishLoadForFrame
 main frame - didStartProvisionalLoadForFrame
 main frame - didCancelClientRedirectForFrame
 main frame - didCommitLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFailLoadWithError
+frame "<!--frame1-->" - didFailProvisionalLoadWithError
 main frame - didFinishLoadForFrame
 

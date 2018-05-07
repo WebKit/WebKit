@@ -1,3 +1,26 @@
+2018-05-07  Chris Dumez  <cdumez@apple.com>
+
+        ASSERT(!childItemWithTarget(child->target())) is hit in HistoryItem::addChildItem()
+        https://bugs.webkit.org/show_bug.cgi?id=185322
+
+        Reviewed by Geoff Garen.
+
+        Rebaseline layout tests due to frame name changes.
+
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/001-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/003-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation_unload_data_url-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation_unload_same_origin-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/unloading-documents/001-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/unloading-documents/002-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/unloading-documents/003-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/unloading-documents/004-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/unloading-documents/005-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/unloading-documents/unload/003-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/unloading-documents/unload/004-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/unloading-documents/unload/007-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/unloading-documents/unload/009-expected.txt:
+
 2018-05-07  Ms2ger  <Ms2ger@igalia.com>
 
         Support negative sw/sh values in createImageBitmap().

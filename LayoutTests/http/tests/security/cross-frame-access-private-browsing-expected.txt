@@ -5,6 +5,6 @@ Attempting to violate the same-origin policy with private browsing enabled.  If 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Inner iframe.

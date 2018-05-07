@@ -12,7 +12,7 @@ TEST COMPLETE
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS window.openDatabase('SandboxedIframeStorageDisallowed', '1.0', '', 1) threw exception SecurityError: The operation is insecure..
 PASS window.localStorage threw exception SecurityError: The operation is insecure..
@@ -20,7 +20,7 @@ PASS window.sessionStorage threw exception SecurityError: The operation is insec
 
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame2-->'
 --------
 PASS window.openDatabase('SandboxedIframeStorageAllowed', '1.0', '', 1) != null is true
 PASS window.localStorage != null is true

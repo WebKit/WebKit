@@ -4,6 +4,6 @@ CONSOLE MESSAGE: line 38: Unsafe JavaScript attempt to initiate navigation for f
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Run test

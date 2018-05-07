@@ -7,6 +7,6 @@ The frame below should load, and a console message should be generated that note
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS: This text should show up.

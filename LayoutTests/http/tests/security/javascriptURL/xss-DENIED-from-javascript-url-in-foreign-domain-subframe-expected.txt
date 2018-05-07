@@ -5,7 +5,7 @@ The scenario for this test is that you have an iframe with content from a foreig
 Pass: Cross frame access from a javascript: URL on a different domain was denied.
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Inner iframe on a foreign domain.
 

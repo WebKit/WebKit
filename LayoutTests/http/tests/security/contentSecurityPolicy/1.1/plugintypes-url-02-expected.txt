@@ -6,16 +6,16 @@ This tests our handling of non-`data:` URLs, given a `plugin-types` CSP directiv
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame2-->'
 --------
 
 
 --------
-Frame: '<!--framePath //<!--frame2-->-->'
+Frame: '<!--frame3-->'
 --------
 

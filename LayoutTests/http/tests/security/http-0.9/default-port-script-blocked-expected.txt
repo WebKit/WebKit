@@ -5,6 +5,6 @@ This tests that JavaScript is blocked in a HTTP 0.9 response served over port 80
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 This content should be visible, but script should not execute.

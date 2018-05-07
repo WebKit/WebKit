@@ -5,6 +5,6 @@ Directives starting with an invalid character should be logged and ignored.
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS

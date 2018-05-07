@@ -6,6 +6,6 @@ The frame below should load, proving that 'sameorigin, sameorigin' === 'sameorig
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 This page should load iff it's same origin with it's parent.

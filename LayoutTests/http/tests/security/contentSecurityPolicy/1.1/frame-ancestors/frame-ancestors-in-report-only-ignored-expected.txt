@@ -4,6 +4,6 @@ Tests that loading a page in an <iframe> with a report-only Content Security Pol
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS

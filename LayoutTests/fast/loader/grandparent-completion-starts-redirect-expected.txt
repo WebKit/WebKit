@@ -5,12 +5,12 @@ If the explanatory text on the grandchild frame is still there, the test has fai
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 This is the parent of a frame that redirects itself.
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+Frame: '<!--frame2-->'
 --------
 

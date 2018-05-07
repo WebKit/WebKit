@@ -10,13 +10,13 @@ TEST COMPLETE
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Testing a cross-origin child with a policy of "http://127.0.0.1:8000 http://localhost:8080" nested in a cross-origin parent.
 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+Frame: '<!--frame2-->'
 --------
 

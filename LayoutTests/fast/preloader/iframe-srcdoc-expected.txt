@@ -2,6 +2,6 @@ CONSOLE MESSAGE: line 1: PASS
 This test has to be run as a layout test in order to see if resources were loaded and the test passed. 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
  <script src=resources/script1.js></script>

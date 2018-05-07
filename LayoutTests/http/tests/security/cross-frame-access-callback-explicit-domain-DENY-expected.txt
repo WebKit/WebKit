@@ -4,6 +4,6 @@ Test that a child frame can't define a function and the use it to access parent 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS: canGet('parentWindow.location.href') should be 'false' and is.

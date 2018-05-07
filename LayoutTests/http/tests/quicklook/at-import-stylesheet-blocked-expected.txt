@@ -3,6 +3,6 @@ CONSOLE MESSAGE: Refused to load data:text/css,body::after { content: 'FAIL'; } 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Run test

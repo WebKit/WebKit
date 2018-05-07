@@ -6,16 +6,16 @@ Test that directives that predate the CSP 1.0 standard generate proper warnings 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame2-->'
 --------
 PASS
 
 --------
-Frame: '<!--framePath //<!--frame2-->-->'
+Frame: '<!--frame3-->'
 --------
 PASS

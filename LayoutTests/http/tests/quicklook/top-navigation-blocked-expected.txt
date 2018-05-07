@@ -5,6 +5,6 @@ CONSOLE MESSAGE: SecurityError: The operation is insecure.
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Run test

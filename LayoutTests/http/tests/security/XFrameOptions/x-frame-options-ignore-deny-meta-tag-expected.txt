@@ -8,6 +8,6 @@ There should be content in the iframe below
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS: This should be displayed.

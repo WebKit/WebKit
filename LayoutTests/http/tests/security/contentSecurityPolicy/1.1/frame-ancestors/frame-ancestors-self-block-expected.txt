@@ -4,6 +4,6 @@ A 'frame-ancestors' CSP directive with a value 'self' should allow rendering. Th
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 

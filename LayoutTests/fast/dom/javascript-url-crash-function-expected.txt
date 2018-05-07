@@ -3,6 +3,6 @@ This page tests whether loading a javascript: URL into an iframe while the ifram
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS: You didn't crash.

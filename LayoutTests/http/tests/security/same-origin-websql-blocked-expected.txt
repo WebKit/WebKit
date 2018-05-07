@@ -3,6 +3,6 @@ This iframe should return a security error:
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 SecurityError

@@ -3,7 +3,7 @@ Tests that navigator.geolocation.getCurrentPosition() returns error POSITION_UNA
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS error.code is error.POSITION_UNAVAILABLE.
 PASS error.message is "Origin does not have permission to use Geolocation service".

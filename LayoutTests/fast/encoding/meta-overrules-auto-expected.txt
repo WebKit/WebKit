@@ -2,6 +2,6 @@ This iframe should use UTF-8 because of its meta tag even in spite of this test 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 UTF-8

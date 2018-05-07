@@ -8,14 +8,14 @@ PASS escape(window.name) is "left"
 
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS escape(window.frameElement.name) is ""
 PASS escape(window.name) is ""
 
 
 --------
-Frame: '<!--framePath //<!--frame2-->-->'
+Frame: '<!--frame2-->'
 --------
 PASS escape(window.frameElement.name) is "_blank"
 PASS escape(window.name) is "_blank"

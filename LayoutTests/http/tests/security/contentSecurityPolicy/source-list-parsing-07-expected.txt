@@ -20,46 +20,46 @@ Invalid source expressions should log a console warning, and be ignored.
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame2-->'
 --------
 PASS
 
 --------
-Frame: '<!--framePath //<!--frame2-->-->'
+Frame: '<!--frame3-->'
 --------
 PASS
 
 --------
-Frame: '<!--framePath //<!--frame3-->-->'
+Frame: '<!--frame4-->'
 --------
 PASS
 
 --------
-Frame: '<!--framePath //<!--frame4-->-->'
+Frame: '<!--frame5-->'
 --------
 PASS
 
 --------
-Frame: '<!--framePath //<!--frame5-->-->'
+Frame: '<!--frame6-->'
 --------
 PASS
 
 --------
-Frame: '<!--framePath //<!--frame6-->-->'
+Frame: '<!--frame7-->'
 --------
 PASS
 
 --------
-Frame: '<!--framePath //<!--frame7-->-->'
+Frame: '<!--frame8-->'
 --------
 PASS
 
 --------
-Frame: '<!--framePath //<!--frame8-->-->'
+Frame: '<!--frame9-->'
 --------
 PASS

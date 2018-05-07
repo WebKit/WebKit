@@ -3,7 +3,7 @@ This test verifies that sandboxed iframe has XmlHttpRequest access to the server
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS: Sandboxed iframe XHR access allowed.
 

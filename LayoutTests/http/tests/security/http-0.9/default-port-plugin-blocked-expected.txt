@@ -4,6 +4,6 @@ This tests that loading of a plugin is blocked in a HTTP 0.9 response served ove
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Plugin did not load.

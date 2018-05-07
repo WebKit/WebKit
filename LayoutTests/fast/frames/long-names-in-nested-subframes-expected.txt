@@ -11,21 +11,21 @@ Frame: 'and_this_name_is_long_too_so_we_would_get_pretty_long_names'
    
 
 --------
-Frame: '<!--framePath //<!--frame0-->/<!--frame0-->/<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->/<!--frame0-->/<!--frame1-->-->'
+Frame: '<!--frame2-->'
 --------
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->/<!--frame0-->/<!--frame2-->-->'
+Frame: '<!--frame3-->'
 --------
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->/<!--frame0-->/<!--frame3-->-->'
+Frame: '<!--frame4-->'
 --------
 

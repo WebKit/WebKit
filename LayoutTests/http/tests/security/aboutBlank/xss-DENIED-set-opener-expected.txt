@@ -9,11 +9,11 @@ setTimeout(function() { if (window.testRunner) testRunner.globalFlag = true; }, 
  
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 This page doesn't do anything special.
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame2-->'
 --------
 SUCCESS: Window remained in original SecurityOrigin.

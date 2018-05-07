@@ -8,7 +8,7 @@ URL: https://127.0.0.1:8443/ssl/media-stream/get-user-media-different-host.html
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 URL: https://localhost:8443/ssl/media-stream/resources/get-user-media-frame.html?fail;1
 

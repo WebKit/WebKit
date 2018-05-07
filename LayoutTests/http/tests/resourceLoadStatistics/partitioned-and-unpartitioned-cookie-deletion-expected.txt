@@ -9,7 +9,7 @@ TEST COMPLETE
   
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Should receive no cookies.
 Did not receive cookie named 'firstPartyCookie'.
@@ -17,13 +17,13 @@ Did not receive cookie named 'thirdPartyCookie'.
 Client-side document.cookie:
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame2-->'
 --------
 Setting partitioned, third party cookie.
 
 
 --------
-Frame: '<!--framePath //<!--frame2-->-->'
+Frame: '<!--frame3-->'
 --------
 Should only receive partitioned, third party cookie.
 Did not receive cookie named 'firstPartyCookie'.
@@ -31,7 +31,7 @@ Received cookie named 'thirdPartyCookie'.
 Client-side document.cookie: thirdPartyCookie=value
 
 --------
-Frame: '<!--framePath //<!--frame3-->-->'
+Frame: '<!--frame4-->'
 --------
 After removal, should receive no cookies.
 Did not receive cookie named 'firstPartyCookie'.
@@ -39,7 +39,7 @@ Did not receive cookie named 'thirdPartyCookie'.
 Client-side document.cookie:
 
 --------
-Frame: '<!--framePath //<!--frame4-->-->'
+Frame: '<!--frame5-->'
 --------
 After user interaction, should receive no cookies.
 Did not receive cookie named 'firstPartyCookie'.

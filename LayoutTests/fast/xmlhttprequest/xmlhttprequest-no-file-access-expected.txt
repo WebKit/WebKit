@@ -4,7 +4,7 @@ CONSOLE MESSAGE: line 23: XMLHttpRequest cannot load xmlhttprequest-no-file-acce
 The child iframe cannot paste its textual results into this iframe because it is considered a different domain - that's the point of this test! Therefore, success is denoted by the child iframe calling notifyDone. The test will hang if something goes amiss with the access control checks.
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 
 We're checking we can't read an arbitrary file when we set each file:// URI to have a unique domain.

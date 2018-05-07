@@ -4,13 +4,13 @@ A 'frame-ancestors' CSP directive with a URL value should block or allow renderi
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Testing a cross-origin child with a policy of "http://localhost:8080" nested in a same-origin parent.
 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+Frame: '<!--frame2-->'
 --------
 

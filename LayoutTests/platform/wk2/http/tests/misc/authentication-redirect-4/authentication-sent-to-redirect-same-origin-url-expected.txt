@@ -6,6 +6,6 @@ If not running under DRT, enter any credentials when asked.
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 http://127.0.0.1:8000/misc/authentication-redirect-4/resources/auth-echo.php loaded with HTTP authentication username 'testUser' and password 'testPassword'

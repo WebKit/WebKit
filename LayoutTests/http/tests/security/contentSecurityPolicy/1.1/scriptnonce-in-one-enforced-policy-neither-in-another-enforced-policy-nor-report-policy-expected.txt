@@ -2,6 +2,6 @@ CONSOLE MESSAGE: The Content Security Policy 'object-src 'none'' was delivered i
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS did execute script.

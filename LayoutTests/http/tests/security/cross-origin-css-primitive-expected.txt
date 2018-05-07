@@ -2,7 +2,7 @@ Test that primitive value wrappers are not shared accross documents.
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASSED
 PASSED

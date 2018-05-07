@@ -5,6 +5,6 @@ Loads an iframe which in turns tries to load an external script. The iframe has 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS

@@ -4,13 +4,13 @@ A 'frame-ancestors' CSP directive with a value 'none' should block rendering in 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Testing a cross-origin child with a policy of "'none'" nested in a cross-origin parent.
 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+Frame: '<!--frame2-->'
 --------
 

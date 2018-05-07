@@ -2,6 +2,6 @@ CONSOLE MESSAGE: line 4: The XSS Auditor refused to execute a script in 'http://
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 

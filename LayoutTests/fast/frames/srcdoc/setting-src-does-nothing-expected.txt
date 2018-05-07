@@ -3,6 +3,6 @@ This test ensures that setting the src attribute does not cause the document ins
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS

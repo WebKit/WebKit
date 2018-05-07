@@ -8,7 +8,7 @@ SOURCE XML: &lt;&lt;&lt;&amp;тест&amp;&gt;&gt;&gt;</pre>
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 CHARACTERS IN XSLT: <<<&тест&>>>
 SOURCE XML: <<<&тест&>>>

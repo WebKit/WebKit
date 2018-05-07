@@ -3,6 +3,6 @@ This page has an iframe which will navigate itself. The policy delegate callback
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 You've reached the second page. Congratulations.

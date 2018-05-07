@@ -42,7 +42,7 @@ iframe {
 &lt;p class="p2 it3"&gt;&lt;span class="i8 "&gt;WebKit is an open source web browser engine. WebKit is also the name of the OS X system framework version of the engine that's used by &lt;/span&gt;&lt;a href="http://www.apple.com/safari/" title="http://www.apple.com/safari/"&gt;&lt;span class="it4"&gt;Safari&lt;/span&gt;&lt;/a&gt;&lt;span class="i8 "&gt;, Dashboard, Mail, and many other OS X applications. WebKit's HTML and JavaScript code began as a branch of the &lt;/span&gt;&lt;a href="http://konqueror.kde.org/features/browser.php" title="http://konqueror.kde.org/features/browser.php"&gt;&lt;span class="it4"&gt;KHTML&lt;/span&gt;&lt;/a&gt;&lt;span class="i8 "&gt; and KJS libraries from &lt;/span&gt;&lt;a href="http://kde.org/" title="http://kde.org/"&gt;&lt;span class="it4"&gt;KDE&lt;/span&gt;&lt;/a&gt;&lt;span class="i8 "&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
 &lt;div class="dzo i9 "&gt;&lt;/div&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;</string>
 				<key>WebResourceFrameName</key>
-				<string>&lt;!--framePath //&lt;!--frame0--&gt;--&gt;</string>
+				<string>&lt;!--frame1--&gt;</string>
 				<key>WebResourceMIMEType</key>
 				<string>text/html</string>
 				<key>WebResourceTextEncodingName</key>

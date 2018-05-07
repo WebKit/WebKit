@@ -1,11 +1,11 @@
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 To reproduce the original crash outside of DumpRenderTree, press option-tab twice. After focusing the link below on the first option-tab, the focus loop will try to focus the unloaded frame on the second and crash. Crash
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame2-->'
 --------
 

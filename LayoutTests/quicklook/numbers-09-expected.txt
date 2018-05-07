@@ -36,7 +36,7 @@ iframe {
 &lt;frameset rows="30, *" border="none"&gt;&lt;frame src="x-apple-ql-id://resource.html" name="navPane"&gt;
 &lt;frame src="x-apple-ql-id://resource.html" name="sheetPane"&gt;&lt;/frameset&gt;&lt;/html&gt;</string>
 				<key>WebResourceFrameName</key>
-				<string>&lt;!--framePath //&lt;!--frame0--&gt;--&gt;</string>
+				<string>&lt;!--frame1--&gt;</string>
 				<key>WebResourceMIMEType</key>
 				<string>text/html</string>
 				<key>WebResourceTextEncodingName</key>

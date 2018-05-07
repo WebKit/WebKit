@@ -3,7 +3,7 @@ CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with
  
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 
 Frame-with-plugin-to-navigate

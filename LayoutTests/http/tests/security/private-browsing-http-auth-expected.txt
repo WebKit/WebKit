@@ -2,11 +2,11 @@ http://127.0.0.1:8000/security/resources/basic-auth.php?username=webkit&password
 This test makes sure that auth credentials cached during a private browsing session do not leak out after private browsing is disabled.   
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Authenticated as user: webkit password: rocks
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame2-->'
 --------
 Resource loaded with HTTP authentication username '' and password ''

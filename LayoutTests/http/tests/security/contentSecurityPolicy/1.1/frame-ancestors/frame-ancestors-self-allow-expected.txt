@@ -3,6 +3,6 @@ A 'frame-ancestors' CSP directive with a value 'self' should allow rendering. Th
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 This is an IFrame sending a Content Security Policy header containing "frame-ancestors 'self'".

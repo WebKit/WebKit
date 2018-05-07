@@ -2,6 +2,6 @@ CONSOLE MESSAGE: Refused to load data:application/x-webkit-test-netscape,logiflo
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 

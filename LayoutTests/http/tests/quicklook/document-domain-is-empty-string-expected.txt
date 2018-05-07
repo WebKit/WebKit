@@ -2,6 +2,6 @@ CONSOLE MESSAGE: line 1: Viewport argument value "612;" for key "width" was trun
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS document.domain is .

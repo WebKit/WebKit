@@ -1,7 +1,7 @@
 The srcdoc iframe below should use this document's URL as its referrer. 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 This iframe logs information about its referrer:
 

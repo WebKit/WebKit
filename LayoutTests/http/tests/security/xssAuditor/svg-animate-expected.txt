@@ -4,7 +4,7 @@ This test passes if the element displayed in the frame below has a 'values' attr
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 animate => animate
 * attributeName: xlink:href

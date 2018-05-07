@@ -1,26 +1,26 @@
-frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
 CONSOLE MESSAGE: [Report Only] Blocked mixed content http://127.0.0.1:8000/security/mixedContent/resources/style.css because 'block-all-mixed-content' appears in the Content Security Policy.
 CONSOLE MESSAGE: line 9: [blocked] The page at https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.php was not allowed to run insecure content from http://127.0.0.1:8000/security/mixedContent/resources/style.css.
 
-frame "<!--framePath //<!--frame0-->-->" - willPerformClientRedirectToURL: https://127.0.0.1:8443/security/contentSecurityPolicy/resources/echo-report.php?test=/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.php 
-frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - willPerformClientRedirectToURL: https://127.0.0.1:8443/security/contentSecurityPolicy/resources/echo-report.php?test=/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.php 
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishLoadForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
 main frame - didFinishLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didCancelClientRedirectForFrame
-frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didCancelClientRedirectForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
 This test loads a secure iframe that loads an insecure stylesheet. We should trigger a mixed content block even though the child frame has a report only CSP block-all-mixed-content directive because an active network attacker can use CSS3 to breach the confidentiality of the HTTPS security origin.
 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 CSP report received:
 CONTENT_TYPE: application/csp-report

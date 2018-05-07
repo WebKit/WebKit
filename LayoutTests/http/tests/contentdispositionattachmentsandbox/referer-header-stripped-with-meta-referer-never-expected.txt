@@ -3,6 +3,6 @@ This test verifies that a link redirected by a document which is loaded with Con
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 

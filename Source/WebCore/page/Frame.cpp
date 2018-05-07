@@ -282,6 +282,11 @@ void Frame::setDocument(RefPtr<Document>&& newDocument)
         if (m_page)
             m_page->didChangeMainDocument();
         m_loader->client().dispatchDidChangeMainDocument();
+
+        // We want to generate the same unique names whenever a page is loaded to avoid making layout tests
+        // flaky and for things like form state restoration to work. To achieve this, we reset our frame
+        // identifier generator every time the page is navigated.
+        tree().resetFrameIdentifiers();
     }
 
 #if ENABLE(ATTACHMENT_ELEMENT)

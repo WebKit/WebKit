@@ -4,6 +4,6 @@ Sources containing non-ascii characters should be ignored, and should generate w
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS

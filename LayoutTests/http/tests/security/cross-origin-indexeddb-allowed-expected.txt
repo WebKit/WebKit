@@ -3,14 +3,14 @@ Both of these frames should successfully open the database:
   
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Successfully called window.indexedDB.deleteDatabase().
 Successfully called window.indexedDB.open().
 
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame2-->'
 --------
 Successfully called window.indexedDB.deleteDatabase().
 Successfully called window.indexedDB.open().

@@ -2,7 +2,7 @@
 Please follow this link for a manual test.
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 
 Test for NPP_SetWindow calls sent while a plug-in resizes itself.

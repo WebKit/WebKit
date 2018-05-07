@@ -10,6 +10,6 @@ Frame: 'aFrame'
 Inner iframe.
 
 --------
-Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Inner-inner iframe.

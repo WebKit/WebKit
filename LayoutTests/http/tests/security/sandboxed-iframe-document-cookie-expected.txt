@@ -3,6 +3,6 @@ This test checks that a SECURITY_ERR exception is raised while accessing documen
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS

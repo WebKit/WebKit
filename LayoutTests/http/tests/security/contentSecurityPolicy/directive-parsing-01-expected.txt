@@ -5,6 +5,6 @@ This script should not execute even though there are parse errors in the policy.
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS

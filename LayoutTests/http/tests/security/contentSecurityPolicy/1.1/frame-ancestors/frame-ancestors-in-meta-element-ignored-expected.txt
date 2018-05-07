@@ -4,6 +4,6 @@ Tests that loading a page in an <iframe> with Content Security Policy "frame-anc
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS

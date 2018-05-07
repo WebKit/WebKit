@@ -2,11 +2,11 @@ CONSOLE MESSAGE: line 3: Refused to execute a script for an inline event handler
   
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame2-->'
 --------
 PASS

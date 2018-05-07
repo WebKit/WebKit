@@ -39,6 +39,6 @@ Tests that eval() is blocked in a subframe that disallows eval() when the parent
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 

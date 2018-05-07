@@ -5,6 +5,6 @@ A warning should be logged to the console, as `script-src: 'none'` shouldn't con
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS

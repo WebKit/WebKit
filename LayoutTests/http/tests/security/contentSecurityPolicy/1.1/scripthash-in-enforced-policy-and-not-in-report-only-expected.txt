@@ -5,7 +5,7 @@ CONSOLE MESSAGE: line 7: Refused to execute a script because its hash, its nonce
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 PASS did execute script with hash.
 

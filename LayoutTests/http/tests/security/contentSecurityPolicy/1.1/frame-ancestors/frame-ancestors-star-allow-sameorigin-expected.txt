@@ -3,6 +3,6 @@ A 'frame-ancestors' CSP directive with '*' should allow rendering. This test PAS
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 This is an IFrame sending a Content Security Policy header containing "frame-ancestors *".

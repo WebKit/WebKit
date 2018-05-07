@@ -3,10 +3,10 @@ main frame - didStartProvisionalLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
 main frame - didCommitLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 CONSOLE MESSAGE: [blocked] The page at about:blank was not allowed to display insecure content from http://127.0.0.1:8080/security/mixedContent/resources/boring.html.
 
-frame "<!--framePath //<!--frame0-->-->" - didFailProvisionalLoadWithError
+frame "<!--frame1-->" - didFailProvisionalLoadWithError
 main frame - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame

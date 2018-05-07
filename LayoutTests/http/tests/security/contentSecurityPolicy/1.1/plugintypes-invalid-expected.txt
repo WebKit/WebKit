@@ -29,47 +29,47 @@ This tests our handling of invalid `plugin-types` CSP directives. Consider this 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame2-->'
 --------
 
 
 --------
-Frame: '<!--framePath //<!--frame2-->-->'
+Frame: '<!--frame3-->'
 --------
 
 
 --------
-Frame: '<!--framePath //<!--frame3-->-->'
+Frame: '<!--frame4-->'
 --------
 
 
 --------
-Frame: '<!--framePath //<!--frame4-->-->'
+Frame: '<!--frame5-->'
 --------
 
 
 --------
-Frame: '<!--framePath //<!--frame5-->-->'
+Frame: '<!--frame6-->'
 --------
 
 
 --------
-Frame: '<!--framePath //<!--frame6-->-->'
+Frame: '<!--frame7-->'
 --------
 
 
 --------
-Frame: '<!--framePath //<!--frame7-->-->'
+Frame: '<!--frame8-->'
 --------
 
 
 --------
-Frame: '<!--framePath //<!--frame8-->-->'
+Frame: '<!--frame9-->'
 --------
 PASS.
 

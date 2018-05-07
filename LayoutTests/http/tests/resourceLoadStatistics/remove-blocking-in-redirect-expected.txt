@@ -9,7 +9,7 @@ TEST COMPLETE
   
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 Should receive first-party cookie.
 Received cookie named 'firstPartyCookie'.
@@ -17,7 +17,7 @@ Did not receive cookie named 'partitionedCookie'.
 Client-side document.cookie: firstPartyCookie=value
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame2-->'
 --------
 Redirect case 1, should receive first-party cookie for 127.0.0.1.
 Received cookie named 'firstPartyCookie'.
@@ -25,13 +25,13 @@ Did not receive cookie named 'partitionedCookie'.
 Client-side document.cookie: firstPartyCookie=127.0.0.1
 
 --------
-Frame: '<!--framePath //<!--frame2-->-->'
+Frame: '<!--frame3-->'
 --------
 Set partitioned, third-party cookie.
 
 
 --------
-Frame: '<!--framePath //<!--frame3-->-->'
+Frame: '<!--frame4-->'
 --------
 Should receive no cookie.
 Did not receive cookie named 'firstPartyCookie'.
@@ -39,7 +39,7 @@ Did not receive cookie named 'partitionedCookie'.
 Client-side document.cookie:
 
 --------
-Frame: '<!--framePath //<!--frame4-->-->'
+Frame: '<!--frame5-->'
 --------
 Redirect case 2, should receive first-party cookie for 127.0.0.1.
 Received cookie named 'firstPartyCookie'.

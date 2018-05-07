@@ -2,7 +2,7 @@ CONSOLE MESSAGE: line 5: The XSS Auditor refused to execute a script in 'http://
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 This is an iframe with a injected form
 

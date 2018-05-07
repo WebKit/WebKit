@@ -5,5 +5,5 @@ This test PASSED if there is no assertion failure and you see two JavaScript ale
 ============== Back Forward List ==============
 curr->  (file test):fast/history/back-from-page-with-focused-iframe.html  **nav target**
         data:text/html,<!DOCTYPE html><html><iframe srcdoc="<script>                window.onfocus = function() {                    window.onblur = function () { alert(/iframe blurred/); };                    window.top.onfocus = function () { alert(/main frame focused/); };                    window.top.history.back();                };                window.focus();                </script>"></iframe></html>  **nav target**
-            about:srcdoc (in frame "<!--framePath //<!--frame0-->-->")
+            about:srcdoc (in frame "<!--frame1-->")
 ===============================================

@@ -4,6 +4,6 @@ This test PASS if you can see the text "FAILED: Cookie not set".
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 FAILED: Cookie not set

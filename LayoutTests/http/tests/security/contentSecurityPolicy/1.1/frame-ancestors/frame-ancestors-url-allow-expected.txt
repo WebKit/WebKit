@@ -3,6 +3,6 @@ A 'frame-ancestors' CSP directive with a URL matching this origin should allow r
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 This is an IFrame sending a Content Security Policy header containing "frame-ancestors http://127.0.0.1:8000".

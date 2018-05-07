@@ -3,7 +3,7 @@ Tests that a POST request in a frame is handled correctly. If this test passes, 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 This page was requested with the HTTP method POST.
 
@@ -14,7 +14,7 @@ submitwithpost = Submit with POST
 
 ============== Back Forward List ==============
         http://127.0.0.1:8000/navigation/post-frames.html  **nav target**
-            http://127.0.0.1:8000/navigation/resources/page-that-posts.html (in frame "<!--framePath //<!--frame0-->-->")
+            http://127.0.0.1:8000/navigation/resources/page-that-posts.html (in frame "<!--frame1-->")
 curr->  http://127.0.0.1:8000/navigation/post-frames.html
-            http://127.0.0.1:8000/navigation/resources/form-target.pl (in frame "<!--framePath //<!--frame0-->-->")  **nav target**
+            http://127.0.0.1:8000/navigation/resources/form-target.pl (in frame "<!--frame1-->")  **nav target**
 ===============================================

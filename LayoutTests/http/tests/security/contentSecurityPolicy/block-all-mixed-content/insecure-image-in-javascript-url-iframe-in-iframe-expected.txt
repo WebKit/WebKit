@@ -1,25 +1,25 @@
-frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
-frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - didStartProvisionalLoadForFrame
-frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - didCommitLoadForFrame
-frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - didHandleOnloadEventsForFrame
-frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - didFinishLoadForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+frame "<!--frame2-->" - didStartProvisionalLoadForFrame
+frame "<!--frame2-->" - didCommitLoadForFrame
+frame "<!--frame2-->" - didFinishDocumentLoadForFrame
+frame "<!--frame2-->" - didHandleOnloadEventsForFrame
+frame "<!--frame2-->" - didFinishLoadForFrame
 CONSOLE MESSAGE: Blocked mixed content http://127.0.0.1:8000/security/resources/compass.jpg because 'block-all-mixed-content' appears in the Content Security Policy.
-frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishLoadForFrame
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
 main frame - didFinishLoadForFrame
 This test loads a secure iframe that loads an insecure image inside a JavaScript URL iframe. We should trigger a mixed content block because the child frame has CSP directive block-all-mixed-content and a JavaScript URL executes in the same origin as its embedding document.
 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+Frame: '<!--frame2-->'
 --------
 

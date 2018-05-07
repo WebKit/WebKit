@@ -1,2 +1,2 @@
-frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - has 1 onunload handler(s)
+frame "<!--frame1-->" - has 1 onunload handler(s)
 This test triggers an unload handler that starts an image load in a different frame (and deletes both frames), but ensures the main frame is not destroyed. We pass if we don't crash.

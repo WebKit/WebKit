@@ -15,6 +15,6 @@ Tests that WebAssembly is blocked in a subframe that disallows WebAssembly when 
 
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 

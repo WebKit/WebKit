@@ -102,7 +102,7 @@ if (window.parent.bodyToAdopt) {
 
 &lt;/body&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;</string>
 				<key>WebResourceFrameName</key>
-				<string>&lt;!--framePath //&lt;!--frame0--&gt;--&gt;</string>
+				<string>&lt;!--frame1--&gt;</string>
 				<key>WebResourceMIMEType</key>
 				<string>text/html</string>
 				<key>WebResourceTextEncodingName</key>

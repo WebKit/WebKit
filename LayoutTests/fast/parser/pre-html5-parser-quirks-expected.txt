@@ -3,21 +3,21 @@ This tests that certain pre-HTML5 parser rules are applied when the WebKitUsePre
         
 
 --------
-Frame: '<!--framePath //<!--frame0-->-->'
+Frame: '<!--frame1-->'
 --------
 AfterAttributeNameState:
 Start Tag: PASS
 End Tag: PASS
 
 --------
-Frame: '<!--framePath //<!--frame1-->-->'
+Frame: '<!--frame2-->'
 --------
 AfterAttributeValueQuotedState:
 Start Tag: PASS
 End Tag: PASS
 
 --------
-Frame: '<!--framePath //<!--frame2-->-->'
+Frame: '<!--frame3-->'
 --------
 AfterAttributeValueUnquotedState:
 Start Tag: PASS
@@ -26,21 +26,21 @@ End Tag: PASS
 
 
 --------
-Frame: '<!--framePath //<!--frame3-->-->'
+Frame: '<!--frame4-->'
 --------
 AttributeNameState:
 Start Tag: PASS
 End Tag: PASS
 
 --------
-Frame: '<!--framePath //<!--frame4-->-->'
+Frame: '<!--frame5-->'
 --------
 BeforeAttributeNameState:
 Start Tag: PASS
 End Tag: PASS
 
 --------
-Frame: '<!--framePath //<!--frame5-->-->'
+Frame: '<!--frame6-->'
 --------
 Document fragment:
 Start Tag: PASS
@@ -50,21 +50,21 @@ End Tag: PASS
 
 
 --------
-Frame: '<!--framePath //<!--frame6-->-->'
+Frame: '<!--frame7-->'
 --------
 TagNameState:
 Start Tag: PASS
 End Tag: PASS
 
 --------
-Frame: '<!--framePath //<!--frame7-->-->'
+Frame: '<!--frame8-->'
 --------
 Self-closing <script> in head:
 Parsing: PASS
 External script loading: PASS
 
 --------
-Frame: '<!--framePath //<!--frame8-->-->'
+Frame: '<!--frame9-->'
 --------
 Self-closing <script> in body:
 Parsing: PASS

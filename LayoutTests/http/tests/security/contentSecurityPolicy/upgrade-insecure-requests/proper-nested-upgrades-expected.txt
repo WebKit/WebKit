@@ -1,18 +1,18 @@
-frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
 ALERT: PASS
-frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - didStartProvisionalLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - didCommitLoadForFrame
+frame "<!--frame2-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame2-->" - didCommitLoadForFrame
 ALERT: PASS
 ALERT: PASS
-frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - didHandleOnloadEventsForFrame
-frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
+frame "<!--frame2-->" - didFinishDocumentLoadForFrame
+frame "<!--frame2-->" - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame
-frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - didFinishLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFinishLoadForFrame
+frame "<!--frame2-->" - didFinishLoadForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
 main frame - didFinishLoadForFrame
 This test loads a secure iframe with the 'upgrade-insecure-requests' header. The secure frame has an insecure script reference, which will get upgraded. The secure frame does a secure load of another frame. This other frame specifies an insecure load of this same script. If the nested subresource logic is working properly, the non-secure load in the second nested frame should be upgraded, even though that frame does not use the 'upgrade-insecure-requests' header, because it had been previously upgraded by an enclosing context. The frame two-layers deep also loads a second script using HTTP. This should also be upgraded to HTTPS, since the nested frame inherits the 'upgrade-insecure-request' from its parent.
 

@@ -1,7 +1,7 @@
-frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)
-frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - has 1 onunload handler(s)
-frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - has 1 onunload handler(s)
-frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)
+frame "<!--frame1-->" - has 1 onunload handler(s)
+frame "<!--frame2-->" - has 1 onunload handler(s)
+frame "<!--frame2-->" - has 1 onunload handler(s)
+frame "<!--frame1-->" - has 1 onunload handler(s)
 Test pageshow/pagehide event behavior in subframes.
 
 
