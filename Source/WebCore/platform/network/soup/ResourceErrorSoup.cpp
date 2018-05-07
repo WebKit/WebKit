@@ -75,10 +75,9 @@ ResourceError ResourceError::genericGError(GError* error, SoupRequest* request)
         failingURI(request), String::fromUTF8(error->message));
 }
 
-ResourceError ResourceError::tlsError(SoupRequest* request, unsigned tlsErrors, GTlsCertificate* certificate)
+ResourceError ResourceError::tlsError(const URL& failingURL, unsigned tlsErrors, GTlsCertificate* certificate)
 {
-    ResourceError resourceError(g_quark_to_string(SOUP_HTTP_ERROR), SOUP_STATUS_SSL_FAILED,
-        failingURI(request), unacceptableTLSCertificate());
+    ResourceError resourceError(g_quark_to_string(SOUP_HTTP_ERROR), SOUP_STATUS_SSL_FAILED, failingURL, unacceptableTLSCertificate());
     resourceError.setTLSErrors(tlsErrors);
     resourceError.setCertificate(certificate);
     return resourceError;

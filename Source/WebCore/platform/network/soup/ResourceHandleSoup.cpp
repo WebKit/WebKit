@@ -147,19 +147,26 @@ static bool isAuthenticationFailureStatusCode(int httpStatusCode)
     return httpStatusCode == SOUP_STATUS_PROXY_AUTHENTICATION_REQUIRED || httpStatusCode == SOUP_STATUS_UNAUTHORIZED;
 }
 
-static void tlsErrorsChangedCallback(SoupMessage* message, GParamSpec*, gpointer data)
+static gboolean tlsConnectionAcceptCertificateCallback(GTlsConnection* connection, GTlsCertificate* certificate, GTlsCertificateFlags errors, gpointer data)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
     if (!handle || handle->cancelledOrClientless())
-        return;
+        return FALSE;
 
-    SoupNetworkSession::checkTLSErrors(handle->getInternal()->m_soupRequest.get(), message, [handle] (const ResourceError& error) {
-        if (error.isNull())
-            return;
+    ResourceHandleInternal* d = handle->getInternal();
 
-        handle->client()->didFail(handle.get(), error);
-        handle->cancel();
-    });
+    auto* connectionMessage = g_object_get_data(G_OBJECT(connection), "wk-soup-message");
+    if (connectionMessage != d->m_soupMessage.get())
+        return FALSE;
+
+    URL url(soup_request_get_uri(d->m_soupRequest.get()));
+    auto error = SoupNetworkSession::checkTLSErrors(url, certificate, errors);
+    if (!error)
+        return TRUE;
+
+    handle->client()->didFail(handle.get(), error.value());
+    handle->cancel();
+    return FALSE;
 }
 
 static void gotHeadersCallback(SoupMessage* message, gpointer data)
@@ -564,7 +571,7 @@ static void startingCallback(SoupMessage*, ResourceHandle* handle)
 }
 #endif // SOUP_CHECK_VERSION(2, 49, 91)
 
-static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStream*, gpointer data)
+static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStream* stream, gpointer data)
 {
     ResourceHandle* handle = static_cast<ResourceHandle*>(data);
     if (!handle)
@@ -604,6 +611,9 @@ static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStre
         break;
     case G_SOCKET_CLIENT_TLS_HANDSHAKING:
         d->m_response.deprecatedNetworkLoadMetrics().secureConnectionStart = deltaTime;
+        ASSERT(G_IS_TLS_CONNECTION(stream));
+        g_object_set_data(G_OBJECT(stream), "wk-soup-message", d->m_soupMessage.get());
+        g_signal_connect(stream, "accept-certificate", G_CALLBACK(tlsConnectionAcceptCertificateCallback), handle);
         break;
     case G_SOCKET_CLIENT_TLS_HANDSHAKED:
         break;
@@ -649,7 +659,6 @@ static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const R
     if ((request.httpMethod() == "POST" || request.httpMethod() == "PUT") && !d->m_bodySize)
         soup_message_headers_set_content_length(soupMessage->request_headers, 0);
 
-    g_signal_connect(d->m_soupMessage.get(), "notify::tls-errors", G_CALLBACK(tlsErrorsChangedCallback), handle);
     g_signal_connect(d->m_soupMessage.get(), "got-headers", G_CALLBACK(gotHeadersCallback), handle);
     g_signal_connect(d->m_soupMessage.get(), "wrote-body-data", G_CALLBACK(wroteBodyDataCallback), handle);
 

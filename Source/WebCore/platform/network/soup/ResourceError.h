@@ -56,7 +56,7 @@ public:
     static ResourceError httpError(SoupMessage*, GError*, SoupRequest*);
     static ResourceError transportError(SoupRequest*, int statusCode, const String& reasonPhrase);
     static ResourceError genericGError(GError*, SoupRequest*);
-    static ResourceError tlsError(SoupRequest*, unsigned tlsErrors, GTlsCertificate*);
+    static ResourceError tlsError(const URL&, unsigned tlsErrors, GTlsCertificate*);
     static ResourceError timeoutError(const URL& failingURL);
     static ResourceError authenticationError(SoupMessage*);
 
