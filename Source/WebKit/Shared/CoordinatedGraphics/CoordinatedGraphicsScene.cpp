@@ -61,7 +61,8 @@ void CoordinatedGraphicsScene::dispatchOnClientRunLoop(Function<void()>&& functi
 
 static bool layerShouldHaveBackingStore(TextureMapperLayer* layer)
 {
-    return layer->drawsContent() && layer->contentsAreVisible() && !layer->size().isEmpty();
+    return layer->drawsContent() && layer->contentsAreVisible() && !layer->size().isEmpty()
+        && (!!layer->opacity() || layer->animations().hasActiveAnimationsOfType(AnimatedPropertyOpacity));
 }
 
 CoordinatedGraphicsScene::CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient* client)
