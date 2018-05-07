@@ -274,6 +274,8 @@ void InspectorController::connectFrontend(Inspector::FrontendChannel* frontendCh
         m_agents.didCreateFrontendAndBackend(&m_frontendRouter.get(), &m_backendDispatcher.get());
     }
 
+    m_inspectorClient->frontendCountChanged(m_frontendRouter->frontendCount());
+
 #if ENABLE(REMOTE_INSPECTOR)
     if (!m_frontendRouter->hasRemoteFrontend())
         m_page.remoteInspectorInformationDidChange();
@@ -301,6 +303,8 @@ void InspectorController::disconnectFrontend(FrontendChannel* frontendChannel)
         // Unplug all instrumentations since they aren't needed now.
         InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
     }
+
+    m_inspectorClient->frontendCountChanged(m_frontendRouter->frontendCount());
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (!m_frontendRouter->hasFrontends())
@@ -337,6 +341,8 @@ void InspectorController::disconnectAllFrontends()
     m_frontendRouter->disconnectAllFrontends();
     m_isAutomaticInspection = false;
     m_pauseAfterInitialization = false;
+
+    m_inspectorClient->frontendCountChanged(m_frontendRouter->frontendCount());
 
 #if ENABLE(REMOTE_INSPECTOR)
     m_page.remoteInspectorInformationDidChange();

@@ -44,6 +44,7 @@ public:
     virtual ~InspectorClient() = default;
 
     virtual void inspectedPageDestroyed() = 0;
+    virtual void frontendCountChanged(unsigned) { }
 
     virtual Inspector::FrontendChannel* openLocalFrontend(InspectorController*) = 0;
     virtual void bringFrontendToFront() = 0;

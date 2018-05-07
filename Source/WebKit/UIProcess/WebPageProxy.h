@@ -362,6 +362,9 @@ public:
 
     WebInspectorProxy* inspector() const;
 
+    void didChangeInspectorFrontendCount(unsigned count) { m_inspectorFrontendCount = count; }
+    unsigned inspectorFrontendCount() const { return m_inspectorFrontendCount; }
+
     bool isControlledByAutomation() const { return m_controlledByAutomation; }
     void setControlledByAutomation(bool);
 
@@ -2009,6 +2012,7 @@ private:
     bool m_allowsRemoteInspection { true };
     String m_remoteInspectionNameOverride;
 #endif
+    unsigned m_inspectorFrontendCount { 0 };
 
 #if PLATFORM(COCOA)
     bool m_isSmartInsertDeleteEnabled { false };

@@ -3265,6 +3265,11 @@ RemoteWebInspectorUI* WebPage::remoteInspectorUI()
     return m_remoteInspectorUI.get();
 }
 
+void WebPage::inspectorFrontendCountChanged(unsigned count)
+{
+    send(Messages::WebPageProxy::DidChangeInspectorFrontendCount(count));
+}
+
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 PlaybackSessionManager& WebPage::playbackSessionManager()
 {

@@ -1,3 +1,30 @@
+2018-05-07  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: opt out of process swap on navigation if a Web Inspector frontend is connected
+        https://bugs.webkit.org/show_bug.cgi?id=184861
+        <rdar://problem/39153768>
+
+        Reviewed by Timothy Hatcher.
+
+        We need to track how many frontends are attached to the web page (both local and remote).
+        InspectorController propagates this out to WebKit via InspectorClient. This is then
+        kept in UIProcess as a member of WebPageProxy. When making a decision whether to use a
+        new process for a navigation, return early with "no" if any frontends are open for the
+        page being navigated.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::didChangeInspectorFrontendCount):
+        (WebKit::WebPageProxy::inspectorFrontendCount const):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigation):
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::frontendCountChanged):
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::inspectorFrontendCountChanged):
+        * WebProcess/WebPage/WebPage.h:
+
 2018-05-04  Tim Horton  <timothy_horton@apple.com>
 
         Shift to a lower-level framework for simplifying URLs

@@ -27,6 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import <WebKit/WKInspector.h>
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -1066,6 +1067,59 @@ TEST(ProcessSwap, LoadUnload)
     EXPECT_TRUE([receivedMessages.get()[5] isEqualToString:@"pson1://host/main.html - unload" ]);
     EXPECT_TRUE([receivedMessages.get()[6] isEqualToString:@"pson2://host/main.html - load" ]);
 }
+
+TEST(ProcessSwap, DisableForInspector)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
+    
+    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON1"];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON2"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main1.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pid1 = [webView _webProcessIdentifier];
+
+    // FIXME: use ObjC equivalent for WKInspectorRef when available.
+    WKInspectorShow(WKPageGetInspector([webView _pageRefForTransitionToWKWebView]));
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson2://host/main2.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pid2 = [webView _webProcessIdentifier];
+
+    WKInspectorClose(WKPageGetInspector([webView _pageRefForTransitionToWKWebView]));
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main2.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pid3 = [webView _webProcessIdentifier];
+
+    EXPECT_EQ(pid1, pid2);
+    EXPECT_FALSE(pid2 == pid3);
+    EXPECT_EQ(numberOfDecidePolicyCalls, 3);
+}
+
 #endif // !TARGET_OS_IPHONE
 
 static const char* sameOriginBlobNavigationTestBytes = R"PSONRESOURCE(
