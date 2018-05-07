@@ -152,7 +152,6 @@ public:
 
     void setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool);
     void setShouldExitOnSyncMessageSendFailure(bool);
-    bool shouldExitOnSyncMessageSendFailure() const { return m_shouldExitOnSyncMessageSendFailure; }
 
     // The set callback will be called on the connection work queue when the connection is closed, 
     // before didCall is called on the client thread. Must be called before the connection is opened.
