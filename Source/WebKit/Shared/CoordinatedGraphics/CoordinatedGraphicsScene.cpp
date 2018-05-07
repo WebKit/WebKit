@@ -282,15 +282,14 @@ void CoordinatedGraphicsScene::setLayerState(CoordinatedLayerID id, const Coordi
     if (layerState.committedScrollOffsetChanged)
         layer->didCommitScrollOffset(layerState.committedScrollOffset);
 
-    prepareContentBackingStore(layer);
-
     // Apply Operations.
     setLayerChildrenIfNeeded(layer, layerState);
+    setLayerFiltersIfNeeded(layer, layerState);
+    setLayerAnimationsIfNeeded(layer, layerState);
+    prepareContentBackingStore(layer);
     createTilesIfNeeded(layer, layerState);
     removeTilesIfNeeded(layer, layerState);
     updateTilesIfNeeded(layer, layerState);
-    setLayerFiltersIfNeeded(layer, layerState);
-    setLayerAnimationsIfNeeded(layer, layerState);
     syncPlatformLayerIfNeeded(layer, layerState);
     setLayerRepaintCountIfNeeded(layer, layerState);
 }
