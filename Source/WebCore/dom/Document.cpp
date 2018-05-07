@@ -3384,12 +3384,12 @@ void Document::processHttpEquiv(const String& equiv, const String& content, bool
 
     case HTTPHeaderName::ContentSecurityPolicy:
         if (isInDocumentHead)
-            contentSecurityPolicy()->didReceiveHeader(content, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta);
+            contentSecurityPolicy()->didReceiveHeader(content, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta, referrer());
         break;
 
     case HTTPHeaderName::XWebKitCSP:
         if (isInDocumentHead)
-            contentSecurityPolicy()->didReceiveHeader(content, ContentSecurityPolicyHeaderType::PrefixedEnforce, ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta);
+            contentSecurityPolicy()->didReceiveHeader(content, ContentSecurityPolicyHeaderType::PrefixedEnforce, ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta, referrer());
         break;
 
     default:
@@ -5522,7 +5522,7 @@ void Document::initSecurityContext()
 
     String overrideContentSecurityPolicy = m_frame->loader().client().overrideContentSecurityPolicy();
     if (!overrideContentSecurityPolicy.isNull())
-        contentSecurityPolicy()->didReceiveHeader(overrideContentSecurityPolicy, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::API);
+        contentSecurityPolicy()->didReceiveHeader(overrideContentSecurityPolicy, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::API, referrer());
 
 #if USE(QUICK_LOOK)
     if (shouldEnforceQuickLookSandbox())
@@ -7277,7 +7277,7 @@ void Document::applyQuickLookSandbox()
     static NeverDestroyed<String> quickLookCSP = makeString("default-src ", QLPreviewProtocol(), ": 'unsafe-inline'; base-uri 'none'; sandbox allow-same-origin allow-scripts");
     RELEASE_ASSERT(contentSecurityPolicy());
     // The sandbox directive is only allowed if the policy is from an HTTP header.
-    contentSecurityPolicy()->didReceiveHeader(quickLookCSP, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::HTTPHeader);
+    contentSecurityPolicy()->didReceiveHeader(quickLookCSP, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::HTTPHeader, referrer());
 
     disableSandboxFlags(SandboxNavigation);
 

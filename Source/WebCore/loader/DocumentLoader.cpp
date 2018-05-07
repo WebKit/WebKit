@@ -768,7 +768,7 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
     auto url = response.url();
 
     ContentSecurityPolicy contentSecurityPolicy(SecurityOrigin::create(url), m_frame);
-    contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders(response));
+    contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders(response), m_frame->loader().referrer());
     if (!contentSecurityPolicy.allowFrameAncestors(*m_frame, url)) {
         stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(identifier, response);
         return;

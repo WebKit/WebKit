@@ -111,7 +111,7 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
     }
 
     if (synchronousReply || parameters.shouldRestrictHTTPResponseAccess) {
-        m_networkLoadChecker = NetworkLoadChecker::create(FetchOptions { m_parameters.options }, m_parameters.sessionID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef(), m_parameters.preflightPolicy);
+        m_networkLoadChecker = NetworkLoadChecker::create(FetchOptions { m_parameters.options }, m_parameters.sessionID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef(), m_parameters.preflightPolicy, originalRequest().httpReferrer());
         if (m_parameters.cspResponseHeaders)
             m_networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { m_parameters.cspResponseHeaders.value() });
 #if ENABLE(CONTENT_EXTENSIONS)

@@ -118,7 +118,7 @@ bool WorkerGlobalScope::isSecureContext() const
 
 void WorkerGlobalScope::applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders)
 {
-    contentSecurityPolicy()->didReceiveHeaders(contentSecurityPolicyResponseHeaders);
+    contentSecurityPolicy()->didReceiveHeaders(contentSecurityPolicyResponseHeaders, String { });
 }
 
 URL WorkerGlobalScope::completeURL(const String& url) const

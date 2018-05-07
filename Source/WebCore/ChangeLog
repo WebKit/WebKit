@@ -1,5 +1,38 @@
 2018-05-07  Daniel Bates  <dabates@apple.com>
 
+        CSP should be passed the referrer
+        https://bugs.webkit.org/show_bug.cgi?id=185367
+
+        Reviewed by Per Arne Vollan.
+
+        As a step towards formalizing a CSP delegate object and removing the dependencies
+        on ScriptExecutionContext and Frame, we should pass the document's referrer directly
+        instead of indirectly obtaining it from the ScriptExecutionContext or Frame used
+        to instantiate the ContentSecurityPolicy object.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv): Pass the document's referrer.
+        (WebCore::Document::initSecurityContext): Ditto.
+        (WebCore::Document::applyQuickLookSandbox): Ditto.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived): Ditto.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument): Ditto.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::copyStateFrom): We pass a null string for the referrer
+        to didReceiveHeader() as a placeholder since it requires the referrer be given to it. We
+        fix up the referrer (m_referrer) after copying all the policy headers.
+        (WebCore::ContentSecurityPolicy::didReceiveHeaders): Ditto.
+        (WebCore::ContentSecurityPolicy::didReceiveHeader): Modified to take a referrer and WTFMove()s
+        it into an instance variable (m_referrer).
+        (WebCore::ContentSecurityPolicy::reportViolation const): Modified to use the stored referrer.
+        * page/csp/ContentSecurityPolicy.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::applyContentSecurityPolicyResponseHeaders): Pass a null string
+        for the referrer as a worker does not have a referrer.
+
+2018-05-07  Daniel Bates  <dabates@apple.com>
+
         CSP should only notify Inspector to pause the debugger on the first policy to violate a directive
         https://bugs.webkit.org/show_bug.cgi?id=185364
 

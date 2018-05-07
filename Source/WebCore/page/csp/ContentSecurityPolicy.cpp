@@ -111,7 +111,8 @@ void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other)
         return;
     ASSERT(m_policies.isEmpty());
     for (auto& policy : other->m_policies)
-        didReceiveHeader(policy->header(), policy->headerType(), ContentSecurityPolicy::PolicyFrom::Inherited);
+        didReceiveHeader(policy->header(), policy->headerType(), ContentSecurityPolicy::PolicyFrom::Inherited, String { });
+    m_referrer = other->m_referrer;
 }
 
 void ContentSecurityPolicy::copyUpgradeInsecureRequestStateFrom(const ContentSecurityPolicy& other)
@@ -171,17 +172,20 @@ ContentSecurityPolicyResponseHeaders ContentSecurityPolicy::responseHeaders() co
     return *m_cachedResponseHeaders;
 }
 
-void ContentSecurityPolicy::didReceiveHeaders(const ContentSecurityPolicyResponseHeaders& headers, ReportParsingErrors reportParsingErrors)
+void ContentSecurityPolicy::didReceiveHeaders(const ContentSecurityPolicyResponseHeaders& headers, String&& referrer, ReportParsingErrors reportParsingErrors)
 {
     SetForScope<bool> isReportingEnabled(m_isReportingEnabled, reportParsingErrors == ReportParsingErrors::Yes);
     for (auto& header : headers.m_headers)
-        didReceiveHeader(header.first, header.second, ContentSecurityPolicy::PolicyFrom::HTTPHeader);
+        didReceiveHeader(header.first, header.second, ContentSecurityPolicy::PolicyFrom::HTTPHeader, String { });
+    m_referrer = WTFMove(referrer);
 }
 
-void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecurityPolicyHeaderType type, ContentSecurityPolicy::PolicyFrom policyFrom)
+void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecurityPolicyHeaderType type, ContentSecurityPolicy::PolicyFrom policyFrom, String&& referrer)
 {
     if (m_hasAPIPolicy)
         return;
+
+    m_referrer = WTFMove(referrer);
 
     if (policyFrom == PolicyFrom::API) {
         ASSERT(m_policies.isEmpty());
@@ -664,7 +668,6 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     }
     String violatedDirectiveText = violatedDirective;
     String originalPolicy = violatedDirectiveList.header();
-    String referrer = document.referrer();
     ASSERT(document.loader());
     // FIXME: Is it policy to not use the status code for HTTPS, or is that a bug?
     unsigned short statusCode = document.url().protocolIs("http") && document.loader() ? document.loader()->response().httpStatusCode() : 0;
@@ -683,7 +686,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     // 1. Dispatch violation event.
     bool canBubble = false;
     bool cancelable = false;
-    document.enqueueDocumentEvent(SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, canBubble, cancelable, documentURI, referrer, blockedURI, violatedDirectiveText, effectiveViolatedDirective, originalPolicy, sourceFile, statusCode, lineNumber, columnNumber));
+    document.enqueueDocumentEvent(SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, canBubble, cancelable, documentURI, m_referrer, blockedURI, violatedDirectiveText, effectiveViolatedDirective, originalPolicy, sourceFile, statusCode, lineNumber, columnNumber));
 
     // 2. Send violation report (if applicable).
     auto& reportURIs = violatedDirectiveList.reportURIs();
@@ -702,7 +705,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
     auto cspReport = JSON::Object::create();
     cspReport->setString(ASCIILiteral("document-uri"), documentURI);
-    cspReport->setString(ASCIILiteral("referrer"), referrer);
+    cspReport->setString(ASCIILiteral("referrer"), m_referrer);
     cspReport->setString(ASCIILiteral("violated-directive"), violatedDirectiveText);
     cspReport->setString(ASCIILiteral("effective-directive"), effectiveViolatedDirective);
     cspReport->setString(ASCIILiteral("original-policy"), originalPolicy);

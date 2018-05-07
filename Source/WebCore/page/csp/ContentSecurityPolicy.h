@@ -81,8 +81,8 @@ public:
     };
     WEBCORE_EXPORT ContentSecurityPolicyResponseHeaders responseHeaders() const;
     enum ReportParsingErrors { No, Yes };
-    WEBCORE_EXPORT void didReceiveHeaders(const ContentSecurityPolicyResponseHeaders&, ReportParsingErrors = ReportParsingErrors::Yes);
-    void didReceiveHeader(const String&, ContentSecurityPolicyHeaderType, ContentSecurityPolicy::PolicyFrom);
+    WEBCORE_EXPORT void didReceiveHeaders(const ContentSecurityPolicyResponseHeaders&, String&& referrer, ReportParsingErrors = ReportParsingErrors::Yes);
+    void didReceiveHeader(const String&, ContentSecurityPolicyHeaderType, ContentSecurityPolicy::PolicyFrom, String&& referrer);
 
     bool allowScriptWithNonce(const String& nonce, bool overrideContentSecurityPolicy = false) const;
     bool allowStyleWithNonce(const String& nonce, bool overrideContentSecurityPolicy = false) const;
@@ -211,6 +211,7 @@ private:
     CSPDirectiveListVector m_policies;
     String m_lastPolicyEvalDisabledErrorMessage;
     String m_lastPolicyWebAssemblyDisabledErrorMessage;
+    String m_referrer;
     SandboxFlags m_sandboxFlags;
     bool m_overrideInlineStyleAllowed { false };
     bool m_isReportingEnabled { true };

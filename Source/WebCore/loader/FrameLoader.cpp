@@ -732,7 +732,7 @@ void FrameLoader::didBeginDocument(bool dispatch)
         if (!dnsPrefetchControl.isEmpty())
             m_frame.document()->parseDNSPrefetchControlHeader(dnsPrefetchControl);
 
-        m_frame.document()->contentSecurityPolicy()->didReceiveHeaders(ContentSecurityPolicyResponseHeaders(m_documentLoader->response()), ContentSecurityPolicy::ReportParsingErrors::No);
+        m_frame.document()->contentSecurityPolicy()->didReceiveHeaders(ContentSecurityPolicyResponseHeaders(m_documentLoader->response()), referrer(), ContentSecurityPolicy::ReportParsingErrors::No);
 
         String headerContentLanguage = m_documentLoader->response().httpHeaderField(HTTPHeaderName::ContentLanguage);
         if (!headerContentLanguage.isEmpty()) {

@@ -1,5 +1,24 @@
 2018-05-07  Daniel Bates  <dabates@apple.com>
 
+        CSP should be passed the referrer
+        https://bugs.webkit.org/show_bug.cgi?id=185367
+
+        Reviewed by Per Arne Vollan.
+
+        Pass the referrer through NetworkLoadChecker so that it can pass it to the ContentSecurityPolicy
+        object it instantiates.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::NetworkLoadChecker):
+        (WebKit::NetworkLoadChecker::contentSecurityPolicy const):
+        * NetworkProcess/NetworkLoadChecker.h:
+        (WebKit::NetworkLoadChecker::create):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::PingLoad):
+
+2018-05-07  Daniel Bates  <dabates@apple.com>
+
         Substitute CrossOriginPreflightResultCache::clear() for CrossOriginPreflightResultCache::empty()
         https://bugs.webkit.org/show_bug.cgi?id=185170
 
