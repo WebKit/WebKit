@@ -1,3 +1,21 @@
+2018-05-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Use static initializers for WTF::Mutex and WTF::ThreadCondition
+        https://bugs.webkit.org/show_bug.cgi?id=185361
+
+        Reviewed by Sam Weinig.
+
+        Use static initializers for WTF::Mutex and WTF::ThreadCondition to make
+        constructors of them simple and constexpr.
+
+        * wtf/ThreadingPrimitives.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Mutex::Mutex): Deleted.
+        (WTF::ThreadCondition::ThreadCondition): Deleted.
+        * wtf/ThreadingWin.cpp:
+        (WTF::Mutex::Mutex): Deleted.
+        (WTF::ThreadCondition::ThreadCondition): Deleted.
+
 2018-05-04  Tim Horton  <timothy_horton@apple.com>
 
         Shift to a lower-level framework for simplifying URLs

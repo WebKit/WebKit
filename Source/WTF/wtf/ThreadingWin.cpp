@@ -360,11 +360,6 @@ void Thread::destructTLS(void* data)
     thread->m_isDestroyedOnce = true;
 }
 
-Mutex::Mutex()
-{
-    InitializeSRWLock(&m_mutex);
-}
-
 Mutex::~Mutex()
 {
 }
@@ -398,11 +393,6 @@ static DWORD absoluteTimeToWaitTimeoutInterval(WallTime absoluteTime)
         return INFINITE;
 
     return static_cast<DWORD>((absoluteTime - currentTime).milliseconds());
-}
-
-ThreadCondition::ThreadCondition()
-{
-    InitializeConditionVariable(&m_condition);
 }
 
 ThreadCondition::~ThreadCondition()

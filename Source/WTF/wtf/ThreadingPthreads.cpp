@@ -490,18 +490,6 @@ void Thread::destructTLS(void* data)
 #endif
 }
 
-Mutex::Mutex()
-{
-    pthread_mutexattr_t attr;
-    pthread_mutexattr_init(&attr);
-    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
-
-    int result = pthread_mutex_init(&m_mutex, &attr);
-    ASSERT_UNUSED(result, !result);
-
-    pthread_mutexattr_destroy(&attr);
-}
-
 Mutex::~Mutex()
 {
     int result = pthread_mutex_destroy(&m_mutex);
@@ -531,11 +519,6 @@ void Mutex::unlock()
 {
     int result = pthread_mutex_unlock(&m_mutex);
     ASSERT_UNUSED(result, !result);
-}
-
-ThreadCondition::ThreadCondition()
-{ 
-    pthread_cond_init(&m_condition, NULL);
 }
 
 ThreadCondition::~ThreadCondition()
