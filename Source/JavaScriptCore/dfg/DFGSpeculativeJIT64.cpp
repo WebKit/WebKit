@@ -4000,6 +4000,11 @@ void SpeculativeJIT::compile(Node* node)
         compileGetCallee(node);
         break;
     }
+
+    case SetCallee: {
+        compileSetCallee(node);
+        break;
+    }
         
     case GetArgumentCountIncludingThis: {
         compileGetArgumentCountIncludingThis(node);

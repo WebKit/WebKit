@@ -171,6 +171,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ToThis:
     case CreateThis:
     case GetCallee:
+    case SetCallee:
     case GetArgumentCountIncludingThis:
     case SetArgumentCountIncludingThis:
     case GetRestLength:
