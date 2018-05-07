@@ -14,6 +14,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+import codecs
 import errno
 import logging
 import os
@@ -247,17 +248,6 @@ class GTKDoc(object):
         self._create_directory_if_nonexistent(self.output_dir)
         copy_all_files_in_directory(self.doc_dir, self.output_dir)
 
-        if not html:
-            return
-
-        self.logger.debug('Copying HTML files to output directory...')
-        html_src_dir = os.path.join(self.doc_dir, 'html')
-        html_dest_dir = os.path.join(self.output_dir, 'html')
-        self._create_directory_if_nonexistent(html_dest_dir)
-
-        if os.path.exists(html_src_dir):
-            copy_all_files_in_directory(html_src_dir, html_dest_dir)
-
     def _write_version_xml(self):
         if not self.version:
             self.logger.info('No version specified, so not writing version.xml')
@@ -358,7 +348,9 @@ class GTKDoc(object):
         self._run_command(args, cwd=self.output_dir)
 
     def _run_gtkdoc_mkhtml(self):
-        html_dest_dir = os.path.join(self.output_dir, 'html')
+        # gtkdoc-fixxref expects the paths to be html/modulename.
+        html_dest_dir = os.path.join(self.output_dir, 'html', self.module_name)
+        self._create_directory_if_nonexistent(html_dest_dir)
         if not os.path.isdir(html_dest_dir):
             raise Exception("%s is not a directory, could not generate HTML"
                             % html_dest_dir)
@@ -377,10 +369,31 @@ class GTKDoc(object):
     def _run_gtkdoc_fixxref(self):
         args = ['gtkdoc-fixxref',
                 '--module=%s' % self.module_name,
-                '--module-dir=html',
-                '--html-dir=html']
+                '--module-dir=html/%s' % self.module_name]
         args.extend(['--extra-dir=%s' % extra_dir for extra_dir in self.cross_reference_deps])
         self._run_command(args, cwd=self.output_dir, ignore_warnings=True)
+
+        # gtkdoc-fixxref has some predefined links for which it always uses absolute paths.
+        html_dir_prefix = os.path.join(self.virtual_root + self.prefix, 'share', 'gtk-doc', 'html')
+        module_dir = os.path.join(self.output_dir, 'html', self.module_name)
+        for entry in os.listdir(module_dir):
+            if not entry.endswith('.html'):
+                continue
+
+            filename = os.path.join(module_dir, entry)
+            contents = ''
+            with codecs.open(filename, 'r', encoding='utf-8') as f:
+                contents = f.read()
+
+            if not html_dir_prefix in contents:
+                continue
+
+            tmp_filename = filename + '.new'
+            new_contents = contents.replace(html_dir_prefix, '..')
+            with codecs.open(tmp_filename, 'w', encoding='utf-8') as f:
+                f.write(new_contents)
+
+            os.rename(tmp_filename, filename)
 
     def rebase_installed_docs(self):
         if not os.path.isdir(self.output_dir):
