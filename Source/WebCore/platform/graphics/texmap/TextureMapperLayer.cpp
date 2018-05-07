@@ -449,13 +449,6 @@ TextureMapperLayer::~TextureMapperLayer()
         child->m_parent = nullptr;
 
     removeFromParent();
-
-    if (m_effectTarget) {
-        if (m_effectTarget->m_state.maskLayer == this)
-            m_effectTarget->m_state.maskLayer = nullptr;
-        if (m_effectTarget->m_state.replicaLayer == this)
-            m_effectTarget->m_state.replicaLayer = nullptr;
-    }
 }
 
 #if !USE(COORDINATED_GRAPHICS)
@@ -505,16 +498,20 @@ void TextureMapperLayer::removeAllChildren()
 
 void TextureMapperLayer::setMaskLayer(TextureMapperLayer* maskLayer)
 {
-    if (maskLayer)
-        maskLayer->m_effectTarget = this;
-    m_state.maskLayer = maskLayer;
+    if (maskLayer) {
+        maskLayer->m_effectTarget = createWeakPtr();
+        m_state.maskLayer = maskLayer->createWeakPtr();
+    } else
+        m_state.maskLayer = nullptr;
 }
 
 void TextureMapperLayer::setReplicaLayer(TextureMapperLayer* replicaLayer)
 {
-    if (replicaLayer)
-        replicaLayer->m_effectTarget = this;
-    m_state.replicaLayer = replicaLayer;
+    if (replicaLayer) {
+        replicaLayer->m_effectTarget = createWeakPtr();
+        m_state.replicaLayer = replicaLayer->createWeakPtr();
+    } else
+        m_state.replicaLayer = nullptr;
 }
 
 void TextureMapperLayer::setPosition(const FloatPoint& position)
