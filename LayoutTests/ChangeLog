@@ -1,3 +1,17 @@
+2018-05-07  Daniel Bates  <dabates@apple.com>
+
+        CSP referrer incorrect for document blocked due to violation of its frame-ancestors directive
+        https://bugs.webkit.org/show_bug.cgi?id=185380
+
+        Reviewed by Brent Fulgham.
+
+        Update existing test results now that we send the referrer for the correct document.
+
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-cross-origin-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-cross-origin-https-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-same-origin-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-same-origin-https-expected.txt:
+
 2018-05-07  Chris Dumez  <cdumez@apple.com>
 
         Stop using an iframe's id as fallback if its name attribute is not set

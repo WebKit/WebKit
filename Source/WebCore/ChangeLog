@@ -1,3 +1,26 @@
+2018-05-07  Daniel Bates  <dabates@apple.com>
+
+        CSP referrer incorrect for document blocked due to violation of its frame-ancestors directive
+        https://bugs.webkit.org/show_bug.cgi?id=185380
+
+        Reviewed by Brent Fulgham.
+
+        Similar to <https://bugs.webkit.org/show_bug.cgi?id=185366>, fixes an issue where the referrer
+        in the sent CSP report for an HTTP document blocked because its frame-ancestors directive was
+        violated would be the referrer of the previously loaded document in the frame.
+
+        Currently whenever we send a CSP report we ask the document's loader (Document::loader()) for
+        the referrer for the last request. Document::loader() returns the loader for the last committed
+        document in its frame. For a frame-ancestors violation, a CSP report is sent before the document
+        that had the frame-ancestors directive has been committed and after it has been associate with a
+        frame. As a result we are in a transient transition state for the frame and hence the last request
+        for the new document's loader (Document::loader()) is actually the last request of the previously
+        loaded document in the frame. Instead we need to take care to tell CSP about the referrer for the
+        request associated with the document the CSP came from.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+
 2018-05-07  Brent Fulgham  <bfulgham@apple.com>
 
         Add experimental feature to prompt for Storage Access API use
