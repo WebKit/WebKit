@@ -371,18 +371,26 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(String&& subFrameHost,
 
         auto& subFrameStatistic = ensureResourceStatisticsForPrimaryDomain(subFramePrimaryDomain);
         if (shouldBlockCookies(subFrameStatistic)) {
-            callback(false);
+            callOnMainThread([callback = WTFMove(callback)] {
+                callback(false);
+            });
             return;
         }
         
         if (!shouldPartitionCookies(subFrameStatistic)) {
-            callback(true);
+            callOnMainThread([callback = WTFMove(callback)] {
+                callback(true);
+            });
             return;
         }
 
         subFrameStatistic.timesAccessedAsFirstPartyDueToStorageAccessAPI++;
 
-        m_grantStorageAccessHandler(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID, WTFMove(callback));
+        m_grantStorageAccessHandler(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID, [callback = WTFMove(callback)] (bool value) mutable {
+            callOnMainThread([value, callback = WTFMove(callback)] {
+                callback(value);
+            });
+        });
     });
 }
 

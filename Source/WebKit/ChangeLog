@@ -1,3 +1,13 @@
+2018-05-07  Alex Christensen  <achristensen@webkit.org>
+
+        WebResourceLoadStatisticsStore::requestStorageAccess should call its completion handler on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=185403
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+
 2018-05-07  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Release page load process assertion if the screen is locked
