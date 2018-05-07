@@ -1,3 +1,12 @@
+2018-05-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark platform/mac/media/audio-session-category-video-track-change.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=184609
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2018-05-07  Daniel Bates  <dabates@apple.com>
 
         CSP referrer incorrect for document blocked due to violation of its frame-ancestors directive

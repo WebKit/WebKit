@@ -1761,3 +1761,5 @@ webkit.org/b/184612 [ Debug ] media/audio-concurrent-supported.html [ Pass Failu
 webkit.org/b/184624 [ Sierra ] fast/text/font-collection.html [ ImageOnlyFailure ]
 
 webkit.org/b/184457 media/video-aspect-ratio.html [ Pass Failure ]
+
+webkit.org/b/184609 platform/mac/media/audio-session-category-video-track-change.html [ Pass Failure ]
