@@ -1,3 +1,26 @@
+2018-05-07  Jonathan Bedard  <jbedard@apple.com>
+
+        Check for com.apple.datamigrator before declaring simulators booted
+        https://bugs.webkit.org/show_bug.cgi?id=185315
+        <rdar://problem/39986261>
+
+        Reviewed by David Kilzer.
+
+        * Scripts/webkitdirs.pm:
+        (waitUntilProcessNotRunning): Wait until a process is not found.
+        (relaunchIOSSimulator): Wait until com.apple.datamigrator stops running to declare
+        a simulator booted.
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockExecutive2.__init__): Define _running_pids.
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager.initialize_devices): Call wait_until_data_migration_is_done before
+        declaring that devices have been booted, increase the timeout since data migration will frequently
+        take longer than 60 seconds, especially with multiple simulators booting.
+        (SimulatedDeviceManager.swap): Ditto.
+        (SimulatedDeviceManager):
+        (SimulatedDeviceManager.wait_until_data_migration_is_done): Wait until there are no com.apple.datamigrator
+        processes running.
+
 2018-05-07  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r229955): run-webkit-tests runs tests in skipped directories and subdirectories of directory given on command line
