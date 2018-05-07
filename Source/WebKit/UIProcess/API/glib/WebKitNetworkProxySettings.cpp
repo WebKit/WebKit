@@ -63,7 +63,7 @@ const SoupNetworkProxySettings& webkitNetworkProxySettingsGetNetworkProxySetting
 /**
  * webkit_network_proxy_settings_new:
  * @default_proxy_uri: (allow-none): the default proxy URI to use, or %NULL.
- * @ignore_hosts: (allow-none): an optional list of hosts/IP addresses to not use a proxy for.
+ * @ignore_hosts: (allow-none) (array zero-terminated=1): an optional list of hosts/IP addresses to not use a proxy for.
  *
  * Create a new #WebKitNetworkProxySettings with the given @default_proxy_uri and @ignore_hosts.
  *
