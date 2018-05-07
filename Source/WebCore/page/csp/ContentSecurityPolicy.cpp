@@ -113,6 +113,7 @@ void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other)
     for (auto& policy : other->m_policies)
         didReceiveHeader(policy->header(), policy->headerType(), ContentSecurityPolicy::PolicyFrom::Inherited, String { });
     m_referrer = other->m_referrer;
+    m_httpStatusCode = other->m_httpStatusCode;
 }
 
 void ContentSecurityPolicy::copyUpgradeInsecureRequestStateFrom(const ContentSecurityPolicy& other)
@@ -167,6 +168,7 @@ ContentSecurityPolicyResponseHeaders ContentSecurityPolicy::responseHeaders() co
         result.m_headers.reserveInitialCapacity(m_policies.size());
         for (auto& policy : m_policies)
             result.m_headers.uncheckedAppend({ policy->header(), policy->headerType() });
+        result.m_httpStatusCode = m_httpStatusCode;
         m_cachedResponseHeaders = WTFMove(result);
     }
     return *m_cachedResponseHeaders;
@@ -178,14 +180,16 @@ void ContentSecurityPolicy::didReceiveHeaders(const ContentSecurityPolicyRespons
     for (auto& header : headers.m_headers)
         didReceiveHeader(header.first, header.second, ContentSecurityPolicy::PolicyFrom::HTTPHeader, String { });
     m_referrer = WTFMove(referrer);
+    m_httpStatusCode = headers.m_httpStatusCode;
 }
 
-void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecurityPolicyHeaderType type, ContentSecurityPolicy::PolicyFrom policyFrom, String&& referrer)
+void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecurityPolicyHeaderType type, ContentSecurityPolicy::PolicyFrom policyFrom, String&& referrer, int httpStatusCode)
 {
     if (m_hasAPIPolicy)
         return;
 
     m_referrer = WTFMove(referrer);
+    m_httpStatusCode = httpStatusCode;
 
     if (policyFrom == PolicyFrom::API) {
         ASSERT(m_policies.isEmpty());
@@ -668,9 +672,8 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     }
     String violatedDirectiveText = violatedDirective;
     String originalPolicy = violatedDirectiveList.header();
-    ASSERT(document.loader());
     // FIXME: Is it policy to not use the status code for HTTPS, or is that a bug?
-    unsigned short statusCode = document.url().protocolIs("http") && document.loader() ? document.loader()->response().httpStatusCode() : 0;
+    unsigned short statusCode = m_selfSourceProtocol == "http" ? m_httpStatusCode : 0;
 
     String sourceFile;
     int lineNumber = 0;

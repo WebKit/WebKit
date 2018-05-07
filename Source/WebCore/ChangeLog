@@ -1,5 +1,49 @@
 2018-05-07  Daniel Bates  <dabates@apple.com>
 
+        CSP status-code incorrect for document blocked due to violation of its frame-ancestors directive
+        https://bugs.webkit.org/show_bug.cgi?id=185366
+        <rdar://problem/40035116>
+
+        Reviewed by Brent Fulgham.
+
+        Fixes an issue where the status-code in the sent CSP report for an HTTP document blocked because
+        its frame-ancestors directive was violated would be the status code of the previously loaded
+        document in the frame. If the previously loaded document was about:blank then this would be 0.
+
+        Currently whenever we send a CSP report we ask the document's loader (Document::loader()) for the
+        HTTP status code for the last response. Document::loader() returns the loader for the last committed
+        document its frame. For a frame-ancestors violation, a CSP report is sent before the document
+        that had the frame-ancestors directive has been committed and after it has been associate with a frame.
+        As a result we are in are in a transient transition state for the frame and hence the last response
+        for new document's loader (Document::loader()) is actually the last response of the previously loaded
+        document in the frame. Instead we need to take care to tell CSP about the HTTP status code for the
+        response associated with the document the CSP came from.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::initSecurityContext):
+        Pass the HTTP status code to CSP.
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::copyStateFrom):
+        (WebCore::ContentSecurityPolicy::responseHeaders const):
+        (WebCore::ContentSecurityPolicy::didReceiveHeaders):
+        (WebCore::ContentSecurityPolicy::didReceiveHeader):
+        (WebCore::ContentSecurityPolicy::reportViolation const):
+        * page/csp/ContentSecurityPolicy.h:
+        Modify existing functions to take the HTTP status code, store it in a instance variable,
+        and reference this variable when reporting a violation.
+
+        * page/csp/ContentSecurityPolicyResponseHeaders.cpp:
+        (WebCore::ContentSecurityPolicyResponseHeaders::ContentSecurityPolicyResponseHeaders):
+        (WebCore::ContentSecurityPolicyResponseHeaders::isolatedCopy const):
+        * page/csp/ContentSecurityPolicyResponseHeaders.h:
+        (WebCore::ContentSecurityPolicyResponseHeaders::encode const):
+        (WebCore::ContentSecurityPolicyResponseHeaders::decode):
+        Store the HTTP status code along with the response headers.
+
+2018-05-07  Daniel Bates  <dabates@apple.com>
+
         CSP referrer incorrect for document blocked due to violation of its frame-ancestors directive
         https://bugs.webkit.org/show_bug.cgi?id=185380
 

@@ -48,6 +48,8 @@ ContentSecurityPolicyResponseHeaders::ContentSecurityPolicyResponseHeaders(const
     policyValue = response.httpHeaderField(HTTPHeaderName::XWebKitCSPReportOnly);
     if (!policyValue.isEmpty())
         m_headers.append({ policyValue, ContentSecurityPolicyHeaderType::PrefixedReport });
+
+    m_httpStatusCode = response.httpStatusCode();
 }
 
 ContentSecurityPolicyResponseHeaders ContentSecurityPolicyResponseHeaders::isolatedCopy() const
@@ -56,6 +58,7 @@ ContentSecurityPolicyResponseHeaders ContentSecurityPolicyResponseHeaders::isola
     isolatedCopy.m_headers.reserveInitialCapacity(m_headers.size());
     for (auto& header : m_headers)
         isolatedCopy.m_headers.uncheckedAppend({ header.first.isolatedCopy(), header.second });
+    isolatedCopy.m_httpStatusCode = m_httpStatusCode;
     return isolatedCopy;
 }
 
