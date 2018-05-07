@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andy VanWagoner <thetalecrafter@gmail.com>.
+ * Copyright (C) 2015 Andy VanWagoner <andy@vanwagoner.family>.
  * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>
  * Copyright (C) 2016 Apple Inc. All rights reserved.
  *

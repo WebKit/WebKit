@@ -1,3 +1,45 @@
+2018-05-07  Andy VanWagoner  <andy@vanwagoner.family>
+
+        Remove defunct email address
+        https://bugs.webkit.org/show_bug.cgi?id=185396
+
+        Reviewed by Mark Lam.
+
+        The email address thetalecrafter@gmail.com is no longer valid, as the
+        associated google account has been closed. This updates the email
+        address so questions about these Intl contributions go to the right
+        place.
+
+        * builtins/DatePrototype.js:
+        * builtins/NumberPrototype.js:
+        * builtins/StringPrototype.js:
+        * runtime/IntlCollator.cpp:
+        * runtime/IntlCollator.h:
+        * runtime/IntlCollatorConstructor.cpp:
+        * runtime/IntlCollatorConstructor.h:
+        * runtime/IntlCollatorPrototype.cpp:
+        * runtime/IntlCollatorPrototype.h:
+        * runtime/IntlDateTimeFormat.cpp:
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        * runtime/IntlDateTimeFormatConstructor.h:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        * runtime/IntlDateTimeFormatPrototype.h:
+        * runtime/IntlNumberFormat.cpp:
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlNumberFormatConstructor.cpp:
+        * runtime/IntlNumberFormatConstructor.h:
+        * runtime/IntlNumberFormatPrototype.cpp:
+        * runtime/IntlNumberFormatPrototype.h:
+        * runtime/IntlObject.cpp:
+        * runtime/IntlObject.h:
+        * runtime/IntlPluralRules.cpp:
+        * runtime/IntlPluralRules.h:
+        * runtime/IntlPluralRulesConstructor.cpp:
+        * runtime/IntlPluralRulesConstructor.h:
+        * runtime/IntlPluralRulesPrototype.cpp:
+        * runtime/IntlPluralRulesPrototype.h:
+
 2018-05-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove "using namespace std;" from JSC, bmalloc, WTF
