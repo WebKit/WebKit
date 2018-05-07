@@ -45,6 +45,7 @@ Box::~Box()
 
 LayoutRect Box::marginBox() const
 {
+    ASSERT(m_hasValidMargin);
     auto marginBox = rect();
     auto topLeftMargin = LayoutSize(m_marginLeft, m_marginTop);
     marginBox.inflate(topLeftMargin);
@@ -61,6 +62,7 @@ LayoutRect Box::borderBox() const
 
 LayoutRect Box::paddingBox() const
 {
+    ASSERT(m_hasValidBorder);
     auto paddingBox = borderBox();
     auto topLeftBorder = LayoutSize(m_borderLeft, m_borderTop);
     paddingBox.inflate(-topLeftBorder);
@@ -72,6 +74,7 @@ LayoutRect Box::paddingBox() const
 
 LayoutRect Box::contentBox() const
 {
+    ASSERT(m_hasValidPadding);
     auto contentBox = paddingBox();
     auto topLeftPadding = LayoutSize(m_paddingLeft, m_paddingTop);
     contentBox.inflate(-topLeftPadding);

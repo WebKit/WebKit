@@ -1,5 +1,46 @@
 2018-05-06  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Add assertions for stale Display::Box geometry
+        https://bugs.webkit.org/show_bug.cgi?id=185357
+
+        Reviewed by Antti Koivisto.
+
+        Ensure that we don't access stale geometry of other boxes during layout.
+        For example, in order to layout a block child we need the containing block's content box top/left and width (but not the height)
+
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::invalidateTop):
+        (WebCore::Display::Box::invalidateLeft):
+        (WebCore::Display::Box::invalidateWidth):
+        (WebCore::Display::Box::invalidateHeight):
+        (WebCore::Display::Box::hasValidPosition const):
+        (WebCore::Display::Box::hasValidSize const):
+        (WebCore::Display::Box::hasValidGeometry const):
+        (WebCore::Display::Box::invalidatePosition):
+        (WebCore::Display::Box::invalidateSize):
+        (WebCore::Display::Box::setHasValidPosition):
+        (WebCore::Display::Box::setHasValidSize):
+        (WebCore::Display::Box::setHasValidGeometry):
+        (WebCore::Display::Box::rect const):
+        (WebCore::Display::Box::top const):
+        (WebCore::Display::Box::left const):
+        (WebCore::Display::Box::bottom const):
+        (WebCore::Display::Box::right const):
+        (WebCore::Display::Box::topLeft const):
+        (WebCore::Display::Box::bottomRight const):
+        (WebCore::Display::Box::size const):
+        (WebCore::Display::Box::width const):
+        (WebCore::Display::Box::height const):
+        (WebCore::Display::Box::setRect):
+        (WebCore::Display::Box::setTopLeft):
+        (WebCore::Display::Box::setTop):
+        (WebCore::Display::Box::setLeft):
+        (WebCore::Display::Box::setSize):
+        (WebCore::Display::Box::setWidth):
+        (WebCore::Display::Box::setHeight):
+
+2018-05-06  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Add BlockFormattingContext::computeStaticPosition
         https://bugs.webkit.org/show_bug.cgi?id=185352
 
