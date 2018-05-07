@@ -190,7 +190,7 @@ protected:
 
     void triggerRepaint(GstSample*);
     void repaint();
-    void cancelRepaint();
+    void cancelRepaint(bool destroying = false);
 
     static void repaintCallback(MediaPlayerPrivateGStreamerBase*, GstSample*);
     static void repaintCancelledCallback(MediaPlayerPrivateGStreamerBase*);
