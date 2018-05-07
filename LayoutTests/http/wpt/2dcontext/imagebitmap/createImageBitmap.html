@@ -8,6 +8,13 @@
 <body>
 <script>
 (function() {
+    let loadImage = new Promise(function(resolve, reject) {
+        let img = new Image();
+        img.onload = function() { resolve(img); };
+        img.onerror = function() { reject(); };
+        img.src = "/images/pattern.png";
+    });
+
     promise_test(function(t) {
         return promise_rejects(t, new RangeError, createImageBitmap(new Image(), 0, 0, 0, 10));
     }, "createImageBitmap rejects with RangeError if width is zero");
@@ -17,23 +24,33 @@
     }, "createImageBitmap rejects with RangeError if height is zero");
 
     promise_test(function(t) {
-        return promise_rejects(t, new RangeError, createImageBitmap(new Image(), 0, 0, -10, 10));
-    }, "createImageBitmap rejects with RangeError if width is negative");
+        return loadImage.then(function(img) {
+            assert_equals(img.width, 20);
+            assert_equals(img.height, 20);
+            return createImageBitmap(img, 10, 10, -10, -10);
+        }).then(function(imageBitmap) {
+            assert_equals(imageBitmap.width, 10);
+            assert_equals(imageBitmap.height, 10);
+        });
+    }, "createImageBitmap if width is negative");
 
     promise_test(function(t) {
-        return promise_rejects(t, new RangeError, createImageBitmap(new Image(), 0, 0, 10, -10));
-    }, "createImageBitmap rejects with RangeError if height is negative");
+        return loadImage.then(function(img) {
+            assert_equals(img.width, 20);
+            assert_equals(img.height, 20);
+            return createImageBitmap(img, 10, 10, 10, -10);
+        }).then(function(imageBitmap) {
+            assert_equals(imageBitmap.width, 10);
+            assert_equals(imageBitmap.height, 10);
+        });
+    }, "createImageBitmap if height is negative");
 
     promise_test(function(t) {
         return promise_rejects(t, "InvalidStateError", createImageBitmap(new Image()));
     }, "createImageBitmap rejects with InvalidStateError on an HTMLImageElement with no image data");
 
     promise_test(function() {
-        return new Promise(function(resolve, reject) {
-            let img = new Image();
-            img.onload = function() { resolve(img); };
-            img.src = "/images/pattern.png";
-        }).then(function(img) {
+        return loadImage.then(function(img) {
             return createImageBitmap(img);
         }).then(function(imageBitmap) {
             assert_equals(imageBitmap.width, 20, "ImageBitmap width should be 20");

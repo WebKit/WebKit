@@ -1,3 +1,16 @@
+2018-05-07  Ms2ger  <Ms2ger@igalia.com>
+
+        Support negative sw/sh values in createImageBitmap().
+        https://bugs.webkit.org/show_bug.cgi?id=184449
+
+        Reviewed by Dean Jackson.
+
+        Tests: LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage.html
+               LayoutTests/http/wpt/2dcontext/imagebitmap/createImageBitmap.html
+
+        * html/ImageBitmap.cpp:
+        (WebCore::ImageBitmap::createPromise): handle negative values per spec.
+
 2018-05-07  Brian Burg  <bburg@apple.com>
 
         Web Inspector: opt out of process swap on navigation if a Web Inspector frontend is connected

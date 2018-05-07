@@ -1,3 +1,13 @@
+2018-05-07  Ms2ger  <Ms2ger@igalia.com>
+
+        Support negative sw/sh values in createImageBitmap().
+        https://bugs.webkit.org/show_bug.cgi?id=184449
+
+        Reviewed by Dean Jackson.
+
+        * http/wpt/2dcontext/imagebitmap/createImageBitmap-expected.txt: update test name
+        * http/wpt/2dcontext/imagebitmap/createImageBitmap.html: update expected result
+
 2018-05-04  Youenn Fablet  <youenn@apple.com>
 
         webrtc/addICECandidate-closed.html is timing out
