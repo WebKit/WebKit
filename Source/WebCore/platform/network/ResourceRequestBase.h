@@ -92,7 +92,7 @@ public:
     void addHTTPHeaderField(const String& name, const String& value);
     void addHTTPHeaderFieldIfNotPresent(HTTPHeaderName, const String&);
 
-    bool hasHTTPHeaderField(HTTPHeaderName) const;
+    WEBCORE_EXPORT bool hasHTTPHeaderField(HTTPHeaderName) const;
 
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
     template<size_t length> String httpHeaderField(const char (&)[length]) const = delete;
