@@ -1,5 +1,29 @@
 2018-05-07  Daniel Bates  <dabates@apple.com>
 
+        CSP should only notify Inspector to pause the debugger on the first policy to violate a directive
+        https://bugs.webkit.org/show_bug.cgi?id=185364
+
+        Reviewed by Brent Fulgham.
+
+        Notify Web Inspector that a script was blocked on the first enforced CSP policy that it
+        violates.
+
+        A page can have more than one enforced Content Security Policy. Currently for inline
+        scripts, inline event handlers, JavaScript URLs, and eval() that are blocked by CSP
+        we notify Web Inspector that it was blocked for each CSP policy that blocked it. When
+        Web Inspector is notified it pauses script execution. It does not seem very meaningful
+        to pause script execution on the same script for each CSP policy that blocked it.
+        Therefore, only tell Web Inspector that a script was blocked for the first enforced CSP
+        policy that blocked it.
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowJavaScriptURLs const):
+        (WebCore::ContentSecurityPolicy::allowInlineEventHandlers const):
+        (WebCore::ContentSecurityPolicy::allowInlineScript const):
+        (WebCore::ContentSecurityPolicy::allowEval const):
+
+2018-05-07  Daniel Bates  <dabates@apple.com>
+
         Substitute CrossOriginPreflightResultCache::clear() for CrossOriginPreflightResultCache::empty()
         https://bugs.webkit.org/show_bug.cgi?id=185170
 
