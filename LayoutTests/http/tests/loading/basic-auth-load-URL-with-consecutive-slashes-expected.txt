@@ -1,19 +1,19 @@
 main frame - didStartProvisionalLoadForFrame
 main frame - didCommitLoadForFrame
-frame "frame" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 http://127.0.0.1:8000/loading/resources/basic-auth-testing.php?username=webkit&password=rocks - didReceiveAuthenticationChallenge - Responding with webkit:rocks
-frame "frame" - didCommitLoadForFrame
-frame "frame" - didFinishDocumentLoadForFrame
-frame "frame" - willPerformClientRedirectToURL: http://127.0.0.1:8000/a//b/non-existent-file.html 
-frame "frame" - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - willPerformClientRedirectToURL: http://127.0.0.1:8000/a//b/non-existent-file.html 
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame
-frame "frame" - didFinishLoadForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
 main frame - didFinishLoadForFrame
-frame "frame" - didStartProvisionalLoadForFrame
-frame "frame" - didCancelClientRedirectForFrame
-frame "frame" - didCommitLoadForFrame
-frame "frame" - didReceiveTitle: 404 Not Found
-frame "frame" - didFinishDocumentLoadForFrame
-frame "frame" - didFailLoadWithError
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didCancelClientRedirectForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - didReceiveTitle: 404 Not Found
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didFailLoadWithError
 PASS did not cause assertion failure.

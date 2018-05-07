@@ -24,8 +24,8 @@
         var cacheName = "test-remove-twice";
         return new Promise((resolve, reject) => {
             window.addEventListener("message", test.step_func((event) => {
-                return Promise.all([self.caches.open(cacheName), cacheFrame.window.caches.open(cacheName) ]).then(() => {
-                    return Promise.all([self.caches.delete(cacheName), cacheFrame.window.caches.delete(cacheName)]);
+                return Promise.all([self.caches.open(cacheName), cacheFrame.contentWindow.caches.open(cacheName) ]).then(() => {
+                    return Promise.all([self.caches.delete(cacheName), cacheFrame.contentWindow.caches.delete(cacheName)]);
                 }).then(resolve, reject);
 	    }));
 	});

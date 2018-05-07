@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<iframe id="testFrame"></iframe>
+<script>
+description("Tests that looking up a frame by id returns the iframe element and not its contentWindow.");
+onload = function() {
+    shouldBe("testFrame", "document.getElementById('testFrame')");
+    shouldBeEqualToString("testFrame.name", "");
+    shouldBeEqualToString("testFrame.id", "testFrame");
+}
+</script>
+</body>
+</html>

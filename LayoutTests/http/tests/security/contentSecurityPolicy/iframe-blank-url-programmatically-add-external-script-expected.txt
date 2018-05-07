@@ -2,6 +2,6 @@ ALERT: PASS
 
 
 --------
-Frame: 'frame'
+Frame: '<!--frame1-->'
 --------
 

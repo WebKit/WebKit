@@ -10,7 +10,7 @@ TEST COMPLETE
   
 
 --------
-Frame: 'TheIframeThatRequestsStorageAccess'
+Frame: '<!--frame1-->'
 --------
 After the top frame navigates the sub frame, the sub frame should no longer have access to first-party cookies.
 Did not receive cookie named 'firstPartyCookie'.
@@ -18,7 +18,7 @@ Received cookie named 'partitionedCookie'.
 Client-side document.cookie: partitionedCookie=value
 
 --------
-Frame: '<!--frame1-->'
+Frame: '<!--frame2-->'
 --------
 Should receive first-party cookie.
 Received cookie named 'firstPartyCookie'.
@@ -26,7 +26,7 @@ Did not receive cookie named 'partitionedCookie'.
 Client-side document.cookie: firstPartyCookie=value
 
 --------
-Frame: '<!--frame2-->'
+Frame: '<!--frame3-->'
 --------
 Should not receive cookies.
 Did not receive cookie named 'firstPartyCookie'.
@@ -34,13 +34,13 @@ Did not receive cookie named 'partitionedCookie'.
 Client-side document.cookie:
 
 --------
-Frame: '<!--frame3-->'
---------
-
-
-
---------
 Frame: '<!--frame4-->'
+--------
+
+
+
+--------
+Frame: '<!--frame5-->'
 --------
 Should receive partitioned cookie.
 Did not receive cookie named 'firstPartyCookie'.

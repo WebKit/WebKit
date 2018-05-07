@@ -14,14 +14,14 @@
     }
 
     function setupTopLevel() {
-        var scrollTarget = window.frames['target'].document.getElementById('might_scroll');
+        var scrollTarget = iframeTarget.contentDocument.getElementById('might_scroll');
 
-        window.frames['target'].window.registerAction(function () {
+        iframeTarget.contentWindow.registerAction(function () {
             iframeTarget.remove();
             setTimeout(finish, 0);
         });
 
-        window.frames['target'].window.run();
+        iframeTarget.contentWindow.run();
     }
 </script>    
 </body>

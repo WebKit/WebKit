@@ -26,8 +26,8 @@ function shouldThrowOrReturnUndefined(expression)
 
 function runTest()
 {
-    crossOriginWindow = crossOriginFrame.window;
-    sameOriginWindow = sameOriginFrame.window;
+    crossOriginWindow = crossOriginFrame.contentWindow;
+    sameOriginWindow = sameOriginFrame.contentWindow;
 
     shouldThrowOrReturnUndefined('crossOriginWindow.document');
     shouldThrowOrReturnUndefined('crossOriginWindow.name');

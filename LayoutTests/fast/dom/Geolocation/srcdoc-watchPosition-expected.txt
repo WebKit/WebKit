@@ -3,7 +3,7 @@ Tests that navigator.geolocation.watchPosition() returns error POSITION_UNAVAILA
 
 
 --------
-Frame: 'frame'
+Frame: '<!--frame1-->'
 --------
 FAIL should have invoked error callback, but invoked success callback.
 

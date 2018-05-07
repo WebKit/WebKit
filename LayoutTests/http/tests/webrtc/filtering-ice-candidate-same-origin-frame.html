@@ -15,7 +15,7 @@ window.addEventListener("message", (event) => {
     }
     if (event.data === "getUserMedia done") {
         didGetUserMedia = true;
-        frame1.postMessage("check filtering", "*");
+        frame1.contentWindow.postMessage("check filtering", "*");
         return;
     }
     check1.innerHTML = "";

@@ -33,7 +33,7 @@
     }
     
     function runTest() {
-        fixedDiv = window.frames['fixedFrame'].document.getElementById('fixedDiv');
+        fixedDiv = fixedFrame.contentDocument.getElementById('fixedDiv');
         target = document.getElementById('target');
 
         setTimeout(function() {

@@ -1,5 +1,37 @@
 2018-05-07  Chris Dumez  <cdumez@apple.com>
 
+        Stop using an iframe's id as fallback if its name attribute is not set
+        https://bugs.webkit.org/show_bug.cgi?id=11388
+
+        Reviewed by Geoff Garen.
+
+        WebKit had logic to use an iframe's id as fallback name when its name
+        content attribute is not set. This behavior was not standard and did not
+        match other browsers:
+        - https://html.spec.whatwg.org/#attr-iframe-name
+
+        Gecko / Trident never behaved this way. Blink was aligned with us until
+        they started to match the specification in:
+        - https://bugs.chromium.org/p/chromium/issues/detail?id=347169
+
+        This WebKit quirk was causing some Web-compatibility issues because it
+        would affect the behavior of Window's name property getter when trying
+        to look up an iframe by id. Because of Window's named property getter
+        behavior [1], we would return the frame's contentWindow instead of the
+        iframe element itself.
+
+        [1] https://html.spec.whatwg.org/multipage/window-object.html#named-access-on-the-window-object
+
+        Test: fast/dom/Window/named-getter-frame-id.html
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::openURL):
+        (WebCore::HTMLFrameElementBase::parseAttribute):
+        (WebCore::HTMLFrameElementBase::didFinishInsertingNode):
+        * html/HTMLFrameElementBase.h:
+
+2018-05-07  Chris Dumez  <cdumez@apple.com>
+
         ASSERT(!childItemWithTarget(child->target())) is hit in HistoryItem::addChildItem()
         https://bugs.webkit.org/show_bug.cgi?id=185322
 

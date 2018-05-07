@@ -3,6 +3,6 @@ Tests that a Content-Security-Policy HTTP header is ignored when delivered with 
 
 
 --------
-Frame: 'frame'
+Frame: '<!--frame1-->'
 --------
 PASS
