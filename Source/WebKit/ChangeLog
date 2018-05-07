@@ -1,3 +1,12 @@
+2018-05-07  Don Olmstead  <don.olmstead@sony.com>
+
+        [Win] LoggingWin is missing includes
+        https://bugs.webkit.org/show_bug.cgi?id=185326
+
+        Reviewed by Per Arne Vollan.
+
+        * Platform/win/LoggingWin.cpp:
+
 2018-05-07  Daniel Bates  <dabates@apple.com>
 
         CSP should be passed the referrer

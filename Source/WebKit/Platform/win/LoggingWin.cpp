@@ -29,6 +29,7 @@
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
+#include <windows.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
