@@ -355,10 +355,6 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
 
 - (void)dealloc {
   [self destroyCompressionSession];
-  if (_callback) {
-    Block_release(_callback);
-  }
-  [super dealloc];
 }
 
 - (NSInteger)startEncodeWithSettings:(RTCVideoEncoderSettings *)settings
@@ -504,7 +500,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
 }
 
 - (void)setCallback:(RTCVideoEncoderCallback)callback {
-  _callback = Block_copy(callback);
+  _callback = callback;
 }
 
 - (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate {
@@ -521,7 +517,6 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
   // callback anymore. Do not remove callback until the session is invalidated
   // since async encoder callbacks can occur until invalidation.
   [self destroyCompressionSession];
-  Block_release(_callback);
   _callback = nullptr;
   return WEBRTC_VIDEO_CODEC_OK;
 }
@@ -695,7 +690,8 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
     CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, kCFBooleanFalse);
     int usageValue = 1;
     CFNumberRef usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
-    CFDictionarySetValue(encoderSpecs, getkVTVideoEncoderSpecification_Usage(), usage);
+    CFDictionarySetValue(encoderSpecs, (__bridge CFStringRef)getkVTVideoEncoderSpecification_Usage(), usage);
+
     if (usage) {
       CFRelease(usage);
       usage = nullptr;

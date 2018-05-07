@@ -90,10 +90,6 @@ void decompressionOutputCallback(void *decoderRef,
 - (void)dealloc {
   [self destroyDecompressionSession];
   [self setVideoFormat:nullptr];
-  if (_callback) {
-    Block_release(_callback);
-  }
-  [super dealloc];
 }
 
 - (NSInteger)startDecodeWithSettings:(RTCVideoEncoderSettings *)settings
@@ -182,7 +178,7 @@ void decompressionOutputCallback(void *decoderRef,
 }
 
 - (void)setCallback:(RTCVideoDecoderCallback)callback {
-  _callback = Block_copy(callback);
+  _callback = callback;
 }
 
 - (void)setError:(OSStatus)error {
@@ -194,7 +190,6 @@ void decompressionOutputCallback(void *decoderRef,
   // is safe to null out the callback.
   [self destroyDecompressionSession];
   [self setVideoFormat:nullptr];
-  Block_release(_callback);
   _callback = nullptr;
   return WEBRTC_VIDEO_CODEC_OK;
 }

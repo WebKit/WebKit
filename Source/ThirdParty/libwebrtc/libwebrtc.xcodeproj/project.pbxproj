@@ -691,14 +691,10 @@
 		419C848F1FE2574D0040C30F /* d1_pkt.cc in Sources */ = {isa = PBXBuildFile; fileRef = 419C84861FE2574C0040C30F /* d1_pkt.cc */; };
 		419C84921FE2591F0040C30F /* err_data.c in Sources */ = {isa = PBXBuildFile; fileRef = 419C84911FE2591E0040C30F /* err_data.c */; };
 		419C849D1FE2FEC00040C30F /* decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 419C84971FE2FEBF0040C30F /* decoder.h */; };
-		419C849E1FE2FEC00040C30F /* decoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 419C84981FE2FEBF0040C30F /* decoder.mm */; };
-		419C84A31FE2FFDB0040C30F /* encoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 419C849A1FE2FEC00040C30F /* encoder.mm */; };
 		419C84A41FE300810040C30F /* encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 419C849B1FE2FEC00040C30F /* encoder.h */; };
 		419C84AA1FE303DE0040C30F /* h264.h in Headers */ = {isa = PBXBuildFile; fileRef = 419C84A81FE303DD0040C30F /* h264.h */; };
 		419C84AB1FE303DE0040C30F /* h264_globals.h in Headers */ = {isa = PBXBuildFile; fileRef = 419C84A91FE303DE0040C30F /* h264_globals.h */; };
 		419C84B11FE304C70040C30F /* VideoToolBoxDecoderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 419C84AD1FE304C60040C30F /* VideoToolBoxDecoderFactory.h */; };
-		419C84B31FE304C70040C30F /* VideoToolBoxDecoderFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 419C84AF1FE304C70040C30F /* VideoToolBoxDecoderFactory.cpp */; };
-		419C84B41FE309050040C30F /* VideoToolBoxEncoderFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 419C84AE1FE304C60040C30F /* VideoToolBoxEncoderFactory.cpp */; };
 		419C84B51FE309050040C30F /* VideoToolBoxEncoderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 419C84AC1FE304C60040C30F /* VideoToolBoxEncoderFactory.h */; };
 		419C84BC1FE319440040C30F /* audio_encoder_ilbc_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 419C84B71FE319430040C30F /* audio_encoder_ilbc_config.h */; };
 		419C84BD1FE319440040C30F /* audio_encoder_ilbc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 419C84B81FE319430040C30F /* audio_encoder_ilbc.cc */; };
@@ -13022,7 +13018,6 @@
 				5CDD87B31E43BC0500621E92 /* decode_bwe.c in Sources */,
 				41433D0E1F79B33400387B4D /* decode_plc.c in Sources */,
 				5CDD8B8D1E43C2B500621E92 /* decode_residual.c in Sources */,
-				419C849E1FE2FEC00040C30F /* decoder.mm in Sources */,
 				5CDD8A191E43BFB300621E92 /* decoder_database.cc in Sources */,
 				5CDD8B911E43C2B500621E92 /* decoder_interpolate_lsf.c in Sources */,
 				5CDD83CA1E439A6F00621E92 /* decoding_state.cc in Sources */,
@@ -13067,7 +13062,6 @@
 				5CDD87B51E43BC0500621E92 /* encode_lpc_swb.c in Sources */,
 				5CDD8A951E43C00F00621E92 /* encode_neteq_input.cc in Sources */,
 				5CDD83CC1E439A6F00621E92 /* encoded_frame.cc in Sources */,
-				419C84A31FE2FFDB0040C30F /* encoder.mm in Sources */,
 				5CDD859F1E43B5C000621E92 /* encoder_rtcp_feedback.cc in Sources */,
 				5CDD86511E43B8B500621E92 /* energy.c in Sources */,
 				5CDD8B981E43C2B500621E92 /* energy_inverse.c in Sources */,
@@ -13734,8 +13728,6 @@
 				41ECEAFD20646664009D5141 /* VideoProcessingSoftLink.cpp in Sources */,
 				5C4B490B1E42C1E3002651C8 /* videosourcebase.cc in Sources */,
 				41F9BF8F2051C80100ABF0B9 /* videosourceinterface.cc in Sources */,
-				419C84B31FE304C70040C30F /* VideoToolBoxDecoderFactory.cpp in Sources */,
-				419C84B41FE309050040C30F /* VideoToolBoxEncoderFactory.cpp in Sources */,
 				5CD285161E6A60570094FDC8 /* videotrack.cc in Sources */,
 				5CD285181E6A60570094FDC8 /* videotracksource.cc in Sources */,
 				413A23121FE18E0700373E99 /* virtualsocketserver.cc in Sources */,

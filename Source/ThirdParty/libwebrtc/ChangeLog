@@ -1,3 +1,34 @@
+2018-05-07  Youenn Fablet  <youenn@apple.com>
+
+        Activate ARC for libwebrtc Objective C files
+        https://bugs.webkit.org/show_bug.cgi?id=185324
+
+        Reviewed by David Kilzer.
+
+        Revert changes made to libwebrtc to accomodate from not using ARC.
+        Use ARC for all libwebrtc objective C files.
+
+        Remove no longer needed export symbols and stop compiling the related files.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Configurations/libwebrtc.xcconfig:
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/Video/RTCCVPixelBuffer.mm:
+        (-[RTCCVPixelBuffer dealloc]):
+        * Source/webrtc/sdk/objc/Framework/Classes/Video/objc_frame_buffer.mm:
+        (webrtc::ObjCFrameBuffer::~ObjCFrameBuffer):
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoDecoderH264.mm:
+        (-[RTCVideoDecoderH264 dealloc]):
+        (-[RTCVideoDecoderH264 setCallback:]):
+        (-[RTCVideoDecoderH264 releaseDecoder]):
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 dealloc]):
+        (-[RTCVideoEncoderH264 setCallback:]):
+        (-[RTCVideoEncoderH264 releaseEncoder]):
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2018-05-02  Youenn Fablet  <youenn@apple.com>
 
         Disable VCP for iOS until it is fully working
