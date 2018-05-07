@@ -122,6 +122,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_shouldManageAudioSessionCategory(DeprecatedGlobalSettings::shouldManageAudioSessionCategory())
 #endif
     , m_customPasteboardDataEnabled(RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled())
+    , m_promptForStorageAccessAPIEnabled(RuntimeEnabledFeatures::sharedFeatures().storageAccessPromptsEnabled())
 {
 }
 
@@ -225,6 +226,8 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #if USE(AUDIO_SESSION)
     DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(m_shouldManageAudioSessionCategory);
 #endif
+
+    RuntimeEnabledFeatures::sharedFeatures().setStorageAccessPromptsEnabled(m_promptForStorageAccessAPIEnabled);
 }
 
 class InternalSettingsWrapper : public Supplement<Page> {
@@ -776,6 +779,11 @@ void InternalSettings::setScreenCaptureEnabled(bool enabled)
 #endif
 }
 
+void InternalSettings::setStorageAccessPromptsEnabled(bool enabled)
+{
+    RuntimeEnabledFeatures::sharedFeatures().setStorageAccessPromptsEnabled(enabled);
+}
+    
 ExceptionOr<String> InternalSettings::userInterfaceDirectionPolicy()
 {
     if (!m_page)

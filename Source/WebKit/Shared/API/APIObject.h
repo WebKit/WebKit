@@ -144,6 +144,7 @@ public:
         ProcessPoolConfiguration,
         PluginSiteDataManager,
         Preferences,
+        RequestStorageAccessConfirmResultListener,
         ResourceLoadStatisticsStore,
         RunBeforeUnloadConfirmPanelResultListener,
         RunJavaScriptAlertResultListener,

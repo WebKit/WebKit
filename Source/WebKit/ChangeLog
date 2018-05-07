@@ -1,3 +1,48 @@
+2018-05-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Add experimental feature to prompt for Storage Access API use
+        https://bugs.webkit.org/show_bug.cgi?id=185335
+        <rdar://problem/39994649>
+
+        Reviewed by Alex Christensen and Youenn Fablet.
+
+        Create a new experimental feature that gates the ability of WebKit clients to prompt the user when
+        Storage Access API is invoked.
+
+        Currently this feature doesn't have any user-visible impact.
+
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKBase.h:
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::requestStorageAccessConfirm):
+        * UIProcess/API/C/WKPage.cpp:
+        (WebKit::RequestStorageAccessConfirmResultListener::create):
+        (WebKit::RequestStorageAccessConfirmResultListener::~RequestStorageAccessConfirmResultListener):
+        (WebKit::RequestStorageAccessConfirmResultListener::call):
+        (WebKit::RequestStorageAccessConfirmResultListener::RequestStorageAccessConfirmResultListener):
+        (WKPageRequestStorageAccessConfirmResultListenerGetTypeID):
+        (WKPageRequestStorageAccessConfirmResultListenerCall):
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _storageAccessPromptsEnabled]):
+        (-[WKPreferences _setStorageAccessPromptsEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::requestStorageAccessConfirm):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestStorageAccessConfirm):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::update):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::requestStorageAccess):
+
 2018-05-07  Dean Jackson  <dino@apple.com>
 
         Use a dark gray for system preview bbackground

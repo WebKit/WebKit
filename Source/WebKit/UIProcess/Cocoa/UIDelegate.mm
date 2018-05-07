@@ -102,6 +102,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewRunJavaScriptAlertPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:)];
+    m_delegateMethods.webViewRequestStorageAccessPanelForTopPrivatelyControlledDomainUnderFirstPartyTopPrivatelyControlledDomainCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestStorageAccessPanelForDomain:underCurrentDomain:completionHandler:)];
     m_delegateMethods.webViewRunBeforeUnloadConfirmPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRequestGeolocationPermissionForFrameDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestGeolocationPermissionForFrame:decisionHandler:)];
     m_delegateMethods.webViewDidResignInputElementStrongPasswordAppearanceWithUserInfo = [delegate respondsToSelector:@selector(_webView:didResignInputElementStrongPasswordAppearanceWithUserInfo:)];
@@ -321,6 +322,28 @@ void UIDelegate::UIClient::runJavaScriptPrompt(WebPageProxy*, const WTF::String&
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:));
     [delegate webView:m_uiDelegate.m_webView runJavaScriptTextInputPanelWithPrompt:message defaultText:defaultValue initiatedByFrame:wrapper(API::FrameInfo::create(*webFrameProxy, securityOriginData.securityOrigin())) completionHandler:BlockPtr<void (NSString *)>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](NSString *result) {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        completionHandler(result);
+        checker->didCallCompletionHandler();
+    }).get()];
+}
+
+void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy&, WebFrameProxy*, const WTF::String& requestingDomain, const WTF::String& currentDomain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewRequestStorageAccessPanelForTopPrivatelyControlledDomainUnderFirstPartyTopPrivatelyControlledDomainCompletionHandler) {
+        completionHandler(true);
+        return;
+    }
+
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate) {
+        completionHandler(true);
+        return;
+    }
+    
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestStorageAccessPanelForDomain:underCurrentDomain:completionHandler:));
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView requestStorageAccessPanelForDomain:requestingDomain underCurrentDomain:currentDomain completionHandler:BlockPtr<void(BOOL)>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](BOOL result) {
         if (checker->completionHandlerHasBeenCalled())
             return;
         completionHandler(result);

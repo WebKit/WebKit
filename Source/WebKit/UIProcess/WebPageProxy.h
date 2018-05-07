@@ -1280,8 +1280,8 @@ public:
 #endif
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, uint64_t webProcessContextId);
-    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, uint64_t webProcessContextId);
+    void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t webProcessContextId);
+    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t webProcessContextId, bool prompt);
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)

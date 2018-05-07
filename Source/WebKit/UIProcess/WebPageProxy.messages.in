@@ -512,8 +512,8 @@ messages -> WebPageProxy {
     StopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier)
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    HasStorageAccess(String subFrameHost, String topFrameHost, uint64_t frameID, uint64_t pageID, uint64_t contextID)
-    RequestStorageAccess(String subFrameHost, String topFrameHost, uint64_t frameID, uint64_t pageID, uint64_t contextID)
+    HasStorageAccess(String subFrameHost, String topFrameHost, uint64_t frameID, uint64_t contextID)
+    RequestStorageAccess(String subFrameHost, String topFrameHost, uint64_t frameID, uint64_t contextID, bool prompt)
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)

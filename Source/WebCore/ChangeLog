@@ -1,3 +1,26 @@
+2018-05-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Add experimental feature to prompt for Storage Access API use
+        https://bugs.webkit.org/show_bug.cgi?id=185335
+        <rdar://problem/39994649>
+
+        Reviewed by Alex Christensen and Youenn Fablet.
+
+        Create a new experimental feature that gates the ability of WebKit clients to prompt the user when
+        Storage Access API is invoked.
+
+        Currently this feature doesn't have any user-visible impact.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setStorageAccessPromptsEnabled):
+        (WebCore::RuntimeEnabledFeatures::storageAccessPromptsEnabled const):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setStorageAccessPromptsEnabled):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2018-05-07  Chris Dumez  <cdumez@apple.com>
 
         Stop using an iframe's id as fallback if its name attribute is not set

@@ -7472,18 +7472,28 @@ void WebPageProxy::stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskId
 }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-void WebPageProxy::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, uint64_t webProcessContextId)
+void WebPageProxy::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t webProcessContextId)
 {
-    m_websiteDataStore->hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, [this, webProcessContextId] (bool hasAccess) {
+    m_websiteDataStore->hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, m_pageID, [this, webProcessContextId] (bool hasAccess) {
         m_process->send(Messages::WebPage::StorageAccessResponse(hasAccess, webProcessContextId), m_pageID);
     });
 }
 
-void WebPageProxy::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, uint64_t webProcessContextId)
+void WebPageProxy::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t webProcessContextId, bool promptEnabled)
 {
-    ASSERT(pageID == m_pageID);
-    m_websiteDataStore->requestStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, [this, webProcessContextId] (bool wasGranted) {
-        m_process->send(Messages::WebPage::StorageAccessResponse(wasGranted, webProcessContextId), m_pageID);
+    auto completionHandler = [this, protectedThis = makeRef(*this), webProcessContextId] (bool access) {
+        m_process->send(Messages::WebPage::StorageAccessResponse(access, webProcessContextId), m_pageID);
+    };
+    String requestingDomain = subFrameHost;
+    String currentDomain = topFrameHost;
+    m_websiteDataStore->requestStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, m_pageID, [this, protectedThis = makeRef(*this), requestingDomain = WTFMove(requestingDomain), currentDomain = WTFMove(currentDomain), promptEnabled, frameID, completionHandler = WTFMove(completionHandler)] (bool wasGranted) mutable {
+        if (!wasGranted)
+            return completionHandler(false);
+        
+        if (!promptEnabled)
+            return completionHandler(true);
+
+        m_uiClient->requestStorageAccessConfirm(*this, m_process->webFrame(frameID), requestingDomain, currentDomain, WTFMove(completionHandler));
     });
 }
 #endif
