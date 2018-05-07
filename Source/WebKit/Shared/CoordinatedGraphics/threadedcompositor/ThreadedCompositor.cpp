@@ -107,6 +107,8 @@ void ThreadedCompositor::invalidate()
     m_displayRefreshMonitor->invalidate();
 #endif
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
+        if (!m_context || !m_context->makeContextCurrent())
+            return;
         m_scene->purgeGLResources();
         m_context = nullptr;
         m_client.didDestroyGLContext();
