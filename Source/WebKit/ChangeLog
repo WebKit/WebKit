@@ -1,3 +1,15 @@
+2018-05-07  Megan Gardner  <megan_gardner@apple.com>
+
+        Allow Web Touch events to timeout
+        https://bugs.webkit.org/show_bug.cgi?id=185282
+
+        Reviewed by Tim Horton.
+        
+        This is backwards, fixing.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleTouchEventSynchronously):
+
 2018-05-07  Don Olmstead  <don.olmstead@sony.com>
 
         [Win] LoggingWin is missing includes
