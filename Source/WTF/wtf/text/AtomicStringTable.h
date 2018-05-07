@@ -29,15 +29,12 @@
 namespace WTF {
 
 class StringImpl;
-class Thread;
 
 class AtomicStringTable {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WTF_EXPORT_PRIVATE ~AtomicStringTable();
 
-    static void create(Thread&);
-    static void destroy(AtomicStringTable*);
     HashSet<StringImpl*>& table() { return m_table; }
 
 private:

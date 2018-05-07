@@ -29,35 +29,10 @@
 
 namespace WTF {
 
-void AtomicStringTable::create(Thread& thread)
-{
-#if USE(WEB_THREAD)
-    // On iOS, one AtomicStringTable is shared between the main UI thread and the WebThread.
-    static AtomicStringTable* sharedStringTable = new AtomicStringTable;
-
-    if (isWebThread() || isUIThread()) {
-        thread.m_defaultAtomicStringTable = sharedStringTable;
-        return;
-    }
-#endif // USE(WEB_THREAD)
-    thread.m_defaultAtomicStringTable = new AtomicStringTable;
-}
-
 AtomicStringTable::~AtomicStringTable()
 {
     for (auto* string : m_table)
         string->setIsAtomic(false);
-}
-
-void AtomicStringTable::destroy(AtomicStringTable* table)
-{
-#if USE(WEB_THREAD)
-    // We do the following so that destruction of default atomic string table happens only
-    // once - on the main UI thread.
-    if (isWebThread())
-        return;
-#endif // USE(WEB_THREAD)
-    delete table;
 }
 
 }

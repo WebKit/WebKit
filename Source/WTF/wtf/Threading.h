@@ -46,6 +46,7 @@
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Vector.h>
 #include <wtf/WordLock.h>
+#include <wtf/text/AtomicStringTable.h>
 
 #if USE(PTHREADS) && !OS(DARWIN)
 #include <signal.h>
@@ -54,7 +55,6 @@
 namespace WTF {
 
 class AbstractLocker;
-class AtomicStringTable;
 class ThreadMessageData;
 
 enum class ThreadGroupAddResult;
@@ -77,7 +77,6 @@ WTF_EXPORT_PRIVATE int waitForThreadCompletion(ThreadIdentifier);
 class Thread : public ThreadSafeRefCounted<Thread> {
 public:
     friend class ThreadGroup;
-    friend class AtomicStringTable;
     friend WTF_EXPORT_PRIVATE void initializeThreading();
 #if OS(WINDOWS)
     friend WTF_EXPORT_PRIVATE int waitForThreadCompletion(ThreadIdentifier);
@@ -290,7 +289,7 @@ protected:
 #endif
 
     AtomicStringTable* m_currentAtomicStringTable { nullptr };
-    AtomicStringTable* m_defaultAtomicStringTable { nullptr };
+    AtomicStringTable m_defaultAtomicStringTable;
 
 #if ENABLE(STACK_STATS)
     StackStats::PerThreadStats m_stackStats;

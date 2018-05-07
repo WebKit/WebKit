@@ -1,5 +1,26 @@
 2018-05-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [WTF] Embed default atomic string table in Thread
+        https://bugs.webkit.org/show_bug.cgi?id=185349
+
+        Reviewed by Darin Adler.
+
+        Do not need to allocate AtomicStringTable separate from Thread
+        since the table's lifetime is completely the same as Thread.
+
+        This patch just embeds it as a data member of Thread.
+
+        * wtf/Threading.cpp:
+        (WTF::Thread::initializeInThread):
+        (WTF::Thread::didExit):
+        * wtf/Threading.h:
+        * wtf/text/AtomicStringTable.cpp:
+        (WTF::AtomicStringTable::create): Deleted.
+        (WTF::AtomicStringTable::destroy): Deleted.
+        * wtf/text/AtomicStringTable.h:
+
+2018-05-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [WTF] Use static initializers for WTF::Mutex and WTF::ThreadCondition
         https://bugs.webkit.org/show_bug.cgi?id=185361
 
