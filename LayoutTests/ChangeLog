@@ -1,3 +1,17 @@
+2018-05-07  Daniel Bates  <dabates@apple.com>
+
+        Add tests to ensure Same-Site cookies are included when performing a top-level redirect
+        https://bugs.webkit.org/show_bug.cgi?id=185235
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/cookies/same-site/fetch-after-top-level-cross-origin-redirect-expected.txt: Added.
+        * http/tests/cookies/same-site/fetch-after-top-level-cross-origin-redirect.html: Added.
+        * http/tests/cookies/same-site/fetch-after-top-level-same-origin-redirect-expected.txt: Added.
+        * http/tests/cookies/same-site/fetch-after-top-level-same-origin-redirect.html: Added.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-cross-origin-redirect.php: Added.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-same-origin-redirect.php: Added.
+
 2018-05-06  Dean Jackson  <dino@apple.com>
 
         WebGL: Reset simulated values after validation fails
