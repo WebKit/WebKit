@@ -1,4 +1,20 @@
 ==================
+WebKitGTK+  2.20.2
+==================
+
+What's new in WebKitGTK+ 2.20.2?
+
+  - Do TLS error checking on GTlsConnection::accept-certificate to finish the load earlier in case of errors.
+  - Properly close the connection to the nested wayland compositor in the Web Process.
+  - Avoid painting backing stores for zero-opacity layers.
+  - Fix downloads started by context menu failing in some websites due to missing user agent HTTP header.
+  - Fix video unpause when GStreamerGL is disabled.
+  - Fix several GObject introspection annotations.
+  - Update user agent quiks to fix Outlook.com and Chase.com.
+  - Fix several crashes and rendering issues.
+  - Security fixes: CVE-2018-4200.
+
+==================
 WebKitGTK+  2.20.1
 ==================
 
