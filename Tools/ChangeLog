@@ -1,3 +1,28 @@
+2018-05-07  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r229955): run-webkit-tests runs tests in skipped directories and subdirectories of directory given on command line
+        https://bugs.webkit.org/show_bug.cgi?id=185054
+        <rdar://problem/39773209>
+
+        Reviewed by Ryosuke Niwa.
+
+        Fallback to MacPort.CURRENT_VERSION if we are not using a known named macOS and do not have Apple Additions.
+
+        Darwin-based ports have OS version-specific test expectations and are certified to support running tests using
+        the currently shipping OS by way of a hardcoded class variable CURRENT_VERSION. The run-webkit-tests script
+        depends on the OS version to find the applicable TestExpectations files to parse to compute the list of skipped
+        tests for the port.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.__init__): Fall back to MacPort.CURRENT_VERSION if we are not using a known named macOS and do not
+        have Apple Additions.
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest.test_factory_with_future_version): Added.
+        (MacTest.test_factory_with_future_version_and_apple_additions): Renamed from MacTest.test_factory_with_future_version()
+        and added code to use the mock Apple Additions so that running this code with- and without- the real Apple Additions
+        produces consistent results now that the Mac port's OS version falls back to MacPort.CURRENT_VERSION when Apple Additions
+        is absent.
+
 2018-05-07  Brian Burg  <bburg@apple.com>
 
         Web Inspector: opt out of process swap on navigation if a Web Inspector frontend is connected
