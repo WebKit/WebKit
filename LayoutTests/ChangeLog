@@ -1,3 +1,16 @@
+2018-05-07  Youenn Fablet  <youenn@apple.com>
+
+        Layout Test webrtc/addICECandidate-closed.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=185384
+
+        Reviewed by Eric Carlson.
+
+        Given that we are calling addIceCandidate and close the peer connection,
+        addIceCandidate might throw an error sometimes.
+        Catch the exception to make the test output stable.
+
+        * webrtc/addICECandidate-closed.html:
+
 2018-05-07  Chris Dumez  <cdumez@apple.com>
 
         ASSERT(!childItemWithTarget(child->target())) is hit in HistoryItem::addChildItem()
