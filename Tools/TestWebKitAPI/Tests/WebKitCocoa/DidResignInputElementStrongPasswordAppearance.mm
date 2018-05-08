@@ -60,9 +60,11 @@ void didResignInputElementStrongPasswordAppearance(WKBundlePageRef, WKBundleNode
     WKBundlePageSetUIClient([browserContextController _bundlePageRef], &client.base);
 
     WKDOMDocument *document = [browserContextController mainFrameDocument];
+    WKDOMElement *formElement = [document createElement:@"form"];
     WKDOMElement *inputElement = [document createElement:@"input"];
     [inputElement setAttribute:@"type" value:@"password"];
-    [[document body] appendChild:inputElement];
+    [formElement appendChild:inputElement];
+    [[document body] appendChild:formElement];
 
     auto *jsContext = [[browserContextController mainFrame] jsContextForWorld:[WKWebProcessPlugInScriptWorld normalWorld]];
     auto *jsValue = [jsContext evaluateScript:@"document.querySelector('input')"];

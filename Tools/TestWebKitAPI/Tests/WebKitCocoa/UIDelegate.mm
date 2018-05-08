@@ -598,6 +598,11 @@ TEST(WebKit, DidResignInputElementStrongPasswordAppearanceWhenValueDidChange)
     testDidResignInputElementStrongPasswordAppearanceAfterEvaluatingJavaScript(@"document.querySelector('input').value = ''");
 }
 
+TEST(WebKit, DidResignInputElementStrongPasswordAppearanceWhenFormIsReset)
+{
+    testDidResignInputElementStrongPasswordAppearanceAfterEvaluatingJavaScript(@"document.forms[0].reset()");
+}
+
 @interface AutoFillAvailableDelegate : NSObject <WKUIDelegatePrivate>
 @end
 
