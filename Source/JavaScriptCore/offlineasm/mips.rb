@@ -26,10 +26,10 @@ require 'risc'
 
 # GPR conventions, to match the baseline JIT
 #
-# $a0 => a0
-# $a1 => a1
-# $a2 => a2
-# $a3 => a3
+# $a0 => a0, t7
+# $a1 => a1, t8
+# $a2 => a2, t9
+# $a3 => a3, t10
 # $v0 => t0, r0
 # $v1 => t1, r1
 # $t0 =>            (scratch)
@@ -113,13 +113,13 @@ end
 class RegisterID
     def mipsOperand
         case name
-        when "a0"
+        when "a0", "t7"
             "$a0"
-        when "a1"
+        when "a1", "t8"
             "$a1"
-        when "a2"
+        when "a2", "t9"
             "$a2"
-        when "a3"
+        when "a3", "t10"
             "$a3"
         when "t0", "r0"
             "$v0"

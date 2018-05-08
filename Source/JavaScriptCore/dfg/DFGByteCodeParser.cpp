@@ -2200,7 +2200,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         
     case ArrayPushIntrinsic: {
 #if USE(JSVALUE32_64)
-        if (isX86() || isMIPS()) {
+        if (isX86()) {
             if (argumentCountIncludingThis > 2)
                 return false;
         }
@@ -2235,7 +2235,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
 
     case ArraySliceIntrinsic: {
 #if USE(JSVALUE32_64)
-        if (isX86() || isMIPS()) {
+        if (isX86()) {
             // There aren't enough registers for this to be done easily.
             return false;
         }

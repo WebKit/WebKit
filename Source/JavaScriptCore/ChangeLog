@@ -1,3 +1,32 @@
+2018-05-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][MIPS] Simplify DFG code by increasing MIPS temporary registers
+        https://bugs.webkit.org/show_bug.cgi?id=185371
+
+        Reviewed by Mark Lam.
+
+        Since MIPS GPRInfo claims it has only 7 registers, some of DFG code exhausts registers.
+        As a result, we need to maintain separated code for MIPS. This increases DFG maintenance burden,
+        but actually MIPS have much more registers.
+
+        This patch adds $a0 - $a3 to temporary registers. This is OK since our temporary registers can be overlapped with
+        argument registers (see ARM, X86 implementations). These registers are caller-save ones, so we do not need to
+        have extra mechanism.
+
+        Then, we remove several unnecessary MIPS code in our JIT infrastructure.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/CCallHelpers.h:
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toRegister):
+        (JSC::GPRInfo::toIndex):
+        * offlineasm/mips.rb:
+
 2018-05-05  Filip Pizlo  <fpizlo@apple.com>
 
         DFG AI should have O(1) clobbering

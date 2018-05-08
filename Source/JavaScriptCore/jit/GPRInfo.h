@@ -729,7 +729,7 @@ public:
 class GPRInfo {
 public:
     typedef GPRReg RegisterType;
-    static const unsigned numberOfRegisters = 7;
+    static const unsigned numberOfRegisters = 11;
     static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // regT0 must be v0 for returning a 32-bit value.
@@ -743,6 +743,10 @@ public:
     static const GPRReg regT4 = MIPSRegisters::t4;
     static const GPRReg regT5 = MIPSRegisters::t5;
     static const GPRReg regT6 = MIPSRegisters::t6;
+    static const GPRReg regT7 = MIPSRegisters::a0;
+    static const GPRReg regT8 = MIPSRegisters::a1;
+    static const GPRReg regT9 = MIPSRegisters::a2;
+    static const GPRReg regT10 = MIPSRegisters::a3;
     // These registers match the baseline JIT.
     static const GPRReg callFrameRegister = MIPSRegisters::fp;
     // These constants provide the names for the general purpose argument & return value registers.
@@ -758,7 +762,7 @@ public:
     static GPRReg toRegister(unsigned index)
     {
         ASSERT(index < numberOfRegisters);
-        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6 };
+        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7, regT8, regT9, regT10 };
         return registerForIndex[index];
     }
 
@@ -774,7 +778,7 @@ public:
         ASSERT(reg != InvalidGPRReg);
         ASSERT(reg < 32);
         static const unsigned indexForRegister[32] = {
-            InvalidIndex, InvalidIndex, 0, 1, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex,
+            InvalidIndex, InvalidIndex, 0, 1, 7, 8, 9, 10,
             InvalidIndex, InvalidIndex, 2, 3, 4, 5, 6, InvalidIndex,
             InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex,
             InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex

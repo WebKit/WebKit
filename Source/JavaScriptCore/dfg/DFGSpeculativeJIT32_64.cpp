@@ -2704,48 +2704,6 @@ void SpeculativeJIT::compile(Node* node)
         flushRegisters();
         appendCall(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValWithThisStrict : operationPutByValWithThis);
         m_jit.exceptionCheck();
-#elif CPU(MIPS)
-        // We don't have enough registers on MIPS either but the ABI is a little different.
-        unsigned index = 4;
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        {
-            JSValueOperand base(this, m_jit.graph().varArgChild(node, 0));
-            GPRReg baseTag = base.tagGPR();
-            GPRReg basePayload = base.payloadGPR();
-
-            JSValueOperand thisValue(this, m_jit.graph().varArgChild(node, 1));
-            GPRReg thisValueTag = thisValue.tagGPR();
-            GPRReg thisValuePayload = thisValue.payloadGPR();
-
-            JSValueOperand property(this, m_jit.graph().varArgChild(node, 2));
-            GPRReg propertyTag = property.tagGPR();
-            GPRReg propertyPayload = property.payloadGPR();
-
-            // for operationPutByValWithThis[Strict](), base is a 64 bits
-            // argument, so it should be double word aligned on the stack.
-            // This requirement still applies when it's in argument registers
-            // instead of on the stack.
-            m_jit.move(basePayload, GPRInfo::argumentGPR2);
-            m_jit.move(baseTag, GPRInfo::argumentGPR3);
-
-            m_jit.poke(thisValuePayload, index++);
-            m_jit.poke(thisValueTag, index++);
-
-            m_jit.poke(propertyPayload, index++);
-            m_jit.poke(propertyTag, index++);
-
-            flushRegisters();
-        }
-
-        JSValueOperand value(this, m_jit.graph().varArgChild(node, 3));
-        GPRReg valueTag = value.tagGPR();
-        GPRReg valuePayload = value.payloadGPR();
-        m_jit.poke(valuePayload, index++);
-        m_jit.poke(valueTag, index++);
-
-        flushRegisters();
-        appendCall(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValWithThisStrict : operationPutByValWithThis);
-        m_jit.exceptionCheck();
 #else
         static_assert(GPRInfo::numberOfRegisters >= 8, "We are assuming we have enough registers to make this call without incrementally setting up the arguments.");
 
@@ -3804,7 +3762,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case HasOwnProperty: {
-#if CPU(X86) || CPU(MIPS)
+#if CPU(X86)
         ASSERT(node->child2().useKind() == UntypedUse);
         SpeculateCellOperand object(this, node->child1());
         JSValueOperand key(this, node->child2());
