@@ -41,11 +41,11 @@ class InlineFormattingState;
 class InlineFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
-    InlineFormattingContext(const Box& formattingContextRoot, LayoutContext&);
+    InlineFormattingContext(const Box& formattingContextRoot);
 
     void layout(LayoutContext&, FormattingState&) const override;
     std::unique_ptr<FormattingState> createFormattingState(Ref<FloatingState>&&) const override;
-    Ref<FloatingState> createOrFindFloatingState() const override;
+    Ref<FloatingState> createOrFindFloatingState(LayoutContext&) const override;
 
 private:
     void computeInFlowWidth(const Box&, Display::Box&) const override;

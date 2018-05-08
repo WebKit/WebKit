@@ -39,8 +39,8 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineFormattingContext);
 
-InlineFormattingContext::InlineFormattingContext(const Box& formattingContextRoot, LayoutContext& layoutContext)
-    : FormattingContext(formattingContextRoot, layoutContext)
+InlineFormattingContext::InlineFormattingContext(const Box& formattingContextRoot)
+    : FormattingContext(formattingContextRoot)
 {
 }
 
@@ -53,7 +53,7 @@ std::unique_ptr<FormattingState> InlineFormattingContext::createFormattingState(
     return std::make_unique<InlineFormattingState>(WTFMove(floatingState));
 }
 
-Ref<FloatingState> InlineFormattingContext::createOrFindFloatingState() const
+Ref<FloatingState> InlineFormattingContext::createOrFindFloatingState(LayoutContext& layoutContext) const
 {
     // If the block container box that initiates this inline formatting context also establishes a block context, the floats outside of the formatting root
     // should not interfere with the content inside.
@@ -62,7 +62,7 @@ Ref<FloatingState> InlineFormattingContext::createOrFindFloatingState() const
         return FloatingState::create();
     // Otherwise, the formatting context inherits the floats from the parent formatting context.
     // Find the formatting state in which this formatting root lives, not the one it creates (this) and use its floating state.
-    auto& formattingState = layoutContext().formattingStateForBox(root());
+    auto& formattingState = layoutContext.formattingStateForBox(root());
     return formattingState.floatingState();
 }
 

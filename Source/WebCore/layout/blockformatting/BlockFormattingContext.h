@@ -43,14 +43,14 @@ class Box;
 class BlockFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(BlockFormattingContext);
 public:
-    BlockFormattingContext(const Box& formattingContextRoot, LayoutContext&);
+    BlockFormattingContext(const Box& formattingContextRoot);
 
     void layout(LayoutContext&, FormattingState&) const override;
     std::unique_ptr<FormattingState> createFormattingState(Ref<FloatingState>&&) const override;
-    Ref<FloatingState> createOrFindFloatingState() const override;
+    Ref<FloatingState> createOrFindFloatingState(LayoutContext&) const override;
 
 protected:
-    void computeStaticPosition(const Box&, Display::Box&) const override;
+    void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const override;
     void computeInFlowWidth(const Box&, Display::Box&) const override;
     void computeInFlowHeight(const Box&, Display::Box&) const override;
 

@@ -1,3 +1,26 @@
+2018-05-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add FormattingContext::layoutOutOfFlowDescendants implementation
+        https://bugs.webkit.org/show_bug.cgi?id=185377
+
+        Reviewed by Antti Koivisto.
+
+        Also, remove FormattingContext's m_layoutContext member and pass it in to ::layout() instead.
+        In theory LayoutContext is needed only during ::layout() call. 
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const):
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::layoutContext const):
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::updateLayout):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+
 2018-05-07  Daniel Bates  <dabates@apple.com>
 
         Check X-Frame-Options and CSP frame-ancestors in network process

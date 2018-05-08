@@ -98,17 +98,17 @@ FormattingState& LayoutContext::formattingStateForBox(const Box& layoutBox) cons
 FormattingState& LayoutContext::establishedFormattingState(const Box& formattingContextRoot, const FormattingContext& context)
 {
     return *m_formattingStates.ensure(&formattingContextRoot, [this, &context] {
-        return context.createFormattingState(context.createOrFindFloatingState());
+        return context.createFormattingState(context.createOrFindFloatingState(*this));
     }).iterator->value;
 }
 
 std::unique_ptr<FormattingContext> LayoutContext::formattingContext(const Box& formattingContextRoot)
 {
     if (formattingContextRoot.establishesBlockFormattingContext())
-        return std::make_unique<BlockFormattingContext>(formattingContextRoot, *this);
+        return std::make_unique<BlockFormattingContext>(formattingContextRoot);
 
     if (formattingContextRoot.establishesInlineFormattingContext())
-        return std::make_unique<InlineFormattingContext>(formattingContextRoot, *this);
+        return std::make_unique<InlineFormattingContext>(formattingContextRoot);
 
     ASSERT_NOT_REACHED();
     return nullptr;

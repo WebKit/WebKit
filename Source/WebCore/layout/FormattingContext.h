@@ -48,12 +48,12 @@ class LayoutContext;
 class FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(FormattingContext);
 public:
-    FormattingContext(const Box& formattingContextRoot, LayoutContext&);
+    FormattingContext(const Box& formattingContextRoot);
     virtual ~FormattingContext();
 
     virtual void layout(LayoutContext&, FormattingState&) const = 0;
     virtual std::unique_ptr<FormattingState> createFormattingState(Ref<FloatingState>&&) const = 0;
-    virtual Ref<FloatingState> createOrFindFloatingState() const = 0;
+    virtual Ref<FloatingState> createOrFindFloatingState(LayoutContext&) const = 0;
 
 protected:
     struct LayoutPair {
@@ -63,9 +63,8 @@ protected:
     using LayoutQueue = Vector<std::unique_ptr<LayoutPair>>;
 
     const Box& root() const { return *m_root; }
-    const LayoutContext& layoutContext() const { return m_layoutContext; }
 
-    virtual void computeStaticPosition(const Box&, Display::Box&) const;
+    virtual void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const;
     virtual void computeInFlowPositionedPosition(const Box&, Display::Box&) const;
     virtual void computeOutOfFlowPosition(const Box&, Display::Box&) const;
 
@@ -86,11 +85,10 @@ protected:
     virtual LayoutUnit marginRight(const Box&) const;
 
     void placeInFlowPositionedChildren(const Container&) const;
-    void layoutOutOfFlowDescendants() const;
+    void layoutOutOfFlowDescendants(LayoutContext&s) const;
 
 private:
     WeakPtr<Box> m_root;
-    LayoutContext& m_layoutContext;
 };
 
 }

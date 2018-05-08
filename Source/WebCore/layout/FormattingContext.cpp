@@ -29,6 +29,8 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutBox.h"
+#include "LayoutContainer.h"
+#include "LayoutContext.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -36,9 +38,8 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingContext);
 
-FormattingContext::FormattingContext(const Box& formattingContextRoot, LayoutContext& layoutContext)
+FormattingContext::FormattingContext(const Box& formattingContextRoot)
     : m_root(makeWeakPtr(const_cast<Box&>(formattingContextRoot)))
-    , m_layoutContext(layoutContext)
 {
 }
 
@@ -46,7 +47,7 @@ FormattingContext::~FormattingContext()
 {
 }
 
-void FormattingContext::computeStaticPosition(const Box&, Display::Box&) const
+void FormattingContext::computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const
 {
 }
 
@@ -116,8 +117,23 @@ void FormattingContext::placeInFlowPositionedChildren(const Container&) const
 {
 }
 
-void FormattingContext::layoutOutOfFlowDescendants() const
+void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext) const
 {
+    if (!is<Container>(m_root.get()))
+        return;
+    for (auto& outOfFlowBox : downcast<Container>(*m_root).outOfFlowDescendants()) {
+        auto& layoutBox = *outOfFlowBox;
+        auto& displayBox = layoutContext.createDisplayBox(layoutBox);
+
+        computeOutOfFlowPosition(layoutBox, displayBox);
+        computeOutOfFlowWidth(layoutBox, displayBox);
+
+        ASSERT(layoutBox.establishesFormattingContext());
+        auto formattingContext = layoutContext.formattingContext(layoutBox);
+        formattingContext->layout(layoutContext, layoutContext.establishedFormattingState(layoutBox, *formattingContext));
+
+        computeOutOfFlowHeight(layoutBox, displayBox);
+    }
 }
 
 }

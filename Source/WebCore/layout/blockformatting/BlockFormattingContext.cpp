@@ -42,8 +42,8 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(BlockFormattingContext);
 
-BlockFormattingContext::BlockFormattingContext(const Box& formattingContextRoot, LayoutContext& layoutContext)
-    : FormattingContext(formattingContextRoot, layoutContext)
+BlockFormattingContext::BlockFormattingContext(const Box& formattingContextRoot)
+    : FormattingContext(formattingContextRoot)
 {
 }
 
@@ -74,7 +74,7 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             auto& displayBox = layoutPair.displayBox;
             
             computeWidth(layoutBox, displayBox);
-            computeStaticPosition(layoutBox, layoutPair.displayBox);
+            computeStaticPosition(layoutContext, layoutBox, layoutPair.displayBox);
             if (layoutBox.establishesFormattingContext()) {
                 auto formattingContext = layoutContext.formattingContext(layoutBox);
                 formattingContext->layout(layoutContext, layoutContext.establishedFormattingState(layoutBox, *formattingContext));
@@ -110,7 +110,7 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
     // Place the inflow positioned children.
     placeInFlowPositionedChildren(formattingRoot);
     // And take care of out-of-flow boxes as the final step.
-    layoutOutOfFlowDescendants();
+    layoutOutOfFlowDescendants(layoutContext);
 }
 
 std::unique_ptr<FormattingState> BlockFormattingContext::createFormattingState(Ref<FloatingState>&& floatingState) const
@@ -118,25 +118,25 @@ std::unique_ptr<FormattingState> BlockFormattingContext::createFormattingState(R
     return std::make_unique<BlockFormattingState>(WTFMove(floatingState));
 }
 
-Ref<FloatingState> BlockFormattingContext::createOrFindFloatingState() const
+Ref<FloatingState> BlockFormattingContext::createOrFindFloatingState(LayoutContext&) const
 {
     // Block formatting context always establishes a new floating state.
     return FloatingState::create();
 }
 
-void BlockFormattingContext::computeStaticPosition(const Box& layoutBox, Display::Box& displayBox) const
+void BlockFormattingContext::computeStaticPosition(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     // https://www.w3.org/TR/CSS22/visuren.html#block-formatting
     // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
     // The vertical distance between two sibling boxes is determined by the 'margin' properties.
     // Vertical margins between adjacent block-level boxes in a block formatting context collapse.
     // In a block formatting context, each box's left outer edge touches the left edge of the containing block (for right-to-left formatting, right edges touch).
-    auto containingBlockContentBox = layoutContext().displayBoxForLayoutBox(*layoutBox.containingBlock())->contentBox();
+    auto containingBlockContentBox = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->contentBox();
     // Start from the top of the container's content box.
     auto top = containingBlockContentBox.y();
     auto left = containingBlockContentBox.x();
     if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling())
-        top = layoutContext().displayBoxForLayoutBox(*previousInFlowSibling)->bottom() + marginBottom(*previousInFlowSibling);
+        top = layoutContext.displayBoxForLayoutBox(*previousInFlowSibling)->bottom() + marginBottom(*previousInFlowSibling);
     LayoutPoint topLeft = { top, left };
     topLeft.moveBy({ marginLeft(layoutBox), marginTop(layoutBox) });
     displayBox.setTopLeft(topLeft);
