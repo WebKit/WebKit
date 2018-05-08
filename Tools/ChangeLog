@@ -1,3 +1,10 @@
+2018-05-08  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix issue with running Speedometer PerfTest after r231450.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest):
+
 2018-05-07  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix issue with running Speedometer PerfTest after r231450.
