@@ -97,7 +97,7 @@ NavigationState::NavigationState(WKWebView *webView)
     , m_navigationDelegateMethods()
     , m_historyDelegateMethods()
 #if PLATFORM(IOS)
-    , m_releaseActivityTimer(RunLoop::current(), this, &NavigationState::releaseNetworkActivityTokenAfterLoadCompletion)
+    , m_releaseActivityTimer(RunLoop::current(), this, &NavigationState::releaseNetworkActivityToken)
 #endif
 {
     ASSERT(m_webView->_page);
@@ -1145,21 +1145,11 @@ void NavigationState::willChangeIsLoading()
 }
 
 #if PLATFORM(IOS)
-void NavigationState::releaseNetworkActivityToken(NetworkActivityTokenReleaseReason reason)
+void NavigationState::releaseNetworkActivityToken()
 {
-    if (!m_activityToken)
-        return;
-
-    switch (reason) {
-    case NetworkActivityTokenReleaseReason::LoadCompleted:
-        RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p NavigationState is releasing background process assertion because a page load completed", this);
-        break;
-    case NetworkActivityTokenReleaseReason::ScreenLocked:
-        RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p NavigationState is releasing background process assertion because the screen was locked", this);
-        break;
-    }
+    RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p UIProcess is releasing a background assertion because a page load completed", this);
+    ASSERT(m_activityToken);
     m_activityToken = nullptr;
-    m_releaseActivityTimer.stop();
 }
 #endif
 
@@ -1167,27 +1157,17 @@ void NavigationState::didChangeIsLoading()
 {
 #if PLATFORM(IOS)
     if (m_webView->_page->pageLoadState().isLoading()) {
-        // We do not take a network activity token if a load starts after the screen has been locked.
-        if ([UIApp isSuspendedUnderLock])
-            return;
-
-        if (m_releaseActivityTimer.isActive()) {
-            RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NavigationState keeps its process network assertion because a new page load started", this);
+        if (m_releaseActivityTimer.isActive())
             m_releaseActivityTimer.stop();
-        }
-        if (!m_activityToken) {
-            RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NavigationState is taking a process network assertion because a page load started", this);
+        else {
+            RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - UIProcess is taking a background assertion because a page load started", this);
+            ASSERT(!m_activityToken);
             m_activityToken = m_webView->_page->process().throttler().backgroundActivityToken();
         }
-    } else if (m_activityToken) {
-        if (m_webView._isBackground)
-            releaseNetworkActivityTokenAfterLoadCompletion();
-        else {
-            // The application is visible so we delay releasing the background activity for 3 seconds to give it a chance to start another navigation
-            // before suspending the WebContent process <rdar://problem/27910964>.
-            RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NavigationState will release its process network assertion soon because the page load completed", this);
-            m_releaseActivityTimer.startOneShot(3_s);
-        }
+    } else {
+        // Delay releasing the background activity for 3 seconds to give the application a chance to start another navigation
+        // before suspending the WebContent process <rdar://problem/27910964>.
+        m_releaseActivityTimer.startOneShot(3_s);
     }
 #endif
 
