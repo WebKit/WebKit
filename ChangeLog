@@ -1,3 +1,14 @@
+2018-05-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSCOnly] Enable Intl.PluralRules
+        https://bugs.webkit.org/show_bug.cgi?id=185359
+
+        Reviewed by Daniel Bates.
+
+        Enable Intl.PluralRules because JSCOnly port enables features aggressively.
+
+        * Source/cmake/OptionsJSCOnly.cmake:
+
 2018-05-07  Don Olmstead  <don.olmstead@sony.com>
 
         [WinCairo] Disable plugin api when building modern WebKit
