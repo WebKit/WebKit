@@ -23,15 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(SYSTEM_PREVIEW)
+#if USE(APPLE_INTERNAL_SDK)
 
-#import "WKWebViewContentProvider.h"
-#import <QuickLook/QuickLook.h>
+#import <AssetViewer/ASVThumbnailView.h>
+
+#else
+
 #import <UIKit/UIKit.h>
-#import <pal/spi/ios/QuickLookSPI.h>
 
-@interface WKSystemPreviewView : UIView <WKWebViewContentProvider, QLPreviewItemDataProvider>
+@class ASVThumbnailView;
+@class QLItem;
+@class QLPreviewController;
 
+@protocol ASVThumbnailViewDelegate <NSObject>
+- (void)thumbnailView:(ASVThumbnailView *)thumbnailView wantsToPresentPreviewController:(QLPreviewController *)previewController forItem:(QLItem *)item
+@end
+
+@interface ASVThumbnailView : UIView
+@property (nonatomic, weak) id<ASVThumbnailViewDelegate> delegate;
+@property (nonatomic) QLItem *thumbnailItem;
+@property (nonatomic) CGSize maxThumbnailSize;
 @end
 
 #endif
+

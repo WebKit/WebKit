@@ -35,24 +35,30 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/LocalizedStrings.h>
+#import <pal/spi/ios/SystemPreviewSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/Vector.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/SystemPreviewTypes.cpp>
+#endif
 
 using namespace WebCore;
 using namespace WebKit;
 
 SOFT_LINK_FRAMEWORK(QuickLook)
 SOFT_LINK_CLASS(QuickLook, QLItem);
-SOFT_LINK_CLASS(QuickLook, QLPreviewController);
+
+@interface WKSystemPreviewView () <ASVThumbnailViewDelegate>
+@end
 
 @implementation WKSystemPreviewView {
-    RetainPtr<QLPreviewController> _qlPreviewController;
     RetainPtr<NSItemProvider> _itemProvider;
-    RetainPtr<QLItem> _item;
     RetainPtr<NSData> _data;
     RetainPtr<NSString> _suggestedFilename;
-
+    RetainPtr<QLItem> _item;
+    RetainPtr<ASVThumbnailView> _thumbnailView;
     WKWebView *_webView;
 }
 
@@ -89,12 +95,48 @@ SOFT_LINK_CLASS(QuickLook, QLPreviewController);
     RetainPtr<CFStringRef> contentType = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (__bridge CFStringRef)extension, nil));
 
     _item = adoptNS([allocQLItemInstance() initWithDataProvider:self contentType:(NSString *)contentType.get() previewTitle:_suggestedFilename.get()]);
+    [_item setUseLoadingTimeout:NO];
 
-    _qlPreviewController = adoptNS([allocQLPreviewControllerInstance() init]);
-    [_qlPreviewController setDelegate:self];
-    [_qlPreviewController setDataSource:self];
+    _thumbnailView = adoptNS([ASVThumbnailView new]);
+    [_thumbnailView setDelegate:self];
+    [self setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 
-    [presentingViewController presentViewController:_qlPreviewController.get() animated:YES completion:nullptr];
+    [self setAutoresizesSubviews:YES];
+    [self setClipsToBounds:YES];
+    [self addSubview:_thumbnailView.get()];
+    [self _layoutThumbnailView];
+
+    auto screenBounds = UIScreen.mainScreen.bounds;
+    CGFloat maxDimension = CGFloatMin(screenBounds.size.width, screenBounds.size.height);
+    [_thumbnailView setMaxThumbnailSize:CGSizeMake(maxDimension, maxDimension)];
+
+    [_thumbnailView setThumbnailItem:_item.get()];
+}
+
+- (void)_layoutThumbnailView
+{
+    if (_thumbnailView) {
+        UIEdgeInsets safeAreaInsets = _webView._computedUnobscuredSafeAreaInset;
+        CGRect layoutFrame = CGRectMake(0, 0, self.frame.size.width - safeAreaInsets.left - safeAreaInsets.right, self.frame.size.height - safeAreaInsets.top - safeAreaInsets.bottom);
+        [_thumbnailView setFrame:layoutFrame];
+        [_thumbnailView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+    }
+}
+
+#pragma mark ASVThumbnailViewDelegate
+
+- (void)thumbnailView:(ASVThumbnailView *)thumbnailView wantsToPresentPreviewController:(QLPreviewController *)previewController forItem:(QLItem *)item
+{
+    RefPtr<WebKit::WebPageProxy> page = _webView->_page;
+    UIViewController *presentingViewController = page->uiClient().presentingViewController();
+    [presentingViewController presentViewController:previewController animated:YES completion:nil];
+}
+
+#pragma mark WKWebViewContentProvider protocol
+
+- (UIView *)web_contentView
+{
+    return self;
 }
 
 - (void)web_setMinimumSize:(CGSize)size
@@ -107,6 +149,7 @@ SOFT_LINK_CLASS(QuickLook, QLPreviewController);
 
 - (void)web_computedContentInsetDidChange
 {
+    [self _layoutThumbnailView];
 }
 
 - (void)web_setFixedOverlayView:(UIView *)fixedOverlayView
@@ -115,11 +158,6 @@ SOFT_LINK_CLASS(QuickLook, QLPreviewController);
 
 - (void)web_didSameDocumentNavigation:(WKSameDocumentNavigationType)navigationType
 {
-}
-
-- (UIView *)web_contentView
-{
-    return self;
 }
 
 #pragma mark Find-in-Page
@@ -140,31 +178,11 @@ SOFT_LINK_CLASS(QuickLook, QLPreviewController);
 {
 }
 
-#pragma mark QLPreviewControllerDataSource
-
-- (NSInteger)numberOfPreviewItemsInPreviewController:(QLPreviewController *)controller
-{
-    return 1;
-}
-
-- (id<QLPreviewItem>)previewController:(QLPreviewController *)controller previewItemAtIndex:(NSInteger)index
-{
-    return static_cast<id<QLPreviewItem>>(_item.get());
-}
-
 #pragma mark QLPreviewItemDataProvider
 
 - (NSData *)provideDataForItem:(QLItem *)item
 {
     return _data.get();
-}
-
-#pragma mark QLPreviewControllerDelegate
-
-- (void)previewControllerWillDismiss:(QLPreviewController *)controller
-{
-    RefPtr<WebKit::WebPageProxy> page = _webView->_page;
-    page->goBack();
 }
 
 @end

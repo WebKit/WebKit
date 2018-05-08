@@ -1,3 +1,15 @@
+2018-05-08  Dean Jackson  <dino@apple.com>
+
+        Use thumbnails in System Previews
+        https://bugs.webkit.org/show_bug.cgi?id=185397
+        <rdar://problem/40039376>
+
+        Reviewed by Jon Lee.
+
+        SYSTEM_PREVIEW is only available on some platforms.
+
+        * wtf/Platform.h:
+
 2018-05-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r231468.

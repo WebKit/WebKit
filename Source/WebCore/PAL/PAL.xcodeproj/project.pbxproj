@@ -107,6 +107,7 @@
 		1C4876D91F8D7F4E00CCEEBD /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4876D71F8D7F4E00CCEEBD /* Logging.h */; };
 		1C4876E01F8D837500CCEEBD /* LoggingCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C4876DF1F8D837500CCEEBD /* LoggingCocoa.mm */; };
 		2D02E93C2056FAA700A13797 /* AudioToolboxSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D02E93B2056FAA700A13797 /* AudioToolboxSPI.h */; };
+		31308B1420A21705003FB929 /* SystemPreviewSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 31308B1320A21705003FB929 /* SystemPreviewSPI.h */; };
 		57F12518205787D7001AB8A6 /* DeviceIdentitySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 57F12517205787C8001AB8A6 /* DeviceIdentitySPI.h */; };
 		7A1656441F97B2B900BA3CE4 /* NSKeyedArchiverSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A1656431F97B2B800BA3CE4 /* NSKeyedArchiverSPI.h */; };
 		A10265871F56746100B4C844 /* FoundationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A10265861F56746100B4C844 /* FoundationSPI.h */; };
@@ -253,6 +254,7 @@
 		1C67CEA11E32EDA800F80F2E /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		1C67CEA21E32EE2600F80F2E /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		2D02E93B2056FAA700A13797 /* AudioToolboxSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioToolboxSPI.h; sourceTree = "<group>"; };
+		31308B1320A21705003FB929 /* SystemPreviewSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemPreviewSPI.h; sourceTree = "<group>"; };
 		57F12517205787C8001AB8A6 /* DeviceIdentitySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceIdentitySPI.h; sourceTree = "<group>"; };
 		7A1656431F97B2B800BA3CE4 /* NSKeyedArchiverSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSKeyedArchiverSPI.h; sourceTree = "<group>"; };
 		93E5909C1F93BF1E0067F8CF /* UnencodableHandling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnencodableHandling.h; sourceTree = "<group>"; };
@@ -402,6 +404,7 @@
 				0C5AF9151F43A4C7002EAC02 /* OpenGLESSPI.h */,
 				0C5AF9161F43A4C7002EAC02 /* QuickLookSPI.h */,
 				0C5AF9171F43A4C7002EAC02 /* SQLite3SPI.h */,
+				31308B1320A21705003FB929 /* SystemPreviewSPI.h */,
 				0C5AF9181F43A4C7002EAC02 /* UIKitSPI.h */,
 			);
 			path = ios;
@@ -705,6 +708,7 @@
 				A3788E981F05B6CE00679425 /* Sound.h in Headers */,
 				A1175B491F6AFF8E00C4B9F0 /* SpeechSynthesisSPI.h in Headers */,
 				0C5AF9211F43A4C7002EAC02 /* SQLite3SPI.h in Headers */,
+				31308B1420A21705003FB929 /* SystemPreviewSPI.h in Headers */,
 				A3AB6E581F3D1DDB009C14B1 /* SystemSleepListener.h in Headers */,
 				A3AB6E641F3D217F009C14B1 /* SystemSleepListenerMac.h in Headers */,
 				0C7785A11F45130F00F4EBB6 /* TUCallSPI.h in Headers */,
