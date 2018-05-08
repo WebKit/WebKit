@@ -1,3 +1,50 @@
+2018-05-08  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Add a request roundtrip to check whether prompting is needed
+        https://bugs.webkit.org/show_bug.cgi?id=185368
+        <rdar://problem/40011556>
+
+        Reviewed by Alex Christensen and Youenn Fablet.
+
+        This patch adds an enum WebKit::StorageAccessStatus to handle our three access
+        states:
+        - WebKit::StorageAccessStatus::CannotRequestAccess.
+            This means the domain is blocked from cookie access.
+        - WebKit::StorageAccessStatus::RequiresUserPrompt.
+            This means that access has not been granted yet and a prompt is required.
+        - WebKit::StorageAccessStatus::HasAccess.
+            This either means that this domain does not need to ask for access,
+            access was already granted, or access was granted now.
+
+        If the call to WebResourceLoadStatisticsStore::requestStorageAccess() comes
+        back as WebKit::StorageAccessStatus::RequiresUserPrompt, the WebPageProxy
+        prompts the user and if the user said yes, calls a direct
+        WebResourceLoadStatisticsStore::grantStorageAccess().
+
+        Existing test cases pass because requestStorageAccessConfirm in WKPage.cpp
+        does not have m_client.requestStorageAccessConfirm and thus returns true.
+
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+            Added a missing #endif.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestStorageAccess):
+            Here we now handle the various cases encoded in WebKit::StorageAccessStatus.
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+            Now covers the optional prompt case.
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener):
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccessInternal):
+            Granting access is broken out to allow WebKit::WebPageProxy to call it
+            directly.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::requestStorageAccess):
+        (WebKit::WebsiteDataStore::grantStorageAccess):
+            Piping through calls from from WebKit::WebResourceLoadStatisticsStore
+            to WebKit::WebPageProxy.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2018-05-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r231376 and r231458.

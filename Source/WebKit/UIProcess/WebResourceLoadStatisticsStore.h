@@ -58,6 +58,11 @@ class OperatingDate;
 class WebProcessProxy;
 
 enum class ShouldClearFirst;
+enum class StorageAccessStatus {
+    CannotRequestAccess,
+    RequiresUserPrompt,
+    HasAccess
+};
 
 class WebResourceLoadStatisticsStore final : public IPC::Connection::WorkQueueMessageReceiver {
 public:
@@ -85,8 +90,9 @@ public:
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&& origins);
 
     void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback);
-    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback);
+    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
     void requestStorageAccessUnderOpener(String&& domainInNeedOfStorageAccess, uint64_t openerPageID, String&& openerDomain, bool isTriggeredByUserGesture);
+    void grantStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&&);
     void requestStorageAccessCallback(bool wasGranted, uint64_t contextId);
 
     void processWillOpenConnection(WebProcessProxy&, IPC::Connection&);
@@ -179,6 +185,7 @@ private:
     void processStatisticsAndDataRecords();
 
     void resetCookiePartitioningState();
+    void grantStorageAccessInternal(String&& subFrameHost, String&& topFrameHost, std::optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&&);
     void removeAllStorageAccess();
 
     void setDebugLogggingEnabled(bool enabled) { m_debugLoggingEnabled  = enabled; }

@@ -60,6 +60,11 @@ struct StorageProcessCreationParameters;
 struct WebsiteDataRecord;
 struct WebsiteDataStoreParameters;
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+enum class StorageAccessStatus;
+enum class StorageAccessPromptStatus;
+#endif
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 struct PluginModuleInfo;
 #endif
@@ -130,7 +135,8 @@ public:
     void removeAllStorageAccessHandler();
     void removePrevalentDomains(const Vector<String>& domains);
     void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback);
-    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback);
+    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
+    void grantStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&&);
 #endif
     void networkProcessDidCrash();
     void resolveDirectoriesIfNecessary();

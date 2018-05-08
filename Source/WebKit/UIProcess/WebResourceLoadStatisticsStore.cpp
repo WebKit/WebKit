@@ -355,7 +355,7 @@ void WebResourceLoadStatisticsStore::hasStorageAccess(String&& subFrameHost, Str
     });
 }
 
-void WebResourceLoadStatisticsStore::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback)
+void WebResourceLoadStatisticsStore::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&& callback)
 {
     ASSERT(subFrameHost != topFrameHost);
     ASSERT(RunLoop::isMain());
@@ -363,32 +363,39 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(String&& subFrameHost,
     auto subFramePrimaryDomain = isolatedPrimaryDomain(subFrameHost);
     auto topFramePrimaryDomain = isolatedPrimaryDomain(topFrameHost);
     if (subFramePrimaryDomain == topFramePrimaryDomain) {
-        callback(true);
+        callback(StorageAccessStatus::HasAccess);
         return;
     }
 
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), subFramePrimaryDomain = crossThreadCopy(subFramePrimaryDomain), topFramePrimaryDomain = crossThreadCopy(topFramePrimaryDomain), frameID, pageID, callback = WTFMove(callback)] () mutable {
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), subFramePrimaryDomain = crossThreadCopy(subFramePrimaryDomain), topFramePrimaryDomain = crossThreadCopy(topFramePrimaryDomain), frameID, pageID, promptEnabled, callback = WTFMove(callback)] () mutable {
 
         auto& subFrameStatistic = ensureResourceStatisticsForPrimaryDomain(subFramePrimaryDomain);
         if (shouldBlockCookies(subFrameStatistic)) {
-            callOnMainThread([callback = WTFMove(callback)] {
-                callback(false);
+            RunLoop::main().dispatch([callback = WTFMove(callback)] {
+                callback(StorageAccessStatus::CannotRequestAccess);
             });
             return;
         }
         
         if (!shouldPartitionCookies(subFrameStatistic)) {
-            callOnMainThread([callback = WTFMove(callback)] {
-                callback(true);
+            RunLoop::main().dispatch([callback = WTFMove(callback)] {
+                callback(StorageAccessStatus::HasAccess);
+            });
+            return;
+        }
+
+        if (promptEnabled) {
+            RunLoop::main().dispatch([callback = WTFMove(callback)] {
+                callback(StorageAccessStatus::RequiresUserPrompt);
             });
             return;
         }
 
         subFrameStatistic.timesAccessedAsFirstPartyDueToStorageAccessAPI++;
 
-        m_grantStorageAccessHandler(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID, [callback = WTFMove(callback)] (bool value) mutable {
-            callOnMainThread([value, callback = WTFMove(callback)] {
-                callback(value);
+        grantStorageAccessInternal(WTFMove(subFramePrimaryDomain), WTFMove(topFramePrimaryDomain), frameID, pageID, false, [callback = WTFMove(callback)] (bool wasGrantedAccess) mutable {
+            RunLoop::main().dispatch([callback = WTFMove(callback), wasGrantedAccess] () mutable {
+                callback(wasGrantedAccess ? StorageAccessStatus::HasAccess : StorageAccessStatus::CannotRequestAccess);
             });
         });
     });
@@ -413,10 +420,35 @@ void WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener(String&& do
     if (!cookiesBlocked && !shouldPartitionCookies(domainInNeedOfStorageAccessStatistic))
         return;
 
-    m_grantStorageAccessHandler(WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), std::nullopt, openerPageID, [](bool) { });
+    grantStorageAccessInternal(WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), std::nullopt, openerPageID, false, [](bool) { });
 #if !RELEASE_LOG_DISABLED
     RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Grant storage access for %{public}s under opener %{public}s, %{public}s user interaction.", domainInNeedOfStorageAccess.utf8().data(), openerDomain.utf8().data(), (isTriggeredByUserGesture ? "with" : "without"));
 #endif
+}
+
+void WebResourceLoadStatisticsStore::grantStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&& callback)
+{
+    ASSERT(RunLoop::isMain());
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), subFrameHost = crossThreadCopy(subFrameHost), topFrameHost = crossThreadCopy(topFrameHost), frameID, pageID, userWasPrompted, callback = WTFMove(callback)] () mutable {
+        grantStorageAccessInternal(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, userWasPrompted, [callback = WTFMove(callback)] (bool wasGrantedAccess) mutable {
+            RunLoop::main().dispatch([callback = WTFMove(callback), wasGrantedAccess] () mutable {
+                callback(wasGrantedAccess);
+            });
+        });
+    });
+}
+
+void WebResourceLoadStatisticsStore::grantStorageAccessInternal(String&& subFrameHost, String&& topFrameHost, std::optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&& callback)
+{
+    ASSERT(!RunLoop::isMain());
+    auto subFramePrimaryDomain = isolatedPrimaryDomain(subFrameHost);
+    auto topFramePrimaryDomain = isolatedPrimaryDomain(topFrameHost);
+    if (subFramePrimaryDomain == topFramePrimaryDomain) {
+        callback(true);
+        return;
+    }
+    
+    m_grantStorageAccessHandler(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID, WTFMove(callback));
 }
 
 void WebResourceLoadStatisticsStore::removeAllStorageAccess()

@@ -204,6 +204,10 @@
 #include "WebCredentialsMessengerProxy.h"
 #endif
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#include "WebResourceLoadStatisticsStore.h"
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -7481,19 +7485,28 @@ void WebPageProxy::hasStorageAccess(String&& subFrameHost, String&& topFrameHost
 
 void WebPageProxy::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t webProcessContextId, bool promptEnabled)
 {
-    auto completionHandler = [this, protectedThis = makeRef(*this), webProcessContextId] (bool access) {
+    CompletionHandler<void(bool)> completionHandler = [this, protectedThis = makeRef(*this), webProcessContextId] (bool access) {
         m_process->send(Messages::WebPage::StorageAccessResponse(access, webProcessContextId), m_pageID);
     };
-    String requestingDomain = subFrameHost;
-    String currentDomain = topFrameHost;
-    m_websiteDataStore->requestStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, m_pageID, [this, protectedThis = makeRef(*this), requestingDomain = WTFMove(requestingDomain), currentDomain = WTFMove(currentDomain), promptEnabled, frameID, completionHandler = WTFMove(completionHandler)] (bool wasGranted) mutable {
-        if (!wasGranted)
-            return completionHandler(false);
-        
-        if (!promptEnabled)
-            return completionHandler(true);
 
-        m_uiClient->requestStorageAccessConfirm(*this, m_process->webFrame(frameID), requestingDomain, currentDomain, WTFMove(completionHandler));
+    m_websiteDataStore->requestStorageAccess(String(subFrameHost), String(topFrameHost), frameID, m_pageID, promptEnabled, [this, protectedThis = makeRef(*this), subFrameHost, topFrameHost, promptEnabled, frameID, completionHandler = WTFMove(completionHandler)] (StorageAccessStatus status) mutable {
+        switch (status) {
+        case StorageAccessStatus::CannotRequestAccess:
+            completionHandler(false);
+            return;
+        case StorageAccessStatus::RequiresUserPrompt:
+            ASSERT_UNUSED(promptEnabled, promptEnabled);
+            m_uiClient->requestStorageAccessConfirm(*this, m_process->webFrame(frameID), String(subFrameHost), String(topFrameHost), [this, protectedThis = makeRef(*this), subFrameHost, topFrameHost, frameID, completionHandler = WTFMove(completionHandler)] (bool userDidGrantAccess) mutable {
+                if (userDidGrantAccess)
+                    m_websiteDataStore->grantStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, m_pageID, userDidGrantAccess, WTFMove(completionHandler));
+                else
+                    completionHandler(false);
+            });
+            return;
+        case StorageAccessStatus::HasAccess:
+            completionHandler(true);
+            return;
+        }
     });
 }
 #endif
