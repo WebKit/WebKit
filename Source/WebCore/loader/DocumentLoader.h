@@ -253,6 +253,7 @@ public:
 
     void stopLoadingPlugIns();
     void stopLoadingSubresources();
+    WEBCORE_EXPORT void stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(unsigned long identifier, const ResourceResponse&);
 
     bool userContentExtensionsEnabled() const { return m_userContentExtensionsEnabled; }
     void setUserContentExtensionsEnabled(bool enabled) { m_userContentExtensionsEnabled = enabled; }
@@ -383,8 +384,6 @@ private:
 
     void stopLoadingForPolicyChange();
     ResourceError interruptedForPolicyChangeError() const;
-
-    void stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(unsigned long identifier, const ResourceResponse&);
 
 #if HAVE(RUNLOOP_TIMER)
     typedef RunLoopTimer<DocumentLoader> DocumentLoaderTimer;

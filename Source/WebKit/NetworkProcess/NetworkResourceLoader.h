@@ -32,13 +32,17 @@
 #include "NetworkLoadClient.h"
 #include "NetworkResourceLoadParameters.h"
 #include "ShareableResource.h"
+#include <JavaScriptCore/ConsoleTypes.h>
+#include <WebCore/ContentSecurityPolicyClient.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/Timer.h>
 
 namespace WebCore {
 class BlobDataFileReference;
+class FormData;
 class NetworkStorageSession;
 class ResourceRequest;
+class SecurityPolicyViolationEvent;
 }
 
 namespace WebKit {
@@ -52,7 +56,11 @@ namespace NetworkCache {
 class Entry;
 }
 
-class NetworkResourceLoader final : public RefCounted<NetworkResourceLoader>, public NetworkLoadClient, public IPC::MessageSender {
+class NetworkResourceLoader final
+    : public RefCounted<NetworkResourceLoader>
+    , public NetworkLoadClient
+    , public IPC::MessageSender
+    , public WebCore::ContentSecurityPolicyClient {
 public:
     static Ref<NetworkResourceLoader> create(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&& reply = nullptr)
     {
@@ -105,6 +113,8 @@ public:
     void convertToDownload(DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     bool isMainResource() const { return m_parameters.request.requester() == WebCore::ResourceRequest::Requester::Main; }
+    bool isMainFrameLoad() const { return isMainResource() && m_parameters.frameAncestorOrigins.size() == 1; }
+
     bool isAlwaysOnLoggingAllowed() const;
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
@@ -129,6 +139,9 @@ private:
     void validateCacheEntry(std::unique_ptr<NetworkCache::Entry>);
     void dispatchWillSendRequestForCacheEntry(std::unique_ptr<NetworkCache::Entry>);
     void continueProcessingCachedEntryAfterDidReceiveResponse(std::unique_ptr<NetworkCache::Entry>);
+
+    bool shouldInterruptLoadForXFrameOptions(const String&, const WebCore::URL&);
+    bool shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const WebCore::ResourceResponse&);
 
     enum class FirstLoad { No, Yes };
     void startNetworkLoad(WebCore::ResourceRequest&&, FirstLoad);
@@ -158,6 +171,11 @@ private:
     void continueWillSendRedirectedRequest(WebCore::ResourceRequest&& request, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&);
 
     WebCore::ResourceResponse sanitizeResponseIfPossible(WebCore::ResourceResponse&&, WebCore::ResourceResponse::SanitizationType);
+
+    // ContentSecurityPolicyClient
+    void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long) final;
+    void sendCSPViolationReport(WebCore::URL&&, Ref<WebCore::FormData>&&) final;
+    void dispatchSecurityPolicyViolationEvent(Ref<WebCore::SecurityPolicyViolationEvent>&&) final { }; // No observable effect for frame-ancestors violation.
 
     const NetworkResourceLoadParameters m_parameters;
 

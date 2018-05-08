@@ -1,5 +1,41 @@
 2018-05-07  Daniel Bates  <dabates@apple.com>
 
+        Check X-Frame-Options and CSP frame-ancestors in network process
+        https://bugs.webkit.org/show_bug.cgi?id=185410
+        <rdar://problem/37733934>
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCore.xcodeproj/project.pbxproj: Make PingLoader.h a private header so that we can include it in WebKit.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived): Only check CSP frame-ancestors and X-Frame-Options here if
+        we are not checking them in the NetworkProcess and HTTP response access is restricted. I code is otherwise kept
+        unchanged. There may be opportunities to clean this code up more and share more of it. We should look into this
+        in subsequent bugs.
+        * loader/DocumentLoader.h: Change visibility of stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied() from
+        private to public and export it so that we can call it from the WebKit.
+        * loader/PingLoader.h:
+        * page/Settings.yaml: Add a new setting called networkProcessCSPFrameAncestorsCheckingEnabled (defaults: false)
+        and is hardcoded in WebPage.cpp to be enabled. This setting is used to determine if we will be using the NetworkProcess.
+        Ideally we wouldn't have this setting and just key off RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess().
+        However RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess() is always enabled in WebKit Legacy
+        at the time of writing (why?). And, strangely, RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess()
+        is conditionally enabled in WebKit. For now, we add a new setting, networkProcessCSPFrameAncestorsCheckingEnabled,
+        to determine if CSP checking should be performed in NetworkProcess. For checking to actually happen in NetworkProcess
+        and not in DocumentLoader::responseReceived() RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess()
+        will also need to be enabled.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowFrameAncestors const): Added a variant that takes a vector of ancestor origins.
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::checkFrameAncestors): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForFrameAncestorOrigins const): Ditto.
+        * page/csp/ContentSecurityPolicyDirectiveList.h: Export constructor so that we can invoke it from NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions().
+        * page/csp/ContentSecurityPolicyResponseHeaders.h:
+        * platform/network/HTTPParsers.h: Export XFrameOptionsDisposition() so that we can use in WebKit.
+
+2018-05-07  Daniel Bates  <dabates@apple.com>
+
         Abstract logic to log console messages and send CSP violation reports into a client
         https://bugs.webkit.org/show_bug.cgi?id=185393
         <rdar://problem/40036053>

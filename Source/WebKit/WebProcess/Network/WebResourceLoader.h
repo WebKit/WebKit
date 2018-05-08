@@ -82,6 +82,9 @@ private:
     void didFinishResourceLoad(const WebCore::NetworkLoadMetrics&);
     void didFailResourceLoad(const WebCore::ResourceError&);
     void didBlockAuthenticationChallenge();
+
+    void stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied();
+
 #if ENABLE(SHAREABLE_RESOURCE)
     void didReceiveResource(const ShareableResource::Handle&);
 #endif

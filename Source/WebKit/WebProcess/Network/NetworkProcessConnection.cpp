@@ -35,6 +35,8 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebLoaderStrategy.h"
 #include "WebMDNSRegisterMessages.h"
+#include "WebPage.h"
+#include "WebPageMessages.h"
 #include "WebProcess.h"
 #include "WebRTCMonitor.h"
 #include "WebRTCMonitorMessages.h"
@@ -73,6 +75,11 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
     if (decoder.messageReceiverName() == Messages::WebSocketStream::messageReceiverName()) {
         if (auto* stream = WebSocketStream::streamWithIdentifier(decoder.destinationID()))
             stream->didReceiveMessage(connection, decoder);
+        return;
+    }
+    if (decoder.messageReceiverName() == Messages::WebPage::messageReceiverName()) {
+        if (auto* webPage = WebProcess::singleton().webPage(decoder.destinationID()))
+            webPage->didReceiveWebPageMessage(connection, decoder);
         return;
     }
 

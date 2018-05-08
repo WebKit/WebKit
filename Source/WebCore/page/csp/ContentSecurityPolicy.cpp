@@ -489,6 +489,23 @@ bool ContentSecurityPolicy::allowFrameAncestors(const Frame& frame, const URL& u
     return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForFrameAncestor, frame);
 }
 
+bool ContentSecurityPolicy::allowFrameAncestors(const Vector<RefPtr<SecurityOrigin>>& ancestorOrigins, const URL& url, bool overrideContentSecurityPolicy) const
+{
+    if (overrideContentSecurityPolicy)
+        return true;
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!ancestorOrigins.isEmpty());
+    bool isTopLevelFrame = ancestorOrigins.size() == 1;
+    if (isTopLevelFrame)
+        return true;
+    String sourceURL;
+    TextPosition sourcePosition(WTF::OrdinalNumber::beforeFirst(), WTF::OrdinalNumber());
+    auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
+        String consoleMessage = consoleMessageForViolation(ContentSecurityPolicyDirectiveNames::frameAncestors, violatedDirective, url, "Refused to load");
+        reportViolation(ContentSecurityPolicyDirectiveNames::frameAncestors, violatedDirective, url, consoleMessage, sourceURL, sourcePosition);
+    };
+    return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForFrameAncestorOrigins, ancestorOrigins);
+}
+
 bool ContentSecurityPolicy::allowPluginType(const String& type, const String& typeAttribute, const URL& url, bool overrideContentSecurityPolicy) const
 {
     if (overrideContentSecurityPolicy)

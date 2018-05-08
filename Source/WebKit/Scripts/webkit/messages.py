@@ -187,6 +187,8 @@ def forward_declarations_and_headers(receiver):
 
     no_forward_declaration_types = frozenset([
         'MachSendRight',
+        'MessageLevel',
+        'MessageSource',
         'String',
         'WebCore::DocumentIdentifier',
         'WebCore::ServiceWorkerIdentifier',
@@ -368,6 +370,8 @@ def headers_for_type(type):
 
     special_cases = {
         'MachSendRight': ['<wtf/MachSendRight.h>'],
+        'MessageLevel': ['<JavaScriptCore/ConsoleTypes.h>'],
+        'MessageSource': ['<JavaScriptCore/ConsoleTypes.h>'],
         'MonotonicTime': ['<wtf/MonotonicTime.h>'],
         'Seconds': ['<wtf/Seconds.h>'],
         'WallTime': ['<wtf/WallTime.h>'],

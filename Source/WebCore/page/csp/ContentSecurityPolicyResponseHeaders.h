@@ -43,7 +43,7 @@ enum class ContentSecurityPolicyHeaderType {
 class ContentSecurityPolicyResponseHeaders {
 public:
     ContentSecurityPolicyResponseHeaders() = default;
-    explicit ContentSecurityPolicyResponseHeaders(const ResourceResponse&);
+    WEBCORE_EXPORT explicit ContentSecurityPolicyResponseHeaders(const ResourceResponse&);
 
     ContentSecurityPolicyResponseHeaders isolatedCopy() const;
 

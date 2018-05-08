@@ -27,6 +27,7 @@
 #include "NetworkResourceLoader.h"
 
 #include "DataReference.h"
+#include "FormDataReference.h"
 #include "Logging.h"
 #include "NetworkBlobRegistry.h"
 #include "NetworkCache.h"
@@ -38,10 +39,13 @@
 #include "SessionTracker.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
+#include "WebPageMessages.h"
 #include "WebResourceLoaderMessages.h"
 #include "WebsiteDataStoreParameters.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/BlobDataFileReference.h>
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/HTTPParsers.h>
@@ -395,6 +399,51 @@ static ResourceError fromOriginResourceError(const URL& url)
     return { errorDomainWebKitInternal, 0, url, ASCIILiteral { "Cancelled load because it violates the resource's From-Origin response header." }, ResourceError::Type::AccessControl };
 }
 
+bool NetworkResourceLoader::shouldInterruptLoadForXFrameOptions(const String& xFrameOptions, const URL& url)
+{
+    if (isMainFrameLoad())
+        return false;
+
+    switch (parseXFrameOptionsHeader(xFrameOptions)) {
+    case XFrameOptionsNone:
+    case XFrameOptionsAllowAll:
+        return false;
+    case XFrameOptionsDeny:
+        return true;
+    case XFrameOptionsSameOrigin:
+        return !SecurityOrigin::create(url)->isSameSchemeHostPort(*m_parameters.sourceOrigin);
+    case XFrameOptionsConflict: {
+        String errorMessage = "Multiple 'X-Frame-Options' headers with conflicting values ('" + xFrameOptions + "') encountered when loading '" + url.stringCenterEllipsizedToLength() + "'. Falling back to 'DENY'.";
+        send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::JS, MessageLevel::Error, errorMessage, identifier() }, m_parameters.webPageID);
+        return true;
+    }
+    case XFrameOptionsInvalid: {
+        String errorMessage = "Invalid 'X-Frame-Options' header encountered when loading '" + url.stringCenterEllipsizedToLength() + "': '" + xFrameOptions + "' is not a recognized directive. The header will be ignored.";
+        send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::JS, MessageLevel::Error, errorMessage, identifier() }, m_parameters.webPageID);
+        return false;
+    }
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const ResourceResponse& response)
+{
+    ASSERT(isMainResource());
+    auto url = response.url();
+    ContentSecurityPolicy contentSecurityPolicy { URL { url }, this };
+    contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, originalRequest().httpReferrer());
+    if (!contentSecurityPolicy.allowFrameAncestors(m_parameters.frameAncestorOrigins, url))
+        return true;
+    String xFrameOptions = m_response.httpHeaderField(HTTPHeaderName::XFrameOptions);
+    if (!xFrameOptions.isNull() && shouldInterruptLoadForXFrameOptions(xFrameOptions, response.url())) {
+        String errorMessage = "Refused to display '" + response.url().stringCenterEllipsizedToLength() + "' in a frame because it set 'X-Frame-Options' to '" + xFrameOptions + "'.";
+        send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::Security, MessageLevel::Error, errorMessage, identifier() }, m_parameters.webPageID);
+        return true;
+    }
+    return false;
+}
+
 auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedResponse) -> ShouldContinueDidReceiveResponse
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveResponse: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", httpStatusCode = %d, length = %" PRId64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, receivedResponse.httpStatusCode(), receivedResponse.expectedContentLength());
@@ -427,16 +476,17 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     ResourceError error;
     if (m_parameters.shouldEnableFromOriginResponseHeader && shouldCancelCrossOriginLoad(m_response, m_parameters.frameAncestorOrigins))
         error = fromOriginResourceError(m_response.url());
+    if (error.isNull() && isMainResource() && shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(m_response)) {
+        send(Messages::WebResourceLoader::StopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied { });
+        return ShouldContinueDidReceiveResponse::No;
+    }
     if (error.isNull() && m_networkLoadChecker)
         error = m_networkLoadChecker->validateResponse(m_response);
     if (!error.isNull()) {
-        // FIXME: We need to make a main resource load look successful to prevent leaking its existence. See <https://bugs.webkit.org/show_bug.cgi?id=185120>.
         RunLoop::main().dispatch([protectedThis = makeRef(*this), error = WTFMove(error)] {
             if (protectedThis->m_networkLoad)
                 protectedThis->didFailLoading(error);
         });
-        // FIXME: We know that we are not going to continue this load. ShouldContinueDidReceiveResponse::No should only be returned when
-        // the network process is waiting to receive message NetworkResourceLoader::ContinueDidReceiveResponse to continue a load.
         return ShouldContinueDidReceiveResponse::No;
     }
 
@@ -726,7 +776,10 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
     ResourceError error;
     if (m_parameters.shouldEnableFromOriginResponseHeader && shouldCancelCrossOriginLoad(response, m_parameters.frameAncestorOrigins))
         error = fromOriginResourceError(response.url());
-
+    if (error.isNull() && isMainResource() && shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(response)) {
+        send(Messages::WebResourceLoader::StopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied { });
+        return;
+    }
     if (error.isNull() && m_networkLoadChecker)
         error = m_networkLoadChecker->validateResponse(response);
 
@@ -1039,5 +1092,15 @@ void NetworkResourceLoader::logCookieInformation(const String& label, const void
     }
 }
 #endif
+
+void NetworkResourceLoader::addConsoleMessage(MessageSource messageSource, MessageLevel messageLevel, const String& message, unsigned long)
+{
+    send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  messageSource, messageLevel, message, identifier() }, m_parameters.webPageID);
+}
+
+void NetworkResourceLoader::sendCSPViolationReport(URL&& reportURL, Ref<FormData>&& report)
+{
+    send(Messages::WebPage::SendCSPViolationReport { m_parameters.webFrameID, WTFMove(reportURL), IPC::FormDataReference { WTFMove(report) } }, m_parameters.webPageID);
+}
 
 } // namespace WebKit

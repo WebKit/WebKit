@@ -38,6 +38,7 @@
 #include "EditorState.h"
 #include "EventDispatcher.h"
 #include "FindController.h"
+#include "FormDataReference.h"
 #include "GeolocationPermissionRequestManager.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleBackForwardList.h"
@@ -177,6 +178,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageConfiguration.h>
+#include <WebCore/PingLoader.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/PrintContext.h>
@@ -468,6 +470,8 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(MEDIA_STREAM)
     WebCore::provideUserMediaTo(m_page.get(), new WebUserMediaClient(*this));
 #endif
+
+    m_page->settings().setNetworkProcessCSPFrameAncestorsCheckingEnabled(true);
 
     m_page->setControlledByAutomation(parameters.controlledByAutomation);
 
@@ -3301,6 +3305,21 @@ WebFullScreenManager* WebPage::fullScreenManager()
     return m_fullScreenManager.get();
 }
 #endif
+
+void WebPage::addConsoleMessage(uint64_t frameID, MessageSource messageSource, MessageLevel messageLevel, const String& message, uint64_t requestID)
+{
+    if (auto* frame = WebProcess::singleton().webFrame(frameID))
+        frame->addConsoleMessage(messageSource, messageLevel, message, requestID);
+}
+
+void WebPage::sendCSPViolationReport(uint64_t frameID, const WebCore::URL& reportURL, IPC::FormDataReference&& reportData)
+{
+    auto report = reportData.takeData();
+    if (!report)
+        return;
+    if (auto* frame = WebProcess::singleton().webFrame(frameID))
+        PingLoader::sendViolationReport(*frame->coreFrame(), reportURL, report.releaseNonNull(), ViolationReportType::ContentSecurityPolicy);
+}
 
 NotificationPermissionRequestManager* WebPage::notificationPermissionRequestManager()
 {

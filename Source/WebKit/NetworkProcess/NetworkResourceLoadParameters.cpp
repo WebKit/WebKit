@@ -98,8 +98,8 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder.encodeEnum(preflightPolicy);
 
     encoder << shouldEnableFromOriginResponseHeader;
-    if (shouldEnableFromOriginResponseHeader)
-        encoder << frameAncestorOrigins;
+
+    encoder << frameAncestorOrigins;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     encoder << mainDocumentURL;
@@ -210,10 +210,9 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     if (!shouldEnableFromOriginResponseHeader)
         return false;
     result.shouldEnableFromOriginResponseHeader = *shouldEnableFromOriginResponseHeader;
-    if (result.shouldEnableFromOriginResponseHeader) {
-        if (!decoder.decode(result.frameAncestorOrigins))
-            return false;
-    }
+
+    if (!decoder.decode(result.frameAncestorOrigins))
+        return false;
     
 #if ENABLE(CONTENT_EXTENSIONS)
     if (!decoder.decode(result.mainDocumentURL))

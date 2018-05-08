@@ -180,6 +180,14 @@ void WebResourceLoader::didBlockAuthenticationChallenge()
     m_coreLoader->didBlockAuthenticationChallenge();
 }
 
+void WebResourceLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied()
+{
+    LOG(Network, "(WebProcess) WebResourceLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied for '%s'", m_coreLoader->url().string().latin1().data());
+    RELEASE_LOG_IF_ALLOWED("stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
+
+    m_coreLoader->documentLoader()->stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(m_coreLoader->identifier(), ResourceResponse { });
+}
+
 #if ENABLE(SHAREABLE_RESOURCE)
 void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& handle)
 {

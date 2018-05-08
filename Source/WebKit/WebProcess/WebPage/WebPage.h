@@ -119,8 +119,9 @@ class Array;
 }
 
 namespace IPC {
-class Decoder;
 class Connection;
+class Decoder;
+class FormDataReference;
 }
 
 namespace WebCore {
@@ -305,6 +306,9 @@ public:
 #if ENABLE(FULLSCREEN_API)
     WebFullScreenManager* fullScreenManager();
 #endif
+
+    void addConsoleMessage(uint64_t frameID, MessageSource, MessageLevel, const String&, uint64_t requestID = 0);
+    void sendCSPViolationReport(uint64_t frameID, const WebCore::URL& reportURL, IPC::FormDataReference&&);
 
     // -- Called by the DrawingArea.
     // FIXME: We could genericize these into a DrawingArea client interface. Would that be beneficial?
@@ -1079,6 +1083,8 @@ public:
 
     bool isSuspended() const { return m_isSuspended; }
 
+    void didReceiveWebPageMessage(IPC::Connection&, IPC::Decoder&);
+
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
 
@@ -1101,7 +1107,6 @@ private:
     void sendTouchBarMenuItemDataRemovedUpdate(WebCore::HTMLMenuItemElement&);
 #endif
 
-    void didReceiveWebPageMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveSyncWebPageMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
 #if PLATFORM(IOS)

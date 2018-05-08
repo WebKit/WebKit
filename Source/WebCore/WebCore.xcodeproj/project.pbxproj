@@ -4111,7 +4111,7 @@
 		D0BC54491443AC4A00E105DA /* CachedStyleSheetClient.h in Headers */ = {isa = PBXBuildFile; fileRef = D0BC54481443AC4A00E105DA /* CachedStyleSheetClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D0BD4F5D1408850F006839B6 /* DictationCommandIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D0BD4F5B1408850F006839B6 /* DictationCommandIOS.h */; };
 		D0EDA775143E303C0028E383 /* CachedRawResource.h in Headers */ = {isa = PBXBuildFile; fileRef = D0EDA773143E303C0028E383 /* CachedRawResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		D0FF2A5E11F8C45A007E74E0 /* PingLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = D0FF2A5C11F8C45A007E74E0 /* PingLoader.h */; };
+		D0FF2A5E11F8C45A007E74E0 /* PingLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = D0FF2A5C11F8C45A007E74E0 /* PingLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D302754A12A5FE84004BD828 /* RenderDetailsMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = D302754612A5FE84004BD828 /* RenderDetailsMarker.h */; };
 		D359D78A129CA2710006E5D2 /* HTMLDetailsElement.h in Headers */ = {isa = PBXBuildFile; fileRef = D359D787129CA2710006E5D2 /* HTMLDetailsElement.h */; };
 		D359D8BF129CA55C0006E5D2 /* JSHTMLDetailsElement.h in Headers */ = {isa = PBXBuildFile; fileRef = D359D8BD129CA55C0006E5D2 /* JSHTMLDetailsElement.h */; };
@@ -27113,7 +27113,6 @@
 				A89943280B42338800D7C802 /* BitmapImage.h in Headers */,
 				976D6C79122B8A3D001FD1F7 /* Blob.h in Headers */,
 				976D6C7C122B8A3D001FD1F7 /* BlobBuilder.h in Headers */,
-				CE5FA255209E48C50051D700 /* ContentSecurityPolicyClient.h in Headers */,
 				A15D75161E68F7C800A35FBC /* BlobCallback.h in Headers */,
 				2EDEF1F4121B0EFC00726DB2 /* BlobData.h in Headers */,
 				E1D31CDD19196020001005A3 /* BlobDataFileReference.h in Headers */,
@@ -27286,6 +27285,7 @@
 				A149786F1ABAF33800CEF7E4 /* ContentFilter.h in Headers */,
 				A14090FD1AA51E480091191A /* ContentFilterUnblockHandler.h in Headers */,
 				97C471DC12F925BD0086354B /* ContentSecurityPolicy.h in Headers */,
+				CE5FA255209E48C50051D700 /* ContentSecurityPolicyClient.h in Headers */,
 				CE799FA41C6A503A0097B518 /* ContentSecurityPolicyDirective.h in Headers */,
 				CE799F9C1C6A4BCD0097B518 /* ContentSecurityPolicyDirectiveList.h in Headers */,
 				CE2849871CA360DF00B4A57F /* ContentSecurityPolicyDirectiveNames.h in Headers */,

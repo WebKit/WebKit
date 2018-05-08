@@ -70,13 +70,36 @@ static inline bool checkNonce(ContentSecurityPolicySourceListDirective* directiv
     return !directive || directive->allows(nonce);
 }
 
+// Used to compute the comparison URL when checking frame-ancestors. We do this weird conversion so that child
+// frames of a page with a unique origin (e.g. about:blank) are not blocked due to their frame-ancestors policy
+// and do not need to add the parent's URL to their policy. The latter could allow the child page to be framed
+// by anyone. See <https://github.com/w3c/webappsec/issues/311> for more details.
+static inline URL urlFromOrigin(const SecurityOrigin& origin)
+{
+    return { URL { }, origin.toString() };
+}
+
 static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective* directive, const Frame& frame)
 {
     if (!directive)
         return true;
     bool didReceiveRedirectResponse = false;
     for (Frame* current = frame.tree().parent(); current; current = current->tree().parent()) {
-        URL origin { URL { }, current->document()->securityOrigin().toString() };
+        URL origin = urlFromOrigin(current->document()->securityOrigin());
+        if (!origin.isValid() || !directive->allows(origin, didReceiveRedirectResponse, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No))
+            return false;
+    }
+    return true;
+}
+
+static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective* directive, const Vector<RefPtr<SecurityOrigin>>& ancestorOrigins)
+{
+    if (!directive)
+        return true;
+    bool didReceiveRedirectResponse = false;
+    auto end = ancestorOrigins.end();
+    for (auto it = ancestorOrigins.begin() + 1; it != end; ++it) {
+        URL origin = urlFromOrigin(*(*it));
         if (!origin.isValid() || !directive->allows(origin, didReceiveRedirectResponse, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No))
             return false;
     }
@@ -232,6 +255,13 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
 const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForFrameAncestor(const Frame& frame) const
 {
     if (checkFrameAncestors(m_frameAncestors.get(), frame))
+        return nullptr;
+    return m_frameAncestors.get();
+}
+
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForFrameAncestorOrigins(const Vector<RefPtr<SecurityOrigin>>& ancestorOrigins) const
+{
+    if (checkFrameAncestors(m_frameAncestors.get(), ancestorOrigins))
         return nullptr;
     return m_frameAncestors.get();
 }

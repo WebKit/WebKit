@@ -1,5 +1,49 @@
 2018-05-07  Daniel Bates  <dabates@apple.com>
 
+        Check X-Frame-Options and CSP frame-ancestors in network process
+        https://bugs.webkit.org/show_bug.cgi?id=185410
+        <rdar://problem/37733934>
+
+        Reviewed by Ryosuke Niwa.
+
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const): Always encode the frame ancestor origins.
+        (WebKit::NetworkResourceLoadParameters::decode): Always decode the frame ancestor origins.
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::shouldInterruptLoadForXFrameOptions): Added.
+        (WebKit::NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions): Added.
+        (WebKit::NetworkResourceLoader::didReceiveResponse): Check if the load needs to be interrupted due
+        to a violation of the CSP frame-ancestors directive or X-Frame-Options. If there is a violation
+        then stop the load.
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry): Ditto.
+        (NetworkResourceLoader::addConsoleMessage): Added.
+        (NetworkResourceLoader::sendCSPViolationReport): Added.
+        * NetworkProcess/NetworkResourceLoader.h:
+        * Scripts/webkit/messages.py: Teach the generator about data types MessageLevel and MessageSource
+        as they are both defined in file JavaScriptCore/ConsoleTypes.h as opposed to independent headers.
+        Also tell the generator that these types should not be forward declared so that we can use these
+        types without their JSC:: prefix in WebPage.messages.in.
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage): Route WebPage messages to the appropriate
+        web page.
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess): Added message StopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied.
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied): Added.
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::addConsoleMessage):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::addConsoleMessage): Added.
+        (WebKit::WebPage::sendCSPViolationReport): Added.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Add messages AddConsoleMessage and SendCSPViolationReport
+        for adding a console message to Web Inspector and sending a CSP report, respectively.
+
+2018-05-07  Daniel Bates  <dabates@apple.com>
+
         Abstract logic to log console messages and send CSP violation reports into a client
         https://bugs.webkit.org/show_bug.cgi?id=185393
         <rdar://problem/40036053>

@@ -766,25 +766,26 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
     ASSERT(m_identifierForLoadWithoutResourceLoader || m_mainResource);
     unsigned long identifier = m_identifierForLoadWithoutResourceLoader ? m_identifierForLoadWithoutResourceLoader : m_mainResource->identifier();
     ASSERT(identifier);
-    
-    auto url = response.url();
 
-    ContentSecurityPolicy contentSecurityPolicy(URL { url }, this);
-    contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, m_request.httpReferrer());
-    if (!contentSecurityPolicy.allowFrameAncestors(*m_frame, url)) {
-        stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(identifier, response);
-        return;
-    }
-
-    const auto& commonHeaders = response.httpHeaderFields().commonHeaders();
-    auto it = commonHeaders.find(HTTPHeaderName::XFrameOptions);
-    if (it != commonHeaders.end()) {
-        String content = it->value;
-        if (frameLoader()->shouldInterruptLoadForXFrameOptions(content, url, identifier)) {
-            String message = "Refused to display '" + url.stringCenterEllipsizedToLength() + "' in a frame because it set 'X-Frame-Options' to '" + content + "'.";
-            m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, identifier);
+    if (!m_frame->settings().networkProcessCSPFrameAncestorsCheckingEnabled() || !RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess()) {
+        auto url = response.url();
+        ContentSecurityPolicy contentSecurityPolicy(URL { url }, this);
+        contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, m_request.httpReferrer());
+        if (!contentSecurityPolicy.allowFrameAncestors(*m_frame, url)) {
             stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(identifier, response);
             return;
+        }
+
+        const auto& commonHeaders = response.httpHeaderFields().commonHeaders();
+        auto it = commonHeaders.find(HTTPHeaderName::XFrameOptions);
+        if (it != commonHeaders.end()) {
+            String content = it->value;
+            if (frameLoader()->shouldInterruptLoadForXFrameOptions(content, url, identifier)) {
+                String message = "Refused to display '" + url.stringCenterEllipsizedToLength() + "' in a frame because it set 'X-Frame-Options' to '" + content + "'.";
+                m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, identifier);
+                stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(identifier, response);
+                return;
+            }
         }
     }
 

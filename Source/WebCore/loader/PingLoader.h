@@ -52,7 +52,7 @@ class PingLoader {
 public:
     static void loadImage(Frame&, const URL&);
     static void sendPing(Frame&, const URL& pingURL, const URL& destinationURL);
-    static void sendViolationReport(Frame&, const URL& reportURL, Ref<FormData>&& report, ViolationReportType);
+    WEBCORE_EXPORT static void sendViolationReport(Frame&, const URL& reportURL, Ref<FormData>&& report, ViolationReportType);
 
 private:
     enum class ShouldFollowRedirects { No, Yes };

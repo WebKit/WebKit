@@ -30,6 +30,7 @@
 #include "ShareableBitmap.h"
 #include "WKBase.h"
 #include "WebFrameLoaderClient.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/JSBase.h>
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -93,6 +94,8 @@ public:
 
     void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = { });
     void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, PAL::SessionID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+
+    void addConsoleMessage(MessageSource, MessageLevel, const String&, uint64_t requestID = 0);
 
     String source() const;
     String contentsAsString() const;
