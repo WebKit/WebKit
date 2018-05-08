@@ -1,0 +1,10 @@
+Access key should work when input type attribute is mutated. To test this manually, press the <alt>+k keys (on Mac OS X, press <Ctrl>+<Opt> instead of <alt>).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS if not crashed.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 
