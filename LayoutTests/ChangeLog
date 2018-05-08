@@ -1,3 +1,13 @@
+2018-05-08  Youenn Fablet  <youenn@apple.com>
+
+        Skip http/tests/appcache/load-from-appcache-defer-resume-crash.html for iOS sim WK2
+        https://bugs.webkit.org/show_bug.cgi?id=185430
+
+        Unreviewed.
+
+        Skip the test as it is using WK1-only test runner API.
+        * platform/ios-wk2/TestExpectations:
+
 2018-05-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         feTurbulence is not rendered correctly on Retina display
