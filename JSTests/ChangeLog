@@ -1,3 +1,13 @@
+2018-05-08  Valerie R Young  <valerie@bocoup.com>
+
+        test262/Runner.pm: move input files to JSTests/test262
+        https://bugs.webkit.org/show_bug.cgi?id=185389
+
+        Reviewed by Michael Saboff.
+
+        * test262/config.yaml: Renamed from Tools/Scripts/test262/config.yaml.
+        * test262/expectations.yaml: Renamed from Tools/Scripts/test262/expectations.yaml.
+
 2018-05-05  Filip Pizlo  <fpizlo@apple.com>
 
         DFG AI should have O(1) clobbering

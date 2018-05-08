@@ -1,3 +1,13 @@
+2018-05-08  Valerie R Young  <valerie@bocoup.com>
+
+        test262/Runner.pm: move input files to JSTests/test262
+        https://bugs.webkit.org/show_bug.cgi?id=185389
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/test262/Runner.pm:
+        (processCLI):
+
 2018-05-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, simplify Speedometer fixes landed in r231489, r231483 & r231474.

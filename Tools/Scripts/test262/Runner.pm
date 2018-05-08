@@ -82,8 +82,8 @@ my $failingOnly;
 my $latestImport;
 my $runningAllTests;
 
-my $expectationsFile = abs_path("$Bin/expectations.yaml");
-my $configFile = abs_path("$Bin/config.yaml");
+my $expectationsFile = abs_path("$Bin/../../../JSTests/test262/expectations.yaml");
+my $configFile = abs_path("$Bin/../../../JSTests/test262/config.yaml");
 my $resultsFile = abs_path("$Bin/results.yaml");
 my $summaryTxtFile = abs_path("$Bin/results-summary.txt");
 my $summaryFile = abs_path("$Bin/results-summary.yaml");
@@ -172,7 +172,6 @@ sub processCLI {
         if ($configFile and not -e $configFile) {
             die "Config file $configFile does not exist!";
         }
-
         $config = LoadFile($configFile) or die $!;
         if ($config->{skip} && $config->{skip}->{files}) {
             %configSkipHash = map { $_ => 1 } @{$config->{skip}->{files}};
