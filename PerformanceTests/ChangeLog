@@ -1,1 +1,52 @@
-== Rolled over to ChangeLog-2018-01-01 ==
+2018-05-08  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r231187. rdar://problem/39987469
+
+    Improve the performance of FontCascadeDescription's effectiveFamilies
+    https://bugs.webkit.org/show_bug.cgi?id=184720
+    PerformanceTests:
+    
+    Reviewed by Simon Fraser.
+    
+    This performance test calls SystemFontDatabase::systemFontCascadeList() around 2,000,000 times (before
+    this patch is applied), which is roughly equivalent to the page we found the performance problem on.
+    The calling pattern is roughly equivalent in this test.
+    
+    * Layout/system-ui.html: Added.
+    
+    Source/WebCore:
+    
+    <rdar://problem/38970927>
+    
+    Reviewed by Simon Fraser.
+    
+    The page that had the performance problem renders many different Chinese characters in system-ui
+    with only a small number of individual fonts. It turns out we were calling into the system-ui
+    machinery for each character in order to opportunistically start loading data URLs (see also:
+    https://bugs.webkit.org/show_bug.cgi?id=175845). These data URLS will never represent the system
+    font, so we don't need to invoke the system-ui machinery at all.
+    
+    This patch makes a 92x performance improvement on the associated performance test. This test is
+    designed to test Chinese text rendered with system-ui.
+    
+    Performance test: Layout/system-ui.html
+    
+    * platform/graphics/FontCascadeFonts.cpp:
+    (WebCore::opportunisticallyStartFontDataURLLoading):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@231187 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-04-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Improve the performance of FontCascadeDescription's effectiveFamilies
+            https://bugs.webkit.org/show_bug.cgi?id=184720
+
+            Reviewed by Simon Fraser.
+
+            This performance test calls SystemFontDatabase::systemFontCascadeList() around 2,000,000 times (before
+            this patch is applied), which is roughly equivalent to the page we found the performance problem on.
+            The calling pattern is roughly equivalent in this test.
+
+            * Layout/system-ui.html: Added.
+
+    == Rolled over to ChangeLog-2018-01-01 ==
