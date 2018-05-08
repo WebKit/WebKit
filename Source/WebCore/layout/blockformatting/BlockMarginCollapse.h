@@ -40,23 +40,8 @@ class Box;
 class BlockMarginCollapse {
     WTF_MAKE_ISO_ALLOCATED(BlockMarginCollapse);
 public:
-    BlockMarginCollapse();
-
-    LayoutUnit marginTop(const Box&) const;
-    LayoutUnit marginBottom(const Box&) const;
-
-private:
-    bool isMarginTopCollapsedWithSibling(const Box&) const;
-    bool isMarginBottomCollapsedWithSibling(const Box&) const;
-    bool isMarginTopCollapsedWithParent(const Box&) const;
-    bool isMarginBottomCollapsedWithParent(const Box&) const;
-
-    LayoutUnit nonCollapsedMarginTop(const Box&) const;
-    LayoutUnit nonCollapsedMarginBottom(const Box&) const;
-    LayoutUnit collapsedMarginTopFromFirstChild(const Box&) const;
-    LayoutUnit collapsedMarginBottomFromLastChild(const Box&) const;
-
-    bool hasAdjoiningMarginTopAndBottom(const Box&) const;
+    static LayoutUnit marginTop(const Box&);
+    static LayoutUnit marginBottom(const Box&);
 };
 
 }

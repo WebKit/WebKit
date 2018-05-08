@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BlockFormattingState.h"
+#include "BlockMarginCollapse.h"
 #include "DisplayBox.h"
 #include "FloatingContext.h"
 #include "FloatingState.h"
@@ -150,14 +151,14 @@ void BlockFormattingContext::computeInFlowHeight(const Box&, Display::Box&) cons
 {
 }
 
-LayoutUnit BlockFormattingContext::marginTop(const Box&) const
+LayoutUnit BlockFormattingContext::marginTop(const Box& layoutBox) const
 {
-    return 0;
+    return BlockMarginCollapse::marginTop(layoutBox);
 }
 
-LayoutUnit BlockFormattingContext::marginBottom(const Box&) const
+LayoutUnit BlockFormattingContext::marginBottom(const Box& layoutBox) const
 {
-    return 0;
+    return BlockMarginCollapse::marginBottom(layoutBox);
 }
 
 }

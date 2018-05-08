@@ -1,3 +1,40 @@
+2018-05-08  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Start using BlockMarginCollapse
+        https://bugs.webkit.org/show_bug.cgi?id=185424
+
+        Reviewed by Antti Koivisto.
+
+        BlockMarginCollapse could be all static.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::marginTop const):
+        (WebCore::Layout::BlockFormattingContext::marginBottom const):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::isMarginTopCollapsedWithSibling):
+        (WebCore::Layout::isMarginBottomCollapsedWithSibling):
+        (WebCore::Layout::isMarginTopCollapsedWithParent):
+        (WebCore::Layout::isMarginBottomCollapsedWithParent):
+        (WebCore::Layout::collapsedMarginTopFromFirstChild):
+        (WebCore::Layout::collapsedMarginBottomFromLastChild):
+        (WebCore::Layout::nonCollapsedMarginTop):
+        (WebCore::Layout::nonCollapsedMarginBottom):
+        (WebCore::Layout::BlockMarginCollapse::marginTop):
+        (WebCore::Layout::BlockMarginCollapse::marginBottom):
+        (WebCore::Layout::BlockMarginCollapse::BlockMarginCollapse): Deleted.
+        (WebCore::Layout::BlockMarginCollapse::marginTop const): Deleted.
+        (WebCore::Layout::BlockMarginCollapse::marginBottom const): Deleted.
+        (WebCore::Layout::BlockMarginCollapse::isMarginTopCollapsedWithSibling const): Deleted.
+        (WebCore::Layout::BlockMarginCollapse::isMarginBottomCollapsedWithSibling const): Deleted.
+        (WebCore::Layout::BlockMarginCollapse::isMarginTopCollapsedWithParent const): Deleted.
+        (WebCore::Layout::BlockMarginCollapse::isMarginBottomCollapsedWithParent const): Deleted.
+        (WebCore::Layout::BlockMarginCollapse::nonCollapsedMarginTop const): Deleted.
+        (WebCore::Layout::BlockMarginCollapse::nonCollapsedMarginBottom const): Deleted.
+        (WebCore::Layout::BlockMarginCollapse::collapsedMarginTopFromFirstChild const): Deleted.
+        (WebCore::Layout::BlockMarginCollapse::collapsedMarginBottomFromLastChild const): Deleted.
+        (WebCore::Layout::BlockMarginCollapse::hasAdjoiningMarginTopAndBottom const): Deleted.
+        * layout/blockformatting/BlockMarginCollapse.h:
+
 2018-05-08  Youenn Fablet  <youenn@apple.com>
 
         Allow WebResourceLoader to cancel a load served from a service worker
