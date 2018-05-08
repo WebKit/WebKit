@@ -1,3 +1,21 @@
+2018-05-08  Youenn Fablet  <youenn@apple.com>
+
+        Allow WebResourceLoader to cancel a load served from a service worker
+        https://bugs.webkit.org/show_bug.cgi?id=185274
+
+        Reviewed by Chris Dumez.
+
+        Add support for cancelling a fetch from WebProcess to service worker process.
+        Use FetchIdentifier instead of uint64_t.
+
+        * Modules/fetch/FetchIdentifier.h: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * workers/service/context/ServiceWorkerFetch.h:
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::startFetch):
+        (WebCore::ServiceWorkerThreadProxy::cancelFetch):
+        * workers/service/context/ServiceWorkerThreadProxy.h:
+
 2018-05-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         feTurbulence is not rendered correctly on Retina display

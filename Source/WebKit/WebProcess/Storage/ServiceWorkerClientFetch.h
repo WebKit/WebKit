@@ -31,6 +31,7 @@
 #include "FormDataReference.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include <WebCore/FetchIdentifier.h>
 #include <WebCore/ResourceLoader.h>
 #include <wtf/CompletionHandler.h>
 
@@ -44,7 +45,7 @@ public:
     enum class Result { Succeeded, Cancelled, Unhandled };
     using Callback = WTF::CompletionHandler<void(Result)>;
 
-    static Ref<ServiceWorkerClientFetch> create(WebServiceWorkerProvider&, Ref<WebCore::ResourceLoader>&&, uint64_t identifier, Ref<WebSWClientConnection>&&, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Callback&&);
+    static Ref<ServiceWorkerClientFetch> create(WebServiceWorkerProvider&, Ref<WebCore::ResourceLoader>&&, WebCore::FetchIdentifier, Ref<WebSWClientConnection>&&, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Callback&&);
     ~ServiceWorkerClientFetch();
 
     void start();
@@ -55,7 +56,7 @@ public:
     bool isOngoing() const { return !!m_callback; }
 
 private:
-    ServiceWorkerClientFetch(WebServiceWorkerProvider&, Ref<WebCore::ResourceLoader>&&, uint64_t identifier, Ref<WebSWClientConnection>&&, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Callback&&);
+    ServiceWorkerClientFetch(WebServiceWorkerProvider&, Ref<WebCore::ResourceLoader>&&, WebCore::FetchIdentifier, Ref<WebSWClientConnection>&&, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Callback&&);
 
     std::optional<WebCore::ResourceError> validateResponse(const WebCore::ResourceResponse&);
 
@@ -70,7 +71,7 @@ private:
 
     WebServiceWorkerProvider& m_serviceWorkerProvider;
     RefPtr<WebCore::ResourceLoader> m_loader;
-    uint64_t m_identifier { 0 };
+    WebCore::FetchIdentifier m_identifier;
     Ref<WebSWClientConnection> m_connection;
     Callback m_callback;
     enum class RedirectionStatus { None, Receiving, Following, Received };
@@ -81,6 +82,8 @@ private:
     bool m_isCheckingResponse { false };
     bool m_didFinish { false };
     bool m_didFail { false };
+
+    WebCore::ServiceWorkerRegistrationIdentifier m_serviceWorkerRegistrationIdentifier;
 };
 
 } // namespace WebKit

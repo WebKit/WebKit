@@ -40,7 +40,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<ServiceWorkerClientFetch> ServiceWorkerClientFetch::create(WebServiceWorkerProvider& serviceWorkerProvider, Ref<WebCore::ResourceLoader>&& loader, uint64_t identifier, Ref<WebSWClientConnection>&& connection, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Callback&& callback)
+Ref<ServiceWorkerClientFetch> ServiceWorkerClientFetch::create(WebServiceWorkerProvider& serviceWorkerProvider, Ref<WebCore::ResourceLoader>&& loader, FetchIdentifier identifier, Ref<WebSWClientConnection>&& connection, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Callback&& callback)
 {
     auto fetch = adoptRef(*new ServiceWorkerClientFetch { serviceWorkerProvider, WTFMove(loader), identifier, WTFMove(connection), shouldClearReferrerOnHTTPSToHTTPRedirect, WTFMove(callback) });
     fetch->start();
@@ -51,7 +51,7 @@ ServiceWorkerClientFetch::~ServiceWorkerClientFetch()
 {
 }
 
-ServiceWorkerClientFetch::ServiceWorkerClientFetch(WebServiceWorkerProvider& serviceWorkerProvider, Ref<WebCore::ResourceLoader>&& loader, uint64_t identifier, Ref<WebSWClientConnection>&& connection, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Callback&& callback)
+ServiceWorkerClientFetch::ServiceWorkerClientFetch(WebServiceWorkerProvider& serviceWorkerProvider, Ref<WebCore::ResourceLoader>&& loader, FetchIdentifier identifier, Ref<WebSWClientConnection>&& connection, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Callback&& callback)
     : m_serviceWorkerProvider(serviceWorkerProvider)
     , m_loader(WTFMove(loader))
     , m_identifier(identifier)
@@ -75,7 +75,8 @@ void ServiceWorkerClientFetch::start()
     cleanHTTPRequestHeadersForAccessControl(request, options.httpHeadersToKeep);
 
     ASSERT(options.serviceWorkersMode != ServiceWorkersMode::None);
-    m_connection->startFetch(m_loader->identifier(), options.serviceWorkerRegistrationIdentifier.value(), request, options, referrer);
+    m_serviceWorkerRegistrationIdentifier = options.serviceWorkerRegistrationIdentifier.value();
+    m_connection->startFetch(m_identifier, m_serviceWorkerRegistrationIdentifier, request, options, referrer);
 
     m_redirectionStatus = RedirectionStatus::None;
 }
@@ -259,6 +260,11 @@ void ServiceWorkerClientFetch::cancel()
 {
     if (auto callback = WTFMove(m_callback))
         callback(Result::Cancelled);
+
+    if (!m_didFinish && !m_didFail) {
+        m_connection->cancelFetch(m_identifier, m_serviceWorkerRegistrationIdentifier);
+
+    }
     m_loader = nullptr;
     m_buffer = nullptr;
 }

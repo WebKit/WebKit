@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "Connection.h"
+#include <WebCore/FetchIdentifier.h>
 #include <WebCore/FetchLoader.h>
 #include <WebCore/FetchLoaderClient.h>
 #include <WebCore/ServiceWorkerFetch.h>
@@ -37,7 +38,7 @@ namespace WebKit {
 
 class WebServiceWorkerFetchTaskClient final : public WebCore::ServiceWorkerFetch::Client {
 public:
-    static Ref<WebServiceWorkerFetchTaskClient> create(Ref<IPC::Connection>&& connection, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier,  WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchTaskIdentifier)
+    static Ref<WebServiceWorkerFetchTaskClient> create(Ref<IPC::Connection>&& connection, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier,  WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchTaskIdentifier)
     {
         return adoptRef(*new WebServiceWorkerFetchTaskClient(WTFMove(connection), serviceWorkerIdentifier, serverConnectionIdentifier, fetchTaskIdentifier));
     }
@@ -45,7 +46,7 @@ public:
     ~WebServiceWorkerFetchTaskClient();
 
 private:
-    WebServiceWorkerFetchTaskClient(Ref<IPC::Connection>&&, WebCore::ServiceWorkerIdentifier, WebCore::SWServerConnectionIdentifier, uint64_t fetchTaskIdentifier);
+    WebServiceWorkerFetchTaskClient(Ref<IPC::Connection>&&, WebCore::ServiceWorkerIdentifier, WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier);
 
     void didReceiveResponse(const WebCore::ResourceResponse&) final;
     void didReceiveData(Ref<WebCore::SharedBuffer>&&) final;
@@ -53,7 +54,10 @@ private:
     void didFail() final;
     void didFinish() final;
     void didNotHandle() final;
+    void cancel() final;
 
+    void cleanup();
+    
     void didReceiveBlobChunk(const char* data, size_t size);
     void didFinishBlobLoading();
 
@@ -73,7 +77,7 @@ private:
     RefPtr<IPC::Connection> m_connection;
     WebCore::SWServerConnectionIdentifier m_serverConnectionIdentifier;
     WebCore::ServiceWorkerIdentifier m_serviceWorkerIdentifier;
-    uint64_t m_fetchTaskIdentifier { 0 };
+    WebCore::FetchIdentifier m_fetchIdentifier;
     std::optional<BlobLoader> m_blobLoader;
 };
 

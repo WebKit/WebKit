@@ -53,6 +53,7 @@ public:
     virtual void didFail() = 0;
     virtual void didFinish() = 0;
     virtual void didNotHandle() = 0;
+    virtual void cancel() = 0;
 };
 
 void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, std::optional<ServiceWorkerClientIdentifier>, ResourceRequest&&, String&& referrer, FetchOptions&&);

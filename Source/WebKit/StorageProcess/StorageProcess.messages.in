@@ -36,12 +36,12 @@ messages -> StorageProcess LegacyReceiver {
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    DidNotHandleFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier)
-    DidFailFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier)
-    DidReceiveFetchResponse(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier, WebCore::ResourceResponse response)
-    DidReceiveFetchData(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier, IPC::DataReference data, int64_t encodedDataLength)
-    DidReceiveFetchFormData(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier, IPC::FormDataReference data)
-    DidFinishFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier)
+    DidNotHandleFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier)
+    DidFailFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier)
+    DidReceiveFetchResponse(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, WebCore::ResourceResponse response)
+    DidReceiveFetchData(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, IPC::DataReference data, int64_t encodedDataLength)
+    DidReceiveFetchFormData(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, IPC::FormDataReference data)
+    DidFinishFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier)
     PostMessageToServiceWorkerClient(struct WebCore::ServiceWorkerClientIdentifier destinationIdentifier, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerIdentifier sourceIdentifier, String sourceOrigin)
 
     PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientIdentifier source, WebCore::SWServerConnectionIdentifier connectionIdentifier)
