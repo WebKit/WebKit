@@ -34,6 +34,7 @@
 #include "JSCInlines.h"
 #include "PutByIdStatus.h"
 #include "StringObject.h"
+#include "SuperSampler.h"
 
 namespace JSC { namespace DFG {
 
@@ -53,17 +54,23 @@ InPlaceAbstractState::~InPlaceAbstractState() { }
 
 void InPlaceAbstractState::beginBasicBlock(BasicBlock* basicBlock)
 {
+    // This function is ~1.6-2% of execution time.
+    
     ASSERT(!m_block);
     
     ASSERT(basicBlock->variablesAtHead.numberOfLocals() == basicBlock->valuesAtHead.numberOfLocals());
     ASSERT(basicBlock->variablesAtTail.numberOfLocals() == basicBlock->valuesAtTail.numberOfLocals());
     ASSERT(basicBlock->variablesAtHead.numberOfLocals() == basicBlock->variablesAtTail.numberOfLocals());
 
-    m_abstractValues.resize();
+    m_abstractValues.resize(); // This part is ~0.1-0.4% of execution time.
 
     AbstractValueClobberEpoch epoch = AbstractValueClobberEpoch::first(basicBlock->cfaStructureClobberStateAtHead);
     m_effectEpoch = epoch;
-    
+
+    // This loop is 0.9-1.2% of execution time.
+    // FIXME: Lazily populate m_variables when GetLocal/SetLocal happens. Apply the same idea to
+    // merging. Alternatively, we could just use liveness here.
+    // https://bugs.webkit.org/show_bug.cgi?id=185452
     for (size_t i = m_variables.size(); i--;) {
         AbstractValue& value = m_variables[i];
         value = basicBlock->valuesAtHead[i];
@@ -71,6 +78,7 @@ void InPlaceAbstractState::beginBasicBlock(BasicBlock* basicBlock)
     }
     
     if (m_graph.m_form == SSA) {
+        // This loop is 0.05-0.17% of execution time.
         for (NodeAbstractValuePair& entry : basicBlock->ssa->valuesAtHead) {
             if (entry.node.isStillValid()) {
                 AbstractValue& value = m_abstractValues.at(entry.node);

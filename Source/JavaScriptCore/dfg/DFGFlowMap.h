@@ -50,7 +50,8 @@ public:
     void resize()
     {
         m_map.resize(m_graph.maxNodeCount());
-        m_shadowMap.resize(m_graph.maxNodeCount());
+        if (m_graph.m_form == SSA)
+            m_shadowMap.resize(m_graph.maxNodeCount());
     }
     
     Graph& graph() const { return m_graph; }

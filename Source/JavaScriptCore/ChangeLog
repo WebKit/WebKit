@@ -1,3 +1,17 @@
+2018-05-08  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::FlowMap::resize() shouldn't resize the shadow map unless we're in SSA
+        https://bugs.webkit.org/show_bug.cgi?id=185453
+
+        Reviewed by Michael Saboff.
+        
+        Tiny improvement for compile times.
+
+        * dfg/DFGFlowMap.h:
+        (JSC::DFG::FlowMap::resize): Remove one Vector::resize() when we're not in SSA.
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::beginBasicBlock): Record some data about how long we spend in different parts of this and add a FIXME linking bug 185452.
+
 2018-05-08  Michael Saboff  <msaboff@apple.com>
 
         Deferred firing of structure transition watchpoints is racy
