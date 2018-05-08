@@ -1198,6 +1198,7 @@ WebToStorageProcessConnection& WebProcess::ensureWebToStorageProcessConnection(P
             // In this particular case, the storage process can be terminated by the UI process while the
             // connection is being done, so we always want to exit instead of crashing.
             // See https://bugs.webkit.org/show_bug.cgi?id=183348.
+            exit(0);
 #else
             CRASH();
 #endif

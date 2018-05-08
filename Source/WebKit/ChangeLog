@@ -1,3 +1,10 @@
+2018-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add missing exit not included in r231298.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureWebToStorageProcessConnection):
+
 2018-05-07  Daniel Bates  <dabates@apple.com>
 
         Check X-Frame-Options and CSP frame-ancestors in network process
