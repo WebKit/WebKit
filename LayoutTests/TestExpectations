@@ -1914,3 +1914,5 @@ webkit.org/b/48451 animations/suspend-resume-animation.html [ Pass Failure ]
 webkit.org/b/48451 animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
 
 webkit.org/b/184800 http/tests/workers/worker-importScripts-banned-mimetype.html [ Pass Timeout ]
+
+webkit.org/b/184802 http/tests/security/contentTypeOptions/nosniff-importScript-blocked.html [ Pass Timeout ]
