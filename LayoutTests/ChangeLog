@@ -1,5 +1,13 @@
 2018-05-08  Daniel Bates  <dabates@apple.com>
 
+        Skip test http/tests/appcache/x-frame-options-prevents-framing.php for now in WebKit2.
+
+        Will address in <https://bugs.webkit.org/show_bug.cgi?id=185443>.
+
+        * platform/wk2/TestExpectations:
+
+2018-05-08  Daniel Bates  <dabates@apple.com>
+
         Mark test http/tests/quicklook/csp-header-ignored.html as Failure.
 
         Will fix in <https://bugs.webkit.org/show_bug.cgi?id=185442>.
