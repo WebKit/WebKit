@@ -1,3 +1,46 @@
+2018-05-06  Filip Pizlo  <fpizlo@apple.com>
+
+        InPlaceAbstractState::beginBasicBlock shouldn't have to clear any abstract values
+        https://bugs.webkit.org/show_bug.cgi?id=185365
+
+        Reviewed by Saam Barati.
+        
+        This patch does three things to improve compile times:
+        
+        - Fixes some inlining goofs.
+        
+        - Adds the ability to measure compile times with run-jsc-benchmarks.
+        
+        - Dramatically improves the performance of InPlaceAbstractState::beginBasicBlock by removing the
+          code that clears abstract values. It turns out that on constant folding "needed" this, in the
+          sense that this was the only thing protecting it from loading the abstract value of a no-result
+          node and then concluding that because it had a non-empty m_value, it could be constant-folded.
+          Any node that produces a result will explicitly set its abstract value, so this problem can
+          also be guarded by just having constant folding check if the node it wants to fold returns any
+          result.
+        
+        Solid 0.96% compile time speed-up across SunSpider-CompileTime and V8Spider-CompileTime.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::set):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::merge):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::doToChildrenWithNode):
+        (JSC::DFG::Graph::doToChildren):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::beginBasicBlock):
+        * jit/JIT.cpp:
+        (JSC::JIT::totalCompileTime):
+        * jit/JIT.h:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionTotalCompileTime):
+
 2018-05-05  Filip Pizlo  <fpizlo@apple.com>
 
         DFG AI doesn't need to merge valuesAtTail - it can just assign them

@@ -250,6 +250,7 @@ namespace JSC {
         static int stackPointerOffsetFor(CodeBlock*);
 
         JS_EXPORT_PRIVATE static HashMap<CString, Seconds> compileTimeStats();
+        JS_EXPORT_PRIVATE static Seconds totalCompileTime();
 
     private:
         void privateCompileMainPass();

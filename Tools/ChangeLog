@@ -1,3 +1,14 @@
+2018-05-06  Filip Pizlo  <fpizlo@apple.com>
+
+        InPlaceAbstractState::beginBasicBlock shouldn't have to clear any abstract values
+        https://bugs.webkit.org/show_bug.cgi?id=185365
+
+        Reviewed by Saam Barati.
+        
+        Make it possible to measure compile times.
+
+        * Scripts/run-jsc-benchmarks:
+
 2018-05-07  Leo Balter  <leonardo.balter@gmail.com>
 
         Test262-Runner: Add base module to the local deps - unicore/Exact.pl

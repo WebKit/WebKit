@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,7 +103,7 @@ public:
     }
     
     // Returns true if the value was added, or false if the value was already there.
-    bool add(T value)
+    ALWAYS_INLINE bool add(T value)
     {
         ASSERT(value);
         if (isThin()) {
@@ -156,7 +156,7 @@ public:
         return containsOutOfLine(value);
     }
     
-    bool merge(const TinyPtrSet& other)
+    ALWAYS_INLINE bool merge(const TinyPtrSet& other)
     {
         if (other.isThin()) {
             if (other.singleEntry())
@@ -164,25 +164,7 @@ public:
             return false;
         }
         
-        OutOfLineList* list = other.list();
-        if (list->m_length >= 2) {
-            if (isThin()) {
-                OutOfLineList* myNewList = OutOfLineList::create(
-                    list->m_length + !!singleEntry());
-                if (singleEntry()) {
-                    myNewList->m_length = 1;
-                    myNewList->list()[0] = singleEntry();
-                }
-                set(myNewList);
-            }
-            bool changed = false;
-            for (unsigned i = 0; i < list->m_length; ++i)
-                changed |= addOutOfLine(list->list()[i]);
-            return changed;
-        }
-        
-        ASSERT(list->m_length);
-        return add(list->list()[0]);
+        return mergeOtherOutOfLine(other);
     }
     
     template<typename Functor>
@@ -379,7 +361,7 @@ private:
 
     static const unsigned defaultStartingSize = 4;
     
-    bool addOutOfLine(T value)
+    NEVER_INLINE bool addOutOfLine(T value)
     {
         OutOfLineList* list = this->list();
         for (unsigned i = 0; i < list->m_length; ++i) {
@@ -400,6 +382,29 @@ private:
         OutOfLineList::destroy(list);
         set(newList);
         return true;
+    }
+    
+    NEVER_INLINE bool mergeOtherOutOfLine(const TinyPtrSet& other)
+    {
+        OutOfLineList* list = other.list();
+        if (list->m_length >= 2) {
+            if (isThin()) {
+                OutOfLineList* myNewList = OutOfLineList::create(
+                    list->m_length + !!singleEntry());
+                if (singleEntry()) {
+                    myNewList->m_length = 1;
+                    myNewList->list()[0] = singleEntry();
+                }
+                set(myNewList);
+            }
+            bool changed = false;
+            for (unsigned i = 0; i < list->m_length; ++i)
+                changed |= addOutOfLine(list->list()[i]);
+            return changed;
+        }
+        
+        ASSERT(list->m_length);
+        return add(list->list()[0]);
     }
     
     bool containsOutOfLine(T value) const
