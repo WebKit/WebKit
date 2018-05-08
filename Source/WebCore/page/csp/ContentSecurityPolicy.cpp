@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google, Inc. All rights reserved.
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #include "config.h"
 #include "ContentSecurityPolicy.h"
 
+#include "ContentSecurityPolicyClient.h"
 #include "ContentSecurityPolicyDirective.h"
 #include "ContentSecurityPolicyDirectiveList.h"
 #include "ContentSecurityPolicyDirectiveNames.h"
@@ -88,19 +89,19 @@ static String consoleMessageForViolation(const char* effectiveViolatedDirective,
     return result.toString();
 }
 
-ContentSecurityPolicy::ContentSecurityPolicy(ScriptExecutionContext& scriptExecutionContext)
+ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ContentSecurityPolicyClient* client)
+    : m_client { client }
+    , m_protectedURL { WTFMove(protectedURL) }
+{
+    updateSourceSelf(SecurityOrigin::create(m_protectedURL).get());
+}
+
+ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ScriptExecutionContext& scriptExecutionContext)
     : m_scriptExecutionContext(&scriptExecutionContext)
-    , m_sandboxFlags(SandboxNone)
+    , m_protectedURL { WTFMove(protectedURL) }
 {
     ASSERT(scriptExecutionContext.securityOrigin());
     updateSourceSelf(*scriptExecutionContext.securityOrigin());
-}
-
-ContentSecurityPolicy::ContentSecurityPolicy(const SecurityOrigin& securityOrigin, const Frame* frame)
-    : m_frame(frame)
-    , m_sandboxFlags(SandboxNone)
-{
-    updateSourceSelf(securityOrigin);
 }
 
 ContentSecurityPolicy::~ContentSecurityPolicy() = default;
@@ -614,13 +615,13 @@ bool ContentSecurityPolicy::allowBaseURI(const URL& url, bool overrideContentSec
     return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForBaseURI, url);
 }
 
-static String stripURLForUseInReport(Document& document, const URL& url)
+String ContentSecurityPolicy::deprecatedURLForReporting(const URL& url) const
 {
     if (!url.isValid())
-        return String();
+        return { };
     if (!url.isHierarchical() || url.protocolIs("file"))
         return url.protocol().toString();
-    return document.securityOrigin().canRequest(url) ? url.strippedForUseAsReferrer() : SecurityOrigin::create(url).get().toString();
+    return static_cast<SecurityOriginData>(*m_selfSource).securityOrigin()->canRequest(url) ? url.strippedForUseAsReferrer() : SecurityOrigin::create(url)->toString();
 }
 
 void ContentSecurityPolicy::reportViolation(const String& violatedDirective, const ContentSecurityPolicyDirective& effectiveViolatedDirective, const URL& blockedURL, const String& consoleMessage, JSC::ExecState* state) const
@@ -648,48 +649,45 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
         return;
 
     // FIXME: Support sending reports from worker.
-    if (!is<Document>(m_scriptExecutionContext) && !m_frame)
-        return;
+    CSPInfo info;
+    info.documentURI = blockedURL;
+    if (m_client)
+        m_client->willSendCSPViolationReport(info);
+    else {
+        if (!is<Document>(m_scriptExecutionContext))
+            return;
 
-    ASSERT(!m_frame || effectiveViolatedDirective == ContentSecurityPolicyDirectiveNames::frameAncestors);
+        auto& document = downcast<Document>(*m_scriptExecutionContext);
+        auto* frame = document.frame();
+        if (!frame)
+            return;
 
-    auto& document = is<Document>(m_scriptExecutionContext) ? downcast<Document>(*m_scriptExecutionContext) : *m_frame->document();
-    auto* frame = document.frame();
-    ASSERT(!m_frame || m_frame == frame);
-    if (!frame)
-        return;
+        info.documentURI = document.url().strippedForUseAsReferrer();
 
-    String documentURI;
-    String blockedURI;
-    if (is<Document>(m_scriptExecutionContext)) {
-        documentURI = document.url().strippedForUseAsReferrer();
-        blockedURI = stripURLForUseInReport(document, blockedURL);
-    } else {
-        // The URL of |document| may not have been initialized (say, when reporting a frame-ancestors violation).
-        // So, we use the URL of the blocked document for the protected document URL.
-        documentURI = blockedURL;
-        blockedURI = blockedURL;
+        auto stack = createScriptCallStack(JSMainThreadExecState::currentState(), 2);
+        auto* callFrame = stack->firstNonNativeCallFrame();
+        if (callFrame && callFrame->lineNumber()) {
+            info.sourceFile = deprecatedURLForReporting(URL { URL { }, callFrame->sourceURL() });
+            info.lineNumber = callFrame->lineNumber();
+            info.columnNumber = callFrame->columnNumber();
+        }
     }
-    String violatedDirectiveText = violatedDirective;
-    String originalPolicy = violatedDirectiveList.header();
+    ASSERT(m_client || is<Document>(m_scriptExecutionContext));
+
+    String blockedURI = deprecatedURLForReporting(blockedURL);
     // FIXME: Is it policy to not use the status code for HTTPS, or is that a bug?
-    unsigned short statusCode = m_selfSourceProtocol == "http" ? m_httpStatusCode : 0;
-
-    String sourceFile;
-    int lineNumber = 0;
-    int columnNumber = 0;
-    auto stack = createScriptCallStack(JSMainThreadExecState::currentState(), 2);
-    auto* callFrame = stack->firstNonNativeCallFrame();
-    if (callFrame && callFrame->lineNumber()) {
-        sourceFile = stripURLForUseInReport(document, URL(URL(), callFrame->sourceURL()));
-        lineNumber = callFrame->lineNumber();
-        columnNumber = callFrame->columnNumber();
-    }
+    unsigned short httpStatusCode = m_selfSourceProtocol == "http" ? m_httpStatusCode : 0;
 
     // 1. Dispatch violation event.
     bool canBubble = false;
     bool cancelable = false;
-    document.enqueueDocumentEvent(SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, canBubble, cancelable, documentURI, m_referrer, blockedURI, violatedDirectiveText, effectiveViolatedDirective, originalPolicy, sourceFile, statusCode, lineNumber, columnNumber));
+    auto violationEvent = SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, canBubble,
+        cancelable, info.documentURI, m_referrer, blockedURI, violatedDirective, effectiveViolatedDirective,
+        violatedDirectiveList.header(), info.sourceFile, httpStatusCode, info.lineNumber, info.columnNumber);
+    if (m_client)
+        m_client->dispatchSecurityPolicyViolationEvent(WTFMove(violationEvent));
+    else
+        downcast<Document>(*m_scriptExecutionContext).enqueueDocumentEvent(WTFMove(violationEvent));
 
     // 2. Send violation report (if applicable).
     auto& reportURIs = violatedDirectiveList.reportURIs();
@@ -707,25 +705,32 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     // harmless information.
 
     auto cspReport = JSON::Object::create();
-    cspReport->setString(ASCIILiteral("document-uri"), documentURI);
+    cspReport->setString(ASCIILiteral("document-uri"), info.documentURI);
     cspReport->setString(ASCIILiteral("referrer"), m_referrer);
-    cspReport->setString(ASCIILiteral("violated-directive"), violatedDirectiveText);
+    cspReport->setString(ASCIILiteral("violated-directive"), violatedDirective);
     cspReport->setString(ASCIILiteral("effective-directive"), effectiveViolatedDirective);
-    cspReport->setString(ASCIILiteral("original-policy"), originalPolicy);
+    cspReport->setString(ASCIILiteral("original-policy"), violatedDirectiveList.header());
     cspReport->setString(ASCIILiteral("blocked-uri"), blockedURI);
-    cspReport->setInteger(ASCIILiteral("status-code"), statusCode);
-    if (!sourceFile.isNull()) {
-        cspReport->setString(ASCIILiteral("source-file"), sourceFile);
-        cspReport->setInteger(ASCIILiteral("line-number"), lineNumber);
-        cspReport->setInteger(ASCIILiteral("column-number"), columnNumber);
+    cspReport->setInteger(ASCIILiteral("status-code"), httpStatusCode);
+    if (!info.sourceFile.isNull()) {
+        cspReport->setString(ASCIILiteral("source-file"), info.sourceFile);
+        cspReport->setInteger(ASCIILiteral("line-number"), info.lineNumber);
+        cspReport->setInteger(ASCIILiteral("column-number"), info.columnNumber);
     }
 
     auto reportObject = JSON::Object::create();
     reportObject->setObject(ASCIILiteral("csp-report"), WTFMove(cspReport));
 
     auto report = FormData::create(reportObject->toJSONString().utf8());
-    for (const auto& url : reportURIs)
-        PingLoader::sendViolationReport(*frame, is<Document>(m_scriptExecutionContext) ? document.completeURL(url) : document.completeURL(url, blockedURL), report.copyRef(), ViolationReportType::ContentSecurityPolicy);
+
+    if (m_client) {
+        for (const auto& url : reportURIs)
+            m_client->sendCSPViolationReport(URL { m_protectedURL, url }, report.copyRef());
+    } else {
+        auto& document = downcast<Document>(*m_scriptExecutionContext);
+        for (const auto& url : reportURIs)
+            PingLoader::sendViolationReport(*document.frame(), URL { m_protectedURL, url }, report.copyRef(), ViolationReportType::ContentSecurityPolicy);
+    }
 }
 
 void ContentSecurityPolicy::reportUnsupportedDirective(const String& name) const
@@ -817,10 +822,10 @@ void ContentSecurityPolicy::logToConsole(const String& message, const String& co
         return;
 
     // FIXME: <http://webkit.org/b/114317> ContentSecurityPolicy::logToConsole should include a column number
-    if (m_scriptExecutionContext)
+    if (m_client)
+        m_client->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, 0);
+    else if (m_scriptExecutionContext)
         m_scriptExecutionContext->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, contextURL, contextLine.oneBasedInt(), 0, state);
-    else if (m_frame && m_frame->document())
-        static_cast<ScriptExecutionContext*>(m_frame->document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, contextURL, contextLine.oneBasedInt(), 0, state);
 }
 
 void ContentSecurityPolicy::reportBlockedScriptExecutionToInspector(const String& directiveText) const

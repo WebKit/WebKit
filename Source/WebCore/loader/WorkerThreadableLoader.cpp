@@ -116,7 +116,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     ASSERT(contentSecurityPolicy);
 
     auto securityOriginCopy = securityOrigin->isolatedCopy();
-    auto contentSecurityPolicyCopy = std::make_unique<ContentSecurityPolicy>(securityOriginCopy);
+    auto contentSecurityPolicyCopy = std::make_unique<ContentSecurityPolicy>(globalScope.url().isolatedCopy());
     contentSecurityPolicyCopy->copyStateFrom(contentSecurityPolicy);
     contentSecurityPolicyCopy->copyUpgradeInsecureRequestStateFrom(*contentSecurityPolicy);
 

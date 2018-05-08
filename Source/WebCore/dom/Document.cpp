@@ -5500,7 +5500,7 @@ void Document::initSecurityContext()
         // This can occur via document.implementation.createDocument().
         setCookieURL(URL(ParsedURLString, emptyString()));
         setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::createUnique()));
-        setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(*this));
+        setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(URL { ParsedURLString, emptyString() }, *this));
         return;
     }
 
@@ -5519,7 +5519,7 @@ void Document::initSecurityContext()
         isSecurityOriginUnique = documentLoader && documentLoader->response().tainting() == ResourceResponse::Tainting::Opaque;
 
     setSecurityOriginPolicy(SecurityOriginPolicy::create(isSecurityOriginUnique ? SecurityOrigin::createUnique() : SecurityOrigin::create(m_url)));
-    setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(*this));
+    setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(URL { m_url }, *this));
 
     String overrideContentSecurityPolicy = m_frame->loader().client().overrideContentSecurityPolicy();
     if (!overrideContentSecurityPolicy.isNull())

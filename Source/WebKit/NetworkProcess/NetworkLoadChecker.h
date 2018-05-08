@@ -71,7 +71,7 @@ public:
 private:
     NetworkLoadChecker(WebCore::FetchOptions&&, PAL::SessionID, WebCore::HTTPHeaderMap&&, WebCore::URL&&, RefPtr<WebCore::SecurityOrigin>&&, WebCore::PreflightPolicy, String&& referrer);
 
-    WebCore::ContentSecurityPolicy* contentSecurityPolicy() const;
+    WebCore::ContentSecurityPolicy* contentSecurityPolicy();
     bool isChecking() const { return !!m_corsPreflightChecker; }
     bool isRedirected() const { return m_redirectCount; }
 
@@ -106,7 +106,7 @@ private:
     std::unique_ptr<NetworkCORSPreflightChecker> m_corsPreflightChecker;
     bool m_isSameOriginRequest { true };
     bool m_isSimpleRequest { true };
-    mutable std::unique_ptr<WebCore::ContentSecurityPolicy> m_contentSecurityPolicy;
+    std::unique_ptr<WebCore::ContentSecurityPolicy> m_contentSecurityPolicy;
     size_t m_redirectCount { 0 };
     WebCore::URL m_previousURL;
     WebCore::PreflightPolicy m_preflightPolicy;

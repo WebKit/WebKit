@@ -1,3 +1,64 @@
+2018-05-07  Daniel Bates  <dabates@apple.com>
+
+        Abstract logic to log console messages and send CSP violation reports into a client
+        https://bugs.webkit.org/show_bug.cgi?id=185393
+        <rdar://problem/40036053>
+
+        Reviewed by Brent Fulgham.
+
+        First pass at adding infrastructure to supporting CSP reporting from NetworkProcess and workers.
+        Replaces the existing ContentSecurityPolicy constructor that takes a Frame with one that
+        takes a ContentSecurityPolicyClient to delegate to for logging and sending reports. We will look
+        to remove ContentSecurityPolicy constructor that takes a ScriptExecutionContext in a follow up.
+
+        Standardize on instantiating a ContentSecurityPolicy with the full URL to resource that it protects
+        instead of taking only the SecurityOrigin of this URL. By taking the full URL the ContentSecurityPolicy
+        object is now capable of resolving a relative report URL without needing a Document/ScriptExecutionContext.
+
+        We are underutilizing the CSPInfo struct and ContentSecurityPolicyClient::willSendCSPViolationReport()
+        delegate callback in this patch. We will make use of this functionality in a subsequent patch to
+        support collecting script state (e.g. source line number) when reporting CSP violations in worker
+        threads. We also no longer go through the unnecessary motions to try to collect script state for a
+        frame-ancestors violation (since DocumentLoader extends ContentSecurityPolicyClient and does not
+        implement ContentSecurityPolicyClient::willSendCSPViolationReport()). The frame-ancestors directive
+        is checked before a document is parsed and executes script; => there will never be any script state
+        to collect; => it is not necessary to try to collect it as we currently do.
+
+        * Sources.txt: Add file ContentSecurityPolicyClient.cpp. See the remarks for ContentSecurityPolicyClient.cpp
+        below on why we have this file.
+        * WebCore.xcodeproj/project.pbxproj: Add files ContentSecurityPolicyClient.{h, cpp}.
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext): Pass the URL of the protected document.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived): Ditto.
+        (WebCore::DocumentLoader::addConsoleMessage): Added.
+        (WebCore::DocumentLoader::sendCSPViolationReport): Added.
+        (WebCore::DocumentLoader::dispatchSecurityPolicyViolationEvent): Added.
+        * loader/DocumentLoader.h:
+        * loader/FrameLoaderClient.h: Fix typo in comment.
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge): Pass the URL of the worker script.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::ContentSecurityPolicy): Added overload that takes a URL&& and an optional
+        ContentSecurityPolicyClient*.
+        (WebCore::ContentSecurityPolicy::deprecatedURLForReporting const): Extracted and simplified stripURLForUseInReport()
+        into this member function.
+        (WebCore::ContentSecurityPolicy::reportViolation const): Modified to make use of the client, if we have
+        one and removed code for handling a ContentSecurityPolicy that was instantiated with a Frame.
+        (WebCore::ContentSecurityPolicy::logToConsole const): Ditto.
+        (WebCore::stripURLForUseInReport): Deleted; incorporated into ContentSecurityPolicy::deprecatedURLForReporting().
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicyClient.cpp: Added. This file exists so that we can define the virtual
+        destructor out-of-line and export this abstract class so as to avoid the need for the vtable to be
+        defined in the translation unit of each derived class.
+        * page/csp/ContentSecurityPolicyClient.h: Added.
+        * page/csp/ContentSecurityPolicySource.cpp:
+        (WebCore::ContentSecurityPolicySource::operator SecurityOriginData const): Added.
+        * page/csp/ContentSecurityPolicySource.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope): Instantiate the ContentSecurityPolicy object with the
+        URL of the worker script.
+
 2018-05-07  Simon Fraser  <simon.fraser@apple.com>
 
         CSS filters which reference SVG filters fail to respect the "color-interpolation-filters" of the filter

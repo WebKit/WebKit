@@ -4075,6 +4075,7 @@
 		CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE08C3D0152B599A0021B8C2 /* AlternativeTextController.h */; settings = {ATTRIBUTES = (); }; };
 		CE1866451F72E5B400A0CAB6 /* MarkedText.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1866431F72E5B400A0CAB6 /* MarkedText.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE2849871CA360DF00B4A57F /* ContentSecurityPolicyDirectiveNames.h in Headers */ = {isa = PBXBuildFile; fileRef = CE2849861CA360DF00B4A57F /* ContentSecurityPolicyDirectiveNames.h */; };
+		CE5FA255209E48C50051D700 /* ContentSecurityPolicyClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CE5FA253209E48C50051D700 /* ContentSecurityPolicyClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE6DADFA1C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = CE6DADF81C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE799F981C6A46BC0097B518 /* ContentSecurityPolicySourceList.h in Headers */ = {isa = PBXBuildFile; fileRef = CE799F961C6A46BC0097B518 /* ContentSecurityPolicySourceList.h */; };
 		CE799F9C1C6A4BCD0097B518 /* ContentSecurityPolicyDirectiveList.h in Headers */ = {isa = PBXBuildFile; fileRef = CE799F9A1C6A4BCD0097B518 /* ContentSecurityPolicyDirectiveList.h */; };
@@ -13423,6 +13424,7 @@
 		CE2849861CA360DF00B4A57F /* ContentSecurityPolicyDirectiveNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContentSecurityPolicyDirectiveNames.h; path = csp/ContentSecurityPolicyDirectiveNames.h; sourceTree = "<group>"; };
 		CE2849881CA3614600B4A57F /* ContentSecurityPolicyDirectiveNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ContentSecurityPolicyDirectiveNames.cpp; path = csp/ContentSecurityPolicyDirectiveNames.cpp; sourceTree = "<group>"; };
 		CE5CB1B314EDAB6F00BB2795 /* EventSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSender.h; sourceTree = "<group>"; };
+		CE5FA253209E48C50051D700 /* ContentSecurityPolicyClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ContentSecurityPolicyClient.h; path = csp/ContentSecurityPolicyClient.h; sourceTree = "<group>"; };
 		CE6D89294C7AACE0AD89B3DD /* MathMLMencloseElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLMencloseElement.h; sourceTree = "<group>"; };
 		CE6DADF71C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ContentSecurityPolicyResponseHeaders.cpp; path = csp/ContentSecurityPolicyResponseHeaders.cpp; sourceTree = "<group>"; };
 		CE6DADF81C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContentSecurityPolicyResponseHeaders.h; path = csp/ContentSecurityPolicyResponseHeaders.h; sourceTree = "<group>"; };
@@ -13462,6 +13464,7 @@
 		CEF418CC1179678C009D112C /* ViewportArguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportArguments.cpp; sourceTree = "<group>"; };
 		CEF418CD1179678C009D112C /* ViewportArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewportArguments.h; sourceTree = "<group>"; };
 		CEF59B251CA0E11D005C3E13 /* ContentSecurityPolicyDirective.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ContentSecurityPolicyDirective.cpp; path = csp/ContentSecurityPolicyDirective.cpp; sourceTree = "<group>"; };
+		CEFD5DB2209EBED400788B67 /* ContentSecurityPolicyClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ContentSecurityPolicyClient.cpp; path = csp/ContentSecurityPolicyClient.cpp; sourceTree = "<group>"; };
 		D000EBA011BDAFD400C47726 /* FrameLoaderStateMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameLoaderStateMachine.cpp; sourceTree = "<group>"; };
 		D000EBA111BDAFD400C47726 /* FrameLoaderStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameLoaderStateMachine.h; sourceTree = "<group>"; };
 		D000ED2511C1B9CD00C47726 /* SubframeLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubframeLoader.cpp; sourceTree = "<group>"; };
@@ -24755,6 +24758,8 @@
 			children = (
 				97C471D912F925BC0086354B /* ContentSecurityPolicy.cpp */,
 				97C471DA12F925BD0086354B /* ContentSecurityPolicy.h */,
+				CEFD5DB2209EBED400788B67 /* ContentSecurityPolicyClient.cpp */,
+				CE5FA253209E48C50051D700 /* ContentSecurityPolicyClient.h */,
 				CEF59B251CA0E11D005C3E13 /* ContentSecurityPolicyDirective.cpp */,
 				CE799FA21C6A503A0097B518 /* ContentSecurityPolicyDirective.h */,
 				CE799F991C6A4BCD0097B518 /* ContentSecurityPolicyDirectiveList.cpp */,
@@ -27108,6 +27113,7 @@
 				A89943280B42338800D7C802 /* BitmapImage.h in Headers */,
 				976D6C79122B8A3D001FD1F7 /* Blob.h in Headers */,
 				976D6C7C122B8A3D001FD1F7 /* BlobBuilder.h in Headers */,
+				CE5FA255209E48C50051D700 /* ContentSecurityPolicyClient.h in Headers */,
 				A15D75161E68F7C800A35FBC /* BlobCallback.h in Headers */,
 				2EDEF1F4121B0EFC00726DB2 /* BlobData.h in Headers */,
 				E1D31CDD19196020001005A3 /* BlobDataFileReference.h in Headers */,

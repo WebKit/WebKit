@@ -28,6 +28,7 @@
 #include "ContentSecurityPolicySource.h"
 
 #include "ContentSecurityPolicy.h"
+#include "SecurityOriginData.h"
 #include "URL.h"
 
 namespace WebCore {
@@ -106,6 +107,11 @@ bool ContentSecurityPolicySource::portMatches(const URL& url) const
 bool ContentSecurityPolicySource::isSchemeOnly() const
 {
     return m_host.isEmpty();
+}
+
+ContentSecurityPolicySource::operator SecurityOriginData() const
+{
+    return { m_scheme, m_host, m_port };
 }
 
 } // namespace WebCore

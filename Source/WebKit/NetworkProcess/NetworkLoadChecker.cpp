@@ -311,10 +311,11 @@ bool NetworkLoadChecker::doesNotNeedCORSCheck(const URL& url) const
     return m_isSameOriginRequest;
 }
 
-ContentSecurityPolicy* NetworkLoadChecker::contentSecurityPolicy() const
+ContentSecurityPolicy* NetworkLoadChecker::contentSecurityPolicy()
 {
     if (!m_contentSecurityPolicy && m_cspResponseHeaders) {
-        m_contentSecurityPolicy = std::make_unique<ContentSecurityPolicy>(*m_origin);
+        // FIXME: Pass the URL of the protected resource instead of its origin.
+        m_contentSecurityPolicy = std::make_unique<ContentSecurityPolicy>(URL { URL { }, m_origin->toString() });
         m_contentSecurityPolicy->didReceiveHeaders(*m_cspResponseHeaders, String { m_referrer }, ContentSecurityPolicy::ReportParsingErrors::No);
     }
     return m_contentSecurityPolicy.get();

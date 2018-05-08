@@ -1,3 +1,24 @@
+2018-05-07  Daniel Bates  <dabates@apple.com>
+
+        Abstract logic to log console messages and send CSP violation reports into a client
+        https://bugs.webkit.org/show_bug.cgi?id=185393
+        <rdar://problem/40036053>
+
+        Reviewed by Brent Fulgham.
+
+        For now, build a URL from the source origin associated with the NetworkResourceLoader
+        and pass this to the ContentSecurityPolicy constructor.
+
+        Additionally, make NetworkLoadChecker::contentSecurityPolicy() non-const since it returns
+        a non-const pointer to a ContentSecurityPolicy object; => callers can mutate this object
+        right from under NetworkLoadChecker. Making this non-const makes this clear to a reader.
+        Also remove the mutable keyword from the definition of NetworkLoadChecker::m_contentSecurityPolicy.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::contentSecurityPolicy):
+        (WebKit::NetworkLoadChecker::contentSecurityPolicy const): Deleted.
+        * NetworkProcess/NetworkLoadChecker.h:
+
 2018-05-07  Alex Christensen  <achristensen@webkit.org>
 
         WebResourceLoadStatisticsStore::requestStorageAccess should call its completion handler on the main thread

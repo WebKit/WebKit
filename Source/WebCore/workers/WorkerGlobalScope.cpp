@@ -82,7 +82,7 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origi
         origin->grantStorageAccessFromFileURLsQuirk();
 
     setSecurityOriginPolicy(SecurityOriginPolicy::create(WTFMove(origin)));
-    setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(*this));
+    setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(URL { m_url }, *this));
 }
 
 WorkerGlobalScope::~WorkerGlobalScope()

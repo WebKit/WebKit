@@ -28,11 +28,11 @@
 
 #include "ContentSecurityPolicyHash.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
+#include "SecurityContext.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginHash.h"
 #include <functional>
 #include <wtf/HashSet.h>
-#include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
 
@@ -57,15 +57,15 @@ class ScriptExecutionContext;
 class SecurityOrigin;
 class TextEncoding;
 class URL;
+struct ContentSecurityPolicyClient;
 
 typedef Vector<std::unique_ptr<ContentSecurityPolicyDirectiveList>> CSPDirectiveListVector;
-typedef int SandboxFlags;
 
 class ContentSecurityPolicy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit ContentSecurityPolicy(ScriptExecutionContext&);
-    WEBCORE_EXPORT explicit ContentSecurityPolicy(const SecurityOrigin&, const Frame* = nullptr);
+    explicit ContentSecurityPolicy(URL&&, ScriptExecutionContext&);
+    WEBCORE_EXPORT explicit ContentSecurityPolicy(URL&&, ContentSecurityPolicyClient* = nullptr);
     WEBCORE_EXPORT ~ContentSecurityPolicy();
 
     void copyStateFrom(const ContentSecurityPolicy*);
@@ -173,6 +173,9 @@ private:
     void updateSourceSelf(const SecurityOrigin&);
     void applyPolicyToScriptExecutionContext();
 
+    // Implements the deprecated CSP2 "strip uri for reporting" algorithm from <https://www.w3.org/TR/CSP2/#violation-reports>.
+    String deprecatedURLForReporting(const URL&) const;
+
     const TextEncoding& documentEncoding() const;
 
     enum class Disposition {
@@ -203,16 +206,17 @@ private:
     void reportViolation(const String& effectiveViolatedDirective, const String& violatedDirective, const ContentSecurityPolicyDirectiveList& violatedDirectiveList, const URL& blockedURL, const String& consoleMessage, const String& sourceURL, const TextPosition& sourcePosition, JSC::ExecState*) const;
     void reportBlockedScriptExecutionToInspector(const String& directiveText) const;
 
-    // We can never have both a script execution context and a frame.
+    // We can never have both a script execution context and a ContentSecurityPolicyClient.
     ScriptExecutionContext* m_scriptExecutionContext { nullptr };
-    const Frame* m_frame { nullptr };
+    ContentSecurityPolicyClient* m_client { nullptr };
+    URL m_protectedURL;
     std::unique_ptr<ContentSecurityPolicySource> m_selfSource;
     String m_selfSourceProtocol;
     CSPDirectiveListVector m_policies;
     String m_lastPolicyEvalDisabledErrorMessage;
     String m_lastPolicyWebAssemblyDisabledErrorMessage;
     String m_referrer;
-    SandboxFlags m_sandboxFlags;
+    SandboxFlags m_sandboxFlags { SandboxNone };
     bool m_overrideInlineStyleAllowed { false };
     bool m_isReportingEnabled { true };
     bool m_upgradeInsecureRequests { false };

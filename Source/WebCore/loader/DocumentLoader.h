@@ -31,6 +31,7 @@
 
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "ContentSecurityPolicyClient.h"
 #include "DocumentWriter.h"
 #include "FrameDestructionObserver.h"
 #include "LinkIcon.h"
@@ -107,7 +108,11 @@ enum class PopUpPolicy {
     Block,
 };
 
-class DocumentLoader : public RefCounted<DocumentLoader>, public FrameDestructionObserver, private CachedRawResourceClient {
+class DocumentLoader
+    : public RefCounted<DocumentLoader>
+    , public FrameDestructionObserver
+    , public ContentSecurityPolicyClient
+    , private CachedRawResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
     friend class ContentFilter;
 public:
@@ -403,6 +408,11 @@ private:
 #if ENABLE(APPLICATION_MANIFEST)
     void notifyFinishedLoadingApplicationManifest(uint64_t callbackIdentifier, std::optional<ApplicationManifest>);
 #endif
+
+    // ContentSecurityPolicyClient
+    WEBCORE_EXPORT void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long requestIdentifier) final;
+    WEBCORE_EXPORT void sendCSPViolationReport(URL&&, Ref<FormData>&&) final;
+    WEBCORE_EXPORT void dispatchSecurityPolicyViolationEvent(Ref<SecurityPolicyViolationEvent>&&) final;
 
     Ref<CachedResourceLoader> m_cachedResourceLoader;
 
