@@ -26,7 +26,6 @@
 #include "config.h"
 #include "XMLHttpRequestUpload.h"
 
-#include "Event.h"
 #include "EventNames.h"
 #include "XMLHttpRequestProgressEvent.h"
 #include <wtf/Assertions.h>
@@ -34,8 +33,8 @@
 
 namespace WebCore {
 
-XMLHttpRequestUpload::XMLHttpRequestUpload(XMLHttpRequest& xmlHttpRequest)
-    : m_xmlHttpRequest(xmlHttpRequest)
+XMLHttpRequestUpload::XMLHttpRequestUpload(XMLHttpRequest& request)
+    : m_request(request)
 {
 }
 
@@ -60,6 +59,5 @@ void XMLHttpRequestUpload::dispatchProgressEvent(const AtomicString& type)
 
     dispatchEvent(XMLHttpRequestProgressEvent::create(type, m_lengthComputable, m_loaded, m_total));
 }
-
 
 } // namespace WebCore

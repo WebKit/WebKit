@@ -1,3 +1,19 @@
+2018-05-08  Sam Weinig  <sam@webkit.org>
+
+        More cleanup of XMLHttpRequestUpload
+        https://bugs.webkit.org/show_bug.cgi?id=185409
+
+        Reviewed by Alex Christensen.
+
+        - Remove unneeded #includes
+        - Rename m_xmlHttpRequest to m_request
+        - Make some overloaded some methods private, and mark them as final rather
+          than override.
+
+        * xml/XMLHttpRequestUpload.cpp:
+        (WebCore::XMLHttpRequestUpload::XMLHttpRequestUpload):
+        * xml/XMLHttpRequestUpload.h:
+
 2018-05-08  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Start using BlockMarginCollapse

@@ -27,8 +27,6 @@
 
 #include "XMLHttpRequest.h"
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -37,12 +35,8 @@ class XMLHttpRequestUpload final : public XMLHttpRequestEventTarget {
 public:
     explicit XMLHttpRequestUpload(XMLHttpRequest&);
 
-    void ref() { m_xmlHttpRequest.ref(); }
-    void deref() { m_xmlHttpRequest.deref(); }
-    XMLHttpRequest& xmlHttpRequest() const { return m_xmlHttpRequest; }
-
-    EventTargetInterface eventTargetInterface() const override { return XMLHttpRequestUploadEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const override { return m_xmlHttpRequest.scriptExecutionContext(); }
+    void ref() { m_request.ref(); }
+    void deref() { m_request.deref(); }
 
     void dispatchThrottledProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total);
     void dispatchProgressEvent(const AtomicString& type);
@@ -51,7 +45,10 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    XMLHttpRequest& m_xmlHttpRequest;
+    EventTargetInterface eventTargetInterface() const final { return XMLHttpRequestUploadEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return m_request.scriptExecutionContext(); }
+
+    XMLHttpRequest& m_request;
     bool m_lengthComputable { false };
     unsigned long long m_loaded { 0 };
     unsigned long long m_total { 0 };
