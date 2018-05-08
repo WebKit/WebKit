@@ -127,7 +127,7 @@ public:
     ConstructAbility constructAbility() const { return static_cast<ConstructAbility>(m_constructAbility); }
     JSParserScriptMode scriptMode() const { return static_cast<JSParserScriptMode>(m_scriptMode); }
     bool isClassConstructorFunction() const { return constructorKind() != ConstructorKind::None; }
-    const VariableEnvironment* parentScopeTDZVariables() const { return &m_parentScopeTDZVariables; }
+    VariableEnvironment parentScopeTDZVariables() const { return m_parentScopeTDZVariables.environment().toVariableEnvironment(); }
     
     bool isArrowFunction() const { return isArrowFunctionParseMode(parseMode()); }
 
@@ -176,7 +176,7 @@ private:
     String m_sourceURLDirective;
     String m_sourceMappingURLDirective;
 
-    VariableEnvironment m_parentScopeTDZVariables;
+    CompactVariableMap::Handle m_parentScopeTDZVariables;
 
 protected:
     static void visitChildren(JSCell*, SlotVisitor&);

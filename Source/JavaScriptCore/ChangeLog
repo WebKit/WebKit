@@ -1,3 +1,77 @@
+2018-05-07  Saam Barati  <sbarati@apple.com>
+
+        Make a compact version of VariableEnvironment that UnlinkedFunctionExecutable stores and hash-cons these compact environments as we make them
+        https://bugs.webkit.org/show_bug.cgi?id=185329
+        <rdar://problem/39961536>
+
+        Reviewed by Michael Saboff.
+
+        I was made aware of a memory goof inside of JSC where we would inefficiently
+        use space to represent an UnlinkedFunctionExecutable's parent TDZ variables.
+        
+        We did two things badly:
+        1. We used a HashMap instead of a Vector to represent the environment. Having
+        a HashMap is useful when looking things up when generating bytecode, but it's
+        space inefficient. Because UnlinkedFunctionExecutables live a long time because
+        of the code cache, we should have them store this information efficiently
+        inside of a Vector.
+        
+        2. We didn't hash-cons these environments together. If you think about how
+        some programs are structured, hash-consing these together is hugely profitable.
+        Consider some code like this:
+        ```
+        const/let V_1 = ...;
+        const/let V_2 = ...;
+        ...
+        const/let V_n = ...;
+        
+        function f_1() { ... };
+        function f_2() { ... };
+        ...
+        function f_n() { ... };
+        ```
+        
+        Each f_i would store an identical hash map for its parent TDZ variables
+        consisting of {V_1, ..., V_n}. This was incredibly dumb. With hash-consing,
+        each f_i just holds onto a reference to the environment.
+        
+        I benchmarked this change against an app that made heavy use of the
+        above code pattern and it reduced its peak memory footprint from ~220MB
+        to ~160MB.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * parser/VariableEnvironment.cpp:
+        (JSC::CompactVariableEnvironment::CompactVariableEnvironment):
+        (JSC::CompactVariableEnvironment::operator== const):
+        (JSC::CompactVariableEnvironment::toVariableEnvironment const):
+        (JSC::CompactVariableMap::get):
+        (JSC::CompactVariableMap::Handle::~Handle):
+        * parser/VariableEnvironment.h:
+        (JSC::VariableEnvironmentEntry::bits const):
+        (JSC::VariableEnvironmentEntry::operator== const):
+        (JSC::VariableEnvironment::isEverythingCaptured const):
+        (JSC::CompactVariableEnvironment::hash const):
+        (JSC::CompactVariableMapKey::CompactVariableMapKey):
+        (JSC::CompactVariableMapKey::hash):
+        (JSC::CompactVariableMapKey::equal):
+        (JSC::CompactVariableMapKey::makeDeletedValue):
+        (JSC::CompactVariableMapKey::isHashTableDeletedValue const):
+        (JSC::CompactVariableMapKey::isHashTableEmptyValue const):
+        (JSC::CompactVariableMapKey::environment):
+        (WTF::HashTraits<JSC::CompactVariableMapKey>::emptyValue):
+        (WTF::HashTraits<JSC::CompactVariableMapKey>::isEmptyValue):
+        (WTF::HashTraits<JSC::CompactVariableMapKey>::constructDeletedValue):
+        (WTF::HashTraits<JSC::CompactVariableMapKey>::isDeletedValue):
+        (JSC::CompactVariableMap::Handle::Handle):
+        (JSC::CompactVariableMap::Handle::environment const):
+        (JSC::VariableEnvironment::VariableEnvironment): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2018-05-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][MIPS] Simplify DFG code by increasing MIPS temporary registers

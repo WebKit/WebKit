@@ -102,6 +102,7 @@ class BytecodeIntrinsicRegistry;
 class CodeBlock;
 class CodeCache;
 class CommonIdentifiers;
+class CompactVariableMap;
 class CustomGetterSetter;
 class DOMAttributeGetterSetter;
 class ExecState;
@@ -709,6 +710,7 @@ public:
     void releaseRegExpPatternContexBuffer();
 #endif
 
+    Ref<CompactVariableMap> m_compactVariableMap;
 
     std::unique_ptr<HasOwnPropertyCache> m_hasOwnPropertyCache;
     ALWAYS_INLINE HasOwnPropertyCache* hasOwnPropertyCache() { return m_hasOwnPropertyCache.get(); }

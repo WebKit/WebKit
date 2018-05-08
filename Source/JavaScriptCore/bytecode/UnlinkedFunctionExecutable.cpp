@@ -68,7 +68,8 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
 
     UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&vm, FunctionCode, ExecutableInfo(function->usesEval(), function->isStrictMode(), kind == CodeForConstruct, functionKind == UnlinkedBuiltinFunction, executable->constructorKind(), scriptMode, executable->superBinding(), parseMode, executable->derivedContextType(), false, isClassContext, EvalContextType::FunctionEvalContext), debuggerMode);
 
-    error = BytecodeGenerator::generate(vm, function.get(), source, result, debuggerMode, executable->parentScopeTDZVariables());
+    VariableEnvironment parentScopeTDZVariables = executable->parentScopeTDZVariables();
+    error = BytecodeGenerator::generate(vm, function.get(), source, result, debuggerMode, &parentScopeTDZVariables);
 
     if (error.isValid())
         return nullptr;
@@ -104,6 +105,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_inferredName(node->inferredName())
     , m_parentSourceOverride(WTFMove(parentSourceOverride))
     , m_classSource(node->classSource())
+    , m_parentScopeTDZVariables(vm->m_compactVariableMap->get(parentScopeTDZVariables))
 {
     // Make sure these bitfields are adequately wide.
     ASSERT(m_constructAbility == static_cast<unsigned>(constructAbility));
@@ -112,8 +114,6 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     ASSERT(m_scriptMode == static_cast<unsigned>(scriptMode));
     ASSERT(m_superBinding == static_cast<unsigned>(node->superBinding()));
     ASSERT(m_derivedContextType == static_cast<unsigned>(derivedContextType));
-
-    m_parentScopeTDZVariables.swap(parentScopeTDZVariables);
 }
 
 void UnlinkedFunctionExecutable::destroy(JSCell* cell)

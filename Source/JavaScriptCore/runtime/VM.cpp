@@ -144,6 +144,7 @@
 #include "UnlinkedCodeBlock.h"
 #include "VMEntryScope.h"
 #include "VMInspector.h"
+#include "VariableEnvironment.h"
 #include "WasmWorklist.h"
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
@@ -333,6 +334,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , interpreter(0)
     , entryScope(0)
     , m_regExpCache(new RegExpCache(this))
+    , m_compactVariableMap(adoptRef(*(new CompactVariableMap)))
 #if ENABLE(REGEXP_TRACING)
     , m_rtTraceList(new RTTraceList())
 #endif

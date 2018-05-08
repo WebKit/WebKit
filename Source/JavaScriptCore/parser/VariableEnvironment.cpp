@@ -96,4 +96,91 @@ void VariableEnvironment::markVariableAsExported(const RefPtr<UniquedStringImpl>
     findResult->value.setIsExported();
 }
 
+CompactVariableEnvironment::CompactVariableEnvironment(const VariableEnvironment& env)
+    : m_isEverythingCaptured(env.isEverythingCaptured())
+{
+    Vector<std::pair<UniquedStringImpl*, VariableEnvironmentEntry>, 32> sortedEntries;
+    sortedEntries.reserveInitialCapacity(env.size());
+    for (auto& pair : env)
+        sortedEntries.append({ pair.key.get(), pair.value });
+
+    std::sort(sortedEntries.begin(), sortedEntries.end(), [] (const auto& a, const auto& b) {
+        return a.first < b.first;
+    });
+
+    m_hash = 0;
+    m_variables.reserveInitialCapacity(sortedEntries.size());
+    m_variableMetadata.reserveInitialCapacity(sortedEntries.size());
+    for (const auto& pair : sortedEntries) {
+        m_variables.append(pair.first);
+        m_variableMetadata.append(pair.second);
+        m_hash ^= pair.first->hash();
+        m_hash += pair.second.bits();
+    }
+
+    if (m_isEverythingCaptured)
+        m_hash *= 2;
+}
+
+bool CompactVariableEnvironment::operator==(const CompactVariableEnvironment& other) const
+{
+    if (this == &other)
+        return true;
+    if (m_isEverythingCaptured != other.m_isEverythingCaptured)
+        return false;
+    if (m_variables != other.m_variables)
+        return false;
+    if (m_variableMetadata != other.m_variableMetadata)
+        return false;
+    return true;
+}
+
+VariableEnvironment CompactVariableEnvironment::toVariableEnvironment() const
+{
+    VariableEnvironment result;
+    ASSERT(m_variables.size() == m_variableMetadata.size());
+    for (size_t i = 0; i < m_variables.size(); ++i) {
+        auto addResult = result.add(m_variables[i]);
+        ASSERT(addResult.isNewEntry);
+        addResult.iterator->value = m_variableMetadata[i];
+    }
+
+    if (m_isEverythingCaptured)
+        result.markAllVariablesAsCaptured();
+
+    return result;
+}
+
+CompactVariableMap::Handle CompactVariableMap::get(const VariableEnvironment& env)
+{
+    auto* environment = new CompactVariableEnvironment(env);
+    CompactVariableMapKey key { *environment };
+    auto addResult = m_map.add(key, 1);
+    if (addResult.isNewEntry)
+        return CompactVariableMap::Handle(*environment, *this);
+
+    delete environment;
+    ++addResult.iterator->value;
+    return CompactVariableMap::Handle(addResult.iterator->key.environment(), *this);
+}
+
+CompactVariableMap::Handle::~Handle()
+{
+    if (!m_map) {
+        ASSERT(!m_environment);
+        // This happens if we were moved into a different handle.
+        return;
+    }
+
+    RELEASE_ASSERT(m_environment);
+    auto iter = m_map->m_map.find(CompactVariableMapKey { *m_environment });
+    RELEASE_ASSERT(iter != m_map->m_map.end());
+    --iter->value;
+    if (!iter->value) {
+        ASSERT(m_environment == &iter->key.environment());
+        m_map->m_map.remove(iter);
+        fastFree(m_environment);
+    }
+}
+
 } // namespace JSC
