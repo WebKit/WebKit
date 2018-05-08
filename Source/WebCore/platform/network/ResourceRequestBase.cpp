@@ -576,6 +576,16 @@ void ResourceRequestBase::setHTTPHeaderFields(HTTPHeaderMap headerFields)
     m_platformRequestUpdated = false;
 }
 
+bool ResourceRequestBase::isSystemPreview() const
+{
+    return m_isSystemPreview;
+}
+
+void ResourceRequestBase::setSystemPreview(bool s)
+{
+    m_isSystemPreview = s;
+}
+
 bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceRequestBase& b)
 {
     if (a.url() != b.url())

@@ -171,6 +171,9 @@ public:
     String initiatorIdentifier() const { return m_initiatorIdentifier; }
     void setInitiatorIdentifier(const String& identifier) { m_initiatorIdentifier = identifier; }
 
+    WEBCORE_EXPORT bool isSystemPreview() const;
+    WEBCORE_EXPORT void setSystemPreview(bool);
+
 #if !PLATFORM(COCOA)
     bool encodingRequiresPlatformData() const { return true; }
 #endif
@@ -230,6 +233,7 @@ protected:
     Requester m_requester { Requester::Unspecified };
     String m_initiatorIdentifier;
     String m_cachePartition { emptyString() };
+    bool m_isSystemPreview { false };
 
 private:
     const ResourceRequest& asResourceRequest() const;

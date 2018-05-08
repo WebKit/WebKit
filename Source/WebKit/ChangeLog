@@ -1,3 +1,21 @@
+2018-05-08  Dean Jackson  <dino@apple.com>
+
+        System Preview links should trigger a download
+        https://bugs.webkit.org/show_bug.cgi?id=185439
+        <rdar://problem/40065545>
+
+        Reviewed by Jon Lee.
+
+        Encode the new field identifying a system preview. And
+        if you encounter such a resource request, trigger
+        a download.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceRequest>::encode):
+        (IPC::ArgumentCoder<ResourceRequest>::decode):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2018-05-08  John Wilander  <wilander@apple.com>
 
         Storage Access API: Add a request roundtrip to check whether prompting is needed
