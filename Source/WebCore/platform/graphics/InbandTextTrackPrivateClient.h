@@ -120,7 +120,9 @@ inline String GenericCueData::toJSONString() const
 {
     auto object = JSON::Object::create();
 
+#if !LOG_DISABLED
     object->setString(ASCIILiteral("text"), m_content);
+#endif
     object->setDouble(ASCIILiteral("start"), m_startTime.toDouble());
     object->setDouble(ASCIILiteral("end"), m_endTime.toDouble());
 

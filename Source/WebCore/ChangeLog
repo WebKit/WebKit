@@ -1,3 +1,20 @@
+2018-05-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Text track cue logging should include cue text
+        https://bugs.webkit.org/show_bug.cgi?id=185353
+        <rdar://problem/40003565>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests, tested manually.
+
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::toJSON const):
+        * platform/graphics/InbandTextTrackPrivateClient.h:
+        (WebCore::GenericCueData::toJSONString const):
+        * platform/graphics/iso/ISOVTTCue.cpp:
+        (WebCore::ISOWebVTTCue::toJSONString const):
+
 2018-05-08  Sam Weinig  <sam@webkit.org>
 
         More cleanup of XMLHttpRequestUpload

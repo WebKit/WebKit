@@ -1191,14 +1191,15 @@ void VTTCue::toJSON(JSON::Object& object) const
 {
     TextTrackCue::toJSON(object);
 
+#if !LOG_DISABLED
     object.setString(ASCIILiteral("text"), text());
+#endif
     object.setString(ASCIILiteral("vertical"), vertical());
     object.setBoolean(ASCIILiteral("snapToLines"), snapToLines());
     object.setDouble(ASCIILiteral("line"), m_linePosition);
     object.setDouble(ASCIILiteral("position"), position());
     object.setInteger(ASCIILiteral("size"), m_cueSize);
     object.setString(ASCIILiteral("align"), align());
-    object.setString(ASCIILiteral("text"), text());
     object.setString(ASCIILiteral("regionId"), regionId());
 }
 
