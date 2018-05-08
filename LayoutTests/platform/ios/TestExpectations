@@ -3296,5 +3296,3 @@ webkit.org/b/180260 http/wpt/resource-timing/rt-resources-per-worker.html [ Pass
 webkit.org/b/185028 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Failure ]
 
 webkit.org/b/185332 animations/duplicate-keys.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/185442 http/tests/quicklook/csp-header-ignored.html [ Failure ]

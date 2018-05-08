@@ -1,5 +1,17 @@
 2018-05-08  Daniel Bates  <dabates@apple.com>
 
+        Do not apply X-Frame-Options and CSP frame-ancestors to Quick Look-applicable responses in NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=185442
+        <rdar://problem/40067209>
+
+        Reviewed by Andy Estes.
+
+        Remove test http/tests/quicklook/csp-header-ignored.html from TestExpectations now that it passes.
+
+        * platform/ios/TestExpectations:
+
+2018-05-08  Daniel Bates  <dabates@apple.com>
+
         Add tests to ensure that the Strong Password appearance is removed on form reset
         https://bugs.webkit.org/show_bug.cgi?id=185440
 

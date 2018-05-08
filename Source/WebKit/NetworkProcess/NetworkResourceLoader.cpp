@@ -62,6 +62,10 @@
 #include <WebCore/PlatformCookieJar.h>
 #endif
 
+#if USE(QUICK_LOOK)
+#include <WebCore/PreviewLoader.h>
+#endif
+
 using namespace WebCore;
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkResourceLoader::" fmt, this, ##__VA_ARGS__)
@@ -430,6 +434,12 @@ bool NetworkResourceLoader::shouldInterruptLoadForXFrameOptions(const String& xF
 bool NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const ResourceResponse& response)
 {
     ASSERT(isMainResource());
+
+#if USE(QUICK_LOOK)
+    if (PreviewLoader::shouldCreateForMIMEType(response.mimeType()))
+        return false;
+#endif
+
     auto url = response.url();
     ContentSecurityPolicy contentSecurityPolicy { URL { url }, this };
     contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, originalRequest().httpReferrer());

@@ -1,3 +1,22 @@
+2018-05-08  Daniel Bates  <dabates@apple.com>
+
+        Do not apply X-Frame-Options and CSP frame-ancestors to Quick Look-applicable responses in NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=185442
+        <rdar://problem/40067209>
+
+        Reviewed by Andy Estes.
+
+        Just as we exempt responses in WebContent process that will be handled by Quick Look from the Content
+        Security Policy frame-ancestors directive and X-Frame-Options checking we need to do the same when
+        such checks are performed in NetworkProcess following r231479.
+
+        HTTP responses that will be previewed using Quick Look are not considered web pages and are subject
+        to the security model for Quick Look documents. That is, they are exempt from Content Security Policy
+        and X-Frame-Options processing.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions):
+
 2018-05-08  Brian Burg  <bburg@apple.com>
 
         REGRESSION(r230743): Mousemove events are not coalesced properly, mousemove/drag is very laggy
