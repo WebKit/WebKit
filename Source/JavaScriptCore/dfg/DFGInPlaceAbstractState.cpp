@@ -213,13 +213,10 @@ bool InPlaceAbstractState::endBasicBlock()
 
     case SSA: {
         for (size_t i = 0; i < block->valuesAtTail.size(); ++i)
-            block->valuesAtTail[i].merge(m_variables[i]);
+            block->valuesAtTail[i] = m_variables[i];
 
-        for (NodeAbstractValuePair& valueAtTail : block->ssa->valuesAtTail) {
-            AbstractValue& valueAtNode = forNode(valueAtTail.node);
-            valueAtTail.value.merge(valueAtNode);
-            valueAtNode = valueAtTail.value;
-        }
+        for (NodeAbstractValuePair& valueAtTail : block->ssa->valuesAtTail)
+            valueAtTail.value = forNode(valueAtTail.node);
         break;
     }
 

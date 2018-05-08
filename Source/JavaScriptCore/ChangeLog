@@ -1,3 +1,22 @@
+2018-05-05  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG AI doesn't need to merge valuesAtTail - it can just assign them
+        https://bugs.webkit.org/show_bug.cgi?id=185355
+
+        Reviewed by Mark Lam.
+        
+        This is a further attempt to improve compile times. Assigning AbstractValue ought to always
+        be faster than merging. There's no need to merge valuesAtTail. In most cases, assigning and
+        merging will get the same answer because the value computed this time will be either the same
+        as or more general than the value computed last time. If the value does change for some
+        reason, then valuesAtHead are already merged, which ensures monotonicity. Also, if the value
+        changes, then we have no reason to believe that this new value is less right than the last
+        one we computed. Finally, the one client of valuesAtTail (AtTailAbstractState) doesn't care
+        if it's getting the merged valuesAtTail or just some correct answer for valuesAtTail.
+
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::endBasicBlock):
+
 2018-05-07  Andy VanWagoner  <andy@vanwagoner.family>
 
         Remove defunct email address
