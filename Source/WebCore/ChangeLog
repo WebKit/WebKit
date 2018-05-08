@@ -1,3 +1,26 @@
+2018-05-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Switch some RELEASE_ASSERTS to plain debug ASSERTS in PlatformScreenMac.mm
+        https://bugs.webkit.org/show_bug.cgi?id=185451
+        <rdar://problem/39620348>
+
+        Reviewed by Zalan Bujtas.
+
+        Change a set of RELEASE_ASSERTS used to prevent accessing NSScreen related functions in the
+        PlatformScreenMac implementation to less expensive Debug ASSERTS.
+
+        No change in behavior.
+
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::screenHasInvertedColors):
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenRectForDisplay):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        (WebCore::screenColorSpace):
+        (WebCore::screenSupportsExtendedColor):
+
 2018-05-08  Daniel Bates  <dabates@apple.com>
 
         Resign Strong Password appearance when text field value changes

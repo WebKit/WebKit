@@ -181,7 +181,7 @@ bool screenHasInvertedColors()
         return screenProperties(primaryScreenDisplayID()).screenHasInvertedColors;
 
     // This is a system-wide accessibility setting, same on all screens.
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return CGDisplayUsesInvertedPolarity();
 }
 
@@ -193,7 +193,7 @@ int screenDepth(Widget* widget)
         return screenDepth;
     }
 
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return NSBitsPerPixelFromDepth(screen(widget).depth);
 }
 
@@ -205,7 +205,7 @@ int screenDepthPerComponent(Widget* widget)
         return depthPerComponent;
     }
 
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return NSBitsPerSampleFromDepth(screen(widget).depth);
 }
 
@@ -217,7 +217,7 @@ FloatRect screenRectForDisplay(PlatformDisplayID displayID)
         return screenRect;
     }
 
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return screen(displayID).frame;
 }
 
@@ -226,7 +226,7 @@ FloatRect screenRect(Widget* widget)
     if (!screenProperties().isEmpty())
         return getScreenProperties(widget).screenRect;
 
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return toUserSpace([screen(widget) frame], window(widget));
 }
 
@@ -235,7 +235,7 @@ FloatRect screenAvailableRect(Widget* widget)
     if (!screenProperties().isEmpty())
         return getScreenProperties(widget).screenAvailableRect;
 
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return toUserSpace([screen(widget) visibleFrame], window(widget));
 }
 
@@ -260,7 +260,7 @@ CGColorSpaceRef screenColorSpace(Widget* widget)
     if (!screenProperties().isEmpty())
         return getScreenProperties(widget).colorSpace.get();
 
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return screen(widget).colorSpace.CGColorSpace;
 }
 
@@ -269,7 +269,7 @@ bool screenSupportsExtendedColor(Widget* widget)
     if (!screenProperties().isEmpty())
         return getScreenProperties(widget).screenSupportsExtendedColor;
 
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return [screen(widget) canRepresentDisplayGamut:NSDisplayGamutP3];
 }
 
