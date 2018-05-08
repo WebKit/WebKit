@@ -1,3 +1,18 @@
+2018-05-07  Simon Fraser  <simon.fraser@apple.com>
+
+        CSS filters which reference SVG filters fail to respect the "color-interpolation-filters" of the filter
+        https://bugs.webkit.org/show_bug.cgi?id=185343
+
+        Reviewed by Dean Jackson.
+
+        Test: css3/filters/color-interpolation-filters.html
+        
+        When applying CSS reference filters, apply the value of "color-interpolation-filters" for the
+        referenced filter effect element, just as we do for SVG filters.
+
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::buildReferenceFilter):
+
 2018-05-07  Daniel Bates  <dabates@apple.com>
 
         CSP status-code incorrect for document blocked due to violation of its frame-ancestors directive
