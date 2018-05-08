@@ -1043,6 +1043,19 @@ void LibWebRTCMediaEndpoint::gatherStatsForLogging()
     });
 }
 
+class RTCStatsLogger {
+public:
+    explicit RTCStatsLogger(const webrtc::RTCStats& stats)
+        : m_stats(stats)
+    {
+    }
+
+    String toJSONString() const { return String(m_stats.ToJson().c_str()); }
+
+private:
+    const webrtc::RTCStats& m_stats;
+};
+
 void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& report)
 {
 #if !RELEASE_LOG_DISABLED
@@ -1060,7 +1073,7 @@ void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const web
             if (iterator->type() == webrtc::RTCCodecStats::kType)
                 continue;
 
-            ALWAYS_LOG(LOGIDENTIFIER, "WebRTC stats for :", *iterator);
+            ALWAYS_LOG(Logger::LogSiteIdentifier("LibWebRTCMediaEndpoint", "OnStatsDelivered", logIdentifier()), RTCStatsLogger { *iterator });
         }
     });
 #else
@@ -1101,5 +1114,21 @@ Seconds LibWebRTCMediaEndpoint::statsLogInterval(int64_t reportTimestamp) const
 #endif
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::RTCStatsLogger> {
+    static String toString(const WebCore::RTCStatsLogger& logger)
+    {
+        return String(logger.toJSONString());
+    }
+};
+
+}; // namespace WTF
+
 
 #endif // USE(LIBWEBRTC)

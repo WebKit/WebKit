@@ -1,3 +1,22 @@
+2018-05-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Log rtcstats as JSON
+        https://bugs.webkit.org/show_bug.cgi?id=185437
+        <rdar://problem/40065332>
+
+        Reviewed by Youenn Fablet.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::RTCStatsLogger::RTCStatsLogger): Create a wrapper class so we don't have to add a
+        toJSONString method to libwebrtc.
+        (WebCore::RTCStatsLogger::toJSONString const): Log stats as JSON.
+        (WebCore::LibWebRTCMediaEndpoint::OnStatsDelivered): Don't use the LOGIDENTIFIER macro because
+        it doesn't work well inside of a lambda.
+        (WTF::LogArgument<WebCore::RTCStatsLogger>::toString): Move into .cpp file because it is only
+        used here.
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        (WTF::LogArgument<webrtc::RTCStats>::toString): Deleted. Move to .cpp file.
+
 2018-05-08  Dean Jackson  <dino@apple.com>
 
         System Preview links should trigger a download

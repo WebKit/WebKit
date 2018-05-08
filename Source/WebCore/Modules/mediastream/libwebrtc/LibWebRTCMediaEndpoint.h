@@ -223,19 +223,4 @@ private:
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<typename Type>
-struct LogArgument;
-
-template <>
-struct LogArgument<webrtc::RTCStats> {
-    static String toString(const webrtc::RTCStats& stats)
-    {
-        return WTF::String(stats.ToJson().c_str());
-    }
-};
-
-}; // namespace WTF
-
 #endif // USE(LIBWEBRTC)
