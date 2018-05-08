@@ -1,5 +1,12 @@
 2018-05-08  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed build fix; add missing function definition.
+
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::didPassCORSAccessCheck const):
+
+2018-05-08  Jer Noble  <jer.noble@apple.com>
+
         Mute MediaElementSourceNode when tainted.
         https://bugs.webkit.org/show_bug.cgi?id=184866
 
