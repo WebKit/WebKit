@@ -1,3 +1,14 @@
+2018-05-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSCONLY] Enable ARMv7 DFG
+        https://bugs.webkit.org/show_bug.cgi?id=185415
+
+        Reviewed by Mark Lam.
+
+        Enable ARMv7 DFG JIT by default on Linux and FreeBSD.
+
+        * wtf/Platform.h:
+
 2018-05-06  Filip Pizlo  <fpizlo@apple.com>
 
         InPlaceAbstractState::beginBasicBlock shouldn't have to clear any abstract values
