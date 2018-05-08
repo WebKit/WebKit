@@ -1,3 +1,16 @@
+2018-05-06  Filip Pizlo  <fpizlo@apple.com>
+
+        InPlaceAbstractState::beginBasicBlock shouldn't have to clear any abstract values
+        https://bugs.webkit.org/show_bug.cgi?id=185365
+
+        Reviewed by Saam Barati.
+        
+        Make it possible to measure compile times.
+        
+        Rolling back in after fixing cloop builds.
+
+        * Scripts/run-jsc-benchmarks:
+
 2018-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] WKAttachmentTestsIOS.InsertDroppedItemProvidersInOrder fails after r231396

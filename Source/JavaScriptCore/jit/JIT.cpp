@@ -1011,6 +1011,11 @@ HashMap<CString, Seconds> JIT::compileTimeStats()
     return result;
 }
 
+Seconds JIT::totalCompileTime()
+{
+    return totalBaselineCompileTime + totalDFGCompileTime + totalFTLCompileTime;
+}
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

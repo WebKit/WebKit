@@ -60,13 +60,6 @@ void InPlaceAbstractState::beginBasicBlock(BasicBlock* basicBlock)
     ASSERT(basicBlock->variablesAtHead.numberOfLocals() == basicBlock->variablesAtTail.numberOfLocals());
 
     m_abstractValues.resize();
-    
-    for (size_t i = 0; i < basicBlock->size(); i++) {
-        NodeFlowProjection::forEach(
-            basicBlock->at(i), [&] (NodeFlowProjection nodeProjection) {
-                forNode(nodeProjection).clear();
-            });
-    }
 
     AbstractValueClobberEpoch epoch = AbstractValueClobberEpoch::first(basicBlock->cfaStructureClobberStateAtHead);
     m_effectEpoch = epoch;

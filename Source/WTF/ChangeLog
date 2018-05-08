@@ -1,3 +1,20 @@
+2018-05-06  Filip Pizlo  <fpizlo@apple.com>
+
+        InPlaceAbstractState::beginBasicBlock shouldn't have to clear any abstract values
+        https://bugs.webkit.org/show_bug.cgi?id=185365
+
+        Reviewed by Saam Barati.
+        
+        Fix some inlining goof-ups.
+        
+        Rolling back in after fixing cloop build.
+
+        * wtf/TinyPtrSet.h:
+        (WTF::TinyPtrSet::add):
+        (WTF::TinyPtrSet::merge):
+        (WTF::TinyPtrSet::addOutOfLine):
+        (WTF::TinyPtrSet::mergeOtherOutOfLine):
+
 2018-05-08  Dean Jackson  <dino@apple.com>
 
         Use thumbnails in System Previews

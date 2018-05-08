@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2018 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -216,8 +216,10 @@ $warmup=1
 $outer=4
 $quantum=1000
 $includeSunSpider=true
+$includeSunSpiderCompileTime=true
 $includeLongSpider=false
 $includeV8=true
+$includeV8CompileTime=true
 $includeKraken=true
 $includeJSBench=true
 $includeMicrobenchmarks=true
@@ -311,7 +313,11 @@ def usage
   puts "--dont-copy-vms      Don't copy VMs even when doing a remote benchmarking run;"
   puts "                     instead assume that they are already there."
   puts "--sunspider          Only run SunSpider."
-  puts "--v8-spider          Only run V8."
+  puts "--sunspider-compile-time"
+  puts "                     Only run the SunSpider compile time benchmark."
+  puts "--v8-spider          Only run SunSpider-style V8."
+  puts "--v8-spider-compile-time"
+  puts "                     Only run the SunSpider-style V8 compile time benchmark."
   puts "--kraken             Only run Kraken."
   puts "--js-bench           Only run JSBench."
   puts "--microbenchmarks    Only run microbenchmarks."
@@ -856,6 +862,20 @@ class SingleFileCustomTimedBenchmarkParameters
   end
 end
 
+# Benchmark that consists of a single file and must be loaded in its own global object each
+# time (i.e. run()), and returns the time spent compiling
+class SingleFileCompileTimeBenchmarkParameters
+  attr_reader :benchPath
+  
+  def initialize(benchPath)
+    @benchPath = benchPath
+  end
+  
+  def kind
+    :singleFileCompileTimeBenchmark
+  end
+end
+
 # Benchmark that consists of one or more data files that should be loaded globally, followed
 # by a command to run the benchmark.
 class MultiFileTimedBenchmarkParameters
@@ -989,6 +1009,23 @@ def emitBenchRunCodeFile(name, plan, benchParams)
         doublePuts($stderr,file,"   if (__bencher_result.value == null)")
         doublePuts($stderr,file,"      throw new Error(\"Null result\");")
         doublePuts($stderr,file,"   return __bencher_result.value;")
+        doublePuts($stderr,file,"}")
+        $warmup.times {
+          doublePuts($stderr,file,"__bencher_run(#{benchParams.benchPath.inspect})")
+          doublePuts($stderr,file,"gc();") unless plan.vm.shouldMeasureGC
+        }
+        $inner.times {
+          | innerIndex |
+          doublePuts($stderr,file,"print(\"#{name}: #{plan.vm}: #{plan.iteration}: #{innerIndex}: Time: \"+__bencher_run(#{benchParams.benchPath.inspect}));")
+          doublePuts($stderr,file,"gc();") unless plan.vm.shouldMeasureGC
+        }
+      elsif benchParams.kind == :singleFileCompileTimeBenchmark
+        doublePuts($stderr,file,"function __bencher_run(__bencher_what) {")
+        doublePuts($stderr,file,"   var __compileTimeBefore = totalCompileTime();")
+        $rerun.times {
+          doublePuts($stderr,file,"   run(__bencher_what);")
+        }
+        doublePuts($stderr,file,"   return totalCompileTime() - __compileTimeBefore;")
         doublePuts($stderr,file,"}")
         $warmup.times {
           doublePuts($stderr,file,"__bencher_run(#{benchParams.benchPath.inspect})")
@@ -1539,6 +1576,10 @@ module Benchmark
       "x#{weight} "
     end
   end
+  
+  def environment
+    {}
+  end
 end
 
 class SunSpiderBenchmark
@@ -1638,6 +1679,23 @@ class CustomTimedBenchmark
   
   def emitRunCode(plan)
     emitBenchRunCode(fullname, plan, SingleFileCustomTimedBenchmarkParameters.new(ensureFile("CustomTimed-#{@name}", @fullPath)))
+  end
+end
+
+class CompileTimeBenchmark
+  include Benchmark
+  
+  def initialize(name, fullPath)
+    @name = name
+    @fullPath = fullPath
+  end
+  
+  def emitRunCode(plan)
+    emitBenchRunCode(fullname, plan, SingleFileCompileTimeBenchmarkParameters.new(ensureFile("CompileTime-#{@name}", @fullPath)))
+  end
+  
+  def environment
+    {"JSC_useConcurrentJIT" => "false", "JSC_reportTotalCompileTimes" => "true"}
   end
 end
 
@@ -2038,7 +2096,12 @@ class BenchRunPlan
   end
  
   def environment
-    @environment
+    result = @environment.clone
+    benchmark.environment.each_pair {
+      | key, value |
+      result[key] = value
+    }
+    result
   end
  
   def prefix
@@ -2722,8 +2785,10 @@ begin
   def resetBenchOptionsIfNecessary
     unless $sawBenchOptions
       $includeSunSpider = false
+      $includeSunSpiderCompileTime = false
       $includeLongSpider = false
       $includeV8 = false
+      $includeV8CompileTime = false
       $includeKraken = false
       $includeJSBench = false
       $includeMicrobenchmarks = false
@@ -2748,8 +2813,10 @@ begin
                  ['--minimum', GetoptLong::REQUIRED_ARGUMENT],
                  ['--timing-mode', GetoptLong::REQUIRED_ARGUMENT],
                  ['--sunspider', GetoptLong::NO_ARGUMENT],
+                 ['--sunspider-compile-time', GetoptLong::NO_ARGUMENT],
                  ['--longspider', GetoptLong::NO_ARGUMENT],
                  ['--v8-spider', GetoptLong::NO_ARGUMENT],
+                 ['--v8-spider-compile-time', GetoptLong::NO_ARGUMENT],
                  ['--kraken', GetoptLong::NO_ARGUMENT],
                  ['--js-bench', GetoptLong::NO_ARGUMENT],
                  ['--microbenchmarks', GetoptLong::NO_ARGUMENT],
@@ -2828,12 +2895,18 @@ begin
     when '--sunspider'
       resetBenchOptionsIfNecessary
       $includeSunSpider = true
+    when '--sunspider-compile-time'
+      resetBenchOptionsIfNecessary
+      $includeSunSpiderCompileTime = true
     when '--longspider'
       resetBenchOptionsIfNecessary
       $includeLongSpider = true
     when '--v8-spider'
       resetBenchOptionsIfNecessary
       $includeV8 = true
+    when '--v8-spider-compile-time'
+      resetBenchOptionsIfNecessary
+      $includeV8CompileTime = true
     when '--kraken'
       resetBenchOptionsIfNecessary
       $includeKraken = true
@@ -3002,6 +3075,7 @@ begin
   }
   
   SUNSPIDER = BenchmarkSuite.new("SunSpider", :arithmeticMean, 0)
+  SUNSPIDER_COMPILE_TIME = BenchmarkSuite.new("SunSpider-CompileTime", :arithmeticMean, 0)
   WARMUP = BenchmarkSuite.new("WARMUP", :arithmeticMean, 0)
   ["3d-cube", "3d-morph", "3d-raytrace", "access-binary-trees",
    "access-fannkuch", "access-nbody", "access-nsieve",
@@ -3013,6 +3087,7 @@ begin
    "string-unpack-code", "string-validate-input"].each {
     | name |
     SUNSPIDER.add SunSpiderBenchmark.new(name)
+    SUNSPIDER_COMPILE_TIME.add CompileTimeBenchmark.new(name, "#{SUNSPIDER_PATH}/#{name}.js")
     WARMUP.addIgnoringPattern SunSpiderBenchmark.new(name)
   }
 
@@ -3029,10 +3104,12 @@ begin
   }
 
   V8 = BenchmarkSuite.new("V8Spider", :geometricMean, 0)
+  V8_COMPILE_TIME = BenchmarkSuite.new("V8Spider-CompileTime", :geometricMean, 0)
   ["crypto", "deltablue", "earley-boyer", "raytrace",
    "regexp", "richards", "splay"].each {
     | name |
     V8.add V8Benchmark.new(name)
+    V8_COMPILE_TIME.add CompileTimeBenchmark.new(name, "#{V8_PATH}/v8-#{name}.js")
   }
 
   OCTANE = BenchmarkSuite.new("Octane", :geometricMean, 1)
@@ -3193,12 +3270,20 @@ begin
     $suites << SUNSPIDER
   end
   
+  if $includeSunSpiderCompileTime and not SUNSPIDER_COMPILE_TIME.empty?
+    $suites << SUNSPIDER_COMPILE_TIME
+  end
+  
   if $includeLongSpider and not LONGSPIDER.empty?
     $suites << LONGSPIDER
   end
   
   if $includeV8 and not V8.empty?
     $suites << V8
+  end
+  
+  if $includeV8CompileTime and not V8_COMPILE_TIME.empty?
+    $suites << V8_COMPILE_TIME
   end
   
   if $includeOctane and not OCTANE.empty?
