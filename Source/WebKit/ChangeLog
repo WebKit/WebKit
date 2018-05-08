@@ -1,3 +1,21 @@
+2018-05-08  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r230743): Mousemove events are not coalesced properly, mousemove/drag is very laggy
+        https://bugs.webkit.org/show_bug.cgi?id=185425
+        <rdar://problem/39323336>
+
+        Reviewed by Simon Fraser.
+
+        When mousemove events come in faster than they can be processed, we should coalesce
+        pending mousemoves that have not yet been sent to WebProcess. This has the effect of
+        processing the most recent mousemove location, which is the old behavior that regressed.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleMouseEvent):
+        If there is >1 event in the mouse queue, then the first one is being processed by WebProcess
+        and the second one is eligible for coalescing. Replace it if the last event and new event
+        are both mousemoves.
+
 2018-05-08  Per Arne Vollan  <pvollan@apple.com>
 
         The PDF context menu should not be created in the WebContent process.

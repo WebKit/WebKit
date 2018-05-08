@@ -1928,8 +1928,16 @@ void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
     if (!isValid())
         return;
 
-    LOG(MouseHandling, "UIProcess: enqueued mouse event %s (queue size %zu)", webMouseEventTypeString(event.type()), m_mouseEventQueue.size());
-    m_mouseEventQueue.append(event);
+    // If we receive multiple mousemove events and the most recent mousemove event has not been
+    // sent to WebProcess for processing, replace the pending mousemove event with a new one.
+    if (event.type() == WebEvent::MouseMove && m_mouseEventQueue.size() > 1 && m_mouseEventQueue.last().type() == WebEvent::MouseMove) {
+        LOG(MouseHandling, "UIProcess: updated pending mousemove event (queue size %zu)", m_mouseEventQueue.size());
+        m_mouseEventQueue.removeLast();
+        m_mouseEventQueue.append(event);
+    } else {
+        LOG(MouseHandling, "UIProcess: enqueued mouse event %s (queue size %zu)", webMouseEventTypeString(event.type()), m_mouseEventQueue.size());
+        m_mouseEventQueue.append(event);
+    }
     if (m_mouseEventQueue.size() == 1) // Otherwise, called from DidReceiveEvent message handler.
         processNextQueuedMouseEvent();
 }
