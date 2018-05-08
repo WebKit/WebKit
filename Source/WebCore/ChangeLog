@@ -1,3 +1,21 @@
+2018-05-08  Jer Noble  <jer.noble@apple.com>
+
+        Mute MediaElementSourceNode when tainted.
+        https://bugs.webkit.org/show_bug.cgi?id=184866
+
+        Reviewed by Eric Carlson.
+
+        Test: http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::wouldTaintOrigin const):
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::setFormat):
+        (WebCore::MediaElementAudioSourceNode::wouldTaintOrigin):
+        (WebCore::MediaElementAudioSourceNode::process):
+        * Modules/webaudio/MediaElementAudioSourceNode.h:
+
 2018-05-08  Eric Carlson  <eric.carlson@apple.com>
 
         Log rtcstats as JSON
