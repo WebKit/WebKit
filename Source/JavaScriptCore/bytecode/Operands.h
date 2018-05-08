@@ -245,7 +245,7 @@ public:
     
 private:
     // The first m_numArguments of m_values are arguments, the rest are locals.
-    Vector<T, 24> m_values;
+    Vector<T, 24, UnsafeVectorOverflow> m_values;
     unsigned m_numArguments;
 };
 

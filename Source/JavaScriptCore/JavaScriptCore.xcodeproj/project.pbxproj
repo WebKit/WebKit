@@ -319,6 +319,7 @@
 		0F4D8C781FCA3CFA001D32AC /* SimpleMarkingConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4D8C771FCA3CF3001D32AC /* SimpleMarkingConstraint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F4DE1CF1C4C1B54004D6C11 /* AirFixObviousSpills.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4DE1CD1C4C1B54004D6C11 /* AirFixObviousSpills.h */; };
 		0F4F11E8209BCDAB00709654 /* CompilerTimingScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4F11E6209BCDA100709654 /* CompilerTimingScope.h */; };
+		0F4F11EB209D426600709654 /* DFGAbstractValueClobberEpoch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4F11EA209D426300709654 /* DFGAbstractValueClobberEpoch.h */; };
 		0F4F29E018B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4F29DE18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h */; };
 		0F4F82881E2FFDE00075184C /* JSSegmentedVariableObjectHeapCellType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4F82861E2FFDDB0075184C /* JSSegmentedVariableObjectHeapCellType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F4F828C1E31B9760075184C /* StochasticSpaceTimeMutatorScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4F828A1E31B9710075184C /* StochasticSpaceTimeMutatorScheduler.h */; };
@@ -2310,6 +2311,8 @@
 		0F4DE1D01C4D764B004D6C11 /* B3OriginDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3OriginDump.cpp; path = b3/B3OriginDump.cpp; sourceTree = "<group>"; };
 		0F4F11E6209BCDA100709654 /* CompilerTimingScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompilerTimingScope.h; sourceTree = "<group>"; };
 		0F4F11E7209BCDA100709654 /* CompilerTimingScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompilerTimingScope.cpp; sourceTree = "<group>"; };
+		0F4F11E9209D426300709654 /* DFGAbstractValueClobberEpoch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGAbstractValueClobberEpoch.cpp; path = dfg/DFGAbstractValueClobberEpoch.cpp; sourceTree = "<group>"; };
+		0F4F11EA209D426300709654 /* DFGAbstractValueClobberEpoch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAbstractValueClobberEpoch.h; path = dfg/DFGAbstractValueClobberEpoch.h; sourceTree = "<group>"; };
 		0F4F29DD18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStaticExecutionCountEstimationPhase.cpp; path = dfg/DFGStaticExecutionCountEstimationPhase.cpp; sourceTree = "<group>"; };
 		0F4F29DE18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStaticExecutionCountEstimationPhase.h; path = dfg/DFGStaticExecutionCountEstimationPhase.h; sourceTree = "<group>"; };
 		0F4F82851E2FFDDB0075184C /* JSSegmentedVariableObjectHeapCellType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSegmentedVariableObjectHeapCellType.cpp; sourceTree = "<group>"; };
@@ -7114,6 +7117,8 @@
 				A704D8FF17A0BAA8006BA554 /* DFGAbstractInterpreterInlines.h */,
 				0F55C19317276E4600CEABFD /* DFGAbstractValue.cpp */,
 				0F62016F143FCD2F0068B77C /* DFGAbstractValue.h */,
+				0F4F11E9209D426300709654 /* DFGAbstractValueClobberEpoch.cpp */,
+				0F4F11EA209D426300709654 /* DFGAbstractValueClobberEpoch.h */,
 				0FD3E3FF1B618AAF00C80E1E /* DFGAdaptiveInferredPropertyValueWatchpoint.cpp */,
 				0FD3E4001B618AAF00C80E1E /* DFGAdaptiveInferredPropertyValueWatchpoint.h */,
 				0F18D3CD1B55A6E0002C5C9F /* DFGAdaptiveStructureWatchpoint.cpp */,
@@ -9040,6 +9045,7 @@
 				A513E5C2185BFACC007E95AD /* JSInjectedScriptHostPrototype.h in Headers */,
 				0F2B66F817B6B5AB00A7AE3F /* JSInt16Array.h in Headers */,
 				0F2B66F917B6B5AB00A7AE3F /* JSInt32Array.h in Headers */,
+				0F4F11EB209D426600709654 /* DFGAbstractValueClobberEpoch.h in Headers */,
 				0F2B66F717B6B5AB00A7AE3F /* JSInt8Array.h in Headers */,
 				A76C51761182748D00715B05 /* JSInterfaceJIT.h in Headers */,
 				E33F50811B8429A400413856 /* JSInternalPromise.h in Headers */,

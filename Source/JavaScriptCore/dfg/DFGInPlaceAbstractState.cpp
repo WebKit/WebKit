@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,12 +61,22 @@ void InPlaceAbstractState::beginBasicBlock(BasicBlock* basicBlock)
 
     m_abstractValues.resize();
 
-    m_variables = basicBlock->valuesAtHead;
+    AbstractValueClobberEpoch epoch = AbstractValueClobberEpoch::first(basicBlock->cfaStructureClobberStateAtHead);
+    m_effectEpoch = epoch;
+    
+    for (size_t i = m_variables.size(); i--;) {
+        AbstractValue& value = m_variables[i];
+        value = basicBlock->valuesAtHead[i];
+        value.m_effectEpoch = epoch;
+    }
     
     if (m_graph.m_form == SSA) {
         for (NodeAbstractValuePair& entry : basicBlock->ssa->valuesAtHead) {
-            if (entry.node.isStillValid())
-                forNode(entry.node) = entry.value;
+            if (entry.node.isStillValid()) {
+                AbstractValue& value = m_abstractValues.at(entry.node);
+                value = entry.value;
+                value.m_effectEpoch = epoch;
+            }
         }
     }
     basicBlock->cfaShouldRevisit = false;
@@ -116,10 +126,10 @@ void InPlaceAbstractState::initialize()
 
                 switch (format) {
                 case FlushedInt32:
-                    entrypoint->valuesAtHead.argument(i).setType(SpecInt32Only);
+                    entrypoint->valuesAtHead.argument(i).setNonCellType(SpecInt32Only);
                     break;
                 case FlushedBoolean:
-                    entrypoint->valuesAtHead.argument(i).setType(SpecBoolean);
+                    entrypoint->valuesAtHead.argument(i).setNonCellType(SpecBoolean);
                     break;
                 case FlushedCell:
                     entrypoint->valuesAtHead.argument(i).setType(m_graph, SpecCellCheck);
@@ -194,19 +204,19 @@ bool InPlaceAbstractState::endBasicBlock()
     case ThreadedCPS: {
         for (size_t argument = 0; argument < block->variablesAtTail.numberOfArguments(); ++argument) {
             AbstractValue& destination = block->valuesAtTail.argument(argument);
-            mergeStateAtTail(destination, m_variables.argument(argument), block->variablesAtTail.argument(argument));
+            mergeStateAtTail(destination, this->argument(argument), block->variablesAtTail.argument(argument));
         }
 
         for (size_t local = 0; local < block->variablesAtTail.numberOfLocals(); ++local) {
             AbstractValue& destination = block->valuesAtTail.local(local);
-            mergeStateAtTail(destination, m_variables.local(local), block->variablesAtTail.local(local));
+            mergeStateAtTail(destination, this->local(local), block->variablesAtTail.local(local));
         }
         break;
     }
 
     case SSA: {
         for (size_t i = 0; i < block->valuesAtTail.size(); ++i)
-            block->valuesAtTail[i] = m_variables[i];
+            block->valuesAtTail[i] = variableAt(i);
 
         for (NodeAbstractValuePair& valueAtTail : block->ssa->valuesAtTail)
             valueAtTail.value = forNode(valueAtTail.node);

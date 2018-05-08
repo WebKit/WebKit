@@ -171,7 +171,7 @@ private:
                 if (!safeToExecute(m_state, m_graph, node))
                     dataLog("(UNSAFE) ");
                 
-                dataLog(m_state.variables(), " ", m_interpreter);
+                dataLog(m_state.variablesForDebugging(), " ", m_interpreter);
                 
                 dataLogF("\n");
             }

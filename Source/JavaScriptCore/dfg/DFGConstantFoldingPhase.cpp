@@ -379,7 +379,7 @@ private:
                     if (index >= inlineCallFrame->argumentCountIncludingThis - 1)
                         break;
                 } else {
-                    if (index >= m_state.variables().numberOfArguments() - 1)
+                    if (index >= m_state.numberOfArguments() - 1)
                         break;
                 }
                 

@@ -52,7 +52,89 @@ public:
     void createValueForNode(NodeFlowProjection);
     AbstractValue& forNode(NodeFlowProjection);
     AbstractValue& forNode(Edge edge) { return forNode(edge.node()); }
-    Operands<AbstractValue>& variables() { return m_block->valuesAtTail; }
+    
+    ALWAYS_INLINE void clearForNode(NodeFlowProjection node)
+    {
+        forNode(node).clear();
+    }
+    
+    ALWAYS_INLINE void clearForNode(Edge edge)
+    {
+        clearForNode(edge.node());
+    }
+    
+    template<typename... Arguments>
+    ALWAYS_INLINE void setForNode(NodeFlowProjection node, Arguments&&... arguments)
+    {
+        forNode(node).set(m_graph, std::forward<Arguments>(arguments)...);
+    }
+
+    template<typename... Arguments>
+    ALWAYS_INLINE void setForNode(Edge edge, Arguments&&... arguments)
+    {
+        setForNode(edge.node(), std::forward<Arguments>(arguments)...);
+    }
+    
+    template<typename... Arguments>
+    ALWAYS_INLINE void setTypeForNode(NodeFlowProjection node, Arguments&&... arguments)
+    {
+        forNode(node).setType(m_graph, std::forward<Arguments>(arguments)...);
+    }
+
+    template<typename... Arguments>
+    ALWAYS_INLINE void setTypeForNode(Edge edge, Arguments&&... arguments)
+    {
+        setTypeForNode(edge.node(), std::forward<Arguments>(arguments)...);
+    }
+    
+    template<typename... Arguments>
+    ALWAYS_INLINE void setNonCellTypeForNode(NodeFlowProjection node, Arguments&&... arguments)
+    {
+        forNode(node).setNonCellType(std::forward<Arguments>(arguments)...);
+    }
+
+    template<typename... Arguments>
+    ALWAYS_INLINE void setNonCellTypeForNode(Edge edge, Arguments&&... arguments)
+    {
+        setNonCellTypeForNode(edge.node(), std::forward<Arguments>(arguments)...);
+    }
+    
+    ALWAYS_INLINE void makeBytecodeTopForNode(NodeFlowProjection node)
+    {
+        forNode(node).makeBytecodeTop();
+    }
+    
+    ALWAYS_INLINE void makeBytecodeTopForNode(Edge edge)
+    {
+        makeBytecodeTopForNode(edge.node());
+    }
+    
+    ALWAYS_INLINE void makeHeapTopForNode(NodeFlowProjection node)
+    {
+        forNode(node).makeHeapTop();
+    }
+    
+    ALWAYS_INLINE void makeHeapTopForNode(Edge edge)
+    {
+        makeHeapTopForNode(edge.node());
+    }
+    
+    unsigned numberOfArguments() const { return m_block->valuesAtTail.numberOfArguments(); }
+    unsigned numberOfLocals() const { return m_block->valuesAtTail.numberOfLocals(); }
+    AbstractValue& operand(int operand) { return m_block->valuesAtTail.operand(operand); }
+    AbstractValue& operand(VirtualRegister operand) { return m_block->valuesAtTail.operand(operand); }
+    AbstractValue& local(size_t index) { return m_block->valuesAtTail.local(index); }
+    AbstractValue& argument(size_t index) { return m_block->valuesAtTail.argument(index); }
+    
+    void clobberStructures()
+    {
+        UNREACHABLE_FOR_PLATFORM();
+    }
+    
+    void observeInvalidationPoint()
+    {
+        UNREACHABLE_FOR_PLATFORM();
+    }
     
     BasicBlock* block() const { return m_block; }
     

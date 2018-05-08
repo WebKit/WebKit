@@ -1,3 +1,14 @@
+2018-05-05  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG AI should have O(1) clobbering
+        https://bugs.webkit.org/show_bug.cgi?id=185287
+
+        Reviewed by Saam Barati.
+
+        * stress/simple-ai-effect.js: Added.
+        (bar):
+        (foo):
+
 2018-05-04  Keith Miller  <keith_miller@apple.com>
 
         isCacheableArrayLength should return true for undecided arrays

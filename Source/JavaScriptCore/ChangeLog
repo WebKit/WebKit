@@ -1,3 +1,91 @@
+2018-05-05  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG AI should have O(1) clobbering
+        https://bugs.webkit.org/show_bug.cgi?id=185287
+
+        Reviewed by Saam Barati.
+        
+        This fixes an old scalability probem in AI. Previously, if we did clobberWorld(), then we
+        would traverse all of the state available to the AI at that time and clobber it.
+        
+        This changes clobberWorld() to be O(1). It just does some math to a clobber epoch.
+        
+        This is a ~1% speed-up for compile times.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * dfg/DFGAbstractInterpreter.h:
+        (JSC::DFG::AbstractInterpreter::forNode):
+        (JSC::DFG::AbstractInterpreter::setForNode):
+        (JSC::DFG::AbstractInterpreter::clearForNode):
+        (JSC::DFG::AbstractInterpreter::variables): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::clobberWorld):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::forAllValues):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::clobberStructures):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::fastForwardToSlow):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::fastForwardTo):
+        (JSC::DFG::AbstractValue::clobberStructuresFor): Deleted.
+        (JSC::DFG::AbstractValue::observeInvalidationPoint): Deleted.
+        (JSC::DFG::AbstractValue::observeInvalidationPointFor): Deleted.
+        * dfg/DFGAbstractValueClobberEpoch.cpp: Added.
+        (JSC::DFG::AbstractValueClobberEpoch::dump const):
+        * dfg/DFGAbstractValueClobberEpoch.h: Added.
+        (JSC::DFG::AbstractValueClobberEpoch::AbstractValueClobberEpoch):
+        (JSC::DFG::AbstractValueClobberEpoch::first):
+        (JSC::DFG::AbstractValueClobberEpoch::clobber):
+        (JSC::DFG::AbstractValueClobberEpoch::observeInvalidationPoint):
+        (JSC::DFG::AbstractValueClobberEpoch::operator== const):
+        (JSC::DFG::AbstractValueClobberEpoch::operator!= const):
+        (JSC::DFG::AbstractValueClobberEpoch::structureClobberState const):
+        (JSC::DFG::AbstractValueClobberEpoch::clobberEpoch const):
+        * dfg/DFGAtTailAbstractState.h:
+        (JSC::DFG::AtTailAbstractState::setForNode):
+        (JSC::DFG::AtTailAbstractState::clearForNode):
+        (JSC::DFG::AtTailAbstractState::numberOfArguments const):
+        (JSC::DFG::AtTailAbstractState::numberOfLocals const):
+        (JSC::DFG::AtTailAbstractState::operand):
+        (JSC::DFG::AtTailAbstractState::local):
+        (JSC::DFG::AtTailAbstractState::argument):
+        (JSC::DFG::AtTailAbstractState::clobberStructures):
+        (JSC::DFG::AtTailAbstractState::observeInvalidationPoint):
+        (JSC::DFG::AtTailAbstractState::variables): Deleted.
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFlowMap.h:
+        (JSC::DFG::FlowMap::at):
+        (JSC::DFG::FlowMap::atShadow):
+        (JSC::DFG::FlowMap::at const):
+        (JSC::DFG::FlowMap::atShadow const):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::beginBasicBlock):
+        (JSC::DFG::InPlaceAbstractState::endBasicBlock):
+        * dfg/DFGInPlaceAbstractState.h:
+        (JSC::DFG::InPlaceAbstractState::forNode):
+        (JSC::DFG::InPlaceAbstractState::setForNode):
+        (JSC::DFG::InPlaceAbstractState::clearForNode):
+        (JSC::DFG::InPlaceAbstractState::variablesForDebugging):
+        (JSC::DFG::InPlaceAbstractState::numberOfArguments const):
+        (JSC::DFG::InPlaceAbstractState::numberOfLocals const):
+        (JSC::DFG::InPlaceAbstractState::operand):
+        (JSC::DFG::InPlaceAbstractState::local):
+        (JSC::DFG::InPlaceAbstractState::argument):
+        (JSC::DFG::InPlaceAbstractState::variableAt):
+        (JSC::DFG::InPlaceAbstractState::clobberStructures):
+        (JSC::DFG::InPlaceAbstractState::observeInvalidationPoint):
+        (JSC::DFG::InPlaceAbstractState::fastForward):
+        (JSC::DFG::InPlaceAbstractState::variables): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetStack):
+
 2018-05-06  Filip Pizlo  <fpizlo@apple.com>
 
         InPlaceAbstractState::beginBasicBlock shouldn't have to clear any abstract values

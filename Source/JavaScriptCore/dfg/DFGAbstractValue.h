@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "ArrayProfile.h"
+#include "DFGAbstractValueClobberEpoch.h"
 #include "DFGFiltrationResult.h"
 #include "DFGFrozenValue.h"
 #include "DFGNodeFlags.h"
@@ -103,20 +104,17 @@ struct AbstractValue {
         checkConsistency();
     }
     
-    static void clobberStructuresFor(AbstractValue& value)
+    ALWAYS_INLINE void fastForwardTo(AbstractValueClobberEpoch newEpoch)
     {
-        value.clobberStructures();
-    }
-    
-    void observeInvalidationPoint()
-    {
-        m_structure.observeInvalidationPoint();
-        checkConsistency();
-    }
-    
-    static void observeInvalidationPointFor(AbstractValue& value)
-    {
-        value.observeInvalidationPoint();
+        if (newEpoch == m_effectEpoch)
+            return;
+        
+        if (!(m_type & SpecCell)) {
+            m_effectEpoch = newEpoch;
+            return;
+        }
+
+        fastForwardToSlow(newEpoch);
     }
     
     void observeTransition(RegisteredStructure from, RegisteredStructure to)
@@ -206,6 +204,16 @@ struct AbstractValue {
         return result;
     }
     
+    void set(Graph&, const AbstractValue& other)
+    {
+        *this = other;
+    }
+    
+    void set(Graph&, AbstractValue&& other)
+    {
+        *this = WTFMove(other);
+    }
+    
     void set(Graph&, const FrozenValue&, StructureClobberState);
     void set(Graph&, Structure*);
     void set(Graph&, RegisteredStructure);
@@ -215,7 +223,7 @@ struct AbstractValue {
     void setType(Graph&, SpeculatedType);
     
     // As above, but only valid for non-cell types.
-    void setType(SpeculatedType type)
+    ALWAYS_INLINE void setNonCellType(SpeculatedType type)
     {
         RELEASE_ASSERT(!(type & SpecCell));
         m_structure.clear();
@@ -397,6 +405,19 @@ struct AbstractValue {
     // effect that makes non-obvious changes to the heap.
     ArrayModes m_arrayModes;
     
+    // The effect epoch is usually ignored. This field is used by InPlaceAbstractState.
+    //
+    // InPlaceAbstractState needs to be able to clobberStructures() for all values it tracks. That
+    // could be a lot of values. So, it makes this operation O(1) by bumping its effect epoch and
+    // calling AbstractValue::fastForwardTo() anytime it vends someone an AbstractValue, which lazily
+    // does clobberStructures(). The epoch type used here (AbstractValueClobberEpoch) is a bit more
+    // complex than the normal Epoch, because it knows how to track clobberStructures() and
+    // observeInvalidationPoint() precisely using integer math.
+    //
+    // One reason why it's here is to steal the 32-bit hole between m_arrayModes and m_value on
+    // 64-bit systems.
+    AbstractValueClobberEpoch m_effectEpoch;
+    
     // This is a proven constraint on the possible values that this value can
     // have now or any time in the future, unless it is reassigned. Note that this
     // implies nothing about the structure. Oddly, JSValue() (i.e. the empty value)
@@ -454,6 +475,8 @@ private:
         m_value = JSValue();
         checkConsistency();
     }
+    
+    void fastForwardToSlow(AbstractValueClobberEpoch);
     
     void filterValueByType();
     void filterArrayModesByType();

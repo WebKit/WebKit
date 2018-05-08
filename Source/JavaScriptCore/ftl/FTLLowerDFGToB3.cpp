@@ -1685,7 +1685,7 @@ private:
     void compileGetStack()
     {
         StackAccessData* data = m_node->stackAccessData();
-        AbstractValue& value = m_state.variables().operand(data->local);
+        AbstractValue& value = m_state.operand(data->local);
         
         DFG_ASSERT(m_graph, m_node, isConcrete(data->format), data->format);
         DFG_ASSERT(m_graph, m_node, data->format != FlushedDouble, data->format); // This just happens to not arise for GetStacks, right now. It would be trivial to support.

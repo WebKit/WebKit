@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -133,16 +133,16 @@ void AbstractValue::set(Graph& graph, const InferredType::Descriptor& descriptor
         clear();
         return;
     case InferredType::Boolean:
-        setType(SpecBoolean);
+        setNonCellType(SpecBoolean);
         return;
     case InferredType::Other:
-        setType(SpecOther);
+        setNonCellType(SpecOther);
         return;
     case InferredType::Int32:
-        setType(SpecInt32Only);
+        setNonCellType(SpecInt32Only);
         return;
     case InferredType::Number:
-        setType(SpecBytecodeNumber);
+        setNonCellType(SpecBytecodeNumber);
         return;
     case InferredType::String:
         set(graph, graph.m_vm.stringStructure.get());
@@ -556,6 +556,7 @@ void AbstractValue::dumpInContext(PrintStream& out, DumpContext* context) const
     }
     if (!!m_value)
         out.print(", ", inContext(m_value, context));
+    out.print(", ", m_effectEpoch);
     out.print(")");
 }
 
@@ -573,6 +574,20 @@ void AbstractValue::ensureCanInitializeWithZeros()
     ASSERT(*this == *static_cast<AbstractValue*>(static_cast<void*>(&zeroFilledStorage)));
 }
 #endif
+
+void AbstractValue::fastForwardToSlow(AbstractValueClobberEpoch newEpoch)
+{
+    ASSERT(newEpoch != m_effectEpoch);
+    
+    if (newEpoch.clobberEpoch() != m_effectEpoch.clobberEpoch())
+        clobberStructures();
+    if (newEpoch.structureClobberState() == StructuresAreWatched)
+        m_structure.observeInvalidationPoint();
+    
+    m_effectEpoch = newEpoch;
+    
+    checkConsistency();
+}
 
 } } // namespace JSC::DFG
 
