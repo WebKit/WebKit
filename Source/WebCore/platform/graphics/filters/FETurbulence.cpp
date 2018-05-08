@@ -370,6 +370,7 @@ void FETurbulence::fillRegion(Uint8ClampedArray& pixelArray, const PaintingData&
     ASSERT(endY > startY);
 
     IntRect filterRegion = absolutePaintRect();
+    filterRegion.scale(filter().filterScale());
     FloatPoint point(0, filterRegion.y() + startY);
     int indexOfPixelChannel = startY * (filterRegion.width() << 2);
     AffineTransform inverseTransfrom = filter().absoluteTransform().inverse().value_or(AffineTransform());
@@ -398,7 +399,10 @@ void FETurbulence::platformApplySoftware()
     if (!pixelArray)
         return;
 
-    if (absolutePaintRect().isEmpty()) {
+    IntSize resultSize(absolutePaintRect().size());
+    resultSize.scale(filter().filterScale());
+
+    if (resultSize.isEmpty()) {
         pixelArray->zeroFill();
         return;
     }
@@ -412,11 +416,11 @@ void FETurbulence::platformApplySoftware()
     PaintingData paintingData(m_seed, tileSize, baseFrequencyX, baseFrequencyY);
     initPaint(paintingData);
 
-    auto area = absolutePaintRect().area();
+    auto area = resultSize.area();
     if (area.hasOverflowed())
         return;
 
-    int height = absolutePaintRect().height();
+    int height = resultSize.height();
 
     unsigned maxNumThreads = height / 8;
     unsigned optimalThreadNumber = std::min<unsigned>(area.unsafeGet() / s_minimalRectDimension, maxNumThreads);

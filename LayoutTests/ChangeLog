@@ -1,3 +1,13 @@
+2018-05-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        feTurbulence is not rendered correctly on Retina display
+        https://bugs.webkit.org/show_bug.cgi?id=183798
+
+        Reviewed by Simon Fraser.
+
+        * fast/hidpi/filters-turbulence-expected.html: Added.
+        * fast/hidpi/filters-turbulence.html: Added.
+
 2018-05-07  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, add frame name in form-iframe-target-before-load-crash.html

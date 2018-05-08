@@ -1,3 +1,20 @@
+2018-05-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        feTurbulence is not rendered correctly on Retina display
+        https://bugs.webkit.org/show_bug.cgi?id=183798
+
+        Reviewed by Simon Fraser.
+
+        On 2x display the feTurbulence filter creates a scaled ImageBuffer but
+        processes only the unscaled size. This is a remaining work of r168577 and
+        is very similar to what was done for the feMorphology filter in r188271.
+
+        Test: fast/hidpi/filters-turbulence.html
+
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::FETurbulence::fillRegion const):
+        (WebCore::FETurbulence::platformApplySoftware):
+
 2018-05-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add FormattingContext::layoutOutOfFlowDescendants implementation
