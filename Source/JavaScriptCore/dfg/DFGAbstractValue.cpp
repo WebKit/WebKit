@@ -53,9 +53,9 @@ void AbstractValue::set(Graph& graph, const FrozenValue& value, StructureClobber
     if (!!value && value.value().isCell()) {
         Structure* structure = value.structure();
         StructureRegistrationResult result;
-        RegisteredStructure registeredStructure = graph.registerStructure(structure, result);
+        RegisteredStructure RegisteredStructure = graph.registerStructure(structure, result);
         if (result == StructureRegisteredAndWatched) {
-            m_structure = registeredStructure;
+            m_structure = RegisteredStructure;
             if (clobberState == StructuresAreClobbered) {
                 m_arrayModes = ALL_ARRAY_MODES;
                 m_structure.clobber();

@@ -347,7 +347,6 @@ static EncodedJSValue JSC_HOST_CALL functionHeapCapacity(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionFlashHeapAccess(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDisableRichSourceInfo(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionMallocInALoop(ExecState*);
-static EncodedJSValue JSC_HOST_CALL functionTotalCompileTime(ExecState*);
 
 struct Script {
     enum class StrictMode {
@@ -607,7 +606,6 @@ protected:
 
         addFunction(vm, "disableRichSourceInfo", functionDisableRichSourceInfo, 0);
         addFunction(vm, "mallocInALoop", functionMallocInALoop, 0);
-        addFunction(vm, "totalCompileTime", functionTotalCompileTime, 0);
     }
     
     void addFunction(VM& vm, JSObject* object, const char* name, NativeFunction function, unsigned arguments)
@@ -1809,11 +1807,6 @@ EncodedJSValue JSC_HOST_CALL functionMallocInALoop(ExecState*)
     for (void* ptr : ptrs)
         fastFree(ptr);
     return JSValue::encode(jsUndefined());
-}
-
-EncodedJSValue JSC_HOST_CALL functionTotalCompileTime(ExecState*)
-{
-    return JSValue::encode(jsNumber(JIT::totalCompileTime().milliseconds()));
 }
 
 template<typename ValueType>

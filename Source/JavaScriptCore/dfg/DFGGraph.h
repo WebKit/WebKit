@@ -84,12 +84,23 @@ using SSANaturalLoops = NaturalLoops<SSACFG>;
                     thingToDo(_node, (graph).m_varArgChildren[_childIdx]); \
             }                                                           \
         } else {                                                        \
-            for (unsigned _edgeIndex = 0; _edgeIndex < AdjacencyList::Size; _edgeIndex++) { \
-                Edge& _edge = _node->children.child(_edgeIndex);        \
-                if (!_edge)                                             \
-                    break;                                              \
-                thingToDo(_node, _edge);                                \
+            if (!_node->child1()) {                                     \
+                ASSERT(                                                 \
+                    !_node->child2()                                    \
+                    && !_node->child3());                               \
+                break;                                                  \
             }                                                           \
+            thingToDo(_node, _node->child1());                          \
+                                                                        \
+            if (!_node->child2()) {                                     \
+                ASSERT(!_node->child3());                               \
+                break;                                                  \
+            }                                                           \
+            thingToDo(_node, _node->child2());                          \
+                                                                        \
+            if (!_node->child3())                                       \
+                break;                                                  \
+            thingToDo(_node, _node->child3());                          \
         }                                                               \
     } while (false)
 
@@ -708,13 +719,13 @@ public:
     }
     
     template<typename ChildFunctor>
-    ALWAYS_INLINE void doToChildrenWithNode(Node* node, const ChildFunctor& functor)
+    void doToChildrenWithNode(Node* node, const ChildFunctor& functor)
     {
         DFG_NODE_DO_TO_CHILDREN(*this, node, functor);
     }
     
     template<typename ChildFunctor>
-    ALWAYS_INLINE void doToChildren(Node* node, const ChildFunctor& functor)
+    void doToChildren(Node* node, const ChildFunctor& functor)
     {
         doToChildrenWithNode(
             node,

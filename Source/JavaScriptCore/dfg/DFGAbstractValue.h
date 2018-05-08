@@ -251,7 +251,7 @@ struct AbstractValue {
         return !(*this == other);
     }
     
-    ALWAYS_INLINE bool merge(const AbstractValue& other)
+    bool merge(const AbstractValue& other)
     {
         if (other.isClear())
             return false;

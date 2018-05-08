@@ -3405,6 +3405,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CheckTraps:
     case LogShadowChickenPrologue:
     case LogShadowChickenTail:
+        break;
+
     case ProfileType:
     case ProfileControlFlow:
     case Phantom:
@@ -3414,10 +3416,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CheckTypeInfoFlags:
     case SuperSamplerBegin:
     case SuperSamplerEnd:
-    case CheckTierUpAndOSREnter:
-    case LoopHint:
-    case ZombieHint:
-    case ExitOK:
         break;
 
     case ParseInt: {
@@ -3479,6 +3477,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
+    case CheckTierUpAndOSREnter:
+    case LoopHint:
+    case ZombieHint:
+    case ExitOK:
         break;
 
     case Unreachable:
