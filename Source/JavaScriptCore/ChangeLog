@@ -1,3 +1,13 @@
+2018-05-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Consecutive messages logged as JSON are coalesced
+        https://bugs.webkit.org/show_bug.cgi?id=185432
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::isEqual const): Messages with JSON arguments are not equal.
+
 2018-05-06  Filip Pizlo  <fpizlo@apple.com>
 
         InPlaceAbstractState::beginBasicBlock shouldn't have to clear any abstract values

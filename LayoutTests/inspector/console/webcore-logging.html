@@ -27,6 +27,16 @@ function pause()
     TestPage.dispatchEventToFrontend('PauseEvent', {count: 1});
 }
 
+function setupTrackTest()
+{
+    let track = document.createElement('track');
+    track.src = 'data:text/vtt,'+encodeURIComponent('WEBVTT\n\n00:00:00.000 --> 00:00:00.001\nCue 1\n\n'+
+                                                '00:00:00.000 --> 00:00:00.001 line:0\nCue 2\n\n'+
+                                                '00:00:00.000 --> 00:00:00.001 line:0%\nCue 3');
+    track.track.mode = 'showing';
+    video.appendChild(track);
+}
+
 function test()
 {
     let suite = InspectorTest.createAsyncSuite("Console.Logging");
@@ -147,6 +157,48 @@ function test()
 
                 InspectorTest.evaluateInPage(`play()`);
                 InspectorTest.evaluateInPage(`pause()`);
+            })
+        }
+    });
+
+    suite.addTestCase({
+        name: "Console.Logging.LogAsJSONWithoutRepeat",
+        description: "JSON messages logged correctly.",
+        test(resolve, reject) {
+            ConsoleAgent.clearMessages();
+
+            let channel = WI.logManager.customLoggingChannels.find(channel => channel.source === WI.ConsoleMessage.MessageSource.Media);
+            InspectorTest.expectThat(channel.level === WI.LoggingChannel.Level.Off, "Media logging disabled.");
+
+            ConsoleAgent.setLoggingChannelLevel(channel.source, WI.LoggingChannel.Level.Verbose)
+            ConsoleAgent.getLoggingChannels((error, channels) => {
+                if (error) {
+                    InspectorTest.fail(`ConsoleAgent.getLoggingChannels() failed with error ${error}`);
+                    reject();
+                }
+
+                let mediaChannel = channels.find(channel => channel.source === WI.ConsoleMessage.MessageSource.Media);
+                InspectorTest.expectThat(mediaChannel.level === WI.LoggingChannel.Level.Verbose, "Verbose media logging has been enabled.");
+
+                let messageCount = 0;
+                let logListener = WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, (event) => {
+                    let message = event.data.message;
+                    InspectorTest.assert(message instanceof WI.ConsoleMessage);
+                    InspectorTest.assert(message.source === WI.ConsoleMessage.MessageSource.Media);
+
+                    if (message.messageText.includes("LoadableTextTrack::newCuesAvailable")) {
+                        InspectorTest.expectThat(message.parameters.length > 1, "Message logged as JSON.");
+                        InspectorTest.expectThat(message.repeatCount === 1, "ConsoleMessage repeatCount is 1.");
+                        if (++messageCount === 3) {
+                            InspectorTest.log("Received three JSON messages.");
+                            WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, logListener, null);
+                            ConsoleAgent.setLoggingChannelLevel(mediaChannel.source, WI.LoggingChannel.Level.Off)
+                            resolve();
+                        }
+                    }
+                });
+
+                InspectorTest.evaluateInPage(`setupTrackTest()`);
             })
         }
     });

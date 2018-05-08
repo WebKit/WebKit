@@ -300,6 +300,9 @@ bool ConsoleMessage::isEqual(ConsoleMessage* msg) const
     } else if (msg->m_callStack)
         return false;
 
+    if (m_jsonLogValues.size() || msg->m_jsonLogValues.size())
+        return false;
+
     return msg->m_source == m_source
         && msg->m_type == m_type
         && msg->m_level == m_level

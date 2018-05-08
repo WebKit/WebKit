@@ -1,3 +1,13 @@
+2018-05-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Consecutive messages logged as JSON are coalesced
+        https://bugs.webkit.org/show_bug.cgi?id=185432
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/console/webcore-logging-expected.txt:
+        * inspector/console/webcore-logging.html:
+
 2018-05-08  Jer Noble  <jer.noble@apple.com>
 
         Mute MediaElementSourceNode when tainted.

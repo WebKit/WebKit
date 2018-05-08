@@ -30,3 +30,14 @@ PASS: Media logging disabled.
 PASS: Media logging has been enabled.
 PASS: Media log message should have source 'media'.
 
+-- Running test case: Console.Logging.LogAsJSONWithoutRepeat
+PASS: Media logging disabled.
+PASS: Verbose media logging has been enabled.
+PASS: Message logged as JSON.
+PASS: ConsoleMessage repeatCount is 1.
+PASS: Message logged as JSON.
+PASS: ConsoleMessage repeatCount is 1.
+PASS: Message logged as JSON.
+PASS: ConsoleMessage repeatCount is 1.
+Received three JSON messages.
+
