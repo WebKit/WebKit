@@ -36,6 +36,7 @@
 #import "EditorState.h"
 #import "MenuUtilities.h"
 #import "NativeWebKeyboardEvent.h"
+#import "PDFContextMenu.h"
 #import "PageClient.h"
 #import "PageClientImplMac.h"
 #import "PluginComplexTextInputState.h"
@@ -58,6 +59,7 @@
 #import <WebCore/ValidationBubble.h>
 #import <mach-o/dyld.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
+#import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/text/StringConcatenate.h>
 
@@ -71,6 +73,37 @@ using namespace WebCore;
 - (void)speakString:(NSString *)string;
 - (void)stopSpeaking:(id)sender;
 @end
+
+#if ENABLE(PDFKIT_PLUGIN)
+@interface WKPDFMenuTarget : NSObject {
+    id _selectedMenuItem;
+}
+- (id)selectedMenuItem;
+- (void)contextMenuAction:(id)sender;
+@end
+
+@implementation WKPDFMenuTarget
+- (instancetype)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    
+    _selectedMenuItem = nil;
+    return self;
+}
+
+- (id)selectedMenuItem
+{
+    return _selectedMenuItem;
+}
+
+- (void)contextMenuAction:(id)sender
+{
+    _selectedMenuItem = sender;
+}
+@end // implementation WKPDFMenuTarget
+#endif
 
 namespace WebKit {
 
@@ -528,6 +561,45 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&
 
     [[NSWorkspace sharedWorkspace] openFile:pdfFilename];
 }
+
+#if ENABLE(PDFKIT_PLUGIN)
+void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, int32_t& selectedIndex)
+{
+    if (!contextMenu.m_items.size())
+        return;
+    
+    RetainPtr<WKPDFMenuTarget> menuTarget = adoptNS([[WKPDFMenuTarget alloc] init]);
+    RetainPtr<NSMenu> nsMenu = adoptNS([[NSMenu alloc] init]);
+    [nsMenu setAllowsContextMenuPlugIns:false];
+    for (unsigned i = 0; i < contextMenu.m_items.size(); i++) {
+        auto& item = contextMenu.m_items[i];
+        
+        if (item.separator) {
+            [nsMenu insertItem:[NSMenuItem separatorItem] atIndex:i];
+            continue;
+        }
+        
+        RetainPtr<NSMenuItem> nsItem = adoptNS([[NSMenuItem alloc] init]);
+        [nsItem setTitle:item.title];
+        [nsItem setEnabled:item.enabled];
+        [nsItem setState:item.state];
+        if (item.hasAction) {
+            [nsItem setTarget:menuTarget.get()];
+            [nsItem setAction:@selector(contextMenuAction:)];
+        }
+        [nsItem setTag:item.tag];
+        [nsMenu insertItem:nsItem.get() atIndex:i];
+    }
+    NSWindow *window = m_pageClient.platformWindow();
+    auto windowNumber = [window windowNumber];
+    auto location = [window convertRectFromScreen: { contextMenu.m_point, NSZeroSize }].origin;
+    NSEvent* event = [NSEvent mouseEventWithType:NSEventTypeRightMouseDown location:location modifierFlags:0 timestamp:0 windowNumber:windowNumber context:0 eventNumber:0 clickCount:1 pressure:1];
+
+    auto view = [m_pageClient.platformWindow() contentView];
+    [NSMenu popUpContextMenu:nsMenu.get() withEvent:event forView:view];
+    selectedIndex = [[menuTarget selectedMenuItem] tag];
+}
+#endif
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
 void WebPageProxy::showTelephoneNumberMenu(const String& telephoneNumber, const WebCore::IntPoint& point)

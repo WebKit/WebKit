@@ -1,3 +1,29 @@
+2018-05-08  Per Arne Vollan  <pvollan@apple.com>
+
+        The PDF context menu should not be created in the WebContent process.
+        https://bugs.webkit.org/show_bug.cgi?id=185401
+
+        Reviewed by Tim Horton.
+
+        Send a sync IPC message from the WebContent process to the UI process with the necessary context
+        menu information when the menu is requested. The NSMenu will then be created and shown in the
+        UI process. The reply will contain the selected menu item index.
+
+        * Shared/mac/PDFContextMenu.h: Added.
+        (WebKit::PDFContextMenuItem::encode const):
+        (WebKit::PDFContextMenuItem::decode):
+        (WebKit::PDFContextMenu::encode const):
+        (WebKit::PDFContextMenu::decode):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (-[WKPDFMenuTarget menuItem]):
+        (-[WKPDFMenuTarget contextMenuAction:]):
+        (WebKit::WebPageProxy::showPDFContextMenu):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::handleContextMenuEvent):
+
 2018-05-08  Dean Jackson  <dino@apple.com>
 
         System Preview links should trigger a download

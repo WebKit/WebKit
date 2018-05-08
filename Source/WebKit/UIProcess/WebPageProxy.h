@@ -1026,6 +1026,9 @@ public:
     void openPDFFromTemporaryFolderWithNativeApplication(const String& pdfUUID);
 #endif
 
+#if ENABLE(PDFKIT_PLUGIN)
+    void showPDFContextMenu(const WebKit::PDFContextMenu&, int32_t& selectedIndex);
+#endif
     WebCore::IntRect visibleScrollerThumbRect() const { return m_visibleScrollerThumbRect; }
 
     uint64_t renderTreeSize() const { return m_renderTreeSize; }

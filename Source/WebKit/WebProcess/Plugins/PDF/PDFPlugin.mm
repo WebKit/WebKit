@@ -31,6 +31,7 @@
 #import "ArgumentCoders.h"
 #import "DataReference.h"
 #import "PDFAnnotationTextWidgetDetails.h"
+#import "PDFContextMenu.h"
 #import "PDFLayerControllerSPI.h"
 #import "PDFPluginAnnotation.h"
 #import "PDFPluginPasswordField.h"
@@ -1572,9 +1573,27 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
 {
     FrameView* frameView = webFrame()->coreFrame()->view();
     IntPoint point = frameView->contentsToScreen(IntRect(frameView->windowToContents(event.position()), IntSize())).location();
-    
+
     if (NSMenu *nsMenu = [m_pdfLayerController menuForEvent:nsEventForWebMouseEvent(event)]) {
-        _NSPopUpCarbonMenu3(nsMenu, nil, nil, point, -1, nil, 0, nil, NSPopUpMenuTypeContext, nil);
+        Vector<PDFContextMenuItem> items;
+        auto itemCount = [nsMenu numberOfItems];
+        for (int i = 0; i < itemCount; i++) {
+            auto item = [nsMenu itemAtIndex:i];
+            if ([item submenu])
+                continue;
+            PDFContextMenuItem menuItem { String([item title]), !![item isEnabled], !![item isSeparatorItem], static_cast<int>([item state]), [item action], i };
+            items.append(WTFMove(menuItem));
+        }
+        PDFContextMenu contextMenu { point, WTFMove(items) };
+
+        if (!webFrame()->page())
+            return false;
+
+        int selectedIndex = -1;
+        webFrame()->page()->sendSync(Messages::WebPageProxy::ShowPDFContextMenu(contextMenu), Messages::WebPageProxy::ShowPDFContextMenu::Reply(selectedIndex));
+        if (selectedIndex >= 0 && selectedIndex < itemCount)
+            [nsMenu performActionForItemAtIndex:selectedIndex];
+
         return true;
     }
     

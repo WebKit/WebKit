@@ -1992,6 +1992,7 @@
 		C181735F205839F600DFDA65 /* DrawingAreaMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C181735E205839F600DFDA65 /* DrawingAreaMac.cpp */; };
 		C18173612058424700DFDA65 /* DisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = C18173602058424700DFDA65 /* DisplayLink.h */; };
 		C1817363205844A900DFDA65 /* DisplayLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C1817362205844A900DFDA65 /* DisplayLink.cpp */; };
+		C1E123BA20A11573002646F4 /* PDFContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = C1E123B920A11572002646F4 /* PDFContextMenu.h */; };
 		C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */ = {isa = PBXBuildFile; fileRef = C517388012DF8F4F00EE3F47 /* DragControllerAction.h */; };
 		C5237F6012441CA300780472 /* WebEditorClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5237F5F12441CA300780472 /* WebEditorClientMac.mm */; };
 		C54256B518BEC18C00DE4179 /* WKFormInputControl.h in Headers */ = {isa = PBXBuildFile; fileRef = C54256AF18BEC18B00DE4179 /* WKFormInputControl.h */; };
@@ -4521,6 +4522,7 @@
 		C181735E205839F600DFDA65 /* DrawingAreaMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaMac.cpp; sourceTree = "<group>"; };
 		C18173602058424700DFDA65 /* DisplayLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayLink.h; sourceTree = "<group>"; };
 		C1817362205844A900DFDA65 /* DisplayLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayLink.cpp; sourceTree = "<group>"; };
+		C1E123B920A11572002646F4 /* PDFContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFContextMenu.h; sourceTree = "<group>"; };
 		C517388012DF8F4F00EE3F47 /* DragControllerAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragControllerAction.h; sourceTree = "<group>"; };
 		C5237F5F12441CA300780472 /* WebEditorClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEditorClientMac.mm; sourceTree = "<group>"; };
 		C54256AF18BEC18B00DE4179 /* WKFormInputControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFormInputControl.h; path = ios/forms/WKFormInputControl.h; sourceTree = "<group>"; };
@@ -7678,6 +7680,7 @@
 				BC8ACA1016670D7B004C1941 /* ObjCObjectGraph.mm */,
 				C574A57F12E66681002DFE98 /* PasteboardTypes.h */,
 				C574A58012E66681002DFE98 /* PasteboardTypes.mm */,
+				C1E123B920A11572002646F4 /* PDFContextMenu.h */,
 				E19582D2153CBFD700B60875 /* PDFKitImports.h */,
 				E19582D4153CC05300B60875 /* PDFKitImports.mm */,
 				E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */,
@@ -9069,6 +9072,7 @@
 				1AC7537C183A9FDB0072CB15 /* PageLoadState.h in Headers */,
 				1A8B66B01BC43C860082DF77 /* PageLoadStateObserver.h in Headers */,
 				C574A58112E66681002DFE98 /* PasteboardTypes.h in Headers */,
+				C1E123BA20A11573002646F4 /* PDFContextMenu.h in Headers */,
 				E19582D3153CBFD700B60875 /* PDFKitImports.h in Headers */,
 				5C298DA01C3DF02100470AFE /* PendingDownload.h in Headers */,
 				832ED18C1E2FE157006BA64A /* PerActivityStateCPUUsageSampler.h in Headers */,
