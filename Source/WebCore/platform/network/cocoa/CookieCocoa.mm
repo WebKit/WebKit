@@ -82,7 +82,7 @@ Cookie::operator NSHTTPCookie *() const
     if (isNull())
         return nil;
 
-    NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithCapacity:12];
+    NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithCapacity:13];
 
     if (!comment.isNull())
         [properties setObject:(NSString *)comment forKey:NSHTTPCookieComment];
@@ -106,6 +106,8 @@ Cookie::operator NSHTTPCookie *() const
     auto maxAge = ceil([expirationDate timeIntervalSinceNow]);
     if (maxAge > 0)
         [properties setObject:[NSString stringWithFormat:@"%f", maxAge] forKey:NSHTTPCookieMaximumAge];
+    
+    [properties setObject:[NSNumber numberWithDouble:created / 1000.0] forKey:@"Created"];
 
     auto* portString = portStringFromVector(ports);
     if (portString)

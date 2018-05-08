@@ -33,6 +33,7 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Seconds.h>
 
 #if WK_API_ENABLED
 
@@ -308,6 +309,59 @@ TEST(WebKit, WKHTTPCookieStoreHttpOnly)
     gotFlag = false;
     ASSERT_EQ(cookies.count, 0u);
     [cookies release];
+}
+
+TEST(WebKit, WKHTTPCookieStoreCreationTime) 
+{   
+    WKWebsiteDataStore* dataStore = [WKWebsiteDataStore defaultDataStore];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = dataStore;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView loadHTMLString:@"WebKit Test" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:[] {
+        gotFlag = true;
+    }];
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+
+    globalCookieStore = dataStore.httpCookieStore;
+
+    RetainPtr<NSHTTPCookie> cookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookiePath: @"/path",
+        NSHTTPCookieName: @"CookieName",
+        NSHTTPCookieValue: @"CookieValue",
+        NSHTTPCookieDomain: @".www.webkit.org",
+    }];
+
+    [globalCookieStore setCookie:cookie.get() completionHandler:[]() {
+        gotFlag = true;
+    }];
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+
+    RetainPtr<NSNumber> creationTime = nil;
+    [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *cookies) {
+        ASSERT_EQ(1u, cookies.count);
+        creationTime = [cookies objectAtIndex:0].properties[@"Created"];
+        gotFlag = true;
+    }];
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+
+    sleep(1_s);
+
+    [globalCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+        ASSERT_EQ(1u, cookies.count);
+        NSNumber* creationTime2 = [cookies objectAtIndex:0].properties[@"Created"];
+        EXPECT_TRUE([creationTime.get() isEqual:creationTime2]);
+        gotFlag = true;
+    }];
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
 }
 
 // FIXME: This should be removed once <rdar://problem/35344202> is resolved and bots are updated.
