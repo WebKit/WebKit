@@ -1338,11 +1338,7 @@ TEST(WKAttachmentTestsIOS, InsertDroppedItemProvidersInOrder)
             NSLog(@"Error: %@", error);
     }
 
-    NSArray *observedElementTags = (NSArray *)[webView objectByEvaluatingJavaScript:@"Array.from(document.body.children).map(e => e.tagName)"];
-    NSArray *expectedElementTags = @[ @"ATTACHMENT", @"A", @"ATTACHMENT" ];
-    EXPECT_TRUE([observedElementTags isEqualToArray:expectedElementTags]);
-    if (![observedElementTags isEqualToArray:expectedElementTags])
-        NSLog(@"Observed elements: %@ did not match expectations: %@", observedElementTags, expectedElementTags);
+    [webView expectElementTagsInOrder:@[ @"ATTACHMENT", @"A", @"ATTACHMENT" ]];
 
     EXPECT_WK_STREQ("first.txt", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('title')"]);
     EXPECT_WK_STREQ("text/plain", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('type')"]);
