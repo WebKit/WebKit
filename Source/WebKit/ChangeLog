@@ -1,3 +1,25 @@
+2018-05-08  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Make user opt-in sticky
+        https://bugs.webkit.org/show_bug.cgi?id=185454
+        <rdar://problem/40003946>
+
+        Reviewed by Alex Christensen.
+
+        This patch persists the user's choice to opt-in to access under specific domains.
+        Such storage access should age out with the accessing domain's cookies and website
+        data. The opt-in prompt is still an experimental feature.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::hasStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener):
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccessInternal):
+        (WebKit::WebResourceLoadStatisticsStore::hasUserGrantedStorageAccessThroughPrompt const):
+        (WebKit::WebResourceLoadStatisticsStore::hasHadUnexpiredRecentUserInteraction const):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2018-05-08  Daniel Bates  <dabates@apple.com>
 
         Do not apply X-Frame-Options and CSP frame-ancestors to Quick Look-applicable responses in NetworkProcess
