@@ -574,17 +574,28 @@ static bool readytoResign;
 
 @end
 
-TEST(WebKit, DidResignInputElementStrongPasswordAppearance)
+static void testDidResignInputElementStrongPasswordAppearanceAfterEvaluatingJavaScript(NSString *script)
 {
     done = false;
+    readytoResign = false;
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"DidResignInputElementStrongPasswordAppearance"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
     auto delegate = adoptNS([[DidResignInputElementStrongPasswordAppearanceDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
     TestWebKitAPI::Util::run(&readytoResign);
-    [webView evaluateJavaScript:@"document.querySelector('input').type = 'text'" completionHandler:nil];
+    [webView evaluateJavaScript:script completionHandler:nil];
     TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WebKit, DidResignInputElementStrongPasswordAppearanceWhenTypeDidChange)
+{
+    testDidResignInputElementStrongPasswordAppearanceAfterEvaluatingJavaScript(@"document.querySelector('input').type = 'text'");
+}
+
+TEST(WebKit, DidResignInputElementStrongPasswordAppearanceWhenValueDidChange)
+{
+    testDidResignInputElementStrongPasswordAppearanceAfterEvaluatingJavaScript(@"document.querySelector('input').value = ''");
 }
 
 @interface AutoFillAvailableDelegate : NSObject <WKUIDelegatePrivate>

@@ -377,6 +377,8 @@ private:
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;
 
+    void resignStrongPasswordAppearance();
+
     bool canStartSelection() const final;
 
     void accessKeyAction(bool sendMouseEvents) final;

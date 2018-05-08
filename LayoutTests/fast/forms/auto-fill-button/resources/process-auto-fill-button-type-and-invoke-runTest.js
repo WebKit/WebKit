@@ -5,8 +5,10 @@ window.onload = function ()
         return;
     }
     let inputElements = document.getElementsByTagName("input");
-    for (let inputElement of inputElements)
+    for (let inputElement of inputElements) {
+        internals.setAutofilled(inputElement, inputElement.dataset.autofilled == "true");
         internals.setShowAutoFillButton(inputElement, inputElement.dataset.autoFillButtonType);
+    }
     if (window.runTest)
         window.runTest();
 }

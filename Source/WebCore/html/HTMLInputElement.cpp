@@ -488,6 +488,16 @@ void HTMLInputElement::setType(const AtomicString& type)
     setAttributeWithoutSynchronization(typeAttr, type);
 }
 
+void HTMLInputElement::resignStrongPasswordAppearance()
+{
+    if (!hasAutoFillStrongPasswordButton())
+        return;
+    setAutoFilled(false);
+    setShowAutoFillButton(AutoFillButtonType::None);
+    if (auto* page = document().page())
+        page->chrome().client().inputElementDidResignStrongPasswordAppearance(*this);
+}
+
 void HTMLInputElement::updateType()
 {
     ASSERT(m_inputType);
@@ -497,13 +507,7 @@ void HTMLInputElement::updateType()
         return;
 
     removeFromRadioButtonGroup();
-
-    if (hasAutoFillStrongPasswordButton()) {
-        setAutoFilled(false);
-        setShowAutoFillButton(AutoFillButtonType::None);
-        if (auto* page = document().page())
-            page->chrome().client().inputElementDidResignStrongPasswordAppearance(*this);
-    }
+    resignStrongPasswordAppearance();
 
     bool didStoreValue = m_inputType->storesValueSeparateFromAttribute();
     bool willStoreValue = newType->storesValueSeparateFromAttribute();
@@ -1064,6 +1068,10 @@ ExceptionOr<void> HTMLInputElement::setValue(const String& value, TextFieldEvent
     setLastChangeWasNotUserEdit();
     setFormControlValueMatchesRenderer(false);
     m_inputType->setValue(sanitizedValue, valueChanged, eventBehavior);
+
+    bool wasModifiedProgrammatically = eventBehavior == DispatchNoEvent;
+    if (wasModifiedProgrammatically)
+        resignStrongPasswordAppearance();
     return { };
 }
 

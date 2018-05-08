@@ -1,3 +1,26 @@
+2018-05-08  Daniel Bates  <dabates@apple.com>
+
+        Resign Strong Password appearance when text field value changes
+        https://bugs.webkit.org/show_bug.cgi?id=185433
+        <rdar://problem/39958508>
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove the Strong Password decoration when the text field's value changes to avoid interfering
+        with web sites that allow a person to clear the password field.
+
+        Tests: fast/forms/auto-fill-button/auto-fill-strong-password-button-when-maxlength-changes.html
+               fast/forms/auto-fill-button/auto-fill-strong-password-button-when-minlength-changes.html
+               fast/forms/auto-fill-button/hide-auto-fill-strong-password-button-when-value-changes.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::resignStrongPasswordAppearance): Extracted from HTMLInputElement::updateType().
+        (WebCore::HTMLInputElement::updateType): Extract out logic to resign the Strong Password appearance
+        into a function that can be shared by this function and HTMLInputElement::setValue().
+        (WebCore::HTMLInputElement::setValue): Resign the Strong Password appearance if this field was
+        changed programmatically (i.e. no DOM change event was dispatched).
+        * html/HTMLInputElement.h:
+
 2018-05-08  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; add missing function definition.

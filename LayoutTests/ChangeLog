@@ -1,3 +1,23 @@
+2018-05-08  Daniel Bates  <dabates@apple.com>
+
+        Resign Strong Password appearance when text field value changes
+        https://bugs.webkit.org/show_bug.cgi?id=185433
+        <rdar://problem/39958508>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a test to ensure we remove the Strong Password appearance when the value of the text field value changes.
+
+        * fast/forms/auto-fill-button/auto-fill-strong-password-button-when-maxlength-changes-expected.html: Added.
+        * fast/forms/auto-fill-button/auto-fill-strong-password-button-when-maxlength-changes.html: Added.
+        * fast/forms/auto-fill-button/auto-fill-strong-password-button-when-minlength-changes-expected.html: Added.
+        * fast/forms/auto-fill-button/auto-fill-strong-password-button-when-minlength-changes.html: Added.
+        * fast/forms/auto-fill-button/hide-auto-fill-strong-password-button-when-value-changes-expected.html: Added.
+        * fast/forms/auto-fill-button/hide-auto-fill-strong-password-button-when-value-changes.html: Added.
+        * fast/forms/auto-fill-button/resources/process-auto-fill-button-type-and-invoke-runTest.js: Add support for
+        setting the autofilled state of a field.
+        (window.onload):
+
 2018-05-08  Eric Carlson  <eric.carlson@apple.com>
 
         Consecutive messages logged as JSON are coalesced
