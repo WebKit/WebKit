@@ -146,7 +146,7 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
 void Entry::initializeShareableResourceHandleFromStorageRecord() const
 {
     auto* cache = NetworkProcess::singleton().cache();
-    if (!cache || !cache->canUseSharedMemoryForBodyData())
+    if (!cache)
         return;
 
     auto sharedMemory = m_sourceStorageRecord.body.tryCreateSharedMemory();
@@ -195,13 +195,6 @@ bool Entry::needsValidation() const
 
 void Entry::setNeedsValidation(bool value)
 {
-    if (value) {
-        // Validation keeps the entry alive waiting for the network response. Pull data from a mapped file into a buffer early
-        // to protect against map disappearing due to device becoming locked.
-        // FIXME: Cache files should be Class B/C, or we shoudn't use mapped files at all in these cases.
-        if (!NetworkProcess::singleton().cache()->canUseSharedMemoryForBodyData())
-            buffer();
-    }
     m_response.setSource(value ? WebCore::ResourceResponse::Source::DiskCacheAfterValidation : WebCore::ResourceResponse::Source::DiskCache);
 }
 

@@ -427,15 +427,13 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
     auto cacheEntry = makeEntry(request, response, WTFMove(responseData));
     auto record = cacheEntry->encodeAsStorageRecord();
 
-    m_storage->store(record, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](const Data& bodyData) {
+    m_storage->store(record, [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](const Data& bodyData) {
         MappedBody mappedBody;
 #if ENABLE(SHAREABLE_RESOURCE)
-        if (canUseSharedMemoryForBodyData()) {
-            if (auto sharedMemory = bodyData.tryCreateSharedMemory()) {
-                mappedBody.shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, bodyData.size());
-                ASSERT(mappedBody.shareableResource);
-                mappedBody.shareableResource->createHandle(mappedBody.shareableResourceHandle);
-            }
+        if (auto sharedMemory = bodyData.tryCreateSharedMemory()) {
+            mappedBody.shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, bodyData.size());
+            ASSERT(mappedBody.shareableResource);
+            mappedBody.shareableResource->createHandle(mappedBody.shareableResourceHandle);
         }
 #endif
         completionHandler(mappedBody);

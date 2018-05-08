@@ -146,7 +146,7 @@ void updateFileModificationTimeIfNeeded(const String& path)
 #endif
 }
 
-bool canUseSharedMemoryForPath(const String& path)
+bool isSafeToUseMemoryMapForPath(const String& path)
 {
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
     struct {

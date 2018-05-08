@@ -1,3 +1,44 @@
+2018-05-08  Antti Koivisto  <antti@apple.com>
+
+        Don't use mapped cache files in case of Class A/B protected app
+        https://bugs.webkit.org/show_bug.cgi?id=185422
+        <rdar://problem/34001688>
+
+        Reviewed by Chris Dumez.
+
+        Currently we don't use shared memory maps in these cases. This still leaves us open for crashes
+        in the network process when the device is locked.
+
+        This patch disables use of blob storage (mapped cache files) in apps that use class A/B protection.
+        Normally we use blobs for resources > 16KB. Since use of shared memory is already disabled,
+        the only optimization lost for these apps is body data deduplication.
+
+        Any existing cache entries with blobs are ignored and deleted. New entries are created with
+        body data inlined with the metadata.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::store):
+        * NetworkProcess/cache/NetworkCache.h:
+        (WebKit::NetworkCache::Cache::canUseSharedMemoryForBodyData const): Deleted.
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::initializeShareableResourceHandleFromStorageRecord const):
+
+            Remove the code the prevented use of shared memory in these cases. Non-mapped Data objects
+            are never shareable.
+
+        (WebKit::NetworkCache::Entry::setNeedsValidation):
+        * NetworkProcess/cache/NetworkCacheFileSystem.cpp:
+        (WebKit::NetworkCache::isSafeToUseMemoryMapForPath):
+        (WebKit::NetworkCache::canUseSharedMemoryForPath): Deleted.
+        * NetworkProcess/cache/NetworkCacheFileSystem.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::Storage):
+        (WebKit::NetworkCache::Storage::mayContainBlob const):
+        (WebKit::NetworkCache::Storage::shouldStoreBodyAsBlob):
+        (WebKit::NetworkCache::shouldStoreBodyAsBlob): Deleted.
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCache::Storage::canUseSharedMemoryForBodyData const): Deleted.
+
 2018-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Add missing exit not included in r231298.

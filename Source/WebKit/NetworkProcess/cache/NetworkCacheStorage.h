@@ -101,8 +101,6 @@ public:
 
     const Salt& salt() const { return m_salt; }
 
-    bool canUseSharedMemoryForBodyData() const { return m_canUseSharedMemoryForBodyData; }
-
     ~Storage();
 
     void writeWithoutWaiting() { m_initialWriteDelay = 0_s; };
@@ -130,6 +128,7 @@ private:
     void dispatchPendingWriteOperations();
     void finishWriteOperation(WriteOperation&);
 
+    bool shouldStoreBodyAsBlob(const Data& bodyData);
     std::optional<BlobStorage::Blob> storeBodyAsBlob(WriteOperation&);
     Data encodeRecord(const Record&, std::optional<BlobStorage::Blob>);
     void readRecord(ReadOperation&, const Data&);
@@ -152,7 +151,7 @@ private:
     
     const Mode m_mode;
     const Salt m_salt;
-    const bool m_canUseSharedMemoryForBodyData;
+    const bool m_canUseBlobsForForBodyData;
 
     size_t m_capacity { std::numeric_limits<size_t>::max() };
     size_t m_approximateRecordsSize { 0 };

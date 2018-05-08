@@ -219,7 +219,7 @@ Storage::Storage(const String& baseDirectoryPath, Mode mode, Salt salt)
     , m_recordsPath(makeRecordsDirectoryPath(baseDirectoryPath))
     , m_mode(mode)
     , m_salt(salt)
-    , m_canUseSharedMemoryForBodyData(canUseSharedMemoryForPath(baseDirectoryPath))
+    , m_canUseBlobsForForBodyData(isSafeToUseMemoryMapForPath(baseDirectoryPath))
     , m_readOperationTimeoutTimer(*this, &Storage::cancelAllReadOperations)
     , m_writeOperationDispatchTimer(*this, &Storage::dispatchPendingWriteOperations)
     , m_ioQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage", WorkQueue::Type::Concurrent))
@@ -348,6 +348,8 @@ bool Storage::mayContain(const Key& key) const
 bool Storage::mayContainBlob(const Key& key) const
 {
     ASSERT(RunLoop::isMain());
+    if (!m_canUseBlobsForForBodyData)
+        return false;
     return !m_blobFilter || m_blobFilter->mayContain(key.hash());
 }
 
@@ -750,8 +752,10 @@ void Storage::dispatchPendingWriteOperations()
     }
 }
 
-static bool shouldStoreBodyAsBlob(const Data& bodyData)
+bool Storage::shouldStoreBodyAsBlob(const Data& bodyData)
 {
+    if (!m_canUseBlobsForForBodyData)
+        return false;
     const size_t maximumInlineBodySize { 16 * 1024 };
     return bodyData.size() > maximumInlineBodySize;
 }
