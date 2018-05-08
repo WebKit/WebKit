@@ -1,4 +1,2 @@
-CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
-CONSOLE MESSAGE: Application Cache update failed, because http://127.0.0.1:8000/appcache/resources/does-not-exist.txt could not be fetched.
 This tests that a manifest that contains a missing file will not crash the browser even if the main resource keeps loading after the error occurs.
 SUCCESS
