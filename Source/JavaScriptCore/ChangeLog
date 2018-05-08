@@ -1,3 +1,39 @@
+2018-05-08  Michael Saboff  <msaboff@apple.com>
+
+        Deferred firing of structure transition watchpoints is racy
+        https://bugs.webkit.org/show_bug.cgi?id=185438
+
+        Reviewed by Saam Barati.
+
+        Changed DeferredStructureTransitionWatchpointFire to take the watchpoints to fire
+        and fire them in the destructor.  When the watchpoints are taken from the
+        original WatchpointSet, that WatchpointSet if marked invalid.
+
+        * bytecode/Watchpoint.cpp:
+        (JSC::WatchpointSet::fireAllSlow):
+        (JSC::WatchpointSet::take):
+        (JSC::DeferredWatchpointFire::DeferredWatchpointFire):
+        (JSC::DeferredWatchpointFire::~DeferredWatchpointFire):
+        (JSC::DeferredWatchpointFire::fireAll):
+        (JSC::DeferredWatchpointFire::takeWatchpointsToFire):
+        * bytecode/Watchpoint.h:
+        (JSC::WatchpointSet::fireAll):
+        (JSC::InlineWatchpointSet::fireAll):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::setPrototypeDirect):
+        (JSC::JSObject::convertToDictionary):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putDirectInternal):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::DeferredStructureTransitionWatchpointFire::DeferredStructureTransitionWatchpointFire):
+        (JSC::DeferredStructureTransitionWatchpointFire::~DeferredStructureTransitionWatchpointFire):
+        (JSC::DeferredStructureTransitionWatchpointFire::dump const):
+        (JSC::Structure::didTransitionFromThisStructure const):
+        (JSC::DeferredStructureTransitionWatchpointFire::add): Deleted.
+        * runtime/Structure.h:
+        (JSC::DeferredStructureTransitionWatchpointFire::structure const):
+
 2018-05-08  Eric Carlson  <eric.carlson@apple.com>
 
         Consecutive messages logged as JSON are coalesced

@@ -110,14 +110,16 @@ private:
     const Structure* m_structure;
 };
 
-class DeferredStructureTransitionWatchpointFire {
+class DeferredStructureTransitionWatchpointFire : public DeferredWatchpointFire {
     WTF_MAKE_NONCOPYABLE(DeferredStructureTransitionWatchpointFire);
 public:
-    JS_EXPORT_PRIVATE DeferredStructureTransitionWatchpointFire();
+    JS_EXPORT_PRIVATE DeferredStructureTransitionWatchpointFire(VM&, Structure*);
     JS_EXPORT_PRIVATE ~DeferredStructureTransitionWatchpointFire();
     
-    void add(const Structure*);
-    
+    void dump(PrintStream& out) const override;
+
+    const Structure* structure() const { return m_structure; }
+
 private:
     const Structure* m_structure;
 };

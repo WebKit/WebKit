@@ -362,7 +362,7 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
     // We want the structure transition watchpoint to fire after this object has switched
     // structure. This allows adaptive watchpoints to observe if the new structure is the one
     // we want.
-    DeferredStructureTransitionWatchpointFire deferredWatchpointFire;
+    DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
     
     newStructure = Structure::addNewPropertyTransition(
         vm, structure, propertyName, attributes, offset, slot.context(), &deferredWatchpointFire);
