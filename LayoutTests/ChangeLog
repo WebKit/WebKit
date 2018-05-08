@@ -1,3 +1,13 @@
+2018-05-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, add frame name in form-iframe-target-before-load-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=185408
+
+        The test started causing flakiness after r231456 because it would submit
+        the form in the main frame instead of the test frame.
+
+        * fast/events/form-iframe-target-before-load-crash.html:
+
 2018-05-07  Simon Fraser  <simon.fraser@apple.com>
 
         CSS filters which reference SVG filters fail to respect the "color-interpolation-filters" of the filter
