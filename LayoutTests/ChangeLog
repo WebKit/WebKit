@@ -1,5 +1,14 @@
 2018-05-07  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Update TestExpectations for imported/w3c/web-platform-tests/html/dom/interfaces.worker.html.
+        https://bugs.webkit.org/show_bug.cgi?id=185407
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2018-05-07  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark http/tests/security/contentTypeOptions/nosniff-importScript-blocked.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=184802
 

@@ -321,7 +321,7 @@ imported/w3c/web-platform-tests/eventsource/request-credentials.htm [ Failure ]
 imported/w3c/web-platform-tests/mediacapture-fromelement/capture.html [ Failure ]
 imported/w3c/web-platform-tests/mediacapture-fromelement/ended.html [ Failure ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_4.html [ Failure ]
-imported/w3c/web-platform-tests/html/dom/interfaces.worker.html [ Pass Failure ]
+webkit.org/b/185407 imported/w3c/web-platform-tests/html/dom/interfaces.worker.html [ Pass Failure Timeout ]
 imported/w3c/web-platform-tests/mediacapture-fromelement/creation.html [ Pass Failure ]
 webkit.org/b/180240 imported/w3c/web-platform-tests/resource-timing/single-entry-per-resource.html [ Pass Failure ]
 
