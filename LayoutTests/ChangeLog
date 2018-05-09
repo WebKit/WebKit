@@ -1,3 +1,15 @@
+2018-05-09  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed gardening for WinCairo LayoutTests.
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/css3/filters/effect-brightness-clamping-expected.txt:
+        * platform/wincairo/css3/filters/effect-brightness-expected.txt:
+        * platform/wincairo/editing/deleting/5126166-expected.txt:
+        * platform/wincairo/editing/deleting/5206311-1-expected.txt:
+        * platform/wincairo/editing/deleting/5433862-2-expected.txt:
+        * platform/wincairo/editing/deleting/5483370-expected.txt:
+
 2018-05-09  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r231479): http/tests/appcache/x-frame-options-prevents-framing.php is timing out

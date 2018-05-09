@@ -8,15 +8,15 @@ layer at (0,0) size 800x600
           text run at (0,0) width 676: "This tests for a problem where empty table rows after the selection being deleted would be removed incorrectly. "
           text run at (676,0) width 75: "Only the last"
           text run at (0,20) width 302: "letter in 'foo' should be removed during this delete."
-      RenderBlock {DIV} at (0,56) size 784x36
-        RenderTable {TABLE} at (0,0) size 28x36 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 26x34
+      RenderBlock {DIV} at (0,56) size 784x56
+        RenderTable {TABLE} at (0,0) size 28x56 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 26x54
             RenderTableRow {TR} at (0,2) size 26x24
               RenderTableCell {TD} at (2,2) size 16x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 12x19
                   text run at (2,2) width 12: "fo"
-              RenderTableCell {TD} at (20,12) size 4x4 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-            RenderTableRow {TR} at (0,28) size 26x4
-              RenderTableCell {TD} at (2,28) size 16x4 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderTableCell {TD} at (20,28) size 4x4 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (20,2) size 4x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableRow {TR} at (0,28) size 26x24
+              RenderTableCell {TD} at (2,28) size 16x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (20,28) size 4x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
 caret: position 2 of child 0 {#text} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body
