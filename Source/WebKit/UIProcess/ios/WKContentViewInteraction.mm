@@ -3220,7 +3220,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)setSelectedTextRange:(UITextRange *)range
 {
-    if (_textSelectionAssistant && !range)
+    if (hasAssistedNode(_assistedNodeInformation) && !range)
         [self clearSelection];
 }
 

@@ -1,3 +1,16 @@
+2018-05-08  Megan Gardner  <megan_gardner@apple.com>
+
+        Don't clear selection until we are actually interacting with a Node.
+        https://bugs.webkit.org/show_bug.cgi?id=185455
+
+        Reviewed by Wenson Hsieh.
+        
+        The presence of TextInteractionAssistant should not be used as a proxy for it we are actually editing content.
+        We need to check to see if we have an active node, and then we should clear the selection.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setSelectedTextRange:]):
+
 2018-05-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r231486.
