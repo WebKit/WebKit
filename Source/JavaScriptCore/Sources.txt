@@ -411,15 +411,12 @@ dfg/DFGWatchpointCollectionPhase.cpp
 dfg/DFGWorklist.cpp
 
 disassembler/ARM64Disassembler.cpp
-disassembler/ARMv7Disassembler.cpp
 disassembler/CapstoneDisassembler.cpp
 disassembler/Disassembler.cpp
 disassembler/UDis86Disassembler.cpp
 disassembler/X86Disassembler.cpp
 
 disassembler/ARM64/A64DOpcode.cpp
-
-disassembler/ARMv7/ARMv7DOpcode.cpp
 
 disassembler/udis86/udis86.c
 disassembler/udis86/udis86_decode.c
