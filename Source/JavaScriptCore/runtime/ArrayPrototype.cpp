@@ -247,8 +247,10 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstru
             if (constructor.isNull())
                 return std::make_pair(SpeciesConstructResult::FastPath, nullptr);;
         }
-    } else
-        RETURN_IF_EXCEPTION(scope, exceptionResult());
+    } else {
+        // If isArray is false, return ? ArrayCreate(length).
+        return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
+    }
 
     if (constructor.isUndefined())
         return std::make_pair(SpeciesConstructResult::FastPath, nullptr);

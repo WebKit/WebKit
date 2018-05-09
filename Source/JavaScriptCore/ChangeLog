@@ -1,3 +1,20 @@
+2018-05-09  Leo Balter  <leonardo.balter@gmail.com>
+
+        [JSC] Fix ArraySpeciesCreate to return a new Array when the given object is not an array
+        Error found in the following Test262 tests:
+
+        - test/built-ins/Array/prototype/slice/create-non-array-invalid-len.js
+        - test/built-ins/Array/prototype/slice/create-proxied-array-invalid-len.js
+        - test/built-ins/Array/prototype/splice/create-species-undef-invalid-len.js
+
+        The ArraySpeciesCreate should throw a RangeError with non-Array custom objects
+        presenting a length > 2**32-1
+        https://bugs.webkit.org/show_bug.cgi?id=185476
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/ArrayPrototype.cpp:
+
 2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Build cleanly with GCC 8 and ICU 60
