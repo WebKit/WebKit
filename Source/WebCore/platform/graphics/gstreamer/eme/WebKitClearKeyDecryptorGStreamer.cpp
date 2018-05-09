@@ -255,7 +255,7 @@ static gboolean webKitMediaClearKeyDecryptorDecrypt(WebKitMediaCommonEncryptionD
 
     if (!subSampleCount) {
         // Full sample encryption.
-        GST_TRACE_OBJECT(self, "full sample encryption: %d encrypted bytes", map.size);
+        GST_TRACE_OBJECT(self, "full sample encryption: %zu encrypted bytes", map.size);
 
         // Check if the buffer is empty.
         if (map.size) {

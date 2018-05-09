@@ -605,6 +605,7 @@ auto CSSFontFace::fontLoadTiming() const -> FontLoadTiming
         case FontLoadingBehavior::Optional:
             return { 0.1_s, 0_s };
         }
+        RELEASE_ASSERT_NOT_REACHED();
     case Settings::FontLoadTimingOverride::Block:
         return { Seconds::infinity(), 0_s };
     case Settings::FontLoadTimingOverride::Swap:
@@ -612,8 +613,7 @@ auto CSSFontFace::fontLoadTiming() const -> FontLoadTiming
     case Settings::FontLoadTimingOverride::Failure:
         return { 0_s, 0_s };
     }
-    ASSERT_NOT_REACHED();
-    return { 3_s, Seconds::infinity() };
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void CSSFontFace::setStatus(Status newStatus)

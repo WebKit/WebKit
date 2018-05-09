@@ -54,7 +54,7 @@ static void type_name##_finalize(GObject* object) \
     G_OBJECT_CLASS(type_name##_parent_class)->finalize(object); \
 } \
 \
-static void type_name##_class_intern_init(gpointer klass) \
+static void type_name##_class_intern_init(gpointer klass, gpointer) \
 { \
     GObjectClass* gObjectClass = G_OBJECT_CLASS(klass); \
     g_type_class_add_private(klass, sizeof(TypeName##Private)); \
@@ -63,7 +63,7 @@ static void type_name##_class_intern_init(gpointer klass) \
     gObjectClass->finalize = type_name##_finalize; \
 } \
 \
-static void type_name##_init(TypeName* self) \
+static void type_name##_init(TypeName* self, gpointer) \
 { \
     TypeName##Private* priv = G_TYPE_INSTANCE_GET_PRIVATE(self, type_name##_get_type(), TypeName##Private); \
     self->priv = priv; \

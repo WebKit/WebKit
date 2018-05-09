@@ -268,7 +268,7 @@ void SocketStreamHandleImpl::beginWaitingForSocketWritability()
 
     m_writeReadySource = adoptGRef(g_pollable_output_stream_create_source(m_outputStream.get(), m_cancellable.get()));
     ref();
-    g_source_set_callback(m_writeReadySource.get(), reinterpret_cast<GSourceFunc>(writeReadyCallback), this, [](gpointer handle) { 
+    g_source_set_callback(m_writeReadySource.get(), reinterpret_cast<GSourceFunc>(reinterpret_cast<GCallback>(writeReadyCallback)), this, [](gpointer handle) {
         static_cast<SocketStreamHandleImpl*>(handle)->deref();
     });
     g_source_attach(m_writeReadySource.get(), g_main_context_get_thread_default());

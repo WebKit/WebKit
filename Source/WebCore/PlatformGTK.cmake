@@ -156,11 +156,11 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
     )
     target_include_directories(WebCorePlatformGTK2 PRIVATE
         ${WebCore_INCLUDE_DIRECTORIES}
-        ${GTK2_INCLUDE_DIRS}
-        ${GDK2_INCLUDE_DIRS}
     )
     target_include_directories(WebCorePlatformGTK2 SYSTEM PRIVATE
         ${WebCore_SYSTEM_INCLUDE_DIRECTORIES}
+        ${GTK2_INCLUDE_DIRS}
+        ${GDK2_INCLUDE_DIRS}
     )
     target_link_libraries(WebCorePlatformGTK2
          ${WebCore_LIBRARIES}

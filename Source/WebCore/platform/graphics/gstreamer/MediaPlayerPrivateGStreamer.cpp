@@ -1232,8 +1232,9 @@ void MediaPlayerPrivateGStreamer::processTableOfContentsEntry(GstTocEntry* entry
 }
 #endif
 
-static int findHLSQueue(const GValue* item)
+static gint findHLSQueue(gconstpointer a, gconstpointer)
 {
+    GValue* item = static_cast<GValue*>(const_cast<gpointer>(a));
     GstElement* element = GST_ELEMENT(g_value_get_object(item));
     if (g_str_has_prefix(GST_ELEMENT_NAME(element), "queue")) {
         GstElement* parent = GST_ELEMENT(GST_ELEMENT_PARENT(element));

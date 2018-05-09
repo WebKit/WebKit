@@ -85,7 +85,7 @@ T CPUState::gpr(RegisterID id) const
     CPUState* cpu = const_cast<CPUState*>(this);
     auto& from = cpu->gpr(id);
     typename std::remove_const<T>::type to { };
-    std::memcpy(&to, &from, sizeof(to)); // Use std::memcpy to avoid strict aliasing issues.
+    std::memcpy(static_cast<void*>(&to), &from, sizeof(to)); // Use std::memcpy to avoid strict aliasing issues.
     return to;
 }
 
@@ -95,7 +95,7 @@ T CPUState::spr(SPRegisterID id) const
     CPUState* cpu = const_cast<CPUState*>(this);
     auto& from = cpu->spr(id);
     typename std::remove_const<T>::type to { };
-    std::memcpy(&to, &from, sizeof(to)); // Use std::memcpy to avoid strict aliasing issues.
+    std::memcpy(static_cast<void*>(&to), &from, sizeof(to)); // Use std::memcpy to avoid strict aliasing issues.
     return to;
 }
 

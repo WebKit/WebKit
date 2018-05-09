@@ -136,7 +136,7 @@ WebKitContextMenu* webkit_context_menu_new()
 WebKitContextMenu* webkit_context_menu_new_with_items(GList* items)
 {
     WebKitContextMenu* menu = webkit_context_menu_new();
-    g_list_foreach(items, reinterpret_cast<GFunc>(g_object_ref_sink), 0);
+    g_list_foreach(items, reinterpret_cast<GFunc>(reinterpret_cast<GCallback>(g_object_ref_sink)), 0);
     menu->priv->items = g_list_copy(items);
 
     return menu;
