@@ -213,7 +213,8 @@ unsigned Gradient::hash() const
     COMPILE_ASSERT(!(sizeof(ColorStop) % 2), Color_stop_size_should_be_multiple_of_two);
     
     // Ensure that any padding in the struct is zero-filled, so it will not affect the hash value.
-    memset(&parameters, 0, sizeof(parameters));
+    // FIXME: This is asking for trouble, because it is a nontrivial type.
+    memset(static_cast<void*>(&parameters), 0, sizeof(parameters));
     
     WTF::switchOn(m_data,
         [&parameters] (const LinearData& data) {

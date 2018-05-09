@@ -1003,14 +1003,14 @@ void jsc_value_object_define_property_accessor(JSCValue* value, const char* prop
     JSC::VM& vm = exec->vm();
     JSC::JSLockHolder locker(vm);
     if (getter) {
-        GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(getter, userData, reinterpret_cast<GClosureNotify>(destroyNotify)));
+        GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(getter, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
         auto* functionObject = toRef(JSC::JSCCallbackFunction::create(vm, exec->lexicalGlobalObject(), ASCIILiteral("get"),
             JSC::JSCCallbackFunction::Type::Method, nullptr, WTFMove(closure), propertyType, { }));
         GRefPtr<JSCValue> function = jscContextGetOrCreateValue(priv->context.get(), functionObject);
         jsc_value_object_set_property(descriptor.get(), "get", function.get());
     }
     if (setter) {
-        GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(setter, userData, getter ? nullptr : reinterpret_cast<GClosureNotify>(destroyNotify)));
+        GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(setter, userData, getter ? nullptr : reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
         auto* functionObject = toRef(JSC::JSCCallbackFunction::create(vm, exec->lexicalGlobalObject(), ASCIILiteral("set"),
             JSC::JSCCallbackFunction::Type::Method, nullptr, WTFMove(closure), G_TYPE_NONE, { propertyType }));
         GRefPtr<JSCValue> function = jscContextGetOrCreateValue(priv->context.get(), functionObject);
@@ -1054,7 +1054,7 @@ JSCValue* jsc_value_new_function(JSCContext* context, const char* name, GCallbac
     }
     va_end(args);
 
-    GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(callback, userData, reinterpret_cast<GClosureNotify>(destroyNotify)));
+    GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(callback, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
     JSC::ExecState* exec = toJS(jscContextGetJSContext(context));
     JSC::VM& vm = exec->vm();
     JSC::JSLockHolder locker(vm);

@@ -1,3 +1,15 @@
+2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Build cleanly with GCC 8 and ICU 60
+        https://bugs.webkit.org/show_bug.cgi?id=185462
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * Platform/IPC/glib/GSocketMonitor.cpp:
+        (IPC::GSocketMonitor::start): Silence -Wcast-function-type warning.
+        * Shared/API/glib/WebKitContextMenu.cpp:
+        (webkit_context_menu_new_with_items): Ditto.
+
 2018-05-08  Sihui Liu  <sihui_liu@apple.com>
 
         Adopt new async _savecookies SPI for keeping networking process active during flushing cookies

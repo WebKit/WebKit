@@ -47,6 +47,27 @@ SymbolImpl::StaticSymbolImpl dollarVMPrivateName { "PrivateSymbol.$vm", SymbolIm
 SymbolImpl::StaticSymbolImpl polyProtoPrivateName { "PrivateSymbol.PolyProto", SymbolImpl::s_flagIsPrivate };
 
 } // namespace Symbols
+
+// We treat the dollarVM name as a special case below for $vm (because CommonIdentifiers does not
+// yet support the $ character).
+BuiltinNames::BuiltinNames(VM* vm, CommonIdentifiers* commonIdentifiers)
+    : m_emptyIdentifier(commonIdentifiers->emptyIdentifier)
+    JSC_FOREACH_BUILTIN_FUNCTION_NAME(INITIALIZE_BUILTIN_NAMES_IN_JSC)
+    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_BUILTIN_NAMES_IN_JSC)
+    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALIZE_BUILTIN_SYMBOLS)
+    , m_dollarVMName(Identifier::fromString(vm, "$vm"))
+    , m_dollarVMPrivateName(Identifier::fromUid(vm, &static_cast<SymbolImpl&>(Symbols::dollarVMPrivateName)))
+    , m_polyProtoPrivateName(Identifier::fromUid(vm, &static_cast<SymbolImpl&>(Symbols::polyProtoPrivateName)))
+{
+    JSC_FOREACH_BUILTIN_FUNCTION_NAME(INITIALIZE_PRIVATE_TO_PUBLIC_ENTRY)
+    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PRIVATE_TO_PUBLIC_ENTRY)
+    JSC_FOREACH_BUILTIN_FUNCTION_NAME(INITIALIZE_PUBLIC_TO_PRIVATE_ENTRY)
+    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PUBLIC_TO_PRIVATE_ENTRY)
+    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALIZE_SYMBOL_PUBLIC_TO_PRIVATE_ENTRY)
+    m_privateToPublicMap.add(m_dollarVMPrivateName.impl(), &m_dollarVMName);
+    m_publicToPrivateMap.add(m_dollarVMName.impl(), &m_dollarVMPrivateName);
+}
+
 } // namespace JSC
 
 #if COMPILER(MSVC)

@@ -21,6 +21,7 @@ add_definitions(-DXDG_PREFIX=_wk_xdg)
 add_library(xdgmime STATIC ${XDGMIME_SOURCES})
 
 if (COMPILER_IS_GCC_OR_CLANG)
-    WEBKIT_ADD_TARGET_C_FLAGS(xdgmime -Wno-sign-compare
+    WEBKIT_ADD_TARGET_C_FLAGS(xdgmime -Wno-cast-function-type
+                                      -Wno-sign-compare
                                       -Wno-unused-parameter)
 endif ()

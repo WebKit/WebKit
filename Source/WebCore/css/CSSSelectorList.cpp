@@ -67,7 +67,7 @@ void CSSSelectorList::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelect
             {
                 // Move item from the parser selector vector into m_selectorArray without invoking destructor (Ugh.)
                 CSSSelector* currentSelector = current->releaseSelector().release();
-                memcpy(&m_selectorArray[arrayIndex], currentSelector, sizeof(CSSSelector));
+                memcpy(static_cast<void*>(&m_selectorArray[arrayIndex]), static_cast<void*>(currentSelector), sizeof(CSSSelector));
 
                 // Free the underlying memory without invoking the destructor.
                 operator delete (currentSelector);

@@ -1999,11 +1999,11 @@ static inline bool containsKanaLetters(const String& pattern)
     return false;
 }
 
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#if COMPILER(GCC_OR_CLANG)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
-// NOTE: ICU's unorm_normalize function is deprecated in some SDKs.
+// NOTE: ICU's unorm_normalize function is deprecated.
 
 static void normalizeCharacters(const UChar* characters, unsigned length, Vector<UChar>& buffer)
 {
@@ -2026,8 +2026,8 @@ static void normalizeCharacters(const UChar* characters, unsigned length, Vector
     ASSERT(status == U_STRING_NOT_TERMINATED_WARNING);
 }
 
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
+#if COMPILER(GCC_OR_CLANG)
+#pragma GCC diagnostic pop
 #endif
 
 static bool isNonLatin1Separator(UChar32 character)

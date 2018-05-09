@@ -178,6 +178,7 @@ include_directories(
     ${WEBKIT_DIR}/Shared/Plugins
     ${WEBKIT_DIR}/UIProcess
     ${WEBKIT_DIR}/UIProcess/API
+    ${WEBKIT_DIR}/UIProcess/API/C
     ${WEBKIT_DIR}/WebProcess/InjectedBundle
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/c
 )

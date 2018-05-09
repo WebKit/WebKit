@@ -218,6 +218,7 @@
             hash="sha256:bb89e5c5aad33169a8c7f28b45671c7899c12f74caf707737f784d7102758e6c">
       <!-- This patch landed in glib-2-54 branch and will be available in 2.54.3. -->
       <patch file="glib-gtester-do-not-consider-skipped-tests-as-failures.patch" strip="1"/>
+      <patch file="glib-cast-function-type.patch" strip="1"/>
     </branch>
   </autotools>
 

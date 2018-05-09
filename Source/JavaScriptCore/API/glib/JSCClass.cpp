@@ -563,7 +563,7 @@ JSCValue* jsc_class_add_constructor(JSCClass* jscClass, const char* name, GCallb
     }
     va_end(args);
 
-    GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(callback, userData, reinterpret_cast<GClosureNotify>(destroyNotify)));
+    GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(callback, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
     JSC::ExecState* exec = toJS(jscContextGetJSContext(priv->context));
     JSC::VM& vm = exec->vm();
     JSC::JSLockHolder locker(vm);
@@ -613,7 +613,7 @@ void jsc_class_add_method(JSCClass* jscClass, const char* name, GCallback callba
     }
     va_end(args);
 
-    GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(callback, userData, reinterpret_cast<GClosureNotify>(destroyNotify)));
+    GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(callback, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
     JSC::ExecState* exec = toJS(jscContextGetJSContext(priv->context));
     JSC::VM& vm = exec->vm();
     JSC::JSLockHolder locker(vm);

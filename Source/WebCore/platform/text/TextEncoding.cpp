@@ -69,11 +69,11 @@ String TextEncoding::decode(const char* data, size_t length, bool stopOnError, b
     return newTextCodec(*this)->decode(data, length, true, stopOnError, sawError);
 }
 
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#if COMPILER(GCC_OR_CLANG)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
-// NOTE: ICU's unorm_quickCheck and unorm_normalize functions are deprecated in some SDKs.
+// NOTE: ICU's unorm_quickCheck and unorm_normalize functions are deprecated.
 
 Vector<uint8_t> TextEncoding::encode(StringView text, UnencodableHandling handling) const
 {
@@ -112,8 +112,8 @@ Vector<uint8_t> TextEncoding::encode(StringView text, UnencodableHandling handli
     return newTextCodec(*this)->encode(StringView { source, sourceLength }, handling);
 }
 
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
+#if COMPILER(GCC_OR_CLANG)
+#pragma GCC diagnostic pop
 #endif
 
 const char* TextEncoding::domName() const

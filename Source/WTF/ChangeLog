@@ -1,3 +1,18 @@
+2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Build cleanly with GCC 8 and ICU 60
+        https://bugs.webkit.org/show_bug.cgi?id=185462
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * wtf/HashTable.h:
+        (WTF::HashTableBucketInitializer<true>::initialize): Since -Wclass-memaccess warning. This
+        is probably safe enough, since it's for an empty bucket.
+        * wtf/StdLibExtras.h:
+        (WTF::bitwise_cast): Silence -Wclass-memaccess as we use type traits to ensure safety here.
+        * wtf/Vector.h: Ditto, all uses are safe.
+        * wtf/glib/WTFGType.h: Silence -Wcast-function-type.
+
 2018-05-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ARMv7] Drop ARMv7 disassembler in favor of capstone

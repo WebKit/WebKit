@@ -1,3 +1,44 @@
+2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Build cleanly with GCC 8 and ICU 60
+        https://bugs.webkit.org/show_bug.cgi?id=185462
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * PlatformGTK.cmake: Include directories are in the wrong place.
+        * accessibility/AXObjectCache.cpp: Silence -Wclass-memaccess problems and leave warnings.
+        (WebCore::AXObjectCache::startOrEndTextMarkerDataForRange):
+        (WebCore::AXObjectCache::textMarkerDataForCharacterOffset):
+        (WebCore::AXObjectCache::textMarkerDataForVisiblePosition):
+        (WebCore::AXObjectCache::textMarkerDataForFirstPositionInTextControl):
+        * css/CSSFontFace.cpp: Silence -Wfallthrough
+        (WebCore::CSSFontFace::fontLoadTiming const):
+        * css/CSSSelectorList.cpp: Silence -Wclass-memaccess, this one is intentional.
+        (WebCore::CSSSelectorList::adoptSelectorVector):
+        * editing/TextIterator.cpp: Silence ICU deprecation warnings.
+        * platform/Length.h:
+        (WebCore::Length::operator=): More -Wclass-memaccess, looks benign.
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::hash const): -Wclass-memaccess again. Leave a warning.
+        * platform/graphics/SurrogatePairAwareTextIterator.cpp: Silence ICU deprecation warnings.
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::FontCascade::fontForCombiningCharacterSequence const): Silence ICU deprecation.
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData): Silence -Wcast-function-type.
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::Font::canRenderCombiningCharacterSequence const): Silence ICU deprecation.
+        * platform/graphics/gstreamer/GstAllocatorFastMalloc.cpp:
+        (gstAllocatorFastMallocMemUnmap): Fix -Wcast-function-type.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::updateTracks): Fix bad printf.
+        (WebCore::MediaPlayerPrivateGStreamer::enableTrack): Another bad printf.
+        (WebCore::findHLSQueue): Fix -Wcast-function-type.
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (webKitMediaClearKeyDecryptorDecrypt): Fix another bad printf.
+        * platform/network/soup/SocketStreamHandleImplSoup.cpp: Silence -Wcast-function-type.
+        (WebCore::SocketStreamHandleImpl::beginWaitingForSocketWritability):
+        * platform/text/TextEncoding.cpp: Silence ICU deprecration.
+
 2018-05-08  Simon Fraser  <simon.fraser@apple.com>
 
         SVG lighting colors need to be converted into linearSRGB

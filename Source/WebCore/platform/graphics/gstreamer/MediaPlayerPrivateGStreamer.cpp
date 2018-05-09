@@ -685,7 +685,7 @@ void MediaPlayerPrivateGStreamer::updateTracks()
             GST_WARNING("Unknown track type found for stream %s", streamId.utf8().data());
     }
 
-    GST_INFO("Media has %u video tracks, %u audio tracks and %u text tracks", validVideoStreams.size(), validAudioStreams.size(), validTextStreams.size());
+    GST_INFO("Media has %zu video tracks, %zu audio tracks and %zu text tracks", validVideoStreams.size(), validAudioStreams.size(), validTextStreams.size());
 
     bool oldHasAudio = m_hasAudio;
     bool oldHasVideo = m_hasVideo;
@@ -749,7 +749,7 @@ void MediaPlayerPrivateGStreamer::enableTrack(TrackPrivateBaseGStreamer::TrackTy
         ASSERT_NOT_REACHED();
     }
 
-    GST_INFO("Enabling %s track with index: %lu", trackTypeAsString, index);
+    GST_INFO("Enabling %s track with index: %u", trackTypeAsString, index);
     // FIXME: Remove isMediaSource() test below when fixing https://bugs.webkit.org/show_bug.cgi?id=182531
     if (m_isLegacyPlaybin || isMediaSource()) {
         GstElement* element = isMediaSource() ? m_source.get() : m_pipeline.get();
@@ -762,7 +762,7 @@ void MediaPlayerPrivateGStreamer::enableTrack(TrackPrivateBaseGStreamer::TrackTy
             String streamId = gst_stream_get_stream_id(stream);
             selectedStreams = g_list_append(selectedStreams, g_strdup(streamId.utf8().data()));
         } else
-            GST_WARNING("%s stream %lu not found", trackTypeAsString, index);
+            GST_WARNING("%s stream %u not found", trackTypeAsString, index);
 
         // TODO: MSE GstStream API support: https://bugs.webkit.org/show_bug.cgi?id=182531
         gst_element_send_event(m_pipeline.get(), gst_event_new_select_streams(selectedStreams));
@@ -1477,8 +1477,9 @@ void MediaPlayerPrivateGStreamer::purgeInvalidTextTracks(Vector<String> validTra
 }
 #endif
 
-static int findHLSQueue(const GValue* item)
+static gint findHLSQueue(gconstpointer a, gconstpointer)
 {
+    GValue* item = static_cast<GValue*>(const_cast<gpointer>(a));
     GstElement* element = GST_ELEMENT(g_value_get_object(item));
     if (g_str_has_prefix(GST_ELEMENT_NAME(element), "queue")) {
         GstElement* parent = GST_ELEMENT(GST_ELEMENT_PARENT(element));

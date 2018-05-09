@@ -1,3 +1,17 @@
+2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Build cleanly with GCC 8 and ICU 60
+        https://bugs.webkit.org/show_bug.cgi?id=185462
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * TestWebKitAPI/CMakeLists.txt: Fix weird build failure, we were missing a directory. Not
+        sure why this was never noticed until now or why the bots are OK.
+        * gtk/jhbuild.modules: Add upstream patch to avoid warnings inside G_DEFINE_TYPE.
+        * gtk/patches/glib-cast-function-type.patch: Added.
+        * wpe/jhbuild.modules: Add upstream patch to avoid warnings inside G_DEFINE_TYPE.
+        * wpe/patches/glib-cast-function-type.patch: Added.
+
 2018-05-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][GTK][JSCONLY] Use capstone disassembler

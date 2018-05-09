@@ -73,6 +73,7 @@
             hash="sha256:963fdc6685dc3da8e5381dfb9f15ca4b5709b28be84d9d05a9bb8e446abac0a8">
       <patch file="gdate-suppress-string-format-literal-warning.patch" strip="1"/>
       <patch file="glib-revert-wakeup-changes.patch" strip="1"/>
+      <patch file="glib-cast-function-type.patch" strip="1"/>
     </branch>
   </autotools>
 

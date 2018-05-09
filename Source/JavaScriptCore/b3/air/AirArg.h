@@ -889,6 +889,7 @@ public:
             case Width64:
                 return B3::isRepresentableAs<int64_t>(value);
             }
+            RELEASE_ASSERT_NOT_REACHED();
         case Unsigned:
             switch (width) {
             case Width8:
@@ -901,7 +902,7 @@ public:
                 return B3::isRepresentableAs<uint64_t>(value);
             }
         }
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     bool isRepresentableAs(Width, Signedness) const;
@@ -920,6 +921,7 @@ public:
             case Width64:
                 return static_cast<int64_t>(value);
             }
+            RELEASE_ASSERT_NOT_REACHED();
         case Unsigned:
             switch (width) {
             case Width8:
@@ -932,7 +934,7 @@ public:
                 return static_cast<uint64_t>(value);
             }
         }
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     template<typename T>

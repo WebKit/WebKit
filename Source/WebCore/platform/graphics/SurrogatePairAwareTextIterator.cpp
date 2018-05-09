@@ -69,11 +69,11 @@ bool SurrogatePairAwareTextIterator::consumeSlowCase(UChar32& character, unsigne
     return true;
 }
 
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#if COMPILER(GCC_OR_CLANG)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
-// NOTE: ICU's unorm_normalize function is deprecated in some SDKs.
+// NOTE: ICU's unorm_normalize function is deprecated.
 
 UChar32 SurrogatePairAwareTextIterator::normalizeVoicingMarks()
 {
@@ -95,8 +95,8 @@ UChar32 SurrogatePairAwareTextIterator::normalizeVoicingMarks()
     return 0;
 }
 
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
+#if COMPILER(GCC_OR_CLANG)
+#pragma GCC diagnostic pop
 #endif
 
 }

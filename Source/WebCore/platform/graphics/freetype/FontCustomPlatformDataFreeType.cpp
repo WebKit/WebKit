@@ -48,7 +48,7 @@ FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, SharedBuffe
     // this cairo_font_face_t is destroyed, it cleans up the FreeType face as well.
     static cairo_user_data_key_t freeTypeFaceKey;
     cairo_font_face_set_user_data(m_fontFace, &freeTypeFaceKey, freeTypeFace,
-         reinterpret_cast<cairo_destroy_func_t>(FT_Done_Face));
+        reinterpret_cast<cairo_destroy_func_t>(reinterpret_cast<GCallback>(FT_Done_Face)));
 }
 
 FontCustomPlatformData::~FontCustomPlatformData()

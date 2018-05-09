@@ -86,9 +86,8 @@ static gpointer gstAllocatorFastMallocMemMap(GstMemoryFastMalloc* memory, gsize,
     return memory->data;
 }
 
-static gboolean gstAllocatorFastMallocMemUnmap(GstMemoryFastMalloc*)
+static void gstAllocatorFastMallocMemUnmap(GstMemoryFastMalloc*)
 {
-    return TRUE;
 }
 
 static GstMemoryFastMalloc* gstAllocatorFastMallocMemCopy(GstMemoryFastMalloc* memory, gssize offset, gsize size)
