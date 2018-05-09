@@ -1,3 +1,62 @@
+2018-05-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Update MediaSession to use release logging
+        https://bugs.webkit.org/show_bug.cgi?id=185376
+        <rdar://problem/40022203>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, tested manually.
+
+        * Modules/mediastream/MediaStream.h: hostingDocument() doesn't need to return a const Document.
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::hostingDocument const): Ditto.
+        * Modules/webaudio/AudioContext.h:
+
+        * html/HTMLMediaElement.h: Ditto.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::MediaElementSession):
+        (WebCore::MediaElementSession::addBehaviorRestriction):
+        (WebCore::MediaElementSession::removeBehaviorRestriction):
+        (WebCore::MediaElementSession::dataLoadingPermitted const):
+        (WebCore::MediaElementSession::fullscreenPermitted const):
+        (WebCore::MediaElementSession::pageAllowsDataLoading const):
+        (WebCore::MediaElementSession::pageAllowsPlaybackAfterResuming const):
+        (WebCore::MediaElementSession::canShowControlsManager const):
+        (WebCore::MediaElementSession::showPlaybackTargetPicker):
+        (WebCore::MediaElementSession::hasWirelessPlaybackTargets const):
+        (WebCore::MediaElementSession::wirelessVideoPlaybackDisabled const):
+        (WebCore::MediaElementSession::setWirelessVideoPlaybackDisabled):
+        (WebCore::MediaElementSession::setHasPlaybackTargetAvailabilityListeners):
+        (WebCore::MediaElementSession::externalOutputDeviceAvailableDidChange):
+        (WebCore::MediaElementSession::setShouldPlayToPlaybackTarget):
+        (WebCore::MediaElementSession::mediaEngineUpdated):
+        (WebCore::MediaElementSession::willLog const): Deleted.
+        (WebCore::MediaElementSession::logger const): Deleted.
+        (WebCore::MediaElementSession::logIdentifier const): Deleted.
+        (WebCore::MediaElementSession::logChannel const): Deleted.
+        * html/MediaElementSession.h:
+
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::nextLogIdentifier):
+        (WebCore::convertEnumerationToString):
+        (WebCore::PlatformMediaSession::PlatformMediaSession):
+        (WebCore::PlatformMediaSession::setState):
+        (WebCore::PlatformMediaSession::beginInterruption):
+        (WebCore::PlatformMediaSession::endInterruption):
+        (WebCore::PlatformMediaSession::clientWillBeginAutoplaying):
+        (WebCore::PlatformMediaSession::clientWillPausePlayback):
+        (WebCore::PlatformMediaSession::pauseSession):
+        (WebCore::PlatformMediaSession::stopSession):
+        (WebCore::PlatformMediaSession::clientDataBufferingTimerFired):
+        (WebCore::PlatformMediaSession::logChannel const):
+        (WebCore::stateName): Deleted.
+        (WebCore::interruptionName): Deleted.
+        * platform/audio/PlatformMediaSession.h:
+        (WTF::LogArgument<WebCore::PlatformMediaSession::State>::toString):
+        (WTF::LogArgument<WebCore::PlatformMediaSession::InterruptionType>::toString):
+
 2018-05-09  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Never call updateTracks if running on legacy pipeline

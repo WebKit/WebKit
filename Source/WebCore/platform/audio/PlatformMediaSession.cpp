@@ -31,43 +31,59 @@
 #include "Logging.h"
 #include "MediaPlayer.h"
 #include "PlatformMediaSessionManager.h"
+#include <wtf/CryptographicallyRandomNumber.h>
 
 namespace WebCore {
 
 static const Seconds clientDataBufferingTimerThrottleDelay { 100_ms };
 
-#if !LOG_DISABLED
-static const char* stateName(PlatformMediaSession::State state)
+#if !RELEASE_LOG_DISABLED
+static uint64_t nextLogIdentifier()
 {
-#define STATE_CASE(state) case PlatformMediaSession::state: return #state
-    switch (state) {
-    STATE_CASE(Idle);
-    STATE_CASE(Autoplaying);
-    STATE_CASE(Playing);
-    STATE_CASE(Paused);
-    STATE_CASE(Interrupted);
-    }
-
-    ASSERT_NOT_REACHED();
-    return "";
+    static uint64_t logIdentifier = cryptographicallyRandomNumber();
+    return ++logIdentifier;
 }
 
-static const char* interruptionName(PlatformMediaSession::InterruptionType type)
+String convertEnumerationToString(PlatformMediaSession::State state)
 {
-#define INTERRUPTION_CASE(type) case PlatformMediaSession::type: return #type
-    switch (type) {
-    INTERRUPTION_CASE(NoInterruption);
-    INTERRUPTION_CASE(SystemSleep);
-    INTERRUPTION_CASE(EnteringBackground);
-    INTERRUPTION_CASE(SystemInterruption);
-    INTERRUPTION_CASE(SuspendedUnderLock);
-    INTERRUPTION_CASE(InvisibleAutoplay);
-    INTERRUPTION_CASE(ProcessInactive);
-    }
-    
-    ASSERT_NOT_REACHED();
-    return "";
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("Idle"),
+        MAKE_STATIC_STRING_IMPL("Autoplaying"),
+        MAKE_STATIC_STRING_IMPL("Playing"),
+        MAKE_STATIC_STRING_IMPL("Paused"),
+        MAKE_STATIC_STRING_IMPL("Interrupted"),
+    };
+    static_assert(!static_cast<size_t>(PlatformMediaSession::Idle), "PlatformMediaSession::Idle is not 0 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::Autoplaying == 1), "PlatformMediaSession::Autoplaying is not 1 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::Playing == 2), "PlatformMediaSession::Playing is not 2 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::Paused == 3), "PlatformMediaSession::Paused is not 3 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::Interrupted == 4), "PlatformMediaSession::Interrupted is not 4 as expected");
+    ASSERT(static_cast<size_t>(state) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(state)];
 }
+
+String convertEnumerationToString(PlatformMediaSession::InterruptionType type)
+{
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("NoInterruption"),
+        MAKE_STATIC_STRING_IMPL("SystemSleep"),
+        MAKE_STATIC_STRING_IMPL("EnteringBackground"),
+        MAKE_STATIC_STRING_IMPL("SystemInterruption"),
+        MAKE_STATIC_STRING_IMPL("SuspendedUnderLock"),
+        MAKE_STATIC_STRING_IMPL("InvisibleAutoplay"),
+        MAKE_STATIC_STRING_IMPL("ProcessInactive"),
+    };
+    static_assert(!static_cast<size_t>(PlatformMediaSession::NoInterruption), "PlatformMediaSession::NoInterruption is not 0 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::SystemSleep == 1), "PlatformMediaSession::SystemSleep is not 1 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::EnteringBackground == 2), "PlatformMediaSession::EnteringBackground is not 2 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::SystemInterruption == 3), "PlatformMediaSession::SystemInterruption is not 3 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::SuspendedUnderLock == 4), "PlatformMediaSession::SuspendedUnderLock is not 4 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::InvisibleAutoplay == 5), "PlatformMediaSession::InvisibleAutoplay is not 5 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::ProcessInactive == 6), "PlatformMediaSession::ProcessInactive is not 6 as expected");
+    ASSERT(static_cast<size_t>(type) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(type)];
+}
+
 #endif
 
 std::unique_ptr<PlatformMediaSession> PlatformMediaSession::create(PlatformMediaSessionClient& client)
@@ -81,6 +97,10 @@ PlatformMediaSession::PlatformMediaSession(PlatformMediaSessionClient& client)
     , m_state(Idle)
     , m_stateToRestore(Idle)
     , m_notifyingClient(false)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(client.hostingDocument()->logger())
+    , m_logIdentifier(nextLogIdentifier())
+#endif
 {
     ASSERT(m_client.mediaType() >= None && m_client.mediaType() <= MediaStreamCapturingAudio);
     PlatformMediaSessionManager::sharedManager().addSession(*this);
@@ -93,13 +113,13 @@ PlatformMediaSession::~PlatformMediaSession()
 
 void PlatformMediaSession::setState(State state)
 {
-    LOG(Media, "PlatformMediaSession::setState(%p) - %s", this, stateName(state));
+    INFO_LOG(LOGIDENTIFIER, state);
     m_state = state;
 }
 
 void PlatformMediaSession::beginInterruption(InterruptionType type)
 {
-    LOG(Media, "PlatformMediaSession::beginInterruption(%p), state = %s, interruption type = %s, interruption count = %i", this, stateName(m_state), interruptionName(type), m_interruptionCount);
+    INFO_LOG(LOGIDENTIFIER, "state = ", m_state, ", interruption type = ", type, ", interruption count = ", m_interruptionCount);
 
     // When interruptions are overridden, m_interruptionType doesn't get set.
     // Give nested interruptions a chance when the previous interruptions were overridden.
@@ -107,7 +127,7 @@ void PlatformMediaSession::beginInterruption(InterruptionType type)
         return;
 
     if (client().shouldOverrideBackgroundPlaybackRestriction(type)) {
-        LOG(Media, "PlatformMediaSession::beginInterruption(%p), returning early because client says to override interruption", this);
+        INFO_LOG(LOGIDENTIFIER, "returning early because client says to override interruption");
         return;
     }
 
@@ -121,10 +141,10 @@ void PlatformMediaSession::beginInterruption(InterruptionType type)
 
 void PlatformMediaSession::endInterruption(EndInterruptionFlags flags)
 {
-    LOG(Media, "PlatformMediaSession::endInterruption(%p) - flags = %i, stateToRestore = %s, interruption count = %i", this, (int)flags, stateName(m_stateToRestore), m_interruptionCount);
+    INFO_LOG(LOGIDENTIFIER, "flags = ", (int)flags, ", stateToRestore = ", m_stateToRestore, ", interruption count = ", m_interruptionCount);
 
     if (!m_interruptionCount) {
-        LOG(Media, "PlatformMediaSession::endInterruption(%p) - !! ignoring spurious interruption end !!", this);
+        INFO_LOG(LOGIDENTIFIER, "!! ignoring spurious interruption end !!");
         return;
     }
 
@@ -148,10 +168,10 @@ void PlatformMediaSession::clientWillBeginAutoplaying()
     if (m_notifyingClient)
         return;
 
-    LOG(Media, "PlatformMediaSession::clientWillBeginAutoplaying(%p)- state = %s", this, stateName(m_state));
+    INFO_LOG(LOGIDENTIFIER, "state = ", m_state);
     if (state() == Interrupted) {
         m_stateToRestore = Autoplaying;
-        LOG(Media, "      setting stateToRestore to \"Autoplaying\"");
+        INFO_LOG(LOGIDENTIFIER, "      setting stateToRestore to \"Autoplaying\"");
         return;
     }
 
@@ -180,10 +200,10 @@ bool PlatformMediaSession::clientWillPausePlayback()
     if (m_notifyingClient)
         return true;
 
-    LOG(Media, "PlatformMediaSession::clientWillPausePlayback(%p)- state = %s", this, stateName(m_state));
+    INFO_LOG(LOGIDENTIFIER, "state = ", m_state);
     if (state() == Interrupted) {
         m_stateToRestore = Paused;
-        LOG(Media, "      setting stateToRestore to \"Paused\"");
+        INFO_LOG(LOGIDENTIFIER, "      setting stateToRestore to \"Paused\"");
         return false;
     }
     
@@ -195,13 +215,13 @@ bool PlatformMediaSession::clientWillPausePlayback()
 
 void PlatformMediaSession::pauseSession()
 {
-    LOG(Media, "PlatformMediaSession::pauseSession(%p)", this);
+    INFO_LOG(LOGIDENTIFIER);
     m_client.suspendPlayback();
 }
 
 void PlatformMediaSession::stopSession()
 {
-    LOG(Media, "PlatformMediaSession::stopSession(%p)", this);
+    INFO_LOG(LOGIDENTIFIER);
     m_client.suspendPlayback();
     PlatformMediaSessionManager::sharedManager().removeSession(*this);
 }
@@ -266,7 +286,7 @@ void PlatformMediaSession::scheduleClientDataBufferingCheck()
 
 void PlatformMediaSession::clientDataBufferingTimerFired()
 {
-    LOG(Media, "PlatformMediaSession::clientDataBufferingTimerFired(%p)- visible = %s", this, m_client.elementIsHidden() ? "false" : "true");
+    INFO_LOG(LOGIDENTIFIER, "visible = ", m_client.elementIsHidden());
 
     updateClientDataBuffering();
 
@@ -370,5 +390,13 @@ void PlatformMediaSession::clientCharacteristicsChanged()
     PlatformMediaSessionManager::sharedManager().clientCharacteristicsChanged(*this);
 }
 
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& PlatformMediaSession::logChannel() const
+{
+    return LogMedia;
 }
+#endif
+
+}
+
 #endif

@@ -343,7 +343,7 @@ Document* AudioContext::document() const
     return downcast<Document>(m_scriptExecutionContext);
 }
 
-const Document* AudioContext::hostingDocument() const
+Document* AudioContext::hostingDocument() const
 {
     return downcast<Document>(m_scriptExecutionContext);
 }

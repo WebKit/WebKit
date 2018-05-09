@@ -198,7 +198,7 @@ public:
     
     bool inActiveDocument() const { return m_inActiveDocument; }
 
-    const Document* hostingDocument() const override { return &document(); }
+    Document* hostingDocument() const final { return &document(); }
 
 // DOM API
 // error state

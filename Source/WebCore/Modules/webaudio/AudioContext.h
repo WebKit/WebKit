@@ -90,7 +90,7 @@ public:
 
     Document* document() const; // ASSERTs if document no longer exists.
 
-    const Document* hostingDocument() const override;
+    Document* hostingDocument() const final;
 
     AudioDestinationNode* destination() { return m_destinationNode.get(); }
     size_t currentSampleFrame() const { return m_destinationNode->currentSampleFrame(); }

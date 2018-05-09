@@ -27,6 +27,7 @@
 #define PlatformMediaSession_h
 
 #include "Timer.h"
+#include <wtf/LoggerHelper.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,6 +44,9 @@ class PlatformMediaSessionClient;
 class PlatformMediaSession
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     : public MediaPlaybackTargetClient
+#endif
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
 #endif
 {
 public:
@@ -176,6 +180,13 @@ public:
 protected:
     PlatformMediaSessionClient& client() const { return m_client; }
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return m_logger.get(); }
+    const void* logIdentifier() const override { return reinterpret_cast<const void*>(m_logIdentifier); }
+    const char* logClassName() const override { return "PlatformMediaSession"; }
+    WTFLogChannel& logChannel() const final;
+#endif
+
 private:
     void clientDataBufferingTimerFired();
     void updateClientDataBuffering();
@@ -188,6 +199,11 @@ private:
     int m_interruptionCount { 0 };
     bool m_notifyingClient;
     bool m_isPlayingToWirelessPlaybackTarget { false };
+
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    uint64_t m_logIdentifier;
+#endif
 
     friend class PlatformMediaSessionManager;
 };
@@ -230,7 +246,7 @@ public:
     virtual bool isPlayingToWirelessPlaybackTarget() const { return false; }
     virtual void setShouldPlayToPlaybackTarget(bool) { }
 
-    virtual const Document* hostingDocument() const = 0;
+    virtual Document* hostingDocument() const = 0;
     virtual String sourceApplicationIdentifier() const = 0;
 
     virtual bool processingUserGestureForMedia() const = 0;
@@ -239,6 +255,32 @@ protected:
     virtual ~PlatformMediaSessionClient() = default;
 };
 
+String convertEnumerationToString(PlatformMediaSession::State);
+String convertEnumerationToString(PlatformMediaSession::InterruptionType);
+
 }
+
+namespace WTF {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::PlatformMediaSession::State> {
+    static String toString(const WebCore::PlatformMediaSession::State state)
+    {
+        return convertEnumerationToString(state);
+    }
+};
+
+template <>
+struct LogArgument<WebCore::PlatformMediaSession::InterruptionType> {
+    static String toString(const WebCore::PlatformMediaSession::InterruptionType state)
+    {
+        return convertEnumerationToString(state);
+    }
+};
+
+} // namespace WTF
 
 #endif // PlatformMediaSession_h
