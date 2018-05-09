@@ -181,7 +181,7 @@ void InjectedBundle::setBundleParameter(const String& key, const IPC::DataRefere
 
     id parameter = nil;
     @try {
-        parameter = [unarchiver decodeObjectOfClass:[NSObject class] forKey:@"parameter"];
+        parameter = [unarchiver decodeObjectOfClasses:[NSSet setWithObjects:[NSArray class], [NSData class], [NSDate class], [NSDictionary class], [NSNull class], [NSNumber class], [NSSet class], [NSString class], [NSTimeZone class], [NSURL class], [NSUUID class], nil] forKey:@"parameter"];
     } @catch (NSException *exception) {
         LOG_ERROR("Failed to decode bundle parameter: %@", exception);
         return;

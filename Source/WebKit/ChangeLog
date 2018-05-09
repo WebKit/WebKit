@@ -1,3 +1,17 @@
+2018-05-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Restrict unarchiving of bundle parameters to a set of known classes
+        https://bugs.webkit.org/show_bug.cgi?id=185489
+        <rdar://problem/21912401>
+
+        Reviewed by Ryosuke Niwa.
+
+        Stop accepting anything derived from NSObject, and instead only agree to unarchive objects
+        from a set of things we actually pass as InjectedBundle parameters.
+
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::setBundleParameter):
+
 2018-05-09  Richard Houle  <rhoule@apple.com>
 
         [Cocoa] Some fields are not identified as [WKWebProcessPlugInNodeHandle isTextField]
