@@ -1,3 +1,16 @@
+2018-05-08  Dean Jackson  <dino@apple.com>
+
+        Disable system preview link fetching
+        https://bugs.webkit.org/show_bug.cgi?id=185463
+
+        Reviewed by Jon Lee.
+
+        Temporarily disable system preview detection when a link
+        is clicked.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+
 2018-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal iOS build

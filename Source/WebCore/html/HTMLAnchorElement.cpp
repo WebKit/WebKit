@@ -418,10 +418,6 @@ void HTMLAnchorElement::handleClick(Event& event)
 #endif
 
     bool isSystemPreview = false;
-#if USE(SYSTEM_PREVIEW)
-    isSystemPreview = isSystemPreviewLink();
-#endif
-
     ShouldSendReferrer shouldSendReferrer = hasRel(Relation::NoReferrer) ? NeverSendReferrer : MaybeSendReferrer;
     auto newFrameOpenerPolicy = hasRel(Relation::NoOpener) ? std::make_optional(NewFrameOpenerPolicy::Suppress) : std::nullopt;
     frame->loader().urlSelected(completedURL, target(), &event, LockHistory::No, LockBackForwardList::No, shouldSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, isSystemPreview);
