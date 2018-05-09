@@ -1,3 +1,27 @@
+2018-05-09  Saam Barati  <sbarati@apple.com>
+
+        Add JSVirtualMachine SPI to shrink the memory footprint of the VM
+        https://bugs.webkit.org/show_bug.cgi?id=185441
+        <rdar://problem/39999414>
+
+        Reviewed by Keith Miller.
+
+        This patch adds JSVirtualMachine SPI to release as much memory as possible.
+        The SPI does:
+        - Deletes all code caches.
+        - Synchronous GC.
+        - Run the scavenger.
+
+        * API/JSVirtualMachine.mm:
+        (-[JSVirtualMachine shrinkFootprint]):
+        * API/JSVirtualMachinePrivate.h: Added.
+        * API/tests/testapi.mm:
+        (testObjectiveCAPIMain):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/VM.cpp:
+        (JSC::VM::shrinkFootprint):
+        * runtime/VM.h:
+
 2018-05-09  Leo Balter  <leonardo.balter@gmail.com>
 
         [JSC] Fix ArraySpeciesCreate to return a new Array when the given object is not an array
