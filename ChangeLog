@@ -1,3 +1,9 @@
+2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for 2.21.1 release.
+
+        * Source/cmake/OptionsWPE.cmake: Bump version numbers.
+
 2018-05-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][GTK][JSCONLY] Use capstone disassembler
