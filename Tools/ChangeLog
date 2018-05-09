@@ -1,3 +1,14 @@
+2018-05-09  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
+        [GTK][JHBuild] LLVM 3.7.0 build is broken with GCC 8.1
+        https://bugs.webkit.org/show_bug.cgi?id=185461
+
+        Reviewed by Michael Catanzaro.
+
+        JHBuild now compiles LLVM 6 and Mesa 18.0.3.
+
+        * gtk/jhbuild.modules:
+
 2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for 2.21.1 release.

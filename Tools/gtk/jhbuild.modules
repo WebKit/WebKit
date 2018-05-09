@@ -382,10 +382,10 @@
     <!--- WARNING: At jhbuildrc, when we define the path to the Gallium llvmpipe software rasterizer (needed by XvfbDriver),
           we assume that the directory is named "Mesa". So, don't change the checkoutdir name even if you update the version.  -->
     <branch checkoutdir="Mesa"
-            version="17.3.3"
+            version="18.0.3"
             module="/archive/mesa-${version}.tar.xz"
             repo="mesa.freedesktop.org"
-            hash="sha256:41bac5de0ef6adc1f41a1ec0f80c19e361298ce02fa81b5f9ba4fdca33a9379b">
+            hash="sha256:099d9667327a76a61741a533f95067d76ea71a656e66b91507b3c0caf1d49e30">
     </branch>
     <dependencies>
       <dep package="llvm"/>
@@ -394,13 +394,12 @@
     </dependencies>
   </autotools>
 
-  <autotools id="llvm"
-             autogen-sh="configure"
-             autogenargs="--enable-optimized --disable-terminfo --disable-zlib --enable-targets=host --disable-backtraces --disable-crash-overrides --disable-expensive-checks --disable-debug-runtime --disable-assertions --enable-shared --enable-bindings=none">
+  <cmake id="llvm"
+         cmakeargs="-DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_TERMINFO=OFF -DLLVM_ENABLE_ZLIB=OFF -DLLVM_TARGETS_TO_BUILD=host -DLLVM_ENABLE_BACKTRACES=OFF -DLLVM_ENABLE_CRASH_OVERRIDES=OFF -DLLVM_ENABLE_EXPENSIVE_CHECKS=OFF -DLLVM_ENABLE_ASSERTIONS=OFF -DBUILD_SHARED_LIBS=ON">
     <branch repo="llvm.org"
-            module="/releases/3.7.0/llvm-3.7.0.src.tar.xz" version="3.7.0" checkoutdir="llvm-3.7.0"
-            hash="sha256:ab45895f9dcdad1e140a3a79fd709f64b05ad7364e308c0e582c5b02e9cc3153"/>
-  </autotools>
+            module="/releases/6.0.0/llvm-6.0.0.src.tar.xz" version="6.0.0" checkoutdir="llvm-6.0.0"
+            hash="sha256:1ff53c915b4e761ef400b803f07261ade637b0c269d99569f18040f3dcee4408"/>
+  </cmake>
 
   <autotools id="gsettings-desktop-schemas"
              autogen-sh="configure">
