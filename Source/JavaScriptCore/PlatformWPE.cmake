@@ -24,3 +24,5 @@ list(APPEND JavaScriptCore_FORWARDING_HEADERS
     inspector/remote/glib/RemoteInspectorServer.h
     inspector/remote/glib/RemoteInspectorUtils.h
 )
+
+add_definitions(-DJSC_COMPILATION)
