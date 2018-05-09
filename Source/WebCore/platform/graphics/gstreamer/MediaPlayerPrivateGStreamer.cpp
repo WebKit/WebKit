@@ -108,9 +108,10 @@ void MediaPlayerPrivateGStreamer::setAudioStreamProperties(GObject* object)
 
 void MediaPlayerPrivateGStreamer::registerMediaEngine(MediaEngineRegistrar registrar)
 {
-    if (isAvailable())
+    if (isAvailable()) {
         registrar([](MediaPlayer* player) { return std::make_unique<MediaPlayerPrivateGStreamer>(player); },
             getSupportedTypes, supportsType, nullptr, nullptr, nullptr, supportsKeySystem);
+    }
 }
 
 bool MediaPlayerPrivateGStreamer::isAvailable()
@@ -188,9 +189,10 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     if (WEBKIT_IS_WEB_SRC(m_source.get()) && GST_OBJECT_PARENT(m_source.get()))
         g_signal_handlers_disconnect_by_func(GST_ELEMENT_PARENT(m_source.get()), reinterpret_cast<gpointer>(uriDecodeBinElementAddedCallback), this);
 
-    if (m_autoAudioSink)
+    if (m_autoAudioSink) {
         g_signal_handlers_disconnect_by_func(G_OBJECT(m_autoAudioSink.get()),
             reinterpret_cast<gpointer>(setAudioStreamPropertiesCallback), this);
+    }
 
     m_readyTimerHandler.stop();
     for (auto& missingPluginCallback : m_missingPluginCallbacks) {
@@ -375,9 +377,8 @@ bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
 
     GstStateChangeReturn setStateResult = gst_element_set_state(m_pipeline.get(), newState);
     GstState pausedOrPlaying = newState == GST_STATE_PLAYING ? GST_STATE_PAUSED : GST_STATE_PLAYING;
-    if (currentState != pausedOrPlaying && setStateResult == GST_STATE_CHANGE_FAILURE) {
+    if (currentState != pausedOrPlaying && setStateResult == GST_STATE_CHANGE_FAILURE)
         return false;
-    }
 
     // Create a timer when entering the READY state so that we can free resources
     // if we stay for too long on READY.
@@ -417,9 +418,8 @@ void MediaPlayerPrivateGStreamer::play()
         m_preload = MediaPlayer::Auto;
         setDownloadBuffering();
         GST_INFO("Play");
-    } else {
+    } else
         loadingFailed(MediaPlayer::Empty);
-    }
 }
 
 void MediaPlayerPrivateGStreamer::pause()
@@ -775,7 +775,9 @@ void MediaPlayerPrivateGStreamer::enableTrack(TrackPrivateBaseGStreamer::TrackTy
 
 void MediaPlayerPrivateGStreamer::videoChangedCallback(MediaPlayerPrivateGStreamer* player)
 {
-    player->m_notifier->notify(MainThreadNotification::VideoChanged, [player] { player->notifyPlayerOfVideo(); });
+    player->m_notifier->notify(MainThreadNotification::VideoChanged, [player] {
+        player->notifyPlayerOfVideo();
+    });
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
@@ -838,7 +840,9 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
 
 void MediaPlayerPrivateGStreamer::videoSinkCapsChangedCallback(MediaPlayerPrivateGStreamer* player)
 {
-    player->m_notifier->notify(MainThreadNotification::VideoCapsChanged, [player] { player->notifyPlayerOfVideoCaps(); });
+    player->m_notifier->notify(MainThreadNotification::VideoCapsChanged, [player] {
+        player->notifyPlayerOfVideoCaps();
+    });
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfVideoCaps()
@@ -849,7 +853,9 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideoCaps()
 
 void MediaPlayerPrivateGStreamer::audioChangedCallback(MediaPlayerPrivateGStreamer* player)
 {
-    player->m_notifier->notify(MainThreadNotification::AudioChanged, [player] { player->notifyPlayerOfAudio(); });
+    player->m_notifier->notify(MainThreadNotification::AudioChanged, [player] {
+        player->notifyPlayerOfAudio();
+    });
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
@@ -909,7 +915,9 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
 #if ENABLE(VIDEO_TRACK)
 void MediaPlayerPrivateGStreamer::textChangedCallback(MediaPlayerPrivateGStreamer* player)
 {
-    player->m_notifier->notify(MainThreadNotification::TextChanged, [player] { player->notifyPlayerOfText(); });
+    player->m_notifier->notify(MainThreadNotification::TextChanged, [player] {
+        player->notifyPlayerOfText();
+    });
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfText()
@@ -1071,16 +1079,18 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamer::buffered() cons
     guint numBufferingRanges = gst_query_get_n_buffering_ranges(query);
     for (guint index = 0; index < numBufferingRanges; index++) {
         gint64 rangeStart = 0, rangeStop = 0;
-        if (gst_query_parse_nth_buffering_range(query, index, &rangeStart, &rangeStop))
+        if (gst_query_parse_nth_buffering_range(query, index, &rangeStart, &rangeStop)) {
             timeRanges->add(MediaTime(rangeStart * toGstUnsigned64Time(mediaDuration) / GST_FORMAT_PERCENT_MAX, GST_SECOND),
                 MediaTime(rangeStop * toGstUnsigned64Time(mediaDuration) / GST_FORMAT_PERCENT_MAX, GST_SECOND));
+        }
     }
 
     // Fallback to the more general maxTimeLoaded() if no range has
     // been found.
-    if (!timeRanges->length())
+    if (!timeRanges->length()) {
         if (MediaTime loaded = maxTimeLoaded())
             timeRanges->add(MediaTime::zeroTime(), loaded);
+    }
 
     gst_query_unref(query);
 
@@ -2005,8 +2015,7 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
             return false;
         }
 
-        const GValue* location = gst_value_list_get_value(locations,
-                                                          m_mediaLocationCurrentIndex);
+        const GValue* location = gst_value_list_get_value(locations, m_mediaLocationCurrentIndex);
         const GstStructure* structure = gst_value_get_structure(location);
 
         if (!structure) {

@@ -1,3 +1,35 @@
+2018-05-09  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Fix style issue in MediaPlayerPrivateGStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=185479
+
+        Reviewed by Philippe Normand.
+
+        ERROR: Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:114:  Multi line control clauses should use braces.  [whitespace/braces] [4]
+        ERROR: Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:194:  Multi line control clauses should use braces.  [whitespace/braces] [4]
+        ERROR: Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:398:  One line control clauses should not use braces.  [whitespace/braces] [4]
+        ERROR: Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:440:  One line control clauses should not use braces.  [whitespace/braces] [4]
+        ERROR: Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:806:  More than one command on the same line  [whitespace/newline] [4]
+        ERROR: Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:869:  More than one command on the same line  [whitespace/newline] [4]
+        ERROR: Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:880:  More than one command on the same line  [whitespace/newline] [4]
+        ERROR: Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:940:  More than one command on the same line  [whitespace/newline] [4]
+        ERROR: Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:1102:  Multi line control clauses should use braces.  [whitespace/braces] [4]
+        ERROR: Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:1109:  Multi line control clauses should use braces.  [whitespace/braces] [4]
+
+        Indentation and style issue fixed only.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::registerMediaEngine):
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::changePipelineState):
+        (WebCore::MediaPlayerPrivateGStreamer::play):
+        (WebCore::MediaPlayerPrivateGStreamer::videoChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::videoSinkCapsChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::audioChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::textChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::buffered const):
+        (WebCore::MediaPlayerPrivateGStreamer::loadNextLocation):
+
 2018-05-09  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r231479): com.apple.WebCore crash in WebCore::DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied()
