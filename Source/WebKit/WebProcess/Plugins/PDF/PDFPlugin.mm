@@ -74,6 +74,7 @@
 #import <WebCore/PDFDocumentImage.h>
 #import <WebCore/Page.h>
 #import <WebCore/Pasteboard.h>
+#import <WebCore/PlatformScreen.h>
 #import <WebCore/PluginData.h>
 #import <WebCore/PluginDocument.h>
 #import <WebCore/RenderBoxModelObject.h>
@@ -632,6 +633,12 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame)
 
     [m_containerLayer addSublayer:m_contentLayer.get()];
     [m_containerLayer addSublayer:m_scrollCornerLayer.get()];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    if ([m_pdfLayerController respondsToSelector:@selector(setDeviceColorSpace:)]) {
+        auto view = webFrame()->coreFrame()->view();
+        [m_pdfLayerController setDeviceColorSpace:screenColorSpace(view)];
+    }
+#endif
 }
 
 PDFPlugin::~PDFPlugin()

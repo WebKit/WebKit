@@ -1,3 +1,15 @@
+2018-05-08  Per Arne Vollan  <pvollan@apple.com>
+
+        Set colorspace in the PDF plugin.
+        https://bugs.webkit.org/show_bug.cgi?id=185445
+        <rdar://problem/40030981>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/Plugins/PDF/PDFLayerControllerSPI.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin):
+
 2018-05-08  Megan Gardner  <megan_gardner@apple.com>
 
         Don't clear selection until we are actually interacting with a Node.
