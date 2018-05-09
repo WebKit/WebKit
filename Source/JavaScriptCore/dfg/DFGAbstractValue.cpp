@@ -332,24 +332,8 @@ FiltrationResult AbstractValue::filterClassInfo(Graph& graph, const ClassInfo* c
     return normalizeClarity(graph);
 }
 
-FiltrationResult AbstractValue::filter(SpeculatedType type)
+FiltrationResult AbstractValue::filterSlow(SpeculatedType type)
 {
-    if ((m_type & type) == m_type)
-        return FiltrationOK;
-    
-    // Fast path for the case that we don't even have a cell.
-    if (!(m_type & SpecCell)) {
-        m_type &= type;
-        FiltrationResult result;
-        if (m_type == SpecNone) {
-            clear();
-            result = Contradiction;
-        } else
-            result = FiltrationOK;
-        checkConsistency();
-        return result;
-    }
-    
     m_type &= type;
     
     // It's possible that prior to this filter() call we had, say, (Final, TOP), and
@@ -360,6 +344,14 @@ FiltrationResult AbstractValue::filter(SpeculatedType type)
     filterArrayModesByType();
     filterValueByType();
     return normalizeClarity();
+}
+
+FiltrationResult AbstractValue::fastForwardToAndFilterSlow(AbstractValueClobberEpoch newEpoch, SpeculatedType type)
+{
+    if (newEpoch != m_effectEpoch)
+        fastForwardToSlow(newEpoch);
+    
+    return filterSlow(type);
 }
 
 FiltrationResult AbstractValue::filterByValue(const FrozenValue& value)

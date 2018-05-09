@@ -312,13 +312,51 @@ struct AbstractValue {
     FiltrationResult filter(Graph&, const RegisteredStructureSet&, SpeculatedType admittedTypes = SpecNone);
     
     FiltrationResult filterArrayModes(ArrayModes);
-    FiltrationResult filter(SpeculatedType);
+
+    ALWAYS_INLINE FiltrationResult filter(SpeculatedType type)
+    {
+        if ((m_type & type) == m_type)
+            return FiltrationOK;
+    
+        // Fast path for the case that we don't even have a cell.
+        if (!(m_type & SpecCell)) {
+            m_type &= type;
+            FiltrationResult result;
+            if (m_type == SpecNone) {
+                clear();
+                result = Contradiction;
+            } else
+                result = FiltrationOK;
+            checkConsistency();
+            return result;
+        }
+        
+        return filterSlow(type);
+    }
+    
     FiltrationResult filterByValue(const FrozenValue& value);
     FiltrationResult filter(const AbstractValue&);
     FiltrationResult filterClassInfo(Graph&, const ClassInfo*);
 
     FiltrationResult filter(Graph&, const InferredType::Descriptor&);
     
+    ALWAYS_INLINE FiltrationResult fastForwardToAndFilterUnproven(AbstractValueClobberEpoch newEpoch, SpeculatedType type)
+    {
+        if (m_type & SpecCell)
+            return fastForwardToAndFilterSlow(newEpoch, type);
+        
+        m_effectEpoch = newEpoch;
+        m_type &= type;
+        FiltrationResult result;
+        if (m_type == SpecNone) {
+            clear();
+            result = Contradiction;
+        } else
+            result = FiltrationOK;
+        checkConsistency();
+        return result;
+    }
+
     FiltrationResult changeStructure(Graph&, const RegisteredStructureSet&);
     
     bool contains(RegisteredStructure) const;
@@ -469,7 +507,7 @@ private:
     
     void makeTop(SpeculatedType top)
     {
-        m_type |= top;
+        m_type = top;
         m_arrayModes = ALL_ARRAY_MODES;
         m_structure.makeTop();
         m_value = JSValue();
@@ -477,6 +515,8 @@ private:
     }
     
     void fastForwardToSlow(AbstractValueClobberEpoch);
+    FiltrationResult filterSlow(SpeculatedType);
+    FiltrationResult fastForwardToAndFilterSlow(AbstractValueClobberEpoch, SpeculatedType);
     
     void filterValueByType();
     void filterArrayModesByType();

@@ -1,3 +1,82 @@
+2018-05-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Speed up AbstractInterpreter::executeEdges
+        https://bugs.webkit.org/show_bug.cgi?id=185457
+
+        Reviewed by Saam Barati.
+
+        This patch started out with the desire to make executeEdges() faster by making filtering faster.
+        However, when I studied the disassembly, I found that there are many opportunities for
+        improvement and I implemented all of them:
+        
+        - Filtering itself now has an inline fast path for when the filtering didn't change the value or
+          for non-cells.
+        
+        - Edge execution doesn't fast-forward anything if the filtering fast path would have succeeded,
+          since fast-forwarding is only interesting for cells and only if we have a clobbered value.
+        
+        - Similarly, edge verification doesn't need to fast-forward in the common case.
+        
+        - A bunch of stuff related to Graph::doToChildren is now inlined properly.
+        
+        - The edge doesn't even have to be considered for execution if it's UntypedUse.
+        
+        That last bit was the trickiest. We had gotten into a bad habit of using SpecFullNumber in the
+        abstract interpreter. It's not correct to use SpecFullNumber in the abstract interpreter, because
+        it means proving that the value could either be formatted as a double (with impure NaN values),
+        or as any JSValue, or as an Int52. There is no value that could possibly hold all of those
+        states. This "worked" before because UntypedUse would filter this down to SpecBytecodeNumber. To
+        make it work again, I needed to fix all of those uses of SpecFullNumber. In the future, we need
+        to be careful about picking either SpecFullDouble (if returning a DoubleRep) or
+        SpecBytecodeNumber (if returning a JSValueRep).
+        
+        But that fix revealed an amazing timeout in
+        stress/keep-checks-when-converting-to-lazy-js-constant-in-strength-reduction.js. We were getting
+        stuck in an OSR loop (baseline->DFG->FTL->baseline), all involving the same bytecode, without
+        ever realizing that we should jettison something. The problem was with how
+        triggerReoptimizationNow was getting the optimizedCodeBlock. It was trying to guess it by using
+        baselineCodeBlock->replacement(), but that's wrong for FTL-for-OSR-entry code blocks.
+        
+        This is a 1% improvement in V8Spider-CompileTime.
+
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindMayJettison):
+        * dfg/DFGAbstractInterpreter.h:
+        (JSC::DFG::AbstractInterpreter::filterEdgeByUse):
+        (JSC::DFG::AbstractInterpreter::filterByType): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreterExecuteEdgesFunc::AbstractInterpreterExecuteEdgesFunc):
+        (JSC::DFG::AbstractInterpreterExecuteEdgesFunc::operator() const):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEdges):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::filterByType):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::verifyEdge):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::filterSlow):
+        (JSC::DFG::AbstractValue::fastForwardToAndFilterSlow):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::filter):
+        (JSC::DFG::AbstractValue::fastForwardToAndFilter):
+        (JSC::DFG::AbstractValue::fastForwardToAndFilterUnproven):
+        (JSC::DFG::AbstractValue::makeTop):
+        * dfg/DFGAtTailAbstractState.h:
+        (JSC::DFG::AtTailAbstractState::fastForward):
+        (JSC::DFG::AtTailAbstractState::forNodeWithoutFastForward):
+        (JSC::DFG::AtTailAbstractState::fastForwardAndFilterUnproven):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::doToChildren):
+        * dfg/DFGInPlaceAbstractState.h:
+        (JSC::DFG::InPlaceAbstractState::fastForward):
+        (JSC::DFG::InPlaceAbstractState::fastForwardAndFilterUnproven):
+        (JSC::DFG::InPlaceAbstractState::forNodeWithoutFastForward):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+
 2018-05-09  Saam Barati  <sbarati@apple.com>
 
         Add JSVirtualMachine SPI to shrink the memory footprint of the VM

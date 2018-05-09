@@ -50,8 +50,26 @@ public:
     }
     
     void createValueForNode(NodeFlowProjection);
+    
+    AbstractValue& fastForward(AbstractValue& value) { return value; }
+    
     AbstractValue& forNode(NodeFlowProjection);
     AbstractValue& forNode(Edge edge) { return forNode(edge.node()); }
+    
+    ALWAYS_INLINE AbstractValue& forNodeWithoutFastForward(NodeFlowProjection node)
+    {
+        return forNode(node);
+    }
+    
+    ALWAYS_INLINE AbstractValue& forNodeWithoutFastForward(Edge edge)
+    {
+        return forNode(edge);
+    }
+    
+    ALWAYS_INLINE void fastForwardAndFilterUnproven(AbstractValue& value, SpeculatedType type)
+    {
+        value.filter(type);
+    }
     
     ALWAYS_INLINE void clearForNode(NodeFlowProjection node)
     {

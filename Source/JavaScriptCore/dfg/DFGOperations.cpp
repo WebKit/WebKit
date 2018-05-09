@@ -2815,7 +2815,7 @@ void JIT_OPERATION operationThrowStaticError(ExecState* exec, JSString* message,
     scope.throwException(exec, createError(exec, static_cast<ErrorType>(errorType), errorMessage));
 }
 
-extern "C" void JIT_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock, OSRExitBase* exit)
+extern "C" void JIT_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock, CodeBlock* optimizedCodeBlock, OSRExitBase* exit)
 {
     // It's sort of preferable that we don't GC while in here. Anyways, doing so wouldn't
     // really be profitable.
@@ -2830,6 +2830,9 @@ extern "C" void JIT_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock, OSR
 
     // If I am my own replacement, then reoptimization has already been triggered.
     // This can happen in recursive functions.
+    //
+    // Note that even if optimizedCodeBlock is an FTLForOSREntry style CodeBlock, this condition is a
+    // sure bet that we don't have anything else left to do.
     if (codeBlock->replacement() == codeBlock) {
         if (Options::verboseOSR())
             dataLog(*codeBlock, ": Not reoptimizing because we've already been jettisoned.\n");
@@ -2839,7 +2842,6 @@ extern "C" void JIT_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock, OSR
     // Otherwise, the replacement must be optimized code. Use this as an opportunity
     // to check our logic.
     ASSERT(codeBlock->hasOptimizedReplacement());
-    CodeBlock* optimizedCodeBlock = codeBlock->replacement();
     ASSERT(JITCode::isOptimizingJIT(optimizedCodeBlock->jitType()));
     
     bool didTryToEnterIntoInlinedLoops = false;
@@ -2864,7 +2866,7 @@ extern "C" void JIT_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock, OSR
         codeBlock->optimizeAfterLongWarmUp();
         return;
     }
-
+    
     optimizedCodeBlock->jettison(Profiler::JettisonDueToOSRExit, CountReoptimization);
 }
 

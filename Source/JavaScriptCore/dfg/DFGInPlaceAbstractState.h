@@ -47,6 +47,27 @@ public:
     
     void createValueForNode(NodeFlowProjection) { }
     
+    ALWAYS_INLINE AbstractValue& fastForward(AbstractValue& value)
+    {
+        value.fastForwardTo(m_effectEpoch);
+        return value;
+    }
+    
+    ALWAYS_INLINE void fastForwardAndFilterUnproven(AbstractValue& value, SpeculatedType type)
+    {
+        value.fastForwardToAndFilterUnproven(m_effectEpoch, type);
+    }
+    
+    ALWAYS_INLINE AbstractValue& forNodeWithoutFastForward(NodeFlowProjection node)
+    {
+        return m_abstractValues.at(node);
+    }
+    
+    ALWAYS_INLINE AbstractValue& forNodeWithoutFastForward(Edge edge)
+    {
+        return forNodeWithoutFastForward(edge.node());
+    }
+    
     ALWAYS_INLINE AbstractValue& forNode(NodeFlowProjection node)
     {
         return fastForward(m_abstractValues.at(node));
@@ -226,12 +247,6 @@ public:
     }
 
 private:
-    ALWAYS_INLINE AbstractValue& fastForward(AbstractValue& value)
-    {
-        value.fastForwardTo(m_effectEpoch);
-        return value;
-    }
-    
     void mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, Node*);
 
     static bool mergeVariableBetweenBlocks(AbstractValue& destination, AbstractValue& source, Node* destinationNode, Node* sourceNode);

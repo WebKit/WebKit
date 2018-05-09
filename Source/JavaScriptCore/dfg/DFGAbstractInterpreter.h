@@ -160,7 +160,10 @@ public:
     
     ALWAYS_INLINE void filterEdgeByUse(Edge& edge)
     {
-        filterByType(edge, typeFilterFor(edge.useKind()));
+        UseKind useKind = edge.useKind();
+        if (useKind == UntypedUse)
+            return;
+        filterByType(edge, typeFilterFor(useKind));
     }
     
     // Abstractly execute the effects of the given node. This changes the abstract
@@ -242,12 +245,7 @@ private:
         m_state.setFoundConstants(true);
     }
     
-    ALWAYS_INLINE void filterByType(Edge& edge, SpeculatedType type)
-    {
-        AbstractValue& value = forNode(edge);
-        m_state.setProofStatus(edge, value.isType(type) ? IsProved : NeedsCheck);
-        filter(value, type);
-    }
+    ALWAYS_INLINE void filterByType(Edge& edge, SpeculatedType type);
     
     void verifyEdge(Node*, Edge);
     void verifyEdges(Node*);

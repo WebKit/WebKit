@@ -716,7 +716,7 @@ void OSRExit::executeOSRExit(Context& context)
     // counterValueForOptimizeAfterWarmUp().
 
     if (UNLIKELY(codeBlock->updateOSRExitCounterAndCheckIfNeedToReoptimize(exitState) == CodeBlock::OptimizeAction::ReoptimizeNow))
-        triggerReoptimizationNow(baselineCodeBlock, &exit);
+        triggerReoptimizationNow(baselineCodeBlock, codeBlock, &exit);
 
     reifyInlinedCallFrames(context, baselineCodeBlock, exit);
     adjustAndJumpToTarget(context, vm, codeBlock, baselineCodeBlock, exit);

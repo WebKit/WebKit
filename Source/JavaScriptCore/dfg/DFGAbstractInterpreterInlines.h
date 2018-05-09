@@ -102,13 +102,27 @@ void AbstractInterpreter<AbstractStateType>::startExecuting()
 }
 
 template<typename AbstractStateType>
+class AbstractInterpreterExecuteEdgesFunc {
+public:
+    AbstractInterpreterExecuteEdgesFunc(AbstractInterpreter<AbstractStateType>& interpreter)
+        : m_interpreter(interpreter)
+    {
+    }
+    
+    // This func is manually written out so that we can put ALWAYS_INLINE on it.
+    ALWAYS_INLINE void operator()(Edge& edge) const
+    {
+        m_interpreter.filterEdgeByUse(edge);
+    }
+    
+private:
+    AbstractInterpreter<AbstractStateType>& m_interpreter;
+};
+
+template<typename AbstractStateType>
 void AbstractInterpreter<AbstractStateType>::executeEdges(Node* node)
 {
-    m_graph.doToChildren(
-        node,
-        [&] (Edge& edge) {
-            filterEdgeByUse(edge);
-        });
+    m_graph.doToChildren(node, AbstractInterpreterExecuteEdgesFunc<AbstractStateType>(*this));
 }
 
 template<typename AbstractStateType>
@@ -130,9 +144,21 @@ void AbstractInterpreter<AbstractStateType>::executeKnownEdgeTypes(Node* node)
 }
 
 template<typename AbstractStateType>
+ALWAYS_INLINE void AbstractInterpreter<AbstractStateType>::filterByType(Edge& edge, SpeculatedType type)
+{
+    AbstractValue& value = m_state.forNodeWithoutFastForward(edge);
+    if (value.isType(type)) {
+        m_state.setProofStatus(edge, IsProved);
+        return;
+    }
+    m_state.setProofStatus(edge, NeedsCheck);
+    m_state.fastForwardAndFilterUnproven(value, type);
+}
+
+template<typename AbstractStateType>
 void AbstractInterpreter<AbstractStateType>::verifyEdge(Node* node, Edge edge)
 {
-    if (!(forNode(edge).m_type & ~typeFilterFor(edge.useKind())))
+    if (!(m_state.forNodeWithoutFastForward(edge).m_type & ~typeFilterFor(edge.useKind())))
         return;
     
     DFG_CRASH(m_graph, node, toCString("Edge verification error: ", node, "->", edge, " was expected to have type ", SpeculationDump(typeFilterFor(edge.useKind())), " but has type ", SpeculationDump(forNode(edge).m_type), " (", forNode(edge).m_type, ")").data(), AbstractInterpreterInvalidType, node->op(), edge->op(), edge.useKind(), forNode(edge).m_type);
@@ -999,7 +1025,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         default:
             DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse, node->child1().useKind());
             clobberWorld();
-            setNonCellTypeForNode(node, SpecFullNumber);
+            setNonCellTypeForNode(node, SpecBytecodeNumber);
             break;
         }
         break;
@@ -1079,7 +1105,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         } else {
             DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse, node->child1().useKind());
             clobberWorld();
-            setNonCellTypeForNode(node, SpecFullNumber);
+            setNonCellTypeForNode(node, SpecBytecodeNumber);
         }
         break;
     }
@@ -3712,11 +3738,13 @@ void AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects(Node* n
         setConstant(node, jsDoubleNumber(equivalentFunction(*number)));
         return;
     }
-    SpeculatedType type = SpecFullNumber;
+    SpeculatedType type;
     if (node->child1().useKind() == DoubleRepUse)
         type = typeOfDoubleUnaryOp(forNode(node->child1()).m_type);
-    else
+    else {
         clobberWorld();
+        type = SpecBytecodeNumber;
+    }
     setNonCellTypeForNode(node, type);
 }
 
