@@ -1,3 +1,20 @@
+2018-05-09  Jason Marcell  <jmarcell@apple.com>
+
+        Apply patch. rdar://problem/39839226
+
+    2018-05-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Revise sandboxes to allow additional IOKit property access
+        https://bugs.webkit.org/show_bug.cgi?id=185095
+        <rdar://problem/39809455>
+
+        Reviewed by Eric Carlson.
+
+        Update the WebContent and Plugin processes to allow additional IOKit property access.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-05-02  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r231242. rdar://problem/39860939
