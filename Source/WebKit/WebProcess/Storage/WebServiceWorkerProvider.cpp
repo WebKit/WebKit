@@ -88,11 +88,10 @@ void WebServiceWorkerProvider::handleFetch(ResourceLoader& loader, CachedResourc
     }
 
     auto& connection = WebProcess::singleton().ensureWebToStorageProcessConnection(sessionID).serviceWorkerConnectionForSession(sessionID);
-    auto fetchIdentifier = makeObjectIdentifier<FetchIdentifierType>(loader.identifier());
-    m_ongoingFetchTasks.add(fetchIdentifier, ServiceWorkerClientFetch::create(*this, loader, fetchIdentifier, connection, shouldClearReferrerOnHTTPSToHTTPRedirect, WTFMove(callback)));
+    m_ongoingFetchTasks.add(loader.identifier(), ServiceWorkerClientFetch::create(*this, loader, loader.identifier(), connection, shouldClearReferrerOnHTTPSToHTTPRedirect, WTFMove(callback)));
 }
 
-bool WebServiceWorkerProvider::cancelFetch(FetchIdentifier fetchIdentifier)
+bool WebServiceWorkerProvider::cancelFetch(uint64_t fetchIdentifier)
 {
     auto fetch = m_ongoingFetchTasks.take(fetchIdentifier);
     if (fetch)
@@ -100,14 +99,14 @@ bool WebServiceWorkerProvider::cancelFetch(FetchIdentifier fetchIdentifier)
     return !!fetch;
 }
 
-void WebServiceWorkerProvider::fetchFinished(FetchIdentifier fetchIdentifier)
+void WebServiceWorkerProvider::fetchFinished(uint64_t fetchIdentifier)
 {
     m_ongoingFetchTasks.take(fetchIdentifier);
 }
 
 void WebServiceWorkerProvider::didReceiveServiceWorkerClientFetchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (auto fetch = m_ongoingFetchTasks.get(makeObjectIdentifier<FetchIdentifierType>(decoder.destinationID())))
+    if (auto fetch = m_ongoingFetchTasks.get(decoder.destinationID()))
         fetch->didReceiveMessage(connection, decoder);
 }
 

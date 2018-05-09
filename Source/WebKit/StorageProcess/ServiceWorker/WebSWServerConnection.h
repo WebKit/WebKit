@@ -29,7 +29,6 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include <WebCore/FetchIdentifier.h>
 #include <WebCore/SWServer.h>
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
@@ -62,12 +61,12 @@ public:
 
     PAL::SessionID sessionID() const { return m_sessionID; }
 
-    void didReceiveFetchResponse(WebCore::FetchIdentifier, const WebCore::ResourceResponse&);
-    void didReceiveFetchData(WebCore::FetchIdentifier, const IPC::DataReference&, int64_t encodedDataLength);
-    void didReceiveFetchFormData(WebCore::FetchIdentifier, const IPC::FormDataReference&);
-    void didFinishFetch(WebCore::FetchIdentifier);
-    void didFailFetch(WebCore::FetchIdentifier);
-    void didNotHandleFetch(WebCore::FetchIdentifier);
+    void didReceiveFetchResponse(uint64_t fetchIdentifier, const WebCore::ResourceResponse&);
+    void didReceiveFetchData(uint64_t fetchIdentifier, const IPC::DataReference&, int64_t encodedDataLength);
+    void didReceiveFetchFormData(uint64_t fetchIdentifier, const IPC::FormDataReference&);
+    void didFinishFetch(uint64_t fetchIdentifier);
+    void didFailFetch(uint64_t fetchIdentifier);
+    void didNotHandleFetch(uint64_t fetchIdentifier);
 
     void postMessageToServiceWorkerClient(WebCore::DocumentIdentifier destinationContextIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerIdentifier sourceServiceWorkerIdentifier, const String& sourceOrigin);
     void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source);
@@ -88,8 +87,7 @@ private:
 
     void scheduleJobInServer(WebCore::ServiceWorkerJobData&&);
 
-    void startFetch(WebCore::ServiceWorkerRegistrationIdentifier, WebCore::FetchIdentifier, WebCore::ResourceRequest&&, WebCore::FetchOptions&&, IPC::FormDataReference&&, String&& referrer);
-    void cancelFetch(WebCore::ServiceWorkerRegistrationIdentifier, WebCore::FetchIdentifier);
+    void startFetch(uint64_t fetchIdentifier, WebCore::ServiceWorkerRegistrationIdentifier, WebCore::ResourceRequest&&, WebCore::FetchOptions&&, IPC::FormDataReference&&, String&& referrer);
 
     void matchRegistration(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::URL& clientURL);
     void getRegistrations(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::URL& clientURL);
