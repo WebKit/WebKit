@@ -10766,7 +10766,6 @@
 		9B03D8061BB3110D00B764DA /* JSDOMBindingInternalsBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMBindingInternalsBuiltins.h; sourceTree = "<group>"; };
 		9B03D8061BB3110D00B764E8 /* WritableStreamBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WritableStreamBuiltins.h; sourceTree = "<group>"; };
 		9B03D8061BB3110D00B764E9 /* WritableStreamInternalsBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WritableStreamInternalsBuiltins.h; sourceTree = "<group>"; };
-		9B0811231F67CDC00074BDE2 /* WebContentReaderIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentReaderIOS.mm; sourceTree = "<group>"; };
 		9B098BD51F3D6033002DD562 /* DataTransferItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataTransferItem.cpp; sourceTree = "<group>"; };
 		9B098BDD1F3D673D002DD562 /* JSDataTransferItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDataTransferItem.cpp; sourceTree = "<group>"; };
 		9B098BDE1F3D673D002DD562 /* JSDataTransferItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDataTransferItem.h; sourceTree = "<group>"; };
@@ -10801,7 +10800,6 @@
 		9B6C41521344949000085B62 /* StringWithDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringWithDirection.h; sourceTree = "<group>"; };
 		9B714E1E1C91166900AC0E92 /* EventPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventPath.cpp; sourceTree = "<group>"; };
 		9B714E1F1C91166900AC0E92 /* EventPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventPath.h; sourceTree = "<group>"; };
-		9B9299AD1F67865B006723C2 /* WebContentReaderMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = WebContentReaderMac.mm; sourceTree = "<group>"; };
 		9B9299B01F6796A4006723C2 /* WebContentReaderCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentReaderCocoa.mm; sourceTree = "<group>"; };
 		9BA273F3172206BB0097CE47 /* LogicalSelectionOffsetCaches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogicalSelectionOffsetCaches.h; sourceTree = "<group>"; };
 		9BA827781F06156500F71E75 /* NavigationDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationDisabler.h; sourceTree = "<group>"; };
@@ -17126,7 +17124,6 @@
 				D0BD4F5A1408850F006839B6 /* DictationCommandIOS.cpp */,
 				D0BD4F5B1408850F006839B6 /* DictationCommandIOS.h */,
 				FED13D390CEA934600D89466 /* EditorIOS.mm */,
-				9B0811231F67CDC00074BDE2 /* WebContentReaderIOS.mm */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -25338,7 +25335,6 @@
 				CE7B2DB21586ABAD0098B3FA /* TextAlternativeWithRange.mm */,
 				29FAF4B5195AB08900A522DC /* TextUndoInsertionMarkupMac.h */,
 				29498681195341940072D2BD /* TextUndoInsertionMarkupMac.mm */,
-				9B9299AD1F67865B006723C2 /* WebContentReaderMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";

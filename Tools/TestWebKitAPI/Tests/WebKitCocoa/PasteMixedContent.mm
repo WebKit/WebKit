@@ -237,6 +237,20 @@ TEST(PasteMixedContent, ImageDataAndPlainTextAndURLAndHTML)
     EXPECT_FALSE([[webView stringByEvaluatingJavaScript:@"rawHTMLData.textContent"] containsString:@"script"]);
 }
 
+TEST(PasteMixedContent, PasteURLWrittenToPasteboardUsingWriteObjects)
+{
+    NSString *urlToCopy = @"https://www.webkit.org/";
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<body contenteditable></body><script>document.body.focus()</script>"];
+    [[NSPasteboard generalPasteboard] clearContents];
+    [[NSPasteboard generalPasteboard] writeObjects:@[ [NSURL URLWithString:urlToCopy] ]];
+    [webView paste:nil];
+
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('a').href"], urlToCopy);
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('a').textContent"], urlToCopy);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC) && WK_API_ENABLED

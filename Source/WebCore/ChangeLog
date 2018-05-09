@@ -1,3 +1,30 @@
+2018-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Consolidate WebContentReaderIOS and WebContentReaderMac into WebContentReaderCocoa
+        https://bugs.webkit.org/show_bug.cgi?id=185340
+
+        Reviewed by Tim Horton.
+
+        WebContentReader::readURL is currently the only method implemented separately in iOS and macOS platform
+        WebContentReader files. The implementation across macOS and iOS is nearly identical (with some exceptions with
+        the way iOS handles file URLs and plain text editing), so we can merge these into a single method
+        WebContentReaderCocoa and delete WebContentReaderIOS and WebContentReaderMac.
+
+        This also has the added bonus of fixing a latent bug in WebContentReaderMac, wherein URLs written to the
+        pasteboard using -[NSPasteboard writeObjects:] are currently pasted as empty anchor elements. In this case, the
+        link title isn't made explicit, so the `title` passed in to WebContentReader::readURL is empty. On iOS, we have
+        code to fall back to pasting the absolute string of the URL if the title is empty, but on macOS, we'll just use
+        this empty string as the title of the anchor.
+
+        Test: PasteMixedContent.PasteURLWrittenToPasteboardUsingWriteObjects
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::WebContentReader::readURL):
+        * editing/ios/WebContentReaderIOS.mm: Removed.
+        * editing/mac/WebContentReaderMac.mm: Removed.
+
 2018-05-08  Zalan Bujtas  <zalan@apple.com>
 
         [Simple line layout] Cache run resolver.

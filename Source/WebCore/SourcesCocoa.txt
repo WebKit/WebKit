@@ -84,7 +84,6 @@ editing/cocoa/WebContentReaderCocoa.mm
 
 editing/ios/DictationCommandIOS.cpp
 editing/ios/EditorIOS.mm
-editing/ios/WebContentReaderIOS.mm
 
 editing/mac/AlternativeTextUIController.mm
 editing/mac/DictionaryLookup.mm
@@ -92,7 +91,6 @@ editing/mac/EditorMac.mm
 editing/mac/FrameSelectionMac.mm
 editing/mac/TextAlternativeWithRange.mm
 editing/mac/TextUndoInsertionMarkupMac.mm
-editing/mac/WebContentReaderMac.mm
 
 editing/ios/AutofillElements.cpp
 
