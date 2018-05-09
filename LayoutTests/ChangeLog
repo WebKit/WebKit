@@ -1,3 +1,15 @@
+2018-05-09  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTests/http/tests/appcache/abort-cache-onchecking-manifest-404.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=185494
+
+        Reviewed by Geoffrey Garen.
+
+        Return the 404 to the manifest request after a delay so that aborting is done first.
+
+        * http/tests/appcache/abort-cache-onchecking-manifest-404-expected.txt:
+        * http/tests/appcache/abort-cache-onchecking-manifest-404.html:
+
 2018-05-09  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Never call updateTracks if running on legacy pipeline
