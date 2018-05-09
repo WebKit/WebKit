@@ -1,3 +1,20 @@
+2018-05-09  Youenn Fablet  <youenn@apple.com>
+
+        Unflake some additional AppCache tests
+        https://bugs.webkit.org/show_bug.cgi?id=185467
+
+        Reviewed by Alex Christensen.
+
+        Remove JS console logging for two tests that are testing crash scenarios.
+        Increase the time it takes to load appcache entries so that aborting
+        is done prior entry loading completion for two other tests.
+
+        * TestExpectations:
+        * http/tests/appcache/deferred-events-delete-while-raising-expected.txt:
+        * http/tests/appcache/deferred-events-delete-while-raising-timer-expected.txt:
+        * http/tests/appcache/resources/abort-cache-onprogress.manifest:
+        * http/tests/appcache/resources/not-exist.vob.php:
+
 2018-05-09  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] The test http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html is timing out.

@@ -1009,20 +1009,13 @@ webkit.org/b/140043 js/dom/Promise.html [ Pass Failure ]
 webkit.org/b/134550 http/tests/cache/iframe-304-crash.html [ Failure Pass ]
 webkit.org/b/141267 http/tests/misc/detached-frame-console.html [ Pass Failure ]
 
-# Aborting application cache abort tests are intrinsically flaky.
-webkit.org/b/87633 http/tests/appcache/abort-cache-onchecking-manifest-404.html [ Pass Failure ]
-webkit.org/b/87633 http/tests/appcache/abort-cache-ondownloading-resource-404.html [ Pass Failure ]
-webkit.org/b/87633 http/tests/appcache/deferred-events-delete-while-raising-timer.html [ Pass Failure ]
-webkit.org/b/87633 http/tests/appcache/deferred-events-delete-while-raising.html [ Pass Failure ]
-webkit.org/b/87633 http/tests/appcache/deferred-events.html [ Pass Failure ]
-
+http/tests/appcache/deferred-events-delete-while-raising-timer.html [ DumpJSConsoleLogInStdErr ]
+http/tests/appcache/deferred-events-delete-while-raising.html [ DumpJSConsoleLogInStdErr ]
 http/tests/appcache/fail-on-update.html [ DumpJSConsoleLogInStdErr ]
 http/tests/appcache/fail-on-update-2.html [ DumpJSConsoleLogInStdErr ]
 http/tests/appcache/404-resource-with-slow-main-resource.php [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/141370 http/tests/security/appcache-in-private-browsing.html [ Pass Failure ]
-
-webkit.org/b/183684 http/tests/appcache/abort-cache-onprogress.html [ Pass Failure ]
 
 # The current expectations for this test only make sense for WebKit on iOS; other platforms can have very different behaviors.
 webkit.org/b/141488 fast/replaced/pdf-as-object-and-embed.html [ Skip ]
