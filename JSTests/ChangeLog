@@ -1,5 +1,37 @@
 2018-05-08  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r230972. rdar://problem/40050818
+
+    Gardening: test fix after r230863.
+    https://bugs.webkit.org/show_bug.cgi?id=184846
+    <rdar://problem/39390672>
+    
+    Not reviewed.
+    
+    * stress/json-stringified-overflow-2.js:
+    (catch):
+    * stress/json-stringified-overflow.js:
+    (catch):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@230972 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-04-24  Mark Lam  <mark.lam@apple.com>
+
+            Gardening: test fix after r230863.
+            https://bugs.webkit.org/show_bug.cgi?id=184846
+            <rdar://problem/39390672>
+
+            Not reviewed.
+
+            * stress/json-stringified-overflow-2.js:
+            (catch):
+            * stress/json-stringified-overflow.js:
+            (catch):
+
+2018-05-08  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r230863. rdar://problem/40050818
 
     Handle more JSON stringify OOM
