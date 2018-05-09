@@ -4107,6 +4107,8 @@
 		D06C0D8F0CFD11460065F43F /* RemoveFormatCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D06C0D8D0CFD11460065F43F /* RemoveFormatCommand.h */; };
 		D07DEABA0A36554A00CA30F8 /* InsertListCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D07DEAB80A36554A00CA30F8 /* InsertListCommand.h */; };
 		D086FE9809D53AAB005BC74D /* UnlinkCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D086FE9609D53AAB005BC74D /* UnlinkCommand.h */; };
+		D08B00E220A282490004BC0A /* WebGLCompressedTextureASTC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0A20D562092A0A600E0C259 /* WebGLCompressedTextureASTC.cpp */; };
+		D08B00E420A282590004BC0A /* WebGLCompressedTextureASTC.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A20D542092A0A600E0C259 /* WebGLCompressedTextureASTC.h */; };
 		D0A3A7311405A39800FB8ED3 /* ResourceLoaderOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A3A7301405A39800FB8ED3 /* ResourceLoaderOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D0B0556809C6700100307E43 /* CreateLinkCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D0B0556609C6700100307E43 /* CreateLinkCommand.h */; };
 		D0BC54491443AC4A00E105DA /* CachedStyleSheetClient.h in Headers */ = {isa = PBXBuildFile; fileRef = D0BC54481443AC4A00E105DA /* CachedStyleSheetClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13473,6 +13475,7 @@
 		D01A27AC10C9BFD800026A42 /* SpaceSplitString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpaceSplitString.h; sourceTree = "<group>"; };
 		D02B64B014089E56006EFA21 /* DictationPhraseWithAlternativesDot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DictationPhraseWithAlternativesDot.png; sourceTree = "<group>"; };
 		D02B64B114089E56006EFA21 /* DictationPhraseWithAlternativesDot@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DictationPhraseWithAlternativesDot@2x.png"; sourceTree = "<group>"; };
+		D036DD8D208FFC0C00F9F4B2 /* WebGLCompressedTextureASTC.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGLCompressedTextureASTC.idl; sourceTree = "<group>"; };
 		D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormatBlockCommand.cpp; sourceTree = "<group>"; };
 		D05CED280A40BB2C00C5AF38 /* FormatBlockCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FormatBlockCommand.h; sourceTree = "<group>"; };
 		D06C0D8D0CFD11460065F43F /* RemoveFormatCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveFormatCommand.h; sourceTree = "<group>"; };
@@ -13481,6 +13484,8 @@
 		D07DEAB80A36554A00CA30F8 /* InsertListCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = InsertListCommand.h; sourceTree = "<group>"; };
 		D086FE9609D53AAB005BC74D /* UnlinkCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkCommand.h; sourceTree = "<group>"; };
 		D086FE9709D53AAB005BC74D /* UnlinkCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnlinkCommand.cpp; sourceTree = "<group>"; };
+		D0A20D542092A0A600E0C259 /* WebGLCompressedTextureASTC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLCompressedTextureASTC.h; sourceTree = "<group>"; };
+		D0A20D562092A0A600E0C259 /* WebGLCompressedTextureASTC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGLCompressedTextureASTC.cpp; sourceTree = "<group>"; };
 		D0A3A7301405A39800FB8ED3 /* ResourceLoaderOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoaderOptions.h; sourceTree = "<group>"; };
 		D0B0556609C6700100307E43 /* CreateLinkCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateLinkCommand.h; sourceTree = "<group>"; };
 		D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreateLinkCommand.cpp; sourceTree = "<group>"; };
@@ -17253,6 +17258,9 @@
 				49C7B9A81042D32E0009D447 /* WebGLBuffer.cpp */,
 				49C7B9A91042D32E0009D447 /* WebGLBuffer.h */,
 				49C7B9AA1042D32E0009D447 /* WebGLBuffer.idl */,
+				D0A20D562092A0A600E0C259 /* WebGLCompressedTextureASTC.cpp */,
+				D0A20D542092A0A600E0C259 /* WebGLCompressedTextureASTC.h */,
+				D036DD8D208FFC0C00F9F4B2 /* WebGLCompressedTextureASTC.idl */,
 				7E66E23116D6EB6C00F7E7FF /* WebGLCompressedTextureATC.cpp */,
 				7E66E23216D6EB6C00F7E7FF /* WebGLCompressedTextureATC.h */,
 				7EA30F6216DFD62700257D0B /* WebGLCompressedTextureATC.idl */,
@@ -30735,6 +30743,7 @@
 				6E47E66110B7944B00B186C8 /* WebGLAny.h in Headers */,
 				1AFFC4581D5E865500267A66 /* WebGLBlacklist.h in Headers */,
 				49C7B9C91042D32F0009D447 /* WebGLBuffer.h in Headers */,
+				D08B00E420A282590004BC0A /* WebGLCompressedTextureASTC.h in Headers */,
 				7E66E23416D6EB6C00F7E7FF /* WebGLCompressedTextureATC.h in Headers */,
 				7E66E23417E6EB6C00F7E7FF /* WebGLCompressedTexturePVRTC.h in Headers */,
 				6E3FAE8F14733FDB00E42306 /* WebGLCompressedTextureS3TC.h in Headers */,
@@ -32022,6 +32031,7 @@
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
 				D3F3D36D1A69B7DC0059FC2B /* WebGL2RenderingContext.cpp in Sources */,
 				49C7B9C81042D32F0009D447 /* WebGLBuffer.cpp in Sources */,
+				D08B00E220A282490004BC0A /* WebGLCompressedTextureASTC.cpp in Sources */,
 				7E66E23316D6EB6C00F7E7FF /* WebGLCompressedTextureATC.cpp in Sources */,
 				7E66E23317E6EB6C00F7E7FF /* WebGLCompressedTexturePVRTC.cpp in Sources */,
 				6E3FAE8E14733FDB00E42306 /* WebGLCompressedTextureS3TC.cpp in Sources */,

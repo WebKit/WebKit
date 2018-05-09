@@ -1,3 +1,41 @@
+2018-05-09  Justin Fan  <justin_fan@apple.com>
+
+        Hooked up ASTC support in WebGL; requires OpenGL ES 3 context to work. 
+        https://bugs.webkit.org/show_bug.cgi?id=185272
+        <rdar://problem/15745737>
+
+        Reviewed by Dean Jackson.
+
+        Also added in Khronos' ASTC test from version 1.0.4 beta of their conformance test suite,
+        although again, this requires OpenGL ES 3 context for WebKit to detect proper support.
+
+        Test: fast/canvas/webgl/webgl-compressed-texture-astc.html
+
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMConvertWebGL.cpp:
+        (WebCore::convertToJSValue):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getExtension):
+        (WebCore::WebGL2RenderingContext::getSupportedExtensions):
+        * html/canvas/WebGLCompressedTextureASTC.cpp: Added.
+        (WebCore::WebGLCompressedTextureASTC::WebGLCompressedTextureASTC):
+        (WebCore::WebGLCompressedTextureASTC::getName const):
+        (WebCore::WebGLCompressedTextureASTC::supported):
+        (WebCore::WebGLCompressedTextureASTC::getSupportedProfiles):
+        * html/canvas/WebGLCompressedTextureASTC.h: Added.
+        * html/canvas/WebGLCompressedTextureASTC.idl: Added.
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::validateCompressedTexFuncData):
+        (WebCore::WebGLRenderingContextBase::validateCompressedTexDimensions):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * platform/graphics/Extensions3D.h:
+
 2018-05-09  Youenn Fablet  <youenn@apple.com>
 
         Allow WebResourceLoader to cancel a load served from a service worker

@@ -43,6 +43,7 @@
 #include "JSOESTextureHalfFloatLinear.h"
 #include "JSOESVertexArrayObject.h"
 #include "JSWebGLBuffer.h"
+#include "JSWebGLCompressedTextureASTC.h"
 #include "JSWebGLCompressedTextureATC.h"
 #include "JSWebGLCompressedTexturePVRTC.h"
 #include "JSWebGLCompressedTextureS3TC.h"
@@ -179,6 +180,8 @@ JSValue convertToJSValue(ExecState& state, JSDOMGlobalObject& globalObject, WebG
         return toJS(&state, &globalObject, static_cast<WebGLCompressedTexturePVRTC&>(extension));
     case WebGLExtension::WebGLCompressedTextureS3TCName:
         return toJS(&state, &globalObject, static_cast<WebGLCompressedTextureS3TC&>(extension));
+    case WebGLExtension::WebGLCompressedTextureASTCName:
+        return toJS(&state, &globalObject, static_cast<WebGLCompressedTextureASTC&>(extension));
     case WebGLExtension::WebGLDepthTextureName:
         return toJS(&state, &globalObject, static_cast<WebGLDepthTexture&>(extension));
     case WebGLExtension::WebGLDrawBuffersName:

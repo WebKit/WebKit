@@ -3194,6 +3194,7 @@ JSOESVertexArrayObject.cpp
 JSWebGL2RenderingContext.cpp
 JSWebGLActiveInfo.cpp
 JSWebGLBuffer.cpp
+JSWebGLCompressedTextureASTC.cpp
 JSWebGLCompressedTextureATC.cpp
 JSWebGLCompressedTexturePVRTC.cpp
 JSWebGLCompressedTextureS3TC.cpp

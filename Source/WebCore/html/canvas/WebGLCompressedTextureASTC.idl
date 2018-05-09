@@ -1,0 +1,65 @@
+/*
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+[
+    Conditional=WEBGL,
+    DoNotCheckConstants,
+    GenerateIsReachable=ImplWebGLRenderingContext,
+    NoInterfaceObject,
+] interface WebGLCompressedTextureASTC {
+    /* Compressed Texture Format */
+    const GLenum COMPRESSED_RGBA_ASTC_4x4_KHR = 0x93B0;
+    const GLenum COMPRESSED_RGBA_ASTC_5x4_KHR = 0x93B1;
+    const GLenum COMPRESSED_RGBA_ASTC_5x5_KHR = 0x93B2;
+    const GLenum COMPRESSED_RGBA_ASTC_6x5_KHR = 0x93B3;
+    const GLenum COMPRESSED_RGBA_ASTC_6x6_KHR = 0x93B4;
+    const GLenum COMPRESSED_RGBA_ASTC_8x5_KHR = 0x93B5;
+    const GLenum COMPRESSED_RGBA_ASTC_8x6_KHR = 0x93B6;
+    const GLenum COMPRESSED_RGBA_ASTC_8x8_KHR = 0x93B7;
+    const GLenum COMPRESSED_RGBA_ASTC_10x5_KHR = 0x93B8;
+    const GLenum COMPRESSED_RGBA_ASTC_10x6_KHR = 0x93B9;
+    const GLenum COMPRESSED_RGBA_ASTC_10x8_KHR = 0x93BA;
+    const GLenum COMPRESSED_RGBA_ASTC_10x10_KHR = 0x93BB;
+    const GLenum COMPRESSED_RGBA_ASTC_12x10_KHR = 0x93BC;
+    const GLenum COMPRESSED_RGBA_ASTC_12x12_KHR = 0x93BD;
+
+    const GLenum COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR = 0x93D0;
+    const GLenum COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR = 0x93D1;
+    const GLenum COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR = 0x93D2;
+    const GLenum COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR = 0x93D3;
+    const GLenum COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR = 0x93D4;
+    const GLenum COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR = 0x93D5;
+    const GLenum COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR = 0x93D6;
+    const GLenum COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR = 0x93D7;
+    const GLenum COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR = 0x93D8;
+    const GLenum COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR = 0x93D9;
+    const GLenum COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR = 0x93DA;
+    const GLenum COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR = 0x93DB;
+    const GLenum COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR = 0x93DC;
+    const GLenum COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR = 0x93DD;
+
+    // Profile query support.
+    sequence<DOMString> getSupportedProfiles();
+};

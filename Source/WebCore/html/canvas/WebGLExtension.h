@@ -54,6 +54,7 @@ public:
         OESElementIndexUintName,
         WebGLCompressedTextureATCName,
         WebGLCompressedTexturePVRTCName,
+        WebGLCompressedTextureASTCName,
         ANGLEInstancedArraysName,
     };
 

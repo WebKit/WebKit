@@ -1,3 +1,20 @@
+2018-05-09  Justin Fan  <justin_fan@apple.com>
+
+        Added Khronos conformance test for ASTC compressed texture support.
+        https://bugs.webkit.org/show_bug.cgi?id=185272
+        <rdar://problem/15745737>
+        
+        Reviewed by Dean Jackson.
+
+        This requires OpenGL ES 3 context for WebKit to detect proper support.
+
+        * fast/canvas/webgl/resources/js-test-post.js: Added.
+        * fast/canvas/webgl/resources/js-test-pre.js: Added.
+        * fast/canvas/webgl/resources/js-test-style.css: Added.
+        * fast/canvas/webgl/resources/webgl-test-utils-khr.js: Added.
+        * fast/canvas/webgl/webgl-compressed-texture-astc-expected.txt: Added.
+        * fast/canvas/webgl/webgl-compressed-texture-astc.html: Added.
+
 2018-05-09  Youenn Fablet  <youenn@apple.com>
 
         Unflake some additional AppCache tests

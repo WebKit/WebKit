@@ -71,6 +71,7 @@
 #include "WebGL2RenderingContext.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLBuffer.h"
+#include "WebGLCompressedTextureASTC.h"
 #include "WebGLCompressedTextureATC.h"
 #include "WebGLCompressedTexturePVRTC.h"
 #include "WebGLCompressedTextureS3TC.h"
@@ -5364,6 +5365,17 @@ bool WebGLRenderingContextBase::validateCompressedTexFormat(GC3Denum format)
     return m_compressedTextureFormats.contains(format);
 }
 
+struct BlockParameters {
+    const int width;
+    const int height;
+    const int size;
+};
+
+static inline unsigned calculateBytesForASTC(GC3Dsizei width, GC3Dsizei height, const BlockParameters& parameters)
+{
+    return ((width + parameters.width - 1) / parameters.width) * ((height + parameters.height - 1) / parameters.height) * parameters.size;
+}
+
 bool WebGLRenderingContextBase::validateCompressedTexFuncData(const char* functionName, GC3Dsizei width, GC3Dsizei height, GC3Denum format, ArrayBufferView& pixels)
 {
     if (width < 0 || height < 0) {
@@ -5372,6 +5384,27 @@ bool WebGLRenderingContextBase::validateCompressedTexFuncData(const char* functi
     }
 
     unsigned bytesRequired = 0;
+
+    // Block parameters for ASTC formats
+    const int kASTCBlockSize = 16;
+    static const BlockParameters ASTCParameters[] {
+        BlockParameters { 4, 4, kASTCBlockSize },
+        BlockParameters { 5, 4, kASTCBlockSize },
+        BlockParameters { 5, 5, kASTCBlockSize },
+        BlockParameters { 6, 5, kASTCBlockSize },
+        BlockParameters { 6, 6, kASTCBlockSize },
+        BlockParameters { 8, 5, kASTCBlockSize },
+        BlockParameters { 8, 6, kASTCBlockSize },
+        BlockParameters { 8, 8, kASTCBlockSize },
+        BlockParameters { 10, 5, kASTCBlockSize },
+        BlockParameters { 10, 6, kASTCBlockSize },
+        BlockParameters { 10, 8, kASTCBlockSize },
+        BlockParameters { 10, 10, kASTCBlockSize },
+        BlockParameters { 12, 10, kASTCBlockSize },
+        BlockParameters { 12, 12, kASTCBlockSize }
+    };
+    const GC3Denum ASTCEnumStartRGBA = Extensions3D::COMPRESSED_RGBA_ASTC_4x4_KHR;
+    const GC3Denum ASTCEnumStartSRGB8 = Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR;
 
     switch (format) {
     case Extensions3D::COMPRESSED_RGB_S3TC_DXT1_EXT:
@@ -5417,6 +5450,38 @@ bool WebGLRenderingContextBase::validateCompressedTexFuncData(const char* functi
             bytesRequired = (std::max(width, kBlockWidth) * std::max(height, kBlockHeight) * 2 + 7) / kBlockSize;
         }
         break;
+    case Extensions3D::COMPRESSED_RGBA_ASTC_4x4_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_5x4_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_5x5_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_6x5_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_6x6_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_8x5_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_8x6_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_8x8_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_10x5_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_10x6_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_10x8_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_10x10_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_12x10_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_12x12_KHR:
+        bytesRequired = calculateBytesForASTC(width, height, ASTCParameters[format - ASTCEnumStartRGBA]);
+        break;
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR:
+        bytesRequired = calculateBytesForASTC(width, height, ASTCParameters[format - ASTCEnumStartSRGB8]);
+        break;
     default:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid format");
         return false;
@@ -5458,6 +5523,36 @@ bool WebGLRenderingContextBase::validateCompressedTexDimensions(const char* func
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "width or height invalid for level");
             return false;
         }
+        return true;
+    case Extensions3D::COMPRESSED_RGBA_ASTC_4x4_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_5x4_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_5x5_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_6x5_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_6x6_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_8x5_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_8x6_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_8x8_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_10x5_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_10x6_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_10x8_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_10x10_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_12x10_KHR:
+    case Extensions3D::COMPRESSED_RGBA_ASTC_12x12_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR:
+    case Extensions3D::COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR:
+        // No height and width restrictions on ASTC.
         return true;
     default:
         return false;

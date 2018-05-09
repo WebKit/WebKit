@@ -49,6 +49,7 @@
 #include "OESTextureHalfFloatLinear.h"
 #include "OESVertexArrayObject.h"
 #include "RenderBox.h"
+#include "WebGLCompressedTextureASTC.h"
 #include "WebGLCompressedTextureATC.h"
 #include "WebGLCompressedTexturePVRTC.h"
 #include "WebGLCompressedTextureS3TC.h"
@@ -147,6 +148,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(WebGLCompressedTextureATC, m_webglCompressedTextureATC, "WEBKIT_WEBGL_compressed_texture_atc", WebGLCompressedTextureATC::supported(*this));
     ENABLE_IF_REQUESTED(WebGLCompressedTexturePVRTC, m_webglCompressedTexturePVRTC, "WEBKIT_WEBGL_compressed_texture_pvrtc", WebGLCompressedTexturePVRTC::supported(*this));
     ENABLE_IF_REQUESTED(WebGLCompressedTextureS3TC, m_webglCompressedTextureS3TC, "WEBGL_compressed_texture_s3tc", WebGLCompressedTextureS3TC::supported(*this));
+    ENABLE_IF_REQUESTED(WebGLCompressedTextureASTC, m_webglCompressedTextureASTC, "WEBGL_compressed_texture_astc", WebGLCompressedTextureASTC::supported(*this));
     ENABLE_IF_REQUESTED(WebGLDepthTexture, m_webglDepthTexture, "WEBGL_depth_texture", WebGLDepthTexture::supported(*m_context));
     if (equalIgnoringASCIICase(name, "WEBGL_draw_buffers")) {
         if (!m_webglDrawBuffers) {
@@ -217,7 +219,9 @@ std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
     if (WebGLCompressedTexturePVRTC::supported(*this))
         result.append(ASCIILiteral { "WEBKIT_WEBGL_compressed_texture_pvrtc" });
     if (WebGLCompressedTextureS3TC::supported(*this))
-        result.append("WEBGL_compressed_texture_s3tc");
+        result.append(ASCIILiteral { "WEBGL_compressed_texture_s3tc" });
+    if (WebGLCompressedTextureASTC::supported(*this))
+        result.append(ASCIILiteral { "WEBGL_compressed_texture_astc" });
     if (WebGLDepthTexture::supported(*m_context))
         result.append(ASCIILiteral { "WEBGL_depth_texture" });
     if (supportsDrawBuffers())

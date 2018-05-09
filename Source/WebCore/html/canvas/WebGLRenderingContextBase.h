@@ -71,6 +71,7 @@ class OffscreenCanvas;
 class WebGLActiveInfo;
 class WebGLContextGroup;
 class WebGLContextObject;
+class WebGLCompressedTextureASTC;
 class WebGLCompressedTextureATC;
 class WebGLCompressedTexturePVRTC;
 class WebGLCompressedTextureS3TC;
@@ -366,6 +367,7 @@ protected:
     friend class WebGLObject;
     friend class OESVertexArrayObject;
     friend class WebGLDebugShaders;
+    friend class WebGLCompressedTextureASTC;
     friend class WebGLCompressedTextureATC;
     friend class WebGLCompressedTexturePVRTC;
     friend class WebGLCompressedTextureS3TC;
@@ -591,6 +593,7 @@ protected:
     std::unique_ptr<WebGLLoseContext> m_webglLoseContext;
     std::unique_ptr<WebGLDebugRendererInfo> m_webglDebugRendererInfo;
     std::unique_ptr<WebGLDebugShaders> m_webglDebugShaders;
+    std::unique_ptr<WebGLCompressedTextureASTC> m_webglCompressedTextureASTC;
     std::unique_ptr<WebGLCompressedTextureATC> m_webglCompressedTextureATC;
     std::unique_ptr<WebGLCompressedTexturePVRTC> m_webglCompressedTexturePVRTC;
     std::unique_ptr<WebGLCompressedTextureS3TC> m_webglCompressedTextureS3TC;

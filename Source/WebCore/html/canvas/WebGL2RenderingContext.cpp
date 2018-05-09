@@ -42,6 +42,7 @@
 #include "OESTextureHalfFloatLinear.h"
 #include "RenderBox.h"
 #include "WebGLActiveInfo.h"
+#include "WebGLCompressedTextureASTC.h"
 #include "WebGLCompressedTextureATC.h"
 #include "WebGLCompressedTexturePVRTC.h"
 #include "WebGLCompressedTextureS3TC.h"
@@ -1123,6 +1124,7 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(WebGLCompressedTextureATC, m_webglCompressedTextureATC, "WEBKIT_WEBGL_compressed_texture_atc", WebGLCompressedTextureATC::supported(*this));
     ENABLE_IF_REQUESTED(WebGLCompressedTexturePVRTC, m_webglCompressedTexturePVRTC, "WEBKIT_WEBGL_compressed_texture_pvrtc", WebGLCompressedTexturePVRTC::supported(*this));
     ENABLE_IF_REQUESTED(WebGLCompressedTextureS3TC, m_webglCompressedTextureS3TC, "WEBGL_compressed_texture_s3tc", WebGLCompressedTextureS3TC::supported(*this));
+    ENABLE_IF_REQUESTED(WebGLCompressedTextureASTC, m_webglCompressedTextureASTC, "WEBGL_compressed_texture_astc", WebGLCompressedTextureASTC::supported(*this));
     ENABLE_IF_REQUESTED(WebGLDepthTexture, m_webglDepthTexture, "WEBGL_depth_texture", WebGLDepthTexture::supported(*graphicsContext3D()));
     ENABLE_IF_REQUESTED(WebGLDebugRendererInfo, m_webglDebugRendererInfo, "WEBGL_debug_renderer_info", true);
     ENABLE_IF_REQUESTED(WebGLDebugShaders, m_webglDebugShaders, "WEBGL_debug_shaders", m_context->getExtensions().supports(ASCIILiteral { "GL_ANGLE_translated_shader_source" }));
@@ -1156,6 +1158,8 @@ std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
         result.append(ASCIILiteral { "WEBKIT_WEBGL_compressed_texture_pvrtc" });
     if (WebGLCompressedTextureS3TC::supported(*this))
         result.append(ASCIILiteral { "WEBGL_compressed_texture_s3tc" });
+    if (WebGLCompressedTextureASTC::supported(*this))
+        result.append(ASCIILiteral { "WEBGL_compressed_texture_astc" });
     if (WebGLDepthTexture::supported(*graphicsContext3D()))
         result.append(ASCIILiteral { "WEBGL_depth_texture" });
     result.append(ASCIILiteral { "WEBGL_lose_context" });

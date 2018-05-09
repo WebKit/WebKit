@@ -1169,6 +1169,7 @@ if (ENABLE_WEBGL)
         html/canvas/OESVertexArrayObject.cpp
         html/canvas/WebGL2RenderingContext.cpp
         html/canvas/WebGLBuffer.cpp
+        html/canvas/WebGLCompressedTextureASTC.cpp
         html/canvas/WebGLCompressedTextureATC.cpp
         html/canvas/WebGLCompressedTexturePVRTC.cpp
         html/canvas/WebGLCompressedTextureS3TC.cpp
@@ -1217,6 +1218,7 @@ if (ENABLE_WEBGL)
         html/canvas/WebGL2RenderingContext.idl
         html/canvas/WebGLActiveInfo.idl
         html/canvas/WebGLBuffer.idl
+        html/canvas/WebGLCompressedTextureASTC.idl
         html/canvas/WebGLCompressedTextureATC.idl
         html/canvas/WebGLCompressedTexturePVRTC.idl
         html/canvas/WebGLCompressedTextureS3TC.idl
