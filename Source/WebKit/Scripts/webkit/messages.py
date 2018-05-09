@@ -191,6 +191,7 @@ def forward_declarations_and_headers(receiver):
         'MessageSource',
         'String',
         'WebCore::DocumentIdentifier',
+        'WebCore::FetchIdentifier',
         'WebCore::ServiceWorkerIdentifier',
         'WebCore::ServiceWorkerJobIdentifier',
         'WebCore::ServiceWorkerOrClientData',

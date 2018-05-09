@@ -185,6 +185,26 @@ void ServiceWorkerThreadProxy::notifyNetworkStateChange(bool isOnline)
     }, WorkerRunLoop::defaultMode());
 }
 
+void ServiceWorkerThreadProxy::startFetch(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier, Ref<ServiceWorkerFetch::Client>&& client, std::optional<ServiceWorkerClientIdentifier>&& clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options)
+{
+    auto key = std::make_pair(connectionIdentifier, fetchIdentifier);
+
+    ASSERT(!m_ongoingFetchTasks.contains(key));
+    m_ongoingFetchTasks.add(key, client.copyRef());
+    thread().postFetchTask(WTFMove(client), WTFMove(clientId), WTFMove(request), WTFMove(referrer), WTFMove(options));
+}
+
+void ServiceWorkerThreadProxy::cancelFetch(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier)
+{
+    if (auto client = m_ongoingFetchTasks.take(std::make_pair(connectionIdentifier, fetchIdentifier)))
+        client.value()->cancel();
+}
+
+void ServiceWorkerThreadProxy::removeFetch(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier)
+{
+    m_ongoingFetchTasks.remove(std::make_pair(connectionIdentifier, fetchIdentifier));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

@@ -25,39 +25,11 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
-#include "ServiceWorkerClientFetch.h"
-#include <WebCore/ServiceWorkerProvider.h>
-#include <wtf/NeverDestroyed.h>
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
-class CachedResource;
+
+enum FetchIdentifierType { };
+using FetchIdentifier = ObjectIdentifier<FetchIdentifierType>;
+
 }
-
-namespace WebKit {
-
-class WebServiceWorkerProvider final : public WebCore::ServiceWorkerProvider {
-public:
-    static WebServiceWorkerProvider& singleton();
-
-    void handleFetch(WebCore::ResourceLoader&, WebCore::CachedResource*, PAL::SessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect, ServiceWorkerClientFetch::Callback&&);
-    bool cancelFetch(WebCore::FetchIdentifier);
-    void fetchFinished(WebCore::FetchIdentifier);
-
-    void didReceiveServiceWorkerClientFetchMessage(IPC::Connection&, IPC::Decoder&);
-    void didReceiveServiceWorkerClientRegistrationMatch(IPC::Connection&, IPC::Decoder&);
-
-private:
-    friend NeverDestroyed<WebServiceWorkerProvider>;
-    WebServiceWorkerProvider();
-
-    WebCore::SWClientConnection* existingServiceWorkerConnectionForSession(PAL::SessionID) final;
-    WebCore::SWClientConnection& serviceWorkerConnectionForSession(PAL::SessionID) final;
-
-    HashMap<WebCore::FetchIdentifier, Ref<ServiceWorkerClientFetch>> m_ongoingFetchTasks;
-}; // class WebServiceWorkerProvider
-
-} // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

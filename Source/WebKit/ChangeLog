@@ -1,3 +1,65 @@
+2018-05-09  Youenn Fablet  <youenn@apple.com>
+
+        Allow WebResourceLoader to cancel a load served from a service worker
+        https://bugs.webkit.org/show_bug.cgi?id=185274
+
+        Reviewed by Chris Dumez.
+
+        Use FetchIdentifier instead of uint64_t.
+        Add IPC support for cancelling a fetch from WebProcess to service worker process.
+        Ask service worker process to cancel the fetch when its corresponding WebResourceLoader is cancelled.
+        No change of behavior as once a WebResourceLoader is cancelled, any related IPC is not processed.
+        A follow-up patch should try to cancel the FetchResponse load, meaning to either cancel the network load
+        or to abort reading the readable stream.
+
+        * Scripts/webkit/messages.py:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::cancelFetch):
+        (WebKit::WebSWServerConnection::startFetch):
+        (WebKit::WebSWServerConnection::didReceiveFetchResponse):
+        (WebKit::WebSWServerConnection::didReceiveFetchData):
+        (WebKit::WebSWServerConnection::didReceiveFetchFormData):
+        (WebKit::WebSWServerConnection::didFinishFetch):
+        (WebKit::WebSWServerConnection::didFailFetch):
+        (WebKit::WebSWServerConnection::didNotHandleFetch):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::didFailFetch):
+        (WebKit::StorageProcess::didNotHandleFetch):
+        (WebKit::StorageProcess::didReceiveFetchResponse):
+        (WebKit::StorageProcess::didReceiveFetchData):
+        (WebKit::StorageProcess::didReceiveFetchFormData):
+        (WebKit::StorageProcess::didFinishFetch):
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::remove):
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp:
+        (WebKit::ServiceWorkerClientFetch::create):
+        (WebKit::ServiceWorkerClientFetch::ServiceWorkerClientFetch):
+        (WebKit::ServiceWorkerClientFetch::start):
+        (WebKit::ServiceWorkerClientFetch::cancel):
+        * WebProcess/Storage/ServiceWorkerClientFetch.h:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::startFetch):
+        (WebKit::WebSWClientConnection::cancelFetch):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::cancelFetch):
+        (WebKit::WebSWContextManagerConnection::startFetch):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::WebServiceWorkerFetchTaskClient):
+        (WebKit::WebServiceWorkerFetchTaskClient::cancel):
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.h:
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::WebServiceWorkerProvider::handleFetch):
+        (WebKit::WebServiceWorkerProvider::cancelFetch):
+        (WebKit::WebServiceWorkerProvider::fetchFinished):
+        * WebProcess/Storage/WebServiceWorkerProvider.h:
+
 2018-05-09  Andy Estes  <aestes@apple.com>
 
         [iOS] Consider the annotation bounds when positioning action sheets near long-pressed PDF links

@@ -399,7 +399,7 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
     }
 
 #if ENABLE(SERVICE_WORKER)
-    if (WebServiceWorkerProvider::singleton().cancelFetch(identifier))
+    if (WebServiceWorkerProvider::singleton().cancelFetch(makeObjectIdentifier<FetchIdentifierType>(identifier)))
         return;
 #endif
 
