@@ -106,7 +106,7 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
     LayoutRect paintRect = paintInfo.rect;
     paintRect.moveBy(-paintOffset);
 
-    auto resolver = runResolver(flow, layout);
+    auto& resolver = layout.runResolver();
     float deviceScaleFactor = flow.document().deviceScaleFactor();
     for (auto run : resolver.rangeForRect(paintRect)) {
         if (run.start() == run.end())
@@ -148,7 +148,7 @@ bool hitTestFlow(const RenderBlockFlow& flow, const Layout& layout, const HitTes
 
     LayoutRect rangeRect = locationInContainer.boundingBox();
     rangeRect.moveBy(-accumulatedOffset);
-    auto resolver = lineResolver(flow, layout);
+    auto resolver = lineResolver(layout.runResolver());
     auto range = resolver.rangeForRect(rangeRect);
     for (auto it = range.begin(), end = range.end(); it != end; ++it) {
         auto lineRect = *it;
@@ -165,7 +165,7 @@ bool hitTestFlow(const RenderBlockFlow& flow, const Layout& layout, const HitTes
 
 void collectFlowOverflow(RenderBlockFlow& flow, const Layout& layout)
 {
-    for (auto lineRect : lineResolver(flow, layout)) {
+    for (auto lineRect : lineResolver(layout.runResolver())) {
         LayoutRect visualOverflowRect = LayoutRect(computeOverflow(flow, lineRect));
         flow.addLayoutOverflow(LayoutRect(lineRect));
         flow.addVisualOverflow(visualOverflowRect);
@@ -174,7 +174,7 @@ void collectFlowOverflow(RenderBlockFlow& flow, const Layout& layout)
 
 IntRect computeBoundingBox(const RenderObject& renderer, const Layout& layout)
 {
-    auto resolver = runResolver(downcast<RenderBlockFlow>(*renderer.parent()), layout);
+    auto& resolver = layout.runResolver();
     FloatRect boundingBoxRect;
     for (auto run : resolver.rangeForRenderer(renderer)) {
         FloatRect rect = run.rect();
@@ -188,7 +188,7 @@ IntRect computeBoundingBox(const RenderObject& renderer, const Layout& layout)
 
 IntPoint computeFirstRunLocation(const RenderObject& renderer, const Layout& layout)
 {
-    auto resolver = runResolver(downcast<RenderBlockFlow>(*renderer.parent()), layout);
+    auto& resolver = layout.runResolver();
     auto range = resolver.rangeForRenderer(renderer);
     auto begin = range.begin();
     if (begin == range.end())
@@ -199,7 +199,7 @@ IntPoint computeFirstRunLocation(const RenderObject& renderer, const Layout& lay
 Vector<IntRect> collectAbsoluteRects(const RenderObject& renderer, const Layout& layout, const LayoutPoint& accumulatedOffset)
 {
     Vector<IntRect> rects;
-    auto resolver = runResolver(downcast<RenderBlockFlow>(*renderer.parent()), layout);
+    auto& resolver = layout.runResolver();
     for (auto run : resolver.rangeForRenderer(renderer)) {
         FloatRect rect = run.rect();
         rects.append(enclosingIntRect(FloatRect(accumulatedOffset + rect.location(), rect.size())));
@@ -210,7 +210,7 @@ Vector<IntRect> collectAbsoluteRects(const RenderObject& renderer, const Layout&
 Vector<FloatQuad> collectAbsoluteQuads(const RenderObject& renderer, const Layout& layout, bool* wasFixed)
 {
     Vector<FloatQuad> quads;
-    auto resolver = runResolver(downcast<RenderBlockFlow>(*renderer.parent()), layout);
+    auto& resolver = layout.runResolver();
     for (auto run : resolver.rangeForRenderer(renderer))
         quads.append(renderer.localToAbsoluteQuad(FloatQuad(run.rect()), UseTransforms, wasFixed));
     return quads;
@@ -220,7 +220,7 @@ unsigned textOffsetForPoint(const LayoutPoint& point, const RenderText& renderer
 {
     auto& flow = downcast<RenderBlockFlow>(*renderer.parent());
     ASSERT(flow.firstChild() == flow.lastChild());
-    auto resolver = runResolver(flow, layout);
+    auto& resolver = layout.runResolver();
     auto it = resolver.runForPoint(point);
     if (it == resolver.end())
         return renderer.text().length();
@@ -235,7 +235,7 @@ Vector<FloatQuad> collectAbsoluteQuadsForRange(const RenderObject& renderer, uns
 {
     auto& style = downcast<RenderBlockFlow>(*renderer.parent()).style();
     Vector<FloatQuad> quads;
-    auto resolver = runResolver(downcast<RenderBlockFlow>(*renderer.parent()), layout);
+    auto& resolver = layout.runResolver();
     for (auto run : resolver.rangeForRendererWithOffsets(renderer, start, end)) {
         // This run is fully contained.
         if (start <= run.start() && end >= run.end()) {
@@ -322,7 +322,7 @@ void generateLineBoxTree(RenderBlockFlow& flow, const Layout& layout)
         return;
 
     Ref<BidiContext> bidiContext = BidiContext::create(0, U_LEFT_TO_RIGHT);
-    auto resolver = runResolver(flow, layout);
+    auto& resolver = layout.runResolver();
     unsigned lineIndex = 0;
     while (true) {
         auto range = resolver.rangeForLine(lineIndex++);

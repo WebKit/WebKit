@@ -50,6 +50,7 @@
 #include "Settings.h"
 #include "SimpleLineLayoutFlowContents.h"
 #include "SimpleLineLayoutFunctions.h"
+#include "SimpleLineLayoutResolver.h"
 #include "SimpleLineLayoutTextFragmentIterator.h"
 #include "Text.h"
 #include "TextPaintStyle.h"
@@ -962,20 +963,28 @@ std::unique_ptr<Layout> create(RenderBlockFlow& flow)
     unsigned lineCount = 0;
     Layout::RunVector runs;
     createTextRuns(runs, flow, lineCount);
-    return Layout::create(runs, lineCount);
+    return Layout::create(runs, lineCount, flow);
 }
 
-std::unique_ptr<Layout> Layout::create(const RunVector& runVector, unsigned lineCount)
+std::unique_ptr<Layout> Layout::create(const RunVector& runVector, unsigned lineCount, const RenderBlockFlow& blockFlow)
 {
     void* slot = WTF::fastMalloc(sizeof(Layout) + sizeof(Run) * runVector.size());
-    return std::unique_ptr<Layout>(new (NotNull, slot) Layout(runVector, lineCount));
+    return std::unique_ptr<Layout>(new (NotNull, slot) Layout(runVector, lineCount, blockFlow));
 }
 
-Layout::Layout(const RunVector& runVector, unsigned lineCount)
+Layout::Layout(const RunVector& runVector, unsigned lineCount, const RenderBlockFlow& blockFlow)
     : m_lineCount(lineCount)
     , m_runCount(runVector.size())
+    , m_blockFlowRenderer(blockFlow)
 {
     memcpy(m_runs, runVector.data(), m_runCount * sizeof(Run));
+}
+
+const RunResolver& Layout::runResolver() const
+{
+    if (!m_runResolver)
+        m_runResolver = std::make_unique<RunResolver>(m_blockFlowRenderer, *this);
+    return *m_runResolver;
 }
 
 Layout::~Layout()

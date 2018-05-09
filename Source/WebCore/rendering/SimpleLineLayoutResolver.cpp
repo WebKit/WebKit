@@ -337,8 +337,8 @@ const RenderObject& LineResolver::Iterator::renderer() const
     return m_runIterator.resolver().flowContents().segmentForRun(run.start(), run.end()).renderer;
 }
 
-LineResolver::LineResolver(const RenderBlockFlow& flow, const Layout& layout)
-    : m_runResolver(flow, layout)
+LineResolver::LineResolver(const RunResolver& runResolver)
+    : m_runResolver(runResolver)
 {
 }
 
