@@ -1,3 +1,16 @@
+2018-05-09  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [MIPS] Use mfhc1 and mthc1 to fix assembler error
+        https://bugs.webkit.org/show_bug.cgi?id=185464
+
+        Reviewed by Yusuke Suzuki.
+
+        The binutils-assembler started to report failures for copying words between
+        GP and FP registers for odd FP register indices. Use mfhc1 and mthc1 instead
+        of mfc1 and mtc1 for conversion.
+
+        * offlineasm/mips.rb:
+
 2018-05-08  Dominik Infuehr  <dinfuehr@igalia.com>
 
         [MIPS] Collect callee-saved register using inline assembly

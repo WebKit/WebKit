@@ -1014,10 +1014,10 @@ class Instruction
             $asm.puts "sw #{operands[1].mipsOperand}, #{operands[0].value * 4}($sp)"
         when "fii2d"
             $asm.puts "mtc1 #{operands[0].mipsOperand}, #{operands[2].mipsSingleLo}"
-            $asm.puts "mtc1 #{operands[1].mipsOperand}, #{operands[2].mipsSingleHi}"
+            $asm.puts "mthc1 #{operands[1].mipsOperand}, #{operands[2].mipsSingleLo}"
         when "fd2ii"
             $asm.puts "mfc1 #{operands[1].mipsOperand}, #{operands[0].mipsSingleLo}"
-            $asm.puts "mfc1 #{operands[2].mipsOperand}, #{operands[0].mipsSingleHi}"
+            $asm.puts "mfhc1 #{operands[2].mipsOperand}, #{operands[0].mipsSingleLo}"
         when /^bo/
             $asm.puts "bgt #{operands[0].mipsOperand}, #{operands[1].mipsOperand}, #{operands[2].asmLabel}"
         when /^bs/
