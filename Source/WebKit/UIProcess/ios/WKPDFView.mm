@@ -47,6 +47,7 @@
 @implementation WKPDFView {
     RetainPtr<WKActionSheetAssistant> _actionSheetAssistant;
     RetainPtr<NSData> _data;
+    RetainPtr<CGPDFDocumentRef> _documentForPrinting;
     BlockPtr<void()> _findCompletion;
     RetainPtr<NSString> _findString;
     NSUInteger _findStringCount;
@@ -498,9 +499,27 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 
 @implementation WKPDFView (_WKWebViewPrintFormatter)
 
+- (CGPDFDocumentRef)_ensureDocumentForPrinting
+{
+    if (_documentForPrinting)
+        return _documentForPrinting.get();
+
+    auto dataProvider = adoptCF(CGDataProviderCreateWithCFData((CFDataRef)_data.get()));
+    auto pdfDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
+    if (!CGPDFDocumentIsUnlocked(pdfDocument.get()))
+        CGPDFDocumentUnlockWithPassword(pdfDocument.get(), [_password UTF8String]);
+
+    _documentForPrinting = WTFMove(pdfDocument);
+    return _documentForPrinting.get();
+}
+
 - (NSUInteger)_wk_pageCountForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter
 {
-    NSUInteger pageCount = std::max<NSInteger>([_hostViewController pageCount], 0);
+    CGPDFDocumentRef documentForPrinting = [self _ensureDocumentForPrinting];
+    if (!CGPDFDocumentAllowsPrinting(documentForPrinting))
+        return 0;
+
+    size_t pageCount = CGPDFDocumentGetNumberOfPages(documentForPrinting);
     if (printFormatter.snapshotFirstPage)
         return std::min<NSUInteger>(pageCount, 1);
     return pageCount;
@@ -508,11 +527,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 
 - (CGPDFDocumentRef)_wk_printedDocument
 {
-    auto dataProvider = adoptCF(CGDataProviderCreateWithCFData((CFDataRef)_data.get()));
-    auto pdfDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
-    if (!CGPDFDocumentIsUnlocked(pdfDocument.get()))
-        CGPDFDocumentUnlockWithPassword(pdfDocument.get(), [_password UTF8String]);
-    return pdfDocument.autorelease();
+    return [self _ensureDocumentForPrinting];
 }
 
 @end

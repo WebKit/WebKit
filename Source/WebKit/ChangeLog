@@ -1,5 +1,17 @@
 2018-05-08  Andy Estes  <aestes@apple.com>
 
+        [iOS] _WKWebViewPrintFormatter should return a page count of 0 for PDF documents that do not allow printing
+        https://bugs.webkit.org/show_bug.cgi?id=185133
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _ensureDocumentForPrinting]):
+        (-[WKPDFView _wk_pageCountForPrintFormatter:]):
+        (-[WKPDFView _wk_printedDocument]):
+
+2018-05-08  Andy Estes  <aestes@apple.com>
+
         [iOS] WKPDFView remains in the view hierarchy after navigating away
         https://bugs.webkit.org/show_bug.cgi?id=185449
         <rdar://problem/39693469>
