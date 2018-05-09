@@ -1,3 +1,16 @@
+2018-05-08  Michael Saboff  <msaboff@apple.com>
+
+        Replace multiple Watchpoint Set fireAll() methods with templates
+        https://bugs.webkit.org/show_bug.cgi?id=185456
+
+        Reviewed by Saam Barati.
+
+        Refactored to minimize duplicate code.
+
+        * bytecode/Watchpoint.h:
+        (JSC::WatchpointSet::fireAll):
+        (JSC::InlineWatchpointSet::fireAll):
+
 2018-05-08  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::FlowMap::resize() shouldn't resize the shadow map unless we're in SSA

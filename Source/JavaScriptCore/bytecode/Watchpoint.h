@@ -153,28 +153,15 @@ public:
         m_state = IsWatched;
         WTF::storeStoreFence();
     }
-    
-    void fireAll(VM& vm, const FireDetail& detail)
+
+    template <typename T>
+    void fireAll(VM& vm, T& fireDetails)
     {
         if (LIKELY(m_state != IsWatched))
             return;
-        fireAllSlow(vm, detail);
-    }
-    
-    void fireAll(VM& vm, DeferredWatchpointFire* deferredWatchpoints)
-    {
-        if (LIKELY(m_state != IsWatched))
-            return;
-        fireAllSlow(vm, deferredWatchpoints);
+        fireAllSlow(vm, fireDetails);
     }
 
-    void fireAll(VM& vm, const char* reason)
-    {
-        if (LIKELY(m_state != IsWatched))
-            return;
-        fireAllSlow(vm, reason);
-    }
-    
     void touch(VM& vm, const FireDetail& detail)
     {
         if (state() == ClearWatchpoint)
@@ -210,7 +197,7 @@ public:
     int8_t* addressOfSetIsNotEmpty() { return &m_setIsNotEmpty; }
     
     JS_EXPORT_PRIVATE void fireAllSlow(VM&, const FireDetail&); // Call only if you've checked isWatched.
-    JS_EXPORT_PRIVATE void fireAllSlow(VM&, DeferredWatchpointFire* deferredWatchpoints);
+    JS_EXPORT_PRIVATE void fireAllSlow(VM&, DeferredWatchpointFire* deferredWatchpoints); // Ditto.
     JS_EXPORT_PRIVATE void fireAllSlow(VM&, const char* reason); // Ditto.
     
 private:
@@ -306,23 +293,12 @@ public:
         ASSERT(decodeState(m_data) != IsInvalidated);
         m_data = encodeState(IsWatched);
     }
-    
-    void fireAll(VM& vm, const FireDetail& detail)
+
+    template <typename T>
+    void fireAll(VM& vm, T fireDetails)
     {
         if (isFat()) {
-            fat()->fireAll(vm, detail);
-            return;
-        }
-        if (decodeState(m_data) == ClearWatchpoint)
-            return;
-        m_data = encodeState(IsInvalidated);
-        WTF::storeStoreFence();
-    }
-    
-    void fireAll(VM& vm, DeferredWatchpointFire* deferred)
-    {
-        if (isFat()) {
-            fat()->fireAll(vm, deferred);
+            fat()->fireAll(vm, fireDetails);
             return;
         }
         if (decodeState(m_data) == ClearWatchpoint)
