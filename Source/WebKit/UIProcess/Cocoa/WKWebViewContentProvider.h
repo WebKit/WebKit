@@ -59,6 +59,8 @@ struct UIEdgeInsets;
 - (void)web_scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view;
 - (void)web_scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale;
 - (void)web_scrollViewDidZoom:(UIScrollView *)scrollView;
+- (void)web_beginAnimatedResize;
+- (void)web_endAnimatedResize;
 @property (nonatomic, readonly) NSData *web_dataRepresentation;
 @property (nonatomic, readonly) NSString *web_suggestedFilename;
 @property (nonatomic, readonly) BOOL web_isBackground;

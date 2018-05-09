@@ -344,6 +344,16 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
     [_hostViewController updatePDFViewLayout];
 }
 
+- (void)web_beginAnimatedResize
+{
+    [_hostViewController beginPDFViewRotation];
+}
+
+- (void)web_endAnimatedResize
+{
+    [_hostViewController endPDFViewRotation];
+}
+
 - (NSData *)web_dataRepresentation
 {
     return _data.get();

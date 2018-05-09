@@ -5147,6 +5147,8 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
     if (![self usesStandardContentView] || !_hasCommittedLoadForMainFrame || CGRectIsEmpty(oldBounds) || oldUnobscuredContentRect.isEmpty()) {
         updateBlock();
+        if ([_customContentView respondsToSelector:@selector(web_beginAnimatedResize)])
+            [_customContentView web_beginAnimatedResize];
         return;
     }
 
@@ -5261,6 +5263,9 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (void)_endAnimatedResize
 {
     LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView " << _page->pageID() << " _endAnimatedResize:] " << " _dynamicViewportUpdateMode " << (int)_dynamicViewportUpdateMode);
+
+    if ([_customContentView respondsToSelector:@selector(web_endAnimatedResize)])
+        [_customContentView web_endAnimatedResize];
 
     if (_dynamicViewportUpdateMode == DynamicViewportUpdateMode::NotResizing)
         return;
