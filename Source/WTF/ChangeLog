@@ -1,3 +1,27 @@
+2018-05-09  Antti Koivisto  <antti@apple.com>
+
+        Add OptionSet::operator& and operator bool
+        https://bugs.webkit.org/show_bug.cgi?id=185306
+
+        Reviewed by Anders Carlsson.
+
+        This is primarily to allow writing
+
+            if (options & Option:A)
+
+        instead of
+
+            if (options.contains(Option:A))
+
+        This is consistent with other OptionSet operators.
+
+        * wtf/OptionSet.h:
+        (WTF::OptionSet::operator bool):
+        (WTF::OptionSet::operator&):
+
+        Also remove T versions of operator| and operator-, they are not needed due to
+        implicit conversion from T to OptionSet<T>.
+
 2018-05-06  Filip Pizlo  <fpizlo@apple.com>
 
         InPlaceAbstractState::beginBasicBlock shouldn't have to clear any abstract values

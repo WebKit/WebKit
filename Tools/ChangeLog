@@ -1,3 +1,13 @@
+2018-05-09  Antti Koivisto  <antti@apple.com>
+
+        Add OptionSet::operator& and operator bool
+        https://bugs.webkit.org/show_bug.cgi?id=185306
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WTF/OptionSet.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Consolidate WebContentReaderIOS and WebContentReaderMac into WebContentReaderCocoa

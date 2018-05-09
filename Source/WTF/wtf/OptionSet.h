@@ -107,6 +107,8 @@ public:
     constexpr iterator begin() const { return m_storage; }
     constexpr iterator end() const { return 0; }
 
+    constexpr explicit operator bool() { return !isEmpty(); }
+
     constexpr bool contains(OptionSet optionSet) const
     {
         return m_storage & optionSet.m_storage;
@@ -139,19 +141,14 @@ public:
         return fromRaw(lhs.m_storage | rhs.m_storage);
     }
 
-    constexpr friend OptionSet operator|(OptionSet lhs, T rhs)
+    constexpr friend OptionSet operator&(OptionSet lhs, OptionSet rhs)
     {
-        return lhs | OptionSet { rhs };
+        return fromRaw(lhs.m_storage & rhs.m_storage);
     }
 
     constexpr friend OptionSet operator-(OptionSet lhs, OptionSet rhs)
     {
         return fromRaw(lhs.m_storage & ~rhs.m_storage);
-    }
-
-    constexpr friend OptionSet operator-(OptionSet lhs, T rhs)
-    {
-        return lhs - OptionSet { rhs };
     }
 
 private:

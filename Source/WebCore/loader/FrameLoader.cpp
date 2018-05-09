@@ -1701,9 +1701,9 @@ void FrameLoader::reload(OptionSet<ReloadOption> options)
     loader->setOverrideEncoding(m_documentLoader->overrideEncoding());
 
     auto frameLoadTypeForReloadOptions = [] (auto options) {
-        if (options.contains(ReloadOption::FromOrigin))
+        if (options & ReloadOption::FromOrigin)
             return FrameLoadType::ReloadFromOrigin;
-        if (options.contains(ReloadOption::ExpiredOnly))
+        if (options & ReloadOption::ExpiredOnly)
             return FrameLoadType::ReloadExpiredOnly;
         return FrameLoadType::Reload;
     };

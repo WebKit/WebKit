@@ -2210,81 +2210,81 @@ const char* RenderLayerCompositor::logReasonsForCompositing(const RenderLayer& l
 {
     OptionSet<CompositingReason> reasons = reasonsForCompositing(layer);
 
-    if (reasons.contains(CompositingReason::Transform3D))
+    if (reasons & CompositingReason::Transform3D)
         return "3D transform";
 
-    if (reasons.contains(CompositingReason::Video))
+    if (reasons & CompositingReason::Video)
         return "video";
 
-    if (reasons.contains(CompositingReason::Canvas))
+    if (reasons & CompositingReason::Canvas)
         return "canvas";
 
-    if (reasons.contains(CompositingReason::Plugin))
+    if (reasons & CompositingReason::Plugin)
         return "plugin";
 
-    if (reasons.contains(CompositingReason::IFrame))
+    if (reasons & CompositingReason::IFrame)
         return "iframe";
 
-    if (reasons.contains(CompositingReason::BackfaceVisibilityHidden))
+    if (reasons & CompositingReason::BackfaceVisibilityHidden)
         return "backface-visibility: hidden";
 
-    if (reasons.contains(CompositingReason::ClipsCompositingDescendants))
+    if (reasons & CompositingReason::ClipsCompositingDescendants)
         return "clips compositing descendants";
 
-    if (reasons.contains(CompositingReason::Animation))
+    if (reasons & CompositingReason::Animation)
         return "animation";
 
-    if (reasons.contains(CompositingReason::Filters))
+    if (reasons & CompositingReason::Filters)
         return "filters";
 
-    if (reasons.contains(CompositingReason::PositionFixed))
+    if (reasons & CompositingReason::PositionFixed)
         return "position: fixed";
 
-    if (reasons.contains(CompositingReason::PositionSticky))
+    if (reasons & CompositingReason::PositionSticky)
         return "position: sticky";
 
-    if (reasons.contains(CompositingReason::OverflowScrollingTouch))
+    if (reasons & CompositingReason::OverflowScrollingTouch)
         return "-webkit-overflow-scrolling: touch";
 
-    if (reasons.contains(CompositingReason::Stacking))
+    if (reasons & CompositingReason::Stacking)
         return "stacking";
 
-    if (reasons.contains(CompositingReason::Overlap))
+    if (reasons & CompositingReason::Overlap)
         return "overlap";
 
-    if (reasons.contains(CompositingReason::NegativeZIndexChildren))
+    if (reasons & CompositingReason::NegativeZIndexChildren)
         return "negative z-index children";
 
-    if (reasons.contains(CompositingReason::TransformWithCompositedDescendants))
+    if (reasons & CompositingReason::TransformWithCompositedDescendants)
         return "transform with composited descendants";
 
-    if (reasons.contains(CompositingReason::OpacityWithCompositedDescendants))
+    if (reasons & CompositingReason::OpacityWithCompositedDescendants)
         return "opacity with composited descendants";
 
-    if (reasons.contains(CompositingReason::MaskWithCompositedDescendants))
+    if (reasons & CompositingReason::MaskWithCompositedDescendants)
         return "mask with composited descendants";
 
-    if (reasons.contains(CompositingReason::ReflectionWithCompositedDescendants))
+    if (reasons & CompositingReason::ReflectionWithCompositedDescendants)
         return "reflection with composited descendants";
 
-    if (reasons.contains(CompositingReason::FilterWithCompositedDescendants))
+    if (reasons & CompositingReason::FilterWithCompositedDescendants)
         return "filter with composited descendants";
 
 #if ENABLE(CSS_COMPOSITING)
-    if (reasons.contains(CompositingReason::BlendingWithCompositedDescendants))
+    if (reasons & CompositingReason::BlendingWithCompositedDescendants)
         return "blending with composited descendants";
 
-    if (reasons.contains(CompositingReason::IsolatesCompositedBlendingDescendants))
+    if (reasons & CompositingReason::IsolatesCompositedBlendingDescendants)
         return "isolates composited blending descendants";
 #endif
 
-    if (reasons.contains(CompositingReason::Perspective))
+    if (reasons & CompositingReason::Perspective)
         return "perspective";
 
-    if (reasons.contains(CompositingReason::Preserve3D))
+    if (reasons & CompositingReason::Preserve3D)
         return "preserve-3d";
 
-    if (reasons.contains(CompositingReason::Root))
+    if (reasons & CompositingReason::Root)
         return "root";
 
     return "";
@@ -3798,10 +3798,10 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Lay
             
         LOG_WITH_STREAM(Compositing, stream << "Registering ViewportConstrained " << nodeType << " node " << nodeID << " (layer " << backing->graphicsLayer()->primaryLayerID() << ") as child of " << parentNodeID);
 
-        if (changes.contains(ScrollingNodeChangeFlags::Layer))
+        if (changes & ScrollingNodeChangeFlags::Layer)
             scrollingCoordinator->updateNodeLayer(nodeID, backing->graphicsLayer());
 
-        if (changes.contains(ScrollingNodeChangeFlags::LayerGeometry)) {
+        if (changes & ScrollingNodeChangeFlags::LayerGeometry) {
             switch (nodeType) {
             case FixedNode:
                 scrollingCoordinator->updateNodeViewportConstraints(nodeID, computeFixedViewportConstraints(layer));
