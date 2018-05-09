@@ -460,7 +460,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
         if (frame().selection().isFocusedAndActive() && document().focusedElement() == &selectElement())
             backColor = theme().activeListBoxSelectionBackgroundColor();
         else
-            backColor = theme().inactiveListBoxSelectionBackgroundColor(document().useSystemAppearance());
+            backColor = theme().inactiveListBoxSelectionBackgroundColor(document().styleColorOptions());
     } else
         backColor = itemStyle.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
 

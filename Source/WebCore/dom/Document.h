@@ -545,6 +545,7 @@ public:
     float deviceScaleFactor() const;
 
     bool useSystemAppearance() const;
+    bool useDefaultAppearance() const;
     OptionSet<StyleColor::Options> styleColorOptions() const;
 
     WEBCORE_EXPORT Ref<Range> createRange();

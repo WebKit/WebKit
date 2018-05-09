@@ -53,7 +53,8 @@ public:
 
     enum class Options : uint8_t {
         ForVisitedLink = 1 << 0,
-        UseSystemAppearance = 1 << 1
+        UseSystemAppearance = 1 << 1,
+        UseDefaultAppearance = 1 << 2
     };
 
     static Color colorFromKeyword(CSSValueID, OptionSet<Options>);
