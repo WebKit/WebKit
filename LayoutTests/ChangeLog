@@ -1,3 +1,15 @@
+2018-05-09  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [ARM] Disable test on Linux due to lack of executable memory
+        https://bugs.webkit.org/show_bug.cgi?id=185466
+
+        Reviewed by Yusuke Suzuki.
+
+        Do not run tests with LLInt disabled, otherwise test runs out of executable memory.
+
+        * js/script-tests/dfg-uint32array-overflow-values.js:
+        * js/script-tests/dfg-uint8clampedarray.js:
+
 2018-05-09  Ms2ger  <Ms2ger@igalia.com>
 
         Update fast/events/constructors/(mouse|wheel)-event-constructor.html and expectations.
