@@ -36,6 +36,7 @@ use File::Find;
 use File::Temp qw(tempfile tempdir);
 use File::Spec::Functions qw(abs2rel);
 use File::Basename qw(dirname);
+use File::Path qw(mkpath);
 use Cwd qw(abs_path);
 use FindBin;
 use Env qw(DYLD_FRAMEWORK_PATH);
@@ -84,9 +85,15 @@ my $runningAllTests;
 
 my $expectationsFile = abs_path("$Bin/../../../JSTests/test262/expectations.yaml");
 my $configFile = abs_path("$Bin/../../../JSTests/test262/config.yaml");
-my $resultsFile = abs_path("$Bin/results.yaml");
-my $summaryTxtFile = abs_path("$Bin/results-summary.txt");
-my $summaryFile = abs_path("$Bin/results-summary.yaml");
+
+my $resultsDir = `pwd`;
+chomp $resultsDir;
+$resultsDir = $resultsDir . "/test262-results";
+mkpath($resultsDir);
+
+my $resultsFile = abs_path("$resultsDir/results.yaml");
+my $summaryTxtFile = abs_path("$resultsDir/summary.txt");
+my $summaryFile = abs_path("$resultsDir/summary.yaml");
 
 my @results;
 my @files;
@@ -106,6 +113,7 @@ sub processCLI {
     my $ignoreExpectations;
     my @features;
     my $stats;
+    my $specifiedResultsFile;
 
     # If adding a new commandline argument, you must update the POD
     # documentation at the end of the file.
@@ -125,6 +133,7 @@ sub processCLI {
         'failing-files' => \$failingOnly,
         'l|latest-import' => \$latestImport,
         'stats' => \$stats,
+        'r|results=s' => \$specifiedResultsFile,
     );
 
     if ($help) {
@@ -136,7 +145,22 @@ sub processCLI {
         }
     }
 
+    if ($specifiedResultsFile) {
+        if (!$stats) {
+            print "Waring: supplied results file not used for this command.\n";
+        }
+        elsif (-e $specifiedResultsFile) {
+            $resultsFile = $specifiedResultsFile;
+        }
+        else {
+            die "Error: results file $specifiedResultsFile does not exist.";
+        }
+    }
+
     if ($stats) {
+        if (! -e $resultsFile) {
+            die "Error: cannot find results file, please specify with --results.";
+        }
         summarizeResults();
         exit;
     }
@@ -182,7 +206,7 @@ sub processCLI {
         # If expectations file doesn't exist yet, just run tests, UNLESS
         # --failures-only option supplied.
         if ( $failingOnly && ! -e $expectationsFile ) {
-            print "Error: Cannot run failing tests if test262-expectation.yaml file does not exist.\n";
+            print "Error: Cannot run failing tests if expectation.yaml file does not exist.\n";
             die;
         } elsif (-e $expectationsFile) {
             $expect = LoadFile($expectationsFile) or die $!;
@@ -884,7 +908,11 @@ Runs the test files listed in the last import (./JSTests/test262/latest-changes-
 
 =item B<--stats>
 
-Calculate conformance statistics from JSTests/test262-results.yaml file. Saves results in JSTests/test262/results-summary.txt and JSTests/test262/results-summary.yaml.
+Calculate conformance statistics from results/results.yaml file or a supplied results file (--results). Saves results in results/summary.txt and results/summary.yaml.
+
+=item B<--results, -r>
+
+Specifies a results file the --stats option.
 
 =back
 

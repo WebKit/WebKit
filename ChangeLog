@@ -1,3 +1,14 @@
+2018-05-08  Valerie R Young  <valerie@bocoup.com>
+
+        test262/Runner.pm: create results dir for results of test262 run
+        https://bugs.webkit.org/show_bug.cgi?id=185392
+
+        Reviewed by Michael Saboff.
+
+        Remove reference to no longer existing files.
+
+        * .gitignore:
+
 2018-05-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSCOnly] Enable Intl.PluralRules
