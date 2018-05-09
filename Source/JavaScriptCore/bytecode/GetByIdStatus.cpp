@@ -104,11 +104,7 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     }
 
     case op_get_array_length:
-    case op_try_get_by_id:
-    case op_get_by_id_proto_load:
-    case op_get_by_id_unset: {
-        // FIXME: We should not just bail if we see a try_get_by_id or a get_by_id_proto_load.
-        // https://bugs.webkit.org/show_bug.cgi?id=158039
+    case op_try_get_by_id: {
         return GetByIdStatus(NoInformation, false);
     }
 
