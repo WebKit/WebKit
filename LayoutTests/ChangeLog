@@ -1,3 +1,48 @@
+2018-05-09  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r231513. rdar://problem/40096750
+
+    Mute MediaElementSourceNode when tainted.
+    https://bugs.webkit.org/show_bug.cgi?id=184866
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Test: http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html
+    
+    * Modules/webaudio/AudioContext.cpp:
+    (WebCore::AudioContext::wouldTaintOrigin const):
+    * Modules/webaudio/AudioContext.h:
+    * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+    (WebCore::MediaElementAudioSourceNode::setFormat):
+    (WebCore::MediaElementAudioSourceNode::wouldTaintOrigin):
+    (WebCore::MediaElementAudioSourceNode::process):
+    * Modules/webaudio/MediaElementAudioSourceNode.h:
+    
+    LayoutTests:
+    
+    * http/tests/media/resources/1000Hz-sin.wav: Added.
+    * http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-expected.txt: Added.
+    * http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html: Added.
+    * http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin-expected.txt: Added.
+    * http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@231513 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-05-08  Jer Noble  <jer.noble@apple.com>
+
+            Mute MediaElementSourceNode when tainted.
+            https://bugs.webkit.org/show_bug.cgi?id=184866
+
+            Reviewed by Eric Carlson.
+
+            * http/tests/media/resources/1000Hz-sin.wav: Added.
+            * http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-expected.txt: Added.
+            * http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html: Added.
+            * http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin-expected.txt: Added.
+            * http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html: Added.
+
 2018-05-08  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r231441. rdar://problem/40050720
