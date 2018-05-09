@@ -1,3 +1,28 @@
+2018-05-09  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r231479): com.apple.WebCore crash in WebCore::DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied()
+        https://bugs.webkit.org/show_bug.cgi?id=185475
+        <rdar://problem/40093853>
+
+        Reviewed by Andy Estes.
+
+        DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied() must extends its lifetime
+        until completion as dispatching a DOM load event at the associated frame can cause JavaScript execution
+        that can do anything, including destroying the loader that dispatched the event.
+
+        Following r231479 DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied() is now
+        invoked by both DocumentLoader::responseReceived() and WebResourceLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied().
+        The latter only can happen when using WebKit2 and the experimental feature Restricted HTTP Response Access
+        is enabled (RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess()). Unlike DocumentLoader::responseReceived()
+        WebResourceLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied() does not take out a ref
+        on the DocumentLoader before invoking DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied().
+        Therefore, DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied() can cause its
+        own destruction as a result of dispatching a DOM load event at the frame. We should take out a ref on
+        the DocumentLoader when executing DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied().
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied):
+
 2018-05-09  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build by ignoring some deprecation warnings
