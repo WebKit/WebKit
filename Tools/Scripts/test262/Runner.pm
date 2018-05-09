@@ -172,7 +172,6 @@ sub processCLI {
             die "Error: --jsc path does not exist.";
         }
 
-        # For custom JSC paths, Sets only if not yet defined
         if (not defined $DYLD_FRAMEWORK_PATH) {
             $DYLD_FRAMEWORK_PATH = dirname($JSC);
         }
@@ -466,6 +465,7 @@ sub getBuildPath {
     my $jscDir = qx($cmd);
     chomp $jscDir;
 
+
     my $jsc;
     $jsc = $jscDir . '/jsc';
 
@@ -613,7 +613,8 @@ sub runTest {
     my $defaultHarness = '';
     $defaultHarness = $deffile if $scenario ne 'raw';
 
-    my $result = qx/$JSC $args $defaultHarness $includesfile '$prefixFile$filename'/;
+    my $prefix = qq(DYLD_FRAMEWORK_PATH=$DYLD_FRAMEWORK_PATH);
+    my $result = qx($prefix $JSC $args $defaultHarness $includesfile '$prefixFile$filename');
 
     chomp $result;
 

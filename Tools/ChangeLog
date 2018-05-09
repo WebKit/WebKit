@@ -1,3 +1,15 @@
+2018-05-09  Leo Balter  <leonardo.balter@gmail.com>
+
+        Fix Test262 Runner to have DYLD_FRAMEWORK_PATH always set
+        https://bugs.webkit.org/show_bug.cgi?id=185488
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/test262/Runner.pm:
+        (processCLI):
+        (getBuildPath):
+        (runTest):
+
 2018-05-09  Richard Houle  <rhoule@apple.com>
 
         [Cocoa] Some fields are not identified as [WKWebProcessPlugInNodeHandle isTextField]
