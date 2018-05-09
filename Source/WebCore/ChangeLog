@@ -1,3 +1,11 @@
+2018-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the internal iOS build
+
+        Add a missing import statement in an implementation file.
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+
 2018-05-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r231486.

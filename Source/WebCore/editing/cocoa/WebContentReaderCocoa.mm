@@ -38,6 +38,7 @@
 #import "Frame.h"
 #import "FrameLoader.h"
 #import "FrameLoaderClient.h"
+#import "HTMLAnchorElement.h"
 #import "HTMLAttachmentElement.h"
 #import "HTMLBRElement.h"
 #import "HTMLBodyElement.h"
