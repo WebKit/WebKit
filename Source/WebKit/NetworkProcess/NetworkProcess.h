@@ -227,7 +227,9 @@ private:
     void getNetworkProcessStatistics(uint64_t callbackID);
     void clearCacheForAllOrigins(uint32_t cachesToClear);
     void setAllowsAnySSLCertificateForWebSocket(bool);
+    
     void syncAllCookies();
+    void didSyncAllCookies();
 
     void didGrantSandboxExtensionsToStorageProcessForBlobs(uint64_t requestID);
 

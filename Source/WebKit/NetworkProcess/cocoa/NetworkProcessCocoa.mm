@@ -41,6 +41,7 @@
 #import <WebCore/SecurityOriginData.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/CallbackAggregator.h>
 #import <wtf/ProcessPrivilege.h>
 
 namespace WebKit {
@@ -229,7 +230,19 @@ void NetworkProcess::syncAllCookies()
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+    RefPtr<CallbackAggregator> callbackAggregator = CallbackAggregator::create([this] {
+        didSyncAllCookies();
+    });
+    WebCore::NetworkStorageSession::forEach([&] (auto& networkStorageSession) {
+        [networkStorageSession.nsCookieStorage() _saveCookies:[callbackAggregator] { }];
+    });
+#else
     _CFHTTPCookieStorageFlushCookieStores();
+    didSyncAllCookies();
+#endif
+
 #pragma clang diagnostic pop
 }
 

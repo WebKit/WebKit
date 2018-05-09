@@ -264,6 +264,9 @@ void NetworkProcessProxy::didClose(IPC::Connection&)
 #endif
 
     m_tokenForHoldingLockedFiles = nullptr;
+    
+    m_syncAllCookiesToken = nullptr;
+    m_syncAllCookiesCounter = 0;
 
     for (auto& callback : m_writeBlobToFilePathCallbackMap.values())
         callback(false);
@@ -548,6 +551,28 @@ void NetworkProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
     }
 }
 
+void NetworkProcessProxy::syncAllCookies()
+{
+    send(Messages::NetworkProcess::SyncAllCookies(), 0);
+    
+    ++m_syncAllCookiesCounter;
+    if (m_syncAllCookiesToken)
+        return;
+    
+    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because the Network process is syncing cookies", this);
+    m_syncAllCookiesToken = throttler().backgroundActivityToken();
+}
+    
+void NetworkProcessProxy::didSyncAllCookies()
+{
+    ASSERT(m_syncAllCookiesCounter);
+
+    --m_syncAllCookiesCounter;
+    if (!m_syncAllCookiesCounter) {
+        RELEASE_LOG(ProcessSuspension, "%p - NetworkProcessProxy is releasing a background assertion because the Network process is done syncing cookies", this);
+        m_syncAllCookiesToken = nullptr;
+    }
+}
 
 #if ENABLE(CONTENT_EXTENSIONS)
 void NetworkProcessProxy::contentExtensionRules(UserContentControllerIdentifier identifier)

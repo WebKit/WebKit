@@ -323,6 +323,7 @@ WTF_EXTERN_C_END
 - (id)_initWithCFHTTPCookieStorage:(CFHTTPCookieStorageRef)cfStorage;
 - (CFHTTPCookieStorageRef)_cookieStorage;
 - (void)_saveCookies;
+- (void)_saveCookies:(dispatch_block_t) completionHandler;
 @end
 #endif
 

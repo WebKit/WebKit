@@ -29,6 +29,8 @@ messages -> NetworkProcessProxy LegacyReceiver {
     DidDeleteWebsiteData(uint64_t callbackID)
     DidDeleteWebsiteDataForOrigins(uint64_t callbackID)
 
+    DidSyncAllCookies()
+
     DidWriteBlobToFilePath(bool success, uint64_t callbackID)
 
     GrantSandboxExtensionsToStorageProcessForBlobs(uint64_t requestID, Vector<String> paths)

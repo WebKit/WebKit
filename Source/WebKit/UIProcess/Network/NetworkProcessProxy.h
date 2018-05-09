@@ -92,6 +92,9 @@ public:
     void processReadyToSuspend();
 
     void setIsHoldingLockedFiles(bool);
+    
+    void syncAllCookies();
+    void didSyncAllCookies();
 
     ProcessThrottler& throttler() { return m_throttler; }
     WebProcessPool& processPool() { return m_processPool; }
@@ -167,6 +170,9 @@ private:
 #endif
     ProcessThrottler m_throttler;
     ProcessThrottler::BackgroundActivityToken m_tokenForHoldingLockedFiles;
+    ProcessThrottler::BackgroundActivityToken m_syncAllCookiesToken;
+    
+    unsigned m_syncAllCookiesCounter { 0 };
 
     HashMap<uint64_t, CompletionHandler<void(bool success)>> m_writeBlobToFilePathCallbackMap;
     HashMap<uint64_t, WTF::CompletionHandler<void(bool wasGranted)>> m_storageAccessResponseCallbackMap;

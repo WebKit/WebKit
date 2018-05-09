@@ -924,6 +924,11 @@ void NetworkProcess::registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&
     SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(scheme);
 }
 
+void NetworkProcess::didSyncAllCookies()
+{
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidSyncAllCookies(), 0);
+}
+
 #if !PLATFORM(COCOA)
 void NetworkProcess::initializeProcess(const ChildProcessInitializationParameters&)
 {

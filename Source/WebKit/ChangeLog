@@ -1,3 +1,29 @@
+2018-05-08  Sihui Liu  <sihui_liu@apple.com>
+
+        Adopt new async _savecookies SPI for keeping networking process active during flushing cookies
+        https://bugs.webkit.org/show_bug.cgi?id=185261
+        <rdar://problem/37214391>
+
+        Reviewed by Chris Dumez.
+
+        By adopting new async SPI _savecookies, we can keep networking process active(not suspended)
+        until cookies are fully synced to disk with process assertion.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didSyncAllCookies):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::syncAllCookies):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didClose):
+        (WebKit::NetworkProcessProxy::syncAllCookies):
+        (WebKit::NetworkProcessProxy::didSyncAllCookies):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::syncNetworkProcessCookies):
+
 2018-05-08  Per Arne Vollan  <pvollan@apple.com>
 
         Set colorspace in the PDF plugin.

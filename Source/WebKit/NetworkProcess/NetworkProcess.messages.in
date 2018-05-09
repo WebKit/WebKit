@@ -60,7 +60,7 @@ messages -> NetworkProcess LegacyReceiver {
 #endif
     SetAllowsAnySSLCertificateForWebSocket(bool enabled) -> ()
 
-    SyncAllCookies() -> ()
+    SyncAllCookies()
 
     AllowSpecificHTTPSCertificateForHost(WebCore::CertificateInfo certificate, String host)
     SetCanHandleHTTPSServerTrustEvaluation(bool value)
