@@ -607,11 +607,12 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
 
         Shared/cairo/ShareableBitmapCairo.cpp
 
+        Shared/glib/ProcessExecutablePathGLib.cpp
+
         Shared/gtk/NativeWebKeyboardEventGtk.cpp
         Shared/gtk/NativeWebMouseEventGtk.cpp
         Shared/gtk/NativeWebTouchEventGtk.cpp
         Shared/gtk/NativeWebWheelEventGtk.cpp
-        Shared/gtk/ProcessExecutablePathGtk.cpp
         Shared/gtk/WebEventFactory.cpp
 
         Shared/soup/WebCoreArgumentCodersSoup.cpp

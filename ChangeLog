@@ -1,3 +1,16 @@
+2018-04-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Use GNU install directories
+        https://bugs.webkit.org/show_bug.cgi?id=184377
+
+        Reviewed by Carlos Garcia Campos.
+
+        Notably, this means all the CMake arguments that distributors use to customize install
+        directories (-DCMAKE_INSTALL_*DIR) will no longer be ignored.
+
+        * Source/cmake/OptionsCommon.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2018-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.20.2 release.

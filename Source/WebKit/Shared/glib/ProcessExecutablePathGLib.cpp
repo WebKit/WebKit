@@ -29,13 +29,11 @@
 
 #include <WebCore/FileSystem.h>
 #include <glib.h>
-
-#if ENABLE(DEVELOPER_MODE)
 #include <wtf/glib/GLibUtilities.h>
-#endif
+
+using namespace WebCore;
 
 namespace WebKit {
-using namespace WebCore;
 
 #if ENABLE(DEVELOPER_MODE)
 static String getExecutablePath()
@@ -43,7 +41,7 @@ static String getExecutablePath()
     CString executablePath = getCurrentExecutablePath();
     if (!executablePath.isNull())
         return FileSystem::directoryName(FileSystem::stringFromFileSystemRepresentation(executablePath.data()));
-    return String();
+    return { };
 }
 #endif
 
@@ -70,22 +68,38 @@ static String findWebKitProcess(const char* processName)
 
 String executablePathOfWebProcess()
 {
+#if PLATFORM(WPE)
+    return findWebKitProcess("WPEWebProcess");
+#else
     return findWebKitProcess("WebKitWebProcess");
+#endif
 }
 
 String executablePathOfPluginProcess()
 {
+#if PLATFORM(WPE)
+    return findWebKitProcess("WPEPluginProcess");
+#else
     return findWebKitProcess("WebKitPluginProcess");
+#endif
 }
 
 String executablePathOfNetworkProcess()
 {
+#if PLATFORM(WPE)
+    return findWebKitProcess("WPENetworkProcess");
+#else
     return findWebKitProcess("WebKitNetworkProcess");
+#endif
 }
 
 String executablePathOfStorageProcess()
 {
+#if PLATFORM(WPE)
+    return findWebKitProcess("WPEStorageProcess");
+#else
     return findWebKitProcess("WebKitStorageProcess");
+#endif
 }
 
 } // namespace WebKit
