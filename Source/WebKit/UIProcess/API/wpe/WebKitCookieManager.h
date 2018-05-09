@@ -145,24 +145,6 @@ webkit_cookie_manager_delete_cookie_finish            (WebKitCookieManager      
                                                        GAsyncResult                 *result,
                                                        GError                      **error);
 
-WEBKIT_DEPRECATED_FOR(webkit_website_data_manager_fetch) void
-webkit_cookie_manager_get_domains_with_cookies        (WebKitCookieManager          *cookie_manager,
-                                                       GCancellable                 *cancellable,
-                                                       GAsyncReadyCallback           callback,
-                                                       gpointer                      user_data);
-
-WEBKIT_DEPRECATED_FOR(webkit_website_data_manager_fetch_finish) gchar **
-webkit_cookie_manager_get_domains_with_cookies_finish (WebKitCookieManager          *cookie_manager,
-                                                       GAsyncResult                 *result,
-                                                       GError                      **error);
-
-WEBKIT_DEPRECATED_FOR(webkit_website_data_manager_remove) void
-webkit_cookie_manager_delete_cookies_for_domain       (WebKitCookieManager          *cookie_manager,
-                                                       const gchar                  *domain);
-
-WEBKIT_DEPRECATED_FOR(webkit_website_data_manager_clear) void
-webkit_cookie_manager_delete_all_cookies              (WebKitCookieManager          *cookie_manager);
-
 G_END_DECLS
 
 #endif

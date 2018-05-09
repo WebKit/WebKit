@@ -59,9 +59,6 @@ struct _WebKitFormSubmissionRequestClass {
 WEBKIT_API GType
 webkit_form_submission_request_get_type         (void);
 
-WEBKIT_DEPRECATED_FOR(webkit_form_submission_request_list_text_fields) GHashTable *
-webkit_form_submission_request_get_text_fields  (WebKitFormSubmissionRequest  *request);
-
 WEBKIT_API gboolean
 webkit_form_submission_request_list_text_fields (WebKitFormSubmissionRequest  *request,
                                                  GPtrArray                   **field_names,

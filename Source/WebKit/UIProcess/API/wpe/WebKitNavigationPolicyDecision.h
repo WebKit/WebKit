@@ -65,18 +65,6 @@ webkit_navigation_policy_decision_get_type            (void);
 WEBKIT_API WebKitNavigationAction *
 webkit_navigation_policy_decision_get_navigation_action (WebKitNavigationPolicyDecision *decision);
 
-WEBKIT_DEPRECATED_FOR(webkit_navigation_policy_decision_get_navigation_action) WebKitNavigationType
-webkit_navigation_policy_decision_get_navigation_type   (WebKitNavigationPolicyDecision *decision);
-
-WEBKIT_DEPRECATED_FOR(webkit_navigation_policy_decision_get_navigation_action) guint
-webkit_navigation_policy_decision_get_mouse_button      (WebKitNavigationPolicyDecision *decision);
-
-WEBKIT_DEPRECATED_FOR(webkit_navigation_policy_decision_get_navigation_action) guint
-webkit_navigation_policy_decision_get_modifiers         (WebKitNavigationPolicyDecision *decision);
-
-WEBKIT_DEPRECATED_FOR(webkit_navigation_policy_decision_get_navigation_action) WebKitURIRequest *
-webkit_navigation_policy_decision_get_request           (WebKitNavigationPolicyDecision *decision);
-
 WEBKIT_API const gchar *
 webkit_navigation_policy_decision_get_frame_name        (WebKitNavigationPolicyDecision *decision);
 

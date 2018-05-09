@@ -59,10 +59,12 @@ WEBKIT_DEFINE_TYPE(WebKitNavigationPolicyDecision, webkit_navigation_policy_deci
 enum {
     PROP_0,
     PROP_NAVIGATION_ACTION,
+#if PLATFORM(GTK)
     PROP_NAVIGATION_TYPE,
     PROP_MOUSE_BUTTON,
     PROP_MODIFIERS,
     PROP_REQUEST,
+#endif
     PROP_FRAME_NAME,
 };
 
@@ -73,6 +75,7 @@ static void webkitNavigationPolicyDecisionGetProperty(GObject* object, guint pro
     case PROP_NAVIGATION_ACTION:
         g_value_set_boxed(value, webkit_navigation_policy_decision_get_navigation_action(decision));
         break;
+#if PLATFORM(GTK)
     case PROP_NAVIGATION_TYPE:
         g_value_set_enum(value, webkit_navigation_action_get_navigation_type(decision->priv->navigationAction));
         break;
@@ -85,6 +88,7 @@ static void webkitNavigationPolicyDecisionGetProperty(GObject* object, guint pro
     case PROP_REQUEST:
         g_value_set_object(value, webkit_navigation_action_get_request(decision->priv->navigationAction));
         break;
+#endif
     case PROP_FRAME_NAME:
         g_value_set_string(value, webkit_navigation_policy_decision_get_frame_name(decision));
         break;
@@ -116,6 +120,7 @@ static void webkit_navigation_policy_decision_class_init(WebKitNavigationPolicyD
             WEBKIT_TYPE_NAVIGATION_ACTION,
             WEBKIT_PARAM_READABLE));
 
+#if PLATFORM(GTK)
     /**
      * WebKitNavigationPolicyDecision:navigation-type:
      *
@@ -187,6 +192,7 @@ static void webkit_navigation_policy_decision_class_init(WebKitNavigationPolicyD
                                                       _("The URI request that is associated with this navigation"),
                                                       WEBKIT_TYPE_URI_REQUEST,
                                                       WEBKIT_PARAM_READABLE));
+#endif
 
     /**
      * WebKitNavigationPolicyDecision:frame-name:
@@ -221,6 +227,7 @@ WebKitNavigationAction* webkit_navigation_policy_decision_get_navigation_action(
     return decision->priv->navigationAction;
 }
 
+#if PLATFORM(GTK)
 /**
  * webkit_navigation_policy_decision_get_navigation_type:
  * @decision: a #WebKitNavigationPolicyDecision
@@ -284,6 +291,7 @@ WebKitURIRequest* webkit_navigation_policy_decision_get_request(WebKitNavigation
     g_return_val_if_fail(WEBKIT_IS_NAVIGATION_POLICY_DECISION(decision), nullptr);
     return webkit_navigation_action_get_request(decision->priv->navigationAction);
 }
+#endif
 
 /**
  * webkit_navigation_policy_decision_get_frame_name:

@@ -127,7 +127,9 @@ enum {
     PROP_DEFAULT_MONOSPACE_FONT_SIZE,
     PROP_MINIMUM_FONT_SIZE,
     PROP_DEFAULT_CHARSET,
+#if PLATFORM(GTK)
     PROP_ENABLE_PRIVATE_BROWSING,
+#endif
     PROP_ENABLE_DEVELOPER_EXTRAS,
     PROP_ENABLE_RESIZABLE_TEXT_AREAS,
     PROP_ENABLE_TABS_TO_LINKS,
@@ -266,11 +268,13 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_DEFAULT_CHARSET:
         webkit_settings_set_default_charset(settings, g_value_get_string(value));
         break;
+#if PLATFORM(GTK)
     case PROP_ENABLE_PRIVATE_BROWSING:
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         webkit_settings_set_enable_private_browsing(settings, g_value_get_boolean(value));
         G_GNUC_END_IGNORE_DEPRECATIONS;
         break;
+#endif
     case PROP_ENABLE_DEVELOPER_EXTRAS:
         webkit_settings_set_enable_developer_extras(settings, g_value_get_boolean(value));
         break;
@@ -443,11 +447,13 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
     case PROP_DEFAULT_CHARSET:
         g_value_set_string(value, webkit_settings_get_default_charset(settings));
         break;
+#if PLATFORM(GTK)
     case PROP_ENABLE_PRIVATE_BROWSING:
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         g_value_set_boolean(value, webkit_settings_get_enable_private_browsing(settings));
         G_GNUC_END_IGNORE_DEPRECATIONS;
         break;
+#endif
     case PROP_ENABLE_DEVELOPER_EXTRAS:
         g_value_set_boolean(value, webkit_settings_get_enable_developer_extras(settings));
         break;
@@ -879,6 +885,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         "iso-8859-1",
                                                         readWriteConstructParamFlags));
 
+#if PLATFORM(GTK)
     /**
      * WebKitSettings:enable-private-browsing:
      *
@@ -894,6 +901,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          _("Whether to enable private browsing"),
                                                          FALSE,
                                                          readWriteConstructParamFlags));
+#endif
 
     /**
      * WebKitSettings:enable-developer-extras:
@@ -2242,6 +2250,7 @@ void webkit_settings_set_default_charset(WebKitSettings* settings, const gchar* 
     g_object_notify(G_OBJECT(settings), "default-charset");
 }
 
+#if PLATFORM(GTK)
 /**
  * webkit_settings_get_enable_private_browsing:
  * @settings: a #WebKitSettings
@@ -2280,6 +2289,7 @@ void webkit_settings_set_enable_private_browsing(WebKitSettings* settings, gbool
     priv->preferences->setPrivateBrowsingEnabled(enabled);
     g_object_notify(G_OBJECT(settings), "enable-private-browsing");
 }
+#endif
 
 /**
  * webkit_settings_get_enable_developer_extras:

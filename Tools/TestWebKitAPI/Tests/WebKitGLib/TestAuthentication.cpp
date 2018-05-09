@@ -184,6 +184,8 @@ static void testWebViewAuthenticationNoCredential(AuthenticationTest* test, gcon
     g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, authExpectedFailureTitle);
 }
 
+// FIXME: Find a way to not use the private browsing setting and enable for WPE.
+#if PLATFORM(GTK)
 static void testWebViewAuthenticationStorage(AuthenticationTest* test, gconstpointer)
 {
     // Enable private browsing before authentication request to test that credentials can't be saved.
@@ -207,6 +209,7 @@ static void testWebViewAuthenticationStorage(AuthenticationTest* test, gconstpoi
     g_assert(webkit_authentication_request_can_save_credentials(request));
 #endif
 }
+#endif
 
 static void testWebViewAuthenticationSuccess(AuthenticationTest* test, gconstpointer)
 {
@@ -416,7 +419,9 @@ void beforeAll()
     AuthenticationTest::add("Authentication", "authentication-success", testWebViewAuthenticationSuccess);
     AuthenticationTest::add("Authentication", "authentication-failure", testWebViewAuthenticationFailure);
     AuthenticationTest::add("Authentication", "authentication-no-credential", testWebViewAuthenticationNoCredential);
+#if PLATFORM(GTK)
     AuthenticationTest::add("Authentication", "authentication-storage", testWebViewAuthenticationStorage);
+#endif
     AuthenticationTest::add("Authentication", "authentication-empty-realm", testWebViewAuthenticationEmptyRealm);
     ProxyAuthenticationTest::add("Authentication", "authentication-proxy", testWebViewAuthenticationProxy);
     ProxyAuthenticationTest::add("Authentication", "authentication-proxy-https", testWebViewAuthenticationProxyHTTPS);
