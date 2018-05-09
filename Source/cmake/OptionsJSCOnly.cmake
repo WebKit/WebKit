@@ -43,8 +43,8 @@ else ()
     set(ENABLE_API_TESTS ON)
 endif ()
 
-if (WTF_CPU_X86 OR WTF_CPU_X86_64)
-    SET_AND_EXPOSE_TO_BUILD(USE_UDIS86 1)
+if (WTF_CPU_ARM OR WTF_CPU_MIPS)
+    SET_AND_EXPOSE_TO_BUILD(USE_CAPSTONE TRUE)
 endif ()
 
 # FIXME: JSCOnly on WIN32 seems to only work with fully static build

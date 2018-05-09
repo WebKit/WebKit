@@ -1,0 +1,69 @@
+This file credits all the contributors of the Capstone engine project.
+
+Key developers
+==============
+1. Nguyen Anh Quynh <aquynh -at- gmail.com>
+	- Core engine
+	- Bindings: Python, Ruby, OCaml, Java, C#
+
+2. Tan Sheng Di <shengdi -at- coseinc.com>
+	- Bindings: Ruby
+
+3. Ben Nagy <ben -at- coseinc.com>
+	- Bindings: Ruby, Go
+
+4. Dang Hoang Vu <dang.hvu -at- gmail.com>
+	- Bindings: Java
+
+
+Beta testers (in random order)
+==============================
+Pancake
+Van Hauser
+FX of Phenoelit
+The Grugq, The Grugq   <-- our hero for submitting the first ever patch!
+Isaac Dawson, Veracode Inc
+Patroklos Argyroudis, Census Inc. (http://census-labs.com)
+Attila Suszter
+Le Dinh Long
+Nicolas Ruff
+Gunther
+Alex Ionescu, Winsider Seminars & Solutions Inc.
+Snare
+Daniel Godas-Lopez
+Joshua J. Drake
+Edgar Barbosa
+Ralf-Philipp Weinmann
+Hugo Fortier
+Joxean Koret
+Bruce Dang
+Andrew Dunham
+
+
+Contributors (in no particular order)
+=====================================
+(Please let us know if you want to have your name here)
+
+Ole André Vadla Ravnås (author of the 100th Pull-Request in our Github repo, thanks!)
+Axel "0vercl0k" Souchet (@0vercl0k) & Alex Ionescu: port to MSVC.
+Daniel Pistelli: Cmake support.
+Peter Hlavaty: integrate Capstone for Windows kernel drivers.
+Guillaume Jeanne: Ocaml binding.
+Martin Tofall, Obsidium Software: Optimize X86 performance & size.
+David Martínez Moreno & Hilko Bengen: Debian package.
+Félix Cloutier: Xcode project.
+Benoit Lecocq: OpenBSD package.
+Christophe Avoinne (Hlide): Improve memory management for better performance.
+Michael Cohen & Nguyen Tan Cong: Python module installer.
+Bui Dinh Cuong: Explicit registers accessed for Arm64.
+Vincent Bénony: Explicit registers accessed for X86.
+Adel Gadllah, Francisco Alonso & Stefan Cornelius: RPM package.
+Felix Gröbert (Google): fuzz testing harness.
+Daniel Collin & Nicolas Planel: M68K architecture.
+Pranith Kumar: Explicit registers accessed for Arm64.
+Xipiter LLC: Capstone logo redesigned.
+Satoshi Tanda: Support Windows kernel driver.
+Koutheir Attouchi: Support for Windows CE.
+Fotis Loukos: TMS320C64x architecture.
+Wolfgang Schwotzer: M680X architecture.
+

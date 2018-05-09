@@ -48,6 +48,10 @@ SET_AND_EXPOSE_TO_BUILD(USE_CAIRO TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_XDGMIME TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_GCRYPT TRUE)
 
+if (WTF_CPU_ARM OR WTF_CPU_MIPS)
+    SET_AND_EXPOSE_TO_BUILD(USE_CAPSTONE ${DEVELOPER_MODE})
+endif ()
+
 # For old versions of HarfBuzz that do not expose an API for the OpenType MATH
 # table, we enable our own code to parse that table.
 if ("${PC_HARFBUZZ_VERSION}" VERSION_LESS "1.3.3")

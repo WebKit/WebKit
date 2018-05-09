@@ -1,3 +1,23 @@
+2018-05-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][GTK][JSCONLY] Use capstone disassembler
+        https://bugs.webkit.org/show_bug.cgi?id=185283
+
+        Reviewed by Michael Catanzaro.
+
+        Instead of adding MIPS disassembler baked by ourselves, we import capstone disassembler.
+        And use capstone disassembler for MIPS, ARM, and ARMv7 in GTK, WPE, WinCairo and JSCOnly ports.
+
+        And we remove ARM LLVM disassembler.
+
+        Capstone is licensed under 3-clause BSD, which is acceptable in WebKit tree.
+
+        * CMakeLists.txt:
+        * Sources.txt:
+        * disassembler/ARMLLVMDisassembler.cpp: Removed.
+        * disassembler/CapstoneDisassembler.cpp: Added.
+        (JSC::tryToDisassemble):
+
 2018-05-09  Dominik Infuehr  <dinfuehr@igalia.com>
 
         [MIPS] Use mfhc1 and mthc1 to fix assembler error

@@ -1,0 +1,111 @@
+.DS_Store
+
+# Object files
+*.o
+*.ko
+
+# Gcc dependency-tracking files
+*.d
+
+# Libraries
+*.lib
+*.a
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# python
+bindings/python/build/
+bindings/python/capstone.egg-info/
+*.pyc
+
+# java
+bindings/java/capstone.jar
+
+# ocaml
+bindings/ocaml/*.cmi
+bindings/ocaml/*.cmx
+bindings/ocaml/*.cmxa
+bindings/ocaml/*.mli
+bindings/ocaml/test
+bindings/ocaml/test_arm
+bindings/ocaml/test_arm64
+bindings/ocaml/test_basic
+bindings/ocaml/test_mips
+bindings/ocaml/test_x86
+bindings/ocaml/test_detail
+bindings/ocaml/test_ppc
+bindings/ocaml/test_sparc
+bindings/ocaml/test_systemz
+bindings/ocaml/test_xcore
+bindings/ocaml/test_m680x
+
+
+# test binaries
+tests/test_basic
+tests/test_detail
+tests/test_iter
+tests/test_arm
+tests/test_arm64
+tests/test_mips
+tests/test_x86
+tests/test_ppc
+tests/test_skipdata
+tests/test_sparc
+tests/test_systemz
+tests/test_xcore
+tests/*.static
+tests/test_customized_mnem
+tests/test_m68k
+tests/test_tms320c64x
+tests/test_m680x
+tests/test_evm
+
+# vim tmp file
+*.swp
+*~
+
+capstone.pc
+
+# local files
+_*
+
+# freebsd ports: generated file with "make makesum" command
+packages/freebsd/ports/devel/capstone/distinfo
+
+# VisualStudio
+ProjectUpgradeLog.log
+Debug/
+Release/
+ipch/
+build*/
+*.sdf
+*.opensdf
+*.suo
+*.user
+*.backup
+*.VC.db
+*.VC.opendb
+
+# Xcode
+xcode/Capstone.xcodeproj/xcuserdata
+xcode/Capstone.xcodeproj/project.xcworkspace/xcuserdata
+
+# suite/
+test_arm_regression
+test_arm_regression.o
+fuzz_harness
+test_iter_benchmark
+
+
+*.s
+
+cstool/cstool

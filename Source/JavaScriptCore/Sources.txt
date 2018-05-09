@@ -411,8 +411,8 @@ dfg/DFGWatchpointCollectionPhase.cpp
 dfg/DFGWorklist.cpp
 
 disassembler/ARM64Disassembler.cpp
-disassembler/ARMLLVMDisassembler.cpp
 disassembler/ARMv7Disassembler.cpp
+disassembler/CapstoneDisassembler.cpp
 disassembler/Disassembler.cpp
 disassembler/UDis86Disassembler.cpp
 disassembler/X86Disassembler.cpp

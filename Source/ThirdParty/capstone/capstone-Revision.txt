@@ -1,0 +1,2 @@
+capstone remote url: https://github.com/aquynh/capstone.git
+capstone revision: b4998b32647a4b55f9329b348c46fadbfaaee374

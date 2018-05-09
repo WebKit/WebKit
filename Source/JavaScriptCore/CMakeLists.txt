@@ -50,6 +50,10 @@ set(JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr"
 )
 
+if (USE_CAPSTONE)
+    list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES "${THIRDPARTY_DIR}/capstone/Source/include")
+endif ()
+
 set(JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
     "${ICU_INCLUDE_DIRS}"
 )
@@ -115,8 +119,11 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
 set(JavaScriptCore_LIBRARIES
     WTF${DEBUG_SUFFIX}
     ${ICU_I18N_LIBRARIES}
-    ${LLVM_LIBRARIES}
 )
+
+if (USE_CAPSTONE)
+    list(APPEND JavaScriptCore_LIBRARIES capstone)
+endif ()
 
 # Since r228149, on MIPS we need to link with -latomic, because
 # __atomic_fetch_add_8 is not available as a compiler intrinsic. It is

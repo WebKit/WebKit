@@ -47,6 +47,7 @@ exclude .*\/(Configurations|mac|ios|cf|cg|cocoa|Cocoa|objc|avfoundation|ca|curl|
 
 directory Source
 exclude Source/JavaScriptCore/tests
+exclude Source/ThirdParty/capstone
 exclude Source/ThirdParty/libwebrtc
 exclude Source/ThirdParty/qunit
 exclude Source/ThirdParty/openvr
