@@ -66,9 +66,7 @@ class WPEPort(Port):
 
     @memoized
     def _driver_class(self):
-        if self._display_server == "wayland":
-            return WaylandDriver
-        return HeadlessDriver
+        return WaylandDriver
 
     def setup_environ_for_server(self, server_name=None):
         environment = super(WPEPort, self).setup_environ_for_server(server_name)

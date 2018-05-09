@@ -49,6 +49,7 @@ class WaylandDriver(Driver):
         self._port._copy_value_from_environ_if_set(driver_environment, 'WAYLAND_DISPLAY')
         self._port._copy_value_from_environ_if_set(driver_environment, 'WAYLAND_SOCKET')
         driver_environment['GDK_BACKEND'] = 'wayland'
+        driver_environment['EGL_PLATFORM'] = 'wayland'
         driver_environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
         if self._driver_tempdir is not None:
             driver_environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)

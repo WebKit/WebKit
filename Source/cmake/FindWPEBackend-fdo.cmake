@@ -1,9 +1,9 @@
-# - Try to find WPE-mesa.
+# - Try to find WPEBackend-fdo.
 # Once done, this will define
 #
-#  WPE_MESA_FOUND - system has WPE-mesa.
-#  WPE_MESA_INCLUDE_DIRS - the WPE-mesa include directories
-#  WPE_MESA_LIBRARIES - link these to use WPE-mesa.
+#  WPEBACKEND_FDO_FOUND - system has WPEBackend-fdo.
+#  WPEBACKEND_FDO_INCLUDE_DIRS - the WPEBackend-fdo include directories
+#  WPEBACKEND_FDO_LIBRARIES - link these to use WPEBackend-fdo.
 #
 # Copyright (C) 2016 Igalia S.L.
 #
@@ -29,19 +29,19 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 find_package(PkgConfig)
-pkg_check_modules(PC_WPE_MESA QUIET wpe-mesa)
+pkg_check_modules(PC_WPEBACKEND_FDO QUIET wpebackend-fdo)
 
-find_path(WPE_MESA_INCLUDE_DIRS
-    NAMES wpe-mesa/view-backend-exportable-dma-buf.h
-    HINTS ${PC_WPE_MESA_INCLUDEDIR} ${PC_WPE_MESA_INCLUDE_DIRS}
+find_path(WPEBACKEND_FDO_INCLUDE_DIRS
+    NAMES wpe-fdo/initialize-egl.h
+    HINTS ${PC_WPEBACKEND_FDO_INCLUDEDIR} ${PC_WPEBACKEND_FDO_INCLUDE_DIRS}
 )
 
-find_library(WPE_MESA_LIBRARIES
-    NAMES WPEBackend-mesa
-    HINTS ${PC_WPE_MESA_LIBDIR} ${PC_WPE_MESA_LIBRARY_DIRS}
+find_library(WPEBACKEND_FDO_LIBRARIES
+    NAMES WPEBackend-fdo
+    HINTS ${PC_WPEBACKEND_FDO_LIBDIR} ${PC_WPEBACKEND_FDO_LIBRARY_DIRS}
 )
 
-mark_as_advanced(WPE_MESA_INCLUDE_DIRS WPE_MESA_LIBRARIES)
+mark_as_advanced(WPEBACKEND_FDO_INCLUDE_DIRS WPEBACKEND_FDO_LIBRARIES)
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(WPEBackend-mesa REQUIRED_VARS WPE_MESA_INCLUDE_DIRS WPE_MESA_LIBRARIES)
+find_package_handle_standard_args(WPEBackend-fdo REQUIRED_VARS WPEBACKEND_FDO_INCLUDE_DIRS WPEBACKEND_FDO_LIBRARIES)
