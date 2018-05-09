@@ -1,5 +1,12 @@
 2018-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Add missing exit not included in r231298.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureWebToStorageProcessConnection):
+
+2018-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.20.2 release.
 
         * gtk/NEWS: Add release notes for 2.20.2.
