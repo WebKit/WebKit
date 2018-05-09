@@ -3220,7 +3220,10 @@ void MediaPlayerPrivateAVFoundationObjC::canPlayFastReverseDidChange(bool newVal
 void MediaPlayerPrivateAVFoundationObjC::setShouldDisableSleep(bool flag)
 {
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR) && !ENABLE(MINIMAL_SIMULATOR)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [m_avPlayer _setPreventsSleepDuringVideoPlayback:flag];
+#pragma clang diagnostic pop
 #else
     UNUSED_PARAM(flag);
 #endif

@@ -1,3 +1,10 @@
+2018-05-09  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build by ignoring some deprecation warnings
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldDisableSleep):
+
 2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Build cleanly with GCC 8 and ICU 60
