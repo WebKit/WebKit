@@ -64,8 +64,16 @@ void SubmitInputType::handleDOMActivateEvent(Event& event)
     Ref<HTMLInputElement> element(this->element());
     if (element->isDisabledFormControl() || !element->form())
         return;
+
+    Ref<HTMLFormElement> protectedForm(*element->form());
+
+    // Update layout before processing form actions in case the style changes
+    // the Form or button relationships.
+    element->document().updateLayoutIgnorePendingStylesheets();
+
     element->setActivatedSubmit(true);
-    element->form()->prepareForSubmission(event); // Event handlers can run.
+    if (auto currentForm = element->form())
+        currentForm->prepareForSubmission(event); // Event handlers can run.
     element->setActivatedSubmit(false);
     event.setDefaultHandled();
 }
