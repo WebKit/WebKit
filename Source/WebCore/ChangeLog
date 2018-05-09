@@ -1,3 +1,30 @@
+2018-05-08  Simon Fraser  <simon.fraser@apple.com>
+
+        SVG lighting colors need to be converted into linearSRGB
+        https://bugs.webkit.org/show_bug.cgi?id=181196
+
+        Reviewed by Darin Adler.
+
+        Address post-commit comments. Don't make a Color that contains linearRGB components,
+        but use FloatComponents instead. Since these FloatComponents are in the 0-1 range,
+        FELighting::setPixelInternal() needs to multiply by 255 since the output pixels are
+        8-bit 0-255.
+        
+        Change linearToSRGBColorComponent() and sRGBToLinearColorComponent() to do math in
+        floats without promoting to doubles.
+
+        * platform/graphics/ColorUtilities.cpp:
+        (WebCore::FloatComponents::FloatComponents):
+        (WebCore::linearToSRGBColorComponent):
+        (WebCore::sRGBToLinearColorComponent):
+        (WebCore::sRGBColorToLinearComponents):
+        (WebCore::linearToSRGBColor): Deleted.
+        (WebCore::sRGBToLinearColor): Deleted.
+        * platform/graphics/ColorUtilities.h:
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::setPixelInternal):
+        (WebCore::FELighting::drawLighting):
+
 2018-05-09  Timothy Hatcher  <timothy@apple.com>
 
         Use StyleColor::Options in more places.

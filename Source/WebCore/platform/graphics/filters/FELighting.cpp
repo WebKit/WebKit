@@ -295,9 +295,9 @@ void FELighting::setPixelInternal(int offset, const LightingData& data, const Li
         lightStrength = 0;
 
     uint8_t pixelValue[3] = {
-        static_cast<uint8_t>(lightStrength * lightingData.colorVector.x()),
-        static_cast<uint8_t>(lightStrength * lightingData.colorVector.y()),
-        static_cast<uint8_t>(lightStrength * lightingData.colorVector.z())
+        static_cast<uint8_t>(lightStrength * lightingData.colorVector.x() * 255.0f),
+        static_cast<uint8_t>(lightStrength * lightingData.colorVector.y() * 255.0f),
+        static_cast<uint8_t>(lightStrength * lightingData.colorVector.z() * 255.0f)
     };
     
     data.pixels->setRange(pixelValue, 3, offset);
@@ -403,8 +403,8 @@ bool FELighting::drawLighting(Uint8ClampedArray& pixels, int width, int height)
     data.widthDecreasedByOne = width - 1;
     data.heightDecreasedByOne = height - 1;
     
-    Color lightColor = (operatingColorSpace() == ColorSpaceLinearRGB) ? sRGBToLinearColor(m_lightingColor) : m_lightingColor;
-    paintingData.initialLightingData.colorVector = FloatPoint3D(lightColor.red(), lightColor.green(), lightColor.blue());
+    FloatComponents lightColor = (operatingColorSpace() == ColorSpaceLinearRGB) ? sRGBColorToLinearComponents(m_lightingColor) : FloatComponents(m_lightingColor);
+    paintingData.initialLightingData.colorVector = FloatPoint3D(lightColor.components[0], lightColor.components[1], lightColor.components[2]);
     m_lightSource->initPaintingData(*this, paintingData);
 
     // Top left.

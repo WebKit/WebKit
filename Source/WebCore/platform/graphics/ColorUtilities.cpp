@@ -31,6 +31,11 @@
 
 namespace WebCore {
 
+FloatComponents::FloatComponents(const Color& color)
+{
+    color.getRGBA(components[0], components[1], components[2], components[3]);
+}
+
 ColorComponents::ColorComponents(const FloatComponents& floatComponents)
 {
     components[0] = clampedColorComponent(floatComponents.components[0]);
@@ -42,40 +47,30 @@ ColorComponents::ColorComponents(const FloatComponents& floatComponents)
 // These are the standard sRGB <-> linearRGB conversion functions (https://en.wikipedia.org/wiki/SRGB).
 float linearToSRGBColorComponent(float c)
 {
-    if (c < 0.0031308)
-        return 12.92 * c;
+    if (c < 0.0031308f)
+        return 12.92f * c;
 
-    return clampTo<float>(1.055 * powf(c, 1.0 / 2.4) - 0.055, 0, 1);
+    return clampTo<float>(1.055f * std::pow(c, 1.0f / 2.4f) - 0.055f, 0, 1);
 }
 
 float sRGBToLinearColorComponent(float c)
 {
-    if (c <= 0.04045)
-        return c / 12.92;
+    if (c <= 0.04045f)
+        return c / 12.92f;
 
-    return clampTo<float>(powf((c + 0.055) / 1.055, 2.4), 0, 1);
+    return clampTo<float>(std::pow((c + 0.055f) / 1.055f, 2.4f), 0, 1);
 }
 
-Color linearToSRGBColor(const Color& color)
+FloatComponents sRGBColorToLinearComponents(const Color& color)
 {
     float r, g, b, a;
     color.getRGBA(r, g, b, a);
-    r = linearToSRGBColorComponent(r);
-    g = linearToSRGBColorComponent(g);
-    b = linearToSRGBColorComponent(b);
-
-    return Color(r, g, b, a);
-}
-
-Color sRGBToLinearColor(const Color& color)
-{
-    float r, g, b, a;
-    color.getRGBA(r, g, b, a);
-    r = sRGBToLinearColorComponent(r);
-    g = sRGBToLinearColorComponent(g);
-    b = sRGBToLinearColorComponent(b);
-
-    return Color(r, g, b, a);
+    return {
+        sRGBToLinearColorComponent(r),
+        sRGBToLinearColorComponent(g),
+        sRGBToLinearColorComponent(b),
+        a
+    };
 }
 
 

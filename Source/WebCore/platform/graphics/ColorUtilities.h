@@ -40,6 +40,8 @@ struct FloatComponents {
         components[3] = d;
     }
 
+    FloatComponents(const Color&);
+
     FloatComponents& operator+=(const FloatComponents& rhs)
     {
         components[0] += rhs.components[0];
@@ -151,9 +153,8 @@ inline unsigned byteOffsetOfPixel(unsigned x, unsigned y, unsigned rowBytes)
 // 0-1 components, result is clamped.
 float linearToSRGBColorComponent(float);
 float sRGBToLinearColorComponent(float);
-    
-Color linearToSRGBColor(const Color&);
-Color sRGBToLinearColor(const Color&);
+
+FloatComponents sRGBColorToLinearComponents(const Color&);
 
 class ColorMatrix {
 public:
