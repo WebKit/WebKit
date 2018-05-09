@@ -26,23 +26,23 @@ PASS new WheelEvent('eventType', { cancelable: false }).cancelable is false
 PASS new WheelEvent('eventType', { cancelable: true }).cancelable is true
 PASS new WheelEvent('eventType', { view: window }).view is window
 PASS new WheelEvent('eventType', { view: this }).view is this
-PASS new WheelEvent('eventType', { view: testObject }).view is null
-PASS new WheelEvent('eventType', { view: document }).view is null
+PASS new WheelEvent('eventType', { view: testObject }).view threw exception TypeError: Type error.
+PASS new WheelEvent('eventType', { view: document }).view threw exception TypeError: Type error.
 PASS new WheelEvent('eventType', { view: undefined }).view is null
 PASS new WheelEvent('eventType', { view: null }).view is null
-PASS new WheelEvent('eventType', { view: false }).view is null
-PASS new WheelEvent('eventType', { view: true }).view is null
-PASS new WheelEvent('eventType', { view: '' }).view is null
-PASS new WheelEvent('eventType', { view: 'chocolate' }).view is null
-PASS new WheelEvent('eventType', { view: 12345 }).view is null
-PASS new WheelEvent('eventType', { view: 18446744073709551615 }).view is null
-PASS new WheelEvent('eventType', { view: NaN }).view is null
-PASS new WheelEvent('eventType', { view: {valueOf: function () { return window; } } }).view == window is false
-PASS new WheelEvent('eventType', { get view() { return 123; } }).view is null
+PASS new WheelEvent('eventType', { view: false }).view threw exception TypeError: Type error.
+PASS new WheelEvent('eventType', { view: true }).view threw exception TypeError: Type error.
+PASS new WheelEvent('eventType', { view: '' }).view threw exception TypeError: Type error.
+PASS new WheelEvent('eventType', { view: 'chocolate' }).view threw exception TypeError: Type error.
+PASS new WheelEvent('eventType', { view: 12345 }).view threw exception TypeError: Type error.
+PASS new WheelEvent('eventType', { view: 18446744073709551615 }).view threw exception TypeError: Type error.
+PASS new WheelEvent('eventType', { view: NaN }).view threw exception TypeError: Type error.
+PASS new WheelEvent('eventType', { view: {valueOf: function () { return window; } } }).view threw exception TypeError: Type error.
+PASS new WheelEvent('eventType', { get view() { return 123; } }).view threw exception TypeError: Type error.
 PASS new WheelEvent('eventType', { get view() { throw 'WheelEvent Error'; } }) threw exception WheelEvent Error.
 PASS new WheelEvent('eventType', { detail: 0 }).detail is 0
-PASS new WheelEvent('eventType', { detail: 2147483647 }).detail is 2147483647
 PASS new WheelEvent('eventType', { detail: -1 }).detail is -1
+PASS new WheelEvent('eventType', { detail: 2147483647 }).detail is 2147483647
 PASS new WheelEvent('eventType', { detail: -2147483648 }).detail is -2147483648
 PASS new WheelEvent('eventType', { detail: 4294967295 }).detail is -1
 PASS new WheelEvent('eventType', { detail: 9007199254740991 }).detail is -1
@@ -62,8 +62,8 @@ PASS new WheelEvent('eventType', { detail: {} }).detail is 0
 PASS new WheelEvent('eventType', { detail: {moemoe: 12345} }).detail is 0
 PASS new WheelEvent('eventType', { detail: {valueOf: function () { return 12345; }} }).detail is 12345
 PASS new WheelEvent('eventType', { screenX: 0 }).screenX is 0
-PASS new WheelEvent('eventType', { screenX: 2147483647 }).screenX is 2147483647
 PASS new WheelEvent('eventType', { screenX: -1 }).screenX is -1
+PASS new WheelEvent('eventType', { screenX: 2147483647 }).screenX is 2147483647
 PASS new WheelEvent('eventType', { screenX: -2147483648 }).screenX is -2147483648
 PASS new WheelEvent('eventType', { screenX: 4294967295 }).screenX is -1
 PASS new WheelEvent('eventType', { screenX: 9007199254740991 }).screenX is -1
@@ -83,8 +83,8 @@ PASS new WheelEvent('eventType', { screenX: {} }).screenX is 0
 PASS new WheelEvent('eventType', { screenX: {moemoe: 12345} }).screenX is 0
 PASS new WheelEvent('eventType', { screenX: {valueOf: function () { return 12345; }} }).screenX is 12345
 PASS new WheelEvent('eventType', { screenY: 0 }).screenY is 0
-PASS new WheelEvent('eventType', { screenY: 2147483647 }).screenY is 2147483647
 PASS new WheelEvent('eventType', { screenY: -1 }).screenY is -1
+PASS new WheelEvent('eventType', { screenY: 2147483647 }).screenY is 2147483647
 PASS new WheelEvent('eventType', { screenY: -2147483648 }).screenY is -2147483648
 PASS new WheelEvent('eventType', { screenY: 4294967295 }).screenY is -1
 PASS new WheelEvent('eventType', { screenY: 9007199254740991 }).screenY is -1
@@ -104,9 +104,9 @@ PASS new WheelEvent('eventType', { screenY: {} }).screenY is 0
 PASS new WheelEvent('eventType', { screenY: {moemoe: 12345} }).screenY is 0
 PASS new WheelEvent('eventType', { screenY: {valueOf: function () { return 12345; }} }).screenY is 12345
 PASS new WheelEvent('eventType', { clientX: 0 }).clientX is 0
-FAIL new WheelEvent('eventType', { clientX: 2147483647 }).clientX should be 2147483647. Was -1.
 PASS new WheelEvent('eventType', { clientX: -1 }).clientX is -1
-FAIL new WheelEvent('eventType', { clientX: -2147483648 }).clientX should be -2147483648. Was 0.
+PASS new WheelEvent('eventType', { clientX: 2147483647 }).clientX is 33554431
+PASS new WheelEvent('eventType', { clientX: -2147483648 }).clientX is -33554432
 PASS new WheelEvent('eventType', { clientX: 4294967295 }).clientX is -1
 PASS new WheelEvent('eventType', { clientX: 9007199254740991 }).clientX is -1
 PASS new WheelEvent('eventType', { clientX: 18446744073709551615 }).clientX is 0
@@ -125,9 +125,9 @@ PASS new WheelEvent('eventType', { clientX: {} }).clientX is 0
 PASS new WheelEvent('eventType', { clientX: {moemoe: 12345} }).clientX is 0
 PASS new WheelEvent('eventType', { clientX: {valueOf: function () { return 12345; }} }).clientX is 12345
 PASS new WheelEvent('eventType', { clientY: 0 }).clientY is 0
-FAIL new WheelEvent('eventType', { clientY: 2147483647 }).clientY should be 2147483647. Was -1.
 PASS new WheelEvent('eventType', { clientY: -1 }).clientY is -1
-FAIL new WheelEvent('eventType', { clientY: -2147483648 }).clientY should be -2147483648. Was 0.
+PASS new WheelEvent('eventType', { clientY: 2147483647 }).clientY is 33554431
+PASS new WheelEvent('eventType', { clientY: -2147483648 }).clientY is -33554432
 PASS new WheelEvent('eventType', { clientY: 4294967295 }).clientY is -1
 PASS new WheelEvent('eventType', { clientY: 9007199254740991 }).clientY is -1
 PASS new WheelEvent('eventType', { clientY: 18446744073709551615 }).clientY is 0
@@ -146,8 +146,8 @@ PASS new WheelEvent('eventType', { clientY: {} }).clientY is 0
 PASS new WheelEvent('eventType', { clientY: {moemoe: 12345} }).clientY is 0
 PASS new WheelEvent('eventType', { clientY: {valueOf: function () { return 12345; }} }).clientY is 12345
 PASS new WheelEvent('eventType', { wheelDeltaX: 0 }).wheelDeltaX is 0
-PASS new WheelEvent('eventType', { wheelDeltaX: 2147483647 }).wheelDeltaX is 2147483647
 PASS new WheelEvent('eventType', { wheelDeltaX: -1 }).wheelDeltaX is -1
+PASS new WheelEvent('eventType', { wheelDeltaX: 2147483647 }).wheelDeltaX is 2147483647
 PASS new WheelEvent('eventType', { wheelDeltaX: -2147483648 }).wheelDeltaX is -2147483648
 PASS new WheelEvent('eventType', { wheelDeltaX: 4294967295 }).wheelDeltaX is -1
 PASS new WheelEvent('eventType', { wheelDeltaX: 9007199254740991 }).wheelDeltaX is -1
@@ -167,8 +167,8 @@ PASS new WheelEvent('eventType', { wheelDeltaX: {} }).wheelDeltaX is 0
 PASS new WheelEvent('eventType', { wheelDeltaX: {moemoe: 12345} }).wheelDeltaX is 0
 PASS new WheelEvent('eventType', { wheelDeltaX: {valueOf: function () { return 12345; }} }).wheelDeltaX is 12345
 PASS new WheelEvent('eventType', { wheelDeltaY: 0 }).wheelDeltaY is 0
-PASS new WheelEvent('eventType', { wheelDeltaY: 2147483647 }).wheelDeltaY is 2147483647
 PASS new WheelEvent('eventType', { wheelDeltaY: -1 }).wheelDeltaY is -1
+PASS new WheelEvent('eventType', { wheelDeltaY: 2147483647 }).wheelDeltaY is 2147483647
 PASS new WheelEvent('eventType', { wheelDeltaY: -2147483648 }).wheelDeltaY is -2147483648
 PASS new WheelEvent('eventType', { wheelDeltaY: 4294967295 }).wheelDeltaY is -1
 PASS new WheelEvent('eventType', { wheelDeltaY: 9007199254740991 }).wheelDeltaY is -1
@@ -245,18 +245,18 @@ PASS new WheelEvent('eventType', { button: {valueOf: function () { return 12345;
 PASS new WheelEvent('eventType', { relatedTarget: testDiv }).relatedTarget is testDiv
 PASS new WheelEvent('eventType', { relatedTarget: document }).relatedTarget is document
 PASS new WheelEvent('eventType', { relatedTarget: xhr }).relatedTarget is xhr
-PASS new WheelEvent('eventType', { relatedTarget: testObject }).relatedTarget is null
+PASS new WheelEvent('eventType', { relatedTarget: testObject }) threw exception TypeError: Type error.
 PASS new WheelEvent('eventType', { relatedTarget: undefined }).relatedTarget is null
 PASS new WheelEvent('eventType', { relatedTarget: null }).relatedTarget is null
-PASS new WheelEvent('eventType', { relatedTarget: false }).relatedTarget is null
-PASS new WheelEvent('eventType', { relatedTarget: true }).relatedTarget is null
-PASS new WheelEvent('eventType', { relatedTarget: '' }).relatedTarget is null
-PASS new WheelEvent('eventType', { relatedTarget: 'chocolate' }).relatedTarget is null
-PASS new WheelEvent('eventType', { relatedTarget: 12345 }).relatedTarget is null
-PASS new WheelEvent('eventType', { relatedTarget: 18446744073709551615 }).relatedTarget is null
-PASS new WheelEvent('eventType', { relatedTarget: NaN }).relatedTarget is null
-PASS new WheelEvent('eventType', { relatedTarget: {valueOf: function () { return testDiv; } } }).relatedTarget == testDiv is false
-PASS new WheelEvent('eventType', { get relatedTarget() { return 123; } }).relatedTarget is null
+PASS new WheelEvent('eventType', { relatedTarget: false }) threw exception TypeError: Type error.
+PASS new WheelEvent('eventType', { relatedTarget: true }) threw exception TypeError: Type error.
+PASS new WheelEvent('eventType', { relatedTarget: '' }) threw exception TypeError: Type error.
+PASS new WheelEvent('eventType', { relatedTarget: 'chocolate' }) threw exception TypeError: Type error.
+PASS new WheelEvent('eventType', { relatedTarget: 12345 }) threw exception TypeError: Type error.
+PASS new WheelEvent('eventType', { relatedTarget: 18446744073709551615 }) threw exception TypeError: Type error.
+PASS new WheelEvent('eventType', { relatedTarget: NaN }) threw exception TypeError: Type error.
+PASS new WheelEvent('eventType', { relatedTarget: {valueOf: function () { return testDiv; } } }) threw exception TypeError: Type error.
+PASS new WheelEvent('eventType', { get relatedTarget() { return 123; } }).relatedTarget threw exception TypeError: Type error.
 PASS new WheelEvent('eventType', { get relatedTarget() { throw 'WheelEvent Error'; } }) threw exception WheelEvent Error.
 PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).bubbles is true
 PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).cancelable is true

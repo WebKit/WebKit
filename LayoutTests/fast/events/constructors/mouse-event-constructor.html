@@ -62,9 +62,12 @@ shouldThrow("new MouseEvent('eventType', { get view() { throw 'MouseEvent Error'
 ["detail", "screenX", "screenY", "clientX", "clientY"].forEach(function (attr) {
     // numbers within the long range.
     shouldBe("new MouseEvent('eventType', { " + attr + ": 0 })." + attr, "0");
-    shouldBe("new MouseEvent('eventType', { " + attr + ": 2147483647 })." + attr, "2147483647");
     shouldBe("new MouseEvent('eventType', { " + attr + ": -1 })." + attr, "-1");
-    shouldBe("new MouseEvent('eventType', { " + attr + ": -2147483648 })." + attr, "-2147483648");
+
+    // numbers within the long range, but outside the range of LayoutUnit.
+    var exponent = attr.startsWith("client") ? 25 : 31;
+    shouldBe("new MouseEvent('eventType', { " + attr + ": 2147483647 })." + attr, String(Math.pow(2, exponent) - 1));
+    shouldBe("new MouseEvent('eventType', { " + attr + ": -2147483648 })." + attr, String(-Math.pow(2, exponent)));
 
     // numbers out of the long range.
     shouldBe("new MouseEvent('eventType', { " + attr + ": 4294967295 })." + attr, "-1");

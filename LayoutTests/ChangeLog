@@ -1,3 +1,29 @@
+2018-05-09  Ms2ger  <Ms2ger@igalia.com>
+
+        Update fast/events/constructors/(mouse|wheel)-event-constructor.html and expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=115025
+
+        Reviewed by Michael Catanzaro.
+
+        clientX/Y values are clamped to a signed 26 bit-integer by using LayoutPoint.
+        I updated the test to expect that. (Alternatively, we could keep the
+        current expectations in the test and leave FAIL lines in the test
+        expectation file.)
+
+        Expectation files are updated or removed to match the test change, as
+        well as a number of code changes since the last time they were accurate.
+
+        * fast/events/constructors/mouse-event-constructor-expected.txt:
+        * fast/events/constructors/mouse-event-constructor.html:
+        * fast/events/constructors/wheel-event-constructor-expected.txt:
+        * fast/events/constructors/wheel-event-constructor.html:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/events/constructors/mouse-event-constructor-expected.txt: Removed.
+        * platform/gtk/fast/events/constructors/wheel-event-constructor-expected.txt: Removed.
+        * platform/mac/fast/events/constructors/mouse-event-constructor-expected.txt: Removed.
+        * platform/mac/fast/events/constructors/wheel-event-constructor-expected.txt: Removed.
+        * platform/wpe/TestExpectations:
+
 2018-05-08  Daniel Bates  <dabates@apple.com>
 
         Do not apply X-Frame-Options and CSP frame-ancestors to Quick Look-applicable responses in NetworkProcess

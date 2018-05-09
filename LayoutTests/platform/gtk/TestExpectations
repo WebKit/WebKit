@@ -2686,9 +2686,6 @@ webkit.org/b/112228 svg/custom/resources-css-scaled.html [ ImageOnlyFailure ]
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure Pass ]
 
-webkit.org/b/115025 fast/events/constructors/mouse-event-constructor.html [ Failure ]
-webkit.org/b/115025 fast/events/constructors/wheel-event-constructor.html [ Failure ]
-
 webkit.org/b/115437 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
 
 webkit.org/b/117582 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]

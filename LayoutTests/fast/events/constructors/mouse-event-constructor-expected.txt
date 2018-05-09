@@ -23,23 +23,23 @@ PASS new MouseEvent('eventType', { cancelable: false }).cancelable is false
 PASS new MouseEvent('eventType', { cancelable: true }).cancelable is true
 PASS new MouseEvent('eventType', { view: window }).view is window
 PASS new MouseEvent('eventType', { view: this }).view is this
-PASS new MouseEvent('eventType', { view: testObject }).view is null
-PASS new MouseEvent('eventType', { view: document }).view is null
+PASS new MouseEvent('eventType', { view: testObject }).view threw exception TypeError: Type error.
+PASS new MouseEvent('eventType', { view: document }).view threw exception TypeError: Type error.
 PASS new MouseEvent('eventType', { view: undefined }).view is null
 PASS new MouseEvent('eventType', { view: null }).view is null
-PASS new MouseEvent('eventType', { view: false }).view is null
-PASS new MouseEvent('eventType', { view: true }).view is null
-PASS new MouseEvent('eventType', { view: '' }).view is null
-PASS new MouseEvent('eventType', { view: 'chocolate' }).view is null
-PASS new MouseEvent('eventType', { view: 12345 }).view is null
-PASS new MouseEvent('eventType', { view: 18446744073709551615 }).view is null
-PASS new MouseEvent('eventType', { view: NaN }).view is null
-PASS new MouseEvent('eventType', { view: {valueOf: function () { return window; } } }).view == window is false
-PASS new MouseEvent('eventType', { get view() { return 123; } }).view is null
+PASS new MouseEvent('eventType', { view: false }).view threw exception TypeError: Type error.
+PASS new MouseEvent('eventType', { view: true }).view threw exception TypeError: Type error.
+PASS new MouseEvent('eventType', { view: '' }).view threw exception TypeError: Type error.
+PASS new MouseEvent('eventType', { view: 'chocolate' }).view threw exception TypeError: Type error.
+PASS new MouseEvent('eventType', { view: 12345 }).view threw exception TypeError: Type error.
+PASS new MouseEvent('eventType', { view: 18446744073709551615 }).view threw exception TypeError: Type error.
+PASS new MouseEvent('eventType', { view: NaN }).view threw exception TypeError: Type error.
+PASS new MouseEvent('eventType', { view: {valueOf: function () { return window; } } }).view threw exception TypeError: Type error.
+PASS new MouseEvent('eventType', { get view() { return 123; } }).view threw exception TypeError: Type error.
 PASS new MouseEvent('eventType', { get view() { throw 'MouseEvent Error'; } }) threw exception MouseEvent Error.
 PASS new MouseEvent('eventType', { detail: 0 }).detail is 0
-PASS new MouseEvent('eventType', { detail: 2147483647 }).detail is 2147483647
 PASS new MouseEvent('eventType', { detail: -1 }).detail is -1
+PASS new MouseEvent('eventType', { detail: 2147483647 }).detail is 2147483647
 PASS new MouseEvent('eventType', { detail: -2147483648 }).detail is -2147483648
 PASS new MouseEvent('eventType', { detail: 4294967295 }).detail is -1
 PASS new MouseEvent('eventType', { detail: 9007199254740991 }).detail is -1
@@ -59,8 +59,8 @@ PASS new MouseEvent('eventType', { detail: {} }).detail is 0
 PASS new MouseEvent('eventType', { detail: {moemoe: 12345} }).detail is 0
 PASS new MouseEvent('eventType', { detail: {valueOf: function () { return 12345; }} }).detail is 12345
 PASS new MouseEvent('eventType', { screenX: 0 }).screenX is 0
-PASS new MouseEvent('eventType', { screenX: 2147483647 }).screenX is 2147483647
 PASS new MouseEvent('eventType', { screenX: -1 }).screenX is -1
+PASS new MouseEvent('eventType', { screenX: 2147483647 }).screenX is 2147483647
 PASS new MouseEvent('eventType', { screenX: -2147483648 }).screenX is -2147483648
 PASS new MouseEvent('eventType', { screenX: 4294967295 }).screenX is -1
 PASS new MouseEvent('eventType', { screenX: 9007199254740991 }).screenX is -1
@@ -80,8 +80,8 @@ PASS new MouseEvent('eventType', { screenX: {} }).screenX is 0
 PASS new MouseEvent('eventType', { screenX: {moemoe: 12345} }).screenX is 0
 PASS new MouseEvent('eventType', { screenX: {valueOf: function () { return 12345; }} }).screenX is 12345
 PASS new MouseEvent('eventType', { screenY: 0 }).screenY is 0
-PASS new MouseEvent('eventType', { screenY: 2147483647 }).screenY is 2147483647
 PASS new MouseEvent('eventType', { screenY: -1 }).screenY is -1
+PASS new MouseEvent('eventType', { screenY: 2147483647 }).screenY is 2147483647
 PASS new MouseEvent('eventType', { screenY: -2147483648 }).screenY is -2147483648
 PASS new MouseEvent('eventType', { screenY: 4294967295 }).screenY is -1
 PASS new MouseEvent('eventType', { screenY: 9007199254740991 }).screenY is -1
@@ -101,9 +101,9 @@ PASS new MouseEvent('eventType', { screenY: {} }).screenY is 0
 PASS new MouseEvent('eventType', { screenY: {moemoe: 12345} }).screenY is 0
 PASS new MouseEvent('eventType', { screenY: {valueOf: function () { return 12345; }} }).screenY is 12345
 PASS new MouseEvent('eventType', { clientX: 0 }).clientX is 0
-FAIL new MouseEvent('eventType', { clientX: 2147483647 }).clientX should be 2147483647. Was -1.
 PASS new MouseEvent('eventType', { clientX: -1 }).clientX is -1
-FAIL new MouseEvent('eventType', { clientX: -2147483648 }).clientX should be -2147483648. Was 0.
+PASS new MouseEvent('eventType', { clientX: 2147483647 }).clientX is 33554431
+PASS new MouseEvent('eventType', { clientX: -2147483648 }).clientX is -33554432
 PASS new MouseEvent('eventType', { clientX: 4294967295 }).clientX is -1
 PASS new MouseEvent('eventType', { clientX: 9007199254740991 }).clientX is -1
 PASS new MouseEvent('eventType', { clientX: 18446744073709551615 }).clientX is 0
@@ -122,9 +122,9 @@ PASS new MouseEvent('eventType', { clientX: {} }).clientX is 0
 PASS new MouseEvent('eventType', { clientX: {moemoe: 12345} }).clientX is 0
 PASS new MouseEvent('eventType', { clientX: {valueOf: function () { return 12345; }} }).clientX is 12345
 PASS new MouseEvent('eventType', { clientY: 0 }).clientY is 0
-FAIL new MouseEvent('eventType', { clientY: 2147483647 }).clientY should be 2147483647. Was -1.
 PASS new MouseEvent('eventType', { clientY: -1 }).clientY is -1
-FAIL new MouseEvent('eventType', { clientY: -2147483648 }).clientY should be -2147483648. Was 0.
+PASS new MouseEvent('eventType', { clientY: 2147483647 }).clientY is 33554431
+PASS new MouseEvent('eventType', { clientY: -2147483648 }).clientY is -33554432
 PASS new MouseEvent('eventType', { clientY: 4294967295 }).clientY is -1
 PASS new MouseEvent('eventType', { clientY: 9007199254740991 }).clientY is -1
 PASS new MouseEvent('eventType', { clientY: 18446744073709551615 }).clientY is 0
@@ -176,18 +176,18 @@ PASS new MouseEvent('eventType', { relatedTarget: testDiv }).relatedTarget is te
 PASS new MouseEvent('eventType', { relatedTarget: document }).relatedTarget is document
 PASS new MouseEvent('eventType', { relatedTarget: xhr }).relatedTarget is xhr
 PASS new MouseEvent('eventType', { relatedTarget: window }).relatedTarget is window
-PASS new MouseEvent('eventType', { relatedTarget: testObject }).relatedTarget is null
+PASS new MouseEvent('eventType', { relatedTarget: testObject }) threw exception TypeError: Type error.
 PASS new MouseEvent('eventType', { relatedTarget: undefined }).relatedTarget is null
 PASS new MouseEvent('eventType', { relatedTarget: null }).relatedTarget is null
-PASS new MouseEvent('eventType', { relatedTarget: false }).relatedTarget is null
-PASS new MouseEvent('eventType', { relatedTarget: true }).relatedTarget is null
-PASS new MouseEvent('eventType', { relatedTarget: '' }).relatedTarget is null
-PASS new MouseEvent('eventType', { relatedTarget: 'chocolate' }).relatedTarget is null
-PASS new MouseEvent('eventType', { relatedTarget: 12345 }).relatedTarget is null
-PASS new MouseEvent('eventType', { relatedTarget: 18446744073709551615 }).relatedTarget is null
-PASS new MouseEvent('eventType', { relatedTarget: NaN }).relatedTarget is null
-PASS new MouseEvent('eventType', { relatedTarget: {valueOf: function () { return testDiv; } } }).relatedTarget == testDiv is false
-PASS new MouseEvent('eventType', { get relatedTarget() { return 123; } }).relatedTarget is null
+PASS new MouseEvent('eventType', { relatedTarget: false }) threw exception TypeError: Type error.
+PASS new MouseEvent('eventType', { relatedTarget: true }) threw exception TypeError: Type error.
+PASS new MouseEvent('eventType', { relatedTarget: '' }) threw exception TypeError: Type error.
+PASS new MouseEvent('eventType', { relatedTarget: 'chocolate' }) threw exception TypeError: Type error.
+PASS new MouseEvent('eventType', { relatedTarget: 12345 }) threw exception TypeError: Type error.
+PASS new MouseEvent('eventType', { relatedTarget: 18446744073709551615 }) threw exception TypeError: Type error.
+PASS new MouseEvent('eventType', { relatedTarget: NaN }) threw exception TypeError: Type error.
+PASS new MouseEvent('eventType', { relatedTarget: {valueOf: function () { return testDiv; } } }) threw exception TypeError: Type error.
+PASS new MouseEvent('eventType', { get relatedTarget() { return 123; } }) threw exception TypeError: Type error.
 PASS new MouseEvent('eventType', { get relatedTarget() { throw 'MouseEvent Error'; } }) threw exception MouseEvent Error.
 PASS new MouseEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv }).bubbles is true
 PASS new MouseEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv }).cancelable is true
