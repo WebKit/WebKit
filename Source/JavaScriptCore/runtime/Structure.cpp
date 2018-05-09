@@ -1035,22 +1035,20 @@ void StructureFireDetail::dump(PrintStream& out) const
     out.print("Structure transition from ", *m_structure);
 }
 
-DeferredStructureTransitionWatchpointFire::DeferredStructureTransitionWatchpointFire()
-    : m_structure(nullptr)
+DeferredStructureTransitionWatchpointFire::DeferredStructureTransitionWatchpointFire(VM& vm, Structure* structure)
+    : DeferredWatchpointFire(vm)
+    , m_structure(structure)
 {
 }
 
 DeferredStructureTransitionWatchpointFire::~DeferredStructureTransitionWatchpointFire()
 {
-    if (m_structure)
-        m_structure->transitionWatchpointSet().fireAll(*m_structure->vm(), StructureFireDetail(m_structure));
+    fireAll();
 }
 
-void DeferredStructureTransitionWatchpointFire::add(const Structure* structure)
+void DeferredStructureTransitionWatchpointFire::dump(PrintStream& out) const
 {
-    RELEASE_ASSERT(!m_structure);
-    RELEASE_ASSERT(structure);
-    m_structure = structure;
+    out.print("Structure transition from ", *m_structure);
 }
 
 void Structure::didTransitionFromThisStructure(DeferredStructureTransitionWatchpointFire* deferred) const
@@ -1060,10 +1058,11 @@ void Structure::didTransitionFromThisStructure(DeferredStructureTransitionWatchp
     // unwise to watch it.
     if (m_transitionWatchpointSet.isBeingWatched())
         const_cast<Structure*>(this)->setTransitionWatchpointIsLikelyToBeFired(true);
-    
-    if (deferred)
-        deferred->add(this);
-    else
+
+    if (deferred) {
+        ASSERT(deferred->structure() == this);
+        m_transitionWatchpointSet.fireAll(*vm(), deferred);
+    } else
         m_transitionWatchpointSet.fireAll(*vm(), StructureFireDetail(this));
 }
 
