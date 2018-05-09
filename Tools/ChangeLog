@@ -1,5 +1,17 @@
 2018-05-09  Leo Balter  <leonardo.balter@gmail.com>
 
+        Test262-Runner: Improve the verbose output
+        https://bugs.webkit.org/show_bug.cgi?id=185491
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/test262/Import.pm:
+        (transferFiles):
+        * Scripts/test262/Runner.pm:
+        (processResult):
+
+2018-05-09  Leo Balter  <leonardo.balter@gmail.com>
+
         Fix Test262 Runner to have DYLD_FRAMEWORK_PATH always set
         https://bugs.webkit.org/show_bug.cgi?id=185488
 

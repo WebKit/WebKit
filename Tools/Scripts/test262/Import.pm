@@ -159,8 +159,8 @@ sub transferFiles {
     printAndRun("rm -rf $test262Dir\/test") if -e "$test262Dir/test";
 
     # Copy from source
-    printAndRun("cp -r $sourceDir\/harness $test262Dir");
-    printAndRun("cp -r $sourceDir\/test $test262Dir");
+    printAndRun("mv $sourceDir\/harness $test262Dir");
+    printAndRun("mv $sourceDir\/test $test262Dir");
 }
 
 sub getRevision {
