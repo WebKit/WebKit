@@ -1741,7 +1741,7 @@ Color RenderThemeGtk::platformActiveListBoxSelectionBackgroundColor() const
     return styleColor(ListBox, static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), StyleColorBackground);
 }
 
-Color RenderThemeGtk::platformInactiveListBoxSelectionBackgroundColor(bool) const
+Color RenderThemeGtk::platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
 {
     return styleColor(ListBox, GTK_STATE_FLAG_SELECTED, StyleColorBackground);
 }

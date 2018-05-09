@@ -303,7 +303,7 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     case ButtonPart:
     case InnerSpinButtonPart:
         updateControlStatesForRenderer(box, controlStates);
-        Theme::singleton().paint(part, controlStates, paintInfo.context(), devicePixelSnappedRect, box.style().effectiveZoom(), &box.view().frameView(), deviceScaleFactor, pageScaleFactor, box.page().useSystemAppearance());
+        Theme::singleton().paint(part, controlStates, paintInfo.context(), devicePixelSnappedRect, box.style().effectiveZoom(), &box.view().frameView(), deviceScaleFactor, pageScaleFactor, box.page().useSystemAppearance(), box.page().defaultAppearance());
         return false;
     default:
         break;
@@ -614,10 +614,10 @@ Color RenderTheme::activeListBoxSelectionBackgroundColor() const
     return m_activeListBoxSelectionBackgroundColor;
 }
 
-Color RenderTheme::inactiveListBoxSelectionBackgroundColor(bool useSystemAppearance) const
+Color RenderTheme::inactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
 {
     if (!m_inactiveListBoxSelectionBackgroundColor.isValid())
-        m_inactiveListBoxSelectionBackgroundColor = platformInactiveListBoxSelectionBackgroundColor(useSystemAppearance);
+        m_inactiveListBoxSelectionBackgroundColor = platformInactiveListBoxSelectionBackgroundColor(options);
     return m_inactiveListBoxSelectionBackgroundColor;
 }
 
@@ -670,7 +670,7 @@ Color RenderTheme::platformActiveListBoxSelectionForegroundColor() const
     return platformActiveSelectionForegroundColor();
 }
 
-Color RenderTheme::platformInactiveListBoxSelectionBackgroundColor(bool) const
+Color RenderTheme::platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
 {
     return platformInactiveSelectionBackgroundColor();
 }

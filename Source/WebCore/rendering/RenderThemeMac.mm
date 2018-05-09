@@ -201,8 +201,9 @@ RenderThemeMac::RenderThemeMac()
 
 NSView *RenderThemeMac::documentViewFor(const RenderObject& o) const
 {
+    LocalDefaultSystemAppearance localAppearance(o.page().useSystemAppearance(), o.page().defaultAppearance());
     ControlStates states(extractControlStatesForRenderer(o));
-    return ThemeMac::ensuredView(&o.view().frameView(), states, o.page().useSystemAppearance());
+    return ThemeMac::ensuredView(&o.view().frameView(), states);
 }
 
 #if ENABLE(VIDEO)
@@ -322,9 +323,11 @@ Color RenderThemeMac::platformFocusRingColor(OptionSet<StyleColor::Options> opti
     return systemColor(CSSValueWebkitFocusRingColor, options);
 }
 
-Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor(bool useSystemAppearance) const
+Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
 {
-    LocalDefaultSystemAppearance localAppearance(useSystemAppearance);
+    const bool useSystemAppearance = options.contains(StyleColor::Options::UseSystemAppearance);
+    const bool useDefaultAppearance = options.contains(StyleColor::Options::UseDefaultAppearance);
+    LocalDefaultSystemAppearance localAppearance(useSystemAppearance, useDefaultAppearance);
     return platformInactiveSelectionBackgroundColor();
 }
 
@@ -431,9 +434,10 @@ void RenderThemeMac::platformColorsDidChange()
 Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const
 {
     const bool useSystemAppearance = options.contains(StyleColor::Options::UseSystemAppearance);
+    const bool useDefaultAppearance = options.contains(StyleColor::Options::UseDefaultAppearance);
     const bool forVisitedLink = options.contains(StyleColor::Options::ForVisitedLink);
 
-    LocalDefaultSystemAppearance localAppearance(useSystemAppearance);
+    LocalDefaultSystemAppearance localAppearance(useSystemAppearance, useDefaultAppearance);
 
     // The system color cache below can't handle visited links. The only color value
     // that cares about visited links is CSSValueWebkitLink, so handle it here.
@@ -1412,10 +1416,11 @@ void RenderThemeMac::setPopupButtonCellState(const RenderObject& o, const IntSiz
 
 void RenderThemeMac::paintCellAndSetFocusedElementNeedsRepaintIfNecessary(NSCell* cell, const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
+    LocalDefaultSystemAppearance localAppearance(renderer.page().useSystemAppearance(), renderer.page().defaultAppearance());
     bool shouldDrawFocusRing = isFocused(renderer) && renderer.style().outlineStyleIsAuto();
     bool shouldUseImageBuffer = renderer.style().effectiveZoom() != 1 || renderer.page().pageScaleFactor() != 1;
     bool shouldDrawCell = true;
-    if (ThemeMac::drawCellOrFocusRingWithViewIntoContext(cell, paintInfo.context(), rect, documentViewFor(renderer), shouldDrawCell, shouldDrawFocusRing, shouldUseImageBuffer, renderer.page().deviceScaleFactor(), renderer.page().useSystemAppearance()))
+    if (ThemeMac::drawCellOrFocusRingWithViewIntoContext(cell, paintInfo.context(), rect, documentViewFor(renderer), shouldDrawCell, shouldDrawFocusRing, shouldUseImageBuffer, renderer.page().deviceScaleFactor()))
         renderer.page().focusController().setFocusedElementNeedsRepaint();
 }
 
@@ -1493,6 +1498,8 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
         ? sliderThumbVertical()
         : sliderThumbHorizontal();
 
+    LocalDefaultSystemAppearance localAppearance(o.page().useSystemAppearance(), o.page().defaultAppearance());
+
     LocalCurrentGraphicsContext localContext(paintInfo.context());
 
     // Update the various states we respond to.
@@ -1544,7 +1551,7 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
     bool shouldDrawFocusRing = false;
     float deviceScaleFactor = o.page().deviceScaleFactor();
     bool shouldUseImageBuffer = deviceScaleFactor != 1 || zoomLevel != 1;
-    ThemeMac::drawCellOrFocusRingWithViewIntoContext(sliderThumbCell, paintInfo.context(), unzoomedRect, view, shouldDrawCell, shouldDrawFocusRing, shouldUseImageBuffer, deviceScaleFactor, o.page().useSystemAppearance());
+    ThemeMac::drawCellOrFocusRingWithViewIntoContext(sliderThumbCell, paintInfo.context(), unzoomedRect, view, shouldDrawCell, shouldDrawFocusRing, shouldUseImageBuffer, deviceScaleFactor);
     [sliderThumbCell setControlView:nil];
 
     return false;

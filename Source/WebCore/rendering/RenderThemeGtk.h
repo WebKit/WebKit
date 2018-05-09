@@ -78,7 +78,7 @@ public:
     // List Box selection color
     Color platformActiveListBoxSelectionBackgroundColor() const override;
     Color platformActiveListBoxSelectionForegroundColor() const override;
-    Color platformInactiveListBoxSelectionBackgroundColor(bool) const override;
+    Color platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
     Color platformInactiveListBoxSelectionForegroundColor() const override;
 
     Seconds caretBlinkInterval() const override;
