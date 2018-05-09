@@ -1206,10 +1206,11 @@ unsigned MediaPlayerPrivateGStreamerBase::videoDecodedByteCount() const
 #if ENABLE(ENCRYPTED_MEDIA)
 void MediaPlayerPrivateGStreamerBase::cdmInstanceAttached(CDMInstance& instance)
 {
-    ASSERT(!m_cdmInstance);
-    m_cdmInstance = &instance;
-    GST_DEBUG_OBJECT(pipeline(), "CDM instance %p set", m_cdmInstance.get());
-    m_protectionCondition.notifyAll();
+    if (m_cdmInstance != &instance) {
+        m_cdmInstance = &instance;
+        GST_DEBUG_OBJECT(pipeline(), "CDM instance %p set", m_cdmInstance.get());
+        m_protectionCondition.notifyAll();
+    }
 }
 
 void MediaPlayerPrivateGStreamerBase::cdmInstanceDetached(CDMInstance& instance)
@@ -1217,10 +1218,11 @@ void MediaPlayerPrivateGStreamerBase::cdmInstanceDetached(CDMInstance& instance)
 #ifdef NDEBUG
     UNUSED_PARAM(instance);
 #endif
-    ASSERT(m_cdmInstance.get() == &instance);
-    GST_DEBUG_OBJECT(pipeline(), "detaching CDM instance %p", m_cdmInstance.get());
-    m_cdmInstance = nullptr;
-    m_protectionCondition.notifyAll();
+    if (m_cdmInstance == &instance) {
+        GST_DEBUG_OBJECT(pipeline(), "detaching CDM instance %p", m_cdmInstance.get());
+        m_cdmInstance = nullptr;
+        m_protectionCondition.notifyAll();
+    }
 }
 
 void MediaPlayerPrivateGStreamerBase::attemptToDecryptWithInstance(CDMInstance& instance)

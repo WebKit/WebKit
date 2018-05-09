@@ -1,3 +1,24 @@
+2018-05-09  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
+        [EME][GStreamer] Crash when the mediaKeys are created before loading the media in debug conf
+        https://bugs.webkit.org/show_bug.cgi?id=185244
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The function "MediaPlayerPrivateGStreamerBase::cdmInstanceAttached" is expected to be called once,
+        so there is an ASSERT(!m_cdmInstance).
+        But when the MediaKeys are created before loading the media, the cdminstance is created and attached
+        to the MediaPlayerPrivate via "MediaPlayerPrivateGStreamerBase::cdmInstanceAttached" before loading
+        the media, then when the media is loading, the function "MediaPlayerPrivateGStreamerBase::cdmInstanceAttached"
+        will be called several times via the function "mediaEngineWasUpdated" wich is called for each change
+        in the MediaElement state, thus the WebProcess crashes in the ASSERT(!m_cdmInstance).
+
+        This commit avoid the crash by replacing the assert with a simple check.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::cdmInstanceAttached):
+        (WebCore::MediaPlayerPrivateGStreamerBase::cdmInstanceDetached):
+
 2018-05-09  Antti Koivisto  <antti@apple.com>
 
         Add OptionSet::operator& and operator bool
