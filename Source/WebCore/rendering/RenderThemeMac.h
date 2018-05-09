@@ -57,7 +57,7 @@ public:
     Color platformInactiveSelectionBackgroundColor() const final;
     Color platformActiveListBoxSelectionBackgroundColor() const final;
     Color platformActiveListBoxSelectionForegroundColor() const final;
-    Color platformInactiveListBoxSelectionBackgroundColor(bool) const final;
+    Color platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const final;
     Color platformInactiveListBoxSelectionForegroundColor() const final;
     Color platformFocusRingColor(OptionSet<StyleColor::Options>) const final;
 

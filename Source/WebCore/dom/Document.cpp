@@ -7034,11 +7034,21 @@ bool Document::useSystemAppearance() const
     return useSystemAppearance;
 }
 
+bool Document::useDefaultAppearance() const
+{
+    bool useDefaultAppearance = true;
+    if (Page* documentPage = page())
+        useDefaultAppearance = documentPage->defaultAppearance();
+    return useDefaultAppearance;
+}
+
 OptionSet<StyleColor::Options> Document::styleColorOptions() const
 {
     OptionSet<StyleColor::Options> options;
     if (useSystemAppearance())
         options |= StyleColor::Options::UseSystemAppearance;
+    if (useDefaultAppearance())
+        options |= StyleColor::Options::UseDefaultAppearance;
     return options;
 }
 

@@ -33,9 +33,9 @@ namespace WebCore {
 
 class ThemeMac final : public ThemeCocoa {
 public:
-    static NSView *ensuredView(ScrollView*, const ControlStates&, bool useSystemAppearance, bool useUnparentedView = false);
+    static NSView *ensuredView(ScrollView*, const ControlStates&, bool useUnparentedView = false);
     static void setFocusRingClipRect(const FloatRect&);
-    static bool drawCellOrFocusRingWithViewIntoContext(NSCell *, GraphicsContext&, const FloatRect&, NSView *, bool drawButtonCell, bool drawFocusRing, bool useImageBuffer, float deviceScaleFactor, bool useSystemAppearance);
+    static bool drawCellOrFocusRingWithViewIntoContext(NSCell *, GraphicsContext&, const FloatRect&, NSView *, bool drawButtonCell, bool drawFocusRing, bool useImageBuffer, float deviceScaleFactor);
 
 private:
     friend NeverDestroyed<ThemeMac>;
@@ -53,7 +53,7 @@ private:
 
     bool controlRequiresPreWhiteSpace(ControlPart part) const final { return part == PushButtonPart; }
 
-    void paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect&, float zoomFactor, ScrollView*, float deviceScaleFactor, float pageScaleFactor, bool useSystemAppearance) final;
+    void paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect&, float zoomFactor, ScrollView*, float deviceScaleFactor, float pageScaleFactor, bool useSystemAppearance, bool useDefaultAppearance) final;
     void inflateControlPaintRect(ControlPart, const ControlStates&, FloatRect&, float zoomFactor) const final;
 
     bool userPrefersReducedMotion() const final;

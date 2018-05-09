@@ -1,3 +1,57 @@
+2018-05-09  Timothy Hatcher  <timothy@apple.com>
+
+        Use StyleColor::Options in more places.
+
+        https://bugs.webkit.org/show_bug.cgi?id=185458
+        rdar://problem/39853798
+
+        Add UseDefaultAppearance to StyleColor::Options, to avoid passing yet another
+        boolean on some of these functions.
+
+        Reviewed by Tim Horton.
+
+        * css/MediaQueryEvaluator.cpp:
+        * css/StyleColor.h:
+        * dom/Document.cpp:
+        (WebCore::Document::useDefaultAppearance const):
+        (WebCore::Document::styleColorOptions const):
+        * dom/Document.h:
+        * platform/Theme.cpp:
+        (WebCore::Theme::paint):
+        * platform/Theme.h:
+        * platform/mac/LocalDefaultSystemAppearance.h:
+        * platform/mac/LocalDefaultSystemAppearance.mm:
+        (WebCore::LocalDefaultSystemAppearance::LocalDefaultSystemAppearance):
+        (WebCore::LocalDefaultSystemAppearance::~LocalDefaultSystemAppearance):
+        * platform/mac/ThemeMac.h:
+        * platform/mac/ThemeMac.mm:
+        (WebCore::paintToggleButton):
+        (WebCore::paintButton):
+        (WebCore::ThemeMac::ensuredView):
+        (WebCore::ThemeMac::drawCellOrFocusRingWithViewIntoContext):
+        (WebCore::ThemeMac::paint):
+        (-[WebCoreThemeView initWithUseSystemAppearance:]): Deleted.
+        * platform/wpe/ThemeWPE.cpp:
+        (WebCore::ThemeWPE::paint):
+        * platform/wpe/ThemeWPE.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemBackground):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::inactiveListBoxSelectionBackgroundColor const):
+        (WebCore::RenderTheme::platformInactiveListBoxSelectionBackgroundColor const):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::platformInactiveListBoxSelectionBackgroundColor const):
+        * rendering/RenderThemeGtk.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::documentViewFor const):
+        (WebCore::RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor const):
+        (WebCore::RenderThemeMac::systemColor const):
+        (WebCore::RenderThemeMac::paintCellAndSetFocusedElementNeedsRepaintIfNecessary):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+
 2018-05-09  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [EME][GStreamer] Crash when the mediaKeys are created before loading the media in debug conf

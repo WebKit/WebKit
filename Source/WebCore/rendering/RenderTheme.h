@@ -141,7 +141,7 @@ public:
     // List box selection colors
     Color activeListBoxSelectionBackgroundColor() const;
     Color activeListBoxSelectionForegroundColor() const;
-    Color inactiveListBoxSelectionBackgroundColor(bool) const;
+    Color inactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
     Color inactiveListBoxSelectionForegroundColor() const;
 
     // Highlighting colors for TextMatches.
@@ -261,7 +261,7 @@ protected:
     virtual Color platformInactiveSelectionForegroundColor() const;
 
     virtual Color platformActiveListBoxSelectionBackgroundColor() const;
-    virtual Color platformInactiveListBoxSelectionBackgroundColor(bool) const;
+    virtual Color platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
     virtual Color platformActiveListBoxSelectionForegroundColor() const;
     virtual Color platformInactiveListBoxSelectionForegroundColor() const;
 
