@@ -16,18 +16,20 @@ class CommitSetRangeBisector {
         const commitRangeByRepository = new Map;
         const indexForAllTimelessCommitsWithOrderByRepository = new Map;
         const allCommitsWithCommitTime = [];
-        const topLevelRepositoriesWithCommitChange = firstCommitSet.topLevelRepositories()
+        const topLevelRepositoriesWithOrderedCommits = firstCommitSet.topLevelRepositories()
             .filter((repository) => {
                 const firstCommit = firstCommitSet.commitForRepository(repository);
                 const secondCommit = secondCommitSet.commitForRepository(repository);
-                return firstCommit !== secondCommit && CommitLog.hasOrdering(firstCommit, secondCommit);
+                return CommitLog.hasOrdering(firstCommit, secondCommit);
             });
 
-        await Promise.all(topLevelRepositoriesWithCommitChange.map(async (repository) => {
+        await Promise.all(topLevelRepositoriesWithOrderedCommits.map(async (repository) => {
             const firstCommit = firstCommitSet.commitForRepository(repository);
             const secondCommit = secondCommitSet.commitForRepository(repository);
             const [startCommit, endCommit] = CommitLog.orderTwoCommits(firstCommit, secondCommit);
-            const commits = await CommitLog.fetchBetweenRevisions(repository, startCommit.revision(), endCommit.revision());
+
+            const commits = startCommit === endCommit ? [startCommit] : await CommitLog.fetchBetweenRevisions(repository, startCommit.revision(), endCommit.revision());
+
             if (startCommit.hasCommitTime()) {
                 allCommitsWithCommitTime.push(startCommit, ...commits);
                 commitRangeByRepository.set(repository, (commit) =>

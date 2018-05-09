@@ -140,6 +140,54 @@ describe('CommitSetRangeBisector', () => {
         ];
     }
 
+    function commitSetsWitCommitRollback()
+    {
+        return [
+            CommitSet.ensureSingleton(11, {
+                revisionItems: [
+                    { commit: makeCommit(1, MockModels.webkit, 'webkit-commit-1', 10), requiresBuild: false },
+                    { commit: makeCommit(11, MockModels.osx, 'osx-commit-1', 1), requiresBuild: false },
+                    { commit: makeCommit(201, MockModels.ownerRepository, 'owner-commit-1', 0, 1), requiresBuild: false }
+                ],
+                customRoots: []}),
+            CommitSet.ensureSingleton(12, {
+                revisionItems: [
+                    { commit: makeCommit(1, MockModels.webkit, 'webkit-commit-1', 10), requiresBuild: false },
+                    { commit: makeCommit(12, MockModels.osx, 'osx-commit-2', 21), requiresBuild: false },
+                    { commit: makeCommit(202, MockModels.ownerRepository, 'owner-commit-2', 0, 2), requiresBuild: false }
+                ],
+                customRoots: []}),
+            CommitSet.ensureSingleton(13, {
+                revisionItems: [
+                    { commit: makeCommit(2, MockModels.webkit, 'webkit-commit-2', 20), requiresBuild: false },
+                    { commit: makeCommit(12, MockModels.osx, 'osx-commit-2', 21), requiresBuild: false },
+                    { commit: makeCommit(202, MockModels.ownerRepository, 'owner-commit-2', 0, 2), requiresBuild: false }
+                ],
+                customRoots: []}),
+            CommitSet.ensureSingleton(14, {
+                revisionItems: [
+                    { commit: makeCommit(3, MockModels.webkit, 'webkit-commit-3', 30), requiresBuild: false },
+                    { commit: makeCommit(13, MockModels.osx, 'osx-commit-3', 31), requiresBuild: false },
+                    { commit: makeCommit(202, MockModels.ownerRepository, 'owner-commit-2', 0, 2), requiresBuild: false }
+                ],
+                customRoots: []}),
+            CommitSet.ensureSingleton(15, {
+                revisionItems: [
+                    { commit: makeCommit(3, MockModels.webkit, 'webkit-commit-3', 30), requiresBuild: false },
+                    { commit: makeCommit(13, MockModels.osx, 'osx-commit-3', 31), requiresBuild: false },
+                    { commit: makeCommit(203, MockModels.ownerRepository, 'owner-commit-3', 0, 3), requiresBuild: false }
+                ],
+                customRoots: []}),
+            CommitSet.ensureSingleton(17, {
+                revisionItems: [
+                    { commit: makeCommit(6, MockModels.webkit, 'webkit-commit-6', 60), requiresBuild: false },
+                    { commit: makeCommit(13, MockModels.osx, 'osx-commit-3', 31), requiresBuild: false },
+                    { commit: makeCommit(201, MockModels.ownerRepository, 'owner-commit-1', 0, 1), requiresBuild: false }
+                ],
+                customRoots: []}),
+        ];
+    }
+
     function commitSetsWithSomeHaveOwnedCommits()
     {
         return [
@@ -613,6 +661,79 @@ describe('CommitSetRangeBisector', () => {
                 ]
             });
             assert.equal(await promise, allCommitSets[3]);
+        });
+
+        it('should still check the repository revision even the repository has no change in the range', async () => {
+            const allCommitSets = commitSetsWitCommitRollback();
+            const startCommitSet = allCommitSets[0];
+            const endCommitSet = allCommitSets[allCommitSets.length - 1];
+            const promise = CommitSetRangeBisector.commitSetClosestToMiddleOfAllCommits([startCommitSet, endCommitSet], allCommitSets);
+            const webkitId = MockModels.webkit.id();
+            const osxId = MockModels.osx.id();
+
+            assert.equal(requests.length, 2);
+            assert.equal(requests[0].url, '/api/commits/9/?precedingRevision=osx-commit-1&lastRevision=osx-commit-3');
+            assert.equal(requests[1].url, '/api/commits/11/?precedingRevision=webkit-commit-1&lastRevision=webkit-commit-6');
+
+            requests[0].resolve({
+                'commits': [
+                    {
+                        repository: osxId,
+                        id: 12,
+                        revision: 'osx-commit-2',
+                        ownsCommits: false,
+                        time: 21
+                    },
+                    {
+                        repository: osxId,
+                        id: 13,
+                        revision: 'osx-commit-3',
+                        ownsCommits: false,
+                        time: 31
+                    }
+                ]
+            });
+
+            requests[1].resolve({
+                'commits': [
+                    {
+                        repository: webkitId,
+                        id: 2,
+                        revision: 'webkit-commit-2',
+                        ownsCommits: false,
+                        time: 20
+                    },
+                    {
+                        repository: webkitId,
+                        id: 3,
+                        revision: 'webkit-commit-3',
+                        ownsCommits: false,
+                        time: 30
+                    },
+                    {
+                        repository: webkitId,
+                        id: 4,
+                        revision: 'webkit-commit-4',
+                        ownsCommits: false,
+                        time: 40
+                    },
+                    {
+                        repository: webkitId,
+                        id: 5,
+                        revision: 'webkit-commit-5',
+                        ownsCommits: false,
+                        time: 50
+                    },
+                    {
+                        repository: webkitId,
+                        id: 6,
+                        revision: 'webkit-commit-6',
+                        ownsCommits: false,
+                        time: 60
+                    },
+                ]
+            });
+            assert.equal(await promise, null);
         });
 
         it('should filter out commit set with owned commit', async () => {
