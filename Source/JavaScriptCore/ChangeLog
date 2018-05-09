@@ -1,5 +1,23 @@
 2018-05-08  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r231332. rdar://problem/40050814
+
+    Unreviewed, fix 32-bit profile offset for change in bytecode
+    length of the get_by_id and get_array_length opcodes.
+    
+    * llint/LowLevelInterpreter32_64.asm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@231332 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-05-03  Keith Miller  <keith_miller@apple.com>
+
+            Unreviewed, fix 32-bit profile offset for change in bytecode
+            length of the get_by_id and get_array_length opcodes.
+
+            * llint/LowLevelInterpreter32_64.asm:
+
+2018-05-08  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r230980. rdar://problem/40050820
 
     fromCharCode is missing some exception checks
