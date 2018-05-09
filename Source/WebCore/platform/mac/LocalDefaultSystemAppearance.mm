@@ -30,8 +30,11 @@
 #include <AppKit/NSAppearance.h>
 
 namespace WebCore {
-    
-LocalDefaultSystemAppearance::LocalDefaultSystemAppearance(bool useSystemAppearance)
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/LocalDefaultSystemAppearanceAdditions.mm>
+#else
+LocalDefaultSystemAppearance::LocalDefaultSystemAppearance(bool useSystemAppearance, bool)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     m_savedSystemAppearance = [NSAppearance currentAppearance];
@@ -40,15 +43,15 @@ LocalDefaultSystemAppearance::LocalDefaultSystemAppearance(bool useSystemAppeara
     UNUSED_PARAM(useSystemAppearance);
 #endif
 }
+#endif
 
 LocalDefaultSystemAppearance::~LocalDefaultSystemAppearance()
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    if (m_savedSystemAppearance)
-        [NSAppearance setCurrentAppearance:m_savedSystemAppearance.get()];
+    [NSAppearance setCurrentAppearance:m_savedSystemAppearance.get()];
 #endif
 }
-    
+
 }
 
 #endif // USE(APPKIT)
