@@ -26,3 +26,4 @@ list(APPEND JavaScriptCore_FORWARDING_HEADERS
 )
 
 add_definitions(-DJSC_COMPILATION)
+add_definitions(-DPKGLIBDIR="${CMAKE_INSTALL_FULL_LIBDIR}/wpe-webkit-${WPE_API_VERSION}")
