@@ -263,8 +263,8 @@ static const char* injectedBundleDirectory()
         G_DIR_SEPARATOR_S "injected-bundle" G_DIR_SEPARATOR_S;
     return injectedBundlePath;
 #elif PLATFORM(WPE)
-    // FIXME: Make it possible to use installed injected bundle in WPE.
-    return nullptr;
+    static const char* injectedBundlePath = PKGLIBDIR G_DIR_SEPARATOR_S "injected-bundle" G_DIR_SEPARATOR_S;
+    return injectedBundlePath;
 #endif
 }
 
