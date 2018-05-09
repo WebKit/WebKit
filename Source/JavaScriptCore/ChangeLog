@@ -1,3 +1,15 @@
+2018-05-08  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [MIPS] Collect callee-saved register using inline assembly
+        https://bugs.webkit.org/show_bug.cgi?id=185428
+
+        Reviewed by Yusuke Suzuki.
+
+        MIPS used setjmp instead of collecting registers with inline assembly like
+        other architectures.
+
+        * heap/RegisterState.h:
+
 2018-05-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [BigInt] Simplifying JSBigInt by using bool addition
