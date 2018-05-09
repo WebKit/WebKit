@@ -1,3 +1,18 @@
+2018-05-09  Richard Houle  <rhoule@apple.com>
+
+        [Cocoa] Some fields are not identified as [WKWebProcessPlugInNodeHandle isTextField]
+        https://bugs.webkit.org/show_bug.cgi?id=185260
+        <rdar://problem/39290394>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/InjectedBundleNodeHandleIsTextField.mm: Added.
+        (-[InjectedBundleNodeHandleIsTextField isTextFieldForHTMLInputType:document:jsContext:]):
+        (-[InjectedBundleNodeHandleIsTextField webProcessPlugIn:didCreateBrowserContextController:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[InjectedBundleNodeHandleIsTextFieldDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+
 2018-05-09  Thibault Saunier  <tsaunier@igalia.com>
 
         [tests][GStreamer]: Pass USE_PLAYBIN3 to the tests subprocess

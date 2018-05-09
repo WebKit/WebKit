@@ -1,3 +1,18 @@
+2018-05-09  Richard Houle  <rhoule@apple.com>
+
+        [Cocoa] Some fields are not identified as [WKWebProcessPlugInNodeHandle isTextField]
+        https://bugs.webkit.org/show_bug.cgi?id=185260
+        <rdar://problem/39290394>
+
+        INPUT element are not considered to be text fields when
+        calling -[WKWebProcessPlugInNodeHandle isTextField]
+        when they are of type number.
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::isTextField const):
+
 2018-05-09  Youenn Fablet  <youenn@apple.com>
 
         Allow WebResourceLoader to cancel a load served from a service worker
