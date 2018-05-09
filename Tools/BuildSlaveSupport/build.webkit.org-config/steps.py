@@ -359,7 +359,7 @@ class RunTest262Tests(TestWithFailureCount):
     description = ["test262-tests running"]
     descriptionDone = ["test262-tests"]
     failedTestsFormatString = "%d Test262 test%s failed"
-    command = ["ruby", "./Tools/Scripts/run-jsc-stress-tests", WithProperties("--%(configuration)s"), "JSTests/test262.yaml"]
+    command = ["perl", "./Tools/Scripts/test262-runner"]
 
     def start(self):
         appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
@@ -367,7 +367,7 @@ class RunTest262Tests(TestWithFailureCount):
 
     def countFailures(self, cmd):
         logText = cmd.logs['stdio'].getText()
-        matches = re.findall(r'^FAIL:', logText, flags=re.MULTILINE)
+        matches = re.findall(r'^\! NEW FAIL', logText, flags=re.MULTILINE)
         if matches:
             return len(matches)
         return 0

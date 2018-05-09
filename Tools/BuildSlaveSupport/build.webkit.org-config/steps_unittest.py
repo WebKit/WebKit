@@ -135,30 +135,86 @@ class RunTest262TestsTest(unittest.TestCase):
         self.assertEqual(actual_text, expected_text)
 
     def test_no_regressions_output(self):
-        self.assertResults(SUCCESS, ["test262-test"], 0, """Using the following jsc path: /WebKitBuild/Release/jsc
+        self.assertResults(SUCCESS, ["test262-test"], 0, """
+-------------------------Settings------------------------
+Test262 Dir: JSTests/test262
+JSC: WebKitBuild/Release/jsc
+DYLD_FRAMEWORK_PATH: WebKitBuild/Release
+Child Processes: 32
+Config file: Tools/Scripts/test262/config.yaml
+Expectations file: Tools/Scripts/test262/expectations.yaml
+--------------------------------------------------------
 
-Running test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default
-Running test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default-strict
+NEW PASS: test/annexB/built-ins/Date/prototype/getYear/length.js (default)
+NEW PASS test/language/expressions/class/fields-after-same-line-static-method-computed-symbol-names.js (default)
+
+Run with --save to save a new expectations file
+Saved all the results in Tools/Scripts/test262/results.yaml
+Summarizing results...
+See summarized results in Tools/Scripts/test262/results-summary.txt
+
+56071 tests ran
+0 expected tests failed
+0 tests newly fail
+2546 tests newly pass
+1241 test files skipped
+Done in 247 seconds!
 """)
 
     def test_failure_output(self):
-        self.assertResults(FAILURE, ["1 Test262 test failed"], 0, """Using the following jsc path: /WebKitBuild/Release/jsc
+        self.assertResults(FAILURE, ["1 Test262 test failed"], 0, """
+-------------------------Settings------------------------
+Test262 Dir: JSTests/test262
+JSC: WebKitBuild/Release/jsc
+DYLD_FRAMEWORK_PATH: WebKitBuild/Release
+Child Processes: 32
+Config file: Tools/Scripts/test262/config.yaml
+Expectations file: Tools/Scripts/test262/expectations.yaml
+--------------------------------------------------------
 
-Running test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default
-Running test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default-strict
-test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default-strict: ERROR: Unexpected exit code: 0
-FAIL: test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default-strict
+! NEW FAIL: test/annexB/built-ins/Date/prototype/getYear/length.js (default)
+NEW PASS test/language/expressions/class/fields-after-same-line-static-method-computed-symbol-names.js (default)
+
+Run with --save to save a new expectations file
+Saved all the results in Tools/Scripts/test262/results.yaml
+Summarizing results...
+See summarized results in Tools/Scripts/test262/results-summary.txt
+
+56071 tests ran
+0 expected tests failed
+0 tests newly fail
+2546 tests newly pass
+1241 test files skipped
+Done in 247 seconds!
 """)
 
     def test_failures_output(self):
-        self.assertResults(FAILURE, ["2 Test262 tests failed"], 0, """Using the following jsc path: /WebKitBuild/Release/jsc
+        self.assertResults(FAILURE, ["2 Test262 tests failed"], 0, """
+-------------------------Settings------------------------
+Test262 Dir: JSTests/test262
+JSC: WebKitBuild/Release/jsc
+DYLD_FRAMEWORK_PATH: WebKitBuild/Release
+Child Processes: 32
+Config file: Tools/Scripts/test262/config.yaml
+Expectations file: Tools/Scripts/test262/expectations.yaml
+--------------------------------------------------------
 
-Running test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default
-test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default: ERROR: Unexpected exit code: 0
-FAIL: test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default
-Running test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default-strict
-test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default-strict: ERROR: Unexpected exit code: 0
-FAIL: test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default-strict
+NEW PASS test/language/statements/class/fields-after-same-line-static-async-gen-computed-names.js (default)
+! NEW FAIL: test/annexB/built-ins/Date/prototype/getYear/length.js (default)
+! NEW FAIL: test/annexB/built-ins/Date/prototype/getYear/length.js (strict mode)
+NEW PASS test/language/expressions/class/fields-after-same-line-static-method-computed-symbol-names.js (default)
+
+Run with --save to save a new expectations file
+Saved all the results in Tools/Scripts/test262/results.yaml
+Summarizing results...
+See summarized results in Tools/Scripts/test262/results-summary.txt
+
+56071 tests ran
+0 expected tests failed
+0 tests newly fail
+2546 tests newly pass
+1241 test files skipped
+Done in 247 seconds!
 """)
 
 
