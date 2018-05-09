@@ -404,7 +404,12 @@ sub getProcesses {
         $cores = 1;
     }
 
-    return $cores * 8;
+    if ($cores <= 8) {
+        return $cores * 4;
+    }
+    else {
+        return $cores * 2;
+    }
 }
 
 sub parseError {

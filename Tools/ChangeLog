@@ -1,3 +1,13 @@
+2018-05-08  Valerie R Young  <valerie@bocoup.com>
+
+        test262/Runner.pm: lower number of processes per core
+        https://bugs.webkit.org/show_bug.cgi?id=185426
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/test262/Runner.pm:
+        (getProcesses):
+
 2018-05-08  Leo Balter  <leonardo.balter@gmail.com>
 
         Test262-Runner: Add base Perl UnicodeData
