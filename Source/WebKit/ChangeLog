@@ -1,3 +1,28 @@
+2018-05-08  Andy Estes  <aestes@apple.com>
+
+        [iOS] WKPDFView remains in the view hierarchy after navigating away
+        https://bugs.webkit.org/show_bug.cgi?id=185449
+        <rdar://problem/39693469>
+
+        Reviewed by Tim Horton.
+
+        WKPDFView removes the PDF host view from the view hierarchy in its -dealloc
+        method, and relies on WKWebView releasing its last reference in
+        -_setHasCustomContentView:loadedMIMEType: when the user navigates.
+
+        However, WKWPDFView was capturing a strong reference to self in the block passed
+        to +[PDFHostViewController createHostView:forExtensionIdentifier:], and PDFKit
+        (actually UIKit) is retaining this block beyond its being called. This results in
+        the PDF host view remaining as a child of the WKScrollView even after the user
+        navigates to another page.
+
+        Changed the aforementioned block to a lambda that captures a weak reference to
+        self to prevent WKPDFView from outliving the current navigation.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView retain]):
+        (-[WKPDFView web_setContentProviderData:suggestedFilename:]):
+
 2018-05-08  John Wilander  <wilander@apple.com>
 
         Storage Access API: Make user opt-in sticky

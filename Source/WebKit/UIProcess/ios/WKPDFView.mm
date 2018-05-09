@@ -95,8 +95,13 @@
     _data = adoptNS([data copy]);
     _suggestedFilename = adoptNS([filename copy]);
 
-    [PDFHostViewController createHostView:^(PDFHostViewController * _Nullable hostViewController) {
+    WebKit::WeakObjCPtr<WKPDFView> weakSelf = self;
+    [PDFHostViewController createHostView:[self, weakSelf = WTFMove(weakSelf)](PDFHostViewController * _Nullable hostViewController) {
         ASSERT(isMainThread());
+
+        WKPDFView *autoreleasedSelf = weakSelf.getAutoreleased();
+        if (!autoreleasedSelf)
+            return;
 
         WKWebView *webView = _webView.getAutoreleased();
         if (!webView)
