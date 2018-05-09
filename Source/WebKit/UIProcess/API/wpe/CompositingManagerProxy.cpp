@@ -31,7 +31,7 @@
 #include "WPEView.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
-#include <wpe/view-backend.h>
+#include <wpe/wpe.h>
 
 namespace WebKit {
 

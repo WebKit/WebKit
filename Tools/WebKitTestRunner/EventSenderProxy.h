@@ -29,18 +29,17 @@
 
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(GTK)
 #include <WebCore/GUniquePtrGtk.h>
 #include <gdk/gdk.h>
-#include <wtf/HashSet.h>
 #endif
 
 #if PLATFORM(WPE)
-#include <wpe/input.h>
-#include <wtf/HashSet.h>
+#include <wpe/wpe.h>
 #endif
 
 #if PLATFORM(COCOA)

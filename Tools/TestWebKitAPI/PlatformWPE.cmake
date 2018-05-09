@@ -22,6 +22,8 @@ include_directories(SYSTEM
     ${CAIRO_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
+    ${WPE_INCLUDE_DIRS}
+    ${WPEBACKEND_FDO_INCLUDE_DIRS}
 )
 
 set(test_main_SOURCES

@@ -28,7 +28,7 @@
 
 #include "WebPage.h"
 #include <WebCore/PlatformDisplayWPE.h>
-#include <wpe/renderer-backend-egl.h>
+#include <wpe/wpe-egl.h>
 
 using namespace WebCore;
 
@@ -60,6 +60,11 @@ void AcceleratedSurfaceWPE::initialize()
             auto& surface = *reinterpret_cast<AcceleratedSurfaceWPE*>(data);
             surface.m_client.frameComplete();
         },
+        // padding
+        nullptr,
+        nullptr,
+        nullptr,
+        nullptr
     };
     wpe_renderer_backend_egl_target_set_client(m_backend, &s_client, this);
     wpe_renderer_backend_egl_target_initialize(m_backend, downcast<PlatformDisplayWPE>(PlatformDisplay::sharedDisplay()).backend(),

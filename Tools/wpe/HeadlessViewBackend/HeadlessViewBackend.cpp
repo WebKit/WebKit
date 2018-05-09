@@ -28,7 +28,7 @@
 #include <cassert>
 #include <fcntl.h>
 #include <unistd.h>
-#include <wpe-fdo/initialize-egl.h>
+#include <wpe/fdo-egl.h>
 
 // Manually provide the EGL_CAST C++ definition in case eglplatform.h doesn't provide it.
 #ifndef EGL_CAST
@@ -232,4 +232,9 @@ struct wpe_view_backend_exportable_fdo_client HeadlessViewBackend::s_exportableC
         EGLImageKHR image = egl.createImage(egl.display, EGL_NO_CONTEXT, EGL_WAYLAND_BUFFER_WL, bufferResource, attributes);
         backend.m_pendingImage = { bufferResource, std::make_tuple(image, width, height) };
     },
+    // padding
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr
 };
