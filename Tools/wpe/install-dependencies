@@ -108,7 +108,6 @@ function installDependenciesWithApt {
         git \
         gsettings-desktop-schemas-dev \
         libexpat1-dev \
-        libgbm-dev \
         libgles2-mesa-dev \
         libluajit-5.1-dev \
         libmount-dev \
@@ -295,7 +294,6 @@ function installDependenciesWithDnf {
         libxcb-devel \
         luajit \
         luajit-devel \
-        mesa-libgbm-devel \
         mesa-libGLES-devel \
         opus-devel \
         orc-devel \
