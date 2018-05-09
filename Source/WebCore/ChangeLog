@@ -1,5 +1,23 @@
 2018-05-09  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r231516. rdar://problem/40096750
+
+    Unreviewed build fix; add missing function definition.
+    
+    * html/HTMLMediaElement.h:
+    (WebCore::HTMLMediaElement::didPassCORSAccessCheck const):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@231516 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-05-08  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed build fix; add missing function definition.
+
+            * html/HTMLMediaElement.h:
+            (WebCore::HTMLMediaElement::didPassCORSAccessCheck const):
+
+2018-05-09  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r231513. rdar://problem/40096750
 
     Mute MediaElementSourceNode when tainted.
