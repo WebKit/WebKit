@@ -28,11 +28,14 @@
 #import "CurrentThisInsideBlockGetterTest.h"
 #import "DateTests.h"
 #import "JSExportTests.h"
+#import "JSVirtualMachinePrivate.h"
 #import "Regress141275.h"
 #import "Regress141809.h"
 
 #import <pthread.h>
 #import <vector>
+#import <wtf/MemoryFootprint.h>
+#import <wtf/Optional.h>
 
 extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 extern "C" void JSSynchronousEdenCollectForDebugging(JSContextRef);
@@ -1467,6 +1470,33 @@ static void testObjectiveCAPIMain()
             pthread_join(thread, nullptr);
 
         checkResult(@"Ran code in five concurrent VMs that GC'd", ok);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        JSVirtualMachine *vm = [context virtualMachine];
+        [vm shrinkFootprint]; // Make sure that when we allocate a ton of memory below we reuse at little as possible.
+
+        std::optional<size_t> footprintBefore = WTF::memoryFootprint();
+        RELEASE_ASSERT(footprintBefore);
+
+        [context evaluateScript:@"for (let i = 0; i < 10000; ++i) { eval(`myVariable_${i} = [i]`); }"];
+
+        static constexpr size_t approximateBytes = 10000 * sizeof(int);
+        std::optional<size_t> footprintMiddle = WTF::memoryFootprint();
+        RELEASE_ASSERT(footprintMiddle);
+        checkResult(@"Footprint is larger than what we allocated", *footprintMiddle > approximateBytes);
+        checkResult(@"Footprint got larger as we allocated a ton of stuff", *footprintMiddle > *footprintBefore);
+        size_t allocationDelta = *footprintMiddle - *footprintBefore;
+        checkResult(@"We allocated as much or more memory than what we expected to", allocationDelta >= approximateBytes);
+
+        [context evaluateScript:@"for (let i = 0; i < 10000; ++i) { eval(`myVariable_${i} = null`); }"];
+        [vm shrinkFootprint];
+        std::optional<size_t> footprintAfter = WTF::memoryFootprint();
+        RELEASE_ASSERT(footprintAfter);
+        checkResult(@"Footprint got smaller after we shrank the VM", *footprintAfter < *footprintMiddle);
+        size_t freeDelta = *footprintMiddle - *footprintAfter;
+        checkResult(@"Shrinking the footprint of the VM actually freed memory", freeDelta > (approximateBytes / 2));
     }
 
     currentThisInsideBlockGetterTest();
