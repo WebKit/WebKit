@@ -2727,7 +2727,7 @@ void WebPage::viewportConfigurationChanged()
     FrameView& frameView = *mainFrameView();
     IntPoint scrollPosition = frameView.scrollPosition();
     if (!m_hasReceivedVisibleContentRectsAfterDidCommitLoad) {
-        FloatSize minimumLayoutSizeInScrollViewCoordinates = m_viewportConfiguration.minimumLayoutSize();
+        FloatSize minimumLayoutSizeInScrollViewCoordinates = m_viewportConfiguration.viewLayoutSize();
         minimumLayoutSizeInScrollViewCoordinates.scale(1 / scale);
         IntSize minimumLayoutSizeInDocumentCoordinates = roundedIntSize(minimumLayoutSizeInScrollViewCoordinates);
         frameView.setUnobscuredContentSize(minimumLayoutSizeInDocumentCoordinates);
@@ -2749,13 +2749,13 @@ void WebPage::viewportConfigurationChanged()
 
 void WebPage::updateViewportSizeForCSSViewportUnits()
 {
-    FloatSize largestUnobscuredRect = m_maximumUnobscuredSize;
-    if (largestUnobscuredRect.isEmpty())
-        largestUnobscuredRect = m_viewportConfiguration.minimumLayoutSize();
+    FloatSize largestUnobscuredSize = m_maximumUnobscuredSize;
+    if (largestUnobscuredSize.isEmpty())
+        largestUnobscuredSize = m_viewportConfiguration.viewLayoutSize();
 
     FrameView& frameView = *mainFrameView();
-    largestUnobscuredRect.scale(1 / m_viewportConfiguration.initialScaleIgnoringContentSize());
-    frameView.setViewportSizeForCSSViewportUnits(roundedIntSize(largestUnobscuredRect));
+    largestUnobscuredSize.scale(1 / m_viewportConfiguration.initialScaleIgnoringContentSize());
+    frameView.setViewportSizeForCSSViewportUnits(roundedIntSize(largestUnobscuredSize));
 }
 
 void WebPage::applicationWillResignActive()

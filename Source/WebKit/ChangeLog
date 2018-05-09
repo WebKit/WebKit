@@ -1,3 +1,28 @@
+2018-05-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] fast/viewport/extrazoom/viewport-change-min-device-width.html sometimes fails
+        https://bugs.webkit.org/show_bug.cgi?id=185490
+        <rdar://problem/40097629>
+
+        Reviewed by Tim Horton.
+
+        This test is currently flaky due to incorrect logic when computing the unobscured content rect, in the slice of
+        time after a frame load has been committed, and before the first visible content rect update from the UI process
+        after the frame load has been committed.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::viewportConfigurationChanged):
+
+        In the case where !m_hasReceivedVisibleContentRectsAfterDidCommitLoad, we try to set the unobscured content size
+        to be the view size divided by the initial scale. However, in extra zoom mode, `ViewportConfiguration`'s
+        `minimumLayoutSize()` is the layout size, which is larger than the size of the view by default, so dividing this
+        by the initial scale yields a bogus value. Instead, use `viewLayoutSize()` instead.
+
+        (WebKit::WebPage::updateViewportSizeForCSSViewportUnits):
+
+        We also try to divide the view size by the initial scale when computing the effective viewport size for `vw` and
+        `vh`. Additionally, fix the misleading name of a variable (largestUnobscuredRect) that stores a size.
+
 2018-05-09  Brent Fulgham  <bfulgham@apple.com>
 
         Restrict unarchiving of bundle parameters to a set of known classes
