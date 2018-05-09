@@ -1,3 +1,16 @@
+2018-05-09  Sihui Liu  <sihui_liu@apple.com>
+
+        Update WebKit.WebsiteDataStoreCustomPaths after r231536
+        https://bugs.webkit.org/show_bug.cgi?id=185486
+        <rdar://problem/37214391>
+
+        Reviewed by Chris Dumez.
+
+        Update WebKit.WebsiteDataStoreCustomPaths as _syncNetworkProcessCookies is async now.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2018-05-09  Leo Balter  <leonardo.balter@gmail.com>
 
         Test262-Runner: Improve the verbose output

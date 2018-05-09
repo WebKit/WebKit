@@ -143,6 +143,12 @@ TEST(WebKit, WebsiteDataStoreCustomPaths)
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:localStoragePath.path]);
 
 #if PLATFORM(IOS) || (__MAC_OS_X_VERSION_MIN_REQUIRED < 101300)
+    int retryCount = 30;
+    while (retryCount--) {
+        if ([[NSFileManager defaultManager] fileExistsAtPath:cookieStorageFile.path])
+            break;
+        TestWebKitAPI::Util::sleep(0.1);
+    }
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:cookieStorageFile.path]);
 
     // Note: The format of the cookie file on disk is proprietary and opaque, so this is fragile to future changes.
