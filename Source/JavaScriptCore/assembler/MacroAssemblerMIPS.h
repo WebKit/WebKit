@@ -51,6 +51,16 @@ public:
         return value >= -2147483647 - 1 && value <= 2147483647;
     }
 
+    inline bool isPowerOf2(int32_t v)
+    {
+        return hasOneBitSet(v);
+    }
+
+    inline int bitPosition(int32_t v)
+    {
+        return getLSBSet(v);
+    }
+
     static const Scale ScalePtr = TimesFour;
 
     // For storing immediate number
@@ -101,6 +111,11 @@ public:
         DoubleGreaterThanOrEqualOrUnordered,
         DoubleLessThanOrUnordered,
         DoubleLessThanOrEqualOrUnordered
+    };
+
+    enum class LoadAddressMode {
+        ScaleAndAddOffsetIfOffsetIsOutOfBounds,
+        Scale
     };
 
     static const RegisterID stackPointerRegister = MIPSRegisters::sp;
@@ -310,10 +325,37 @@ public:
         m_assembler.sw(dataTempRegister, addrTempRegister, 4);
     }
 
+    void loadAddress(BaseIndex address, LoadAddressMode mode)
+    {
+        if (mode == LoadAddressMode::ScaleAndAddOffsetIfOffsetIsOutOfBounds) {
+            if (!address.scale)
+                m_assembler.addu(addrTempRegister, address.index, address.base);
+            else {
+                m_assembler.sll(addrTempRegister, address.index, address.scale);
+                m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+            }
+            if (address.offset < -32768 || address.offset > 32767) {
+                m_assembler.lui(immTempRegister, (address.offset + 0x8000) >> 16);
+                m_assembler.addu(addrTempRegister, addrTempRegister, immTempRegister);
+            }
+        } else {
+            if (!address.scale)
+                m_assembler.addu(addrTempRegister, address.index, address.base);
+            else {
+                m_assembler.sll(addrTempRegister, address.index, address.scale);
+                m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+            }
+        }
+    }
+
     void getEffectiveAddress(BaseIndex address, RegisterID dest)
     {
-        m_assembler.sll(addrTempRegister, address.index, address.scale);
-        m_assembler.addu(dest, addrTempRegister, address.base);
+        if (!address.scale && !m_fixedWidth)
+            m_assembler.addu(dest, address.index, address.base);
+        else {
+            m_assembler.sll(addrTempRegister, address.index, address.scale);
+            m_assembler.addu(dest, addrTempRegister, address.base);
+        }
         if (address.offset)
             add32(TrustedImm32(address.offset), dest);
     }
@@ -845,19 +887,8 @@ public:
 
     void load8(BaseIndex address, RegisterID dest)
     {
-        if (address.offset >= -32768 && address.offset <= 32767
-            && !m_fixedWidth) {
-            /*
-             sll     addrTemp, address.index, address.scale
-             addu    addrTemp, addrTemp, address.base
-             lbu     dest, address.offset(addrTemp)
-             */
-            if (!address.scale)
-                m_assembler.addu(addrTempRegister, address.index, address.base);
-            else {
-                m_assembler.sll(addrTempRegister, address.index, address.scale);
-                m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
-            }
+        if (!m_fixedWidth) {
+            loadAddress(address, LoadAddressMode::ScaleAndAddOffsetIfOffsetIsOutOfBounds);
             m_assembler.lbu(dest, addrTempRegister, address.offset);
         } else {
             /*
@@ -867,12 +898,8 @@ public:
              addu    addrTemp, addrTemp, immTemp
              lbu     dest, (address.offset & 0xffff)(at)
              */
-            if (!address.scale && !m_fixedWidth)
-                m_assembler.addu(addrTempRegister, address.index, address.base);
-            else {
-                m_assembler.sll(addrTempRegister, address.index, address.scale);
-                m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
-            }
+            m_assembler.sll(addrTempRegister, address.index, address.scale);
+            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
             m_assembler.lui(immTempRegister, (address.offset + 0x8000) >> 16);
             m_assembler.addu(addrTempRegister, addrTempRegister, immTempRegister);
             m_assembler.lbu(dest, addrTempRegister, address.offset);
@@ -919,19 +946,8 @@ public:
 
     void load8SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
-        if (address.offset >= -32768 && address.offset <= 32767
-            && !m_fixedWidth) {
-            /*
-                sll     addrTemp, address.index, address.scale
-                addu    addrTemp, addrTemp, address.base
-                lb      dest, address.offset(addrTemp)
-            */
-            if (!address.scale)
-                m_assembler.addu(addrTempRegister, address.index, address.base);
-            else {
-                m_assembler.sll(addrTempRegister, address.index, address.scale);
-                m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
-            }
+        if (!m_fixedWidth) {
+            loadAddress(address, LoadAddressMode::ScaleAndAddOffsetIfOffsetIsOutOfBounds);
             m_assembler.lb(dest, addrTempRegister, address.offset);
         } else {
             /*
@@ -941,12 +957,8 @@ public:
                 addu    addrTemp, addrTemp, immTemp
                 lb     dest, (address.offset & 0xffff)(at)
             */
-            if (!address.scale && !m_fixedWidth)
-                m_assembler.addu(addrTempRegister, address.index, address.base);
-            else {
-                m_assembler.sll(addrTempRegister, address.index, address.scale);
-                m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
-            }
+            m_assembler.sll(addrTempRegister, address.index, address.scale);
+            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
             m_assembler.lui(immTempRegister, (address.offset + 0x8000) >> 16);
             m_assembler.addu(addrTempRegister, addrTempRegister, immTempRegister);
             m_assembler.lb(dest, addrTempRegister, address.offset);
@@ -994,19 +1006,8 @@ public:
 
     void load32(BaseIndex address, RegisterID dest)
     {
-        if (address.offset >= -32768 && address.offset <= 32767
-            && !m_fixedWidth) {
-            /*
-                sll     addrTemp, address.index, address.scale
-                addu    addrTemp, addrTemp, address.base
-                lw      dest, address.offset(addrTemp)
-            */
-            if (!address.scale)
-                m_assembler.addu(addrTempRegister, address.index, address.base);
-            else {
-                m_assembler.sll(addrTempRegister, address.index, address.scale);
-                m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
-            }
+        if (!m_fixedWidth) {
+            loadAddress(address, LoadAddressMode::ScaleAndAddOffsetIfOffsetIsOutOfBounds);
             m_assembler.lw(dest, addrTempRegister, address.offset);
         } else {
             /*
@@ -1035,8 +1036,7 @@ public:
                 sll     dest, dest, 8
                 or      dest, dest, immTemp
             */
-            m_assembler.sll(addrTempRegister, address.index, address.scale);
-            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+            loadAddress(address, LoadAddressMode::Scale);
 #if CPU(BIG_ENDIAN)
             m_assembler.lbu(immTempRegister, addrTempRegister, address.offset + 1);
             m_assembler.lbu(dest, addrTempRegister, address.offset);
@@ -1089,8 +1089,7 @@ public:
                 lwl     dest, address.offset+3(addrTemp)
                 lwr     dest, address.offset(addrTemp)
             */
-            m_assembler.sll(addrTempRegister, address.index, address.scale);
-            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+            loadAddress(address, LoadAddressMode::Scale);
 #if CPU(BIG_ENDIAN)
             m_assembler.lwl(dest, addrTempRegister, address.offset);
             m_assembler.lwr(dest, addrTempRegister, address.offset + 3);
@@ -1189,15 +1188,8 @@ public:
     /* Need to use zero-extened load half-word for load16.  */
     void load16(BaseIndex address, RegisterID dest)
     {
-        if (address.offset >= -32768 && address.offset <= 32767
-            && !m_fixedWidth) {
-            /*
-                sll     addrTemp, address.index, address.scale
-                addu    addrTemp, addrTemp, address.base
-                lhu     dest, address.offset(addrTemp)
-            */
-            m_assembler.sll(addrTempRegister, address.index, address.scale);
-            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+        if (!m_fixedWidth) {
+            loadAddress(address, LoadAddressMode::ScaleAndAddOffsetIfOffsetIsOutOfBounds);
             m_assembler.lhu(dest, addrTempRegister, address.offset);
         } else {
             /*
@@ -1217,15 +1209,8 @@ public:
 
     void load16SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
-        if (address.offset >= -32768 && address.offset <= 32767
-            && !m_fixedWidth) {
-            /*
-                sll     addrTemp, address.index, address.scale
-                addu    addrTemp, addrTemp, address.base
-                lh     dest, address.offset(addrTemp)
-            */
-            m_assembler.sll(addrTempRegister, address.index, address.scale);
-            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+        if (!m_fixedWidth) {
+            loadAddress(address, LoadAddressMode::ScaleAndAddOffsetIfOffsetIsOutOfBounds);
             m_assembler.lh(dest, addrTempRegister, address.offset);
         } else {
             /*
@@ -1262,19 +1247,8 @@ public:
 
     void store8(RegisterID src, BaseIndex address)
     {
-        if (address.offset >= -32768 && address.offset <= 32767
-            && !m_fixedWidth) {
-            /*
-                sll     addrTemp, address.index, address.scale
-                addu    addrTemp, addrTemp, address.base
-                sb      src, address.offset(addrTemp)
-            */
-            if (!address.scale)
-                m_assembler.addu(addrTempRegister, address.index, address.base);
-            else {
-                m_assembler.sll(addrTempRegister, address.index, address.scale);
-                m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
-            }
+        if (!m_fixedWidth) {
+            loadAddress(address, LoadAddressMode::ScaleAndAddOffsetIfOffsetIsOutOfBounds);
             m_assembler.sb(src, addrTempRegister, address.offset);
         } else {
             /*
@@ -1284,12 +1258,8 @@ public:
                 addu    addrTemp, addrTemp, immTemp
                 sb      src, (address.offset & 0xffff)(at)
             */
-            if (!address.scale && !m_fixedWidth)
-                m_assembler.addu(addrTempRegister, address.index, address.base);
-            else {
-                m_assembler.sll(addrTempRegister, address.index, address.scale);
-                m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
-            }
+            m_assembler.sll(addrTempRegister, address.index, address.scale);
+            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
             m_assembler.lui(immTempRegister, (address.offset + 0x8000) >> 16);
             m_assembler.addu(addrTempRegister, addrTempRegister, immTempRegister);
             m_assembler.sb(src, addrTempRegister, address.offset);
@@ -1384,15 +1354,8 @@ public:
 
     void store16(RegisterID src, BaseIndex address)
     {
-        if (address.offset >= -32768 && address.offset <= 32767
-            && !m_fixedWidth) {
-            /*
-                sll     addrTemp, address.index, address.scale
-                addu    addrTemp, addrTemp, address.base
-                sh      src, address.offset(addrTemp)
-            */
-            m_assembler.sll(addrTempRegister, address.index, address.scale);
-            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+        if (!m_fixedWidth) {
+            loadAddress(address, LoadAddressMode::ScaleAndAddOffsetIfOffsetIsOutOfBounds);
             m_assembler.sh(src, addrTempRegister, address.offset);
         } else {
             /*
@@ -1429,19 +1392,8 @@ public:
 
     void store32(RegisterID src, BaseIndex address)
     {
-        if (address.offset >= -32768 && address.offset <= 32767
-            && !m_fixedWidth) {
-            /*
-                sll     addrTemp, address.index, address.scale
-                addu    addrTemp, addrTemp, address.base
-                sw      src, address.offset(addrTemp)
-            */
-            if (!address.scale)
-                m_assembler.addu(addrTempRegister, address.index, address.base);
-            else {
-                m_assembler.sll(addrTempRegister, address.index, address.scale);
-                m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
-            }
+        if (!m_fixedWidth) {
+            loadAddress(address, LoadAddressMode::ScaleAndAddOffsetIfOffsetIsOutOfBounds);
             m_assembler.sw(src, addrTempRegister, address.offset);
         } else {
             /*
@@ -1488,18 +1440,8 @@ public:
 
     void store32(TrustedImm32 imm, BaseIndex address)
     {
-        if (address.offset >= -32768 && address.offset <= 32767 && !m_fixedWidth) {
-            /*
-                sll     addrTemp, address.index, address.scale
-                addu    addrTemp, addrTemp, address.base
-                sw      src, address.offset(addrTemp)
-            */
-            if (!address.scale)
-                m_assembler.addu(addrTempRegister, address.index, address.base);
-            else {
-                m_assembler.sll(addrTempRegister, address.index, address.scale);
-                m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
-            }
+        if (!m_fixedWidth) {
+            loadAddress(address, LoadAddressMode::ScaleAndAddOffsetIfOffsetIsOutOfBounds);
             if (!imm.m_value)
                 m_assembler.sw(MIPSRegisters::zero, addrTempRegister, address.offset);
             else {
@@ -1518,12 +1460,8 @@ public:
             m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
             m_assembler.lui(immTempRegister, (address.offset + 0x8000) >> 16);
             m_assembler.addu(addrTempRegister, addrTempRegister, immTempRegister);
-            if (!imm.m_value && !m_fixedWidth)
-                m_assembler.sw(MIPSRegisters::zero, addrTempRegister, address.offset);
-            else {
-                move(imm, immTempRegister);
-                m_assembler.sw(immTempRegister, addrTempRegister, address.offset);
-            }
+            move(imm, immTempRegister);
+            m_assembler.sw(immTempRegister, addrTempRegister, address.offset);
         }
     }
 
@@ -1897,6 +1835,23 @@ public:
                     RELEASE_ASSERT_NOT_REACHED();
                 }
             }
+#if WTF_MIPS_ISA_REV(2)
+            if (isPowerOf2(mask.m_value)) {
+                uint16_t pos= bitPosition(mask.m_value);
+                m_assembler.ext(cmpTempRegister, reg, pos, 1);
+                switch (cond) {
+                case Zero:
+                    return branchEqual(cmpTempRegister, MIPSRegisters::zero);
+                case NonZero:
+                    return branchNotEqual(cmpTempRegister, MIPSRegisters::zero);
+                case Signed:
+                    m_assembler.slt(cmpTempRegister, cmpTempRegister, MIPSRegisters::zero);
+                    return branchNotEqual(cmpTempRegister, MIPSRegisters::zero);
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+            }
+#endif
             if (mask.m_value >= 0 && mask.m_value <= 65535) {
                 m_assembler.andi(cmpTempRegister, reg, mask.m_value);
                 switch (cond) {
@@ -2763,15 +2718,8 @@ public:
 
     void loadFloat(BaseIndex address, FPRegisterID dest)
     {
-        if (address.offset >= -32768 && address.offset <= 32767
-            && !m_fixedWidth) {
-            /*
-                sll     addrTemp, address.index, address.scale
-                addu    addrTemp, addrTemp, address.base
-                lwc1    dest, address.offset(addrTemp)
-            */
-            m_assembler.sll(addrTempRegister, address.index, address.scale);
-            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+        if (!m_fixedWidth) {
+            loadAddress(address, LoadAddressMode::ScaleAndAddOffsetIfOffsetIsOutOfBounds);
             m_assembler.lwc1(dest, addrTempRegister, address.offset);
         } else {
             /*
@@ -2839,16 +2787,8 @@ public:
     void loadDouble(BaseIndex address, FPRegisterID dest)
     {
 #if WTF_MIPS_ISA(1)
-        if (address.offset >= -32768 && address.offset <= 32767
-            && !m_fixedWidth) {
-            /*
-                sll     addrTemp, address.index, address.scale
-                addu    addrTemp, addrTemp, address.base
-                lwc1    dest, address.offset(addrTemp)
-                lwc1    dest+1, (address.offset+4)(addrTemp)
-            */
-            m_assembler.sll(addrTempRegister, address.index, address.scale);
-            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+        if (!m_fixedWidth) {
+            loadAddress(address, LoadAddressMode::ScaleAndAddOffsetIfOffsetIsOutOfBounds);
             m_assembler.lwc1(dest, addrTempRegister, address.offset);
             m_assembler.lwc1(FPRegisterID(dest + 1), addrTempRegister, address.offset + 4);
         } else {
@@ -2868,15 +2808,8 @@ public:
             m_assembler.lwc1(FPRegisterID(dest + 1), addrTempRegister, address.offset + 4);
         }
 #else
-        if (address.offset >= -32768 && address.offset <= 32767
-            && !m_fixedWidth) {
-            /*
-                sll     addrTemp, address.index, address.scale
-                addu    addrTemp, addrTemp, address.base
-                ldc1    dest, address.offset(addrTemp)
-            */
-            m_assembler.sll(addrTempRegister, address.index, address.scale);
-            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+        if (!m_fixedWidth) {
+            loadAddress(address, LoadAddressMode::ScaleAndAddOffsetIfOffsetIsOutOfBounds);
             m_assembler.ldc1(dest, addrTempRegister, address.offset);
         } else {
             /*
@@ -2924,15 +2857,8 @@ public:
 
     void storeFloat(FPRegisterID src, BaseIndex address)
     {
-        if (address.offset >= -32768 && address.offset <= 32767
-            && !m_fixedWidth) {
-            /*
-                sll     addrTemp, address.index, address.scale
-                addu    addrTemp, addrTemp, address.base
-                swc1    src, address.offset(addrTemp)
-            */
-            m_assembler.sll(addrTempRegister, address.index, address.scale);
-            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+        if (!m_fixedWidth) {
+            loadAddress(address, LoadAddressMode::ScaleAndAddOffsetIfOffsetIsOutOfBounds);
             m_assembler.swc1(src, addrTempRegister, address.offset);
         } else {
             /*
@@ -3000,16 +2926,8 @@ public:
     void storeDouble(FPRegisterID src, BaseIndex address)
     {
 #if WTF_MIPS_ISA(1)
-        if (address.offset >= -32768 && address.offset <= 32767
-            && !m_fixedWidth) {
-            /*
-                sll     addrTemp, address.index, address.scale
-                addu    addrTemp, addrTemp, address.base
-                swc1    src, address.offset(addrTemp)
-                swc1    src+1, (address.offset + 4)(addrTemp)
-            */
-            m_assembler.sll(addrTempRegister, address.index, address.scale);
-            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+        if (!m_fixedWidth) {
+            loadAddress(address, LoadAddressMode::ScaleAndAddOffsetIfOffsetIsOutOfBounds);
             m_assembler.swc1(src, addrTempRegister, address.offset);
             m_assembler.swc1(FPRegisterID(src + 1), addrTempRegister, address.offset + 4);
         } else {
@@ -3029,15 +2947,8 @@ public:
             m_assembler.swc1(FPRegisterID(src + 1), addrTempRegister, address.offset + 4);
         }
 #else
-        if (address.offset >= -32768 && address.offset <= 32767
-            && !m_fixedWidth) {
-            /*
-                sll     addrTemp, address.index, address.scale
-                addu    addrTemp, addrTemp, address.base
-                sdc1    src, address.offset(addrTemp)
-            */
-            m_assembler.sll(addrTempRegister, address.index, address.scale);
-            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+        if (!m_fixedWidth) {
+            loadAddress(address, LoadAddressMode::ScaleAndAddOffsetIfOffsetIsOutOfBounds);
             m_assembler.sdc1(src, addrTempRegister, address.offset);
         } else {
             /*

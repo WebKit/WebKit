@@ -238,7 +238,9 @@ public:
         OP_SH_CODE = 16,
         OP_SH_FD = 6,
         OP_SH_FS = 11,
-        OP_SH_FT = 16
+        OP_SH_FT = 16,
+        OP_SH_MSB = 11,
+        OP_SH_LSB = 6
     };
 
     // FCSR Bits
@@ -317,6 +319,17 @@ public:
             if (imm & 0xffff)
                 ori(dest, dest, imm);
         }
+    }
+
+    void ext(RegisterID rt, RegisterID rs, int pos, int size)
+    {
+        int msb = size - 1;
+        emitInst(0x7c000000 | (rt << OP_SH_RT) | (rs << OP_SH_RS) | (pos << OP_SH_LSB) | (msb << OP_SH_MSB));
+    }
+
+    void mfhc1(RegisterID rt, FPRegisterID fs)
+    {
+        emitInst(0x4460000 | (rt << OP_SH_RT) | (fs << OP_SH_FS));
     }
 
     void lui(RegisterID rt, int imm)

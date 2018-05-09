@@ -30,6 +30,7 @@
 
 #include "ProbeContext.h"
 #include <wtf/InlineASM.h>
+#include <wtf/MathExtras.h>
 
 namespace JSC {
 

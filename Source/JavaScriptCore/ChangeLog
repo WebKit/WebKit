@@ -1,3 +1,38 @@
+2018-05-09  Srdjan Lazarevic  <srdjan.lazarevic@rt-rk.com>
+
+        [MIPS] Optimize generated JIT code using r2
+        https://bugs.webkit.org/show_bug.cgi?id=184584
+
+        Reviewed by Yusuke Suzuki.
+
+        EXT and MFHC1 instructions from MIPSR2 implemented and used where it is possible.
+        Also, done some code size optimizations that were discovered in meantime.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::ext):
+        (JSC::MIPSAssembler::mfhc1):
+        * assembler/MacroAssemblerMIPS.cpp:
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::isPowerOf2):
+        (JSC::MacroAssemblerMIPS::bitPosition):
+        (JSC::MacroAssemblerMIPS::loadAddress):
+        (JSC::MacroAssemblerMIPS::getEffectiveAddress):
+        (JSC::MacroAssemblerMIPS::load8):
+        (JSC::MacroAssemblerMIPS::load8SignedExtendTo32):
+        (JSC::MacroAssemblerMIPS::load32):
+        (JSC::MacroAssemblerMIPS::load16Unaligned):
+        (JSC::MacroAssemblerMIPS::load32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerMIPS::load16):
+        (JSC::MacroAssemblerMIPS::load16SignedExtendTo32):
+        (JSC::MacroAssemblerMIPS::store8):
+        (JSC::MacroAssemblerMIPS::store16):
+        (JSC::MacroAssemblerMIPS::store32):
+        (JSC::MacroAssemblerMIPS::branchTest32):
+        (JSC::MacroAssemblerMIPS::loadFloat):
+        (JSC::MacroAssemblerMIPS::loadDouble):
+        (JSC::MacroAssemblerMIPS::storeFloat):
+        (JSC::MacroAssemblerMIPS::storeDouble):
+
 2018-05-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][GTK][JSCONLY] Use capstone disassembler
