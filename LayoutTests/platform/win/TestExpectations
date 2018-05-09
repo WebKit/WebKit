@@ -4076,3 +4076,6 @@ webkit.org/b/185075 css3/color-filters/color-filter-current-color.html [ ImageOn
 webkit.org/b/185075 css3/color-filters/color-filter-inherits.html [ ImageOnlyFailure ]
 webkit.org/b/185075 css3/color-filters/color-filter-outline.html [ ImageOnlyFailure ]
 webkit.org/b/185075 css3/color-filters/color-filter-text-emphasis.html [ ImageOnlyFailure ]
+
+webkit.org/b/185471 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Skip ]
+webkit.org/b/185471 http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ Skip ]

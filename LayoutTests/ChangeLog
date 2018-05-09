@@ -1,3 +1,12 @@
+2018-05-09  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] The test http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html is timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=185471
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-05-09  Dominik Infuehr  <dinfuehr@igalia.com>
 
         [ARM] Disable test on Linux due to lack of executable memory
