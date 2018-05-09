@@ -1005,6 +1005,8 @@ webkit.org/b/167579 fast/forms/validation-message-minimum-font-size.html [ Skip 
 # Tests failing with GStreamer 1.6.3
 webkit.org/b/154390 http/tests/media/video-throttled-load-metadata.html [ Pass Failure ]
 webkit.org/b/154390 http/tests/media/video-redirect.html [ Timeout Pass ]
+webkit.org/b/154390 [ Release ] http/tests/media/hls/video-controller-getStartDate.html [ Timeout Failure ]
+webkit.org/b/154390 [ Release ] http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Timeout Failure ]
 webkit.org/b/154390 [ Release ] http/tests/media/hls/hls-video-resize.html [ Timeout Failure ]
 webkit.org/b/154390 http/tests/security/local-video-source-from-remote.html [ Timeout Pass ]
 
@@ -1245,11 +1247,6 @@ webkit.org/b/135050 legacy-animation-engine/animations/animation-end-event-short
 webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html [ ImageOnlyFailure Crash Pass ]
 
 webkit.org/b/152043 [ Debug ] http/tests/media/hls [ Timeout Crash ]
-
-# Tests crashing since addition of playbin3 usage
-webkit.org/b/184581 http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Timeout Failure Crash ]
-webkit.org/b/184581 http/tests/media/hls/hls-progress.html [ Crash ]
-webkit.org/b/184581 http/tests/media/hls/video-controller-getStartDate.html [ Timeout Failure Crash ]
 
 webkit.org/b/152642 http/tests/misc/detached-frame-console.html [ Crash Pass Timeout Failure ]
 
@@ -3357,8 +3354,6 @@ webkit.org/b/184778 inspector/canvas/setShaderProgramHighlighted.html [ Failure 
 
 webkit.org/b/184779 transitions/clip-path-path-transitions.html [ Failure ]
 webkit.org/b/184779 transitions/clip-path-transitions.html [ Failure ]
-
-webkit.org/b/185252 http/tests/media/hls/hls-audio-tracks.html [ Failure ]
 
 webkit.org/b/185254 http/tests/cache/disk-cache/redirect-chain-limits.html [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-error.html [ Failure ]

@@ -1295,6 +1295,9 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     }
 #if GST_CHECK_VERSION(1, 10, 0)
     case GST_MESSAGE_STREAM_COLLECTION: {
+        if (m_isLegacyPlaybin)
+            break;
+
         GRefPtr<GstStreamCollection> collection;
         gst_message_parse_stream_collection(message, &collection.outPtr());
 

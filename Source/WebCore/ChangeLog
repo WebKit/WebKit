@@ -1,3 +1,17 @@
+2018-05-09  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Never call updateTracks if running on legacy pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=184581
+
+        This makes sure failling code path is never reached in the conditions where it should not have been reached.
+
+        Reviewed by Philippe Normand.
+
+        Re enables all tests that were disabled after fixing.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+
 2018-05-09  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r231479): http/tests/appcache/x-frame-options-prevents-framing.php is timing out
