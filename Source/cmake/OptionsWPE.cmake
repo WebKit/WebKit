@@ -4,7 +4,7 @@ include(VersioningUtils)
 SET_PROJECT_VERSION(2 21 1)
 set(WPE_API_VERSION 0.1)
 
-CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 1 0 0)
+CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 2 0 0)
 
 # These are shared variables, but we special case their definition so that we can use the
 # CMAKE_INSTALL_* variables that are populated by the GNUInstallDirs macro.

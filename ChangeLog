@@ -1,5 +1,11 @@
 2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed. Bump WPE soname for good measure.
+
+        * Source/cmake/OptionsWPE.cmake:
+
+2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed. Update OptionsWPE.cmake and NEWS for 2.21.1 release.
 
         * Source/cmake/OptionsWPE.cmake: Bump version numbers.
