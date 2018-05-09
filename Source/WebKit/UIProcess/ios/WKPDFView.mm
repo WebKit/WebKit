@@ -420,31 +420,29 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
     [self _goToURL:[self _URLWithPageIndex:pageIndex] atLocation:documentViewRect.origin];
 }
 
-- (void)_showActionSheetForURL:(NSURL *)url atLocation:(CGPoint)location
+- (void)_showActionSheetForURL:(NSURL *)url atLocation:(CGPoint)location withAnnotationRect:(CGRect)annotationRect
 {
     WKWebView *webView = _webView.getAutoreleased();
     if (!webView)
         return;
 
-    CGPoint locationInHostView = [webView.scrollView convertPoint:location toView:[_hostViewController view]];
-
     WebKit::InteractionInformationAtPosition positionInformation;
-    positionInformation.bounds = WebCore::roundedIntRect(CGRect { locationInHostView, CGSizeMake(0, 0) });
-    positionInformation.request.point = WebCore::roundedIntPoint(locationInHostView);
+    positionInformation.bounds = WebCore::roundedIntRect(annotationRect);
+    positionInformation.request.point = WebCore::roundedIntPoint(location);
     positionInformation.url = url;
 
     _positionInformation = WTFMove(positionInformation);
     [_actionSheetAssistant showLinkSheet];
 }
 
-- (void)pdfHostViewController:(PDFHostViewController *)controller didLongPressURL:(NSURL *)url atLocation:(CGPoint)location
+- (void)pdfHostViewController:(PDFHostViewController *)controller didLongPressURL:(NSURL *)url atLocation:(CGPoint)location withAnnotationRect:(CGRect)annotationRect
 {
-    [self _showActionSheetForURL:url atLocation:location];
+    [self _showActionSheetForURL:url atLocation:location withAnnotationRect:annotationRect];
 }
 
-- (void)pdfHostViewController:(PDFHostViewController *)controller didLongPressPageIndex:(NSInteger)pageIndex atLocation:(CGPoint)location
+- (void)pdfHostViewController:(PDFHostViewController *)controller didLongPressPageIndex:(NSInteger)pageIndex atLocation:(CGPoint)location withAnnotationRect:(CGRect)annotationRect
 {
-    [self _showActionSheetForURL:[self _URLWithPageIndex:pageIndex] atLocation:location];
+    [self _showActionSheetForURL:[self _URLWithPageIndex:pageIndex] atLocation:location withAnnotationRect:annotationRect];
 }
 
 #pragma mark WKActionSheetAssistantDelegate

@@ -1,5 +1,28 @@
 2018-05-09  Andy Estes  <aestes@apple.com>
 
+        [iOS] Consider the annotation bounds when positioning action sheets near long-pressed PDF links
+        https://bugs.webkit.org/show_bug.cgi?id=185472
+        <rdar://problem/39967092>
+
+        Reviewed by Daniel Bates.
+
+        Adopted new PDFHostViewControllerDelegate methods that include annotation rects
+        when URLs and page indices are long-pressed. This allows us to avoid obscuring
+        annotations when positioning action sheet popovers.
+
+        We also no longer need to convert the press location into host view coordinate
+        space, as PDFKit now does that for us.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _showActionSheetForURL:atLocation:withAnnotationRect:]):
+        (-[WKPDFView pdfHostViewController:didLongPressURL:atLocation:withAnnotationRect:]):
+        (-[WKPDFView pdfHostViewController:didLongPressPageIndex:atLocation:withAnnotationRect:]):
+        (-[WKPDFView _showActionSheetForURL:atLocation:]): Deleted.
+        (-[WKPDFView pdfHostViewController:didLongPressURL:atLocation:]): Deleted.
+        (-[WKPDFView pdfHostViewController:didLongPressPageIndex:atLocation:]): Deleted.
+
+2018-05-09  Andy Estes  <aestes@apple.com>
+
         [iOS] Tell PDFHostViewController when animated resizes begin and end
         https://bugs.webkit.org/show_bug.cgi?id=185477
         <rdar://problem/39875372>
