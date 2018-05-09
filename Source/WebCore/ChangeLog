@@ -1,3 +1,20 @@
+2018-05-09  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r231479): http/tests/appcache/x-frame-options-prevents-framing.php is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=185443
+        <rdar://problem/40100660>
+
+        Reviewed by Andy Estes.
+
+        Following r231479 when using WebKit2 and Restricted HTTP Response Access is enabled (enabled in
+        WebKitTestRunner) we only check the CSP frame-ancestors directive and X-Frame-Options in
+        NetworkProcess. We need to check these security requirements in WebContent process whenever
+        we are performing a substitute data load, such as for app cache, as these loads do not go
+        through NetworkProcess.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+
 2018-05-09  Justin Fan  <justin_fan@apple.com>
 
         Hooked up ASTC support in WebGL; requires OpenGL ES 3 context to work. 

@@ -768,7 +768,7 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
     unsigned long identifier = m_identifierForLoadWithoutResourceLoader ? m_identifierForLoadWithoutResourceLoader : m_mainResource->identifier();
     ASSERT(identifier);
 
-    if (!m_frame->settings().networkProcessCSPFrameAncestorsCheckingEnabled() || !RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess()) {
+    if (m_substituteData.isValid() || !m_frame->settings().networkProcessCSPFrameAncestorsCheckingEnabled() || !RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess()) {
         auto url = response.url();
         ContentSecurityPolicy contentSecurityPolicy(URL { url }, this);
         contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, m_request.httpReferrer());

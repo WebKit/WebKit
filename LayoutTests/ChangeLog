@@ -1,3 +1,15 @@
+2018-05-09  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r231479): http/tests/appcache/x-frame-options-prevents-framing.php is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=185443
+        <rdar://problem/40100660>
+
+        Reviewed by Andy Estes.
+
+        Unskip test now that it no longer times out.
+
+        * platform/wk2/TestExpectations:
+
 2018-05-09  Justin Fan  <justin_fan@apple.com>
 
         Added Khronos conformance test for ASTC compressed texture support.
