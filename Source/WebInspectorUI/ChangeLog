@@ -1,3 +1,18 @@
+2018-05-08  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Console drawer resizing is broken when console prompt has >1 line of code
+        https://bugs.webkit.org/show_bug.cgi?id=185369
+        <rdar://problem/40013202>
+
+        Reviewed by Devin Rousso.
+
+        Mouse offset calculation should account for the height of the quick console.
+        The only reason resizing worked with the single-line quick console is that
+        the offset calculation included the resizer height, which is very close
+        to that of the single-line quick console (27px and 30px respectively).
+
+        * UserInterface/Views/ConsoleDrawer.js:
+
 2018-05-04  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: simplify the WI.Collection interface

@@ -122,7 +122,8 @@ WI.ConsoleDrawer = class ConsoleDrawer extends WI.ContentBrowser
             return;
 
         let resizerElement = event.target;
-        let mouseOffset = resizerElement.offsetHeight - (event.pageY - resizerElement.totalOffsetTop);
+        let quickConsoleHeight = window.innerHeight - (this.element.totalOffsetTop + this.height);
+        let mouseOffset = quickConsoleHeight - (event.pageY - resizerElement.totalOffsetTop);
 
         function dockedResizerDrag(event)
         {
