@@ -1097,6 +1097,13 @@ ConstantPropertiesEnabled:
   humanReadableDescription: "Enable CSS constant() values"
   category: experimental
 
+CrossOriginOptionsSupportEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Cross-Origin-Options HTTP Header"
+  humanReadableDescription: "Enable support for Cross-Origin-Options HTTP Header"
+  category: experimental
+
 SpringTimingFunctionEnabled:
   type: bool
   defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED

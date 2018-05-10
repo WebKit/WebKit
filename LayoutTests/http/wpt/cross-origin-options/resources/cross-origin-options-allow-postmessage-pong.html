@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+addEventListener('message', (msg) => {
+    if (event.data === "PING")
+        event.source.postMessage("PONG", "*");
+    });
+    window.addEventListener('load', () => {
+        const ownerWindow = window.opener ? window.opener : window.top;
+        try {
+            ownerWindow.postMessage("READY", "*");
+        } catch (e) { }
+    });
+</script>
+</body>
+</html>

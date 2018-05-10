@@ -35,6 +35,8 @@ namespace WebCore {
 
 class AbstractFrame;
 
+enum class CrossOriginOptions;
+
 // FIXME: Rename DOMWindow to LocalWindow and AbstractDOMWindow to DOMWindow.
 class AbstractDOMWindow : public RefCounted<AbstractDOMWindow>, public EventTargetWithInlineData {
 public:
@@ -52,8 +54,11 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
+    CrossOriginOptions crossOriginOptions() { return m_crossOriginOptions; }
+    void setCrossOriginOptions(CrossOriginOptions value) { m_crossOriginOptions = value; }
+
 protected:
-    explicit AbstractDOMWindow(GlobalWindowIdentifier&&);
+    AbstractDOMWindow(GlobalWindowIdentifier&&, CrossOriginOptions);
 
     EventTargetInterface eventTargetInterface() const final { return DOMWindowEventTargetInterfaceType; }
     void refEventTarget() final { ref(); }
@@ -61,6 +66,7 @@ protected:
 
 private:
     GlobalWindowIdentifier m_identifier;
+    CrossOriginOptions m_crossOriginOptions;
 };
 
 } // namespace WebCore

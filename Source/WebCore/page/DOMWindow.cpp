@@ -402,7 +402,7 @@ void DOMWindow::setCanShowModalDialogOverride(bool allow)
 }
 
 DOMWindow::DOMWindow(Document& document)
-    : AbstractDOMWindow(GlobalWindowIdentifier { Process::identifier(), generateObjectIdentifier<WindowIdentifierType>() })
+    : AbstractDOMWindow(GlobalWindowIdentifier { Process::identifier(), generateObjectIdentifier<WindowIdentifierType>() }, document.crossOriginOptions())
     , ContextDestructionObserver(&document)
     , FrameDestructionObserver(document.frame())
 {
@@ -413,6 +413,7 @@ DOMWindow::DOMWindow(Document& document)
 void DOMWindow::didSecureTransitionTo(Document& document)
 {
     observeContext(&document);
+    setCrossOriginOptions(document.crossOriginOptions());
 }
 
 DOMWindow::~DOMWindow()
