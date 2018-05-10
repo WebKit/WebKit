@@ -69,7 +69,7 @@ protected:
     virtual void computeOutOfFlowPosition(const Box&, Display::Box&) const;
 
     virtual void computeWidth(const Box&, Display::Box&) const;
-    virtual void computeHeight(const Box&, Display::Box&) const;
+    virtual void computeHeight(LayoutContext&, const Box&, Display::Box&) const;
 
     virtual void computeOutOfFlowWidth(const Box&, Display::Box&) const;
     virtual void computeFloatingWidth(const Box&, Display::Box&) const;
@@ -77,7 +77,7 @@ protected:
 
     virtual void computeOutOfFlowHeight(const Box&, Display::Box&) const;
     virtual void computeFloatingHeight(const Box&, Display::Box&) const;
-    virtual void computeInFlowHeight(const Box&, Display::Box&) const = 0;
+    virtual void computeInFlowHeight(LayoutContext&, const Box&, Display::Box&) const = 0;
 
     virtual LayoutUnit marginTop(const Box&) const;
     virtual LayoutUnit marginLeft(const Box&) const;

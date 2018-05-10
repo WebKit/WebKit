@@ -114,42 +114,6 @@ static bool isMarginTopCollapsedWithParent(const Box& layoutBox)
     return true;
 }
 
-static bool isMarginBottomCollapsedWithParent(const Box& layoutBox)
-{
-    // last inflow box to parent.
-    // https://www.w3.org/TR/CSS21/box.html#collapsing-margins
-    if (layoutBox.isAnonymous())
-        return false;
-
-    if (layoutBox.isFloatingOrOutOfFlowPositioned())
-        return false;
-
-    // We never margin collapse the initial containing block.
-    ASSERT(layoutBox.parent());
-    auto& parent = *layoutBox.parent();
-    // Is this the last inlflow child?
-    if (parent.lastInFlowChild() != &layoutBox)
-        return false;
-
-    if (parent.establishesBlockFormattingContext())
-        return false;
-
-    // Margins of the root element's box do not collapse.
-    if (parent.isInitialContainingBlock())
-        return false;
-
-    if (!parent.style().borderTop().nonZero())
-        return false;
-
-    if (!parent.style().paddingTop().isZero())
-        return false;
-
-    if (!parent.style().height().isAuto())
-        return false;
-
-    return true;
-}
-
 static LayoutUnit collapsedMarginTopFromFirstChild(const Box& layoutBox)
 {
     // Check if the first child collapses its margin top.
@@ -171,7 +135,7 @@ static LayoutUnit collapsedMarginBottomFromLastChild(const Box& layoutBox)
         return 0;
 
     auto& lastInFlowChild = *downcast<Container>(layoutBox).lastInFlowChild();
-    if (!isMarginBottomCollapsedWithParent(lastInFlowChild))
+    if (!BlockMarginCollapse::isMarginBottomCollapsedWithParent(lastInFlowChild))
         return 0;
 
     // Collect collapsed margin bottom recursively.
@@ -247,6 +211,47 @@ LayoutUnit BlockMarginCollapse::marginBottom(const Box& layoutBox)
     if (layoutBox.nextInFlowSibling())
         return 0;
     return nonCollapsedMarginBottom(layoutBox);
+}
+
+bool BlockMarginCollapse::isMarginBottomCollapsedWithParent(const Box& layoutBox)
+{
+    // last inflow box to parent.
+    // https://www.w3.org/TR/CSS21/box.html#collapsing-margins
+    if (layoutBox.isAnonymous())
+        return false;
+
+    if (layoutBox.isFloatingOrOutOfFlowPositioned())
+        return false;
+
+    // We never margin collapse the initial containing block.
+    ASSERT(layoutBox.parent());
+    auto& parent = *layoutBox.parent();
+    // Is this the last inlflow child?
+    if (parent.lastInFlowChild() != &layoutBox)
+        return false;
+
+    if (parent.establishesBlockFormattingContext())
+        return false;
+
+    // Margins of the root element's box do not collapse.
+    if (parent.isInitialContainingBlock())
+        return false;
+
+    if (!parent.style().borderTop().nonZero())
+        return false;
+
+    if (!parent.style().paddingTop().isZero())
+        return false;
+
+    if (!parent.style().height().isAuto())
+        return false;
+
+    return true;
+}
+
+bool BlockMarginCollapse::isMarginTopCollapsedWithParentMarginBottom(const Box&)
+{
+    return false;
 }
 
 }

@@ -42,6 +42,9 @@ class BlockMarginCollapse {
 public:
     static LayoutUnit marginTop(const Box&);
     static LayoutUnit marginBottom(const Box&);
+
+    static bool isMarginBottomCollapsedWithParent(const Box&);
+    static bool isMarginTopCollapsedWithParentMarginBottom(const Box&);
 };
 
 }

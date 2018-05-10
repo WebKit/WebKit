@@ -94,7 +94,7 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             auto& layoutBox = layoutPair->layoutBox;
             auto& displayBox = layoutPair->displayBox;
 
-            computeHeight(layoutBox, displayBox);
+            computeHeight(layoutContext, layoutBox, displayBox);
             // Adjust position now that we have all the previous floats placed in this context -if needed.
             floatingContext.computePosition(layoutBox, displayBox);
             if (!is<Container>(layoutBox))
@@ -147,8 +147,13 @@ void BlockFormattingContext::computeInFlowWidth(const Box&, Display::Box&) const
 {
 }
 
-void BlockFormattingContext::computeInFlowHeight(const Box&, Display::Box&) const
+void BlockFormattingContext::computeInFlowHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
+    if (!layoutBox.isReplaced()) {
+        computeInFlowNonReplacedHeight(layoutContext, layoutBox, displayBox);
+        return;
+    }
+    ASSERT_NOT_REACHED();
 }
 
 LayoutUnit BlockFormattingContext::marginTop(const Box& layoutBox) const
@@ -159,6 +164,61 @@ LayoutUnit BlockFormattingContext::marginTop(const Box& layoutBox) const
 LayoutUnit BlockFormattingContext::marginBottom(const Box& layoutBox) const
 {
     return BlockMarginCollapse::marginBottom(layoutBox);
+}
+
+void BlockFormattingContext::computeInFlowNonReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    // https://www.w3.org/TR/CSS22/visudet.html
+    // If 'height' is 'auto', the height depends on whether the element has any block-level children and whether it has padding or borders:
+    // The element's height is the distance from its top content edge to the first applicable of the following:
+    // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
+    // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin
+    //    does not collapse with the element's bottom margin
+    // 3. the bottom border edge of the last in-flow child whose top margin doesn't collapse with the element's bottom margin
+    // 4. zero, otherwise
+    // Only children in the normal flow are taken into account (i.e., floating boxes and absolutely positioned boxes are ignored,
+    // and relatively positioned boxes are considered without their offset). Note that the child box may be an anonymous block box.
+    if (!layoutBox.style().logicalHeight().isAuto()) {
+        // FIXME: Only fixed values yet.
+        displayBox.setHeight(layoutBox.style().logicalHeight().value());
+        return;
+    }
+
+    if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowChild()) {
+        displayBox.setHeight(0);
+        return;
+    }
+
+    // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
+    if (layoutBox.establishesInlineFormattingContext()) {
+        // height = lastLineBox().bottom();
+        displayBox.setHeight(0);
+        return;
+    }
+
+    // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin...
+    auto* lastInFlowChild = downcast<Container>(layoutBox).lastInFlowChild();
+    ASSERT(lastInFlowChild);
+    if (!BlockMarginCollapse::isMarginBottomCollapsedWithParent(*lastInFlowChild)) {
+        auto* lastInFlowDisplayBox = layoutContext.displayBoxForLayoutBox(*lastInFlowChild);
+        ASSERT(lastInFlowDisplayBox);
+        displayBox.setHeight(lastInFlowDisplayBox->bottom() + lastInFlowDisplayBox->marginBottom());
+        return;
+    }
+
+    // 3. the bottom border edge of the last in-flow child whose top margin doesn't collapse with the element's bottom margin
+    auto* inFlowChild = lastInFlowChild;
+    while (inFlowChild && BlockMarginCollapse::isMarginTopCollapsedWithParentMarginBottom(*inFlowChild))
+        inFlowChild = inFlowChild->previousInFlowSibling();
+    if (inFlowChild) {
+        auto* inFlowDisplayBox = layoutContext.displayBoxForLayoutBox(*inFlowChild);
+        ASSERT(inFlowDisplayBox);
+        displayBox.setHeight(inFlowDisplayBox->top() + inFlowDisplayBox->borderBox().height());
+        return;
+    }
+
+    // 4. zero, otherwise
+    displayBox.setHeight(0);
 }
 
 }

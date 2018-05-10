@@ -68,13 +68,13 @@ void FormattingContext::computeWidth(const Box& layoutBox, Display::Box& display
     return computeInFlowWidth(layoutBox, displayBox);
 }
 
-void FormattingContext::computeHeight(const Box& layoutBox, Display::Box& displayBox) const
+void FormattingContext::computeHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     if (layoutBox.isOutOfFlowPositioned())
         return computeOutOfFlowHeight(layoutBox, displayBox);
     if (layoutBox.isFloatingPositioned())
         return computeFloatingHeight(layoutBox, displayBox);
-    return computeInFlowHeight(layoutBox, displayBox);
+    return computeInFlowHeight(layoutContext, layoutBox, displayBox);
 }
 
 void FormattingContext::computeOutOfFlowWidth(const Box&, Display::Box&) const

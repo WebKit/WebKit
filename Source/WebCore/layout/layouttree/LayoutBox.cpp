@@ -179,6 +179,12 @@ bool Box::isInitialContainingBlock() const
     return !parent();
 }
 
+bool Box::isReplaced() const
+{
+    // HTMLAudioElement || HTMLCanvasElement || HTMLEmbedElement || HTMLIFrameElement || HTMLImageElement || HTMLInputElement || HTMLObjectElement || HTMLVideoElement
+    return false;
+}
+
 const Box* Box::nextInFlowSibling() const
 {
     if (auto* nextSibling = this->nextSibling()) {

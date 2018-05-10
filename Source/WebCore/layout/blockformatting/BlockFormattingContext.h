@@ -49,10 +49,11 @@ public:
     std::unique_ptr<FormattingState> createFormattingState(Ref<FloatingState>&&) const override;
     Ref<FloatingState> createOrFindFloatingState(LayoutContext&) const override;
 
-protected:
+private:
     void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const override;
     void computeInFlowWidth(const Box&, Display::Box&) const override;
-    void computeInFlowHeight(const Box&, Display::Box&) const override;
+    void computeInFlowHeight(LayoutContext&, const Box&, Display::Box&) const override;
+    void computeInFlowNonReplacedHeight(LayoutContext&, const Box&, Display::Box&) const;
 
     LayoutUnit marginTop(const Box&) const override;
     LayoutUnit marginBottom(const Box&) const override;

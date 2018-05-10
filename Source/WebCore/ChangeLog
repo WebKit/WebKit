@@ -1,3 +1,33 @@
+2018-05-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement height computation for non-replaced inflow elements.
+        https://bugs.webkit.org/show_bug.cgi?id=185474
+
+        Reviewed by Antti Koivisto.
+
+        Initial implementation. Does not cover all the cases.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeHeight const):
+        * layout/FormattingContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowHeight const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowNonReplacedHeight const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::collapsedMarginBottomFromLastChild):
+        (WebCore::Layout::BlockMarginCollapse::isMarginBottomCollapsedWithParent):
+        (WebCore::Layout::BlockMarginCollapse::isMarginTopCollapsedWithParentMarginBottom):
+        (WebCore::Layout::isMarginBottomCollapsedWithParent): Deleted.
+        * layout/blockformatting/BlockMarginCollapse.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeInFlowHeight const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isReplaced const):
+        * layout/layouttree/LayoutBox.h:
+
 2018-05-10  Thibault Saunier  <tsaunier@igalia.com>
 
         [GTK] Implement ImageBuffer::toBGRAData
