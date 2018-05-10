@@ -1,3 +1,14 @@
+2018-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fix some -Wstring-op-truncation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=185496
+
+        Reviewed by Alex Christensen.
+
+        Disable this warning when building gtest.
+
+        * gtest/CMakeLists.txt:
+
 2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Build cleanly with GCC 8 and ICU 60

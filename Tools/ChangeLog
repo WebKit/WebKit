@@ -1,3 +1,21 @@
+2018-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fix some -Wstring-op-truncation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=185496
+
+        Reviewed by Alex Christensen.
+
+        We have an off-by-one in the use of strncpy. The strings would not be null-terminated if
+        the input was too long. Ensure the buffers are zero-initialized so we don't need to manually
+        set the last bucket to NUL.
+
+        * TestWebKitAPI/Tests/WTF/AtomicString.cpp:
+        (TestWebKitAPI::testAtomicStringNumber):
+        * TestWebKitAPI/Tests/WTF/WTFString.cpp:
+        (TestWebKitAPI::testStringNumberFixedPrecision):
+        (TestWebKitAPI::testStringNumberFixedWidth):
+        (TestWebKitAPI::testStringNumber):
+
 2018-05-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MiniBrowser] Add a separate WndProc for the layered window

@@ -63,8 +63,8 @@ TEST(WTF, AtomicStringExistingHash)
 
 static inline const char* testAtomicStringNumber(double number)
 {
-    static char testBuffer[100];
-    std::strncpy(testBuffer, AtomicString::number(number).string().utf8().data(), 100);
+    static char testBuffer[100] = { };
+    std::strncpy(testBuffer, AtomicString::number(number).string().utf8().data(), 99);
     return testBuffer;
 }
 
