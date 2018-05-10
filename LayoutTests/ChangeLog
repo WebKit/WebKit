@@ -1,3 +1,13 @@
+2018-05-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: accessibleNameForNode should simplify whitespace when using innerText
+        https://bugs.webkit.org/show_bug.cgi?id=185498
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/text-alternative-calculation-from-unrendered-table-expected.txt: Added.
+        * accessibility/text-alternative-calculation-from-unrendered-table.html: Added.
+
 2018-05-09  Chris Dumez  <cdumez@apple.com>
 
         Add initial support for 'Cross-Origin-Options' HTTP response header

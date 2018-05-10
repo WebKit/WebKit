@@ -1,0 +1,11 @@
+This tests text alternative calculation from an unrendered table.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test 1 - W3C Name: cell 1 cell 2 cell 3
+Test 2 - W3C Description: cell 1 cell 2 cell 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

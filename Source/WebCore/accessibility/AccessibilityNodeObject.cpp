@@ -1962,7 +1962,7 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
         if (axObject->accessibleNameDerivesFromContent())
             text = axObject->textUnderElement(AccessibilityTextUnderElementMode(AccessibilityTextUnderElementMode::TextUnderElementModeIncludeNameFromContentsChildren, true, labelledbyNode));
     } else
-        text = element.innerText();
+        text = element.innerText().simplifyWhiteSpace();
 
     if (!text.isEmpty())
         return text;
