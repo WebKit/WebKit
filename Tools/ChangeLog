@@ -1,3 +1,31 @@
+2018-05-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Add a separate WndProc for the layered window
+        https://bugs.webkit.org/show_bug.cgi?id=185460
+
+        Reviewed by Brent Fulgham.
+
+        All WK1 related code should be moved into MiniBrowser for the
+        preparation of Bug 184770.
+
+        The layered window was using WndProc of the main window. The
+        layered window is specific only for WK1. the main window will be
+        shared among WK1 and WK2.
+
+        This change add a new WndProc for the layer window.
+
+        * MiniBrowser/win/Common.cpp:
+        (WndProc): Removed code for the layered windows.
+        (subclassForLayeredWindow): Moved into MiniBrowser.cpp.
+        * MiniBrowser/win/MiniBrowser.cpp:
+        (MiniBrowser::prepareViews): Removed the fourth argument `viewHwnd`.
+        (viewWndProc): New WndProc for the layered windows.
+        (MiniBrowser::subclassForLayeredWindow): Moved from Common.cpp.
+        * MiniBrowser/win/MiniBrowser.h:
+        (MiniBrowser::hwnd):
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain): Added m_viewWnd.
+
 2018-05-10  Stephan Szabo  <stephan.szabo@sony.com>
 
         Support --verbose in run-javascriptcore-tests

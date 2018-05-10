@@ -132,18 +132,6 @@ static void resizeSubViews()
     ::SendMessage(hURLBarWnd, static_cast<UINT>(WM_SETFONT), reinterpret_cast<WPARAM>(gMiniBrowser->urlBarFont()), TRUE);
 }
 
-static void subclassForLayeredWindow()
-{
-    hMainWnd = gViewWindow;
-#if defined _M_AMD64 || defined _WIN64
-    DefWebKitProc = reinterpret_cast<WNDPROC>(::GetWindowLongPtr(hMainWnd, GWLP_WNDPROC));
-    ::SetWindowLongPtr(hMainWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(WndProc));
-#else
-    DefWebKitProc = reinterpret_cast<WNDPROC>(::GetWindowLong(hMainWnd, GWL_WNDPROC));
-    ::SetWindowLong(hMainWnd, GWL_WNDPROC, reinterpret_cast<LONG_PTR>(WndProc));
-#endif
-}
-
 static void computeFullDesktopFrame()
 {
     RECT desktop;
@@ -435,26 +423,7 @@ static const int dragBarHeight = 30;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    WNDPROC parentProc = (gMiniBrowser) ? (gMiniBrowser->usesLayeredWebView() ? DefWebKitProc : DefWindowProc) : DefWindowProc;
-
     switch (message) {
-    case WM_NCHITTEST:
-        if (gMiniBrowser && gMiniBrowser->usesLayeredWebView()) {
-            RECT window;
-            ::GetWindowRect(hWnd, &window);
-            // For testing our transparent window, we need a region to use as a handle for
-            // dragging. The right way to do this would be to query the web view to see what's
-            // under the mouse. However, for testing purposes we just use an arbitrary
-            // 30 logical pixel band at the top of the view as an arbitrary gripping location.
-            //
-            // When we are within this bad, return HT_CAPTION to tell Windows we want to
-            // treat this region as if it were the title bar on a normal window.
-            int y = HIWORD(lParam);
-            float scaledDragBarHeightFactor = dragBarHeight * gMiniBrowser->deviceScaleFactor();
-            if ((y > window.top) && (y < window.top + scaledDragBarHeightFactor))
-                return HTCAPTION;
-        }
-        return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
     case WM_COMMAND: {
         int wmId = LOWORD(wParam);
         int wmEvent = HIWORD(wParam);
@@ -513,7 +482,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         default:
             if (!ToggleMenuItem(hWnd, wmId))
-                return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
+                return DefWindowProc(hWnd, message, wParam, lParam);
         }
         }
         break;
@@ -524,17 +493,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         PostQuitMessage(0);
         break;
     case WM_SIZE:
-        if (!gMiniBrowser || !gMiniBrowser->hasWebView() || gMiniBrowser->usesLayeredWebView())
-            return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
+        if (!gMiniBrowser || !gMiniBrowser->hasWebView())
+            return DefWindowProc(hWnd, message, wParam, lParam);
 
         resizeSubViews();
         break;
     case WM_DPICHANGED:
         if (gMiniBrowser)
             gMiniBrowser->updateDeviceScaleFactor();
-        return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
+        return DefWindowProc(hWnd, message, wParam, lParam);
     default:
-        return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
+        return DefWindowProc(hWnd, message, wParam, lParam);
     }
 
     return 0;

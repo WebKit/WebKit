@@ -50,7 +50,7 @@ public:
     MiniBrowser(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false, bool pageLoadTesting = false);
 
     HRESULT init();
-    HRESULT prepareViews(HWND mainWnd, const RECT& clientRect, const BSTR& requestedURL, HWND& viewWnd);
+    HRESULT prepareViews(HWND mainWnd, const RECT& clientRect, const BSTR& requestedURL);
 
     HRESULT loadURL(const BSTR& passedURL);
 
@@ -97,6 +97,8 @@ public:
     void updateDeviceScaleFactor();
 
     HGDIOBJ urlBarFont() { return m_hURLBarFont; }
+    HWND hwnd() { return m_viewWnd; }
+    void subclassForLayeredWindow();
 
 private:
     void generateFontForScaleFactor(float);
@@ -125,6 +127,7 @@ private:
     HWND m_hMainWnd { nullptr };
     HWND m_hURLBarWnd { nullptr };
     HGDIOBJ m_hURLBarFont { nullptr };
+    HWND m_viewWnd { nullptr };
 
     float m_deviceScaleFactor { 1.0f };
     bool m_useLayeredWebView;

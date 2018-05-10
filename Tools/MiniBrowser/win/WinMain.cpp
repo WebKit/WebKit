@@ -157,12 +157,13 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     if (FAILED(hr))
         goto exit;
 
-    hr = gMiniBrowser->prepareViews(hMainWnd, clientRect, requestedURL.GetBSTR(), gViewWindow);
-    if (FAILED(hr) || !gViewWindow)
+    hr = gMiniBrowser->prepareViews(hMainWnd, clientRect, requestedURL.GetBSTR());
+    if (FAILED(hr))
         goto exit;
+    gViewWindow = gMiniBrowser->hwnd();
 
     if (gMiniBrowser->usesLayeredWebView())
-        subclassForLayeredWindow();
+        gMiniBrowser->subclassForLayeredWindow();
 
     resizeSubViews();
 
