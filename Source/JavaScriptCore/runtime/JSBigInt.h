@@ -73,13 +73,20 @@ public:
     void setLength(int length) { m_length = length; }
     int length() const { return m_length; }
 
-    static JSBigInt* parseInt(ExecState*, VM&, StringView, uint8_t radix);
-    static JSBigInt* parseInt(ExecState*, StringView);
+    enum ErrorParseMode {
+        ThrowExceptions,
+        IgnoreExceptions
+    };
+
+    static JSBigInt* parseInt(ExecState*, VM&, StringView, uint8_t radix, ErrorParseMode = ThrowExceptions);
+    static JSBigInt* parseInt(ExecState*, StringView, ErrorParseMode = ThrowExceptions);
+    static JSBigInt* stringToBigInt(ExecState*, StringView);
 
     std::optional<uint8_t> singleDigitValueForString();
-    String toString(ExecState&, int radix);
+    String toString(ExecState&, unsigned radix);
     
     JS_EXPORT_PRIVATE static bool equals(JSBigInt*, JSBigInt*);
+    bool equalsToNumber(JSValue);
 
     bool getPrimitiveNumber(ExecState*, double& number, JSValue& result) const;
     double toNumber(ExecState*) const;
@@ -87,6 +94,14 @@ public:
     JSObject* toObject(ExecState*, JSGlobalObject*) const;
     
 private:
+
+    enum ComparisonResult {
+        Equal,
+        Undefined,
+        GreaterThan,
+        LessThan
+    };
+
     using Digit = uintptr_t;
     static constexpr const int bitsPerByte = 8;
     static constexpr const int digitBits = sizeof(Digit) * bitsPerByte;
@@ -116,11 +131,13 @@ private:
 
     bool isZero();
 
-    template <typename CharType>
-    static JSBigInt* parseInt(ExecState*, CharType*  data, int length);
+    ComparisonResult static compareToDouble(JSBigInt* x, double y);
 
     template <typename CharType>
-    static JSBigInt* parseInt(ExecState*, VM&, CharType* data, int length, int startIndex, int radix, bool allowEmptyString = true);
+    static JSBigInt* parseInt(ExecState*, CharType*  data, unsigned length, ErrorParseMode);
+
+    template <typename CharType>
+    static JSBigInt* parseInt(ExecState*, VM&, CharType* data, unsigned length, unsigned startIndex, unsigned radix, ErrorParseMode, bool allowEmptyString = true);
 
     static JSBigInt* allocateFor(ExecState*, VM&, int radix, int charcount);
 

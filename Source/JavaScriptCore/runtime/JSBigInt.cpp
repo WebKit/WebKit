@@ -208,21 +208,26 @@ std::optional<uint8_t> JSBigInt::singleDigitValueForString()
     return { };
 }
 
-JSBigInt* JSBigInt::parseInt(ExecState* state, StringView s)
+JSBigInt* JSBigInt::parseInt(ExecState* state, StringView s, ErrorParseMode parserMode)
 {
     if (s.is8Bit())
-        return parseInt(state, s.characters8(), s.length());
-    return parseInt(state, s.characters16(), s.length());
+        return parseInt(state, s.characters8(), s.length(), parserMode);
+    return parseInt(state, s.characters16(), s.length(), parserMode);
 }
 
-JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, StringView s, uint8_t radix)
+JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, StringView s, uint8_t radix, ErrorParseMode parserMode)
 {
     if (s.is8Bit())
-        return parseInt(state, vm, s.characters8(), s.length(), 0, radix, false);
-    return parseInt(state, vm, s.characters16(), s.length(), 0, radix, false);
+        return parseInt(state, vm, s.characters8(), s.length(), 0, radix, parserMode, false);
+    return parseInt(state, vm, s.characters16(), s.length(), 0, radix, parserMode, false);
 }
 
-String JSBigInt::toString(ExecState& state, int radix)
+JSBigInt* JSBigInt::stringToBigInt(ExecState* state, StringView s)
+{
+    return parseInt(state, s, ErrorParseMode::IgnoreExceptions);
+}
+
+String JSBigInt::toString(ExecState& state, unsigned radix)
 {
     if (this->isZero())
         return state.vm().smallStrings.singleCharacterStringRep('0');
@@ -699,24 +704,24 @@ inline size_t JSBigInt::offsetOfData()
 }
 
 template <typename CharType>
-JSBigInt* JSBigInt::parseInt(ExecState* state, CharType*  data, int length)
+JSBigInt* JSBigInt::parseInt(ExecState* state, CharType*  data, unsigned length, ErrorParseMode errorParseMode)
 {
     VM& vm = state->vm();
 
-    int p = 0;
+    unsigned p = 0;
     while (p < length && isStrWhiteSpace(data[p]))
         ++p;
 
     // Check Radix from frist characters
     if (static_cast<unsigned>(p) + 1 < static_cast<unsigned>(length) && data[p] == '0') {
         if (isASCIIAlphaCaselessEqual(data[p + 1], 'b'))
-            return parseInt(state, vm, data, length, p + 2, 2, false);
+            return parseInt(state, vm, data, length, p + 2, 2, errorParseMode, false);
         
         if (isASCIIAlphaCaselessEqual(data[p + 1], 'x'))
-            return parseInt(state, vm, data, length, p + 2, 16, false);
+            return parseInt(state, vm, data, length, p + 2, 16, errorParseMode, false);
         
         if (isASCIIAlphaCaselessEqual(data[p + 1], 'o'))
-            return parseInt(state, vm, data, length, p + 2, 8, false);
+            return parseInt(state, vm, data, length, p + 2, 8, errorParseMode, false);
     }
 
     bool sign = false;
@@ -729,7 +734,7 @@ JSBigInt* JSBigInt::parseInt(ExecState* state, CharType*  data, int length)
         }
     }
 
-    JSBigInt* result = parseInt(state, vm, data, length, p, 10);
+    JSBigInt* result = parseInt(state, vm, data, length, p, 10, errorParseMode);
 
     if (result && !result->isZero())
         result->setSign(sign);
@@ -738,16 +743,17 @@ JSBigInt* JSBigInt::parseInt(ExecState* state, CharType*  data, int length)
 }
 
 template <typename CharType>
-JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, CharType* data, int length, int startIndex, int radix, bool allowEmptyString)
+JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, CharType* data, unsigned length, unsigned startIndex, unsigned radix, ErrorParseMode errorParseMode, bool allowEmptyString)
 {
     ASSERT(length >= 0);
-    int p = startIndex;
+    unsigned p = startIndex;
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!allowEmptyString && startIndex == length) {
         ASSERT(state);
-        throwVMError(state, scope, createSyntaxError(state, "Failed to parse String to BigInt"));
+        if (errorParseMode == ErrorParseMode::ThrowExceptions)
+            throwVMError(state, scope, createSyntaxError(state, "Failed to parse String to BigInt"));
         return nullptr;
     }
 
@@ -757,7 +763,7 @@ JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, CharType* data, int lengt
 
     int endIndex = length - 1;
     // Removing trailing spaces
-    while (endIndex >= p && isStrWhiteSpace(data[endIndex]))
+    while (endIndex >= static_cast<int>(p) && isStrWhiteSpace(data[endIndex]))
         --endIndex;
 
     length = endIndex + 1;
@@ -774,7 +780,7 @@ JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, CharType* data, int lengt
 
     result->initialize(InitializationType::WithZero);
 
-    for (int i = p; i < length; i++, p++) {
+    for (unsigned i = p; i < length; i++, p++) {
         uint32_t digit;
         if (data[i] >= '0' && data[i] < limit0)
             digit = data[i] - '0';
@@ -792,7 +798,8 @@ JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, CharType* data, int lengt
         return result->rightTrim(vm);
 
     ASSERT(state);
-    throwVMError(state, scope, createSyntaxError(state, "Failed to parse String to BigInt"));
+    if (errorParseMode == ErrorParseMode::ThrowExceptions)
+        throwVMError(state, scope, createSyntaxError(state, "Failed to parse String to BigInt"));
 
     return nullptr;
 }
@@ -813,10 +820,153 @@ inline void JSBigInt::setDigit(int n, Digit value)
     ASSERT(n >= 0 && n < length());
     dataStorage()[n] = value;
 }
-
 JSObject* JSBigInt::toObject(ExecState* exec, JSGlobalObject* globalObject) const
 {
     return BigIntObject::create(exec->vm(), globalObject, const_cast<JSBigInt*>(this));
+}
+
+bool JSBigInt::equalsToNumber(JSValue numValue)
+{
+    ASSERT(numValue.isNumber());
+    
+    if (numValue.isInt32()) {
+        int value = numValue.asInt32();
+        if (!value)
+            return this->isZero();
+
+        return (this->length() == 1) && (this->sign() == (value < 0)) && (this->digit(0) == static_cast<Digit>(std::abs(static_cast<int64_t>(value))));
+    }
+    
+    double value = numValue.asDouble();
+    return compareToDouble(this, value) == ComparisonResult::Equal;
+}
+
+JSBigInt::ComparisonResult JSBigInt::compareToDouble(JSBigInt* x, double y)
+{
+    // This algorithm expect that the double format is IEEE 754
+
+    uint64_t doubleBits = bitwise_cast<uint64_t>(y);
+    int rawExponent = static_cast<int>(doubleBits >> 52) & 0x7FF;
+
+    if (rawExponent == 0x7FF) {
+        if (std::isnan(y))
+            return ComparisonResult::Undefined;
+
+        return (y == std::numeric_limits<double>::infinity()) ? ComparisonResult::LessThan : ComparisonResult::GreaterThan;
+    }
+
+    bool xSign = x->sign();
+    
+    // Note that this is different from the double's sign bit for -0. That's
+    // intentional because -0 must be treated like 0.
+    bool ySign = y < 0;
+    if (xSign != ySign)
+        return xSign ? ComparisonResult::LessThan : ComparisonResult::GreaterThan;
+
+    if (!y) {
+        ASSERT(!xSign);
+        return x->isZero() ? ComparisonResult::Equal : ComparisonResult::GreaterThan;
+    }
+
+    if (x->isZero())
+        return ComparisonResult::LessThan;
+
+    uint64_t mantissa = doubleBits & 0x000FFFFFFFFFFFFF;
+
+    // Non-finite doubles are handled above.
+    ASSERT(rawExponent != 0x7FF);
+    int exponent = rawExponent - 0x3FF;
+    if (exponent < 0) {
+        // The absolute value of the double is less than 1. Only 0n has an
+        // absolute value smaller than that, but we've already covered that case.
+        return xSign ? ComparisonResult::LessThan : ComparisonResult::GreaterThan;
+    }
+
+    int xLength = x->length();
+    Digit xMSD = x->digit(xLength - 1);
+    int msdLeadingZeros = sizeof(xMSD) == 8  ? clz64(xMSD) : clz32(xMSD);
+
+    int xBitLength = xLength * digitBits - msdLeadingZeros;
+    int yBitLength = exponent + 1;
+    if (xBitLength < yBitLength)
+        return xSign? ComparisonResult::GreaterThan : ComparisonResult::LessThan;
+
+    if (xBitLength > yBitLength)
+        return xSign ? ComparisonResult::LessThan : ComparisonResult::GreaterThan;
+    
+    // At this point, we know that signs and bit lengths (i.e. position of
+    // the most significant bit in exponent-free representation) are identical.
+    // {x} is not zero, {y} is finite and not denormal.
+    // Now we virtually convert the double to an integer by shifting its
+    // mantissa according to its exponent, so it will align with the BigInt {x},
+    // and then we compare them bit for bit until we find a difference or the
+    // least significant bit.
+    //                    <----- 52 ------> <-- virtual trailing zeroes -->
+    // y / mantissa:     1yyyyyyyyyyyyyyyyy 0000000000000000000000000000000
+    // x / digits:    0001xxxx xxxxxxxx xxxxxxxx ...
+    //                    <-->          <------>
+    //              msdTopBit         digitBits
+    //
+    mantissa |= 0x0010000000000000;
+    const int mantissaTopBit = 52; // 0-indexed.
+
+    // 0-indexed position of {x}'s most significant bit within the {msd}.
+    int msdTopBit = digitBits - 1 - msdLeadingZeros;
+    ASSERT(msdTopBit == (xBitLength - 1) % digitBits);
+    
+    // Shifted chunk of {mantissa} for comparing with {digit}.
+    Digit compareMantissa;
+
+    // Number of unprocessed bits in {mantissa}. We'll keep them shifted to
+    // the left (i.e. most significant part) of the underlying uint64_t.
+    int remainingMantissaBits = 0;
+    
+    // First, compare the most significant digit against the beginning of
+    // the mantissa and then we align them.
+    if (msdTopBit < mantissaTopBit) {
+        remainingMantissaBits = (mantissaTopBit - msdTopBit);
+        compareMantissa = static_cast<Digit>(mantissa >> remainingMantissaBits);
+        mantissa = mantissa << (64 - remainingMantissaBits);
+    } else {
+        compareMantissa = static_cast<Digit>(mantissa << (msdTopBit - mantissaTopBit));
+        mantissa = 0;
+    }
+
+    if (xMSD > compareMantissa)
+        return xSign ? ComparisonResult::LessThan : ComparisonResult::GreaterThan;
+
+    if (xMSD < compareMantissa)
+        return xSign ? ComparisonResult::GreaterThan : ComparisonResult::LessThan;
+    
+    // Then, compare additional digits against any remaining mantissa bits.
+    for (int digitIndex = xLength - 2; digitIndex >= 0; digitIndex--) {
+        if (remainingMantissaBits > 0) {
+            remainingMantissaBits -= digitBits;
+            if (sizeof(mantissa) != sizeof(xMSD)) {
+                compareMantissa = static_cast<Digit>(mantissa >> (64 - digitBits));
+                // "& 63" to appease compilers. digitBits is 32 here anyway.
+                mantissa = mantissa << (digitBits & 63);
+            } else {
+                compareMantissa = static_cast<Digit>(mantissa);
+                mantissa = 0;
+            }
+        } else
+            compareMantissa = 0;
+
+        Digit digit = x->digit(digitIndex);
+        if (digit > compareMantissa)
+            return xSign ? ComparisonResult::LessThan : ComparisonResult::GreaterThan;
+        if (digit < compareMantissa)
+            return xSign ? ComparisonResult::GreaterThan : ComparisonResult::LessThan;
+    }
+
+    // Integer parts are equal; check whether {y} has a fractional part.
+    if (mantissa) {
+        ASSERT(remainingMantissaBits > 0);
+        return xSign ? ComparisonResult::GreaterThan : ComparisonResult::LessThan;
+    }
+
+    return ComparisonResult::Equal;
 }
 
 } // namespace JSC

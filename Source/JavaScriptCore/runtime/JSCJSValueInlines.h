@@ -981,6 +981,26 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSV
             return asString(v1)->equal(exec, asString(v2));
         }
 
+        if (v1.isBigInt() && s2) {
+            JSBigInt* n = JSBigInt::stringToBigInt(exec, asString(v2)->value(exec));
+            RETURN_IF_EXCEPTION(scope, false);
+            if (!n)
+                return false;
+            
+            v2 = JSValue(n);
+            continue;
+        }
+
+        if (s1 && v2.isBigInt()) {
+            JSBigInt* n = JSBigInt::stringToBigInt(exec, asString(v1)->value(exec));
+            RETURN_IF_EXCEPTION(scope, false);
+            if (!n)
+                return false;
+            
+            v1 = JSValue(n);
+            continue;
+        }
+
         if (v1.isUndefinedOrNull()) {
             if (v2.isUndefinedOrNull())
                 return true;
@@ -1034,10 +1054,27 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSV
         if (v1.isBoolean()) {
             if (v2.isNumber())
                 return static_cast<double>(v1.asBoolean()) == v2.asNumber();
+            else if (v2.isBigInt()) {
+                v1 = JSValue(v1.toNumber(exec));
+                continue;
+            }
         } else if (v2.isBoolean()) {
             if (v1.isNumber())
                 return v1.asNumber() == static_cast<double>(v2.asBoolean());
+            else if (v1.isBigInt()) {
+                v2 = JSValue(v2.toNumber(exec));
+                continue;
+            }
         }
+        
+        if (v1.isBigInt() && v2.isBigInt())
+            return JSBigInt::equals(asBigInt(v1), asBigInt(v2));
+        
+        if (v1.isBigInt() && v2.isNumber())
+            return asBigInt(v1)->equalsToNumber(v2);
+
+        if (v2.isBigInt() && v1.isNumber())
+            return asBigInt(v2)->equalsToNumber(v1);
 
         return v1 == v2;
     } while (true);
