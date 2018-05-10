@@ -1,3 +1,47 @@
+2018-05-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: implement advance user interactions
+        https://bugs.webkit.org/show_bug.cgi?id=174616
+
+        Reviewed by Brian Burg.
+
+        Add initial implementation of action commands.
+
+        * Actions.h: Added.
+        (WebDriver::Action::Action):
+        * CommandResult.cpp:
+        (WebDriver::CommandResult::CommandResult): Handle MoveTargetOutOfBounds error.
+        (WebDriver::CommandResult::httpStatusCode const): Ditto.
+        (WebDriver::CommandResult::errorString const): Ditto.
+        * CommandResult.h:
+        * Session.cpp:
+        (WebDriver::Session::webElementIdentifier): Helper to return the web element id.
+        (WebDriver::Session::createElement): Use webElementIdentifier().
+        (WebDriver::Session::extractElementID): Ditto.
+        (WebDriver::Session::virtualKeyForKeySequence): Add more kay codes includes in the spec.
+        (WebDriver::mouseButtonForAutomation): Helper to get the mouse button string to pass to automation.
+        (WebDriver::Session::performMouseInteraction): Use mouseButtonForAutomation().
+        (WebDriver::Session::getOrCreateInputSource): Ensure an input source for given id and add it to the active input
+        sources.
+        (WebDriver::Session::inputSourceState): Return the current input source state for the given id.
+        (WebDriver::Session::computeInViewCenterPointOfElements): Get the in view center point for the list of elements given.
+        (WebDriver::automationSourceType): Helper to get the input source type to pass to automation.
+        (WebDriver::Session::performActions): Process the list of action by tick and generate a list of states to pass
+        to automation.
+        (WebDriver::Session::releaseActions): Reset input sources and state table and send a message to automation.
+        * Session.h:
+        * WebDriverService.cpp:
+        (WebDriver::processPauseAction):
+        (WebDriver::processNullAction):
+        (WebDriver::processKeyAction):
+        (WebDriver::actionMouseButton):
+        (WebDriver::processPointerAction):
+        (WebDriver::processPointerParameters):
+        (WebDriver::processInputActionSequence):
+        (WebDriver::WebDriverService::performActions):
+        (WebDriver::WebDriverService::releaseActions):
+        * WebDriverService.h:
+
 2018-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: Also ignore NoSuchwindow errors when waiting for navigation to complete

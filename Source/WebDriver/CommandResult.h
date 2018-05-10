@@ -44,6 +44,7 @@ public:
         InvalidSelector,
         InvalidSessionID,
         JavascriptError,
+        MoveTargetOutOfBounds,
         NoSuchAlert,
         NoSuchCookie,
         NoSuchElement,

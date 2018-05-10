@@ -151,6 +151,9 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
     { HTTPMethod::Delete, "/session/$sessionId/cookie/$name", &WebDriverService::deleteCookie },
     { HTTPMethod::Delete, "/session/$sessionId/cookie", &WebDriverService::deleteAllCookies },
 
+    { HTTPMethod::Post, "/session/$sessionId/actions", &WebDriverService::performActions },
+    { HTTPMethod::Delete, "/session/$sessionId/actions", &WebDriverService::releaseActions },
+
     { HTTPMethod::Post, "/session/$sessionId/alert/dismiss", &WebDriverService::dismissAlert },
     { HTTPMethod::Post, "/session/$sessionId/alert/accept", &WebDriverService::acceptAlert },
     { HTTPMethod::Get, "/session/$sessionId/alert/text", &WebDriverService::getAlertText },
@@ -1585,6 +1588,371 @@ void WebDriverService::deleteAllCookies(RefPtr<JSON::Object>&& parameters, Funct
         }
         m_session->deleteAllCookies(WTFMove(completionHandler));
     });
+}
+
+static bool processPauseAction(JSON::Object& actionItem, Action& action, std::optional<String>& errorMessage)
+{
+    RefPtr<JSON::Value> durationValue;
+    if (!actionItem.getValue(ASCIILiteral("duration"), durationValue)) {
+        errorMessage = String("The parameter 'duration' is missing in pause action");
+        return false;
+    }
+
+    auto duration = unsignedValue(*durationValue);
+    if (!duration) {
+        errorMessage = String("The parameter 'duration' is invalid in pause action");
+        return false;
+    }
+
+    action.duration = duration.value();
+    return true;
+}
+
+static std::optional<Action> processNullAction(const String& id, JSON::Object& actionItem, std::optional<String>& errorMessage)
+{
+    String subtype;
+    actionItem.getString(ASCIILiteral("type"), subtype);
+    if (subtype != "pause") {
+        errorMessage = String("The parameter 'type' in null action is invalid or missing");
+        return std::nullopt;
+    }
+
+    Action action(id, Action::Type::None, Action::Subtype::Pause);
+    if (!processPauseAction(actionItem, action, errorMessage))
+        return std::nullopt;
+
+    return action;
+}
+
+static std::optional<Action> processKeyAction(const String& id, JSON::Object& actionItem, std::optional<String>& errorMessage)
+{
+    Action::Subtype actionSubtype;
+    String subtype;
+    actionItem.getString(ASCIILiteral("type"), subtype);
+    if (subtype == "pause")
+        actionSubtype = Action::Subtype::Pause;
+    else if (subtype == "keyUp")
+        actionSubtype = Action::Subtype::KeyUp;
+    else if (subtype == "keyDown")
+        actionSubtype = Action::Subtype::KeyDown;
+    else {
+        errorMessage = String("The parameter 'type' of key action is invalid");
+        return std::nullopt;
+    }
+
+    Action action(id, Action::Type::Key, actionSubtype);
+
+    switch (actionSubtype) {
+    case Action::Subtype::Pause:
+        if (!processPauseAction(actionItem, action, errorMessage))
+            return std::nullopt;
+        break;
+    case Action::Subtype::KeyUp:
+    case Action::Subtype::KeyDown: {
+        RefPtr<JSON::Value> keyValue;
+        if (!actionItem.getValue(ASCIILiteral("value"), keyValue)) {
+            errorMessage = String("The paramater 'value' is missing for key up/down action");
+            return std::nullopt;
+        }
+        String key;
+        if (!keyValue->asString(key) || key.isEmpty()) {
+            errorMessage = String("The paramater 'value' is invalid for key up/down action");
+            return std::nullopt;
+        }
+        // FIXME: check single unicode code point.
+        action.key = key;
+        break;
+    }
+    case Action::Subtype::PointerUp:
+    case Action::Subtype::PointerDown:
+    case Action::Subtype::PointerMove:
+    case Action::Subtype::PointerCancel:
+        ASSERT_NOT_REACHED();
+    }
+
+    return action;
+}
+
+static MouseButton actionMouseButton(unsigned button)
+{
+    // MouseEvent.button
+    // https://www.w3.org/TR/uievents/#ref-for-dom-mouseevent-button-1
+    switch (button) {
+    case 0:
+        return MouseButton::Left;
+    case 1:
+        return MouseButton::Middle;
+    case 2:
+        return MouseButton::Right;
+    }
+
+    return MouseButton::None;
+}
+
+static std::optional<Action> processPointerAction(const String& id, PointerParameters& parameters, JSON::Object& actionItem, std::optional<String>& errorMessage)
+{
+    Action::Subtype actionSubtype;
+    String subtype;
+    actionItem.getString(ASCIILiteral("type"), subtype);
+    if (subtype == "pause")
+        actionSubtype = Action::Subtype::Pause;
+    else if (subtype == "pointerUp")
+        actionSubtype = Action::Subtype::PointerUp;
+    else if (subtype == "pointerDown")
+        actionSubtype = Action::Subtype::PointerDown;
+    else if (subtype == "pointerMove")
+        actionSubtype = Action::Subtype::PointerMove;
+    else if (subtype == "pointerCancel")
+        actionSubtype = Action::Subtype::PointerCancel;
+    else {
+        errorMessage = String("The parameter 'type' of pointer action is invalid");
+        return std::nullopt;
+    }
+
+    Action action(id, Action::Type::Pointer, actionSubtype);
+    action.pointerType = parameters.pointerType;
+
+    switch (actionSubtype) {
+    case Action::Subtype::Pause:
+        if (!processPauseAction(actionItem, action, errorMessage))
+            return std::nullopt;
+        break;
+    case Action::Subtype::PointerUp:
+    case Action::Subtype::PointerDown: {
+        RefPtr<JSON::Value> buttonValue;
+        if (!actionItem.getValue(ASCIILiteral("button"), buttonValue)) {
+            errorMessage = String("The paramater 'button' is missing for pointer up/down action");
+            return std::nullopt;
+        }
+        auto button = unsignedValue(*buttonValue);
+        if (!button) {
+            errorMessage = String("The paramater 'button' is invalid for pointer up/down action");
+            return std::nullopt;
+        }
+        action.button = actionMouseButton(button.value());
+        break;
+    }
+    case Action::Subtype::PointerMove: {
+        RefPtr<JSON::Value> durationValue;
+        if (actionItem.getValue(ASCIILiteral("duration"), durationValue)) {
+            auto duration = unsignedValue(*durationValue);
+            if (!duration) {
+                errorMessage = String("The parameter 'duration' is invalid in pointer move action");
+                return std::nullopt;
+            }
+            action.duration = duration.value();
+        }
+
+        RefPtr<JSON::Value> originValue;
+        if (actionItem.getValue(ASCIILiteral("origin"), originValue)) {
+            if (originValue->type() == JSON::Value::Type::Object) {
+                RefPtr<JSON::Object> originObject;
+                originValue->asObject(originObject);
+                String elementID;
+                if (!originObject->getString(Session::webElementIdentifier(), elementID)) {
+                    errorMessage = String("The parameter 'origin' is not a valid web element object in pointer move action");
+                    return std::nullopt;
+                }
+                action.origin = PointerOrigin { PointerOrigin::Type::Element, elementID };
+            } else {
+                String origin;
+                originValue->asString(origin);
+                if (origin == "viewport")
+                    action.origin = PointerOrigin { PointerOrigin::Type::Viewport, std::nullopt };
+                else if (origin == "pointer")
+                    action.origin = PointerOrigin { PointerOrigin::Type::Pointer, std::nullopt };
+                else {
+                    errorMessage = String("The parameter 'origin' is invalid in pointer move action");
+                    return std::nullopt;
+                }
+            }
+        } else
+            action.origin = PointerOrigin { PointerOrigin::Type::Viewport, std::nullopt };
+
+        RefPtr<JSON::Value> xValue;
+        if (actionItem.getValue(ASCIILiteral("x"), xValue)) {
+            auto x = valueAsNumberInRange(*xValue, INT_MIN);
+            if (!x) {
+                errorMessage = String("The paramater 'x' is invalid for pointer move action");
+                return std::nullopt;
+            }
+            action.x = x.value();
+        }
+
+        RefPtr<JSON::Value> yValue;
+        if (actionItem.getValue(ASCIILiteral("y"), yValue)) {
+            auto y = valueAsNumberInRange(*yValue, INT_MIN);
+            if (!y) {
+                errorMessage = String("The paramater 'y' is invalid for pointer move action");
+                return std::nullopt;
+            }
+            action.y = y.value();
+        }
+        break;
+    }
+    case Action::Subtype::PointerCancel:
+        break;
+    case Action::Subtype::KeyUp:
+    case Action::Subtype::KeyDown:
+        ASSERT_NOT_REACHED();
+    }
+
+    return action;
+}
+
+static std::optional<PointerParameters> processPointerParameters(JSON::Object& actionSequence, std::optional<String>& errorMessage)
+{
+    PointerParameters parameters;
+    RefPtr<JSON::Value> parametersDataValue;
+    if (!actionSequence.getValue(ASCIILiteral("parameters"), parametersDataValue))
+        return parameters;
+
+    RefPtr<JSON::Object> parametersData;
+    if (!parametersDataValue->asObject(parametersData)) {
+        errorMessage = String("Action sequence pointer parameters is not an object");
+        return std::nullopt;
+    }
+
+    String pointerType;
+    if (!parametersData->getString(ASCIILiteral("pointerType"), pointerType))
+        return parameters;
+
+    if (pointerType == "mouse")
+        parameters.pointerType = PointerType::Mouse;
+    else if (pointerType == "pen")
+        parameters.pointerType = PointerType::Pen;
+    else if (pointerType == "touch")
+        parameters.pointerType = PointerType::Touch;
+    else {
+        errorMessage = String("The parameter 'pointerType' in action sequence pointer parameters is invalid");
+        return std::nullopt;
+    }
+
+    return parameters;
+}
+
+static std::optional<Vector<Action>> processInputActionSequence(Session& session, JSON::Value& actionSequenceValue, std::optional<String>& errorMessage)
+{
+    RefPtr<JSON::Object> actionSequence;
+    if (!actionSequenceValue.asObject(actionSequence)) {
+        errorMessage = String("The action sequence is not an object");
+        return std::nullopt;
+    }
+
+    String type;
+    actionSequence->getString(ASCIILiteral("type"), type);
+    InputSource::Type inputSourceType;
+    if (type == "key")
+        inputSourceType = InputSource::Type::Key;
+    else if (type == "pointer")
+        inputSourceType = InputSource::Type::Pointer;
+    else if (type == "none")
+        inputSourceType = InputSource::Type::None;
+    else {
+        errorMessage = String("The parameter 'type' is invalid or missing in action sequence");
+        return std::nullopt;
+    }
+
+    String id;
+    if (!actionSequence->getString(ASCIILiteral("id"), id)) {
+        errorMessage = String("The parameter 'id' is invalid or missing in action sequence");
+        return std::nullopt;
+    }
+
+    std::optional<PointerParameters> parameters;
+    std::optional<PointerType> pointerType;
+    if (inputSourceType == InputSource::Type::Pointer) {
+        parameters = processPointerParameters(*actionSequence, errorMessage);
+        if (!parameters)
+            return std::nullopt;
+
+        pointerType = parameters->pointerType;
+    }
+
+    auto& inputSource = session.getOrCreateInputSource(id, inputSourceType, pointerType);
+    if (inputSource.type != inputSourceType) {
+        errorMessage = String("Action sequence type doesn't match input source type");
+        return std::nullopt;
+    }
+
+    if (inputSource.type ==  InputSource::Type::Pointer && inputSource.pointerType != pointerType) {
+        errorMessage = String("Action sequence pointer type doesn't match input source pointer type");
+        return std::nullopt;
+    }
+
+    RefPtr<JSON::Array> actionItems;
+    if (!actionSequence->getArray(ASCIILiteral("actions"), actionItems)) {
+        errorMessage = String("The parameter 'actions' is invalid or not present in action sequence");
+        return std::nullopt;
+    }
+
+    Vector<Action> actions;
+    unsigned actionItemsLength = actionItems->length();
+    for (unsigned i = 0; i < actionItemsLength; ++i) {
+        auto actionItemValue = actionItems->get(i);
+        RefPtr<JSON::Object> actionItem;
+        if (!actionItemValue->asObject(actionItem)) {
+            errorMessage = String("An action in action sequence is not an object");
+            return std::nullopt;
+        }
+
+        std::optional<Action> action;
+        if (inputSourceType == InputSource::Type::None)
+            action = processNullAction(id, *actionItem, errorMessage);
+        else if (inputSourceType == InputSource::Type::Key)
+            action = processKeyAction(id, *actionItem, errorMessage);
+        else if (inputSourceType == InputSource::Type::Pointer)
+            action = processPointerAction(id, parameters.value(), *actionItem, errorMessage);
+        if (!action)
+            return std::nullopt;
+
+        actions.append(action.value());
+    }
+
+    return actions;
+}
+
+void WebDriverService::performActions(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §17.5 Perform Actions.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#perform-actions
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
+        return;
+
+    RefPtr<JSON::Array> actionsArray;
+    if (!parameters->getArray(ASCIILiteral("actions"), actionsArray)) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("The paramater 'actions' is invalid or not present")));
+        return;
+    }
+
+    std::optional<String> errorMessage;
+    Vector<Vector<Action>> actionsByTick;
+    unsigned actionsArrayLength = actionsArray->length();
+    for (unsigned i = 0; i < actionsArrayLength; ++i) {
+        auto actionSequence = actionsArray->get(i);
+        auto inputSourceActions = processInputActionSequence(*m_session, *actionSequence, errorMessage);
+        if (!inputSourceActions) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, errorMessage.value()));
+            return;
+        }
+        for (unsigned i = 0; i < inputSourceActions->size(); ++i) {
+            if (actionsByTick.size() < i + 1)
+                actionsByTick.append({ });
+            actionsByTick[i].append(inputSourceActions.value()[i]);
+        }
+    }
+
+    m_session->performActions(WTFMove(actionsByTick), WTFMove(completionHandler));
+}
+
+void WebDriverService::releaseActions(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §17.5 Release Actions.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#release-actions
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
+        return;
+
+    m_session->releaseActions(WTFMove(completionHandler));
 }
 
 void WebDriverService::dismissAlert(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)

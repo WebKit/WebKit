@@ -103,6 +103,8 @@ private:
     void addCookie(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void deleteCookie(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void deleteAllCookies(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    void performActions(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    void releaseActions(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void dismissAlert(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void acceptAlert(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getAlertText(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);

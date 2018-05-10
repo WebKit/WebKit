@@ -1,3 +1,36 @@
+2018-05-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: implement advance user interactions
+        https://bugs.webkit.org/show_bug.cgi?id=174616
+
+        Reviewed by Brian Burg.
+
+        Handle origin in case of mouse move transitions.
+
+        * UIProcess/Automation/Automation.json: Add MouseMoveOrigin enum and pass it as parameter of InputSourceState
+        together with optional node handle. Also pass the frame handle to performInteractionSequence command to find the
+        node in the current browsing context.
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputKeyFrame::keyFrameToResetInputSources): Ensure we reset the location.
+        (WebKit::SimulatedInputDispatcher::resolveLocation): Helper to resolve destination location based on current
+        location and mouse move origin.
+        (WebKit::SimulatedInputDispatcher::transitionInputSourceToState): Use resolveLocation() in mouse transitions.
+        (WebKit::SimulatedInputDispatcher::run): Receive and save the frame ID.
+        (WebKit::SimulatedInputDispatcher::finishDispatching): Reset the frame ID.
+        * UIProcess/Automation/SimulatedInputDispatcher.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::computeElementLayout): Use even numbers for the callback ID to not conflict with
+        viewportInViewCenterPointOfElement() callbacks.
+        (WebKit::WebAutomationSession::didComputeElementLayout): Handle computeElementLayout() or
+        viewportInViewCenterPointOfElement() requests by calling the right callback depending on whether the ID is odd
+        or even number.
+        (WebKit::WebAutomationSession::viewportInViewCenterPointOfElement): Send ComputeElementLayout message to the
+        WebProcess using odd numbers for the callback ID to not conflict with computeElementLayout() callbacks.
+        (WebKit::WebAutomationSession::performInteractionSequence): Handle the mouse origin and element handle.
+        (WebKit::WebAutomationSession::cancelInteractionSequence): Pass the frame ID to the input dispatcher.
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSessionMacros.h:
+
 2018-05-09  Tim Horton  <timothy_horton@apple.com>
 
         Remove the unused HAVE_OS_ACTIVITY

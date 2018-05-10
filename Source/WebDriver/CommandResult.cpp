@@ -108,6 +108,8 @@ CommandResult::CommandResult(RefPtr<JSON::Value>&& result, std::optional<ErrorCo
             m_errorCode = ErrorCode::UnableToCaptureScreen;
         else if (errorName == "UnexpectedAlertOpen")
             m_errorCode = ErrorCode::UnexpectedAlertOpen;
+        else if (errorName == "TargetOutOfBounds")
+            m_errorCode = ErrorCode::MoveTargetOutOfBounds;
 
         break;
     }
@@ -148,6 +150,7 @@ unsigned CommandResult::httpStatusCode() const
     case ErrorCode::Timeout:
         return 408;
     case ErrorCode::JavascriptError:
+    case ErrorCode::MoveTargetOutOfBounds:
     case ErrorCode::SessionNotCreated:
     case ErrorCode::UnableToCaptureScreen:
     case ErrorCode::UnexpectedAlertOpen:
@@ -201,6 +204,8 @@ String CommandResult::errorString() const
         return ASCIILiteral("timeout");
     case ErrorCode::UnableToCaptureScreen:
         return ASCIILiteral("unable to capture screen");
+    case ErrorCode::MoveTargetOutOfBounds:
+        return ASCIILiteral("move target out of bounds");
     case ErrorCode::UnexpectedAlertOpen:
         return ASCIILiteral("unexpected alert open");
     case ErrorCode::UnknownCommand:

@@ -274,6 +274,16 @@
             ]
         },
         {
+            "id": "MouseMoveOrigin",
+            "type": "string",
+            "description": "Enumerates different origin types that can be used in mouse move interactions.",
+            "enum": [
+                "Viewport",
+                "Pointer",
+                "Element"
+            ]
+        },
+        {
             "id": "InputSourceState",
             "type": "object",
             "description": "A new state for a specific input source. All state-related fields are optional and must be applicable to the InputSource referenced by 'sourceId'. If no state-related fields are specified, the state is assumed to remain the same as in the previous step (i.e., 'sustained').",
@@ -282,6 +292,8 @@
                 { "name": "pressedCharKey", "type": "string", "optional": true, "description": "For 'keyboard' input sources, specifies a character key that has 'pressed' state. Unmentioned character keys are assumed to have a 'released' state." },
                 { "name": "pressedVirtualKey", "$ref": "VirtualKey", "optional": true, "description": "For 'keyboard' input sources, specifies a virtual key that has a 'pressed' state. Unmentioned virtual keys are assumed to have a 'released' state." },
                 { "name": "pressedButton", "$ref": "MouseButton", "optional": true, "description": "For 'mouse' input sources, specifies which mouse button has a 'pressed' state. Unmentioned mouse buttons are assumed to have a 'released' state." },
+                { "name": "origin", "$ref": "MouseMoveOrigin", "optional": true, "description": "For 'mouse' input sources, specifies the origin type of a mouse move transition. Defaults to 'Viewport' if omitted."},
+                { "name": "nodeHandle", "$ref": "NodeHandle", "optional": true, "description": "The handle of the element to use as origin when origin type is 'Element'."},
                 { "name": "location", "$ref": "Point", "optional": true, "description": "For 'mouse' or 'touch' input sources, specifies a location in view coordinates to which the input source should transition. Transitioning to this state may interpolate intemediate input source states to better simulate real user movements and gestures." },
                 { "name": "duration", "type": "integer", "optional": true, "description": "The minimum number of milliseconds that must elapse while the relevant input source transitions to this state." }
             ]
@@ -459,6 +471,7 @@
             "description": "Perform multiple simulated interactions over time using a list of input sources and a list of steps, where each step specifies a state for each input source at the time that step is performed.",
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The browsing context to be interacted with." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame in which to search for the elements in case of an 'Element' type MouseMoveOrigin. The main frame is used if this parameter empty string or excluded." },
                 { "name": "inputSources", "type": "array", "items": { "$ref": "InputSource" }, "description": "All input sources that are used to perform this interaction sequence." },
                 { "name": "steps", "type": "array", "items": { "$ref": "InteractionStep" }, "description": "A list of steps that are executed in order." }
             ],
@@ -468,7 +481,8 @@
             "name": "cancelInteractionSequence",
             "description": "Cancel an active interaction sequence that is currently in progress.",
             "parameters": [
-                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The browsing context to be interacted with." }
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The browsing context to be interacted with." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame passed to performInteractionSequence. The main frame is used if this parameter empty string or excluded." }
             ],
             "async": true
         },

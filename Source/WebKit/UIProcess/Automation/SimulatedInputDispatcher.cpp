@@ -66,8 +66,12 @@ SimulatedInputKeyFrame SimulatedInputKeyFrame::keyFrameToResetInputSources(HashS
     Vector<SimulatedInputKeyFrame::StateEntry> entries;
     entries.reserveCapacity(inputSources.size());
 
-    for (auto& inputSource : inputSources)
-        entries.uncheckedAppend(std::pair<SimulatedInputSource&, SimulatedInputSourceState> { inputSource.get(), SimulatedInputSourceState::emptyState() });
+    for (auto& inputSource : inputSources) {
+        auto emptyState = SimulatedInputSourceState::emptyState();
+        // Ensure we reset the location.
+        emptyState.location = WebCore::IntPoint();
+        entries.uncheckedAppend(std::pair<SimulatedInputSource&, SimulatedInputSourceState> { inputSource.get(), WTFMove(emptyState) });
+    }
 
     return SimulatedInputKeyFrame(WTFMove(entries));
 }
@@ -174,11 +178,44 @@ void SimulatedInputDispatcher::transitionBetweenKeyFrames(const SimulatedInputKe
     transitionToNextInputSourceState();
 }
 
-void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource& inputSource, const SimulatedInputSourceState& newState, AutomationCompletionHandler&& completionHandler)
+void SimulatedInputDispatcher::resolveLocation(const WebCore::IntPoint& currentLocation, std::optional<WebCore::IntPoint> location, MouseMoveOrigin origin, std::optional<String> nodeHandle, Function<void (std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&& completionHandler)
+{
+    if (!location) {
+        completionHandler(currentLocation, std::nullopt);
+        return;
+    }
+
+    switch (origin) {
+    case MouseMoveOrigin::Viewport:
+        completionHandler(location.value(), std::nullopt);
+        break;
+    case MouseMoveOrigin::Pointer: {
+        WebCore::IntPoint destination(currentLocation);
+        destination.moveBy(location.value());
+        completionHandler(destination, std::nullopt);
+        break;
+    }
+    case MouseMoveOrigin::Element: {
+        m_client.viewportInViewCenterPointOfElement(m_page, m_frameID.value(), nodeHandle.value(), [destination = location.value(), completionHandler = WTFMove(completionHandler)](std::optional<WebCore::IntPoint> inViewCenterPoint, std::optional<AutomationCommandError> error) mutable {
+            if (error) {
+                completionHandler(std::nullopt, error);
+                return;
+            }
+
+            ASSERT(inViewCenterPoint);
+            destination.moveBy(inViewCenterPoint.value());
+            completionHandler(destination, std::nullopt);
+        });
+        break;
+    }
+    }
+}
+
+void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource& inputSource, SimulatedInputSourceState& newState, AutomationCompletionHandler&& completionHandler)
 {
     // Make cases and conditionals more readable by aliasing pre/post states as 'a' and 'b'.
-    SimulatedInputSourceState a = inputSource.state;
-    SimulatedInputSourceState b = newState;
+    SimulatedInputSourceState& a = inputSource.state;
+    SimulatedInputSourceState& b = newState;
 
     AutomationCompletionHandler eventDispatchFinished = [&inputSource, &newState, completionHandler = WTFMove(completionHandler)](std::optional<AutomationCommandError> error) {
         if (error) {
@@ -196,16 +233,24 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
         eventDispatchFinished(std::nullopt);
         break;
     case SimulatedInputSource::Type::Mouse: {
-        // The "dispatch a pointer{Down,Up,Move} action" algorithms (§17.4 Dispatching Actions).
-        if (!a.pressedMouseButton && b.pressedMouseButton)
-            m_client.simulateMouseInteraction(m_page, MouseInteraction::Down, b.pressedMouseButton.value(), b.location.value(), WTFMove(eventDispatchFinished));
-        else if (a.pressedMouseButton && !b.pressedMouseButton)
-            m_client.simulateMouseInteraction(m_page, MouseInteraction::Up, a.pressedMouseButton.value(), b.location.value(), WTFMove(eventDispatchFinished));
-        else if (a.location != b.location) {
-            // FIXME: This does not interpolate mousemoves per the "perform a pointer move" algorithm (§17.4 Dispatching Actions).
-            m_client.simulateMouseInteraction(m_page, MouseInteraction::Move, b.pressedMouseButton.value_or(MouseButton::NoButton), b.location.value(), WTFMove(eventDispatchFinished));
-        } else
-            eventDispatchFinished(std::nullopt);
+        resolveLocation(a.location.value_or(WebCore::IntPoint()), b.location, b.origin.value_or(MouseMoveOrigin::Viewport), b.nodeHandle, [this, &a, &b, eventDispatchFinished = WTFMove(eventDispatchFinished)](std::optional<WebCore::IntPoint> location, std::optional<AutomationCommandError> error) mutable {
+            if (error) {
+                eventDispatchFinished(error);
+                return;
+            }
+            RELEASE_ASSERT(location);
+            b.location = location;
+            // The "dispatch a pointer{Down,Up,Move} action" algorithms (§17.4 Dispatching Actions).
+            if (!a.pressedMouseButton && b.pressedMouseButton)
+                m_client.simulateMouseInteraction(m_page, MouseInteraction::Down, b.pressedMouseButton.value(), b.location.value(), WTFMove(eventDispatchFinished));
+            else if (a.pressedMouseButton && !b.pressedMouseButton)
+                m_client.simulateMouseInteraction(m_page, MouseInteraction::Up, a.pressedMouseButton.value(), b.location.value(), WTFMove(eventDispatchFinished));
+            else if (a.location != b.location) {
+                // FIXME: This does not interpolate mousemoves per the "perform a pointer move" algorithm (§17.4 Dispatching Actions).
+                m_client.simulateMouseInteraction(m_page, MouseInteraction::Move, b.pressedMouseButton.value_or(MouseButton::NoButton), b.location.value(), WTFMove(eventDispatchFinished));
+            } else
+                eventDispatchFinished(std::nullopt);
+        });
         break;
     }
     case SimulatedInputSource::Type::Keyboard:
@@ -225,7 +270,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
     }
 }
 
-void SimulatedInputDispatcher::run(Vector<SimulatedInputKeyFrame>&& keyFrames, HashSet<Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&& completionHandler)
+void SimulatedInputDispatcher::run(uint64_t frameID, Vector<SimulatedInputKeyFrame>&& keyFrames, HashSet<Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&& completionHandler)
 {
     ASSERT(!isActive());
     if (isActive()) {
@@ -233,6 +278,7 @@ void SimulatedInputDispatcher::run(Vector<SimulatedInputKeyFrame>&& keyFrames, H
         return;
     }
 
+    m_frameID = frameID;
     m_runCompletionHandler = WTFMove(completionHandler);
     for (const Ref<SimulatedInputSource>& inputSource : inputSources)
         m_inputSources.add(inputSource.copyRef());
@@ -261,6 +307,7 @@ void SimulatedInputDispatcher::finishDispatching(std::optional<AutomationCommand
     m_keyFrameTransitionDurationTimer.stop();
 
     auto finish = std::exchange(m_runCompletionHandler, nullptr);
+    m_frameID = std::nullopt;
     m_keyframes.clear();
     m_inputSources.clear();
     m_keyframeIndex = 0;

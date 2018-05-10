@@ -39,6 +39,7 @@
 #define STRING_FOR_PREDEFINED_ERROR_MESSAGE_AND_DETAILS(errorMessage, detailsString) makeString(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(VALIDATED_ERROR_MESSAGE(errorMessage)), errorNameAndDetailsSeparator, detailsString)
 
 #define AUTOMATION_COMMAND_ERROR_WITH_NAME(errorName) AutomationCommandError(Inspector::Protocol::Automation::ErrorMessage::errorName)
+#define AUTOMATION_COMMAND_ERROR_WITH_MESSAGE(errorString) AutomationCommandError(VALIDATED_ERROR_MESSAGE(errorString))
 
 // Convenience macros for filling in the error string of synchronous commands in bailout branches.
 #define SYNC_FAIL_WITH_PREDEFINED_ERROR(errorName) \

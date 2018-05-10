@@ -30,13 +30,11 @@
 #include "SessionHost.h"
 #include "WebDriverAtoms.h"
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/HashSet.h>
 #include <wtf/HexNumber.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebDriver {
-
-// The web element identifier is a constant defined by the spec in Section 11 Elements.
-// https://www.w3.org/TR/webdriver/#elements
-static const String webElementIdentifier = ASCIILiteral("element-6066-11e4-a52e-4f735466cecf");
 
 // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-session-script-timeout
 static const Seconds defaultScriptTimeout = 30_s;
@@ -44,6 +42,14 @@ static const Seconds defaultScriptTimeout = 30_s;
 static const Seconds defaultPageLoadTimeout = 300_s;
 // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-session-implicit-wait-timeout
 static const Seconds defaultImplicitWaitTimeout = 0_s;
+
+const String& Session::webElementIdentifier()
+{
+    // The web element identifier is a constant defined by the spec in Section 11 Elements.
+    // https://www.w3.org/TR/webdriver/#elements
+    static NeverDestroyed<String> webElementID { ASCIILiteral("element-6066-11e4-a52e-4f735466cecf") };
+    return webElementID;
+}
 
 Session::Session(std::unique_ptr<SessionHost>&& host)
     : m_host(WTFMove(host))
@@ -779,7 +785,7 @@ RefPtr<JSON::Object> Session::createElement(RefPtr<JSON::Value>&& value)
         return nullptr;
 
     RefPtr<JSON::Object> elementObject = JSON::Object::create();
-    elementObject->setString(webElementIdentifier, elementID);
+    elementObject->setString(webElementIdentifier(), elementID);
     return elementObject;
 }
 
@@ -803,7 +809,7 @@ String Session::extractElementID(JSON::Value& value)
         return emptyString();
 
     String elementID;
-    if (!valueObject->getString(webElementIdentifier, elementID))
+    if (!valueObject->getString(webElementIdentifier(), elementID))
         return emptyString();
 
     return elementID;
@@ -1504,12 +1510,15 @@ String Session::virtualKeyForKeySequence(const String& keySequence, KeyModifier&
     case 0xE007U:
         return ASCIILiteral("Enter");
     case 0xE008U:
+    case 0xE050U:
         modifier = KeyModifier::Shift;
         return ASCIILiteral("Shift");
     case 0xE009U:
+    case 0xE051U:
         modifier = KeyModifier::Control;
         return ASCIILiteral("Control");
     case 0xE00AU:
+    case 0xE052U:
         modifier = KeyModifier::Alternate;
         return ASCIILiteral("Alternate");
     case 0xE00BU:
@@ -1519,24 +1528,34 @@ String Session::virtualKeyForKeySequence(const String& keySequence, KeyModifier&
     case 0xE00DU:
         return ASCIILiteral("Space");
     case 0xE00EU:
+    case 0xE054U:
         return ASCIILiteral("PageUp");
     case 0xE00FU:
+    case 0xE055U:
         return ASCIILiteral("PageDown");
     case 0xE010U:
+    case 0xE056U:
         return ASCIILiteral("End");
     case 0xE011U:
+    case 0xE057U:
         return ASCIILiteral("Home");
     case 0xE012U:
+    case 0xE058U:
         return ASCIILiteral("LeftArrow");
     case 0xE013U:
+    case 0xE059U:
         return ASCIILiteral("UpArrow");
     case 0xE014U:
+    case 0xE05AU:
         return ASCIILiteral("RightArrow");
     case 0xE015U:
+    case 0xE05BU:
         return ASCIILiteral("DownArrow");
     case 0xE016U:
+    case 0xE05CU:
         return ASCIILiteral("Insert");
     case 0xE017U:
+    case 0xE05DU:
         return ASCIILiteral("Delete");
     case 0xE018U:
         return ASCIILiteral("Semicolon");
@@ -1599,6 +1618,7 @@ String Session::virtualKeyForKeySequence(const String& keySequence, KeyModifier&
     case 0xE03CU:
         return ASCIILiteral("Function12");
     case 0xE03DU:
+    case 0xE053U:
         modifier = KeyModifier::Meta;
         return ASCIILiteral("Meta");
     default:
@@ -1769,6 +1789,22 @@ void Session::executeScript(const String& script, RefPtr<JSON::Array>&& argument
     });
 }
 
+static String mouseButtonForAutomation(MouseButton button)
+{
+    switch (button) {
+    case MouseButton::None:
+        return ASCIILiteral("None");
+    case MouseButton::Left:
+        return ASCIILiteral("Left");
+    case MouseButton::Middle:
+        return ASCIILiteral("Middle");
+    case MouseButton::Right:
+        return ASCIILiteral("Right");
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void Session::performMouseInteraction(int x, int y, MouseButton button, MouseInteraction interaction, Function<void (CommandResult&&)>&& completionHandler)
 {
     RefPtr<JSON::Object> parameters = JSON::Object::create();
@@ -1777,20 +1813,7 @@ void Session::performMouseInteraction(int x, int y, MouseButton button, MouseInt
     position->setInteger(ASCIILiteral("x"), x);
     position->setInteger(ASCIILiteral("y"), y);
     parameters->setObject(ASCIILiteral("position"), WTFMove(position));
-    switch (button) {
-    case MouseButton::None:
-        parameters->setString(ASCIILiteral("button"), ASCIILiteral("None"));
-        break;
-    case MouseButton::Left:
-        parameters->setString(ASCIILiteral("button"), ASCIILiteral("Left"));
-        break;
-    case MouseButton::Middle:
-        parameters->setString(ASCIILiteral("button"), ASCIILiteral("Middle"));
-        break;
-    case MouseButton::Right:
-        parameters->setString(ASCIILiteral("button"), ASCIILiteral("Right"));
-        break;
-    }
+    parameters->setString(ASCIILiteral("button"), mouseButtonForAutomation(button));
     switch (interaction) {
     case MouseInteraction::Move:
         parameters->setString(ASCIILiteral("interaction"), ASCIILiteral("Move"));
@@ -2056,6 +2079,195 @@ void Session::deleteAllCookies(Function<void (CommandResult&&)>&& completionHand
             }
             completionHandler(CommandResult::success());
         });
+    });
+}
+
+InputSource& Session::getOrCreateInputSource(const String& id, InputSource::Type type, std::optional<PointerType> pointerType)
+{
+    auto addResult = m_activeInputSources.add(id, InputSource());
+    if (addResult.isNewEntry)
+        addResult.iterator->value = { type, pointerType };
+    return addResult.iterator->value;
+}
+
+Session::InputSourceState& Session::inputSourceState(const String& id)
+{
+    return m_inputStateTable.ensure(id, [] { return InputSourceState(); }).iterator->value;
+}
+
+static const char* automationSourceType(InputSource::Type type)
+{
+    switch (type) {
+    case InputSource::Type::None:
+        return "Null";
+    case InputSource::Type::Pointer:
+        return "Mouse";
+    case InputSource::Type::Key:
+        return "Keyboard";
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+static const char* automationOriginType(PointerOrigin::Type type)
+{
+    switch (type) {
+    case PointerOrigin::Type::Viewport:
+        return "Viewport";
+    case PointerOrigin::Type::Pointer:
+        return "Pointer";
+    case PointerOrigin::Type::Element:
+        return "Element";
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!m_toplevelBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    handleUserPrompts([this, actionsByTick = WTFMove(actionsByTick), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+
+        // First check if we have actions and whether we need to resolve any pointer move element origin.
+        unsigned actionsCount = 0;
+        for (const auto& tick : actionsByTick)
+            actionsCount += tick.size();
+        if (!actionsCount) {
+            completionHandler(CommandResult::success());
+            return;
+        }
+
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
+        parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
+        if (m_currentBrowsingContext)
+            parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
+        RefPtr<JSON::Array> inputSources = JSON::Array::create();
+        for (const auto& inputSource : m_activeInputSources) {
+            RefPtr<JSON::Object> inputSourceObject = JSON::Object::create();
+            inputSourceObject->setString(ASCIILiteral("sourceId"), inputSource.key);
+            inputSourceObject->setString(ASCIILiteral("sourceType"), automationSourceType(inputSource.value.type));
+            inputSources->pushObject(WTFMove(inputSourceObject));
+        }
+        parameters->setArray(ASCIILiteral("inputSources"), WTFMove(inputSources));
+        RefPtr<JSON::Array> steps = JSON::Array::create();
+        for (const auto& tick : actionsByTick) {
+            RefPtr<JSON::Array> states = JSON::Array::create();
+            for (const auto& action : tick) {
+                RefPtr<JSON::Object> state = JSON::Object::create();
+                auto& currentState = inputSourceState(action.id);
+                state->setString(ASCIILiteral("sourceId"), action.id);
+                switch (action.type) {
+                case Action::Type::None:
+                    state->setDouble(ASCIILiteral("duration"), action.duration.value());
+                    break;
+                case Action::Type::Pointer: {
+                    switch (action.subtype) {
+                    case Action::Subtype::PointerUp:
+                        currentState.pressedButton = std::nullopt;
+                        break;
+                    case Action::Subtype::PointerDown:
+                        currentState.pressedButton = action.button.value();
+                        break;
+                    case Action::Subtype::PointerMove: {
+                        state->setString(ASCIILiteral("origin"), automationOriginType(action.origin->type));
+                        RefPtr<JSON::Object> location = JSON::Object::create();
+                        location->setInteger(ASCIILiteral("x"), action.x.value());
+                        location->setInteger(ASCIILiteral("y"), action.y.value());
+                        state->setObject(ASCIILiteral("location"), WTFMove(location));
+                        if (action.origin->type == PointerOrigin::Type::Element)
+                            state->setString(ASCIILiteral("nodeHandle"), action.origin->elementID.value());
+                        FALLTHROUGH;
+                    }
+                    case Action::Subtype::Pause:
+                        if (action.duration)
+                            state->setDouble(ASCIILiteral("duration"), action.duration.value());
+                        break;
+                    case Action::Subtype::PointerCancel:
+                        currentState.pressedButton = std::nullopt;
+                        break;
+                    case Action::Subtype::KeyUp:
+                    case Action::Subtype::KeyDown:
+                        ASSERT_NOT_REACHED();
+                    }
+                    if (currentState.pressedButton)
+                        state->setString(ASCIILiteral("pressedButton"), mouseButtonForAutomation(currentState.pressedButton.value()));
+                    break;
+                }
+                case Action::Type::Key:
+                    switch (action.subtype) {
+                    case Action::Subtype::KeyUp:
+                        if (currentState.pressedVirtualKey)
+                            currentState.pressedVirtualKey = std::nullopt;
+                        else
+                            currentState.pressedKey = std::nullopt;
+                        break;
+                    case Action::Subtype::KeyDown: {
+                        KeyModifier modifier;
+                        auto virtualKey = virtualKeyForKeySequence(action.key.value(), modifier);
+                        if (!virtualKey.isNull())
+                            currentState.pressedVirtualKey = virtualKey;
+                        else
+                            currentState.pressedKey = action.key.value();
+                        break;
+                    }
+                    case Action::Subtype::Pause:
+                        if (action.duration)
+                            state->setDouble(ASCIILiteral("duration"), action.duration.value());
+                        break;
+                    case Action::Subtype::PointerUp:
+                    case Action::Subtype::PointerDown:
+                    case Action::Subtype::PointerMove:
+                    case Action::Subtype::PointerCancel:
+                        ASSERT_NOT_REACHED();
+                    }
+                    if (currentState.pressedKey)
+                        state->setString(ASCIILiteral("pressedCharKey"), currentState.pressedKey.value());
+                    if (currentState.pressedVirtualKey)
+                        state->setString(ASCIILiteral("pressedVirtualKey"), currentState.pressedVirtualKey.value());
+                    break;
+                }
+                states->pushObject(WTFMove(state));
+            }
+            RefPtr<JSON::Object> stepStates = JSON::Object::create();
+            stepStates->setArray(ASCIILiteral("states"), WTFMove(states));
+            steps->pushObject(WTFMove(stepStates));
+        }
+
+        parameters->setArray(ASCIILiteral("steps"), WTFMove(steps));
+        m_host->sendCommandToBackend(ASCIILiteral("performInteractionSequence"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (SessionHost::CommandResponse&& response) {
+            if (response.isError) {
+                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+                return;
+            }
+            completionHandler(CommandResult::success());
+        });
+    });
+}
+
+void Session::releaseActions(Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!m_toplevelBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    m_activeInputSources.clear();
+    m_inputStateTable.clear();
+
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
+    parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
+    m_host->sendCommandToBackend(ASCIILiteral("cancelInteractionSequence"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        if (response.isError) {
+            completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+            return;
+        }
+        completionHandler(CommandResult::success());
     });
 }
 
