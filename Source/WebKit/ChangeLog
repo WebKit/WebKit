@@ -1,3 +1,12 @@
+2018-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, install WebKitHitTestResult.h
+
+        Not sure what I was thinking yesterday, but I removed this required header. I did not notice
+        because I validated the release using dyz, which does not use our headers at all.
+
+        * PlatformWPE.cmake:
+
 2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for 2.19.92 release.
