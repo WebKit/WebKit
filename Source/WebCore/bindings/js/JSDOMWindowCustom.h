@@ -22,6 +22,7 @@
 
 namespace WebCore {
 
+class AbstractDOMWindow;
 class AbstractFrame;
 
 inline JSDOMWindow* asJSDOMWindow(JSC::JSGlobalObject* globalObject)
@@ -37,8 +38,8 @@ inline const JSDOMWindow* asJSDOMWindow(const JSC::JSGlobalObject* globalObject)
 enum class DOMWindowType { Local, Remote };
 
 template <DOMWindowType windowType>
-bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject*, AbstractFrame*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&, const String&);
+bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject*, AbstractDOMWindow&, JSC::ExecState&, JSC::PropertyName, JSC::PropertySlot&, const String&);
 
-void addCrossOriginWindowOwnPropertyNames(JSC::ExecState&, JSC::PropertyNameArray&);
+void addCrossOriginWindowOwnPropertyNames(JSC::ExecState&, AbstractDOMWindow&, JSC::PropertyNameArray&);
 
 } // namespace WebCore

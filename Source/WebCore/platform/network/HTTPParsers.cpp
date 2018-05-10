@@ -913,4 +913,19 @@ FromOriginDisposition parseFromOriginHeader(const String& header)
     return FromOriginDisposition::Invalid;
 }
 
+CrossOriginOptions parseCrossOriginOptionsHeader(StringView header)
+{
+    auto strippedHeader = stripLeadingAndTrailingHTTPSpaces(header);
+    if (strippedHeader.isEmpty())
+        return CrossOriginOptions::Allow;
+
+    if (equalLettersIgnoringASCIICase(strippedHeader, "deny"))
+        return CrossOriginOptions::Deny;
+
+    if (equalLettersIgnoringASCIICase(strippedHeader, "allow-postmessage"))
+        return CrossOriginOptions::AllowPostMessage;
+
+    return CrossOriginOptions::Allow;
+}
+
 }

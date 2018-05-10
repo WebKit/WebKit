@@ -37,22 +37,19 @@ bool JSRemoteDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* state, P
         return getOwnPropertySlotByIndex(object, state, index.value(), slot);
 
     auto* thisObject = jsCast<JSRemoteDOMWindow*>(object);
-    auto* frame = thisObject->wrapped().frame();
-
-    return jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Remote>(thisObject, frame, state, propertyName, slot, String());
+    return jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Remote>(thisObject, thisObject->wrapped(), *state, propertyName, slot, String());
 }
 
 bool JSRemoteDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, unsigned index, PropertySlot& slot)
 {
     auto* thisObject = jsCast<JSRemoteDOMWindow*>(object);
-    auto* frame = thisObject->wrapped().frame();
 
     // Indexed getters take precendence over regular properties, so caching would be invalid.
     slot.disableCaching();
 
     // FIXME: Add support for indexed properties.
 
-    return jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Remote>(thisObject, frame, state, Identifier::from(state, index), slot, String());
+    return jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Remote>(thisObject, thisObject->wrapped(), *state, Identifier::from(state, index), slot, String());
 }
 
 bool JSRemoteDOMWindow::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
@@ -100,12 +97,14 @@ bool JSRemoteDOMWindow::deletePropertyByIndex(JSCell*, ExecState* state, unsigne
     return false;
 }
 
-void JSRemoteDOMWindow::getOwnPropertyNames(JSObject*, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSRemoteDOMWindow::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    auto* thisObject = jsCast<JSRemoteDOMWindow*>(object);
+
     // FIXME: Add scoped children indexes.
 
     if (mode.includeDontEnumProperties())
-        addCrossOriginWindowOwnPropertyNames(*exec, propertyNames);
+        addCrossOriginWindowOwnPropertyNames(*exec, thisObject->wrapped(), propertyNames);
 }
 
 bool JSRemoteDOMWindow::defineOwnProperty(JSC::JSObject*, JSC::ExecState* state, JSC::PropertyName, const JSC::PropertyDescriptor&, bool)

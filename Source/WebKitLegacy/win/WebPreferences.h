@@ -276,6 +276,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE menuItemElementEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setMenuItemElementEnabled(BOOL);
 
+    // IWebPreferencesPrivate7
+    virtual HRESULT STDMETHODCALLTYPE crossOriginOptionsSupportEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setCrossOriginOptionsSupportEnabled(BOOL);
+
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.
