@@ -180,7 +180,10 @@ void PlaybackPipeline::attachTrack(RefPtr<SourceBufferPrivateGStreamer> sourceBu
 
     GUniquePtr<gchar> parserBinName(g_strdup_printf("streamparser%u", padId));
 
-    if (!g_strcmp0(mediaType, "video/x-h264")) {
+    if (areEncryptedCaps(caps)) {
+        GST_DEBUG("It's encrypted content, parsers are not needed before decrypting the content");
+        stream->parser = nullptr;
+    } else if (!g_strcmp0(mediaType, "video/x-h264")) {
         GRefPtr<GstCaps> filterCaps = adoptGRef(gst_caps_new_simple("video/x-h264", "alignment", G_TYPE_STRING, "au", nullptr));
         GstElement* capsfilter = gst_element_factory_make("capsfilter", nullptr);
         g_object_set(capsfilter, "caps", filterCaps.get(), nullptr);

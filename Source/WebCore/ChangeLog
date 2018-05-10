@@ -1,3 +1,53 @@
+2018-05-10  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
+        [EME][GStreamer] Move the decryptor from AppendPipeline to PlaybackPipeline.
+        https://bugs.webkit.org/show_bug.cgi?id=181855
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The goal of this move is to handle the limitation of SVP (Secure Video Path) memory size.
+
+        When the decryptor is in the AppendPipeline and we use SVP, we buffer in MediaSource queue
+        the decrypted GstBuffers that are in SVP memory.
+        This behavior cause an out-of-memory error, because we are limited in SVP memory size.
+
+        By moving the decryptor in PlaybackPipeline, we avoid to buffer the decrypted GstBuffers
+        which use the SVP memory and we buffer the encrypted GstBuffers that are in system memory.
+
+        This new architecture also allows to start the buffering before obtaining the DRM license
+        and it makes easier to manage dynamic change of the license or Key.
+
+        The decryptor is auto plugged by GStreamer playbin in PlaybackPipeline.
+
+        SVP: Secure Video Path also named trusted or protected video path, it is a memory which is
+        protected by a hardware access control engine, it is not accessible to other unauthorised
+        software or hardware components.
+
+        Tests:
+            media/encrypted-media/clearKey/clearKey-cenc-audio-playback-mse.html
+            media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse.html
+
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (webkitMediaCommonEncryptionDecryptSinkEventHandler):
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::dumpAppendState):
+        (WebCore::AppendPipeline::AppendPipeline):
+        (WebCore::AppendPipeline::handleNeedContextSyncMessage):
+        (WebCore::AppendPipeline::handleAppsrcNeedDataReceived):
+        (WebCore::AppendPipeline::setAppendState):
+        (WebCore::AppendPipeline::parseDemuxerSrcPadCaps):
+        (WebCore::AppendPipeline::appsinkNewSample):
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsinkFromAnyThread):
+        (WebCore::AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread):
+        (WebCore::appendPipelineElementMessageCallback): Deleted.
+        (WebCore::AppendPipeline::handleElementMessage): Deleted.
+        (WebCore::AppendPipeline::dispatchPendingDecryptionStructure): Deleted.
+        (WebCore::AppendPipeline::dispatchDecryptionStructure): Deleted.
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::attemptToDecryptWithInstance):
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp:
+
 2018-05-09  Nan Wang  <n_wang@apple.com>
 
         AX: VoiceOver iframe scrolling focus jumping bug
