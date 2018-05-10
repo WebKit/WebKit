@@ -54,31 +54,25 @@ InPlaceAbstractState::~InPlaceAbstractState() { }
 
 void InPlaceAbstractState::beginBasicBlock(BasicBlock* basicBlock)
 {
-    // This function is ~1.6-2% of execution time.
-    
     ASSERT(!m_block);
     
     ASSERT(basicBlock->variablesAtHead.numberOfLocals() == basicBlock->valuesAtHead.numberOfLocals());
     ASSERT(basicBlock->variablesAtTail.numberOfLocals() == basicBlock->valuesAtTail.numberOfLocals());
     ASSERT(basicBlock->variablesAtHead.numberOfLocals() == basicBlock->variablesAtTail.numberOfLocals());
 
-    m_abstractValues.resize(); // This part is ~0.1-0.4% of execution time.
+    m_abstractValues.resize();
 
     AbstractValueClobberEpoch epoch = AbstractValueClobberEpoch::first(basicBlock->cfaStructureClobberStateAtHead);
+    m_epochAtHead = epoch;
     m_effectEpoch = epoch;
 
-    // This loop is 0.9-1.2% of execution time.
-    // FIXME: Lazily populate m_variables when GetLocal/SetLocal happens. Apply the same idea to
-    // merging. Alternatively, we could just use liveness here.
-    // https://bugs.webkit.org/show_bug.cgi?id=185452
-    for (size_t i = m_variables.size(); i--;) {
-        AbstractValue& value = m_variables[i];
-        value = basicBlock->valuesAtHead[i];
-        value.m_effectEpoch = epoch;
-    }
+    m_block = basicBlock;
+
+    m_activeVariables.clearRange(0, std::min(m_variables.size(), m_activeVariables.size()));
+    if (m_variables.size() > m_activeVariables.size())
+        m_activeVariables.resize(m_variables.size());
     
     if (m_graph.m_form == SSA) {
-        // This loop is 0.05-0.17% of execution time.
         for (NodeAbstractValuePair& entry : basicBlock->ssa->valuesAtHead) {
             if (entry.node.isStillValid()) {
                 AbstractValue& value = m_abstractValues.at(entry.node);
@@ -89,7 +83,6 @@ void InPlaceAbstractState::beginBasicBlock(BasicBlock* basicBlock)
     }
     basicBlock->cfaShouldRevisit = false;
     basicBlock->cfaHasVisited = true;
-    m_block = basicBlock;
     m_isValid = true;
     m_foundConstants = false;
     m_branchDirection = InvalidBranchDirection;
@@ -102,6 +95,18 @@ static void setLiveValues(Vector<NodeAbstractValuePair>& values, const Vector<No
     values.reserveCapacity(live.size());
     for (NodeFlowProjection node : live)
         values.uncheckedAppend(NodeAbstractValuePair { node, AbstractValue() });
+}
+
+Operands<AbstractValue>& InPlaceAbstractState::variablesForDebugging()
+{
+    activateAllVariables();
+    return m_variables;
+}
+
+void InPlaceAbstractState::activateAllVariables()
+{
+    for (size_t i = m_variables.size(); i--;)
+        activateVariableIfNecessary(i);
 }
 
 void InPlaceAbstractState::initialize()
@@ -206,25 +211,67 @@ bool InPlaceAbstractState::endBasicBlock()
         return false;
     }
 
-    block->cfaStructureClobberStateAtTail = m_structureClobberState;
+    AbstractValueClobberEpoch epochAtHead = m_epochAtHead;
+    AbstractValueClobberEpoch currentEpoch = m_effectEpoch;
 
+    block->cfaStructureClobberStateAtTail = m_structureClobberState;
+    
     switch (m_graph.m_form) {
     case ThreadedCPS: {
-        for (size_t argument = 0; argument < block->variablesAtTail.numberOfArguments(); ++argument) {
-            AbstractValue& destination = block->valuesAtTail.argument(argument);
-            mergeStateAtTail(destination, this->argument(argument), block->variablesAtTail.argument(argument));
-        }
-
-        for (size_t local = 0; local < block->variablesAtTail.numberOfLocals(); ++local) {
-            AbstractValue& destination = block->valuesAtTail.local(local);
-            mergeStateAtTail(destination, this->local(local), block->variablesAtTail.local(local));
+        ASSERT(block->variablesAtTail.size() == block->valuesAtTail.size());
+        ASSERT(block->variablesAtTail.size() == m_variables.size());
+        for (size_t index = m_variables.size(); index--;) {
+            Node* node = block->variablesAtTail[index];
+            if (!node)
+                continue;
+            AbstractValue& destination = block->valuesAtTail[index];
+            
+            if (!m_activeVariables[index]) {
+                destination = block->valuesAtHead[index];
+                destination.fastForwardFromTo(epochAtHead, currentEpoch);
+                continue;
+            }
+            
+            switch (node->op()) {
+            case Phi:
+            case SetArgument:
+            case PhantomLocal:
+            case Flush:
+                // The block transfers the value from head to tail.
+                destination = variableAt(index);
+                break;
+                
+            case GetLocal:
+                // The block refines the value with additional speculations.
+                destination = forNode(node);
+                break;
+                
+            case SetLocal:
+                // The block sets the variable, and potentially refines it, both
+                // before and after setting it.
+                destination = forNode(node->child1());
+                break;
+                
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
         }
         break;
     }
 
     case SSA: {
-        for (size_t i = 0; i < block->valuesAtTail.size(); ++i)
+        for (size_t i = 0; i < block->valuesAtTail.size(); ++i) {
+            AbstractValue& destination = block->valuesAtTail[i];
+
+            if (!m_activeVariables[i]) {
+                destination = block->valuesAtHead[i];
+                destination.fastForwardFromTo(epochAtHead, currentEpoch);
+                continue;
+            }
+            
             block->valuesAtTail[i] = variableAt(i);
+        }
 
         for (NodeAbstractValuePair& valueAtTail : block->ssa->valuesAtTail)
             valueAtTail.value = forNode(valueAtTail.node);
@@ -248,40 +295,12 @@ void InPlaceAbstractState::reset()
     m_structureClobberState = StructuresAreWatched;
 }
 
-void InPlaceAbstractState::mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, Node* node)
+void InPlaceAbstractState::activateVariable(size_t variableIndex)
 {
-    if (!node)
-        return;
-
-    const AbstractValue* source = nullptr;
-    
-    switch (node->op()) {
-    case Phi:
-    case SetArgument:
-    case PhantomLocal:
-    case Flush:
-        // The block transfers the value from head to tail.
-        source = &inVariable;
-        break;
-            
-    case GetLocal:
-        // The block refines the value with additional speculations.
-        source = &forNode(node);
-        break;
-            
-    case SetLocal:
-        // The block sets the variable, and potentially refines it, both
-        // before and after setting it.
-        source = &forNode(node->child1());
-        if (node->variableAccessData()->flushFormat() == FlushedDouble)
-            RELEASE_ASSERT(!(source->m_type & ~SpecFullDouble));
-        break;
-        
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
-    }
-    destination = *source;
+    AbstractValue& value = m_variables[variableIndex];
+    value = m_block->valuesAtHead[variableIndex];
+    value.m_effectEpoch = m_epochAtHead;
+    m_activeVariables[variableIndex] = true;
 }
 
 bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)

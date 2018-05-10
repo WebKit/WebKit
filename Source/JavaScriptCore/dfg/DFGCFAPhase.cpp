@@ -203,7 +203,7 @@ private:
     {
         ++m_count;
         if (m_verbose)
-            dataLogF("CFA [%u]\n", ++m_count);
+            dataLogF("CFA [%u]\n", m_count);
         
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
             performBlockCFA(m_graph.block(blockIndex));

@@ -156,15 +156,33 @@ public:
         makeHeapTopForNode(edge.node());
     }
     
-    Operands<AbstractValue>& variablesForDebugging() { return m_variables; }
+    Operands<AbstractValue>& variablesForDebugging();
 
     unsigned numberOfArguments() const { return m_variables.numberOfArguments(); }
     unsigned numberOfLocals() const { return m_variables.numberOfLocals(); }
-    AbstractValue& operand(int operand) { return fastForward(m_variables.operand(operand)); }
-    AbstractValue& operand(VirtualRegister operand) { return fastForward(m_variables.operand(operand)); }
-    AbstractValue& local(size_t index) { return fastForward(m_variables.local(index)); }
-    AbstractValue& argument(size_t index) { return fastForward(m_variables.argument(index)); }
-    AbstractValue& variableAt(size_t index) { return fastForward(m_variables[index]); }
+    
+    AbstractValue& variableAt(size_t index)
+    {
+        activateVariableIfNecessary(index);
+        return fastForward(m_variables[index]);
+    }
+
+    AbstractValue& operand(int operand)
+    {
+        return variableAt(m_variables.operandIndex(operand));
+    }
+    
+    AbstractValue& operand(VirtualRegister operand) { return this->operand(operand.offset()); }
+    
+    AbstractValue& local(size_t index)
+    {
+        return variableAt(m_variables.localIndex(index));
+    }
+    
+    AbstractValue& argument(size_t index)
+    {
+        return variableAt(m_variables.argumentIndex(index));
+    }
     
     // Call this before beginning CFA to initialize the abstract values of
     // arguments, and to indicate which blocks should be listed for CFA
@@ -247,14 +265,22 @@ public:
     }
 
 private:
-    void mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, Node*);
-
+    ALWAYS_INLINE void activateVariableIfNecessary(size_t variableIndex)
+    {
+        if (!m_activeVariables[variableIndex])
+            activateVariable(variableIndex);
+    }
+    
+    void activateVariable(size_t variableIndex);
+    void activateAllVariables();
+    
     static bool mergeVariableBetweenBlocks(AbstractValue& destination, AbstractValue& source, Node* destinationNode, Node* sourceNode);
     
     Graph& m_graph;
 
     FlowMap<AbstractValue>& m_abstractValues;
     Operands<AbstractValue> m_variables;
+    FastBitVector m_activeVariables;
     BasicBlock* m_block;
     
     bool m_foundConstants;
@@ -262,6 +288,7 @@ private:
     bool m_isValid;
     AbstractInterpreterClobberState m_clobberState;
     StructureClobberState m_structureClobberState;
+    AbstractValueClobberEpoch m_epochAtHead;
     AbstractValueClobberEpoch m_effectEpoch;
     
     BranchDirection m_branchDirection; // This is only set for blocks that end in Branch and that execute to completion (i.e. m_isValid == true).

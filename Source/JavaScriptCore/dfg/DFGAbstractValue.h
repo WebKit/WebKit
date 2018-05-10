@@ -104,6 +104,22 @@ struct AbstractValue {
         checkConsistency();
     }
     
+    ALWAYS_INLINE void fastForwardFromTo(AbstractValueClobberEpoch oldEpoch, AbstractValueClobberEpoch newEpoch)
+    {
+        if (newEpoch == oldEpoch)
+            return;
+        
+        if (!(m_type & SpecCell))
+            return;
+
+        if (newEpoch.clobberEpoch() != oldEpoch.clobberEpoch())
+            clobberStructures();
+        if (newEpoch.structureClobberState() == StructuresAreWatched)
+            m_structure.observeInvalidationPoint();
+
+        checkConsistency();
+    }
+    
     ALWAYS_INLINE void fastForwardTo(AbstractValueClobberEpoch newEpoch)
     {
         if (newEpoch == m_effectEpoch)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013, 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,19 +71,28 @@ public:
     size_t numberOfArguments() const { return m_numArguments; }
     size_t numberOfLocals() const { return m_values.size() - m_numArguments; }
     
-    T& argument(size_t idx)
+    size_t argumentIndex(size_t idx) const
     {
         ASSERT(idx < m_numArguments);
-        return m_values[idx];
+        return idx;
+    }
+    
+    size_t localIndex(size_t idx) const
+    {
+        return m_numArguments + idx;
+    }
+    
+    T& argument(size_t idx)
+    {
+        return m_values[argumentIndex(idx)];
     }
     const T& argument(size_t idx) const
     {
-        ASSERT(idx < m_numArguments);
-        return m_values[idx];
+        return m_values[argumentIndex(idx)];
     }
     
-    T& local(size_t idx) { return m_values[m_numArguments + idx]; }
-    const T& local(size_t idx) const { return m_values[m_numArguments + idx]; }
+    T& local(size_t idx) { return m_values[localIndex(idx)]; }
+    const T& local(size_t idx) const { return m_values[localIndex(idx)]; }
     
     template<OperandKind operandKind>
     size_t sizeFor() const
@@ -154,6 +163,18 @@ public:
     {
         ASSERT(idx >= numberOfLocals() || local(idx) == T());
         setLocal(idx, value);
+    }
+    
+    size_t operandIndex(int operand) const
+    {
+        if (operandIsArgument(operand))
+            return argumentIndex(VirtualRegister(operand).toArgument());
+        return localIndex(VirtualRegister(operand).toLocal());
+    }
+    
+    size_t operandIndex(VirtualRegister virtualRegister) const
+    {
+        return operandIndex(virtualRegister.offset());
     }
     
     T& operand(int operand)

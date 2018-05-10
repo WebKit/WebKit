@@ -1,3 +1,50 @@
+2018-05-09  Filip Pizlo  <fpizlo@apple.com>
+
+        InPlaceAbstractState::beginBasicBlock shouldn't copy all m_variables every time
+        https://bugs.webkit.org/show_bug.cgi?id=185452
+
+        Reviewed by Michael Saboff.
+        
+        We were spending a lot of time in beginBasicBlock() just copying the state of all variables
+        from the block head to InPlaceAbstractState::m_variables. It is necessary for
+        InPlaceAbstractState to have its own copy since we need to mutate it separately from
+        block->valuesAtHead. But most variables are untouched by most basic blocks, so this was a lot
+        of superfluous work.
+        
+        This change adds a bitvector called m_activeVariables that tracks which variables have been
+        copied. We lazily copy the variables on first use. Variables that were never copied also have
+        a simplified merging path, which just needs to consider if the variable got clobbered between
+        head and tail.
+        
+        This is a 1.5% speed-up on SunSpider-CompileTime and a 1.7% speed-up on V8Spider-CompileTime.
+
+        * bytecode/Operands.h:
+        (JSC::Operands::argumentIndex const):
+        (JSC::Operands::localIndex const):
+        (JSC::Operands::argument):
+        (JSC::Operands::argument const):
+        (JSC::Operands::local):
+        (JSC::Operands::local const):
+        (JSC::Operands::operandIndex const):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::fastForwardFromTo):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::performForwardCFA):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::beginBasicBlock):
+        (JSC::DFG::InPlaceAbstractState::variablesForDebugging):
+        (JSC::DFG::InPlaceAbstractState::activateAllVariables):
+        (JSC::DFG::InPlaceAbstractState::endBasicBlock):
+        (JSC::DFG::InPlaceAbstractState::activateVariable):
+        (JSC::DFG::InPlaceAbstractState::mergeStateAtTail): Deleted.
+        * dfg/DFGInPlaceAbstractState.h:
+        (JSC::DFG::InPlaceAbstractState::variableAt):
+        (JSC::DFG::InPlaceAbstractState::operand):
+        (JSC::DFG::InPlaceAbstractState::local):
+        (JSC::DFG::InPlaceAbstractState::argument):
+        (JSC::DFG::InPlaceAbstractState::activateVariableIfNecessary):
+        (JSC::DFG::InPlaceAbstractState::variablesForDebugging): Deleted.
+
 2018-05-09  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "==" operation
