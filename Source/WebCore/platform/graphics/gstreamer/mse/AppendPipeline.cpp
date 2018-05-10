@@ -76,6 +76,11 @@ static GstPadProbeReturn appendPipelineAppsrcDataLeaving(GstPad*, GstPadProbeInf
 #if !LOG_DISABLED
 static GstPadProbeReturn appendPipelinePadProbeDebugInformation(GstPad*, GstPadProbeInfo*, struct PadProbeInformation*);
 #endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+static GstPadProbeReturn appendPipelineAppsinkPadEventProbe(GstPad*, GstPadProbeInfo*, struct PadProbeInformation*);
+#endif
+
 static GstPadProbeReturn appendPipelineDemuxerBlackHolePadProbe(GstPad*, GstPadProbeInfo*, gpointer);
 static GstFlowReturn appendPipelineAppsinkNewSample(GstElement*, AppendPipeline*);
 static void appendPipelineAppsinkEOS(GstElement*, AppendPipeline*);
@@ -156,6 +161,12 @@ AppendPipeline::AppendPipeline(Ref<MediaSourceClientGStreamerMSE> mediaSourceCli
     m_appsinkDataEnteringPadProbeInformation.probeId = gst_pad_add_probe(appsinkPad.get(), GST_PAD_PROBE_TYPE_BUFFER, reinterpret_cast<GstPadProbeCallback>(appendPipelinePadProbeDebugInformation), &m_appsinkDataEnteringPadProbeInformation, nullptr);
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    m_appsinkPadEventProbeInformation.appendPipeline = this;
+    m_appsinkPadEventProbeInformation.description = "appsink event probe";
+    m_appsinkPadEventProbeInformation.probeId = gst_pad_add_probe(appsinkPad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(appendPipelineAppsinkPadEventProbe), &m_appsinkPadEventProbeInformation, nullptr);
+#endif
+
     // These signals won't be connected outside of the lifetime of "this".
     g_signal_connect(m_appsrc.get(), "need-data", G_CALLBACK(appendPipelineAppsrcNeedData), this);
     g_signal_connect(m_demux.get(), "pad-added", G_CALLBACK(appendPipelineDemuxerPadAdded), this);
@@ -224,6 +235,9 @@ AppendPipeline::~AppendPipeline()
         gst_pad_remove_probe(appsinkPad.get(), m_appsinkDataEnteringPadProbeInformation.probeId);
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+        gst_pad_remove_probe(appsinkPad.get(), m_appsinkPadEventProbeInformation.probeId);
+#endif
         m_appsink = nullptr;
     }
 
@@ -1067,6 +1081,27 @@ static GstPadProbeReturn appendPipelinePadProbeDebugInformation(GstPad*, GstPadP
     ASSERT(GST_PAD_PROBE_INFO_TYPE(info) & GST_PAD_PROBE_TYPE_BUFFER);
     GstBuffer* buffer = GST_PAD_PROBE_INFO_BUFFER(info);
     GST_TRACE("%s: buffer of size %" G_GSIZE_FORMAT " going thru", padProbeInformation->description, gst_buffer_get_size(buffer));
+    return GST_PAD_PROBE_OK;
+}
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+static GstPadProbeReturn appendPipelineAppsinkPadEventProbe(GstPad*, GstPadProbeInfo* info, struct PadProbeInformation *padProbeInformation)
+{
+    ASSERT(GST_PAD_PROBE_INFO_TYPE(info) & GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM);
+    GstEvent* event = gst_pad_probe_info_get_event(info);
+    GST_DEBUG("Handling event %s on append pipeline appsinkPad", GST_EVENT_TYPE_NAME(event));
+    WebCore::AppendPipeline* appendPipeline = padProbeInformation->appendPipeline;
+
+    switch (GST_EVENT_TYPE(event)) {
+    case GST_EVENT_PROTECTION:
+        if (appendPipeline && appendPipeline->playerPrivate())
+            appendPipeline->playerPrivate()->handleProtectionEvent(event);
+        return GST_PAD_PROBE_DROP;
+    default:
+        break;
+    }
+
     return GST_PAD_PROBE_OK;
 }
 #endif

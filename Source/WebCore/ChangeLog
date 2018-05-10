@@ -1,5 +1,30 @@
 2018-05-10  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
+        [EME][GStreamer] Add a handler for GStreamer protection event
+        https://bugs.webkit.org/show_bug.cgi?id=185245
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Qtdemux sends the protection event when encountered a new PSSH box (encrypted content).
+
+        The Decryptor is moved from AppendPipeline to PlaybackPipeline (see https://bugs.webkit.org/show_bug.cgi?id=181855),
+        thus the protection event is no longer handled because the Decryptor is not in the same pipeline as qtdemux.
+
+        AppendPipeline: httpsrc-->qtdemux-->appsink
+        PlaybackPipeline: appsrc-->parser--> decryptor-->decoder-->sink
+
+        This patch attaches a probe to the sink pad of the appsink in the appendPipeline in order to
+        catch and manage the protection event.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::AppendPipeline):
+        (WebCore::AppendPipeline::~AppendPipeline):
+        (WebCore::appendPipelineAppsinkPadEventProbe):
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+        (WebCore::AppendPipeline::playerPrivate):
+
+2018-05-10  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
         [EME][GStreamer] Move the decryptor from AppendPipeline to PlaybackPipeline.
         https://bugs.webkit.org/show_bug.cgi?id=181855
 

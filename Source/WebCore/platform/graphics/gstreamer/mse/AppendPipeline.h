@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-#if !LOG_DISABLED
+#if !LOG_DISABLED || ENABLE(ENCRYPTED_MEDIA)
 struct PadProbeInformation {
     AppendPipeline* appendPipeline;
     const char* description;
@@ -75,6 +75,7 @@ public:
     GstElement* appsink() { return m_appsink.get(); }
     GstCaps* demuxerSrcPadCaps() { return m_demuxerSrcPadCaps.get(); }
     GstCaps* appsinkCaps() { return m_appsinkCaps.get(); }
+    MediaPlayerPrivateGStreamerMSE* playerPrivate() { return m_playerPrivate; }
     RefPtr<WebCore::TrackPrivateBase> track() { return m_track; }
     WebCore::MediaSourceStreamTypeGStreamer streamType() { return m_streamType; }
 
@@ -130,6 +131,9 @@ private:
     struct PadProbeInformation m_appsinkDataEnteringPadProbeInformation;
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    struct PadProbeInformation m_appsinkPadEventProbeInformation;
+#endif
     // Keeps track of the states of append processing, to avoid performing actions inappropriate for the current state
     // (eg: processing more samples when the last one has been detected, etc.). See setAppendState() for valid
     // transitions.
