@@ -1,3 +1,15 @@
+2018-05-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assert in TreeScopeOrderedMap::remove via HTMLImageElement::removedFromAncestor
+        https://bugs.webkit.org/show_bug.cgi?id=185493
+
+        Reviewed by Brent Fulgham.
+
+        Added a regression test.
+
+        * fast/images/imagemap-in-shadow-tree-removed-expected.txt: Added.
+        * fast/images/imagemap-in-shadow-tree-removed.html: Added.
+
 2018-05-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Hidden nodes which are not directly referenced should not participate name/description from content

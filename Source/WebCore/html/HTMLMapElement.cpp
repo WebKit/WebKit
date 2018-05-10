@@ -126,7 +126,7 @@ Node::InsertedIntoAncestorResult HTMLMapElement::insertedIntoAncestor(InsertionT
 void HTMLMapElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.disconnectedFromDocument)
-        treeScope().removeImageMap(*this);
+        oldParentOfRemovedTree.treeScope().removeImageMap(*this);
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }
 

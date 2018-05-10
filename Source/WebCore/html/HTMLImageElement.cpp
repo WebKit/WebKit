@@ -342,7 +342,7 @@ void HTMLImageElement::removedFromAncestor(RemovalType removalType, ContainerNod
         m_form->removeImgElement(this);
 
     if (removalType.disconnectedFromDocument && !m_parsedUsemap.isNull())
-        treeScope().removeImageElementByUsemap(*m_parsedUsemap.impl(), *this);
+        oldParentOfRemovedTree.treeScope().removeImageElementByUsemap(*m_parsedUsemap.impl(), *this);
 
     if (is<HTMLPictureElement>(parentNode()))
         setPictureElement(nullptr);
