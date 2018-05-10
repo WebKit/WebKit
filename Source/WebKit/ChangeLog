@@ -1,3 +1,84 @@
+2018-05-10  Jason Marcell  <jmarcell@apple.com>
+
+        Apply patch. rdar://problem/39987479
+
+    Load hangs if the WebProcess fails to launch https://bugs.webkit.org/show_bug.cgi?id=185225 <rdar://problem/38249058>
+    
+    Reviewed by Geoff Garen.
+    
+    Source/WebKit:
+    
+    When a process fails to launch, ChildProcessProxy::didFinishLaunching() gets called with an
+    invalid connection identifier. While NetworkProcessProxy::didFinishLaunching() properly deals with
+    this situation, WebProcessProxy::didFinishLaunching() does not. As a result, we do not attempt to
+    relaunch the process, we do not notify the client and WebPageProxy::m_isValid stays true.
+    
+    This patch thus updates WebProcessProxy::didFinishLaunching() to check if the connection identifier
+    is valid and treats it as a crash. As a result, the WebPageProxies properly reset their state and
+    the client gets notified of the crash so that it can attempt to reload.
+    
+    * UIProcess/API/Cocoa/WKProcessPool.mm:
+    (-[WKProcessPool _makeNextWebProcessLaunchFailForTesting]):
+    * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+    * UIProcess/Launcher/ProcessLauncher.h:
+    * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+    (WebKit::ProcessLauncher::launchProcess):
+    Add SPI to make the next WebProcess launch fail, for the purpose of API testing.
+    
+    * UIProcess/WebProcessPool.h:
+    * UIProcess/WebProcessProxy.cpp:
+    (WebKit::WebProcessProxy::getLaunchOptions):
+    (WebKit::WebProcessProxy::didClose):
+    (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+    (WebKit::WebProcessProxy::didFinishLaunching):
+    * UIProcess/WebProcessProxy.h:
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKitCocoa/WebContentProcessDidTerminate.mm: Added.
+    (-[CrashOnStartNavigationDelegate _webView:webContentProcessDidTerminateWithReason:]):
+    (-[CrashOnStartNavigationDelegate webView:didFinishNavigation:]):
+    (-[CrashRecoveryScriptMessageHandler userContentController:didReceiveScriptMessage:]):
+    (TEST):
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@231321 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-05-03  Chris Dumez  <cdumez@apple.com>
+
+            Load hangs if the WebProcess fails to launch
+            https://bugs.webkit.org/show_bug.cgi?id=185225
+            <rdar://problem/38249058>
+
+            Reviewed by Geoff Garen.
+
+            When a process fails to launch, ChildProcessProxy::didFinishLaunching() gets called with an
+            invalid connection identifier. While NetworkProcessProxy::didFinishLaunching() properly deals with
+            this situation, WebProcessProxy::didFinishLaunching() does not. As a result, we do not attempt to
+            relaunch the process, we do not notify the client and WebPageProxy::m_isValid stays true.
+
+            This patch thus updates WebProcessProxy::didFinishLaunching() to check if the connection identifier
+            is valid and treats it as a crash. As a result, the WebPageProxies properly reset their state and
+            the client gets notified of the crash so that it can attempt to reload.
+
+            * UIProcess/API/Cocoa/WKProcessPool.mm:
+            (-[WKProcessPool _makeNextWebProcessLaunchFailForTesting]):
+            * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+            * UIProcess/Launcher/ProcessLauncher.h:
+            * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+            (WebKit::ProcessLauncher::launchProcess):
+            Add SPI to make the next WebProcess launch fail, for the purpose of API testing.
+
+            * UIProcess/WebProcessPool.h:
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::getLaunchOptions):
+            (WebKit::WebProcessProxy::didClose):
+            (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+            (WebKit::WebProcessProxy::didFinishLaunching):
+            * UIProcess/WebProcessProxy.h:
+
 2018-05-09  Jason Marcell  <jmarcell@apple.com>
 
         Apply patch. rdar://problem/39839226

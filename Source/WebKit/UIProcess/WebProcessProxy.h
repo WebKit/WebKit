@@ -252,6 +252,8 @@ private:
 
     void updateBackgroundResponsivenessTimer();
 
+    void processDidTerminateOrFailedToLaunch();
+
     // IPC::Connection::Client
     friend class WebConnectionToWebProcess;
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

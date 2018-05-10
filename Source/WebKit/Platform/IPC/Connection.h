@@ -101,6 +101,7 @@ public:
 #if USE(UNIX_DOMAIN_SOCKETS)
     typedef int Identifier;
     static bool identifierIsNull(Identifier identifier) { return identifier == -1; }
+    static bool identifierIsValid(Identifier identifier) { return identifier != -1; }
 
     struct SocketPair {
         int client;
@@ -135,6 +136,7 @@ public:
         OSObjectPtr<xpc_connection_t> xpcConnection;
     };
     static bool identifierIsNull(Identifier identifier) { return identifier.port == MACH_PORT_NULL; }
+    static bool identifierIsValid(Identifier identifier) { return MACH_PORT_VALID(identifier.port); }
     xpc_connection_t xpcConnection() const { return m_xpcConnection.get(); }
     bool getAuditToken(audit_token_t&);
     pid_t remoteProcessID() const;
@@ -142,6 +144,7 @@ public:
     typedef HANDLE Identifier;
     static bool createServerAndClientIdentifiers(Identifier& serverIdentifier, Identifier& clientIdentifier);
     static bool identifierIsNull(Identifier identifier) { return !identifier; }
+    static bool identifierIsValid(Identifier identifier) { return !!identifier; }
 #endif
 
     static Ref<Connection> createServerConnection(Identifier, Client&);
