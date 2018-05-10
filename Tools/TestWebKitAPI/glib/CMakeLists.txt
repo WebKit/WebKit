@@ -62,8 +62,12 @@ macro(ADD_WK2_TEST test_name)
     add_executable(${test_name} ${ARGN})
     add_dependencies(${test_name}
         test-gresource-bundle
-        WebExtensionTest
     )
+    if (PORT STREQUAL "GTK")
+        add_dependencies(${test_name}
+            WebExtensionTest
+        )
+    endif ()
     set_target_properties(${test_name} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${TEST_BINARY_DIR}
     )
@@ -112,32 +116,32 @@ add_custom_target(test-gresource-bundle
     DEPENDS ${TEST_RESOURCES_DIR}/webkitglib-tests-resources.gresource
 )
 
-ADD_WK2_TEST_WEB_EXTENSION(WebExtensionTest ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp)
-ADD_WK2_TEST_WEB_EXTENSION(WebProcessTest ${WebKitGLibAPIWebProcessTests})
-
 ADD_WK2_TEST(TestAuthentication ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp)
 ADD_WK2_TEST(TestAutomationSession ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestAutomationSession.cpp)
-ADD_WK2_TEST(TestBackForwardList ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestBackForwardList.cpp)
 ADD_WK2_TEST(TestDownloads ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestDownloads.cpp)
 ADD_WK2_TEST(TestWebKitFaviconDatabase ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitFaviconDatabase.cpp)
 ADD_WK2_TEST(TestWebKitFindController ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitFindController.cpp)
-ADD_WK2_TEST(TestFrame ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestFrame.cpp)
-ADD_WK2_TEST(TestLoaderClient ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestLoaderClient.cpp)
 ADD_WK2_TEST(TestMultiprocess ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestMultiprocess.cpp)
-ADD_WK2_TEST(TestResources ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestResources.cpp)
-ADD_WK2_TEST(TestSSL ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp)
-ADD_WK2_TEST(TestUIClient ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp)
-ADD_WK2_TEST(TestWebExtensions ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp)
 ADD_WK2_TEST(TestWebKitPolicyClient ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitPolicyClient.cpp)
 ADD_WK2_TEST(TestWebKitSecurityOrigin ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitSecurityOrigin.cpp)
 ADD_WK2_TEST(TestWebKitSettings ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp)
-ADD_WK2_TEST(TestWebKitWebContext ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp)
-ADD_WK2_TEST(TestWebKitWebView ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp)
-ADD_WK2_TEST(TestWebKitUserContentManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitUserContentManager.cpp)
-ADD_WK2_TEST(TestWebsiteData ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp)
-ADD_WK2_TEST(TestConsoleMessage ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestConsoleMessage.cpp)
 
 # FIXME: Enable for WPE
 if (PORT STREQUAL "GTK")
+    ADD_WK2_TEST(TestBackForwardList ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestBackForwardList.cpp)
+    ADD_WK2_TEST(TestConsoleMessage ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestConsoleMessage.cpp)
     ADD_WK2_TEST(TestCookieManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp)
+    ADD_WK2_TEST(TestFrame ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestFrame.cpp)
+    ADD_WK2_TEST(TestLoaderClient ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestLoaderClient.cpp)
+    ADD_WK2_TEST(TestResources ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestResources.cpp)
+    ADD_WK2_TEST(TestSSL ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp)
+    ADD_WK2_TEST(TestUIClient ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp)
+    ADD_WK2_TEST(TestWebExtensions ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp)
+    ADD_WK2_TEST(TestWebKitUserContentManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitUserContentManager.cpp)
+    ADD_WK2_TEST(TestWebKitWebContext ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp)
+    ADD_WK2_TEST(TestWebKitWebView ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp)
+    ADD_WK2_TEST(TestWebsiteData ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp)
+
+    ADD_WK2_TEST_WEB_EXTENSION(WebExtensionTest ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp)
+    ADD_WK2_TEST_WEB_EXTENSION(WebProcessTest ${WebKitGLibAPIWebProcessTests})
 endif ()

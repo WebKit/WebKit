@@ -24,10 +24,8 @@
 #ifndef WebKitFrame_h
 #define WebKitFrame_h
 
-#include <JavaScriptCore/JSBase.h>
 #include <glib-object.h>
 #include <wpe/WebKitDefines.h>
-#include <wpe/WebKitScriptWorld.h>
 
 G_BEGIN_DECLS
 
@@ -60,13 +58,6 @@ webkit_frame_is_main_frame                           (WebKitFrame       *frame);
 
 WEBKIT_API const gchar *
 webkit_frame_get_uri                                 (WebKitFrame       *frame);
-
-WEBKIT_API JSGlobalContextRef
-webkit_frame_get_javascript_global_context           (WebKitFrame       *frame);
-
-WEBKIT_API JSGlobalContextRef
-webkit_frame_get_javascript_context_for_script_world (WebKitFrame       *frame,
-                                                      WebKitScriptWorld *world);
 
 G_END_DECLS
 

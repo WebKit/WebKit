@@ -37,8 +37,10 @@ WebViewTest::WebViewTest()
 WebViewTest::~WebViewTest()
 {
     platformDestroy();
+#if PLATFORM(GTK)
     if (m_javascriptResult)
         webkit_javascript_result_unref(m_javascriptResult);
+#endif
     if (m_surface)
         cairo_surface_destroy(m_surface);
     g_object_unref(m_webView);
@@ -259,6 +261,7 @@ const char* WebViewTest::mainResourceData(size_t& mainResourceDataSize)
     return m_resourceData.get();
 }
 
+#if PLATFORM(GTK)
 static void runJavaScriptReadyCallback(GObject*, GAsyncResult* result, WebViewTest* test)
 {
     test->m_javascriptResult = webkit_web_view_run_javascript_finish(test->m_webView, result, test->m_javascriptError);
@@ -358,7 +361,6 @@ bool WebViewTest::javascriptResultIsUndefined(WebKitJavascriptResult* javascript
     return JSValueIsUndefined(context, value);
 }
 
-#if PLATFORM(GTK)
 static void onSnapshotReady(WebKitWebView* web_view, GAsyncResult* res, WebViewTest* test)
 {
     GUniqueOutPtr<GError> error;
@@ -378,7 +380,6 @@ cairo_surface_t* WebViewTest::getSnapshotAndWaitUntilReady(WebKitSnapshotRegion 
     g_main_loop_run(m_mainLoop);
     return m_surface;
 }
-#endif
 
 bool WebViewTest::runWebProcessTest(const char* suiteName, const char* testName, const char* contents, const char* contentType)
 {
@@ -399,3 +400,4 @@ bool WebViewTest::runWebProcessTest(const char* suiteName, const char* testName,
     waitUntilLoadFinished();
     return javascriptResultToBoolean(javascriptResult);
 }
+#endif

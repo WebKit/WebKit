@@ -71,13 +71,6 @@ webkit_user_content_manager_add_style_sheet                   (WebKitUserContent
 WEBKIT_API void
 webkit_user_content_manager_remove_all_style_sheets           (WebKitUserContentManager *manager);
 
-WEBKIT_API gboolean
-webkit_user_content_manager_register_script_message_handler   (WebKitUserContentManager *manager,
-                                                               const gchar              *name);
-WEBKIT_API void
-webkit_user_content_manager_unregister_script_message_handler (WebKitUserContentManager *manager,
-                                                               const gchar              *name);
-
 WEBKIT_API void
 webkit_user_content_manager_add_script              (WebKitUserContentManager *manager,
                                                      WebKitUserScript         *script);

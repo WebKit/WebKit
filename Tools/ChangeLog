@@ -1,3 +1,19 @@
+2018-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][STABLE] Remove unusable JavaScript APIs
+        https://bugs.webkit.org/show_bug.cgi?id=185518
+
+        Sort of reviewed by Carlos Alberto Lopez Perez. Not really. He didn't really approve the
+        part where I remove half the API tests. He just told me to make it build, and that I did.
+
+        The tests live on in trunk, of course.
+
+        * TestWebKitAPI/glib/CMakeLists.txt:
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+        (WebViewTest::~WebViewTest):
+        (WebViewTest::getSnapshotAndWaitUntilReady):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.h:
+
 2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for 2.19.92 release.

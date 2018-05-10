@@ -369,11 +369,6 @@ private:
         webkitWebViewHandleDownloadRequest(m_webView, &downloadProxy);
     }
 
-    JSGlobalContextRef javascriptGlobalContext() override
-    {
-        return webkit_web_view_get_javascript_global_context(m_webView);
-    }
-
     WebKitWebView* m_webView;
 };
 #endif
@@ -3254,6 +3249,7 @@ WebKitFindController* webkit_web_view_get_find_controller(WebKitWebView* webView
     return webView->priv->findController.get();
 }
 
+#if PLATFORM(GTK)
 /**
  * webkit_web_view_get_javascript_global_context:
  * @web_view: a #WebKitWebView
@@ -3474,6 +3470,7 @@ WebKitJavascriptResult* webkit_web_view_run_javascript_from_gresource_finish(Web
 
     return static_cast<WebKitJavascriptResult*>(g_task_propagate_pointer(G_TASK(result), error));
 }
+#endif
 
 /**
  * webkit_web_view_get_main_resource:

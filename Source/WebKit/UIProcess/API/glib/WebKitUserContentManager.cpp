@@ -73,10 +73,13 @@ enum {
     LAST_SIGNAL
 };
 
+#if PLATFORM(GTK)
 static guint signals[LAST_SIGNAL] = { 0, };
+#endif
 
 static void webkit_user_content_manager_class_init(WebKitUserContentManagerClass* klass)
 {
+#if PLATFORM(GTK)
     GObjectClass* gObjectClass = G_OBJECT_CLASS(klass);
 
     /**
@@ -100,6 +103,7 @@ static void webkit_user_content_manager_class_init(WebKitUserContentManagerClass
             g_cclosure_marshal_VOID__BOXED,
             G_TYPE_NONE, 1,
             WEBKIT_TYPE_JAVASCRIPT_RESULT);
+#endif
 }
 
 /**
@@ -180,6 +184,7 @@ void webkit_user_content_manager_remove_all_scripts(WebKitUserContentManager* ma
     manager->priv->userContentController->removeAllUserScripts();
 }
 
+#if PLATFORM(GTK)
 class ScriptMessageClientGtk final : public WebScriptMessageHandler::Client {
 public:
     ScriptMessageClientGtk(WebKitUserContentManager* manager, const char* handlerName)
@@ -263,6 +268,7 @@ void webkit_user_content_manager_unregister_script_message_handler(WebKitUserCon
     g_return_if_fail(name);
     manager->priv->userContentController->removeUserMessageHandlerForName(String::fromUTF8(name), API::UserContentWorld::normalWorld());
 }
+#endif
 
 WebUserContentControllerProxy* webkitUserContentManagerGetUserContentControllerProxy(WebKitUserContentManager* manager)
 {

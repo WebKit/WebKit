@@ -109,7 +109,6 @@ set(WPE_API_INSTALLED_HEADERS
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitGeolocationPermissionRequest.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitHitTestResult.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitInstallMissingMediaPluginsPermissionRequest.h
-    ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitJavascriptResult.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitMimeInfo.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitNavigationAction.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitNavigationPolicyDecision.h
@@ -145,7 +144,6 @@ set(WPE_WEB_EXTENSION_API_INSTALLED_HEADERS
     ${DERIVED_SOURCES_WPE_API_DIR}/WebKitWebProcessEnumTypes.h
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/WebKitConsoleMessage.h
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/WebKitFrame.h
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/WebKitScriptWorld.h
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/WebKitWebEditor.h
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/WebKitWebExtension.h
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/WebKitWebPage.h

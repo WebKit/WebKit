@@ -31,7 +31,6 @@
 #include <wpe/WebKitContextMenuActions.h>
 #include <wpe/WebKitContextMenuItem.h>
 #include <wpe/WebKitFrame.h>
-#include <wpe/WebKitScriptWorld.h>
 #include <wpe/WebKitURIRequest.h>
 #include <wpe/WebKitURIResponse.h>
 #include <wpe/WebKitWebEditor.h>

@@ -28,7 +28,6 @@
 #ifndef WebKitWebView_h
 #define WebKitWebView_h
 
-#include <JavaScriptCore/JSBase.h>
 #include <wpe/WebKitAuthenticationRequest.h>
 #include <wpe/WebKitBackForwardList.h>
 #include <wpe/WebKitContextMenu.h>
@@ -38,7 +37,6 @@
 #include <wpe/WebKitFindController.h>
 #include <wpe/WebKitFormSubmissionRequest.h>
 #include <wpe/WebKitHitTestResult.h>
-#include <wpe/WebKitJavascriptResult.h>
 #include <wpe/WebKitNavigationAction.h>
 #include <wpe/WebKitNotification.h>
 #include <wpe/WebKitPermissionRequest.h>
@@ -399,32 +397,6 @@ webkit_web_view_execute_editing_command_with_argument(WebKitWebView             
 
 WEBKIT_API WebKitFindController *
 webkit_web_view_get_find_controller                  (WebKitWebView             *web_view);
-
-WEBKIT_API JSGlobalContextRef
-webkit_web_view_get_javascript_global_context        (WebKitWebView             *web_view);
-
-WEBKIT_API void
-webkit_web_view_run_javascript                       (WebKitWebView             *web_view,
-                                                      const gchar               *script,
-                                                      GCancellable              *cancellable,
-                                                      GAsyncReadyCallback        callback,
-                                                      gpointer                   user_data);
-WEBKIT_API WebKitJavascriptResult *
-webkit_web_view_run_javascript_finish                (WebKitWebView             *web_view,
-                                                      GAsyncResult              *result,
-                                                      GError                   **error);
-
-WEBKIT_API void
-webkit_web_view_run_javascript_from_gresource        (WebKitWebView             *web_view,
-                                                      const gchar               *resource,
-                                                      GCancellable              *cancellable,
-                                                      GAsyncReadyCallback        callback,
-                                                      gpointer                   user_data);
-
-WEBKIT_API WebKitJavascriptResult *
-webkit_web_view_run_javascript_from_gresource_finish (WebKitWebView             *web_view,
-                                                      GAsyncResult              *result,
-                                                      GError                   **error);
 
 WEBKIT_API WebKitWebResource *
 webkit_web_view_get_main_resource                    (WebKitWebView             *web_view);
