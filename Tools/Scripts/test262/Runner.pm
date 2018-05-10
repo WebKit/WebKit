@@ -86,9 +86,7 @@ my $runningAllTests;
 my $expectationsFile = abs_path("$Bin/../../../JSTests/test262/expectations.yaml");
 my $configFile = abs_path("$Bin/../../../JSTests/test262/config.yaml");
 
-my $resultsDir = `pwd`;
-chomp $resultsDir;
-$resultsDir = $resultsDir . "/test262-results";
+my $resultsDir = $ENV{PWD} . "/test262-results";
 mkpath($resultsDir);
 
 my $resultsFile = abs_path("$resultsDir/results.yaml");
@@ -114,6 +112,7 @@ sub processCLI {
     my @features;
     my $stats;
     my $specifiedResultsFile;
+    my $specifiedExpectationsFile;
 
     # If adding a new commandline argument, you must update the POD
     # documentation at the end of the file.
@@ -129,8 +128,9 @@ sub processCLI {
         'c|config=s' => \$configFile,
         'i|ignore-config' => \$ignoreConfig,
         's|save' => \$saveExpectations,
+        'e|expectations=s' => \$specifiedExpectationsFile,
         'x|ignore-expectations' => \$ignoreExpectations,
-        'failing-files' => \$failingOnly,
+        'f|failing-files' => \$failingOnly,
         'l|latest-import' => \$latestImport,
         'stats' => \$stats,
         'r|results=s' => \$specifiedResultsFile,
@@ -146,7 +146,7 @@ sub processCLI {
     }
 
     if ($specifiedResultsFile) {
-        if (!$stats) {
+        if (!$stats && !$failingOnly) {
             print "Waring: supplied results file not used for this command.\n";
         }
         elsif (-e $specifiedResultsFile) {
@@ -159,7 +159,8 @@ sub processCLI {
 
     if ($stats) {
         if (! -e $resultsFile) {
-            die "Error: cannot find results file, please specify with --results.";
+            die "Error: cannot find results file to summarize," .
+                "please specify with --results.";
         }
         summarizeResults();
         exit;
@@ -192,8 +193,9 @@ sub processCLI {
     $harnessDir = "$test262Dir/harness";
 
     if (! $ignoreConfig) {
-        if ($configFile and not -e $configFile) {
-            die "Config file $configFile does not exist!";
+        if ($configFile && ! -e $configFile) {
+            die "Error: Config file $configFile does not exist!\n" .
+                "Run without config file with -i or supply with --config.\n"
         }
         $config = LoadFile($configFile) or die $!;
         if ($config->{skip} && $config->{skip}->{files}) {
@@ -201,15 +203,21 @@ sub processCLI {
         }
     }
 
-    if (! $ignoreExpectations) {
-        # If expectations file doesn't exist yet, just run tests, UNLESS
-        # --failures-only option supplied.
-        if ( $failingOnly && ! -e $expectationsFile ) {
-            print "Error: Cannot run failing tests if expectation.yaml file does not exist.\n";
-            die;
-        } elsif (-e $expectationsFile) {
-            $expect = LoadFile($expectationsFile) or die $!;
+    if ( $failingOnly && ! -e $resultsFile ) {
+        die "Error: cannot find results file to run failing tests," .
+            " please specify with --results.";
+    }
+
+    if (! $ignoreExpectations && $specifiedExpectationsFile) {
+        $expectationsFile = abs_path($specifiedExpectationsFile);
+        if (! -e $expectationsFile) {
+            die "Error: Supplied expectations file $expectationsFile does not exist!";
         }
+    }
+
+    # If the expectation file doesn't exist and is not specified, run all tests.
+    if (! $ignoreExpectations && -e $expectationsFile) {
+        $expect = LoadFile($expectationsFile) or die $!;
     }
 
     if (@features) {
@@ -228,6 +236,7 @@ sub processCLI {
     print "Paths:  " . join(', ', @cliTestDirs) . "\n" if @cliTestDirs;
     print "Config file: $configFile\n" if $config;
     print "Expectations file: $expectationsFile\n" if $expect;
+    print "Results file: $resultsFile\n" if $stats || $failingOnly;
 
     print "Running only the latest imported files\n" if $latestImport;
 
@@ -253,8 +262,8 @@ sub main {
     if ($latestImport) {
         @files = loadImportFile();
     } elsif ($failingOnly) {
-        # If we only want to re-run failure, only run tests in expectation file
-        @files = map { qq($test262Dir/$_) } keys %{$expect};
+        # If we only want to re-run failure, only run tests in results file
+        findAllFailing();
     } else {
         $runningAllTests = 1;
         # Otherwise, get all files from directory
@@ -397,7 +406,7 @@ sub main {
 
 sub loadImportFile {
     my $importFile = abs_path("$Bin/../../../JSTests/test262/latest-changes-summary.txt");
-    die "Import file not found at $importFile.\n" if ! -e $importFile;
+    die "Error: Import file not found at $importFile.\n" if ! -e $importFile;
 
     open(my $fh, "<", $importFile) or die $!;
 
@@ -824,6 +833,20 @@ sub summarizeResults {
     print "See summarized results in $summaryTxtFile\n";
 }
 
+sub findAllFailing {
+    my @allresults = LoadFile($resultsFile) or die $!;
+     @allresults = @{$allresults[0]};
+
+    my %filedictionary;
+    foreach my $test (@allresults) {
+        if ($test->{result} eq 'FAIL') {
+            $filedictionary{$test->{path}} = 1;
+        }
+    }
+
+    @files = map { qq($test262Dir/$_) } keys %filedictionary;
+}
+
 __END__
 
 =head1 DESCRIPTION
@@ -878,7 +901,7 @@ Verbose output for test results. Includes error message for test.
 
 =item B<--config, -c>
 
-Specify a config file. If not provided, script will load local test262-config.yaml
+Specify a config file. If not provided, script will load local JSTests/test262/config.yaml
 
 =item B<--ignore-config, -i>
 
@@ -896,13 +919,17 @@ Specify one or more specific test262 directory of test to run, relative to the r
 
 Overwrites the test262-expectations.yaml file with the current list of test262 files and test results.
 
+=item B<--expectations, -e>
+
+Specify a expectations file.  If not provided, script will load local JSTests/test262/expectations.yaml
+
 =item B<--ignore-expectations, -x>
 
 Ignores the test262-expectations.yaml file and outputs all failures, instead of only unexpected failures.
 
-=item B<--failing-files>
+=item B<--failing-files, -f>
 
-Runs all test files that expect to fail according to the expectation file. This option will run the rests in both strict and non-strict modes, even if the test only fails in one of the two modes.
+Runs all test files that failed in a given results file (specifc with --results). This option will run the rests in both strict and non-strict modes, even if the test only fails in one of the two modes.
 
 =item B<--latest-import, -l>
 
@@ -914,7 +941,7 @@ Calculate conformance statistics from results/results.yaml file or a supplied re
 
 =item B<--results, -r>
 
-Specifies a results file the --stats option.
+Specifies a results file for the --stats or --failing-files options.
 
 =back
 

@@ -1,3 +1,22 @@
+2018-05-10  Valerie R Young  <valerie@bocoup.com>
+
+        test262/Runner.pm: --failing-files uses results file not expectations
+        https://bugs.webkit.org/show_bug.cgi?id=185395
+
+        Reviewed by Michael Saboff.
+
+        --failing-files arg now uses results file to find failing tests
+        to rerun. It will look in the test262-results directory from whereever
+        the script is run, or a results.yaml file can be supplied via command
+        line argument.
+        --expectations arg added for suppling expectation file.
+
+        * Scripts/test262/Runner.pm:
+        (processCLI):
+        (main):
+        (loadImportFile):
+        (findAllFailing):
+
 2018-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add support for settings cookies policy and storage type in MiniBrowser
