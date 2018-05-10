@@ -30,7 +30,7 @@
 #include <WebCore/BString.h>
 #include <wtf/RetainPtr.h>
 
-class WebPreferences : public IWebPreferences, public IWebPreferencesPrivate6 {
+class WebPreferences : public IWebPreferences, public IWebPreferencesPrivate7 {
 public:
     static WebPreferences* createInstance();
 protected:
