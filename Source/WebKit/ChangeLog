@@ -1,3 +1,26 @@
+2018-05-10  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r230323): UIProcess needs to notify WebContent process of Accessibility setting changes
+        https://bugs.webkit.org/show_bug.cgi?id=185515
+        <rdar://problem/39627764>
+
+        Reviewed by Chris Fleizach.
+
+        The UIProcess needs to register for relevant Accessibility preference updates so that it can notify the
+        WebContent processes that screen properties have changed.
+
+        This is represented by NSWorkspaceAccessibilityDisplayOptionsDidChangeNotification.
+
+        Tested manually with the Accessibility preferences pane.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::registerNotificationObservers): Add notification observer. When the notification
+        is received, call 'screenPropertiesStateChanged' to message the information to the WebContent processes.
+        (WebKit::WebProcessPool::unregisterNotificationObservers): Clean up observer.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::screenPropertiesStateChanged): Added helper function.
+        * UIProcess/WebProcessPool.h:
+
 2018-05-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: implement advance user interactions
