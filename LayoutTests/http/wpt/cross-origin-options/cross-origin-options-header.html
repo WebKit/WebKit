@@ -48,6 +48,32 @@ promise_test(function(test) {
 }, "Cross-origin iframe with 'Cross-Origin-Options: allow-postmessage' HTTP header");
 
 promise_test(function(test) {
+    return withIframe("serve-cross-origin-options-header.py?value=alLoW-postMessAgE", true /* isCrossOrigin */).then((f) => {
+        testCrossOriginOption(f.contentWindow, "allow-postmessage", true /* isCrossOrigin */);
+    });
+}, "Cross-origin iframe with 'Cross-Origin-Options: alLoW-postMessAgE' HTTP header (mixed case)");
+
+promise_test(function(test) {
+    return withIframe("serve-cross-origin-options-header.py?value=deny,allow", true /* isCrossOrigin */).then((f) => {
+        const w = f.contentWindow;
+        // Invalid input: should be treated as "allow".
+        testCrossOriginOption(w, "allow", true /* isCrossOrigin */);
+
+        checkIframePropertyValues(w);
+    });
+}, "Cross-origin iframe with 'Cross-Origin-Options: deny,allow' HTTP header (multiple values is invalid)");
+
+promise_test(function(test) {
+    return withIframe("serve-cross-origin-options-header.py?value=", true /* isCrossOrigin */).then((f) => {
+        const w = f.contentWindow;
+        // Empty value: should be treated as "allow".
+        testCrossOriginOption(w, "allow", true /* isCrossOrigin */);
+
+        checkIframePropertyValues(w);
+    });
+}, "Cross-origin iframe with 'Cross-Origin-Options:' HTTP header (empty value)");
+
+promise_test(function(test) {
     return withIframe("serve-cross-origin-options-header.py?value=allow", true /* isCrossOrigin */).then((f) => {
         const w = f.contentWindow;
         testCrossOriginOption(w, "allow", true /* isCrossOrigin */);

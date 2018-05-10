@@ -1,3 +1,36 @@
+2018-05-10  Chris Dumez  <cdumez@apple.com>
+
+        'Cross-Origin-Options header implementation follow-up
+        https://bugs.webkit.org/show_bug.cgi?id=185520
+
+        Reviewed by Ryosuke Niwa.
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument):
+        Using isNull() check is sufficient here as the header parsing
+        function will do the right thing when passed the empty string.
+        Also set the options directly on the window instead of the
+        document. The window is guaranteed to have been constructed
+        by then because didBeginDocument() is called DocumentWriter::begin()
+        which calls Document::createDOMWindow() or Document::takeDOMWindowFrom().
+
+        * page/AbstractDOMWindow.cpp:
+        (WebCore::AbstractDOMWindow::AbstractDOMWindow):
+        * page/AbstractDOMWindow.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::DOMWindow):
+        (WebCore::DOMWindow::didSecureTransitionTo):
+        * page/RemoteDOMWindow.cpp:
+        (WebCore::RemoteDOMWindow::RemoteDOMWindow):
+        * page/RemoteDOMWindow.h:
+        CrossOriginOptions are now stored only on the Window, not the Document.
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseCrossOriginOptionsHeader):
+        Drop strippedHeader local variable as it is not strictly needed.
+
 2018-05-10  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build after r231393

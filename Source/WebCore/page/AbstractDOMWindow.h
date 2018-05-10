@@ -58,7 +58,7 @@ public:
     void setCrossOriginOptions(CrossOriginOptions value) { m_crossOriginOptions = value; }
 
 protected:
-    AbstractDOMWindow(GlobalWindowIdentifier&&, CrossOriginOptions);
+    explicit AbstractDOMWindow(GlobalWindowIdentifier&&);
 
     EventTargetInterface eventTargetInterface() const final { return DOMWindowEventTargetInterfaceType; }
     void refEventTarget() final { ref(); }

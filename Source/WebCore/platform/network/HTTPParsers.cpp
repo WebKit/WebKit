@@ -915,14 +915,14 @@ FromOriginDisposition parseFromOriginHeader(const String& header)
 
 CrossOriginOptions parseCrossOriginOptionsHeader(StringView header)
 {
-    auto strippedHeader = stripLeadingAndTrailingHTTPSpaces(header);
-    if (strippedHeader.isEmpty())
+    header = stripLeadingAndTrailingHTTPSpaces(header);
+    if (header.isEmpty())
         return CrossOriginOptions::Allow;
 
-    if (equalLettersIgnoringASCIICase(strippedHeader, "deny"))
+    if (equalLettersIgnoringASCIICase(header, "deny"))
         return CrossOriginOptions::Deny;
 
-    if (equalLettersIgnoringASCIICase(strippedHeader, "allow-postmessage"))
+    if (equalLettersIgnoringASCIICase(header, "allow-postmessage"))
         return CrossOriginOptions::AllowPostMessage;
 
     return CrossOriginOptions::Allow;

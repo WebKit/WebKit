@@ -44,9 +44,9 @@ class Location;
 
 class RemoteDOMWindow final : public AbstractDOMWindow {
 public:
-    static Ref<RemoteDOMWindow> create(Ref<RemoteFrame>&& frame, GlobalWindowIdentifier&& identifier, CrossOriginOptions crossOriginOptions)
+    static Ref<RemoteDOMWindow> create(Ref<RemoteFrame>&& frame, GlobalWindowIdentifier&& identifier)
     {
-        return adoptRef(*new RemoteDOMWindow(WTFMove(frame), WTFMove(identifier), crossOriginOptions));
+        return adoptRef(*new RemoteDOMWindow(WTFMove(frame), WTFMove(identifier)));
     }
 
     ~RemoteDOMWindow() final;
@@ -68,7 +68,7 @@ public:
     void postMessage(JSC::ExecState&, DOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&);
 
 private:
-    WEBCORE_EXPORT RemoteDOMWindow(Ref<RemoteFrame>&&, GlobalWindowIdentifier&&, CrossOriginOptions);
+    WEBCORE_EXPORT RemoteDOMWindow(Ref<RemoteFrame>&&, GlobalWindowIdentifier&&);
 
     bool isRemoteDOMWindow() const final { return true; }
     bool isLocalDOMWindow() const final { return false; }

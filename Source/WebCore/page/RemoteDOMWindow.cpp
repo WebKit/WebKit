@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-RemoteDOMWindow::RemoteDOMWindow(Ref<RemoteFrame>&& frame, GlobalWindowIdentifier&& identifier, CrossOriginOptions crossOriginOptions)
-    : AbstractDOMWindow(WTFMove(identifier), crossOriginOptions)
+RemoteDOMWindow::RemoteDOMWindow(Ref<RemoteFrame>&& frame, GlobalWindowIdentifier&& identifier)
+    : AbstractDOMWindow(WTFMove(identifier))
     , m_frame(WTFMove(frame))
 {
     m_frame->setWindow(this);

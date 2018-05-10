@@ -63,6 +63,7 @@
 #include "FrameLoaderClient.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "HTTPParsers.h"
 #include "History.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMWindowBase.h"
@@ -402,7 +403,7 @@ void DOMWindow::setCanShowModalDialogOverride(bool allow)
 }
 
 DOMWindow::DOMWindow(Document& document)
-    : AbstractDOMWindow(GlobalWindowIdentifier { Process::identifier(), generateObjectIdentifier<WindowIdentifierType>() }, document.crossOriginOptions())
+    : AbstractDOMWindow(GlobalWindowIdentifier { Process::identifier(), generateObjectIdentifier<WindowIdentifierType>() })
     , ContextDestructionObserver(&document)
     , FrameDestructionObserver(document.frame())
 {
@@ -413,7 +414,6 @@ DOMWindow::DOMWindow(Document& document)
 void DOMWindow::didSecureTransitionTo(Document& document)
 {
     observeContext(&document);
-    setCrossOriginOptions(document.crossOriginOptions());
 }
 
 DOMWindow::~DOMWindow()

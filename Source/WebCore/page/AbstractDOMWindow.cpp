@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AbstractDOMWindow.h"
 
+#include "HTTPParsers.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -37,9 +38,9 @@ HashMap<GlobalWindowIdentifier, AbstractDOMWindow*>& AbstractDOMWindow::allWindo
     return map;
 }
 
-AbstractDOMWindow::AbstractDOMWindow(GlobalWindowIdentifier&& identifier, CrossOriginOptions crossOriginOptions)
+AbstractDOMWindow::AbstractDOMWindow(GlobalWindowIdentifier&& identifier)
     : m_identifier(WTFMove(identifier))
-    , m_crossOriginOptions(crossOriginOptions)
+    , m_crossOriginOptions(CrossOriginOptions::Allow)
 {
     ASSERT(!allWindows().contains(identifier));
     allWindows().add(identifier, this);

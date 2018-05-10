@@ -5911,8 +5911,8 @@ void WebPage::frameBecameRemote(uint64_t frameID, GlobalFrameIdentifier&& remote
         return;
 
     auto remoteFrame = RemoteFrame::create(WTFMove(remoteFrameIdentifier));
-    auto remoteWindow = RemoteDOMWindow::create(remoteFrame.copyRef(), WTFMove(remoteWindowIdentifier), previousWindow->crossOriginOptions());
-    UNUSED_PARAM(remoteWindow);
+    auto remoteWindow = RemoteDOMWindow::create(remoteFrame.copyRef(), WTFMove(remoteWindowIdentifier));
+    remoteWindow->setCrossOriginOptions(previousWindow->crossOriginOptions());
 
     remoteFrame->setOpener(frame->coreFrame()->loader().opener());
 

@@ -517,7 +517,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_didAssociateFormControlsTimer(*this, &Document::didAssociateFormControlsTimerFired)
     , m_cookieCacheExpiryTimer(*this, &Document::invalidateDOMCookieCache)
     , m_socketProvider(page() ? &page()->socketProvider() : nullptr)
-    , m_crossOriginOptions { CrossOriginOptions::Allow }
     , m_isSynthesized(constructionFlags & Synthesized)
     , m_isNonRenderedPlaceholder(constructionFlags & NonRenderedPlaceholder)
     , m_orientationNotifier(currentOrientation(frame))
@@ -7805,13 +7804,6 @@ String Document::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const 
     if (!page)
         return emptyString();
     return page->chrome().client().signedPublicKeyAndChallengeString(keySizeIndex, challengeString, url);
-}
-
-void Document::setCrossOriginOptions(CrossOriginOptions value)
-{
-    m_crossOriginOptions = value;
-    if (auto* window = domWindow())
-        window->setCrossOriginOptions(value);
 }
 
 } // namespace WebCore

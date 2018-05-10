@@ -745,8 +745,10 @@ void FrameLoader::didBeginDocument(bool dispatch)
 
         if (m_frame.settings().crossOriginOptionsSupportEnabled()) {
             String crossOriginOptionsHeader = m_documentLoader->response().httpHeaderField(HTTPHeaderName::CrossOriginOptions);
-            if (!crossOriginOptionsHeader.isEmpty())
-                m_frame.document()->setCrossOriginOptions(parseCrossOriginOptionsHeader(crossOriginOptionsHeader));
+            if (!crossOriginOptionsHeader.isNull()) {
+                ASSERT(m_frame.window());
+                m_frame.window()->setCrossOriginOptions(parseCrossOriginOptionsHeader(crossOriginOptionsHeader));
+            }
         }
     }
 
