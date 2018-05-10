@@ -1,3 +1,10 @@
+2018-05-10  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Unreviewed gardening.
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/editing/deleting/delete-emoji-expected.txt:
+
 2018-05-10  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [wpe] update the TestExpectations for encrypted-media after some fixes
