@@ -1,0 +1,39 @@
+This tests that scrolling to make an element visible works properly when there's an iframe off screen.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+5000-pixel box
+ 
+
+Test scrolling an offscreen iframe.
+PASS window.pageYOffset is 0
+
+Scroll lower target to visible.
+The iframe should be scrolled into view
+PASS scrolledYOffset > 0 is true
+Test the lower target should be scrolled into view.
+PASS scrolledIntoView is true
+
+Scroll upper target to visible.
+The main window shouldn't scroll.
+PASS window.pageYOffset == scrolledYOffset is true
+Test the upper target should be scrolled into view.
+PASS scrolledIntoView is true
+
+Reset scrolling. Test scrolling in nested iframes.
+PASS window.pageYOffset is 0
+
+Scroll inner button to visible.
+Test the button inside the inner frame should be scrolled into view
+PASS scrolledIntoView is true
+The inner iframe should be scrolled into view
+PASS outterFrameWindow.pageYOffset > 0 is true
+
+Scroll outter text element to visible.
+The Y offset of the outter iframe should be reset.
+PASS outterFrameWindow.pageYOffset is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

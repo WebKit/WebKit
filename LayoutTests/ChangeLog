@@ -1,3 +1,16 @@
+2018-05-09  Nan Wang  <n_wang@apple.com>
+
+        AX: VoiceOver iframe scrolling focus jumping bug
+        https://bugs.webkit.org/show_bug.cgi?id=176615
+        <rdar://problem/34333067>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/resources/iframe.html: Added.
+        * accessibility/scroll-to-make-visible-iframe-offscreen-expected.txt: Added.
+        * accessibility/scroll-to-make-visible-iframe-offscreen.html: Added.
+        * platform/win/TestExpectations:
+
 2018-05-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: accessibleNameForNode should simplify whitespace when using innerText

@@ -1,3 +1,20 @@
+2018-05-09  Nan Wang  <n_wang@apple.com>
+
+        AX: VoiceOver iframe scrolling focus jumping bug
+        https://bugs.webkit.org/show_bug.cgi?id=176615
+        <rdar://problem/34333067>
+
+        Reviewed by Chris Fleizach.
+
+        Scrolling to make elements visible is not working correctly for elements inside an
+        offscreen iframe. Fixed it by using RenderLayer::scrollRectToVisible() to handle
+        scrolling more properly.
+
+        Test: accessibility/scroll-to-make-visible-iframe-offscreen.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::scrollToMakeVisible const):
+
 2018-05-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: accessibleNameForNode should simplify whitespace when using innerText

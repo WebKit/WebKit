@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="description"></p>
+
+<div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div>
+
+<iframe id="frame" src="data:text/html,<body><button id='upper_target'>Upper Target</button><div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div><button id='lower_target'>Lower Target</button></body>"></iframe>
+
+<br>
+<iframe id="frame2" src="./resources/iframe.html"></iframe>
+
+<div id="console"></div>
+
+<script>
+description("This tests that scrolling to make an element visible works properly when there's an iframe off screen.");
+
+window.jsTestIsAsync = true;
+
+function runTest() {
+
+    window.frame = document.getElementById("frame");
+    window.frameWindow = frame.contentWindow;
+
+    var upperTarget = frameWindow.document.getElementById("upper_target");
+    var lowerTarget = frameWindow.document.getElementById("lower_target");
+
+    var lowerTargetAccessibleObject;
+    var upperTargetAccessibleObject;
+    if (frameWindow.accessibilityController) {
+        lowerTargetAccessibleObject = frameWindow.accessibilityController.accessibleElementById("lower_target");
+        upperTargetAccessibleObject = frameWindow.accessibilityController.accessibleElementById("upper_target");
+    }
+
+    // Initial state
+    debug("Test scrolling an offscreen iframe.");
+    window.scrollTo(0, 0);
+    shouldBeZero("window.pageYOffset");
+
+    // Scroll to make lower target visible and check.
+    debug("\nScroll lower target to visible.");
+    if (frameWindow.accessibilityController)
+        lowerTargetAccessibleObject.scrollToMakeVisible();
+    // The iframe should be scrolled into view.
+    debug("The iframe should be scrolled into view");
+    window.scrolledYOffset = window.pageYOffset;
+    shouldBeTrue("scrolledYOffset > 0");
+    // The content inside the iframe should be scrolled into view too
+    testScrolledIntoView(lowerTarget, frameWindow, "Test the lower target should be scrolled into view.")
+
+    // Scroll to make upper target visible and check.
+    debug("\nScroll upper target to visible.");
+    if (frameWindow.accessibilityController)
+        upperTargetAccessibleObject.scrollToMakeVisible();
+    // The iframe should be visible already
+    debug("The main window shouldn't scroll.");
+    shouldBeTrue("window.pageYOffset == scrolledYOffset");
+    // The content inside the iframe should be scrolled into view too
+    testScrolledIntoView(upperTarget, frameWindow, "Test the upper target should be scrolled into view.")
+
+    // Reset and test iframe inside iframe
+    debug("\nReset scrolling. Test scrolling in nested iframes.");
+    window.scrollTo(0, 0);
+    shouldBeZero("window.pageYOffset");
+
+    window.innerFrame = document.getElementById("frame2").contentWindow.document.getElementById("iframe");
+    window.innerFrameWindow = innerFrame.contentWindow;
+    var button = innerFrameWindow.document.getElementById("button");
+    var buttonAccessibleObject;
+    debug("\nScroll inner button to visible.");
+    if (innerFrameWindow.accessibilityController) {
+        buttonAccessibleObject = innerFrameWindow.accessibilityController.accessibleElementById("button");
+        buttonAccessibleObject.scrollToMakeVisible();
+    }
+    // The content inside the inner iframe should be scrolled into view too
+    testScrolledIntoView(button, innerFrameWindow, "Test the button inside the inner frame should be scrolled into view");
+    // Use outter frame to determine the inner frame is scrolled into view.
+    window.outterFrame = document.getElementById("frame2");
+    window.outterFrameWindow = outterFrame.contentWindow;
+    debug("The inner iframe should be scrolled into view");
+    shouldBeTrue("outterFrameWindow.pageYOffset > 0");
+
+    // Now make sure we can scroll back to the outter text above the inner iframe
+    var text = outterFrameWindow.document.getElementById("box").firstChild;
+    var textAccessibleObject;
+    debug("\nScroll outter text element to visible.");
+    if (outterFrameWindow.accessibilityController) {
+        textAccessibleObject = outterFrameWindow.accessibilityController.accessibleElementById("box").childAtIndex(0);
+        textAccessibleObject.scrollToMakeVisible();
+    }
+    debug("The Y offset of the outter iframe should be reset.")
+    shouldBeZero("outterFrameWindow.pageYOffset");
+
+    finishJSTest();
+}
+
+function testScrolledIntoView(object, testWindow, description) {
+    debug(description);
+    window.frameMinYOffset = object.offsetTop + object.offsetHeight - testWindow.innerHeight;
+    window.frameMaxYOffset = object.offsetTop;
+    window.scrolledIntoView = testWindow.pageYOffset >= frameMinYOffset && testWindow.pageYOffset <= frameMaxYOffset;
+    shouldBeTrue("scrolledIntoView");
+}
+
+window.addEventListener("load", function() {
+    setTimeout(runTest, 0);
+}, false);
+
+</script>
+
+</body>
+</html>
