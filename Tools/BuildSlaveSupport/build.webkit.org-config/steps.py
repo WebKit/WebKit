@@ -160,6 +160,14 @@ class DeleteStaleBuildFiles(shell.Compile):
         return shell.Compile.start(self)
 
 
+class InstallWinCairoDependencies(shell.ShellCommand):
+    name = 'wincairo-requirements'
+    description = ['updating wincairo dependencies']
+    descriptionDone = ['updated wincairo dependencies']
+    command = ['python', './Tools/Scripts/update-webkit-wincairo-libs.py']
+    haltOnFailure = True
+
+
 class InstallGtkDependencies(shell.ShellCommand):
     name = "jhbuild"
     description = ["updating gtk dependencies"]

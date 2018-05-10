@@ -80,6 +80,10 @@ class TestFactory(Factory):
     def __init__(self, platform, configuration, architectures, additionalArguments=None, SVNMirror=None, **kwargs):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, SVNMirror, **kwargs)
         self.getProduct()
+
+        if platform == 'wincairo':
+            self.addStep(InstallWinCairoDependencies())
+
         if self.JSCTestClass:
             self.addStep(self.JSCTestClass())
         if self.LayoutTestClass:
