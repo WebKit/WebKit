@@ -1,3 +1,16 @@
+2018-05-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r231622) [Win] Crashes for null dereference of prefsPrivate in WebView::notifyPreferencesChanged
+        https://bugs.webkit.org/show_bug.cgi?id=185505
+
+        Unreviewed serious crash fix
+
+        Windows port crashes soon since Bug 184996.
+
+        * WebPreferences.cpp:
+        (WebPreferences::QueryInterface): Added IID_IWebPreferencesPrivate7.
+        * WebPreferences.h: Inherit IWebPreferencesPrivate7 instead of IWebPreferencesPrivate6.
+
 2018-05-07  Daniel Bates  <dabates@apple.com>
 
         Substitute CrossOriginPreflightResultCache::clear() for CrossOriginPreflightResultCache::empty()
