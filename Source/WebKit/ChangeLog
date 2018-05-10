@@ -1,3 +1,12 @@
+2018-05-09  Tim Horton  <timothy_horton@apple.com>
+
+        Remove the unused HAVE_OS_ACTIVITY
+        https://bugs.webkit.org/show_bug.cgi?id=185501
+
+        Reviewed by Wenson Hsieh.
+
+        * config.h:
+
 2018-05-09  Chris Dumez  <cdumez@apple.com>
 
         Add initial support for 'Cross-Origin-Options' HTTP response header

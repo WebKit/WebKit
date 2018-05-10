@@ -89,12 +89,6 @@
 #endif
 #endif
 
-#ifndef HAVE_OS_ACTIVITY
-#if PLATFORM(IOS) || PLATFORM(MAC)
-#define HAVE_OS_ACTIVITY 1
-#endif
-#endif
-
 #ifndef ENABLE_NETWORK_CAPTURE
 #if PLATFORM(COCOA)
 #define ENABLE_NETWORK_CAPTURE 1
