@@ -1,3 +1,23 @@
+2018-05-10  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Release page load process assertion if the screen is locked
+        https://bugs.webkit.org/show_bug.cgi?id=185333
+
+        Reviewed by Geoff Garen.
+
+        We normally take a background process assertion during page loads to allow them to complete
+        even if the tab / app is backgrounded. We should however avoid doing so when the backgrounding
+        is caused by the screen locking. Keeping the process assertion in this case would prevent the
+        whole device from sleeping longer than it should, thus negatively impacting power.
+
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationState):
+        (WebKit::NavigationState::releaseNetworkActivityToken):
+        (WebKit::NavigationState::didChangeIsLoading):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationDidEnterBackground):
+
 2018-05-10  Megan Gardner  <megan_gardner@apple.com>
 
         Remove Unused Chinese/Japanese Reanalyze code
