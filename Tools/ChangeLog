@@ -1,3 +1,10 @@
+2018-05-09  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed Windows build fix after r231622.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (enableExperimentalFeatures):
+
 2018-05-09  Sihui Liu  <sihui_liu@apple.com>
 
         Update WebKit.WebsiteDataStoreCustomPaths after r231536
