@@ -71,6 +71,13 @@ enum class FromOriginDisposition {
     Invalid
 };
 
+// Should be sorted from most restrictive to most permissive.
+enum class CrossOriginOptions {
+    Deny,
+    AllowPostMessage,
+    Allow,
+};
+
 bool isValidReasonPhrase(const String&);
 bool isValidHTTPHeaderValue(const String&);
 bool isValidAcceptHeaderValue(const String&);
@@ -111,6 +118,7 @@ bool isCrossOriginSafeRequestHeader(HTTPHeaderName, const String&);
 String normalizeHTTPMethod(const String&);
 
 WEBCORE_EXPORT FromOriginDisposition parseFromOriginHeader(const String&);
+CrossOriginOptions parseCrossOriginOptionsHeader(StringView);
 
 inline bool isHTTPSpace(UChar character)
 {

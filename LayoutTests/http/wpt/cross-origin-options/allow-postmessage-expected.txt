@@ -1,0 +1,5 @@
+
+
+PASS postMessage() on Cross-origin iframe with 'Cross-Origin-Options: allow-postmessage' HTTP header 
+PASS postMessage() on Cross-origin popup with 'Cross-Origin-Options: allow-postmessage' HTTP header 
+

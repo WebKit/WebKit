@@ -26,6 +26,7 @@
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTTPParsers.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertNumbers.h"
@@ -55,6 +56,12 @@
 namespace WebCore {
 using namespace JSC;
 
+static CrossOriginOptions effectiveCrossOriginOptionsForAccess(ExecState& state, AbstractDOMWindow& target)
+{
+    static_assert(CrossOriginOptions::Deny < CrossOriginOptions::AllowPostMessage && CrossOriginOptions::AllowPostMessage < CrossOriginOptions::Allow, "More restrictive cross-origin options should have lower values");
+    return std::min(activeDOMWindow(state).crossOriginOptions(), target.crossOriginOptions());
+}
+
 EncodedJSValue JSC_HOST_CALL jsDOMWindowInstanceFunctionShowModalDialog(ExecState*);
 
 void JSDOMWindow::visitAdditionalChildren(SlotVisitor& visitor)
@@ -80,9 +87,9 @@ static EncodedJSValue jsDOMWindowWebKit(ExecState* exec, EncodedJSValue thisValu
 #endif
 
 template <DOMWindowType windowType>
-bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject, AbstractFrame* frame, ExecState* exec, PropertyName propertyName, PropertySlot& slot, const String& errorMessage)
+bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject, AbstractDOMWindow& window, ExecState& state, PropertyName propertyName, PropertySlot& slot, const String& errorMessage)
 {
-    VM& vm = exec->vm();
+    VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto& builtinNames = static_cast<JSVMClientData*>(vm.clientData)->builtinNames();
@@ -91,6 +98,21 @@ bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject
     if (propertyName == vm.propertyNames->toStringTagSymbol || propertyName == vm.propertyNames->hasInstanceSymbol || propertyName == vm.propertyNames->isConcatSpreadableSymbol) {
         slot.setValue(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum, jsUndefined());
         return true;
+    }
+
+    switch (effectiveCrossOriginOptionsForAccess(state, window)) {
+    case CrossOriginOptions::AllowPostMessage:
+        if (propertyName == builtinNames.postMessagePublicName()) {
+            slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum), windowType == DOMWindowType::Remote ? nonCachingStaticFunctionGetter<jsRemoteDOMWindowInstanceFunctionPostMessage, 0> : nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionPostMessage, 2>);
+            return true;
+        }
+        FALLTHROUGH;
+    case CrossOriginOptions::Deny:
+        throwSecurityError(state, scope, errorMessage);
+        slot.setUndefined();
+        return false;
+    case CrossOriginOptions::Allow:
+        break;
     }
 
     // These are the functions we allow access to cross-origin (DoNotCheckSecurity in IDL).
@@ -136,7 +158,7 @@ bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject
         // For any other entries in the static property table, deny access. (Early return also prevents
         // named getter from returning frames with matching names - this seems a little questionable, see
         // FIXME comment on prototype search below.)
-        throwSecurityError(*exec, scope, errorMessage);
+        throwSecurityError(state, scope, errorMessage);
         slot.setUndefined();
         return false;
     }
@@ -146,19 +168,20 @@ bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject
     // properties that are in Moz but not IE. Since we have some of these, we have to do it
     // the Moz way.
     // FIXME: Add support to named attributes on RemoteFrames.
+    auto* frame = window.frame();
     if (frame && is<Frame>(*frame)) {
         if (auto* scopedChild = downcast<Frame>(*frame).tree().scopedChild(propertyNameToAtomicString(propertyName))) {
-            slot.setValue(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum, toJS(exec, scopedChild->document()->domWindow()));
+            slot.setValue(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum, toJS(&state, scopedChild->document()->domWindow()));
             return true;
         }
     }
 
-    throwSecurityError(*exec, scope, errorMessage);
+    throwSecurityError(state, scope, errorMessage);
     slot.setUndefined();
     return false;
 }
-template bool jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Local>(JSDOMGlobalObject*, AbstractFrame*, ExecState*, PropertyName, PropertySlot&, const String&);
-template bool jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Remote>(JSDOMGlobalObject*, AbstractFrame*, ExecState*, PropertyName, PropertySlot&, const String&);
+template bool jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Local>(JSDOMGlobalObject*, AbstractDOMWindow&, ExecState&, PropertyName, PropertySlot&, const String&);
+template bool jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Remote>(JSDOMGlobalObject*, AbstractDOMWindow&, ExecState&, PropertyName, PropertySlot&, const String&);
 
 // Property access sequence is:
 // (1) indexed properties,
@@ -172,13 +195,12 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* state, Propert
         return getOwnPropertySlotByIndex(object, state, index.value(), slot);
 
     auto* thisObject = jsCast<JSDOMWindow*>(object);
-    auto* frame = thisObject->wrapped().frame();
 
     // Hand off all cross-domain access to jsDOMWindowGetOwnPropertySlotRestrictedAccess.
     String errorMessage;
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(*state, thisObject->wrapped(), errorMessage))
-        return jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Local>(thisObject, frame, state, propertyName, slot, errorMessage);
-    
+        return jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Local>(thisObject, thisObject->wrapped(), *state, propertyName, slot, errorMessage);
+
     // FIXME: this need more explanation.
     // (Particularly, is it correct that this exists here but not in getOwnPropertySlotByIndex?)
     slot.setWatchpointSet(thisObject->m_windowCloseWatchpoints);
@@ -186,6 +208,8 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* state, Propert
     // (2) Regular own properties.
     PropertySlot slotCopy = slot;
     if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot)) {
+        auto* frame = thisObject->wrapped().frame();
+
         // Detect when we're getting the property 'showModalDialog', this is disabled, and has its original value.
         bool isShowModalDialogAndShouldHide = propertyName == static_cast<JSVMClientData*>(state->vm().clientData)->builtinNames().showModalDialogPublicName()
             && (!frame || !DOMWindow::canShowModalDialog(*frame))
@@ -213,22 +237,39 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* state, Propert
 bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, unsigned index, PropertySlot& slot)
 {
     auto* thisObject = jsCast<JSDOMWindow*>(object);
-    auto* frame = thisObject->wrapped().frame();
+    auto& window = thisObject->wrapped();
+    auto* frame = window.frame();
 
     // Indexed getters take precendence over regular properties, so caching would be invalid.
     slot.disableCaching();
 
+    String errorMessage;
+    std::optional<bool> cachedIsCrossOriginAccess;
+    auto isCrossOriginAccess = [&] {
+        if (!cachedIsCrossOriginAccess)
+            cachedIsCrossOriginAccess = !BindingSecurity::shouldAllowAccessToDOMWindow(*state, window, errorMessage);
+        return *cachedIsCrossOriginAccess;
+    };
+
     // (1) First, indexed properties.
-    // These are also allowed cross-orgin, so come before the access check.
-    if (frame && index < frame->tree().scopedChildCount()) {
-        slot.setValue(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), toJS(state, frame->tree().scopedChild(index)->document()->domWindow()));
-        return true;
+    // These are also allowed cross-origin, so come before the access check.
+    switch (effectiveCrossOriginOptionsForAccess(*state, window)) {
+    case CrossOriginOptions::Deny:
+    case CrossOriginOptions::AllowPostMessage:
+        if (isCrossOriginAccess())
+            break;
+        FALLTHROUGH;
+    case CrossOriginOptions::Allow:
+        if (frame && index < frame->tree().scopedChildCount()) {
+            slot.setValue(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), toJS(state, frame->tree().scopedChild(index)->document()->domWindow()));
+            return true;
+        }
+        break;
     }
 
     // Hand off all cross-domain/frameless access to jsDOMWindowGetOwnPropertySlotRestrictedAccess.
-    String errorMessage;
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(*state, thisObject->wrapped(), errorMessage))
-        return jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Local>(thisObject, frame, state, Identifier::from(state, index), slot, errorMessage);
+    if (isCrossOriginAccess())
+        return jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Local>(thisObject, window, *state, Identifier::from(state, index), slot, errorMessage);
 
     // (2) Regular own properties.
     return Base::getOwnPropertySlotByIndex(thisObject, state, index, slot);
@@ -287,8 +328,10 @@ bool JSDOMWindow::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned 
 }
 
 // https://html.spec.whatwg.org/#crossoriginproperties-(-o-)
-static void addCrossOriginWindowPropertyNames(VM& vm, PropertyNameArray& propertyNames)
+static void addCrossOriginWindowPropertyNames(ExecState& state, AbstractDOMWindow& window, PropertyNameArray& propertyNames)
 {
+    auto& vm = state.vm();
+
     static const Identifier* const properties[] = {
         &static_cast<JSVMClientData*>(vm.clientData)->builtinNames().blurPublicName(),
         &static_cast<JSVMClientData*>(vm.clientData)->builtinNames().closePublicName(),
@@ -304,8 +347,18 @@ static void addCrossOriginWindowPropertyNames(VM& vm, PropertyNameArray& propert
         &static_cast<JSVMClientData*>(vm.clientData)->builtinNames().topPublicName(),
         &static_cast<JSVMClientData*>(vm.clientData)->builtinNames().windowPublicName()
     };
-    for (auto* property : properties)
-        propertyNames.add(*property);
+
+    switch (effectiveCrossOriginOptionsForAccess(state, window)) {
+    case CrossOriginOptions::Allow:
+        for (auto* property : properties)
+            propertyNames.add(*property);
+        break;
+    case CrossOriginOptions::AllowPostMessage:
+        propertyNames.add(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().postMessagePublicName());
+        break;
+    case CrossOriginOptions::Deny:
+        break;
+    }
 }
 
 static void addScopedChildrenIndexes(ExecState& state, DOMWindow& window, PropertyNameArray& propertyNames)
@@ -318,17 +371,25 @@ static void addScopedChildrenIndexes(ExecState& state, DOMWindow& window, Proper
     if (!frame)
         return;
 
+    switch (effectiveCrossOriginOptionsForAccess(state, window)) {
+    case CrossOriginOptions::Allow:
+        break;
+    case CrossOriginOptions::Deny:
+    case CrossOriginOptions::AllowPostMessage:
+        return;
+    }
+
     unsigned scopedChildCount = frame->tree().scopedChildCount();
     for (unsigned i = 0; i < scopedChildCount; ++i)
         propertyNames.add(Identifier::from(&state, i));
 }
 
 // https://html.spec.whatwg.org/#crossoriginownpropertykeys-(-o-)
-void addCrossOriginWindowOwnPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
+void addCrossOriginWindowOwnPropertyNames(ExecState& state, AbstractDOMWindow& window, PropertyNameArray& propertyNames)
 {
-    VM& vm = state.vm();
-    addCrossOriginWindowPropertyNames(vm, propertyNames);
+    addCrossOriginWindowPropertyNames(state, window, propertyNames);
 
+    auto& vm = state.vm();
     propertyNames.add(vm.propertyNames->toStringTagSymbol);
     propertyNames.add(vm.propertyNames->hasInstanceSymbol);
     propertyNames.add(vm.propertyNames->isConcatSpreadableSymbol);
@@ -343,7 +404,7 @@ void JSDOMWindow::getOwnPropertyNames(JSObject* object, ExecState* exec, Propert
 
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), DoNotReportSecurityError)) {
         if (mode.includeDontEnumProperties())
-            addCrossOriginWindowOwnPropertyNames(*exec, propertyNames);
+            addCrossOriginWindowOwnPropertyNames(*exec, thisObject->wrapped(), propertyNames);
         return;
     }
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);

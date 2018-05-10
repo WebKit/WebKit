@@ -1,3 +1,83 @@
+2018-05-09  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for 'Cross-Origin-Options' HTTP response header
+        https://bugs.webkit.org/show_bug.cgi?id=184996
+        <rdar://problem/39664620>
+
+        Reviewed by Geoff Garen.
+
+        Add initial support for 'Cross-Origin-Options' HTTP response header behind an experimental
+        feature flag, on by default. When the HTTP server services this HTTP response header for a
+        main resource, we'll set these options on the corresponding Document. This will impact the
+        behavior of the Document's associated Window API when cross-origin.
+
+        The HTTP header has 3 possible values:
+        - allow: This is the default. Regular cross-origin Window API is available.
+        - allow-postmessage: Only postMessage() is available on a cross-origin window, trying to
+          access anything else will throw a SecurityError.
+        - deny: Trying to do anything with a cross-origin window will throw a SecurityError.
+
+        The header has no effect when accessing same origin windows.
+
+        Note that on cross-origin access from Window A to Window B, we check the cross-origin
+        options for both Window A and Window B and use the lowest common denominator as effective
+        cross-origin options for the access. So if Window A has 'Cross-Origin-Options: deny' and
+        tries to call postMessage() on Window B which has 'Cross-Origin-Options: allow-postmessage',
+        we will throw a SecurityError. This is because Window A's more restrictive options (deny)
+        apply.
+
+        Tests: http/wpt/cross-origin-options/allow-postmessage-from-deny.html
+               http/wpt/cross-origin-options/allow-postmessage.html
+               http/wpt/cross-origin-options/cross-origin-options-header.html
+
+        * bindings/js/JSDOMBindingSecurity.cpp:
+        (WebCore::BindingSecurity::shouldAllowAccessToDOMWindowGivenMinimumCrossOriginOptions):
+        * bindings/js/JSDOMBindingSecurity.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::effectiveCrossOriginOptionsForAccess):
+        (WebCore::jsDOMWindowGetOwnPropertySlotRestrictedAccess):
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+        (WebCore::addCrossOriginWindowPropertyNames):
+        (WebCore::addScopedChildrenIndexes):
+        (WebCore::addCrossOriginWindowOwnPropertyNames):
+        (WebCore::JSDOMWindow::getOwnPropertyNames):
+        * bindings/js/JSDOMWindowCustom.h:
+        * bindings/js/JSRemoteDOMWindowCustom.cpp:
+        (WebCore::JSRemoteDOMWindow::getOwnPropertySlot):
+        (WebCore::JSRemoteDOMWindow::getOwnPropertySlotByIndex):
+        (WebCore::JSRemoteDOMWindow::getOwnPropertyNames):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributeGetterBodyDefinition):
+        (GetCrossOriginsOptionsFromExtendedAttributeValue):
+        (GenerateAttributeSetterBodyDefinition):
+        (GenerateOperationBodyDefinition):
+        * bindings/scripts/IDLAttributes.json:
+        * dom/Document.cpp:
+        (WebCore::Document::setCrossOriginOptions):
+        * dom/Document.h:
+        (WebCore::Document::crossOriginOptions const):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument):
+        * page/AbstractDOMWindow.cpp:
+        (WebCore::AbstractDOMWindow::AbstractDOMWindow):
+        * page/AbstractDOMWindow.h:
+        (WebCore::AbstractDOMWindow::crossOriginOptions):
+        (WebCore::AbstractDOMWindow::setCrossOriginOptions):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::DOMWindow):
+        (WebCore::DOMWindow::didSecureTransitionTo):
+        * page/DOMWindow.idl:
+        * page/Frame.h:
+        * page/RemoteDOMWindow.cpp:
+        (WebCore::RemoteDOMWindow::RemoteDOMWindow):
+        * page/RemoteDOMWindow.h:
+        * page/Settings.yaml:
+        * platform/network/HTTPHeaderNames.in:
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseCrossOriginOptionsHeader):
+        * platform/network/HTTPParsers.h:
+
 2018-05-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Release assert in TreeScopeOrderedMap::remove via HTMLImageElement::removedFromAncestor

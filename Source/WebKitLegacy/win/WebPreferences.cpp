@@ -249,6 +249,7 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitShouldDisplaySubtitlesPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitShouldDisplayCaptionsPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitShouldDisplayTextDescriptionsPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults, CFSTR(WebKitCrossOriginOptionsSupportEnabledPreferenceKey), kCFBooleanFalse);
 
     RetainPtr<CFStringRef> linkBehaviorStringRef = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%d"), WebKitEditableLinkDefaultBehavior));
     CFDictionaryAddValue(defaults, CFSTR(WebKitEditableLinkBehaviorPreferenceKey), linkBehaviorStringRef.get());
@@ -2026,6 +2027,20 @@ HRESULT WebPreferences::menuItemElementEnabled(_Out_ BOOL* enabled)
 HRESULT WebPreferences::setMenuItemElementEnabled(BOOL enabled)
 {
     setBoolValue(WebKitMenuItemElementEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::crossOriginOptionsSupportEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitCrossOriginOptionsSupportEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setCrossOriginOptionsSupportEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitCrossOriginOptionsSupportEnabledPreferenceKey, enabled);
     return S_OK;
 }
 

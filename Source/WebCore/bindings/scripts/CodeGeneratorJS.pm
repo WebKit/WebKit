@@ -4706,7 +4706,13 @@ sub GenerateAttributeGetterBodyDefinition
         !$attribute->extendedAttributes->{DoNotCheckSecurityOnGetter}) {
         AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
         if ($interface->type->name eq "DOMWindow") {
-            push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&state, thisObject.wrapped(), ThrowSecurityError))\n");
+            if ($attribute->extendedAttributes->{DoNotCheckSecurityIf}) {
+                my $crossOriginOptions = GetCrossOriginsOptionsFromExtendedAttributeValue($attribute->extendedAttributes->{DoNotCheckSecurityIf});
+                AddToImplIncludes("HTTPParsers.h", $conditional);
+                push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindowGivenMinimumCrossOriginOptions(&state, thisObject.wrapped(), $crossOriginOptions, ThrowSecurityError))\n");
+            } else {
+                push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&state, thisObject.wrapped(), ThrowSecurityError))\n");
+            }
         } else {
             push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToFrame(&state, thisObject.wrapped().frame(), ThrowSecurityError))\n");
         }
@@ -4814,6 +4820,15 @@ sub GenerateAttributeGetterDefinition
     push(@$outputArray, "#endif\n\n") if $conditional;
 }
 
+sub GetCrossOriginsOptionsFromExtendedAttributeValue
+{
+    my $extendedAttributeValue = shift;
+
+    return "CrossOriginOptions::Allow" if $extendedAttributeValue eq "CrossOriginOptionsAllow";
+    return "CrossOriginOptions::AllowPostMessage" if $extendedAttributeValue eq "CrossOriginOptionsAllowPostMessage";
+    die "Unsupported CrossOriginOptions: " + $extendedAttributeValue;
+}
+
 sub GenerateAttributeSetterBodyDefinition
 {
     my ($outputArray, $interface, $className, $attribute, $attributeSetterBodyName, $conditional) = @_;
@@ -4836,7 +4851,13 @@ sub GenerateAttributeSetterBodyDefinition
     if ($interface->extendedAttributes->{CheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurityOnSetter}) {
         AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
         if ($interface->type->name eq "DOMWindow") {
-            push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&state, thisObject.wrapped(), ThrowSecurityError))\n");
+            if ($attribute->extendedAttributes->{DoNotCheckSecurityIf}) {
+                my $crossOriginOptions = GetCrossOriginsOptionsFromExtendedAttributeValue($attribute->extendedAttributes->{DoNotCheckSecurityIf});
+                AddToImplIncludes("HTTPParsers.h", $conditional);
+                push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindowGivenMinimumCrossOriginOptions(&state, thisObject.wrapped(), $crossOriginOptions, ThrowSecurityError))\n");
+            } else {
+                push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&state, thisObject.wrapped(), ThrowSecurityError))\n");
+            }
         } else {
             push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToFrame(&state, thisObject.wrapped().frame(), ThrowSecurityError))\n");
         }
@@ -5057,7 +5078,13 @@ sub GenerateOperationBodyDefinition
             
             AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
             if ($interface->type->name eq "DOMWindow") {
-                push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped(), ThrowSecurityError))\n");
+                if ($operation->extendedAttributes->{DoNotCheckSecurityIf}) {
+                    my $crossOriginOptions = GetCrossOriginsOptionsFromExtendedAttributeValue($operation->extendedAttributes->{DoNotCheckSecurityIf});
+                    AddToImplIncludes("HTTPParsers.h", $conditional);
+                    push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindowGivenMinimumCrossOriginOptions(state, castedThis->wrapped(), $crossOriginOptions, ThrowSecurityError))\n");
+                } else {
+                    push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped(), ThrowSecurityError))\n");
+                }
                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
             } else {
                 push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToFrame(state, castedThis->wrapped().frame(), ThrowSecurityError))\n");

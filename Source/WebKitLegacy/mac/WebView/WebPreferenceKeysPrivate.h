@@ -173,6 +173,7 @@
 #define WebKitDataTransferItemsEnabledPreferenceKey @"WebKitDataTransferItemsEnabled"
 #define WebKitCustomPasteboardDataEnabledPreferenceKey @"WebKitCustomPasteboardDataEnabled"
 #define WebKitCacheAPIEnabledPreferenceKey @"WebKitCacheAPIEnabled"
+#define WebKitCrossOriginOptionsSupportEnabledPreferenceKey @"WebKitCrossOriginOptionsSupportEnabled"
 #define WebKitFetchAPIEnabledPreferenceKey @"WebKitFetchAPIEnabled"
 #define WebKitWritableStreamAPIEnabledPreferenceKey @"WebKitWritableStreamAPIEnabled"
 #define WebKitReadableByteStreamAPIEnabledPreferenceKey @"WebKitReadableByteStreamAPIEnabled"

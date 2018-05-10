@@ -1,3 +1,24 @@
+2018-05-09  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for 'Cross-Origin-Options' HTTP response header
+        https://bugs.webkit.org/show_bug.cgi?id=184996
+        <rdar://problem/39664620>
+
+        Reviewed by Geoff Garen.
+
+        Add layout test coverage.
+
+        * http/wpt/cross-origin-options/allow-postmessage-expected.txt: Added.
+        * http/wpt/cross-origin-options/allow-postmessage-from-deny-expected.txt: Added.
+        * http/wpt/cross-origin-options/allow-postmessage-from-deny.html: Added.
+        * http/wpt/cross-origin-options/allow-postmessage-from-deny.html.headers: Added.
+        * http/wpt/cross-origin-options/allow-postmessage.html: Added.
+        * http/wpt/cross-origin-options/cross-origin-options-header-expected.txt: Added.
+        * http/wpt/cross-origin-options/cross-origin-options-header.html: Added.
+        * http/wpt/cross-origin-options/resources/cross-origin-options-allow-postmessage-pong.html: Added.
+        * http/wpt/cross-origin-options/resources/cross-origin-options-allow-postmessage-pong.html.headers: Added.
+        * http/wpt/cross-origin-options/resources/serve-cross-origin-options-header.py: Added.
+
 2018-05-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Release assert in TreeScopeOrderedMap::remove via HTMLImageElement::removedFromAncestor

@@ -49,11 +49,11 @@ typedef USVString CSSOMString;
     PrimaryGlobal,
 ] interface DOMWindow : EventTarget {
     // The current browsing context.
-    [DoNotCheckSecurity, Unforgeable, ImplementedAs=self] readonly attribute WindowProxy window;
-    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute WindowProxy self;
+    [DoNotCheckSecurityIf=CrossOriginOptionsAllow, Unforgeable, ImplementedAs=self] readonly attribute WindowProxy window;
+    [Replaceable, DoNotCheckSecurityIf=CrossOriginOptionsAllow] readonly attribute WindowProxy self;
     [Unforgeable] readonly attribute Document document;
     attribute DOMString name;
-    [DoNotCheckSecurity, PutForwards=href, Unforgeable] readonly attribute Location? location; // FIXME: Should not be nullable.
+    [DoNotCheckSecurityIf=CrossOriginOptionsAllow, PutForwards=href, Unforgeable] readonly attribute Location? location; // FIXME: Should not be nullable.
     readonly attribute History history;
     [EnabledAtRuntime=CustomElements, ImplementedAs=ensureCustomElementRegistry] readonly attribute CustomElementRegistry customElements;
     [Replaceable] readonly attribute BarProp locationbar;
@@ -63,18 +63,18 @@ typedef USVString CSSOMString;
     [Replaceable] readonly attribute BarProp statusbar;
     [Replaceable] readonly attribute BarProp toolbar;
     attribute DOMString status;
-    [DoNotCheckSecurity, CallWith=IncumbentDocument, ForwardDeclareInHeader] void close();
-    [DoNotCheckSecurity, ForwardDeclareInHeader] readonly attribute boolean closed;
+    [DoNotCheckSecurityIf=CrossOriginOptionsAllow, CallWith=IncumbentDocument, ForwardDeclareInHeader] void close();
+    [DoNotCheckSecurityIf=CrossOriginOptionsAllow, ForwardDeclareInHeader] readonly attribute boolean closed;
     void stop();
-    [DoNotCheckSecurity, CallWith=IncumbentWindow, ForwardDeclareInHeader] void focus();
-    [DoNotCheckSecurity, ForwardDeclareInHeader] void blur();
+    [DoNotCheckSecurityIf=CrossOriginOptionsAllow, CallWith=IncumbentWindow, ForwardDeclareInHeader] void focus();
+    [DoNotCheckSecurityIf=CrossOriginOptionsAllow, ForwardDeclareInHeader] void blur();
 
     // Other browsing contexts.
-    [Replaceable, DoNotCheckSecurityOnGetter, ImplementedAs=self] readonly attribute WindowProxy frames;
-    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute unsigned long length;
-    [DoNotCheckSecurityOnGetter, Unforgeable] readonly attribute WindowProxy? top;
-    [DoNotCheckSecurityOnGetter, CustomSetter] attribute WindowProxy? opener;
-    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute WindowProxy? parent;
+    [Replaceable, DoNotCheckSecurityIf=CrossOriginOptionsAllow, ImplementedAs=self] readonly attribute WindowProxy frames;
+    [Replaceable, DoNotCheckSecurityIf=CrossOriginOptionsAllow] readonly attribute unsigned long length;
+    [DoNotCheckSecurityIf=CrossOriginOptionsAllow, Unforgeable] readonly attribute WindowProxy? top;
+    [DoNotCheckSecurityIf=CrossOriginOptionsAllow, CustomSetter] attribute WindowProxy? opener;
+    [Replaceable, DoNotCheckSecurityIf=CrossOriginOptionsAllow] readonly attribute WindowProxy? parent;
     [CheckSecurityForNode] readonly attribute Element? frameElement;
     [CallWith=ActiveWindow&FirstWindow] WindowProxy? open(optional USVString url = "about:blank", optional DOMString target = "_blank", optional [TreatNullAs=EmptyString] DOMString features = "");
 
@@ -92,7 +92,7 @@ typedef USVString CSSOMString;
     long requestAnimationFrame(RequestAnimationFrameCallback callback); // FIXME: Should return an unsigned long.
     void cancelAnimationFrame(long handle); // FIXME: handle should be an unsigned long.
 
-    [CallWith=ScriptState&IncumbentWindow, DoNotCheckSecurity, ForwardDeclareInHeader, MayThrowException] void postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
+    [CallWith=ScriptState&IncumbentWindow, DoNotCheckSecurityIf=CrossOriginOptionsAllowPostMessage, ForwardDeclareInHeader, MayThrowException] void postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
 
     // Obsolete members, still part of the HTML specification (https://html.spec.whatwg.org/#Window-partial).
     void captureEvents(); // Not implemented. Also not in modern standards. Empty function may help compatibility with legacy content.

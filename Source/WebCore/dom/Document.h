@@ -194,6 +194,7 @@ class XPathResult;
 template<typename> class ExceptionOr;
 
 enum CollectionType;
+enum class CrossOriginOptions;
 enum class ShouldOpenExternalURLsPolicy;
 
 enum class RouteSharingPolicy;
@@ -1430,6 +1431,9 @@ public:
 
     String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL&);
 
+    CrossOriginOptions crossOriginOptions() const { return m_crossOriginOptions; }
+    void setCrossOriginOptions(CrossOriginOptions value);
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1814,6 +1818,8 @@ private:
     unsigned m_styleRecalcCount { 0 };
 
     unsigned m_writeRecursionDepth { 0 };
+
+    CrossOriginOptions m_crossOriginOptions;
 
     InheritedBool m_designMode { inherit };
     MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };

@@ -136,7 +136,7 @@ public:
 
     WEBCORE_EXPORT ~Frame();
 
-    DOMWindow* window() const;
+    WEBCORE_EXPORT DOMWindow* window() const;
 
     void addDestructionObserver(FrameDestructionObserver*);
     void removeDestructionObserver(FrameDestructionObserver*);

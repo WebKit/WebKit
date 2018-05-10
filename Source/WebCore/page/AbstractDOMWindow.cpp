@@ -37,8 +37,9 @@ HashMap<GlobalWindowIdentifier, AbstractDOMWindow*>& AbstractDOMWindow::allWindo
     return map;
 }
 
-AbstractDOMWindow::AbstractDOMWindow(GlobalWindowIdentifier&& identifier)
+AbstractDOMWindow::AbstractDOMWindow(GlobalWindowIdentifier&& identifier, CrossOriginOptions crossOriginOptions)
     : m_identifier(WTFMove(identifier))
+    , m_crossOriginOptions(crossOriginOptions)
 {
     ASSERT(!allWindows().contains(identifier));
     allWindows().add(identifier, this);
