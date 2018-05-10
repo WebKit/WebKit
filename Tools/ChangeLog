@@ -1,5 +1,48 @@
 2018-05-10  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226610. rdar://problem/39987479
+
+    Add WKNavigationDelegate SPI exposing WebProcess crash reason
+    https://bugs.webkit.org/show_bug.cgi?id=181410
+    <rdar://problem/36167199>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebKit:
+    
+    We exposed it in the C SPI.
+    
+    * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+    * UIProcess/Cocoa/NavigationState.h:
+    * UIProcess/Cocoa/NavigationState.mm:
+    (WebKit::NavigationState::setNavigationDelegate):
+    (WebKit::toWKProcessTerminationReason):
+    (WebKit::NavigationState::NavigationClient::processDidTerminate):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+    (-[CrashReasonDelegate _webView:webContentProcessDidTerminateWithReason:]):
+    (TEST):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@226610 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-01-08  Alex Christensen  <achristensen@webkit.org>
+
+            Add WKNavigationDelegate SPI exposing WebProcess crash reason
+            https://bugs.webkit.org/show_bug.cgi?id=181410
+            <rdar://problem/36167199>
+
+            Reviewed by Wenson Hsieh.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+            (-[CrashReasonDelegate _webView:webContentProcessDidTerminateWithReason:]):
+            (TEST):
+
+2018-05-10  Jason Marcell  <jmarcell@apple.com>
+
         Apply patch. rdar://problem/39987479
 
     Load hangs if the WebProcess fails to launch https://bugs.webkit.org/show_bug.cgi?id=185225 <rdar://problem/38249058>
