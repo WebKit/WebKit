@@ -50,6 +50,34 @@ function testAddEventListener() {
     document.body.click();
 }
 
+function testAttributeEventListener() {
+    let previousListener = document.body.onclick;
+
+    function handleClick() {
+        document.body.onclick = previousListener;
+        pauseThenFinishTest();
+    }
+
+    document.body.onclick = handleClick;
+    document.body.click();
+}
+
+function testReplaceAttributeEventListener() {
+    let previousListener = document.body.onclick;
+
+    function handleClick1() {}
+
+    function handleClick2() {
+        document.body.onclick = previousListener;
+        pauseThenFinishTest();
+    }
+
+    document.body.onclick = handleClick1;
+    document.body.addEventListener("click", handleClick1, {once: true});
+    document.body.onclick = handleClick2;
+    document.body.click();
+}
+
 function testPostMessage(targetOrigin = "*") {
     let childFrame = document.getElementById("postMessageTestFrame");
     childFrame.contentWindow.postMessage("<message>", targetOrigin);
@@ -121,6 +149,11 @@ function test()
     addSimpleTestCase("ChainedRequestAnimationFrame", "testChainedRequestAnimationFrame()");
     addSimpleTestCase("ReferenceCounting", "testReferenceCounting()");
     addSimpleTestCase("AddEventListener", "testAddEventListener()");
+    // FIXME: <https://webkit.org/b/183236> Web Inspector: Async stack trace for an on-event handler doesn't include a boundary frame.
+    // Update test results once this has been addressed.
+    addSimpleTestCase("AddAttributeEventListener", "testAttributeEventListener()");
+    // Test for <https://webkit.org/b/181580> Web Inspector: ASSERT_NOT_REACHED in PageDebuggerAgent::didAddEventListener when page adds attribute event listener.
+    addSimpleTestCase("ReplaceAttributeEventListener", "testReplaceAttributeEventListener()");
     addSimpleTestCase("PostMessage", "testPostMessage()");
 
     suite.addTestCase({

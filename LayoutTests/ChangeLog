@@ -1,3 +1,17 @@
+2018-05-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: ASSERT_NOT_REACHED in PageDebuggerAgent::didAddEventListener when page adds attribute event listener
+        https://bugs.webkit.org/show_bug.cgi?id=181580
+        <rdar://problem/36461309>
+
+        Reviewed by Brian Burg.
+
+        Add new test covering the case where adding an attribute event listener
+        causes an existing attribute event listener to be replaced.
+
+        * inspector/debugger/async-stack-trace-expected.txt:
+        * inspector/debugger/async-stack-trace.html:
+
 2018-05-10  Chris Dumez  <cdumez@apple.com>
 
         'Cross-Origin-Options header implementation follow-up

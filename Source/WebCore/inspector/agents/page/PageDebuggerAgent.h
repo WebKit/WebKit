@@ -61,7 +61,7 @@ public:
     void willFireAnimationFrame(int callbackId);
     void didCancelAnimationFrame(int callbackId);
 
-    void didAddEventListener(EventTarget&, const AtomicString& eventType);
+    void didAddEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
     void willRemoveEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
     void willHandleEvent(const RegisteredEventListener&);
 

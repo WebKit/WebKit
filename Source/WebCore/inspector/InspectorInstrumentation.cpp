@@ -313,10 +313,10 @@ void InspectorInstrumentation::didRemoveTimerImpl(InstrumentingAgents& instrumen
         timelineAgent->didRemoveTimer(timerId, frameForScriptExecutionContext(context));
 }
 
-void InspectorInstrumentation::didAddEventListenerImpl(InstrumentingAgents& instrumentingAgents, EventTarget& target, const AtomicString& eventType)
+void InspectorInstrumentation::didAddEventListenerImpl(InstrumentingAgents& instrumentingAgents, EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
 {
     if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
-        pageDebuggerAgent->didAddEventListener(target, eventType);
+        pageDebuggerAgent->didAddEventListener(target, eventType, listener, capture);
     if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
         domAgent->didAddEventListener(target);
 }

@@ -164,14 +164,20 @@ void PageDebuggerAgent::mainFrameNavigated()
     setSuppressAllPauses(false);
 }
 
-void PageDebuggerAgent::didAddEventListener(EventTarget& target, const AtomicString& eventType)
+void PageDebuggerAgent::didAddEventListener(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
 {
     if (!breakpointsActive())
         return;
 
     auto& eventListeners = target.eventListeners(eventType);
-    const RefPtr<RegisteredEventListener>& listener = eventListeners.last();
-    if (m_registeredEventListeners.contains(listener.get())) {
+    auto position = eventListeners.findMatching([&](auto& registeredListener) {
+        return &registeredListener->callback() == &listener && registeredListener->useCapture() == capture;
+    });
+    if (position == notFound)
+        return;
+
+    auto& registeredListener = eventListeners.at(position);
+    if (m_registeredEventListeners.contains(registeredListener.get())) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -181,9 +187,9 @@ void PageDebuggerAgent::didAddEventListener(EventTarget& target, const AtomicStr
         return;
 
     int identifier = m_nextEventListenerIdentifier++;
-    m_registeredEventListeners.set(listener.get(), identifier);
+    m_registeredEventListeners.set(registeredListener.get(), identifier);
 
-    didScheduleAsyncCall(scriptState, InspectorDebuggerAgent::AsyncCallType::EventListener, identifier, listener->isOnce());
+    didScheduleAsyncCall(scriptState, InspectorDebuggerAgent::AsyncCallType::EventListener, identifier, registeredListener->isOnce());
 }
 
 void PageDebuggerAgent::willRemoveEventListener(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)

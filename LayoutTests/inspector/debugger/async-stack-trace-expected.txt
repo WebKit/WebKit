@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 55: Unable to post message to http://example.com. Recipient has origin .
+CONSOLE MESSAGE: line 83: Unable to post message to http://example.com. Recipient has origin .
 
 Tests for async stack traces.
 
@@ -79,6 +79,26 @@ ASYNC CALL STACK:
 4: --- addEventListener ---
 5: [F] testAddEventListener
 6: [P] Global Code
+
+-- Running test case: CheckAsyncStackTrace.AddAttributeEventListener
+PAUSE #1
+CALL STACK:
+0: [F] pauseThenFinishTest
+1: [F] handleClick
+2: [F] testAttributeEventListener
+3: [P] Global Code
+4: [F] testAttributeEventListener
+5: [P] Global Code
+
+-- Running test case: CheckAsyncStackTrace.ReplaceAttributeEventListener
+PAUSE #1
+CALL STACK:
+0: [F] pauseThenFinishTest
+1: [F] handleClick2
+2: [F] testReplaceAttributeEventListener
+3: [P] Global Code
+4: [F] testReplaceAttributeEventListener
+5: [P] Global Code
 
 -- Running test case: CheckAsyncStackTrace.PostMessage
 PAUSE #1

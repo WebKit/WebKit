@@ -1,3 +1,30 @@
+2018-05-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: ASSERT_NOT_REACHED in PageDebuggerAgent::didAddEventListener when page adds attribute event listener
+        https://bugs.webkit.org/show_bug.cgi?id=181580
+        <rdar://problem/36461309>
+
+        Reviewed by Brian Burg.
+
+        EventTarget should pass newly added EventListeners to InspectorInstrumentation,
+        instead of PageDebuggerAgent assuming the last item in the EventListenerVector
+        is the most recently added listener. This assumption does not hold when
+        the new listener replaces an existing listener.
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::addEventListener):
+        (WebCore::EventTarget::setAttributeEventListener):
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didAddEventListenerImpl):
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didAddEventListener):
+
+        * inspector/agents/page/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::didAddEventListener):
+        * inspector/agents/page/PageDebuggerAgent.h:
+
 2018-05-10  Chris Dumez  <cdumez@apple.com>
 
         'Cross-Origin-Options header implementation follow-up

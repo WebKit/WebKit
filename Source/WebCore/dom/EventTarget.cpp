@@ -75,12 +75,13 @@ bool EventTarget::addEventListener(const AtomicString& eventType, Ref<EventListe
     }
 
     bool listenerCreatedFromScript = listener->type() == EventListener::JSEventListenerType && !listener->wasCreatedFromMarkup();
+    auto listenerRef = listener.copyRef();
 
     if (!ensureEventTargetData().eventListenerMap.add(eventType, WTFMove(listener), { options.capture, passive.value_or(false), options.once }))
         return false;
 
     if (listenerCreatedFromScript)
-        InspectorInstrumentation::didAddEventListener(*this, eventType);
+        InspectorInstrumentation::didAddEventListener(*this, eventType, listenerRef.get(), options.capture);
 
     return true;
 }
@@ -135,9 +136,10 @@ bool EventTarget::setAttributeEventListener(const AtomicString& eventType, RefPt
     if (existingListener) {
         InspectorInstrumentation::willRemoveEventListener(*this, eventType, *existingListener, false);
 
+        auto listenerPointer = listener.copyRef();
         eventTargetData()->eventListenerMap.replace(eventType, *existingListener, listener.releaseNonNull(), { });
 
-        InspectorInstrumentation::didAddEventListener(*this, eventType);
+        InspectorInstrumentation::didAddEventListener(*this, eventType, *listenerPointer, false);
 
         return true;
     }
