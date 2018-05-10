@@ -90,7 +90,8 @@ else()
 endif()
 
 if (COMPILER_IS_GCC_OR_CLANG)
-    WEBKIT_ADD_TARGET_CXX_FLAGS(${LIBNAME} -Wno-unknown-pragmas
+    WEBKIT_ADD_TARGET_CXX_FLAGS(${LIBNAME} -Wno-implicit-fallthrough
+                                           -Wno-unknown-pragmas
                                            -Wno-unused-parameter
                                            -Wno-unused-variable)
 endif()
