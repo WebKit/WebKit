@@ -1,3 +1,15 @@
+2018-05-10  Per Arne Vollan  <pvollan@apple.com>
+
+        Drop-down Control borders missing.
+        https://bugs.webkit.org/show_bug.cgi?id=185500
+        <rdar://problem/40093461>
+
+        Reviewed by Brent Fulgham.
+
+        Open sandbox for reading of some files in temp folder.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-05-10  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream, iOS] Don't check authorizationStatusForMediaType when using mock capture devices
