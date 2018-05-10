@@ -7,7 +7,7 @@ info: |
   BigInt.asIntN ( bits, bigint )
 
   1. Let bits be ? ToIndex(bits).
-features: [BigInt, Symbol.toPrimitive, computed-property-names]
+features: [BigInt, computed-property-names, Symbol, Symbol.toPrimitive]
 ---*/
 
 assert.sameValue(BigInt.asIntN(Object(0), 1n), 0n, "ToPrimitive: unbox object with internal slot");

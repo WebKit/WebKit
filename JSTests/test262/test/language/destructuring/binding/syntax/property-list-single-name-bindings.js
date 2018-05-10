@@ -24,6 +24,7 @@ info: |
   SingleNameBinding[Yield] :
     BindingIdentifier[?Yield] Initializer[In, ?Yield]opt
 
+features: [destructuring-binding]
 ---*/
 
 function fna({x}) {}

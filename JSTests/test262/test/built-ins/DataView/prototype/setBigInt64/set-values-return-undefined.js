@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Igalia, S.L. All rights reserved.
+// Copyright (C) 2018 Igalia, S.L. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
@@ -20,7 +20,7 @@ values.forEach(function(value, i) {
       () => sample.setBigInt64(0, BigInt(value), false),
       "value: " + value);
     return;
-  } else if (!Number.isInteger(value) || value > 9007199254740991) {
+  } else if (!Number.isInteger(value)) {
     assert.throws(RangeError,
       () => sample.setBigInt64(0, BigInt(value), false),
       "value " + value);

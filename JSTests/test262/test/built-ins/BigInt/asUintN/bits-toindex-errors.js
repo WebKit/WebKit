@@ -7,7 +7,7 @@ info: |
   BigInt.asUintN ( bits, bigint )
 
   1. Let bits be ? ToIndex(bits).
-features: [BigInt, Symbol, Symbol.toPrimitive, computed-property-names]
+features: [BigInt, computed-property-names, Symbol, Symbol.toPrimitive]
 ---*/
 
 assert.throws(RangeError, function() {

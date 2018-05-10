@@ -6,7 +6,7 @@ esid: sec-atomics.store
 description: >
   Test Atomics.store on view values other than TypedArrays
 includes: [testAtomics.js]
-features: [SharedArrayBuffer, ArrayBuffer, DataView, Atomics, arrow-function, let, for-of]
+features: [ArrayBuffer, arrow-function, Atomics, DataView, for-of, let, SharedArrayBuffer]
 ---*/
 
 testWithAtomicsNonViewValues(function(view) {

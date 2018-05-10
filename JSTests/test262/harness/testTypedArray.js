@@ -20,6 +20,9 @@ var typedArrayConstructors = [
   Uint8ClampedArray
 ];
 
+var floatArrayConstructors = typedArrayConstructors.slice(0, 2);
+var intArrayConstructors = typedArrayConstructors.slice(2, 7);
+
 /**
  * The %TypedArray% intrinsic constructor function.
  */

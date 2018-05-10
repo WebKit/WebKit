@@ -11,7 +11,7 @@ info: |
     This property has the attributes { [[Writable]]: false, [[Enumerable]]:
     false, [[Configurable]]: true }.
 includes: [propertyHelper.js]
-features: [Symbol.toStringTag, BigInt, Symbol]
+features: [BigInt, Symbol, Symbol.toStringTag]
 ---*/
 
 verifyProperty(BigInt.prototype, Symbol.toStringTag, {

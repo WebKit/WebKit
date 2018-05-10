@@ -8,11 +8,12 @@ description: >
 info: |
   The Atomics Object
 
-  [...]
-  The Atomics object is not a function object. It does not have a [[Construct]]
-  internal method; it is not possible to use the Atomics object as a constructor
-  with the new operator. The Atomics object also does not have a [[Call]] internal
-  method; it is not possible to invoke the Atomics object as a function.
+  ...
+  The Atomics object does not have a [[Construct]] internal method;
+  it is not possible to use the Atomics object as a constructor with the new operator.
+
+  The Atomics object does not have a [[Call]] internal method;
+  it is not possible to invoke the Atomics object as a function.
 
   17 ECMAScript Standard Built-in Objects:
 
@@ -23,11 +24,18 @@ includes: [propertyHelper.js]
 features: [Atomics]
 ---*/
 
-assert.sameValue(typeof Atomics, "object", "no [[Call]]");
+assert.sameValue(typeof Atomics, "object");
+
+assert.throws(TypeError, function() {
+  Atomics();
+}, "no [[Call]]");
+
 assert.throws(TypeError, function() {
   new Atomics();
 }, "no [[Construct]]");
 
-verifyNotEnumerable(this, "Atomics");
-verifyWritable(this, "Atomics");
-verifyConfigurable(this, "Atomics");
+verifyProperty(this, "Atomics", {
+  enumerable: false,
+  writable: true,
+  configurable: true
+});

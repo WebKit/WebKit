@@ -7,7 +7,7 @@ info: |
   BigInt.asIntN ( bits, bigint )
 
   2. Let bigint ? ToBigInt(bigint).
-features: [BigInt, Symbol.toPrimitive, computed-property-names]
+features: [BigInt, computed-property-names, Symbol, Symbol.toPrimitive]
 ---*/
 
 assert.sameValue(BigInt.asIntN(2, Object(0n)), 0n, "ToPrimitive: unbox object with internal slot");

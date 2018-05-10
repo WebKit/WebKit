@@ -14,12 +14,13 @@ info: |
   6. Let B be AgentCanSuspend().
   7. If B is false, throw a TypeError exception.
   ...
-features: [Atomics, SharedArrayBuffer, TypedArray, CannotSuspendMainAgent]
+features: [Atomics, SharedArrayBuffer, TypedArray]
+flags: [CanBlockIsFalse]
 ---*/
 
-var sab = new SharedArrayBuffer(4);
-var int32Array = new Int32Array(sab);
-  
+var buffer = new SharedArrayBuffer(4);
+var int32Array = new Int32Array(buffer);
+
 assert.throws(TypeError, function() {
   Atomics.wait(int32Array, 0, 0, 0);
 });

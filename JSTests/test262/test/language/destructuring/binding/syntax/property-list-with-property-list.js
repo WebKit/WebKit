@@ -17,6 +17,7 @@ info: |
     BindingProperty[?Yield]
     BindingPropertyList[?Yield] , BindingProperty[?Yield]
 
+features: [destructuring-binding]
 ---*/
 
 function fn1({a: {p: q}, b: {r}, c: {s = 0}, d: {}}) {}

@@ -10,7 +10,7 @@ info: |
   1.Let buffer be ? ValidateSharedIntegerTypedArray(typedArray, true).
     ...
     2. if Type(typedArray) is not Object, throw a TypeError exception
-features: [ Atomics, Symbol ]
+features: [Atomics, Symbol]
 ---*/
 
 var poisoned = {
@@ -19,16 +19,30 @@ var poisoned = {
   }
 };
 
-assert.throws(TypeError, function() { Atomics.wait(null,poisoned,poisoned,poisoned) }, 'null');
+assert.throws(TypeError, function() {
+  Atomics.wait(null, poisoned, poisoned, poisoned);
+}, 'null');
 
-assert.throws(TypeError, function() { Atomics.wait(undefined,poisoned,poisoned,poisoned) }, 'undefined');
+assert.throws(TypeError, function() {
+  Atomics.wait(undefined, poisoned, poisoned, poisoned);
+}, 'undefined');
 
-assert.throws(TypeError, function() { Atomics.wait(true,poisoned,poisoned,poisoned) }, 'true');
+assert.throws(TypeError, function() {
+  Atomics.wait(true, poisoned, poisoned, poisoned);
+}, 'true');
 
-assert.throws(TypeError, function() { Atomics.wait(false,poisoned,poisoned,poisoned) }, 'false');
+assert.throws(TypeError, function() {
+  Atomics.wait(false, poisoned, poisoned, poisoned);
+}, 'false');
 
-assert.throws(TypeError, function() { Atomics.wait('***string***',poisoned,poisoned,poisoned) }, 'String');
+assert.throws(TypeError, function() {
+  Atomics.wait('***string***', poisoned, poisoned, poisoned);
+}, 'String');
 
-assert.throws(TypeError, function() { Atomics.wait(Number.NEGATIVE_INFINITY,poisoned,poisoned,poisoned) }, '-Infinity');
+assert.throws(TypeError, function() {
+  Atomics.wait(Number.NEGATIVE_INFINITY, poisoned, poisoned, poisoned);
+}, '-Infinity');
 
-assert.throws(TypeError, function() { Atomics.wait(Symbol('***symbol***'),poisoned,poisoned,poisoned) }, 'Symbol');
+assert.throws(TypeError, function() {
+  Atomics.wait(Symbol('***symbol***'), poisoned, poisoned, poisoned);
+}, 'Symbol');

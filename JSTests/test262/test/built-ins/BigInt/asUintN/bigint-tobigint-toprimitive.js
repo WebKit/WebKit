@@ -7,7 +7,7 @@ info: |
   BigInt.asUintN ( bits, bigint )
 
   2. Let bigint ? ToBigInt(bigint).
-features: [BigInt, Symbol.toPrimitive, computed-property-names]
+features: [BigInt, computed-property-names, Symbol, Symbol.toPrimitive]
 ---*/
 
 function err() {

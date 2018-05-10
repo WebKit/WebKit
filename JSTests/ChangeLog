@@ -1,3 +1,719 @@
+2018-05-10  Leo Balter  <leonardo.balter@gmail.com>
+
+        Update Test262 tests through the new import script - 20180509
+        https://bugs.webkit.org/show_bug.cgi?id=185482
+
+        Reviewed by Michael Saboff.
+
+        Also update the test262/expecatations.yaml with the recent imported files.
+
+        * test262/expectations.yaml:
+        * test262/harness/compareIterator.js: Added.
+        (assert.compareIterator):
+        * test262/harness/nativeFunctionMatcher.js:
+        (const.assertToStringOrNativeFunction):
+        (const.assertNativeFunction):
+        * test262/harness/regExpUtils.js:
+        * test262/harness/testIntl.js:
+        (getInvalidLanguageTags):
+        * test262/harness/testTypedArray.js:
+        * test262/harness/wellKnownIntrinsicObjects.js: Added.
+        (WellKnownIntrinsicObjects.forEach.wkio.catch):
+        * test262/latest-changes-summary.txt: Added.
+        * test262/test/annexB/language/eval-code/direct/block-decl-nostrict.js: Copied from JSTests/test262/test/language/eval-code/direct/block-decl-strict-caller.js.
+        (catch):
+        * test262/test/annexB/language/eval-code/direct/switch-case-decl-nostrict.js: Copied from JSTests/test262/test/language/eval-code/direct/switch-case-decl-strict-source.js.
+        (catch):
+        * test262/test/annexB/language/eval-code/direct/switch-dflt-decl-nostrict.js: Copied from JSTests/test262/test/language/eval-code/direct/switch-dflt-decl-strict-caller.js.
+        (catch):
+        * test262/test/annexB/language/function-code/block-decl-nested-blocks-with-fun-decl.js: Added.
+        (g.f):
+        (g):
+        * test262/test/annexB/language/function-code/block-decl-nostrict.js: Copied from JSTests/test262/test/language/function-code/block-decl-strict.js.
+        (catch):
+        (f):
+        * test262/test/annexB/language/function-code/switch-case-decl-nostrict.js: Copied from JSTests/test262/test/language/function-code/switch-case-decl-strict.js.
+        (catch):
+        (switch.case.1):
+        (switch):
+        * test262/test/annexB/language/function-code/switch-dflt-decl-nostrict.js: Copied from JSTests/test262/test/language/function-code/switch-dflt-decl-strict.js.
+        (catch):
+        (switch.default):
+        (switch):
+        * test262/test/built-ins/Array/prototype/filter/target-array-with-non-writable-property.js: Added.
+        (a.Symbol.species):
+        (r.a.filter):
+        * test262/test/built-ins/Array/prototype/indexOf/calls-only-has-on-prototype-after-length-zeroed.js: Added.
+        (allowProxyTraps.has):
+        (fromIndex.valueOf):
+        * test262/test/built-ins/Array/prototype/lastIndexOf/calls-only-has-on-prototype-after-length-zeroed.js: Added.
+        (allowProxyTraps.has):
+        (fromIndex.valueOf):
+        * test262/test/built-ins/Array/prototype/map/target-array-with-non-writable-property.js: Added.
+        (a.Symbol.species):
+        (r.a.map):
+        * test262/test/built-ins/Array/prototype/slice/target-array-with-non-writable-property.js: Added.
+        (a.Symbol.species):
+        * test262/test/built-ins/Array/prototype/splice/property-traps-order-with-species.js: Added.
+        (a.Symbol.species):
+        * test262/test/built-ins/Array/prototype/splice/target-array-with-non-writable-property.js: Added.
+        (a.Symbol.species):
+        * test262/test/built-ins/Atomics/Symbol.toStringTag.js:
+        * test262/test/built-ins/Atomics/add/bad-range.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/add/good-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/add/non-views.js:
+        * test262/test/built-ins/Atomics/add/nonshared-int-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/add/shared-nonint-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/and/bad-range.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/and/good-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/and/non-views.js:
+        * test262/test/built-ins/Atomics/and/nonshared-int-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/and/shared-nonint-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/compareExchange/bad-range.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/compareExchange/good-views.js:
+        (testWithTypedArrayConstructors):
+        (view): Deleted.
+        * test262/test/built-ins/Atomics/compareExchange/non-views.js:
+        * test262/test/built-ins/Atomics/compareExchange/nonshared-int-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/compareExchange/shared-nonint-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/exchange/bad-range.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/exchange/good-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/exchange/non-views.js:
+        * test262/test/built-ins/Atomics/exchange/nonshared-int-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/exchange/shared-nonint-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/isLockFree/corner-cases.js:
+        (hide):
+        * test262/test/built-ins/Atomics/isLockFree/value.js:
+        (testIsLockFree): Deleted.
+        * test262/test/built-ins/Atomics/load/bad-range.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/load/good-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/load/non-views.js:
+        * test262/test/built-ins/Atomics/load/nonshared-int-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/load/shared-nonint-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/or/bad-range.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/or/good-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/or/non-views.js:
+        * test262/test/built-ins/Atomics/or/nonshared-int-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/or/shared-nonint-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/prop-desc.js:
+        * test262/test/built-ins/Atomics/proto.js:
+        * test262/test/built-ins/Atomics/store/bad-range.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/store/good-views.js:
+        (testWithTypedArrayConstructors):
+        (ToInteger):
+        * test262/test/built-ins/Atomics/store/non-views.js:
+        * test262/test/built-ins/Atomics/store/nonshared-int-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/store/shared-nonint-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/sub/bad-range.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/sub/good-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/sub/non-views.js:
+        * test262/test/built-ins/Atomics/sub/nonshared-int-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/sub/shared-nonint-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/wait/bad-range.js: Copied from JSTests/test262/test/built-ins/Atomics/wake/bad-range.js.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/wait/cannot-suspend-throws.js:
+        * test262/test/built-ins/Atomics/wait/did-timeout.js:
+        (getReport):
+        * test262/test/built-ins/Atomics/wait/false-for-timeout-agent.js: Copied from JSTests/test262/test/built-ins/Atomics/wait/false-for-timeout.js.
+        (getReport):
+        (262.agent.start.valueOf.valueOf):
+        (toPrimitive.Symbol.toPrimitive):
+        (262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wait/false-for-timeout.js:
+        (valueOf.valueOf):
+        (toPrimitive.Symbol.toPrimitive):
+        (getReport): Deleted.
+        (262.agent.start.262.agent.receiveBroadcast): Deleted.
+        * test262/test/built-ins/Atomics/wait/good-views.js:
+        (r.getReport):
+        (getReport):
+        * test262/test/built-ins/Atomics/wait/nan-for-timeout.js:
+        (getReport):
+        * test262/test/built-ins/Atomics/wait/negative-index-throws.js:
+        * test262/test/built-ins/Atomics/wait/negative-timeout-agent.js: Copied from JSTests/test262/test/built-ins/Atomics/wait/negative-timeout.js.
+        (getReport):
+        (262.agent.start.262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wait/negative-timeout.js:
+        (262.agent.start.262.agent.receiveBroadcast): Deleted.
+        (getReport): Deleted.
+        * test262/test/built-ins/Atomics/wait/no-spurious-wakeup.js:
+        (getReport):
+        * test262/test/built-ins/Atomics/wait/non-int32-typedarray-throws.js:
+        * test262/test/built-ins/Atomics/wait/non-shared-bufferdata-throws.js: Copied from JSTests/test262/test/built-ins/Atomics/wait/nonshared-bufferdata-throws.js.
+        * test262/test/built-ins/Atomics/wait/not-a-typedarray-throws.js:
+        * test262/test/built-ins/Atomics/wait/not-an-object-throws.js:
+        * test262/test/built-ins/Atomics/wait/null-bufferdata-throws.js:
+        * test262/test/built-ins/Atomics/wait/null-for-timeout-agent.js: Copied from JSTests/test262/test/built-ins/Atomics/wait/false-for-timeout.js.
+        (getReport):
+        (262.agent.start.valueOf.valueOf):
+        (toPrimitive.Symbol.toPrimitive):
+        (262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wait/null-for-timeout.js:
+        (valueOf.valueOf):
+        (toPrimitive.Symbol.toPrimitive):
+        (getReport): Deleted.
+        (262.agent.start.262.agent.receiveBroadcast): Deleted.
+        * test262/test/built-ins/Atomics/wait/object-for-timeout-agent.js: Copied from JSTests/test262/test/built-ins/Atomics/wait/false-for-timeout.js.
+        (getReport):
+        (262.agent.start.valueOf.valueOf):
+        (toString.toString):
+        (toPrimitive.Symbol.toPrimitive):
+        (262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wait/object-for-timeout.js:
+        (valueOf.valueOf):
+        (toString.toString):
+        (toPrimitive.Symbol.toPrimitive):
+        (getReport): Deleted.
+        (262.agent.start.262.agent.receiveBroadcast): Deleted.
+        * test262/test/built-ins/Atomics/wait/out-of-range-index-throws.js:
+        * test262/test/built-ins/Atomics/wait/poisoned-object-for-timeout-throws-agent.js: Added.
+        (getReport):
+        (262.agent.start.poisonedValueOf.valueOf):
+        (poisonedToPrimitive.Symbol.toPrimitive):
+        (262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wait/poisoned-object-for-timeout-throws.js:
+        (poisonedValueOf.valueOf):
+        (poisonedToPrimitive.Symbol.toPrimitive):
+        (getReport): Deleted.
+        (262.agent.start.262.agent.receiveBroadcast): Deleted.
+        * test262/test/built-ins/Atomics/wait/symbol-for-index-throws-agent.js: Added.
+        (getReport):
+        (262.agent.start.poisonedValueOf.valueOf):
+        (poisonedToPrimitive.Symbol.toPrimitive):
+        (262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wait/symbol-for-index-throws.js:
+        (poisonedToPrimitive.Symbol.toPrimitive):
+        (poisoned.valueOf): Deleted.
+        (poisonedWithString.get valueOf): Deleted.
+        (poisonedToPrimitive.get Symbol): Deleted.
+        * test262/test/built-ins/Atomics/wait/symbol-for-timeout-throws-agent.js: Added.
+        (getReport):
+        (262.agent.start.262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wait/symbol-for-timeout-throws.js:
+        (poisonedValueOf.valueOf):
+        (poisonedToPrimitive.Symbol.toPrimitive):
+        (getReport): Deleted.
+        (262.agent.start.262.agent.receiveBroadcast): Deleted.
+        * test262/test/built-ins/Atomics/wait/symbol-for-value-throws-agent.js: Added.
+        (getReport):
+        (262.agent.start.poisonedValueOf.valueOf):
+        (poisonedToPrimitive.Symbol.toPrimitive):
+        (262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wait/symbol-for-value-throws.js: Added.
+        (poisonedValueOf.valueOf):
+        (poisonedToPrimitive.Symbol.toPrimitive):
+        * test262/test/built-ins/Atomics/wait/true-for-timeout-agent.js: Copied from JSTests/test262/test/built-ins/Atomics/wait/null-for-timeout.js.
+        (getReport):
+        (262.agent.start.valueOf.valueOf):
+        (toPrimitive.Symbol.toPrimitive):
+        (262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wait/true-for-timeout.js:
+        (valueOf.valueOf):
+        (toPrimitive.Symbol.toPrimitive):
+        (getReport): Deleted.
+        (262.agent.start.262.agent.receiveBroadcast): Deleted.
+        * test262/test/built-ins/Atomics/wait/undefined-for-timeout.js:
+        (getReport):
+        * test262/test/built-ins/Atomics/wait/undefined-index-defaults-to-zero.js:
+        (262.agent.start.262.agent.receiveBroadcast):
+        (getReport):
+        * test262/test/built-ins/Atomics/wait/value-not-equal.js: Copied from JSTests/test262/test/built-ins/Atomics/wait/wait-index-value-not-equal.js.
+        (getReport):
+        (262.agent.start.262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wait/wait-index-value-not-equal.js:
+        (262.agent.start.262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wait/waiterlist-block-indexedposition-wake.js: Added.
+        (getReport):
+        (262.agent.start.262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wait/waiterlist-order-of-operations-is-fifo.js: Added.
+        (getReport):
+        (262.agent.start.262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wait/was-woken-before-timeout.js:
+        (getReport):
+        (262.agent.start.262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wait/was-woken.js:
+        (getReport):
+        (262.agent.start.262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wake/bad-range.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/wake/count-boundary-cases.js: Renamed from JSTests/test262/test/built-ins/Atomics/wake/counts.js.
+        * test262/test/built-ins/Atomics/wake/count-defaults-to-infinity-missing.js: Added.
+        (getReport):
+        (262.agent.start.262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wake/count-defaults-to-infinity-undefined.js: Added.
+        (getReport):
+        (262.agent.start.262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wake/count-from-nans.js: Added.
+        * test262/test/built-ins/Atomics/wake/count-symbol-throws.js: Added.
+        * test262/test/built-ins/Atomics/wake/count-tointeger-throws-then-wake-throws.js: Added.
+        (poisoned.valueOf):
+        * test262/test/built-ins/Atomics/wake/good-views.js:
+        * test262/test/built-ins/Atomics/wake/negative-count.js: Renamed from JSTests/test262/test/built-ins/Atomics/wake/wake-negative.js.
+        * test262/test/built-ins/Atomics/wake/negative-index-throws.js: Copied from JSTests/test262/test/built-ins/Atomics/wait/negative-index-throws.js.
+        (poisoned.valueOf):
+        * test262/test/built-ins/Atomics/wake/non-int32-typedarray-throws.js: Copied from JSTests/test262/test/built-ins/Atomics/wait/non-int32-typedarray-throws.js.
+        (poisoned.valueOf):
+        * test262/test/built-ins/Atomics/wake/non-shared-bufferdata-throws.js: Renamed from JSTests/test262/test/built-ins/Atomics/wait/nonshared-bufferdata-throws.js.
+        (poisoned.valueOf):
+        * test262/test/built-ins/Atomics/wake/non-views.js:
+        * test262/test/built-ins/Atomics/wake/nonshared-int-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/wake/not-a-typedarray-throws.js: Copied from JSTests/test262/test/built-ins/Atomics/wait/not-a-typedarray-throws.js.
+        (poisoned.valueOf):
+        * test262/test/built-ins/Atomics/wake/not-an-object-throws.js: Added.
+        (poisoned.valueOf):
+        * test262/test/built-ins/Atomics/wake/null-bufferdata-throws.js: Copied from JSTests/test262/test/built-ins/Atomics/wait/null-bufferdata-throws.js.
+        (poisoned.valueOf):
+        * test262/test/built-ins/Atomics/wake/out-of-range-index-throws.js: Copied from JSTests/test262/test/built-ins/Atomics/wait/out-of-range-index-throws.js.
+        (poisoned.valueOf):
+        * test262/test/built-ins/Atomics/wake/shared-nonint-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/wake/symbol-for-index-throws.js: Added.
+        (poisonedValueOf.valueOf):
+        (poisonedToPrimitive.Symbol.toPrimitive):
+        * test262/test/built-ins/Atomics/wake/undefined-index-defaults-to-zero.js: Copied from JSTests/test262/test/built-ins/Atomics/wait/undefined-index-defaults-to-zero.js.
+        (262.agent.start.262.agent.receiveBroadcast):
+        (getReport):
+        * test262/test/built-ins/Atomics/wake/wake-all-on-loc.js:
+        (262.agent.start.262.agent.receiveBroadcast):
+        (getReport):
+        (waitUntil):
+        * test262/test/built-ins/Atomics/wake/wake-all.js:
+        (262.agent.start.262.agent.receiveBroadcast):
+        (getReport):
+        (waitUntil):
+        * test262/test/built-ins/Atomics/wake/wake-in-order.js:
+        (getReport):
+        (waitUntil):
+        * test262/test/built-ins/Atomics/wake/wake-nan.js:
+        (getReport):
+        * test262/test/built-ins/Atomics/wake/wake-one.js:
+        (getReport):
+        (waitUntil):
+        * test262/test/built-ins/Atomics/wake/wake-rewake-noop.js: Added.
+        (getReport):
+        (waitUntil):
+        (262.agent.start.262.agent.receiveBroadcast):
+        * test262/test/built-ins/Atomics/wake/wake-two.js:
+        (getReport):
+        * test262/test/built-ins/Atomics/wake/wake-with-no-agents-waiting.js: Added.
+        (262.agent.start.262.agent.receiveBroadcast):
+        (waitUntil):
+        * test262/test/built-ins/Atomics/wake/wake-with-no-matching-agents-waiting.js: Added.
+        (262.agent.start.262.agent.receiveBroadcast):
+        (waitUntil):
+        * test262/test/built-ins/Atomics/wake/wake-zero.js:
+        (i.262.agent.start.262.agent.receiveBroadcast):
+        (getReport):
+        (waitUntil):
+        * test262/test/built-ins/Atomics/xor/bad-range.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/xor/good-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/xor/non-views.js:
+        * test262/test/built-ins/Atomics/xor/nonshared-int-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/xor/shared-nonint-views.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/BigInt/asIntN/bigint-tobigint-errors.js:
+        * test262/test/built-ins/BigInt/asIntN/bigint-tobigint-toprimitive.js:
+        * test262/test/built-ins/BigInt/asIntN/bigint-tobigint-wrapped-values.js:
+        * test262/test/built-ins/BigInt/asIntN/bits-toindex-errors.js:
+        * test262/test/built-ins/BigInt/asIntN/bits-toindex-toprimitive.js:
+        * test262/test/built-ins/BigInt/asIntN/bits-toindex-wrapped-values.js:
+        * test262/test/built-ins/BigInt/asUintN/bigint-tobigint-errors.js:
+        * test262/test/built-ins/BigInt/asUintN/bigint-tobigint-toprimitive.js:
+        * test262/test/built-ins/BigInt/asUintN/bigint-tobigint-wrapped-values.js:
+        * test262/test/built-ins/BigInt/asUintN/bits-toindex-errors.js:
+        * test262/test/built-ins/BigInt/asUintN/bits-toindex-toprimitive.js:
+        * test262/test/built-ins/BigInt/asUintN/bits-toindex-wrapped-values.js:
+        * test262/test/built-ins/BigInt/constructor-empty-string.js:
+        * test262/test/built-ins/BigInt/constructor-from-binary-string.js:
+        * test262/test/built-ins/BigInt/constructor-from-decimal-string.js:
+        * test262/test/built-ins/BigInt/constructor-from-hex-string.js:
+        * test262/test/built-ins/BigInt/constructor-from-octal-string.js:
+        * test262/test/built-ins/BigInt/constructor-from-string-syntax-errors.js:
+        * test262/test/built-ins/BigInt/constructor-integer.js: Added.
+        * test262/test/built-ins/BigInt/constructor-trailing-leading-spaces.js:
+        * test262/test/built-ins/BigInt/issafeinteger-true.js: Removed.
+        * test262/test/built-ins/BigInt/out-of-bounds-integer-rangeerror.js: Removed.
+        * test262/test/built-ins/BigInt/prototype/Symbol.toStringTag.js:
+        * test262/test/built-ins/BigInt/prototype/toString/default-radix.js: Added.
+        * test262/test/built-ins/BigInt/prototype/toString/thisbigintvalue-not-valid-throws.js:
+        * test262/test/built-ins/BigInt/prototype/valueOf/cross-realm.js: Added.
+        * test262/test/built-ins/BigInt/tostring-throws.js: Copied from JSTests/test262/test/built-ins/BigInt/value-of-throws.js.
+        * test262/test/built-ins/BigInt/valueof-throws.js: Renamed from JSTests/test262/test/built-ins/BigInt/value-of-throws.js.
+        (BigInt.valueOf):
+        * test262/test/built-ins/DataView/prototype/setBigInt64/set-values-return-undefined.js:
+        (values.forEach):
+        * test262/test/built-ins/Function/prototype/bind/length-exceeds-int32.js: Added.
+        (f):
+        * test262/test/built-ins/Function/prototype/toString/anonymous-intrinsics.js: Removed.
+        * test262/test/built-ins/Function/prototype/toString/bound-function.js:
+        (assertNativeFunction):
+        (let.f): Deleted.
+        * test262/test/built-ins/Function/prototype/toString/built-in-function-object.js: Added.
+        * test262/test/built-ins/Function/prototype/toString/intrinsics.js: Removed.
+        * test262/test/built-ins/Function/prototype/toString/proxy-arrow-function.js: Added.
+        (assertNativeFunction.new.Proxy):
+        * test262/test/built-ins/Function/prototype/toString/proxy-async-function.js: Added.
+        (assertNativeFunction.new.Proxy.async):
+        * test262/test/built-ins/Function/prototype/toString/proxy-async-generator-function.js: Added.
+        (assertNativeFunction.new.Proxy.async):
+        * test262/test/built-ins/Function/prototype/toString/proxy-async-generator-method-definition.js: Added.
+        (assertNativeFunction.new.Proxy.async.method):
+        (apply):
+        * test262/test/built-ins/Function/prototype/toString/proxy-async-method-definition.js: Added.
+        (assertNativeFunction.new.Proxy.async.method):
+        (apply):
+        * test262/test/built-ins/Function/prototype/toString/proxy-bound-function.js: Added.
+        (assertNativeFunction.new.Proxy):
+        (bind):
+        * test262/test/built-ins/Function/prototype/toString/proxy-class.js: Added.
+        (assertNativeFunction):
+        * test262/test/built-ins/Function/prototype/toString/proxy-function-expression.js: Added.
+        (assertNativeFunction.new.Proxy):
+        * test262/test/built-ins/Function/prototype/toString/proxy-generator-function.js: Added.
+        (assertNativeFunction.new.Proxy):
+        * test262/test/built-ins/Function/prototype/toString/proxy-method-definition.js: Added.
+        (assertNativeFunction.new.Proxy.method):
+        (apply):
+        * test262/test/built-ins/Function/prototype/toString/proxy-non-callable-throws.js: Added.
+        * test262/test/built-ins/Function/prototype/toString/proxy.js: Removed.
+        * test262/test/built-ins/Function/prototype/toString/well-known-intrinsic-object-functions.js: Added.
+        (WellKnownIntrinsicObjects.forEach):
+        * test262/test/built-ins/JSON/prop-desc.js: Added.
+        * test262/test/built-ins/Math/acosh/nan-returns.js:
+        * test262/test/built-ins/Math/asinh/asinh-specialVals.js:
+        * test262/test/built-ins/Math/atanh/atanh-specialVals.js:
+        * test262/test/built-ins/Math/cbrt/cbrt-specialValues.js:
+        * test262/test/built-ins/Math/cbrt/prop-desc.js:
+        * test262/test/built-ins/Math/cosh/cosh-specialVals.js:
+        * test262/test/built-ins/Math/expm1/expm1-specialVals.js:
+        * test262/test/built-ins/Math/log10/Log10-specialVals.js:
+        * test262/test/built-ins/Math/log2/log2-basicTests.js:
+        * test262/test/built-ins/Math/prop-desc.js:
+        * test262/test/built-ins/Math/sign/sign-specialVals.js:
+        * test262/test/built-ins/Math/sinh/sinh-specialVals.js:
+        * test262/test/built-ins/Math/tanh/tanh-specialVals.js:
+        * test262/test/built-ins/Math/trunc/trunc-sampleTests.js:
+        * test262/test/built-ins/Math/trunc/trunc-specialVals.js:
+        * test262/test/built-ins/Object/assign/strings-and-symbol-order.js: Added.
+        * test262/test/built-ins/Object/keys/property-traps-order-with-proxied-array.js: Added.
+        (get t):
+        * test262/test/built-ins/Reflect/Reflect.js: Removed.
+        * test262/test/built-ins/Reflect/prop-desc.js: Added.
+        * test262/test/built-ins/Reflect/properties.js: Removed.
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/internal-regexp-lastindex-not-zero.js: Added.
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/isregexp-internal-regexp-is-false.js: Added.
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/isregexp-internal-regexp-throws.js: Added.
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/isregexp-this-throws.js: Added.
+        (obj.get Symbol):
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/length.js: Added.
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/name.js: Added.
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/prop-desc.js: Added.
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/regexpcreate-this-throws.js: Added.
+        (obj.toString):
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor-get-constructor-throws.js: Added.
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor-get-species-throws.js: Added.
+        (regexp.get Symbol):
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor-is-not-object-throws.js: Added.
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor-is-undefined.js: Added.
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor-species-is-not-constructor.js: Added.
+        (callMatchAll):
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor-species-is-null-or-undefined.js: Added.
+        (TestWithConstructor):
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor-species-throws.js: Added.
+        (regexp.Symbol.species):
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor.js: Added.
+        (regexp.Symbol.species):
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/species-regexp-get-global-throws.js: Added.
+        (regexp.Symbol.species):
+        (get assert):
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/species-regexp-get-unicode-throws.js: Added.
+        (regexp.Symbol.species):
+        (get assert):
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/string-tostring-throws.js: Added.
+        (obj.valueOf):
+        (obj.toString):
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/string-tostring.js: Added.
+        (obj.toString):
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/this-get-flags-throws.js: Added.
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/this-get-flags.js: Added.
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/this-lastindex-cached.js: Added.
+        (regexp.lastIndex.valueOf):
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/this-not-object-throws.js: Added.
+        (callMatchAll):
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/this-tolength-lastindex-throws.js: Added.
+        (regexp.lastIndex.valueOf):
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/this-tostring-flags-throws.js: Added.
+        (value.valueOf):
+        (value.toString):
+        * test262/test/built-ins/RegExp/prototype/Symbol.matchAll/this-tostring-flags.js: Added.
+        (value.toString):
+        * test262/test/built-ins/RegExpStringIteratorPrototype/Symbol.toStringTag.js: Added.
+        * test262/test/built-ins/RegExpStringIteratorPrototype/ancestry.js: Added.
+        * test262/test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-call-throws.js: Added.
+        (RegExp.prototype.exec):
+        * test262/test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-get-throws.js: Added.
+        * test262/test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-match-get-0-throws.js: Added.
+        (return.get string_appeared_here):
+        (RegExp.prototype.exec):
+        * test262/test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-match-get-0-tostring-throws.js: Added.
+        (return.toString):
+        (RegExp.prototype.exec):
+        * test262/test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-match-get-0-tostring.js: Added.
+        (execResult.get string_appeared_here):
+        (RegExp.prototype.exec):
+        * test262/test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-not-callable.js: Added.
+        (TestWithRegExpExec):
+        * test262/test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec.js: Added.
+        (callNextWithExecReturnValue.RegExp.prototype.exec):
+        (callNextWithExecReturnValue):
+        * test262/test/built-ins/RegExpStringIteratorPrototype/next/length.js: Added.
+        * test262/test/built-ins/RegExpStringIteratorPrototype/next/name.js: Added.
+        * test262/test/built-ins/RegExpStringIteratorPrototype/next/next-iteration-global.js: Added.
+        * test262/test/built-ins/RegExpStringIteratorPrototype/next/next-iteration.js: Added.
+        * test262/test/built-ins/RegExpStringIteratorPrototype/next/next-missing-internal-slots.js: Added.
+        * test262/test/built-ins/RegExpStringIteratorPrototype/next/prop-desc.js: Added.
+        * test262/test/built-ins/RegExpStringIteratorPrototype/next/regexp-tolength-lastindex-throws.js: Added.
+        (RegExp.prototype.exec):
+        * test262/test/built-ins/RegExpStringIteratorPrototype/next/this-is-not-object-throws.js: Added.
+        (callNext):
+        * test262/test/built-ins/String/prototype/matchAll/length.js: Added.
+        * test262/test/built-ins/String/prototype/matchAll/name.js: Added.
+        * test262/test/built-ins/String/prototype/matchAll/prop-desc.js: Added.
+        * test262/test/built-ins/String/prototype/matchAll/regexp-get-matchAll-throws.js: Added.
+        * test262/test/built-ins/String/prototype/matchAll/regexp-is-null.js: Added.
+        * test262/test/built-ins/String/prototype/matchAll/regexp-is-undefined.js: Added.
+        * test262/test/built-ins/String/prototype/matchAll/regexp-matchAll-invocation.js: Added.
+        (obj.Symbol.matchAll):
+        * test262/test/built-ins/String/prototype/matchAll/regexp-matchAll-throws.js: Added.
+        (regexp.Symbol.matchAll):
+        * test262/test/built-ins/String/prototype/matchAll/regexp-prototype-get-matchAll-throws.js: Added.
+        * test262/test/built-ins/String/prototype/matchAll/regexp-prototype-has-no-matchAll.js: Added.
+        * test262/test/built-ins/String/prototype/matchAll/regexp-prototype-matchAll-invocation.js: Added.
+        (RegExp.prototype.Symbol.matchAll):
+        * test262/test/built-ins/String/prototype/matchAll/regexp-prototype-matchAll-throws.js: Added.
+        (RegExp.prototype.Symbol.matchAll):
+        * test262/test/built-ins/String/prototype/matchAll/this-val-non-obj-coercible.js: Added.
+        * test262/test/built-ins/Symbol/matchAll/cross-realm.js: Added.
+        * test262/test/built-ins/Symbol/matchAll/prop-desc.js: Added.
+        * test262/test/harness/testTypedArray.js:
+        * test262/test/intl402/Array/prototype/toLocaleString/calls-toLocaleString-number-elements.js: Added.
+        * test262/test/intl402/Intl/getCanonicalLocales/invalid-tags.js:
+        * test262/test/intl402/Locale/constructor-newtarget-undefined.js: Added.
+        * test262/test/intl402/Locale/constructor-options-calendar-invalid.js: Added.
+        (const.invalidCalendarOption.of.invalidCalendarOptions.new.Intl.Locale):
+        * test262/test/intl402/Locale/constructor-options-calendar-valid.js: Added.
+        * test262/test/intl402/Locale/constructor-options-language-invalid.js: Added.
+        (const.invalidLanguageOption.of.invalidLanguageOptions.new.Intl.Locale):
+        * test262/test/intl402/Locale/constructor-options-language-valid.js: Added.
+        (toString):
+        * test262/test/intl402/Locale/constructor-options-region-invalid.js: Added.
+        (const.invalidRegionOption.of.invalidRegionOptions.new.Intl.Locale):
+        * test262/test/intl402/Locale/constructor-options-region-valid.js: Added.
+        * test262/test/intl402/Locale/constructor-options-script-invalid.js: Added.
+        (const.invalidScriptOption.of.invalidScriptOptions.new.Intl.Locale):
+        * test262/test/intl402/Locale/constructor-options-script-valid.js: Added.
+        (toString):
+        * test262/test/intl402/Locale/function-prototype.js: Added.
+        * test262/test/intl402/Locale/instance-extensibility.js: Added.
+        * test262/test/intl402/Locale/instance.js: Added.
+        * test262/test/intl402/Locale/invalid-tag-throws-boolean.js: Added.
+        * test262/test/intl402/Locale/invalid-tag-throws-null.js: Added.
+        * test262/test/intl402/Locale/invalid-tag-throws-number.js: Added.
+        * test262/test/intl402/Locale/invalid-tag-throws-symbol.js: Added.
+        * test262/test/intl402/Locale/invalid-tag-throws-undefined.js: Added.
+        * test262/test/intl402/Locale/invalid-tag-throws.js: Added.
+        (const.invalidTag.of.getInvalidLanguageTags):
+        * test262/test/intl402/Locale/length.js: Added.
+        * test262/test/intl402/Locale/name.js: Added.
+        * test262/test/intl402/Locale/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/constructor.js: Added.
+        * test262/test/intl402/Locale/prototype/maximize/length.js: Added.
+        * test262/test/intl402/Locale/prototype/maximize/name.js: Added.
+        * test262/test/intl402/Locale/prototype/maximize/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/toStringTag.js: Added.
+        * test262/test/intl402/TypedArray/prototype/toLocaleString/calls-toLocaleString-number-elements.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/language/asi/S7.9_A11_T8.js:
+        (else.x.1): Deleted.
+        * test262/test/language/asi/S7.9_A4.js:
+        (catch):
+        * test262/test/language/asi/S7.9_A5.1_T1.js:
+        * test262/test/language/asi/S7.9_A5.3_T1.js:
+        * test262/test/language/block-scope/syntax/redeclaration/function-declaration-attempt-to-redeclare-with-var-declaration-nested-in-function.js: Added.
+        (g.f):
+        (g):
+        * test262/test/language/destructuring/binding/initialization-requires-object-coercible-null.js:
+        * test262/test/language/destructuring/binding/initialization-requires-object-coercible-undefined.js:
+        * test262/test/language/destructuring/binding/initialization-returns-normal-completion-for-empty-objects.js:
+        * test262/test/language/destructuring/binding/syntax/array-elements-with-initializer.js:
+        * test262/test/language/destructuring/binding/syntax/array-elements-with-object-patterns.js:
+        * test262/test/language/destructuring/binding/syntax/array-elements-without-initializer.js:
+        * test262/test/language/destructuring/binding/syntax/array-pattern-with-elisions.js:
+        * test262/test/language/destructuring/binding/syntax/array-pattern-with-no-elements.js:
+        * test262/test/language/destructuring/binding/syntax/array-rest-elements.js:
+        * test262/test/language/destructuring/binding/syntax/object-pattern-with-no-property-list.js:
+        * test262/test/language/destructuring/binding/syntax/property-list-bindings-elements.js:
+        * test262/test/language/destructuring/binding/syntax/property-list-followed-by-a-single-comma.js:
+        * test262/test/language/destructuring/binding/syntax/property-list-single-name-bindings.js:
+        * test262/test/language/destructuring/binding/syntax/property-list-with-property-list.js:
+        * test262/test/language/destructuring/binding/syntax/recursive-array-and-object-patterns.js:
+        * test262/test/language/eval-code/direct/block-decl-eval-source-is-strict-nostrict.js: Copied from JSTests/test262/test/language/eval-code/direct/block-decl-strict-source.js.
+        * test262/test/language/eval-code/direct/block-decl-eval-source-is-strict-onlystrict.js: Renamed from JSTests/test262/test/language/eval-code/direct/block-decl-strict-source.js.
+        (catch):
+        * test262/test/language/eval-code/direct/block-decl-onlystrict.js: Renamed from JSTests/test262/test/language/eval-code/direct/block-decl-strict-caller.js.
+        * test262/test/language/eval-code/direct/switch-case-decl-eval-source-is-strict-nostrict.js: Renamed from JSTests/test262/test/language/eval-code/direct/switch-case-decl-strict-source.js.
+        * test262/test/language/eval-code/direct/switch-case-decl-eval-source-is-strict-onlystrict.js: Copied from JSTests/test262/test/language/eval-code/direct/switch-case-decl-strict-caller.js.
+        (catch):
+        * test262/test/language/eval-code/direct/switch-case-decl-onlystrict.js: Renamed from JSTests/test262/test/language/eval-code/direct/switch-case-decl-strict-caller.js.
+        * test262/test/language/eval-code/direct/switch-dflt-decl-eval-source-is-strict-nostrict.js: Renamed from JSTests/test262/test/language/eval-code/direct/switch-dflt-decl-strict-source.js.
+        * test262/test/language/eval-code/direct/switch-dflt-decl-eval-source-is-strict-onlystrict.js: Copied from JSTests/test262/test/language/eval-code/direct/switch-dflt-decl-strict-caller.js.
+        (catch):
+        * test262/test/language/eval-code/direct/switch-dflt-decl-onlystrict.js: Renamed from JSTests/test262/test/language/eval-code/direct/switch-dflt-decl-strict-caller.js.
+        * test262/test/language/expressions/async-arrow-function/await-as-param-ident-nested-arrow-parameter-position.js: Added.
+        (async):
+        * test262/test/language/expressions/async-arrow-function/await-as-param-nested-arrow-body-position.js: Added.
+        (async):
+        * test262/test/language/expressions/async-arrow-function/await-as-param-nested-arrow-parameter-position.js: Added.
+        (async.a):
+        * test262/test/language/expressions/async-arrow-function/await-as-param-rest-nested-arrow-parameter-position.js: Added.
+        (async.a):
+        * test262/test/language/expressions/async-arrow-function/escaped-async-line-terminator.js: Added.
+        * test262/test/language/expressions/async-generator/generator-created-after-decl-inst.js: Added.
+        (g.async.a):
+        * test262/test/language/expressions/class/class-name-ident-await-escaped-module.js: Added.
+        (C):
+        * test262/test/language/expressions/class/class-name-ident-await-escaped.js: Added.
+        (C):
+        * test262/test/language/expressions/class/class-name-ident-await-module.js: Added.
+        (C):
+        * test262/test/language/expressions/class/class-name-ident-await.js: Added.
+        (C):
+        * test262/test/language/expressions/class/class-name-ident-let-escaped.js: Added.
+        (C):
+        * test262/test/language/expressions/class/class-name-ident-let.js: Added.
+        (C):
+        * test262/test/language/expressions/class/class-name-ident-static-escaped.js: Added.
+        (C):
+        * test262/test/language/expressions/class/class-name-ident-static.js: Added.
+        * test262/test/language/expressions/class/class-name-ident-yield-escaped.js: Added.
+        (C):
+        * test262/test/language/expressions/class/class-name-ident-yield.js: Added.
+        (C):
+        * test262/test/language/expressions/class/constructor-this-tdz-during-initializers.js: Added.
+        (Base):
+        (C):
+        * test262/test/language/expressions/class/fields-run-once-on-double-super.js: Added.
+        (Base):
+        (C):
+        * test262/test/language/expressions/generators/generator-created-after-decl-inst.js: Added.
+        (g):
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-incomparable-string.js: Added.
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-string.js: Added.
+        * test262/test/language/expressions/greater-than/bigint-and-boolean.js: Added.
+        * test262/test/language/expressions/greater-than/bigint-and-incomparable-string.js: Added.
+        * test262/test/language/expressions/greater-than/bigint-and-string.js: Added.
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-incomparable-string.js: Added.
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-string.js: Added.
+        * test262/test/language/expressions/less-than/bigint-and-boolean.js: Added.
+        * test262/test/language/expressions/less-than/bigint-and-incomparable-string.js: Added.
+        * test262/test/language/expressions/less-than/bigint-and-string.js: Added.
+        * test262/test/language/expressions/object/method-definition/generator-super-prop-param.js:
+        * test262/test/language/function-code/block-decl-onlystrict.js: Renamed from JSTests/test262/test/language/function-code/block-decl-strict.js.
+        * test262/test/language/function-code/switch-case-decl-onlystrict.js: Renamed from JSTests/test262/test/language/function-code/switch-case-decl-strict.js.
+        * test262/test/language/function-code/switch-dflt-decl-onlystrict.js: Renamed from JSTests/test262/test/language/function-code/switch-dflt-decl-strict.js.
+        * test262/test/language/line-terminators/S7.3_A2.3.js: Removed.
+        * test262/test/language/line-terminators/S7.3_A2.4.js: Removed.
+        * test262/test/language/literals/regexp/invalid-optional-lookbehind.js: Copied from JSTests/test262/test/language/literals/regexp/u-invalid-quantifiable-assertion.js.
+        * test262/test/language/literals/regexp/invalid-optional-negative-lookbehind.js: Copied from JSTests/test262/test/language/literals/regexp/u-invalid-quantifiable-assertion.js.
+        * test262/test/language/literals/regexp/invalid-range-lookbehind.js: Copied from JSTests/test262/test/language/literals/regexp/u-invalid-quantifiable-assertion.js.
+        * test262/test/language/literals/regexp/invalid-range-negative-lookbehind.js: Copied from JSTests/test262/test/language/literals/regexp/u-invalid-quantifiable-assertion.js.
+        * test262/test/language/literals/regexp/u-invalid-optional-lookahead.js: Copied from JSTests/test262/test/language/literals/regexp/u-invalid-quantifiable-assertion.js.
+        * test262/test/language/literals/regexp/u-invalid-optional-lookbehind.js: Copied from JSTests/test262/test/language/literals/regexp/u-invalid-quantifiable-assertion.js.
+        * test262/test/language/literals/regexp/u-invalid-optional-negative-lookahead.js: Copied from JSTests/test262/test/language/literals/regexp/u-invalid-quantifiable-assertion.js.
+        * test262/test/language/literals/regexp/u-invalid-optional-negative-lookbehind.js: Copied from JSTests/test262/test/language/literals/regexp/u-invalid-quantifiable-assertion.js.
+        * test262/test/language/literals/regexp/u-invalid-range-lookahead.js: Copied from JSTests/test262/test/language/literals/regexp/u-invalid-quantifiable-assertion.js.
+        * test262/test/language/literals/regexp/u-invalid-range-lookbehind.js: Copied from JSTests/test262/test/language/literals/regexp/u-invalid-quantifiable-assertion.js.
+        * test262/test/language/literals/regexp/u-invalid-range-negative-lookahead.js: Copied from JSTests/test262/test/language/literals/regexp/u-invalid-quantifiable-assertion.js.
+        * test262/test/language/literals/regexp/u-invalid-range-negative-lookbehind.js: Renamed from JSTests/test262/test/language/literals/regexp/u-invalid-quantifiable-assertion.js.
+        * test262/test/language/literals/string/line-separator-eval.js: Added.
+        * test262/test/language/literals/string/line-separator.js: Added.
+        * test262/test/language/literals/string/paragraph-separator-eval.js: Added.
+        * test262/test/language/literals/string/paragraph-separator.js: Added.
+        * test262/test/language/module-code/early-strict-mode.js:
+        * test262/test/language/statements/async-generator/generator-created-after-decl-inst.js: Added.
+        (async.g):
+        * test262/test/language/statements/break/S12.8_A8_T1.js:
+        (catch):
+        * test262/test/language/statements/break/S12.8_A8_T2.js:
+        (catch):
+        * test262/test/language/statements/class/class-name-ident-await-escaped-module.js: Added.
+        (aw):
+        * test262/test/language/statements/class/class-name-ident-await-escaped.js: Added.
+        (aw):
+        * test262/test/language/statements/class/class-name-ident-await-module.js: Added.
+        (await):
+        * test262/test/language/statements/class/class-name-ident-await.js: Added.
+        (await):
+        * test262/test/language/statements/class/class-name-ident-let-escaped.js: Added.
+        (l):
+        * test262/test/language/statements/class/class-name-ident-let.js: Added.
+        (let):
+        * test262/test/language/statements/class/class-name-ident-static-escaped.js: Added.
+        (st):
+        * test262/test/language/statements/class/class-name-ident-static.js: Added.
+        * test262/test/language/statements/class/class-name-ident-yield-escaped.js: Added.
+        (yi):
+        * test262/test/language/statements/class/class-name-ident-yield.js: Added.
+        (yield):
+        * test262/test/language/statements/continue/S12.7_A8_T1.js:
+        (catch):
+        * test262/test/language/statements/continue/S12.7_A8_T2.js:
+        (catch):
+        * test262/test/language/statements/generators/generator-created-after-decl-inst.js: Added.
+        (g):
+        * test262/test/language/statements/try/early-catch-duplicates.js:
+        * test262/test/language/statements/try/early-catch-function.js: Added.
+        (f.catch.e):
+        (f):
+        * test262/test/language/statements/try/early-catch-lex.js:
+        * test262/test/language/statements/try/early-catch-var.js:
+        * test262/test262-Revision.txt:
+
 2018-05-09  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "==" operation

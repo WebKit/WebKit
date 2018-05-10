@@ -2,18 +2,18 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 20.2
 esid: sec-math-object
 description: >
   Property descriptor of Math
 info: |
   The Math Object
 
-  [...]
-  The Math object is not a function object. It does not have a [[Construct]]
-  internal method; it is not possible to use the Math object as a constructor
-  with the new operator. The Math object also does not have a [[Call]] internal
-  method; it is not possible to invoke the Math object as a function.
+  ...
+  The Math object does not have a [[Construct]] internal method;
+  it is not possible to use the Math object as a constructor with the new operator.
+
+  The Math object does not have a [[Call]] internal method;
+  it is not possible to invoke the Math object as a function.
 
   17 ECMAScript Standard Built-in Objects:
 
@@ -23,11 +23,18 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(typeof Math, "object", "no [[Call]]");
+assert.sameValue(typeof Math, "object");
+
+assert.throws(TypeError, function() {
+  Math();
+}, "no [[Call]]");
+
 assert.throws(TypeError, function() {
   new Math();
 }, "no [[Construct]]");
 
-verifyNotEnumerable(this, "Math");
-verifyWritable(this, "Math");
-verifyConfigurable(this, "Math");
+verifyProperty(this, "Math", {
+  enumerable: false,
+  writable: true,
+  configurable: true
+});

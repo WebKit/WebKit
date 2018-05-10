@@ -7,7 +7,7 @@ description: >
   Test that Atomics.wait actually waits and does not spuriously wake
   up when the memory value is changed.
 includes: [atomicsHelper.js]
-features: [Atomics]
+features: [Atomics, SharedArrayBuffer, TypedArray]
 ---*/
 
 $262.agent.start(
@@ -33,7 +33,8 @@ assert.sameValue((getReport() | 0) >= 1000 - $ATOMICS_MAX_TIME_EPSILON, true);
 
 function getReport() {
   var r;
-  while ((r = $262.agent.getReport()) == null)
+  while ((r = $262.agent.getReport()) == null) {
     $262.agent.sleep(100);
+  }
   return r;
 }

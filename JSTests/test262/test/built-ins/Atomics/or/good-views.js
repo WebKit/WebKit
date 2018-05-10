@@ -5,18 +5,18 @@
 esid: sec-atomics.or
 description: Test Atomics.or on arrays that allow atomic operations
 includes: [testAtomics.js, testTypedArray.js]
-features: [SharedArrayBuffer, ArrayBuffer, DataView, Atomics, arrow-function, let, TypedArray, for-of]
+features: [ArrayBuffer, arrow-function, Atomics, DataView, for-of, let, SharedArrayBuffer, TypedArray]
 ---*/
 
 var sab = new SharedArrayBuffer(1024);
 var ab = new ArrayBuffer(16);
-var int_views = [Int8Array, Uint8Array, Int16Array, Uint16Array, Int32Array, Uint32Array];
+var views = intArrayConstructors.slice();
 
-testWithTypedArrayConstructors(function(View) {
+testWithTypedArrayConstructors(function(TA) {
   // Make it interesting - use non-zero byteOffsets and non-zero indexes.
 
-  var view = new View(sab, 32, 20);
-  var control = new View(ab, 0, 2);
+  var view = new TA(sab, 32, 20);
+  var control = new TA(ab, 0, 2);
 
   view[8] = 0x33333333;
   control[0] = 0x33333333;
@@ -58,4 +58,4 @@ testWithTypedArrayConstructors(function(View) {
     Atomics.store(view, Idx, 37);
     assert.sameValue(Atomics.or(view, Idx, 0), 37);
   });
-}, int_views);
+}, views);

@@ -37,3 +37,18 @@ function testPropertyEscapes(regex, string, expression) {
     }
   }
 }
+
+// Returns a function that will validate RegExp match result
+//
+// Example:
+//
+//    var validate = matchValidator(['b'], 1, 'abc');
+//    validate(/b/.exec('abc'));
+//
+function matchValidator(expectedEntries, expectedIndex, expectedInput) {
+  return function(match) {
+    assert.compareArray(match, expectedEntries, 'Match entries');
+    assert.sameValue(match.index, expectedIndex, 'Match index');
+    assert.sameValue(match.input, expectedInput, 'Match input');
+  }
+}

@@ -5,10 +5,17 @@
 description: Octal prefixed String should be parsed to BigInt according StringToBigInt
 esid: sec-string-to-bigint
 info: |
-  Apply the algorithm in 3.1.3.1 with the following changes:
+  ToBigInt ( argument )
 
-  - Replace the StrUnsignedDecimalLiteral production with DecimalDigits
-    to not allow decimal points or exponents.
+  String:
+
+  Let n be StringToBigInt(prim).
+  If n is NaN, throw a SyntaxError exception.
+  Return n.
+
+  StringToBigInt ( argument )
+
+  Replace the StrUnsignedDecimalLiteral production with DecimalDigits to not allow Infinity, decimal points, or exponents.
 
 features: [BigInt]
 ---*/

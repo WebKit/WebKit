@@ -21,34 +21,36 @@ info: |
 features: [Atomics, SharedArrayBuffer, TypedArray]
 ---*/
 
+var sleeping = 100;
 var timeout = 20000;
-$262.agent.start(
-    `
-  $262.agent.receiveBroadcast(function (sab) { 
-    var int32Array = new Int32Array(sab);
-    $262.agent.report(Atomics.wait(int32Array, 0, 0, ${timeout}));
-    $262.agent.leaving();
-  })
-  `);
-  
-  var sab = new SharedArrayBuffer(4);
-  var int32Array = new Int32Array(sab);
-  
-  var sleeping = 100;
 
-  $262.agent.broadcast(int32Array.buffer);
-  $262.agent.sleep(sleeping);
-  
-  assert.sameValue(Atomics.wake(int32Array, 0), 1);
-  
-  assert.sameValue(getReport(), "ok");
-  assert(sleeping < timeout, "this test assumes it won't last for more than 20 seconds");
-  
-  function getReport() {
-    var r;
-    while ((r = $262.agent.getReport()) == null) {
-      sleeping += 100;
-      $262.agent.sleep(100);
-    }
-    return r;
+function getReport() {
+  var r;
+  while ((r = $262.agent.getReport()) == null) {
+    sleeping += 100;
+    $262.agent.sleep(100);
   }
+  return r;
+}
+
+$262.agent.start(
+`
+$262.agent.receiveBroadcast(function(sab) {
+  var int32Array = new Int32Array(sab);
+  $262.agent.report(Atomics.wait(int32Array, 0, 0, ${timeout}));
+  $262.agent.leaving();
+});
+`);
+
+var sab = new SharedArrayBuffer(4);
+var int32Array = new Int32Array(sab);
+
+
+$262.agent.broadcast(int32Array.buffer);
+$262.agent.sleep(sleeping);
+
+assert.sameValue(Atomics.wake(int32Array, 0), 1);
+
+assert.sameValue(getReport(), "ok");
+assert(sleeping < timeout, "this test assumes it won't last for more than 20 seconds");
+

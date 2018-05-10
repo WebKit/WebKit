@@ -6,15 +6,13 @@ esid: sec-atomics.or
 description: >
   Test Atomics.or on shared non-integer TypedArrays
 includes: [testTypedArray.js]
-features: [Atomics, TypedArray]
+features: [Atomics, SharedArrayBuffer, TypedArray]
 ---*/
 
-var sab = new SharedArrayBuffer(1024);
+var buffer = new SharedArrayBuffer(1024);
 
-var other_views = [Uint8ClampedArray, Float32Array, Float64Array];
+testWithTypedArrayConstructors(function(TA) {
+  assert.throws(TypeError, (() => Atomics.or(new TA(buffer), 0, 0)));
+}, floatArrayConstructors);
 
-testWithTypedArrayConstructors(function(View) {
-  var view = new View(sab);
 
-  assert.throws(TypeError, (() => Atomics.or(view, 0, 0)));
-}, other_views);

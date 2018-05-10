@@ -23,6 +23,7 @@ info: |
   BindingElement[Yield ] :
     SingleNameBinding[?Yield]
     BindingPattern[?Yield] Initializer[In, ?Yield]opt
+features: [destructuring-binding]
 ---*/
 
 function fn1([{}]) {}

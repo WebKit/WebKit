@@ -12,7 +12,7 @@ info: |
     ...
     Undefined    Return NaN.
   5.If q is NaN, let t be +∞, else let t be max(q, 0)
-features: [ Atomics, SharedArrayBuffer, TypedArray ]
+features: [Atomics, SharedArrayBuffer, TypedArray]
 ---*/
 
 var NUMAGENT = 2; // Total number of agents started
@@ -21,8 +21,9 @@ var WAKECOUNT = 2; // Total number of agents to wake up
 
 function getReport() {
   var r;
-  while ((r = $262.agent.getReport()) == null)
+  while ((r = $262.agent.getReport()) == null) {
     $262.agent.sleep(100);
+  }
   return r;
 }
 

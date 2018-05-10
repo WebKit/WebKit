@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Amal Hussein.  All rights reserved.
+// Copyright (C) 2018 Amal Hussein. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
@@ -8,45 +8,30 @@ description: >
 info: |
   Atomics.wait( typedArray, index, value, timeout )
 
-  4.Let q be ? ToNumber(timeout).
-    ...
-    Null  Return +0.
-    Boolean    If argument is true, return 1. If argument is false, return +0.
-features: [ Atomics, SharedArrayBuffer, TypedArray ]
-includes: [ atomicsHelper.js ]
+  4. Let q be ? ToNumber(timeout).
+
+    Boolean -> If argument is true, return 1. If argument is false, return +0.
+
+features: [Atomics, SharedArrayBuffer, Symbol, Symbol.toPrimitive, TypedArray]
+flags: [CanBlockIsFalse]
 ---*/
 
-function getReport() {
-  var r;
-  while ((r = $262.agent.getReport()) == null)
-    $262.agent.sleep(100);
-  return r;
-}
+var buffer = new SharedArrayBuffer(1024);
+var int32Array = new Int32Array(buffer);
 
-$262.agent.start(
-  `
-$262.agent.receiveBroadcast(function (sab) {
-  var int32Array = new Int32Array(sab);
-  var start = Date.now();
-  $262.agent.report(Atomics.wait(int32Array, 0, 0, false));  // false => +0
-  $262.agent.report(Date.now() - start);
-  $262.agent.leaving();
-})
-`);
+var valueOf = {
+  valueOf: function() {
+    return false;
+  }
+};
 
-var int32Array = new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT));
+var toPrimitive = {
+  [Symbol.toPrimitive]: function() {
+    return false;
+  }
+};
 
-$262.agent.broadcast(int32Array.buffer);
+assert.sameValue(Atomics.wait(int32Array, 0, 0, false), "timed-out");
+assert.sameValue(Atomics.wait(int32Array, 0, 0, valueOf), "timed-out");
+assert.sameValue(Atomics.wait(int32Array, 0, 0, toPrimitive), "timed-out");
 
-$262.agent.sleep(150);
-
-var atomicsReport = getReport();
-var timeDiffReport = getReport();
-
-assert.sameValue(atomicsReport, 'timed-out');
-
-assert(timeDiffReport >= 0, 'timeout should be a min of 0ms');
-
-assert(timeDiffReport <= $ATOMICS_MAX_TIME_EPSILON, 'timeout should be a max of $$ATOMICS_MAX_TIME_EPSILON');
-
-assert.sameValue(Atomics.wake(int32Array, 0), 0);

@@ -12,7 +12,7 @@ info: |
     a.Perform LeaveCriticalSection(WL).
     b. Return the String "not-equal".
 
-features: [ Atomics, SharedArrayBuffer, TypedArray ]
+features: [Atomics, SharedArrayBuffer, TypedArray]
 ---*/
 
 function getReport() {
@@ -24,12 +24,12 @@ function getReport() {
 }
 
 $262.agent.start(
-  `
+`
 $262.agent.receiveBroadcast(function (sab) {
   var int32Array = new Int32Array(sab);
-    
+
   $262.agent.report(Atomics.wait(int32Array, 0, 44, 1000));
-  
+
   $262.agent.report(Atomics.wait(int32Array, 0, 251.4, 1000));
 
   $262.agent.leaving();

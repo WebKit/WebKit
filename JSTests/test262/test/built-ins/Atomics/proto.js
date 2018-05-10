@@ -13,6 +13,4 @@ info: |
 features: [Atomics]
 ---*/
 
-var proto = Object.getPrototypeOf(Atomics);
-
-assert.sameValue(proto, Object.prototype);
+assert.sameValue(Object.getPrototypeOf(Atomics), Object.prototype);

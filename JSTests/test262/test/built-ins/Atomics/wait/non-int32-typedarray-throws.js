@@ -12,7 +12,7 @@ info: |
     ...
       5.If onlyInt32 is true, then
         If typeName is not "Int32Array", throw a TypeError exception.
-features: [ Atomics, TypedArray ]
+features: [Atomics, Float32Array, Float64Array, Int8Array, TypedArray, Uint16Array, Uint8Array, Uint8ClampedArray]
 ---*/
 
 var poisoned = {

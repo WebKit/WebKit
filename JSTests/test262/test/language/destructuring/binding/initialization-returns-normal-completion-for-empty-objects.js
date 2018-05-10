@@ -18,6 +18,7 @@ info: |
 
   1. Return NormalCompletion(empty).
 
+features: [destructuring-binding]
 ---*/
 
 function fn({}) { return true; }

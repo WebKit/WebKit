@@ -16,7 +16,7 @@ info: |
   2. If Type(value) is Object and value has a [[BigIntData]] internal slot, then
     ...
   3. Throw a TypeError exception.
-features: [BigInt, Symbol.toPrimitive]
+features: [BigInt, Symbol, Symbol.toPrimitive]
 ---*/
 
 var toString = BigInt.prototype.toString;

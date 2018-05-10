@@ -7,7 +7,7 @@ info: |
   BigInt.asIntN ( bits, bigint )
 
   1. Let bits be ? ToIndex(bits).
-features: [BigInt, Symbol.toPrimitive, computed-property-names]
+features: [BigInt, computed-property-names, Symbol, Symbol.toPrimitive]
 ---*/
 
 function err() {
