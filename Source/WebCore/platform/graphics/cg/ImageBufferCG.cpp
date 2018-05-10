@@ -630,6 +630,13 @@ Vector<uint8_t> data(const ImageData& source, const String& mimeType, std::optio
     return { };
 }
 
+Vector<uint8_t> ImageBuffer::toBGRAData() const
+{
+    if (context().isAcceleratedContext())
+        flushContext();
+    return m_data.toBGRAData(context().isAcceleratedContext(), m_size.width(), m_size.height());
+}
+
 } // namespace WebCore
 
 #endif

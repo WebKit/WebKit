@@ -1,3 +1,20 @@
+2018-05-10  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GTK] Implement ImageBuffer::toBGRAData
+        https://bugs.webkit.org/show_bug.cgi?id=185511
+
+        Reviewed by Michael Catanzaro.
+
+        This was never implemented but will be required for the MediaStream API
+        tests.
+
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::toBGRAData const):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::toBGRAData const):
+        * platform/graphics/gtk/ImageBufferGtk.cpp:
+        (WebCore::ImageBuffer::toBGRAData const):
+
 2018-05-10  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [EME][GStreamer] Add a handler for GStreamer protection event

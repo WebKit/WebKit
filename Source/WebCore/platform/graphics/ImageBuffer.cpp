@@ -102,17 +102,13 @@ FloatRect ImageBuffer::clampedRect(const FloatRect& rect)
     return FloatRect(rect.location(), clampedSize(rect.size()));
 }
 
+#if !USE(CG) && !PLATFORM(GTK)
 Vector<uint8_t> ImageBuffer::toBGRAData() const
 {
-#if USE(CG)
-    if (context().isAcceleratedContext())
-        flushContext();
-    return m_data.toBGRAData(context().isAcceleratedContext(), m_size.width(), m_size.height());
-#else
     // FIXME: Implement this for other backends.
     return { };
-#endif
 }
+#endif
 
 #if !(USE(CG) || USE(DIRECT2D))
 
