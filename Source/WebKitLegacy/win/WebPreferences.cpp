@@ -576,6 +576,8 @@ HRESULT WebPreferences::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppv
         *ppvObject = static_cast<IWebPreferencesPrivate5*>(this);
     else if (IsEqualGUID(riid, IID_IWebPreferencesPrivate6))
         *ppvObject = static_cast<IWebPreferencesPrivate6*>(this);
+    else if (IsEqualGUID(riid, IID_IWebPreferencesPrivate7))
+        *ppvObject = static_cast<IWebPreferencesPrivate7*>(this);
     else if (IsEqualGUID(riid, CLSID_WebPreferences))
         *ppvObject = this;
     else
