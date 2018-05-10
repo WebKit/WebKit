@@ -1,5 +1,13 @@
 2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed. Update OptionsWPE.cmake and NEWS for 2.19.92 release.
+
+        Add the NEWS to the tarball.
+
+        * wpe/manifest.txt.in:
+
+2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [WPE] Build cleanly with GCC 8 and ICU 60
         https://bugs.webkit.org/show_bug.cgi?id=185462
 

@@ -1,3 +1,9 @@
+2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for 2.19.92 release.
+
+        * Source/cmake/OptionsWPE.cmake:
+
 2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Build and link against latest WPEBackend and WPEBackend-fdo
