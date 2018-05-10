@@ -46,4 +46,5 @@ Dump of markup 11:
 🏃🏿‍♂️<#selection-caret>"
 
 Dump of markup 12:
+| <#selection-caret>
 | <br>

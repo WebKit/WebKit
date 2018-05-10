@@ -15,6 +15,7 @@ Before:
 |         "gghfg"
 |       <td>
 |         "fsfg"
+| <#selection-focus>
 
 After:
 | <table>

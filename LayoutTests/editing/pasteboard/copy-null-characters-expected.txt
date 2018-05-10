@@ -32,6 +32,7 @@ If there are NULL characters in text nodes, they should not be copied to the cli
 |   "Copy paste me"
 | "
 "
+| <#selection-caret>
 | <textarea>
 |   id="destination-plain-text"
 |   this.value="Copy paste mebold

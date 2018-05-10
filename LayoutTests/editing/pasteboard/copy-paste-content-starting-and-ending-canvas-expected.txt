@@ -4,6 +4,7 @@ To manually test, copy and paste the content below:
 Before paste:
 | "
 "
+| <#selection-anchor>
 | <canvas>
 |   height="100"
 |   style="border: 1px solid black"
@@ -22,6 +23,7 @@ some more text
 |   height="100"
 |   style="border: 1px solid black"
 |   width="100"
+| <#selection-focus>
 | "
 "
 
@@ -44,4 +46,5 @@ After paste:
 |   height="100"
 |   style="border: 1px solid black;"
 |   width="100"
+| <#selection-caret>
 | <br>

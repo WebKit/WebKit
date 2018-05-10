@@ -1,4 +1,5 @@
 This test that the deletion of the last row of an unstyled DIV leaves a BR element and that the selection is where the BR element is.
 | "one"
 | <br>
+| <#selection-caret>
 | <br>

@@ -3,6 +3,7 @@ This testcase is to test crash scenario when designMode is set on document and R
         "
 | <iframe>
 |   onload="selectAndRemoveFormat()"
+| <#selection-focus>
 | "
         "
 | <p>

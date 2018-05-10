@@ -25,6 +25,7 @@ After innerHTML = innerHTML:
 |   style="color: blue"
 |   "Blue Line 1"
 |   <br>
+| <#selection-caret>
 | <h6>
 |   "Black Line"
 | <h6>

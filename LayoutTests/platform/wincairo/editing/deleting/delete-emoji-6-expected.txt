@@ -98,4 +98,5 @@ Dump of markup 24:
 🏄<#selection-caret>"
 
 Dump of markup 25:
+| <#selection-caret>
 | <br>

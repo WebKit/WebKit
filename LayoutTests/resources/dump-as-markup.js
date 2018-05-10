@@ -135,8 +135,15 @@ Markup.get = function(node)
         return '| ';
 
     // Don't print any markup for the root node.
-    for (var i = 0, len = node.childNodes.length; i < len; i++)
+
+    var len = node.childNodes.length;
+    var i = 0;
+    for (; i < len; i++) {
+        markup += Markup._getSelectionMarkerWithIdentation(node, i, 0);
         markup += Markup._get(node.childNodes[i], 0, shadowRootList);
+    }
+    markup += Markup._getSelectionMarkerWithIdentation(node, len, 0);
+
     return markup.substring(1);
 }
 
@@ -233,18 +240,12 @@ Markup._get = function(node, depth, shadowRootList)
         str += Markup._get(node.content, depth + 1, shadowRootList);
 
     for (var i = 0, len = node.childNodes.length; i < len; i++) {
-        var selection = Markup._getSelectionMarker(node, i);
-        if (selection)
-            str += Markup._indent(depth + 1) + selection;
-
+        str += Markup._getSelectionMarkerWithIdentation(node, i, depth + 1);
         str += Markup._get(node.childNodes[i], depth + 1, shadowRootList);
     }
     
     str += Markup._getShadowHostIfPossible(node, depth, shadowRootList);
-    
-    var selection = Markup._getSelectionMarker(node, i);
-    if (selection)
-        str += Markup._indent(depth + 1) + selection;
+    str += Markup._getSelectionMarkerWithIdentation(node, i, depth + 1);
 
     return str;
 }
@@ -344,6 +345,14 @@ Markup._getMarkupForTextNode = function(node)
         innerMarkup = innerMarkup.substring(0, startOffset) + startText + innerMarkup.substring(startOffset);
 
     return innerMarkup;
+}
+
+Markup._getSelectionMarkerWithIdentation = function(node, index, depth)
+{
+    var selection = Markup._getSelectionMarker(node, index);
+    if (!selection)
+        return selection;
+    return Markup._indent(depth) + selection;
 }
 
 Markup._getSelectionMarker = function(node, index)

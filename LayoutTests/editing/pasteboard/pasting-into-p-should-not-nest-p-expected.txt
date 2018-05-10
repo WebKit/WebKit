@@ -49,6 +49,7 @@ After innerHTML = innerHTML:
 |   <span>
 |     id="source"
 |     "Copy this line"
+| <#selection-caret>
 | <div>
 |   <span>
 |     <br>

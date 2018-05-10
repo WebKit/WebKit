@@ -4,6 +4,7 @@ You should see 'hello' (blockquoted), 'world' (not quoted, black text), 'hello' 
 See <rdar://problem/5368833<
 
 Before paste:
+| <#selection-caret>
 | <br>
 | <blockquote>
 |   id="blockquote"

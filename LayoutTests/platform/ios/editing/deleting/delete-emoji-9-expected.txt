@@ -58,4 +58,5 @@ Dump of markup 14:
 🤙🏻<#selection-caret>"
 
 Dump of markup 15:
+| <#selection-caret>
 | <br>

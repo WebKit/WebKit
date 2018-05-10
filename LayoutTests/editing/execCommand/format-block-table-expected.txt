@@ -2,6 +2,7 @@
 Formatting:
 | "
 "
+| <#selection-anchor>
 | <table>
 |   <tbody>
 |     <tr>
@@ -9,6 +10,7 @@ Formatting:
 |         "hello"
 |       <td>
 |         "world"
+| <#selection-focus>
 | "
 "
 

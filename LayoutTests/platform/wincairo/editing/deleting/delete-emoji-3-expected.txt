@@ -114,4 +114,5 @@ Dump of markup 28:
 🏃<#selection-caret>"
 
 Dump of markup 29:
+| <#selection-caret>
 | <br>

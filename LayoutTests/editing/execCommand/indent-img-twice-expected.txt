@@ -1,8 +1,10 @@
 Test indenting an image element twice.
 
 Initial state:
+| <#selection-anchor>
 | <img>
 |   src="../resources/abe.png"
+| <#selection-focus>
 
 After indenting once:
 | <blockquote>

@@ -1,3 +1,82 @@
+2018-05-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Markup.dump should dump selection focus & anchor at the root node
+        https://bugs.webkit.org/show_bug.cgi?id=185497
+
+        Reviewed by Wenson Hsieh.
+
+        Added the support for logging selection end points (anchor & focus) for when they're
+        anchored against the root node passed to Markup.dump.
+
+        * editing/deleting/delete-across-editable-content-boundaries-1-expected.txt:
+        * editing/deleting/delete-image-followed-by-two-br-expected.txt:
+        * editing/deleting/delete-start-block-expected.txt:
+        * editing/deleting/delete-word-from-unstyled-div-expected.txt:
+        * editing/deleting/deleting-relative-positioned-special-element-expected.txt:
+        * editing/deleting/smart-delete-across-editable-boundaries-2-expected.txt:
+        * editing/deleting/smart-delete-across-editable-boundaries-expected.txt:
+        * editing/execCommand/break-non-editable-blockquote-expected.txt:
+        * editing/execCommand/format-block-table-expected.txt:
+        * editing/execCommand/indent-img-twice-expected.txt:
+        * editing/execCommand/remove-format-textdecoration-in-iframe-expected.txt:
+        * editing/inserting/5607069-2-expected.txt:
+        * editing/inserting/5994480-2-expected.txt:
+        * editing/inserting/insert-list-in-table-cell-03-expected.txt:
+        * editing/inserting/insert-list-in-table-cell-04-expected.txt:
+        * editing/inserting/insert-list-in-table-cell-07-expected.txt:
+        * editing/inserting/insert-list-in-table-cell-08-expected.txt:
+        * editing/inserting/insert-table-in-paragraph-crash-expected.txt:
+        * editing/pasteboard/copy-null-characters-expected.txt:
+        * editing/pasteboard/copy-paste-content-starting-and-ending-canvas-expected.txt:
+        * editing/pasteboard/paste-blockquote-and-paragraph-break-expected.txt:
+        * editing/pasteboard/paste-table-with-unrendered-text-nodes-expected.txt:
+        * editing/pasteboard/pasting-into-h6-should-not-nest-h6-expected.txt:
+        * editing/pasteboard/pasting-into-p-should-not-nest-p-expected.txt:
+        * editing/style/apply-style-atomic-expected.txt:
+        * fast/events/5056619-expected.txt:
+        * platform/ios/editing/deleting/delete-emoji-1-expected.txt:
+        * platform/ios/editing/deleting/delete-emoji-2-expected.txt:
+        * platform/ios/editing/deleting/delete-emoji-3-expected.txt:
+        * platform/ios/editing/deleting/delete-emoji-4-expected.txt:
+        * platform/ios/editing/deleting/delete-emoji-5-expected.txt:
+        * platform/ios/editing/deleting/delete-emoji-6-expected.txt:
+        * platform/ios/editing/deleting/delete-emoji-7-expected.txt:
+        * platform/ios/editing/deleting/delete-emoji-8-expected.txt:
+        * platform/ios/editing/deleting/delete-emoji-9-expected.txt:
+        * platform/ios/editing/deleting/delete-emoji-expected.txt:
+        * platform/mac-sierra/editing/deleting/delete-emoji-1-expected.txt:
+        * platform/mac-sierra/editing/deleting/delete-emoji-2-expected.txt:
+        * platform/mac-sierra/editing/deleting/delete-emoji-3-expected.txt:
+        * platform/mac-sierra/editing/deleting/delete-emoji-4-expected.txt:
+        * platform/mac-sierra/editing/deleting/delete-emoji-5-expected.txt:
+        * platform/mac-sierra/editing/deleting/delete-emoji-6-expected.txt:
+        * platform/mac-sierra/editing/deleting/delete-emoji-7-expected.txt:
+        * platform/mac-sierra/editing/deleting/delete-emoji-8-expected.txt:
+        * platform/mac-sierra/editing/deleting/delete-emoji-9-expected.txt:
+        * platform/mac/editing/deleting/delete-emoji-1-expected.txt:
+        * platform/mac/editing/deleting/delete-emoji-2-expected.txt:
+        * platform/mac/editing/deleting/delete-emoji-3-expected.txt:
+        * platform/mac/editing/deleting/delete-emoji-4-expected.txt:
+        * platform/mac/editing/deleting/delete-emoji-5-expected.txt:
+        * platform/mac/editing/deleting/delete-emoji-6-expected.txt:
+        * platform/mac/editing/deleting/delete-emoji-7-expected.txt:
+        * platform/mac/editing/deleting/delete-emoji-8-expected.txt:
+        * platform/mac/editing/deleting/delete-emoji-9-expected.txt:
+        * platform/mac/editing/deleting/delete-emoji-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-1-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-2-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-3-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-4-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-5-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-6-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-7-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-8-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-9-expected.txt:
+        * resources/dump-as-markup.js:
+        (Markup): Added the logging of selection markers to the root node.ß∑
+        (Markup._get):
+        (Markup._getSelectionMarkerWithIdentation): Extracted out of Markup._get.
+
 2018-05-09  Nan Wang  <n_wang@apple.com>
 
         AX: VoiceOver iframe scrolling focus jumping bug

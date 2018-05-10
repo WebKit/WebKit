@@ -10,6 +10,7 @@ This tests drag and drop into a form element that is removed in its onfocus hand
 | <span>
 |   id="span"
 |   "Dragme"
+| <#selection-caret>
 | "
 "
 | <script>

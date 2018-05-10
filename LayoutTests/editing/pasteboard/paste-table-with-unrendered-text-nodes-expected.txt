@@ -2,6 +2,7 @@
 Initial state:
 | "line 1"
 | <br>
+| <#selection-caret>
 | <br>
 
 After pasting line 2 (table A):
@@ -25,6 +26,7 @@ After pasting line 2 (table A):
 "
 |   "
 "
+| <#selection-caret>
 
 After typing ling 3:
 | "line 1"
@@ -93,6 +95,7 @@ After pasting ling 4 (table B):
 "
 |   "
 "
+| <#selection-caret>
 
 After typing ling 5:
 | "line 1"

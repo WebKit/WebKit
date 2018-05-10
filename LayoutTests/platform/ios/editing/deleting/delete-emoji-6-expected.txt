@@ -38,4 +38,5 @@ Dump of markup 9:
 🏄🏻‍♂<#selection-caret>"
 
 Dump of markup 10:
+| <#selection-caret>
 | <br>

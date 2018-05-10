@@ -2,6 +2,7 @@ This test ensures WebKit properly inserts newline in quoted contents, which is e
 | <blockquote>
 |   type="cite"
 |   "hello"
+| <#selection-caret>
 | <br>
 | <blockquote>
 |   type="cite"

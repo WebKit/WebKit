@@ -102,4 +102,5 @@ Dump of markup 25:
 🤷<#selection-caret>"
 
 Dump of markup 26:
+| <#selection-caret>
 | <br>

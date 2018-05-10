@@ -106,4 +106,5 @@ Dump of markup 26:
 🏇<#selection-caret>"
 
 Dump of markup 27:
+| <#selection-caret>
 | <br>
