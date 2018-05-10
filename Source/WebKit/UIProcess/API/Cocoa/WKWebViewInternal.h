@@ -129,7 +129,6 @@ struct PrintInfo;
 - (void)_arrowKey:(id)sender;
 - (void)_define:(id)sender;
 - (void)_lookup:(id)sender;
-- (void)_reanalyze:(id)sender;
 - (void)_share:(id)sender;
 - (void)_showTextStyleOptions:(id)sender;
 - (void)_promptForReplace:(id)sender;

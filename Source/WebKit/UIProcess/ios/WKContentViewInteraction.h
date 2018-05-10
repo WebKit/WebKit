@@ -108,7 +108,6 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
     M(_define) \
     M(_lookup) \
     M(_promptForReplace) \
-    M(_reanalyze) \
     M(_share) \
     M(_showTextStyleOptions) \
     M(_transliterateChinese) \
