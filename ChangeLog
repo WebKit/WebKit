@@ -1,3 +1,15 @@
+2018-05-09  Jan Alexander Steffens  <jan.steffens@gmail.com>
+
+        [GTK] gtk-doc installation subdir duplicated
+        https://bugs.webkit.org/show_bug.cgi?id=185468
+
+        Reviewed by Carlos Garcia Campos.
+
+        The GTK docs are installed into a duplicated subdir,
+        e.g. /usr/share/doc/gtk-doc/html/webkit2gtk-4.0/webkit2gtk-4.0.
+
+        * Source/PlatformGTK.cmake:
+
 2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed. Bump WPE soname for good measure.
