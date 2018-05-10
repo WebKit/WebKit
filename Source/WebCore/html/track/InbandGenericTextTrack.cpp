@@ -156,7 +156,7 @@ void InbandGenericTextTrack::removeGenericCue(GenericCueData& cueData)
         DEBUG_LOG(LOGIDENTIFIER, *cue);
         removeCue(*cue);
     } else
-        DEBUG_LOG(LOGIDENTIFIER, "UNABLE to find cue: ", *cue);
+        DEBUG_LOG(LOGIDENTIFIER, "UNABLE to find cue: ", cueData);
 
 }
 

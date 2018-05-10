@@ -1,3 +1,17 @@
+2018-05-10  Eric Carlson  <eric.carlson@apple.com>
+
+        Log missing cues correctly
+        https://bugs.webkit.org/show_bug.cgi?id=185499
+        <rdar://problem/40113821>
+
+        Reviewed by Daniel Bates.
+
+        No new tests, tested manually.
+
+        * html/track/InbandGenericTextTrack.cpp:
+        (WebCore::InbandGenericTextTrack::removeGenericCue): Log the cue we searched for, not
+        the NULL cue.
+
 2018-05-10  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement height computation for non-replaced inflow elements.
