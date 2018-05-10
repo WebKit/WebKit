@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,12 @@ public:
     bool add(BasicBlock* block)
     {
         return !m_set.set(block->index);
+    }
+    
+    // Return true if the block was removed, false if it was already absent.
+    bool remove(BasicBlock* block)
+    {
+        return m_set.clear(block->index);
     }
     
     bool contains(BasicBlock* block) const

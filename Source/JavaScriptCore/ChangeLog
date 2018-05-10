@@ -1,3 +1,26 @@
+2018-05-10  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CFA should pick the right time to inject OSR entry data
+        https://bugs.webkit.org/show_bug.cgi?id=185530
+
+        Reviewed by Saam Barati.
+        
+        Previously, we would do a bonus run of CFA to inject OSR entry data. This patch makes us inject
+        OSR entry data as part of the normal flow of CFA, which reduces the total number of CFA
+        reexecutions while minimizing the likelihood that we have CFA execute constants in paths that
+        would eventually LUB to non-constant.
+        
+        This looks like almost a 1% speed-up on SunSpider-CompileTime. All of the logic for preventing
+        execution over constants is for V8Spider-CompileTime/regexp, which would otherwise do a lot of
+        useless regexp/string execution in the compiler.
+
+        * dfg/DFGBlockSet.h:
+        (JSC::DFG::BlockSet::remove):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::run):
+        (JSC::DFG::CFAPhase::injectOSR):
+        (JSC::DFG::CFAPhase::performBlockCFA):
+
 2018-05-09  Filip Pizlo  <fpizlo@apple.com>
 
         InPlaceAbstractState::beginBasicBlock shouldn't copy all m_variables every time
