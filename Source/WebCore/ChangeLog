@@ -1,3 +1,13 @@
+2018-05-10  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build after r231393
+        https://bugs.webkit.org/show_bug.cgi?id=185519
+        <rdar://problem/40131741>
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/WebCore.xcconfig:
+
 2018-05-10  Eric Carlson  <eric.carlson@apple.com>
 
         Log missing cues correctly
