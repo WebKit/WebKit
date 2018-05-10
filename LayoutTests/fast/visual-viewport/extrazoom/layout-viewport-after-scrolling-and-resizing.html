@@ -36,9 +36,7 @@
         async function runTest() {
             jsTestIsAsync = true;
 
-            // FIXME: This works around innerWidth and innerHeight being incorrect (i.e. unadjusted for shrink-to-fit
-            // behavior) in the load event listener of the body. See: https://bugs.webkit.org/show_bug.cgi?id=184788.
-            await UIHelper.ensurePresentationUpdate();
+            await UIHelper.ensureVisibleContentRectUpdate();
 
             topRectBeforeScrolling = document.getElementById("top").getBoundingClientRect();
             bottomRectBeforeScrolling = document.getElementById("bottom").getBoundingClientRect();
@@ -52,7 +50,7 @@
             layoutViewportAfterScrolling = internals.layoutViewportRect();
 
             document.body.style.height = "100px";
-            await UIHelper.ensurePresentationUpdate();
+            await UIHelper.ensureVisibleContentRectUpdate();
 
             topRectAfterShorteningBody = document.getElementById("top").getBoundingClientRect();
             bottomRectAfterShorteningBody = document.getElementById("bottom").getBoundingClientRect();
@@ -60,7 +58,7 @@
 
             finalDocumentHeight = Math.round(innerHeight * 1.5);
             document.body.style.height = `${finalDocumentHeight}px`;
-            await UIHelper.ensurePresentationUpdate();
+            await UIHelper.ensureVisibleContentRectUpdate();
 
             topRectAfterExtendingBody = document.getElementById("top").getBoundingClientRect();
             bottomRectAfterExtendingBody = document.getElementById("bottom").getBoundingClientRect();

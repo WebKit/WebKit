@@ -84,6 +84,17 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static ensureVisibleContentRectUpdate()
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            const visibleContentRectUpdateScript = "uiController.doAfterVisibleContentRectUpdate(() => uiController.uiScriptComplete())";
+            testRunner.runUIScript(visibleContentRectUpdateScript, resolve);
+        });
+    }
+
     static activateAndWaitForInputSessionAt(x, y)
     {
         if (!this.isWebKit2() || !this.isIOS())

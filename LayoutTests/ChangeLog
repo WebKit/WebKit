@@ -1,3 +1,33 @@
+2018-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] fast/visual-viewport/extrazoom/layout-viewport-after-scrolling-and-resizing.html sometimes fails
+        https://bugs.webkit.org/show_bug.cgi?id=185517
+        <rdar://problem/40112983>
+
+        Reviewed by Tim Horton.
+
+        Adjusts some existing layout tests — see below for more detail.
+
+        * fast/css/extrazoom/viewport-units-shrink-to-fit.html:
+
+        Remove calls to wait for the next presentation update which are no longer necessary after r231606.
+
+        * fast/viewport/extrazoom/viewport-change-min-device-width.html:
+
+        Wait for the next visible content rect update, when the unobscured content rect is guaranteed to be up to date.
+
+        * fast/visual-viewport/extrazoom/layout-viewport-after-scrolling-and-resizing.html:
+
+        Wait for the next visible content rect update rather than the next presentation update (i.e. remote layer tree
+        commit). This is because the layout viewport's custom fixed position rect is propagated in the visible content
+        rect update flow, and ensuring a presentation update is insufficient to guarantee that the layout viewport is up
+        to date.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.ensureVisibleContentRectUpdate):
+
+        Add a new test helper to wait for the next presentation update.
+
 2018-05-10  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: ASSERT_NOT_REACHED in PageDebuggerAgent::didAddEventListener when page adds attribute event listener

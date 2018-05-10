@@ -17,7 +17,7 @@
         function logWindowDimensionsAfterSettingViewportContent(content) {
             return new Promise(async resolve => {
                 meta.setAttribute("content", content);
-                await UIHelper.ensurePresentationUpdate();
+                await UIHelper.ensureVisibleContentRectUpdate();
                 debug(`[${meta.getAttribute("content")}] (${innerWidth}, ${innerHeight})`);
                 resolve();
             });

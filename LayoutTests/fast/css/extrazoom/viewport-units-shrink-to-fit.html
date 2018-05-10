@@ -21,15 +21,12 @@
         jsTestIsAsync = true;
 
         async function runTest() {
-            await UIHelper.ensurePresentationUpdate();
-
             largeElementRectBeforeRemoval = large.getBoundingClientRect();
             mediumElementRectBeforeRemoval = medium.getBoundingClientRect();
             innerWidthBeforeRemoval = innerWidth;
             innerHeightBeforeRemoval = innerHeight;
 
             large.remove();
-            await UIHelper.ensurePresentationUpdate();
 
             mediumElementRectAfterRemoval = medium.getBoundingClientRect();
             innerWidthAfterRemoval = innerWidth;
