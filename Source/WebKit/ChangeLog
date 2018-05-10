@@ -1,3 +1,15 @@
+2018-05-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream, iOS] Don't check authorizationStatusForMediaType when using mock capture devices
+        https://bugs.webkit.org/show_bug.cgi?id=185516
+        <rdar://problem/36328191>
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest): Don't check
+        +[AVCaptureDevice authorizationStatusForMediaType:] when using mock capture devices.
+
 2018-05-10  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r230323): UIProcess needs to notify WebContent process of Accessibility setting changes

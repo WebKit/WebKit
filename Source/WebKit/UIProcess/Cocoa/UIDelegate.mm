@@ -886,13 +886,14 @@ bool UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
     }
 
 #if PLATFORM(IOS)
-    auto requestCameraAuthorization = BlockPtr<void()>::fromCallable([this, &frame, protectedRequest = makeRef(request), webView = RetainPtr<WKWebView>(m_uiDelegate.m_webView)]() {
+    bool usingMockCaptureDevices = page.preferences().mockCaptureDevicesEnabled();
+    auto requestCameraAuthorization = BlockPtr<void()>::fromCallable([this, &frame, protectedRequest = makeRef(request), webView = RetainPtr<WKWebView>(m_uiDelegate.m_webView), usingMockCaptureDevices]() {
 
         if (!protectedRequest->requiresVideoCapture()) {
             requestUserMediaAuthorizationForDevices(frame, protectedRequest, (id <WKUIDelegatePrivate>)m_uiDelegate.m_delegate.get(), *webView.get());
             return;
         }
-        AVAuthorizationStatus cameraAuthorizationStatus = [getAVCaptureDeviceClass() authorizationStatusForMediaType:getAVMediaTypeVideo()];
+        AVAuthorizationStatus cameraAuthorizationStatus = usingMockCaptureDevices ? AVAuthorizationStatusAuthorized : [getAVCaptureDeviceClass() authorizationStatusForMediaType:getAVMediaTypeVideo()];
         switch (cameraAuthorizationStatus) {
         case AVAuthorizationStatusAuthorized:
             requestUserMediaAuthorizationForDevices(frame, protectedRequest, (id <WKUIDelegatePrivate>)m_uiDelegate.m_delegate.get(), *webView.get());
@@ -916,7 +917,7 @@ bool UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
     });
 
     if (requiresAudioCapture) {
-        AVAuthorizationStatus microphoneAuthorizationStatus = [getAVCaptureDeviceClass() authorizationStatusForMediaType:getAVMediaTypeAudio()];
+        AVAuthorizationStatus microphoneAuthorizationStatus = usingMockCaptureDevices ? AVAuthorizationStatusAuthorized : [getAVCaptureDeviceClass() authorizationStatusForMediaType:getAVMediaTypeAudio()];
         switch (microphoneAuthorizationStatus) {
         case AVAuthorizationStatusAuthorized:
             requestCameraAuthorization();
