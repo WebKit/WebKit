@@ -1,3 +1,19 @@
+2018-05-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Hidden nodes which are not directly referenced should not participate name/description from content
+        https://bugs.webkit.org/show_bug.cgi?id=185478
+
+        Reviewed by Chris Fleizach.
+
+        Add a check to AccessibilityNodeObject::textUnderElement() and return early
+        if the node is hidden, not referenced by aria-labelledby or aria-describedby,
+        not an HTMLLabelElement, and not fallback content for an HTMLCanvasElement.
+
+        Test: accessibility/text-alternative-calculation-hidden-nodes.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::textUnderElement const):
+
 2018-05-09  Eric Carlson  <eric.carlson@apple.com>
 
         Update MediaSession to use release logging
