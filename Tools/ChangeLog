@@ -1,3 +1,13 @@
+2018-05-10  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Support --verbose in run-javascriptcore-tests
+        https://bugs.webkit.org/show_bug.cgi?id=185492
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+
 2018-05-10  Valerie R Young  <valerie@bocoup.com>
 
         test262/Runner.pm: --failing-files uses results file not expectations

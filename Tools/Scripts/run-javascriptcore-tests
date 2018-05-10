@@ -93,6 +93,7 @@ my $failFast = 1;
 my %jsonData = ();
 my $remoteConfigFile;
 my $jsonFileName;
+my $verbose = 0;
 
 if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTMASM}) {
     if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTMASM} eq "true") {
@@ -231,6 +232,7 @@ Usage: $programName [options] [options to pass to build system]
                                 Each environment variable should be separated by a space.
                                 e.g. \"foo=bar x=y\" (no quotes).
   --gmalloc:                    Run tests with Guard Malloc enabled (if no path is given: $gmallocDefaultPath is used)
+  --verbose:                    Verbose output (specify more than once to increase verbosity).
 
 Environment Variables:
   - set RUN_JAVASCRIPTCORE_TESTS_TESTMASM to "true" or "false" (no quotes) to determine if we run testmasm by default.
@@ -277,6 +279,7 @@ GetOptions(
     'help' => \$showHelp,
     'env-vars=s' => \$envVars,
     'gmalloc:s' => \$gmallocPath,
+    'verbose+' => \$verbose
 );
 
 
@@ -516,6 +519,8 @@ sub runJSCStressTests
         push(@jscStressDriverCmd, "--filter");
         push(@jscStressDriverCmd, $filter);
     }
+
+    push(@jscStressDriverCmd, ("--verbose") x $verbose) if ($verbose > 0);
 
     unshift @jscStressDriverCmd, wrapperPrefixIfNeeded() if shouldUseJhbuild();
 
