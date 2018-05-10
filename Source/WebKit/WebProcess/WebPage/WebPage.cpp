@@ -5905,8 +5905,13 @@ void WebPage::frameBecameRemote(uint64_t frameID, GlobalFrameIdentifier&& remote
     if (frame->page() != this)
         return;
 
+    auto* coreFrame = frame->coreFrame();
+    auto* previousWindow = coreFrame->window();
+    if (!previousWindow)
+        return;
+
     auto remoteFrame = RemoteFrame::create(WTFMove(remoteFrameIdentifier));
-    auto remoteWindow = RemoteDOMWindow::create(remoteFrame.copyRef(), WTFMove(remoteWindowIdentifier));
+    auto remoteWindow = RemoteDOMWindow::create(remoteFrame.copyRef(), WTFMove(remoteWindowIdentifier), previousWindow->crossOriginOptions());
     UNUSED_PARAM(remoteWindow);
 
     remoteFrame->setOpener(frame->coreFrame()->loader().opener());
@@ -5915,7 +5920,6 @@ void WebPage::frameBecameRemote(uint64_t frameID, GlobalFrameIdentifier&& remote
     remoteFrame->windowProxy().setJSWindowProxies(WTFMove(jsWindowProxies));
     remoteFrame->windowProxy().setDOMWindow(remoteWindow.ptr());
 
-    auto* coreFrame = frame->coreFrame();
     coreFrame->setView(nullptr);
     coreFrame->willDetachPage();
     coreFrame->detachFromPage();

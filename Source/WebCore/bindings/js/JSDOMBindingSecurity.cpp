@@ -25,6 +25,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
+#include "HTTPParsers.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindowBase.h"
 #include "SecurityOrigin.h"
@@ -97,6 +98,21 @@ bool BindingSecurity::shouldAllowAccessToFrame(JSC::ExecState* state, Frame* tar
 bool BindingSecurity::shouldAllowAccessToNode(JSC::ExecState& state, Node* target)
 {
     return !target || canAccessDocument(&state, &target->document(), LogSecurityError);
+}
+
+bool BindingSecurity::shouldAllowAccessToDOMWindowGivenMinimumCrossOriginOptions(JSC::ExecState* state, DOMWindow& target, CrossOriginOptions minimumCrossOriginOptions, SecurityReportingOption reportingOption)
+{
+    DOMWindow& source = activeDOMWindow(*state);
+    ASSERT(minimumCrossOriginOptions > CrossOriginOptions::Deny);
+
+    static_assert(CrossOriginOptions::Deny < CrossOriginOptions::AllowPostMessage && CrossOriginOptions::AllowPostMessage < CrossOriginOptions::Allow, "More restrictive cross-origin options should have lower values");
+
+    // Fast path.
+    auto effectiveCrossOriginOptions = std::min(source.crossOriginOptions(), target.crossOriginOptions());
+    if (effectiveCrossOriginOptions >= minimumCrossOriginOptions)
+        return true;
+
+    return shouldAllowAccessToDOMWindow(state, target, reportingOption);
 }
 
 } // namespace WebCore

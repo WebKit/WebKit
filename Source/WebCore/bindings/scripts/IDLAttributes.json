@@ -161,6 +161,10 @@
         "DoNotCheckSecurity": {
             "contextsAllowed": ["attribute", "operation"]
         },
+        "DoNotCheckSecurityIf": {
+            "contextsAllowed": ["attribute", "operation"],
+            "values": ["CrossOriginOptionsAllow", "CrossOriginOptionsAllowPostMessage"]
+        },
         "DoNotCheckSecurityOnGetter": {
             "contextsAllowed": ["attribute"]
         },

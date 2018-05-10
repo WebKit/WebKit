@@ -788,6 +788,7 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     prefsPrivate->setWebAnimationsEnabled(TRUE);
     // FIXME: WebGL2
     // FIXME: WebRTC
+    prefsPrivate->setCrossOriginOptionsSupportEnabled(TRUE);
 }
 
 static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)

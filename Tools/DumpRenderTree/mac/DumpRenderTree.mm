@@ -862,6 +862,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setAccessibilityObjectModelEnabled:YES];
     [preferences setVisualViewportAPIEnabled:YES];
     [preferences setColorFilterEnabled:YES];
+    [preferences setCrossOriginOptionsSupportEnabled:YES];
 }
 
 // Called before each test.
