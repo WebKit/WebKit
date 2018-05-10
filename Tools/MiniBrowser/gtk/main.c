@@ -46,6 +46,8 @@ static gboolean privateMode;
 static gboolean automationMode;
 static gboolean fullScreen;
 static gboolean enableIntelligentTrackingPrevention;
+static const char *cookiesFile;
+static const char *cookiesPolicy;
 static const char *proxy;
 
 typedef enum {
@@ -104,6 +106,8 @@ static const GOptionEntry commandLineOptions[] =
     { "private", 'p', 0, G_OPTION_ARG_NONE, &privateMode, "Run in private browsing mode", NULL },
     { "automation", 0, 0, G_OPTION_ARG_NONE, &automationMode, "Run in automation mode", NULL },
     { "enable-itp", 0, 0, G_OPTION_ARG_NONE, &enableIntelligentTrackingPrevention, "Enable intelligent tracking prevention", NULL },
+    { "cookies-file", 'c', 0, G_OPTION_ARG_FILENAME, &cookiesFile, "Persistent cookie storage database file", "FILE" },
+    { "cookies-policy", 0, 0, G_OPTION_ARG_STRING, &cookiesPolicy, "Cookies accept policy (always, never, no-third-party). Default: no-third-party", "POLICY" },
     { "proxy", 0, 0, G_OPTION_ARG_STRING, &proxy, "Set proxy", "PROXY" },
     { "ignore-host", 0, 0, G_OPTION_ARG_STRING_ARRAY, &ignoreHosts, "Set proxy ignore hosts", "HOSTS" },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
@@ -495,6 +499,21 @@ int main(int argc, char *argv[])
     g_option_context_free (context);
 
     WebKitWebContext *webContext = (privateMode || automationMode) ? webkit_web_context_new_ephemeral() : webkit_web_context_get_default();
+
+    if (cookiesPolicy) {
+        WebKitCookieManager *cookieManager = webkit_web_context_get_cookie_manager(webContext);
+        GEnumClass *enumClass = g_type_class_ref(WEBKIT_TYPE_COOKIE_ACCEPT_POLICY);
+        GEnumValue *enumValue = g_enum_get_value_by_nick(enumClass, cookiesPolicy);
+        if (enumValue)
+            webkit_cookie_manager_set_accept_policy(cookieManager, enumValue->value);
+        g_type_class_unref(enumClass);
+    }
+
+    if (cookiesFile && !webkit_web_context_is_ephemeral(webContext)) {
+        WebKitCookieManager *cookieManager = webkit_web_context_get_cookie_manager(webContext);
+        WebKitCookiePersistentStorage storageType = g_str_has_suffix(cookiesFile, ".txt") ? WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT : WEBKIT_COOKIE_PERSISTENT_STORAGE_SQLITE;
+        webkit_cookie_manager_set_persistent_storage(cookieManager, cookiesFile, storageType);
+    }
 
     if (proxy) {
         WebKitNetworkProxySettings *webkitProxySettings = webkit_network_proxy_settings_new(proxy, ignoreHosts);
