@@ -606,6 +606,10 @@
        (global-name "com.apple.xpcd")
 )
 
+;; Needed to support encrypted media playback <rdar://problem/40038478>
+(allow mach-lookup
+    (global-name "com.apple.SecurityServer"))
+
 (allow file-read* file-write* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 
 (allow file-read*

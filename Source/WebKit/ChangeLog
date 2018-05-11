@@ -1,3 +1,16 @@
+2018-05-10  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r231057): Encrypted media content playback failures
+        https://bugs.webkit.org/show_bug.cgi?id=185537
+        <rdar://problem/40038478>
+
+        Reviewed by Eric Carlson.
+
+        Put access to the SecurityServer back in the sandbox so we can validate the
+        signatures of media encoder/decoders.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-05-11  Youenn Fablet  <youenn@apple.com>
 
         NetworkCORSPreflightChecker should proceed when having a ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested challenge
