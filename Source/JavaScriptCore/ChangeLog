@@ -1,3 +1,18 @@
+2018-05-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Make return types of construction functions tight
+        https://bugs.webkit.org/show_bug.cgi?id=185509
+
+        Reviewed by Saam Barati.
+
+        Array and Object construction functions should return strict types instead of returning JSObject*/JSValue.
+
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructArrayWithSizeQuirk):
+        * runtime/ArrayConstructor.h:
+        * runtime/ObjectConstructor.h:
+        (JSC::constructEmptyObject):
+
 2018-05-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Object.assign for final objects should be faster

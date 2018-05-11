@@ -69,7 +69,7 @@ void ArrayConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Arra
 
 // ------------------------------ Functions ---------------------------
 
-JSValue constructArrayWithSizeQuirk(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, JSValue length, JSValue newTarget)
+JSArray* constructArrayWithSizeQuirk(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, JSValue length, JSValue newTarget)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -79,13 +79,15 @@ JSValue constructArrayWithSizeQuirk(ExecState* exec, ArrayAllocationProfile* pro
     }
     
     uint32_t n = length.toUInt32(exec);
-    if (n != length.toNumber(exec))
-        return throwException(exec, scope, createRangeError(exec, ASCIILiteral("Array size is not a small enough positive integer.")));
+    if (n != length.toNumber(exec)) {
+        throwException(exec, scope, createRangeError(exec, ASCIILiteral("Array size is not a small enough positive integer.")));
+        return nullptr;
+    }
     scope.release();
     return constructEmptyArray(exec, profile, globalObject, n, newTarget);
 }
 
-static inline JSValue constructArrayWithSizeQuirk(ExecState* exec, const ArgList& args, JSValue newTarget)
+static inline JSArray* constructArrayWithSizeQuirk(ExecState* exec, const ArgList& args, JSValue newTarget)
 {
     JSGlobalObject* globalObject = jsCast<InternalFunction*>(exec->jsCallee())->globalObject();
 
