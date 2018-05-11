@@ -1,5 +1,11 @@
 2018-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed. Update OptionsWPE.cmake and NEWS for 2.19.93 release.
+
+        * wpe/NEWS:
+
+2018-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [WPE][STABLE] Remove unusable JavaScript APIs
         https://bugs.webkit.org/show_bug.cgi?id=185518
 

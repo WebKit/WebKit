@@ -1,4 +1,13 @@
 ==================
+WPE WebKit 2.19.93
+==================
+
+What's new in WPE WebKit 2.19.93?
+
+  - Remove unusable JavaScript APIs
+  - Fix missing WebKitHitTestResult.h
+
+==================
 WPE WebKit 2.19.92
 ==================
 
