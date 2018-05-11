@@ -1,3 +1,20 @@
+2018-05-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r231316 and r231332.
+        https://bugs.webkit.org/show_bug.cgi?id=185564
+
+        Appears to be a Speedometer2/MotionMark regression (Requested
+        by keith_miller on #webkit).
+
+        Reverted changesets:
+
+        "Remove the prototype caching for get_by_id in the LLInt"
+        https://bugs.webkit.org/show_bug.cgi?id=185226
+        https://trac.webkit.org/changeset/231316
+
+        "Unreviewed, fix 32-bit profile offset for change in bytecode"
+        https://trac.webkit.org/changeset/231332
+
 2018-05-11  Michael Saboff  <msaboff@apple.com>
 
         [DFG] Compiler uses incorrect output register for NumberIsInteger operation

@@ -377,6 +377,12 @@ void BytecodeDumper<Block>::printGetByIdOp(PrintStream& out, int location, const
     case op_get_by_id:
         op = "get_by_id";
         break;
+    case op_get_by_id_proto_load:
+        op = "get_by_id_proto_load";
+        break;
+    case op_get_by_id_unset:
+        op = "get_by_id_unset";
+        break;
     case op_get_array_length:
         op = "array_length";
         break;
@@ -391,7 +397,7 @@ void BytecodeDumper<Block>::printGetByIdOp(PrintStream& out, int location, const
     int id0 = (++it)->u.operand;
     printLocationAndOp(out, location, it, op);
     out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), idName(id0, identifier(id0)).data());
-    it += 3; // Increment up to the value profiler.
+    it += 4; // Increment up to the value profiler.
 }
 
 static void dumpStructure(PrintStream& out, const char* name, Structure* structure, const Identifier& ident)
@@ -436,6 +442,8 @@ void BytecodeDumper<Block>::printGetByIdCacheStatus(PrintStream& out, int locati
         out.printf(" llint(");
         dumpStructure(out, "struct", structure, ident);
         out.printf(")");
+        if (Interpreter::getOpcodeID(instruction[0]) == op_get_by_id_proto_load)
+            out.printf(" proto(%p)", getPointer(instruction[6]));
     }
 
 #if ENABLE(JIT)
@@ -1030,6 +1038,8 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         break;
     }
     case op_get_by_id:
+    case op_get_by_id_proto_load:
+    case op_get_by_id_unset:
     case op_get_array_length: {
         printGetByIdOp(out, location, it);
         printGetByIdCacheStatus(out, location, stubInfos);

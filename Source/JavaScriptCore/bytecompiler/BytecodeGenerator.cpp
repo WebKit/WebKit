@@ -2703,6 +2703,7 @@ RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, co
     instructions().append(0);
     instructions().append(0);
     instructions().append(0);
+    instructions().append(Options::prototypeHitCountForLLIntCaching());
     instructions().append(profile);
     return dst;
 }

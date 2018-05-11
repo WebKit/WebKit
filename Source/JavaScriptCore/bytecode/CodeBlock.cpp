@@ -65,6 +65,7 @@
 #include "JSTemplateObjectDescriptor.h"
 #include "LLIntData.h"
 #include "LLIntEntrypoint.h"
+#include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
 #include "LowLevelInterpreter.h"
 #include "ModuleProgramCodeBlock.h"
 #include "ObjectAllocationProfileInlines.h"
@@ -1250,7 +1251,9 @@ void CodeBlock::finalizeLLIntInlineCaches()
     for (size_t size = propertyAccessInstructions.size(), i = 0; i < size; ++i) {
         Instruction* curInstruction = &instructions()[propertyAccessInstructions[i]];
         switch (Interpreter::getOpcodeID(curInstruction[0])) {
-        case op_get_by_id: {
+        case op_get_by_id:
+        case op_get_by_id_proto_load:
+        case op_get_by_id_unset: {
             StructureID oldStructureID = curInstruction[4].u.structureID;
             if (!oldStructureID || Heap::isMarked(vm.heap.structureIDTable().get(oldStructureID)))
                 break;
@@ -1343,6 +1346,12 @@ void CodeBlock::finalizeLLIntInlineCaches()
             ASSERT_WITH_MESSAGE_UNUSED(opcodeID, false, "Unhandled opcode in CodeBlock::finalizeUnconditionally, %s(%d) at bc %u", opcodeNames[opcodeID], opcodeID, propertyAccessInstructions[i]);
         }
     }
+
+    // We can't just remove all the sets when we clear the caches since we might have created a watchpoint set
+    // then cleared the cache without GCing in between.
+    m_llintGetByIdWatchpointMap.removeIf([](const StructureWatchpointMap::KeyValuePairType& pair) -> bool {
+        return !Heap::isMarked(pair.key);
+    });
 
     for (unsigned i = 0; i < m_llintCallLinkInfos.size(); ++i) {
         if (m_llintCallLinkInfos[i].isLinked() && !Heap::isMarked(m_llintCallLinkInfos[i].callee.get())) {
