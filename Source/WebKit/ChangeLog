@@ -1,3 +1,19 @@
+2018-05-11  Youenn Fablet  <youenn@apple.com>
+
+        NetworkCORSPreflightChecker should proceed when having a ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested challenge
+        https://bugs.webkit.org/show_bug.cgi?id=185522
+        <rdar://problem/39987152>
+
+        Reviewed by Brent Fulgham.
+
+        In case of such challenge, refuse to proceed with authentication since preflight is not using credentials.
+        Previously, we were failing right away which is not right in case preflight is the request triggering the connection.
+
+        Manually tested.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::didReceiveChallenge):
+
 2018-05-10  Daniel Bates  <dabates@apple.com>
 
         Use PlatformStrategies to switch between WebKit and WebKitLegacy checking of CSP frame-ancestors and X-Frame-Options

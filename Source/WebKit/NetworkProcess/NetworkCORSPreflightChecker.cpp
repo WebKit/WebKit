@@ -78,9 +78,15 @@ void NetworkCORSPreflightChecker::willPerformHTTPRedirection(WebCore::ResourceRe
     m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), ASCIILiteral("Preflight response is not successful"), ResourceError::Type::AccessControl });
 }
 
-void NetworkCORSPreflightChecker::didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&& completionHandler)
+void NetworkCORSPreflightChecker::didReceiveChallenge(const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler&& completionHandler)
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveChallenge");
+
+    if (challenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
+        completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, { });
+        return;
+    }
+
     completionHandler(AuthenticationChallengeDisposition::Cancel, { });
     m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), ASCIILiteral("Preflight response is not successful"), ResourceError::Type::AccessControl });
 }
