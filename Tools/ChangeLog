@@ -1,3 +1,20 @@
+2018-05-10  Leo Balter  <leonardo.balter@gmail.com>
+
+        [Build Bot] Restore configuration options to the Test262 Runner
+
+        During the switch from the previous Test262 runner to the new one,
+        a call for an extra configurations options got removed.
+
+        This call is important to inform the script to find the debug or
+        release build of JSC. It's being restored in this patch.
+
+        https://bugs.webkit.org/show_bug.cgi?id=185513
+
+        Reviewed by Yusuke Suzuki.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (RunTest262Tests):
+
 2018-05-10  Jonathan Bedard  <jbedard@apple.com>
 
         REGRESSION (r230998): Cannot stream API test output
