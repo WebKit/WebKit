@@ -403,7 +403,7 @@ struct InlineTextBox::MarkedTextStyle {
     }
     static bool areDecorationMarkedTextStylesEqual(const MarkedTextStyle& a, const MarkedTextStyle& b)
     {
-        return a.textDecorationStyles == b.textDecorationStyles && a.textShadow == b.textShadow;
+        return a.textDecorationStyles == b.textDecorationStyles && a.textShadow == b.textShadow && a.alpha == b.alpha;
     }
 
     Color backgroundColor;
@@ -1075,9 +1075,13 @@ void InlineTextBox::paintMarkedTextDecoration(PaintInfo& paintInfo, const FloatR
 
     {
         GraphicsContextStateSaver stateSaver { context, false };
-        if (!clipOutRect.isEmpty()) {
+        bool isDraggedContent = markedText.type == MarkedText::DraggedContent;
+        if (isDraggedContent || !clipOutRect.isEmpty()) {
             stateSaver.save();
-            context.clipOut(clipOutRect);
+            if (isDraggedContent)
+                context.setAlpha(markedText.style.alpha);
+            if (!clipOutRect.isEmpty())
+                context.clipOut(clipOutRect);
         }
         decorationPainter.paintTextDecoration(textRun.subRun(startOffset, endOffset - startOffset), textOriginFromBoxRect(snappedSelectionRect), snappedSelectionRect.location());
     }

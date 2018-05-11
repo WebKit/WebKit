@@ -1,3 +1,18 @@
+2018-05-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Text decoration of dragged content does not paint with opacity
+        https://bugs.webkit.org/show_bug.cgi?id=185551
+        <rdar://problem/40166867>
+
+        Reviewed by Wenson Hsieh.
+
+        Respect alpha when painting the text decoration for dragged content.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::MarkedTextStyle::areDecorationMarkedTextStylesEqual): Consider alpha when
+        comparing decoration styles for equality so that we do not coalesce styles with differing alpha.
+        (WebCore::InlineTextBox::paintMarkedTextDecoration): Respect alpha when painting dragged content.
+
 2018-05-11  Nan Wang  <n_wang@apple.com>
 
         AX: In role=dialog elements with aria-modal=true VoiceOver iOS/macOS can't manually focus or read dialog paragraph description text inside the modal.
