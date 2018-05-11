@@ -60,11 +60,8 @@ void createListFromArrayLike(ExecState* exec, JSValue arrayLikeValue, RuntimeTyp
     }
 }
 
-ALWAYS_INLINE bool JSObject::canPerformFastPutInline(VM& vm, PropertyName propertyName)
+ALWAYS_INLINE bool JSObject::canPerformFastPutInlineExcludingProto(VM& vm)
 {
-    if (UNLIKELY(propertyName == vm.propertyNames->underscoreProto))
-        return false;
-
     // Check if there are any setters or getters in the prototype chain
     JSValue prototype;
     JSObject* obj = this;
@@ -81,6 +78,13 @@ ALWAYS_INLINE bool JSObject::canPerformFastPutInline(VM& vm, PropertyName proper
     }
 
     ASSERT_NOT_REACHED();
+}
+
+ALWAYS_INLINE bool JSObject::canPerformFastPutInline(VM& vm, PropertyName propertyName)
+{
+    if (UNLIKELY(propertyName == vm.propertyNames->underscoreProto))
+        return false;
+    return canPerformFastPutInlineExcludingProto(vm);
 }
 
 template<typename CallbackWhenNoException>

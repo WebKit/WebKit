@@ -1,3 +1,42 @@
+2018-05-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Object.assign for final objects should be faster
+        https://bugs.webkit.org/show_bug.cgi?id=185348
+
+        Reviewed by Saam Barati.
+
+        Object.assign is so heavily used to clone an object. For example, speedometer react-redux can be significantly
+        improved if Object.assign becomes fast. It is worth adding a complex fast path to accelerate the major use cases.
+
+        If enumerating properties of source objects and putting properties to target object are non observable,
+        we can avoid hash table looking up of source object properties. We can enumerate object property entries,
+        and put them to target object. This patch adds this fast path to Object.assign implementation.
+
+        When enumerating properties, we need to ensure that the given |source| object does not include "__proto__"
+        property since we cannot perform fast [[Put]] for the |target| object. We add a new flag
+        "HasUnderscoreProtoPropertyExcludingOriginalProto" to Structure to track this state.
+
+        This improves object-assign.es6 by 1.85x.
+
+                                        baseline                  patched
+
+            object-assign.es6      368.6132+-8.3508     ^    198.8775+-4.9042        ^ definitely 1.8535x faster
+
+        And Speedometer2.0 React-Redux-TodoMVC's total time is improved from 490ms to 431ms.
+
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::canPerformFastPutInlineExcludingProto):
+        (JSC::JSObject::canPerformFastPutInline):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorAssign):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::forEachProperty):
+        (JSC::Structure::add):
+
 2018-05-10  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CFA should pick the right time to inject OSR entry data

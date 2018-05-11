@@ -872,6 +872,9 @@ public:
 
     JS_EXPORT_PRIVATE JSValue getMethod(ExecState*, CallData&, CallType&, const Identifier&, const String& errorMessage);
 
+    bool canPerformFastPutInline(VM&, PropertyName);
+    bool canPerformFastPutInlineExcludingProto(VM&);
+
     DECLARE_EXPORT_INFO;
 
 protected:
@@ -1017,7 +1020,6 @@ private:
         
     template<PutMode>
     bool putDirectInternal(VM&, PropertyName, JSValue, unsigned attr, PutPropertySlot&);
-    bool canPerformFastPutInline(VM&, PropertyName);
 
     JS_EXPORT_PRIVATE NEVER_INLINE bool putInlineSlow(ExecState*, PropertyName, JSValue, PutPropertySlot&);
 

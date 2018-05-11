@@ -163,6 +163,17 @@ void Structure::forEachPropertyConcurrently(const Functor& functor)
     }
 }
 
+template<typename Functor>
+void Structure::forEachProperty(VM& vm, const Functor& functor)
+{
+    if (PropertyTable* table = ensurePropertyTableIfNotEmpty(vm)) {
+        for (auto& entry : *table) {
+            if (!functor(entry))
+                return;
+        }
+    }
+}
+
 inline PropertyOffset Structure::getConcurrently(UniquedStringImpl* uid)
 {
     unsigned attributesIgnored;
@@ -376,6 +387,8 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
     checkConsistency();
     if (attributes & PropertyAttribute::DontEnum || propertyName.isSymbol())
         setIsQuickPropertyAccessAllowedForEnumeration(false);
+    if (propertyName == vm.propertyNames->underscoreProto)
+        setHasUnderscoreProtoPropertyExcludingOriginalProto(true);
 
     auto rep = propertyName.uid();
 

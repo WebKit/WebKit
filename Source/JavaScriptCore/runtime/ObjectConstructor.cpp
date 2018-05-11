@@ -300,6 +300,10 @@ EncodedJSValue JSC_HOST_CALL objectConstructorAssign(ExecState* exec)
     JSObject* target = targetValue.toObject(exec);
     RETURN_IF_EXCEPTION(scope, { });
 
+    // FIXME: Extend this for non JSFinalObject. For example, we would like to use this fast path for function objects too.
+    // https://bugs.webkit.org/show_bug.cgi?id=185358
+    bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(vm, target) && target->canPerformFastPutInlineExcludingProto(vm);
+
     unsigned argsCount = exec->argumentCount();
     for (unsigned i = 1; i < argsCount; ++i) {
         JSValue sourceValue = exec->uncheckedArgument(i);
@@ -307,6 +311,57 @@ EncodedJSValue JSC_HOST_CALL objectConstructorAssign(ExecState* exec)
             continue;
         JSObject* source = sourceValue.toObject(exec);
         RETURN_IF_EXCEPTION(scope, { });
+
+        if (targetCanPerformFastPut) {
+            if (!source->staticPropertiesReified()) {
+                source->reifyAllStaticProperties(exec);
+                RETURN_IF_EXCEPTION(scope, { });
+            }
+
+            auto canPerformFastPropertyEnumerationForObjectAssign = [] (Structure* structure) {
+                if (structure->typeInfo().overridesGetOwnPropertySlot())
+                    return false;
+                if (structure->typeInfo().overridesGetPropertyNames())
+                    return false;
+                // FIXME: Indexed properties can be handled.
+                // https://bugs.webkit.org/show_bug.cgi?id=185358
+                if (hasIndexedProperties(structure->indexingType()))
+                    return false;
+                if (structure->hasGetterSetterProperties())
+                    return false;
+                if (structure->isUncacheableDictionary())
+                    return false;
+                // Cannot perform fast [[Put]] to |target| if the property names of the |source| contain "__proto__".
+                if (structure->hasUnderscoreProtoPropertyExcludingOriginalProto())
+                    return false;
+                return true;
+            };
+
+            Structure* structure = source->structure(vm);
+            if (canPerformFastPropertyEnumerationForObjectAssign(structure)) {
+                // |source| Structure does not have any getters. And target can perform fast put.
+                // So enumerating properties and putting properties are non observable.
+                structure->forEachProperty(vm, [&] (const PropertyMapEntry& entry) -> bool {
+                    if (entry.attributes & PropertyAttribute::DontEnum)
+                        return true;
+
+                    PropertyName propertyName(entry.key);
+                    if (propertyName.isPrivateName())
+                        return true;
+
+                    // FIXME: We could put properties in a batching manner to accelerate Object.assign more.
+                    // https://bugs.webkit.org/show_bug.cgi?id=185358
+                    PutPropertySlot putPropertySlot(target, true);
+                    target->putOwnDataProperty(vm, propertyName, source->getDirect(entry.offset), putPropertySlot);
+                    return true;
+                });
+                continue;
+            }
+        }
+
+        // [[GetOwnPropertyNames]], [[Get]] etc. could modify target object and invalidate this assumption.
+        // For example, [[Get]] of source object could configure setter to target object. So disable the fast path.
+        targetCanPerformFastPut = false;
 
         PropertyNameArray properties(&vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
         source->methodTable(vm)->getOwnPropertyNames(source, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));

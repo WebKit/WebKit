@@ -432,6 +432,9 @@ public:
     // to continue or false if it's done.
     template<typename Functor>
     void forEachPropertyConcurrently(const Functor&);
+
+    template<typename Functor>
+    void forEachProperty(VM&, const Functor&);
     
     PropertyOffset getConcurrently(UniquedStringImpl* uid);
     PropertyOffset getConcurrently(UniquedStringImpl* uid, unsigned& attributes);
@@ -679,6 +682,7 @@ public:
     DEFINE_BITFIELD(bool, transitionWatchpointIsLikelyToBeFired, TransitionWatchpointIsLikelyToBeFired, 1, 26);
     DEFINE_BITFIELD(bool, hasBeenDictionary, HasBeenDictionary, 1, 27);
     DEFINE_BITFIELD(bool, isAddingPropertyForTransition, IsAddingPropertyForTransition, 1, 28);
+    DEFINE_BITFIELD(bool, hasUnderscoreProtoPropertyExcludingOriginalProto, HasUnderscoreProtoPropertyExcludingOriginalProto, 1, 29);
 
 private:
     friend class LLIntOffsetsExtractor;

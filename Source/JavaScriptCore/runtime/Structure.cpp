@@ -193,6 +193,7 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     setHasGetterSetterProperties(classInfo->hasStaticSetterOrReadonlyProperties());
     setHasCustomGetterSetterProperties(false);
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(classInfo->hasStaticSetterOrReadonlyProperties());
+    setHasUnderscoreProtoPropertyExcludingOriginalProto(false);
     setIsQuickPropertyAccessAllowedForEnumeration(true);
     setAttributesInPrevious(0);
     setDidPreventExtensions(false);
@@ -226,6 +227,7 @@ Structure::Structure(VM& vm)
     setHasGetterSetterProperties(m_classInfo->hasStaticSetterOrReadonlyProperties());
     setHasCustomGetterSetterProperties(false);
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(m_classInfo->hasStaticSetterOrReadonlyProperties());
+    setHasUnderscoreProtoPropertyExcludingOriginalProto(false);
     setIsQuickPropertyAccessAllowedForEnumeration(true);
     setAttributesInPrevious(0);
     setDidPreventExtensions(false);
@@ -259,6 +261,7 @@ Structure::Structure(VM& vm, Structure* previous, DeferredStructureTransitionWat
     setHasGetterSetterProperties(previous->hasGetterSetterProperties());
     setHasCustomGetterSetterProperties(previous->hasCustomGetterSetterProperties());
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(previous->hasReadOnlyOrGetterSetterPropertiesExcludingProto());
+    setHasUnderscoreProtoPropertyExcludingOriginalProto(previous->hasUnderscoreProtoPropertyExcludingOriginalProto());
     setIsQuickPropertyAccessAllowedForEnumeration(previous->isQuickPropertyAccessAllowedForEnumeration());
     setAttributesInPrevious(0);
     setDidPreventExtensions(previous->didPreventExtensions());

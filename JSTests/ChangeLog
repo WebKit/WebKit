@@ -1,3 +1,14 @@
+2018-05-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Object.assign for final objects should be faster
+        https://bugs.webkit.org/show_bug.cgi?id=185348
+
+        Reviewed by Saam Barati.
+
+        * stress/object-assign-fast-path.js: Added.
+        (shouldBe):
+        (checkProperty):
+
 2018-05-10  Leo Balter  <leonardo.balter@gmail.com>
 
         Update Test262 tests through the new import script - 20180509
