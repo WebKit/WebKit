@@ -579,6 +579,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setIsSecureContextAttributeEnabled:(BOOL)flag;
 - (BOOL)isSecureContextAttributeEnabled;
 
+- (void)setServerTimingEnabled:(BOOL)flag;
+- (BOOL)serverTimingEnabled;
+
 @property (nonatomic) BOOL visualViewportEnabled;
 @property (nonatomic) BOOL visualViewportAPIEnabled;
 @property (nonatomic) BOOL largeImageAsyncDecodingEnabled;

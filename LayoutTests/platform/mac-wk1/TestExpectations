@@ -149,6 +149,7 @@ imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.s
 http/tests/appcache/main-resource-redirect-with-sw.html [ Skip ]
 http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Skip ]
 http/tests/cookies/same-site/fetch-in-same-origin-service-worker.html [ Skip ]
+imported/w3c/web-platform-tests/server-timing/service_worker_idl.html [ Skip ]
 
 # Skip WebRTC for now in WK1
 imported/w3c/web-platform-tests/webrtc [ Skip ]

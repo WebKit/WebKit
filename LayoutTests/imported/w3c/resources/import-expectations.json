@@ -290,7 +290,7 @@
     "web-platform-tests/selection": "skip", 
     "web-platform-tests/selectors": "skip", 
     "web-platform-tests/selectors-api": "skip", 
-    "web-platform-tests/server-timing": "skip", 
+    "web-platform-tests/server-timing": "import", 
     "web-platform-tests/service-workers/cache-storage": "import", 
     "web-platform-tests/service-workers/service-worker": "import", 
     "web-platform-tests/service-workers/tools": "import", 

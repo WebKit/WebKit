@@ -1,3 +1,26 @@
+2018-05-11  Charles Vazac  <cvazac@gmail.com>
+
+        Runtime feature flag for Server-Timing
+        https://bugs.webkit.org/show_bug.cgi?id=184758
+
+        Reviewed by Youenn Fablet.
+
+        * mac/WebView/WebPreferenceKeysPrivate.h: Added server-timing preference.
+        * mac/WebView/WebPreferences.mm:
+        (WebKit::WebPreferences::serverTimingEnabled):
+        (WebKit::WebPreferences::setServerTimingEnabled):
+        * mac/WebView/WebPreferencesPrivate.h:
+        (WebKit::WebPreferences::setServerTimingEnabled):
+        (WebKit::WebPreferences::serverTimingEnabled):
+        * mac/WebView/WebView.mm: Set runtime enabled feature based on preference.
+        * win/Interfaces/IWebPreferencesPrivate.idl: define serverTimingEnabled and setServerTimingEnabled.
+        * win/WebPreferenceKeysPrivate.h: Added server-timing preference.
+        * win/WebPreferences.cpp: Initialize server-timing as false and define setter and getter.
+        (WebKit::WebPreferences::serverTimingEnabled):
+        (WebKit::WebPreferences::setServerTimingEnabled):
+        * win/WebPreferences.h: Define serverTimingEnabled and setServerTimingEnabled.
+        * win/WebView.cpp: Set runtime enabled feature based on preference.
+
 2018-05-02  Keith Rollin  <krollin@apple.com>
 
         Add facility for tracking times and results of page and resource loading

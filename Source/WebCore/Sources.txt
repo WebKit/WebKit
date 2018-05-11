@@ -1392,6 +1392,7 @@ page/PerformanceNavigation.cpp
 page/PerformanceObserver.cpp
 page/PerformanceObserverEntryList.cpp
 page/PerformanceResourceTiming.cpp
+page/PerformanceServerTiming.cpp
 page/PerformanceTiming.cpp
 page/PerformanceUserTiming.cpp
 page/PointerLockController.cpp
@@ -2809,6 +2810,7 @@ JSPerformanceObserver.cpp
 JSPerformanceObserverCallback.cpp
 JSPerformanceObserverEntryList.cpp
 JSPerformanceResourceTiming.cpp
+JSPerformanceServerTiming.cpp
 JSPerformanceTiming.cpp
 JSPeriodicWave.cpp
 JSPlaybackDirection.cpp

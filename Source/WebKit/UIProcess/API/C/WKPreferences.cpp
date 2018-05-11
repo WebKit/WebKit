@@ -1993,3 +1993,13 @@ bool WKPreferencesGetRestrictedHTTPResponseAccess(WKPreferencesRef preferencesRe
 {
     return toImpl(preferencesRef)->restrictedHTTPResponseAccess();
 }
+
+void WKPreferencesSetServerTimingEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setServerTimingEnabled(flag);
+}
+
+bool WKPreferencesGetServerTimingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->serverTimingEnabled();
+}

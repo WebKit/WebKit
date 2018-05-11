@@ -259,6 +259,9 @@ public:
     void setStorageAccessPromptsEnabled(bool isEnabled)  { m_promptForStorageAccessAPIEnabled = isEnabled; }
     bool storageAccessPromptsEnabled() const { return m_promptForStorageAccessAPIEnabled; }
 
+    void setServerTimingEnabled(bool isEnabled) { m_isServerTimingEnabled = isEnabled; }
+    bool serverTimingEnabled() const { return m_isServerTimingEnabled; }
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -394,10 +397,12 @@ private:
     bool m_isRestrictedHTTPResponseAccess { true };
 
     bool m_fromOriginResponseHeaderEnabled { false };
-    
+
     bool m_isWebGLCompressedTextureASTCSupportEnabled { false };
 
     bool m_promptForStorageAccessAPIEnabled { false };
+
+    bool m_isServerTimingEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

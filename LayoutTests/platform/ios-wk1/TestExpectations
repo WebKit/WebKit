@@ -9,6 +9,7 @@ editing/input/focus-change-with-marked-text.html [ Pass ]
 
 # No service worker implementation for WK1
 imported/w3c/web-platform-tests/service-workers [ Skip ]
+imported/w3c/web-platform-tests/server-timing/service_worker_idl.html [ Skip ]
 http/wpt/service-workers [ Skip ]
 http/wpt/cache-storage [ Skip ]
 http/tests/cache-storage [ Skip ]

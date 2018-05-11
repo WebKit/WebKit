@@ -819,6 +819,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/PerformanceObserverEntryList.idl
     page/PerformanceNavigation.idl
     page/PerformanceResourceTiming.idl
+    page/PerformanceServerTiming.idl
     page/PerformanceTiming.idl
     page/RemoteDOMWindow.idl
     page/Screen.idl

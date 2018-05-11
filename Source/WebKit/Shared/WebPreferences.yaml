@@ -1274,3 +1274,12 @@ StorageAccessPromptsEnabled:
     humanReadableDescription: "Prompt the user when Storage Access API calls are made"
     category: experimental
     webcoreBinding: RuntimeEnabledFeatures
+
+ServerTimingEnabled:
+    type: bool
+    defaultValue: false
+    humanReadableName: "Server Timing"
+    humanReadableDescription: "Enable Server Timing API"
+    category: experimental
+    webcoreBinding: RuntimeEnabledFeatures
+    webcoreName: serverTimingEnabled

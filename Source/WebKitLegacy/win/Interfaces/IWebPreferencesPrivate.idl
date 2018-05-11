@@ -227,6 +227,8 @@ interface IWebPreferencesPrivate6 : IWebPreferencesPrivate5
     HRESULT setSpatialNavigationEnabled([in] BOOL enabled);
     HRESULT menuItemElementEnabled([out, retval] BOOL* enabled);
     HRESULT setMenuItemElementEnabled([in] BOOL enabled);
+    HRESULT serverTimingEnabled([out, retval] BOOL* enabled);
+    HRESULT setServerTimingEnabled([in] BOOL enabled);
 }
 
 [uuid(9A49D1DE-53DD-11E8-95E6-003EE1C28AB6)]

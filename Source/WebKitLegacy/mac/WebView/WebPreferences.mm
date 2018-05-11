@@ -684,6 +684,7 @@ public:
         @NO, WebKitAccessibilityObjectModelEnabledPreferenceKey,
         @NO, WebKitMediaCapabilitiesEnabledPreferenceKey,
         @NO, WebKitFetchAPIKeepAliveEnabledPreferenceKey,
+        @NO, WebKitServerTimingEnabledPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS)
@@ -3320,6 +3321,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setMediaCapabilitiesEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitMediaCapabilitiesEnabledPreferenceKey];
+}
+
+- (BOOL)serverTimingEnabled
+{
+    return [self _boolValueForKey:WebKitServerTimingEnabledPreferenceKey];
+}
+
+- (void)setServerTimingEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitServerTimingEnabledPreferenceKey];
 }
 
 @end

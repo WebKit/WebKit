@@ -863,6 +863,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setVisualViewportAPIEnabled:YES];
     [preferences setColorFilterEnabled:YES];
     [preferences setCrossOriginOptionsSupportEnabled:YES];
+    [preferences setServerTimingEnabled:YES];
 }
 
 // Called before each test.

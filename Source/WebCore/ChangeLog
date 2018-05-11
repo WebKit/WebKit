@@ -1,3 +1,21 @@
+2018-05-11  Charles Vazac  <cvazac@gmail.com>
+
+        Runtime feature flag for Server-Timing
+        https://bugs.webkit.org/show_bug.cgi?id=184758
+
+        Reviewed by Youenn Fablet.
+
+        * Source/WebCore/CMakeLists.txt: Added reference to PerformanceServerTiming.idl.
+        * Source/WebCore/DerivedSources.make: Added reference to PerformanceServerTiming.idl.
+        * Source/WebCore/Sources.txt: Added reference to PerformanceServerTiming.cpp and JSPerformanceServerTiming.cpp.
+        * Source/WebCore/WebCore.xcodeproj/project.pbxproj: Added references to PerformanceServerTiming.cpp, PerformanceServerTiming.h, and PerformanceServerTiming.idl.
+        * Source/WebCore/bindings/js/WebCoreBuiltinNames.h: Added PerformanceServerTiming.
+        * Source/WebCore/page/PerformanceResourceTiming.h: Added serverTiming member.
+        * Source/WebCore/page/PerformanceResourceTiming.idl: Added serverTiming attribute.
+        * Source/WebCore/page/PerformanceServerTiming.cpp: Added.
+        * Source/WebCore/page/PerformanceServerTiming.h: Added.
+        * Source/WebCore/page/PerformanceServerTiming.idl: Added.
+
 2018-05-11  Brady Eidson  <beidson@apple.com>
 
         Make sure history navigations reuse the existing process when necessary.

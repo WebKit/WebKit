@@ -1,3 +1,16 @@
+2018-05-11  Charles Vazac  <cvazac@gmail.com>
+
+        Runtime feature flag for Server-Timing
+        https://bugs.webkit.org/show_bug.cgi?id=184758
+
+        Reviewed by Youenn Fablet.
+
+        * Shared/WebPreferences.yaml: Added ServerTimingEnabled.
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesGetServerTimingEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h: WK_EXPORT for WKPreferencesSetServerTimingEnabled.
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp: Call setServerTimingEnabled.
+
 2018-05-11  Antti Koivisto  <antti@apple.com>
 
         Network process should not stat() all cache files on startup to find their sizes

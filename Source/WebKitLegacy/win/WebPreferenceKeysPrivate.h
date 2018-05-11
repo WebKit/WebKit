@@ -203,3 +203,5 @@
 #define WebKitInspectorAdditionsEnabledPreferenceKey "WebKitInspectorAdditionsEnabled"
 
 #define WebKitVisualViewportAPIEnabledPreferenceKey "WebKitVisualViewportAPIEnabled"
+
+#define WebKitServerTimingEnabledPreferenceKey "WebKitServerTimingEnabled"

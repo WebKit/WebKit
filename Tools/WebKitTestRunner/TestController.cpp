@@ -771,6 +771,8 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
 
     WKPreferencesSetRestrictedHTTPResponseAccess(preferences, true);
 
+    WKPreferencesSetServerTimingEnabled(preferences, true);
+
     platformResetPreferencesToConsistentValues();
 }
 

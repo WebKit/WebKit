@@ -561,6 +561,10 @@ WK_EXPORT bool WKPreferencesGetShouldAllowUserInstalledFonts(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetAllowCrossOriginSubresourcesToAskForCredentials(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetAllowCrossOriginSubresourcesToAskForCredentials(WKPreferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetServerTimingEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetServerTimingEnabled(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

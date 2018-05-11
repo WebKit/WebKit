@@ -1,3 +1,17 @@
+2018-05-11  Charles Vazac  <cvazac@gmail.com>
+
+        Runtime feature flag for Server-Timing
+        https://bugs.webkit.org/show_bug.cgi?id=184758
+
+        Reviewed by Youenn Fablet.
+
+        * imported/w3c/resources/import-expectations.json: Import server-timing tests.
+        * imported/w3c/web-platform-tests/server-timing/resource_timing_idl.html: Added.
+        * imported/w3c/web-platform-tests/server-timing/resource_timing_idl-expected.txt: Added.
+        * platform/ios-wk1/TestExpectations: Skip service-worker test.
+        * platform/mac-wk1/TestExpectations: Skip service-worker test.
+        * platform/win/TestExpectations: Skip service-worker test.
+
 2018-05-11  Youenn Fablet  <youenn@apple.com>
 
         Layout Test webrtc/addICECandidate-closed.html is a flaky failure

@@ -51,6 +51,7 @@ typedef double DOMHighResTimeStamp;
     readonly attribute DOMHighResTimeStamp requestStart;
     readonly attribute DOMHighResTimeStamp responseStart;
     readonly attribute DOMHighResTimeStamp responseEnd;
+    [EnabledAtRuntime=ServerTiming] readonly attribute FrozenArray<PerformanceServerTiming> serverTiming;
 
     serializer = { inherit, attribute };
 };

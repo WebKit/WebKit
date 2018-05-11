@@ -6383,6 +6383,9 @@
 		26F756B41B3B68F20005DD79 /* ImmutableNFANodeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImmutableNFANodeBuilder.h; sourceTree = "<group>"; };
 		26F9A83618A046AC00AEB88A /* ViewportConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportConfiguration.cpp; sourceTree = "<group>"; };
 		26F9A83718A046AC00AEB88A /* ViewportConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewportConfiguration.h; sourceTree = "<group>"; };
+		28DB9BC52020EA0400E54A07 /* PerformanceServerTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceServerTiming.cpp; sourceTree = "<group>"; };
+		28DB9BC62020EA0400E54A07 /* PerformanceServerTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceServerTiming.h; sourceTree = "<group>"; };
+		28DB9BC72020EA0400E54A07 /* PerformanceServerTiming.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceServerTiming.idl; sourceTree = "<group>"; };
 		2914E3051CAB5A440049966F /* AccessibilityAttachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityAttachment.cpp; sourceTree = "<group>"; };
 		2914E3061CAB5A440049966F /* AccessibilityAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityAttachment.h; sourceTree = "<group>"; };
 		2917B55E1473496C0052C9D0 /* LayerFlushScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayerFlushScheduler.cpp; sourceTree = "<group>"; };
@@ -19315,6 +19318,9 @@
 				86512EDB154A2AEE00A90426 /* PerformanceResourceTiming.cpp */,
 				86512EDC154A2AEF00A90426 /* PerformanceResourceTiming.h */,
 				86512EDD154A2AEF00A90426 /* PerformanceResourceTiming.idl */,
+				28DB9BC52020EA0400E54A07 /* PerformanceServerTiming.cpp */,
+				28DB9BC62020EA0400E54A07 /* PerformanceServerTiming.h */,
+				28DB9BC72020EA0400E54A07 /* PerformanceServerTiming.idl */,
 				0F43C85C189E10CF00019AE2 /* PerformanceTiming.cpp */,
 				8AF4E55911DC5A63000ED3DE /* PerformanceTiming.h */,
 				8AF4E55A11DC5A63000ED3DE /* PerformanceTiming.idl */,

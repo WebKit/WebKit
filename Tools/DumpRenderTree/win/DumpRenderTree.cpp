@@ -786,6 +786,7 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     // FIXME: SubtleCrypto
     prefsPrivate->setVisualViewportAPIEnabled(TRUE);
     prefsPrivate->setWebAnimationsEnabled(TRUE);
+    prefsPrivate->setServerTimingEnabled(TRUE);
     // FIXME: WebGL2
     // FIXME: WebRTC
     prefsPrivate->setCrossOriginOptionsSupportEnabled(TRUE);

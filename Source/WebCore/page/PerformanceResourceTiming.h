@@ -39,6 +39,7 @@
 
 namespace WebCore {
 
+class PerformanceServerTiming;
 class ResourceTiming;
 
 class PerformanceResourceTiming final : public PerformanceEntry {
@@ -60,6 +61,7 @@ public:
     double requestStart() const;
     double responseStart() const;
     double responseEnd() const;
+    const Vector<Ref<PerformanceServerTiming>>& serverTiming() const { return m_serverTiming; }
 
 private:
     PerformanceResourceTiming(MonotonicTime timeOrigin, ResourceTiming&&);
@@ -72,6 +74,7 @@ private:
     LoadTiming m_loadTiming;
     NetworkLoadMetrics m_networkLoadMetrics;
     bool m_shouldReportDetails;
+    Vector<Ref<PerformanceServerTiming>> m_serverTiming;
 };
 
 } // namespace WebCore

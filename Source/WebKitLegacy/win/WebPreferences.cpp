@@ -2231,3 +2231,17 @@ HRESULT WebPreferences::resourceTimingEnabled(_Out_ BOOL* enabled)
     *enabled = boolValueForKey(WebKitResourceTimingEnabledPreferenceKey);
     return S_OK;
 }
+
+HRESULT WebPreferences::serverTimingEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitServerTimingEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setServerTimingEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitServerTimingEnabledPreferenceKey, enabled);
+    return S_OK;
+}
