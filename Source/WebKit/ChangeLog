@@ -1,3 +1,16 @@
+2018-05-11  Megan Gardner  <megan_gardner@apple.com>
+
+        Cleanup canPerformActionForWebView in relation to the webSelectionAssistant being removed
+        https://bugs.webkit.org/show_bug.cgi?id=185536
+
+        Reviewed by Tim Horton.
+        
+        The _webSelectionAssistant is now always nil, therefor many of these checks are unnecessary.
+        Remove the check for a webSelection and clean up the logic surrounding those checks.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+
 2018-05-11  Brady Eidson  <beidson@apple.com>
 
         Followup to: Make sure history navigations reuse the existing process when necessary.

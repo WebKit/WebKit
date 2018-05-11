@@ -2209,8 +2209,6 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 
 - (BOOL)canPerformActionForWebView:(SEL)action withSender:(id)sender
 {
-    BOOL hasWebSelection = _webSelectionAssistant && !CGRectIsEmpty(_webSelectionAssistant.get().selectionFrame);
-
     if (action == @selector(_arrowKey:))
         return [self isFirstResponder];
         
@@ -2235,11 +2233,11 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     if (action == @selector(copy:)) {
         if (_page->editorState().isInPasswordField)
             return NO;
-        return hasWebSelection || _page->editorState().selectionIsRange;
+        return _page->editorState().selectionIsRange;
     }
 
     if (action == @selector(_define:)) {
-        if (_page->editorState().isInPasswordField || !(hasWebSelection || _page->editorState().selectionIsRange))
+        if (_page->editorState().isInPasswordField || !_page->editorState().selectionIsRange)
             return NO;
 
         NSUInteger textLength = _page->editorState().postLayoutData().selectedTextLength;
@@ -2266,18 +2264,18 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
             return NO;
 #endif
 
-        return hasWebSelection || _page->editorState().selectionIsRange;
+        return _page->editorState().selectionIsRange;
     }
 
     if (action == @selector(_share:)) {
-        if (_page->editorState().isInPasswordField || !(hasWebSelection || _page->editorState().selectionIsRange))
+        if (_page->editorState().isInPasswordField || !_page->editorState().selectionIsRange)
             return NO;
 
         return _page->editorState().postLayoutData().selectedTextLength > 0;
     }
 
     if (action == @selector(_addShortcut:)) {
-        if (_page->editorState().isInPasswordField || !(hasWebSelection || _page->editorState().selectionIsRange))
+        if (_page->editorState().isInPasswordField || !_page->editorState().selectionIsRange)
             return NO;
 
         NSString *selectedText = [self selectedText];
@@ -2311,19 +2309,9 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     }
 
     if (action == @selector(selectAll:)) {
-        if (_page->editorState().selectionIsNone || ![self hasContent])
-            return NO;
-        if (!_page->editorState().selectionIsRange)
+        if (!_page->editorState().selectionIsNone && !_page->editorState().selectionIsRange)
             return YES;
-        // Enable selectAll for non-editable text, where the user can't access
-        // this command via long-press to get a caret.
-        if (_page->editorState().isContentEditable)
-            return NO;
-        // Don't attempt selectAll with general web content.
-        if (hasWebSelection)
-            return NO;
-        // FIXME: Only enable if the selection doesn't already span the entire document.
-        return YES;
+        return NO;
     }
 
     if (action == @selector(replace:))
