@@ -3369,6 +3369,8 @@ webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-sync-request
 webkit.org/b/185254 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-infinite-sync.htm [ Failure ]
 webkit.org/b/185254 imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-network-error-sync.htm [ Failure ]
 
+webkit.org/b/185548 accessibility/scroll-to-make-visible-iframe-offscreen.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
