@@ -66,6 +66,7 @@ fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-doublequote.html [
 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-slashes.html [ Skip ]
 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-unicode.html [ Skip ]
 fast/dom/HTMLAnchorElement/anchor-file-blob-download-no-extension.html [ Skip ]
+fast/dom/HTMLAnchorElement/anchor-file-blob-download-then-revoke.html [ Skip ]
 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Skip ]
 
 # ENABLE_INPUT_TYPE_* are disabled.

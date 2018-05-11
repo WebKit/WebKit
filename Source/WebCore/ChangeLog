@@ -1,3 +1,29 @@
+2018-05-11  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (async policy delegate): Revoking an object URL immediately after triggering download breaks file download
+        https://bugs.webkit.org/show_bug.cgi?id=185531
+        <rdar://problem/39909589>
+
+        Reviewed by Geoffrey Garen.
+
+        Whenever we start an asynchronous navigation policy decision for a blob URL, create a temporary
+        blob URL pointing to the same data, and update the request's URL. This way, if the page's JS revokes
+        the URL during the policy decision, the load will still succeed.
+
+        Test: fast/dom/HTMLAnchorElement/anchor-file-blob-download-then-revoke.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadPostRequest):
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::extendBlobURLLifetimeIfNecessary const):
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        (WebCore::PolicyChecker::checkNewWindowPolicy):
+        * loader/PolicyChecker.h:
+
 2018-05-11  Antti Koivisto  <antti@apple.com>
 
         LinkLoader fails to remove CachedResourceClient in some cases

@@ -66,6 +66,8 @@ private:
 
 class CompletionHandlerCallingScope {
 public:
+    CompletionHandlerCallingScope() = default;
+
     CompletionHandlerCallingScope(CompletionHandler<void()>&& completionHandler)
         : m_completionHandler(WTFMove(completionHandler))
     { }

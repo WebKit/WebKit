@@ -301,6 +301,7 @@ webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-include
 webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-slashes.html [ Skip ]
 webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-unicode.html [ Skip ]
 webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-no-extension.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-then-revoke.html [ Skip ]
 webkit.org/b/156069 http/tests/download/anchor-download-attribute-content-disposition.html [ Skip ]
 webkit.org/b/156069 http/tests/download/anchor-download-no-extension.html [ Skip ]
 webkit.org/b/156069 http/tests/download/anchor-download-redirect.html [ Skip ]

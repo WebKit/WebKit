@@ -1336,7 +1336,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
 
     if (!targetFrame && !frameName.isEmpty()) {
         action = action.copyWithShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicyToApply(m_frame, frameLoadRequest));
-        policyChecker().checkNewWindowPolicy(WTFMove(action), request, formState, frameName, [this, allowNavigationToInvalidURL, openerPolicy, completionHandler = completionHandlerCaller.release()] (const ResourceRequest& request, FormState* formState, const String& frameName, const NavigationAction& action, ShouldContinue shouldContinue) {
+        policyChecker().checkNewWindowPolicy(WTFMove(action), WTFMove(request), formState, frameName, [this, allowNavigationToInvalidURL, openerPolicy, completionHandler = completionHandlerCaller.release()] (const ResourceRequest& request, FormState* formState, const String& frameName, const NavigationAction& action, ShouldContinue shouldContinue) {
             continueLoadAfterNewWindowPolicy(request, formState, frameName, action, shouldContinue, allowNavigationToInvalidURL, openerPolicy);
             completionHandler();
         });
@@ -1356,7 +1356,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
         policyChecker().setLoadType(newLoadType);
-        policyChecker().checkNavigationPolicy(ResourceRequest(request), false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [this, protectedFrame = makeRef(m_frame)] (const ResourceRequest& request, FormState*, ShouldContinue shouldContinue) {
+        policyChecker().checkNavigationPolicy(WTFMove(request), false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [this, protectedFrame = makeRef(m_frame)] (const ResourceRequest& request, FormState*, ShouldContinue shouldContinue) {
             continueFragmentScrollAfterNavigationPolicy(request, shouldContinue == ShouldContinue::Yes);
         }, PolicyDecisionMode::Synchronous);
         return;
@@ -1412,7 +1412,7 @@ void FrameLoader::load(FrameLoadRequest&& request)
 
     if (request.shouldCheckNewWindowPolicy()) {
         NavigationAction action { request.requester(), request.resourceRequest(), InitiatedByMainFrame::Unknown, NavigationType::Other, request.shouldOpenExternalURLsPolicy() };
-        policyChecker().checkNewWindowPolicy(WTFMove(action), request.resourceRequest(), nullptr, request.frameName(), [this] (const ResourceRequest& request, FormState* formState, const String& frameName, const NavigationAction& action, ShouldContinue shouldContinue) {
+        policyChecker().checkNewWindowPolicy(WTFMove(action), WTFMove(request.resourceRequest()), nullptr, request.frameName(), [this] (const ResourceRequest& request, FormState* formState, const String& frameName, const NavigationAction& action, ShouldContinue shouldContinue) {
             continueLoadAfterNewWindowPolicy(request, formState, frameName, action, shouldContinue, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Suppress);
         });
 
@@ -2858,7 +2858,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
             return;
         }
 
-        policyChecker().checkNewWindowPolicy(WTFMove(action), workingResourceRequest, WTFMove(formState), frameName, [this, allowNavigationToInvalidURL, openerPolicy, completionHandler = WTFMove(completionHandler)] (const ResourceRequest& request, FormState* formState, const String& frameName, const NavigationAction& action, ShouldContinue shouldContinue) {
+        policyChecker().checkNewWindowPolicy(WTFMove(action), WTFMove(workingResourceRequest), WTFMove(formState), frameName, [this, allowNavigationToInvalidURL, openerPolicy, completionHandler = WTFMove(completionHandler)] (const ResourceRequest& request, FormState* formState, const String& frameName, const NavigationAction& action, ShouldContinue shouldContinue) {
             continueLoadAfterNewWindowPolicy(request, formState, frameName, action, shouldContinue, allowNavigationToInvalidURL, openerPolicy);
             completionHandler();
         });

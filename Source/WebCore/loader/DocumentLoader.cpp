@@ -666,7 +666,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         return;
     }
 
-    frameLoader()->policyChecker().checkNavigationPolicy(ResourceRequest(newRequest), didReceiveRedirectResponse, WTFMove(navigationPolicyCompletionHandler));
+    frameLoader()->policyChecker().checkNavigationPolicy(WTFMove(newRequest), didReceiveRedirectResponse, WTFMove(navigationPolicyCompletionHandler));
 }
 
 bool DocumentLoader::tryLoadingRequestFromApplicationCache()

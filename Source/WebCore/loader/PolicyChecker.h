@@ -39,6 +39,7 @@
 
 namespace WTF {
 template<typename> class CompletionHandler;
+class CompletionHandlerCallingScope;
 }
 
 namespace WebCore {
@@ -69,7 +70,7 @@ public:
 
     void checkNavigationPolicy(ResourceRequest&&, bool didReceiveRedirectResponse, DocumentLoader*, FormState*, NavigationPolicyDecisionFunction&&, PolicyDecisionMode = PolicyDecisionMode::Asynchronous);
     void checkNavigationPolicy(ResourceRequest&&, bool didReceiveRedirectResponse, NavigationPolicyDecisionFunction&&);
-    void checkNewWindowPolicy(NavigationAction&&, const ResourceRequest&, FormState*, const String& frameName, NewWindowPolicyDecisionFunction&&);
+    void checkNewWindowPolicy(NavigationAction&&, ResourceRequest&&, FormState*, const String& frameName, NewWindowPolicyDecisionFunction&&);
 
     void stopCheck();
 
@@ -87,6 +88,7 @@ public:
 
 private:
     void handleUnimplementablePolicy(const ResourceError&);
+    WTF::CompletionHandlerCallingScope extendBlobURLLifetimeIfNecessary(ResourceRequest&) const;
 
     Frame& m_frame;
 
