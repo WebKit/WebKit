@@ -1,3 +1,14 @@
+2018-05-11  Youenn Fablet  <youenn@apple.com>
+
+        Layout Test webrtc/addICECandidate-closed.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=185384
+        <rdar://problem/40035167>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/addICECandidate-closed.html: Move more pc calls inside the try/catch.
+        This ensures that the test will be consistent as the pc might be closed sooner for some runs.
+
 2018-05-11  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK][a11y] Newly added accessibility/scroll-to-make-visible-iframe-offscreen.html fails

@@ -25,15 +25,15 @@ promise_test(async (test) => {
         localTracks.forEach(track => sender.addTrack(track, stream));
         receiver.addTransceiver('audio');
         receiver.addTransceiver('video');
-        const offer1 = await sender.createOffer();
-        await sender.setLocalDescription(offer1);
-        await receiver.setRemoteDescription(offer1);
-        const answer1 = await receiver.createAnswer();
-        await receiver.setLocalDescription(answer1);
         await new Promise (async (resolve) => {
             // RTCPeerConnection does not resolve promises when it gets closed, hence the timeout here to make sure we execute some if not all these operations.
             test.step_timeout(resolve, 100);
             try {
+                const offer1 = await sender.createOffer();
+                await sender.setLocalDescription(offer1);
+                await receiver.setRemoteDescription(offer1);
+                const answer1 = await receiver.createAnswer();
+                await receiver.setLocalDescription(answer1);
                 await sender.setRemoteDescription(answer1);
                 const offer2 = await sender.createOffer();
                 await sender.setLocalDescription(offer2);
