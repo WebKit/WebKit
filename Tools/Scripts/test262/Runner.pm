@@ -107,7 +107,7 @@ main();
 
 sub processCLI {
     my $help = 0;
-    my $debug;
+    my $release;
     my $ignoreExpectations;
     my @features;
     my $stats;
@@ -122,7 +122,7 @@ sub processCLI {
         'o|test-only=s@' => \@cliTestDirs,
         'p|child-processes=i' => \$max_process,
         'h|help' => \$help,
-        'd|debug' => \$debug,
+        'release' => \$release,
         'v|verbose' => \$verbose,
         'f|features=s@' => \@features,
         'c|config=s' => \$configFile,
@@ -177,7 +177,7 @@ sub processCLI {
             $DYLD_FRAMEWORK_PATH = dirname($JSC);
         }
     } else {
-        $JSC = getBuildPath($debug);
+        $JSC = getBuildPath($release);
     }
 
     if ($latestImport) {
@@ -277,7 +277,6 @@ sub main {
             }
         }
     }
-
 
     # If we are processing many files, fork process
     if (scalar @files > $max_process * 5) {
@@ -457,7 +456,7 @@ sub parseError {
 }
 
 sub getBuildPath {
-    my $debug = shift;
+    my $release = shift;
 
     # Try to find JSC for user, if not supplied
     my $cmd = abs_path("$Bin/../webkit-build-directory");
@@ -465,15 +464,14 @@ sub getBuildPath {
         die 'Error: cannot find webkit-build-directory, specify with JSC with --jsc <path>.';
     }
 
-    if ($debug) {
-        $cmd .= ' --debug';
-    } else {
+    if ($release) {
         $cmd .= ' --release';
+    } else {
+        $cmd .= ' --debug';
     }
     $cmd .= ' --executablePath';
     my $jscDir = qx($cmd);
     chomp $jscDir;
-
 
     my $jsc;
     $jsc = $jscDir . '/jsc';
@@ -653,16 +651,22 @@ sub processResult {
 
         # Print the failure if we haven't loaded an expectation file
         # or the failure is new.
-        my $printfailure = !$expect || $isnewfailure;
+        my $printFailure = !$expect || $isnewfailure;
+
+        my $newFail = '';
+        $newFail = '! NEW ' if $isnewfailure;
+        my $failMsg = '';
+        $failMsg = "FAIL $file ($scenario)\n" if ($printFailure or $verbose);
+
+        my $suffixMsg = '';
 
         if ($verbose) {
-            print "! NEW FAIL $file ($scenario)\n$result";
-            print "\nFeatures: " . join(', ', @{ $data->{features} }) if $data->{features};
-            print "\n\n";
-        } else {
-            print "! NEW " if $isnewfailure;
-            print "FAIL $file ($scenario)\n" if $printfailure;
+            my $featuresList = '';
+            $featuresList = "\nFeatures: " . join(', ', @{ $data->{features} }) if $data->{features};
+            $suffixMsg = "$result$featuresList\n\n";
         }
+
+        print "$newFail$failMsg$suffixMsg";
 
         $resultdata{result} = 'FAIL';
         $resultdata{error} = $currentfailure;
@@ -891,9 +895,9 @@ Specify root test262 directory.
 
 Specify JSC location. If not provided, script will attempt to look up JSC.
 
-=item B<--debug, -d>
+=item B<--release>
 
-Use debug build of JSC. Can only use if --jsc <path> is not provided. Release build of JSC is used by default.
+Use the Release build of JSC. Can only use if --jsc <path> is not provided. The Debug build of JSC is used by default.
 
 =item B<--verbose, -v>
 

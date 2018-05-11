@@ -1,3 +1,24 @@
+2018-05-11  Leo Balter  <leonardo.balter@gmail.com>
+
+        Test262 Runner should search for the Debug JSC by default
+        https://bugs.webkit.org/show_bug.cgi?id=185562
+
+        Reviewed by Michael Saboff.
+
+        The Test262 Runner is now searching for the Debug build of JSC by
+        default, not the Release build.
+
+        This fix allows a similar call from the previous runner, making
+        it compatible with the current build bot configuration parameters.
+
+        This patch also adds some minor improvements the verbose mode output.
+
+        * Scripts/test262/Runner.pm:
+        (processCLI):
+        (main):
+        (getBuildPath):
+        (processResult):
+
 2018-05-11  Charles Vazac  <cvazac@gmail.com>
 
         Runtime feature flag for Server-Timing
