@@ -54,6 +54,10 @@
 
 #if WK_API_ENABLED
 
+@interface WKProcessPool ()
+- (WKContextRef)_contextForTesting;
+@end
+
 static bool done;
 static bool failed;
 static bool didCreateWebView;
@@ -1380,6 +1384,54 @@ TEST(ProcessSwap, NavigateToInvalidURL)
 
     EXPECT_EQ(2, numberOfDecidePolicyCalls);
     EXPECT_EQ(pid1, pid2);
+}
+
+static const char* navigateToDataURLThenBackBytes = R"PSONRESOURCE(
+<script>
+onpageshow = function(event) {
+    // Location changes need to happen outside the onload handler to generate history entries.
+    setTimeout(function() {
+      window.location.href = "data:text/html,<body onload='history.back()'></body>";
+    }, 0);
+}
+
+</script>
+)PSONRESOURCE";
+
+TEST(ProcessSwap, NavigateToDataURLThenBack)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    processPoolConfiguration.get().pageCacheEnabled = NO;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] initWithBytes:navigateToDataURLThenBackBytes]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    numberOfDecidePolicyCalls = 0;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main1.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pid1 = [webView _webProcessIdentifier];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pid2 = [webView _webProcessIdentifier];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pid3 = [webView _webProcessIdentifier];
+
+    EXPECT_EQ(3, numberOfDecidePolicyCalls);
+    EXPECT_EQ(1u, seenPIDs.size());
+    EXPECT_EQ(pid1, pid2);
+    EXPECT_EQ(pid2, pid3);
 }
 
 #endif // WK_API_ENABLED

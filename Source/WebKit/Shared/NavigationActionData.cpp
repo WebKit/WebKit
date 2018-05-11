@@ -50,6 +50,7 @@ void NavigationActionData::encode(IPC::Encoder& encoder) const
     encoder << treatAsSameOriginNavigation;
     encoder << isCrossOriginWindowOpenNavigation;
     encoder << opener;
+    encoder << targetBackForwardItemIdentifier;
 }
 
 std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decoder)
@@ -113,9 +114,14 @@ std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& d
     if (!opener)
         return std::nullopt;
 
+    std::optional<std::optional<BackForwardItemIdentifier>> targetBackForwardItemIdentifier;
+    decoder >> targetBackForwardItemIdentifier;
+    if (!targetBackForwardItemIdentifier)
+        return std::nullopt;
+        
     return {{ WTFMove(navigationType), WTFMove(modifiers), WTFMove(mouseButton), WTFMove(syntheticClickType), WTFMove(*userGestureTokenIdentifier),
         WTFMove(*canHandleRequest), WTFMove(shouldOpenExternalURLsPolicy), WTFMove(*downloadAttribute), WTFMove(clickLocationInRootViewCoordinates),
-        WTFMove(*isRedirect), *treatAsSameOriginNavigation, *isCrossOriginWindowOpenNavigation, WTFMove(*opener) }};
+        WTFMove(*isRedirect), *treatAsSameOriginNavigation, *isCrossOriginWindowOpenNavigation, WTFMove(*opener), WTFMove(*targetBackForwardItemIdentifier) }};
 }
 
 } // namespace WebKit

@@ -267,6 +267,19 @@
     _processPoolConfiguration->setTrackNetworkActivity(track);
 }
 
+- (BOOL)pageCacheEnabled
+{
+    return _processPoolConfiguration->cacheModel() != WebKit::CacheModelDocumentViewer;
+}
+
+- (void)setPageCacheEnabled:(BOOL)enabled
+{
+    if (!enabled)
+        _processPoolConfiguration->setCacheModel(WebKit::CacheModelDocumentViewer);
+    else if (![self pageCacheEnabled])
+        _processPoolConfiguration->setCacheModel(WebKit::CacheModelPrimaryWebBrowser);
+}
+
 #if PLATFORM(IOS)
 - (NSString *)CTDataConnectionServiceType
 {

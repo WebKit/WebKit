@@ -1,3 +1,29 @@
+2018-05-11  Brady Eidson  <beidson@apple.com>
+
+        Make sure history navigations reuse the existing process when necessary.
+        <rdar://problem/39746516> and https://bugs.webkit.org/show_bug.cgi?id=185532
+
+        Reviewed by Ryosuke Niwa.
+
+        Covered by new API tests.
+
+        In WebCore-land, make sure *all* NavigationActions to a back/forward item are tagged with
+        the item identifier.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        (WebCore::HistoryItem::logString const):
+        * history/HistoryItem.h:
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+
+        * loader/NavigationAction.cpp:
+        (WebCore::NavigationAction::setTargetBackForwardItem):
+
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::targetBackForwardItemIdentifier const):
+
 2018-05-11  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [EME][GStreamer] Handle the protection event in MediaPlayerPrivate

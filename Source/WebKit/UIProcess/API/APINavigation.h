@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "WebBackForwardListItem.h"
 #include <WebCore/Process.h>
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Ref.h>
@@ -35,7 +36,6 @@ enum class FrameLoadType;
 }
 
 namespace WebKit {
-class WebBackForwardListItem;
 class WebNavigationState;
 }
 
@@ -71,6 +71,7 @@ public:
     void setCurrentRequestIsRedirect(bool isRedirect) { m_isRedirect = isRedirect; }
     bool currentRequestIsRedirect() const { return m_isRedirect; }
 
+    void setTargetItem(WebKit::WebBackForwardListItem& item) { m_targetItem = &item; }
     WebKit::WebBackForwardListItem* targetItem() const { return m_targetItem.get(); }
     WebKit::WebBackForwardListItem* fromItem() const { return m_fromItem.get(); }
     std::optional<WebCore::FrameLoadType> backForwardFrameLoadType() const { return m_backForwardFrameLoadType; }

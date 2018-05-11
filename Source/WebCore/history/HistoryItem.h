@@ -215,6 +215,10 @@ public:
     void setWasRestoredFromSession(bool wasRestoredFromSession) { m_wasRestoredFromSession = wasRestoredFromSession; }
     bool wasRestoredFromSession() const { return m_wasRestoredFromSession; }
 
+#if !LOG_DISABLED
+    const char* logString() const;
+#endif
+
 private:
     WEBCORE_EXPORT HistoryItem();
     WEBCORE_EXPORT HistoryItem(const String& urlString, const String& title);

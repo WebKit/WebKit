@@ -35,6 +35,7 @@
 #include "SharedBuffer.h"
 #include <stdio.h>
 #include <wtf/DateMath.h>
+#include <wtf/DebugUtilities.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/CString.h>
 
@@ -105,6 +106,7 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     , m_scale(item.m_scale)
     , m_scaleIsInitial(item.m_scaleIsInitial)
 #endif
+    , m_identifier(item.m_identifier)
 {
     if (item.m_formData)
         m_formData = item.m_formData->copy();
@@ -489,7 +491,14 @@ int HistoryItem::showTreeWithIndent(unsigned indentLevel) const
 }
 
 #endif
-                
+
+#if !LOG_DISABLED
+const char* HistoryItem::logString() const
+{
+    return debugString("HistoryItem current URL ", urlString(), ", identifier ", m_identifier.logString());
+}
+#endif
+
 } // namespace WebCore
 
 #ifndef NDEBUG

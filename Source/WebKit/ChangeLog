@@ -1,3 +1,38 @@
+2018-05-11  Brady Eidson  <beidson@apple.com>
+
+        Make sure history navigations reuse the existing process when necessary.
+        <rdar://problem/39746516> and https://bugs.webkit.org/show_bug.cgi?id=185532
+
+        Reviewed by Ryosuke Niwa.
+
+        If a view navigates to either a data: or blob: URL, it reuses the existing process.
+ 
+        In such cases we need to also ensure that history navigations back will also reuse the existing process.
+
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode const):
+        (WebKit::NavigationActionData::decode):
+        * Shared/NavigationActionData.h:
+
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::setTargetItem):
+
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration pageCacheEnabled]):
+        (-[_WKProcessPoolConfiguration setPageCacheEnabled:]):
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal): If the current and target back/forward items both
+          came from the same process, then reuse the existing process.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2018-05-10  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r231057): Encrypted media content playback failures

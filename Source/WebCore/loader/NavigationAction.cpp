@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "Event.h"
 #include "FrameLoader.h"
+#include "HistoryItem.h"
 
 namespace WebCore {
 
@@ -93,6 +94,11 @@ NavigationAction NavigationAction::copyWithShouldOpenExternalURLsPolicy(ShouldOp
     NavigationAction result(*this);
     result.m_shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy;
     return result;
+}
+
+void NavigationAction::setTargetBackForwardItem(HistoryItem& item)
+{
+    m_targetBackForwardItemIdentifier = item.identifier();
 }
 
 }
