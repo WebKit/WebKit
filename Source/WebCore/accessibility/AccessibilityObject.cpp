@@ -2088,19 +2088,16 @@ String AccessibilityObject::currentValue() const
 
 bool AccessibilityObject::isModalDescendant(Node* modalNode) const
 {
-    if (!modalNode || !this->element())
+    Node* node = this->node();
+    if (!modalNode || !node)
         return false;
     
-    if (this->element() == modalNode)
+    if (node == modalNode)
         return true;
     
     // ARIA 1.1 aria-modal, indicates whether an element is modal when displayed.
     // For the decendants of the modal object, they should also be considered as aria-modal=true.
-    for (auto& ancestor : elementAncestors(this->element())) {
-        if (&ancestor == modalNode)
-            return true;
-    }
-    return false;
+    return node->isDescendantOf(*modalNode);
 }
 
 bool AccessibilityObject::isModalNode() const

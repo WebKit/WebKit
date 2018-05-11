@@ -1,3 +1,19 @@
+2018-05-11  Nan Wang  <n_wang@apple.com>
+
+        AX: In role=dialog elements with aria-modal=true VoiceOver iOS/macOS can't manually focus or read dialog paragraph description text inside the modal.
+        https://bugs.webkit.org/show_bug.cgi?id=185219
+        <rdar://problem/39920009>
+
+        Reviewed by Chris Fleizach.
+
+        The text node descendants of a modal dialog are ignored. Fixed it by using AccessibilityObject's 
+        node() to determine if it's the descendant of the modal dialog node.
+
+        Test: accessibility/aria-modal-text-descendants.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isModalDescendant const):
+
 2018-05-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Tapping after CSS-based table casues an infinite loop in wordRangeFromPosition
