@@ -456,12 +456,19 @@ void WebResourceLoadStatisticsStore::grantStorageAccess(String&& subFrameHost, S
 
 void WebResourceLoadStatisticsStore::grantStorageAccessInternal(String&& subFramePrimaryDomain, String&& topFramePrimaryDomain, std::optional<uint64_t> frameID, uint64_t pageID, bool userWasPromptedNowOrEarlier, CompletionHandler<void(bool)>&& callback)
 {
-    UNUSED_PARAM(userWasPromptedNowOrEarlier);
     ASSERT(!RunLoop::isMain());
 
     if (subFramePrimaryDomain == topFramePrimaryDomain) {
         callback(true);
         return;
+    }
+
+    // FIXME: Remove m_storageAccessPromptsEnabled check if prompting is no longer experimental.
+    if (userWasPromptedNowOrEarlier && m_storageAccessPromptsEnabled) {
+        auto& subFrameStatistic = ensureResourceStatisticsForPrimaryDomain(subFramePrimaryDomain);
+        ASSERT(subFrameStatistic.hadUserInteraction);
+        ASSERT(subFrameStatistic.storageAccessUnderTopFrameOrigins.contains(topFramePrimaryDomain));
+        subFrameStatistic.mostRecentUserInteractionTime = WallTime::now();
     }
 
     m_grantStorageAccessHandler(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID, WTFMove(callback));

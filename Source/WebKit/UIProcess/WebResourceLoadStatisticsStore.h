@@ -191,6 +191,7 @@ private:
     void removeAllStorageAccess();
 
     void setDebugLogggingEnabled(bool enabled) { m_debugLoggingEnabled  = enabled; }
+    void setStorageAccessPromptsEnabled(bool enabled) { m_storageAccessPromptsEnabled  = enabled; }
 
 #if PLATFORM(COCOA)
     void registerUserDefaultsIfNeeded();
@@ -239,6 +240,7 @@ private:
 
     bool m_debugModeEnabled { false };
     bool m_debugLoggingEnabled { false };
+    bool m_storageAccessPromptsEnabled { false };
 
     Function<void (const String&)> m_statisticsTestingCallback;
 };

@@ -51,6 +51,7 @@ void WebResourceLoadStatisticsStore::registerUserDefaultsIfNeeded()
 
         setDebugLogggingEnabled([[NSUserDefaults standardUserDefaults] boolForKey:@"ResourceLoadStatisticsDebugLoggingEnabled"]);
         setResourceLoadStatisticsDebugMode([[NSUserDefaults standardUserDefaults] boolForKey:@"ExperimentalResourceLoadStatisticsDebugMode"]);
+        setStorageAccessPromptsEnabled([[NSUserDefaults standardUserDefaults] boolForKey:@"ExperimentalStorageAccessPromptsEnabled"]);
     });
 }
 

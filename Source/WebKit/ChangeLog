@@ -1,3 +1,20 @@
+2018-05-10  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Extend lifetime of cookies on successful user approval
+        https://bugs.webkit.org/show_bug.cgi?id=185534
+        <rdar://problem/40064547>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/Cocoa/WebResourceLoadStatisticsStoreCocoa.mm:
+        (WebKit::WebResourceLoadStatisticsStore::registerUserDefaultsIfNeeded):
+            Picks up the experimental feature flag.
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccessInternal):
+            Now updates the domain's user interaction timestamp if the user was
+            prompted for this access.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2018-05-10  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Release page load process assertion if the screen is locked
