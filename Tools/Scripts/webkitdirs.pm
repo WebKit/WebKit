@@ -230,7 +230,7 @@ sub determineXcodeVersion
 {
     return if defined $xcodeVersion;
     my $xcodebuildVersionOutput = `xcodebuild -version`;
-    $xcodeVersion = ($xcodebuildVersionOutput =~ /Xcode ([0-9](\.[0-9]+)*)/) ? $1 : "3.0";
+    $xcodeVersion = ($xcodebuildVersionOutput =~ /Xcode ([0-9]+(\.[0-9]+)*)/) ? $1 : "3.0";
 }
 
 sub readXcodeUserDefault($)
