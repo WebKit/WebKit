@@ -895,6 +895,8 @@ void Structure::willStoreValueSlow(
     ASSERT(structure()->classInfo() == info());
     ASSERT(!hasBeenDictionary());
 
+    ASSERT_WITH_MESSAGE(VM::canUseJIT(), "We don't want to use memory for inferred types unless we're using the JIT.");
+
     // Create the inferred type table before doing anything else, so that we don't GC after we have already
     // grabbed a pointer into the property map.
     InferredTypeTable* table = m_inferredTypeTable.get();

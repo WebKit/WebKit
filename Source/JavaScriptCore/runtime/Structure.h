@@ -608,7 +608,7 @@ public:
     ALWAYS_INLINE void willStoreValueForNewTransition(
         VM& vm, PropertyName propertyName, JSValue value, bool shouldOptimize)
     {
-        if (hasBeenDictionary() || (!shouldOptimize && !m_inferredTypeTable))
+        if (hasBeenDictionary() || (!shouldOptimize && !m_inferredTypeTable) || !VM::canUseJIT())
             return;
         willStoreValueSlow(vm, propertyName, value, shouldOptimize, InferredTypeTable::NewProperty);
     }
@@ -619,7 +619,7 @@ public:
     ALWAYS_INLINE void willStoreValueForExistingTransition(
         VM& vm, PropertyName propertyName, JSValue value, bool shouldOptimize)
     {
-        if (hasBeenDictionary() || !m_inferredTypeTable)
+        if (hasBeenDictionary() || !m_inferredTypeTable || !VM::canUseJIT())
             return;
         willStoreValueSlow(vm, propertyName, value, shouldOptimize, InferredTypeTable::NewProperty);
     }
@@ -628,7 +628,7 @@ public:
     ALWAYS_INLINE void willStoreValueForReplace(
         VM& vm, PropertyName propertyName, JSValue value, bool shouldOptimize)
     {
-        if (hasBeenDictionary())
+        if (hasBeenDictionary() || !VM::canUseJIT())
             return;
         willStoreValueSlow(vm, propertyName, value, shouldOptimize, InferredTypeTable::OldProperty);
     }
