@@ -1,5 +1,16 @@
 2018-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Fix some -Wstring-op-truncation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=185496
+
+        Reviewed by Alex Christensen.
+
+        Disable this warning when building gtest.
+
+        * gtest/CMakeLists.txt:
+
+2018-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed, silence a couple more build warnings on the stable branch
 
         * openvr/src/CMakeLists.txt:
