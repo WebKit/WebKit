@@ -1299,6 +1299,8 @@ webkit.org/b/183401 fast/animation/request-animation-frame-during-modal.html [ C
 
 webkit.org/b/184781 [ Release ] plugins/unavailable-plugin-indicator-obscurity.html [ Crash ]
 
+webkit.org/b/185546 media/video-playbackrate.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////

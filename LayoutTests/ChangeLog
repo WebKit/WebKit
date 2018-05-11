@@ -1,3 +1,11 @@
+2018-05-11  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] media/video-playbackrate.html intermittently crashing
+        https://bugs.webkit.org/show_bug.cgi?id=185546
+
+        Mark thet test, unreviewed gardening.
+        * platform/gtk/TestExpectations:
+
 2018-05-11  Youenn Fablet  <youenn@apple.com>
 
         Rebase some fetch API tests
