@@ -55,11 +55,11 @@ CurlSSLHandle::CurlSSLHandle()
 #endif
 }
 
-CString CurlSSLHandle::getCACertPathEnv()
+String CurlSSLHandle::getCACertPathEnv()
 {
     char* envPath = getenv("CURL_CA_BUNDLE_PATH");
     if (envPath)
-        return envPath;
+        return String(envPath);
 
 #if USE(CF)
     CFBundleRef webKitBundleRef = webKitBundle();
@@ -68,12 +68,12 @@ CString CurlSSLHandle::getCACertPathEnv()
         if (certURLRef) {
             char path[MAX_PATH];
             CFURLGetFileSystemRepresentation(certURLRef.get(), false, reinterpret_cast<UInt8*>(path), MAX_PATH);
-            return path;
+            return String(path);
         }
     }
 #endif
 
-    return CString();
+    return String();
 }
 
 void CurlSSLHandle::setHostAllowsAnyHTTPSCertificate(const String& hostName)

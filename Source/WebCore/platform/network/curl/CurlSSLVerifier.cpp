@@ -38,10 +38,21 @@ CurlSSLVerifier::CurlSSLVerifier(CurlHandle* curlHandle, const String& hostName,
     : m_curlHandle(curlHandle)
     , m_hostName(hostName)
 {
-    if (sslCtx) {
-        SSL_CTX_set_app_data(static_cast<SSL_CTX*>(sslCtx), this);
-        SSL_CTX_set_verify(static_cast<SSL_CTX*>(sslCtx), SSL_VERIFY_PEER, certVerifyCallback);
-    }
+    auto* ctx = static_cast<SSL_CTX*>(sslCtx);
+    auto& sslHandle = CurlContext::singleton().sslHandle();
+
+    SSL_CTX_set_app_data(ctx, this);
+    SSL_CTX_set_verify(ctx, SSL_CTX_get_verify_mode(ctx), certVerifyCallback);
+
+#if (!defined(LIBRESSL_VERSION_NUMBER))
+    auto signatureAlgorithmsList = sslHandle.getSignatureAlgorithmsList();
+    if (!signatureAlgorithmsList.isEmpty())
+        SSL_CTX_set1_sigalgs_list(ctx, signatureAlgorithmsList->utf8().data());
+#endif
+
+    auto curvesList = sslHandle.getCurvesList();
+    if (!curvesList.isEmpty())
+        SSL_CTX_set1_curves_list(ctx, curvesList.utf8().data());
 }
 
 int CurlSSLVerifier::certVerifyCallback(int ok, X509_STORE_CTX* storeCtx)

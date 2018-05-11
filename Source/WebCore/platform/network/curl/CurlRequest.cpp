@@ -192,6 +192,7 @@ CURL* CurlRequest::setupTransfer()
         m_curlHandle->setHttpAuthUserPass(m_user, m_password);
     }
 
+    m_curlHandle->setSslCtxCallbackFunction(willSetupSslCtxCallback, this);
     m_curlHandle->setHeaderCallbackFunction(didReceiveHeaderCallback, this);
     m_curlHandle->setWriteCallbackFunction(didReceiveDataCallback, this);
 
@@ -205,8 +206,17 @@ CURL* CurlRequest::setupTransfer()
 
     m_curlHandle->enableProxyIfExists();
 
-    m_curlHandle->setSslVerifyPeer(CurlHandle::VerifyPeer::Enable);
-    m_curlHandle->setSslVerifyHost(CurlHandle::VerifyHost::StrictNameCheck);
+    if (sslHandle.shouldIgnoreSSLErrors()) {
+        m_curlHandle->setSslVerifyPeer(CurlHandle::VerifyPeer::Disable);
+        m_curlHandle->setSslVerifyHost(CurlHandle::VerifyHost::LooseNameCheck);
+    } else {
+        m_curlHandle->setSslVerifyPeer(CurlHandle::VerifyPeer::Enable);
+        m_curlHandle->setSslVerifyHost(CurlHandle::VerifyHost::StrictNameCheck);
+    }
+
+    auto cipherList = sslHandle.getCipherList();
+    if (!cipherList.isEmpty())
+        m_curlHandle->setSslCipherList(cipherList.utf8().data());
 
     auto sslClientCertificate = sslHandle.getSSLClientCertificate(m_request.url().host());
     if (sslClientCertificate) {
@@ -215,12 +225,7 @@ CURL* CurlRequest::setupTransfer()
         m_curlHandle->setSslKeyPassword(sslClientCertificate->second.utf8().data());
     }
 
-    if (sslHandle.shouldIgnoreSSLErrors())
-        m_curlHandle->setSslVerifyPeer(CurlHandle::VerifyPeer::Disable);
-    else
-        m_curlHandle->setSslCtxCallbackFunction(willSetupSslCtxCallback, this);
-
-    m_curlHandle->setCACertPath(sslHandle.getCACertPath());
+    m_curlHandle->setCACertPath(sslHandle.getCACertPath().utf8().data());
 
     if (m_shouldSuspend)
         suspend();
@@ -235,8 +240,11 @@ CURL* CurlRequest::setupTransfer()
 
 CURLcode CurlRequest::willSetupSslCtx(void* sslCtx)
 {
-    m_sslVerifier = std::make_unique<CurlSSLVerifier>(m_curlHandle.get(), m_request.url().host(), sslCtx);
+    if (!sslCtx)
+        return CURLE_ABORTED_BY_CALLBACK;
 
+    if (!m_sslVerifier)
+        m_sslVerifier = std::make_unique<CurlSSLVerifier>(m_curlHandle.get(), m_request.url().host(), sslCtx);
     return CURLE_OK;
 }
 

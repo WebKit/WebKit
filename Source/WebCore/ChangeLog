@@ -1,3 +1,35 @@
+2018-05-11  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Make the cipher suites, the signing algorithms and the curve lists configurable.
+        https://bugs.webkit.org/show_bug.cgi?id=185139
+
+        Add interface to configure the cipher suites, the signing algorithms and the curve lists 
+        used by OpenSSL and libcurl to exchange, to sign or to verify keys.
+
+        Reviewed by Youenn Fablet.
+
+        No new tests in public. Have tested internally.
+
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::setSslCipherList):
+        * platform/network/curl/CurlContext.h:
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::setupTransfer):
+        (WebCore::CurlRequest::willSetupSslCtx):
+        * platform/network/curl/CurlSSLHandle.cpp:
+        (WebCore::CurlSSLHandle::getCACertPathEnv):
+        * platform/network/curl/CurlSSLHandle.h:
+        (WebCore::CurlSSLHandle::getCipherList const):
+        (WebCore::CurlSSLHandle::getSignatureAlgorithmsList const):
+        (WebCore::CurlSSLHandle::getCurvesList const):
+        (WebCore::CurlSSLHandle::setCipherList):
+        (WebCore::CurlSSLHandle::setSignatureAlgorithmsList):
+        (WebCore::CurlSSLHandle::setCurvesList):
+        (WebCore::CurlSSLHandle::getCACertPath const):
+        (WebCore::CurlSSLHandle::setCACertPath):
+        * platform/network/curl/CurlSSLVerifier.cpp:
+        (WebCore::CurlSSLVerifier::CurlSSLVerifier):
+
 2018-05-10  Daniel Bates  <dabates@apple.com>
 
         Use PlatformStrategies to switch between WebKit and WebKitLegacy checking of CSP frame-ancestors and X-Frame-Options

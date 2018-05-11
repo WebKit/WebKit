@@ -482,6 +482,11 @@ void CurlHandle::setSslKeyPassword(const char* password)
     curl_easy_setopt(m_handle, CURLOPT_KEYPASSWD, password);
 }
 
+void CurlHandle::setSslCipherList(const char* cipherList)
+{
+    curl_easy_setopt(m_handle, CURLOPT_SSL_CIPHER_LIST, cipherList);
+}
+
 void CurlHandle::enableProxyIfExists()
 {
     auto& proxy = CurlContext::singleton().proxySettings();

@@ -45,14 +45,23 @@ namespace WebCore {
 class CurlSSLHandle {
     WTF_MAKE_NONCOPYABLE(CurlSSLHandle);
     friend NeverDestroyed<CurlSSLHandle>;
+    using ClientCertificate = std::pair<String, String>;
 
 public:
     CurlSSLHandle();
 
-    using ClientCertificate = std::pair<String, String>;
+    String getCipherList() const { return m_cipherList; }
+    String getSignatureAlgorithmsList() const { return m_signatureAlgorithmsList; }
+    String getCurvesList() const { return m_curvesList; }
+
+    void setCipherList(String&& cipherList) { m_cipherList = WTFMove(cipherList); }
+    void setSignatureAlgorithmsList(String&& signatureAlgorithmsList) { m_signatureAlgorithmsList = WTFMove(signatureAlgorithmsList); }
+    void setCurvesList(String&& curvesList) { m_curvesList = WTFMove(curvesList); }
 
     bool shouldIgnoreSSLErrors() const { return m_ignoreSSLErrors; }
-    const char* getCACertPath() const { return m_caCertPath.data(); }
+
+    String getCACertPath() const { return m_caCertPath; }
+    void setCACertPath(String&& caCertPath) { m_caCertPath = WTFMove(caCertPath); }
 
     WEBCORE_EXPORT void setHostAllowsAnyHTTPSCertificate(const String&);
     bool isAllowedHTTPSCertificateHost(const String&);
@@ -62,8 +71,6 @@ public:
     std::optional<ClientCertificate> getSSLClientCertificate(const String&);
 
 private:
-    CString getCACertPathEnv();
-
 #if NEED_OPENSSL_THREAD_SUPPORT
     class ThreadSupport {
         friend NeverDestroyed<CurlSSLHandle::ThreadSupport>;
@@ -91,8 +98,15 @@ private:
     };
 #endif
 
+    String getCACertPathEnv();
+
     bool m_ignoreSSLErrors { false };
-    CString m_caCertPath;
+
+    String m_cipherList;
+    String m_signatureAlgorithmsList;
+    String m_curvesList;
+
+    String m_caCertPath;
 
     Lock m_mutex;
     HashMap<String, ListHashSet<String>, ASCIICaseInsensitiveHash> m_allowedHosts;
