@@ -1,3 +1,17 @@
+2018-05-11  Timothy Hatcher  <timothy@apple.com>
+
+        WebHTMLView is not setting aside subviews when drawing.
+
+        https://bugs.webkit.org/show_bug.cgi?id=185561
+        rdar://problem/40172894
+
+        Reviewed by Simon Fraser.
+
+        Use the new method signature for _recursive:displayRectIgnoringOpacity:shouldChangeFontReferenceColor:.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _recursive:displayRectIgnoringOpacity:inContext:shouldChangeFontReferenceColor:stopAtLayerBackedViews:]): Added.
+
 2018-05-07  Daniel Bates  <dabates@apple.com>
 
         Substitute CrossOriginPreflightResultCache::clear() for CrossOriginPreflightResultCache::empty()
