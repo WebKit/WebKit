@@ -1,3 +1,21 @@
+2018-05-11  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
+        [EME][GStreamer] Handle the protection event in MediaPlayerPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=185535
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch is based on this calvaris's commit
+        https://github.com/WebPlatformForEmbedded/WPEWebKit/commit/d966168b0d2b65f9ca9415426e26d3752c78b03e
+
+        It adds a handler for the protection event in MediaPalyerPrivateGStreamerBase, it extracts the InitData from the event
+        and sends the encrypted event to JS via HTMLMediaElement.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::initializationDataEncountered):
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleProtectionEvent):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/eme/GStreamerEMEUtilities.h: Add a new type InitData.
+
 2018-05-11  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Make the cipher suites, the signing algorithms and the curve lists configurable.

@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+using InitData = String;
+
 class GStreamerEMEUtilities {
 
 public:
