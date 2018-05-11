@@ -3854,7 +3854,7 @@ void SpeculativeJIT::compile(Node* node)
         FPRTemporary temp2(this);
 
         JSValueRegs valueRegs = JSValueRegs(value.gpr());
-        GPRReg resultGPR = value.gpr();
+        GPRReg resultGPR = result.gpr();
 
         FPRReg tempFPR1 = temp1.fpr();
         FPRReg tempFPR2 = temp2.fpr();

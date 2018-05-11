@@ -1,3 +1,15 @@
+2018-05-11  Michael Saboff  <msaboff@apple.com>
+
+        [DFG] Compiler uses incorrect output register for NumberIsInteger operation
+        https://bugs.webkit.org/show_bug.cgi?id=185328
+
+        Reviewed by Keith Miller.
+
+        New regression test.
+
+        * stress/isInteger-doesnt-overwrite-argument.js: Added.
+        (testIsInteger):
+
 2018-05-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Object.assign for final objects should be faster
