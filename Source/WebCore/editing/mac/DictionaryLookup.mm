@@ -208,7 +208,9 @@ static PlatformAnimationController showPopupOrCreateAnimationController(bool cre
     if (!getLULookupDefinitionModuleClass())
         return nil;
 
-    RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([(NSDictionary *)dictionaryPopupInfo.options.get() mutableCopy]);
+    RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([[NSMutableDictionary alloc] init]);
+    if (NSDictionary *options = dictionaryPopupInfo.options.get())
+        [mutableOptions addEntriesFromDictionary:options];
 
     auto textIndicator = TextIndicator::create(dictionaryPopupInfo.textIndicator);
 
