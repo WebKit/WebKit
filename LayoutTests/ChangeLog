@@ -1,3 +1,13 @@
+2018-05-11  Youenn Fablet  <youenn@apple.com>
+
+        Skip http/tests/appcache/load-from-appcache-defer-resume-crash.html for iOS sim WK2
+        https://bugs.webkit.org/show_bug.cgi?id=185430
+        <rdar://problem/40065118>
+
+        Unreviewed.
+
+        * platform/ios-wk2/TestExpectations: Precising the WK1 testRunner API used by the test.
+
 2018-05-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r227983): fast/dom/adopt-node-crash-2.html is flaky

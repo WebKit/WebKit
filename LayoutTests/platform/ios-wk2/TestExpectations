@@ -1119,7 +1119,8 @@ webkit.org/b/153380 webarchive/loading/object.html [ Pass Crash ]
 webkit.org/b/153380 webarchive/loading/missing-data.html [ Pass Crash ]
 
 webkit.org/b/153503 http/tests/appcache/404-resource-with-slow-main-resource.php [ Pass Failure ]
-# Uses WK1 TestRunner API
+
+# Uses WK1 TestRunner.setUseDeferredFramLoading
 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]
 
 webkit.org/b/153050 http/tests/security/cross-frame-access-custom.html [ Pass Failure ]
