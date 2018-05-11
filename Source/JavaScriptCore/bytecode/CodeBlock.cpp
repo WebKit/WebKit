@@ -506,6 +506,8 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         m_arrayAllocationProfiles = RefCountedArray<ArrayAllocationProfile>(size);
     if (size_t size = unlinkedCodeBlock->numberOfValueProfiles())
         m_valueProfiles = RefCountedArray<ValueProfile>(size);
+    if (!vm.canUseJIT())
+        RELEASE_ASSERT(!m_valueProfiles.size());
     if (size_t size = unlinkedCodeBlock->numberOfObjectAllocationProfiles())
         m_objectAllocationProfiles = RefCountedArray<ObjectAllocationProfile>(size);
 
@@ -524,6 +526,12 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
     unsigned valueProfileCount = 0;
     auto linkValueProfile = [&](unsigned bytecodeOffset, unsigned opLength) {
+        if (!vm.canUseJIT()) {
+            ASSERT(vm.noJITValueProfileSingleton);
+            instructions[bytecodeOffset + opLength - 1] = vm.noJITValueProfileSingleton.get();
+            return;
+        }
+
         unsigned valueProfileIndex = valueProfileCount++;
         ValueProfile* profile = &m_valueProfiles[valueProfileIndex];
         ASSERT(profile->m_bytecodeOffset == -1);
@@ -967,7 +975,7 @@ void CodeBlock::setNumParameters(int newValue)
 {
     m_numParameters = newValue;
 
-    m_argumentValueProfiles = RefCountedArray<ValueProfile>(newValue);
+    m_argumentValueProfiles = RefCountedArray<ValueProfile>(vm()->canUseJIT() ? newValue : 0);
 }
 
 CodeBlock* CodeBlock::specialOSREntryBlockOrNull()

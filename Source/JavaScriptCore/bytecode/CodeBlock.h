@@ -417,11 +417,12 @@ public:
     unsigned numberOfArgumentValueProfiles()
     {
         ASSERT(m_numParameters >= 0);
-        ASSERT(m_argumentValueProfiles.size() == static_cast<unsigned>(m_numParameters));
+        ASSERT(m_argumentValueProfiles.size() == static_cast<unsigned>(m_numParameters) || !vm()->canUseJIT());
         return m_argumentValueProfiles.size();
     }
     ValueProfile& valueProfileForArgument(unsigned argumentIndex)
     {
+        ASSERT(vm()->canUseJIT()); // This is only called from the various JIT compilers or places that first check numberOfArgumentValueProfiles before calling this.
         ValueProfile& result = m_argumentValueProfiles[argumentIndex];
         ASSERT(result.m_bytecodeOffset == -1);
         return result;

@@ -490,6 +490,9 @@ VM::VM(VMType vmType, HeapType heapType)
     }
 #endif
 
+    if (!canUseJIT())
+        noJITValueProfileSingleton = std::make_unique<ValueProfile>(0);
+
     VMInspector::instance().add(this);
 }
 

@@ -1119,6 +1119,7 @@ macro functionInitialization(profileArgSkip)
     assert(macro (ok) bpgteq t0, 0, ok end)
     btpz t0, .argumentProfileDone
     loadp CodeBlock::m_argumentValueProfiles + VectorBufferOffset[t1], t3
+    bpeq 0, t3, .argumentProfileDone # When we can't JIT, we don't allocate any argument value profiles.
     mulp sizeof ValueProfile, t0, t2 # Aaaaahhhh! Need strength reduction!
     lshiftp 3, t0
     addp t2, t3

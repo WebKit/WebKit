@@ -1,3 +1,13 @@
+2018-05-11  Saam Barati  <sbarati@apple.com>
+
+        Don't allocate value profiles when the JIT is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=185525
+
+        Reviewed by Michael Saboff.
+
+        * wtf/RefCountedArray.h:
+        (WTF::RefCountedArray::RefCountedArray):
+
 2018-05-10  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build after r231393

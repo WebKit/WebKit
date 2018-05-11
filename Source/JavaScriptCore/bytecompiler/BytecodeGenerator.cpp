@@ -1294,8 +1294,10 @@ UnlinkedObjectAllocationProfile BytecodeGenerator::newObjectAllocationProfile()
 
 UnlinkedValueProfile BytecodeGenerator::emitProfiledOpcode(OpcodeID opcodeID)
 {
-    UnlinkedValueProfile result = m_codeBlock->addValueProfile();
     emitOpcode(opcodeID);
+    if (!m_vm->canUseJIT())
+        return static_cast<UnlinkedValueProfile>(-1);
+    UnlinkedValueProfile result = m_codeBlock->addValueProfile();
     return result;
 }
 

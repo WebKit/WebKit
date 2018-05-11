@@ -63,6 +63,7 @@ public:
     explicit RefCountedArray(size_t size)
     {
         if (!size) {
+            // NOTE: JSC's LowLevelInterpreter relies on this being nullptr when the size is zero.
             PtrTraits::exchange(m_data, nullptr);
             return;
         }

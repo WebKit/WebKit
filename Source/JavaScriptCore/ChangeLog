@@ -1,3 +1,36 @@
+2018-05-11  Saam Barati  <sbarati@apple.com>
+
+        Don't allocate value profiles when the JIT is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=185525
+
+        Reviewed by Michael Saboff.
+
+        There are many JSC API clients that run with the JIT disabled. We were
+        still allocating a ton of value profiles in this use case even though
+        these clients get no benefit from doing value profiling. This patch makes
+        it so that we don't allocate value profiles or argument value profiles
+        when we're not using the JIT. We now just make all value profiles in
+        the instruction stream point to a global value profile that the VM owns.
+        And we make the argument value profile array have zero length and teach
+        the LLInt how to handle that. Heap clears the global value profile on each GC.
+
+        In an app that I'm testing this against, this saves ~1MB of memory.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setNumParameters):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numberOfArgumentValueProfiles):
+        (JSC::CodeBlock::valueProfileForArgument):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitProfiledOpcode):
+        * heap/Heap.cpp:
+        (JSC::Heap::runEndPhase):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2018-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [JSC][GLIB] Add introspectable alternatives to functions using vargars
