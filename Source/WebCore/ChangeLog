@@ -1,3 +1,19 @@
+2018-05-11  Antti Koivisto  <antti@apple.com>
+
+        LinkLoader fails to remove CachedResourceClient in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=185553
+        <rdar://problem/36879656>
+
+        Reviewed by Geoffrey Garen.
+
+        Test: http/tests/preload/link-preload-client-remove.html
+
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::loadLink):
+
+        If there is a link preload already in progress, we fail to clear the client for the ongoing load.
+        This may leave the CachedResource client map in a bad state.
+
 2018-05-11  Charles Vazac  <cvazac@gmail.com>
 
         Runtime feature flag for Server-Timing
