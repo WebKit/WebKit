@@ -20,13 +20,23 @@ if (window.testRunner) {
 <script>
 function doit()
 {
-    div2.addEventListener("DOMFocusOut", function () { document.implementation.createDocument("", "", null).adoptNode(div2); }, false);
+    div2.addEventListener("DOMFocusOut", function () {
+        document.implementation.createDocument("", "", null).adoptNode(div2);
+        setTimeout(() => {
+            if (window.internals)
+                internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    }, false);
     div1.outerHTML = header1.outerHTML;
-    if (window.testRunner)
-        testRunner.notifyDone();
 }
-document.addEventListener("DOMContentLoaded", function() {
+window.onload = function() {
+    if (window.internals)
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+    else
+        div2.getBoundingClientRect();
     setTimeout("doit()", 1);
-}, false);
+}
 </script>
 </html>
