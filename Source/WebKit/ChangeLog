@@ -1,3 +1,14 @@
+2018-05-11  Brady Eidson  <beidson@apple.com>
+
+        Followup to: Make sure history navigations reuse the existing process when necessary.
+        https://bugs.webkit.org/show_bug.cgi?id=185532
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal): When re-using the same process,
+          don't change the policy action.
+
 2018-05-11  Charles Vazac  <cvazac@gmail.com>
 
         Runtime feature flag for Server-Timing
