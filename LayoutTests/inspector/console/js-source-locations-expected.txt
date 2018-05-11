@@ -7,6 +7,7 @@ CONSOLE MESSAGE: line 9: warn 1
 CONSOLE MESSAGE: line 9: error 1
 CONSOLE MESSAGE: line 10: error 2
 Tests that JavaScript errors and warnings from inline script tags and external files are sent to the console with correct line and column information.
+
 {"source":"console-api","level":"error","text":"error script","location":"errors.js:1:14","parameters":[{"type":"string"}]}
 {"source":"console-api","level":"warning","text":"warn script","location":"errors.js:1:44","parameters":[{"type":"string"}]}
 {"source":"console-api","level":"error","text":"error script","location":"errors.js:5:18","parameters":[{"type":"string"}]}

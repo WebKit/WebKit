@@ -1,5 +1,6 @@
 Test stack trace detection heuristic.
 
+
 == Running test suite: WI.StackTrace.isLikelyStackTrace
 -- Running test case: notStacktrace
 PASS: Should NOT be a stacktrace.

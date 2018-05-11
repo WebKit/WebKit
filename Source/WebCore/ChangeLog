@@ -1,3 +1,44 @@
+2018-05-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Tapping after CSS-based table casues an infinite loop in wordRangeFromPosition
+        https://bugs.webkit.org/show_bug.cgi?id=185465
+        <rdar://problem/35263057>
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by TextIterator not emitting a line break when exiting a CSS-based table when an element
+        with `display: table-row` has an invisible text node. Specifically, TextIterator::exitNode is never called on
+        an element with `table-cell: row` when m_node is a text node with whitespaces which appears after an element
+        with `display: table-cell`.
+
+        For example, for a tree structure like:
+        table-row (R)
+          table-cell (C)
+            "text" (1)
+          " " (2)
+        Getting out of (C) would result in moving onto (2) without generating a line break for (R).
+
+        When this happens in nextBoundary as it tries to find the end of the last word in the table cell, we end up
+        finding the end of the document as the end of the word. As a result, nextWordBoundaryInDirection, the caller
+        of nextBoundary, ends up infinite looping between the positon at the end of the document and the position
+        immediately before the last word in the last table cell when it traverses words backwards.
+
+        This patch fixes the hang by addressing this root cause in TextIterator. Namely, TextIterator now generates
+        a line break when exiting a block while walking up ancestors in TextIterator::advance().
+
+        Tests: editing/selection/tapping-in-table-at-end-of-document.html
+               editing/text-iterator/table-at-end-of-document.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::advance): Fixed the bug.
+        (WebCore::shouldEmitNewlineAfterNode): Do generate a new line at the end of a document when we're trying to
+        generate every visible poitions even there are no renderers beyond this point. e.g. a position inside the
+        last cell of a table at the end of a document hits this condition.
+        (WebCore::shouldEmitExtraNewlineForNode): Don't emit a line break when the render box's height is 0px
+        to avoid generating many empty lines for empty paragraph and header elements (this function is used to generate
+        a blank line between p's and h1/h2/...'s).
+        (WebCore::TextIterator::exitNode):
+
 2018-05-11  Dean Jackson  <dino@apple.com>
 
         System preview badge doesn't show on <picture> elements

@@ -1,4 +1,5 @@
-123456Before:
+123456
+Before:
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)

@@ -22,6 +22,7 @@ PASS html5lib_menuitem-element.html 03664aa93a55daceccc26d99c0aef841d8862af5
 PASS html5lib_menuitem-element.html 6d596b9e342db2306365fbdfb7615377c5b26347 
 PASS html5lib_menuitem-element.html 4b712b488be9ee047c139c1b0cd955bae990b8e5 
 afcd3b1e3317ac609ddab924d836ba1e3873b80f
+
 Input
 
 <!DOCTYPE html><body><menuitem>A<menuitem>B
@@ -48,6 +49,7 @@ Actual
 |       <menuitem>
 |         "B"
 95c0c6923fe609297c1592f2cb82bb9f2d0f5aed
+
 Input
 
 <!DOCTYPE html><body><menuitem>A<menu>B</menu>
@@ -74,6 +76,7 @@ Actual
 |       <menu>
 |         "B"
 e2772fe779cbcefb4458f169a0cd495cf7115845
+
 Input
 
 <!DOCTYPE html><body><menuitem>A<hr>B

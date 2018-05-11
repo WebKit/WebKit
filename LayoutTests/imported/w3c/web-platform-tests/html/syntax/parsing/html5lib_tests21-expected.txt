@@ -25,6 +25,7 @@ PASS html5lib_tests21.html 9df59cd349097dca330fefef6c1b1bbbfddadae6
 PASS html5lib_tests21.html 671f606f5cb7033854d99b96b040994f0f451496 
 PASS html5lib_tests21.html caa80af33c7880aaddd17824efff1774ece01325 
 80607dd011814b8d3ef5c9ca380fec044dd5e1aa
+
 Input
 
 <!DOCTYPE html><svg><![CDATA[foo]]]>
@@ -47,6 +48,7 @@ Actual
 |     <svg svg>
 |       "foo]]]>"
 c9f579bf49de2d4c553d03e43772c0d94be474c0
+
 Input
 
 <!DOCTYPE html><svg><![CDATA[foo]]]]]>

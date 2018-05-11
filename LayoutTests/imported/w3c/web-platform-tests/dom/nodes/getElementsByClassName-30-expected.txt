@@ -26,6 +26,7 @@ pre
 q s samp   small span strike strong sub sup colgroup
 caption
 th
-td tt u
+td
+ tt u
 ul
 var

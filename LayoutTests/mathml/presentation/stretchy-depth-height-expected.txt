@@ -8,6 +8,7 @@ This test passes if the depth and height of braces match the maximum depth and h
  
 {
 x	y	z	x	y	z	x	y	z	x	y	z	x	y	z 
+ 
 {
 1
 2

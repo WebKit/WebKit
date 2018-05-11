@@ -536,6 +536,8 @@ void TextIterator::advance()
                         return;
                     }
                     next = nextSibling(m_behavior, *m_node);
+                    if (next && m_node->renderer())
+                        exitNode(m_node);
                 }
             }
             m_fullyClippedStack.pop();            
@@ -998,13 +1000,15 @@ static bool shouldEmitNewlinesBeforeAndAfterNode(Node& node)
         && !renderer->isRubyText();
 }
 
-static bool shouldEmitNewlineAfterNode(Node& node)
+static bool shouldEmitNewlineAfterNode(Node& node, bool emitsCharactersBetweenAllVisiblePositions = false)
 {
     // FIXME: It should be better but slower to create a VisiblePosition here.
     if (!shouldEmitNewlinesBeforeAndAfterNode(node))
         return false;
-    // Check if this is the very last renderer in the document.
-    // If so, then we should not emit a newline.
+
+    // Don't emit a new line at the end of the document unless we're matching the behavior of VisiblePosition.
+    if (emitsCharactersBetweenAllVisiblePositions)
+        return true;
     Node* subsequentNode = &node;
     while ((subsequentNode = NodeTraversal::nextSkippingChildren(*subsequentNode))) {
         if (subsequentNode->renderer())
@@ -1037,8 +1041,12 @@ static bool shouldEmitExtraNewlineForNode(Node& node)
     if (!hasHeaderTag(element) && !is<HTMLParagraphElement>(element))
         return false;
 
-    int bottomMargin = downcast<RenderBox>(*renderer).collapsedMarginAfter();
-    int fontSize = downcast<RenderBox>(*renderer).style().fontDescription().computedPixelSize();
+    auto& renderBox = downcast<RenderBox>(*renderer);
+    if (!renderBox.height())
+        return false;
+
+    int bottomMargin = renderBox.collapsedMarginAfter();
+    int fontSize = renderBox.style().fontDescription().computedPixelSize();
     return bottomMargin * 2 >= fontSize;
 }
 
@@ -1174,7 +1182,7 @@ void TextIterator::exitNode(Node* exitedNode)
     // the logic in _web_attributedStringFromRange match. We'll get that for free when we switch to use
     // TextIterator in _web_attributedStringFromRange.
     // See <rdar://problem/5428427> for an example of how this mismatch will cause problems.
-    if (m_lastTextNode && shouldEmitNewlineAfterNode(*m_node)) {
+    if (m_lastTextNode && shouldEmitNewlineAfterNode(*m_node, m_behavior & TextIteratorEmitsCharactersBetweenAllVisiblePositions)) {
         // use extra newline to represent margin bottom, as needed
         bool addNewline = shouldEmitExtraNewlineForNode(*m_node);
         

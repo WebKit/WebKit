@@ -1,3 +1,74 @@
+2018-05-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Tapping after CSS-based table casues an infinite loop in wordRangeFromPosition
+        https://bugs.webkit.org/show_bug.cgi?id=185465
+        <rdar://problem/35263057>
+
+        Reviewed by Antti Koivisto.
+
+        Rebaselined the tests. Most of these are due to new extra line breaks being generated after table and
+        header elements as expected. See inline comments for some newly discovered bugs and rebaselines due to
+        other non-obvious reasons.
+
+        * accessibility/internal-link-anchors2-expected.txt: This test now demonstrates a bug that WebKit doesn't
+        generate an extra line break before h3 when it has a large margin-top since an extra line break is only
+        generated after a node at the moment.
+        * accessibility/mac/mathml-elements-expected.txt:
+        * accessibility/table-headers-expected.txt:
+        * compositing/layer-creation/overlap-transformed-preserved-3d-expected.txt:
+        * css3/flexbox/box-orient-button-expected.txt:
+        * css3/flexbox/flexitem-expected.txt:
+        * editing/execCommand/19087-expected.txt: The second blockquote which has the height of 0px no longer
+        generates an extra new line.
+        * editing/inserting/insert-list-in-table-cell-08-expected.txt: Selection is now being restored properly
+        using TextIterator in InsertListCommand.
+        * editing/selection/tapping-in-table-at-end-of-document-expected.txt: Added.
+        * editing/selection/tapping-in-table-at-end-of-document.html: Added.
+        * editing/text-iterator/table-at-end-of-document-expected.txt: Added.
+        * editing/text-iterator/table-at-end-of-document.html: Added.
+        * fast/block/positioning/insert-positioned-in-anonymous-crash-expected.txt:
+        * fast/css/css3-ch-unit-expected.txt: Line breaks are generated between block & inline-block elements
+        as expected.
+        * fast/css/percent-min-width-img-src-change-expected.txt:
+        * fast/css/percent-width-img-src-change-expected.txt:
+        * fast/css/pseudo-empty-display-none-expected.txt:
+        * fast/dom/HTMLAnchorElement/anchor-in-noscroll-iframe-crash-expected.txt:
+        * fast/dom/HTMLDivElement/align/getset-expected.txt:
+        * fast/dom/HTMLSelectElement/listbox-select-reset-expected.txt:
+        * fast/dom/HTMLTableElement/table-with-invalid-border-expected.txt:
+        * fast/forms/option-mouseevents-expected.txt:
+        * fast/history/multiple-classes-visited-expected.txt:
+        * fast/history/self-is-visited-expected.txt:
+        * fast/html/marquee-reparent-check-expected.txt:
+        * fast/inline-block/anonymous-block-crash-expected.txt: This test now demonstrates a bug that we're not
+        generating an empty line before a block in some cases.
+        * fast/inline/inline-position-top-align-expected.txt:
+        * fast/invalid/test-case-tr-th-td-should-not-close-dl-list-expected.txt:
+        * fast/overflow/scrollbar-click-retains-focus-expected.txt:
+        * fast/parser/comments-expected.txt:
+        * fast/parser/fragment-parser-doctype-expected.txt:
+        * fast/ruby/ruby-base-merge-block-children-crash-2-expected.txt:
+        * fast/spatial-navigation/snav-radio-group-expected.txt: A line break is generated after a nested table.
+        * fast/sub-pixel/table-cells-have-stable-width-expected.txt:
+        * fast/table/table-row-oveflow-crash-expected.txt: A line break is generated after a table as expected,
+        which is followed by a BR which creates a blank line.
+        * fast/table/table-with-borderattr-null-expected.txt:
+        * fast/table/table-with-borderattr-set-to-null-expected.txt:
+        * fast/text/international/dynamic-text-combine-crash-expected.txt:
+        * fast/xsl/mozilla-tests-expected.txt:
+        * http/tests/misc/large-js-program-expected.txt:
+        * imported/blink/plugins/empty-per-context-data-expected.txt:
+        * inspector/console/js-isLikelyStackTrace-expected.txt:
+        * inspector/console/js-source-locations-expected.txt:
+        * mathml/out-of-flow-in-token-crash-expected.txt:
+        * mathml/presentation/stretchy-depth-height-expected.txt:
+        * platform/mac/accessibility/table-cells-roles-expected.txt: Line breaks are generated after a block
+        followed by two two consecutive BRs.
+        * platform/mac/accessibility/table-roles-hierarchy-expected.txt: Ditto.
+        * svg/foreignObject/fO-fixed-position-crash-expected.txt:
+        * tiled-drawing/scrolling/non-fast-region/wheel-handler-region-basic-expected.txt:
+        * transforms/3d/hit-testing/coplanar-with-camera-expected.txt:
+
 2018-05-11  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (async policy delegate): Revoking an object URL immediately after triggering download breaks file download

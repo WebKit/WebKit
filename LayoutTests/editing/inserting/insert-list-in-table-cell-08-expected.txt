@@ -33,4 +33,5 @@ After:
 |       <td>
 |         "gghfg"
 |       <td>
-|         "fsfg<#selection-focus>"
+|         "fsfg"
+| <#selection-focus>

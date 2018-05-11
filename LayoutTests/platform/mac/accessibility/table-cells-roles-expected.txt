@@ -5,6 +5,7 @@ No	Country	Capital
 3.	Ukraine	Kiev
 All	3 countries	3 capitals
 
+
 table2
 No	Country	Capital
 1.	Germany	Berlin

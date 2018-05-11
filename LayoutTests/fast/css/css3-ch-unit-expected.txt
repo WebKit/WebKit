@@ -36,10 +36,14 @@ abcdefghijklmnopqrstuvwxyz
 Four zeroes should be visible, nothing else:
 0000
 0000
-0000 There should be more than one green '|' visible (non-monospaced fonts):
-|||0|||
-|||0|||
-|||0|||
+0000
+There should be more than one green '|' visible (non-monospaced fonts):
+|||0
+|||
+|||0
+|||
+|||0
+|||
 This box has a 20px font size. The last two '0's should be the same size.
 0
 0

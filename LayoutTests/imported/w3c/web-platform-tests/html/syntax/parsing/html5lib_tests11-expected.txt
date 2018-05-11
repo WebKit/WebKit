@@ -18,6 +18,7 @@ PASS html5lib_tests11.html 791437ece7ba684e00162d1dd79dfe540e3621a7
 PASS html5lib_tests11.html af40d26164229c29b9be77ed6dd7dda780cba55c 
 PASS html5lib_tests11.html 16e68d18f8f0fb81013fe77a30b7d396c5081e5e 
 0e5897aafe87e460f84576c2d1d983504d12a7db
+
 Input
 
 <!DOCTYPE html><body><svg attributename='' attributetype='' basefrequency='' baseprofile='' calcmode='' clippathunits='' diffuseconstant='' edgemode='' filterunits='' filterres='' glyphref='' gradienttransform='' gradientunits='' kernelmatrix='' kernelunitlength='' keypoints='' keysplines='' keytimes='' lengthadjust='' limitingconeangle='' markerheight='' markerunits='' markerwidth='' maskcontentunits='' maskunits='' numoctaves='' pathlength='' patterncontentunits='' patterntransform='' patternunits='' pointsatx='' pointsaty='' pointsatz='' preservealpha='' preserveaspectratio='' primitiveunits='' refx='' refy='' repeatcount='' repeatdur='' requiredextensions='' requiredfeatures='' specularconstant='' specularexponent='' spreadmethod='' startoffset='' stddeviation='' stitchtiles='' surfacescale='' systemlanguage='' tablevalues='' targetx='' targety='' textlength='' viewbox='' viewtarget='' xchannelselector='' ychannelselector='' zoomandpan=''></svg>
@@ -156,6 +157,7 @@ Actual
 |       yChannelSelector=""
 |       zoomAndPan=""
 a8f7a23601363454b4a13f66aed99ec9708ae87b
+
 Input
 
 <!DOCTYPE html><body><svg contentScriptType='' contentStyleType='' externalResourcesRequired='' filterRes=''></svg>
@@ -184,6 +186,7 @@ Actual
 |       externalResourcesRequired=""
 |       filterRes=""
 f8f7f6c576acc9eb874acb0dce6988f0f7b6fc5f
+
 Input
 
 <!DOCTYPE html><body><svg CONTENTSCRIPTTYPE='' CONTENTSTYLETYPE='' EXTERNALRESOURCESREQUIRED='' FILTERRES=''></svg>
@@ -212,6 +215,7 @@ Actual
 |       externalResourcesRequired=""
 |       filterRes=""
 fb4dc9f70129a8a045fca3a1e3acee052d0990b3
+
 Input
 
 <!DOCTYPE html><body><svg contentscripttype='' contentstyletype='' externalresourcesrequired='' filterres=''></svg>

@@ -18,7 +18,6 @@ RenderMathMLRow
 RenderMathMLScripts
 
 RenderMathMLToken
-
 RenderMathMLUnderOver
 
 RenderMathMLBlock (invalid markup)

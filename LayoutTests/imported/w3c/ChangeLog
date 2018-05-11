@@ -1,3 +1,21 @@
+2018-05-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Tapping after CSS-based table casues an infinite loop in wordRangeFromPosition
+        https://bugs.webkit.org/show_bug.cgi?id=185465
+        <rdar://problem/35263057>
+
+        Reviewed by Antti Koivisto.
+
+        Rebaselined the tests. h2
+
+        * web-platform-tests/dom/nodes/getElementsByClassName-30-expected.txt: table is generating a new line as expected.
+        * web-platform-tests/html/syntax/parsing/html5lib_menuitem-element-expected.txt: h2 is generating an extra line
+        to emulate its margin as expected.
+        * web-platform-tests/html/syntax/parsing/html5lib_tests11-expected.txt: Ditto.
+        * web-platform-tests/html/syntax/parsing/html5lib_tests21-expected.txt: Ditto.
+        * web-platform-tests/html/syntax/parsing/html5lib_tests25-expected.txt: Ditto.
+        * web-platform-tests/html/syntax/parsing/html5lib_webkit02-expected.txt: Ditto.
+
 2018-05-11  Youenn Fablet  <youenn@apple.com>
 
         Rebase some fetch API tests

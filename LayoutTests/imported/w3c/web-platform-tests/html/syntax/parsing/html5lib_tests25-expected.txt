@@ -22,6 +22,7 @@ PASS html5lib_tests25.html 057bc2d868d2f365cb2c0b4d07c231d2fa2b23b7
 PASS html5lib_tests25.html 7f684d19be362ec9aa4fe7ecbba4ff3fc9730a43 
 PASS html5lib_tests25.html d79f9119d02447226cc2d151044e6cffc5409e81 
 de4aa726e09215ba9c50b97d257e6c6b880107f1
+
 Input
 
 <!DOCTYPE html><body><command>A
