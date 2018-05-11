@@ -1,3 +1,45 @@
+2018-05-10  Daniel Bates  <dabates@apple.com>
+
+        Use PlatformStrategies to switch between WebKit and WebKitLegacy checking of CSP frame-ancestors and X-Frame-Options
+        https://bugs.webkit.org/show_bug.cgi?id=185412
+
+        Reviewed by Ryosuke Niwa.
+
+        Consolidate the knowledge on how to determine whether security checks were performed on a ResourceResponse
+        into LoaderStrategy::havePerformedSecurityChecks() (default implementation returns false) and query it
+        to determine whether CSP frame-ancestors and X-Frame-Options need to be checked for a ResourceResponse.
+
+        Additionally, rename LoaderStrategy::isDoingLoadingSecurityChecks() to shouldPerformSecurityChecks()
+        for consistency with havePerformedSecurityChecks(). Querying shouldPerformSecurityChecks() answers the
+        question of whether the loader strategy is responsible for performing security checks when building up
+        a ResourceRequest to have the loader strategy load. And LoaderStrategy::havePerformedSecurityChecks()
+        is used to determine whether the loader strategy performed these security checks for a given ResourceResponse.
+
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::didReceiveResponse):
+        (WebCore::InspectorNetworkAgent::didFinishLoading):
+        (WebCore::isResponseProbablyComingFromNetworkProcess): Deleted.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::shouldPerformSecurityChecks):
+        (WebCore::DocumentThreadableLoader::shouldSetHTTPHeadersToKeep const):
+        (WebCore::DocumentThreadableLoader::makeCrossOriginAccessRequest):
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest):
+        (WebCore::DocumentThreadableLoader::redirectReceived):
+        (WebCore::DocumentThreadableLoader::didFail):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        (WebCore::isDoingSecurityChecksInNetworkProcess): Deleted.
+        (WebCore::isResponseComingFromNetworkProcess): Deleted.
+        * loader/LoaderStrategy.cpp:
+        * loader/LoaderStrategy.h:
+        * page/Settings.yaml: Remove setting networkProcessCSPFrameAncestorsCheckingEnabled as we now make
+        use of the loader strategy to determine whether to perform CSP frame-ancestors and X-Frame-Options
+        checking in DocumentLoader.
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::setSource): Added an ASSERT to catch the programming error of setting
+        source to ResourceResponse::Source::Unknown. This source type represents an uninitialized ResourceResponse.
+
 2018-05-10  Tim Horton  <timothy_horton@apple.com>
 
         Lookup sometimes shows a second yellow highlight on top of WebKit's TextIndicator

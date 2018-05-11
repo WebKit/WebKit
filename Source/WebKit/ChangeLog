@@ -1,3 +1,24 @@
+2018-05-10  Daniel Bates  <dabates@apple.com>
+
+        Use PlatformStrategies to switch between WebKit and WebKitLegacy checking of CSP frame-ancestors and X-Frame-Options
+        https://bugs.webkit.org/show_bug.cgi?id=185412
+
+        Reviewed by Ryosuke Niwa.
+
+        Update code for renaming and write in terms of WebLoaderStrategy::shouldPerformSecurityChecks()
+        instead of explicitly querying RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess().
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        (WebKit::WebLoaderStrategy::shouldPerformSecurityChecks const):
+        (WebKit::WebLoaderStrategy::havePerformedSecurityChecks const):
+        (WebKit::WebLoaderStrategy::isDoingLoadingSecurityChecks const): Deleted.
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+
 2018-05-10  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build after r231393

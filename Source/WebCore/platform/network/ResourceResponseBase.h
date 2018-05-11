@@ -144,7 +144,11 @@ public:
 
     enum class Source { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation, ServiceWorker, ApplicationCache };
     WEBCORE_EXPORT Source source() const;
-    void setSource(Source source) { m_source = source; }
+    void setSource(Source source)
+    {
+        ASSERT(source != Source::Unknown);
+        m_source = source;
+    }
 
     const std::optional<SHA1::Digest>& cacheBodyKey() const { return m_cacheBodyKey; }
     void setCacheBodyKey(const SHA1::Digest& key) { m_cacheBodyKey = key; }

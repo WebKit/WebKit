@@ -27,7 +27,6 @@
 #include "LoaderStrategy.h"
 
 #include "NetworkLoadMetrics.h"
-#include "PlatformStrategies.h"
 #include "ResourceResponse.h"
 
 namespace WebCore {

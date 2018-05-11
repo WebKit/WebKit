@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -421,23 +421,6 @@ void InspectorNetworkAgent::willSendRequestOfType(unsigned long identifier, Docu
     willSendRequest(identifier, loader, request, ResourceResponse(), resourceTypeForLoadType(loadType));
 }
 
-static inline bool isResponseProbablyComingFromNetworkProcess(ResourceResponse::Source source)
-{
-    switch (source) {
-    case ResourceResponse::Source::MemoryCache:
-    case ResourceResponse::Source::MemoryCacheAfterValidation:
-    case ResourceResponse::Source::ServiceWorker:
-    case ResourceResponse::Source::ApplicationCache:
-        return false;
-    case ResourceResponse::Source::Unknown:
-    case ResourceResponse::Source::Network:
-    case ResourceResponse::Source::DiskCache:
-    case ResourceResponse::Source::DiskCacheAfterValidation:
-        return true;
-    }
-    return true;
-}
-
 void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
 {
     if (m_hiddenRequestIdentifiers.contains(identifier))
@@ -446,7 +429,7 @@ void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, Documen
     String requestId = IdentifiersFactory::requestId(identifier);
 
     std::optional<ResourceResponse> realResponse;
-    if (RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess() && isResponseProbablyComingFromNetworkProcess(response.source())) {
+    if (platformStrategies()->loaderStrategy()->havePerformedSecurityChecks(response)) {
         callOnMainThreadAndWait([&] {
             // We do not need to isolate response since it comes straight from IPC, but we might want to isolate it for extra safety.
             auto response = platformStrategies()->loaderStrategy()->responseFromResourceLoadIdentifier(identifier);
@@ -534,7 +517,7 @@ void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentL
         sourceMappingURL = InspectorPageAgent::sourceMapURLForResource(resourceData->cachedResource());
 
     std::optional<NetworkLoadMetrics> realMetrics;
-    if (RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess() && !networkLoadMetrics.isComplete()) {
+    if (platformStrategies()->loaderStrategy()->shouldPerformSecurityChecks() && !networkLoadMetrics.isComplete()) {
         callOnMainThreadAndWait([&] {
             realMetrics = platformStrategies()->loaderStrategy()->networkMetricsFromResourceLoadIdentifier(identifier).isolatedCopy();
         });

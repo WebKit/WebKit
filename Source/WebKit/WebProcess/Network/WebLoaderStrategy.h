@@ -94,7 +94,8 @@ private:
     WebCore::ResourceResponse responseFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier) final;
     WebCore::NetworkLoadMetrics networkMetricsFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier) final;
 
-    bool isDoingLoadingSecurityChecks() const final;
+    bool shouldPerformSecurityChecks() const final;
+    bool havePerformedSecurityChecks(const WebCore::ResourceResponse&) const final;
 
     HashSet<RefPtr<WebCore::ResourceLoader>> m_internallyFailedResourceLoaders;
     RunLoop::Timer<WebLoaderStrategy> m_internallyFailedLoadTimer;

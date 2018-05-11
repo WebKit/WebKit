@@ -471,8 +471,6 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     WebCore::provideUserMediaTo(m_page.get(), new WebUserMediaClient(*this));
 #endif
 
-    m_page->settings().setNetworkProcessCSPFrameAncestorsCheckingEnabled(true);
-
     m_page->setControlledByAutomation(parameters.controlledByAutomation);
 
 #if ENABLE(REMOTE_INSPECTOR)

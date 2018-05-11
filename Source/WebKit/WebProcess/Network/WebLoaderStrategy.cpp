@@ -59,6 +59,7 @@
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceLoader.h>
+#include <WebCore/ResourceResponse.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
@@ -322,7 +323,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         }
     }
 
-    loadParameters.shouldRestrictHTTPResponseAccess = RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess();
+    loadParameters.shouldRestrictHTTPResponseAccess = shouldPerformSecurityChecks();
 
     loadParameters.isMainFrameNavigation = resourceLoader.frame() && resourceLoader.frame()->isMainFrame() && resourceLoader.options().mode == FetchOptions::Mode::Navigate;
 
@@ -493,7 +494,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
     loadParameters.storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
     loadParameters.clientCredentialPolicy = clientCredentialPolicy;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect(webFrame ? webFrame->coreFrame() : nullptr);
-    loadParameters.shouldRestrictHTTPResponseAccess = RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess();
+    loadParameters.shouldRestrictHTTPResponseAccess = shouldPerformSecurityChecks();
 
     loadParameters.options = options;
     loadParameters.sourceOrigin = &document->securityOrigin();
@@ -545,7 +546,7 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
     loadParameters.options = options;
     loadParameters.originalRequestHeaders = originalRequestHeaders;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect(&frame);
-    loadParameters.shouldRestrictHTTPResponseAccess = RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess();
+    loadParameters.shouldRestrictHTTPResponseAccess = shouldPerformSecurityChecks();
     if (!document->shouldBypassMainWorldContentSecurityPolicy()) {
         if (auto * contentSecurityPolicy = document->contentSecurityPolicy())
             loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
@@ -602,7 +603,7 @@ void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const WebCore::UR
     parameters.sessionID = webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID();
     parameters.storedCredentialsPolicy = storedCredentialsPolicy;
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
-    parameters.shouldRestrictHTTPResponseAccess = RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess();
+    parameters.shouldRestrictHTTPResponseAccess = shouldPerformSecurityChecks();
     // FIXME: Use the proper destination once all fetch options are passed.
     parameters.options.destination = FetchOptions::Destination::EmptyString;
 
@@ -662,9 +663,29 @@ NetworkLoadMetrics WebLoaderStrategy::networkMetricsFromResourceLoadIdentifier(u
     return networkMetrics;
 }
 
-bool WebLoaderStrategy::isDoingLoadingSecurityChecks() const
+bool WebLoaderStrategy::shouldPerformSecurityChecks() const
 {
     return RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess();
+}
+
+bool WebLoaderStrategy::havePerformedSecurityChecks(const ResourceResponse& response) const
+{
+    if (!shouldPerformSecurityChecks())
+        return false;
+    switch (response.source()) {
+    case ResourceResponse::Source::ApplicationCache:
+    case ResourceResponse::Source::MemoryCache:
+    case ResourceResponse::Source::MemoryCacheAfterValidation:
+    case ResourceResponse::Source::ServiceWorker:
+        return false;
+    case ResourceResponse::Source::DiskCache:
+    case ResourceResponse::Source::DiskCacheAfterValidation:
+    case ResourceResponse::Source::Network:
+    case ResourceResponse::Source::Unknown:
+        return true;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 } // namespace WebKit

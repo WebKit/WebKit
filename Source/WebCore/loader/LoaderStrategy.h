@@ -81,7 +81,8 @@ public:
     virtual bool isOnLine() const = 0;
     virtual void addOnlineStateChangeListener(WTF::Function<void(bool)>&&) = 0;
 
-    virtual bool isDoingLoadingSecurityChecks() const { return false; }
+    virtual bool shouldPerformSecurityChecks() const { return false; }
+    virtual bool havePerformedSecurityChecks(const ResourceResponse&) const { return false; }
 
     virtual ResourceResponse responseFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier);
     virtual NetworkLoadMetrics networkMetricsFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier);

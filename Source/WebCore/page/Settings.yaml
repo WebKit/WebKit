@@ -313,8 +313,6 @@ forceUpdateScrollbarsOnMainThreadForPerformanceTesting:
   initial: false
 notificationsEnabled:
   initial: true
-networkProcessCSPFrameAncestorsCheckingEnabled:
-  initial: false
 
 # Some apps needs isLoadingInAPISense to account for active subresource loaders.
 needsIsLoadingInAPISenseQuirk:

@@ -60,11 +60,13 @@
 #include "InspectorInstrumentation.h"
 #include "LinkIconCollector.h"
 #include "LinkIconType.h"
+#include "LoaderStrategy.h"
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "NetworkLoadMetrics.h"
 #include "Page.h"
 #include "PingLoader.h"
+#include "PlatformStrategies.h"
 #include "PolicyChecker.h"
 #include "ProgressTracker.h"
 #include "ResourceHandle.h"
@@ -768,7 +770,7 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
     unsigned long identifier = m_identifierForLoadWithoutResourceLoader ? m_identifierForLoadWithoutResourceLoader : m_mainResource->identifier();
     ASSERT(identifier);
 
-    if (m_substituteData.isValid() || !m_frame->settings().networkProcessCSPFrameAncestorsCheckingEnabled() || !RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess()) {
+    if (m_substituteData.isValid() || !platformStrategies()->loaderStrategy()->havePerformedSecurityChecks(response)) {
         auto url = response.url();
         ContentSecurityPolicy contentSecurityPolicy(URL { url }, this);
         contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, m_request.httpReferrer());
