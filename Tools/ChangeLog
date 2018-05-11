@@ -1,3 +1,16 @@
+2018-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [JSC][GLIB] Add introspectable alternatives to functions using vargars
+        https://bugs.webkit.org/show_bug.cgi?id=185508
+
+        Reviewed by Michael Catanzaro.
+
+        Add test cases for the new API.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (testJSCFunction):
+        (testJSCObject):
+
 2018-05-10  Leo Balter  <leonardo.balter@gmail.com>
 
         [Build Bot] Restore configuration options to the Test262 Runner

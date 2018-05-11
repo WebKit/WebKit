@@ -92,13 +92,17 @@ jsc_value_object_has_property
 jsc_value_object_delete_property
 jsc_value_object_enumerate_properties
 jsc_value_object_invoke_method
+jsc_value_object_invoke_methodv
 jsc_value_object_define_property_data
 jsc_value_object_define_property_accessor
 jsc_value_new_function
+jsc_value_new_functionv
 jsc_value_is_function
 jsc_value_function_call
+jsc_value_function_callv
 jsc_value_is_constructor
 jsc_value_constructor_call
+jsc_value_constructor_callv
 
 <SUBSECTION Standard>
 JSCValueClass
@@ -171,7 +175,9 @@ JSCClassVTable
 jsc_class_get_name
 jsc_class_get_parent
 jsc_class_add_constructor
+jsc_class_add_constructorv
 jsc_class_add_method
+jsc_class_add_methodv
 jsc_class_add_property
 
 <SUBSECTION Standard>

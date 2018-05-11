@@ -581,6 +581,42 @@ static void testJSCFunction()
         GRefPtr<JSCValue> value = adoptGRef(jsc_value_function_call(function.get(), G_TYPE_INT, 200, G_TYPE_NONE));
         checker.watch(value.get());
         g_assert_true(value.get() == result.get());
+
+        GRefPtr<GPtrArray> parameters = adoptGRef(g_ptr_array_new_with_free_func(g_object_unref));
+        auto* parameter = jsc_value_new_number(context.get(), 200);
+        checker.watch(parameter);
+        g_ptr_array_add(parameters.get(), parameter);
+        value = adoptGRef(jsc_value_function_callv(function.get(), parameters->len, reinterpret_cast<JSCValue**>(parameters->pdata)));
+        checker.watch(value.get());
+        g_assert_true(value.get() == result.get());
+    }
+
+    {
+        LeakChecker checker;
+        GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        GType parameterTypes[] = { G_TYPE_INT };
+        GRefPtr<JSCValue> function = adoptGRef(jsc_value_new_functionv(context.get(), "foo", G_CALLBACK(foo), nullptr, nullptr,  G_TYPE_INT, 1, parameterTypes));
+        checker.watch(function.get());
+        jsc_context_set_value(context.get(), "foo", function.get());
+        GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate(context.get(), "foo(200)", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_number(result.get()));
+        g_assert_cmpint(jsc_value_to_int32(result.get()), ==, 400);
+
+        GRefPtr<JSCValue> value = adoptGRef(jsc_value_function_call(function.get(), G_TYPE_INT, 200, G_TYPE_NONE));
+        checker.watch(value.get());
+        g_assert_true(value.get() == result.get());
+
+        GRefPtr<GPtrArray> parameters = adoptGRef(g_ptr_array_new_with_free_func(g_object_unref));
+        auto* parameter = jsc_value_new_number(context.get(), 200);
+        checker.watch(parameter);
+        g_ptr_array_add(parameters.get(), parameter);
+        value = adoptGRef(jsc_value_function_callv(function.get(), parameters->len, reinterpret_cast<JSCValue**>(parameters->pdata)));
+        checker.watch(value.get());
+        g_assert_true(value.get() == result.get());
     }
 
     {
@@ -598,6 +634,14 @@ static void testJSCFunction()
         g_assert_cmpint(jsc_value_to_int32(result.get()), ==, 400);
 
         GRefPtr<JSCValue> value = adoptGRef(jsc_value_function_call(function.get(), G_TYPE_INT, 200, G_TYPE_NONE));
+        checker.watch(value.get());
+        g_assert_true(value.get() == result.get());
+
+        GRefPtr<GPtrArray> parameters = adoptGRef(g_ptr_array_new_with_free_func(g_object_unref));
+        auto* parameter = jsc_value_new_number(context.get(), 200);
+        checker.watch(parameter);
+        g_ptr_array_add(parameters.get(), parameter);
+        value = adoptGRef(jsc_value_function_callv(function.get(), parameters->len, reinterpret_cast<JSCValue**>(parameters->pdata)));
         checker.watch(value.get());
         g_assert_true(value.get() == result.get());
     }
@@ -626,6 +670,15 @@ static void testJSCFunction()
         GRefPtr<JSCValue> dbl = adoptGRef(jsc_value_new_function(context.get(), "doubleAndSetInResult", G_CALLBACK(doubleAndSetInResult), nullptr, nullptr, G_TYPE_NONE, 1, G_TYPE_INT));
         checker.watch(dbl.get());
         GRefPtr<JSCValue> value = adoptGRef(jsc_value_function_call(function.get(), JSC_TYPE_VALUE, dbl.get(), G_TYPE_NONE));
+        checker.watch(value.get());
+        result = adoptGRef(jsc_context_evaluate(context.get(), "result", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_number(result.get()));
+        g_assert_cmpint(jsc_value_to_int32(result.get()), ==, 400);
+
+        GRefPtr<GPtrArray> parameters = adoptGRef(g_ptr_array_new());
+        g_ptr_array_add(parameters.get(), dbl.get());
+        value = adoptGRef(jsc_value_function_callv(function.get(), parameters->len, reinterpret_cast<JSCValue**>(parameters->pdata)));
         checker.watch(value.get());
         result = adoptGRef(jsc_context_evaluate(context.get(), "result", -1));
         checker.watch(result.get());
@@ -715,10 +768,25 @@ static void testJSCObject()
         g_assert_true(jsc_value_is_number(result.get()));
         g_assert_cmpint(jsc_value_to_int32(result.get()), ==, 400);
 
+        GRefPtr<GPtrArray> parameters = adoptGRef(g_ptr_array_new_with_free_func(g_object_unref));
+        auto* parameter = jsc_value_new_number(context.get(), 200);
+        checker.watch(parameter);
+        g_ptr_array_add(parameters.get(), parameter);
+        result = adoptGRef(jsc_value_object_invoke_methodv(foo.get(), "foo", parameters->len, reinterpret_cast<JSCValue**>(parameters->pdata)));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_number(result.get()));
+        g_assert_cmpint(jsc_value_to_int32(result.get()), ==, 400);
+
         g_assert_false(jsc_value_object_has_property(foo.get(), "bar"));
         bool didThrow = false;
         g_assert_throw_begin(exceptionHandler, didThrow);
         result = adoptGRef(jsc_value_object_invoke_method(foo.get(), "bar", G_TYPE_INT, 200, G_TYPE_NONE));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_undefined(result.get()));
+        g_assert_did_throw(exceptionHandler, didThrow);
+
+        g_assert_throw_begin(exceptionHandler, didThrow);
+        result = adoptGRef(jsc_value_object_invoke_methodv(foo.get(), "bar", parameters->len, reinterpret_cast<JSCValue**>(parameters->pdata)));
         checker.watch(result.get());
         g_assert_true(jsc_value_is_undefined(result.get()));
         g_assert_did_throw(exceptionHandler, didThrow);
@@ -747,6 +815,12 @@ static void testJSCObject()
         checker.watch(result.get());
         g_assert_true(jsc_value_is_number(result.get()));
         g_assert_cmpint(jsc_value_to_int32(result.get()), ==, 1000);
+
+        GRefPtr<JSCValue> foo2 = adoptGRef(jsc_value_constructor_callv(constructor.get(), 0, nullptr));
+        checker.watch(foo2.get());
+        g_assert_true(jsc_value_is_object(foo2.get()));
+        g_assert_true(jsc_value_object_is_instance_of(foo2.get(), "Foo"));
+        g_assert_false(foo.get() == foo2.get());
     }
 
     {
@@ -1182,12 +1256,18 @@ static void testJSCClass()
         g_assert_true(jsc_value_is_number(value.get()));
         g_assert_cmpint(jsc_value_to_int32(value.get()), ==, 0);
 
+        value = adoptGRef(jsc_value_object_invoke_methodv(foo.get(), "getFoo", 0, nullptr));
+        checker.watch(value.get());
+        g_assert_true(jsc_value_is_number(value.get()));
+        g_assert_cmpint(jsc_value_to_int32(value.get()), ==, 0);
+
         GRefPtr<JSCValue> value2 = adoptGRef(jsc_context_evaluate(context.get(), "f.getFoo()", -1));
         checker.watch(value2.get());
         g_assert_true(value.get() == value2.get());
 
         g_assert_false(jsc_value_object_has_property(foo.get(), "setFoo"));
-        jsc_class_add_method(jscClass, "setFoo", G_CALLBACK(setFoo), nullptr, nullptr, G_TYPE_NONE, 1, G_TYPE_INT);
+        GType parameterTypes[] = { G_TYPE_INT };
+        jsc_class_add_methodv(jscClass, "setFoo", G_CALLBACK(setFoo), nullptr, nullptr, G_TYPE_NONE, 1, parameterTypes);
         g_assert_true(jsc_value_object_has_property(foo.get(), "setFoo"));
         properties.reset(jsc_value_object_enumerate_properties(foo.get()));
         g_assert_null(properties.get());
@@ -1205,7 +1285,12 @@ static void testJSCClass()
         g_assert_true(jsc_value_is_number(value.get()));
         g_assert_cmpint(jsc_value_to_int32(value.get()), ==, 45);
 
-        GRefPtr<JSCValue> constructor2 = adoptGRef(jsc_class_add_constructor(jscClass, "CreateWithFoo", G_CALLBACK(fooCreateWithFoo), nullptr, nullptr, G_TYPE_POINTER, 1, G_TYPE_INT));
+        value = adoptGRef(jsc_value_object_invoke_methodv(foo.get(), "getFoo", 0, nullptr));
+        checker.watch(value.get());
+        g_assert_true(jsc_value_is_number(value.get()));
+        g_assert_cmpint(jsc_value_to_int32(value.get()), ==, 45);
+
+        GRefPtr<JSCValue> constructor2 = adoptGRef(jsc_class_add_constructorv(jscClass, "CreateWithFoo", G_CALLBACK(fooCreateWithFoo), nullptr, nullptr, G_TYPE_POINTER, 1, parameterTypes));
         checker.watch(constructor2.get());
         g_assert_true(jsc_value_is_constructor(constructor2.get()));
         jsc_value_object_set_property(constructor.get(), "CreateWithFoo", constructor2.get());
@@ -1311,7 +1396,7 @@ static void testJSCClass()
         JSCClass* jscClass = jsc_context_register_class(context.get(), "Foo", nullptr, nullptr, reinterpret_cast<GDestroyNotify>(fooFree));
         checker.watch(jscClass);
 
-        GRefPtr<JSCValue> constructor = adoptGRef(jsc_class_add_constructor(jscClass, nullptr, G_CALLBACK(fooCreate), nullptr, nullptr, G_TYPE_POINTER, 0, G_TYPE_NONE));
+        GRefPtr<JSCValue> constructor = adoptGRef(jsc_class_add_constructorv(jscClass, nullptr, G_CALLBACK(fooCreate), nullptr, nullptr, G_TYPE_POINTER, 0, nullptr));
         checker.watch(constructor.get());
         g_assert_true(jsc_value_is_constructor(constructor.get()));
         jsc_context_set_value(context.get(), jsc_class_get_name(jscClass), constructor.get());
@@ -1554,7 +1639,12 @@ static void testJSCClass()
         g_assert_true(jsc_value_is_number(result.get()));
         g_assert_cmpint(jsc_value_to_int32(result.get()), ==, 42);
 
-        GRefPtr<JSCValue> foo3 = adoptGRef(jsc_value_constructor_call(constructor2.get(), G_TYPE_INT, 62, G_TYPE_NONE));
+        GRefPtr<GPtrArray> parameters = adoptGRef(g_ptr_array_new_with_free_func(g_object_unref));
+        auto* parameter = jsc_value_new_number(context.get(), 62);
+        checker.watch(parameter);
+        g_ptr_array_add(parameters.get(), parameter);
+
+        GRefPtr<JSCValue> foo3 = adoptGRef(jsc_value_constructor_callv(constructor2.get(), parameters->len, reinterpret_cast<JSCValue**>(parameters->pdata)));
         checker.watch(foo3.get());
         g_assert_true(jsc_value_is_object(foo3.get()));
         g_assert_true(jsc_value_object_is_instance_of(foo3.get(), "wk.Foo"));

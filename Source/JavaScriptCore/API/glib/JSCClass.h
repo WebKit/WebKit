@@ -76,42 +76,62 @@ typedef struct {
 } JSCClassVTable;
 
 JSC_API GType
-jsc_class_get_type        (void);
+jsc_class_get_type         (void);
 
 JSC_API const char *
-jsc_class_get_name        (JSCClass      *jsc_class);
+jsc_class_get_name         (JSCClass      *jsc_class);
 
 JSC_API JSCClass *
-jsc_class_get_parent      (JSCClass      *jsc_class);
+jsc_class_get_parent       (JSCClass      *jsc_class);
 
 JSC_API JSCValue *
-jsc_class_add_constructor (JSCClass      *jsc_class,
-                           const char    *name,
-                           GCallback      callback,
-                           gpointer       user_data,
-                           GDestroyNotify destroy_notify,
-                           GType          return_type,
-                           unsigned       n_params,
-                           ...);
+jsc_class_add_constructor  (JSCClass      *jsc_class,
+                            const char    *name,
+                            GCallback      callback,
+                            gpointer       user_data,
+                            GDestroyNotify destroy_notify,
+                            GType          return_type,
+                            guint          n_params,
+                            ...);
+
+JSC_API JSCValue *
+jsc_class_add_constructorv (JSCClass      *jsc_class,
+                            const char    *name,
+                            GCallback      callback,
+                            gpointer       user_data,
+                            GDestroyNotify destroy_notify,
+                            GType          return_type,
+                            guint          n_parameters,
+                            GType         *parameter_types);
 
 JSC_API void
-jsc_class_add_method      (JSCClass      *jsc_class,
-                           const char    *name,
-                           GCallback      callback,
-                           gpointer       user_data,
-                           GDestroyNotify destroy_notify,
-                           GType          return_type,
-                           unsigned       n_params,
-                           ...);
+jsc_class_add_method       (JSCClass      *jsc_class,
+                            const char    *name,
+                            GCallback      callback,
+                            gpointer       user_data,
+                            GDestroyNotify destroy_notify,
+                            GType          return_type,
+                            guint          n_params,
+                            ...);
 
 JSC_API void
-jsc_class_add_property    (JSCClass      *jsc_class,
-                           const char    *name,
-                           GType          property_type,
-                           GCallback      getter,
-                           GCallback      setter,
-                           gpointer       user_data,
-                           GDestroyNotify destroy_notify);
+jsc_class_add_methodv      (JSCClass      *jsc_class,
+                            const char    *name,
+                            GCallback      callback,
+                            gpointer       user_data,
+                            GDestroyNotify destroy_notify,
+                            GType          return_type,
+                            guint          n_parameters,
+                            GType         *parameter_types);
+
+JSC_API void
+jsc_class_add_property     (JSCClass      *jsc_class,
+                            const char    *name,
+                            GType          property_type,
+                            GCallback      getter,
+                            GCallback      setter,
+                            gpointer       user_data,
+                            GDestroyNotify destroy_notify);
 
 G_END_DECLS
 

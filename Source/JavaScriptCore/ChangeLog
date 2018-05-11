@@ -1,3 +1,30 @@
+2018-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [JSC][GLIB] Add introspectable alternatives to functions using vargars
+        https://bugs.webkit.org/show_bug.cgi?id=185508
+
+        Reviewed by Michael Catanzaro.
+
+        * API/glib/JSCClass.cpp:
+        (jscClassCreateConstructor):
+        (jsc_class_add_constructor):
+        (jsc_class_add_constructorv):
+        (jscClassAddMethod):
+        (jsc_class_add_method):
+        (jsc_class_add_methodv):
+        * API/glib/JSCClass.h:
+        * API/glib/JSCValue.cpp:
+        (jsObjectCall):
+        (jscValueCallFunction):
+        (jsc_value_object_invoke_methodv):
+        (jscValueFunctionCreate):
+        (jsc_value_new_function):
+        (jsc_value_new_functionv):
+        (jsc_value_function_callv):
+        (jsc_value_constructor_callv):
+        * API/glib/JSCValue.h:
+        * API/glib/docs/jsc-glib-4.0-sections.txt:
+
 2018-05-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Make return types of construction functions tight
