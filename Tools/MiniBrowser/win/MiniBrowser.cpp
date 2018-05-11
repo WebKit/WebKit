@@ -29,9 +29,15 @@
 #include "stdafx.h"
 #include "MiniBrowser.h"
 
+#include "AccessibilityDelegate.h"
+#include "Common.h"
 #include "DOMDefaultImpl.h"
 #include "MiniBrowserLibResource.h"
 #include "MiniBrowserReplace.h"
+#include "MiniBrowserWebHost.h"
+#include "PrintWebUIDelegate.h"
+#include "ResourceLoadDelegate.h"
+#include "WebDownloadDelegate.h"
 #include <WebKitLegacy/WebKitCOMAPI.h>
 #include <wtf/ExportMacros.h>
 #include <wtf/Platform.h>
@@ -63,7 +69,7 @@ MiniBrowser::MiniBrowser(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, b
 {
 }
 
-HRESULT MiniBrowser::init()
+HRESULT MiniBrowser::init(_bstr_t& requestedURL)
 {
     updateDeviceScaleFactor();
 
@@ -84,8 +90,71 @@ HRESULT MiniBrowser::init()
         return hr;
 
     hr = WebKitCreateInstance(CLSID_WebCache, 0, __uuidof(m_webCache), reinterpret_cast<void**>(&m_webCache.GetInterfacePtr()));
+    if (FAILED(hr))
+        return hr;
+
+    if (!seedInitialDefaultPreferences())
+        return E_FAIL;
+
+    if (!setToDefaultPreferences())
+        return E_FAIL;
+
+    if (!setCacheFolder())
+        return E_FAIL;
+
+    auto webHost = new MiniBrowserWebHost(this, m_hURLBarWnd);
+
+    hr = setFrameLoadDelegate(webHost);
+    if (FAILED(hr))
+        return hr;
+
+    hr = setFrameLoadDelegatePrivate(webHost);
+    if (FAILED(hr))
+        return hr;
+
+    hr = setUIDelegate(new PrintWebUIDelegate());
+    if (FAILED (hr))
+        return hr;
+
+    hr = setAccessibilityDelegate(new AccessibilityDelegate());
+    if (FAILED (hr))
+        return hr;
+
+    hr = setResourceLoadDelegate(new ResourceLoadDelegate(this));
+    if (FAILED(hr))
+        return hr;
+
+    IWebDownloadDelegatePtr downloadDelegate;
+    downloadDelegate.Attach(new WebDownloadDelegate());
+    hr = setDownloadDelegate(downloadDelegate);
+    if (FAILED(hr))
+        return hr;
+
+    RECT clientRect;
+    ::GetClientRect(m_hMainWnd, &clientRect);
+    if (usesLayeredWebView())
+        clientRect = { s_windowPosition.x, s_windowPosition.y, s_windowPosition.x + s_windowSize.cx, s_windowPosition.y + s_windowSize.cy };
+
+    hr = prepareViews(m_hMainWnd, clientRect, requestedURL.GetBSTR());
+    if (FAILED(hr))
+        return hr;
+
+    if (usesLayeredWebView())
+        subclassForLayeredWindow();
 
     return hr;
+}
+
+bool MiniBrowser::setCacheFolder()
+{
+    _bstr_t appDataFolder;
+    if (!getAppDataFolder(appDataFolder))
+        return false;
+
+    appDataFolder += L"\\cache";
+    webCache()->setCacheFolder(appDataFolder);
+
+    return true;
 }
 
 HRESULT MiniBrowser::prepareViews(HWND mainWnd, const RECT& clientRect, const BSTR& requestedURL)

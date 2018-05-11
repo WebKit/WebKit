@@ -49,7 +49,7 @@ class MiniBrowser {
 public:
     MiniBrowser(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false, bool pageLoadTesting = false);
 
-    HRESULT init();
+    HRESULT init(_bstr_t& requestedURL);
     HRESULT prepareViews(HWND mainWnd, const RECT& clientRect, const BSTR& requestedURL);
 
     HRESULT loadURL(const BSTR& passedURL);
@@ -98,10 +98,11 @@ public:
 
     HGDIOBJ urlBarFont() { return m_hURLBarFont; }
     HWND hwnd() { return m_viewWnd; }
-    void subclassForLayeredWindow();
 
 private:
+    void subclassForLayeredWindow();
     void generateFontForScaleFactor(float);
+    bool setCacheFolder();
 
     std::vector<IWebHistoryItemPtr> m_historyItems;
 

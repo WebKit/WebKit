@@ -30,7 +30,6 @@
 
 #include "stdafx.h"
 #include "MiniBrowserLibResource.h"
-#include "MiniBrowserWebHost.h"
 #include "Common.cpp"
 
 namespace WebCore {
@@ -103,67 +102,14 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     SetFocus(hURLBarWnd);
 
-    RECT clientRect;
-    ::GetClientRect(hMainWnd, &clientRect);
-
-    if (usesLayeredWebView)
-        clientRect = { s_windowPosition.x, s_windowPosition.y, s_windowPosition.x + s_windowSize.cx, s_windowPosition.y + s_windowSize.cy };
-
-    MiniBrowserWebHost* webHost = nullptr;
-
-    IWebDownloadDelegatePtr downloadDelegate;
-    downloadDelegate.Attach(new WebDownloadDelegate());
-
     gMiniBrowser = new MiniBrowser(hMainWnd, hURLBarWnd, usesLayeredWebView, pageLoadTesting);
     if (!gMiniBrowser)
         goto exit;
-
-    if (!gMiniBrowser->seedInitialDefaultPreferences())
-        goto exit;
-
-    if (!gMiniBrowser->setToDefaultPreferences())
-        goto exit;
-
-    HRESULT hr = gMiniBrowser->init();
+    HRESULT hr = gMiniBrowser->init(requestedURL);
     if (FAILED(hr))
         goto exit;
 
-    if (!setCacheFolder())
-        goto exit;
-
-    webHost = new MiniBrowserWebHost(gMiniBrowser, hURLBarWnd);
-
-    hr = gMiniBrowser->setFrameLoadDelegate(webHost);
-    if (FAILED(hr))
-        goto exit;
-
-    hr = gMiniBrowser->setFrameLoadDelegatePrivate(webHost);
-    if (FAILED(hr))
-        goto exit;
-
-    hr = gMiniBrowser->setUIDelegate(new PrintWebUIDelegate());
-    if (FAILED (hr))
-        goto exit;
-
-    hr = gMiniBrowser->setAccessibilityDelegate(new AccessibilityDelegate());
-    if (FAILED (hr))
-        goto exit;
-
-    hr = gMiniBrowser->setResourceLoadDelegate(new ResourceLoadDelegate(gMiniBrowser));
-    if (FAILED(hr))
-        goto exit;
-
-    hr = gMiniBrowser->setDownloadDelegate(downloadDelegate);
-    if (FAILED(hr))
-        goto exit;
-
-    hr = gMiniBrowser->prepareViews(hMainWnd, clientRect, requestedURL.GetBSTR());
-    if (FAILED(hr))
-        goto exit;
     gViewWindow = gMiniBrowser->hwnd();
-
-    if (gMiniBrowser->usesLayeredWebView())
-        gMiniBrowser->subclassForLayeredWindow();
 
     resizeSubViews();
 

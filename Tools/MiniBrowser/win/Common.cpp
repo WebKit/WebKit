@@ -26,11 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "AccessibilityDelegate.h"
 #include "DOMDefaultImpl.h"
-#include "PrintWebUIDelegate.h"
-#include "ResourceLoadDelegate.h"
-#include "WebDownloadDelegate.h"
 #include "MiniBrowser.h"
 #include "MiniBrowserReplace.h"
 #include <WebKitLegacy/WebKitCOMAPI.h>
@@ -154,7 +150,7 @@ BOOL WINAPI DllMain(HINSTANCE dllInstance, DWORD reason, LPVOID)
     return TRUE;
 }
 
-static bool getAppDataFolder(_bstr_t& directory)
+bool getAppDataFolder(_bstr_t& directory)
 {
     wchar_t appDataDirectory[MAX_PATH];
     if (FAILED(SHGetFolderPathW(0, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, 0, 0, appDataDirectory)))
@@ -167,22 +163,6 @@ static bool getAppDataFolder(_bstr_t& directory)
     ::PathRemoveExtensionW(executablePath);
 
     directory = _bstr_t(appDataDirectory) + L"\\" + ::PathFindFileNameW(executablePath);
-
-    return true;
-}
-
-static bool setCacheFolder()
-{
-    IWebCachePtr webCache = gMiniBrowser->webCache();
-    if (!webCache)
-        return false;
-
-    _bstr_t appDataFolder;
-    if (!getAppDataFolder(appDataFolder))
-        return false;
-
-    appDataFolder += L"\\cache";
-    webCache->setCacheFolder(appDataFolder);
 
     return true;
 }

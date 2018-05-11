@@ -1,3 +1,28 @@
+2018-05-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Move WK1 related code into MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=185418
+
+        Reviewed by Alex Christensen.
+
+        All WK1 related code should be moved into MiniBrowser for the preparation
+        of Bug 184770.
+
+        This change moves the initilization code of MiniBrowse into MiniBrowser::init().
+
+        * MiniBrowser/win/Common.cpp:
+        (getAppDataFolder): Removed `static` keyword to be called from MiniBrowser.cpp.
+        (setCacheFolder): This is only for WK1. Moved into MiniBrowser.cpp.
+        * MiniBrowser/win/Common.h: Added.
+        * MiniBrowser/win/MiniBrowser.cpp:
+        (MiniBrowser::init): Moved the initilization code from wWinMain.
+        (MiniBrowser::setCacheFolder): Moved from Common.cpp and made it a method.
+        * MiniBrowser/win/MiniBrowser.h:
+        (MiniBrowser::setCacheFolder): Changed to a private method.
+        (MiniBrowser::subclassForLayeredWindow): Changed to a private method.
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain): Moved MiniBrowse initilization code into MiniBrowser.cpp.
+
 2018-05-11  Brady Eidson  <beidson@apple.com>
 
         Make sure history navigations reuse the existing process when necessary.
