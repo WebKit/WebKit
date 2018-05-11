@@ -21,10 +21,11 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import logging
 import time
 
 from webkitpy.common import message_pool
-from webkitpy.port.server_process import ServerProcess
+from webkitpy.port.server_process import ServerProcess, _log as server_process_logger
 from webkitpy.xcode.simulated_device import SimulatedDeviceManager
 
 
@@ -34,6 +35,7 @@ class Runner(object):
     STATUS_CRASHED = 2
     STATUS_TIMEOUT = 3
     STATUS_DISABLED = 4
+    STATUS_RUNNING = 5
 
     NAME_FOR_STATUS = [
         'Passed',
@@ -47,6 +49,8 @@ class Runner(object):
         self.port = port
         self.printer = printer
         self.tests_run = 0
+        self._num_workers = 1
+        self._has_logged_for_test = True  # Suppress an empty line between "Running tests" and the first test's output.
         self.results = {}
 
     @staticmethod
@@ -78,24 +82,48 @@ class Runner(object):
         self.printer.write_update('Sharding tests ...')
         shards = Runner._shard_tests(tests)
 
-        with message_pool.get(self, lambda caller: _Worker(caller, self.port, shards), min(num_workers, len(shards))) as pool:
-            pool.run(('test', shard) for shard, _ in shards.iteritems())
+        original_level = server_process_logger.level
+        server_process_logger.setLevel(logging.CRITICAL)
+
+        try:
+            self._num_workers = min(num_workers, len(shards))
+            with message_pool.get(self, lambda caller: _Worker(caller, self.port, shards), self._num_workers) as pool:
+                pool.run(('test', shard) for shard, _ in shards.iteritems())
+        finally:
+            server_process_logger.setLevel(original_level)
+
 
     def handle(self, message_name, source, test_name=None, status=0, output=''):
         if message_name == 'did_spawn_worker':
             return
+
+        source = '' if self._num_workers == 1 else source + ' '
+        will_stream_logs = self._num_workers == 1 and self.port.get_option('verbose')
         if message_name == 'ended_test':
-            update = '{} {} {}'.format(source, test_name, Runner.NAME_FOR_STATUS[status])
+            update = '{}{} {}'.format(source, test_name, Runner.NAME_FOR_STATUS[status])
 
             # Don't print test output if --quiet.
             if status != Runner.STATUS_PASSED or (output and not self.port.get_option('quiet')):
+                if not will_stream_logs:
+                    for line in output.splitlines():
+                        if not self._has_logged_for_test:
+                            self._has_logged_for_test = True
+                            self.printer.writeln(source)
+                        self.printer.writeln('{}    {}'.format(source, line))
                 self.printer.writeln(update)
-                for line in output.splitlines():
-                    self.printer.writeln('    {}'.format(line))
             else:
                 self.printer.write_update(update)
             self.tests_run += 1
             self.results[test_name] = (status, output)
+            self._has_logged_for_test = False
+
+        if message_name == 'log' and will_stream_logs:
+            for line in output.splitlines():
+                if not self._has_logged_for_test:
+                    self._has_logged_for_test = True
+                    self.printer.writeln(source)
+                self.printer.writeln('{}    {}'.format(source, line))
+
 
     def result_map_by_status(self, status=None):
         map = {}
@@ -130,31 +158,51 @@ class _Worker(object):
             Runner.command_for_port(self._port, [self._port._build_path(binary_name), '--gtest_filter={}'.format(test)]),
             env=self._port.environment_for_api_tests())
 
+        status = Runner.STATUS_RUNNING
+        if test.split('.')[1].startswith('DISABLED_'):
+            status = Runner.STATUS_DISABLED
+
         try:
             deadline = time.time() + self._timeout
-            server_process.start()
+            if status != Runner.STATUS_DISABLED:
+                server_process.start()
 
-            if not test.split('.')[1].startswith('DISABLED_'):
-                stdout_line = server_process.read_stdout_line(deadline)
-            else:
-                stdout_line = None
+            stdout_buffer = ''
+            stderr_buffer = ''
+            while status == Runner.STATUS_RUNNING:
+                stdout_line, stderr_line = server_process.read_either_stdout_or_stderr_line(deadline)
+                if not stderr_line and not stdout_line:
+                    break
 
-            if not stdout_line and server_process.timed_out:
+                if stderr_line:
+                    stderr_buffer += stderr_line
+                    self.post('log', output=stderr_line[:-1])
+                if stdout_line:
+                    if '**PASS**' in stdout_line:
+                        status = Runner.STATUS_PASSED
+                    elif '**FAIL**' in stdout_line:
+                        status = Runner.STATUS_FAILED
+                    else:
+                        stdout_buffer += stdout_line
+                        self.post('log', output=stdout_line[:-1])
+
+            if status == Runner.STATUS_DISABLED:
+                pass
+            elif server_process.timed_out:
                 status = Runner.STATUS_TIMEOUT
-            elif not stdout_line and server_process.has_crashed():
+            elif server_process.has_crashed():
                 status = Runner.STATUS_CRASHED
-            elif not stdout_line:
-                status = Runner.STATUS_DISABLED
-            elif '**PASS**' in stdout_line:
-                status = Runner.STATUS_PASSED
-            else:
+            elif status == Runner.STATUS_RUNNING:
                 status = Runner.STATUS_FAILED
 
         finally:
-            output_buffer = server_process.pop_all_buffered_stdout() + server_process.pop_all_buffered_stderr()
+            remaining_stderr = server_process.pop_all_buffered_stderr()
+            remaining_stdout = server_process.pop_all_buffered_stdout()
+            self.post('log', output=remaining_stderr + remaining_stdout)
+            output_buffer = stderr_buffer + stdout_buffer + remaining_stderr + remaining_stdout
             server_process.stop()
 
-        self._caller.post('ended_test', '{}.{}'.format(binary_name, test), status, self._filter_noisy_output(output_buffer))
+        self.post('ended_test', '{}.{}'.format(binary_name, test), status, self._filter_noisy_output(output_buffer))
 
     def _run_shard_with_binary(self, binary_name, tests):
         remaining_tests = list(tests)
@@ -196,7 +244,7 @@ class _Worker(object):
                         continue
                     if last_test is not None:
                         remaining_tests.remove(last_test)
-                        self._caller.post('ended_test', '{}.{}'.format(binary_name, last_test), last_status, stdout_buffer)
+                        self.post('ended_test', '{}.{}'.format(binary_name, last_test), last_status, stdout_buffer)
                         deadline = time.time() + self._timeout
                         stdout_buffer = ''
 
@@ -211,7 +259,8 @@ class _Worker(object):
                     remaining_tests.remove(last_test)
                     stdout_buffer += server_process.pop_all_buffered_stdout()
                     stderr_buffer = server_process.pop_all_buffered_stderr() if last_status == Runner.STATUS_CRASHED else ''
-                    self._caller.post('ended_test', '{}.{}'.format(binary_name, last_test), last_status, self._filter_noisy_output(stdout_buffer + stderr_buffer))
+                    self.post('log', output=stdout_buffer + stderr_buffer)
+                    self.post('ended_test', '{}.{}'.format(binary_name, last_test), last_status, self._filter_noisy_output(stdout_buffer + stderr_buffer))
 
                 if server_process.timed_out:
                     break
@@ -226,9 +275,12 @@ class _Worker(object):
         for test in remaining_tests:
             self._run_single_test(binary_name, test)
 
+    def post(self, message_name, test_name=None, status=0, output=''):
+        self._caller.post(message_name, test_name, status, output)
+
     def handle(self, message_name, source, shard_name):
         assert message_name == 'test'
-        self._caller.post('started_shard', shard_name)
+        self.post('started_shard', shard_name)
 
         binary_map = {}
         for test in self._shard_map[shard_name]:

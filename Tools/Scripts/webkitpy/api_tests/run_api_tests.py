@@ -70,7 +70,7 @@ def run(port, options, args, logging_stream):
     logger.setLevel(logging.DEBUG if options.verbose else logging.ERROR if options.quiet else logging.INFO)
 
     try:
-        stream = MeteredStream(logging_stream, options.verbose, logger=logger, number_of_columns=port.host.platform.terminal_width())
+        stream = MeteredStream(logging_stream, options.verbose, logger=logger, number_of_columns=port.host.platform.terminal_width(), print_timestamps=options.timestamps)
         manager = Manager(port, options, stream)
 
         result = manager.run(args)
@@ -90,6 +90,8 @@ def parse_args(args):
                              help='Run quietly (errors, warnings, and progress only)'),
         optparse.make_option('-v', '--verbose', action='store_true', default=False,
                              help='Enable verbose printing'),
+        optparse.make_option('--timestamps', action='store_true', default=False,
+                             help='Print timestamps for each logged line'),
     ]))
 
     option_group_definitions.append(('WebKit Options', [

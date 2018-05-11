@@ -37,6 +37,7 @@ from webkitpy.layout_tests.views.metered_stream import MeteredStream
 class RegularTest(unittest.TestCase):
     verbose = False
     isatty = False
+    print_timestamps = None
 
     def setUp(self):
         self.stream = StringIO.StringIO()
@@ -51,7 +52,7 @@ class RegularTest(unittest.TestCase):
         # add a dummy time counter for a default behavior.
         self.times = range(10)
 
-        self.meter = MeteredStream(self.stream, self.verbose, self.logger, self.time_fn, 8675)
+        self.meter = MeteredStream(self.stream, self.verbose, self.logger, self.time_fn, 8675, print_timestamps=self.print_timestamps)
 
     def tearDown(self):
         if self.meter:
@@ -71,7 +72,7 @@ class RegularTest(unittest.TestCase):
         root_logger.addHandler(handler)
         root_logger.setLevel(logging.DEBUG)
         try:
-            self.meter = MeteredStream(self.stream, self.verbose, None, self.time_fn, 8675)
+            self.meter = MeteredStream(self.stream, self.verbose, None, self.time_fn, 8675, print_timestamps=self.print_timestamps)
             self.meter.write_throttled_update('foo')
             self.meter.write_update('bar')
             self.meter.write('baz')
@@ -152,3 +153,17 @@ class VerboseTest(RegularTest):
         self.logger.info('foo %s %d', 'bar', 2)
         self.assertEqual(len(self.buflist), 1)
         self.assertTrue(self.buflist[0].endswith('foo bar 2\n'))
+
+
+class VerboseWithOutTimestamp(RegularTest):
+    isatty = True
+    verbose = True
+    print_timestamps = False
+
+    def test_basic(self):
+        buflist = self._basic([0, 1, 2.1, 13, 14.1234])
+        self.assertTrue(re.match('foo\n', buflist[0]))
+        self.assertTrue(re.match('bar\n', buflist[1]))
+        self.assertTrue(re.match('baz 2\n', buflist[2]))
+        self.assertTrue(re.match('done\n', buflist[3]))
+        self.assertEqual(len(buflist), 4)

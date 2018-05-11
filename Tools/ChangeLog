@@ -1,3 +1,40 @@
+2018-05-10  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION (r230998): Cannot stream API test output
+        https://bugs.webkit.org/show_bug.cgi?id=185090
+
+        Reviewed by Ryosuke Niwa.
+
+        Change run-api-tests so that the stdout and stderr of a test will be printed
+        before it's result. If -v is passed, the output of single test runs will be
+        streamed. 
+
+        * Scripts/webkitpy/api_tests/run_api_tests.py:
+        (run): Use print_timestamps flag.
+        (parse_args): Add timestamps option to print timestamps in the log.
+        * Scripts/webkitpy/api_tests/runner.py:
+        (Runner): Add running status.
+        (Runner.__init__): Add number of workers and a flag to detect if a newline
+        is needed at the beginning of a log line.
+        (Runner.run): Turn off most logging coming from server process since it is
+        not constructive for API tests.
+        (Runner.handle): Add new log message to stream stdout and stderr instead of
+        caching values until the test run finished.
+        (_Worker._run_single_test): Log stdout and stderr in real time.
+        (_Worker._run_shard_with_binary): Log stderr and stdout buffer before ending
+        the test.
+        (_Worker.post): Provide a post with explicitly enumerated argument names.
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py:
+        (MeteredStream.__init__): Differentiate verbose logging and logging with timestamps.
+        (MeteredStream.write): Allow for verbose logging without timestamps.
+        * Scripts/webkitpy/layout_tests/views/metered_stream_unittest.py:
+        (RegularTest): Add print_timestamps flag.
+        (RegularTest.setUp):
+        (RegularTest.test_logging_not_included):
+        (VerboseTest.test_log_args):
+        (VerboseWithOutTimestamp):
+        (VerboseWithOutTimestamp.test_basic): Add test for verbose logging without timestamps.
+
 2018-05-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         build-webkit can erroneously warn about Xcode being too old
