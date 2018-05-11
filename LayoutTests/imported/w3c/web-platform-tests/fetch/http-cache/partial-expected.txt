@@ -1,6 +1,10 @@
 
-FAIL HTTP cache stores partial content and reuses it. assert_equals: Response body expected "42984cca-6ce2-4a68-9cf8-4edc87e810c0" but got "01234"
-FAIL HTTP cache stores complete response and serves smaller ranges from it. assert_less_than: Response used expected a number less than 2 but got 2
-FAIL HTTP cache stores partial response and serves smaller ranges from it. assert_less_than: Response used expected a number less than 2 but got 2
+PASS HTTP cache stores partial content and reuses it. 
+FAIL HTTP cache stores complete response and serves smaller ranges from it(byte-range-spec). assert_less_than: Response used expected a number less than 2 but got 2
+FAIL HTTP cache stores complete response and serves smaller ranges from it(absent last-byte-pos). assert_less_than: Response used expected a number less than 2 but got 2
+FAIL HTTP cache stores complete response and serves smaller ranges from it(suffix-byte-range-spec). assert_less_than: Response used expected a number less than 2 but got 2
+FAIL HTTP cache stores partial response and serves smaller ranges from it(byte-range-spec). assert_less_than: Response used expected a number less than 2 but got 2
+FAIL HTTP cache stores partial response and serves smaller ranges from it(absent last-byte-pos). assert_less_than: Response used expected a number less than 2 but got 2
+FAIL HTTP cache stores partial response and serves smaller ranges from it(suffix-byte-range-spec). assert_less_than: Response used expected a number less than 2 but got 2
 FAIL HTTP cache stores partial content and completes it. assert_equals: expected (string) "bytes=5-" but got (undefined) undefined
 

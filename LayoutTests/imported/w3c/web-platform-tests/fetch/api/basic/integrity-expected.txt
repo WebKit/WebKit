@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/top.txt. Failed integrity metadata check.
-CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/top.txt. Failed integrity metadata check.
-CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/top.txt. Failed integrity metadata check.
-CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/top.txt?pipe=header(Access-Control-Allow-Origin,*). Failed integrity metadata check.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/top.txt.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/top.txt.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/top.txt.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/top.txt?pipe=header(Access-Control-Allow-Origin,*).
 
 PASS Empty string integrity 
 PASS SHA-256 integrity 

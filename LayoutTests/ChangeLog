@@ -1,5 +1,16 @@
 2018-05-11  Youenn Fablet  <youenn@apple.com>
 
+        Rebase some fetch API tests
+        https://bugs.webkit.org/show_bug.cgi?id=185544
+
+        Unreviewed.
+
+        * http/tests/fetch/fetching-same-resource-with-different-options-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker-expected.txt:
+
+2018-05-11  Youenn Fablet  <youenn@apple.com>
+
         Skip http/tests/appcache/load-from-appcache-defer-resume-crash.html for iOS sim WK2
         https://bugs.webkit.org/show_bug.cgi?id=185430
         <rdar://problem/40065118>
