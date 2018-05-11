@@ -1,3 +1,26 @@
+2018-05-11  Antti Koivisto  <antti@apple.com>
+
+        Network process should not stat() all cache files on startup to find their sizes
+        https://bugs.webkit.org/show_bug.cgi?id=185542
+        <rdar://problem/40092953>
+
+        Reviewed by Chris Dumez.
+
+        This is done to compute how much disk space a cache is using. While the operation happens
+        in a background priority thread it is still quite a bit of work.
+
+        Large bodies are saved in separate blob files so record file sizes are capped. We can avoid work by
+        estimating their size instead of counting it exactly.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::estimateRecordsSize):
+        (WebKit::NetworkCache::Storage::synchronize):
+
+            Use size estimation if blob storage is in use.
+            Remove the code that would delete empty files. Normal cache shrinking handles this.
+
+        (WebKit::NetworkCache::Storage::shouldStoreBodyAsBlob):
+
 2018-05-11  Brady Eidson  <beidson@apple.com>
 
         Make sure history navigations reuse the existing process when necessary.

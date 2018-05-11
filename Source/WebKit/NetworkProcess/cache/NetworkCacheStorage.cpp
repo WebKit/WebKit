@@ -45,6 +45,7 @@ static const char versionDirectoryPrefix[] = "Version ";
 static const char recordsDirectoryName[] = "Records";
 static const char blobsDirectoryName[] = "Blobs";
 static const char blobSuffix[] = "-blob";
+constexpr size_t maximumInlineBodySize { 16 * 1024 };
 
 static double computeRecordWorth(FileTimes);
 
@@ -261,6 +262,14 @@ size_t Storage::approximateSize() const
     return m_approximateRecordsSize + m_blobStorage.approximateSize();
 }
 
+static size_t estimateRecordsSize(unsigned recordCount, unsigned blobCount)
+{
+    auto inlineBodyCount = recordCount - std::min(blobCount, recordCount);
+    auto headerSizes = recordCount * 4096;
+    auto inlineBodySizes = (maximumInlineBodySize / 2) * inlineBodyCount;
+    return headerSizes + inlineBodySizes;
+}
+
 void Storage::synchronize()
 {
     ASSERT(RunLoop::isMain());
@@ -274,10 +283,15 @@ void Storage::synchronize()
     backgroundIOQueue().dispatch([this, protectedThis = makeRef(*this)] () mutable {
         auto recordFilter = std::make_unique<ContentsFilter>();
         auto blobFilter = std::make_unique<ContentsFilter>();
+
+        // Most of the disk space usage is in blobs if we are using them. Approximate records file sizes to avoid expensive stat() calls.
+        bool shouldComputeExactRecordsSize = !m_canUseBlobsForForBodyData;
         size_t recordsSize = 0;
-        unsigned count = 0;
+        unsigned recordCount = 0;
+        unsigned blobCount = 0;
+
         String anyType;
-        traverseRecordsFiles(recordsPath(), anyType, [&recordFilter, &blobFilter, &recordsSize, &count](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
+        traverseRecordsFiles(recordsPath(), anyType, [&](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
             auto filePath = WebCore::FileSystem::pathByAppendingComponent(recordDirectoryPath, fileName);
 
             Key::HashType hash;
@@ -285,22 +299,26 @@ void Storage::synchronize()
                 WebCore::FileSystem::deleteFile(filePath);
                 return;
             }
-            long long fileSize = 0;
-            WebCore::FileSystem::getFileSize(filePath, fileSize);
-            if (!fileSize) {
-                WebCore::FileSystem::deleteFile(filePath);
-                return;
-            }
 
             if (isBlob) {
+                ++blobCount;
                 blobFilter->add(hash);
                 return;
             }
 
+            ++recordCount;
+
+            if (shouldComputeExactRecordsSize) {
+                long long fileSize = 0;
+                WebCore::FileSystem::getFileSize(filePath, fileSize);
+                recordsSize += fileSize;
+            }
+
             recordFilter->add(hash);
-            recordsSize += fileSize;
-            ++count;
         });
+
+        if (!shouldComputeExactRecordsSize)
+            recordsSize = estimateRecordsSize(recordCount, blobCount);
 
         RunLoop::main().dispatch([this, recordFilter = WTFMove(recordFilter), blobFilter = WTFMove(blobFilter), recordsSize]() mutable {
             for (auto& recordFilterKey : m_recordFilterHashesAddedDuringSynchronization)
@@ -321,7 +339,7 @@ void Storage::synchronize()
 
         deleteEmptyRecordsDirectories(recordsPath());
 
-        LOG(NetworkCacheStorage, "(NetworkProcess) cache synchronization completed size=%zu count=%u", recordsSize, count);
+        LOG(NetworkCacheStorage, "(NetworkProcess) cache synchronization completed size=%zu recordCount=%u", recordsSize, recordCount);
 
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
@@ -756,7 +774,6 @@ bool Storage::shouldStoreBodyAsBlob(const Data& bodyData)
 {
     if (!m_canUseBlobsForForBodyData)
         return false;
-    const size_t maximumInlineBodySize { 16 * 1024 };
     return bodyData.size() > maximumInlineBodySize;
 }
 
