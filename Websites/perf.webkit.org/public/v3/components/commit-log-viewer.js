@@ -36,7 +36,6 @@ class CommitLogViewer extends ComponentBase {
         }
 
         let promise;
-        let precedingCommitPromise;
         const fetchSingleCommit = !precedingRevision || precedingRevision == lastRevision;
         if (fetchSingleCommit) {
             promise = CommitLog.fetchForSingleRevision(repository, lastRevision).then((commits) => {
@@ -55,7 +54,7 @@ class CommitLogViewer extends ComponentBase {
                 CommitLog.fetchForSingleRevision(repository, precedingRevision).then((precedingCommit) => {
                     if (this._fetchingPromise != promise)
                         return;
-                    this._precedingCommit = null;
+                    this._precedingCommit = precedingCommit[0];
                 })
             ]);
         }

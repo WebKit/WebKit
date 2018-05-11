@@ -363,7 +363,7 @@ const ChartTest = {
 
     respondWithSampleCluster(request, options)
     {
-        expect(request.url).to.be('../data/measurement-set-1-1.json');
+        expect(request.url).to.be('/data/measurement-set-1-1.json');
         expect(request.method).to.be('GET');
         request.resolve(this.makeSampleCluster(options));
     },
