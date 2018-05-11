@@ -1,3 +1,20 @@
+2018-05-11  Dean Jackson  <dino@apple.com>
+
+        System preview badge doesn't show on <picture> elements
+        https://bugs.webkit.org/show_bug.cgi?id=185559
+        <rdar://problem/40150066>
+
+        Reviewed by Tim Horton.
+
+        We should also identify <img>s that are the child of a <picture>
+        contained inside the appropriate <a> element.
+
+        Tested internally, since the badge is platform specific.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::isSystemPreviewImage const): Add logic
+        to look for <picture> parents.
+
 2018-05-11  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (async policy delegate): Revoking an object URL immediately after triggering download breaks file download
