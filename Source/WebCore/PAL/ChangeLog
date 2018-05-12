@@ -1,3 +1,27 @@
+2018-05-11  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r231731. rdar://problem/39806412
+
+    Follow-up build fix to r231721.
+    
+    * pal/cf/CoreMediaSoftLink.cpp:
+    * pal/cf/CoreMediaSoftLink.h:
+      Unify the conditions between the header and the implementation files, and have watchOS and
+      tvOS keyed off iOS.
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@231731 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-05-11  Dan Bernstein  <mitz@apple.com>
+
+            Follow-up build fix to r231721.
+
+            * pal/cf/CoreMediaSoftLink.cpp:
+            * pal/cf/CoreMediaSoftLink.h:
+              Unify the conditions between the header and the implementation files, and have watchOS and
+              tvOS keyed off iOS.
+
 2018-05-11  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r231721. rdar://problem/39806412
