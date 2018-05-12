@@ -1,3 +1,12 @@
+2018-05-11  Dan Bernstein  <mitz@apple.com>
+
+        Follow-up build fix to r231721.
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h:
+          Unify the conditions between the header and the implementation files, and have watchOS and
+          tvOS keyed off iOS.
+
 2018-05-11  Jer Noble  <jer.noble@apple.com>
 
         Add CF_NOESCAPE decorators for tvOS and watchOS
