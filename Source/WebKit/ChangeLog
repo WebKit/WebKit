@@ -1,3 +1,33 @@
+2018-05-11  Dean Jackson  <dino@apple.com>
+
+        WKWebViewContentProvider should know what MIME type it was created to handle
+        https://bugs.webkit.org/show_bug.cgi?id=185574
+        <rdar://problem/40183049>
+
+        Reviewed by Tim Horton.
+
+        Pass the MIME type of the downloaded asset into the WKWebViewContentProvider's
+        init method, so it can choose to do something based on that information. The
+        PDF and LegacyPDF views don't care because they, clearly, only handle PDF. But
+        a WKSystemPreviewView can handle multiple types.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setHasCustomContentView:loadedMIMEType:]): Send the MIME type on
+        to the WKWebViewContentProvider.
+        * UIProcess/Cocoa/WKWebViewContentProvider.h: Add a new parameter to web_initWithFrame.
+        * UIProcess/ios/WKLegacyPDFView.mm:
+        (-[WKLegacyPDFView web_initWithFrame:webView:mimeType:]):
+        (-[WKLegacyPDFView web_initWithFrame:webView:]): Deleted.
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_initWithFrame:webView:mimeType:]):
+        (-[WKPDFView web_initWithFrame:webView:]): Deleted.
+        * UIProcess/ios/WKSystemPreviewView.mm:
+        (-[WKSystemPreviewView web_initWithFrame:webView:mimeType:]):
+        (-[WKSystemPreviewView web_setContentProviderData:suggestedFilename:]): Actually use
+        the MIME type to tell QuickLook what it will be getting, rather than basing it on
+        the file extension.
+        (-[WKSystemPreviewView web_initWithFrame:webView:]): Deleted.
+
 2018-05-11  Brent Fulgham  <bfulgham@apple.com>
 
         Allow the WebContent process to read global ViewBridge preferences

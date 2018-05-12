@@ -57,12 +57,13 @@ SOFT_LINK_CLASS(QuickLook, QLItem);
     RetainPtr<NSItemProvider> _itemProvider;
     RetainPtr<NSData> _data;
     RetainPtr<NSString> _suggestedFilename;
+    RetainPtr<NSString> _mimeType;
     RetainPtr<QLItem> _item;
     RetainPtr<ASVThumbnailView> _thumbnailView;
     WKWebView *_webView;
 }
 
-- (instancetype)web_initWithFrame:(CGRect)frame webView:(WKWebView *)webView
+- (instancetype)web_initWithFrame:(CGRect)frame webView:(WKWebView *)webView mimeType:(NSString *)mimeType
 {
     if (!(self = [super initWithFrame:frame]))
         return nil;
@@ -71,6 +72,7 @@ SOFT_LINK_CLASS(QuickLook, QLItem);
     self.backgroundColor = backgroundColor;
 
     _webView = webView;
+    _mimeType = mimeType;
 
     UIScrollView *scrollView = webView.scrollView;
     [scrollView setMinimumZoomScale:1];
@@ -91,10 +93,16 @@ SOFT_LINK_CLASS(QuickLook, QLItem);
     _suggestedFilename = adoptNS([filename copy]);
     _data = adoptNS([data copy]);
 
+    NSString *contentType;
+#if USE(APPLE_INTERNAL_SDK)
+    contentType = WebKit::getUTIForMIMEType(_mimeType.get());
+#else
     NSString *extension = [[_suggestedFilename.get() pathExtension] lowercaseString];
-    RetainPtr<CFStringRef> contentType = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (__bridge CFStringRef)extension, nil));
+    RetainPtr<CFStringRef> contentTypeCF = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (__bridge CFStringRef)extension, nil));
+    contentType = (NSString *)contentTypeCF.get();
+#endif
 
-    _item = adoptNS([allocQLItemInstance() initWithDataProvider:self contentType:(NSString *)contentType.get() previewTitle:_suggestedFilename.get()]);
+    _item = adoptNS([allocQLItemInstance() initWithDataProvider:self contentType:contentType previewTitle:_suggestedFilename.get()]);
     [_item setUseLoadingTimeout:NO];
 
     _thumbnailView = adoptNS([ASVThumbnailView new]);

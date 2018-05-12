@@ -1457,7 +1457,7 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
 
         Class representationClass = [[_configuration _contentProviderRegistry] providerForMIMEType:mimeType];
         ASSERT(representationClass);
-        _customContentView = adoptNS([[representationClass alloc] web_initWithFrame:self.bounds webView:self]);
+        _customContentView = adoptNS([[representationClass alloc] web_initWithFrame:self.bounds webView:self mimeType:mimeType]);
         _customContentFixedOverlayView = adoptNS([[UIView alloc] initWithFrame:self.bounds]);
         [_customContentFixedOverlayView layer].name = @"CustomContentFixedOverlay";
         [_customContentFixedOverlayView setUserInteractionEnabled:NO];

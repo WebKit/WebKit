@@ -119,7 +119,7 @@ typedef struct {
     CGFloat _lastLayoutWidth;
 }
 
-- (instancetype)web_initWithFrame:(CGRect)frame webView:(WKWebView *)webView
+- (instancetype)web_initWithFrame:(CGRect)frame webView:(WKWebView *)webView  mimeType:(NSString *)mimeType
 {
     if (!(self = [super initWithFrame:frame webView:webView]))
         return nil;
