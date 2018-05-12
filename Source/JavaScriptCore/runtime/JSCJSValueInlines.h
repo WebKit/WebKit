@@ -37,6 +37,7 @@
 #include "JSProxy.h"
 #include "JSStringInlines.h"
 #include "MathCommon.h"
+#include <wtf/Variant.h>
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {
@@ -726,6 +727,26 @@ ALWAYS_INLINE double JSValue::toNumber(ExecState* exec) const
     if (isDouble())
         return asDouble();
     return toNumberSlowCase(exec);
+}
+
+ALWAYS_INLINE Variant<JSBigInt*, double> JSValue::toNumeric(ExecState* exec) const
+{
+    if (isInt32())
+        return asInt32();
+    if (isDouble())
+        return asDouble();
+    if (isBigInt())
+        return asBigInt(*this);
+
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSValue primValue = this->toPrimitive(exec, PreferNumber);
+    RETURN_IF_EXCEPTION(scope, 0);
+    if (primValue.isBigInt())
+        return asBigInt(primValue);
+    double value = primValue.toNumber(exec);
+    RETURN_IF_EXCEPTION(scope, 0);
+    return value;
 }
 
 inline JSObject* JSValue::toObject(ExecState* exec) const

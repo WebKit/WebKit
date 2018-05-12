@@ -23,7 +23,9 @@
 
 #include "CallFrame.h"
 #include "ExceptionHelpers.h"
+#include "JSBigInt.h"
 #include "JSCJSValue.h"
+#include <wtf/Variant.h>
 
 namespace JSC {
 
@@ -254,6 +256,29 @@ ALWAYS_INLINE JSValue jsAdd(CallFrame* callFrame, JSValue v1, JSValue v2)
 
     // All other cases are pretty uncommon
     return jsAddSlowCase(callFrame, v1, v2);
+}
+
+ALWAYS_INLINE JSValue jsMul(ExecState* state, JSValue v1, JSValue v2)
+{
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Variant<JSBigInt*, double> leftNumeric = v1.toNumeric(state);
+    RETURN_IF_EXCEPTION(scope, { });
+    Variant<JSBigInt*, double> rightNumeric = v2.toNumeric(state);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
+        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric))
+            return JSBigInt::multiply(state, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
+
+        throwTypeError(state, scope, ASCIILiteral("Invalid mix of BigInt and other type in multiplication."));
+        return { };
+    }
+
+    double leftValue =  WTF::get<double>(leftNumeric);
+    double rightValue =  WTF::get<double>(rightNumeric);
+    return jsNumber(leftValue * rightValue);
 }
 
 inline bool scribbleFreeCells()

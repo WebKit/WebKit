@@ -1,3 +1,19 @@
+2018-05-11  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement support for "*" operation
+        https://bugs.webkit.org/show_bug.cgi?id=183721
+
+        Reviewed by Yusuke Suzuki.
+
+        * bigIntTests.yaml:
+        * stress/big-int-mul-jit.js: Added.
+        * stress/big-int-mul-to-primitive-precedence.js: Added.
+        * stress/big-int-mul-to-primitive.js: Added.
+        * stress/big-int-mul-type-error.js: Added.
+        * stress/big-int-mul-wrapped-value.js: Added.
+        * stress/big-int-multiplication.js: Added.
+        * stress/big-int-multiply-memory-stress.js: Added.
+
 2018-05-11  Michael Saboff  <msaboff@apple.com>
 
         [DFG] Compiler uses incorrect output register for NumberIsInteger operation
