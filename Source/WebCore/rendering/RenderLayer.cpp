@@ -325,7 +325,6 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_last(nullptr)
     , m_staticInlinePosition(0)
     , m_staticBlockPosition(0)
-    , m_enclosingPaginationLayer(nullptr)
 {
     m_isNormalFlowOnly = shouldBeNormalFlowOnly();
     m_isSelfPaintingLayer = shouldBeSelfPaintingLayer();
@@ -1110,7 +1109,7 @@ void RenderLayer::updatePagination()
     // layers). We track an enclosingPaginationLayer instead of using a simple bit, since we want to be able to get back
     // to that layer easily.
     if (renderer().isInFlowRenderFragmentedFlow()) {
-        m_enclosingPaginationLayer = this;
+        m_enclosingPaginationLayer = makeWeakPtr(*this);
         return;
     }
 
@@ -1121,7 +1120,7 @@ void RenderLayer::updatePagination()
         if (parent()->hasTransform())
             m_enclosingPaginationLayer = nullptr;
         else
-            m_enclosingPaginationLayer = parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers);
+            m_enclosingPaginationLayer = makeWeakPtr(parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers));
         return;
     }
 
@@ -1135,7 +1134,7 @@ void RenderLayer::updatePagination()
             if (containingBlock->layer()->hasTransform())
                 m_enclosingPaginationLayer = nullptr;
             else
-                m_enclosingPaginationLayer = containingBlock->layer()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers);
+                m_enclosingPaginationLayer = makeWeakPtr(containingBlock->layer()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers));
             return;
         }
     }

@@ -845,7 +845,7 @@ static WeakPtr<ScrollableArea> scrollableAreaForEventTarget(Element* eventTarget
     if (!widget || !widget->isScrollView())
         return { };
 
-    return static_cast<ScrollableArea*>(static_cast<ScrollView*>(widget))->createWeakPtr();
+    return makeWeakPtr(static_cast<ScrollableArea&>(static_cast<ScrollView&>(*widget)));
 }
     
 static bool eventTargetIsPlatformWidget(Element* eventTarget)
@@ -904,7 +904,7 @@ static WeakPtr<ScrollableArea> scrollableAreaForContainerNode(ContainerNode& con
     if (!scrollableAreaPtr)
         return { };
     
-    return scrollableAreaPtr->createWeakPtr();
+    return makeWeakPtr(*scrollableAreaPtr);
 }
 
 static bool latchedToFrameOrBody(ContainerNode& container)
@@ -956,7 +956,7 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
                 scrollableArea = scrollableAreaForContainerNode(*scrollableContainer);
             else {
                 scrollableContainer = view->frame().document()->bodyOrFrameset();
-                scrollableArea = static_cast<ScrollableArea*>(view)->createWeakPtr();
+                scrollableArea = makeWeakPtr(static_cast<ScrollableArea&>(*view));
             }
         }
     }

@@ -65,7 +65,7 @@ public:
 
     WEBCORE_EXPORT bool handleWheelEvent(const PlatformWheelEvent&);
 
-    WeakPtr<ScrollableArea> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
+    auto& weakPtrFactory() const { return m_weakPtrFactory; }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     WEBCORE_EXPORT const Vector<LayoutUnit>* horizontalSnapOffsets() const;
@@ -338,6 +338,8 @@ protected:
 
     bool hasLayerForScrollCorner() const;
 
+    WeakPtrFactory<ScrollableArea> m_weakPtrFactory;
+
 private:
     WEBCORE_EXPORT virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const;
     void scrollPositionChanged(const ScrollPosition&);
@@ -352,8 +354,6 @@ private:
     ScrollSnapOffsetsInfo<LayoutUnit>& ensureSnapOffsetsInfo();
 
     mutable std::unique_ptr<ScrollAnimator> m_scrollAnimator;
-
-    WeakPtrFactory<ScrollableArea> m_weakPtrFactory;
 
 #if ENABLE(CSS_SCROLL_SNAP)
     std::unique_ptr<ScrollSnapOffsetsInfo<LayoutUnit>> m_snapOffsetsInfo;

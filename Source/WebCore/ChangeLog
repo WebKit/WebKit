@@ -1,3 +1,28 @@
+2018-05-12  Zalan Bujtas  <zalan@apple.com>
+
+        Use WeakPtr for m_enclosingPaginationLayer in RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=185566
+        <rdar://problem/36486052>
+
+        Reviewed by Simon Fraser.
+
+        Since RenderLayer does not own the enclosing pagination layout, it should
+        construct a weak pointer instead of holding on to a raw pointer.
+
+        Unable to create a reliably reproducible test case.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::scrollableAreaForEventTarget):
+        (WebCore::scrollableAreaForContainerNode):
+        (WebCore::EventHandler::platformPrepareForWheelEvents):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::weakPtrFactory const):
+        (WebCore::ScrollableArea::createWeakPtr): Deleted.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updatePagination):
+        * rendering/RenderLayer.h:
+
 2018-05-11  Daniel Bates  <dabates@apple.com>
 
         X-Frame-Options: SAMEORIGIN needs to check all ancestor frames

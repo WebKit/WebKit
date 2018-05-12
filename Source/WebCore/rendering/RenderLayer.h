@@ -52,6 +52,7 @@
 #include "RenderPtr.h"
 #include "ScrollableArea.h"
 #include <memory>
+#include <wtf/WeakPtr.h>
 
 namespace WTF {
 class TextStream;
@@ -324,7 +325,7 @@ public:
     {
         if (mode == ExcludeCompositedPaginatedLayers && hasCompositedLayerInEnclosingPaginationChain())
             return nullptr;
-        return m_enclosingPaginationLayer;
+        return m_enclosingPaginationLayer.get();
     }
 
     void updateTransform();
@@ -1163,7 +1164,7 @@ private:
     RenderPtr<RenderScrollbarPart> m_resizer;
 
     // Pointer to the enclosing RenderLayer that caused us to be paginated. It is 0 if we are not paginated.
-    RenderLayer* m_enclosingPaginationLayer;
+    WeakPtr<RenderLayer> m_enclosingPaginationLayer;
 
     IntRect m_blockSelectionGapsBounds;
 
