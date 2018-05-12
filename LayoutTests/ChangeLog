@@ -1,3 +1,25 @@
+2018-05-11  Daniel Bates  <dabates@apple.com>
+
+        X-Frame-Options: SAMEORIGIN needs to check all ancestor frames
+        https://bugs.webkit.org/show_bug.cgi?id=185567
+        <rdar://problem/40175008>
+
+        Reviewed by Brent Fulgham.
+
+        Add tests to ensure that "X-Frame-Options: SAMEORIGIN" checks ancestor frames.
+
+        * http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html:
+        * http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.html:
+        * http/tests/cookies/same-site/fetch-in-cross-origin-iframe.html:
+        * http/tests/resources/echo-iframe-src.php: Copied from LayoutTests/http/tests/cookies/same-site/resources/echo-iframe-src.php.
+        * http/tests/security/XFrameOptions/resources/x-frame-options-ancestors-same-origin-deny.html: Added.
+        * http/tests/security/XFrameOptions/resources/x-frame-options-frame-ancestors-same-origin-allow.cgi: Added.
+        * http/tests/security/XFrameOptions/resources/x-frame-options-frame-ancestors-same-origin-deny.cgi: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-ancestors-same-origin-allow-expected.txt: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-ancestors-same-origin-allow.html: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-ancestors-same-origin-deny-expected.txt: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-ancestors-same-origin-deny.html: Renamed from LayoutTests/http/tests/cookies/same-site/resources/echo-iframe-src.php.
+
 2018-05-11  Nan Wang  <n_wang@apple.com>
 
         AX: In role=dialog elements with aria-modal=true VoiceOver iOS/macOS can't manually focus or read dialog paragraph description text inside the modal.

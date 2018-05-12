@@ -11,7 +11,7 @@ async function runTest()
     await setCookie("implicit-strict", "4", {"SameSite": null, "Max-Age": 100, "path": "/"});
     await setCookie("strict-because-invalid-SameSite-value", "4", {"SameSite": "invalid", "Max-Age": 100, "path": "/"});
     await setCookie("lax", "4", {"SameSite": "Lax", "Max-Age": 100, "path": "/"});
-    window.location.href = "http://localhost:8000/cookies/same-site/resources/echo-iframe-src.php?src=http%3A//127.0.0.1%3A8000/cookies/same-site/resources/click-hyperlink.php%3Fhref%3Dfetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.php%26target%3D_top";
+    window.location.href = "http://localhost:8000/resources/echo-iframe-src.php?src=http%3A//127.0.0.1%3A8000/cookies/same-site/resources/click-hyperlink.php%3Fhref%3Dfetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.php%26target%3D_top";
 }
 runTest();
 </script>

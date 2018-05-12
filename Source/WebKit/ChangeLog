@@ -1,3 +1,27 @@
+2018-05-11  Daniel Bates  <dabates@apple.com>
+
+        X-Frame-Options: SAMEORIGIN needs to check all ancestor frames
+        https://bugs.webkit.org/show_bug.cgi?id=185567
+        <rdar://problem/40175008>
+
+        Reviewed by Brent Fulgham.
+
+        Change the behavior of "X-Frame-Options: SAMEORIGIN" to ensure that all ancestors frames
+        are same-origin with the document that delivered this header. This prevents an intermediary
+        malicious frame from clickjacking a child frame whose document is same-origin with the top-
+        level frame. It also makes the behavior of X-Frame-Options in WebKit more closely match
+        the behavior of X-Frame-Options in other browsers, including Chrome and Firefox.
+        
+        Currently a document delivered with "X-Frame-Options: SAMEORIGIN" must only be same-origin
+        with the top-level frame's document in order to be displayed. This prevents clickjacking by
+        a malicious page that embeds a page delivered with "X-Frame-Options: SAMEORIGIN". However,
+        it does not protect against clickjacking of the "X-Frame-Options: SAMEORIGIN" page (victim)
+        if embedded by an intermediate malicious iframe, say a "rogue ad", that was embedded in a
+        document same origin with the victim page. We should protect against such attacks.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::shouldInterruptLoadForXFrameOptions):
+
 2018-05-11  Dean Jackson  <dino@apple.com>
 
         WKWebViewContentProvider should know what MIME type it was created to handle

@@ -414,8 +414,16 @@ bool NetworkResourceLoader::shouldInterruptLoadForXFrameOptions(const String& xF
         return false;
     case XFrameOptionsDeny:
         return true;
-    case XFrameOptionsSameOrigin:
-        return !SecurityOrigin::create(url)->isSameSchemeHostPort(*m_parameters.sourceOrigin);
+    case XFrameOptionsSameOrigin: {
+        auto origin = SecurityOrigin::create(url);
+        if (!origin->isSameSchemeHostPort(*m_parameters.sourceOrigin))
+            return true;
+        for (auto& ancestorOrigin : m_parameters.frameAncestorOrigins) {
+            if (!origin->isSameSchemeHostPort(*ancestorOrigin))
+                return true;
+        }
+        return false;
+    }
     case XFrameOptionsConflict: {
         String errorMessage = "Multiple 'X-Frame-Options' headers with conflicting values ('" + xFrameOptions + "') encountered when loading '" + url.stringCenterEllipsizedToLength() + "'. Falling back to 'DENY'.";
         send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::JS, MessageLevel::Error, errorMessage, identifier() }, m_parameters.webPageID);
