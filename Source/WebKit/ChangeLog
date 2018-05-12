@@ -1,3 +1,15 @@
+2018-05-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Allow the WebContent process to read global ViewBridge preferences
+        https://bugs.webkit.org/show_bug.cgi?id=185569
+        <rdar://problem/40164339>
+
+        Reviewed by Eric Carlson.
+
+        Allow reads of the global /Library/Preferences/com.apple.ViewBridge.plist preference file.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-05-11  Megan Gardner  <megan_gardner@apple.com>
 
         Cleanup canPerformActionForWebView in relation to the webSelectionAssistant being removed

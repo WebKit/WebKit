@@ -485,6 +485,10 @@
         "pbs" ;; Needed for NSAttributedString <rdar://problem/10844321>
 ))
 
+; (Temporary) backward compatibility with non-CFPreferences readers.
+(allow file-read*
+    (literal "/Library/Preferences/com.apple.ViewBridge.plist"))
+
 ;; On-disk WebKit2 framework location, to account for debug installations outside of /System/Library/Frameworks,
 ;; and to allow issuing extensions.
 (allow-read-directory-and-issue-read-extensions (param "WEBKIT2_FRAMEWORK_DIR"))
