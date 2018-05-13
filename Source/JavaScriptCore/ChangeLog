@@ -1,3 +1,40 @@
+2018-05-12  Filip Pizlo  <fpizlo@apple.com>
+
+        CachedCall::call() should be faster
+        https://bugs.webkit.org/show_bug.cgi?id=185583
+
+        Reviewed by Yusuke Suzuki.
+        
+        CachedCall is an optimization for String.prototype.replace(r, f) where f is a function.
+        Unfortunately, because of a combination of abstraction and assertions, this code path had a
+        lot of overhead. This patch reduces this overhead by:
+        
+        - Turning off some assertions. These assertions don't look to have security value; they're
+          mostly for sanity. I turned off stack alignment checks and VM state checks having to do
+          with whether the JSLock is held. The JSLock checks are not relevant when doing a cached
+          call, considering that the caller would have already been strongly assuming that the JSLock
+          is held.
+        
+        - Making more things inlineable.
+        
+        This looks like a small (4% ish) speed-up on SunSpider/string-unpack-code.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::call):
+        * interpreter/Interpreter.cpp:
+        (JSC::checkedReturn): Deleted.
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::checkedReturn):
+        * interpreter/InterpreterInlines.h:
+        (JSC::Interpreter::execute):
+        * jit/JITCode.cpp:
+        (JSC::JITCode::execute): Deleted.
+        * jit/JITCodeInlines.h: Added.
+        (JSC::JITCode::execute):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/StringPrototype.cpp:
+
 2018-05-13  Andy VanWagoner  <andy@vanwagoner.family>
 
         [INTL] Improve spec & test262 compliance for Intl APIs

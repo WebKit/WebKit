@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JITCode.h"
 
-#include "LLIntThunks.h"
 #include "JSCInlines.h"
 #include "ProtoCallFrame.h"
 #include <wtf/PrintStream.h>
@@ -65,15 +64,6 @@ const char* JITCode::typeName(JITType jitType)
 
 void JITCode::validateReferences(const TrackedReferences&)
 {
-}
-
-JSValue JITCode::execute(VM* vm, ProtoCallFrame* protoCallFrame)
-{
-    auto scope = DECLARE_THROW_SCOPE(*vm);
-    void* entryAddress;
-    entryAddress = addressForCall(MustCheckArity).executableAddress();
-    JSValue result = JSValue::decode(vmEntryToJavaScript(entryAddress, vm, protoCallFrame));
-    return scope.exception() ? jsNull() : result;
 }
 
 DFG::CommonData* JITCode::dfgCommon()

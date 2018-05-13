@@ -712,6 +712,7 @@
 		0FF9CE741B9CD6D0004EDCA6 /* PolymorphicAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF9CE721B9CD6D0004EDCA6 /* PolymorphicAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FFA549816B8835300B3A982 /* A64DOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 652A3A231651C69700A80AFE /* A64DOpcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FFB6C391AF48DDC00DB1BF7 /* TypeofType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFB6C371AF48DDC00DB1BF7 /* TypeofType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FFB80BC20A794730006AAF6 /* JITCodeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFB80BB20A794700006AAF6 /* JITCodeInlines.h */; };
 		0FFB921A16D02EC50055A5DB /* DFGBasicBlockInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD5652216AB780A00197653 /* DFGBasicBlockInlines.h */; };
 		0FFB921C16D02F110055A5DB /* DFGOSRExitCompilationInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 65987F2C167FE84B003C2F8D /* DFGOSRExitCompilationInfo.h */; };
 		0FFB921D16D02F300055A5DB /* DFGSlowPathGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1E3A501537C2CB000F9456 /* DFGSlowPathGenerator.h */; };
@@ -2991,6 +2992,7 @@
 		0FF9CE721B9CD6D0004EDCA6 /* PolymorphicAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolymorphicAccess.h; sourceTree = "<group>"; };
 		0FFB6C361AF48DDC00DB1BF7 /* TypeofType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TypeofType.cpp; sourceTree = "<group>"; };
 		0FFB6C371AF48DDC00DB1BF7 /* TypeofType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeofType.h; sourceTree = "<group>"; };
+		0FFB80BB20A794700006AAF6 /* JITCodeInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITCodeInlines.h; sourceTree = "<group>"; };
 		0FFC920F1B94D4DF0071DD66 /* InferredTypeTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InferredTypeTable.cpp; sourceTree = "<group>"; };
 		0FFC92101B94D4DF0071DD66 /* InferredTypeTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InferredTypeTable.h; sourceTree = "<group>"; };
 		0FFC92131B94E83E0071DD66 /* DFGDesiredInferredType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredInferredType.h; path = dfg/DFGDesiredInferredType.h; sourceTree = "<group>"; };
@@ -5517,6 +5519,7 @@
 				146FE51111A710430087AE66 /* JITCall32_64.cpp */,
 				0F8F94431667635200D61971 /* JITCode.cpp */,
 				86CCEFDD0F413F8900FD7F9E /* JITCode.h */,
+				0FFB80BB20A794700006AAF6 /* JITCodeInlines.h */,
 				FE476FF3207E85D40093CA2D /* JITCodeMap.h */,
 				0F0776BD14FF002800102332 /* JITCompilationEffort.h */,
 				0FAF7EFA165BA919000C8455 /* JITDisassembler.cpp */,
@@ -9249,6 +9252,7 @@
 				E34E657520668EAA00FB81AC /* ParseHash.h in Headers */,
 				37C738D21EDB56E4003F2B0B /* ParseInt.h in Headers */,
 				BC18C44B0E16F5CD00B34460 /* Parser.h in Headers */,
+				0FFB80BC20A794730006AAF6 /* JITCodeInlines.h in Headers */,
 				93052C350FB792190048FDC3 /* ParserArena.h in Headers */,
 				0FCCAE4516D0CF7400D0C65B /* ParserError.h in Headers */,
 				A77F1825164192C700640A47 /* ParserModes.h in Headers */,

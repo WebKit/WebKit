@@ -47,6 +47,7 @@
 #include "FrameTracers.h"
 #include "FunctionCodeBlock.h"
 #include "InterpreterInlines.h"
+#include "JITCodeInlines.h"
 #include "JSArrayInlines.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
@@ -769,18 +770,6 @@ void Interpreter::notifyDebuggerOfExceptionToBeThrown(VM& vm, CallFrame* callFra
     exception->setDidNotifyInspectorOfThrow();
 }
 
-static inline JSValue checkedReturn(JSValue returnValue)
-{
-    ASSERT(returnValue);
-    return returnValue;
-}
-
-static inline JSObject* checkedReturn(JSObject* returnValue)
-{
-    ASSERT(returnValue);
-    return returnValue;
-}
-
 JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFrame, JSObject* thisObj)
 {
     JSScope* scope = thisObj->globalObject()->globalScope();
@@ -1126,31 +1115,6 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
     // Return the successful closure:
     CallFrameClosure result = { callFrame, protoCallFrame, function, functionExecutable, &vm, scope, newCodeBlock->numParameters(), argumentCountIncludingThis };
     return result;
-}
-
-JSValue Interpreter::execute(CallFrameClosure& closure) 
-{
-    VM& vm = *closure.vm;
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-
-    ASSERT(!vm.isCollectorBusyOnCurrentThread());
-    RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    if (vm.isCollectorBusyOnCurrentThread())
-        return jsNull();
-
-    StackStats::CheckPoint stackCheckPoint;
-
-    VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
-    if (UNLIKELY(vm.needTrapHandling(mask))) {
-        vm.handleTraps(closure.oldCallFrame, mask);
-        RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
-    }
-
-    // Execute the code:
-    throwScope.release();
-    JSValue result = closure.functionExecutable->generatedJITCodeForCall()->execute(&vm, closure.protoCallFrame);
-
-    return checkedReturn(result);
 }
 
 JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue thisValue, JSScope* scope)

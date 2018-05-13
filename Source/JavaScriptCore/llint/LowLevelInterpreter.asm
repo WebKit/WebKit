@@ -542,22 +542,24 @@ else
 end
 
 macro checkStackPointerAlignment(tempReg, location)
-    if ARM64 or ARM64E or C_LOOP
-        # ARM64 and ARM64E will check for us!
-        # C_LOOP does not need the alignment, and can use a little perf
-        # improvement from avoiding useless work.
-    else
-        if ARM or ARMv7 or ARMv7_TRADITIONAL
-            # ARM can't do logical ops with the sp as a source
-            move sp, tempReg
-            andp StackAlignmentMask, tempReg
+    if ASSERT_ENABLED
+        if ARM64 or ARM64E or C_LOOP
+            # ARM64 and ARM64E will check for us!
+            # C_LOOP does not need the alignment, and can use a little perf
+            # improvement from avoiding useless work.
         else
-            andp sp, StackAlignmentMask, tempReg
+            if ARM or ARMv7 or ARMv7_TRADITIONAL
+                # ARM can't do logical ops with the sp as a source
+                move sp, tempReg
+                andp StackAlignmentMask, tempReg
+            else
+                andp sp, StackAlignmentMask, tempReg
+            end
+            btpz tempReg, .stackPointerOkay
+            move location, tempReg
+            break
+        .stackPointerOkay:
         end
-        btpz tempReg, .stackPointerOkay
-        move location, tempReg
-        break
-    .stackPointerOkay:
     end
 end
 

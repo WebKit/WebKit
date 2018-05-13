@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include "CallFrameClosure.h"
+#include "Exception.h"
 #include "Instruction.h"
 #include "Interpreter.h"
 #include "JSCPtrTag.h"
@@ -69,6 +71,29 @@ inline OpcodeID Interpreter::getOpcodeID(const Instruction& instruction)
 inline OpcodeID Interpreter::getOpcodeID(const UnlinkedInstruction& instruction)
 {
     return instruction.u.opcode;
+}
+
+ALWAYS_INLINE JSValue Interpreter::execute(CallFrameClosure& closure)
+{
+    VM& vm = *closure.vm;
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(!vm.isCollectorBusyOnCurrentThread());
+    ASSERT(vm.currentThreadIsHoldingAPILock());
+
+    StackStats::CheckPoint stackCheckPoint;
+
+    VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+    if (UNLIKELY(vm.needTrapHandling(mask))) {
+        vm.handleTraps(closure.oldCallFrame, mask);
+        RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+    }
+
+    // Execute the code:
+    throwScope.release();
+    JSValue result = closure.functionExecutable->generatedJITCodeForCall()->execute(&vm, closure.protoCallFrame);
+
+    return checkedReturn(result);
 }
 
 } // namespace JSC
