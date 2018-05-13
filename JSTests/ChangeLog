@@ -1,3 +1,16 @@
+2018-05-13  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] stress/big-int-spec-to-primitive.js test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=185582
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is removing the use of ```numberOfDFGCompiles``` from 
+        stress/big-int-spec-to-primitive.js because it makes this est fail
+        sometimes.
+
+        * stress/big-int-spec-to-primitive.js:
+
 2018-05-13  Andy VanWagoner  <andy@vanwagoner.family>
 
         [INTL] Improve spec & test262 compliance for Intl APIs

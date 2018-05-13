@@ -1,4 +1,3 @@
-//@ skip if not $jitTests
 //@ runBigIntEnabled
 
 function assert(a) {
@@ -15,6 +14,4 @@ noInline(foo);
 for (let i = 0; i < 10000; i++) {
     assert(foo(10n) === "10");
 }
-
-assert(numberOfDFGCompiles(foo) === 1);
 
