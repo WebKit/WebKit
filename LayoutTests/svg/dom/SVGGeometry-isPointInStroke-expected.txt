@@ -1,0 +1,72 @@
+Test isPointInStroke() on path.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Test that fill area does not contribute to stroke area
+PASS p1.isPointInStroke() is false
+PASS p1.isPointInStroke({}) is false
+
+Test disabled stroke
+PASS p2.isPointInStroke({x: 1, y: 0}) is false
+
+Test general functionality
+PASS p3.isPointInStroke() is true
+PASS p3.isPointInStroke({}) is true
+PASS p3.isPointInStroke(new DOMPoint()) is true
+PASS p3.isPointInStroke(new DOMPoint(1, 0)) is true
+PASS p3.isPointInStroke(new DOMPoint(-200, -200)) is false
+PASS p3.isPointInStroke(new DOMPointReadOnly()) is true
+PASS p3.isPointInStroke(new DOMPointReadOnly(-200, -200)) is false
+PASS p3.isPointInStroke(svgPoint) is true
+PASS p3.isPointInStroke(svgPoint) is false
+PASS p3.isPointInStroke(new DOMPoint(NaN)) is false
+PASS p3.isPointInStroke(new DOMPoint(Infinity)) is false
+PASS p3.isPointInStroke('string') threw exception TypeError: Type error.
+
+Test CSS properties that shall not affect isPointInStroke
+PASS p11.isPointInStroke() is true
+FAIL p12.isPointInStroke() should be true. Was false.
+PASS p13.isPointInStroke() is true
+PASS p14.isPointInStroke() is true
+
+Test different stroke properties
+PASS p4.isPointInStroke() is false
+PASS p4.isPointInStroke({x: 19}) is false
+PASS p4.isPointInStroke({x: 20}) is true
+PASS p4.isPointInStroke({x: 30}) is true
+PASS p4.isPointInStroke({x: 40}) is true
+PASS p4.isPointInStroke({x: 41}) is false
+PASS p4.isPointInStroke({x: 50}) is false
+PASS p4.isPointInStroke({x: 59}) is false
+PASS p4.isPointInStroke({x: 60}) is true
+PASS p4.isPointInStroke({x: 20, y: 10}) is true
+PASS p4.isPointInStroke({x: 20, y: 11}) is false
+PASS p4.isPointInStroke({x: 20, y: -10}) is true
+PASS p4.isPointInStroke({x: 20, y: -11}) is false
+
+Test different linecaps
+PASS p5.isPointInStroke({x: 18}) is true
+PASS p6.isPointInStroke({x: 18}) is true
+PASS p7.isPointInStroke({x: 18}) is false
+
+Test different linejoins
+PASS p8.isPointInStroke({x: 20, y: 60}) is true
+PASS p8.isPointInStroke({x: 20, y: 75}) is true
+PASS p8.isPointInStroke({x: 20, y: 90}) is true
+PASS p9.isPointInStroke({x: 20, y: 60}) is true
+PASS p9.isPointInStroke({x: 20, y: 70}) is true
+PASS p9.isPointInStroke({x: 20, y: 90}) is false
+PASS p10.isPointInStroke({x: 20, y: 60}) is true
+PASS p10.isPointInStroke({x: 20, y: 70}) is false
+PASS p10.isPointInStroke({x: 20, y: 90}) is false
+
+Test non-scaling-stroke
+PASS p15.isPointInStroke({}) is true
+PASS p15.isPointInStroke({y: 1}) is true
+PASS p15.isPointInStroke({y: 11}) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

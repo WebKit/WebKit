@@ -45,6 +45,10 @@ class SVGGraphicsElement;
 class RenderSVGShape : public RenderSVGModelObject {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGShape);
 public:
+    enum PointCoordinateSpace {
+        GlobalCoordinateSpace,
+        LocalCoordinateSpace
+    };
     RenderSVGShape(SVGGraphicsElement&, RenderStyle&&);
     virtual ~RenderSVGShape();
 
@@ -57,6 +61,9 @@ public:
     virtual void fillShape(GraphicsContext&) const;
     virtual void strokeShape(GraphicsContext&) const;
     virtual bool isRenderingDisabled() const = 0;
+
+    bool isPointInFill(const FloatPoint&);
+    bool isPointInStroke(const FloatPoint&);
 
     bool hasPath() const { return m_path.get(); }
     Path& path() const
@@ -71,7 +78,7 @@ protected:
 
     virtual void updateShapeFromElement();
     virtual bool isEmpty() const;
-    virtual bool shapeDependentStrokeContains(const FloatPoint&);
+    virtual bool shapeDependentStrokeContains(const FloatPoint&, PointCoordinateSpace = GlobalCoordinateSpace);
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const;
     float strokeWidth() const;
     bool hasSmoothStroke() const;

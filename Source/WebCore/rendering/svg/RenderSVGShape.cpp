@@ -8,6 +8,7 @@
  * Copyright (C) 2009 Jeff Schiller <codedread@gmail.com>
  * Copyright (C) 2011 Renata Hodovan <reni@webkit.org>
  * Copyright (C) 2011 University of Szeged
+ * Copyright (C) 2018 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -110,12 +111,12 @@ void RenderSVGShape::strokeShape(GraphicsContext& context) const
     context.strokePath(*usePath);
 }
 
-bool RenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point)
+bool RenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
 {
     ASSERT(m_path);
     BoundingRectStrokeStyleApplier applier(*this);
 
-    if (hasNonScalingStroke()) {
+    if (hasNonScalingStroke() && pointCoordinateSpace != LocalCoordinateSpace) {
         AffineTransform nonScalingTransform = nonScalingStrokeTransform();
         Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
 
@@ -329,6 +330,19 @@ void RenderSVGShape::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPo
     LayoutRect rect = LayoutRect(repaintRectInLocalCoordinates());
     if (!rect.isEmpty())
         rects.append(rect);
+}
+
+bool RenderSVGShape::isPointInFill(const FloatPoint& point)
+{
+    return shapeDependentFillContains(point, style().svgStyle().fillRule());
+}
+
+bool RenderSVGShape::isPointInStroke(const FloatPoint& point)
+{
+    if (!style().svgStyle().hasStroke())
+        return false;
+
+    return shapeDependentStrokeContains(point, LocalCoordinateSpace);
 }
 
 bool RenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)

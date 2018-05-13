@@ -27,8 +27,8 @@
 interface SVGGeometryElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedNumber pathLength; // FIXME: Should be [SameObject].
 
-    // boolean isPointInFill(DOMPointInit point);
-    // boolean isPointInStroke(DOMPointInit point);
+    boolean isPointInFill(optional DOMPointInit point);
+    boolean isPointInStroke(optional DOMPointInit point);
     unrestricted float getTotalLength();
     [NewObject] SVGPoint getPointAtLength(float distance);
 };

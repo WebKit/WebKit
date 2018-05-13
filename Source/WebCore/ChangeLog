@@ -1,3 +1,46 @@
+2018-05-13  Dirk Schulze  <krit@webkit.org>
+
+        Implement SVGGeometryElement's isPointInFill and isPointInStroke
+        https://bugs.webkit.org/show_bug.cgi?id=185580
+
+        Reviewed by Antti Koivisto.
+
+        Implement isPointInFill and isPointInStroke methods for
+        SVGGeometryElement interface from SVG2.
+
+        https://svgwg.org/svg2-draft/types.html#InterfaceSVGGeometryElement
+
+        Tests: svg/dom/SVGGeometry-isPointInFill.xhtml
+               svg/dom/SVGGeometry-isPointInStroke.xhtml
+
+        * rendering/svg/RenderSVGEllipse.cpp:
+        (WebCore::RenderSVGEllipse::shapeDependentStrokeContains): Flag
+                to switch between local and "global" coordinate space for hit testing.
+        * rendering/svg/RenderSVGEllipse.h:
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::shapeDependentStrokeContains): Flag
+                to switch between local and "global" coordinate space for hit testing.
+        * rendering/svg/RenderSVGPath.h:
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::shapeDependentStrokeContains): Flag
+                to switch between local and "global" coordinate space for hit testing.
+        * rendering/svg/RenderSVGRect.h:
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::shapeDependentStrokeContains): Flag
+                to switch between local and "global" coordinate space for hit testing.
+        (WebCore::RenderSVGShape::isPointInFill): Take the winding rule given by
+                `fill-rule` to test if a given point is in the fill area of a path.
+        (WebCore::RenderSVGShape::isPointInStroke): Take stroke properties into
+                account to check if a point is on top of the stroke area.
+        * rendering/svg/RenderSVGShape.h:
+        * svg/SVGGeometryElement.cpp:
+        (WebCore::SVGGeometryElement::isPointInFill):
+        (WebCore::SVGGeometryElement::isPointInStroke):
+        (WebCore::SVGGeometryElement::createElementRenderer): Deleted. This is getting implemented
+                by inheriting classes. No need to create RenderSVGPath here.
+        * svg/SVGGeometryElement.h:
+        * svg/SVGGeometryElement.idl:
+
 2018-05-12  Zalan Bujtas  <zalan@apple.com>
 
         Use WeakPtr for m_enclosingPaginationLayer in RenderLayer

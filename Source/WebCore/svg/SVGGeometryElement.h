@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+struct DOMPointInit;
 class SVGPoint;
 
 class SVGGeometryElement : public SVGGraphicsElement {
@@ -38,6 +39,9 @@ public:
     
     virtual float getTotalLength() const = 0;
     virtual Ref<SVGPoint> getPointAtLength(float distance) const = 0;
+
+    bool isPointInFill(DOMPointInit&&);
+    bool isPointInStroke(DOMPointInit&&);
 
 protected:
     SVGGeometryElement(const QualifiedName&, Document&);
@@ -49,8 +53,6 @@ protected:
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGGeometryElement)
         DECLARE_ANIMATED_NUMBER(PathLength, pathLength)
     END_DECLARE_ANIMATED_PROPERTIES
-
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 };
 
 } // namespace WebCore
