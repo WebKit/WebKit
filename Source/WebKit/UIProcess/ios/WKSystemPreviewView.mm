@@ -47,8 +47,11 @@
 using namespace WebCore;
 using namespace WebKit;
 
-SOFT_LINK_FRAMEWORK(QuickLook)
+SOFT_LINK_FRAMEWORK(QuickLook);
 SOFT_LINK_CLASS(QuickLook, QLItem);
+
+SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
+SOFT_LINK_CLASS(AssetViewer, ASVThumbnailView);
 
 @interface WKSystemPreviewView () <ASVThumbnailViewDelegate>
 @end
@@ -105,7 +108,7 @@ SOFT_LINK_CLASS(QuickLook, QLItem);
     _item = adoptNS([allocQLItemInstance() initWithDataProvider:self contentType:contentType previewTitle:_suggestedFilename.get()]);
     [_item setUseLoadingTimeout:NO];
 
-    _thumbnailView = adoptNS([ASVThumbnailView new]);
+    _thumbnailView = adoptNS([allocASVThumbnailViewInstance() init]);
     [_thumbnailView setDelegate:self];
     [self setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 
