@@ -1,3 +1,9 @@
+2018-05-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, rebaseline a layout test after r231717
+
+        * fast/events/extrazoom/change-focus-during-change-event-expected.txt:
+
 2018-05-11  Daniel Bates  <dabates@apple.com>
 
         X-Frame-Options: SAMEORIGIN needs to check all ancestor frames
