@@ -991,12 +991,7 @@
 #define ENABLE_SIGNAL_BASED_VM_TRAPS 1
 #endif
 
-#define ENABLE_POISON 1
-/* Not currently supported for 32-bit or OS(WINDOWS) builds (because of missing llint support). Make sure it's disabled. */
-#if USE(JSVALUE32_64) || OS(WINDOWS)
-#undef ENABLE_POISON
 #define ENABLE_POISON 0
-#endif
 
 #if !defined(USE_POINTER_PROFILING) || USE(JSVALUE32_64) || !ENABLE(JIT)
 #undef USE_POINTER_PROFILING
