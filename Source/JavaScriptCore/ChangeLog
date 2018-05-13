@@ -1,3 +1,43 @@
+2018-05-13  Andy VanWagoner  <andy@vanwagoner.family>
+
+        [INTL] Improve spec & test262 compliance for Intl APIs
+        https://bugs.webkit.org/show_bug.cgi?id=185578
+
+        Reviewed by Yusuke Suzuki.
+
+        Use putDirectIndex over push for lists to arrays.
+        Update default options to construct with a null prototype.
+        Define constructor and toStringTag on prototypes.
+        Add proper time clipping.
+        Remove some outdated comment spec text, use url instead.
+
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator):
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::IntlCollatorConstructor::finishCreation):
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::IntlCollatorPrototype::finishCreation):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::IntlDateTimeFormatConstructor::finishCreation):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototype::finishCreation):
+        (JSC::IntlDateTimeFormatFuncFormatDateTime):
+        (JSC::IntlDateTimeFormatPrototypeFuncFormatToParts):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::IntlNumberFormatConstructor::finishCreation):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototype::finishCreation):
+        * runtime/IntlObject.cpp:
+        (JSC::lookupSupportedLocales):
+        (JSC::supportedLocales):
+        (JSC::intlObjectFuncGetCanonicalLocales):
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::resolvedOptions):
+        * runtime/IntlPluralRulesConstructor.cpp:
+        (JSC::IntlPluralRulesConstructor::finishCreation):
+
 2018-05-11  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "*" operation

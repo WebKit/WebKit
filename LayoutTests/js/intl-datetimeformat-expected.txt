@@ -62,9 +62,13 @@ PASS Intl.DateTimeFormat.supportedLocalesOf('x-12345-12345-en-US') did not throw
 PASS Intl.DateTimeFormat.supportedLocalesOf('x-en-US-12345-12345') did not throw exception.
 PASS Intl.DateTimeFormat.supportedLocalesOf('x-en-u-foo') did not throw exception.
 PASS Intl.DateTimeFormat.supportedLocalesOf('x-en-u-foo-u-bar') did not throw exception.
-PASS Intl.DateTimeFormat.prototype.constructor is Object
 PASS Object.getPrototypeOf(Intl.DateTimeFormat.prototype) is Object.prototype
+PASS Intl.DateTimeFormat.prototype.constructor is Intl.DateTimeFormat
+PASS Intl.DateTimeFormat.prototype[Symbol.toStringTag] is 'Object'
 PASS Object.prototype.toString.call(Intl.DateTimeFormat.prototype) is '[object Object]'
+PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, Symbol.toStringTag).writable is false
+PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, Symbol.toStringTag).enumerable is false
+PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, Symbol.toStringTag).configurable is true
 PASS defaultDTFormat.format is an instance of Function
 PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'format').get is an instance of Function
 PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'format').set is undefined

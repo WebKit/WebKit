@@ -99,14 +99,25 @@ for (var validLanguageTag of validLanguageTags) {
     shouldNotThrow("Intl.DateTimeFormat.supportedLocalesOf('" + validLanguageTag + "')");
 }
 
-// 12.3 Properties of the Intl.DateTimeFormat Prototype Object
+// 12.4 Properties of the Intl.DateTimeFormat Prototype Object
 
-// is a plain object
-shouldBe("Intl.DateTimeFormat.prototype.constructor", "Object");
+// The Intl.DateTimeFormat prototype object is itself an ordinary object.
 shouldBe("Object.getPrototypeOf(Intl.DateTimeFormat.prototype)", "Object.prototype");
-shouldBe("Object.prototype.toString.call(Intl.DateTimeFormat.prototype)", "'[object Object]'");
 
-// 12.3.3 Intl.DateTimeFormat.prototype.format
+// 12.4.1 Intl.DateTimeFormat.prototype.constructor
+// The initial value of Intl.DateTimeFormat.prototype.constructor is the intrinsic object %DateTimeFormat%.
+shouldBe("Intl.DateTimeFormat.prototype.constructor", "Intl.DateTimeFormat");
+
+// 12.4.2 Intl.DateTimeFormat.prototype [ @@toStringTag ]
+// The initial value of the @@toStringTag property is the string value "Object".
+shouldBe("Intl.DateTimeFormat.prototype[Symbol.toStringTag]", "'Object'");
+shouldBe("Object.prototype.toString.call(Intl.DateTimeFormat.prototype)", "'[object Object]'");
+// This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: true }.
+shouldBeFalse("Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, Symbol.toStringTag).writable");
+shouldBeFalse("Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, Symbol.toStringTag).enumerable");
+shouldBeTrue("Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, Symbol.toStringTag).configurable");
+
+// 12.4.3 Intl.DateTimeFormat.prototype.format
 
 // This named accessor property returns a function that formats a date according to the effective locale and the formatting options of this DateTimeFormat object.
 var defaultDTFormat = Intl.DateTimeFormat();
@@ -601,4 +612,3 @@ shouldBe(`JSON.stringify(
   {"type":"literal","value":" "},
   {"type":"timeZoneName","value":"Pacific Standard Time"}
 ])`)
-

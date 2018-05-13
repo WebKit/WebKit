@@ -178,32 +178,22 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // 10.1.1 InitializeCollator (collator, locales, options) (ECMA-402 2.0)
-    // 1. If collator has an [[initializedIntlObject]] internal slot with value true, throw a TypeError exception.
-    // 2. Set collator.[[initializedIntlObject]] to true.
+    // 10.1.1 InitializeCollator (collator, locales, options) (ECMA-402)
+    // https://tc39.github.io/ecma402/#sec-initializecollator
 
-    // 3. Let requestedLocales be CanonicalizeLocaleList(locales).
     auto requestedLocales = canonicalizeLocaleList(state, locales);
-    // 4. ReturnIfAbrupt(requestedLocales).
     RETURN_IF_EXCEPTION(scope, void());
 
-    // 5. If options is undefined, then
     JSObject* options;
-    if (optionsValue.isUndefined()) {
-        // a. Let options be ObjectCreate(%ObjectPrototype%).
-        options = constructEmptyObject(&state);
-    } else { // 6. Else
-        // a. Let options be ToObject(options).
+    if (optionsValue.isUndefined())
+        options = constructEmptyObject(&state, state.lexicalGlobalObject()->nullPrototypeObjectStructure());
+    else {
         options = optionsValue.toObject(&state);
-        // b. ReturnIfAbrupt(options).
         RETURN_IF_EXCEPTION(scope, void());
     }
 
-    // 7. Let u be GetOption(options, "usage", "string", «"sort", "search"», "sort").
     String usageString = intlStringOption(state, options, vm.propertyNames->usage, { "sort", "search" }, "usage must be either \"sort\" or \"search\"", "sort");
-    // 8. ReturnIfAbrupt(u).
     RETURN_IF_EXCEPTION(scope, void());
-    // 9. Set collator.[[usage]] to u.
     if (usageString == "sort")
         m_usage = Usage::Sort;
     else if (usageString == "search")
@@ -211,37 +201,14 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
     else
         ASSERT_NOT_REACHED();
 
-    // 10. If u is "sort", then
-    // a. Let localeData be the value of %Collator%.[[sortLocaleData]];
-    // 11. Else
-    // a. Let localeData be the value of %Collator%.[[searchLocaleData]].
-    Vector<String> (*localeData)(const String&, size_t);
-    if (m_usage == Usage::Sort)
-        localeData = sortLocaleData;
-    else
-        localeData = searchLocaleData;
+    auto localeData = (m_usage == Usage::Sort) ? sortLocaleData : searchLocaleData;
 
-    // 12. Let opt be a new Record.
     HashMap<String, String> opt;
 
-    // 13. Let matcher be GetOption(options, "localeMatcher", "string", «"lookup", "best fit"», "best fit").
     String matcher = intlStringOption(state, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
-    // 14. ReturnIfAbrupt(matcher).
     RETURN_IF_EXCEPTION(scope, void());
-    // 15. Set opt.[[localeMatcher]] to matcher.
     opt.add(ASCIILiteral("localeMatcher"), matcher);
 
-    // 16. For each row in Table 1, except the header row, do:
-    // a. Let key be the name given in the Key column of the row.
-    // b. Let prop be the name given in the Property column of the row.
-    // c. Let type be the string given in the Type column of the row.
-    // d. Let list be a List containing the Strings given in the Values column of the row, or undefined if no strings are given.
-    // e. Let value be GetOption(options, prop, type, list, undefined).
-    // f. ReturnIfAbrupt(value).
-    // g. If the string given in the Type column of the row is "boolean" and value is not undefined, then
-    //    i. Let value be ToString(value).
-    //    ii. ReturnIfAbrupt(value).
-    // h. Set opt.[[<key>]] to value.
     {
         String numericString;
         bool usesFallback;
@@ -257,35 +224,15 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
         opt.add(ASCIILiteral("kf"), caseFirst);
     }
 
-    // 17. Let relevantExtensionKeys be the value of %Collator%.[[relevantExtensionKeys]].
-    // 18. Let r be ResolveLocale(%Collator%.[[availableLocales]], requestedLocales, opt, relevantExtensionKeys, localeData).
     auto& availableLocales = state.jsCallee()->globalObject()->intlCollatorAvailableLocales();
     auto result = resolveLocale(state, availableLocales, requestedLocales, opt, relevantCollatorExtensionKeys, WTF_ARRAY_LENGTH(relevantCollatorExtensionKeys), localeData);
 
-    // 19. Set collator.[[locale]] to the value of r.[[locale]].
     m_locale = result.get(ASCIILiteral("locale"));
     if (m_locale.isEmpty()) {
         throwTypeError(&state, scope, ASCIILiteral("failed to initialize Collator due to invalid locale"));
         return;
     }
 
-    // 20. Let k be 0.
-    // 21. Let lenValue be Get(relevantExtensionKeys, "length").
-    // 22. Let len be ToLength(lenValue).
-    // 23. Repeat while k < len:
-    // a. Let Pk be ToString(k).
-    // b. Let key be Get(relevantExtensionKeys, Pk).
-    // c. ReturnIfAbrupt(key).
-    // d. If key is "co", then
-    //    i. Let property be "collation".
-    //    ii. Let value be the value of r.[[co]].
-    //    iii. If value is null, let value be "default".
-    // e. Else use the row of Table 1 that contains the value of key in the Key column:
-    //    i. Let property be the name given in the Property column of the row.
-    //    ii. Let value be the value of r.[[<key>]].
-    //    iii. If the name given in the Type column of the row is "boolean", let value be the result of comparing value with "true".
-    // f. Set collator.[[<property>]] to value.
-    // g. Increase k by 1.
     const String& collation = result.get(ASCIILiteral("co"));
     m_collation = collation.isNull() ? ASCIILiteral("default") : collation;
     m_numeric = result.get(ASCIILiteral("kn")) == "true";
@@ -298,18 +245,8 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
     else
         m_caseFirst = CaseFirst::False;
 
-    // 24. Let s be GetOption(options, "sensitivity", "string", «"base", "accent", "case", "variant"», undefined).
     String sensitivityString = intlStringOption(state, options, vm.propertyNames->sensitivity, { "base", "accent", "case", "variant" }, "sensitivity must be either \"base\", \"accent\", \"case\", or \"variant\"", nullptr);
-    // 25. ReturnIfAbrupt(s).
     RETURN_IF_EXCEPTION(scope, void());
-    // 26. If s is undefined, then
-    // a. If u is "sort", then let s be "variant".
-    // b. Else
-    //    i. Let dataLocale be the value of r.[[dataLocale]].
-    //    ii. Let dataLocaleData be Get(localeData, dataLocale).
-    //    iii. Let s be Get(dataLocaleData, "sensitivity").
-    //    10.2.3 "[[searchLocaleData]][locale] must have a sensitivity property with a String value equal to "base", "accent", "case", or "variant" for all locale values."
-    // 27. Set collator.[[sensitivity]] to s.
     if (sensitivityString == "base")
         m_sensitivity = Sensitivity::Base;
     else if (sensitivityString == "accent")
@@ -319,21 +256,14 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
     else
         m_sensitivity = Sensitivity::Variant;
 
-    // 28. Let ip be GetOption(options, "ignorePunctuation", "boolean", undefined, false).
     bool usesFallback;
     bool ignorePunctuation = intlBooleanOption(state, options, vm.propertyNames->ignorePunctuation, usesFallback);
     if (usesFallback)
         ignorePunctuation = false;
-    // 29. ReturnIfAbrupt(ip).
     RETURN_IF_EXCEPTION(scope, void());
-    // 30. Set collator.[[ignorePunctuation]] to ip.
     m_ignorePunctuation = ignorePunctuation;
 
-    // 31. Set collator.[[boundCompare]] to undefined.
-    // 32. Set collator.[[initializedCollator]] to true.
     m_initializedCollator = true;
-
-    // 33. Return collator.
 }
 
 void IntlCollator::createCollator(ExecState& state)

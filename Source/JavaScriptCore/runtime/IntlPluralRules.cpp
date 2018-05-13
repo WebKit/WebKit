@@ -226,9 +226,10 @@ JSObject* IntlPluralRules::resolvedOptions(ExecState& exec)
     int32_t resultLength;
 
     // Category names are always ASCII, so use char[].
+    unsigned index = 0;
     while (const char* result = uenum_next(keywords.get(), &resultLength, &status)) {
         ASSERT(U_SUCCESS(status));
-        categories->push(&exec, jsNontrivialString(&exec, String(result, resultLength)));
+        categories->putDirectIndex(&exec, index++, jsNontrivialString(&exec, String(result, resultLength)));
         RETURN_IF_EXCEPTION(scope, { });
     }
     options->putDirect(vm, Identifier::fromString(&vm, "pluralCategories"), categories);

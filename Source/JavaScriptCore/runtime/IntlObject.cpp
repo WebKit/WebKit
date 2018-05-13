@@ -799,12 +799,13 @@ static JSArray* lookupSupportedLocales(ExecState& state, const HashSet<String>& 
         return nullptr;
     }
 
+    unsigned index = 0;
     for (size_t k = 0; k < len; ++k) {
         const String& locale = requestedLocales[k];
         String noExtensionsLocale = removeUnicodeLocaleExtension(locale);
         String availableLocale = bestAvailableLocale(availableLocales, noExtensionsLocale);
         if (!availableLocale.isNull()) {
-            subset->push(&state, jsString(&state, locale));
+            subset->putDirectIndex(&state, index++, jsString(&state, locale));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
     }
@@ -854,6 +855,7 @@ JSValue supportedLocales(ExecState& state, const HashSet<String>& availableLocal
         supportedLocales->defineOwnProperty(supportedLocales, &state, keys[i], desc, true);
         RETURN_IF_EXCEPTION(scope, JSValue());
     }
+    supportedLocales->defineOwnProperty(supportedLocales, &state, vm.propertyNames->length, desc, true);
 
     return supportedLocales;
 }
@@ -902,17 +904,17 @@ EncodedJSValue JSC_HOST_CALL intlObjectFuncGetCanonicalLocales(ExecState* state)
 
     Vector<String> localeList = canonicalizeLocaleList(*state, state->argument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    auto length = localeList.size();
 
     JSGlobalObject* globalObject = state->jsCallee()->globalObject();
-    JSArray* localeArray = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous));
+    JSArray* localeArray = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), length);
     if (!localeArray) {
         throwOutOfMemoryError(state, scope);
         return encodedJSValue();
     }
 
-    auto length = localeList.size();
     for (size_t i = 0; i < length; ++i) {
-        localeArray->push(state, jsString(state, localeList[i]));
+        localeArray->putDirectIndex(state, i, jsString(state, localeList[i]));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     return JSValue::encode(localeArray);

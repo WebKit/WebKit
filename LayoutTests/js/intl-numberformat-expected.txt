@@ -130,9 +130,13 @@ PASS Intl.NumberFormat.supportedLocalesOf('x-12345-12345-en-US') did not throw e
 PASS Intl.NumberFormat.supportedLocalesOf('x-en-US-12345-12345') did not throw exception.
 PASS Intl.NumberFormat.supportedLocalesOf('x-en-u-foo') did not throw exception.
 PASS Intl.NumberFormat.supportedLocalesOf('x-en-u-foo-u-bar') did not throw exception.
-PASS Intl.NumberFormat.prototype.constructor is Object
 PASS Object.getPrototypeOf(Intl.NumberFormat.prototype) is Object.prototype
+PASS Intl.NumberFormat.prototype.constructor is Intl.NumberFormat
+PASS Intl.NumberFormat.prototype[Symbol.toStringTag] is 'Object'
 PASS Object.prototype.toString.call(Intl.NumberFormat.prototype) is '[object Object]'
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, Symbol.toStringTag).writable is false
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, Symbol.toStringTag).enumerable is false
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, Symbol.toStringTag).configurable is true
 PASS defaultNFormat.format is an instance of Function
 PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, 'format').get is an instance of Function
 PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, 'format').set is undefined

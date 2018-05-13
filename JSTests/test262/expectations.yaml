@@ -1853,54 +1853,27 @@ test/built-ins/parseInt/S15.1.2.2_A2_T10_U180E.js:
 test/harness/assert-throws-early-referenceerror.js:
   default: 'Test262Error: Function: 1 = 1; Expected a ReferenceError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Function: 1 = 1; Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/intl402/Collator/default-options-object-prototype.js:
-  default: 'Test262Error: Expected SameValue(Â«baseÂ», Â«variantÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«baseÂ», Â«variantÂ») to be true'
 test/intl402/Collator/length.js:
   default: 'Test262Error: Expected obj[length] to have configurable:true.'
   strict mode: 'Test262Error: Expected obj[length] to have configurable:true.'
 test/intl402/Collator/prototype/compare/compare-function-name.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-test/intl402/Collator/prototype/constructor/prop-desc.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name).enumerable')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name).enumerable')"
-test/intl402/Collator/prototype/constructor/value.js:
-  default: 'Test262Error: Intl.Collator.prototype.constructor is not the same as Intl.Collator Expected SameValue(Â«function Object() {'
-  strict mode: 'Test262Error: Intl.Collator.prototype.constructor is not the same as Intl.Collator Expected SameValue(Â«function Object() {'
 test/intl402/Collator/unicode-ext-seq-in-private-tag.js:
   default: 'Test262Error: Expected SameValue(Â«phonebkÂ», Â«defaultÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«phonebkÂ», Â«defaultÂ») to be true'
 test/intl402/DateTimeFormat/length.js:
   default: 'Test262Error: Expected obj[length] to have configurable:true.'
   strict mode: 'Test262Error: Expected obj[length] to have configurable:true.'
-test/intl402/DateTimeFormat/prototype/constructor/prop-desc.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name).enumerable')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name).enumerable')"
-test/intl402/DateTimeFormat/prototype/constructor/value.js:
-  default: 'Test262Error: Intl.DateTimeFormat.prototype.constructor is not the same as Intl.DateTimeFormat Expected SameValue(Â«function Object() {'
-  strict mode: 'Test262Error: Intl.DateTimeFormat.prototype.constructor is not the same as Intl.DateTimeFormat Expected SameValue(Â«function Object() {'
 test/intl402/DateTimeFormat/prototype/format/format-function-name.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
 test/intl402/DateTimeFormat/prototype/format/proleptic-gregorian-calendar.js:
   default: "Test262Error: Internal error: Didn't find Gregorian calendar Expected SameValue(Â«gregorianÂ», Â«gregoryÂ») to be true"
   strict mode: "Test262Error: Internal error: Didn't find Gregorian calendar Expected SameValue(Â«gregorianÂ», Â«gregoryÂ») to be true"
-test/intl402/DateTimeFormat/prototype/format/time-clip-near-time-boundaries.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/DateTimeFormat/prototype/format/time-clip-to-integer.js:
-  default: 'Test262Error: format(-0.9) Expected SameValue(Â«8:59:59 PMÂ», Â«9:00:00 PMÂ») to be true'
-  strict mode: 'Test262Error: format(-0.9) Expected SameValue(Â«8:59:59 PMÂ», Â«9:00:00 PMÂ») to be true'
 test/intl402/DateTimeFormat/prototype/formatToParts/length.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
-test/intl402/DateTimeFormat/prototype/formatToParts/time-clip-near-time-boundaries.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/DateTimeFormat/prototype/formatToParts/time-clip-to-integer.js:
-  default: 'Test262Error: formatToParts(-0.9) Expected SameValue(Â«8:59:59 PMÂ», Â«9:00:00 PMÂ») to be true'
-  strict mode: 'Test262Error: formatToParts(-0.9) Expected SameValue(Â«8:59:59 PMÂ», Â«9:00:00 PMÂ») to be true'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/basic.js:
   default: 'Test262Error: Invalid calendar: gregorian Expected SameValue(Â«-1Â», Â«-1Â») to be false'
   strict mode: 'Test262Error: Invalid calendar: gregorian Expected SameValue(Â«-1Â», Â«-1Â») to be false'
@@ -1985,24 +1958,12 @@ test/intl402/Locale/prototype/prop-desc.js:
 test/intl402/Locale/prototype/toStringTag.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
-test/intl402/Number/prototype/toLocaleString/default-options-object-prototype.js:
-  default: 'Test262Error: Expected SameValue(Â«1.2Â», Â«1.23Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«1.2Â», Â«1.23Â») to be true'
 test/intl402/Number/prototype/toLocaleString/returns-same-results-as-NumberFormat.js:
   default: 'Error: Failed to format a number.'
   strict mode: 'Error: Failed to format a number.'
-test/intl402/NumberFormat/default-options-object-prototype.js:
-  default: 'Test262Error: Expected SameValue(Â«1Â», Â«3Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«1Â», Â«3Â») to be true'
 test/intl402/NumberFormat/length.js:
   default: 'Test262Error: Expected obj[length] to have configurable:true.'
   strict mode: 'Test262Error: Expected obj[length] to have configurable:true.'
-test/intl402/NumberFormat/prototype/constructor/prop-desc.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name).enumerable')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name).enumerable')"
-test/intl402/NumberFormat/prototype/constructor/value.js:
-  default: 'Test262Error: Intl.NumberFormat.prototype.constructor is not the same as Intl.NumberFormat Expected SameValue(Â«function Object() {'
-  strict mode: 'Test262Error: Intl.NumberFormat.prototype.constructor is not the same as Intl.NumberFormat Expected SameValue(Â«function Object() {'
 test/intl402/NumberFormat/prototype/format/bound-to-numberformat-instance.js:
   default: 'Error: Failed to format a number.'
   strict mode: 'Error: Failed to format a number.'
@@ -2042,12 +2003,6 @@ test/intl402/PluralRules/default-options-object-prototype.js:
 test/intl402/PluralRules/length.js:
   default: 'Test262Error: Expected obj[length] to have configurable:true.'
   strict mode: 'Test262Error: Expected obj[length] to have configurable:true.'
-test/intl402/PluralRules/prototype/constructor/prop-desc.js:
-  default: 'Test262Error: Expected obj[constructor] to have configurable:true.'
-  strict mode: 'Test262Error: Expected obj[constructor] to have configurable:true.'
-test/intl402/String/prototype/localeCompare/default-options-object-prototype.js:
-  default: 'Test262Error: Expected SameValue(Â«0Â», Â«-1Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«-1Â») to be true'
 test/intl402/TypedArray/prototype/toLocaleString/calls-toLocaleString-number-elements.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«à¹.à¹à¹à¹Â») to be true (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«à¹.à¹à¹à¹Â») to be true (Testing with Float64Array.)'
@@ -2057,15 +2012,6 @@ test/intl402/fallback-locales-are-supported.js:
 test/intl402/language-tags-canonicalized.js:
   default: 'Test262Error: For de-DD got de-DD; expected de-DE. (Testing with Collator.)'
   strict mode: 'Test262Error: For de-DD got de-DD; expected de-DE. (Testing with Collator.)'
-test/intl402/supportedLocalesOf-returned-array-elements-are-frozen.js:
-  default: 'Test262Error: Property length of object returned by SupportedLocales is writable. Expected SameValue(Â«trueÂ», Â«falseÂ») to be true (Testing with Collator.)'
-  strict mode: 'Test262Error: Property length of object returned by SupportedLocales is writable. Expected SameValue(Â«trueÂ», Â«falseÂ») to be true (Testing with Collator.)'
-test/intl402/supportedLocalesOf-taint-Array-2.js:
-  default: 'Test262Error: Client code can adversely affect behavior: setter for 0. (Testing with Collator.)'
-  strict mode: 'Test262Error: Client code can adversely affect behavior: setter for 0. (Testing with Collator.)'
-test/intl402/supportedLocalesOf-taint-Array.js:
-  default: 'Test262Error: Client code can adversely affect behavior: setter for 0. (Testing with Collator.)'
-  strict mode: 'Test262Error: Client code can adversely affect behavior: setter for 0. (Testing with Collator.)'
 test/language/arguments-object/mapped/nonconfigurable-nonenumerable-nonwritable-descriptors-set-by-arguments.js:
   default: 'Test262Error: Expected obj[0] to have enumerable:false.'
 test/language/arguments-object/mapped/nonconfigurable-nonenumerable-nonwritable-descriptors-set-by-param.js:

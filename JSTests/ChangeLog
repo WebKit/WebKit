@@ -1,3 +1,15 @@
+2018-05-13  Andy VanWagoner  <andy@vanwagoner.family>
+
+        [INTL] Improve spec & test262 compliance for Intl APIs
+        https://bugs.webkit.org/show_bug.cgi?id=185578
+
+        Reviewed by Yusuke Suzuki.
+
+        Remove intl402 failures that have been fixed.
+
+        * test262/expectations.yaml:
+        * stress/regress-178385.js: toStringTag is configurable, but not writable.
+
 2018-05-11  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "*" operation

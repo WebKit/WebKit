@@ -80,7 +80,7 @@ void IntlPluralRulesConstructor::finishCreation(VM& vm, IntlPluralRulesPrototype
     Base::finishCreation(vm, ASCIILiteral("PluralRules"));
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, pluralRulesPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
-    pluralRulesPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
+    pluralRulesPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
     m_pluralRulesStructure.set(vm, this, pluralRulesStructure);
 }
 

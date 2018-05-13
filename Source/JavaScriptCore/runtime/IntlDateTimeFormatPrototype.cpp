@@ -37,6 +37,7 @@
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSObjectInlines.h"
+#include <wtf/DateMath.h>
 
 namespace JSC {
 
@@ -87,33 +88,29 @@ void IntlDateTimeFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalO
 #else
     UNUSED_PARAM(globalObject);
 #endif
+
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Object"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
 static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatFuncFormatDateTime(ExecState* state)
 {
     VM& vm = state->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    // 12.3.4 DateTime Format Functions (ECMA-402 2.0)
-    // 1. Let dtf be the this value.
-    // 2. Assert: Type(dtf) is Object and dtf has an [[initializedDateTimeFormat]] internal slot whose value is true.
+    // 12.1.7 DateTime Format Functions (ECMA-402)
+    // https://tc39.github.io/ecma402/#sec-formatdatetime
+
     IntlDateTimeFormat* format = jsCast<IntlDateTimeFormat*>(state->thisValue());
 
     JSValue date = state->argument(0);
     double value;
 
-    // 3. If date is not provided or is undefined, then
-    if (date.isUndefined()) {
-        // a. Let x be %Date_now%().
+    if (date.isUndefined())
         value = JSValue::decode(dateNow(state)).toNumber(state);
-    } else {
-        // 4. Else
-        // a. Let x be ToNumber(date).
-        value = date.toNumber(state);
-        // b. ReturnIfAbrupt(x).
+    else {
+        value = WTF::timeClip(date.toNumber(state));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    // 5. Return FormatDateTime(dtf, x).
     scope.release();
     return JSValue::encode(format->format(*state, value));
 }
@@ -175,7 +172,7 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncFormatToParts(ExecSt
     if (date.isUndefined())
         value = JSValue::decode(dateNow(state)).toNumber(state);
     else {
-        value = date.toNumber(state);
+        value = WTF::timeClip(date.toNumber(state));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 

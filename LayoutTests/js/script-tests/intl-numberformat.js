@@ -215,14 +215,25 @@ for (var validLanguageTag of validLanguageTags) {
     shouldNotThrow("Intl.NumberFormat.supportedLocalesOf('" + validLanguageTag + "')");
 }
 
-// 11.3 Properties of the Intl.NumberFormat Prototype Object
+// 11.4 Properties of the Intl.NumberFormat Prototype Object
 
-// is a plain object
-shouldBe("Intl.NumberFormat.prototype.constructor", "Object");
+// The Intl.NumberFormat prototype object is itself an ordinary object.
 shouldBe("Object.getPrototypeOf(Intl.NumberFormat.prototype)", "Object.prototype");
-shouldBe("Object.prototype.toString.call(Intl.NumberFormat.prototype)", "'[object Object]'");
 
-// 11.3.3 Intl.NumberFormat.prototype.format
+// 11.4.1 Intl.NumberFormat.prototype.constructor
+// The initial value of Intl.NumberFormat.prototype.constructor is the intrinsic object %NumberFormat%.
+shouldBe("Intl.NumberFormat.prototype.constructor", "Intl.NumberFormat");
+
+// 11.4.2 Intl.NumberFormat.prototype [ @@toStringTag ]
+// The initial value of the @@toStringTag property is the string value "Object".
+shouldBe("Intl.NumberFormat.prototype[Symbol.toStringTag]", "'Object'");
+shouldBe("Object.prototype.toString.call(Intl.NumberFormat.prototype)", "'[object Object]'");
+// This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: true }.
+shouldBeFalse("Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, Symbol.toStringTag).writable");
+shouldBeFalse("Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, Symbol.toStringTag).enumerable");
+shouldBeTrue("Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, Symbol.toStringTag).configurable");
+
+// 11.4.3 Intl.NumberFormat.prototype.format
 
 // This named accessor property returns a function that formats a number according to the effective locale and the formatting options of this NumberFormat object.
 var defaultNFormat = Intl.NumberFormat();

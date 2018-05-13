@@ -130,9 +130,13 @@ PASS Intl.Collator.supportedLocalesOf('x-12345-12345-en-US') did not throw excep
 PASS Intl.Collator.supportedLocalesOf('x-en-US-12345-12345') did not throw exception.
 PASS Intl.Collator.supportedLocalesOf('x-en-u-foo') did not throw exception.
 PASS Intl.Collator.supportedLocalesOf('x-en-u-foo-u-bar') did not throw exception.
-PASS Intl.Collator.prototype.constructor is Object
 PASS Object.getPrototypeOf(Intl.Collator.prototype) is Object.prototype
+PASS Intl.Collator.prototype.constructor is Intl.Collator
+PASS Intl.Collator.prototype[Symbol.toStringTag] is 'Object'
 PASS Object.prototype.toString.call(Intl.Collator.prototype) is '[object Object]'
+PASS Object.getOwnPropertyDescriptor(Intl.Collator.prototype, Symbol.toStringTag).writable is false
+PASS Object.getOwnPropertyDescriptor(Intl.Collator.prototype, Symbol.toStringTag).enumerable is false
+PASS Object.getOwnPropertyDescriptor(Intl.Collator.prototype, Symbol.toStringTag).configurable is true
 PASS defaultCollator.compare is an instance of Function
 PASS Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare').get is an instance of Function
 PASS Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare').set is undefined
