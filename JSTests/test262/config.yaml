@@ -3,7 +3,7 @@
 skip:
   # (uncomment to skip tests based on path)
   # paths:
-  #   - test/built-ins/Atomics
+    # - time-clip-to-integer.js # https://bugs.webkit.org/show_bug.cgi?id=185563
   features:
     - SharedArrayBuffer
     - Atomics

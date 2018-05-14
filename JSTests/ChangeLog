@@ -1,3 +1,13 @@
+2018-05-14  Leo Balter  <leonardo.balter@gmail.com>
+
+        Fix a legacy CRLF eol from Test262
+        https://bugs.webkit.org/show_bug.cgi?id=185565
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/config.yaml:
+        * test262/test/built-ins/Math/cbrt/prop-desc.js:
+
 2018-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] timeClip(-0) should produce +0
