@@ -1,3 +1,13 @@
+2018-05-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] REGRESSION(r231170) Build broken with Clang 5.0
+        https://bugs.webkit.org/show_bug.cgi?id=185198
+
+        Reviewed by Michael Catanzaro.
+
+        * Shared/RTCNetwork.h: With std::optional forward declaration gone,
+        explicitly include the WTF Optional.h header.
+
 2018-05-13  Dean Jackson  <dino@apple.com>
 
         WebKit2_Sim-7606.1.17.4 introduced dep cycle

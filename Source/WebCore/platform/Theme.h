@@ -27,6 +27,7 @@
 
 #include "ThemeTypes.h"
 #include <wtf/Forward.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 

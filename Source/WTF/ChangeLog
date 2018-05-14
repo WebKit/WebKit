@@ -1,3 +1,18 @@
+2018-05-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] REGRESSION(r231170) Build broken with Clang 5.0
+        https://bugs.webkit.org/show_bug.cgi?id=185198
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/Compiler.h:
+        * wtf/Forward.h: Delete the std::optional forward declaration that is
+        potentially incompatible with definition provided by the standard library.
+        * wtf/Hasher.h:
+        * wtf/StdLibExtras.h: In addition to the remaining C++14 configurations,
+        also use custom std::in_place_t implementation when compiling with
+        libstdc++ 6.x, which doesn't provide its own.
+
 2018-05-13  Filip Pizlo  <fpizlo@apple.com>
 
         Disable pointer poisoning

@@ -22,10 +22,6 @@
 
 #include <stddef.h>
 
-namespace std {
-template<typename T> class optional;
-}
-
 namespace WTF {
 
 class AtomicString;

@@ -74,6 +74,8 @@
 #define WTF_CPP_STD_VER 11
 #elif __cplusplus <= 201402L
 #define WTF_CPP_STD_VER 14
+#elif __cplusplus <= 201703L
+#define WTF_CPP_STD_VER 17
 #endif
 #endif
 
