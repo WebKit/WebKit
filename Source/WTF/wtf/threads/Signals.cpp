@@ -73,42 +73,24 @@ static void startMachExceptionHandlerThread()
 {
     static std::once_flag once;
     std::call_once(once, [] {
-        if (mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &exceptionPort) != KERN_SUCCESS)
-            CRASH();
+        kern_return_t kr = mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &exceptionPort);
+        RELEASE_ASSERT(kr == KERN_SUCCESS);
+        kr = mach_port_insert_right(mach_task_self(), exceptionPort, exceptionPort, MACH_MSG_TYPE_MAKE_SEND);
+        RELEASE_ASSERT(kr == KERN_SUCCESS);
 
-        if (mach_port_insert_right(mach_task_self(), exceptionPort, exceptionPort, MACH_MSG_TYPE_MAKE_SEND) != KERN_SUCCESS)
-            CRASH();
+        dispatch_source_t source = dispatch_source_create(
+            DISPATCH_SOURCE_TYPE_MACH_RECV, exceptionPort, 0, DISPATCH_TARGET_QUEUE_DEFAULT);
+        RELEASE_ASSERT(source);
 
-        // It's not clear that this needs to be the high priority queue but it should be rare and it might be
-        // handling exceptions from high priority threads. Anyway, our handlers should be very fast anyway so it's
-        // probably not the end of the world if we handle a low priority exception on a high priority queue.
-        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
-        dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, exceptionPort, 0, queue);
-        RELEASE_ASSERT_WITH_MESSAGE(source, "We need to ensure our source was created.");
-
-        // We should never cancel our handler since it's a permanent thing so we don't add a cancel handler.
         dispatch_source_set_event_handler(source, ^{
-            // the leaks tool will get mad at us if we don't pretend to watch the source.
-            UNUSED_PARAM(source);
-            union Message {
-                mach_msg_header_t header;
-                char data[maxMessageSize];
-            };
-            Message messageHeaderIn;
-            Message messageHeaderOut;
+            UNUSED_PARAM(source); // Capture a pointer to source in user space to silence the leaks tool.
 
-            kern_return_t messageResult = mach_msg(&messageHeaderIn.header, MACH_RCV_MSG, 0, maxMessageSize, exceptionPort, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL);
-            if (messageResult == KERN_SUCCESS) {
-                if (!mach_exc_server(&messageHeaderIn.header, &messageHeaderOut.header))
-                    CRASH();
-
-                messageResult = mach_msg(&messageHeaderOut.header, MACH_SEND_MSG, messageHeaderOut.header.msgh_size, 0, messageHeaderOut.header.msgh_local_port, 0, MACH_PORT_NULL);
-                RELEASE_ASSERT(messageResult == KERN_SUCCESS);
-            } else {
-                dataLogLn("Failed to receive mach message due to ", mach_error_string(messageResult));
-                RELEASE_ASSERT_NOT_REACHED();
-            }
+            kern_return_t kr = mach_msg_server_once(
+                mach_exc_server, maxMessageSize, exceptionPort, MACH_MSG_TIMEOUT_NONE);
+            RELEASE_ASSERT(kr == KERN_SUCCESS);
         });
+
+        // No need for a cancel handler because we never destroy exceptionPort.
 
         dispatch_resume(source);
     });

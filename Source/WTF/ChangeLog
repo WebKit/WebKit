@@ -1,3 +1,20 @@
+2018-05-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Simplified Mach exception handling
+        https://bugs.webkit.org/show_bug.cgi?id=185595
+
+        Reviewed by Keith Miller.
+
+        * wtf/threads/Signals.cpp:
+        (WTF::startMachExceptionHandlerThread): Use mach_msg_server_once instead
+        of duplicating its functionality. Separate error handling logic from
+        program logic to help program logic stand out. Use
+        DISPATCH_TARGET_QUEUE_* instead of explicitly fetching a queue.
+
+        Also, we don't need the high priority queue. The kernel donates a
+        priority voucher from the exception thread to the receiver thread, and
+        mach_msg_server_once takes care to forward that voucher.
+
 2018-05-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] REGRESSION(r231170) Build broken with Clang 5.0
