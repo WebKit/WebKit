@@ -1,3 +1,21 @@
+2018-05-14  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Fix style issue in MediaPlayerPrivateGStreamerBase
+        https://bugs.webkit.org/show_bug.cgi?id=185510
+
+        Reviewed by Philippe Normand.
+
+        ERROR: Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:629:  More than one command on the same line  [whitespace/newline] [4]
+        ERROR: Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:684:  More than one command on the same line  [whitespace/newline] [4]
+        ERROR: Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:807:  More than one command on the same line  [whitespace/newline] [4]
+
+        Indentation and style issue fixed only.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::volumeChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamerBase::muteChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+
 2018-05-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement height computation for non-replaced out of flow elements.
