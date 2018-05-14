@@ -32,6 +32,22 @@
 
 namespace WebKit {
 
+SimulatedInputSourceState SimulatedInputSourceState::emptyStateForSourceType(SimulatedInputSourceType type)
+{
+    SimulatedInputSourceState result { };
+    switch (type) {
+    case SimulatedInputSourceType::Null:
+    case SimulatedInputSourceType::Keyboard:
+        break;
+    case SimulatedInputSourceType::Mouse:
+    case SimulatedInputSourceType::Touch:
+        result.location = WebCore::IntPoint();
+    }
+
+    return result;
+}
+
+
 SimulatedInputKeyFrame::SimulatedInputKeyFrame(Vector<StateEntry>&& entries)
     : states(WTFMove(entries))
 {
@@ -66,12 +82,8 @@ SimulatedInputKeyFrame SimulatedInputKeyFrame::keyFrameToResetInputSources(HashS
     Vector<SimulatedInputKeyFrame::StateEntry> entries;
     entries.reserveCapacity(inputSources.size());
 
-    for (auto& inputSource : inputSources) {
-        auto emptyState = SimulatedInputSourceState::emptyState();
-        // Ensure we reset the location.
-        emptyState.location = WebCore::IntPoint();
-        entries.uncheckedAppend(std::pair<SimulatedInputSource&, SimulatedInputSourceState> { inputSource.get(), WTFMove(emptyState) });
-    }
+    for (auto& inputSource : inputSources)
+        entries.uncheckedAppend(std::pair<SimulatedInputSource&, SimulatedInputSourceState> { inputSource.get(), SimulatedInputSourceState::emptyStateForSourceType(inputSource->type) });
 
     return SimulatedInputKeyFrame(WTFMove(entries));
 }
@@ -228,11 +240,11 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
     };
 
     switch (inputSource.type) {
-    case SimulatedInputSource::Type::Null:
+    case SimulatedInputSourceType::Null:
         // The maximum duration is handled at the keyframe level by m_keyFrameTransitionDurationTimer.
         eventDispatchFinished(std::nullopt);
         break;
-    case SimulatedInputSource::Type::Mouse: {
+    case SimulatedInputSourceType::Mouse: {
         resolveLocation(a.location.value_or(WebCore::IntPoint()), b.location, b.origin.value_or(MouseMoveOrigin::Viewport), b.nodeHandle, [this, &a, &b, eventDispatchFinished = WTFMove(eventDispatchFinished)](std::optional<WebCore::IntPoint> location, std::optional<AutomationCommandError> error) mutable {
             if (error) {
                 eventDispatchFinished(error);
@@ -253,7 +265,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
         });
         break;
     }
-    case SimulatedInputSource::Type::Keyboard:
+    case SimulatedInputSourceType::Keyboard:
         // The "dispatch a key{Down,Up} action" algorithms (§17.4 Dispatching Actions).
         if ((!a.pressedCharKey && b.pressedCharKey) || (!a.pressedVirtualKey && b.pressedVirtualKey))
             m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyPress, b.pressedVirtualKey, b.pressedCharKey, WTFMove(eventDispatchFinished));
@@ -262,7 +274,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
         else
             eventDispatchFinished(std::nullopt);
         break;
-    case SimulatedInputSource::Type::Touch:
+    case SimulatedInputSourceType::Touch:
         // Not supported yet.
         ASSERT_NOT_REACHED();
         eventDispatchFinished(AUTOMATION_COMMAND_ERROR_WITH_NAME(NotImplemented));

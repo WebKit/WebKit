@@ -78,9 +78,9 @@ WebAutomationSession::WebAutomationSession()
     , m_loadTimer(RunLoop::main(), this, &WebAutomationSession::loadTimerFired)
 {
     // Set up canonical input sources to be used for 'performInteractionSequence' and 'cancelInteractionSequence'.
-    m_inputSources.add(SimulatedInputSource::create(SimulatedInputSource::Type::Mouse));
-    m_inputSources.add(SimulatedInputSource::create(SimulatedInputSource::Type::Keyboard));
-    m_inputSources.add(SimulatedInputSource::create(SimulatedInputSource::Type::Null));
+    m_inputSources.add(SimulatedInputSource::create(SimulatedInputSourceType::Mouse));
+    m_inputSources.add(SimulatedInputSource::create(SimulatedInputSourceType::Keyboard));
+    m_inputSources.add(SimulatedInputSource::create(SimulatedInputSourceType::Null));
 }
 
 WebAutomationSession::~WebAutomationSession()
@@ -1404,7 +1404,7 @@ SimulatedInputDispatcher& WebAutomationSession::inputDispatcherForPage(WebPagePr
     }).iterator->value;
 }
 
-SimulatedInputSource* WebAutomationSession::inputSourceForType(SimulatedInputSource::Type type) const
+SimulatedInputSource* WebAutomationSession::inputSourceForType(SimulatedInputSourceType type) const
 {
     // FIXME: this should use something like Vector's findMatching().
     for (auto& inputSource : m_inputSources) {
@@ -1668,17 +1668,17 @@ void WebAutomationSession::performKeyboardInteractions(const String& handle, con
 }
 
 #if USE(APPKIT) || PLATFORM(GTK)
-static SimulatedInputSource::Type simulatedInputSourceTypeFromProtocolSourceType(Inspector::Protocol::Automation::InputSourceType protocolType)
+static SimulatedInputSourceType simulatedInputSourceTypeFromProtocolSourceType(Inspector::Protocol::Automation::InputSourceType protocolType)
 {
     switch (protocolType) {
     case Inspector::Protocol::Automation::InputSourceType::Null:
-        return SimulatedInputSource::Type::Null;
+        return SimulatedInputSourceType::Null;
     case Inspector::Protocol::Automation::InputSourceType::Keyboard:
-        return SimulatedInputSource::Type::Keyboard;
+        return SimulatedInputSourceType::Keyboard;
     case Inspector::Protocol::Automation::InputSourceType::Mouse:
-        return SimulatedInputSource::Type::Mouse;
+        return SimulatedInputSourceType::Mouse;
     case Inspector::Protocol::Automation::InputSourceType::Touch:
-        return SimulatedInputSource::Type::Touch;
+        return SimulatedInputSourceType::Touch;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -1701,7 +1701,7 @@ void WebAutomationSession::performInteractionSequence(const String& handle, cons
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
     HashMap<String, Ref<SimulatedInputSource>> sourceIdToInputSourceMap;
-    HashMap<SimulatedInputSource::Type, String, WTF::IntHash<SimulatedInputSource::Type>, WTF::StrongEnumHashTraits<SimulatedInputSource::Type>> typeToSourceIdMap;
+    HashMap<SimulatedInputSourceType, String, WTF::IntHash<SimulatedInputSourceType>, WTF::StrongEnumHashTraits<SimulatedInputSourceType>> typeToSourceIdMap;
 
     // Parse and validate Automation protocol arguments. By this point, the driver has
     // already performed the steps in §17.3 Processing Actions Requests.
@@ -1725,8 +1725,8 @@ void WebAutomationSession::performInteractionSequence(const String& handle, cons
         if (!parsedInputSourceType)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An input source in the 'inputSources' parameter has an invalid 'sourceType'.");
 
-        SimulatedInputSource::Type inputSourceType = simulatedInputSourceTypeFromProtocolSourceType(*parsedInputSourceType);
-        if (inputSourceType == SimulatedInputSource::Type::Touch)
+        SimulatedInputSourceType inputSourceType = simulatedInputSourceTypeFromProtocolSourceType(*parsedInputSourceType);
+        if (inputSourceType == SimulatedInputSourceType::Touch)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Touch input sources are not yet supported.");
 
         if (typeToSourceIdMap.contains(inputSourceType))

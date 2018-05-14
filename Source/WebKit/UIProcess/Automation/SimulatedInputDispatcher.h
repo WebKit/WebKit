@@ -57,6 +57,13 @@ using MouseButton = WebMouseEvent::Button;
 using MouseInteraction = Inspector::Protocol::Automation::MouseInteraction;
 using MouseMoveOrigin = Inspector::Protocol::Automation::MouseMoveOrigin;
 
+enum class SimulatedInputSourceType {
+    Null, // Used to induce a minimum duration.
+    Keyboard,
+    Mouse,
+    Touch,
+};
+
 struct SimulatedInputSourceState {
     std::optional<CharKey> pressedCharKey;
     std::optional<VirtualKey> pressedVirtualKey;
@@ -66,32 +73,25 @@ struct SimulatedInputSourceState {
     std::optional<WebCore::IntPoint> location;
     std::optional<Seconds> duration;
 
-    static SimulatedInputSourceState emptyState() { return SimulatedInputSourceState(); }
+    static SimulatedInputSourceState emptyStateForSourceType(SimulatedInputSourceType);
 };
 
 struct SimulatedInputSource : public RefCounted<SimulatedInputSource> {
 public:
-    enum class Type {
-        Null, // Used to induce a minimum duration.
-        Keyboard,
-        Mouse,
-        Touch,
-    };
-
-    Type type;
+    SimulatedInputSourceType type;
 
     // The last state associated with this input source.
     SimulatedInputSourceState state;
 
-    static Ref<SimulatedInputSource> create(Type type)
+    static Ref<SimulatedInputSource> create(SimulatedInputSourceType type)
     {
         return adoptRef(*new SimulatedInputSource(type));
     }
 
 private:
-    SimulatedInputSource(Type type)
+    SimulatedInputSource(SimulatedInputSourceType type)
         : type(type)
-        , state(SimulatedInputSourceState::emptyState())
+        , state(SimulatedInputSourceState::emptyStateForSourceType(type))
     { }
 };
 

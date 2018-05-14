@@ -1,3 +1,41 @@
+2018-05-14  Brian Burg  <bburg@apple.com>
+
+        WebDriver: W3C test case actions/key.py::test_lone_keyup_sends_no_events is failing
+        https://bugs.webkit.org/show_bug.cgi?id=185577
+        <rdar://problem/40185478>
+
+        Reviewed by Timothy Hatcher.
+
+        This test is failing because it expects Release Actions to not emit any
+        events if nothing has changed from the initial state. Because the two code paths
+        for creating empty states don't actually produce the same empty state, a difference
+        in location was detected between the two empty states. This generates a mousemove.
+
+        To fix this, unify the code that creates an empty state. For mouse input sources, always
+        initialize the location to (0, 0) so that the mouse input source always has
+        a location that is valid to click at.
+
+        * UIProcess/Automation/SimulatedInputDispatcher.h:
+        Extract the type enum out of the class to avoid circular definitions of
+        SimulatedInputSource and SimulatedInputSourceState.
+
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputSourceState::emptyStateForSourceType):
+        Take the input source type when generating an empty state. We always want location
+        set for a mouse input source, but not set it for other input sources like keys.
+
+        (WebKit::SimulatedInputKeyFrame::keyFrameToResetInputSources):
+        (WebKit::SimulatedInputDispatcher::transitionInputSourceToState):
+        (WebKit::SimulatedInputSource::create):
+        (WebKit::SimulatedInputSource::SimulatedInputSource):
+        (WebKit::SimulatedInputSourceState::emptyState): Deleted.
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::WebAutomationSession):
+        (WebKit::WebAutomationSession::inputSourceForType const):
+        (WebKit::simulatedInputSourceTypeFromProtocolSourceType):
+        (WebKit::WebAutomationSession::performInteractionSequence):
+        * UIProcess/Automation/WebAutomationSession.h:
+
 2018-05-14  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         -Wmemset-elt-size warning in LibWebRTCSocket constructor

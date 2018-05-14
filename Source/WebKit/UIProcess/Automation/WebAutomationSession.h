@@ -188,7 +188,7 @@ public:
     // Event Simulation Support.
     bool isSimulatingUserInteraction() const;
     SimulatedInputDispatcher& inputDispatcherForPage(WebPageProxy&);
-    SimulatedInputSource* inputSourceForType(SimulatedInputSource::Type) const;
+    SimulatedInputSource* inputSourceForType(SimulatedInputSourceType) const;
 
 #if PLATFORM(MAC)
     bool wasEventSynthesizedForAutomation(NSEvent *);
