@@ -102,7 +102,7 @@ public:
     LayoutUnit paddingBefore() const override;
     LayoutUnit paddingAfter() const override;
 
-    void setOverrideLogicalContentHeightFromRowHeight(LayoutUnit);
+    void setOverrideContentLogicalHeightFromRowHeight(LayoutUnit);
 
     void scrollbarsChanged(bool horizontalScrollbarChanged, bool verticalScrollbarChanged) override;
 

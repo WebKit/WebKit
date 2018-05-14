@@ -302,23 +302,23 @@ public:
     // the border-box height/width like the regular height/width accessors on RenderBox.
     // Right now, these are different than contentHeight/contentWidth because they still
     // include the scrollbar height/width.
-    LayoutUnit overrideLogicalContentWidth() const;
-    LayoutUnit overrideLogicalContentHeight() const;
-    bool hasOverrideLogicalContentHeight() const;
-    bool hasOverrideLogicalContentWidth() const;
-    void setOverrideLogicalContentHeight(LayoutUnit);
-    void setOverrideLogicalContentWidth(LayoutUnit);
-    void clearOverrideSize();
-    void clearOverrideLogicalContentHeight();
-    void clearOverrideLogicalContentWidth();
+    LayoutUnit overrideContentLogicalWidth() const;
+    LayoutUnit overrideContentLogicalHeight() const;
+    bool hasOverrideContentLogicalHeight() const;
+    bool hasOverrideContentLogicalWidth() const;
+    void setOverrideContentLogicalHeight(LayoutUnit);
+    void setOverrideContentLogicalWidth(LayoutUnit);
+    void clearOverrideContentSize();
+    void clearOverrideContentLogicalHeight();
+    void clearOverrideContentLogicalWidth();
 
     std::optional<LayoutUnit> overrideContainingBlockContentLogicalWidth() const;
     std::optional<LayoutUnit> overrideContainingBlockContentLogicalHeight() const;
-    bool hasOverrideContainingBlockLogicalWidth() const;
-    bool hasOverrideContainingBlockLogicalHeight() const;
+    bool hasOverrideContainingBlockContentLogicalWidth() const;
+    bool hasOverrideContainingBlockContentLogicalHeight() const;
     void setOverrideContainingBlockContentLogicalWidth(std::optional<LayoutUnit>);
     void setOverrideContainingBlockContentLogicalHeight(std::optional<LayoutUnit>);
-    void clearContainingBlockOverrideSize();
+    void clearOverrideContainingBlockContentSize();
     void clearOverrideContainingBlockContentLogicalHeight();
 
     LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;

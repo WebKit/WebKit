@@ -564,11 +564,11 @@ void RenderBlockFlow::updateRubyForJustifiedText(RenderRubyRun& rubyRun, BidiRun
         totalOpportunitiesInRun += opportunitiesInRun;
     }
 
-    ASSERT(!rubyRun.hasOverrideLogicalContentWidth());
+    ASSERT(!rubyRun.hasOverrideContentLogicalWidth());
     float newBaseWidth = rubyRun.logicalWidth() + totalExpansion + marginStartForChild(rubyRun) + marginEndForChild(rubyRun);
     float newRubyRunWidth = rubyRun.logicalWidth() + totalExpansion;
     rubyBase.setInitialOffset((newRubyRunWidth - newBaseWidth) / 2);
-    rubyRun.setOverrideLogicalContentWidth(newRubyRunWidth);
+    rubyRun.setOverrideContentLogicalWidth(newRubyRunWidth);
     rubyRun.setNeedsLayout(MarkOnlyThis);
     rootBox.markDirty();
     if (RenderRubyText* rubyText = rubyRun.rubyText()) {
@@ -576,7 +576,7 @@ void RenderBlockFlow::updateRubyForJustifiedText(RenderRubyRun& rubyRun, BidiRun
             textRootBox->markDirty();
     }
     rubyRun.layoutBlock(true);
-    rubyRun.clearOverrideLogicalContentWidth();
+    rubyRun.clearOverrideContentLogicalWidth();
     r.box()->setExpansion(newRubyRunWidth - r.box()->logicalWidth());
 
     totalLogicalWidth += totalExpansion;

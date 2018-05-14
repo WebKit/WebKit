@@ -213,7 +213,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         LayoutSize previousSize = size();
         // FIXME: We should use RenderBlock::hasDefiniteLogicalHeight() but it does not work for positioned stuff.
         // FIXME: Consider caching the hasDefiniteLogicalHeight value throughout the layout.
-        bool hasDefiniteLogicalHeight = hasOverrideLogicalContentHeight() || computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), std::nullopt);
+        bool hasDefiniteLogicalHeight = hasOverrideContentLogicalHeight() || computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), std::nullopt);
 
         // We need to clear both own and containingBlock override sizes of orthogonal items to ensure we get the
         // same result when grid's intrinsic size is computed again in the updateLogicalWidth call bellow.
@@ -221,8 +221,8 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
             for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
                 if (child->isOutOfFlowPositioned() || !GridLayoutFunctions::isOrthogonalChild(*this, *child))
                     continue;
-                child->clearOverrideSize();
-                child->clearContainingBlockOverrideSize();
+                child->clearOverrideContentSize();
+                child->clearOverrideContainingBlockContentSize();
                 child->setNeedsLayout();
                 child->layoutIfNeeded();
             }
@@ -874,8 +874,8 @@ void RenderGrid::layoutGridItems()
 
         // Because the grid area cannot be styled, we don't need to adjust
         // the grid breadth to account for 'box-sizing'.
-        std::optional<LayoutUnit> oldOverrideContainingBlockContentLogicalWidth = child->hasOverrideContainingBlockLogicalWidth() ? child->overrideContainingBlockContentLogicalWidth() : LayoutUnit();
-        std::optional<LayoutUnit> oldOverrideContainingBlockContentLogicalHeight = child->hasOverrideContainingBlockLogicalHeight() ? child->overrideContainingBlockContentLogicalHeight() : LayoutUnit();
+        std::optional<LayoutUnit> oldOverrideContainingBlockContentLogicalWidth = child->hasOverrideContainingBlockContentLogicalWidth() ? child->overrideContainingBlockContentLogicalWidth() : LayoutUnit();
+        std::optional<LayoutUnit> oldOverrideContainingBlockContentLogicalHeight = child->hasOverrideContainingBlockContentLogicalHeight() ? child->overrideContainingBlockContentLogicalHeight() : LayoutUnit();
 
         LayoutUnit overrideContainingBlockContentLogicalWidth = gridAreaBreadthForChildIncludingAlignmentOffsets(*child, ForColumns);
         LayoutUnit overrideContainingBlockContentLogicalHeight = gridAreaBreadthForChildIncludingAlignmentOffsets(*child, ForRows);
@@ -1065,7 +1065,7 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
 
     // We clear height override values because we will decide now whether it's allowed or
     // not, evaluating the conditions which might have changed since the old values were set.
-    child.clearOverrideLogicalContentHeight();
+    child.clearOverrideContentLogicalHeight();
 
     GridTrackSizingDirection childBlockDirection = GridLayoutFunctions::flowAwareDirectionForChild(*this, child, ForRows);
     bool blockFlowIsColumnAxis = childBlockDirection == ForRows;
@@ -1073,7 +1073,7 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
     if (allowedToStretchChildBlockSize) {
         LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overrideContainingBlockContentSizeForChild(child, childBlockDirection).value(), child);
         LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, LayoutUnit(-1));
-        child.setOverrideLogicalContentHeight(desiredLogicalHeight - child.borderAndPaddingLogicalHeight());
+        child.setOverrideContentLogicalHeight(desiredLogicalHeight - child.borderAndPaddingLogicalHeight());
         if (desiredLogicalHeight != child.logicalHeight()) {
             // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
             child.setLogicalHeight(LayoutUnit());

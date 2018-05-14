@@ -1,3 +1,88 @@
+2018-05-14  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Renaming of overrides in LayoutBox
+        https://bugs.webkit.org/show_bug.cgi?id=185609
+
+        Reviewed by Javier Fernandez.
+
+        The names of the methods for the overrides were not consistent,
+        this patch fixes it by using the same structure in all the cases.
+
+        No new tests, no change of behavior.
+
+        * rendering/GridLayoutFunctions.cpp:
+        (WebCore::GridLayoutFunctions::hasOverrideContainingBlockContentSizeForChild):
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithmStrategy::logicalHeightForChild const):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeChildPreferredLogicalWidths const):
+        (WebCore::RenderBlock::availableLogicalHeightForPercentageComputation const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::fitBorderToLinesIfNeeded):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::updateRubyForJustifiedText):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::willBeDestroyed):
+        (WebCore::RenderBox::hasOverrideContentLogicalHeight const):
+        (WebCore::RenderBox::hasOverrideContentLogicalWidth const):
+        (WebCore::RenderBox::setOverrideContentLogicalHeight):
+        (WebCore::RenderBox::setOverrideContentLogicalWidth):
+        (WebCore::RenderBox::clearOverrideContentLogicalHeight):
+        (WebCore::RenderBox::clearOverrideContentLogicalWidth):
+        (WebCore::RenderBox::clearOverrideContentSize):
+        (WebCore::RenderBox::overrideContentLogicalWidth const):
+        (WebCore::RenderBox::overrideContentLogicalHeight const):
+        (WebCore::RenderBox::overrideContainingBlockContentLogicalWidth const):
+        (WebCore::RenderBox::overrideContainingBlockContentLogicalHeight const):
+        (WebCore::RenderBox::hasOverrideContainingBlockContentLogicalWidth const):
+        (WebCore::RenderBox::hasOverrideContainingBlockContentLogicalHeight const):
+        (WebCore::RenderBox::setOverrideContainingBlockContentLogicalWidth):
+        (WebCore::RenderBox::setOverrideContainingBlockContentLogicalHeight):
+        (WebCore::RenderBox::clearOverrideContainingBlockContentSize):
+        (WebCore::RenderBox::clearOverrideContainingBlockContentLogicalHeight):
+        (WebCore::RenderBox::containingBlockLogicalWidthForContent const):
+        (WebCore::RenderBox::containingBlockLogicalHeightForContent const):
+        (WebCore::RenderBox::perpendicularContainingBlockLogicalHeight const):
+        (WebCore::RenderBox::computeLogicalWidthInFragment const):
+        (WebCore::RenderBox::computeLogicalHeight const):
+        (WebCore::RenderBox::computePercentageLogicalHeight const):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing const):
+        (WebCore::RenderBox::availableLogicalHeightUsing const):
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned const):
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned const):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight const):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::contentWidthForChild):
+        (WebCore::contentHeightForChild):
+        (WebCore::gatherFlexChildrenInfo):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        (WebCore::RenderDeprecatedFlexibleBox::clearLineClamp):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeInnerFlexBaseSizeForChild):
+        (WebCore::RenderFlexibleBox::crossSizeForPercentageResolution):
+        (WebCore::RenderFlexibleBox::mainSizeForPercentageResolution):
+        (WebCore::RenderFlexibleBox::constructFlexItem):
+        (WebCore::RenderFlexibleBox::setOverrideMainAxisContentSizeForChild):
+        (WebCore::RenderFlexibleBox::applyStretchAlignmentToChild):
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::RenderFullScreen::unwrapRenderer):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+        (WebCore::RenderGrid::layoutGridItems):
+        (WebCore::RenderGrid::applyStretchAlignmentToChildIfNeeded):
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::adjustInlineDirectionLineBounds const):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::setOverrideContentLogicalHeightFromRowHeight):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+        (WebCore::RenderTableSection::relayoutCellIfFlexed):
+
 2018-05-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement width computation for non-replaced out of flow elements.

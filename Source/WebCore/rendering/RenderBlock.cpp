@@ -2378,11 +2378,11 @@ void RenderBlock::computeChildPreferredLogicalWidths(RenderObject& child, Layout
     if (child.isBox()) {
         auto& box = downcast<RenderBox>(child);
         if (box.isFlexItem()) {
-            if (box.hasOverrideLogicalContentHeight())
-                overrideHeight = std::optional<LayoutUnit>(box.overrideLogicalContentHeight());
-            if (box.hasOverrideLogicalContentWidth())
-                overrideWidth = std::optional<LayoutUnit>(box.overrideLogicalContentWidth());
-            box.clearOverrideSize();
+            if (box.hasOverrideContentLogicalHeight())
+                overrideHeight = std::optional<LayoutUnit>(box.overrideContentLogicalHeight());
+            if (box.hasOverrideContentLogicalWidth())
+                overrideWidth = std::optional<LayoutUnit>(box.overrideContentLogicalWidth());
+            box.clearOverrideContentSize();
         }
     }
     
@@ -2392,9 +2392,9 @@ void RenderBlock::computeChildPreferredLogicalWidths(RenderObject& child, Layout
     if (child.isBox()) {
         auto& box = downcast<RenderBox>(child);
         if (overrideHeight)
-            box.setOverrideLogicalContentHeight(overrideHeight.value());
+            box.setOverrideContentLogicalHeight(overrideHeight.value());
         if (overrideWidth)
-            box.setOverrideLogicalContentWidth(overrideWidth.value());
+            box.setOverrideContentLogicalWidth(overrideWidth.value());
     }
 
     // For non-replaced blocks if the inline size is min|max-content or a definite
@@ -3178,8 +3178,8 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
     
     if (stretchedFlexHeight)
         availableHeight = stretchedFlexHeight;
-    else if (isGridItem() && hasOverrideLogicalContentHeight())
-        availableHeight = overrideLogicalContentHeight();
+    else if (isGridItem() && hasOverrideContentLogicalHeight())
+        availableHeight = overrideContentLogicalHeight();
     else if (styleToUse.logicalHeight().isFixed()) {
         LayoutUnit contentBoxHeight = adjustContentBoxLogicalHeightForBoxSizing((LayoutUnit)styleToUse.logicalHeight().value());
         availableHeight = std::max(LayoutUnit(), constrainContentBoxLogicalHeightByMinMax(contentBoxHeight - scrollbarLogicalHeight(), std::nullopt));

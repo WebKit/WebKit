@@ -333,7 +333,7 @@ bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
             return false;
     }
     
-    if (thisBox && thisBox->isGridItem() && thisBox->hasOverrideContainingBlockLogicalHeight())
+    if (thisBox && thisBox->isGridItem() && thisBox->hasOverrideContainingBlockContentLogicalHeight())
         return false;
     
     if (logicalHeightLength.isAuto() && !isOutOfFlowPositionedWithImplicitHeight(*this))

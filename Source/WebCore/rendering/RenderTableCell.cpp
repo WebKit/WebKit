@@ -328,10 +328,10 @@ LayoutUnit RenderTableCell::paddingAfter() const
     return computedCSSPaddingAfter() + intrinsicPaddingAfter();
 }
 
-void RenderTableCell::setOverrideLogicalContentHeightFromRowHeight(LayoutUnit rowHeight)
+void RenderTableCell::setOverrideContentLogicalHeightFromRowHeight(LayoutUnit rowHeight)
 {
     clearIntrinsicPadding();
-    setOverrideLogicalContentHeight(std::max<LayoutUnit>(0, rowHeight - borderAndPaddingLogicalHeight()));
+    setOverrideContentLogicalHeight(std::max<LayoutUnit>(0, rowHeight - borderAndPaddingLogicalHeight()));
 }
 
 LayoutSize RenderTableCell::offsetFromContainer(RenderElement& container, const LayoutPoint& point, bool* offsetDependsOnPoint) const

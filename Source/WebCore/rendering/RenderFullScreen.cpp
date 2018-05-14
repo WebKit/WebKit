@@ -170,7 +170,7 @@ void RenderFullScreen::unwrapRenderer(bool& requiresRenderTreeRebuild)
             // may have set one on the child, and we don't want to leave that
             // lying around on the child.
             if (is<RenderBox>(*child))
-                downcast<RenderBox>(*child).clearOverrideSize();
+                downcast<RenderBox>(*child).clearOverrideContentSize();
             auto childToMove = builder.detach(*child->parent(), *child);
             builder.attach(*parent(), WTFMove(childToMove), this);
             parent()->setNeedsLayoutAndPrefWidthsRecalc();

@@ -86,7 +86,7 @@ GridTrackSizingDirection flowAwareDirectionForChild(const RenderGrid& grid, cons
 
 bool hasOverrideContainingBlockContentSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)
 {
-    return direction == ForColumns ? child.hasOverrideContainingBlockLogicalWidth() : child.hasOverrideContainingBlockLogicalHeight();
+    return direction == ForColumns ? child.hasOverrideContainingBlockContentLogicalWidth() : child.hasOverrideContainingBlockContentLogicalHeight();
 }
 
 std::optional<LayoutUnit> overrideContainingBlockContentSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)

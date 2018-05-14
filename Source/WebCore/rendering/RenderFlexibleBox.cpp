@@ -817,7 +817,7 @@ void RenderFlexibleBox::clearCachedMainSizeForChild(const RenderBox& child)
     
 LayoutUnit RenderFlexibleBox::computeInnerFlexBaseSizeForChild(RenderBox& child, LayoutUnit mainAxisBorderAndPadding, bool relayoutChildren)
 {
-    child.clearOverrideSize();
+    child.clearOverrideContentSize();
     
     Length flexBasis = flexBasisForChild(child);
     if (mainAxisLengthIsDefinite(child, flexBasis))
@@ -1122,10 +1122,10 @@ std::optional<LayoutUnit> RenderFlexibleBox::crossSizeForPercentageResolution(co
         return std::nullopt;
 
     // Here we implement https://drafts.csswg.org/css-flexbox/#algo-stretch
-    if (hasOrthogonalFlow(child) && child.hasOverrideLogicalContentWidth())
-        return child.overrideLogicalContentWidth();
-    if (!hasOrthogonalFlow(child) && child.hasOverrideLogicalContentHeight())
-        return child.overrideLogicalContentHeight();
+    if (hasOrthogonalFlow(child) && child.hasOverrideContentLogicalWidth())
+        return child.overrideContentLogicalWidth();
+    if (!hasOrthogonalFlow(child) && child.hasOverrideContentLogicalHeight())
+        return child.overrideContentLogicalHeight();
     
     // We don't currently implement the optimization from
     // https://drafts.csswg.org/css-flexbox/#definite-sizes case 1. While that
@@ -1154,8 +1154,8 @@ std::optional<LayoutUnit> RenderFlexibleBox::mainSizeForPercentageResolution(con
     }
     
     if (hasOrthogonalFlow(child))
-        return child.hasOverrideLogicalContentHeight() ? std::optional<LayoutUnit>(child.overrideLogicalContentHeight()) : std::nullopt;
-    return child.hasOverrideLogicalContentWidth() ? std::optional<LayoutUnit>(child.overrideLogicalContentWidth()) : std::nullopt;
+        return child.hasOverrideContentLogicalHeight() ? std::optional<LayoutUnit>(child.overrideContentLogicalHeight()) : std::nullopt;
+    return child.hasOverrideContentLogicalWidth() ? std::optional<LayoutUnit>(child.overrideContentLogicalWidth()) : std::nullopt;
 }
 
 std::optional<LayoutUnit> RenderFlexibleBox::childLogicalHeightForPercentageResolution(const RenderBox& child)
@@ -1191,7 +1191,7 @@ FlexItem RenderFlexibleBox::constructFlexItem(RenderBox& child, bool relayoutChi
     // min/max/preferred size, run layout on it now to make sure its logical
     // height and scroll bars are up to date.
     if (childHasIntrinsicMainAxisSize(child) && child.needsLayout()) {
-        child.clearOverrideSize();
+        child.clearOverrideContentSize();
         child.setChildNeedsLayout(MarkOnlyThis);
         child.layoutIfNeeded();
         cacheChildMainSize(child);
@@ -1379,9 +1379,9 @@ static LayoutUnit alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition po
 void RenderFlexibleBox::setOverrideMainAxisContentSizeForChild(RenderBox& child, LayoutUnit childPreferredSize)
 {
     if (hasOrthogonalFlow(child))
-        child.setOverrideLogicalContentHeight(childPreferredSize);
+        child.setOverrideContentLogicalHeight(childPreferredSize);
     else
-        child.setOverrideLogicalContentWidth(childPreferredSize);
+        child.setOverrideContentLogicalWidth(childPreferredSize);
 }
 
 LayoutUnit RenderFlexibleBox::staticMainAxisPositionForPositionedChild(const RenderBox& child)
@@ -1810,8 +1810,8 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox& child, LayoutUni
             // So, redo it here.
             childNeedsRelayout = true;
         }
-        if (childNeedsRelayout || !child.hasOverrideLogicalContentHeight())
-            child.setOverrideLogicalContentHeight(desiredLogicalHeight - child.borderAndPaddingLogicalHeight());
+        if (childNeedsRelayout || !child.hasOverrideContentLogicalHeight())
+            child.setOverrideContentLogicalHeight(desiredLogicalHeight - child.borderAndPaddingLogicalHeight());
         if (childNeedsRelayout) {
             child.setLogicalHeight(LayoutUnit());
             // We cache the child's intrinsic content logical height to avoid it being
@@ -1832,7 +1832,7 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox& child, LayoutUni
         childWidth = child.constrainLogicalWidthInFragmentByMinMax(childWidth, crossAxisContentExtent(), *this, nullptr);
         
         if (childWidth != child.logicalWidth()) {
-            child.setOverrideLogicalContentWidth(childWidth - child.borderAndPaddingLogicalWidth());
+            child.setOverrideContentLogicalWidth(childWidth - child.borderAndPaddingLogicalWidth());
             child.setChildNeedsLayout(MarkOnlyThis);
             child.layoutIfNeeded();
         }
