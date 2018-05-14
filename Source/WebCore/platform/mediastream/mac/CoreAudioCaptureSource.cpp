@@ -307,7 +307,9 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
     if (err)
         return err;
 
-    // For the moment we do not need to configure speaker proc as we are not providing any reference data.
+    err = configureSpeakerProc();
+    if (err)
+        return err;
 
     err = AudioUnitInitialize(m_ioUnit);
     if (err) {
