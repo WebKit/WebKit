@@ -43,6 +43,7 @@
 @end
 
 @interface NSEvent (ForTestRunner)
++ (NSEvent *)_sendEventToObservers:(NSEvent *)event;
 - (void)_postDelayed;
 @end
 
@@ -876,6 +877,7 @@ void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int
     // Our event should have the correct settings:
     if (NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]]) {
         [NSApp _setCurrentEvent:event];
+        event = [NSEvent _sendEventToObservers:event];
         [targetView scrollWheel:event];
         [NSApp _setCurrentEvent:nil];
     } else {

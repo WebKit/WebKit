@@ -1,0 +1,68 @@
+<html>
+<head>
+<script>
+
+function logResult(s) {
+    document.getElementById('result').textContent += s + "\n";
+}
+
+function backSwipe()
+{
+    var divTarget = document.getElementById('content');
+    var documentBounds = divTarget.getBoundingClientRect();
+    
+    eventSender.mouseMoveTo(documentBounds.left + 10, documentBounds.top + 10);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(100, 0, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(100, 0, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(100, 0, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(100, 0, 'ended', 'none');
+}
+
+function startTest()
+{
+    if (!window.eventSender) {
+        logResult('This test must be run in DumpRenderTree/WebKitTestRunner (no eventSender)');
+        return;
+    }
+
+    if (!window.testRunner) {
+        logResult('This test must be run in DumpRenderTree/WebKitTestRunner (no testRunner)');
+        return;
+    }
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.setNavigationGesturesEnabled(true);
+
+    window.onpopstate = function(event) {
+        logResult('PASS: mouseWheel caused navigation');
+        if (event.state.name == "page1") {
+            logResult('PASS: navigated back to ' + event.state.name);
+        } else {
+            logResult('FAILED: navigated back to ' + event.state.name);
+        }
+        testRunner.notifyDone();
+    };
+
+    var stateObj = { name: "page1" };
+    history.replaceState(stateObj, "page1", "");
+
+    var stateObj = { name: "page2" };
+    history.pushState(stateObj, "page2", "");
+
+    backSwipe();
+}
+
+window.addEventListener('load', startTest, false);
+
+</script>
+</head>
+<body id="content">
+
+<h1>This is a swipe navigation test.</h1>
+
+<pre id="result"></pre>
+
+</body>
+</html>

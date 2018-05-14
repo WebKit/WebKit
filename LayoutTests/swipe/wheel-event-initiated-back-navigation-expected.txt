@@ -1,0 +1,5 @@
+This is a swipe navigation test.
+
+PASS: mouseWheel caused navigation
+PASS: navigated back to page1
+

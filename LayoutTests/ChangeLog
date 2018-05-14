@@ -1,3 +1,16 @@
+2018-05-14  Jeremy Jones  <jeremyj@apple.com>
+
+        NSEvent event trackers don't work from WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=185383
+        rdar://problem/40025045
+
+        Reviewed by Simon Fraser.
+
+        This test initiates back navigation with wheel events.
+
+        * swipe/wheel-event-initiated-back-navigation-expected.txt: Added.
+        * swipe/wheel-event-initiated-back-navigation.html: Added.
+
 2018-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] timeClip(-0) should produce +0
