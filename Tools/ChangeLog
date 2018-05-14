@@ -1,3 +1,17 @@
+2018-05-14  Valerie R Young  <valerie@bocoup.com>
+
+        test262/Runner.pm: small bugs in CLI and error codes
+        https://bugs.webkit.org/show_bug.cgi?id=185629
+
+        Reviewed by Michael Saboff.
+
+        Fix two commandline args with use '-f', correct
+        error code of failures.
+
+        * Scripts/test262/Runner.pm:
+        (processCLI):
+        (main):
+
 2018-05-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Disable API tests that time out after pointer poisioning was disabled.

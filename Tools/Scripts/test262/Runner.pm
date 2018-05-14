@@ -130,7 +130,7 @@ sub processCLI {
         's|save' => \$saveExpectations,
         'e|expectations=s' => \$specifiedExpectationsFile,
         'x|ignore-expectations' => \$ignoreExpectations,
-        'f|failing-files' => \$failingOnly,
+        'F|failing-files' => \$failingOnly,
         'l|latest-import' => \$latestImport,
         'stats' => \$stats,
         'r|results=s' => \$specifiedResultsFile,
@@ -400,7 +400,8 @@ sub main {
     my $totalTime = $endTime - $startTime;
     print "Done in $totalTime seconds!\n";
 
-    exit $newfailcount ? 1 : 0;
+    my $totalfailures = $expect ? $newfailcount : $failcount;
+    exit ($totalfailures ? 1 : 0);
 }
 
 sub loadImportFile {
@@ -932,7 +933,7 @@ Specify a expectations file.  If not provided, script will load local JSTests/te
 
 Ignores the test262-expectations.yaml file and outputs all failures, instead of only unexpected failures.
 
-=item B<--failing-files, -f>
+=item B<--failing-files, -F>
 
 Runs all test files that failed in a given results file (specifc with --results). This option will run the rests in both strict and non-strict modes, even if the test only fails in one of the two modes.
 
