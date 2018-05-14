@@ -1,3 +1,12 @@
+2018-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] timeClip(-0) should produce +0
+        https://bugs.webkit.org/show_bug.cgi?id=185589
+
+        Reviewed by Saam Barati.
+
+        * sputnik/Implementation_Diagnostics/S15.9.1.14_D1-expected.txt:
+
 2018-05-14  Youenn Fablet  <youenn@apple.com>
 
         Enable service-worker/navigation-redirect-body.https.html and service-worker/postmessage.https.html

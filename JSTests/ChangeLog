@@ -1,3 +1,16 @@
+2018-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] timeClip(-0) should produce +0
+        https://bugs.webkit.org/show_bug.cgi?id=185589
+
+        Reviewed by Saam Barati.
+
+        Fix several test262 failures.
+
+        * stress/date-negative-zero.js: Added.
+        (shouldBe):
+        * test262/expectations.yaml:
+
 2018-05-13  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] stress/big-int-spec-to-primitive.js test is failing

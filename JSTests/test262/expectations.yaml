@@ -958,9 +958,6 @@ test/built-ins/DataView/prototype/setUint8/detached-buffer-before-outofrange-byt
 test/built-ins/DataView/prototype/setUint8/detached-buffer.js:
   default: 'Test262Error: Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: Expected a TypeError but got a RangeError'
-test/built-ins/Date/TimeClip_negative_zero.js:
-  default: 'Test262Error: TimeClip does not return negative zero Expected SameValue(Â«0Â», Â«0Â») to be true'
-  strict mode: 'Test262Error: TimeClip does not return negative zero Expected SameValue(Â«0Â», Â«0Â») to be true'
 test/built-ins/Date/UTC/return-value.js:
   default: 'Test262Error: 1970 Expected SameValue(Â«NaNÂ», Â«0Â») to be true'
   strict mode: 'Test262Error: 1970 Expected SameValue(Â«NaNÂ», Â«0Â») to be true'
@@ -973,9 +970,6 @@ test/built-ins/Date/proto-from-ctor-realm-two.js:
 test/built-ins/Date/proto-from-ctor-realm-zero.js:
   default: 'TypeError: Type error'
   strict mode: 'TypeError: Type error'
-test/built-ins/Date/prototype/getTime/this-value-valid-date.js:
-  default: 'Test262Error: -0 Expected SameValue(Â«0Â», Â«0Â») to be true'
-  strict mode: 'Test262Error: -0 Expected SameValue(Â«0Â», Â«0Â») to be true'
 test/built-ins/Error/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«ErrorÂ», Â«ErrorÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«ErrorÂ», Â«ErrorÂ») to be true'
