@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayBox.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
 #include "LayoutContext.h"
@@ -59,10 +60,10 @@ void FormattingContext::computeOutOfFlowPosition(const Box&, Display::Box&) cons
 {
 }
 
-void FormattingContext::computeWidth(const Box& layoutBox, Display::Box& displayBox) const
+void FormattingContext::computeWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     if (layoutBox.isOutOfFlowPositioned())
-        return computeOutOfFlowWidth(layoutBox, displayBox);
+        return computeOutOfFlowWidth(layoutContext, layoutBox, displayBox);
     if (layoutBox.isFloatingPositioned())
         return computeFloatingWidth(layoutBox, displayBox);
     return computeInFlowWidth(layoutBox, displayBox);
@@ -77,8 +78,13 @@ void FormattingContext::computeHeight(LayoutContext& layoutContext, const Box& l
     return computeInFlowHeight(layoutContext, layoutBox, displayBox);
 }
 
-void FormattingContext::computeOutOfFlowWidth(const Box&, Display::Box&) const
+void FormattingContext::computeOutOfFlowWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
+    if (!layoutBox.isReplaced()) {
+        computeOutOfFlowNonReplacedWidth(layoutContext, layoutBox, displayBox);
+        return;
+    }
+    ASSERT_NOT_REACHED();
 }
 
 void FormattingContext::computeFloatingWidth(const Box&, Display::Box&) const
@@ -126,7 +132,7 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext)
         auto& displayBox = layoutContext.createDisplayBox(layoutBox);
 
         computeOutOfFlowPosition(layoutBox, displayBox);
-        computeOutOfFlowWidth(layoutBox, displayBox);
+        computeOutOfFlowWidth(layoutContext, layoutBox, displayBox);
 
         ASSERT(layoutBox.establishesFormattingContext());
         auto formattingContext = layoutContext.formattingContext(layoutBox);
@@ -134,6 +140,61 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext)
 
         computeOutOfFlowHeight(layoutBox, displayBox);
     }
+}
+
+void FormattingContext::computeOutOfFlowNonReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    // 'left' + 'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width' + 'margin-right' + 'right'
+    // = width of containing block
+
+    // If all three of 'left', 'width', and 'right' are 'auto': First set any 'auto' values for 'margin-left' and 'margin-right' to 0.
+    // Then, if the 'direction' property of the element establishing the static-position containing block is 'ltr' set 'left' to the static
+    // position and apply rule number three below; otherwise, set 'right' to the static position and apply rule number one below.
+
+    // 1. 'left' and 'width' are 'auto' and 'right' is not 'auto', then the width is shrink-to-fit. Then solve for 'left'
+    // 2. 'left' and 'right' are 'auto' and 'width' is not 'auto', then if the 'direction' property of the element establishing the static-position 
+    //    containing block is 'ltr' set 'left' to the static position, otherwise set 'right' to the static position.
+    //    Then solve for 'left' (if 'direction is 'rtl') or 'right' (if 'direction' is 'ltr').
+    // 3. 'width' and 'right' are 'auto' and 'left' is not 'auto', then the width is shrink-to-fit . Then solve for 'right'
+    // 4. 'left' is 'auto', 'width' and 'right' are not 'auto', then solve for 'left'
+    // 5. 'width' is 'auto', 'left' and 'right' are not 'auto', then solve for 'width'
+    // 6. 'right' is 'auto', 'left' and 'width' are not 'auto', then solve for 'right'
+    auto& style = layoutBox.style();
+    auto left = style.logicalLeft();
+    auto right = style.logicalRight();
+    auto width = style.logicalWidth();
+
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+    LayoutUnit computedWidthValue;
+
+    if ((left.isAuto() && width.isAuto() && right.isAuto())
+        || (left.isAuto() && width.isAuto() && !right.isAuto())
+        || (!left.isAuto() && width.isAuto() && right.isAuto())) {
+        // All auto (#1), #1 and #3
+        computedWidthValue = shrinkToFitWidth(layoutContext, layoutBox);
+    } else if (!left.isAuto() && width.isAuto() && !right.isAuto()) {
+        // #5
+        auto marginLeft = style.marginLeft().isAuto() ? LayoutUnit() : valueForLength(style.marginLeft(), containingBlockWidth);
+        auto marginRight = style.marginRight().isAuto() ? LayoutUnit() : valueForLength(style.marginRight(), containingBlockWidth);
+    
+        auto paddingLeft = valueForLength(style.paddingTop(), containingBlockWidth);
+        auto paddingRight = valueForLength(style.paddingBottom(), containingBlockWidth);
+
+        auto borderLeftWidth = style.borderStartWidth();
+        auto borderRightWidth = style.borderEndWidth();
+
+        computedWidthValue = containingBlockWidth - (left.value() + marginLeft + borderLeftWidth + paddingLeft + paddingRight + borderRightWidth + marginRight + right.value());
+    } else if (!width.isAuto())
+        computedWidthValue = valueForLength(width, containingBlockWidth);
+    else
+        ASSERT_NOT_REACHED();
+
+    displayBox.setWidth(computedWidthValue);
+}
+
+LayoutUnit FormattingContext::shrinkToFitWidth(LayoutContext&, const Box&) const
+{
+    return 0;
 }
 
 }

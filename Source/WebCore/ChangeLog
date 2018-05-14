@@ -1,3 +1,21 @@
+2018-05-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement width computation for non-replaced out of flow elements.
+        https://bugs.webkit.org/show_bug.cgi?id=185598
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeWidth const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowWidth const):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowNonReplacedWidth const):
+        (WebCore::Layout::FormattingContext::shrinkToFitWidth const):
+        * layout/FormattingContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        * layout/displaytree/DisplayBox.h:
+
 2018-05-14  Zan Dobersek  <zdobersek@igalia.com>
 
         Drop the m_compositorTexture member variable in TextureMapperGC3DPlatformLayer.

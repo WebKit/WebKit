@@ -35,8 +35,9 @@
 namespace WebCore {
 
 namespace Layout {
-class LayoutContext;
 class BlockFormattingContext;
+class FormattingContext;
+class LayoutContext;
 }
 
 namespace Display {
@@ -45,6 +46,7 @@ class Box {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
     friend class Layout::LayoutContext;
+    friend class Layout::FormattingContext;
     friend class Layout::BlockFormattingContext;
 
     ~Box();

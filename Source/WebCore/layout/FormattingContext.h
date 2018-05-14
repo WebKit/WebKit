@@ -68,10 +68,10 @@ protected:
     virtual void computeInFlowPositionedPosition(const Box&, Display::Box&) const;
     virtual void computeOutOfFlowPosition(const Box&, Display::Box&) const;
 
-    virtual void computeWidth(const Box&, Display::Box&) const;
+    virtual void computeWidth(LayoutContext&, const Box&, Display::Box&) const;
     virtual void computeHeight(LayoutContext&, const Box&, Display::Box&) const;
 
-    virtual void computeOutOfFlowWidth(const Box&, Display::Box&) const;
+    virtual void computeOutOfFlowWidth(LayoutContext&, const Box&, Display::Box&) const;
     virtual void computeFloatingWidth(const Box&, Display::Box&) const;
     virtual void computeInFlowWidth(const Box&, Display::Box&) const = 0;
 
@@ -88,6 +88,9 @@ protected:
     void layoutOutOfFlowDescendants(LayoutContext&s) const;
 
 private:
+    void computeOutOfFlowNonReplacedWidth(LayoutContext&, const Box&, Display::Box&) const;
+    LayoutUnit shrinkToFitWidth(LayoutContext&, const Box&) const;
+
     WeakPtr<Box> m_root;
 };
 
