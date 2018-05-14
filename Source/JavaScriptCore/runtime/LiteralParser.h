@@ -172,10 +172,10 @@ private:
         
     private:
         String m_lexErrorMessage;
-        template <ParserMode mode> TokenType lex(LiteralParserToken<CharType>&);
+        TokenType lex(LiteralParserToken<CharType>&);
         ALWAYS_INLINE TokenType lexIdentifier(LiteralParserToken<CharType>&);
-        template <ParserMode mode, char terminator> ALWAYS_INLINE TokenType lexString(LiteralParserToken<CharType>&);
-        template <ParserMode mode, char terminator> TokenType lexStringSlow(LiteralParserToken<CharType>&, const CharType* runStart);
+        ALWAYS_INLINE TokenType lexString(LiteralParserToken<CharType>&, CharType terminator);
+        TokenType lexStringSlow(LiteralParserToken<CharType>&, const CharType* runStart, CharType terminator);
         ALWAYS_INLINE TokenType lexNumber(LiteralParserToken<CharType>&);
         LiteralParserToken<CharType> m_currentToken;
         ParserMode m_mode;

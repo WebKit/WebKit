@@ -110,6 +110,13 @@ public:
         ASSERT(m_size);
         return JSValue::decode(slotFor(m_size - 1));
     }
+
+    JSValue takeLast()
+    {
+        JSValue result = last();
+        removeLast();
+        return result;
+    }
         
     static void markLists(SlotVisitor&, ListSet&);
 

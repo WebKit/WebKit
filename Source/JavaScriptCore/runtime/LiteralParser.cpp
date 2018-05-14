@@ -172,8 +172,268 @@ ALWAYS_INLINE const Identifier LiteralParser<CharType>::makeIdentifier(const UCh
     return m_recentIdentifiers[characters[0]];
 }
 
+// 256 Latin-1 codes
+static constexpr const TokenType TokenTypesOfLatin1Characters[256] = {
+/*   0 - Null               */ TokError,
+/*   1 - Start of Heading   */ TokError,
+/*   2 - Start of Text      */ TokError,
+/*   3 - End of Text        */ TokError,
+/*   4 - End of Transm.     */ TokError,
+/*   5 - Enquiry            */ TokError,
+/*   6 - Acknowledgment     */ TokError,
+/*   7 - Bell               */ TokError,
+/*   8 - Back Space         */ TokError,
+/*   9 - Horizontal Tab     */ TokError,
+/*  10 - Line Feed          */ TokError,
+/*  11 - Vertical Tab       */ TokError,
+/*  12 - Form Feed          */ TokError,
+/*  13 - Carriage Return    */ TokError,
+/*  14 - Shift Out          */ TokError,
+/*  15 - Shift In           */ TokError,
+/*  16 - Data Line Escape   */ TokError,
+/*  17 - Device Control 1   */ TokError,
+/*  18 - Device Control 2   */ TokError,
+/*  19 - Device Control 3   */ TokError,
+/*  20 - Device Control 4   */ TokError,
+/*  21 - Negative Ack.      */ TokError,
+/*  22 - Synchronous Idle   */ TokError,
+/*  23 - End of Transmit    */ TokError,
+/*  24 - Cancel             */ TokError,
+/*  25 - End of Medium      */ TokError,
+/*  26 - Substitute         */ TokError,
+/*  27 - Escape             */ TokError,
+/*  28 - File Separator     */ TokError,
+/*  29 - Group Separator    */ TokError,
+/*  30 - Record Separator   */ TokError,
+/*  31 - Unit Separator     */ TokError,
+/*  32 - Space              */ TokError,
+/*  33 - !                  */ TokError,
+/*  34 - "                  */ TokString,
+/*  35 - #                  */ TokError,
+/*  36 - $                  */ TokIdentifier,
+/*  37 - %                  */ TokError,
+/*  38 - &                  */ TokError,
+/*  39 - '                  */ TokString,
+/*  40 - (                  */ TokLParen,
+/*  41 - )                  */ TokRParen,
+/*  42 - *                  */ TokError,
+/*  43 - +                  */ TokError,
+/*  44 - ,                  */ TokComma,
+/*  45 - -                  */ TokNumber,
+/*  46 - .                  */ TokDot,
+/*  47 - /                  */ TokError,
+/*  48 - 0                  */ TokNumber,
+/*  49 - 1                  */ TokNumber,
+/*  50 - 2                  */ TokNumber,
+/*  51 - 3                  */ TokNumber,
+/*  52 - 4                  */ TokNumber,
+/*  53 - 5                  */ TokNumber,
+/*  54 - 6                  */ TokNumber,
+/*  55 - 7                  */ TokNumber,
+/*  56 - 8                  */ TokNumber,
+/*  57 - 9                  */ TokNumber,
+/*  58 - :                  */ TokColon,
+/*  59 - ;                  */ TokSemi,
+/*  60 - <                  */ TokError,
+/*  61 - =                  */ TokAssign,
+/*  62 - >                  */ TokError,
+/*  63 - ?                  */ TokError,
+/*  64 - @                  */ TokError,
+/*  65 - A                  */ TokIdentifier,
+/*  66 - B                  */ TokIdentifier,
+/*  67 - C                  */ TokIdentifier,
+/*  68 - D                  */ TokIdentifier,
+/*  69 - E                  */ TokIdentifier,
+/*  70 - F                  */ TokIdentifier,
+/*  71 - G                  */ TokIdentifier,
+/*  72 - H                  */ TokIdentifier,
+/*  73 - I                  */ TokIdentifier,
+/*  74 - J                  */ TokIdentifier,
+/*  75 - K                  */ TokIdentifier,
+/*  76 - L                  */ TokIdentifier,
+/*  77 - M                  */ TokIdentifier,
+/*  78 - N                  */ TokIdentifier,
+/*  79 - O                  */ TokIdentifier,
+/*  80 - P                  */ TokIdentifier,
+/*  81 - Q                  */ TokIdentifier,
+/*  82 - R                  */ TokIdentifier,
+/*  83 - S                  */ TokIdentifier,
+/*  84 - T                  */ TokIdentifier,
+/*  85 - U                  */ TokIdentifier,
+/*  86 - V                  */ TokIdentifier,
+/*  87 - W                  */ TokIdentifier,
+/*  88 - X                  */ TokIdentifier,
+/*  89 - Y                  */ TokIdentifier,
+/*  90 - Z                  */ TokIdentifier,
+/*  91 - [                  */ TokLBracket,
+/*  92 - \                  */ TokError,
+/*  93 - ]                  */ TokRBracket,
+/*  94 - ^                  */ TokError,
+/*  95 - _                  */ TokIdentifier,
+/*  96 - `                  */ TokError,
+/*  97 - a                  */ TokIdentifier,
+/*  98 - b                  */ TokIdentifier,
+/*  99 - c                  */ TokIdentifier,
+/* 100 - d                  */ TokIdentifier,
+/* 101 - e                  */ TokIdentifier,
+/* 102 - f                  */ TokIdentifier,
+/* 103 - g                  */ TokIdentifier,
+/* 104 - h                  */ TokIdentifier,
+/* 105 - i                  */ TokIdentifier,
+/* 106 - j                  */ TokIdentifier,
+/* 107 - k                  */ TokIdentifier,
+/* 108 - l                  */ TokIdentifier,
+/* 109 - m                  */ TokIdentifier,
+/* 110 - n                  */ TokIdentifier,
+/* 111 - o                  */ TokIdentifier,
+/* 112 - p                  */ TokIdentifier,
+/* 113 - q                  */ TokIdentifier,
+/* 114 - r                  */ TokIdentifier,
+/* 115 - s                  */ TokIdentifier,
+/* 116 - t                  */ TokIdentifier,
+/* 117 - u                  */ TokIdentifier,
+/* 118 - v                  */ TokIdentifier,
+/* 119 - w                  */ TokIdentifier,
+/* 120 - x                  */ TokIdentifier,
+/* 121 - y                  */ TokIdentifier,
+/* 122 - z                  */ TokIdentifier,
+/* 123 - {                  */ TokLBrace,
+/* 124 - |                  */ TokError,
+/* 125 - }                  */ TokRBrace,
+/* 126 - ~                  */ TokError,
+/* 127 - Delete             */ TokError,
+/* 128 - Cc category        */ TokError,
+/* 129 - Cc category        */ TokError,
+/* 130 - Cc category        */ TokError,
+/* 131 - Cc category        */ TokError,
+/* 132 - Cc category        */ TokError,
+/* 133 - Cc category        */ TokError,
+/* 134 - Cc category        */ TokError,
+/* 135 - Cc category        */ TokError,
+/* 136 - Cc category        */ TokError,
+/* 137 - Cc category        */ TokError,
+/* 138 - Cc category        */ TokError,
+/* 139 - Cc category        */ TokError,
+/* 140 - Cc category        */ TokError,
+/* 141 - Cc category        */ TokError,
+/* 142 - Cc category        */ TokError,
+/* 143 - Cc category        */ TokError,
+/* 144 - Cc category        */ TokError,
+/* 145 - Cc category        */ TokError,
+/* 146 - Cc category        */ TokError,
+/* 147 - Cc category        */ TokError,
+/* 148 - Cc category        */ TokError,
+/* 149 - Cc category        */ TokError,
+/* 150 - Cc category        */ TokError,
+/* 151 - Cc category        */ TokError,
+/* 152 - Cc category        */ TokError,
+/* 153 - Cc category        */ TokError,
+/* 154 - Cc category        */ TokError,
+/* 155 - Cc category        */ TokError,
+/* 156 - Cc category        */ TokError,
+/* 157 - Cc category        */ TokError,
+/* 158 - Cc category        */ TokError,
+/* 159 - Cc category        */ TokError,
+/* 160 - Zs category (nbsp) */ TokError,
+/* 161 - Po category        */ TokError,
+/* 162 - Sc category        */ TokError,
+/* 163 - Sc category        */ TokError,
+/* 164 - Sc category        */ TokError,
+/* 165 - Sc category        */ TokError,
+/* 166 - So category        */ TokError,
+/* 167 - So category        */ TokError,
+/* 168 - Sk category        */ TokError,
+/* 169 - So category        */ TokError,
+/* 170 - Ll category        */ TokError,
+/* 171 - Pi category        */ TokError,
+/* 172 - Sm category        */ TokError,
+/* 173 - Cf category        */ TokError,
+/* 174 - So category        */ TokError,
+/* 175 - Sk category        */ TokError,
+/* 176 - So category        */ TokError,
+/* 177 - Sm category        */ TokError,
+/* 178 - No category        */ TokError,
+/* 179 - No category        */ TokError,
+/* 180 - Sk category        */ TokError,
+/* 181 - Ll category        */ TokError,
+/* 182 - So category        */ TokError,
+/* 183 - Po category        */ TokError,
+/* 184 - Sk category        */ TokError,
+/* 185 - No category        */ TokError,
+/* 186 - Ll category        */ TokError,
+/* 187 - Pf category        */ TokError,
+/* 188 - No category        */ TokError,
+/* 189 - No category        */ TokError,
+/* 190 - No category        */ TokError,
+/* 191 - Po category        */ TokError,
+/* 192 - Lu category        */ TokError,
+/* 193 - Lu category        */ TokError,
+/* 194 - Lu category        */ TokError,
+/* 195 - Lu category        */ TokError,
+/* 196 - Lu category        */ TokError,
+/* 197 - Lu category        */ TokError,
+/* 198 - Lu category        */ TokError,
+/* 199 - Lu category        */ TokError,
+/* 200 - Lu category        */ TokError,
+/* 201 - Lu category        */ TokError,
+/* 202 - Lu category        */ TokError,
+/* 203 - Lu category        */ TokError,
+/* 204 - Lu category        */ TokError,
+/* 205 - Lu category        */ TokError,
+/* 206 - Lu category        */ TokError,
+/* 207 - Lu category        */ TokError,
+/* 208 - Lu category        */ TokError,
+/* 209 - Lu category        */ TokError,
+/* 210 - Lu category        */ TokError,
+/* 211 - Lu category        */ TokError,
+/* 212 - Lu category        */ TokError,
+/* 213 - Lu category        */ TokError,
+/* 214 - Lu category        */ TokError,
+/* 215 - Sm category        */ TokError,
+/* 216 - Lu category        */ TokError,
+/* 217 - Lu category        */ TokError,
+/* 218 - Lu category        */ TokError,
+/* 219 - Lu category        */ TokError,
+/* 220 - Lu category        */ TokError,
+/* 221 - Lu category        */ TokError,
+/* 222 - Lu category        */ TokError,
+/* 223 - Ll category        */ TokError,
+/* 224 - Ll category        */ TokError,
+/* 225 - Ll category        */ TokError,
+/* 226 - Ll category        */ TokError,
+/* 227 - Ll category        */ TokError,
+/* 228 - Ll category        */ TokError,
+/* 229 - Ll category        */ TokError,
+/* 230 - Ll category        */ TokError,
+/* 231 - Ll category        */ TokError,
+/* 232 - Ll category        */ TokError,
+/* 233 - Ll category        */ TokError,
+/* 234 - Ll category        */ TokError,
+/* 235 - Ll category        */ TokError,
+/* 236 - Ll category        */ TokError,
+/* 237 - Ll category        */ TokError,
+/* 238 - Ll category        */ TokError,
+/* 239 - Ll category        */ TokError,
+/* 240 - Ll category        */ TokError,
+/* 241 - Ll category        */ TokError,
+/* 242 - Ll category        */ TokError,
+/* 243 - Ll category        */ TokError,
+/* 244 - Ll category        */ TokError,
+/* 245 - Ll category        */ TokError,
+/* 246 - Ll category        */ TokError,
+/* 247 - Sm category        */ TokError,
+/* 248 - Ll category        */ TokError,
+/* 249 - Ll category        */ TokError,
+/* 250 - Ll category        */ TokError,
+/* 251 - Ll category        */ TokError,
+/* 252 - Ll category        */ TokError,
+/* 253 - Ll category        */ TokError,
+/* 254 - Ll category        */ TokError,
+/* 255 - Ll category        */ TokError
+};
+
 template <typename CharType>
-template <ParserMode mode> TokenType LiteralParser<CharType>::Lexer::lex(LiteralParserToken<CharType>& token)
+ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lex(LiteralParserToken<CharType>& token)
 {
 #if !ASSERT_DISABLED
     m_currentTokenID++;
@@ -183,109 +443,76 @@ template <ParserMode mode> TokenType LiteralParser<CharType>::Lexer::lex(Literal
         ++m_ptr;
 
     ASSERT(m_ptr <= m_end);
-    if (m_ptr >= m_end) {
+    if (m_ptr == m_end) {
         token.type = TokEnd;
         token.start = token.end = m_ptr;
         return TokEnd;
     }
+    ASSERT(m_ptr < m_end);
     token.type = TokError;
     token.start = m_ptr;
-    switch (*m_ptr) {
-        case '[':
-            token.type = TokLBracket;
-            token.end = ++m_ptr;
-            return TokLBracket;
-        case ']':
-            token.type = TokRBracket;
-            token.end = ++m_ptr;
-            return TokRBracket;
-        case '(':
-            token.type = TokLParen;
-            token.end = ++m_ptr;
-            return TokLParen;
-        case ')':
-            token.type = TokRParen;
-            token.end = ++m_ptr;
-            return TokRParen;
-        case '{':
-            token.type = TokLBrace;
-            token.end = ++m_ptr;
-            return TokLBrace;
-        case '}':
-            token.type = TokRBrace;
-            token.end = ++m_ptr;
-            return TokRBrace;
-        case ',':
-            token.type = TokComma;
-            token.end = ++m_ptr;
-            return TokComma;
-        case ':':
-            token.type = TokColon;
-            token.end = ++m_ptr;
-            return TokColon;
-        case '"':
-            return lexString<mode, '"'>(token);
-        case 't':
-            if (m_end - m_ptr >= 4 && m_ptr[1] == 'r' && m_ptr[2] == 'u' && m_ptr[3] == 'e') {
-                m_ptr += 4;
-                token.type = TokTrue;
-                token.end = m_ptr;
-                return TokTrue;
-            }
-            break;
-        case 'f':
-            if (m_end - m_ptr >= 5 && m_ptr[1] == 'a' && m_ptr[2] == 'l' && m_ptr[3] == 's' && m_ptr[4] == 'e') {
-                m_ptr += 5;
-                token.type = TokFalse;
-                token.end = m_ptr;
-                return TokFalse;
-            }
-            break;
-        case 'n':
-            if (m_end - m_ptr >= 4 && m_ptr[1] == 'u' && m_ptr[2] == 'l' && m_ptr[3] == 'l') {
-                m_ptr += 4;
-                token.type = TokNull;
-                token.end = m_ptr;
-                return TokNull;
-            }
-            break;
-        case '-':
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-            return lexNumber(token);
-    }
-    if (m_ptr < m_end) {
-        if (*m_ptr == '.') {
-            token.type = TokDot;
-            token.end = ++m_ptr;
-            return TokDot;
-        }
-        if (*m_ptr == '=') {
-            token.type = TokAssign;
-            token.end = ++m_ptr;
-            return TokAssign;
-        }
-        if (*m_ptr == ';') {
-            token.type = TokSemi;
-            token.end = ++m_ptr;
-            return TokSemi;
-        }
-        if (isASCIIAlpha(*m_ptr) || *m_ptr == '_' || *m_ptr == '$')
-            return lexIdentifier(token);
-        if (*m_ptr == '\'') {
-            if (mode == StrictJSON) {
+    CharType character = *m_ptr;
+    if (LIKELY(character < 256)) {
+        TokenType tokenType = TokenTypesOfLatin1Characters[character];
+        switch (tokenType) {
+        case TokString:
+            if (character == '\'' && m_mode == StrictJSON) {
                 m_lexErrorMessage = ASCIILiteral("Single quotes (\') are not allowed in JSON");
                 return TokError;
             }
-            return lexString<mode, '\''>(token);
+            return lexString(token, character);
+
+        case TokIdentifier: {
+            switch (character) {
+            case 't':
+                if (m_end - m_ptr >= 4 && m_ptr[1] == 'r' && m_ptr[2] == 'u' && m_ptr[3] == 'e') {
+                    m_ptr += 4;
+                    token.type = TokTrue;
+                    token.end = m_ptr;
+                    return TokTrue;
+                }
+                break;
+            case 'f':
+                if (m_end - m_ptr >= 5 && m_ptr[1] == 'a' && m_ptr[2] == 'l' && m_ptr[3] == 's' && m_ptr[4] == 'e') {
+                    m_ptr += 5;
+                    token.type = TokFalse;
+                    token.end = m_ptr;
+                    return TokFalse;
+                }
+                break;
+            case 'n':
+                if (m_end - m_ptr >= 4 && m_ptr[1] == 'u' && m_ptr[2] == 'l' && m_ptr[3] == 'l') {
+                    m_ptr += 4;
+                    token.type = TokNull;
+                    token.end = m_ptr;
+                    return TokNull;
+                }
+                break;
+            }
+            return lexIdentifier(token);
+        }
+
+        case TokNumber:
+            return lexNumber(token);
+
+        case TokError:
+            break;
+
+        default:
+            ASSERT(tokenType == TokLBracket
+                || tokenType == TokRBracket
+                || tokenType == TokLBrace
+                || tokenType == TokRBrace
+                || tokenType == TokColon
+                || tokenType == TokLParen
+                || tokenType == TokRParen
+                || tokenType == TokComma
+                || tokenType == TokDot
+                || tokenType == TokAssign
+                || tokenType == TokSemi);
+            token.type = tokenType;
+            token.end = ++m_ptr;
+            return tokenType;
         }
     }
     m_lexErrorMessage = String::format("Unrecognized token '%c'", *m_ptr);
@@ -321,13 +548,7 @@ ALWAYS_INLINE TokenType LiteralParser<UChar>::Lexer::lexIdentifier(LiteralParser
 template <typename CharType>
 TokenType LiteralParser<CharType>::Lexer::next()
 {
-    TokenType result;
-    if (m_mode == NonStrictJSON)
-        result = lex<NonStrictJSON>(m_currentToken);
-    else if (m_mode == JSONP)
-        result = lex<JSONP>(m_currentToken);
-    else
-        result = lex<StrictJSON>(m_currentToken);
+    TokenType result = lex(m_currentToken);
     ASSERT(m_currentToken.type == result);
     return result;
 }
@@ -346,23 +567,34 @@ ALWAYS_INLINE void setParserTokenString<UChar>(LiteralParserToken<UChar>& token,
     token.stringToken16 = string;
 }
 
-template <ParserMode mode, typename CharType, LChar terminator> static ALWAYS_INLINE bool isSafeStringCharacter(LChar c)
+enum class SafeStringCharacterSet { Strict, NonStrict };
+
+template <SafeStringCharacterSet set>
+static ALWAYS_INLINE bool isSafeStringCharacter(LChar c, LChar terminator)
 {
-    return (c >= ' ' && c != '\\' && c != terminator) || (c == '\t' && mode != StrictJSON);
+    return (c >= ' ' && c != '\\' && c != terminator) || (c == '\t' && set != SafeStringCharacterSet::Strict);
 }
 
-template <ParserMode mode, typename CharType, UChar terminator> static ALWAYS_INLINE bool isSafeStringCharacter(UChar c)
+template <SafeStringCharacterSet set>
+static ALWAYS_INLINE bool isSafeStringCharacter(UChar c, UChar terminator)
 {
-    return (c >= ' ' && (mode == StrictJSON || c <= 0xff) && c != '\\' && c != terminator) || (c == '\t' && mode != StrictJSON);
+    return (c >= ' ' && (set == SafeStringCharacterSet::Strict || c <= 0xff) && c != '\\' && c != terminator) || (c == '\t' && set != SafeStringCharacterSet::Strict);
 }
 
 template <typename CharType>
-template <ParserMode mode, char terminator> ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lexString(LiteralParserToken<CharType>& token)
+ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lexString(LiteralParserToken<CharType>& token, CharType terminator)
 {
     ++m_ptr;
     const CharType* runStart = m_ptr;
-    while (m_ptr < m_end && isSafeStringCharacter<mode, CharType, terminator>(*m_ptr))
-        ++m_ptr;
+
+    if (m_mode == StrictJSON) {
+        while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Strict>(*m_ptr, terminator))
+            ++m_ptr;
+    } else {
+        while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::NonStrict>(*m_ptr, terminator))
+            ++m_ptr;
+    }
+
     if (LIKELY(m_ptr < m_end && *m_ptr == terminator)) {
         setParserTokenString<CharType>(token, runStart);
         token.stringLength = m_ptr - runStart;
@@ -370,23 +602,29 @@ template <ParserMode mode, char terminator> ALWAYS_INLINE TokenType LiteralParse
         token.end = ++m_ptr;
         return TokString;
     }
-    return lexStringSlow<mode, terminator>(token, runStart);
+    return lexStringSlow(token, runStart, terminator);
 }
 
 template <typename CharType>
-template <ParserMode mode, char terminator> TokenType LiteralParser<CharType>::Lexer::lexStringSlow(LiteralParserToken<CharType>& token, const CharType* runStart)
+TokenType LiteralParser<CharType>::Lexer::lexStringSlow(LiteralParserToken<CharType>& token, const CharType* runStart, CharType terminator)
 {
     m_builder.clear();
     goto slowPathBegin;
     do {
         runStart = m_ptr;
-        while (m_ptr < m_end && isSafeStringCharacter<mode, CharType, terminator>(*m_ptr))
-            ++m_ptr;
+        if (m_mode == StrictJSON) {
+            while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Strict>(*m_ptr, terminator))
+                ++m_ptr;
+        } else {
+            while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::NonStrict>(*m_ptr, terminator))
+                ++m_ptr;
+        }
+
         if (!m_builder.isEmpty())
             m_builder.append(runStart, m_ptr - runStart);
 
 slowPathBegin:
-        if ((mode != NonStrictJSON) && m_ptr < m_end && *m_ptr == '\\') {
+        if ((m_mode != NonStrictJSON) && m_ptr < m_end && *m_ptr == '\\') {
             if (m_builder.isEmpty() && runStart < m_ptr)
                 m_builder.append(runStart, m_ptr - runStart);
             ++m_ptr;
@@ -444,7 +682,7 @@ slowPathBegin:
                     break;
 
                 default:
-                    if (*m_ptr == '\'' && mode != StrictJSON) {
+                    if (*m_ptr == '\'' && m_mode != StrictJSON) {
                         m_builder.append('\'');
                         m_ptr++;
                         break;
@@ -453,7 +691,7 @@ slowPathBegin:
                     return TokError;
             }
         }
-    } while ((mode != NonStrictJSON) && m_ptr != runStart && (m_ptr < m_end) && *m_ptr != terminator);
+    } while ((m_mode != NonStrictJSON) && m_ptr != runStart && (m_ptr < m_end) && *m_ptr != terminator);
 
     if (m_ptr >= m_end || *m_ptr != terminator) {
         m_lexErrorMessage = ASCIILiteral("Unterminated string");
@@ -605,8 +843,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                         return JSValue();
                     }
                     m_lexer.next();
-                    lastValue = objectStack.last();
-                    objectStack.removeLast();
+                    lastValue = objectStack.takeLast();
                     break;
                 }
 
@@ -627,8 +864,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                 }
                 
                 m_lexer.next();
-                lastValue = objectStack.last();
-                objectStack.removeLast();
+                lastValue = objectStack.takeLast();
                 break;
             }
             startParseObject:
@@ -659,8 +895,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                     return JSValue();
                 }
                 m_lexer.next();
-                lastValue = objectStack.last();
-                objectStack.removeLast();
+                lastValue = objectStack.takeLast();
                 break;
             }
             doParseObjectStartExpression:
@@ -689,7 +924,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             case DoParseObjectEndExpression:
             {
                 JSObject* object = asObject(objectStack.last());
-                PropertyName ident = identifierStack.last();
+                Identifier ident = identifierStack.takeLast();
                 if (m_mode != StrictJSON && ident == vm.propertyNames->underscoreProto) {
                     if (!visitedUnderscoreProto.add(object).isNewEntry) {
                         m_parseErrorMessage = ASCIILiteral("Attempted to redefine __proto__ property");
@@ -705,7 +940,6 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                         object->putDirect(vm, ident, lastValue);
                 }
                 RETURN_IF_EXCEPTION(scope, JSValue());
-                identifierStack.removeLast();
                 if (m_lexer.currentToken()->type == TokComma)
                     goto doParseObjectStartExpression;
                 if (m_lexer.currentToken()->type != TokRBrace) {
@@ -713,8 +947,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                     return JSValue();
                 }
                 m_lexer.next();
-                lastValue = objectStack.last();
-                objectStack.removeLast();
+                lastValue = objectStack.takeLast();
                 break;
             }
             startParseExpression:
@@ -873,8 +1106,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
         }
         if (stateStack.isEmpty())
             return lastValue;
-        state = stateStack.last();
-        stateStack.removeLast();
+        state = stateStack.takeLast();
         continue;
     }
 }

@@ -1,3 +1,43 @@
+2018-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Tweak LiteralParser to improve lexing performance
+        https://bugs.webkit.org/show_bug.cgi?id=185541
+
+        Reviewed by Saam Barati.
+
+        This patch attemps to improve LiteralParser performance.
+
+        This patch improves Kraken/json-parse-financial by roughly ~10%.
+                                           baseline                  patched
+
+            json-parse-financial        65.810+-1.591      ^      59.943+-1.784         ^ definitely 1.0979x faster
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::Lexer):
+        * runtime/ArgList.h:
+        (JSC::MarkedArgumentBuffer::takeLast):
+        Add takeLast() for idiomatic last() + removeLast() calls.
+
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::Lexer::lex):
+        Do not have mode in its template parameter. While lex function is large, this mode is not used in a critical path.
+        We should not include this mode in its template parameter to reduce the code size.
+        And we do not use template parameter for a terminator since duplicating ' and " code for lexString is not good.
+        Also, we construct TokenType table to remove bunch of unnecessary switch cases.
+
+        (JSC::LiteralParser<CharType>::Lexer::next):
+        (JSC::isSafeStringCharacter):
+        Take mode in its template parameter. But do not take terminator character in its template parameter.
+
+        (JSC::LiteralParser<CharType>::Lexer::lexString):
+        (JSC::LiteralParser<CharType>::Lexer::lexStringSlow):
+        Duplicate while statements manually since this is a critical path.
+
+        (JSC::LiteralParser<CharType>::parse):
+        Use takeLast().
+
+        * runtime/LiteralParser.h:
+
 2018-05-14  Dominik Infuehr  <dinfuehr@igalia.com>
 
         [MIPS] Use btpz to compare against 0 instead of bpeq

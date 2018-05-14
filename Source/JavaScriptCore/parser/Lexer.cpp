@@ -94,7 +94,7 @@ enum CharacterType {
 };
 
 // 256 Latin-1 codes
-static const unsigned short typesOfLatin1Characters[256] = {
+static constexpr const unsigned short typesOfLatin1Characters[256] = {
 /*   0 - Null               */ CharacterInvalid,
 /*   1 - Start of Heading   */ CharacterInvalid,
 /*   2 - Start of Text      */ CharacterInvalid,
@@ -355,7 +355,7 @@ static const unsigned short typesOfLatin1Characters[256] = {
 
 // This table provides the character that results from \X where X is the index in the table beginning
 // with SPACE. A table value of 0 means that more processing needs to be done.
-static const LChar singleCharacterEscapeValuesForASCII[128] = {
+static constexpr const LChar singleCharacterEscapeValuesForASCII[128] = {
 /*   0 - Null               */ 0,
 /*   1 - Start of Heading   */ 0,
 /*   2 - Start of Text      */ 0,
