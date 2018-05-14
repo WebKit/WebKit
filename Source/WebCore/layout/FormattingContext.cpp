@@ -72,7 +72,7 @@ void FormattingContext::computeWidth(LayoutContext& layoutContext, const Box& la
 void FormattingContext::computeHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     if (layoutBox.isOutOfFlowPositioned())
-        return computeOutOfFlowHeight(layoutBox, displayBox);
+        return computeOutOfFlowHeight(layoutContext, layoutBox, displayBox);
     if (layoutBox.isFloatingPositioned())
         return computeFloatingHeight(layoutBox, displayBox);
     return computeInFlowHeight(layoutContext, layoutBox, displayBox);
@@ -91,8 +91,13 @@ void FormattingContext::computeFloatingWidth(const Box&, Display::Box&) const
 {
 }
 
-void FormattingContext::computeOutOfFlowHeight(const Box&, Display::Box&) const
+void FormattingContext::computeOutOfFlowHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
+    if (!layoutBox.isReplaced()) {
+        computeOutOfFlowNonReplacedHeight(layoutContext, layoutBox, displayBox);
+        return;
+    }
+    ASSERT_NOT_REACHED();
 }
 
 void FormattingContext::computeFloatingHeight(const Box&, Display::Box&) const
@@ -138,8 +143,93 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext)
         auto formattingContext = layoutContext.formattingContext(layoutBox);
         formattingContext->layout(layoutContext, layoutContext.establishedFormattingState(layoutBox, *formattingContext));
 
-        computeOutOfFlowHeight(layoutBox, displayBox);
+        computeOutOfFlowHeight(layoutContext, layoutBox, displayBox);
     }
+}
+
+void FormattingContext::computeOutOfFlowNonReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    // For absolutely positioned elements, the used values of the vertical dimensions must satisfy this constraint:
+    // 'top' + 'margin-top' + 'border-top-width' + 'padding-top' + 'height' + 'padding-bottom' + 'border-bottom-width' + 'margin-bottom' + 'bottom'
+    // = height of containing block
+
+    // If all three of 'top', 'height', and 'bottom' are auto, set 'top' to the static position and apply rule number three below.
+
+    // If none of the three are 'auto': If both 'margin-top' and 'margin-bottom' are 'auto', solve the equation under the extra
+    // constraint that the two margins get equal values. If one of 'margin-top' or 'margin-bottom' is 'auto', solve the equation for that value.
+    // If the values are over-constrained, ignore the value for 'bottom' and solve for that value.
+
+    // Otherwise, pick the one of the following six rules that applies.
+
+    // 1. 'top' and 'height' are 'auto' and 'bottom' is not 'auto', then the height is based on the content per 10.6.7,
+    //     set 'auto' values for 'margin-top' and 'margin-bottom' to 0, and solve for 'top'
+    // 2. 'top' and 'bottom' are 'auto' and 'height' is not 'auto', then set 'top' to the static position, set 'auto' values for
+    //    'margin-top' and 'margin-bottom' to 0, and solve for 'bottom'
+    // 3. 'height' and 'bottom' are 'auto' and 'top' is not 'auto', then the height is based on the content per 10.6.7, set 'auto'
+    //     values for 'margin-top' and 'margin-bottom' to 0, and solve for 'bottom'
+    // 4. 'top' is 'auto', 'height' and 'bottom' are not 'auto', then set 'auto' values for 'margin-top' and 'margin-bottom' to 0, and solve for 'top'
+    // 5. 'height' is 'auto', 'top' and 'bottom' are not 'auto', then 'auto' values for 'margin-top' and 'margin-bottom' are set to 0 and solve for 'height'
+    // 6. 'bottom' is 'auto', 'top' and 'height' are not 'auto', then set 'auto' values for 'margin-top' and 'margin-bottom' to 0 and solve for 'bottom'
+    auto& style = layoutBox.style();
+    auto top = style.logicalTop();
+    auto bottom = style.logicalBottom();
+    auto height = style.logicalHeight(); 
+
+    auto containingBlockHeight = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->height();
+    LayoutUnit computedHeightValue;
+
+    if ((top.isAuto() && height.isAuto() && bottom.isAuto())
+        || (top.isAuto() && height.isAuto() && !bottom.isAuto())
+        || (!top.isAuto() && height.isAuto() && bottom.isAuto())) {
+        // All auto (#3), #1 and #3
+        computedHeightValue = contentHeightForFormattingContextRoot(layoutContext, layoutBox);
+    } else if (!top.isAuto() && height.isAuto() && !bottom.isAuto()) {
+        // #5
+        auto marginTop = style.marginTop().isAuto() ? LayoutUnit() : valueForLength(style.marginTop(), containingBlockHeight);
+        auto marginBottom = style.marginBottom().isAuto() ? LayoutUnit() : valueForLength(style.marginBottom(), containingBlockHeight);
+    
+        auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+        auto paddingTop = valueForLength(style.paddingTop(), containingBlockWidth);
+        auto paddingBottom = valueForLength(style.paddingBottom(), containingBlockWidth);
+
+        auto borderTopWidth = style.borderBeforeWidth();
+        auto borderBottomWidth = style.borderAfterWidth();
+
+        computedHeightValue = containingBlockHeight - (top.value() + marginTop + borderTopWidth + paddingTop + paddingBottom + borderBottomWidth + marginBottom + bottom.value());
+    } else if (!height.isAuto())
+        computedHeightValue = valueForLength(height, containingBlockHeight);
+    else
+        ASSERT_NOT_REACHED();
+
+    displayBox.setHeight(computedHeightValue);
+}
+
+LayoutUnit FormattingContext::contentHeightForFormattingContextRoot(LayoutContext& layoutContext, const Box& layoutBox) const
+{
+    ASSERT(layoutBox.style().logicalHeight().isAuto());
+    if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
+        return 0;
+
+    auto& formattingRootContainer = downcast<Container>(layoutBox);
+    // 10.6.7 'Auto' heights for block formatting context roots
+
+    // If it only has inline-level children, the height is the distance between the top of the topmost line box and the bottom of the bottommost line box.
+    // If it has block-level children, the height is the distance between the top margin-edge of the topmost block-level
+    // child box and the bottom margin-edge of the bottommost block-level child box.
+
+    // In addition, if the element has any floating descendants whose bottom margin edge is below the element's bottom content edge,
+    // then the height is increased to include those edges. Only floats that participate in this block formatting context are taken
+    // into account, e.g., floats inside absolutely positioned descendants or other floats are not.
+    if (formattingRootContainer.establishesInlineFormattingContext())
+        return 0;
+
+    auto* firstDisplayBox = layoutContext.displayBoxForLayoutBox(*formattingRootContainer.firstInFlowChild());
+    auto* lastDisplayBox = layoutContext.displayBoxForLayoutBox(*formattingRootContainer.lastInFlowChild());
+
+    auto top = firstDisplayBox->marginBox().y();
+    auto bottom = lastDisplayBox->marginBox().maxY();
+    // FIXME: add floating support.
+    return bottom - top;
 }
 
 void FormattingContext::computeOutOfFlowNonReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const

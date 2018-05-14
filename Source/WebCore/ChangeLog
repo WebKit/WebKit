@@ -1,3 +1,20 @@
+2018-05-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement height computation for non-replaced out of flow elements.
+        https://bugs.webkit.org/show_bug.cgi?id=185585
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeHeight const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHeight const):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowNonReplacedHeight const):
+        (WebCore::Layout::FormattingContext::computeHeightForBlockFormattingContextRootWithAutoHeight const):
+        * layout/FormattingContext.h:
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/displaytree/DisplayBox.h:
+
 2018-05-14  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Renaming of overrides in LayoutBox
