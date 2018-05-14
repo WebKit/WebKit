@@ -1,3 +1,12 @@
+2018-05-14  Youenn Fablet  <youenn@apple.com>
+
+        Enable service-worker/navigation-redirect-body.https.html and service-worker/postmessage.https.html
+        https://bugs.webkit.org/show_bug.cgi?id=185605
+
+        Unreviewed.
+
+        * web-platform-tests/service-workers/service-worker/postmessage.https-expected.txt:
+
 2018-05-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Tapping after CSS-based table casues an infinite loop in wordRangeFromPosition

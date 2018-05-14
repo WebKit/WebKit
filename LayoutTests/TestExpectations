@@ -175,7 +175,6 @@ imported/w3c/web-platform-tests/cors/remote-origin.htm [ Skip ]
 # Skip service worker tests that are timing out.
 imported/w3c/web-platform-tests/fetch/api/abort/general-serviceworker.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/performance-timeline.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/postmessage.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/respond-with-body-accessed-response.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/sandboxed-iframe-fetch-event.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-bytecheck.https.html [ Skip ]
@@ -189,9 +188,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oned
 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/shared-worker-controlled.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/claim-shared-worker-fetch.https.html [ Skip ]
-
-# Reliably ASSERTS in ServiceWorkerClientFetch::didFinish
-imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect-body.https.html [ Skip ]
 
 imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html [ Pass Failure ]
 

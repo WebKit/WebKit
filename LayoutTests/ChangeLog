@@ -1,5 +1,14 @@
 2018-05-14  Youenn Fablet  <youenn@apple.com>
 
+        Enable service-worker/navigation-redirect-body.https.html and service-worker/postmessage.https.html
+        https://bugs.webkit.org/show_bug.cgi?id=185605
+
+        Unreviewed.
+
+        * TestExpectations:
+
+2018-05-14  Youenn Fablet  <youenn@apple.com>
+
         Mark imported/w3c/web-platform-tests/service-workers/service-worker/redirected-response.https.html as slow in debug
         https://bugs.webkit.org/show_bug.cgi?id=185604
 
