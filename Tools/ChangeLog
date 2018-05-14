@@ -1,3 +1,19 @@
+2018-05-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Add a test to ensure that setTimeout() does not fire more than expected when using UIWebView
+        https://bugs.webkit.org/show_bug.cgi?id=185599
+        <rdar://problem/22493890>
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/SetTimeoutFunction.mm: Added.
+        (-[SetTimeoutFunctionWebViewDelegate webViewDidFinishLoad:]):
+        (-[SetTimeoutFunctionWebViewDelegate webView:didFailLoadWithError:]):
+        (-[SetTimeoutFunctionWebViewDelegate webView:shouldStartLoadWithRequest:navigationType:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/set-timeout-function.html: Added.
+
 2018-05-14  Valerie R Young  <valerie@bocoup.com>
 
         test262/Runner.pm: small bugs in CLI and error codes
