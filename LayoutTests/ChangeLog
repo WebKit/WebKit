@@ -1,3 +1,12 @@
+2018-05-14  Youenn Fablet  <youenn@apple.com>
+
+        Mark imported/w3c/web-platform-tests/service-workers/service-worker/redirected-response.https.html as slow in debug
+        https://bugs.webkit.org/show_bug.cgi?id=185604
+
+        Unreviewed.
+
+        * TestExpectations:
+
 2018-05-13  Andy VanWagoner  <andy@vanwagoner.family>
 
         [INTL] Improve spec & test262 compliance for Intl APIs

@@ -225,6 +225,7 @@ imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-red
 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/activation.https.html [ Slow ]
 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/worker-interception.https.html [ Slow ]
 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/registration-mime-types.https.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/redirected-response.https.html [ Slow ]
 
 # Reenable it when having a custom gc exposed in service workers.
 [ Debug ] http/wpt/service-workers/fetchEvent.https.html [ Skip ]
