@@ -1,5 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
 
 <html lang="en">
 <head>
@@ -28,6 +27,8 @@
       ["anim1", 0.7, "box1", "left", 200, 1],
       ["anim2", 0.3, "box2", "left", 100, 1],
       ["anim2", 0.7, "box2", "left", 200, 1],
+      ["anim3", 0.3, "box3", "left", 0, 0],
+      ["anim3", 0.7, "box3", "left", 0, 0],
     ];
 
     function addKeyframes() {
@@ -64,13 +65,6 @@
         style.sheet.removeRule(box3Index);
 
         runAnimationTest(expectedValues);
-
-        if (window.testRunner) {
-            if (internals.pauseAnimationAtTimeOnElement("anim3", 0.1, box3))
-                result += "FAIL - box3 animation was running<br>";
-            else
-                result += "PASS - box3 animation was not running<br>";
-        }
     }
     
     window.addEventListener('DOMContentLoaded', addKeyframes, false);

@@ -1,7 +1,8 @@
 This test performs an animation of the left property. It should stop for 100ms at 100px and 200px We test for those values 50ms after it has stopped at each position. The animations for the three boxes are inserted by JavaScript. The first box's keyframes remain in the stylesheet. The second box's keyframes are removed after its animation starts (but it should animate). The third box's keyframes are removed before its animation starts, and it should not animate.
-PASS - box3 animation was not running
 PASS - "left" property for "box1" element at 0.3s saw something close to: 100
 PASS - "left" property for "box1" element at 0.7s saw something close to: 200
 PASS - "left" property for "box2" element at 0.3s saw something close to: 100
 PASS - "left" property for "box2" element at 0.7s saw something close to: 200
+PASS - "left" property for "box3" element at 0.3s saw something close to: 0
+PASS - "left" property for "box3" element at 0.7s saw something close to: 0
 

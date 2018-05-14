@@ -1,5 +1,30 @@
 2018-05-14  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Tests using the new animation engine may crash under WebCore::FrameView::didDestroyRenderTree when using internals methods
+        https://bugs.webkit.org/show_bug.cgi?id=185612
+        <rdar://problem/39579344>
+
+        Reviewed by Dean Jackson.
+
+        Some tests that were opting into the new animation engine were using internals methods (pauseAnimationAtTimeOnElement, pauseTransitionAtTimeOnElement, etc.)
+        that enforce the creation of animations in the old animation engine. Meanwhile, the code that toggles the animation engine used based on HTML comments is run
+        prior to teardown of the previous test and so a test running with the new engine would run with the legacy engine during teardown. These two factors would
+        cause `ASSERT(!frame().animation().hasAnimations())` to fail under FrameView::didDestroyRenderTree().
+
+        We update tests that use these internals method to use the Web Animations API instead and opt into the new animation engine if they didn't already do that.
+
+        * animations/animation-hit-test-transform.html:
+        * animations/keyframes-dynamic-expected.txt:
+        * animations/keyframes-dynamic.html:
+        * animations/missing-from-to-expected.txt:
+        * animations/missing-from-to-transforms-expected.txt:
+        * animations/missing-from-to-transforms.html:
+        * animations/missing-from-to.html:
+        * fast/css-generated-content/pseudo-animation.html:
+        * transitions/transition-hit-test-transform.html:
+
+2018-05-14  Antoine Quint  <graouts@apple.com>
+
         REGRESSION (r230574): Interrupted hardware transitions don't behave correctly
         https://bugs.webkit.org/show_bug.cgi?id=185299
         <rdar://problem/39630230>

@@ -71,7 +71,7 @@
   <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
 
-    const expectedValues = [
+    runAnimationTest([
       // [animation-name, time, element-id, property, expected-value, tolerance]
       ["anim1", 0.4, "box1", "webkitTransform.4", 20, 2],
       ["anim1", 1.0, "box1", "webkitTransform.4", 20, 2],
@@ -84,18 +84,11 @@
       ["anim3", 1.6, "box3", "webkitTransform.4", 15, 2],
       ["anim4", 0.4, "box4", "webkitTransform.4", 20, 2],
       ["anim4", 1.0, "box4", "webkitTransform.4", 25, 2],
-      ["anim4", 1.6, "box4", "webkitTransform.4", 15, 2]
-    ];
-
-    runAnimationTest(expectedValues, function() {
-      if (window.testRunner) {
-          var box5Element = document.getElementById('box5');
-          if (internals.pauseAnimationAtTimeOnElement("anim5", 0.1, box5Element))
-              result += "FAIL - box5 animation was running<br>";
-          else 
-              result += "PASS - box5 animation was not running<br>";
-      }
-    });
+      ["anim4", 1.6, "box4", "webkitTransform.4", 15, 2],
+      ["anim5", 0.4, "box5", "webkitTransform.4", 10, 0],
+      ["anim5", 1.0, "box5", "webkitTransform.4", 10, 0],
+      ["anim5", 1.6, "box5", "webkitTransform.4", 10, 0]
+    ]);
     
   </script>
 </head>
