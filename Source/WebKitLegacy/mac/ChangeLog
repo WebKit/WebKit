@@ -1,3 +1,17 @@
+2018-05-14  Daniel Bates  <dabates@apple.com>
+
+        Fix the Apple Internal build
+
+        See <rdar://problem/40237873> for more details.
+
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController enterFullScreen:]):
+        (-[WebFullScreenController finishedEnterFullScreenAnimation:]):
+        (-[WebFullScreenController exitFullScreen]):
+        (-[WebFullScreenController finishedExitFullScreenAnimation:]):
+        (-[WebFullScreenController _startEnterFullScreenAnimationWithDuration:]):
+        (-[WebFullScreenController _startExitFullScreenAnimationWithDuration:]):
+
 2018-05-11  Timothy Hatcher  <timothy@apple.com>
 
         WebHTMLView is not setting aside subviews when drawing.
