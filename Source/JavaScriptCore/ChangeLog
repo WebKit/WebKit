@@ -1,3 +1,17 @@
+2018-05-14  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [MIPS] Use btpz to compare against 0 instead of bpeq
+        https://bugs.webkit.org/show_bug.cgi?id=185607
+
+        Reviewed by Yusuke Suzuki.
+
+        Fixes build on MIPS since MIPS doesn't have an instruction to
+        compare a register against an immediate. Since the immediate is just 0
+        in this case the simplest solution is just to use btpz instead of bpeq
+        to compare to 0.
+
+        * llint/LowLevelInterpreter.asm:
+
 2018-05-12  Filip Pizlo  <fpizlo@apple.com>
 
         CachedCall::call() should be faster
