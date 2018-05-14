@@ -1,3 +1,16 @@
+2018-05-14  Andy VanWagoner  <andy@vanwagoner.family>
+
+        [INTL] Handle error in defineProperty for supported locales length
+        https://bugs.webkit.org/show_bug.cgi?id=185623
+
+        Reviewed by Saam Barati.
+
+        Adds the missing RETURN_IF_EXCEPTION after defineOwnProperty for the
+        length of the supported locales array.
+
+        * runtime/IntlObject.cpp:
+        (JSC::supportedLocales):
+
 2018-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Tweak LiteralParser to improve lexing performance

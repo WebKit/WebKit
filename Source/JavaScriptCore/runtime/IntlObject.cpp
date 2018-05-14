@@ -856,6 +856,7 @@ JSValue supportedLocales(ExecState& state, const HashSet<String>& availableLocal
         RETURN_IF_EXCEPTION(scope, JSValue());
     }
     supportedLocales->defineOwnProperty(supportedLocales, &state, vm.propertyNames->length, desc, true);
+    RETURN_IF_EXCEPTION(scope, JSValue());
 
     return supportedLocales;
 }
