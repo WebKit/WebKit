@@ -1,3 +1,39 @@
+2018-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Overly aggressive timer throttling in service workers
+        https://bugs.webkit.org/show_bug.cgi?id=185575
+        <rdar://problem/40219038>
+
+        Reviewed by Geoff Garen.
+
+        After ~30 seconds, the system would put the service worker process in "App Nap",
+        causing its timers to get aggressively throttled. This happens because the
+        service worker processes are WebProcesses that have no visible WebPages.
+
+        To address the issue, we now disable process suppression for all service worker
+        processes. This causes those processes to construct a UserActivity which prevents
+        App Nap.
+
+        This patch also refactors the code a bit to avoid duplication. The ProcessSuppression
+        suppression logic in now all on ChildProcessProxy / ChildProcess.
+
+        * NetworkProcess/NetworkProcess.messages.in:
+        * PluginProcess/PluginProcess.messages.in:
+        * Shared/ChildProcess.messages.in:
+        * UIProcess/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::setProcessSuppressionEnabled):
+        * UIProcess/ChildProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/mac/NetworkProcessProxyMac.mm: Removed.
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::ServiceWorkerProcessProxy::didFinishLaunching):
+        * UIProcess/ServiceWorkerProcessProxy.h:
+        * UIProcess/WebProcessProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.messages.in:
+
 2018-05-14  Andy Estes  <aestes@apple.com>
 
         [Wi-Fi Assertions] Allow clients to specify a context identifier

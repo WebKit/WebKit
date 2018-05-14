@@ -213,6 +213,18 @@ void ChildProcessProxy::shutDownProcess()
     m_connection = nullptr;
 }
 
+void ChildProcessProxy::setProcessSuppressionEnabled(bool processSuppressionEnabled)
+{
+#if PLATFORM(COCOA)
+    if (state() != State::Running)
+        return;
+
+    connection()->send(Messages::ChildProcess::SetProcessSuppressionEnabled(processSuppressionEnabled), 0);
+#else
+    UNUSED_PARAM(processSuppressionEnabled);
+#endif
+}
+
 void ChildProcessProxy::connectionWillOpen(IPC::Connection&)
 {
 }

@@ -54,6 +54,9 @@ private:
     // ChildProcessProxy
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) final;
 
+    // ProcessLauncher::Client
+    void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) final;
+
     bool isServiceWorkerProcess() const final { return true; }
 
     ServiceWorkerProcessProxy(WebProcessPool&, const WebCore::SecurityOriginData&, WebsiteDataStore&);

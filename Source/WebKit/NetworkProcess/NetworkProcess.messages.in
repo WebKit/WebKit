@@ -52,7 +52,6 @@ messages -> NetworkProcess LegacyReceiver {
     ContinueWillSendRequest(WebKit::DownloadID downloadID, WebCore::ResourceRequest request)
     ContinueDecidePendingDownloadDestination(WebKit::DownloadID downloadID, String destination, WebKit::SandboxExtension::Handle sandboxExtensionHandle, bool allowOverwrite)
 
-    SetProcessSuppressionEnabled(bool flag)
 #if PLATFORM(COCOA)
     SetQOS(int latencyQOS, int throughputQOS)
     SetCookieStoragePartitioningEnabled(bool enabled)

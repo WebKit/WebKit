@@ -105,6 +105,15 @@ void ServiceWorkerProcessProxy::didReceiveAuthenticationChallenge(uint64_t pageI
     challenge->performDefaultHandling();
 }
 
+void ServiceWorkerProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
+{
+    WebProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
+
+    // Prevent App Nap for Service Worker processes.
+    // FIXME: Ideally, the Service Worker process would app nap when all its clients app nap (http://webkit.org/b/185626).
+    setProcessSuppressionEnabled(false);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)

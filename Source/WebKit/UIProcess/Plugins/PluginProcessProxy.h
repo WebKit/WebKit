@@ -84,11 +84,6 @@ public:
 
     bool isValid() const { return m_connection; }
 
-#if PLATFORM(COCOA)
-    void setProcessSuppressionEnabled(bool);
-
-#endif
-
 #if PLUGIN_ARCHITECTURE(UNIX)
     static bool scanPlugin(const String& pluginPath, RawPluginMetaData& result);
 #endif

@@ -83,6 +83,8 @@ public:
 
     WebCore::ProcessIdentifier coreProcessIdentifier() const { return m_processIdentifier; }
 
+    void setProcessSuppressionEnabled(bool);
+
 protected:
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;

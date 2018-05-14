@@ -230,14 +230,6 @@ void PluginProcessProxy::applicationDidBecomeActive()
     makePluginProcessTheFrontProcess();
 }
 
-void PluginProcessProxy::setProcessSuppressionEnabled(bool processSuppressionEnabled)
-{
-    if (!isValid())
-        return;
-
-    m_connection->send(Messages::PluginProcess::SetProcessSuppressionEnabled(processSuppressionEnabled), 0);
-}
-
 static bool isFlashUpdater(const String& launchPath, const Vector<String>& arguments)
 {
     if (launchPath != "/Applications/Utilities/Adobe Flash Player Install Manager.app/Contents/MacOS/Adobe Flash Player Install Manager")

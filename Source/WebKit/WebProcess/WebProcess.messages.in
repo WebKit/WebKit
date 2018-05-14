@@ -84,7 +84,6 @@ messages -> WebProcess LegacyReceiver {
     DeleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins) -> ()
 
     SetHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds)
-    SetProcessSuppressionEnabled(bool flag)
 #if PLATFORM(COCOA)
     SetQOS(int latencyQOS, int throughputQOS)
 #endif

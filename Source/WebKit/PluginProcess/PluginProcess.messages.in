@@ -38,7 +38,6 @@ messages -> PluginProcess LegacyReceiver {
     DeleteWebsiteData(WallTime modifiedSince, uint64_t callbackID)
     DeleteWebsiteDataForHostNames(Vector<String> hostNames, uint64_t callbackID)
 
-    SetProcessSuppressionEnabled(bool flag)
 #if PLATFORM(COCOA)
     SetQOS(int latencyQOS, int throughputQOS)
 #endif

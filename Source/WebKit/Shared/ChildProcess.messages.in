@@ -23,4 +23,5 @@
 messages -> ChildProcess {
     ShutDown()
     RegisterURLSchemeServiceWorkersCanHandle(String scheme)
+    SetProcessSuppressionEnabled(bool flag)
 }
