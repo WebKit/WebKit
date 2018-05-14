@@ -28,7 +28,6 @@
 
 namespace WebCore {
 
-class BitmapTextureGL;
 class GLContext;
 class TextureMapperPlatformLayerProxy;
 
@@ -53,7 +52,6 @@ private:
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
     RefPtr<TextureMapperPlatformLayerProxy> m_platformLayerProxy;
-    RefPtr<BitmapTextureGL> m_compositorTexture;
 #endif
 };
 
