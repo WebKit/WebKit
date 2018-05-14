@@ -1,3 +1,22 @@
+2018-05-14  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas tab: don't automatically select a recording when viewing a canvas
+        https://bugs.webkit.org/show_bug.cgi?id=182950
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel):
+        (WI.CanvasSidebarPanel.prototype._currentRepresentedObjectsDidChange):
+        (WI.CanvasSidebarPanel.prototype._treeOutlineSelectionDidChange):
+        (WI.CanvasSidebarPanel.prototype._canvasChanged):
+        (WI.CanvasSidebarPanel.prototype._recordingChanged):
+        (WI.CanvasSidebarPanel.prototype._updateRecordingScopeBar):
+        Add a "dummy" ScopeBarItem to the recording ScopeBar that is selected whenever a TreeElement
+        that doesn't correspond to a Recording is selected. This way, the Recording ScopeBar will
+        become deselected, and the list of actions will disappear. Clicking on the Recording ScopeBar
+        will show the previously selected Recording.
+
 2018-05-08  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Console drawer resizing is broken when console prompt has >1 line of code

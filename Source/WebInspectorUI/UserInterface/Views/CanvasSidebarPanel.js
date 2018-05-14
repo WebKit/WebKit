@@ -34,6 +34,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
         this._navigationBar = new WI.NavigationBar;
         this._scopeBar = null;
+        this._placeholderScopeBarItem = null;
 
         const toolTip = WI.UIString("Start recording canvas actions.\nShift-click to record a single frame.");
         const altToolTip = WI.UIString("Stop recording canvas actions");
@@ -259,9 +260,8 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
         let recording = objects.find((object) => object instanceof WI.Recording);
         if (recording) {
-            this.canvas = recording.source;
+            recording[WI.CanvasSidebarPanel.SelectedActionSymbol] = objects.find((object) => object instanceof WI.RecordingAction);
             this.recording = recording;
-            this.action = objects.find((object) => object instanceof WI.RecordingAction);
             return;
         }
 
@@ -276,6 +276,9 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
             return;
 
         if ((treeElement instanceof WI.CanvasTreeElement) || (treeElement instanceof WI.ShaderProgramTreeElement)) {
+            if (this._placeholderScopeBarItem)
+                this._placeholderScopeBarItem.selected = true;
+
             this.showDefaultContentViewForTreeElement(treeElement);
             return;
         }
@@ -316,17 +319,12 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         if (WI.Canvas.ContextType.Canvas2D || this._canvas.contextType === WI.Canvas.ContextType.WebGL)
             this._recordButtonNavigationItem.enabled = true;
 
-        let defaultSelectedRecording = null;
-        if (this._canvas.recordingCollection.size)
-            defaultSelectedRecording = Array.from(this._canvas.recordingCollection).lastValue;
-
-        this.recording = defaultSelectedRecording;
+        this.recording = null;
     }
 
     _recordingChanged()
     {
         this._recordingTreeOutline.removeChildren();
-        this.element.classList.toggle("has-recordings", !!this._recording);
 
         if (!this._recording)
             return;
@@ -405,12 +403,17 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
     _updateRecordingScopeBar()
     {
         if (this._scopeBar) {
+            this._placeholderScopeBarItem = null;
+
             this._recordingNavigationBar.removeNavigationItem(this._scopeBar);
             this._scopeBar = null;
         }
 
-        this._recordingNavigationBar.element.classList.toggle("hidden", !this._canvas || !this._recording);
-        if (!this._recording || !this._canvas)
+        this._recordingNavigationBar.element.classList.toggle("hidden", !this._canvas);
+
+        let hasRecordings = this._canvas && this._canvas.recordingCollection.size;
+        this.element.classList.toggle("has-recordings", hasRecordings);
+        if (!hasRecordings)
             return;
 
         let scopeBarItems = [];
@@ -419,12 +422,23 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
             let scopeBarItem = new WI.ScopeBarItem(recording.displayName, recording.displayName);
             if (recording === this._recording)
                 selectedScopeBarItem = scopeBarItem;
+            else
+                scopeBarItem.selected = false;
             scopeBarItem.__recording = recording;
             scopeBarItems.push(scopeBarItem);
         }
 
-        if (!selectedScopeBarItem)
+        if (!selectedScopeBarItem) {
             selectedScopeBarItem = scopeBarItems[0];
+
+            const exclusive = true;
+            const className = null;
+            const hidden = true;
+            this._placeholderScopeBarItem = new WI.ScopeBarItem("canvas-recording-scope-bar-item-placeholder", WI.UIString("Recordings"), exclusive, className, hidden);
+            this._placeholderScopeBarItem.selected = true;
+
+            scopeBarItems.unshift(this._placeholderScopeBarItem);
+        }
 
         this._scopeBar = new WI.ScopeBar("canvas-recordinga-scope-bar", scopeBarItems, selectedScopeBarItem, true);
         this._scopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionChanged, this);
