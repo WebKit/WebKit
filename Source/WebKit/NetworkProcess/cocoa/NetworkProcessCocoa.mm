@@ -44,6 +44,10 @@
 #import <wtf/CallbackAggregator.h>
 #import <wtf/ProcessPrivilege.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/NetworkProcessCocoaAdditions.mm>
+#endif
+
 namespace WebKit {
 
 static void initializeNetworkSettings()
@@ -110,6 +114,10 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
         m_cacheStoragePerOriginQuota = parameters.cacheStoragePerOriginQuota;
         SandboxExtension::consumePermanently(parameters.cacheStorageDirectoryExtensionHandle);
     }
+
+#if ENABLE(WIFI_ASSERTIONS)
+    initializeWiFiAssertions(parameters);
+#endif
 
     if (!m_diskCacheDirectory.isNull()) {
         SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
