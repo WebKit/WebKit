@@ -1099,11 +1099,11 @@ test/built-ins/Function/prototype/toString/getter-object.js:
   default: "Test262Error: Conforms to NativeFunction Syntax: 'function ( /* c */ ) /* d */ { /* e */ }'.(get /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })"
   strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function ( /* c */ ) /* d */ { /* e */ }'.(get /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })"
 test/built-ins/Function/prototype/toString/line-terminator-normalisation-CR-LF.js:
-  default: "ReferenceError: Can't find variable: assertToStringOrNativeFunction"
-  strict mode: "ReferenceError: Can't find variable: assertToStringOrNativeFunction"
+  default: "Test262Error: Conforms to NativeFunction Syntax: 'function f(\r"
+  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function f(\r"
 test/built-ins/Function/prototype/toString/line-terminator-normalisation-CR.js:
-  default: "ReferenceError: Can't find variable: assertToStringOrNativeFunction"
-  strict mode: "ReferenceError: Can't find variable: assertToStringOrNativeFunction"
+  default: "Test262Error: Conforms to NativeFunction Syntax: 'function f(\r// c\rx\r// d\r,\r// e\ry\r// f\r)\r// g\r{\r// h\r;\r// i\r;\r// j\r}'.(function\r// a\rf\r// b\r(\r// c\rx\r// d\r,\r// e\ry\r// f\r)\r// g\r{\r// h\r;\r// i\r;\r// j\r})"
+  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function f(\r// c\rx\r// d\r,\r// e\ry\r// f\r)\r// g\r{\r// h\r;\r// i\r;\r// j\r}'.(function\r// a\rf\r// b\r(\r// c\rx\r// d\r,\r// e\ry\r// f\r)\r// g\r{\r// h\r;\r// i\r;\r// j\r})"
 test/built-ins/Function/prototype/toString/line-terminator-normalisation-LF.js:
   default: "Test262Error: Conforms to NativeFunction Syntax: 'function f("
   strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function f("
@@ -2197,14 +2197,6 @@ test/language/eval-code/indirect/var-env-func-init-global-update-configurable.js
 test/language/eval-code/indirect/var-env-global-lex-non-strict.js:
   default: 'Test262Error: Expected SameValue(Â«function TypeError() {'
   strict mode: 'Test262Error: Expected SameValue(Â«function TypeError() {'
-test/language/expressions/arrow-function/arrow/binding-tests-1.js:
-  strict mode: 'Test262Error: This binding initialization was incorrect for arrow capturing this from closure. Expected SameValue(Â«undefinedÂ», Â«[object global]Â») to be true'
-test/language/expressions/arrow-function/arrow/binding-tests-2.js:
-  strict mode: 'Test262Error: This binding initialization was incorrect for arrow capturing this from closure. Expected SameValue(Â«undefinedÂ», Â«[object global]Â») to be true'
-test/language/expressions/arrow-function/arrow/binding-tests-3.js:
-  strict mode: 'Test262Error: This binding initialization was incorrect for arrow capturing this from closure. Expected SameValue(Â«undefinedÂ», Â«[object global]Â») to be true'
-test/language/expressions/arrow-function/arrow/capturing-closure-variables-2.js:
-  strict mode: "SyntaxError: 'with' statements are not valid in strict mode."
 test/language/expressions/arrow-function/scope-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/arrow-function/scope-param-elem-var-close.js:

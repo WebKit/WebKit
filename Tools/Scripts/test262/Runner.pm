@@ -707,7 +707,7 @@ sub parseData {
 
     my $parsed;
     my $found = '';
-    if ($contents =~ /\/\*(---\n[\S\s]*)\n---\*\//m) {
+    if ($contents =~ /\/\*(---[\r\n]+[\S\s]*)[\r\n]+---\*\//m) {
         $found = $1;
     };
 
@@ -718,6 +718,7 @@ sub parseData {
         print "\nError parsing YAML data on file $filename.\n";
         print "$@\n";
     };
+
     return $parsed;
 }
 
