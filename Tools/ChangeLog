@@ -1,3 +1,19 @@
+2018-05-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Disable API tests that time out after pointer poisioning was disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=185586
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WTF/Poisoned.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/PoisonedUniquePtr.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/PoisonedUniquePtrForTriviallyDestructibleArrays.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-05-14  Leo Balter  <leonardo.balter@gmail.com>
 
         Test262-Runner: Fix RegExp for capturing tests metadata"

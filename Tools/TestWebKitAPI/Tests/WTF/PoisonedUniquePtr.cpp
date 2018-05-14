@@ -74,7 +74,7 @@ struct Other {
 
 } // anonymous namespace
 
-TEST(WTF_PoisonedUniquePtr, Basic)
+TEST(WTF_PoisonedUniquePtr, DISABLED_Basic)
 {
     initializePoisons();
 
@@ -317,7 +317,7 @@ TEST(WTF_PoisonedUniquePtr, Basic)
     }
 }
 
-TEST(WTF_PoisonedUniquePtr, Assignment)
+TEST(WTF_PoisonedUniquePtr, DISABLED_Assignment)
 {
     initializePoisons();
 
@@ -490,7 +490,7 @@ TEST(WTF_PoisonedUniquePtr, Assignment)
     }
 }
 
-TEST(WTF_PoisonedUniquePtr, Swap)
+TEST(WTF_PoisonedUniquePtr, DISABLED_Swap)
 {
     initializePoisons();
 
@@ -564,7 +564,7 @@ static PoisonedUniquePtr<PoisonA, Logger> poisonedPtrFoo(Logger* logger)
     return PoisonedUniquePtr<PoisonA, Logger>(logger);
 }
 
-TEST(WTF_PoisonedUniquePtr, ReturnValue)
+TEST(WTF_PoisonedUniquePtr, DISABLED_ReturnValue)
 {
     initializePoisons();
 

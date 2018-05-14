@@ -55,7 +55,7 @@ static void initializeTestPoison()
 // For these tests, we need a base class and a derived class. For this purpose,
 // we reuse the RefLogger and DerivedRefLogger classes.
 
-TEST(WTF_Poisoned, Basic)
+TEST(WTF_Poisoned, DISABLED_Basic)
 {
     initializeTestPoison();
     DerivedRefLogger a("a");
@@ -368,7 +368,7 @@ TEST(WTF_Poisoned, Basic)
     }
 }
 
-TEST(WTF_Poisoned, Assignment)
+TEST(WTF_Poisoned, DISABLED_Assignment)
 {
     initializeTestPoison();
     DerivedRefLogger a("a");
@@ -499,7 +499,7 @@ TEST(WTF_Poisoned, Assignment)
     }
 }
 
-TEST(WTF_Poisoned, Swap)
+TEST(WTF_Poisoned, DISABLED_Swap)
 {
     initializeTestPoison();
     RefLogger a("a");
@@ -583,7 +583,7 @@ static Poisoned<TestPoisonA, RefLogger*> poisonedPtrFoo(RefLogger& logger)
     return Poisoned<TestPoisonA, RefLogger*>(&logger);
 }
 
-TEST(WTF_Poisoned, ReturnValue)
+TEST(WTF_Poisoned, DISABLED_ReturnValue)
 {
     initializeTestPoison();
     DerivedRefLogger a("a");

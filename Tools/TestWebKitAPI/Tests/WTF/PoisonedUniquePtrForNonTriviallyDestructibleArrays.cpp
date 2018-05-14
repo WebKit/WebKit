@@ -75,7 +75,7 @@ const int arraySize = 5;
 
 } // anonymous namespace
 
-TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Basic)
+TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, DISABLED_Basic)
 {
     initializePoisons();
 
@@ -245,7 +245,7 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Basic)
     }
 }
 
-TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Assignment)
+TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, DISABLED_Assignment)
 {
     initializePoisons();
 
@@ -359,7 +359,7 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Assignment)
     }
 }
 
-TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Swap)
+TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, DISABLED_Swap)
 {
     initializePoisons();
 
@@ -433,7 +433,7 @@ static PoisonedUniquePtr<PoisonA, Logger[]> poisonedPtrFoo(Logger* array)
     return PoisonedUniquePtr<PoisonA, Logger[]>(array);
 }
 
-TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, ReturnValue)
+TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, DISABLED_ReturnValue)
 {
     initializePoisons();
 
