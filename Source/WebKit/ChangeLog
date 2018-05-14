@@ -1,3 +1,15 @@
+2018-05-14  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        -Wmemset-elt-size warning in LibWebRTCSocket constructor
+        https://bugs.webkit.org/show_bug.cgi?id=185555
+
+        Reviewed by Youenn Fablet.
+
+        Add missing multiplication.
+
+        * WebProcess/Network/webrtc/LibWebRTCSocket.cpp:
+        (WebKit::LibWebRTCSocket::LibWebRTCSocket):
+
 2018-05-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] REGRESSION(r231170) Build broken with Clang 5.0
