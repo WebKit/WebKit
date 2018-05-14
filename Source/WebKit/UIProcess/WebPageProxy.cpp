@@ -4437,7 +4437,9 @@ void WebPageProxy::getWindowFrame(Ref<Messages::WebPageProxy::GetWindowFrame::De
 
 void WebPageProxy::getWindowFrameWithCallback(Function<void(FloatRect)>&& completionHandler)
 {
-    m_uiClient->windowFrame(*this, WTFMove(completionHandler));
+    m_uiClient->windowFrame(*this, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (FloatRect frame) {
+        completionHandler(m_pageClient.convertToUserSpace(frame));
+    });
 }
 
 void WebPageProxy::screenToRootView(const IntPoint& screenPoint, Ref<Messages::WebPageProxy::ScreenToRootView::DelayedReply>&& reply)

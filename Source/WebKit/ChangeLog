@@ -1,3 +1,19 @@
+2018-05-11  Brian Burg  <bburg@apple.com>
+
+        Web Automation: Automation.getBrowsingContext returns window origin that differs from window.screenX/Y
+        https://bugs.webkit.org/show_bug.cgi?id=185571
+        <rdar://problem/40180785>
+
+        Reviewed by Timothy Hatcher.
+
+        This code path was refactored to use completion handlers. It seems that the window.screenX/Y
+        code path converts back to user coordinates but the WebDriver code path does not. Make them
+        consistent since that is how it is spec'd and tested.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getWindowFrameWithCallback):
+        Convert the window frame to user coordinate space so it's the same as window.screenY.
+
 2018-05-14  Brian Burg  <bburg@apple.com>
 
         WebDriver: W3C test case actions/key.py::test_lone_keyup_sends_no_events is failing
