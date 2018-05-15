@@ -1,3 +1,20 @@
+2018-05-15  Dean Jackson  <dino@apple.com>
+
+        Update animation when presenting QuickLook
+        https://bugs.webkit.org/show_bug.cgi?id=185648
+        <rdar://problem/39652624>
+
+        Reviewed by Antoine Quint.
+
+        Implement the QuickLook delegate on _WKPreviewControllerDelegate that
+        produces a zoom-like animation when the QLPreviewController appears.
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        (-[_WKPreviewControllerDelegate previewController:frameForPreviewItem:inSourceView:]):
+        * UIProcess/SystemPreviewController.h: Add a reference back to the page, so that
+        the delegate implementation can access the presentingViewController.
+        (WebKit::SystemPreviewController::page):
+
 2018-05-14  Dean Jackson  <dino@apple.com>
 
         Download and present System Preview
