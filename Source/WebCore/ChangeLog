@@ -1,3 +1,82 @@
+2018-05-15  Jer Noble  <jer.noble@apple.com>
+
+        Media continues loading after rendered invisible (removed from DOM; scrolled off screen)
+        https://bugs.webkit.org/show_bug.cgi?id=185487
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-buffering-allowed.html
+
+        When a media element is removed from the dom (e.g. through innerHTML=""), it doesn't
+        necessarily stop loading media data; it will continue to do so until its destructor is
+        called through garbage collection. Similarly, when a media element is rendered not-visible
+        by being scrolled off-screen or being made display:none, media loading continues. There
+        are legitimate use cases for out-of-DOM media loading, so only temporarily block loading
+        when the element transitions out of the document. Similarly, only block loading for non-visible
+        media elements when returning from the "page is hidden" state, and only until the media
+        element is asked to play or is otherwise made visible.
+
+        Note: this refactors a lot of code out of PlatformMediaSession and into MediaElementSession,
+        since this code is specific to "media elements".
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::insertedIntoAncestor):
+        (WebCore::HTMLMediaElement::removedFromAncestor):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::stopWithoutDestroyingMediaPlayer):
+        (WebCore::HTMLMediaElement::resume):
+        (WebCore::HTMLMediaElement::visibilityStateChanged):
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+        (WebCore::HTMLMediaElement::setShouldBufferData):
+        (WebCore::HTMLMediaElement::purgeBufferedDataIfPossible):
+        (WebCore::HTMLMediaElement::isVisibleInViewportChanged):
+        (WebCore::HTMLMediaElement::fullscreenModeChanged):
+        (WebCore::HTMLMediaElement::setInActiveDocument):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::shouldBufferData const):
+        (WebCore::HTMLMediaElement::elementIsHidden const):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::MediaElementSession):
+        (WebCore::MediaElementSession::clientWillBeginAutoplaying):
+        (WebCore::MediaElementSession::clientWillBeginPlayback):
+        (WebCore::MediaElementSession::clientWillPausePlayback):
+        (WebCore::MediaElementSession::visibilityChanged):
+        (WebCore::MediaElementSession::isVisibleInViewportChanged):
+        (WebCore::MediaElementSession::inActiveDocumentChanged):
+        (WebCore::MediaElementSession::scheduleClientDataBufferingCheck):
+        (WebCore::MediaElementSession::clientDataBufferingTimerFired):
+        (WebCore::MediaElementSession::updateClientDataBuffering):
+        (WebCore::MediaElementSession::dataBufferingPermitted const):
+        (WebCore::MediaElementSession::wantsToObserveViewportVisibilityForAutoplay const):
+        * html/MediaElementSession.h:
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::PlatformMediaSession):
+        (WebCore::PlatformMediaSession::clientWillBeginAutoplaying):
+        (WebCore::PlatformMediaSession::clientWillBeginPlayback):
+        (WebCore::PlatformMediaSession::clientWillPausePlayback):
+        (): Deleted.
+        (WebCore::PlatformMediaSession::visibilityChanged): Deleted.
+        (WebCore::PlatformMediaSession::scheduleClientDataBufferingCheck): Deleted.
+        (WebCore::PlatformMediaSession::clientDataBufferingTimerFired): Deleted.
+        (WebCore::PlatformMediaSession::updateClientDataBuffering): Deleted.
+        (WebCore::PlatformMediaSession::isHidden const): Deleted.
+        * platform/audio/PlatformMediaSession.h:
+        (WebCore::PlatformMediaSessionClient::setShouldBufferData): Deleted.
+        (WebCore::PlatformMediaSessionClient::elementIsHidden const): Deleted.
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::sessionCanLoadMedia const): Deleted.
+        * platform/audio/PlatformMediaSessionManager.h:
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::sessionCanLoadMedia const): Deleted.
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::willBeDestroyed):
+        * testing/Internals.cpp:
+        (WebCore::Internals::elementShouldBufferData):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-05-15  Charles Vazac  <cvazac@gmail.com>
 
         Add the PerformanceServerTiming Interface which makes Server-Timing header timing values available to JavaScript running in the browser.

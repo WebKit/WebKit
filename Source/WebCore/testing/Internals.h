@@ -473,6 +473,8 @@ public:
     ExceptionOr<bool> mediaElementHasCharacteristic(HTMLMediaElement&, const String&);
     void beginSimulatedHDCPError(HTMLMediaElement&);
     void endSimulatedHDCPError(HTMLMediaElement&);
+
+    bool elementShouldBufferData(HTMLMediaElement&);
 #endif
 
     bool isSelectPopupVisible(HTMLSelectElement&);

@@ -93,7 +93,6 @@ std::unique_ptr<PlatformMediaSession> PlatformMediaSession::create(PlatformMedia
 
 PlatformMediaSession::PlatformMediaSession(PlatformMediaSessionClient& client)
     : m_client(client)
-    , m_clientDataBufferingTimer(*this, &PlatformMediaSession::clientDataBufferingTimerFired)
     , m_state(Idle)
     , m_stateToRestore(Idle)
     , m_notifyingClient(false)
@@ -176,7 +175,6 @@ void PlatformMediaSession::clientWillBeginAutoplaying()
     }
 
     setState(Autoplaying);
-    updateClientDataBuffering();
 }
 
 bool PlatformMediaSession::clientWillBeginPlayback()
@@ -191,7 +189,6 @@ bool PlatformMediaSession::clientWillBeginPlayback()
     }
 
     setState(Playing);
-    updateClientDataBuffering();
     return true;
 }
 
@@ -209,7 +206,6 @@ bool PlatformMediaSession::clientWillPausePlayback()
     
     setState(Paused);
     PlatformMediaSessionManager::sharedManager().sessionWillEndPlayback(*this);
-    scheduleClientDataBufferingCheck();
     return true;
 }
 
@@ -273,51 +269,9 @@ bool PlatformMediaSession::supportsSeeking() const
     return m_client.supportsSeeking();
 }
 
-void PlatformMediaSession::visibilityChanged()
-{
-    scheduleClientDataBufferingCheck();
-}
-
-void PlatformMediaSession::scheduleClientDataBufferingCheck()
-{
-    if (!m_clientDataBufferingTimer.isActive())
-        m_clientDataBufferingTimer.startOneShot(clientDataBufferingTimerThrottleDelay);
-}
-
-void PlatformMediaSession::clientDataBufferingTimerFired()
-{
-    INFO_LOG(LOGIDENTIFIER, "visible = ", m_client.elementIsHidden());
-
-    updateClientDataBuffering();
-
-#if PLATFORM(IOS)
-    PlatformMediaSessionManager::sharedManager().configureWireLessTargetMonitoring();
-#endif
-
-    if (m_state != Playing || !m_client.elementIsHidden())
-        return;
-
-    PlatformMediaSessionManager::SessionRestrictions restrictions = PlatformMediaSessionManager::sharedManager().restrictions(mediaType());
-    if ((restrictions & PlatformMediaSessionManager::BackgroundTabPlaybackRestricted) == PlatformMediaSessionManager::BackgroundTabPlaybackRestricted)
-        pauseSession();
-}
-
-void PlatformMediaSession::updateClientDataBuffering()
-{
-    if (m_clientDataBufferingTimer.isActive())
-        m_clientDataBufferingTimer.stop();
-
-    m_client.setShouldBufferData(PlatformMediaSessionManager::sharedManager().sessionCanLoadMedia(*this));
-}
-
 String PlatformMediaSession::sourceApplicationIdentifier() const
 {
     return m_client.sourceApplicationIdentifier();
-}
-
-bool PlatformMediaSession::isHidden() const
-{
-    return m_client.elementIsHidden();
 }
 
 bool PlatformMediaSession::isSuspended() const

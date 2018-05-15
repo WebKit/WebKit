@@ -1,48 +1,48 @@
-CONSOLE MESSAGE: line 176: The language 'a' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'a' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 106: The language 'a' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'a' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language '1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'a' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language '1' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 106: The language '1' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language '1' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'ab-abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language '1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'ab-abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 106: The language 'ab-abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'ab-abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language '1a' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'ab-abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language '1a' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 106: The language '1a' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language '1a' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language '-a' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language '1a' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language '-a' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 106: The language '-a' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language '-a' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'a-' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language '-a' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'a-' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 106: The language 'a-' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'a-' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'a1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'a-' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'a1' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 106: The language 'a1' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'a1' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'aa1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'a1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'aa1' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 106: The language 'aa1' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'aa1' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'aaaa' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'aa1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'aaaa' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 106: The language 'aaaa' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'aaaa' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'aaa1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'aaaa' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'aaa1' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 106: The language 'aaa1' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'aaa1' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'inv-alid-char space' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'aaa1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'inv-alid-char space' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 106: The language 'inv-alid-char space' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'inv-alid-char space' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'inv-alid-charâ€“longDash' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'inv-alid-char space' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'inv-alid-charâ€“longDash' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 106: The language 'inv-alid-charâ€“longDash' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'inv-alid-charâ€“longDash' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'inv-alid-char-PÃ¥lska' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'inv-alid-charâ€“longDash' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'inv-alid-char-PÃ¥lska' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 106: The language 'inv-alid-char-PÃ¥lska' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'inv-alid-char-PÃ¥lska' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'inv-alid-char-*' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'inv-alid-char-PÃ¥lska' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'inv-alid-char-*' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 106: The language 'inv-alid-char-*' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'inv-alid-char-*' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'inv-alid-char-ï£¿' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'inv-alid-char-*' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'inv-alid-char-ï£¿' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 106: The language 'inv-alid-char-ï£¿' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 176: The language 'inv-alid-char-ï£¿' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 221: The language 'inv-alid-char-ï£¿' is not a valid BCP 47 language tag.
 Test that only BCP47 language tags are accepted as valid but still reflected.
 
 

@@ -287,13 +287,6 @@ Vector<PlatformMediaSession*> PlatformMediaSessionManager::currentSessionsMatchi
     return matchingSessions;
 }
     
-bool PlatformMediaSessionManager::sessionCanLoadMedia(const PlatformMediaSession& session) const
-{
-    if (session.isSuspended())
-        return false;
-    return session.state() == PlatformMediaSession::Playing || !session.isHidden() || session.shouldOverrideBackgroundLoadingRestriction();
-}
-
 void PlatformMediaSessionManager::applicationWillBecomeInactive() const
 {
     LOG(Media, "PlatformMediaSessionManager::applicationWillBecomeInactive");

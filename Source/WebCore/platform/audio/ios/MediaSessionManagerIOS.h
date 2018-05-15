@@ -65,8 +65,6 @@ private:
 
     void configureWireLessTargetMonitoring() override;
 
-    bool sessionCanLoadMedia(const PlatformMediaSession&) const override;
-
     bool hasActiveNowPlayingSession() const final { return m_nowPlayingActive; }
     String lastUpdatedNowPlayingTitle() const final { return m_reportedTitle; }
     double lastUpdatedNowPlayingDuration() const final { return m_reportedDuration; }

@@ -3232,6 +3232,11 @@ void Internals::endSimulatedHDCPError(HTMLMediaElement& element)
         player->endSimulatedHDCPError();
 }
 
+bool Internals::elementShouldBufferData(HTMLMediaElement& element)
+{
+    return element.shouldBufferData();
+}
+
 #endif
 
 bool Internals::isSelectPopupVisible(HTMLSelectElement& element)

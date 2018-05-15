@@ -477,6 +477,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_completelyLoaded(false)
     , m_havePreparedToPlay(false)
     , m_parsingInProgress(createdByParser)
+    , m_shouldBufferData(true)
     , m_elementIsHidden(document.hidden())
     , m_creatingControls(false)
     , m_receivedLayoutSizeChanged(false)
@@ -926,7 +927,7 @@ Node::InsertedIntoAncestorResult HTMLMediaElement::insertedIntoAncestor(Insertio
 
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument)
-        m_inActiveDocument = true;
+        setInActiveDocument(true);
 
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
@@ -978,7 +979,7 @@ void HTMLMediaElement::removedFromAncestor(RemovalType removalType, ContainerNod
 {
     INFO_LOG(LOGIDENTIFIER);
 
-    m_inActiveDocument = false;
+    setInActiveDocument(false);
     if (removalType.disconnectedFromDocument) {
         // Pause asynchronously to let the operation that removed us finish, in case we get inserted back into a document.
         m_pauseAfterDetachedTaskQueue.enqueueTask(std::bind(&HTMLMediaElement::pauseAfterDetachedTask, this));
@@ -3467,7 +3468,7 @@ void HTMLMediaElement::playInternal()
         ALWAYS_LOG(LOGIDENTIFIER, "  returning because of interruption");
         return;
     }
-
+    
     // 4.8.10.9. Playing the media resource
     if (!m_player || m_networkState == NETWORK_EMPTY)
         selectMediaResource();
@@ -5520,7 +5521,7 @@ void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
     setPreparedToReturnVideoLayerToInline(true);
 
     updatePlaybackControlsManager();
-    m_inActiveDocument = false;
+    setInActiveDocument(false);
 
     // Stop the playback without generating events
     setPlaying(false);
@@ -5600,7 +5601,7 @@ void HTMLMediaElement::resume()
 {
     INFO_LOG(LOGIDENTIFIER);
 
-    m_inActiveDocument = true;
+    setInActiveDocument(true);
 
     m_asyncEventQueue.resume();
 
@@ -5638,8 +5639,13 @@ void HTMLMediaElement::mediaVolumeDidChange()
 
 void HTMLMediaElement::visibilityStateChanged()
 {
-    m_elementIsHidden = document().hidden() && m_videoFullscreenMode != VideoFullscreenModePictureInPicture;
+    bool elementIsHidden = document().hidden() && m_videoFullscreenMode != VideoFullscreenModePictureInPicture;
+    if (elementIsHidden == m_elementIsHidden)
+        return;
+
+    m_elementIsHidden = elementIsHidden;
     INFO_LOG(LOGIDENTIFIER, "visible = ", !m_elementIsHidden);
+
     updateSleepDisabling();
     m_mediaSession->visibilityChanged();
     if (m_player)
@@ -6499,6 +6505,7 @@ void HTMLMediaElement::createMediaPlayer()
     forgetResourceSpecificTracks();
 #endif
     m_player = MediaPlayer::create(*this);
+    m_player->setShouldBufferData(m_shouldBufferData);
     scheduleUpdatePlaybackControlsManager();
 
 #if ENABLE(WEB_AUDIO)
@@ -7660,6 +7667,10 @@ bool HTMLMediaElement::doesHaveAttribute(const AtomicString& attribute, AtomicSt
 
 void HTMLMediaElement::setShouldBufferData(bool shouldBuffer)
 {
+    if (shouldBuffer == m_shouldBufferData)
+        return;
+
+    m_shouldBufferData = shouldBuffer;
     if (m_player)
         m_player->setShouldBufferData(shouldBuffer);
 }
@@ -7667,7 +7678,7 @@ void HTMLMediaElement::setShouldBufferData(bool shouldBuffer)
 void HTMLMediaElement::purgeBufferedDataIfPossible()
 {
 #if PLATFORM(IOS)
-    if (!MemoryPressureHandler::singleton().isUnderMemoryPressure() && PlatformMediaSessionManager::sharedManager().sessionCanLoadMedia(*m_mediaSession))
+    if (!MemoryPressureHandler::singleton().isUnderMemoryPressure() && m_mediaSession->dataBufferingPermitted())
         return;
 
     if (m_isPlayingToWirelessTarget) {
@@ -7775,6 +7786,7 @@ bool HTMLMediaElement::isVideoTooSmallForInlinePlayback()
 void HTMLMediaElement::isVisibleInViewportChanged()
 {
     m_visibilityChangeTaskQueue.enqueueTask([this] {
+        m_mediaSession->isVisibleInViewportChanged();
         updateShouldAutoplay();
         scheduleUpdatePlaybackControlsManager();
     });
@@ -7874,7 +7886,6 @@ void HTMLMediaElement::fullscreenModeChanged(VideoFullscreenMode mode)
 
     m_videoFullscreenMode = mode;
     visibilityStateChanged();
-    m_mediaSession->scheduleClientDataBufferingCheck();
     scheduleUpdatePlaybackControlsManager();
 }
 
@@ -7905,6 +7916,15 @@ void HTMLMediaElement::applicationDidBecomeActive()
 {
     if (m_player)
         m_player->applicationDidBecomeActive();
+}
+
+void HTMLMediaElement::setInActiveDocument(bool inActiveDocument)
+{
+    if (inActiveDocument == m_inActiveDocument)
+        return;
+
+    m_inActiveDocument = inActiveDocument;
+    m_mediaSession->inActiveDocumentChanged();
 }
 
 }

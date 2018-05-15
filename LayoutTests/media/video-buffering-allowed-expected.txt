@@ -1,0 +1,32 @@
+
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+EXPECTED (internals.elementShouldBufferData(video) == 'true') OK
+* Remove the video element from the document.
+RUN(video.parentNode.removeChild(video))
+EXPECTED (internals.elementShouldBufferData(video) == 'false') OK
+* Play the video.
+RUN(video.play())
+EVENT(playing)
+EXPECTED (internals.elementShouldBufferData(video) == 'true') OK
+* Pause the video.
+RUN(video.pause())
+EVENT(pause)
+EXPECTED (internals.elementShouldBufferData(video) == 'true') OK
+* Re-insert the video element into the document.
+RUN(document.body.insertBefore(video, document.body.firstChild))
+EXPECTED (internals.elementShouldBufferData(video) == 'true') OK
+* display:none the video element.
+RUN(video.style.display = "none")
+EXPECTED (internals.elementShouldBufferData(video) == 'true') OK
+* Simulate the view becoming invisible.
+RUN(internals.setPageVisibility(false))
+EXPECTED (internals.elementShouldBufferData(video) == 'false') OK
+* Simulate the view becoming visible.
+RUN(internals.setPageVisibility(true))
+EXPECTED (internals.elementShouldBufferData(video) == 'false') OK
+* Remove display:none from the video element.
+RUN(video.style.removeProperty("display"))
+EXPECTED (internals.elementShouldBufferData(video) == 'true') OK
+END OF TEST
+

@@ -301,14 +301,6 @@ void MediaSessionManageriOS::updateNowPlayingInfo()
 #endif // HAVE(MEDIA_PLAYER)
 }
 
-bool MediaSessionManageriOS::sessionCanLoadMedia(const PlatformMediaSession& session) const
-{
-    if (session.displayType() == PlatformMediaSession::Optimized)
-        return true;
-
-    return PlatformMediaSessionManager::sessionCanLoadMedia(session);
-}
-
 void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS

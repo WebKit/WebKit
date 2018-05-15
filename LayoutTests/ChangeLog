@@ -1,3 +1,18 @@
+2018-05-15  Jer Noble  <jer.noble@apple.com>
+
+        Media continues loading after rendered invisible (removed from DOM; scrolled off screen)
+        https://bugs.webkit.org/show_bug.cgi?id=185487
+
+        Reviewed by Eric Carlson.
+
+        * media/video-buffering-allowed-expected.txt: Added.
+        * media/video-buffering-allowed.html: Added.
+        * media/video-test.js:
+        (compare):
+        (testExpected):
+        (sleepFor):
+        (testArraysEqual): Deleted.
+
 2018-05-15  Charles Vazac  <cvazac@gmail.com>
 
         Add the PerformanceServerTiming Interface which makes Server-Timing header timing values available to JavaScript running in the browser.

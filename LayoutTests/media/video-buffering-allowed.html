@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-buffering-allowed</title>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+    <script>
+        async function runTest() {
+            findMediaElement();
+            failTestIn(1000);
+
+            run('video.src = findMediaFile("video", "content/test")');
+            await waitFor(video, 'canplaythrough');
+            testExpected('internals.elementShouldBufferData(video)', true);
+
+            consoleWrite('* Remove the video element from the document.');
+            run('video.parentNode.removeChild(video)');
+            await testExpectedEventually('internals.elementShouldBufferData(video)', false);
+
+            consoleWrite('* Play the video.');
+            run ('video.play()');
+            await waitFor(video, 'playing');
+            testExpected('internals.elementShouldBufferData(video)', true);
+
+            consoleWrite('* Pause the video.');
+            run('video.pause()');
+            await waitFor(video, 'pause');
+            testExpected('internals.elementShouldBufferData(video)', true);
+
+            consoleWrite('* Re-insert the video element into the document.');
+            run('document.body.insertBefore(video, document.body.firstChild)');
+            await testExpectedEventually('internals.elementShouldBufferData(video)', true);
+
+            consoleWrite('* display:none the video element.');
+            run('video.style.display = "none"');
+            await testExpectedEventually('internals.elementShouldBufferData(video)', true);
+
+            consoleWrite('* Simulate the view becoming invisible.');
+            run('internals.setPageVisibility(false)');
+            await testExpectedEventually('internals.elementShouldBufferData(video)', false);
+
+            consoleWrite('* Simulate the view becoming visible.');
+            run('internals.setPageVisibility(true)');
+            await testExpectedEventually('internals.elementShouldBufferData(video)', false);
+
+            consoleWrite('* Remove display:none from the video element.');
+            run('video.style.removeProperty("display")');
+            await testExpectedEventually('internals.elementShouldBufferData(video)', true);
+
+            endTest();
+        }
+        window.addEventListener('load', runTest);
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

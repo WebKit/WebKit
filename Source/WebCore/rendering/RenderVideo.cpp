@@ -64,6 +64,7 @@ RenderVideo::~RenderVideo()
 
 void RenderVideo::willBeDestroyed()
 {
+    visibleInViewportStateChanged();
     if (auto player = videoElement().player())
         player->setVisible(false);
 

@@ -56,6 +56,7 @@
 
 namespace WebCore {
 
+static const Seconds clientDataBufferingTimerThrottleDelay { 100_ms };
 static const Seconds elementMainContentCheckInterval { 250_ms };
 
 static bool isElementRectMostlyInMainFrame(const HTMLMediaElement&);
@@ -109,6 +110,7 @@ MediaElementSession::MediaElementSession(HTMLMediaElement& element)
     , m_targetAvailabilityChangedTimer(*this, &MediaElementSession::targetAvailabilityChangedTimerFired)
 #endif
     , m_mainContentCheckTimer(*this, &MediaElementSession::mainContentCheckTimerFired)
+    , m_clientDataBufferingTimer(*this, &MediaElementSession::clientDataBufferingTimerFired)
 #if !RELEASE_LOG_DISABLED
     , m_logIdentifier(element.logIdentifier())
 #endif
@@ -131,6 +133,86 @@ void MediaElementSession::unregisterWithDocument(Document& document)
 #else
     UNUSED_PARAM(document);
 #endif
+}
+
+void MediaElementSession::clientWillBeginAutoplaying()
+{
+    PlatformMediaSession::clientWillBeginAutoplaying();
+    m_elementIsHiddenBecauseItWasRemovedFromDOM = false;
+    updateClientDataBuffering();
+}
+
+bool MediaElementSession::clientWillBeginPlayback()
+{
+    if (!PlatformMediaSession::clientWillBeginPlayback())
+        return false;
+
+    m_elementIsHiddenBecauseItWasRemovedFromDOM = false;
+    updateClientDataBuffering();
+    return true;
+}
+
+bool MediaElementSession::clientWillPausePlayback()
+{
+    if (!PlatformMediaSession::clientWillPausePlayback())
+        return false;
+
+    updateClientDataBuffering();
+    return true;
+}
+
+void MediaElementSession::visibilityChanged()
+{
+    scheduleClientDataBufferingCheck();
+
+    if (m_element.elementIsHidden() && !m_element.isFullscreen())
+        m_elementIsHiddenUntilVisibleInViewport = true;
+}
+
+void MediaElementSession::isVisibleInViewportChanged()
+{
+    scheduleClientDataBufferingCheck();
+
+    if (m_element.isFullscreen() || m_element.isVisibleInViewport())
+        m_elementIsHiddenUntilVisibleInViewport = false;
+}
+
+void MediaElementSession::inActiveDocumentChanged()
+{
+    m_elementIsHiddenBecauseItWasRemovedFromDOM = !m_element.inActiveDocument();
+    scheduleClientDataBufferingCheck();
+}
+
+void MediaElementSession::scheduleClientDataBufferingCheck()
+{
+    if (!m_clientDataBufferingTimer.isActive())
+        m_clientDataBufferingTimer.startOneShot(clientDataBufferingTimerThrottleDelay);
+}
+
+void MediaElementSession::clientDataBufferingTimerFired()
+{
+    INFO_LOG(LOGIDENTIFIER, "visible = ", m_element.elementIsHidden());
+
+    updateClientDataBuffering();
+
+#if PLATFORM(IOS)
+    PlatformMediaSessionManager::sharedManager().configureWireLessTargetMonitoring();
+#endif
+
+    if (state() != Playing || !m_element.elementIsHidden())
+        return;
+
+    PlatformMediaSessionManager::SessionRestrictions restrictions = PlatformMediaSessionManager::sharedManager().restrictions(mediaType());
+    if ((restrictions & PlatformMediaSessionManager::BackgroundTabPlaybackRestricted) == PlatformMediaSessionManager::BackgroundTabPlaybackRestricted)
+        pauseSession();
+}
+
+void MediaElementSession::updateClientDataBuffering()
+{
+    if (m_clientDataBufferingTimer.isActive())
+        m_clientDataBufferingTimer.stop();
+
+    m_element.setShouldBufferData(dataBufferingPermitted());
 }
 
 void MediaElementSession::addBehaviorRestriction(BehaviorRestrictions restrictions)
@@ -271,6 +353,23 @@ bool MediaElementSession::dataLoadingPermitted() const
         INFO_LOG(LOGIDENTIFIER, "returning FALSE");
         return false;
     }
+
+    return true;
+}
+
+bool MediaElementSession::dataBufferingPermitted() const
+{
+    if (isSuspended())
+        return false;
+
+    if (state() == PlatformMediaSession::Playing)
+        return true;
+
+    if (shouldOverrideBackgroundLoadingRestriction())
+        return true;
+
+    if (m_elementIsHiddenUntilVisibleInViewport || m_elementIsHiddenBecauseItWasRemovedFromDOM || m_element.elementIsHidden())
+        return false;
 
     return true;
 }
@@ -418,9 +517,7 @@ bool MediaElementSession::wantsToObserveViewportVisibilityForMediaControls() con
 
 bool MediaElementSession::wantsToObserveViewportVisibilityForAutoplay() const
 {
-    if (!m_element.isVideo())
-        return false;
-    return hasBehaviorRestriction(InvisibleAutoplayNotPermitted) || hasBehaviorRestriction(OverrideUserGestureRequirementForMainContent);
+    return m_element.isVideo();
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -674,7 +771,7 @@ bool MediaElementSession::allowsPictureInPicture() const
 #if PLATFORM(IOS)
 bool MediaElementSession::requiresPlaybackTargetRouteMonitoring() const
 {
-    return m_hasPlaybackTargetAvailabilityListeners && !client().elementIsHidden();
+    return m_hasPlaybackTargetAvailabilityListeners && !m_element.elementIsHidden();
 }
 #endif
 

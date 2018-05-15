@@ -62,17 +62,9 @@ function test(testFuncString, endit)
         endTest();
 }
 
-function testExpected(testFuncString, expected, comparison)
+function compare(testFuncString, expected, comparison)
 {
-    try {
-        var observed = eval(testFuncString);
-    } catch (ex) {
-        consoleWrite(ex);
-        return;
-    }
-
-    if (comparison === undefined)
-        comparison = '==';
+    var observed = eval(testFuncString);
 
     var success = false;
     switch (comparison)
@@ -87,7 +79,51 @@ function testExpected(testFuncString, expected, comparison)
         case 'instanceof': success = observed instanceof expected; break;
     }
 
-    reportExpected(success, testFuncString, comparison, expected, observed)
+    return {success:success, observed:observed};
+}
+
+function testExpected(testFuncString, expected, comparison)
+{
+    if (comparison === undefined)
+        comparison = '==';
+
+    try {
+        let {success, observed} = compare(testFuncString, expected, comparison);
+        reportExpected(success, testFuncString, comparison, expected, observed)
+    } catch (ex) {
+        consoleWrite(ex);
+    }
+}
+
+function sleepFor(duration) {
+    return new Promise(resolve => {
+        setTimeout(resolve, duration);
+    });
+}
+
+function testExpectedEventually(testFuncString, expected, comparison)
+{
+    return new Promise(async resolve => {
+        var success;
+        var observed;
+        if (comparison === undefined)
+            comparison = '==';
+        while (true) {
+            try {
+                let {success, observed} = compare(testFuncString, expected, comparison);
+                if (success) {
+                    reportExpected(success, testFuncString, comparison, expected, observed);
+                    resolve();
+                    return;
+                }
+                await sleepFor(1);
+            } catch (ex) {
+                consoleWrite(ex);
+                resolve();
+                return;
+            }
+        }
+    });
 }
 
 function testArraysEqual(testFuncString, expected)
@@ -148,6 +184,15 @@ function run(testFuncString)
     } catch (ex) {
         consoleWrite(ex);
     }
+}
+
+function waitFor(element, event) {
+    return new Promise(resolve => {
+        element.addEventListener(event, event => {
+            consoleWrite(`EVENT(${event.type})`);
+            resolve(event);
+        }, { once: true });
+    });
 }
 
 function waitForEventOnce(eventName, func, endit)

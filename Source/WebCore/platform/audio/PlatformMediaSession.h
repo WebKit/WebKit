@@ -105,15 +105,13 @@ public:
     void beginInterruption(InterruptionType);
     void endInterruption(EndInterruptionFlags);
 
-    void clientWillBeginAutoplaying();
-    bool clientWillBeginPlayback();
-    bool clientWillPausePlayback();
+    virtual void clientWillBeginAutoplaying();
+    virtual bool clientWillBeginPlayback();
+    virtual bool clientWillPausePlayback();
 
     void pauseSession();
     void stopSession();
     
-    void visibilityChanged();
-
 #if ENABLE(VIDEO)
     String title() const;
     double duration() const;
@@ -171,7 +169,6 @@ public:
     bool canProduceAudio() const;
     void canProduceAudioChanged();
 
-    void scheduleClientDataBufferingCheck();
     virtual void resetPlaybackSessionState() { }
     String sourceApplicationIdentifier() const;
 
@@ -188,11 +185,7 @@ protected:
 #endif
 
 private:
-    void clientDataBufferingTimerFired();
-    void updateClientDataBuffering();
-
     PlatformMediaSessionClient& m_client;
-    Timer m_clientDataBufferingTimer;
     State m_state;
     State m_stateToRestore;
     InterruptionType m_interruptionType { NoInterruption };
@@ -232,8 +225,6 @@ public:
     virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) = 0;
     virtual bool supportsSeeking() const = 0;
 
-    virtual void setShouldBufferData(bool) { }
-    virtual bool elementIsHidden() const { return false; }
     virtual bool canProduceAudio() const { return false; }
     virtual bool isSuspended() const { return false; };
 
