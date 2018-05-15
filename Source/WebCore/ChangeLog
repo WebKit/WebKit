@@ -1,3 +1,12 @@
+2018-05-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the iOS build after r231779
+
+        Also address a minor in-person review comment by returning "extrazoom" instead of the empty string.
+
+        * page/DisabledAdaptations.cpp:
+        (WebCore::extraZoomModeAdaptationName):
+
 2018-05-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] FormattingContext:computeOutOfFlowNonReplacedHeight/Width should use the computed margins/paddings/borders
