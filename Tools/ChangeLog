@@ -1,3 +1,12 @@
+2018-05-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, rolling out r230749
+
+        This did not work as desired.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-05-15  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Expose Web Animations CSS integration as an experimental feature
