@@ -225,10 +225,10 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     // future overhead.
     webViewContents = createImageWithCopiedData(webViewContents.get());
 
-    // Screen updates to be re-enabled in _startEnterFullScreenAnimationWithDuration:
-    NSDisableScreenUpdates();
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    // Screen updates to be re-enabled in _startEnterFullScreenAnimationWithDuration:
+    NSDisableScreenUpdates();
     [[self window] setAutodisplay:NO];
 #pragma clang diagnostic pop
 
@@ -287,8 +287,11 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
     if (completed) {
         _fullScreenState = InFullScreen;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         // Screen updates to be re-enabled ta the end of the current block.
         NSDisableScreenUpdates();
+#pragma clang diagnostic pop
         [self _manager]->didEnterFullScreen();
         [self _manager]->setAnimatingFullScreen(false);
 
@@ -328,7 +331,10 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
         [self _manager]->setAnimatingFullScreen(false);
     }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSEnableScreenUpdates();
+#pragma clang diagnostic pop
 
     if (_requestedExitFullScreen) {
         _requestedExitFullScreen = NO;
@@ -358,10 +364,10 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
 
     [_webViewPlaceholder setExitWarningVisible:NO];
 
-    // Screen updates to be re-enabled in _startExitFullScreenAnimationWithDuration: or beganExitFullScreenWithInitialFrame:finalFrame:
-    NSDisableScreenUpdates();
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    // Screen updates to be re-enabled in _startExitFullScreenAnimationWithDuration: or beganExitFullScreenWithInitialFrame:finalFrame:
+    NSDisableScreenUpdates();
     [[self window] setAutodisplay:NO];
 #pragma clang diagnostic pop
 
@@ -393,7 +399,10 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
         // Because we are breaking the normal animation pattern, re-enable screen updates
         // as exitFullScreen has disabled them, but _startExitFullScreenAnimationWithDuration:
         // will never be called.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         NSEnableScreenUpdates();
+#pragma clang diagnostic pop
     }
 
     [[self window] exitFullScreenMode:self];
@@ -416,8 +425,11 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
 
     NSResponder *firstResponder = [[self window] firstResponder];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     // Screen updates to be re-enabled in completeFinishExitFullScreenAnimationAfterRepaint.
     NSDisableScreenUpdates();
+#pragma clang diagnostic pop
     _page->setSuppressVisibilityUpdates(true);
     [[self window] orderOut:self];
     NSView *contentView = [[self window] contentView];
@@ -465,7 +477,10 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
 #pragma clang diagnostic pop
     [[_webView window] displayIfNeeded];
     _page->setSuppressVisibilityUpdates(false);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSEnableScreenUpdates();
+#pragma clang diagnostic pop
 }
 
 - (void)performClose:(id)sender
@@ -666,7 +681,10 @@ static CAAnimation *fadeAnimation(CFTimeInterval duration, AnimationDirection di
     [[self window] setAutodisplay:YES];
 #pragma clang diagnostic pop
     [[self window] displayIfNeeded];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSEnableScreenUpdates();
+#pragma clang diagnostic pop
 }
 
 - (void)_startExitFullScreenAnimationWithDuration:(NSTimeInterval)duration
@@ -694,7 +712,10 @@ static CAAnimation *fadeAnimation(CFTimeInterval duration, AnimationDirection di
     [[self window] setAutodisplay:YES];
 #pragma clang diagnostic pop
     [[self window] displayIfNeeded];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSEnableScreenUpdates();
+#pragma clang diagnostic pop
 }
 
 - (void)_watchdogTimerFired:(NSTimer *)timer

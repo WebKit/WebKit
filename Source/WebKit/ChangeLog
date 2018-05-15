@@ -1,3 +1,19 @@
+2018-05-15  Daniel Bates  <dabates@apple.com>
+
+        Fix the Apple Internal build
+
+        Make a similar change to WebKit as I did for LegacyWebKit in r231777. See <rdar://problem/40237873> for more details.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]):
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+        (-[WKFullScreenWindowController exitFullScreen]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+        (-[WKFullScreenWindowController completeFinishExitFullScreenAnimationAfterRepaint]):
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]):
+        (-[WKFullScreenWindowController _startExitFullScreenAnimationWithDuration:]):
+
 2018-05-15  Megan Gardner  <megan_gardner@apple.com>
 
         Clear selections from web content with single tap
