@@ -1,3 +1,12 @@
+2018-05-15  Thomas Klausner  <tk@giga.or.at>
+
+        Add missing header to fix build.
+        https://bugs.webkit.org/show_bug.cgi?id=185378
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/network/soup/SoupNetworkSession.h:
+
 2018-05-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE] Build failure with RPi userland drivers and gstreamer-gl
