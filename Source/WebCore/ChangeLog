@@ -1,3 +1,22 @@
+2018-05-15  Dirk Schulze  <krit@webkit.org>
+
+        Add new SVGDOM SVGFEBLEND constants
+        https://bugs.webkit.org/show_bug.cgi?id=185581
+
+        Reviewed by Simon Fraser.
+
+        Provide new SVG DOM constants for the new blend modes added to feBlend.
+
+        https://drafts.fxtf.org/filter-effects-1/#InterfaceSVGFEBlendElement
+
+        * platform/graphics/GraphicsTypes.cpp:
+        (WebCore::blendModeName):
+        * platform/graphics/GraphicsTypes.h:
+        * svg/SVGFEBlendElement.h:
+        (WebCore::SVGPropertyTraits<BlendMode>::highestEnumValue):
+        (WebCore::SVGPropertyTraits<BlendMode>::toString):
+        * svg/SVGFEBlendElement.idl:
+
 2018-05-15  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Expose Web Animations CSS integration as an experimental feature

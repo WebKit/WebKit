@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "GraphicsTypes.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
@@ -28,24 +29,14 @@ namespace WebCore {
 
 template<>
 struct SVGPropertyTraits<BlendMode> {
-    static unsigned highestEnumValue() { return BlendModeLighten; }
+    static unsigned highestEnumValue() { return BlendModeLuminosity; }
 
     static String toString(BlendMode type)
     {
-        switch (type) {
-        case BlendModeNormal:
-            return ASCIILiteral("normal");
-        case BlendModeMultiply:
-            return ASCIILiteral("multiply");
-        case BlendModeScreen:
-            return ASCIILiteral("screen");
-        case BlendModeDarken:
-            return ASCIILiteral("darken");
-        case BlendModeLighten:
-            return ASCIILiteral("lighten");
-        default:
-            return emptyString();
-        }
+        if (type < BlendModePlusDarker)
+            return blendModeName(type);
+
+        return emptyString();
     }
 };
 

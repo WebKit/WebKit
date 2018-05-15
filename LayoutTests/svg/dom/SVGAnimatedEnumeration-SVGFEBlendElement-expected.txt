@@ -29,16 +29,71 @@ PASS feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_LIGHTEN is
 PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LIGHTEN
 PASS feBlendElement.getAttribute('mode') is "lighten"
 
+Switch to 'overlay'
+PASS feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_OVERLAY is SVGFEBlendElement.SVG_FEBLEND_MODE_OVERLAY
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_OVERLAY
+PASS feBlendElement.getAttribute('mode') is "overlay"
+
+Switch to 'color-dodge'
+PASS feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_DODGE is SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_DODGE
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_DODGE
+PASS feBlendElement.getAttribute('mode') is "color-dodge"
+
+Switch to 'color-burn'
+PASS feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_BURN is SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_BURN
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_BURN
+PASS feBlendElement.getAttribute('mode') is "color-burn"
+
+Switch to 'hard-light'
+PASS feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_HARD_LIGHT is SVGFEBlendElement.SVG_FEBLEND_MODE_HARD_LIGHT
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_HARD_LIGHT
+PASS feBlendElement.getAttribute('mode') is "hard-light"
+
+Switch to 'soft-light'
+PASS feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_SOFT_LIGHT is SVGFEBlendElement.SVG_FEBLEND_MODE_SOFT_LIGHT
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_SOFT_LIGHT
+PASS feBlendElement.getAttribute('mode') is "soft-light"
+
+Switch to 'difference'
+PASS feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_DIFFERENCE is SVGFEBlendElement.SVG_FEBLEND_MODE_DIFFERENCE
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_DIFFERENCE
+PASS feBlendElement.getAttribute('mode') is "difference"
+
+Switch to 'exclusion'
+PASS feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_EXCLUSION is SVGFEBlendElement.SVG_FEBLEND_MODE_EXCLUSION
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_EXCLUSION
+PASS feBlendElement.getAttribute('mode') is "exclusion"
+
+Switch to 'hue'
+PASS feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_HUE is SVGFEBlendElement.SVG_FEBLEND_MODE_HUE
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_HUE
+PASS feBlendElement.getAttribute('mode') is "hue"
+
+Switch to 'saturation'
+PASS feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_SATURATION is SVGFEBlendElement.SVG_FEBLEND_MODE_SATURATION
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_SATURATION
+PASS feBlendElement.getAttribute('mode') is "saturation"
+
+Switch to 'color'
+PASS feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR is SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR
+PASS feBlendElement.getAttribute('mode') is "color"
+
+Switch to 'luminosity'
+PASS feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_LUMINOSITY is SVGFEBlendElement.SVG_FEBLEND_MODE_LUMINOSITY
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LUMINOSITY
+PASS feBlendElement.getAttribute('mode') is "luminosity"
+
 Try setting invalid values
-PASS feBlendElement.mode.baseVal = 6 threw exception TypeError: Type error.
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LIGHTEN
-PASS feBlendElement.getAttribute('mode') is "lighten"
+PASS feBlendElement.mode.baseVal = 17 threw exception TypeError: Type error.
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LUMINOSITY
+PASS feBlendElement.getAttribute('mode') is "luminosity"
 PASS feBlendElement.mode.baseVal = -1 threw exception TypeError: Type error.
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LIGHTEN
-PASS feBlendElement.getAttribute('mode') is "lighten"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LUMINOSITY
+PASS feBlendElement.getAttribute('mode') is "luminosity"
 PASS feBlendElement.mode.baseVal = 0 threw exception TypeError: Type error.
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LIGHTEN
-PASS feBlendElement.getAttribute('mode') is "lighten"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LUMINOSITY
+PASS feBlendElement.getAttribute('mode') is "luminosity"
 
 Switch to 'normal'
 PASS feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL is SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL

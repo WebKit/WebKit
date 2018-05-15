@@ -43,18 +43,84 @@ shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_LIGH
 shouldBeEqualToString("feBlendElement.getAttribute('mode')", "lighten");
 
 debug("");
+debug("Switch to 'overlay'");
+shouldBe("feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_OVERLAY", "SVGFEBlendElement.SVG_FEBLEND_MODE_OVERLAY");
+shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_OVERLAY");
+shouldBeEqualToString("feBlendElement.getAttribute('mode')", "overlay");
+
+debug("");
+debug("Switch to 'color-dodge'");
+shouldBe("feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_DODGE", "SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_DODGE");
+shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_DODGE");
+shouldBeEqualToString("feBlendElement.getAttribute('mode')", "color-dodge");
+
+debug("");
+debug("Switch to 'color-burn'");
+shouldBe("feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_BURN", "SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_BURN");
+shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_BURN");
+shouldBeEqualToString("feBlendElement.getAttribute('mode')", "color-burn");
+
+debug("");
+debug("Switch to 'hard-light'");
+shouldBe("feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_HARD_LIGHT", "SVGFEBlendElement.SVG_FEBLEND_MODE_HARD_LIGHT");
+shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_HARD_LIGHT");
+shouldBeEqualToString("feBlendElement.getAttribute('mode')", "hard-light");
+
+debug("");
+debug("Switch to 'soft-light'");
+shouldBe("feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_SOFT_LIGHT", "SVGFEBlendElement.SVG_FEBLEND_MODE_SOFT_LIGHT");
+shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_SOFT_LIGHT");
+shouldBeEqualToString("feBlendElement.getAttribute('mode')", "soft-light");
+
+debug("");
+debug("Switch to 'difference'");
+shouldBe("feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_DIFFERENCE", "SVGFEBlendElement.SVG_FEBLEND_MODE_DIFFERENCE");
+shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_DIFFERENCE");
+shouldBeEqualToString("feBlendElement.getAttribute('mode')", "difference");
+
+debug("");
+debug("Switch to 'exclusion'");
+shouldBe("feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_EXCLUSION", "SVGFEBlendElement.SVG_FEBLEND_MODE_EXCLUSION");
+shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_EXCLUSION");
+shouldBeEqualToString("feBlendElement.getAttribute('mode')", "exclusion");
+
+debug("");
+debug("Switch to 'hue'");
+shouldBe("feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_HUE", "SVGFEBlendElement.SVG_FEBLEND_MODE_HUE");
+shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_HUE");
+shouldBeEqualToString("feBlendElement.getAttribute('mode')", "hue");
+
+debug("");
+debug("Switch to 'saturation'");
+shouldBe("feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_SATURATION", "SVGFEBlendElement.SVG_FEBLEND_MODE_SATURATION");
+shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_SATURATION");
+shouldBeEqualToString("feBlendElement.getAttribute('mode')", "saturation");
+
+debug("");
+debug("Switch to 'color'");
+shouldBe("feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR", "SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR");
+shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR");
+shouldBeEqualToString("feBlendElement.getAttribute('mode')", "color");
+
+debug("");
+debug("Switch to 'luminosity'");
+shouldBe("feBlendElement.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_LUMINOSITY", "SVGFEBlendElement.SVG_FEBLEND_MODE_LUMINOSITY");
+shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_LUMINOSITY");
+shouldBeEqualToString("feBlendElement.getAttribute('mode')", "luminosity");
+
+debug("");
 debug("Try setting invalid values");
-shouldThrow("feBlendElement.mode.baseVal = 6");
-shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_LIGHTEN");
-shouldBeEqualToString("feBlendElement.getAttribute('mode')", "lighten");
+shouldThrow("feBlendElement.mode.baseVal = 17");
+shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_LUMINOSITY");
+shouldBeEqualToString("feBlendElement.getAttribute('mode')", "luminosity");
 
 shouldThrow("feBlendElement.mode.baseVal = -1");
-shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_LIGHTEN");
-shouldBeEqualToString("feBlendElement.getAttribute('mode')", "lighten");
+shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_LUMINOSITY");
+shouldBeEqualToString("feBlendElement.getAttribute('mode')", "luminosity");
 
 shouldThrow("feBlendElement.mode.baseVal = 0");
-shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_LIGHTEN");
-shouldBeEqualToString("feBlendElement.getAttribute('mode')", "lighten");
+shouldBe("feBlendElement.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_LUMINOSITY");
+shouldBeEqualToString("feBlendElement.getAttribute('mode')", "luminosity");
 
 debug("");
 debug("Switch to 'normal'");

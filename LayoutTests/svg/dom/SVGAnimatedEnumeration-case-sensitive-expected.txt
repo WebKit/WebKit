@@ -78,6 +78,50 @@ PASS feBlendElement.setAttribute('mode', 'lighten') is undefined.
 PASS feBlendElement.getAttribute('mode') is "lighten"
 PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LIGHTEN
 
+PASS feBlendElement.setAttribute('mode', 'overlay') is undefined.
+PASS feBlendElement.getAttribute('mode') is "overlay"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_OVERLAY
+
+PASS feBlendElement.setAttribute('mode', 'color-dodge') is undefined.
+PASS feBlendElement.getAttribute('mode') is "color-dodge"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_DODGE
+
+PASS feBlendElement.setAttribute('mode', 'color-burn') is undefined.
+PASS feBlendElement.getAttribute('mode') is "color-burn"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_BURN
+
+PASS feBlendElement.setAttribute('mode', 'hard-light') is undefined.
+PASS feBlendElement.getAttribute('mode') is "hard-light"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_HARD_LIGHT
+
+PASS feBlendElement.setAttribute('mode', 'soft-light') is undefined.
+PASS feBlendElement.getAttribute('mode') is "soft-light"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_SOFT_LIGHT
+
+PASS feBlendElement.setAttribute('mode', 'difference') is undefined.
+PASS feBlendElement.getAttribute('mode') is "difference"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_DIFFERENCE
+
+PASS feBlendElement.setAttribute('mode', 'exclusion') is undefined.
+PASS feBlendElement.getAttribute('mode') is "exclusion"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_EXCLUSION
+
+PASS feBlendElement.setAttribute('mode', 'hue') is undefined.
+PASS feBlendElement.getAttribute('mode') is "hue"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_HUE
+
+PASS feBlendElement.setAttribute('mode', 'saturation') is undefined.
+PASS feBlendElement.getAttribute('mode') is "saturation"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_SATURATION
+
+PASS feBlendElement.setAttribute('mode', 'color') is undefined.
+PASS feBlendElement.getAttribute('mode') is "color"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR
+
+PASS feBlendElement.setAttribute('mode', 'luminosity') is undefined.
+PASS feBlendElement.getAttribute('mode') is "luminosity"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LUMINOSITY
+
 Check invalid case feBlend 'mode'
 
 feBlendElement.setAttribute('mode', 'multiply')
@@ -100,9 +144,64 @@ PASS feBlendElement.setAttribute('mode', 'DARKEN') is undefined.
 PASS feBlendElement.getAttribute('mode') is "DARKEN"
 PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LIGHTEN
 
-feBlendElement.setAttribute('mode', 'normal')
+feBlendElement.setAttribute('mode', 'overlay')
 PASS feBlendElement.setAttribute('mode', 'LIGHTEN') is undefined.
 PASS feBlendElement.getAttribute('mode') is "LIGHTEN"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_OVERLAY
+
+feBlendElement.setAttribute('mode', 'color-dodge')
+PASS feBlendElement.setAttribute('mode', 'OVERLAY') is undefined.
+PASS feBlendElement.getAttribute('mode') is "OVERLAY"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_DODGE
+
+feBlendElement.setAttribute('mode', 'color-burn')
+PASS feBlendElement.setAttribute('mode', 'COLOR-DODGE') is undefined.
+PASS feBlendElement.getAttribute('mode') is "COLOR-DODGE"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_BURN
+
+feBlendElement.setAttribute('mode', 'hard-light')
+PASS feBlendElement.setAttribute('mode', 'COLOR-BURN') is undefined.
+PASS feBlendElement.getAttribute('mode') is "COLOR-BURN"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_HARD_LIGHT
+
+feBlendElement.setAttribute('mode', 'soft-light')
+PASS feBlendElement.setAttribute('mode', 'HARD-LIGHT') is undefined.
+PASS feBlendElement.getAttribute('mode') is "HARD-LIGHT"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_SOFT_LIGHT
+
+feBlendElement.setAttribute('mode', 'difference')
+PASS feBlendElement.setAttribute('mode', 'SOFT-LIGHT') is undefined.
+PASS feBlendElement.getAttribute('mode') is "SOFT-LIGHT"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_DIFFERENCE
+
+feBlendElement.setAttribute('mode', 'exclusion')
+PASS feBlendElement.setAttribute('mode', 'DIFFERENCE') is undefined.
+PASS feBlendElement.getAttribute('mode') is "DIFFERENCE"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_EXCLUSION
+
+feBlendElement.setAttribute('mode', 'hue')
+PASS feBlendElement.setAttribute('mode', 'EXCLUSION') is undefined.
+PASS feBlendElement.getAttribute('mode') is "EXCLUSION"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_HUE
+
+feBlendElement.setAttribute('mode', 'saturation')
+PASS feBlendElement.setAttribute('mode', 'HUE') is undefined.
+PASS feBlendElement.getAttribute('mode') is "HUE"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_SATURATION
+
+feBlendElement.setAttribute('mode', 'color')
+PASS feBlendElement.setAttribute('mode', 'SATURATION') is undefined.
+PASS feBlendElement.getAttribute('mode') is "SATURATION"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR
+
+feBlendElement.setAttribute('mode', 'luminosity')
+PASS feBlendElement.setAttribute('mode', 'COLOR') is undefined.
+PASS feBlendElement.getAttribute('mode') is "COLOR"
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LUMINOSITY
+
+feBlendElement.setAttribute('mode', 'normal')
+PASS feBlendElement.setAttribute('mode', 'LUMINOSITY') is undefined.
+PASS feBlendElement.getAttribute('mode') is "LUMINOSITY"
 PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL
 
 Check valid feColorMatrix 'type'

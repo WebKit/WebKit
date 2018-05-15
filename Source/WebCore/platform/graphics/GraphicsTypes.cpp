@@ -118,7 +118,7 @@ String compositeOperatorName(CompositeOperator op, BlendMode blendOp)
     return compositeOperatorNames[op];
 }
 
-static String blendModeName(BlendMode blendOp)
+String blendModeName(BlendMode blendOp)
 {
     ASSERT(blendOp >= BlendModeNormal);
     ASSERT(blendOp <= BlendModePlusLighter);

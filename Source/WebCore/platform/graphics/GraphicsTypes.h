@@ -108,6 +108,7 @@ enum class AlphaPremultiplication {
 };
 
 String compositeOperatorName(CompositeOperator, BlendMode);
+String blendModeName(BlendMode);
 bool parseBlendMode(const String&, BlendMode&);
 bool parseCompositeAndBlendOperator(const String&, CompositeOperator&, BlendMode&);
 
