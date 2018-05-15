@@ -1,3 +1,19 @@
+2018-05-15  Dean Jackson  <dino@apple.com>
+
+        Provide UIView and UIImage for zoom transition
+        https://bugs.webkit.org/show_bug.cgi?id=185655
+        <rdar://problem/40267224>
+
+        Reviewed by Antoine Quint.
+
+        Provide a UIView* for the frameForPreviewItem to use as a source view.
+        Also implement the transitionImageForPreviewItem delegate, even though
+        we're returning nil.
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        (-[_WKPreviewControllerDelegate previewController:frameForPreviewItem:inSourceView:]):
+        (-[_WKPreviewControllerDelegate previewController:transitionImageForPreviewItem:contentRect:]):
+
 2018-05-15  Daniel Bates  <dabates@apple.com>
 
         Fix the Apple Internal build
