@@ -1,3 +1,16 @@
+2018-05-15  Megan Gardner  <megan_gardner@apple.com>
+
+        Clear selections from web content with single tap
+        https://bugs.webkit.org/show_bug.cgi?id=185634
+
+        Reviewed by Tim Horton.
+        
+        With the switch to the single text selection assistant, we were not correctly clearing the selection when a
+        single tap happened.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _singleTapCommited:]):
+
 2018-05-15  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Expose Web Animations CSS integration as an experimental feature

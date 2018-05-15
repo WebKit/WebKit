@@ -1869,7 +1869,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     // The selection could have been set by autofocusing on page load and not
     // reflected in the UI process since the user was not interacting with the page.
     if (!_page->editorState().isContentEditable)
-        [_webSelectionAssistant clearSelection];
+        _page->clearSelection();
 
     _lastInteractionLocation = gestureRecognizer.location;
 
