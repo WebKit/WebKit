@@ -1,3 +1,72 @@
+2018-05-14  Dean Jackson  <dino@apple.com>
+
+        Download and present System Preview
+        https://bugs.webkit.org/show_bug.cgi?id=185459
+        <rdar://problem/40079228>
+
+        Reviewed by Tim Horton.
+
+        Extend DownloadClient so that it can handle the case where
+        the download was triggered by a System Preview. In this situation
+        the result (and progress) are piped into QuickLook via the SystemPreviewController.
+
+        The DownloadProxy class is also extended to handle the destination
+        filename and the size of the content.
+
+        Lastly, SystemPreviewController is updated to have a start(), show()
+        and cancel() interface, and no longer adjusts page navigation.
+
+        * UIProcess/Cocoa/DownloadClient.h:
+        * UIProcess/Cocoa/DownloadClient.mm: Handle the SystemPreview case, which
+        doesn't have a download delegate, but instead needs to communicate with
+        the SystemPreviewController, if one exists.
+        (WebKit::DownloadClient::didStart):
+        (WebKit::DownloadClient::didReceiveResponse):
+        (WebKit::DownloadClient::didReceiveData):
+        (WebKit::DownloadClient::didCreateDestination):
+        (WebKit::DownloadClient::processDidCrash):
+        (WebKit::DownloadClient::decideDestinationWithSuggestedFilename):
+        (WebKit::DownloadClient::didFinish):
+        (WebKit::DownloadClient::didFail):
+        (WebKit::DownloadClient::didCancel):
+        (WebKit::DownloadClient::releaseActivityToken):
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm: Implement the new API.
+        (-[_WKPreviewControllerDataSource initWithMIMEType:]):
+        (-[_WKPreviewControllerDataSource previewController:previewItemAtIndex:]):
+        (-[_WKPreviewControllerDataSource setProgress:]):
+        (-[_WKPreviewControllerDataSource finish:]):
+        (-[_WKPreviewControllerDelegate previewControllerDidDismiss:]):
+        (WebKit::SystemPreviewController::start):
+        (WebKit::SystemPreviewController::updateProgress):
+        (WebKit::SystemPreviewController::finish):
+        (WebKit::SystemPreviewController::cancel):
+        (-[_WKPreviewControllerDataSource initWithURL:]): Deleted.
+        (-[_WKPreviewControllerDelegate previewControllerWillDismiss:]): Deleted.
+        (WebKit::SystemPreviewController::canPreview const): Deleted.
+        (WebKit::SystemPreviewController::showPreview): Deleted.
+        * UIProcess/Downloads/DownloadProxy.h: Track the destination file by name
+        and size. Also expose a helper to identify system preview downloads.
+        (WebKit::DownloadProxy::destinationFilename const):
+        (WebKit::DownloadProxy::setDestinationFilename):
+        (WebKit::DownloadProxy::expectedContentLength const):
+        (WebKit::DownloadProxy::setExpectedContentLength):
+        (WebKit::DownloadProxy::bytesLoaded const):
+        (WebKit::DownloadProxy::setBytesLoaded):
+        (WebKit::DownloadProxy::isSystemPreviewDownload const):
+
+        * UIProcess/SystemPreviewController.cpp: New API.
+        (WebKit::SystemPreviewController::canPreview const):
+        (WebKit::SystemPreviewController::sendPageBack): Deleted.
+        (WebKit::SystemPreviewController::showPreview): Deleted.
+        * UIProcess/SystemPreviewController.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_configurationPreferenceValues):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebPageProxy.h:
+
 2018-05-14  Brady Eidson  <beidson@apple.com>
 
         Add an API test to guard against regressions while re-entering setDefersLoading:.

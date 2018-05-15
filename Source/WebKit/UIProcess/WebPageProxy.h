@@ -391,7 +391,9 @@ public:
     void setAllowsMediaDocumentInlinePlayback(bool);
 #endif
 
+#if USE(SYSTEM_PREVIEW)
     SystemPreviewController* systemPreviewController() { return m_systemPreviewController.get(); }
+#endif
 
 #if ENABLE(CONTEXT_MENUS)
     API::ContextMenuClient& contextMenuClient() { return *m_contextMenuClient; }
@@ -1854,7 +1856,9 @@ private:
     std::unique_ptr<WebPaymentCoordinatorProxy> m_paymentCoordinator;
 #endif
 
+#if USE(SYSTEM_PREVIEW)
     std::unique_ptr<SystemPreviewController> m_systemPreviewController;
+#endif
 
 #if ENABLE(WEB_AUTHN)
     std::unique_ptr<WebCredentialsMessengerProxy> m_credentialsMessenger;

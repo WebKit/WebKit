@@ -1,3 +1,16 @@
+2018-05-14  Dean Jackson  <dino@apple.com>
+
+        Download and present System Preview
+        https://bugs.webkit.org/show_bug.cgi?id=185459
+        <rdar://problem/40079228>
+
+        Reviewed by Tim Horton.
+
+        If an <a> is a system preview, tell the resource request about it.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+
 2018-05-15  Antti Koivisto  <antti@apple.com>
 
         animation-play-state: paused causes very high cpu load because of style invalidation loop

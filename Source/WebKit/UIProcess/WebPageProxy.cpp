@@ -438,7 +438,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     m_paymentCoordinator = std::make_unique<WebPaymentCoordinatorProxy>(*this);
 #endif
 
+#if USE(SYSTEM_PREVIEW)
     m_systemPreviewController = std::make_unique<SystemPreviewController>(*this);
+#endif
 
 #if ENABLE(WEB_AUTHN)
     m_credentialsMessenger = std::make_unique<WebCredentialsMessengerProxy>(*this);
@@ -750,7 +752,9 @@ void WebPageProxy::reattachToWebProcess(Ref<WebProcessProxy>&& process, API::Nav
     m_paymentCoordinator = std::make_unique<WebPaymentCoordinatorProxy>(*this);
 #endif
 
+#if USE(SYSTEM_PREVIEW)
     m_systemPreviewController = std::make_unique<SystemPreviewController>(*this);
+#endif
 
 #if ENABLE(WEB_AUTHN)
     m_credentialsMessenger = std::make_unique<WebCredentialsMessengerProxy>(*this);
@@ -5942,7 +5946,9 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_paymentCoordinator = nullptr;
 #endif
 
+#if USE(SYSTEM_PREVIEW)
     m_systemPreviewController = nullptr;
+#endif
 
 #if ENABLE(WEB_AUTHN)
     m_credentialsMessenger = nullptr;
