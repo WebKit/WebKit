@@ -85,7 +85,8 @@ static void didFindStringMatches(WKPageRef page, WKStringRef string, WKArrayRef 
             type = WKGetTypeID(items);
             EXPECT_EQ(type, WKRectGetTypeID());
             WKRect rect = WKRectGetValue(reinterpret_cast<WKRectRef>(items));
-            rect = rect;
+            EXPECT_GT(rect.size.height, 0);
+            EXPECT_GT(rect.size.width, 0);
         }
     } else if (WKStringIsEqualToUTF8CString(string, "crazy")) {
         size_t numMatches = WKArrayGetSize(matches);

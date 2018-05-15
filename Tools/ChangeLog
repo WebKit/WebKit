@@ -1,3 +1,35 @@
+2018-05-15  David Kilzer  <ddkilzer@apple.com>
+
+        TestWebKitAPI: Fix warnings found by new clang compiler
+        <https://webkit.org/b/185631>
+
+        Reviewed by Michael Catanzaro.
+
+        * TestWebKitAPI/Tests/WTF/NakedPtr.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/Poisoned.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/PoisonedRefPtr.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/RefPtr.cpp:
+        (TestWebKitAPI::TEST):
+        - Add #pragma statements to ignore the new
+          -Wself-assign-overloaded warning and to ignore
+          this as an unknown warning on older clang versions.  We want
+          to keep these self assigments as this code is designed to test
+          that use case.
+
+        * TestWebKitAPI/Tests/WebKit/FindMatches.mm:
+        (TestWebKitAPI::didFindStringMatches):
+        - Replace the "rect = rect;" statement that was used to avoid an
+          unused variable warning with two expectations.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[PinnedStateObserver observeValueForKeyPath:ofObject:change:context:]):
+        - Switch from -integerValue to -unsignedIntegerValue when
+          comparing against _WKRectEdgeAll since it's an enum declared
+          as an NSUInteger.
+
 2018-05-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r230749

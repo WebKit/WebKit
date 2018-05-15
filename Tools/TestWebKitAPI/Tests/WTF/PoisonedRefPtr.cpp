@@ -304,7 +304,16 @@ TEST(WTF_PoisonedRefPtr, Assignment)
         PoisonedRefPtr<PoisonE, RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Wunknown-warning-option"
+#pragma clang diagnostic ignored "-Wself-assign-overloaded"
+#endif
         ptr = ptr;
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
     }

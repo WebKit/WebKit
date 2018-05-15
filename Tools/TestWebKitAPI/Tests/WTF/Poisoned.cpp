@@ -479,7 +479,16 @@ TEST(WTF_Poisoned, DISABLED_Assignment)
     {
         Poisoned<TestPoisonA, RefLogger*> ptr(&a);
         ASSERT_EQ(&a, ptr.unpoisoned());
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Wunknown-warning-option"
+#pragma clang diagnostic ignored "-Wself-assign-overloaded"
+#endif
         ptr = ptr;
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
         ASSERT_EQ(&a, ptr.unpoisoned());
     }
 

@@ -660,7 +660,7 @@ TEST(WebKit, InjectedBundleNodeHandleIsTextField)
 {
     EXPECT_TRUE([keyPath isEqualToString:NSStringFromSelector(@selector(_pinnedState))]);
     EXPECT_TRUE([[object class] isEqual:[TestWKWebView class]]);
-    EXPECT_EQ([[change objectForKey:NSKeyValueChangeOldKey] integerValue], _WKRectEdgeAll);
+    EXPECT_EQ([[change objectForKey:NSKeyValueChangeOldKey] unsignedIntegerValue], _WKRectEdgeAll);
     EXPECT_EQ([[change objectForKey:NSKeyValueChangeNewKey] unsignedIntegerValue], _WKRectEdgeLeft | _WKRectEdgeRight);
     EXPECT_TRUE(context == nullptr);
     done = true;
