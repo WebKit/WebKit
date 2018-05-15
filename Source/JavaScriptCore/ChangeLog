@@ -1,3 +1,17 @@
+2018-05-14  Keith Miller  <keith_miller@apple.com>
+
+        Remove butterflyMask from DFGAbstractHeap
+        https://bugs.webkit.org/show_bug.cgi?id=185640
+
+        Reviewed by Saam Barati.
+
+        We don't have a butterfly indexing mask anymore so we don't need
+        the abstract heap information for it anymore.
+
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
 2018-05-14  Andy VanWagoner  <andy@vanwagoner.family>
 
         [INTL] Handle error in defineProperty for supported locales length
