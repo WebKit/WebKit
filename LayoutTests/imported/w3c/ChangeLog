@@ -1,5 +1,16 @@
 2018-05-14  Youenn Fablet  <youenn@apple.com>
 
+        imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-6.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=185549
+
+        Reviewed by Chris Dumez.
+
+        Catch any potential rejected promise.
+
+        * web-platform-tests/fetch/api/response/response-stream-disturbed-6.html:
+
+2018-05-14  Youenn Fablet  <youenn@apple.com>
+
         Enable service-worker/navigation-redirect-body.https.html and service-worker/postmessage.https.html
         https://bugs.webkit.org/show_bug.cgi?id=185605
 
