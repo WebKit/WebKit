@@ -1,3 +1,25 @@
+2018-05-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE] Build failure with RPi userland drivers and gstreamer-gl
+        https://bugs.webkit.org/show_bug.cgi?id=185639
+
+        Reviewed by Philippe Normand.
+
+        When building for the RPi with userland drivers (dispmanx) override the
+        value of GST_GL_HAVE_GLSYNC to 1 to avoid that the gstreamer-gl headers
+        try to redefine the GLsync type that is already defined in libepoxy.
+
+        Defining __gl2_h_ is also needed to avoid other conflicting type
+        definitions that happen between libepoxy and RPi GLES2 userland
+        headers when the gstreamer-gl headers are included.
+
+        The issue doesn't happen with 1.14.0, so a check for that is added
+        as well.
+
+        No new tests, no behavior change. It is a build fix.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+
 2018-05-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r230749

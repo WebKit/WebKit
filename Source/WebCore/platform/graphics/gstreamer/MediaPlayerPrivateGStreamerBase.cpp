@@ -69,7 +69,17 @@
 #if USE(LIBEPOXY)
 // Include the <epoxy/gl.h> header before <gst/gl/gl.h>.
 #include <epoxy/gl.h>
+
+// Workaround build issue with RPi userland GLESv2 headers and libepoxy <https://webkit.org/b/185639>
+#if !GST_CHECK_VERSION(1, 14, 0)
+#include <gst/gl/gstglconfig.h>
+#if defined(GST_GL_HAVE_WINDOW_DISPMANX) && GST_GL_HAVE_WINDOW_DISPMANX
+#define __gl2_h_
+#undef GST_GL_HAVE_GLSYNC
+#define GST_GL_HAVE_GLSYNC 1
 #endif
+#endif // !GST_CHECK_VERSION(1, 14, 0)
+#endif // USE(LIBEPOXY)
 
 #define GST_USE_UNSTABLE_API
 #include <gst/gl/gl.h>
