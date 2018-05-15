@@ -82,6 +82,11 @@ public:
 
     void didFirstPaint();
 
+#if PLATFORM(IOS)
+    enum class NetworkActivityTokenReleaseReason { LoadCompleted, ScreenLocked };
+    void releaseNetworkActivityToken(NetworkActivityTokenReleaseReason);
+#endif
+
 private:
     class NavigationClient final : public API::NavigationClient {
     public:
@@ -172,7 +177,7 @@ private:
     void didChangeWebProcessIsResponsive() override;
 
 #if PLATFORM(IOS)
-    void releaseNetworkActivityToken();
+    void releaseNetworkActivityTokenAfterLoadCompletion() { releaseNetworkActivityToken(NetworkActivityTokenReleaseReason::LoadCompleted); }
 #endif
 
     WKWebView *m_webView;

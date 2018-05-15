@@ -34,6 +34,7 @@
 #import "InteractionInformationAtPosition.h"
 #import "Logging.h"
 #import "NativeWebKeyboardEvent.h"
+#import "NavigationState.h"
 #import "PageClient.h"
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
@@ -677,6 +678,11 @@ void WebPageProxy::saveImageToLibrary(const SharedMemory::Handle& imageHandle, u
 void WebPageProxy::applicationDidEnterBackground()
 {
     bool isSuspendedUnderLock = [UIApp isSuspendedUnderLock];
+
+    // We normally delay process suspension when the app is backgrounded until the current page load completes. However,
+    // we do not want to do so when the screen is locked for power reasons.
+    if (isSuspendedUnderLock)
+        NavigationState::fromWebPage(*this).releaseNetworkActivityToken(NavigationState::NetworkActivityTokenReleaseReason::ScreenLocked);
     m_process->send(Messages::WebPage::ApplicationDidEnterBackground(isSuspendedUnderLock), m_pageID);
 }
 
