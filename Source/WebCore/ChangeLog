@@ -1,3 +1,20 @@
+2018-05-14  Youenn Fablet  <youenn@apple.com>
+
+        readableStreamDefaultControllerError should return early if stream is not readable
+        https://bugs.webkit.org/show_bug.cgi?id=185602
+
+        Reviewed by Chris Dumez.
+
+        Return early if stream is not readable in @readableStreamDefaultControllerError.
+        Update call sites to no longer check for ReadableStream state.
+        Covered by unflaked and rebased tests.
+
+        * Modules/streams/ReadableStreamDefaultController.js:
+        (error):
+        * Modules/streams/ReadableStreamInternals.js:
+        (readableStreamDefaultControllerError):
+        (readableStreamDefaultControllerCallPullIfNeeded):
+
 2018-05-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement width computation for non-replaced block level inflow elements.

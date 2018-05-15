@@ -85,8 +85,7 @@ function privateInitializeReadableStreamDefaultController(stream, underlyingSour
         @assert(!@getByIdDirectPrivate(controller, "pullAgain"));
         @readableStreamDefaultControllerCallPullIfNeeded(controller);
     }, (error) => {
-        if (@getByIdDirectPrivate(stream, "state") === @streamReadable)
-            @readableStreamDefaultControllerError(controller, error);
+        @readableStreamDefaultControllerError(controller, error);
     });
 
     @putByIdDirectPrivate(this, "cancel", @readableStreamDefaultControllerCancel);
@@ -101,7 +100,8 @@ function readableStreamDefaultControllerError(controller, error)
     "use strict";
 
     const stream = @getByIdDirectPrivate(controller, "controlledReadableStream");
-    @assert(@getByIdDirectPrivate(stream, "state") === @streamReadable);
+    if (@getByIdDirectPrivate(stream, "state") !== @streamReadable)
+        return;
     @putByIdDirectPrivate(controller, "queue", @newQueue());
     @readableStreamError(stream, error);
 }
@@ -341,8 +341,7 @@ function readableStreamDefaultControllerCallPullIfNeeded(controller)
             @readableStreamDefaultControllerCallPullIfNeeded(controller);
         }
     }, function(error) {
-        if (@getByIdDirectPrivate(stream, "state") === @streamReadable)
-            @readableStreamDefaultControllerError(controller, error);
+        @readableStreamDefaultControllerError(controller, error);
     });
 }
 
@@ -477,8 +476,7 @@ function readableStreamDefaultControllerEnqueue(controller, chunk)
         @enqueueValueWithSize(@getByIdDirectPrivate(controller, "queue"), chunk, chunkSize);
     }
     catch(error) {
-        if (@getByIdDirectPrivate(stream, "state") === @streamReadable)
-            @readableStreamDefaultControllerError(controller, error);
+        @readableStreamDefaultControllerError(controller, error);
         throw error;
     }
     @readableStreamDefaultControllerCallPullIfNeeded(controller);

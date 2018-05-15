@@ -24,8 +24,8 @@ PASS Underlying source: calling close twice on a non-empty stream should throw t
 PASS Underlying source: calling close on an empty canceled stream should throw 
 PASS Underlying source: calling close on a non-empty canceled stream should throw 
 PASS Underlying source: calling close after error should throw 
-FAIL Underlying source: calling error twice should not throw ReadableStream is not readable
-FAIL Underlying source: calling error after close should not throw ReadableStream is not readable
+PASS Underlying source: calling error twice should not throw 
+PASS Underlying source: calling error after close should not throw 
 PASS Underlying source: calling error and returning a rejected promise from start should cause the stream to error with the first error 
 PASS Underlying source: calling error and returning a rejected promise from pull should cause the stream to error with the first error 
 PASS read should not error if it dequeues and pull() throws 

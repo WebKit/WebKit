@@ -615,10 +615,8 @@ http/tests/loading/text-content-type-with-binary-extension.html [ Pass Failure ]
 webkit.org/b/171094 streams/brand-checks.html [ Pass Failure ]
 webkit.org/b/171094 streams/reference-implementation/abstract-ops.html [ Pass Failure ]
 
-# tee.html is flaky with release and crashes with debug builds
-webkit.org/b/171094 imported/w3c/web-platform-tests/streams/readable-streams/tee.html [ Pass Failure Crash ]
-[ Debug ] imported/w3c/web-platform-tests/streams/readable-streams/tee.serviceworker.https.html [ Failure ]
-[ Debug ] imported/w3c/web-platform-tests/streams/readable-streams/tee.dedicatedworker.html [ Crash ]
+# tee.html is flaky with unhandled promise rejections
+imported/w3c/web-platform-tests/streams/readable-streams/tee.html [ DumpJSConsoleLogInStdErr ]
 
 # WPT tests that fail after doing full test repository reimport and need further investigation
 imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace.html [ Pass Failure ]

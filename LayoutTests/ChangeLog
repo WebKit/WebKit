@@ -1,5 +1,14 @@
 2018-05-14  Youenn Fablet  <youenn@apple.com>
 
+        readableStreamDefaultControllerError should return early if stream is not readable
+        https://bugs.webkit.org/show_bug.cgi?id=185602
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+
+2018-05-14  Youenn Fablet  <youenn@apple.com>
+
         imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-6.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=185549
 
