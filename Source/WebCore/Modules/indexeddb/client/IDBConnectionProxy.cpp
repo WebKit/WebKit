@@ -316,7 +316,8 @@ void IDBConnectionProxy::didStartTransaction(const IDBResourceIdentifier& transa
         transaction = m_pendingTransactions.take(transactionIdentifier);
     }
 
-    ASSERT(transaction);
+    if (!transaction)
+        return;
 
     transaction->performCallbackOnOriginThread(*transaction, &IDBTransaction::didStart, error);
 }

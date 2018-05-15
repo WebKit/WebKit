@@ -1,3 +1,19 @@
+2018-05-15  Brady Eidson  <beidson@apple.com>
+
+        Fix crash after a Worker terminates but there are still IDB transactions the server is trying to open for it.
+        <rdar://problem/33744241> and https://bugs.webkit.org/show_bug.cgi?id=185653
+
+        Reviewed by Andy Estes.
+
+        * storage/indexeddb/modern/resources/worker-transaction-open-after-worker-stop.js: Added.
+        (const.errorHandler):
+        (openRequest.onupgradeneeded):
+        (tx.oncomplete):
+        (openRequest.onsuccess):
+        (deleteRequest.onerror.deleteRequest.onblocked.deleteRequest.onsuccess):
+        * storage/indexeddb/modern/worker-transaction-open-after-worker-stop-expected.txt: Added.
+        * storage/indexeddb/modern/worker-transaction-open-after-worker-stop.html: Added.
+
 2018-05-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r231763.

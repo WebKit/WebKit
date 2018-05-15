@@ -1,3 +1,16 @@
+2018-05-15  Brady Eidson  <beidson@apple.com>
+
+        Fix crash after a Worker terminates but there are still IDB transactions the server is trying to open for it.
+        <rdar://problem/33744241> and https://bugs.webkit.org/show_bug.cgi?id=185653
+
+        Reviewed by Andy Estes.
+
+        Test: storage/indexeddb/modern/worker-transaction-open-after-worker-stop.html
+
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::didStartTransaction): It's okay to not be able to find a pending TX
+          that the server has started. e.g. When it was a WebWorker that asked for the TX but it has since terminated.
+
 2018-05-15  Thomas Klausner  <tk@giga.or.at>
 
         Add missing header to fix build.
