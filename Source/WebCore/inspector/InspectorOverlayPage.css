@@ -18,6 +18,10 @@ body.platform-linux {
     font-family: dejavu sans mono;
 }
 
+#log {
+    position: absolute;
+}
+
 .fill {
     position: absolute;
     top: 0;
@@ -77,22 +81,4 @@ body.platform-linux {
 
 .css-property {
     color: rgb(170, 13, 145);
-}
-
-#right-gutter {
-    display: none;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    position: absolute;
-    background-color: darkgray;
-}
-
-#bottom-gutter {
-    display: none;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    position: absolute;
-    background-color: darkgray;
 }

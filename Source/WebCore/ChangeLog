@@ -1,3 +1,52 @@
+2018-05-15  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Add rulers and guides
+        https://bugs.webkit.org/show_bug.cgi?id=32263
+        <rdar://problem/19281564>
+
+        Reviewed by Matt Baker.
+
+        This patch is purely a visual change for WebInspector, and doesn't affect anything else.
+
+        * inspector/InspectorOverlay.h:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::update):
+        (WebCore::InspectorOverlay::reset):
+        (WebCore::InspectorOverlay::drawGutter): Deleted.
+
+        * inspector/InspectorOverlayPage.html:
+        * inspector/InspectorOverlayPage.js:
+        (Bounds): Added.
+        (Bounds.prototype.get minX): Added.
+        (Bounds.prototype.get minY): Added.
+        (Bounds.prototype.get maxX): Added.
+        (Bounds.prototype.get maxY): Added.
+        (Bounds.prototype.update): Added.
+        (drawNodeHighlight):
+        (drawQuadHighlight):
+        (reset):
+        (_isolateActions): Added.
+        (_quadToPath): Added.
+        (_quadToPath.parseQuadPoint): Added.
+        (_drawOutlinedQuad): Added.
+        (_drawPath): Added.
+        (_drawPath.parsePoints): Added.
+        (_drawOutlinedQuadWithClip): Added.
+        (_drawElementTitle):
+        (_drawShapeHighlight):
+        (_drawFragmentHighlight):
+        (_drawRulers): Added.
+        (quadToPath): Deleted.
+        (drawOutlinedQuad): Deleted.
+        (pathCommand): Deleted.
+        (drawPath): Deleted.
+        (drawOutlinedQuadWithClip): Deleted.
+        (drawGutter): Deleted.
+        * inspector/InspectorOverlayPage.css:
+        (#log): Added.
+        (#right-gutter): Deleted.
+        (#bottom-gutter): Deleted.
+
 2018-05-15  Jer Noble  <jer.noble@apple.com>
 
         Media continues loading after rendered invisible (removed from DOM; scrolled off screen)

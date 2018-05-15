@@ -283,16 +283,15 @@ void InspectorOverlay::update()
         return;
 
     FrameView* overlayView = overlayPage()->mainFrame().view();
-    IntSize viewportSize = view->sizeForVisibleContent();
     IntSize frameViewFullSize = view->sizeForVisibleContent(ScrollableArea::IncludeScrollbars);
     overlayView->resize(frameViewFullSize);
 
     // Clear canvas and paint things.
-    // FIXME: Remove extra parameter?
-    reset(viewportSize, IntSize());
+    IntSize viewportSize = view->sizeForVisibleContent();
+    IntPoint scrollOffset = view->scrollPosition();
+    reset(viewportSize, scrollOffset);
 
     // Include scrollbars to avoid masking them by the gutter.
-    drawGutter();
     drawNodeHighlight();
     drawQuadHighlight();
     drawPausedInDebuggerMessage();
@@ -418,11 +417,6 @@ void InspectorOverlay::drawPaintRects()
         arrayOfRects->addItem(buildObjectForRect(pair.second));
 
     evaluateInOverlay(ASCIILiteral("updatePaintRects"), WTFMove(arrayOfRects));
-}
-
-void InspectorOverlay::drawGutter()
-{
-    evaluateInOverlay(ASCIILiteral("drawGutter"));
 }
 
 static RefPtr<JSON::ArrayOf<Inspector::Protocol::OverlayTypes::FragmentHighlightData>> buildArrayForRendererFragments(RenderObject* renderer, const HighlightConfig& config)
@@ -739,12 +733,15 @@ void InspectorOverlay::forcePaint()
     m_client->highlight();
 }
 
-void InspectorOverlay::reset(const IntSize& viewportSize, const IntSize& frameViewFullSize)
+void InspectorOverlay::reset(const IntSize& viewportSize, const IntPoint& scrollOffset)
 {
     auto configObject = Inspector::Protocol::OverlayTypes::OverlayConfiguration::create()
         .setDeviceScaleFactor(m_page.deviceScaleFactor())
         .setViewportSize(buildObjectForSize(viewportSize))
-        .setFrameViewFullSize(buildObjectForSize(frameViewFullSize))
+        .setPageScaleFactor(m_page.pageScaleFactor())
+        .setPageZoomFactor(m_page.mainFrame().pageZoomFactor())
+        .setScrollOffset(buildObjectForPoint(scrollOffset))
+        .setContentInset(buildObjectForSize(IntSize(0, m_page.mainFrame().view()->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset))))
         .release();
     evaluateInOverlay("reset", WTFMove(configObject));
 }

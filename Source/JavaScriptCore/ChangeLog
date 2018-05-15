@@ -1,3 +1,13 @@
+2018-05-15  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Add rulers and guides
+        https://bugs.webkit.org/show_bug.cgi?id=32263
+        <rdar://problem/19281564>
+
+        Reviewed by Matt Baker.
+
+        * inspector/protocol/OverlayTypes.json:
+
 2018-05-14  Keith Miller  <keith_miller@apple.com>
 
         Remove butterflyMask from DFGAbstractHeap
