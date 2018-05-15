@@ -1,3 +1,59 @@
+2018-05-15  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Expose Web Animations CSS integration as an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=185647
+
+        Reviewed by Dean Jackson.
+
+        Make the Web Animations CSS integration flag an experimental feature, and only indicate that it is on if the Web Animations
+        experimental feature is also enabled.
+
+        * dom/Document.cpp:
+        (WebCore::Document::didBecomeCurrentDocumentInFrame):
+        (WebCore::Document::resume):
+        * dom/Element.cpp:
+        (WebCore::Element::removedFromAncestor):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::clearHostElement):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        * page/Frame.cpp:
+        (WebCore::Frame::clearTimers):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didDestroyRenderTree):
+        * page/Page.cpp:
+        (WebCore::Page::handleLowModePowerChange):
+        (WebCore::Page::setIsVisibleInternal):
+        (WebCore::Page::hiddenPageCSSAnimationSuspensionStateChanged):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebAnimationsCSSIntegrationEnabled):
+        (WebCore::RuntimeEnabledFeatures::webAnimationsCSSIntegrationEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled const): Deleted.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::currentTransform const):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation const):
+        (WebCore::RenderLayerCompositor::isRunningTransformAnimation const):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::webAnimationsCSSIntegrationEnabled):
+        (WebCore::InternalSettings::cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled): Deleted.
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::numberOfActiveAnimations const):
+        (WebCore::Internals::animationsAreSuspended const):
+        (WebCore::Internals::animationsInterval const):
+        (WebCore::Internals::suspendAnimations const):
+        (WebCore::Internals::resumeAnimations const):
+
 2018-05-15  David Kilzer  <ddkilzer@apple.com>
 
         Fix -Wreturn-std-move warnings in WebKit found by new clang compiler

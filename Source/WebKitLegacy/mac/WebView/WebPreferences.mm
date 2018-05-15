@@ -625,7 +625,7 @@ public:
         [NSNumber numberWithBool:YES], WebKitDataTransferItemsEnabledPreferenceKey,
         [NSNumber numberWithBool:NO], WebKitCustomPasteboardDataEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitModernMediaControlsEnabledPreferenceKey,
-        [NSNumber numberWithBool:NO], WebKitCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey,
 
 #if ENABLE(WEBGL2)
         [NSNumber numberWithBool:NO], WebKitWebGL2EnabledPreferenceKey,
@@ -3121,14 +3121,14 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitModernMediaControlsEnabledPreferenceKey];
 }
 
-- (BOOL)cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled
+- (BOOL)webAnimationsCSSIntegrationEnabled
 {
-    return [self _boolValueForKey:WebKitCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabledPreferenceKey];
+    return [self _boolValueForKey:WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey];
 }
 
-- (void)setCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled:(BOOL)flag
+- (void)setWebAnimationsCSSIntegrationEnabled:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabledPreferenceKey];
+    [self _setBoolValue:flag forKey:WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey];
 }
 
 - (BOOL)intersectionObserverEnabled

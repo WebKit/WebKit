@@ -196,7 +196,7 @@
 #define WebKitConstantPropertiesEnabledPreferenceKey @"WebKitConstantPropertiesEnabled"
 #define WebKitColorFilterEnabledPreferenceKey @"WebKitColorFilterEnabled"
 #define WebKitFetchAPIKeepAliveEnabledPreferenceKey @"WebKitFetchAPIKeepAliveEnabled"
-#define WebKitCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabledPreferenceKey @"WebKitCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled"
+#define WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey @"WebKitWebAnimationsCSSIntegrationEnabled"
 
 #if !TARGET_OS_IPHONE
 // These are private both because callers should be using the cover methods and because the

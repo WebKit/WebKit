@@ -1,3 +1,24 @@
+2018-05-15  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Expose Web Animations CSS integration as an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=185647
+
+        Reviewed by Dean Jackson.
+
+        Rename the Web Animations CSS integration flag.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::webAnimationsCSSIntegrationEnabled):
+        (WebPreferences::setWebAnimationsCSSIntegrationEnabled):
+        (WebPreferences::cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled): Deleted.
+        (WebPreferences::setCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled): Deleted.
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2018-05-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r231622) [Win] Crashes for null dereference of prefsPrivate in WebView::notifyPreferencesChanged

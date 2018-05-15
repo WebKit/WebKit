@@ -111,7 +111,7 @@ enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
     [MayThrowException] void setShouldManageAudioSessionCategory(boolean should);
     [MayThrowException] void setCustomPasteboardDataEnabled(boolean enabled);
 
-    [EnabledAtRuntime=WebAnimations] boolean cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled();
+    [EnabledAtRuntime=WebAnimations] boolean webAnimationsCSSIntegrationEnabled();
 
     [MayThrowException] void setAccessibilityEventsEnabled(boolean enabled);
 };

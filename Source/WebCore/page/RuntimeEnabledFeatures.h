@@ -173,8 +173,8 @@ public:
     void setWebAnimationsEnabled(bool areEnabled) { m_areWebAnimationsEnabled = areEnabled; }
     bool webAnimationsEnabled() const { return m_areWebAnimationsEnabled; }
 
-    void setCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled(bool areEnabled) { m_areCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled = areEnabled; }
-    bool cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled() const { return m_areCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled; }
+    void setWebAnimationsCSSIntegrationEnabled(bool isEnabled) { m_isWebAnimationsCSSIntegrationEnabled = isEnabled; }
+    bool webAnimationsCSSIntegrationEnabled() const { return m_areWebAnimationsEnabled && m_isWebAnimationsCSSIntegrationEnabled; }
 
 #if ENABLE(WEBGL2)
     void setWebGL2Enabled(bool isEnabled) { m_isWebGL2Enabled = isEnabled; }
@@ -352,7 +352,7 @@ private:
 #endif
 
     bool m_areWebAnimationsEnabled { true };
-    bool m_areCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled { false };
+    bool m_isWebAnimationsCSSIntegrationEnabled { false };
 
 #if ENABLE(WEBGL2)
     bool m_isWebGL2Enabled { false };

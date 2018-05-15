@@ -982,14 +982,14 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->cssAnimationTriggersEnabled();
 }
 
-- (void)_setCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled:(BOOL)enabled
+- (void)_setWebAnimationsCSSIntegrationEnabled:(BOOL)enabled
 {
-    _preferences->setCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled(enabled);
+    _preferences->setWebAnimationsCSSIntegrationEnabled(enabled);
 }
 
-- (BOOL)_cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled
+- (BOOL)_webAnimationsCSSIntegrationEnabled
 {
-    return _preferences->cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled();
+    return _preferences->webAnimationsCSSIntegrationEnabled();
 }
 
 - (void)_setStandardFontFamily:(NSString *)family

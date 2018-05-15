@@ -99,11 +99,6 @@ CSSAnimationTriggersEnabled:
   webcoreName: animationTriggersEnabled
   condition: ENABLE(CSS_ANIMATIONS_LEVEL_2)
 
-CSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled:
-  type: bool
-  defaultValue: false
-  webcoreBinding: RuntimeEnabledFeatures
-
 ForceFTPDirectoryListings:
   type: bool
   defaultValue: false
@@ -1197,6 +1192,14 @@ WebAnimationsEnabled:
   defaultValue: true
   humanReadableName: "Web Animations"
   humanReadableDescription: "Web Animations prototype"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures
+
+WebAnimationsCSSIntegrationEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Web Animations and CSS Integration"
+  humanReadableDescription: "Expose CSS Animations and CSS Transitions through getAnimations()"
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
 

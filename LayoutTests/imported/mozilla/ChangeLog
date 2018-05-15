@@ -1,3 +1,49 @@
+2018-05-15  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Expose Web Animations CSS integration as an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=185647
+
+        Reviewed by Dean Jackson.
+
+        Change the name of the Web Animations CSS integration flag so that tests can opt into this feature.
+
+        * css-animations/test_animation-cancel.html:
+        * css-animations/test_animation-computed-timing.html:
+        * css-animations/test_animation-currenttime.html:
+        * css-animations/test_animation-finish.html:
+        * css-animations/test_animation-finished.html:
+        * css-animations/test_animation-id.html:
+        * css-animations/test_animation-pausing.html:
+        * css-animations/test_animation-playstate.html:
+        * css-animations/test_animation-ready.html:
+        * css-animations/test_animation-reverse.html:
+        * css-animations/test_animation-starttime.html:
+        * css-animations/test_animations-dynamic-changes.html:
+        * css-animations/test_cssanimation-animationname.html:
+        * css-animations/test_document-get-animations.html:
+        * css-animations/test_effect-target.html:
+        * css-animations/test_element-get-animations.html:
+        * css-animations/test_event-dispatch.html:
+        * css-animations/test_event-order.html:
+        * css-animations/test_keyframeeffect-getkeyframes.html:
+        * css-animations/test_pseudoElement-get-animations.html:
+        * css-animations/test_setting-effect.html:
+        * css-transitions/test_animation-cancel.html:
+        * css-transitions/test_animation-computed-timing.html:
+        * css-transitions/test_animation-currenttime.html:
+        * css-transitions/test_animation-finished.html:
+        * css-transitions/test_animation-pausing.html:
+        * css-transitions/test_animation-ready.html:
+        * css-transitions/test_animation-starttime.html:
+        * css-transitions/test_csstransition-transitionproperty.html:
+        * css-transitions/test_document-get-animations.html:
+        * css-transitions/test_effect-target.html:
+        * css-transitions/test_element-get-animations.html:
+        * css-transitions/test_event-dispatch.html:
+        * css-transitions/test_keyframeeffect-getkeyframes.html:
+        * css-transitions/test_pseudoElement-get-animations.html:
+        * css-transitions/test_setting-effect.html:
+
 2018-03-23  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make imported/mozilla/css-animations/test_animation-currenttime.html pass reliably

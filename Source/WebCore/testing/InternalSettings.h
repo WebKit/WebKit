@@ -125,7 +125,7 @@ public:
     static void setWebVREnabled(bool);
     static void setScreenCaptureEnabled(bool);
 
-    static bool cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled();
+    static bool webAnimationsCSSIntegrationEnabled();
 
     static void setStorageAccessPromptsEnabled(bool);
 

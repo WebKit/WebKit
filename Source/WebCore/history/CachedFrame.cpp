@@ -98,7 +98,7 @@ void CachedFrameBase::restore()
     if (m_document->svgExtensions())
         m_document->accessSVGExtensions().unpauseAnimations();
 
-    if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled())
+    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
         m_document->timeline().resumeAnimations();
     else
         frame.animation().resumeAnimationsForDocument(m_document.get());

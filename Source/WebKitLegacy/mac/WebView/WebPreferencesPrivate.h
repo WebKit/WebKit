@@ -570,8 +570,8 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setModernMediaControlsEnabled:(BOOL)flag;
 - (BOOL)modernMediaControlsEnabled;
 
-- (void)setCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled:(BOOL)flag;
-- (BOOL)cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled;
+- (void)setWebAnimationsCSSIntegrationEnabled:(BOOL)flag;
+- (BOOL)webAnimationsCSSIntegrationEnabled;
 
 - (void)setWebAuthenticationEnabled:(BOOL)flag;
 - (BOOL)webAuthenticationEnabled;

@@ -5229,10 +5229,10 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsEnabled(!!enabled);
 
-    hr = prefsPrivate->cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled(&enabled);
+    hr = prefsPrivate->webAnimationsCSSIntegrationEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    RuntimeEnabledFeatures::sharedFeatures().setCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled(!!enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsCSSIntegrationEnabled(!!enabled);
 
     hr = prefsPrivate->userTimingEnabled(&enabled);
     if (FAILED(hr))

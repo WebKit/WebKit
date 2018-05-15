@@ -55,7 +55,7 @@ struct TestOptions {
     bool shouldShowTouches { false };
     bool dumpJSConsoleLogInStdErr { false };
     bool allowCrossOriginSubresourcesToAskForCredentials { false };
-    bool enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations { false };
+    bool enableWebAnimationsCSSIntegration { false };
     bool enableProcessSwapOnNavigation { false };
 
     float deviceScaleFactor { 1 };
@@ -87,7 +87,7 @@ struct TestOptions {
             || dumpJSConsoleLogInStdErr != options.dumpJSConsoleLogInStdErr
             || applicationManifest != options.applicationManifest
             || allowCrossOriginSubresourcesToAskForCredentials != options.allowCrossOriginSubresourcesToAskForCredentials
-            || enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations != options.enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations
+            || enableWebAnimationsCSSIntegration != options.enableWebAnimationsCSSIntegration
             || enableProcessSwapOnNavigation != options.enableProcessSwapOnNavigation)
             return false;
 

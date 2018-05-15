@@ -356,7 +356,7 @@ const propertiesRequiringPrefix = ["-webkit-text-stroke-color", "-webkit-text-fi
 function pauseTransitionAtTimeOnElement(transitionProperty, time, element)
 {
     // If we haven't opted into CSS Animations and CSS Transitions as Web Animations, use the internal API.
-    if ('internals' in window && !internals.settings.cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled())
+    if ('internals' in window && !internals.settings.webAnimationsCSSIntegrationEnabled())
         return internals.pauseTransitionAtTimeOnElement(transitionProperty, time, element);
 
     if (transitionProperty.startsWith(prefix) && !propertiesRequiringPrefix.includes(transitionProperty))

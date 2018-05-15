@@ -151,7 +151,7 @@ public:
     void setSerialLoadingEnabled(bool);
     void setCSSAnimationTriggersEnabled(bool);
     void setWebAnimationsEnabled(bool);
-    void setCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled(bool);
+    void setWebAnimationsCSSIntegrationEnabled(bool);
     void dispatchPendingLoadRequests();
 
 #if PLATFORM(COCOA) && WK_API_ENABLED

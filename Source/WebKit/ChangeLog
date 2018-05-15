@@ -1,3 +1,31 @@
+2018-05-15  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Expose Web Animations CSS integration as an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=185647
+
+        Reviewed by Dean Jackson.
+
+        Rename the Web Animations CSS integration flag.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetWebAnimationsCSSIntegrationEnabled):
+        (WKPreferencesGetWebAnimationsCSSIntegrationEnabled):
+        (WKPreferencesSetCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled): Deleted.
+        (WKPreferencesGetCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setWebAnimationsCSSIntegrationEnabled:]):
+        (-[WKPreferences _webAnimationsCSSIntegrationEnabled]):
+        (-[WKPreferences _setCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled:]): Deleted.
+        (-[WKPreferences _cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled]): Deleted.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        (WebKit::InjectedBundle::setWebAnimationsCSSIntegrationEnabled):
+        (WebKit::InjectedBundle::setCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2018-05-15  Dean Jackson  <dino@apple.com>
 
         Update animation when presenting QuickLook

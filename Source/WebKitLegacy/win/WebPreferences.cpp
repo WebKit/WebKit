@@ -311,6 +311,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebAnimationsEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey), kCFBooleanFalse);
+
     CFDictionaryAddValue(defaults, CFSTR(WebKitUserTimingEnabledPreferenceKey), kCFBooleanFalse);
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitResourceTimingEnabledPreferenceKey), kCFBooleanFalse);
@@ -2060,17 +2062,17 @@ HRESULT WebPreferences::modernMediaControlsEnabled(_Out_ BOOL* enabled)
     return S_OK;
 }
 
-HRESULT WebPreferences::cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled(_Out_ BOOL* enabled)
+HRESULT WebPreferences::webAnimationsCSSIntegrationEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)
         return E_POINTER;
-    *enabled = boolValueForKey(WebKitCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabledPreferenceKey);
+    *enabled = boolValueForKey(WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey);
     return S_OK;
 }
 
-HRESULT WebPreferences::setCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled(BOOL enabled)
+HRESULT WebPreferences::setWebAnimationsCSSIntegrationEnabled(BOOL enabled)
 {
-    setBoolValue(WebKitCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabledPreferenceKey, enabled);
+    setBoolValue(WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey, enabled);
     return S_OK;
 }
 

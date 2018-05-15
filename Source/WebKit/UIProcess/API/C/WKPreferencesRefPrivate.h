@@ -120,8 +120,8 @@ WK_EXPORT void WKPreferencesSetWebAnimationsEnabled(WKPreferencesRef, bool flag)
 WK_EXPORT bool WKPreferencesGetWebAnimationsEnabled(WKPreferencesRef);
 
 // Defaults to false
-WK_EXPORT void WKPreferencesSetCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled(WKPreferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled(WKPreferencesRef);
+WK_EXPORT void WKPreferencesSetWebAnimationsCSSIntegrationEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetWebAnimationsCSSIntegrationEnabled(WKPreferencesRef);
 
 // Defaults to false.
 WK_EXPORT void WKPreferencesSetNeedsSiteSpecificQuirks(WKPreferencesRef, bool);

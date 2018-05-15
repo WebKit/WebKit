@@ -962,9 +962,9 @@ void InternalSettings::setForcedPrefersReducedMotionAccessibilityValue(InternalS
     settings().setForcedPrefersReducedMotionAccessibilityValue(internalSettingsToSettingsValue(value));
 }
 
-bool InternalSettings::cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled()
+bool InternalSettings::webAnimationsCSSIntegrationEnabled()
 {
-    return RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled();
+    return RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled();
 }
 
 // If you add to this class, make sure that you update the Backup class for test reproducability!
