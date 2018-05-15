@@ -38,6 +38,7 @@ public:
     virtual ~AccessibilityLabel();
     
     bool containsOnlyStaticText() const;
+    bool containsUnrelatedControls() const;
 
 private:
     explicit AccessibilityLabel(RenderObject*);

@@ -28,15 +28,15 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 	AXHelp: 
 	AXTitleUIElement: null
 
-	AXTitle: 
+	AXTitle: test 5 input value
 	AXDescription: 
 	AXHelp: 
-	AXTitleUIElement: non-null
+	AXTitleUIElement: null
 
-	AXTitle: 
+	AXTitle: before test 6 input value after
 	AXDescription: 
 	AXHelp: 
-	AXTitleUIElement: non-null
+	AXTitleUIElement: null
 
 PASS successfullyParsed is true
 

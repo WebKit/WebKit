@@ -354,6 +354,7 @@ bool AccessibilityObject::accessibleNameDerivesFromContent() const
     // Now check for generically derived elements now that we know the element does not match a specific ARIA role.
     switch (roleValue()) {
     case AccessibilityRole::Slider:
+    case AccessibilityRole::ListBox:
         return false;
     default:
         break;
@@ -905,7 +906,7 @@ bool AccessibilityObject::isARIAInput(AccessibilityRole ariaRole)
     
 bool AccessibilityObject::isARIAControl(AccessibilityRole ariaRole)
 {
-    return isARIAInput(ariaRole) || ariaRole == AccessibilityRole::TextArea || ariaRole == AccessibilityRole::Button || ariaRole == AccessibilityRole::ComboBox || ariaRole == AccessibilityRole::Slider;
+    return isARIAInput(ariaRole) || ariaRole == AccessibilityRole::TextArea || ariaRole == AccessibilityRole::Button || ariaRole == AccessibilityRole::ComboBox || ariaRole == AccessibilityRole::Slider || ariaRole == AccessibilityRole::ListBox;
 }
     
 bool AccessibilityObject::isRangeControl() const

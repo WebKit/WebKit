@@ -31,6 +31,7 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityImageMapLink.h"
+#include "AccessibilityLabel.h"
 #include "AccessibilityListBox.h"
 #include "AccessibilitySVGRoot.h"
 #include "AccessibilitySpinButton.h"
@@ -1064,6 +1065,11 @@ bool AccessibilityRenderObject::exposesTitleUIElement() const
             if (AccessibilityObject* labelObject = axObjectCache()->getOrCreate(label)) {
                 if (!labelObject->ariaLabeledByAttribute().isEmpty())
                     return false;
+                // To simplify instances where the labeling element includes widget descendants
+                // which it does not label.
+                if (is<AccessibilityLabel>(*labelObject)
+                    && downcast<AccessibilityLabel>(*labelObject).containsUnrelatedControls())
+                    return false;
             }
         }
     }
@@ -1204,12 +1210,6 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (m_renderer && ancestorsOfType<RenderMenuList>(*m_renderer).first())
         return true;
 
-    // find out if this element is inside of a label element.
-    // if so, it may be ignored because it's the label for a checkbox or radio button
-    AccessibilityObject* controlObject = correspondingControlForLabelElement();
-    if (controlObject && !controlObject->exposesTitleUIElement() && controlObject->isCheckboxOrRadio())
-        return true;
-    
     // https://webkit.org/b/161276 Getting the controlObject might cause the m_renderer to be nullptr.
     if (!m_renderer)
         return true;
@@ -1415,6 +1415,12 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     // Make sure that ruby containers are not ignored.
     if (m_renderer->isRubyRun() || m_renderer->isRubyBlock() || m_renderer->isRubyInline())
         return false;
+
+    // Find out if this element is inside of a label element.
+    // If so, it may be ignored because it's the label for a checkbox or radio button.
+    AccessibilityObject* controlObject = correspondingControlForLabelElement();
+    if (controlObject && !controlObject->exposesTitleUIElement() && controlObject->isCheckboxOrRadio())
+        return true;
 
     // By default, objects should be ignored so that the AX hierarchy is not
     // filled with unnecessary items.

@@ -1,3 +1,16 @@
+2018-05-14  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Listbox and Combobox roles embedded in labels should participate in name calculation
+        https://bugs.webkit.org/show_bug.cgi?id=185521
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/label-with-pseudo-elements-expected.txt: Updated for new behavior.
+        * accessibility/text-alternative-calculation-from-listbox-expected.txt: Added.
+        * accessibility/text-alternative-calculation-from-listbox.html: Added.
+        * platform/mac/accessibility/label-with-pseudo-elements-expected.txt: Updated for new behavior.
+        * platform/win/accessibility/label-with-pseudo-elements-expected.txt: Updated for new behavior.
+
 2018-05-14  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Tests using the new animation engine may crash under WebCore::FrameView::didDestroyRenderTree when using internals methods

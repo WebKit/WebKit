@@ -1,3 +1,33 @@
+2018-05-14  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Listbox and Combobox roles embedded in labels should participate in name calculation
+        https://bugs.webkit.org/show_bug.cgi?id=185521
+
+        Reviewed by Chris Fleizach.
+
+        Take selected children into account when computing the name in accessibleNameForNode.
+        Add ListBox to the roles for which accessibleNameDerivesFromContent returns false so
+        that native select elements with size > 1 are treated the same way as ARIA listbox.
+        Also add ListBox to the roles which are treated as controls when used in ARIA. Finally,
+        prevent labels which contain unrelated controls from being used as an AXTitleUIElement.
+        This causes us to build a string from the label and its descendants, ensuring the latter
+        participate in the name calculation.
+
+        Test: accessibility/text-alternative-calculation-from-listbox.html
+
+        * accessibility/AccessibilityLabel.cpp:
+        (WebCore::childrenContainUnrelatedControls):
+        (WebCore::AccessibilityLabel::containsUnrelatedControls const):
+        * accessibility/AccessibilityLabel.h:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::accessibleNameForNode):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::accessibleNameDerivesFromContent const):
+        (WebCore::AccessibilityObject::isARIAControl):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::exposesTitleUIElement const):
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored const):
+
 2018-05-14  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Tests using the new animation engine may crash under WebCore::FrameView::didDestroyRenderTree when using internals methods

@@ -24,13 +24,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 	AXDescription: 
 	AXTitleUIElement: null
 
-	AXTitle: 
+	AXTitle: test 5 input value
 	AXDescription: 
-	AXTitleUIElement: non-null
+	AXTitleUIElement: null
 
-	AXTitle: 
+	AXTitle: before test 6 input value after
 	AXDescription: 
-	AXTitleUIElement: non-null
+	AXTitleUIElement: null
 
 PASS successfullyParsed is true
 
