@@ -2300,8 +2300,7 @@ void WebPageProxy::handleTouchEventSynchronously(NativeWebTouchEvent& event)
 
     TraceScope scope(SyncTouchEventStart, SyncTouchEventEnd);
 
-    if (event.type() == WebEvent::TouchStart)
-        updateTouchEventTracking(event);
+    updateTouchEventTracking(event);
 
     TrackingType touchEventsTrackingType = touchEventTrackingType(event);
     if (touchEventsTrackingType == TrackingType::NotTracking)
@@ -2355,8 +2354,7 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
     if (!isValid())
         return;
 
-    if (event.type() == WebEvent::TouchStart)
-        updateTouchEventTracking(event);
+    updateTouchEventTracking(event);
 
     if (touchEventTrackingType(event) == TrackingType::NotTracking)
         return;

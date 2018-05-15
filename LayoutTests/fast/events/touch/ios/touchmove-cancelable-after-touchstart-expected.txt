@@ -1,0 +1,12 @@
+Test that touchmove can be cancelled from event listeners dynamically added after touchstart
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.cancelable is true
+PASS event.defaultPrevented is true
+PASS document.body.scrollTop is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

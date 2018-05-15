@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <style>
+    #square {
+        position: absolute;
+        left: 100px;
+        top: 100px;
+        width: 150px;
+        height: 2000px;
+        background: red;
+        opacity: 0.5;
+    }
+    </style>
+</head>
+
+<body>
+<div id="square" style=""></div>
+
+<script>
+description("Test that touchmove can be cancelled from event listeners dynamically added after touchstart");
+window.jsTestIsAsync = true;
+
+const getUIScript = (startX, startY, endX, endY) => `
+(function() {
+     var eventStream = {
+         events : [{
+            interpolate: "linear",
+            timestep: 0.025,
+            startEvent: {
+                inputType: "hand",
+                timeOffset: 0,
+                touches: [{
+                    inputType: "finger",
+                    phase: "began",
+                    id: 1,
+                    x: ${startX},
+                    y: ${startY},
+                    pressure: 0
+                }]
+            },
+            endEvent: {
+                inputType: "hand",
+                timeOffset: 3.0,
+                touches: [{
+                    inputType: "finger",
+                    phase: "stationary",
+                    id: 1,
+                    x: ${endX},
+                    y: ${endY},
+                    pressure : 500
+                }]
+            }
+        }]
+    };
+
+    uiController.sendEventStream(JSON.stringify(eventStream), function() {
+        uiController.uiScriptComplete();
+    });
+})();
+`;
+
+function runTest()
+{
+    function touchmoveEventHandler(event)
+    {
+        shouldBe("event.cancelable", "true");
+        event.preventDefault();
+        shouldBe("event.defaultPrevented", "true");
+    }
+
+    const square = document.querySelector('#square');
+    document.addEventListener("touchstart", event => {
+        // NOTE: For some reason, if we don't interact with the DOM here, the first few touchmove events we see will be passive (not cancelable)
+        // See https://bugs.webkit.org/show_bug.cgi?id=185656
+        document.body.appendChild(document.createElement('p'));
+        if (event.target === square)
+            window.addEventListener("touchmove", touchmoveEventHandler, { passive: false, once: true });
+    }, { passive: false, once: true });
+
+    if (window.testRunner) {
+        let clientRect = square.getBoundingClientRect();
+        testRunner.runUIScript(getUIScript(clientRect.left + 50, clientRect.top + 200, clientRect.left + 50, clientRect.top + 10), () => {
+            shouldBe("document.body.scrollTop", "0");
+            finishJSTest();
+        });
+    }
+}
+
+window.addEventListener('load', runTest, false);
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>
