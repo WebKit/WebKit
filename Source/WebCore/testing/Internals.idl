@@ -596,5 +596,7 @@ enum EventThrottlingBehavior {
     boolean isSystemPreviewLink(Element element);
     boolean isSystemPreviewImage(Element element);
 
+    DOMString extraZoomModeAdaptationName();
+
     boolean usingAppleInternalSDK();
 };

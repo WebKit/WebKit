@@ -1,3 +1,24 @@
+2018-05-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Google search results are excessively zoomed in
+        https://bugs.webkit.org/show_bug.cgi?id=185347
+        <rdar://problem/39999778>
+
+        Reviewed by Tim Horton.
+
+        Adds a new experimental feature for the "disabled-adaptations" meta tag, and adds plumbing in WebKit to
+        propagate disabled adaptation changes to the ViewportConfiguration. The experimental feature is on by default in
+        extra zoom mode.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::dispatchDisabledAdaptationsDidChange const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::disabledAdaptationsDidChange):
+        * WebProcess/WebPage/WebPage.h:
+
 2018-05-14  Chris Dumez  <cdumez@apple.com>
 
         Overly aggressive timer throttling in service workers

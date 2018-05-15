@@ -178,9 +178,9 @@
 #endif
 
 #if ENABLE(EXTRA_ZOOM_MODE)
-#define DEFAULT_MIN_DEVICE_WIDTH_ENABLED 1
+#define DISABLED_ADAPTATIONS_META_TAG_ENABLED true
 #else
-#define DEFAULT_MIN_DEVICE_WIDTH_ENABLED 0
+#define DISABLED_ADAPTATIONS_META_TAG_ENABLED false
 #endif
 
 // Cocoa ports must disable experimental features on release branches for now.

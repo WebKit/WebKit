@@ -1,3 +1,113 @@
+2018-05-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Google search results are excessively zoomed in
+        https://bugs.webkit.org/show_bug.cgi?id=185347
+        <rdar://problem/39999778>
+
+        Reviewed by Tim Horton.
+
+        It turns out that basing minimum layout size and shrink-to-fit behaviors off of the `shrink-to-fit` viewport
+        argument poses compatibility risks with web pages that already specify `shrink-to-fit` to opt out of default
+        viewport shrinking behaviors in 1/3 multitasking mode on iPad.
+
+        One way to resolve this is to introduce a new viewport meta content attribute to disable viewport heuristics in
+        extra zoom mode. However, combined shrink-to-fit and minimum device width behaviors are difficult to describe
+        using a single backwards-compatible viewport meta content attribute, and the need to suppress the default
+        behavior of `shrink-to-fit=no` if such an attribute is not disabled further muddles our viewport story.
+
+        After some internal deliberation, we’ve decided to experiment with a new meta tag named "disabled-adaptations".
+        The content of this meta tag is a comma-separated list of adaptation names; if an adaptation name matches a
+        known adaptation type (for instance, extra zoom mode), we disable the class of behaviors used to adapt web
+        content. The first and only known adaptation type is extra zoom mode, which affects `shrink-to-fit` and layout
+        size adjustments.
+
+        See per-method changes below for more details.
+
+        Test: fast/viewport/extrazoom/viewport-disable-extra-zoom-adaptations.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::processDisabledAdaptations):
+        * dom/Document.h:
+        (WebCore::Document::disabledAdaptations const):
+
+        Add disabled adaptations to Document. Changes to disabled adaptations are not propagated if the parsed disabled
+        adaptation types don't change; upon changing adaptation types, notify the client to adjust for the new disabled
+        adaptations (currently, this only affects the viewport configuration).
+
+        * dom/ViewportArguments.h:
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::process):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::StartTagScanner):
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttributes):
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+
+        Restore the set of disabled adaptations when restoring a page from the cache.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::dispatchDisabledAdaptationsDidChange const):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+
+        Add plumbing for changes to the set of disabled adaptations.
+
+        * page/DisabledAdaptations.cpp: Added.
+        (WebCore::extraZoomModeAdaptationName):
+        * page/DisabledAdaptations.h: Added.
+
+        Introduce a header containing a new enum for the extra zoom mode adaptation, as well as a helper function to
+        return the extra zoom mode adaptation name.
+
+        * page/Page.cpp:
+        (WebCore::Page::disabledAdaptations const):
+
+        Returns the mainframe's set of adaptations to disable.
+
+        * page/Page.h:
+        * page/RemoteFrame.h:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setDisabledAdaptationsMetaTagEnabled):
+        (WebCore::RuntimeEnabledFeatures::disabledAdaptationsMetaTagEnabled const):
+
+        Add a new runtime feature to gate handling the "disabled-adaptations" meta tag.
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::shouldOverrideShrinkToFitArgument):
+        (WebCore::needsUpdateAfterChangingDisabledAdaptations):
+        (WebCore::ViewportConfiguration::setDisabledAdaptations):
+        (WebCore::ViewportConfiguration::shouldOverrideDeviceWidthAndShrinkToFit const):
+
+        Consult whether or not extra zoom mode adaptations are disabled, instead of the shrink-to-fit attribute value.
+
+        (WebCore::ViewportConfiguration::updateConfiguration):
+        * page/ViewportConfiguration.h:
+
+        Add an OptionSet of disabled adaptation types to ViewportConfiguration. Updates to the adaptation type are
+        propagated to the ViewportConfiguration from Document, through the ChromeClient and the client layer (refer to
+        changes in WebKit). Once the OptionSet is changed, we recompute the viewport configuration only if needed by the
+        platform.
+
+        (WebCore::ViewportConfiguration::viewLayoutSize const):
+        (WebCore::ViewportConfiguration::disabledAdaptations const):
+        * page/WindowFeatures.cpp:
+        (WebCore::parseDisabledAdaptations):
+        * page/WindowFeatures.h:
+
+        Add a new helper to parse the meta content of a "disabled-adaptations" tag as an OptionSet of disabled
+        adaptation types. The string is parsed by first splitting on the comma character, and then iterating over lower
+        case, whitespace-stripped tokens to look for known adaptation names. So far, only extra zoom mode is supported.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::extraZoomModeAdaptationName const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+        Expose the extra zoom mode adaptation name to the DOM, only when running layout tests.
+
 2018-05-14  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Listbox and Combobox roles embedded in labels should participate in name calculation

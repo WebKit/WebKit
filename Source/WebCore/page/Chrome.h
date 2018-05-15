@@ -22,6 +22,7 @@
 #pragma once
 
 #include "Cursor.h"
+#include "DisabledAdaptations.h"
 #include "FocusDirection.h"
 #include "HostWindow.h"
 #include <wtf/Forward.h>
@@ -154,6 +155,7 @@ public:
     void runOpenPanel(Frame&, FileChooser&);
     void loadIconForFiles(const Vector<String>&, FileIconLoader&);
 
+    void dispatchDisabledAdaptationsDidChange(const OptionSet<DisabledAdaptations>&) const;
     void dispatchViewportPropertiesDidChange(const ViewportArguments&) const;
 
     bool requiresFullscreenForVideoPlayback();

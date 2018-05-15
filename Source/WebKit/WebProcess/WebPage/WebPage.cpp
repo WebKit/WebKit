@@ -1788,6 +1788,16 @@ IntSize WebPage::fixedLayoutSize() const
     return view->fixedLayoutSize();
 }
 
+void WebPage::disabledAdaptationsDidChange(const OptionSet<DisabledAdaptations>& disabledAdaptations)
+{
+#if PLATFORM(IOS)
+    if (m_viewportConfiguration.setDisabledAdaptations(disabledAdaptations))
+        viewportConfigurationChanged();
+#else
+    UNUSED_PARAM(disabledAdaptations);
+#endif
+}
+
 void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArguments)
 {
 #if PLATFORM(IOS)

@@ -1283,3 +1283,11 @@ ServerTimingEnabled:
     category: experimental
     webcoreBinding: RuntimeEnabledFeatures
     webcoreName: serverTimingEnabled
+
+DisabledAdaptationsMetaTagEnabled:
+    type: bool
+    defaultValue: DISABLED_ADAPTATIONS_META_TAG_ENABLED
+    humanReadableName: "disabled-adaptations"
+    humanReadableDescription: "Enable the 'disabled-adaptations' meta tag"
+    category: experimental
+    webcoreBinding: RuntimeEnabledFeatures

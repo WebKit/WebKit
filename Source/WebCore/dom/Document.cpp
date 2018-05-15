@@ -3399,6 +3399,18 @@ void Document::processHttpEquiv(const String& equiv, const String& content, bool
     }
 }
 
+void Document::processDisabledAdaptations(const String& disabledAdaptationsString)
+{
+    auto disabledAdaptations = parseDisabledAdaptations(disabledAdaptationsString);
+    if (m_disabledAdaptations == disabledAdaptations)
+        return;
+
+    m_disabledAdaptations = disabledAdaptations;
+
+    if (page() && frame()->isMainFrame())
+        page()->chrome().dispatchDisabledAdaptationsDidChange(m_disabledAdaptations);
+}
+
 void Document::processViewport(const String& features, ViewportArguments::Type origin)
 {
     ASSERT(!features.isNull());

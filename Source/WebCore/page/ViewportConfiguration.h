@@ -25,10 +25,12 @@
 
 #pragma once
 
+#include "DisabledAdaptations.h"
 #include "FloatSize.h"
 #include "IntSize.h"
 #include "ViewportArguments.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/OptionSet.h>
 
 namespace WTF {
 class TextStream;
@@ -74,15 +76,16 @@ public:
     const IntSize& contentsSize() const { return m_contentSize; }
     WEBCORE_EXPORT bool setContentsSize(const IntSize&);
 
-    FloatSize viewLayoutSize() const { return m_viewLayoutSize; }
+    const FloatSize& viewLayoutSize() const { return m_viewLayoutSize; }
 
     const FloatSize& minimumLayoutSize() const { return m_minimumLayoutSize; }
     WEBCORE_EXPORT bool setViewLayoutSize(const FloatSize&);
 
+    const OptionSet<DisabledAdaptations>& disabledAdaptations() const { return m_disabledAdaptations; }
+    WEBCORE_EXPORT bool setDisabledAdaptations(const OptionSet<DisabledAdaptations>&);
+
     const ViewportArguments& viewportArguments() const { return m_viewportArguments; }
     WEBCORE_EXPORT bool setViewportArguments(const ViewportArguments&);
-
-    bool shouldOverrideDeviceWidthAndShrinkToFit() const;
 
     WEBCORE_EXPORT bool setCanIgnoreScalingConstraints(bool);
     void setForceAlwaysUserScalable(bool forceAlwaysUserScalable) { m_forceAlwaysUserScalable = forceAlwaysUserScalable; }
@@ -116,6 +119,7 @@ private:
     int layoutWidth() const;
     int layoutHeight() const;
 
+    bool shouldOverrideDeviceWidthAndShrinkToFit() const;
     bool shouldIgnoreScalingConstraintsRegardlessOfContentSize() const;
     bool shouldIgnoreScalingConstraints() const;
     bool shouldIgnoreVerticalScalingConstraints() const;
@@ -129,6 +133,7 @@ private:
     FloatSize m_minimumLayoutSize;
     FloatSize m_viewLayoutSize;
     ViewportArguments m_viewportArguments;
+    OptionSet<DisabledAdaptations> m_disabledAdaptations;
 
     bool m_canIgnoreScalingConstraints;
     bool m_forceAlwaysUserScalable;

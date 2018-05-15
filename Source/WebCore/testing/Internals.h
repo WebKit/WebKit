@@ -664,6 +664,8 @@ public:
     bool isSystemPreviewLink(Element&) const;
     bool isSystemPreviewImage(Element&) const;
 
+    String extraZoomModeAdaptationName() const;
+
     bool usingAppleInternalSDK() const;
 
 private:

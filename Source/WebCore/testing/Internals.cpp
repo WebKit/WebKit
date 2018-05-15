@@ -53,6 +53,7 @@
 #include "DOMStringList.h"
 #include "DOMWindow.h"
 #include "DeprecatedGlobalSettings.h"
+#include "DisabledAdaptations.h"
 #include "DisplayList.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -4511,6 +4512,11 @@ bool Internals::isSystemPreviewImage(Element& element) const
     UNUSED_PARAM(element);
     return false;
 #endif
+}
+
+String Internals::extraZoomModeAdaptationName() const
+{
+    return WebCore::extraZoomModeAdaptationName();
 }
 
 bool Internals::usingAppleInternalSDK() const
