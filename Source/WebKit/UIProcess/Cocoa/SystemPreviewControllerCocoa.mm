@@ -31,8 +31,10 @@
 #import "APIUIClient.h"
 #import "WebPageProxy.h"
 
+#import <MobileCoreServices/MobileCoreServices.h>
 #import <QuickLook/QuickLook.h>
 #import <UIKit/UIViewController.h>
+#import <pal/spi/ios/QuickLookSPI.h>
 #import <wtf/SoftLinking.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -41,22 +43,27 @@
 
 SOFT_LINK_FRAMEWORK(QuickLook)
 SOFT_LINK_CLASS(QuickLook, QLPreviewController);
+SOFT_LINK_CLASS(QuickLook, QLItem);
 
 @interface _WKPreviewControllerDataSource : NSObject <QLPreviewControllerDataSource> {
+    RetainPtr<NSItemProvider> _itemProvider;
+    RetainPtr<QLItem> _item;
 };
 
-@property (nonatomic) WebCore::URL url;
+@property (strong) NSItemProviderCompletionHandler completionHandler;
+@property (retain) NSString *mimeType;
 
 @end
 
 @implementation _WKPreviewControllerDataSource
 
-- (id)initWithURL:(const WebCore::URL&)url
+- (id)initWithMIMEType:(NSString*)mimeType
 {
     if (!(self = [super init]))
         return nil;
 
-    self.url = url;
+    self.mimeType = mimeType;
+
     return self;
 }
 
@@ -67,7 +74,33 @@ SOFT_LINK_CLASS(QuickLook, QLPreviewController);
 
 - (id<QLPreviewItem>)previewController:(QLPreviewController *)controller previewItemAtIndex:(NSInteger)index
 {
-    return (NSURL*)self.url;
+    if (!_item) {
+        _itemProvider = adoptNS([[NSItemProvider alloc] init]);
+        NSString *contentType = @"public.content";
+#if USE(APPLE_INTERNAL_SDK)
+        contentType = WebKit::getUTIForMIMEType(self.mimeType);
+#endif
+        _item = adoptNS([allocQLItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0)]);
+        [_item setUseLoadingTimeout:NO];
+
+        [_itemProvider registerItemForTypeIdentifier:contentType loadHandler:^(NSItemProviderCompletionHandler completionHandler, Class expectedValueClass, NSDictionary * options) {
+            // This will get called once the download completes.
+            self.completionHandler = completionHandler;
+        }];
+    }
+    return _item.get();
+}
+
+- (void)setProgress:(float)progress
+{
+    if (_item)
+        [_item setPreviewItemProviderProgress:@(progress)];
+}
+
+- (void)finish:(WebCore::URL)url
+{
+    if (self.completionHandler)
+        self.completionHandler((NSURL*)url, nil);
 }
 
 @end
@@ -88,26 +121,16 @@ SOFT_LINK_CLASS(QuickLook, QLPreviewController);
     return self;
 }
 
-- (void)previewControllerWillDismiss:(QLPreviewController *)controller
+- (void)previewControllerDidDismiss:(QLPreviewController *)controller
 {
     if (_previewController)
-        _previewController->sendPageBack();
+        _previewController->cancel();
 }
 @end
 
 namespace WebKit {
 
-bool SystemPreviewController::canPreview(const String& mimeType) const
-{
-#if USE(APPLE_INTERNAL_SDK)
-    return canShowSystemPreviewForMIMEType(mimeType);
-#else
-    UNUSED_PARAM(mimeType);
-    return false;
-#endif
-}
-
-void SystemPreviewController::showPreview(const WebCore::URL& url)
+void SystemPreviewController::start(const String& mimeType)
 {
     // FIXME: Make sure you can't show a preview if we're already previewing.
 
@@ -122,14 +145,34 @@ void SystemPreviewController::showPreview(const WebCore::URL& url)
         m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:this]);
         [m_qlPreviewController setDelegate:m_qlPreviewControllerDelegate.get()];
 
-        m_qlPreviewControllerDataSource = adoptNS([[_WKPreviewControllerDataSource alloc] initWithURL:url]);
+        m_qlPreviewControllerDataSource = adoptNS([[_WKPreviewControllerDataSource alloc] initWithMIMEType:mimeType]);
         [m_qlPreviewController setDataSource:m_qlPreviewControllerDataSource.get()];
-    } else
-        m_qlPreviewControllerDataSource.get().url = url;
 
-    [m_qlPreviewController reloadData];
+    }
 
     [presentingViewController presentViewController:m_qlPreviewController.get() animated:YES completion:nullptr];
+}
+
+void SystemPreviewController::updateProgress(float progress)
+{
+    if (m_qlPreviewControllerDataSource)
+        [m_qlPreviewControllerDataSource setProgress:progress];
+}
+
+void SystemPreviewController::finish(WebCore::URL url)
+{
+    if (m_qlPreviewControllerDataSource)
+        [m_qlPreviewControllerDataSource finish:url];
+}
+
+void SystemPreviewController::cancel()
+{
+    if (m_qlPreviewController)
+        [m_qlPreviewController.get() dismissViewControllerAnimated:YES completion:nullptr];
+
+    m_qlPreviewControllerDelegate = nullptr;
+    m_qlPreviewControllerDataSource = nullptr;
+    m_qlPreviewController = nullptr;
 }
 
 }
