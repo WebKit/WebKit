@@ -32,11 +32,16 @@
 #import "AuthenticationDecisionListener.h"
 #import "CompletionHandlerCallChecker.h"
 #import "DownloadProxy.h"
+#import "Logging.h"
+#import "SystemPreviewController.h"
 #import "WKNSURLAuthenticationChallenge.h"
 #import "WKNSURLExtras.h"
 #import "WebCredential.h"
+#import "WebPageProxy.h"
+#import "WebProcessProxy.h"
 #import "_WKDownloadDelegate.h"
 #import "_WKDownloadInternal.h"
+#import <WebCore/FileSystem.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceResponse.h>
 #import <wtf/BlockPtr.h>
@@ -69,24 +74,57 @@ DownloadClient::DownloadClient(id <_WKDownloadDelegate> delegate)
 
 void DownloadClient::didStart(WebProcessPool&, DownloadProxy& downloadProxy)
 {
+#if USE(SYSTEM_PREVIEW)
+    if (downloadProxy.isSystemPreviewDownload()) {
+        if (auto* webPage = downloadProxy.originatingPage()) {
+            RELEASE_LOG_IF(webPage->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - UIProcess is taking a background assertion because it is downloading a system preview", this);
+            ASSERT(!m_activityToken);
+            m_activityToken = webPage->process().throttler().backgroundActivityToken();
+        }
+        return;
+    }
+#endif
+
     if (m_delegateMethods.downloadDidStart)
         [m_delegate _downloadDidStart:wrapper(downloadProxy)];
 }
 
 void DownloadClient::didReceiveResponse(WebProcessPool&, DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response)
 {
+#if USE(SYSTEM_PREVIEW)
+    if (downloadProxy.isSystemPreviewDownload()) {
+        downloadProxy.setExpectedContentLength(response.expectedContentLength());
+        downloadProxy.setBytesLoaded(0);
+        if (auto* webPage = downloadProxy.originatingPage()) {
+            webPage->systemPreviewController()->start(response.mimeType());
+            webPage->systemPreviewController()->updateProgress(0);
+        }
+        return;
+    }
+#endif
+
     if (m_delegateMethods.downloadDidReceiveResponse)
         [m_delegate _download:wrapper(downloadProxy) didReceiveResponse:response.nsURLResponse()];
 }
 
 void DownloadClient::didReceiveData(WebProcessPool&, DownloadProxy& downloadProxy, uint64_t length)
 {
+#if USE(SYSTEM_PREVIEW)
+    if (downloadProxy.isSystemPreviewDownload()) {
+        downloadProxy.setBytesLoaded(downloadProxy.bytesLoaded() + length);
+        if (auto* webPage = downloadProxy.originatingPage())
+            webPage->systemPreviewController()->updateProgress(static_cast<float>(downloadProxy.bytesLoaded()) / downloadProxy.expectedContentLength());
+        return;
+    }
+#endif
+
     if (m_delegateMethods.downloadDidReceiveData)
         [m_delegate _download:wrapper(downloadProxy) didReceiveData:length];
 }
 
 void DownloadClient::didReceiveAuthenticationChallenge(WebProcessPool&, DownloadProxy& downloadProxy, AuthenticationChallengeProxy& authenticationChallenge)
 {
+    // FIXME: System Preview needs code here.
     if (!m_delegateMethods.downloadDidReceiveAuthenticationChallengeCompletionHandler) {
         authenticationChallenge.listener()->performDefaultHandling();
         return;
@@ -126,18 +164,42 @@ void DownloadClient::didReceiveAuthenticationChallenge(WebProcessPool&, Download
 
 void DownloadClient::didCreateDestination(WebProcessPool&, DownloadProxy& downloadProxy, const String& destination)
 {
+#if USE(SYSTEM_PREVIEW)
+    if (downloadProxy.isSystemPreviewDownload()) {
+        downloadProxy.setDestinationFilename(destination);
+        return;
+    }
+#endif
+
     if (m_delegateMethods.downloadDidCreateDestination)
         [m_delegate _download:wrapper(downloadProxy) didCreateDestination:destination];
 }
 
 void DownloadClient::processDidCrash(WebProcessPool&, DownloadProxy& downloadProxy)
 {
+#if USE(SYSTEM_PREVIEW)
+    if (downloadProxy.isSystemPreviewDownload()) {
+        if (m_activityToken)
+            releaseActivityToken(downloadProxy);
+        return;
+    }
+#endif
+
     if (m_delegateMethods.downloadProcessDidCrash)
         [m_delegate _downloadProcessDidCrash:wrapper(downloadProxy)];
 }
 
 void DownloadClient::decideDestinationWithSuggestedFilename(WebProcessPool&, DownloadProxy& downloadProxy, const String& filename, Function<void(AllowOverwrite, String)>&& completionHandler)
 {
+#if USE(SYSTEM_PREVIEW)
+    if (downloadProxy.isSystemPreviewDownload()) {
+        NSString *temporaryDirectory = WebCore::FileSystem::createTemporaryDirectory(@"SystemPreviews");
+        NSString *destination = [temporaryDirectory stringByAppendingPathComponent:filename];
+        completionHandler(AllowOverwrite::Yes, destination);
+        return;
+    }
+#endif
+
     if (!m_delegateMethods.downloadDecideDestinationWithSuggestedFilenameAllowOverwrite && !m_delegateMethods.downloadDecideDestinationWithSuggestedFilenameCompletionHandler)
         return completionHandler(AllowOverwrite::No, { });
 
@@ -160,18 +222,50 @@ void DownloadClient::decideDestinationWithSuggestedFilename(WebProcessPool&, Dow
 
 void DownloadClient::didFinish(WebProcessPool&, DownloadProxy& downloadProxy)
 {
+#if USE(SYSTEM_PREVIEW)
+    if (downloadProxy.isSystemPreviewDownload()) {
+        if (auto* webPage = downloadProxy.originatingPage()) {
+            NSURL *destinationURL = [NSURL fileURLWithPath:(NSString *)downloadProxy.destinationFilename()];
+            webPage->systemPreviewController()->finish(WebCore::URL(destinationURL));
+        }
+        if (m_activityToken)
+            releaseActivityToken(downloadProxy);
+        return;
+    }
+#endif
+
     if (m_delegateMethods.downloadDidFinish)
         [m_delegate _downloadDidFinish:wrapper(downloadProxy)];
 }
 
 void DownloadClient::didFail(WebProcessPool&, DownloadProxy& downloadProxy, const WebCore::ResourceError& error)
 {
+#if USE(SYSTEM_PREVIEW)
+    if (downloadProxy.isSystemPreviewDownload()) {
+        if (auto* webPage = downloadProxy.originatingPage())
+            webPage->systemPreviewController()->cancel();
+        if (m_activityToken)
+            releaseActivityToken(downloadProxy);
+        return;
+    }
+#endif
+
     if (m_delegateMethods.downloadDidFail)
         [m_delegate _download:wrapper(downloadProxy) didFailWithError:error.nsError()];
 }
 
 void DownloadClient::didCancel(WebProcessPool&, DownloadProxy& downloadProxy)
 {
+#if USE(SYSTEM_PREVIEW)
+    if (downloadProxy.isSystemPreviewDownload()) {
+        if (auto* webPage = downloadProxy.originatingPage())
+            webPage->systemPreviewController()->cancel();
+        if (m_activityToken)
+            releaseActivityToken(downloadProxy);
+        return;
+    }
+#endif
+
     if (m_delegateMethods.downloadDidCancel)
         [m_delegate _downloadDidCancel:wrapper(downloadProxy)];
 }
@@ -183,6 +277,15 @@ void DownloadClient::willSendRequest(WebProcessPool&, DownloadProxy& downloadPro
 
     completionHandler(WTFMove(request));
 }
+
+#if PLATFORM(IOS) && USE(SYSTEM_PREVIEW)
+void DownloadClient::releaseActivityToken(DownloadProxy& downloadProxy)
+{
+    RELEASE_LOG_IF(downloadProxy.originatingPage()->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p UIProcess is releasing a background assertion because a system preview download completed", this);
+    ASSERT(m_activityToken);
+    m_activityToken = nullptr;
+}
+#endif
 
 } // namespace WebKit
 

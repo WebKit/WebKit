@@ -26,7 +26,13 @@
 #include "config.h"
 #include "SystemPreviewController.h"
 
+#if USE(SYSTEM_PREVIEW)
+
 #include "WebPageProxy.h"
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/SystemPreviewTypes.cpp>
+#endif
 
 namespace WebKit {
 
@@ -35,20 +41,16 @@ SystemPreviewController::SystemPreviewController(WebPageProxy& webPageProxy)
 {
 }
 
-void SystemPreviewController::sendPageBack()
+bool SystemPreviewController::canPreview(const String& mimeType) const
 {
-    m_webPageProxy.goBack();
-}
-
-#if !PLATFORM(IOS) || !USE(QUICK_LOOK)
-bool SystemPreviewController::canPreview(const String&) const
-{
+#if USE(APPLE_INTERNAL_SDK)
+    return canShowSystemPreviewForMIMEType(mimeType);
+#else
+    UNUSED_PARAM(mimeType);
     return false;
-}
-
-void SystemPreviewController::showPreview(const WebCore::URL&)
-{
-}
 #endif
+}
 
 }
+
+#endif
