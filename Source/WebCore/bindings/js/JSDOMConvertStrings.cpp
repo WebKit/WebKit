@@ -39,7 +39,7 @@ static inline String stringToByteString(ExecState& state, JSC::ThrowScope& scope
         return { };
     }
 
-    return string;
+    return WTFMove(string);
 }
 
 String identifierToByteString(ExecState& state, const Identifier& identifier)
@@ -78,7 +78,7 @@ static inline String stringToUSVString(String&& string)
 {
     // Fast path for the case where there are no unpaired surrogates.
     if (!hasUnpairedSurrogate(string))
-        return string;
+        return WTFMove(string);
 
     // Slow path: http://heycam.github.io/webidl/#dfn-obtain-unicode
     // Replaces unpaired surrogates with the replacement character.

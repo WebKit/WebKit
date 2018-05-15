@@ -409,7 +409,7 @@ static String filterICECandidate(String&& sdp)
 String PeerConnectionBackend::filterSDP(String&& sdp) const
 {
     if (!m_shouldFilterICECandidates)
-        return sdp;
+        return WTFMove(sdp);
 
     StringBuilder filteredSDP;
     sdp.split('\n', false, [&filteredSDP](StringView line) {

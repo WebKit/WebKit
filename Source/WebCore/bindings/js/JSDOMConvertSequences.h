@@ -57,7 +57,7 @@ struct GenericSequenceConverter {
                 return;
             result.append(WTFMove(convertedValue));
         });
-        return result;
+        return WTFMove(result);
     }
 
     static ReturnType convert(JSC::ExecState& state, JSC::JSObject* object, JSC::JSValue method)
@@ -75,7 +75,7 @@ struct GenericSequenceConverter {
                 return;
             result.append(WTFMove(convertedValue));
         });
-        return result;
+        return WTFMove(result);
     }
 };
 
@@ -99,7 +99,7 @@ struct NumericSequenceConverter {
                 else
                     result.uncheckedAppend(indexValue.asInt32());
             }
-            return result;
+            return WTFMove(result);
         }
 
         ASSERT(indexingType == JSC::DoubleShape);
@@ -114,7 +114,7 @@ struct NumericSequenceConverter {
                 result.uncheckedAppend(convertedValue);
             }
         }
-        return result;
+        return WTFMove(result);
     }
 
     static ReturnType convert(JSC::ExecState& state, JSC::JSValue value)
