@@ -1157,17 +1157,23 @@ void NavigationState::didChangeIsLoading()
 {
 #if PLATFORM(IOS)
     if (m_webView->_page->pageLoadState().isLoading()) {
-        if (m_releaseActivityTimer.isActive())
+        if (m_releaseActivityTimer.isActive()) {
+            RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - A new page load started while the UIProcess was still holding a page load background assertion", this);
             m_releaseActivityTimer.stop();
-        else {
+        } else {
             RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - UIProcess is taking a background assertion because a page load started", this);
             ASSERT(!m_activityToken);
             m_activityToken = m_webView->_page->process().throttler().backgroundActivityToken();
         }
-    } else {
-        // Delay releasing the background activity for 3 seconds to give the application a chance to start another navigation
-        // before suspending the WebContent process <rdar://problem/27910964>.
-        m_releaseActivityTimer.startOneShot(3_s);
+    } else if (m_activityToken) {
+        if (m_webView._isBackground)
+            releaseNetworkActivityToken();
+        else {
+            // The application is visible so we delay releasing the background activity for 3 seconds to give it a chance to start another navigation
+            // before suspending the WebContent process <rdar://problem/27910964>.
+            RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - Page load completed and UIProcess will be releasing background assertion soon unless a new load starts", this);
+            m_releaseActivityTimer.startOneShot(3_s);
+        }
     }
 #endif
 
