@@ -30,6 +30,7 @@
 #if WK_API_ENABLED
 
 #import "APIDownloadClient.h"
+#import "ProcessThrottler.h"
 #import "WeakObjCPtr.h"
 
 @protocol _WKDownloadDelegate;
@@ -59,6 +60,10 @@ private:
     void didCreateDestination(WebProcessPool&, DownloadProxy&, const String&) final;
     void processDidCrash(WebProcessPool&, DownloadProxy&) final;
 
+#if PLATFORM(IOS) && USE(SYSTEM_PREVIEW)
+    void releaseActivityToken(DownloadProxy&);
+#endif
+
     WeakObjCPtr<id <_WKDownloadDelegate>> m_delegate;
 
     struct {
@@ -76,6 +81,10 @@ private:
         bool downloadDidCreateDestination : 1;
         bool downloadProcessDidCrash : 1;
     } m_delegateMethods;
+
+#if PLATFORM(IOS) && USE(SYSTEM_PREVIEW)
+    ProcessThrottler::BackgroundActivityToken m_activityToken;
+#endif
 };
 
 } // namespace WebKit
