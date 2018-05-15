@@ -54,7 +54,7 @@ LibWebRTCSocket::LibWebRTCSocket(LibWebRTCSocketFactory& factory, uint64_t ident
     , m_localAddress(localAddress)
     , m_remoteAddress(remoteAddress)
 {
-    memset(&m_options, 1, MAX_SOCKET_OPTION * sizeof(m_options[0]));
+    memset(&m_options, 1, MAX_SOCKET_OPTION);
 }
 
 LibWebRTCSocket::~LibWebRTCSocket()
