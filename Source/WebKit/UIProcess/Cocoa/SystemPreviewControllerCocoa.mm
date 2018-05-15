@@ -126,6 +126,25 @@ SOFT_LINK_CLASS(QuickLook, QLItem);
     if (_previewController)
         _previewController->cancel();
 }
+
+- (CGRect)previewController:(QLPreviewController *)controller frameForPreviewItem:(id <QLPreviewItem>)item inSourceView:(UIView * *)view
+{
+    if (!_previewController)
+        return CGRectZero;
+
+    UIViewController *presentingViewController = _previewController->page().uiClient().presentingViewController();
+
+    if (!presentingViewController)
+        return CGRectZero;
+
+    CGRect frame = presentingViewController.view.frame;
+    // Create a smaller rectangle centered in the frame.
+    CGFloat halfWidth = frame.size.width / 2;
+    CGFloat halfHeight = frame.size.height / 2;
+    frame = CGRectMake(CGRectGetMidX(frame) - halfWidth / 2, CGRectGetMidY(frame) - halfHeight / 2, halfWidth, halfHeight);
+    return frame;
+}
+
 @end
 
 namespace WebKit {
