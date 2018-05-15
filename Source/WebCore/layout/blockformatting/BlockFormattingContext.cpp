@@ -143,8 +143,42 @@ void BlockFormattingContext::computeStaticPosition(LayoutContext& layoutContext,
     displayBox.setTopLeft(topLeft);
 }
 
-void BlockFormattingContext::computeInFlowWidth(const Box&, Display::Box&) const
+void BlockFormattingContext::computeInFlowWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
+    if (!layoutBox.isReplaced()) {
+        computeInFlowNonReplacedWidth(layoutContext, layoutBox, displayBox);
+        return;
+    }
+    ASSERT_NOT_REACHED();
+}
+
+void BlockFormattingContext::computeInFlowNonReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    // 10.3.3 Block-level, non-replaced elements in normal flow
+    // The following constraints must hold among the used values of the other properties:
+    // 'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width' + 'margin-right' = width of containing block
+
+    // If 'width' is set to 'auto', any other 'auto' values become '0' and 'width' follows from the resulting equality.
+    auto& style = layoutBox.style();
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+
+    LayoutUnit computedWidthValue;
+    auto width = style.logicalWidth();
+    if (width.isAuto()) {
+        auto marginLeft = displayBox.marginLeft();
+        auto marginRight = displayBox.marginRight();
+
+        auto paddingLeft = displayBox.paddingLeft();
+        auto paddingRight = displayBox.paddingRight();
+
+        auto borderLeft = displayBox.borderLeft();
+        auto borderRight = displayBox.borderRight();
+
+        computedWidthValue = containingBlockWidth - (marginLeft + borderLeft + paddingLeft + paddingRight + borderRight + marginRight);
+    } else
+        computedWidthValue = valueForLength(width, containingBlockWidth);
+
+    displayBox.setWidth(computedWidthValue);
 }
 
 void BlockFormattingContext::computeInFlowHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const

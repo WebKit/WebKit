@@ -73,7 +73,7 @@ protected:
 
     virtual void computeOutOfFlowWidth(LayoutContext&, const Box&, Display::Box&) const;
     virtual void computeFloatingWidth(const Box&, Display::Box&) const;
-    virtual void computeInFlowWidth(const Box&, Display::Box&) const = 0;
+    virtual void computeInFlowWidth(LayoutContext&, const Box&, Display::Box&) const = 0;
 
     virtual void computeOutOfFlowHeight(LayoutContext&, const Box&, Display::Box&) const;
     virtual void computeFloatingHeight(const Box&, Display::Box&) const;

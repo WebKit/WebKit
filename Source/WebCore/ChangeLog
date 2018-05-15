@@ -1,3 +1,22 @@
+2018-05-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement width computation for non-replaced block level inflow elements.
+        https://bugs.webkit.org/show_bug.cgi?id=185641
+
+        Reviewed by Sam Weinig.
+
+        Block level inflow elements participate in block formatting context.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeWidth const):
+        * layout/FormattingContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeInFlowWidth const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeInFlowWidth const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+
 2018-05-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the iOS build after r231779

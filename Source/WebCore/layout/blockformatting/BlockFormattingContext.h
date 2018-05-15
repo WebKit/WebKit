@@ -51,7 +51,10 @@ public:
 
 private:
     void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const override;
-    void computeInFlowWidth(const Box&, Display::Box&) const override;
+
+    void computeInFlowWidth(LayoutContext&, const Box&, Display::Box&) const override;
+    void computeInFlowNonReplacedWidth(LayoutContext&, const Box&, Display::Box&) const;
+
     void computeInFlowHeight(LayoutContext&, const Box&, Display::Box&) const override;
     void computeInFlowNonReplacedHeight(LayoutContext&, const Box&, Display::Box&) const;
 
