@@ -1,3 +1,20 @@
+2018-05-15  Per Arne Vollan  <pvollan@apple.com>
+
+        Pause display links when window is not visible.
+        https://bugs.webkit.org/show_bug.cgi?id=185627
+        <rdar://problem/39401106>
+
+        Reviewed by Simon Fraser.
+
+        Pause/resume display links created in the UI process when the window is hidden/shown.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::pause):
+        (WebKit::DisplayLink::resume):
+        * UIProcess/mac/DisplayLink.h:
+
 2018-05-15  Dean Jackson  <dino@apple.com>
 
         Provide UIView and UIImage for zoom transition

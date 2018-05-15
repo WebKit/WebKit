@@ -45,6 +45,9 @@ public:
     void removeObserver(unsigned observerID);
     bool hasObservers() const;
 
+    void pause();
+    void resume();
+    
 private:
     static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data);
     
