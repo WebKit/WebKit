@@ -520,4 +520,6 @@ messages -> WebPage LegacyReceiver {
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     OpenGLDisplayMaskChanged(uint32_t displayMask)
 #endif
+
+    SetDefersLoading(bool defersLoading)
 }

@@ -6380,6 +6380,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 #endif
 }
 
+- (void)_setDefersLoadingForTesting:(BOOL)defersLoading
+{
+    _page->setDefersLoadingForTesting(defersLoading);
+}
+
 @end
 
 

@@ -1,3 +1,22 @@
+2018-05-14  Brady Eidson  <beidson@apple.com>
+
+        Add an API test to guard against regressions while re-entering setDefersLoading:.
+        <rdar://problem/37033737> and https://bugs.webkit.org/show_bug.cgi?id=185630
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/DoubleDefersLoading.mm: Added.
+        (-[DoubleDefersNavigationDelegate _webView:navigation:didSameDocumentNavigation:]):
+        (-[DoubleDefersNavigationDelegate webView:didFinishNavigation:]):
+        (-[DefersScheme initWithBytes:]):
+        (-[DefersScheme webView:startURLSchemeTask:]):
+        (-[DefersScheme webView:stopURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/DoubleDefersLoadingPlugin.mm: Added.
+        (-[DoubleDefersLoadingPlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+        (-[DoubleDefersLoadingPlugIn webProcessPlugInBrowserContextController:didSameDocumentNavigation:forFrame:]):
+        (-[DoubleDefersLoadingPlugIn dealloc]):
+
 2018-05-14  Daniel Bates  <dabates@apple.com>
 
         [iOS] Add a test to ensure that setTimeout() does not fire more than expected when using UIWebView

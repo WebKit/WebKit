@@ -461,6 +461,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 - (BOOL)_beginBackSwipeForTesting;
 - (BOOL)_completeBackSwipeForTesting;
+- (void)_setDefersLoadingForTesting:(BOOL)defersLoading;
 
 @end
 

@@ -7691,4 +7691,9 @@ void WebPageProxy::reportPageLoadResult(const ResourceError& error)
     }
 }
 
+void WebPageProxy::setDefersLoadingForTesting(bool defersLoading)
+{
+    m_process->send(Messages::WebPage::SetDefersLoading(defersLoading), m_pageID);
+}
+
 } // namespace WebKit
