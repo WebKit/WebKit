@@ -46,6 +46,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLPlugInElement.h"
+#include "Logging.h"
 #include <wtf/CompletionHandler.h>
 
 #if USE(QUICK_LOOK)

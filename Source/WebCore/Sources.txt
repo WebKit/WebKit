@@ -1242,13 +1242,14 @@ loader/DocumentLoader.cpp
 loader/DocumentThreadableLoader.cpp
 loader/DocumentWriter.cpp
 loader/EmptyClients.cpp
+loader/FetchIdioms.cpp
 loader/FTPDirectoryParser.cpp
 loader/FormState.cpp
 loader/FormSubmission.cpp
 loader/FrameLoadRequest.cpp
 loader/FrameLoader.cpp
 loader/FrameLoaderStateMachine.cpp
-loader/FetchIdioms.cpp
+loader/HeaderFieldTokenizer.cpp
 loader/HTTPHeaderField.cpp
 loader/HistoryController.cpp
 loader/ImageLoader.cpp
@@ -1262,6 +1263,7 @@ loader/MixedContentChecker.cpp
 loader/NavigationAction.cpp
 loader/NavigationScheduler.cpp
 loader/NetscapePlugInStreamLoader.cpp
+loader/ServerTimingParser.cpp
 loader/PingLoader.cpp
 loader/PolicyChecker.cpp
 loader/ProgressTracker.cpp
@@ -1272,6 +1274,7 @@ loader/ResourceLoadStatistics.cpp
 loader/ResourceLoader.cpp
 loader/ResourceTiming.cpp
 loader/ResourceTimingInformation.cpp
+loader/ServerTiming.cpp
 loader/SinkDocument.cpp
 loader/SubframeLoader.cpp
 loader/SubresourceIntegrity.cpp

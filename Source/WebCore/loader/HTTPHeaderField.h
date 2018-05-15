@@ -71,4 +71,9 @@ std::optional<HTTPHeaderField> HTTPHeaderField::decode(Decoder& decoder)
     return {{ WTFMove(*name), WTFMove(*value) }};
 }
 
+namespace RFC7230 {
+bool isTokenCharacter(UChar);
+bool isWhitespace(UChar);
+} // namespace RFC7230
+
 } // namespace WebCore

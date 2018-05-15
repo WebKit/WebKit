@@ -1,3 +1,54 @@
+2018-05-15  Charles Vazac  <cvazac@gmail.com>
+
+        Add the PerformanceServerTiming Interface which makes Server-Timing header timing values available to JavaScript running in the browser.
+        https://bugs.webkit.org/show_bug.cgi?id=175569
+
+        Reviewed by Youenn Fablet.
+
+        Tests were imported from web-platform-tests: WebKit/LayoutTests/imported/w3c/web-platform-tests/server-timing/*
+
+        * Sources.txt: Added references to HeaderFieldTokenizer.cpp, ServerTiming.cpp, and ServerTimingParser.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Added various files.
+        * loader/HeaderFieldTokenizer.cpp: Added.
+        (WebCore::HeaderFieldTokenizer::HeaderFieldTokenizer): Added class for tokenizing header values.
+        (WebCore::HeaderFieldTokenizer::consume): Added method to consume a specified character.
+        (WebCore::HeaderFieldTokenizer::consumeQuotedString): Added method to consume a quote-string.
+        (WebCore::HeaderFieldTokenizer::consumeToken): Added a method to consume a token.
+        (WebCore::HeaderFieldTokenizer::consumeTokenOrQuotedString): Added method to consume a quote-string or quote-string, depending on net character.
+        (WebCore::HeaderFieldTokenizer::skipSpaces): Added method to skip whitespace.
+        (WebCore::HeaderFieldTokenizer::consumeBeforeAnyCharMatch): Added method to advance the cursor up until any of a list of characters.
+        * loader/HeaderFieldTokenizer.h: Added.
+        * loader/HTTPHeaderField.cpp: Expose isTokenCharacter and isWhitespace.
+        * loader/HTTPHeaderField.h: Expose isTokenCharacter and isWhitespace.
+        * loader/PolicyChecker.cpp: Added #include so source compiled on my machine.
+        * loader/ResourceTiming.cpp:
+        (WebCore::ResourceTiming::ResourceTiming): Added call to initServerTiming to parse the header.
+        (WebCore::ResourceTiming::initServerTiming): Added method to parse the header.
+        (WebCore::ResourceTiming::populateServerTiming): Added method to populate the server timing entries on a PerformanceResourceTiming object.
+        (WebCore::ResourceTiming::isolatedCopy const): Added code to copy over the server timing entries.
+        * loader/ResourceTiming.h:
+        (WebCore::ResourceTiming::ResourceTiming): Accept collection of server timing entries in c'tor.
+        * loader/ServerTiming.cpp: Added.
+        (WebCore::ServerTiming::setParameter): Set named parameters, ignoring unrecognized or duplicates.
+        (WebCore::ServerTiming::isolatedCopy const): Return a new pointer to the object.
+        * loader/ServerTiming.h: Added.
+        (WebCore::ServerTiming::ServerTiming): Added struct for the data needed by a server timing entry.
+        (WebCore::ServerTiming::name const): Added name field of a server timing entry.
+        (WebCore::ServerTiming::duration const): Added duration field of a server timing entry.
+        (WebCore::ServerTiming::description const): Added description field of a server timing entry.
+        * loader/ServerTimingParser.cpp: Added.
+        (WebCore::ServerTimingParser::parseServerTiming): Parses the header generating a collection of server timing structs.
+        * loader/ServerTimingParser.h: Added.
+        * loader/WorkerThreadableLoader.h: Fix build.
+        * page/Performance.cpp:
+        (WebCore::Performance::addResourceTiming): Fixed a typo.
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::PerformanceResourceTiming::PerformanceResourceTiming): Given a ResourceTiming object, populate our collection of PerformanceServerTiming objects.
+        * page/PerformanceResourceTiming.h: Added serverTiming member and getter.
+        * page/PerformanceResourceTiming.idl: Added serverTiming member to interface.
+        * platform/network/HTTPHeaderNames.in: Added "Server-Timing" to the header enum.
+        * platform/network/ResourceResponseBase.cpp: Added "Server-Timing" to isSafeCrossOriginResponseHeader whitelist.
+
 2018-05-15  Brady Eidson  <beidson@apple.com>
 
         Fix crash after a Worker terminates but there are still IDB transactions the server is trying to open for it.

@@ -30,7 +30,7 @@ namespace WebCore {
 
 namespace RFC7230 {
     
-static bool isTokenCharacter(UChar c)
+bool isTokenCharacter(UChar c)
 {
     return isASCIIAlpha(c) || isASCIIDigit(c)
         || c == '!' || c == '#' || c == '$'
@@ -55,7 +55,7 @@ static bool isVisibleCharacter(UChar c)
     return isTokenCharacter(c) || isDelimiter(c);
 }
 
-static bool isWhitespace(UChar c)
+bool isWhitespace(UChar c)
 {
     return c == ' ' || c == '\t';
 }

@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "NetworkLoadMetrics.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
 #include "ThreadableLoaderClientWrapper.h"

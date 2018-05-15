@@ -27,11 +27,13 @@
 
 #include "LoadTiming.h"
 #include "NetworkLoadMetrics.h"
+#include "ServerTiming.h"
 #include "URL.h"
 
 namespace WebCore {
 
 class CachedResource;
+class PerformanceServerTiming;
 class ResourceResponse;
 class SecurityOrigin;
 
@@ -47,7 +49,7 @@ public:
     LoadTiming loadTiming() const { return m_loadTiming; }
     NetworkLoadMetrics networkLoadMetrics() const { return m_networkLoadMetrics; }
     bool allowTimingDetails() const { return m_allowTimingDetails; }
-
+    Vector<Ref<PerformanceServerTiming>> populateServerTiming();
     ResourceTiming isolatedCopy() const;
 
     void overrideInitiatorName(const String& name) { m_initiator = name; }
@@ -56,20 +58,23 @@ private:
     ResourceTiming(CachedResource&, const String& initiator, const LoadTiming&, const NetworkLoadMetrics&, const SecurityOrigin&);
     ResourceTiming(const URL&, const String& initiator, const LoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
     ResourceTiming(const URL&, const String& initiator, const LoadTiming&, const ResourceResponse&, const SecurityOrigin&);
-    ResourceTiming(const URL& url, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, bool allowTimingDetails)
-        : m_url(url)
-        , m_initiator(initiator)
-        , m_loadTiming(loadTiming)
-        , m_networkLoadMetrics(networkLoadMetrics)
+    ResourceTiming(URL&& url, String&& initiator, LoadTiming&& loadTiming, NetworkLoadMetrics&& networkLoadMetrics, bool allowTimingDetails, Vector<ServerTiming>&& serverTiming)
+        : m_url(WTFMove(url))
+        , m_initiator(WTFMove(initiator))
+        , m_loadTiming(WTFMove(loadTiming))
+        , m_networkLoadMetrics(WTFMove(networkLoadMetrics))
         , m_allowTimingDetails(allowTimingDetails)
+        , m_serverTiming(WTFMove(serverTiming))
     {
     }
+    void initServerTiming(const ResourceResponse&);
 
     URL m_url;
     String m_initiator;
     LoadTiming m_loadTiming;
     NetworkLoadMetrics m_networkLoadMetrics;
     bool m_allowTimingDetails { false };
+    Vector<ServerTiming> m_serverTiming;
 };
 
 } // namespace WebCore

@@ -84,6 +84,7 @@ Sec-WebSocket-Extensions
 Sec-WebSocket-Key
 Sec-WebSocket-Protocol
 Sec-WebSocket-Version
+Server-Timing
 Service-Worker-Allowed
 Set-Cookie
 Set-Cookie2

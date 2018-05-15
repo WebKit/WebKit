@@ -1,3 +1,18 @@
+2018-05-15  Charles Vazac  <cvazac@gmail.com>
+
+        Add the PerformanceServerTiming Interface which makes Server-Timing header timing values available to JavaScript running in the browser.
+        https://bugs.webkit.org/show_bug.cgi?id=175569
+
+        Reviewed by Youenn Fablet.
+
+        Tests were imported from web-platform-tests: WebKit/LayoutTests/imported/w3c/web-platform-tests/server-timing/*
+
+        * imported/w3c/web-platform-tests/server-timing/cross_origin-expected.txt: Added.
+        * imported/w3c/web-platform-tests/server-timing/resource_timing_idl-expected.txt: Added.
+        * imported/w3c/web-platform-tests/server-timing/resource_timing_idl.https-expected.txt: Added.
+        * imported/w3c/web-platform-tests/server-timing/server_timing_header-parsing-expected.txt: Added.
+        * imported/w3c/web-platform-tests/server-timing/server_timing_header-parsing.https-expected.txt: Added.
+
 2018-05-15  Brady Eidson  <beidson@apple.com>
 
         Fix crash after a Worker terminates but there are still IDB transactions the server is trying to open for it.

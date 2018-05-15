@@ -189,6 +189,12 @@ imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preloa
 imported/w3c/web-platform-tests/service-workers/service-worker/shared-worker-controlled.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/claim-shared-worker-fetch.https.html [ Skip ]
 
+# Unsupported features: PerformanceNavigationTiming
+imported/w3c/web-platform-tests/server-timing/test_server_timing.html [ Skip ]
+imported/w3c/web-platform-tests/server-timing/test_server_timing.https.html [ Skip ]
+imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.html [ Skip ]
+imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.https.html [ Skip ]
+
 imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html [ Pass Failure ]
 
 # Console log lines may appear in a different order so we silence them.

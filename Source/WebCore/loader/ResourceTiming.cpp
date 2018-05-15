@@ -27,7 +27,9 @@
 #include "ResourceTiming.h"
 
 #include "CachedResource.h"
+#include "PerformanceServerTiming.h"
 #include "SecurityOrigin.h"
+#include "ServerTimingParser.h"
 
 namespace WebCore {
 
@@ -76,6 +78,7 @@ ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const Lo
     , m_loadTiming(loadTiming)
     , m_allowTimingDetails(passesTimingAllowCheck(response, securityOrigin))
 {
+    initServerTiming(response);
 }
 
 ResourceTiming::ResourceTiming(CachedResource& resource, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const SecurityOrigin& securityOrigin)
@@ -85,6 +88,7 @@ ResourceTiming::ResourceTiming(CachedResource& resource, const String& initiator
     , m_networkLoadMetrics(networkLoadMetrics)
     , m_allowTimingDetails(passesTimingAllowCheck(resource.response(), securityOrigin))
 {
+    initServerTiming(resource.response());
 }
 
 ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin& securityOrigin)
@@ -94,11 +98,25 @@ ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const Lo
     , m_networkLoadMetrics(networkLoadMetrics)
     , m_allowTimingDetails(passesTimingAllowCheck(response, securityOrigin))
 {
+    initServerTiming(response);
+}
+
+void ResourceTiming::initServerTiming(const ResourceResponse& response)
+{
+    if (RuntimeEnabledFeatures::sharedFeatures().serverTimingEnabled() && m_allowTimingDetails)
+        m_serverTiming = ServerTimingParser::parseServerTiming(response.httpHeaderField(HTTPHeaderName::ServerTiming));
+}
+
+Vector<Ref<PerformanceServerTiming>> ResourceTiming::populateServerTiming()
+{
+    return WTF::map(m_serverTiming, [] (auto& entry) {
+        return PerformanceServerTiming::create(WTFMove(entry.name), entry.duration, WTFMove(entry.description));
+    });
 }
 
 ResourceTiming ResourceTiming::isolatedCopy() const
 {
-    return ResourceTiming(m_url.isolatedCopy(), m_initiator.isolatedCopy(), m_loadTiming.isolatedCopy(), m_networkLoadMetrics.isolatedCopy(), m_allowTimingDetails);
+    return ResourceTiming(m_url.isolatedCopy(), m_initiator.isolatedCopy(), m_loadTiming.isolatedCopy(), m_networkLoadMetrics.isolatedCopy(), m_allowTimingDetails, crossThreadCopy(m_serverTiming));
 }
 
 } // namespace WebCore

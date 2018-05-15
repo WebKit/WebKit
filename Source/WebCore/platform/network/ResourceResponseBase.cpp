@@ -376,6 +376,7 @@ static bool isSafeCrossOriginResponseHeader(HTTPHeaderName name)
         || name == HTTPHeaderName::Range
         || name == HTTPHeaderName::ReferrerPolicy
         || name == HTTPHeaderName::Refresh
+        || name == HTTPHeaderName::ServerTiming
         || name == HTTPHeaderName::SourceMap
         || name == HTTPHeaderName::XSourceMap
         || name == HTTPHeaderName::TimingAllowOrigin

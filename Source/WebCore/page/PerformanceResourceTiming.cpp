@@ -79,6 +79,7 @@ PerformanceResourceTiming::PerformanceResourceTiming(MonotonicTime timeOrigin, R
     , m_loadTiming(resourceTiming.loadTiming())
     , m_networkLoadMetrics(resourceTiming.networkLoadMetrics())
     , m_shouldReportDetails(resourceTiming.allowTimingDetails())
+    , m_serverTiming(resourceTiming.populateServerTiming())
 {
     m_networkLoadMetrics.clearNonTimingData();
 }
