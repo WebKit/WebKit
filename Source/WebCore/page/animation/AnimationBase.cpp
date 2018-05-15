@@ -395,7 +395,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
             // AnimationState::PausedWaitResponse, we don't yet have a valid startTime, so we send 0 to startAnimation.
             // When the AnimationStateInput::StartTimeSet comes in and we were in AnimationState::PausedRun, we will notice
             // that we have already set the startTime and will ignore it.
-            ASSERT(input == AnimationStateInput::PlayStatePaused || input == AnimationStateInput::PlayStateRunning || input == AnimationStateInput::StartTimeSet || input == AnimationStateInput::StyleAvailable || input == AnimationStateInput::StartAnimation);
+            ASSERT(input == AnimationStateInput::PlayStatePaused || input == AnimationStateInput::PlayStateRunning || input == AnimationStateInput::StartTimeSet || input == AnimationStateInput::StyleAvailable);
             ASSERT(paused());
 
             if (input == AnimationStateInput::PlayStateRunning) {
@@ -456,6 +456,12 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
             }
 
             ASSERT(m_animationState == AnimationState::PausedNew || m_animationState == AnimationState::PausedWaitStyleAvailable);
+
+            if (input == AnimationStateInput::PlayStatePaused)
+                break;
+
+            ASSERT(input == AnimationStateInput::StyleAvailable);
+
             // We are paused but we got the callback that notifies us that style has been updated.
             // We move to the AnimationState::PausedWaitResponse state
             LOG(Animations, "%p AnimationState %s -> PausedWaitResponse", this, nameForState(m_animationState));

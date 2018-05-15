@@ -1,3 +1,24 @@
+2018-05-15  Antti Koivisto  <antti@apple.com>
+
+        animation-play-state: paused causes very high cpu load because of style invalidation loop
+        https://bugs.webkit.org/show_bug.cgi?id=182436
+        <rdar://problem/37182562>
+
+        Reviewed by Dean Jackson.
+
+        Test: animations/animation-playstate-paused-style-resolution.html
+
+        If the style of an element with 'animation-play-state: paused' is recomputed so it stays
+        paused we would enter zero-duration animation timer loop.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+
+        Don't move to AnimationState::PausedWaitResponse unless we get AnimationStateInput::StyleAvailable
+        (matching the comments). Otherwise just stay in the existing paused state.
+
+        Remove AnimationStateInput::StartAnimation from assertion as the case can't happen.
+
 2018-05-14  Youenn Fablet  <youenn@apple.com>
 
         readableStreamDefaultControllerError should return early if stream is not readable

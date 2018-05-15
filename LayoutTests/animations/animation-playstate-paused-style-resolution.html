@@ -1,0 +1,37 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<style>
+.anim {
+    animation-duration: 20s;
+    animation-name: slidein;
+    animation-play-state: paused;
+}
+@keyframes slidein {
+    from { margin-left: 50%; width: 300%; }
+    to { margin-left: 0%; width: 100%; }
+}
+</style>
+<div class=anim>
+Paused animation
+</div>
+<div id=log></div>
+<script>
+document.body.offsetLeft;
+if (window.testRunner) {
+    internals.startTrackingStyleRecalcs();
+    setTimeout(() => {
+        document.body.offsetLeft;
+        log.innerHTML = "style recalc count: " + internals.styleRecalcCount();
+        testRunner.notifyDone();
+    }, 50);
+}
+</script>
+<style>
+.anim {
+    color: green;
+}
+</style>
