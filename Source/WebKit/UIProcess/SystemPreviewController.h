@@ -51,6 +51,8 @@ public:
     void finish(WebCore::URL);
     void cancel();
 
+    WebPageProxy& page() { return m_webPageProxy; }
+
 private:
     WebPageProxy& m_webPageProxy;
 #if USE(QUICK_LOOK)
