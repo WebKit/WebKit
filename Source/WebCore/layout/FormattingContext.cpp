@@ -185,17 +185,16 @@ void FormattingContext::computeOutOfFlowNonReplacedHeight(LayoutContext& layoutC
         computedHeightValue = contentHeightForFormattingContextRoot(layoutContext, layoutBox);
     } else if (!top.isAuto() && height.isAuto() && !bottom.isAuto()) {
         // #5
-        auto marginTop = style.marginTop().isAuto() ? LayoutUnit() : valueForLength(style.marginTop(), containingBlockHeight);
-        auto marginBottom = style.marginBottom().isAuto() ? LayoutUnit() : valueForLength(style.marginBottom(), containingBlockHeight);
+        auto marginTop = displayBox.marginTop();
+        auto marginBottom = displayBox.marginBottom();
     
-        auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
-        auto paddingTop = valueForLength(style.paddingTop(), containingBlockWidth);
-        auto paddingBottom = valueForLength(style.paddingBottom(), containingBlockWidth);
+        auto paddingTop = displayBox.paddingTop();
+        auto paddingBottom = displayBox.paddingBottom();
 
-        auto borderTopWidth = style.borderBeforeWidth();
-        auto borderBottomWidth = style.borderAfterWidth();
+        auto borderTop = displayBox.borderTop();
+        auto borderBottom = displayBox.borderBottom();
 
-        computedHeightValue = containingBlockHeight - (top.value() + marginTop + borderTopWidth + paddingTop + paddingBottom + borderBottomWidth + marginBottom + bottom.value());
+        computedHeightValue = containingBlockHeight - (top.value() + marginTop + borderTop + paddingTop + paddingBottom + borderBottom + marginBottom + bottom.value());
     } else if (!height.isAuto())
         computedHeightValue = valueForLength(height, containingBlockHeight);
     else
@@ -264,16 +263,16 @@ void FormattingContext::computeOutOfFlowNonReplacedWidth(LayoutContext& layoutCo
         computedWidthValue = shrinkToFitWidth(layoutContext, layoutBox);
     } else if (!left.isAuto() && width.isAuto() && !right.isAuto()) {
         // #5
-        auto marginLeft = style.marginLeft().isAuto() ? LayoutUnit() : valueForLength(style.marginLeft(), containingBlockWidth);
-        auto marginRight = style.marginRight().isAuto() ? LayoutUnit() : valueForLength(style.marginRight(), containingBlockWidth);
+        auto marginLeft = displayBox.marginLeft();
+        auto marginRight = displayBox.marginRight();
     
-        auto paddingLeft = valueForLength(style.paddingTop(), containingBlockWidth);
-        auto paddingRight = valueForLength(style.paddingBottom(), containingBlockWidth);
+        auto paddingLeft = displayBox.paddingLeft();
+        auto paddingRight = displayBox.paddingRight();
 
-        auto borderLeftWidth = style.borderStartWidth();
-        auto borderRightWidth = style.borderEndWidth();
+        auto borderLeft = displayBox.borderLeft();
+        auto borderRight = displayBox.borderRight();
 
-        computedWidthValue = containingBlockWidth - (left.value() + marginLeft + borderLeftWidth + paddingLeft + paddingRight + borderRightWidth + marginRight + right.value());
+        computedWidthValue = containingBlockWidth - (left.value() + marginLeft + borderLeft + paddingLeft + paddingRight + borderRight + marginRight + right.value());
     } else if (!width.isAuto())
         computedWidthValue = valueForLength(width, containingBlockWidth);
     else

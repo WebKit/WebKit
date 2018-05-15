@@ -70,6 +70,16 @@ public:
     LayoutUnit marginBottom() const;
     LayoutUnit marginRight() const;
 
+    LayoutUnit borderTop() const;
+    LayoutUnit borderLeft() const;
+    LayoutUnit borderBottom() const;
+    LayoutUnit borderRight() const;
+
+    LayoutUnit paddingTop() const;
+    LayoutUnit paddingLeft() const;
+    LayoutUnit paddingBottom() const;
+    LayoutUnit paddingRight() const;
+
     LayoutRect marginBox() const;
     LayoutRect borderBox() const;
     LayoutRect paddingBox() const;
@@ -345,6 +355,54 @@ inline LayoutUnit Box::marginRight() const
 {
     ASSERT(m_hasValidMargin);
     return m_marginRight;
+}
+
+inline LayoutUnit Box::paddingTop() const
+{
+    ASSERT(m_hasValidPadding);
+    return m_paddingTop;
+}
+
+inline LayoutUnit Box::paddingLeft() const
+{
+    ASSERT(m_hasValidPadding);
+    return m_paddingLeft;
+}
+
+inline LayoutUnit Box::paddingBottom() const
+{
+    ASSERT(m_hasValidPadding);
+    return m_paddingBottom;
+}
+
+inline LayoutUnit Box::paddingRight() const
+{
+    ASSERT(m_hasValidPadding);
+    return m_paddingRight;
+}
+
+inline LayoutUnit Box::borderTop() const
+{
+    ASSERT(m_hasValidBorder);
+    return m_borderTop;
+}
+
+inline LayoutUnit Box::borderLeft() const
+{
+    ASSERT(m_hasValidBorder);
+    return m_borderLeft;
+}
+
+inline LayoutUnit Box::borderBottom() const
+{
+    ASSERT(m_hasValidBorder);
+    return m_borderBottom;
+}
+
+inline LayoutUnit Box::borderRight() const
+{
+    ASSERT(m_hasValidBorder);
+    return m_borderRight;
 }
 
 }

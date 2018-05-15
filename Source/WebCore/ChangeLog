@@ -1,3 +1,25 @@
+2018-05-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] FormattingContext:computeOutOfFlowNonReplacedHeight/Width should use the computed margins/paddings/borders
+        https://bugs.webkit.org/show_bug.cgi?id=185633
+
+        Reviewed by Sam Weinig.
+
+        By the time we start computing height and width, DisplayBox should already have the computed values for margin/padding/border.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowNonReplacedHeight const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowNonReplacedWidth const):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::paddingTop const):
+        (WebCore::Display::Box::paddingLeft const):
+        (WebCore::Display::Box::paddingBottom const):
+        (WebCore::Display::Box::paddingRight const):
+        (WebCore::Display::Box::borderTop const):
+        (WebCore::Display::Box::borderLeft const):
+        (WebCore::Display::Box::borderBottom const):
+        (WebCore::Display::Box::borderRight const):
+
 2018-05-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Google search results are excessively zoomed in
