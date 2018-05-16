@@ -810,22 +810,8 @@ else ()
     set(JavaScriptCore_SCRIPTS_DIR "${FORWARDING_HEADERS_DIR}/JavaScriptCore/Scripts")
 endif ()
 
-if (COMPILER_IS_GCC_OR_CLANG)
-    set(ATOMIC_TEST_SOURCE
-    "
-        #include <atomic>
-        int main() { std::atomic<int64_t> i(0); i++; return 0; }
-    "
-    )
-    check_cxx_source_compiles("${ATOMIC_TEST_SOURCE}" ATOMIC_INT64_IS_BUILTIN)
-    if (NOT ATOMIC_INT64_IS_BUILTIN)
-        set(CMAKE_REQUIRED_LIBRARIES atomic)
-        check_cxx_source_compiles("${ATOMIC_TEST_SOURCE}" ATOMIC_INT64_REQUIRES_LIBATOMIC)
-        if (ATOMIC_INT64_REQUIRES_LIBATOMIC)
-            list(APPEND WebKit_LIBRARIES PRIVATE atomic)
-        endif ()
-        unset(CMAKE_REQUIRED_LIBRARIES)
-    endif ()
+if (ATOMIC_INT64_REQUIRES_LIBATOMIC)
+    list(APPEND WebKit_LIBRARIES PRIVATE atomic)
 endif ()
 
 if (UNIX)

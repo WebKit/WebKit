@@ -1,3 +1,22 @@
+2018-05-16  Alberto Garcia  <berto@igalia.com>
+
+        [CMake] Properly detect compiler flags, needed libs, and fallbacks for usage of 64-bit atomic operations
+        https://bugs.webkit.org/show_bug.cgi?id=182622
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsJSCOnly.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        Enable THREADS_PREFER_PTHREAD_FLAG. This uses -pthread instead of
+        -lpthread, fixing the 64-bit RISC-V build of the GTK+ port due to
+        missing atomic primitives.
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+        Move the test to detect whether we need to link against libatomic
+        to a common CMake file so it can be used from both JavaScriptCore
+        and WebKit.
+
 2018-05-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] REGRESSION(r231170) Build broken with Clang 5.0

@@ -1,3 +1,22 @@
+2018-05-16  Alberto Garcia  <berto@igalia.com>
+
+        [CMake] Properly detect compiler flags, needed libs, and fallbacks for usage of 64-bit atomic operations
+        https://bugs.webkit.org/show_bug.cgi?id=182622
+
+        Reviewed by Michael Catanzaro.
+
+        We were linking JavaScriptCore against libatomic in MIPS because
+        in that architecture __atomic_fetch_add_8() is not a compiler
+        intrinsic and is provided by that library instead. However other
+        architectures (e.g armel) are in the same situation, so we need a
+        generic test.
+
+        That test already exists in WebKit/CMakeLists.txt, so we just have
+        to move it to a common file (WebKitCompilerFlags.cmake) and use
+        its result (ATOMIC_INT64_REQUIRES_LIBATOMIC) here.
+
+        * CMakeLists.txt:
+
 2018-05-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Check TypeInfo first before calling getCallData when we would like to check whether given object is a function
