@@ -75,7 +75,6 @@
 #include "TypedArrayInlines.h"
 #include "VMInlines.h"
 #include <wtf/InlineASM.h>
-#include <wtf/Variant.h>
 
 #if ENABLE(JIT)
 #if ENABLE(DFG_JIT)
@@ -425,25 +424,10 @@ EncodedJSValue JIT_OPERATION operationValueDiv(ExecState* exec, EncodedJSValue e
     JSValue op1 = JSValue::decode(encodedOp1);
     JSValue op2 = JSValue::decode(encodedOp2);
 
-    auto leftNumeric = op1.toNumeric(exec);
+    double a = op1.toNumber(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    auto rightNumeric = op2.toNumeric(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSBigInt* result = JSBigInt::divide(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
-            RETURN_IF_EXCEPTION(scope, encodedJSValue());
-            return JSValue::encode(result);
-        }
-
-        return throwVMTypeError(exec, scope, "Invalid operand in BigInt operation.");
-    }
-
     scope.release();
-
-    double a = WTF::get<double>(leftNumeric);
-    double b = WTF::get<double>(rightNumeric);
+    double b = op2.toNumber(exec);
     return JSValue::encode(jsNumber(a / b));
 }
 

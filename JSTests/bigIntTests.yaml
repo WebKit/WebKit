@@ -118,20 +118,3 @@
 - path: stress/big-int-multiply-memory-stress.js
   cmd: runBigIntEnabled
 
-- path: stress/big-int-div-jit.js
-  cmd: runBigIntEnabled
-
-- path: stress/big-int-div-memory-stress.js
-  cmd: runBigIntEnabled
-
-- path: stress/big-int-div-to-primitive.js
-  cmd: runBigIntEnabled
-
-- path: stress/big-int-div-type-error.js
-  cmd: runBigIntEnabled
-
-- path: stress/big-int-div-wrapped-value.js
-  cmd: runBigIntEnabled
-
-- path: stress/big-int-division.js
-  cmd: runBigIntEnabled

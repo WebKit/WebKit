@@ -516,25 +516,12 @@ SLOW_PATH_DECL(slow_path_div)
     BEGIN();
     JSValue left = OP_C(2).jsValue();
     JSValue right = OP_C(3).jsValue();
-    auto leftNumeric = left.toNumeric(exec);
-    CHECK_EXCEPTION();
-    auto rightNumeric = right.toNumeric(exec);
-    CHECK_EXCEPTION();
-
-    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSValue result(JSBigInt::divide(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric)));
-            CHECK_EXCEPTION();
-            RETURN_WITH_PROFILING(result, {
-                updateArithProfileForBinaryArithOp(exec, pc, result, left, right);
-            });
-        }
-
-        THROW(createTypeError(exec, "Invalid mix of BigInt and other type in division."));
-    }
-
-    double a = WTF::get<double>(leftNumeric);
-    double b = WTF::get<double>(rightNumeric);
+    double a = left.toNumber(exec);
+    if (UNLIKELY(throwScope.exception()))
+        RETURN(JSValue());
+    double b = right.toNumber(exec);
+    if (UNLIKELY(throwScope.exception()))
+        RETURN(JSValue());
     JSValue result = jsNumber(a / b);
     RETURN_WITH_PROFILING(result, {
         updateArithProfileForBinaryArithOp(exec, pc, result, left, right);

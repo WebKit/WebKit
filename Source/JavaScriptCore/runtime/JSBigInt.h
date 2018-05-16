@@ -82,7 +82,7 @@ public:
     static JSBigInt* stringToBigInt(ExecState*, StringView);
 
     std::optional<uint8_t> singleDigitValueForString();
-    String toString(ExecState*, unsigned radix);
+    String toString(ExecState&, unsigned radix);
     
     JS_EXPORT_PRIVATE static bool equals(JSBigInt*, JSBigInt*);
     bool equalsToNumber(JSValue);
@@ -94,12 +94,9 @@ public:
 
     static JSBigInt* multiply(ExecState*, JSBigInt* x, JSBigInt* y);
     
-    static JSBigInt* divide(ExecState*, JSBigInt* x, JSBigInt* y);
-    static JSBigInt* unaryMinus(VM&, JSBigInt* x);
-    
 private:
 
-    enum class ComparisonResult {
+    enum ComparisonResult {
         Equal,
         Undefined,
         GreaterThan,
@@ -121,23 +118,9 @@ private:
     
     static uint64_t calculateMaximumCharactersRequired(unsigned length, unsigned radix, Digit lastDigit, bool sign);
     
-    static ComparisonResult absoluteCompare(JSBigInt* x, JSBigInt* y);
-    static void absoluteDivWithDigitDivisor(VM&, JSBigInt* x, Digit divisor, JSBigInt** quotient, Digit& remainder);
+    static void absoluteDivSmall(ExecState&, JSBigInt* x, Digit divisor, JSBigInt** quotient, Digit& remainder);
     static void internalMultiplyAdd(JSBigInt* source, Digit factor, Digit summand, unsigned, JSBigInt* result);
     static void multiplyAccumulate(JSBigInt* multiplicand, Digit multiplier, JSBigInt* accumulator, unsigned accumulatorIndex);
-    static void absoluteDivWithBigIntDivisor(VM&, JSBigInt* dividend, JSBigInt* divisor, JSBigInt** quotient, JSBigInt** remainder);
-    
-    enum class LeftShiftMode {
-        SameSizeResult,
-        AlwaysAddOneDigit
-    };
-    
-    static JSBigInt* absoluteLeftShiftAlwaysCopy(VM&, JSBigInt* x, unsigned shift, LeftShiftMode);
-    static bool productGreaterThan(Digit factor1, Digit factor2, Digit high, Digit low);
-
-    Digit absoluteInplaceAdd(JSBigInt* summand, unsigned startIndex);
-    Digit absoluteInplaceSub(JSBigInt* subtrahend, unsigned startIndex);
-    void inplaceRightShift(unsigned shift);
 
     // Digit arithmetic helpers.
     static Digit digitAdd(Digit a, Digit b, Digit& carry);
@@ -146,7 +129,7 @@ private:
     static Digit digitDiv(Digit high, Digit low, Digit divisor, Digit& remainder);
     static Digit digitPow(Digit base, Digit exponent);
 
-    static String toStringGeneric(ExecState*, JSBigInt*, unsigned radix);
+    static String toStringGeneric(ExecState&, JSBigInt*, unsigned radix);
 
     bool isZero();
 
@@ -160,7 +143,6 @@ private:
 
     static JSBigInt* allocateFor(ExecState*, VM&, unsigned radix, unsigned charcount);
 
-    static JSBigInt* copy(VM&, JSBigInt* x);
     JSBigInt* rightTrim(VM&);
 
     void inplaceMultiplyAdd(Digit multiplier, Digit part);
