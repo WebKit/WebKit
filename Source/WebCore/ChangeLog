@@ -1,3 +1,26 @@
+2018-05-16  Chris Nardi  <cnardi@chromium.org>
+
+        Remove Document#selectedStylesheetSet/preferredStylesheetSet
+        https://bugs.webkit.org/show_bug.cgi?id=185381
+
+        Reviewed by Darin Adler.
+
+        Document#selectedStylesheetSet/preferredStylesheetSet are non-standard methods that
+        are only implemented WebKit. Blink removed these methods in https://crbug.com/690609.
+        The standard versions of these methods are are no longer in the spec. Remove them
+        entirely from our implementation.
+
+        Updated existing tests and imported/w3c/web-platform-tests/cssom/historical.html.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::collectActiveStyleSheets):
+        * style/StyleScope.h:
+        (WebCore::Style::Scope::preferredStylesheetSetName const):
+
 2018-05-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement width computation for replaced inflow elements.

@@ -326,20 +326,16 @@
 
 - (NSString *)preferredStylesheetSet
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->preferredStylesheetSet();
+    return nil;
 }
 
 - (NSString *)selectedStylesheetSet
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->selectedStylesheetSet();
+    return nil;
 }
 
 - (void)setSelectedStylesheetSet:(NSString *)newSelectedStylesheetSet
 {
-    WebCore::JSMainThreadNullState state;
-    IMPL->setSelectedStylesheetSet(newSelectedStylesheetSet);
 }
 
 - (DOMElement *)activeElement

@@ -168,10 +168,6 @@ typedef (
     readonly attribute VisibilityState visibilityState;
     attribute EventHandler onvisibilitychange;
 
-    // FIXME: Those were dropped from the CSSOM specification.
-    readonly attribute DOMString? preferredStylesheetSet;
-    attribute DOMString? selectedStylesheetSet;
-
     // FIXME: Those have been dropped from the DOM specification.
     readonly attribute DOMString? xmlEncoding;
     attribute DOMString? xmlVersion;

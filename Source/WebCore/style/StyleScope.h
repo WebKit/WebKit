@@ -78,9 +78,7 @@ public:
     void removeStyleSheetCandidateNode(Node&);
 
     String preferredStylesheetSetName() const { return m_preferredStylesheetSetName; }
-    String selectedStylesheetSetName() const { return m_selectedStylesheetSetName; }
     void setPreferredStylesheetSetName(const String&);
-    void setSelectedStylesheetSetName(const String&);
 
     void addPendingSheet(const Element&);
     void removePendingSheet(const Element&);
@@ -178,7 +176,6 @@ private:
     ListHashSet<Node*> m_styleSheetCandidateNodes;
 
     String m_preferredStylesheetSetName;
-    String m_selectedStylesheetSetName;
 
     bool m_usesStyleBasedEditability { false };
     bool m_isUpdatingStyleResolver { false };

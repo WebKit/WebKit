@@ -181,7 +181,7 @@ static void webkit_dom_document_set_property(GObject* object, guint propertyId, 
         webkit_dom_document_set_charset(self, g_value_get_string(value));
         break;
     case DOM_DOCUMENT_PROP_SELECTED_STYLESHEET_SET:
-        webkit_dom_document_set_selected_stylesheet_set(self, g_value_get_string(value));
+        g_warning("%s: The selected-stylesheet-set property has been removed and no longer works.", __func__);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -291,10 +291,10 @@ static void webkit_dom_document_get_property(GObject* object, guint propertyId, 
         g_value_take_string(value, webkit_dom_document_get_character_set(self));
         break;
     case DOM_DOCUMENT_PROP_PREFERRED_STYLESHEET_SET:
-        g_value_take_string(value, webkit_dom_document_get_preferred_stylesheet_set(self));
+        g_warning("%s: The preferred-stylesheet-set property has been removed and no longer works.", __func__);
         break;
     case DOM_DOCUMENT_PROP_SELECTED_STYLESHEET_SET:
-        g_value_take_string(value, webkit_dom_document_get_selected_stylesheet_set(self));
+        g_warning("%s: The selected-stylesheet-set property has been removed and no longer works.", __func__);
         break;
     case DOM_DOCUMENT_PROP_ACTIVE_ELEMENT:
         g_value_set_object(value, webkit_dom_document_get_active_element(self));
@@ -1787,30 +1787,19 @@ gchar* webkit_dom_document_get_character_set(WebKitDOMDocument* self)
 
 gchar* webkit_dom_document_get_preferred_stylesheet_set(WebKitDOMDocument* self)
 {
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), 0);
-    WebCore::Document* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->preferredStylesheetSet());
-    return result;
+    g_warning("%s: this function has been removed and does nothing", __func__);
+    return nullptr;
 }
 
 gchar* webkit_dom_document_get_selected_stylesheet_set(WebKitDOMDocument* self)
 {
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), 0);
-    WebCore::Document* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->selectedStylesheetSet());
-    return result;
+    g_warning("%s: this function has been removed and does nothing", __func__);
+    return nullptr;
 }
 
 void webkit_dom_document_set_selected_stylesheet_set(WebKitDOMDocument* self, const gchar* value)
 {
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_DOCUMENT(self));
-    g_return_if_fail(value);
-    WebCore::Document* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setSelectedStylesheetSet(convertedValue);
+    g_warning("%s: this function has been removed and does nothing", __func__);
 }
 
 WebKitDOMElement* webkit_dom_document_get_active_element(WebKitDOMDocument* self)

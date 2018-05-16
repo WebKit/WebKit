@@ -75,19 +75,6 @@ function altSheetLoaded(e) {
     shouldBeNonNull("link.sheet");
     shouldBe("getComputedStyle(testElement).backgroundColor", "'rgb(0, 128, 0)'");
 
-    // Enabling a stylsheet set modifies disabled status of style sheets.
-
-    document.selectedStyleSheetSet = "nosuchset";
-    shouldBeTrue("link.disabled");
-    shouldBe("getComputedStyle(testElement).backgroundColor", "originalBG");
-
-    document.selectedStyleSheetSet = "altset";
-    shouldBeFalse("link.disabled");
-    shouldBe("getComputedStyle(testElement).backgroundColor", "'rgb(0, 128, 0)'");
-
-    // Disabling a stylesheet *after* its stylesheet set has been selected
-    // de-activates it.
-
     link.disabled = true;
     shouldBe("getComputedStyle(testElement).backgroundColor", "originalBG");
 

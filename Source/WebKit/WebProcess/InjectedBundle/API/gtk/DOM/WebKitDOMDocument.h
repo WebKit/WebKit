@@ -941,6 +941,8 @@ webkit_dom_document_get_character_set(WebKitDOMDocument* self);
  * webkit_dom_document_get_preferred_stylesheet_set:
  * @self: A #WebKitDOMDocument
  *
+ * This function has been removed and does nothing.
+ *
  * Returns: A #gchar
  *
  * Deprecated: 2.22: Use JavaScriptCore API instead
@@ -951,6 +953,8 @@ webkit_dom_document_get_preferred_stylesheet_set(WebKitDOMDocument* self);
 /**
  * webkit_dom_document_get_selected_stylesheet_set:
  * @self: A #WebKitDOMDocument
+ *
+ * This function has been removed and does nothing.
  *
  * Returns: A #gchar
  *
@@ -964,6 +968,7 @@ webkit_dom_document_get_selected_stylesheet_set(WebKitDOMDocument* self);
  * @self: A #WebKitDOMDocument
  * @value: A #gchar
  *
+ * This function has been removed and does nothing.
  *
  * Deprecated: 2.22: Use JavaScriptCore API instead
 **/

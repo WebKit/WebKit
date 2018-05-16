@@ -4,6 +4,8 @@ PASS Historical Document member: lastStyleSheetSet
 PASS Historical Document member: preferredStyleSheetSet 
 PASS Historical Document member: styleSheetSets 
 PASS Historical Document member: enableStyleSheetsForSet 
+PASS Historical Document member: selectedStylesheetSet 
+PASS Historical Document member: preferredStylesheetSet 
 PASS Historical Element member: cascadedStyle 
 PASS Historical Element member: defaultStyle 
 PASS Historical Element member: rawComputedStyle 

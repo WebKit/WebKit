@@ -1,7 +1,6 @@
 This test setting various attributes of documents to JavaScript null.
 
 TEST SUCCEEDED: Got the expected exception (9). [tested Document.xmlVersion]
-TEST SUCCEEDED: The value was null. [tested Document.selectedStylesheetSet]
 
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLDocument.title]
 TEST SUCCEEDED: The value was the empty string. [tested HTMLDocument.cookie]

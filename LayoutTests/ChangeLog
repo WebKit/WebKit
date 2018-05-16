@@ -1,3 +1,23 @@
+2018-05-16  Chris Nardi  <cnardi@chromium.org>
+
+        Remove Document#selectedStylesheetSet/preferredStylesheetSet
+        https://bugs.webkit.org/show_bug.cgi?id=185381
+
+        Reviewed by Darin Adler.
+
+        Update tests to remove selectedStylesheetSet/preferredStylesheetSet.
+
+        * fast/css/link-disabled-attr-expected.txt:
+        * fast/css/link-disabled-attr.html:
+        * fast/dom/assign-to-prototype-accessor-on-prototype-should-throw-expected.txt:
+        * fast/dom/assign-to-prototype-accessor-on-prototype-should-throw.html:
+        * fast/dom/document-attribute-js-null-expected.txt:
+        * fast/dom/document-attribute-js-null.html:
+        * fast/shadow-dom/link-element-in-shadow-tree-expected.txt:
+        * fast/shadow-dom/link-element-in-shadow-tree.html:
+        * fast/shadow-dom/selected-stylesheet-in-shadow-tree-expected.txt: Removed.
+        * fast/shadow-dom/selected-stylesheet-in-shadow-tree.html: Removed.
+
 2018-05-16  Per Arne Vollan  <pvollan@apple.com>
 
         Mark animations/keyframes-dynamic.html and related tests as failing on Windows.

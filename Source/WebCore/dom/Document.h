@@ -727,10 +727,6 @@ public:
 
     MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const LayoutPoint&, const PlatformMouseEvent&);
 
-    WEBCORE_EXPORT String preferredStylesheetSet() const;
-    WEBCORE_EXPORT String selectedStylesheetSet() const;
-    WEBCORE_EXPORT void setSelectedStylesheetSet(const String&);
-
     enum class FocusRemovalEventsMode { Dispatch, DoNotDispatch };
     WEBCORE_EXPORT bool setFocusedElement(Element*, FocusDirection = FocusDirectionNone,
         FocusRemovalEventsMode = FocusRemovalEventsMode::Dispatch);

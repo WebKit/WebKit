@@ -119,25 +119,6 @@ function test_loaded_stylesheet_rule_in_shadow_tree_applies_to_host(mode) {
 
 test_loaded_stylesheet_rule_in_shadow_tree_applies_to_host('closed');
 test_loaded_stylesheet_rule_in_shadow_tree_applies_to_host('open');
-
-function test_title_is_ignored_in_shadow_tree(mode) {
-    promise_test(() => {
-        let doc;
-        return create_iframe().then((contentWindow) => {
-            doc = contentWindow.document;
-            const host = doc.createElement('div');
-            const shadowRoot = host.attachShadow({mode: mode});
-            shadowRoot.innerHTML = `<style title="foo"></style>`;
-            doc.body.appendChild(host);
-        }).then(() => {
-            assert_equals(doc.selectedStylesheetSet, null);
-        });
-    }, `Link elements should load stylesheets inside a connected shadow tree with ${mode} mode`);
-}
-
-test_title_is_ignored_in_shadow_tree('closed');
-test_title_is_ignored_in_shadow_tree('open');
-
 </script>
 </html>
 </body>

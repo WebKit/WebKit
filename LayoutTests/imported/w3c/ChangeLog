@@ -1,3 +1,15 @@
+2018-05-16  Chris Nardi  <cnardi@chromium.org>
+
+        Remove Document#selectedStylesheetSet/preferredStylesheetSet
+        https://bugs.webkit.org/show_bug.cgi?id=185381
+
+        Reviewed by Darin Adler.
+
+        Refresh historical CSSOM test from upstream to test this change.
+
+        * web-platform-tests/cssom/historical-expected.txt:
+        * web-platform-tests/cssom/historical.html:
+
 2018-05-15  Charles Vazac  <cvazac@gmail.com>
 
         Add the PerformanceServerTiming Interface which makes Server-Timing header timing values available to JavaScript running in the browser.

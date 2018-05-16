@@ -19,10 +19,6 @@ altsheet
 FAIL link.disabled should be true. Was false.
 PASS link.sheet is non-null.
 FAIL getComputedStyle(testElement).backgroundColor should be rgb(0, 128, 0). Was rgba(0, 0, 0, 0).
-FAIL link.disabled should be true. Was false.
-PASS getComputedStyle(testElement).backgroundColor is originalBG
-PASS link.disabled is false
-FAIL getComputedStyle(testElement).backgroundColor should be rgb(0, 128, 0). Was rgba(0, 0, 0, 0).
 PASS getComputedStyle(testElement).backgroundColor is originalBG
 PASS successfullyParsed is true
 

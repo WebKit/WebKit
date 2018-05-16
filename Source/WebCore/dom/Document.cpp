@@ -3332,7 +3332,6 @@ void Document::processHttpEquiv(const String& equiv, const String& content, bool
         // For more info, see the test at:
         // http://www.hixie.ch/tests/evil/css/import/main/preferred.html
         // -dwh
-        styleScope().setSelectedStylesheetSetName(content);
         styleScope().setPreferredStylesheetSetName(content);
         break;
 
@@ -3635,21 +3634,6 @@ StyleSheetList& Document::styleSheets()
     if (!m_styleSheetList)
         m_styleSheetList = StyleSheetList::create(this);
     return *m_styleSheetList;
-}
-
-String Document::preferredStylesheetSet() const
-{
-    return styleScope().preferredStylesheetSetName();
-}
-
-String Document::selectedStylesheetSet() const
-{
-    return styleScope().selectedStylesheetSetName();
-}
-
-void Document::setSelectedStylesheetSet(const String& aString)
-{
-    styleScope().setSelectedStylesheetSetName(aString);
 }
 
 void Document::evaluateMediaQueryList()
