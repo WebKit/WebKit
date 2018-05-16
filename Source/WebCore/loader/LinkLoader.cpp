@@ -281,10 +281,10 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href,
 
     if (m_client.shouldLoadLink()) {
         auto resourceClient = preloadIfNeeded(relAttribute, href, document, as, media, mimeType, crossOrigin, this);
+        if (m_preloadResourceClient)
+            m_preloadResourceClient->clear();
         if (resourceClient)
             m_preloadResourceClient = WTFMove(resourceClient);
-        else if (m_preloadResourceClient)
-            m_preloadResourceClient->clear();
     }
 
 #if ENABLE(LINK_PREFETCH)
