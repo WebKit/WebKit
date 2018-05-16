@@ -129,7 +129,8 @@ public:
     };
 #endif
 
-    // FIXME: Remove this class once the sync layout inside SVGImage::draw is removed
+    // FIXME: Remove this class once the sync layout inside SVGImage::draw is removed,
+    // CachedSVGFont::ensureCustomFontData no longer synchronously creates a document during style resolution,
     // and refactored the code in RenderFrameBase::performLayoutWithFlattening.
     class DisableAssertionsInScope {
     public:

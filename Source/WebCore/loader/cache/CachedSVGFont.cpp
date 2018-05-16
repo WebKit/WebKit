@@ -75,7 +75,7 @@ bool CachedSVGFont::ensureCustomFontData(const AtomicString& remoteURI)
             m_externalSVGDocument = SVGDocument::create(nullptr, URL());
             auto decoder = TextResourceDecoder::create("application/xml");
 
-            ScriptDisallowedScope::EventAllowedScope allowedScope(*m_externalSVGDocument);
+            ScriptDisallowedScope::DisableAssertionsInScope disabledScope;
 
             m_externalSVGDocument->setContent(decoder->decodeAndFlush(m_data->data(), m_data->size()));
             sawError = decoder->sawError();
