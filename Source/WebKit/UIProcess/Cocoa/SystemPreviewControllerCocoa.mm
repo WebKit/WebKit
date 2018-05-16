@@ -74,20 +74,21 @@ SOFT_LINK_CLASS(QuickLook, QLItem);
 
 - (id<QLPreviewItem>)previewController:(QLPreviewController *)controller previewItemAtIndex:(NSInteger)index
 {
-    if (!_item) {
-        _itemProvider = adoptNS([[NSItemProvider alloc] init]);
-        NSString *contentType = @"public.content";
-#if USE(APPLE_INTERNAL_SDK)
-        contentType = WebKit::getUTIForMIMEType(self.mimeType);
-#endif
-        _item = adoptNS([allocQLItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0)]);
-        [_item setUseLoadingTimeout:NO];
+    if (_item)
+        return _item.get();
 
-        [_itemProvider registerItemForTypeIdentifier:contentType loadHandler:^(NSItemProviderCompletionHandler completionHandler, Class expectedValueClass, NSDictionary * options) {
-            // This will get called once the download completes.
-            self.completionHandler = completionHandler;
-        }];
-    }
+    _itemProvider = adoptNS([[NSItemProvider alloc] init]);
+    NSString *contentType = @"public.content";
+#if USE(APPLE_INTERNAL_SDK)
+    contentType = WebKit::getUTIForMIMEType(self.mimeType);
+#endif
+    _item = adoptNS([allocQLItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0)]);
+    [_item setUseLoadingTimeout:NO];
+
+    [_itemProvider registerItemForTypeIdentifier:contentType loadHandler:^(NSItemProviderCompletionHandler completionHandler, Class expectedValueClass, NSDictionary * options) {
+        // This will get called once the download completes.
+        self.completionHandler = completionHandler;
+    }];
     return _item.get();
 }
 
