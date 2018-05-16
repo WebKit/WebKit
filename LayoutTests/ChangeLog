@@ -1,5 +1,17 @@
 2018-05-16  Youenn Fablet  <youenn@apple.com>
 
+        Layout Test webrtc/addICECandidate-closed.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=185384
+        <rdar://problem/40035167>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/addICECandidate-closed.html:
+        Handle sometimes rejected promise to remove a line
+        in the -expected.txt file that is sometimes added.
+
+2018-05-16  Youenn Fablet  <youenn@apple.com>
+
         REGRESSION (r229735): LayoutTest http/wpt/service-workers/third-party-registration.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=183860
         <rdar://problem/38975251>

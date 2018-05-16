@@ -15,10 +15,8 @@ promise_test(async (test) => {
         const localTracks = stream.getTracks();
         [[sender, receiver], [receiver, sender]].forEach(([pc1, pc2]) => {
             pc1.onicecandidate = ({ candidate }) => {
-                try {
-                    if (candidate)
-                        pc2.addIceCandidate(candidate);
-                } catch (e) { }
+                if (candidate)
+                    pc2.addIceCandidate(candidate).then(() => { }, () => { });
                 pc1.close();
             };
         });
