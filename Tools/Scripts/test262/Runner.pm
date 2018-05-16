@@ -83,6 +83,7 @@ my $saveExpectations;
 my $failingOnly;
 my $latestImport;
 my $runningAllTests;
+my $timeout;
 
 my $expectationsFile = abs_path("$Bin/../../../JSTests/test262/expectations.yaml");
 my $configFile = abs_path("$Bin/../../../JSTests/test262/config.yaml");
@@ -135,6 +136,7 @@ sub processCLI {
         'l|latest-import' => \$latestImport,
         'stats' => \$stats,
         'r|results=s' => \$specifiedResultsFile,
+        'timeout=i' => \$timeout,
     );
 
     if ($help) {
@@ -234,8 +236,9 @@ sub processCLI {
         . "DYLD_FRAMEWORK_PATH: $DYLD_FRAMEWORK_PATH\n"
         . "Child Processes: $max_process\n";
 
+    print "Test timeout: $timeout\n" if $timeout;
     print "Features to include: " . join(', ', @features) . "\n" if @features;
-    print "Paths:  " . join(', ', @cliTestDirs) . "\n" if @cliTestDirs;
+    print "Paths: " . join(', ', @cliTestDirs) . "\n" if @cliTestDirs;
     print "Config file: $configFile\n" if $config;
     print "Expectations file: $expectationsFile\n" if $expect;
     print "Results file: $resultsFile\n" if $stats || $failingOnly;
@@ -597,6 +600,10 @@ sub runTest {
 
     my $args = '';
 
+    if ($timeout) {
+        $args .= " --watchdog=$timeout ";
+    }
+
     if (exists $data->{negative}) {
         my $type = $data->{negative}->{type};
         $args .=  " --exception=$type ";
@@ -956,6 +963,10 @@ Calculate conformance statistics from results/results.yaml file or a supplied re
 =item B<--results, -r>
 
 Specifies a results file for the --stats or --failing-files options.
+
+=item B<--timeout>
+
+Specifies a timeout execution in ms for each test. Defers the value to the jsc --watchdog argument. Disabled by default.
 
 =back
 

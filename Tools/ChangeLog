@@ -1,5 +1,18 @@
 2018-05-16  Leo Balter  <leonardo.balter@gmail.com>
 
+        Test262-Runner: Adds a --timeout option
+        https://bugs.webkit.org/show_bug.cgi?id=185696
+
+        Reviewed by Michael Saboff.
+
+        The timeout option is used to set a timeout execution in ms for each test run in JSC.
+        The passed value - if defined - will be used as the value for the JSC --watchdog arg.
+        * Scripts/test262/Runner.pm:
+        (processCLI):
+        (runTest):
+
+2018-05-16  Leo Balter  <leonardo.balter@gmail.com>
+
         Test262-Runner: Set timer for each test run
         https://bugs.webkit.org/show_bug.cgi?id=185692
 
