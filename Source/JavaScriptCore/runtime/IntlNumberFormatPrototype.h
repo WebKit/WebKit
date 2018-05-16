@@ -42,7 +42,7 @@ public:
     DECLARE_INFO;
 
 protected:
-    void finishCreation(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*, Structure*);
 
 private:
     IntlNumberFormatPrototype(VM&, Structure*);

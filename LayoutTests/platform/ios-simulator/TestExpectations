@@ -74,3 +74,6 @@ imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-off
 # Simulator doesn't support WebAssembly.
 imported/w3c/web-platform-tests/wasm/wasm_stream_instantiate_test.html  [ Skip ]
 imported/w3c/web-platform-tests/wasm/wasm_stream_compile_test.html  [ Skip ]
+
+# macOS doesn't have ICU v59
+webkit.org/b/185375 js/intl-numberformat-format-to-parts.html [ Failure ]

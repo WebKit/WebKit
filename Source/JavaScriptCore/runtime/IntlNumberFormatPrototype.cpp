@@ -35,10 +35,14 @@
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSObjectInlines.h"
+#include "Options.h"
 
 namespace JSC {
 
 static EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(ExecState*);
+#if HAVE(ICU_FORMAT_DOUBLE_FOR_FIELDS)
+static EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncFormatToParts(ExecState*);
+#endif
 static EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(ExecState*);
 
 }
@@ -56,10 +60,10 @@ const ClassInfo IntlNumberFormatPrototype::s_info = { "Object", &Base::s_info, &
 @end
 */
 
-IntlNumberFormatPrototype* IntlNumberFormatPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
+IntlNumberFormatPrototype* IntlNumberFormatPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
     IntlNumberFormatPrototype* object = new (NotNull, allocateCell<IntlNumberFormatPrototype>(vm.heap)) IntlNumberFormatPrototype(vm, structure);
-    object->finishCreation(vm, structure);
+    object->finishCreation(vm, globalObject, structure);
     return object;
 }
 
@@ -73,9 +77,15 @@ IntlNumberFormatPrototype::IntlNumberFormatPrototype(VM& vm, Structure* structur
 {
 }
 
-void IntlNumberFormatPrototype::finishCreation(VM& vm, Structure*)
+void IntlNumberFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, Structure*)
 {
     Base::finishCreation(vm);
+#if HAVE(ICU_FORMAT_DOUBLE_FOR_FIELDS)
+    if (Options::useIntlNumberFormatToParts())
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->formatToParts, IntlNumberFormatPrototypeFuncFormatToParts, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+#else
+    UNUSED_PARAM(globalObject);
+#endif
 
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Object"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
@@ -136,6 +146,27 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(ExecState* st
     // 3. Return nf.[[boundFormat]].
     return JSValue::encode(boundFormat);
 }
+
+#if HAVE(ICU_FORMAT_DOUBLE_FOR_FIELDS)
+EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncFormatToParts(ExecState* state)
+{
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // Intl.NumberFormat.prototype.formatToParts (ECMA-402)
+    // https://tc39.github.io/ecma402/#sec-intl.numberformat.prototype.formattoparts
+
+    IntlNumberFormat* numberFormat = jsDynamicCast<IntlNumberFormat*>(vm, state->thisValue());
+    if (!numberFormat)
+        return JSValue::encode(throwTypeError(state, scope, ASCIILiteral("Intl.NumberFormat.prototype.formatToParts called on value that's not an object initialized as a NumberFormat")));
+
+    double value = state->argument(0).toNumber(state);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    scope.release();
+    return JSValue::encode(numberFormat->formatToParts(*state, value));
+}
+#endif
 
 EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(ExecState* state)
 {

@@ -1,3 +1,33 @@
+2018-05-16  Andy VanWagoner  <andy@vanwagoner.family>
+
+        Add support for Intl NumberFormat formatToParts
+        https://bugs.webkit.org/show_bug.cgi?id=185375
+
+        Reviewed by Yusuke Suzuki.
+
+        Add flag for NumberFormat formatToParts. Implement formatToParts using
+        unum_formatDoubleForFields. Because the fields are nested and come back
+        in no guaranteed order, the simple algorithm to convert them to the
+        desired format is roughly O(n^2). However, even with Number.MAX_VALUE
+        it appears to perform well enough for the initial implementation. Another
+        issue has been created to improve this algorithm.
+
+        This requires ICU v59+ for unum_formatDoubleForFields, so it is disabled
+        on macOS, since only v57 is available.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::UFieldPositionIteratorDeleter::operator() const):
+        (JSC::IntlNumberFormat::partTypeString):
+        (JSC::IntlNumberFormat::formatToParts):
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototype::create):
+        (JSC::IntlNumberFormatPrototype::finishCreation):
+        (JSC::IntlNumberFormatPrototypeFuncFormatToParts):
+        * runtime/IntlNumberFormatPrototype.h:
+        * runtime/Options.h:
+
 2018-05-16  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "/" operation

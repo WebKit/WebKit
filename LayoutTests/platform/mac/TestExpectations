@@ -1765,3 +1765,6 @@ webkit.org/b/184609 platform/mac/media/audio-session-category-video-track-change
 webkit.org/b/170830 inspector/sampling-profiler/named-function-expression.html [ Pass Failure ]
 
 webkit.org/b/185659 [ Debug ] animations/needs-layout.html [ Pass ImageOnlyFailure ]
+
+# macOS doesn't have ICU v59
+webkit.org/b/185375 js/intl-numberformat-format-to-parts.html [ Failure ]

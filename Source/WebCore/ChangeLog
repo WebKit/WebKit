@@ -1,3 +1,16 @@
+2018-05-16  Andy VanWagoner  <andy@vanwagoner.family>
+
+        Add support for Intl NumberFormat formatToParts
+        https://bugs.webkit.org/show_bug.cgi?id=185375
+
+        Reviewed by Yusuke Suzuki.
+
+        Test: js/intl-numberformat-format-to-parts.html
+
+        Add flag & tests for NumberFormat formatToParts.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-05-16  Eric Carlson  <eric.carlson@apple.com>
 
         Improve NowPlaying "title"

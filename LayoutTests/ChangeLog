@@ -1,3 +1,20 @@
+2018-05-16  Andy VanWagoner  <andy@vanwagoner.family>
+
+        Add support for Intl NumberFormat formatToParts
+        https://bugs.webkit.org/show_bug.cgi?id=185375
+
+        Reviewed by Yusuke Suzuki.
+
+        Add tests for NumberFormat formatToParts. Tests are expected to fail on
+        macOS until ICU is updated to v59 or newer.
+
+        * js/intl-numberformat-format-to-parts-expected.txt: Added.
+        * js/intl-numberformat-format-to-parts.html: Added.
+        * js/script-tests/intl-numberformat-format-to-parts.js: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2018-05-16  Eric Carlson  <eric.carlson@apple.com>
 
         Improve NowPlaying "title"

@@ -38,6 +38,10 @@
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 
+#if HAVE(ICU_FORMAT_DOUBLE_FOR_FIELDS)
+#include <unicode/ufieldpositer.h>
+#endif
+
 namespace JSC {
 
 const ClassInfo IntlNumberFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlNumberFormat) };
@@ -447,6 +451,129 @@ void IntlNumberFormat::setBoundFormat(VM& vm, JSBoundFunction* format)
 {
     m_boundFormat.set(vm, this, format);
 }
+
+#if HAVE(ICU_FORMAT_DOUBLE_FOR_FIELDS)
+void IntlNumberFormat::UFieldPositionIteratorDeleter::operator()(UFieldPositionIterator* iterator) const
+{
+    if (iterator)
+        ufieldpositer_close(iterator);
+}
+
+const char* IntlNumberFormat::partTypeString(UNumberFormatFields field, double value)
+{
+    switch (field) {
+    case UNUM_INTEGER_FIELD:
+        if (std::isnan(value))
+            return "nan";
+        if (!std::isfinite(value))
+            return "infinity";
+        return "integer";
+    case UNUM_FRACTION_FIELD:
+        return "fraction";
+    case UNUM_DECIMAL_SEPARATOR_FIELD:
+        return "decimal";
+    case UNUM_GROUPING_SEPARATOR_FIELD:
+        return "group";
+    case UNUM_CURRENCY_FIELD:
+        return "currency";
+    case UNUM_PERCENT_FIELD:
+        return "percentSign";
+    case UNUM_SIGN_FIELD:
+        return value < 0 ? "minusSign" : "plusSign";
+    // These should not show up because there is no way to specify them in NumberFormat options.
+    // If they do, they don't fit well into any of known part types, so consider it a "literal".
+    case UNUM_PERMILL_FIELD:
+    case UNUM_EXPONENT_SYMBOL_FIELD:
+    case UNUM_EXPONENT_SIGN_FIELD:
+    case UNUM_EXPONENT_FIELD:
+#if !defined(U_HIDE_DEPRECATED_API)
+    case UNUM_FIELD_COUNT:
+#endif
+        return "literal";
+    }
+    // Any newer additions to the UNumberFormatFields enum should just be considered a "literal" part.
+    return "literal";
+}
+
+JSValue IntlNumberFormat::formatToParts(ExecState& exec, double value)
+{
+    VM& vm = exec.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // FormatNumberToParts (ECMA-402)
+    // https://tc39.github.io/ecma402/#sec-formatnumbertoparts
+    // https://tc39.github.io/ecma402/#sec-partitionnumberpattern
+
+    if (!m_numberFormat)
+        createNumberFormat(exec);
+    if (!m_initializedNumberFormat || !m_numberFormat)
+        return throwTypeError(&exec, scope, ASCIILiteral("Intl.NumberFormat.prototype.formatToParts called on value that's not an object initialized as a NumberFormat"));
+
+    UErrorCode status = U_ZERO_ERROR;
+    auto fieldItr = std::unique_ptr<UFieldPositionIterator, UFieldPositionIteratorDeleter>(ufieldpositer_open(&status));
+    if (U_FAILURE(status))
+        return throwTypeError(&exec, scope, ASCIILiteral("failed to open field position iterator"));
+
+    status = U_ZERO_ERROR;
+    Vector<UChar, 32> result(32);
+    auto resultLength = unum_formatDoubleForFields(m_numberFormat.get(), value, result.data(), result.size(), fieldItr.get(), &status);
+    if (status == U_BUFFER_OVERFLOW_ERROR) {
+        status = U_ZERO_ERROR;
+        result.grow(resultLength);
+        unum_formatDoubleForFields(m_numberFormat.get(), value, result.data(), resultLength, fieldItr.get(), &status);
+    }
+    if (U_FAILURE(status))
+        return throwTypeError(&exec, scope, ASCIILiteral("failed to format a number."));
+
+    Vector<IntlNumberFormatField> fields;
+    int32_t beginIndex = 0;
+    int32_t endIndex = 0;
+    auto fieldType = ufieldpositer_next(fieldItr.get(), &beginIndex, &endIndex);
+    while (fieldType >= 0) {
+        IntlNumberFormatField field;
+        field.type = UNumberFormatFields(fieldType);
+        field.beginIndex = beginIndex;
+        field.endIndex = endIndex;
+        fields.append(field);
+        fieldType = ufieldpositer_next(fieldItr.get(), &beginIndex, &endIndex);
+    }
+
+    JSGlobalObject* globalObject = exec.jsCallee()->globalObject();
+    JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
+    if (!parts)
+        return throwOutOfMemoryError(&exec, scope);
+    unsigned index = 0;
+
+    auto resultString = String(result.data(), resultLength);
+    auto typePropertyName = Identifier::fromString(&vm, "type");
+    auto literalString = jsString(&exec, ASCIILiteral("literal"));
+
+    // FIXME: <http://webkit.org/b/185557> This is O(N^2) and could be done in O(N log N).
+    int32_t currentIndex = 0;
+    while (currentIndex < resultLength) {
+        IntlNumberFormatField field;
+        int32_t nextStartIndex = resultLength;
+        for (const auto &candidate : fields) {
+            if (candidate.beginIndex <= currentIndex && currentIndex < candidate.endIndex && (!field.size() || candidate.size() < field.size()))
+                field = candidate;
+            if (currentIndex < candidate.beginIndex && candidate.beginIndex < nextStartIndex)
+                nextStartIndex = candidate.beginIndex;
+        }
+        auto nextIndex = field.size() ? std::min(field.endIndex, nextStartIndex) : nextStartIndex;
+        auto type = field.size() ? jsString(&exec, partTypeString(field.type, value)) : literalString;
+        auto value = jsSubstring(&vm, resultString, currentIndex, nextIndex - currentIndex);
+        JSObject* part = constructEmptyObject(&exec);
+        part->putDirect(vm, typePropertyName, type);
+        part->putDirect(vm, vm.propertyNames->value, value);
+        parts->putDirectIndex(&exec, index++, part);
+        RETURN_IF_EXCEPTION(scope, { });
+        currentIndex = nextIndex;
+    }
+
+
+    return parts;
+}
+#endif
 
 } // namespace JSC
 

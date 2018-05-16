@@ -29,6 +29,9 @@
 
 #include "JSDestructibleObject.h"
 #include <unicode/unum.h>
+#include <unicode/uvernum.h>
+
+#define HAVE_ICU_FORMAT_DOUBLE_FOR_FIELDS (U_ICU_VERSION_MAJOR_NUM >= 59)
 
 namespace JSC {
 
@@ -46,6 +49,9 @@ public:
 
     void initializeNumberFormat(ExecState&, JSValue locales, JSValue optionsValue);
     JSValue formatNumber(ExecState&, double number);
+#if HAVE(ICU_FORMAT_DOUBLE_FOR_FIELDS)
+    JSValue formatToParts(ExecState&, double value);
+#endif
     JSObject* resolvedOptions(ExecState&);
 
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
@@ -83,6 +89,24 @@ private:
     WriteBarrier<JSBoundFunction> m_boundFormat;
     bool m_useGrouping { true };
     bool m_initializedNumberFormat { false };
+
+#if HAVE(ICU_FORMAT_DOUBLE_FOR_FIELDS)
+    struct UFieldPositionIteratorDeleter {
+        void operator()(UFieldPositionIterator*) const;
+    };
+
+    struct IntlNumberFormatField {
+        UNumberFormatFields type;
+        int32_t beginIndex { 0 };
+        int32_t endIndex { 0 };
+        int32_t size() const
+        {
+            return endIndex - beginIndex;
+        };
+    };
+
+    static const char* partTypeString(UNumberFormatFields, double);
+#endif
 };
 
 } // namespace JSC
