@@ -1560,7 +1560,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             write(HeapObjectCount);
             return;
         }
-
         if (node->isBinaryUseKind(UntypedUse)) {
             read(World);
             write(Heap);

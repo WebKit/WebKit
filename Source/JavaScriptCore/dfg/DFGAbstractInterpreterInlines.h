@@ -1637,7 +1637,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
         }
 
-        if (isClobbering)
+        if (node->isBinaryUseKind(UntypedUse))
             clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).setType(SpecBoolean);
         break;
