@@ -879,7 +879,7 @@ webkit.org/b/183869 [ HighSierra+ ] media/modern-media-controls/seek-backward-su
 
 webkit.org/b/183879 [ Debug ] fast/scrolling/latching/scroll-div-no-latching.html [ Pass Failure ]
 
-webkit.org/b/183860 [ Sierra Release ] http/wpt/service-workers/third-party-registration.html [ Skip ]
+webkit.org/b/183860 [ Sierra Release ] http/wpt/service-workers/third-party-registration.html [ Pass Failure ]
 
 webkit.org/b/184245 http/tests/workers/service/service-worker-cache-api.https.html [ Pass Failure ]
 

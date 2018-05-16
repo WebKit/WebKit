@@ -15,19 +15,24 @@ async function doTest()
     if (activeWorker)
         return;
     activeWorker = registration.installing;
-    await new Promise(resolve => {
+    await new Promise((resolve, reject) => {
         activeWorker.addEventListener('statechange', () => {
             if (activeWorker.state === "activated")
                 resolve();
         });
+        setTimeout(reject, 5000);
     });
 }
 window.onmessage = async (e) => {
-    await doTest();
-    navigator.serviceWorker.onmessage = (e) => {
-        parent.postMessage(e.data, '*');
+    try {
+        await doTest();
+        navigator.serviceWorker.onmessage = (e) => {
+            parent.postMessage(e.data, '*');
+        }
+        activeWorker.postMessage(e.data);
+    } catch (e) {
+        parent.postMessage("FAILED: " + e, '*');
     }
-    activeWorker.postMessage(e.data);
 }
 </script>
 </body>

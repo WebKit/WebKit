@@ -1,3 +1,18 @@
+2018-05-16  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r229735): LayoutTest http/wpt/service-workers/third-party-registration.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=183860
+        <rdar://problem/38975251>
+
+        Reviewed by Geoffrey Garen.
+
+        Make test more robust by introducing a timeout and better failure reporting.
+        Mark test as Pass/Fail to start gathering results on test stability.
+
+        * http/wpt/service-workers/resources/third-party-registration-frame.html:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-05-16  David Fenton  <david_fenton@apple.com>
 
         Mark LayoutTest animations/needs-layout.html as Flaky on macOS debug.

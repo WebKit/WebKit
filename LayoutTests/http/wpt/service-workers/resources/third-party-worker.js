@@ -2,22 +2,26 @@ addEventListener('activate', async (e) => {
     await self.clients.claim();
 });
 addEventListener('message', async (e) => {
-    if (e.data === 'write') {
-        await writeDB();
-        await self.caches.open(e.data);
-        e.source.postMessage('written');
-        return;
+    try {
+        if (e.data === 'write') {
+            await writeDB();
+            await self.caches.open(e.data);
+            e.source.postMessage('written');
+            return;
+        }
+        if (e.data === 'read') {
+            var keys = await self.caches.keys();
+            var db = await readDB();
+            if (!db)
+                db = null;
+            var result = { cache : keys, db : db };
+            e.source.postMessage(JSON.stringify(result));
+            return;
+        }
+        e.source.postMessage('error');
+    } catch (e) {
+        e.source.postMessage('Got error:' + e);
     }
-    if (e.data === 'read') {
-        var keys = await self.caches.keys();
-        var db = await readDB();
-        if (!db)
-            db = null;
-        var result = { cache : keys, db : db };
-        e.source.postMessage(JSON.stringify(result));
-        return;
-    }
-    e.source.postMessage('error');
 });
 
 function readDB() {
