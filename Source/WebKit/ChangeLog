@@ -1,3 +1,16 @@
+2018-05-16  Andy Estes  <aestes@apple.com>
+
+        [Wi-Fi Assertions] Adopt WiFiAssertionHolderAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=185685
+        <rdar://problem/40136681>
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/cocoa/WiFiAssertionHolder.cpp:
+        (WebKit::WiFiAssertionHolder::WiFiAssertionHolder):
+        (WebKit::WiFiAssertionHolder::~WiFiAssertionHolder):
+        (WebKit::ensureWiFiManagerClient): Deleted.
+
 2018-05-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Implement WebPage::handleEditingKeyboardEvent
