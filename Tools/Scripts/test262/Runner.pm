@@ -41,6 +41,7 @@ use Cwd qw(abs_path);
 use FindBin;
 use Env qw(DYLD_FRAMEWORK_PATH);
 use Config;
+use Time::HiRes qw(time);
 
 my $podIsAvailable;
 if  (eval {require Pod::Usage; 1;}) {
@@ -397,9 +398,7 @@ sub main {
 
     print $skipfilecount . " test files skipped\n";
 
-    my $endTime = time();
-    my $totalTime = $endTime - $startTime;
-    print "Done in $totalTime seconds!\n";
+    printf("Done in %.2f seconds!\n", time() - $startTime);
 
     my $totalfailures = $expect ? $newfailcount : $failcount;
     exit ($totalfailures ? 1 : 0);
@@ -512,9 +511,9 @@ sub processFile {
     ($includesfh, $includesfile) = compileTest($includes) if defined $includes;
 
     foreach my $scenario (@scenarios) {
-        my $result = runTest($includesfile, $filename, $scenario, $data);
+        my ($result, $execTime) = runTest($includesfile, $filename, $scenario, $data);
 
-        $resultsdata = processResult($filename, $data, $scenario, $result);
+        $resultsdata = processResult($filename, $data, $scenario, $result, $execTime);
         DumpFile($resultsfh, $resultsdata);
     }
 
@@ -623,21 +622,29 @@ sub runTest {
     $defaultHarness = $deffile if $scenario ne 'raw';
 
     my $prefix = qq(DYLD_FRAMEWORK_PATH=$DYLD_FRAMEWORK_PATH);
+
+    my $execTimeStart = time();
     my $result = qx($prefix $JSC $args $defaultHarness $includesfile '$prefixFile$filename');
+    my $execTime = time() - $execTimeStart;
 
     chomp $result;
 
-    return $result if ($?);
+    if ($?) {
+        return ($result, $execTime);
+    } else {
+        return (0, $execTime);
+    }
 }
 
 sub processResult {
-    my ($path, $data, $scenario, $result) = @_;
+    my ($path, $data, $scenario, $result, $execTime) = @_;
 
     # Report a relative path
     my $file = abs2rel( $path, $test262Dir );
     my %resultdata;
     $resultdata{path} = $file;
     $resultdata{mode} = $scenario;
+    $resultdata{time} = $execTime;
 
     my $currentfailure = parseError($result) if $result;
     my $expectedfailure = $expect

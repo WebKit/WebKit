@@ -1,3 +1,18 @@
+2018-05-16  Leo Balter  <leonardo.balter@gmail.com>
+
+        Test262-Runner: Set timer for each test run
+        https://bugs.webkit.org/show_bug.cgi?id=185692
+
+        Reviewed by Michael Saboff.
+
+        Sets a high resolution timer for each execution call of JSC, reporting
+        the time in the results report to allow identifying slow tests.
+        * Scripts/test262/Runner.pm:
+        (main):
+        (processFile):
+        (runTest):
+        (processResult):
+
 2018-05-16  Andy VanWagoner  <andy@vanwagoner.family>
 
         Add support for Intl NumberFormat formatToParts
