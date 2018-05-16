@@ -1,3 +1,14 @@
+2018-05-16  Valerie R Young  <valerie@bocoup.com>
+
+        test262/Runner.pm: save to supplied expectation file if supplied
+        https://bugs.webkit.org/show_bug.cgi?id=185660
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/test262/Runner.pm:
+        (processCLI):
+        (main):
+
 2018-05-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r231763.

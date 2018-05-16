@@ -208,10 +208,11 @@ sub processCLI {
             " please specify with --results.";
     }
 
-    if (! $ignoreExpectations && $specifiedExpectationsFile) {
+    if ($specifiedExpectationsFile) {
         $expectationsFile = abs_path($specifiedExpectationsFile);
-        if (! -e $expectationsFile) {
-            die "Error: Supplied expectations file $expectationsFile does not exist!";
+        if (! -e $expectationsFile && ! $ignoreExpectations) {
+            print("Warning: Supplied expectations file $expectationsFile does"
+                  . " not exist. Running tests without expectation file.\n");
         }
     }
 
@@ -389,7 +390,7 @@ sub main {
     if ( !$expect ) {
         print $failcount . " tests failed\n";
     } else {
-        print $failcount . " expected tests failed\n";
+        print $failcount . " tests failed in total\n";
         print $newfailcount . " tests newly fail\n";
         print $newpasscount . " tests newly pass\n";
     }
@@ -927,7 +928,7 @@ Overwrites the test262-expectations.yaml file with the current list of test262 f
 
 =item B<--expectations, -e>
 
-Specify a expectations file.  If not provided, script will load local JSTests/test262/expectations.yaml
+Specify a expectations file for loading and saving.  If not provided, script will load and save to JSTests/test262/expectations.yaml.
 
 =item B<--ignore-expectations, -x>
 
