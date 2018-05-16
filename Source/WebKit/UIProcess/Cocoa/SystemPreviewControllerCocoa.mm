@@ -137,12 +137,18 @@ SOFT_LINK_CLASS(QuickLook, QLItem);
     if (!presentingViewController)
         return CGRectZero;
 
+    *view = presentingViewController.view;
     CGRect frame = presentingViewController.view.frame;
     // Create a smaller rectangle centered in the frame.
     CGFloat halfWidth = frame.size.width / 2;
     CGFloat halfHeight = frame.size.height / 2;
     frame = CGRectMake(CGRectGetMidX(frame) - halfWidth / 2, CGRectGetMidY(frame) - halfHeight / 2, halfWidth, halfHeight);
     return frame;
+}
+
+- (UIImage *)previewController:(QLPreviewController *)controller transitionImageForPreviewItem:(id <QLPreviewItem>)item contentRect:(CGRect *)contentRect
+{
+    return nil;
 }
 
 @end
