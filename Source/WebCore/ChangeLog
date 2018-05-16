@@ -1,5 +1,15 @@
 2018-05-16  Daniel Bates  <dabates@apple.com>
 
+        Attempt to fix the WinCairo build following r231859
+        (https://bugs.webkit.org/show_bug.cgi?id=185654)
+
+        Instantiate Cookie as a struct and set applicable fields.
+
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::searchCookies):
+
+2018-05-16  Daniel Bates  <dabates@apple.com>
+
         Cleanup platform Cookie
         https://bugs.webkit.org/show_bug.cgi?id=185654
 

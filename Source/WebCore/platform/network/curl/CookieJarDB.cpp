@@ -316,20 +316,16 @@ bool CookieJarDB::searchCookies(const String& requestUrl, const std::optional<bo
         if (!isPathMatched)
             continue;
 
-        Cookie result(cookieName,
-            cookieValue,
-            cookieDomain,
-            cookiePath,
-            0,
-            cookieExpires,
-            cookieHttpOnly,
-            cookieSecure,
-            cookieSession,
-            String(),
-            URL(),
-            Vector<uint16_t>());
-
-        results.append(result);
+        Cookie cookie;
+        cookie.name = cookieName;
+        cookie.value = cookieValue;
+        cookie.domain = cookieDomain;
+        cookie.path = cookiePath;
+        cookie.expires = cookieExpires;
+        cookie.httpOnly = cookieHttpOnly;
+        cookie.secure = cookieSecure;
+        cookie.session = cookieSession;
+        results.append(WTFMove(cookie));
     }
     pstmt->finalize();
 
