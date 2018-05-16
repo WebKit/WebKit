@@ -280,6 +280,7 @@ void MediaSessionManageriOS::updateNowPlayingInfo()
     m_reportedDuration = duration;
     m_reportedTitle = title;
     m_reportedCurrentTime = currentTime;
+    m_lastUpdatedNowPlayingInfoUniqueIdentifier = currentSession->uniqueIdentifier();
 
     auto info = adoptNS([[NSMutableDictionary alloc] init]);
     if (!title.isEmpty())

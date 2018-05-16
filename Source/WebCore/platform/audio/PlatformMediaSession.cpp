@@ -238,6 +238,11 @@ PlatformMediaSession::CharacteristicsFlags PlatformMediaSession::characteristics
 }
 
 #if ENABLE(VIDEO)
+uint64_t PlatformMediaSession::uniqueIdentifier() const
+{
+    return m_client.mediaSessionUniqueIdentifier();
+}
+
 String PlatformMediaSession::title() const
 {
     return m_client.mediaSessionTitle();
@@ -323,6 +328,11 @@ void PlatformMediaSession::canProduceAudioChanged()
 }
 
 #if ENABLE(VIDEO)
+uint64_t PlatformMediaSessionClient::mediaSessionUniqueIdentifier() const
+{
+    return 0;
+}
+
 String PlatformMediaSessionClient::mediaSessionTitle() const
 {
     return String();

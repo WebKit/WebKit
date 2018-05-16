@@ -878,6 +878,9 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomicStr
     else if (name == autoplayAttr) {
         if (processingUserGestureForMedia())
             removeBehaviorsRestrictionsAfterFirstUserGesture();
+    } else if (name == titleAttr) {
+        if (m_mediaSession)
+            m_mediaSession->clientCharacteristicsChanged();
     }
     else
         HTMLElement::parseAttribute(name, value);
@@ -3080,6 +3083,9 @@ void HTMLMediaElement::finishSeek()
 
     // 17 - Queue a task to fire a simple event named seeked at the element.
     scheduleEvent(eventNames().seekedEvent);
+
+    if (m_mediaSession)
+        m_mediaSession->clientCharacteristicsChanged();
 
 #if ENABLE(MEDIA_SOURCE)
     if (m_mediaSource)
@@ -7443,10 +7449,26 @@ void HTMLMediaElement::mayResumePlayback(bool shouldResume)
 
 String HTMLMediaElement::mediaSessionTitle() const
 {
-    if (hasAttributeWithoutSynchronization(titleAttr))
-        return attributeWithoutSynchronization(titleAttr);
+    if (!document().page() || document().page()->usesEphemeralSession())
+        return emptyString();
 
-    return m_currentSrc;
+    if (hasAttributeWithoutSynchronization(titleAttr)) {
+        auto title = attributeWithoutSynchronization(titleAttr);
+        if (!title.isEmpty())
+            return title;
+    }
+
+    auto title = document().title();
+    if (!title.isEmpty())
+        return title;
+
+    return m_currentSrc.host();
+}
+
+uint64_t HTMLMediaElement::mediaSessionUniqueIdentifier() const
+{
+    auto& url = m_currentSrc.string();
+    return url.impl() ? url.impl()->hash() : 0;
 }
 
 void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument* argument)

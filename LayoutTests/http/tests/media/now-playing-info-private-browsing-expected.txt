@@ -1,0 +1,23 @@
+ 
+Tests that the NowPlaying title is not set when in private browsing mode.
+
+* NowPlaying should not be active before playback has started.
+RUN(video.src = findMediaFile("video", "resources/test"))
+EVENT(canplaythrough)
+RUN(nowPlayingState = internals.nowPlayingState)
+EXPECTED (nowPlayingState.registeredAsNowPlayingApplication == 'false') OK
+
+* Start to play, NowPlaying should become active.
+RUN(video.play())
+EVENT(playing)
+RUN(video.pause())
+
+* Title should be blank because video has no title.
+RUN(nowPlayingState = internals.nowPlayingState)
+EXPECTED (nowPlayingState.registeredAsNowPlayingApplication == 'true') OK
+EXPECTED (nowPlayingState.title == '') OK
+EXPECTED (nowPlayingState.duration > '0') OK
+EXPECTED (nowPlayingState.elapsedTime >= '0') OK
+
+END OF TEST
+

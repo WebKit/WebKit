@@ -113,6 +113,7 @@ public:
     void stopSession();
     
 #if ENABLE(VIDEO)
+    uint64_t uniqueIdentifier() const;
     String title() const;
     double duration() const;
     double currentTime() const;
@@ -216,6 +217,7 @@ public:
     virtual void suspendPlayback() = 0;
 
 #if ENABLE(VIDEO)
+    virtual uint64_t mediaSessionUniqueIdentifier() const;
     virtual String mediaSessionTitle() const;
     virtual double mediaSessionDuration() const;
     virtual double mediaSessionCurrentTime() const;

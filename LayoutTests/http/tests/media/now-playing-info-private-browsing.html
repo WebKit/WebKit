@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Page Title</title>
+        <script src=../../media-resources/video-test.js></script>
+        <script src=../../media-resources/media-file.js></script>
+        <script>
+
+            let nowPlayingState;
+            let previousNowPlayingState; 
+
+            if (window.testRunner)
+                testRunner.setPrivateBrowsingEnabled(true);
+
+            async function waitForAttributeToChange(attribute, expected) {
+                let start = new Date().getTime();
+                do {
+
+                    if (internals.nowPlayingState[attribute] != expected)
+                        return;
+
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                } while (new Date().getTime() - start < 500);
+
+                failTest(`** Timed out waiting for "${attribute}" to change from "${expected}"`);
+            }
+
+            async function runTest()
+            {
+                findMediaElement();
+
+                consoleWrite('<br>* NowPlaying should not be active before playback has started.');
+                run('video.src = findMediaFile("video", "resources/test")');
+                await waitFor(video, 'canplaythrough');
+
+                run('nowPlayingState = internals.nowPlayingState');
+                testExpected('nowPlayingState.registeredAsNowPlayingApplication', false);
+
+                consoleWrite('<br>* Start to play, NowPlaying should become active.');
+                runWithKeyDown(() => {
+                    run('video.play()');
+                });
+
+                await waitFor(video, 'playing');
+                run('video.pause()');
+                await waitForAttributeToChange('registeredAsNowPlayingApplication', false);
+
+                consoleWrite('<br>* Title should be blank because video has no title.');
+                run('nowPlayingState = internals.nowPlayingState');
+                testExpected('nowPlayingState.registeredAsNowPlayingApplication', true);
+                testExpected('nowPlayingState.title', '');
+                testExpected('nowPlayingState.duration', '0', '>');
+                testExpected('nowPlayingState.elapsedTime', '0', '>=');
+                previousNowPlayingState = nowPlayingState;
+
+                consoleWrite('');
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <video controls title="Video Title"></video>
+        <br>
+        Tests that the NowPlaying title is not set when in private browsing mode.
+    </body>
+</html>

@@ -1187,6 +1187,10 @@ webkit.org/b/180062 fast/text/user-installed-fonts [ Skip ]
 
 webkit.org/b/184295 http/wpt/loading/redirect-headers.html [ Skip ]
 
+# NowPlaying is macOS and iOS only.
+http/tests/media/now-playing-info-private-browsing.html [ Skip ]
+http/tests/media/now-playing-info.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #

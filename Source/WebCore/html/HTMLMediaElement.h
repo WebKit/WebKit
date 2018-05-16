@@ -860,6 +860,7 @@ private:
     void suspendPlayback() override;
     void resumeAutoplaying() override;
     void mayResumePlayback(bool shouldResume) override;
+    uint64_t mediaSessionUniqueIdentifier() const final;
     String mediaSessionTitle() const override;
     double mediaSessionDuration() const override { return duration(); }
     double mediaSessionCurrentTime() const override { return currentTime(); }

@@ -84,6 +84,19 @@ enum EventThrottlingBehavior {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    Conditional=VIDEO,
+    JSGenerateToJSObject,
+] dictionary NowPlayingState {
+    boolean hasActiveSession;
+    boolean registeredAsNowPlayingApplication;
+    DOMString title;
+    unrestricted double duration;
+    unrestricted double elapsedTime;
+    unsigned long long uniqueIdentifier;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     NoInterfaceObject,
 ] interface Internals {
     DOMString address(Node node);
@@ -601,4 +614,6 @@ enum EventThrottlingBehavior {
     DOMString extraZoomModeAdaptationName();
 
     boolean usingAppleInternalSDK();
+
+    [Conditional=VIDEO, MayThrowException] readonly attribute NowPlayingState nowPlayingState;
 };

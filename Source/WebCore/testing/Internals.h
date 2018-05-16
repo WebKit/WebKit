@@ -670,6 +670,16 @@ public:
 
     bool usingAppleInternalSDK() const;
 
+    struct NowPlayingState {
+        String title;
+        double duration;
+        double elapsedTime;
+        uint64_t uniqueIdentifier;
+        bool hasActiveSession;
+        bool registeredAsNowPlayingApplication;
+    };
+    ExceptionOr<NowPlayingState> nowPlayingState() const;
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;
