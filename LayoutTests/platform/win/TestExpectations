@@ -4082,3 +4082,8 @@ webkit.org/b/185075 css3/color-filters/color-filter-text-emphasis.html [ ImageOn
 
 webkit.org/b/185471 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Skip ]
 webkit.org/b/185471 http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ Skip ]
+
+webkit.org/b/185678 animations/keyframes-dynamic.html [ Failure ]
+webkit.org/b/185678 animations/missing-from-to-transforms.html [ Failure ]
+webkit.org/b/185678 animations/missing-from-to.html [ Failure ]
+webkit.org/b/185678 fast/css-generated-content/pseudo-animation.html [ Failure ]
