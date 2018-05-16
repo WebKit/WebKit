@@ -1,3 +1,10 @@
+2018-05-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Unreviewed gardening before WinCairoRequirements update.
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/fast/dom/adopt-node-crash-2-expected.txt: Added.
+
 2018-05-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/mozilla/css-transitions/test_event-dispatch.html as flaky.
