@@ -1,3 +1,17 @@
+2018-05-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        PasteboardWebContent's dataInAttributedStringFormat fails to deserialize in the UI process when copying a selection
+        https://bugs.webkit.org/show_bug.cgi?id=185667
+        <rdar://problem/40135132>
+
+        Reviewed by Tim Horton.
+
+        Fixes error logging emitted when copying a text selection due to the secure archiver on iOS being unable to
+        handle NSAttributedString in the builds where the errors manifest. USE_SECURE_ARCHIVER_FOR_ATTRIBUTED_STRING is
+        defined to be 1, despite not having the fix for <rdar://problem/31376830>.
+
+        * pal/spi/cocoa/NSKeyedArchiverSPI.h:
+
 2018-05-11  Dan Bernstein  <mitz@apple.com>
 
         Follow-up build fix to r231721.
