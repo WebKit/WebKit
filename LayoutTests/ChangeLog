@@ -1,3 +1,17 @@
+2018-05-16  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION (r230574): Interrupted hardware transitions don't behave correctly
+        https://bugs.webkit.org/show_bug.cgi?id=185299
+        <rdar://problem/39630230>
+
+        Reviewed by Simon Fraser.
+
+        Add a new test where we interrupt a transition and check that upon returning to the original value,
+        an animated value is still used and not the initial value. This test fails prior to this patch.
+
+        * transitions/interrupted-transition-hardware-expected.html: Added.
+        * transitions/interrupted-transition-hardware.html: Added.
+
 2018-05-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r231765.

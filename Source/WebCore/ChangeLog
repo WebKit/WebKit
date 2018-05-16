@@ -1,3 +1,27 @@
+2018-05-16  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION (r230574): Interrupted hardware transitions don't behave correctly
+        https://bugs.webkit.org/show_bug.cgi?id=185299
+        <rdar://problem/39630230>
+
+        Reviewed by Simon Fraser.
+
+        In r230574, the fix for webkit.org/b/184518, we changed the processing order in GraphicsLayerCA::updateAnimations() to first
+        process m_uncomittedAnimations and then m_animationsToProcess, so we are guaranteed animations exist before we attempt to pause
+        or seek them. This broke interrupting and resuming hardware animations (such as an interrupted CSS Transition or an animation
+        running in a non-visible tab) since a pause operation recorded _before_ an animation was added would be paused anyway since
+        the animation was now first added, and then paused. The fix is simply to clear any pending AnimationProcessingAction for a
+        newly-uncommitted animation.
+
+        Test: transitions/interrupted-transition-hardware.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createAnimationFromKeyframes):
+        (WebCore::GraphicsLayerCA::appendToUncommittedAnimations):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::LayerPropertyAnimation::LayerPropertyAnimation):
+
 2018-05-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Check TypeInfo first before calling getCallData when we would like to check whether given object is a function

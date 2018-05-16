@@ -459,8 +459,29 @@ private:
         moveOrCopyAnimations(Copy, fromLayer, toLayer);
     }
 
+    // This represents the animation of a single property. There may be multiple transform animations for
+    // a single transition or keyframe animation, so index is used to distinguish these.
+    struct LayerPropertyAnimation {
+        LayerPropertyAnimation(Ref<PlatformCAAnimation>&& caAnimation, const String& animationName, AnimatedPropertyID property, int index, int subIndex, Seconds timeOffset)
+            : m_animation(WTFMove(caAnimation))
+            , m_name(animationName)
+            , m_property(property)
+            , m_index(index)
+            , m_subIndex(subIndex)
+            , m_timeOffset(timeOffset)
+        { }
+
+        RefPtr<PlatformCAAnimation> m_animation;
+        String m_name;
+        AnimatedPropertyID m_property;
+        int m_index;
+        int m_subIndex;
+        Seconds m_timeOffset;
+    };
+
     bool appendToUncommittedAnimations(const KeyframeValueList&, const TransformOperations*, const Animation*, const String& animationName, const FloatSize& boxSize, int animationIndex, Seconds timeOffset, bool isMatrixAnimation);
     bool appendToUncommittedAnimations(const KeyframeValueList&, const FilterOperation*, const Animation*, const String& animationName, int animationIndex, Seconds timeOffset);
+    void appendToUncommittedAnimations(LayerPropertyAnimation&&);
 
     enum LayerChange : uint64_t {
         NoChange                                = 0,
@@ -571,26 +592,6 @@ private:
 
     RetainPtr<CGImageRef> m_uncorrectedContentsImage;
     RetainPtr<CGImageRef> m_pendingContentsImage;
-    
-    // This represents the animation of a single property. There may be multiple transform animations for
-    // a single transition or keyframe animation, so index is used to distinguish these.
-    struct LayerPropertyAnimation {
-        LayerPropertyAnimation(Ref<PlatformCAAnimation>&& caAnimation, const String& animationName, AnimatedPropertyID property, int index, int subIndex, Seconds timeOffset)
-            : m_animation(WTFMove(caAnimation))
-            , m_name(animationName)
-            , m_property(property)
-            , m_index(index)
-            , m_subIndex(subIndex)
-            , m_timeOffset(timeOffset)
-        { }
-
-        RefPtr<PlatformCAAnimation> m_animation;
-        String m_name;
-        AnimatedPropertyID m_property;
-        int m_index;
-        int m_subIndex;
-        Seconds m_timeOffset;
-    };
     
     // Uncommitted transitions and animations.
     Vector<LayerPropertyAnimation> m_uncomittedAnimations;
