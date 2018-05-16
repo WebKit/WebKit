@@ -42,16 +42,14 @@
 
         const test = document.getElementById("test");
 
-        requestAnimationFrame(() => {
+        setTimeout(() => {
             test.classList.add("transitions");
-            requestAnimationFrame(() => {
+            setTimeout(() => {
                 test.classList.remove("transitions");
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        if (window.testRunner)
-                            testRunner.notifyDone();
-                    });
-                });
+                setTimeout(() => {
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }, 500);
             });
         });
         

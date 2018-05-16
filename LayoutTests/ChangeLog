@@ -2,6 +2,15 @@
 
         REGRESSION (r230574): Interrupted hardware transitions don't behave correctly
         https://bugs.webkit.org/show_bug.cgi?id=185299
+
+        Unreviewed. Attempt to make this test more robust.
+
+        * transitions/interrupted-transition-hardware.html:
+
+2018-05-16  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION (r230574): Interrupted hardware transitions don't behave correctly
+        https://bugs.webkit.org/show_bug.cgi?id=185299
         <rdar://problem/39630230>
 
         Reviewed by Simon Fraser.
