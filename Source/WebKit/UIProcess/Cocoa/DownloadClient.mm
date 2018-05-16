@@ -76,6 +76,10 @@ void DownloadClient::didStart(WebProcessPool&, DownloadProxy& downloadProxy)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
+        if (auto* webPage = downloadProxy.originatingPage()) {
+            // FIXME: Update the MIME-type once it is known in the ResourceResponse.
+            webPage->systemPreviewController()->start(ASCIILiteral { "application/octet-stream" });
+        }
         takeActivityToken(downloadProxy);
         return;
     }
@@ -91,10 +95,8 @@ void DownloadClient::didReceiveResponse(WebProcessPool&, DownloadProxy& download
     if (downloadProxy.isSystemPreviewDownload()) {
         downloadProxy.setExpectedContentLength(response.expectedContentLength());
         downloadProxy.setBytesLoaded(0);
-        if (auto* webPage = downloadProxy.originatingPage()) {
-            webPage->systemPreviewController()->start(response.mimeType());
+        if (auto* webPage = downloadProxy.originatingPage())
             webPage->systemPreviewController()->updateProgress(0);
-        }
         return;
     }
 #endif
