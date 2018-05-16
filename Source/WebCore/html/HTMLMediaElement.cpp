@@ -578,8 +578,23 @@ void HTMLMediaElement::finishInitialization()
     mediaSession().clientWillBeginAutoplaying();
 }
 
+// FIXME: Remove this code once https://webkit.org/b/185284 is fixed.
+static unsigned s_destructorCount = 0;
+
+bool HTMLMediaElement::isRunningDestructor()
+{
+    return !!s_destructorCount;
+}
+
+class HTMLMediaElementDestructorScope {
+public:
+    HTMLMediaElementDestructorScope() { ++s_destructorCount; }
+    ~HTMLMediaElementDestructorScope() { --s_destructorCount; }
+};
+
 HTMLMediaElement::~HTMLMediaElement()
 {
+    HTMLMediaElementDestructorScope destructorScope;
     ALWAYS_LOG(LOGIDENTIFIER);
 
     beginIgnoringTrackDisplayUpdateRequests();
