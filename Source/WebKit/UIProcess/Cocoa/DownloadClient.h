@@ -60,11 +60,16 @@ private:
     void didCreateDestination(WebProcessPool&, DownloadProxy&, const String&) final;
     void processDidCrash(WebProcessPool&, DownloadProxy&) final;
 
-#if PLATFORM(IOS) && USE(SYSTEM_PREVIEW)
-    void releaseActivityToken(DownloadProxy&);
+#if USE(SYSTEM_PREVIEW)
+    void takeActivityToken(DownloadProxy&);
+    void releaseActivityTokenIfNecessary(DownloadProxy&);
 #endif
 
     WeakObjCPtr<id <_WKDownloadDelegate>> m_delegate;
+
+#if PLATFORM(IOS) && USE(SYSTEM_PREVIEW)
+    ProcessThrottler::BackgroundActivityToken m_activityToken { nullptr };
+#endif
 
     struct {
         bool downloadDidStart : 1;            
@@ -81,10 +86,6 @@ private:
         bool downloadDidCreateDestination : 1;
         bool downloadProcessDidCrash : 1;
     } m_delegateMethods;
-
-#if PLATFORM(IOS) && USE(SYSTEM_PREVIEW)
-    ProcessThrottler::BackgroundActivityToken m_activityToken;
-#endif
 };
 
 } // namespace WebKit
