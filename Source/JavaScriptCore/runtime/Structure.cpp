@@ -208,6 +208,7 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     ASSERT(!hasRareData());
     ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticSetterOrReadonlyProperties());
     ASSERT(hasGetterSetterProperties() || !m_classInfo->hasStaticSetterOrReadonlyProperties());
+    ASSERT(!this->typeInfo().overridesGetCallData() || m_classInfo->methodTable.getCallData != &JSCell::getCallData);
 }
 
 const ClassInfo Structure::s_info = { "Structure", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(Structure) };
@@ -243,6 +244,7 @@ Structure::Structure(VM& vm)
 
     ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticSetterOrReadonlyProperties());
     ASSERT(hasGetterSetterProperties() || !m_classInfo->hasStaticSetterOrReadonlyProperties());
+    ASSERT(!this->typeInfo().overridesGetCallData() || m_classInfo->methodTable.getCallData != &JSCell::getCallData);
 }
 
 Structure::Structure(VM& vm, Structure* previous, DeferredStructureTransitionWatchpointFire* deferred)
@@ -286,6 +288,7 @@ Structure::Structure(VM& vm, Structure* previous, DeferredStructureTransitionWat
         m_globalObject.set(vm, this, previous->m_globalObject.get());
     ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticSetterOrReadonlyProperties());
     ASSERT(hasGetterSetterProperties() || !m_classInfo->hasStaticSetterOrReadonlyProperties());
+    ASSERT(!this->typeInfo().overridesGetCallData() || m_classInfo->methodTable.getCallData != &JSCell::getCallData);
 }
 
 Structure::~Structure()

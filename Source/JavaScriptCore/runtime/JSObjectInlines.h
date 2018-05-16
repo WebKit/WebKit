@@ -48,7 +48,7 @@ void createListFromArrayLike(ExecState* exec, JSValue arrayLikeValue, RuntimeTyp
         JSValue next = arrayLikeValue.get(exec, index);
         RETURN_IF_EXCEPTION(scope, void());
         
-        RuntimeType type = runtimeTypeForValue(next);
+        RuntimeType type = runtimeTypeForValue(vm, next);
         if (!(type & legalTypesFilter)) {
             throwTypeError(exec, scope, errorMessage);
             return;

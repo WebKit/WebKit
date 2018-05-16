@@ -35,7 +35,7 @@ namespace JSC {
 class WEBCORE_EXPORT RuntimeMethod : public InternalFunction {
 public:
     typedef InternalFunction Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | TypeOfShouldCallGetCallData;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetCallData;
 
     template<typename CellType>
     static IsoSubspace* subspaceFor(VM& vm)

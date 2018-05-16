@@ -55,7 +55,7 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
     WebAssemblyFunction* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(vm, exec->jsCallee());
     if (!wasmFunction)
-        return JSValue::encode(throwException(exec, scope, createTypeError(exec, "expected a WebAssembly function", defaultSourceAppender, runtimeTypeForValue(exec->jsCallee()))));
+        return JSValue::encode(throwException(exec, scope, createTypeError(exec, "expected a WebAssembly function", defaultSourceAppender, runtimeTypeForValue(vm, exec->jsCallee()))));
     Wasm::SignatureIndex signatureIndex = wasmFunction->signatureIndex();
     const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
 

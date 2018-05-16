@@ -271,7 +271,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateFunc(ExecState* exec)
         JSObject* importObject = importArgument.getObject();
         if (UNLIKELY(!importArgument.isUndefined() && !importObject)) {
             promise->reject(exec, createTypeError(exec,
-                ASCIILiteral("second argument to WebAssembly.instantiate must be undefined or an Object"), defaultSourceAppender, runtimeTypeForValue(importArgument)));
+                ASCIILiteral("second argument to WebAssembly.instantiate must be undefined or an Object"), defaultSourceAppender, runtimeTypeForValue(vm, importArgument)));
             CLEAR_AND_RETURN_IF_EXCEPTION(catchScope, JSValue::encode(promise->promise()));
         } else {
             JSValue firstArgument = exec->argument(0);
@@ -340,7 +340,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateStreamingInternal(ExecState* 
         JSObject* importObject = importArgument.getObject();
         if (UNLIKELY(!importArgument.isUndefined() && !importObject)) {
             promise->reject(exec, createTypeError(exec,
-                ASCIILiteral("second argument to WebAssembly.instantiateStreaming must be undefined or an Object"), defaultSourceAppender, runtimeTypeForValue(importArgument)));
+                ASCIILiteral("second argument to WebAssembly.instantiateStreaming must be undefined or an Object"), defaultSourceAppender, runtimeTypeForValue(vm, importArgument)));
             CLEAR_AND_RETURN_IF_EXCEPTION(catchScope, JSValue::encode(promise->promise()));
         } else {
             if (globalObject->globalObjectMethodTable()->instantiateStreaming) {

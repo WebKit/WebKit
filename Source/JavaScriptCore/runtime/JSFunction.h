@@ -69,7 +69,7 @@ public:
     }
     
     typedef JSCallee Base;
-    const static unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
+    const static unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames | OverridesGetCallData;
 
     static size_t allocationSize(Checked<size_t> inlineCapacity)
     {

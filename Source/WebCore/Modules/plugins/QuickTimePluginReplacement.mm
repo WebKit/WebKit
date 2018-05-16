@@ -159,7 +159,7 @@ bool QuickTimePluginReplacement::ensureReplacementScriptInjected()
     JSC::ExecState* exec = globalObject->globalExec();
     
     JSC::JSValue replacementFunction = globalObject->get(exec, JSC::Identifier::fromString(exec, "createPluginReplacement"));
-    if (replacementFunction.isFunction())
+    if (replacementFunction.isFunction(vm))
         return true;
     
     scriptController.evaluateInWorld(ScriptSourceCode(quickTimePluginReplacementScript()), world);

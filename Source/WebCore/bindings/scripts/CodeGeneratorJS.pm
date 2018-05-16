@@ -2634,7 +2634,7 @@ sub GenerateHeader
     if (InstanceOverridesGetCallData($interface)) {
         push(@headerContent, "    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);\n\n");
         $headerIncludes{"<JavaScriptCore/CallData.h>"} = 1;
-        $structureFlags{"JSC::TypeOfShouldCallGetCallData"} = 1;
+        $structureFlags{"JSC::OverridesGetCallData"} = 1;
     }
     
     if ($interface->extendedAttributes->{CustomGetPrototype}) {
@@ -3419,7 +3419,7 @@ sub GenerateOverloadDispatcher
             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->type() == ErrorInstanceType");
 
             $overload = GetOverloadThatMatches($S, $d, \&$isObjectOrCallbackFunctionParameter);
-            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isFunction()");
+            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isFunction(vm)");
 
             # FIXME: Avoid invoking GetMethod(object, Symbol.iterator) again in convert<IDLSequence<T>>(...).
             $overload = GetOverloadThatMatches($S, $d, \&$isSequenceOrFrozenArrayParameter);

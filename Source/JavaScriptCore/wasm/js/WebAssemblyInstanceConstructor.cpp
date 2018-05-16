@@ -66,13 +66,13 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
     // If moduleObject is not a WebAssembly.Module instance, a TypeError is thrown.
     JSWebAssemblyModule* module = jsDynamicCast<JSWebAssemblyModule*>(vm, exec->argument(0));
     if (!module)
-        return JSValue::encode(throwException(exec, scope, createTypeError(exec, ASCIILiteral("first argument to WebAssembly.Instance must be a WebAssembly.Module"), defaultSourceAppender, runtimeTypeForValue(exec->argument(0)))));
+        return JSValue::encode(throwException(exec, scope, createTypeError(exec, ASCIILiteral("first argument to WebAssembly.Instance must be a WebAssembly.Module"), defaultSourceAppender, runtimeTypeForValue(vm, exec->argument(0)))));
 
     // If the importObject parameter is not undefined and Type(importObject) is not Object, a TypeError is thrown.
     JSValue importArgument = exec->argument(1);
     JSObject* importObject = importArgument.getObject();
     if (!importArgument.isUndefined() && !importObject)
-        return JSValue::encode(throwException(exec, scope, createTypeError(exec, ASCIILiteral("second argument to WebAssembly.Instance must be undefined or an Object"), defaultSourceAppender, runtimeTypeForValue(importArgument))));
+        return JSValue::encode(throwException(exec, scope, createTypeError(exec, ASCIILiteral("second argument to WebAssembly.Instance must be undefined or an Object"), defaultSourceAppender, runtimeTypeForValue(vm, importArgument))));
     
     Structure* instanceStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), exec->lexicalGlobalObject()->WebAssemblyInstanceStructure());
     RETURN_IF_EXCEPTION(scope, { });

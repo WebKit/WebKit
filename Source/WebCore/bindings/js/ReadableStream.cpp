@@ -79,7 +79,7 @@ void ReadableStream::pipeTo(ReadableStreamSink& sink)
     const Identifier& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamPipeToPrivateName();
 
     auto readableStreamPipeTo = m_globalObject->get(&state, privateName);
-    ASSERT(readableStreamPipeTo.isFunction());
+    ASSERT(readableStreamPipeTo.isFunction(state.vm()));
 
     MarkedArgumentBuffer arguments;
     arguments.append(readableStream());
@@ -95,7 +95,7 @@ std::pair<Ref<ReadableStream>, Ref<ReadableStream>> ReadableStream::tee()
     const Identifier& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamTeePrivateName();
 
     auto readableStreamTee = m_globalObject->get(&state, privateName);
-    ASSERT(readableStreamTee.isFunction());
+    ASSERT(readableStreamTee.isFunction(state.vm()));
 
     MarkedArgumentBuffer arguments;
     arguments.append(readableStream());

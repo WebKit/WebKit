@@ -44,7 +44,7 @@ class NPRuntimeObjectMap;
 class JSNPObject final : public JSC::JSDestructibleObject {
 public:
     typedef JSC::JSDestructibleObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | JSC::TypeOfShouldCallGetCallData;
+    static const unsigned StructureFlags = Base::StructureFlags | JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | JSC::OverridesGetCallData;
 
     template<typename CellType>
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)

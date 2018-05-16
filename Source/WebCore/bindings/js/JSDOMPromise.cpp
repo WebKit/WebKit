@@ -64,7 +64,7 @@ void DOMPromise::whenSettled(std::function<void()>&& callback)
     const JSC::Identifier& privateName = vm.propertyNames->builtinNames().thenPrivateName();
     auto* promise = this->promise();
     auto thenFunction = promise->get(&state, privateName);
-    ASSERT(thenFunction.isFunction());
+    ASSERT(thenFunction.isFunction(vm));
 
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(handler);

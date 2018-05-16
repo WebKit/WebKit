@@ -218,9 +218,8 @@ public:
 
     // Querying the type.
     bool isEmpty() const;
-    bool isFunction() const;
-    bool isFunction(CallType&, CallData&) const;
-    bool isCallable(CallType&, CallData&) const;
+    bool isFunction(VM&) const;
+    bool isCallable(VM&, CallType&, CallData&) const;
     bool isConstructor() const;
     bool isConstructor(ConstructType&, ConstructData&) const;
     bool isUndefined() const;

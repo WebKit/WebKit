@@ -1,3 +1,40 @@
+2018-05-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Check TypeInfo first before calling getCallData when we would like to check whether given object is a function
+        https://bugs.webkit.org/show_bug.cgi?id=185601
+
+        Reviewed by Saam Barati.
+
+        No behavior change.
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::ensureReplacementScriptInjected):
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        (WebCore::getCustomElementCallback):
+        * bindings/js/JSDOMConstructorBase.h:
+        * bindings/js/JSDOMConvertCallbacks.h:
+        (WebCore::Converter<IDLCallbackFunction<T>>::convert):
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::DOMPromise::whenSettled):
+        * bindings/js/ReadableStream.cpp:
+        (WebCore::ReadableStream::pipeTo):
+        (WebCore::ReadableStream::tee):
+        * bindings/js/ReadableStreamDefaultController.cpp:
+        (WebCore::ReadableStreamDefaultController::invoke):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateOverloadDispatcher):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestPluginInterface.h:
+        * bridge/objc/objc_runtime.h:
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::ensureMediaControlsInjectedScript):
+        * testing/Internals.cpp:
+        (WebCore::Internals::parserMetaData):
+        (WebCore::Internals::cloneArrayBuffer):
+
 2018-05-15  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: element details hanger in inspector overlay should have better placement logic

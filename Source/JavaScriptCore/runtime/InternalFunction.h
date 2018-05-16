@@ -36,7 +36,7 @@ class InternalFunction : public JSDestructibleObject {
     friend class LLIntOffsetsExtractor;
 public:
     typedef JSDestructibleObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance | ImplementsDefaultHasInstance | TypeOfShouldCallGetCallData;
+    static const unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance | ImplementsDefaultHasInstance | OverridesGetCallData;
 
     template<typename CellType>
     static IsoSubspace* subspaceFor(VM& vm)

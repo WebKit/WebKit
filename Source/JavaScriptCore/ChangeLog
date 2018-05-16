@@ -1,3 +1,102 @@
+2018-05-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Check TypeInfo first before calling getCallData when we would like to check whether given object is a function
+        https://bugs.webkit.org/show_bug.cgi?id=185601
+
+        Reviewed by Saam Barati.
+
+        Rename TypeOfShouldCallGetCallData to OverridesGetCallData. And check OverridesGetCallData
+        before calling getCallData when we would like to check whether a given object is callable
+        since getCallData is a virtual call. When we call the object anyway, directly calling getCallData
+        is fine. But if we would like to check whether the object is callable, we can have non
+        callable objects frequently. In that case, we should not call getCallData if we can avoid it.
+
+        To do this cleanly, we refactor JSValue::{isFunction,isCallable}. We add JSCell::{isFunction,isCallable}
+        and JSValue ones call into these functions. Inside JSCell::{isFunction,isCallable}, we perform
+        OverridesGetCallData checking before calling getCallData.
+
+        We found that this virtual call exists in JSON.stringify's critial path. Checking
+        OverridesGetCallData improves Kraken/json-stringify-tinderbox by 2-4%.
+
+                                               baseline                  patched
+
+            json-stringify-tinderbox        38.807+-0.350      ^      37.216+-0.337         ^ definitely 1.0427x faster
+
+        In addition to that, we also add OverridesGetCallData flag to JSFunction while we keep JSFunctionType checking fast path
+        since major cases are covered by this fast JSFunctionType checking.
+
+        * API/JSCallbackObject.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIsObjectOrNull):
+        (JSC::DFG::SpeculativeJIT::compileIsFunction):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::isExoticForTypeof):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitTypeOf):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createError):
+        (JSC::createInvalidFunctionApplyParameterError):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * runtime/InternalFunction.h:
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::isFunction const):
+        (JSC::JSValue::isCallable const):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::isFunction):
+        ALWAYS_INLINE works well for my environment.
+        (JSC::JSCell::isCallable):
+        * runtime/JSFunction.h:
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::toJSON):
+        (JSC::Stringifier::toJSONImpl):
+        (JSC::Stringifier::appendStringifiedValue):
+        * runtime/JSObjectInlines.h:
+        (JSC::createListFromArrayLike):
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::overridesGetCallData const):
+        (JSC::TypeInfo::typeOfShouldCallGetCallData const): Deleted.
+        * runtime/Operations.cpp:
+        (JSC::jsTypeStringForValue):
+        (JSC::jsIsObjectTypeOrNull):
+        * runtime/ProxyObject.h:
+        * runtime/RuntimeType.cpp:
+        (JSC::runtimeTypeForValue):
+        * runtime/RuntimeType.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        * runtime/TypeProfilerLog.cpp:
+        (JSC::TypeProfilerLog::TypeProfilerLog):
+        (JSC::TypeProfilerLog::processLogEntries):
+        * runtime/TypeProfilerLog.h:
+        * runtime/VM.cpp:
+        (JSC::VM::enableTypeProfiler):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionFindTypeForExpression):
+        (JSC::functionReturnTypeFor):
+        (JSC::functionHasBasicBlockExecuted):
+        (JSC::functionBasicBlockExecutionCount):
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::getWasmBufferFromValue):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::create):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::webAssemblyInstantiateFunc):
+        (JSC::webAssemblyInstantiateStreamingInternal):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::finishCreation):
+
 2018-05-15  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Add rulers and guides

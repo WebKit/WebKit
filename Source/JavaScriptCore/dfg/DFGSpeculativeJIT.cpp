@@ -8756,7 +8756,7 @@ void SpeculativeJIT::compileIsObjectOrNull(Node* node)
     JITCompiler::Jump slowPath = m_jit.branchTest8(
         JITCompiler::NonZero,
         JITCompiler::Address(valueRegs.payloadGPR(), JSCell::typeInfoFlagsOffset()),
-        TrustedImm32(MasqueradesAsUndefined | TypeOfShouldCallGetCallData));
+        TrustedImm32(MasqueradesAsUndefined | OverridesGetCallData));
     
     isNull.link(&m_jit);
     m_jit.move(TrustedImm32(1), resultGPR);
@@ -8794,7 +8794,7 @@ void SpeculativeJIT::compileIsFunction(Node* node)
     JITCompiler::Jump slowPath = m_jit.branchTest8(
         JITCompiler::NonZero,
         JITCompiler::Address(valueRegs.payloadGPR(), JSCell::typeInfoFlagsOffset()),
-        TrustedImm32(MasqueradesAsUndefined | TypeOfShouldCallGetCallData));
+        TrustedImm32(MasqueradesAsUndefined | OverridesGetCallData));
     
     notCell.link(&m_jit);
     notObject.link(&m_jit);

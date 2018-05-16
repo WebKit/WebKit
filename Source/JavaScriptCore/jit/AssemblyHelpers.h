@@ -1528,7 +1528,7 @@ public:
             branchTest8(
                 NonZero,
                 Address(cellGPR, JSCell::typeInfoFlagsOffset()),
-                TrustedImm32(MasqueradesAsUndefined | TypeOfShouldCallGetCallData)));
+                TrustedImm32(MasqueradesAsUndefined | OverridesGetCallData)));
         functor(TypeofType::Object, false);
         
         notObject.link(this);

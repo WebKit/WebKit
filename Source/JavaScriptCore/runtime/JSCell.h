@@ -115,6 +115,8 @@ public:
     bool isGetterSetter() const;
     bool isCustomGetterSetter() const;
     bool isProxy() const;
+    bool isFunction(VM&);
+    bool isCallable(VM&, CallType&, CallData&);
     bool inherits(VM&, const ClassInfo*) const;
     template<typename Target> bool inherits(VM&) const;
     bool isAPIValueWrapper() const;
@@ -153,7 +155,7 @@ public:
         
     // Returns information about how to call/construct this cell as a function/constructor. May tell
     // you that the cell is not callable or constructor (default is that it's not either). If it
-    // says that the function is callable, and the TypeOfShouldCallGetCallData type flag is set, and
+    // says that the function is callable, and the OverridesGetCallData type flag is set, and
     // this is an object, then typeof will return "function" instead of "object". These methods
     // cannot change their minds and must be thread-safe. They are sometimes called from compiler
     // threads.

@@ -1614,7 +1614,7 @@ static EncodedJSValue JSC_HOST_CALL functionFindTypeForExpression(ExecState* exe
     vm.typeProfilerLog()->processLogEntries(ASCIILiteral("jsc Testing API: functionFindTypeForExpression"));
 
     JSValue functionValue = exec->argument(0);
-    RELEASE_ASSERT(functionValue.isFunction());
+    RELEASE_ASSERT(functionValue.isFunction(vm));
     FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(vm, functionValue.asCell()->getObject()))->jsExecutable();
 
     RELEASE_ASSERT(exec->argument(1).isString());
@@ -1633,7 +1633,7 @@ static EncodedJSValue JSC_HOST_CALL functionReturnTypeFor(ExecState* exec)
     vm.typeProfilerLog()->processLogEntries(ASCIILiteral("jsc Testing API: functionReturnTypeFor"));
 
     JSValue functionValue = exec->argument(0);
-    RELEASE_ASSERT(functionValue.isFunction());
+    RELEASE_ASSERT(functionValue.isFunction(vm));
     FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(vm, functionValue.asCell()->getObject()))->jsExecutable();
 
     unsigned offset = executable->typeProfilingStartOffset();
@@ -1655,7 +1655,7 @@ static EncodedJSValue JSC_HOST_CALL functionHasBasicBlockExecuted(ExecState* exe
     RELEASE_ASSERT(vm.controlFlowProfiler());
 
     JSValue functionValue = exec->argument(0);
-    RELEASE_ASSERT(functionValue.isFunction());
+    RELEASE_ASSERT(functionValue.isFunction(vm));
     FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(vm, functionValue.asCell()->getObject()))->jsExecutable();
 
     RELEASE_ASSERT(exec->argument(1).isString());
@@ -1674,7 +1674,7 @@ static EncodedJSValue JSC_HOST_CALL functionBasicBlockExecutionCount(ExecState* 
     RELEASE_ASSERT(vm.controlFlowProfiler());
 
     JSValue functionValue = exec->argument(0);
-    RELEASE_ASSERT(functionValue.isFunction());
+    RELEASE_ASSERT(functionValue.isFunction(vm));
     FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(vm, functionValue.asCell()->getObject()))->jsExecutable();
 
     RELEASE_ASSERT(exec->argument(1).isString());

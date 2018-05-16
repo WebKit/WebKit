@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-RuntimeType runtimeTypeForValue(JSValue value)
+RuntimeType runtimeTypeForValue(VM& vm, JSValue value)
 {
     if (UNLIKELY(!value))
         return TypeNothing;
@@ -51,7 +51,7 @@ RuntimeType runtimeTypeForValue(JSValue value)
         return TypeBoolean;
     if (value.isObject())
         return TypeObject;
-    if (value.isFunction())
+    if (value.isFunction(vm))
         return TypeFunction;
     if (value.isSymbol())
         return TypeSymbol;

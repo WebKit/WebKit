@@ -111,7 +111,7 @@ private:
     friend class Holder;
 
     JSValue toJSON(JSValue, const PropertyNameForFunctionCall&);
-    JSValue toJSONImpl(JSValue value, JSValue toJSONFunction, const PropertyNameForFunctionCall&);
+    JSValue toJSONImpl(VM&, JSValue, JSValue toJSONFunction, const PropertyNameForFunctionCall&);
 
     enum StringifyResult { StringifyFailed, StringifySucceeded, StringifyFailedDueToUndefinedOrSymbolValue };
     StringifyResult appendStringifiedValue(StringBuilder&, JSValue, const Holder&, const PropertyNameForFunctionCall&);
@@ -299,14 +299,14 @@ ALWAYS_INLINE JSValue Stringifier::toJSON(JSValue value, const PropertyNameForFu
     JSValue toJSONFunction = slot.getValue(m_exec, vm.propertyNames->toJSON);
     RETURN_IF_EXCEPTION(scope, { });
     scope.release();
-    return toJSONImpl(value, toJSONFunction, propertyName);
+    return toJSONImpl(vm, value, toJSONFunction, propertyName);
 }
 
-JSValue Stringifier::toJSONImpl(JSValue value, JSValue toJSONFunction, const PropertyNameForFunctionCall& propertyName)
+JSValue Stringifier::toJSONImpl(VM& vm, JSValue value, JSValue toJSONFunction, const PropertyNameForFunctionCall& propertyName)
 {
     CallType callType;
     CallData callData;
-    if (!toJSONFunction.isCallable(callType, callData))
+    if (!toJSONFunction.isCallable(vm, callType, callData))
         return value;
 
     MarkedArgumentBuffer args;
@@ -380,9 +380,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         return StringifyFailed;
 
     JSObject* object = asObject(value);
-
-    CallData callData;
-    if (object->methodTable(vm)->getCallData(object, callData) != CallType::None) {
+    if (object->isFunction(vm)) {
         if (holder.isArray()) {
             builder.appendLiteral("null");
             return StringifySucceeded;

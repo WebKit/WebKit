@@ -7090,7 +7090,7 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
     JSC::ExecState* exec = globalObject->globalExec();
 
     JSC::JSValue functionValue = globalObject->get(exec, JSC::Identifier::fromString(exec, "createControls"));
-    if (functionValue.isFunction())
+    if (functionValue.isFunction(vm))
         return true;
 
 #ifndef NDEBUG

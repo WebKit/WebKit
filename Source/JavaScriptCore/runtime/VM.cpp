@@ -1043,7 +1043,7 @@ bool VM::enableTypeProfiler()
 {
     auto enableTypeProfiler = [this] () {
         this->m_typeProfiler = std::make_unique<TypeProfiler>();
-        this->m_typeProfilerLog = std::make_unique<TypeProfilerLog>();
+        this->m_typeProfilerLog = std::make_unique<TypeProfilerLog>(*this);
     };
 
     return enableProfilerWithRespectToCount(m_typeProfilerEnabledCount, enableTypeProfiler);

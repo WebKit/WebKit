@@ -218,6 +218,25 @@ inline bool JSCell::isProxy() const
     return m_type == ImpureProxyType || m_type == PureForwardingProxyType;
 }
 
+ALWAYS_INLINE bool JSCell::isFunction(VM& vm)
+{
+    if (type() == JSFunctionType)
+        return true;
+    if (inlineTypeFlags() & OverridesGetCallData) {
+        CallData ignoredCallData;
+        return methodTable(vm)->getCallData(this, ignoredCallData) != CallType::None;
+    }
+    return false;
+}
+
+inline bool JSCell::isCallable(VM& vm, CallType& callType, CallData& callData)
+{
+    if (type() != JSFunctionType && !(inlineTypeFlags() & OverridesGetCallData))
+        return false;
+    callType = methodTable(vm)->getCallData(this, callData);
+    return callType != CallType::None;
+}
+
 inline bool JSCell::isAPIValueWrapper() const
 {
     return m_type == APIValueWrapperType;

@@ -1741,14 +1741,8 @@ size_t JIT_OPERATION operationObjectIsObject(ExecState* exec, JSGlobalObject* gl
     
     if (object->structure(vm)->masqueradesAsUndefined(globalObject))
         return false;
-    if (object->type() == JSFunctionType)
+    if (object->isFunction(vm))
         return false;
-    if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
-        CallData callData;
-        if (object->methodTable(vm)->getCallData(object, callData) != CallType::None)
-            return false;
-    }
-    
     return true;
 }
 
@@ -1761,14 +1755,8 @@ size_t JIT_OPERATION operationObjectIsFunction(ExecState* exec, JSGlobalObject* 
     
     if (object->structure(vm)->masqueradesAsUndefined(globalObject))
         return false;
-    if (object->type() == JSFunctionType)
+    if (object->isFunction(vm))
         return true;
-    if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
-        CallData callData;
-        if (object->methodTable(vm)->getCallData(object, callData) != CallType::None)
-            return true;
-    }
-    
     return false;
 }
 
@@ -1781,14 +1769,8 @@ JSCell* JIT_OPERATION operationTypeOfObject(ExecState* exec, JSGlobalObject* glo
     
     if (object->structure(vm)->masqueradesAsUndefined(globalObject))
         return vm.smallStrings.undefinedString();
-    if (object->type() == JSFunctionType)
+    if (object->isFunction(vm))
         return vm.smallStrings.functionString();
-    if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
-        CallData callData;
-        if (object->methodTable(vm)->getCallData(object, callData) != CallType::None)
-            return vm.smallStrings.functionString();
-    }
-    
     return vm.smallStrings.objectString();
 }
 
@@ -1801,14 +1783,8 @@ int32_t JIT_OPERATION operationTypeOfObjectAsTypeofType(ExecState* exec, JSGloba
     
     if (object->structure(vm)->masqueradesAsUndefined(globalObject))
         return static_cast<int32_t>(TypeofType::Undefined);
-    if (object->type() == JSFunctionType)
+    if (object->isFunction(vm))
         return static_cast<int32_t>(TypeofType::Function);
-    if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
-        CallData callData;
-        if (object->methodTable(vm)->getCallData(object, callData) != CallType::None)
-            return static_cast<int32_t>(TypeofType::Function);
-    }
-    
     return static_cast<int32_t>(TypeofType::Object);
 }
 

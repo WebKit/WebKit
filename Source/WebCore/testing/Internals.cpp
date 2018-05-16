@@ -2050,7 +2050,7 @@ String Internals::parserMetaData(JSC::JSValue code)
         exec->iterate(iter);
         CodeBlock* codeBlock = iter.codeBlock();
         executable = codeBlock->ownerScriptExecutable();
-    } else if (code.isFunction()) {
+    } else if (code.isFunction(vm)) {
         JSFunction* funcObj = JSC::jsCast<JSFunction*>(code.toObject(exec));
         executable = funcObj->jsExecutable();
     } else
@@ -4026,7 +4026,7 @@ JSValue Internals::cloneArrayBuffer(JSC::ExecState& state, JSValue buffer, JSVal
     PropertySlot propertySlot(value, PropertySlot::InternalMethodType::Get);
     globalObject->methodTable(vm)->getOwnPropertySlot(globalObject, &state, privateName, propertySlot);
     value = propertySlot.getValue(&state, privateName);
-    ASSERT(value.isFunction());
+    ASSERT(value.isFunction(vm));
 
     JSObject* function = value.getObject();
     CallData callData;

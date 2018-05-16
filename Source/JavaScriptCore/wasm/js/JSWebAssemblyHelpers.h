@@ -65,13 +65,13 @@ ALWAYS_INLINE std::pair<const uint8_t*, size_t> getWasmBufferFromValue(ExecState
     JSArrayBufferView* arrayBufferView = value.getObject() ? jsDynamicCast<JSArrayBufferView*>(vm, value.getObject()) : nullptr;
     if (!(arrayBuffer || arrayBufferView)) {
         throwException(exec, throwScope, createTypeError(exec,
-            ASCIILiteral("first argument must be an ArrayBufferView or an ArrayBuffer"), defaultSourceAppender, runtimeTypeForValue(value)));
+            ASCIILiteral("first argument must be an ArrayBufferView or an ArrayBuffer"), defaultSourceAppender, runtimeTypeForValue(vm, value)));
         return { nullptr, 0 };
     }
 
     if (arrayBufferView ? arrayBufferView->isNeutered() : arrayBuffer->impl()->isNeutered()) {
         throwException(exec, throwScope, createTypeError(exec,
-            ASCIILiteral("underlying TypedArray has been detatched from the ArrayBuffer"), defaultSourceAppender, runtimeTypeForValue(value)));
+            ASCIILiteral("underlying TypedArray has been detatched from the ArrayBuffer"), defaultSourceAppender, runtimeTypeForValue(vm, value)));
         return { nullptr, 0 };
     }
 

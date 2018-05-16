@@ -48,7 +48,7 @@ typedef uint16_t RuntimeTypeMask;
 static const RuntimeTypeMask RuntimeTypeMaskAllTypes = TypeFunction | TypeUndefined | TypeNull | TypeBoolean | TypeAnyInt | TypeNumber | TypeString | TypeObject | TypeSymbol;
 
 class JSValue;
-RuntimeType runtimeTypeForValue(JSValue);
+RuntimeType runtimeTypeForValue(VM&, JSValue);
 String runtimeTypeAsString(RuntimeType);
 
 ALWAYS_INLINE bool runtimeTypeIsPrimitive(RuntimeTypeMask type)

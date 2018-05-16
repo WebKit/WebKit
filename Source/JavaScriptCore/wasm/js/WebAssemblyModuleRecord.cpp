@@ -136,7 +136,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
             RETURN_IF_EXCEPTION(scope, void());
             // 2. If Type(o) is not Object, throw a TypeError.
             if (!importModuleValue.isObject())
-                return exception(createTypeError(exec, importFailMessage(import, "import", "must be an object"), defaultSourceAppender, runtimeTypeForValue(importModuleValue)));
+                return exception(createTypeError(exec, importFailMessage(import, "import", "must be an object"), defaultSourceAppender, runtimeTypeForValue(vm, importModuleValue)));
 
             // 3. Let v be the value of performing Get(o, i.item_name)
             JSObject* object = jsCast<JSObject*>(importModuleValue);
@@ -189,7 +189,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
         case Wasm::ExternalKind::Function: {
             // 4. If i is a function import:
             // i. If IsCallable(v) is false, throw a WebAssembly.LinkError.
-            if (!value.isFunction())
+            if (!value.isFunction(vm))
                 return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "import function", "must be callable")));
 
             Wasm::Instance* calleeInstance = nullptr;

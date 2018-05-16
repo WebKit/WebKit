@@ -270,7 +270,7 @@ JSObject* createError(ExecState* exec, JSValue value, const String& message, Err
 
     String errorMessage = makeString(errorDescriptionForValue(exec, value)->value(exec), ' ', message);
     scope.assertNoException();
-    JSObject* exception = createTypeError(exec, errorMessage, appender, runtimeTypeForValue(value));
+    JSObject* exception = createTypeError(exec, errorMessage, appender, runtimeTypeForValue(vm, value));
     ASSERT(exception->isErrorInstance());
 
     return exception;
@@ -278,7 +278,8 @@ JSObject* createError(ExecState* exec, JSValue value, const String& message, Err
 
 JSObject* createInvalidFunctionApplyParameterError(ExecState* exec, JSValue value)
 {
-    JSObject* exception = createTypeError(exec, makeString("second argument to Function.prototype.apply must be an Array-like object"), defaultSourceAppender, runtimeTypeForValue(value));
+    VM& vm = exec->vm();
+    JSObject* exception = createTypeError(exec, makeString("second argument to Function.prototype.apply must be an Array-like object"), defaultSourceAppender, runtimeTypeForValue(vm, value));
     ASSERT(exception->isErrorInstance());
     return exception;
 }

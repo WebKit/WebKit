@@ -49,7 +49,7 @@ static JSObject* getCustomElementCallback(ExecState& state, JSObject& prototype,
     RETURN_IF_EXCEPTION(scope, nullptr);
     if (callback.isUndefined())
         return nullptr;
-    if (!callback.isFunction()) {
+    if (!callback.isFunction(vm)) {
         throwTypeError(&state, scope, ASCIILiteral("A custom element callback must be a function"));
         return nullptr;
     }

@@ -93,7 +93,7 @@ private:
 class ObjcFallbackObjectImp : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | TypeOfShouldCallGetCallData;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetCallData;
 
     static ObjcFallbackObjectImp* create(ExecState* exec, JSGlobalObject* globalObject, ObjcInstance* instance, const String& propertyName)
     {

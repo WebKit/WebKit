@@ -218,7 +218,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, co
             RETURN_IF_EXCEPTION(throwScope, nullptr);
             // 2. If Type(o) is not Object, throw a TypeError.
             if (!importModuleValue.isObject())
-                return exception(createTypeError(exec, importFailMessage(import, "import", "must be an object"), defaultSourceAppender, runtimeTypeForValue(importModuleValue)));
+                return exception(createTypeError(exec, importFailMessage(import, "import", "must be an object"), defaultSourceAppender, runtimeTypeForValue(vm, importModuleValue)));
 
             // 3. Let v be the value of performing Get(o, i.item_name)
             JSObject* object = jsCast<JSObject*>(importModuleValue);

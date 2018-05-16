@@ -15100,7 +15100,7 @@ private:
             return m_out.booleanFalse;
         return m_out.testNonZero32(
             m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoFlags),
-            m_out.constInt32(MasqueradesAsUndefined | TypeOfShouldCallGetCallData));
+            m_out.constInt32(MasqueradesAsUndefined | OverridesGetCallData));
     }
 
     LValue isType(LValue cell, JSType type)

@@ -759,27 +759,18 @@ inline JSObject* JSValue::toObject(ExecState* exec, JSGlobalObject* globalObject
     return isCell() ? asCell()->toObject(exec, globalObject) : toObjectSlowCase(exec, globalObject);
 }
 
-inline bool JSValue::isFunction() const
+inline bool JSValue::isFunction(VM& vm) const
 {
     if (!isCell())
         return false;
-    JSCell* cell = asCell();
-    CallData ignored;
-    return cell->methodTable()->getCallData(cell, ignored) != CallType::None;
+    return asCell()->isFunction(vm);
 }
 
-inline bool JSValue::isFunction(CallType& callType, CallData& callData) const
-{
-    return isCallable(callType, callData);
-}
-
-inline bool JSValue::isCallable(CallType& callType, CallData& callData) const
+inline bool JSValue::isCallable(VM& vm, CallType& callType, CallData& callData) const
 {
     if (!isCell())
         return false;
-    JSCell* cell = asCell();
-    callType = cell->methodTable()->getCallData(cell, callData);
-    return callType != CallType::None;
+    return asCell()->isCallable(vm, callType, callData);
 }
 
 inline bool JSValue::isConstructor() const

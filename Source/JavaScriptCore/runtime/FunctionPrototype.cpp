@@ -125,14 +125,9 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
 
     if (thisValue.isObject()) {
         JSObject* object = asObject(thisValue);
-        if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
-            CallData callData;
-            if (object->methodTable(vm)->getCallData(object, callData) != CallType::None) {
-                if (auto* classInfo = object->classInfo(vm)) {
-                    scope.release();
-                    return JSValue::encode(jsMakeNontrivialString(exec, "function ", classInfo->className, "() {\n    [native code]\n}"));
-                }
-            }
+        if (object->isFunction(vm)) {
+            scope.release();
+            return JSValue::encode(jsMakeNontrivialString(exec, "function ", object->classInfo(vm)->className, "() {\n    [native code]\n}"));
         }
     }
 

@@ -1260,7 +1260,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     JSObject* object = asObject(child.value());
                     if (object->type() == JSFunctionType)
                         setConstant(node, jsBoolean(false));
-                    else if (!(object->inlineTypeFlags() & TypeOfShouldCallGetCallData))
+                    else if (!(object->inlineTypeFlags() & OverridesGetCallData))
                         setConstant(node, jsBoolean(!child.value().asCell()->structure()->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->origin.semantic))));
                     else {
                         // FIXME: This could just call getCallData.
@@ -1275,7 +1275,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     JSObject* object = asObject(child.value());
                     if (object->type() == JSFunctionType)
                         setConstant(node, jsBoolean(true));
-                    else if (!(object->inlineTypeFlags() & TypeOfShouldCallGetCallData))
+                    else if (!(object->inlineTypeFlags() & OverridesGetCallData))
                         setConstant(node, jsBoolean(false));
                     else {
                         // FIXME: This could just call getCallData.

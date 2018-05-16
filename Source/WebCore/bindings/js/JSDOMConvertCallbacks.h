@@ -40,7 +40,7 @@ template<typename T> struct Converter<IDLCallbackFunction<T>> : DefaultConverter
         JSC::VM& vm = state.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        if (!value.isFunction()) {
+        if (!value.isFunction(vm)) {
             exceptionThrower(state, scope);
             return nullptr;
         }

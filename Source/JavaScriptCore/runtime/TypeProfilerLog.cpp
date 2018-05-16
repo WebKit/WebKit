@@ -40,8 +40,9 @@ namespace TypeProfilerLogInternal {
 static const bool verbose = false;
 }
 
-TypeProfilerLog::TypeProfilerLog()
-    : m_logSize(50000)
+TypeProfilerLog::TypeProfilerLog(VM& vm)
+    : m_vm(vm)
+    , m_logSize(50000)
     , m_logStartPtr(new LogEntry[m_logSize])
     , m_currentLogEntryPtr(m_logStartPtr)
     , m_logEndPtr(m_logStartPtr + m_logSize)
@@ -95,7 +96,7 @@ void TypeProfilerLog::processLogEntries(const String& reason)
                 shape = iter->value;
         }
 
-        RuntimeType type = runtimeTypeForValue(value);
+        RuntimeType type = runtimeTypeForValue(m_vm, value);
         TypeLocation* location = entry->location;
         location->m_lastSeenType = type;
         if (location->m_globalTypeSet)

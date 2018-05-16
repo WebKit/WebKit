@@ -28,7 +28,7 @@ class JSDOMConstructorBase : public JSDOMObject {
 public:
     using Base = JSDOMObject;
 
-    static const unsigned StructureFlags = Base::StructureFlags | JSC::ImplementsHasInstance | JSC::ImplementsDefaultHasInstance | JSC::TypeOfShouldCallGetCallData;
+    static const unsigned StructureFlags = Base::StructureFlags | JSC::ImplementsHasInstance | JSC::ImplementsDefaultHasInstance | JSC::OverridesGetCallData;
     static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject*, JSC::JSValue);
 
 protected:

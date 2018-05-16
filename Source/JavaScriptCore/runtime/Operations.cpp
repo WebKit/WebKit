@@ -90,14 +90,8 @@ JSValue jsTypeStringForValue(VM& vm, JSGlobalObject* globalObject, JSValue v)
         // as null when doing comparisons.
         if (object->structure(vm)->masqueradesAsUndefined(globalObject))
             return vm.smallStrings.undefinedString();
-        if (object->type() == JSFunctionType)
+        if (object->isFunction(vm))
             return vm.smallStrings.functionString();
-        if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
-            CallData callData;
-            JSObject* object = asObject(v);
-            if (object->methodTable(vm)->getCallData(object, callData) != CallType::None)
-                return vm.smallStrings.functionString();
-        }
     }
     return vm.smallStrings.objectString();
 }
@@ -119,9 +113,8 @@ bool jsIsObjectTypeOrNull(CallFrame* callFrame, JSValue v)
     if (type >= ObjectType) {
         if (asObject(v)->structure(vm)->masqueradesAsUndefined(callFrame->lexicalGlobalObject()))
             return false;
-        CallData callData;
         JSObject* object = asObject(v);
-        if (object->methodTable(vm)->getCallData(object, callData) != CallType::None)
+        if (object->isFunction(vm))
             return false;
     }
     return true;
