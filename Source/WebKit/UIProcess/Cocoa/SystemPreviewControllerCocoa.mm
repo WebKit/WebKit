@@ -80,7 +80,9 @@ SOFT_LINK_CLASS(QuickLook, QLItem);
     _itemProvider = adoptNS([[NSItemProvider alloc] init]);
     NSString *contentType = @"public.content";
 #if USE(APPLE_INTERNAL_SDK)
-    contentType = WebKit::getUTIForMIMEType(self.mimeType);
+    // FIXME: We are launching the preview controller before getting a response from the resource, which
+    // means we don't actually know the real MIME type yet. Assume it is one of those that we registered.
+    contentType = WebKit::getUTIForMIMEType(*WebKit::getSystemPreviewMIMETypes().begin());
 #endif
     _item = adoptNS([allocQLItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0)]);
     [_item setUseLoadingTimeout:NO];
@@ -158,23 +160,22 @@ namespace WebKit {
 
 void SystemPreviewController::start(const String& mimeType)
 {
-    // FIXME: Make sure you can't show a preview if we're already previewing.
+    ASSERT(!m_qlPreviewController);
+    if (m_qlPreviewController)
+        return;
 
     UIViewController *presentingViewController = m_webPageProxy.uiClient().presentingViewController();
 
     if (!presentingViewController)
         return;
 
-    if (!m_qlPreviewController) {
-        m_qlPreviewController = adoptNS([allocQLPreviewControllerInstance() init]);
+    m_qlPreviewController = adoptNS([allocQLPreviewControllerInstance() init]);
 
-        m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:this]);
-        [m_qlPreviewController setDelegate:m_qlPreviewControllerDelegate.get()];
+    m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:this]);
+    [m_qlPreviewController setDelegate:m_qlPreviewControllerDelegate.get()];
 
-        m_qlPreviewControllerDataSource = adoptNS([[_WKPreviewControllerDataSource alloc] initWithMIMEType:mimeType]);
-        [m_qlPreviewController setDataSource:m_qlPreviewControllerDataSource.get()];
-
-    }
+    m_qlPreviewControllerDataSource = adoptNS([[_WKPreviewControllerDataSource alloc] initWithMIMEType:mimeType]);
+    [m_qlPreviewController setDataSource:m_qlPreviewControllerDataSource.get()];
 
     [presentingViewController presentViewController:m_qlPreviewController.get() animated:YES completion:nullptr];
 }
