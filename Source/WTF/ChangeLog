@@ -1,3 +1,13 @@
+2018-05-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, follow-up after r231762
+        https://bugs.webkit.org/show_bug.cgi?id=185589
+
+        Addresses darin's suggestions to improve timeClip.
+
+        * wtf/DateMath.cpp:
+        (WTF::timeClip):
+
 2018-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [Win] Use C++17 in MSVC

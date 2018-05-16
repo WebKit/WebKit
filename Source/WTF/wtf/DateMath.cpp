@@ -1155,11 +1155,9 @@ double parseDateFromNullTerminatedCharacters(const char* dateString)
 
 double timeClip(double t)
 {
-    if (!std::isfinite(t))
+    if (std::abs(t) > maxECMAScriptTime)
         return std::numeric_limits<double>::quiet_NaN();
-    if (fabs(t) > maxECMAScriptTime)
-        return std::numeric_limits<double>::quiet_NaN();
-    return trunc(t) + 0.0;
+    return std::trunc(t) + 0.0;
 }
 
 // See http://tools.ietf.org/html/rfc2822#section-3.3 for more information.
