@@ -1,5 +1,28 @@
 2018-05-15  Dean Jackson  <dino@apple.com>
 
+        Launch System Preview as the download starts, rather than waiting for a response
+        https://bugs.webkit.org/show_bug.cgi?id=185669
+        <rdar://problem/40278181>
+
+        Reviewed by Tim Horton.
+
+        We were waiting for the RequestResponse to get a MIME-type before
+        launching the system preview. This causes an annoying delay.
+
+        Instead, assume that the system preview is one of the handled
+        mime types and launch the viewer immediately. If it gets something it
+        didn't expect, it will show an error.
+
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::didStart):
+        (WebKit::DownloadClient::didReceiveResponse):
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        (-[_WKPreviewControllerDataSource previewController:previewItemAtIndex:]):
+        (WebKit::SystemPreviewController::start): Small cleanup to ensure we
+        don't try to present twice (this shouldn't happen).
+
+2018-05-15  Dean Jackson  <dino@apple.com>
+
         Post-review cleanup for 185459
         https://bugs.webkit.org/show_bug.cgi?id=185665
         <rdar://problem/40276689>
