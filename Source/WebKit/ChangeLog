@@ -1,3 +1,28 @@
+2018-05-16  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r231783. rdar://problem/40230277
+
+    Use the system font by default in extra zoom mode
+    https://bugs.webkit.org/show_bug.cgi?id=185638
+    <rdar://problem/40230277>
+    
+    Reviewed by Wenson Hsieh.
+    
+    * Shared/WebPreferencesDefaultValues.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@231783 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-05-14  Tim Horton  <timothy_horton@apple.com>
+
+            Use the system font by default in extra zoom mode
+            https://bugs.webkit.org/show_bug.cgi?id=185638
+            <rdar://problem/40230277>
+
+            Reviewed by Wenson Hsieh.
+
+            * Shared/WebPreferencesDefaultValues.h:
+
 2018-05-15  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r231797. rdar://problem/39652624
