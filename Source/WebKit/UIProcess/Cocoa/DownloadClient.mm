@@ -76,11 +76,7 @@ void DownloadClient::didStart(WebProcessPool&, DownloadProxy& downloadProxy)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
-        if (auto* webPage = downloadProxy.originatingPage()) {
-            RELEASE_LOG_IF(webPage->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - UIProcess is taking a background assertion because it is downloading a system preview", this);
-            ASSERT(!m_activityToken);
-            m_activityToken = webPage->process().throttler().backgroundActivityToken();
-        }
+        takeActivityToken(downloadProxy);
         return;
     }
 #endif
@@ -179,8 +175,7 @@ void DownloadClient::processDidCrash(WebProcessPool&, DownloadProxy& downloadPro
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
-        if (m_activityToken)
-            releaseActivityToken(downloadProxy);
+        releaseActivityTokenIfNecessary(downloadProxy);
         return;
     }
 #endif
@@ -228,8 +223,7 @@ void DownloadClient::didFinish(WebProcessPool&, DownloadProxy& downloadProxy)
             NSURL *destinationURL = [NSURL fileURLWithPath:(NSString *)downloadProxy.destinationFilename()];
             webPage->systemPreviewController()->finish(WebCore::URL(destinationURL));
         }
-        if (m_activityToken)
-            releaseActivityToken(downloadProxy);
+        releaseActivityTokenIfNecessary(downloadProxy);
         return;
     }
 #endif
@@ -244,8 +238,7 @@ void DownloadClient::didFail(WebProcessPool&, DownloadProxy& downloadProxy, cons
     if (downloadProxy.isSystemPreviewDownload()) {
         if (auto* webPage = downloadProxy.originatingPage())
             webPage->systemPreviewController()->cancel();
-        if (m_activityToken)
-            releaseActivityToken(downloadProxy);
+        releaseActivityTokenIfNecessary(downloadProxy);
         return;
     }
 #endif
@@ -260,8 +253,7 @@ void DownloadClient::didCancel(WebProcessPool&, DownloadProxy& downloadProxy)
     if (downloadProxy.isSystemPreviewDownload()) {
         if (auto* webPage = downloadProxy.originatingPage())
             webPage->systemPreviewController()->cancel();
-        if (m_activityToken)
-            releaseActivityToken(downloadProxy);
+        releaseActivityTokenIfNecessary(downloadProxy);
         return;
     }
 #endif
@@ -278,12 +270,30 @@ void DownloadClient::willSendRequest(WebProcessPool&, DownloadProxy& downloadPro
     completionHandler(WTFMove(request));
 }
 
-#if PLATFORM(IOS) && USE(SYSTEM_PREVIEW)
-void DownloadClient::releaseActivityToken(DownloadProxy& downloadProxy)
+#if USE(SYSTEM_PREVIEW)
+void DownloadClient::takeActivityToken(DownloadProxy& downloadProxy)
 {
-    RELEASE_LOG_IF(downloadProxy.originatingPage()->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p UIProcess is releasing a background assertion because a system preview download completed", this);
-    ASSERT(m_activityToken);
-    m_activityToken = nullptr;
+#if PLATFORM(IOS)
+    if (auto* webPage = downloadProxy.originatingPage()) {
+        RELEASE_LOG_IF(webPage->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - UIProcess is taking a background assertion because it is downloading a system preview", this);
+        ASSERT(!m_activityToken);
+        m_activityToken = webPage->process().throttler().backgroundActivityToken();
+    }
+#else
+    UNUSED_PARAM(downloadProxy);
+#endif
+}
+
+void DownloadClient::releaseActivityTokenIfNecessary(DownloadProxy& downloadProxy)
+{
+#if PLATFORM(IOS)
+    if (m_activityToken) {
+        RELEASE_LOG_IF(downloadProxy.originatingPage()->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p UIProcess is releasing a background assertion because a system preview download completed", this);
+        m_activityToken = nullptr;
+    }
+#else
+    UNUSED_PARAM(downloadProxy);
+#endif
 }
 #endif
 
