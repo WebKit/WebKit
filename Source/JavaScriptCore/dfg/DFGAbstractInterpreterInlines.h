@@ -3363,7 +3363,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
             
     case InstanceOf:
-        // Sadly, we don't propagate the fact that we've done InstanceOf
+        clobberWorld();
         setNonCellTypeForNode(node, SpecBoolean);
         break;
 

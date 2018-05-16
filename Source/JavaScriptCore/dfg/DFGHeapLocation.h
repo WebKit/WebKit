@@ -52,7 +52,6 @@ enum LocationKind {
     IndexedPropertyInt52Loc,
     IndexedPropertyJSLoc,
     IndexedPropertyStorageLoc,
-    InstanceOfLoc,
     InvalidationPointLoc,
     IsFunctionLoc,
     IsObjectOrNullLoc,

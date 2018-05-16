@@ -1,3 +1,31 @@
+2018-05-16  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG models InstanceOf incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=185694
+
+        Reviewed by Keith Miller.
+
+        * stress/instanceof-proxy-check-structure.js: Added.
+        (Foo):
+        (Bar):
+        (doBadThings):
+        (getPrototypeOf):
+        (foo):
+        (i.new.Bar):
+        (new.Bar):
+        * stress/instanceof-proxy-loop.js: Added.
+        (Foo):
+        (Bar):
+        (doBadThings):
+        (getPrototypeOf):
+        (foo):
+        * stress/instanceof-proxy.js: Added.
+        (Foo):
+        (Bar):
+        (doBadThings):
+        (getPrototypeOf):
+        (foo):
+
 2018-05-16  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "/" operation

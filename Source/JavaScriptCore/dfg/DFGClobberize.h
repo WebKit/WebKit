@@ -636,6 +636,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ToNumber:
     case NumberToStringWithRadix:
     case CreateThis:
+    case InstanceOf:
         read(World);
         write(Heap);
         return;
@@ -1040,11 +1041,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case OverridesHasInstance:
         read(JSCell_typeInfoFlags);
         def(HeapLocation(OverridesHasInstanceLoc, JSCell_typeInfoFlags, node->child1()), LazyNode(node));
-        return;
-
-    case InstanceOf:
-        read(JSCell_structureID);
-        def(HeapLocation(InstanceOfLoc, JSCell_structureID, node->child1(), node->child2()), LazyNode(node));
         return;
 
     case PutStructure:

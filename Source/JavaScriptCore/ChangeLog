@@ -1,3 +1,22 @@
+2018-05-16  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG models InstanceOf incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=185694
+
+        Reviewed by Keith Miller.
+        
+        Proxies mean that InstanceOf can have effects. Exceptions mean that it's illegal to DCE it or
+        hoist it.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGNodeType.h:
+
 2018-05-16  Andy VanWagoner  <andy@vanwagoner.family>
 
         Add support for Intl NumberFormat formatToParts
