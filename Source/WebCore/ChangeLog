@@ -1,3 +1,23 @@
+2018-05-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Make Display::Box box sizing aware
+        https://bugs.webkit.org/show_bug.cgi?id=185649
+
+        Reviewed by Antti Koivisto.
+
+        Display::Box::width() == Display::Box::contentBox().width() <= box-sizing: content-box; (initial and default value)
+        Display::Box::width() == Display::Box::borderBox().width() <= box-sizing: border-box;
+
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::createDisplayBox):
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::Box):
+        (WebCore::Display::Box::marginBox const):
+        (WebCore::Display::Box::borderBox const):
+        (WebCore::Display::Box::paddingBox const):
+        (WebCore::Display::Box::contentBox const):
+        * layout/displaytree/DisplayBox.h:
+
 2018-05-16  Antoine Quint  <graouts@apple.com>
 
         REGRESSION (r230574): Interrupted hardware transitions don't behave correctly

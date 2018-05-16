@@ -64,7 +64,7 @@ void LayoutContext::updateLayout()
 
 Display::Box& LayoutContext::createDisplayBox(const Box& layoutBox)
 {
-    std::unique_ptr<Display::Box> displayBox(new Display::Box());
+    std::unique_ptr<Display::Box> displayBox(new Display::Box(layoutBox.style().boxSizing()));
     auto* displayBoxPtr = displayBox.get();
     m_layoutToDisplayBox.add(&layoutBox, WTFMove(displayBox));
     return *displayBoxPtr;

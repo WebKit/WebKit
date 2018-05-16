@@ -30,6 +30,7 @@
 #include "LayoutPoint.h"
 #include "LayoutRect.h"
 #include "LayoutUnit.h"
+#include "RenderStyleConstants.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -86,7 +87,7 @@ public:
     LayoutRect contentBox() const;
 
 private:
-    Box();
+    Box(EBoxSizing);
 
     void setRect(const LayoutRect&);
     void setTopLeft(const LayoutPoint&);
@@ -140,6 +141,8 @@ private:
     LayoutUnit m_paddingLeft;
     LayoutUnit m_paddingBottom;
     LayoutUnit m_paddingRight;
+
+    EBoxSizing m_boxSizing { CONTENT_BOX };
 
 #if !ASSERT_DISABLED
     bool m_hasValidTop { false };

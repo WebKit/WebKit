@@ -35,7 +35,8 @@ namespace Display {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Box);
 
-Box::Box()
+Box::Box(EBoxSizing boxSizing)
+    : m_boxSizing(boxSizing)
 {
 }
 
@@ -46,41 +47,56 @@ Box::~Box()
 LayoutRect Box::marginBox() const
 {
     ASSERT(m_hasValidMargin);
-    auto marginBox = rect();
-    auto topLeftMargin = LayoutSize(m_marginLeft, m_marginTop);
-    marginBox.inflate(topLeftMargin);
+    auto marginBox = borderBox();
 
-    auto bottomRightMargin = LayoutSize(m_marginRight, m_marginBottom);
-    marginBox.expand(bottomRightMargin);
+    marginBox.shiftXEdgeTo(marginBox.x() + m_marginLeft);
+    marginBox.shiftYEdgeTo(marginBox.y() + m_marginTop);
+    marginBox.shiftMaxXEdgeTo(marginBox.maxX() - m_marginRight);
+    marginBox.shiftMaxYEdgeTo(marginBox.maxY() - m_marginBottom);
+
     return marginBox;
 }
 
 LayoutRect Box::borderBox() const
 {
-    return LayoutRect(LayoutPoint(0, 0), size());
+    if (m_boxSizing == BORDER_BOX)
+        return LayoutRect( { }, size());
+
+    // Width is content box.
+    ASSERT(m_hasValidBorder);
+    ASSERT(m_hasValidPadding);
+    auto borderBoxSize = size();
+    borderBoxSize.expand(borderLeft() + paddingLeft() + paddingRight() + borderRight() , borderTop() + paddingTop() + paddingBottom() + borderBottom());
+    return LayoutRect( { }, borderBoxSize);
 }
 
 LayoutRect Box::paddingBox() const
 {
     ASSERT(m_hasValidBorder);
     auto paddingBox = borderBox();
-    auto topLeftBorder = LayoutSize(m_borderLeft, m_borderTop);
-    paddingBox.inflate(-topLeftBorder);
 
-    auto bottomRightBorder = LayoutSize(m_borderRight, m_borderBottom);
-    paddingBox.expand(-bottomRightBorder);
+    paddingBox.shiftXEdgeTo(paddingBox.x() + m_borderLeft);
+    paddingBox.shiftYEdgeTo(paddingBox.y() + m_borderTop);
+    paddingBox.shiftMaxXEdgeTo(paddingBox.maxX() - m_borderRight);
+    paddingBox.shiftMaxYEdgeTo(paddingBox.maxY() - m_borderBottom);
+
     return paddingBox;
 }
 
 LayoutRect Box::contentBox() const
 {
+    if (m_boxSizing == CONTENT_BOX)
+        return LayoutRect(LayoutPoint(0, 0), size());
+
+    // Width is border box.
     ASSERT(m_hasValidPadding);
     auto contentBox = paddingBox();
-    auto topLeftPadding = LayoutSize(m_paddingLeft, m_paddingTop);
-    contentBox.inflate(-topLeftPadding);
-    
-    auto bottomRightPadding = LayoutSize(m_paddingRight, m_paddingBottom);
-    contentBox.expand(-bottomRightPadding);
+
+    contentBox.shiftXEdgeTo(contentBox.x() + m_paddingLeft);
+    contentBox.shiftYEdgeTo(contentBox.y() + m_paddingTop);
+    contentBox.shiftMaxXEdgeTo(contentBox.maxX() - m_paddingRight);
+    contentBox.shiftMaxYEdgeTo(contentBox.maxY() - m_paddingBottom);
+
     return contentBox;
 }
 
