@@ -1,3 +1,12 @@
+2018-05-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] SoupNetworkSession.h:68:62: error: unknown type name 'URL'
+        https://bugs.webkit.org/show_bug.cgi?id=185378
+
+        Unreviewed, just replace unneeded #include with a forward declaration
+
+        * platform/network/soup/SoupNetworkSession.h:
+
 2018-05-16  Jer Noble  <jer.noble@apple.com>
 
         CRASH: Exception thrown from -[AVContentKeySession processContentKeyRequestWithIdentifier:initializationData:options:] after -expire called

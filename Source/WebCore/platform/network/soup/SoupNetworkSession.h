@@ -26,7 +26,6 @@
 #ifndef SoupNetworkSession_h
 #define SoupNetworkSession_h
 
-#include "URL.h"
 #include <glib-object.h>
 #include <pal/SessionID.h>
 #include <wtf/Function.h>
@@ -44,6 +43,7 @@ namespace WebCore {
 
 class CertificateInfo;
 class ResourceError;
+class URL;
 struct SoupNetworkProxySettings;
 
 class SoupNetworkSession {
