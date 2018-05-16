@@ -1,3 +1,21 @@
+2018-05-15  Sihui Liu  <sihui_liu@apple.com>
+
+        StorageManager::deleteLocalStorageOriginsModifiedSince: database files get deleted before database connections close
+        https://bugs.webkit.org/show_bug.cgi?id=185671
+
+        Reviewed by Geoffrey Garen.
+
+        We should delete database files before closing databases.
+
+        * UIProcess/WebStorage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::updateDatabaseWithChangedItems):
+        * UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::databasesModifiedSince):
+        (WebKit::LocalStorageDatabaseTracker::deleteDatabasesModifiedSince): Deleted.
+        * UIProcess/WebStorage/LocalStorageDatabaseTracker.h:
+        * UIProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::deleteLocalStorageOriginsModifiedSince):
+
 2018-05-15  Dean Jackson  <dino@apple.com>
 
         Launch System Preview as the download starts, rather than waiting for a response

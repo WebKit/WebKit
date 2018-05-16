@@ -55,8 +55,8 @@ public:
     void deleteDatabaseWithOrigin(const WebCore::SecurityOriginData&);
     void deleteAllDatabases();
 
-    // Returns a vector of the origins whose databases have been deleted.
-    Vector<WebCore::SecurityOriginData> deleteDatabasesModifiedSince(WallTime);
+    // Returns a vector of the origins whose databases should be deleted.
+    Vector<WebCore::SecurityOriginData> databasesModifiedSince(WallTime);
 
     Vector<WebCore::SecurityOriginData> origins() const;
 

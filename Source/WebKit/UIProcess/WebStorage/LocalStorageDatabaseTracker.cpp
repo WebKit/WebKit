@@ -142,33 +142,31 @@ static std::optional<time_t> fileModificationTime(const String& filePath)
     return time;
 }
 
-Vector<SecurityOriginData> LocalStorageDatabaseTracker::deleteDatabasesModifiedSince(WallTime time)
+Vector<SecurityOriginData> LocalStorageDatabaseTracker::databasesModifiedSince(WallTime time)
 {
     ASSERT(!RunLoop::isMain());
     importOriginIdentifiers();
-    Vector<String> originIdentifiersToDelete;
-
+    Vector<String> originIdentifiersModified;
+    
     for (const String& origin : m_origins) {
         String filePath = pathForDatabaseWithOriginIdentifier(origin);
-
+        
         auto modificationTime = FileSystem::getFileModificationTime(filePath);
         if (!modificationTime || modificationTime.value() >= time)
-            originIdentifiersToDelete.append(origin);
+            originIdentifiersModified.append(origin);
     }
-
-    Vector<SecurityOriginData> deletedDatabaseOrigins;
-    deletedDatabaseOrigins.reserveInitialCapacity(originIdentifiersToDelete.size());
-
-    for (const auto& originIdentifier : originIdentifiersToDelete) {
-        removeDatabaseWithOriginIdentifier(originIdentifier);
-
+    
+    Vector<SecurityOriginData> databaseOriginsModified;
+    databaseOriginsModified.reserveInitialCapacity(originIdentifiersModified.size());
+    
+    for (const auto& originIdentifier : originIdentifiersModified) {
         if (auto origin = SecurityOriginData::fromDatabaseIdentifier(originIdentifier))
-            deletedDatabaseOrigins.uncheckedAppend(*origin);
+            databaseOriginsModified.uncheckedAppend(*origin);
         else
             ASSERT_NOT_REACHED();
     }
-
-    return deletedDatabaseOrigins;
+    
+    return databaseOriginsModified;
 }
 
 Vector<SecurityOriginData> LocalStorageDatabaseTracker::origins() const
