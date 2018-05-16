@@ -227,10 +227,10 @@ JSBigInt* JSBigInt::stringToBigInt(ExecState* state, StringView s)
     return parseInt(state, s, ErrorParseMode::IgnoreExceptions);
 }
 
-String JSBigInt::toString(ExecState& state, unsigned radix)
+String JSBigInt::toString(ExecState* state, unsigned radix)
 {
     if (this->isZero())
-        return state.vm().smallStrings.singleCharacterStringRep('0');
+        return state->vm().smallStrings.singleCharacterStringRep('0');
 
     return toStringGeneric(state, this, radix);
 }
@@ -268,6 +268,59 @@ JSBigInt* JSBigInt::multiply(ExecState* state, JSBigInt* x, JSBigInt* y)
 
     result->setSign(x->sign() != y->sign());
     return result->rightTrim(vm);
+}
+
+JSBigInt* JSBigInt::divide(ExecState* state, JSBigInt* x, JSBigInt* y)
+{
+    // 1. If y is 0n, throw a RangeError exception.
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (y->isZero()) {
+        throwRangeError(state, scope, ASCIILiteral("0 is an invalid divisor value."));
+        return nullptr;
+    }
+
+    // 2. Let quotient be the mathematical value of x divided by y.
+    // 3. Return a BigInt representing quotient rounded towards 0 to the next
+    //    integral value.
+    if (absoluteCompare(x, y) == ComparisonResult::LessThan)
+        return createZero(vm);
+
+    JSBigInt* quotient = nullptr;
+    bool resultSign = x->sign() != y->sign();
+    if (y->length() == 1) {
+        Digit divisor = y->digit(0);
+        if (divisor == 1)
+            return resultSign == x->sign() ? x : unaryMinus(vm, x);
+
+        Digit remainder;
+        absoluteDivWithDigitDivisor(vm, x, divisor, &quotient, remainder);
+    } else
+        absoluteDivWithBigIntDivisor(vm, x, y, &quotient, nullptr);
+
+    quotient->setSign(resultSign);
+    return quotient->rightTrim(vm);
+}
+
+JSBigInt* JSBigInt::copy(VM& vm, JSBigInt* x)
+{
+    ASSERT(!x->isZero());
+
+    JSBigInt* result = JSBigInt::createWithLength(vm, x->length());
+    std::copy(x->dataStorage(), x->dataStorage() + x->length(), result->dataStorage());
+    result->setSign(x->sign());
+    return result;
+}
+
+JSBigInt* JSBigInt::unaryMinus(VM& vm, JSBigInt* x)
+{
+    if (x->isZero())
+        return x;
+
+    JSBigInt* result = copy(vm, x);
+    result->setSign(!x->sign());
+    return result;
 }
 
 #if USE(JSVALUE32_64)
@@ -522,6 +575,25 @@ bool JSBigInt::equals(JSBigInt* x, JSBigInt* y)
     return true;
 }
 
+inline JSBigInt::ComparisonResult JSBigInt::absoluteCompare(JSBigInt* x, JSBigInt* y)
+{
+    ASSERT(!x->length() || x->digit(0));
+    ASSERT(!y->length() || y->digit(0));
+
+    int diff = x->length() - y->length();
+    if (diff)
+        return diff < 0 ? ComparisonResult::LessThan : ComparisonResult::GreaterThan;
+
+    int i = x->length() - 1;
+    while (i >= 0 && x->digit(i) == y->digit(i))
+        i--;
+
+    if (i < 0)
+        return ComparisonResult::Equal;
+
+    return x->digit(i) > y->digit(i) ? ComparisonResult::GreaterThan : ComparisonResult::LessThan;
+}
+
 // Divides {x} by {divisor}, returning the result in {quotient} and {remainder}.
 // Mathematically, the contract is:
 // quotient = (x - remainder) / divisor, with 0 <= remainder < divisor.
@@ -529,11 +601,10 @@ bool JSBigInt::equals(JSBigInt* x, JSBigInt* y)
 // allocated for it; otherwise the caller must ensure that it is big enough.
 // {quotient} can be the same as {x} for an in-place division. {quotient} can
 // also be nullptr if the caller is only interested in the remainder.
-void JSBigInt::absoluteDivSmall(ExecState& state, JSBigInt* x, Digit divisor, JSBigInt** quotient, Digit& remainder)
+void JSBigInt::absoluteDivWithDigitDivisor(VM& vm, JSBigInt* x, Digit divisor, JSBigInt** quotient, Digit& remainder)
 {
     ASSERT(divisor);
 
-    VM& vm = state.vm();
     ASSERT(!x->isZero());
     remainder = 0;
     if (divisor == 1) {
@@ -555,6 +626,209 @@ void JSBigInt::absoluteDivSmall(ExecState& state, JSBigInt* x, Digit divisor, JS
         for (int i = length - 1; i >= 0; i--)
             digitDiv(remainder, x->digit(i), divisor, remainder);
     }
+}
+
+// Divides {dividend} by {divisor}, returning the result in {quotient} and
+// {remainder}. Mathematically, the contract is:
+// quotient = (dividend - remainder) / divisor, with 0 <= remainder < divisor.
+// Both {quotient} and {remainder} are optional, for callers that are only
+// interested in one of them.
+// See Knuth, Volume 2, section 4.3.1, Algorithm D.
+void JSBigInt::absoluteDivWithBigIntDivisor(VM& vm, JSBigInt* dividend, JSBigInt* divisor, JSBigInt** quotient, JSBigInt** remainder)
+{
+    ASSERT(divisor->length() >= 2);
+    ASSERT(dividend->length() >= divisor->length());
+
+    // The unusual variable names inside this function are consistent with
+    // Knuth's book, as well as with Go's implementation of this algorithm.
+    // Maintaining this consistency is probably more useful than trying to
+    // come up with more descriptive names for them.
+    unsigned n = divisor->length();
+    unsigned m = dividend->length() - n;
+    
+    // The quotient to be computed.
+    JSBigInt* q = nullptr;
+    if (quotient != nullptr)
+        q = createWithLength(vm, m + 1);
+    
+    // In each iteration, {qhatv} holds {divisor} * {current quotient digit}.
+    // "v" is the book's name for {divisor}, "qhat" the current quotient digit.
+    JSBigInt* qhatv = createWithLength(vm, m + 1);
+    
+    // D1.
+    // Left-shift inputs so that the divisor's MSB is set. This is necessary
+    // to prevent the digit-wise divisions (see digit_div call below) from
+    // overflowing (they take a two digits wide input, and return a one digit
+    // result).
+    Digit lastDigit = divisor->digit(n - 1);
+    unsigned shift = sizeof(lastDigit) == 8 ? clz64(lastDigit) : clz32(lastDigit);
+
+    if (shift > 0)
+        divisor = absoluteLeftShiftAlwaysCopy(vm, divisor, shift, LeftShiftMode::SameSizeResult);
+
+    // Holds the (continuously updated) remaining part of the dividend, which
+    // eventually becomes the remainder.
+    JSBigInt* u = absoluteLeftShiftAlwaysCopy(vm, dividend, shift, LeftShiftMode::AlwaysAddOneDigit);
+
+    // D2.
+    // Iterate over the dividend's digit (like the "grad school" algorithm).
+    // {vn1} is the divisor's most significant digit.
+    Digit vn1 = divisor->digit(n - 1);
+    for (int j = m; j >= 0; j--) {
+        // D3.
+        // Estimate the current iteration's quotient digit (see Knuth for details).
+        // {qhat} is the current quotient digit.
+        Digit qhat = std::numeric_limits<Digit>::max();
+
+        // {ujn} is the dividend's most significant remaining digit.
+        Digit ujn = u->digit(j + n);
+        if (ujn != vn1) {
+            // {rhat} is the current iteration's remainder.
+            Digit rhat = 0;
+            // Estimate the current quotient digit by dividing the most significant
+            // digits of dividend and divisor. The result will not be too small,
+            // but could be a bit too large.
+            qhat = digitDiv(ujn, u->digit(j + n - 1), vn1, rhat);
+            
+            // Decrement the quotient estimate as needed by looking at the next
+            // digit, i.e. by testing whether
+            // qhat * v_{n-2} > (rhat << digitBits) + u_{j+n-2}.
+            Digit vn2 = divisor->digit(n - 2);
+            Digit ujn2 = u->digit(j + n - 2);
+            while (productGreaterThan(qhat, vn2, rhat, ujn2)) {
+                qhat--;
+                Digit prevRhat = rhat;
+                rhat += vn1;
+                // v[n-1] >= 0, so this tests for overflow.
+                if (rhat < prevRhat)
+                    break;
+            }
+        }
+
+        // D4.
+        // Multiply the divisor with the current quotient digit, and subtract
+        // it from the dividend. If there was "borrow", then the quotient digit
+        // was one too high, so we must correct it and undo one subtraction of
+        // the (shifted) divisor.
+        internalMultiplyAdd(divisor, qhat, 0, n, qhatv);
+        Digit c = u->absoluteInplaceSub(qhatv, j);
+        if (c) {
+            c = u->absoluteInplaceAdd(divisor, j);
+            u->setDigit(j + n, u->digit(j + n) + c);
+            qhat--;
+        }
+        
+        if (quotient != nullptr)
+            q->setDigit(j, qhat);
+    }
+
+    if (quotient != nullptr) {
+        // Caller will right-trim.
+        *quotient = q;
+    }
+
+    if (remainder != nullptr) {
+        u->inplaceRightShift(shift);
+        *remainder = u;
+    }
+}
+
+// Returns whether (factor1 * factor2) > (high << kDigitBits) + low.
+inline bool JSBigInt::productGreaterThan(Digit factor1, Digit factor2, Digit high, Digit low)
+{
+    Digit resultHigh;
+    Digit resultLow = digitMul(factor1, factor2, resultHigh);
+    return resultHigh > high || (resultHigh == high && resultLow > low);
+}
+
+// Adds {summand} onto {this}, starting with {summand}'s 0th digit
+// at {this}'s {startIndex}'th digit. Returns the "carry" (0 or 1).
+JSBigInt::Digit JSBigInt::absoluteInplaceAdd(JSBigInt* summand, unsigned startIndex)
+{
+    Digit carry = 0;
+    unsigned n = summand->length();
+    ASSERT(length() >= startIndex + n);
+    for (unsigned i = 0; i < n; i++) {
+        Digit newCarry = 0;
+        Digit sum = digitAdd(digit(startIndex + i), summand->digit(i), newCarry);
+        sum = digitAdd(sum, carry, newCarry);
+        setDigit(startIndex + i, sum);
+        carry = newCarry;
+    }
+
+    return carry;
+}
+
+// Subtracts {subtrahend} from {this}, starting with {subtrahend}'s 0th digit
+// at {this}'s {startIndex}-th digit. Returns the "borrow" (0 or 1).
+JSBigInt::Digit JSBigInt::absoluteInplaceSub(JSBigInt* subtrahend, unsigned startIndex)
+{
+    Digit borrow = 0;
+    unsigned n = subtrahend->length();
+    ASSERT(length() >= startIndex + n);
+    for (unsigned i = 0; i < n; i++) {
+        Digit newBorrow = 0;
+        Digit difference = digitSub(digit(startIndex + i), subtrahend->digit(i), newBorrow);
+        difference = digitSub(difference, borrow, newBorrow);
+        setDigit(startIndex + i, difference);
+        borrow = newBorrow;
+    }
+
+    return borrow;
+}
+
+void JSBigInt::inplaceRightShift(unsigned shift)
+{
+    ASSERT(shift < digitBits);
+    ASSERT(!(digit(0) & ((static_cast<Digit>(1) << shift) - 1)));
+
+    if (!shift)
+        return;
+
+    Digit carry = digit(0) >> shift;
+    unsigned last = length() - 1;
+    for (unsigned i = 0; i < last; i++) {
+        Digit d = digit(i + 1);
+        setDigit(i, (d << (digitBits - shift)) | carry);
+        carry = d >> shift;
+    }
+    setDigit(last, carry);
+}
+
+// Always copies the input, even when {shift} == 0.
+JSBigInt* JSBigInt::absoluteLeftShiftAlwaysCopy(VM& vm, JSBigInt* x, unsigned shift, LeftShiftMode mode)
+{
+    ASSERT(shift < digitBits);
+    ASSERT(!x->isZero());
+
+    unsigned n = x->length();
+    unsigned resultLength = mode == LeftShiftMode::AlwaysAddOneDigit ? n + 1 : n;
+    JSBigInt* result = createWithLength(vm, resultLength);
+
+    if (!shift) {
+        for (unsigned i = 0; i < n; i++)
+            result->setDigit(i, x->digit(i));
+        if (mode == LeftShiftMode::AlwaysAddOneDigit)
+            result->setDigit(n, 0);
+
+        return result;
+    }
+
+    Digit carry = 0;
+    for (unsigned i = 0; i < n; i++) {
+        Digit d = x->digit(i);
+        result->setDigit(i, (d << shift) | carry);
+        carry = d >> (digitBits - shift);
+    }
+
+    if (mode == LeftShiftMode::AlwaysAddOneDigit)
+        result->setDigit(n, carry);
+    else {
+        ASSERT(mode == LeftShiftMode::SameSizeResult);
+        ASSERT(!carry);
+    }
+
+    return result;
 }
 
 // Lookup table for the maximum number of bits required per character of a
@@ -604,11 +878,13 @@ uint64_t JSBigInt::calculateMaximumCharactersRequired(unsigned length, unsigned 
     return maximumCharactersRequired;
 }
 
-String JSBigInt::toStringGeneric(ExecState& state, JSBigInt* x, unsigned radix)
+String JSBigInt::toStringGeneric(ExecState* state, JSBigInt* x, unsigned radix)
 {
     // FIXME: [JSC] Revisit usage of Vector into JSBigInt::toString
     // https://bugs.webkit.org/show_bug.cgi?id=18067
     Vector<LChar> resultString;
+
+    VM& vm = state->vm();
 
     ASSERT(radix >= 2 && radix <= 36);
     ASSERT(!x->isZero());
@@ -620,8 +896,8 @@ String JSBigInt::toStringGeneric(ExecState& state, JSBigInt* x, unsigned radix)
     uint64_t maximumCharactersRequired = calculateMaximumCharactersRequired(length, radix, x->digit(length - 1), sign);
 
     if (maximumCharactersRequired > JSString::MaxLength) {
-        auto scope = DECLARE_THROW_SCOPE(state.vm());
-        throwOutOfMemoryError(&state, scope);
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        throwOutOfMemoryError(state, scope);
         return String();
     }
 
@@ -646,7 +922,7 @@ String JSBigInt::toStringGeneric(ExecState& state, JSBigInt* x, unsigned radix)
         JSBigInt** dividend = &x;
         do {
             Digit chunk;
-            absoluteDivSmall(state, *dividend, chunkDivisor, &rest, chunk);
+            absoluteDivWithDigitDivisor(vm, *dividend, chunkDivisor, &rest, chunk);
             ASSERT(rest);
 
             dividend = &rest;
@@ -694,13 +970,11 @@ JSBigInt* JSBigInt::rightTrim(VM& vm)
     if (isZero())
         return this;
 
-    ASSERT(m_length);
-
-    int nonZeroIndex = m_length - 1;
-    while (nonZeroIndex >= 0 && !digit(nonZeroIndex))
+    unsigned nonZeroIndex = m_length - 1;
+    while (!digit(nonZeroIndex))
         nonZeroIndex--;
 
-    if (nonZeroIndex == static_cast<int>(m_length - 1))
+    if (nonZeroIndex == m_length - 1)
         return this;
 
     unsigned newLength = nonZeroIndex + 1;
@@ -874,15 +1148,15 @@ inline JSBigInt::Digit* JSBigInt::dataStorage()
     return reinterpret_cast<Digit*>(reinterpret_cast<char*>(this) + offsetOfData());
 }
 
-JSBigInt::Digit JSBigInt::digit(unsigned n)
+inline JSBigInt::Digit JSBigInt::digit(unsigned n)
 {
-    ASSERT(n >= 0 && n < length());
+    ASSERT(n < length());
     return dataStorage()[n];
 }
 
-void JSBigInt::setDigit(unsigned n, Digit value)
+inline void JSBigInt::setDigit(unsigned n, Digit value)
 {
-    ASSERT(n >= 0 && n < length());
+    ASSERT(n < length());
     dataStorage()[n] = value;
 }
 JSObject* JSBigInt::toObject(ExecState* exec, JSGlobalObject* globalObject) const

@@ -382,7 +382,7 @@ JSString* JSValue::toStringSlowCase(ExecState* exec, bool returnEmptyStringOnErr
         JSBigInt* bigInt = asBigInt(*this);
         if (auto digit = bigInt->singleDigitValueForString())
             return vm.smallStrings.singleCharacterString(*digit + '0');
-        JSString* returnString = jsNontrivialString(&vm, bigInt->toString(*exec, 10));
+        JSString* returnString = jsNontrivialString(&vm, bigInt->toString(exec, 10));
         RETURN_IF_EXCEPTION(scope, errorValue());
         return returnString;
     }

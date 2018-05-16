@@ -103,7 +103,7 @@ EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToString(ExecState* state)
     int32_t radix = extractToStringRadixArgument(state, state->argument(0), scope);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    String resultString = value->toString(*state, radix);
+    String resultString = value->toString(state, radix);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
     if (resultString.length() == 1)
