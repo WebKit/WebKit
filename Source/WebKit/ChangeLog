@@ -1,3 +1,13 @@
+2018-05-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Implement WebPage::handleEditingKeyboardEvent
+        https://bugs.webkit.org/show_bug.cgi?id=185327
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::handleEditingKeyboardEvent): Copied from WebKitLegacy.
+
 2018-05-16  Sihui Liu  <sihui_liu@apple.com>
 
         Session cookies aren't reliably set when using default WKWebSiteDataStore
