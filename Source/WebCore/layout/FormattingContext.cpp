@@ -65,7 +65,7 @@ void FormattingContext::computeWidth(LayoutContext& layoutContext, const Box& la
     if (layoutBox.isOutOfFlowPositioned())
         return computeOutOfFlowWidth(layoutContext, layoutBox, displayBox);
     if (layoutBox.isFloatingPositioned())
-        return computeFloatingWidth(layoutBox, displayBox);
+        return computeFloatingWidth(layoutContext, layoutBox, displayBox);
     return computeInFlowWidth(layoutContext, layoutBox, displayBox);
 }
 
@@ -87,8 +87,13 @@ void FormattingContext::computeOutOfFlowWidth(LayoutContext& layoutContext, cons
     ASSERT_NOT_REACHED();
 }
 
-void FormattingContext::computeFloatingWidth(const Box&, Display::Box&) const
+void FormattingContext::computeFloatingWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
+    if (!layoutBox.isReplaced()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    computeInFlowReplacedWidth(layoutContext, layoutBox, displayBox);
 }
 
 void FormattingContext::computeOutOfFlowHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
@@ -201,6 +206,55 @@ void FormattingContext::computeOutOfFlowNonReplacedHeight(LayoutContext& layoutC
         ASSERT_NOT_REACHED();
 
     displayBox.setHeight(computedHeightValue);
+}
+
+void FormattingContext::computeInFlowReplacedWidth(LayoutContext&, const Box& layoutBox, Display::Box& displayBox) const
+{
+    // 10.3.4 Block-level, replaced elements in normal flow: The used value of 'width' is determined as for inline replaced elements
+    // 10.3.6 Floating, replaced elements: The used value of 'width' is determined as for inline replaced elements.   
+
+    // 10.3.2 Inline, replaced elements
+    //
+    // 1. If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic width, then that intrinsic width is the used value of 'width'.
+    //
+    // 2. If 'height' and 'width' both have computed values of 'auto' and the element has no intrinsic width, but does have an intrinsic height and intrinsic ratio; 
+    //    or if 'width' has a computed value of 'auto', 'height' has some other computed value, and the element does have an intrinsic ratio;
+    //    then the used value of 'width' is: (used height) * (intrinsic ratio)
+    //
+    // 3. If 'height' and 'width' both have computed values of 'auto' and the element has an intrinsic ratio but no intrinsic height or width,
+    //    then the used value of 'width' is undefined in CSS 2.2. However, it is suggested that, if the containing block's width does not itself depend on the replaced 
+    //    element's width, then the used value of 'width' is calculated from the constraint equation used for block-level, non-replaced elements in normal flow.
+    //
+    // 4. Otherwise, if 'width' has a computed value of 'auto', and the element has an intrinsic width, then that intrinsic width is the used value of 'width'.
+    // 
+    // 5. Otherwise, if 'width' has a computed value of 'auto', but none of the conditions above are met, then the used value of 'width' becomes 300px. 
+    //    If 300px is too wide to fit the device, UAs should use the width of the largest rectangle that has a 2:1 ratio and fits the device instead.
+    auto& style = layoutBox.style();
+    auto width = style.logicalWidth();
+    auto height = style.logicalHeight();
+
+    LayoutUnit computedWidthValue;
+
+    if (width.isAuto() && height.isAuto() && layoutBox.hasIntrinsicWidth()) {
+        // #1
+        computedWidthValue = layoutBox.intrinsicWidth();
+    } else if (width.isAuto() && (height.isCalculated() || layoutBox.hasIntrinsicHeight()) && layoutBox.hasIntrinsicRatio()) {
+        // #2
+        auto usedHeight = height.isCalculated() ? LayoutUnit(height.value()) : layoutBox.intrinsicHeight();   
+        computedWidthValue = usedHeight * layoutBox.intrinsicRatio();
+    } else if (width.isAuto() && height.isAuto() && layoutBox.hasIntrinsicRatio()) {
+        // #3
+        // FIXME: undefined but surely doable.
+        ASSERT_NOT_REACHED();
+    } else if (width.isAuto() && layoutBox.hasIntrinsicWidth()) {
+        // #4
+        computedWidthValue = layoutBox.intrinsicWidth();
+    } else {
+        // #5
+        computedWidthValue = 300;
+    }
+
+    displayBox.setWidth(computedWidthValue);   
 }
 
 LayoutUnit FormattingContext::contentHeightForFormattingContextRoot(LayoutContext& layoutContext, const Box& layoutBox) const

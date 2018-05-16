@@ -230,6 +230,39 @@ bool Box::isOverflowVisible() const
     return m_style.overflowX() == OVISIBLE || m_style.overflowY() == OVISIBLE;
 }
 
+bool Box::hasIntrinsicWidth() const
+{
+    return false;
+}
+
+bool Box::hasIntrinsicHeight() const
+{
+    return false;
+}
+
+bool Box::hasIntrinsicRatio() const
+{
+    return false;
+}
+
+LayoutUnit Box::intrinsicWidth() const
+{
+    ASSERT(hasIntrinsicWidth());
+    return { };
+}
+
+LayoutUnit Box::intrinsicHeight() const
+{
+    ASSERT(hasIntrinsicHeight());
+    return { };
+}
+
+LayoutUnit Box::intrinsicRatio() const
+{
+    ASSERT(hasIntrinsicRatio());
+    return { };
+}
+
 }
 }
 

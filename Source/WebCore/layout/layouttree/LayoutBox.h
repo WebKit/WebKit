@@ -72,7 +72,6 @@ public:
     bool isInlineBlockBox() const;
     bool isBlockContainerBox() const;
     bool isInitialContainingBlock() const;
-    bool isReplaced() const;
 
     const Container* parent() const { return m_parent; }
     const Box* nextSibling() const { return m_nextSibling; }
@@ -90,6 +89,15 @@ public:
 
     const RenderStyle& style() const { return m_style; }
     auto& weakPtrFactory() const { return m_weakFactory; }
+
+    bool isReplaced() const;
+    // FIXME: find out how to not pollute the Box interface
+    bool hasIntrinsicWidth() const;
+    bool hasIntrinsicHeight() const;
+    bool hasIntrinsicRatio() const;
+    LayoutUnit intrinsicWidth() const;
+    LayoutUnit intrinsicHeight() const;
+    LayoutUnit intrinsicRatio() const;
 
 protected:
     enum BaseTypeFlag {

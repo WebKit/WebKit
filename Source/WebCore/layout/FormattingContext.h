@@ -72,7 +72,7 @@ protected:
     virtual void computeHeight(LayoutContext&, const Box&, Display::Box&) const;
 
     virtual void computeOutOfFlowWidth(LayoutContext&, const Box&, Display::Box&) const;
-    virtual void computeFloatingWidth(const Box&, Display::Box&) const;
+    virtual void computeFloatingWidth(LayoutContext&, const Box&, Display::Box&) const;
     virtual void computeInFlowWidth(LayoutContext&, const Box&, Display::Box&) const = 0;
 
     virtual void computeOutOfFlowHeight(LayoutContext&, const Box&, Display::Box&) const;
@@ -86,6 +86,8 @@ protected:
 
     void placeInFlowPositionedChildren(const Container&) const;
     void layoutOutOfFlowDescendants(LayoutContext&s) const;
+
+    void computeInFlowReplacedWidth(LayoutContext&, const Box&, Display::Box&) const;
 
 private:
     void computeOutOfFlowNonReplacedHeight(LayoutContext&, const Box&, Display::Box&) const;

@@ -1,5 +1,30 @@
 2018-05-16  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Implement width computation for replaced inflow elements.
+        https://bugs.webkit.org/show_bug.cgi?id=185672
+
+        Reviewed by Antti Koivisto.
+
+        Replaced width for block, inline and float elements compute the same way. 
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeWidth const):
+        (WebCore::Layout::FormattingContext::computeFloatingWidth const):
+        (WebCore::Layout::FormattingContext::computeInFlowReplacedWidth const):
+        * layout/FormattingContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeInFlowWidth const):
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::hasIntrinsicWidth const):
+        (WebCore::Layout::Box::hasIntrinsicHeight const):
+        (WebCore::Layout::Box::hasIntrinsicRatio const):
+        (WebCore::Layout::Box::intrinsicWidth const):
+        (WebCore::Layout::Box::intrinsicHeight const):
+        (WebCore::Layout::Box::intrinsicRatio const):
+        * layout/layouttree/LayoutBox.h:
+
+2018-05-16  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Make Display::Box box sizing aware
         https://bugs.webkit.org/show_bug.cgi?id=185649
 

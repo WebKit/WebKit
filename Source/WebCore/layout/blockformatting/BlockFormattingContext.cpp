@@ -149,7 +149,7 @@ void BlockFormattingContext::computeInFlowWidth(LayoutContext& layoutContext, co
         computeInFlowNonReplacedWidth(layoutContext, layoutBox, displayBox);
         return;
     }
-    ASSERT_NOT_REACHED();
+    computeInFlowReplacedWidth(layoutContext, layoutBox, displayBox);
 }
 
 void BlockFormattingContext::computeInFlowNonReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
