@@ -1,3 +1,58 @@
+2018-05-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Remove W3C deleted files after r231727.
+
+        In r231727 W3C WebDriver tests were updated, but only new and modified files, not the deleted (or renamed)
+        ones. Remove the deleted files and update the test expectations to use the new names.
+
+        * TestExpectations.json: Update expectations after test renames in r231727.
+        * imported/w3c/tools/wptrunner/wptrunner/executors/testharness_marionette.js: Removed.
+        * imported/w3c/tools/wptrunner/wptrunner/executors/testharness_marionette_resume.js: Removed.
+        * imported/w3c/webdriver/tests/contexts/json_serialize_windowproxy.py: Removed.
+        * imported/w3c/webdriver/tests/contexts/maximize_window.py: Removed.
+        * imported/w3c/webdriver/tests/contexts/resizing_and_positioning.py: Removed.
+        * imported/w3c/webdriver/tests/cookies/add_cookie.py: Removed.
+        * imported/w3c/webdriver/tests/cookies/delete_cookie.py: Removed.
+        * imported/w3c/webdriver/tests/cookies/get_named_cookie.py: Removed.
+        * imported/w3c/webdriver/tests/document_handling/page_source.py: Removed.
+        * imported/w3c/webdriver/tests/element_retrieval/__init__.py: Removed.
+        * imported/w3c/webdriver/tests/element_retrieval/find_element.py: Removed.
+        * imported/w3c/webdriver/tests/element_retrieval/find_element_from_element.py: Removed.
+        * imported/w3c/webdriver/tests/element_retrieval/find_elements.py: Removed.
+        * imported/w3c/webdriver/tests/element_retrieval/find_elements_from_element.py: Removed.
+        * imported/w3c/webdriver/tests/element_retrieval/get_active_element.py: Removed.
+        * imported/w3c/webdriver/tests/fullscreen_window.py: Removed.
+        * imported/w3c/webdriver/tests/get_window_rect.py: Removed.
+        * imported/w3c/webdriver/tests/interaction/element_clear.py: Removed.
+        * imported/w3c/webdriver/tests/interaction/send_keys_content_editable.py: Removed.
+        * imported/w3c/webdriver/tests/minimize_window.py: Removed.
+        * imported/w3c/webdriver/tests/navigation/current_url.py: Removed.
+        * imported/w3c/webdriver/tests/navigation/get_title.py: Removed.
+        * imported/w3c/webdriver/tests/sessions/get_timeouts.py: Removed.
+        * imported/w3c/webdriver/tests/sessions/new_session/conftest.py: Removed.
+        * imported/w3c/webdriver/tests/sessions/new_session/create_alwaysMatch.py: Removed.
+        * imported/w3c/webdriver/tests/sessions/new_session/create_firstMatch.py: Removed.
+        * imported/w3c/webdriver/tests/sessions/new_session/default_values.py: Removed.
+        * imported/w3c/webdriver/tests/sessions/new_session/invalid_capabilities.py: Removed.
+        * imported/w3c/webdriver/tests/sessions/new_session/merge.py: Removed.
+        * imported/w3c/webdriver/tests/sessions/new_session/response.py: Removed.
+        * imported/w3c/webdriver/tests/sessions/new_session/support/__init__.py: Removed.
+        * imported/w3c/webdriver/tests/sessions/new_session/support/create.py: Removed.
+        * imported/w3c/webdriver/tests/sessions/status.py: Removed.
+        * imported/w3c/webdriver/tests/set_window_rect.py: Removed.
+        * imported/w3c/webdriver/tests/state/__init__.py: Removed.
+        * imported/w3c/webdriver/tests/state/get_element_attribute.py: Removed.
+        * imported/w3c/webdriver/tests/state/get_element_property.py: Removed.
+        * imported/w3c/webdriver/tests/state/get_element_tag_name.py: Removed.
+        * imported/w3c/webdriver/tests/state/is_element_selected.py: Removed.
+        * imported/w3c/webdriver/tests/state/text/__init__.py: Removed.
+        * imported/w3c/webdriver/tests/state/text/get_text.py: Removed.
+        * imported/w3c/webdriver/tests/switch_to_parent_frame.py: Removed.
+        * imported/w3c/webdriver/tests/user_prompts/accept_alert.py: Removed.
+        * imported/w3c/webdriver/tests/user_prompts/dismiss_alert.py: Removed.
+        * imported/w3c/webdriver/tests/user_prompts/get_alert_text.py: Removed.
+        * imported/w3c/webdriver/tests/user_prompts/send_alert_text.py: Removed.
+
 2018-05-11  Brian Burg  <bburg@apple.com>
 
         Unreviewed. Update W3C WebDriver imported tests.
