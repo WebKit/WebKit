@@ -237,6 +237,11 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
 {
     UNUSED_PARAM(nextMessage);
 
+    if (m_stopped) {
+        errorCode = MediaPlayer::InvalidPlayerState;
+        return false;
+    }
+
     bool shouldGenerateKeyRequest = !m_certificate || isEqual(key, "renew");
     if (!m_certificate) {
         LOG(Media, "CDMSessionAVContentKeySession::update(%p) - certificate data", this);
