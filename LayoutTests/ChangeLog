@@ -1,3 +1,12 @@
+2018-05-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark imported/mozilla/css-transitions/test_event-dispatch.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=183843
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2018-05-16  Andy VanWagoner  <andy@vanwagoner.family>
 
         Add support for Intl NumberFormat formatToParts
