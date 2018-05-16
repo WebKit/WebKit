@@ -1,3 +1,29 @@
+2018-05-16  Sihui Liu  <sihui_liu@apple.com>
+
+        Session cookies aren't reliably set when using default WKWebSiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=185624
+        <rdar://problem/39111626>
+
+        Reviewed by Geoffrey Garen.
+
+        Session cookies of default session were set in UI Process when there was no process pool, 
+        but they were not synced (or synced slowly to) Network Process. To make these cookies visible
+        as soon as they were set through API, we could manually set those cookies in Network Process
+        during its initilization. 
+
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::cookies):
+        (API::HTTPCookieStore::setCookie):
+        (API::HTTPCookieStore::deleteCookie):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::pageBeginUsingWebsiteDataStore):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::clearPendingCookies):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2018-05-16  Chris Nardi  <cnardi@chromium.org>
 
         Remove Document#selectedStylesheetSet/preferredStylesheetSet
