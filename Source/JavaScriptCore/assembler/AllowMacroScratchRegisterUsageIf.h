@@ -38,8 +38,13 @@ public:
         , m_allowIfTrue(allowIfTrue)
         , m_oldValueOfAllowScratchRegister(masm.m_allowScratchRegister)
     {
-        if (m_allowIfTrue)
+        if (m_allowIfTrue) {
+#if CPU(ARM64)
+            if (!m_oldValueOfAllowScratchRegister)
+                m_masm.invalidateAllTempRegisters();
+#endif
             masm.m_allowScratchRegister = true;
+        }
     }
 
     ~AllowMacroScratchRegisterUsageIf()

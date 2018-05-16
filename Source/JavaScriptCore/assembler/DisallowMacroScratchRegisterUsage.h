@@ -42,6 +42,10 @@ public:
 
     ~DisallowMacroScratchRegisterUsage()
     {
+#if CPU(ARM64)
+        if (m_oldValueOfAllowScratchRegister)
+            m_masm.invalidateAllTempRegisters();
+#endif
         m_masm.m_allowScratchRegister = m_oldValueOfAllowScratchRegister;
     }
 
