@@ -1763,3 +1763,5 @@ webkit.org/b/184457 media/video-aspect-ratio.html [ Pass Failure ]
 webkit.org/b/184609 platform/mac/media/audio-session-category-video-track-change.html [ Pass Failure ]
 
 webkit.org/b/170830 inspector/sampling-profiler/named-function-expression.html [ Pass Failure ]
+
+webkit.org/b/185659 [ Debug ] animations/needs-layout.html [ Pass ImageOnlyFailure ]
