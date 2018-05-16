@@ -42,14 +42,19 @@
 
         const test = document.getElementById("test");
 
+        function waitForCompositedAnimationUpdate(callback)
+        {
+            setTimeout(callback, 500);
+        }
+
         setTimeout(() => {
             test.classList.add("transitions");
-            setTimeout(() => {
+            waitForCompositedAnimationUpdate(() => {
                 test.classList.remove("transitions");
-                setTimeout(() => {
+                waitForCompositedAnimationUpdate(() => {
                     if (window.testRunner)
                         testRunner.notifyDone();
-                }, 500);
+                });
             });
         });
         
