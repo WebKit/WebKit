@@ -1,5 +1,17 @@
 2018-05-16  Chris Nardi  <cnardi@chromium.org>
 
+        Fixup after r231849: Do not mark Mac API methods as deprecated
+        https://bugs.webkit.org/show_bug.cgi?id=185684
+
+        Reviewed by Darin Adler.
+
+        Do not mark API methods for Document#selectedStylesheetSet/preferredStylesheetSet as deprecated
+        as the entire class is already marked as deprecated, so it is unnecessary.
+
+        * DOM/DOMDocument.h:
+
+2018-05-16  Chris Nardi  <cnardi@chromium.org>
+
         Remove Document#selectedStylesheetSet/preferredStylesheetSet
         https://bugs.webkit.org/show_bug.cgi?id=185381
 

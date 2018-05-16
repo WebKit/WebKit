@@ -81,8 +81,8 @@ WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @property (readonly, copy) NSString *defaultCharset WEBKIT_AVAILABLE_MAC(10_5);
 @property (readonly, copy) NSString *readyState WEBKIT_AVAILABLE_MAC(10_5);
 @property (readonly, copy) NSString *characterSet WEBKIT_AVAILABLE_MAC(10_5);
-@property (readonly, copy) NSString *preferredStylesheetSet WEBKIT_DEPRECATED_MAC(10_5, 10_14);
-@property (copy) NSString *selectedStylesheetSet WEBKIT_DEPRECATED_MAC(10_5, 10_14);
+@property (readonly, copy) NSString *preferredStylesheetSet WEBKIT_AVAILABLE_MAC(10_5);
+@property (copy) NSString *selectedStylesheetSet WEBKIT_AVAILABLE_MAC(10_5);
 @property (readonly, strong) DOMElement *activeElement WEBKIT_AVAILABLE_MAC(10_6);
 
 - (DOMElement *)createElement:(NSString *)tagName;
