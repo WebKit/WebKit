@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2015-2018 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,12 +68,22 @@ static double cookieCreated(NSHTTPCookie *cookie)
     if ([value isKindOfClass:[NSString class]])
         return toCanonicalFormat(((NSString *)value).doubleValue);
 
-    return 0.0;
+    return 0;
 }
 
 Cookie::Cookie(NSHTTPCookie *cookie)
-    : Cookie(cookie.name, cookie.value, cookie.domain, cookie.path, cookieCreated(cookie), [cookie.expiresDate timeIntervalSince1970] * 1000.0,
-    cookie.HTTPOnly, cookie.secure, cookie.sessionOnly, cookie.comment, cookie.commentURL, portVectorFromList(cookie.portList))
+    : name { cookie.name }
+    , value { cookie.value }
+    , domain { cookie.domain }
+    , path { cookie.path }
+    , created { cookieCreated(cookie) }
+    , expires { [cookie.expiresDate timeIntervalSince1970] * 1000.0 }
+    , httpOnly { static_cast<bool>(cookie.HTTPOnly) }
+    , secure { static_cast<bool>(cookie.secure) }
+    , session { static_cast<bool>(cookie.sessionOnly) }
+    , comment { cookie.comment }
+    , commentURL { cookie.commentURL }
+    , ports { portVectorFromList(cookie.portList) }
 {
 }
 
@@ -132,17 +142,14 @@ bool Cookie::operator==(const Cookie& other) const
     bool otherNull = other.isNull();
     if (thisNull || otherNull)
         return thisNull == otherNull;
-    
-    NSHTTPCookie *nsCookie(*this);
-    return [nsCookie isEqual:other];
+    return [static_cast<NSHTTPCookie *>(*this) isEqual:other];
 }
     
 unsigned Cookie::hash() const
 {
     ASSERT(!name.isHashTableDeletedValue());
     ASSERT(!isNull());
-    NSHTTPCookie *nsCookie(*this);
-    return nsCookie.hash;
+    return static_cast<NSHTTPCookie *>(*this).hash;
 }
 
 } // namespace WebCore

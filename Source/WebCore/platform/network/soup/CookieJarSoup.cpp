@@ -159,11 +159,19 @@ bool getRawCookies(const NetworkStorageSession& session, const URL& firstParty, 
         return false;
 
     for (GSList* iter = cookies.get(); iter; iter = g_slist_next(iter)) {
-        SoupCookie* cookie = static_cast<SoupCookie*>(iter->data);
-        rawCookies.append(Cookie(String::fromUTF8(cookie->name), String::fromUTF8(cookie->value), String::fromUTF8(cookie->domain),
-            String::fromUTF8(cookie->path), 0, cookie->expires ? static_cast<double>(soup_date_to_time_t(cookie->expires)) * 1000 : 0,
-            cookie->http_only, cookie->secure, !cookie->expires, String(), URL(), Vector<uint16_t>{ }));
-        soup_cookie_free(cookie);
+        SoupCookie* soupCookie = static_cast<SoupCookie*>(iter->data);
+        Cookie cookie;
+        cookie.name = String::fromUTF8(soupCookie->name);
+        cookie.value = String::fromUTF8(soupCookie->value);
+        cookie.domain = String::fromUTF8(soupCookie->domain);
+        cookie.path = String::fromUTF8(soupCookie->path);
+        cookie.created = 0;
+        cookie.expires = soupCookie->expires ? static_cast<double>(soup_date_to_time_t(soupCookie->expires)) * 1000 : 0;
+        cookie.httpOnly = soupCookie->http_only;
+        cookie.secure = soupCookie->secure;
+        cookie.session = !soupCookie->expires;
+        rawCookies.append(WTFMove(cookie));
+        soup_cookie_free(soupCookie);
     }
 
     return true;

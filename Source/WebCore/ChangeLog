@@ -1,3 +1,29 @@
+2018-05-16  Daniel Bates  <dabates@apple.com>
+
+        Cleanup platform Cookie
+        https://bugs.webkit.org/show_bug.cgi?id=185654
+
+        Reviewed by Per Arne Vollan.
+
+        Remove unnecessary constructor and use =default for default constructor.
+        Simplify Cookie::decode() by having it decode directly into a stack-allocated
+        cookie. Remove some unnecessary local variables. Fix style nits.
+
+        * platform/Cookie.h:
+        (WebCore::Cookie::Cookie):
+        (WebCore::Cookie::isNull const):
+        (WebCore::Cookie::encode const):
+        (WebCore::Cookie::decode):
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::getRawCookies):
+        * platform/network/cocoa/CookieCocoa.mm:
+        (WebCore::cookieCreated):
+        (WebCore::Cookie::Cookie):
+        (WebCore::Cookie::operator== const):
+        (WebCore::Cookie::hash const):
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::getRawCookies):
+
 2018-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [Win] Use C++17 in MSVC
