@@ -36,8 +36,6 @@
 #include <comutil.h>
 #include <string>
 
-using namespace std;
-
 void TextInputController::setMarkedText(JSStringRef text, unsigned int from, unsigned int length) 
 {    
     COMPtr<IWebView> webView;
@@ -82,10 +80,10 @@ void TextInputController::unmarkText()
     viewPrivate->confirmCompositionForTesting(empty);
 }
 
-vector<int> TextInputController::markedRange()
+std::vector<int> TextInputController::markedRange()
 {
     // empty vector
-    vector<int> result;
+    std::vector<int> result;
 
     COMPtr<IWebView> webView;
     if (FAILED(frame->webView(&webView)))
@@ -121,10 +119,10 @@ void TextInputController::insertText(JSStringRef text)
     viewPrivate->confirmCompositionForTesting(bstr);
 }
 
-vector<int> TextInputController::firstRectForCharacterRange(unsigned int start, unsigned int length)
+std::vector<int> TextInputController::firstRectForCharacterRange(unsigned int start, unsigned int length)
 {
     // empty vector
-    vector<int> result;
+    std::vector<int> result;
 
     COMPtr<IWebView> webView;
     if (FAILED(frame->webView(&webView)))
@@ -146,10 +144,10 @@ vector<int> TextInputController::firstRectForCharacterRange(unsigned int start, 
     return result;
 }
 
-vector<int> TextInputController::selectedRange()
+std::vector<int> TextInputController::selectedRange()
 {
     // empty vector
-    vector<int> result;
+    std::vector<int> result;
 
     COMPtr<IWebView> webView;
     if (FAILED(frame->webView(&webView)))

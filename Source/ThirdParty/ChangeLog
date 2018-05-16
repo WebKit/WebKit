@@ -1,3 +1,30 @@
+2018-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [Win] Use C++17 in MSVC
+        https://bugs.webkit.org/show_bug.cgi?id=185232
+
+        Reviewed by Alex Christensen.
+
+        Use std::tuple instead of std::tr1::tuple since std::tr1::tuple is removed in C++17 MSVC.
+        In a subsequent patch, we will upgrade gtest too.
+
+        * gtest/include/gtest/internal/gtest-param-util-generated.h:
+        (testing::internal::CartesianProductHolder2::operator ParamGenerator< ::std::tuple<T1, T2> > const):
+        (testing::internal::CartesianProductHolder3::operator ParamGenerator< ::std::tuple<T1, T2, T3> > const):
+        (testing::internal::CartesianProductHolder4::operator ParamGenerator< ::std::tuple<T1, T2, T3, T4> > const):
+        (testing::internal::CartesianProductHolder5::operator ParamGenerator< ::std::tuple<T1, T2, T3, T4, T5> > const):
+        (testing::internal::CartesianProductHolder6::operator ParamGenerator< ::std::tuple<T1, T2, T3, T4, T5, T6> > const):
+        (testing::internal::CartesianProductHolder7:: const):
+        (testing::internal::CartesianProductHolder8:: const):
+        (testing::internal::CartesianProductHolder9:: const):
+        (testing::internal::CartesianProductHolder10:: const):
+        (testing::internal::CartesianProductHolder2::operator ParamGenerator< ::std::tr1::tuple<T1, T2> > const): Deleted.
+        (testing::internal::CartesianProductHolder3::operator ParamGenerator< ::std::tr1::tuple<T1, T2, T3> > const): Deleted.
+        (testing::internal::CartesianProductHolder4::operator ParamGenerator< ::std::tr1::tuple<T1, T2, T3, T4> > const): Deleted.
+        (testing::internal::CartesianProductHolder5::operator ParamGenerator< ::std::tr1::tuple<T1, T2, T3, T4, T5> > const): Deleted.
+        (testing::internal::CartesianProductHolder6::operator ParamGenerator< ::std::tr1::tuple<T1, T2, T3, T4, T5, T6> > const): Deleted.
+        * gtest/include/gtest/internal/gtest-tuple.h:
+
 2018-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fix some -Wstring-op-truncation warnings

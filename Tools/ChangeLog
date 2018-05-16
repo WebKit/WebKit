@@ -1,3 +1,29 @@
+2018-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [Win] Use C++17 in MSVC
+        https://bugs.webkit.org/show_bug.cgi?id=185232
+
+        Reviewed by Alex Christensen.
+
+        Do not use `using namespace std;`. In C++17, we have std::byte. This "byte"
+        conflicts with ::byte defined in Windows' header.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/WindowedPluginTest.cpp:
+        (WindowedPluginTest::WindowedPluginTest):
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (logEventProc):
+        (stringEvent):
+        (AccessibilityController::winNotificationReceived):
+        * DumpRenderTree/win/TextInputController.cpp:
+        (markedRangeCallback):
+        (firstRectForCharacterRangeCallback):
+        (selectedRangeCallback):
+        * DumpRenderTree/win/TextInputController.h:
+        * DumpRenderTree/win/TextInputControllerWin.cpp:
+        (TextInputController::markedRange):
+        (TextInputController::firstRectForCharacterRange):
+        (TextInputController::selectedRange):
+
 2018-05-16  Sihui Liu  <sihui_liu@apple.com>
 
         Session cookies aren't reliably set when using default WKWebSiteDataStore

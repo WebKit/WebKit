@@ -41,7 +41,7 @@ public:
 
     Ref<Coordinates> isolatedCopy() const
     {
-        return Coordinates::create( GeolocationPosition { m_position });
+        return Coordinates::create(GeolocationPosition(m_position));
     }
 
     double latitude() const { return m_position.latitude; }

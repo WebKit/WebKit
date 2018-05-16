@@ -25,11 +25,9 @@
 
 #include "WindowedPluginTest.h"
 
-using namespace std;
-
 static const wchar_t instancePointerProperty[] = L"org.webkit.TestNetscapePlugin.WindowedPluginTest.InstancePointer";
 
-WindowedPluginTest::WindowedPluginTest(NPP npp, const string& identifier)
+WindowedPluginTest::WindowedPluginTest(NPP npp, const std::string& identifier)
     : PluginTest(npp, identifier)
     , m_window(0)
     , m_originalWndProc(0)

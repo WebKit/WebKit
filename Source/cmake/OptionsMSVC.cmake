@@ -29,6 +29,10 @@ endif ()
 # Turn off certain link features
 add_compile_options(/Gy- /openmp- /GF-)
 
+# Enable C++17
+# https://docs.microsoft.com/en-us/cpp/build/reference/std-specify-language-standard-version
+add_compile_options(/std:c++17)
+
 # Specify the source code encoding
 add_compile_options(/utf-8 /validate-charset)
 

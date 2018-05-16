@@ -1,3 +1,15 @@
+2018-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [Win] Use C++17 in MSVC
+        https://bugs.webkit.org/show_bug.cgi?id=185232
+
+        Reviewed by Alex Christensen.
+
+        Workaround for MSVC + /std:c++17.
+
+        * Modules/geolocation/Coordinates.h:
+        (WebCore::Coordinates::isolatedCopy const):
+
 2018-05-16  Chris Nardi  <cnardi@chromium.org>
 
         Remove Document#selectedStylesheetSet/preferredStylesheetSet

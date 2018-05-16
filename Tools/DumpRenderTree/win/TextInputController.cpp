@@ -80,7 +80,7 @@ static JSValueRef markedRangeCallback(JSContextRef context, JSObjectRef function
 {
     TextInputController* controller = static_cast<TextInputController*>(JSObjectGetPrivate(thisObject));
     if (controller) {
-        vector<int> range = controller->markedRange();
+        std::vector<int> range = controller->markedRange();
         if (range.size() == 2) {
             JSValueRef argumentsArrayValues[] = { JSValueMakeNumber(context, range[0]), JSValueMakeNumber(context, range[1]) };
             JSObjectRef result = JSObjectMakeArray(context, sizeof(argumentsArrayValues) / sizeof(JSValueRef), argumentsArrayValues, exception);
@@ -122,7 +122,7 @@ static JSValueRef firstRectForCharacterRangeCallback(JSContextRef context, JSObj
     TextInputController* controller = static_cast<TextInputController*>(JSObjectGetPrivate(thisObject));
 
     if (controller) {
-        vector<int> rect = controller->firstRectForCharacterRange(start, length);
+        std::vector<int> rect = controller->firstRectForCharacterRange(start, length);
         if (rect.size() == 4) {
             JSValueRef argumentsArrayValues[] = 
             { 
@@ -145,7 +145,7 @@ static JSValueRef selectedRangeCallback(JSContextRef context, JSObjectRef functi
     TextInputController* controller = static_cast<TextInputController*>(JSObjectGetPrivate(thisObject));
 
     if (controller) {
-        vector<int> rect = controller->selectedRange();
+        std::vector<int> rect = controller->selectedRange();
         if (rect.size() == 2) {
             JSValueRef argumentsArrayValues[] = { 
                 JSValueMakeNumber(context, rect[0]), 

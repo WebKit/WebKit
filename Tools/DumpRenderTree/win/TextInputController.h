@@ -35,8 +35,6 @@
 #include <JavaScriptCore/JSValueRef.h>
 #include <vector>
 
-using namespace std;
-
 class TextInputController {
 public:
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
@@ -44,10 +42,10 @@ public:
     void setMarkedText(JSStringRef text, unsigned int from, unsigned int length);
     bool hasMarkedText();
     void unmarkText();
-    vector<int> markedRange();
+    std::vector<int> markedRange();
     void insertText(JSStringRef text);
-    vector<int> firstRectForCharacterRange(unsigned int start, unsigned int length);
-    vector<int> selectedRange();
+    std::vector<int> firstRectForCharacterRange(unsigned int start, unsigned int length);
+    std::vector<int> selectedRange();
 
 private:    
     static JSClassRef getJSClass();
