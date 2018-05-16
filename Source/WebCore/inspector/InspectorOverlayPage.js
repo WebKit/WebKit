@@ -137,7 +137,7 @@ function reset(payload)
     document.getElementById("element-title-container").textContent = "";
     document.body.classList.remove("dimmed");
 
-    document.getElementById("log").style.setProperty("top", DATA.contentInset + "px");
+    document.getElementById("log").style.setProperty("top", DATA.contentInset.height + "px");
 }
 
 function DOMBuilder(tagName, className)
@@ -338,20 +338,24 @@ function _drawElementTitle(elementData, fragmentHighlight, scroll)
     anchorTop -= scroll.y;
     anchorBottom -= scroll.y;
 
-    if (boxX + titleWidth > canvas.width)
-        boxX = canvas.width - titleWidth - 2;
+    var viewportWidth = DATA.viewportSize.width;
+    if (boxX + titleWidth > viewportWidth)
+        boxX = viewportWidth - titleWidth - 2;
+
+    var viewportHeight = DATA.viewportSize.height;
+    var viewportTop = DATA.contentInset.height;
 
     var boxY;
-    if (anchorTop > canvas.height) {
+    if (anchorTop > viewportHeight) {
         boxY = canvas.height - titleHeight - arrowHeight;
         renderArrowDown = true;
-    } else if (anchorBottom < 0) {
+    } else if (anchorBottom < viewportTop) {
         boxY = arrowHeight;
         renderArrowUp = true;
-    } else if (anchorBottom + titleHeight + arrowHeight < canvas.height) {
+    } else if (anchorBottom + titleHeight + arrowHeight < viewportHeight) {
         boxY = anchorBottom + arrowHeight - 4;
         renderArrowUp = true;
-    } else if (anchorTop - titleHeight - arrowHeight > 0) {
+    } else if (anchorTop - titleHeight - arrowHeight > viewportTop) {
         boxY = anchorTop - titleHeight - arrowHeight + 3;
         renderArrowDown = true;
     } else
