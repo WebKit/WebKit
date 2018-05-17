@@ -1323,9 +1323,10 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
 
         unsigned length = gst_message_streams_selected_get_size(message);
         for (unsigned i = 0; i < length; i++) {
-            GRefPtr<GstStream> stream = adoptGRef(gst_message_streams_selected_get_stream(message, i));
+            GRefPtr<GstStream> stream = gst_message_streams_selected_get_stream(message, i);
             if (!stream)
                 continue;
+
             GstStreamType type = gst_stream_get_stream_type(stream.get());
             String streamId(gst_stream_get_stream_id(stream.get()));
 

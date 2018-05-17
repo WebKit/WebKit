@@ -1,3 +1,30 @@
+2018-05-17  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer]: Consider GstStream(Collection) as if if was not a GInitiallyUnowned
+        https://bugs.webkit.org/show_bug.cgi?id=185657
+
+        Reviewed by Philippe Normand.
+
+        Starting with GStreamer 1.14[1] the reference is sunk at object creation time, making it a normal
+        GObject in practice, in our GRefPtr template implementation we should just consider GstStream
+        as if it was a normal GObject and not care about its floating reference state as
+        the ref is never sunk by anyone before 1.14 though that floating ref is considered
+        as a hard reference by the GstStreamCollection (leading to assertions/)
+
+        The exact same issue happens with GstStreamCollection, so fix it at the same time.
+
+        Also do not adoptRef() on the result of gst_stream_collection_get_stream() as this function
+        is transfer-none.
+
+        [1] commit f119e93b47efb06ffc68c01d3e094d5346c30041 `gst: Clear floating flag in constructor of all GstObject subclasses that are not owned by any parent`
+
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::adoptGRef):
+        (WTF::refGPtr<GstStream>):
+        (WTF::refGPtr<GstStreamCollection>):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+
 2018-05-16  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: create a navigation item for toggling the overlay rulers/guides
