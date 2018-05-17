@@ -51,11 +51,14 @@
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVAudioSession)
-SOFT_LINK_CLASS(AVFoundation, AVRouteDetector)
 SOFT_LINK_POINTER(AVFoundation, AVAudioSessionInterruptionNotification, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVAudioSessionInterruptionTypeKey, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVAudioSessionInterruptionOptionKey, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVRouteDetectorMultipleRoutesDetectedDidChangeNotification, NSString *)
+
+#if HAVE(MEDIA_PLAYER) && !ENABLE(EXTRA_ZOOM_MODE)
+SOFT_LINK_CLASS(AVFoundation, AVRouteDetector)
+#endif
 
 #define AVAudioSession getAVAudioSessionClass()
 #define AVAudioSessionInterruptionNotification getAVAudioSessionInterruptionNotification()
@@ -101,7 +104,9 @@ using namespace WebCore;
 @interface WebMediaSessionHelper : NSObject {
     MediaSessionManageriOS* _callback;
 
+#if HAVE(MEDIA_PLAYER) && !ENABLE(EXTRA_ZOOM_MODE)
     RetainPtr<AVRouteDetector> _routeDetector;
+#endif
     bool _monitoringAirPlayRoutes;
     bool _startMonitoringAirPlayRoutesPending;
 }
@@ -115,7 +120,7 @@ using namespace WebCore;
 - (void)applicationDidEnterBackground:(NSNotification *)notification;
 - (BOOL)hasWirelessTargetsAvailable;
 
-#if HAVE(MEDIA_PLAYER)
+#if HAVE(MEDIA_PLAYER) && !ENABLE(EXTRA_ZOOM_MODE)
 - (void)startMonitoringAirPlayRoutes;
 - (void)stopMonitoringAirPlayRoutes;
 #endif
@@ -345,7 +350,7 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 {
     LOG(Media, "-[WebMediaSessionHelper dealloc]");
 
-#if HAVE(MEDIA_PLAYER)
+#if HAVE(MEDIA_PLAYER) && !ENABLE(EXTRA_ZOOM_MODE)
     if (!pthread_main_np()) {
         dispatch_async(dispatch_get_main_queue(), [routeDetector = WTFMove(_routeDetector)] () mutable {
             LOG(Media, "safelyTearDown - dipatched to UI thread.");
@@ -371,10 +376,14 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 - (BOOL)hasWirelessTargetsAvailable
 {
     LOG(Media, "-[WebMediaSessionHelper hasWirelessTargetsAvailable]");
+#if HAVE(MEDIA_PLAYER) && !ENABLE(EXTRA_ZOOM_MODE)
     return _routeDetector.get().multipleRoutesDetected;
+#else
+    return NO;
+#endif
 }
 
-#if HAVE(MEDIA_PLAYER)
+#if HAVE(MEDIA_PLAYER) && !ENABLE(EXTRA_ZOOM_MODE)
 - (void)startMonitoringAirPlayRoutes
 {
     if (_monitoringAirPlayRoutes)
@@ -419,7 +428,7 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
     _monitoringAirPlayRoutes = false;
     _routeDetector.get().routeDetectionEnabled = NO;
 }
-#endif // HAVE(MEDIA_PLAYER)
+#endif // HAVE(MEDIA_PLAYER) && !ENABLE(EXTRA_ZOOM_MODE)
 
 - (void)interruption:(NSNotification *)notification
 {

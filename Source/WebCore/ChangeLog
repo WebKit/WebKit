@@ -1,3 +1,15 @@
+2018-05-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Update AirPlay route monitoring
+        https://bugs.webkit.org/show_bug.cgi?id=185706
+        <rdar://problem/40230677>
+
+        Unreviewed, fix extra zoom mode build after r231913.
+
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (-[WebMediaSessionHelper dealloc]):
+        (-[WebMediaSessionHelper hasWirelessTargetsAvailable]):
+
 2018-05-17  Jer Noble  <jer.noble@apple.com>
 
         CRASH in ImageDecoderAVFObjC::sampleAtIndex()
