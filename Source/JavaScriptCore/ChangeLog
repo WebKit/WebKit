@@ -1,3 +1,13 @@
+2018-05-16  Saam Barati  <sbarati@apple.com>
+
+        VM::shrinkFootprint should call collectNow(Sync) instead of collectSync so it also eagerly sweeps
+        https://bugs.webkit.org/show_bug.cgi?id=185707
+
+        Reviewed by Mark Lam.
+
+        * runtime/VM.cpp:
+        (JSC::VM::shrinkFootprint):
+
 2018-05-16  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "/" operation
