@@ -29,8 +29,8 @@
 #if USE(SYSTEM_PREVIEW)
 
 #import "APIUIClient.h"
+#import "WeakObjCPtr.h"
 #import "WebPageProxy.h"
-
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <QuickLook/QuickLook.h>
 #import <UIKit/UIViewController.h>
@@ -87,9 +87,10 @@ SOFT_LINK_CLASS(QuickLook, QLItem);
     _item = adoptNS([allocQLItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0)]);
     [_item setUseLoadingTimeout:NO];
 
-    [_itemProvider registerItemForTypeIdentifier:contentType loadHandler:^(NSItemProviderCompletionHandler completionHandler, Class expectedValueClass, NSDictionary * options) {
-        // This will get called once the download completes.
-        self.completionHandler = completionHandler;
+    WebKit::WeakObjCPtr<_WKPreviewControllerDataSource> weakSelf { self };
+    [_itemProvider registerItemForTypeIdentifier:contentType loadHandler:[weakSelf = WTFMove(weakSelf)] (NSItemProviderCompletionHandler completionHandler, Class expectedValueClass, NSDictionary * options) {
+        if (auto strongSelf = weakSelf.get())
+            [strongSelf setCompletionHandler:completionHandler];
     }];
     return _item.get();
 }
