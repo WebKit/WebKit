@@ -1,3 +1,18 @@
+2018-05-17  Dean Jackson  <dino@apple.com>
+
+        Safari optimized flow should be releasing viewer to prevent memory growth with subsequent launches/closes
+        https://bugs.webkit.org/show_bug.cgi?id=185722
+        <rdar://problem/40247351>
+
+        Reviewed by Antoine Quint.
+
+        I made a rookie mistake in the original patch: I was holding a strong
+        reference to "self" in a block, which was causing a retain cycle.
+        Replace that with a WeakObjCPtr.
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        (-[_WKPreviewControllerDataSource previewController:previewItemAtIndex:]):
+
 2018-05-16  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r229093)[macOS] Allow network-outbound for syslog use
