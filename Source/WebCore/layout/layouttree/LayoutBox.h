@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutReplaced.h"
 #include "RenderStyle.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -90,14 +91,7 @@ public:
     const RenderStyle& style() const { return m_style; }
     auto& weakPtrFactory() const { return m_weakFactory; }
 
-    bool isReplaced() const;
-    // FIXME: find out how to not pollute the Box interface
-    bool hasIntrinsicWidth() const;
-    bool hasIntrinsicHeight() const;
-    bool hasIntrinsicRatio() const;
-    LayoutUnit intrinsicWidth() const;
-    LayoutUnit intrinsicHeight() const;
-    LayoutUnit intrinsicRatio() const;
+    std::optional<const Replaced> replaced() const { return m_replaced; }
 
 protected:
     enum BaseTypeFlag {
@@ -122,6 +116,8 @@ private:
     Container* m_parent { nullptr };
     Box* m_previousSibling { nullptr };
     Box* m_nextSibling { nullptr };
+
+    std::optional<const Replaced> m_replaced;
 
     unsigned m_baseTypeFlags : 4;
     unsigned m_isAnonymous : 1;

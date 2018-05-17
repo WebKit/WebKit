@@ -1231,6 +1231,7 @@ layout/layouttree/LayoutBox.cpp
 layout/layouttree/LayoutContainer.cpp
 layout/layouttree/LayoutInlineBox.cpp
 layout/layouttree/LayoutInlineContainer.cpp
+layout/layouttree/LayoutReplaced.cpp
 layout/layouttree/LayoutTreeBuilder.cpp
 
 loader/ContentFilter.cpp

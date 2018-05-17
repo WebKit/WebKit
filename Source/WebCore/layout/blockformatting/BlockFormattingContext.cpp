@@ -145,7 +145,7 @@ void BlockFormattingContext::computeStaticPosition(LayoutContext& layoutContext,
 
 void BlockFormattingContext::computeInFlowWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    if (!layoutBox.isReplaced()) {
+    if (!layoutBox.replaced()) {
         computeInFlowNonReplacedWidth(layoutContext, layoutBox, displayBox);
         return;
     }
@@ -185,7 +185,7 @@ void BlockFormattingContext::computeInFlowNonReplacedWidth(LayoutContext& layout
 
 void BlockFormattingContext::computeInFlowHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    if (!layoutBox.isReplaced()) {
+    if (!layoutBox.replaced()) {
         computeInFlowNonReplacedHeight(layoutContext, layoutBox, displayBox);
         return;
     }

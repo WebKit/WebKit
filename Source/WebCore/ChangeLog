@@ -1,5 +1,33 @@
 2018-05-17  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Move replaced logic from Layout::Box to Layout::Replaced class
+        https://bugs.webkit.org/show_bug.cgi?id=185711
+
+        Reviewed by Antti Koivisto.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowWidth const):
+        (WebCore::Layout::FormattingContext::computeFloatingWidth const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHeight const):
+        (WebCore::Layout::FormattingContext::computeInFlowReplacedWidth const):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeInFlowWidth const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowHeight const):
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isReplaced const): Deleted.
+        (WebCore::Layout::Box::hasIntrinsicWidth const): Deleted.
+        (WebCore::Layout::Box::hasIntrinsicHeight const): Deleted.
+        (WebCore::Layout::Box::hasIntrinsicRatio const): Deleted.
+        (WebCore::Layout::Box::intrinsicWidth const): Deleted.
+        (WebCore::Layout::Box::intrinsicHeight const): Deleted.
+        (WebCore::Layout::Box::intrinsicRatio const): Deleted.
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::replaced const):
+
+2018-05-17  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Implement width computation for replaced out if flow elements.
         https://bugs.webkit.org/show_bug.cgi?id=185701
 

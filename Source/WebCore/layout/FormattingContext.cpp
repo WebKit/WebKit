@@ -80,7 +80,7 @@ void FormattingContext::computeHeight(LayoutContext& layoutContext, const Box& l
 
 void FormattingContext::computeOutOfFlowWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    if (!layoutBox.isReplaced()) {
+    if (!layoutBox.replaced()) {
         computeOutOfFlowNonReplacedWidth(layoutContext, layoutBox, displayBox);
         return;
     }
@@ -89,7 +89,7 @@ void FormattingContext::computeOutOfFlowWidth(LayoutContext& layoutContext, cons
 
 void FormattingContext::computeFloatingWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    if (!layoutBox.isReplaced()) {
+    if (!layoutBox.replaced()) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -98,7 +98,7 @@ void FormattingContext::computeFloatingWidth(LayoutContext& layoutContext, const
 
 void FormattingContext::computeOutOfFlowHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    if (!layoutBox.isReplaced()) {
+    if (!layoutBox.replaced()) {
         computeOutOfFlowNonReplacedHeight(layoutContext, layoutBox, displayBox);
         return;
     }
@@ -241,21 +241,23 @@ void FormattingContext::computeReplacedWidth(LayoutContext&, const Box& layoutBo
     auto height = style.logicalHeight();
 
     LayoutUnit computedWidthValue;
+    auto replaced = layoutBox.replaced();
+    ASSERT(replaced);
 
-    if (width.isAuto() && height.isAuto() && layoutBox.hasIntrinsicWidth()) {
+    if (width.isAuto() && height.isAuto() && replaced->hasIntrinsicWidth()) {
         // #1
-        computedWidthValue = layoutBox.intrinsicWidth();
-    } else if (width.isAuto() && (height.isCalculated() || layoutBox.hasIntrinsicHeight()) && layoutBox.hasIntrinsicRatio()) {
+        computedWidthValue = replaced->intrinsicWidth();
+    } else if (width.isAuto() && (height.isCalculated() || replaced->hasIntrinsicHeight()) && replaced->hasIntrinsicRatio()) {
         // #2
-        auto usedHeight = height.isCalculated() ? LayoutUnit(height.value()) : layoutBox.intrinsicHeight();   
-        computedWidthValue = usedHeight * layoutBox.intrinsicRatio();
-    } else if (width.isAuto() && height.isAuto() && layoutBox.hasIntrinsicRatio()) {
+        auto usedHeight = height.isCalculated() ? LayoutUnit(height.value()) : replaced->intrinsicHeight();   
+        computedWidthValue = usedHeight * replaced->intrinsicRatio();
+    } else if (width.isAuto() && height.isAuto() && replaced->hasIntrinsicRatio()) {
         // #3
         // FIXME: undefined but surely doable.
         ASSERT_NOT_REACHED();
-    } else if (width.isAuto() && layoutBox.hasIntrinsicWidth()) {
+    } else if (width.isAuto() && replaced->hasIntrinsicWidth()) {
         // #4
-        computedWidthValue = layoutBox.intrinsicWidth();
+        computedWidthValue = replaced->intrinsicWidth();
     } else {
         // #5
         computedWidthValue = 300;

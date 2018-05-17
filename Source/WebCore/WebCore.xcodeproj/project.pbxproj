@@ -5727,6 +5727,8 @@
 		11100FCA2092868D0081AA6C /* LayoutAncestorIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutAncestorIterator.h; sourceTree = "<group>"; };
 		11100FD5209514DE0081AA6C /* LayoutTreeBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutTreeBuilder.cpp; sourceTree = "<group>"; };
 		11100FD7209514DF0081AA6C /* LayoutTreeBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutTreeBuilder.h; sourceTree = "<group>"; };
+		111C615620AD1AE1005B82FA /* LayoutReplaced.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutReplaced.h; sourceTree = "<group>"; };
+		111C615720AD1AE1005B82FA /* LayoutReplaced.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutReplaced.cpp; sourceTree = "<group>"; };
 		1123AFD9209ABB2000736ACC /* BlockInvalidation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlockInvalidation.h; sourceTree = "<group>"; };
 		1123AFDA209ABB2000736ACC /* BlockInvalidation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlockInvalidation.cpp; sourceTree = "<group>"; };
 		1123AFDC209ABBBA00736ACC /* InlineInvalidation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InlineInvalidation.h; sourceTree = "<group>"; };
@@ -15700,6 +15702,8 @@
 				1199FA4E208E3899002358CC /* LayoutInlineContainer.cpp */,
 				1199FA4D208E3899002358CC /* LayoutInlineContainer.h */,
 				11100FC72092764C0081AA6C /* LayoutIterator.h */,
+				111C615720AD1AE1005B82FA /* LayoutReplaced.cpp */,
+				111C615620AD1AE1005B82FA /* LayoutReplaced.h */,
 				11100FD5209514DE0081AA6C /* LayoutTreeBuilder.cpp */,
 				11100FD7209514DF0081AA6C /* LayoutTreeBuilder.h */,
 			);
