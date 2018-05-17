@@ -259,6 +259,9 @@ public:
     void setStorageAccessPromptsEnabled(bool isEnabled)  { m_promptForStorageAccessAPIEnabled = isEnabled; }
     bool storageAccessPromptsEnabled() const { return m_promptForStorageAccessAPIEnabled; }
 
+    void setDisabledAdaptationsMetaTagEnabled(bool isEnabled) { m_disabledAdaptationsMetaTagEnabled = isEnabled; }
+    bool disabledAdaptationsMetaTagEnabled() const { return m_disabledAdaptationsMetaTagEnabled; }
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -398,6 +401,8 @@ private:
     bool m_isWebGLCompressedTextureASTCSupportEnabled { false };
 
     bool m_promptForStorageAccessAPIEnabled { false };
+
+    bool m_disabledAdaptationsMetaTagEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

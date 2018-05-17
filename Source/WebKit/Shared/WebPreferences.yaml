@@ -1274,3 +1274,11 @@ StorageAccessPromptsEnabled:
     humanReadableDescription: "Prompt the user when Storage Access API calls are made"
     category: experimental
     webcoreBinding: RuntimeEnabledFeatures
+
+DisabledAdaptationsMetaTagEnabled:
+    type: bool
+    defaultValue: DISABLED_ADAPTATIONS_META_TAG_ENABLED
+    humanReadableName: "disabled-adaptations"
+    humanReadableDescription: "Enable the 'disabled-adaptations' meta tag"
+    category: experimental
+    webcoreBinding: RuntimeEnabledFeatures

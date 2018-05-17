@@ -54,6 +54,28 @@ static float platformDeviceWidthOverride()
 #endif
 }
 
+static bool shouldOverrideShrinkToFitArgument()
+{
+#if ENABLE(EXTRA_ZOOM_MODE)
+    return true;
+#else
+    return false;
+#endif
+}
+
+static bool needsUpdateAfterChangingDisabledAdaptations(const OptionSet<DisabledAdaptations>& oldDisabledAdaptations, const OptionSet<DisabledAdaptations>& newDisabledAdaptations)
+{
+    if (oldDisabledAdaptations == newDisabledAdaptations)
+        return false;
+
+#if ENABLE(EXTRA_ZOOM_MODE)
+    if (oldDisabledAdaptations.contains(DisabledAdaptations::ExtraZoomMode) != newDisabledAdaptations.contains(DisabledAdaptations::ExtraZoomMode))
+        return true;
+#endif
+
+    return false;
+}
+
 ViewportConfiguration::ViewportConfiguration()
     : m_minimumLayoutSize(1024, 768)
     , m_viewLayoutSize(1024, 768)
@@ -104,6 +126,19 @@ bool ViewportConfiguration::setViewLayoutSize(const FloatSize& viewLayoutSize)
     return true;
 }
 
+bool ViewportConfiguration::setDisabledAdaptations(const OptionSet<DisabledAdaptations>& disabledAdaptations)
+{
+    auto previousDisabledAdaptations = m_disabledAdaptations;
+    m_disabledAdaptations = disabledAdaptations;
+
+    if (!needsUpdateAfterChangingDisabledAdaptations(previousDisabledAdaptations, disabledAdaptations))
+        return false;
+
+    updateMinimumLayoutSize();
+    updateConfiguration();
+    return true;
+}
+
 bool ViewportConfiguration::setViewportArguments(const ViewportArguments& viewportArguments)
 {
     if (m_viewportArguments == viewportArguments)
@@ -134,8 +169,11 @@ IntSize ViewportConfiguration::layoutSize() const
 
 bool ViewportConfiguration::shouldOverrideDeviceWidthAndShrinkToFit() const
 {
+    if (m_disabledAdaptations.contains(DisabledAdaptations::ExtraZoomMode))
+        return false;
+
     auto viewWidth = m_viewLayoutSize.width();
-    return m_viewportArguments.shrinkToFit != 0. && 0 < viewWidth && viewWidth < platformDeviceWidthOverride();
+    return 0 < viewWidth && viewWidth < platformDeviceWidthOverride();
 }
 
 bool ViewportConfiguration::shouldIgnoreHorizontalScalingConstraints() const
@@ -368,7 +406,9 @@ void ViewportConfiguration::updateConfiguration()
     if (booleanViewportArgumentIsSet(m_viewportArguments.userZoom))
         m_configuration.allowsUserScaling = m_viewportArguments.userZoom != 0.;
 
-    if (booleanViewportArgumentIsSet(m_viewportArguments.shrinkToFit))
+    if (shouldOverrideShrinkToFitArgument())
+        m_configuration.allowsShrinkToFit = shouldOverrideDeviceWidthAndShrinkToFit();
+    else if (booleanViewportArgumentIsSet(m_viewportArguments.shrinkToFit))
         m_configuration.allowsShrinkToFit = m_viewportArguments.shrinkToFit != 0.;
 
     m_configuration.avoidsUnsafeArea = m_viewportArguments.viewportFit != ViewportFit::Cover;

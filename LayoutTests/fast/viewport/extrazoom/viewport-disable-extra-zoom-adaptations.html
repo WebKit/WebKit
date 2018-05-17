@@ -1,0 +1,107 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport">
+<head>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #output {
+            width: 100%;
+            height: 100%;
+            overflow: scroll;
+        }
+    </style>
+    <script>
+        jsTestIsAsync = true;
+
+        function appendOutput(text) {
+            const span = document.createElement("span");
+            span.textContent = text;
+            output.appendChild(document.createElement("br"));
+            output.appendChild(span);
+        }
+
+        function logWindowDimensionsAfterSettingMetaContent(metaNameToContentMap) {
+            return new Promise(async resolve => {
+                for (const name in metaNameToContentMap)
+                    document.querySelector(`meta[name='${name}']`).content = metaNameToContentMap[name];
+
+                await UIHelper.ensureVisibleContentRectUpdate();
+                appendOutput(`[${Object.values(metaNameToContentMap).join("; ")}] (${innerWidth}, ${innerHeight})`);
+                resolve();
+            });
+        }
+
+        async function runTest() {
+            if (!window.testRunner) {
+                description("Please use WebKitTestRunner to run this test.");
+                return;
+            }
+
+            appendOutput();
+            appendOutput("1. Default viewport");
+            await logWindowDimensionsAfterSettingMetaContent({
+                "viewport" : "width=150"
+            });
+            await logWindowDimensionsAfterSettingMetaContent({
+                "viewport" : "width=device-width"
+            });
+            scaleAtDeviceWidthWithDefaultAdaptations = parseFloat(await UIHelper.zoomScale()).toFixed(3);
+            await logWindowDimensionsAfterSettingMetaContent({
+                "viewport" : "width=600"
+            });
+
+            const disabledAdaptationsMeta = document.createElement("meta");
+            disabledAdaptationsMeta.setAttribute("name", "disabled-adaptations");
+            document.head.appendChild(disabledAdaptationsMeta);
+
+            appendOutput();
+            appendOutput("2. extra zoom mode adaptations disabled");
+            await logWindowDimensionsAfterSettingMetaContent({
+                "viewport" : "width=150",
+                "disabled-adaptations" : `one,\t${internals.extraZoomModeAdaptationName()}   ,two`
+            });
+            await logWindowDimensionsAfterSettingMetaContent({
+                "viewport" : "width=device-width",
+                "disabled-adaptations" : `${internals.extraZoomModeAdaptationName()}, three, four, ${internals.extraZoomModeAdaptationName()}`
+            });
+            scaleAtDeviceWidthWithAdaptationDisabled = parseFloat(await UIHelper.zoomScale()).toFixed(3);
+            await logWindowDimensionsAfterSettingMetaContent({
+                "viewport" : "width=600",
+                "disabled-adaptations" : `five, ${internals.extraZoomModeAdaptationName()}`
+            });
+
+            appendOutput();
+            appendOutput("3. shrink-to-fit disabled");
+            await logWindowDimensionsAfterSettingMetaContent({
+                "viewport" : "width=150, shrink-to-fit=no",
+                "disabled-adaptations" : ""
+            });
+            await logWindowDimensionsAfterSettingMetaContent({
+                "viewport" : "width=device-width, shrink-to-fit=0",
+                "disabled-adaptations" : "bogus, values"
+            });
+            scaleAtDeviceWidthWithShrinkToFitDisabled = parseFloat(await UIHelper.zoomScale()).toFixed(3);
+            await logWindowDimensionsAfterSettingMetaContent({
+                "viewport" : "width=600, shrink-to-fit=-0.5",
+                "disabled-adaptations" : ",,,"
+            });
+
+            shouldBe("scaleAtDeviceWidthWithDefaultAdaptations", "'0.488'");
+            shouldBe("scaleAtDeviceWidthWithAdaptationDisabled", "'1.000'");
+            shouldBe("scaleAtDeviceWidthWithShrinkToFitDisabled", "'0.488'");
+
+            finishJSTest();
+        }
+    </script>
+</head>
+<body onload="runTest()">
+<pre id="output"></pre>
+</body>
+</html>

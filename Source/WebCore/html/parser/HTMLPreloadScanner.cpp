@@ -41,6 +41,7 @@
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryParser.h"
 #include "RenderView.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SizesAttributeParser.h"
 #include <wtf/MainThread.h>
 
@@ -106,6 +107,7 @@ public:
         , m_linkIsStyleSheet(false)
         , m_linkIsPreload(false)
         , m_metaIsViewport(false)
+        , m_metaIsDisabledAdaptations(false)
         , m_inputIsImage(false)
         , m_deviceScaleFactor(deviceScaleFactor)
     {
@@ -142,6 +144,9 @@ public:
 
         if (m_metaIsViewport && !m_metaContent.isNull())
             document.processViewport(m_metaContent, ViewportArguments::ViewportMeta);
+
+        if (m_metaIsDisabledAdaptations && !m_metaContent.isNull())
+            document.processDisabledAdaptations(m_metaContent);
     }
 
     std::unique_ptr<PreloadRequest> createPreloadRequest(const URL& predictedBaseURL)
@@ -266,6 +271,8 @@ private:
                 m_metaContent = attributeValue;
             else if (match(attributeName, nameAttr))
                 m_metaIsViewport = equalLettersIgnoringASCIICase(attributeValue, "viewport");
+            else if (RuntimeEnabledFeatures::sharedFeatures().disabledAdaptationsMetaTagEnabled() && match(attributeName, nameAttr))
+                m_metaIsDisabledAdaptations = equalLettersIgnoringASCIICase(attributeValue, "disabled-adaptations");
             break;
         case TagId::Base:
         case TagId::Style:
@@ -359,6 +366,7 @@ private:
     String m_asAttribute;
     String m_typeAttribute;
     bool m_metaIsViewport;
+    bool m_metaIsDisabledAdaptations;
     bool m_inputIsImage;
     float m_deviceScaleFactor;
     PreloadRequest::ModuleScript m_moduleScript { PreloadRequest::ModuleScript::No };
