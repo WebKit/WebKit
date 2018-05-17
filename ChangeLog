@@ -1,3 +1,15 @@
+2018-05-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE] Implement and enable FULLSCREEN_API
+        https://bugs.webkit.org/show_bug.cgi?id=185676
+
+        Reviewed by Žan Doberšek.
+
+        Remove the CMake option to disable this option for WPE.
+        This feature gets enabled now via Source/cmake/WebKitFeatures.cmake
+
+        * Source/cmake/OptionsWPE.cmake:
+
 2018-05-16  Don Olmstead  <don.olmstead@sony.com>
 
         [WinCairo] Update WinCairoRequirements

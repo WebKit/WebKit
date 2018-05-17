@@ -1,3 +1,29 @@
+2018-05-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE] Implement and enable FULLSCREEN_API
+        https://bugs.webkit.org/show_bug.cgi?id=185676
+
+        Reviewed by Žan Doberšek.
+
+        Do the initial implementation of FULLSCREEN_API for WPE and
+        enable the CMake option by default.
+
+        Most of the layout tests (55 of 58) are passing and the feature
+        seems to work fine on different websites that use it.
+
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::fullScreenManagerProxyClient):
+        (WebKit::PageClientImpl::closeFullScreenManager):
+        (WebKit::PageClientImpl::isFullScreen):
+        (WebKit::PageClientImpl::enterFullScreen):
+        (WebKit::PageClientImpl::exitFullScreen):
+        (WebKit::PageClientImpl::beganEnterFullScreen):
+        (WebKit::PageClientImpl::beganExitFullScreen):
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/API/wpe/WPEView.h:
+        (WKWPE::View::isFullScreen):
+        (WKWPE::View::setFullScreen):
+
 2018-05-17  Jiewen Tan  <jiewen_tan@apple.com>
 
         Convert CertificateInfo into Credential in UI Process instead of Networking Process

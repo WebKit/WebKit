@@ -321,4 +321,58 @@ WebCore::UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirecti
     return WebCore::UserInterfaceLayoutDirection::LTR;
 }
 
+#if ENABLE(FULLSCREEN_API)
+WebFullScreenManagerProxyClient& PageClientImpl::fullScreenManagerProxyClient()
+{
+    return *this;
+}
+
+void PageClientImpl::closeFullScreenManager()
+{
+    notImplemented();
+}
+
+bool PageClientImpl::isFullScreen()
+{
+    return m_view.isFullScreen();
+}
+
+void PageClientImpl::enterFullScreen()
+{
+    if (isFullScreen())
+        return;
+
+    WebFullScreenManagerProxy* fullScreenManagerProxy = m_view.page().fullScreenManager();
+    if (fullScreenManagerProxy) {
+        fullScreenManagerProxy->willEnterFullScreen();
+        m_view.setFullScreen(true);
+        fullScreenManagerProxy->didEnterFullScreen();
+    }
+}
+
+void PageClientImpl::exitFullScreen()
+{
+    if (!isFullScreen())
+        return;
+
+    WebFullScreenManagerProxy* fullScreenManagerProxy = m_view.page().fullScreenManager();
+    if (fullScreenManagerProxy) {
+        fullScreenManagerProxy->willExitFullScreen();
+        m_view.setFullScreen(false);
+        fullScreenManagerProxy->didExitFullScreen();
+    }
+}
+
+void PageClientImpl::beganEnterFullScreen(const WebCore::IntRect& /* initialFrame */, const WebCore::IntRect& /* finalFrame */)
+{
+    notImplemented();
+}
+
+void PageClientImpl::beganExitFullScreen(const WebCore::IntRect& /* initialFrame */, const WebCore::IntRect& /* finalFrame */)
+{
+    notImplemented();
+}
+
+#endif // ENABLE(FULLSCREEN_API)
+
 } // namespace WebKit

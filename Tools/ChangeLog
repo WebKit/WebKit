@@ -1,3 +1,13 @@
+2018-05-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE] Implement and enable FULLSCREEN_API
+        https://bugs.webkit.org/show_bug.cgi?id=185676
+
+        Reviewed by Žan Doberšek.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewFullScreen):
+
 2018-05-17  Brendan McLoughlin  <brendan@bocoup.com>
 
         Export changes to web-platform-test as part of the webkit-patch upload workflow

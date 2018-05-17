@@ -1,3 +1,16 @@
+2018-05-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE] Implement and enable FULLSCREEN_API
+        https://bugs.webkit.org/show_bug.cgi?id=185676
+
+        Reviewed by Žan Doberšek.
+
+        Enable all the 58 fullscreen related tests.
+        Are all passing but 3.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fullscreen/full-screen-placeholder-expected.txt: Added. Copied baseline from WebKitGTK+ port.
+
 2018-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Disabled adaptations are not reset upon mainframe navigation

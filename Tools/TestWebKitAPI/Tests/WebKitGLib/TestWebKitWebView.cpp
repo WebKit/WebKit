@@ -441,7 +441,9 @@ public:
 #if ENABLE(FULLSCREEN_API)
 static void testWebViewFullScreen(FullScreenClientTest* test, gconstpointer)
 {
+#if PLATFORM(GTK)
     test->showInWindowAndWaitUntilMapped();
+#endif
     test->loadHtml("<html><body>FullScreen test</body></html>", 0);
     test->waitUntilLoadFinished();
     test->requestFullScreenAndWaitUntilEnteredFullScreen();

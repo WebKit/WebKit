@@ -72,6 +72,11 @@ public:
 
     void close();
 
+#if ENABLE(FULLSCREEN_API)
+    bool isFullScreen() { return m_fullScreenModeActive; };
+    void setFullScreen(bool fullScreenState) { m_fullScreenModeActive = fullScreenState; };
+#endif
+
 private:
     View(struct wpe_view_backend*, const API::PageConfiguration&);
 
@@ -86,6 +91,10 @@ private:
 
     WebKit::CompositingManagerProxy m_compositingManagerProxy;
     struct wpe_view_backend* m_backend;
+
+#if ENABLE(FULLSCREEN_API)
+    bool m_fullScreenModeActive { false };
+#endif
 };
 
 } // namespace WKWPE
