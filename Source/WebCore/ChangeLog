@@ -1,3 +1,20 @@
+2018-05-17  Brent Fulgham  <bfulgham@apple.com>
+
+        Storage Access API: Allow documents that have been granted storage access to also do a popup
+        https://bugs.webkit.org/show_bug.cgi?id=185615
+        <rdar://problem/39105791>
+
+        Reviewed by Chris Dumez.
+
+        * dom/Document.cpp:
+        (WebCore::Document::consumeTemporaryUserGesture): Added. Clear the document's active one-time user
+        activity (for window opening) state.
+        (WebCore::Document::enableTemporaryUserGesture): Added. Establish a new active one-time user
+        activity (for window opening) state.
+        (WebCore::Document::requestStorageAccess): If the user approves Storage Access, establish a new
+        UserInteraction scope, then resolve the promise. Also post a task to clear the one-time user
+        gesture state.
+
 2018-05-17  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Introduce DisplayBox::Style

@@ -122,6 +122,7 @@
 #include "MediaQueryList.h"
 #include "MediaQueryMatcher.h"
 #include "MessageEvent.h"
+#include "Microtasks.h"
 #include "MouseEventWithHitTestResults.h"
 #include "MutationEvent.h"
 #include "NameNodeList.h"
@@ -7609,20 +7610,38 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    page->chrome().client().requestStorageAccess(WTFMove(iframeHost), WTFMove(topHost), frameID.value(), pageID.value(), [documentReference = m_weakFactory.createWeakPtr(*this), promise = WTFMove(promise)] (bool wasGranted) {
+    page->chrome().client().requestStorageAccess(WTFMove(iframeHost), WTFMove(topHost), frameID.value(), pageID.value(), [documentReference = m_weakFactory.createWeakPtr(*this), promise = WTFMove(promise)] (bool wasGranted) mutable {
         Document* document = documentReference.get();
         if (!document)
             return;
         
         if (wasGranted) {
             document->setHasFrameSpecificStorageAccess(true);
+            MicrotaskQueue::mainThreadQueue().append(std::make_unique<VoidMicrotask>([documentReference = document->m_weakFactory.createWeakPtr(*document)] () {
+                if (auto* document = documentReference.get())
+                    document->enableTemporaryTimeUserGesture();
+            }));
             promise->resolve();
+            MicrotaskQueue::mainThreadQueue().append(std::make_unique<VoidMicrotask>([documentReference = WTFMove(documentReference)] () {
+                if (auto* document = documentReference.get())
+                    document->consumeTemporaryTimeUserGesture();
+            }));
         } else
             promise->reject();
     });
 #else
     promise->reject();
 #endif
+}
+
+void Document::enableTemporaryTimeUserGesture()
+{
+    m_temporaryUserGesture = std::make_unique<UserGestureIndicator>(ProcessingUserGesture, this);
+}
+
+void Document::consumeTemporaryTimeUserGesture()
+{
+    m_temporaryUserGesture = nullptr;
 }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
