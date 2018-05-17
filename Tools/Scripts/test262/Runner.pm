@@ -49,6 +49,12 @@ if  (eval {require Pod::Usage; 1;}) {
     $podIsAvailable = 1;
 }
 
+my $webkitdirIsAvailable;
+if  (eval {require webkitdirs; 1;}) {
+    webkitdirs->import(qw(executableProductDir setConfiguration));
+    $webkitdirIsAvailable = 1;
+}
+
 my $Bin;
 BEGIN {
     $ENV{DBIC_OVERWRITE_HELPER_METHODS_OK} = 1;
@@ -233,10 +239,10 @@ sub processCLI {
     print "\n-------------------------Settings------------------------\n"
         . "Test262 Dir: $test262Dir\n"
         . "JSC: $JSC\n"
-        . "DYLD_FRAMEWORK_PATH: $DYLD_FRAMEWORK_PATH\n"
         . "Child Processes: $max_process\n";
 
     print "Test timeout: $timeout\n" if $timeout;
+    print "DYLD_FRAMEWORK_PATH: $DYLD_FRAMEWORK_PATH\n" if $DYLD_FRAMEWORK_PATH;
     print "Features to include: " . join(', ', @features) . "\n" if @features;
     print "Paths: " . join(', ', @cliTestDirs) . "\n" if @cliTestDirs;
     print "Config file: $configFile\n" if $config;
@@ -460,34 +466,32 @@ sub parseError {
 }
 
 sub getBuildPath {
-    my $release = shift;
-
-    # Try to find JSC for user, if not supplied
-    my $cmd = abs_path("$Bin/../webkit-build-directory");
-    if (! -e $cmd) {
-        die 'Error: cannot find webkit-build-directory, specify with JSC with --jsc <path>.';
-    }
-
-    if ($release) {
-        $cmd .= ' --release';
-    } else {
-        $cmd .= ' --debug';
-    }
-    $cmd .= ' --executablePath';
-    my $jscDir = qx($cmd);
-    chomp $jscDir;
+    my ($release) = @_;
 
     my $jsc;
-    $jsc = $jscDir . '/jsc';
 
-    $jsc = $jscDir . '/JavaScriptCore.framework/Resources/jsc' if (! -e $jsc);
-    $jsc = $jscDir . '/bin/jsc' if (! -e $jsc);
-    if (! -e $jsc) {
-        die 'Error: cannot find jsc, specify with --jsc <path>.';
+    if ($webkitdirIsAvailable) {
+        my $config = $release ? 'Release' : 'Debug';
+        setConfiguration($config);
+        my $jscDir = executableProductDir();
+
+        $jsc = $jscDir . '/jsc';
+        $jsc = $jscDir . '/JavaScriptCore.framework/Resources/jsc' if (! -e $jsc);
+        $jsc = $jscDir . '/bin/jsc' if (! -e $jsc);
+
+        # Sets the Env DYLD_FRAMEWORK_PATH
+        $DYLD_FRAMEWORK_PATH = dirname($jsc) if (-e $jsc);
     }
 
-    # Sets the Env DYLD_FRAMEWORK_PATH
-    $DYLD_FRAMEWORK_PATH = dirname($jsc);
+    if (! $jsc || ! -e $jsc) {
+        # If we cannot find jsc using webkitdirs, look in path
+        $jsc = qx(which jsc);
+        chomp $jsc;
+
+        if (! $jsc ) {
+            die("Cannot find jsc, specify with --jsc <path>.\n\n");
+        }
+    }
 
     return $jsc;
 }
@@ -628,9 +632,9 @@ sub runTest {
     my $defaultHarness = '';
     $defaultHarness = $deffile if $scenario ne 'raw';
 
-    my $prefix = qq(DYLD_FRAMEWORK_PATH=$DYLD_FRAMEWORK_PATH);
-
+    my $prefix = $DYLD_FRAMEWORK_PATH ? qq(DYLD_FRAMEWORK_PATH=$DYLD_FRAMEWORK_PATH) : "";
     my $execTimeStart = time();
+
     my $result = qx($prefix $JSC $args $defaultHarness $includesfile '$prefixFile$filename');
     my $execTime = time() - $execTimeStart;
 

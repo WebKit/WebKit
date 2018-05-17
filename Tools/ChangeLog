@@ -1,3 +1,18 @@
+2018-05-17  Valerie R Young  <valerie@bocoup.com>
+
+        test262/Runner.pm: look for jsc in path if cannot call webkit-build-directory
+        https://bugs.webkit.org/show_bug.cgi?id=185650
+
+        Reviewed by Michael Saboff.
+
+        First, use jsc from CLI arg, then try to use webkit-build-directory,
+        if that doesn't work, look for jsc in the $PATH
+
+        * Scripts/test262/Runner.pm:
+        (processCLI):
+        (getBuildPath):
+        (runTest):
+
 2018-05-16  Leo Balter  <leonardo.balter@gmail.com>
 
         Test262-Runner: Adds a --timeout option
