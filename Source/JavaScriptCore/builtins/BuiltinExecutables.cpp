@@ -49,21 +49,11 @@ SourceCode BuiltinExecutables::defaultConstructorSourceCode(ConstructorKind cons
         break;
     case ConstructorKind::Base: {
         static NeverDestroyed<const String> baseConstructorCode(MAKE_STATIC_STRING_IMPL("(function () { })"));
-        static LazyNeverDestroyed<SourceCode> result;
-        static std::once_flag onceFlag;
-        std::call_once(onceFlag, [&] {
-            result.construct(makeSource(baseConstructorCode, { }));
-        });
-        return result;
+        return makeSource(baseConstructorCode, { });
     }
     case ConstructorKind::Extends: {
         static NeverDestroyed<const String> derivedConstructorCode(MAKE_STATIC_STRING_IMPL("(function (...args) { super(...args); })"));
-        static LazyNeverDestroyed<SourceCode> result;
-        static std::once_flag onceFlag;
-        std::call_once(onceFlag, [&] {
-            result.construct(makeSource(derivedConstructorCode, { }));
-        });
-        return result;
+        return makeSource(derivedConstructorCode, { });
     }
     }
     RELEASE_ASSERT_NOT_REACHED();

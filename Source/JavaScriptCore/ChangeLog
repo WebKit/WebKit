@@ -1,3 +1,18 @@
+2018-05-17  Saam Barati  <sbarati@apple.com>
+
+        defaultConstructorSourceCode needs to makeSource every time it's called
+        https://bugs.webkit.org/show_bug.cgi?id=185753
+
+        Rubber-stamped by Mark Lam.
+
+        The bug here is multiple VMs can be running concurrently to one another
+        in the same process. They may each ref/deref something that isn't ThreadSafeRefCounted
+        if we copy a static SourceCode. instead, we create a new one each time
+        this function is called.
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::defaultConstructorSourceCode):
+
 2018-05-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use AssemblyHelpers' type checking functions as much as possible
