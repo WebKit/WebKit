@@ -102,7 +102,7 @@ void PluginProcessProxy::processWillShutDown(IPC::Connection& connection)
 
 // Asks the plug-in process to create a new connection to a web process. The connection identifier will be 
 // encoded in the given argument encoder and sent back to the connection of the given web process.
-void PluginProcessProxy::getPluginProcessConnection(Ref<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>&& reply)
+void PluginProcessProxy::getPluginProcessConnection(Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply&& reply)
 {
     m_pendingConnectionReplies.append(WTFMove(reply));
 
@@ -159,12 +159,12 @@ void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
 {
     // The plug-in process must have crashed or exited, send any pending sync replies we might have.
     while (!m_pendingConnectionReplies.isEmpty()) {
-        RefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
+        auto reply = m_pendingConnectionReplies.takeFirst();
 
 #if USE(UNIX_DOMAIN_SOCKETS)
-        reply->send(IPC::Attachment(), false);
+        reply(IPC::Attachment(), false);
 #elif OS(DARWIN)
-        reply->send(IPC::Attachment(0, MACH_MSG_TYPE_MOVE_SEND), false);
+        reply(IPC::Attachment(0, MACH_MSG_TYPE_MOVE_SEND), false);
 #else
         notImplemented();
 #endif
@@ -276,12 +276,12 @@ void PluginProcessProxy::didCreateWebProcessConnection(const IPC::Attachment& co
     ASSERT(!m_pendingConnectionReplies.isEmpty());
 
     // Grab the first pending connection reply.
-    RefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
+    auto reply = m_pendingConnectionReplies.takeFirst();
 
 #if USE(UNIX_DOMAIN_SOCKETS)
-    reply->send(connectionIdentifier, supportsAsynchronousPluginInitialization);
+    reply(connectionIdentifier, supportsAsynchronousPluginInitialization);
 #elif OS(DARWIN)
-    reply->send(IPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND), supportsAsynchronousPluginInitialization);
+    reply(IPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND), supportsAsynchronousPluginInitialization);
 #else
     notImplemented();
 #endif

@@ -1,3 +1,113 @@
+2018-05-17  Alex Christensen  <achristensen@webkit.org>
+
+        Use CompletionHandlers for DelayedReplies
+        https://bugs.webkit.org/show_bug.cgi?id=182269
+
+        Reviewed by Youenn Fablet.
+
+        DelayedReplies should be a noncopyable, non-refcountable type.  They should be
+        called once and only once.  This is what CompletionHandlers are for.
+
+        No change in behavior.  Just cleaner code.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::performSynchronousLoad):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::SynchronousLoadData::SynchronousLoadData):
+        (WebKit::sendReplyToSynchronousRequest):
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * Platform/IPC/HandleMessage.h:
+        (IPC::callMemberFunctionImpl):
+        (IPC::callMemberFunction):
+        (IPC::handleMessageDelayed):
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::setInitializationReply):
+        (WebKit::PluginControllerProxy::takeInitializationReply):
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::destroyPlugin):
+        (WebKit::WebProcessConnection::createPlugin):
+        (WebKit::WebProcessConnection::createPluginAsynchronously):
+        * PluginProcess/WebProcessConnection.h:
+        * Scripts/webkit/LegacyMessageReceiver-expected.cpp:
+        (Messages::WebPage::GetPluginProcessConnection::send):
+        (Messages::WebPage::TestMultipleAttributes::send):
+        (Messages::WebPage::GetPluginProcessConnection::DelayedReply::DelayedReply): Deleted.
+        (Messages::WebPage::GetPluginProcessConnection::DelayedReply::~DelayedReply): Deleted.
+        (Messages::WebPage::GetPluginProcessConnection::DelayedReply::send): Deleted.
+        (Messages::WebPage::TestMultipleAttributes::DelayedReply::DelayedReply): Deleted.
+        (Messages::WebPage::TestMultipleAttributes::DelayedReply::~DelayedReply): Deleted.
+        (Messages::WebPage::TestMultipleAttributes::DelayedReply::send): Deleted.
+        * Scripts/webkit/LegacyMessages-expected.h:
+        * Scripts/webkit/MessageReceiver-expected.cpp:
+        (Messages::WebPage::GetPluginProcessConnection::send):
+        (Messages::WebPage::TestMultipleAttributes::send):
+        (Messages::WebPage::GetPluginProcessConnection::DelayedReply::DelayedReply): Deleted.
+        (Messages::WebPage::GetPluginProcessConnection::DelayedReply::~DelayedReply): Deleted.
+        (Messages::WebPage::GetPluginProcessConnection::DelayedReply::send): Deleted.
+        (Messages::WebPage::TestMultipleAttributes::DelayedReply::DelayedReply): Deleted.
+        (Messages::WebPage::TestMultipleAttributes::DelayedReply::~DelayedReply): Deleted.
+        (Messages::WebPage::TestMultipleAttributes::DelayedReply::send): Deleted.
+        * Scripts/webkit/Messages-expected.h:
+        * Scripts/webkit/messages.py:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+        (WebKit::NetworkProcessProxy::networkProcessCrashed):
+        (WebKit::NetworkProcessProxy::networkProcessFailedToLaunch):
+        (WebKit::NetworkProcessProxy::didCreateNetworkConnectionToWebProcess):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::getPluginProcessConnection):
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::getPluginProcessConnection):
+        (WebKit::PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch):
+        (WebKit::PluginProcessProxy::didCreateWebProcessConnection):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Storage/StorageProcessProxy.cpp:
+        (WebKit::StorageProcessProxy::getStorageProcessConnection):
+        (WebKit::StorageProcessProxy::didClose):
+        (WebKit::StorageProcessProxy::didCreateStorageToWebProcessConnection):
+        * UIProcess/Storage/StorageProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::ExceededDatabaseQuotaRecords::createRecord):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSync):
+        (WebKit::WebPageProxy::createNewPage):
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+        (WebKit::WebPageProxy::webGLPolicyForURL):
+        (WebKit::WebPageProxy::resolveWebGLPolicyForURL):
+        (WebKit::WebPageProxy::getToolbarsAreVisible):
+        (WebKit::WebPageProxy::getMenuBarIsVisible):
+        (WebKit::WebPageProxy::getStatusBarIsVisible):
+        (WebKit::WebPageProxy::getWindowFrame):
+        (WebKit::WebPageProxy::screenToRootView):
+        (WebKit::WebPageProxy::rootViewToScreen):
+        (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel):
+        (WebKit::WebPageProxy::exceededDatabaseQuota):
+        (WebKit::WebPageProxy::reachedApplicationCacheOriginQuota):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::networkProcessCrashed):
+        (WebKit::WebProcessPool::getNetworkProcessConnection):
+        (WebKit::WebProcessPool::getStorageProcessConnection):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPluginProcessConnection):
+        (WebKit::WebProcessProxy::getNetworkProcessConnection):
+        (WebKit::WebProcessProxy::getStorageProcessConnection):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::syncTerminateWorker):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::computePagesForPrintingAndDrawToPDF):
+
 2018-05-17  Jer Noble  <jer.noble@apple.com>
 
         CRASH in -[WKFullScreenViewController _manager]

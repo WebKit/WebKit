@@ -358,17 +358,8 @@ public:
     static IPC::StringReference name() { return IPC::StringReference("GetPluginProcessConnection"); }
     static const bool isSync = true;
 
-    struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {
-        DelayedReply(Ref<IPC::Connection>&&, std::unique_ptr<IPC::Encoder>);
-        ~DelayedReply();
-
-        bool send(const IPC::Connection::Handle& connectionHandle);
-
-    private:
-        RefPtr<IPC::Connection> m_connection;
-        std::unique_ptr<IPC::Encoder> m_encoder;
-    };
-
+    using DelayedReply = CompletionHandler<void(const IPC::Connection::Handle& connectionHandle)>;
+    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&, const IPC::Connection::Handle& connectionHandle);
     typedef std::tuple<IPC::Connection::Handle&> Reply;
     explicit GetPluginProcessConnection(const String& pluginPath)
         : m_arguments(pluginPath)
@@ -392,17 +383,8 @@ public:
     static IPC::StringReference name() { return IPC::StringReference("TestMultipleAttributes"); }
     static const bool isSync = true;
 
-    struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {
-        DelayedReply(Ref<IPC::Connection>&&, std::unique_ptr<IPC::Encoder>);
-        ~DelayedReply();
-
-        bool send();
-
-    private:
-        RefPtr<IPC::Connection> m_connection;
-        std::unique_ptr<IPC::Encoder> m_encoder;
-    };
-
+    using DelayedReply = CompletionHandler<void()>;
+    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&);
     typedef std::tuple<> Reply;
     const Arguments& arguments() const
     {

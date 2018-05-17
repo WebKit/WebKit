@@ -59,43 +59,15 @@ namespace Messages {
 
 namespace WebPage {
 
-GetPluginProcessConnection::DelayedReply::DelayedReply(Ref<IPC::Connection>&& connection, std::unique_ptr<IPC::Encoder> encoder)
-    : m_connection(WTFMove(connection))
-    , m_encoder(WTFMove(encoder))
+void GetPluginProcessConnection::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, const IPC::Connection::Handle& connectionHandle)
 {
+    *encoder << connectionHandle;
+    connection.sendSyncReply(WTFMove(encoder));
 }
 
-GetPluginProcessConnection::DelayedReply::~DelayedReply()
+void TestMultipleAttributes::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection)
 {
-    ASSERT(!m_connection);
-}
-
-bool GetPluginProcessConnection::DelayedReply::send(const IPC::Connection::Handle& connectionHandle)
-{
-    ASSERT(m_encoder);
-    *m_encoder << connectionHandle;
-    bool _result = m_connection->sendSyncReply(WTFMove(m_encoder));
-    m_connection = nullptr;
-    return _result;
-}
-
-TestMultipleAttributes::DelayedReply::DelayedReply(Ref<IPC::Connection>&& connection, std::unique_ptr<IPC::Encoder> encoder)
-    : m_connection(WTFMove(connection))
-    , m_encoder(WTFMove(encoder))
-{
-}
-
-TestMultipleAttributes::DelayedReply::~DelayedReply()
-{
-    ASSERT(!m_connection);
-}
-
-bool TestMultipleAttributes::DelayedReply::send()
-{
-    ASSERT(m_encoder);
-    bool _result = m_connection->sendSyncReply(WTFMove(m_encoder));
-    m_connection = nullptr;
-    return _result;
+    connection.sendSyncReply(WTFMove(encoder));
 }
 
 } // namespace WebPage

@@ -74,8 +74,8 @@ public:
 
     bool isInitializing() const { return m_isInitializing; }
     
-    void setInitializationReply(Ref<Messages::WebProcessConnection::CreatePlugin::DelayedReply>&&);
-    RefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> takeInitializationReply();
+    void setInitializationReply(Messages::WebProcessConnection::CreatePlugin::DelayedReply&&);
+    Messages::WebProcessConnection::CreatePlugin::DelayedReply takeInitializationReply();
 
 private:
     void startPaintTimer();
@@ -183,7 +183,7 @@ private:
     bool m_isVisible;
     bool m_isWindowVisible;
 
-    RefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> m_initializationReply;
+    Messages::WebProcessConnection::CreatePlugin::DelayedReply m_initializationReply;
 
     RefPtr<Plugin> m_plugin;
 
