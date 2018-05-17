@@ -100,6 +100,7 @@ JSFunction::JSFunction(VM& vm, JSGlobalObject* globalObject, Structure* structur
     : Base(vm, globalObject, structure)
     , m_executable()
 {
+    assertTypeInfoFlagInvariants();
 }
 
 
@@ -788,5 +789,17 @@ JSFunction::PropertyStatus JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, ExecSt
     }
     return PropertyStatus::Reified;
 }
+
+#if !ASSERT_DISABLED
+void JSFunction::assertTypeInfoFlagInvariants()
+{
+    // If you change this, you'll need to update speculationFromClassInfo.
+    const ClassInfo* info = classInfo(*vm());
+    if (!(inlineTypeFlags() & ImplementsDefaultHasInstance))
+        RELEASE_ASSERT(info == JSBoundFunction::info());
+    else
+        RELEASE_ASSERT(info != JSBoundFunction::info());
+}
+#endif
 
 } // namespace JSC

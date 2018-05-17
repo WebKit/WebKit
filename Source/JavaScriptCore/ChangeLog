@@ -1,3 +1,43 @@
+2018-05-16  Saam Barati  <sbarati@apple.com>
+
+        Constant fold CheckTypeInfoFlags on ImplementsDefaultHasInstance
+        https://bugs.webkit.org/show_bug.cgi?id=185670
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch makes it so that we constant fold CheckTypeInfoFlags for
+        ImplementsDefaultHasInstance inside of AI/constant folding. We constant
+        fold in three ways:
+        - When the incoming value is a constant, we just look at its inline type
+        flags. Since those flags never change after an object is created, this
+        is sound.
+        - Based on the incoming value having a finite structure set. We just iterate
+        all structures and ensure they have the bit set.
+        - Based on speculated type. To do this, I split up SpecFunction into two
+        subheaps where one is for functions that have the bit set, and one for
+        functions that don't have the bit set. The latter is currently only comprised
+        of JSBoundFunctions. To constant fold, we check that the incoming
+        value only has the SpecFunction type with ImplementsDefaultHasInstance set.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationFromClassInfo):
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckTypeInfoFlags):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::assertTypeInfoFlagInvariants):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::assertTypeInfoFlagInvariants):
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::JSFunction):
+
 2018-05-16  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: create a navigation item for toggling the overlay rulers/guides

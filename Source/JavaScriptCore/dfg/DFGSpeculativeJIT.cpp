@@ -3389,6 +3389,9 @@ void SpeculativeJIT::compileCheckTypeInfoFlags(Node* node)
 
     GPRReg baseGPR = base.gpr();
 
+    // FIXME: This only works for checking if a single bit is set. If we want to check more
+    // than one bit at once, we'll need to fix this:
+    // https://bugs.webkit.org/show_bug.cgi?id=185705
     speculationCheck(BadTypeInfoFlags, JSValueRegs(), 0, m_jit.branchTest8(MacroAssembler::Zero, MacroAssembler::Address(baseGPR, JSCell::typeInfoFlagsOffset()), MacroAssembler::TrustedImm32(node->typeInfoOperand())));
 
     noResult(node);

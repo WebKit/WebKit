@@ -208,6 +208,12 @@ private:
     PropertyStatus reifyLazyNameIfNeeded(VM&, ExecState*, PropertyName);
     PropertyStatus reifyLazyBoundNameIfNeeded(VM&, ExecState*, PropertyName);
 
+#if ASSERT_DISABLED
+    void assertTypeInfoFlagInvariants() { }
+#else
+    void assertTypeInfoFlagInvariants();
+#endif
+
     friend class LLIntOffsetsExtractor;
 
     static EncodedJSValue argumentsGetter(ExecState*, EncodedJSValue, PropertyName);

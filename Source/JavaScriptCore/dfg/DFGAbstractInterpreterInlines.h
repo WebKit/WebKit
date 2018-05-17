@@ -3437,7 +3437,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CountExecution:
     case CheckTierUpInLoop:
     case CheckTierUpAtReturn:
-    case CheckTypeInfoFlags:
     case SuperSamplerBegin:
     case SuperSamplerEnd:
     case CheckTierUpAndOSREnter:
@@ -3445,6 +3444,43 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ZombieHint:
     case ExitOK:
         break;
+
+    case CheckTypeInfoFlags: {
+        const AbstractValue& abstractValue = forNode(node->child1());
+        unsigned bits = node->typeInfoOperand();
+        ASSERT(bits);
+        if (bits == ImplementsDefaultHasInstance) {
+            if (abstractValue.m_type == SpecFunctionWithDefaultHasInstance) {
+                m_state.setFoundConstants(true);
+                break;
+            }
+        }
+
+        if (JSValue value = abstractValue.value()) {
+            if (value.isCell()) {
+                // This works because if we see a cell here, we know it's fully constructed
+                // and we can read its inline type info flags. These flags don't change over the
+                // object's lifetime.
+                if ((value.asCell()->inlineTypeFlags() & bits) == bits) {
+                    m_state.setFoundConstants(true);
+                    break;
+                }
+            }
+        }
+
+        if (abstractValue.m_structure.isFinite()) {
+            bool ok = true;
+            abstractValue.m_structure.forEach([&] (RegisteredStructure structure) {
+                ok &= (structure->typeInfo().inlineTypeFlags() & bits) == bits;
+            });
+            if (ok) {
+                m_state.setFoundConstants(true);
+                break;
+            }
+        }
+
+        break;
+    }
 
     case ParseInt: {
         AbstractValue value = forNode(node->child1());

@@ -303,7 +303,7 @@ private:
             break;
         }
 
-        // FIXME: we should probably do this in constant folding but this currently relies on an OSR exit rule.
+        // FIXME: we should probably do this in constant folding but this currently relies on OSR exit history:
         // https://bugs.webkit.org/show_bug.cgi?id=154832
         case OverridesHasInstance: {
             if (!m_node->child2().node()->isCellConstant())

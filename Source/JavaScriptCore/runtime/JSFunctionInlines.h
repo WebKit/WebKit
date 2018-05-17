@@ -43,6 +43,7 @@ inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* s
     , m_executable(vm, this, executable)
     , m_rareData()
 {
+    assertTypeInfoFlagInvariants();
 }
 
 inline FunctionExecutable* JSFunction::jsExecutable() const
