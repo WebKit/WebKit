@@ -1271,7 +1271,7 @@ WebGLCompressedTextureASTCSupportEnabled:
 
 StorageAccessPromptsEnabled:
     type: bool
-    defaultValue: false
+    defaultValue: true
     humanReadableName: "Prompt for Storage Access API Requests"
     humanReadableDescription: "Prompt the user when Storage Access API calls are made"
     category: experimental

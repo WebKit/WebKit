@@ -1,3 +1,17 @@
+2018-05-17  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct default for StorageAccess API
+        https://bugs.webkit.org/show_bug.cgi?id=185748
+        <rdar://problem/40220659>
+
+        Reviewed by Dean Jackson.
+
+        Flip the default state to 'true' so that the new "sticky" state
+        for Storage Access API and attributing user interaction for
+        Storage Access API use is applied by default.
+
+        * Shared/WebPreferences.yaml:
+
 2018-05-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE] Implement and enable FULLSCREEN_API
