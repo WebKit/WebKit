@@ -1,3 +1,16 @@
+2018-05-17  Antoine Quint  <graouts@apple.com>
+
+        [modern-media-controls] AirPlaySupport should be disabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=185658
+        <rdar://problem/40272213>
+
+        Reviewed by Simon Fraser.
+
+        Add a new test that checks that we create an AirplaySupport object only after media has started playing.
+
+        * media/modern-media-controls/airplay-support/airplay-support-disable-event-listeners-until-play-expected.txt: Added.
+        * media/modern-media-controls/airplay-support/airplay-support-disable-event-listeners-until-play.html: Added.
+
 2018-05-17  Rob Buis  <rbuis@igalia.com>
 
         Remove cssom-remove-shorthand-property.html test

@@ -1,3 +1,21 @@
+2018-05-17  Antoine Quint  <graouts@apple.com>
+
+        [modern-media-controls] AirPlaySupport should be disabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=185658
+        <rdar://problem/40272213>
+
+        Reviewed by Simon Fraser.
+
+        We now only enable AirplaySupport if the controls are visible to the user _and_ media has played.
+
+        Test: media/modern-media-controls/airplay-support/airplay-support-disable-event-listeners-until-play.html
+
+        * Modules/modern-media-controls/media/airplay-support.js:
+        (AirplaySupport.prototype.enable):
+        (AirplaySupport.prototype.controlsUserVisibilityDidChange):
+        (AirplaySupport.prototype._shouldBeEnabled):
+        (AirplaySupport):
+
 2018-05-17  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Replace ASSERT_NOT_REACHED with ASSERT_NOT_IMPLEMENTED_YET where applicable.
