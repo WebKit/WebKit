@@ -206,13 +206,13 @@
 
 2018-05-15  Tadeu Zagallo  <tzagallo@apple.com>
 
-        Update touch event tracking type on every touch
+        Update touch event tracking types on every touch
         https://bugs.webkit.org/show_bug.cgi?id=184250
         <rdar://problem/39145092>
 
         Reviewed by Geoffrey Garen.
 
-        The tracking type for touch events were only update on touchstart, which meant that event
+        The tracking types for touch events were only update on touchstart, which meant that event
         listeners added after the touchstart would always be treated as passive, even if explicitly
         setting passive to false.
 
