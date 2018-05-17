@@ -286,6 +286,7 @@ class Upload(AbstractPatchUploadingCommand):
         steps.EnsureBugIsOpenAndAssigned,
         steps.PostDiff,
         steps.SubmitToEWS,
+        steps.WPTChangeExport,
     ]
     long_help = """upload uploads the current diff to bugs.webkit.org.
     If no bug id is provided, upload will create a bug.
@@ -531,3 +532,25 @@ class CreateBug(Command):
             self.create_bug_from_commit(options, args, tool)
         else:
             self.create_bug_from_patch(options, args, tool)
+
+
+class WPTChangeExport(AbstractPatchUploadingCommand):
+    name = "wpt-change-export"
+    help_text = "Opens a pull request to synchronize any changes in the LayoutTests/imported/w3c/web-platform-tests directory"
+    argument_names = "[BUGID]"
+    steps = [
+        steps.WPTChangeExport,
+    ]
+
+    long_help = """Opens a pull request to the w3c/web-platform-tests
+    github repo for any changes in the
+    LayoutTests/imported/w3c/web-platform-tests directory. This step
+    will noop if there are no changes in the web-platform-tests directory.
+    The user will be prompted to provide a github username and OAuth token
+    the first time this is run.
+    """
+
+    def _prepare_state(self, options, args, tool):
+        state = {}
+        state["bug_id"] = self._bug_id(options, args, tool, state)
+        return state
