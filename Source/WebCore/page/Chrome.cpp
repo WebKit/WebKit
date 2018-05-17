@@ -448,6 +448,11 @@ FloatSize Chrome::overrideScreenSize() const
     return m_client.overrideScreenSize();
 }
 
+void Chrome::dispatchDisabledAdaptationsDidChange(const OptionSet<DisabledAdaptations>& disabledAdaptations) const
+{
+    m_client.dispatchDisabledAdaptationsDidChange(disabledAdaptations);
+}
+
 void Chrome::dispatchViewportPropertiesDidChange(const ViewportArguments& arguments) const
 {
 #if PLATFORM(IOS)

@@ -21,6 +21,7 @@
 #pragma once
 
 #include "ActivityState.h"
+#include "DisabledAdaptations.h"
 #include "FindOptions.h"
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestones.h"
@@ -174,6 +175,7 @@ public:
 
     WEBCORE_EXPORT void setNeedsRecalcStyleInAllFrames();
 
+    WEBCORE_EXPORT OptionSet<DisabledAdaptations> disabledAdaptations() const;
     WEBCORE_EXPORT ViewportArguments viewportArguments() const;
 
     static void refreshPlugins(bool reload);

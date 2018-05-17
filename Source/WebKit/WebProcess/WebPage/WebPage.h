@@ -50,6 +50,7 @@
 #include "WebUserContentController.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/DictionaryPopupInfo.h>
+#include <WebCore/DisabledAdaptations.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HTMLMenuElement.h>
 #include <WebCore/HTMLMenuItemElement.h>
@@ -558,6 +559,7 @@ public:
     void elementDidBlur(WebCore::Node*);
     void resetAssistedNodeForFrame(WebFrame*);
 
+    void disabledAdaptationsDidChange(const OptionSet<WebCore::DisabledAdaptations>&);
     void viewportPropertiesDidChange(const WebCore::ViewportArguments&);
     void executeEditCommandWithCallback(const String&, const String& argument, CallbackID);
 
