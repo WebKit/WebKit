@@ -134,6 +134,10 @@ struct NetworkProcessCreationParameters {
     Vector<String> urlSchemesRegisteredAsCORSEnabled;
 
     bool trackNetworkActivity { false };
+    
+#if ENABLE(WIFI_ASSERTIONS)
+    unsigned wirelessContextIdentifier { 0 };
+#endif
 };
 
 } // namespace WebKit

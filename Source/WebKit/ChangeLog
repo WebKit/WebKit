@@ -1,5 +1,64 @@
 2018-05-17  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r231770. rdar://problem/39915196
+
+    [Wi-Fi Assertions] Allow clients to specify a context identifier
+    https://bugs.webkit.org/show_bug.cgi?id=185620
+    <rdar://problem/39915196>
+    
+    Reviewed by Brady Eidson.
+    
+    Added an SPI on _WKProcessPoolConfiguration that allows clients to specify a
+    context identifier.
+    
+    * NetworkProcess/NetworkProcessCreationParameters.cpp:
+    (WebKit::NetworkProcessCreationParameters::encode const):
+    (WebKit::NetworkProcessCreationParameters::decode):
+    * NetworkProcess/NetworkProcessCreationParameters.h:
+    * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+    (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+    * UIProcess/API/APIProcessPoolConfiguration.cpp:
+    (API::ProcessPoolConfiguration::copy):
+    * UIProcess/API/APIProcessPoolConfiguration.h:
+    * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+    * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+    (-[_WKProcessPoolConfiguration wirelessContextIdentifier]):
+    (-[_WKProcessPoolConfiguration setWirelessContextIdentifier:]):
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@231770 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-05-14  Andy Estes  <aestes@apple.com>
+
+            [Wi-Fi Assertions] Allow clients to specify a context identifier
+            https://bugs.webkit.org/show_bug.cgi?id=185620
+            <rdar://problem/39915196>
+
+            Reviewed by Brady Eidson.
+
+            Added an SPI on _WKProcessPoolConfiguration that allows clients to specify a
+            context identifier.
+
+            * NetworkProcess/NetworkProcessCreationParameters.cpp:
+            (WebKit::NetworkProcessCreationParameters::encode const):
+            (WebKit::NetworkProcessCreationParameters::decode):
+            * NetworkProcess/NetworkProcessCreationParameters.h:
+            * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+            (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+            * UIProcess/API/APIProcessPoolConfiguration.cpp:
+            (API::ProcessPoolConfiguration::copy):
+            * UIProcess/API/APIProcessPoolConfiguration.h:
+            * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+            * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+            (-[_WKProcessPoolConfiguration wirelessContextIdentifier]):
+            (-[_WKProcessPoolConfiguration setWirelessContextIdentifier:]):
+            * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+            (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
+2018-05-17  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r231893. rdar://problem/40247351
 
     Safari optimized flow should be releasing viewer to prevent memory growth with subsequent launches/closes
