@@ -43,18 +43,6 @@ use Env qw(DYLD_FRAMEWORK_PATH);
 use Config;
 use Time::HiRes qw(time);
 
-my $podIsAvailable;
-if  (eval {require Pod::Usage; 1;}) {
-    Pod::Usage->import();
-    $podIsAvailable = 1;
-}
-
-my $webkitdirIsAvailable;
-if  (eval {require webkitdirs; 1;}) {
-    webkitdirs->import(qw(executableProductDir setConfiguration));
-    $webkitdirIsAvailable = 1;
-}
-
 my $Bin;
 BEGIN {
     $ENV{DBIC_OVERWRITE_HELPER_METHODS_OK} = 1;
@@ -65,6 +53,7 @@ BEGIN {
     unshift @INC, "$Bin/lib";
     unshift @INC, "$Bin/local/lib/perl5";
     unshift @INC, "$Bin/local/lib/perl5/$Config{archname}";
+    unshift @INC, "$Bin/..";
 
     $ENV{LOAD_ROUTES} = 1;
 }
@@ -72,6 +61,17 @@ BEGIN {
 use YAML qw(Load LoadFile Dump DumpFile Bless);
 use Parallel::ForkManager;
 use Getopt::Long qw(GetOptions);
+
+my $webkitdirIsAvailable;
+if (eval {require webkitdirs; 1;}) {
+    webkitdirs->import(qw(executableProductDir setConfiguration));
+    $webkitdirIsAvailable = 1;
+}
+my $podIsAvailable;
+if (eval {require Pod::Usage; 1;}) {
+    Pod::Usage->import();
+    $podIsAvailable = 1;
+}
 
 # Commandline settings
 my $max_process;
@@ -489,7 +489,7 @@ sub getBuildPath {
         chomp $jsc;
 
         if (! $jsc ) {
-            die("Cannot find jsc, specify with --jsc <path>.\n\n");
+            die("Cannot find jsc, try with --release or specify with --jsc <path>.\n\n");
         }
     }
 
