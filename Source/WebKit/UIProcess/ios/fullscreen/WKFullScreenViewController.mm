@@ -100,7 +100,7 @@ private:
 #pragma mark - WKFullScreenViewController
 
 @interface WKFullScreenViewController () <UIGestureRecognizerDelegate, UIToolbarDelegate>
-@property (assign, nonatomic) WKWebView *_webView; // Cannot be retained, see <rdar://problem/14884666>.
+@property (weak, nonatomic) WKWebView *_webView; // Cannot be retained, see <rdar://problem/14884666>.
 @property (readonly, nonatomic) WebFullScreenManagerProxy* _manager;
 @property (readonly, nonatomic) CGFloat _effectiveFullscreenInsetTop;
 @end
