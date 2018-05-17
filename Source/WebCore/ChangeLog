@@ -1,3 +1,25 @@
+2018-05-17  Jeremy Jones  <jeremyj@apple.com>
+
+        Fullscreen to PiP results in exit fullscreen call failure
+        https://bugs.webkit.org/show_bug.cgi?id=185699
+        rdar://problem/40310291
+
+        Reviewed by Eric Carlson.
+
+        No new tests because no behavior change.
+
+        Prevent multiple exit fullscreen calls when transitioning from fullscreen to picture-in-picture.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerViewControllerDelegate playerViewControllerShouldAutomaticallyDismissAtPictureInPictureStart:]):
+        Implement this to prevent AVKit from automatically initiating exit fullscreen on pip.
+        
+        (VideoFullscreenInterfaceAVKit::didStartPictureInPicture):
+        Set the return to fullscreen flag here, since this is where exit fullscreen happens.
+
+        (VideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason):
+        Don't exit fullscreen here since it is already initiated in didStartPictureInPicture.
+
 2018-05-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r231899.
