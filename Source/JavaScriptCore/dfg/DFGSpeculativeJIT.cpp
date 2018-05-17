@@ -2375,16 +2375,15 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
             FPRTemporary tempFpr(this);
             FPRReg fpr = tempFpr.fpr();
 
-            JITCompiler::Jump isInteger = m_jit.branch64(MacroAssembler::AboveOrEqual, gpr, GPRInfo::tagTypeNumberRegister);
+            JITCompiler::Jump isInteger = m_jit.branchIfInt32(gpr);
             JITCompiler::JumpList converted;
 
             if (node->child1().useKind() == NumberUse) {
                 DFG_TYPE_CHECK(
                     JSValueRegs(gpr), node->child1(), SpecBytecodeNumber,
-                    m_jit.branchTest64(
-                        MacroAssembler::Zero, gpr, GPRInfo::tagTypeNumberRegister));
+                    m_jit.branchIfNotNumber(gpr));
             } else {
-                JITCompiler::Jump isNumber = m_jit.branchTest64(MacroAssembler::NonZero, gpr, GPRInfo::tagTypeNumberRegister);
+                JITCompiler::Jump isNumber = m_jit.branchIfNumber(gpr);
                 
                 DFG_TYPE_CHECK(
                     JSValueRegs(gpr), node->child1(), ~SpecCellCheck, m_jit.branchIfCell(JSValueRegs(gpr)));
@@ -2429,7 +2428,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
                 FPRReg fpr = tempFpr.fpr();
                 FPRTemporary scratch(this);
 
-                JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, tagGPR, TrustedImm32(JSValue::Int32Tag));
+                JITCompiler::Jump isInteger = m_jit.branchIfInt32(tagGPR);
 
                 if (node->child1().useKind() == NumberUse) {
                     DFG_TYPE_CHECK(
@@ -2445,7 +2444,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
                         m_jit.branchIfCell(op1.jsValueRegs()));
                     
                     // It's not a cell: so true turns into 1 and all else turns into 0.
-                    JITCompiler::Jump isBoolean = m_jit.branch32(JITCompiler::Equal, tagGPR, TrustedImm32(JSValue::BooleanTag));
+                    JITCompiler::Jump isBoolean = m_jit.branchIfBoolean(tagGPR, InvalidGPRReg);
                     m_jit.move(TrustedImm32(0), resultGpr);
                     converted.append(m_jit.jump());
                     
@@ -2602,17 +2601,16 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
         FPRReg resultFPR = result.fpr();
         JITCompiler::JumpList done;
 
-        JITCompiler::Jump isInteger = m_jit.branch64(
-            MacroAssembler::AboveOrEqual, op1GPR, GPRInfo::tagTypeNumberRegister);
+        JITCompiler::Jump isInteger = m_jit.branchIfInt32(op1GPR);
 
         if (node->child1().useKind() == NotCellUse) {
-            JITCompiler::Jump isNumber = m_jit.branchTest64(MacroAssembler::NonZero, op1GPR, GPRInfo::tagTypeNumberRegister);
-            JITCompiler::Jump isUndefined = m_jit.branch64(JITCompiler::Equal, op1GPR, TrustedImm64(ValueUndefined));
+            JITCompiler::Jump isNumber = m_jit.branchIfNumber(op1GPR);
+            JITCompiler::Jump isUndefined = m_jit.branchIfUndefined(op1GPR);
 
             static const double zero = 0;
             m_jit.loadDouble(TrustedImmPtr(&zero), resultFPR);
 
-            JITCompiler::Jump isNull = m_jit.branch64(JITCompiler::Equal, op1GPR, TrustedImm64(ValueNull));
+            JITCompiler::Jump isNull = m_jit.branchIfNull(op1GPR);
             done.append(isNull);
 
             DFG_TYPE_CHECK(JSValueRegs(op1GPR), node->child1(), ~SpecCellCheck,
@@ -2633,7 +2631,7 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
         } else if (needsTypeCheck(node->child1(), SpecBytecodeNumber)) {
             typeCheck(
                 JSValueRegs(op1GPR), node->child1(), SpecBytecodeNumber,
-                m_jit.branchTest64(MacroAssembler::Zero, op1GPR, GPRInfo::tagTypeNumberRegister));
+                m_jit.branchIfNotNumber(op1GPR));
         }
 
         unboxDouble(op1GPR, tempGPR, resultFPR);
@@ -2651,20 +2649,19 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
         FPRReg resultFPR = result.fpr();
         JITCompiler::JumpList done;
     
-        JITCompiler::Jump isInteger = m_jit.branch32(
-            MacroAssembler::Equal, op1TagGPR, TrustedImm32(JSValue::Int32Tag));
+        JITCompiler::Jump isInteger = m_jit.branchIfInt32(op1TagGPR);
 
         if (node->child1().useKind() == NotCellUse) {
             JITCompiler::Jump isNumber = m_jit.branch32(JITCompiler::Below, op1TagGPR, JITCompiler::TrustedImm32(JSValue::LowestTag + 1));
-            JITCompiler::Jump isUndefined = m_jit.branch32(JITCompiler::Equal, op1TagGPR, TrustedImm32(JSValue::UndefinedTag));
+            JITCompiler::Jump isUndefined = m_jit.branchIfUndefined(op1TagGPR);
 
             static const double zero = 0;
             m_jit.loadDouble(TrustedImmPtr(&zero), resultFPR);
 
-            JITCompiler::Jump isNull = m_jit.branch32(JITCompiler::Equal, op1TagGPR, TrustedImm32(JSValue::NullTag));
+            JITCompiler::Jump isNull = m_jit.branchIfNull(op1TagGPR);
             done.append(isNull);
 
-            DFG_TYPE_CHECK(JSValueRegs(op1TagGPR, op1PayloadGPR), node->child1(), ~SpecCell, m_jit.branch32(JITCompiler::NotEqual, op1TagGPR, TrustedImm32(JSValue::BooleanTag)));
+            DFG_TYPE_CHECK(JSValueRegs(op1TagGPR, op1PayloadGPR), node->child1(), ~SpecCell, m_jit.branchIfNotBoolean(op1TagGPR, InvalidGPRReg));
 
             JITCompiler::Jump isFalse = m_jit.branchTest32(JITCompiler::Zero, op1PayloadGPR, TrustedImm32(1));
             static const double one = 1;
@@ -2679,6 +2676,7 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
 
             isNumber.link(&m_jit);
         } else if (needsTypeCheck(node->child1(), SpecBytecodeNumber)) {
+            // This check fails with Int32Tag, but it is OK since Int32 case is already excluded.
             typeCheck(
                 JSValueRegs(op1TagGPR, op1PayloadGPR), node->child1(), SpecBytecodeNumber,
                 m_jit.branch32(MacroAssembler::AboveOrEqual, op1TagGPR, TrustedImm32(JSValue::LowestTag)));
@@ -3329,19 +3327,18 @@ void SpeculativeJIT::compileInstanceOfForObject(Node*, GPRReg valueReg, GPRReg p
     
     // Walk up the prototype chain of the value (in scratchReg), comparing to prototypeReg.
     MacroAssembler::Label loop(&m_jit);
-    MacroAssembler::Jump performDefaultHasInstance = m_jit.branch8(MacroAssembler::Equal,
-        MacroAssembler::Address(scratchReg, JSCell::typeInfoTypeOffset()), TrustedImm32(ProxyObjectType));
+    MacroAssembler::Jump performDefaultHasInstance = m_jit.branchIfType(scratchReg, ProxyObjectType);
     m_jit.emitLoadStructure(*m_jit.vm(), scratchReg, scratch3Reg, scratch2Reg);
 #if USE(JSVALUE64)
     m_jit.load64(MacroAssembler::Address(scratch3Reg, Structure::prototypeOffset()), scratch3Reg);
-    auto hasMonoProto = m_jit.branchTest64(JITCompiler::NonZero, scratch3Reg);
+    auto hasMonoProto = m_jit.branchIfNotEmpty(scratch3Reg);
     m_jit.load64(JITCompiler::Address(scratchReg, offsetRelativeToBase(knownPolyProtoOffset)), scratch3Reg);
     hasMonoProto.link(&m_jit);
     m_jit.move(scratch3Reg, scratchReg);
 #else
     m_jit.load32(MacroAssembler::Address(scratch3Reg, Structure::prototypeOffset() + TagOffset), scratch2Reg);
     m_jit.load32(MacroAssembler::Address(scratch3Reg, Structure::prototypeOffset() + PayloadOffset), scratch3Reg);
-    auto hasMonoProto = m_jit.branch32(CCallHelpers::NotEqual, scratch2Reg, TrustedImm32(JSValue::EmptyValueTag));
+    auto hasMonoProto = m_jit.branchIfNotEmpty(scratch2Reg);
     m_jit.load32(JITCompiler::Address(scratchReg, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), scratch3Reg);
     hasMonoProto.link(&m_jit);
     m_jit.move(scratch3Reg, scratchReg);
@@ -7660,7 +7657,7 @@ void SpeculativeJIT::compileSpread(Node* node)
             auto loopStart = m_jit.label();
             m_jit.sub32(TrustedImm32(1), lengthGPR);
             m_jit.load64(MacroAssembler::BaseIndex(scratch1GPR, lengthGPR, MacroAssembler::TimesEight), scratch2GPR);
-            auto notEmpty = m_jit.branchTest64(MacroAssembler::NonZero, scratch2GPR);
+            auto notEmpty = m_jit.branchIfNotEmpty(scratch2GPR);
             m_jit.move(TrustedImm64(JSValue::encode(jsUndefined())), scratch2GPR);
             notEmpty.link(&m_jit);
             m_jit.store64(scratch2GPR, MacroAssembler::BaseIndex(resultGPR, lengthGPR, MacroAssembler::TimesEight, JSFixedArray::offsetOfData()));
@@ -9664,10 +9661,7 @@ void SpeculativeJIT::speculateCellTypeWithoutTypeFiltering(
 {
     speculationCheck(
         BadType, JSValueSource::unboxedCell(cellGPR), edge,
-        m_jit.branch8(
-            MacroAssembler::NotEqual,
-            MacroAssembler::Address(cellGPR, JSCell::typeInfoTypeOffset()),
-            MacroAssembler::TrustedImm32(jsType)));
+        m_jit.branchIfNotType(cellGPR, jsType));
 }
 
 void SpeculativeJIT::speculateCellType(
@@ -9675,10 +9669,7 @@ void SpeculativeJIT::speculateCellType(
 {
     DFG_TYPE_CHECK(
         JSValueSource::unboxedCell(cellGPR), edge, specType,
-        m_jit.branch8(
-            MacroAssembler::NotEqual,
-            MacroAssembler::Address(cellGPR, JSCell::typeInfoTypeOffset()),
-            TrustedImm32(jsType)));
+        m_jit.branchIfNotType(cellGPR, jsType));
 }
 
 void SpeculativeJIT::speculateInt32(Edge edge)
@@ -9699,12 +9690,13 @@ void SpeculativeJIT::speculateNumber(Edge edge)
     GPRReg gpr = value.gpr();
     typeCheck(
         JSValueRegs(gpr), edge, SpecBytecodeNumber,
-        m_jit.branchTest64(MacroAssembler::Zero, gpr, GPRInfo::tagTypeNumberRegister));
+        m_jit.branchIfNotNumber(gpr));
 #else
+    static_assert(JSValue::Int32Tag >= JSValue::LowestTag, "Int32Tag is included in >= JSValue::LowestTag range.");
     GPRReg tagGPR = value.tagGPR();
     DFG_TYPE_CHECK(
         value.jsValueRegs(), edge, ~SpecInt32Only,
-        m_jit.branch32(MacroAssembler::Equal, tagGPR, TrustedImm32(JSValue::Int32Tag)));
+        m_jit.branchIfInt32(tagGPR));
     DFG_TYPE_CHECK(
         value.jsValueRegs(), edge, SpecBytecodeNumber,
         m_jit.branch32(MacroAssembler::AboveOrEqual, tagGPR, TrustedImm32(JSValue::LowestTag)));
@@ -10193,9 +10185,10 @@ void SpeculativeJIT::speculateMisc(Edge edge, JSValueRegs regs)
         regs, edge, SpecMisc,
         m_jit.branch64(MacroAssembler::Above, regs.gpr(), MacroAssembler::TrustedImm64(TagBitTypeOther | TagBitBool | TagBitUndefined)));
 #else
+    static_assert(JSValue::Int32Tag >= JSValue::UndefinedTag, "Int32Tag is included in >= JSValue::UndefinedTag range.");
     DFG_TYPE_CHECK(
         regs, edge, ~SpecInt32Only,
-        m_jit.branch32(MacroAssembler::Equal, regs.tagGPR(), MacroAssembler::TrustedImm32(JSValue::Int32Tag)));
+        m_jit.branchIfInt32(regs.tagGPR()));
     DFG_TYPE_CHECK(
         regs, edge, SpecMisc,
         m_jit.branch32(MacroAssembler::Below, regs.tagGPR(), MacroAssembler::TrustedImm32(JSValue::UndefinedTag)));
@@ -11705,7 +11698,7 @@ void SpeculativeJIT::compileExtractValueFromWeakMapGet(Node* node)
     m_jit.moveValue(jsUndefined(), resultRegs);
     done.link(&m_jit);
 #else
-    auto isEmpty = m_jit.branch32(JITCompiler::Equal, valueRegs.tagGPR(), TrustedImm32(JSValue::EmptyValueTag));
+    auto isEmpty = m_jit.branchIfEmpty(valueRegs.tagGPR());
     m_jit.moveValueRegs(valueRegs, resultRegs);
     auto done = m_jit.jump();
 
@@ -12233,8 +12226,7 @@ void SpeculativeJIT::compileCreateThis(Node* node)
 
     MacroAssembler::JumpList slowPath;
 
-    slowPath.append(m_jit.branch8(JITCompiler::NotEqual,
-        JITCompiler::Address(calleeGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(JSFunctionType)));
+    slowPath.append(m_jit.branchIfNotFunction(calleeGPR));
     m_jit.loadPtr(JITCompiler::Address(calleeGPR, JSFunction::offsetOfRareData()), rareDataGPR);
     slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, rareDataGPR));
     m_jit.xorPtr(JITCompiler::TrustedImmPtr(JSFunctionPoison::key()), rareDataGPR);
@@ -12604,14 +12596,14 @@ void SpeculativeJIT::compileGetPrototypeOf(Node* node)
 
 #if USE(JSVALUE64)
         m_jit.load64(MacroAssembler::Address(tempGPR, Structure::prototypeOffset()), tempGPR);
-        auto hasMonoProto = m_jit.branchTest64(JITCompiler::NonZero, tempGPR);
+        auto hasMonoProto = m_jit.branchIfNotEmpty(tempGPR);
         m_jit.load64(JITCompiler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset)), tempGPR);
         hasMonoProto.link(&m_jit);
         jsValueResult(tempGPR, node);
 #else
         m_jit.load32(MacroAssembler::Address(tempGPR, Structure::prototypeOffset() + TagOffset), temp2GPR);
         m_jit.load32(MacroAssembler::Address(tempGPR, Structure::prototypeOffset() + PayloadOffset), tempGPR);
-        auto hasMonoProto = m_jit.branch32(CCallHelpers::NotEqual, temp2GPR, TrustedImm32(JSValue::EmptyValueTag));
+        auto hasMonoProto = m_jit.branchIfNotEmpty(temp2GPR);
         m_jit.load32(JITCompiler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset) + TagOffset), temp2GPR);
         m_jit.load32(JITCompiler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), tempGPR);
         hasMonoProto.link(&m_jit);
@@ -12796,10 +12788,10 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
 
 #if USE(JSVALUE64)
         m_jit.load64(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), scratchGPR);
-        slowCases.append(m_jit.branchTest64(MacroAssembler::Zero, scratchGPR));
+        slowCases.append(m_jit.branchIfEmpty(scratchGPR));
 #else
         m_jit.load32(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), scratchGPR);
-        slowCases.append(m_jit.branch32(MacroAssembler::Equal, scratchGPR, TrustedImm32(JSValue::EmptyValueTag)));
+        slowCases.append(m_jit.branchIfEmpty(scratchGPR));
 #endif
         m_jit.move(TrustedImm32(1), resultGPR);
         break;
@@ -12838,10 +12830,10 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
 
 #if USE(JSVALUE64)
         m_jit.load64(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, ArrayStorage::vectorOffset()), scratchGPR);
-        slowCases.append(m_jit.branchTest64(MacroAssembler::Zero, scratchGPR));
+        slowCases.append(m_jit.branchIfEmpty(scratchGPR));
 #else
         m_jit.load32(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, ArrayStorage::vectorOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), scratchGPR);
-        slowCases.append(m_jit.branch32(MacroAssembler::Equal, scratchGPR, TrustedImm32(JSValue::EmptyValueTag)));
+        slowCases.append(m_jit.branchIfEmpty(scratchGPR));
 #endif
         m_jit.move(TrustedImm32(1), resultGPR);
         break;

@@ -194,10 +194,7 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM* vm, CallLinkInfo
     slowCase.append(
         jit.branchTest64(CCallHelpers::NonZero, GPRInfo::regT0, tagMaskRegister));
 #else
-    slowCase.append(
-        jit.branch32(
-            CCallHelpers::NotEqual, GPRInfo::regT1,
-            CCallHelpers::TrustedImm32(JSValue::CellTag)));
+    slowCase.append(jit.branchIfNotCell(GPRInfo::regT1));
 #endif
     auto notJSFunction = jit.branchIfNotType(GPRInfo::regT0, JSFunctionType);
     
@@ -1024,7 +1021,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> absThunkGenerator(VM* vm)
 #if USE(JSVALUE64)
     unsigned virtualRegisterIndex = CallFrame::argumentOffset(0);
     jit.load64(AssemblyHelpers::addressFor(virtualRegisterIndex), GPRInfo::regT0);
-    MacroAssembler::Jump notInteger = jit.branch64(MacroAssembler::Below, GPRInfo::regT0, GPRInfo::tagTypeNumberRegister);
+    auto notInteger = jit.branchIfNotInt32(GPRInfo::regT0);
 
     // Abs Int32.
     jit.rshift32(GPRInfo::regT0, MacroAssembler::TrustedImm32(31), GPRInfo::regT1);
@@ -1040,7 +1037,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> absThunkGenerator(VM* vm)
 
     // Handle Doubles.
     notInteger.link(&jit);
-    jit.appendFailure(jit.branchTest64(MacroAssembler::Zero, GPRInfo::regT0, GPRInfo::tagTypeNumberRegister));
+    jit.appendFailure(jit.branchIfNotNumber(GPRInfo::regT0));
     jit.unboxDoubleWithoutAssertions(GPRInfo::regT0, GPRInfo::regT0, FPRInfo::fpRegT0);
     MacroAssembler::Label absFPR0Label = jit.label();
     jit.absDouble(FPRInfo::fpRegT0, FPRInfo::fpRegT1);

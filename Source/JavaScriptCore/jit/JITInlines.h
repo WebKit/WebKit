@@ -252,16 +252,6 @@ ALWAYS_INLINE void JIT::emitJumpSlowToHot(Jump jump, int relativeOffset)
     jump.linkTo(m_labels[m_bytecodeOffset + relativeOffset], this);
 }
 
-ALWAYS_INLINE JIT::Jump JIT::emitJumpIfCellObject(RegisterID cellReg)
-{
-    return branch8(AboveOrEqual, Address(cellReg, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType));
-}
-
-ALWAYS_INLINE JIT::Jump JIT::emitJumpIfCellNotObject(RegisterID cellReg)
-{
-    return branch8(Below, Address(cellReg, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType));
-}
-
 #if ENABLE(SAMPLING_FLAGS)
 ALWAYS_INLINE void JIT::setSamplingFlag(int32_t flag)
 {
@@ -556,7 +546,7 @@ inline void JIT::emitJumpSlowCaseIfNotJSCell(int virtualRegisterIndex, RegisterI
         if (m_codeBlock->isConstantRegisterIndex(virtualRegisterIndex))
             addSlowCase(jump());
         else
-            addSlowCase(branch32(NotEqual, tag, TrustedImm32(JSValue::CellTag)));
+            addSlowCase(branchIfNotCell(tag));
     }
 }
 
@@ -648,26 +638,21 @@ ALWAYS_INLINE void JIT::emitInitRegister(int dst)
     store64(TrustedImm64(JSValue::encode(jsUndefined())), Address(callFrameRegister, dst * sizeof(Register)));
 }
 
-ALWAYS_INLINE JIT::Jump JIT::emitJumpIfJSCell(RegisterID reg)
-{
-    return branchTest64(Zero, reg, tagMaskRegister);
-}
-
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfBothJSCells(RegisterID reg1, RegisterID reg2, RegisterID scratch)
 {
     move(reg1, scratch);
     or64(reg2, scratch);
-    return emitJumpIfJSCell(scratch);
+    return branchIfCell(scratch);
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfJSCell(RegisterID reg)
 {
-    addSlowCase(emitJumpIfJSCell(reg));
+    addSlowCase(branchIfCell(reg));
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg)
 {
-    addSlowCase(emitJumpIfNotJSCell(reg));
+    addSlowCase(branchIfNotCell(reg));
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, int vReg)
@@ -694,16 +679,6 @@ inline void JIT::emitLoadInt32ToDouble(int index, FPRegisterID value)
         convertInt32ToDouble(addressFor(index), value);
 }
 
-ALWAYS_INLINE JIT::Jump JIT::emitJumpIfInt(RegisterID reg)
-{
-    return branch64(AboveOrEqual, reg, tagTypeNumberRegister);
-}
-
-ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotInt(RegisterID reg)
-{
-    return branch64(Below, reg, tagTypeNumberRegister);
-}
-
 ALWAYS_INLINE JIT::PatchableJump JIT::emitPatchableJumpIfNotInt(RegisterID reg)
 {
     return patchableBranch64(Below, reg, tagTypeNumberRegister);
@@ -713,12 +688,12 @@ ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotInt(RegisterID reg1, RegisterID reg2, 
 {
     move(reg1, scratch);
     and64(reg2, scratch);
-    return emitJumpIfNotInt(scratch);
+    return branchIfNotInt32(scratch);
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotInt(RegisterID reg)
 {
-    addSlowCase(emitJumpIfNotInt(reg));
+    addSlowCase(branchIfNotInt32(reg));
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotInt(RegisterID reg1, RegisterID reg2, RegisterID scratch)
@@ -728,7 +703,7 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotInt(RegisterID reg1, RegisterID reg
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotNumber(RegisterID reg)
 {
-    addSlowCase(emitJumpIfNotNumber(reg));
+    addSlowCase(branchIfNotNumber(reg));
 }
 
 ALWAYS_INLINE void JIT::emitTagBool(RegisterID reg)

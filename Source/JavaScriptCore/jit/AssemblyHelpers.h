@@ -707,6 +707,7 @@ public:
         return branch32(MacroAssembler::NotEqual, reg, TrustedImm32(JSValue::CellTag));
 #endif
     }
+
     Jump branchIfNotCell(JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
@@ -760,34 +761,45 @@ public:
 #endif
     }
     
-    Jump branchIfInt32(JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
+    Jump branchIfInt32(GPRReg gpr, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
         if (mode == HaveTagRegisters)
-            return branch64(AboveOrEqual, regs.gpr(), GPRInfo::tagTypeNumberRegister);
-        return branch64(AboveOrEqual, regs.gpr(), TrustedImm64(TagTypeNumber));
+            return branch64(AboveOrEqual, gpr, GPRInfo::tagTypeNumberRegister);
+        return branch64(AboveOrEqual, gpr, TrustedImm64(TagTypeNumber));
 #else
         UNUSED_PARAM(mode);
-        return branch32(Equal, regs.tagGPR(), TrustedImm32(JSValue::Int32Tag));
+        return branch32(Equal, gpr, TrustedImm32(JSValue::Int32Tag));
 #endif
     }
 
+    Jump branchIfInt32(JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
+    {
 #if USE(JSVALUE64)
+        return branchIfInt32(regs.gpr(), mode);
+#else
+        return branchIfInt32(regs.tagGPR(), mode);
+#endif
+    }
+
     Jump branchIfNotInt32(GPRReg gpr, TagRegistersMode mode = HaveTagRegisters)
     {
+#if USE(JSVALUE64)
         if (mode == HaveTagRegisters)
             return branch64(Below, gpr, GPRInfo::tagTypeNumberRegister);
         return branch64(Below, gpr, TrustedImm64(TagTypeNumber));
-    }
+#else
+        UNUSED_PARAM(mode);
+        return branch32(NotEqual, gpr, TrustedImm32(JSValue::Int32Tag));
 #endif
+    }
 
     Jump branchIfNotInt32(JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
         return branchIfNotInt32(regs.gpr(), mode);
 #else
-        UNUSED_PARAM(mode);
-        return branch32(NotEqual, regs.tagGPR(), TrustedImm32(JSValue::Int32Tag));
+        return branchIfNotInt32(regs.tagGPR(), mode);
 #endif
     }
 
@@ -799,17 +811,18 @@ public:
         return branchIfNumber(regs.gpr(), mode);
 #else
         UNUSED_PARAM(mode);
+        ASSERT(tempGPR != InvalidGPRReg);
         add32(TrustedImm32(1), regs.tagGPR(), tempGPR);
         return branch32(Below, tempGPR, TrustedImm32(JSValue::LowestTag + 1));
 #endif
     }
 
 #if USE(JSVALUE64)
-    Jump branchIfNumber(GPRReg reg, TagRegistersMode mode = HaveTagRegisters)
+    Jump branchIfNumber(GPRReg gpr, TagRegistersMode mode = HaveTagRegisters)
     {
         if (mode == HaveTagRegisters)
-            return branchTest64(NonZero, reg, GPRInfo::tagTypeNumberRegister);
-        return branchTest64(NonZero, reg, TrustedImm64(TagTypeNumber));
+            return branchTest64(NonZero, gpr, GPRInfo::tagTypeNumberRegister);
+        return branchTest64(NonZero, gpr, TrustedImm64(TagTypeNumber));
     }
 #endif
     
@@ -827,11 +840,11 @@ public:
     }
 
 #if USE(JSVALUE64)
-    Jump branchIfNotNumber(GPRReg reg, TagRegistersMode mode = HaveTagRegisters)
+    Jump branchIfNotNumber(GPRReg gpr, TagRegistersMode mode = HaveTagRegisters)
     {
         if (mode == HaveTagRegisters)
-            return branchTest64(Zero, reg, GPRInfo::tagTypeNumberRegister);
-        return branchTest64(Zero, reg, TrustedImm64(TagTypeNumber));
+            return branchTest64(Zero, gpr, GPRInfo::tagTypeNumberRegister);
+        return branchTest64(Zero, gpr, TrustedImm64(TagTypeNumber));
     }
 #endif
 
@@ -848,28 +861,50 @@ public:
     }
 
     // Note that the tempGPR is not used in 32-bit mode.
-    Jump branchIfBoolean(JSValueRegs regs, GPRReg tempGPR)
+    Jump branchIfBoolean(GPRReg gpr, GPRReg tempGPR)
     {
 #if USE(JSVALUE64)
-        move(regs.gpr(), tempGPR);
+        ASSERT(tempGPR != InvalidGPRReg);
+        move(gpr, tempGPR);
         xor64(TrustedImm32(static_cast<int32_t>(ValueFalse)), tempGPR);
         return branchTest64(Zero, tempGPR, TrustedImm32(static_cast<int32_t>(~1)));
 #else
         UNUSED_PARAM(tempGPR);
-        return branch32(Equal, regs.tagGPR(), TrustedImm32(JSValue::BooleanTag));
+        return branch32(Equal, gpr, TrustedImm32(JSValue::BooleanTag));
+#endif
+    }
+
+    // Note that the tempGPR is not used in 32-bit mode.
+    Jump branchIfBoolean(JSValueRegs regs, GPRReg tempGPR)
+    {
+#if USE(JSVALUE64)
+        return branchIfBoolean(regs.gpr(), tempGPR);
+#else
+        return branchIfBoolean(regs.tagGPR(), tempGPR);
 #endif
     }
     
     // Note that the tempGPR is not used in 32-bit mode.
-    Jump branchIfNotBoolean(JSValueRegs regs, GPRReg tempGPR)
+    Jump branchIfNotBoolean(GPRReg gpr, GPRReg tempGPR)
     {
 #if USE(JSVALUE64)
-        move(regs.gpr(), tempGPR);
+        ASSERT(tempGPR != InvalidGPRReg);
+        move(gpr, tempGPR);
         xor64(TrustedImm32(static_cast<int32_t>(ValueFalse)), tempGPR);
         return branchTest64(NonZero, tempGPR, TrustedImm32(static_cast<int32_t>(~1)));
 #else
         UNUSED_PARAM(tempGPR);
-        return branch32(NotEqual, regs.tagGPR(), TrustedImm32(JSValue::BooleanTag));
+        return branch32(NotEqual, gpr, TrustedImm32(JSValue::BooleanTag));
+#endif
+    }
+
+    // Note that the tempGPR is not used in 32-bit mode.
+    Jump branchIfNotBoolean(JSValueRegs regs, GPRReg tempGPR)
+    {
+#if USE(JSVALUE64)
+        return branchIfNotBoolean(regs.gpr(), tempGPR);
+#else
+        return branchIfNotBoolean(regs.tagGPR(), tempGPR);
 #endif
     }
     
@@ -904,12 +939,49 @@ public:
     Jump branchIfFunction(GPRReg cellGPR) { return branchIfType(cellGPR, JSFunctionType); }
     Jump branchIfNotFunction(GPRReg cellGPR) { return branchIfNotType(cellGPR, JSFunctionType); }
     
+    Jump branchIfEmpty(GPRReg gpr)
+    {
+#if USE(JSVALUE64)
+        return branchTest64(Zero, gpr);
+#else
+        return branch32(Equal, gpr, TrustedImm32(JSValue::EmptyValueTag));
+#endif
+    }
+
     Jump branchIfEmpty(JSValueRegs regs)
     {
 #if USE(JSVALUE64)
-        return branchTest64(Zero, regs.gpr());
+        return branchIfEmpty(regs.gpr());
 #else
-        return branch32(Equal, regs.tagGPR(), TrustedImm32(JSValue::EmptyValueTag));
+        return branchIfEmpty(regs.tagGPR());
+#endif
+    }
+
+    Jump branchIfNotEmpty(GPRReg gpr)
+    {
+#if USE(JSVALUE64)
+        return branchTest64(NonZero, gpr);
+#else
+        return branch32(NotEqual, gpr, TrustedImm32(JSValue::EmptyValueTag));
+#endif
+    }
+
+    Jump branchIfNotEmpty(JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        return branchIfNotEmpty(regs.gpr());
+#else
+        return branchIfNotEmpty(regs.tagGPR());
+#endif
+    }
+
+    // Note that this function does not respect MasqueradesAsUndefined.
+    Jump branchIfUndefined(GPRReg gpr)
+    {
+#if USE(JSVALUE64)
+        return branch64(Equal, gpr, TrustedImm64(JSValue::encode(jsUndefined())));
+#else
+        return branch32(Equal, gpr, TrustedImm32(JSValue::UndefinedTag));
 #endif
     }
 
@@ -917,18 +989,65 @@ public:
     Jump branchIfUndefined(JSValueRegs regs)
     {
 #if USE(JSVALUE64)
-        return branch64(Equal, regs.gpr(), TrustedImm64(JSValue::encode(jsUndefined())));
+        return branchIfUndefined(regs.gpr());
 #else
-        return branch32(Equal, regs.tagGPR(), TrustedImm32(JSValue::UndefinedTag));
+        return branchIfUndefined(regs.tagGPR());
+#endif
+    }
+
+    // Note that this function does not respect MasqueradesAsUndefined.
+    Jump branchIfNotUndefined(GPRReg gpr)
+    {
+#if USE(JSVALUE64)
+        return branch64(NotEqual, gpr, TrustedImm64(JSValue::encode(jsUndefined())));
+#else
+        return branch32(NotEqual, gpr, TrustedImm32(JSValue::UndefinedTag));
+#endif
+    }
+
+    // Note that this function does not respect MasqueradesAsUndefined.
+    Jump branchIfNotUndefined(JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        return branchIfNotUndefined(regs.gpr());
+#else
+        return branchIfNotUndefined(regs.tagGPR());
+#endif
+    }
+
+    Jump branchIfNull(GPRReg gpr)
+    {
+#if USE(JSVALUE64)
+        return branch64(Equal, gpr, TrustedImm64(JSValue::encode(jsNull())));
+#else
+        return branch32(Equal, gpr, TrustedImm32(JSValue::NullTag));
 #endif
     }
 
     Jump branchIfNull(JSValueRegs regs)
     {
 #if USE(JSVALUE64)
-        return branch64(Equal, regs.gpr(), TrustedImm64(JSValue::encode(jsNull())));
+        return branchIfNull(regs.gpr());
 #else
-        return branch32(Equal, regs.tagGPR(), TrustedImm32(JSValue::NullTag));
+        return branchIfNull(regs.tagGPR());
+#endif
+    }
+
+    Jump branchIfNotNull(GPRReg gpr)
+    {
+#if USE(JSVALUE64)
+        return branch64(NotEqual, gpr, TrustedImm64(JSValue::encode(jsNull())));
+#else
+        return branch32(NotEqual, gpr, TrustedImm32(JSValue::NullTag));
+#endif
+    }
+
+    Jump branchIfNotNull(JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        return branchIfNotNull(regs.gpr());
+#else
+        return branchIfNotNull(regs.tagGPR());
 #endif
     }
 

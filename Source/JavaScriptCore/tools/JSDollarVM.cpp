@@ -467,10 +467,7 @@ public:
         Ref<Snippet> snippet = Snippet::create();
         snippet->setGenerator([=](CCallHelpers& jit, SnippetParams& params) {
             CCallHelpers::JumpList failureCases;
-            failureCases.append(jit.branch8(
-                CCallHelpers::NotEqual,
-                CCallHelpers::Address(params[0].gpr(), JSCell::typeInfoTypeOffset()),
-                CCallHelpers::TrustedImm32(JSC::JSType(LastJSCObjectType + 1))));
+            failureCases.append(jit.branchIfNotType(params[0].gpr(), JSC::JSType(LastJSCObjectType + 1)));
             return failureCases;
         });
         return snippet;
@@ -741,10 +738,7 @@ public:
             CCallHelpers::JumpList failureCases;
             // May use scratch registers.
             jit.loadDouble(CCallHelpers::TrustedImmPtr(&value), params.fpScratch(0));
-            failureCases.append(jit.branch8(
-                CCallHelpers::NotEqual,
-                CCallHelpers::Address(params[0].gpr(), JSCell::typeInfoTypeOffset()),
-                CCallHelpers::TrustedImm32(JSC::JSType(LastJSCObjectType + 1))));
+            failureCases.append(jit.branchIfNotType(params[0].gpr(), JSC::JSType(LastJSCObjectType + 1)));
             return failureCases;
         });
         return snippet;

@@ -254,7 +254,7 @@ void JIT::emit_compareAndJump(OpcodeID, int op1, int op2, unsigned target, Relat
 
     if (isOperandConstantChar(op1)) {
         emitGetVirtualRegister(op2, regT0);
-        addSlowCase(emitJumpIfNotJSCell(regT0));
+        addSlowCase(branchIfNotCell(regT0));
         JumpList failures;
         emitLoadCharacterString(regT0, regT0, failures);
         addSlowCase(failures);
@@ -263,7 +263,7 @@ void JIT::emit_compareAndJump(OpcodeID, int op1, int op2, unsigned target, Relat
     }
     if (isOperandConstantChar(op2)) {
         emitGetVirtualRegister(op1, regT0);
-        addSlowCase(emitJumpIfNotJSCell(regT0));
+        addSlowCase(branchIfNotCell(regT0));
         JumpList failures;
         emitLoadCharacterString(regT0, regT0, failures);
         addSlowCase(failures);
@@ -354,7 +354,7 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
         linkAllSlowCases(iter);
 
         if (supportsFloatingPoint()) {
-            Jump fail1 = emitJumpIfNotNumber(regT0);
+            Jump fail1 = branchIfNotNumber(regT0);
             add64(tagTypeNumberRegister, regT0);
             move64ToDouble(regT0, fpRegT0);
 
@@ -380,7 +380,7 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
         linkAllSlowCases(iter);
 
         if (supportsFloatingPoint()) {
-            Jump fail1 = emitJumpIfNotNumber(regT1);
+            Jump fail1 = branchIfNotNumber(regT1);
             add64(tagTypeNumberRegister, regT1);
             move64ToDouble(regT1, fpRegT1);
 
@@ -405,9 +405,9 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
     linkSlowCase(iter); // LHS is not Int.
 
     if (supportsFloatingPoint()) {
-        Jump fail1 = emitJumpIfNotNumber(regT0);
-        Jump fail2 = emitJumpIfNotNumber(regT1);
-        Jump fail3 = emitJumpIfInt(regT1);
+        Jump fail1 = branchIfNotNumber(regT0);
+        Jump fail2 = branchIfNotNumber(regT1);
+        Jump fail3 = branchIfInt32(regT1);
         add64(tagTypeNumberRegister, regT0);
         add64(tagTypeNumberRegister, regT1);
         move64ToDouble(regT0, fpRegT0);

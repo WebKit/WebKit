@@ -103,7 +103,7 @@ void JIT::compileCallEval(Instruction* instruction)
 
     callOperation(operationCallEval, regT1);
 
-    addSlowCase(branch64(Equal, regT0, TrustedImm64(JSValue::encode(JSValue()))));
+    addSlowCase(branchIfEmpty(regT0));
 
     sampleCodeBlock(m_codeBlock);
     
@@ -165,7 +165,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
 
         if (opcodeID == op_call && shouldEmitProfiling()) {
             emitGetVirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0), regT0);
-            Jump done = emitJumpIfNotJSCell(regT0);
+            Jump done = branchIfNotCell(regT0);
             load32(Address(regT0, JSCell::structureIDOffset()), regT0);
             store32(regT0, instruction[OPCODE_LENGTH(op_call) - 2].u.arrayProfile->addressOfLastSeenStructureID());
             done.link(this);

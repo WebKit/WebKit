@@ -1,3 +1,172 @@
+2018-05-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use AssemblyHelpers' type checking functions as much as possible
+        https://bugs.webkit.org/show_bug.cgi?id=185730
+
+        Reviewed by Saam Barati.
+
+        Let's use AssemblyHelpers' type checking functions as much as possible. This hides the complex
+        bit and register operations for type tagging of JSValue. It is really useful when we would like
+        to tweak type tagging representation since the code is collected into AssemblyHelpers. And
+        the named function is more readable than some branching operations.
+
+        We also remove unnecessary branching functions in JIT / JSInterfaceJIT. Some of them are duplicate
+        to AssemblyHelpers' one.
+
+        We add several new type checking functions to AssemblyHelpers. Moreover, we add branchIfXXX(GPRReg)
+        functions even for 32bit environment. In 32bit environment, this function takes tag register. This
+        semantics is aligned to the existing branchIfCell / branchIfNotCell.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileDoubleRep):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfForObject):
+        (JSC::DFG::SpeculativeJIT::compileSpread):
+        (JSC::DFG::SpeculativeJIT::speculateCellTypeWithoutTypeFiltering):
+        (JSC::DFG::SpeculativeJIT::speculateCellType):
+        (JSC::DFG::SpeculativeJIT::speculateNumber):
+        (JSC::DFG::SpeculativeJIT::speculateMisc):
+        (JSC::DFG::SpeculativeJIT::compileExtractValueFromWeakMapGet):
+        (JSC::DFG::SpeculativeJIT::compileCreateThis):
+        (JSC::DFG::SpeculativeJIT::compileGetPrototypeOf):
+        (JSC::DFG::SpeculativeJIT::compileHasIndexedProperty):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::convertAnyInt):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileAssertNotEmpty):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfInt32):
+        (JSC::AssemblyHelpers::branchIfNotInt32):
+        (JSC::AssemblyHelpers::branchIfNumber):
+        (JSC::AssemblyHelpers::branchIfNotNumber):
+        (JSC::AssemblyHelpers::branchIfBoolean):
+        (JSC::AssemblyHelpers::branchIfNotBoolean):
+        (JSC::AssemblyHelpers::branchIfEmpty):
+        (JSC::AssemblyHelpers::branchIfNotEmpty):
+        (JSC::AssemblyHelpers::branchIfUndefined):
+        (JSC::AssemblyHelpers::branchIfNotUndefined):
+        (JSC::AssemblyHelpers::branchIfNull):
+        (JSC::AssemblyHelpers::branchIfNotNull):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_compareAndJump):
+        (JSC::JIT::emit_compareAndJumpSlow):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_compareAndJump):
+        (JSC::JIT::emit_op_unsigned):
+        (JSC::JIT::emit_op_inc):
+        (JSC::JIT::emit_op_dec):
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emit_op_mod):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitJumpSlowCaseIfNotJSCell):
+        (JSC::JIT::emitJumpIfBothJSCells):
+        (JSC::JIT::emitJumpSlowCaseIfJSCell):
+        (JSC::JIT::emitJumpIfNotInt):
+        (JSC::JIT::emitJumpSlowCaseIfNotInt):
+        (JSC::JIT::emitJumpSlowCaseIfNotNumber):
+        (JSC::JIT::emitJumpIfCellObject): Deleted.
+        (JSC::JIT::emitJumpIfCellNotObject): Deleted.
+        (JSC::JIT::emitJumpIfJSCell): Deleted.
+        (JSC::JIT::emitJumpIfInt): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_is_undefined):
+        (JSC::JIT::emit_op_is_cell_with_type):
+        (JSC::JIT::emit_op_is_object):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::compileOpStrictEqJump):
+        (JSC::JIT::emit_op_to_number):
+        (JSC::JIT::emit_op_to_string):
+        (JSC::JIT::emit_op_to_object):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emit_op_to_this):
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emit_op_check_tdz):
+        (JSC::JIT::emitNewFuncExprCommon):
+        (JSC::JIT::emit_op_profile_type):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_is_undefined):
+        (JSC::JIT::emit_op_is_cell_with_type):
+        (JSC::JIT::emit_op_is_object):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emit_op_not):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emit_op_jeq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::emit_op_jneq):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::compileOpStrictEqJump):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emit_op_to_number):
+        (JSC::JIT::emit_op_to_string):
+        (JSC::JIT::emit_op_to_object):
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emit_op_to_this):
+        (JSC::JIT::emit_op_check_tdz):
+        (JSC::JIT::emit_op_profile_type):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitWriteBarrier):
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitContiguousLoad):
+        (JSC::JIT::emitArrayStorageLoad):
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emit_op_put_to_scope):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::emitLoadJSCell):
+        (JSC::JSInterfaceJIT::emitLoadInt32):
+        (JSC::JSInterfaceJIT::emitLoadDouble):
+        (JSC::JSInterfaceJIT::emitJumpIfNumber): Deleted.
+        (JSC::JSInterfaceJIT::emitJumpIfNotNumber): Deleted.
+        (JSC::JSInterfaceJIT::emitJumpIfNotType): Deleted.
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+        (JSC::absThunkGenerator):
+        * tools/JSDollarVM.cpp:
+        (WTF::DOMJITNode::checkSubClassSnippet):
+        (WTF::DOMJITFunctionObject::checkSubClassSnippet):
+
 2018-05-17  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Fix the build after my attempted build fix broke the build.

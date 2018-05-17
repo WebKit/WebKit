@@ -49,7 +49,7 @@ void JIT::emit_compareAndJump(OpcodeID opcode, int op1, int op2, unsigned target
     // Character less.
     if (isOperandConstantChar(op1)) {
         emitLoad(op2, regT1, regT0);
-        addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
+        addSlowCase(branchIfNotCell(regT1));
         JumpList failures;
         emitLoadCharacterString(regT0, regT0, failures);
         addSlowCase(failures);
@@ -58,7 +58,7 @@ void JIT::emit_compareAndJump(OpcodeID opcode, int op1, int op2, unsigned target
     }
     if (isOperandConstantChar(op2)) {
         emitLoad(op1, regT1, regT0);
-        addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
+        addSlowCase(branchIfNotCell(regT1));
         JumpList failures;
         emitLoadCharacterString(regT0, regT0, failures);
         addSlowCase(failures);
@@ -67,16 +67,16 @@ void JIT::emit_compareAndJump(OpcodeID opcode, int op1, int op2, unsigned target
     } 
     if (isOperandConstantInt(op1)) {
         emitLoad(op2, regT3, regT2);
-        notInt32Op2.append(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
+        notInt32Op2.append(branchIfNotInt32(regT3));
         addJump(branch32(commute(condition), regT2, Imm32(getConstantOperand(op1).asInt32())), target);
     } else if (isOperandConstantInt(op2)) {
         emitLoad(op1, regT1, regT0);
-        notInt32Op1.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
+        notInt32Op1.append(branchIfNotInt32(regT1));
         addJump(branch32(condition, regT0, Imm32(getConstantOperand(op2).asInt32())), target);
     } else {
         emitLoad2(op1, regT1, regT0, op2, regT3, regT2);
-        notInt32Op1.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-        notInt32Op2.append(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
+        notInt32Op1.append(branchIfNotInt32(regT1));
+        notInt32Op2.append(branchIfNotInt32(regT3));
         addJump(branch32(condition, regT0, regT2), target);
     }
 
@@ -139,7 +139,7 @@ void JIT::emit_op_unsigned(Instruction* currentInstruction)
     
     emitLoad(op1, regT1, regT0);
     
-    addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
+    addSlowCase(branchIfNotInt32(regT1));
     addSlowCase(branch32(LessThan, regT0, TrustedImm32(0)));
     emitStoreInt32(result, regT0, result == op1);
 }
@@ -150,7 +150,7 @@ void JIT::emit_op_inc(Instruction* currentInstruction)
 
     emitLoad(srcDst, regT1, regT0);
 
-    addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
+    addSlowCase(branchIfNotInt32(regT1));
     addSlowCase(branchAdd32(Overflow, TrustedImm32(1), regT0));
     emitStoreInt32(srcDst, regT0, true);
 }
@@ -161,7 +161,7 @@ void JIT::emit_op_dec(Instruction* currentInstruction)
 
     emitLoad(srcDst, regT1, regT0);
 
-    addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
+    addSlowCase(branchIfNotInt32(regT1));
     addSlowCase(branchSub32(Overflow, TrustedImm32(1), regT0));
     emitStoreInt32(srcDst, regT0, true);
 }
@@ -186,7 +186,7 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, Opera
         Jump doubleOp2 = branch32(Below, regT3, TrustedImm32(JSValue::LowestTag));
 
         if (!types.second().definitelyIsNumber())
-            addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
+            addSlowCase(branchIfNotInt32(regT3));
 
         convertInt32ToDouble(regT2, fpRegT0);
         Jump doTheMath = jump();
@@ -313,8 +313,8 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     ASSERT(regT3 == X86Registers::ebx);
 
     emitLoad2(op1, regT0, regT3, op2, regT1, regT2);
-    addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-    addSlowCase(branch32(NotEqual, regT0, TrustedImm32(JSValue::Int32Tag)));
+    addSlowCase(branchIfNotInt32(regT1));
+    addSlowCase(branchIfNotInt32(regT0));
 
     move(regT3, regT0);
     addSlowCase(branchTest32(Zero, regT2));
