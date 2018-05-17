@@ -79,7 +79,7 @@ void LayoutContext::styleChanged(const Box& layoutBox, StyleDiff styleDiff)
     else if (is<InlineFormattingState>(formattingState))
         invalidationRoot = InlineInvalidation::invalidate(layoutBox, styleDiff, *this, downcast<InlineFormattingState>(formattingState)).root;
     else
-        ASSERT_NOT_REACHED();
+        ASSERT_NOT_IMPLEMENTED_YET();
     ASSERT(invalidationRoot);
     m_formattingContextRootListForLayout.addVoid(invalidationRoot);
 }
@@ -110,7 +110,7 @@ std::unique_ptr<FormattingContext> LayoutContext::formattingContext(const Box& f
     if (formattingContextRoot.establishesInlineFormattingContext())
         return std::make_unique<InlineFormattingContext>(formattingContextRoot);
 
-    ASSERT_NOT_REACHED();
+    ASSERT_NOT_IMPLEMENTED_YET();
     return nullptr;
 }
 

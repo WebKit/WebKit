@@ -1,5 +1,30 @@
 2018-05-17  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Replace ASSERT_NOT_REACHED with ASSERT_NOT_IMPLEMENTED_YET where applicable.
+        https://bugs.webkit.org/show_bug.cgi?id=185728
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowWidth const): leftover from previous patch.
+        (WebCore::Layout::FormattingContext::computeFloatingWidth const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHeight const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowNonReplacedHeight const):
+        (WebCore::Layout::FormattingContext::computeReplacedWidth const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowNonReplacedWidth const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowReplacedWidth const):
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::styleChanged):
+        (WebCore::Layout::LayoutContext::formattingContext):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeInFlowNonReplacedWidth const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowHeight const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowNonReplacedHeight const):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createSubTree):
+
+2018-05-17  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Move replaced logic from Layout::Box to Layout::Replaced class
         https://bugs.webkit.org/show_bug.cgi?id=185711
 

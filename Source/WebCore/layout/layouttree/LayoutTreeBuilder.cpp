@@ -63,7 +63,7 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
             box = new InlineContainer(RenderStyle::clone(child.style()));
             createSubTree(child, downcast<Container>(*box));
         } else
-            ASSERT_NOT_REACHED();
+            ASSERT_NOT_IMPLEMENTED_YET();
 
         if (!rootContainer.hasChild()) {
             rootContainer.setFirstChild(*box);
