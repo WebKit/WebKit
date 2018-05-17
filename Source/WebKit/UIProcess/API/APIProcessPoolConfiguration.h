@@ -147,6 +147,11 @@ public:
     bool trackNetworkActivity() const { return m_trackNetworkActivity; }
     void setTrackNetworkActivity(bool track) { m_trackNetworkActivity = track; }
 
+#if ENABLE(WIFI_ASSERTIONS)
+    unsigned wirelessContextIdentifier() const { return m_wirelessContextIdentifier; }
+    void setWirelessContextIdentifier(unsigned wirelessContextIdentifier) { m_wirelessContextIdentifier = wirelessContextIdentifier; }
+#endif
+
 private:
     bool m_shouldHaveLegacyDataStore { false };
 
@@ -185,6 +190,10 @@ private:
 
 #if PLATFORM(IOS)
     WTF::String m_ctDataConnectionServiceType;
+#endif
+
+#if ENABLE(WIFI_ASSERTIONS)
+    unsigned m_wirelessContextIdentifier { 0 };
 #endif
 };
 
