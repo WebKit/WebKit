@@ -25,6 +25,7 @@
 #include "AutoplayEvent.h"
 #include "Cursor.h"
 #include "DatabaseDetails.h"
+#include "DisabledAdaptations.h"
 #include "DisplayRefreshMonitor.h"
 #include "FocusDirection.h"
 #include "FrameLoader.h"
@@ -185,6 +186,7 @@ public:
     virtual FloatSize availableScreenSize() const { return const_cast<ChromeClient&>(*this).windowRect().size(); }
     virtual FloatSize overrideScreenSize() const { return const_cast<ChromeClient&>(*this).windowRect().size(); }
 
+    virtual void dispatchDisabledAdaptationsDidChange(const OptionSet<DisabledAdaptations>&) const { }
     virtual void dispatchViewportPropertiesDidChange(const ViewportArguments&) const { }
 
     virtual void contentsSizeChanged(Frame&, const IntSize&) const = 0;

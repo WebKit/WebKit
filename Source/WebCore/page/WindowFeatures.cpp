@@ -114,6 +114,19 @@ void processFeaturesString(StringView features, FeatureMode mode, const WTF::Fun
     }
 }
 
+OptionSet<DisabledAdaptations> parseDisabledAdaptations(const String& disabledAdaptationsString)
+{
+    OptionSet<DisabledAdaptations> disabledAdaptations;
+    Vector<String> disabledAdaptationNames;
+    disabledAdaptationsString.split(',', false, disabledAdaptationNames);
+    for (auto& name : disabledAdaptationNames) {
+        auto normalizedName = name.stripWhiteSpace().convertToASCIILowercase();
+        if (normalizedName == extraZoomModeAdaptationName())
+            disabledAdaptations |= DisabledAdaptations::ExtraZoomMode;
+    }
+    return disabledAdaptations;
+}
+
 static void setWindowFeature(WindowFeatures& features, StringView key, StringView value)
 {
     // Listing a key with no value is shorthand for key=yes

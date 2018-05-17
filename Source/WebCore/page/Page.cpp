@@ -358,6 +358,14 @@ uint64_t Page::renderTreeSize() const
     return total;
 }
 
+OptionSet<DisabledAdaptations> Page::disabledAdaptations() const
+{
+    if (mainFrame().document())
+        return mainFrame().document()->disabledAdaptations();
+
+    return { };
+}
+
 ViewportArguments Page::viewportArguments() const
 {
     return mainFrame().document() ? mainFrame().document()->viewportArguments() : ViewportArguments();

@@ -23,50 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "DisabledAdaptations.h"
 
-#include "AbstractFrame.h"
-#include "GlobalFrameIdentifier.h"
-#include <wtf/Ref.h>
-#include <wtf/RefPtr.h>
-#include <wtf/TypeCasts.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class RemoteDOMWindow;
+#if USE(APPLE_INTERNAL_SDK)
 
-class RemoteFrame final : public AbstractFrame {
-public:
-    static Ref<RemoteFrame> create(GlobalFrameIdentifier&& frameIdentifier)
-    {
-        return adoptRef(* new RemoteFrame(WTFMove(frameIdentifier)));
-    }
-    ~RemoteFrame();
+#import <WebKitAdditions/DisabledAdaptationsAdditions.cpp>
 
-    const GlobalFrameIdentifier& identifier() const { return m_identifier; }
+#else
 
-    void setWindow(RemoteDOMWindow* window) { m_window = window; }
-    RemoteDOMWindow* window() const { return m_window; }
+String extraZoomModeAdaptationName()
+{
+    return emptyString();
+}
 
-    void setOpener(AbstractFrame* opener) { m_opener = opener; }
-    AbstractFrame* opener() const { return m_opener.get(); }
-
-private:
-    WEBCORE_EXPORT explicit RemoteFrame(GlobalFrameIdentifier&&);
-
-    bool isRemoteFrame() const final { return true; }
-    bool isLocalFrame() const final { return false; }
-
-    AbstractDOMWindow* virtualWindow() const final;
-
-    GlobalFrameIdentifier m_identifier;
-    RemoteDOMWindow* m_window { nullptr };
-
-    RefPtr<AbstractFrame> m_opener;
-};
+#endif
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RemoteFrame)
-    static bool isType(const WebCore::AbstractFrame& frame) { return frame.isRemoteFrame(); }
-SPECIALIZE_TYPE_TRAITS_END()

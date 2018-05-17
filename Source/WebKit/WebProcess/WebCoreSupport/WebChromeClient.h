@@ -284,6 +284,7 @@ private:
     WebCore::FloatSize overrideScreenSize() const final;
 #endif
 
+    void dispatchDisabledAdaptationsDidChange(const OptionSet<WebCore::DisabledAdaptations>&) const final;
     void dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments&) const final;
 
     void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&) final;

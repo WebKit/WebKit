@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "DisabledAdaptations.h"
 #include <wtf/Function.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
@@ -59,6 +60,7 @@ struct WindowFeatures {
 
 WindowFeatures parseWindowFeatures(StringView windowFeaturesString);
 WindowFeatures parseDialogFeatures(const String& dialogFeaturesString, const FloatRect& screenAvailableRect);
+OptionSet<DisabledAdaptations> parseDisabledAdaptations(const String&);
 
 enum class FeatureMode { Window, Viewport };
 void processFeaturesString(StringView features, FeatureMode, const WTF::Function<void(StringView type, StringView value)>& callback);
