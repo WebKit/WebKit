@@ -166,6 +166,13 @@
             ]
         },
         {
+            "name": "setShowRulers",
+            "description": "Requests that backend draw rulers in the inspector overlay",
+            "parameters": [
+                { "name": "result", "type": "boolean", "description": "True for showing rulers" }
+            ]
+        },
+        {
             "name": "setShowPaintRects",
             "description": "Requests that backend shows paint rectangles",
             "parameters": [

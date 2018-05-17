@@ -54,6 +54,12 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._showPrintStylesButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._showPrintStylesChanged();
 
+        WI.settings.showRulers.addEventListener(WI.Setting.Event.Changed, this._showRulersChanged, this);
+        this._showRulersButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-rulers", WI.UIString("Show Rulers"), WI.UIString("Hide Rulers"), "Images/Rulers.svg", 16, 16);
+        this._showRulersButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleShowRulers, this);
+        this._showRulersButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._showRulersChanged();
+
         this.element.classList.add("dom-tree");
         this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
 
@@ -93,6 +99,11 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
     get navigationItems()
     {
         let items = [this._showPrintStylesButtonNavigationItem, this._showsShadowDOMButtonNavigationItem];
+
+        // COMPATIBILITY (iOS 11.3)
+        if (PageAgent.setShowRulers)
+            items.unshift(this._showRulersButtonNavigationItem);
+
         if (!WI.settings.experimentalEnableLayersTab.value)
             items.push(this._compositingBordersButtonNavigationItem, this._paintFlashingButtonNavigationItem);
 
@@ -150,6 +161,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
         WI.showPaintRectsSetting.removeEventListener(null, null, this);
         WI.showShadowDOMSetting.removeEventListener(null, null, this);
+        WI.settings.showRulers.removeEventListener(null, null, this);
         WI.debuggerManager.removeEventListener(null, null, this);
         WI.domTreeManager.removeEventListener(null, null, this);
         WI.domDebuggerManager.removeEventListener(null, null, this);
@@ -565,6 +577,24 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
     {
         WI.printStylesEnabled = !WI.printStylesEnabled;
         this._showPrintStylesChanged();
+    }
+
+    _showRulersChanged()
+    {
+        this._showRulersButtonNavigationItem.activated = WI.settings.showRulers.value;
+
+        // COMPATIBILITY (iOS 11.3)
+        if (!PageAgent.setShowRulers)
+            return;
+
+        PageAgent.setShowRulers(this._showRulersButtonNavigationItem.activated);
+    }
+
+    _toggleShowRulers(event)
+    {
+        WI.settings.showRulers.value = !WI.settings.showRulers.value;
+
+        this._showRulersChanged();
     }
 
     _showSearchHighlights()

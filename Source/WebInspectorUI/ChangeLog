@@ -1,3 +1,19 @@
+2018-05-16  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: create a navigation item for toggling the overlay rulers/guides
+        https://bugs.webkit.org/show_bug.cgi?id=185644
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+        (WI.DOMTreeContentView.prototype.get navigationItems):
+        (WI.DOMTreeContentView.prototype.closed):
+        (WI.DOMTreeContentView.prototype._showRulersChanged): Added.
+        (WI.DOMTreeContentView.prototype._toggleShowRulers): Added.
+
 2018-05-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Canvas: Remove unused --value-visual-highlight CSS variable

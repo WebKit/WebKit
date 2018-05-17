@@ -268,7 +268,7 @@ void InspectorOverlay::setIndicating(bool indicating)
 
 bool InspectorOverlay::shouldShowOverlay() const
 {
-    return m_highlightNode || m_highlightNodeList || m_highlightQuad || m_indicating || m_showingPaintRects || !m_pausedInDebuggerMessage.isNull();
+    return m_highlightNode || m_highlightNodeList || m_highlightQuad || m_indicating || m_showingPaintRects || m_showRulers || !m_pausedInDebuggerMessage.isNull();
 }
 
 void InspectorOverlay::update()
@@ -296,6 +296,9 @@ void InspectorOverlay::update()
     drawQuadHighlight();
     drawPausedInDebuggerMessage();
     drawPaintRects();
+
+    if (m_showRulers)
+        drawRulers();
 
     // Position DOM elements.
     overlayPage()->mainFrame().document()->resolveStyle(Document::ResolveStyleType::Rebuild);
@@ -392,6 +395,16 @@ void InspectorOverlay::showPaintRect(const FloatRect& rect)
     forcePaint();
 }
 
+void InspectorOverlay::setShowRulers(bool showRulers)
+{
+    if (m_showRulers == showRulers)
+        return;
+
+    m_showRulers = showRulers;
+
+    update();
+}
+
 void InspectorOverlay::updatePaintRectsTimerFired()
 {
     MonotonicTime now = MonotonicTime::now();
@@ -417,6 +430,11 @@ void InspectorOverlay::drawPaintRects()
         arrayOfRects->addItem(buildObjectForRect(pair.second));
 
     evaluateInOverlay(ASCIILiteral("updatePaintRects"), WTFMove(arrayOfRects));
+}
+
+void InspectorOverlay::drawRulers()
+{
+    evaluateInOverlay(ASCIILiteral("drawRulers"));
 }
 
 static RefPtr<JSON::ArrayOf<Inspector::Protocol::OverlayTypes::FragmentHighlightData>> buildArrayForRendererFragments(RenderObject* renderer, const HighlightConfig& config)
@@ -742,6 +760,7 @@ void InspectorOverlay::reset(const IntSize& viewportSize, const IntPoint& scroll
         .setPageZoomFactor(m_page.mainFrame().pageZoomFactor())
         .setScrollOffset(buildObjectForPoint(scrollOffset))
         .setContentInset(buildObjectForSize(IntSize(0, m_page.mainFrame().view()->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset))))
+        .setShowRulers(m_showRulers)
         .release();
     evaluateInOverlay("reset", WTFMove(configObject));
 }

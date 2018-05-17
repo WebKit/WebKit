@@ -542,6 +542,11 @@ void InspectorPageAgent::searchInResources(ErrorString&, const String& text, con
         networkAgent->searchOtherRequests(regex, result);
 }
 
+void InspectorPageAgent::setShowRulers(ErrorString&, bool showRulers)
+{
+    m_overlay->setShowRulers(showRulers);
+}
+
 void InspectorPageAgent::setShowPaintRects(ErrorString&, bool show)
 {
     m_showPaintRects = show;

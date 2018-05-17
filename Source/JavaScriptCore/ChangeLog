@@ -1,3 +1,13 @@
+2018-05-16  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: create a navigation item for toggling the overlay rulers/guides
+        https://bugs.webkit.org/show_bug.cgi?id=185644
+
+        Reviewed by Matt Baker.
+
+        * inspector/protocol/OverlayTypes.json:
+        * inspector/protocol/Page.json:
+
 2018-05-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r231845.

@@ -97,6 +97,7 @@ public:
     void getResourceContent(ErrorString&, const String& frameId, const String& url, String* content, bool* base64Encoded) final;
     void searchInResource(ErrorString&, const String& frameId, const String& url, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, const String* optionalRequestId, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>&) final;
     void searchInResources(ErrorString&, const String&, const bool* caseSensitive, const bool* isRegex, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>&) final;
+    void setShowRulers(ErrorString&, bool) final;
     void setShowPaintRects(ErrorString&, bool show) final;
     void setEmulatedMedia(ErrorString&, const String&) final;
     void getCompositingBordersVisible(ErrorString&, bool* out_param) final;

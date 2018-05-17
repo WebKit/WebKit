@@ -1,3 +1,32 @@
+2018-05-16  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: create a navigation item for toggling the overlay rulers/guides
+        https://bugs.webkit.org/show_bug.cgi?id=185644
+
+        Reviewed by Matt Baker.
+
+        This patch is purely a visual change for WebInspector, and doesn't affect anything else.
+
+        * inspector/agents/InspectorPageAgent.h:
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::setShowRulers): Added.
+
+        * inspector/InspectorOverlay.h:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::shouldShowOverlay):
+        (WebCore::InspectorOverlay::update):
+        (WebCore::InspectorOverlay::setShowRulers): Added.
+        (WebCore::InspectorOverlay::drawRulers): Added.
+        (WebCore::InspectorOverlay::reset):
+
+        * inspector/InspectorOverlayPage.js:
+        (drawNodeHighlight):
+        (drawQuadHighlight):
+        (drawRulers): Added.
+        (_drawBounds): Added.
+        (reset):
+        (_drawRulers): Deleted.
+
 2018-05-16  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] SoupNetworkSession.h:68:62: error: unknown type name 'URL'

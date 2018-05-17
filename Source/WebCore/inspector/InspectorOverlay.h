@@ -115,6 +115,8 @@ public:
     
     void setShowingPaintRects(bool);
     void showPaintRect(const FloatRect&);
+
+    void setShowRulers(bool);
     
     Node* highlightedNode() const;
 
@@ -132,6 +134,7 @@ private:
     void drawQuadHighlight();
     void drawPausedInDebuggerMessage();
     void drawPaintRects();
+    void drawRulers();
     void updatePaintRectsTimerFired();
 
     Page* overlayPage();
@@ -157,6 +160,7 @@ private:
     Timer m_paintRectUpdateTimer;
     bool m_indicating {false};
     bool m_showingPaintRects {false};
+    bool m_showRulers {false};
 };
 
 } // namespace WebCore

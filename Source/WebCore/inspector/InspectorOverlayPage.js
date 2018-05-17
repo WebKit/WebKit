@@ -1,3 +1,4 @@
+const boundsColor = "rgba(0,0,0,0.4)";
 const lightGridColor = "rgba(0,0,0,0.2)";
 const darkGridColor = "rgba(0,0,0,0.5)";
 const transparentColor = "rgba(0, 0, 0, 0)";
@@ -63,7 +64,8 @@ function drawNodeHighlight(allHighlights)
         });
     }
 
-    _drawRulers();
+    if (DATA.showRulers)
+        _drawBounds(bounds);
 
     if (allHighlights.length === 1) {
         for (let fragment of allHighlights[0].fragments)
@@ -79,7 +81,8 @@ function drawQuadHighlight(highlight)
         _drawOutlinedQuad(highlight.quads[0], highlight.contentColor, highlight.contentOutlineColor, bounds);
     });
 
-    _drawRulers();
+    if (DATA.showRulers)
+        _drawBounds(bounds);
 }
 
 function quadEquals(quad1, quad2)
@@ -106,6 +109,129 @@ function updatePaintRects(paintRectList)
     context.restore();
 }
 
+function drawRulers()
+{
+    const gridLabelSize = 13;
+    const gridSize = 15;
+    const gridStepIncrement = 50;
+    const gridStepLength = 8;
+    const gridSubStepIncrement = 5;
+    const gridSubStepLength = 5;
+
+
+    let pageFactor = DATA.pageZoomFactor * DATA.pageScaleFactor;
+    let scrollX = DATA.scrollOffset.x * DATA.pageScaleFactor;
+    let scrollY = DATA.scrollOffset.y * DATA.pageScaleFactor;
+
+    function zoom(value) {
+        return value * pageFactor;
+    }
+
+    function unzoom(value) {
+        return value / pageFactor;
+    }
+
+    function multipleBelow(value, step) {
+        return value - (value % step);
+    }
+
+    let width = DATA.viewportSize.width / pageFactor;
+    let height = DATA.viewportSize.height / pageFactor;
+    let minX = unzoom(scrollX);
+    let minY = unzoom(scrollY);
+    let maxX = minX + width;
+    let maxY = minY + height;
+
+    // Draw backgrounds
+    _isolateActions(() => {
+        let offsetX = DATA.contentInset.width + gridSize;
+        let offsetY = DATA.contentInset.height + gridSize;
+
+        context.fillStyle = gridBackgroundColor;
+        context.fillRect(DATA.contentInset.width, DATA.contentInset.height, gridSize, gridSize);
+        context.fillRect(offsetX, DATA.contentInset.height, zoom(width) - offsetX, gridSize);
+        context.fillRect(DATA.contentInset.width, offsetY, gridSize, zoom(height) - offsetY);
+    });
+
+    // Ruler styles
+    _isolateActions(() => {
+        context.lineWidth = 1;
+        context.fillStyle = darkGridColor;
+
+        // Draw labels
+        _isolateActions(() => {
+            context.translate(DATA.contentInset.width - scrollX, DATA.contentInset.height - scrollY);
+
+            for (let x = multipleBelow(minX, gridStepIncrement * 2); x < maxX; x += gridStepIncrement * 2) {
+                if (!x && !scrollX)
+                    continue;
+
+                _isolateActions(() => {
+                    context.translate(zoom(x) + 0.5, scrollY);
+                    context.fillText(x, 2, gridLabelSize);
+                });
+            }
+
+            for (let y = multipleBelow(minY, gridStepIncrement * 2); y < maxY; y += gridStepIncrement * 2) {
+                if (!y && !scrollY)
+                    continue;
+
+                _isolateActions(() => {
+                    context.translate(scrollX, zoom(y) + 0.5);
+                    context.rotate(-Math.PI / 2);
+                    context.fillText(y, 2, gridLabelSize);
+                });
+            }
+        });
+
+        // Draw horizontal grid
+        _isolateActions(() => {
+            context.translate(DATA.contentInset.width - scrollX + 0.5, DATA.contentInset.height - scrollY);
+
+            for (let x = multipleBelow(minX, gridSubStepIncrement); x < maxX; x += gridSubStepIncrement) {
+                if (!x && !scrollX)
+                    continue;
+
+                context.beginPath();
+                context.moveTo(zoom(x), scrollY);
+
+                if (x % gridStepIncrement) {
+                    context.strokeStyle = lightGridColor;
+                    context.lineTo(zoom(x), scrollY + gridSubStepLength);
+                } else {
+                    context.strokeStyle = darkGridColor;
+                    context.lineTo(zoom(x), scrollY + ((x % (gridStepIncrement * 2)) ? gridSubStepLength : gridStepLength));
+                }
+
+                context.stroke();
+            }
+        });
+
+        // Draw vertical grid
+        _isolateActions(() => {
+            context.translate(DATA.contentInset.width - scrollX, DATA.contentInset.height - scrollY + 0.5);
+
+            for (let y = multipleBelow(minY, gridSubStepIncrement); y < maxY; y += gridSubStepIncrement) {
+                if (!y && !scrollY)
+                    continue;
+
+                context.beginPath();
+                context.moveTo(scrollX, zoom(y));
+
+                if (y % gridStepIncrement) {
+                    context.strokeStyle = lightGridColor;
+                    context.lineTo(scrollX + gridSubStepLength, zoom(y));
+                } else {
+                    context.strokeStyle = darkGridColor;
+                    context.lineTo(scrollX + ((y % (gridStepIncrement * 2)) ? gridSubStepLength : gridStepLength), zoom(y));
+                }
+
+                context.stroke();
+            }
+        });
+    });
+}
+
 function reset(payload)
 {
     DATA.viewportSize = payload.viewportSize;
@@ -114,6 +240,7 @@ function reset(payload)
     DATA.pageZoomFactor = payload.pageZoomFactor;
     DATA.scrollOffset = payload.scrollOffset;
     DATA.contentInset = payload.contentInset;
+    DATA.showRulers = payload.showRulers;
 
     window.canvas = document.getElementById("canvas");
     window.paintRectsCanvas = document.getElementById("paintrects-canvas");
@@ -286,6 +413,36 @@ function _drawOutlinedQuadWithClip(quad, clipQuad, fillColor, bounds)
     });
 }
 
+function _drawBounds(bounds)
+{
+    _isolateActions(() => {
+        let startX = DATA.contentInset.width;
+        let startY = DATA.contentInset.height;
+
+        context.beginPath();
+
+        if (bounds.minY - startY > 0) {
+            context.moveTo(bounds.minX, bounds.minY);
+            context.lineTo(bounds.minX, startY);
+
+            context.moveTo(bounds.maxX, bounds.minY);
+            context.lineTo(bounds.maxX, startY);
+        }
+
+        if (bounds.minX - startX > 0) {
+            context.moveTo(bounds.minX, bounds.minY);
+            context.lineTo(startX, bounds.minY);
+
+            context.moveTo(bounds.minX, bounds.maxY);
+            context.lineTo(startX, bounds.maxY);
+        }
+
+        context.lineWidth = 1;
+        context.strokeStyle = boundsColor;
+        context.stroke();
+    });
+}
+
 function _createElementTitle(elementData)
 {
     let builder = new DOMBuilder("div", "element-title");
@@ -440,128 +597,6 @@ function showPageIndication()
 function hidePageIndication()
 {
     document.body.classList.remove("indicate");
-}
-
-function _drawRulers(options = {})
-{
-    const gridLabelSize = 13;
-    const gridSize = 15;
-    const gridStepIncrement = 50;
-    const gridStepLength = 8;
-    const gridSubStepIncrement = 5;
-    const gridSubStepLength = 5;
-
-    let pageFactor = DATA.pageZoomFactor * DATA.pageScaleFactor;
-    let scrollX = DATA.scrollOffset.x * DATA.pageScaleFactor;
-    let scrollY = DATA.scrollOffset.y * DATA.pageScaleFactor;
-
-    function zoom(value) {
-        return value * pageFactor;
-    }
-
-    function unzoom(value) {
-        return value / pageFactor;
-    }
-
-    function multipleBelow(value, step) {
-        return value - (value % step);
-    }
-
-    let width = DATA.viewportSize.width / pageFactor;
-    let height = DATA.viewportSize.height / pageFactor;
-    let minX = unzoom(scrollX);
-    let minY = unzoom(scrollY);
-    let maxX = minX + width;
-    let maxY = minY + height;
-
-    // Draw backgrounds
-    _isolateActions(() => {
-        let offsetX = DATA.contentInset.width + gridSize;
-        let offsetY = DATA.contentInset.height + gridSize;
-
-        context.fillStyle = gridBackgroundColor;
-        context.fillRect(DATA.contentInset.width, DATA.contentInset.height, gridSize, gridSize);
-        context.fillRect(offsetX, DATA.contentInset.height, zoom(width) - offsetX, gridSize);
-        context.fillRect(DATA.contentInset.width, offsetY, gridSize, zoom(height) - offsetY);
-    });
-
-    // Ruler styles
-    _isolateActions(() => {
-        context.lineWidth = 1;
-        context.fillStyle = darkGridColor;
-
-        // Draw labels
-        _isolateActions(() => {
-            context.translate(DATA.contentInset.width - scrollX, DATA.contentInset.height - scrollY);
-
-            for (let x = multipleBelow(minX, gridStepIncrement * 2); x < maxX; x += gridStepIncrement * 2) {
-                if (!x && !scrollX)
-                    continue;
-
-                _isolateActions(() => {
-                    context.translate(zoom(x) + 0.5, scrollY);
-                    context.fillText(x, 2, gridLabelSize);
-                });
-            }
-
-            for (let y = multipleBelow(minY, gridStepIncrement * 2); y < maxY; y += gridStepIncrement * 2) {
-                if (!y && !scrollY)
-                    continue;
-
-                _isolateActions(() => {
-                    context.translate(scrollX, zoom(y) + 0.5);
-                    context.rotate(-Math.PI / 2);
-                    context.fillText(y, 2, gridLabelSize);
-                });
-            }
-        });
-
-        // Draw horizontal grid
-        _isolateActions(() => {
-            context.translate(DATA.contentInset.width - scrollX + 0.5, DATA.contentInset.height - scrollY);
-
-            for (let x = multipleBelow(minX, gridSubStepIncrement); x < maxX; x += gridSubStepIncrement) {
-                if (!x && !scrollX)
-                    continue;
-
-                context.beginPath();
-                context.moveTo(zoom(x), scrollY);
-
-                if (x % gridStepIncrement) {
-                    context.strokeStyle = lightGridColor;
-                    context.lineTo(zoom(x), scrollY + gridSubStepLength);
-                } else {
-                    context.strokeStyle = darkGridColor;
-                    context.lineTo(zoom(x), scrollY + ((x % (gridStepIncrement * 2)) ? gridSubStepLength : gridStepLength));
-                }
-
-                context.stroke();
-            }
-        });
-
-        // Draw vertical grid
-        _isolateActions(() => {
-            context.translate(DATA.contentInset.width - scrollX, DATA.contentInset.height - scrollY + 0.5);
-
-            for (let y = multipleBelow(minY, gridSubStepIncrement); y < maxY; y += gridSubStepIncrement) {
-                if (!y && !scrollY)
-                    continue;
-
-                context.beginPath();
-                context.moveTo(scrollX, zoom(y));
-
-                if (y % gridStepIncrement) {
-                    context.strokeStyle = lightGridColor;
-                    context.lineTo(scrollX + gridSubStepLength, zoom(y));
-                } else {
-                    context.strokeStyle = darkGridColor;
-                    context.lineTo(scrollX + ((y % (gridStepIncrement * 2)) ? gridSubStepLength : gridStepLength), zoom(y));
-                }
-
-                context.stroke();
-            }
-        });
-    });
 }
 
 function setPlatform(platform)

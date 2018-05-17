@@ -121,6 +121,7 @@ WI.settings = {
     showImageGrid: new WI.Setting("show-image-grid", false),
     showCanvasPath: new WI.Setting("show-canvas-path", false),
     selectedNetworkDetailContentViewIdentifier: new WI.Setting("network-detail-content-view-identifier", "preview"),
+    showRulers: new WI.Setting("show-rulers", false),
 
     // Experimental
     experimentalEnableLayersTab: new WI.Setting("experimental-enable-layers-tab", false),

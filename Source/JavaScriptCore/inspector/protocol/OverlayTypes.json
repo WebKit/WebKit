@@ -97,7 +97,8 @@
                 { "name": "pageScaleFactor", "type": "number" },
                 { "name": "pageZoomFactor", "type": "number" },
                 { "name": "scrollOffset", "$ref": "Point" },
-                { "name": "contentInset", "$ref": "Size" }
+                { "name": "contentInset", "$ref": "Size" },
+                { "name": "showRulers", "type": "boolean" }
             ]
         }
     ]
