@@ -645,6 +645,8 @@
        ;; Note: This is needed for some media playback features. <rdar://problem/38191574>
        ;; Remove this permission when <rdar://problem/38240572> is fixed.
        (literal "/private/var/run/mDNSResponder")
+       ;; ObjC map_images needs to send logging data to syslog. <rdar://problem/39778918>
+       (literal "/private/var/run/syslog")
        (remote tcp))
 
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300

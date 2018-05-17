@@ -1,3 +1,19 @@
+2018-05-16  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r229093)[macOS] Allow network-outbound for syslog use
+        https://bugs.webkit.org/show_bug.cgi?id=185703
+        <rdar://problem/39778918>
+
+        Reviewed by Eric Carlson.
+
+        In r229093 I removed the 'network-outbound' permission for syslog use.
+        Further testing has shown that this is still needed for subsystem
+        logging in our bundle loading code.
+
+        This patch re-enabled network-outbound for syslog.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-05-16  Andy VanWagoner  <andy@vanwagoner.family>
 
         Add support for Intl NumberFormat formatToParts
