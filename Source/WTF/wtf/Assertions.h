@@ -180,6 +180,7 @@ typedef struct {
 #endif
 #endif
 
+WTF_EXPORT_PRIVATE void WTFReportNotImplementedYet(const char* file, int line, const char* function);
 WTF_EXPORT_PRIVATE void WTFReportAssertionFailure(const char* file, int line, const char* function, const char* assertion);
 WTF_EXPORT_PRIVATE void WTFReportAssertionFailureWithMessage(const char* file, int line, const char* function, const char* assertion, const char* format, ...) WTF_ATTRIBUTE_PRINTF(5, 6);
 WTF_EXPORT_PRIVATE void WTFReportArgumentAssertionFailure(const char* file, int line, const char* function, const char* argName, const char* assertion);
@@ -277,6 +278,7 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 #define ASSERT(assertion) ((void)0)
 #define ASSERT_AT(assertion, file, line, function) ((void)0)
 #define ASSERT_NOT_REACHED() ((void)0)
+#define ASSERT_NOT_IMPLEMENTED_YET() ((void)0)
 #define ASSERT_IMPLIES(condition, assertion) ((void)0)
 #define NO_RETURN_DUE_TO_ASSERT
 
@@ -313,6 +315,11 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 
 #define ASSERT_NOT_REACHED() do { \
     WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, 0); \
+    CRASH(); \
+} while (0)
+
+#define ASSERT_NOT_IMPLEMENTED_YET() do { \
+    WTFReportNotImplementedYet(__FILE__, __LINE__, WTF_PRETTY_FUNCTION); \
     CRASH(); \
 } while (0)
 

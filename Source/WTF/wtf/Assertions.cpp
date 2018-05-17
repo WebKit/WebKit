@@ -199,6 +199,12 @@ static void printCallSite(const char* file, int line, const char* function)
 #endif
 }
 
+void WTFReportNotImplementedYet(const char* file, int line, const char* function)
+{
+    printf_stderr_common("NOT IMPLEMENTED YET\n");
+    printCallSite(file, line, function);
+}
+
 void WTFReportAssertionFailure(const char* file, int line, const char* function, const char* assertion)
 {
     if (assertion)
