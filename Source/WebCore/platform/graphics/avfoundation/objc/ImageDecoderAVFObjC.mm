@@ -670,7 +670,7 @@ void ImageDecoderAVFObjC::clearFrameBufferCache(size_t index)
 
 const ImageDecoderAVFObjCSample* ImageDecoderAVFObjC::sampleAtIndex(size_t index) const
 {
-    if (index >= m_sampleData.size())
+    if (index >= m_sampleData.presentationOrder().size())
         return nullptr;
 
     // FIXME: std::map is not random-accessible; this can get expensive if callers repeatedly call
@@ -679,7 +679,7 @@ const ImageDecoderAVFObjCSample* ImageDecoderAVFObjC::sampleAtIndex(size_t index
     auto iter = m_sampleData.presentationOrder().begin();
     for (size_t i = 0; i != index; ++i)
         ++iter;
-    
+
     return toSample(iter);
 }
 

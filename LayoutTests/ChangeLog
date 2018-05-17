@@ -1,3 +1,15 @@
+2018-05-17  Jer Noble  <jer.noble@apple.com>
+
+        CRASH in ImageDecoderAVFObjC::sampleAtIndex()
+        https://bugs.webkit.org/show_bug.cgi?id=185734
+        <rdar://problem/40295094>
+
+        Reviewed by Eric Carlson.
+
+        * fast/images/animated-image-mp4-crash-expected.txt: Added.
+        * fast/images/animated-image-mp4-crash.html: Added.
+        * fast/images/resources/two-samples-with-same-pts.mp4: Added.
+
 2018-05-17  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r229831?): Layout Test http/tests/appcache/interrupted-update.html is a flaky failure

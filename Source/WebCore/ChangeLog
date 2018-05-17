@@ -1,3 +1,20 @@
+2018-05-17  Jer Noble  <jer.noble@apple.com>
+
+        CRASH in ImageDecoderAVFObjC::sampleAtIndex()
+        https://bugs.webkit.org/show_bug.cgi?id=185734
+        <rdar://problem/40295094>
+
+        Reviewed by Eric Carlson.
+
+        Test: fast/images/animated-image-mp4-crash.html
+
+        Test the correct size value before iterating over the SampleMap in presentationOrder()
+
+        * Modules/mediasource/SampleMap.h:
+        (WebCore::PresentationOrderSampleMap::size const):
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (WebCore::ImageDecoderAVFObjC::sampleAtIndex const):
+
 2018-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Disabled adaptations are not reset upon mainframe navigation

@@ -54,6 +54,8 @@ public:
     reverse_iterator rend() { return m_samples.rend(); }
     const_reverse_iterator rend() const { return m_samples.rend(); }
 
+    size_t size() const { return m_samples.size(); }
+
     WEBCORE_EXPORT iterator findSampleWithPresentationTime(const MediaTime&);
     WEBCORE_EXPORT iterator findSampleContainingPresentationTime(const MediaTime&);
     WEBCORE_EXPORT iterator findSampleContainingOrAfterPresentationTime(const MediaTime&);
