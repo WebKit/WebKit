@@ -1,3 +1,12 @@
+2018-05-17  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Fix the build after my attempted build fix broke the build.
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::defaultConstructorSourceCode):
+        (JSC::BuiltinExecutables::createDefaultConstructor):
+        * builtins/BuiltinExecutables.h:
+
 2018-05-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove reifyPropertyNameIfNeeded

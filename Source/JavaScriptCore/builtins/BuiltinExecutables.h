@@ -49,7 +49,7 @@ const SourceCode& name##Source() { return m_##name##Source; }
     JSC_FOREACH_BUILTIN_CODE(EXPOSE_BUILTIN_EXECUTABLES)
 #undef EXPOSE_BUILTIN_SOURCES
 
-    static const SourceCode& defaultConstructorSourceCode(ConstructorKind);
+    static SourceCode defaultConstructorSourceCode(ConstructorKind);
     UnlinkedFunctionExecutable* createDefaultConstructor(ConstructorKind, const Identifier& name);
 
     static UnlinkedFunctionExecutable* createExecutable(VM&, const SourceCode&, const Identifier&, ConstructorKind, ConstructAbility);

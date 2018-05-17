@@ -42,7 +42,7 @@ BuiltinExecutables::BuiltinExecutables(VM& vm)
 {
 }
 
-const SourceCode& BuiltinExecutables::defaultConstructorSourceCode(ConstructorKind constructorKind)
+SourceCode BuiltinExecutables::defaultConstructorSourceCode(ConstructorKind constructorKind)
 {
     switch (constructorKind) {
     case ConstructorKind::None:
@@ -72,7 +72,6 @@ const SourceCode& BuiltinExecutables::defaultConstructorSourceCode(ConstructorKi
 
 UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(ConstructorKind constructorKind, const Identifier& name)
 {
-
     switch (constructorKind) {
     case ConstructorKind::None:
         break;
