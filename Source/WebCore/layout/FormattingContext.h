@@ -87,11 +87,12 @@ protected:
     void placeInFlowPositionedChildren(const Container&) const;
     void layoutOutOfFlowDescendants(LayoutContext&s) const;
 
-    void computeInFlowReplacedWidth(LayoutContext&, const Box&, Display::Box&) const;
+    void computeReplacedWidth(LayoutContext&, const Box&, Display::Box&) const;
 
 private:
     void computeOutOfFlowNonReplacedHeight(LayoutContext&, const Box&, Display::Box&) const;
     void computeOutOfFlowNonReplacedWidth(LayoutContext&, const Box&, Display::Box&) const;
+    void computeOutOfFlowReplacedWidth(LayoutContext&, const Box&, Display::Box&) const;
 
     LayoutUnit contentHeightForFormattingContextRoot(LayoutContext&, const Box&) const;
     LayoutUnit shrinkToFitWidth(LayoutContext&, const Box&) const;

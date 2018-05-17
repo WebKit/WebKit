@@ -1,3 +1,18 @@
+2018-05-17  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement width computation for replaced out if flow elements.
+        https://bugs.webkit.org/show_bug.cgi?id=185701
+
+        Reviewed by Antti Koivisto.
+        
+        The used value of 'width' is determined as for inline replaced elements.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowNonReplacedHeight const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowNonReplacedWidth const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowReplacedWidth const):
+        * layout/FormattingContext.h:
+
 2018-05-17  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer]: Consider GstStream(Collection) as if if was not a GInitiallyUnowned

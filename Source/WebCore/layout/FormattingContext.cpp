@@ -93,7 +93,7 @@ void FormattingContext::computeFloatingWidth(LayoutContext& layoutContext, const
         ASSERT_NOT_REACHED();
         return;
     }
-    computeInFlowReplacedWidth(layoutContext, layoutBox, displayBox);
+    computeReplacedWidth(layoutContext, layoutBox, displayBox);
 }
 
 void FormattingContext::computeOutOfFlowHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
@@ -154,6 +154,10 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext)
 
 void FormattingContext::computeOutOfFlowNonReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
+    ASSERT(layoutBox.isOutOfFlowPositioned() && !layoutBox.isReplaced());
+
+    // 10.6.4 Absolutely positioned, non-replaced elements
+    //
     // For absolutely positioned elements, the used values of the vertical dimensions must satisfy this constraint:
     // 'top' + 'margin-top' + 'border-top-width' + 'padding-top' + 'height' + 'padding-bottom' + 'border-bottom-width' + 'margin-bottom' + 'bottom'
     // = height of containing block
@@ -208,10 +212,13 @@ void FormattingContext::computeOutOfFlowNonReplacedHeight(LayoutContext& layoutC
     displayBox.setHeight(computedHeightValue);
 }
 
-void FormattingContext::computeInFlowReplacedWidth(LayoutContext&, const Box& layoutBox, Display::Box& displayBox) const
+void FormattingContext::computeReplacedWidth(LayoutContext&, const Box& layoutBox, Display::Box& displayBox) const
 {
-    // 10.3.4 Block-level, replaced elements in normal flow: The used value of 'width' is determined as for inline replaced elements
-    // 10.3.6 Floating, replaced elements: The used value of 'width' is determined as for inline replaced elements.   
+    ASSERT((layoutBox.isOutOfFlowPositioned() || layoutBox.isFloatingPositioned() || layoutBox.isInFlow()) && layoutBox.isReplaced());
+
+    // 10.3.4 Block-level, replaced elements in normal flow: The used value of 'width' is determined as for inline replaced elements.
+    // 10.3.6 Floating, replaced elements: The used value of 'width' is determined as for inline replaced elements.
+    // 10.3.8 Absolutely positioned, replaced elements: The used value of 'width' is determined as for inline replaced elements.
 
     // 10.3.2 Inline, replaced elements
     //
@@ -260,6 +267,7 @@ void FormattingContext::computeInFlowReplacedWidth(LayoutContext&, const Box& la
 LayoutUnit FormattingContext::contentHeightForFormattingContextRoot(LayoutContext& layoutContext, const Box& layoutBox) const
 {
     ASSERT(layoutBox.style().logicalHeight().isAuto());
+
     if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
         return 0;
 
@@ -287,6 +295,10 @@ LayoutUnit FormattingContext::contentHeightForFormattingContextRoot(LayoutContex
 
 void FormattingContext::computeOutOfFlowNonReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
+    ASSERT(layoutBox.isOutOfFlowPositioned() && !layoutBox.isReplaced());
+    
+    // 10.3.7 Absolutely positioned, non-replaced elements
+    //
     // 'left' + 'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width' + 'margin-right' + 'right'
     // = width of containing block
 
@@ -333,6 +345,15 @@ void FormattingContext::computeOutOfFlowNonReplacedWidth(LayoutContext& layoutCo
         ASSERT_NOT_REACHED();
 
     displayBox.setWidth(computedWidthValue);
+}
+
+void FormattingContext::computeOutOfFlowReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    ASSERT(layoutBox.isOutOfFlowPositioned() && layoutBox.isReplaced());
+    // 10.3.8 Absolutely positioned, replaced elements
+    //
+    // The used value of 'width' is determined as for inline replaced elements.
+    computeReplacedWidth(layoutContext, layoutBox, displayBox);
 }
 
 LayoutUnit FormattingContext::shrinkToFitWidth(LayoutContext&, const Box&) const

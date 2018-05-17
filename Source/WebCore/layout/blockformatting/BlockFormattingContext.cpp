@@ -149,11 +149,13 @@ void BlockFormattingContext::computeInFlowWidth(LayoutContext& layoutContext, co
         computeInFlowNonReplacedWidth(layoutContext, layoutBox, displayBox);
         return;
     }
-    computeInFlowReplacedWidth(layoutContext, layoutBox, displayBox);
+    computeReplacedWidth(layoutContext, layoutBox, displayBox);
 }
 
 void BlockFormattingContext::computeInFlowNonReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
+    ASSERT(layoutBox.isInFlow() && !layoutBox.isReplaced());
+
     // 10.3.3 Block-level, non-replaced elements in normal flow
     // The following constraints must hold among the used values of the other properties:
     // 'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width' + 'margin-right' = width of containing block
@@ -202,6 +204,8 @@ LayoutUnit BlockFormattingContext::marginBottom(const Box& layoutBox) const
 
 void BlockFormattingContext::computeInFlowNonReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
+    ASSERT(layoutBox.isInFlow() && !layoutBox.isReplaced());
+
     // https://www.w3.org/TR/CSS22/visudet.html
     // If 'height' is 'auto', the height depends on whether the element has any block-level children and whether it has padding or borders:
     // The element's height is the distance from its top content edge to the first applicable of the following:
