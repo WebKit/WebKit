@@ -54,9 +54,16 @@ function openDatabase1()
     request.onblocked = unexpectedBlockedCallback;
     request.onupgradeneeded = function openOnUpgradeNeeded1(evt) {
         preamble(evt);
-        evalAndLog("db1 = event.target.result");
-        evalAndLog("store1 = db1.createObjectStore('store')");
-        evalAndLog("store1.put(0, 0)");
+        db1 = event.target.result;
+		store1 = db1.createObjectStore('store');
+        var count = 0;
+        function putter() {
+			++count;
+			if (count == 50)
+				return;
+            store1.put(0, 0).onsuccess = putter;
+        }
+        putter();
     };
     request.onsuccess = function openOnSuccess1(evt) {
         preamble(evt);

@@ -19,9 +19,6 @@ openDatabase1():
 indexedDB.open(dbname1, 1)
 
 openOnUpgradeNeeded1():
-db1 = event.target.result
-store1 = db1.createObjectStore('store')
-store1.put(0, 0)
 
 openOnSuccess1():
 PASS isAfterReload() is true

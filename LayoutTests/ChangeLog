@@ -1,3 +1,19 @@
+2018-05-16  Brady Eidson  <beidson@apple.com>
+
+        LayoutTest storage/indexeddb/dont-wedge-private.html is a flaky failure
+        <rdar://problem/38975304> and https://bugs.webkit.org/show_bug.cgi?id=184058
+
+        Reviewed by Andy Estes.
+
+        Make the asynchronous IDB part of this test take way, way longer to always give the location change a chance to happen.
+
+        * TestExpectations:
+        * storage/indexeddb/dont-wedge-expected.txt:
+        * storage/indexeddb/dont-wedge-private-expected.txt:
+        * storage/indexeddb/resources/dont-wedge.js:
+        (openDatabase1.request.onupgradeneeded.openOnUpgradeNeeded1.putter):
+        (openDatabase1.request.onupgradeneeded):
+
 2018-05-16  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Unreviewed gardening before WinCairoRequirements update.
