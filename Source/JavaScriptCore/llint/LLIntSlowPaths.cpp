@@ -793,7 +793,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
     JSValue baseValue = LLINT_OP_C(1).jsValue();
     PutPropertySlot slot(baseValue, codeBlock->isStrictMode(), codeBlock->putByIdContext());
     if (pc[8].u.putByIdFlags & PutByIdIsDirect)
-        asObject(baseValue)->putDirect(vm, ident, LLINT_OP_C(3).jsValue(), slot);
+        CommonSlowPaths::putDirectWithReify(vm, exec, asObject(baseValue), ident, LLINT_OP_C(3).jsValue(), slot);
     else
         baseValue.putInline(exec, ident, LLINT_OP_C(3).jsValue(), slot);
     LLINT_CHECK_EXCEPTION();
@@ -1010,7 +1010,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val_direct)
         baseObject->putDirectIndex(exec, index.value(), value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
     else {
         PutPropertySlot slot(baseObject, isStrictMode);
-        baseObject->putDirect(vm, property, value, slot);
+        CommonSlowPaths::putDirectWithReify(vm, exec, baseObject, property, value, slot);
     }
     LLINT_END();
 }
@@ -1077,7 +1077,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_getter_setter_by_id)
 {
     LLINT_BEGIN();
     ASSERT(LLINT_OP(1).jsValue().isObject());
-    JSObject* baseObj = asObject(LLINT_OP(1).jsValue());
+    JSObject* baseObject = asObject(LLINT_OP(1).jsValue());
     
     GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject());
     LLINT_CHECK_EXCEPTION();
@@ -1092,10 +1092,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_getter_setter_by_id)
         accessor->setGetter(vm, exec->lexicalGlobalObject(), asObject(getter));
     if (!setter.isUndefined())
         accessor->setSetter(vm, exec->lexicalGlobalObject(), asObject(setter));
-    baseObj->putDirectAccessor(
-        exec,
-        exec->codeBlock()->identifier(pc[2].u.operand),
-        accessor, pc[3].u.operand);
+    CommonSlowPaths::putDirectAccessorWithReify(vm, exec, baseObject, exec->codeBlock()->identifier(pc[2].u.operand), accessor, pc[3].u.operand);
     LLINT_END();
 }
 

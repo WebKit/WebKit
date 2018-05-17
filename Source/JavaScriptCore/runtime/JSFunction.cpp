@@ -234,13 +234,6 @@ void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_rareData);
 }
 
-PropertyReificationResult JSFunction::reifyPropertyNameIfNeeded(JSCell* cell, ExecState* exec, PropertyName& propertyName)
-{
-    JSFunction* thisObject = jsCast<JSFunction*>(cell);
-    PropertyStatus propertyType = thisObject->reifyLazyPropertyIfNeeded(exec->vm(), exec, propertyName);
-    return isReified(propertyType) ? PropertyReificationResult::Something : PropertyReificationResult::Nothing;
-}
-
 CallType JSFunction::getCallData(JSCell* cell, CallData& callData)
 {
     JSFunction* thisObject = jsCast<JSFunction*>(cell);

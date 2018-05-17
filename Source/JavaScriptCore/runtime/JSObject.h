@@ -583,8 +583,8 @@ public:
     bool putDirect(VM&, PropertyName, JSValue, unsigned attributes = 0);
     bool putDirect(VM&, PropertyName, JSValue, PutPropertySlot&);
     void putDirectWithoutTransition(VM&, PropertyName, JSValue, unsigned attributes = 0);
-    bool putDirectNonIndexAccessor(VM&, PropertyName, JSValue, unsigned attributes);
-    bool putDirectAccessor(ExecState*, PropertyName, JSValue, unsigned attributes);
+    bool putDirectNonIndexAccessor(VM&, PropertyName, GetterSetter*, unsigned attributes);
+    bool putDirectAccessor(ExecState*, PropertyName, GetterSetter*, unsigned attributes);
     JS_EXPORT_PRIVATE bool putDirectCustomAccessor(VM&, PropertyName, JSValue, unsigned attributes);
 
     bool putGetter(ExecState*, PropertyName, JSValue, unsigned attributes);

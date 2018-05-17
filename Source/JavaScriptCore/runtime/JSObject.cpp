@@ -1752,14 +1752,14 @@ bool JSObject::putSetter(ExecState* exec, PropertyName propertyName, JSValue set
     return defineOwnProperty(this, exec, propertyName, descriptor, true);
 }
 
-bool JSObject::putDirectAccessor(ExecState* exec, PropertyName propertyName, JSValue value, unsigned attributes)
+bool JSObject::putDirectAccessor(ExecState* exec, PropertyName propertyName, GetterSetter* accessor, unsigned attributes)
 {
-    ASSERT(value.isGetterSetter() && (attributes & PropertyAttribute::Accessor));
+    ASSERT(attributes & PropertyAttribute::Accessor);
 
     if (std::optional<uint32_t> index = parseIndex(propertyName))
-        return putDirectIndex(exec, index.value(), value, attributes, PutDirectIndexLikePutDirect);
+        return putDirectIndex(exec, index.value(), accessor, attributes, PutDirectIndexLikePutDirect);
 
-    return putDirectNonIndexAccessor(exec->vm(), propertyName, value, attributes);
+    return putDirectNonIndexAccessor(exec->vm(), propertyName, accessor, attributes);
 }
 
 bool JSObject::putDirectCustomAccessor(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
@@ -1778,10 +1778,10 @@ bool JSObject::putDirectCustomAccessor(VM& vm, PropertyName propertyName, JSValu
     return result;
 }
 
-bool JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
+bool JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, GetterSetter* accessor, unsigned attributes)
 {
     PutPropertySlot slot(this);
-    bool result = putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot);
+    bool result = putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, accessor, attributes, slot);
 
     Structure* structure = this->structure(vm);
     if (attributes & PropertyAttribute::ReadOnly)

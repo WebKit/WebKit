@@ -139,12 +139,13 @@ ALWAYS_INLINE static void putByValInternal(ExecState* exec, VM& vm, EncodedJSVal
     PutPropertySlot slot(baseValue, strict);
     if (direct) {
         RELEASE_ASSERT(baseValue.isObject());
+        JSObject* baseObject = asObject(baseValue);
         if (std::optional<uint32_t> index = parseIndex(propertyName)) {
             scope.release();
-            asObject(baseValue)->putDirectIndex(exec, index.value(), value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
+            baseObject->putDirectIndex(exec, index.value(), value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
             return;
         }
-        asObject(baseValue)->putDirect(vm, propertyName, value, slot);
+        CommonSlowPaths::putDirectWithReify(vm, exec, baseObject, propertyName, value, slot);
         return;
     }
     scope.release();
@@ -157,10 +158,12 @@ ALWAYS_INLINE static void putByValCellInternal(ExecState* exec, VM& vm, JSCell* 
     PutPropertySlot slot(base, strict);
     if (direct) {
         RELEASE_ASSERT(base->isObject());
-        if (std::optional<uint32_t> index = parseIndex(propertyName))
-            asObject(base)->putDirectIndex(exec, index.value(), value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
-        else
-            asObject(base)->putDirect(vm, propertyName, value, slot);
+        JSObject* baseObject = asObject(base);
+        if (std::optional<uint32_t> index = parseIndex(propertyName)) {
+            baseObject->putDirectIndex(exec, index.value(), value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
+            return;
+        }
+        CommonSlowPaths::putDirectWithReify(vm, exec, baseObject, propertyName, value, slot);
         return;
     }
     base->putInline(exec, propertyName, value, slot);
@@ -838,7 +841,7 @@ void JIT_OPERATION operationPutDoubleByValDirectBeyondArrayBoundsStrict(ExecStat
     }
 
     PutPropertySlot slot(object, true);
-    object->putDirect(vm, Identifier::from(exec, index), jsValue, slot);
+    CommonSlowPaths::putDirectWithReify(vm, exec, object, Identifier::from(exec, index), jsValue, slot);
 }
 
 void JIT_OPERATION operationPutDoubleByValDirectBeyondArrayBoundsNonStrict(ExecState* exec, JSObject* object, int32_t index, double value)
@@ -854,7 +857,7 @@ void JIT_OPERATION operationPutDoubleByValDirectBeyondArrayBoundsNonStrict(ExecS
     }
 
     PutPropertySlot slot(object, false);
-    object->putDirect(vm, Identifier::from(exec, index), jsValue, slot);
+    CommonSlowPaths::putDirectWithReify(vm, exec, object, Identifier::from(exec, index), jsValue, slot);
 }
 
 void JIT_OPERATION operationPutByValDirectStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
@@ -931,7 +934,7 @@ void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsStrict(ExecState* exe
     }
     
     PutPropertySlot slot(object, true);
-    object->putDirect(vm, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
+    CommonSlowPaths::putDirectWithReify(vm, exec, object, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
 }
 
 void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsNonStrict(ExecState* exec, JSObject* object, int32_t index, EncodedJSValue encodedValue)
@@ -945,7 +948,7 @@ void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsNonStrict(ExecState* 
     }
     
     PutPropertySlot slot(object, false);
-    object->putDirect(vm, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
+    CommonSlowPaths::putDirectWithReify(vm, exec, object, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
 }
 
 EncodedJSValue JIT_OPERATION operationArrayPush(ExecState* exec, EncodedJSValue encodedValue, JSArray* array)

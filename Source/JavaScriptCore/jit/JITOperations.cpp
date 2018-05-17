@@ -474,32 +474,32 @@ void JIT_OPERATION operationPutByIdDirectStrict(ExecState* exec, StructureStubIn
 {
     SuperSamplerScope superSamplerScope(false);
     
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
     
     stubInfo->tookSlowPath = true;
     
     JSValue baseValue = JSValue::decode(encodedBase);
-    Identifier ident = Identifier::fromUid(vm, uid);
-    LOG_IC((ICEvent::OperationPutByIdDirectStrict, baseValue.classInfoOrNull(*vm), ident));
+    Identifier ident = Identifier::fromUid(&vm, uid);
+    LOG_IC((ICEvent::OperationPutByIdDirectStrict, baseValue.classInfoOrNull(vm), ident));
     PutPropertySlot slot(baseValue, true, exec->codeBlock()->putByIdContext());
-    asObject(baseValue)->putDirect(*vm, ident, JSValue::decode(encodedValue), slot);
+    CommonSlowPaths::putDirectWithReify(vm, exec, asObject(baseValue), ident, JSValue::decode(encodedValue), slot);
 }
 
 void JIT_OPERATION operationPutByIdDirectNonStrict(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
 {
     SuperSamplerScope superSamplerScope(false);
     
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
     
     stubInfo->tookSlowPath = true;
     
     JSValue baseValue = JSValue::decode(encodedBase);
-    Identifier ident = Identifier::fromUid(vm, uid);
-    LOG_IC((ICEvent::OperationPutByIdDirectNonStrict, baseValue.classInfoOrNull(*vm), ident));
+    Identifier ident = Identifier::fromUid(&vm, uid);
+    LOG_IC((ICEvent::OperationPutByIdDirectNonStrict, baseValue.classInfoOrNull(vm), ident));
     PutPropertySlot slot(baseValue, false, exec->codeBlock()->putByIdContext());
-    asObject(baseValue)->putDirect(*vm, ident, JSValue::decode(encodedValue), slot);
+    CommonSlowPaths::putDirectWithReify(vm, exec, asObject(baseValue), ident, JSValue::decode(encodedValue), slot);
 }
 
 void JIT_OPERATION operationPutByIdStrictOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
@@ -562,20 +562,21 @@ void JIT_OPERATION operationPutByIdDirectStrictOptimize(ExecState* exec, Structu
 {
     SuperSamplerScope superSamplerScope(false);
     
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
     
-    Identifier ident = Identifier::fromUid(vm, uid);
+    Identifier ident = Identifier::fromUid(&vm, uid);
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
     JSValue value = JSValue::decode(encodedValue);
     JSObject* baseObject = asObject(JSValue::decode(encodedBase));
-    LOG_IC((ICEvent::OperationPutByIdDirectStrictOptimize, baseObject->classInfo(*vm), ident));
+    LOG_IC((ICEvent::OperationPutByIdDirectStrictOptimize, baseObject->classInfo(vm), ident));
     CodeBlock* codeBlock = exec->codeBlock();
     PutPropertySlot slot(baseObject, true, codeBlock->putByIdContext());
-    
-    Structure* structure = baseObject->structure(*vm);
-    baseObject->putDirect(*vm, ident, value, slot);
+    Structure* structure = nullptr;
+    CommonSlowPaths::putDirectWithReify(vm, exec, baseObject, ident, value, slot, &structure);
+    RETURN_IF_EXCEPTION(scope, void());
     
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
@@ -588,20 +589,21 @@ void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(ExecState* exec, Stru
 {
     SuperSamplerScope superSamplerScope(false);
     
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
     
-    Identifier ident = Identifier::fromUid(vm, uid);
+    Identifier ident = Identifier::fromUid(&vm, uid);
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
     JSValue value = JSValue::decode(encodedValue);
     JSObject* baseObject = asObject(JSValue::decode(encodedBase));
-    LOG_IC((ICEvent::OperationPutByIdDirectNonStrictOptimize, baseObject->classInfo(*vm), ident));
+    LOG_IC((ICEvent::OperationPutByIdDirectNonStrictOptimize, baseObject->classInfo(vm), ident));
     CodeBlock* codeBlock = exec->codeBlock();
     PutPropertySlot slot(baseObject, false, codeBlock->putByIdContext());
-    
-    Structure* structure = baseObject->structure(*vm);
-    baseObject->putDirect(*vm, ident, value, slot);
+    Structure* structure = nullptr;
+    CommonSlowPaths::putDirectWithReify(vm, exec, baseObject, ident, value, slot, &structure);
+    RETURN_IF_EXCEPTION(scope, void());
     
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
@@ -710,7 +712,7 @@ static void directPutByVal(CallFrame* callFrame, JSObject* baseObject, JSValue s
         byValInfo->tookSlowPath = true;
 
     PutPropertySlot slot(baseObject, isStrictMode);
-    baseObject->putDirect(vm, property, value, slot);
+    CommonSlowPaths::putDirectWithReify(vm, callFrame, baseObject, property, value, slot);
 }
 
 enum class OptimizationResult {
@@ -1745,7 +1747,7 @@ void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, Uni
     NativeCallFrameTracer tracer(&vm, exec);
 
     ASSERT(object && object->isObject());
-    JSObject* baseObj = asObject(object);
+    JSObject* baseObject = asObject(object);
 
     GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject());
 
@@ -1759,7 +1761,7 @@ void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, Uni
         accessor->setGetter(vm, exec->lexicalGlobalObject(), asObject(getter));
     if (!setter.isUndefined())
         accessor->setSetter(vm, exec->lexicalGlobalObject(), asObject(setter));
-    baseObj->putDirectAccessor(exec, uid, accessor, attribute);
+    CommonSlowPaths::putDirectAccessorWithReify(vm, exec, baseObject, uid, accessor, attribute);
 }
 
 #else
@@ -1769,7 +1771,7 @@ void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, Uni
     NativeCallFrameTracer tracer(&vm, exec);
 
     ASSERT(object && object->isObject());
-    JSObject* baseObj = asObject(object);
+    JSObject* baseObject = asObject(object);
 
     GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject());
 
@@ -1781,7 +1783,7 @@ void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, Uni
         accessor->setGetter(vm, exec->lexicalGlobalObject(), getter->getObject());
     if (setter)
         accessor->setSetter(vm, exec->lexicalGlobalObject(), setter->getObject());
-    baseObj->putDirectAccessor(exec, uid, accessor, attribute);
+    CommonSlowPaths::putDirectAccessorWithReify(vm, exec, baseObject, uid, accessor, attribute);
 }
 #endif
 

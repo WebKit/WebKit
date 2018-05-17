@@ -64,11 +64,6 @@ size_t JSCell::estimatedSize(JSCell* cell)
     return cell->cellSize();
 }
 
-PropertyReificationResult JSCell::reifyPropertyNameIfNeeded(JSCell*, ExecState*, PropertyName&)
-{
-    return PropertyReificationResult::Nothing;
-}
-
 void JSCell::heapSnapshot(JSCell*, HeapSnapshotBuilder&)
 {
 }

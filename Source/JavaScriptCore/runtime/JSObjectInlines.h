@@ -272,12 +272,6 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
     ASSERT(!parseIndex(propertyName));
 
-    switch (methodTable(vm)->reifyPropertyNameIfNeeded(this, globalObject(vm)->globalExec(), propertyName)) {
-    case PropertyReificationResult::Nothing: break;
-    case PropertyReificationResult::Something: break;
-    case PropertyReificationResult::TriedButFailed: RELEASE_ASSERT_NOT_REACHED();
-    }
-
     StructureID structureID = this->structureID();
     Structure* structure = vm.heap.structureIDTable().get(structureID);
     if (structure->isDictionary()) {

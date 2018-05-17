@@ -130,9 +130,6 @@ struct MethodTable {
 
     using VisitOutputConstraintsPtr = void (*)(JSCell*, SlotVisitor&);
     VisitOutputConstraintsPtr WTF_METHOD_TABLE_ENTRY(visitOutputConstraints);
-
-    using ReifyPropertyNameIfNeededPtr = PropertyReificationResult (*)(JSCell*, ExecState*, PropertyName&);
-    ReifyPropertyNameIfNeededPtr WTF_METHOD_TABLE_ENTRY(reifyPropertyNameIfNeeded);
 };
 
 #define CREATE_MEMBER_CHECKER(member) \
@@ -187,7 +184,6 @@ struct MethodTable {
         &ClassName::heapSnapshot, \
         &ClassName::estimatedSize, \
         &ClassName::visitOutputConstraints, \
-        &ClassName::reifyPropertyNameIfNeeded, \
     }, \
     ClassName::TypedArrayStorageType
 

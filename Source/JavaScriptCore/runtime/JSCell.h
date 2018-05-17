@@ -57,12 +57,6 @@ enum class GCDeferralContextArgPresense {
     DoesNotHaveArg
 };
 
-enum class PropertyReificationResult {
-    Nothing,
-    Something,
-    TriedButFailed, // Sometimes the property name already exists but has special behavior and can't be reified, e.g. Array.length.
-};
-
 template<typename T> void* allocateCell(Heap&, size_t = sizeof(T));
 template<typename T> void* tryAllocateCell(Heap&, size_t = sizeof(T));
 template<typename T> void* allocateCell(Heap&, GCDeferralContext*, size_t = sizeof(T));
@@ -178,8 +172,6 @@ public:
 
     static void visitChildren(JSCell*, SlotVisitor&);
     static void visitOutputConstraints(JSCell*, SlotVisitor&);
-
-    JS_EXPORT_PRIVATE static PropertyReificationResult reifyPropertyNameIfNeeded(JSCell*, ExecState*, PropertyName&);
 
     JS_EXPORT_PRIVATE static void heapSnapshot(JSCell*, HeapSnapshotBuilder&);
 

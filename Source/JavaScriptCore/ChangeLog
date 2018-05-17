@@ -1,3 +1,53 @@
+2018-05-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove reifyPropertyNameIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=185350
+
+        Reviewed by Saam Barati.
+
+        reifyPropertyNameIfNeeded is in the middle of putDirectInternal, which is super critical path.
+        This is a virtual call, and it is only used by JSFunction right now. Since this causes too much
+        cost, we should remove this from the critical path.
+
+        This patch removes this function call from the critical path. And in our slow paths, we call
+        helper functions which calls reifyLazyPropertyIfNeeded if the given value is a JSFunction.
+        While putDirect is a bit raw API, our slow paths just call it. This helper wraps this calls
+        and care the edge cases. The other callsites of putDirect should know the type of the given
+        object and the name of the property (And avoid these edge cases).
+
+        This improves SixSpeed/object-assign.es6 by ~4% on MacBook Pro. And this patch does not cause
+        regressions of the existing tests.
+
+                                           baseline                  patched
+        Kraken:
+            json-parse-financial        35.522+-0.069      ^      34.708+-0.097         ^ definitely 1.0234x faster
+
+        SixSpeed:
+            object-assign.es6         145.8779+-0.2838     ^    140.1019+-0.8007        ^ definitely 1.0412x faster
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::putByValInternal):
+        (JSC::DFG::putByValCellInternal):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/ClassInfo.h:
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::putDirectWithReify):
+        (JSC::CommonSlowPaths::putDirectAccessorWithReify):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::reifyPropertyNameIfNeeded): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::reifyPropertyNameIfNeeded): Deleted.
+        * runtime/JSFunction.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectAccessor):
+        (JSC::JSObject::putDirectNonIndexAccessor):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putDirectInternal):
+
 2018-05-17  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Try to fix windows build.
