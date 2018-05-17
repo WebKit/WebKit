@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+class RenderStyle;
+
 namespace Layout {
 class BlockFormattingContext;
 class FormattingContext;
@@ -87,7 +89,13 @@ public:
     LayoutRect contentBox() const;
 
 private:
-    Box(EBoxSizing);
+    Box(const RenderStyle&);
+
+    struct Style {
+        Style(const RenderStyle&);
+
+        EBoxSizing boxSizing { CONTENT_BOX };
+    };
 
     void setRect(const LayoutRect&);
     void setTopLeft(const LayoutPoint&);
@@ -125,6 +133,8 @@ private:
     void setHasValidPadding();
 #endif
 
+    const Style m_style;
+
     LayoutRect m_rect;
 
     LayoutUnit m_marginTop;
@@ -141,8 +151,6 @@ private:
     LayoutUnit m_paddingLeft;
     LayoutUnit m_paddingBottom;
     LayoutUnit m_paddingRight;
-
-    EBoxSizing m_boxSizing { CONTENT_BOX };
 
 #if !ASSERT_DISABLED
     bool m_hasValidTop { false };

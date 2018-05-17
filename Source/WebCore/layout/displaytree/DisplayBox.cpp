@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "RenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -35,13 +36,19 @@ namespace Display {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Box);
 
-Box::Box(EBoxSizing boxSizing)
-    : m_boxSizing(boxSizing)
+Box::Box(const RenderStyle& style)
+    : m_style(style)
 {
 }
 
 Box::~Box()
 {
+}
+
+Box::Style::Style(const RenderStyle& style)
+    : boxSizing(style.boxSizing())
+{
+
 }
 
 LayoutRect Box::marginBox() const
@@ -59,7 +66,7 @@ LayoutRect Box::marginBox() const
 
 LayoutRect Box::borderBox() const
 {
-    if (m_boxSizing == BORDER_BOX)
+    if (m_style.boxSizing == BORDER_BOX)
         return LayoutRect( { }, size());
 
     // Width is content box.
@@ -85,7 +92,7 @@ LayoutRect Box::paddingBox() const
 
 LayoutRect Box::contentBox() const
 {
-    if (m_boxSizing == CONTENT_BOX)
+    if (m_style.boxSizing == CONTENT_BOX)
         return LayoutRect(LayoutPoint(0, 0), size());
 
     // Width is border box.

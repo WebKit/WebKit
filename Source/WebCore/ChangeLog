@@ -1,3 +1,21 @@
+2018-05-17  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Introduce DisplayBox::Style
+        https://bugs.webkit.org/show_bug.cgi?id=185733
+
+        Reviewed by Antti Koivisto.
+
+        This is the collection of computed style data needed to paint/hittest the display boxtree.
+
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::createDisplayBox):
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::Box):
+        (WebCore::Display::Box::Style::Style):
+        (WebCore::Display::Box::borderBox const):
+        (WebCore::Display::Box::contentBox const):
+        * layout/displaytree/DisplayBox.h:
+
 2018-05-17  Antoine Quint  <graouts@apple.com>
 
         [modern-media-controls] AirPlaySupport should be disabled by default
