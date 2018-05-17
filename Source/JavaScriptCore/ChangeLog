@@ -1,3 +1,10 @@
+2018-05-17  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Try to fix windows build.
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::defaultConstructorSourceCode):
+
 2018-05-16  Saam Barati  <sbarati@apple.com>
 
         UnlinkedFunctionExecutable doesn't need a parent source override field since it's only used for default class constructors

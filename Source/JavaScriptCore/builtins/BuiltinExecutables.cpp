@@ -46,7 +46,7 @@ const SourceCode& BuiltinExecutables::defaultConstructorSourceCode(ConstructorKi
 {
     switch (constructorKind) {
     case ConstructorKind::None:
-        RELEASE_ASSERT_NOT_REACHED();
+        break;
     case ConstructorKind::Base: {
         static NeverDestroyed<const String> baseConstructorCode(MAKE_STATIC_STRING_IMPL("(function () { })"));
         static LazyNeverDestroyed<SourceCode> result;
@@ -66,6 +66,8 @@ const SourceCode& BuiltinExecutables::defaultConstructorSourceCode(ConstructorKi
         return result;
     }
     }
+    RELEASE_ASSERT_NOT_REACHED();
+    return SourceCode();
 }
 
 UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(ConstructorKind constructorKind, const Identifier& name)
