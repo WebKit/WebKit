@@ -61,6 +61,11 @@ SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(LinkPresentation)
 
 namespace WebKit {
 
+static CGSize sizeExpandedToSize(CGSize initial, CGSize other)
+{
+    return CGSizeMake(std::max(initial.width, other.width),  std::max(initial.height, other.height));
+}
+
 static void replaceViewWithView(UIView *view, UIView *otherView)
 {
     [CATransaction begin];
@@ -504,7 +509,10 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     _initialFrame = initialFrame;
     _finalFrame = finalFrame;
-
+    
+    _initialFrame.size = sizeExpandedToSize(_initialFrame.size, CGSizeMake(1, 1));
+    _finalFrame.size = sizeExpandedToSize(_finalFrame.size, CGSizeMake(1, 1));
+    
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
@@ -569,6 +577,9 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     _initialFrame = initialFrame;
     _finalFrame = finalFrame;
+    
+    _initialFrame.size = sizeExpandedToSize(_initialFrame.size, CGSizeMake(1, 1));
+    _finalFrame.size = sizeExpandedToSize(_finalFrame.size, CGSizeMake(1, 1));
     
     [_webView _page]->setSuppressVisibilityUpdates(true);
 

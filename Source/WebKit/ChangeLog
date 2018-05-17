@@ -1,3 +1,17 @@
+2018-05-17  Jeremy Jones  <jeremyj@apple.com>
+
+        Ensure valid rects for fullsceen animation.
+        https://bugs.webkit.org/show_bug.cgi?id=185736
+        rdar://problem/40320174
+
+        Reviewed by Jer Noble.
+
+        Protect against zero width and height since those can make for NANs in the animation transforms.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+
 2018-05-17  Jer Noble  <jer.noble@apple.com>
 
         Turn Modern EME API on by default and remove it as an experimental feature
