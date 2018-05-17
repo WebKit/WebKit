@@ -1,3 +1,37 @@
+2018-05-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Update AirPlay route monitoring
+        https://bugs.webkit.org/show_bug.cgi?id=185706
+        <rdar://problem/40230677>
+
+        Reviewed by Jer Noble.
+
+        Use an AVRouteDetector instead of an MPVolumeView and an MPAVRoutingController for AirPlay
+        route detection and availability monitoring.
+
+        No new tests, tested manually.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::hasWirelessPlaybackTargets): No need to update m_hasPlaybackTargets
+        manually, it is always updated by the session manager when route availability changes.
+
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (-[WebMediaSessionHelper dealloc]): Pull the logic from safelyTearDown inline.
+        (-[WebMediaSessionHelper hasWirelessTargetsAvailable]): Use the AVRouteDetector.
+        (-[WebMediaSessionHelper startMonitoringAirPlayRoutes]): Ditto.  Simplify logic, there is no
+        need to dispatch twice.
+        (-[WebMediaSessionHelper stopMonitoringAirPlayRoutes]): Don't release the route detector
+        completely, just disable route detection, because AVRouteDetector is a lightweight object so
+        it is not worth the overhead of dealloc/realloc to disable/enable route detection.
+        (-[WebMediaSessionHelper interruption:]): Use callOnWebThreadOrDispatchAsyncOnMainThread
+        instead of WebThreadRun so it works correctly in WK2 as well as in WK1.
+        (-[WebMediaSessionHelper applicationWillEnterForeground:]): Ditto.
+        (-[WebMediaSessionHelper applicationDidBecomeActive:]): Ditto.
+        (-[WebMediaSessionHelper applicationWillResignActive:]): Ditto.
+        (-[WebMediaSessionHelper wirelessRoutesAvailableDidChange:]): Ditto.
+        (-[WebMediaSessionHelper applicationDidEnterBackground:]): Ditto.
+        (safelyTearDown): Deleted.
+
 2018-05-17  Chris Dumez  <cdumez@apple.com>
 
         Cross-Origin-Options: deny/allow-postmessage should prevent getting navigated by cross-origin scripts

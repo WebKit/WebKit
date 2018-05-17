@@ -549,11 +549,6 @@ void MediaElementSession::showPlaybackTargetPicker()
 
 bool MediaElementSession::hasWirelessPlaybackTargets() const
 {
-#if PLATFORM(IOS)
-    // FIXME: consolidate Mac and iOS implementations
-    m_hasPlaybackTargets = PlatformMediaSessionManager::sharedManager().hasWirelessTargetsAvailable();
-#endif
-
     INFO_LOG(LOGIDENTIFIER, "returning ", m_hasPlaybackTargets);
 
     return m_hasPlaybackTargets;
