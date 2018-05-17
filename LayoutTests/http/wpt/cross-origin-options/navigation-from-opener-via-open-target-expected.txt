@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 23: Unsafe JavaScript attempt to initiate navigation for frame with URL 'http://127.0.0.1:8800/WebKit/cross-origin-options/resources/serve-cross-origin-options-header.py?value=deny' from frame with URL 'http://localhost:8800/WebKit/cross-origin-options/navigation-from-opener-via-open-target.html'. Navigation was not allowed due to Cross-Origin-Options header.
+
+CONSOLE MESSAGE: line 44: Unsafe JavaScript attempt to initiate navigation for frame with URL 'http://127.0.0.1:8800/WebKit/cross-origin-options/resources/serve-cross-origin-options-header.py?value=allow-postmessage' from frame with URL 'http://localhost:8800/WebKit/cross-origin-options/navigation-from-opener-via-open-target.html'. Navigation was not allowed due to Cross-Origin-Options header.
+
+
+PASS 'Cross-Origin-Options: deny' prevents navigation from opener via open() target 
+PASS 'Cross-Origin-Options: allow-postmessage' prevents navigation from opener via open() target 
+PASS 'Cross-Origin-Options: allow' does not prevent navigation from opener via open() target 
+

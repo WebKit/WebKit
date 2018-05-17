@@ -1,3 +1,27 @@
+2018-05-17  Chris Dumez  <cdumez@apple.com>
+
+        Cross-Origin-Options: deny/allow-postmessage should prevent getting navigated by cross-origin scripts
+        https://bugs.webkit.org/show_bug.cgi?id=185681
+        <rdar://problem/40296313>
+
+        Reviewed by Geoffrey Garen.
+
+        Update our canNavigate() implementation [1] to take into account the Cross-Origin-Options header.
+        If the window being navigated or the window trigerring the navigation have a Cross-Origin-Options
+        header value different than 'allow', then the attempt to navigate will be blocked.
+
+        Note that it was already not possible to navigate via setting window.location since trying to set
+        it would throw a SecurityError with 'Cross-Origin-Options: deny/allow-postmessage'. However, it was
+        possible to trigger a "targeted" navigation via <a target="foo"> or open(url, "foo").
+
+        [1] https://html.spec.whatwg.org/#allowed-to-navigate
+
+        Tests: http/wpt/cross-origin-options/navigation-from-opener-via-open-target.html
+               http/wpt/cross-origin-options/navigation-from-subframe-via-anchor-target.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::canNavigate):
+
 2018-05-17  Brent Fulgham  <bfulgham@apple.com>
 
         Storage Access API: Allow documents that have been granted storage access to also do a popup

@@ -54,14 +54,14 @@ async function withIframe(resourceFile, crossOrigin)
     });
 }
 
-async function withPopup(resourceFile, crossOrigin)
+async function withPopup(resourceFile, crossOrigin, windowName)
 {
     return new Promise((resolve) => { 
         let resourceURL = crossOrigin ? get_host_info().HTTP_REMOTE_ORIGIN : get_host_info().HTTP_ORIGIN;
         resourceURL += RESOURCES_DIR;
         resourceURL += resourceFile;
 
-        let w = open(resourceURL);
+        let w = open(resourceURL, windowName);
         if (crossOrigin) {
             waitForCrossOriginLoad(w).then(() => {
                 resolve({ 'window': w });
