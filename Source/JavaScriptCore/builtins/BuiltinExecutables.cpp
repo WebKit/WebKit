@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,18 +42,41 @@ BuiltinExecutables::BuiltinExecutables(VM& vm)
 {
 }
 
+const SourceCode& BuiltinExecutables::defaultConstructorSourceCode(ConstructorKind constructorKind)
+{
+    switch (constructorKind) {
+    case ConstructorKind::None:
+        RELEASE_ASSERT_NOT_REACHED();
+    case ConstructorKind::Base: {
+        static NeverDestroyed<const String> baseConstructorCode(MAKE_STATIC_STRING_IMPL("(function () { })"));
+        static LazyNeverDestroyed<SourceCode> result;
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [&] {
+            result.construct(makeSource(baseConstructorCode, { }));
+        });
+        return result;
+    }
+    case ConstructorKind::Extends: {
+        static NeverDestroyed<const String> derivedConstructorCode(MAKE_STATIC_STRING_IMPL("(function (...args) { super(...args); })"));
+        static LazyNeverDestroyed<SourceCode> result;
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [&] {
+            result.construct(makeSource(derivedConstructorCode, { }));
+        });
+        return result;
+    }
+    }
+}
+
 UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(ConstructorKind constructorKind, const Identifier& name)
 {
-    static NeverDestroyed<const String> baseConstructorCode(MAKE_STATIC_STRING_IMPL("(function () { })"));
-    static NeverDestroyed<const String> derivedConstructorCode(MAKE_STATIC_STRING_IMPL("(function (...args) { super(...args); })"));
 
     switch (constructorKind) {
     case ConstructorKind::None:
         break;
     case ConstructorKind::Base:
-        return createExecutable(m_vm, makeSource(baseConstructorCode, { }), name, constructorKind, ConstructAbility::CanConstruct);
     case ConstructorKind::Extends:
-        return createExecutable(m_vm, makeSource(derivedConstructorCode, { }), name, constructorKind, ConstructAbility::CanConstruct);
+        return createExecutable(m_vm, defaultConstructorSourceCode(constructorKind), name, constructorKind, ConstructAbility::CanConstruct);
     }
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -73,10 +96,9 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
 {
     JSTextPosition positionBeforeLastNewline;
     ParserError error;
-    bool isParsingDefaultConstructor = constructorKind != ConstructorKind::None;
-    JSParserBuiltinMode builtinMode = isParsingDefaultConstructor ? JSParserBuiltinMode::NotBuiltin : JSParserBuiltinMode::Builtin;
-    UnlinkedFunctionKind kind = isParsingDefaultConstructor ? UnlinkedNormalFunction : UnlinkedBuiltinFunction;
-    SourceCode parentSourceOverride = isParsingDefaultConstructor ? source : SourceCode();
+    bool isBuiltinDefaultClassConstructor = constructorKind != ConstructorKind::None;
+    JSParserBuiltinMode builtinMode = isBuiltinDefaultClassConstructor ? JSParserBuiltinMode::NotBuiltin : JSParserBuiltinMode::Builtin;
+    UnlinkedFunctionKind kind = isBuiltinDefaultClassConstructor ? UnlinkedNormalFunction : UnlinkedBuiltinFunction;
     std::unique_ptr<ProgramNode> program = parse<ProgramNode>(
         &vm, source, Identifier(), builtinMode,
         JSParserStrictMode::NotStrict, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, SuperBinding::NotNeeded, error,
@@ -105,7 +127,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     RELEASE_ASSERT(metadata);
     metadata->overrideName(name);
     VariableEnvironment dummyTDZVariables;
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, metadata, kind, constructAbility, JSParserScriptMode::Classic, dummyTDZVariables, DerivedContextType::None, WTFMove(parentSourceOverride));
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, metadata, kind, constructAbility, JSParserScriptMode::Classic, dummyTDZVariables, DerivedContextType::None, isBuiltinDefaultClassConstructor);
     return functionExecutable;
 }
 

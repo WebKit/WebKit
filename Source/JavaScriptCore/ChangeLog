@@ -1,5 +1,35 @@
 2018-05-16  Saam Barati  <sbarati@apple.com>
 
+        UnlinkedFunctionExecutable doesn't need a parent source override field since it's only used for default class constructors
+        https://bugs.webkit.org/show_bug.cgi?id=185637
+
+        Reviewed by Keith Miller.
+
+        We had this general mechanism for overriding an UnlinkedFunctionExecutable's parent
+        source code. However, we were only using this for default class constructors. There
+        are only two types of default class constructors. This patch makes it so that
+        we just store this information inside of a single bit, and ask for the source
+        code as needed instead of holding it in a nullable field that is 24 bytes in size.
+        
+        This brings UnlinkedFunctionExecutable's size down from 184 bytes to 160 bytes.
+        This has the consequence of making it allocated out of a 160 byte size class
+        instead of a 224 byte size class. This should bring down its memory footprint
+        by ~40%.
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::defaultConstructorSourceCode):
+        (JSC::BuiltinExecutables::createDefaultConstructor):
+        (JSC::BuiltinExecutables::createExecutable):
+        * builtins/BuiltinExecutables.h:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::UnlinkedFunctionExecutable::link):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedGlobalFunctionExecutable):
+
+2018-05-16  Saam Barati  <sbarati@apple.com>
+
         VM::shrinkFootprint should call collectNow(Sync) instead of collectSync so it also eagerly sweeps
         https://bugs.webkit.org/show_bug.cgi?id=185707
 
