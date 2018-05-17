@@ -1342,12 +1342,49 @@ _llint_op_get_by_id:
     loadisFromInstruction(1, t2)
     loadPropertyAtVariableOffset(t1, t3, t0)
     storeq t0, [cfr, t2, 8]
-    valueProfile(t0, constexpr (op_get_by_id_length - 1), t1)
+    valueProfile(t0, 8, t1)
     dispatch(constexpr op_get_by_id_length)
 
 .opGetByIdSlow:
     callSlowPath(_llint_slow_path_get_by_id)
     dispatch(constexpr op_get_by_id_length)
+
+
+_llint_op_get_by_id_proto_load:
+    traceExecution()
+    loadisFromInstruction(2, t0)
+    loadConstantOrVariableCell(t0, t3, .opGetByIdProtoSlow)
+    loadi JSCell::m_structureID[t3], t1
+    loadisFromInstruction(4, t2)
+    bineq t2, t1, .opGetByIdProtoSlow
+    loadisFromInstruction(5, t1)
+    loadpFromInstruction(6, t3)
+    loadisFromInstruction(1, t2)
+    loadPropertyAtVariableOffset(t1, t3, t0)
+    storeq t0, [cfr, t2, 8]
+    valueProfile(t0, 8, t1)
+    dispatch(constexpr op_get_by_id_proto_load_length)
+
+.opGetByIdProtoSlow:
+    callSlowPath(_llint_slow_path_get_by_id)
+    dispatch(constexpr op_get_by_id_proto_load_length)
+
+
+_llint_op_get_by_id_unset:
+    traceExecution()
+    loadisFromInstruction(2, t0)
+    loadConstantOrVariableCell(t0, t3, .opGetByIdUnsetSlow)
+    loadi JSCell::m_structureID[t3], t1
+    loadisFromInstruction(4, t2)
+    bineq t2, t1, .opGetByIdUnsetSlow
+    loadisFromInstruction(1, t2)
+    storeq ValueUndefined, [cfr, t2, 8]
+    valueProfile(ValueUndefined, 8, t1)
+    dispatch(constexpr op_get_by_id_unset_length)
+
+.opGetByIdUnsetSlow:
+    callSlowPath(_llint_slow_path_get_by_id)
+    dispatch(constexpr op_get_by_id_unset_length)
 
 
 _llint_op_get_array_length:
@@ -1364,7 +1401,7 @@ _llint_op_get_array_length:
     loadi -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], t0
     bilt t0, 0, .opGetArrayLengthSlow
     orq tagTypeNumber, t0
-    valueProfile(t0, constexpr (op_get_array_length_length - 1), t2)
+    valueProfile(t0, 8, t2)
     storeq t0, [cfr, t1, 8]
     dispatch(constexpr op_get_array_length_length)
 
