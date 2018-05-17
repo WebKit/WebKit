@@ -1,3 +1,13 @@
+2018-05-17  Jer Noble  <jer.noble@apple.com>
+
+        Turn Modern EME API on by default and remove it as an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=185693
+        <rdar://problem/39954396>
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferences.yaml:
+
 2018-05-17  Dean Jackson  <dino@apple.com>
 
         Safari optimized flow should be releasing viewer to prevent memory growth with subsequent launches/closes
