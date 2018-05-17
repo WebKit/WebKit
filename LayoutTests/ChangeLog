@@ -1,3 +1,16 @@
+2018-05-17  Rob Buis  <rbuis@igalia.com>
+
+        Remove cssom-remove-shorthand-property.html test
+        https://bugs.webkit.org/show_bug.cgi?id=185727
+
+        Reviewed by Frédéric Wang.
+
+        Exact same test is contained in WPT:
+        cssom/cssom-setProperty-shorthand.html
+
+        * fast/css/cssom-remove-shorthand-property-expected.txt: Removed.
+        * fast/css/cssom-remove-shorthand-property.html: Removed.
+
 2018-05-17  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK][WPE] Test gardening
