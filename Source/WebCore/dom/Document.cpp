@@ -2229,6 +2229,7 @@ void Document::didBecomeCurrentDocumentInFrame()
     if (!hasLivingRenderTree())
         createRenderTree();
 
+    dispatchDisabledAdaptationsDidChangeForMainFrame();
     updateViewportArguments();
 
     // FIXME: Doing this only for the main frame is insufficient.
@@ -3417,9 +3418,18 @@ void Document::processDisabledAdaptations(const String& disabledAdaptationsStrin
         return;
 
     m_disabledAdaptations = disabledAdaptations;
+    dispatchDisabledAdaptationsDidChangeForMainFrame();
+}
 
-    if (page() && frame()->isMainFrame())
-        page()->chrome().dispatchDisabledAdaptationsDidChange(m_disabledAdaptations);
+void Document::dispatchDisabledAdaptationsDidChangeForMainFrame()
+{
+    if (!frame()->isMainFrame())
+        return;
+
+    if (!page())
+        return;
+
+    page()->chrome().dispatchDisabledAdaptationsDidChange(m_disabledAdaptations);
 }
 
 void Document::processViewport(const String& features, ViewportArguments::Type origin)

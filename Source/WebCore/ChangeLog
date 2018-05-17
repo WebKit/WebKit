@@ -1,3 +1,23 @@
+2018-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Disabled adaptations are not reset upon mainframe navigation
+        https://bugs.webkit.org/show_bug.cgi?id=185735
+        <rdar://problem/40335311>
+
+        Reviewed by Tim Horton.
+
+        When performing mainframe navigation, we currently don't update the Page's ViewportConfiguration's disabled
+        adaptations. This causes disabled adaptations from the previous main document to persist. To fix this, propagate
+        the new document's disabled adaptations to the client when it becomes the main document in the page.
+
+        Test: fast/viewport/extrazoom/viewport-adaptations-after-navigation.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::didBecomeCurrentDocumentInFrame):
+        (WebCore::Document::processDisabledAdaptations):
+        (WebCore::Document::dispatchDisabledAdaptationsDidChangeForMainFrame):
+        * dom/Document.h:
+
 2018-05-17  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Update AirPlay route monitoring

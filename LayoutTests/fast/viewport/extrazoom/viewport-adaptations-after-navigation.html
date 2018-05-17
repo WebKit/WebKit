@@ -1,0 +1,41 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script>
+        async function runTest() {
+            if (!window.testRunner) {
+                description("Please use WebKitTestRunner to run this test.");
+                return;
+            }
+
+            const matches = location.search.match(/previousSize=([0-9]+),([0-9]+)/);
+            if (matches) {
+                document.write(`previous size: (${parseInt(matches[1])}, ${parseInt(matches[2])}); current size: (${innerWidth}, ${innerHeight})`);
+                testRunner.notifyDone();
+                return;
+            }
+
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+
+            const meta = document.createElement("meta");
+            meta.setAttribute("name", "disabled-adaptations");
+            meta.setAttribute("content", internals.extraZoomModeAdaptationName());
+            document.head.appendChild(meta);
+            await UIHelper.ensureVisibleContentRectUpdate();
+
+            location.href += `?previousSize=${innerWidth},${innerHeight}`;
+        }
+    </script>
+</head>
+<body onload="runTest()"></body>
+</html>

@@ -1506,6 +1506,8 @@ private:
     void addDocumentToFullScreenChangeEventQueue(Document*);
 #endif
 
+    void dispatchDisabledAdaptationsDidChangeForMainFrame();
+
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     friend void setParserFeature(const String& key, const String& value, Document*, void* userData);
     void setIsTelephoneNumberParsingAllowed(bool);

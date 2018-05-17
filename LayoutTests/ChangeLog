@@ -1,3 +1,16 @@
+2018-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Disabled adaptations are not reset upon mainframe navigation
+        https://bugs.webkit.org/show_bug.cgi?id=185735
+        <rdar://problem/40335311>
+
+        Reviewed by Tim Horton.
+
+        Adds a new layout test that disables extra zoom mode adaptations, navigates to a new document, and checks that
+        the innerWidth and innerHeight are reset to their expected (default) values.
+
+        * fast/viewport/extrazoom/viewport-adaptations-after-navigation.html: Added.
+
 2018-05-17  Chris Dumez  <cdumez@apple.com>
 
         Cross-Origin-Options: deny/allow-postmessage should prevent getting navigated by cross-origin scripts
