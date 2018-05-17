@@ -117,6 +117,10 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
 
     encoder << trackNetworkActivity;
+    
+#if ENABLE(WIFI_ASSERTIONS)
+    encoder << wirelessContextIdentifier;
+#endif
 }
 
 bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProcessCreationParameters& result)
@@ -279,6 +283,11 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
 
     if (!decoder.decode(result.trackNetworkActivity))
         return false;
+
+#if ENABLE(WIFI_ASSERTIONS)
+    if (!decoder.decode(result.wirelessContextIdentifier))
+        return false;
+#endif
 
     return true;
 }

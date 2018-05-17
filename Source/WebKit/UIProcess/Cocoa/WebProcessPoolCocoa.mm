@@ -328,6 +328,10 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     if (parameters.recordReplayCacheLocation.isEmpty())
         parameters.recordReplayCacheLocation = parameters.diskCacheDirectory;
 #endif
+
+#if ENABLE(WIFI_ASSERTIONS)
+    parameters.wirelessContextIdentifier = m_configuration->wirelessContextIdentifier();
+#endif
 }
 
 void WebProcessPool::platformInvalidateContext()
