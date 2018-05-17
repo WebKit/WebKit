@@ -1420,12 +1420,49 @@ _llint_op_get_by_id:
     loadi 4[PC], t2
     storei t0, TagOffset[cfr, t2, 8]
     storei t1, PayloadOffset[cfr, t2, 8]
-    valueProfile(t0, t1, 28, t2)
+    valueProfile(t0, t1, 32, t2)
     dispatch(constexpr op_get_by_id_length)
 
 .opGetByIdSlow:
     callSlowPath(_llint_slow_path_get_by_id)
     dispatch(constexpr op_get_by_id_length)
+
+
+_llint_op_get_by_id_proto_load:
+    traceExecution()
+    loadi 8[PC], t0
+    loadi 16[PC], t1
+    loadConstantOrVariablePayload(t0, CellTag, t3, .opGetByIdProtoSlow)
+    loadi 20[PC], t2
+    bineq JSCell::m_structureID[t3], t1, .opGetByIdProtoSlow
+    loadpFromInstruction(6, t3)
+    loadPropertyAtVariableOffset(t2, t3, t0, t1)
+    loadi 4[PC], t2
+    storei t0, TagOffset[cfr, t2, 8]
+    storei t1, PayloadOffset[cfr, t2, 8]
+    valueProfile(t0, t1, 32, t2)
+    dispatch(constexpr op_get_by_id_proto_load_length)
+
+.opGetByIdProtoSlow:
+    callSlowPath(_llint_slow_path_get_by_id)
+    dispatch(constexpr op_get_by_id_proto_load_length)
+
+
+_llint_op_get_by_id_unset:
+    traceExecution()
+    loadi 8[PC], t0
+    loadi 16[PC], t1
+    loadConstantOrVariablePayload(t0, CellTag, t3, .opGetByIdUnsetSlow)
+    bineq JSCell::m_structureID[t3], t1, .opGetByIdUnsetSlow
+    loadi 4[PC], t2
+    storei UndefinedTag, TagOffset[cfr, t2, 8]
+    storei 0, PayloadOffset[cfr, t2, 8]
+    valueProfile(UndefinedTag, 0, 32, t2)
+    dispatch(constexpr op_get_by_id_unset_length)
+
+.opGetByIdUnsetSlow:
+    callSlowPath(_llint_slow_path_get_by_id)
+    dispatch(constexpr op_get_by_id_unset_length)
 
 
 _llint_op_get_array_length:
@@ -1441,7 +1478,7 @@ _llint_op_get_array_length:
     loadp JSObject::m_butterfly[t3], t0
     loadi -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], t0
     bilt t0, 0, .opGetArrayLengthSlow
-    valueProfile(Int32Tag, t0, 28, t2)
+    valueProfile(Int32Tag, t0, 32, t2)
     storep t0, PayloadOffset[cfr, t1, 8]
     storep Int32Tag, TagOffset[cfr, t1, 8]
     dispatch(constexpr op_get_array_length_length)
