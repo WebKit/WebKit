@@ -1,3 +1,22 @@
+2018-05-17  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK][WPE] Test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=185718
+
+        Unreviewed test gardening.
+
+        * accessibility/gtk/spans-expected.txt: rebaseline for r231717.
+        * accessibility/gtk/spans-paragraphs-and-divs-expected.txt: rebaseline for r231717.
+        * js/script-tests/intl-numberformat-format-to-parts.js: skip (bug 185714).
+        * js/script-tests/intl-pluralrules.js: skip (bug 185714).
+        * platform/gtk/TestExpectations: skip new Intl tests (bug 185714).
+        * platform/gtk/editing/deleting/delete-emoji-1-expected.txt: rebaseline for r231630.
+        * platform/gtk/editing/deleting/delete-emoji-expected.txt: rebaseline for r231630.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any-expected.txt:
+          Removed (platform-neutral expectation file applies since r231000).
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.worker-expected.txt:
+          Removed (platform-neutral expectation file applies since r231000).
+
 2018-05-16  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Unreviewed gardening after WinCairoRequirements update.

@@ -1,8 +1,0 @@
-
-FAIL Fetching about:blank (GET) is OK promise_test: Unhandled rejection with value: object "TypeError: Cross origin requests are only supported for HTTP."
-FAIL Fetching about:blank (PUT) is OK promise_test: Unhandled rejection with value: object "TypeError: The URL can’t be shown"
-FAIL Fetching about:blank (POST) is OK promise_test: Unhandled rejection with value: object "TypeError: Cross origin requests are only supported for HTTP."
-PASS Fetching about:invalid.com is KO 
-PASS Fetching about:config is KO 
-PASS Fetching about:unicorn is KO 
-

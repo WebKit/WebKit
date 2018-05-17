@@ -3375,6 +3375,9 @@ webkit.org/b/185254 imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttpreques
 
 webkit.org/b/185548 accessibility/scroll-to-make-visible-iframe-offscreen.html [ Failure ]
 
+webkit.org/b/185714 js/intl-numberformat-format-to-parts.html [ Failure ]
+webkit.org/b/185714 js/intl-pluralrules.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

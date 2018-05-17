@@ -9,6 +9,7 @@ Block span in a link in a paragraph
 
 Inline span in a paragraph
 Block span in a paragraph
+
 Block span in a link in a div
 Inline span in a link in a div
 Block span in a div
