@@ -1,3 +1,23 @@
+2018-05-17  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r229831?): Layout Test http/tests/appcache/interrupted-update.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=184061
+        <rdar://problem/38975570>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test is flaky as it sometimes reload twice.
+        Make sure it reloads only once by not relying on localStorage.
+        Make sure the appcache has not enough time to finish before reloading is done.
+        This is done by adding more entries to the appcache.
+        Add a test that sets an item in local storage, reloads and verifies the item is there.
+
+        * TestExpectations:
+        * http/tests/appcache/interrupted-update.html:
+        * http/tests/appcache/resources/interrupted-update.manifest:
+        * http/tests/storage/setItem-and-reload-expected.txt: Added.
+        * http/tests/storage/setItem-and-reload.html: Added.
+
 2018-05-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE] Implement and enable FULLSCREEN_API

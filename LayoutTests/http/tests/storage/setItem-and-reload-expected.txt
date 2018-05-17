@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 25: Reloading...
+Test that setting local storage, reloading and getting local storage works.
+
+Reloaded
+

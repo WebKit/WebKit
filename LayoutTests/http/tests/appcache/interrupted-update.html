@@ -12,8 +12,7 @@ function log(msg)
     document.getElementById("log").innerHTML += msg + "\n";
 }
 
-var haveReloaded = localStorage.getItem("appcache-interrupted-update-reloaded") == "YES";
-localStorage.removeItem("appcache-interrupted-update-reloaded");
+var haveReloaded = window.location.hash === "#reloaded";
 
 if (haveReloaded)
     log("Reloaded");
@@ -33,9 +32,9 @@ function onprogress(event)
     log("PROGRESS " + event.loaded + "/" + event.total);
 
     if (!haveReloaded && event.loaded == 2) {
-        localStorage.setItem("appcache-interrupted-update-reloaded", "YES");
+        reloadedLocation = window.location + "#reloaded";
+        window.location = "/resources/redirect.php?url=" + encodeURIComponent(reloadedLocation);
         console.log("Reloading...");
-        window.location.reload();
     }
 }
 
