@@ -1,3 +1,21 @@
+2018-05-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Unreviewed gardening after WinCairoRequirements update.
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/editing/deleting/delete-emoji-1-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-2-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-3-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-4-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-5-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-6-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-7-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-8-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-9-expected.txt:
+        * platform/wincairo/editing/deleting/delete-emoji-expected.txt:
+        * platform/wincairo/editing/deleting/regional-indicators-expected.txt: Removed.
+        * platform/wincairo/editing/style/create-block-for-style-006-expected.png: Added.
+
 2018-05-16  Brady Eidson  <beidson@apple.com>
 
         LayoutTest storage/indexeddb/dont-wedge-private.html is a flaky failure

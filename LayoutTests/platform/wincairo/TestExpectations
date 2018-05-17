@@ -696,6 +696,9 @@ fast/css/relative-position-replaced-in-table-display-crash.html [ Pass Failure ]
 fast/css/vertical-align-lengths.html [ Failure ]
 fast/css/visibility-hit-test.html [ Failure ]
 
+fast/doctypes/xhtml-with-xhtmlmp-doctype.xhtml [ Pass Failure ]
+fast/doctypes/xhtml-with-xhtmlmp12-doctype.xhtml [ Pass Failure ]
+
 fast/dom/boolean-attribute-reflection.html [ Pass Failure ]
 fast/dom/reflect-unsigned-long.html [ Pass Failure ]
 fast/dom/javascript-url-crash-function.html [ Pass Failure ]
@@ -1146,7 +1149,7 @@ animations/font-variations/font-variation-settings.html [ Failure ]
 legacy-animation-engine/animations/font-variations/font-variation-settings.html [ Failure ]
 
 # Unexpected timeouts tracked in webkit.org/b/172437.
-animations/font-variations/font-stretch.html [ Timeout ]
+animations/font-variations/font-stretch.html [ Skip ]
 legacy-animation-engine/animations/font-variations/font-stretch.html [ Timeout ]
 animations/font-variations/font-style.html [ Timeout ]
 legacy-animation-engine/animations/font-variations/font-style.html [ Timeout ]
@@ -1293,7 +1296,8 @@ webkit.org/b/179296 fast/css/object-fit/object-fit-object.html [ ImageOnlyFailur
 webkit.org/b/179296 fast/css/object-position/object-position-embed.html [ ImageOnlyFailure ]
 webkit.org/b/179296 fast/css/object-position/object-position-object.html [ ImageOnlyFailure ]
 
-fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
+[ Release ] fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
+[ Debug ] fast/css/will-change/will-change-creates-stacking-context.html [ Skip ]
 fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnlyFailure ]
 
 # TODO CSS3_TEXT is disabled on Windows
@@ -1549,6 +1553,8 @@ imported/mozilla [ Skip ]
 imported/w3c [ Skip ]
 inspector [ Skip ]
 js/dom [ Skip ]
+js/intl-numberformat.html [ Skip ]
+js/intl-numberformat-format-to-parts.html [ Skip ]
 js/intl-pluralrules.html [ Skip ]
 legacy-animation-engine/media [ Skip ]
 legacy-animation-engine/transitions [ Skip ]
