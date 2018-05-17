@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,14 +24,13 @@
  */
 
 #include "config.h"
-#include "AuthenticationManager.h"
+#include "WebCredential.h"
 
-#if HAVE(SEC_IDENTITY)
+#if PLATFORM(MAC)
 
+#include "WebCertificateInfo.h"
 #include <Security/SecIdentity.h>
-#include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/CertificateInfo.h>
-#include <WebCore/NotImplemented.h>
 #include <wtf/cf/TypeCastsCF.h>
 
 WTF_DECLARE_CF_TYPE_TRAIT(SecCertificate);
@@ -62,7 +61,7 @@ static NSArray *chain(const CertificateInfo& certificateInfo)
         NSMutableArray *array = [NSMutableArray array];
         for (CFIndex i = 1; i < count; ++i)
             [array addObject:(id)SecTrustGetCertificateAtIndex(certificateInfo.trust(), i)];
-            
+
         return array;
     }
 #endif
@@ -71,32 +70,22 @@ static NSArray *chain(const CertificateInfo& certificateInfo)
     return chainCount > 1 ? [(NSArray *)certificateInfo.certificateChain() subarrayWithRange:NSMakeRange(1, chainCount - 1)] : nil;
 }
 
-// FIXME: This function creates an identity from a certificate, which should not be needed. We should pass an identity over IPC (as we do on iOS).
-bool AuthenticationManager::tryUseCertificateInfoForChallenge(const AuthenticationChallenge& challenge, const CertificateInfo& certificateInfo, ChallengeCompletionHandler& completionHandler)
+WebCredential::WebCredential(WebCertificateInfo* certificateInfo)
 {
-    if (certificateInfo.isEmpty())
-        return false;
+    if (!certificateInfo || certificateInfo->certificateInfo().isEmpty())
+        return;
 
     // The passed-in certificate chain includes the identity certificate at index 0, and additional certificates starting at index 1.
     SecIdentityRef identity;
-    OSStatus result = SecIdentityCreateWithCertificate(NULL, leafCertificate(certificateInfo), &identity);
+    OSStatus result = SecIdentityCreateWithCertificate(NULL, leafCertificate(certificateInfo->certificateInfo()), &identity);
     if (result != errSecSuccess) {
         LOG_ERROR("Unable to create SecIdentityRef with certificate - %i", result);
-        if (completionHandler)
-            completionHandler(AuthenticationChallengeDisposition::Cancel, { });
-        else
-            [challenge.sender() cancelAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
-        return true;
+        return;
     }
 
-    NSURLCredential *credential = [NSURLCredential credentialWithIdentity:identity certificates:chain(certificateInfo) persistence:NSURLCredentialPersistenceNone];
-    if (completionHandler)
-        completionHandler(AuthenticationChallengeDisposition::UseCredential, Credential(credential));
-    else
-        [challenge.sender() useCredential:credential forAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
-    return true;
+    m_coreCredential = Credential([NSURLCredential credentialWithIdentity:identity certificates:chain(certificateInfo->certificateInfo()) persistence:NSURLCredentialPersistenceNone]);
 }
 
 } // namespace WebKit
 
-#endif // HAVE(SEC_IDENTITY)
+#endif // PLATFORM(MAC)

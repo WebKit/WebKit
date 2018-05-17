@@ -47,8 +47,6 @@ public:
     {
         return adoptRef(*new WebCredential(certificateInfo));
     }
-    
-    WebCertificateInfo* certificateInfo();
 
     const WebCore::Credential& credential();
 
@@ -57,7 +55,6 @@ private:
     explicit WebCredential(WebCertificateInfo*);
 
     WebCore::Credential m_coreCredential;
-    RefPtr<WebCertificateInfo> m_certificateInfo;
 };
 
 } // namespace WebKit

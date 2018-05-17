@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> AuthenticationManager {
-    void UseCredentialForChallenge(uint64_t challengeID, WebCore::Credential credential, WebCore::CertificateInfo certificate);
+    void UseCredentialForChallenge(uint64_t challengeID, WebCore::Credential credential);
     void ContinueWithoutCredentialForChallenge(uint64_t challengeID);
     void CancelChallenge(uint64_t challengeID);
     void PerformDefaultHandling(uint64_t challengeID);

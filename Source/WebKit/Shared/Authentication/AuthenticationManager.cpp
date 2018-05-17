@@ -135,31 +135,20 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(IPC::MessageSender
     download.send(Messages::DownloadProxy::DidReceiveAuthenticationChallenge(authenticationChallenge, challengeID));
 }
 
-// Currently, only Mac knows how to respond to authentication challenges with certificate info.
-#if !HAVE(SEC_IDENTITY)
-bool AuthenticationManager::tryUseCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const CertificateInfo&, ChallengeCompletionHandler&)
-{
-    return false;
-}
-#endif
-
-void AuthenticationManager::useCredentialForChallenge(uint64_t challengeID, const Credential& credential, const CertificateInfo& certificateInfo)
+void AuthenticationManager::useCredentialForChallenge(uint64_t challengeID, const Credential& credential)
 {
     ASSERT(RunLoop::isMain());
 
     for (auto& coalescedChallengeID : coalesceChallengesMatching(challengeID))
-        useCredentialForSingleChallenge(coalescedChallengeID, credential, certificateInfo);
+        useCredentialForSingleChallenge(coalescedChallengeID, credential);
 }
 
-void AuthenticationManager::useCredentialForSingleChallenge(uint64_t challengeID, const Credential& credential, const CertificateInfo& certificateInfo)
+void AuthenticationManager::useCredentialForSingleChallenge(uint64_t challengeID, const Credential& credential)
 {
     auto challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.challenge.isNull());
 
     auto completionHandler = WTFMove(challenge.completionHandler);
-    
-    if (tryUseCertificateInfoForChallenge(challenge.challenge, certificateInfo, completionHandler))
-        return;
 
     if (completionHandler)
         completionHandler(AuthenticationChallengeDisposition::UseCredential, credential);

@@ -1,3 +1,15 @@
+2018-05-17  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Convert CertificateInfo into Credential in UI Process instead of Networking Process
+        https://bugs.webkit.org/show_bug.cgi?id=185662
+        <rdar://problem/40275561>
+
+        Reviewed by Alex Christensen.
+
+        Remove marco HAVE_SEC_IDENTITY since it is no longer useful.
+
+        * wtf/Platform.h:
+
 2018-05-17  Zalan Bujtas  <zalan@apple.com>
 
         Add ASSERT_NOT_IMPLEMENTED_YET() macro

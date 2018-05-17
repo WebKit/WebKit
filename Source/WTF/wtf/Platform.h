@@ -572,7 +572,6 @@
 
 #define USE_APPKIT 1
 #define HAVE_RUNLOOP_TIMER 1
-#define HAVE_SEC_IDENTITY 1
 #define HAVE_SEC_KEYCHAIN 1
 
 #if CPU(X86_64)

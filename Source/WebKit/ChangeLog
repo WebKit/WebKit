@@ -1,3 +1,41 @@
+2018-05-17  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Convert CertificateInfo into Credential in UI Process instead of Networking Process
+        https://bugs.webkit.org/show_bug.cgi?id=185662
+        <rdar://problem/40275561>
+
+        Reviewed by Alex Christensen.
+
+        Right now we convert CertificateInfo into Credential in the very last stage of client certificate authentication process
+        when it reaches Networking Process. This patch moves that conversion earlier in UI Process such that we don't have to
+        pass both Credential and CertificateInfo to Networking Process.
+
+        CertificateInfo is only used in macOS for C API specifically. WK2 includes macOS/iOS relies on NSURLCredential/WebCore::Credential
+        solely. WK2 has already exercised the ability of using WebCore::Credential to do client certficate authentication. This patch therefore
+        takes advantage of that. It converts CertficateInfo objects into Credential objects right after WebCredential is initialized, and then merge
+        any code paths that utilizes CertficateInfo into ones that uses WebCore::Credential.
+
+        Covered by existing tests.
+
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::useCredentialForChallenge):
+        (WebKit::AuthenticationManager::useCredentialForSingleChallenge):
+        (WebKit::AuthenticationManager::tryUseCertificateInfoForChallenge): Deleted.
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/Authentication/AuthenticationManager.messages.in:
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        (WebKit::AuthenticationChallengeProxy::useCredential):
+        * UIProcess/Authentication/WebCredential.cpp:
+        (WebKit::WebCredential::WebCredential):
+        (WebKit::WebCredential::certificateInfo): Deleted.
+        * UIProcess/Authentication/WebCredential.h:
+        (WebKit::WebCredential::create):
+        * UIProcess/Authentication/mac/WebCredentialMac.mm: Renamed from Source/WebKit/Shared/Authentication/mac/AuthenticationManager.mac.mm.
+        (WebKit::leafCertificate):
+        (WebKit::chain):
+        (WebKit::WebCredential::WebCredential):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-05-17  Jeremy Jones  <jeremyj@apple.com>
 
         Ensure valid rects for fullsceen animation.

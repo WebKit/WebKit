@@ -70,11 +70,7 @@ void AuthenticationChallengeProxy::useCredential(WebCredential* credential)
         return;
     }
 
-    WebCore::CertificateInfo certificateInfo;
-    if (credential->certificateInfo())
-        certificateInfo = credential->certificateInfo()->certificateInfo();
-
-    m_connection->send(Messages::AuthenticationManager::UseCredentialForChallenge(challengeID, credential->credential(), certificateInfo), 0);
+    m_connection->send(Messages::AuthenticationManager::UseCredentialForChallenge(challengeID, credential->credential()), 0);
 }
 
 void AuthenticationChallengeProxy::cancel()

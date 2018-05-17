@@ -1106,7 +1106,6 @@
 		518D2CAE12D5153B003BB93B /* WebBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 518D2CAC12D5153B003BB93B /* WebBackForwardListItem.h */; };
 		518E8EF816B2091C00E91429 /* AuthenticationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518E8EF316B2091C00E91429 /* AuthenticationManager.cpp */; };
 		518E8EF916B2091C00E91429 /* AuthenticationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 518E8EF416B2091C00E91429 /* AuthenticationManager.h */; };
-		518E8EFB16B2091C00E91429 /* AuthenticationManager.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 518E8EF716B2091C00E91429 /* AuthenticationManager.mac.mm */; };
 		51933DEF1965EB31008AC3EA /* MenuUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51933DEB1965EB24008AC3EA /* MenuUtilities.h */; };
 		51933DF01965EB31008AC3EA /* MenuUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51933DEC1965EB24008AC3EA /* MenuUtilities.mm */; };
 		51A4D5A916CAC4FF000E615E /* StatisticsRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A4D5A816CAC4FF000E615E /* StatisticsRequest.cpp */; };
@@ -1219,6 +1218,7 @@
 		53BA47D01DC2EF5E004DF4AD /* NetworkDataTaskBlob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539EB5461DC2EE40009D48CF /* NetworkDataTaskBlob.cpp */; };
 		53BA47D11DC2EF5E004DF4AD /* NetworkDataTaskBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 539EB5471DC2EE40009D48CF /* NetworkDataTaskBlob.h */; };
 		53DEA3661DDE423100E82648 /* json.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 53DEA3651DDE422E00E82648 /* json.hpp */; };
+		575075A820AB8DE100693EA9 /* WebCredentialMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 575075A720AB763600693EA9 /* WebCredentialMac.mm */; };
 		5760828E2029895E00116678 /* WebCredentialsMessenger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5760828C2029854200116678 /* WebCredentialsMessenger.cpp */; };
 		57608298202BD8BA00116678 /* WebCredentialsMessengerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57608296202BD8BA00116678 /* WebCredentialsMessengerProxy.cpp */; };
 		5760829C202D2C3C00116678 /* WebCredentialsMessengerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5760829020298FBD00116678 /* WebCredentialsMessengerMessageReceiver.cpp */; };
@@ -3519,7 +3519,6 @@
 		518E8EF316B2091C00E91429 /* AuthenticationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AuthenticationManager.cpp; path = Authentication/AuthenticationManager.cpp; sourceTree = "<group>"; };
 		518E8EF416B2091C00E91429 /* AuthenticationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AuthenticationManager.h; path = Authentication/AuthenticationManager.h; sourceTree = "<group>"; };
 		518E8EF516B2091C00E91429 /* AuthenticationManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = AuthenticationManager.messages.in; path = Authentication/AuthenticationManager.messages.in; sourceTree = "<group>"; };
-		518E8EF716B2091C00E91429 /* AuthenticationManager.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationManager.mac.mm; sourceTree = "<group>"; };
 		51933DEB1965EB24008AC3EA /* MenuUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuUtilities.h; sourceTree = "<group>"; };
 		51933DEC1965EB24008AC3EA /* MenuUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MenuUtilities.mm; sourceTree = "<group>"; };
 		5194B3861F192FB900FA4708 /* CookieStorageUtilsCF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CookieStorageUtilsCF.h; sourceTree = "<group>"; };
@@ -3659,6 +3658,7 @@
 		539EB5471DC2EE40009D48CF /* NetworkDataTaskBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkDataTaskBlob.h; path = NetworkProcess/NetworkDataTaskBlob.h; sourceTree = "<group>"; };
 		53DEA3651DDE422E00E82648 /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = json.hpp; path = NetworkProcess/capture/json.hpp; sourceTree = "<group>"; };
 		53F3CAA5206C443E0086490E /* NetworkActivityTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkActivityTracker.cpp; path = NetworkProcess/NetworkActivityTracker.cpp; sourceTree = "<group>"; };
+		575075A720AB763600693EA9 /* WebCredentialMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCredentialMac.mm; sourceTree = "<group>"; };
 		5750F32A2032D4E500389347 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
 		5760828B2029854200116678 /* WebCredentialsMessenger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCredentialsMessenger.h; sourceTree = "<group>"; };
 		5760828C2029854200116678 /* WebCredentialsMessenger.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCredentialsMessenger.cpp; sourceTree = "<group>"; };
@@ -6527,6 +6527,7 @@
 		512F588D12A8836F00629530 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
+				575075A620AB75AB00693EA9 /* mac */,
 				512F588E12A8838800629530 /* AuthenticationChallengeProxy.cpp */,
 				512F588F12A8838800629530 /* AuthenticationChallengeProxy.h */,
 				512F589012A8838800629530 /* AuthenticationDecisionListener.cpp */,
@@ -6626,21 +6627,11 @@
 		518E8EF116B208F000E91429 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
-				518E8EF616B2091C00E91429 /* mac */,
 				518E8EF316B2091C00E91429 /* AuthenticationManager.cpp */,
 				518E8EF416B2091C00E91429 /* AuthenticationManager.h */,
 				518E8EF516B2091C00E91429 /* AuthenticationManager.messages.in */,
 			);
 			name = Authentication;
-			sourceTree = "<group>";
-		};
-		518E8EF616B2091C00E91429 /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				518E8EF716B2091C00E91429 /* AuthenticationManager.mac.mm */,
-			);
-			name = mac;
-			path = Authentication/mac;
 			sourceTree = "<group>";
 		};
 		51B15A7D138439B200321AD8 /* unix */ = {
@@ -6760,6 +6751,14 @@
 				5302583A1DCBBD1D00DA89C2 /* NetworkDataTaskReplay.h */,
 			);
 			name = capture;
+			sourceTree = "<group>";
+		};
+		575075A620AB75AB00693EA9 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				575075A720AB763600693EA9 /* WebCredentialMac.mm */,
+			);
+			path = mac;
 			sourceTree = "<group>";
 		};
 		5750F3292032D4E300389347 /* Frameworks */ = {
@@ -10510,7 +10509,6 @@
 				512F589612A8838800629530 /* AuthenticationChallengeProxy.cpp in Sources */,
 				512F589812A8838800629530 /* AuthenticationDecisionListener.cpp in Sources */,
 				518E8EF816B2091C00E91429 /* AuthenticationManager.cpp in Sources */,
-				518E8EFB16B2091C00E91429 /* AuthenticationManager.mac.mm in Sources */,
 				512F58A212A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp in Sources */,
 				9955A6F41C7986DC00EB6A93 /* AutomationBackendDispatchers.cpp in Sources */,
 				99C81D591C20E1E5005C4C82 /* AutomationClient.mm in Sources */,
@@ -10971,6 +10969,7 @@
 				1AB1F7901D1B34A6007C9BD1 /* WebCoreArgumentCodersCocoa.mm in Sources */,
 				BCE23263122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm in Sources */,
 				512F589A12A8838800629530 /* WebCredential.cpp in Sources */,
+				575075A820AB8DE100693EA9 /* WebCredentialMac.mm in Sources */,
 				5760828E2029895E00116678 /* WebCredentialsMessenger.cpp in Sources */,
 				5760829C202D2C3C00116678 /* WebCredentialsMessengerMessageReceiver.cpp in Sources */,
 				57608298202BD8BA00116678 /* WebCredentialsMessengerProxy.cpp in Sources */,

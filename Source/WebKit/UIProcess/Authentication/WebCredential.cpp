@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebCredential.h"
 
-#include "WebCertificateInfo.h"
-
 namespace WebKit {
 
 WebCredential::WebCredential(const WebCore::Credential& credential)
@@ -35,18 +33,14 @@ WebCredential::WebCredential(const WebCore::Credential& credential)
 {
 }
 
+#if !PLATFORM(MAC)
 WebCredential::WebCredential(WebCertificateInfo* certificateInfo)
-    : m_certificateInfo(certificateInfo)
 {
 }
+#endif
 
 WebCredential::~WebCredential()
 {
-}
-
-WebCertificateInfo* WebCredential::certificateInfo()
-{
-    return m_certificateInfo.get();
 }
 
 const WebCore::Credential& WebCredential::credential()
