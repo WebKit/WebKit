@@ -3290,6 +3290,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case InstanceOf:
         // Sadly, we don't propagate the fact that we've done InstanceOf
         forNode(node).setType(SpecBoolean);
+        clobberWorld(node->origin.semantic, clobberLimit);
         break;
 
     case InstanceOfCustom:

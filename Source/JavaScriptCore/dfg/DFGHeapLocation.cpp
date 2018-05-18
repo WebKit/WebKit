@@ -144,10 +144,6 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("IndexedPropertyStorageLoc");
         return;
         
-    case InstanceOfLoc:
-        out.print("InstanceOfLoc");
-        return;
-        
     case NamedPropertyLoc:
         out.print("NamedPropertyLoc");
         return;

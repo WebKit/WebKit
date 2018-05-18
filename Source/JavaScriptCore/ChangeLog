@@ -1,3 +1,69 @@
+2018-05-17  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r231871. rdar://problem/40346090
+
+    DFG models InstanceOf incorrectly
+    https://bugs.webkit.org/show_bug.cgi?id=185694
+    
+    Reviewed by Keith Miller.
+    JSTests:
+    
+    * stress/instanceof-proxy-check-structure.js: Added.
+    (Foo):
+    (Bar):
+    (doBadThings):
+    (getPrototypeOf):
+    (foo):
+    (i.new.Bar):
+    (new.Bar):
+    * stress/instanceof-proxy-loop.js: Added.
+    (Foo):
+    (Bar):
+    (doBadThings):
+    (getPrototypeOf):
+    (foo):
+    * stress/instanceof-proxy.js: Added.
+    (Foo):
+    (Bar):
+    (doBadThings):
+    (getPrototypeOf):
+    (foo):
+    
+    Source/JavaScriptCore:
+    
+    Proxies mean that InstanceOf can have effects. Exceptions mean that it's illegal to DCE it or
+    hoist it.
+    
+    * dfg/DFGAbstractInterpreterInlines.h:
+    (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+    * dfg/DFGClobberize.h:
+    (JSC::DFG::clobberize):
+    * dfg/DFGHeapLocation.cpp:
+    (WTF::printInternal):
+    * dfg/DFGHeapLocation.h:
+    * dfg/DFGNodeType.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@231871 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-05-16  Filip Pizlo  <fpizlo@apple.com>
+
+            DFG models InstanceOf incorrectly
+            https://bugs.webkit.org/show_bug.cgi?id=185694
+
+            Reviewed by Keith Miller.
+
+            Proxies mean that InstanceOf can have effects. Exceptions mean that it's illegal to DCE it or
+            hoist it.
+
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+            * dfg/DFGHeapLocation.cpp:
+            (WTF::printInternal):
+            * dfg/DFGHeapLocation.h:
+            * dfg/DFGNodeType.h:
+
 2018-05-15  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r230485. rdar://problem/39988105
