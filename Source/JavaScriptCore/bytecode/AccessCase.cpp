@@ -374,20 +374,14 @@ void AccessCase::generateWithGuard(
     case StringLength: {
         ASSERT(!viaProxy());
         fallThrough.append(
-            jit.branch8(
-                CCallHelpers::NotEqual,
-                CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()),
-                CCallHelpers::TrustedImm32(StringType)));
+            jit.branchIfNotString(baseGPR));
         break;
     }
 
     case DirectArgumentsLength: {
         ASSERT(!viaProxy());
         fallThrough.append(
-            jit.branch8(
-                CCallHelpers::NotEqual,
-                CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()),
-                CCallHelpers::TrustedImm32(DirectArgumentsType)));
+            jit.branchIfNotType(baseGPR, DirectArgumentsType));
 
         fallThrough.append(
             jit.branchTestPtr(
@@ -404,10 +398,7 @@ void AccessCase::generateWithGuard(
     case ScopedArgumentsLength: {
         ASSERT(!viaProxy());
         fallThrough.append(
-            jit.branch8(
-                CCallHelpers::NotEqual,
-                CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()),
-                CCallHelpers::TrustedImm32(ScopedArgumentsType)));
+            jit.branchIfNotType(baseGPR, ScopedArgumentsType));
 
         jit.loadPtr(
             CCallHelpers::Address(baseGPR, ScopedArguments::offsetOfStorage()),
@@ -448,7 +439,7 @@ void AccessCase::generateWithGuard(
                         // has the property.
 #if USE(JSVALUE64)
                         jit.load64(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset)), baseForAccessGPR);
-                        fallThrough.append(jit.branch64(CCallHelpers::NotEqual, baseForAccessGPR, CCallHelpers::TrustedImm64(ValueNull)));
+                        fallThrough.append(jit.branchIfNotNull(baseForAccessGPR));
 #else
                         jit.load32(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), baseForAccessGPR);
                         fallThrough.append(jit.branchTestPtr(CCallHelpers::NonZero, baseForAccessGPR));
@@ -463,7 +454,7 @@ void AccessCase::generateWithGuard(
                         RELEASE_ASSERT(structure->isObject()); // Primitives must have a stored prototype. We use prototypeForLookup for them.
 #if USE(JSVALUE64)
                         jit.load64(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset)), baseForAccessGPR);
-                        fallThrough.append(jit.branch64(CCallHelpers::Equal, baseForAccessGPR, CCallHelpers::TrustedImm64(ValueNull)));
+                        fallThrough.append(jit.branchIfNull(baseForAccessGPR));
 #else
                         jit.load32(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), baseForAccessGPR);
                         fallThrough.append(jit.branchTestPtr(CCallHelpers::Zero, baseForAccessGPR));
@@ -474,10 +465,7 @@ void AccessCase::generateWithGuard(
         } else {
             if (viaProxy()) {
                 fallThrough.append(
-                    jit.branch8(
-                        CCallHelpers::NotEqual,
-                        CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()),
-                        CCallHelpers::TrustedImm32(PureForwardingProxyType)));
+                    jit.branchIfNotType(baseGPR, PureForwardingProxyType));
 
                 jit.loadPtr(CCallHelpers::Address(baseGPR, JSProxy::targetOffset()), scratchGPR);
 
