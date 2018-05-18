@@ -4090,3 +4090,5 @@ webkit.org/b/185471 http/tests/security/webaudio-render-remote-audio-blocked-no-
 webkit.org/b/185678 animations/keyframes-dynamic.html [ Failure ]
 webkit.org/b/185678 animations/missing-from-to-transforms.html [ Failure ]
 webkit.org/b/185678 animations/missing-from-to.html [ Failure ]
+
+webkit.org/b/185765 fast/images/animated-image-mp4-crash.html [ Skip ]
