@@ -161,12 +161,17 @@ auto NetworkLoadChecker::accessControlErrorForValidationHandler(String&& message
 void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ValidationHandler&& handler)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    processContentExtensionRulesForLoad(WTFMove(request), [this, handler = WTFMove(handler)](auto&& request, auto status) mutable {
-        if (status.blockedLoad) {
+    processContentExtensionRulesForLoad(WTFMove(request), [this, handler = WTFMove(handler)](auto result) mutable {
+        if (!result.has_value()) {
+            ASSERT(result.error().isCancellation());
+            handler(makeUnexpected(WTFMove(result.error())));
+            return;
+        }
+        if (result.value().status.blockedLoad) {
             handler(this->accessControlErrorForValidationHandler(ASCIILiteral("Blocked by content extension")));
             return;
         }
-        this->continueCheckingRequest(WTFMove(request), WTFMove(handler));
+        this->continueCheckingRequest(WTFMove(result.value().request), WTFMove(handler));
     });
 #else
     continueCheckingRequest(WTFMove(request), WTFMove(handler));
@@ -322,18 +327,24 @@ ContentSecurityPolicy* NetworkLoadChecker::contentSecurityPolicy()
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void NetworkLoadChecker::processContentExtensionRulesForLoad(ResourceRequest&& request, CompletionHandler<void(ResourceRequest&&, const ContentExtensions::BlockedStatus&)>&& callback)
+void NetworkLoadChecker::processContentExtensionRulesForLoad(ResourceRequest&& request, ContentExtensionCallback&& callback)
 {
     // FIXME: Enable content blockers for navigation loads.
     if (!m_userContentControllerIdentifier || m_options.mode == FetchOptions::Mode::Navigate) {
         ContentExtensions::BlockedStatus status;
-        callback(WTFMove(request), status);
+        callback(ContentExtensionResult { WTFMove(request), status });
         return;
     }
-    NetworkProcess::singleton().networkContentRuleListManager().contentExtensionsBackend(*m_userContentControllerIdentifier, [protectedThis = makeRef(*this), this, request = WTFMove(request), callback = WTFMove(callback)](auto& backend) mutable {
+
+    NetworkProcess::singleton().networkContentRuleListManager().contentExtensionsBackend(*m_userContentControllerIdentifier, [this, weakThis = makeWeakPtr(this), request = WTFMove(request), callback = WTFMove(callback)](auto& backend) mutable {
+        if (!weakThis) {
+            callback(makeUnexpected(ResourceError { ResourceError::Type::Cancellation }));
+            return;
+        }
+
         auto status = backend.processContentExtensionRulesForPingLoad(request.url(), m_mainDocumentURL);
         applyBlockedStatusToRequest(status, nullptr, request);
-        callback(WTFMove(request), status);
+        callback(ContentExtensionResult { WTFMove(request), status });
     });
 }
 #endif // ENABLE(CONTENT_EXTENSIONS)

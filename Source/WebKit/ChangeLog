@@ -1,3 +1,27 @@
+2018-05-18  Youenn Fablet  <youenn@apple.com>
+
+        NetworkLoadChecker should cancel its content extension retrieval task when being destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=185661
+        <rdar://problem/39985509>
+
+        Reviewed by Chris Dumez.
+
+        Make sure that the Content Extension retrieval callback checks that NetworkLoadChecker is alive.
+        This allows stopping NetworkLoadChecker be ref counted.
+        This in turns allows NetworkResourceLoader to delete its NetworkLoadChecker when being deleted as well.
+        By doing so, we simplify the memory management of NetworkResourceLoader and NetworkLoadChecker.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::checkRequest):
+        (WebKit::NetworkLoadChecker::processContentExtensionRulesForLoad):
+        * NetworkProcess/NetworkLoadChecker.h:
+        (WebKit::NetworkLoadChecker::weakPtrFactory):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::PingLoad):
+        * NetworkProcess/PingLoad.h:
+
 2018-05-18  Per Arne Vollan  <pvollan@apple.com>
 
         WebProcess fails to launch

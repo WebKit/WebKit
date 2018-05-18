@@ -207,7 +207,7 @@ private:
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryForValidation;
     bool m_isWaitingContinueWillSendRequestForCachedRedirect { false };
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryWaitingForContinueDidReceiveResponse;
-    RefPtr<NetworkLoadChecker> m_networkLoadChecker;
+    std::unique_ptr<NetworkLoadChecker> m_networkLoadChecker;
 
     std::optional<NetworkActivityTracker> m_networkActivityTracker;
 };
