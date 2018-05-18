@@ -139,12 +139,13 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         }
 
         let contentBefore = null;
-        if (this._valid && this._isVisual)
+        let shouldCheckHasVisualEffect = WI.settings.experimentalRecordingHasVisualEffect.value && this._valid && this._isVisual;
+        if (shouldCheckHasVisualEffect)
             contentBefore = getContent();
 
         this.apply(context);
 
-        if (this._valid && this._isVisual)
+        if (shouldCheckHasVisualEffect)
             this._hasVisibleEffect = !Array.shallowEqual(contentBefore, getContent());
 
         if (recording.type === WI.Recording.Type.Canvas2D) {

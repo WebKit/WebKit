@@ -130,4 +130,5 @@ WI.settings = {
     experimentalLegacyVisualSidebar: new WI.Setting("experimental-legacy-visual-sidebar", false),
     experimentalEnableNewTabBar: new WI.Setting("experimental-enable-new-tab-bar", false),
     experimentalEnableAccessibilityAuditTab: new WI.Setting("experimental-enable-accessibility-audit-tab", false),
+    experimentalRecordingHasVisualEffect: new WI.Setting("experimental-recording-has-visual-effect", false),
 };

@@ -259,6 +259,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         experimentalSettingsView.addSetting(WI.UIString("Accessibility Audit:"), WI.settings.experimentalEnableAccessibilityAuditTab, WI.UIString("Enable Accessibility Audit Tab"));
         experimentalSettingsView.addSeparator();
 
+        experimentalSettingsView.addSetting(WI.UIString("Canvas:"), WI.settings.experimentalRecordingHasVisualEffect, WI.UIString("Enable Visual Change Detection"));
+        experimentalSettingsView.addSeparator();
+
         let reloadInspectorButton = document.createElement("button");
         reloadInspectorButton.textContent = WI.UIString("Reload Web Inspector");
         reloadInspectorButton.addEventListener("click", () => { window.location.reload(); });

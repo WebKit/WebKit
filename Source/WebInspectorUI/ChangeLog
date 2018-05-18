@@ -1,3 +1,23 @@
+2018-05-18  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas: put `hasVisualEffect` behind an experimental setting
+        https://bugs.webkit.org/show_bug.cgi?id=185758
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Base/Setting.js:
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction.prototype.process):
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement.prototype.onattach):
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
 2018-05-16  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: create a navigation item for toggling the overlay rulers/guides
