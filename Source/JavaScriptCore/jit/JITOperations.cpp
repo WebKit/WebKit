@@ -2181,6 +2181,36 @@ EncodedJSValue JIT_OPERATION operationInstanceOf(ExecState* exec, EncodedJSValue
     return JSValue::encode(jsBoolean(result));
 }
 
+EncodedJSValue JIT_OPERATION operationInstanceOfGeneric(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedProto)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSValue value = JSValue::decode(encodedValue);
+    JSValue proto = JSValue::decode(encodedProto);
+    
+    stubInfo->tookSlowPath = true;
+    
+    bool result = JSObject::defaultHasInstance(exec, value, proto);
+    return JSValue::encode(jsBoolean(result));
+}
+
+EncodedJSValue JIT_OPERATION operationInstanceOfOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedProto)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSValue value = JSValue::decode(encodedValue);
+    JSValue proto = JSValue::decode(encodedProto);
+    
+    bool result = JSObject::defaultHasInstance(exec, value, proto);
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
+    
+    if (stubInfo->considerCaching(exec->codeBlock(), value.structureOrNull()))
+        repatchInstanceOf(exec, value, proto, *stubInfo, result);
+    
+    return JSValue::encode(jsBoolean(result));
+}
+
 int32_t JIT_OPERATION operationSizeFrameForForwardArguments(ExecState* exec, EncodedJSValue, int32_t numUsedStackSlots, int32_t)
 {
     VM& vm = exec->vm();

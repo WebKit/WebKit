@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,25 +45,12 @@ enum class AccessType : int8_t;
 class JITInlineCacheGenerator {
 protected:
     JITInlineCacheGenerator() { }
-    JITInlineCacheGenerator(CodeBlock*, CodeOrigin, CallSiteIndex, AccessType);
+    JITInlineCacheGenerator(
+        CodeBlock*, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters);
     
 public:
     StructureStubInfo* stubInfo() const { return m_stubInfo; }
 
-protected:
-    CodeBlock* m_codeBlock;
-    StructureStubInfo* m_stubInfo;
-};
-
-class JITByIdGenerator : public JITInlineCacheGenerator {
-protected:
-    JITByIdGenerator() { }
-
-    JITByIdGenerator(
-        CodeBlock*, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet&, JSValueRegs base,
-        JSValueRegs value);
-    
-public:
     void reportSlowPathCall(MacroAssembler::Label slowPathBegin, MacroAssembler::Call call)
     {
         m_slowPathBegin = slowPathBegin;
@@ -71,25 +58,46 @@ public:
     }
     
     MacroAssembler::Label slowPathBegin() const { return m_slowPathBegin; }
+
+    void finalize(
+        LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer,
+        CodeLocationLabel<JITStubRoutinePtrTag> start);
+    
+protected:
+    CodeBlock* m_codeBlock;
+    StructureStubInfo* m_stubInfo;
+
+    MacroAssembler::Label m_done;
+    MacroAssembler::Label m_slowPathBegin;
+    MacroAssembler::Call m_slowPathCall;
+};
+
+class JITByIdGenerator : public JITInlineCacheGenerator {
+protected:
+    JITByIdGenerator() { }
+
+    JITByIdGenerator(
+        CodeBlock*, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
+        JSValueRegs base, JSValueRegs value);
+
+public:
     MacroAssembler::Jump slowPathJump() const
     {
         ASSERT(m_slowPathJump.isSet());
         return m_slowPathJump;
     }
 
-    void finalize(LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
-    void finalize(LinkBuffer&);
+    void finalize(
+        LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
     
 protected:
+    
     void generateFastCommon(MacroAssembler&, size_t size);
     
     JSValueRegs m_base;
     JSValueRegs m_value;
-    
+
     MacroAssembler::Label m_start;
-    MacroAssembler::Label m_done;
-    MacroAssembler::Label m_slowPathBegin;
-    MacroAssembler::Call m_slowPathCall;
     MacroAssembler::Jump m_slowPathJump;
 };
 
@@ -124,7 +132,7 @@ public:
 
     JITPutByIdGenerator(
         CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, JSValueRegs base,
-        JSValueRegs, GPRReg scratch, ECMAMode, PutKind);
+        JSValueRegs value, GPRReg scratch, ECMAMode, PutKind);
     
     void generateFastPath(MacroAssembler&);
     
@@ -134,6 +142,36 @@ private:
     ECMAMode m_ecmaMode;
     PutKind m_putKind;
 };
+
+class JITInstanceOfGenerator : public JITInlineCacheGenerator {
+public:
+    JITInstanceOfGenerator() { }
+    
+    JITInstanceOfGenerator(
+        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, GPRReg result,
+        GPRReg value, GPRReg prototype, GPRReg scratch1, GPRReg scratch2,
+        bool prototypeIsKnownObject = false);
+    
+    void generateFastPath(MacroAssembler&);
+
+    void finalize(LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
+
+private:
+    MacroAssembler::PatchableJump m_jump;
+};
+
+template<typename VectorType>
+void finalizeInlineCaches(VectorType& vector, LinkBuffer& fastPath, LinkBuffer& slowPath)
+{
+    for (auto& entry : vector)
+        entry.finalize(fastPath, slowPath);
+}
+
+template<typename VectorType>
+void finalizeInlineCaches(VectorType& vector, LinkBuffer& linkBuffer)
+{
+    finalizeInlineCaches(vector, linkBuffer, linkBuffer);
+}
 
 } // namespace JSC
 

@@ -1,3 +1,140 @@
+2018-05-16  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should have InstanceOf inline caching
+        https://bugs.webkit.org/show_bug.cgi?id=185652
+
+        Reviewed by Saam Barati.
+        
+        This adds a polymorphic inline cache for instanceof. It caches hits and misses. It uses the
+        existing PolymorphicAccess IC machinery along with all of its heuristics. If we ever generate
+        too many cases, we emit the generic instanceof implementation instead.
+        
+        All of the JIT tiers use the same InstanceOf IC. It uses the existing JITInlineCacheGenerator
+        abstraction.
+        
+        This is a ~40% speed-up on instanceof microbenchmarks. It's a *tiny* (~1%) speed-up on
+        Octane/boyer. I think I can make that speed-up bigger by inlining the inline cache.
+
+        * API/tests/testapi.mm:
+        (testObjectiveCAPIMain):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * b3/B3Effects.h:
+        (JSC::B3::Effects::forReadOnlyCall):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::guardedByStructureCheck const):
+        (JSC::AccessCase::canReplace const):
+        (JSC::AccessCase::visitWeak const):
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/AccessCase.h:
+        * bytecode/InstanceOfAccessCase.cpp: Added.
+        (JSC::InstanceOfAccessCase::create):
+        (JSC::InstanceOfAccessCase::dumpImpl const):
+        (JSC::InstanceOfAccessCase::clone const):
+        (JSC::InstanceOfAccessCase::~InstanceOfAccessCase):
+        (JSC::InstanceOfAccessCase::InstanceOfAccessCase):
+        * bytecode/InstanceOfAccessCase.h: Added.
+        (JSC::InstanceOfAccessCase::prototype const):
+        * bytecode/ObjectPropertyCondition.h:
+        (JSC::ObjectPropertyCondition::hasPrototypeWithoutBarrier):
+        (JSC::ObjectPropertyCondition::hasPrototype):
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::generateConditionsForInstanceOf):
+        * bytecode/ObjectPropertyConditionSet.h:
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::addCases):
+        (JSC::PolymorphicAccess::regenerate):
+        (WTF::printInternal):
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::dumpInContext const):
+        (JSC::PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint const):
+        (JSC::PropertyCondition::validityRequiresImpurePropertyWatchpoint const):
+        (WTF::printInternal):
+        * bytecode/PropertyCondition.h:
+        (JSC::PropertyCondition::absenceWithoutBarrier):
+        (JSC::PropertyCondition::absenceOfSetEffectWithoutBarrier):
+        (JSC::PropertyCondition::hasPrototypeWithoutBarrier):
+        (JSC::PropertyCondition::hasPrototype):
+        (JSC::PropertyCondition::hasPrototype const):
+        (JSC::PropertyCondition::prototype const):
+        (JSC::PropertyCondition::hash const):
+        (JSC::PropertyCondition::operator== const):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        (JSC::StructureStubInfo::reset):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::considerCaching):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGInlineCacheWrapper.h:
+        * dfg/DFGInlineCacheWrapperInlines.h:
+        (JSC::DFG::InlineCacheWrapper<GeneratorType>::finalize):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addInstanceOf):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::usedRegisters):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfForCells):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOf):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfForObject): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileAssertNotEmpty):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNumberIsInteger):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIn):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInstanceOf):
+        (JSC::FTL::DFG::LowerDFGToB3::getById):
+        (JSC::FTL::DFG::LowerDFGToB3::getByIdWithThis):
+        * jit/ICStats.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITInlineCacheGenerator::JITInlineCacheGenerator):
+        (JSC::JITInlineCacheGenerator::finalize):
+        (JSC::JITByIdGenerator::JITByIdGenerator):
+        (JSC::JITByIdGenerator::finalize):
+        (JSC::JITInstanceOfGenerator::JITInstanceOfGenerator):
+        (JSC::JITInstanceOfGenerator::generateFastPath):
+        (JSC::JITInstanceOfGenerator::finalize):
+        * jit/JITInlineCacheGenerator.h:
+        (JSC::JITInlineCacheGenerator::reportSlowPathCall):
+        (JSC::JITInlineCacheGenerator::slowPathBegin const):
+        (JSC::JITInstanceOfGenerator::JITInstanceOfGenerator):
+        (JSC::finalizeInlineCaches):
+        (JSC::JITByIdGenerator::reportSlowPathCall): Deleted.
+        (JSC::JITByIdGenerator::slowPathBegin const): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByValWithCachedId):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::stubUnavailableRegisters):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheIn):
+        (JSC::tryCacheInstanceOf):
+        (JSC::repatchInstanceOf):
+        (JSC::resetPatchableJump):
+        (JSC::resetIn):
+        (JSC::resetInstanceOf):
+        * jit/Repatch.h:
+        * runtime/Options.h:
+        * runtime/Structure.h:
+
 2018-05-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, fix exception checking

@@ -262,12 +262,10 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     for (unsigned i = 0; i < m_calls.size(); ++i)
         linkBuffer.link(m_calls[i].m_call, m_calls[i].m_function);
 
-    for (unsigned i = m_getByIds.size(); i--;)
-        m_getByIds[i].finalize(linkBuffer);
-    for (unsigned i = m_getByIdsWithThis.size(); i--;)
-        m_getByIdsWithThis[i].finalize(linkBuffer);
-    for (unsigned i = m_putByIds.size(); i--;)
-        m_putByIds[i].finalize(linkBuffer);
+    finalizeInlineCaches(m_getByIds, linkBuffer);
+    finalizeInlineCaches(m_getByIdsWithThis, linkBuffer);
+    finalizeInlineCaches(m_putByIds, linkBuffer);
+    finalizeInlineCaches(m_instanceOfs, linkBuffer);
 
     for (unsigned i = 0; i < m_ins.size(); ++i) {
         StructureStubInfo& info = *m_ins[i].m_stubInfo;

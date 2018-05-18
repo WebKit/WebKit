@@ -2423,15 +2423,6 @@ int64_t JIT_OPERATION operationConvertDoubleToInt52(double value)
     return tryConvertToInt52(value);
 }
 
-size_t JIT_OPERATION operationDefaultHasInstance(ExecState* exec, JSCell* value, JSCell* proto) // Returns jsBoolean(True|False) on 64-bit.
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    if (JSObject::defaultHasInstance(exec, value, proto))
-        return 1;
-    return 0;
-}
-
 char* JIT_OPERATION operationNewRawObject(ExecState* exec, Structure* structure, int32_t length, Butterfly* butterfly)
 {
     VM& vm = exec->vm();

@@ -222,6 +222,7 @@ bytecode/GetterSetterAccessCase.cpp
 bytecode/InlineAccess.cpp
 bytecode/InlineCallFrame.cpp
 bytecode/InlineCallFrameSet.cpp
+bytecode/InstanceOfAccessCase.cpp
 bytecode/IntrinsicGetterAccessCase.cpp
 bytecode/JumpTable.cpp
 bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp

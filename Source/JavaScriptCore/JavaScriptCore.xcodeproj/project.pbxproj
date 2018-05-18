@@ -310,6 +310,7 @@
 		0F485322187750560083B687 /* DFGArithMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F485320187750560083B687 /* DFGArithMode.h */; };
 		0F485328187DFDEC0083B687 /* FTLAvailableRecovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F485324187DFDEC0083B687 /* FTLAvailableRecovery.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F48532A187DFDEC0083B687 /* FTLRecoveryOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F485326187DFDEC0083B687 /* FTLRecoveryOpcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F49E9AA20AB4D00001CA0AA /* InstanceOfAccessCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F49E9A820AB4CFB001CA0AA /* InstanceOfAccessCase.h */; };
 		0F4A38FA1C8E13DF00190318 /* SuperSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4A38F81C8E13DF00190318 /* SuperSampler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F4AE0431FE0D25700E20839 /* InferredValueInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4AE0421FE0D25400E20839 /* InferredValueInlines.h */; };
 		0F4B94DC17B9F07500DD03A4 /* TypedArrayInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4B94DB17B9F07500DD03A4 /* TypedArrayInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2299,6 +2300,8 @@
 		0F485325187DFDEC0083B687 /* FTLRecoveryOpcode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLRecoveryOpcode.cpp; path = ftl/FTLRecoveryOpcode.cpp; sourceTree = "<group>"; };
 		0F485326187DFDEC0083B687 /* FTLRecoveryOpcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLRecoveryOpcode.h; path = ftl/FTLRecoveryOpcode.h; sourceTree = "<group>"; };
 		0F493AF816D0CAD10084508B /* SourceProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceProvider.cpp; sourceTree = "<group>"; };
+		0F49E9A720AB4CFB001CA0AA /* InstanceOfAccessCase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InstanceOfAccessCase.cpp; sourceTree = "<group>"; };
+		0F49E9A820AB4CFB001CA0AA /* InstanceOfAccessCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstanceOfAccessCase.h; sourceTree = "<group>"; };
 		0F4A38F71C8E13DF00190318 /* SuperSampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SuperSampler.cpp; sourceTree = "<group>"; };
 		0F4A38F81C8E13DF00190318 /* SuperSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SuperSampler.h; sourceTree = "<group>"; };
 		0F4AE0421FE0D25400E20839 /* InferredValueInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InferredValueInlines.h; sourceTree = "<group>"; };
@@ -5962,6 +5965,8 @@
 				534E034D1E4D4B1600213F64 /* AccessCase.h */,
 				53B0BE331E561AC900A8FC29 /* GetterSetterAccessCase.cpp */,
 				534E03571E53BF2F00213F64 /* GetterSetterAccessCase.h */,
+				0F49E9A720AB4CFB001CA0AA /* InstanceOfAccessCase.cpp */,
+				0F49E9A820AB4CFB001CA0AA /* InstanceOfAccessCase.h */,
 				53B0BE371E561B2400A8FC29 /* IntrinsicGetterAccessCase.cpp */,
 				534E03531E53BD2900213F64 /* IntrinsicGetterAccessCase.h */,
 				53B0BE351E561B0900A8FC29 /* ProxyableAccessCase.cpp */,
@@ -9208,6 +9213,7 @@
 				7C008CE7187631B600955C24 /* Microtask.h in Headers */,
 				FE2A87601F02381600EB31B2 /* MinimumReservedZoneSize.h in Headers */,
 				86C568E211A213EE0007F7F0 /* MIPSAssembler.h in Headers */,
+				0F49E9AA20AB4D00001CA0AA /* InstanceOfAccessCase.h in Headers */,
 				C4703CD7192844CC0013FBEA /* models.py in Headers */,
 				E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */,
 				9F63434577274FAFB9336C38 /* ModuleNamespaceAccessCase.h in Headers */,

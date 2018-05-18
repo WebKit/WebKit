@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,25 +20,42 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
 
-#include "DFGInlineCacheWrapper.h"
-#include "DFGSlowPathGenerator.h"
+#include "AccessCase.h"
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
-template<typename GeneratorType>
-void InlineCacheWrapper<GeneratorType>::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
-{
-    m_generator.reportSlowPathCall(m_slowPath->label(), m_slowPath->call());
-    m_generator.finalize(fastPath, slowPath);
-}
+class InstanceOfAccessCase : public AccessCase {
+public:
+    using Base = AccessCase;
+    
+    static std::unique_ptr<AccessCase> create(
+        VM&, JSCell*, AccessType, Structure*, const ObjectPropertyConditionSet&,
+        JSObject* prototype);
+    
+    JSObject* prototype() const { return m_prototype.get(); }
+    
+    void dumpImpl(PrintStream&, CommaPrinter&) const override;
+    std::unique_ptr<AccessCase> clone() const override;
+    
+    ~InstanceOfAccessCase();
 
-} } // namespace JSC::DFG
+protected:
+    InstanceOfAccessCase(
+        VM&, JSCell*, AccessType, Structure*, const ObjectPropertyConditionSet&,
+        JSObject* prototype);
 
-#endif // ENABLE(DFG_JIT)
+private:
+    WriteBarrier<JSObject> m_prototype;
+};
+
+} // namespace JSC
+
+#endif // ENABLE(JIT)
+

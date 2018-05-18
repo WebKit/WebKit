@@ -1,3 +1,24 @@
+2018-05-16  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should have InstanceOf inline caching
+        https://bugs.webkit.org/show_bug.cgi?id=185652
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/instanceof-always-hit-one.js: Added.
+        * microbenchmarks/instanceof-always-hit-two.js: Added.
+        * microbenchmarks/instanceof-dynamic.js: Added.
+        * microbenchmarks/instanceof-sometimes-hit.js: Added.
+        * stress/instanceof-dynamic-proxy-check-structure.js: Added.
+        * stress/instanceof-dynamic-proxy-loop.js: Added.
+        * stress/instanceof-dynamic-proxy.js: Added.
+        * stress/instanceof-hit-one-object-then-another.js: Added.
+        * stress/instanceof-hit-two-objects-then-another.js: Added.
+        * stress/instanceof-prototype-change.js: Added.
+        * stress/instanceof-prototype-change-to-hit.js: Added.
+        * stress/instanceof-prototype-change-to-null.js: Added.
+        * stress/instanceof-prototype-change-watchpointable.js: Added.
+
 2018-05-17  Michael Saboff  <msaboff@apple.com>
 
         We don't throw SyntaxErrors for runtime generated regular expressions with errors

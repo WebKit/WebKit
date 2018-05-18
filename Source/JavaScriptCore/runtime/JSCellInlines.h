@@ -215,7 +215,7 @@ inline bool JSCell::isCustomGetterSetter() const
 
 inline bool JSCell::isProxy() const
 {
-    return m_type == ImpureProxyType || m_type == PureForwardingProxyType;
+    return m_type == ImpureProxyType || m_type == PureForwardingProxyType || m_type == ProxyObjectType;
 }
 
 ALWAYS_INLINE bool JSCell::isFunction(VM& vm)

@@ -50,6 +50,7 @@ StructureStubInfo::StructureStubInfo(AccessType accessType)
     , resetByGC(false)
     , tookSlowPath(false)
     , everConsidered(false)
+    , prototypeIsKnownObject(false)
 {
 }
 
@@ -235,7 +236,10 @@ void StructureStubInfo::reset(CodeBlock* codeBlock)
         resetPutByID(codeBlock, *this);
         break;
     case AccessType::In:
-        resetIn(codeBlock, *this);
+        resetIn(*this);
+        break;
+    case AccessType::InstanceOf:
+        resetInstanceOf(*this);
         break;
     }
     

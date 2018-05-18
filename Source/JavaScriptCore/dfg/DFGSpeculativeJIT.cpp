@@ -373,6 +373,9 @@ RegisterSet SpeculativeJIT::usedRegisters()
             result.set(fpr);
     }
     
+    // FIXME: This is overly conservative. We could subtract out those callee-saves that we
+    // actually saved.
+    // https://bugs.webkit.org/show_bug.cgi?id=185686
     result.merge(RegisterSet::stubUnavailableRegisters());
     
     return result;
@@ -3317,69 +3320,6 @@ void SpeculativeJIT::compileGetByValWithThis(Node* node)
     jsValueResult(resultRegs, node);
 }
 
-void SpeculativeJIT::compileInstanceOfForObject(Node*, GPRReg valueReg, GPRReg prototypeReg, GPRReg scratchReg, GPRReg scratch2Reg, GPRReg scratch3Reg)
-{
-    // Check that prototype is an object.
-    speculationCheck(BadType, JSValueRegs(), 0, m_jit.branchIfNotObject(prototypeReg));
-    
-    // Initialize scratchReg with the value being checked.
-    m_jit.move(valueReg, scratchReg);
-    
-    // Walk up the prototype chain of the value (in scratchReg), comparing to prototypeReg.
-    MacroAssembler::Label loop(&m_jit);
-    MacroAssembler::Jump performDefaultHasInstance = m_jit.branchIfType(scratchReg, ProxyObjectType);
-    m_jit.emitLoadStructure(*m_jit.vm(), scratchReg, scratch3Reg, scratch2Reg);
-#if USE(JSVALUE64)
-    m_jit.load64(MacroAssembler::Address(scratch3Reg, Structure::prototypeOffset()), scratch3Reg);
-    auto hasMonoProto = m_jit.branchIfNotEmpty(scratch3Reg);
-    m_jit.load64(JITCompiler::Address(scratchReg, offsetRelativeToBase(knownPolyProtoOffset)), scratch3Reg);
-    hasMonoProto.link(&m_jit);
-    m_jit.move(scratch3Reg, scratchReg);
-#else
-    m_jit.load32(MacroAssembler::Address(scratch3Reg, Structure::prototypeOffset() + TagOffset), scratch2Reg);
-    m_jit.load32(MacroAssembler::Address(scratch3Reg, Structure::prototypeOffset() + PayloadOffset), scratch3Reg);
-    auto hasMonoProto = m_jit.branchIfNotEmpty(scratch2Reg);
-    m_jit.load32(JITCompiler::Address(scratchReg, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), scratch3Reg);
-    hasMonoProto.link(&m_jit);
-    m_jit.move(scratch3Reg, scratchReg);
-#endif
-
-    MacroAssembler::Jump isInstance = m_jit.branchPtr(MacroAssembler::Equal, scratchReg, prototypeReg);
-#if USE(JSVALUE64)
-    m_jit.branchIfCell(JSValueRegs(scratchReg)).linkTo(loop, &m_jit);
-#else
-    m_jit.branchTestPtr(MacroAssembler::NonZero, scratchReg).linkTo(loop, &m_jit);
-#endif
-    
-    // No match - result is false.
-#if USE(JSVALUE64)
-    m_jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsBoolean(false))), scratchReg);
-#else
-    m_jit.move(MacroAssembler::TrustedImm32(0), scratchReg);
-#endif
-    MacroAssembler::JumpList doneJumps; 
-    doneJumps.append(m_jit.jump());
-
-    performDefaultHasInstance.link(&m_jit);
-    silentSpillAllRegisters(scratchReg);
-    callOperation(operationDefaultHasInstance, scratchReg, valueReg, prototypeReg); 
-    silentFillAllRegisters();
-    m_jit.exceptionCheck();
-#if USE(JSVALUE64)
-    m_jit.or32(TrustedImm32(ValueFalse), scratchReg);
-#endif
-    doneJumps.append(m_jit.jump());
-    
-    isInstance.link(&m_jit);
-#if USE(JSVALUE64)
-    m_jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsBoolean(true))), scratchReg);
-#else
-    m_jit.move(MacroAssembler::TrustedImm32(1), scratchReg);
-#endif
-    
-    doneJumps.link(&m_jit);
-}
-
 void SpeculativeJIT::compileCheckTypeInfoFlags(Node* node)
 {
     SpeculateCellOperand base(this, node->child1());
@@ -3490,56 +3430,81 @@ void SpeculativeJIT::compileOverridesHasInstance(Node* node)
     unblessedBooleanResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileInstanceOfForCells(Node* node, JSValueRegs valueRegs, JSValueRegs prototypeRegs, GPRReg resultGPR, GPRReg scratchGPR, GPRReg scratch2GPR, JITCompiler::Jump slowCase)
+{
+    CallSiteIndex callSiteIndex = m_jit.addCallSite(node->origin.semantic);
+    
+    JITInstanceOfGenerator gen(
+        m_jit.codeBlock(), node->origin.semantic, callSiteIndex, usedRegisters(), resultGPR,
+        valueRegs.payloadGPR(), prototypeRegs.payloadGPR(), scratchGPR, scratch2GPR,
+        m_state.forNode(node->child2()).isType(SpecObject | ~SpecCell));
+    gen.generateFastPath(m_jit);
+    
+    JITCompiler::JumpList slowCases;
+    slowCases.append(slowCase);
+    
+    std::unique_ptr<SlowPathGenerator> slowPath = slowPathCall(
+        slowCases, this, operationInstanceOfOptimize, resultGPR, gen.stubInfo(), valueRegs,
+        prototypeRegs);
+    
+    m_jit.addInstanceOf(gen, slowPath.get());
+    addSlowPathGenerator(WTFMove(slowPath));
+}
+
 void SpeculativeJIT::compileInstanceOf(Node* node)
 {
-    if (node->child1().useKind() == UntypedUse) {
-        // It might not be a cell. Speculate less aggressively.
-        // Or: it might only be used once (i.e. by us), so we get zero benefit
-        // from speculating any more aggressively than we absolutely need to.
-        
-        JSValueOperand value(this, node->child1());
+#if USE(JSVALUE64)
+    if (node->child1().useKind() == CellUse
+        && node->child2().useKind() == CellUse) {
+        SpeculateCellOperand value(this, node->child1());
         SpeculateCellOperand prototype(this, node->child2());
+        
+        GPRTemporary result(this);
         GPRTemporary scratch(this);
         GPRTemporary scratch2(this);
-        GPRTemporary scratch3(this);
         
-        GPRReg prototypeReg = prototype.gpr();
-        GPRReg scratchReg = scratch.gpr();
-        GPRReg scratch2Reg = scratch2.gpr();
-        GPRReg scratch3Reg = scratch3.gpr();
+        GPRReg valueGPR = value.gpr();
+        GPRReg prototypeGPR = prototype.gpr();
+        GPRReg resultGPR = result.gpr();
+        GPRReg scratchGPR = scratch.gpr();
+        GPRReg scratch2GPR = scratch2.gpr();
         
-        MacroAssembler::Jump isCell = m_jit.branchIfCell(value.jsValueRegs());
-        GPRReg valueReg = value.jsValueRegs().payloadGPR();
-        moveFalseTo(scratchReg);
-
-        MacroAssembler::Jump done = m_jit.jump();
+        compileInstanceOfForCells(node, JSValueRegs(valueGPR), JSValueRegs(prototypeGPR), resultGPR, scratchGPR, scratch2GPR);
         
-        isCell.link(&m_jit);
-        
-        compileInstanceOfForObject(node, valueReg, prototypeReg, scratchReg, scratch2Reg, scratch3Reg);
-        
-        done.link(&m_jit);
-
-        blessedBooleanResult(scratchReg, node);
+        blessedBooleanResult(resultGPR, node);
         return;
     }
+#endif
     
-    SpeculateCellOperand value(this, node->child1());
-    SpeculateCellOperand prototype(this, node->child2());
+    DFG_ASSERT(m_jit.graph(), node, node->child1().useKind() == UntypedUse);
+    DFG_ASSERT(m_jit.graph(), node, node->child2().useKind() == UntypedUse);
     
+    JSValueOperand value(this, node->child1());
+    JSValueOperand prototype(this, node->child2());
+    
+    GPRTemporary result(this);
     GPRTemporary scratch(this);
-    GPRTemporary scratch2(this);
-    GPRTemporary scratch3(this);
     
-    GPRReg valueReg = value.gpr();
-    GPRReg prototypeReg = prototype.gpr();
-    GPRReg scratchReg = scratch.gpr();
-    GPRReg scratch2Reg = scratch2.gpr();
-    GPRReg scratch3Reg = scratch3.gpr();
+    JSValueRegs valueRegs = value.jsValueRegs();
+    JSValueRegs prototypeRegs = prototype.jsValueRegs();
     
-    compileInstanceOfForObject(node, valueReg, prototypeReg, scratchReg, scratch2Reg, scratch3Reg);
-
-    blessedBooleanResult(scratchReg, node);
+    GPRReg resultGPR = result.gpr();
+    GPRReg scratchGPR = scratch.gpr();
+    
+    JITCompiler::Jump isCell = m_jit.branchIfCell(valueRegs);
+    moveFalseTo(resultGPR);
+    
+    JITCompiler::Jump done = m_jit.jump();
+    
+    isCell.link(&m_jit);
+    
+    JITCompiler::Jump slowCase = m_jit.branchIfNotCell(prototypeRegs);
+    
+    compileInstanceOfForCells(node, valueRegs, prototypeRegs, resultGPR, scratchGPR, InvalidGPRReg, slowCase);
+    
+    done.link(&m_jit);
+    blessedBooleanResult(resultGPR, node);
+    return;
 }
 
 template<typename SnippetGenerator, J_JITOperation_EJJ snippetSlowPathFunction>

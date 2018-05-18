@@ -43,6 +43,8 @@ namespace JSC {
     macro(GetByIdSelfPatch) \
     macro(InAddAccessCase) \
     macro(InReplaceWithJump) \
+    macro(InstanceOfAddAccessCase) \
+    macro(InstanceOfReplaceWithJump) \
     macro(OperationGetById) \
     macro(OperationGetByIdGeneric) \
     macro(OperationGetByIdBuildList) \
