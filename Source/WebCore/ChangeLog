@@ -1,3 +1,16 @@
+2018-05-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement height computation for non-replaced floating elements.
+        https://bugs.webkit.org/show_bug.cgi?id=185767
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeFloatingHeight const):
+        (WebCore::Layout::FormattingContext::computeFloatingNonReplacedHeight const):
+        (WebCore::Layout::FormattingContext::contentHeightForFormattingContextRoot const):
+        * layout/FormattingContext.h:
+
 2018-05-18  Dirk Schulze  <krit@webkit.org>
 
         Make all SVG shape interfaces inherit from SVGGeometryElement

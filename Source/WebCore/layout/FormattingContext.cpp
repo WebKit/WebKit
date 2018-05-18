@@ -108,7 +108,7 @@ void FormattingContext::computeOutOfFlowHeight(LayoutContext& layoutContext, con
 void FormattingContext::computeFloatingHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     if (!layoutBox.replaced()) {
-        ASSERT_NOT_IMPLEMENTED_YET();
+        computeFloatingNonReplacedHeight(layoutContext, layoutBox, displayBox);
         return;
     }
     computeReplacedHeight(layoutContext, layoutBox, displayBox);
@@ -217,6 +217,18 @@ void FormattingContext::computeOutOfFlowNonReplacedHeight(LayoutContext& layoutC
     displayBox.setHeight(computedHeightValue);
 }
 
+void FormattingContext::computeFloatingNonReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    ASSERT(layoutBox.isFloatingPositioned() && !layoutBox.replaced());
+    // 10.6.6 Complicated cases
+    //
+    // Floating, non-replaced elements.
+    //
+    // If 'height' is 'auto', the height depends on the element's descendants per 10.6.7.
+    auto height = layoutBox.style().logicalHeight();
+    displayBox.setHeight(height.isAuto() ? contentHeightForFormattingContextRoot(layoutContext, layoutBox) : LayoutUnit(height.value()));
+}
+
 void FormattingContext::computeReplacedHeight(LayoutContext&, const Box& layoutBox, Display::Box& displayBox) const
 {
     ASSERT((layoutBox.isOutOfFlowPositioned() || layoutBox.isFloatingPositioned() || layoutBox.isInFlow()) && layoutBox.replaced());
@@ -317,12 +329,7 @@ void FormattingContext::computeReplacedWidth(LayoutContext&, const Box& layoutBo
 
 LayoutUnit FormattingContext::contentHeightForFormattingContextRoot(LayoutContext& layoutContext, const Box& layoutBox) const
 {
-    ASSERT(layoutBox.style().logicalHeight().isAuto());
-
-    if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
-        return 0;
-
-    auto& formattingRootContainer = downcast<Container>(layoutBox);
+    ASSERT(layoutBox.style().logicalHeight().isAuto() && layoutBox.establishesFormattingContext());
     // 10.6.7 'Auto' heights for block formatting context roots
 
     // If it only has inline-level children, the height is the distance between the top of the topmost line box and the bottom of the bottommost line box.
@@ -332,6 +339,10 @@ LayoutUnit FormattingContext::contentHeightForFormattingContextRoot(LayoutContex
     // In addition, if the element has any floating descendants whose bottom margin edge is below the element's bottom content edge,
     // then the height is increased to include those edges. Only floats that participate in this block formatting context are taken
     // into account, e.g., floats inside absolutely positioned descendants or other floats are not.
+    if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
+        return 0;
+
+    auto& formattingRootContainer = downcast<Container>(layoutBox);
     if (formattingRootContainer.establishesInlineFormattingContext())
         return 0;
 
