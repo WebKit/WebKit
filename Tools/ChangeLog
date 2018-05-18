@@ -1,3 +1,27 @@
+2018-05-18  Daniel Bates  <dabates@apple.com>
+
+        "debug-safari --ios-simulator" creates lldb target to launch Mac Safari
+        https://bugs.webkit.org/show_bug.cgi?id=185774
+
+        Reviewed by Andy Estes.
+
+        For now, the script debug-safari is not supported for WebKit for iOS. To
+        fix this we differentiate between the Apple Mac port and Apple embedded
+        ports.
+
+        * Scripts/webkitdirs.pm:
+        (safariPath): Substitute isAppleMacWebKit() for isAppleCocoaWebKit().
+        (isAppleMacWebKit): Added.
+        (isAppleCocoaWebKit): Write in terms of isAppleMacWebKit() and isEmbeddedWebKit().
+        (launcherName): Substitute isAppleMacWebKit() for isAppleCocoaWebKit().
+        (mobileSafariBundle): Substitute isIOSWebKit() for isAppleCocoaWebKit().
+        (debugSafari): Substitute isAppleMacWebKit() for isAppleCocoaWebKit().
+        (runSafari): Ditto.
+        (runMiniBrowser): Ditto.
+        (debugMiniBrowser): Ditto.
+        (runWebKitTestRunner): Ditto.
+        (debugWebKitTestRunner): Ditto.
+
 2018-05-18  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn Web Animations with CSS integration on for test runners
