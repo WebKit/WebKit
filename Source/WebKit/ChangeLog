@@ -1,3 +1,13 @@
+2018-05-18  Jer Noble  <jer.noble@apple.com>
+
+        Complete fix for enabling modern EME by default
+        https://bugs.webkit.org/show_bug.cgi?id=185770
+        <rdar://problem/40368220>
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-05-18  Brent Fulgham  <bfulgham@apple.com>
 
         Convert ProcessPrivilege assertions to regular debug-only assertions
