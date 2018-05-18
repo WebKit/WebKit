@@ -1,3 +1,15 @@
+2018-05-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [Curl] Enable HTTP/2 Multiplexing
+        https://bugs.webkit.org/show_bug.cgi?id=185746
+
+        Reviewed by Youenn Fablet.
+
+        Covered by existing tests.
+
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlMultiHandle::CurlMultiHandle):
+
 2018-05-17  Jeremy Jones  <jeremyj@apple.com>
 
         Remove unnecessary exit fullscreen call on application resume
