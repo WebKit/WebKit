@@ -949,17 +949,13 @@ void linkPolymorphicCall(
         // Verify that we have a function and stash the executable in scratchGPR.
 
 #if USE(JSVALUE64)
-        slowPath.append(stubJit.branchTest64(CCallHelpers::NonZero, calleeGPR, GPRInfo::tagMaskRegister));
+        slowPath.append(stubJit.branchIfNotCell(calleeGPR));
 #else
         // We would have already checked that the callee is a cell.
 #endif
 
         // FIXME: We could add a fast path for InternalFunction with closure call.
-        slowPath.append(
-            stubJit.branch8(
-                CCallHelpers::NotEqual,
-                CCallHelpers::Address(calleeGPR, JSCell::typeInfoTypeOffset()),
-                CCallHelpers::TrustedImm32(JSFunctionType)));
+        slowPath.append(stubJit.branchIfNotFunction(calleeGPR));
     
         stubJit.loadPtr(
             CCallHelpers::Address(calleeGPR, JSFunction::offsetOfExecutable()),

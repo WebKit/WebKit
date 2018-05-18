@@ -213,7 +213,7 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     Label done = label();
 
     if (!ASSERT_DISABLED) {
-        Jump resultOK = branch32(NotEqual, regT1, TrustedImm32(JSValue::EmptyValueTag));
+        Jump resultOK = branchIfNotEmpty(regT1);
         abortWithReason(JITGetByValResultIsNotEmpty);
         resultOK.link(this);
     }
@@ -235,7 +235,7 @@ JIT::JumpList JIT::emitContiguousLoad(Instruction*, PatchableJump& badType, Inde
     slowCases.append(branch32(AboveOrEqual, regT2, Address(regT3, Butterfly::offsetOfPublicLength())));
     load32(BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1); // tag
     load32(BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0); // payload
-    slowCases.append(branch32(Equal, regT1, TrustedImm32(JSValue::EmptyValueTag)));
+    slowCases.append(branchIfEmpty(regT1));
     
     return slowCases;
 }
@@ -263,7 +263,7 @@ JIT::JumpList JIT::emitArrayStorageLoad(Instruction*, PatchableJump& badType)
     slowCases.append(branch32(AboveOrEqual, regT2, Address(regT3, ArrayStorage::vectorLengthOffset())));
     load32(BaseIndex(regT3, regT2, TimesEight, ArrayStorage::vectorOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1); // tag
     load32(BaseIndex(regT3, regT2, TimesEight, ArrayStorage::vectorOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0); // payload
-    slowCases.append(branch32(Equal, regT1, TrustedImm32(JSValue::EmptyValueTag)));
+    slowCases.append(branchIfEmpty(regT1));
     
     return slowCases;
 }
@@ -276,7 +276,7 @@ JITGetByIdGenerator JIT::emitGetByValWithCachedId(ByValInfo* byValInfo, Instruct
     // property: tag(regT3), payload(regT2)
     // scratch: regT4
 
-    slowCases.append(branch32(NotEqual, regT3, TrustedImm32(JSValue::CellTag)));
+    slowCases.append(branchIfNotCell(regT3));
     emitByValIdentifierCheck(byValInfo, regT2, regT4, propertyName, slowCases);
 
     JITGetByIdGenerator gen(
@@ -395,7 +395,7 @@ JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction
     emitLoad(value, regT1, regT0);
     switch (indexingShape) {
     case Int32Shape:
-        slowCases.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
+        slowCases.append(branchIfNotInt32(regT1));
         store32(regT0, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
         store32(regT1, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
         break;
@@ -406,7 +406,7 @@ JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction
         emitWriteBarrier(base, value, ShouldFilterValue);
         break;
     case DoubleShape: {
-        Jump notInt = branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag));
+        Jump notInt = branchIfNotInt32(regT1);
         convertInt32ToDouble(regT0, fpRegT0);
         Jump ready = jump();
         notInt.link(this);
@@ -482,7 +482,7 @@ JITPutByIdGenerator JIT::emitPutByValWithCachedId(ByValInfo* byValInfo, Instruct
     int base = currentInstruction[1].u.operand;
     int value = currentInstruction[3].u.operand;
 
-    slowCases.append(branch32(NotEqual, regT3, TrustedImm32(JSValue::CellTag)));
+    slowCases.append(branchIfNotCell(regT3));
     emitByValIdentifierCheck(byValInfo, regT2, regT2, propertyName, slowCases);
 
     // Write barrier breaks the registers. So after issuing the write barrier,
@@ -933,7 +933,7 @@ void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
             else
                 emitGetVarFromPointer(bitwise_cast<JSValue*>(*operandSlot), regT1, regT0);
             if (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks) // TDZ check.
-                addSlowCase(branch32(Equal, regT1, TrustedImm32(JSValue::EmptyValueTag)));
+                addSlowCase(branchIfEmpty(regT1));
             break;
         case ClosureVar:
         case ClosureVarWithVarInjectionChecks:
@@ -1063,7 +1063,7 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
                     emitGetVarFromIndirectPointer(bitwise_cast<JSValue**>(operandSlot), regT1, regT0);
                 else
                     emitGetVarFromPointer(bitwise_cast<JSValue*>(*operandSlot), regT1, regT0);
-                addSlowCase(branch32(Equal, regT1, TrustedImm32(JSValue::EmptyValueTag)));
+                addSlowCase(branchIfEmpty(regT1));
             }
             if (indirectLoadForOperand)
                 emitPutGlobalVariableIndirect(bitwise_cast<JSValue**>(operandSlot), value, bitwise_cast<WatchpointSet**>(&currentInstruction[5]));
