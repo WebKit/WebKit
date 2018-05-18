@@ -99,6 +99,9 @@ public:
         DirectArgumentsLength,
         ScopedArgumentsLength,
         ModuleNamespaceLoad,
+        InstanceOfHit,
+        InstanceOfMiss,
+        InstanceOfGeneric
     };
 
     enum State : uint8_t {
@@ -126,7 +129,7 @@ public:
     // This create method should be used for transitions.
     static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, PropertyOffset, Structure* oldStructure,
         Structure* newStructure, const ObjectPropertyConditionSet&, std::unique_ptr<PolyProtoAccessChain>);
-
+    
     static std::unique_ptr<AccessCase> fromStructureStubInfo(VM&, JSCell* owner, StructureStubInfo&);
 
     AccessType type() const { return m_type; }
@@ -193,7 +196,7 @@ public:
     {
         return !!m_polyProtoAccessChain;
     }
-
+    
 protected:
     AccessCase(VM&, JSCell* owner, AccessType, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, std::unique_ptr<PolyProtoAccessChain>);
     AccessCase(AccessCase&&) = default;

@@ -50,7 +50,8 @@ enum class AccessType : int8_t {
     GetDirect,
     TryGet,
     Put,
-    In
+    In,
+    InstanceOf
 };
 
 enum class CacheType : int8_t {
@@ -138,6 +139,10 @@ public:
             // we don't already have a case buffered for. Note that if this returns true but the
             // bufferingCountdown is not zero then we will buffer the access case for later without
             // immediately generating code for it.
+            //
+            // NOTE: This will behave oddly for InstanceOf if the user varies the prototype but not
+            // the base's structure. That seems unlikely for the canonical use of instanceof, where
+            // the prototype is fixed.
             bool isNewlyAdded = bufferedStructures.add(structure);
             if (isNewlyAdded) {
                 VM& vm = *codeBlock->vm();
@@ -169,7 +174,7 @@ public:
     StructureSet bufferedStructures;
     
     struct {
-        CodeLocationLabel<JITStubRoutinePtrTag> start; // This is either the start of the inline IC for *byId caches, or the location of patchable jump for 'in' caches.
+        CodeLocationLabel<JITStubRoutinePtrTag> start; // This is either the start of the inline IC for *byId caches, or the location of patchable jump for 'in' and 'instanceof' caches.
         RegisterSet usedRegisters;
         uint32_t inlineSize;
         int32_t deltaFromStartToSlowPathCallLocation;
@@ -188,9 +193,9 @@ public:
     CodeLocationCall<JSInternalPtrTag> slowPathCallLocation() { return patch.start.callAtOffset<JSInternalPtrTag>(patch.deltaFromStartToSlowPathCallLocation); }
     CodeLocationLabel<JSInternalPtrTag> doneLocation() { return patch.start.labelAtOffset<JSInternalPtrTag>(patch.inlineSize); }
     CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation() { return patch.start.labelAtOffset(patch.deltaFromStartToSlowPathStart); }
-    CodeLocationJump<JSInternalPtrTag> patchableJumpForIn()
+    CodeLocationJump<JSInternalPtrTag> patchableJump()
     { 
-        ASSERT(accessType == AccessType::In);
+        ASSERT(accessType == AccessType::In || accessType == AccessType::InstanceOf);
         return patch.start.jumpAtOffset<JSInternalPtrTag>(0);
     }
 
@@ -213,6 +218,7 @@ public:
     bool resetByGC : 1;
     bool tookSlowPath : 1;
     bool everConsidered : 1;
+    bool prototypeIsKnownObject : 1; // Only relevant for InstanceOf.
 };
 
 inline CodeOrigin getStructureStubInfoCodeOrigin(StructureStubInfo& structureStubInfo)

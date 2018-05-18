@@ -99,7 +99,7 @@ struct Effects {
         result.fence = true;
         return result;
     }
-
+    
     static Effects forCheck()
     {
         Effects result;

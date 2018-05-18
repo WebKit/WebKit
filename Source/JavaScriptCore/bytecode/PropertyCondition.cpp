@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,17 +43,19 @@ void PropertyCondition::dumpInContext(PrintStream& out, DumpContext* context) co
         return;
     }
     
-    out.print(m_kind, " of ", m_uid);
     switch (m_kind) {
     case Presence:
-        out.print(" at ", offset(), " with attributes ", attributes());
+        out.print(m_kind, " of ", m_uid, " at ", offset(), " with attributes ", attributes());
         return;
     case Absence:
     case AbsenceOfSetEffect:
-        out.print(" with prototype ", inContext(JSValue(prototype()), context));
+        out.print(m_kind, " of ", m_uid, " with prototype ", inContext(JSValue(prototype()), context));
         return;
     case Equivalence:
-        out.print(" with ", inContext(requiredValue(), context));
+        out.print(m_kind, " of ", m_uid, " with ", inContext(requiredValue(), context));
+        return;
+    case HasPrototype:
+        out.print(m_kind, " with prototype ", inContext(JSValue(prototype()), context));
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -78,11 +80,26 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
             dataLog("Invalid because unset.\n");
         return false;
     }
-    
-    if (!structure->propertyAccessesAreCacheable()) {
-        if (PropertyConditionInternal::verbose)
-            dataLog("Invalid because accesses are not cacheable.\n");
-        return false;
+
+    switch (m_kind) {
+    case Presence:
+    case Absence:
+    case AbsenceOfSetEffect:
+    case Equivalence:
+        if (!structure->propertyAccessesAreCacheable()) {
+            if (PropertyConditionInternal::verbose)
+                dataLog("Invalid because property accesses are not cacheable.\n");
+            return false;
+        }
+        break;
+        
+    case HasPrototype:
+        if (!structure->prototypeQueriesAreCacheable()) {
+            if (PropertyConditionInternal::verbose)
+                dataLog("Invalid because prototype queries are not cacheable.\n");
+            return false;
+        }
+        break;
     }
     
     switch (m_kind) {
@@ -174,6 +191,27 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         return true;
     }
         
+    case HasPrototype: {
+        if (structure->hasPolyProto()) {
+            // FIXME: I think this is too conservative. We can probably prove this if
+            // we have the base. Anyways, we should make this work when integrating
+            // OPC and poly proto.
+            // https://bugs.webkit.org/show_bug.cgi?id=177339
+            return false;
+        }
+
+        if (structure->storedPrototypeObject() != prototype()) {
+            if (PropertyConditionInternal::verbose) {
+                dataLog(
+                    "Invalid because the prototype is ", structure->storedPrototype(), " even though "
+                    "it should have been ", JSValue(prototype()), "\n");
+            }
+            return false;
+        }
+        
+        return true;
+    }
+        
     case Equivalence: {
         if (!base || base->structure() != structure) {
             // Conservatively return false, since we cannot verify this one without having the
@@ -226,9 +264,13 @@ bool PropertyCondition::validityRequiresImpurePropertyWatchpoint(Structure* stru
     case Absence:
     case Equivalence:
         return structure->needImpurePropertyWatchpoint();
-    default:
+    case AbsenceOfSetEffect:
+    case HasPrototype:
         return false;
     }
+    
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
 }
 
 bool PropertyCondition::isStillValid(Structure* structure, JSObject* base) const
@@ -374,6 +416,9 @@ void printInternal(PrintStream& out, JSC::PropertyCondition::Kind condition)
         return;
     case JSC::PropertyCondition::Equivalence:
         out.print("Equivalence");
+        return;
+    case JSC::PropertyCondition::HasPrototype:
+        out.print("HasPrototype");
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();

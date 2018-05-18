@@ -1314,7 +1314,7 @@ void JIT::privateCompileGetByValWithCachedId(ByValInfo* byValInfo, ReturnAddress
         if (callSite.callee)
             patchBuffer.link(callSite.from, callSite.callee);
     }
-    gen.finalize(patchBuffer);
+    gen.finalize(patchBuffer, patchBuffer);
 
     byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
         m_codeBlock, patchBuffer, JITStubRoutinePtrTag,
@@ -1404,7 +1404,7 @@ void JIT::privateCompilePutByValWithCachedId(ByValInfo* byValInfo, ReturnAddress
         if (callSite.callee)
             patchBuffer.link(callSite.from, callSite.callee);
     }
-    gen.finalize(patchBuffer);
+    gen.finalize(patchBuffer, patchBuffer);
 
     byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
         m_codeBlock, patchBuffer, JITStubRoutinePtrTag,
