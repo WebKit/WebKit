@@ -27,7 +27,7 @@ PASS SVGAnimatedString inherits Object
 PASS SVGAnimatedTransformList inherits Object
 PASS SVGAnimationElement inherits SVGElement
 FAIL SVGCSSRule is not defined
-FAIL SVGCircleElement should inherit SVGGeometryElement but got SVGGraphicsElement instead
+PASS SVGCircleElement inherits SVGGeometryElement
 FAIL SVGClipPathElement should inherit SVGDefinitionElement but got SVGGraphicsElement instead
 FAIL SVGColorProfileElement is not defined
 FAIL SVGColorProfileRule is not defined
@@ -35,7 +35,7 @@ PASS SVGCursorElement inherits SVGElement
 PASS SVGDefsElement inherits SVGGraphicsElement
 PASS SVGDescElement inherits SVGElement
 PASS SVGElement inherits Element
-FAIL SVGEllipseElement should inherit SVGGeometryElement but got SVGGraphicsElement instead
+PASS SVGEllipseElement inherits SVGGeometryElement
 PASS SVGFontElement inherits SVGElement
 PASS SVGFontFaceElement inherits SVGElement
 PASS SVGFontFaceFormatElement inherits SVGElement
@@ -53,7 +53,7 @@ PASS SVGHKernElement inherits SVGElement
 PASS SVGImageElement inherits SVGGraphicsElement
 PASS SVGLength inherits Object
 PASS SVGLengthList inherits Object
-FAIL SVGLineElement should inherit SVGGeometryElement but got SVGGraphicsElement instead
+PASS SVGLineElement inherits SVGGeometryElement
 PASS SVGLinearGradientElement inherits SVGGradientElement
 PASS SVGMPathElement inherits SVGElement
 PASS SVGMarkerElement inherits SVGElement
@@ -93,12 +93,12 @@ PASS SVGPathSegMovetoRel inherits SVGPathSeg
 PASS SVGPatternElement inherits SVGElement
 PASS SVGPoint inherits Object
 PASS SVGPointList inherits Object
-FAIL SVGPolygonElement should inherit SVGGeometryElement but got SVGGraphicsElement instead
-FAIL SVGPolylineElement should inherit SVGGeometryElement but got SVGGraphicsElement instead
+PASS SVGPolygonElement inherits SVGGeometryElement
+PASS SVGPolylineElement inherits SVGGeometryElement
 PASS SVGPreserveAspectRatio inherits Object
 PASS SVGRadialGradientElement inherits SVGGradientElement
 PASS SVGRect inherits Object
-FAIL SVGRectElement should inherit SVGGeometryElement but got SVGGraphicsElement instead
+PASS SVGRectElement inherits SVGGeometryElement
 PASS SVGSVGElement inherits SVGGraphicsElement
 PASS SVGScriptElement inherits SVGElement
 PASS SVGSetElement inherits SVGAnimationElement

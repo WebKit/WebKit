@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGLineElement : SVGGraphicsElement {
+interface SVGLineElement : SVGGeometryElement {
     readonly attribute SVGAnimatedLength x1;
     readonly attribute SVGAnimatedLength y1;
     readonly attribute SVGAnimatedLength x2;

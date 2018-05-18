@@ -22,13 +22,13 @@
 
 #include "SVGAnimatedBoolean.h"
 #include "SVGExternalResourcesRequired.h"
-#include "SVGGraphicsElement.h"
+#include "SVGGeometryElement.h"
 #include "SVGNames.h"
 #include "SVGPointListValues.h"
 
 namespace WebCore {
 
-class SVGPolyElement : public SVGGraphicsElement, public SVGExternalResourcesRequired {
+class SVGPolyElement : public SVGGeometryElement, public SVGExternalResourcesRequired {
     WTF_MAKE_ISO_ALLOCATED(SVGPolyElement);
 public:
     Ref<SVGPointList> points();

@@ -64,6 +64,7 @@ function run() {
     shouldBe("p1.isPointInFill(svgPoint)", "false");
     shouldBe("p1.isPointInFill(new DOMPoint(NaN))", "false");
     shouldBe("p1.isPointInFill(new DOMPoint(Infinity))", "false");
+    shouldBe("p1.isPointInFill({x: 'string', y: 'string'})", "false");
     shouldThrow("p1.isPointInFill('string')");
 
     debug("");

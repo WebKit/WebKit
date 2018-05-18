@@ -23,11 +23,11 @@
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
-#include "SVGGraphicsElement.h"
+#include "SVGGeometryElement.h"
 
 namespace WebCore {
 
-class SVGLineElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired {
+class SVGLineElement final : public SVGGeometryElement, public SVGExternalResourcesRequired {
     WTF_MAKE_ISO_ALLOCATED(SVGLineElement);
 public:
     static Ref<SVGLineElement> create(const QualifiedName&, Document&);

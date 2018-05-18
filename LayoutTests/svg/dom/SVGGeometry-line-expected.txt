@@ -1,0 +1,37 @@
+Test SVGGeometryElement APIs for line.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Test isPointInFill()
+PASS l1.isPointInFill({}) is false
+PASS l1.isPointInFill({x: 0, y: 50}) is true
+PASS l1.isPointInFill({x: 50, y: 50}) is true
+PASS l1.isPointInFill({x: 100, y: 50}) is true
+PASS l1.isPointInFill({x: 50, y: 49}) is false
+PASS l1.isPointInFill({x: 50, y: 51}) is false
+
+Test isPointInStroke()
+PASS l1.isPointInStroke({x: 19, y: 50}) is false
+PASS l1.isPointInStroke({x: 20, y: 50}) is true
+PASS l1.isPointInStroke({x: 39, y: 50}) is true
+PASS l1.isPointInStroke({x: 40, y: 50}) is true
+PASS l1.isPointInStroke({x: 41, y: 50}) is false
+
+Test getTotalLength()
+PASS l1.getTotalLength() is within 1 of 100
+
+Test getPointAtLength()
+PASS l1.getPointAtLength(0).x is within 0.1 of 0
+PASS l1.getPointAtLength(0).y is within 0.1 of 50
+PASS l1.getPointAtLength(50).x is within 0.1 of 50
+PASS l1.getPointAtLength(50).y is within 0.1 of 50
+PASS l1.getPointAtLength(100).x is within 0.1 of 100
+PASS l1.getPointAtLength(100).y is within 0.1 of 50
+PASS l1.getPointAtLength(150).x is within 0.1 of 100
+PASS l1.getPointAtLength(150).y is within 0.1 of 50
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

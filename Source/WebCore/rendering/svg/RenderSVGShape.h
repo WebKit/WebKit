@@ -65,6 +65,9 @@ public:
     bool isPointInFill(const FloatPoint&);
     bool isPointInStroke(const FloatPoint&);
 
+    float getTotalLength() const;
+    void getPointAtLength(FloatPoint&, float distance) const;
+
     bool hasPath() const { return m_path.get(); }
     Path& path() const
     {

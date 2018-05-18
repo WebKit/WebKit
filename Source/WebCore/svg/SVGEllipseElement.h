@@ -23,11 +23,11 @@
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
-#include "SVGGraphicsElement.h"
+#include "SVGGeometryElement.h"
 
 namespace WebCore {
 
-class SVGEllipseElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired {
+class SVGEllipseElement final : public SVGGeometryElement, public SVGExternalResourcesRequired {
     WTF_MAKE_ISO_ALLOCATED(SVGEllipseElement);
 public:
     static Ref<SVGEllipseElement> create(const QualifiedName&, Document&);

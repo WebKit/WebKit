@@ -52,6 +52,30 @@ SVGGeometryElement::SVGGeometryElement(const QualifiedName& tagName, Document& d
     registerAnimatedPropertiesForSVGGeometryElement();
 }
 
+float SVGGeometryElement::getTotalLength() const
+{
+    document().updateLayoutIgnorePendingStylesheets();
+
+    auto* renderer = downcast<RenderSVGShape>(this->renderer());
+    if (!renderer)
+        return 0;
+
+    return renderer->getTotalLength();
+}
+
+Ref<SVGPoint> SVGGeometryElement::getPointAtLength(float distance) const
+{
+    FloatPoint point { };
+
+    document().updateLayoutIgnorePendingStylesheets();
+
+    auto* renderer = downcast<RenderSVGShape>(this->renderer());
+    if (renderer)
+        renderer->getPointAtLength(point, distance);
+
+    return SVGPoint::create(point);
+}
+
 bool SVGGeometryElement::isPointInFill(DOMPointInit&& pointInit)
 {
     document().updateLayoutIgnorePendingStylesheets();

@@ -1,0 +1,58 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body onload="run()">
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <line id="l1" x1="0" y1="50" x2="100" y2="50" fill="none" stroke="black" stroke-width="20" stroke-dashoffset="20" stroke-dasharray="20 20"/>
+</svg>
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+<![CDATA[
+window.enablePixelTesting = false;
+window.jsTestIsAsync = true;
+var l1 = document.getElementById("l1");
+
+function run() {
+    description("Test SVGGeometryElement APIs for line.");
+
+    debug("");
+    debug("Test isPointInFill()");
+    shouldBe("l1.isPointInFill({})", "false");
+    shouldBe("l1.isPointInFill({x: 0, y: 50})", "true");
+    shouldBe("l1.isPointInFill({x: 50, y: 50})", "true");
+    shouldBe("l1.isPointInFill({x: 100, y: 50})", "true");
+    shouldBe("l1.isPointInFill({x: 50, y: 49})", "false");
+    shouldBe("l1.isPointInFill({x: 50, y: 51})", "false");
+
+    debug("");
+    debug("Test isPointInStroke()");
+    shouldBe("l1.isPointInStroke({x: 19, y: 50})", "false");
+    shouldBe("l1.isPointInStroke({x: 20, y: 50})", "true");
+    shouldBe("l1.isPointInStroke({x: 39, y: 50})", "true");
+    shouldBe("l1.isPointInStroke({x: 40, y: 50})", "true");
+    shouldBe("l1.isPointInStroke({x: 41, y: 50})", "false");
+
+    debug("");
+    debug("Test getTotalLength()");
+    shouldBeCloseTo("l1.getTotalLength()", 100, 1);
+
+    debug("");
+    debug("Test getPointAtLength()");
+    shouldBeCloseTo("l1.getPointAtLength(0).x", 0, 0.1);
+    shouldBeCloseTo("l1.getPointAtLength(0).y", 50, 0.1);
+    shouldBeCloseTo("l1.getPointAtLength(50).x", 50, 0.1);
+    shouldBeCloseTo("l1.getPointAtLength(50).y", 50, 0.1);
+    shouldBeCloseTo("l1.getPointAtLength(100).x", 100, 0.1);
+    shouldBeCloseTo("l1.getPointAtLength(100).y", 50, 0.1);
+    shouldBeCloseTo("l1.getPointAtLength(150).x", 100, 0.1);
+    shouldBeCloseTo("l1.getPointAtLength(150).y", 50, 0.1);
+
+    finishJSTest();
+}
+]]>
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

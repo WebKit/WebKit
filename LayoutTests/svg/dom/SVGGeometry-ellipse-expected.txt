@@ -1,0 +1,50 @@
+Test SVGGeometryElement APIs for ellipse.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Test isPointInFill()
+PASS e1.isPointInFill({}) is false
+PASS e1.isPointInFill({x: 75, y: 50}) is true
+PASS e1.isPointInFill({x: 0, y: 50}) is true
+PASS e1.isPointInFill({x: 150, y: 50}) is true
+PASS e1.isPointInFill({x: 75, y: 0}) is true
+PASS e1.isPointInFill({x: 75, y: 100}) is true
+PASS e1.isPointInFill({x: -1, y: 50}) is false
+PASS e1.isPointInFill({x: 151, y: 50}) is false
+PASS e1.isPointInFill({x: 75, y: -1}) is false
+PASS e1.isPointInFill({x: 75, y: 101}) is false
+PASS e1.isPointInFill({x: 140, y: 90}) is false
+PASS e1.isPointInFill({x: 10, y: 10}) is false
+PASS e1.isPointInFill({x: 140, y: 10}) is false
+PASS e1.isPointInFill({x: 10, y: 90}) is false
+
+Test isPointInStroke()
+PASS e1.isPointInStroke({}) is false
+PASS e1.isPointInStroke({x: 75, y: 50}) is false
+PASS e1.isPointInStroke({x: 150, y: 51}) is false
+PASS e1.isPointInStroke({x: 150, y: 49}) is true
+PASS e1.isPointInStroke({x: 0, y: 52}) is true
+PASS e1.isPointInStroke({x: 0, y: 48}) is false
+PASS e1.isPointInStroke({x: 77, y: 100}) is false
+PASS e1.isPointInStroke({x: 73, y: 100}) is true
+
+Test getTotalLength()
+PASS e1.getTotalLength() is within 5 of 392.6990816987241
+
+Test getPointAtLength()
+PASS e1.getPointAtLength(0).x is within 0.1 of 150
+PASS e1.getPointAtLength(0).y is within 0.1 of 50
+PASS e1.getPointAtLength(Math.PI * (75 + 50) / 4).x is within 3 of 75
+PASS e1.getPointAtLength(Math.PI * (75 + 50) / 4).y is within 3 of 100
+PASS e1.getPointAtLength(Math.PI * (75 + 50) / 2).x is within 3 of 0
+PASS e1.getPointAtLength(Math.PI * (75 + 50) / 2).y is within 3 of 50
+PASS e1.getPointAtLength(Math.PI * (75 + 50) / 8).x is within 3 of 123
+PASS e1.getPointAtLength(Math.PI * (75 + 50) / 8).y is within 3 of 88
+PASS e1.getPointAtLength(Math.PI * (75 + 50) * 2).x is within 3 of 150
+PASS e1.getPointAtLength(Math.PI * (75 + 50) * 2).y is within 3 of 50
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

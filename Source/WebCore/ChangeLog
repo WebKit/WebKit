@@ -1,3 +1,58 @@
+2018-05-18  Dirk Schulze  <krit@webkit.org>
+
+        Make all SVG shape interfaces inherit from SVGGeometryElement
+        https://bugs.webkit.org/show_bug.cgi?id=185600
+
+        Reviewed by Antti Koivisto.
+
+        Make all SVG shape interfaces inherit from SVGGeometryElement
+        as defined by SVG2:
+
+        https://svgwg.org/svg2-draft/shapes.html#DOMInterfaces
+
+        Tests: svg/dom/SVGGeometry-circle.xhtml
+               svg/dom/SVGGeometry-ellipse.xhtml
+               svg/dom/SVGGeometry-line.xhtml
+               svg/dom/SVGGeometry-polygon.xhtml
+               svg/dom/SVGGeometry-polyline.xhtml
+               svg/dom/SVGGeometry-rect.xhtml
+
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::getTotalLength const): Added shape
+                independent implementation for all methods defined
+                by SVGGeometryElement interface. Calculations are
+                based on the Path object created and referenced by
+                RenderSVGShape.
+        (WebCore::RenderSVGShape::getPointAtLength const):
+        * rendering/svg/RenderSVGShape.h:
+        * svg/SVGCircleElement.cpp:
+                Repeating pattern: Change inheritance from
+                SVGGraphicsElement to SVGGeometryElement.
+        (WebCore::SVGCircleElement::SVGCircleElement):
+        * svg/SVGCircleElement.h:
+        * svg/SVGCircleElement.idl:
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::SVGEllipseElement):
+        * svg/SVGEllipseElement.h:
+        * svg/SVGEllipseElement.idl:
+        * svg/SVGGeometryElement.cpp:
+        (WebCore::SVGGeometryElement::getTotalLength const):
+        (WebCore::SVGGeometryElement::getPointAtLength const):
+        * svg/SVGGeometryElement.h:
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::SVGLineElement):
+        * svg/SVGLineElement.h:
+        * svg/SVGLineElement.idl:
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::SVGPolyElement):
+        * svg/SVGPolyElement.h:
+        * svg/SVGPolygonElement.idl:
+        * svg/SVGPolylineElement.idl:
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::SVGRectElement):
+        * svg/SVGRectElement.h:
+        * svg/SVGRectElement.idl:
+
 2018-05-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement height computation for replaced elements.

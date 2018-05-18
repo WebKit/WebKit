@@ -46,11 +46,11 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGLineElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(x2)
     REGISTER_LOCAL_ANIMATED_PROPERTY(y2)
     REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGraphicsElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGeometryElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document& document)
-    : SVGGraphicsElement(tagName, document)
+    : SVGGeometryElement(tagName, document)
     , m_x1(LengthModeWidth)
     , m_y1(LengthModeHeight)
     , m_x2(LengthModeWidth)

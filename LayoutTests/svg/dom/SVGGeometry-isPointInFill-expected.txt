@@ -20,6 +20,7 @@ PASS p1.isPointInFill(svgPoint) is true
 PASS p1.isPointInFill(svgPoint) is false
 PASS p1.isPointInFill(new DOMPoint(NaN)) is false
 PASS p1.isPointInFill(new DOMPoint(Infinity)) is false
+PASS p1.isPointInFill({x: 'string', y: 'string'}) is false
 PASS p1.isPointInFill('string') threw exception TypeError: Type error.
 
 Test that transform doesn't affect result

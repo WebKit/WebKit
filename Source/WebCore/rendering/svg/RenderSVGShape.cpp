@@ -345,6 +345,23 @@ bool RenderSVGShape::isPointInStroke(const FloatPoint& point)
     return shapeDependentStrokeContains(point, LocalCoordinateSpace);
 }
 
+float RenderSVGShape::getTotalLength() const
+{
+    if (m_path)
+        return m_path->length();
+
+    return 0;
+}
+
+void RenderSVGShape::getPointAtLength(FloatPoint& point, float distance) const
+{
+    if (!m_path)
+        return;
+
+    bool isValid;
+    point = m_path->pointAtLength(distance, isValid);
+}
+
 bool RenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
 {
     // We only draw in the forground phase, so we only hit-test then.

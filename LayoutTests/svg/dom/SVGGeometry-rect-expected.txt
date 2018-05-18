@@ -1,0 +1,50 @@
+Test SVGGeometryElement APIs for rect.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Test isPointInFill()
+PASS r1.isPointInFill({}) is false
+PASS r1.isPointInFill({x: 48, y: 0}) is false
+PASS r1.isPointInFill({x: 52, y: 0}) is true
+PASS r1.isPointInFill({x: 98, y: 0}) is true
+PASS r1.isPointInFill({x: 102, y: 0}) is false
+PASS r1.isPointInFill({x: 150, y: 38}) is false
+PASS r1.isPointInFill({x: 150, y: 42}) is true
+PASS r1.isPointInFill({x: 150, y: 58}) is true
+PASS r1.isPointInFill({x: 150, y: 62}) is false
+PASS r1.isPointInFill({x: 48, y: 100}) is false
+PASS r1.isPointInFill({x: 52, y: 100}) is true
+PASS r1.isPointInFill({x: 98, y: 100}) is true
+PASS r1.isPointInFill({x: 102, y: 100}) is false
+PASS r1.isPointInFill({x: 0, y: 38}) is false
+PASS r1.isPointInFill({x: 0, y: 42}) is true
+PASS r1.isPointInFill({x: 0, y: 58}) is true
+PASS r1.isPointInFill({x: 0, y: 62}) is false
+PASS r1.isPointInFill({x: 75, y: 50}) is true
+
+Test isPointInStroke()
+PASS r1.isPointInStroke({x: 52, y: 0}) is false
+PASS r1.isPointInStroke({x: 72, y: 0}) is true
+PASS r1.isPointInStroke({x: 92, y: 0}) is false
+PASS r1.isPointInStroke({x: 112, y: 10}) is true
+
+Test getTotalLength()
+PASS r1.getTotalLength() is within 1 of 424
+
+Test getPointAtLength()
+PASS r1.getPointAtLength(0).x is within 1 of 50
+PASS r1.getPointAtLength(0).y is within 1 of 0
+PASS r1.getPointAtLength(25).x is within 1 of 75
+PASS r1.getPointAtLength(25).y is within 1 of 0
+PASS r1.getPointAtLength(200).x is within 3 of 112
+PASS r1.getPointAtLength(200).y is within 3 of 100
+PASS r1.getPointAtLength(300).x is within 3 of 14
+PASS r1.getPointAtLength(300).y is within 3 of 88
+PASS r1.getPointAtLength(400).x is within 3 of 27
+PASS r1.getPointAtLength(400).y is within 3 of 5
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,29 @@
+2018-05-18  Dirk Schulze  <krit@webkit.org>
+
+        Make all SVG shape interfaces inherit from SVGGeometryElement
+        https://bugs.webkit.org/show_bug.cgi?id=185600
+
+        Reviewed by Antti Koivisto.
+
+        Update test for inheritance of SVG shape interfaces (more passes).
+        Add individual tests for SVGGeometryElement interfaces for each
+        SVG shape. There already are more detailed tests for the methods
+        and the SVGPathElement interface.
+
+        * svg/dom/SVGGeometry-circle-expected.txt: Added.
+        * svg/dom/SVGGeometry-circle.xhtml: Added.
+        * svg/dom/SVGGeometry-ellipse-expected.txt: Added.
+        * svg/dom/SVGGeometry-ellipse.xhtml: Added.
+        * svg/dom/SVGGeometry-line-expected.txt: Added.
+        * svg/dom/SVGGeometry-line.xhtml: Added.
+        * svg/dom/SVGGeometry-polygon-expected.txt: Added.
+        * svg/dom/SVGGeometry-polygon.xhtml: Added.
+        * svg/dom/SVGGeometry-polyline-expected.txt: Added.
+        * svg/dom/SVGGeometry-polyline.xhtml: Added.
+        * svg/dom/SVGGeometry-rect-expected.txt: Added.
+        * svg/dom/SVGGeometry-rect.xhtml: Added.
+        * svg/dom/svg2-inheritance-expected.txt:
+
 2018-05-18  Per Arne Vollan  <pvollan@apple.com>
 
         The test fast/images/animated-image-mp4-crash.html is failing on Windows.

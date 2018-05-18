@@ -1,0 +1,41 @@
+Test SVGGeometryElement APIs for polyline.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Test isPointInFill()
+PASS p1.isPointInFill({}) is true
+PASS p1.isPointInFill({x: 100, y: 0}) is true
+PASS p1.isPointInFill({x: 152, y: 0}) is false
+PASS p1.isPointInFill({x: 150, y: 50}) is true
+PASS p1.isPointInFill({x: 150, y: 100}) is true
+PASS p1.isPointInFill({x: 150, y: 101}) is false
+PASS p1.isPointInFill({x: 100, y: 100}) is true
+PASS p1.isPointInFill({x: 75, y: 50}) is true
+
+Test isPointInStroke()
+PASS p1.isPointInStroke({x: 0, y: 0}) is false
+PASS p1.isPointInStroke({x: 20, y: 0}) is true
+PASS p1.isPointInStroke({x: 150, y: 0}) is true
+PASS p1.isPointInStroke({x: 150, y: 35}) is true
+PASS p1.isPointInStroke({x: 75, y: 50}) is false
+
+Test getTotalLength()
+PASS p1.getTotalLength() is within 1 of 400
+
+Test getPointAtLength()
+PASS p1.getPointAtLength(0).x is within 0.1 of 0
+PASS p1.getPointAtLength(0).y is within 0.1 of 0
+PASS p1.getPointAtLength(150).x is within 0.1 of 150
+PASS p1.getPointAtLength(150).y is within 0.1 of 0
+PASS p1.getPointAtLength(200).x is within 0.1 of 150
+PASS p1.getPointAtLength(200).y is within 0.1 of 50
+PASS p1.getPointAtLength(300).x is within 0.1 of 100
+PASS p1.getPointAtLength(300).y is within 0.1 of 100
+PASS p1.getPointAtLength(450).x is within 0.1 of 0
+PASS p1.getPointAtLength(450).y is within 0.1 of 100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
