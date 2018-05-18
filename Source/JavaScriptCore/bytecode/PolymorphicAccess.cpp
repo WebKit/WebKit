@@ -258,39 +258,41 @@ AccessGenerationResult PolymorphicAccess::addCases(
     if (casesToAdd.isEmpty())
         return AccessGenerationResult::MadeNoChanges;
 
-    bool shouldReset = false;
-    AccessGenerationResult resetResult(AccessGenerationResult::ResetStubAndFireWatchpoints);
-    auto considerPolyProtoReset = [&] (Structure* a, Structure* b) {
-        if (Structure::shouldConvertToPolyProto(a, b)) {
-            // For now, we only reset if this is our first time invalidating this watchpoint.
-            // The reason we don't immediately fire this watchpoint is that we may be already
-            // watching the poly proto watchpoint, which if fired, would destroy us. We let
-            // the person handling the result to do a delayed fire.
-            ASSERT(a->rareData()->sharedPolyProtoWatchpoint().get() == b->rareData()->sharedPolyProtoWatchpoint().get());
-            if (a->rareData()->sharedPolyProtoWatchpoint()->isStillValid()) {
-                shouldReset = true;
-                resetResult.addWatchpointToFire(*a->rareData()->sharedPolyProtoWatchpoint(), StringFireDetail("Detected poly proto optimization opportunity."));
+    if (stubInfo.accessType != AccessType::InstanceOf) {
+        bool shouldReset = false;
+        AccessGenerationResult resetResult(AccessGenerationResult::ResetStubAndFireWatchpoints);
+        auto considerPolyProtoReset = [&] (Structure* a, Structure* b) {
+            if (Structure::shouldConvertToPolyProto(a, b)) {
+                // For now, we only reset if this is our first time invalidating this watchpoint.
+                // The reason we don't immediately fire this watchpoint is that we may be already
+                // watching the poly proto watchpoint, which if fired, would destroy us. We let
+                // the person handling the result to do a delayed fire.
+                ASSERT(a->rareData()->sharedPolyProtoWatchpoint().get() == b->rareData()->sharedPolyProtoWatchpoint().get());
+                if (a->rareData()->sharedPolyProtoWatchpoint()->isStillValid()) {
+                    shouldReset = true;
+                    resetResult.addWatchpointToFire(*a->rareData()->sharedPolyProtoWatchpoint(), StringFireDetail("Detected poly proto optimization opportunity."));
+                }
+            }
+        };
+
+        for (auto& caseToAdd : casesToAdd) {
+            for (auto& existingCase : m_list) {
+                Structure* a = caseToAdd->structure();
+                Structure* b = existingCase->structure();
+                considerPolyProtoReset(a, b);
             }
         }
-    };
-
-    for (auto& caseToAdd : casesToAdd) {
-        for (auto& existingCase : m_list) {
-            Structure* a = caseToAdd->structure();
-            Structure* b = existingCase->structure();
-            considerPolyProtoReset(a, b);
+        for (unsigned i = 0; i < casesToAdd.size(); ++i) {
+            for (unsigned j = i + 1; j < casesToAdd.size(); ++j) {
+                Structure* a = casesToAdd[i]->structure();
+                Structure* b = casesToAdd[j]->structure();
+                considerPolyProtoReset(a, b);
+            }
         }
-    }
-    for (unsigned i = 0; i < casesToAdd.size(); ++i) {
-        for (unsigned j = i + 1; j < casesToAdd.size(); ++j) {
-            Structure* a = casesToAdd[i]->structure();
-            Structure* b = casesToAdd[j]->structure();
-            considerPolyProtoReset(a, b);
-        }
-    }
 
-    if (shouldReset)
-        return resetResult;
+        if (shouldReset)
+            return resetResult;
+    }
 
     // Now add things to the new list. Note that at this point, we will still have old cases that
     // may be replaced by the new ones. That's fine. We will sort that out when we regenerate.
@@ -421,7 +423,18 @@ AccessGenerationResult PolymorphicAccess::regenerate(
             if (!someCase->couldStillSucceed())
                 return;
 
-            // Figure out if this is replaced by any later case.
+            // Figure out if this is replaced by any later case. Given two cases A and B where A
+            // comes first in the case list, we know that A would have triggered first if we had
+            // generated the cases in a cascade. That's why this loop asks B->canReplace(A) but not
+            // A->canReplace(B). If A->canReplace(B) was true then A would never have requested
+            // repatching in cases where Repatch.cpp would have then gone on to generate B. If that
+            // did happen by some fluke, then we'd just miss the redundancy here, which wouldn't be
+            // incorrect - just slow. However, if A's checks failed and Repatch.cpp concluded that
+            // this new condition could be handled by B and B->canReplace(A), then this says that we
+            // don't need A anymore.
+            //
+            // If we can generate a binary switch, then A->canReplace(B) == B->canReplace(A). So,
+            // it doesn't matter that we only do the check in one direction.
             for (unsigned j = srcIndex; j < m_list.size(); ++j) {
                 if (m_list[j]->canReplace(*someCase))
                     return;
@@ -438,6 +451,18 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     }
     m_list.resize(dstIndex);
     
+    bool generatedFinalCode = false;
+
+    // If the resulting set of cases is so big that we would stop caching and this is InstanceOf,
+    // then we want to generate the generic InstanceOf and then stop.
+    if (cases.size() >= Options::maxAccessVariantListSize()
+        && stubInfo.accessType == AccessType::InstanceOf) {
+        while (!cases.isEmpty())
+            m_list.append(cases.takeLast());
+        cases.append(AccessCase::create(vm, codeBlock, AccessCase::InstanceOfGeneric));
+        generatedFinalCode = true;
+    }
+
     if (PolymorphicAccessInternal::verbose)
         dataLog("Optimized cases: ", listDump(cases), "\n");
     
@@ -586,7 +611,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     m_list = WTFMove(cases);
     
     AccessGenerationResult::Kind resultKind;
-    if (m_list.size() >= Options::maxAccessVariantListSize())
+    if (m_list.size() >= Options::maxAccessVariantListSize() || generatedFinalCode)
         resultKind = AccessGenerationResult::GeneratedFinalCode;
     else
         resultKind = AccessGenerationResult::GeneratedNewCode;
@@ -691,6 +716,15 @@ void printInternal(PrintStream& out, AccessCase::AccessType type)
         return;
     case AccessCase::ModuleNamespaceLoad:
         out.print("ModuleNamespaceLoad");
+        return;
+    case AccessCase::InstanceOfHit:
+        out.print("InstanceOfHit");
+        return;
+    case AccessCase::InstanceOfMiss:
+        out.print("InstanceOfMiss");
+        return;
+    case AccessCase::InstanceOfGeneric:
+        out.print("InstanceOfGeneric");
         return;
     }
 

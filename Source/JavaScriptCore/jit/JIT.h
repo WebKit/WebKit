@@ -865,6 +865,7 @@ namespace JSC {
         Vector<JITGetByIdGenerator> m_getByIds;
         Vector<JITGetByIdWithThisGenerator> m_getByIdsWithThis;
         Vector<JITPutByIdGenerator> m_putByIds;
+        Vector<JITInstanceOfGenerator> m_instanceOfs;
         Vector<ByValCompilationInfo> m_byValCompilationInfo;
         Vector<CallCompilationInfo> m_callCompilationInfo;
         Vector<JumpTable> m_jmpTable;
@@ -880,6 +881,7 @@ namespace JSC {
         unsigned m_getByIdIndex;
         unsigned m_getByIdWithThisIndex;
         unsigned m_putByIdIndex;
+        unsigned m_instanceOfIndex;
         unsigned m_byValInstructionIndex;
         unsigned m_callLinkInfoIndex;
         

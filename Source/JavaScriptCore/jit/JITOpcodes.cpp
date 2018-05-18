@@ -146,39 +146,35 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     // We use regT0 for baseVal since we will be done with this first, and we can then use it for the result.
     emitGetVirtualRegister(value, regT2);
     emitGetVirtualRegister(proto, regT1);
-
+    
     // Check that proto are cells. baseVal must be a cell - this is checked by the get_by_id for Symbol.hasInstance.
     emitJumpSlowCaseIfNotJSCell(regT2, value);
     emitJumpSlowCaseIfNotJSCell(regT1, proto);
 
-    // Check that prototype is an object
-    addSlowCase(branchIfNotObject(regT1));
+    JITInstanceOfGenerator gen(
+        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(m_bytecodeOffset),
+        RegisterSet::stubUnavailableRegisters(),
+        regT0, // result
+        regT2, // value
+        regT1, // proto
+        regT3, regT4); // scratch
+    gen.generateFastPath(*this);
+    m_instanceOfs.append(gen);
     
-    // Optimistically load the result true, and start looping.
-    // Initially, regT1 still contains proto and regT2 still contains value.
-    // As we loop regT2 will be updated with its prototype, recursively walking the prototype chain.
-    move(TrustedImm64(JSValue::encode(jsBoolean(true))), regT0);
-    Label loop(this);
-
-    addSlowCase(branchIfType(regT2, ProxyObjectType));
-
-    // Load the prototype of the object in regT2.  If this is equal to regT1 - WIN!
-    // Otherwise, check if we've hit null - if we have then drop out of the loop, if not go again.
-    emitLoadStructure(*vm(), regT2, regT4, regT3);
-    load64(Address(regT4, Structure::prototypeOffset()), regT4);
-    auto hasMonoProto = branchIfNotEmpty(regT4);
-    load64(Address(regT2, offsetRelativeToBase(knownPolyProtoOffset)), regT4);
-    hasMonoProto.link(this);
-    move(regT4, regT2);
-    Jump isInstance = branchPtr(Equal, regT2, regT1);
-    branchIfCell(regT2).linkTo(loop, this);
-
-    // We get here either by dropping out of the loop, or if value was not an Object.  Result is false.
-    move(TrustedImm64(JSValue::encode(jsBoolean(false))), regT0);
-
-    // isInstance jumps right down to here, to skip setting the result to false (it has already set true).
-    isInstance.link(this);
     emitPutVirtualRegister(dst);
+}
+
+void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+    
+    int resultVReg = currentInstruction[1].u.operand;
+    
+    JITInstanceOfGenerator& gen = m_instanceOfs[m_instanceOfIndex++];
+    
+    Label coldPathBegin = label();
+    Call call = callOperation(operationInstanceOfOptimize, resultVReg, gen.stubInfo(), regT2, regT1);
+    gen.reportSlowPathCall(coldPathBegin, call);
 }
 
 void JIT::emit_op_instanceof_custom(Instruction*)
@@ -903,20 +899,6 @@ void JIT::emitSlow_op_jneq(Instruction* currentInstruction, Vector<SlowCaseEntry
     unsigned target = currentInstruction[3].u.operand;
     callOperation(operationCompareEq, regT0, regT1);
     emitJumpSlowToHot(branchTest32(Zero, returnValueGPR), target);
-}
-
-void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkAllSlowCases(iter);
-
-    auto& bytecode = *reinterpret_cast<OpInstanceof*>(currentInstruction);
-    int dst = bytecode.dst();
-    int value = bytecode.value();
-    int proto = bytecode.prototype();
-
-    emitGetVirtualRegister(value, regT0);
-    emitGetVirtualRegister(proto, regT1);
-    callOperation(operationInstanceOf, dst, regT0, regT1);
 }
 
 void JIT::emitSlow_op_instanceof_custom(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

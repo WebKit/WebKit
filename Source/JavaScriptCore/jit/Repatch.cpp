@@ -43,6 +43,7 @@
 #include "GetterSetterAccessCase.h"
 #include "ICStats.h"
 #include "InlineAccess.h"
+#include "InstanceOfAccessCase.h"
 #include "IntrinsicGetterAccessCase.h"
 #include "JIT.h"
 #include "JITInlines.h"
@@ -612,7 +613,7 @@ static InlineCacheAction tryCacheIn(
     AccessGenerationResult result;
 
     {
-        GCSafeConcurrentJSLocker locker(exec->codeBlock()->m_lock, exec->vm().heap);
+        GCSafeConcurrentJSLocker locker(exec->codeBlock()->m_lock, vm.heap);
         if (forceICFailure(exec))
             return GiveUpOnCache;
         
@@ -673,7 +674,7 @@ static InlineCacheAction tryCacheIn(
             RELEASE_ASSERT(result.code());
 
             MacroAssembler::repatchJump(
-                stubInfo.patchableJumpForIn(),
+                stubInfo.patchableJump(),
                 CodeLocationLabel<JITStubRoutinePtrTag>(result.code()));
         }
     }
@@ -690,6 +691,80 @@ void repatchIn(
     SuperSamplerScope superSamplerScope(false);
     if (tryCacheIn(exec, base, ident, wasFound, slot, stubInfo) == GiveUpOnCache)
         ftlThunkAwareRepatchCall(exec->codeBlock(), stubInfo.slowPathCallLocation(), operationIn);
+}
+
+static InlineCacheAction tryCacheInstanceOf(
+    ExecState* exec, JSValue valueValue, JSValue prototypeValue, StructureStubInfo& stubInfo,
+    bool wasFound)
+{
+    VM& vm = exec->vm();
+    CodeBlock* codeBlock = exec->codeBlock();
+    AccessGenerationResult result;
+    
+    RELEASE_ASSERT(valueValue.isCell()); // shouldConsiderCaching rejects non-cells.
+    
+    if (forceICFailure(exec))
+        return GiveUpOnCache;
+    
+    {
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
+        
+        JSCell* value = valueValue.asCell();
+        JSObject* prototype = jsDynamicCast<JSObject*>(vm, prototypeValue);
+        
+        Structure* structure = value->structure(vm);
+        
+        std::unique_ptr<AccessCase> newCase;
+        
+        if (!jsDynamicCast<JSObject*>(vm, value)) {
+            newCase = InstanceOfAccessCase::create(
+                vm, codeBlock, AccessCase::InstanceOfMiss, structure, ObjectPropertyConditionSet(),
+                prototype);
+        } else if (prototype && structure->prototypeQueriesAreCacheable()) {
+            // FIXME: Teach this to do poly proto.
+            // https://bugs.webkit.org/show_bug.cgi?id=185663
+            
+            ObjectPropertyConditionSet conditionSet = generateConditionsForInstanceOf(
+                vm, codeBlock, exec, structure, prototype, wasFound);
+            
+            if (conditionSet.isValid()) {
+                newCase = InstanceOfAccessCase::create(
+                    vm, codeBlock,
+                    wasFound ? AccessCase::InstanceOfHit : AccessCase::InstanceOfMiss,
+                    structure, conditionSet, prototype);
+            }
+        }
+        
+        if (!newCase)
+            newCase = AccessCase::create(vm, codeBlock, AccessCase::InstanceOfGeneric);
+        
+        LOG_IC((ICEvent::InstanceOfAddAccessCase, structure->classInfo(), Identifier()));
+        
+        result = stubInfo.addAccessCase(locker, codeBlock, Identifier(), WTFMove(newCase));
+        
+        if (result.generatedSomeCode()) {
+            LOG_IC((ICEvent::InstanceOfReplaceWithJump, structure->classInfo(), Identifier()));
+            
+            RELEASE_ASSERT(result.code());
+
+            MacroAssembler::repatchJump(
+                stubInfo.patchableJump(),
+                CodeLocationLabel<JITStubRoutinePtrTag>(result.code()));
+        }
+    }
+    
+    fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
+    
+    return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
+}
+
+void repatchInstanceOf(
+    ExecState* exec, JSValue valueValue, JSValue prototypeValue, StructureStubInfo& stubInfo,
+    bool wasFound)
+{
+    SuperSamplerScope superSamplerScope(false);
+    if (tryCacheInstanceOf(exec, valueValue, prototypeValue, stubInfo, wasFound) == GiveUpOnCache)
+        ftlThunkAwareRepatchCall(exec->codeBlock(), stubInfo.slowPathCallLocation(), operationInstanceOfGeneric);
 }
 
 static void linkSlowFor(VM*, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef<JITStubRoutinePtrTag> codeRef)
@@ -1156,9 +1231,19 @@ void resetPutByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
     InlineAccess::rewireStubAsJump(stubInfo, stubInfo.slowPathStartLocation());
 }
 
-void resetIn(CodeBlock*, StructureStubInfo& stubInfo)
+static void resetPatchableJump(StructureStubInfo& stubInfo)
 {
-    MacroAssembler::repatchJump(stubInfo.patchableJumpForIn(), stubInfo.slowPathStartLocation());
+    MacroAssembler::repatchJump(stubInfo.patchableJump(), stubInfo.slowPathStartLocation());
+}
+
+void resetIn(StructureStubInfo& stubInfo)
+{
+    resetPatchableJump(stubInfo);
+}
+
+void resetInstanceOf(StructureStubInfo& stubInfo)
+{
+    resetPatchableJump(stubInfo);
 }
 
 } // namespace JSC

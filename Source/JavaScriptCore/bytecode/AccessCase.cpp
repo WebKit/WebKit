@@ -35,6 +35,7 @@
 #include "GetterSetter.h"
 #include "GetterSetterAccessCase.h"
 #include "HeapInlines.h"
+#include "InstanceOfAccessCase.h"
 #include "IntrinsicGetterAccessCase.h"
 #include "JSCJSValueInlines.h"
 #include "JSModuleEnvironment.h"
@@ -76,6 +77,7 @@ std::unique_ptr<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
     case Replace:
+    case InstanceOfGeneric:
         RELEASE_ASSERT(!prototypeAccessChain);
         break;
     default:
@@ -148,10 +150,12 @@ Vector<WatchpointSet*, 2> AccessCase::commit(VM& vm, const Identifier& ident)
     Vector<WatchpointSet*, 2> result;
     Structure* structure = this->structure();
 
-    if ((structure && structure->needImpurePropertyWatchpoint())
-        || m_conditionSet.needImpurePropertyWatchpoint()
-        || (m_polyProtoAccessChain && m_polyProtoAccessChain->needImpurePropertyWatchpoint()))
-        result.append(vm.ensureWatchpointSetForImpureProperty(ident));
+    if (!ident.isNull()) {
+        if ((structure && structure->needImpurePropertyWatchpoint())
+            || m_conditionSet.needImpurePropertyWatchpoint()
+            || (m_polyProtoAccessChain && m_polyProtoAccessChain->needImpurePropertyWatchpoint()))
+            result.append(vm.ensureWatchpointSetForImpureProperty(ident));
+    }
 
     if (additionalSet())
         result.append(additionalSet());
@@ -183,6 +187,9 @@ bool AccessCase::guardedByStructureCheck() const
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
+    case InstanceOfHit:
+    case InstanceOfMiss:
+    case InstanceOfGeneric:
         return false;
     default:
         return true;
@@ -221,7 +228,10 @@ bool AccessCase::canReplace(const AccessCase& other) const
 {
     // This puts in a good effort to try to figure out if 'other' is made superfluous by '*this'.
     // It's fine for this to return false if it's in doubt.
-
+    //
+    // Note that if A->guardedByStructureCheck() && B->guardedByStructureCheck() then
+    // A->canReplace(B) == B->canReplace(A).
+    
     switch (type()) {
     case ArrayLength:
     case StringLength:
@@ -235,6 +245,25 @@ bool AccessCase::canReplace(const AccessCase& other) const
         auto& otherCase = this->as<ModuleNamespaceAccessCase>();
         return thisCase.moduleNamespaceObject() == otherCase.moduleNamespaceObject();
     }
+    case InstanceOfHit:
+    case InstanceOfMiss: {
+        if (other.type() != type())
+            return false;
+        
+        if (this->as<InstanceOfAccessCase>().prototype() != other.as<InstanceOfAccessCase>().prototype())
+            return false;
+        
+        return structure() == other.structure();
+    }
+    case InstanceOfGeneric:
+        switch (other.type()) {
+        case InstanceOfGeneric:
+        case InstanceOfHit:
+        case InstanceOfMiss:
+            return true;
+        default:
+            return false;
+        }
     default:
         if (other.type() != type())
             return false;
@@ -311,6 +340,9 @@ bool AccessCase::visitWeak(VM& vm) const
             return false;
         if (accessCase.moduleEnvironment() && !Heap::isMarked(accessCase.moduleEnvironment()))
             return false;
+    } else if (type() == InstanceOfHit || type() == InstanceOfMiss) {
+        if (as<InstanceOfAccessCase>().prototype() && !Heap::isMarked(as<InstanceOfAccessCase>().prototype()))
+            return false;
     }
 
     return true;
@@ -351,13 +383,80 @@ void AccessCase::generateWithGuard(
     m_state = Generated;
 
     CCallHelpers& jit = *state.jit;
+    StructureStubInfo& stubInfo = *state.stubInfo;
     VM& vm = state.m_vm;
     JSValueRegs valueRegs = state.valueRegs;
     GPRReg baseGPR = state.baseGPR;
+    GPRReg thisGPR = state.thisGPR != InvalidGPRReg ? state.thisGPR : baseGPR;
     GPRReg scratchGPR = state.scratchGPR;
 
     UNUSED_PARAM(vm);
 
+    auto emitDefaultGuard = [&] () {
+        if (m_polyProtoAccessChain) {
+            GPRReg baseForAccessGPR = state.scratchGPR;
+            jit.move(state.baseGPR, baseForAccessGPR);
+            m_polyProtoAccessChain->forEach(structure(), [&] (Structure* structure, bool atEnd) {
+                fallThrough.append(
+                    jit.branchStructure(
+                        CCallHelpers::NotEqual,
+                        CCallHelpers::Address(baseForAccessGPR, JSCell::structureIDOffset()),
+                        structure));
+                if (atEnd) {
+                    if ((m_type == Miss || m_type == InMiss || m_type == Transition) && structure->hasPolyProto()) {
+                        // For a Miss/InMiss/Transition, we must ensure we're at the end when the last item is poly proto.
+                        // Transitions must do this because they need to verify there isn't a setter in the chain.
+                        // Miss/InMiss need to do this to ensure there isn't a new item at the end of the chain that
+                        // has the property.
+#if USE(JSVALUE64)
+                        jit.load64(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset)), baseForAccessGPR);
+                        fallThrough.append(jit.branch64(CCallHelpers::NotEqual, baseForAccessGPR, CCallHelpers::TrustedImm64(ValueNull)));
+#else
+                        jit.load32(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), baseForAccessGPR);
+                        fallThrough.append(jit.branchTestPtr(CCallHelpers::NonZero, baseForAccessGPR));
+#endif
+                    }
+                } else {
+                    if (structure->hasMonoProto()) {
+                        JSValue prototype = structure->prototypeForLookup(state.m_globalObject);
+                        RELEASE_ASSERT(prototype.isObject());
+                        jit.move(CCallHelpers::TrustedImmPtr(asObject(prototype)), baseForAccessGPR);
+                    } else {
+                        RELEASE_ASSERT(structure->isObject()); // Primitives must have a stored prototype. We use prototypeForLookup for them.
+#if USE(JSVALUE64)
+                        jit.load64(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset)), baseForAccessGPR);
+                        fallThrough.append(jit.branch64(CCallHelpers::Equal, baseForAccessGPR, CCallHelpers::TrustedImm64(ValueNull)));
+#else
+                        jit.load32(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), baseForAccessGPR);
+                        fallThrough.append(jit.branchTestPtr(CCallHelpers::Zero, baseForAccessGPR));
+#endif
+                    }
+                }
+            });
+            return;
+        }
+        
+        if (viaProxy()) {
+            fallThrough.append(
+                jit.branchIfNotType(baseGPR, PureForwardingProxyType));
+            
+            jit.loadPtr(CCallHelpers::Address(baseGPR, JSProxy::targetOffset()), scratchGPR);
+            
+            fallThrough.append(
+                jit.branchStructure(
+                    CCallHelpers::NotEqual,
+                    CCallHelpers::Address(scratchGPR, JSCell::structureIDOffset()),
+                    structure()));
+            return;
+        }
+        
+        fallThrough.append(
+            jit.branchStructure(
+                CCallHelpers::NotEqual,
+                CCallHelpers::Address(baseGPR, JSCell::structureIDOffset()),
+                structure()));
+    };
+    
     switch (m_type) {
     case ArrayLength: {
         ASSERT(!viaProxy());
@@ -421,69 +520,101 @@ void AccessCase::generateWithGuard(
         return;
     }
 
-    default: {
-        if (m_polyProtoAccessChain) {
-            GPRReg baseForAccessGPR = state.scratchGPR;
-            jit.move(state.baseGPR, baseForAccessGPR);
-            m_polyProtoAccessChain->forEach(structure(), [&] (Structure* structure, bool atEnd) {
-                fallThrough.append(
-                    jit.branchStructure(
-                        CCallHelpers::NotEqual,
-                        CCallHelpers::Address(baseForAccessGPR, JSCell::structureIDOffset()),
-                        structure));
-                if (atEnd) {
-                    if ((m_type == Miss || m_type == InMiss || m_type == Transition) && structure->hasPolyProto()) {
-                        // For a Miss/InMiss/Transition, we must ensure we're at the end when the last item is poly proto.
-                        // Transitions must do this because they need to verify there isn't a setter in the chain.
-                        // Miss/InMiss need to do this to ensure there isn't a new item at the end of the chain that
-                        // has the property.
-#if USE(JSVALUE64)
-                        jit.load64(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset)), baseForAccessGPR);
-                        fallThrough.append(jit.branchIfNotNull(baseForAccessGPR));
-#else
-                        jit.load32(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), baseForAccessGPR);
-                        fallThrough.append(jit.branchTestPtr(CCallHelpers::NonZero, baseForAccessGPR));
-#endif
-                    }
-                } else {
-                    if (structure->hasMonoProto()) {
-                        JSValue prototype = structure->prototypeForLookup(state.m_globalObject);
-                        RELEASE_ASSERT(prototype.isObject());
-                        jit.move(CCallHelpers::TrustedImmPtr(asObject(prototype)), baseForAccessGPR);
-                    } else {
-                        RELEASE_ASSERT(structure->isObject()); // Primitives must have a stored prototype. We use prototypeForLookup for them.
-#if USE(JSVALUE64)
-                        jit.load64(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset)), baseForAccessGPR);
-                        fallThrough.append(jit.branchIfNull(baseForAccessGPR));
-#else
-                        jit.load32(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), baseForAccessGPR);
-                        fallThrough.append(jit.branchTestPtr(CCallHelpers::Zero, baseForAccessGPR));
-#endif
-                    }
-                }
-            });
-        } else {
-            if (viaProxy()) {
-                fallThrough.append(
-                    jit.branchIfNotType(baseGPR, PureForwardingProxyType));
-
-                jit.loadPtr(CCallHelpers::Address(baseGPR, JSProxy::targetOffset()), scratchGPR);
-
-                fallThrough.append(
-                    jit.branchStructure(
-                        CCallHelpers::NotEqual,
-                        CCallHelpers::Address(scratchGPR, JSCell::structureIDOffset()),
-                        structure()));
-            } else {
-                fallThrough.append(
-                    jit.branchStructure(
-                        CCallHelpers::NotEqual,
-                        CCallHelpers::Address(baseGPR, JSCell::structureIDOffset()),
-                        structure()));
-            }
-        }
+    case InstanceOfHit:
+    case InstanceOfMiss:
+        emitDefaultGuard();
+        
+        fallThrough.append(
+            jit.branchPtr(
+                CCallHelpers::NotEqual, thisGPR,
+                CCallHelpers::TrustedImmPtr(as<InstanceOfAccessCase>().prototype())));
         break;
-    } };
+        
+    case InstanceOfGeneric: {
+        // Legend: value = `base instanceof this`.
+        
+        GPRReg valueGPR = valueRegs.payloadGPR();
+        
+        ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
+        allocator.lock(baseGPR);
+        allocator.lock(valueGPR);
+        allocator.lock(thisGPR);
+        allocator.lock(scratchGPR);
+        
+        GPRReg scratch2GPR = allocator.allocateScratchGPR();
+        
+        if (!state.stubInfo->prototypeIsKnownObject)
+            state.failAndIgnore.append(jit.branchIfNotObject(thisGPR));
+        
+        ScratchRegisterAllocator::PreservedState preservedState =
+            allocator.preserveReusedRegistersByPushing(
+                jit,
+                ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+        CCallHelpers::Jump failAndIgnore;
+
+        jit.move(baseGPR, valueGPR);
+        
+        CCallHelpers::Label loop(&jit);
+        failAndIgnore = jit.branch8(
+            CCallHelpers::Equal,
+            CCallHelpers::Address(valueGPR, JSCell::typeInfoTypeOffset()),
+            CCallHelpers::TrustedImm32(ProxyObjectType));
+        
+        jit.emitLoadStructure(vm, valueGPR, scratch2GPR, scratchGPR);
+#if USE(JSVALUE64)
+        jit.load64(CCallHelpers::Address(scratch2GPR, Structure::prototypeOffset()), scratch2GPR);
+        CCallHelpers::Jump hasMonoProto = jit.branchTest64(CCallHelpers::NonZero, scratch2GPR);
+        jit.load64(
+            CCallHelpers::Address(valueGPR, offsetRelativeToBase(knownPolyProtoOffset)),
+            scratch2GPR);
+        hasMonoProto.link(&jit);
+#else
+        jit.load32(
+            CCallHelpers::Address(scratch2GPR, Structure::prototypeOffset() + TagOffset),
+            scratchGPR);
+        jit.load32(
+            CCallHelpers::Address(scratch2GPR, Structure::prototypeOffset() + PayloadOffset),
+            scratch2GPR);
+        CCallHelpers::Jump hasMonoProto = jit.branch32(
+            CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(JSValue::EmptyValueTag));
+        jit.load32(
+            CCallHelpers::Address(
+                valueGPR, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset),
+            scratch2GPR);
+        hasMonoProto.link(&jit);
+#endif
+        jit.move(scratch2GPR, valueGPR);
+        
+        CCallHelpers::Jump isInstance = jit.branchPtr(CCallHelpers::Equal, valueGPR, thisGPR);
+
+#if USE(JSVALUE64)
+        jit.branchIfCell(JSValueRegs(valueGPR)).linkTo(loop, &jit);
+#else
+        jit.branchTestPtr(CCallHelpers::NonZero, valueGPR).linkTo(loop, &jit);
+#endif
+    
+        jit.boxBooleanPayload(false, valueGPR);
+        allocator.restoreReusedRegistersByPopping(jit, preservedState);
+        state.succeed();
+        
+        isInstance.link(&jit);
+        jit.boxBooleanPayload(true, valueGPR);
+        allocator.restoreReusedRegistersByPopping(jit, preservedState);
+        state.succeed();
+        
+        if (allocator.didReuseRegisters()) {
+            failAndIgnore.link(&jit);
+            allocator.restoreReusedRegistersByPopping(jit, preservedState);
+            state.failAndIgnore.append(jit.jump());
+        } else
+            state.failAndIgnore.append(failAndIgnore);
+        return;
+    }
+        
+    default:
+        emitDefaultGuard();
+        break;
+    }
 
     generateImpl(state);
 }
@@ -558,6 +689,12 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         state.succeed();
         return;
 
+    case InstanceOfHit:
+    case InstanceOfMiss:
+        jit.boxBooleanPayload(m_type == InstanceOfHit, valueRegs.payloadGPR());
+        state.succeed();
+        return;
+        
     case Load:
     case GetGetter:
     case Getter:
@@ -936,7 +1073,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         }
 
         ScratchRegisterAllocator::PreservedState preservedState =
-        allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
+            allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
 
         CCallHelpers::JumpList slowPath;
 
@@ -1112,6 +1249,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
+    case InstanceOfGeneric:
         // These need to be handled by generateWithGuard(), since the guard is part of the
         // algorithm. We can be sure that nobody will call generate() directly for these since they
         // are not guarded by structure checks.

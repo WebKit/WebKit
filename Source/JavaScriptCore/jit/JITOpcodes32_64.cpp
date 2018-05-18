@@ -151,34 +151,16 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(value);
     emitJumpSlowCaseIfNotJSCell(proto);
     
-    // Check that prototype is an object
-    addSlowCase(branchIfNotObject(regT1));
-
-    // Optimistically load the result true, and start looping.
-    // Initially, regT1 still contains proto and regT2 still contains value.
-    // As we loop regT2 will be updated with its prototype, recursively walking the prototype chain.
-    move(TrustedImm32(1), regT0);
-    Label loop(this);
-
-    addSlowCase(branchIfType(regT2, ProxyObjectType));
-
-    // Load the prototype of the cell in regT2.  If this is equal to regT1 - WIN!
-    // Otherwise, check if we've hit null - if we have then drop out of the loop, if not go again.
-    loadPtr(Address(regT2, JSCell::structureIDOffset()), regT4);
-    load32(Address(regT4, Structure::prototypeOffset() + TagOffset), regT3);
-    load32(Address(regT4, Structure::prototypeOffset() + PayloadOffset), regT4);
-    auto hasMonoProto = branchIfNotEmpty(regT3);
-    load32(Address(regT2, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), regT4);
-    hasMonoProto.link(this);
-    move(regT4, regT2);
-    Jump isInstance = branchPtr(Equal, regT2, regT1);
-    branchTest32(NonZero, regT2).linkTo(loop, this);
-
-    // We get here either by dropping out of the loop, or if value was not an Object.  Result is false.
-    move(TrustedImm32(0), regT0);
-
-    // isInstance jumps right down to here, to skip setting the result to false (it has already set true).
-    isInstance.link(this);
+    JITInstanceOfGenerator gen(
+        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(m_bytecodeOffset),
+        RegisterSet::stubUnavailableRegisters(),
+        regT0, // result
+        regT2, // value
+        regT1, // proto
+        regT3, regT4); // scratch
+    gen.generateFastPath(*this);
+    m_instanceOfs.append(gen);
+    
     emitStoreBool(dst, regT0);
 }
 
@@ -191,15 +173,19 @@ void JIT::emit_op_instanceof_custom(Instruction*)
 void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
-
+    
     auto& bytecode = *reinterpret_cast<OpInstanceof*>(currentInstruction);
     int dst = bytecode.dst();
     int value = bytecode.value();
     int proto = bytecode.prototype();
-
-    emitLoad(value, regT1, regT0);
-    emitLoad(proto, regT3, regT2);
-    callOperation(operationInstanceOf, dst, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
+    
+    JITInstanceOfGenerator& gen = m_instanceOfs[m_instanceOfIndex++];
+    
+    Label coldPathBegin = label();
+    emitLoadTag(value, regT0);
+    emitLoadTag(proto, regT3);
+    Call call = callOperation(operationInstanceOfOptimize, dst, gen.stubInfo(), JSValueRegs(regT0, regT2), JSValueRegs(regT3, regT1));
+    gen.reportSlowPathCall(coldPathBegin, call);
 }
 
 void JIT::emitSlow_op_instanceof_custom(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

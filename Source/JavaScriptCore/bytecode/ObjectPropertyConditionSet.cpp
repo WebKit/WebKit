@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -390,6 +390,36 @@ ObjectPropertyConditionSet generateConditionsForPrototypePropertyHitCustom(
             conditions.append(result);
             return true;
         });
+}
+
+ObjectPropertyConditionSet generateConditionsForInstanceOf(
+    VM& vm, JSCell* owner, ExecState* exec, Structure* headStructure, JSObject* prototype,
+    bool shouldHit)
+{
+    bool didHit = false;
+    if (ObjectPropertyConditionSetInternal::verbose)
+        dataLog("Searching for prototype ", JSValue(prototype), " starting with structure ", RawPointer(headStructure), " with shouldHit = ", shouldHit, "\n");
+    ObjectPropertyConditionSet result = generateConditions(
+        vm, exec->lexicalGlobalObject(), headStructure, shouldHit ? prototype : nullptr,
+        [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
+            if (ObjectPropertyConditionSetInternal::verbose)
+                dataLog("Encountered object: ", RawPointer(object), "\n");
+            if (object == prototype) {
+                RELEASE_ASSERT(shouldHit);
+                didHit = true;
+                return true;
+            }
+            conditions.append(
+                ObjectPropertyCondition::hasPrototype(
+                    vm, owner, object, object->structure()->storedPrototypeObject()));
+            return true;
+        });
+    if (result.isValid()) {
+        if (ObjectPropertyConditionSetInternal::verbose)
+            dataLog("didHit = ", didHit, ", shouldHit = ", shouldHit, "\n");
+        RELEASE_ASSERT(didHit == shouldHit);
+    }
+    return result;
 }
 
 ObjectPropertyConditionSet generateConditionsForPrototypeEquivalenceConcurrently(

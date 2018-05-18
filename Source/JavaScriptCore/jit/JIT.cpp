@@ -478,6 +478,7 @@ void JIT::privateCompileSlowCases()
     m_getByIdIndex = 0;
     m_getByIdWithThisIndex = 0;
     m_putByIdIndex = 0;
+    m_instanceOfIndex = 0;
     m_byValInstructionIndex = 0;
     m_callLinkInfoIndex = 0;
     
@@ -599,6 +600,7 @@ void JIT::privateCompileSlowCases()
     RELEASE_ASSERT(m_getByIdIndex == m_getByIds.size());
     RELEASE_ASSERT(m_getByIdWithThisIndex == m_getByIdsWithThis.size());
     RELEASE_ASSERT(m_putByIdIndex == m_putByIds.size());
+    RELEASE_ASSERT(m_instanceOfIndex == m_instanceOfs.size());
     RELEASE_ASSERT(m_callLinkInfoIndex == m_callCompilationInfo.size());
     RELEASE_ASSERT(numberOfValueProfiles == m_codeBlock->numberOfValueProfiles());
 
@@ -836,13 +838,11 @@ CompilationResult JIT::link()
         if (record.callee)
             patchBuffer.link(record.from, record.callee);
     }
-
-    for (unsigned i = m_getByIds.size(); i--;)
-        m_getByIds[i].finalize(patchBuffer);
-    for (unsigned i = m_getByIdsWithThis.size(); i--;)
-        m_getByIdsWithThis[i].finalize(patchBuffer);
-    for (unsigned i = m_putByIds.size(); i--;)
-        m_putByIds[i].finalize(patchBuffer);
+    
+    finalizeInlineCaches(m_getByIds, patchBuffer);
+    finalizeInlineCaches(m_getByIdsWithThis, patchBuffer);
+    finalizeInlineCaches(m_putByIds, patchBuffer);
+    finalizeInlineCaches(m_instanceOfs, patchBuffer);
 
     if (m_byValCompilationInfo.size()) {
         CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler = patchBuffer.locationOf<ExceptionHandlerPtrTag>(m_exceptionHandler);
