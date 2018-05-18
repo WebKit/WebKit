@@ -1,5 +1,24 @@
 2018-05-18  Antoine Quint  <graouts@apple.com>
 
+        [modern-media-controls] AirPlaySupport should be disabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=185658
+        <rdar://problem/40272213>
+
+        Reviewed by Simon Fraser.
+
+        Add a new test that checks that we create an AirplaySupport object only after media has started playing.
+        We also modify a couple of existing tests so they are no longer flaky, as a first pass of this patch
+        revealed some flakiness.
+
+        * media/modern-media-controls/airplay-support/airplay-support-disable-event-listeners-until-play-expected.txt: Added.
+        * media/modern-media-controls/airplay-support/airplay-support-disable-event-listeners-until-play.html: Added.
+        * media/modern-media-controls/scrubber-support/scrubber-support-drag-expected.txt:
+        * media/modern-media-controls/scrubber-support/scrubber-support-drag.html:
+        * media/modern-media-controls/volume-support/volume-support-click-expected.txt:
+        * media/modern-media-controls/volume-support/volume-support-click.html:
+
+2018-05-18  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Turn Web Animations with CSS integration on for test runners
         https://bugs.webkit.org/show_bug.cgi?id=184819
         <rdar://problem/39597337>

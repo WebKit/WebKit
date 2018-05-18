@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS media.currentTime is within 0.2 of 3.0136
-PASS media.currentTime is 0
+PASS media.currentTime became 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

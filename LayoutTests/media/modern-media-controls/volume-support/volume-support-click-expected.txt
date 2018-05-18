@@ -3,8 +3,11 @@ Testing the VolumeSupport behavior when clicking the volume slider.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS media.paused became false
+PASS !!muteButtonElement.getBoundingClientRect().width became true
+PASS !!volumeSliderElement.getBoundingClientRect().width became true
 PASS mediaController.controls.volumeSlider.parent.visible is true
-PASS media.volume is 0.51
+PASS media.volume became 0.51
 PASS successfullyParsed is true
 
 TEST COMPLETE

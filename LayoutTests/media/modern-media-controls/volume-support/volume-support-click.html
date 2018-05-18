@@ -24,43 +24,32 @@ const container = document.querySelector("div#host");
 const media = document.querySelector("video");
 const mediaController = createControls(container, media, null);
 
-let numberOfFrames = 0;
-scheduler.frameDidFire = function() {
-    const muteButtonElement = mediaController.controls.muteButton.element;
-    const muteButtonBounds = muteButtonElement.getBoundingClientRect();
+const muteButtonElement = mediaController.controls.muteButton.element;
+const volumeSliderElement = mediaController.controls.volumeSlider.element;
 
-    if (media.paused || muteButtonBounds.width === 0)
-        return;
-
-    numberOfFrames++;
-
-    if (numberOfFrames == 1) {
+shouldBecomeEqual("media.paused", "false", () => {
+    shouldBecomeEqual("!!muteButtonElement.getBoundingClientRect().width", "true", () => {
         // Controls are now visible, let's hover over the mute button to make the volume control visible.
+        const muteButtonBounds = muteButtonElement.getBoundingClientRect();
         eventSender.mouseMoveTo(muteButtonBounds.left + muteButtonBounds.width / 2, muteButtonBounds.top + muteButtonBounds.height / 2);
-    } else if (numberOfFrames == 2) {
-        // Volume slider is visible, let's click in the middle of it.
-        const volumeSliderBounds = mediaController.controls.volumeSlider.element.getBoundingClientRect();
-        eventSender.mouseMoveTo(volumeSliderBounds.left + volumeSliderBounds.width / 2, volumeSliderBounds.top + volumeSliderBounds.height / 2);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
 
-        // Ensure the volume slider remains visible.
-        shouldBeTrue("mediaController.controls.volumeSlider.parent.visible");
+        shouldBecomeEqual("!!volumeSliderElement.getBoundingClientRect().width", "true", () => {
+            // Volume slider is visible, let's click in the middle of it.
+            const volumeSliderBounds = volumeSliderElement.getBoundingClientRect();
+            eventSender.mouseMoveTo(volumeSliderBounds.left + volumeSliderBounds.width / 2, volumeSliderBounds.top + volumeSliderBounds.height / 2);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
 
-        scheduler.frameDidFire = null;
-    }
-};
+            // Ensure the volume slider remains visible.
+            shouldBeTrue("mediaController.controls.volumeSlider.parent.visible");
 
-// First, ensure controls are shown.
-mediaController.controls.showsStartButton = false;
-
-media.addEventListener("volumechange", () => {
-    // Because the slider has a 9pt-wide knob and tests are ran at 1x, we can't get 0.5 here, and instead get 0.51 since
-    // the slider will only increment on whole pixels.
-    shouldBe("media.volume", "0.51");
-    container.remove();
-    media.remove();
-    finishJSTest();
+            shouldBecomeEqual("media.volume", "0.51", () => {
+                container.remove();
+                media.remove();
+                finishJSTest();
+            });
+        });
+    });
 });
 
 </script>

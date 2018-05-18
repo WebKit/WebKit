@@ -24,7 +24,6 @@ const container = document.querySelector("div#host");
 const media = document.querySelector("video");
 const mediaController = createControls(container, media, null);
 
-let numberOfEvents = 0;
 scheduler.frameDidFire = function() {
     if (media.paused)
         return;
@@ -42,24 +41,21 @@ scheduler.frameDidFire = function() {
     const centerY = bounds.top + bounds.height / 2;
 
     media.addEventListener("timeupdate", () => {
-        numberOfEvents++;
+        shouldBeCloseTo("media.currentTime", media.duration / 2, 0.2);
+        const delta = dragEndX - dragStartX;
+        const iterations = Math.abs(delta);
 
-        if (numberOfEvents == 1) {
-            shouldBeCloseTo("media.currentTime", media.duration / 2, 0.2);
-            const delta = dragEndX - dragStartX;
-            const iterations = Math.abs(delta);
-            for (let i = 1; i <= iterations; ++i)
-                eventSender.mouseMoveTo(dragStartX + i * Math.sign(delta), centerY);
+        for (let i = 1; i <= iterations; ++i)
+            eventSender.mouseMoveTo(dragStartX + i * Math.sign(delta), centerY);
 
-            eventSender.mouseUp();
-        } else {
-            shouldBe("media.currentTime", "0");
+        eventSender.mouseUp();
+
+        shouldBecomeEqual("media.currentTime", "0", () => {
             container.remove();
             media.remove();
             finishJSTest();
-        }
-    
-    });
+        });
+    }, { once: true });
 
     // Start dragging.
     eventSender.mouseMoveTo(dragStartX, centerY);
