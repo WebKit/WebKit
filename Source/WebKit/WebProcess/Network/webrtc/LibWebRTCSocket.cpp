@@ -54,7 +54,6 @@ LibWebRTCSocket::LibWebRTCSocket(LibWebRTCSocketFactory& factory, uint64_t ident
     , m_localAddress(localAddress)
     , m_remoteAddress(remoteAddress)
 {
-    memset(&m_options, 1, MAX_SOCKET_OPTION);
 }
 
 LibWebRTCSocket::~LibWebRTCSocket()
@@ -157,10 +156,11 @@ int LibWebRTCSocket::Close()
 int LibWebRTCSocket::GetOption(rtc::Socket::Option option, int* value)
 {
     ASSERT(option < MAX_SOCKET_OPTION);
-    int storedValue = m_options[option];
-    if (storedValue != -1)
-        *value = m_options[option];
-    return 0;
+    if (auto storedValue = m_options[option]) {
+        *value = *storedValue;
+        return 0;
+    }
+    return -1;
 }
 
 int LibWebRTCSocket::SetOption(rtc::Socket::Option option, int value)

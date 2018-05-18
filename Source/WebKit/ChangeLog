@@ -1,3 +1,22 @@
+2018-05-18  Youenn Fablet  <youenn@apple.com>
+
+        -Wmemset-elt-size warning in LibWebRTCSocket constructor
+        https://bugs.webkit.org/show_bug.cgi?id=185555
+        <rdar://problem/40217250>
+
+        Reviewed by Darin Adler.
+
+        GetOption implementation was broken in that it was not initializing properly its array of options.
+        This patch fixes it by using an array of optional<int> which are initialized by default.
+        When no value is set, we return the error code -1.
+        In theory, we should go to NetworkProcess to get the actual value.
+        Since GetOption is not used in practice, we just do this best effort implementation of storing previously set values.
+
+        * WebProcess/Network/webrtc/LibWebRTCSocket.cpp:
+        (WebKit::LibWebRTCSocket::LibWebRTCSocket):
+        (WebKit::LibWebRTCSocket::GetOption):
+        * WebProcess/Network/webrtc/LibWebRTCSocket.h:
+
 2018-05-18  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn Web Animations with CSS integration on for test runners
