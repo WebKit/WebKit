@@ -323,8 +323,6 @@ namespace JSC {
         
         void emitLoadDouble(int index, FPRegisterID value);
         void emitLoadInt32ToDouble(int index, FPRegisterID value);
-        Jump emitJumpIfCellObject(RegisterID cellReg);
-        Jump emitJumpIfCellNotObject(RegisterID cellReg);
 
         enum WriteBarrierMode { UnconditionalWriteBarrier, ShouldFilterBase, ShouldFilterValue, ShouldFilterBaseAndValue };
         // value register in write barrier is used before any scratch registers
@@ -441,13 +439,10 @@ namespace JSC {
             emitPutVirtualRegister(dst, payload);
         }
 
-        Jump emitJumpIfJSCell(RegisterID);
         Jump emitJumpIfBothJSCells(RegisterID, RegisterID, RegisterID);
         void emitJumpSlowCaseIfJSCell(RegisterID);
         void emitJumpSlowCaseIfNotJSCell(RegisterID);
         void emitJumpSlowCaseIfNotJSCell(RegisterID, int VReg);
-        Jump emitJumpIfInt(RegisterID);
-        Jump emitJumpIfNotInt(RegisterID);
         Jump emitJumpIfNotInt(RegisterID, RegisterID, RegisterID scratch);
         PatchableJump emitPatchableJumpIfNotInt(RegisterID);
         void emitJumpSlowCaseIfNotInt(RegisterID);

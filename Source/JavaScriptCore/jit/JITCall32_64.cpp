@@ -193,7 +193,7 @@ void JIT::compileCallEval(Instruction* instruction)
 
     callOperation(operationCallEval, regT1);
 
-    addSlowCase(branch32(Equal, regT1, TrustedImm32(JSValue::EmptyValueTag)));
+    addSlowCase(branchIfEmpty(regT1));
 
     sampleCodeBlock(m_codeBlock);
     
@@ -249,7 +249,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         
         if (opcodeID == op_call && shouldEmitProfiling()) {
             emitLoad(registerOffset + CallFrame::argumentOffsetIncludingThis(0), regT0, regT1);
-            Jump done = branch32(NotEqual, regT0, TrustedImm32(JSValue::CellTag));
+            Jump done = branchIfNotCell(regT0);
             loadPtr(Address(regT1, JSCell::structureIDOffset()), regT1);
             storePtr(regT1, instruction[OPCODE_LENGTH(op_call) - 2].u.arrayProfile->addressOfLastSeenStructureID());
             done.link(this);
@@ -275,7 +275,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs)
         emitRestoreCalleeSaves();
 
-    addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
+    addSlowCase(branchIfNotCell(regT1));
 
     DataLabelPtr addressOfLinkedFunctionCheck;
     Jump slowCase = branchPtrWithPatch(NotEqual, regT0, addressOfLinkedFunctionCheck, TrustedImmPtr(nullptr));

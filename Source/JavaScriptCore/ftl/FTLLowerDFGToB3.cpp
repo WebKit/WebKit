@@ -2953,7 +2953,7 @@ private:
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 GPRReg input =  params[0].gpr();
-                CCallHelpers::Jump done = jit.branchTest64(CCallHelpers::NonZero, input);
+                CCallHelpers::Jump done = jit.branchIfNotEmpty(input);
                 jit.breakpoint();
                 done.link(&jit);
             });

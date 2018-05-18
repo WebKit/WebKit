@@ -59,13 +59,8 @@ namespace JSC {
 #endif
 
 #if USE(JSVALUE64)
-        Jump emitJumpIfNotJSCell(RegisterID);
-        Jump emitJumpIfNumber(RegisterID);
-        Jump emitJumpIfNotNumber(RegisterID);
         void emitTagInt(RegisterID src, RegisterID dest);
 #endif
-
-        Jump emitJumpIfNotType(RegisterID baseReg, JSType);
 
         void emitGetFromCallFrameHeaderPtr(int entry, RegisterID to, RegisterID from = callFrameRegister);
         void emitPutToCallFrameHeader(RegisterID from, int entry);
@@ -147,43 +142,29 @@ namespace JSC {
 #endif
 
 #if USE(JSVALUE64)
-    ALWAYS_INLINE JSInterfaceJIT::Jump JSInterfaceJIT::emitJumpIfNotJSCell(RegisterID reg)
-    {
-        return branchTest64(NonZero, reg, tagMaskRegister);
-    }
-
-    ALWAYS_INLINE JSInterfaceJIT::Jump JSInterfaceJIT::emitJumpIfNumber(RegisterID reg)
-    {
-        return branchTest64(NonZero, reg, tagTypeNumberRegister);
-    }
-    ALWAYS_INLINE JSInterfaceJIT::Jump JSInterfaceJIT::emitJumpIfNotNumber(RegisterID reg)
-    {
-        return branchTest64(Zero, reg, tagTypeNumberRegister);
-    }
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadJSCell(unsigned virtualRegisterIndex, RegisterID dst)
     {
         load64(addressFor(virtualRegisterIndex), dst);
-        return branchTest64(NonZero, dst, tagMaskRegister);
+        return branchIfNotCell(dst);
     }
     
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadInt32(unsigned virtualRegisterIndex, RegisterID dst)
     {
         load64(addressFor(virtualRegisterIndex), dst);
-        Jump result = branch64(Below, dst, tagTypeNumberRegister);
+        Jump notInt32 = branchIfNotInt32(dst);
         zeroExtend32ToPtr(dst, dst);
-        return result;
+        return notInt32;
     }
 
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadDouble(unsigned virtualRegisterIndex, FPRegisterID dst, RegisterID scratch)
     {
         load64(addressFor(virtualRegisterIndex), scratch);
-        Jump notNumber = emitJumpIfNotNumber(scratch);
-        Jump notInt = branch64(Below, scratch, tagTypeNumberRegister);
+        Jump notNumber = branchIfNotNumber(scratch);
+        Jump notInt = branchIfNotInt32(scratch);
         convertInt32ToDouble(scratch, dst);
         Jump done = jump();
         notInt.link(this);
-        add64(tagTypeNumberRegister, scratch);
-        move64ToDouble(scratch, dst);
+        unboxDouble(scratch, scratch, dst);
         done.link(this);
         return notNumber;
     }
@@ -215,11 +196,6 @@ namespace JSC {
         return Address(base, (static_cast<unsigned>(virtualRegisterIndex) * sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
     }
 #endif
-
-    ALWAYS_INLINE JSInterfaceJIT::Jump JSInterfaceJIT::emitJumpIfNotType(RegisterID baseReg, JSType type)
-    {
-        return branch8(NotEqual, Address(baseReg, JSCell::typeInfoTypeOffset()), TrustedImm32(type));
-    }
 
     ALWAYS_INLINE void JSInterfaceJIT::emitGetFromCallFrameHeaderPtr(int entry, RegisterID to, RegisterID from)
     {
