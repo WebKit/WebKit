@@ -269,14 +269,14 @@
     return _processPoolConfiguration->processSwapsOnWindowOpenWithOpener();
 }
 
-- (BOOL)trackNetworkActivity
+- (BOOL)tracksResourceLoadMilestones
 {
-    return _processPoolConfiguration->trackNetworkActivity();
+    return _processPoolConfiguration->tracksResourceLoadMilestones();
 }
 
-- (void)setTrackNetworkActivity:(BOOL)track
+- (void)setTracksResourceLoadMilestones:(BOOL)track
 {
-    _processPoolConfiguration->setTrackNetworkActivity(track);
+    _processPoolConfiguration->setTracksResourceLoadMilestones(track);
 }
 
 - (BOOL)pageCacheEnabled

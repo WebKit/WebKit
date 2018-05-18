@@ -77,8 +77,8 @@ WK_EXPORT void WKContextConfigurationSetAlwaysKeepAndReuseSwappedProcesses(WKCon
 WK_EXPORT bool WKContextConfigurationProcessSwapsOnWindowOpenWithOpener(WKContextConfigurationRef configuration);
 WK_EXPORT void WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(WKContextConfigurationRef configuration, bool swaps);
 
-WK_EXPORT bool WKContextConfigurationTrackNetworkActivity(WKContextConfigurationRef configuration);
-WK_EXPORT void WKContextConfigurationSetTrackNetworkActivity(WKContextConfigurationRef configuration, bool track);
+WK_EXPORT bool WKContextConfigurationTracksResourceLoadMilestones(WKContextConfigurationRef configuration);
+WK_EXPORT void WKContextConfigurationSetTracksResourceLoadMilestones(WKContextConfigurationRef configuration, bool track);
 
 #ifdef __cplusplus
 }

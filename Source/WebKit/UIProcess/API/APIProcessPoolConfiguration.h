@@ -144,8 +144,8 @@ public:
     bool processSwapsOnWindowOpenWithOpener() const { return m_processSwapsOnWindowOpenWithOpener; }
     void setProcessSwapsOnWindowOpenWithOpener(bool swaps) { m_processSwapsOnWindowOpenWithOpener = swaps; }
 
-    bool trackNetworkActivity() const { return m_trackNetworkActivity; }
-    void setTrackNetworkActivity(bool track) { m_trackNetworkActivity = track; }
+    bool tracksResourceLoadMilestones() const { return m_tracksResourceLoadMilestones; }
+    void setTracksResourceLoadMilestones(bool track) { m_tracksResourceLoadMilestones = track; }
 
 #if ENABLE(WIFI_ASSERTIONS)
     unsigned wirelessContextIdentifier() const { return m_wirelessContextIdentifier; }
@@ -186,7 +186,7 @@ private:
     bool m_processSwapsOnNavigation { false };
     bool m_alwaysKeepAndReuseSwappedProcesses { false };
     bool m_processSwapsOnWindowOpenWithOpener { false };
-    bool m_trackNetworkActivity { false };
+    bool m_tracksResourceLoadMilestones { false };
 
 #if PLATFORM(IOS)
     WTF::String m_ctDataConnectionServiceType;

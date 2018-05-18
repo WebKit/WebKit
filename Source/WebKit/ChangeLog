@@ -1,3 +1,40 @@
+2018-05-18  Keith Rollin  <krollin@apple.com>
+
+        Renamed "trackNetworkActivity" to "tracksResourceLoadMilestones"
+        https://bugs.webkit.org/show_bug.cgi?id=185523
+        <rdar://problem/40136361>
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::networkActivityTrackingEnabled):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::tracksResourceLoadMilestones const):
+        (WebKit::NetworkProcess::trackNetworkActivity const): Deleted.
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationTracksResourceLoadMilestones):
+        (WKContextConfigurationSetTracksResourceLoadMilestones):
+        (WKContextConfigurationTrackNetworkActivity): Deleted.
+        (WKContextConfigurationSetTrackNetworkActivity): Deleted.
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration tracksResourceLoadMilestones]):
+        (-[_WKProcessPoolConfiguration setTracksResourceLoadMilestones:]):
+        (-[_WKProcessPoolConfiguration trackNetworkActivity]): Deleted.
+        (-[_WKProcessPoolConfiguration setTrackNetworkActivity:]): Deleted.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2018-05-18  Chris Dumez  <cdumez@apple.com>
 
         Avoid keeping the frame alive when ref'ing a WindowProxy

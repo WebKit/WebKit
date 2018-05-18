@@ -188,12 +188,12 @@ void WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(WKContextConfig
     toImpl(configuration)->setProcessSwapsOnWindowOpenWithOpener(swaps);
 }
 
-bool WKContextConfigurationTrackNetworkActivity(WKContextConfigurationRef configuration)
+bool WKContextConfigurationTracksResourceLoadMilestones(WKContextConfigurationRef configuration)
 {
-    return toImpl(configuration)->trackNetworkActivity();
+    return toImpl(configuration)->tracksResourceLoadMilestones();
 }
 
-void WKContextConfigurationSetTrackNetworkActivity(WKContextConfigurationRef configuration, bool track)
+void WKContextConfigurationSetTracksResourceLoadMilestones(WKContextConfigurationRef configuration, bool track)
 {
-    toImpl(configuration)->setTrackNetworkActivity(track);
+    toImpl(configuration)->setTracksResourceLoadMilestones(track);
 }

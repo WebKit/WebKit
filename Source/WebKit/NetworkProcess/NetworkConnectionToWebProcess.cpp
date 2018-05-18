@@ -548,7 +548,7 @@ void NetworkConnectionToWebProcess::resetOriginAccessWhitelists()
 
 static bool networkActivityTrackingEnabled()
 {
-    return NetworkProcess::singleton().trackNetworkActivity();
+    return NetworkProcess::singleton().tracksResourceLoadMilestones();
 }
 
 std::optional<NetworkActivityTracker> NetworkConnectionToWebProcess::startTrackingResourceLoad(uint64_t pageID, ResourceLoadIdentifier resourceID, bool isMainResource)
