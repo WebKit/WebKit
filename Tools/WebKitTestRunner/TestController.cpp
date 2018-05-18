@@ -714,7 +714,9 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetWebAuthenticationEnabled(preferences, options.enableWebAuthentication);
     WKPreferencesSetIsSecureContextAttributeEnabled(preferences, options.enableIsSecureContextAttribute);
     WKPreferencesSetAllowCrossOriginSubresourcesToAskForCredentials(preferences, options.allowCrossOriginSubresourcesToAskForCredentials);
-    WKPreferencesSetWebAnimationsCSSIntegrationEnabled(preferences, options.enableWebAnimationsCSSIntegration);
+
+    // We always want to have CSS Animations and CSS Transitions as Web Animations turned off for legacy-animation-engine directory.
+    WKPreferencesSetWebAnimationsCSSIntegrationEnabled(preferences, options.enableWebAnimationsCSSIntegration && !options.isLegacyAnimationEngineTest);
 
     static WKStringRef defaultTextEncoding = WKStringCreateWithUTF8CString("ISO-8859-1");
     WKPreferencesSetDefaultTextEncodingName(preferences, defaultTextEncoding);
@@ -1113,8 +1115,6 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.applicationManifest = parseStringTestHeaderValueAsRelativePath(value, pathOrURL);
         if (key == "allowCrossOriginSubresourcesToAskForCredentials")
             testOptions.allowCrossOriginSubresourcesToAskForCredentials = parseBooleanTestHeaderValue(value);
-        if (key == "enableWebAnimationsCSSIntegration")
-            testOptions.enableWebAnimationsCSSIntegration = parseBooleanTestHeaderValue(value);
         if (key == "enableProcessSwapOnNavigation")
             testOptions.enableProcessSwapOnNavigation = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;

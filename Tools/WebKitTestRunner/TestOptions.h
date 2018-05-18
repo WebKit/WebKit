@@ -55,7 +55,8 @@ struct TestOptions {
     bool shouldShowTouches { false };
     bool dumpJSConsoleLogInStdErr { false };
     bool allowCrossOriginSubresourcesToAskForCredentials { false };
-    bool enableWebAnimationsCSSIntegration { false };
+    bool enableWebAnimationsCSSIntegration { true };
+    bool isLegacyAnimationEngineTest { false };
     bool enableProcessSwapOnNavigation { false };
 
     float deviceScaleFactor { 1 };

@@ -1,3 +1,26 @@
+2018-05-18  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn Web Animations with CSS integration on for test runners
+        https://bugs.webkit.org/show_bug.cgi?id=184819
+        <rdar://problem/39597337>
+
+        Reviewed by Jon Lee.
+
+        We ensure we always call into both CSSAnimationController::cancelAnimations() and
+        AnimationTimeline::cancelDeclarativeAnimationsForElement() since we want teardown of animations
+        to be performed no matter which animation code path is used. What that in mind, we don't
+        conditionalize the CSSAnimationController-related ASSERT() in FrameView::didDestroyRenderTree().
+
+        * dom/Element.cpp:
+        (WebCore::Element::removedFromAncestor):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::clearHostElement):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didDestroyRenderTree):
+        * page/RuntimeEnabledFeatures.h:
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+
 2018-05-17  David Kilzer  <ddkilzer@apple.com>
 
         Lazily create WebCore::Timer for WebCore::Image

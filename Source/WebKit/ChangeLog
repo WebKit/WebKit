@@ -1,3 +1,14 @@
+2018-05-18  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn Web Animations with CSS integration on for test runners
+        https://bugs.webkit.org/show_bug.cgi?id=184819
+        <rdar://problem/39597337>
+
+        Reviewed by Jon Lee.
+
+        * Shared/WebPreferences.yaml: Leave Web Animations off by default, it's up to clients
+        to turn it on.
+
 2018-05-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Curl] Remove unused SystemProxyWin.cpp

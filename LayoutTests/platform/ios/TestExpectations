@@ -3298,3 +3298,5 @@ webkit.org/b/185028 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/185332 animations/duplicate-keys.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/183843 imported/mozilla/css-transitions/test_event-dispatch.html [ Pass Failure ]
+
+webkit.org/b/184580 animations/stop-animation-on-suspend.html [ Failure ]

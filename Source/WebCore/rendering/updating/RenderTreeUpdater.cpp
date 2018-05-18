@@ -553,11 +553,9 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
             auto& element = *teardownStack.takeLast();
 
             if (teardownType == TeardownType::Full || teardownType == TeardownType::RendererUpdateCancelingAnimations) {
-                if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-                    if (timeline)
-                        timeline->cancelDeclarativeAnimationsForElement(element);
-                } else
-                    animationController.cancelAnimations(element);
+                if (timeline)
+                    timeline->cancelDeclarativeAnimationsForElement(element);
+                animationController.cancelAnimations(element);
             }
 
             if (teardownType == TeardownType::Full)

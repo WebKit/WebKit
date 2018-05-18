@@ -99,8 +99,6 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             dumpJSConsoleLogInStdErr = parseBooleanTestHeaderValue(value);
         else if (key == "allowCrossOriginSubresourcesToAskForCredentials")
             allowCrossOriginSubresourcesToAskForCredentials = parseBooleanTestHeaderValue(value);
-        else if (key == "enableWebAnimationsCSSIntegration")
-            enableWebAnimationsCSSIntegration = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

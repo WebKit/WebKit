@@ -1745,11 +1745,9 @@ legacy-animation-engine/animations/transition-and-animation-2.html [ Pass Failur
 [ Debug ] legacy-animation-engine/animations/animation-hit-test-transform.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-hit-test.html [ Skip ] # Debug assertion
 [ Debug ] legacy-animation-engine/animations/animation-hit-test.html [ Skip ] # Debug assertion
-[ Debug ] animations/animation-internals-api.html [ Skip ] # Debug assertion
 [ Debug ] legacy-animation-engine/animations/animation-internals-api.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-direction-reverse-fill-mode-hardware.html [ Skip ] # Debug assertion
 [ Debug ] legacy-animation-engine/animations/animation-direction-reverse-fill-mode-hardware.html [ Skip ] # Debug assertion
-[ Debug ] animations/animation-internals-api-multiple-keyframes.html [ Skip ] # Debug assertion
 [ Debug ] legacy-animation-engine/animations/animation-internals-api-multiple-keyframes.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-shorthand-name-order.html [ Skip ] # Debug assertion
 [ Debug ] legacy-animation-engine/animations/animation-shorthand-name-order.html [ Skip ] # Debug assertion
@@ -1777,7 +1775,6 @@ legacy-animation-engine/animations/transition-and-animation-2.html [ Pass Failur
 [ Debug ] legacy-animation-engine/animations/animation-on-inline-crash.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-css-rule-types.html [ Skip ] # Debug assertion
 [ Debug ] legacy-animation-engine/animations/animation-css-rule-types.html [ Skip ] # Debug assertion
-[ Debug ] animations/animation-direction-alternate-reverse.html [ Skip ] # Debug assertion
 [ Debug ] legacy-animation-engine/animations/animation-direction-alternate-reverse.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-direction-reverse-timing-functions.html [ Skip ] # Debug assertion
 [ Debug ] legacy-animation-engine/animations/animation-direction-reverse-timing-functions.html [ Skip ] # Debug assertion
@@ -4066,6 +4063,12 @@ webkit.org/b/184482 legacy-animation-engine/compositing/reflections/nested-refle
 
 webkit.org/b/184537 fast/forms/file/entries-api/webkitEntries-nonascii-folder-name.html [ Skip ]
 
+webkit.org/b/184589 transitions/zero-duration-with-non-zero-delay-end.html [ Skip ]
+webkit.org/b/184589 animations/big-rotation.html [ Skip ]
+webkit.org/b/184589 fast/css-generated-content/pseudo-transition.html [ Skip ]
+webkit.org/b/184589 animations/animation-direction-alternate-reverse.html [ Skip ]
+webkit.org/b/184589 fast/css-generated-content/pseudo-animation.html [ Skip ]
+
 webkit.org/b/184649 css3/filters/blur-various-radii.html [ Crash ]
 
 webkit.org/b/184428 http/tests/misc/submit-post-keygen.html [ Skip ]
@@ -4087,4 +4090,3 @@ webkit.org/b/185471 http/tests/security/webaudio-render-remote-audio-blocked-no-
 webkit.org/b/185678 animations/keyframes-dynamic.html [ Failure ]
 webkit.org/b/185678 animations/missing-from-to-transforms.html [ Failure ]
 webkit.org/b/185678 animations/missing-from-to.html [ Failure ]
-webkit.org/b/185678 fast/css-generated-content/pseudo-animation.html [ Failure ]

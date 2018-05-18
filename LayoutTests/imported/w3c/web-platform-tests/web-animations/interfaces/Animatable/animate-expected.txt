@@ -118,6 +118,6 @@ PASS Element.animate() correctly sets the id attribute
 PASS Element.animate() correctly sets the Animation's timeline 
 PASS Element.animate() correctly sets the Animation's timeline when triggered on an element in a different document 
 PASS Element.animate() calls play on the Animation 
-FAIL CSSPseudoElement.animate() creates an Animation object assert_true: expected true got false
-FAIL CSSPseudoElement.animate() creates an Animation object targeting to the correct CSSPseudoElement object assert_true: expected true got false
+FAIL CSSPseudoElement.animate() creates an Animation object assert_equals: expected Element node <div class="pseudo"></div> but got null
+FAIL CSSPseudoElement.animate() creates an Animation object targeting to the correct CSSPseudoElement object assert_equals: expected Element node <div class="pseudo"></div> but got null
 

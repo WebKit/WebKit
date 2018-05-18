@@ -90,10 +90,9 @@ void PseudoElement::clearHostElement()
 {
     InspectorInstrumentation::pseudoElementDestroyed(document().page(), *this);
 
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        if (auto* timeline = document().existingTimeline())
-            timeline->cancelDeclarativeAnimationsForElement(*this);
-    } else if (auto* frame = document().frame())
+    if (auto* timeline = document().existingTimeline())
+        timeline->cancelDeclarativeAnimationsForElement(*this);
+    if (auto* frame = document().frame())
         frame->animation().cancelAnimations(*this);
 
     m_hostElement = nullptr;
