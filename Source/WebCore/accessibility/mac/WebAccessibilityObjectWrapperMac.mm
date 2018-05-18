@@ -1656,6 +1656,9 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const Visibl
     if (m_object->currentState() != AccessibilityCurrentState::False)
         objectAttributes = [objectAttributes arrayByAddingObjectsFromArray:@[ NSAccessibilityARIACurrentAttribute ]];
     
+    // AppKit needs to know the screen height in order to do the coordinate conversion.
+    objectAttributes = [objectAttributes arrayByAddingObjectsFromArray:@[ NSAccessibilityPrimaryScreenHeightAttribute ]];
+    
     return objectAttributes;
 }
 
@@ -1817,6 +1820,12 @@ static void WebTransformCGPathToNSBezierPath(void *info, const CGPathElement *el
     
     CGPathRef transformedPath = [self convertPathToScreenSpace:path];
     return [self bezierPathFromPath:transformedPath];
+}
+
+- (NSNumber *)primaryScreenHeight
+{
+    FloatRect screenRect = screenRectForPrimaryScreen();
+    return [NSNumber numberWithFloat:screenRect.height()];
 }
 
 - (NSValue *)position
@@ -2700,6 +2709,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return [NSValue valueWithSize: NSMakeSize(s.width(), s.height())];
     }
     
+    if ([attributeName isEqualToString: NSAccessibilityPrimaryScreenHeightAttribute])
+        return [self primaryScreenHeight];
     if ([attributeName isEqualToString: NSAccessibilityPositionAttribute])
         return [self position];
     if ([attributeName isEqualToString:NSAccessibilityPathAttribute])
