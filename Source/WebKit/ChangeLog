@@ -1,3 +1,16 @@
+2018-05-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Curl] Remove unused SystemProxyWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=185224
+
+        Reviewed by Antti Koivisto.
+
+        SystemProxyWin is not used at the moment. Remove it.
+
+        * NetworkProcess/win/SystemProxyWin.cpp: Removed.
+        * NetworkProcess/win/SystemProxyWin.h: Removed.
+        * PlatformWin.cmake: Removed SystemProxyWin.cpp.
+
 2018-05-17  Nan Wang  <n_wang@apple.com>
 
         AX: [macOS] Expose the primary screen height through AX API

@@ -10,7 +10,6 @@ add_definitions(-DBUILDING_WEBKIT)
 
 list(APPEND WebKit_SOURCES
     NetworkProcess/win/NetworkProcessMainWin.cpp
-    NetworkProcess/win/SystemProxyWin.cpp
 
     Platform/IPC/win/AttachmentWin.cpp
     Platform/IPC/win/ConnectionWin.cpp
