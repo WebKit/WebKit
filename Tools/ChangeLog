@@ -1,3 +1,25 @@
+2018-05-18  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn Web Animations with CSS integration on for test runners
+        https://bugs.webkit.org/show_bug.cgi?id=184819
+        <rdar://problem/39597337>
+
+        Unreviewed. Rolling out the patch for this bug, it caused some flaky timeouts for animation suspension tests.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (TestOptions::TestOptions):
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runTest):
+        (shouldOverrideAndDisableWebAnimationsCSSIntegrationPreference): Deleted.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::TestOptions):
+        (WTR::isLegacyAnimationEngineTestPath): Deleted.
+        * WebKitTestRunner/TestOptions.h:
+
 2018-05-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MiniBrowser] Create MainWindow even in transparent mode

@@ -1,3 +1,13 @@
+2018-05-18  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn Web Animations with CSS integration on for test runners
+        https://bugs.webkit.org/show_bug.cgi?id=184819
+        <rdar://problem/39597337>
+
+        Unreviewed. Rolling out the patch for this bug, it caused some flaky timeouts for animation suspension tests.
+
+        * Shared/WebPreferences.yaml:
+
 2018-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Clearing text fields should dispatch input events of type "deleteContent"

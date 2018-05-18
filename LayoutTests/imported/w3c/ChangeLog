@@ -4,6 +4,20 @@
         https://bugs.webkit.org/show_bug.cgi?id=184819
         <rdar://problem/39597337>
 
+        Unreviewed. Rolling out the patch for this bug, it caused some flaky timeouts for animation suspension tests.
+
+        * web-platform-tests/css-timing-1/frames-timing-functions-output.html:
+        * web-platform-tests/web-animations/interfaces/Animatable/animate-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/ready.html:
+        * web-platform-tests/web-animations/timing-model/animations/playing-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/reversing-an-animation.html:
+
+2018-05-18  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn Web Animations with CSS integration on for test runners
+        https://bugs.webkit.org/show_bug.cgi?id=184819
+        <rdar://problem/39597337>
+
         Reviewed by Jon Lee.
 
         Since Web Animations with CSS integration is on by default on test runners, we no longer need

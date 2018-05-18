@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    #target {
+      position: relative;
+      left: 100px;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-transition-property: left;
+      -webkit-transition-duration: 4s;
+      -webkit-transition-timing-function: linear;
+    }
+    
+    #target.moved {
+      left: 200px;
+    }
+   </style>
+   <script>
+    if (window.testRunner)
+      testRunner.dumpAsText();
+
+    function endTest() {
+      if (window.testRunner) {
+        var target = document.getElementById('target');
+        var paused = internals.pauseTransitionAtTimeOnElement("left", 1.0, target);
+        var result = "";
+        if (paused)
+          result = "PASS: correctly paused transition";
+        else
+          result = "FAIL: failed to pause transition";
+
+        document.getElementById('results').innerText = result;
+        testRunner.notifyDone();
+      } else
+        document.getElementById('results').innerText = "This test requires DRT";
+    }
+    
+    function startTest() {
+      if (window.testRunner)
+        testRunner.waitUntilDone();
+      
+      document.getElementById("target").className = "moved";
+      window.setTimeout(endTest, 0);
+    }
+   </script>
+</head>
+<body onload="startTest()">
+  <!-- Test for Interals pauseTransitionAtTimeOnElement() API -->
+  <div id="target"></div>
+  <div id="results"></div>
+
+</body>
+</html>

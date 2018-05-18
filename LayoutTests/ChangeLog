@@ -1,3 +1,210 @@
+2018-05-18  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn Web Animations with CSS integration on for test runners
+        https://bugs.webkit.org/show_bug.cgi?id=184819
+        <rdar://problem/39597337>
+
+        Unreviewed. Rolling out the patch for this bug, it caused some flaky timeouts for animation suspension tests.
+
+        * TestExpectations:
+        * animations/3d/matrix-transform-type-animation.html:
+        * animations/3d/replace-filling-transform.html:
+        * animations/3d/transform-origin-vs-functions.html:
+        * animations/3d/transform-perspective.html:
+        * animations/additive-transform-animations.html:
+        * animations/animation-border-overflow.html:
+        * animations/animation-callback-timestamp.html:
+        * animations/animation-controller-drt-api.html:
+        * animations/animation-direction-alternate-reverse-expected.txt:
+        * animations/animation-direction-alternate-reverse.html:
+        * animations/animation-direction-reverse-fill-mode-hardware.html:
+        * animations/animation-direction-reverse-hardware-opacity.html:
+        * animations/animation-direction-reverse-hardware.html:
+        * animations/animation-direction-reverse-non-hardware.html:
+        * animations/animation-direction-reverse-timing-functions-hardware.html:
+        * animations/animation-direction-reverse-timing-functions.html:
+        * animations/animation-direction.html:
+        * animations/animation-followed-by-transition.html:
+        * animations/animation-hit-test-transform.html:
+        * animations/animation-hit-test.html:
+        * animations/animation-internals-api-expected.txt: Added.
+        * animations/animation-internals-api-multiple-keyframes-expected.txt: Added.
+        * animations/animation-internals-api-multiple-keyframes.html: Added.
+        * animations/animation-internals-api.html: Added.
+        * animations/animation-offscreen-to-onscreen.html:
+        * animations/big-rotation-expected.txt:
+        * animations/big-rotation.html:
+        * animations/change-completed-animation-transform.html:
+        * animations/change-keyframes.html:
+        * animations/combo-transform-rotate+scale.html:
+        * animations/cross-fade-background-image.html:
+        * animations/cross-fade-border-image-source.html:
+        * animations/cross-fade-list-style-image.html:
+        * animations/cross-fade-webkit-mask-box-image.html:
+        * animations/duplicate-keys-expected.html:
+        * animations/duplicate-keys.html:
+        * animations/duplicated-keyframes-name.html:
+        * animations/fill-forwards-end-state.html:
+        * animations/fill-mode-forwards-zero-duration-expected.txt:
+        * animations/fill-mode-forwards-zero-duration.html:
+        * animations/font-variations/font-stretch.html:
+        * animations/font-variations/font-style.html:
+        * animations/font-variations/font-variation-settings-order.html:
+        * animations/font-variations/font-variation-settings-unlike.html:
+        * animations/font-variations/font-variation-settings.html:
+        * animations/font-variations/font-weight.html:
+        * animations/generic-from-to.html:
+        * animations/import.html:
+        * animations/keyframe-multiple-timing-functions-transform.html:
+        * animations/keyframe-timing-functions-transform.html:
+        * animations/keyframe-timing-functions.html:
+        * animations/keyframe-timing-functions2.html:
+        * animations/keyframes-comma-separated.html:
+        * animations/keyframes-dynamic.html:
+        * animations/keyframes-infinite-iterations.html:
+        * animations/keyframes-invalid-keys.html:
+        * animations/keyframes-out-of-order.html:
+        * animations/keyframes.html:
+        * animations/lineheight-animation.html:
+        * animations/longhand-timing-function.html:
+        * animations/matrix-anim.html:
+        * animations/missing-from-to-transforms.html:
+        * animations/missing-from-to.html:
+        * animations/missing-keyframe-properties-repeating.html:
+        * animations/missing-keyframe-properties-timing-function.html:
+        * animations/missing-keyframe-properties.html:
+        * animations/missing-values-first-keyframe.html:
+        * animations/missing-values-last-keyframe.html:
+        * animations/multiple-animations-timing-function.html:
+        * animations/multiple-animations.html:
+        * animations/multiple-keyframes.html:
+        * animations/negative-delay.html:
+        * animations/pause-crash.html:
+        * animations/play-state-start-paused.html:
+        * animations/simultaneous-start-left.html:
+        * animations/simultaneous-start-transform.html:
+        * animations/spring-function.html:
+        * animations/stacking-context-unchanged-while-running.html:
+        * animations/timing-functions.html:
+        * animations/transition-and-animation-1.html:
+        * animations/transition-and-animation-2.html:
+        * animations/transition-and-animation-3.html:
+        * animations/unanimated-style.html:
+        * animations/unprefixed-keyframes.html:
+        * animations/width-using-ems.html:
+        * compositing/animation/animated-composited-inside-hidden.html:
+        * compositing/animation/computed-style-during-delay.html:
+        * compositing/animation/layer-for-filling-animation.html:
+        * compositing/backing/backface-visibility-flip.html:
+        * compositing/contents-scale/animating.html:
+        * compositing/layer-creation/animation-overlap-with-children.html:
+        * compositing/layer-creation/mismatched-rotated-transform-animation-overlap.html:
+        * compositing/layer-creation/multiple-keyframes-animation-overlap.html:
+        * compositing/layer-creation/overlap-animation-clipping.html:
+        * compositing/layer-creation/overlap-animation-container.html:
+        * compositing/layer-creation/overlap-animation.html:
+        * compositing/layer-creation/scale-rotation-animation-overlap.html:
+        * compositing/layer-creation/translate-animation-overlap.html:
+        * compositing/layer-creation/translate-scale-animation-overlap.html:
+        * compositing/overflow/overflow-positioning.html:
+        * compositing/reflections/animation-inside-reflection.html:
+        * compositing/reflections/nested-reflection-animated.html:
+        * compositing/reflections/nested-reflection-transition.html:
+        * compositing/transitions/scale-transition-no-start.html:
+        * compositing/transitions/singular-scale-transition.html:
+        * compositing/visible-rect/animated.html:
+        * css3/calc/transitions-dependent.html:
+        * css3/calc/transitions.html:
+        * css3/filters/backdrop/animation.html:
+        * css3/filters/composited-during-animation.html:
+        * css3/filters/filter-animation-from-none-hw.html:
+        * css3/filters/filter-animation-from-none-multi-hw.html:
+        * css3/filters/filter-animation-from-none-multi.html:
+        * css3/filters/filter-animation-from-none.html:
+        * css3/filters/filter-animation-hw.html:
+        * css3/filters/filter-animation-multi-hw.html:
+        * css3/filters/filter-animation-multi.html:
+        * css3/filters/filter-animation.html:
+        * css3/masking/clip-path-animation.html:
+        * fast/animation/css-animation-resuming-when-visible-with-style-change.html:
+        * fast/animation/css-animation-resuming-when-visible.html:
+        * fast/animation/css-animation-throttling-lowPowerMode.html:
+        * fast/css-generated-content/pseudo-animation.html:
+        * fast/css-generated-content/pseudo-transition.html:
+        * fast/filter-image/filter-image-animation.html:
+        * fast/shapes/shape-outside-floats/shape-outside-animation.html:
+        * fast/shapes/shape-outside-floats/shape-outside-shape-image-threshold-animation.html:
+        * fast/shapes/shape-outside-floats/shape-outside-shape-margin-animation.html:
+        * imported/blink/transitions/unprefixed-transform.html:
+        * platform/ios/TestExpectations:
+        * platform/win/TestExpectations:
+        * transitions/background-position-transitions.html:
+        * transitions/background-transitions.html:
+        * transitions/blendmode-transitions.html:
+        * transitions/border-radius-transition.html:
+        * transitions/clip-path-path-transitions.html:
+        * transitions/clip-path-transitions.html:
+        * transitions/clip-transition.html:
+        * transitions/color-transition-all.html:
+        * transitions/color-transition-premultiplied.html:
+        * transitions/color-transition-rounding.html:
+        * transitions/cross-fade-background-image.html:
+        * transitions/cross-fade-border-image.html:
+        * transitions/cubic-bezier-overflow-color.html:
+        * transitions/cubic-bezier-overflow-length.html:
+        * transitions/cubic-bezier-overflow-shadow.html:
+        * transitions/cubic-bezier-overflow-svg-length.html:
+        * transitions/cubic-bezier-overflow-transform.html:
+        * transitions/default-timing-function.html:
+        * transitions/delay.html:
+        * transitions/flex-transitions.html:
+        * transitions/font-family-during-transition.html:
+        * transitions/frames-timing-function.html:
+        * transitions/interrupted-all-transition.html:
+        * transitions/longhand-vs-shorthand-initial.html:
+        * transitions/mask-transitions.html:
+        * transitions/min-max-width-height-transitions.html:
+        * transitions/mismatched-shadow-styles.html:
+        * transitions/mismatched-shadow-transitions.html:
+        * transitions/mixed-type.html:
+        * transitions/move-after-transition.html:
+        * transitions/multiple-background-size-transitions.html:
+        * transitions/multiple-background-transitions.html:
+        * transitions/multiple-mask-transitions.html:
+        * transitions/multiple-shadow-transitions.html:
+        * transitions/negative-delay.html:
+        * transitions/opacity-transition-zindex.html:
+        * transitions/remove-transition-style.html:
+        * transitions/shape-outside-transitions.html:
+        * transitions/shorthand-border-transitions.html:
+        * transitions/shorthand-transitions.html:
+        * transitions/steps-timing-function.html:
+        * transitions/svg-layout-transition.html:
+        * transitions/svg-text-shadow-transition.html:
+        * transitions/svg-transitions.html:
+        * transitions/text-indent-transition.html:
+        * transitions/transform-op-list-match.html:
+        * transitions/transform-op-list-no-match.html:
+        * transitions/transition-drt-api-delay-expected.txt: Added.
+        * transitions/transition-drt-api-delay.html: Added.
+        * transitions/transition-drt-api-expected.txt: Added.
+        * transitions/transition-drt-api.html: Added.
+        * transitions/transition-end-event-rendering.html:
+        * transitions/transition-hit-test-transform.html:
+        * transitions/transition-hit-test.html:
+        * transitions/transition-in-delay-phase.html:
+        * transitions/transition-on-element-with-content.html:
+        * transitions/transition-shorthand-delay.html:
+        * transitions/transition-timing-function.html:
+        * transitions/transition-to-from-auto.html:
+        * transitions/transition-to-from-undefined.html:
+        * transitions/visited-link-color.html:
+        * transitions/zero-duration-in-list.html:
+        * transitions/zero-duration-with-non-zero-delay-end.html:
+        * transitions/zero-duration-with-non-zero-delay-start.html:
+        * webanimations/css-animations.html:
+        * webanimations/css-transitions.html:
+
 2018-05-18  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Bug fix on suspend/resume behavior.

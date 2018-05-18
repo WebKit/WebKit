@@ -1754,11 +1754,6 @@ static bool shouldDumpAsText(const char* pathOrURL)
     return strstr(pathOrURL, "dumpAsText/");
 }
 
-static bool shouldOverrideAndDisableWebAnimationsCSSIntegrationPreference(const char* pathOrURL)
-{
-    return strstr(pathOrURL, "legacy-animation-engine/");
-}
-
 static bool shouldEnableDeveloperExtras(const char* pathOrURL)
 {
     return true;
@@ -1927,9 +1922,6 @@ static void runTest(const string& inputLine)
     WebKit::setCrashReportApplicationSpecificInformation((CFStringRef)informationString);
 
     TestOptions options { [url isFileURL] ? [url fileSystemRepresentation] : pathOrURL, command.absolutePath };
-
-    if (shouldOverrideAndDisableWebAnimationsCSSIntegrationPreference(pathOrURL.c_str()))
-        options.enableWebAnimationsCSSIntegration = false;
 
     if (!mainFrameTestOptions || !options.webViewIsCompatibleWithOptions(mainFrameTestOptions.value())) {
         if (mainFrame)

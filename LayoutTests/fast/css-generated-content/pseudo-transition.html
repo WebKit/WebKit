@@ -53,33 +53,6 @@ function getPseudoComputedTop(id)
 // FIXME: This test should be modified so subpixel doesn't cause off by one
 // below and it no longer needs shouldBeCloseTo.
 
-const prefix = "-webkit-";
-const propertiesRequiringPrefix = ["-webkit-text-stroke-color", "-webkit-text-fill-color"];
-
-function pauseTransitionAtTimeOnPseudoElement(transitionProperty, time, element, pseudoId)
-{
-    const pseudoElement = internals.pseudoElement(element, pseudoId);
-    if (!pseudoElement) {
-        console.log("Failed to find pseudo element");
-        return;
-    }
-
-    if (transitionProperty.startsWith(prefix) && !propertiesRequiringPrefix.includes(transitionProperty))
-        transitionProperty = transitionProperty.substr(prefix.length);
-
-    // Otherwise, use the Web Animations API.
-    const animations = pseudoElement.getAnimations();
-    for (let animation of animations) {
-        if (animation instanceof CSSTransition && animation.transitionProperty == transitionProperty) {
-            animation.currentTime = time * 1000;
-            animation.pause();
-            return true;
-        }
-    }
-    console.log(`A transition for property ${transitionProperty} could not be found`);
-    return false;
-}
-
 function testTransition(id)
 {
     var div = document.getElementById(id);
@@ -87,14 +60,14 @@ function testTransition(id)
     window.div = div;
     shouldBe('div.offsetWidth', '52');
     if (window.internals) {
-        pauseTransitionAtTimeOnPseudoElement('width', 1.0, div, id);
+        internals.pauseTransitionAtTimeOnPseudoElement('width', 1.0, div, id);
         shouldBeCloseTo('div.offsetWidth', 20, 1);
-        pauseTransitionAtTimeOnPseudoElement('top', 1.0, div, id);
+        internals.pauseTransitionAtTimeOnPseudoElement('top', 1.0, div, id);
         computedTop = getPseudoComputedTop(id);
         shouldBeCloseTo('computedTop', 170, 1);
-        pauseTransitionAtTimeOnPseudoElement('width', 2.0, div, id);
+        internals.pauseTransitionAtTimeOnPseudoElement('width', 2.0, div, id);
         shouldBeCloseTo('div.offsetWidth', 12, 1);
-        pauseTransitionAtTimeOnPseudoElement('top', 2.0, div, id);
+        internals.pauseTransitionAtTimeOnPseudoElement('top', 2.0, div, id);
         computedTop = getPseudoComputedTop(id);
         shouldBeCloseTo('computedTop', 200, 1);
     } else {

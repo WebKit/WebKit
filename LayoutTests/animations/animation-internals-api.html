@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #target {
+      position: relative;
+      left: 100px;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-animation-duration: 1s;
+      -webkit-animation-timing-function: linear;
+    }
+
+    @-webkit-keyframes bounce {
+      from {
+        left: 100px;
+      }
+      to {
+        left: 200px;
+      }
+    }
+
+  </style>
+
+  <script src="resources/animation-test-helpers.js"></script>
+  <script>
+    if (window.testRunner)
+      testRunner.dumpAsText();
+
+    function animationStarted()
+    {
+      if (window.testRunner) {
+        var target = document.getElementById('target');
+        var paused = internals.pauseAnimationAtTimeOnElement("bounce", 1.0, target);
+        var result = "";
+        if (paused)
+          result = "PASS: correctly paused animation";
+        else
+          result = "FAIL: failed to pause animation";
+
+        document.getElementById('results').innerText = result;
+        testRunner.notifyDone();
+      } else
+        document.getElementById('results').innerText = "This test requires WebCore Internals";
+    }
+
+    function startTest()
+    {
+      var target = document.getElementById('target');
+      target.style.webkitAnimationName = "bounce";
+      waitForAnimationToStart(target, animationStarted);
+    }
+   </script>
+</head>
+<body onload="startTest()">
+  <!-- Test for Internals pauseAnimationAtTimeOnElement() API -->
+  <div id="target"></div>
+  <div id="results"></div>
+</body>
+</html>
