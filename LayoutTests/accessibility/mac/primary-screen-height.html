@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<button id="button1">Click</button>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests the primary screen height is exposed to AX API from web process.");
+    if (window.accessibilityController) {
+    	var rootElement = accessibilityController.rootElement;
+        var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+        var screenHeightFromRootElement = rootElement.numberAttributeValue("_AXPrimaryScreenHeight");
+        shouldBeTrue("screenHeightFromRootElement > 0");
+
+        var screenHeightFromWebArea = webArea.numberAttributeValue("_AXPrimaryScreenHeight");
+        shouldBeTrue("screenHeightFromWebArea > 0");
+    }
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

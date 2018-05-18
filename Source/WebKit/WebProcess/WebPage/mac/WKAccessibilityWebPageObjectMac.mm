@@ -44,6 +44,7 @@
 #import <WebCore/PageOverlayController.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/Scrollbar.h>
+#import <WebCore/WebAccessibilityObjectWrapperMac.h>
 #import <pal/spi/mac/NSAccessibilitySPI.h>
 #import <wtf/ObjcRuntimeExtras.h>
 
@@ -70,7 +71,7 @@ using namespace WebKit;
         m_attributeNames = adoptNS([[NSArray alloc] initWithObjects:
                             NSAccessibilityRoleAttribute, NSAccessibilityRoleDescriptionAttribute, NSAccessibilityFocusedAttribute,
                             NSAccessibilityParentAttribute, NSAccessibilityWindowAttribute, NSAccessibilityTopLevelUIElementAttribute,
-                            NSAccessibilityPositionAttribute, NSAccessibilitySizeAttribute, NSAccessibilityChildrenAttribute, nil]);
+                            NSAccessibilityPositionAttribute, NSAccessibilitySizeAttribute, NSAccessibilityChildrenAttribute, NSAccessibilityPrimaryScreenHeightAttribute, nil]);
     
     return m_attributeNames.get();
 }
@@ -146,6 +147,9 @@ using namespace WebKit;
         const WebCore::FloatPoint& point = m_page->accessibilityPosition();
         return [NSValue valueWithPoint:NSMakePoint(point.x(), point.y())];
     }
+    
+    if ([attribute isEqualToString:NSAccessibilityPrimaryScreenHeightAttribute])
+        return [[self accessibilityRootObjectWrapper] accessibilityAttributeValue:attribute];
     
     if ([attribute isEqualToString:NSAccessibilitySizeAttribute]) {
         const IntSize& s = m_page->size();
