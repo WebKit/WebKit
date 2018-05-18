@@ -1,3 +1,23 @@
+2018-05-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Create MainWindow even in transparent mode
+        https://bugs.webkit.org/show_bug.cgi?id=185597
+
+        Reviewed by Per Arne Vollan.
+
+        The current implementations doesn't create the MainWindow in
+        transparent mode. The screenshot is in Bug 58300.
+
+        There were three problems:
+        - Can't control the WebView. ie. going backward and forward.
+        - Can't quit the program.
+        - It makes implementation complicated.
+
+        * MiniBrowser/win/Common.cpp (resizeSubViews): Resize sub views
+        even in the transparent mode.
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain): Create the main window even in the transparent mode.
+
 2018-05-18  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn Web Animations with CSS integration on for test runners

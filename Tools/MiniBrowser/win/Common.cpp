@@ -109,10 +109,7 @@ float deviceScaleFactorForWindow(HWND);
 
 static void resizeSubViews()
 {
-    if (gMiniBrowser->usesLayeredWebView() || !gViewWindow)
-        return;
-
-    float scaleFactor = WebCore::deviceScaleFactorForWindow(gViewWindow);
+    float scaleFactor = WebCore::deviceScaleFactorForWindow(hMainWnd);
 
     RECT rcClient;
     GetClientRect(hMainWnd, &rcClient);
@@ -123,9 +120,12 @@ static void resizeSubViews()
     MoveWindow(hBackButtonWnd, 0, 0, width, height, TRUE);
     MoveWindow(hForwardButtonWnd, width, 0, width, height, TRUE);
     MoveWindow(hURLBarWnd, width * 2, 0, rcClient.right, height, TRUE);
-    MoveWindow(gViewWindow, 0, height, rcClient.right, rcClient.bottom - height, TRUE);
 
     ::SendMessage(hURLBarWnd, static_cast<UINT>(WM_SETFONT), reinterpret_cast<WPARAM>(gMiniBrowser->urlBarFont()), TRUE);
+
+    if (gMiniBrowser->usesLayeredWebView() || !gViewWindow)
+        return;
+    MoveWindow(gViewWindow, 0, height, rcClient.right, rcClient.bottom - height, TRUE);
 }
 
 static void computeFullDesktopFrame()
