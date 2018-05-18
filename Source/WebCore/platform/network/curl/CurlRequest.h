@@ -105,7 +105,8 @@ private:
 
     void startWithJobManager();
 
-    void callClient(WTF::Function<void(CurlRequest&, CurlRequestClient&)>);
+    void callClient(Function<void(CurlRequest&, CurlRequestClient&)>&&);
+    void runOnWorkerThreadIfRequired(Function<void()>&&);
 
     // Transfer processing of Request body, Response header/body
     // Called by worker thread in case of async, main thread in case of sync.
@@ -119,6 +120,7 @@ private:
     void didCompleteTransfer(CURLcode) override;
     void didCancelTransfer() override;
     void finalizeTransfer();
+    void invokeCancel();
 
     // For setup 
     void appendAcceptLanguageHeader(HTTPHeaderMap&);
@@ -134,7 +136,9 @@ private:
     void setRequestPaused(bool);
     void setCallbackPaused(bool);
     void pausedStatusChanged();
-    bool isPaused() const { return m_isPausedOfRequest || m_isPausedOfCallback; };
+    bool shouldBePaused() const { return m_isPausedOfRequest || m_isPausedOfCallback; };
+    void updateHandlePauseState(bool);
+    bool isHandlePaused() const;
 
     // Download
     void writeDataToDownloadFileIfEnabled(const SharedBuffer&);
@@ -173,6 +177,16 @@ private:
 
     bool m_isPausedOfRequest { false };
     bool m_isPausedOfCallback { false };
+    Lock m_pauseStateMutex;
+    // Following `m_isHandlePaused` is actual paused state of CurlHandle. It's required because pause
+    // request coming from main thread has a time lag until it invokes and receive callback can
+    // change the state by returning a special value. So that is must be managed by this flag.
+    // Unfortunately libcurl doesn't have an interface to check the state.
+    // There's also no need to protect this flag by the mutex because it is and MUST BE accessed only
+    // within worker thread. The access must be using accessor to detect irregular usage.
+    // [TODO] When libcurl is updated to fetch paused state, remove this state variable and
+    // setter/getter above.
+    bool m_isHandlePaused { false };
 
     Lock m_downloadMutex;
     bool m_isEnabledDownloadToFile { false };

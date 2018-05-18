@@ -1,3 +1,35 @@
+2018-05-18  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Bug fix on suspend/resume behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=183089
+
+        The flag was not set correctly. Also wrong method was called.
+
+        Reviewed by Youenn Fablet.
+
+        Enable loader tests to cover this case.
+
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::cancel): Remove unnecessary cleanup. Use runXXX method.
+        (WebCore::CurlRequest::suspend): Added cancel check.
+        (WebCore::CurlRequest::resume): Ditto.
+        (WebCore::CurlRequest::callClient): Use runXXX method. Change to move semantics.
+        (WebCore::runOnMainThread): Added.
+        (WebCore::CurlRequest::runOnWorkerThreadIfRequired): Added.
+        (WebCore::CurlRequest::setupTransfer): Bug fix. Call setRequestPaused directly.
+        (WebCore::CurlRequest::didReceiveData): Add state flag update.
+        (WebCore::CurlRequest::invokeDidReceiveResponseForFile): Use runXXX to simplify.
+        (WebCore::CurlRequest::completeDidReceiveResponse): Ditto.
+        (WebCore::CurlRequest::setRequestPaused): Protect state change by mutex.
+        (WebCore::CurlRequest::setCallbackPaused): Ditto.
+        (WebCore::CurlRequest::invokeCancel): Added.
+        (WebCore::CurlRequest::pausedStatusChanged): Use runXXX to simplify.
+        (WebCore::CurlRequest::updateHandlePauseState): Accessor for m_isHandlePaused.
+        (WebCore::CurlRequest::isHandlePaused const): Ditto.
+        * platform/network/curl/CurlRequest.h: Add mutex and paused state.
+        (WebCore::CurlRequest::shouldBePaused const): Rename from isPaused.
+        (WebCore::CurlRequest::isPaused const): Deleted.
+
 2018-05-18  Chris Dumez  <cdumez@apple.com>
 
         Avoid keeping the frame alive when ref'ing a WindowProxy

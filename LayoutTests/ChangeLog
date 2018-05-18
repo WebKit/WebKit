@@ -1,3 +1,14 @@
+2018-05-18  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Bug fix on suspend/resume behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=183089
+
+        The flag was not set correctly. Also wrong method was called.
+
+        Reviewed by Youenn Fablet.
+
+        * platform/wincairo/TestExpectations: Enable loader/ tests for WinCairo.
+
 2018-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Clearing text fields should dispatch input events of type "deleteContent"

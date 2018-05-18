@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+static void runOnMainThread(Function<void()>&& task);
+
 CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, bool shouldSuspend, bool enableMultipart)
     : m_request(request.isolatedCopy())
     , m_client(client)
@@ -113,8 +115,8 @@ void CurlRequest::cancel()
         auto& scheduler = CurlContext::singleton().scheduler();
 
         if (needToInvokeDidCancelTransfer()) {
-            scheduler.callOnWorkerThread([protectedThis = makeRef(*this)]() {
-                protectedThis->didCancelTransfer();
+            runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this)]() {
+                didCancelTransfer();
             });
         } else
             scheduler.cancel(this);
@@ -123,14 +125,15 @@ void CurlRequest::cancel()
             didCancelTransfer();
     }
 
-    setRequestPaused(false);
-    setCallbackPaused(false);
     invalidateClient();
 }
 
 void CurlRequest::suspend()
 {
     ASSERT(isMainThread());
+
+    if (isCompletedOrCancelled())
+        return;
 
     setRequestPaused(true);
 }
@@ -139,25 +142,36 @@ void CurlRequest::resume()
 {
     ASSERT(isMainThread());
 
+    if (isCompletedOrCancelled())
+        return;
+
     setRequestPaused(false);
 }
 
 /* `this` is protected inside this method. */
-void CurlRequest::callClient(WTF::Function<void(CurlRequest&, CurlRequestClient&)> task)
+void CurlRequest::callClient(Function<void(CurlRequest&, CurlRequestClient&)>&& task)
 {
-    if (isMainThread()) {
+    runOnMainThread([this, protectedThis = makeRef(*this), task = WTFMove(task)]() mutable {
         if (CurlRequestClient* client = m_client) {
-            RefPtr<CurlRequestClient> protectedClient(client);
-            task(*this, *client);
+            task(*this, makeRef(*client));
         }
-    } else {
-        callOnMainThread([this, protectedThis = makeRef(*this), task = WTFMove(task)]() mutable {
-            if (CurlRequestClient* client = protectedThis->m_client) {
-                RefPtr<CurlRequestClient> protectedClient(client);
-                task(*this, *client);
-            }
-        });
-    }
+    });
+}
+
+static void runOnMainThread(Function<void()>&& task)
+{
+    if (isMainThread())
+        task();
+    else
+        callOnMainThread(WTFMove(task));
+}
+
+void CurlRequest::runOnWorkerThreadIfRequired(Function<void()>&& task)
+{
+    if (isMainThread() && !m_isSyncRequest)
+        CurlContext::singleton().scheduler().callOnWorkerThread(WTFMove(task));
+    else
+        task();
 }
 
 CURL* CurlRequest::setupTransfer()
@@ -228,7 +242,7 @@ CURL* CurlRequest::setupTransfer()
     m_curlHandle->setCACertPath(sslHandle.getCACertPath().utf8().data());
 
     if (m_shouldSuspend)
-        suspend();
+        setRequestPaused(true);
 
 #ifndef NDEBUG
     m_curlHandle->enableVerboseIfUsed();
@@ -358,6 +372,9 @@ size_t CurlRequest::didReceiveData(Ref<SharedBuffer>&& buffer)
             // For asynchronous, pause until completeDidReceiveResponse() is called.
             setCallbackPaused(true);
             invokeDidReceiveResponse(m_response, Action::ReceiveData);
+            // Because libcurl pauses the handle after returning this CURL_WRITEFUNC_PAUSE,
+            // we need to update its state here.
+            updateHandlePauseState(true);
             return CURL_WRITEFUNC_PAUSE;
         }
 
@@ -537,8 +554,8 @@ void CurlRequest::invokeDidReceiveResponseForFile(URL& url)
 
     if (!m_isSyncRequest) {
         // DidReceiveResponse must not be called immediately
-        CurlContext::singleton().scheduler().callOnWorkerThread([protectedThis = makeRef(*this)]() {
-            protectedThis->invokeDidReceiveResponse(protectedThis->m_response, Action::StartTransfer);
+        runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this)]() {
+            invokeDidReceiveResponse(m_response, Action::StartTransfer);
         });
     } else {
         // For synchronous, completeDidReceiveResponse() is called in platformContinueSynchronousDidReceiveResponse().
@@ -580,8 +597,8 @@ void CurlRequest::completeDidReceiveResponse()
         startWithJobManager();
     } else if (m_actionAfterInvoke == Action::FinishTransfer) {
         if (!m_isSyncRequest) {
-            CurlContext::singleton().scheduler().callOnWorkerThread([protectedThis = makeRef(*this), finishedResultCode = m_finishedResultCode]() {
-                protectedThis->didCompleteTransfer(finishedResultCode);
+            runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this), finishedResultCode = m_finishedResultCode]() {
+                didCompleteTransfer(finishedResultCode);
             });
         } else
             didCompleteTransfer(m_finishedResultCode);
@@ -590,55 +607,81 @@ void CurlRequest::completeDidReceiveResponse()
 
 void CurlRequest::setRequestPaused(bool paused)
 {
-    auto wasPaused = isPaused();
+    {
+        LockHolder lock(m_pauseStateMutex);
 
-    m_isPausedOfRequest = paused;
-
-    if (isPaused() == wasPaused)
-        return;
+        auto savedState = shouldBePaused();
+        m_shouldSuspend = m_isPausedOfRequest = paused;
+        if (shouldBePaused() == savedState)
+            return;
+    }
 
     pausedStatusChanged();
 }
 
 void CurlRequest::setCallbackPaused(bool paused)
 {
-    auto wasPaused = isPaused();
+    {
+        LockHolder lock(m_pauseStateMutex);
 
-    m_isPausedOfCallback = paused;
+        auto savedState = shouldBePaused();
+        m_isPausedOfCallback = paused;
 
-    if (isPaused() == wasPaused)
-        return;
-
-    // In this case, PAUSE will be executed within didReceiveData(). Change pause state and return.
-    if (paused)
-        return;
+        // If pause is requested, it is called within didReceiveData() which means
+        // actual change happens inside libcurl. No need to update manually here.
+        if (shouldBePaused() == savedState || paused)
+            return;
+    }
 
     pausedStatusChanged();
 }
 
+void CurlRequest::invokeCancel()
+{
+    // There's no need to extract this method. This is a workaround for MSVC's bug
+    // which happens when using lambda inside other lambda. The compiler loses context
+    // of `this` which prevent makeRef.
+    runOnMainThread([this, protectedThis = makeRef(*this)]() {
+        cancel();
+    });
+}
+
 void CurlRequest::pausedStatusChanged()
 {
-    if (isCompletedOrCancelled())
-        return;
+    runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this)]() {
+        if (isCompletedOrCancelled())
+            return;
 
-    if (!m_isSyncRequest && isMainThread()) {
-        CurlContext::singleton().scheduler().callOnWorkerThread([protectedThis = makeRef(*this), paused = isPaused()]() {
-            if (protectedThis->isCompletedOrCancelled())
+        bool needCancel { false };
+        {
+            LockHolder lock(m_pauseStateMutex);
+            bool paused = shouldBePaused();
+
+            if (isHandlePaused() == paused)
                 return;
 
-            auto error = protectedThis->m_curlHandle->pause(paused ? CURLPAUSE_ALL : CURLPAUSE_CONT);
-            if ((error != CURLE_OK) && !paused) {
-                // Restarting the handle has failed so just cancel it.
-                callOnMainThread([protectedThis = makeRef(protectedThis.get())]() {
-                    protectedThis->cancel();
-                });
-            }
-        });
-    } else {
-        auto error = m_curlHandle->pause(isPaused() ? CURLPAUSE_ALL : CURLPAUSE_CONT);
-        if ((error != CURLE_OK) && !isPaused())
-            cancel();
-    }
+            auto error = m_curlHandle->pause(paused ? CURLPAUSE_ALL : CURLPAUSE_CONT);
+            if (error == CURLE_OK)
+                updateHandlePauseState(paused);
+
+            needCancel = (error != CURLE_OK && paused);
+        }
+
+        if (needCancel)
+            invokeCancel();
+    });
+}
+
+void CurlRequest::updateHandlePauseState(bool paused)
+{
+    ASSERT(!isMainThread() || m_isSyncRequest);
+    m_isHandlePaused = paused;
+}
+
+bool CurlRequest::isHandlePaused() const
+{
+    ASSERT(!isMainThread() || m_isSyncRequest);
+    return m_isHandlePaused;
 }
 
 void CurlRequest::enableDownloadToFile()
