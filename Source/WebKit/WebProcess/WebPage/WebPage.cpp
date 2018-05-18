@@ -4619,7 +4619,10 @@ void WebPage::setTextAsync(const String& text)
     if (frame->selection().selection().isContentEditable()) {
         UserTypingGestureIndicator indicator(frame.get());
         frame->selection().selectAll();
-        frame->editor().insertText(text, nullptr, TextEventInputKeyboard);
+        if (text.isEmpty())
+            frame->editor().deleteSelectionWithSmartDelete(false);
+        else
+            frame->editor().insertText(text, nullptr, TextEventInputKeyboard);
         return;
     }
 

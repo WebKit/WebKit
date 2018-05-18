@@ -1,3 +1,18 @@
+2018-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Clearing text fields should dispatch input events of type "deleteContent"
+        https://bugs.webkit.org/show_bug.cgi?id=185769
+        <rdar://problem/40368261>
+
+        Reviewed by Tim Horton.
+
+        Adds a new test to inspect the input events dispatched as a result of inserting and deleting text in a form
+        control. The inputTypes should be "insertText" and "deleteContent", respectively; the data values should be the
+        inserted string and null, respectively.
+
+        * fast/forms/extrazoom/delete-content-in-text-field-expected.txt: Added.
+        * fast/forms/extrazoom/delete-content-in-text-field.html: Added.
+
 2018-05-18  Youenn Fablet  <youenn@apple.com>
 
         Layout Test http/wpt/service-workers/header-filtering.https.html is a flaky failure

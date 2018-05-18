@@ -1,3 +1,20 @@
+2018-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Clearing text fields should dispatch input events of type "deleteContent"
+        https://bugs.webkit.org/show_bug.cgi?id=185769
+        <rdar://problem/40368261>
+
+        Reviewed by Tim Horton.
+
+        When setting the text of the currently focused element to the empty string, just delete the text instead of
+        pretending to insert an empty string. This mimics deleting content using the delete key on macOS, and fires an
+        input event with inputType "deleteContent" instead of "insertText".
+
+        Test: fast/forms/extrazoom/delete-content-in-text-field.html
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setTextAsync):
+
 2018-05-18  Keith Rollin  <krollin@apple.com>
 
         Renamed "trackNetworkActivity" to "tracksResourceLoadMilestones"
