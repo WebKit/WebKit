@@ -186,7 +186,7 @@ bool MediaSessionManageriOS::hasWirelessTargetsAvailable()
 
 void MediaSessionManageriOS::configureWireLessTargetMonitoring()
 {
-#if HAVE(MEDIA_PLAYER)
+#if HAVE(MEDIA_PLAYER) && !ENABLE(EXTRA_ZOOM_MODE)
     bool requiresMonitoring = anyOfSessions([] (PlatformMediaSession& session, size_t) {
         return session.requiresPlaybackTargetRouteMonitoring();
     });
