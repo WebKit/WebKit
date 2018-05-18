@@ -189,7 +189,7 @@ void BlockFormattingContext::computeInFlowHeight(LayoutContext& layoutContext, c
         computeInFlowNonReplacedHeight(layoutContext, layoutBox, displayBox);
         return;
     }
-    ASSERT_NOT_IMPLEMENTED_YET();
+    computeReplacedHeight(layoutContext, layoutBox, displayBox);
 }
 
 LayoutUnit BlockFormattingContext::marginTop(const Box& layoutBox) const

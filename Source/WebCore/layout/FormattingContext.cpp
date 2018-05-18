@@ -74,7 +74,7 @@ void FormattingContext::computeHeight(LayoutContext& layoutContext, const Box& l
     if (layoutBox.isOutOfFlowPositioned())
         return computeOutOfFlowHeight(layoutContext, layoutBox, displayBox);
     if (layoutBox.isFloatingPositioned())
-        return computeFloatingHeight(layoutBox, displayBox);
+        return computeFloatingHeight(layoutContext, layoutBox, displayBox);
     return computeInFlowHeight(layoutContext, layoutBox, displayBox);
 }
 
@@ -84,7 +84,7 @@ void FormattingContext::computeOutOfFlowWidth(LayoutContext& layoutContext, cons
         computeOutOfFlowNonReplacedWidth(layoutContext, layoutBox, displayBox);
         return;
     }
-    ASSERT_NOT_IMPLEMENTED_YET();
+    computeOutOfFlowReplacedWidth(layoutContext, layoutBox, displayBox);
 }
 
 void FormattingContext::computeFloatingWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
@@ -102,11 +102,16 @@ void FormattingContext::computeOutOfFlowHeight(LayoutContext& layoutContext, con
         computeOutOfFlowNonReplacedHeight(layoutContext, layoutBox, displayBox);
         return;
     }
-    ASSERT_NOT_IMPLEMENTED_YET();
+    computeOutOfFlowReplacedHeight(layoutContext, layoutBox, displayBox);
 }
 
-void FormattingContext::computeFloatingHeight(const Box&, Display::Box&) const
+void FormattingContext::computeFloatingHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
+    if (!layoutBox.replaced()) {
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return;
+    }
+    computeReplacedHeight(layoutContext, layoutBox, displayBox);
 }
 
 LayoutUnit FormattingContext::marginTop(const Box&) const
@@ -212,6 +217,50 @@ void FormattingContext::computeOutOfFlowNonReplacedHeight(LayoutContext& layoutC
     displayBox.setHeight(computedHeightValue);
 }
 
+void FormattingContext::computeReplacedHeight(LayoutContext&, const Box& layoutBox, Display::Box& displayBox) const
+{
+    ASSERT((layoutBox.isOutOfFlowPositioned() || layoutBox.isFloatingPositioned() || layoutBox.isInFlow()) && layoutBox.replaced());
+    // 10.6.5 Absolutely positioned, replaced elements. The used value of 'height' is determined as for inline replaced elements.
+
+    // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block' replaced elements in normal flow and floating replaced elements
+    //
+    // 1. If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic height, then that intrinsic height is the used value of 'height'.
+    //
+    // 2. Otherwise, if 'height' has a computed value of 'auto', and the element has an intrinsic ratio then the used value of 'height' is:
+    //    (used width) / (intrinsic ratio)
+    //
+    // 3. Otherwise, if 'height' has a computed value of 'auto', and the element has an intrinsic height, then that intrinsic height is the used value of 'height'.
+    //
+    // 4. Otherwise, if 'height' has a computed value of 'auto', but none of the conditions above are met, then the used value of 'height' must be set to
+    //    the height of the largest rectangle that has a 2:1 ratio, has a height not greater than 150px, and has a width not greater than the device width.
+    auto& style = layoutBox.style();
+    auto width = style.logicalWidth();
+    auto height = style.logicalHeight();
+
+    LayoutUnit computedHeightValue;
+    auto replaced = layoutBox.replaced();
+    ASSERT(replaced);
+
+    if (height.isAuto()) {
+        if (width.isAuto() && replaced->hasIntrinsicHeight()) {
+            // #1
+            computedHeightValue = replaced->intrinsicHeight();
+        } else if (replaced->hasIntrinsicRatio()) {
+            // #2
+            computedHeightValue = width.value() / replaced->intrinsicRatio();
+        } else if (replaced->hasIntrinsicHeight()) {
+            // #3
+            computedHeightValue = replaced->intrinsicHeight();
+        } else {
+            // #4
+            computedHeightValue = 150;
+        }
+    } else
+        computedHeightValue = height.value();
+
+    displayBox.setHeight(computedHeightValue);
+}
+
 void FormattingContext::computeReplacedWidth(LayoutContext&, const Box& layoutBox, Display::Box& displayBox) const
 {
     ASSERT((layoutBox.isOutOfFlowPositioned() || layoutBox.isFloatingPositioned() || layoutBox.isInFlow()) && layoutBox.replaced());
@@ -263,7 +312,7 @@ void FormattingContext::computeReplacedWidth(LayoutContext&, const Box& layoutBo
         computedWidthValue = 300;
     }
 
-    displayBox.setWidth(computedWidthValue);   
+    displayBox.setWidth(computedWidthValue);
 }
 
 LayoutUnit FormattingContext::contentHeightForFormattingContextRoot(LayoutContext& layoutContext, const Box& layoutBox) const
@@ -357,6 +406,15 @@ void FormattingContext::computeOutOfFlowNonReplacedWidth(LayoutContext& layoutCo
         ASSERT_NOT_REACHED();
 
     displayBox.setWidth(computedWidthValue);
+}
+
+void FormattingContext::computeOutOfFlowReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    ASSERT(layoutBox.isOutOfFlowPositioned() && layoutBox.replaced());
+    // 10.6.5 Absolutely positioned, replaced elements
+    //
+    // The used value of 'height' is determined as for inline replaced elements.
+    computeReplacedHeight(layoutContext, layoutBox, displayBox);
 }
 
 void FormattingContext::computeOutOfFlowReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
