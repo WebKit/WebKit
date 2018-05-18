@@ -38,7 +38,7 @@ namespace WebKit {
 
 WebPageProxy* UIGamepadProvider::platformWebPageProxyForGamepadInput()
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     auto responder = [[NSApp keyWindow] firstResponder];
 
 #if WK_API_ENABLED

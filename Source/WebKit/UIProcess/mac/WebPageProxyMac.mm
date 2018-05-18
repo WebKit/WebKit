@@ -133,19 +133,19 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
 
 void WebPageProxy::getIsSpeaking(bool& isSpeaking)
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     isSpeaking = [NSApp isSpeaking];
 }
 
 void WebPageProxy::speak(const String& string)
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     [NSApp speakString:nsStringFromWebCoreString(string)];
 }
 
 void WebPageProxy::stopSpeaking()
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     [NSApp stopSpeaking:nil];
 }
 
@@ -684,7 +684,7 @@ _WKRemoteObjectRegistry *WebPageProxy::remoteObjectRegistry()
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
 void WebPageProxy::startDisplayLink(unsigned observerID)
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     if (!m_displayLink) {
         uint32_t displayID = [[[[platformWindow() screen] deviceDescription] objectForKey:@"NSScreenNumber"] intValue];
         m_displayLink = std::make_unique<DisplayLink>(displayID, *this);

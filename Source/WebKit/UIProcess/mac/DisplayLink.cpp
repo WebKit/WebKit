@@ -37,7 +37,7 @@ namespace WebKit {
     
 DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID, WebPageProxy& webPageProxy)
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     CVReturn error = CVDisplayLinkCreateWithCGDisplay(displayID, &m_displayLink);
     if (error) {
         WTFLogAlways("Could not create a display link: %d", error);
@@ -57,7 +57,7 @@ DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID, WebPageProxy& web
 
 DisplayLink::~DisplayLink()
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     ASSERT(m_displayLink);
     if (!m_displayLink)
         return;

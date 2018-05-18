@@ -1,3 +1,29 @@
+2018-05-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Convert ProcessPrivilege assertions to regular debug-only assertions
+        https://bugs.webkit.org/show_bug.cgi?id=185775
+        <rdar://problem/40372286>
+
+        Reviewed by Geoffrey Garen.
+
+        In Bug 184322 I added a number of RELEASE_ASSERT checks that certain
+        UI-only calls were not being made in the WebContent process.
+
+        Measurements have shown that these RELEASE_ASSERTs have regressed performance
+        by around 1% on some benchmarks, so we should convert them to normal asserts.
+
+        This patch changes the RELEASE_ASSERTs into ASSERTs.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::setDragImage):
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::displayID):
+        (WebCore::firstScreen):
+        (WebCore::window):
+        (WebCore::screen):
+        (WebCore::getScreenProperties):
+        (WebCore::screenIsMonochrome):
+
 2018-05-18  Eric Carlson  <eric.carlson@apple.com>
 
         Handle failure to extend sandbox gracefully

@@ -132,7 +132,7 @@ void PluginProcessProxy::setFullscreenWindowIsShowing(bool fullscreenWindowIsSho
 
 void PluginProcessProxy::enterFullscreen()
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     // Get the current presentation options.
     m_preFullscreenAppPresentationOptions = [NSApp presentationOptions];
 
@@ -193,7 +193,7 @@ void PluginProcessProxy::beginModal()
 {
     ASSERT(!m_placeholderWindow);
     ASSERT(!m_activationObserver);
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
 
     m_placeholderWindow = adoptNS([[WKPlaceholderModalWindow alloc] initWithContentRect:NSMakeRect(0, 0, 1, 1) styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
     [m_placeholderWindow setReleasedWhenClosed:NO];
@@ -215,7 +215,7 @@ void PluginProcessProxy::endModal()
 {
     ASSERT(m_placeholderWindow);
     ASSERT(m_activationObserver);
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
 
     [[NSNotificationCenter defaultCenter] removeObserver:m_activationObserver.get()];
     m_activationObserver = nullptr;

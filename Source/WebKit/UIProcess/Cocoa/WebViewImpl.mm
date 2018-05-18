@@ -1295,7 +1295,7 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
 {
     static_cast<PageClientImpl&>(*m_pageClient).setImpl(*this);
 
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     [NSApp registerServicesMenuSendTypes:PasteboardTypes::forSelection() returnTypes:PasteboardTypes::forEditing()];
 
     [view addTrackingArea:m_primaryTrackingArea.get()];
@@ -1429,7 +1429,7 @@ bool WebViewImpl::acceptsFirstResponder()
 
 bool WebViewImpl::becomeFirstResponder()
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     // If we just became first responder again, there is no need to do anything,
     // since resignFirstResponder has correctly detected this situation.
     if (m_willBecomeFirstResponderAgain) {
@@ -2386,7 +2386,7 @@ bool WebViewImpl::tryHandlePluginComplexTextInputKeyDown(NSEvent *event)
 
 void WebViewImpl::pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus, uint64_t pluginComplexTextInputIdentifier)
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     BOOL inputSourceChanged = m_pluginComplexTextInputIdentifier;
 
     if (pluginHasFocusAndWindowHasFocus) {
@@ -2696,7 +2696,7 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
 
 bool WebViewImpl::validateUserInterfaceItem(id <NSValidatedUserInterfaceItem> item)
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     SEL action = [item action];
 
     if (action == @selector(showGuessPanel:)) {
@@ -2818,7 +2818,7 @@ void WebViewImpl::setUserInterfaceItemState(NSString *commandName, bool enabled,
 
 void WebViewImpl::startSpeaking()
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     m_page->getSelectionOrContentsAsString([](const String& string, WebKit::CallbackBase::Error error) {
         if (error != WebKit::CallbackBase::Error::None)
             return;
@@ -2831,7 +2831,7 @@ void WebViewImpl::startSpeaking()
 
 void WebViewImpl::stopSpeaking(id sender)
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     [NSApp stopSpeaking:sender];
 }
 
@@ -3639,7 +3639,7 @@ void WebViewImpl::draggedImage(NSImage *image, CGPoint endPoint, NSDragOperation
 
 static WebCore::DragApplicationFlags applicationFlagsForDrag(NSView *view, id <NSDraggingInfo> draggingInfo)
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     uint32_t flags = 0;
     if ([NSApp modalWindow])
         flags = WebCore::DragApplicationIsModal;
@@ -4252,7 +4252,7 @@ void WebViewImpl::didRestoreScrollPosition()
 
 void WebViewImpl::doneWithKeyEvent(NSEvent *event, bool eventWasHandled)
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     if ([event type] != NSEventTypeKeyDown)
         return;
 
