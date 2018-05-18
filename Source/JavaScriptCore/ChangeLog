@@ -1,5 +1,19 @@
 2018-05-17  Saam Barati  <sbarati@apple.com>
 
+        Remove shrinkFootprint test from apitests since it's flaky
+        https://bugs.webkit.org/show_bug.cgi?id=185754
+
+        Reviewed by Mark Lam.
+
+        This test is flaky as it keeps failing on certain people's machines.
+        Having a test about OS footprint seems like it'll forever be doomed
+        to being flaky.
+
+        * API/tests/testapi.mm:
+        (testObjectiveCAPIMain):
+
+2018-05-17  Saam Barati  <sbarati@apple.com>
+
         defaultConstructorSourceCode needs to makeSource every time it's called
         https://bugs.webkit.org/show_bug.cgi?id=185753
 
