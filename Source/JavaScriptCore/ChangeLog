@@ -1,3 +1,19 @@
+2018-05-18  Keith Miller  <keith_miller@apple.com>
+
+        op_in should mark if it sees out of bounds accesses
+        https://bugs.webkit.org/show_bug.cgi?id=185792
+
+        Reviewed by Filip Pizlo.
+
+        This would used to cause us to OSR loop since we would always speculate
+        we were in bounds in HasIndexedProperty.
+
+        * bytecode/ArrayProfile.cpp:
+        (JSC::ArrayProfile::observeIndexedRead):
+        * bytecode/ArrayProfile.h:
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::opIn):
+
 2018-05-18  Mark Lam  <mark.lam@apple.com>
 
         Add missing exception check.

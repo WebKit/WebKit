@@ -32,11 +32,11 @@ shouldBe(test1(array), false);
 function test2(array)
 {
     didFTLCompile = ftlTrue();
-    return 2 in array;
+    return 13 in array;
 }
 noInline(test2);
 
-var array1 = [1, 2, 3, 4];
+var array1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 ensureArrayStorage(array1);
 var array2 = [1, 2];
 ensureArrayStorage(array2);

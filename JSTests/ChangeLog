@@ -1,3 +1,15 @@
+2018-05-18  Keith Miller  <keith_miller@apple.com>
+
+        op_in should mark if it sees out of bounds accesses
+        https://bugs.webkit.org/show_bug.cgi?id=185792
+
+        Reviewed by Filip Pizlo.
+
+        * stress/has-indexed-property-array-storage-ftl.js:
+        (test2):
+        * stress/has-indexed-property-slow-put-array-storage-ftl.js:
+        (test2):
+
 2018-05-18  Mark Lam  <mark.lam@apple.com>
 
         Add missing exception check.

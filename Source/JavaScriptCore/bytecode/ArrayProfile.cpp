@@ -121,6 +121,23 @@ void ArrayProfile::computeUpdatedPrediction(const ConcurrentJSLocker&, CodeBlock
         m_usesOriginalArrayStructures = false;
 }
 
+void ArrayProfile::observeIndexedRead(VM& vm, JSCell* cell, unsigned index)
+{
+    m_lastSeenStructureID = cell->structureID();
+
+    if (JSObject* object = jsDynamicCast<JSObject*>(vm, cell)) {
+        if (hasAnyArrayStorage(object->indexingType()) && index >= object->getVectorLength())
+            setOutOfBounds();
+        else if (index >= object->getArrayLength())
+            setOutOfBounds();
+    }
+
+    if (JSString* string = jsDynamicCast<JSString*>(vm, cell)) {
+        if (index >= string->length())
+            setOutOfBounds();
+    }
+}
+
 CString ArrayProfile::briefDescription(const ConcurrentJSLocker& locker, CodeBlock* codeBlock)
 {
     computeUpdatedPrediction(locker, codeBlock);

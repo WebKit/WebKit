@@ -100,6 +100,8 @@ inline bool opIn(ExecState* exec, JSValue baseVal, JSValue propName, ArrayProfil
 
     uint32_t i;
     if (propName.getUInt32(i)) {
+        if (arrayProfile)
+            arrayProfile->observeIndexedRead(vm, baseObj, i);
         scope.release();
         return baseObj->hasProperty(exec, i);
     }

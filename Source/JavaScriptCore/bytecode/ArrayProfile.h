@@ -214,11 +214,13 @@ public:
     {
         m_lastSeenStructureID = structure->id();
     }
-    
+
     void computeUpdatedPrediction(const ConcurrentJSLocker&, CodeBlock*);
     void computeUpdatedPrediction(const ConcurrentJSLocker&, CodeBlock*, Structure* lastSeenStructure);
     
     void observeArrayMode(ArrayModes mode) { m_observedArrayModes |= mode; }
+    void observeIndexedRead(VM&, JSCell*, unsigned index);
+
     ArrayModes observedArrayModes(const ConcurrentJSLocker&) const { return m_observedArrayModes; }
     bool mayInterceptIndexedAccesses(const ConcurrentJSLocker&) const { return m_mayInterceptIndexedAccesses; }
     
