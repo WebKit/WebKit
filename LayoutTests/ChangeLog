@@ -1,5 +1,48 @@
 2018-05-17  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r231910. rdar://problem/39105791
+
+    Storage Access API: Allow documents that have been granted storage access to also do a popup
+    https://bugs.webkit.org/show_bug.cgi?id=185615
+    <rdar://problem/39105791>
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    * dom/Document.cpp:
+    (WebCore::Document::consumeTemporaryUserGesture): Added. Clear the document's active one-time user
+    activity (for window opening) state.
+    (WebCore::Document::enableTemporaryUserGesture): Added. Establish a new active one-time user
+    activity (for window opening) state.
+    (WebCore::Document::requestStorageAccess): If the user approves Storage Access, establish a new
+    UserInteraction scope, then resolve the promise. Also post a task to clear the one-time user
+    gesture state.
+    
+    LayoutTests:
+    
+    * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-non-sandboxed-iframe-pop-window-expected.txt: Added.
+    * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-non-sandboxed-iframe-pop-window.html: Added.
+    * http/tests/storageAccess/resources/request-storage-access-iframe-and-pop-window.html: Added.
+    * http/tests/storageAccess/resources/request-storage-access-second-window.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@231910 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-05-17  Brent Fulgham  <bfulgham@apple.com>
+
+            Storage Access API: Allow documents that have been granted storage access to also do a popup
+            https://bugs.webkit.org/show_bug.cgi?id=185615
+            <rdar://problem/39105791>
+
+            Reviewed by Chris Dumez.
+
+            * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-non-sandboxed-iframe-pop-window-expected.txt: Added.
+            * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-non-sandboxed-iframe-pop-window.html: Added.
+            * http/tests/storageAccess/resources/request-storage-access-iframe-and-pop-window.html: Added.
+            * http/tests/storageAccess/resources/request-storage-access-second-window.html: Added.
+
+2018-05-17  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r231937. rdar://problem/40265269
 
     AX: [macOS] Expose the primary screen height through AX API
