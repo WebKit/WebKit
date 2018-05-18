@@ -1,3 +1,14 @@
+2018-05-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Handle failure to extend sandbox gracefully
+        https://bugs.webkit.org/show_bug.cgi?id=185779
+        <rdar://problem/40316349>
+
+        Unreviewed, fix test results.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaSimulateFailedSandbox.mm:
+        (TEST_F):
+
 2018-05-18  Jer Noble  <jer.noble@apple.com>
 
         Complete fix for enabling modern EME by default

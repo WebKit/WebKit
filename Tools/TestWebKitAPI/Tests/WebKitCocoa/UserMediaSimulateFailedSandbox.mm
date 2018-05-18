@@ -136,7 +136,7 @@ TEST_F(MediaCaptureSimulateFailedSandbox, Test)
     loadTestAndWaitForMessage("denied");
     EXPECT_TRUE(wasPrompted);
     auto* error = [m_webView stringByEvaluatingJavaScript:@"lastError()"];
-    EXPECT_STREQ([error UTF8String], "AbortError,Unable to extend sandbox");
+    EXPECT_STREQ([error UTF8String], "AbortError,Unable to extend sandbox.");
 
     loadTestAndWaitForMessage("allowed");
     EXPECT_TRUE(wasPrompted);
