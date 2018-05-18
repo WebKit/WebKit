@@ -315,7 +315,6 @@ set(WTF_HEADERS
 
 set(WTF_SOURCES
     Assertions.cpp
-    Atomics.cpp
     AutomaticThread.cpp
     BitVector.cpp
     CPUTime.cpp
