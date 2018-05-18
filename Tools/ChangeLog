@@ -1,5 +1,54 @@
 2018-05-17  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r231591. rdar://problem/39290394
+
+    [Cocoa] Some fields are not identified as [WKWebProcessPlugInNodeHandle isTextField]
+    https://bugs.webkit.org/show_bug.cgi?id=185260
+    <rdar://problem/39290394>
+    
+    Source/WebKit:
+    
+    INPUT element are not considered to be text fields when
+    calling -[WKWebProcessPlugInNodeHandle isTextField]
+    when they are of type number.
+    
+    Patch by Richard Houle <rhoule@apple.com> on 2018-05-09
+    Reviewed by Tim Horton.
+    
+    * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+    (WebKit::InjectedBundleNodeHandle::isTextField const):
+    
+    Tools:
+    
+    Patch by Richard Houle <rhoule@apple.com> on 2018-05-09
+    Reviewed by Tim Horton.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKitCocoa/InjectedBundleNodeHandleIsTextField.mm: Added.
+    (-[InjectedBundleNodeHandleIsTextField isTextFieldForHTMLInputType:document:jsContext:]):
+    (-[InjectedBundleNodeHandleIsTextField webProcessPlugIn:didCreateBrowserContextController:]):
+    * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+    (-[InjectedBundleNodeHandleIsTextFieldDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@231591 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-05-09  Richard Houle  <rhoule@apple.com>
+
+            [Cocoa] Some fields are not identified as [WKWebProcessPlugInNodeHandle isTextField]
+            https://bugs.webkit.org/show_bug.cgi?id=185260
+            <rdar://problem/39290394>
+
+            Reviewed by Tim Horton.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKitCocoa/InjectedBundleNodeHandleIsTextField.mm: Added.
+            (-[InjectedBundleNodeHandleIsTextField isTextFieldForHTMLInputType:document:jsContext:]):
+            (-[InjectedBundleNodeHandleIsTextField webProcessPlugIn:didCreateBrowserContextController:]):
+            * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+            (-[InjectedBundleNodeHandleIsTextFieldDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+
+2018-05-17  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r231937. rdar://problem/40265269
 
     AX: [macOS] Expose the primary screen height through AX API
