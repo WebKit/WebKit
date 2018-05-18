@@ -221,6 +221,11 @@ FloatRect screenRectForDisplay(PlatformDisplayID displayID)
     return screen(displayID).frame;
 }
 
+FloatRect screenRectForPrimaryScreen()
+{
+    return screenRectForDisplay(primaryScreenDisplayID());
+}
+
 FloatRect screenRect(Widget* widget)
 {
     if (!screenProperties().isEmpty())

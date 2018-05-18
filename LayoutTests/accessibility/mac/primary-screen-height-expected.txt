@@ -1,0 +1,12 @@
+Click
+This tests the primary screen height is exposed to AX API from web process.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS screenHeightFromRootElement > 0 is true
+PASS screenHeightFromWebArea > 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
