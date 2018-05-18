@@ -1,3 +1,23 @@
+2018-05-18  Tim Horton  <timothy_horton@apple.com>
+
+        Stop softlinking QuickLook when loading from client-registered schemes
+        https://bugs.webkit.org/show_bug.cgi?id=185716
+        <rdar://problem/40303227>
+
+        Reviewed by Dan Bernstein.
+
+        No new tests, just a performance improvement.
+
+        * dom/Document.cpp:
+        * platform/SchemeRegistry.cpp:
+        * platform/ios/QuickLook.h:
+        * platform/ios/QuickLook.mm:
+        (WebCore::isQuickLookPreviewURL):
+        (WebCore::QLPreviewProtocol): Deleted.
+        Hard-code the QuickLook preview URL scheme, instead of loading the QuickLook
+        framework to retrieve it. It will never change, and just in case it does,
+        add an ASSERT (which does load QuickLook) so that we'll find out.
+
 2018-05-18  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn Web Animations with CSS integration on for test runners

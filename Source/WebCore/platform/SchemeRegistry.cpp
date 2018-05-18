@@ -89,7 +89,7 @@ static const URLSchemesMap& allBuiltinSchemes()
             "safari-extension",
 #endif
 #if USE(QUICK_LOOK)
-            QLPreviewProtocol(),
+            QLPreviewProtocol,
 #endif
 #if ENABLE(CONTENT_FILTERING)
             ContentFilter::urlScheme(),

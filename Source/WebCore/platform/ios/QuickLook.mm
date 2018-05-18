@@ -40,6 +40,8 @@
 
 namespace WebCore {
 
+const char* QLPreviewProtocol = "x-apple-ql-id";
+
 NSSet *QLPreviewGetSupportedMIMETypesSet()
 {
     static NSSet *set = [QLPreviewGetSupportedMIMETypes() retain];
@@ -96,18 +98,10 @@ RetainPtr<NSURLRequest> registerQLPreviewConverterIfNeeded(NSURL *url, NSString 
     return nil;
 }
 
-const char* QLPreviewProtocol()
-{
-    static const char* const previewProtocol = fastStrDup([QLPreviewScheme UTF8String]);
-    return previewProtocol;
-}
-
 bool isQuickLookPreviewURL(const URL& url)
 {
-    // Use some known protocols as a short-cut to avoid loading the QuickLook framework.
-    if (url.protocolIsInHTTPFamily() || url.isBlankURL() || url.protocolIsBlob() || url.protocolIsData() || SchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol().toString()))
-        return false;
-    return url.protocolIs(QLPreviewProtocol());
+    ASSERT([QLPreviewScheme isEqualToString:@(QLPreviewProtocol)]);
+    return url.protocolIs(QLPreviewProtocol);
 }
 
 static NSDictionary *temporaryFileAttributes()
