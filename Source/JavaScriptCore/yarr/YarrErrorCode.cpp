@@ -26,6 +26,8 @@
 #include "config.h"
 #include "YarrErrorCode.h"
 
+#include "Error.h"
+
 namespace JSC { namespace Yarr {
 
 const char* errorMessage(ErrorCode error)
@@ -56,6 +58,39 @@ const char* errorMessage(ErrorCode error)
     };
 
     return errorMessages[static_cast<unsigned>(error)];
+}
+
+JSObject* errorToThrow(ExecState* exec, ErrorCode error)
+{
+    switch (error) {
+    case ErrorCode::NoError:
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    case ErrorCode::PatternTooLarge:
+    case ErrorCode::QuantifierOutOfOrder:
+    case ErrorCode::QuantifierWithoutAtom:
+    case ErrorCode::QuantifierTooLarge:
+    case ErrorCode::MissingParentheses:
+    case ErrorCode::ParenthesesUnmatched:
+    case ErrorCode::ParenthesesTypeInvalid:
+    case ErrorCode::InvalidGroupName:
+    case ErrorCode::DuplicateGroupName:
+    case ErrorCode::CharacterClassUnmatched:
+    case ErrorCode::CharacterClassOutOfOrder:
+    case ErrorCode::EscapeUnterminated:
+    case ErrorCode::InvalidUnicodeEscape:
+    case ErrorCode::InvalidBackreference:
+    case ErrorCode::InvalidIdentityEscape:
+    case ErrorCode::InvalidUnicodePropertyExpression:
+    case ErrorCode::OffsetTooLarge:
+    case ErrorCode::InvalidRegularExpressionFlags:
+        return createSyntaxError(exec, errorMessage(error));
+    case ErrorCode::TooManyDisjunctions:
+        return createOutOfMemoryError(exec, errorMessage(error));
+    }
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 } } // namespace JSC::Yarr

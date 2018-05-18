@@ -1,3 +1,25 @@
+2018-05-17  Michael Saboff  <msaboff@apple.com>
+
+        We don't throw SyntaxErrors for runtime generated regular expressions with errors
+        https://bugs.webkit.org/show_bug.cgi?id=185755
+
+        Reviewed by Keith Miller.
+
+        Added a new helper that creates the correct exception to throw for each type of error when
+        compiling a RegExp.  Using that new helper, added missing checks for RegExp for the cases
+        where we create a new RegExp from an existing one.  Also refactored other places that we
+        throw SyntaxErrors after a failed RegExp compile to use the new helper.
+
+        * runtime/RegExp.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::regExpCreate):
+        (JSC::constructRegExp):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+        * yarr/YarrErrorCode.cpp:
+        (JSC::Yarr::errorToThrow):
+        * yarr/YarrErrorCode.h:
+
 2018-05-17  Saam Barati  <sbarati@apple.com>
 
         Remove shrinkFootprint test from apitests since it's flaky

@@ -243,7 +243,7 @@ static JSObject* regExpCreate(ExecState* exec, JSGlobalObject* globalObject, JSV
 
     RegExp* regExp = RegExp::create(vm, pattern, flags);
     if (!regExp->isValid())
-        return throwException(exec, scope, createSyntaxError(exec, regExp->errorMessage()));
+        return throwException(exec, scope, regExp->errorToThrow(exec));
 
     Structure* structure = getRegExpStructure(exec, globalObject, newTarget);
     RETURN_IF_EXCEPTION(scope, nullptr);
@@ -281,6 +281,9 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
             if (flags == InvalidFlags)
                 return nullptr;
             regExp = RegExp::create(vm, regExp->pattern(), flags);
+
+            if (!regExp->isValid())
+                return throwException(exec, scope, regExp->errorToThrow(exec));
         }
 
         return RegExpObject::create(vm, structure, regExp);

@@ -1,3 +1,21 @@
+2018-05-17  Michael Saboff  <msaboff@apple.com>
+
+        We don't throw SyntaxErrors for runtime generated regular expressions with errors
+        https://bugs.webkit.org/show_bug.cgi?id=185755
+
+        Reviewed by Keith Miller.
+
+        New regression test.
+
+        * stress/regexp-with-runtime-syntax-errors.js: Added.
+        (testThrowsSyntaxtError):
+        (fromExecWithBadUnicodeEscape):
+        (fromTestWithBadUnicodeProperty):
+        (fromSplitWithBadUnicodeIdentity):
+        (fromMatchWithBadUnicodeBackReference):
+        (fromReplaceWithBadUnicodeEscape):
+        (fromSearchWithBadUnicodeEscape):
+
 2018-05-16  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "/" operation

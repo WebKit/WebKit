@@ -1,3 +1,18 @@
+2018-05-17  Michael Saboff  <msaboff@apple.com>
+
+        We don't throw SyntaxErrors for runtime generated regular expressions with errors
+        https://bugs.webkit.org/show_bug.cgi?id=185755
+
+        Reviewed by Keith Miller.
+
+        Updated test and results from reporting a SyntaxError to an Out of memory error.
+
+        * js/script-tests/stack-overflow-regexp.js:
+        (shouldThrow.recursiveCall):
+        (shouldThrow):
+        (recursiveCall):
+        * js/stack-overflow-regexp-expected.txt:
+
 2018-05-17  Nan Wang  <n_wang@apple.com>
 
         AX: [macOS] Expose the primary screen height through AX API

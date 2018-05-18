@@ -353,6 +353,14 @@ JSObject* createOutOfMemoryError(ExecState* exec)
     return error;
 }
 
+JSObject* createOutOfMemoryError(ExecState* exec, const String& message)
+{
+    
+    auto* error = createError(exec, makeString("Out of memory: ", message), nullptr);
+    jsCast<ErrorInstance*>(error)->setOutOfMemoryError();
+    return error;
+}
+
 
 const ClassInfo StrictModeTypeErrorFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(StrictModeTypeErrorFunction) };
 

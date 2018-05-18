@@ -174,7 +174,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
     }
 
     if (!regExp->isValid())
-        return throwVMError(exec, scope, createSyntaxError(exec, regExp->errorMessage()));
+        return throwVMError(exec, scope, regExp->errorToThrow(exec));
 
     thisRegExp->setRegExp(vm, regExp);
     scope.release();

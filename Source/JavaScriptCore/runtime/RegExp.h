@@ -62,6 +62,7 @@ public:
 
     bool isValid() const { return !Yarr::hasError(m_constructionErrorCode) && m_flags != InvalidFlags; }
     const char* errorMessage() const { return Yarr::errorMessage(m_constructionErrorCode); }
+    JSObject* errorToThrow(ExecState* exec) { return Yarr::errorToThrow(exec, m_constructionErrorCode); }
 
     JS_EXPORT_PRIVATE int match(VM&, const String&, unsigned startOffset, Vector<int>& ovector);
 

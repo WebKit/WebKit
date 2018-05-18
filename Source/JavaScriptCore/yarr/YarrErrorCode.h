@@ -25,7 +25,12 @@
 
 #pragma once
 
-namespace JSC { namespace Yarr {
+namespace JSC {
+
+class ExecState;
+class JSObject;
+
+namespace Yarr {
 
 enum class ErrorCode : unsigned {
     NoError = 0,
@@ -55,5 +60,6 @@ inline bool hasError(ErrorCode errorCode)
 {
     return errorCode != ErrorCode::NoError;
 }
+JS_EXPORT_PRIVATE JSObject* errorToThrow(ExecState*, ErrorCode);
 
 } } // namespace JSC::Yarr

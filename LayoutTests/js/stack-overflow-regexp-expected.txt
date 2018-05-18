@@ -3,30 +3,30 @@ Test that we do not overflow the stack while handling regular expressions
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception SyntaxError: Invalid regular expression: too many nested disjunctions.
+PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception Error: Out of memory: Invalid regular expression: too many nested disjunctions.
 Creating RegExp at depth 0
-PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception SyntaxError: Invalid regular expression: too many nested disjunctions.
+PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception Error: Out of memory: Invalid regular expression: too many nested disjunctions.
 Creating RegExp at depth 10
-PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception SyntaxError: Invalid regular expression: too many nested disjunctions.
+PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception Error: Out of memory: Invalid regular expression: too many nested disjunctions.
 Creating RegExp at depth 20
-PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception SyntaxError: Invalid regular expression: too many nested disjunctions.
+PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception Error: Out of memory: Invalid regular expression: too many nested disjunctions.
 Creating RegExp at depth 30
-PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception SyntaxError: Invalid regular expression: too many nested disjunctions.
+PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception Error: Out of memory: Invalid regular expression: too many nested disjunctions.
 Creating RegExp at depth 40
-PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception SyntaxError: Invalid regular expression: too many nested disjunctions.
+PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception Error: Out of memory: Invalid regular expression: too many nested disjunctions.
 Creating RegExp at depth 50
-PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception SyntaxError: Invalid regular expression: too many nested disjunctions.
+PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception Error: Out of memory: Invalid regular expression: too many nested disjunctions.
 Creating RegExp at depth 60
-PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception SyntaxError: Invalid regular expression: too many nested disjunctions.
+PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception Error: Out of memory: Invalid regular expression: too many nested disjunctions.
 Creating RegExp at depth 70
-PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception SyntaxError: Invalid regular expression: too many nested disjunctions.
+PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception Error: Out of memory: Invalid regular expression: too many nested disjunctions.
 Creating RegExp at depth 80
-PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception SyntaxError: Invalid regular expression: too many nested disjunctions.
+PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception Error: Out of memory: Invalid regular expression: too many nested disjunctions.
 Creating RegExp at depth 90
-PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception SyntaxError: Invalid regular expression: too many nested disjunctions.
+PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception Error: Out of memory: Invalid regular expression: too many nested disjunctions.
 Creating RegExp at depth 100
-PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception SyntaxError: Invalid regular expression: too many nested disjunctions.
-PASS new RegExp(expression) threw exception SyntaxError: Invalid regular expression: too many nested disjunctions.
+PASS new RegExp(Array(50000).join("(") + "a" + Array(50000).join(")")) threw exception Error: Out of memory: Invalid regular expression: too many nested disjunctions.
+PASS new RegExp(expression) threw exception Error: Out of memory: Invalid regular expression: too many nested disjunctions.
 PASS successfullyParsed is true
 
 TEST COMPLETE
