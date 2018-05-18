@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,8 @@ public:
         Presence,
         Absence,
         AbsenceOfSetEffect,
-        Equivalence // An adaptive watchpoint on this will be a pair of watchpoints, and when the structure transitions, we will set the replacement watchpoint on the new structure.
+        Equivalence, // An adaptive watchpoint on this will be a pair of watchpoints, and when the structure transitions, we will set the replacement watchpoint on the new structure.
+        HasPrototype
     };
     
     PropertyCondition()
@@ -77,7 +78,7 @@ public:
         PropertyCondition result;
         result.m_uid = uid;
         result.m_kind = Absence;
-        result.u.absence.prototype = prototype;
+        result.u.prototype.prototype = prototype;
         return result;
     }
     
@@ -95,7 +96,7 @@ public:
         PropertyCondition result;
         result.m_uid = uid;
         result.m_kind = AbsenceOfSetEffect;
-        result.u.absence.prototype = prototype;
+        result.u.prototype.prototype = prototype;
         return result;
     }
     
@@ -125,6 +126,21 @@ public:
         return equivalenceWithoutBarrier(uid, value);
     }
     
+    static PropertyCondition hasPrototypeWithoutBarrier(JSObject* prototype)
+    {
+        PropertyCondition result;
+        result.m_kind = HasPrototype;
+        result.u.prototype.prototype = prototype;
+        return result;
+    }
+    
+    static PropertyCondition hasPrototype(VM& vm, JSCell* owner, JSObject* prototype)
+    {
+        if (owner)
+            vm.heap.writeBarrier(owner);
+        return hasPrototypeWithoutBarrier(prototype);
+    }
+    
     explicit operator bool() const { return m_uid || m_kind != Presence; }
     
     Kind kind() const { return m_kind; }
@@ -143,11 +159,15 @@ public:
         return u.presence.attributes;
     }
     
-    bool hasPrototype() const { return !!*this && (m_kind == Absence || m_kind == AbsenceOfSetEffect); }
+    bool hasPrototype() const
+    {
+        return !!*this
+            && (m_kind == Absence || m_kind == AbsenceOfSetEffect || m_kind == HasPrototype);
+    }
     JSObject* prototype() const
     {
         ASSERT(hasPrototype());
-        return u.absence.prototype;
+        return u.prototype.prototype;
     }
     
     bool hasRequiredValue() const { return !!*this && m_kind == Equivalence; }
@@ -170,7 +190,8 @@ public:
             break;
         case Absence:
         case AbsenceOfSetEffect:
-            result ^= WTF::PtrHash<JSObject*>::hash(u.absence.prototype);
+        case HasPrototype:
+            result ^= WTF::PtrHash<JSObject*>::hash(u.prototype.prototype);
             break;
         case Equivalence:
             result ^= EncodedJSValueHash::hash(u.equivalence.value);
@@ -191,7 +212,8 @@ public:
                 && u.presence.attributes == other.u.presence.attributes;
         case Absence:
         case AbsenceOfSetEffect:
-            return u.absence.prototype == other.u.absence.prototype;
+        case HasPrototype:
+            return u.prototype.prototype == other.u.prototype.prototype;
         case Equivalence:
             return u.equivalence.value == other.u.equivalence.value;
         }
@@ -300,7 +322,7 @@ private:
         } presence;
         struct {
             JSObject* prototype;
-        } absence;
+        } prototype;
         struct {
             EncodedJSValue value;
         } equivalence;

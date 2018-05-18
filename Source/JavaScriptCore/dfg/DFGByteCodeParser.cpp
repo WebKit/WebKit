@@ -4783,6 +4783,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_instanceof: {
+            // FIXME: We should turn this into either a CheckStructure followed by a constant, or
+            // some kind of MultiInstanceOf thing, if the InstanceOf IC is stable.
+            // https://bugs.webkit.org/show_bug.cgi?id=185695
             auto& bytecode = *reinterpret_cast<OpInstanceof*>(currentInstruction);
             Node* value = get(VirtualRegister(bytecode.value()));
             Node* prototype = get(VirtualRegister(bytecode.prototype()));

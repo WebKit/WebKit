@@ -84,6 +84,9 @@ RegisterSet RegisterSet::volatileRegistersForJSCall()
 
 RegisterSet RegisterSet::stubUnavailableRegisters()
 {
+    // FIXME: This is overly conservative. We could subtract out those callee-saves that we
+    // actually saved.
+    // https://bugs.webkit.org/show_bug.cgi?id=185686
     return RegisterSet(specialRegisters(), vmCalleeSaveRegisters());
 }
 
