@@ -1,3 +1,15 @@
+2018-05-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement width computation for non-replaced floating elements.
+        https://bugs.webkit.org/show_bug.cgi?id=185759
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeFloatingWidth const):
+        (WebCore::Layout::FormattingContext::computeFloatingNonReplacedWidth const):
+        * layout/FormattingContext.h:
+
 2018-05-18  Antoine Quint  <graouts@apple.com>
 
         [modern-media-controls] AirPlaySupport should be disabled by default

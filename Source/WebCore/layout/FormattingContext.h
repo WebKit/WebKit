@@ -94,6 +94,8 @@ private:
     void computeOutOfFlowNonReplacedWidth(LayoutContext&, const Box&, Display::Box&) const;
     void computeOutOfFlowReplacedWidth(LayoutContext&, const Box&, Display::Box&) const;
 
+    void computeFloatingNonReplacedWidth(LayoutContext&, const Box&, Display::Box&) const;
+
     LayoutUnit contentHeightForFormattingContextRoot(LayoutContext&, const Box&) const;
     LayoutUnit shrinkToFitWidth(LayoutContext&, const Box&) const;
 

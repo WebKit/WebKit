@@ -90,7 +90,7 @@ void FormattingContext::computeOutOfFlowWidth(LayoutContext& layoutContext, cons
 void FormattingContext::computeFloatingWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     if (!layoutBox.replaced()) {
-        ASSERT_NOT_IMPLEMENTED_YET();
+        computeFloatingNonReplacedWidth(layoutContext, layoutBox, displayBox);
         return;
     }
     computeReplacedWidth(layoutContext, layoutBox, displayBox);
@@ -293,6 +293,16 @@ LayoutUnit FormattingContext::contentHeightForFormattingContextRoot(LayoutContex
     auto bottom = lastDisplayBox->marginBox().maxY();
     // FIXME: add floating support.
     return bottom - top;
+}
+
+void FormattingContext::computeFloatingNonReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    ASSERT(layoutBox.isFloatingPositioned() && !layoutBox.replaced());
+    // 10.3.5 Floating, non-replaced elements
+
+    // If 'width' is computed as 'auto', the used value is the "shrink-to-fit" width.
+    auto width = layoutBox.style().logicalWidth();
+    displayBox.setWidth(width.isAuto() ? shrinkToFitWidth(layoutContext, layoutBox) : LayoutUnit(width.value()));
 }
 
 void FormattingContext::computeOutOfFlowNonReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
