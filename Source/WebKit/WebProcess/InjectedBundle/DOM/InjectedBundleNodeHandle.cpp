@@ -334,7 +334,7 @@ bool InjectedBundleNodeHandle::isTextField() const
     if (!is<HTMLInputElement>(m_node))
         return false;
 
-    return downcast<HTMLInputElement>(m_node.get()).isText();
+    return downcast<HTMLInputElement>(m_node.get()).isTextField();
 }
 
 RefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::htmlTableCellElementCellAbove()
