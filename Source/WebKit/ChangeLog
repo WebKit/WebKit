@@ -1,5 +1,37 @@
 2018-05-17  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r231922. rdar://problem/40220659
+
+    Correct default for StorageAccess API
+    https://bugs.webkit.org/show_bug.cgi?id=185748
+    <rdar://problem/40220659>
+    
+    Reviewed by Dean Jackson.
+    
+    Flip the default state to 'true' so that the new "sticky" state
+    for Storage Access API and attributing user interaction for
+    Storage Access API use is applied by default.
+    
+    * Shared/WebPreferences.yaml:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@231922 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-05-17  Brent Fulgham  <bfulgham@apple.com>
+
+            Correct default for StorageAccess API
+            https://bugs.webkit.org/show_bug.cgi?id=185748
+            <rdar://problem/40220659>
+
+            Reviewed by Dean Jackson.
+
+            Flip the default state to 'true' so that the new "sticky" state
+            for Storage Access API and attributing user interaction for
+            Storage Access API use is applied by default.
+
+            * Shared/WebPreferences.yaml:
+
+2018-05-17  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r231591. rdar://problem/39290394
 
     [Cocoa] Some fields are not identified as [WKWebProcessPlugInNodeHandle isTextField]
