@@ -58,7 +58,7 @@ typedef NS_ENUM(NSUInteger, _WKAutomationSessionBrowsingContextOptions) {
 - (BOOL)_automationSession:(_WKAutomationSession *)automationSession isShowingJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_automationSession:(_WKAutomationSession *)automationSession dismissCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_automationSession:(_WKAutomationSession *)automationSession acceptCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13), ios(11.0));
-- (NSString *)_automationSession:(_WKAutomationSession *)automationSession messageOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (nullable NSString *)_automationSession:(_WKAutomationSession *)automationSession messageOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_automationSession:(_WKAutomationSession *)automationSession setUserInput:(NSString *)value forCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (_WKAutomationSessionJavaScriptDialogType)_automationSession:(_WKAutomationSession *)automationSession typeOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
@@ -71,7 +71,7 @@ typedef NS_ENUM(NSUInteger, _WKAutomationSessionBrowsingContextOptions) {
 - (BOOL)_automationSession:(_WKAutomationSession *)automationSession isShowingJavaScriptDialogOnPage:(WKPageRef)page WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_automationSession:(_WKAutomationSession *)automationSession dismissCurrentJavaScriptDialogOnPage:(WKPageRef)page WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_automationSession:(_WKAutomationSession *)automationSession acceptCurrentJavaScriptDialogOnPage:(WKPageRef)page WK_API_AVAILABLE(macosx(10.13), ios(11.0));
-- (NSString *)_automationSession:(_WKAutomationSession *)automationSession messageOfCurrentJavaScriptDialogOnPage:(WKPageRef)page WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (nullable NSString *)_automationSession:(_WKAutomationSession *)automationSession messageOfCurrentJavaScriptDialogOnPage:(WKPageRef)page WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_automationSession:(_WKAutomationSession *)automationSession setUserInput:(NSString *)value forCurrentJavaScriptDialogOnPage:(WKPageRef)page WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (_WKAutomationSessionJavaScriptDialogType)_automationSession:(_WKAutomationSession *)automationSession typeOfCurrentJavaScriptDialogOnPage:(WKPageRef)page WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 @end

@@ -1,3 +1,14 @@
+2018-05-18  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Add missing nullability annotations to _WKAutomationSessionDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=185791
+        <rdar://problem/40279891>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/_WKAutomationSessionDelegate.h: If there is no dialog shown,
+        then the delegate methods to return the dialog text may return a nil NSString.
+
 2018-05-18  Youenn Fablet  <youenn@apple.com>
 
         NetworkLoadChecker should cancel its content extension retrieval task when being destroyed
