@@ -194,6 +194,49 @@ TEST(PasteMixedContent, ImageFileWithHTMLAndURL)
     EXPECT_FALSE([[webView stringByEvaluatingJavaScript:@"rawHTMLData.textContent"] containsString:@"script"]);
 }
 
+TEST(PasteMixedContent, ImageDataAndPlainText)
+{
+    auto webView = setUpWebView();
+    writeTypesAndDataToPasteboard(NSPasteboardTypeString, @"Hello world", NSPasteboardTypePNG, [NSData dataWithContentsOfFile:imagePath()], nil);
+    [webView paste:nil];
+
+    EXPECT_WK_STREQ("Files, text/plain", [webView stringByEvaluatingJavaScript:@"types.textContent"]);
+    EXPECT_WK_STREQ("(STRING, text/plain), (FILE, image/png)", [webView stringByEvaluatingJavaScript:@"items.textContent"]);
+    EXPECT_WK_STREQ("('image.png', image/png)", [webView stringByEvaluatingJavaScript:@"files.textContent"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"urlData.textContent"]);
+    EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"textData.textContent"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"htmlData.textContent"]);
+}
+
+TEST(PasteMixedContent, ImageDataAndPlainTextAndURL)
+{
+    auto webView = setUpWebView();
+    writeTypesAndDataToPasteboard(NSPasteboardTypeString, imagePath(), NSURLPboardType, imagePath(), NSPasteboardTypePNG, [NSData dataWithContentsOfFile:imagePath()], nil);
+    [webView paste:nil];
+
+    EXPECT_WK_STREQ("Files", [webView stringByEvaluatingJavaScript:@"types.textContent"]);
+    EXPECT_WK_STREQ("(FILE, image/png)", [webView stringByEvaluatingJavaScript:@"items.textContent"]);
+    EXPECT_WK_STREQ("('image.png', image/png)", [webView stringByEvaluatingJavaScript:@"files.textContent"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"urlData.textContent"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"textData.textContent"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"htmlData.textContent"]);
+}
+
+TEST(PasteMixedContent, ImageDataAndPlainTextAndURLAndHTML)
+{
+    auto webView = setUpWebView();
+    writeTypesAndDataToPasteboard(NSPasteboardTypeString, imagePath(), NSURLPboardType, imagePath(), NSPasteboardTypeHTML, markupString(), NSPasteboardTypePNG, [NSData dataWithContentsOfFile:imagePath()], nil);
+    [webView paste:nil];
+
+    EXPECT_WK_STREQ("Files, text/html", [webView stringByEvaluatingJavaScript:@"types.textContent"]);
+    EXPECT_WK_STREQ("(STRING, text/html), (FILE, image/png)", [webView stringByEvaluatingJavaScript:@"items.textContent"]);
+    EXPECT_WK_STREQ("('image.png', image/png)", [webView stringByEvaluatingJavaScript:@"files.textContent"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"urlData.textContent"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"textData.textContent"]);
+    EXPECT_WK_STREQ("HELLO WORLD", [webView stringByEvaluatingJavaScript:@"htmlData.textContent"]);
+    EXPECT_FALSE([[webView stringByEvaluatingJavaScript:@"rawHTMLData.textContent"] containsString:@"script"]);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC) && WK_API_ENABLED

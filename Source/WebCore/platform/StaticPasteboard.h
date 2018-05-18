@@ -61,7 +61,7 @@ public:
 
     void writeCustomData(const PasteboardCustomData&) final { }
 
-    bool containsFiles() final { return false; }
+    Pasteboard::FileContentState fileContentState() final { return FileContentState::NoFileOrImageData; }
     bool canSmartReplace() final { return false; }
 
     void writeMarkup(const String&) final { }

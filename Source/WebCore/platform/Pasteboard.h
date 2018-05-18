@@ -220,8 +220,10 @@ public:
 
     virtual void writeCustomData(const PasteboardCustomData&);
 
-    virtual bool containsFiles();
     virtual bool canSmartReplace();
+
+    enum class FileContentState { NoFileOrImageData, InMemoryImage, MayContainFilePaths };
+    virtual WEBCORE_EXPORT FileContentState fileContentState();
 
     virtual void writeMarkup(const String& markup);
     enum SmartReplaceOption { CanSmartReplace, CannotSmartReplace };

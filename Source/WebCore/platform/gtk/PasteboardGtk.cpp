@@ -318,10 +318,10 @@ String Pasteboard::readStringInCustomData(const String&)
     return { };
 }
 
-bool Pasteboard::containsFiles()
+Pasteboard::FileContentState Pasteboard::fileContentState()
 {
     readFromClipboard();
-    return !m_selectionData->filenames().isEmpty();
+    return m_selectionData->filenames().isEmpty() ? FileContentState::NoFileOrImageData : FileContentState::MayContainFilePaths;
 }
 
 void Pasteboard::writeMarkup(const String&)

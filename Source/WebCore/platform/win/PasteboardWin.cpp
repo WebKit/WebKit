@@ -315,12 +315,12 @@ struct PasteboardFileCounter final : PasteboardFileReader {
     unsigned count { 0 };
 };
 
-bool Pasteboard::containsFiles()
+Pasteboard::FileContentState Pasteboard::fileContentState()
 {
     // FIXME: This implementation can be slightly more efficient by avoiding calls to DragQueryFileW.
     PasteboardFileCounter reader;
     read(reader);
-    return reader.count;
+    return reader.count ? FileContentState::MayContainFilePaths : FileContentState::NoFileOrImageData;
 }
 
 void Pasteboard::read(PasteboardFileReader& reader)
