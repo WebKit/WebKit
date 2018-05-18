@@ -31,12 +31,13 @@
 namespace WebCore {
 
 AbstractFrame::AbstractFrame()
-    : m_windowProxy(makeUniqueRef<WindowProxy>(*this))
+    : m_windowProxy(WindowProxy::create(*this))
 {
 }
 
 AbstractFrame::~AbstractFrame()
 {
+    m_windowProxy->detachFromFrame();
 }
 
 } // namespace WebCore

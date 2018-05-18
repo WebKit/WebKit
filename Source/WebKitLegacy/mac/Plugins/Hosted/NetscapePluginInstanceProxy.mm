@@ -839,7 +839,7 @@ bool NetscapePluginInstanceProxy::getWindowNPObject(uint32_t& objectID)
     if (!frame->script().canExecuteScripts(NotAboutToExecuteScript))
         objectID = 0;
     else
-        objectID = m_localObjects.idForObject(pluginWorld().vm(), frame->windowProxy().jsWindowProxy(pluginWorld()).window());
+        objectID = m_localObjects.idForObject(pluginWorld().vm(), frame->windowProxy().jsWindowProxy(pluginWorld())->window());
         
     return true;
 }

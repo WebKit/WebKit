@@ -40,7 +40,7 @@ Ref<Touch> DocumentTouch::createTouch(Document& document, RefPtr<WindowProxy>&& 
 {
     Frame* frame;
     if (window && is<Frame>(window->frame()))
-        frame = &downcast<Frame>(window->frame());
+        frame = downcast<Frame>(window->frame());
     else
         frame = document.frame();
 

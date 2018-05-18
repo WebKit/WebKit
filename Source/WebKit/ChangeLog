@@ -1,3 +1,14 @@
+2018-05-18  Chris Dumez  <cdumez@apple.com>
+
+        Avoid keeping the frame alive when ref'ing a WindowProxy
+        https://bugs.webkit.org/show_bug.cgi?id=185737
+        <rdar://problem/40004666>
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::windowScriptNPObject):
+
 2018-05-18  Youenn Fablet  <youenn@apple.com>
 
         -Wmemset-elt-size warning in LibWebRTCSocket constructor

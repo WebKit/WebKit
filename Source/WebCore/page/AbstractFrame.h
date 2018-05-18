@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
@@ -52,7 +52,7 @@ protected:
 private:
     virtual AbstractDOMWindow* virtualWindow() const = 0;
 
-    UniqueRef<WindowProxy> m_windowProxy;
+    Ref<WindowProxy> m_windowProxy;
 };
 
 } // namespace WebCore
