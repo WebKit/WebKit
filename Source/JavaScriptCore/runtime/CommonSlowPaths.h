@@ -227,23 +227,26 @@ inline bool canAccessArgumentIndexQuickly(JSObject& object, uint32_t index)
 
 static ALWAYS_INLINE void putDirectWithReify(VM& vm, ExecState* exec, JSObject* baseObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot, Structure** result = nullptr)
 {
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (baseObject->inherits<JSFunction>(vm)) {
-        auto scope = DECLARE_THROW_SCOPE(vm);
         jsCast<JSFunction*>(baseObject)->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
         RETURN_IF_EXCEPTION(scope, void());
     }
     if (result)
         *result = baseObject->structure(vm);
+    scope.release();
     baseObject->putDirect(vm, propertyName, value, slot);
 }
 
 static ALWAYS_INLINE void putDirectAccessorWithReify(VM& vm, ExecState* exec, JSObject* baseObject, PropertyName propertyName, GetterSetter* accessor, unsigned attribute)
 {
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (baseObject->inherits<JSFunction>(vm)) {
         auto scope = DECLARE_THROW_SCOPE(vm);
         jsCast<JSFunction*>(baseObject)->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
         RETURN_IF_EXCEPTION(scope, void());
     }
+    scope.release();
     baseObject->putDirectAccessor(exec, propertyName, accessor, attribute);
 }
 
