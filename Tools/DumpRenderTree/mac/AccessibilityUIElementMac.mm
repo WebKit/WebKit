@@ -158,6 +158,10 @@ static NSString* attributesOfElement(id accessibilityObject)
         if ([attribute isEqualToString:@"AXPosition"])
             continue;
         
+        // Skip screen-specific information.
+        if ([attribute isEqualToString:@"_AXPrimaryScreenHeight"])
+            continue;
+        
         // accessibilityAttributeValue: can throw an if an attribute is not returned.
         // For DumpRenderTree's purpose, we should ignore those exceptions
         BEGIN_AX_OBJC_EXCEPTIONS

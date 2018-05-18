@@ -514,6 +514,9 @@ webkit.org/b/184742 accessibility/mac/async-increment-decrement-action.html [ Sk
 
 webkit.org/b/182752 accessibility/mac/accessibility-make-first-responder.html [ Skip ]
 
+# This test tests the rootElement on WK2.
+webkit.org/b/185742 accessibility/mac/primary-screen-height.html [ Skip ]
+
 # User-installed fonts test infrastructure is not present in WK1
 webkit.org/b/180062 fast/text/user-installed-fonts [ ImageOnlyFailure ]
 

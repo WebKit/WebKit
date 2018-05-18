@@ -711,7 +711,7 @@
 		29A812410FBB9C1D00510293 /* AccessibilityTableColumn.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812230FBB9C1D00510293 /* AccessibilityTableColumn.h */; };
 		29A812420FBB9C1D00510293 /* AccessibilityListBoxOption.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812240FBB9C1D00510293 /* AccessibilityListBoxOption.h */; };
 		29A812430FBB9C1D00510293 /* AccessibilityListBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812250FBB9C1D00510293 /* AccessibilityListBox.h */; };
-		29A812490FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812450FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.h */; };
+		29A812490FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812450FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		29ACB212143E7128006BCA5F /* AccessibilityMockObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29ACB211143E7128006BCA5F /* AccessibilityMockObject.h */; };
 		29D7BCFA1444AF7D0070619C /* AccessibilitySpinButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 29D7BCF91444AF7D0070619C /* AccessibilitySpinButton.h */; };
 		29FAF4B6195AB08900A522DC /* TextUndoInsertionMarkupMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 29FAF4B5195AB08900A522DC /* TextUndoInsertionMarkupMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3275,7 +3275,7 @@
 		AA2A5AD216A4860A00976A25 /* JSSpeechSynthesisEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2A5AC116A485D500976A25 /* JSSpeechSynthesisEvent.h */; };
 		AA2A5AD416A4861100975A25 /* SpeechSynthesis.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2A5ABE16A485D500975A25 /* SpeechSynthesis.h */; };
 		AA2A5AD616A4861600975A25 /* DOMWindowSpeechSynthesis.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2A5AB916A485D500975A25 /* DOMWindowSpeechSynthesis.h */; };
-		AA478A7F16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.h in Headers */ = {isa = PBXBuildFile; fileRef = AA478A7D16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.h */; };
+		AA478A7F16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.h in Headers */ = {isa = PBXBuildFile; fileRef = AA478A7D16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AA4C3A770B2B1679002334A2 /* InlineStyleSheetOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4C3A750B2B1679002334A2 /* InlineStyleSheetOwner.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AA5F3B8D16CC33D100455EB0 /* PlatformSpeechSynthesizerMock.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE27B7516CBFC0D00623043 /* PlatformSpeechSynthesizerMock.h */; };
 		AA5F3B8F16CC4B3900455EB0 /* PlatformSpeechSynthesizerMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE27B7416CBFC0D00623043 /* PlatformSpeechSynthesizerMock.cpp */; };
@@ -26931,6 +26931,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				29A812490FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.h in Headers */,
+				AA478A7F16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.h in Headers */,
 				7CD0E2B81F80A4820016A4CE /* AbortController.h in Headers */,
 				7CD0E2BF1F80A56E0016A4CE /* AbortSignal.h in Headers */,
 				46B95195207D633400A7D2DD /* AbstractDOMWindow.h in Headers */,
@@ -30723,9 +30725,7 @@
 				FD7F299213D4C0CB00AD9535 /* WaveShaperDSPKernel.h in Headers */,
 				FD7F299413D4C0CB00AD9535 /* WaveShaperNode.h in Headers */,
 				FD7F299713D4C0CB00AD9535 /* WaveShaperProcessor.h in Headers */,
-				29A812490FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.h in Headers */,
 				AAA728F716D1D8BC00D3BBC6 /* WebAccessibilityObjectWrapperIOS.h in Headers */,
-				AA478A7F16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.h in Headers */,
 				2D3EF4481917915C00034184 /* WebActionDisablingCALayerDelegate.h in Headers */,
 				71025ED31F99F0CE004A250C /* WebAnimation.h in Headers */,
 				7132445120109DA500AE7FB2 /* WebAnimationUtilities.h in Headers */,

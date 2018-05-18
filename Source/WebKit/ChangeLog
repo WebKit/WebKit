@@ -1,3 +1,14 @@
+2018-05-17  Nan Wang  <n_wang@apple.com>
+
+        AX: [macOS] Expose the primary screen height through AX API
+        https://bugs.webkit.org/show_bug.cgi?id=185742
+
+        Reviewed by Chris Fleizach.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject accessibilityAttributeNames]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:]):
+
 2018-05-17  Alex Christensen  <achristensen@webkit.org>
 
         Use CompletionHandlers for DelayedReplies
