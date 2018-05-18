@@ -77,8 +77,8 @@ inline JSC::JSValue toJS(JSC::ExecState* state, WindowProxy* windowProxy) { retu
 inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject*, WindowProxy& windowProxy) { return toJS(state, windowProxy); }
 inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, WindowProxy* windowProxy) { return windowProxy ? toJS(state, globalObject, *windowProxy) : JSC::jsNull(); }
 
-JSWindowProxy& toJSWindowProxy(WindowProxy&, DOMWrapperWorld&);
-inline JSWindowProxy* toJSWindowProxy(WindowProxy* windowProxy, DOMWrapperWorld& world) { return windowProxy ? &toJSWindowProxy(*windowProxy, world) : nullptr; }
+JSWindowProxy* toJSWindowProxy(WindowProxy&, DOMWrapperWorld&);
+inline JSWindowProxy* toJSWindowProxy(WindowProxy* windowProxy, DOMWrapperWorld& world) { return windowProxy ? toJSWindowProxy(*windowProxy, world) : nullptr; }
 
 
 template<> struct JSDOMWrapperConverterTraits<WindowProxy> {

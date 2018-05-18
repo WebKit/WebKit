@@ -83,7 +83,7 @@ public:
 
     JSDOMWindow* globalObject(DOMWrapperWorld& world)
     {
-        return JSC::jsCast<JSDOMWindow*>(windowProxy().jsWindowProxy(world).window());
+        return JSC::jsCast<JSDOMWindow*>(jsWindowProxy(world).window());
     }
 
     static void getAllWorlds(Vector<Ref<DOMWrapperWorld>>&);
@@ -166,6 +166,7 @@ private:
     void disconnectPlatformScriptObjects();
 
     WEBCORE_EXPORT WindowProxy& windowProxy();
+    WEBCORE_EXPORT JSWindowProxy& jsWindowProxy(DOMWrapperWorld&);
 
     Frame& m_frame;
     const String* m_sourceURL;
