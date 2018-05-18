@@ -1,3 +1,25 @@
+2018-05-17  David Kilzer  <ddkilzer@apple.com>
+
+        Lazily create WebCore::Timer for WebCore::Image
+        <https://webkit.org/b/185752>
+
+        Reviewed by Simon Fraser.
+
+        Not every image is an animated image, so lazily creating
+        m_animationStartTimer saves 64 bytes per instance of
+        WebCore::Image.
+
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::Image): Remove default initializer for
+        m_animationStartTimer.
+        (WebCore::Image::startAnimationAsynchronously): Initialize
+        m_animationStartTimer if it's not already created.
+        * platform/graphics/Image.h:
+        (WebCore::Image::animationPending const): Update to check if
+        m_animationStartTimer has been set before dereferencing it.
+        (WebCore::Image::m_animationStartTimer): Change type to
+        std::unique_ptr<Timer>.
+
 2018-05-17  Nan Wang  <n_wang@apple.com>
 
         AX: [macOS] Expose the primary screen height through AX API

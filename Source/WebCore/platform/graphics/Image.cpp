@@ -50,7 +50,6 @@ namespace WebCore {
 
 Image::Image(ImageObserver* observer)
     : m_imageObserver(observer)
-    , m_animationStartTimer(*this, &Image::startAnimation)
 {
 }
 
@@ -349,9 +348,11 @@ void Image::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsic
 
 void Image::startAnimationAsynchronously()
 {
-    if (m_animationStartTimer.isActive())
+    if (!m_animationStartTimer)
+        m_animationStartTimer = std::make_unique<Timer>(*this, &Image::startAnimation);
+    if (m_animationStartTimer->isActive())
         return;
-    m_animationStartTimer.startOneShot(0_s);
+    m_animationStartTimer->startOneShot(0_s);
 }
 
 void Image::dump(TextStream& ts) const

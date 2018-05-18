@@ -138,7 +138,7 @@ public:
     virtual void stopAnimation() {}
     virtual void resetAnimation() {}
     virtual bool isAnimating() const { return false; }
-    bool animationPending() const { return m_animationStartTimer.isActive(); }
+    bool animationPending() const { return m_animationStartTimer && m_animationStartTimer->isActive(); }
 
     // Typically the CachedImage that owns us.
     ImageObserver* imageObserver() const { return m_imageObserver; }
@@ -200,7 +200,7 @@ protected:
 private:
     RefPtr<SharedBuffer> m_encodedImageData;
     ImageObserver* m_imageObserver;
-    Timer m_animationStartTimer;
+    std::unique_ptr<Timer> m_animationStartTimer;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Image&);
