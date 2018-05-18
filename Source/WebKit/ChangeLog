@@ -1,3 +1,17 @@
+2018-05-18  Per Arne Vollan  <pvollan@apple.com>
+
+        WebProcess fails to launch
+        https://bugs.webkit.org/show_bug.cgi?id=185140
+
+        Reviewed by Geoffrey Garen.
+
+        If the NSApplication runloop is not used in the WebContent process, launchServicesCheckIn() needs to be called
+        in order for enableSandboxStyleFileQuarantine() to succeed. Determine at runtime if launchServicesCheckIn()
+        should be called by checking if the NSApplication event loop is running.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2018-05-18  Jer Noble  <jer.noble@apple.com>
 
         Complete fix for enabling modern EME by default

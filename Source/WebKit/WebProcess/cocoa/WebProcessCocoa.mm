@@ -306,11 +306,11 @@ void WebProcess::platformInitializeProcess(const ChildProcessInitializationParam
     // Make sure that we close any WindowServer connections after checking in with Launch Services.
     CGSShutdownServerConnections();
 #else
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    // This call is needed when the WebProcess is not running the NSApplication event loop.
-    // Otherwise, calling enableSandboxStyleFileQuarantine() will fail.
-    launchServicesCheckIn();
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    if (![NSApp isRunning]) {
+        // This call is needed when the WebProcess is not running the NSApplication event loop.
+        // Otherwise, calling enableSandboxStyleFileQuarantine() will fail.
+        launchServicesCheckIn();
+    }
 #endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 #endif // PLATFORM(MAC)
 
