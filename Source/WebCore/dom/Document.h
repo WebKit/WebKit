@@ -1437,6 +1437,8 @@ public:
     CrossOriginOptions crossOriginOptions() const { return m_crossOriginOptions; }
     void setCrossOriginOptions(CrossOriginOptions value);
 
+    void consumeTemporaryTimeUserGesture();
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1549,6 +1551,8 @@ private:
     void platformSuspendOrStopActiveDOMObjects();
 
     bool domainIsRegisterable(const String&) const;
+
+    void enableTemporaryTimeUserGesture();
 
     const Ref<Settings> m_settings;
 
@@ -1929,6 +1933,8 @@ private:
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     String m_primaryDomainRequestedPageSpecificStorageAccessWithUserInteraction { };
 #endif
+    
+    std::unique_ptr<UserGestureIndicator> m_temporaryUserGesture;
 };
 
 Element* eventTargetElementForDocument(Document*);

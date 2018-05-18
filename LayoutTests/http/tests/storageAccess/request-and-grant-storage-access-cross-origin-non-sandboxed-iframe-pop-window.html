@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script>
+        description("Tests that cross-origin iframe can display a window if storage access is granted.");
+        jsTestIsAsync = true;
+
+        const hostUnderTest = "localhost:8000";
+        const statisticsUrl = "http://" + hostUnderTest + "/temp";
+
+        window.addEventListener("message", receiveMessage, false);
+
+        function setEnableFeature(enable) {
+            if (!window.testRunner)
+                return;
+
+            if (!enable)
+                testRunner.statisticsResetToConsistentState();
+            internals.setResourceLoadStatisticsEnabled(enable);
+            testRunner.setCookieStoragePartitioningEnabled(enable);
+            testRunner.setStorageAccessAPIEnabled(enable);
+        }
+
+        function receiveMessage(event) {
+            if (event.origin === "http://localhost:8000") {
+                if (event.data.indexOf("PASS ") !== -1)
+                    testPassed(event.data.replace("PASS ", ""));
+                else
+                    testFailed(event.data);
+            } else
+                testFailed("Received a message from an unexpected origin: " + event.origin);
+            finishJSTest();
+            setEnableFeature(false);
+        }
+
+        function activateElement(elementId) {
+            var element = document.getElementById(elementId);
+            var centerX = element.offsetLeft + element.offsetWidth / 2;
+            var centerY = element.offsetTop + element.offsetHeight / 2;
+            UIHelper.activateAt(centerX, centerY).then(
+                function () {
+                    if (window.eventSender)
+                        eventSender.keyDown("escape");
+                    else {
+                        testFailed("No eventSender.");
+                        finishJSTest();
+                        setEnableFeature(false);
+                    }
+                },
+                function () {
+                    testFailed("Promise rejected.");
+                    finishJSTest();
+                    setEnableFeature(false);
+                }
+            );
+        }
+
+        function runTest() {
+            setEnableFeature(true);
+
+            if (!window.testRunner)
+                return;
+
+            testRunner.setCanOpenWindows(false);
+            testRunner.setPopupBlockingEnabled(true);
+            testRunner.setStatisticsPrevalentResource(statisticsUrl, true);
+            if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                testFailed("Host did not get set as prevalent resource.");
+            testRunner.setStatisticsHasHadNonRecentUserInteraction(statisticsUrl);
+            if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+                testFailed("Host did not get logged for user interaction.");
+            testRunner.statisticsUpdateCookiePartitioning();
+ 
+            activateElement("theIframe");
+        }
+    </script>
+</head>
+<body>
+    <iframe onload="runTest()" id="theIframe" src="http://localhost:8000/storageAccess/resources/request-storage-access-iframe-and-pop-window.html#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess,isNotSameOriginIframe"></iframe>
+</body>
+</html>
