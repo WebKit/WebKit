@@ -1,3 +1,14 @@
+2018-05-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Password fields obscure the text with rectangles instead of circles
+        https://bugs.webkit.org/show_bug.cgi?id=185760
+        <rdar://problem/38644697>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/text/black-circle-expected.html: Added.
+        * fast/text/black-circle.html: Added.
+
 2018-05-18  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r231935.

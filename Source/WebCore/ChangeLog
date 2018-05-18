@@ -1,3 +1,21 @@
+2018-05-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Password fields obscure the text with rectangles instead of circles
+        https://bugs.webkit.org/show_bug.cgi?id=185760
+        <rdar://problem/38644697>
+
+        Reviewed by Zalan Bujtas.
+
+        Password fields are obscured by drawing U+25CF BLACK CIRCLE. On iOS, we have custom handling
+        for this character. However, this custom handling is unnecessary and isn't present on macOS.
+        Instead, we should simply unify the password obscuring codepath between iOS and macOS.
+
+        Test: fast/text/black-circle.html
+
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::requiresCustomFallbackFont):
+        (WebCore::FontCache::getCustomFallbackFont):
+
 2018-05-18  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r231935.
