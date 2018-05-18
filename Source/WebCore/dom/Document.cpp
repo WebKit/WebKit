@@ -3264,23 +3264,6 @@ bool Document::canNavigate(Frame* targetFrame)
     return false;
 }
 
-Frame* Document::findUnsafeParentScrollPropagationBoundary()
-{
-    Frame* currentFrame = m_frame;
-    if (!currentFrame)
-        return nullptr;
-
-    Frame* ancestorFrame = currentFrame->tree().parent();
-
-    while (ancestorFrame) {
-        if (!ancestorFrame->document()->securityOrigin().canAccess(securityOrigin()))
-            return currentFrame;
-        currentFrame = ancestorFrame;
-        ancestorFrame = ancestorFrame->tree().parent();
-    }
-    return nullptr;
-}
-
 void Document::didRemoveAllPendingStylesheet()
 {
     if (auto* parser = scriptableDocumentParser())

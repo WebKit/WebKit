@@ -1,3 +1,37 @@
+2018-05-17  Chris Dumez  <cdumez@apple.com>
+
+        RenderLayer::scrollRectToVisible() should not propagate a subframe's scroll to its cross-origin parent
+        https://bugs.webkit.org/show_bug.cgi?id=185664
+        <rdar://problem/36185260>
+
+        Reviewed by Simon Fraser.
+
+        RenderLayer::scrollRectToVisible() should not propagate a subframe's scroll to its
+        cross-origin parent. There was logic in FrameLoader::scrollToFragmentWithParentBoundary()
+        to temporarily set the 'safeToPropagateScrollToParent' flag to false on the cross-origin
+        ancestor frame during the call to FrameView::scrollToFragment(). This would correctly
+        prevent RenderLayer::scrollRectToVisible() to propagate the scroll to the cross-origin
+        ancestor frame when scrollRectToVisible() is called synchronously. However,
+        scrollRectToVisible() can get called asynchronously in case of a dirty layout, as part
+        of the post layout tasks.
+
+        To address the issue, we get rid of the safeToPropagateScrollToParent flag on FrameView
+        and instead update FrameView::safeToPropagateScrollToParent() to do the cross-origin
+        check. FrameView::safeToPropagateScrollToParent() is called by RenderLayer::scrollRectToVisible()
+        and this is a lot more robust than relying on a flag which gets temporarily set.
+
+        Test: http/tests/navigation/fragment-navigation-cross-origin-subframe-no-scrolling-parent.html
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::scrollToFragmentWithParentBoundary):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::safeToPropagateScrollToParent const):
+        * page/FrameView.h:
+
 2018-05-17  Don Olmstead  <don.olmstead@sony.com>
 
         [Curl] Enable HTTP/2 Multiplexing

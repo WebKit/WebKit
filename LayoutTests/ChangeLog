@@ -1,3 +1,17 @@
+2018-05-17  Chris Dumez  <cdumez@apple.com>
+
+        RenderLayer::scrollRectToVisible() should not propagate a subframe's scroll to its cross-origin parent
+        https://bugs.webkit.org/show_bug.cgi?id=185664
+        <rdar://problem/36185260>
+
+        Reviewed by Simon Fraser.
+
+        Add layout test coverage.
+
+        * http/tests/navigation/fragment-navigation-cross-origin-subframe-no-scrolling-parent-expected.txt: Added.
+        * http/tests/navigation/fragment-navigation-cross-origin-subframe-no-scrolling-parent.html: Added.
+        * http/tests/navigation/resources/clear-fragment.html: Added.
+
 2018-05-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r231899.
