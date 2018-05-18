@@ -145,6 +145,7 @@ ALWAYS_INLINE static void putByValInternal(ExecState* exec, VM& vm, EncodedJSVal
             baseObject->putDirectIndex(exec, index.value(), value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
             return;
         }
+        scope.release();
         CommonSlowPaths::putDirectWithReify(vm, exec, baseObject, propertyName, value, slot);
         return;
     }

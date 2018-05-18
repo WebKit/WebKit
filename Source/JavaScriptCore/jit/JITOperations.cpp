@@ -711,6 +711,7 @@ static void directPutByVal(CallFrame* callFrame, JSObject* baseObject, JSValue s
     if (byValInfo->stubInfo && (!isStringOrSymbol(subscript) || byValInfo->cachedId != property))
         byValInfo->tookSlowPath = true;
 
+    scope.release();
     PutPropertySlot slot(baseObject, isStrictMode);
     CommonSlowPaths::putDirectWithReify(vm, callFrame, baseObject, property, value, slot);
 }

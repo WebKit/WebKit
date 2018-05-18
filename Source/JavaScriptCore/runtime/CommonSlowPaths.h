@@ -242,7 +242,6 @@ static ALWAYS_INLINE void putDirectAccessorWithReify(VM& vm, ExecState* exec, JS
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (baseObject->inherits<JSFunction>(vm)) {
-        auto scope = DECLARE_THROW_SCOPE(vm);
         jsCast<JSFunction*>(baseObject)->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
         RETURN_IF_EXCEPTION(scope, void());
     }
