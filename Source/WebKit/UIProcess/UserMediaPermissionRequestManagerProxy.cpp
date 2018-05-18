@@ -153,8 +153,9 @@ void UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted(uint64_t 
     if (!request)
         return;
 
-    grantAccess(userMediaID, WTFMove(audioDevice), WTFMove(videoDevice), request->deviceIdentifierHashSalt());
-    m_grantedRequests.append(request.releaseNonNull());
+    if (grantAccess(userMediaID, WTFMove(audioDevice), WTFMove(videoDevice), request->deviceIdentifierHashSalt()))
+        m_grantedRequests.append(request.releaseNonNull());
+
 #else
     UNUSED_PARAM(userMediaID);
     UNUSED_PARAM(audioDevice);
@@ -220,10 +221,15 @@ bool UserMediaPermissionRequestManagerProxy::wasRequestDenied(uint64_t mainFrame
     return false;
 }
 
-void UserMediaPermissionRequestManagerProxy::grantAccess(uint64_t userMediaID, const CaptureDevice audioDevice, const CaptureDevice videoDevice, const String& deviceIdentifierHashSalt)
+bool UserMediaPermissionRequestManagerProxy::grantAccess(uint64_t userMediaID, const CaptureDevice audioDevice, const CaptureDevice videoDevice, const String& deviceIdentifierHashSalt)
 {
-    UserMediaProcessManager::singleton().willCreateMediaStream(*this, !!audioDevice, !!videoDevice);
+    if (!UserMediaProcessManager::singleton().willCreateMediaStream(*this, !!audioDevice, !!videoDevice)) {
+        denyRequest(userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure, "Unable to extend sandbox.");
+        return false;
+    }
+
     m_page.process().send(Messages::WebPage::UserMediaAccessWasGranted(userMediaID, audioDevice, videoDevice, deviceIdentifierHashSalt), m_page.pageID());
+    return true;
 }
 #endif
 

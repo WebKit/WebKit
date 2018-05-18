@@ -257,45 +257,51 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
 #endif
 }
 
-void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& invalidConstraint)
+void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& message)
 {
     if (!m_scriptExecutionContext)
         return;
 
+    ExceptionCode code;
     switch (reason) {
     case MediaAccessDenialReason::NoConstraints:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - no constraints");
-        m_promise.reject(TypeError);
+        code = TypeError;
         break;
     case MediaAccessDenialReason::UserMediaDisabled:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - user media disabled");
-        m_promise.reject(SecurityError);
+        code = SecurityError;
         break;
     case MediaAccessDenialReason::NoCaptureDevices:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - no capture devices");
-        m_promise.reject(NotFoundError);
+        code = NotFoundError;
         break;
     case MediaAccessDenialReason::InvalidConstraint:
-        RELEASE_LOG(MediaStream, "UserMediaRequest::deny - invalid constraint - %s", invalidConstraint.utf8().data());
-        m_promise.rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(invalidConstraint, ASCIILiteral("Invalid constraint")).get());
-        break;
+        RELEASE_LOG(MediaStream, "UserMediaRequest::deny - invalid constraint - %s", message.utf8().data());
+        m_promise.rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(message, ASCIILiteral("Invalid constraint")).get());
+        return;
     case MediaAccessDenialReason::HardwareError:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - hardware error");
-        m_promise.reject(NotReadableError);
+        code = NotReadableError;
         break;
     case MediaAccessDenialReason::OtherFailure:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - other failure");
-        m_promise.reject(AbortError);
+        code = AbortError;
         break;
     case MediaAccessDenialReason::PermissionDenied:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - permission denied");
-        m_promise.reject(NotAllowedError);
+        code = NotAllowedError;
         break;
     case MediaAccessDenialReason::InvalidAccess:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - invalid access");
-        m_promise.reject(InvalidAccessError);
+        code = InvalidAccessError;
         break;
     }
+
+    if (!message.isEmpty())
+        m_promise.reject(code, message);
+    else
+        m_promise.reject(code);
 }
 
 void UserMediaRequest::stop()

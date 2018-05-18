@@ -459,6 +459,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_disableBackForwardSnapshotVolatilityForTesting WK_API_AVAILABLE(macosx(10.12.3), ios(10.3));
 - (void)_executeEditCommand:(NSString *)command argument:(NSString *)argument completion:(void (^)(BOOL))completion WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 
+- (void)_denyNextUserMediaRequest WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 - (BOOL)_beginBackSwipeForTesting;
 - (BOOL)_completeBackSwipeForTesting;
 - (void)_setDefersLoadingForTesting:(BOOL)defersLoading;

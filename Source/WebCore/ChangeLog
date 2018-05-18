@@ -1,3 +1,17 @@
+2018-05-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Handle failure to extend sandbox gracefully
+        https://bugs.webkit.org/show_bug.cgi?id=185779
+        <rdar://problem/40316349>
+
+        Reviewed by Brent Fulgham.
+
+        Test: TestWebKitAPI/Tests/WebKitCocoa/UserMediaSimulateFailedSandbox.mm
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::deny): Include the error string in the promise rejection.
+        * Modules/mediastream/UserMediaRequest.h:
+
 2018-05-18  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn Web Animations with CSS integration on for test runners

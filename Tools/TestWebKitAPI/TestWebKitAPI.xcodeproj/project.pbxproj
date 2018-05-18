@@ -35,6 +35,7 @@
 		07E1F6A21FFC44FA0096C7EC /* getDisplayMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 07E1F6A11FFC44F90096C7EC /* getDisplayMedia.html */; };
 		07E1F6A31FFC4B760096C7EC /* GetDisplayMedia.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07E1F6A01FFC3A080096C7EC /* GetDisplayMedia.mm */; };
 		07E499911F9E56DF002F1EF3 /* GetUserMediaReprompt.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07E499901F9E56A1002F1EF3 /* GetUserMediaReprompt.mm */; };
+		07F4E92E20AF59E2002E3803 /* UserMediaSimulateFailedSandbox.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07F4E92D20AF58D3002E3803 /* UserMediaSimulateFailedSandbox.mm */; };
 		0EBBCC661FFF9E0C00FA42AB /* pop-up-check.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0EBBCC651FFF9DCE00FA42AB /* pop-up-check.html */; };
 		0F139E771A423A5B00F590F5 /* WeakObjCPtr.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E751A423A5300F590F5 /* WeakObjCPtr.mm */; };
 		0F139E781A423A6B00F590F5 /* PlatformUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */; };
@@ -1151,6 +1152,7 @@
 		07E1F6A11FFC44F90096C7EC /* getDisplayMedia.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = getDisplayMedia.html; path = ../WebKit/getDisplayMedia.html; sourceTree = "<group>"; };
 		07E499901F9E56A1002F1EF3 /* GetUserMediaReprompt.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetUserMediaReprompt.mm; sourceTree = "<group>"; };
 		07EDEFAC1EB9400C00D43292 /* UserMediaDisabled.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserMediaDisabled.mm; sourceTree = "<group>"; };
+		07F4E92D20AF58D3002E3803 /* UserMediaSimulateFailedSandbox.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserMediaSimulateFailedSandbox.mm; sourceTree = "<group>"; };
 		0BCD833414857CE400EA2003 /* HashMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HashMap.cpp; sourceTree = "<group>"; };
 		0BCD85691485C98B00EA2003 /* SetForScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetForScope.cpp; sourceTree = "<group>"; };
 		0EBBCC651FFF9DCE00FA42AB /* pop-up-check.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "pop-up-check.html"; sourceTree = "<group>"; };
@@ -2258,6 +2260,7 @@
 				7C882E051C80C624006BF731 /* UserContentWorldProtocol.h */,
 				7CCB99201D3B41F6003922F6 /* UserInitiatedActionInNavigationAction.mm */,
 				07EDEFAC1EB9400C00D43292 /* UserMediaDisabled.mm */,
+				07F4E92D20AF58D3002E3803 /* UserMediaSimulateFailedSandbox.mm */,
 				93E943F11CD3E87E00AC08C2 /* VideoControlsManager.mm */,
 				6356FB211EC4E0BA0044BF18 /* VisibleContentRect.mm */,
 				83779C371F82FEB0007CDA8A /* VisitedLinkStore.mm */,
@@ -3782,6 +3785,7 @@
 				7CCB99211D3B41F6003922F6 /* UserInitiatedActionInNavigationAction.mm in Sources */,
 				7CCE7F171A411AE600447C4C /* UserMedia.cpp in Sources */,
 				0799C3491EBA2D7B003B7532 /* UserMediaDisabled.mm in Sources */,
+				07F4E92E20AF59E2002E3803 /* UserMediaSimulateFailedSandbox.mm in Sources */,
 				7CCE7F181A411AE600447C4C /* UserMessage.cpp in Sources */,
 				7C83E03A1D0A602700FEBCF3 /* UtilitiesCocoa.mm in Sources */,
 				7C83E0C61D0A654E00FEBCF3 /* VideoControlsManager.mm in Sources */,

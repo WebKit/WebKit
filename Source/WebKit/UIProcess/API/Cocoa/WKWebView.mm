@@ -47,6 +47,7 @@
 #import "RemoteObjectRegistryMessages.h"
 #import "SandboxUtilities.h"
 #import "UIDelegate.h"
+#import "UserMediaProcessManager.h"
 #import "VersionChecks.h"
 #import "ViewGestureController.h"
 #import "ViewSnapshotStore.h"
@@ -6385,6 +6386,10 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _page->setDefersLoadingForTesting(defersLoading);
 }
 
+- (void)_denyNextUserMediaRequest
+{
+    WebKit::UserMediaProcessManager::singleton().denyNextUserMediaRequest();
+}
 @end
 
 

@@ -126,14 +126,17 @@ void UserMediaProcessManager::muteCaptureMediaStreamsExceptIn(WebPageProxy& page
 #endif
 }
 
-void UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestManagerProxy& proxy, bool withAudio, bool withVideo)
+bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestManagerProxy& proxy, bool withAudio, bool withVideo)
 {
 #if ENABLE(SANDBOX_EXTENSIONS)
     auto& processStartingCapture = proxy.page().process();
 
     ASSERT(stateMap().contains(&processStartingCapture));
 
-    proxy.page().activateMediaStreamCaptureInPage();
+    if (m_denyNextRequest) {
+        m_denyNextRequest = false;
+        return false;
+    }
 
     auto& state = processState(processStartingCapture);
     size_t extensionCount = 0;
@@ -171,10 +174,23 @@ void UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
             }
         }
 
+        if (ids.size() != handles.size()) {
+            WTFLogAlways("Could not create a required sandbox extension, capture will fail!");
+            return false;
+        }
+
         state.setSandboxExtensionsGranted(currentExtensions);
         processStartingCapture.send(Messages::WebPage::GrantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions(ids, WTFMove(handles))), proxy.page().pageID());
     }
+#else
+    UNUSED_PARAM(proxy);
+    UNUSED_PARAM(withAudio);
+    UNUSED_PARAM(withVideo);
 #endif
+
+    proxy.page().activateMediaStreamCaptureInPage();
+
+    return true;
 }
 
 void UserMediaProcessManager::startedCaptureSession(UserMediaPermissionRequestManagerProxy& proxy)

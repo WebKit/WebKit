@@ -1,3 +1,28 @@
+2018-05-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Handle failure to extend sandbox gracefully
+        https://bugs.webkit.org/show_bug.cgi?id=185779
+        <rdar://problem/40316349>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _denyNextUserMediaRequest]): 
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted): Don't append
+        the request to m_grantedRequests if it failed.
+        (WebKit::UserMediaPermissionRequestManagerProxy::grantAccess): Deny request if willCreateMediaStream
+        fails.
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::willCreateMediaStream): Don't try to extend sandbox if
+        we fail to allocate all necessary handles.
+        * UIProcess/UserMediaProcessManager.h:
+        (WebKit::UserMediaProcessManager::denyNextUserMediaRequest): New, for testing.
+
 2018-05-18  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn Web Animations with CSS integration on for test runners

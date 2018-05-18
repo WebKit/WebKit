@@ -1,3 +1,21 @@
+2018-05-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Handle failure to extend sandbox gracefully
+        https://bugs.webkit.org/show_bug.cgi?id=185779
+        <rdar://problem/40316349>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaSimulateFailedSandbox.mm: Added.
+        (-[SimulateFailedSandboxMessageHandler userContentController:didReceiveScriptMessage:]):
+        (-[SimulateFailedSandboxUIDelegate _webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:]):
+        (-[SimulateFailedSandboxUIDelegate _webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:]):
+        (MediaCaptureSimulateFailedSandbox::SetUp):
+        (MediaCaptureSimulateFailedSandbox::loadTestAndWaitForMessage):
+        (TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/disableGetUserMedia.html:
+
 2018-05-18  Daniel Bates  <dabates@apple.com>
 
         "debug-safari --ios-simulator" creates lldb target to launch Mac Safari
