@@ -1,3 +1,13 @@
+2018-05-18  Youenn Fablet  <youenn@apple.com>
+
+        Layout Test http/wpt/service-workers/header-filtering.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=184469
+        <rdar://problem/39428226>
+
+        Unreviewed.
+
+        * platform/mac-wk2/TestExpectations: Removed flaky expectation that was added back inadvertently.
+
 2018-05-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Password fields obscure the text with rectangles instead of circles
