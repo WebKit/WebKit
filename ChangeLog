@@ -1,3 +1,9 @@
+2018-05-18  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for 2.20.0 release.
+
+        * Source/cmake/OptionsWPE.cmake:
+
 2018-05-16  Alberto Garcia  <berto@igalia.com>
 
         [CMake] Properly detect compiler flags, needed libs, and fallbacks for usage of 64-bit atomic operations

@@ -1,3 +1,13 @@
+=================
+WPE WebKit 2.20.0
+=================
+
+What's new in WPE WebKit 2.20.0?
+
+  - Add support for the fullscreen API.
+  - Fix build in architectures which need linking with libatomic to support atomic operations on 64-bit values.
+  - Fix build failure when using the RaspberryPi userland GPU drivers in combination with GStreamer-GL.
+
 ==================
 WPE WebKit 2.19.93
 ==================
