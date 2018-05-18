@@ -117,7 +117,7 @@ JSValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DO
     // and false for <script>doSomething()</script>. Check if it has the
     // expected value in all cases.
     // See smart window.open policy for where this is used.
-    auto& proxy = windowProxy().jsWindowProxy(world);
+    auto& proxy = jsWindowProxy(world);
     auto& exec = *proxy.window()->globalExec();
     const String* savedSourceURL = m_sourceURL;
     m_sourceURL = &sourceURL;
@@ -150,7 +150,7 @@ void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScrip
 {
     JSLockHolder lock(world.vm());
 
-    auto& proxy = windowProxy().jsWindowProxy(world);
+    auto& proxy = jsWindowProxy(world);
     auto& state = *proxy.window()->globalExec();
 
     auto& promise = JSMainThreadExecState::loadModule(state, moduleName, JSC::JSScriptFetchParameters::create(state.vm(), WTFMove(topLevelFetchParameters)), JSC::JSScriptFetcher::create(state.vm(), { &moduleScript }));
@@ -166,7 +166,7 @@ void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScrip
 {
     JSLockHolder lock(world.vm());
 
-    auto& proxy = windowProxy().jsWindowProxy(world);
+    auto& proxy = jsWindowProxy(world);
     auto& state = *proxy.window()->globalExec();
 
     auto& promise = JSMainThreadExecState::loadModule(state, sourceCode.jsSourceCode(), JSC::JSScriptFetcher::create(state.vm(), { &moduleScript }));
@@ -182,7 +182,7 @@ JSC::JSValue ScriptController::linkAndEvaluateModuleScriptInWorld(LoadableModule
 {
     JSLockHolder lock(world.vm());
 
-    auto& proxy = windowProxy().jsWindowProxy(world);
+    auto& proxy = jsWindowProxy(world);
     auto& state = *proxy.window()->globalExec();
 
     // FIXME: Preventing Frame from being destroyed is essentially unnecessary.
@@ -211,7 +211,7 @@ JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, JSModuleReco
 
     const auto& jsSourceCode = moduleRecord.sourceCode();
 
-    auto& proxy = windowProxy().jsWindowProxy(world);
+    auto& proxy = jsWindowProxy(world);
     auto& state = *proxy.window()->globalExec();
     SetForScope<const String*> sourceURLScope(m_sourceURL, &sourceURL.string());
 
@@ -268,7 +268,7 @@ static Identifier jsValueToModuleKey(ExecState* exec, JSValue value)
 
 void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScriptRef, JSInternalPromise& promise, DOMWrapperWorld& world)
 {
-    auto& proxy = windowProxy().jsWindowProxy(world);
+    auto& proxy = jsWindowProxy(world);
     auto& state = *proxy.window()->globalExec();
 
     // It is not guaranteed that either fulfillHandler or rejectHandler is eventually called.
@@ -323,6 +323,13 @@ void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScr
 WindowProxy& ScriptController::windowProxy()
 {
     return m_frame.windowProxy();
+}
+
+JSWindowProxy& ScriptController::jsWindowProxy(DOMWrapperWorld& world)
+{
+    auto* jsWindowProxy = m_frame.windowProxy().jsWindowProxy(world);
+    ASSERT_WITH_MESSAGE(jsWindowProxy, "The JSWindowProxy can only be null if the frame has been destroyed");
+    return *jsWindowProxy;
 }
 
 TextPosition ScriptController::eventHandlerPosition() const
@@ -442,7 +449,7 @@ NPObject* ScriptController::windowScriptNPObject()
         if (canExecuteScripts(NotAboutToExecuteScript)) {
             // JavaScript is enabled, so there is a JavaScript window object.
             // Return an NPObject bound to the window object.
-            auto* window = windowProxy().jsWindowProxy(pluginWorld()).window();
+            auto* window = jsWindowProxy(pluginWorld()).window();
             ASSERT(window);
             Bindings::RootObject* root = bindingRootObject();
             m_windowScriptNPObject = _NPN_CreateScriptObject(0, window, root);
@@ -603,7 +610,7 @@ bool ScriptController::executeIfJavaScriptURL(const URL& url, ShouldReplaceDocum
         return true;
 
     String scriptResult;
-    if (!result || !result.getString(windowProxy().jsWindowProxy(mainThreadNormalWorld()).window()->globalExec(), scriptResult))
+    if (!result || !result.getString(jsWindowProxy(mainThreadNormalWorld()).window()->globalExec(), scriptResult))
         return true;
 
     // FIXME: We should always replace the document, but doing so

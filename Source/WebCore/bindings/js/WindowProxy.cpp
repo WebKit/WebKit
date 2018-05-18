@@ -49,12 +49,22 @@ static void collectGarbageAfterWindowProxyDestruction()
 }
 
 WindowProxy::WindowProxy(AbstractFrame& frame)
-    : m_frame(frame)
+    : m_frame(&frame)
 {
 }
 
 WindowProxy::~WindowProxy()
 {
+    ASSERT(!m_frame);
+    ASSERT(m_jsWindowProxies.isEmpty());
+}
+
+void WindowProxy::detachFromFrame()
+{
+    ASSERT(m_frame);
+
+    m_frame = nullptr;
+
     // It's likely that destroying windowProxies will create a lot of garbage.
     if (!m_jsWindowProxies.isEmpty()) {
         while (!m_jsWindowProxies.isEmpty()) {
@@ -75,12 +85,14 @@ void WindowProxy::destroyJSWindowProxy(DOMWrapperWorld& world)
 
 JSWindowProxy& WindowProxy::createJSWindowProxy(DOMWrapperWorld& world)
 {
+    ASSERT(m_frame);
+
     ASSERT(!m_jsWindowProxies.contains(&world));
-    ASSERT(m_frame.window());
+    ASSERT(m_frame->window());
 
     VM& vm = world.vm();
 
-    Strong<JSWindowProxy> jsWindowProxy(vm, &JSWindowProxy::create(vm, *m_frame.window(), world));
+    Strong<JSWindowProxy> jsWindowProxy(vm, &JSWindowProxy::create(vm, *m_frame->window(), world));
     Strong<JSWindowProxy> jsWindowProxy2(jsWindowProxy);
     m_jsWindowProxies.add(&world, jsWindowProxy);
     world.didCreateWindowProxy(this);
@@ -94,15 +106,19 @@ Vector<JSC::Strong<JSWindowProxy>> WindowProxy::jsWindowProxiesAsVector() const
 
 JSDOMGlobalObject* WindowProxy::globalObject(DOMWrapperWorld& world)
 {
-    return jsWindowProxy(world).window();
+    if (auto* windowProxy = jsWindowProxy(world))
+        return windowProxy->window();
+    return nullptr;
 }
 
 JSWindowProxy& WindowProxy::createJSWindowProxyWithInitializedScript(DOMWrapperWorld& world)
 {
+    ASSERT(m_frame);
+
     JSLockHolder lock(world.vm());
     auto& windowProxy = createJSWindowProxy(world);
-    if (is<Frame>(m_frame))
-        downcast<Frame>(m_frame).script().initScriptForWindowProxy(windowProxy);
+    if (is<Frame>(*m_frame))
+        downcast<Frame>(*m_frame).script().initScriptForWindowProxy(windowProxy);
     return windowProxy;
 }
 
@@ -137,6 +153,8 @@ void WindowProxy::setDOMWindow(AbstractDOMWindow* newDOMWindow)
     if (m_jsWindowProxies.isEmpty())
         return;
 
+    ASSERT(m_frame);
+
     JSLockHolder lock(commonVM());
 
     for (auto& windowProxy : jsWindowProxiesAsVector()) {
@@ -147,8 +165,8 @@ void WindowProxy::setDOMWindow(AbstractDOMWindow* newDOMWindow)
 
         ScriptController* scriptController = nullptr;
         Page* page = nullptr;
-        if (is<Frame>(m_frame)) {
-            auto& frame = downcast<Frame>(m_frame);
+        if (is<Frame>(*m_frame)) {
+            auto& frame = downcast<Frame>(*m_frame);
             scriptController = &frame.script();
             page = frame.page();
         }
@@ -173,17 +191,7 @@ void WindowProxy::attachDebugger(JSC::Debugger* debugger)
 
 AbstractDOMWindow* WindowProxy::window() const
 {
-    return m_frame.window();
-}
-
-void WindowProxy::ref()
-{
-    m_frame.ref();
-}
-
-void WindowProxy::deref()
-{
-    m_frame.deref();
+    return m_frame ? m_frame->window() : nullptr;
 }
 
 } // namespace WebCore

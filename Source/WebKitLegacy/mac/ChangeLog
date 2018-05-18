@@ -1,3 +1,89 @@
+2018-05-18  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r231963. rdar://problem/40004666
+
+    Avoid keeping the frame alive when ref'ing a WindowProxy
+    https://bugs.webkit.org/show_bug.cgi?id=185737
+    <rdar://problem/40004666>
+    
+    Reviewed by Sam Weinig.
+    
+    Source/WebCore:
+    
+    Avoid keeping the frame alive when ref'ing a WindowProxy by making WindowProxy
+    manage its own refcount (instead of proxying refcounting to the Frame). As a
+    result, a WindowProxy can now be detached from its Frame. When detached, it
+    return null when asked for a JSWindowProxy.
+    
+    It is important to not extend the lifetime of the Frame because we want script
+    to stop running when the Page gets destroyed.
+    
+    * bindings/js/JSWindowProxy.cpp:
+    (WebCore::toJS):
+    (WebCore::toJSWindowProxy):
+    * bindings/js/JSWindowProxy.h:
+    (WebCore::toJSWindowProxy):
+    * bindings/js/ScriptController.cpp:
+    (WebCore::ScriptController::evaluateInWorld):
+    (WebCore::ScriptController::loadModuleScriptInWorld):
+    (WebCore::ScriptController::linkAndEvaluateModuleScriptInWorld):
+    (WebCore::ScriptController::evaluateModule):
+    (WebCore::ScriptController::setupModuleScriptHandlers):
+    (WebCore::ScriptController::jsWindowProxy):
+    (WebCore::ScriptController::windowScriptNPObject):
+    (WebCore::ScriptController::executeIfJavaScriptURL):
+    * bindings/js/ScriptController.h:
+    (WebCore::ScriptController::globalObject):
+    * bindings/js/ScriptControllerMac.mm:
+    (WebCore::ScriptController::windowScriptObject):
+    * bindings/js/ScriptState.cpp:
+    (WebCore::mainWorldExecState):
+    * bindings/js/WindowProxy.cpp:
+    (WebCore::WindowProxy::WindowProxy):
+    (WebCore::WindowProxy::~WindowProxy):
+    (WebCore::WindowProxy::detachFromFrame):
+    (WebCore::WindowProxy::createJSWindowProxy):
+    (WebCore::WindowProxy::globalObject):
+    (WebCore::WindowProxy::createJSWindowProxyWithInitializedScript):
+    (WebCore::WindowProxy::setDOMWindow):
+    (WebCore::WindowProxy::window const):
+    (WebCore::WindowProxy::ref): Deleted.
+    (WebCore::WindowProxy::deref): Deleted.
+    * bindings/js/WindowProxy.h:
+    (WebCore::WindowProxy::create):
+    (WebCore::WindowProxy::frame const):
+    (WebCore::WindowProxy::jsWindowProxy):
+    * dom/DocumentTouch.cpp:
+    (WebCore::DocumentTouch::createTouch):
+    * page/AbstractFrame.cpp:
+    (WebCore::AbstractFrame::AbstractFrame):
+    (WebCore::AbstractFrame::~AbstractFrame):
+    * page/AbstractFrame.h:
+    
+    Source/WebKit:
+    
+    * WebProcess/Plugins/PluginView.cpp:
+    (WebKit::PluginView::windowScriptNPObject):
+    
+    Source/WebKitLegacy/mac:
+    
+    * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+    (WebKit::NetscapePluginInstanceProxy::getWindowNPObject):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@231963 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-05-18  Chris Dumez  <cdumez@apple.com>
+
+            Avoid keeping the frame alive when ref'ing a WindowProxy
+            https://bugs.webkit.org/show_bug.cgi?id=185737
+            <rdar://problem/40004666>
+
+            Reviewed by Sam Weinig.
+
+            * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+            (WebKit::NetscapePluginInstanceProxy::getWindowNPObject):
+
 2018-05-07  Daniel Bates  <dabates@apple.com>
 
         Substitute CrossOriginPreflightResultCache::clear() for CrossOriginPreflightResultCache::empty()

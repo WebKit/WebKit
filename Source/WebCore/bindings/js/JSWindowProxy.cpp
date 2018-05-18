@@ -146,10 +146,11 @@ AbstractDOMWindow& JSWindowProxy::wrapped() const
 
 JSValue toJS(ExecState* state, WindowProxy& windowProxy)
 {
-    return &windowProxy.jsWindowProxy(currentWorld(*state));
+    auto* jsWindowProxy = windowProxy.jsWindowProxy(currentWorld(*state));
+    return jsWindowProxy ? JSValue(jsWindowProxy) : jsNull();
 }
 
-JSWindowProxy& toJSWindowProxy(WindowProxy& windowProxy, DOMWrapperWorld& world)
+JSWindowProxy* toJSWindowProxy(WindowProxy& windowProxy, DOMWrapperWorld& world)
 {
     return windowProxy.jsWindowProxy(world);
 }
