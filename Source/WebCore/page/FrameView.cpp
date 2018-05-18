@@ -179,6 +179,7 @@ FrameView::FrameView(Frame& frame)
     , m_overflowStatusDirty(true)
     , m_wasScrolledByUser(false)
     , m_inProgrammaticScroll(false)
+    , m_safeToPropagateScrollToParent(true)
     , m_delayedScrollEventTimer(*this, &FrameView::sendScrollEvent)
     , m_selectionRevealModeForFocusedElement(SelectionRevealMode::DoNotReveal)
     , m_delayedScrollToFocusedElementTimer(*this, &FrameView::scrollToFocusedElementTimerFired)
@@ -263,6 +264,7 @@ void FrameView::reset()
     m_updateEmbeddedObjectsTimer.stop();
     m_firstLayoutCallbackPending = false;
     m_wasScrolledByUser = false;
+    m_safeToPropagateScrollToParent = true;
     m_delayedScrollEventTimer.stop();
     m_shouldScrollToFocusedElement = false;
     m_delayedScrollToFocusedElementTimer.stop();
@@ -3054,23 +3056,6 @@ bool FrameView::shouldUpdate() const
     if (isOffscreen() && !shouldUpdateWhileOffscreen())
         return false;
     return true;
-}
-
-bool FrameView::safeToPropagateScrollToParent() const
-{
-    auto* document = frame().document();
-    if (!document)
-        return false;
-
-    auto* parentFrame = frame().tree().parent();
-    if (!parentFrame)
-        return false;
-
-    auto* parentDocument = parentFrame->document();
-    if (!parentDocument)
-        return false;
-
-    return document->securityOrigin().canAccess(parentDocument->securityOrigin());
 }
 
 void FrameView::scrollToAnchor()

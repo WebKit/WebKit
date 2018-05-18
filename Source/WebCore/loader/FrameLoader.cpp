@@ -3028,8 +3028,17 @@ void FrameLoader::scrollToFragmentWithParentBoundary(const URL& url, bool isNewN
     if (!view)
         return;
 
+    // Leaking scroll position to a cross-origin ancestor would permit the so-called "framesniffing" attack.
+    RefPtr<Frame> boundaryFrame(url.hasFragmentIdentifier() ? m_frame.document()->findUnsafeParentScrollPropagationBoundary() : 0);
+
+    if (boundaryFrame)
+        boundaryFrame->view()->setSafeToPropagateScrollToParent(false);
+
     if (isSameDocumentReload(isNewNavigation, m_loadType) || itemAllowsScrollRestoration(history().currentItem()))
         view->scrollToFragment(url);
+
+    if (boundaryFrame)
+        boundaryFrame->view()->setSafeToPropagateScrollToParent(true);
 }
 
 bool FrameLoader::shouldClose()

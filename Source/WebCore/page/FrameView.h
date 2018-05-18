@@ -337,7 +337,8 @@ public:
     WEBCORE_EXPORT bool wasScrolledByUser() const;
     WEBCORE_EXPORT void setWasScrolledByUser(bool);
 
-    bool safeToPropagateScrollToParent() const;
+    bool safeToPropagateScrollToParent() const { return m_safeToPropagateScrollToParent; }
+    void setSafeToPropagateScrollToParent(bool isSafe) { m_safeToPropagateScrollToParent = isSafe; }
 
     void addEmbeddedObjectToUpdate(RenderEmbeddedObject&);
     void removeEmbeddedObjectToUpdate(RenderEmbeddedObject&);
@@ -822,6 +823,7 @@ private:
 
     bool m_wasScrolledByUser;
     bool m_inProgrammaticScroll;
+    bool m_safeToPropagateScrollToParent;
     Timer m_delayedScrollEventTimer;
     bool m_shouldScrollToFocusedElement { false };
     SelectionRevealMode m_selectionRevealModeForFocusedElement;
