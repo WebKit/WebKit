@@ -28,36 +28,28 @@
 
 #if HAVE(MOBILE_WIFI)
 
-#include "Logging.h"
-#include "MobileWiFiSPI.h"
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WiFiAssertionHolderAdditions.cpp>
+#else
+static void holdWiFiAssertion()
+{
+}
+
+static void releaseWiFiAssertion()
+{
+}
+#endif
 
 namespace WebKit {
 
-static WiFiManagerClientRef ensureWiFiManagerClient()
-{
-    static WiFiManagerClientRef wiFiManagerClient = WiFiManagerClientCreate(kCFAllocatorDefault, kWiFiClientTypeNormal);
-    return wiFiManagerClient;
-}
-
-static uint64_t wiFiAssertionCount;
-
 WiFiAssertionHolder::WiFiAssertionHolder()
 {
-    if (wiFiAssertionCount++)
-        return;
-
-    RELEASE_LOG(WiFiAssertions, "Acquiring Wi-Fi assertion.");
-    WiFiManagerClientSetType(ensureWiFiManagerClient(), kWiFiClientTypeBackground);
+    holdWiFiAssertion();
 }
 
 WiFiAssertionHolder::~WiFiAssertionHolder()
 {
-    ASSERT(wiFiAssertionCount);
-    if (--wiFiAssertionCount)
-        return;
-
-    RELEASE_LOG(WiFiAssertions, "Releasing Wi-Fi assertion.");
-    WiFiManagerClientSetType(ensureWiFiManagerClient(), kWiFiClientTypeNormal);
+    releaseWiFiAssertion();
 }
 
 } // namespace WebKit
