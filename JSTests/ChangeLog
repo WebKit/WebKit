@@ -1,3 +1,13 @@
+2018-05-18  Mark Lam  <mark.lam@apple.com>
+
+        Add missing exception check.
+        https://bugs.webkit.org/show_bug.cgi?id=185786
+        <rdar://problem/35686560>
+
+        Reviewed by Michael Saboff.
+
+        * stress/regress-185786.js: Added.
+
 2018-05-16  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should have InstanceOf inline caching
