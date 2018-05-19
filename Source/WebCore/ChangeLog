@@ -1,3 +1,19 @@
+2018-05-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Improve NowPlaying "title"
+        https://bugs.webkit.org/show_bug.cgi?id=185680
+        <rdar://problem/40296700>
+
+        Reviewed by Dean Jackson.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaSessionTitle const): Use decodeHostName and 
+        topPrivatelyControlledDomain when possible to make the host name more readable.
+
+        * platform/PublicSuffix.h:
+        * platform/mac/PublicSuffixMac.mm:
+        (WebCore::decodeHostName): Expose topPrivatelyControlledDomain method to .cpp functions.
+
 2018-05-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r231996.

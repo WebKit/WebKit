@@ -72,6 +72,7 @@
 #include "PageGroup.h"
 #include "PlatformMediaSessionManager.h"
 #include "ProgressTracker.h"
+#include "PublicSuffix.h"
 #include "RenderLayerCompositor.h"
 #include "RenderTheme.h"
 #include "RenderVideo.h"
@@ -7452,17 +7453,28 @@ String HTMLMediaElement::mediaSessionTitle() const
     if (!document().page() || document().page()->usesEphemeralSession())
         return emptyString();
 
-    if (hasAttributeWithoutSynchronization(titleAttr)) {
-        auto title = attributeWithoutSynchronization(titleAttr);
-        if (!title.isEmpty())
-            return title;
-    }
-
-    auto title = document().title();
+    auto title = String(attributeWithoutSynchronization(titleAttr)).stripWhiteSpace().simplifyWhiteSpace();
     if (!title.isEmpty())
         return title;
 
-    return m_currentSrc.host();
+    title = document().title().stripWhiteSpace().simplifyWhiteSpace();
+    if (!title.isEmpty())
+        return title;
+
+    title = m_currentSrc.host();
+#if PLATFORM(MAC) || PLATFORM(IOS)
+    if (!title.isEmpty())
+        title = decodeHostName(title);
+#endif
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    if (!title.isEmpty()) {
+        auto domain = topPrivatelyControlledDomain(title);
+        if (!domain.isEmpty())
+            title = domain;
+    }
+#endif
+
+    return title;
 }
 
 uint64_t HTMLMediaElement::mediaSessionUniqueIdentifier() const
