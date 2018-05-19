@@ -648,10 +648,21 @@ SLOW_PATH_DECL(slow_path_is_function)
     RETURN(jsBoolean(jsIsFunctionType(OP_C(2).jsValue())));
 }
 
-SLOW_PATH_DECL(slow_path_in)
+SLOW_PATH_DECL(slow_path_in_by_val)
 {
     BEGIN();
-    RETURN(jsBoolean(CommonSlowPaths::opIn(exec, OP_C(2).jsValue(), OP_C(3).jsValue(), pc[4].u.arrayProfile)));
+    RETURN(jsBoolean(CommonSlowPaths::opInByVal(exec, OP_C(2).jsValue(), OP_C(3).jsValue(), pc[4].u.arrayProfile)));
+}
+
+SLOW_PATH_DECL(slow_path_in_by_id)
+{
+    BEGIN();
+
+    JSValue baseValue = OP_C(2).jsValue();
+    if (!baseValue.isObject())
+        THROW(createInvalidInParameterError(exec, baseValue));
+
+    RETURN(jsBoolean(asObject(baseValue)->hasProperty(exec, exec->codeBlock()->identifier(pc[3].u.operand))));
 }
 
 SLOW_PATH_DECL(slow_path_del_by_val)

@@ -81,6 +81,15 @@ void StructureStubInfo::initPutByIdReplace(CodeBlock* codeBlock, Structure* base
     u.byIdSelf.offset = offset;
 }
 
+void StructureStubInfo::initInByIdSelf(CodeBlock* codeBlock, Structure* baseObjectStructure, PropertyOffset offset)
+{
+    cacheType = CacheType::InByIdSelf;
+
+    u.byIdSelf.baseObjectStructure.set(
+        *codeBlock->vm(), codeBlock, baseObjectStructure);
+    u.byIdSelf.offset = offset;
+}
+
 void StructureStubInfo::deref()
 {
     switch (cacheType) {
@@ -90,6 +99,7 @@ void StructureStubInfo::deref()
     case CacheType::Unset:
     case CacheType::GetByIdSelf:
     case CacheType::PutByIdReplace:
+    case CacheType::InByIdSelf:
     case CacheType::ArrayLength:
         return;
     }
@@ -106,6 +116,7 @@ void StructureStubInfo::aboutToDie()
     case CacheType::Unset:
     case CacheType::GetByIdSelf:
     case CacheType::PutByIdReplace:
+    case CacheType::InByIdSelf:
     case CacheType::ArrayLength:
         return;
     }
@@ -236,7 +247,7 @@ void StructureStubInfo::reset(CodeBlock* codeBlock)
         resetPutByID(codeBlock, *this);
         break;
     case AccessType::In:
-        resetIn(*this);
+        resetInByID(codeBlock, *this);
         break;
     case AccessType::InstanceOf:
         resetInstanceOf(*this);
@@ -259,6 +270,7 @@ void StructureStubInfo::visitWeakReferences(CodeBlock* codeBlock)
     switch (cacheType) {
     case CacheType::GetByIdSelf:
     case CacheType::PutByIdReplace:
+    case CacheType::InByIdSelf:
         if (Heap::isMarked(u.byIdSelf.baseObjectStructure.get()))
             return;
         break;
@@ -282,6 +294,7 @@ bool StructureStubInfo::propagateTransitions(SlotVisitor& visitor)
         return true;
     case CacheType::GetByIdSelf:
     case CacheType::PutByIdReplace:
+    case CacheType::InByIdSelf:
         return u.byIdSelf.baseObjectStructure->markIfCheap(visitor);
     case CacheType::Stub:
         return u.stub->propagateTransitions(visitor);

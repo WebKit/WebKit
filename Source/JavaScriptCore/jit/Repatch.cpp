@@ -605,8 +605,8 @@ void repatchPutByID(ExecState* exec, JSValue baseValue, Structure* structure, co
     }
 }
 
-static InlineCacheAction tryCacheIn(
-    ExecState* exec, JSCell* base, const Identifier& ident,
+static InlineCacheAction tryCacheInByID(
+    ExecState* exec, JSObject* base, const Identifier& ident,
     bool wasFound, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
     VM& vm = exec->vm();
@@ -631,6 +631,26 @@ static InlineCacheAction tryCacheIn(
         std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
         ObjectPropertyConditionSet conditionSet;
         if (wasFound) {
+            InlineCacheAction action = actionForCell(vm, base);
+            if (action != AttemptToCache)
+                return action;
+
+            // Optimize self access.
+            if (stubInfo.cacheType == CacheType::Unset
+                && slot.isCacheableValue()
+                && slot.slotBase() == base
+                && !slot.watchpointSet()
+                && !structure->needImpurePropertyWatchpoint()) {
+                bool generatedCodeInline = InlineAccess::generateSelfInAccess(stubInfo, structure);
+                if (generatedCodeInline) {
+                    LOG_IC((ICEvent::InByIdSelfPatch, structure->classInfo(), ident));
+                    structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
+                    ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), operationInByIdOptimize);
+                    stubInfo.initInByIdSelf(codeBlock, structure, slot.cachedOffset());
+                    return RetryCacheLater;
+                }
+            }
+
             if (slot.slotBase() != base) {
                 bool usesPolyProto;
                 prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), base, slot, usesPolyProto);
@@ -664,7 +684,7 @@ static InlineCacheAction tryCacheIn(
         LOG_IC((ICEvent::InAddAccessCase, structure->classInfo(), ident));
 
         std::unique_ptr<AccessCase> newCase = AccessCase::create(
-            vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, invalidOffset, structure, conditionSet, WTFMove(prototypeAccessChain));
+            vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, wasFound ? slot.cachedOffset() : invalidOffset, structure, conditionSet, WTFMove(prototypeAccessChain));
 
         result = stubInfo.addAccessCase(locker, codeBlock, ident, WTFMove(newCase));
 
@@ -672,10 +692,7 @@ static InlineCacheAction tryCacheIn(
             LOG_IC((ICEvent::InReplaceWithJump, structure->classInfo(), ident));
             
             RELEASE_ASSERT(result.code());
-
-            MacroAssembler::repatchJump(
-                stubInfo.patchableJump(),
-                CodeLocationLabel<JITStubRoutinePtrTag>(result.code()));
+            InlineAccess::rewireStubAsJump(stubInfo, CodeLocationLabel<JITStubRoutinePtrTag>(result.code()));
         }
     }
 
@@ -684,13 +701,14 @@ static InlineCacheAction tryCacheIn(
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
-void repatchIn(
-    ExecState* exec, JSCell* base, const Identifier& ident, bool wasFound,
-    const PropertySlot& slot, StructureStubInfo& stubInfo)
+void repatchInByID(ExecState* exec, JSObject* baseObject, const Identifier& propertyName, bool wasFound, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
     SuperSamplerScope superSamplerScope(false);
-    if (tryCacheIn(exec, base, ident, wasFound, slot, stubInfo) == GiveUpOnCache)
-        ftlThunkAwareRepatchCall(exec->codeBlock(), stubInfo.slowPathCallLocation(), operationIn);
+
+    if (tryCacheInByID(exec, baseObject, propertyName, wasFound, slot, stubInfo) == GiveUpOnCache) {
+        CodeBlock* codeBlock = exec->codeBlock();
+        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), operationInById);
+    }
 }
 
 static InlineCacheAction tryCacheInstanceOf(
@@ -1236,9 +1254,10 @@ static void resetPatchableJump(StructureStubInfo& stubInfo)
     MacroAssembler::repatchJump(stubInfo.patchableJump(), stubInfo.slowPathStartLocation());
 }
 
-void resetIn(StructureStubInfo& stubInfo)
+void resetInByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
 {
-    resetPatchableJump(stubInfo);
+    ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), operationInByIdOptimize);
+    InlineAccess::rewireStubAsJump(stubInfo, stubInfo.slowPathStartLocation());
 }
 
 void resetInstanceOf(StructureStubInfo& stubInfo)

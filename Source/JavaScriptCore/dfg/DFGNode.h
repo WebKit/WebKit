@@ -743,6 +743,15 @@ public:
         setOp(SetRegExpObjectLastIndex);
         m_opInfo = false;
     }
+
+    void convertToInById(unsigned identifierNumber)
+    {
+        ASSERT(m_op == InByVal);
+        setOpAndDefaultFlags(InById);
+        children.setChild2(Edge());
+        m_opInfo = identifierNumber;
+        m_opInfo2 = OpInfoWrapper();
+    }
     
     JSValue asJSValue()
     {
@@ -1010,6 +1019,7 @@ public:
         case PutSetterById:
         case PutGetterSetterById:
         case DeleteById:
+        case InById:
         case GetDynamicVar:
         case PutDynamicVar:
         case ResolveScopeForHoistingFuncDeclInEval:
@@ -1967,7 +1977,7 @@ public:
         case GetIndexedPropertyStorage:
         case GetArrayLength:
         case GetVectorLength:
-        case In:
+        case InByVal:
         case PutByValDirect:
         case PutByVal:
         case PutByValAlias:

@@ -193,7 +193,8 @@ bool doesGC(Graph& graph, Node* node)
     case CallStringConstructor:
     case NumberToStringWithRadix:
     case NumberToStringWithValidRadixConstant:
-    case In:
+    case InByVal:
+    case InById:
     case HasOwnProperty:
     case Jump:
     case Branch:

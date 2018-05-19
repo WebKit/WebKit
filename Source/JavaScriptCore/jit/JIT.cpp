@@ -78,11 +78,6 @@ JIT::JIT(VM* vm, CodeBlock* codeBlock, unsigned loopOSREntryBytecodeOffset)
     , m_interpreter(vm->interpreter)
     , m_labels(codeBlock ? codeBlock->numberOfInstructions() : 0)
     , m_bytecodeOffset(std::numeric_limits<unsigned>::max())
-    , m_getByIdIndex(UINT_MAX)
-    , m_getByIdWithThisIndex(UINT_MAX)
-    , m_putByIdIndex(UINT_MAX)
-    , m_byValInstructionIndex(UINT_MAX)
-    , m_callLinkInfoIndex(UINT_MAX)
     , m_pcToCodeOriginMapBuilder(*vm)
     , m_canBeOptimized(false)
     , m_shouldEmitProfiling(false)
@@ -277,7 +272,7 @@ void JIT::privateCompileMainPass()
         unsigned bytecodeOffset = m_bytecodeOffset;
 
         switch (opcodeID) {
-        DEFINE_SLOW_OP(in)
+        DEFINE_SLOW_OP(in_by_val)
         DEFINE_SLOW_OP(less)
         DEFINE_SLOW_OP(lesseq)
         DEFINE_SLOW_OP(greater)
@@ -341,6 +336,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_below)
         DEFINE_OP(op_beloweq)
         DEFINE_OP(op_try_get_by_id)
+        DEFINE_OP(op_in_by_id)
         case op_get_array_length:
         case op_get_by_id_proto_load:
         case op_get_by_id_unset:
@@ -478,6 +474,7 @@ void JIT::privateCompileSlowCases()
     m_getByIdIndex = 0;
     m_getByIdWithThisIndex = 0;
     m_putByIdIndex = 0;
+    m_inByIdIndex = 0;
     m_instanceOfIndex = 0;
     m_byValInstructionIndex = 0;
     m_callLinkInfoIndex = 0;
@@ -521,6 +518,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_construct)
         DEFINE_SLOWCASE_OP(op_eq)
         DEFINE_SLOWCASE_OP(op_try_get_by_id)
+        DEFINE_SLOWCASE_OP(op_in_by_id)
         case op_get_array_length:
         case op_get_by_id_proto_load:
         case op_get_by_id_unset:
@@ -600,6 +598,7 @@ void JIT::privateCompileSlowCases()
     RELEASE_ASSERT(m_getByIdIndex == m_getByIds.size());
     RELEASE_ASSERT(m_getByIdWithThisIndex == m_getByIdsWithThis.size());
     RELEASE_ASSERT(m_putByIdIndex == m_putByIds.size());
+    RELEASE_ASSERT(m_inByIdIndex == m_inByIds.size());
     RELEASE_ASSERT(m_instanceOfIndex == m_instanceOfs.size());
     RELEASE_ASSERT(m_callLinkInfoIndex == m_callCompilationInfo.size());
     RELEASE_ASSERT(numberOfValueProfiles == m_codeBlock->numberOfValueProfiles());
@@ -842,6 +841,7 @@ CompilationResult JIT::link()
     finalizeInlineCaches(m_getByIds, patchBuffer);
     finalizeInlineCaches(m_getByIdsWithThis, patchBuffer);
     finalizeInlineCaches(m_putByIds, patchBuffer);
+    finalizeInlineCaches(m_inByIds, patchBuffer);
     finalizeInlineCaches(m_instanceOfs, patchBuffer);
 
     if (m_byValCompilationInfo.size()) {

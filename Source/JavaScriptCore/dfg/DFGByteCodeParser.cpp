@@ -6363,11 +6363,20 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_to_object);
         }
 
-        case op_in: {
-            ArrayMode arrayMode = getArrayMode(currentInstruction[OPCODE_LENGTH(op_in) - 1].u.arrayProfile);
+        case op_in_by_val: {
+            ArrayMode arrayMode = getArrayMode(currentInstruction[OPCODE_LENGTH(op_in_by_val) - 1].u.arrayProfile);
             set(VirtualRegister(currentInstruction[1].u.operand),
-                addToGraph(In, OpInfo(arrayMode.asWord()), get(VirtualRegister(currentInstruction[2].u.operand)), get(VirtualRegister(currentInstruction[3].u.operand))));
-            NEXT_OPCODE(op_in);
+                addToGraph(InByVal, OpInfo(arrayMode.asWord()), get(VirtualRegister(currentInstruction[2].u.operand)), get(VirtualRegister(currentInstruction[3].u.operand))));
+            NEXT_OPCODE(op_in_by_val);
+        }
+
+        case op_in_by_id: {
+            Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
+            set(VirtualRegister(currentInstruction[1].u.operand),
+                addToGraph(InById, OpInfo(identifierNumber), base));
+            NEXT_OPCODE(op_in_by_id);
+            break;
         }
 
         case op_get_enumerable_length: {

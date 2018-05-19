@@ -143,6 +143,17 @@ private:
     PutKind m_putKind;
 };
 
+class JITInByIdGenerator : public JITByIdGenerator {
+public:
+    JITInByIdGenerator() { }
+
+    JITInByIdGenerator(
+        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, UniquedStringImpl* propertyName,
+        JSValueRegs base, JSValueRegs value);
+
+    void generateFastPath(MacroAssembler&);
+};
+
 class JITInstanceOfGenerator : public JITInlineCacheGenerator {
 public:
     JITInstanceOfGenerator() { }
