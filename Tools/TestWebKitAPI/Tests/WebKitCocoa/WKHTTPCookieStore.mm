@@ -33,6 +33,7 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/WTFString.h>
 
 #if WK_API_ENABLED
 
@@ -376,7 +377,8 @@ static bool finished;
 @implementation CookieUIDelegate
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
-    EXPECT_STREQ("cookie:PersistentCookieName=CookieValue; SessionCookieName=CookieValue", message.UTF8String);
+    auto cookies = String(message.UTF8String);
+    ASSERT_TRUE(cookies == "PersistentCookieName=CookieValue; SessionCookieName=CookieValue" || cookies == "SessionCookieName=CookieValue; PersistentCookieName=CookieValue");
     finished = true;
     completionHandler();
 }
@@ -397,7 +399,7 @@ TEST(WebKit, WKHTTPCookieStoreWithoutProcessPool)
         NSHTTPCookieDomain: @"127.0.0.1",
         NSHTTPCookieExpires: [NSDate distantFuture],
     }];
-    NSString *alertCookieHTML = @"<script>alert('cookie:'+document.cookie);</script>";
+    NSString *alertCookieHTML = @"<script>alert(document.cookie);</script>";
 
     // NonPersistentDataStore
     RetainPtr<WKWebsiteDataStore> ephemeralStoreWithCookies = [WKWebsiteDataStore nonPersistentDataStore];
