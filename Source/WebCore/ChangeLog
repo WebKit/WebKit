@@ -1,3 +1,16 @@
+2018-05-19  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r231996.
+        https://bugs.webkit.org/show_bug.cgi?id=185799
+
+         Broke the GTK build (Requested by eric_carlson on #webkit).
+
+        Reverted changeset:
+
+        "Improve NowPlaying "title""
+        https://bugs.webkit.org/show_bug.cgi?id=185680
+        https://trac.webkit.org/changeset/231996
+
 2018-05-18  Eric Carlson  <eric.carlson@apple.com>
 
         Improve NowPlaying "title"

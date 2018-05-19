@@ -60,11 +60,6 @@ String topPrivatelyControlledDomain(const String& domain)
     return String();
 }
 
-String decodeHostName(const String& domain)
-{
-    return decodeHostName(static_cast<NSString*>(domain));
-}
-
 }
 
 #endif
