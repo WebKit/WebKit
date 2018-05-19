@@ -134,14 +134,14 @@ private:
 // safely execute before that check, so long as that check continues to guard any
 // user-observable things done to the loaded value.
 template<typename AbstractStateType>
-bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
+bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool ignoreEmptyChildren = false)
 {
     SafeToExecuteEdge<AbstractStateType> safeToExecuteEdge(state);
     DFG_NODE_DO_TO_CHILDREN(graph, node, safeToExecuteEdge);
     if (!safeToExecuteEdge.result())
         return false;
 
-    if (safeToExecuteEdge.maySeeEmptyChild()) {
+    if (!ignoreEmptyChildren && safeToExecuteEdge.maySeeEmptyChild()) {
         // We conservatively assume if the empty value flows into a node,
         // it might not be able to handle it (e.g, crash). In general, the bytecode generator
         // emits code in such a way that most node types don't need to worry about the empty value
@@ -453,6 +453,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case AtomicsXor:
     case AtomicsIsLockFree:
     case InitializeEntrypointArguments:
+    case MatchStructure:
         return true;
 
     case ArraySlice:

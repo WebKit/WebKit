@@ -96,6 +96,15 @@ struct MultiPutByOffsetData {
     bool reallocatesStorage() const;
 };
 
+struct MatchStructureVariant {
+    RegisteredStructure structure;
+    bool result;
+};
+
+struct MatchStructureData {
+    Vector<MatchStructureVariant, 2> variants;
+};
+
 struct NewArrayBufferData {
     union {
         struct {
@@ -1861,6 +1870,17 @@ public:
     {
         ASSERT(hasMultiPutByOffsetData());
         return *m_opInfo.as<MultiPutByOffsetData*>();
+    }
+    
+    bool hasMatchStructureData()
+    {
+        return op() == MatchStructure;
+    }
+    
+    MatchStructureData& matchStructureData()
+    {
+        ASSERT(hasMatchStructureData());
+        return *m_opInfo.as<MatchStructureData*>();
     }
     
     bool hasObjectMaterializationData()

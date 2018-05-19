@@ -41,7 +41,7 @@
 #include "Operations.h"
 #include "PutByIdStatus.h"
 #include "StringObject.h"
-
+#include <wtf/BooleanLattice.h>
 #include <wtf/CheckedArithmetic.h>
 
 namespace JSC { namespace DFG {
@@ -3391,6 +3391,40 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         clobberWorld();
         setNonCellTypeForNode(node, SpecBoolean);
         break;
+        
+    case MatchStructure: {
+        AbstractValue base = forNode(node->child1());
+        RegisteredStructureSet baseSet;
+        
+        BooleanLattice result = BooleanLattice::Bottom;
+        for (MatchStructureVariant& variant : node->matchStructureData().variants) {
+            RegisteredStructure structure = variant.structure;
+            if (!base.contains(structure)) {
+                m_state.setFoundConstants(true);
+                continue;
+            }
+            
+            baseSet.add(structure);
+            result = leastUpperBoundOfBooleanLattices(
+                result, variant.result ? BooleanLattice::True : BooleanLattice::False);
+        }
+        
+        if (forNode(node->child1()).changeStructure(m_graph, baseSet) == Contradiction)
+            m_state.setIsValid(false);
+        
+        switch (result) {
+        case BooleanLattice::False:
+            setConstant(node, jsBoolean(false));
+            break;
+        case BooleanLattice::True:
+            setConstant(node, jsBoolean(true));
+            break;
+        default:
+            setNonCellTypeForNode(node, SpecBoolean);
+            break;
+        }
+        break;
+    }
             
     case Phi:
         RELEASE_ASSERT(m_graph.m_form == SSA);

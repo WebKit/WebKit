@@ -92,8 +92,10 @@ public:
     ALWAYS_INLINE bool considerCaching(CodeBlock* codeBlock, Structure* structure)
     {
         // We never cache non-cells.
-        if (!structure)
+        if (!structure) {
+            sawNonCell = true;
             return false;
+        }
         
         // This method is called from the Optimize variants of IC slow paths. The first part of this
         // method tries to determine if the Optimize variant should really behave like the
@@ -221,6 +223,7 @@ public:
     bool tookSlowPath : 1;
     bool everConsidered : 1;
     bool prototypeIsKnownObject : 1; // Only relevant for InstanceOf.
+    bool sawNonCell : 1;
 };
 
 inline CodeOrigin getStructureStubInfoCodeOrigin(StructureStubInfo& structureStubInfo)

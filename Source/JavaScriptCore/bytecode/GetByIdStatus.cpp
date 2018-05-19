@@ -29,6 +29,7 @@
 #include "CodeBlock.h"
 #include "ComplexGetStatus.h"
 #include "GetterSetterAccessCase.h"
+#include "ICStatusUtils.h"
 #include "InterpreterInlines.h"
 #include "IntrinsicGetterAccessCase.h"
 #include "JSCInlines.h"
@@ -47,22 +48,7 @@ class GetterSetter;
 
 bool GetByIdStatus::appendVariant(const GetByIdVariant& variant)
 {
-    // Attempt to merge this variant with an already existing variant.
-    for (unsigned i = 0; i < m_variants.size(); ++i) {
-        if (m_variants[i].attemptToMerge(variant))
-            return true;
-    }
-    
-    // Make sure there is no overlap. We should have pruned out opportunities for
-    // overlap but it's possible that an inline cache got into a weird state. We are
-    // defensive and bail if we detect crazy.
-    for (unsigned i = 0; i < m_variants.size(); ++i) {
-        if (m_variants[i].structureSet().overlaps(variant.structureSet()))
-            return false;
-    }
-    
-    m_variants.append(variant);
-    return true;
+    return appendICStatusVariant(m_variants, variant);
 }
 
 #if ENABLE(DFG_JIT)
@@ -432,14 +418,7 @@ void GetByIdStatus::filter(const StructureSet& set)
 {
     if (m_state != Simple)
         return;
-    
-    // FIXME: We could also filter the variants themselves.
-    
-    m_variants.removeAllMatching(
-        [&] (GetByIdVariant& variant) -> bool {
-            return !variant.structureSet().overlaps(set);
-        });
-    
+    filterICStatusVariants(m_variants, set);
     if (m_variants.isEmpty())
         m_state = NoInformation;
 }

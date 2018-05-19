@@ -350,6 +350,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PutByValAlias:
     case PutByValDirect:
     case PutByValWithThis:
+    case MatchStructure:
         // These are OK.
         break;
 

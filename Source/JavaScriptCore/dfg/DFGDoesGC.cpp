@@ -311,6 +311,7 @@ bool doesGC(Graph& graph, Node* node)
     case AtomicsSub:
     case AtomicsXor:
     case AtomicsIsLockFree:
+    case MatchStructure:
         return false;
 
     case PushWithScope:

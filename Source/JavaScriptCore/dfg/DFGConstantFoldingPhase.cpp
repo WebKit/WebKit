@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -487,6 +487,41 @@ private:
                 emitPutByOffset(
                     indexInBlock, node, baseValue, data.variants[0], data.identifierNumber);
                 changed = true;
+                break;
+            }
+                
+            case MatchStructure: {
+                Edge baseEdge = node->child1();
+                Node* base = baseEdge.node();
+                MatchStructureData& data = node->matchStructureData();
+                
+                AbstractValue baseValue = m_state.forNode(base);
+
+                m_interpreter.execute(indexInBlock); // Push CFA over this node after we get the state before.
+                alreadyHandled = true; // Don't allow the default constant folder to do things to this.
+                
+                BooleanLattice result = BooleanLattice::Bottom;
+                for (unsigned i = 0; i < data.variants.size(); ++i) {
+                    if (!baseValue.contains(data.variants[i].structure)) {
+                        data.variants[i--] = data.variants.last();
+                        data.variants.removeLast();
+                        changed = true;
+                        continue;
+                    }
+                    result = leastUpperBoundOfBooleanLattices(
+                        result,
+                        data.variants[i].result ? BooleanLattice::True : BooleanLattice::False);
+                }
+                
+                if (result == BooleanLattice::False || result == BooleanLattice::True) {
+                    RegisteredStructureSet structureSet;
+                    for (MatchStructureVariant& variant : data.variants)
+                        structureSet.add(variant.structure);
+                    addBaseCheck(indexInBlock, node, baseValue, structureSet);
+                    m_graph.convertToConstant(
+                        node, m_graph.freeze(jsBoolean(result == BooleanLattice::True)));
+                    changed = true;
+                }
                 break;
             }
         

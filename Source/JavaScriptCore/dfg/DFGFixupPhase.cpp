@@ -1454,6 +1454,13 @@ private:
             break;
         }
             
+        case MatchStructure: {
+            // FIXME: Introduce a variant of MatchStructure that doesn't do a cell check.
+            // https://bugs.webkit.org/show_bug.cgi?id=185784
+            fixEdge<CellUse>(node->child1());
+            break;
+        }
+            
         case InstanceOf: {
             if (node->child1()->shouldSpeculateCell()
                 && node->child2()->shouldSpeculateCell()

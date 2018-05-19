@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -264,15 +264,9 @@ private:
         }
         
         m_state.initializeTo(data.preHeader);
-        if (!safeToExecute(m_state, m_graph, node)) {
-            if (verbose) {
-                dataLog(
-                    "    Not hoisting ", node, " because it isn't safe to execute.\n");
-            }
-            return false;
-        }
-        
+
         NodeOrigin originalOrigin = node->origin;
+        bool canSpeculateBlindly = !m_graph.hasGlobalExitSite(originalOrigin.semantic, HoistingFailed);
 
         // NOTE: We could just use BackwardsDominators here directly, since we already know that the
         // preHeader dominates fromBlock. But we wouldn't get anything from being so clever, since
@@ -280,8 +274,7 @@ private:
         bool addsBlindSpeculation = mayExit(m_graph, node, m_state)
             && !m_graph.m_controlEquivalenceAnalysis->dominatesEquivalently(data.preHeader, fromBlock);
         
-        if (addsBlindSpeculation
-            && m_graph.hasGlobalExitSite(originalOrigin.semantic, HoistingFailed)) {
+        if (addsBlindSpeculation && !canSpeculateBlindly) {
             if (verbose) {
                 dataLog(
                     "    Not hoisting ", node, " because it may exit and the pre-header (",
@@ -291,22 +284,61 @@ private:
             return false;
         }
         
+        // For abstract interpretation, these are in the reverse order that they appear in this
+        // vector.
+        Vector<Node*, 2> hoistedNodesReverse;
+        hoistedNodesReverse.append(node);
+
+        NodeOrigin terminalOrigin = data.preHeader->terminal()->origin;
+        
+        auto insertHoistedNode = [&] (Node* node) {
+            data.preHeader->insertBeforeTerminal(node);
+            node->owner = data.preHeader;
+            node->origin = terminalOrigin.withSemantic(node->origin.semantic);
+            node->origin.wasHoisted |= addsBlindSpeculation;
+        };
+        
+        if (!safeToExecute(m_state, m_graph, node)) {
+            // See if we can rescue the situation by inserting blind speculations.
+            bool ignoreEmptyChildren = true;
+            if (canSpeculateBlindly
+                && safeToExecute(m_state, m_graph, node, ignoreEmptyChildren)) {
+                if (verbose) {
+                    dataLog(
+                        "    Rescuing hoisting by inserting empty checks.\n");
+                }
+                m_graph.doToChildren(
+                    node,
+                    [&] (Edge& edge) {
+                        if (!(m_state.forNode(edge).m_type & SpecEmpty))
+                            return;
+                        
+                        Node* check = m_graph.addNode(CheckNotEmpty, originalOrigin, Edge(edge.node(), UntypedUse));
+                        insertHoistedNode(check);
+                        hoistedNodesReverse.append(check);
+                    });
+            } else {
+                if (verbose) {
+                    dataLog(
+                        "    Not hoisting ", node, " because it isn't safe to execute.\n");
+                }
+                return false;
+            }
+        }
+        
         if (verbose) {
             dataLog(
                 "    Hoisting ", node, " from ", *fromBlock, " to ", *data.preHeader,
                 "\n");
         }
 
-        data.preHeader->insertBeforeTerminal(node);
-        node->owner = data.preHeader;
-        NodeOrigin terminalOrigin = data.preHeader->terminal()->origin;
-        node->origin = terminalOrigin.withSemantic(node->origin.semantic);
-        node->origin.wasHoisted |= addsBlindSpeculation;
+        insertHoistedNode(node);
         
         // We can trust what AI proves about edge proof statuses when hoisting to the preheader.
         m_state.trustEdgeProofs();
         m_state.initializeTo(data.preHeader);
-        m_interpreter.execute(node);
+        for (unsigned i = hoistedNodesReverse.size(); i--;)
+            m_interpreter.execute(hoistedNodesReverse[i]);
         // However, when walking various inner loops below, the proof status of
         // an edge may be trivially true, even if it's not true in the preheader
         // we hoist to. We don't allow the below node executions to change the
@@ -340,7 +372,8 @@ private:
             if (subPreHeader == data.preHeader)
                 continue;
             m_state.initializeTo(subPreHeader);
-            m_interpreter.execute(node);
+            for (unsigned i = hoistedNodesReverse.size(); i--;)
+                m_interpreter.execute(hoistedNodesReverse[i]);
         }
 
         if (node->flags() & NodeHasVarArgs)

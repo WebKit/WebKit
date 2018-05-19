@@ -914,6 +914,9 @@ private:
         case MultiPutByOffset:
             compileMultiPutByOffset();
             break;
+        case MatchStructure:
+            compileMatchStructure();
+            break;
         case GetGlobalVar:
         case GetGlobalLexicalVariable:
             compileGetGlobalVariable();
@@ -6593,6 +6596,47 @@ private:
         m_out.unreachable();
         
         m_out.appendTo(continuation, lastNext);
+    }
+    
+    void compileMatchStructure()
+    {
+        LValue base = lowCell(m_node->child1());
+        
+        MatchStructureData& data = m_node->matchStructureData();
+        
+        LBasicBlock trueBlock = m_out.newBlock();
+        LBasicBlock falseBlock = m_out.newBlock();
+        LBasicBlock exitBlock = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+        
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(trueBlock);
+        
+        Vector<SwitchCase, 2> cases;
+        RegisteredStructureSet baseSet;
+        for (MatchStructureVariant& variant : data.variants) {
+            baseSet.add(variant.structure);
+            cases.append(SwitchCase(
+                weakStructureID(variant.structure),
+                variant.result ? trueBlock : falseBlock, Weight(1)));
+        }
+        bool structuresChecked = m_interpreter.forNode(m_node->child1()).m_structure.isSubsetOf(baseSet);
+        emitSwitchForMultiByOffset(base, structuresChecked, cases, exitBlock);
+        
+        m_out.appendTo(trueBlock, falseBlock);
+        ValueFromBlock trueResult = m_out.anchor(m_out.booleanTrue);
+        m_out.jump(continuation);
+        
+        m_out.appendTo(falseBlock, exitBlock);
+        ValueFromBlock falseResult = m_out.anchor(m_out.booleanFalse);
+        m_out.jump(continuation);
+        
+        m_out.appendTo(exitBlock, continuation);
+        if (!structuresChecked)
+            speculate(BadCache, noValue(), nullptr, m_out.booleanTrue);
+        m_out.unreachable();
+        
+        m_out.appendTo(continuation, lastNext);
+        setBoolean(m_out.phi(Int32, trueResult, falseResult));
     }
     
     void compileGetGlobalVariable()

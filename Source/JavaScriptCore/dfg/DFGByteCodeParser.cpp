@@ -48,6 +48,7 @@
 #include "FunctionCodeBlock.h"
 #include "GetByIdStatus.h"
 #include "Heap.h"
+#include "InstanceOfStatus.h"
 #include "JSCInlines.h"
 #include "JSFixedArray.h"
 #include "JSModuleEnvironment.h"
@@ -4783,12 +4784,40 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_instanceof: {
-            // FIXME: We should turn this into either a CheckStructure followed by a constant, or
-            // some kind of MultiInstanceOf thing, if the InstanceOf IC is stable.
-            // https://bugs.webkit.org/show_bug.cgi?id=185695
             auto& bytecode = *reinterpret_cast<OpInstanceof*>(currentInstruction);
+            
+            InstanceOfStatus status = InstanceOfStatus::computeFor(
+                m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_stubInfos,
+                m_currentIndex);
+            
             Node* value = get(VirtualRegister(bytecode.value()));
             Node* prototype = get(VirtualRegister(bytecode.prototype()));
+
+            // Only inline it if it's Simple with a commonPrototype; bottom/top or variable
+            // prototypes both get handled by the IC. This makes sense for bottom (unprofiled)
+            // instanceof ICs because the profit of this optimization is fairly low. So, in the
+            // absence of any information, it's better to avoid making this be the cause of a
+            // recompilation.
+            if (JSObject* commonPrototype = status.commonPrototype()) {
+                addToGraph(CheckCell, OpInfo(m_graph.freeze(commonPrototype)), prototype);
+                
+                MatchStructureData* data = m_graph.m_matchStructureData.add();
+                for (const InstanceOfVariant& variant : status.variants()) {
+                    check(variant.conditionSet());
+                    for (Structure* structure : variant.structureSet()) {
+                        MatchStructureVariant matchVariant;
+                        matchVariant.structure = m_graph.registerStructure(structure);
+                        matchVariant.result = variant.isHit();
+                        
+                        data->variants.append(matchVariant);
+                    }
+                }
+                
+                Node* match = addToGraph(MatchStructure, OpInfo(data), value);
+                set(VirtualRegister(bytecode.dst()), match);
+                NEXT_OPCODE(op_instanceof);
+            }
+            
             set(VirtualRegister(bytecode.dst()), addToGraph(InstanceOf, value, prototype));
             NEXT_OPCODE(op_instanceof);
         }

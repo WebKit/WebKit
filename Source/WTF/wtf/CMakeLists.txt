@@ -14,6 +14,7 @@ set(WTF_PUBLIC_HEADERS
     BlockPtr.h
     BlockStack.h
     BloomFilter.h
+    BooleanLattice.h
     Box.h
     Brigand.h
     BubbleSort.h

@@ -97,6 +97,15 @@ void Node::remove(Graph& graph)
         return;
     }
         
+    case MatchStructure: {
+        MatchStructureData& data = matchStructureData();
+        RegisteredStructureSet set;
+        for (MatchStructureVariant& variant : data.variants)
+            set.add(variant.structure);
+        convertToCheckStructure(graph.addStructureSet(set));
+        return;
+    }
+        
     default:
         if (flags() & NodeHasVarArgs) {
             unsigned targetIndex = 0;

@@ -55,7 +55,7 @@ public:
     GetByIdVariant& operator=(const GetByIdVariant&);
     
     bool isSet() const { return !!m_structureSet.size(); }
-    bool operator!() const { return !isSet(); }
+    explicit operator bool() const { return isSet(); }
     const StructureSet& structureSet() const { return m_structureSet; }
     StructureSet& structureSet() { return m_structureSet; }
 

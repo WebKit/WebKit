@@ -51,6 +51,7 @@ StructureStubInfo::StructureStubInfo(AccessType accessType)
     , tookSlowPath(false)
     , everConsidered(false)
     , prototypeIsKnownObject(false)
+    , sawNonCell(false)
 {
 }
 

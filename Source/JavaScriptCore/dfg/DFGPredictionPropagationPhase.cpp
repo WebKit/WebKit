@@ -864,7 +864,8 @@ private:
         case IsObjectOrNull:
         case IsFunction:
         case IsCellWithType:
-        case IsTypedArrayView: {
+        case IsTypedArrayView:
+        case MatchStructure: {
             setPrediction(SpecBoolean);
             break;
         }

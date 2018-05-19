@@ -11818,6 +11818,33 @@ void SpeculativeJIT::compilePutByOffset(Node* node)
     noResult(node);
 }
 
+void SpeculativeJIT::compileMatchStructure(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    GPRTemporary temp(this);
+    GPRReg baseGPR = base.gpr();
+    GPRReg tempGPR = temp.gpr();
+    
+    m_jit.load32(JITCompiler::Address(baseGPR, JSCell::structureIDOffset()), tempGPR);
+    
+    auto& variants = node->matchStructureData().variants;
+    Vector<int64_t> cases;
+    for (MatchStructureVariant& variant : variants)
+        cases.append(bitwise_cast<int32_t>(variant.structure->id()));
+    
+    BinarySwitch binarySwitch(tempGPR, cases, BinarySwitch::Int32);
+    JITCompiler::JumpList done;
+    while (binarySwitch.advance(m_jit)) {
+        m_jit.boxBooleanPayload(variants[binarySwitch.caseIndex()].result, tempGPR);
+        done.append(m_jit.jump());
+    }
+    speculationCheck(BadCache, JSValueRegs(), node, binarySwitch.fallThrough());
+    
+    done.link(&m_jit);
+    
+    blessedBooleanResult(tempGPR, node);
+}
+
 void SpeculativeJIT::compileHasStructureProperty(Node* node)
 {
     JSValueOperand base(this, node->child1());

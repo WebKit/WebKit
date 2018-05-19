@@ -1052,6 +1052,7 @@ public:
     Bag<SwitchData> m_switchData;
     Bag<MultiGetByOffsetData> m_multiGetByOffsetData;
     Bag<MultiPutByOffsetData> m_multiPutByOffsetData;
+    Bag<MatchStructureData> m_matchStructureData;
     Bag<ObjectMaterializationData> m_objectMaterializationData;
     Bag<CallVarargsData> m_callVarargsData;
     Bag<LoadVarargsData> m_loadVarargsData;

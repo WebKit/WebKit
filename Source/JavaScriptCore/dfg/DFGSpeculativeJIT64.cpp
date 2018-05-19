@@ -3627,6 +3627,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
+    case MatchStructure: {
+        compileMatchStructure(node);
+        break;
+    }
+        
     case GetGetter: {
         compileGetGetter(node);
         break;

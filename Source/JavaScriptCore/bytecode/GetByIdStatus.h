@@ -93,7 +93,7 @@ public:
     State state() const { return m_state; }
     
     bool isSet() const { return m_state != NoInformation; }
-    bool operator!() const { return !isSet(); }
+    explicit operator bool() const { return isSet(); }
     bool isSimple() const { return m_state == Simple; }
     bool isCustom() const { return m_state == Custom; }
     bool isModuleNamespace() const { return m_state == ModuleNamespace; }

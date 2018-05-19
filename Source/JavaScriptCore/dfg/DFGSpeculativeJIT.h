@@ -1376,6 +1376,7 @@ public:
     void compileGetByValWithThis(Node*);
     void compileGetByOffset(Node*);
     void compilePutByOffset(Node*);
+    void compileMatchStructure(Node*);
     // If this returns false it means that we terminated speculative execution.
     bool getIntTypedArrayStoreOperand(
         GPRTemporary& value,
