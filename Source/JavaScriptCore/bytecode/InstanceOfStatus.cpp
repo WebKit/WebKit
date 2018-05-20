@@ -58,7 +58,7 @@ InstanceOfStatus InstanceOfStatus::computeFor(
     }
 #else
     UNUSED_PARAM(infoMap);
-    UNUSED_PARAM(codeOrigin);
+    UNUSED_PARAM(bytecodeIndex);
 #endif
     
     return result;
