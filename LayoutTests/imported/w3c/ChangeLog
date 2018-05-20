@@ -1,3 +1,245 @@
+2018-05-20  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Update CSSOM WPT tests.
+        https://bugs.webkit.org/show_bug.cgi?id=185805
+
+        They've been moved under the css/ directory.
+
+        This has been done with:
+
+          ./Tools/Scripts/import-w3c-tests web-platform-tests/css/cssom
+          rm -rf LayoutTests/imported/w3c/web-platform-tests/cssom
+          ./Tools/Scripts/run-webkit-tests -t Debug LayoutTests/imported/w3c/web-platform-tests/css/cssom/ --reset-results
+
+        And ensuring that the same run without --reset-results also succeeded.
+
+        I manually removed entries in import-expectations.json which no longer
+        correspond to an upstream directory.
+
+        Reviewed by Frédéric Wang.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/cssom/CSS-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/CSS-expected.txt.
+        * web-platform-tests/css/cssom/CSS.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/CSS.html.
+        * web-platform-tests/css/cssom/CSSKeyframeRule-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/CSSKeyframeRule-expected.txt.
+        * web-platform-tests/css/cssom/CSSKeyframeRule.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/CSSKeyframeRule.html.
+        * web-platform-tests/css/cssom/CSSKeyframesRule-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/CSSKeyframesRule-expected.txt.
+        * web-platform-tests/css/cssom/CSSKeyframesRule.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/CSSKeyframesRule.html.
+        * web-platform-tests/css/cssom/CSSNamespaceRule-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/CSSNamespaceRule-expected.txt.
+        * web-platform-tests/css/cssom/CSSNamespaceRule.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/CSSNamespaceRule.html.
+        * web-platform-tests/css/cssom/CSSRuleList-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/CSSRuleList-expected.txt.
+        * web-platform-tests/css/cssom/CSSRuleList.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/CSSRuleList.html.
+        * web-platform-tests/css/cssom/CSSStyleRule-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/CSSStyleRule-expected.txt.
+        * web-platform-tests/css/cssom/CSSStyleRule-set-selectorText-expected.txt: Added.
+        * web-platform-tests/css/cssom/CSSStyleRule-set-selectorText-namespace-expected.txt: Added.
+        * web-platform-tests/css/cssom/CSSStyleRule-set-selectorText-namespace.html: Added.
+        * web-platform-tests/css/cssom/CSSStyleRule-set-selectorText.html: Added.
+        * web-platform-tests/css/cssom/CSSStyleRule.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/CSSStyleRule.html.
+        * web-platform-tests/css/cssom/CSSStyleSheet-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/CSSStyleSheet-expected.txt.
+        * web-platform-tests/css/cssom/CSSStyleSheet.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/CSSStyleSheet.html.
+        * web-platform-tests/css/cssom/MediaList-expected.txt: Added.
+        * web-platform-tests/css/cssom/MediaList.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/MediaList.html.
+        * web-platform-tests/css/cssom/MediaList2-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/MediaList2-expected.txt.
+        * web-platform-tests/css/cssom/MediaList2.xhtml: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/MediaList2.xhtml.
+        * web-platform-tests/css/cssom/OWNERS: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/OWNERS.
+        * web-platform-tests/css/cssom/StyleSheetList-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/StyleSheetList-expected.txt.
+        * web-platform-tests/css/cssom/StyleSheetList.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/StyleSheetList.html.
+        * web-platform-tests/css/cssom/computed-style-001-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/computed-style-001-expected.txt.
+        * web-platform-tests/css/cssom/computed-style-001.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/computed-style-001.html.
+        * web-platform-tests/css/cssom/computed-style-002-expected.txt: Added.
+        * web-platform-tests/css/cssom/computed-style-002.html: Added.
+        * web-platform-tests/css/cssom/computed-style-003-expected.txt: Added.
+        * web-platform-tests/css/cssom/computed-style-003.html: Added.
+        * web-platform-tests/css/cssom/computed-style-004-expected.txt: Added.
+        * web-platform-tests/css/cssom/computed-style-004.html: Added.
+        * web-platform-tests/css/cssom/css-style-attr-decl-block-expected.txt: Added.
+        * web-platform-tests/css/cssom/css-style-attr-decl-block.html: Added.
+        * web-platform-tests/css/cssom/css-style-attribute-modifications-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/css-style-attribute-modifications-expected.txt.
+        * web-platform-tests/css/cssom/css-style-attribute-modifications.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/css-style-attribute-modifications.html.
+        * web-platform-tests/css/cssom/css-style-declaration-modifications-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/css-style-declaration-modifications-expected.txt.
+        * web-platform-tests/css/cssom/css-style-declaration-modifications.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/css-style-declaration-modifications.html.
+        * web-platform-tests/css/cssom/css-style-reparse-expected.txt: Added.
+        * web-platform-tests/css/cssom/css-style-reparse.html: Added.
+        * web-platform-tests/css/cssom/cssimportrule-expected.txt: Added.
+        * web-platform-tests/css/cssom/cssimportrule.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/cssimportrule.html.
+        * web-platform-tests/css/cssom/cssom-cssText-serialize-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/cssom-cssText-serialize-expected.txt.
+        * web-platform-tests/css/cssom/cssom-cssText-serialize.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/cssom-cssText-serialize.html.
+        * web-platform-tests/css/cssom/cssom-cssstyledeclaration-set-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/cssom-cssstyledeclaration-set-expected.txt.
+        * web-platform-tests/css/cssom/cssom-cssstyledeclaration-set.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/cssom-cssstyledeclaration-set.html.
+        * web-platform-tests/css/cssom/cssom-fontfacerule-constructors-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/cssom-fontfacerule-constructors-expected.txt.
+        * web-platform-tests/css/cssom/cssom-fontfacerule-constructors.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/cssom-fontfacerule-constructors.html.
+        * web-platform-tests/css/cssom/cssom-fontfacerule-expected.txt: Added.
+        * web-platform-tests/css/cssom/cssom-fontfacerule.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/cssom-fontfacerule.html.
+        * web-platform-tests/css/cssom/cssom-ruleTypeAndOrder-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/cssom-ruleTypeAndOrder-expected.txt.
+        * web-platform-tests/css/cssom/cssom-ruleTypeAndOrder.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/cssom-ruleTypeAndOrder.html.
+        * web-platform-tests/css/cssom/cssom-setProperty-shorthand-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/cssom-setProperty-shorthand-expected.txt.
+        * web-platform-tests/css/cssom/cssom-setProperty-shorthand.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/cssom-setProperty-shorthand.html.
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/cssstyledeclaration-csstext-expected.txt.
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-final-delimiter-expected.txt: Added.
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-final-delimiter.html: Added.
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-important-expected.txt: Added.
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-important.html: Added.
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/cssstyledeclaration-csstext.html.
+        * web-platform-tests/css/cssom/cssstyledeclaration-mutability-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/cssstyledeclaration-mutability-expected.txt.
+        * web-platform-tests/css/cssom/cssstyledeclaration-mutability.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/cssstyledeclaration-mutability.html.
+        * web-platform-tests/css/cssom/cssstyledeclaration-mutationrecord-001-expected.txt: Added.
+        * web-platform-tests/css/cssom/cssstyledeclaration-mutationrecord-001.html: Added.
+        * web-platform-tests/css/cssom/cssstyledeclaration-mutationrecord-002-expected.txt: Added.
+        * web-platform-tests/css/cssom/cssstyledeclaration-mutationrecord-002.html: Added.
+        * web-platform-tests/css/cssom/cssstyledeclaration-mutationrecord-003-expected.txt: Added.
+        * web-platform-tests/css/cssom/cssstyledeclaration-mutationrecord-003.html: Added.
+        * web-platform-tests/css/cssom/cssstyledeclaration-mutationrecord-004-expected.txt: Added.
+        * web-platform-tests/css/cssom/cssstyledeclaration-mutationrecord-004.html: Added.
+        * web-platform-tests/css/cssom/cssstyledeclaration-setter-order-expected.txt: Added.
+        * web-platform-tests/css/cssom/cssstyledeclaration-setter-order.html: Added.
+        * web-platform-tests/css/cssom/escape-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/escape-expected.txt.
+        * web-platform-tests/css/cssom/escape.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/escape.html.
+        * web-platform-tests/css/cssom/font-shorthand-serialization-expected.txt: Added.
+        * web-platform-tests/css/cssom/font-shorthand-serialization.html: Added.
+        * web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt: Added.
+        * web-platform-tests/css/cssom/getComputedStyle-detached-subtree.html: Added.
+        * web-platform-tests/css/cssom/getComputedStyle-dynamic-subdoc-expected.txt: Added.
+        * web-platform-tests/css/cssom/getComputedStyle-dynamic-subdoc.html: Added.
+        * web-platform-tests/css/cssom/getComputedStyle-pseudo-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/getComputedStyle-pseudo-expected.txt.
+        * web-platform-tests/css/cssom/getComputedStyle-pseudo.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/getComputedStyle-pseudo.html.
+        * web-platform-tests/css/cssom/historical-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/historical-expected.txt.
+        * web-platform-tests/css/cssom/historical.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/historical.html.
+        * web-platform-tests/css/cssom/inline-style-001-expected.txt: Added.
+        * web-platform-tests/css/cssom/inline-style-001.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/inline-style-001.html.
+        * web-platform-tests/css/cssom/insertRule-charset-no-index-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/insertRule-charset-no-index-expected.txt.
+        * web-platform-tests/css/cssom/insertRule-charset-no-index.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/insertRule-charset-no-index.html.
+        * web-platform-tests/css/cssom/insertRule-import-no-index-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/insertRule-import-no-index-expected.txt.
+        * web-platform-tests/css/cssom/insertRule-import-no-index.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/insertRule-import-no-index.html.
+        * web-platform-tests/css/cssom/insertRule-namespace-no-index-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/insertRule-namespace-no-index-expected.txt.
+        * web-platform-tests/css/cssom/insertRule-namespace-no-index.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/insertRule-namespace-no-index.html.
+        * web-platform-tests/css/cssom/insertRule-no-index-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/insertRule-no-index-expected.txt.
+        * web-platform-tests/css/cssom/insertRule-no-index.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/insertRule-no-index.html.
+        * web-platform-tests/css/cssom/insertRule-syntax-error-01-expected.txt: Added.
+        * web-platform-tests/css/cssom/insertRule-syntax-error-01.html: Added.
+        * web-platform-tests/css/cssom/interfaces-expected.txt: Added.
+        * web-platform-tests/css/cssom/interfaces.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/interfaces.html.
+        * web-platform-tests/css/cssom/medialist-dynamic-001-expected.html: Added.
+        * web-platform-tests/css/cssom/medialist-dynamic-001.html: Added.
+        * web-platform-tests/css/cssom/medialist-interfaces-001-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/medialist-interfaces-001-expected.txt.
+        * web-platform-tests/css/cssom/medialist-interfaces-001.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/medialist-interfaces-001.html.
+        * web-platform-tests/css/cssom/medialist-interfaces-002-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/medialist-interfaces-002-expected.txt.
+        * web-platform-tests/css/cssom/medialist-interfaces-002.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/medialist-interfaces-002.html.
+        * web-platform-tests/css/cssom/medialist-interfaces-003-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/medialist-interfaces-003-expected.txt.
+        * web-platform-tests/css/cssom/medialist-interfaces-003.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/medialist-interfaces-003.html.
+        * web-platform-tests/css/cssom/medialist-interfaces-004-expected.txt: Added.
+        * web-platform-tests/css/cssom/medialist-interfaces-004.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/medialist-interfaces-004.html.
+        * web-platform-tests/css/cssom/overflow-serialization-expected.txt: Added.
+        * web-platform-tests/css/cssom/overflow-serialization.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/overflow-serialization.html.
+        * web-platform-tests/css/cssom/preferred-stylesheet-order-expected.txt: Added.
+        * web-platform-tests/css/cssom/preferred-stylesheet-order.html: Added.
+        * web-platform-tests/css/cssom/preferred-stylesheet-reversed-order-expected.txt: Added.
+        * web-platform-tests/css/cssom/preferred-stylesheet-reversed-order.html: Added.
+        * web-platform-tests/css/cssom/selectorSerialize-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/selectorSerialize-expected.txt.
+        * web-platform-tests/css/cssom/selectorSerialize.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/selectorSerialize.html.
+        * web-platform-tests/css/cssom/selectorText-modification-restyle-001-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/selectorText-modification-restyle-001-expected.html.
+        * web-platform-tests/css/cssom/selectorText-modification-restyle-001.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/selectorText-modification-restyle-001.html.
+        * web-platform-tests/css/cssom/selectorText-modification-restyle-002-expected.txt: Added.
+        * web-platform-tests/css/cssom/selectorText-modification-restyle-002.html: Added.
+        * web-platform-tests/css/cssom/serialization-CSSDeclaration-with-important-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/serialization-CSSDeclaration-with-important-expected.txt.
+        * web-platform-tests/css/cssom/serialization-CSSDeclaration-with-important.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/serialization-CSSDeclaration-with-important.html.
+        * web-platform-tests/css/cssom/serialize-namespaced-type-selectors-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/serialize-namespaced-type-selectors-expected.txt.
+        * web-platform-tests/css/cssom/serialize-namespaced-type-selectors.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/serialize-namespaced-type-selectors.html.
+        * web-platform-tests/css/cssom/serialize-values-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/serialize-values-expected.txt.
+        * web-platform-tests/css/cssom/serialize-values.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/serialize-values.html.
+        * web-platform-tests/css/cssom/serialize-variable-reference-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/serialize-variable-reference-expected.txt.
+        * web-platform-tests/css/cssom/serialize-variable-reference.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/serialize-variable-reference.html.
+        * web-platform-tests/css/cssom/setproperty-null-undefined-expected.txt: Added.
+        * web-platform-tests/css/cssom/setproperty-null-undefined.html: Added.
+        * web-platform-tests/css/cssom/shorthand-serialization-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/shorthand-serialization-expected.txt.
+        * web-platform-tests/css/cssom/shorthand-serialization.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/shorthand-serialization.html.
+        * web-platform-tests/css/cssom/shorthand-values-expected.txt: Added.
+        * web-platform-tests/css/cssom/shorthand-values.html: Added.
+        * web-platform-tests/css/cssom/style-sheet-interfaces-001-expected.txt: Added.
+        * web-platform-tests/css/cssom/style-sheet-interfaces-001.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/style-sheet-interfaces-001.html.
+        * web-platform-tests/css/cssom/style-sheet-interfaces-002-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/style-sheet-interfaces-002-expected.txt.
+        * web-platform-tests/css/cssom/style-sheet-interfaces-002.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/style-sheet-interfaces-002.html.
+        * web-platform-tests/css/cssom/stylesheet-replacedata-dynamic-expected.html: Added.
+        * web-platform-tests/css/cssom/stylesheet-replacedata-dynamic.html: Added.
+        * web-platform-tests/css/cssom/stylesheet-same-origin.css: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/stylesheet-same-origin.css.
+        * web-platform-tests/css/cssom/stylesheet-same-origin.sub-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/stylesheet-same-origin.sub-expected.txt.
+        * web-platform-tests/css/cssom/stylesheet-same-origin.sub.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/stylesheet-same-origin.sub.html.
+        * web-platform-tests/css/cssom/stylesheet-title-expected.txt: Added.
+        * web-platform-tests/css/cssom/stylesheet-title.html: Added.
+        * web-platform-tests/css/cssom/support/1x1-green.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/1x1-green.png.
+        * web-platform-tests/css/cssom/support/1x1-lime.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/1x1-lime.png.
+        * web-platform-tests/css/cssom/support/1x1-maroon.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/1x1-maroon.png.
+        * web-platform-tests/css/cssom/support/1x1-navy.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/1x1-navy.png.
+        * web-platform-tests/css/cssom/support/1x1-red.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/1x1-red.png.
+        * web-platform-tests/css/cssom/support/1x1-white.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/1x1-white.png.
+        * web-platform-tests/css/cssom/support/60x60-gg-rr.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/60x60-gg-rr.png.
+        * web-platform-tests/css/cssom/support/60x60-green.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/60x60-green.png.
+        * web-platform-tests/css/cssom/support/60x60-red.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/60x60-red.png.
+        * web-platform-tests/css/cssom/support/README: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/README.
+        * web-platform-tests/css/cssom/support/a-green.css: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/a-green.css.
+        * web-platform-tests/css/cssom/support/b-green.css: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/b-green.css.
+        * web-platform-tests/css/cssom/support/c-red.css: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/c-red.css.
+        * web-platform-tests/css/cssom/support/cat.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/cat.png.
+        * web-platform-tests/css/cssom/support/import-charset.css: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/import-charset.css.
+        * web-platform-tests/css/cssom/support/import-green.css: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/import-green.css.
+        * web-platform-tests/css/cssom/support/import-red.css: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/import-red.css.
+        * web-platform-tests/css/cssom/support/pattern-grg-rgr-grg.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/pattern-grg-rgr-grg.png.
+        * web-platform-tests/css/cssom/support/pattern-grg-rrg-rgg.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/pattern-grg-rrg-rgg.png.
+        * web-platform-tests/css/cssom/support/pattern-rgr-grg-rgr.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/pattern-rgr-grg-rgr.png.
+        * web-platform-tests/css/cssom/support/pattern-tr.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/pattern-tr.png.
+        * web-platform-tests/css/cssom/support/ruler-h-50%.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/ruler-h-50%.png.
+        * web-platform-tests/css/cssom/support/ruler-h-50px.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/ruler-h-50px.png.
+        * web-platform-tests/css/cssom/support/ruler-v-100px.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/ruler-v-100px.png.
+        * web-platform-tests/css/cssom/support/ruler-v-50px.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/ruler-v-50px.png.
+        * web-platform-tests/css/cssom/support/square-purple.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/square-purple.png.
+        * web-platform-tests/css/cssom/support/square-teal.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/square-teal.png.
+        * web-platform-tests/css/cssom/support/square-white.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/square-white.png.
+        * web-platform-tests/css/cssom/support/support/README: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/support/README.
+        * web-platform-tests/css/cssom/support/support/swatch-green.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/support/swatch-green.png.
+        * web-platform-tests/css/cssom/support/support/swatch-red.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/support/swatch-red.png.
+        * web-platform-tests/css/cssom/support/support/w3c-import.log: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/support/w3c-import.log.
+        * web-platform-tests/css/cssom/support/swatch-blue.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/swatch-blue.png.
+        * web-platform-tests/css/cssom/support/swatch-green.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/swatch-green.png.
+        * web-platform-tests/css/cssom/support/swatch-lime.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/swatch-lime.png.
+        * web-platform-tests/css/cssom/support/swatch-orange.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/swatch-orange.png.
+        * web-platform-tests/css/cssom/support/swatch-red.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/swatch-red.png.
+        * web-platform-tests/css/cssom/support/swatch-teal.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/swatch-teal.png.
+        * web-platform-tests/css/cssom/support/swatch-white.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/swatch-white.png.
+        * web-platform-tests/css/cssom/support/swatch-yellow.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/swatch-yellow.png.
+        * web-platform-tests/css/cssom/support/test-bl.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/test-bl.png.
+        * web-platform-tests/css/cssom/support/test-br.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/test-br.png.
+        * web-platform-tests/css/cssom/support/test-inner-half-size.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/test-inner-half-size.png.
+        * web-platform-tests/css/cssom/support/test-outer.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/test-outer.png.
+        * web-platform-tests/css/cssom/support/test-tl.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/test-tl.png.
+        * web-platform-tests/css/cssom/support/test-tr.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/test-tr.png.
+        * web-platform-tests/css/cssom/support/w3c-import.log: Added.
+        * web-platform-tests/css/cssom/support/xmlss-pi.xhtml: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/support/xmlss-pi.xhtml.
+        * web-platform-tests/css/cssom/ttwf-cssom-doc-ext-load-count-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/ttwf-cssom-doc-ext-load-count-expected.txt.
+        * web-platform-tests/css/cssom/ttwf-cssom-doc-ext-load-count.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/ttwf-cssom-doc-ext-load-count.html.
+        * web-platform-tests/css/cssom/ttwf-cssom-doc-ext-load-tree-order-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/ttwf-cssom-doc-ext-load-tree-order-expected.txt.
+        * web-platform-tests/css/cssom/ttwf-cssom-doc-ext-load-tree-order.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/ttwf-cssom-doc-ext-load-tree-order.html.
+        * web-platform-tests/css/cssom/ttwf-cssom-document-extension-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/ttwf-cssom-document-extension-expected.txt.
+        * web-platform-tests/css/cssom/ttwf-cssom-document-extension.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/ttwf-cssom-document-extension.html.
+        * web-platform-tests/css/cssom/variable-names-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/variable-names-expected.txt.
+        * web-platform-tests/css/cssom/variable-names.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/cssom/variable-names.html.
+        * web-platform-tests/css/cssom/w3c-import.log: Added.
+        * web-platform-tests/cssom/GetBoundingRect-expected.txt: Removed.
+        * web-platform-tests/cssom/GetBoundingRect.html: Removed.
+        * web-platform-tests/cssom/MediaList-expected.txt: Removed.
+        * web-platform-tests/cssom/cssimportrule-expected.txt: Removed.
+        * web-platform-tests/cssom/cssom-fontfacerule-expected.txt: Removed.
+        * web-platform-tests/cssom/index-001-expected.txt: Removed.
+        * web-platform-tests/cssom/index-001.html: Removed.
+        * web-platform-tests/cssom/index-002-expected.txt: Removed.
+        * web-platform-tests/cssom/index-002.html: Removed.
+        * web-platform-tests/cssom/inline-style-001-expected.txt: Removed.
+        * web-platform-tests/cssom/interfaces-expected.txt: Removed.
+        * web-platform-tests/cssom/medialist-interfaces-004-expected.txt: Removed.
+        * web-platform-tests/cssom/overflow-serialization-expected.txt: Removed.
+        * web-platform-tests/cssom/style-sheet-interfaces-001-expected.txt: Removed.
+        * web-platform-tests/cssom/support/w3c-import.log: Removed.
+        * web-platform-tests/cssom/w3c-import.log: Removed.
+
 2018-05-18  Rob Buis  <rbuis@igalia.com>
 
         Cannot unset transition with important

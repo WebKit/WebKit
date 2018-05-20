@@ -1,0 +1,13 @@
+foo
+foo
+foo
+foo
+foo
+foo
+foo
+
+PASS Shorthand serialization with shorthand and longhands mixed. 
+PASS Shorthand serialization with just longhands. 
+FAIL Shorthand serialization with variable and variable from other shorthand. assert_equals: expected "var(--a)" but got ""
+PASS Shorthand serialization after setting 
+

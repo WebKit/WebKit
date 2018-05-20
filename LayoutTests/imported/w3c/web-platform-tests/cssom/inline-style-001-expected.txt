@@ -1,7 +1,0 @@
-
-FAIL CSSStyleDeclaration_accessible assert_own_property: expected property "style" missing
-FAIL read Can't find variable: declaration
-FAIL csstext_write Can't find variable: declaration
-FAIL property_write Can't find variable: declaration
-FAIL shorthand_properties Can't find variable: declaration
-

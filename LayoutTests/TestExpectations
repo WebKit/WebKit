@@ -307,7 +307,7 @@ webkit.org/b/145566 imported/w3c/web-platform-tests/css/css-grid/alignment/self-
 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-small.html [ Skip ]
-imported/w3c/web-platform-tests/cssom/interfaces.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/css/cssom/interfaces.html [ Pass Timeout ]
 imported/w3c/web-platform-tests/cssom-view/interfaces.html [ Pass Timeout ]
 webkit.org/b/182292 imported/w3c/web-platform-tests/cssom-view/scrollingElement-quirks-dynamic-001.html [ ImageOnlyFailure ]
 webkit.org/b/182292 imported/w3c/web-platform-tests/cssom-view/scrollingElement-quirks-dynamic-002.html [ ImageOnlyFailure ]

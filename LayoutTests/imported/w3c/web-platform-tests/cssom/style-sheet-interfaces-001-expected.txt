@@ -1,8 +1,0 @@
-
-FAIL sheet_property assert_own_property: expected property "sheet" missing
-PASS sheet_property_updates 
-FAIL CSSStyleSheet_properties undefined is not an object (evaluating 'object.hasOwnProperty')
-FAIL CSSStyleSheet_property_values undefined is not an object (evaluating 'styleSheet.ownerRule')
-FAIL StyleSheet_properties undefined is not an object (evaluating 'object.hasOwnProperty')
-FAIL StyleSheet_property_values undefined is not an object (evaluating 'styleSheet.type')
-

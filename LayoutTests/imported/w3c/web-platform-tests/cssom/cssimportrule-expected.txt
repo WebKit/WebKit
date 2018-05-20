@@ -1,8 +1,0 @@
-
-PASS CSSRule and CSSImportRule types 
-PASS Type of CSSRule#type and constant values 
-PASS Existence and writability of CSSRule attributes 
-PASS Values of CSSRule attributes 
-PASS Existence and writability of CSSImportRule attributes 
-PASS Values of CSSImportRule attributes 
-
