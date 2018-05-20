@@ -865,7 +865,7 @@ private:
                 ASSERT(bits);
                 if (bits == ImplementsDefaultHasInstance) {
                     if (abstractValue.m_type == SpecFunctionWithDefaultHasInstance) {
-                        changed = true;
+                        eliminated = true;
                         node->remove(m_graph);
                         break;
                     }
@@ -877,7 +877,7 @@ private:
                         // and we can read its inline type info flags. These flags don't change over the
                         // object's lifetime.
                         if ((value.asCell()->inlineTypeFlags() & bits) == bits) {
-                            changed = true;
+                            eliminated = true;
                             node->remove(m_graph);
                             break;
                         }
@@ -890,7 +890,7 @@ private:
                         ok &= (structure->typeInfo().inlineTypeFlags() & bits) == bits;
                     });
                     if (ok) {
-                        changed = true;
+                        eliminated = true;
                         node->remove(m_graph);
                         break;
                     }

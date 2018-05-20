@@ -1,3 +1,13 @@
+2018-05-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] CheckTypeInfoFlags should say `eliminated` if it is removed in constant folding phase
+        https://bugs.webkit.org/show_bug.cgi?id=185802
+
+        Reviewed by Saam Barati.
+
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+
 2018-05-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should inline InstanceOf ICs
