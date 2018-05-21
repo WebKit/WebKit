@@ -1,3 +1,14 @@
+2018-05-21  David Fenton  <david_fenton@apple.com>
+
+        Add expected results for imported/w3c/web-platform-tests/css/cssom/interfaces.html
+        https://bugs.webkit.org/show_bug.cgi?id=185834
+
+        Unreviewed test gardening.
+
+        This test was added as part of r232005 but it didn't have an expected results file.
+
+        * web-platform-tests/css/cssom/interfaces-expected.txt: Added.
+
 2018-05-20  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Update CSSOM WPT tests.
