@@ -85,6 +85,8 @@ static GstPadProbeReturn appendPipelineDemuxerBlackHolePadProbe(GstPad*, GstPadP
 static GstFlowReturn appendPipelineAppsinkNewSample(GstElement*, AppendPipeline*);
 static void appendPipelineAppsinkEOS(GstElement*, AppendPipeline*);
 
+static GstPadProbeReturn matroskademuxForceSegmentStartToEqualZero(GstPad*, GstPadProbeInfo*, void*);
+
 static void appendPipelineNeedContextMessageCallback(GstBus*, GstMessage* message, AppendPipeline* appendPipeline)
 {
     GST_TRACE("received callback");
@@ -978,6 +980,10 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
     ASSERT(WTF::isMainThread());
     GST_DEBUG("Connecting to appsink");
 
+    const String& type = m_sourceBufferPrivate->type().containerType();
+    if (type.endsWith("webm"))
+        gst_pad_add_probe(demuxerSrcPad, GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, matroskademuxForceSegmentStartToEqualZero, nullptr, nullptr);
+
     LockHolder locker(m_padAddRemoveLock);
     GRefPtr<GstPad> sinkSinkPad = adoptGRef(gst_element_get_static_pad(m_appsink.get(), "sink"));
 
@@ -1148,7 +1154,35 @@ static void appendPipelineAppsinkEOS(GstElement*, AppendPipeline* appendPipeline
     GST_DEBUG("%s main thread", (WTF::isMainThread()) ? "Is" : "Not");
 }
 
+static GstPadProbeReturn matroskademuxForceSegmentStartToEqualZero(GstPad*, GstPadProbeInfo* info, void*)
+{
+    // matroskademux sets GstSegment.start to the PTS of the first frame.
+    //
+    // This way in the unlikely case a user made a .mkv or .webm file where a certain portion of the movie is skipped
+    // (e.g. by concatenating a MSE initialization segment with any MSE media segment other than the first) and opened
+    // it with a regular player, playback would start immediately. GstSegment.duration is not modified in any case.
+    //
+    // Leaving the usefulness of that feature aside, the fact that it uses GstSegment.start is problematic for MSE.
+    // In MSE is not unusual to process unordered MSE media segments. In this case, a frame may have
+    // PTS <<< GstSegment.start and be discarded by downstream. This happens for instance in elements derived from
+    // audiobasefilter, such as opusparse.
+    //
+    // This probe remedies the problem by setting GstSegment.start to 0 in all cases, not only when the PTS of the first
+    // frame is zero.
 
+    ASSERT(info->type & GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM);
+    GstEvent* event = static_cast<GstEvent*>(info->data);
+    if (event->type == GST_EVENT_SEGMENT) {
+        GstSegment segment;
+        gst_event_copy_segment(event, &segment);
+
+        segment.start = 0;
+
+        GRefPtr<GstEvent> newEvent = adoptGRef(gst_event_new_segment(&segment));
+        gst_event_replace(reinterpret_cast<GstEvent**>(&info->data), newEvent.get());
+    }
+    return GST_PAD_PROBE_OK;
+}
 
 } // namespace WebCore.
 

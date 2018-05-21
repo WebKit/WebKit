@@ -1,3 +1,33 @@
+2018-05-21  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Force segment.start = 0 after matroskademux
+        https://bugs.webkit.org/show_bug.cgi?id=185740
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch ensures that when WebM MSE media segments are appended in
+        an out of order fashion their frames are not discarded by opusparse or
+        any other potential elements downstream in the AppendPipeline that
+        perform segment clipping.
+
+        This patch fixes the following YTTV 2018 tests:
+
+        38. OpusAudioWithOverlap
+        39. OpusAudioWithSmallGap
+        40. OpusAudioWithLargeGap
+        70. VP9VideoWithOverlap
+        71. VP9VideoWithSmallGap
+
+        This patch is necessary, but not sufficient for fixing the following
+        YTTV 2018 tests:
+
+        36. AppendOpusAudioOutOfOrder
+        67. AppendVP9VideoOutOfOrder
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsink):
+        (WebCore::matroskademuxForceSegmentStartToEqualZero):
+
 2018-05-19  Eric Carlson  <eric.carlson@apple.com>
 
         Improve NowPlaying "title"
