@@ -241,8 +241,6 @@ imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/006
 imported/w3c/web-platform-tests/workers/nested_worker.worker.html [ Skip ]
 imported/w3c/web-platform-tests/workers/opaque-origin.html [ Skip ]
 imported/w3c/web-platform-tests/workers/semantics/interface-objects/003.html [ Skip ]
-imported/w3c/web-platform-tests/workers/semantics/structured-clone/shared.html [ Skip ]
-imported/w3c/web-platform-tests/workers/semantics/structured-clone/dedicated.html [ Skip ]
 imported/w3c/web-platform-tests/workers/semantics/multiple-workers/003.html [ Skip ]
 imported/w3c/web-platform-tests/workers/semantics/multiple-workers/005.html [ Skip ]
 imported/w3c/web-platform-tests/workers/Worker_cross_origin_security_err.htm [ Skip ]

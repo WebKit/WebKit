@@ -278,8 +278,9 @@ static unsigned countUsages(CryptoKeyUsageBitmap usages)
  * Version 4. added support for serializing non-index properties of arrays.
  * Version 5. added support for Map and Set types.
  * Version 6. added support for 8-bit strings.
+ * Version 7. added support for File's lastModified attribute.
  */
-static const unsigned CurrentVersion = 6;
+static const unsigned CurrentVersion = 7;
 static const unsigned TerminatorTag = 0xFFFFFFFF;
 static const unsigned StringPoolTag = 0xFFFFFFFE;
 static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
@@ -363,7 +364,7 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  *    FileTag FileData
  *
  * FileData :-
- *    <path:StringData> <url:StringData> <type:StringData> <name:StringData>
+ *    <path:StringData> <url:StringData> <type:StringData> <name:StringData> <lastModified:double>
  *
  * FileList :-
  *    FileListTag <length:uint32_t>(<file:FileData>){length}
@@ -1236,6 +1237,7 @@ private:
         write(file.url());
         write(file.type());
         write(file.name());
+        write(static_cast<double>(file.lastModifiedOverride().value_or(-1)));
     }
 
 #if ENABLE(SUBTLE_CRYPTO)
@@ -2036,6 +2038,9 @@ private:
         CachedStringRef name;
         if (!readStringData(name))
             return false;
+        double lastModified;
+        if (!read(lastModified))
+            return false;
 
         // If the blob URL for this file has an associated blob file path, prefer that one over the "built-in" path.
         String filePath = blobFilePathForBlobURL(url->string());
@@ -2043,7 +2048,7 @@ private:
             filePath = path->string();
 
         if (m_isDOMGlobalObject)
-            file = File::deserialize(filePath, URL(URL(), url->string()), type->string(), name->string());
+            file = File::deserialize(filePath, URL(URL(), url->string()), type->string(), name->string(), lastModified >= 0 ? std::make_optional<int64_t>(lastModified) : std::nullopt);
         return true;
     }
 

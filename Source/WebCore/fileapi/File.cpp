@@ -63,10 +63,11 @@ File::File(const String& path, const String& nameOverride)
     ThreadableBlobRegistry::registerFileBlobURL(m_internalURL, path, m_type);
 }
 
-File::File(DeserializationContructor, const String& path, const URL& url, const String& type, const String& name)
+File::File(DeserializationContructor, const String& path, const URL& url, const String& type, const String& name, const std::optional<int64_t>& lastModified)
     : Blob(deserializationContructor, url, type, -1, path)
     , m_path(path)
     , m_name(name)
+    , m_lastModifiedDateOverride(lastModified)
 {
 }
 
@@ -80,7 +81,7 @@ static BlobPropertyBag convertPropertyBag(const File::PropertyBag& initialBag)
 File::File(Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
     : Blob(WTFMove(blobPartVariants), convertPropertyBag(propertyBag))
     , m_name(filename)
-    , m_overrideLastModifiedDate(propertyBag.lastModified.value_or(WallTime::now().secondsSinceEpoch().milliseconds()))
+    , m_lastModifiedDateOverride(propertyBag.lastModified.value_or(WallTime::now().secondsSinceEpoch().milliseconds()))
 {
 }
 
@@ -96,17 +97,17 @@ File::File(const File& file, const String& name)
     , m_path(file.path())
     , m_relativePath(file.relativePath())
     , m_name(!name.isNull() ? name : file.name())
-    , m_overrideLastModifiedDate(file.m_overrideLastModifiedDate)
+    , m_lastModifiedDateOverride(file.m_lastModifiedDateOverride)
     , m_isDirectory(file.isDirectory())
 {
 }
 
-double File::lastModified() const
+int64_t File::lastModified() const
 {
-    if (m_overrideLastModifiedDate)
-        return m_overrideLastModifiedDate.value();
+    if (m_lastModifiedDateOverride)
+        return m_lastModifiedDateOverride.value();
 
-    double result;
+    int64_t result;
 
     // FIXME: This does sync-i/o on the main thread and also recalculates every time the method is called.
     // The i/o should be performed on a background thread,

@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS primitive undefined 
 PASS primitive null 
 PASS primitive true 
@@ -52,57 +50,51 @@ PASS Date 8.64e15
 PASS Array Date objects 
 PASS Object Date objects 
 PASS RegExp flags and lastIndex 
-FAIL RegExp sticky flag assert_unreached: FAIL: unknown test Reached unreachable code
-FAIL RegExp unicode flag assert_unreached: FAIL: unknown test Reached unreachable code
+FAIL RegExp sticky flag assert_equals: sticky expected true but got false
+FAIL RegExp unicode flag assert_equals: unicode expected true but got false
 PASS RegExp empty 
 PASS RegExp slash 
 PASS RegExp new line 
 PASS Array RegExp object, RegExp flags and lastIndex 
-FAIL Array RegExp object, RegExp sticky flag assert_unreached: FAIL: unknown test Reached unreachable code
-FAIL Array RegExp object, RegExp unicode flag assert_unreached: FAIL: unknown test Reached unreachable code
+FAIL Array RegExp object, RegExp sticky flag assert_equals: sticky expected true but got false
+FAIL Array RegExp object, RegExp unicode flag assert_equals: unicode expected true but got false
 PASS Array RegExp object, RegExp empty 
 PASS Array RegExp object, RegExp slash 
 PASS Array RegExp object, RegExp new line 
 PASS Object RegExp object, RegExp flags and lastIndex 
-FAIL Object RegExp object, RegExp sticky flag assert_unreached: FAIL: unknown test Reached unreachable code
-FAIL Object RegExp object, RegExp unicode flag assert_unreached: FAIL: unknown test Reached unreachable code
+FAIL Object RegExp object, RegExp sticky flag assert_equals: sticky expected true but got false
+FAIL Object RegExp object, RegExp unicode flag assert_equals: unicode expected true but got false
 PASS Object RegExp object, RegExp empty 
 PASS Object RegExp object, RegExp slash 
 PASS Object RegExp object, RegExp new line 
-FAIL Blob basic assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL Blob unpaired high surrogate (invalid utf-8) assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL Blob unpaired low surrogate (invalid utf-8) assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL Blob paired surrogates (invalid utf-8) assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL Blob empty assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL Blob NUL assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL Array Blob object, Blob basic assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL Array Blob object, Blob unpaired high surrogate (invalid utf-8) assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL Array Blob object, Blob unpaired low surrogate (invalid utf-8) assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL Array Blob object, Blob paired surrogates (invalid utf-8) assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL Array Blob object, Blob empty assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL Array Blob object, Blob NUL assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL Object Blob object, Blob basic assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL Object Blob object, Blob unpaired high surrogate (invalid utf-8) assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL Object Blob object, Blob unpaired low surrogate (invalid utf-8) assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL Object Blob object, Blob paired surrogates (invalid utf-8) assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL Object Blob object, Blob empty assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL Object Blob object, Blob NUL assert_unreached: FAIL ReferenceError: Can't find variable: File Reached unreachable code
-FAIL File basic assert_true: instanceof File expected true got false
-FAIL FileList empty assert_unreached: FAIL ReferenceError: Can't find variable: FileList Reached unreachable code
-FAIL Array FileList object, FileList empty The object can not be cloned.
-FAIL Object FileList object, FileList empty The object can not be cloned.
+PASS Blob basic 
+PASS Blob unpaired high surrogate (invalid utf-8) 
+PASS Blob unpaired low surrogate (invalid utf-8) 
+PASS Blob paired surrogates (invalid utf-8) 
+PASS Blob empty 
+PASS Blob NUL 
+PASS Array Blob object, Blob basic 
+PASS Array Blob object, Blob unpaired high surrogate (invalid utf-8) 
+PASS Array Blob object, Blob unpaired low surrogate (invalid utf-8) 
+PASS Array Blob object, Blob paired surrogates (invalid utf-8) 
+PASS Array Blob object, Blob empty 
+PASS Array Blob object, Blob NUL 
+PASS Object Blob object, Blob basic 
+PASS Object Blob object, Blob unpaired high surrogate (invalid utf-8) 
+PASS Object Blob object, Blob unpaired low surrogate (invalid utf-8) 
+PASS Object Blob object, Blob paired surrogates (invalid utf-8) 
+PASS Object Blob object, Blob empty 
+PASS Object Blob object, Blob NUL 
+PASS File basic 
+PASS FileList empty 
+PASS Array FileList object, FileList empty 
+PASS Object FileList object, FileList empty 
 PASS ImageData 1x1 transparent black 
 PASS ImageData 1x1 non-transparent non-black 
 PASS Array ImageData object, ImageData 1x1 transparent black 
 PASS Array ImageData object, ImageData 1x1 non-transparent non-black 
 PASS Object ImageData object, ImageData 1x1 transparent black 
 PASS Object ImageData object, ImageData 1x1 non-transparent non-black 
-TIMEOUT ImageBitmap 1x1 transparent black Test timed out
-TIMEOUT ImageBitmap 1x1 non-transparent non-black Test timed out
-TIMEOUT Array ImageBitmap object, ImageBitmap 1x1 transparent black Test timed out
-TIMEOUT Array ImageBitmap object, ImageBitmap 1x1 non-transparent non-black Test timed out
-TIMEOUT Object ImageBitmap object, ImageBitmap 1x1 transparent black Test timed out
-TIMEOUT Object ImageBitmap object, ImageBitmap 1x1 non-transparent non-black Test timed out
 PASS Array sparse 
 PASS Array with non-index property 
 PASS Object with index property and length 
@@ -114,4 +106,12 @@ PASS Object with property on prototype
 PASS Object with non-enumerable property 
 PASS Object with non-writable property 
 PASS Object with non-configurable property 
+FAIL ImageBitmap 1x1 transparent black promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL ImageBitmap 1x1 non-transparent non-black promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Array ImageBitmap object, ImageBitmap 1x1 transparent black promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Array ImageBitmap object, ImageBitmap 1x1 transparent non-black promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Object ImageBitmap object, ImageBitmap 1x1 transparent black promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Object ImageBitmap object, ImageBitmap 1x1 transparent non-black promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS ArrayBuffer 
+PASS MessagePort 
 

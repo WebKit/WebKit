@@ -14,5 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/structured-clone/dedicated.html
-/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/structured-clone/shared.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/structured-clone/structured-clone-battery-of-tests-harness.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/structured-clone/structured-clone-battery-of-tests-with-transferables.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/structured-clone/structured-clone-battery-of-tests.js
