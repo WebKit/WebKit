@@ -47,16 +47,16 @@ public:
     };
 
     BorderEdge() = default;
-    BorderEdge(float edgeWidth, Color edgeColor, EBorderStyle edgeStyle, bool edgeIsTransparent, bool edgeIsPresent, float devicePixelRatio);
+    BorderEdge(float edgeWidth, Color edgeColor, BorderStyle edgeStyle, bool edgeIsTransparent, bool edgeIsPresent, float devicePixelRatio);
 
     static void getBorderEdgeInfo(BorderEdge edges[], const RenderStyle&, float deviceScaleFactor, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
 
-    EBorderStyle style() const { return m_style; }
+    BorderStyle style() const { return m_style; }
     const Color& color() const { return m_color; }
     bool isTransparent() const { return m_isTransparent; }
     bool isPresent() const { return m_isPresent; }
 
-    inline bool hasVisibleColorAndStyle() const { return m_style > BHIDDEN && !m_isTransparent; }
+    inline bool hasVisibleColorAndStyle() const { return m_style > BorderStyle::Hidden && !m_isTransparent; }
     inline bool shouldRender() const { return m_isPresent && widthForPainting() && hasVisibleColorAndStyle(); }
     inline bool presentButInvisible() const { return widthForPainting() && !hasVisibleColorAndStyle(); }
     inline float widthForPainting() const { return m_isPresent ?  m_flooredToDevicePixelWidth : 0; }
@@ -69,7 +69,7 @@ private:
 
     LayoutUnit m_width;
     Color m_color;
-    EBorderStyle m_style { BHIDDEN };
+    BorderStyle m_style { BorderStyle::Hidden };
     bool m_isTransparent { false };
     bool m_isPresent { false };
     float m_flooredToDevicePixelWidth { 0 };

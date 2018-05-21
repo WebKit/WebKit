@@ -686,15 +686,15 @@ LayoutUnit RenderTableSection::calcOuterBorderBefore() const
     LayoutUnit borderWidth = 0;
 
     const BorderValue& sb = style().borderBefore();
-    if (sb.style() == BHIDDEN)
+    if (sb.style() == BorderStyle::Hidden)
         return -1;
-    if (sb.style() > BHIDDEN)
+    if (sb.style() > BorderStyle::Hidden)
         borderWidth = sb.width();
 
     const BorderValue& rb = firstRow()->style().borderBefore();
-    if (rb.style() == BHIDDEN)
+    if (rb.style() == BorderStyle::Hidden)
         return -1;
-    if (rb.style() > BHIDDEN && rb.width() > borderWidth)
+    if (rb.style() > BorderStyle::Hidden && rb.width() > borderWidth)
         borderWidth = rb.width();
 
     bool allHidden = true;
@@ -707,18 +707,18 @@ LayoutUnit RenderTableSection::calcOuterBorderBefore() const
         RenderTableCol* colGroup = table()->colElement(c);
         if (colGroup) {
             const BorderValue& gb = colGroup->style().borderBefore();
-            if (gb.style() == BHIDDEN || cb.style() == BHIDDEN)
+            if (gb.style() == BorderStyle::Hidden || cb.style() == BorderStyle::Hidden)
                 continue;
             allHidden = false;
-            if (gb.style() > BHIDDEN && gb.width() > borderWidth)
+            if (gb.style() > BorderStyle::Hidden && gb.width() > borderWidth)
                 borderWidth = gb.width();
-            if (cb.style() > BHIDDEN && cb.width() > borderWidth)
+            if (cb.style() > BorderStyle::Hidden && cb.width() > borderWidth)
                 borderWidth = cb.width();
         } else {
-            if (cb.style() == BHIDDEN)
+            if (cb.style() == BorderStyle::Hidden)
                 continue;
             allHidden = false;
-            if (cb.style() > BHIDDEN && cb.width() > borderWidth)
+            if (cb.style() > BorderStyle::Hidden && cb.width() > borderWidth)
                 borderWidth = cb.width();
         }
     }
@@ -736,15 +736,15 @@ LayoutUnit RenderTableSection::calcOuterBorderAfter() const
     LayoutUnit borderWidth = 0;
 
     const BorderValue& sb = style().borderAfter();
-    if (sb.style() == BHIDDEN)
+    if (sb.style() == BorderStyle::Hidden)
         return -1;
-    if (sb.style() > BHIDDEN)
+    if (sb.style() > BorderStyle::Hidden)
         borderWidth = sb.width();
 
     const BorderValue& rb = lastRow()->style().borderAfter();
-    if (rb.style() == BHIDDEN)
+    if (rb.style() == BorderStyle::Hidden)
         return -1;
-    if (rb.style() > BHIDDEN && rb.width() > borderWidth)
+    if (rb.style() > BorderStyle::Hidden && rb.width() > borderWidth)
         borderWidth = rb.width();
 
     bool allHidden = true;
@@ -757,18 +757,18 @@ LayoutUnit RenderTableSection::calcOuterBorderAfter() const
         RenderTableCol* colGroup = table()->colElement(c);
         if (colGroup) {
             const BorderValue& gb = colGroup->style().borderAfter();
-            if (gb.style() == BHIDDEN || cb.style() == BHIDDEN)
+            if (gb.style() == BorderStyle::Hidden || cb.style() == BorderStyle::Hidden)
                 continue;
             allHidden = false;
-            if (gb.style() > BHIDDEN && gb.width() > borderWidth)
+            if (gb.style() > BorderStyle::Hidden && gb.width() > borderWidth)
                 borderWidth = gb.width();
-            if (cb.style() > BHIDDEN && cb.width() > borderWidth)
+            if (cb.style() > BorderStyle::Hidden && cb.width() > borderWidth)
                 borderWidth = cb.width();
         } else {
-            if (cb.style() == BHIDDEN)
+            if (cb.style() == BorderStyle::Hidden)
                 continue;
             allHidden = false;
-            if (cb.style() > BHIDDEN && cb.width() > borderWidth)
+            if (cb.style() > BorderStyle::Hidden && cb.width() > borderWidth)
                 borderWidth = cb.width();
         }
     }
@@ -786,16 +786,16 @@ LayoutUnit RenderTableSection::calcOuterBorderStart() const
     LayoutUnit borderWidth = 0;
 
     const BorderValue& sb = style().borderStart();
-    if (sb.style() == BHIDDEN)
+    if (sb.style() == BorderStyle::Hidden)
         return -1;
-    if (sb.style() > BHIDDEN)
+    if (sb.style() > BorderStyle::Hidden)
         borderWidth = sb.width();
 
     if (RenderTableCol* colGroup = table()->colElement(0)) {
         const BorderValue& gb = colGroup->style().borderStart();
-        if (gb.style() == BHIDDEN)
+        if (gb.style() == BorderStyle::Hidden)
             return -1;
-        if (gb.style() > BHIDDEN && gb.width() > borderWidth)
+        if (gb.style() > BorderStyle::Hidden && gb.width() > borderWidth)
             borderWidth = gb.width();
     }
 
@@ -807,12 +807,12 @@ LayoutUnit RenderTableSection::calcOuterBorderStart() const
         // FIXME: Don't repeat for the same cell
         const BorderValue& cb = current.primaryCell()->style().borderStart(); // FIXME: Make this work with perpendicular and flipped cells.
         const BorderValue& rb = current.primaryCell()->parent()->style().borderStart();
-        if (cb.style() == BHIDDEN || rb.style() == BHIDDEN)
+        if (cb.style() == BorderStyle::Hidden || rb.style() == BorderStyle::Hidden)
             continue;
         allHidden = false;
-        if (cb.style() > BHIDDEN && cb.width() > borderWidth)
+        if (cb.style() > BorderStyle::Hidden && cb.width() > borderWidth)
             borderWidth = cb.width();
-        if (rb.style() > BHIDDEN && rb.width() > borderWidth)
+        if (rb.style() > BorderStyle::Hidden && rb.width() > borderWidth)
             borderWidth = rb.width();
     }
     if (allHidden)
@@ -829,16 +829,16 @@ LayoutUnit RenderTableSection::calcOuterBorderEnd() const
     LayoutUnit borderWidth = 0;
 
     const BorderValue& sb = style().borderEnd();
-    if (sb.style() == BHIDDEN)
+    if (sb.style() == BorderStyle::Hidden)
         return -1;
-    if (sb.style() > BHIDDEN)
+    if (sb.style() > BorderStyle::Hidden)
         borderWidth = sb.width();
 
     if (RenderTableCol* colGroup = table()->colElement(totalCols - 1)) {
         const BorderValue& gb = colGroup->style().borderEnd();
-        if (gb.style() == BHIDDEN)
+        if (gb.style() == BorderStyle::Hidden)
             return -1;
-        if (gb.style() > BHIDDEN && gb.width() > borderWidth)
+        if (gb.style() > BorderStyle::Hidden && gb.width() > borderWidth)
             borderWidth = gb.width();
     }
 
@@ -850,12 +850,12 @@ LayoutUnit RenderTableSection::calcOuterBorderEnd() const
         // FIXME: Don't repeat for the same cell
         const BorderValue& cb = current.primaryCell()->style().borderEnd(); // FIXME: Make this work with perpendicular and flipped cells.
         const BorderValue& rb = current.primaryCell()->parent()->style().borderEnd();
-        if (cb.style() == BHIDDEN || rb.style() == BHIDDEN)
+        if (cb.style() == BorderStyle::Hidden || rb.style() == BorderStyle::Hidden)
             continue;
         allHidden = false;
-        if (cb.style() > BHIDDEN && cb.width() > borderWidth)
+        if (cb.style() > BorderStyle::Hidden && cb.width() > borderWidth)
             borderWidth = cb.width();
-        if (rb.style() > BHIDDEN && rb.width() > borderWidth)
+        if (rb.style() > BorderStyle::Hidden && rb.width() > borderWidth)
             borderWidth = rb.width();
     }
     if (allHidden)
@@ -1075,9 +1075,9 @@ CellSpan RenderTableSection::spannedColumns(const LayoutRect& flippedRect, Shoul
     return CellSpan(startColumn, endColumn);
 }
 
-void RenderTableSection::paintRowGroupBorder(const PaintInfo& paintInfo, bool antialias, LayoutRect rect, BoxSide side, CSSPropertyID borderColor, EBorderStyle borderStyle, EBorderStyle tableBorderStyle)
+void RenderTableSection::paintRowGroupBorder(const PaintInfo& paintInfo, bool antialias, LayoutRect rect, BoxSide side, CSSPropertyID borderColor, BorderStyle borderStyle, BorderStyle tableBorderStyle)
 {
-    if (tableBorderStyle == BHIDDEN)
+    if (tableBorderStyle == BorderStyle::Hidden)
         return;
     rect.intersect(paintInfo.rect);
     if (rect.isEmpty())
@@ -1129,7 +1129,7 @@ LayoutUnit RenderTableSection::horizontalRowGroupBorderWidth(RenderTableCell* ce
 
 void RenderTableSection::paintRowGroupBorderIfRequired(const PaintInfo& paintInfo, const LayoutPoint& paintOffset, unsigned row, unsigned column, BoxSide borderSide, RenderTableCell* cell)
 {
-    if (table()->currentBorderValue()->precedence() > BROWGROUP)
+    if (table()->currentBorderValue()->precedence() > BorderPrecedence::RowGroup)
         return;
     if (paintInfo.context().paintingDisabled())
         return;
@@ -1545,7 +1545,7 @@ CollapsedBorderValue RenderTableSection::cachedCollapsedBorder(const RenderTable
     auto it = m_cellsCollapsedBorders.find(std::make_pair(&cell, side));
     // Only non-empty collapsed borders are in the hashmap.
     if (it == m_cellsCollapsedBorders.end())
-        return CollapsedBorderValue(BorderValue(), Color(), BCELL);
+        return CollapsedBorderValue(BorderValue(), Color(), BorderPrecedence::Cell);
     return it->value;
 }
 

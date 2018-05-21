@@ -316,7 +316,7 @@ bool SVGRenderSupport::isOverflowHidden(const RenderElement& renderer)
     // RenderSVGRoot should never query for overflow state - it should always clip itself to the initial viewport size.
     ASSERT(!renderer.isDocumentElementRenderer());
 
-    return renderer.style().overflowX() == OHIDDEN || renderer.style().overflowX() == OSCROLL;
+    return renderer.style().overflowX() == Overflow::Hidden || renderer.style().overflowX() == Overflow::Scroll;
 }
 
 bool SVGRenderSupport::rendererHasSVGShadow(const RenderObject& renderer)

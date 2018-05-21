@@ -79,8 +79,8 @@ void SimplifyMarkupCommand::doApply()
                 break;
             }
             
-            unsigned context;
-            if (currentNode->renderStyle()->diff(*startingStyle, context) == StyleDifferenceEqual)
+            OptionSet<StyleDifferenceContextSensitiveProperty> contextSensitiveProperties;
+            if (currentNode->renderStyle()->diff(*startingStyle, contextSensitiveProperties) == StyleDifference::Equal)
                 topNodeWithStartingStyle = currentNode;
             
         }

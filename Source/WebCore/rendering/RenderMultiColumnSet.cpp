@@ -332,7 +332,7 @@ bool RenderMultiColumnSet::requiresBalancing() const
         }
     }
     RenderBlockFlow* container = multiColumnBlockFlow();
-    if (container->style().columnFill() == ColumnFillBalance)
+    if (container->style().columnFill() == ColumnFill::Balance)
         return true;
     return !multiColumnFlow()->columnHeightAvailable();
 }
@@ -583,10 +583,10 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
     const RenderStyle& blockStyle = parent()->style();
     const Color& ruleColor = blockStyle.visitedDependentColorWithColorFilter(CSSPropertyColumnRuleColor);
     bool ruleTransparent = blockStyle.columnRuleIsTransparent();
-    EBorderStyle ruleStyle = collapsedBorderStyle(blockStyle.columnRuleStyle());
+    BorderStyle ruleStyle = collapsedBorderStyle(blockStyle.columnRuleStyle());
     LayoutUnit ruleThickness = blockStyle.columnRuleWidth();
     LayoutUnit colGap = columnGap();
-    bool renderRule = ruleStyle > BHIDDEN && !ruleTransparent;
+    bool renderRule = ruleStyle > BorderStyle::Hidden && !ruleTransparent;
     if (!renderRule)
         return;
 

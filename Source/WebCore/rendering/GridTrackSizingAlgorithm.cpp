@@ -745,7 +745,7 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minSizeForChild(RenderBox& child) c
     const Length& childMinSize = isRowAxis ? child.style().logicalMinWidth() : child.style().logicalMinHeight();
     const Length& childSize = isRowAxis ? child.style().logicalWidth() : child.style().logicalHeight();
 
-    bool overflowIsVisible = isRowAxis ? child.style().overflowInlineDirection() == OVISIBLE : child.style().overflowBlockDirection() == OVISIBLE;
+    bool overflowIsVisible = isRowAxis ? child.style().overflowInlineDirection() == Overflow::Visible : child.style().overflowBlockDirection() == Overflow::Visible;
     if (childSize.isAuto() && childMinSize.isAuto() && overflowIsVisible) {
         auto minSize = minContentForChild(child);
         LayoutUnit maxBreadth;
@@ -1070,7 +1070,7 @@ void GridTrackSizingAlgorithm::stretchAutoTracks()
 {
     auto currentFreeSpace = m_strategy->freeSpaceForStretchAutoTracksStep();
     if (m_autoSizedTracksForStretchIndex.isEmpty() || currentFreeSpace <= 0
-        || (m_renderGrid->contentAlignment(m_direction).distribution() != ContentDistributionStretch))
+        || (m_renderGrid->contentAlignment(m_direction).distribution() != ContentDistribution::Stretch))
         return;
 
     Vector<GridTrack>& allTracks = tracks(m_direction);

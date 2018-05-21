@@ -418,7 +418,7 @@ public:
         bool m_hasUAAppearance { false };
 
         BorderData m_borderData;
-        FillLayer m_backgroundData { BackgroundFillLayer };
+        FillLayer m_backgroundData { FillLayerType::Background };
         Color m_backgroundColor;
 
         CSSToLengthConversionData m_cssToLengthConversionData;

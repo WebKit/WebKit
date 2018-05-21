@@ -1,3 +1,15 @@
+2018-05-21  Sam Weinig  <sam@webkit.org>
+
+        Modernize RenderStyleConstants.h - Part 1
+        https://bugs.webkit.org/show_bug.cgi?id=185809
+
+        Reviewed by Yusuke Suzuki.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::rangeForWebSelectionAtPosition):
+        (WebKit::WebPage::getPositionInformation):
+        Update for new enum names.
+
 2018-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.21.2 release.

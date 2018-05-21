@@ -83,7 +83,7 @@ public:
     static TextEmphasisPosition convertTextEmphasisPosition(StyleResolver&, const CSSValue&);
     static ETextAlign convertTextAlign(StyleResolver&, const CSSValue&);
     static RefPtr<ClipPathOperation> convertClipPath(StyleResolver&, const CSSValue&);
-    static EResize convertResize(StyleResolver&, const CSSValue&);
+    static Resize convertResize(StyleResolver&, const CSSValue&);
     static int convertMarqueeRepetition(StyleResolver&, const CSSValue&);
     static int convertMarqueeSpeed(StyleResolver&, const CSSValue&);
     static Ref<QuotesData> convertQuotes(StyleResolver&, const CSSValue&);
@@ -562,13 +562,13 @@ inline RefPtr<ClipPathOperation> StyleBuilderConverter::convertClipPath(StyleRes
     return operation;
 }
 
-inline EResize StyleBuilderConverter::convertResize(StyleResolver& styleResolver, const CSSValue& value)
+inline Resize StyleBuilderConverter::convertResize(StyleResolver& styleResolver, const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
-    EResize resize = RESIZE_NONE;
+    Resize resize = Resize::None;
     if (primitiveValue.valueID() == CSSValueAuto)
-        resize = styleResolver.settings().textAreasAreResizable() ? RESIZE_BOTH : RESIZE_NONE;
+        resize = styleResolver.settings().textAreasAreResizable() ? Resize::Both : Resize::None;
     else
         resize = primitiveValue;
 
@@ -1355,12 +1355,12 @@ inline StyleSelfAlignmentData StyleBuilderConverter::convertSelfOrDefaultAlignme
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (Pair* pairValue = primitiveValue.pairValue()) {
         if (pairValue->first()->valueID() == CSSValueLegacy) {
-            alignmentData.setPositionType(LegacyPosition);
+            alignmentData.setPositionType(ItemPositionType::Legacy);
             alignmentData.setPosition(*pairValue->second());
         } else if (pairValue->first()->valueID() == CSSValueFirst) {
-            alignmentData.setPosition(ItemPositionBaseline);
+            alignmentData.setPosition(ItemPosition::Baseline);
         } else if (pairValue->first()->valueID() == CSSValueLast) {
-            alignmentData.setPosition(ItemPositionLastBaseline);
+            alignmentData.setPosition(ItemPosition::LastBaseline);
         } else {
             alignmentData.setOverflow(*pairValue->first());
             alignmentData.setPosition(*pairValue->second());

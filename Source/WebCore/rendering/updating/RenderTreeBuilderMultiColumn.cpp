@@ -108,7 +108,7 @@ static bool isValidColumnSpanner(const RenderMultiColumnFlow& fragmentedFlow, co
         // This ancestor (descendent of the fragmentedFlow) will create columns later. The spanner belongs to it.
         if (is<RenderBlockFlow>(*ancestor) && downcast<RenderBlockFlow>(*ancestor).willCreateColumns())
             return false;
-        ASSERT(ancestor->style().columnSpan() != ColumnSpanAll || !isValidColumnSpanner(fragmentedFlow, *ancestor));
+        ASSERT(ancestor->style().columnSpan() != ColumnSpan::All || !isValidColumnSpanner(fragmentedFlow, *ancestor));
         if (ancestor->isUnsplittableForPagination())
             return false;
     }
@@ -234,7 +234,7 @@ RenderObject* RenderTreeBuilder::MultiColumn::resolveMovedChild(RenderFragmented
         return beforeChild;
 
     // We only need to resolve for column spanners.
-    if (beforeChild->style().columnSpan() != ColumnSpanAll)
+    if (beforeChild->style().columnSpan() != ColumnSpan::All)
         return beforeChild;
 
     // The renderer for the actual DOM node that establishes a spanner is moved from its original
@@ -396,7 +396,7 @@ void RenderTreeBuilder::MultiColumn::multiColumnRelativeWillBeRemoved(RenderMult
         flow.spannerMap().remove(downcast<RenderMultiColumnSpannerPlaceholder>(relative).spanner());
         return;
     }
-    if (relative.style().columnSpan() == ColumnSpanAll) {
+    if (relative.style().columnSpan() == ColumnSpan::All) {
         if (relative.parent() != flow.parent())
             return; // not a valid spanner.
 

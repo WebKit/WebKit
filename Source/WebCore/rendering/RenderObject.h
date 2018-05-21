@@ -423,8 +423,8 @@ public:
     bool isPositioned() const { return m_bitfields.isPositioned(); }
     bool isInFlowPositioned() const { return m_bitfields.isRelativelyPositioned() || m_bitfields.isStickilyPositioned(); }
     bool isOutOfFlowPositioned() const { return m_bitfields.isOutOfFlowPositioned(); } // absolute or fixed positioning
-    bool isFixedPositioned() const { return isOutOfFlowPositioned() && style().position() == FixedPosition; }
-    bool isAbsolutelyPositioned() const { return isOutOfFlowPositioned() && style().position() == AbsolutePosition; }
+    bool isFixedPositioned() const { return isOutOfFlowPositioned() && style().position() == PositionType::Fixed; }
+    bool isAbsolutelyPositioned() const { return isOutOfFlowPositioned() && style().position() == PositionType::Absolute; }
     bool isRelativelyPositioned() const { return m_bitfields.isRelativelyPositioned(); }
     bool isStickilyPositioned() const { return m_bitfields.isStickilyPositioned(); }
 
@@ -528,10 +528,10 @@ public:
         setPreferredLogicalWidthsDirty(true);
     }
 
-    void setPositionState(EPosition position)
+    void setPositionState(PositionType position)
     {
-        ASSERT((position != AbsolutePosition && position != FixedPosition) || isBox());
-        m_bitfields.setPositionedState(position);
+        ASSERT((position != PositionType::Absolute && position != PositionType::Fixed) || isBox());
+        m_bitfields.setPositionedState(static_cast<int>(position));
     }
     void clearPositionedState() { m_bitfields.clearPositionedState(); }
 
@@ -801,7 +801,7 @@ protected:
     void setNeedsSimplifiedNormalFlowLayoutBit(bool b) { m_bitfields.setNeedsSimplifiedNormalFlowLayout(b); }
 
     virtual RenderFragmentedFlow* locateEnclosingFragmentedFlow() const;
-    static void calculateBorderStyleColor(const EBorderStyle&, const BoxSide&, Color&);
+    static void calculateBorderStyleColor(const BorderStyle&, const BoxSide&, Color&);
 
     static FragmentedFlowState computedFragmentedFlowState(const RenderObject&);
 
@@ -941,10 +941,10 @@ private:
 
         void setPositionedState(int positionState)
         {
-            // This mask maps FixedPosition and AbsolutePosition to IsOutOfFlowPositioned, saving one bit.
+            // This mask maps PositionType::Fixed and PositionType::Absolute to IsOutOfFlowPositioned, saving one bit.
             m_positionedState = static_cast<PositionedState>(positionState & 0x3);
         }
-        void clearPositionedState() { m_positionedState = StaticPosition; }
+        void clearPositionedState() { m_positionedState = static_cast<unsigned>(PositionType::Static); }
 
         ALWAYS_INLINE SelectionState selectionState() const { return static_cast<SelectionState>(m_selectionState); }
         ALWAYS_INLINE void setSelectionState(SelectionState selectionState) { m_selectionState = selectionState; }

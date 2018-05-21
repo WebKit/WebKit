@@ -245,7 +245,7 @@ public:
 
     const RenderStyle& lineStyle() const { return m_bitfields.firstLine() ? renderer().firstLineStyle() : renderer().style(); }
     
-    EVerticalAlign verticalAlign() const { return lineStyle().verticalAlign(); }
+    VerticalAlign verticalAlign() const { return lineStyle().verticalAlign(); }
 
     // Use with caution! The type is not checked!
     RenderBoxModelObject* boxModelObject() const

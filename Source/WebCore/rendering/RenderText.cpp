@@ -253,7 +253,7 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     // we already did this for the parent of the text run.
     // We do have to schedule layouts, though, since a style change can force us to
     // need to relayout.
-    if (diff == StyleDifferenceLayout) {
+    if (diff == StyleDifference::Layout) {
         setNeedsLayoutAndPrefWidthsRecalc();
         m_knownToHaveNoOverflowAndNoFallbackFonts = false;
     }
@@ -272,7 +272,7 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
         m_canUseSimplifiedTextMeasuring = computeCanUseSimplifiedTextMeasuring();
 
     ETextTransform oldTransform = oldStyle ? oldStyle->textTransform() : TTNONE;
-    ETextSecurity oldSecurity = oldStyle ? oldStyle->textSecurity() : TSNONE;
+    TextSecurity oldSecurity = oldStyle ? oldStyle->textSecurity() : TextSecurity::None;
     if (needsResetText || oldTransform != newStyle.textTransform() || oldSecurity != newStyle.textSecurity())
         RenderText::setText(originalText(), true);
 }
@@ -418,7 +418,7 @@ void RenderText::collectSelectionRects(Vector<SelectionRect>& rects, unsigned st
 Vector<FloatQuad> RenderText::absoluteQuadsClippedToEllipsis() const
 {
     if (auto* layout = simpleLineLayout()) {
-        ASSERT(style().textOverflow() != TextOverflowEllipsis);
+        ASSERT(style().textOverflow() != TextOverflow::Ellipsis);
         return SimpleLineLayout::collectAbsoluteQuads(*this, *layout, nullptr);
     }
     return m_lineBoxes.absoluteQuads(*this, nullptr, RenderTextLineBoxes::ClipToEllipsis);
@@ -678,7 +678,7 @@ RenderText::Widths RenderText::trimmedPreferredWidths(float leadWidth, bool& str
 
 static inline bool isSpaceAccordingToStyle(UChar c, const RenderStyle& style)
 {
-    return c == ' ' || (c == noBreakSpace && style.nbspMode() == SPACE);
+    return c == ' ' || (c == noBreakSpace && style.nbspMode() == NBSPMode::Space);
 }
 
 float RenderText::minLogicalWidth() const
@@ -700,14 +700,14 @@ float RenderText::maxLogicalWidth() const
 LineBreakIteratorMode mapLineBreakToIteratorMode(LineBreak lineBreak)
 {
     switch (lineBreak) {
-    case LineBreakAuto:
-    case LineBreakAfterWhiteSpace:
+    case LineBreak::Auto:
+    case LineBreak::AfterWhiteSpace:
         return LineBreakIteratorMode::Default;
-    case LineBreakLoose:
+    case LineBreak::Loose:
         return LineBreakIteratorMode::Loose;
-    case LineBreakNormal:
+    case LineBreak::Normal:
         return LineBreakIteratorMode::Normal;
-    case LineBreakStrict:
+    case LineBreak::Strict:
         return LineBreakIteratorMode::Strict;
     }
     ASSERT_NOT_REACHED();
@@ -821,13 +821,13 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
 
     std::optional<int> firstGlyphLeftOverflow;
 
-    bool breakNBSP = style.autoWrap() && style.nbspMode() == SPACE;
+    bool breakNBSP = style.autoWrap() && style.nbspMode() == NBSPMode::Space;
     
     // Note the deliberate omission of word-wrap and overflow-wrap from this breakAll check. Those
     // do not affect minimum preferred sizes. Note that break-word is a non-standard value for
     // word-break, but we support it as though it means break-all.
-    bool breakAll = (style.wordBreak() == BreakAllWordBreak || style.wordBreak() == BreakWordBreak) && style.autoWrap();
-    bool keepAllWords = style.wordBreak() == KeepAllWordBreak;
+    bool breakAll = (style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::Break) && style.autoWrap();
+    bool keepAllWords = style.wordBreak() == WordBreak::KeepAll;
     bool canUseLineBreakShortcut = iteratorMode == LineBreakIteratorMode::Default;
 
     for (unsigned i = 0; i < length; i++) {
@@ -1164,25 +1164,25 @@ void RenderText::setRenderedText(const String& newText)
     m_text = applyTextTransform(style(), m_text, previousCharacter());
 
     switch (style().textSecurity()) {
-    case TSNONE:
+    case TextSecurity::None:
         break;
 #if !PLATFORM(IOS)
     // We use the same characters here as for list markers.
     // See the listMarkerText function in RenderListMarker.cpp.
-    case TSCIRCLE:
+    case TextSecurity::Circle:
         secureText(whiteBullet);
         break;
-    case TSDISC:
+    case TextSecurity::Disc:
         secureText(bullet);
         break;
-    case TSSQUARE:
+    case TextSecurity::Square:
         secureText(blackSquare);
         break;
 #else
     // FIXME: Why this quirk on iOS?
-    case TSCIRCLE:
-    case TSDISC:
-    case TSSQUARE:
+    case TextSecurity::Circle:
+    case TextSecurity::Disc:
+    case TextSecurity::Square:
         secureText(blackCircle);
         break;
 #endif
@@ -1283,7 +1283,7 @@ void RenderText::setText(const String& text, bool force)
 
 String RenderText::textWithoutConvertingBackslashToYenSymbol() const
 {
-    if (!m_useBackslashAsYenSymbol || style().textSecurity() != TSNONE)
+    if (!m_useBackslashAsYenSymbol || style().textSecurity() != TextSecurity::None)
         return text();
     return applyTextTransform(style(), originalText(), previousCharacter());
 }
@@ -1528,7 +1528,7 @@ bool RenderText::computeCanUseSimpleFontCodePath() const
 
 void RenderText::momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTypedCharacter)
 {
-    if (style().textSecurity() == TSNONE)
+    if (style().textSecurity() == TextSecurity::None)
         return;
     auto& secureTextTimer = secureTextTimers().add(this, nullptr).iterator->value;
     if (!secureTextTimer)

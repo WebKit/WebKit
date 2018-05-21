@@ -103,7 +103,7 @@ void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle
         return;
     }
 
-    if (diff != StyleDifferenceLayout)
+    if (diff != StyleDifference::Layout)
         return;
 
     // The text metrics may be influenced by style changes.

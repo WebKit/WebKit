@@ -134,9 +134,9 @@ void RenderTreeBuilder::Block::insertChildToContinuation(RenderBlock& parent, Re
         return;
     }
 
-    bool childIsNormal = child->isInline() || !child->style().columnSpan();
-    bool bcpIsNormal = beforeChildParent->isInline() || !beforeChildParent->style().columnSpan();
-    bool flowIsNormal = flow->isInline() || !flow->style().columnSpan();
+    bool childIsNormal = child->isInline() || child->style().columnSpan() == ColumnSpan::None;
+    bool bcpIsNormal = beforeChildParent->isInline() || beforeChildParent->style().columnSpan() == ColumnSpan::None;
+    bool flowIsNormal = flow->isInline() || flow->style().columnSpan() == ColumnSpan::None;
 
     if (flow == beforeChildParent) {
         m_builder.attachIgnoringContinuation(*flow, WTFMove(child), beforeChild);

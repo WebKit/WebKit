@@ -825,7 +825,7 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
     for (const auto* renderer = this; renderer; renderer = renderer->parent()) {
         bool rendererHasOutlineAutoAncestor = renderer->hasOutlineAutoAncestor();
         ASSERT(rendererHasOutlineAutoAncestor
-            || renderer->outlineStyleForRepaint().outlineStyleIsAuto()
+            || renderer->outlineStyleForRepaint().outlineStyleIsAuto() == OutlineIsAuto::On
             || (is<RenderBoxModelObject>(*renderer) && downcast<RenderBoxModelObject>(*renderer).isContinuation()));
         if (renderer == &repaintContainer && rendererHasOutlineAutoAncestor)
             repaintRectNeedsConverting = true;
@@ -1396,11 +1396,11 @@ static inline RenderElement* containerForElement(const RenderObject& renderer, c
     // (2) For absolute positioned elements, it will return a relative positioned inline, while
     // containingBlock() skips to the non-anonymous containing block.
     // This does mean that computePositionedLogicalWidth and computePositionedLogicalHeight have to use container().
-    EPosition pos = renderer.style().position();
+    auto pos = renderer.style().position();
     auto* parent = renderer.parent();
-    if (is<RenderText>(renderer) || (pos != FixedPosition && pos != AbsolutePosition))
+    if (is<RenderText>(renderer) || (pos != PositionType::Fixed && pos != PositionType::Absolute))
         return parent;
-    for (; parent && (pos == AbsolutePosition ? !parent->canContainAbsolutelyPositionedObjects() : !parent->canContainFixedPositionObjects()); parent = parent->parent()) {
+    for (; parent && (pos == PositionType::Absolute ? !parent->canContainAbsolutelyPositionedObjects() : !parent->canContainFixedPositionObjects()); parent = parent->parent()) {
         if (repaintContainerSkipped && repaintContainer == parent)
             *repaintContainerSkipped = true;
     }
@@ -1843,15 +1843,15 @@ RenderFragmentedFlow* RenderObject::locateEnclosingFragmentedFlow() const
     return containingBlock ? containingBlock->enclosingFragmentedFlow() : nullptr;
 }
 
-void RenderObject::calculateBorderStyleColor(const EBorderStyle& style, const BoxSide& side, Color& color)
+void RenderObject::calculateBorderStyleColor(const BorderStyle& style, const BoxSide& side, Color& color)
 {
-    ASSERT(style == INSET || style == OUTSET);
+    ASSERT(style == BorderStyle::Inset || style == BorderStyle::Outset);
     // This values were derived empirically.
     const RGBA32 baseDarkColor = 0xFF202020;
     const RGBA32 baseLightColor = 0xFFEBEBEB;
     enum Operation { Darken, Lighten };
 
-    Operation operation = (side == BSTop || side == BSLeft) == (style == INSET) ? Darken : Lighten;
+    Operation operation = (side == BSTop || side == BSLeft) == (style == BorderStyle::Inset) ? Darken : Lighten;
 
     // Here we will darken the border decoration color when needed. This will yield a similar behavior as in FF.
     if (operation == Darken) {

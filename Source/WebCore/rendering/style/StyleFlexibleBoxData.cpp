@@ -34,8 +34,8 @@ StyleFlexibleBoxData::StyleFlexibleBoxData()
     : flexGrow(RenderStyle::initialFlexGrow())
     , flexShrink(RenderStyle::initialFlexShrink())
     , flexBasis(RenderStyle::initialFlexBasis())
-    , flexDirection(RenderStyle::initialFlexDirection())
-    , flexWrap(RenderStyle::initialFlexWrap())
+    , flexDirection(static_cast<unsigned>(RenderStyle::initialFlexDirection()))
+    , flexWrap(static_cast<unsigned>(RenderStyle::initialFlexWrap()))
 {
 }
 

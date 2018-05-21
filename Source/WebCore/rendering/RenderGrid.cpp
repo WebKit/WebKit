@@ -77,24 +77,24 @@ StyleSelfAlignmentData RenderGrid::selfAlignmentForChild(GridAxis axis, const Re
 
 bool RenderGrid::selfAlignmentChangedToStretch(GridAxis axis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox& child) const
 {
-    return selfAlignmentForChild(axis, child, &oldStyle).position() != ItemPositionStretch
-        && selfAlignmentForChild(axis, child, &newStyle).position() == ItemPositionStretch;
+    return selfAlignmentForChild(axis, child, &oldStyle).position() != ItemPosition::Stretch
+        && selfAlignmentForChild(axis, child, &newStyle).position() == ItemPosition::Stretch;
 }
 
 bool RenderGrid::selfAlignmentChangedFromStretch(GridAxis axis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox& child) const
 {
-    return selfAlignmentForChild(axis, child, &oldStyle).position() == ItemPositionStretch
-        && selfAlignmentForChild(axis, child, &newStyle).position() != ItemPositionStretch;
+    return selfAlignmentForChild(axis, child, &oldStyle).position() == ItemPosition::Stretch
+        && selfAlignmentForChild(axis, child, &newStyle).position() != ItemPosition::Stretch;
 }
 
 void RenderGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
-    if (!oldStyle || diff != StyleDifferenceLayout)
+    if (!oldStyle || diff != StyleDifference::Layout)
         return;
 
     const RenderStyle& newStyle = this->style();
-    if (oldStyle->resolvedAlignItems(selfAlignmentNormalBehavior(this)).position() == ItemPositionStretch) {
+    if (oldStyle->resolvedAlignItems(selfAlignmentNormalBehavior(this)).position() == ItemPosition::Stretch) {
         // Style changes on the grid container implying stretching (to-stretch) or
         // shrinking (from-stretch) require the affected items to be laid out again.
         // These logic only applies to 'stretch' since the rest of the alignment
@@ -855,7 +855,7 @@ Vector<LayoutUnit> RenderGrid::trackSizesForComputedStyle(GridTrackSizingDirecti
 
 static const StyleContentAlignmentData& contentAlignmentNormalBehaviorGrid()
 {
-    static const StyleContentAlignmentData normalBehavior = {ContentPositionNormal, ContentDistributionStretch};
+    static const StyleContentAlignmentData normalBehavior = {ContentPosition::Normal, ContentDistribution::Stretch};
     return normalBehavior;
 }
 
@@ -1019,12 +1019,12 @@ static LayoutUnit computeOverflowAlignmentOffset(OverflowAlignment overflow, Lay
 {
     LayoutUnit offset = trackSize - childSize;
     switch (overflow) {
-    case OverflowAlignmentSafe:
+    case OverflowAlignment::Safe:
         // If overflow is 'safe', we have to make sure we don't overflow the 'start'
         // edge (potentially cause some data loss as the overflow is unreachable).
         return std::max<LayoutUnit>(0, offset);
-    case OverflowAlignmentUnsafe:
-    case OverflowAlignmentDefault:
+    case OverflowAlignment::Unsafe:
+    case OverflowAlignment::Default:
         // If we overflow our alignment container and overflow is 'true' (default), we
         // ignore the overflow and just return the value regardless (which may cause data
         // loss as we overflow the 'start' edge).
@@ -1150,7 +1150,7 @@ static int synthesizedBaselineFromBorderBox(const RenderBox& box, LineDirectionM
 
 bool RenderGrid::isInlineBaselineAlignedChild(const RenderBox& child) const
 {
-    return alignSelfForChild(child).position() == ItemPositionBaseline && !GridLayoutFunctions::isOrthogonalChild(*this, child) && !hasAutoMarginsInColumnAxis(child);
+    return alignSelfForChild(child).position() == ItemPosition::Baseline && !GridLayoutFunctions::isOrthogonalChild(*this, child) && !hasAutoMarginsInColumnAxis(child);
 }
 
 // FIXME: This logic is shared by RenderFlexibleBox, so it might be refactored somehow.
@@ -1220,7 +1220,7 @@ GridAxisPosition RenderGrid::columnAxisPositionForChild(const RenderBox& child) 
         return GridAxisStart;
 
     switch (alignSelfForChild(child).position()) {
-    case ItemPositionSelfStart:
+    case ItemPosition::SelfStart:
         // FIXME: Should we implement this logic in a generic utility function ?
         // Aligns the alignment subject to be flush with the edge of the alignment container
         // corresponding to the alignment subject's 'start' side in the column axis.
@@ -1233,7 +1233,7 @@ GridAxisPosition RenderGrid::columnAxisPositionForChild(const RenderBox& child) 
         }
         // self-start is based on the child's block-flow direction. That's why we need to check against the grid container's block-flow direction.
         return hasSameWritingMode ? GridAxisStart : GridAxisEnd;
-    case ItemPositionSelfEnd:
+    case ItemPosition::SelfEnd:
         // FIXME: Should we implement this logic in a generic utility function ?
         // Aligns the alignment subject to be flush with the edge of the alignment container
         // corresponding to the alignment subject's 'end' side in the column axis.
@@ -1246,33 +1246,33 @@ GridAxisPosition RenderGrid::columnAxisPositionForChild(const RenderBox& child) 
         }
         // self-end is based on the child's block-flow direction. That's why we need to check against the grid container's block-flow direction.
         return hasSameWritingMode ? GridAxisEnd : GridAxisStart;
-    case ItemPositionLeft:
+    case ItemPosition::Left:
         // Aligns the alignment subject to be flush with the alignment container's 'line-left' edge.
         // The alignment axis (column axis) is always orthogonal to the inline axis, hence this value behaves as 'start'.
         return GridAxisStart;
-    case ItemPositionRight:
+    case ItemPosition::Right:
         // Aligns the alignment subject to be flush with the alignment container's 'line-right' edge.
         // The alignment axis (column axis) is always orthogonal to the inline axis, hence this value behaves as 'start'.
         return GridAxisStart;
-    case ItemPositionCenter:
+    case ItemPosition::Center:
         return GridAxisCenter;
-    case ItemPositionFlexStart: // Only used in flex layout, otherwise equivalent to 'start'.
+    case ItemPosition::FlexStart: // Only used in flex layout, otherwise equivalent to 'start'.
         // Aligns the alignment subject to be flush with the alignment container's 'start' edge (block-start) in the column axis.
-    case ItemPositionStart:
+    case ItemPosition::Start:
         return GridAxisStart;
-    case ItemPositionFlexEnd: // Only used in flex layout, otherwise equivalent to 'end'.
+    case ItemPosition::FlexEnd: // Only used in flex layout, otherwise equivalent to 'end'.
         // Aligns the alignment subject to be flush with the alignment container's 'end' edge (block-end) in the column axis.
-    case ItemPositionEnd:
+    case ItemPosition::End:
         return GridAxisEnd;
-    case ItemPositionStretch:
+    case ItemPosition::Stretch:
         return GridAxisStart;
-    case ItemPositionBaseline:
-    case ItemPositionLastBaseline:
+    case ItemPosition::Baseline:
+    case ItemPosition::LastBaseline:
         // FIXME: Implement the previous values. For now, we always 'start' align the child.
         return GridAxisStart;
-    case ItemPositionLegacy:
-    case ItemPositionAuto:
-    case ItemPositionNormal:
+    case ItemPosition::Legacy:
+    case ItemPosition::Auto:
+    case ItemPosition::Normal:
         break;
     }
 
@@ -1288,7 +1288,7 @@ GridAxisPosition RenderGrid::rowAxisPositionForChild(const RenderBox& child) con
         return GridAxisStart;
 
     switch (justifySelfForChild(child).position()) {
-    case ItemPositionSelfStart:
+    case ItemPosition::SelfStart:
         // FIXME: Should we implement this logic in a generic utility function ?
         // Aligns the alignment subject to be flush with the edge of the alignment container
         // corresponding to the alignment subject's 'start' side in the row axis.
@@ -1301,7 +1301,7 @@ GridAxisPosition RenderGrid::rowAxisPositionForChild(const RenderBox& child) con
         }
         // self-start is based on the child's inline-flow direction. That's why we need to check against the grid container's direction.
         return hasSameDirection ? GridAxisStart : GridAxisEnd;
-    case ItemPositionSelfEnd:
+    case ItemPosition::SelfEnd:
         // FIXME: Should we implement this logic in a generic utility function ?
         // Aligns the alignment subject to be flush with the edge of the alignment container
         // corresponding to the alignment subject's 'end' side in the row axis.
@@ -1314,33 +1314,33 @@ GridAxisPosition RenderGrid::rowAxisPositionForChild(const RenderBox& child) con
         }
         // self-end is based on the child's inline-flow direction. That's why we need to check against the grid container's direction.
         return hasSameDirection ? GridAxisEnd : GridAxisStart;
-    case ItemPositionLeft:
+    case ItemPosition::Left:
         // Aligns the alignment subject to be flush with the alignment container's 'line-left' edge.
         // We want the physical 'left' side, so we have to take account, container's inline-flow direction.
         return gridIsLTR ? GridAxisStart : GridAxisEnd;
-    case ItemPositionRight:
+    case ItemPosition::Right:
         // Aligns the alignment subject to be flush with the alignment container's 'line-right' edge.
         // We want the physical 'right' side, so we have to take account, container's inline-flow direction.
         return gridIsLTR ? GridAxisEnd : GridAxisStart;
-    case ItemPositionCenter:
+    case ItemPosition::Center:
         return GridAxisCenter;
-    case ItemPositionFlexStart: // Only used in flex layout, otherwise equivalent to 'start'.
+    case ItemPosition::FlexStart: // Only used in flex layout, otherwise equivalent to 'start'.
         // Aligns the alignment subject to be flush with the alignment container's 'start' edge (inline-start) in the row axis.
-    case ItemPositionStart:
+    case ItemPosition::Start:
         return GridAxisStart;
-    case ItemPositionFlexEnd: // Only used in flex layout, otherwise equivalent to 'end'.
+    case ItemPosition::FlexEnd: // Only used in flex layout, otherwise equivalent to 'end'.
         // Aligns the alignment subject to be flush with the alignment container's 'end' edge (inline-end) in the row axis.
-    case ItemPositionEnd:
+    case ItemPosition::End:
         return GridAxisEnd;
-    case ItemPositionStretch:
+    case ItemPosition::Stretch:
         return GridAxisStart;
-    case ItemPositionBaseline:
-    case ItemPositionLastBaseline:
+    case ItemPosition::Baseline:
+    case ItemPosition::LastBaseline:
         // FIXME: Implement the previous values. For now, we always 'start' align the child.
         return GridAxisStart;
-    case ItemPositionLegacy:
-    case ItemPositionAuto:
-    case ItemPositionNormal:
+    case ItemPosition::Legacy:
+    case ItemPosition::Auto:
+    case ItemPosition::Normal:
         break;
     }
 
@@ -1410,9 +1410,9 @@ LayoutUnit RenderGrid::resolveAutoStartGridPosition(GridTrackSizingDirection dir
 
     int lastLine = numTracks(ForColumns, m_grid);
     ContentPosition position = style().resolvedJustifyContentPosition(contentAlignmentNormalBehaviorGrid());
-    if (position == ContentPositionEnd)
+    if (position == ContentPosition::End)
         return m_columnPositions[lastLine] - clientLogicalWidth();
-    if (position == ContentPositionStart || style().resolvedJustifyContentDistribution(contentAlignmentNormalBehaviorGrid()) == ContentDistributionStretch)
+    if (position == ContentPosition::Start || style().resolvedJustifyContentDistribution(contentAlignmentNormalBehaviorGrid()) == ContentDistribution::Stretch)
         return m_columnPositions[0] - borderAndPaddingLogicalLeft();
     return LayoutUnit();
 }
@@ -1426,9 +1426,9 @@ LayoutUnit RenderGrid::resolveAutoEndGridPosition(GridTrackSizingDirection direc
 
     int lastLine = numTracks(ForColumns, m_grid);
     ContentPosition position = style().resolvedJustifyContentPosition(contentAlignmentNormalBehaviorGrid());
-    if (position == ContentPositionEnd)
+    if (position == ContentPosition::End)
         return m_columnPositions[lastLine];
-    if (position == ContentPositionStart || style().resolvedJustifyContentDistribution(contentAlignmentNormalBehaviorGrid()) == ContentDistributionStretch)
+    if (position == ContentPosition::Start || style().resolvedJustifyContentDistribution(contentAlignmentNormalBehaviorGrid()) == ContentDistribution::Stretch)
         return m_columnPositions[0] - borderAndPaddingLogicalLeft() + clientLogicalWidth();
     return clientLogicalWidth();
 }
@@ -1539,28 +1539,28 @@ void RenderGrid::gridAreaPositionForChild(const RenderBox& child, GridTrackSizin
         gridAreaPositionForInFlowChild(child, direction, start, end);
 }
 
-ContentPosition static resolveContentDistributionFallback(ContentDistributionType distribution)
+ContentPosition static resolveContentDistributionFallback(ContentDistribution distribution)
 {
     switch (distribution) {
-    case ContentDistributionSpaceBetween:
-        return ContentPositionStart;
-    case ContentDistributionSpaceAround:
-        return ContentPositionCenter;
-    case ContentDistributionSpaceEvenly:
-        return ContentPositionCenter;
-    case ContentDistributionStretch:
-        return ContentPositionStart;
-    case ContentDistributionDefault:
-        return ContentPositionNormal;
+    case ContentDistribution::SpaceBetween:
+        return ContentPosition::Start;
+    case ContentDistribution::SpaceAround:
+        return ContentPosition::Center;
+    case ContentDistribution::SpaceEvenly:
+        return ContentPosition::Center;
+    case ContentDistribution::Stretch:
+        return ContentPosition::Start;
+    case ContentDistribution::Default:
+        return ContentPosition::Normal;
     }
 
     ASSERT_NOT_REACHED();
-    return ContentPositionNormal;
+    return ContentPosition::Normal;
 }
 
-static ContentAlignmentData contentDistributionOffset(const LayoutUnit& availableFreeSpace, ContentPosition& fallbackPosition, ContentDistributionType distribution, unsigned numberOfGridTracks)
+static ContentAlignmentData contentDistributionOffset(const LayoutUnit& availableFreeSpace, ContentPosition& fallbackPosition, ContentDistribution distribution, unsigned numberOfGridTracks)
 {
-    if (distribution != ContentDistributionDefault && fallbackPosition == ContentPositionNormal)
+    if (distribution != ContentDistribution::Default && fallbackPosition == ContentPosition::Normal)
         fallbackPosition = resolveContentDistributionFallback(distribution);
 
     if (availableFreeSpace <= 0)
@@ -1568,20 +1568,20 @@ static ContentAlignmentData contentDistributionOffset(const LayoutUnit& availabl
 
     LayoutUnit distributionOffset;
     switch (distribution) {
-    case ContentDistributionSpaceBetween:
+    case ContentDistribution::SpaceBetween:
         if (numberOfGridTracks < 2)
             return ContentAlignmentData::defaultOffsets();
         return {0, availableFreeSpace / (numberOfGridTracks - 1)};
-    case ContentDistributionSpaceAround:
+    case ContentDistribution::SpaceAround:
         if (numberOfGridTracks < 1)
             return ContentAlignmentData::defaultOffsets();
         distributionOffset = availableFreeSpace / numberOfGridTracks;
         return {distributionOffset / 2, distributionOffset};
-    case ContentDistributionSpaceEvenly:
+    case ContentDistribution::SpaceEvenly:
         distributionOffset = availableFreeSpace / (numberOfGridTracks + 1);
         return {distributionOffset, distributionOffset};
-    case ContentDistributionStretch:
-    case ContentDistributionDefault:
+    case ContentDistribution::Stretch:
+    case ContentDistribution::Default:
         return ContentAlignmentData::defaultOffsets();
     }
 
@@ -1605,38 +1605,38 @@ ContentAlignmentData RenderGrid::computeContentPositionAndDistributionOffset(Gri
     if (contentAlignment.isValid())
         return contentAlignment;
 
-    if (availableFreeSpace <= 0 && contentAlignmentData.overflow() == OverflowAlignmentSafe)
+    if (availableFreeSpace <= 0 && contentAlignmentData.overflow() == OverflowAlignment::Safe)
         return {0, 0};
 
     switch (position) {
-    case ContentPositionLeft:
+    case ContentPosition::Left:
         // The align-content's axis is always orthogonal to the inline-axis.
         return {0, 0};
-    case ContentPositionRight:
+    case ContentPosition::Right:
         if (isRowAxis)
             return {availableFreeSpace, 0};
         // The align-content's axis is always orthogonal to the inline-axis.
         return {0, 0};
-    case ContentPositionCenter:
+    case ContentPosition::Center:
         return {availableFreeSpace / 2, 0};
-    case ContentPositionFlexEnd: // Only used in flex layout, for other layout, it's equivalent to 'end'.
-    case ContentPositionEnd:
+    case ContentPosition::FlexEnd: // Only used in flex layout, for other layout, it's equivalent to 'end'.
+    case ContentPosition::End:
         if (isRowAxis)
             return {style().isLeftToRightDirection() ? availableFreeSpace : LayoutUnit(), LayoutUnit()};
         return {availableFreeSpace, 0};
-    case ContentPositionFlexStart: // Only used in flex layout, for other layout, it's equivalent to 'start'.
-    case ContentPositionStart:
+    case ContentPosition::FlexStart: // Only used in flex layout, for other layout, it's equivalent to 'start'.
+    case ContentPosition::Start:
         if (isRowAxis)
             return {style().isLeftToRightDirection() ? LayoutUnit() : availableFreeSpace, LayoutUnit()};
         return {0, 0};
-    case ContentPositionBaseline:
-    case ContentPositionLastBaseline:
+    case ContentPosition::Baseline:
+    case ContentPosition::LastBaseline:
         // FIXME: Implement the previous values. For now, we always 'start' align.
         // http://webkit.org/b/145566
         if (isRowAxis)
             return {style().isLeftToRightDirection() ? LayoutUnit() : availableFreeSpace, LayoutUnit()};
         return {0, 0};
-    case ContentPositionNormal:
+    case ContentPosition::Normal:
         break;
     }
 

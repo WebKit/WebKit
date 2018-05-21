@@ -241,7 +241,7 @@ void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const Ren
         containerRenderer->mutableStyle().setHeight(Length());
         containerRenderer->mutableStyle().setWidth(Length());
     }
-    if (diff == StyleDifferenceLayout) {
+    if (diff == StyleDifference::Layout) {
         if (auto innerTextRenderer = innerTextElement()->renderer())
             innerTextRenderer->setNeedsLayout(MarkContainingBlockChain);
         if (auto* placeholder = inputElement().placeholderElement()) {

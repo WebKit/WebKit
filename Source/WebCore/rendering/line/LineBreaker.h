@@ -55,7 +55,7 @@ public:
 
     bool lineWasHyphenated() { return m_hyphenated; }
     const Vector<RenderBox*>& positionedObjects() { return m_positionedObjects; }
-    EClear clear() { return m_clear; }
+    Clear clear() { return m_clear; }
 
 private:
     void reset();
@@ -71,7 +71,7 @@ private:
 
     RenderBlockFlow& m_block;
     bool m_hyphenated;
-    EClear m_clear;
+    Clear m_clear;
     Vector<RenderBox*> m_positionedObjects;
 };
 

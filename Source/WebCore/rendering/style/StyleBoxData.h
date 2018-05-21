@@ -56,9 +56,9 @@ public:
     int zIndex() const { return m_zIndex; }
     bool hasAutoZIndex() const { return m_hasAutoZIndex; }
     
-    EBoxSizing boxSizing() const { return static_cast<EBoxSizing>(m_boxSizing); }
+    BoxSizing boxSizing() const { return static_cast<BoxSizing>(m_boxSizing); }
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
-    EBoxDecorationBreak boxDecorationBreak() const { return static_cast<EBoxDecorationBreak>(m_boxDecorationBreak); }
+    BoxDecorationBreak boxDecorationBreak() const { return static_cast<BoxDecorationBreak>(m_boxDecorationBreak); }
 #endif
 
 private:
@@ -80,9 +80,9 @@ private:
 
     int m_zIndex;
     unsigned m_hasAutoZIndex : 1;
-    unsigned m_boxSizing : 1; // EBoxSizing
+    unsigned m_boxSizing : 1; // BoxSizing
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
-    unsigned m_boxDecorationBreak : 1; // EBoxDecorationBreak
+    unsigned m_boxDecorationBreak : 1; // BoxDecorationBreak
 #endif
 };
 

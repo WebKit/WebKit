@@ -293,15 +293,15 @@ inline LayoutUnit RenderTableCell::logicalHeightForRowSizing() const
     LayoutUnit styleLogicalHeight = valueForLength(style().logicalHeight(), 0);
     // In strict mode, box-sizing: content-box do the right thing and actually add in the border and padding.
     // Call computedCSSPadding* directly to avoid including implicitPadding.
-    if (!document().inQuirksMode() && style().boxSizing() != BORDER_BOX)
+    if (!document().inQuirksMode() && style().boxSizing() != BoxSizing::BorderBox)
         styleLogicalHeight += computedCSSPaddingBefore() + computedCSSPaddingAfter() + borderBefore() + borderAfter();
     return std::max(styleLogicalHeight, adjustedLogicalHeight);
 }
 
 inline bool RenderTableCell::isBaselineAligned() const
 {
-    EVerticalAlign va = style().verticalAlign();
-    return va == BASELINE || va == TEXT_BOTTOM || va == TEXT_TOP || va == SUPER || va == SUB || va == LENGTH;
+    VerticalAlign va = style().verticalAlign();
+    return va == VerticalAlign::Baseline || va == VerticalAlign::TextBottom || va == VerticalAlign::TextTop || va == VerticalAlign::Super || va == VerticalAlign::Sub || va == VerticalAlign::Length;
 }
 
 inline const BorderValue& RenderTableCell::borderAdjoiningTableStart() const

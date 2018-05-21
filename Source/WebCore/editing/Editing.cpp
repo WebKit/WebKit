@@ -462,7 +462,7 @@ static bool isSpecialHTMLElement(const Node* node)
     if (renderer->style().isFloating())
         return true;
 
-    if (renderer->style().position() != StaticPosition)
+    if (renderer->style().position() != PositionType::Static)
         return true;
 
     return false;

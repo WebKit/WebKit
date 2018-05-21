@@ -6062,7 +6062,7 @@
             ],
             "codegen-properties": {
                 "name-for-methods": "TransformStyle3D",
-                "comment": "Keeping -webkit-transform-style around is how we'll detect legacy content. At that point, we'll have to add a custom builder and a new ETransformStyle3D type. FIXME: this never happened."
+                "comment": "Keeping -webkit-transform-style around is how we'll detect legacy content. At that point, we'll have to add a custom builder and a new TransformStyle3D type. FIXME: this never happened."
             }
         },
         "-webkit-user-drag": {

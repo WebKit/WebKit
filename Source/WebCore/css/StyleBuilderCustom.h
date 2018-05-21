@@ -518,9 +518,9 @@ inline void StyleBuilderCustom::applyValueTextIndent(StyleResolver& styleResolve
             lengthOrPercentageValue = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver.state().cssToLengthConversionData());
 #if ENABLE(CSS3_TEXT)
         else if (primitiveValue.valueID() == CSSValueWebkitEachLine)
-            textIndentLineValue = TextIndentEachLine;
+            textIndentLineValue = TextIndentLine::EachLine;
         else if (primitiveValue.valueID() == CSSValueWebkitHanging)
-            textIndentTypeValue = TextIndentHanging;
+            textIndentTypeValue = TextIndentType::Hanging;
 #endif
     }
 
@@ -1058,7 +1058,7 @@ inline void StyleBuilderCustom::applyInitialWebkitAspectRatio(StyleResolver& sty
 
 inline void StyleBuilderCustom::applyInheritWebkitAspectRatio(StyleResolver& styleResolver)
 {
-    if (styleResolver.parentStyle()->aspectRatioType() == AspectRatioAuto)
+    if (styleResolver.parentStyle()->aspectRatioType() == AspectRatioType::Auto)
         return;
     styleResolver.style()->setAspectRatioType(styleResolver.parentStyle()->aspectRatioType());
     styleResolver.style()->setAspectRatioDenominator(styleResolver.parentStyle()->aspectRatioDenominator());
@@ -1071,16 +1071,16 @@ inline void StyleBuilderCustom::applyValueWebkitAspectRatio(StyleResolver& style
         auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
         if (primitiveValue.valueID() == CSSValueFromDimensions)
-            return styleResolver.style()->setAspectRatioType(AspectRatioFromDimensions);
+            return styleResolver.style()->setAspectRatioType(AspectRatioType::FromDimensions);
         if (primitiveValue.valueID() == CSSValueFromIntrinsic)
-            return styleResolver.style()->setAspectRatioType(AspectRatioFromIntrinsic);
+            return styleResolver.style()->setAspectRatioType(AspectRatioType::FromIntrinsic);
 
         ASSERT(primitiveValue.valueID() == CSSValueAuto);
-        return styleResolver.style()->setAspectRatioType(AspectRatioAuto);
+        return styleResolver.style()->setAspectRatioType(AspectRatioType::Auto);
     }
 
     auto& aspectRatioValue = downcast<CSSAspectRatioValue>(value);
-    styleResolver.style()->setAspectRatioType(AspectRatioSpecified);
+    styleResolver.style()->setAspectRatioType(AspectRatioType::Specified);
     styleResolver.style()->setAspectRatioDenominator(aspectRatioValue.denominatorValue());
     styleResolver.style()->setAspectRatioNumerator(aspectRatioValue.numeratorValue());
 }
@@ -1436,19 +1436,19 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
         } else {
             switch (contentValue.valueID()) {
             case CSSValueOpenQuote:
-                styleResolver.style()->setContent(OPEN_QUOTE, didSet);
+                styleResolver.style()->setContent(QuoteType::OpenQuote, didSet);
                 didSet = true;
                 break;
             case CSSValueCloseQuote:
-                styleResolver.style()->setContent(CLOSE_QUOTE, didSet);
+                styleResolver.style()->setContent(QuoteType::CloseQuote, didSet);
                 didSet = true;
                 break;
             case CSSValueNoOpenQuote:
-                styleResolver.style()->setContent(NO_OPEN_QUOTE, didSet);
+                styleResolver.style()->setContent(QuoteType::NoOpenQuote, didSet);
                 didSet = true;
                 break;
             case CSSValueNoCloseQuote:
-                styleResolver.style()->setContent(NO_CLOSE_QUOTE, didSet);
+                styleResolver.style()->setContent(QuoteType::NoCloseQuote, didSet);
                 didSet = true;
                 break;
             default:

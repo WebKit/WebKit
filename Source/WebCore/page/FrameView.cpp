@@ -143,8 +143,8 @@ static RenderLayer::UpdateLayerPositionsFlags updateLayerPositionFlags(RenderLay
 
 Pagination::Mode paginationModeForRenderStyle(const RenderStyle& style)
 {
-    EOverflow overflow = style.overflowY();
-    if (overflow != OPAGEDX && overflow != OPAGEDY)
+    Overflow overflow = style.overflowY();
+    if (overflow != Overflow::PagedX && overflow != Overflow::PagedY)
         return Pagination::Unpaginated;
 
     bool isHorizontalWritingMode = style.isHorizontalWritingMode();
@@ -154,7 +154,7 @@ Pagination::Mode paginationModeForRenderStyle(const RenderStyle& style)
     // paged-x always corresponds to LeftToRightPaginated or RightToLeftPaginated. If the WritingMode
     // is horizontal, then we use TextDirection to choose between those options. If the WritingMode
     // is vertical, then the direction of the verticality dictates the choice.
-    if (overflow == OPAGEDX) {
+    if (overflow == Overflow::PagedX) {
         if ((isHorizontalWritingMode && textDirection == LTR) || writingMode == LeftToRightWritingMode)
             return Pagination::LeftToRightPaginated;
         return Pagination::RightToLeftPaginated;
@@ -650,52 +650,52 @@ void FrameView::applyOverflowToViewport(const RenderElement& renderer, Scrollbar
 
     bool overrideHidden = frame().isMainFrame() && ((frame().frameScaleFactor() > 1) || headerHeight() || footerHeight());
 
-    EOverflow overflowX = renderer.style().overflowX();
-    EOverflow overflowY = renderer.style().overflowY();
+    Overflow overflowX = renderer.style().overflowX();
+    Overflow overflowY = renderer.style().overflowY();
 
     if (is<RenderSVGRoot>(renderer)) {
         // FIXME: evaluate if we can allow overflow for these cases too.
         // Overflow is always hidden when stand-alone SVG documents are embedded.
         if (downcast<RenderSVGRoot>(renderer).isEmbeddedThroughFrameContainingSVGDocument()) {
-            overflowX = OHIDDEN;
-            overflowY = OHIDDEN;
+            overflowX = Overflow::Hidden;
+            overflowY = Overflow::Hidden;
         }
     }
 
     switch (overflowX) {
-        case OHIDDEN:
-            if (overrideHidden)
-                hMode = ScrollbarAuto;
-            else
-                hMode = ScrollbarAlwaysOff;
-            break;
-        case OSCROLL:
-            hMode = ScrollbarAlwaysOn;
-            break;
-        case OAUTO:
+    case Overflow::Hidden:
+        if (overrideHidden)
             hMode = ScrollbarAuto;
-            break;
-        default:
-            // Don't set it at all.
-            ;
+        else
+            hMode = ScrollbarAlwaysOff;
+        break;
+    case Overflow::Scroll:
+        hMode = ScrollbarAlwaysOn;
+        break;
+    case Overflow::Auto:
+        hMode = ScrollbarAuto;
+        break;
+    default:
+        // Don't set it at all.
+        ;
     }
-    
-     switch (overflowY) {
-        case OHIDDEN:
-            if (overrideHidden)
-                vMode = ScrollbarAuto;
-            else
-                vMode = ScrollbarAlwaysOff;
-            break;
-        case OSCROLL:
-            vMode = ScrollbarAlwaysOn;
-            break;
-        case OAUTO:
+
+    switch (overflowY) {
+    case Overflow::Hidden:
+        if (overrideHidden)
             vMode = ScrollbarAuto;
-            break;
-        default:
-            // Don't set it at all. Values of OPAGEDX and OPAGEDY are handled by applyPaginationToViewPort().
-            ;
+        else
+            vMode = ScrollbarAlwaysOff;
+        break;
+    case Overflow::Scroll:
+        vMode = ScrollbarAlwaysOn;
+        break;
+    case Overflow::Auto:
+        vMode = ScrollbarAuto;
+        break;
+    default:
+        // Don't set it at all. Values of Overflow::PagedX and Overflow::PagedY are handled by applyPaginationToViewPort().
+        ;
     }
 }
 
@@ -713,13 +713,13 @@ void FrameView::applyPaginationToViewport()
 
     auto* body = document->body();
     if (body && body->renderer()) {
-        documentOrBodyRenderer = documentRenderer.style().overflowX() == OVISIBLE && is<HTMLHtmlElement>(*documentElement) ?
+        documentOrBodyRenderer = documentRenderer.style().overflowX() == Overflow::Visible && is<HTMLHtmlElement>(*documentElement) ?
             body->renderer() : &documentRenderer;
     }
 
     Pagination pagination;
-    EOverflow overflowY = documentOrBodyRenderer->style().overflowY();
-    if (overflowY == OPAGEDX || overflowY == OPAGEDY) {
+    Overflow overflowY = documentOrBodyRenderer->style().overflowY();
+    if (overflowY == Overflow::PagedX || overflowY == Overflow::PagedY) {
         pagination.mode = WebCore::paginationModeForRenderStyle(documentOrBodyRenderer->style());
         GapLength columnGapLength = documentOrBodyRenderer->style().columnGap();
         pagination.gap = 0;
@@ -780,7 +780,7 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
     if (is<HTMLBodyElement>(*bodyOrFrameset) && rootRenderer) {
         // It's sufficient to just check the X overflow,
         // since it's illegal to have visible in only one direction.
-        if (rootRenderer->style().overflowX() == OVISIBLE && is<HTMLHtmlElement>(documentElement)) {
+        if (rootRenderer->style().overflowX() == Overflow::Visible && is<HTMLHtmlElement>(documentElement)) {
             auto* bodyRenderer = bodyOrFrameset->renderer();
             if (bodyRenderer) {
                 applyOverflowToViewport(*bodyRenderer, hMode, vMode);
@@ -2987,9 +2987,9 @@ FrameView::ExtendedBackgroundMode FrameView::calculateExtendedBackgroundMode() c
         return ExtendedBackgroundModeNone;
 
     ExtendedBackgroundMode mode = ExtendedBackgroundModeNone;
-    if (rootBackgroundRenderer->style().backgroundRepeatX() == RepeatFill)
+    if (rootBackgroundRenderer->style().backgroundRepeatX() == FillRepeat::Repeat)
         mode |= ExtendedBackgroundModeHorizontal;
-    if (rootBackgroundRenderer->style().backgroundRepeatY() == RepeatFill)
+    if (rootBackgroundRenderer->style().backgroundRepeatY() == FillRepeat::Repeat)
         mode |= ExtendedBackgroundModeVertical;
 
     return mode;
@@ -3604,7 +3604,7 @@ float FrameView::adjustScrollStepForFixedContent(float step, ScrollbarOrientatio
     float bottomObscuredArea = 0;
     for (const auto& positionedObject : *positionedObjects) {
         const RenderStyle& style = positionedObject->style();
-        if (style.position() != FixedPosition || style.visibility() == HIDDEN || !style.opacity())
+        if (style.position() != PositionType::Fixed || style.visibility() == HIDDEN || !style.opacity())
             continue;
 
         FloatQuad contentQuad = positionedObject->absoluteContentQuad();

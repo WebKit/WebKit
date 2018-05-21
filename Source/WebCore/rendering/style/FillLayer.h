@@ -36,17 +36,17 @@ class RenderElement;
 
 struct FillSize {
     FillSize()
-        : type(SizeLength)
+        : type(FillSizeType::Size)
     {
     }
 
-    FillSize(EFillSizeType type, const LengthSize& size)
+    FillSize(FillSizeType type, const LengthSize& size)
         : type(type)
         , size(size)
     {
     }
 
-    EFillSizeType type;
+    FillSizeType type;
     LengthSize size;
 };
 
@@ -63,7 +63,7 @@ inline bool operator!=(const FillSize& a, const FillSize& b)
 class FillLayer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit FillLayer(EFillLayerType);
+    explicit FillLayer(FillLayerType);
     ~FillLayer();
 
     StyleImage* image() const { return m_image.get(); }
@@ -71,17 +71,17 @@ public:
     const Length& yPosition() const { return m_yPosition; }
     Edge backgroundXOrigin() const { return static_cast<Edge>(m_backgroundXOrigin); }
     Edge backgroundYOrigin() const { return static_cast<Edge>(m_backgroundYOrigin); }
-    EFillAttachment attachment() const { return static_cast<EFillAttachment>(m_attachment); }
-    EFillBox clip() const { return static_cast<EFillBox>(m_clip); }
-    EFillBox origin() const { return static_cast<EFillBox>(m_origin); }
-    EFillRepeat repeatX() const { return static_cast<EFillRepeat>(m_repeatX); }
-    EFillRepeat repeatY() const { return static_cast<EFillRepeat>(m_repeatY); }
+    FillAttachment attachment() const { return static_cast<FillAttachment>(m_attachment); }
+    FillBox clip() const { return static_cast<FillBox>(m_clip); }
+    FillBox origin() const { return static_cast<FillBox>(m_origin); }
+    FillRepeat repeatX() const { return static_cast<FillRepeat>(m_repeatX); }
+    FillRepeat repeatY() const { return static_cast<FillRepeat>(m_repeatY); }
     CompositeOperator composite() const { return static_cast<CompositeOperator>(m_composite); }
     BlendMode blendMode() const { return static_cast<BlendMode>(m_blendMode); }
     const LengthSize& sizeLength() const { return m_sizeLength; }
-    EFillSizeType sizeType() const { return static_cast<EFillSizeType>(m_sizeType); }
-    FillSize size() const { return FillSize(static_cast<EFillSizeType>(m_sizeType), m_sizeLength); }
-    EMaskSourceType maskSourceType() const { return static_cast<EMaskSourceType>(m_maskSourceType); }
+    FillSizeType sizeType() const { return static_cast<FillSizeType>(m_sizeType); }
+    FillSize size() const { return FillSize(static_cast<FillSizeType>(m_sizeType), m_sizeLength); }
+    MaskSourceType maskSourceType() const { return static_cast<MaskSourceType>(m_maskSourceType); }
 
     const FillLayer* next() const { return m_next.get(); }
     FillLayer* next() { return m_next.get(); }
@@ -98,7 +98,7 @@ public:
     bool isRepeatYSet() const { return m_repeatYSet; }
     bool isCompositeSet() const { return m_compositeSet; }
     bool isBlendModeSet() const { return m_blendModeSet; }
-    bool isSizeSet() const { return m_sizeType != SizeNone; }
+    bool isSizeSet() const { return static_cast<FillSizeType>(m_sizeType) != FillSizeType::None; }
     bool isMaskSourceTypeSet() const { return m_maskSourceTypeSet; }
 
     void setImage(RefPtr<StyleImage>&& image) { m_image = WTFMove(image); m_imageSet = true; }
@@ -106,17 +106,17 @@ public:
     void setYPosition(Length length) { m_yPosition = WTFMove(length); m_yPosSet = true; }
     void setBackgroundXOrigin(Edge o) { m_backgroundXOrigin = static_cast<unsigned>(o); m_backgroundXOriginSet = true; }
     void setBackgroundYOrigin(Edge o) { m_backgroundYOrigin = static_cast<unsigned>(o); m_backgroundYOriginSet = true; }
-    void setAttachment(EFillAttachment attachment) { m_attachment = attachment; m_attachmentSet = true; }
-    void setClip(EFillBox b) { m_clip = b; m_clipSet = true; }
-    void setOrigin(EFillBox b) { m_origin = b; m_originSet = true; }
-    void setRepeatX(EFillRepeat r) { m_repeatX = r; m_repeatXSet = true; }
-    void setRepeatY(EFillRepeat r) { m_repeatY = r; m_repeatYSet = true; }
-    void setComposite(CompositeOperator c) { m_composite = c; m_compositeSet = true; }
-    void setBlendMode(BlendMode b) { m_blendMode = b; m_blendModeSet = true; }
-    void setSizeType(EFillSizeType b) { m_sizeType = b; }
+    void setAttachment(FillAttachment attachment) { m_attachment = static_cast<unsigned>(attachment); m_attachmentSet = true; }
+    void setClip(FillBox b) { m_clip = static_cast<unsigned>(b); m_clipSet = true; }
+    void setOrigin(FillBox b) { m_origin = static_cast<unsigned>(b); m_originSet = true; }
+    void setRepeatX(FillRepeat r) { m_repeatX = static_cast<unsigned>(r); m_repeatXSet = true; }
+    void setRepeatY(FillRepeat r) { m_repeatY = static_cast<unsigned>(r); m_repeatYSet = true; }
+    void setComposite(CompositeOperator c) { m_composite = static_cast<unsigned>(c); m_compositeSet = true; }
+    void setBlendMode(BlendMode b) { m_blendMode = static_cast<unsigned>(b); m_blendModeSet = true; }
+    void setSizeType(FillSizeType b) { m_sizeType = static_cast<unsigned>(b); }
     void setSizeLength(LengthSize l) { m_sizeLength = l; }
-    void setSize(FillSize f) { m_sizeType = f.type; m_sizeLength = f.size; }
-    void setMaskSourceType(EMaskSourceType m) { m_maskSourceType = m; m_maskSourceTypeSet = true; }
+    void setSize(FillSize f) { m_sizeType = static_cast<unsigned>(f.type); m_sizeLength = f.size; }
+    void setMaskSourceType(MaskSourceType m) { m_maskSourceType = static_cast<unsigned>(m); m_maskSourceTypeSet = true; }
 
     void clearImage() { m_image = nullptr; m_imageSet = false; }
 
@@ -130,7 +130,7 @@ public:
     void clearRepeatY() { m_repeatYSet = false; }
     void clearComposite() { m_compositeSet = false; }
     void clearBlendMode() { m_blendModeSet = false; }
-    void clearSize() { m_sizeType = SizeNone; }
+    void clearSize() { m_sizeType = static_cast<unsigned>(FillSizeType::None); }
     void clearMaskSourceType() { m_maskSourceTypeSet = false; }
 
     void setNext(std::unique_ptr<FillLayer> next) { m_next = WTFMove(next); }
@@ -149,25 +149,25 @@ public:
     bool hasRepeatXY() const;
     bool clipOccludesNextLayers(bool firstLayer) const;
 
-    EFillLayerType type() const { return static_cast<EFillLayerType>(m_type); }
+    FillLayerType type() const { return static_cast<FillLayerType>(m_type); }
 
     void fillUnsetProperties();
     void cullEmptyLayers();
 
     static bool imagesIdentical(const FillLayer*, const FillLayer*);
 
-    static EFillAttachment initialFillAttachment(EFillLayerType) { return ScrollBackgroundAttachment; }
-    static EFillBox initialFillClip(EFillLayerType) { return BorderFillBox; }
-    static EFillBox initialFillOrigin(EFillLayerType type) { return type == BackgroundFillLayer ? PaddingFillBox : BorderFillBox; }
-    static EFillRepeat initialFillRepeatX(EFillLayerType) { return RepeatFill; }
-    static EFillRepeat initialFillRepeatY(EFillLayerType) { return RepeatFill; }
-    static CompositeOperator initialFillComposite(EFillLayerType) { return CompositeSourceOver; }
-    static BlendMode initialFillBlendMode(EFillLayerType) { return BlendModeNormal; }
-    static FillSize initialFillSize(EFillLayerType) { return FillSize(); }
-    static Length initialFillXPosition(EFillLayerType) { return Length(0.0f, Percent); }
-    static Length initialFillYPosition(EFillLayerType) { return Length(0.0f, Percent); }
-    static StyleImage* initialFillImage(EFillLayerType) { return nullptr; }
-    static EMaskSourceType initialFillMaskSourceType(EFillLayerType) { return MaskAlpha; }
+    static FillAttachment initialFillAttachment(FillLayerType) { return FillAttachment::ScrollBackground; }
+    static FillBox initialFillClip(FillLayerType) { return FillBox::Border; }
+    static FillBox initialFillOrigin(FillLayerType type) { return type == FillLayerType::Background ? FillBox::Padding : FillBox::Border; }
+    static FillRepeat initialFillRepeatX(FillLayerType) { return FillRepeat::Repeat; }
+    static FillRepeat initialFillRepeatY(FillLayerType) { return FillRepeat::Repeat; }
+    static CompositeOperator initialFillComposite(FillLayerType) { return CompositeSourceOver; }
+    static BlendMode initialFillBlendMode(FillLayerType) { return BlendModeNormal; }
+    static FillSize initialFillSize(FillLayerType) { return { }; }
+    static Length initialFillXPosition(FillLayerType) { return Length(0.0f, Percent); }
+    static Length initialFillYPosition(FillLayerType) { return Length(0.0f, Percent); }
+    static StyleImage* initialFillImage(FillLayerType) { return nullptr; }
+    static MaskSourceType initialFillMaskSourceType(FillLayerType) { return MaskSourceType::Alpha; }
 
 private:
     friend class RenderStyle;
@@ -183,15 +183,15 @@ private:
 
     LengthSize m_sizeLength;
 
-    unsigned m_attachment : 2; // EFillAttachment
-    unsigned m_clip : 2; // EFillBox
-    unsigned m_origin : 2; // EFillBox
-    unsigned m_repeatX : 3; // EFillRepeat
-    unsigned m_repeatY : 3; // EFillRepeat
+    unsigned m_attachment : 2; // FillAttachment
+    unsigned m_clip : 2; // FillBox
+    unsigned m_origin : 2; // FillBox
+    unsigned m_repeatX : 3; // FillRepeat
+    unsigned m_repeatY : 3; // FillRepeat
     unsigned m_composite : 4; // CompositeOperator
-    unsigned m_sizeType : 2; // EFillSizeType
+    unsigned m_sizeType : 2; // FillSizeType
     unsigned m_blendMode : 5; // BlendMode
-    unsigned m_maskSourceType : 1; // EMaskSourceType
+    unsigned m_maskSourceType : 1; // MaskSourceType
 
     unsigned m_imageSet : 1;
     unsigned m_attachmentSet : 1;
@@ -209,9 +209,9 @@ private:
     unsigned m_blendModeSet : 1;
     unsigned m_maskSourceTypeSet : 1;
 
-    unsigned m_type : 1; // EFillLayerType
+    unsigned m_type : 1; // FillLayerType
 
-    mutable unsigned m_clipMax : 2; // EFillBox, maximum m_clip value from this to bottom layer
+    mutable unsigned m_clipMax : 2; // FillBox, maximum m_clip value from this to bottom layer
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, FillSize);

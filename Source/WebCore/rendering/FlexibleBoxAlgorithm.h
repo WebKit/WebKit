@@ -78,7 +78,7 @@ public:
     bool computeNextFlexLine(size_t& nextIndex, Vector<FlexItem>& lineItems, LayoutUnit& sumFlexBaseSize, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink, LayoutUnit& sumHypotheticalMainSize);
 
 private:
-    bool isMultiline() const { return m_style.flexWrap() != FlexNoWrap; }
+    bool isMultiline() const { return m_style.flexWrap() != FlexWrap::NoWrap; }
 
     const RenderStyle& m_style;
     LayoutUnit m_lineBreakLength;

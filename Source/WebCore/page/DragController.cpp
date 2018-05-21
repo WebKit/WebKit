@@ -761,12 +761,12 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
         if (!renderer)
             continue;
 
-        EUserDrag dragMode = renderer->style().userDrag();
-        if ((m_dragSourceAction & DragSourceActionDHTML) && dragMode == DRAG_ELEMENT) {
+        UserDrag dragMode = renderer->style().userDrag();
+        if ((m_dragSourceAction & DragSourceActionDHTML) && dragMode == UserDrag::Element) {
             state.type = static_cast<DragSourceAction>(state.type | DragSourceActionDHTML);
             return element;
         }
-        if (dragMode == DRAG_AUTO) {
+        if (dragMode == UserDrag::Auto) {
             if ((m_dragSourceAction & DragSourceActionImage)
                 && is<HTMLImageElement>(*element)
                 && imageElementIsDraggable(downcast<HTMLImageElement>(*element), *sourceFrame)) {

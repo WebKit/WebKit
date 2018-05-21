@@ -33,19 +33,19 @@ class StyleContentAlignmentData {
 public:
     // Style data for Content-Distribution properties: align-content, justify-content.
     // <content-distribution> || [ <overflow-position>? && <content-position> ]
-    StyleContentAlignmentData(ContentPosition position, ContentDistributionType distribution, OverflowAlignment overflow = OverflowAlignmentDefault)
-        : m_position(position)
-        , m_distribution(distribution)
-        , m_overflow(overflow)
+    StyleContentAlignmentData(ContentPosition position, ContentDistribution distribution, OverflowAlignment overflow = OverflowAlignment::Default)
+        : m_position(static_cast<unsigned>(position))
+        , m_distribution(static_cast<unsigned>(distribution))
+        , m_overflow(static_cast<unsigned>(overflow))
     {
     }
 
-    void setPosition(ContentPosition position) { m_position = position; }
-    void setDistribution(ContentDistributionType distribution) { m_distribution = distribution; }
-    void setOverflow(OverflowAlignment overflow) { m_overflow = overflow; }
+    void setPosition(ContentPosition position) { m_position = static_cast<unsigned>(position); }
+    void setDistribution(ContentDistribution distribution) { m_distribution = static_cast<unsigned>(distribution); }
+    void setOverflow(OverflowAlignment overflow) { m_overflow = static_cast<unsigned>(overflow); }
 
     ContentPosition position() const { return static_cast<ContentPosition>(m_position); }
-    ContentDistributionType distribution() const { return static_cast<ContentDistributionType>(m_distribution); }
+    ContentDistribution distribution() const { return static_cast<ContentDistribution>(m_distribution); }
     OverflowAlignment overflow() const { return static_cast<OverflowAlignment>(m_overflow); }
 
     bool operator==(const StyleContentAlignmentData& o) const
@@ -60,7 +60,7 @@ public:
 
 private:
     unsigned m_position : 4; // ContentPosition
-    unsigned m_distribution : 3; // ContentDistributionType
+    unsigned m_distribution : 3; // ContentDistribution
     unsigned m_overflow : 2; // OverflowAlignment
 };
 

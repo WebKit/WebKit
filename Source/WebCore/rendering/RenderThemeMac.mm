@@ -689,7 +689,7 @@ void RenderThemeMac::updateEnabledState(NSCell* cell, const RenderObject& o)
 void RenderThemeMac::updateFocusedState(NSCell* cell, const RenderObject& o)
 {
     bool oldFocused = [cell showsFirstResponder];
-    bool focused = isFocused(o) && o.style().outlineStyleIsAuto();
+    bool focused = isFocused(o) && o.style().outlineStyleIsAuto() == OutlineIsAuto::On;
     if (focused != oldFocused)
         [cell setShowsFirstResponder:focused];
 }
@@ -1417,7 +1417,7 @@ void RenderThemeMac::setPopupButtonCellState(const RenderObject& o, const IntSiz
 void RenderThemeMac::paintCellAndSetFocusedElementNeedsRepaintIfNecessary(NSCell* cell, const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     LocalDefaultSystemAppearance localAppearance(renderer.page().useSystemAppearance(), renderer.page().defaultAppearance());
-    bool shouldDrawFocusRing = isFocused(renderer) && renderer.style().outlineStyleIsAuto();
+    bool shouldDrawFocusRing = isFocused(renderer) && renderer.style().outlineStyleIsAuto() == OutlineIsAuto::On;
     bool shouldUseImageBuffer = renderer.style().effectiveZoom() != 1 || renderer.page().pageScaleFactor() != 1;
     bool shouldDrawCell = true;
     if (ThemeMac::drawCellOrFocusRingWithViewIntoContext(cell, paintInfo.context(), rect, documentViewFor(renderer), shouldDrawCell, shouldDrawFocusRing, shouldUseImageBuffer, renderer.page().deviceScaleFactor()))
@@ -1620,13 +1620,13 @@ void RenderThemeMac::adjustSearchFieldStyle(StyleResolver& styleResolver, Render
     style.resetBorder();
     const short borderWidth = 2 * style.effectiveZoom();
     style.setBorderLeftWidth(borderWidth);
-    style.setBorderLeftStyle(INSET);
+    style.setBorderLeftStyle(BorderStyle::Inset);
     style.setBorderRightWidth(borderWidth);
-    style.setBorderRightStyle(INSET);
+    style.setBorderRightStyle(BorderStyle::Inset);
     style.setBorderBottomWidth(borderWidth);
-    style.setBorderBottomStyle(INSET);
+    style.setBorderBottomStyle(BorderStyle::Inset);
     style.setBorderTopWidth(borderWidth);
-    style.setBorderTopStyle(INSET);
+    style.setBorderTopStyle(BorderStyle::Inset);
 
     // Override height.
     style.setHeight(Length(Auto));

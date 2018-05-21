@@ -105,13 +105,13 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
     int baselinePosition;
     bool includeRise = true;
     switch (style->verticalAlign()) {
-    case SUB:
+    case VerticalAlign::Sub:
         baselinePosition = -1 * baselinePositionForRenderObject(renderer);
         break;
-    case SUPER:
+    case VerticalAlign::Super:
         baselinePosition = baselinePositionForRenderObject(renderer);
         break;
-    case BASELINE:
+    case VerticalAlign::Baseline:
         baselinePosition = 0;
         break;
     default:

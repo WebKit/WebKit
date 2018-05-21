@@ -62,7 +62,7 @@ void RenderQuote::willBeRemovedFromTree()
 void RenderQuote::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderInline::styleDidChange(diff, oldStyle);
-    if (diff >= StyleDifferenceLayout) {
+    if (diff >= StyleDifference::Layout) {
         m_needsTextUpdate = true;
         view().setHasQuotesNeedingUpdate(true);
     }
@@ -371,13 +371,13 @@ String RenderQuote::computeText() const
         return emptyString();
     bool isOpenQuote = false;
     switch (m_type) {
-    case NO_OPEN_QUOTE:
-    case NO_CLOSE_QUOTE:
+    case QuoteType::NoOpenQuote:
+    case QuoteType::NoCloseQuote:
         return emptyString();
-    case OPEN_QUOTE:
+    case QuoteType::OpenQuote:
         isOpenQuote = true;
         FALLTHROUGH;
-    case CLOSE_QUOTE:
+    case QuoteType::CloseQuote:
         if (const QuotesData* quotes = style().quotes())
             return isOpenQuote ? quotes->openQuote(m_depth).impl() : quotes->closeQuote(m_depth).impl();
         if (const QuotesForLanguage* quotes = quotesForLanguage(style().locale()))
@@ -392,11 +392,11 @@ String RenderQuote::computeText() const
 bool RenderQuote::isOpen() const
 {
     switch (m_type) {
-    case OPEN_QUOTE:
-    case NO_OPEN_QUOTE:
+    case QuoteType::OpenQuote:
+    case QuoteType::NoOpenQuote:
         return true;
-    case CLOSE_QUOTE:
-    case NO_CLOSE_QUOTE:
+    case QuoteType::CloseQuote:
+    case QuoteType::NoCloseQuote:
         return false;
     }
     ASSERT_NOT_REACHED();

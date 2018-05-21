@@ -344,19 +344,19 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     auto& renderer = *element.renderer();
 
     if (update.recompositeLayer) {
-        updateRendererStyle(renderer, RenderStyle::clone(*update.style), StyleDifferenceRecompositeLayer);
+        updateRendererStyle(renderer, RenderStyle::clone(*update.style), StyleDifference::RecompositeLayer);
         return;
     }
 
     if (update.change == Style::NoChange) {
         if (pseudoStyleCacheIsInvalid(&renderer, update.style.get())) {
-            updateRendererStyle(renderer, RenderStyle::clone(*update.style), StyleDifferenceEqual);
+            updateRendererStyle(renderer, RenderStyle::clone(*update.style), StyleDifference::Equal);
             return;
         }
         return;
     }
 
-    updateRendererStyle(renderer, RenderStyle::clone(*update.style), StyleDifferenceEqual);
+    updateRendererStyle(renderer, RenderStyle::clone(*update.style), StyleDifference::Equal);
 }
 
 void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)

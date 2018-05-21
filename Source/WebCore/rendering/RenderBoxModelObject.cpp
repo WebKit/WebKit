@@ -749,8 +749,8 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     bool includeRightEdge = box ? box->includeLogicalRightEdge() : true;
 
     bool hasRoundedBorder = style().hasBorderRadius() && (includeLeftEdge || includeRightEdge);
-    bool clippedWithLocalScrolling = hasOverflowClip() && bgLayer.attachment() == LocalBackgroundAttachment;
-    bool isBorderFill = bgLayer.clip() == BorderFillBox;
+    bool clippedWithLocalScrolling = hasOverflowClip() && bgLayer.attachment() == FillAttachment::LocalBackground;
+    bool isBorderFill = bgLayer.clip() == FillBox::Border;
     bool isRoot = this->isDocumentElementRenderer();
 
     Color bgColor = color;
@@ -759,7 +759,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     
     bool forceBackgroundToWhite = false;
     if (document().printing()) {
-        if (style().printColorAdjust() == PrintColorAdjustEconomy)
+        if (style().printColorAdjust() == PrintColorAdjust::Economy)
             forceBackgroundToWhite = true;
         if (settings().shouldPrintBackgrounds())
             forceBackgroundToWhite = false;
@@ -816,17 +816,17 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         return;
     }
 
-    // BorderFillBox radius clipping is taken care of by BackgroundBleedUseTransparencyLayer
+    // FillBox::Border radius clipping is taken care of by BackgroundBleedUseTransparencyLayer
     bool clipToBorderRadius = hasRoundedBorder && !(isBorderFill && bleedAvoidance == BackgroundBleedUseTransparencyLayer);
     GraphicsContextStateSaver clipToBorderStateSaver(context, clipToBorderRadius);
     if (clipToBorderRadius) {
         RoundedRect border = isBorderFill ? backgroundRoundedRectAdjustedForBleedAvoidance(context, rect, bleedAvoidance, box, boxSize, includeLeftEdge, includeRightEdge) : getBackgroundRoundedRect(rect, box, boxSize.width(), boxSize.height(), includeLeftEdge, includeRightEdge);
 
         // Clip to the padding or content boxes as necessary.
-        if (bgLayer.clip() == ContentFillBox) {
+        if (bgLayer.clip() == FillBox::Content) {
             border = style().getRoundedInnerBorderFor(border.rect(),
                 paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), includeLeftEdge, includeRightEdge);
-        } else if (bgLayer.clip() == PaddingFillBox)
+        } else if (bgLayer.clip() == FillBox::Padding)
             border = style().getRoundedInnerBorderFor(border.rect(), includeLeftEdge, includeRightEdge);
 
         clipRoundedInnerRect(context, pixelSnappedRect, border.pixelSnappedRoundedRectForPainting(deviceScaleFactor));
@@ -854,10 +854,10 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     std::unique_ptr<ImageBuffer> maskImage;
     IntRect maskRect;
 
-    if (bgLayer.clip() == PaddingFillBox || bgLayer.clip() == ContentFillBox) {
+    if (bgLayer.clip() == FillBox::Padding || bgLayer.clip() == FillBox::Content) {
         // Clip to the padding or content boxes as necessary.
         if (!clipToBorderRadius) {
-            bool includePadding = bgLayer.clip() == ContentFillBox;
+            bool includePadding = bgLayer.clip() == FillBox::Content;
             LayoutRect clipRect = LayoutRect(scrolledPaintRect.x() + bLeft + (includePadding ? pLeft : LayoutUnit()),
                 scrolledPaintRect.y() + borderTop() + (includePadding ? paddingTop() : LayoutUnit()),
                 scrolledPaintRect.width() - bLeft - bRight - (includePadding ? pLeft + pRight : LayoutUnit()),
@@ -865,7 +865,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             backgroundClipStateSaver.save();
             context.clip(clipRect);
         }
-    } else if (bgLayer.clip() == TextFillBox) {
+    } else if (bgLayer.clip() == FillBox::Text) {
         // We have to draw our text into a mask that can then be used to clip background drawing.
         // First figure out how big the mask has to be.  It should be no bigger than what we need
         // to actually render, so we should intersect the dirty rect with the border box of the background.
@@ -954,7 +954,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         RefPtr<Image> image;
         if (!geometry.destRect().isEmpty() && (image = bgImage->image(backgroundObject ? backgroundObject : this, geometry.tileSize()))) {
             auto compositeOp = op == CompositeSourceOver ? bgLayer.composite() : op;
-            context.setDrawLuminanceMask(bgLayer.maskSourceType() == MaskLuminance);
+            context.setDrawLuminanceMask(bgLayer.maskSourceType() == MaskSourceType::Luminance);
 
             if (is<BitmapImage>(image))
                 downcast<BitmapImage>(*image).updateFromSettings(settings());
@@ -969,7 +969,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         }
     }
 
-    if (maskImage && bgLayer.clip() == TextFillBox) {
+    if (maskImage && bgLayer.clip() == FillBox::Text) {
         context.drawConsumingImageBuffer(WTFMove(maskImage), maskRect, CompositeDestinationIn);
         context.endTransparencyLayer();
     }
@@ -1069,7 +1069,7 @@ LayoutSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* i
 LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer& fillLayer, const LayoutSize& positioningAreaSize) const
 {
     StyleImage* image = fillLayer.image();
-    EFillSizeType type = fillLayer.size().type;
+    FillSizeType type = fillLayer.size().type;
 
     LayoutSize imageIntrinsicSize;
     if (image) {
@@ -1079,60 +1079,60 @@ LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer& fillLaye
         imageIntrinsicSize = positioningAreaSize;
 
     switch (type) {
-        case SizeLength: {
-            LayoutSize tileSize = positioningAreaSize;
+    case FillSizeType::Size: {
+        LayoutSize tileSize = positioningAreaSize;
 
-            Length layerWidth = fillLayer.size().size.width;
-            Length layerHeight = fillLayer.size().size.height;
+        Length layerWidth = fillLayer.size().size.width;
+        Length layerHeight = fillLayer.size().size.height;
 
-            if (layerWidth.isFixed())
-                tileSize.setWidth(layerWidth.value());
-            else if (layerWidth.isPercentOrCalculated())
-                tileSize.setWidth(valueForLength(layerWidth, positioningAreaSize.width()));
-            
-            if (layerHeight.isFixed())
-                tileSize.setHeight(layerHeight.value());
-            else if (layerHeight.isPercentOrCalculated())
-                tileSize.setHeight(valueForLength(layerHeight, positioningAreaSize.height()));
+        if (layerWidth.isFixed())
+            tileSize.setWidth(layerWidth.value());
+        else if (layerWidth.isPercentOrCalculated())
+            tileSize.setWidth(valueForLength(layerWidth, positioningAreaSize.width()));
+        
+        if (layerHeight.isFixed())
+            tileSize.setHeight(layerHeight.value());
+        else if (layerHeight.isPercentOrCalculated())
+            tileSize.setHeight(valueForLength(layerHeight, positioningAreaSize.height()));
 
-            // If one of the values is auto we have to use the appropriate
-            // scale to maintain our aspect ratio.
-            if (layerWidth.isAuto() && !layerHeight.isAuto()) {
-                if (imageIntrinsicSize.height())
-                    tileSize.setWidth(imageIntrinsicSize.width() * tileSize.height() / imageIntrinsicSize.height());
-            } else if (!layerWidth.isAuto() && layerHeight.isAuto()) {
-                if (imageIntrinsicSize.width())
-                    tileSize.setHeight(imageIntrinsicSize.height() * tileSize.width() / imageIntrinsicSize.width());
-            } else if (layerWidth.isAuto() && layerHeight.isAuto()) {
-                // If both width and height are auto, use the image's intrinsic size.
-                tileSize = imageIntrinsicSize;
-            }
-
-            tileSize.clampNegativeToZero();
-            return tileSize;
+        // If one of the values is auto we have to use the appropriate
+        // scale to maintain our aspect ratio.
+        if (layerWidth.isAuto() && !layerHeight.isAuto()) {
+            if (imageIntrinsicSize.height())
+                tileSize.setWidth(imageIntrinsicSize.width() * tileSize.height() / imageIntrinsicSize.height());
+        } else if (!layerWidth.isAuto() && layerHeight.isAuto()) {
+            if (imageIntrinsicSize.width())
+                tileSize.setHeight(imageIntrinsicSize.height() * tileSize.width() / imageIntrinsicSize.width());
+        } else if (layerWidth.isAuto() && layerHeight.isAuto()) {
+            // If both width and height are auto, use the image's intrinsic size.
+            tileSize = imageIntrinsicSize;
         }
-        case SizeNone: {
-            // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.
-            if (!imageIntrinsicSize.isEmpty())
-                return imageIntrinsicSize;
 
-            // If the image has neither an intrinsic width nor an intrinsic height, its size is determined as for ‘contain’.
-            type = Contain;
-        }
-        FALLTHROUGH;
-        case Contain:
-        case Cover: {
-            // Scale computation needs higher precision than what LayoutUnit can offer.
-            FloatSize localImageIntrinsicSize = imageIntrinsicSize;
-            FloatSize localPositioningAreaSize = positioningAreaSize;
+        tileSize.clampNegativeToZero();
+        return tileSize;
+    }
+    case FillSizeType::None: {
+        // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.
+        if (!imageIntrinsicSize.isEmpty())
+            return imageIntrinsicSize;
 
-            float horizontalScaleFactor = localImageIntrinsicSize.width() ? (localPositioningAreaSize.width() / localImageIntrinsicSize.width()) : 1;
-            float verticalScaleFactor = localImageIntrinsicSize.height() ? (localPositioningAreaSize.height() / localImageIntrinsicSize.height()) : 1;
-            float scaleFactor = type == Contain ? std::min(horizontalScaleFactor, verticalScaleFactor) : std::max(horizontalScaleFactor, verticalScaleFactor);
-            float deviceScaleFactor = document().deviceScaleFactor();
-            return LayoutSize(std::max<LayoutUnit>(1 / deviceScaleFactor, localImageIntrinsicSize.width() * scaleFactor),
-                std::max<LayoutUnit>(1 / deviceScaleFactor, localImageIntrinsicSize.height() * scaleFactor));
-       }
+        // If the image has neither an intrinsic width nor an intrinsic height, its size is determined as for ‘contain’.
+        type = FillSizeType::Contain;
+    }
+    FALLTHROUGH;
+    case FillSizeType::Contain:
+    case FillSizeType::Cover: {
+        // Scale computation needs higher precision than what LayoutUnit can offer.
+        FloatSize localImageIntrinsicSize = imageIntrinsicSize;
+        FloatSize localPositioningAreaSize = positioningAreaSize;
+
+        float horizontalScaleFactor = localImageIntrinsicSize.width() ? (localPositioningAreaSize.width() / localImageIntrinsicSize.width()) : 1;
+        float verticalScaleFactor = localImageIntrinsicSize.height() ? (localPositioningAreaSize.height() / localImageIntrinsicSize.height()) : 1;
+        float scaleFactor = type == FillSizeType::Contain ? std::min(horizontalScaleFactor, verticalScaleFactor) : std::max(horizontalScaleFactor, verticalScaleFactor);
+        float deviceScaleFactor = document().deviceScaleFactor();
+        return LayoutSize(std::max<LayoutUnit>(1 / deviceScaleFactor, localImageIntrinsicSize.width() * scaleFactor),
+            std::max<LayoutUnit>(1 / deviceScaleFactor, localImageIntrinsicSize.height() * scaleFactor));
+    }
     }
 
     ASSERT_NOT_REACHED();
@@ -1196,18 +1196,18 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
     // Destination rect will be adjusted later if the background is non-repeating.
     // FIXME: transforms spec says that fixed backgrounds behave like scroll inside transforms. https://bugs.webkit.org/show_bug.cgi?id=15679
     LayoutRect destinationRect(borderBoxRect);
-    bool fixedAttachment = fillLayer.attachment() == FixedBackgroundAttachment;
+    bool fixedAttachment = fillLayer.attachment() == FillAttachment::FixedBackground;
     float deviceScaleFactor = document().deviceScaleFactor();
     if (!fixedAttachment) {
         LayoutUnit right = 0;
         LayoutUnit bottom = 0;
         // Scroll and Local.
-        if (fillLayer.origin() != BorderFillBox) {
+        if (fillLayer.origin() != FillBox::Border) {
             left = borderLeft();
             right = borderRight();
             top = borderTop();
             bottom = borderBottom();
-            if (fillLayer.origin() == ContentFillBox) {
+            if (fillLayer.origin() == FillBox::Content) {
                 left += paddingLeft();
                 right += paddingRight();
                 top += paddingTop();
@@ -1281,8 +1281,8 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
     if (StyleImage* layerImage = fillLayer.image())
         layerImage->setContainerContextForRenderer(*clientForBackgroundImage, tileSize, style().effectiveZoom());
     
-    EFillRepeat backgroundRepeatX = fillLayer.repeatX();
-    EFillRepeat backgroundRepeatY = fillLayer.repeatY();
+    FillRepeat backgroundRepeatX = fillLayer.repeatX();
+    FillRepeat backgroundRepeatY = fillLayer.repeatY();
     LayoutUnit availableWidth = positioningAreaSize.width() - tileSize.width();
     LayoutUnit availableHeight = positioningAreaSize.height() - tileSize.height();
 
@@ -1290,9 +1290,9 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
     LayoutSize phase;
     LayoutSize noRepeat;
     LayoutUnit computedXPosition = resolveEdgeRelativeLength(fillLayer.xPosition(), fillLayer.backgroundXOrigin(), availableWidth, positioningAreaSize, tileSize);
-    if (backgroundRepeatX == RoundFill && positioningAreaSize.width() > 0 && tileSize.width() > 0) {
+    if (backgroundRepeatX == FillRepeat::Round && positioningAreaSize.width() > 0 && tileSize.width() > 0) {
         int numTiles = std::max(1, roundToInt(positioningAreaSize.width() / tileSize.width()));
-        if (fillLayer.size().size.height.isAuto() && backgroundRepeatY != RoundFill)
+        if (fillLayer.size().size.height.isAuto() && backgroundRepeatY != FillRepeat::Round)
             tileSize.setHeight(tileSize.height() * positioningAreaSize.width() / (numTiles * tileSize.width()));
 
         tileSize.setWidth(positioningAreaSize.width() / numTiles);
@@ -1300,19 +1300,19 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
     }
 
     LayoutUnit computedYPosition = resolveEdgeRelativeLength(fillLayer.yPosition(), fillLayer.backgroundYOrigin(), availableHeight, positioningAreaSize, tileSize);
-    if (backgroundRepeatY == RoundFill && positioningAreaSize.height() > 0 && tileSize.height() > 0) {
+    if (backgroundRepeatY == FillRepeat::Round && positioningAreaSize.height() > 0 && tileSize.height() > 0) {
         int numTiles = std::max(1, roundToInt(positioningAreaSize.height() / tileSize.height()));
-        if (fillLayer.size().size.width.isAuto() && backgroundRepeatX != RoundFill)
+        if (fillLayer.size().size.width.isAuto() && backgroundRepeatX != FillRepeat::Round)
             tileSize.setWidth(tileSize.width() * positioningAreaSize.height() / (numTiles * tileSize.height()));
 
         tileSize.setHeight(positioningAreaSize.height() / numTiles);
         phase.setHeight(tileSize.height() ? tileSize.height() - fmodf((computedYPosition + top), tileSize.height()) : 0);
     }
 
-    if (backgroundRepeatX == RepeatFill) {
+    if (backgroundRepeatX == FillRepeat::Repeat) {
         phase.setWidth(tileSize.width() ? tileSize.width() - fmodf(computedXPosition + left, tileSize.width()) : 0);
         spaceSize.setWidth(0);
-    } else if (backgroundRepeatX == SpaceFill && tileSize.width() > 0) {
+    } else if (backgroundRepeatX == FillRepeat::Space && tileSize.width() > 0) {
         LayoutUnit space = getSpace(positioningAreaSize.width(), tileSize.width());
         if (space >= 0) {
             LayoutUnit actualWidth = tileSize.width() + space;
@@ -1321,10 +1321,10 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
             spaceSize.setHeight(0);
             phase.setWidth(actualWidth ? actualWidth - fmodf((computedXPosition + left), actualWidth) : 0);
         } else
-            backgroundRepeatX = NoRepeatFill;
+            backgroundRepeatX = FillRepeat::NoRepeat;
     }
 
-    if (backgroundRepeatX == NoRepeatFill) {
+    if (backgroundRepeatX == FillRepeat::NoRepeat) {
         LayoutUnit xOffset = left + computedXPosition;
         if (xOffset > 0)
             destinationRect.move(xOffset, 0);
@@ -1334,10 +1334,10 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
         spaceSize.setWidth(0);
     }
 
-    if (backgroundRepeatY == RepeatFill) {
+    if (backgroundRepeatY == FillRepeat::Repeat) {
         phase.setHeight(tileSize.height() ? tileSize.height() - fmodf(computedYPosition + top, tileSize.height()) : 0);
         spaceSize.setHeight(0);
-    } else if (backgroundRepeatY == SpaceFill && tileSize.height() > 0) {
+    } else if (backgroundRepeatY == FillRepeat::Space && tileSize.height() > 0) {
         LayoutUnit space = getSpace(positioningAreaSize.height(), tileSize.height());
 
         if (space >= 0) {
@@ -1346,9 +1346,9 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
             spaceSize.setHeight(space);
             phase.setHeight(actualHeight ? actualHeight - fmodf((computedYPosition + top), actualHeight) : 0);
         } else
-            backgroundRepeatY = NoRepeatFill;
+            backgroundRepeatY = FillRepeat::NoRepeat;
     }
-    if (backgroundRepeatY == NoRepeatFill) {
+    if (backgroundRepeatY == FillRepeat::NoRepeat) {
         LayoutUnit yOffset = top + computedYPosition;
         if (yOffset > 0)
             destinationRect.move(0, yOffset);
@@ -1443,32 +1443,32 @@ static bool borderWillArcInnerEdge(const LayoutSize& firstRadius, const FloatSiz
     return !firstRadius.isZero() || !secondRadius.isZero();
 }
 
-inline bool styleRequiresClipPolygon(EBorderStyle style)
+inline bool styleRequiresClipPolygon(BorderStyle style)
 {
-    return style == DOTTED || style == DASHED; // These are drawn with a stroke, so we have to clip to get corner miters.
+    return style == BorderStyle::Dotted || style == BorderStyle::Dashed; // These are drawn with a stroke, so we have to clip to get corner miters.
 }
 
-static bool borderStyleFillsBorderArea(EBorderStyle style)
+static bool borderStyleFillsBorderArea(BorderStyle style)
 {
-    return !(style == DOTTED || style == DASHED || style == DOUBLE);
+    return !(style == BorderStyle::Dotted || style == BorderStyle::Dashed || style == BorderStyle::Double);
 }
 
-static bool borderStyleHasInnerDetail(EBorderStyle style)
+static bool borderStyleHasInnerDetail(BorderStyle style)
 {
-    return style == GROOVE || style == RIDGE || style == DOUBLE;
+    return style == BorderStyle::Groove || style == BorderStyle::Ridge || style == BorderStyle::Double;
 }
 
-static bool borderStyleIsDottedOrDashed(EBorderStyle style)
+static bool borderStyleIsDottedOrDashed(BorderStyle style)
 {
-    return style == DOTTED || style == DASHED;
+    return style == BorderStyle::Dotted || style == BorderStyle::Dashed;
 }
 
-// OUTSET darkens the bottom and right (and maybe lightens the top and left)
-// INSET darkens the top and left (and maybe lightens the bottom and right)
-static inline bool borderStyleHasUnmatchedColorsAtCorner(EBorderStyle style, BoxSide side, BoxSide adjacentSide)
+// BorderStyle::Outset darkens the bottom and right (and maybe lightens the top and left)
+// BorderStyle::Inset darkens the top and left (and maybe lightens the bottom and right)
+static inline bool borderStyleHasUnmatchedColorsAtCorner(BorderStyle style, BoxSide side, BoxSide adjacentSide)
 {
     // These styles match at the top/left and bottom/right.
-    if (style == INSET || style == GROOVE || style == RIDGE || style == OUTSET) {
+    if (style == BorderStyle::Inset || style == BorderStyle::Groove || style == BorderStyle::Ridge || style == BorderStyle::Outset) {
         const BorderEdgeFlags topRightFlags = edgeFlagForSide(BSTop) | edgeFlagForSide(BSRight);
         const BorderEdgeFlags bottomLeftFlags = edgeFlagForSide(BSBottom) | edgeFlagForSide(BSLeft);
 
@@ -1529,9 +1529,9 @@ static inline bool willBeOverdrawn(BoxSide side, BoxSide adjacentSide, const Bor
     return false;
 }
 
-static inline bool borderStylesRequireMitre(BoxSide side, BoxSide adjacentSide, EBorderStyle style, EBorderStyle adjacentStyle)
+static inline bool borderStylesRequireMitre(BoxSide side, BoxSide adjacentSide, BorderStyle style, BorderStyle adjacentStyle)
 {
-    if (style == DOUBLE || adjacentStyle == DOUBLE || adjacentStyle == GROOVE || adjacentStyle == RIDGE)
+    if (style == BorderStyle::Double || adjacentStyle == BorderStyle::Double || adjacentStyle == BorderStyle::Groove || adjacentStyle == BorderStyle::Ridge)
         return true;
 
     if (borderStyleIsDottedOrDashed(style) != borderStyleIsDottedOrDashed(adjacentStyle))
@@ -1858,10 +1858,10 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
         if (!currEdge.color().isOpaque())
             haveAlphaColor = true;
         
-        if (currEdge.style() != SOLID)
+        if (currEdge.style() != BorderStyle::Solid)
             haveAllSolidEdges = false;
 
-        if (currEdge.style() != DOUBLE)
+        if (currEdge.style() != BorderStyle::Double)
             haveAllDoubleEdges = false;
     }
 
@@ -1976,21 +1976,21 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
 }
 
 void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext& graphicsContext, const LayoutRect& borderRect, const Path& borderPath, const BorderEdge edges[],
-    float thickness, float drawThickness, BoxSide side, const RenderStyle& style, Color color, EBorderStyle borderStyle, BackgroundBleedAvoidance bleedAvoidance,
+    float thickness, float drawThickness, BoxSide side, const RenderStyle& style, Color color, BorderStyle borderStyle, BackgroundBleedAvoidance bleedAvoidance,
     bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
     if (thickness <= 0)
         return;
 
-    if (borderStyle == DOUBLE && thickness < 3)
-        borderStyle = SOLID;
+    if (borderStyle == BorderStyle::Double && thickness < 3)
+        borderStyle = BorderStyle::Solid;
 
     switch (borderStyle) {
-    case BNONE:
-    case BHIDDEN:
+    case BorderStyle::None:
+    case BorderStyle::Hidden:
         return;
-    case DOTTED:
-    case DASHED: {
+    case BorderStyle::Dotted:
+    case BorderStyle::Dashed: {
         graphicsContext.setStrokeColor(color);
 
         // The stroke is doubled here because the provided path is the 
@@ -1998,14 +1998,14 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext& graphicsContext,
         // The extra multiplier is so that the clipping mask can antialias
         // the edges to prevent jaggies.
         graphicsContext.setStrokeThickness(drawThickness * 2 * 1.1f);
-        graphicsContext.setStrokeStyle(borderStyle == DASHED ? DashedStroke : DottedStroke);
+        graphicsContext.setStrokeStyle(borderStyle == BorderStyle::Dashed ? DashedStroke : DottedStroke);
 
         // If the number of dashes that fit in the path is odd and non-integral then we
         // will have an awkwardly-sized dash at the end of the path. To try to avoid that
         // here, we simply make the whitespace dashes ever so slightly bigger.
         // FIXME: This could be even better if we tried to manipulate the dash offset
         // and possibly the gapLength to get the corners dash-symmetrical.
-        float dashLength = thickness * ((borderStyle == DASHED) ? 3.0f : 1.0f);
+        float dashLength = thickness * ((borderStyle == BorderStyle::Dashed) ? 3.0f : 1.0f);
         float gapLength = dashLength;
         float numberOfDashes = borderPath.length() / dashLength;
         // Don't try to show dashes if we have less than 2 dashes + 2 gaps.
@@ -2030,7 +2030,7 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext& graphicsContext,
         graphicsContext.strokePath(borderPath);
         return;
     }
-    case DOUBLE: {
+    case BorderStyle::Double: {
         // Get the inner border rects for both the outer border line and the inner border line
         LayoutUnit outerBorderTopWidth;
         LayoutUnit innerBorderTopWidth;
@@ -2056,7 +2056,7 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext& graphicsContext,
                 includeLogicalLeftEdge, includeLogicalRightEdge);
             
             graphicsContext.clipRoundedRect(FloatRoundedRect(innerClip));
-            drawBoxSideFromPath(graphicsContext, borderRect, borderPath, edges, thickness, drawThickness, side, style, color, SOLID, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge);
+            drawBoxSideFromPath(graphicsContext, borderRect, borderPath, edges, thickness, drawThickness, side, style, color, BorderStyle::Solid, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge);
         }
 
         // Draw outer border line
@@ -2075,21 +2075,21 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext& graphicsContext,
                 outerBorderTopWidth, outerBorderBottomWidth, outerBorderLeftWidth, outerBorderRightWidth,
                 includeLogicalLeftEdge, includeLogicalRightEdge);
             graphicsContext.clipOutRoundedRect(FloatRoundedRect(outerClip));
-            drawBoxSideFromPath(graphicsContext, borderRect, borderPath, edges, thickness, drawThickness, side, style, color, SOLID, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge);
+            drawBoxSideFromPath(graphicsContext, borderRect, borderPath, edges, thickness, drawThickness, side, style, color, BorderStyle::Solid, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge);
         }
         return;
     }
-    case RIDGE:
-    case GROOVE:
+    case BorderStyle::Ridge:
+    case BorderStyle::Groove:
     {
-        EBorderStyle s1;
-        EBorderStyle s2;
-        if (borderStyle == GROOVE) {
-            s1 = INSET;
-            s2 = OUTSET;
+        BorderStyle s1;
+        BorderStyle s2;
+        if (borderStyle == BorderStyle::Groove) {
+            s1 = BorderStyle::Inset;
+            s2 = BorderStyle::Outset;
         } else {
-            s1 = OUTSET;
-            s2 = INSET;
+            s1 = BorderStyle::Outset;
+            s2 = BorderStyle::Inset;
         }
         
         // Paint full border
@@ -2110,8 +2110,8 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext& graphicsContext,
         drawBoxSideFromPath(graphicsContext, borderRect, borderPath, edges, thickness, drawThickness, side, style, color, s2, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge);
         return;
     }
-    case INSET:
-    case OUTSET:
+    case BorderStyle::Inset:
+    case BorderStyle::Outset:
         calculateBorderStyleColor(borderStyle, side, color);
         break;
     default:
@@ -2305,7 +2305,7 @@ bool RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(const LayoutPoin
     while (auto* next = lastBackgroundLayer->next())
         lastBackgroundLayer = next;
 
-    if (lastBackgroundLayer->clip() != BorderFillBox)
+    if (lastBackgroundLayer->clip() != FillBox::Border)
         return false;
 
     if (lastBackgroundLayer->image() && style().hasBorderRadius())
@@ -2314,7 +2314,7 @@ bool RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(const LayoutPoin
     if (inlineFlowBox && !inlineFlowBox->boxShadowCanBeAppliedToBackground(*lastBackgroundLayer))
         return false;
 
-    if (hasOverflowClip() && lastBackgroundLayer->attachment() == LocalBackgroundAttachment)
+    if (hasOverflowClip() && lastBackgroundLayer->attachment() == FillAttachment::LocalBackground)
         return false;
 
     return true;

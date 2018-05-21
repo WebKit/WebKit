@@ -954,13 +954,13 @@ bool Position::hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&
 
 bool Position::nodeIsUserSelectNone(Node* node)
 {
-    return node && node->renderer() && node->renderer()->style().userSelect() == SELECT_NONE;
+    return node && node->renderer() && node->renderer()->style().userSelect() == UserSelect::None;
 }
 
 #if ENABLE(USERSELECT_ALL)
 bool Position::nodeIsUserSelectAll(const Node* node)
 {
-    return node && node->renderer() && node->renderer()->style().userSelect() == SELECT_ALL;
+    return node && node->renderer() && node->renderer()->style().userSelect() == UserSelect::All;
 }
 
 Node* Position::rootUserSelectAllForNode(Node* node)

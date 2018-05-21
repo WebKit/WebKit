@@ -187,7 +187,7 @@ void RenderSVGResourceContainer::registerResource()
         auto* renderer = client->renderer();
         if (!renderer)
             continue;
-        SVGResourcesCache::clientStyleChanged(*renderer, StyleDifferenceLayout, renderer->style());
+        SVGResourcesCache::clientStyleChanged(*renderer, StyleDifference::Layout, renderer->style());
         renderer->setNeedsLayout();
     }
 }

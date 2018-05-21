@@ -109,12 +109,12 @@ public:
 
     const ContainingBlockInfo& containingBlockInfo(RenderBlock& block) const
     {
-        EPosition position = block.style().position();
-        if (position == FixedPosition) {
+        auto position = block.style().position();
+        if (position == PositionType::Fixed) {
             ASSERT(block.containingBlock() == m_containingBlockForFixedPosition.block());
             return m_containingBlockForFixedPosition;
         }
-        if (position == AbsolutePosition) {
+        if (position == PositionType::Absolute) {
             ASSERT(block.containingBlock() == m_containingBlockForAbsolutePosition.block());
             return m_containingBlockForAbsolutePosition;
         }

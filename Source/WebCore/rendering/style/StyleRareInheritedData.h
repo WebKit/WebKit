@@ -90,13 +90,13 @@ public:
     unsigned hasAutoWidows : 1;
     unsigned hasAutoOrphans : 1;
     
-    unsigned textSecurity : 2; // ETextSecurity
-    unsigned userModify : 2; // EUserModify (editing)
-    unsigned wordBreak : 2; // EWordBreak
-    unsigned overflowWrap : 1; // EOverflowWrap
-    unsigned nbspMode : 1; // ENBSPMode
+    unsigned textSecurity : 2; // TextSecurity
+    unsigned userModify : 2; // UserModify (editing)
+    unsigned wordBreak : 2; // WordBreak
+    unsigned overflowWrap : 1; // OverflowWrap
+    unsigned nbspMode : 1; // NBSPMode
     unsigned lineBreak : 3; // LineBreak
-    unsigned userSelect : 2; // EUserSelect
+    unsigned userSelect : 2; // UserSelect
     unsigned colorSpace : 1; // ColorSpace
     unsigned speakAs : 4; // ESpeakAs
     unsigned hyphens : 2; // Hyphens
@@ -113,7 +113,7 @@ public:
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     unsigned imageOrientation : 4; // ImageOrientationEnum
 #endif
-    unsigned imageRendering : 3; // EImageRendering
+    unsigned imageRendering : 3; // ImageRendering
     unsigned lineSnap : 2; // LineSnap
     unsigned lineAlign : 1; // LineAlign
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)

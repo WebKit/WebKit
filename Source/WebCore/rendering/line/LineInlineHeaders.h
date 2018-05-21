@@ -73,7 +73,7 @@ inline bool shouldCollapseWhiteSpace(const RenderStyle* style, const LineInfo& l
 
 inline bool skipNonBreakingSpace(const InlineIterator& it, const LineInfo& lineInfo)
 {
-    if (it.renderer()->style().nbspMode() != SPACE || it.current() != noBreakSpace)
+    if (it.renderer()->style().nbspMode() != NBSPMode::Space || it.current() != noBreakSpace)
         return false;
 
     // FIXME: This is bad. It makes nbsp inconsistent with space and won't work correctly

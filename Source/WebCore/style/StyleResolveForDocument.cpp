@@ -67,7 +67,7 @@ RenderStyle resolveForDocument(const Document& document)
     documentStyle.setFontDescription(WTFMove(documentFontDescription));
 
     // This overrides any -webkit-user-modify inherited from the parent iframe.
-    documentStyle.setUserModify(document.inDesignMode() ? READ_WRITE : READ_ONLY);
+    documentStyle.setUserModify(document.inDesignMode() ? UserModify::ReadWrite : UserModify::ReadOnly);
 #if PLATFORM(IOS)
     if (document.inDesignMode())
         documentStyle.setTextSizeAdjust(TextSizeAdjustment(NoTextSizeAdjustment));

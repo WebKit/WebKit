@@ -775,7 +775,7 @@ ControlStates::States RenderTheme::extractControlStatesForRenderer(const RenderO
         if (isSpinUpButtonPartPressed(o))
             states |= ControlStates::SpinUpState;
     }
-    if (isFocused(o) && o.style().outlineStyleIsAuto())
+    if (isFocused(o) && o.style().outlineStyleIsAuto() == OutlineIsAuto::On)
         states |= ControlStates::FocusState;
     if (isEnabled(o))
         states |= ControlStates::EnabledState;

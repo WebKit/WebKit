@@ -154,10 +154,10 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
 #endif
     m_inheritedFlags.direction = initialDirection();
     m_inheritedFlags.whiteSpace = initialWhiteSpace();
-    m_inheritedFlags.borderCollapse = initialBorderCollapse();
+    m_inheritedFlags.borderCollapse = static_cast<unsigned>(initialBorderCollapse());
     m_inheritedFlags.rtlOrdering = initialRTLOrdering();
-    m_inheritedFlags.boxDirection = initialBoxDirection();
-    m_inheritedFlags.printColorAdjust = initialPrintColorAdjust();
+    m_inheritedFlags.boxDirection = static_cast<unsigned>(initialBoxDirection());
+    m_inheritedFlags.printColorAdjust = static_cast<unsigned>(initialPrintColorAdjust());
     m_inheritedFlags.pointerEvents = initialPointerEvents();
     m_inheritedFlags.insideLink = NotInsideLink;
     m_inheritedFlags.insideDefaultButton = false;
@@ -165,14 +165,14 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
 
     m_nonInheritedFlags.effectiveDisplay = initialDisplay();
     m_nonInheritedFlags.originalDisplay = initialDisplay();
-    m_nonInheritedFlags.overflowX = initialOverflowX();
-    m_nonInheritedFlags.overflowY = initialOverflowY();
-    m_nonInheritedFlags.verticalAlign = initialVerticalAlign();
-    m_nonInheritedFlags.clear = initialClear();
-    m_nonInheritedFlags.position = initialPosition();
+    m_nonInheritedFlags.overflowX = static_cast<unsigned>(initialOverflowX());
+    m_nonInheritedFlags.overflowY = static_cast<unsigned>(initialOverflowY());
+    m_nonInheritedFlags.verticalAlign = static_cast<unsigned>(initialVerticalAlign());
+    m_nonInheritedFlags.clear = static_cast<unsigned>(initialClear());
+    m_nonInheritedFlags.position = static_cast<unsigned>(initialPosition());
     m_nonInheritedFlags.unicodeBidi = initialUnicodeBidi();
-    m_nonInheritedFlags.floating = initialFloating();
-    m_nonInheritedFlags.tableLayout = initialTableLayout();
+    m_nonInheritedFlags.floating = static_cast<unsigned>(initialFloating());
+    m_nonInheritedFlags.tableLayout = static_cast<unsigned>(initialTableLayout());
     m_nonInheritedFlags.hasExplicitlySetDirection = false;
     m_nonInheritedFlags.hasExplicitlySetWritingMode = false;
     m_nonInheritedFlags.hasExplicitlySetTextAlign = false;
@@ -237,8 +237,8 @@ RenderStyle RenderStyle::replace(RenderStyle&& newStyle)
 
 static StyleSelfAlignmentData resolvedSelfAlignment(const StyleSelfAlignmentData& value, ItemPosition normalValueBehavior)
 {
-    if (value.position() == ItemPositionLegacy || value.position() == ItemPositionNormal || value.position() == ItemPositionAuto)
-        return { normalValueBehavior, OverflowAlignmentDefault };
+    if (value.position() == ItemPosition::Legacy || value.position() == ItemPosition::Normal || value.position() == ItemPosition::Auto)
+        return { normalValueBehavior, OverflowAlignment::Default };
     return value;
 }
 
@@ -251,7 +251,7 @@ StyleSelfAlignmentData RenderStyle::resolvedAlignSelf(const RenderStyle* parentS
 {
     // The auto keyword computes to the parent's align-items computed value.
     // We will return the behaviour of 'normal' value if needed, which is specific of each layout model.
-    if (!parentStyle || alignSelf().position() != ItemPositionAuto)
+    if (!parentStyle || alignSelf().position() != ItemPosition::Auto)
         return resolvedSelfAlignment(alignSelf(), normalValueBehaviour);
     return parentStyle->resolvedAlignItems(normalValueBehaviour);
 }
@@ -265,14 +265,14 @@ StyleSelfAlignmentData RenderStyle::resolvedJustifySelf(const RenderStyle* paren
 {
     // The auto keyword computes to the parent's justify-items computed value.
     // We will return the behaviour of 'normal' value if needed, which is specific of each layout model.
-    if (!parentStyle || justifySelf().position() != ItemPositionAuto)
+    if (!parentStyle || justifySelf().position() != ItemPosition::Auto)
         return resolvedSelfAlignment(justifySelf(), normalValueBehaviour);
     return parentStyle->resolvedJustifyItems(normalValueBehaviour);
 }
 
 static inline StyleContentAlignmentData resolvedContentAlignment(const StyleContentAlignmentData& value, const StyleContentAlignmentData& normalValueBehavior)
 {
-    return (value.position() == ContentPositionNormal && value.distribution() == ContentDistributionDefault) ? normalValueBehavior : value;
+    return (value.position() == ContentPosition::Normal && value.distribution() == ContentDistribution::Default) ? normalValueBehavior : value;
 }
 
 StyleContentAlignmentData RenderStyle::resolvedAlignContent(const StyleContentAlignmentData& normalValueBehavior) const
@@ -289,12 +289,12 @@ StyleContentAlignmentData RenderStyle::resolvedJustifyContent(const StyleContent
 
 static inline ContentPosition resolvedContentAlignmentPosition(const StyleContentAlignmentData& value, const StyleContentAlignmentData& normalValueBehavior)
 {
-    return (value.position() == ContentPositionNormal && value.distribution() == ContentDistributionDefault) ? normalValueBehavior.position() : value.position();
+    return (value.position() == ContentPosition::Normal && value.distribution() == ContentDistribution::Default) ? normalValueBehavior.position() : value.position();
 }
 
-static inline ContentDistributionType resolvedContentAlignmentDistribution(const StyleContentAlignmentData& value, const StyleContentAlignmentData& normalValueBehavior)
+static inline ContentDistribution resolvedContentAlignmentDistribution(const StyleContentAlignmentData& value, const StyleContentAlignmentData& normalValueBehavior)
 {
-    return (value.position() == ContentPositionNormal && value.distribution() == ContentDistributionDefault) ? normalValueBehavior.distribution() : value.distribution();
+    return (value.position() == ContentPosition::Normal && value.distribution() == ContentDistribution::Default) ? normalValueBehavior.distribution() : value.distribution();
 }
 
 ContentPosition RenderStyle::resolvedJustifyContentPosition(const StyleContentAlignmentData& normalValueBehavior) const
@@ -302,7 +302,7 @@ ContentPosition RenderStyle::resolvedJustifyContentPosition(const StyleContentAl
     return resolvedContentAlignmentPosition(justifyContent(), normalValueBehavior);
 }
 
-ContentDistributionType RenderStyle::resolvedJustifyContentDistribution(const StyleContentAlignmentData& normalValueBehavior) const
+ContentDistribution RenderStyle::resolvedJustifyContentDistribution(const StyleContentAlignmentData& normalValueBehavior) const
 {
     return resolvedContentAlignmentDistribution(justifyContent(), normalValueBehavior);
 }
@@ -312,7 +312,7 @@ ContentPosition RenderStyle::resolvedAlignContentPosition(const StyleContentAlig
     return resolvedContentAlignmentPosition(alignContent(), normalValueBehavior);
 }
 
-ContentDistributionType RenderStyle::resolvedAlignContentDistribution(const StyleContentAlignmentData& normalValueBehavior) const
+ContentDistribution RenderStyle::resolvedAlignContentDistribution(const StyleContentAlignmentData& normalValueBehavior) const
 {
     return resolvedContentAlignmentDistribution(alignContent(), normalValueBehavior);
 }
@@ -550,7 +550,7 @@ inline bool RenderStyle::changeAffectsVisualOverflow(const RenderStyle& other) c
     return false;
 }
 
-bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& changedContextSensitiveProperties) const
+bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const
 {
     if (m_boxData->width() != other.m_boxData->width()
         || m_boxData->minWidth() != other.m_boxData->minWidth()
@@ -613,7 +613,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
             if (m_rareNonInheritedData->transform->hasTransform() != other.m_rareNonInheritedData->transform->hasTransform())
                 return true;
             if (*m_rareNonInheritedData->transform != *other.m_rareNonInheritedData->transform) {
-                changedContextSensitiveProperties |= ContextSensitivePropertyTransform;
+                changedContextSensitiveProperties |= StyleDifferenceContextSensitiveProperty::Transform;
                 // Don't return; keep looking for another change
             }
         }
@@ -629,7 +629,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
 #endif
 
         if (!arePointingToEqualData(m_rareNonInheritedData->willChange, other.m_rareNonInheritedData->willChange)) {
-            changedContextSensitiveProperties |= ContextSensitivePropertyWillChange;
+            changedContextSensitiveProperties |= StyleDifferenceContextSensitiveProperty::WillChange;
             // Don't return; keep looking for another change
         }
     }
@@ -716,14 +716,14 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
         // In the collapsing border model, 'hidden' suppresses other borders, while 'none'
         // does not, so these style differences can be width differences.
         if (m_inheritedFlags.borderCollapse
-            && ((borderTopStyle() == BHIDDEN && other.borderTopStyle() == BNONE)
-                || (borderTopStyle() == BNONE && other.borderTopStyle() == BHIDDEN)
-                || (borderBottomStyle() == BHIDDEN && other.borderBottomStyle() == BNONE)
-                || (borderBottomStyle() == BNONE && other.borderBottomStyle() == BHIDDEN)
-                || (borderLeftStyle() == BHIDDEN && other.borderLeftStyle() == BNONE)
-                || (borderLeftStyle() == BNONE && other.borderLeftStyle() == BHIDDEN)
-                || (borderRightStyle() == BHIDDEN && other.borderRightStyle() == BNONE)
-                || (borderRightStyle() == BNONE && other.borderRightStyle() == BHIDDEN)))
+            && ((borderTopStyle() == BorderStyle::Hidden && other.borderTopStyle() == BorderStyle::None)
+                || (borderTopStyle() == BorderStyle::None && other.borderTopStyle() == BorderStyle::Hidden)
+                || (borderBottomStyle() == BorderStyle::Hidden && other.borderBottomStyle() == BorderStyle::None)
+                || (borderBottomStyle() == BorderStyle::None && other.borderBottomStyle() == BorderStyle::Hidden)
+                || (borderLeftStyle() == BorderStyle::Hidden && other.borderLeftStyle() == BorderStyle::None)
+                || (borderLeftStyle() == BorderStyle::None && other.borderLeftStyle() == BorderStyle::Hidden)
+                || (borderRightStyle() == BorderStyle::Hidden && other.borderRightStyle() == BorderStyle::None)
+                || (borderRightStyle() == BorderStyle::None && other.borderRightStyle() == BorderStyle::Hidden)))
             return true;
     }
 
@@ -795,12 +795,12 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
     if (!arePointingToEqualData(m_rareInheritedData->quotes, other.m_rareInheritedData->quotes))
         return true;
 
-    if (position() != StaticPosition) {
+    if (position() != PositionType::Static) {
         if (m_surroundData->offset != other.m_surroundData->offset) {
             // FIXME: We would like to use SimplifiedLayout for relative positioning, but we can't quite do that yet.
             // We need to make sure SimplifiedLayout can operate correctly on RenderInlines (we will need
             // to add a selfNeedsSimplifiedLayout bit in order to not get confused and taint every line).
-            if (position() != AbsolutePosition)
+            if (position() != PositionType::Absolute)
                 return true;
 
             // Optimize for the case where a positioned layer is moving but not changing size.
@@ -827,29 +827,29 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
     return false;
 }
 
-bool RenderStyle::changeRequiresPositionedLayoutOnly(const RenderStyle& other, unsigned&) const
+bool RenderStyle::changeRequiresPositionedLayoutOnly(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>&) const
 {
-    if (position() == StaticPosition)
+    if (position() == PositionType::Static)
         return false;
 
     if (m_surroundData->offset != other.m_surroundData->offset) {
         // Optimize for the case where a positioned layer is moving but not changing size.
-        if (position() == AbsolutePosition && positionChangeIsMovementOnly(m_surroundData->offset, other.m_surroundData->offset, m_boxData->width()))
+        if (position() == PositionType::Absolute && positionChangeIsMovementOnly(m_surroundData->offset, other.m_surroundData->offset, m_boxData->width()))
             return true;
     }
     
     return false;
 }
 
-bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle& other, unsigned& changedContextSensitiveProperties) const
+bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const
 {
     // StyleResolver has ensured that zIndex is non-auto only if it's applicable.
     if (m_boxData->zIndex() != other.m_boxData->zIndex() || m_boxData->hasAutoZIndex() != other.m_boxData->hasAutoZIndex())
         return true;
 
-    if (position() != StaticPosition) {
+    if (position() != PositionType::Static) {
         if (m_visualData->clip != other.m_visualData->clip || m_visualData->hasClip != other.m_visualData->hasClip) {
-            changedContextSensitiveProperties |= ContextSensitivePropertyClipRect;
+            changedContextSensitiveProperties |= StyleDifferenceContextSensitiveProperty::ClipRect;
             return true;
         }
     }
@@ -860,18 +860,18 @@ bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle& other, unsigned&
 #endif
 
     if (m_rareNonInheritedData->opacity != other.m_rareNonInheritedData->opacity) {
-        changedContextSensitiveProperties |= ContextSensitivePropertyOpacity;
+        changedContextSensitiveProperties |= StyleDifferenceContextSensitiveProperty::Opacity;
         // Don't return; keep looking for another change.
     }
 
     if (m_rareNonInheritedData->filter != other.m_rareNonInheritedData->filter) {
-        changedContextSensitiveProperties |= ContextSensitivePropertyFilter;
+        changedContextSensitiveProperties |= StyleDifferenceContextSensitiveProperty::Filter;
         // Don't return; keep looking for another change.
     }
 
 #if ENABLE(FILTERS_LEVEL_2)
     if (m_rareNonInheritedData->backdropFilter != other.m_rareNonInheritedData->backdropFilter) {
-        changedContextSensitiveProperties |= ContextSensitivePropertyFilter;
+        changedContextSensitiveProperties |= StyleDifferenceContextSensitiveProperty::Filter;
         // Don't return; keep looking for another change.
     }
 #endif
@@ -892,7 +892,7 @@ static bool requiresPainting(const RenderStyle& style)
     return true;
 }
 
-bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, unsigned& changedContextSensitiveProperties) const
+bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const
 {
     if (!requiresPainting(*this) && !requiresPainting(other))
         return false;
@@ -921,14 +921,14 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, unsigned& chan
 
     // FIXME: this should probably be moved to changeRequiresLayerRepaint().
     if (m_rareNonInheritedData->clipPath != other.m_rareNonInheritedData->clipPath) {
-        changedContextSensitiveProperties |= ContextSensitivePropertyClipPath;
+        changedContextSensitiveProperties |= StyleDifferenceContextSensitiveProperty::ClipPath;
         // Don't return; keep looking for another change.
     }
 
     return false;
 }
 
-bool RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline(const RenderStyle& other, unsigned&) const
+bool RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>&) const
 {
     if (m_inheritedData->color != other.m_inheritedData->color
         || m_inheritedFlags.textDecorations != other.m_inheritedFlags.textDecorations
@@ -947,7 +947,7 @@ bool RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline(const RenderStyle
     return false;
 }
 
-bool RenderStyle::changeRequiresRecompositeLayer(const RenderStyle& other, unsigned&) const
+bool RenderStyle::changeRequiresRecompositeLayer(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>&) const
 {
     if (m_rareNonInheritedData.ptr() != other.m_rareNonInheritedData.ptr()) {
         if (m_rareNonInheritedData->transformStyle3D != other.m_rareNonInheritedData->transformStyle3D
@@ -961,59 +961,59 @@ bool RenderStyle::changeRequiresRecompositeLayer(const RenderStyle& other, unsig
     return false;
 }
 
-StyleDifference RenderStyle::diff(const RenderStyle& other, unsigned& changedContextSensitiveProperties) const
+StyleDifference RenderStyle::diff(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const
 {
-    changedContextSensitiveProperties = ContextSensitivePropertyNone;
+    changedContextSensitiveProperties = OptionSet<StyleDifferenceContextSensitiveProperty>();
 
-    StyleDifference svgChange = StyleDifferenceEqual;
+    StyleDifference svgChange = StyleDifference::Equal;
     if (m_svgStyle != other.m_svgStyle) {
         svgChange = m_svgStyle->diff(other.m_svgStyle.get());
-        if (svgChange == StyleDifferenceLayout)
+        if (svgChange == StyleDifference::Layout)
             return svgChange;
     }
 
     if (changeRequiresLayout(other, changedContextSensitiveProperties))
-        return StyleDifferenceLayout;
+        return StyleDifference::Layout;
 
-    // SVGRenderStyle::diff() might have returned StyleDifferenceRepaint, eg. if fill changes.
-    // If eg. the font-size changed at the same time, we're not allowed to return StyleDifferenceRepaint,
-    // but have to return StyleDifferenceLayout, that's why  this if branch comes after all branches
-    // that are relevant for SVG and might return StyleDifferenceLayout.
-    if (svgChange != StyleDifferenceEqual)
+    // SVGRenderStyle::diff() might have returned StyleDifference::Repaint, eg. if fill changes.
+    // If eg. the font-size changed at the same time, we're not allowed to return StyleDifference::Repaint,
+    // but have to return StyleDifference::Layout, that's why  this if branch comes after all branches
+    // that are relevant for SVG and might return StyleDifference::Layout.
+    if (svgChange != StyleDifference::Equal)
         return svgChange;
 
     if (changeRequiresPositionedLayoutOnly(other, changedContextSensitiveProperties))
-        return StyleDifferenceLayoutPositionedMovementOnly;
+        return StyleDifference::LayoutPositionedMovementOnly;
 
     if (changeRequiresLayerRepaint(other, changedContextSensitiveProperties))
-        return StyleDifferenceRepaintLayer;
+        return StyleDifference::RepaintLayer;
 
     if (changeRequiresRepaint(other, changedContextSensitiveProperties))
-        return StyleDifferenceRepaint;
+        return StyleDifference::Repaint;
 
     if (changeRequiresRecompositeLayer(other, changedContextSensitiveProperties))
-        return StyleDifferenceRecompositeLayer;
+        return StyleDifference::RecompositeLayer;
 
     if (changeRequiresRepaintIfTextOrBorderOrOutline(other, changedContextSensitiveProperties))
-        return StyleDifferenceRepaintIfTextOrBorderOrOutline;
+        return StyleDifference::RepaintIfTextOrBorderOrOutline;
 
     // Cursors are not checked, since they will be set appropriately in response to mouse events,
     // so they don't need to cause any repaint or layout.
 
     // Animations don't need to be checked either.  We always set the new style on the RenderObject, so we will get a chance to fire off
     // the resulting transition properly.
-    return StyleDifferenceEqual;
+    return StyleDifference::Equal;
 }
 
 bool RenderStyle::diffRequiresLayerRepaint(const RenderStyle& style, bool isComposited) const
 {
-    unsigned changedContextSensitiveProperties = 0;
+    OptionSet<StyleDifferenceContextSensitiveProperty> changedContextSensitiveProperties;
 
     if (changeRequiresRepaint(style, changedContextSensitiveProperties))
         return true;
 
     if (isComposited && changeRequiresLayerRepaint(style, changedContextSensitiveProperties))
-        return changedContextSensitiveProperties & ContextSensitivePropertyClipRect;
+        return changedContextSensitiveProperties.contains(StyleDifferenceContextSensitiveProperty::ClipRect);
 
     return false;
 }
@@ -1323,7 +1323,7 @@ RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect, 
 static bool allLayersAreFixed(const FillLayer& layers)
 {
     for (auto* layer = &layers; layer; layer = layer->next()) {
-        if (!(layer->image() && layer->attachment() == FixedBackgroundAttachment))
+        if (!(layer->image() && layer->attachment() == FillAttachment::FixedBackground))
             return false;
     }
     return true;
@@ -1761,7 +1761,7 @@ void RenderStyle::getShadowVerticalExtent(const ShadowData* shadow, LayoutUnit &
 Color RenderStyle::colorIncludingFallback(CSSPropertyID colorProperty, bool visitedLink) const
 {
     Color result;
-    EBorderStyle borderStyle = BNONE;
+    BorderStyle borderStyle = BorderStyle::None;
     switch (colorProperty) {
     case CSSPropertyBackgroundColor:
         return visitedLink ? visitedLinkBackgroundColor() : backgroundColor(); // Background color doesn't fall back.
@@ -1814,7 +1814,7 @@ Color RenderStyle::colorIncludingFallback(CSSPropertyID colorProperty, bool visi
     }
 
     if (!result.isValid()) {
-        if (!visitedLink && (borderStyle == INSET || borderStyle == OUTSET || borderStyle == RIDGE || borderStyle == GROOVE))
+        if (!visitedLink && (borderStyle == BorderStyle::Inset || borderStyle == BorderStyle::Outset || borderStyle == BorderStyle::Ridge || borderStyle == BorderStyle::Groove))
             result = Color(238, 238, 238);
         else
             result = visitedLink ? visitedLinkColor() : color();
@@ -2063,7 +2063,7 @@ void RenderStyle::setColumnStylesFromPaginationMode(const Pagination::Mode& pagi
     if (paginationMode == Pagination::Unpaginated)
         return;
     
-    setColumnFill(ColumnFillAuto);
+    setColumnFill(ColumnFill::Auto);
     
     switch (paginationMode) {
     case Pagination::LeftToRightPaginated:
@@ -2286,18 +2286,18 @@ void RenderStyle::checkVariablesInCustomProperties()
 
 float RenderStyle::outlineWidth() const
 {
-    if (m_backgroundData->outline.style() == BNONE)
+    if (m_backgroundData->outline.style() == BorderStyle::None)
         return 0;
-    if (outlineStyleIsAuto())
+    if (outlineStyleIsAuto() == OutlineIsAuto::On)
         return std::max(m_backgroundData->outline.width(), RenderTheme::platformFocusRingWidth());
     return m_backgroundData->outline.width();
 }
 
 float RenderStyle::outlineOffset() const
 {
-    if (m_backgroundData->outline.style() == BNONE)
+    if (m_backgroundData->outline.style() == BorderStyle::None)
         return 0;
-    if (outlineStyleIsAuto())
+    if (outlineStyleIsAuto() == OutlineIsAuto::On)
         return (m_backgroundData->outline.offset() + RenderTheme::platformFocusRingOffset(outlineWidth()));
     return m_backgroundData->outline.offset();
 }

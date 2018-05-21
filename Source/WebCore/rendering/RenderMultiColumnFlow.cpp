@@ -135,7 +135,7 @@ void RenderMultiColumnFlow::layout()
 
 bool RenderMultiColumnFlow::isColumnSpanningDescendant(const RenderBox& descendantBox) const
 {
-    return descendantBox.style().columnSpan() == ColumnSpanAll;
+    return descendantBox.style().columnSpan() == ColumnSpan::All;
 }
 
 void RenderMultiColumnFlow::addFragmentToThread(RenderFragmentContainer* RenderFragmentContainer)

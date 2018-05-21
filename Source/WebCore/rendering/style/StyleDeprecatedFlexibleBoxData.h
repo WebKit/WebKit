@@ -44,10 +44,10 @@ public:
     unsigned flexGroup;
     unsigned ordinalGroup;
 
-    unsigned align : 3; // EBoxAlignment
-    unsigned pack: 2; // EBoxPack
-    unsigned orient: 1; // EBoxOrient
-    unsigned lines : 1; // EBoxLines
+    unsigned align : 3; // BoxAlignment
+    unsigned pack: 2; // BoxPack
+    unsigned orient: 1; // BoxOrient
+    unsigned lines : 1; // BoxLines
 
 private:
     StyleDeprecatedFlexibleBoxData();

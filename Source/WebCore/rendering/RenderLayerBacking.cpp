@@ -981,9 +981,9 @@ void RenderLayerBacking::updateGeometry()
     m_owningLayer.updateDescendantDependentFlags();
 
     // FIXME: reflections should force transform-style to be flat in the style: https://bugs.webkit.org/show_bug.cgi?id=106959
-    bool preserves3D = style.transformStyle3D() == TransformStyle3DPreserve3D && !renderer().hasReflection();
+    bool preserves3D = style.transformStyle3D() == TransformStyle3D::Preserve3D && !renderer().hasReflection();
     m_graphicsLayer->setPreserves3D(preserves3D);
-    m_graphicsLayer->setBackfaceVisibility(style.backfaceVisibility() == BackfaceVisibilityVisible);
+    m_graphicsLayer->setBackfaceVisibility(style.backfaceVisibility() == BackfaceVisibility::Visible);
 
     auto* compositedAncestor = m_owningLayer.ancestorCompositingLayer();
     LayoutSize ancestorClippingLayerOffset;
@@ -1840,7 +1840,7 @@ static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderStyle& sty
     if (!fillLayer.imagesAreLoaded())
         return false;
 
-    if (fillLayer.attachment() != ScrollBackgroundAttachment)
+    if (fillLayer.attachment() != FillAttachment::ScrollBackground)
         return false;
 
     // FIXME: Allow color+image compositing when it makes sense.
@@ -2047,7 +2047,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer(PaintedContentsInfo& 
     if (contentsInfo.paintsBoxDecorations() || contentsInfo.paintsContent())
         return false;
 
-    if (renderer().style().backgroundClip() == TextFillBox)
+    if (renderer().style().backgroundClip() == FillBox::Text)
         return false;
     
     if (renderer().isDocumentElementRenderer() && m_owningLayer.isolatesCompositedBlending())
@@ -2324,11 +2324,11 @@ LayoutRect RenderLayerBacking::contentsBox() const
 static LayoutRect backgroundRectForBox(const RenderBox& box)
 {
     switch (box.style().backgroundClip()) {
-    case BorderFillBox:
+    case FillBox::Border:
         return box.borderBoxRect();
-    case PaddingFillBox:
+    case FillBox::Padding:
         return box.paddingBoxRect();
-    case ContentFillBox:
+    case FillBox::Content:
         return box.contentBoxRect();
     default:
         break;

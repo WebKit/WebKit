@@ -58,9 +58,9 @@ private:
 
     LayoutUnit allowedChildFlex(RenderBox* child, bool expanding, unsigned group);
 
-    bool hasMultipleLines() const { return style().boxLines() == MULTIPLE; }
-    bool isVertical() const { return style().boxOrient() == VERTICAL; }
-    bool isHorizontal() const { return style().boxOrient() == HORIZONTAL; }
+    bool hasMultipleLines() const { return style().boxLines() == BoxLines::Multiple; }
+    bool isVertical() const { return style().boxOrient() == BoxOrient::Vertical; }
+    bool isHorizontal() const { return style().boxOrient() == BoxOrient::Horizontal; }
 
     void applyLineClamp(FlexBoxIterator&, bool relayoutChildren);
     void clearLineClamp();

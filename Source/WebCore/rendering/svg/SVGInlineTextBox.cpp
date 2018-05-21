@@ -605,12 +605,12 @@ void SVGInlineTextBox::paintText(GraphicsContext& context, const RenderStyle& st
 
     // Draw text using selection style from the start to the end position of the selection
     if (style != selectionStyle)
-        SVGResourcesCache::clientStyleChanged(parent()->renderer(), StyleDifferenceRepaint, selectionStyle);
+        SVGResourcesCache::clientStyleChanged(parent()->renderer(), StyleDifference::Repaint, selectionStyle);
 
     paintTextWithShadows(context, selectionStyle, textRun, fragment, startPosition, endPosition);
 
     if (style != selectionStyle)
-        SVGResourcesCache::clientStyleChanged(parent()->renderer(), StyleDifferenceRepaint, style);
+        SVGResourcesCache::clientStyleChanged(parent()->renderer(), StyleDifference::Repaint, style);
 
     // Eventually draw text using regular style from the end position of the selection to the end of the current chunk part
     if (endPosition < fragment.length && !paintSelectedTextOnly)

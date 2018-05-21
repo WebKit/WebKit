@@ -100,7 +100,7 @@ void RenderSVGModelObject::willBeDestroyed()
 
 void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    if (diff == StyleDifferenceLayout) {
+    if (diff == StyleDifference::Layout) {
         setNeedsBoundariesUpdate();
         if (style().hasTransform())
             setNeedsTransformUpdate();

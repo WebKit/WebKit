@@ -883,7 +883,7 @@ RefPtr<Range> Frame::rangeForPoint(const IntPoint& framePoint)
 
     Position deepPosition = position.deepEquivalent();
     Text* containerText = deepPosition.containerText();
-    if (!containerText || !containerText->renderer() || containerText->renderer()->style().userSelect() == SELECT_NONE)
+    if (!containerText || !containerText->renderer() || containerText->renderer()->style().userSelect() == UserSelect::None)
         return nullptr;
 
     VisiblePosition previous = position.previous();

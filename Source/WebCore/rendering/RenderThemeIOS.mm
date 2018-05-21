@@ -603,7 +603,7 @@ static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputEle
     if (maximumWidth > 0) {
         int width = static_cast<int>(maximumWidth + MenuListButtonPaddingAfter);
         style.setWidth(Length(width, Fixed));
-        style.setBoxSizing(CONTENT_BOX);
+        style.setBoxSizing(BoxSizing::ContentBox);
     }
 }
 

@@ -110,19 +110,19 @@ RetainPtr<NSDictionary> Editor::fontAttributesForSelectionStart() const
 
     int superscriptInt = 0;
     switch (style->verticalAlign()) {
-    case BASELINE:
-    case BOTTOM:
-    case BASELINE_MIDDLE:
-    case LENGTH:
-    case MIDDLE:
-    case TEXT_BOTTOM:
-    case TEXT_TOP:
-    case TOP:
+    case VerticalAlign::Baseline:
+    case VerticalAlign::Bottom:
+    case VerticalAlign::BaselineMiddle:
+    case VerticalAlign::Length:
+    case VerticalAlign::Middle:
+    case VerticalAlign::TextBottom:
+    case VerticalAlign::TextTop:
+    case VerticalAlign::Top:
         break;
-    case SUB:
+    case VerticalAlign::Sub:
         superscriptInt = -1;
         break;
-    case SUPER:
+    case VerticalAlign::Super:
         superscriptInt = 1;
         break;
     }

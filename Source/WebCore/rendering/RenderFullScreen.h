@@ -46,7 +46,7 @@ public:
     static void wrapExistingRenderer(RenderElement&, Document&);
     void unwrapRenderer(bool& requiresRenderTreeRebuild);
 
-    ItemPosition selfAlignmentNormalBehavior(const RenderBox* = nullptr) const override { return ItemPositionCenter; }
+    ItemPosition selfAlignmentNormalBehavior(const RenderBox* = nullptr) const override { return ItemPosition::Center; }
     
 private:
     bool isRenderFullScreen() const override { return true; }

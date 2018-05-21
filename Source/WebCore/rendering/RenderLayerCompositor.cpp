@@ -881,9 +881,9 @@ static bool checkIfDescendantClippingContextNeedsUpdate(const RenderLayer& layer
 }
 
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
-static bool isScrollableOverflow(EOverflow overflow)
+static bool isScrollableOverflow(Overflow overflow)
 {
-    return overflow == OSCROLL || overflow == OAUTO || overflow == OOVERLAY;
+    return overflow == Overflow::Scroll || overflow == Overflow::Auto || overflow == Overflow::Overlay;
 }
 
 static bool styleHasTouchScrolling(const RenderStyle& style)
@@ -919,8 +919,8 @@ static bool styleChangeRequiresLayerRebuild(const RenderLayer& layer, const Rend
 
     // Compositing layers keep track of whether they are clipped by any of the ancestors.
     // When the current layer's clipping behaviour changes, we need to propagate it to the descendants.
-    bool wasClipping = oldStyle.hasClip() || oldStyle.overflowX() != OVISIBLE || oldStyle.overflowY() != OVISIBLE;
-    bool isClipping = newStyle.hasClip() || newStyle.overflowX() != OVISIBLE || newStyle.overflowY() != OVISIBLE;
+    bool wasClipping = oldStyle.hasClip() || oldStyle.overflowX() != Overflow::Visible || oldStyle.overflowY() != Overflow::Visible;
+    bool isClipping = newStyle.hasClip() || newStyle.overflowX() != Overflow::Visible || newStyle.overflowY() != Overflow::Visible;
     if (isClipping != wasClipping) {
         if (checkIfDescendantClippingContextNeedsUpdate(layer, isClipping))
             return true;
@@ -931,7 +931,7 @@ static bool styleChangeRequiresLayerRebuild(const RenderLayer& layer, const Rend
 
 void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer& layer, const RenderStyle* oldStyle)
 {
-    if (diff == StyleDifferenceEqual)
+    if (diff == StyleDifference::Equal)
         return;
 
     const RenderStyle& newStyle = layer.renderer().style();
@@ -2129,7 +2129,7 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
     else if (requiresCompositingForFrame(renderer))
         reasons |= CompositingReason::IFrame;
 
-    if ((canRender3DTransforms() && renderer.style().backfaceVisibility() == BackfaceVisibilityHidden))
+    if ((canRender3DTransforms() && renderer.style().backfaceVisibility() == BackfaceVisibility::Hidden))
         reasons |= CompositingReason::BackfaceVisibilityHidden;
 
     if (clipsCompositingDescendants(*renderer.layer()))
@@ -2371,15 +2371,15 @@ bool RenderLayerCompositor::requiresCompositingForBackfaceVisibility(RenderLayer
     if (!(m_compositingTriggers & ChromeClient::ThreeDTransformTrigger))
         return false;
 
-    if (renderer.style().backfaceVisibility() != BackfaceVisibilityHidden)
+    if (renderer.style().backfaceVisibility() != BackfaceVisibility::Hidden)
         return false;
-        
+
     if (renderer.layer()->has3DTransformedAncestor())
         return true;
     
     // FIXME: workaround for webkit.org/b/132801
     auto* stackingContext = renderer.layer()->stackingContainer();
-    if (stackingContext && stackingContext->renderer().style().transformStyle3D() == TransformStyle3DPreserve3D)
+    if (stackingContext && stackingContext->renderer().style().transformStyle3D() == TransformStyle3D::Preserve3D)
         return true;
 
     return false;
@@ -2506,7 +2506,7 @@ bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderLayerMode
     // A layer with preserve-3d or perspective only needs to be composited if there are descendant layers that
     // will be affected by the preserve-3d or perspective.
     if (has3DTransformedDescendants) {
-        if (renderer.style().transformStyle3D() == TransformStyle3DPreserve3D) {
+        if (renderer.style().transformStyle3D() == TransformStyle3D::Preserve3D) {
             reason = RenderLayer::IndirectCompositingReason::Preserve3D;
             return true;
         }
@@ -2600,7 +2600,7 @@ bool RenderLayerCompositor::isViewportConstrainedFixedOrStickyLayer(const Render
     if (layer.renderer().isStickilyPositioned())
         return isAsyncScrollableStickyLayer(layer);
 
-    if (layer.renderer().style().position() != FixedPosition)
+    if (layer.renderer().style().position() != PositionType::Fixed)
         return false;
 
     // FIXME: Handle fixed inside of a transform, which should not behave as fixed.
@@ -2628,12 +2628,12 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
     if (!renderer.isPositioned())
         return false;
     
-    EPosition position = renderer.style().position();
-    bool isFixed = renderer.isOutOfFlowPositioned() && position == FixedPosition;
+    auto position = renderer.style().position();
+    bool isFixed = renderer.isOutOfFlowPositioned() && position == PositionType::Fixed;
     if (isFixed && !layer.isStackingContainer())
         return false;
     
-    bool isSticky = renderer.isInFlowPositioned() && position == StickyPosition;
+    bool isSticky = renderer.isInFlowPositioned() && position == PositionType::Sticky;
     if (!isFixed && !isSticky)
         return false;
 
@@ -3491,7 +3491,7 @@ bool RenderLayerCompositor::layerHas3DContent(const RenderLayer& layer) const
 {
     const RenderStyle& style = layer.renderer().style();
 
-    if (style.transformStyle3D() == TransformStyle3DPreserve3D || style.hasPerspective() || style.transform().has3DOperation())
+    if (style.transformStyle3D() == TransformStyle3D::Preserve3D || style.hasPerspective() || style.transform().has3DOperation())
         return true;
 
     const_cast<RenderLayer&>(layer).updateLayerListsIfNeeded();
@@ -3787,7 +3787,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Lay
         ScrollingNodeType nodeType = MainFrameScrollingNode;
         if (layer.renderer().isFixedPositioned())
             nodeType = FixedNode;
-        else if (layer.renderer().style().position() == StickyPosition)
+        else if (layer.renderer().style().position() == PositionType::Sticky)
             nodeType = StickyNode;
         else
             ASSERT_NOT_REACHED();

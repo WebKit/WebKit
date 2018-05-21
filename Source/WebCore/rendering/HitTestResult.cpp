@@ -277,7 +277,7 @@ String HitTestResult::innerTextIfTruncated(TextDirection& dir) const
         if (auto renderer = downcast<Element>(*truncatedNode).renderer()) {
             if (is<RenderBlockFlow>(*renderer)) {
                 RenderBlockFlow& block = downcast<RenderBlockFlow>(*renderer);
-                if (block.style().textOverflow()) {
+                if (block.style().textOverflow() == TextOverflow::Ellipsis) {
                     for (RootInlineBox* line = block.firstRootBox(); line; line = line->nextRootBox()) {
                         if (line->hasEllipsisBox()) {
                             dir = block.style().direction();

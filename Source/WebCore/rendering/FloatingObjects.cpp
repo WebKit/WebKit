@@ -51,11 +51,11 @@ FloatingObject::FloatingObject(RenderBox& renderer)
     , m_isInPlacedTree(false)
 #endif
 {
-    EFloat type = renderer.style().floating();
-    ASSERT(type != NoFloat);
-    if (type == LeftFloat)
+    Float type = renderer.style().floating();
+    ASSERT(type != Float::No);
+    if (type == Float::Left)
         m_type = FloatLeft;
-    else if (type == RightFloat)
+    else if (type == Float::Right)
         m_type = FloatRight;
 }
 

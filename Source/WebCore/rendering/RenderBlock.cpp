@@ -385,20 +385,20 @@ void RenderBlock::removePositionedObjectsIfNeeded(const RenderStyle& oldStyle, c
     }
 
     // We are no longer the containing block for absolute positioned descendants.
-    if (newStyle.position() == StaticPosition && !willHaveTransform) {
+    if (newStyle.position() == PositionType::Static && !willHaveTransform) {
         // Our positioned descendants will be inserted into a new containing block's positioned objects list during the next layout.
         removePositionedObjects(nullptr, NewContainingBlock);
         return;
     }
 
     // We are a new containing block.
-    if (oldStyle.position() == StaticPosition && !hadTransform) {
+    if (oldStyle.position() == PositionType::Static && !hadTransform) {
         // Remove our absolutely positioned descendants from their current containing block.
         // They will be inserted into our positioned objects list during layout.
         auto* containingBlock = parent();
         while (containingBlock && !is<RenderView>(*containingBlock)
-            && (containingBlock->style().position() == StaticPosition || (containingBlock->isInline() && !containingBlock->isReplaced()))) {
-            if (containingBlock->style().position() == RelativePosition && containingBlock->isInline() && !containingBlock->isReplaced()) {
+            && (containingBlock->style().position() == PositionType::Static || (containingBlock->isInline() && !containingBlock->isReplaced()))) {
+            if (containingBlock->style().position() == PositionType::Relative && containingBlock->isInline() && !containingBlock->isReplaced()) {
                 containingBlock = containingBlock->containingBlock();
                 break;
             }
@@ -445,7 +445,7 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
 
     // It's possible for our border/padding to change, but for the overall logical width of the block to
     // end up being the same. We keep track of this change so in layoutBlock, we can know to set relayoutChildren=true.
-    setShouldForceRelayoutChildren(oldStyle && diff == StyleDifferenceLayout && needsLayout() && borderOrPaddingLogicalWidthChanged(*oldStyle, style()));
+    setShouldForceRelayoutChildren(oldStyle && diff == StyleDifference::Layout && needsLayout() && borderOrPaddingLogicalWidthChanged(*oldStyle, style()));
 }
 
 RenderPtr<RenderBlock> RenderBlock::clone() const
@@ -498,7 +498,7 @@ bool RenderBlock::isSelfCollapsingBlock() const
     if (logicalHeight() > 0
         || isTable() || borderAndPaddingLogicalHeight()
         || style().logicalMinHeight().isPositive()
-        || style().marginBeforeCollapse() == MSEPARATE || style().marginAfterCollapse() == MSEPARATE)
+        || style().marginBeforeCollapse() == MarginCollapse::Separate || style().marginAfterCollapse() == MarginCollapse::Separate)
         return false;
 
     Length logicalHeightLength = style().logicalHeight();
@@ -728,7 +728,7 @@ void RenderBlock::addOverflowFromPositionedObjects()
         RenderBox* positionedObject = *it;
         
         // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
-        if (positionedObject->style().position() != FixedPosition)
+        if (positionedObject->style().position() != PositionType::Fixed)
             addOverflowFromChild(positionedObject, { positionedObject->x(), positionedObject->y() });
     }
 }
@@ -935,7 +935,7 @@ bool RenderBlock::simplifiedLayout()
 
 void RenderBlock::markFixedPositionObjectForLayoutIfNeeded(RenderBox& positionedChild)
 {
-    if (positionedChild.style().position() != FixedPosition)
+    if (positionedChild.style().position() != PositionType::Fixed)
         return;
 
     bool hasStaticBlockPosition = positionedChild.style().hasStaticBlockPosition(isHorizontalWritingMode());
@@ -944,9 +944,9 @@ void RenderBlock::markFixedPositionObjectForLayoutIfNeeded(RenderBox& positioned
         return;
 
     auto* parent = positionedChild.parent();
-    while (parent && !is<RenderView>(*parent) && parent->style().position() != AbsolutePosition)
+    while (parent && !is<RenderView>(*parent) && parent->style().position() != PositionType::Absolute)
         parent = parent->parent();
-    if (!parent || parent->style().position() != AbsolutePosition)
+    if (!parent || parent->style().position() != PositionType::Absolute)
         return;
 
     if (hasStaticInlinePosition) {
@@ -1390,7 +1390,7 @@ bool RenderBlock::isSelectionRoot() const
         || isPositioned() || isFloating()
         || isTableCell() || isInlineBlockOrInlineTable()
         || hasTransform() || hasReflection() || hasMask() || isWritingModeRoot()
-        || isRenderFragmentedFlow() || style().columnSpan() == ColumnSpanAll)
+        || isRenderFragmentedFlow() || style().columnSpan() == ColumnSpan::All)
         return true;
     
     if (view().selection().start()) {
@@ -1509,7 +1509,7 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
     if (!isRenderBlockFlow()) // FIXME: Make multi-column selection gap filling work someday.
         return result;
 
-    if (hasTransform() || style().columnSpan() == ColumnSpanAll || isInFlowRenderFragmentedFlow()) {
+    if (hasTransform() || style().columnSpan() == ColumnSpan::All || isInFlowRenderFragmentedFlow()) {
         // FIXME: We should learn how to gap fill multiple columns and transforms eventually.
         lastLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + logicalHeight();
         lastLogicalLeft = logicalLeftSelectionOffset(rootBlock, logicalHeight(), cache);
@@ -2284,11 +2284,11 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
         const RenderStyle& childStyle = child->style();
         if (child->isFloating() || (is<RenderBox>(*child) && downcast<RenderBox>(*child).avoidsFloats())) {
             LayoutUnit floatTotalWidth = floatLeftWidth + floatRightWidth;
-            if (childStyle.clear() & CLEFT) {
+            if (childStyle.clear() == Clear::Left || childStyle.clear() == Clear::Both) {
                 maxLogicalWidth = std::max(floatTotalWidth, maxLogicalWidth);
                 floatLeftWidth = 0;
             }
-            if (childStyle.clear() & CRIGHT) {
+            if (childStyle.clear() == Clear::Right || childStyle.clear() == Clear::Both) {
                 maxLogicalWidth = std::max(floatTotalWidth, maxLogicalWidth);
                 floatRightWidth = 0;
             }
@@ -2339,7 +2339,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
         }
         
         if (child->isFloating()) {
-            if (childStyle.floating() == LeftFloat)
+            if (childStyle.floating() == Float::Left)
                 floatLeftWidth += w;
             else
                 floatRightWidth += w;
@@ -3434,7 +3434,7 @@ LayoutUnit RenderBlock::adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit heig
     // Shouldn't height:100px mean the fieldset content gets 100px of height even if the
     // resulting fieldset becomes much taller because of the legend?
     LayoutUnit bordersPlusPadding = borderAndPaddingLogicalHeight();
-    if (style().boxSizing() == CONTENT_BOX)
+    if (style().boxSizing() == BoxSizing::ContentBox)
         return height + bordersPlusPadding - intrinsicBorderForFieldset();
     return std::max(height, bordersPlusPadding);
 }
@@ -3447,7 +3447,7 @@ LayoutUnit RenderBlock::adjustContentBoxLogicalHeightForBoxSizing(std::optional<
     if (!height)
         return 0;
     LayoutUnit result = height.value();
-    if (style().boxSizing() == BORDER_BOX)
+    if (style().boxSizing() == BoxSizing::BorderBox)
         result -= borderAndPaddingLogicalHeight();
     else
         result -= intrinsicBorderForFieldset();

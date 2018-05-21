@@ -110,7 +110,7 @@ TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& line
 
     bool forceBackgroundToWhite = false;
     if (frame.document() && frame.document()->printing()) {
-        if (lineStyle.printColorAdjust() == PrintColorAdjustEconomy)
+        if (lineStyle.printColorAdjust() == PrintColorAdjust::Economy)
             forceBackgroundToWhite = true;
         if (frame.settings().shouldPrintBackgrounds())
             forceBackgroundToWhite = false;

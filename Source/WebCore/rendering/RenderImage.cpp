@@ -225,12 +225,12 @@ void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         m_needsToSetSizeForAltText = false;
     }
 #if ENABLE(CSS_IMAGE_ORIENTATION)
-    if (diff == StyleDifferenceLayout && oldStyle->imageOrientation() != style().imageOrientation())
+    if (diff == StyleDifference::Layout && oldStyle->imageOrientation() != style().imageOrientation())
         return repaintOrMarkForLayout(ImageSizeChangeNone);
 #endif
 
 #if ENABLE(CSS_IMAGE_RESOLUTION)
-    if (diff == StyleDifferenceLayout
+    if (diff == StyleDifference::Layout
         && (oldStyle->imageResolution() != style().imageResolution()
             || oldStyle->imageResolutionSnap() != style().imageResolutionSnap()
             || oldStyle->imageResolutionSource() != style().imageResolutionSource()))
@@ -618,16 +618,16 @@ bool RenderImage::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
         return false;
     if (!contentBoxRect().contains(localRect))
         return false;
-    EFillBox backgroundClip = style().backgroundClip();
+    FillBox backgroundClip = style().backgroundClip();
     // Background paints under borders.
-    if (backgroundClip == BorderFillBox && style().hasBorder() && !borderObscuresBackground())
+    if (backgroundClip == FillBox::Border && style().hasBorder() && !borderObscuresBackground())
         return false;
     // Background shows in padding area.
-    if ((backgroundClip == BorderFillBox || backgroundClip == PaddingFillBox) && style().hasPadding())
+    if ((backgroundClip == FillBox::Border || backgroundClip == FillBox::Padding) && style().hasPadding())
         return false;
     // Object-fit may leave parts of the content box empty.
     ObjectFit objectFit = style().objectFit();
-    if (objectFit != ObjectFitFill && objectFit != ObjectFitCover)
+    if (objectFit != ObjectFit::Fill && objectFit != ObjectFit::Cover)
         return false;
 
     LengthPoint objectPosition = style().objectPosition();

@@ -34,7 +34,7 @@ void LineBreaker::reset()
 {
     m_positionedObjects.clear();
     m_hyphenated = false;
-    m_clear = CNONE;
+    m_clear = Clear::None;
 }
 
 // FIXME: The entire concept of the skipTrailingWhitespace function is flawed, since we really need to be building

@@ -1053,7 +1053,7 @@ RefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point, con
         return nullptr;
 
     RenderObject* renderer = bestChoice->renderer();
-    if (!renderer || renderer->style().userSelect() == SELECT_NONE)
+    if (!renderer || renderer->style().userSelect() == UserSelect::None)
         return nullptr;
 
     if (renderer->childrenInline() && (is<RenderBlock>(*renderer) && !downcast<RenderBlock>(*renderer).inlineContinuation()) && !renderer->isTable()) {
@@ -2165,7 +2165,7 @@ void WebPage::getPositionInformation(const InteractionInformationRequest& reques
                 if (attachment.file())
                     info.url = URL::fileURLWithFileSystemPath(downcast<HTMLAttachmentElement>(*hitNode).file()->path());
             } else {
-                info.isSelectable = renderer->style().userSelect() != SELECT_NONE;
+                info.isSelectable = renderer->style().userSelect() != UserSelect::None;
                 if (info.isSelectable && !hitNode->isTextNode())
                     info.isSelectable = !isAssistableElement(*downcast<Element>(hitNode)) && !rectIsTooBigForSelection(info.bounds, *result.innerNodeFrame());
             }

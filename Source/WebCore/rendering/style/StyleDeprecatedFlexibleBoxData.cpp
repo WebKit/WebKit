@@ -30,10 +30,10 @@ StyleDeprecatedFlexibleBoxData::StyleDeprecatedFlexibleBoxData()
     : flex(RenderStyle::initialBoxFlex())
     , flexGroup(RenderStyle::initialBoxFlexGroup())
     , ordinalGroup(RenderStyle::initialBoxOrdinalGroup())
-    , align(RenderStyle::initialBoxAlign())
-    , pack(RenderStyle::initialBoxPack())
-    , orient(RenderStyle::initialBoxOrient())
-    , lines(RenderStyle::initialBoxLines())
+    , align(static_cast<unsigned>(RenderStyle::initialBoxAlign()))
+    , pack(static_cast<unsigned>(RenderStyle::initialBoxPack()))
+    , orient(static_cast<unsigned>(RenderStyle::initialBoxOrient()))
+    , lines(static_cast<unsigned>(RenderStyle::initialBoxLines()))
 {
 }
 

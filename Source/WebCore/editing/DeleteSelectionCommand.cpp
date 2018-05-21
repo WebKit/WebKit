@@ -900,7 +900,7 @@ void DeleteSelectionCommand::doApply()
         if (is<Text>(node)) {
             Text& textNode = downcast<Text>(*node);
             if (textNode.length() && textNode.renderer())
-                shouldRebalaceWhiteSpace = textNode.renderer()->style().textSecurity() == TSNONE;
+                shouldRebalaceWhiteSpace = textNode.renderer()->style().textSecurity() == TextSecurity::None;
         }        
     }
     if (shouldRebalaceWhiteSpace)

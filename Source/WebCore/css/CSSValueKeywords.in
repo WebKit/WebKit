@@ -11,7 +11,7 @@ revert
 // CSS_PROP_BORDER_TOP_STYLE
 // CSS_PROP_BORDER_BOTTOM_STYLE
 // CSS_PROP_BORDER_LEFT_STYLE
-// The order here must match the order of the EBorderStyle enum in RenderStyleConstants.h.
+// The order here must match the order of the BorderStyle enum in RenderStyleConstants.h.
 none
 hidden
 inset

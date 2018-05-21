@@ -126,7 +126,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
             if (child->renderer().isLineBreak() || child->renderer().parent() != &renderer()) {
                 if (!parentStyle.fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().fontMetrics())
                     || parentStyle.lineHeight() != childStyle.lineHeight()
-                    || (parentStyle.verticalAlign() != BASELINE && !isRootInlineBox()) || childStyle.verticalAlign() != BASELINE)
+                    || (parentStyle.verticalAlign() != VerticalAlign::Baseline && !isRootInlineBox()) || childStyle.verticalAlign() != VerticalAlign::Baseline)
                     shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
             }
             if (childStyle.hasTextCombine() || childStyle.textEmphasisMark() != TextEmphasisMarkNone)
@@ -142,7 +142,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
                 if (!childFlowBox.descendantsHaveSameLineHeightAndBaseline()
                     || !parentStyle.fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().fontMetrics())
                     || parentStyle.lineHeight() != childStyle.lineHeight()
-                    || (parentStyle.verticalAlign() != BASELINE && !isRootInlineBox()) || childStyle.verticalAlign() != BASELINE
+                    || (parentStyle.verticalAlign() != VerticalAlign::Baseline && !isRootInlineBox()) || childStyle.verticalAlign() != VerticalAlign::Baseline
                     || childStyle.hasBorder() || childStyle.hasPadding() || childStyle.hasTextCombine())
                     shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
             }
@@ -313,7 +313,7 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLogically
         const auto& lineBoxList = inlineFlow.lineBoxes();
         if (!lineBoxList.firstLineBox()->isConstructed() && !inlineFlow.isContinuation()) {
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
-            if (renderer().style().boxDecorationBreak() == DCLONE)
+            if (renderer().style().boxDecorationBreak() == BoxDecorationBreak::Clone)
                 includeLeftEdge = includeRightEdge = true;
             else
 #endif
@@ -332,7 +332,7 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLogically
             // (3) The logicallyLastRun is a descendant of this renderer, but it is the last child of this renderer and it does not wrap to the next line.
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
             // (4) The decoration break is set to clone therefore there will be borders on every sides.
-            if (renderer().style().boxDecorationBreak() == DCLONE)
+            if (renderer().style().boxDecorationBreak() == BoxDecorationBreak::Clone)
                 includeLeftEdge = includeRightEdge = true;
             else
 #endif
@@ -492,9 +492,9 @@ void InlineFlowBox::adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent, i
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
 
-        if ((child->verticalAlign() == TOP || child->verticalAlign() == BOTTOM) && verticalAlignApplies(child->renderer())) {
+        if ((child->verticalAlign() == VerticalAlign::Top || child->verticalAlign() == VerticalAlign::Bottom) && verticalAlignApplies(child->renderer())) {
             int lineHeight = child->lineHeight();
-            if (child->verticalAlign() == TOP) {
+            if (child->verticalAlign() == VerticalAlign::Top) {
                 if (maxAscent + maxDescent < lineHeight)
                     maxDescent = lineHeight - maxAscent;
             }
@@ -575,10 +575,10 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox& rootBox, LayoutUnit&
         rootBox.ascentAndDescentForBox(*child, textBoxDataMap, ascent, descent, affectsAscent, affectsDescent);
 
         LayoutUnit boxHeight = ascent + descent;
-        if (child->verticalAlign() == TOP && verticalAlignApplies(child->renderer())) {
+        if (child->verticalAlign() == VerticalAlign::Top && verticalAlignApplies(child->renderer())) {
             if (maxPositionTop < boxHeight)
                 maxPositionTop = boxHeight;
-        } else if (child->verticalAlign() == BOTTOM && verticalAlignApplies(child->renderer())) {
+        } else if (child->verticalAlign() == VerticalAlign::Bottom && verticalAlignApplies(child->renderer())) {
             if (maxPositionBottom < boxHeight)
                 maxPositionBottom = boxHeight;
         } else if (!inlineFlowBox || strictMode || inlineFlowBox->hasTextChildren() || (inlineFlowBox->descendantsHaveSameLineHeightAndBaseline() && inlineFlowBox->hasTextDescendants())
@@ -639,9 +639,9 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
         InlineFlowBox* inlineFlowBox = is<InlineFlowBox>(*child) ? downcast<InlineFlowBox>(child) : nullptr;
         bool childAffectsTopBottomPos = true;
 
-        if (child->verticalAlign() == TOP && verticalAlignApplies(child->renderer()))
+        if (child->verticalAlign() == VerticalAlign::Top && verticalAlignApplies(child->renderer()))
             child->setLogicalTop(top);
-        else if (child->verticalAlign() == BOTTOM && verticalAlignApplies(child->renderer()))
+        else if (child->verticalAlign() == VerticalAlign::Bottom && verticalAlignApplies(child->renderer()))
             child->setLogicalTop(top + maxHeight - child->lineHeight());
         else {
             if (!strictMode && inlineFlowBox && !inlineFlowBox->hasTextChildren() && !inlineFlowBox->renderer().hasInlineDirectionBordersOrPadding()
@@ -1236,7 +1236,7 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& colo
     if ((!hasFillImage && !renderer().style().hasBorderRadius()) || (!prevLineBox() && !nextLineBox()) || !parent())
         renderer().paintFillLayerExtended(paintInfo, color, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
-    else if (renderer().style().boxDecorationBreak() == DCLONE) {
+    else if (renderer().style().boxDecorationBreak() == BoxDecorationBreak::Clone) {
         GraphicsContextStateSaver stateSaver(paintInfo.context());
         paintInfo.context().clip(LayoutRect(rect.x(), rect.y(), width(), height()));
         renderer().paintFillLayerExtended(paintInfo, color, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);

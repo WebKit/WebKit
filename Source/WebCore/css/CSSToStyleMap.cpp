@@ -83,13 +83,13 @@ void CSSToStyleMap::mapFillAttachment(CSSPropertyID propertyID, FillLayer& layer
 
     switch (downcast<CSSPrimitiveValue>(value).valueID()) {
     case CSSValueFixed:
-        layer.setAttachment(FixedBackgroundAttachment);
+        layer.setAttachment(FillAttachment::FixedBackground);
         break;
     case CSSValueScroll:
-        layer.setAttachment(ScrollBackgroundAttachment);
+        layer.setAttachment(FillAttachment::ScrollBackground);
         break;
     case CSSValueLocal:
-        layer.setAttachment(LocalBackgroundAttachment);
+        layer.setAttachment(FillAttachment::LocalBackground);
         break;
     default:
         return;
@@ -208,13 +208,13 @@ void CSSToStyleMap::mapFillSize(CSSPropertyID propertyID, FillLayer& layer, cons
     FillSize fillSize;
     switch (primitiveValue.valueID()) {
     case CSSValueContain:
-        fillSize.type = Contain;
+        fillSize.type = FillSizeType::Contain;
         break;
     case CSSValueCover:
-        fillSize.type = Cover;
+        fillSize.type = FillSizeType::Cover;
         break;
     default:
-        ASSERT(fillSize.type == SizeLength);
+        ASSERT(fillSize.type == FillSizeType::Size);
         if (!convertToLengthSize(primitiveValue, m_resolver->state().cssToLengthConversionData(), fillSize.size))
             return;
         break;
@@ -272,7 +272,7 @@ void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer& layer,
 
 void CSSToStyleMap::mapFillMaskSourceType(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
 {
-    EMaskSourceType type = FillLayer::initialFillMaskSourceType(layer.type());
+    MaskSourceType type = FillLayer::initialFillMaskSourceType(layer.type());
     if (value.treatAsInitialValue(propertyID)) {
         layer.setMaskSourceType(type);
         return;
@@ -283,10 +283,10 @@ void CSSToStyleMap::mapFillMaskSourceType(CSSPropertyID propertyID, FillLayer& l
 
     switch (downcast<CSSPrimitiveValue>(value).valueID()) {
     case CSSValueAlpha:
-        type = EMaskSourceType::MaskAlpha;
+        type = MaskSourceType::Alpha;
         break;
     case CSSValueLuminance:
-        type = EMaskSourceType::MaskLuminance;
+        type = MaskSourceType::Luminance;
         break;
     case CSSValueAuto:
         break;

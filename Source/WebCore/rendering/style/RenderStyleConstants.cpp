@@ -30,56 +30,69 @@
 
 namespace WebCore {
 
-TextStream& operator<<(TextStream& ts, EFillSizeType sizeType)
+TextStream& operator<<(TextStream& ts, ImageRendering imageRendering)
 {
-    switch (sizeType) {
-    case Contain: ts << "contain"; break;
-    case Cover: ts << "cover"; break;
-    case SizeLength: ts << "size-length"; break;
-    case SizeNone: ts << "size-none"; break;
+    switch (imageRendering) {
+    case ImageRendering::Auto: ts << "auto"; break;
+    case ImageRendering::OptimizeSpeed: ts << "optimizeSpeed"; break;
+    case ImageRendering::OptimizeQuality: ts << "optimizeQuality"; break;
+    case ImageRendering::CrispEdges: ts << "crispEdges"; break;
+    case ImageRendering::Pixelated: ts << "pixelated"; break;
     }
     
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, EFillAttachment attachment)
+TextStream& operator<<(TextStream& ts, FillSizeType sizeType)
+{
+    switch (sizeType) {
+    case FillSizeType::Contain: ts << "contain"; break;
+    case FillSizeType::Cover: ts << "cover"; break;
+    case FillSizeType::Size: ts << "size-length"; break;
+    case FillSizeType::None: ts << "size-none"; break;
+    }
+    
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, FillAttachment attachment)
 {
     switch (attachment) {
-    case ScrollBackgroundAttachment: ts << "scroll"; break;
-    case LocalBackgroundAttachment: ts << "local"; break;
-    case FixedBackgroundAttachment: ts << "fixed"; break;
+    case FillAttachment::ScrollBackground: ts << "scroll"; break;
+    case FillAttachment::LocalBackground: ts << "local"; break;
+    case FillAttachment::FixedBackground: ts << "fixed"; break;
     }
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, EFillBox fill)
+TextStream& operator<<(TextStream& ts, FillBox fill)
 {
     switch (fill) {
-    case BorderFillBox: ts << "border"; break;
-    case PaddingFillBox: ts << "padding"; break;
-    case ContentFillBox: ts << "content"; break;
-    case TextFillBox: ts << "text"; break;
+    case FillBox::Border: ts << "border"; break;
+    case FillBox::Padding: ts << "padding"; break;
+    case FillBox::Content: ts << "content"; break;
+    case FillBox::Text: ts << "text"; break;
     }
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, EFillRepeat repeat)
+TextStream& operator<<(TextStream& ts, FillRepeat repeat)
 {
     switch (repeat) {
-    case RepeatFill: ts << "repeat"; break;
-    case NoRepeatFill: ts << "no-repeat"; break;
-    case RoundFill: ts << "round"; break;
-    case SpaceFill: ts << "space"; break;
+    case FillRepeat::Repeat: ts << "repeat"; break;
+    case FillRepeat::NoRepeat: ts << "no-repeat"; break;
+    case FillRepeat::Round: ts << "round"; break;
+    case FillRepeat::Space: ts << "space"; break;
     }
 
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, EMaskSourceType maskSource)
+TextStream& operator<<(TextStream& ts, MaskSourceType maskSource)
 {
     switch (maskSource) {
-    case MaskAlpha: ts << "alpha"; break;
-    case MaskLuminance: ts << "luminance"; break;
+    case MaskSourceType::Alpha: ts << "alpha"; break;
+    case MaskSourceType::Luminance: ts << "luminance"; break;
     }
 
     return ts;

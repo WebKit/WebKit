@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-BorderEdge::BorderEdge(float edgeWidth, Color edgeColor, EBorderStyle edgeStyle, bool edgeIsTransparent, bool edgeIsPresent, float devicePixelRatio)
+BorderEdge::BorderEdge(float edgeWidth, Color edgeColor, BorderStyle edgeStyle, bool edgeIsTransparent, bool edgeIsPresent, float devicePixelRatio)
     : m_width(edgeWidth)
     , m_color(edgeColor)
     , m_style(edgeStyle)
@@ -41,8 +41,8 @@ BorderEdge::BorderEdge(float edgeWidth, Color edgeColor, EBorderStyle edgeStyle,
     , m_isPresent(edgeIsPresent)
     , m_devicePixelRatio(devicePixelRatio)
 {
-    if (edgeStyle == DOUBLE && edgeWidth  < borderWidthInDevicePixel(3))
-        m_style = SOLID;
+    if (edgeStyle == BorderStyle::Double && edgeWidth  < borderWidthInDevicePixel(3))
+        m_style = BorderStyle::Solid;
     m_flooredToDevicePixelWidth = floorf(edgeWidth * devicePixelRatio) / devicePixelRatio;
 }
 
@@ -62,13 +62,13 @@ void BorderEdge::getBorderEdgeInfo(BorderEdge edges[], const RenderStyle& style,
 
 bool BorderEdge::obscuresBackgroundEdge(float scale) const
 {
-    if (!m_isPresent || m_isTransparent || (m_width * scale) < borderWidthInDevicePixel(2) || !m_color.isOpaque() || m_style == BHIDDEN)
+    if (!m_isPresent || m_isTransparent || (m_width * scale) < borderWidthInDevicePixel(2) || !m_color.isOpaque() || m_style == BorderStyle::Hidden)
         return false;
 
-    if (m_style == DOTTED || m_style == DASHED)
+    if (m_style == BorderStyle::Dotted || m_style == BorderStyle::Dashed)
         return false;
 
-    if (m_style == DOUBLE)
+    if (m_style == BorderStyle::Double)
         return m_width >= scale * borderWidthInDevicePixel(5); // The outer band needs to be >= 2px wide at unit scale.
 
     return true;
@@ -76,10 +76,10 @@ bool BorderEdge::obscuresBackgroundEdge(float scale) const
 
 bool BorderEdge::obscuresBackground() const
 {
-    if (!m_isPresent || m_isTransparent || !m_color.isOpaque() || m_style == BHIDDEN)
+    if (!m_isPresent || m_isTransparent || !m_color.isOpaque() || m_style == BorderStyle::Hidden)
         return false;
 
-    if (m_style == DOTTED || m_style == DASHED || m_style == DOUBLE)
+    if (m_style == BorderStyle::Dotted || m_style == BorderStyle::Dashed || m_style == BorderStyle::Double)
         return false;
 
     return true;

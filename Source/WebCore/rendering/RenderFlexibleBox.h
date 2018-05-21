@@ -149,8 +149,8 @@ private:
     bool crossAxisLengthIsDefinite(const RenderBox& child, const Length& flexBasis) const;
     bool needToStretchChildLogicalHeight(const RenderBox& child) const;
     bool childHasIntrinsicMainAxisSize(const RenderBox& child) const;
-    EOverflow mainAxisOverflowForChild(const RenderBox& child) const;
-    EOverflow crossAxisOverflowForChild(const RenderBox& child) const;
+    Overflow mainAxisOverflowForChild(const RenderBox& child) const;
+    Overflow crossAxisOverflowForChild(const RenderBox& child) const;
     void cacheChildMainSize(const RenderBox& child);
     
     void layoutFlexItems(bool relayoutChildren);

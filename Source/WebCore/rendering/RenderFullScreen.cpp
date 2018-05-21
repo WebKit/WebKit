@@ -72,11 +72,11 @@ static RenderStyle createFullScreenStyle()
     fullscreenStyle.fontCascade().update(nullptr);
 
     fullscreenStyle.setDisplay(FLEX);
-    fullscreenStyle.setJustifyContentPosition(ContentPositionCenter);
-    fullscreenStyle.setAlignItemsPosition(ItemPositionCenter);
-    fullscreenStyle.setFlexDirection(FlowColumn);
+    fullscreenStyle.setJustifyContentPosition(ContentPosition::Center);
+    fullscreenStyle.setAlignItemsPosition(ItemPosition::Center);
+    fullscreenStyle.setFlexDirection(FlexDirection::Column);
     
-    fullscreenStyle.setPosition(FixedPosition);
+    fullscreenStyle.setPosition(PositionType::Fixed);
     fullscreenStyle.setWidth(Length(100.0, Percent));
     fullscreenStyle.setHeight(Length(100.0, Percent));
     fullscreenStyle.setLeft(Length(0, WebCore::Fixed));

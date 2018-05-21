@@ -733,9 +733,9 @@ static bool doesNotInheritTextDecoration(const RenderStyle& style, const Element
 }
 
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
-static bool isScrollableOverflow(EOverflow overflow)
+static bool isScrollableOverflow(Overflow overflow)
 {
-    return overflow == OSCROLL || overflow == OAUTO || overflow == OOVERLAY;
+    return overflow == Overflow::Scroll || overflow == Overflow::Auto || overflow == Overflow::Overlay;
 }
 #endif
 
@@ -851,7 +851,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
             if (document().inQuirksMode()) {
                 if (element->hasTagName(tdTag)) {
                     style.setDisplay(TABLE_CELL);
-                    style.setFloating(NoFloat);
+                    style.setFloating(Float::No);
                 } else if (is<HTMLTableElement>(*element))
                     style.setDisplay(style.isDisplayInlineType() ? INLINE_TABLE : TABLE);
             }
@@ -875,14 +875,14 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
             // Frames and framesets never honor position:relative or position:absolute. This is necessary to
             // fix a crash where a site tries to position these objects. They also never honor display.
             if (element->hasTagName(frameTag) || element->hasTagName(framesetTag)) {
-                style.setPosition(StaticPosition);
+                style.setPosition(PositionType::Static);
                 style.setDisplay(BLOCK);
             }
 
             // Ruby text does not support float or position. This might change with evolution of the specification.
             if (element->hasTagName(rtTag)) {
-                style.setPosition(StaticPosition);
-                style.setFloating(NoFloat);
+                style.setPosition(PositionType::Static);
+                style.setFloating(Float::No);
             }
 
             // User agents are expected to have a rule in their user agent stylesheet that matches th elements that have a parent
@@ -910,8 +910,8 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         // on some sites).
         if ((style.display() == TABLE_HEADER_GROUP || style.display() == TABLE_ROW_GROUP
             || style.display() == TABLE_FOOTER_GROUP || style.display() == TABLE_ROW)
-            && style.position() == RelativePosition)
-            style.setPosition(StaticPosition);
+            && style.position() == PositionType::Relative)
+            style.setPosition(PositionType::Static);
 
         // writing-mode does not apply to table row groups, table column groups, table rows, and table columns.
         // FIXME: Table cells should be allowed to be perpendicular or flipped with respect to the table, though.
@@ -929,13 +929,13 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         // https://www.w3.org/TR/css-display/#transformations
         // "A parent with a grid or flex display value blockifies the box’s display type."
         if (parentBoxStyle->isDisplayFlexibleOrGridBox()) {
-            style.setFloating(NoFloat);
+            style.setFloating(Float::No);
             style.setDisplay(equivalentBlockDisplay(style, document()));
         }
     }
 
     // Make sure our z-index value is only applied if the object is positioned.
-    if (style.position() == StaticPosition && !parentBoxStyle->isDisplayFlexibleOrGridBox())
+    if (style.position() == PositionType::Static && !parentBoxStyle->isDisplayFlexibleOrGridBox())
         style.setHasAutoZIndex();
 
     // Auto z-index becomes 0 for the root element and transparent objects. This prevents
@@ -954,8 +954,8 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
 #endif
             || style.hasBlendMode()
             || style.hasIsolation()
-            || style.position() == StickyPosition
-            || style.position() == FixedPosition
+            || style.position() == PositionType::Sticky
+            || style.position() == PositionType::Fixed
             || style.willChangeCreatesStackingContext())
             style.setZIndex(0);
     }
@@ -963,18 +963,18 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
     if (element) {
         // Textarea considers overflow visible as auto.
         if (is<HTMLTextAreaElement>(*element)) {
-            style.setOverflowX(style.overflowX() == OVISIBLE ? OAUTO : style.overflowX());
-            style.setOverflowY(style.overflowY() == OVISIBLE ? OAUTO : style.overflowY());
+            style.setOverflowX(style.overflowX() == Overflow::Visible ? Overflow::Auto : style.overflowX());
+            style.setOverflowY(style.overflowY() == Overflow::Visible ? Overflow::Auto : style.overflowY());
         }
 
         // Disallow -webkit-user-modify on :pseudo and ::pseudo elements.
         if (!element->shadowPseudoId().isNull())
-            style.setUserModify(READ_ONLY);
+            style.setUserModify(UserModify::ReadOnly);
 
         if (is<HTMLMarqueeElement>(*element)) {
             // For now, <marquee> requires an overflow clip to work properly.
-            style.setOverflowX(OHIDDEN);
-            style.setOverflowY(OHIDDEN);
+            style.setOverflowX(Overflow::Hidden);
+            style.setOverflowY(Overflow::Hidden);
 
             bool isVertical = style.marqueeDirection() == MarqueeDirection::Up || style.marqueeDirection() == MarqueeDirection::Down;
             // Make horizontal marquees not wrap.
@@ -994,34 +994,34 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         style.addToTextDecorationsInEffect(style.textDecoration());
 
     // If either overflow value is not visible, change to auto.
-    if (style.overflowX() == OVISIBLE && style.overflowY() != OVISIBLE) {
+    if (style.overflowX() == Overflow::Visible && style.overflowY() != Overflow::Visible) {
         // FIXME: Once we implement pagination controls, overflow-x should default to hidden
         // if overflow-y is set to -webkit-paged-x or -webkit-page-y. For now, we'll let it
         // default to auto so we can at least scroll through the pages.
-        style.setOverflowX(OAUTO);
-    } else if (style.overflowY() == OVISIBLE && style.overflowX() != OVISIBLE)
-        style.setOverflowY(OAUTO);
+        style.setOverflowX(Overflow::Auto);
+    } else if (style.overflowY() == Overflow::Visible && style.overflowX() != Overflow::Visible)
+        style.setOverflowY(Overflow::Auto);
 
     // Call setStylesForPaginationMode() if a pagination mode is set for any non-root elements. If these
     // styles are specified on a root element, then they will be incorporated in
     // Style::createForDocument().
-    if ((style.overflowY() == OPAGEDX || style.overflowY() == OPAGEDY) && !(element && (element->hasTagName(htmlTag) || element->hasTagName(bodyTag))))
+    if ((style.overflowY() == Overflow::PagedX || style.overflowY() == Overflow::PagedY) && !(element && (element->hasTagName(htmlTag) || element->hasTagName(bodyTag))))
         style.setColumnStylesFromPaginationMode(WebCore::paginationModeForRenderStyle(style));
 
     // Table rows, sections and the table itself will support overflow:hidden and will ignore scroll/auto.
     // FIXME: Eventually table sections will support auto and scroll.
     if (style.display() == TABLE || style.display() == INLINE_TABLE
         || style.display() == TABLE_ROW_GROUP || style.display() == TABLE_ROW) {
-        if (style.overflowX() != OVISIBLE && style.overflowX() != OHIDDEN)
-            style.setOverflowX(OVISIBLE);
-        if (style.overflowY() != OVISIBLE && style.overflowY() != OHIDDEN)
-            style.setOverflowY(OVISIBLE);
+        if (style.overflowX() != Overflow::Visible && style.overflowX() != Overflow::Hidden)
+            style.setOverflowX(Overflow::Visible);
+        if (style.overflowY() != Overflow::Visible && style.overflowY() != Overflow::Hidden)
+            style.setOverflowY(Overflow::Visible);
     }
 
     // Menulists should have visible overflow
     if (style.appearance() == MenulistPart) {
-        style.setOverflowX(OVISIBLE);
-        style.setOverflowY(OVISIBLE);
+        style.setOverflowX(Overflow::Visible);
+        style.setOverflowY(Overflow::Visible);
     }
 
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
@@ -1056,8 +1056,8 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         style.setUnique();
 
     // FIXME: when dropping the -webkit prefix on transform-style, we should also have opacity < 1 cause flattening.
-    if (style.preserves3D() && (style.overflowX() != OVISIBLE
-        || style.overflowY() != OVISIBLE
+    if (style.preserves3D() && (style.overflowX() != Overflow::Visible
+        || style.overflowY() != Overflow::Visible
         || style.hasClip()
         || style.clipPath()
         || style.hasFilter()
@@ -1065,14 +1065,14 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         || style.hasBackdropFilter()
 #endif
         || style.hasBlendMode()))
-        style.setTransformStyle3D(TransformStyle3DFlat);
+        style.setTransformStyle3D(TransformStyle3D::Flat);
 
     if (is<SVGElement>(element))
         adjustSVGElementStyle(downcast<SVGElement>(*element), style);
 
     // If the inherited value of justify-items includes the 'legacy' keyword (plus 'left', 'right' or
     // 'center'), 'legacy' computes to the the inherited value. Otherwise, 'auto' computes to 'normal'.
-    if (parentBoxStyle->justifyItems().positionType() == LegacyPosition && style.justifyItems().position() == ItemPositionLegacy)
+    if (parentBoxStyle->justifyItems().positionType() == ItemPositionType::Legacy && style.justifyItems().position() == ItemPosition::Legacy)
         style.setJustifyItems(parentBoxStyle->justifyItems());
 }
 

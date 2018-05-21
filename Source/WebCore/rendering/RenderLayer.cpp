@@ -1462,13 +1462,13 @@ RenderLayer* RenderLayer::stackingContainer() const
     return layer;
 }
 
-static inline bool isContainerForPositioned(RenderLayer& layer, EPosition position)
+static inline bool isContainerForPositioned(RenderLayer& layer, PositionType position)
 {
     switch (position) {
-    case FixedPosition:
+    case PositionType::Fixed:
         return layer.renderer().canContainFixedPositionObjects();
 
-    case AbsolutePosition:
+    case PositionType::Absolute:
         return layer.renderer().canContainAbsolutelyPositionedObjects();
     
     default:
@@ -1477,7 +1477,7 @@ static inline bool isContainerForPositioned(RenderLayer& layer, EPosition positi
     }
 }
 
-RenderLayer* RenderLayer::enclosingAncestorForPosition(EPosition position) const
+RenderLayer* RenderLayer::enclosingAncestorForPosition(PositionType position) const
 {
     RenderLayer* curr = parent();
     while (curr && !isContainerForPositioned(*curr, position))
@@ -2006,10 +2006,10 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     ASSERT(ancestorLayer != layer);
 
     const RenderLayerModelObject& renderer = layer->renderer();
-    EPosition position = renderer.style().position();
+    auto position = renderer.style().position();
 
     // FIXME: Special casing RenderFragmentedFlow so much for fixed positioning here is not great.
-    RenderFragmentedFlow* fixedFragmentedFlowContainer = position == FixedPosition ? renderer.enclosingFragmentedFlow() : nullptr;
+    RenderFragmentedFlow* fixedFragmentedFlowContainer = position == PositionType::Fixed ? renderer.enclosingFragmentedFlow() : nullptr;
     if (fixedFragmentedFlowContainer && !fixedFragmentedFlowContainer->isOutOfFlowPositioned())
         fixedFragmentedFlowContainer = nullptr;
 
@@ -2018,7 +2018,7 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     // If the fixed renderer is inside a RenderFragmentedFlow, we should not compute location using localToAbsolute,
     // since localToAbsolute maps the coordinates from named flow to regions coordinates and regions can be
     // positioned in a completely different place in the viewport (RenderView).
-    if (position == FixedPosition && !fixedFragmentedFlowContainer && (!ancestorLayer || ancestorLayer == renderer.view().layer())) {
+    if (position == PositionType::Fixed && !fixedFragmentedFlowContainer && (!ancestorLayer || ancestorLayer == renderer.view().layer())) {
         // If the fixed layer's container is the root, just add in the offset of the view. We can obtain this by calling
         // localToAbsolute() on the RenderView.
         FloatPoint absPos = renderer.localToAbsolute(FloatPoint(), IsFixed);
@@ -2029,7 +2029,7 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     // For the fixed positioned elements inside a render flow thread, we should also skip the code path below
     // Otherwise, for the case of ancestorLayer == rootLayer and fixed positioned element child of a transformed
     // element in render flow thread, we will hit the fixed positioned container before hitting the ancestor layer.
-    if (position == FixedPosition && !fixedFragmentedFlowContainer) {
+    if (position == PositionType::Fixed && !fixedFragmentedFlowContainer) {
         // For a fixed layers, we need to walk up to the root to see if there's a fixed position container
         // (e.g. a transformed layer). It's an error to call offsetFromAncestor() across a layer with a transform,
         // so we should always find the ancestor at or before we find the fixed position container.
@@ -2039,7 +2039,7 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
             if (currLayer == ancestorLayer)
                 foundAncestor = true;
 
-            if (isContainerForPositioned(*currLayer, FixedPosition)) {
+            if (isContainerForPositioned(*currLayer, PositionType::Fixed)) {
                 fixedPositionContainerLayer = currLayer;
                 ASSERT_UNUSED(foundAncestor, foundAncestor);
                 break;
@@ -2056,7 +2056,7 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
         }
     }
 
-    if (position == FixedPosition && fixedFragmentedFlowContainer) {
+    if (position == PositionType::Fixed && fixedFragmentedFlowContainer) {
         ASSERT(ancestorLayer);
         if (ancestorLayer->isOutOfFlowRenderFragmentedFlow()) {
             location += toLayoutSize(layer->location());
@@ -2075,7 +2075,7 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     }
 
     RenderLayer* parentLayer;
-    if (position == AbsolutePosition || position == FixedPosition) {
+    if (position == PositionType::Absolute || position == PositionType::Fixed) {
         // Do what enclosingAncestorForPosition() does, but check for ancestorLayer along the way.
         parentLayer = layer->parent();
         bool foundAncestorFirst = false;
@@ -2722,7 +2722,7 @@ bool RenderLayer::canResize() const
     // We need a special case for <iframe> because they never have
     // hasOverflowClip(). However, they do "implicitly" clip their contents, so
     // we want to allow resizing them also.
-    return (renderer().hasOverflowClip() || renderer().isRenderIFrame()) && renderer().style().resize() != RESIZE_NONE;
+    return (renderer().hasOverflowClip() || renderer().isRenderIFrame()) && renderer().style().resize() != Resize::None;
 }
 
 void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOffset)
@@ -2759,10 +2759,10 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
     LayoutSize difference = (currentSize + newOffset - adjustedOldOffset).expandedTo(minimumSize) - currentSize;
 
     StyledElement* styledElement = downcast<StyledElement>(element);
-    bool isBoxSizingBorder = renderer->style().boxSizing() == BORDER_BOX;
+    bool isBoxSizingBorder = renderer->style().boxSizing() == BoxSizing::BorderBox;
 
-    EResize resize = renderer->style().resize();
-    if (resize != RESIZE_VERTICAL && difference.width()) {
+    Resize resize = renderer->style().resize();
+    if (resize != Resize::Vertical && difference.width()) {
         if (is<HTMLFormControlElement>(*element)) {
             // Make implicit margins from the theme explicit (see <http://bugs.webkit.org/show_bug.cgi?id=9547>).
             styledElement->setInlineStyleProperty(CSSPropertyMarginLeft, renderer->marginLeft() / zoomFactor, CSSPrimitiveValue::CSS_PX);
@@ -2773,7 +2773,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
         styledElement->setInlineStyleProperty(CSSPropertyWidth, roundToInt(baseWidth + difference.width()), CSSPrimitiveValue::CSS_PX);
     }
 
-    if (resize != RESIZE_HORIZONTAL && difference.height()) {
+    if (resize != Resize::Horizontal && difference.height()) {
         if (is<HTMLFormControlElement>(*element)) {
             // Make implicit margins from the theme explicit (see <http://bugs.webkit.org/show_bug.cgi?id=9547>).
             styledElement->setInlineStyleProperty(CSSPropertyMarginTop, renderer->marginTop() / zoomFactor, CSSPrimitiveValue::CSS_PX);
@@ -2892,7 +2892,7 @@ IntRect RenderLayer::scrollCornerRect() const
     // Overlay scrollbars always fill the entire length of the box so we never have scroll corner in that case.
     bool hasHorizontalBar = m_hBar && !m_hBar->isOverlayScrollbar();
     bool hasVerticalBar = m_vBar && !m_vBar->isOverlayScrollbar();
-    bool hasResizer = renderer().style().resize() != RESIZE_NONE;
+    bool hasResizer = renderer().style().resize() != Resize::None;
     if ((hasHorizontalBar && hasVerticalBar) || (hasResizer && (hasHorizontalBar || hasVerticalBar)))
         return snappedIntRect(cornerRect(*this, renderBox()->borderBoxRect()));
     return IntRect();
@@ -2901,7 +2901,7 @@ IntRect RenderLayer::scrollCornerRect() const
 static LayoutRect resizerCornerRect(const RenderLayer& layer, const LayoutRect& bounds)
 {
     ASSERT(layer.renderer().isBox());
-    if (layer.renderer().style().resize() == RESIZE_NONE)
+    if (layer.renderer().style().resize() == Resize::None)
         return LayoutRect();
     return cornerRect(layer, bounds);
 }
@@ -3336,7 +3336,7 @@ IntSize RenderLayer::offsetFromResizeCorner(const IntPoint& absolutePoint) const
 
 bool RenderLayer::hasOverflowControls() const
 {
-    return m_hBar || m_vBar || m_scrollCorner || renderer().style().resize() != RESIZE_NONE;
+    return m_hBar || m_vBar || m_scrollCorner || renderer().style().resize() != Resize::None;
 }
 
 void RenderLayer::positionOverflowControls(const IntSize& offsetFromRoot)
@@ -3465,16 +3465,16 @@ bool RenderLayer::hasVerticalOverflow() const
 
 static bool styleRequiresScrollbar(const RenderStyle& style, ScrollbarOrientation axis)
 {
-    EOverflow overflow = axis == ScrollbarOrientation::HorizontalScrollbar ? style.overflowX() : style.overflowY();
-    bool overflowScrollActsLikeAuto = overflow == OSCROLL && !style.hasPseudoStyle(SCROLLBAR) && ScrollbarTheme::theme().usesOverlayScrollbars();
-    return overflow == OSCROLL && !overflowScrollActsLikeAuto;
+    Overflow overflow = axis == ScrollbarOrientation::HorizontalScrollbar ? style.overflowX() : style.overflowY();
+    bool overflowScrollActsLikeAuto = overflow == Overflow::Scroll && !style.hasPseudoStyle(SCROLLBAR) && ScrollbarTheme::theme().usesOverlayScrollbars();
+    return overflow == Overflow::Scroll && !overflowScrollActsLikeAuto;
 }
 
 static bool styleDefinesAutomaticScrollbar(const RenderStyle& style, ScrollbarOrientation axis)
 {
-    EOverflow overflow = axis == ScrollbarOrientation::HorizontalScrollbar ? style.overflowX() : style.overflowY();
-    bool overflowScrollActsLikeAuto = overflow == OSCROLL && !style.hasPseudoStyle(SCROLLBAR) && ScrollbarTheme::theme().usesOverlayScrollbars();
-    return overflow == OAUTO || overflow == OOVERLAY || overflowScrollActsLikeAuto;
+    Overflow overflow = axis == ScrollbarOrientation::HorizontalScrollbar ? style.overflowX() : style.overflowY();
+    bool overflowScrollActsLikeAuto = overflow == Overflow::Scroll && !style.hasPseudoStyle(SCROLLBAR) && ScrollbarTheme::theme().usesOverlayScrollbars();
+    return overflow == Overflow::Auto || overflow == Overflow::Overlay || overflowScrollActsLikeAuto;
 }
 
 void RenderLayer::updateScrollbarsAfterLayout()
@@ -3515,7 +3515,7 @@ void RenderLayer::updateScrollbarsAfterLayout()
 
         renderer().repaint();
 
-        if (renderer().style().overflowX() == OAUTO || renderer().style().overflowY() == OAUTO) {
+        if (renderer().style().overflowX() == Overflow::Auto || renderer().style().overflowY() == Overflow::Auto) {
             if (!m_inOverflowRelayout) {
                 // Our proprietary overflow: overlay value doesn't trigger a layout.
                 m_inOverflowRelayout = true;
@@ -3749,7 +3749,7 @@ void RenderLayer::drawPlatformResizerImage(GraphicsContext& context, const Layou
 
 void RenderLayer::paintResizer(GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& damageRect)
 {
-    if (renderer().style().resize() == RESIZE_NONE)
+    if (renderer().style().resize() == Resize::None)
         return;
 
     RenderBox* box = renderBox();
@@ -3809,7 +3809,7 @@ bool RenderLayer::hitTestOverflowControls(HitTestResult& result, const IntPoint&
     ASSERT(box);
     
     IntRect resizeControlRect;
-    if (renderer().style().resize() != RESIZE_NONE) {
+    if (renderer().style().resize() != Resize::None) {
         resizeControlRect = snappedIntRect(resizerCornerRect(*this, box->borderBoxRect()));
         if (resizeControlRect.contains(localPoint))
             return true;
@@ -5065,7 +5065,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     }
 
     // Check for hit test on backface if backface-visibility is 'hidden'
-    if (localTransformState && renderer().style().backfaceVisibility() == BackfaceVisibilityHidden) {
+    if (localTransformState && renderer().style().backfaceVisibility() == BackfaceVisibility::Hidden) {
         std::optional<TransformationMatrix> invertedMatrix = localTransformState->m_accumulatedTransform.inverse();
         // If the z-vector of the matrix is negative, the back is facing towards the viewer.
         if (invertedMatrix && invertedMatrix.value().m33() < 0)
@@ -5492,12 +5492,12 @@ Ref<ClipRects> RenderLayer::parentClipRects(const ClipRectsContext& clipRectsCon
     return parent()->updateClipRects(clipRectsContext);
 }
 
-static inline ClipRect backgroundClipRectForPosition(const ClipRects& parentRects, EPosition position)
+static inline ClipRect backgroundClipRectForPosition(const ClipRects& parentRects, PositionType position)
 {
-    if (position == FixedPosition)
+    if (position == PositionType::Fixed)
         return parentRects.fixedClipRect();
 
-    if (position == AbsolutePosition)
+    if (position == PositionType::Absolute)
         return parentRects.posClipRect();
 
     return parentRects.overflowClipRect();
@@ -6419,7 +6419,7 @@ static void determineNonLayerDescendantsPaintedContent(const RenderElement& rend
             if (renderText.linesBoundingBox().isEmpty())
                 continue;
 
-            if (renderer.style().userSelect() != SELECT_NONE)
+            if (renderer.style().userSelect() != UserSelect::None)
                 request.setHasPaintedContent();
 
             if (!renderText.text().isAllSpecialCharacters<isHTMLSpace>()) {
@@ -6569,8 +6569,8 @@ void RenderLayer::updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle)
     if (box->style().appearance() == ListboxPart)
         return;
 
-    EOverflow overflowX = box->style().overflowX();
-    EOverflow overflowY = box->style().overflowY();
+    Overflow overflowX = box->style().overflowX();
+    Overflow overflowY = box->style().overflowY();
 
     // To avoid doing a relayout in updateScrollbarsAfterLayout, we try to keep any automatic scrollbar that was already present.
     bool needsHorizontalScrollbar = box->hasOverflowClip() && ((hasHorizontalScrollbar() && styleDefinesAutomaticScrollbar(box->style(), HorizontalScrollbar)) || styleRequiresScrollbar(box->style(), HorizontalScrollbar));
@@ -6580,10 +6580,10 @@ void RenderLayer::updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle)
 
     // With non-overlay overflow:scroll, scrollbars are always visible but may be disabled.
     // When switching to another value, we need to re-enable them (see bug 11985).
-    if (m_hBar && needsHorizontalScrollbar && oldStyle && oldStyle->overflowX() == OSCROLL && overflowX != OSCROLL)
+    if (m_hBar && needsHorizontalScrollbar && oldStyle && oldStyle->overflowX() == Overflow::Scroll && overflowX != Overflow::Scroll)
         m_hBar->setEnabled(true);
 
-    if (m_vBar && needsVerticalScrollbar && oldStyle && oldStyle->overflowY() == OSCROLL && overflowY != OSCROLL)
+    if (m_vBar && needsVerticalScrollbar && oldStyle && oldStyle->overflowY() == Overflow::Scroll && overflowY != Overflow::Scroll)
         m_vBar->setEnabled(true);
 
     if (!m_scrollDimensionsDirty)
@@ -6614,7 +6614,7 @@ void RenderLayer::dirtyAncestorChainHasOutOfFlowPositionedDescendantStatus()
 
 void RenderLayer::updateOutOfFlowPositioned(const RenderStyle* oldStyle)
 {
-    bool wasOutOfFlowPositioned = oldStyle && (oldStyle->position() == AbsolutePosition || oldStyle->position() == FixedPosition);
+    bool wasOutOfFlowPositioned = oldStyle && (oldStyle->position() == PositionType::Absolute || oldStyle->position() == PositionType::Fixed);
     if (parent() && (renderer().isOutOfFlowPositioned() != wasOutOfFlowPositioned)) {
         parent()->dirtyAncestorChainHasOutOfFlowPositionedDescendantStatus();
         if (!renderer().renderTreeBeingDestroyed() && acceleratedCompositingForOverflowScrollEnabled())
@@ -6681,7 +6681,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
     updateOrRemoveFilterEffectRenderer();
 
 #if PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)
-    if (diff == StyleDifferenceRecompositeLayer || diff >= StyleDifferenceLayoutPositionedMovementOnly)
+    if (diff == StyleDifference::RecompositeLayer || diff >= StyleDifference::LayoutPositionedMovementOnly)
         renderer().document().setTouchEventRegionsNeedUpdate();
 #else
     UNUSED_PARAM(diff);

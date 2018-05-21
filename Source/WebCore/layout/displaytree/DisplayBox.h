@@ -94,7 +94,7 @@ private:
     struct Style {
         Style(const RenderStyle&);
 
-        EBoxSizing boxSizing { CONTENT_BOX };
+        BoxSizing boxSizing { BoxSizing::ContentBox };
     };
 
     void setRect(const LayoutRect&);

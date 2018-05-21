@@ -705,7 +705,7 @@ void RenderBlockFlow::computeInlineDirectionPositionsForLine(RootInlineBox* line
 static inline ExpansionBehavior expansionBehaviorForInlineTextBox(RenderBlockFlow& block, InlineTextBox& textBox, BidiRun* previousRun, BidiRun* nextRun, ETextAlign textAlign, bool isAfterExpansion)
 {
     // Tatechuyoko is modeled as the Object Replacement Character (U+FFFC), which can never have expansion opportunities inside nor intrinsically adjacent to it.
-    if (textBox.renderer().style().textCombine() == TextCombineHorizontal)
+    if (textBox.renderer().style().textCombine() == TextCombine::Horizontal)
         return ForbidLeadingExpansion | ForbidTrailingExpansion;
 
     ExpansionBehavior result = 0;
@@ -1020,7 +1020,7 @@ static inline bool isCollapsibleSpace(UChar character, const RenderText& rendere
     if (character == '\n')
         return !renderer.style().preserveNewline();
     if (character == noBreakSpace)
-        return renderer.style().nbspMode() == SPACE;
+        return renderer.style().nbspMode() == NBSPMode::Space;
     return false;
 }
 
@@ -1304,8 +1304,8 @@ void RenderBlockFlow::layoutRunsAndFloats(LineLayoutState& layoutState, bool has
             if (!lastObject->isBR())
                 lastObject = &lastRootBox()->firstLeafChild()->renderer();
             if (lastObject->isBR()) {
-                EClear clear = lastObject->style().clear();
-                if (clear != CNONE)
+                Clear clear = lastObject->style().clear();
+                if (clear != Clear::None)
                     clearFloats(clear);
             }
         }
@@ -1658,8 +1658,8 @@ void RenderBlockFlow::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaint
     // FIXME: CSS3 says that descendants that are clipped must also know how to truncate.  This is insanely
     // difficult to figure out in general (especially in the middle of doing layout), so we only handle the
     // simple case of an anonymous block truncating when it's parent is clipped.
-    bool hasTextOverflow = (style().textOverflow() && hasOverflowClip())
-        || (isAnonymousBlock() && parent() && parent()->isRenderBlock() && parent()->style().textOverflow() && parent()->hasOverflowClip());
+    bool hasTextOverflow = (style().textOverflow() == TextOverflow::Ellipsis && hasOverflowClip())
+        || (isAnonymousBlock() && parent() && parent()->isRenderBlock() && parent()->style().textOverflow() == TextOverflow::Ellipsis && parent()->hasOverflowClip());
 
     // Walk all the lines and delete our ellipsis line boxes if they exist.
     if (hasTextOverflow)

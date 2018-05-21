@@ -1,3 +1,934 @@
+2018-05-21  Sam Weinig  <sam@webkit.org>
+
+        Modernize RenderStyleConstants.h - Part 1
+        https://bugs.webkit.org/show_bug.cgi?id=185809
+
+        Reviewed by Yusuke Suzuki.
+            
+        Modernized the first set of enums in RenderStyleConstants.h by:
+            - Converting them to enum classes
+            - Renaming them to remove unnecessary prefix 'E's
+            - Renaming values to take advantage of enum class scoping (e.g. StyleDifferenceEqual -> StyleDifference::Equal)
+            - Renaming to match modern conventions (e.g BNONE -> None)
+            - Reformatting them so that each value is on its own line.
+
+        Modernizes the following enums:
+            PrintColorAdjust
+            StyleDifference
+            StyleDifferenceContextSensitiveProperty
+            ColumnFill
+            ColumnSpan
+            BorderCollapse (renamed from EBorderCollapse)
+            BorderStyle (renamed from EBorderStyle)
+            BorderPrecedence (renamed from EBorderPrecedence)
+            OutlineIsAuto
+            PositionType (renamed from EPosition)
+            Float (renamed from EFloat)
+            MarginCollapse (renamed from EMarginCollapse)
+            BoxDecorationBreak (renamed from EBoxDecorationBreak)
+            BoxSizing (renamed from EBoxSizing)
+            Overflow (renamed from EOverflow)
+            VerticalAlign (renamed from EVerticalAlign)
+            Clear (renamed from EClear)
+            TableLayoutType (renamed from ETableLayout)
+            TextCombine
+            FillAttachment (renamed from EFillAttachment)
+            FillBox (renamed from EFillBox)
+            FillRepeat (renamed from EFillRepeat)
+            FillLayerType (renamed from EFillLayerType)
+            FillSizeType (renamed from EFillSizeType)
+            MaskSourceType (renamed from EMaskSourceType)
+            BoxPack (renamed from EBoxPack)
+            BoxAlignment (renamed from EBoxAlignment)
+            BoxOrient (renamed from EBoxOrient)
+            BoxLines (renamed from EBoxLines)
+            BoxDirection (renamed from EBoxDirection)
+            AlignContent (renamed from EAlignContent)
+            FlexDirection (renamed from EFlexDirection)
+            FlexWrap (renamed from EFlexWrap)
+            ItemPosition
+            OverflowAlignment
+            ItemPositionType
+            ContentPosition
+            ContentDistribution (renamed from ContentDistributionType)
+            TextSecurity (renamed from ETextSecurity)
+            UserModify (renamed from EUserModify)
+            UserDrag (renamed from EUserDrag)
+            UserSelect (renamed from EUserSelect)
+            ObjectFit
+            AspectRatioType
+            WordBreak (renamed from EWordBreak)
+            OverflowWrap (renamed from EOverflowWrap)
+            NBSPMode (renamed from ENBSPMode)
+            LineBreak
+            Resize (renamed from EResize)
+            QuoteType
+            TransformStyle3D (renamed from ETransformStyle3D)
+            BackfaceVisibility (renamed from EBackfaceVisibility)
+            LineClamp (renamed from ELineClamp)
+            TextOverflow
+            ImageRendering (renamed from EImageRendering)
+            TextIndentLine
+            TextIndentType
+            Isolation
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXAttributeStringSetStyle):
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForCenterCoordinate):
+        (WebCore::valueForBasicShape):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::sizingBox):
+        (WebCore::fillRepeatToCSSValue):
+        (WebCore::fillSourceTypeToCSSValue):
+        (WebCore::fillSizeToCSSValue):
+        (WebCore::valueForItemPositionWithOverflowAlignment):
+        (WebCore::valueForContentPositionAndDistributionWithOverflowAlignment):
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator LineClampValue const):
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ColumnFill const):
+        (WebCore::CSSPrimitiveValue::operator ColumnSpan const):
+        (WebCore::CSSPrimitiveValue::operator PrintColorAdjust const):
+        (WebCore::CSSPrimitiveValue::operator BorderStyle const):
+        (WebCore::CSSPrimitiveValue::operator OutlineIsAuto const):
+        (WebCore::CSSPrimitiveValue::operator BackfaceVisibility const):
+        (WebCore::CSSPrimitiveValue::operator FillAttachment const):
+        (WebCore::CSSPrimitiveValue::operator FillBox const):
+        (WebCore::CSSPrimitiveValue::operator FillRepeat const):
+        (WebCore::CSSPrimitiveValue::operator BoxPack const):
+        (WebCore::CSSPrimitiveValue::operator BoxAlignment const):
+        (WebCore::CSSPrimitiveValue::operator BoxDecorationBreak const):
+        (WebCore::CSSPrimitiveValue::operator BoxSizing const):
+        (WebCore::CSSPrimitiveValue::operator BoxDirection const):
+        (WebCore::CSSPrimitiveValue::operator BoxLines const):
+        (WebCore::CSSPrimitiveValue::operator BoxOrient const):
+        (WebCore::CSSPrimitiveValue::operator Clear const):
+        (WebCore::CSSPrimitiveValue::operator FlexDirection const):
+        (WebCore::CSSPrimitiveValue::operator AlignContent const):
+        (WebCore::CSSPrimitiveValue::operator FlexWrap const):
+        (WebCore::CSSPrimitiveValue::operator Float const):
+        (WebCore::CSSPrimitiveValue::operator LineBreak const):
+        (WebCore::CSSPrimitiveValue::operator MarginCollapse const):
+        (WebCore::CSSPrimitiveValue::operator NBSPMode const):
+        (WebCore::CSSPrimitiveValue::operator Overflow const):
+        (WebCore::CSSPrimitiveValue::operator PositionType const):
+        (WebCore::CSSPrimitiveValue::operator Resize const):
+        (WebCore::CSSPrimitiveValue::operator TableLayoutType const):
+        (WebCore::CSSPrimitiveValue::operator TextSecurity const):
+        (WebCore::CSSPrimitiveValue::operator UserDrag const):
+        (WebCore::CSSPrimitiveValue::operator UserModify const):
+        (WebCore::CSSPrimitiveValue::operator UserSelect const):
+        (WebCore::CSSPrimitiveValue::operator VerticalAlign const):
+        (WebCore::CSSPrimitiveValue::operator WordBreak const):
+        (WebCore::CSSPrimitiveValue::operator OverflowWrap const):
+        (WebCore::CSSPrimitiveValue::operator TextCombine const):
+        (WebCore::CSSPrimitiveValue::operator TextOverflow const):
+        (WebCore::CSSPrimitiveValue::operator ObjectFit const):
+        (WebCore::CSSPrimitiveValue::operator Isolation const):
+        (WebCore::CSSPrimitiveValue::operator BorderCollapse const):
+        (WebCore::CSSPrimitiveValue::operator ImageRendering const):
+        (WebCore::CSSPrimitiveValue::operator TransformStyle3D const):
+        (WebCore::CSSPrimitiveValue::operator ItemPosition const):
+        (WebCore::CSSPrimitiveValue::operator OverflowAlignment const):
+        (WebCore::CSSPrimitiveValue::operator ContentPosition const):
+        (WebCore::CSSPrimitiveValue::operator ContentDistribution const):
+        (WebCore::CSSPrimitiveValue::operator EBorderStyle const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EBackfaceVisibility const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EFillAttachment const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EFillBox const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EFillRepeat const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EBoxPack const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EBoxAlignment const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EBoxDecorationBreak const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EBoxSizing const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EBoxDirection const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EBoxLines const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EBoxOrient const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EClear const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EFlexDirection const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EAlignContent const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EFlexWrap const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EFloat const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EMarginCollapse const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator ENBSPMode const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EOverflow const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EPosition const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EResize const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator ETableLayout const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator ETextSecurity const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EUserDrag const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EUserModify const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EUserSelect const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EVerticalAlign const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EWordBreak const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EOverflowWrap const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EBorderCollapse const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EImageRendering const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator ETransformStyle3D const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator ContentDistributionType const): Deleted.
+        * css/CSSProperties.json:
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapFillAttachment):
+        (WebCore::CSSToStyleMap::mapFillSize):
+        (WebCore::CSSToStyleMap::mapFillMaskSourceType):
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertResize):
+        (WebCore::StyleBuilderConverter::convertSelfOrDefaultAlignmentData):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueTextIndent):
+        (WebCore::StyleBuilderCustom::applyInheritWebkitAspectRatio):
+        (WebCore::StyleBuilderCustom::applyValueWebkitAspectRatio):
+        (WebCore::StyleBuilderCustom::applyValueContent):
+        * css/StyleResolver.cpp:
+        (WebCore::isScrollableOverflow):
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * css/StyleResolver.h:
+        * css/makeprop.pl:
+        (getFillLayerType):
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::computeEditabilityFromComputedStyle):
+        (WebCore::Node::canStartSelection const):
+        * dom/Position.cpp:
+        (WebCore::Position::nodeIsUserSelectNone):
+        (WebCore::Position::nodeIsUserSelectAll):
+        * dom/Range.cpp:
+        (WebCore::Range::collectSelectionRectsWithoutUnionInteriorLines const):
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/Editing.cpp:
+        (WebCore::isSpecialHTMLElement):
+        * editing/EditorCommand.cpp:
+        (WebCore::verticalScrollDistance):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/SimplifyMarkupCommand.cpp:
+        (WebCore::SimplifyMarkupCommand::doApply):
+        * editing/VisibleUnits.cpp:
+        (WebCore::backwardSearchForBoundaryWithTextIterator):
+        (WebCore::forwardSearchForBoundaryWithTextIterator):
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::fontAttributesForSelectionStart const):
+        * editing/cocoa/HTMLConverter.mm:
+        (WebCore::editingAttributedStringFromRange):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::shouldTruncateText const):
+        (WebCore::HTMLInputElement::createInnerTextStyle):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::adjustInnerTextStyle const):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderContainer::layout):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerContainer::resolveCustomStyle):
+        (WebCore::TextControlInnerElement::resolveCustomStyle):
+        (WebCore::TextControlPlaceholderElement::resolveCustomStyle):
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::borderBox const):
+        (WebCore::Display::Box::contentBox const):
+        * layout/displaytree/DisplayBox.h:
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isRelativelyPositioned const):
+        (WebCore::Layout::Box::isStickyPositioned const):
+        (WebCore::Layout::Box::isAbsolutelyPositioned const):
+        (WebCore::Layout::Box::isFixedPositioned const):
+        (WebCore::Layout::Box::isFloatingPositioned const):
+        (WebCore::Layout::Box::isOverflowVisible const):
+        * page/DragController.cpp:
+        (WebCore::DragController::draggableElement const):
+        * page/Frame.cpp:
+        (WebCore::Frame::rangeForPoint):
+        * page/FrameView.cpp:
+        (WebCore::paginationModeForRenderStyle):
+        (WebCore::FrameView::applyOverflowToViewport):
+        (WebCore::FrameView::applyPaginationToViewport):
+        (WebCore::FrameView::calculateScrollbarModesForLayout):
+        (WebCore::FrameView::calculateExtendedBackgroundMode const):
+        (WebCore::FrameView::adjustScrollStepForFixedContent):
+        * page/SpatialNavigation.cpp:
+        (WebCore::canScrollInDirection):
+        (WebCore::canBeScrolledIntoView):
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::nodeRespondingToScrollWheelEvents):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::scrolledToEdgeInDominantDirection):
+        * rendering/BorderEdge.cpp:
+        (WebCore::BorderEdge::BorderEdge):
+        (WebCore::BorderEdge::obscuresBackgroundEdge const):
+        (WebCore::BorderEdge::obscuresBackground const):
+        * rendering/BorderEdge.h:
+        (WebCore::BorderEdge::style const):
+        (WebCore::BorderEdge::hasVisibleColorAndStyle const):
+        * rendering/FlexibleBoxAlgorithm.h:
+        (WebCore::FlexLayoutAlgorithm::isMultiline const):
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FloatingObject::FloatingObject):
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithmStrategy::minSizeForChild const):
+        (WebCore::GridTrackSizingAlgorithm::stretchAutoTracks):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::innerTextIfTruncated const):
+        * rendering/ImageQualityController.cpp:
+        (WebCore::ImageQualityController::interpolationQualityFromStyle):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::verticalAlign const):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::determineSpacingForFlowBoxes):
+        (WebCore::InlineFlowBox::adjustMaxAscentAndDescent):
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::paintFillLayer):
+        * rendering/LogicalSelectionOffsetCaches.h:
+        (WebCore::LogicalSelectionOffsetCaches::containingBlockInfo const):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removePositionedObjectsIfNeeded):
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::isSelfCollapsingBlock const):
+        (WebCore::RenderBlock::addOverflowFromPositionedObjects):
+        (WebCore::RenderBlock::markFixedPositionObjectForLayoutIfNeeded):
+        (WebCore::RenderBlock::isSelectionRoot const):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths const):
+        (WebCore::RenderBlock::adjustBorderBoxLogicalHeightForBoxSizing const):
+        (WebCore::RenderBlock::adjustContentBoxLogicalHeightForBoxSizing const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::MarginInfo::MarginInfo):
+        (WebCore::RenderBlockFlow::willCreateColumns const):
+        (WebCore::RenderBlockFlow::marginOffsetForSelfCollapsingBlock):
+        (WebCore::RenderBlockFlow::clearFloatsIfNeeded):
+        (WebCore::RenderBlockFlow::marginBeforeEstimateForChild const):
+        (WebCore::RenderBlockFlow::setMustDiscardMarginBefore):
+        (WebCore::RenderBlockFlow::setMustDiscardMarginAfter):
+        (WebCore::RenderBlockFlow::mustDiscardMarginBefore const):
+        (WebCore::RenderBlockFlow::mustDiscardMarginAfter const):
+        (WebCore::RenderBlockFlow::mustDiscardMarginBeforeForChild const):
+        (WebCore::RenderBlockFlow::mustDiscardMarginAfterForChild const):
+        (WebCore::RenderBlockFlow::mustSeparateMarginBeforeForChild const):
+        (WebCore::RenderBlockFlow::mustSeparateMarginAfterForChild const):
+        (WebCore::RenderBlockFlow::styleDidChange):
+        (WebCore::RenderBlockFlow::styleWillChange):
+        (WebCore::RenderBlockFlow::computeLogicalLocationForFloat):
+        (WebCore::RenderBlockFlow::positionNewFloats):
+        (WebCore::RenderBlockFlow::clearFloats):
+        (WebCore::RenderBlockFlow::getClearDelta):
+        (WebCore::RenderBlockFlow::inlineBlockBaseline const):
+        (WebCore::RenderBlockFlow::computeInlinePreferredLogicalWidths const):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::expansionBehaviorForInlineTextBox):
+        (WebCore::isCollapsibleSpace):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloats):
+        (WebCore::RenderBlockFlow::layoutLineBoxes):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleWillChange):
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::updateFromStyle):
+        (WebCore::RenderBox::includeVerticalScrollbarSize const):
+        (WebCore::RenderBox::includeHorizontalScrollbarSize const):
+        (WebCore::RenderBox::intrinsicScrollbarLogicalWidth const):
+        (WebCore::RenderBox::hasVerticalScrollbarWithAutoBehavior const):
+        (WebCore::RenderBox::hasHorizontalScrollbarWithAutoBehavior const):
+        (WebCore::RenderBox::adjustBorderBoxLogicalWidthForBoxSizing const):
+        (WebCore::RenderBox::adjustBorderBoxLogicalHeightForBoxSizing const):
+        (WebCore::RenderBox::adjustContentBoxLogicalWidthForBoxSizing const):
+        (WebCore::RenderBox::adjustContentBoxLogicalHeightForBoxSizing const):
+        (WebCore::RenderBox::backgroundIsKnownToBeOpaqueInRect const):
+        (WebCore::isCandidateForOpaquenessTest):
+        (WebCore::RenderBox::foregroundIsKnownToBeOpaqueInRect const):
+        (WebCore::RenderBox::backgroundHasOpaqueTopLayer const):
+        (WebCore::RenderBox::computeRectForRepaint const):
+        (WebCore::RenderBox::computeLogicalWidthInFragment const):
+        (WebCore::RenderBox::columnFlexItemHasStretchAlignment const):
+        (WebCore::RenderBox::isStretchingColumnFlexItem const):
+        (WebCore::RenderBox::hasStretchedLogicalWidth const):
+        (WebCore::RenderBox::sizesLogicalWidthToFitContent const):
+        (WebCore::RenderBox::computeLogicalHeight const):
+        (WebCore::RenderBox::computeIntrinsicLogicalContentHeightUsing const):
+        (WebCore::RenderBox::createsNewFormattingContext const):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::scrollsOverflowX const):
+        (WebCore::RenderBox::scrollsOverflowY const):
+        (WebCore::RenderBox::selfAlignmentNormalBehavior const):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::calculateFillTileSize const):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry const):
+        (WebCore::styleRequiresClipPolygon):
+        (WebCore::borderStyleFillsBorderArea):
+        (WebCore::borderStyleHasInnerDetail):
+        (WebCore::borderStyleIsDottedOrDashed):
+        (WebCore::borderStyleHasUnmatchedColorsAtCorner):
+        (WebCore::borderStylesRequireMitre):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::drawBoxSideFromPath):
+        (WebCore::RenderBoxModelObject::boxShadowShouldBeAppliedToBackground const):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::FlexBoxIterator::FlexBoxIterator):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        * rendering/RenderDeprecatedFlexibleBox.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::adjustStyleDifference const):
+        (WebCore::RenderElement::shouldRepaintForStyleDifference const):
+        (WebCore::RenderElement::initializeStyle):
+        (WebCore::RenderElement::setStyle):
+        (WebCore::RenderElement::didAttachChild):
+        (WebCore::RenderElement::propagateStyleToAnonymousChildren):
+        (WebCore::RenderElement::styleWillChange):
+        (WebCore::RenderElement::styleDidChange):
+        (WebCore::mustRepaintFillLayers):
+        (WebCore::RenderElement::selectionColor const):
+        (WebCore::RenderElement::selectionBackgroundColor const):
+        (WebCore::RenderElement::drawLineForBoxSide const):
+        (WebCore::RenderElement::paintFocusRing):
+        (WebCore::RenderElement::paintOutline):
+        (WebCore::RenderElement::updateOutlineAutoAncestor):
+        (WebCore::includeNonFixedHeight):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::hasHiddenBackface const):
+        (WebCore::RenderElement::canContainAbsolutelyPositionedObjects const):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::firstLineBaseline const):
+        (WebCore::contentAlignmentNormalBehavior):
+        (WebCore::RenderFlexibleBox::styleDidChange):
+        (WebCore::RenderFlexibleBox::repositionLogicalHeightDependentFlexItems):
+        (WebCore::RenderFlexibleBox::isLeftToRightFlow const):
+        (WebCore::RenderFlexibleBox::isMultiline const):
+        (WebCore::RenderFlexibleBox::adjustChildSizeForMinAndMax):
+        (WebCore::RenderFlexibleBox::crossSizeForPercentageResolution):
+        (WebCore::initialJustifyContentOffset):
+        (WebCore::justifyContentSpaceBetweenChildren):
+        (WebCore::alignmentOffset):
+        (WebCore::RenderFlexibleBox::staticMainAxisPositionForPositionedChild):
+        (WebCore::RenderFlexibleBox::staticCrossAxisPositionForPositionedChild):
+        (WebCore::RenderFlexibleBox::alignmentForChild const):
+        (WebCore::RenderFlexibleBox::needToStretchChildLogicalHeight const):
+        (WebCore::RenderFlexibleBox::mainAxisOverflowForChild const):
+        (WebCore::RenderFlexibleBox::crossAxisOverflowForChild const):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::layoutColumnReverse):
+        (WebCore::initialAlignContentOffset):
+        (WebCore::alignContentSpaceBetweenChildren):
+        (WebCore::RenderFlexibleBox::alignFlexLines):
+        (WebCore::RenderFlexibleBox::alignChildren):
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderFragmentContainer.cpp:
+        (WebCore::RenderFragmentContainer::overflowRectForFragmentedFlowPortion):
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::createFullScreenStyle):
+        * rendering/RenderFullScreen.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::selfAlignmentChangedToStretch const):
+        (WebCore::RenderGrid::selfAlignmentChangedFromStretch const):
+        (WebCore::RenderGrid::styleDidChange):
+        (WebCore::contentAlignmentNormalBehaviorGrid):
+        (WebCore::computeOverflowAlignmentOffset):
+        (WebCore::RenderGrid::isInlineBaselineAlignedChild const):
+        (WebCore::RenderGrid::columnAxisPositionForChild const):
+        (WebCore::RenderGrid::rowAxisPositionForChild const):
+        (WebCore::RenderGrid::resolveAutoStartGridPosition const):
+        (WebCore::RenderGrid::resolveAutoEndGridPosition const):
+        (WebCore::resolveContentDistributionFallback):
+        (WebCore::contentDistributionOffset):
+        (WebCore::RenderGrid::computeContentPositionAndDistributionOffset const):
+        * rendering/RenderGrid.h:
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::requiresLayer const):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::styleDidChange):
+        (WebCore::RenderImage::foregroundIsKnownToBeOpaqueInRect const):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleWillChange):
+        (WebCore::RenderInline::updateAlwaysCreateLineBoxes):
+        (WebCore::RenderInline::paintOutline):
+        (WebCore::RenderInline::paintOutlineForLine):
+        * rendering/RenderLayer.cpp:
+        (WebCore::isContainerForPositioned):
+        (WebCore::RenderLayer::enclosingAncestorForPosition const):
+        (WebCore::accumulateOffsetTowardsAncestor):
+        (WebCore::RenderLayer::canResize const):
+        (WebCore::RenderLayer::resize):
+        (WebCore::RenderLayer::scrollCornerRect const):
+        (WebCore::resizerCornerRect):
+        (WebCore::RenderLayer::hasOverflowControls const):
+        (WebCore::styleRequiresScrollbar):
+        (WebCore::styleDefinesAutomaticScrollbar):
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout):
+        (WebCore::RenderLayer::paintResizer):
+        (WebCore::RenderLayer::hitTestOverflowControls):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::canDirectlyCompositeBackgroundBackgroundImage):
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer const):
+        (WebCore::backgroundRectForBox):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::isScrollableOverflow):
+        (WebCore::styleChangeRequiresLayerRebuild):
+        (WebCore::RenderLayerCompositor::layerStyleChanged):
+        (WebCore::RenderLayerCompositor::reasonsForCompositing const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForBackfaceVisibility const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForIndirectReason const):
+        (WebCore::RenderLayerCompositor::isViewportConstrainedFixedOrStickyLayer const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition const):
+        (WebCore::RenderLayerCompositor::layerHas3DContent const):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::styleWillChange):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::adjustInnerStyle):
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::isColumnSpanningDescendant const):
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::requiresBalancing const):
+        (WebCore::RenderMultiColumnSet::paintColumnRules):
+        * rendering/RenderMultiColumnSpannerPlaceholder.cpp:
+        (WebCore::RenderMultiColumnSpannerPlaceholder::createAnonymous):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded const):
+        (WebCore::containerForElement):
+        (WebCore::RenderObject::calculateBorderStyleColor):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isFixedPositioned const):
+        (WebCore::RenderObject::isAbsolutelyPositioned const):
+        (WebCore::RenderObject::setPositionState):
+        (WebCore::RenderObject::RenderObjectBitfields::setPositionedState):
+        (WebCore::RenderObject::RenderObjectBitfields::clearPositionedState):
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::styleDidChange):
+        (WebCore::RenderQuote::computeText const):
+        (WebCore::RenderQuote::isOpen const):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::layout):
+        (WebCore::RenderReplaced::setNeedsLayoutIfNeededAfterIntrinsicSizeChange):
+        (WebCore::RenderReplaced::replacedContentRect const):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::styleDidChange):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::styleDidChange):
+        (WebCore::RenderTable::convertStyleLogicalWidthToComputedWidth):
+        (WebCore::RenderTable::convertStyleLogicalHeightToComputedHeight):
+        (WebCore::RenderTable::calcBorderStart const):
+        (WebCore::RenderTable::calcBorderEnd const):
+        (WebCore::RenderTable::outerBorderBefore const):
+        (WebCore::RenderTable::outerBorderAfter const):
+        (WebCore::RenderTable::outerBorderStart const):
+        (WebCore::RenderTable::outerBorderEnd const):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::collapseBorders const):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeIntrinsicPadding):
+        (WebCore::RenderTableCell::styleDidChange):
+        (WebCore::compareBorders):
+        (WebCore::chooseBorder):
+        (WebCore::emptyBorder):
+        (WebCore::RenderTableCell::computeCollapsedStartBorder const):
+        (WebCore::RenderTableCell::computeCollapsedEndBorder const):
+        (WebCore::RenderTableCell::computeCollapsedBeforeBorder const):
+        (WebCore::RenderTableCell::computeCollapsedAfterBorder const):
+        (WebCore::CollapsedBorders::addBorder):
+        (WebCore::RenderTableCell::paintCollapsedBorders):
+        (WebCore::RenderTableCell::scrollbarsChanged):
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::logicalHeightForRowSizing const):
+        (WebCore::RenderTableCell::isBaselineAligned const):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::styleDidChange):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcOuterBorderBefore const):
+        (WebCore::RenderTableSection::calcOuterBorderAfter const):
+        (WebCore::RenderTableSection::calcOuterBorderStart const):
+        (WebCore::RenderTableSection::calcOuterBorderEnd const):
+        (WebCore::RenderTableSection::paintRowGroupBorder):
+        (WebCore::RenderTableSection::paintRowGroupBorderIfRequired):
+        (WebCore::RenderTableSection::cachedCollapsedBorder):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::styleDidChange):
+        (WebCore::RenderText::absoluteQuadsClippedToEllipsis const):
+        (WebCore::isSpaceAccordingToStyle):
+        (WebCore::mapLineBreakToIteratorMode):
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        (WebCore::RenderText::setRenderedText):
+        (WebCore::RenderText::textWithoutConvertingBackslashToYenSymbol const):
+        (WebCore::RenderText::momentarilyRevealLastTypedCharacter):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::computeLogicalHeight const):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::extractControlStatesForRenderer const):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::adjustInputElementButtonStyle):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::updateFocusedState):
+        (WebCore::RenderThemeMac::paintCellAndSetFocusedElementNeedsRepaintIfNecessary):
+        (WebCore::RenderThemeMac::adjustSearchFieldStyle const):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::printBorderStyle):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updatePlayer):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        (WebCore::rendererObscuresBackground):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::verticalPositionForBox):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForStyle):
+        (WebCore::SimpleLineLayout::canUseForWithReason):
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::Style::Style):
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::computeTextPaintStyle):
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleBR):
+        (WebCore::shouldAddBorderPaddingMargin):
+        (WebCore::BreakingContext::handleText):
+        (WebCore::BreakingContext::optimalLineBreakLocationForTrailingWord):
+        * rendering/line/LineBreaker.cpp:
+        (WebCore::LineBreaker::reset):
+        * rendering/line/LineBreaker.h:
+        (WebCore::LineBreaker::clear):
+        * rendering/line/LineInlineHeaders.h:
+        (WebCore::skipNonBreakingSpace):
+        * rendering/line/LineWidth.cpp:
+        (WebCore::requiresIndent):
+        * rendering/style/BorderData.h:
+        (WebCore::BorderData::borderLeftWidth const):
+        (WebCore::BorderData::borderRightWidth const):
+        (WebCore::BorderData::borderTopWidth const):
+        (WebCore::BorderData::borderBottomWidth const):
+        * rendering/style/BorderValue.h:
+        (WebCore::BorderValue::BorderValue):
+        (WebCore::BorderValue::nonZero const):
+        (WebCore::BorderValue::isVisible const):
+        (WebCore::BorderValue::style const):
+        * rendering/style/CollapsedBorderValue.h:
+        (WebCore::CollapsedBorderValue::CollapsedBorderValue):
+        (WebCore::CollapsedBorderValue::width const):
+        (WebCore::CollapsedBorderValue::style const):
+        (WebCore::CollapsedBorderValue::exists const):
+        (WebCore::CollapsedBorderValue::precedence const):
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::FillLayer):
+        (WebCore::clipMax):
+        (WebCore::FillLayer::computeClipMax const):
+        (WebCore::FillLayer::hasRepeatXY const):
+        (WebCore::FillLayer::hasFixedImage const):
+        * rendering/style/FillLayer.h:
+        (WebCore::FillSize::FillSize):
+        (WebCore::FillLayer::attachment const):
+        (WebCore::FillLayer::clip const):
+        (WebCore::FillLayer::origin const):
+        (WebCore::FillLayer::repeatX const):
+        (WebCore::FillLayer::repeatY const):
+        (WebCore::FillLayer::sizeType const):
+        (WebCore::FillLayer::size const):
+        (WebCore::FillLayer::maskSourceType const):
+        (WebCore::FillLayer::isSizeSet const):
+        (WebCore::FillLayer::setAttachment):
+        (WebCore::FillLayer::setClip):
+        (WebCore::FillLayer::setOrigin):
+        (WebCore::FillLayer::setRepeatX):
+        (WebCore::FillLayer::setRepeatY):
+        (WebCore::FillLayer::setComposite):
+        (WebCore::FillLayer::setBlendMode):
+        (WebCore::FillLayer::setSizeType):
+        (WebCore::FillLayer::setSize):
+        (WebCore::FillLayer::setMaskSourceType):
+        (WebCore::FillLayer::clearSize):
+        (WebCore::FillLayer::type const):
+        (WebCore::FillLayer::initialFillAttachment):
+        (WebCore::FillLayer::initialFillClip):
+        (WebCore::FillLayer::initialFillOrigin):
+        (WebCore::FillLayer::initialFillRepeatX):
+        (WebCore::FillLayer::initialFillRepeatY):
+        (WebCore::FillLayer::initialFillComposite):
+        (WebCore::FillLayer::initialFillBlendMode):
+        (WebCore::FillLayer::initialFillSize):
+        (WebCore::FillLayer::initialFillXPosition):
+        (WebCore::FillLayer::initialFillYPosition):
+        (WebCore::FillLayer::initialFillImage):
+        (WebCore::FillLayer::initialFillMaskSourceType):
+        * rendering/style/LineClampValue.h:
+        (WebCore::LineClampValue::LineClampValue):
+        (WebCore::LineClampValue::isPercentage const):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::resolvedSelfAlignment):
+        (WebCore::RenderStyle::resolvedAlignSelf const):
+        (WebCore::RenderStyle::resolvedJustifySelf const):
+        (WebCore::resolvedContentAlignment):
+        (WebCore::resolvedContentAlignmentPosition):
+        (WebCore::resolvedContentAlignmentDistribution):
+        (WebCore::RenderStyle::resolvedJustifyContentDistribution const):
+        (WebCore::RenderStyle::resolvedAlignContentDistribution const):
+        (WebCore::RenderStyle::changeRequiresLayout const):
+        (WebCore::RenderStyle::changeRequiresPositionedLayoutOnly const):
+        (WebCore::RenderStyle::changeRequiresLayerRepaint const):
+        (WebCore::RenderStyle::changeRequiresRepaint const):
+        (WebCore::RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline const):
+        (WebCore::RenderStyle::changeRequiresRecompositeLayer const):
+        (WebCore::RenderStyle::diff const):
+        (WebCore::RenderStyle::diffRequiresLayerRepaint const):
+        (WebCore::allLayersAreFixed):
+        (WebCore::RenderStyle::colorIncludingFallback const):
+        (WebCore::RenderStyle::setColumnStylesFromPaginationMode):
+        (WebCore::RenderStyle::outlineWidth const):
+        (WebCore::RenderStyle::outlineOffset const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::isFloating const):
+        (WebCore::RenderStyle::position const):
+        (WebCore::RenderStyle::hasOutOfFlowPosition const):
+        (WebCore::RenderStyle::hasInFlowPosition const):
+        (WebCore::RenderStyle::hasViewportConstrainedPosition const):
+        (WebCore::RenderStyle::floating const):
+        (WebCore::RenderStyle::borderLeftStyle const):
+        (WebCore::RenderStyle::borderRightStyle const):
+        (WebCore::RenderStyle::borderTopStyle const):
+        (WebCore::RenderStyle::borderBottomStyle const):
+        (WebCore::RenderStyle::hasOutline const):
+        (WebCore::RenderStyle::outlineStyle const):
+        (WebCore::RenderStyle::overflowX const):
+        (WebCore::RenderStyle::overflowY const):
+        (WebCore::RenderStyle::overflowInlineDirection const):
+        (WebCore::RenderStyle::overflowBlockDirection const):
+        (WebCore::RenderStyle::verticalAlign const):
+        (WebCore::RenderStyle::clear const):
+        (WebCore::RenderStyle::tableLayout const):
+        (WebCore::RenderStyle::backgroundRepeatX const):
+        (WebCore::RenderStyle::backgroundRepeatY const):
+        (WebCore::RenderStyle::backgroundAttachment const):
+        (WebCore::RenderStyle::backgroundClip const):
+        (WebCore::RenderStyle::backgroundOrigin const):
+        (WebCore::RenderStyle::backgroundSizeType const):
+        (WebCore::RenderStyle::maskRepeatX const):
+        (WebCore::RenderStyle::maskRepeatY const):
+        (WebCore::RenderStyle::maskClip const):
+        (WebCore::RenderStyle::maskOrigin const):
+        (WebCore::RenderStyle::maskSizeType const):
+        (WebCore::RenderStyle::borderCollapse const):
+        (WebCore::RenderStyle::boxAlign const):
+        (WebCore::RenderStyle::boxDirection const):
+        (WebCore::RenderStyle::boxLines const):
+        (WebCore::RenderStyle::boxOrient const):
+        (WebCore::RenderStyle::boxPack const):
+        (WebCore::RenderStyle::flexDirection const):
+        (WebCore::RenderStyle::isColumnFlexDirection const):
+        (WebCore::RenderStyle::isReverseFlexDirection const):
+        (WebCore::RenderStyle::flexWrap const):
+        (WebCore::RenderStyle::boxDecorationBreak const):
+        (WebCore::RenderStyle::boxSizing const):
+        (WebCore::RenderStyle::userModify const):
+        (WebCore::RenderStyle::userDrag const):
+        (WebCore::RenderStyle::userSelect const):
+        (WebCore::RenderStyle::marginBeforeCollapse const):
+        (WebCore::RenderStyle::marginAfterCollapse const):
+        (WebCore::RenderStyle::wordBreak const):
+        (WebCore::RenderStyle::overflowWrap const):
+        (WebCore::RenderStyle::nbspMode const):
+        (WebCore::RenderStyle::resize const):
+        (WebCore::RenderStyle::columnRuleStyle const):
+        (WebCore::RenderStyle::hasTextCombine const):
+        (WebCore::RenderStyle::transformStyle3D const):
+        (WebCore::RenderStyle::preserves3D const):
+        (WebCore::RenderStyle::backfaceVisibility const):
+        (WebCore::RenderStyle::textSecurity const):
+        (WebCore::RenderStyle::imageRendering const):
+        (WebCore::RenderStyle::setIsolation):
+        (WebCore::RenderStyle::hasIsolation const):
+        (WebCore::RenderStyle::isolation const):
+        (WebCore::RenderStyle::setPosition):
+        (WebCore::RenderStyle::setFloating):
+        (WebCore::RenderStyle::setBackgroundSize):
+        (WebCore::RenderStyle::setBorderLeftStyle):
+        (WebCore::RenderStyle::setBorderRightStyle):
+        (WebCore::RenderStyle::setBorderTopStyle):
+        (WebCore::RenderStyle::setBorderBottomStyle):
+        (WebCore::RenderStyle::setOutlineStyleIsAuto):
+        (WebCore::RenderStyle::setOutlineStyle):
+        (WebCore::RenderStyle::setOverflowX):
+        (WebCore::RenderStyle::setOverflowY):
+        (WebCore::RenderStyle::setVerticalAlign):
+        (WebCore::RenderStyle::setVerticalAlignLength):
+        (WebCore::RenderStyle::setClear):
+        (WebCore::RenderStyle::setTableLayout):
+        (WebCore::RenderStyle::setImageRendering):
+        (WebCore::RenderStyle::clearBackgroundLayers):
+        (WebCore::RenderStyle::clearMaskLayers):
+        (WebCore::RenderStyle::setBorderCollapse):
+        (WebCore::RenderStyle::setAspectRatioType):
+        (WebCore::RenderStyle::setPrintColorAdjust):
+        (WebCore::RenderStyle::setBoxAlign):
+        (WebCore::RenderStyle::setBoxDirection):
+        (WebCore::RenderStyle::setBoxLines):
+        (WebCore::RenderStyle::setBoxOrient):
+        (WebCore::RenderStyle::setBoxPack):
+        (WebCore::RenderStyle::setBoxSizing):
+        (WebCore::RenderStyle::setFlexDirection):
+        (WebCore::RenderStyle::setFlexWrap):
+        (WebCore::RenderStyle::setBoxDecorationBreak):
+        (WebCore::RenderStyle::setUserModify):
+        (WebCore::RenderStyle::setUserDrag):
+        (WebCore::RenderStyle::setUserSelect):
+        (WebCore::RenderStyle::setTextOverflow):
+        (WebCore::RenderStyle::setMarginBeforeCollapse):
+        (WebCore::RenderStyle::setMarginAfterCollapse):
+        (WebCore::RenderStyle::setWordBreak):
+        (WebCore::RenderStyle::setOverflowWrap):
+        (WebCore::RenderStyle::setNBSPMode):
+        (WebCore::RenderStyle::setLineBreak):
+        (WebCore::RenderStyle::setResize):
+        (WebCore::RenderStyle::setColumnFill):
+        (WebCore::RenderStyle::setColumnRuleStyle):
+        (WebCore::RenderStyle::setColumnSpan):
+        (WebCore::RenderStyle::setTextCombine):
+        (WebCore::RenderStyle::setObjectFit):
+        (WebCore::RenderStyle::setTransformStyle3D):
+        (WebCore::RenderStyle::setBackfaceVisibility):
+        (WebCore::RenderStyle::setTextSecurity):
+        (WebCore::RenderStyle::initialOverflowX):
+        (WebCore::RenderStyle::initialOverflowY):
+        (WebCore::RenderStyle::initialClear):
+        (WebCore::RenderStyle::initialPosition):
+        (WebCore::RenderStyle::initialVerticalAlign):
+        (WebCore::RenderStyle::initialFloating):
+        (WebCore::RenderStyle::initialTableLayout):
+        (WebCore::RenderStyle::initialBorderCollapse):
+        (WebCore::RenderStyle::initialBorderStyle):
+        (WebCore::RenderStyle::initialOutlineStyleIsAuto):
+        (WebCore::RenderStyle::initialTextCombine):
+        (WebCore::RenderStyle::initialObjectFit):
+        (WebCore::RenderStyle::initialBoxAlign):
+        (WebCore::RenderStyle::initialBoxDecorationBreak):
+        (WebCore::RenderStyle::initialBoxDirection):
+        (WebCore::RenderStyle::initialBoxLines):
+        (WebCore::RenderStyle::initialBoxOrient):
+        (WebCore::RenderStyle::initialBoxPack):
+        (WebCore::RenderStyle::initialBoxSizing):
+        (WebCore::RenderStyle::initialJustifyItems):
+        (WebCore::RenderStyle::initialSelfAlignment):
+        (WebCore::RenderStyle::initialDefaultAlignment):
+        (WebCore::RenderStyle::initialContentAlignment):
+        (WebCore::RenderStyle::initialFlexDirection):
+        (WebCore::RenderStyle::initialFlexWrap):
+        (WebCore::RenderStyle::initialUserModify):
+        (WebCore::RenderStyle::initialUserDrag):
+        (WebCore::RenderStyle::initialUserSelect):
+        (WebCore::RenderStyle::initialTextOverflow):
+        (WebCore::RenderStyle::initialMarginBeforeCollapse):
+        (WebCore::RenderStyle::initialMarginAfterCollapse):
+        (WebCore::RenderStyle::initialWordBreak):
+        (WebCore::RenderStyle::initialOverflowWrap):
+        (WebCore::RenderStyle::initialNBSPMode):
+        (WebCore::RenderStyle::initialLineBreak):
+        (WebCore::RenderStyle::initialResize):
+        (WebCore::RenderStyle::initialAspectRatioType):
+        (WebCore::RenderStyle::initialColumnFill):
+        (WebCore::RenderStyle::initialColumnSpan):
+        (WebCore::RenderStyle::initialTransformStyle3D):
+        (WebCore::RenderStyle::initialBackfaceVisibility):
+        (WebCore::RenderStyle::initialImageRendering):
+        (WebCore::RenderStyle::initialPrintColorAdjust):
+        (WebCore::RenderStyle::initialTextIndentLine):
+        (WebCore::RenderStyle::initialTextIndentType):
+        (WebCore::RenderStyle::initialTextSecurity):
+        (WebCore::RenderStyle::initialIsolation):
+        (WebCore::collapsedBorderStyle):
+        (WebCore::RenderStyle::breakOnlyAfterWhiteSpace const):
+        (WebCore::RenderStyle::breakWords const):
+        (WebCore::RenderStyle::setTextOrientation):
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::operator|):
+        (WebCore::operator|=):
+        (WebCore::operator| ): Deleted.
+        (WebCore::operator|= ): Deleted.
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::diff const):
+        * rendering/style/StyleBackgroundData.cpp:
+        (WebCore::StyleBackgroundData::StyleBackgroundData):
+        * rendering/style/StyleBoxData.cpp:
+        (WebCore::StyleBoxData::StyleBoxData):
+        * rendering/style/StyleBoxData.h:
+        (WebCore::StyleBoxData::boxSizing const):
+        (WebCore::StyleBoxData::boxDecorationBreak const):
+        * rendering/style/StyleContentAlignmentData.h:
+        (WebCore::StyleContentAlignmentData::StyleContentAlignmentData):
+        (WebCore::StyleContentAlignmentData::setPosition):
+        (WebCore::StyleContentAlignmentData::setDistribution):
+        (WebCore::StyleContentAlignmentData::setOverflow):
+        (WebCore::StyleContentAlignmentData::distribution const):
+        * rendering/style/StyleDeprecatedFlexibleBoxData.cpp:
+        (WebCore::StyleDeprecatedFlexibleBoxData::StyleDeprecatedFlexibleBoxData):
+        * rendering/style/StyleDeprecatedFlexibleBoxData.h:
+        * rendering/style/StyleFlexibleBoxData.cpp:
+        (WebCore::StyleFlexibleBoxData::StyleFlexibleBoxData):
+        * rendering/style/StyleFlexibleBoxData.h:
+        * rendering/style/StyleMultiColData.cpp:
+        (WebCore::StyleMultiColData::StyleMultiColData):
+        * rendering/style/StyleMultiColData.h:
+        (WebCore::StyleMultiColData::ruleWidth const):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * rendering/style/StyleSelfAlignmentData.h:
+        (WebCore::StyleSelfAlignmentData::StyleSelfAlignmentData):
+        (WebCore::StyleSelfAlignmentData::setPosition):
+        (WebCore::StyleSelfAlignmentData::setPositionType):
+        (WebCore::StyleSelfAlignmentData::setOverflow):
+        * rendering/svg/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::styleDidChange):
+        * rendering/svg/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::styleDidChange):
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::styleDidChange):
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::styleDidChange):
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::styleDidChange):
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::registerResource):
+        * rendering/svg/RenderSVGResourceFilterPrimitive.cpp:
+        (WebCore::RenderSVGResourceFilterPrimitive::styleDidChange):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        (WebCore::RenderSVGRoot::shouldApplyViewportClip const):
+        (WebCore::RenderSVGRoot::styleDidChange):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintText):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::isOverflowHidden):
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::clientStyleChanged):
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::attachToRenderElementInternal):
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::RenderTreeBuilder::Block::insertChildToContinuation):
+        * rendering/updating/RenderTreeBuilderFirstLetter.cpp:
+        (WebCore::styleForFirstLetter):
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::isValidColumnSpanner):
+        (WebCore::RenderTreeBuilder::MultiColumn::resolveMovedChild):
+        (WebCore::RenderTreeBuilder::MultiColumn::multiColumnRelativeWillBeRemoved):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+
 2018-05-21  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Stream::decodebinSinkPad is read but never assigned

@@ -821,7 +821,7 @@ static bool scrolledToEdgeInDominantDirection(const ContainerNode& container, co
     const RenderStyle& style = container.renderer()->style();
 
     if (!deltaIsPredominantlyVertical(deltaX, deltaY) && deltaX) {
-        if (style.overflowX() == OHIDDEN)
+        if (style.overflowX() == Overflow::Hidden)
             return true;
 
         if (deltaX < 0)
@@ -830,7 +830,7 @@ static bool scrolledToEdgeInDominantDirection(const ContainerNode& container, co
         return area.scrolledToLeft();
     }
 
-    if (style.overflowY() == OHIDDEN)
+    if (style.overflowY() == Overflow::Hidden)
         return true;
 
     if (deltaY < 0)

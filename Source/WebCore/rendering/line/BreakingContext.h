@@ -144,7 +144,7 @@ public:
 
     void increment();
 
-    void handleBR(EClear&);
+    void handleBR(Clear&);
     void handleOutOfFlowPositioned(Vector<RenderBox*>& positionedObjects);
     void handleFloat();
     void handleEmptyInline();
@@ -338,7 +338,7 @@ inline void BreakingContext::increment()
     m_atStart = false;
 }
 
-inline void BreakingContext::handleBR(EClear& clear)
+inline void BreakingContext::handleBR(Clear& clear)
 {
     if (fitsOnLineOrHangsAtEnd()) {
         RenderObject& br = *m_current.renderer();
@@ -360,7 +360,7 @@ inline void BreakingContext::handleBR(EClear& clear)
         // A <br> with clearance always needs a linebox in case the lines below it get dirtied later and
         // need to check for floats to clear - so if we're ignoring spaces, stop ignoring them and add a
         // run for this object.
-        if (m_ignoringSpaces && m_currentStyle->clear() != CNONE)
+        if (m_ignoringSpaces && m_currentStyle->clear() != Clear::None)
             m_lineWhitespaceCollapsingState.ensureLineBoxInsideIgnoredSpaces(br);
         // If we were preceded by collapsing space and are in a right-aligned container we need to ensure the space gets
         // collapsed away so that it doesn't push the text out from the container's right-hand edge.
@@ -392,7 +392,7 @@ inline bool shouldAddBorderPaddingMargin(RenderObject* child)
     if (is<RenderText>(*child) && !downcast<RenderText>(*child).text().length())
         return true;
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
-    if (is<RenderLineBreak>(*child) && child->parent()->style().boxDecorationBreak() == DCLONE)
+    if (is<RenderLineBreak>(*child) && child->parent()->style().boxDecorationBreak() == BoxDecorationBreak::Clone)
         return true;
 #endif
     return false;
@@ -775,13 +775,13 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     float wrapWidthOffset = m_width.uncommittedWidth() + inlineLogicalWidth(m_current.renderer(), !m_appliedStartWidth, true);
     float wrapW = wrapWidthOffset;
     float charWidth = 0;
-    bool breakNBSP = m_autoWrap && m_currentStyle->nbspMode() == SPACE;
+    bool breakNBSP = m_autoWrap && m_currentStyle->nbspMode() == NBSPMode::Space;
     // Auto-wrapping text should wrap in the middle of a word only if it could not wrap before the word,
     // which is only possible if the word is the first thing on the line.
     bool breakWords = m_currentStyle->breakWords() && ((m_autoWrap && (!m_width.committedWidth() && !m_width.hasCommittedReplaced())) || m_currWS == PRE);
     bool midWordBreak = false;
-    bool breakAll = m_currentStyle->wordBreak() == BreakAllWordBreak && m_autoWrap;
-    bool keepAllWords = m_currentStyle->wordBreak() == KeepAllWordBreak;
+    bool breakAll = m_currentStyle->wordBreak() == WordBreak::BreakAll && m_autoWrap;
+    bool keepAllWords = m_currentStyle->wordBreak() == WordBreak::KeepAll;
     float hyphenWidth = 0;
     auto iteratorMode = mapLineBreakToIteratorMode(m_blockStyle.lineBreak());
     bool canUseLineBreakShortcut = iteratorMode == LineBreakIteratorMode::Default;
@@ -1317,9 +1317,9 @@ inline InlineIterator BreakingContext::optimalLineBreakLocationForTrailingWord()
     if (renderText.text().length() == lineBreak.offset() || renderText.text().length() - lineBreak.offset() > longTrailingWordLength)
         return lineBreak;
     bool canUseLineBreakShortcut = m_renderTextInfo.lineBreakIterator.mode() == LineBreakIteratorMode::Default;
-    bool breakNBSP = m_autoWrap && m_currentStyle->nbspMode() == SPACE;
+    bool breakNBSP = m_autoWrap && m_currentStyle->nbspMode() == NBSPMode::Space;
     std::optional<unsigned> nextBreakablePosition = lineBreak.nextBreakablePosition();
-    isBreakable(m_renderTextInfo.lineBreakIterator, lineBreak.offset() + 1, nextBreakablePosition, breakNBSP, canUseLineBreakShortcut, m_currentStyle->wordBreak() == KeepAllWordBreak);
+    isBreakable(m_renderTextInfo.lineBreakIterator, lineBreak.offset() + 1, nextBreakablePosition, breakNBSP, canUseLineBreakShortcut, m_currentStyle->wordBreak() == WordBreak::KeepAll);
     if (!nextBreakablePosition || nextBreakablePosition.value() != renderText.text().length())
         return lineBreak;
     const RenderStyle& style = lineStyle(renderText, m_lineInfo);

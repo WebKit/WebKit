@@ -67,28 +67,28 @@ public:
     
     float borderLeftWidth() const
     {
-        if (!m_image.hasImage() && (m_left.style() == BNONE || m_left.style() == BHIDDEN))
+        if (!m_image.hasImage() && (m_left.style() == BorderStyle::None || m_left.style() == BorderStyle::Hidden))
             return 0; 
         return m_left.width();
     }
     
     float borderRightWidth() const
     {
-        if (!m_image.hasImage() && (m_right.style() == BNONE || m_right.style() == BHIDDEN))
+        if (!m_image.hasImage() && (m_right.style() == BorderStyle::None || m_right.style() == BorderStyle::Hidden))
             return 0;
         return m_right.width();
     }
     
     float borderTopWidth() const
     {
-        if (!m_image.hasImage() && (m_top.style() == BNONE || m_top.style() == BHIDDEN))
+        if (!m_image.hasImage() && (m_top.style() == BorderStyle::None || m_top.style() == BorderStyle::Hidden))
             return 0;
         return m_top.width();
     }
     
     float borderBottomWidth() const
     {
-        if (!m_image.hasImage() && (m_bottom.style() == BNONE || m_bottom.style() == BHIDDEN))
+        if (!m_image.hasImage() && (m_bottom.style() == BorderStyle::None || m_bottom.style() == BorderStyle::Hidden))
             return 0;
         return m_bottom.width();
     }

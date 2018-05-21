@@ -2523,7 +2523,7 @@ NSAttributedString *editingAttributedStringFromRange(Range& range, IncludeImages
             [attrs.get() removeObjectForKey:NSBackgroundColorAttributeName];
 
         RetainPtr<NSString> text;
-        if (style.nbspMode() == NBNORMAL)
+        if (style.nbspMode() == NBSPMode::Normal)
             text = it.text().createNSStringWithoutCopying();
         else
             text = it.text().toString().replace(noBreakSpace, ' ');

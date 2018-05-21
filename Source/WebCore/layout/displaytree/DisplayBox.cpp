@@ -66,7 +66,7 @@ LayoutRect Box::marginBox() const
 
 LayoutRect Box::borderBox() const
 {
-    if (m_style.boxSizing == BORDER_BOX)
+    if (m_style.boxSizing == BoxSizing::BorderBox)
         return LayoutRect( { }, size());
 
     // Width is content box.
@@ -92,7 +92,7 @@ LayoutRect Box::paddingBox() const
 
 LayoutRect Box::contentBox() const
 {
-    if (m_style.boxSizing == CONTENT_BOX)
+    if (m_style.boxSizing == BoxSizing::ContentBox)
         return LayoutRect(LayoutPoint(0, 0), size());
 
     // Width is border box.

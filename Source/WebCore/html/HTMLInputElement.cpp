@@ -1974,7 +1974,7 @@ bool HTMLInputElement::shouldTruncateText(const RenderStyle& style) const
 {
     if (!isTextField())
         return false;
-    return document().focusedElement() != this && style.textOverflow() == TextOverflowEllipsis;
+    return document().focusedElement() != this && style.textOverflow() == TextOverflow::Ellipsis;
 }
 
 ExceptionOr<int> HTMLInputElement::selectionStartForBindings() const
@@ -2061,16 +2061,16 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
     adjustInnerTextStyle(style, textBlockStyle);
 
     textBlockStyle.setWhiteSpace(PRE);
-    textBlockStyle.setOverflowWrap(NormalOverflowWrap);
-    textBlockStyle.setOverflowX(OHIDDEN);
-    textBlockStyle.setOverflowY(OHIDDEN);
-    textBlockStyle.setTextOverflow(shouldTruncateText(style) ? TextOverflowEllipsis : TextOverflowClip);
+    textBlockStyle.setOverflowWrap(OverflowWrap::Normal);
+    textBlockStyle.setOverflowX(Overflow::Hidden);
+    textBlockStyle.setOverflowY(Overflow::Hidden);
+    textBlockStyle.setTextOverflow(shouldTruncateText(style) ? TextOverflow::Ellipsis : TextOverflow::Clip);
 
     textBlockStyle.setDisplay(BLOCK);
 
     if (hasAutoFillStrongPasswordButton()) {
         textBlockStyle.setColor({ 0.0f, 0.0f, 0.0f, 0.6f });
-        textBlockStyle.setTextOverflow(TextOverflowClip);
+        textBlockStyle.setTextOverflow(TextOverflow::Clip);
         textBlockStyle.setMaskImage(styleResolver().styleImage(autoFillStrongPasswordMaskImage()));
         // A stacking context is needed for the mask.
         if (textBlockStyle.hasAutoZIndex())

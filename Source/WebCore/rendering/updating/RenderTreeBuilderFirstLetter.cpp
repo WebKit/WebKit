@@ -46,7 +46,7 @@ static RenderStyle styleForFirstLetter(const RenderBlock& firstLetterBlock, cons
 
     // If we have an initial letter drop that is >= 1, then we need to force floating to be on.
     if (firstLetterStyle.initialLetterDrop() >= 1 && !firstLetterStyle.isFloating())
-        firstLetterStyle.setFloating(firstLetterStyle.isLeftToRightDirection() ? LeftFloat : RightFloat);
+        firstLetterStyle.setFloating(firstLetterStyle.isLeftToRightDirection() ? Float::Left : Float::Right);
 
     // We have to compute the correct font-size for the first-letter if it has an initial letter height set.
     auto* paragraph = firstLetterContainer.isRenderBlockFlow() ? &firstLetterContainer : firstLetterContainer.containingBlock();
@@ -84,7 +84,7 @@ static RenderStyle styleForFirstLetter(const RenderBlock& firstLetterBlock, cons
     // Force inline display (except for floating first-letters).
     firstLetterStyle.setDisplay(firstLetterStyle.isFloating() ? BLOCK : INLINE);
     // CSS2 says first-letter can't be positioned.
-    firstLetterStyle.setPosition(StaticPosition);
+    firstLetterStyle.setPosition(PositionType::Static);
     return firstLetterStyle;
 }
 

@@ -80,39 +80,39 @@ using namespace HTMLNames;
 
 static void writeLayers(TextStream&, const RenderLayer& rootLayer, RenderLayer&, const LayoutRect& paintDirtyRect, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 
-static void printBorderStyle(TextStream& ts, const EBorderStyle borderStyle)
+static void printBorderStyle(TextStream& ts, const BorderStyle borderStyle)
 {
     switch (borderStyle) {
-        case BNONE:
-            ts << "none";
-            break;
-        case BHIDDEN:
-            ts << "hidden";
-            break;
-        case INSET:
-            ts << "inset";
-            break;
-        case GROOVE:
-            ts << "groove";
-            break;
-        case RIDGE:
-            ts << "ridge";
-            break;
-        case OUTSET:
-            ts << "outset";
-            break;
-        case DOTTED:
-            ts << "dotted";
-            break;
-        case DASHED:
-            ts << "dashed";
-            break;
-        case SOLID:
-            ts << "solid";
-            break;
-        case DOUBLE:
-            ts << "double";
-            break;
+    case BorderStyle::None:
+        ts << "none";
+        break;
+    case BorderStyle::Hidden:
+        ts << "hidden";
+        break;
+    case BorderStyle::Inset:
+        ts << "inset";
+        break;
+    case BorderStyle::Groove:
+        ts << "groove";
+        break;
+    case BorderStyle::Ridge:
+        ts << "ridge";
+        break;
+    case BorderStyle::Outset:
+        ts << "outset";
+        break;
+    case BorderStyle::Dotted:
+        ts << "dotted";
+        break;
+    case BorderStyle::Dashed:
+        ts << "dashed";
+        break;
+    case BorderStyle::Solid:
+        ts << "solid";
+        break;
+    case BorderStyle::Double:
+        ts << "double";
+        break;
     }
 
     ts << " ";

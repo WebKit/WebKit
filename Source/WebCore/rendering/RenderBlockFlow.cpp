@@ -86,14 +86,14 @@ RenderBlockFlow::MarginInfo::MarginInfo(const RenderBlockFlow& block, LayoutUnit
     ASSERT(block.isRenderView() || block.parent());
     m_canCollapseWithChildren = !block.createsNewFormattingContext() && !block.isRenderView();
 
-    m_canCollapseMarginBeforeWithChildren = m_canCollapseWithChildren && !beforeBorderPadding && blockStyle.marginBeforeCollapse() != MSEPARATE;
+    m_canCollapseMarginBeforeWithChildren = m_canCollapseWithChildren && !beforeBorderPadding && blockStyle.marginBeforeCollapse() != MarginCollapse::Separate;
 
     // If any height other than auto is specified in CSS, then we don't collapse our bottom
     // margins with our children's margins. To do otherwise would be to risk odd visual
     // effects when the children overflow out of the parent block and yet still collapse
     // with it. We also don't collapse if we have any bottom border/padding.
     m_canCollapseMarginAfterWithChildren = m_canCollapseWithChildren && !afterBorderPadding
-        && (blockStyle.logicalHeight().isAuto() && !blockStyle.logicalHeight().value()) && blockStyle.marginAfterCollapse() != MSEPARATE;
+        && (blockStyle.logicalHeight().isAuto() && !blockStyle.logicalHeight().value()) && blockStyle.marginAfterCollapse() != MarginCollapse::Separate;
     
     m_quirkContainer = block.isTableCell() || block.isBody();
 
@@ -422,7 +422,7 @@ bool RenderBlockFlow::willCreateColumns(std::optional<unsigned> desiredColumnCou
         return false;
 
     // If overflow-y is set to paged-x or paged-y on the body or html element, we'll handle the paginating in the RenderView instead.
-    if ((style().overflowY() == OPAGEDX || style().overflowY() == OPAGEDY) && !(isDocumentElementRenderer() || isBody()))
+    if ((style().overflowY() == Overflow::PagedX || style().overflowY() == Overflow::PagedY) && !(isDocumentElementRenderer() || isBody()))
         return true;
     
     // Lines clamping creates columns.
@@ -846,7 +846,7 @@ LayoutUnit RenderBlockFlow::marginOffsetForSelfCollapsingBlock()
 {
     ASSERT(isSelfCollapsingBlock());
     RenderBlockFlow* parentBlock = downcast<RenderBlockFlow>(parent());
-    if (parentBlock && style().clear() && parentBlock->getClearDelta(*this, logicalHeight()))
+    if (parentBlock && style().clear() != Clear::None && parentBlock->getClearDelta(*this, logicalHeight()))
         return marginValuesForChild(*this).positiveMarginBefore();
     return LayoutUnit();
 }
@@ -1198,7 +1198,7 @@ LayoutUnit RenderBlockFlow::clearFloatsIfNeeded(RenderBox& child, MarginInfo& ma
         marginInfo.setAtBeforeSideOfBlock(false);
 
         // In case the child discarded the before margin of the block we need to reset the mustDiscardMarginBefore flag to the initial value.
-        setMustDiscardMarginBefore(style().marginBeforeCollapse() == MDISCARD);
+        setMustDiscardMarginBefore(style().marginBeforeCollapse() == MarginCollapse::Discard);
     }
 
     return yPos + heightIncrease;
@@ -1209,12 +1209,12 @@ void RenderBlockFlow::marginBeforeEstimateForChild(RenderBox& child, LayoutUnit&
     // Give up if in quirks mode and we're a body/table cell and the top margin of the child box is quirky.
     // Give up if the child specified -webkit-margin-collapse: separate that prevents collapsing.
     // FIXME: Use writing mode independent accessor for marginBeforeCollapse.
-    if ((document().inQuirksMode() && hasMarginAfterQuirk(child) && (isTableCell() || isBody())) || child.style().marginBeforeCollapse() == MSEPARATE)
+    if ((document().inQuirksMode() && hasMarginAfterQuirk(child) && (isTableCell() || isBody())) || child.style().marginBeforeCollapse() == MarginCollapse::Separate)
         return;
 
     // The margins are discarded by a child that specified -webkit-margin-collapse: discard.
     // FIXME: Use writing mode independent accessor for marginBeforeCollapse.
-    if (child.style().marginBeforeCollapse() == MDISCARD) {
+    if (child.style().marginBeforeCollapse() == MarginCollapse::Discard) {
         positiveMarginBefore = 0;
         negativeMarginBefore = 0;
         discardMarginBefore = true;
@@ -1243,7 +1243,7 @@ void RenderBlockFlow::marginBeforeEstimateForChild(RenderBox& child, LayoutUnit&
     }
     
     // Give up if there is clearance on the box, since it probably won't collapse into us.
-    if (!grandchildBox || grandchildBox->style().clear() != CNONE)
+    if (!grandchildBox || grandchildBox->style().clear() != Clear::None)
         return;
 
     // Make sure to update the block margins now for the grandchild box so that we're looking at current values.
@@ -1389,7 +1389,7 @@ void RenderBlockFlow::setMaxMarginAfterValues(LayoutUnit pos, LayoutUnit neg)
 
 void RenderBlockFlow::setMustDiscardMarginBefore(bool value)
 {
-    if (style().marginBeforeCollapse() == MDISCARD) {
+    if (style().marginBeforeCollapse() == MarginCollapse::Discard) {
         ASSERT(value);
         return;
     }
@@ -1405,7 +1405,7 @@ void RenderBlockFlow::setMustDiscardMarginBefore(bool value)
 
 void RenderBlockFlow::setMustDiscardMarginAfter(bool value)
 {
-    if (style().marginAfterCollapse() == MDISCARD) {
+    if (style().marginAfterCollapse() == MarginCollapse::Discard) {
         ASSERT(value);
         return;
     }
@@ -1421,21 +1421,21 @@ void RenderBlockFlow::setMustDiscardMarginAfter(bool value)
 
 bool RenderBlockFlow::mustDiscardMarginBefore() const
 {
-    return style().marginBeforeCollapse() == MDISCARD || (hasRareBlockFlowData() && rareBlockFlowData()->m_discardMarginBefore);
+    return style().marginBeforeCollapse() == MarginCollapse::Discard || (hasRareBlockFlowData() && rareBlockFlowData()->m_discardMarginBefore);
 }
 
 bool RenderBlockFlow::mustDiscardMarginAfter() const
 {
-    return style().marginAfterCollapse() == MDISCARD || (hasRareBlockFlowData() && rareBlockFlowData()->m_discardMarginAfter);
+    return style().marginAfterCollapse() == MarginCollapse::Discard || (hasRareBlockFlowData() && rareBlockFlowData()->m_discardMarginAfter);
 }
 
 bool RenderBlockFlow::mustDiscardMarginBeforeForChild(const RenderBox& child) const
 {
     ASSERT(!child.selfNeedsLayout());
     if (!child.isWritingModeRoot())
-        return is<RenderBlockFlow>(child) ? downcast<RenderBlockFlow>(child).mustDiscardMarginBefore() : (child.style().marginBeforeCollapse() == MDISCARD);
+        return is<RenderBlockFlow>(child) ? downcast<RenderBlockFlow>(child).mustDiscardMarginBefore() : (child.style().marginBeforeCollapse() == MarginCollapse::Discard);
     if (child.isHorizontalWritingMode() == isHorizontalWritingMode())
-        return is<RenderBlockFlow>(child) ? downcast<RenderBlockFlow>(child).mustDiscardMarginAfter() : (child.style().marginAfterCollapse() == MDISCARD);
+        return is<RenderBlockFlow>(child) ? downcast<RenderBlockFlow>(child).mustDiscardMarginAfter() : (child.style().marginAfterCollapse() == MarginCollapse::Discard);
 
     // FIXME: We return false here because the implementation is not geometrically complete. We have values only for before/after, not start/end.
     // In case the boxes are perpendicular we assume the property is not specified.
@@ -1446,9 +1446,9 @@ bool RenderBlockFlow::mustDiscardMarginAfterForChild(const RenderBox& child) con
 {
     ASSERT(!child.selfNeedsLayout());
     if (!child.isWritingModeRoot())
-        return is<RenderBlockFlow>(child) ? downcast<RenderBlockFlow>(child).mustDiscardMarginAfter() : (child.style().marginAfterCollapse() == MDISCARD);
+        return is<RenderBlockFlow>(child) ? downcast<RenderBlockFlow>(child).mustDiscardMarginAfter() : (child.style().marginAfterCollapse() == MarginCollapse::Discard);
     if (child.isHorizontalWritingMode() == isHorizontalWritingMode())
-        return is<RenderBlockFlow>(child) ? downcast<RenderBlockFlow>(child).mustDiscardMarginBefore() : (child.style().marginBeforeCollapse() == MDISCARD);
+        return is<RenderBlockFlow>(child) ? downcast<RenderBlockFlow>(child).mustDiscardMarginBefore() : (child.style().marginBeforeCollapse() == MarginCollapse::Discard);
 
     // FIXME: See |mustDiscardMarginBeforeForChild| above.
     return false;
@@ -1459,9 +1459,9 @@ bool RenderBlockFlow::mustSeparateMarginBeforeForChild(const RenderBox& child) c
     ASSERT(!child.selfNeedsLayout());
     const RenderStyle& childStyle = child.style();
     if (!child.isWritingModeRoot())
-        return childStyle.marginBeforeCollapse() == MSEPARATE;
+        return childStyle.marginBeforeCollapse() == MarginCollapse::Separate;
     if (child.isHorizontalWritingMode() == isHorizontalWritingMode())
-        return childStyle.marginAfterCollapse() == MSEPARATE;
+        return childStyle.marginAfterCollapse() == MarginCollapse::Separate;
 
     // FIXME: See |mustDiscardMarginBeforeForChild| above.
     return false;
@@ -1472,9 +1472,9 @@ bool RenderBlockFlow::mustSeparateMarginAfterForChild(const RenderBox& child) co
     ASSERT(!child.selfNeedsLayout());
     const RenderStyle& childStyle = child.style();
     if (!child.isWritingModeRoot())
-        return childStyle.marginAfterCollapse() == MSEPARATE;
+        return childStyle.marginAfterCollapse() == MarginCollapse::Separate;
     if (child.isHorizontalWritingMode() == isHorizontalWritingMode())
-        return childStyle.marginBeforeCollapse() == MSEPARATE;
+        return childStyle.marginBeforeCollapse() == MarginCollapse::Separate;
 
     // FIXME: See |mustDiscardMarginBeforeForChild| above.
     return false;
@@ -2000,7 +2000,7 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
     // then mark its descendants with floats for layout and clear all floats from its next
     // sibling blocks that exist in our floating objects list. See bug 56299 and 62875.
     bool canPropagateFloatIntoSibling = !isFloatingOrOutOfFlowPositioned() && !avoidsFloats();
-    if (diff == StyleDifferenceLayout && s_canPropagateFloatIntoSibling && !canPropagateFloatIntoSibling && hasOverhangingFloats()) {
+    if (diff == StyleDifference::Layout && s_canPropagateFloatIntoSibling && !canPropagateFloatIntoSibling && hasOverhangingFloats()) {
         RenderBlockFlow* parentBlock = this;
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
 
@@ -2022,7 +2022,7 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
         parentBlock->markSiblingsWithFloatsForLayout();
     }
 
-    if (diff >= StyleDifferenceRepaint) {
+    if (diff >= StyleDifference::Repaint) {
         // FIXME: This could use a cheaper style-only test instead of SimpleLineLayout::canUseFor.
         if (selfNeedsLayout() || !m_simpleLineLayout || !SimpleLineLayout::canUseFor(*this))
             invalidateLineLayoutPath();
@@ -2044,10 +2044,10 @@ void RenderBlockFlow::styleWillChange(StyleDifference diff, const RenderStyle& n
     s_canPropagateFloatIntoSibling = oldStyle ? !isFloatingOrOutOfFlowPositioned() && !avoidsFloats() : false;
 
     if (oldStyle) {
-        EPosition oldPosition = oldStyle->position();
-        EPosition newPosition = newStyle.position();
+        auto oldPosition = oldStyle->position();
+        auto newPosition = newStyle.position();
 
-        if (parent() && diff == StyleDifferenceLayout && oldPosition != newPosition) {
+        if (parent() && diff == StyleDifference::Layout && oldPosition != newPosition) {
             if (containsFloats() && !isFloating() && !isOutOfFlowPositioned() && newStyle.hasOutOfFlowPosition())
                 markAllDescendantsWithFloatsForLayout();
         }
@@ -2355,7 +2355,7 @@ void RenderBlockFlow::computeLogicalLocationForFloat(FloatingObject& floatingObj
         }
     }
     
-    if (childBox.style().floating() == LeftFloat) {
+    if (childBox.style().floating() == Float::Left) {
         LayoutUnit heightRemainingLeft = 1;
         LayoutUnit heightRemainingRight = 1;
         floatLogicalLeft = logicalLeftOffsetForPositioningFloat(logicalTopOffset, logicalLeftOffset, false, &heightRemainingLeft);
@@ -2480,9 +2480,9 @@ bool RenderBlockFlow::positionNewFloats()
 
         LayoutRect oldRect = childBox.frameRect();
 
-        if (childBox.style().clear() & CLEFT)
+        if (childBox.style().clear() == Clear::Left || childBox.style().clear() == Clear::Both)
             logicalTop = std::max(lowestFloatLogicalBottom(FloatingObject::FloatLeft), logicalTop);
-        if (childBox.style().clear() & CRIGHT)
+        if (childBox.style().clear() == Clear::Right || childBox.style().clear() == Clear::Both)
             logicalTop = std::max(lowestFloatLogicalBottom(FloatingObject::FloatRight), logicalTop);
 
         computeLogicalLocationForFloat(floatingObject, logicalTop);
@@ -2537,22 +2537,22 @@ bool RenderBlockFlow::positionNewFloats()
     return true;
 }
 
-void RenderBlockFlow::clearFloats(EClear clear)
+void RenderBlockFlow::clearFloats(Clear clear)
 {
     positionNewFloats();
     // set y position
     LayoutUnit newY = 0;
     switch (clear) {
-    case CLEFT:
+    case Clear::Left:
         newY = lowestFloatLogicalBottom(FloatingObject::FloatLeft);
         break;
-    case CRIGHT:
+    case Clear::Right:
         newY = lowestFloatLogicalBottom(FloatingObject::FloatRight);
         break;
-    case CBOTH:
+    case Clear::Both:
         newY = lowestFloatLogicalBottom();
         break;
-    default:
+    case Clear::None:
         break;
     }
     if (height() < newY)
@@ -2803,18 +2803,18 @@ LayoutUnit RenderBlockFlow::getClearDelta(RenderBox& child, LayoutUnit logicalTo
         return 0;
     
     // At least one float is present. We need to perform the clearance computation.
-    bool clearSet = child.style().clear() != CNONE;
+    bool clearSet = child.style().clear() != Clear::None;
     LayoutUnit logicalBottom = 0;
     switch (child.style().clear()) {
-    case CNONE:
+    case Clear::None:
         break;
-    case CLEFT:
+    case Clear::Left:
         logicalBottom = lowestFloatLogicalBottom(FloatingObject::FloatLeft);
         break;
-    case CRIGHT:
+    case Clear::Right:
         logicalBottom = lowestFloatLogicalBottom(FloatingObject::FloatRight);
         break;
-    case CBOTH:
+    case Clear::Both:
         logicalBottom = lowestFloatLogicalBottom();
         break;
     }
@@ -3055,7 +3055,7 @@ std::optional<int> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDi
     // According to the CSS spec http://www.w3.org/TR/CSS21/visudet.html, we shouldn't be performing this min, but should
     // instead be returning boxHeight directly. However, we feel that a min here is better behavior (and is consistent
     // enough with the spec to not cause tons of breakages).
-    return style().overflowY() == OVISIBLE ? lastBaseline : std::min(boxHeight, lastBaseline);
+    return style().overflowY() == Overflow::Visible ? lastBaseline : std::min(boxHeight, lastBaseline);
 }
 
 void RenderBlockFlow::setSelectionState(SelectionState state)
@@ -4189,8 +4189,8 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                 bool clearPreviousFloat;
                 if (child->isFloating()) {
                     clearPreviousFloat = (prevFloat
-                        && ((prevFloat->style().floating() == LeftFloat && (childStyle.clear() & CLEFT))
-                            || (prevFloat->style().floating() == RightFloat && (childStyle.clear() & CRIGHT))));
+                        && ((prevFloat->style().floating() == Float::Left && (childStyle.clear() == Clear::Left || childStyle.clear() == Clear::Both))
+                            || (prevFloat->style().floating() == Float::Right && (childStyle.clear() == Clear::Right || childStyle.clear() == Clear::Both))));
                     prevFloat = child;
                 } else
                     clearPreviousFloat = false;
