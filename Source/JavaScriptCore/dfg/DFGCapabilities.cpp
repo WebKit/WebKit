@@ -236,8 +236,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_to_object:
     case op_switch_imm:
     case op_switch_char:
-    case op_in_by_val:
-    case op_in_by_id:
+    case op_in:
     case op_get_scope:
     case op_get_from_scope:
     case op_get_enumerable_length:

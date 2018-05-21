@@ -3259,30 +3259,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         clobberWorld();
         break;
         
-    case InById: {
+    case In: {
         // FIXME: We can determine when the property definitely exists based on abstract
         // value information.
         clobberWorld();
-        filter(node->child1(), SpecObject);
-        setNonCellTypeForNode(node, SpecBoolean);
-        break;
-    }
-
-    case InByVal: {
-        AbstractValue& property = forNode(node->child2());
-        if (JSValue constant = property.value()) {
-            if (constant.isString()) {
-                JSString* string = asString(constant);
-                const StringImpl* impl = string->tryGetValueImpl();
-                if (impl && impl->isAtomic())
-                    m_state.setFoundConstants(true);
-            }
-        }
-
-        // FIXME: We can determine when the property definitely exists based on abstract
-        // value information.
-        clobberWorld();
-        filter(node->child1(), SpecObject);
         setNonCellTypeForNode(node, SpecBoolean);
         break;
     }

@@ -623,8 +623,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ConstructVarargs:
     case ConstructForwardVarargs:
     case ToPrimitive:
-    case InByVal:
-    case InById:
+    case In:
     case HasOwnProperty:
     case ValueAdd:
     case SetFunctionName:

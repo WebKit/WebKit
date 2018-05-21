@@ -1552,7 +1552,6 @@ _llint_op_put_by_id:
     callSlowPath(_llint_slow_path_put_by_id)
     dispatch(constexpr op_put_by_id_length)
 
-
 macro finishGetByVal(result, scratch)
     loadisFromInstruction(1, scratch)
     storeq result, [cfr, scratch, 8]

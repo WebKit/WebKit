@@ -1507,16 +1507,10 @@ _llint_op_is_function:
     dispatch(constexpr op_is_function_length)
 
 
-_llint_op_in_by_id:
+_llint_op_in:
     traceExecution()
-    callSlowPath(_slow_path_in_by_id)
-    dispatch(constexpr op_in_by_id_length)
-
-
-_llint_op_in_by_val:
-    traceExecution()
-    callSlowPath(_slow_path_in_by_val)
-    dispatch(constexpr op_in_by_val_length)
+    callSlowPath(_slow_path_in)
+    dispatch(constexpr op_in_length)
 
 
 _llint_op_try_get_by_id:

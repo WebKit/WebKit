@@ -981,8 +981,7 @@ private:
             setPrediction(SpecObjectOther);
             break;
 
-        case InByVal:
-        case InById:
+        case In:
             setPrediction(SpecBoolean);
             break;
 

@@ -370,8 +370,7 @@ namespace JSC { namespace DFG {
     macro(NumberToStringWithValidRadixConstant, NodeResultJS) \
     macro(NewStringObject, NodeResultJS) \
     macro(MakeRope, NodeResultJS) \
-    macro(InByVal, NodeResultBoolean | NodeMustGenerate) \
-    macro(InById, NodeResultBoolean | NodeMustGenerate) \
+    macro(In, NodeResultBoolean | NodeMustGenerate) \
     macro(ProfileType, NodeMustGenerate) \
     macro(ProfileControlFlow, NodeMustGenerate) \
     macro(SetFunctionName, NodeMustGenerate) \

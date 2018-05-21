@@ -1,3 +1,21 @@
+2018-05-21  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r231998 and r232017.
+        https://bugs.webkit.org/show_bug.cgi?id=185842
+
+        causes crashes on 32 JSC bot (Requested by realdawei on
+        #webkit).
+
+        Reverted changesets:
+
+        "[JSC] JSC should have consistent InById IC"
+        https://bugs.webkit.org/show_bug.cgi?id=185682
+        https://trac.webkit.org/changeset/231998
+
+        "Unreviewed, fix 32bit and scope release"
+        https://bugs.webkit.org/show_bug.cgi?id=185682
+        https://trac.webkit.org/changeset/232017
+
 2018-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] JSC should have consistent InById IC

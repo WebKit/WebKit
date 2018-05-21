@@ -265,9 +265,26 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     finalizeInlineCaches(m_getByIds, linkBuffer);
     finalizeInlineCaches(m_getByIdsWithThis, linkBuffer);
     finalizeInlineCaches(m_putByIds, linkBuffer);
-    finalizeInlineCaches(m_inByIds, linkBuffer);
     finalizeInlineCaches(m_instanceOfs, linkBuffer);
 
+    for (unsigned i = 0; i < m_ins.size(); ++i) {
+        StructureStubInfo& info = *m_ins[i].m_stubInfo;
+
+        CodeLocationLabel<JITStubRoutinePtrTag> start = linkBuffer.locationOf<JITStubRoutinePtrTag>(m_ins[i].m_jump);
+        info.patch.start = start;
+
+        ptrdiff_t inlineSize = MacroAssembler::differenceBetweenCodePtr(
+            start, linkBuffer.locationOf<JSInternalPtrTag>(m_ins[i].m_done));
+        RELEASE_ASSERT(inlineSize >= 0);
+        info.patch.inlineSize = inlineSize;
+
+        info.patch.deltaFromStartToSlowPathCallLocation = MacroAssembler::differenceBetweenCodePtr(
+            start, linkBuffer.locationOf<JSInternalPtrTag>(m_ins[i].m_slowPathGenerator->call()));
+
+        info.patch.deltaFromStartToSlowPathStart = MacroAssembler::differenceBetweenCodePtr(
+            start, linkBuffer.locationOf<JSInternalPtrTag>(m_ins[i].m_slowPathGenerator->label()));
+    }
+    
     auto linkCallThunk = FunctionPtr<NoPtrTag>(vm()->getCTIStub(linkCallThunkGenerator).retaggedCode<NoPtrTag>());
     for (auto& record : m_jsCalls) {
         CallLinkInfo& info = *record.info;

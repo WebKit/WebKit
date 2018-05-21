@@ -3756,12 +3756,8 @@ void SpeculativeJIT::compile(Node* node)
         compileSetFunctionName(node);
         break;
 
-    case InById:
-        compileInById(node);
-        break;
-
-    case InByVal:
-        compileInByVal(node);
+    case In:
+        compileIn(node);
         break;
 
     case HasOwnProperty: {

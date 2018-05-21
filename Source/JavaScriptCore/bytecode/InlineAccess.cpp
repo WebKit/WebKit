@@ -276,25 +276,6 @@ bool InlineAccess::generateArrayLength(StructureStubInfo& stubInfo, JSArray* arr
     return linkedCodeInline;
 }
 
-bool InlineAccess::generateSelfInAccess(StructureStubInfo& stubInfo, Structure* structure)
-{
-    CCallHelpers jit;
-
-    GPRReg base = static_cast<GPRReg>(stubInfo.patch.baseGPR);
-    JSValueRegs value = stubInfo.valueRegs();
-
-    auto branchToSlowPath = jit.patchableBranch32(
-        MacroAssembler::NotEqual,
-        MacroAssembler::Address(base, JSCell::structureIDOffset()),
-        MacroAssembler::TrustedImm32(bitwise_cast<uint32_t>(structure->id())));
-    jit.boxBooleanPayload(true, value.payloadGPR());
-
-    bool linkedCodeInline = linkCodeInline("in access", jit, stubInfo, [&] (LinkBuffer& linkBuffer) {
-        linkBuffer.link(branchToSlowPath, stubInfo.slowPathStartLocation());
-    });
-    return linkedCodeInline;
-}
-
 void InlineAccess::rewireStubAsJump(StructureStubInfo& stubInfo, CodeLocationLabel<JITStubRoutinePtrTag> target)
 {
     CCallHelpers jit;

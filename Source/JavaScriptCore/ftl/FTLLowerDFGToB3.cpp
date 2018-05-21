@@ -708,11 +708,8 @@ private:
         case GetByIdDirectFlush:
             compileGetById(AccessType::GetDirect);
             break;
-        case InById:
-            compileInById();
-            break;
-        case InByVal:
-            compileInByVal();
+        case In:
+            compileIn();
             break;
         case HasOwnProperty:
             compileHasOwnProperty();
@@ -9716,70 +9713,87 @@ private:
         setJSValue(m_out.phi(Int64, results));
     }
     
-    void compileInByVal()
+    void compileIn()
     {
-        setJSValue(vmCall(Int64, m_out.operation(operationInByVal), m_callFrame, lowCell(m_node->child1()), lowJSValue(m_node->child2())));
-    }
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == CellUse, m_node->child1().useKind());
 
-    void compileInById()
-    {
         Node* node = m_node;
-        UniquedStringImpl* uid = m_graph.identifiers()[node->identifierNumber()];
-        LValue base = lowCell(m_node->child1());
+        Edge base = node->child1();
+        LValue cell = lowCell(base);
+        if (JSString* string = node->child2()->dynamicCastConstant<JSString*>(vm())) {
+            if (string->tryGetValueImpl() && string->tryGetValueImpl()->isAtomic()) {
+                UniquedStringImpl* str = bitwise_cast<UniquedStringImpl*>(string->tryGetValueImpl());
+                PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+                patchpoint->appendSomeRegister(cell);
+                patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
+                patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
+                patchpoint->clobber(RegisterSet::macroScratchRegisters());
 
-        PatchpointValue* patchpoint = m_out.patchpoint(Int64);
-        patchpoint->appendSomeRegister(base);
-        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
+                RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
 
-        patchpoint->clobber(RegisterSet::macroScratchRegisters());
-
-        RefPtr<PatchpointExceptionHandle> exceptionHandle =
-            preparePatchpointForExceptions(patchpoint);
-
-        State* state = &m_ftlState;
-        patchpoint->setGenerator(
-            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-                AllowMacroScratchRegisterUsage allowScratch(jit);
-
-                CallSiteIndex callSiteIndex =
-                    state->jitCode->common.addUniqueCallSiteIndex(node->origin.semantic);
-
-                // This is the direct exit target for operation calls.
-                Box<CCallHelpers::JumpList> exceptions =
-                    exceptionHandle->scheduleExitCreation(params)->jumps(jit);
-
-                auto generator = Box<JITInByIdGenerator>::create(
-                    jit.codeBlock(), node->origin.semantic, callSiteIndex,
-                    params.unavailableRegisters(), uid, JSValueRegs(params[1].gpr()),
-                    JSValueRegs(params[0].gpr()));
-
-                generator->generateFastPath(jit);
-                CCallHelpers::Label done = jit.label();
-
-                params.addLatePath(
-                    [=] (CCallHelpers& jit) {
+                State* state = &m_ftlState;
+                patchpoint->setGenerator(
+                    [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                         AllowMacroScratchRegisterUsage allowScratch(jit);
 
-                        generator->slowPathJump().link(&jit);
-                        CCallHelpers::Label slowPathBegin = jit.label();
-                        CCallHelpers::Call slowPathCall = callOperation(
-                            *state, params.unavailableRegisters(), jit, node->origin.semantic,
-                            exceptions.get(), operationInByIdOptimize, params[0].gpr(),
-                            CCallHelpers::TrustedImmPtr(generator->stubInfo()), params[1].gpr(),
-                            CCallHelpers::TrustedImmPtr(uid)).call();
-                        jit.jump().linkTo(done, &jit);
+                        // This is the direct exit target for operation calls. We don't need a JS exceptionHandle because we don't
+                        // cache Proxy objects.
+                        Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
 
-                        generator->reportSlowPathCall(slowPathBegin, slowPathCall);
+                        GPRReg baseGPR = params[1].gpr();
+                        GPRReg resultGPR = params[0].gpr();
 
-                        jit.addLinkTask(
-                            [=] (LinkBuffer& linkBuffer) {
-                                generator->finalize(linkBuffer, linkBuffer);
+                        StructureStubInfo* stubInfo =
+                            jit.codeBlock()->addStubInfo(AccessType::In);
+                        stubInfo->callSiteIndex =
+                            state->jitCode->common.addCodeOrigin(node->origin.semantic);
+                        stubInfo->codeOrigin = node->origin.semantic;
+                        stubInfo->patch.baseGPR = static_cast<int8_t>(baseGPR);
+                        stubInfo->patch.valueGPR = static_cast<int8_t>(resultGPR);
+                        stubInfo->patch.thisGPR = static_cast<int8_t>(InvalidGPRReg);
+                        stubInfo->patch.usedRegisters = params.unavailableRegisters();
+
+                        CCallHelpers::PatchableJump jump = jit.patchableJump();
+                        CCallHelpers::Label done = jit.label();
+
+                        params.addLatePath(
+                            [=] (CCallHelpers& jit) {
+                                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                                jump.m_jump.link(&jit);
+                                CCallHelpers::Label slowPathBegin = jit.label();
+                                CCallHelpers::Call slowPathCall = callOperation(
+                                    *state, params.unavailableRegisters(), jit,
+                                    node->origin.semantic, exceptions.get(), operationInOptimize,
+                                    resultGPR, CCallHelpers::TrustedImmPtr(stubInfo), baseGPR,
+                                    CCallHelpers::TrustedImmPtr(str)).call();
+                                jit.jump().linkTo(done, &jit);
+
+                                jit.addLinkTask(
+                                    [=] (LinkBuffer& linkBuffer) {
+                                        CodeLocationLabel<JITStubRoutinePtrTag> start = linkBuffer.locationOf<JITStubRoutinePtrTag>(jump);
+                                        stubInfo->patch.start = start;
+                                        ptrdiff_t inlineSize = MacroAssembler::differenceBetweenCodePtr(
+                                            start, linkBuffer.locationOf<NoPtrTag>(done));
+                                        RELEASE_ASSERT(inlineSize >= 0);
+                                        stubInfo->patch.inlineSize = inlineSize;
+
+                                        stubInfo->patch.deltaFromStartToSlowPathCallLocation = MacroAssembler::differenceBetweenCodePtr(
+                                            start, linkBuffer.locationOf<NoPtrTag>(slowPathCall));
+
+                                        stubInfo->patch.deltaFromStartToSlowPathStart = MacroAssembler::differenceBetweenCodePtr(
+                                            start, linkBuffer.locationOf<NoPtrTag>(slowPathBegin));
+
+                                    });
                             });
                     });
-            });
 
-        setJSValue(patchpoint);
+                setJSValue(patchpoint);
+                return;
+            }
+        } 
+
+        setJSValue(vmCall(Int64, m_out.operation(operationGenericIn), m_callFrame, cell, lowJSValue(m_node->child2())));
     }
 
     void compileHasOwnProperty()

@@ -500,7 +500,6 @@ namespace JSC {
         void emit_op_get_arguments_length(Instruction*);
         void emit_op_get_by_val(Instruction*);
         void emit_op_get_argument_by_val(Instruction*);
-        void emit_op_in_by_id(Instruction*);
         void emit_op_init_lazy_reg(Instruction*);
         void emit_op_overrides_has_instance(Instruction*);
         void emit_op_instanceof(Instruction*);
@@ -612,7 +611,6 @@ namespace JSC {
         void emitSlow_op_get_arguments_length(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_argument_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_in_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_instanceof(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_instanceof_custom(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jless(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -867,7 +865,6 @@ namespace JSC {
         Vector<JITGetByIdGenerator> m_getByIds;
         Vector<JITGetByIdWithThisGenerator> m_getByIdsWithThis;
         Vector<JITPutByIdGenerator> m_putByIds;
-        Vector<JITInByIdGenerator> m_inByIds;
         Vector<JITInstanceOfGenerator> m_instanceOfs;
         Vector<ByValCompilationInfo> m_byValCompilationInfo;
         Vector<CallCompilationInfo> m_callCompilationInfo;
@@ -881,13 +878,12 @@ namespace JSC {
         JumpList m_exceptionChecksWithCallFrameRollback;
         Label m_exceptionHandler;
 
-        unsigned m_getByIdIndex { UINT_MAX };
-        unsigned m_getByIdWithThisIndex { UINT_MAX };
-        unsigned m_putByIdIndex { UINT_MAX };
-        unsigned m_inByIdIndex { UINT_MAX };
-        unsigned m_instanceOfIndex { UINT_MAX };
-        unsigned m_byValInstructionIndex { UINT_MAX };
-        unsigned m_callLinkInfoIndex { UINT_MAX };
+        unsigned m_getByIdIndex;
+        unsigned m_getByIdWithThisIndex;
+        unsigned m_putByIdIndex;
+        unsigned m_instanceOfIndex;
+        unsigned m_byValInstructionIndex;
+        unsigned m_callLinkInfoIndex;
         
         Label m_arityCheck;
         std::unique_ptr<LinkBuffer> m_linkBuffer;

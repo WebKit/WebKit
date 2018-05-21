@@ -2280,16 +2280,10 @@ RegisterID* InstanceOfNode::emitBytecode(BytecodeGenerator& generator, RegisterI
 
 RegisterID* InNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    if (isNonIndexStringElement(*m_expr1)) {
-        RefPtr<RegisterID> base = generator.emitNode(m_expr2);
-        generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-        return generator.emitInById(generator.finalDestination(dst, base.get()), base.get(), static_cast<StringNode*>(m_expr1)->value());
-    }
-
     RefPtr<RegisterID> key = generator.emitNodeForLeftHandSide(m_expr1, m_rightHasAssignments, m_expr2->isPure(generator));
     RefPtr<RegisterID> base = generator.emitNode(m_expr2);
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    return generator.emitInByVal(generator.finalDestination(dst, key.get()), key.get(), base.get());
+    return generator.emitIn(generator.finalDestination(dst, key.get()), key.get(), base.get());
 }
 
 

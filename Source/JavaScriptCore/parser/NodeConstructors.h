@@ -623,7 +623,7 @@ namespace JSC {
     }
 
     inline InNode::InNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : ThrowableBinaryOpNode(location, expr1, expr2, op_in_by_val, rightHasAssignments)
+        : ThrowableBinaryOpNode(location, expr1, expr2, op_in, rightHasAssignments)
     {
     }
 

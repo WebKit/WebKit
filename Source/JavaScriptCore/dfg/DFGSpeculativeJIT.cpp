@@ -1056,52 +1056,67 @@ void SpeculativeJIT::compileGetByIdFlush(Node* node, AccessType accessType)
     }
 }
 
-void SpeculativeJIT::compileInById(Node* node)
+void SpeculativeJIT::compileIn(Node* node)
 {
     SpeculateCellOperand base(this, node->child1());
-    JSValueRegsTemporary result(this, Reuse, base, PayloadWord);
-
     GPRReg baseGPR = base.gpr();
-    JSValueRegs resultRegs = result.regs();
+    
+    if (JSString* string = node->child2()->dynamicCastConstant<JSString*>(*m_jit.vm())) {
+        if (string->tryGetValueImpl() && string->tryGetValueImpl()->isAtomic()) {
+            StructureStubInfo* stubInfo = m_jit.codeBlock()->addStubInfo(AccessType::In);
+            
+            GPRTemporary result(this);
+            GPRReg resultGPR = result.gpr();
 
-    base.use();
+            use(node->child2());
+            
+            MacroAssembler::PatchableJump jump = m_jit.patchableJump();
+            MacroAssembler::Label done = m_jit.label();
+            
+            // Since this block is executed only when the result of string->tryGetValueImpl() is atomic,
+            // we can cast it to const AtomicStringImpl* safely.
+            auto slowPath = slowPathCall(
+                jump.m_jump, this, operationInOptimize,
+                JSValueRegs::payloadOnly(resultGPR), stubInfo, baseGPR,
+                static_cast<const AtomicStringImpl*>(string->tryGetValueImpl()));
+            
+            stubInfo->callSiteIndex = m_jit.addCallSite(node->origin.semantic);
+            stubInfo->codeOrigin = node->origin.semantic;
+            stubInfo->patch.baseGPR = static_cast<int8_t>(baseGPR);
+            stubInfo->patch.valueGPR = static_cast<int8_t>(resultGPR);
+            stubInfo->patch.thisGPR = static_cast<int8_t>(InvalidGPRReg);
+#if USE(JSVALUE32_64)
+            stubInfo->patch.valueTagGPR = static_cast<int8_t>(InvalidGPRReg);
+            stubInfo->patch.baseTagGPR = static_cast<int8_t>(InvalidGPRReg);
+            stubInfo->patch.thisTagGPR = static_cast<int8_t>(InvalidGPRReg);
+#endif
+            stubInfo->patch.usedRegisters = usedRegisters();
 
-    CodeOrigin codeOrigin = node->origin.semantic;
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
-    RegisterSet usedRegisters = this->usedRegisters();
-    JITInByIdGenerator gen(
-        m_jit.codeBlock(), codeOrigin, callSite, usedRegisters, identifierUID(node->identifierNumber()),
-        JSValueRegs::payloadOnly(baseGPR), resultRegs);
-    gen.generateFastPath(m_jit);
+            m_jit.addIn(InRecord(jump, done, slowPath.get(), stubInfo));
+            addSlowPathGenerator(WTFMove(slowPath));
 
-    auto slowPath = slowPathCall(
-        gen.slowPathJump(), this, operationInByIdOptimize,
-        NeedToSpill, ExceptionCheckRequirement::CheckNeeded,
-        resultRegs, gen.stubInfo(), CCallHelpers::CellValue(baseGPR), identifierUID(node->identifierNumber()));
+            base.use();
 
-    m_jit.addInById(gen, slowPath.get());
-    addSlowPathGenerator(WTFMove(slowPath));
+            blessedBooleanResult(resultGPR, node, UseChildrenCalledExplicitly);
+            return;
+        }
+    }
 
-    blessedBooleanResult(resultRegs.payloadGPR(), node, UseChildrenCalledExplicitly);
-}
-
-void SpeculativeJIT::compileInByVal(Node* node)
-{
-    SpeculateCellOperand base(this, node->child1());
     JSValueOperand key(this, node->child2());
-
-    GPRReg baseGPR = base.gpr();
     JSValueRegs regs = key.jsValueRegs();
-
+        
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+        
     base.use();
     key.use();
-
+        
     flushRegisters();
-    JSValueRegsFlushedCallResult result(this);
-    JSValueRegs resultRegs = result.regs();
-    callOperation(operationInByVal, resultRegs, baseGPR, regs);
+    callOperation(
+        operationGenericIn, extractResult(JSValueRegs::payloadOnly(resultGPR)),
+        baseGPR, regs);
     m_jit.exceptionCheck();
-    blessedBooleanResult(resultRegs.payloadGPR(), node, UseChildrenCalledExplicitly);
+    blessedBooleanResult(resultGPR, node, UseChildrenCalledExplicitly);
 }
 
 void SpeculativeJIT::compileDeleteById(Node* node)

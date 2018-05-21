@@ -651,23 +651,6 @@ private:
                 break;
             }
 
-            case InByVal: {
-                AbstractValue& property = m_state.forNode(node->child2());
-                if (JSValue constant = property.value()) {
-                    if (constant.isString()) {
-                        JSString* string = asString(constant);
-                        const StringImpl* impl = string->tryGetValueImpl();
-                        if (impl && impl->isAtomic()) {
-                            unsigned identifierNumber = m_graph.identifiers().ensure(const_cast<UniquedStringImpl*>(static_cast<const UniquedStringImpl*>(impl)));
-                            node->convertToInById(identifierNumber);
-                            changed = true;
-                            break;
-                        }
-                    }
-                }
-                break;
-            }
-
             case ToPrimitive: {
                 if (m_state.forNode(node->child1()).m_type & ~(SpecFullNumber | SpecBoolean | SpecString | SpecSymbol | SpecBigInt))
                     break;

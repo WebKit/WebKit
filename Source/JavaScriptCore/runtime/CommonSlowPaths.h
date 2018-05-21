@@ -85,7 +85,7 @@ ALWAYS_INLINE int arityCheckFor(ExecState* exec, VM& vm, CodeSpecializationKind 
     return padding;
 }
 
-inline bool opInByVal(ExecState* exec, JSValue baseVal, JSValue propName, ArrayProfile* arrayProfile = nullptr)
+inline bool opIn(ExecState* exec, JSValue baseVal, JSValue propName, ArrayProfile* arrayProfile = nullptr)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -308,8 +308,7 @@ SLOW_PATH_HIDDEN_DECL(slow_path_typeof);
 SLOW_PATH_HIDDEN_DECL(slow_path_is_object);
 SLOW_PATH_HIDDEN_DECL(slow_path_is_object_or_null);
 SLOW_PATH_HIDDEN_DECL(slow_path_is_function);
-SLOW_PATH_HIDDEN_DECL(slow_path_in_by_id);
-SLOW_PATH_HIDDEN_DECL(slow_path_in_by_val);
+SLOW_PATH_HIDDEN_DECL(slow_path_in);
 SLOW_PATH_HIDDEN_DECL(slow_path_del_by_val);
 SLOW_PATH_HIDDEN_DECL(slow_path_strcat);
 SLOW_PATH_HIDDEN_DECL(slow_path_to_primitive);

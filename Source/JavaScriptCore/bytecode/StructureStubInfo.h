@@ -58,7 +58,6 @@ enum class CacheType : int8_t {
     Unset,
     GetByIdSelf,
     PutByIdReplace,
-    InByIdSelf,
     Stub,
     ArrayLength
 };
@@ -73,7 +72,6 @@ public:
     void initGetByIdSelf(CodeBlock*, Structure* baseObjectStructure, PropertyOffset);
     void initArrayLength();
     void initPutByIdReplace(CodeBlock*, Structure* baseObjectStructure, PropertyOffset);
-    void initInByIdSelf(CodeBlock*, Structure* baseObjectStructure, PropertyOffset);
 
     AccessGenerationResult addAccessCase(const GCSafeConcurrentJSLocker&, CodeBlock*, const Identifier&, std::unique_ptr<AccessCase>);
 
@@ -178,7 +176,7 @@ public:
     StructureSet bufferedStructures;
     
     struct {
-        CodeLocationLabel<JITStubRoutinePtrTag> start; // This is either the start of the inline IC for *byId caches. or the location of patchable jump for 'instanceof' caches.
+        CodeLocationLabel<JITStubRoutinePtrTag> start; // This is either the start of the inline IC for *byId caches, or the location of patchable jump for 'in' and 'instanceof' caches.
         RegisterSet usedRegisters;
         uint32_t inlineSize;
         int32_t deltaFromStartToSlowPathCallLocation;
@@ -199,7 +197,7 @@ public:
     CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation() { return patch.start.labelAtOffset(patch.deltaFromStartToSlowPathStart); }
     CodeLocationJump<JSInternalPtrTag> patchableJump()
     { 
-        ASSERT(accessType == AccessType::InstanceOf);
+        ASSERT(accessType == AccessType::In || accessType == AccessType::InstanceOf);
         return patch.start.jumpAtOffset<JSInternalPtrTag>(0);
     }
 

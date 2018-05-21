@@ -118,9 +118,6 @@ std::unique_ptr<AccessCase> AccessCase::fromStructureStubInfo(
     case CacheType::PutByIdReplace:
         return AccessCase::create(vm, owner, Replace, stubInfo.u.byIdSelf.offset, stubInfo.u.byIdSelf.baseObjectStructure.get());
 
-    case CacheType::InByIdSelf:
-        return AccessCase::create(vm, owner, InHit, stubInfo.u.byIdSelf.offset, stubInfo.u.byIdSelf.baseObjectStructure.get());
-
     default:
         return nullptr;
     }
@@ -558,7 +555,10 @@ void AccessCase::generateWithGuard(
         jit.move(baseGPR, valueGPR);
         
         CCallHelpers::Label loop(&jit);
-        failAndIgnore = jit.branchIfType(valueGPR, ProxyObjectType);
+        failAndIgnore = jit.branch8(
+            CCallHelpers::Equal,
+            CCallHelpers::Address(valueGPR, JSCell::typeInfoTypeOffset()),
+            CCallHelpers::TrustedImm32(ProxyObjectType));
         
         jit.emitLoadStructure(vm, valueGPR, scratch2GPR, scratchGPR);
 #if USE(JSVALUE64)

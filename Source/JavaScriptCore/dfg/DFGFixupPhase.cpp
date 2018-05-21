@@ -1476,12 +1476,7 @@ private:
             fixEdge<CellUse>(node->child2());
             break;
 
-        case InById: {
-            fixEdge<CellUse>(node->child1());
-            break;
-        }
-
-        case InByVal: {
+        case In: {
             if (node->child2()->shouldSpeculateInt32()) {
                 convertToHasIndexedProperty(node);
                 break;
