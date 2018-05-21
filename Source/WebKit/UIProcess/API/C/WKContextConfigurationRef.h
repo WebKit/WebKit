@@ -80,6 +80,9 @@ WK_EXPORT void WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(WKCon
 WK_EXPORT bool WKContextConfigurationTracksResourceLoadMilestones(WKContextConfigurationRef configuration);
 WK_EXPORT void WKContextConfigurationSetTracksResourceLoadMilestones(WKContextConfigurationRef configuration, bool track);
 
+WK_EXPORT int64_t WKContextConfigurationDiskCacheSizeOverride(WKContextConfigurationRef configuration);
+WK_EXPORT void WKContextConfigurationSetDiskCacheSizeOverride(WKContextConfigurationRef configuration, int64_t size);
+    
 #ifdef __cplusplus
 }
 #endif

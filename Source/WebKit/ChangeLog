@@ -1,3 +1,16 @@
+2018-05-21  Sihui Liu  <sihui_liu@apple.com>
+
+        Add a diskCacheSizeOverride accessor function on WKContextConfigurationRef
+        https://bugs.webkit.org/show_bug.cgi?id=185826
+        <rdar://problem/39732113>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationDiskCacheSizeOverride):
+        (WKContextConfigurationSetDiskCacheSizeOverride):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+
 2018-05-21  Jer Noble  <jer.noble@apple.com>
 
         Complete fix for enabling modern EME by default

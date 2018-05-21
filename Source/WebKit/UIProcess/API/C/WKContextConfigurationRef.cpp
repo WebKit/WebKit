@@ -197,3 +197,14 @@ void WKContextConfigurationSetTracksResourceLoadMilestones(WKContextConfiguratio
 {
     toImpl(configuration)->setTracksResourceLoadMilestones(track);
 }
+
+int64_t WKContextConfigurationDiskCacheSizeOverride(WKContextConfigurationRef configuration)
+{
+    return toImpl(configuration)->diskCacheSizeOverride();
+}
+
+void WKContextConfigurationSetDiskCacheSizeOverride(WKContextConfigurationRef configuration, int64_t size)
+{
+    toImpl(configuration)->setDiskCacheSizeOverride(size);
+}
+
