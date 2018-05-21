@@ -1,3 +1,18 @@
+2018-05-21  Olivier Blin  <olivier.blin@softathome.com>
+
+        Fix FrameLoader build without video
+        https://bugs.webkit.org/show_bug.cgi?id=185821
+
+        Reviewed by Michael Catanzaro.
+
+        Regression(r231392): Release assert in ScriptController::canExecuteScripts via HTMLMediaElement::~HTMLMediaElement()
+        https://bugs.webkit.org/show_bug.cgi?id=185288
+
+        No new tests, build fix only.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkCompleted): Flag HTMLMediaElement::isRunningDestructor() usage.
+
 2018-05-21  Sam Weinig  <sam@webkit.org>
 
         Modernize RenderStyleConstants.h - Part 1
