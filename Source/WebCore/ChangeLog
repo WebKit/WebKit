@@ -1,5 +1,18 @@
 2018-05-21  Olivier Blin  <olivier.blin@softathome.com>
 
+        [CMake][WebCore] fix sqlite include dir variable
+        https://bugs.webkit.org/show_bug.cgi?id=185825
+
+        Reviewed by Konstantin Tokarev.
+
+        WebCore's CMakeLists.txt used SQLITE_INCLUDE_DIRS, but only SQLITE_INCLUDE_DIR is defined.
+
+        No new tests, build fix only.
+
+        * CMakeLists.txt: Use SQLITE_INCLUDE_DIR instead of SQLITE_INCLUDE_DIRS.
+
+2018-05-21  Olivier Blin  <olivier.blin@softathome.com>
+
         Propagate WebCore system include dirs in WebCoreHeaderInterface
         https://bugs.webkit.org/show_bug.cgi?id=185822
 
