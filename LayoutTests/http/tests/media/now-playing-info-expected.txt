@@ -17,7 +17,6 @@ RUN(nowPlayingState = internals.nowPlayingState)
 EXPECTED (nowPlayingState.registeredAsNowPlayingApplication == 'true') OK
 EXPECTED (nowPlayingState.title == 'Page Title') OK
 EXPECTED (nowPlayingState.duration > '0') OK
-EXPECTED (nowPlayingState.elapsedTime >= '0') OK
 
 * Set video title, it should be used.
 RUN(video.title = "Video Title")

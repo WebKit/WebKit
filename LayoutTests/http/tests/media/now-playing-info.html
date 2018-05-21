@@ -47,7 +47,6 @@
                 testExpected('nowPlayingState.registeredAsNowPlayingApplication', true);
                 testExpected('nowPlayingState.title', 'Page Title');
                 testExpected('nowPlayingState.duration', '0', '>');
-                testExpected('nowPlayingState.elapsedTime', '0', '>=');
                 previousNowPlayingState = nowPlayingState;
 
 
@@ -64,8 +63,6 @@
                 // because the values will be different from run to run.
                 if (nowPlayingState.uniqueIdentifier != previousNowPlayingState.uniqueIdentifier)
                     testExpected('nowPlayingState.uniqueIdentifier', previousNowPlayingState.uniqueIdentifier);
-                if (nowPlayingState.elapsedTime != previousNowPlayingState.elapsedTime)
-                    testExpected('nowPlayingState.elapsedTime', previousNowPlayingState.elapsedTime);
                 previousNowPlayingState = nowPlayingState;
 
                 consoleWrite('<br>* Clear video and page titles, page domain should be used.');
@@ -79,8 +76,6 @@
                 testExpected('nowPlayingState.duration', '0', '>');
                 if (nowPlayingState.uniqueIdentifier != previousNowPlayingState.uniqueIdentifier)
                     testExpected('nowPlayingState.uniqueIdentifier', previousNowPlayingState.uniqueIdentifier);
-                if (nowPlayingState.elapsedTime != previousNowPlayingState.elapsedTime)
-                    testExpected('nowPlayingState.elapsedTime', previousNowPlayingState.elapsedTime);
                 previousNowPlayingState = nowPlayingState;
 
                 consoleWrite('<br>* Change currentTime, state should be updated.');

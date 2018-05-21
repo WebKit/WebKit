@@ -1,3 +1,15 @@
+2018-05-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Improve NowPlaying "title"
+        https://bugs.webkit.org/show_bug.cgi?id=185680
+        <rdar://problem/40296700>
+
+        Unreviewed test fix.
+
+        * http/tests/media/now-playing-info-expected.txt:
+        * http/tests/media/now-playing-info.html: Don't test .elapsedTime before seeking because
+        the time value can take a while to "settle" when a file has just loaded.
+
 2018-05-21  Jer Noble  <jer.noble@apple.com>
 
         Complete fix for enabling modern EME by default
