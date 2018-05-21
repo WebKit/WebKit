@@ -1,5 +1,18 @@
 2018-05-21  Brian Burg  <bburg@apple.com>
 
+        Web Automation: always return an empty cookie list if document.cookieURL() is empty
+        https://bugs.webkit.org/show_bug.cgi?id=185838
+        <rdar://problem/37737526>
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::getCookiesForFrame):
+        This crashes in CFNetwork code because an empty cookie URL is not a valid input.
+        Just return an empty list since there couldn't be any cookies returned.
+
+2018-05-21  Brian Burg  <bburg@apple.com>
+
         Web Automation: terminate the automation session if the network or storage process crashes
         https://bugs.webkit.org/show_bug.cgi?id=185827
         <rdar://problem/40424020>

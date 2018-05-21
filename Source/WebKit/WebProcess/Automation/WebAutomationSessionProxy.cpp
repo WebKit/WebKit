@@ -751,7 +751,8 @@ void WebAutomationSessionProxy::getCookiesForFrame(uint64_t pageID, uint64_t fra
     // This returns the same list of cookies as when evaluating `document.cookies` in JavaScript.
     auto& document = *frame->coreFrame()->document();
     Vector<WebCore::Cookie> foundCookies;
-    WebCore::getRawCookies(document, document.cookieURL(), foundCookies);
+    if (!document.cookieURL().isEmpty())
+        WebCore::getRawCookies(document, document.cookieURL(), foundCookies);
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidGetCookiesForFrame(callbackID, foundCookies, String()), 0);
 }
