@@ -38,7 +38,7 @@ class URL;
 class File final : public Blob {
 public:
     struct PropertyBag : BlobPropertyBag {
-        std::optional<int64_t> lastModified;
+        std::optional<long long> lastModified;
     };
 
     static Ref<File> create(const String& path)
@@ -52,9 +52,9 @@ public:
         return adoptRef(*new File(WTFMove(blobPartVariants), filename, propertyBag));
     }
 
-    static Ref<File> deserialize(const String& path, const URL& srcURL, const String& type, const String& name, const std::optional<int64_t>& lastModified = std::nullopt)
+    static Ref<File> deserialize(const String& path, const URL& srcURL, const String& type, const String& name)
     {
-        return adoptRef(*new File(deserializationContructor, path, srcURL, type, name, lastModified));
+        return adoptRef(*new File(deserializationContructor, path, srcURL, type, name));
     }
 
     // Create a file with a name exposed to the author (via File.name and associated DOM properties) that differs from the one provided in the path.
@@ -83,8 +83,7 @@ public:
     const String& relativePath() const { return m_relativePath; }
     void setRelativePath(const String& relativePath) { m_relativePath = relativePath; }
     const String& name() const { return m_name; }
-    WEBCORE_EXPORT int64_t lastModified() const; // Number of milliseconds since Epoch.
-    const std::optional<int64_t>& lastModifiedOverride() const { return m_lastModifiedDateOverride; } // Number of milliseconds since Epoch.
+    WEBCORE_EXPORT double lastModified() const;
 
     static String contentTypeForFile(const String& path);
 
@@ -101,7 +100,7 @@ private:
     File(const Blob&, const String& name);
     File(const File&, const String& name);
 
-    File(DeserializationContructor, const String& path, const URL& srcURL, const String& type, const String& name, const std::optional<int64_t>& lastModified);
+    File(DeserializationContructor, const String& path, const URL& srcURL, const String& type, const String& name);
 
     static void computeNameAndContentType(const String& path, const String& nameOverride, String& effectiveName, String& effectiveContentType);
 #if ENABLE(FILE_REPLACEMENT)
@@ -112,7 +111,7 @@ private:
     String m_relativePath;
     String m_name;
 
-    std::optional<int64_t> m_lastModifiedDateOverride;
+    std::optional<int64_t> m_overrideLastModifiedDate;
     mutable std::optional<bool> m_isDirectory;
 };
 

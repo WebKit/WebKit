@@ -14,5 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/structured-clone/common.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/semantics/structured-clone/dedicated.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/structured-clone/dedicated.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/semantics/structured-clone/shared.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/structured-clone/shared.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/structured-clone/worker-common.js
