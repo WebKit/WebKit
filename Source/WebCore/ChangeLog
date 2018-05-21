@@ -1,5 +1,23 @@
 2018-05-21  Olivier Blin  <olivier.blin@softathome.com>
 
+        Propagate WebCore system include dirs in WebCoreHeaderInterface
+        https://bugs.webkit.org/show_bug.cgi?id=185822
+
+        Reviewed by Michael Catanzaro.
+
+        System include directories from WebCore are not propagated anymore to its users.
+        For example gcrypt, sqlite and ICU system headers defined in PAL are not properly passed to WebKit build.
+
+        This may have been caused partly by the fix in r230385:
+        [CMake] WebKit should link to WebCore as a PRIVATE library if WebCore is a static library
+        https://bugs.webkit.org/show_bug.cgi?id=184127
+
+        No new tests, build fix.
+
+        * CMakeLists.txt:
+
+2018-05-21  Olivier Blin  <olivier.blin@softathome.com>
+
         Fix FrameLoader build without video
         https://bugs.webkit.org/show_bug.cgi?id=185821
 

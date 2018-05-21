@@ -1972,6 +1972,7 @@ endif ()
 # paths of WebCore.
 add_library(WebCoreHeaderInterface INTERFACE)
 target_include_directories(WebCoreHeaderInterface INTERFACE ${WebCore_INCLUDE_DIRECTORIES})
+target_include_directories(WebCoreHeaderInterface SYSTEM INTERFACE ${WebCore_SYSTEM_INCLUDE_DIRECTORIES})
 target_link_libraries(WebCoreHeaderInterface INTERFACE ${WebCore_LIBRARIES})
 
 if (MSVC)
