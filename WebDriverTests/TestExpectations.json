@@ -193,6 +193,16 @@
             }
         }
     },
+    "imported/selenium/py/test/selenium/webdriver/common/window_switching_tests.py": {
+        "subtests": {
+            "testClickingOnAButtonThatClosesAnOpenWindowDoesNotCauseTheBrowserToHang": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184963"}}
+            },
+            "testCanCallGetWindowHandlesAfterClosingAWindow": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184963"}}
+            }
+        }
+    },
     "imported/selenium/py/test/selenium/webdriver/common/window_tests.py": {
         "subtests": {
             "testShouldMaximizeTheWindow": {
@@ -677,22 +687,132 @@
         "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180403"}}
     },
     "imported/w3c/webdriver/tests/element_clear/clear.py": {
-        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}},
         "subtests": {
-            "test_no_browsing_context": {
-                "expected": {"all": {"status": ["PASS"]}}
+            "test_pointer_interactable": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
             },
-            "test_closed_context": {
-                "expected": {"all": {"status": ["SKIP"]}}
+            "test_input[number-42-]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
             },
-            "test_disabled_element_not_resettable": {
-                "expected": {"all": {"status": ["PASS"]}}
+            "test_input[range-42-50]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
             },
-            "test_element_readonly": {
-                "expected": {"all": {"status": ["PASS"]}}
+            "test_input[email-foo@example.com-]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
             },
-            "test_element_disabled": {
-                "expected": {"all": {"status": ["PASS"]}}
+            "test_input[password-password-]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_input[search-search-]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_input[tel-999-]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_input[text-text-]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_input[url-https://example.com/-]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_input[color-#ff0000-#000000]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_input[date-2017-12-26-]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_input[datetime-2017-12-26T19:48-]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_input[datetime-local-2017-12-26T19:48-]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_input[time-19:48-]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_input[month-2017-11-]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_input[week-2017-W52-]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_textarea": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_input_file": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_input_file_multiple": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_select": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_button": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_button_with_subtree": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_contenteditable": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_designmode": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_resettable_element_does_not_satisfy_validation_constraints[number-foo]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_resettable_element_does_not_satisfy_validation_constraints[range-foo]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_resettable_element_does_not_satisfy_validation_constraints[email-foo]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_resettable_element_does_not_satisfy_validation_constraints[url-foo]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_resettable_element_does_not_satisfy_validation_constraints[color-foo]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_resettable_element_does_not_satisfy_validation_constraints[date-foo]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_resettable_element_does_not_satisfy_validation_constraints[datetime-foo]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_resettable_element_does_not_satisfy_validation_constraints[datetime-local-foo]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_resettable_element_does_not_satisfy_validation_constraints[time-foo]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_resettable_element_does_not_satisfy_validation_constraints[month-foo]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_resettable_element_does_not_satisfy_validation_constraints[week-foo]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_non_editable_inputs[checkbox]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_non_editable_inputs[radio]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_non_editable_inputs[hidden]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_non_editable_inputs[submit]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_non_editable_inputs[button]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_non_editable_inputs[image]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
+            },
+            "test_scroll_into_view": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180404"}}
             }
         }
     },
