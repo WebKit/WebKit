@@ -1,5 +1,11 @@
 2018-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.21.2 release.
+
+        * gtk/NEWS: Add release notes for 2.21.2.
+
+2018-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed, rolling out r222967.
 
         It's not ready yet

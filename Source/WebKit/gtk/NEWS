@@ -1,4 +1,20 @@
 =================
+WebKitGTK+ 2.21.2
+=================
+
+What's new in WebKitGTK+ 2.21.2?
+
+  - Remove resource load statistics API, it's not ready yet.
+  - Add initial implementation of WebDriver advance user insteraction commands.
+  - Add introspectable alternatives for functions using vargars to JavaScriptCore GLib API.
+  - Implement MouseEvent.buttons.
+  - Do TLS error checking on GTlsConnection::accept-certificate to finish the load earlier in case of errors.
+  - Fix downloads started by context menu failing in some websites due to missing user agent HTTP header.
+  - Avoid painting backing stores for zero-opacity layers.
+  - Fix the installation path of API documentation.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.21.1
 =================
 
