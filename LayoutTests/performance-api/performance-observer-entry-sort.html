@@ -8,10 +8,19 @@
 description("Test PerformanceObserver mutating itself while in its callback.");
 window.jsTestIsAsync = true;
 
+function assert(assertion)
+{
+    if (!assertion())
+        console.log(`Assertion "${assertion}" failed`);
+}
+
 function wait() {
-    let now = performance.now();
-    while (now === performance.now())
-        continue;
+    let start = performance.now();
+    let now;
+    do {
+        now = performance.now();
+    } while (start === now);
+    assert(() => now > start);
 }
 
 let observer = new PerformanceObserver((list) => {
@@ -57,6 +66,12 @@ let observer = new PerformanceObserver((list) => {
     shouldBeEqualToString(`list.getEntries()[6].name`, "measure-matching-mark2-2");
     shouldBeEqualToString(`list.getEntries()[7].name`, "mark3");
 
+    const mark2 = list.getEntries().find((entry) => entry.name == 'mark2');
+    const mark3 = list.getEntries().find((entry) => entry.name == 'mark3');
+    assert(() => mark2.startTime <= mark2Time);
+    assert(() => mark3Time <= mark3.startTime);
+    assert(() => mark2.startTime < mark3.startTime);
+
     finishJSTest();
 });
 
@@ -66,10 +81,13 @@ performance.mark("mark1");
 performance.measure("measure1");
 wait(); // Ensure mark1 !== mark2 startTime by making sure performance.now advances.
 performance.mark("mark2");
+const mark2Time = performance.now();
 performance.measure("measure2");
 performance.measure("measure-matching-mark2-1", "mark2");
 wait(); // Ensure mark2 !== mark3 startTime by making sure performance.now advances.
+const mark3Time = performance.now();
 performance.mark("mark3");
+assert(() => mark3Time > mark2Time);
 performance.measure("measure3");
 performance.measure("measure-matching-mark2-2", "mark2");
 </script>

@@ -1,3 +1,14 @@
+2018-05-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: performance-api/performance-observer-entry-sort.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=185385
+
+        Reviewed by Saam Barati.
+
+        Add diagnostic assertions to test the hypothesis that performance.now is drifting backwards.
+
+        * performance-api/performance-observer-entry-sort.html:
+
 2018-05-21  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r231107): CSP report-only policies are ignored for beacon, importScripts, fetch(), EventSource, and XHR
