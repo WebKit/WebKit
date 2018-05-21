@@ -398,6 +398,7 @@ EncodedJSValue JIT_OPERATION operationInById(ExecState* exec, StructureStubInfo*
 
     LOG_IC((ICEvent::OperationInById, baseObject->classInfo(vm), ident));
 
+    scope.release();
     PropertySlot slot(baseObject, PropertySlot::InternalMethodType::HasProperty);
     return JSValue::encode(jsBoolean(baseObject->getPropertySlot(exec, ident, slot)));
 }
@@ -421,6 +422,7 @@ EncodedJSValue JIT_OPERATION operationInByIdGeneric(ExecState* exec, EncodedJSVa
 
     LOG_IC((ICEvent::OperationInByIdGeneric, baseObject->classInfo(vm), ident));
 
+    scope.release();
     PropertySlot slot(baseObject, PropertySlot::InternalMethodType::HasProperty);
     return JSValue::encode(jsBoolean(baseObject->getPropertySlot(exec, ident, slot)));
 }
@@ -444,6 +446,7 @@ EncodedJSValue JIT_OPERATION operationInByIdOptimize(ExecState* exec, StructureS
 
     LOG_IC((ICEvent::OperationInByIdOptimize, baseObject->classInfo(vm), ident));
 
+    scope.release();
     PropertySlot slot(baseObject, PropertySlot::InternalMethodType::HasProperty);
     bool found = baseObject->getPropertySlot(exec, ident, slot);
     if (stubInfo->considerCaching(exec->codeBlock(), baseObject->structure(vm)))
