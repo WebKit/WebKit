@@ -1,5 +1,20 @@
 2018-05-21  Alicia Boya García  <aboya@igalia.com>
 
+        [MSE][GStreamer] Stream::decodebinSinkPad is read but never assigned
+        https://bugs.webkit.org/show_bug.cgi?id=185724
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This is a dead code removal patch; except when a Stream instance
+        happens to be instantiated in such a place that the non-initialized
+        decodeSinkPad is != 0, then it is a crash bug fix.
+
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        (webKitMediaSrcLinkStreamToSrcPad):
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamerPrivate.h:
+
+2018-05-21  Alicia Boya García  <aboya@igalia.com>
+
         [MSE][GStreamer] Force segment.start = 0 after matroskademux
         https://bugs.webkit.org/show_bug.cgi?id=185740
 

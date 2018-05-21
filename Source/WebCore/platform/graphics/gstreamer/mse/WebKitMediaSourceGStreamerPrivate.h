@@ -51,7 +51,6 @@ struct _Stream {
 
     // AppSrc. Never modified after first assignment.
     GstElement* appsrc;
-    GstPad* decodebinSinkPad;
 
     // Never modified after first assignment.
     WebCore::SourceBufferPrivateGStreamer* sourceBuffer;

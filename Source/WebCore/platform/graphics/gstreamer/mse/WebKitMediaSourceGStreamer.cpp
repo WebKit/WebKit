@@ -478,14 +478,6 @@ void webKitMediaSrcLinkStreamToSrcPad(GstPad* sourcePad, Stream* stream)
 
     gst_pad_set_active(ghostpad, TRUE);
     gst_element_add_pad(GST_ELEMENT(stream->parent), ghostpad);
-
-    if (stream->decodebinSinkPad) {
-        GST_DEBUG_OBJECT(stream->parent, "A decodebin was previously used for this source, trying to reuse it.");
-        // FIXME: error checking here. Not sure what to do if linking
-        // fails though, because decodebin is out of this source
-        // element's scope, in theory.
-        gst_pad_link(ghostpad, stream->decodebinSinkPad);
-    }
 }
 
 void webKitMediaSrcLinkParser(GstPad* sourcePad, GstCaps* caps, Stream* stream)
