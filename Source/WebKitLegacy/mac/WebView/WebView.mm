@@ -2952,6 +2952,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setPlugInSnapshottingEnabled([preferences plugInSnapshottingEnabled]);
     settings.setHttpEquivEnabled([preferences httpEquivEnabled]);
+    settings.setColorFilterEnabled([preferences colorFilterEnabled]);
 
 #if PLATFORM(MAC)
     settings.setAcceleratedCompositingForFixedPositionEnabled(true);
@@ -2992,6 +2993,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(MAC)
+    // This parses the user stylesheet synchronously so anything that may affect it should be done first.
     if ([preferences userStyleSheetEnabled]) {
         NSString* location = [[preferences userStyleSheetLocation] _web_originalDataAsString];
         if ([location isEqualToString:@"apple-dashboard://stylesheet"])
@@ -3061,7 +3063,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setViewportFitEnabled([preferences viewportFitEnabled]);
     settings.setConstantPropertiesEnabled([preferences constantPropertiesEnabled]);
-    settings.setColorFilterEnabled([preferences colorFilterEnabled]);
     settings.setCrossOriginOptionsSupportEnabled([preferences crossOriginOptionsSupportEnabled]);
 
 #if ENABLE(GAMEPAD)
