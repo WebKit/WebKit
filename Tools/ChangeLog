@@ -1,3 +1,18 @@
+2018-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] MiniBrowser crashes when loading twice quickly
+        https://bugs.webkit.org/show_bug.cgi?id=185763
+
+        Reviewed by Michael Catanzaro.
+
+        This is very difficult to reproduce manually, but it happens when running WebDriver tests where loads are very
+        fast and multiple loads are done quickly. The problem is that we use an idle to reset the progress bar, but we
+        don't reset it when a new load starts. We always reset the last idle on destroy, but if there's another one
+        leaked, it will crash when scheduled if the window has already been destroyed.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewLoadProgressChanged): Stop any pending reset task when progress != 1.
+
 2018-05-19  Sihui Liu  <sihui_liu@apple.com>
 
         Flaky API test WebKit.WKHTTPCookieStoreWithoutProcessPool: incorrect order of cookies
