@@ -1303,6 +1303,16 @@
       ],
       "status" : "committer"
    },
+   "Christopher Reid" : {
+      "emails" : [
+         "chris.reid@sony.com",
+         "christopher.reid@am.sony.com"
+      ],
+      "nicks" : [
+         "creid"
+      ],
+      "status" : "committer"
+   },
    "Claudio Saavedra" : {
       "emails" : [
          "csaavedra@igalia.com"
