@@ -1,3 +1,14 @@
+2018-05-21  Olivier Blin  <olivier.blin@softathome.com>
+
+        [WPE][WebDriver] add ICU include dirs
+        https://bugs.webkit.org/show_bug.cgi?id=185824
+
+        Reviewed by Konstantin Tokarev.
+
+        WebDriver does not build in the WPE port when ICU headers are in a non-default directory.
+
+        * PlatformWPE.cmake: Add ICU include dirs
+
 2018-05-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: implement advance user interactions
