@@ -1,3 +1,18 @@
+2018-05-21  Brian Burg  <bburg@apple.com>
+
+        Web Automation: terminate the automation session if the network or storage process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=185827
+        <rdar://problem/40424020>
+
+        Reviewed by Tim Horton.
+
+        If one of the processes crashes, the page may be in an undefined state and
+        automation will fail in unpredictable ways. It's better to just give up immediately.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::networkProcessFailedToLaunch):
+        (WebKit::WebProcessPool::storageProcessCrashed):
+
 2018-05-21  Sihui Liu  <sihui_liu@apple.com>
 
         Add a diskCacheSizeOverride accessor function on WKContextConfigurationRef

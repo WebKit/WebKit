@@ -560,6 +560,9 @@ void WebProcessPool::networkProcessFailedToLaunch(NetworkProcessProxy& networkPr
 
     m_client.networkProcessDidCrash(this);
 
+    if (m_automationSession)
+        m_automationSession->terminate();
+
     // Leave the process proxy around during client call, so that the client could query the process identifier.
     m_networkProcess = nullptr;
 }
@@ -627,6 +630,10 @@ void WebProcessPool::storageProcessCrashed(StorageProcessProxy* storageProcessPr
         supplement->processDidClose(storageProcessProxy);
 
     m_client.storageProcessDidCrash(this);
+
+    if (m_automationSession)
+        m_automationSession->terminate();
+
     m_storageProcess = nullptr;
 }
 
