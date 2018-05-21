@@ -1,3 +1,13 @@
+2018-05-21  Jer Noble  <jer.noble@apple.com>
+
+        Complete fix for enabling modern EME by default
+        https://bugs.webkit.org/show_bug.cgi?id=185770
+        <rdar://problem/40368220>
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2018-05-18  Christopher Reid  <chris.reid@sony.com>
 
         Unreviewed, add myself as a WebKit committer.

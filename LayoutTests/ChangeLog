@@ -1,3 +1,15 @@
+2018-05-21  Jer Noble  <jer.noble@apple.com>
+
+        Complete fix for enabling modern EME by default
+        https://bugs.webkit.org/show_bug.cgi?id=185770
+        <rdar://problem/40368220>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/TestExpectations:
+        * platform/mac-wk1/fast/dom/navigator-detached-no-crash-expected.txt: 
+        * platform/mac/fast/dom/navigator-detached-no-crash-expected.txt:
+
 2018-05-20  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Update CSSOM WPT tests.

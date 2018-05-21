@@ -1768,3 +1768,10 @@ webkit.org/b/185659 [ Debug ] animations/needs-layout.html [ Pass ImageOnlyFailu
 
 # macOS doesn't have ICU v59
 webkit.org/b/185375 js/intl-numberformat-format-to-parts.html [ Failure ]
+
+# <= High Sierra doesn't support Modern EME
+[ HighSierra ] platform/mac/media/encrypted-media/fps-createMediaKeys.html [ Skip ]
+[ HighSierra ] platform/mac/media/encrypted-media/fps-createSession.html [ Skip ]
+[ HighSierra ] platform/mac/media/encrypted-media/fps-encrypted-event.html [ Skip ]
+[ HighSierra ] platform/mac/media/encrypted-media/fps-generateRequest.html [ Skip ]
+[ HighSierra ] platform/mac/media/encrypted-media/fps-requestMediaKeySystemAccess.html [ Skip ]

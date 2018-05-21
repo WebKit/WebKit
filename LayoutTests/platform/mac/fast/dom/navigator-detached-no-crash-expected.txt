@@ -16,6 +16,8 @@ navigator.platform is OK
 navigator.plugins is OK
 navigator.product is OK
 navigator.productSub is OK
+navigator.sendBeacon() threw err TypeError: Not enough arguments
+navigator.serviceWorker is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
@@ -36,6 +38,8 @@ navigator.platform is OK
 navigator.plugins is OK
 navigator.product is OK
 navigator.productSub is OK
+navigator.sendBeacon() threw err TypeError: Not enough arguments
+navigator.serviceWorker is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
