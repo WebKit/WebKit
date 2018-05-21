@@ -45,7 +45,6 @@ static char *geometry;
 static gboolean privateMode;
 static gboolean automationMode;
 static gboolean fullScreen;
-static gboolean enableIntelligentTrackingPrevention;
 static const char *cookiesFile;
 static const char *cookiesPolicy;
 static const char *proxy;
@@ -105,7 +104,6 @@ static const GOptionEntry commandLineOptions[] =
     { "full-screen", 'f', 0, G_OPTION_ARG_NONE, &fullScreen, "Set the window to full-screen mode", NULL },
     { "private", 'p', 0, G_OPTION_ARG_NONE, &privateMode, "Run in private browsing mode", NULL },
     { "automation", 0, 0, G_OPTION_ARG_NONE, &automationMode, "Run in automation mode", NULL },
-    { "enable-itp", 0, 0, G_OPTION_ARG_NONE, &enableIntelligentTrackingPrevention, "Enable intelligent tracking prevention", NULL },
     { "cookies-file", 'c', 0, G_OPTION_ARG_FILENAME, &cookiesFile, "Persistent cookie storage database file", "FILE" },
     { "cookies-policy", 0, 0, G_OPTION_ARG_STRING, &cookiesPolicy, "Cookies accept policy (always, never, no-third-party). Default: no-third-party", "POLICY" },
     { "proxy", 0, 0, G_OPTION_ARG_STRING, &proxy, "Set proxy", "PROXY" },
@@ -527,9 +525,6 @@ int main(int argc, char *argv[])
 
     // Enable the favicon database, by specifying the default directory.
     webkit_web_context_set_favicon_database_directory(webContext, NULL);
-
-    WebKitWebsiteDataManager *manager = webkit_web_context_get_website_data_manager(webContext);
-    webkit_website_data_manager_set_resource_load_statistics_enabled(manager, enableIntelligentTrackingPrevention);
 
     webkit_web_context_register_uri_scheme(webContext, BROWSER_ABOUT_SCHEME, (WebKitURISchemeRequestCallback)aboutURISchemeRequestCallback, webContext, NULL);
 

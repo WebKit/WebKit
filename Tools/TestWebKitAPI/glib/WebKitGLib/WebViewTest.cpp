@@ -217,23 +217,6 @@ void WebViewTest::waitUntilTitleChanged()
     waitUntilTitleChangedTo(0);
 }
 
-static void directoryChangedCallback(GFileMonitor*, GFile* file, GFile*, GFileMonitorEvent event, WebViewTest* test)
-{
-    if (event == G_FILE_MONITOR_EVENT_CREATED && g_file_equal(file, test->m_monitoredFile.get()))
-        test->quitMainLoop();
-}
-
-void WebViewTest::waitUntilFileExists(const char* filename)
-{
-    m_monitoredFile = adoptGRef(g_file_new_for_path(filename));
-    GRefPtr<GFile> directory = adoptGRef(g_file_get_parent(m_monitoredFile.get()));
-    GRefPtr<GFileMonitor> monitor = adoptGRef(g_file_monitor_directory(directory.get(), G_FILE_MONITOR_NONE, nullptr, nullptr));
-    g_assert(monitor.get());
-    g_signal_connect(monitor.get(), "changed", G_CALLBACK(directoryChangedCallback), this);
-    if (!g_file_query_exists(m_monitoredFile.get(), nullptr))
-        g_main_loop_run(m_mainLoop);
-}
-
 void WebViewTest::selectAll()
 {
     webkit_web_view_execute_editing_command(m_webView, "SelectAll");

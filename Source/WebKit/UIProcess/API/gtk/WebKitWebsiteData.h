@@ -44,7 +44,6 @@ typedef struct _WebKitWebsiteData WebKitWebsiteData;
  * @WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES: IndexedDB databases.
  * @WEBKIT_WEBSITE_DATA_PLUGIN_DATA: Plugins data.
  * @WEBKIT_WEBSITE_DATA_COOKIES: Cookies.
- * @WEBKIT_WEBSITE_DATA_RESOURCE_LOAD_STATISTICS: Resource load statistics. Since 2.22.
  * @WEBKIT_WEBSITE_DATA_ALL: All types.
  *
  * Enum values with flags representing types of Website data.
@@ -61,8 +60,7 @@ typedef enum {
     WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES       = 1 << 6,
     WEBKIT_WEBSITE_DATA_PLUGIN_DATA               = 1 << 7,
     WEBKIT_WEBSITE_DATA_COOKIES                   = 1 << 8,
-    WEBKIT_WEBSITE_DATA_RESOURCE_LOAD_STATISTICS  = 1 << 9,
-    WEBKIT_WEBSITE_DATA_ALL                       = (1 << 10) - 1
+    WEBKIT_WEBSITE_DATA_ALL                       = (1 << 9) - 1
 } WebKitWebsiteDataTypes;
 
 WEBKIT_API GType

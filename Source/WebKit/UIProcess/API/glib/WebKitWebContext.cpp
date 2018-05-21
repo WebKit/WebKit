@@ -316,7 +316,6 @@ static inline WebsiteDataStore::Configuration websiteDataStoreConfigurationForWe
     configuration.webSQLDatabaseDirectory = processPoolconfigurarion.webSQLDatabaseDirectory();
     configuration.localStorageDirectory = processPoolconfigurarion.localStorageDirectory();
     configuration.mediaKeysStorageDirectory = processPoolconfigurarion.mediaKeysStorageDirectory();
-    configuration.resourceLoadStatisticsDirectory = processPoolconfigurarion.resourceLoadStatisticsDirectory();
     return configuration;
 }
 
@@ -339,7 +338,6 @@ static void webkitWebContextConstructed(GObject* object)
         configuration.setApplicationCacheDirectory(WebCore::FileSystem::stringFromFileSystemRepresentation(webkit_website_data_manager_get_offline_application_cache_directory(priv->websiteDataManager.get())));
         configuration.setIndexedDBDatabaseDirectory(WebCore::FileSystem::stringFromFileSystemRepresentation(webkit_website_data_manager_get_indexeddb_directory(priv->websiteDataManager.get())));
         configuration.setWebSQLDatabaseDirectory(WebCore::FileSystem::stringFromFileSystemRepresentation(webkit_website_data_manager_get_websql_directory(priv->websiteDataManager.get())));
-        configuration.setResourceLoadStatisticsDirectory(WebCore::FileSystem::stringFromFileSystemRepresentation(webkit_website_data_manager_get_resource_load_statistics_directory(priv->websiteDataManager.get())));
     } else if (!priv->localStorageDirectory.isNull())
         configuration.setLocalStorageDirectory(WebCore::FileSystem::stringFromFileSystemRepresentation(priv->localStorageDirectory.data()));
 

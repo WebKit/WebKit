@@ -84,7 +84,6 @@ enum {
     PROP_APPLICATION_CACHE_DIRECTORY,
     PROP_INDEXEDDB_DIRECTORY,
     PROP_WEBSQL_DIRECTORY,
-    PROP_RESOURCE_LOAD_STATISTICS_DIRECTORY,
     PROP_IS_EPHEMERAL
 };
 
@@ -102,7 +101,6 @@ struct _WebKitWebsiteDataManagerPrivate {
     GUniquePtr<char> applicationCacheDirectory;
     GUniquePtr<char> indexedDBDirectory;
     GUniquePtr<char> webSQLDirectory;
-    GUniquePtr<char> resourceLoadStatisticsDirectory;
 
     GRefPtr<WebKitCookieManager> cookieManager;
     Vector<WebProcessPool*> processPools;
@@ -135,9 +133,6 @@ static void webkitWebsiteDataManagerGetProperty(GObject* object, guint propID, G
         break;
     case PROP_WEBSQL_DIRECTORY:
         g_value_set_string(value, webkit_website_data_manager_get_websql_directory(manager));
-        break;
-    case PROP_RESOURCE_LOAD_STATISTICS_DIRECTORY:
-        g_value_set_string(value, webkit_website_data_manager_get_resource_load_statistics_directory(manager));
         break;
     case PROP_IS_EPHEMERAL:
         g_value_set_boolean(value, webkit_website_data_manager_is_ephemeral(manager));
@@ -173,9 +168,6 @@ static void webkitWebsiteDataManagerSetProperty(GObject* object, guint propID, c
     case PROP_WEBSQL_DIRECTORY:
         manager->priv->webSQLDirectory.reset(g_value_dup_string(value));
         break;
-    case PROP_RESOURCE_LOAD_STATISTICS_DIRECTORY:
-        manager->priv->resourceLoadStatisticsDirectory.reset(g_value_dup_string(value));
-        break;
     case PROP_IS_EPHEMERAL:
         if (g_value_get_boolean(value))
             manager->priv->websiteDataStore = API::WebsiteDataStore::createNonPersistentDataStore();
@@ -197,8 +189,6 @@ static void webkitWebsiteDataManagerConstructed(GObject* object)
             priv->indexedDBDirectory.reset(g_build_filename(priv->baseDataDirectory.get(), "databases", "indexeddb", nullptr));
         if (!priv->webSQLDirectory)
             priv->webSQLDirectory.reset(g_build_filename(priv->baseDataDirectory.get(), "databases", nullptr));
-        if (!priv->resourceLoadStatisticsDirectory)
-            priv->resourceLoadStatisticsDirectory.reset(g_build_filename(priv->baseDataDirectory.get(), "resourceloadstatistics", nullptr));
     }
 
     if (priv->baseCacheDirectory) {
@@ -339,23 +329,6 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
     /**
-     * WebKitWebsiteDataManager:resource-load-statistics-directory:
-     *
-     * The directory where resource load statistics will be stored.
-     *
-     * Since: 2.22
-     */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_RESOURCE_LOAD_STATISTICS_DIRECTORY,
-        g_param_spec_string(
-            "resource-load-statistics-directory",
-            _("Resource Load Statistics Directory"),
-            _("The directory where resource load statistics will be stored"),
-            nullptr,
-            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
-
-    /**
      * WebKitWebsiteDataManager:is-ephemeral:
      *
      * Whether the #WebKitWebsiteDataManager is ephemeral. An ephemeral #WebKitWebsiteDataManager
@@ -397,8 +370,6 @@ API::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataMan
             API::WebsiteDataStore::defaultApplicationCacheDirectory() : WebCore::FileSystem::stringFromFileSystemRepresentation(priv->applicationCacheDirectory.get());
         configuration.webSQLDatabaseDirectory = !priv->webSQLDirectory ?
             API::WebsiteDataStore::defaultWebSQLDatabaseDirectory() : WebCore::FileSystem::stringFromFileSystemRepresentation(priv->webSQLDirectory.get());
-        configuration.resourceLoadStatisticsDirectory = !priv->resourceLoadStatisticsDirectory ?
-            API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory() : WebCore::FileSystem::stringFromFileSystemRepresentation(priv->resourceLoadStatisticsDirectory.get());
         configuration.mediaKeysStorageDirectory = API::WebsiteDataStore::defaultMediaKeysStorageDirectory();
         priv->websiteDataStore = API::WebsiteDataStore::createLegacy(WTFMove(configuration));
     }
@@ -636,29 +607,6 @@ const gchar* webkit_website_data_manager_get_websql_directory(WebKitWebsiteDataM
 }
 
 /**
- * webkit_website_data_manager_get_resource_load_statistics_directory:
- * @manager: a #WebKitWebsiteDataManager
- *
- * Get the #WebKitWebsiteDataManager:resource-load-statistics-directory property.
- *
- * Returns: (allow-none): the directory where resource load statistics are stored or %NULL if @manager is ephemeral.
- *
- * Since: 2.22
- */
-const gchar* webkit_website_data_manager_get_resource_load_statistics_directory(WebKitWebsiteDataManager* manager)
-{
-    g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), nullptr);
-
-    WebKitWebsiteDataManagerPrivate* priv = manager->priv;
-    if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
-        return nullptr;
-
-    if (!priv->resourceLoadStatisticsDirectory)
-        priv->resourceLoadStatisticsDirectory.reset(g_strdup(API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory().utf8().data()));
-    return priv->resourceLoadStatisticsDirectory.get();
-}
-
-/**
  * webkit_website_data_manager_get_cookie_manager:
  * @manager: a #WebKitWebsiteDataManager
  *
@@ -678,39 +626,6 @@ WebKitCookieManager* webkit_website_data_manager_get_cookie_manager(WebKitWebsit
     return manager->priv->cookieManager.get();
 }
 
-/**
- * webkit_website_data_manager_set_resource_load_statistics_enabled:
- * @manager: a #WebKitWebsiteDataManager
- * @enabled: value to set
- *
- * Enable collection of resource load statistics for intelligent tracking prevention.
- *
- * Since: 2.22
- */
-void webkit_website_data_manager_set_resource_load_statistics_enabled(WebKitWebsiteDataManager* manager, gboolean enabled)
-{
-    g_return_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
-
-    manager->priv->websiteDataStore->setResourceLoadStatisticsEnabled(enabled);
-}
-
-/**
- * webkit_website_data_manager_get_resource_load_statistics_enabled:
- * @manager: a #WebKitWebsiteDataManager
- *
- * Get whether collection of resource load statistics for intelligent tracking prevention is enabled or not.
- *
- * Returns: %TRUE if collection of resource load statistics is enabled, or %FALSE otherwise.
- *
- * Since: 2.22
- */
-gboolean webkit_website_data_manager_get_resource_load_statistics_enabled(WebKitWebsiteDataManager* manager)
-{
-    g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), FALSE);
-
-    return manager->priv->websiteDataStore->resourceLoadStatisticsEnabled();
-}
-
 static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes types)
 {
     OptionSet<WebsiteDataType> returnValue;
@@ -728,8 +643,6 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes type
         returnValue |= WebsiteDataType::WebSQLDatabases;
     if (types & WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES)
         returnValue |= WebsiteDataType::IndexedDBDatabases;
-    if (types & WEBKIT_WEBSITE_DATA_RESOURCE_LOAD_STATISTICS)
-        returnValue |= WebsiteDataType::ResourceLoadStatistics;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if (types & WEBKIT_WEBSITE_DATA_PLUGIN_DATA)
         returnValue |= WebsiteDataType::PlugInData;
