@@ -432,6 +432,9 @@ http/tests/inspector/network/beacon-type.html [ Skip ]
 http/wpt/beacon/ [ Skip ]
 imported/blink/fast/beacon/ [ Skip ]
 imported/w3c/web-platform-tests/beacon/ [ Skip ]
+http/tests/security/contentSecurityPolicy/connect-src-beacon-allowed.html [ Skip ]
+http/tests/security/contentSecurityPolicy/connect-src-beacon-blocked.html [ Skip ]
+http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked.php [ Skip ]
 
 # This was a WK2-only fix.
 http/tests/css/filters-on-iframes.html [ Skip ]

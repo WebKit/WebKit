@@ -35,6 +35,7 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/ContentSecurityPolicyClient.h>
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/SecurityPolicyViolationEvent.h>
 #include <WebCore/Timer.h>
 
 namespace WebCore {
@@ -42,7 +43,6 @@ class BlobDataFileReference;
 class FormData;
 class NetworkStorageSession;
 class ResourceRequest;
-class SecurityPolicyViolationEvent;
 }
 
 namespace WebKit {
@@ -175,7 +175,7 @@ private:
     // ContentSecurityPolicyClient
     void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long) final;
     void sendCSPViolationReport(WebCore::URL&&, Ref<WebCore::FormData>&&) final;
-    void dispatchSecurityPolicyViolationEvent(Ref<WebCore::SecurityPolicyViolationEvent>&&) final { }; // No observable effect for frame-ancestors violation.
+    void enqueueSecurityPolicyViolationEvent(WebCore::SecurityPolicyViolationEvent::Init&&) final;
 
     const NetworkResourceLoadParameters m_parameters;
 

@@ -75,7 +75,6 @@
 #include "SchemeRegistry.h"
 #include "ScriptableDocumentParser.h"
 #include "SecurityPolicy.h"
-#include "SecurityPolicyViolationEvent.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerProvider.h"
 #include "Settings.h"
@@ -2025,9 +2024,9 @@ void DocumentLoader::sendCSPViolationReport(URL&& reportURL, Ref<FormData>&& rep
     PingLoader::sendViolationReport(*m_frame, WTFMove(reportURL), WTFMove(report), ViolationReportType::ContentSecurityPolicy);
 }
 
-void DocumentLoader::dispatchSecurityPolicyViolationEvent(Ref<SecurityPolicyViolationEvent>&& violationEvent)
+void DocumentLoader::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEvent::Init&& eventInit)
 {
-    m_frame->document()->enqueueDocumentEvent(WTFMove(violationEvent));
+    m_frame->document()->enqueueSecurityPolicyViolationEvent(WTFMove(eventInit));
 }
 
 } // namespace WebCore

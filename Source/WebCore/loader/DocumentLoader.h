@@ -41,6 +41,7 @@
 #include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SecurityPolicyViolationEvent.h"
 #include "ServiceWorkerRegistrationData.h"
 #include "StringWithDirection.h"
 #include "StyleSheetContents.h"
@@ -411,7 +412,7 @@ private:
     // ContentSecurityPolicyClient
     WEBCORE_EXPORT void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long requestIdentifier) final;
     WEBCORE_EXPORT void sendCSPViolationReport(URL&&, Ref<FormData>&&) final;
-    WEBCORE_EXPORT void dispatchSecurityPolicyViolationEvent(Ref<SecurityPolicyViolationEvent>&&) final;
+    WEBCORE_EXPORT void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEvent::Init&&) final;
 
     Ref<CachedResourceLoader> m_cachedResourceLoader;
 

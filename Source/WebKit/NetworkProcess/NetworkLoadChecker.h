@@ -27,8 +27,10 @@
 
 #include "NetworkContentRuleListManager.h"
 #include "NetworkResourceLoadParameters.h"
+#include <WebCore/ContentSecurityPolicyClient.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/SecurityPolicyViolationEvent.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 #include <wtf/WeakPtr.h>
@@ -39,11 +41,12 @@ class ContentSecurityPolicy;
 
 namespace WebKit {
 
+class NetworkConnectionToWebProcess;
 class NetworkCORSPreflightChecker;
 
-class NetworkLoadChecker {
+class NetworkLoadChecker : public WebCore::ContentSecurityPolicyClient {
 public:
-    NetworkLoadChecker(WebCore::FetchOptions&&, PAL::SessionID, WebCore::HTTPHeaderMap&&, WebCore::URL&&, RefPtr<WebCore::SecurityOrigin>&&, WebCore::PreflightPolicy, String&& referrer);
+    NetworkLoadChecker(NetworkConnectionToWebProcess&, uint64_t webPageID, uint64_t webFrameID, ResourceLoadIdentifier, WebCore::FetchOptions&&, PAL::SessionID, WebCore::HTTPHeaderMap&&, WebCore::URL&&, RefPtr<WebCore::SecurityOrigin>&&, WebCore::PreflightPolicy, String&& referrer);
     ~NetworkLoadChecker();
 
     using RequestOrError = Expected<WebCore::ResourceRequest, WebCore::ResourceError>;
@@ -75,6 +78,8 @@ private:
 
     void checkRequest(WebCore::ResourceRequest&&, ValidationHandler&&);
 
+    bool isAllowedByContentSecurityPolicy(const WebCore::ResourceRequest&);
+
     void continueCheckingRequest(WebCore::ResourceRequest&&, ValidationHandler&&);
 
     bool doesNotNeedCORSCheck(const WebCore::URL&) const;
@@ -93,6 +98,17 @@ private:
     using ContentExtensionCallback = CompletionHandler<void(ContentExtensionResultOrError)>;
     void processContentExtensionRulesForLoad(WebCore::ResourceRequest&&, ContentExtensionCallback&&);
 #endif
+
+    // ContentSecurityPolicyClient
+    void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long) final;
+    void sendCSPViolationReport(WebCore::URL&&, Ref<WebCore::FormData>&&) final;
+    void enqueueSecurityPolicyViolationEvent(WebCore::SecurityPolicyViolationEvent::Init&&) final;
+
+    // The connection, web page ID, web frame ID and load identifier are used for CSP reporting.
+    Ref<NetworkConnectionToWebProcess> m_connection;
+    uint64_t m_webPageID;
+    uint64_t m_webFrameID;
+    ResourceLoadIdentifier m_loadIdentifier;
 
     WebCore::FetchOptions m_options;
     WebCore::StoredCredentialsPolicy m_storedCredentialsPolicy;

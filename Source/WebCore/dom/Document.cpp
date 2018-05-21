@@ -5942,6 +5942,11 @@ void Document::dispatchPageshowEvent(PageshowEventPersistence persisted)
     dispatchWindowEvent(PageTransitionEvent::create(eventNames().pageshowEvent, persisted), this);
 }
 
+void Document::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEvent::Init&& eventInit)
+{
+    enqueueDocumentEvent(SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, WTFMove(eventInit), Event::IsTrusted::Yes));
+}
+
 void Document::enqueueHashchangeEvent(const String& oldURL, const String& newURL)
 {
     enqueueWindowEvent(HashChangeEvent::create(oldURL, newURL));

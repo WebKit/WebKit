@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +52,9 @@ public:
         unsigned short statusCode { 0 };
         int lineNumber { 0 };
         int columnNumber { 0 };
+
+        template<class Encoder> void encode(Encoder&) const;
+        template<class Decoder> static bool decode(Decoder&, Init&);
     };
 
     static Ref<SecurityPolicyViolationEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
@@ -118,5 +121,49 @@ private:
     int m_lineNumber;
     int m_columnNumber;
 };
+
+template<class Encoder>
+void SecurityPolicyViolationEvent::Init::encode(Encoder& encoder) const
+{
+    encoder << static_cast<const EventInit&>(*this);
+    encoder << documentURI;
+    encoder << referrer;
+    encoder << blockedURI;
+    encoder << violatedDirective;
+    encoder << effectiveDirective;
+    encoder << originalPolicy;
+    encoder << sourceFile;
+    encoder << statusCode;
+    encoder << lineNumber;
+    encoder << columnNumber;
+}
+
+template<class Decoder>
+bool SecurityPolicyViolationEvent::Init::decode(Decoder& decoder, SecurityPolicyViolationEvent::Init& eventInit)
+{
+    if (!decoder.decode(static_cast<EventInit&>(eventInit)))
+        return false;
+    if (!decoder.decode(eventInit.documentURI))
+        return false;
+    if (!decoder.decode(eventInit.referrer))
+        return false;
+    if (!decoder.decode(eventInit.blockedURI))
+        return false;
+    if (!decoder.decode(eventInit.violatedDirective))
+        return false;
+    if (!decoder.decode(eventInit.effectiveDirective))
+        return false;
+    if (!decoder.decode(eventInit.originalPolicy))
+        return false;
+    if (!decoder.decode(eventInit.sourceFile))
+        return false;
+    if (!decoder.decode(eventInit.statusCode))
+        return false;
+    if (!decoder.decode(eventInit.lineNumber))
+        return false;
+    if (!decoder.decode(eventInit.columnNumber))
+        return false;
+    return true;
+}
 
 } // namespace WebCore

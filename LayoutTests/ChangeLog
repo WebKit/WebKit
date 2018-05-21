@@ -1,3 +1,44 @@
+2018-05-21  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r231107): CSP report-only policies are ignored for beacon, importScripts, fetch(), EventSource, and XHR
+        https://bugs.webkit.org/show_bug.cgi?id=185789
+        <rdar://problem/40380175>
+
+        Reviewed by Andy Estes.
+
+        Add some new tests and updated the expected results of other tests.
+
+        The tests connect-src-beacon-{allowed, blocked} are derived from the Blink test:
+        <https://chromium.googlesource.com/chromium/src/+/5c265c1a56a60533a1957589d33eabc201e2e8b6/third_party/WebKit/LayoutTests/http/tests/security/contentSecurityPolicy/connect-src-beacon-allowed.html>
+
+        * http/tests/quicklook/same-origin-xmlhttprequest-allowed-expected.txt: Update expected result. Note that these results are
+        a continuation of a regression caused by r231107. See <https://bugs.webkit.org/show_bug.cgi?id=185807> for more details.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/connect-src-beacon-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-beacon-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-beacon-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-beacon-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-eventsource-redirect-to-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-redirect-to-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked.php: Added.
+        * http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked.php: Added.
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-redirect-cross-origin-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-csp-blocks-xhr-redirect-cross-origin-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-csp-importScripts-redirect-cross-origin-blocked-expected.txt:
+        * http/wpt/beacon/connect-src-beacon-redirect-blocked.sub-expected.txt:
+        * platform/mac-wk1/TestExpectations: Skip the beacon tests because we do not support beacon in WebKit1.
+        * platform/mac-wk1/http/tests/security/contentSecurityPolicy/connect-src-eventsource-redirect-to-blocked-expected.txt:
+        * platform/mac-wk1/http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-redirect-to-blocked-expected.txt:
+        * platform/mac-wk1/http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-redirect-cross-origin-blocked-expected.txt: Added.
+        * platform/mac-wk1/http/tests/security/contentSecurityPolicy/worker-csp-importScripts-redirect-cross-origin-blocked-expected.txt: Added.
+        * platform/win/TestExpectations: Skip the beacon tests because we do not support beacon in WebKit1.
+        * platform/win/http/tests/security/contentSecurityPolicy/connect-src-eventsource-redirect-to-blocked-expected.txt:
+        * platform/win/http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-redirect-to-blocked-expected.txt:
+        * platform/win/http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-redirect-cross-origin-blocked-expected.txt: Added.
+        * platform/win/http/tests/security/contentSecurityPolicy/worker-csp-importScripts-redirect-cross-origin-blocked-expected.txt: Added.
+
 2018-05-21  Chris Dumez  <cdumez@apple.com>
 
         File's structured serialization should serialize lastModified attribute

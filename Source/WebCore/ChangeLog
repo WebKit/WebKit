@@ -1,3 +1,78 @@
+2018-05-21  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r231107): CSP report-only policies are ignored for beacon, importScripts, fetch(), EventSource, and XHR
+        https://bugs.webkit.org/show_bug.cgi?id=185789
+        <rdar://problem/40380175>
+
+        Reviewed by Andy Estes.
+
+        Fixes an issue where CSP report-only policies were ignored for DocumentThreadableLoader and
+        PingLoad initiated loads as a result of moving CSP processing to NetworkProcess.
+
+        Have NetworkLoadChecker implement the ContentSecurityPolicyClient interface and support logging
+        console messages, sending CSP reports, and dispatching SecurityPolicyViolation events. To support
+        the latter we introduce a new WebPage message, EnqueueSecurityPolicyViolationEvent, to enqueue
+        a SecurityPolicyViolationEvent created from an event init dictionary on the document's event
+        dispatch queue.
+
+        Additionally, shorten the description for a ResourceError caused by CSP to "Blocked by Content Security Policy"
+        because the CSP code run in NetworkProcess can now log its more detailed error description to
+        Web Inspector.
+
+        Tests: http/tests/security/contentSecurityPolicy/connect-src-beacon-allowed.html
+               http/tests/security/contentSecurityPolicy/connect-src-beacon-blocked.html
+               http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked.php
+               http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked.php
+
+        * WebCore.xcodeproj/project.pbxproj: Change SecurityPolicyViolationEvent.h from a project header to
+        a private header so that we can include it in WebKit code.
+        * dom/Document.cpp:
+        (WebCore::Document::enqueueSecurityPolicyViolationEvent): Added.
+        * dom/Document.h:
+
+        * dom/EventInit.h:
+        (WebCore::EventInit::encode const):
+        (WebCore::EventInit::decode
+        * dom/SecurityPolicyViolationEvent.h:
+        (WebCore::SecurityPolicyViolationEvent::Init::encode const):
+        (WebCore::SecurityPolicyViolationEvent::Init::decode):
+        Support encoding and decoding for the event.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::enqueueSecurityPolicyViolationEvent): Formerly named "dispatchSecurityPolicyViolationEvent".
+        (WebCore::DocumentLoader::dispatchSecurityPolicyViolationEvent): Deleted; renamed to "enqueueSecurityPolicyViolationEvent".
+        * loader/DocumentLoader.h:
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::redirectReceived): While I am here, move the check for whether the loader
+        strategy took responsibility for performing security checks to be before we perform the CSP check to avoid doing
+        such CSP checks twice in the case that the loader strategy already did them.
+        (WebCore::DocumentThreadableLoader::didFail): Remove code that checked the CSP policy if the load failed. When
+        the loader strategy (NetworkProcess) is responsible for performing security checks then this code would never
+        be executed for a violation of a CSP report-only policy because the loader does not and should not fail the load
+        for a report-only violations. As the name implies, a report-only violation is only reported. That is, it is not
+        enforced such that the load is blocked; => fail the load.
+        (WebCore::DocumentThreadableLoader::reportContentSecurityPolicyError): Update the error description to more
+        accurately describe the error and be consistent with the error message used in NetworkProcess. This error
+        message is shown for a redirect blocked by CSP regardless of whether the redirect was to a same-origin or
+        cross-origin resource. I chose to make the error message more vague than necessary for simplicity because
+        the CSP code will log a more detailed message for this error than could ever be captured by error message
+        for the ResourceError. Also use ASCIILiteral to efficiently construct the String object for the error
+        message.
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation const): Build up a SecurityPolicyViolationEvent::Init and
+        pass that to the delegate to dispatch.
+        * page/csp/ContentSecurityPolicy.h: Export allowScriptFromSource() and allowChildContextFromSource() so that
+        we can call them from WebKit.
+        * page/csp/ContentSecurityPolicyClient.h: Update for renaming.
+        * platform/network/ResourceRequestBase.h: Define a new requester type to be able to differentiate a request
+        initiated by importScripts() from other requests. We use this to perform the appropriate CSP checks in NetworkProcess.
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadSynchronously): Set the requester on the ResourceRequest to ResourceRequest::Requester::ImportScripts
+        so that we can differentiate this request from other requests. See remark for file ResourceRequestBase.h for
+        more details.
+
 2018-05-21  Chris Dumez  <cdumez@apple.com>
 
         File's structured serialization should serialize lastModified attribute

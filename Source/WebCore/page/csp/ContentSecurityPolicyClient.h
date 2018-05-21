@@ -25,13 +25,13 @@
 
 #pragma once
 
+#include "SecurityPolicyViolationEvent.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class FormData;
-class SecurityPolicyViolationEvent;
 class URL;
 
 struct CSPInfo {
@@ -52,7 +52,7 @@ struct WEBCORE_EXPORT ContentSecurityPolicyClient {
 
     virtual void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long requestIdentifier = 0) = 0;
     virtual void sendCSPViolationReport(URL&&, Ref<FormData>&&) = 0;
-    virtual void dispatchSecurityPolicyViolationEvent(Ref<SecurityPolicyViolationEvent>&&) = 0;
+    virtual void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEvent::Init&&) = 0;
 };
 
 } // namespace WebCore

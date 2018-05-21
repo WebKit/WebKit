@@ -100,7 +100,7 @@ public:
     WEBCORE_EXPORT bool allowFrameAncestors(const Vector<RefPtr<SecurityOrigin>>& ancestorOrigins, const URL&, bool overrideContentSecurityPolicy = false) const;
 
     enum class RedirectResponseReceived { No, Yes };
-    bool allowScriptFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
+    WEBCORE_EXPORT bool allowScriptFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
     bool allowImageFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
     bool allowStyleFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
     bool allowFontFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
@@ -110,7 +110,7 @@ public:
     bool allowMediaFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
 
     bool allowChildFrameFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
-    bool allowChildContextFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
+    WEBCORE_EXPORT bool allowChildContextFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
     WEBCORE_EXPORT bool allowConnectToSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
     bool allowFormAction(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
 

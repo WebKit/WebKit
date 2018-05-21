@@ -283,15 +283,15 @@ void DocumentThreadableLoader::redirectReceived(CachedResource& resource, Resour
         return completionHandler(WTFMove(request));
     }
 
+    if (platformStrategies()->loaderStrategy()->havePerformedSecurityChecks(redirectResponse)) {
+        completionHandler(WTFMove(request));
+        return;
+    }
+
     if (!isAllowedByContentSecurityPolicy(request.url(), redirectResponse.isNull() ? ContentSecurityPolicy::RedirectResponseReceived::No : ContentSecurityPolicy::RedirectResponseReceived::Yes)) {
         reportContentSecurityPolicyError(redirectResponse.url());
         clearResource();
         return completionHandler(WTFMove(request));
-    }
-
-    if (platformStrategies()->loaderStrategy()->havePerformedSecurityChecks(redirectResponse)) {
-        completionHandler(WTFMove(request));
-        return;
     }
 
     // Allow same origin requests to continue after allowing clients to audit the redirect.
@@ -460,14 +460,6 @@ void DocumentThreadableLoader::didFail(unsigned long, const ResourceError& error
         return;
     }
 #endif
-
-    // NetworkProcess might return a CSP violation as an AccessControl error in case of redirection.
-    // Let's recheck CSP to generate the report if needed.
-    // FIXME: We should introduce an error dedicated to CSP violation.
-    if (shouldPerformSecurityChecks() && error.isAccessControl() && error.failingURL().protocolIsInHTTPFamily() && !isAllowedByContentSecurityPolicy(error.failingURL(), ContentSecurityPolicy::RedirectResponseReceived::Yes)) {
-        reportContentSecurityPolicyError(m_resource->resourceRequest().url());
-        return;
-    }
 
     if (m_shouldLogError == ShouldLogError::Yes)
         logError(m_document, error, m_options.initiator);
@@ -670,7 +662,7 @@ void DocumentThreadableLoader::reportRedirectionWithBadScheme(const URL& url)
 
 void DocumentThreadableLoader::reportContentSecurityPolicyError(const URL& url)
 {
-    logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, url, "Cross-origin redirection denied by Content Security Policy.", ResourceError::Type::AccessControl));
+    logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, url, ASCIILiteral { "Blocked by Content Security Policy." }, ResourceError::Type::AccessControl));
 }
 
 void DocumentThreadableLoader::reportCrossOriginResourceSharingError(const URL& url)

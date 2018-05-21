@@ -3329,6 +3329,18 @@ void WebPage::sendCSPViolationReport(uint64_t frameID, const WebCore::URL& repor
         PingLoader::sendViolationReport(*frame->coreFrame(), reportURL, report.releaseNonNull(), ViolationReportType::ContentSecurityPolicy);
 }
 
+void WebPage::enqueueSecurityPolicyViolationEvent(uint64_t frameID, SecurityPolicyViolationEvent::Init&& eventInit)
+{
+    auto* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+    auto* coreFrame = frame->coreFrame();
+    if (!coreFrame)
+        return;
+    if (auto* document = coreFrame->document())
+        document->enqueueSecurityPolicyViolationEvent(WTFMove(eventInit));
+}
+
 NotificationPermissionRequestManager* WebPage::notificationPermissionRequestManager()
 {
     if (m_notificationPermissionRequestManager)

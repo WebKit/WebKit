@@ -1,4 +1,5 @@
-CONSOLE MESSAGE: Blocked by Content Security Policy
+CONSOLE MESSAGE: Refused to connect to about: because it appears in neither the connect-src directive nor the default-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Blocked by Content Security Policy.
 CONSOLE MESSAGE: XMLHttpRequest cannot load about: due to access control checks.
 CONSOLE MESSAGE: line 1: PASS: XMLHttpRequest allowed
 

@@ -1,3 +1,40 @@
+2018-05-21  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r231107): CSP report-only policies are ignored for beacon, importScripts, fetch(), EventSource, and XHR
+        https://bugs.webkit.org/show_bug.cgi?id=185789
+        <rdar://problem/40380175>
+
+        Reviewed by Andy Estes.
+
+        Have NetworkLoadChecker implement the ContentSecurityPolicyClient interface and support logging
+        console messages, sending CSP reports, and dispatching SecurityPolicyViolation events.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::loadPing):
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::NetworkLoadChecker): Modified to take a reference to the NetworkConnectionToWebProcess,
+        the web page ID, the web frame ID, and the resource load identifier. These details are necessary
+        in order to implement the ContentSecurityPolicyClient interface.
+        (WebKit::NetworkLoadChecker::isAllowedByContentSecurityPolicy): Added.
+        (WebKit::NetworkLoadChecker::continueCheckingRequest): Write in terms of isAllowedByContentSecurityPolicy().
+        (WebKit::NetworkLoadChecker::contentSecurityPolicy): Pass ourself as the client so that we receive
+        delegate callbacks.
+        (WebKit::NetworkLoadChecker::addConsoleMessage): Added.
+        (WebKit::NetworkLoadChecker::sendCSPViolationReport): Added.
+        (WebKit::NetworkLoadChecker::enqueueSecurityPolicyViolationEvent): Added.
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (NetworkResourceLoader::enqueueSecurityPolicyViolationEvent): Added.
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::PingLoad): Modified to take a reference to the NetworkConnectionToWebProcess and pass
+        this through to the NetworkLoadChecker along with the web page ID, web frame ID and resource load identifier.
+        * NetworkProcess/PingLoad.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::enqueueSecurityPolicyViolationEvent): Added.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Add message EnqueueSecurityPolicyViolationEvent.
+
 2018-05-21  Brian Burg  <bburg@apple.com>
 
         Web Automation: always return an empty cookie list if document.cookieURL() is empty

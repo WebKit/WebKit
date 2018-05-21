@@ -60,6 +60,7 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
 
     // Only used for importScripts that prescribes NoCors mode.
     ASSERT(mode == FetchOptions::Mode::NoCors);
+    request->setRequester(ResourceRequest::Requester::ImportScripts);
 
     ThreadableLoaderOptions options;
     options.credentials = FetchOptions::Credentials::Include;

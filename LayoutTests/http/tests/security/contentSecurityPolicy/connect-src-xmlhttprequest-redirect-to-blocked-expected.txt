@@ -1,7 +1,6 @@
-CONSOLE MESSAGE: Blocked http://localhost:8000/security/contentSecurityPolicy/resources/xhr-redirect-not-allowed.pl by Content Security Policy
 CONSOLE MESSAGE: Refused to connect to http://localhost:8000/security/contentSecurityPolicy/resources/xhr-redirect-not-allowed.pl because it does not appear in the connect-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Cross-origin redirection denied by Content Security Policy.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php?url=http://localhost:8000/security/contentSecurityPolicy/resources/xhr-redirect-not-allowed.pl due to access control checks.
+CONSOLE MESSAGE: Blocked by Content Security Policy.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/security/contentSecurityPolicy/resources/xhr-redirect-not-allowed.pl due to access control checks.
 PASS XMLHttpRequest.send() did not follow the disallowed redirect.
 PASS successfullyParsed is true
 

@@ -1,4 +1,5 @@
-CONSOLE MESSAGE: Blocked http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi by Content Security Policy
+CONSOLE MESSAGE: Refused to connect to http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Blocked by Content Security Policy.
 This tests an XHR request made from a worker is blocked if it redirects to a cross-origin resource that is not listed as a connect-src in the CSP of the worker.
 
 PASS threw exception NetworkError:  A network error occurred..

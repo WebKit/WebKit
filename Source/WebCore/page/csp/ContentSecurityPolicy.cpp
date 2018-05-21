@@ -696,15 +696,21 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     unsigned short httpStatusCode = m_selfSourceProtocol == "http" ? m_httpStatusCode : 0;
 
     // 1. Dispatch violation event.
-    bool canBubble = false;
-    bool cancelable = false;
-    auto violationEvent = SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, canBubble,
-        cancelable, info.documentURI, m_referrer, blockedURI, violatedDirective, effectiveViolatedDirective,
-        violatedDirectiveList.header(), info.sourceFile, httpStatusCode, info.lineNumber, info.columnNumber);
+    SecurityPolicyViolationEvent::Init violationEventInit;
+    violationEventInit.documentURI = info.documentURI;
+    violationEventInit.referrer = m_referrer;
+    violationEventInit.blockedURI = blockedURI;
+    violationEventInit.violatedDirective = violatedDirective;
+    violationEventInit.effectiveDirective = effectiveViolatedDirective;
+    violationEventInit.originalPolicy = violatedDirectiveList.header();
+    violationEventInit.sourceFile = info.sourceFile;
+    violationEventInit.statusCode = httpStatusCode;
+    violationEventInit.lineNumber =  info.lineNumber;
+    violationEventInit.columnNumber = info.columnNumber;
     if (m_client)
-        m_client->dispatchSecurityPolicyViolationEvent(WTFMove(violationEvent));
+        m_client->enqueueSecurityPolicyViolationEvent(WTFMove(violationEventInit));
     else
-        downcast<Document>(*m_scriptExecutionContext).enqueueDocumentEvent(WTFMove(violationEvent));
+        downcast<Document>(*m_scriptExecutionContext).enqueueSecurityPolicyViolationEvent(WTFMove(violationEventInit));
 
     // 2. Send violation report (if applicable).
     auto& reportURIs = violatedDirectiveList.reportURIs();
