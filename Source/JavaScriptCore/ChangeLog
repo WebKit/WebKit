@@ -1,3 +1,19 @@
+2018-05-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Revert the B3 compiler pipeline's treatment of taildup
+        https://bugs.webkit.org/show_bug.cgi?id=185808
+
+        Reviewed by Yusuke Suzuki.
+        
+        While trying to implement path specialization (bug 185060), I reorganized the B3 pass pipeline.
+        But then path specialization turned out to be a negative result. This reverts the pipeline to the
+        way it was before that work.
+        
+        1.5% progression on V8Spider-CompileTime.
+
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+
 2018-05-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] CheckTypeInfoFlags should say `eliminated` if it is removed in constant folding phase
