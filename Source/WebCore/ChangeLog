@@ -1,3 +1,23 @@
+2018-05-21  Chris Dumez  <cdumez@apple.com>
+
+        File's structured serialization should serialize lastModified attribute
+        https://bugs.webkit.org/show_bug.cgi?id=185773
+
+        Reviewed by Youenn Fablet.
+
+        Update our implementation for the stuctured serialization of a File to include
+        its lastModified attribute, as per:
+        - https://w3c.github.io/FileAPI/#file-section
+
+        No new tests, rebaselined existing test.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::write):
+        (WebCore::CloneDeserializer::readFile):
+        * fileapi/File.cpp:
+        (WebCore::File::File):
+        * fileapi/File.h:
+
 2018-05-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add FormattingContext::validateGeometryConstraintsAfterLayout

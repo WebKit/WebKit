@@ -1,3 +1,14 @@
+2018-05-21  Chris Dumez  <cdumez@apple.com>
+
+        File's structured serialization should serialize lastModified attribute
+        https://bugs.webkit.org/show_bug.cgi?id=185773
+
+        Reviewed by Youenn Fablet.
+
+        Unskip structured serialization tests that no longer fail / time out.
+
+        * TestExpectations:
+
 2018-05-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, update crypto/subtle/ecdh-import-jwk-private-key-p384.html to correct input
