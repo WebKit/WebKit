@@ -35,16 +35,3 @@
 
 #define BASAN_ENABLED BCOMPILER_HAS_CLANG_FEATURE(address_sanitizer)
 
-/* NO_RETURN */
-
-#if !defined(NO_RETURN) && defined(__GNUC__)
-#define BNO_RETURN __attribute((__noreturn__))
-#endif
-
-#if !defined(BNO_RETURN) && defined(_MSC_VER)
-#define BNO_RETURN __declspec(noreturn)
-#endif
-
-#if !defined(BNO_RETURN)
-#define BNO_RETURN
-#endif

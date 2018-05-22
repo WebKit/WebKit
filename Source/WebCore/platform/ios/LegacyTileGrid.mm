@@ -130,13 +130,9 @@ bool LegacyTileGrid::dropDistantTiles(unsigned tilesNeeded, double shortestDista
         if (distance <= shortestDistance)
             continue;
         toRemove.append(std::make_pair(distance, index));
-        std::push_heap(toRemove.begin(), toRemove.end(), [] (const auto& left, const auto& right) {
-            return isFartherAway<TileIndex>(left, right);
-        });
+        std::push_heap(toRemove.begin(), toRemove.end(), std::ptr_fun(isFartherAway<TileIndex>));
         if (toRemove.size() > tilesToRemoveCount) {
-            std::pop_heap(toRemove.begin(), toRemove.end(), [] (const auto& left, const auto& right) {
-                return isFartherAway<TileIndex>(left, right);
-            });
+            std::pop_heap(toRemove.begin(), toRemove.end(), std::ptr_fun(isFartherAway<TileIndex>));
             toRemove.removeLast();
         }
     }

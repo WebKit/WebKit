@@ -80,8 +80,8 @@ private:
 
     void scheduleIfUnderMemoryPressureHoldingLock(size_t bytes);
 
-    BNO_RETURN static void threadEntryPoint(Scavenger*);
-    BNO_RETURN void threadRunLoop();
+    static void threadEntryPoint(Scavenger*);
+    void threadRunLoop();
     
     void setSelfQOSClass();
     void setThreadName(const char*);
