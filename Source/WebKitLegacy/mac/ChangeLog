@@ -1,3 +1,32 @@
+2018-05-22  Chris Dumez  <cdumez@apple.com>
+
+        Regression(AsyncPolicyDelegates): Box.app login Window is blank
+        https://bugs.webkit.org/show_bug.cgi?id=185832
+        <rdar://problem/40307871>
+
+        Reviewed by Geoffrey Garen.
+
+        We used to have a bug where where we would fail to wait for the policy decision for
+        the navigation response from the client and the load would keep going, racing with
+        the client's policy decision. If the client did not respond in time, the behavior
+        would be the same as "Use" policy action.
+
+        Box.app fails to make any policy decision in its decidePolicyForMIMEType delegate
+        but the load happened to proceed anyway due to our bug. Now that we've fixed the
+        WebKit bug, however, the load would hang because the completion handler for the
+        decidePolicyForNavigationResponse would never get called.
+
+        To work around the issue, I made the policy listener weak on the WebFrameLoaderClient
+        instead of retaining it. If the policy listener object gets destroyed because getting
+        resolved, we now use "Use" policy action in its dealloc function to maintain previous
+        behavior.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::cancelPolicyCheck):
+        (WebFrameLoaderClient::setUpPolicyListener):
+        (-[WebFramePolicyListener dealloc]):
+
 2018-05-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r232052.

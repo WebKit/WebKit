@@ -33,7 +33,6 @@
 #import "PlaybackSessionManagerProxy.h"
 #import "VideoFullscreenManagerMessages.h"
 #import "VideoFullscreenManagerProxyMessages.h"
-#import "WeakObjCPtr.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/CoreAnimation.h>
@@ -41,6 +40,7 @@
 #import <WebCore/TimeRanges.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MachSendRight.h>
+#import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(IOS)
 #import "RemoteLayerTreeDrawingAreaProxy.h"

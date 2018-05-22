@@ -29,12 +29,12 @@
 #if WK_API_ENABLED
 
 #import "HTTPCookieAcceptPolicy.h"
-#import "WeakObjCPtr.h"
 #import <WebCore/Cookie.h>
 #import <WebCore/URL.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Cookie>& coreCookies)
 {
@@ -59,7 +59,7 @@ private:
         [m_observer.get() cookiesDidChangeInCookieStore:WebKit::wrapper(cookieStore)];
     }
 
-    WebKit::WeakObjCPtr<id<WKHTTPCookieStoreObserver>> m_observer;
+    WeakObjCPtr<id<WKHTTPCookieStoreObserver>> m_observer;
 };
 
 @implementation WKHTTPCookieStore {

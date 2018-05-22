@@ -36,7 +36,6 @@
 #import "SandboxUtilities.h"
 #import "UIGamepadProvider.h"
 #import "WKObject.h"
-#import "WeakObjCPtr.h"
 #import "WebCertificateInfo.h"
 #import "WebCookieManagerProxy.h"
 #import "WebProcessMessages.h"
@@ -50,6 +49,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(IOS)
 #import <WebCore/WebCoreThreadSystemInterface.h>
@@ -59,8 +59,8 @@
 static WKProcessPool *sharedProcessPool;
 
 @implementation WKProcessPool {
-    WebKit::WeakObjCPtr<id <_WKAutomationDelegate>> _automationDelegate;
-    WebKit::WeakObjCPtr<id <_WKDownloadDelegate>> _downloadDelegate;
+    WeakObjCPtr<id <_WKAutomationDelegate>> _automationDelegate;
+    WeakObjCPtr<id <_WKDownloadDelegate>> _downloadDelegate;
 
     RetainPtr<_WKAutomationSession> _automationSession;
 #if PLATFORM(IOS)

@@ -31,6 +31,7 @@
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 @class WebDownload;
 @class WebFrame;
@@ -260,5 +261,5 @@ private:
 
     RetainPtr<WebFrame> m_webFrame;
 
-    RetainPtr<WebFramePolicyListener> m_policyListener;
+    WeakObjCPtr<WebFramePolicyListener> m_policyListener;
 };

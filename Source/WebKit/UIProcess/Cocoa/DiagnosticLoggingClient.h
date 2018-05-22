@@ -31,8 +31,8 @@
 #if WK_API_ENABLED
 
 #import "APIDiagnosticLoggingClient.h"
-#import "WeakObjCPtr.h"
 #import <WebCore/DiagnosticLoggingResultType.h>
+#import <wtf/WeakObjCPtr.h>
 
 @class WKWebView;
 @protocol _WKDiagnosticLoggingDelegate;

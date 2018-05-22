@@ -34,9 +34,9 @@
 #import "PageLoadState.h"
 #import "ProcessTerminationReason.h"
 #import "ProcessThrottler.h"
-#import "WeakObjCPtr.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/WeakObjCPtr.h>
 
 @class WKWebView;
 @protocol WKHistoryDelegatePrivate;

@@ -29,8 +29,8 @@
 #if PLATFORM(IOS)
 
 #import "WKWebViewInternal.h"
-#import "WeakObjCPtr.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <wtf/WeakObjCPtr.h>
 
 using namespace WebKit;
 

@@ -30,7 +30,7 @@
 
 #import "DownloadProxy.h"
 #import "WKWebViewInternal.h"
-#import "WeakObjCPtr.h"
+#import <wtf/WeakObjCPtr.h>
 
 @implementation _WKDownload {
     API::ObjectStorage<WebKit::DownloadProxy> _download;

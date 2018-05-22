@@ -29,12 +29,12 @@
 #if WK_API_ENABLED
 
 #import "WKFrameInfo.h"
-#import "WeakObjCPtr.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 @implementation WKScriptMessage {
     RetainPtr<id> _body;
-    WebKit::WeakObjCPtr<WKWebView> _webView;
+    WeakObjCPtr<WKWebView> _webView;
     RetainPtr<WKFrameInfo> _frameInfo;
     RetainPtr<NSString> _name;
 }

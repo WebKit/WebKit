@@ -35,7 +35,6 @@
 #import "WKActionSheet.h"
 #import "WKContentViewInteraction.h"
 #import "WKNSURLExtras.h"
-#import "WeakObjCPtr.h"
 #import "WebPageProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKElementActionInternal.h"
@@ -45,6 +44,7 @@
 #import <WebCore/PathUtilities.h>
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
 
 #if HAVE(APP_LINKS)

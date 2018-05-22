@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WeakObjCPtr_h
-#define WeakObjCPtr_h
+#pragma once
 
 #include <objc/runtime.h>
 #include <type_traits>
@@ -42,7 +41,7 @@ void objc_moveWeak(id*, id*);
 }
 #endif
 
-namespace WebKit {
+namespace WTF {
 
 template<typename T> class WeakObjCPtr {
 public:
@@ -101,6 +100,6 @@ private:
     id m_weakReference;
 };
 
-} // namespace WebKit
+} // namespace WTF
 
-#endif // WeakObjCPtr_h
+using WTF::WeakObjCPtr;

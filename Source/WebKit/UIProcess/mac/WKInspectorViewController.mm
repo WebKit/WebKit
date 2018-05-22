@@ -39,10 +39,10 @@
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewPrivate.h"
-#import "WeakObjCPtr.h"
 #import "WebInspectorProxy.h"
 #import "WebInspectorUtilities.h"
 #import "WebPageProxy.h"
+#import <wtf/WeakObjCPtr.h>
 
 using namespace WebKit;
 
@@ -52,7 +52,7 @@ using namespace WebKit;
 @implementation WKInspectorViewController {
     WebPageProxy* _inspectedPage;
     RetainPtr<WKInspectorWKWebView> _webView;
-    WebKit::WeakObjCPtr<id <WKInspectorViewControllerDelegate>> _delegate;
+    WeakObjCPtr<id <WKInspectorViewControllerDelegate>> _delegate;
 }
 
 - (instancetype)initWithInspectedPage:(WebKit::WebPageProxy* _Nullable)inspectedPage

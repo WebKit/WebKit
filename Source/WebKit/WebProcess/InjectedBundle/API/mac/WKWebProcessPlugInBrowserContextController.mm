@@ -53,7 +53,6 @@
 #import "WKWebProcessPlugInPageGroupInternal.h"
 #import "WKWebProcessPlugInRangeHandleInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
-#import "WeakObjCPtr.h"
 #import "WebPage.h"
 #import "WebProcess.h"
 #import "_WKRemoteObjectRegistryInternal.h"
@@ -65,6 +64,7 @@
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLInputElement.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
+#import <wtf/WeakObjCPtr.h>
 
 using namespace WebCore;
 using namespace WebKit;

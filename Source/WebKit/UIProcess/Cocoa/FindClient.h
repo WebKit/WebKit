@@ -31,7 +31,7 @@
 #if WK_API_ENABLED
 
 #import "APIFindClient.h"
-#import "WeakObjCPtr.h"
+#import <wtf/WeakObjCPtr.h>
 
 @class WKWebView;
 @protocol _WKFindDelegate;

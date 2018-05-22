@@ -1,3 +1,50 @@
+2018-05-22  Chris Dumez  <cdumez@apple.com>
+
+        Regression(AsyncPolicyDelegates): Box.app login Window is blank
+        https://bugs.webkit.org/show_bug.cgi?id=185832
+        <rdar://problem/40307871>
+
+        Reviewed by Geoffrey Garen.
+
+        Moved WeakObjCPtr.h header from WebKit/ to wtf/ so that it can be used in
+        WebKitLegacy code.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        * UIProcess/API/Cocoa/WKBrowsingContextControllerInternal.h:
+        * UIProcess/API/Cocoa/WKConnection.mm:
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.mm:
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        * UIProcess/API/Cocoa/WKScriptMessage.mm:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        * UIProcess/API/Cocoa/_WKAutomationSession.mm:
+        * UIProcess/API/Cocoa/_WKDownload.mm:
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        * UIProcess/ApplicationStateTracker.h:
+        * UIProcess/Cocoa/AutomationClient.h:
+        * UIProcess/Cocoa/AutomationSessionClient.h:
+        * UIProcess/Cocoa/DiagnosticLoggingClient.h:
+        * UIProcess/Cocoa/DownloadClient.h:
+        * UIProcess/Cocoa/FindClient.h:
+        * UIProcess/Cocoa/FullscreenClient.h:
+        * UIProcess/Cocoa/IconLoadingDelegate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        * UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_setContentProviderData:suggestedFilename:]):
+        * UIProcess/ios/WKScrollView.mm:
+        * UIProcess/mac/WKInspectorViewController.mm:
+        * UIProcess/mac/WKInspectorWKWebView.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+
 2018-05-22  Sihui Liu  <sihui_liu@apple.com>
 
         Conversion between SecurityOriginData and DatabaseIdentifier is asymmetric when port is null

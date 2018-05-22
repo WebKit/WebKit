@@ -1,3 +1,17 @@
+2018-05-22  Chris Dumez  <cdumez@apple.com>
+
+        Regression(AsyncPolicyDelegates): Box.app login Window is blank
+        https://bugs.webkit.org/show_bug.cgi?id=185832
+        <rdar://problem/40307871>
+
+        Reviewed by Geoffrey Garen.
+
+        Moved WeakObjCPtr.h from WebKit2 to WTF with RetainPtr.h, so that it can be used
+        in WebKitLegacy code.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/WeakObjCPtr.h: Renamed from Source/WebKit/Shared/mac/WeakObjCPtr.h.
+
 2018-05-22  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of TLCs

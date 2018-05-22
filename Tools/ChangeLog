@@ -1,3 +1,23 @@
+2018-05-22  Chris Dumez  <cdumez@apple.com>
+
+        Regression(AsyncPolicyDelegates): Box.app login Window is blank
+        https://bugs.webkit.org/show_bug.cgi?id=185832
+        <rdar://problem/40307871>
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/cocoa/WeakObjCPtr.mm:
+        * TestWebKitAPI/Tests/mac/NoPolicyDelegateResponse.mm: Added.
+        (-[NoPolicyDelegateDecisionDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]):
+        (-[NoPolicyDelegateDecisionDelegate webView:decidePolicyForMIMEType:request:frame:decisionListener:]):
+        (-[NoPolicyDelegateDecisionDelegate webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView _isBackground]):
+
 2018-05-22  Sihui Liu  <sihui_liu@apple.com>
 
         Conversion between SecurityOriginData and DatabaseIdentifier is asymmetric when port is null

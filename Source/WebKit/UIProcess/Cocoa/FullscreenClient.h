@@ -30,8 +30,8 @@
 #if WK_API_ENABLED
 
 #import "APIFullscreenClient.h"
-#import "WeakObjCPtr.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(MAC)
 @class NSView;

@@ -31,7 +31,7 @@
 #if WK_API_ENABLED
 
 #import "APIAutomationSessionClient.h"
-#import "WeakObjCPtr.h"
+#import <wtf/WeakObjCPtr.h>
 
 @protocol _WKAutomationSessionDelegate;
 

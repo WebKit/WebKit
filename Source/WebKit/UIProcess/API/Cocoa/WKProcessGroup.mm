@@ -40,11 +40,11 @@
 #import "WKNavigationDataInternal.h"
 #import "WKRetainPtr.h"
 #import "WKStringCF.h"
-#import "WeakObjCPtr.h"
 #import "WebCertificateInfo.h"
 #import "WebFrameProxy.h"
 #import "WebProcessPool.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(IOS)
 #import "WKAPICast.h"

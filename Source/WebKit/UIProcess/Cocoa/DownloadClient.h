@@ -31,7 +31,7 @@
 
 #import "APIDownloadClient.h"
 #import "ProcessThrottler.h"
-#import "WeakObjCPtr.h"
+#import <wtf/WeakObjCPtr.h>
 
 @protocol _WKDownloadDelegate;
 

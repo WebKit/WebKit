@@ -30,12 +30,12 @@
 
 #import "ApplicationStateTracker.h"
 #import "WKWebViewInternal.h"
-#import "WeakObjCPtr.h"
 #import "WebPageProxy.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 @implementation WKApplicationStateTrackingView {
-    WebKit::WeakObjCPtr<WKWebView> _webView;
+    WeakObjCPtr<WKWebView> _webView;
     std::unique_ptr<WebKit::ApplicationStateTracker> _applicationStateTracker;
 }
 

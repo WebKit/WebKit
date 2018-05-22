@@ -28,8 +28,8 @@
 
 #if PLATFORM(IOS)
 
-#import "WeakObjCPtr.h"
 #import <wtf/Forward.h>
+#import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
 
 OBJC_CLASS BKSApplicationStateMonitor;

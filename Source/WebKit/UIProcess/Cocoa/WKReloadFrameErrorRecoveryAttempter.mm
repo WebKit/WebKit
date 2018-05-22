@@ -31,17 +31,17 @@
 #import "_WKErrorRecoveryAttempting.h"
 #import "_WKFrameHandleInternal.h"
 #import "WKWebViewInternal.h"
-#import "WeakObjCPtr.h"
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 @interface WKReloadFrameErrorRecoveryAttempter () <_WKErrorRecoveryAttempting>
 @end
 
 @implementation WKReloadFrameErrorRecoveryAttempter {
-    WebKit::WeakObjCPtr<WKWebView> _webView;
+    WeakObjCPtr<WKWebView> _webView;
     RetainPtr<_WKFrameHandle> _frameHandle;
     String _urlString;
 }

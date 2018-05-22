@@ -30,7 +30,6 @@
 #include "PluginComplexTextInputState.h"
 #include "WKDragDestinationAction.h"
 #include "WKLayoutMode.h"
-#include "WeakObjCPtr.h"
 #include "WebPageProxy.h"
 #include "_WKOverlayScrollbarStyle.h"
 #include <WebCore/TextIndicatorWindow.h>
@@ -38,6 +37,7 @@
 #include <pal/spi/cocoa/AVKitSPI.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 

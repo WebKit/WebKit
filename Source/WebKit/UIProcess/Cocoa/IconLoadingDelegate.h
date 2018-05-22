@@ -30,8 +30,8 @@
 #if WK_API_ENABLED
 
 #import "APIIconLoadingClient.h"
-#import "WeakObjCPtr.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 @class WKWebView;
 @protocol _WKIconLoadingDelegate;

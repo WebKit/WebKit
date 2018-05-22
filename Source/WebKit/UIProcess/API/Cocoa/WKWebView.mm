@@ -266,7 +266,7 @@ static std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOve
 
     _WKRenderingProgressEvents _observedRenderingProgressEvents;
 
-    WebKit::WeakObjCPtr<id <_WKInputDelegate>> _inputDelegate;
+    WeakObjCPtr<id <_WKInputDelegate>> _inputDelegate;
 
 #if PLATFORM(IOS)
     RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;

@@ -31,8 +31,8 @@
 
 #import "APIContextMenuClient.h"
 #import "APIUIClient.h"
-#import "WeakObjCPtr.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 @class _WKActivatedElementInfo;
 @class WKWebView;

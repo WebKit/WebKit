@@ -29,10 +29,10 @@
 #if PLATFORM(MAC) && WK_API_ENABLED
 
 #import "WKInspectorPrivateMac.h"
-#import "WeakObjCPtr.h"
+#import <wtf/WeakObjCPtr.h>
 
 @implementation WKInspectorWKWebView {
-    WebKit::WeakObjCPtr<id <WKInspectorWKWebViewDelegate>> _inspectorWKWebViewDelegate;
+    WeakObjCPtr<id <WKInspectorWKWebViewDelegate>> _inspectorWKWebViewDelegate;
 }
 
 - (NSInteger)tag

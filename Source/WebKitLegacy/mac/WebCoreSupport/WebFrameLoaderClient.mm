@@ -914,8 +914,11 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 
 void WebFrameLoaderClient::cancelPolicyCheck()
 {
+    if (!m_policyListener)
+        return;
+
     [m_policyListener invalidate];
-    m_policyListener = nullptr;
+    m_policyListener = nil;
 }
 
 void WebFrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError& error)
@@ -1524,14 +1527,17 @@ RetainPtr<WebFramePolicyListener> WebFrameLoaderClient::setUpPolicyListener(Fram
     // FIXME: <rdar://5634381> We need to support multiple active policy listeners.
     [m_policyListener invalidate];
 
+    RetainPtr<WebFramePolicyListener> policyListener;
 #if HAVE(APP_LINKS)
     if (appLinkURL)
-        m_policyListener = adoptNS([[WebFramePolicyListener alloc] initWithFrame:core(m_webFrame.get()) policyFunction:WTFMove(function) appLinkURL:appLinkURL]);
+        policyListener = adoptNS([[WebFramePolicyListener alloc] initWithFrame:core(m_webFrame.get()) policyFunction:WTFMove(function) appLinkURL:appLinkURL]);
     else
 #endif
-        m_policyListener = adoptNS([[WebFramePolicyListener alloc] initWithFrame:core(m_webFrame.get()) policyFunction:WTFMove(function)]);
+        policyListener = adoptNS([[WebFramePolicyListener alloc] initWithFrame:core(m_webFrame.get()) policyFunction:WTFMove(function)]);
 
-    return m_policyListener;
+    m_policyListener = policyListener.get();
+
+    return policyListener;
 }
 
 String WebFrameLoaderClient::userAgent(const URL& url)
@@ -2425,6 +2431,14 @@ void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackID, SharedBuffer
 {
     if (WebCoreObjCScheduleDeallocateOnMainThread([WebFramePolicyListener class], self))
         return;
+
+    // If the app did not respond before the listener is destroyed, then we let the load
+    // proceed with policy "Use".
+    _frame = nullptr;
+    if (auto policyFunction = std::exchange(_policyFunction, nullptr)) {
+        RELEASE_LOG_ERROR(Loading, "Client application failed to make a policy decision via WebPolicyDecisionListener, letting the load proceed");
+        policyFunction(PolicyAction::Use);
+    }
 
     [super dealloc];
 }

@@ -37,7 +37,6 @@
 #import "WKUserContentController.h"
 #import "WKWebView.h"
 #import "WKWebViewContentProviderRegistry.h"
-#import "WeakObjCPtr.h"
 #import "WebKit2Initialize.h"
 #import "_WKVisitedLinkStore.h"
 #import "_WKWebsiteDataStoreInternal.h"
@@ -45,6 +44,7 @@
 #import <WebCore/Settings.h>
 #import <WebCore/URLParser.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(IOS)
 #import "UIKitSPI.h"
@@ -109,8 +109,8 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     LazyInitialized<RetainPtr<WKUserContentController>> _userContentController;
     LazyInitialized<RetainPtr<_WKVisitedLinkStore>> _visitedLinkStore;
     LazyInitialized<RetainPtr<WKWebsiteDataStore>> _websiteDataStore;
-    WebKit::WeakObjCPtr<WKWebView> _relatedWebView;
-    WebKit::WeakObjCPtr<WKWebView> _alternateWebViewForNavigationGestures;
+    WeakObjCPtr<WKWebView> _relatedWebView;
+    WeakObjCPtr<WKWebView> _alternateWebViewForNavigationGestures;
     RetainPtr<NSString> _groupIdentifier;
     LazyInitialized<RetainPtr<NSString>> _applicationNameForUserAgent;
     LazyInitialized<RetainPtr<NSMutableDictionary<NSString *, id <WKURLSchemeHandler>>>> _urlSchemeHandlers;

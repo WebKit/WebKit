@@ -52,13 +52,13 @@
 #import "WKURLRequestNS.h"
 #import "WKURLResponseNS.h"
 #import "WKViewInternal.h"
-#import "WeakObjCPtr.h"
 #import "WebCertificateInfo.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import "WebProtectionSpace.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import <wtf/NeverDestroyed.h>
+#import <wtf/WeakObjCPtr.h>
 
 using namespace WebCore;
 using namespace WebKit;

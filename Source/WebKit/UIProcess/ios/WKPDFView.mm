@@ -32,7 +32,6 @@
 #import "FindClient.h"
 #import "WKActionSheetAssistant.h"
 #import "WKWebViewInternal.h"
-#import "WeakObjCPtr.h"
 #import "WebPageProxy.h"
 #import "_WKWebViewPrintFormatterInternal.h"
 #import <PDFKit/PDFHostViewController.h>
@@ -40,6 +39,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 @interface WKPDFView () <PDFHostViewControllerDelegate, WKActionSheetAssistantDelegate>
 @end
@@ -61,7 +61,7 @@
     RetainPtr<NSString> _password;
     WebKit::InteractionInformationAtPosition _positionInformation;
     RetainPtr<NSString> _suggestedFilename;
-    WebKit::WeakObjCPtr<WKWebView> _webView;
+    WeakObjCPtr<WKWebView> _webView;
 }
 
 - (void)dealloc
@@ -96,7 +96,7 @@
     _data = adoptNS([data copy]);
     _suggestedFilename = adoptNS([filename copy]);
 
-    WebKit::WeakObjCPtr<WKPDFView> weakSelf = self;
+    WeakObjCPtr<WKPDFView> weakSelf = self;
     [PDFHostViewController createHostView:[self, weakSelf = WTFMove(weakSelf)](PDFHostViewController * _Nullable hostViewController) {
         ASSERT(isMainThread());
 
