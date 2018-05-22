@@ -39,7 +39,6 @@
 #include "Options.h"
 #include "StructureIDTable.h"
 #include "Synchronousness.h"
-#include "UnconditionalFinalizer.h"
 #include "WeakHandleOwner.h"
 #include "WeakReferenceHarvester.h"
 #include <wtf/AutomaticThread.h>
@@ -670,7 +669,6 @@ private:
     static const size_t s_blockFragmentLength = 32;
 
     ListableHandler<WeakReferenceHarvester>::List m_weakReferenceHarvesters;
-    ListableHandler<UnconditionalFinalizer>::List m_unconditionalFinalizers;
 
     ParallelHelperClient m_helperClient;
     RefPtr<SharedTask<void(SlotVisitor&)>> m_bonusVisitorTask;

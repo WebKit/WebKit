@@ -50,8 +50,6 @@ JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, Ref<Wasm::CodeBlock>&& co
     : Base(vm, vm.webAssemblyCodeBlockStructure.get())
     , m_codeBlock(WTFMove(codeBlock))
 {
-    m_unconditionalFinalizer = PoisonedUniquePtr<JSWebAssemblyCodeBlockPoison, UnconditionalFinalizer>::create(*this);
-
     // FIXME: We should not need to do this synchronously.
     // https://bugs.webkit.org/show_bug.cgi?id=170567
     m_wasmToJSExitStubs.reserveCapacity(m_codeBlock->functionImportCount());
@@ -92,14 +90,12 @@ void JSWebAssemblyCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
-
-    visitor.addUnconditionalFinalizer(thisObject->m_unconditionalFinalizer.get());
 }
 
-void JSWebAssemblyCodeBlock::UnconditionalFinalizer::finalizeUnconditionally()
+void JSWebAssemblyCodeBlock::finalizeUnconditionally(VM& vm)
 {
-    for (auto iter = codeBlock.m_callLinkInfos.begin(); !!iter; ++iter)
-        (*iter)->visitWeak(*codeBlock.vm());
+    for (auto iter = m_callLinkInfos.begin(); !!iter; ++iter)
+        (*iter)->visitWeak(vm);
 }
 
 } // namespace JSC

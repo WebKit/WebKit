@@ -758,11 +758,6 @@ void SlotVisitor::addWeakReferenceHarvester(WeakReferenceHarvester* weakReferenc
     m_heap.m_weakReferenceHarvesters.addThreadSafe(weakReferenceHarvester);
 }
 
-void SlotVisitor::addUnconditionalFinalizer(UnconditionalFinalizer* unconditionalFinalizer)
-{
-    m_heap.m_unconditionalFinalizers.addThreadSafe(unconditionalFinalizer);
-}
-
 void SlotVisitor::didRace(const VisitRaceKey& race)
 {
     if (Options::verboseVisitRace())

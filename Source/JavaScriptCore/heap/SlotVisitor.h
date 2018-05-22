@@ -44,7 +44,6 @@ class HeapSnapshotBuilder;
 class MarkedBlock;
 class MarkingConstraint;
 class MarkingConstraintSolver;
-class UnconditionalFinalizer;
 template<typename T> class Weak;
 class WeakReferenceHarvester;
 template<typename T, typename Traits> class WriteBarrierBase;
@@ -142,7 +141,6 @@ public:
 #endif
     
     void addWeakReferenceHarvester(WeakReferenceHarvester*);
-    void addUnconditionalFinalizer(UnconditionalFinalizer*);
 
     void dump(PrintStream&) const;
 

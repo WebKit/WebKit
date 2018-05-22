@@ -30,7 +30,6 @@
 #include "JSCPoison.h"
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
-#include "UnconditionalFinalizer.h"
 #include "WasmMemoryMode.h"
 #include <wtf/Bag.h>
 #include <wtf/Expected.h>

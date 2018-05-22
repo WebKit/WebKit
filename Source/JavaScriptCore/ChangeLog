@@ -1,5 +1,51 @@
 2018-05-22  Keith Miller  <keith_miller@apple.com>
 
+        Remove the UnconditionalFinalizer class
+        https://bugs.webkit.org/show_bug.cgi?id=185881
+
+        Reviewed by Filip Pizlo.
+
+        The only remaining user of this API is
+        JSWebAssemblyCodeBlock. This patch changes, JSWebAssemblyCodeBlock
+        to use the newer template based API and removes the old class.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        * heap/Heap.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::addUnconditionalFinalizer): Deleted.
+        * heap/SlotVisitor.h:
+        * heap/UnconditionalFinalizer.h: Removed.
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock):
+        (JSC::JSWebAssemblyCodeBlock::visitChildren):
+        (JSC::JSWebAssemblyCodeBlock::finalizeUnconditionally):
+        (JSC::JSWebAssemblyCodeBlock::UnconditionalFinalizer::finalizeUnconditionally): Deleted.
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        * wasm/js/JSWebAssemblyModule.h:
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        * heap/Heap.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::addUnconditionalFinalizer): Deleted.
+        * heap/SlotVisitor.h:
+        * heap/UnconditionalFinalizer.h: Removed.
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock):
+        (JSC::JSWebAssemblyCodeBlock::visitChildren):
+        (JSC::JSWebAssemblyCodeBlock::finalizeUnconditionally):
+        (JSC::JSWebAssemblyCodeBlock::UnconditionalFinalizer::finalizeUnconditionally): Deleted.
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        * wasm/js/JSWebAssemblyModule.h:
+
+2018-05-22  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, fix internal build.
 
         * runtime/JSImmutableButterfly.cpp:

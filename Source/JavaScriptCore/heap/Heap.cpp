@@ -591,11 +591,10 @@ void Heap::finalizeUnconditionalFinalizers()
     finalizeMarkedUnconditionalFinalizers<ExecutableToCodeBlockEdge>(vm()->executableToCodeBlockEdgesWithFinalizers);
     finalizeMarkedUnconditionalFinalizers<JSWeakSet>(vm()->weakSetSpace);
     finalizeMarkedUnconditionalFinalizers<JSWeakMap>(vm()->weakMapSpace);
-    
-    while (m_unconditionalFinalizers.hasNext()) {
-        UnconditionalFinalizer* finalizer = m_unconditionalFinalizers.removeNext();
-        finalizer->finalizeUnconditionally();
-    }
+
+#if ENABLE(WEBASSEMBLY)
+    finalizeMarkedUnconditionalFinalizers<JSWebAssemblyCodeBlock>(vm()->webAssemblyCodeBlockSpace);
+#endif
 }
 
 void Heap::willStartIterating()
