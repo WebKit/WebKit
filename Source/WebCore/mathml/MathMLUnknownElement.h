@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(MATHML)
+
 #include "MathMLElement.h"
 
 namespace WebCore {
@@ -47,3 +49,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(MATHML)

@@ -1,3 +1,27 @@
+2018-05-22  Olivier Blin  <olivier.blin@softathome.com>
+
+        Fix build without MathML
+        https://bugs.webkit.org/show_bug.cgi?id=185865
+
+        Reviewed by Frédéric Wang.
+
+        Regression(r226654): [RenderTreeBuilder] Move MathML addChild logic to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=181443
+
+        Regression(r229694): Put the DOM in IsoHeaps
+        https://bugs.webkit.org/show_bug.cgi?id=183546
+
+        No new tests, build fix.
+
+        * mathml/MathMLUnknownElement.cpp:
+        * mathml/MathMLUnknownElement.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::RenderTreeBuilder):
+        (WebCore::RenderTreeBuilder::attach):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderMathML.cpp:
+        * rendering/updating/RenderTreeBuilderMathML.h:
+
 2018-05-22  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [GStreamer] Don't set the ReadyState to HaveNothing when an error occurs in playback pipeline

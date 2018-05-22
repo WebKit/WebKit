@@ -26,6 +26,8 @@
 #include "config.h"
 #include "MathMLUnknownElement.h"
 
+#if ENABLE(MATHML)
+
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -34,3 +36,4 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLUnknownElement);
 
 } // namespace WebCore
 
+#endif // ENABLE(MATHML)

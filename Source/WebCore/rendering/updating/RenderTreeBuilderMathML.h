@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(MATHML)
+
 #include "MathMLOperatorDictionary.h"
 #include "RenderTreeBuilder.h"
 
@@ -48,3 +50,5 @@ private:
 };
 
 }
+
+#endif // ENABLE(MATHML)

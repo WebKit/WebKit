@@ -131,7 +131,9 @@ RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
     , m_blockFlowBuilder(std::make_unique<BlockFlow>(*this))
     , m_inlineBuilder(std::make_unique<Inline>(*this))
     , m_svgBuilder(std::make_unique<SVG>(*this))
+#if ENABLE(MATHML)
     , m_mathMLBuilder(std::make_unique<MathML>(*this))
+#endif
     , m_continuationBuilder(std::make_unique<Continuation>(*this))
 #if ENABLE(FULLSCREEN_API)
     , m_fullScreenBuilder(std::make_unique<FullScreen>(*this))
@@ -270,10 +272,12 @@ void RenderTreeBuilder::attach(RenderElement& parent, RenderPtr<RenderObject> ch
         return;
     }
 
+#if ENABLE(MATHML)
     if (is<RenderMathMLFenced>(parent)) {
         mathMLBuilder().attach(downcast<RenderMathMLFenced>(parent), WTFMove(child), beforeChild);
         return;
     }
+#endif
 
     if (is<RenderGrid>(parent)) {
         attachToRenderGrid(downcast<RenderGrid>(parent), WTFMove(child), beforeChild);

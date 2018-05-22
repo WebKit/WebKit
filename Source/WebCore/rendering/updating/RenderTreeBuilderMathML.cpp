@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RenderTreeBuilderMathML.h"
 
+#if ENABLE(MATHML)
+
 #include "RenderMathMLFenced.h"
 #include "RenderMathMLFencedOperator.h"
 #include "RenderTreeBuilderBlock.h"
@@ -108,3 +110,5 @@ void RenderTreeBuilder::MathML::attach(RenderMathMLFenced& parent, RenderPtr<Ren
 }
 
 }
+
+#endif // ENABLE(MATHML)

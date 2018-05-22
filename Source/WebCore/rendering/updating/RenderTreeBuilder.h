@@ -94,7 +94,9 @@ private:
     class BlockFlow;
     class Inline;
     class SVG;
+#if ENABLE(MATHML)
     class MathML;
+#endif
     class Continuation;
 #if ENABLE(FULLSCREEN_API)
     class FullScreen;
@@ -110,7 +112,9 @@ private:
     BlockFlow& blockFlowBuilder() { return *m_blockFlowBuilder; }
     Inline& inlineBuilder() { return *m_inlineBuilder; }
     SVG& svgBuilder() { return *m_svgBuilder; }
+#if ENABLE(MATHML)
     MathML& mathMLBuilder() { return *m_mathMLBuilder; }
+#endif
     Continuation& continuationBuilder() { return *m_continuationBuilder; }
 #if ENABLE(FULLSCREEN_API)
     FullScreen& fullScreenBuilder() { return *m_fullScreenBuilder; }
@@ -130,7 +134,9 @@ private:
     std::unique_ptr<BlockFlow> m_blockFlowBuilder;
     std::unique_ptr<Inline> m_inlineBuilder;
     std::unique_ptr<SVG> m_svgBuilder;
+#if ENABLE(MATHML)
     std::unique_ptr<MathML> m_mathMLBuilder;
+#endif
     std::unique_ptr<Continuation> m_continuationBuilder;
 #if ENABLE(FULLSCREEN_API)
     std::unique_ptr<FullScreen> m_fullScreenBuilder;
