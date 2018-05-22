@@ -2667,14 +2667,23 @@ RegisterID* BytecodeGenerator::emitInstanceOfCustom(RegisterID* dst, RegisterID*
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitIn(RegisterID* dst, RegisterID* property, RegisterID* base)
+RegisterID* BytecodeGenerator::emitInByVal(RegisterID* dst, RegisterID* property, RegisterID* base)
 {
     UnlinkedArrayProfile arrayProfile = newArrayProfile();
-    emitOpcode(op_in);
+    emitOpcode(op_in_by_val);
     instructions().append(dst->index());
     instructions().append(base->index());
     instructions().append(property->index());
     instructions().append(arrayProfile);
+    return dst;
+}
+
+RegisterID* BytecodeGenerator::emitInById(RegisterID* dst, RegisterID* base, const Identifier& property)
+{
+    emitOpcode(op_in_by_id);
+    instructions().append(dst->index());
+    instructions().append(base->index());
+    instructions().append(addConstant(property));
     return dst;
 }
 

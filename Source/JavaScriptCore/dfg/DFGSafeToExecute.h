@@ -332,7 +332,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case CallStringConstructor:
     case NewStringObject:
     case MakeRope:
-    case In:
+    case InByVal:
+    case InById:
     case HasOwnProperty:
     case PushWithScope:
     case CreateActivation:

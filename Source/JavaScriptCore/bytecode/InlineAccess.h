@@ -116,6 +116,7 @@ public:
     static bool isCacheableArrayLength(StructureStubInfo&, JSArray*);
     static bool generateArrayLength(StructureStubInfo&, JSArray*);
     static void rewireStubAsJump(StructureStubInfo&, CodeLocationLabel<JITStubRoutinePtrTag>);
+    static bool generateSelfInAccess(StructureStubInfo&, Structure*);
 
     // This is helpful when determining the size of an IC on
     // various platforms. When adding a new type of IC, implement

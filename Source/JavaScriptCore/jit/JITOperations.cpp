@@ -377,64 +377,91 @@ EncodedJSValue JIT_OPERATION operationGetByIdWithThisOptimize(ExecState* exec, S
     }));
 }
 
-EncodedJSValue JIT_OPERATION operationInOptimize(ExecState* exec, StructureStubInfo* stubInfo, JSCell* base, UniquedStringImpl* key)
+EncodedJSValue JIT_OPERATION operationInById(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
 {
     SuperSamplerScope superSamplerScope(false);
-    
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    auto scope = DECLARE_THROW_SCOPE(*vm);
 
-    if (!base->isObject()) {
-        throwException(exec, scope, createInvalidInParameterError(exec, base));
-        return JSValue::encode(jsUndefined());
-    }
-    
-    AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
-
-    Identifier ident = Identifier::fromUid(vm, key);
-    LOG_IC((ICEvent::OperationInOptimize, base->classInfo(*vm), ident));
-    PropertySlot slot(base, PropertySlot::InternalMethodType::HasProperty);
-    bool result = asObject(base)->getPropertySlot(exec, ident, slot);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    
-    RELEASE_ASSERT(accessType == stubInfo->accessType);
-    
-    if (stubInfo->considerCaching(exec->codeBlock(), asObject(base)->structure()))
-        repatchIn(exec, base, ident, result, slot, *stubInfo);
-    
-    return JSValue::encode(jsBoolean(result));
-}
-
-EncodedJSValue JIT_OPERATION operationIn(ExecState* exec, StructureStubInfo* stubInfo, JSCell* base, UniquedStringImpl* key)
-{
-    SuperSamplerScope superSamplerScope(false);
-    
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    auto scope = DECLARE_THROW_SCOPE(*vm);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     stubInfo->tookSlowPath = true;
 
-    if (!base->isObject()) {
-        throwException(exec, scope, createInvalidInParameterError(exec, base));
+    Identifier ident = Identifier::fromUid(&vm, uid);
+
+    JSValue baseValue = JSValue::decode(base);
+    if (!baseValue.isObject()) {
+        throwException(exec, scope, createInvalidInParameterError(exec, baseValue));
         return JSValue::encode(jsUndefined());
     }
+    JSObject* baseObject = asObject(baseValue);
 
-    Identifier ident = Identifier::fromUid(vm, key);
-    LOG_IC((ICEvent::OperationIn, base->classInfo(*vm), ident));
+    LOG_IC((ICEvent::OperationInById, baseObject->classInfo(vm), ident));
+
     scope.release();
-    return JSValue::encode(jsBoolean(asObject(base)->hasProperty(exec, ident)));
+    PropertySlot slot(baseObject, PropertySlot::InternalMethodType::HasProperty);
+    return JSValue::encode(jsBoolean(baseObject->getPropertySlot(exec, ident, slot)));
 }
 
-EncodedJSValue JIT_OPERATION operationGenericIn(ExecState* exec, JSCell* base, EncodedJSValue key)
+EncodedJSValue JIT_OPERATION operationInByIdGeneric(ExecState* exec, EncodedJSValue base, UniquedStringImpl* uid)
+{
+    SuperSamplerScope superSamplerScope(false);
+
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Identifier ident = Identifier::fromUid(&vm, uid);
+
+    JSValue baseValue = JSValue::decode(base);
+    if (!baseValue.isObject()) {
+        throwException(exec, scope, createInvalidInParameterError(exec, baseValue));
+        return JSValue::encode(jsUndefined());
+    }
+    JSObject* baseObject = asObject(baseValue);
+
+    LOG_IC((ICEvent::OperationInByIdGeneric, baseObject->classInfo(vm), ident));
+
+    scope.release();
+    PropertySlot slot(baseObject, PropertySlot::InternalMethodType::HasProperty);
+    return JSValue::encode(jsBoolean(baseObject->getPropertySlot(exec, ident, slot)));
+}
+
+EncodedJSValue JIT_OPERATION operationInByIdOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
+{
+    SuperSamplerScope superSamplerScope(false);
+
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Identifier ident = Identifier::fromUid(&vm, uid);
+
+    JSValue baseValue = JSValue::decode(base);
+    if (!baseValue.isObject()) {
+        throwException(exec, scope, createInvalidInParameterError(exec, baseValue));
+        return JSValue::encode(jsUndefined());
+    }
+    JSObject* baseObject = asObject(baseValue);
+
+    LOG_IC((ICEvent::OperationInByIdOptimize, baseObject->classInfo(vm), ident));
+
+    scope.release();
+    PropertySlot slot(baseObject, PropertySlot::InternalMethodType::HasProperty);
+    bool found = baseObject->getPropertySlot(exec, ident, slot);
+    if (stubInfo->considerCaching(exec->codeBlock(), baseObject->structure(vm)))
+        repatchInByID(exec, baseObject, ident, found, slot, *stubInfo);
+    return JSValue::encode(jsBoolean(found));
+}
+
+EncodedJSValue JIT_OPERATION operationInByVal(ExecState* exec, JSCell* base, EncodedJSValue key)
 {
     SuperSamplerScope superSamplerScope(false);
     
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
 
-    return JSValue::encode(jsBoolean(CommonSlowPaths::opIn(exec, base, JSValue::decode(key))));
+    return JSValue::encode(jsBoolean(CommonSlowPaths::opInByVal(exec, base, JSValue::decode(key))));
 }
 
 void JIT_OPERATION operationPutByIdStrict(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)

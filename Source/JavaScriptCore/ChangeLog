@@ -1,3 +1,127 @@
+2018-05-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, reland InById cache
+        https://bugs.webkit.org/show_bug.cgi?id=185682
+
+        Includes Dominik's 32bit fix.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::fromStructureStubInfo):
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::printInByIdCacheStatus):
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        * bytecode/BytecodeDumper.h:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/InlineAccess.cpp:
+        (JSC::InlineAccess::generateSelfInAccess):
+        * bytecode/InlineAccess.h:
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::initInByIdSelf):
+        (JSC::StructureStubInfo::deref):
+        (JSC::StructureStubInfo::aboutToDie):
+        (JSC::StructureStubInfo::reset):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        (JSC::StructureStubInfo::propagateTransitions):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::patchableJump):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitInByVal):
+        (JSC::BytecodeGenerator::emitInById):
+        (JSC::BytecodeGenerator::emitIn): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::InNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addInById):
+        (JSC::DFG::InRecord::InRecord): Deleted.
+        (JSC::DFG::JITCompiler::addIn): Deleted.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToInById):
+        (JSC::DFG::Node::hasIdentifier):
+        (JSC::DFG::Node::hasArrayMode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInById):
+        (JSC::DFG::SpeculativeJIT::compileInByVal):
+        (JSC::DFG::SpeculativeJIT::compileIn): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIn): Deleted.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::boxBoolean):
+        * jit/ICStats.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITInByIdGenerator::JITInByIdGenerator):
+        (JSC::JITInByIdGenerator::generateFastPath):
+        * jit/JITInlineCacheGenerator.h:
+        (JSC::JITInByIdGenerator::JITInByIdGenerator):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_in_by_id):
+        (JSC::JIT::emitSlow_op_in_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_in_by_id):
+        (JSC::JIT::emitSlow_op_in_by_id):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheInByID):
+        (JSC::repatchInByID):
+        (JSC::resetInByID):
+        (JSC::tryCacheIn): Deleted.
+        (JSC::repatchIn): Deleted.
+        (JSC::resetIn): Deleted.
+        * jit/Repatch.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/NodeConstructors.h:
+        (JSC::InNode::InNode):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::opInByVal):
+        (JSC::CommonSlowPaths::opIn): Deleted.
+
 2018-05-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r231998 and r232017.

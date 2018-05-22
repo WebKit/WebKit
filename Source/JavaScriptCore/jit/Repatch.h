@@ -44,7 +44,7 @@ void buildGetByIDList(ExecState*, JSValue, const Identifier&, const PropertySlot
 void buildGetByIDProtoList(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
 void repatchPutByID(ExecState*, JSValue, Structure*, const Identifier&, const PutPropertySlot&, StructureStubInfo&, PutKind);
 void buildPutByIdList(ExecState*, JSValue, Structure*, const Identifier&, const PutPropertySlot&, StructureStubInfo&, PutKind);
-void repatchIn(ExecState*, JSCell*, const Identifier&, bool wasFound, const PropertySlot&, StructureStubInfo&);
+void repatchInByID(ExecState*, JSObject*, const Identifier&, bool wasFound, const PropertySlot&, StructureStubInfo&);
 void repatchInstanceOf(ExecState*, JSValue value, JSValue prototype, StructureStubInfo&, bool wasFound);
 void linkFor(ExecState*, CallLinkInfo&, CodeBlock*, JSObject* callee, MacroAssemblerCodePtr<JSEntryPtrTag>);
 void linkDirectFor(ExecState*, CallLinkInfo&, CodeBlock*, MacroAssemblerCodePtr<JSEntryPtrTag>);
@@ -54,7 +54,7 @@ void linkVirtualFor(ExecState*, CallLinkInfo&);
 void linkPolymorphicCall(ExecState*, CallLinkInfo&, CallVariant);
 void resetGetByID(CodeBlock*, StructureStubInfo&, GetByIDKind);
 void resetPutByID(CodeBlock*, StructureStubInfo&);
-void resetIn(StructureStubInfo&);
+void resetInByID(CodeBlock*, StructureStubInfo&);
 void resetInstanceOf(StructureStubInfo&);
 void ftlThunkAwareRepatchCall(CodeBlock*, CodeLocationCall<JSInternalPtrTag>, FunctionPtr<CFunctionPtrTag> newCalleeFunction);
 

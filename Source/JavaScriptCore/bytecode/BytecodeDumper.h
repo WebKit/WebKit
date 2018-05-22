@@ -71,6 +71,7 @@ private:
     void printGetByIdOp(PrintStream& out, int location, const Instruction*& it);
     void printGetByIdCacheStatus(PrintStream& out, int location, const StubInfoMap&);
     void printPutByIdCacheStatus(PrintStream& out, int location, const StubInfoMap&);
+    void printInByIdCacheStatus(PrintStream& out, int location, const StubInfoMap&);
     enum CacheDumpMode { DumpCaches, DontDumpCaches };
     void printCallOp(PrintStream& out, int location, const Instruction*& it, const char* op, CacheDumpMode, bool& hasPrintedProfiling, const CallLinkInfoMap&);
     void printPutByIdOp(PrintStream& out, int location, const Instruction*& it, const char* op);

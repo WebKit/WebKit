@@ -205,7 +205,8 @@ inline CapabilityLevel canCompile(Node* node)
     case Throw:
     case ThrowStaticError:
     case Unreachable:
-    case In:
+    case InByVal:
+    case InById:
     case HasOwnProperty:
     case IsCellWithType:
     case MapHash:

@@ -166,6 +166,21 @@ V_JITOperation_ESsiJJI JITPutByIdGenerator::slowPathFunction()
     return operationPutByIdNonStrictOptimize;
 }
 
+JITInByIdGenerator::JITInByIdGenerator(
+    CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
+    UniquedStringImpl* propertyName, JSValueRegs base, JSValueRegs value)
+    : JITByIdGenerator(codeBlock, codeOrigin, callSite, AccessType::In, usedRegisters, base, value)
+{
+    // FIXME: We are not supporting fast path for "length" property.
+    UNUSED_PARAM(propertyName);
+    RELEASE_ASSERT(base.payloadGPR() != value.tagGPR());
+}
+
+void JITInByIdGenerator::generateFastPath(MacroAssembler& jit)
+{
+    generateFastCommon(jit, InlineAccess::sizeForPropertyAccess());
+}
+
 JITInstanceOfGenerator::JITInstanceOfGenerator(
     CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex,
     const RegisterSet& usedRegisters, GPRReg result, GPRReg value, GPRReg prototype,
