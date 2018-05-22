@@ -1,3 +1,49 @@
+2018-05-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Avoid keeping FormState alive longer than necessary
+        https://bugs.webkit.org/show_bug.cgi?id=185877
+        <rdar://problem/39329219>
+
+        Reviewed by Ryosuke Niwa.
+
+        A number of crash fixes were done to prevent FormState objects from being
+        accessed after their relevant Frames had been destroyed. Unfortunately, this
+        could cause the FormState to persist after the owning Frame had been
+        destroyed, resulting in nullptr dereferences.
+
+        This patch does the following:
+
+        1. Changes to use WeakPtr's for FormState objects passed to completion handlers,
+           rather than RefPtr, since those completion handlers might fire as part of
+           the clean-up process during Frame destruction. This allows us to use the FormState
+           if they are still valid, but gracefully handle cases where a form submission
+           is cancelled in-flight.
+        2. Removes some extraneous WTFMove() calls being made on bare FormState pointers.
+        3. Changes the trap from Bug 183704 so that it only fires if the FormState object
+           is being retained more than once.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest): Update for new CompletionHandler
+        signature.
+        * loader/FormState.cpp:
+        (WebCore::FormState::willDetachPage): Revise trap to check for retain counts
+        above one.
+        * loader/FormState.h:
+        (WebCore::FormState::weakPtrFactory const): Added.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadFrameRequest): Revise to use WeakPtr for FormState
+        passed to the completion handler.
+        (WebCore::FrameLoader::loadURL): Update for new CompletionHandler signature.
+        (WebCore::FrameLoader::load): Ditto.
+        (WebCore::FrameLoader::loadWithDocumentLoader): Ditto.
+        (WebCore::FrameLoader::loadPostRequest): Ditto.
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy): Revise to use WeakPtr for
+        FormState passed to the completion handler. Remove some extraneous WTFMove()
+        calls on bare pointers.
+        (WebCore::PolicyChecker::checkNewWindowPolicy): Ditto.
+        * loader/PolicyChecker.h:
+
 2018-05-22  Sihui Liu  <sihui_liu@apple.com>
 
         Conversion between SecurityOriginData and DatabaseIdentifier is asymmetric when port is null
