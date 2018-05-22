@@ -642,7 +642,6 @@
 ;; CFNetwork
 (allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
 #endif
-(allow file-read-data (path-regex #"^/private/tmp/cvmsCodeSignObj"))
 
 ;; Network Extensions / VPN helper.
 (allow mach-lookup
