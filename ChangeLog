@@ -1,3 +1,16 @@
+2018-05-22  Alberto Garcia  <berto@igalia.com>
+
+        [CMake] Properly detect compiler flags, needed libs, and fallbacks for usage of 64-bit atomic operations
+        https://bugs.webkit.org/show_bug.cgi?id=182622
+        <rdar://problem/40292317>
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+        Move the test to detect whether we need to link against libatomic
+        to a common CMake file so it can be used from both JavaScriptCore
+        and WebKit.
+
 2018-05-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r231843.
