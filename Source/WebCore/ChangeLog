@@ -1,3 +1,20 @@
+2018-05-22  Chris Dumez  <cdumez@apple.com>
+
+        [POSIX] Use access() instead of stat() in FileSystem::fileExists()
+        https://bugs.webkit.org/show_bug.cgi?id=185882
+
+        Reviewed by Geoffrey Garen.
+
+        Use access() instead of stat() in FileSystem::fileExists(). stat() returns a lot of information we
+        do not leverage and local benchmarking on macOS shows access() being > 80% faster than stat():
+        stat: 0.31567 (lower is better)
+        access: 0.16074 (lower is better)
+        stat: 0.303665 (lower is better)
+        access: 0.165468 (lower is better)
+
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::FileSystem::fileExists):
+
 2018-05-22  Brent Fulgham  <bfulgham@apple.com>
 
         Avoid keeping FormState alive longer than necessary

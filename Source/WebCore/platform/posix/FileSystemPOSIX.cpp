@@ -58,10 +58,7 @@ bool fileExists(const String& path)
     if (!fsRep.data() || fsRep.data()[0] == '\0')
         return false;
 
-    struct stat fileInfo;
-
-    // stat(...) returns 0 on successful stat'ing of the file, and non-zero in any case where the file doesn't exist or cannot be accessed
-    return !stat(fsRep.data(), &fileInfo);
+    return access(fsRep.data(), F_OK) != -1;
 }
 
 bool deleteFile(const String& path)
