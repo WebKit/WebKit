@@ -1,3 +1,9 @@
+2018-05-22  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, fix internal build.
+
+        * runtime/JSImmutableButterfly.cpp:
+
 2018-05-22  Saam Barati  <sbarati@apple.com>
 
         DFG::LICMPhase should attempt to hoist edge type checks if hoisting the whole node fails
