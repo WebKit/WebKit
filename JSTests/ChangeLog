@@ -1,3 +1,13 @@
+2018-05-22  Mark Lam  <mark.lam@apple.com>
+
+        StringImpl utf8 conversion should not fail silently.
+        https://bugs.webkit.org/show_bug.cgi?id=185888
+        <rdar://problem/40464506>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/regress-185888.js: Added.
+
 2018-05-22  Keith Miller  <keith_miller@apple.com>
 
         We should have a CoW storage for NewArrayBuffer arrays.

@@ -165,6 +165,9 @@ public:
     WTF_EXPORT_PRIVATE CString utf8(ConversionMode) const;
     WTF_EXPORT_PRIVATE CString utf8() const;
 
+    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUtf8(ConversionMode) const;
+    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUtf8() const;
+
     UChar characterAt(unsigned index) const;
     UChar operator[](unsigned index) const { return characterAt(index); }
 

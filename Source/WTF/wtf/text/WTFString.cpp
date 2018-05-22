@@ -804,9 +804,21 @@ CString String::latin1() const
     return result;
 }
 
+Expected<CString, UTF8ConversionError> String::tryGetUtf8(ConversionMode mode) const
+{
+    return m_impl ? m_impl->tryGetUtf8(mode) : CString { "", 0 };
+}
+
+Expected<CString, UTF8ConversionError> String::tryGetUtf8() const
+{
+    return tryGetUtf8(LenientConversion);
+}
+
 CString String::utf8(ConversionMode mode) const
 {
-    return m_impl ? m_impl->utf8(mode) : CString { "", 0 };
+    Expected<CString, UTF8ConversionError> expectedString = tryGetUtf8(mode);
+    RELEASE_ASSERT(expectedString);
+    return expectedString.value();
 }
 
 CString String::utf8() const

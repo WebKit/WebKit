@@ -27,6 +27,7 @@
 #include <unicode/ustring.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/Expected.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -34,6 +35,7 @@
 #include <wtf/text/ConversionMode.h>
 #include <wtf/text/StringCommon.h>
 #include <wtf/text/StringHasher.h>
+#include <wtf/text/UTF8ConversionError.h>
 
 #if USE(CF)
 typedef const struct __CFString * CFStringRef;
@@ -284,13 +286,15 @@ public:
     bool isSubString() const { return bufferOwnership() == BufferSubstring; }
 #endif
 
-    static WTF_EXPORT_PRIVATE CString utf8ForCharacters(const LChar* characters, unsigned length);
-    static WTF_EXPORT_PRIVATE CString utf8ForCharacters(const UChar* characters, unsigned length, ConversionMode = LenientConversion);
-    WTF_EXPORT_PRIVATE CString utf8ForRange(unsigned offset, unsigned length, ConversionMode = LenientConversion) const;
+    static WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> utf8ForCharacters(const LChar* characters, unsigned length);
+    static WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> utf8ForCharacters(const UChar* characters, unsigned length, ConversionMode = LenientConversion);
+
+    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUtf8ForRange(unsigned offset, unsigned length, ConversionMode = LenientConversion) const;
+    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUtf8(ConversionMode = LenientConversion) const;
     WTF_EXPORT_PRIVATE CString utf8(ConversionMode = LenientConversion) const;
 
 private:
-    static WTF_EXPORT_PRIVATE bool utf8Impl(const UChar* characters, unsigned length, char*& buffer, size_t bufferSize, ConversionMode);
+    static WTF_EXPORT_PRIVATE UTF8ConversionError utf8Impl(const UChar* characters, unsigned length, char*& buffer, size_t bufferSize, ConversionMode);
     
     // The high bits of 'hash' are always empty, but we prefer to store our flags
     // in the low bits because it makes them slightly more efficient to access.
@@ -1202,8 +1206,8 @@ template<unsigned length> inline bool equalLettersIgnoringASCIICase(const String
 
 } // namespace WTF
 
-using WTF::StringImpl;
 using WTF::StaticStringImpl;
+using WTF::StringImpl;
 using WTF::equal;
 
 #endif

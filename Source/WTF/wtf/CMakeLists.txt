@@ -305,6 +305,7 @@ set(WTF_PUBLIC_HEADERS
     text/TextBreakIteratorInternalICU.h
     text/TextPosition.h
     text/TextStream.h
+    text/UTF8ConversionError.h
     text/UniquedStringImpl.h
     text/ValueToString.h
     text/WTFString.h

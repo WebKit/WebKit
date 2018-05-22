@@ -36,6 +36,7 @@
 #include <wtf/text/ConversionMode.h>
 #include <wtf/text/LChar.h>
 #include <wtf/text/StringCommon.h>
+#include <wtf/text/UTF8ConversionError.h>
 
 // FIXME: Enabling the StringView lifetime checking causes the MSVC build to fail. Figure out why.
 #if defined(NDEBUG) || COMPILER(MSVC)
@@ -106,6 +107,7 @@ public:
     WTF_EXPORT_PRIVATE RetainPtr<NSString> createNSStringWithoutCopying() const;
 #endif
 
+    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUtf8(ConversionMode = LenientConversion) const;
     WTF_EXPORT_PRIVATE CString utf8(ConversionMode = LenientConversion) const;
 
     class UpconvertedCharacters;

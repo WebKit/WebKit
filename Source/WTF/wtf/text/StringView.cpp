@@ -80,13 +80,20 @@ bool StringView::endsWithIgnoringASCIICase(const StringView& suffix) const
     return ::WTF::endsWithIgnoringASCIICase(*this, suffix);
 }
 
-CString StringView::utf8(ConversionMode mode) const
+Expected<CString, UTF8ConversionError> StringView::tryGetUtf8(ConversionMode mode) const
 {
     if (isNull())
         return CString("", 0);
     if (is8Bit())
         return StringImpl::utf8ForCharacters(characters8(), length());
     return StringImpl::utf8ForCharacters(characters16(), length(), mode);
+}
+
+CString StringView::utf8(ConversionMode mode) const
+{
+    auto expectedString = tryGetUtf8(mode);
+    RELEASE_ASSERT(expectedString);
+    return expectedString.value();
 }
 
 size_t StringView::find(StringView matchString, unsigned start) const

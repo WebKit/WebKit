@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2008, 2011, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -136,9 +136,10 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, JSValue n
         else {
             JSValue primitive = arg0.toPrimitive(exec);
             RETURN_IF_EXCEPTION(scope, nullptr);
-            if (primitive.isString())
-                value = parseDate(vm, asString(primitive)->value(exec));
-            else
+            if (primitive.isString()) {
+                value = parseDate(exec, vm, asString(primitive)->value(exec));
+                RETURN_IF_EXCEPTION(scope, nullptr);
+            } else
                 value = primitive.toNumber(exec);
         }
     } else
@@ -172,7 +173,8 @@ EncodedJSValue JSC_HOST_CALL dateParse(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
     String dateStr = exec->argument(0).toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    return JSValue::encode(jsNumber(parseDate(vm, dateStr)));
+    scope.release();
+    return JSValue::encode(jsNumber(parseDate(exec, vm, dateStr)));
 }
 
 EncodedJSValue JSC_HOST_CALL dateNow(ExecState*)

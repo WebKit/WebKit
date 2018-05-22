@@ -250,7 +250,7 @@ void LazyJSValue::dumpInContext(PrintStream& out, DumpContext* context) const
     case SingleCharacterString:
         out.print("Lazy:SingleCharacterString(");
         out.printf("%04X", static_cast<unsigned>(character()));
-        out.print(" / ", StringImpl::utf8ForCharacters(&u.character, 1), ")");
+        out.print(" / ", StringImpl::utf8ForCharacters(&u.character, 1).value(), ")");
         return;
     case KnownStringImpl:
         out.print("Lazy:KnownString(", stringImpl(), ")");

@@ -82,9 +82,21 @@ void printInternal(PrintStream& out, const char* string)
     out.printf("%s", string);
 }
 
+static void printExpectedCStringHelper(PrintStream& out, const char* type, Expected<CString, UTF8ConversionError> expectedCString)
+{
+    if (UNLIKELY(!expectedCString)) {
+        if (expectedCString.error() == UTF8ConversionError::OutOfMemory)
+            out.print("(Out of memory while converting ", type, " to utf8)");
+        else
+            out.print("(failed to convert ", type, " to utf8)");
+        return;
+    }
+    out.print(expectedCString.value());
+}
+
 void printInternal(PrintStream& out, const StringView& string)
 {
-    out.print(string.utf8());
+    printExpectedCStringHelper(out, "StringView", string.tryGetUtf8());
 }
 
 void printInternal(PrintStream& out, const CString& string)
@@ -94,7 +106,7 @@ void printInternal(PrintStream& out, const CString& string)
 
 void printInternal(PrintStream& out, const String& string)
 {
-    out.print(string.utf8());
+    printExpectedCStringHelper(out, "String", string.tryGetUtf8());
 }
 
 void printInternal(PrintStream& out, const StringImpl* string)
@@ -103,7 +115,7 @@ void printInternal(PrintStream& out, const StringImpl* string)
         out.print("(null StringImpl*)");
         return;
     }
-    out.print(string->utf8());
+    printExpectedCStringHelper(out, "StringImpl*", string->tryGetUtf8());
 }
 
 void printInternal(PrintStream& out, bool value)

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2006, 2007, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010 &yet, LLC. (nate@andyet.net)
@@ -235,13 +235,26 @@ double parseDateFromNullTerminatedCharacters(VM& vm, const char* dateString)
     return localTimeMS - (offset * WTF::msPerMinute);
 }
 
-double parseDate(VM& vm, const String& date)
+double parseDate(ExecState* exec, VM& vm, const String& date)
 {
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (date == vm.cachedDateString)
         return vm.cachedDateStringValue;
-    double value = parseES5DateFromNullTerminatedCharacters(date.utf8().data());
+    auto expectedString = date.tryGetUtf8();
+    if (!expectedString) {
+        if (expectedString.error() == UTF8ConversionError::OutOfMemory)
+            throwOutOfMemoryError(exec, scope);
+        // https://tc39.github.io/ecma262/#sec-date-objects section 20.3.3.2 states that:
+        // "Unrecognizable Strings or dates containing illegal element values in the
+        // format String shall cause Date.parse to return NaN."
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+
+    auto dateUtf8 = expectedString.value();
+    double value = parseES5DateFromNullTerminatedCharacters(dateUtf8.data());
     if (std::isnan(value))
-        value = parseDateFromNullTerminatedCharacters(vm, date.utf8().data());
+        value = parseDateFromNullTerminatedCharacters(vm, dateUtf8.data());
     vm.cachedDateString = date;
     vm.cachedDateStringValue = value;
     return value;
