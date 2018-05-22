@@ -1,3 +1,14 @@
+2018-05-22  Roy Reapor  <rreapor@apple.com>
+
+        Test infrastructure websites should use jQuery and jQuery UI hosted on webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=185788
+
+        Reviewed by Aakash Jain.
+
+        * ajax/libs/jquery/jquery-1.6.2.min.js: Added.
+        * ajax/libs/jqueryui: Added.
+        * ajax/libs/jqueryui/jquery-ui-1.8.15.css: Added.
+
 2018-05-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add some additional demo content to webkit.org
