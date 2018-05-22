@@ -1,3 +1,12 @@
+2018-05-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use more C++17
+        https://bugs.webkit.org/show_bug.cgi?id=185176
+
+        Reviewed by JF Bastien.
+
+        * Configurations/Base.xcconfig:
+
 2018-05-18  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas: put `hasVisualEffect` behind an experimental setting

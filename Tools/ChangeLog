@@ -1,3 +1,17 @@
+2018-05-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use more C++17
+        https://bugs.webkit.org/show_bug.cgi?id=185176
+
+        Reviewed by JF Bastien.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * ImageDiff/cg/Configurations/Base.xcconfig:
+        * MiniBrowser/Configurations/Base.xcconfig:
+        * MobileMiniBrowser/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+
 2018-05-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Enable WebKit build by default

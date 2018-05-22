@@ -42,9 +42,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CDB099EF1E430B550039E198 /* libicucore.dylib in Frameworks */,
-				CDB099ED1E430B440039E198 /* Foundation.framework in Frameworks */,
 				CDB099EB1E430B250039E198 /* CoreFoundation.framework in Frameworks */,
+				CDB099ED1E430B440039E198 /* Foundation.framework in Frameworks */,
+				CDB099EF1E430B550039E198 /* libicucore.dylib in Frameworks */,
 				CDB099E91E4308700039E198 /* libWTF.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -64,10 +64,10 @@
 		CDB099D41E4308470039E198 = {
 			isa = PBXGroup;
 			children = (
-				CDB099E01E4308470039E198 /* main.cpp */,
 				CD836CFD1E43BDB4009F8091 /* Configurations */,
-				CDB099DE1E4308470039E198 /* Products */,
 				CDB099E71E43086F0039E198 /* Frameworks */,
+				CDB099DE1E4308470039E198 /* Products */,
+				CDB099E01E4308470039E198 /* main.cpp */,
 			);
 			sourceTree = "<group>";
 		};
@@ -82,9 +82,9 @@
 		CDB099E71E43086F0039E198 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CDB099EE1E430B550039E198 /* libicucore.dylib */,
-				CDB099EC1E430B440039E198 /* Foundation.framework */,
 				CDB099EA1E430B250039E198 /* CoreFoundation.framework */,
+				CDB099EC1E430B440039E198 /* Foundation.framework */,
+				CDB099EE1E430B550039E198 /* libicucore.dylib */,
 				CDB099E81E4308700039E198 /* libWTF.a */,
 			);
 			name = Frameworks;
@@ -190,7 +190,7 @@
 		CDB099E51E4308470039E198 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++1z";
 				DEVELOPMENT_TEAM = G5UYP5CS7K;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -199,7 +199,7 @@
 		CDB099E61E4308470039E198 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++1z";
 				DEVELOPMENT_TEAM = G5UYP5CS7K;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -209,7 +209,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++1z";
 				CLANG_CXX_LIBRARY = "libc++";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -221,7 +221,7 @@
 		CDB099F11E4394540039E198 /* Control */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++1z";
 				DEVELOPMENT_TEAM = G5UYP5CS7K;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

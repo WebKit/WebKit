@@ -1,3 +1,14 @@
+2018-05-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use more C++17
+        https://bugs.webkit.org/show_bug.cgi?id=185176
+
+        Reviewed by JF Bastien.
+
+        * MallocBench/MallocBench.xcodeproj/project.pbxproj:
+        * MediaTime/Configurations/Base.xcconfig:
+        * MediaTime/MediaTime.xcodeproj/project.pbxproj:
+
 2018-04-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Improve the performance of FontCascadeDescription's effectiveFamilies
