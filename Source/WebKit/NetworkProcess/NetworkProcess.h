@@ -177,6 +177,8 @@ private:
 
     enum class ShouldAcknowledgeWhenReadyToSuspend { No, Yes };
     void actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend);
+    void platformPrepareToSuspend();
+    void platformProcessDidResume();
 
     // ChildProcess
     void initializeProcess(const ChildProcessInitializationParameters&) override;

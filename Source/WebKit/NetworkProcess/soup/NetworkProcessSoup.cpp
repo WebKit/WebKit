@@ -176,4 +176,15 @@ void NetworkProcess::setNetworkProxySettings(const SoupNetworkProxySettings& set
     });
 }
 
+void NetworkProcess::platformPrepareToSuspend()
+{
+    notImplemented();
+}
+
+void NetworkProcess::platformProcessDidResume()
+{
+    notImplemented();
+}
+
+
 } // namespace WebKit

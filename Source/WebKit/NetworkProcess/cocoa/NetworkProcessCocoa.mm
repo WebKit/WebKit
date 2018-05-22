@@ -254,4 +254,18 @@ void NetworkProcess::syncAllCookies()
 #pragma clang diagnostic pop
 }
 
+void NetworkProcess::platformPrepareToSuspend()
+{
+#if ENABLE(WIFI_ASSERTIONS)
+    suspendWiFiAssertions();
+#endif
+}
+
+void NetworkProcess::platformProcessDidResume()
+{
+#if ENABLE(WIFI_ASSERTIONS)
+    resumeWiFiAssertions();
+#endif
+}
+
 }

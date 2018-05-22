@@ -1,3 +1,19 @@
+2018-05-22  Andy Estes  <aestes@apple.com>
+
+        [Wi-Fi Assertions] Drop assertions on process suspension
+        https://bugs.webkit.org/show_bug.cgi?id=185844
+        <rdar://problem/40352319>
+
+        Reviewed by Daniel Bates.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::actualPrepareToSuspend):
+        (WebKit::NetworkProcess::processDidResume):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformPrepareToSuspend):
+        (WebKit::NetworkProcess::platformProcessDidResume):
+
 2018-05-22  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r229093): Re-enable Network Extension support in the WebContent process (Take 2)

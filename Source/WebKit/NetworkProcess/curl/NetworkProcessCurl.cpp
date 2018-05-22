@@ -74,4 +74,14 @@ void NetworkProcess::platformTerminate()
     notImplemented();
 }
 
+void NetworkProcess::platformPrepareToSuspend()
+{
+    notImplemented();
+}
+
+void NetworkProcess::platformProcessDidResume()
+{
+    notImplemented();
+}
+
 } // namespace WebKit

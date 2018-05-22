@@ -803,6 +803,7 @@ private:
 
 void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shouldAcknowledgeWhenReadyToSuspend)
 {
+    platformPrepareToSuspend();
     lowMemoryHandler(Critical::Yes);
 
     RefPtr<TaskCounter> delayedTaskCounter;
@@ -844,6 +845,7 @@ void NetworkProcess::cancelPrepareToSuspend()
 void NetworkProcess::processDidResume()
 {
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processDidResume()", this);
+    platformProcessDidResume();
     for (auto& connection : m_webProcessConnections)
         connection->endSuspension();
 }
