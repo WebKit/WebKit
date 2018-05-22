@@ -1,3 +1,20 @@
+2018-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebDriver: Network process crash when running imported/w3c/webdriver/tests/delete_cookie/delete.py::test_unknown_cookie
+        https://bugs.webkit.org/show_bug.cgi?id=185867
+
+        Reviewed by Michael Catanzaro.
+
+        We need to null check the value returned by URL::createSoupURI() before passing it to soup.
+
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::setCookiesFromDOM):
+        (WebCore::cookiesForSession):
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::getCookies):
+
 2018-05-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement positioning for non-replaced out-of-flow elements.

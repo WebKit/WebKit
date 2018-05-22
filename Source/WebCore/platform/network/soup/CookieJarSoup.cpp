@@ -55,12 +55,16 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstPar
 {
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
-    SoupCookieJar* jar = session.cookieStorage();
-
     GUniquePtr<SoupURI> origin = url.createSoupURI();
+    if (!origin)
+        return;
+
     GUniquePtr<SoupURI> firstPartyURI = firstParty.createSoupURI();
+    if (!firstPartyURI)
+        return;
 
     // Get existing cookies for this origin.
+    SoupCookieJar* jar = session.cookieStorage();
     GSList* existingCookies = soup_cookie_jar_get_cookie_list(jar, origin.get(), TRUE);
 
     Vector<String> cookies;
@@ -88,6 +92,9 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstPar
 static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& session, const URL& url, bool forHTTPHeader, IncludeSecureCookies includeSecureCookies)
 {
     GUniquePtr<SoupURI> uri = url.createSoupURI();
+    if (!uri)
+        return { { }, false };
+
     GSList* cookies = soup_cookie_jar_get_cookie_list(session.cookieStorage(), uri.get(), forHTTPHeader);
     bool didAccessSecureCookies = false;
 
@@ -154,6 +161,9 @@ bool getRawCookies(const NetworkStorageSession& session, const URL& firstParty, 
     UNUSED_PARAM(pageID);
     rawCookies.clear();
     GUniquePtr<SoupURI> uri = url.createSoupURI();
+    if (!uri)
+        return false;
+
     GUniquePtr<GSList> cookies(soup_cookie_jar_get_cookie_list(session.cookieStorage(), uri.get(), TRUE));
     if (!cookies)
         return false;
@@ -179,9 +189,11 @@ bool getRawCookies(const NetworkStorageSession& session, const URL& firstParty, 
 
 void deleteCookie(const NetworkStorageSession& session, const URL& url, const String& name)
 {
-    SoupCookieJar* jar = session.cookieStorage();
-
     GUniquePtr<SoupURI> uri = url.createSoupURI();
+    if (!uri)
+        return;
+
+    SoupCookieJar* jar = session.cookieStorage();
     GUniquePtr<GSList> cookies(soup_cookie_jar_get_cookie_list(jar, uri.get(), TRUE));
     if (!cookies)
         return;
