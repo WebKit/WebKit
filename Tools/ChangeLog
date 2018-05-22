@@ -1,3 +1,16 @@
+2018-05-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Enable WebKit build by default
+        https://bugs.webkit.org/show_bug.cgi?id=185141
+
+        Reviewed by Per Arne Vollan.
+
+        TestWTF, TestWebCore and TestWebKitLegacy need a dependency to
+        WebKitForwardingHeaders because config.h includes a header of WK2.
+
+        * TestWebKitAPI/PlatformWin.cmake: Make TestWTFLib, TestWebCoreLib and TestWebKitLegacyLib depend on WebKitForwardingHeaders.
+        * TestWebKitAPI/config.h: Use PLATFORM(WIN_CAIRO) instead of BUILDING_WIN_CAIRO_WEBKIT.
+
 2018-05-21  Jer Noble  <jer.noble@apple.com>
 
         Complete fix for enabling modern EME by default

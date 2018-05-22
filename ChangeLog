@@ -1,3 +1,16 @@
+2018-05-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Enable WebKit build by default
+        https://bugs.webkit.org/show_bug.cgi?id=185141
+
+        Reviewed by Per Arne Vollan.
+
+        * Source/cmake/OptionsWin.cmake: Disable
+        ENABLE_NETSCAPE_PLUGIN_API unconditionally for WinCairo port
+        because it builds both WK1 and WK2.
+        * Source/cmake/OptionsWinCairo.cmake: Turn ENABLE_WEBKIT on by default.
+        Remove BUILDING_WIN_CAIRO_WEBKIT macro.
+
 2018-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.21.2 release.
