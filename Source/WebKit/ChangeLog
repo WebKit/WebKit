@@ -1,3 +1,18 @@
+2018-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][Wayland] UI process crash when closing the window
+        https://bugs.webkit.org/show_bug.cgi?id=185818
+
+        Reviewed by Michael Catanzaro.
+
+        This happens when a page containing a text field is loaded but the focus remains in the url bar when the window
+        is closed. This is because we are sending a notify-in to the IM context, but the focus is still in the URL
+        bar. That confuses the wayland input method manager that tries to free the text of the web view IM context that has
+        already been deleted.
+
+        * UIProcess/gtk/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::setEnabled): Only send notify-in if the view is actually focused.
+
 2018-05-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove unused and no-op WKContextSetCookieStorageDirectory

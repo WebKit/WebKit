@@ -89,7 +89,7 @@ void InputMethodFilter::setEnabled(bool enabled)
     if (!enabled)
         notifyFocusedOut();
     m_enabled = enabled;
-    if (enabled)
+    if (enabled && m_page->isViewFocused())
         notifyFocusedIn();
 }
 
