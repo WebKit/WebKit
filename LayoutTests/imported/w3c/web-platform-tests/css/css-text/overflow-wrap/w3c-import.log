@@ -1,0 +1,44 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-fit-content-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-fit-content-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/word-wrap-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/word-wrap-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/word-wrap-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/word-wrap-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/word-wrap-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/word-wrap-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/word-wrap-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/word-wrap-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/word-wrap-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/word-wrap-005.html

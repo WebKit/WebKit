@@ -1,0 +1,98 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+text-justify
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-012-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-013-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-013.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-014-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-015.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-016.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-017.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-012-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-013-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-013.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-014-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapse-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapse-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapse-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapsing-discard-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapsing-discard-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapsing-preserve-breaks-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapsing-preserve-breaks-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapsing-trim-inner-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapsing-trim-inner-001.xht

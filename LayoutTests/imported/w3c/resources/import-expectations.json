@@ -69,6 +69,7 @@
     "web-platform-tests/css/css-scoping": "import", 
     "web-platform-tests/css/css-shapes": "import", 
     "web-platform-tests/css/css-shapes/test-plan/index.html": "skip", 
+    "web-platform-tests/css/css-text": "import", 
     "web-platform-tests/css/css-ui": "import", 
     "web-platform-tests/css/cssom": "import", 
     "web-platform-tests/css/geometry/": "import", 

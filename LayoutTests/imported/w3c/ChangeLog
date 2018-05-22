@@ -1,3 +1,14 @@
+2018-05-22  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-text] Import WPT test suite
+        https://bugs.webkit.org/show_bug.cgi?id=183258
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-text/: Added.
+
 2018-05-21  Chris Dumez  <cdumez@apple.com>
 
         File's structured serialization should serialize lastModified attribute
