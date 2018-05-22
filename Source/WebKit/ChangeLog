@@ -1,3 +1,17 @@
+2018-05-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove unused and no-op WKContextSetCookieStorageDirectory
+        https://bugs.webkit.org/show_bug.cgi?id=185857
+
+        Reviewed by Youenn Fablet.
+
+        Deleted C API which didn't do anything useful, and consequently not used by anyone.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetCookieStorageDirectory): Deleted.
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/WebProcessPool.h:
+
 2018-05-21  Chris Nardi  <cnardi@chromium.org>
 
         Remove dead exception in MediaList.appendMedium

@@ -488,11 +488,6 @@ void WKContextAllowSpecificHTTPSCertificateForHost(WKContextRef contextRef, WKCe
     toImpl(contextRef)->allowSpecificHTTPSCertificateForHost(toImpl(certificateRef), toImpl(hostRef)->string());
 }
 
-WK_EXPORT void WKContextSetCookieStorageDirectory(WKContextRef contextRef, WKStringRef cookieStorageDirectory)
-{
-    toImpl(contextRef)->setCookieStorageDirectory(toImpl(cookieStorageDirectory)->string());
-}
-
 void WKContextDisableProcessTermination(WKContextRef contextRef)
 {
     toImpl(contextRef)->disableProcessTermination();

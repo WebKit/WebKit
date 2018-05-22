@@ -261,8 +261,6 @@ public:
     };
     static Statistics& statistics();    
 
-    void setCookieStorageDirectory(const String& dir) { m_overrideCookieStorageDirectory = dir; }
-
     void useTestingNetworkSession();
     bool isUsingTestingNetworkSession() const { return m_shouldUseTestingNetworkSession; }
 
@@ -613,8 +611,6 @@ private:
     std::unique_ptr<HighPerformanceGraphicsUsageSampler> m_highPerformanceGraphicsUsageSampler;
     std::unique_ptr<PerActivityStateCPUUsageSampler> m_perActivityStateCPUUsageSampler;
 #endif
-
-    String m_overrideCookieStorageDirectory;
 
     bool m_shouldUseTestingNetworkSession { false };
 
