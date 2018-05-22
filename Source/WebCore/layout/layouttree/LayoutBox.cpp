@@ -142,10 +142,12 @@ const Container& Box::formattingContextRoot() const
 }
 
 bool Box::isDescendantOf(Container& container) const
-{
-    auto* ancestor = parent();
-    for (; ancestor && ancestor != &container; ancestor = ancestor->parent()) { }
-    return ancestor;
+{ 
+    for (auto* ancestor = containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+        if (ancestor == &container)
+            return true;
+    }
+    return false;
 }
 
 bool Box::isInlineBlockBox() const
