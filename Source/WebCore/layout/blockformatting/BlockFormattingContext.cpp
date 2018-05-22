@@ -112,6 +112,9 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
     placeInFlowPositionedChildren(formattingRoot);
     // And take care of out-of-flow boxes as the final step.
     layoutOutOfFlowDescendants(layoutContext);
+#ifndef NDEBUG
+    validateGeometryConstraintsAfterLayout(layoutContext);
+#endif
 }
 
 std::unique_ptr<FormattingState> BlockFormattingContext::createFormattingState(Ref<FloatingState>&& floatingState) const

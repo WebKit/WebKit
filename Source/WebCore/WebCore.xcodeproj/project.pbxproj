@@ -5776,6 +5776,7 @@
 		1199FA52208E38D3002358CC /* LayoutInlineBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutInlineBox.cpp; sourceTree = "<group>"; };
 		1199FA59208E3C7F002358CC /* DisplayBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayBox.h; sourceTree = "<group>"; };
 		1199FA5A208E3C7F002358CC /* DisplayBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayBox.cpp; sourceTree = "<group>"; };
+		11B042FB20B0E21400828A6B /* LayoutDescendantIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutDescendantIterator.h; sourceTree = "<group>"; };
 		11C5F1162003E7750001AE60 /* RenderTreeBuilderInline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderInline.cpp; sourceTree = "<group>"; };
 		11C5F1182003E7760001AE60 /* RenderTreeBuilderInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderInline.h; sourceTree = "<group>"; };
 		11C5F11D2003F69E0001AE60 /* RenderTreeBuilderBlockFlow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderBlockFlow.h; sourceTree = "<group>"; };
@@ -15697,6 +15698,7 @@
 				11100FC920927CBC0081AA6C /* LayoutChildIterator.h */,
 				1199FA45208E35A3002358CC /* LayoutContainer.cpp */,
 				1199FA44208E35A3002358CC /* LayoutContainer.h */,
+				11B042FB20B0E21400828A6B /* LayoutDescendantIterator.h */,
 				1199FA52208E38D3002358CC /* LayoutInlineBox.cpp */,
 				1199FA51208E38D3002358CC /* LayoutInlineBox.h */,
 				1199FA4E208E3899002358CC /* LayoutInlineContainer.cpp */,
@@ -26931,8 +26933,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				29A812490FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.h in Headers */,
-				AA478A7F16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.h in Headers */,
 				7CD0E2B81F80A4820016A4CE /* AbortController.h in Headers */,
 				7CD0E2BF1F80A56E0016A4CE /* AbortSignal.h in Headers */,
 				46B95195207D633400A7D2DD /* AbstractDOMWindow.h in Headers */,
@@ -30725,7 +30725,9 @@
 				FD7F299213D4C0CB00AD9535 /* WaveShaperDSPKernel.h in Headers */,
 				FD7F299413D4C0CB00AD9535 /* WaveShaperNode.h in Headers */,
 				FD7F299713D4C0CB00AD9535 /* WaveShaperProcessor.h in Headers */,
+				29A812490FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.h in Headers */,
 				AAA728F716D1D8BC00D3BBC6 /* WebAccessibilityObjectWrapperIOS.h in Headers */,
+				AA478A7F16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.h in Headers */,
 				2D3EF4481917915C00034184 /* WebActionDisablingCALayerDelegate.h in Headers */,
 				71025ED31F99F0CE004A250C /* WebAnimation.h in Headers */,
 				7132445120109DA500AE7FB2 /* WebAnimationUtilities.h in Headers */,

@@ -90,6 +90,10 @@ protected:
     void computeReplacedHeight(LayoutContext&, const Box&, Display::Box&) const;
     void computeReplacedWidth(LayoutContext&, const Box&, Display::Box&) const;
 
+#ifndef NDEBUG
+    virtual void validateGeometryConstraintsAfterLayout(const LayoutContext&) const;
+#endif
+
 private:
     void computeOutOfFlowNonReplacedHeight(LayoutContext&, const Box&, Display::Box&) const;
     void computeOutOfFlowNonReplacedWidth(LayoutContext&, const Box&, Display::Box&) const;

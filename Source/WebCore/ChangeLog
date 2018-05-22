@@ -1,3 +1,42 @@
+2018-05-21  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add FormattingContext::validateGeometryConstraintsAfterLayout
+        https://bugs.webkit.org/show_bug.cgi?id=185811
+
+        Reviewed by Antti Koivisto.
+
+        Also implement LayoutDescendantIterator and fix LayoutIterator.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::validateGeometryConstraintsAfterLayout const):
+        * layout/FormattingContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        * layout/layouttree/LayoutDescendantIterator.h: Added.
+        (WebCore::Layout::LayoutDescendantIterator<T>::LayoutDescendantIterator):
+        (WebCore::Layout::LayoutDescendantIterator<T>::operator):
+        (WebCore::Layout::LayoutDescendantIteratorAdapter<T>::LayoutDescendantIteratorAdapter):
+        (WebCore::Layout::LayoutDescendantIteratorAdapter<T>::begin):
+        (WebCore::Layout::LayoutDescendantIteratorAdapter<T>::end):
+        (WebCore::Layout::LayoutDescendantIteratorAdapter<T>::at):
+        (WebCore::Layout::descendantsOfType):
+        * layout/layouttree/LayoutIterator.h:
+        (WebCore::Layout::LayoutBoxTraversal::firstChild):
+        (WebCore::Layout::LayoutBoxTraversal::nextAncestorSibling):
+        (WebCore::Layout::LayoutBoxTraversal::next):
+        (WebCore::Layout::LayoutBoxTraversal::nextSkippingChildren):
+        (WebCore::Layout::Traversal::firstChild):
+        (WebCore::Layout::Traversal::nextSibling):
+        (WebCore::Layout::Traversal::previousSibling):
+        (WebCore::Layout::Traversal::findAncestorOfType):
+        (WebCore::Layout::Traversal::firstWithin):
+        (WebCore::Layout::Traversal::next):
+        (WebCore::Layout::LayoutIterator<T>::traversePreviousSibling):
+        (WebCore::Layout::LayoutIterator<T>::traverseAncestor):
+        (WebCore::Layout::Traversal::nextAncestorSibling): Deleted.
+        (WebCore::Layout::Traversal::nextWithin): Deleted.
+
 2018-05-21  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Bugfix for r231968, Suspend/Resume with WK2

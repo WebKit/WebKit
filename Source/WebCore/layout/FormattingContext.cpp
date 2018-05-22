@@ -32,6 +32,7 @@
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
 #include "LayoutContext.h"
+#include "LayoutDescendantIterator.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -442,6 +443,39 @@ LayoutUnit FormattingContext::shrinkToFitWidth(LayoutContext&, const Box&) const
     return 0;
 }
 
+#ifndef NDEBUG
+void FormattingContext::validateGeometryConstraintsAfterLayout(const LayoutContext& layoutContext) const
+{
+    if (!is<Container>(root()))
+        return;
+    auto& formattingContextRoot = downcast<Container>(root());
+    // FIXME: add a descendantsOfType<> flavor that stops at nested formatting contexts
+    for (auto& layoutBox : descendantsOfType<Box>(formattingContextRoot)) {
+        if (&layoutBox.formattingContextRoot() != &formattingContextRoot)
+            continue;
+        auto* containingBlock = layoutBox.containingBlock();
+        ASSERT(containingBlock);
+        auto containingBlockSize = layoutContext.displayBoxForLayoutBox(*containingBlock)->size();
+        auto* displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
+        ASSERT(displayBox);
+
+        // 10.3.3 Block-level, non-replaced elements in normal flow
+        // 10.3.7 Absolutely positioned, non-replaced elements
+        if ((layoutBox.isBlockLevelBox() || layoutBox.isOutOfFlowPositioned()) && !layoutBox.replaced()) {
+            // margin-left + border-left-width + padding-left + width + padding-right + border-right-width + margin-right = width of containing block
+            ASSERT(displayBox->marginLeft() + displayBox->borderLeft() + displayBox->paddingLeft() + displayBox->width()
+                + displayBox->paddingRight() + displayBox->borderRight() + displayBox->marginRight() == containingBlockSize.width());
+        }
+
+        // 10.6.4 Absolutely positioned, non-replaced elements
+        if (layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced()) {
+            // top + margin-top + border-top-width + padding-top + height + padding-bottom + border-bottom-width + margin-bottom + bottom = height of containing block
+            ASSERT(displayBox->top() + displayBox->marginTop() + displayBox->borderTop() + displayBox->paddingTop()
+                + displayBox->paddingBottom() + displayBox->borderBottom() + displayBox->marginBottom() == containingBlockSize.height());
+        }
+    }
+}
+#endif
 }
 }
 #endif
