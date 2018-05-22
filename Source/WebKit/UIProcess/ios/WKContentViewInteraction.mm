@@ -1175,6 +1175,9 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (!_isTapHighlightIDValid || _latestTapID != requestID)
         return;
 
+    if (_potentialTapInProgress && hasAssistedNode(_assistedNodeInformation) && _positionInformation.nodeAtPositionIsAssistedNode)
+        return;
+
     _isTapHighlightIDValid = NO;
 
     _tapHighlightInformation.quads = highlightedQuads;
@@ -1546,8 +1549,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (gestureRecognizer == _highlightLongPressGestureRecognizer
         || gestureRecognizer == _doubleTapGestureRecognizer
         || gestureRecognizer == _nonBlockingDoubleTapGestureRecognizer
-        || gestureRecognizer == _twoFingerDoubleTapGestureRecognizer
-        || gestureRecognizer == _singleTapGestureRecognizer) {
+        || gestureRecognizer == _twoFingerDoubleTapGestureRecognizer) {
 
         if (hasAssistedNode(_assistedNodeInformation)) {
             // Request information about the position with sync message.

@@ -1,0 +1,9 @@
+PASS document.getElementById('clicks').textContent is "2"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+The click event should be fired on a node that is being edited.
+
+The click count in the editable node is: 2
+
+Click me!

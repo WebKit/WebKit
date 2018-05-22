@@ -1,3 +1,13 @@
+2018-05-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        Added test to verify behaviour when tapping multiple times on an editable node.
+        https://bugs.webkit.org/show_bug.cgi?id=185777
+
+        Reviewed by Tim Horton.
+
+        * fast/events/ios/click-event-while-editing-node-expected.txt: Added.
+        * fast/events/ios/click-event-while-editing-node.html: Added.
+
 2018-05-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r232030.

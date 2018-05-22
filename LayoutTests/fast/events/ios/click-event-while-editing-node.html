@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <div id="description">
+        <p>The click event should be fired on a node that is being edited.</p>
+        <p>The click count in the editable node is: <span id="clicks">0</span></p>
+    </div>
+    <div id="editable" contenteditable="true" style="width: 100%; height: 500px; border:1px solid black;">
+        <p>Click me!</p>
+    </div>
+</body>
+<script>
+clickCount = 0;
+editable.addEventListener("click", function(){
+     clickCount += 1;
+     clicks.textContent = clickCount;
+});
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    jsTestIsAsync = true;
+    UIHelper.activateAndWaitForInputSessionAt(50, 300).then(() => {
+        UIHelper.tapAt(50, 300).then(() => {
+            shouldBeEqualToString("document.getElementById('clicks').textContent", `${clickCount}`);
+            finishJSTest();
+        });
+    });
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</html>
