@@ -1,3 +1,13 @@
+2018-05-22  Brady Eidson  <beidson@apple.com>
+
+        Rename the "Web content is visible" process assertion.
+        https://bugs.webkit.org/show_bug.cgi?id=185878
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+
 2018-05-22  Andy Estes  <aestes@apple.com>
 
         [Wi-Fi Assertions] Drop assertions on process suspension
