@@ -1,5 +1,19 @@
 2018-05-22  Manuel Rego Casasnovas  <rego@igalia.com>
 
+        [css-text] W3C test suite gardening
+        https://bugs.webkit.org/show_bug.cgi?id=185862
+
+        Test suite landed in r232057 but some of the tests marked as failure
+        are actually passing.
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2018-05-22  Manuel Rego Casasnovas  <rego@igalia.com>
+
         [css-text] Import WPT test suite
         https://bugs.webkit.org/show_bug.cgi?id=183258
 
