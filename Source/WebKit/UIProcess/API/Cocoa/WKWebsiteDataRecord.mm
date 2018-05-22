@@ -29,6 +29,8 @@
 #if WK_API_ENABLED
 
 #import "_WKWebsiteDataSizeInternal.h"
+#import <WebCore/SecurityOriginData.h>
+#import <wtf/HashSet.h>
 
 NSString * const WKWebsiteDataTypeFetchCache = @"WKWebsiteDataTypeFetchCache";
 NSString * const WKWebsiteDataTypeDiskCache = @"WKWebsiteDataTypeDiskCache";
@@ -144,6 +146,15 @@ static NSString *dataTypesToString(NSSet *dataTypes)
         return nil;
 
     return [[[_WKWebsiteDataSize alloc] initWithSize:*size] autorelease];
+}
+
+- (NSArray<NSString *> *)_originsStrings
+{
+    auto origins = _websiteDataRecord->websiteDataRecord().origins;
+    NSMutableArray<NSString *> *array = [[NSMutableArray alloc] initWithCapacity:origins.size()];
+    for (auto& origin : origins)
+        [array addObject:(NSString *)origin.toString()];
+    return [array autorelease];
 }
 
 @end
