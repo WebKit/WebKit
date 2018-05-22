@@ -1,3 +1,20 @@
+2018-05-21  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Bugfix for r231968, Suspend/Resume with WK2
+        https://bugs.webkit.org/show_bug.cgi?id=185830
+
+        The flags are needed to be updated even if it is cancelled or finished to cleanup correctly.
+        Also fixed trivial bug for very rare case (hard to produce the situation).
+
+        Reviewed by Youenn Fablet.
+
+        No new tests because WK2 is not ready for WinCairo yet in public., tested internaly.
+
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::suspend):
+        (WebCore::CurlRequest::resume):
+        (WebCore::CurlRequest::pausedStatusChanged):
+
 2018-05-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r232030.

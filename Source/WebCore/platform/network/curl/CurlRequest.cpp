@@ -132,18 +132,12 @@ void CurlRequest::suspend()
 {
     ASSERT(isMainThread());
 
-    if (isCompletedOrCancelled())
-        return;
-
     setRequestPaused(true);
 }
 
 void CurlRequest::resume()
 {
     ASSERT(isMainThread());
-
-    if (isCompletedOrCancelled())
-        return;
 
     setRequestPaused(false);
 }
@@ -648,6 +642,9 @@ void CurlRequest::invokeCancel()
 
 void CurlRequest::pausedStatusChanged()
 {
+    if (isCompletedOrCancelled())
+        return;
+
     runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this)]() {
         if (isCompletedOrCancelled())
             return;
@@ -664,7 +661,7 @@ void CurlRequest::pausedStatusChanged()
             if (error == CURLE_OK)
                 updateHandlePauseState(paused);
 
-            needCancel = (error != CURLE_OK && paused);
+            needCancel = (error != CURLE_OK && !paused);
         }
 
         if (needCancel)
