@@ -57,8 +57,13 @@ void FormattingContext::computeInFlowPositionedPosition(const Box&, Display::Box
 {
 }
 
-void FormattingContext::computeOutOfFlowPosition(const Box&, Display::Box&) const
+void FormattingContext::computeOutOfFlowPosition(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
+    if (!layoutBox.replaced()) {
+        computeOutOfFlowNonReplacedPosition(layoutContext, layoutBox, displayBox);
+        return;
+    }
+    computeOutOfFlowReplacedPosition(layoutContext, layoutBox, displayBox);
 }
 
 void FormattingContext::computeWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
@@ -147,7 +152,11 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext)
         auto& layoutBox = *outOfFlowBox;
         auto& displayBox = layoutContext.createDisplayBox(layoutBox);
 
-        computeOutOfFlowPosition(layoutBox, displayBox);
+        // The term "static position" (of an element) refers, roughly, to the position an element would have had in the normal flow.
+        // More precisely, the static position for 'top' is the distance from the top edge of the containing block to the top margin edge
+        // of a hypothetical box that would have been the first box of the element if its specified 'position' value had been 'static' and
+        // its specified 'float' had been 'none' and its specified 'clear' had been 'none'.
+        computeStaticPosition(layoutContext, layoutBox, displayBox);
         computeOutOfFlowWidth(layoutContext, layoutBox, displayBox);
 
         ASSERT(layoutBox.establishesFormattingContext());
@@ -155,6 +164,7 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext)
         formattingContext->layout(layoutContext, layoutContext.establishedFormattingState(layoutBox, *formattingContext));
 
         computeOutOfFlowHeight(layoutContext, layoutBox, displayBox);
+        computeOutOfFlowPosition(layoutContext, layoutBox, displayBox);
     }
 }
 
@@ -438,6 +448,106 @@ void FormattingContext::computeOutOfFlowReplacedWidth(LayoutContext& layoutConte
     computeReplacedWidth(layoutContext, layoutBox, displayBox);
 }
 
+void FormattingContext::computeOutOfFlowNonReplacedPosition(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    // 10.3.7 Absolutely positioned, non-replaced elements (left/right)
+    // 10.6.4 Absolutely positioned, non-replaced elements (top/bottom)
+
+    // At this point we've the size computed.
+    auto size = displayBox.size();
+    auto& style = layoutBox.style();
+
+    // 10.6.4 Absolutely positioned, non-replaced elements
+    auto top = style.logicalTop();
+    auto bottom = style.logicalBottom();
+    auto containingBlockHeight = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->height();
+
+    // 'top' + 'margin-top' + 'border-top-width' + 'padding-top' + 'height' + 'padding-bottom' + 'border-bottom-width' + 'margin-bottom' + 'bottom'
+    // = height of containing block
+    //
+    // 1. 'top' and 'height' are 'auto' and 'bottom' is not 'auto', then the height is based on the content per 10.6.7,
+    //     set 'auto' values for 'margin-top' and 'margin-bottom' to 0, and solve for 'top'
+    // 2. 'top' and 'bottom' are 'auto' and 'height' is not 'auto', then set 'top' to the static position, set 'auto' values for
+    //    'margin-top' and 'margin-bottom' to 0, and solve for 'bottom'
+    // 3. 'height' and 'bottom' are 'auto' and 'top' is not 'auto', then the height is based on the content per 10.6.7, set 'auto'
+    //     values for 'margin-top' and 'margin-bottom' to 0, and solve for 'bottom'
+    // 4. 'top' is 'auto', 'height' and 'bottom' are not 'auto', then set 'auto' values for 'margin-top' and 'margin-bottom' to 0, and solve for 'top'
+    // 5. 'height' is 'auto', 'top' and 'bottom' are not 'auto', then 'auto' values for 'margin-top' and 'margin-bottom' are set to 0 and solve for 'height'
+    // 6. 'bottom' is 'auto', 'top' and 'height' are not 'auto', then set 'auto' values for 'margin-top' and 'margin-bottom' to 0 and solve for 'bottom'
+    LayoutUnit computedTopValue;
+    if (top.isAuto() && !bottom.isAuto()) {
+        // #1 #4
+        auto marginTop = displayBox.marginTop();
+        auto marginBottom = displayBox.marginBottom();
+    
+        auto paddingTop = displayBox.paddingTop();
+        auto paddingBottom = displayBox.paddingBottom();
+
+        auto borderTop = displayBox.borderTop();
+        auto borderBottom = displayBox.borderBottom();
+
+        computedTopValue = containingBlockHeight - (marginTop + borderTop + paddingTop + size.height() + paddingBottom + borderBottom + marginBottom + bottom.value());
+    } else if (top.isAuto() && bottom.isAuto()) {
+        // #2
+        // Already computed as part of the computeStaticPosition();
+        computedTopValue = displayBox.top();
+    } else {
+        // #3 #5 #6 have top != auto
+        computedTopValue = valueForLength(top, containingBlockHeight);
+    }
+
+    displayBox.setTop(computedTopValue);
+
+    // 10.3.7 Absolutely positioned, non-replaced elements
+    auto left = style.logicalLeft();
+    auto right = style.logicalRight();
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+
+    // 'left' + 'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width' + 'margin-right' + 'right'
+    // = width of containing block
+    //
+    // If all three of 'left', 'width', and 'right' are 'auto': First set any 'auto' values for 'margin-left' and 'margin-right' to 0.
+    // Then, if the 'direction' property of the element establishing the static-position containing block is 'ltr' set 'left' to the static
+    // position and apply rule number three below; otherwise, set 'right' to the static position and apply rule number one below.
+
+    // 1. 'left' and 'width' are 'auto' and 'right' is not 'auto', then the width is shrink-to-fit. Then solve for 'left'
+    // 2. 'left' and 'right' are 'auto' and 'width' is not 'auto', then if the 'direction' property of the element establishing the static-position 
+    //    containing block is 'ltr' set 'left' to the static position, otherwise set 'right' to the static position.
+    //    Then solve for 'left' (if 'direction is 'rtl') or 'right' (if 'direction' is 'ltr').
+    // 3. 'width' and 'right' are 'auto' and 'left' is not 'auto', then the width is shrink-to-fit . Then solve for 'right'
+    // 4. 'left' is 'auto', 'width' and 'right' are not 'auto', then solve for 'left'
+    // 5. 'width' is 'auto', 'left' and 'right' are not 'auto', then solve for 'width'
+    // 6. 'right' is 'auto', 'left' and 'width' are not 'auto', then solve for 'right'
+    LayoutUnit computedLeftValue;
+    if (left.isAuto() && !right.isAuto()) {
+        // #1 #4
+        auto marginLeft = displayBox.marginLeft();
+        auto marginRight = displayBox.marginRight();
+    
+        auto paddingLeft = displayBox.paddingLeft();
+        auto paddingRight = displayBox.paddingRight();
+
+        auto borderLeft = displayBox.borderLeft();
+        auto borderRight = displayBox.borderRight();
+
+        computedLeftValue = containingBlockWidth - (marginLeft + borderLeft + paddingLeft + size.width() + paddingRight + borderRight + marginRight + right.value());
+    } else if (left.isAuto() && right.isAuto()) {
+        // #2
+        // FIXME: rtl
+        computedLeftValue = displayBox.left();
+    } else {
+        // #3 #5 #6 have left != auto
+        computedLeftValue = valueForLength(left, containingBlockWidth);
+    }
+
+    displayBox.setLeft(computedLeftValue);
+}
+
+void FormattingContext::computeOutOfFlowReplacedPosition(LayoutContext&, const Box&, Display::Box&) const
+{
+
+}
+
 LayoutUnit FormattingContext::shrinkToFitWidth(LayoutContext&, const Box&) const
 {
     return 0;
@@ -476,6 +586,7 @@ void FormattingContext::validateGeometryConstraintsAfterLayout(const LayoutConte
     }
 }
 #endif
+
 }
 }
 #endif

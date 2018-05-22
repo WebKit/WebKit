@@ -1,3 +1,20 @@
+2018-05-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement positioning for non-replaced out-of-flow elements.
+        https://bugs.webkit.org/show_bug.cgi?id=185858
+
+        Reviewed by Antti Koivisto.
+
+        In certain cases, the out-of-flow element's final position depends on the element's size.
+        Call computeOutOfFlowPosition() after width/height are resolved.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowPosition const):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowNonReplacedPosition const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowReplacedPosition const):
+        * layout/FormattingContext.h:
+
 2018-05-22  Olivier Blin  <olivier.blin@softathome.com>
 
         Fix build without MathML

@@ -66,7 +66,7 @@ protected:
 
     virtual void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const;
     virtual void computeInFlowPositionedPosition(const Box&, Display::Box&) const;
-    virtual void computeOutOfFlowPosition(const Box&, Display::Box&) const;
+    virtual void computeOutOfFlowPosition(LayoutContext&, const Box&, Display::Box&) const;
 
     virtual void computeWidth(LayoutContext&, const Box&, Display::Box&) const;
     virtual void computeHeight(LayoutContext&, const Box&, Display::Box&) const;
@@ -99,6 +99,9 @@ private:
     void computeOutOfFlowNonReplacedWidth(LayoutContext&, const Box&, Display::Box&) const;
     void computeOutOfFlowReplacedHeight(LayoutContext&, const Box&, Display::Box&) const;
     void computeOutOfFlowReplacedWidth(LayoutContext&, const Box&, Display::Box&) const;
+
+    void computeOutOfFlowNonReplacedPosition(LayoutContext&, const Box&, Display::Box&) const;
+    void computeOutOfFlowReplacedPosition(LayoutContext&, const Box&, Display::Box&) const;
 
     void computeFloatingNonReplacedHeight(LayoutContext&, const Box&, Display::Box&) const;
     void computeFloatingNonReplacedWidth(LayoutContext&, const Box&, Display::Box&) const;
