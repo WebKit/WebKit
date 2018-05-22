@@ -1,3 +1,16 @@
+2018-05-22  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r229093): Re-enable Network Extension support in the WebContent process (Take 2)
+        https://bugs.webkit.org/show_bug.cgi?id=185874
+        <rdar://problem/40454404>
+
+        Reviewed by Eric Carlson.
+
+        Add back a necessary XPC connection after locking down the network features in r229093.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-05-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r232052.
