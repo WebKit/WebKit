@@ -85,7 +85,7 @@
 - (void)appendMedium:(NSString *)newMedium
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(IMPL->appendMedium(newMedium));
+    IMPL->appendMedium(newMedium);
 }
 
 @end

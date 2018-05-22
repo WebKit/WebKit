@@ -1,3 +1,15 @@
+2018-05-21  Chris Nardi  <cnardi@chromium.org>
+
+        Remove dead exception in MediaList.appendMedium
+        https://bugs.webkit.org/show_bug.cgi?id=185278
+
+        Reviewed by Chris Dumez.
+
+        Remove code pertaining to an exception being thrown by appendMedium().
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaList.cpp:
+        (webkit_dom_media_list_append_medium):
+
 2018-05-21  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Click events only fire once when editing

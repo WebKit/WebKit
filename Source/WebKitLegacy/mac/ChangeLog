@@ -1,3 +1,15 @@
+2018-05-21  Chris Nardi  <cnardi@chromium.org>
+
+        Remove dead exception in MediaList.appendMedium
+        https://bugs.webkit.org/show_bug.cgi?id=185278
+
+        Reviewed by Chris Dumez.
+
+        Remove code pertaining to an exception being thrown by appendMedium().
+
+        * DOM/DOMMediaList.mm:
+        (-[DOMMediaList appendMedium:]):
+
 2018-05-21  Jer Noble  <jer.noble@apple.com>
 
         Complete fix for enabling modern EME by default

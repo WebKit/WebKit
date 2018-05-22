@@ -35,5 +35,5 @@
     getter DOMString? item(unsigned long index);
 
     [MayThrowException] void deleteMedium(DOMString oldMedium);
-    [MayThrowException] void appendMedium(DOMString newMedium);
+    void appendMedium(DOMString newMedium);
 };

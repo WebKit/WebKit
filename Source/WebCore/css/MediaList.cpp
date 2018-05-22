@@ -96,13 +96,13 @@ bool MediaQuerySet::add(const String& queryString)
     
     // Only continue if exactly one media query is found, as described above.
     if (result->m_queries.size() != 1)
-        return true;
+        return false;
     
     // If comparing with any of the media queries in the collection of media
     // queries returns true terminate these steps.
     for (size_t i = 0; i < m_queries.size(); ++i) {
         if (m_queries[i] == result->m_queries[0])
-            return true;
+            return false;
     }
     
     m_queries.append(result->m_queries[0]);
@@ -204,18 +204,14 @@ ExceptionOr<void> MediaList::deleteMedium(const String& medium)
     return { };
 }
 
-ExceptionOr<void> MediaList::appendMedium(const String& medium)
+void MediaList::appendMedium(const String& medium)
 {
     CSSStyleSheet::RuleMutationScope mutationScope(m_parentRule);
 
-    bool success = m_mediaQueries->add(medium);
-    if (!success) {
-        // FIXME: Should this really be InvalidCharacterError?
-        return Exception { InvalidCharacterError };
-    }
+    if (!m_mediaQueries->add(medium))
+        return;
     if (m_parentStyleSheet)
         m_parentStyleSheet->didMutate();
-    return { };
 }
 
 void MediaList::reattach(MediaQuerySet* mediaQueries)

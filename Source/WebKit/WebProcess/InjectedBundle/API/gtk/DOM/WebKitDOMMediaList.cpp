@@ -194,11 +194,7 @@ void webkit_dom_media_list_append_medium(WebKitDOMMediaList* self, const gchar* 
     g_return_if_fail(!error || !*error);
     WebCore::MediaList* item = WebKit::core(self);
     WTF::String convertedNewMedium = WTF::String::fromUTF8(newMedium);
-    auto result = item->appendMedium(convertedNewMedium);
-    if (result.hasException()) {
-        auto description = WebCore::DOMException::description(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
-    }
+    item->appendMedium(convertedNewMedium);
 }
 
 gchar* webkit_dom_media_list_get_media_text(WebKitDOMMediaList* self)
