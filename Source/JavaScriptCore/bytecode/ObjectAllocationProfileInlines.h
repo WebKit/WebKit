@@ -105,7 +105,7 @@ ALWAYS_INLINE void ObjectAllocationProfile::initializeProfile(VM& vm, JSGlobalOb
 
     // Take advantage of extra inline capacity available in the size class.
     if (allocator) {
-        size_t slop = (allocator.cellSize(vm.heap) - allocationSize) / sizeof(WriteBarrier<Unknown>);
+        size_t slop = (allocator.cellSize() - allocationSize) / sizeof(WriteBarrier<Unknown>);
         inlineCapacity += slop;
         if (inlineCapacity > JSFinalObject::maxInlineCapacity())
             inlineCapacity = JSFinalObject::maxInlineCapacity();

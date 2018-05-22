@@ -556,7 +556,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/Subspace.h
     heap/SubspaceInlines.h
     heap/Synchronousness.h
-    heap/ThreadLocalCache.h
     heap/TinyBloomFilter.h
     heap/UnconditionalFinalizer.h
     heap/VisitRaceKey.h

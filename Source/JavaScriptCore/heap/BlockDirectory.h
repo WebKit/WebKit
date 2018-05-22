@@ -26,7 +26,6 @@
 #pragma once
 
 #include "AllocationFailureMode.h"
-#include "Allocator.h"
 #include "CellAttributes.h"
 #include "FreeList.h"
 #include "LocalAllocator.h"
@@ -44,8 +43,6 @@ class Heap;
 class IsoCellSet;
 class MarkedSpace;
 class LLIntOffsetsExtractor;
-class ThreadLocalCache;
-class ThreadLocalCacheLayout;
 
 #define FOR_EACH_BLOCK_DIRECTORY_BIT(macro) \
     macro(live, Live) /* The set of block indices that have actual blocks. */\
@@ -158,8 +155,6 @@ public:
     Subspace* subspace() const { return m_subspace; }
     MarkedSpace& markedSpace() const;
     
-    Allocator allocator() const { return Allocator(m_tlcOffset); }
-    
     void dump(PrintStream&) const;
     void dumpBits(PrintStream& = WTF::dataFile());
     
@@ -168,7 +163,6 @@ private:
     friend class LocalAllocator;
     friend class LocalSideAllocator;
     friend class MarkedBlock;
-    friend class ThreadLocalCacheLayout;
     
     MarkedBlock::Handle* findBlockForAllocation(LocalAllocator&);
     
@@ -201,7 +195,6 @@ private:
     BlockDirectory* m_nextDirectoryInAlignedMemoryAllocator { nullptr };
     
     Lock m_localAllocatorsLock;
-    size_t m_tlcOffset;
     SentinelLinkedList<LocalAllocator, BasicRawSentinelNode<LocalAllocator>> m_localAllocators;
 };
 

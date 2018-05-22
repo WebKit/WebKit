@@ -26,28 +26,13 @@
 #pragma once
 
 #include "Allocator.h"
-#include "ThreadLocalCache.h"
+#include "LocalAllocator.h"
 
 namespace JSC {
 
-inline void* Allocator::allocate(VM& vm, GCDeferralContext* context, AllocationFailureMode mode) const
+inline void* Allocator::allocate(GCDeferralContext* context, AllocationFailureMode mode) const
 {
-    return ThreadLocalCache::allocator(vm, m_offset).allocate(context, mode);
-}
-
-template<typename FailureFunc>
-void* Allocator::tryAllocate(VM& vm, GCDeferralContext* context, AllocationFailureMode mode, const FailureFunc& failureFunc) const
-{
-    void* result;
-    ThreadLocalCache::tryGetAllocator(
-        vm, m_offset,
-        [&] (LocalAllocator& allocator) {
-            result = allocator.allocate(context, mode);
-        },
-        [&] () {
-            result = failureFunc();
-        });
-    return result;
+    return m_localAllocator->allocate(context, mode);
 }
 
 } // namespace JSC

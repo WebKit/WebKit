@@ -56,7 +56,7 @@ private:
     
     size_t m_size;
     BlockDirectory m_directory;
-    Allocator m_allocator;
+    LocalAllocator m_localAllocator;
     std::unique_ptr<IsoAlignedMemoryAllocator> m_isoAlignedMemoryAllocator;
     SentinelLinkedList<IsoCellSet, BasicRawSentinelNode<IsoCellSet>> m_cellSets;
 };
@@ -64,7 +64,7 @@ private:
 inline Allocator IsoSubspace::allocatorForNonVirtual(size_t size, AllocatorForMode)
 {
     RELEASE_ASSERT(size == this->size());
-    return m_allocator;
+    return Allocator(&m_localAllocator);
 }
 
 #define ISO_SUBSPACE_INIT(heap, heapCellType, type) ("Isolated " #type " Space", (heap), (heapCellType), sizeof(type))

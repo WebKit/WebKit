@@ -32,31 +32,13 @@
 
 namespace JSC {
 
-LocalAllocator::LocalAllocator(ThreadLocalCache* tlc, BlockDirectory* directory)
-    : m_tlc(tlc)
-    , m_directory(directory)
+LocalAllocator::LocalAllocator(BlockDirectory* directory)
+    : m_directory(directory)
     , m_cellSize(directory->m_cellSize)
     , m_freeList(m_cellSize)
 {
     auto locker = holdLock(directory->m_localAllocatorsLock);
     directory->m_localAllocators.append(this);
-}
-
-LocalAllocator::LocalAllocator(LocalAllocator&& other)
-    : m_tlc(other.m_tlc)
-    , m_directory(other.m_directory)
-    , m_cellSize(other.m_cellSize)
-    , m_freeList(WTFMove(other.m_freeList))
-    , m_currentBlock(other.m_currentBlock)
-    , m_lastActiveBlock(other.m_lastActiveBlock)
-    , m_allocationCursor(other.m_allocationCursor)
-{
-    other.reset();
-    if (other.isOnList()) {
-        auto locker = holdLock(m_directory->m_localAllocatorsLock);
-        other.remove();
-        m_directory->m_localAllocators.append(this);
-    }
 }
 
 void LocalAllocator::reset()
@@ -74,25 +56,6 @@ LocalAllocator::~LocalAllocator()
         remove();
     }
     
-    // Assert that this allocator isn't holding onto any memory. This is a valid assertion for the
-    // following two use cases:
-    // 
-    // - Immortal TLC. Those destruct after the heap is done destructing, so they should not have
-    //   any state left in them.
-    //
-    // - TLC owned by an object. Such a TLC gets destroyed after a GC flip during which we proved
-    //   that it is not reachable. Therefore, the TLC should still be in a fully reset state at the
-    //   time of destruction because for it to get into any other state, someone must have allocated
-    //   in it (which is impossible because it's supposedly unreachable).
-    //
-    // My biggest worry with these assertions is that there will be some TLC that gets set as the
-    // current one but then never reset, and in the meantime the global object that owns it gets
-    // destroyed.
-    //
-    // Note that if we did hold onto some memory and we wanted to return it then this could be weird.
-    // We would potentially have to stopAllocating(). That would mean having to return a block to the
-    // BlockDirectory. It's not clear that the BlockDirectory is prepared to handle that during
-    // sweeping another block, for example.
     bool ok = true;
     if (!m_freeList.allocationWillFail()) {
         dataLog("FATAL: ", RawPointer(this), "->~LocalAllocator has non-empty free-list.\n");

@@ -6165,7 +6165,7 @@ private:
         Allocator allocator = subspaceFor<JSRopeString>(vm())->allocatorForNonVirtual(sizeof(JSRopeString), AllocatorForMode::AllocatorIfExists);
         
         LValue result = allocateCell(
-            m_out.constInt32(allocator.offset()), vm().stringStructure.get(), slowPath);
+            m_out.constIntPtr(allocator.localAllocator()), vm().stringStructure.get(), slowPath);
         
         m_out.storePtr(m_out.intPtrZero, result, m_heaps.JSString_value);
         for (unsigned i = 0; i < numKids; ++i)
@@ -10467,7 +10467,8 @@ private:
                 m_out.store32(vectorLength, fastButterflyValue, m_heaps.Butterfly_vectorLength);
 
                 LValue fastObjectValue = allocateObject(
-                    m_out.constInt32(cellAllocator.offset()), structure, fastButterflyValue, slowPath);
+                    m_out.constIntPtr(cellAllocator.localAllocator()), structure, fastButterflyValue,
+                    slowPath);
 
                 ValueFromBlock fastObject = m_out.anchor(fastObjectValue);
                 ValueFromBlock fastButterfly = m_out.anchor(fastButterflyValue);
@@ -11469,7 +11470,8 @@ private:
 
         size_t sizeInBytes = sizeInValues * sizeof(JSValue);
         Allocator allocator = vm().jsValueGigacageAuxiliarySpace.allocatorForNonVirtual(sizeInBytes, AllocatorForMode::AllocatorIfExists);
-        LValue startOfStorage = allocateHeapCell(m_out.constInt32(allocator.offset()), slowPath);
+        LValue startOfStorage = allocateHeapCell(
+            m_out.constIntPtr(allocator.localAllocator()), slowPath);
         ValueFromBlock fastButterfly = m_out.anchor(
             m_out.add(m_out.constIntPtr(sizeInBytes + sizeof(IndexingHeader)), startOfStorage));
         m_out.jump(continuation);
@@ -12513,7 +12515,7 @@ private:
     {
         JITAllocator actualAllocator;
         if (allocator->hasInt32())
-            actualAllocator = JITAllocator::constant(Allocator(allocator->asInt32()));
+            actualAllocator = JITAllocator::constant(Allocator(bitwise_cast<LocalAllocator*>(allocator->asIntPtr())));
         else
             actualAllocator = JITAllocator::variable();
         
@@ -12531,7 +12533,7 @@ private:
             LBasicBlock haveAllocator = m_out.newBlock();
             LBasicBlock lastNext = m_out.insertNewBlocksBefore(haveAllocator);
             m_out.branch(
-                m_out.notEqual(allocator, m_out.constInt32(Allocator().offset())),
+                m_out.notEqual(allocator, m_out.intPtrZero),
                 usually(haveAllocator), rarely(slowPath));
             m_out.appendTo(haveAllocator, lastNext);
         }
@@ -12661,7 +12663,8 @@ private:
         size_t size, StructureType structure, LValue butterfly, LBasicBlock slowPath)
     {
         Allocator allocator = subspaceFor<ClassType>(vm())->allocatorForNonVirtual(size, AllocatorForMode::AllocatorIfExists);
-        return allocateObject(m_out.constInt32(allocator.offset()), structure, butterfly, slowPath);
+        return allocateObject(
+            m_out.constIntPtr(allocator.localAllocator()), structure, butterfly, slowPath);
     }
     
     template<typename ClassType, typename StructureType>
@@ -12686,10 +12689,10 @@ private:
                 LBasicBlock lastNext = m_out.insertNewBlocksBefore(continuation);
                 m_out.jump(slowPath);
                 m_out.appendTo(continuation, lastNext);
-                return m_out.int32Zero;
+                return m_out.intPtrZero;
             }
             
-            return m_out.constInt32(actualAllocator.offset());
+            return m_out.constIntPtr(actualAllocator.localAllocator());
         }
         
         unsigned stepShift = getLSBSet(MarkedSpace::sizeStep);
@@ -12708,7 +12711,7 @@ private:
         
         m_out.appendTo(continuation, lastNext);
         
-        return m_out.load32(
+        return m_out.loadPtr(
             m_out.baseIndex(
                 m_heaps.CompleteSubspace_allocatorForSizeStep,
                 subspace, m_out.sub(sizeClassIndex, m_out.intPtrOne)));
@@ -12750,7 +12753,7 @@ private:
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
         
         ValueFromBlock fastResult = m_out.anchor(allocateObject(
-            m_out.constInt32(allocator.offset()), structure, m_out.intPtrZero, slowPath));
+            m_out.constIntPtr(allocator.localAllocator()), structure, m_out.intPtrZero, slowPath));
         
         m_out.jump(continuation);
         

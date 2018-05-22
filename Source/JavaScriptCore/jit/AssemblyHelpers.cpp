@@ -588,24 +588,13 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
     Jump popPath;
     Jump done;
     
-#if USE(FAST_TLS_FOR_TLC)
-    loadFromTLSPtr(fastTLSOffsetForKey(WTF_GC_TLC_KEY), scratchGPR);
-#else
-    loadPtr(&vm().threadLocalCacheData, scratchGPR);
-#endif
-    if (allocator.isConstant()) {
-        slowPath.append(branch32(BelowOrEqual, Address(scratchGPR, ThreadLocalCache::offsetOfSizeInData()), TrustedImm32(allocator.allocator().offset())));
-        addPtr(TrustedImm32(ThreadLocalCache::offsetOfFirstAllocatorInData() + allocator.allocator().offset()), scratchGPR, allocatorGPR);
-    } else {
-        slowPath.append(branch32(BelowOrEqual, Address(scratchGPR, ThreadLocalCache::offsetOfSizeInData()), allocatorGPR));
-        addPtr(TrustedImm32(ThreadLocalCache::offsetOfFirstAllocatorInData()), allocatorGPR);
-        addPtr(scratchGPR, allocatorGPR);
-    }
+    if (allocator.isConstant())
+        move(TrustedImmPtr(allocator.allocator().localAllocator()), allocatorGPR);
 
     load32(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfRemaining()), resultGPR);
     popPath = branchTest32(Zero, resultGPR);
     if (allocator.isConstant())
-        add32(TrustedImm32(-allocator.allocator().cellSize(vm().heap)), resultGPR, scratchGPR);
+        add32(TrustedImm32(-allocator.allocator().cellSize()), resultGPR, scratchGPR);
     else {
         move(resultGPR, scratchGPR);
         sub32(Address(allocatorGPR, LocalAllocator::offsetOfCellSize()), scratchGPR);
@@ -638,7 +627,8 @@ void AssemblyHelpers::emitAllocate(GPRReg resultGPR, const JITAllocator& allocat
             slowPath.append(jump());
             return;
         }
-    }
+    } else
+        slowPath.append(branchTestPtr(Zero, allocatorGPR));
     emitAllocateWithNonNullAllocator(resultGPR, allocator, allocatorGPR, scratchGPR, slowPath);
 }
 
@@ -652,7 +642,7 @@ void AssemblyHelpers::emitAllocateVariableSized(GPRReg resultGPR, CompleteSubspa
     urshift32(TrustedImm32(stepShift), scratchGPR1);
     slowPath.append(branch32(Above, scratchGPR1, TrustedImm32(MarkedSpace::largeCutoff >> stepShift)));
     move(TrustedImmPtr(subspace.allocatorForSizeStep() - 1), scratchGPR2);
-    load32(BaseIndex(scratchGPR2, scratchGPR1, TimesFour), scratchGPR1);
+    loadPtr(BaseIndex(scratchGPR2, scratchGPR1, timesPtr()), scratchGPR1);
     
     emitAllocate(resultGPR, JITAllocator::variable(), scratchGPR1, scratchGPR2, slowPath);
 }

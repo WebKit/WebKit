@@ -28,7 +28,6 @@
 #include "JSCInlines.h"
 #include "MachineStackMarker.h"
 #include "SamplingProfiler.h"
-#include "ThreadLocalCacheInlines.h"
 #include "WasmMachineThreads.h"
 #include <thread>
 #include <wtf/Threading.h>
@@ -148,8 +147,6 @@ void JSLock::didAcquireLock()
 
     m_vm->setLastStackTop(thread.savedLastStackTop());
     ASSERT(thread.stack().contains(m_vm->lastStackTop()));
-    
-    m_vm->defaultThreadLocalCache->install(*m_vm);
     
     m_vm->heap.machineThreads().addCurrentThread();
 #if ENABLE(WEBASSEMBLY)

@@ -33,7 +33,6 @@
 #include "JSCInlines.h"
 #include "MarkedBlockInlines.h"
 #include "SuperSampler.h"
-#include "ThreadLocalCacheInlines.h"
 #include "VM.h"
 
 namespace JSC {
@@ -42,11 +41,13 @@ BlockDirectory::BlockDirectory(Heap* heap, size_t cellSize)
     : m_cellSize(static_cast<unsigned>(cellSize))
     , m_heap(heap)
 {
-    heap->threadLocalCacheLayout().allocateOffset(this);
 }
 
 BlockDirectory::~BlockDirectory()
 {
+    auto locker = holdLock(m_localAllocatorsLock);
+    while (!m_localAllocators.isEmpty())
+        m_localAllocators.begin()->remove();
 }
 
 void BlockDirectory::setSubspace(Subspace* subspace)

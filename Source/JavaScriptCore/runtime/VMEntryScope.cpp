@@ -30,7 +30,6 @@
 #include "JSGlobalObject.h"
 #include "Options.h"
 #include "SamplingProfiler.h"
-#include "ThreadLocalCacheInlines.h"
 #include "VM.h"
 #include "Watchdog.h"
 #include <wtf/StackBounds.h>
@@ -71,9 +70,6 @@ void VMEntryScope::addDidPopListener(std::function<void ()> listener)
 
 VMEntryScope::~VMEntryScope()
 {
-    if (m_previousTLC)
-        m_previousTLC->install(m_vm);
-    
     if (m_vm.entryScope != this)
         return;
 

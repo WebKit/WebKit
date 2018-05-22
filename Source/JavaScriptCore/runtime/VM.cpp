@@ -138,7 +138,6 @@
 #include "StrongInlines.h"
 #include "StructureInlines.h"
 #include "TestRunnerUtils.h"
-#include "ThreadLocalCacheInlines.h"
 #include "ThunkGenerators.h"
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
@@ -355,9 +354,6 @@ VM::VM(VMType vmType, HeapType heapType)
     updateSoftReservedZoneSize(Options::softReservedZoneSize());
     setLastStackTop(stack.origin());
 
-    defaultThreadLocalCache = ThreadLocalCache::create(heap);
-    defaultThreadLocalCache->install(*this);
-
     // Need to be careful to keep everything consistent here
     JSLockHolder lock(this);
     AtomicStringTable* existingEntryAtomicStringTable = Thread::current().setCurrentAtomicStringTable(m_atomicStringTable);
@@ -559,10 +555,6 @@ VM::~VM()
     m_apiLock->willDestroyVM(this);
     heap.lastChanceToFinalize();
     
-#if !USE(FAST_TLS_FOR_TLC)
-    ThreadLocalCache::destructor(threadLocalCacheData);
-#endif
-
     delete interpreter;
 #ifndef NDEBUG
     interpreter = reinterpret_cast<Interpreter*>(0xbbadbeef);

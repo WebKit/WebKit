@@ -53,7 +53,6 @@
 #include "StructureCache.h"
 #include "VMEntryRecord.h"
 #include "VMTraps.h"
-#include "ThreadLocalCache.h"
 #include "WasmContext.h"
 #include "Watchpoint.h"
 #include <wtf/BumpPointerAllocator.h>
@@ -688,11 +687,6 @@ public:
     JSObject* stringRecursionCheckFirstObject { nullptr };
     HashSet<JSObject*> stringRecursionCheckVisitedObjects;
     
-#if !USE(FAST_TLS_FOR_TLC)
-    ThreadLocalCache::Data* threadLocalCacheData { nullptr };
-#endif
-    RefPtr<ThreadLocalCache> defaultThreadLocalCache;
-
     LocalTimeOffsetCache localTimeOffsetCache;
 
     String cachedDateString;

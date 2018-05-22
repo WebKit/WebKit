@@ -1,3 +1,112 @@
+2018-05-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of TLCs
+        https://bugs.webkit.org/show_bug.cgi?id=185846
+
+        Rubber stamped by Geoffrey Garen.
+        
+        This removes support for thread-local caches from the GC in order to speed up allocation a
+        bit.
+        
+        We added TLCs as part of Spectre mitigations, which we have since removed.
+        
+        We will want some kind of TLCs eventually, since they allow us to:
+        
+        - have a global GC, which may be a perf optimization at some point.
+        - allocate objects from JIT threads, which we've been wanting to do for a while.
+        
+        This change keeps the most interesting aspect of TLCs, which is the
+        LocalAllocator/BlockDirectory separation. This means that it ought to be easy to implement
+        TLCs again in the future if we wanted this feature.
+        
+        This change removes the part of TLCs that causes a perf regression, namely that Allocator is
+        an offset that requires a bounds check and lookup that makes the rest of the allocation fast
+        path dependent on the load of the TLC. Now, Allocator is really just a LocalAllocator*, so
+        you can directly use it to allocate. This removes two loads and a check from the allocation
+        fast path. In hindsight, I probably could have made that whole thing more efficient, had I
+        allowed us to have a statically known set of LocalAllocators. This would have removed the
+        bounds check (one load and one branch) and it would have made it possible to CSE the load of
+        the TLC data structure, since that would no longer resize. But that's a harder change that
+        this patch, and we don't need it right now.
+        
+        While reviewing the allocation hot paths, I found that CreateThis had an unnecessary branch
+        to check if the allocator is null. I removed that check. AssemblyHelpers::emitAllocate() does
+        that check already. Previously, the TLC bounds check doubled as this check.
+        
+        This is a 1% speed-up on Octane and a 2.3% speed-up on TailBench. However, the Octane
+        speed-up on my machine includes an 8% regexp speed-up. I've found that sometimes regexp
+        speeds up or slows down by 8% depending on which path I build JSC from. Without that 8%, this
+        is still an Octane speed-up due to 2-4% speed-ups in earley, boyer, raytrace, and splay.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/ObjectAllocationProfileInlines.h:
+        (JSC::ObjectAllocationProfile::initializeProfile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCreateThis):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorageWithSizeImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateHeapCell):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatorForSize):
+        * heap/Allocator.cpp:
+        (JSC::Allocator::cellSize const):
+        * heap/Allocator.h:
+        (JSC::Allocator::Allocator):
+        (JSC::Allocator::localAllocator const):
+        (JSC::Allocator::operator== const):
+        (JSC::Allocator::offset const): Deleted.
+        * heap/AllocatorInlines.h:
+        (JSC::Allocator::allocate const):
+        (JSC::Allocator::tryAllocate const): Deleted.
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::BlockDirectory):
+        (JSC::BlockDirectory::~BlockDirectory):
+        * heap/BlockDirectory.h:
+        (JSC::BlockDirectory::allocator const): Deleted.
+        * heap/CompleteSubspace.cpp:
+        (JSC::CompleteSubspace::allocateNonVirtual):
+        (JSC::CompleteSubspace::allocatorForSlow):
+        (JSC::CompleteSubspace::tryAllocateSlow):
+        * heap/CompleteSubspace.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        * heap/Heap.h:
+        (JSC::Heap::threadLocalCacheLayout): Deleted.
+        * heap/IsoSubspace.cpp:
+        (JSC::IsoSubspace::IsoSubspace):
+        (JSC::IsoSubspace::allocateNonVirtual):
+        * heap/IsoSubspace.h:
+        (JSC::IsoSubspace::allocatorForNonVirtual):
+        * heap/LocalAllocator.cpp:
+        (JSC::LocalAllocator::LocalAllocator):
+        (JSC::LocalAllocator::~LocalAllocator):
+        * heap/LocalAllocator.h:
+        (JSC::LocalAllocator::cellSize const):
+        (JSC::LocalAllocator::tlc const): Deleted.
+        * heap/ThreadLocalCache.cpp: Removed.
+        * heap/ThreadLocalCache.h: Removed.
+        * heap/ThreadLocalCacheInlines.h: Removed.
+        * heap/ThreadLocalCacheLayout.cpp: Removed.
+        * heap/ThreadLocalCacheLayout.h: Removed.
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitAllocateWithNonNullAllocator):
+        (JSC::AssemblyHelpers::emitAllocate):
+        (JSC::AssemblyHelpers::emitAllocateVariableSized):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_this):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::~VMEntryScope):
+        * runtime/VMEntryScope.h:
+
 2018-05-22  Keith Miller  <keith_miller@apple.com>
 
         We should have a CoW storage for NewArrayBuffer arrays.

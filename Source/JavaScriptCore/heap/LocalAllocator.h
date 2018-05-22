@@ -33,17 +33,17 @@ namespace JSC {
 
 class BlockDirectory;
 class GCDeferralContext;
-class ThreadLocalCache;
 
 class LocalAllocator : public BasicRawSentinelNode<LocalAllocator> {
     WTF_MAKE_NONCOPYABLE(LocalAllocator);
     
 public:
-    LocalAllocator(ThreadLocalCache*, BlockDirectory*);
-    LocalAllocator(LocalAllocator&&);
+    LocalAllocator(BlockDirectory*);
     ~LocalAllocator();
     
     void* allocate(GCDeferralContext*, AllocationFailureMode);
+    
+    unsigned cellSize() const { return m_cellSize; }
 
     void stopAllocating();
     void prepareForAllocation();
@@ -55,8 +55,6 @@ public:
     
     bool isFreeListedCell(const void*) const;
     
-    ThreadLocalCache* tlc() const { return m_tlc; }
-
 private:
     friend class BlockDirectory;
     
@@ -68,7 +66,6 @@ private:
     void* allocateIn(MarkedBlock::Handle*);
     ALWAYS_INLINE void doTestCollectionsIfNeeded(GCDeferralContext*);
 
-    ThreadLocalCache* m_tlc;
     BlockDirectory* m_directory;
     unsigned m_cellSize;
     FreeList m_freeList;

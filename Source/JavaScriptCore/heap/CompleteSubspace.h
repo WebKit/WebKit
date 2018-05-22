@@ -58,6 +58,7 @@ private:
     
     std::array<Allocator, MarkedSpace::numSizeClasses> m_allocatorForSizeStep;
     Vector<std::unique_ptr<BlockDirectory>> m_directories;
+    Vector<std::unique_ptr<LocalAllocator>> m_localAllocators;
 };
 
 ALWAYS_INLINE Allocator CompleteSubspace::allocatorForNonVirtual(size_t size, AllocatorForMode mode)

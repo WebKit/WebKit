@@ -793,11 +793,6 @@
 #define ENABLE_FAST_TLS_JIT 1
 #endif
 
-/* This feature is currently disabled because WebCore will context switch VMs without telling JSC.
-   FIXME: Re-enable this feature.
-   https://bugs.webkit.org/show_bug.cgi?id=182173 */
-#define USE_FAST_TLS_FOR_TLC 0
-
 #if CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2) || CPU(ARM64) || CPU(ARM_TRADITIONAL) || CPU(MIPS)
 #define ENABLE_MASM_PROBE 1
 #else

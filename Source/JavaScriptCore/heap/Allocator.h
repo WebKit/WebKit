@@ -31,35 +31,32 @@
 namespace JSC {
 
 class GCDeferralContext;
-class Heap;
-class VM;
+class LocalAllocator;
+
+// This abstracts how we refer to LocalAllocator so that we could eventually support thread-local
+// caches.
 
 class Allocator {
 public:
     Allocator() { }
     
-    explicit Allocator(unsigned offset)
-        : m_offset(offset)
+    explicit Allocator(LocalAllocator* localAllocator)
+        : m_localAllocator(localAllocator)
     {
     }
     
-    void* allocate(VM&, GCDeferralContext*, AllocationFailureMode) const;
+    void* allocate(GCDeferralContext*, AllocationFailureMode) const;
     
-    // This version calls FailureFunc if we have a null allocator or if the TLC hasn't been resized
-    // to include this allocator.
-    template<typename FailureFunc>
-    void* tryAllocate(VM&, GCDeferralContext*, AllocationFailureMode, const FailureFunc&) const;
+    unsigned cellSize() const;
     
-    unsigned cellSize(Heap&) const;
+    LocalAllocator* localAllocator() const { return m_localAllocator; }
     
-    unsigned offset() const { return m_offset; }
-    
-    bool operator==(const Allocator& other) const { return m_offset == other.offset(); }
+    bool operator==(const Allocator& other) const { return m_localAllocator == other.localAllocator(); }
     bool operator!=(const Allocator& other) const { return !(*this == other); }
     explicit operator bool() const { return *this != Allocator(); }
     
 private:
-    unsigned m_offset { UINT_MAX };
+    LocalAllocator* m_localAllocator { nullptr };
 };
 
 } // namespace JSC
