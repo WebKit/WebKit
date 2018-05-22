@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include "IntRect.h"
+
 namespace WebCore {
 
 enum FrameState {
@@ -145,6 +147,12 @@ enum class AllowNavigationToInvalidURL {
 enum class HasInsecureContent {
     Yes,
     No,
+};
+
+
+struct SystemPreviewInfo {
+    IntRect systemPreviewRect;
+    bool isSystemPreview { false };
 };
 
 } // namespace WebCore

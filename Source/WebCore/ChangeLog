@@ -1,3 +1,37 @@
+2018-05-22  Dean Jackson  <dino@apple.com>
+
+        Optimized path zoom animation needs a valid UIImage and CGRect
+        https://bugs.webkit.org/show_bug.cgi?id=185883
+        <rdar://problem/40306056>
+
+        Reviewed by Jon Lee.
+
+        Pass the bounding box of the element that was clicked onto
+        the UI process, so it can perform an animation from that spot.
+
+        This involved adding an IntRect to the ResourceRequest, and passing
+        that info into it from the HTMLAnchorElement, using a new struct
+        called SystemPreviewInfo.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+        * loader/FrameLoadRequest.cpp:
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        (WebCore::FrameLoadRequest::isSystemPreview const):
+        (WebCore::FrameLoadRequest::systemPreviewRect const):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::loadURL):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::urlSelected):
+        * loader/FrameLoaderTypes.h:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::systemPreviewRect const):
+        (WebCore::ResourceRequestBase::setSystemPreviewRect):
+        * platform/network/ResourceRequestBase.h:
+
 2018-05-22  Chris Dumez  <cdumez@apple.com>
 
         [POSIX] Use access() instead of stat() in FileSystem::fileExists()

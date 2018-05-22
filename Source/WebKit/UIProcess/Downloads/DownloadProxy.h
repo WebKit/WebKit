@@ -41,6 +41,7 @@ class Data;
 
 namespace WebCore {
 class AuthenticationChallenge;
+class IntRect;
 class ProtectionSpace;
 class ResourceError;
 class ResourceResponse;
@@ -91,6 +92,7 @@ public:
 
 #if USE(SYSTEM_PREVIEW)
     bool isSystemPreviewDownload() const { return request().isSystemPreview(); }
+    const WebCore::IntRect& systemPreviewDownloadRect() const { return request().systemPreviewRect(); }
 #endif
 
 private:

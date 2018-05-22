@@ -576,6 +576,7 @@ void ResourceRequestBase::setHTTPHeaderFields(HTTPHeaderMap headerFields)
     m_platformRequestUpdated = false;
 }
 
+#if USE(SYSTEM_PREVIEW)
 bool ResourceRequestBase::isSystemPreview() const
 {
     return m_isSystemPreview;
@@ -585,6 +586,17 @@ void ResourceRequestBase::setSystemPreview(bool s)
 {
     m_isSystemPreview = s;
 }
+
+const IntRect& ResourceRequestBase::systemPreviewRect() const
+{
+    return m_systemPreviewRect;
+}
+
+void ResourceRequestBase::setSystemPreviewRect(const IntRect& rect)
+{
+    m_systemPreviewRect = rect;
+}
+#endif
 
 bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceRequestBase& b)
 {

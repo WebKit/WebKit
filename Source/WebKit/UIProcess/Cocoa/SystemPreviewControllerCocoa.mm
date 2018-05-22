@@ -111,17 +111,19 @@ SOFT_LINK_CLASS(QuickLook, QLItem);
 
 @interface _WKPreviewControllerDelegate : NSObject <QLPreviewControllerDelegate> {
     WebKit::SystemPreviewController* _previewController;
+    WebCore::IntRect _linkRect;
 };
 @end
 
 @implementation _WKPreviewControllerDelegate
 
-- (id)initWithSystemPreviewController:(WebKit::SystemPreviewController*)previewController
+- (id)initWithSystemPreviewController:(WebKit::SystemPreviewController*)previewController fromRect:(WebCore::IntRect)rect
 {
     if (!(self = [super init]))
         return nil;
 
     _previewController = previewController;
+    _linkRect = rect;
     return self;
 }
 
@@ -131,35 +133,57 @@ SOFT_LINK_CLASS(QuickLook, QLItem);
         _previewController->cancel();
 }
 
-- (CGRect)previewController:(QLPreviewController *)controller frameForPreviewItem:(id <QLPreviewItem>)item inSourceView:(UIView * *)view
+- (UIViewController *)presentingViewController
 {
     if (!_previewController)
-        return CGRectZero;
+        return nil;
 
-    UIViewController *presentingViewController = _previewController->page().uiClient().presentingViewController();
+    return _previewController->page().uiClient().presentingViewController();
+}
+
+- (CGRect)previewController:(QLPreviewController *)controller frameForPreviewItem:(id <QLPreviewItem>)item inSourceView:(UIView * *)view
+{
+    UIViewController *presentingViewController = [self presentingViewController];
 
     if (!presentingViewController)
         return CGRectZero;
 
     *view = presentingViewController.view;
-    CGRect frame = presentingViewController.view.frame;
-    // Create a smaller rectangle centered in the frame.
-    CGFloat halfWidth = frame.size.width / 2;
-    CGFloat halfHeight = frame.size.height / 2;
-    frame = CGRectMake(CGRectGetMidX(frame) - halfWidth / 2, CGRectGetMidY(frame) - halfHeight / 2, halfWidth, halfHeight);
-    return frame;
+
+    if (_linkRect.isEmpty()) {
+        CGRect frame;
+        frame.size.width = presentingViewController.view.frame.size.width / 2.0;
+        frame.size.height = presentingViewController.view.frame.size.height / 2.0;
+        frame.origin.x = (presentingViewController.view.frame.size.width - frame.size.width) / 2.0;
+        frame.origin.y = (presentingViewController.view.frame.size.height - frame.size.height) / 2.0;
+        return frame;
+    }
+
+    return _previewController->page().syncRootViewToScreen(_linkRect);
 }
 
 - (UIImage *)previewController:(QLPreviewController *)controller transitionImageForPreviewItem:(id <QLPreviewItem>)item contentRect:(CGRect *)contentRect
 {
-    return nil;
+    *contentRect = CGRectZero;
+
+    UIViewController *presentingViewController = [self presentingViewController];
+    if (presentingViewController) {
+        if (_linkRect.isEmpty())
+            *contentRect = {CGPointZero, {presentingViewController.view.frame.size.width / 2.0, presentingViewController.view.frame.size.height / 2.0}};
+        else {
+            WebCore::IntRect screenRect = _previewController->page().syncRootViewToScreen(_linkRect);
+            *contentRect = { CGPointZero, { static_cast<CGFloat>(screenRect.width()), static_cast<CGFloat>(screenRect.height()) } };
+        }
+    }
+
+    return [UIImage new];
 }
 
 @end
 
 namespace WebKit {
 
-void SystemPreviewController::start(const String& mimeType)
+void SystemPreviewController::start(const String& mimeType, const WebCore::IntRect& fromRect)
 {
     ASSERT(!m_qlPreviewController);
     if (m_qlPreviewController)
@@ -172,7 +196,7 @@ void SystemPreviewController::start(const String& mimeType)
 
     m_qlPreviewController = adoptNS([allocQLPreviewControllerInstance() init]);
 
-    m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:this]);
+    m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:this fromRect:fromRect]);
     [m_qlPreviewController setDelegate:m_qlPreviewControllerDelegate.get()];
 
     m_qlPreviewControllerDataSource = adoptNS([[_WKPreviewControllerDataSource alloc] initWithMIMEType:mimeType]);

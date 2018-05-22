@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-FrameLoadRequest::FrameLoadRequest(Document& requester, SecurityOrigin& requesterSecurityOrigin, const ResourceRequest& resourceRequest, const String& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy newFrameOpenerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, InitiatedByMainFrame initiatedByMainFrame, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL, const AtomicString& downloadAttribute, bool isSystemPreview)
+FrameLoadRequest::FrameLoadRequest(Document& requester, SecurityOrigin& requesterSecurityOrigin, const ResourceRequest& resourceRequest, const String& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy newFrameOpenerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, InitiatedByMainFrame initiatedByMainFrame, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL, const AtomicString& downloadAttribute, const SystemPreviewInfo& systemPreviewInfo)
     : m_requester { makeRef(requester) }
     , m_requesterSecurityOrigin { makeRef(requesterSecurityOrigin) }
     , m_resourceRequest { resourceRequest }
@@ -51,7 +51,7 @@ FrameLoadRequest::FrameLoadRequest(Document& requester, SecurityOrigin& requeste
     , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
     , m_downloadAttribute { downloadAttribute }
     , m_initiatedByMainFrame { initiatedByMainFrame }
-    , m_isSystemPreview { isSystemPreview }
+    , m_systemPreviewInfo { systemPreviewInfo }
 {
 }
 

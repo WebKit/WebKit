@@ -27,6 +27,7 @@
 
 #if USE(SYSTEM_PREVIEW)
 
+#include <WebCore/IntRect.h>
 #include <WebCore/URL.h>
 #include <wtf/RetainPtr.h>
 
@@ -46,7 +47,7 @@ public:
 
     bool canPreview(const String& mimeType) const;
 
-    void start(const String& mimeType);
+    void start(const String& mimeType, const WebCore::IntRect&);
     void updateProgress(float);
     void finish(WebCore::URL);
     void cancel();

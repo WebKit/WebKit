@@ -1,3 +1,33 @@
+2018-05-22  Dean Jackson  <dino@apple.com>
+
+        Optimized path zoom animation needs a valid UIImage and CGRect
+        https://bugs.webkit.org/show_bug.cgi?id=185883
+        <rdar://problem/40306056>
+
+        Reviewed by Jon Lee.
+
+        Take the rectangle that was passed into the ResourceRequest and
+        use it for the origin of an animation into QuickLook.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceRequest>::encode):
+        (IPC::ArgumentCoder<ResourceRequest>::decode):
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::didStart):
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        (-[_WKPreviewControllerDelegate initWithSystemPreviewController:fromRect:]):
+        (-[_WKPreviewControllerDelegate presentingViewController]):
+        (-[_WKPreviewControllerDelegate previewController:frameForPreviewItem:inSourceView:]):
+        (-[_WKPreviewControllerDelegate previewController:transitionImageForPreviewItem:contentRect:]):
+        (WebKit::SystemPreviewController::start):
+        (-[_WKPreviewControllerDelegate initWithSystemPreviewController:]): Deleted.
+        * UIProcess/Downloads/DownloadProxy.h:
+        (WebKit::DownloadProxy::systemPreviewDownloadRect const):
+        * UIProcess/SystemPreviewController.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::syncRootViewToScreen):
+        * UIProcess/WebPageProxy.h:
+
 2018-05-22  Sihui Liu  <sihui_liu@apple.com>
 
         [iOS] TestWebKitAPI.WebKit.WKHTTPCookieStoreWithoutProcessPool fails because cookies use different files with/without processpool
