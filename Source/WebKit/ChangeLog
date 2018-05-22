@@ -1,3 +1,20 @@
+2018-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Crash when loading a SVG image
+        https://bugs.webkit.org/show_bug.cgi?id=185819
+
+        Reviewed by Brent Fulgham.
+
+        This is happening in WebLoaderStrategy::scheduleLoad() when getting the value of
+        FrameLoaderClient::pageID(). SVGImage uses the empty clients for the loader, and
+        EmptyFrameLoaderClient::pageID() returns std::nullopt. The same happens with the frameID. This changed in
+        r225934, when pageID() and frameID() were changed to return std::optional, EmptyFrameLoaderClient was updated to
+        return std::nullopt instead of 0.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad): Use value_or(0) instead of value() to get pageID and frameID from
+        FrameLoaderClient.
+
 2018-05-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use more C++17
