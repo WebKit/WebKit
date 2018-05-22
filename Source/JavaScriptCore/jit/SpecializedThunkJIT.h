@@ -135,7 +135,7 @@ namespace JSC {
             Jump lowNonZero = branchTestPtr(NonZero, regT1);
             Jump highNonZero = branchTestPtr(NonZero, regT0);
             move(TrustedImm32(0), regT0);
-            move(TrustedImm32(Int32Tag), regT1);
+            move(TrustedImm32(JSValue::Int32Tag), regT1);
             lowNonZero.link(this);
             highNonZero.link(this);
 #endif

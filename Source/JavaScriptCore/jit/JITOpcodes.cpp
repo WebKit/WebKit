@@ -125,7 +125,7 @@ void JIT::emit_op_overrides_has_instance(Instruction* currentInstruction)
 
     // Check that constructor 'ImplementsDefaultHasInstance' i.e. the object is not a C-API user nor a bound function.
     test8(Zero, Address(regT0, JSCell::typeInfoFlagsOffset()), TrustedImm32(ImplementsDefaultHasInstance), regT0);
-    emitTagBool(regT0);
+    boxBoolean(regT0, JSValueRegs { regT0 });
     Jump done = jump();
 
     customhasInstanceValue.link(this);
@@ -191,7 +191,7 @@ void JIT::emit_op_is_empty(Instruction* currentInstruction)
     emitGetVirtualRegister(value, regT0);
     compare64(Equal, regT0, TrustedImm32(JSValue::encode(JSValue())), regT0);
 
-    emitTagBool(regT0);
+    boxBoolean(regT0, JSValueRegs { regT0 });
     emitPutVirtualRegister(dst);
 }
 
@@ -219,7 +219,7 @@ void JIT::emit_op_is_undefined(Instruction* currentInstruction)
 
     notMasqueradesAsUndefined.link(this);
     done.link(this);
-    emitTagBool(regT0);
+    boxBoolean(regT0, JSValueRegs { regT0 });
     emitPutVirtualRegister(dst);
 }
 
@@ -231,7 +231,7 @@ void JIT::emit_op_is_boolean(Instruction* currentInstruction)
     emitGetVirtualRegister(value, regT0);
     xor64(TrustedImm32(static_cast<int32_t>(ValueFalse)), regT0);
     test64(Zero, regT0, TrustedImm32(static_cast<int32_t>(~1)), regT0);
-    emitTagBool(regT0);
+    boxBoolean(regT0, JSValueRegs { regT0 });
     emitPutVirtualRegister(dst);
 }
 
@@ -242,7 +242,7 @@ void JIT::emit_op_is_number(Instruction* currentInstruction)
     
     emitGetVirtualRegister(value, regT0);
     test64(NonZero, regT0, tagTypeNumberRegister, regT0);
-    emitTagBool(regT0);
+    boxBoolean(regT0, JSValueRegs { regT0 });
     emitPutVirtualRegister(dst);
 }
 
@@ -256,7 +256,7 @@ void JIT::emit_op_is_cell_with_type(Instruction* currentInstruction)
     Jump isNotCell = branchIfNotCell(regT0);
 
     compare8(Equal, Address(regT0, JSCell::typeInfoTypeOffset()), TrustedImm32(type), regT0);
-    emitTagBool(regT0);
+    boxBoolean(regT0, JSValueRegs { regT0 });
     Jump done = jump();
 
     isNotCell.link(this);
@@ -275,7 +275,7 @@ void JIT::emit_op_is_object(Instruction* currentInstruction)
     Jump isNotCell = branchIfNotCell(regT0);
 
     compare8(AboveOrEqual, Address(regT0, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType), regT0);
-    emitTagBool(regT0);
+    boxBoolean(regT0, JSValueRegs { regT0 });
     Jump done = jump();
 
     isNotCell.link(this);
@@ -416,7 +416,7 @@ void JIT::emit_op_eq(Instruction* currentInstruction)
     emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
     emitJumpSlowCaseIfNotInt(regT0, regT1, regT2);
     compare32(Equal, regT1, regT0, regT0);
-    emitTagBool(regT0);
+    boxBoolean(regT0, JSValueRegs { regT0 });
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
@@ -446,7 +446,7 @@ void JIT::emit_op_neq(Instruction* currentInstruction)
     emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
     emitJumpSlowCaseIfNotInt(regT0, regT1, regT2);
     compare32(NotEqual, regT1, regT0, regT0);
-    emitTagBool(regT0);
+    boxBoolean(regT0, JSValueRegs { regT0 });
 
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
@@ -494,7 +494,7 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
         compare64(Equal, regT1, regT0, regT0);
     else
         compare64(NotEqual, regT1, regT0, regT0);
-    emitTagBool(regT0);
+    boxBoolean(regT0, JSValueRegs { regT0 });
 
     emitPutVirtualRegister(dst);
 }
@@ -745,7 +745,7 @@ void JIT::emit_op_eq_null(Instruction* currentInstruction)
     wasNotImmediate.link(this);
     wasNotMasqueradesAsUndefined.link(this);
 
-    emitTagBool(regT0);
+    boxBoolean(regT0, JSValueRegs { regT0 });
     emitPutVirtualRegister(dst);
 
 }
@@ -777,7 +777,7 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
     wasNotImmediate.link(this);
     wasNotMasqueradesAsUndefined.link(this);
 
-    emitTagBool(regT0);
+    boxBoolean(regT0, JSValueRegs { regT0 });
     emitPutVirtualRegister(dst);
 }
 
@@ -869,7 +869,7 @@ void JIT::emitSlow_op_eq(Instruction* currentInstruction, Vector<SlowCaseEntry>:
     linkAllSlowCases(iter);
 
     callOperation(operationCompareEq, regT0, regT1);
-    emitTagBool(returnValueGPR);
+    boxBoolean(returnValueGPR, JSValueRegs { returnValueGPR });
     emitPutVirtualRegister(currentInstruction[1].u.operand, returnValueGPR);
 }
 
@@ -879,7 +879,7 @@ void JIT::emitSlow_op_neq(Instruction* currentInstruction, Vector<SlowCaseEntry>
 
     callOperation(operationCompareEq, regT0, regT1);
     xor32(TrustedImm32(0x1), regT0);
-    emitTagBool(returnValueGPR);
+    boxBoolean(returnValueGPR, JSValueRegs { returnValueGPR });
     emitPutVirtualRegister(currentInstruction[1].u.operand, returnValueGPR);
 }
 
@@ -915,7 +915,7 @@ void JIT::emitSlow_op_instanceof_custom(Instruction* currentInstruction, Vector<
     emitGetVirtualRegister(constructor, regT1);
     emitGetVirtualRegister(hasInstanceValue, regT2);
     callOperation(operationInstanceOfCustom, regT0, regT1, regT2);
-    emitTagBool(returnValueGPR);
+    boxBoolean(returnValueGPR, JSValueRegs { returnValueGPR });
     emitPutVirtualRegister(dst, returnValueGPR);
 }
 
@@ -1041,12 +1041,12 @@ void JIT::emitNewFuncExprCommon(Instruction* currentInstruction)
 #if USE(JSVALUE64)
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
     notUndefinedScope = branchIfNotUndefined(regT0);
-    store64(TrustedImm64(JSValue::encode(jsUndefined())), Address(callFrameRegister, sizeof(Register) * dst));
 #else
     emitLoadPayload(currentInstruction[2].u.operand, regT0);
     notUndefinedScope = branch32(NotEqual, tagFor(currentInstruction[2].u.operand), TrustedImm32(JSValue::UndefinedTag));
-    emitStore(dst, jsUndefined());
 #endif
+    storeTrustedValue(jsUndefined(), addressFor(dst));
+
     Jump done = jump();
     notUndefinedScope.link(this);
         

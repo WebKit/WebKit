@@ -90,10 +90,10 @@ ALWAYS_INLINE JSValue JIT::getConstantOperand(int src)
 ALWAYS_INLINE void JIT::emitPutIntToCallFrameHeader(RegisterID from, int entry)
 {
 #if USE(JSVALUE32_64)
-    store32(TrustedImm32(Int32Tag), intTagFor(entry, callFrameRegister));
-    store32(from, intPayloadFor(entry, callFrameRegister));
+    store32(TrustedImm32(JSValue::Int32Tag), tagFor(entry));
+    store32(from, payloadFor(entry));
 #else
-    store64(from, addressFor(entry, callFrameRegister));
+    store64(from, addressFor(entry));
 #endif
 }
 
@@ -141,7 +141,7 @@ ALWAYS_INLINE void JIT::updateTopCallFrame()
 #else
     uint32_t locationBits = CallSiteIndex(m_bytecodeOffset).bits();
 #endif
-    store32(TrustedImm32(locationBits), intTagFor(CallFrameSlot::argumentCount));
+    store32(TrustedImm32(locationBits), tagFor(CallFrameSlot::argumentCount));
     
     // FIXME: It's not clear that this is needed. JITOperations tend to update the top call frame on
     // the C++ side.
@@ -396,6 +396,11 @@ ALWAYS_INLINE double JIT::getOperandConstantDouble(int src)
     return getConstantOperand(src).asDouble();
 }
 
+ALWAYS_INLINE void JIT::emitInitRegister(int dst)
+{
+    storeTrustedValue(jsUndefined(), addressFor(dst));
+}
+
 #if USE(JSVALUE32_64)
 
 inline void JIT::emitLoadTag(int index, RegisterID tag)
@@ -445,14 +450,15 @@ inline void JIT::emitLoad(int index, RegisterID tag, RegisterID payload, Registe
         return;
     }
 
+    VirtualRegister target { index };
     if (payload == base) { // avoid stomping base
-        load32(tagFor(index, base), tag);
-        load32(payloadFor(index, base), payload);
+        load32(tagFor(target, base), tag);
+        load32(payloadFor(target, base), payload);
         return;
     }
 
-    load32(payloadFor(index, base), payload);
-    load32(tagFor(index, base), tag);
+    load32(payloadFor(target, base), payload);
+    load32(tagFor(target, base), tag);
 }
 
 inline void JIT::emitLoad2(int index1, RegisterID tag1, RegisterID payload1, int index2, RegisterID tag2, RegisterID payload2)
@@ -482,36 +488,37 @@ inline void JIT::emitLoadInt32ToDouble(int index, FPRegisterID value)
 
 inline void JIT::emitStore(int index, RegisterID tag, RegisterID payload, RegisterID base)
 {
-    store32(payload, payloadFor(index, base));
-    store32(tag, tagFor(index, base));
+    VirtualRegister target { index };
+    store32(payload, payloadFor(target, base));
+    store32(tag, tagFor(target, base));
 }
 
 inline void JIT::emitStoreInt32(int index, RegisterID payload, bool indexIsInt32)
 {
-    store32(payload, payloadFor(index, callFrameRegister));
+    store32(payload, payloadFor(index));
     if (!indexIsInt32)
-        store32(TrustedImm32(JSValue::Int32Tag), tagFor(index, callFrameRegister));
+        store32(TrustedImm32(JSValue::Int32Tag), tagFor(index));
 }
 
 inline void JIT::emitStoreInt32(int index, TrustedImm32 payload, bool indexIsInt32)
 {
-    store32(payload, payloadFor(index, callFrameRegister));
+    store32(payload, payloadFor(index));
     if (!indexIsInt32)
-        store32(TrustedImm32(JSValue::Int32Tag), tagFor(index, callFrameRegister));
+        store32(TrustedImm32(JSValue::Int32Tag), tagFor(index));
 }
 
 inline void JIT::emitStoreCell(int index, RegisterID payload, bool indexIsCell)
 {
-    store32(payload, payloadFor(index, callFrameRegister));
+    store32(payload, payloadFor(index));
     if (!indexIsCell)
-        store32(TrustedImm32(JSValue::CellTag), tagFor(index, callFrameRegister));
+        store32(TrustedImm32(JSValue::CellTag), tagFor(index));
 }
 
 inline void JIT::emitStoreBool(int index, RegisterID payload, bool indexIsBool)
 {
-    store32(payload, payloadFor(index, callFrameRegister));
+    store32(payload, payloadFor(index));
     if (!indexIsBool)
-        store32(TrustedImm32(JSValue::BooleanTag), tagFor(index, callFrameRegister));
+        store32(TrustedImm32(JSValue::BooleanTag), tagFor(index));
 }
 
 inline void JIT::emitStoreDouble(int index, FPRegisterID value)
@@ -521,13 +528,9 @@ inline void JIT::emitStoreDouble(int index, FPRegisterID value)
 
 inline void JIT::emitStore(int index, const JSValue constant, RegisterID base)
 {
-    store32(Imm32(constant.payload()), payloadFor(index, base));
-    store32(Imm32(constant.tag()), tagFor(index, base));
-}
-
-ALWAYS_INLINE void JIT::emitInitRegister(int dst)
-{
-    emitStore(dst, jsUndefined());
+    VirtualRegister target { index };
+    store32(Imm32(constant.payload()), payloadFor(target, base));
+    store32(Imm32(constant.tag()), tagFor(target, base));
 }
 
 inline void JIT::emitJumpSlowCaseIfNotJSCell(int virtualRegisterIndex)
@@ -589,7 +592,7 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst)
         return;
     }
 
-    load64(Address(callFrameRegister, src * sizeof(Register)), dst);
+    load64(addressFor(src), dst);
 }
 
 ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, JSValueRegs dst)
@@ -620,7 +623,7 @@ ALWAYS_INLINE bool JIT::isOperandConstantInt(int src)
 
 ALWAYS_INLINE void JIT::emitPutVirtualRegister(int dst, RegisterID from)
 {
-    store64(from, Address(callFrameRegister, dst * sizeof(Register)));
+    store64(from, addressFor(dst));
 }
 
 ALWAYS_INLINE void JIT::emitPutVirtualRegister(int dst, JSValueRegs from)
@@ -631,11 +634,6 @@ ALWAYS_INLINE void JIT::emitPutVirtualRegister(int dst, JSValueRegs from)
 ALWAYS_INLINE void JIT::emitPutVirtualRegister(VirtualRegister dst, RegisterID from)
 {
     emitPutVirtualRegister(dst.offset(), from);
-}
-
-ALWAYS_INLINE void JIT::emitInitRegister(int dst)
-{
-    store64(TrustedImm64(JSValue::encode(jsUndefined())), Address(callFrameRegister, dst * sizeof(Register)));
 }
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfBothJSCells(RegisterID reg1, RegisterID reg2, RegisterID scratch)
@@ -704,11 +702,6 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotInt(RegisterID reg1, RegisterID reg
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotNumber(RegisterID reg)
 {
     addSlowCase(branchIfNotNumber(reg));
-}
-
-ALWAYS_INLINE void JIT::emitTagBool(RegisterID reg)
-{
-    or32(TrustedImm32(static_cast<int32_t>(ValueFalse)), reg);
 }
 
 inline Instruction* JIT::copiedInstruction(Instruction* inst)

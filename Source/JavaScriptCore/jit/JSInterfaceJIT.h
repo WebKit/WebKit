@@ -44,33 +44,18 @@ namespace JSC {
         {
         }
 
-#if USE(JSVALUE32_64)
-        static const unsigned Int32Tag = static_cast<unsigned>(JSValue::Int32Tag);
-#else
-        static const unsigned Int32Tag = static_cast<unsigned>(TagTypeNumber >> 32);
-#endif
         inline Jump emitLoadJSCell(unsigned virtualRegisterIndex, RegisterID payload);
         inline Jump emitLoadInt32(unsigned virtualRegisterIndex, RegisterID dst);
         inline Jump emitLoadDouble(unsigned virtualRegisterIndex, FPRegisterID dst, RegisterID scratch);
 
 #if USE(JSVALUE32_64)
         inline Jump emitJumpIfNotJSCell(unsigned virtualRegisterIndex);
-        inline Address tagFor(int index, RegisterID base = callFrameRegister);
-#endif
-
-#if USE(JSVALUE64)
-        void emitTagInt(RegisterID src, RegisterID dest);
 #endif
 
         void emitGetFromCallFrameHeaderPtr(int entry, RegisterID to, RegisterID from = callFrameRegister);
         void emitPutToCallFrameHeader(RegisterID from, int entry);
         void emitPutToCallFrameHeader(void* value, int entry);
         void emitPutCellToCallFrameHeader(RegisterID from, int entry);
-
-        inline Address payloadFor(int index, RegisterID base = callFrameRegister);
-        inline Address intPayloadFor(int index, RegisterID base = callFrameRegister);
-        inline Address intTagFor(int index, RegisterID base = callFrameRegister);
-        inline Address addressFor(int index, RegisterID base = callFrameRegister);
 
         VM* vm() const { return m_vm; }
 
@@ -100,28 +85,6 @@ namespace JSC {
         ASSERT(static_cast<int>(virtualRegisterIndex) < FirstConstantRegisterIndex);
         loadPtr(payloadFor(virtualRegisterIndex), dst);
         return branch32(NotEqual, tagFor(static_cast<int>(virtualRegisterIndex)), TrustedImm32(JSValue::Int32Tag));
-    }
-    
-    inline JSInterfaceJIT::Address JSInterfaceJIT::tagFor(int virtualRegisterIndex, RegisterID base)
-    {
-        ASSERT(virtualRegisterIndex < FirstConstantRegisterIndex);
-        return Address(base, (static_cast<unsigned>(virtualRegisterIndex) * sizeof(Register)) + OBJECT_OFFSETOF(JSValue, u.asBits.tag));
-    }
-    
-    inline JSInterfaceJIT::Address JSInterfaceJIT::payloadFor(int virtualRegisterIndex, RegisterID base)
-    {
-        ASSERT(virtualRegisterIndex < FirstConstantRegisterIndex);
-        return Address(base, (static_cast<unsigned>(virtualRegisterIndex) * sizeof(Register)) + OBJECT_OFFSETOF(JSValue, u.asBits.payload));
-    }
-
-    inline JSInterfaceJIT::Address JSInterfaceJIT::intPayloadFor(int virtualRegisterIndex, RegisterID base)
-    {
-        return payloadFor(virtualRegisterIndex, base);
-    }
-
-    inline JSInterfaceJIT::Address JSInterfaceJIT::intTagFor(int virtualRegisterIndex, RegisterID base)
-    {
-        return tagFor(virtualRegisterIndex, base);
     }
 
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadDouble(unsigned virtualRegisterIndex, FPRegisterID dst, RegisterID scratch)
@@ -168,33 +131,6 @@ namespace JSC {
         done.link(this);
         return notNumber;
     }
-
-    // operand is int32_t, must have been zero-extended if register is 64-bit.
-    ALWAYS_INLINE void JSInterfaceJIT::emitTagInt(RegisterID src, RegisterID dest)
-    {
-        if (src != dest)
-            move(src, dest);
-        or64(tagTypeNumberRegister, dest);
-    }
-#endif
-
-#if USE(JSVALUE64)
-    inline JSInterfaceJIT::Address JSInterfaceJIT::payloadFor(int virtualRegisterIndex, RegisterID base)
-    {
-        ASSERT(virtualRegisterIndex < FirstConstantRegisterIndex);
-        return addressFor(virtualRegisterIndex, base);
-    }
-
-    inline JSInterfaceJIT::Address JSInterfaceJIT::intPayloadFor(int virtualRegisterIndex, RegisterID base)
-    {
-        ASSERT(virtualRegisterIndex < FirstConstantRegisterIndex);
-        return Address(base, (static_cast<unsigned>(virtualRegisterIndex) * sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
-    }
-    inline JSInterfaceJIT::Address JSInterfaceJIT::intTagFor(int virtualRegisterIndex, RegisterID base)
-    {
-        ASSERT(virtualRegisterIndex < FirstConstantRegisterIndex);
-        return Address(base, (static_cast<unsigned>(virtualRegisterIndex) * sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
-    }
 #endif
 
     ALWAYS_INLINE void JSInterfaceJIT::emitGetFromCallFrameHeaderPtr(int entry, RegisterID to, RegisterID from)
@@ -205,31 +141,25 @@ namespace JSC {
     ALWAYS_INLINE void JSInterfaceJIT::emitPutToCallFrameHeader(RegisterID from, int entry)
     {
 #if USE(JSVALUE32_64)
-        storePtr(from, payloadFor(entry, callFrameRegister));
+        storePtr(from, payloadFor(entry));
 #else
-        store64(from, addressFor(entry, callFrameRegister));
+        store64(from, addressFor(entry));
 #endif
     }
 
     ALWAYS_INLINE void JSInterfaceJIT::emitPutToCallFrameHeader(void* value, int entry)
     {
-        storePtr(TrustedImmPtr(value), Address(callFrameRegister, entry * sizeof(Register)));
+        storePtr(TrustedImmPtr(value), addressFor(entry));
     }
 
     ALWAYS_INLINE void JSInterfaceJIT::emitPutCellToCallFrameHeader(RegisterID from, int entry)
     {
 #if USE(JSVALUE32_64)
-        store32(TrustedImm32(JSValue::CellTag), tagFor(entry, callFrameRegister));
-        store32(from, payloadFor(entry, callFrameRegister));
+        store32(TrustedImm32(JSValue::CellTag), tagFor(entry));
+        store32(from, payloadFor(entry));
 #else
-        store64(from, addressFor(entry, callFrameRegister));
+        store64(from, addressFor(entry));
 #endif
-    }
-
-    inline JSInterfaceJIT::Address JSInterfaceJIT::addressFor(int virtualRegisterIndex, RegisterID base)
-    {
-        ASSERT(virtualRegisterIndex < FirstConstantRegisterIndex);
-        return Address(base, (static_cast<unsigned>(virtualRegisterIndex) * sizeof(Register)));
     }
 
 } // namespace JSC

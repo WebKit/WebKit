@@ -1,5 +1,75 @@
 2018-05-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Remove duplicate methods in JSInterfaceJIT
+        https://bugs.webkit.org/show_bug.cgi?id=185813
+
+        Reviewed by Saam Barati.
+
+        Some methods of JSInterfaceJIT are duplicate with AssemblyHelpers' ones.
+        This patch removes these ones and use AssemblyHelpers' ones instead.
+
+        This patch also a bit cleans up ThunkGenerators' unnecessary ifdefs.
+
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::tagFor):
+        (JSC::AssemblyHelpers::payloadFor):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_unsigned):
+        (JSC::JIT::emit_compareUnsigned):
+        (JSC::JIT::emit_op_inc):
+        (JSC::JIT::emit_op_dec):
+        (JSC::JIT::emit_op_mod):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitPutIntToCallFrameHeader):
+        (JSC::JIT::updateTopCallFrame):
+        (JSC::JIT::emitInitRegister):
+        (JSC::JIT::emitLoad):
+        (JSC::JIT::emitStore):
+        (JSC::JIT::emitStoreInt32):
+        (JSC::JIT::emitStoreCell):
+        (JSC::JIT::emitStoreBool):
+        (JSC::JIT::emitGetVirtualRegister):
+        (JSC::JIT::emitPutVirtualRegister):
+        (JSC::JIT::emitTagBool): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_overrides_has_instance):
+        (JSC::JIT::emit_op_is_empty):
+        (JSC::JIT::emit_op_is_undefined):
+        (JSC::JIT::emit_op_is_boolean):
+        (JSC::JIT::emit_op_is_number):
+        (JSC::JIT::emit_op_is_cell_with_type):
+        (JSC::JIT::emit_op_is_object):
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::emitSlow_op_instanceof_custom):
+        (JSC::JIT::emitNewFuncExprCommon):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::emitLoadInt32):
+        (JSC::JSInterfaceJIT::emitLoadDouble):
+        (JSC::JSInterfaceJIT::emitPutToCallFrameHeader):
+        (JSC::JSInterfaceJIT::emitPutCellToCallFrameHeader):
+        (JSC::JSInterfaceJIT::tagFor): Deleted.
+        (JSC::JSInterfaceJIT::payloadFor): Deleted.
+        (JSC::JSInterfaceJIT::intPayloadFor): Deleted.
+        (JSC::JSInterfaceJIT::intTagFor): Deleted.
+        (JSC::JSInterfaceJIT::emitTagInt): Deleted.
+        (JSC::JSInterfaceJIT::addressFor): Deleted.
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::returnDouble):
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        (JSC::arityFixupGenerator):
+
+2018-05-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, reland InById cache
         https://bugs.webkit.org/show_bug.cgi?id=185682
 

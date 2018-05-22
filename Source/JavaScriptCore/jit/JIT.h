@@ -449,8 +449,6 @@ namespace JSC {
         void emitJumpSlowCaseIfNotNumber(RegisterID);
         void emitJumpSlowCaseIfNotInt(RegisterID, RegisterID, RegisterID scratch);
 
-        void emitTagBool(RegisterID);
-
         void compileGetByIdHotPath(int baseVReg, const Identifier*);
 
 #endif // USE(JSVALUE32_64)

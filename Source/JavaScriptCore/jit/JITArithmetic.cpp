@@ -241,7 +241,7 @@ void JIT::emit_op_unsigned(Instruction* currentInstruction)
     emitGetVirtualRegister(op1, regT0);
     emitJumpSlowCaseIfNotInt(regT0);
     addSlowCase(branch32(LessThan, regT0, TrustedImm32(0)));
-    emitTagInt(regT0, regT0);
+    boxInt32(regT0, JSValueRegs { regT0 });
     emitPutVirtualRegister(result, regT0);
 }
 
@@ -322,7 +322,7 @@ void JIT::emit_compareUnsigned(int dst, int op1, int op2, RelationalCondition co
         emitGetVirtualRegisters(op1, regT0, op2, regT1);
         compare32(condition, regT0, regT1, regT0);
     }
-    emitTagBool(regT0);
+    boxBoolean(regT0, JSValueRegs { regT0 });
     emitPutVirtualRegister(dst);
 }
 
@@ -434,7 +434,7 @@ void JIT::emit_op_inc(Instruction* currentInstruction)
     emitGetVirtualRegister(srcDst, regT0);
     emitJumpSlowCaseIfNotInt(regT0);
     addSlowCase(branchAdd32(Overflow, TrustedImm32(1), regT0));
-    emitTagInt(regT0, regT0);
+    boxInt32(regT0, JSValueRegs { regT0 });
     emitPutVirtualRegister(srcDst);
 }
 
@@ -445,7 +445,7 @@ void JIT::emit_op_dec(Instruction* currentInstruction)
     emitGetVirtualRegister(srcDst, regT0);
     emitJumpSlowCaseIfNotInt(regT0);
     addSlowCase(branchSub32(Overflow, TrustedImm32(1), regT0));
-    emitTagInt(regT0, regT0);
+    boxInt32(regT0, JSValueRegs { regT0 });
     emitPutVirtualRegister(srcDst);
 }
 
@@ -480,7 +480,7 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     Jump numeratorPositive = branch32(GreaterThanOrEqual, regT4, TrustedImm32(0));
     addSlowCase(branchTest32(Zero, edx));
     numeratorPositive.link(this);
-    emitTagInt(edx, regT0);
+    boxInt32(edx, JSValueRegs { regT0 });
     emitPutVirtualRegister(result);
 }
 
