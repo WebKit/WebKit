@@ -246,7 +246,7 @@ private:
     // Platform Helpers
     void platformSetURLCacheSize(unsigned urlCacheMemoryCapacity, uint64_t urlCacheDiskCapacity);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     static void setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier);
 #endif
 

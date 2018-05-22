@@ -378,7 +378,7 @@ static bool finished;
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
     auto cookies = String(message.UTF8String);
-    ASSERT_TRUE(cookies == "PersistentCookieName=CookieValue; SessionCookieName=CookieValue" || cookies == "SessionCookieName=CookieValue; PersistentCookieName=CookieValue");
+    EXPECT_TRUE(cookies == "PersistentCookieName=CookieValue; SessionCookieName=CookieValue" || cookies == "SessionCookieName=CookieValue; PersistentCookieName=CookieValue");
     finished = true;
     completionHandler();
 }
