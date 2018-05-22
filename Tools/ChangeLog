@@ -1,3 +1,9 @@
+2018-05-22  Sihui Liu  <sihui_liu@apple.com>
+
+        Unreviewed, added myself as a WebKit committer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-05-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r232052.
