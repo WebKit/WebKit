@@ -1,7 +1,7 @@
-From e09ab95ad39264783bf0e57dfb89165ad9b83802 Mon Sep 17 00:00:00 2001
+From 0ba62ba4805e2cdbed17fa9934762d685be42fd4 Mon Sep 17 00:00:00 2001
 From: Xabier Rodriguez Calvar <calvaris@igalia.com>
 Date: Wed, 21 Jun 2017 17:59:21 +0200
-Subject: [PATCH] qtdemux: add context for a preferred protection
+Subject: [PATCH 2/7] qtdemux: add context for a preferred protection
 
 qtdemux selected the first system corresponding to a working GStreamer
 decryptor. With this change, before selecting that decryptor, qtdemux
@@ -31,15 +31,15 @@ is dispatched to the decryptor, which can then decrypt the video successfully.
 
 https://bugzilla.gnome.org/show_bug.cgi?id=770107
 ---
- gst/isomp4/qtdemux.c | 200 +++++++++++++++++++++++++++++++++++++++++++++++++--
+ gst/isomp4/qtdemux.c | 200 +++++++++++++++++++++++++++++++++++++++++--
  gst/isomp4/qtdemux.h |   1 +
  2 files changed, 195 insertions(+), 6 deletions(-)
 
 diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
-index f0f8320e2..f710d2685 100644
+index 705bdf7ca..da22463f8 100644
 --- a/gst/isomp4/qtdemux.c
 +++ b/gst/isomp4/qtdemux.c
-@@ -513,6 +513,8 @@ static GstIndex *gst_qtdemux_get_index (GstElement * element);
+@@ -511,6 +511,8 @@ static GstIndex *gst_qtdemux_get_index (GstElement * element);
  #endif
  static GstStateChangeReturn gst_qtdemux_change_state (GstElement * element,
      GstStateChange transition);
@@ -48,7 +48,7 @@ index f0f8320e2..f710d2685 100644
  static gboolean qtdemux_sink_activate (GstPad * sinkpad, GstObject * parent);
  static gboolean qtdemux_sink_activate_mode (GstPad * sinkpad,
      GstObject * parent, GstPadMode mode, gboolean active);
-@@ -602,6 +604,7 @@ gst_qtdemux_class_init (GstQTDemuxClass * klass)
+@@ -600,6 +602,7 @@ gst_qtdemux_class_init (GstQTDemuxClass * klass)
    gstelement_class->set_index = GST_DEBUG_FUNCPTR (gst_qtdemux_set_index);
    gstelement_class->get_index = GST_DEBUG_FUNCPTR (gst_qtdemux_get_index);
  #endif
@@ -56,7 +56,7 @@ index f0f8320e2..f710d2685 100644
  
    gst_tag_register_musicbrainz_tags ();
  
-@@ -660,6 +663,7 @@ gst_qtdemux_init (GstQTDemux * qtdemux)
+@@ -658,6 +661,7 @@ gst_qtdemux_init (GstQTDemux * qtdemux)
    qtdemux->cenc_aux_info_sizes = NULL;
    qtdemux->cenc_aux_sample_count = 0;
    qtdemux->protection_system_ids = NULL;
@@ -64,7 +64,7 @@ index f0f8320e2..f710d2685 100644
    g_queue_init (&qtdemux->protection_event_queue);
    gst_segment_init (&qtdemux->segment, GST_FORMAT_TIME);
    qtdemux->tag_list = gst_tag_list_new_empty ();
-@@ -2114,6 +2118,10 @@ gst_qtdemux_reset (GstQTDemux * qtdemux, gboolean hard)
+@@ -2121,6 +2125,10 @@ gst_qtdemux_reset (GstQTDemux * qtdemux, gboolean hard)
        g_ptr_array_free (qtdemux->protection_system_ids, TRUE);
        qtdemux->protection_system_ids = NULL;
      }
@@ -75,10 +75,11 @@ index f0f8320e2..f710d2685 100644
    } else if (qtdemux->mss_mode) {
      gst_flow_combiner_reset (qtdemux->flowcombiner);
      for (n = 0; n < qtdemux->n_streams; n++)
-@@ -2600,6 +2608,28 @@ gst_qtdemux_change_state (GstElement * element, GstStateChange transition)
+@@ -2606,6 +2614,28 @@ gst_qtdemux_change_state (GstElement * element, GstStateChange transition)
+   return result;
  }
  
- static void
++static void
 +gst_qtdemux_set_context (GstElement * element, GstContext * context)
 +{
 +  GstQTDemux *qtdemux = GST_QTDEMUX (element);
@@ -100,11 +101,10 @@ index f0f8320e2..f710d2685 100644
 +  GST_ELEMENT_CLASS (parent_class)->set_context (element, context);
 +}
 +
-+static void
+ static void
  qtdemux_parse_ftyp (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
  {
-   /* counts as header data */
-@@ -3829,6 +3859,8 @@ qtdemux_parse_pssh (GstQTDemux * qtdemux, GNode * node)
+@@ -3847,6 +3877,8 @@ qtdemux_parse_pssh (GstQTDemux * qtdemux, GNode * node)
    event = gst_event_new_protection (sysid_string, pssh,
        (parent_box_type == FOURCC_moov) ? "isobmff/moov" : "isobmff/moof");
    for (i = 0; i < qtdemux->n_streams; ++i) {
@@ -113,7 +113,7 @@ index f0f8320e2..f710d2685 100644
      g_queue_push_tail (&qtdemux->streams[i]->protection_scheme_event_queue,
          gst_event_ref (event));
    }
-@@ -5538,6 +5570,8 @@ gst_qtdemux_decorate_and_push_buffer (GstQTDemux * qtdemux,
+@@ -5563,6 +5595,8 @@ gst_qtdemux_decorate_and_push_buffer (GstQTDemux * qtdemux,
      GstEvent *event;
  
      while ((event = g_queue_pop_head (&stream->protection_scheme_event_queue))) {
@@ -122,10 +122,11 @@ index f0f8320e2..f710d2685 100644
        gst_pad_push_event (stream->pad, event);
      }
  
-@@ -7696,11 +7730,141 @@ qtdemux_do_allocation (GstQTDemux * qtdemux, QtDemuxStream * stream)
+@@ -7756,12 +7790,142 @@ qtdemux_do_allocation (GstQTDemux * qtdemux, QtDemuxStream * stream)
+ #endif
  }
  
- static gboolean
++static gboolean
 +pad_query (const GValue * item, GValue * value, gpointer user_data)
 +{
 +  GstPad *pad = g_value_get_object (item);
@@ -255,7 +256,7 @@ index f0f8320e2..f710d2685 100644
 +  gst_query_unref (query);
 +}
 +
-+static gboolean
+ static gboolean
  gst_qtdemux_configure_protected_caps (GstQTDemux * qtdemux,
      QtDemuxStream * stream)
  {
@@ -265,7 +266,7 @@ index f0f8320e2..f710d2685 100644
  
    g_return_val_if_fail (qtdemux != NULL, FALSE);
    g_return_val_if_fail (stream != NULL, FALSE);
-@@ -7716,17 +7880,41 @@ gst_qtdemux_configure_protected_caps (GstQTDemux * qtdemux,
+@@ -7777,17 +7941,41 @@ gst_qtdemux_configure_protected_caps (GstQTDemux * qtdemux,
          "cenc protection system information has been found");
      return FALSE;
    }
@@ -313,10 +314,10 @@ index f0f8320e2..f710d2685 100644
    if (!gst_structure_has_name (s, "application/x-cenc")) {
      gst_structure_set (s,
 diff --git a/gst/isomp4/qtdemux.h b/gst/isomp4/qtdemux.h
-index ebd725871..b3d64a4e8 100644
+index ad4da3ef2..079372356 100644
 --- a/gst/isomp4/qtdemux.h
 +++ b/gst/isomp4/qtdemux.h
-@@ -154,6 +154,7 @@ struct _GstQTDemux {
+@@ -151,6 +151,7 @@ struct _GstQTDemux {
    guint64 cenc_aux_info_offset;
    guint8 *cenc_aux_info_sizes;
    guint32 cenc_aux_sample_count;
@@ -325,5 +326,5 @@ index ebd725871..b3d64a4e8 100644
  
    /*
 -- 
-2.11.0
+2.17.0
 

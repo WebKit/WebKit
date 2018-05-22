@@ -1,18 +1,18 @@
-From 78559bc5db3495f12b0284e4be5fc8bfcd7041e2 Mon Sep 17 00:00:00 2001
+From 762e9c645ec13513c62eb5a3800d7406e01cdcb7 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Enrique=20Oca=C3=B1a=20Gonz=C3=A1lez?= <eocanha@igalia.com>
 Date: Mon, 24 Apr 2017 17:22:02 +0000
-Subject: [PATCH] qtdemux: also push buffers without encryption info instead of
- dropping them
+Subject: [PATCH 3/7] qtdemux: also push buffers without encryption info
+ instead of dropping them
 
 ---
- gst/isomp4/qtdemux.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+ gst/isomp4/qtdemux.c | 39 +++++++++++++++++++--------------------
+ 1 file changed, 19 insertions(+), 20 deletions(-)
 
 diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
-index f0f8320..3f2c016 100644
+index da22463f8..8e9f5b9ae 100644
 --- a/gst/isomp4/qtdemux.c
 +++ b/gst/isomp4/qtdemux.c
-@@ -5541,26 +5541,25 @@ gst_qtdemux_decorate_and_push_buffer (GstQTDemux * qtdemux,
+@@ -5600,26 +5600,25 @@ gst_qtdemux_decorate_and_push_buffer (GstQTDemux * qtdemux,
        gst_pad_push_event (stream->pad, event);
      }
  
@@ -59,5 +59,5 @@ index f0f8320..3f2c016 100644
    }
  
 -- 
-2.11.0
+2.17.0
 

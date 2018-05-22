@@ -44,10 +44,7 @@
     <dependencies>
       <dep package="orc"/>
     </dependencies>
-    <branch module="gstreamer/gstreamer-${version}.tar.xz" version="1.12.4"
-            repo="gstreamer"
-            hash="sha256:5a8704aa4c2eeb04da192c4a9942f94f860ac1a585de90d9f914bac26a970674">
-      <patch file="gstreamer-0001-protection-added-function-to-filter-system-ids.patch" strip="1"/>
+    <branch hash="sha:28d82b0d261544a9bf85b429399929e4986eb00efcf1ce16cc71d269a4c3186c" module="gstreamer/gstreamer-${version}.tar.xz" repo="gstreamer" version="1.14.1">
     </branch>
   </autotools>
 
@@ -60,9 +57,7 @@
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
-    <branch module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" version="1.12.4"
-            repo="gstreamer"
-            hash="sha256:4c306b03df0212f1b8903784e29bb3493319ba19ebebf13b0c56a17870292282"/>
+    <branch hash="sha:1026c7c3082d825d9b5d034c1a6dd8a4ebab60eb3738b0a0afde4ad2dc0b0db5" module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" repo="gstreamer" version="1.14.1" />
   </autotools>
 
   <autotools id="gst-plugins-good" autogen-sh="configure" autogenargs="--disable-examples --disable-gtk-doc --disable-introspection">
@@ -71,14 +66,9 @@
       <dep package="libvpx"/>
     </dependencies>
 
-    <branch module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" version="1.12.4"
-            repo="gstreamer"
-            hash="sha256:649f49bec60892d47ee6731b92266974c723554da1c6649f21296097715eb957">
-      <patch file="gst-plugins-good-0001-gstgdkpixbufdec-stop-pretending-to-decode-gifs.patch" strip="1"/>
-      <patch file="gst-plugins-good-0005-souphttpsrc-cookie-jar-and-context-query-support.patch" strip="1"/>
-      <patch file="gst-plugins-good-0006-qtdemux-add-context-for-a-preferred-protection.patch" strip="1"/>
-      <patch file="gst-plugins-good-0008-qtdemux-also-push-buffers-without-encryption-info-in.patch" strip="1"/>
-      <patch file="gst-plugins-good-0009-qtdemux-fix-assert-when-moof-contains-one-sample.patch" strip="1"/>
+    <branch hash="sha:34ec062ddb766a32377532e039781f4a16fbc3e8b449e642605bacab26a99172" module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" repo="gstreamer" version="1.14.1">
+      <patch file="gst-plugins-good-0002-qtdemux-add-context-for-a-preferred-protection.patch" strip="1" /> <!-- Merged as ee4b45da24cb7465b416c230597f8efc7b2c45cb -->
+      <patch file="gst-plugins-good-0003-qtdemux-also-push-buffers-without-encryption-info-in.patch" strip="1" /> <!-- Merged as 844423ff99e281fc831303b92861ed43ce5c1518 -->
     </branch>
   </autotools>
 
@@ -88,24 +78,18 @@
       <dep package="gst-plugins-base"/>
       <dep package="openh264"/>
     </dependencies>
-    <branch module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" version="1.12.4"
-            repo="gstreamer"
-            hash="sha256:0c7857be16686d5c1ba6e34bd338664d3d4599d32714a8eca5c8a41a101e2d08"/>
+    <branch hash="sha:2a77c6908032aafdf2cd2e5823fec948f16a25c2d1497a953828d762dc20d61a" module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" repo="gstreamer" version="1.14.1" />
   </autotools>
 
   <autotools id="gst-libav" autogen-sh="configure" autogenargs="--with-libav-extra-configure='--disable-yasm' --disable-gtk-doc">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch module="gst-libav/gst-libav-${version}.tar.xz" version="1.12.4"
-            repo="gstreamer"
-            hash="sha256:2a56aa5d2d8cd912f2bce17f174713d2c417ca298f1f9c28ee66d4aa1e1d9e62"/>
+    <branch hash="sha:eff80a02d2f2fb9f34b67e9a26e9954d3218c7aa18e863f2a47805fa7066029d" module="gst-libav/gst-libav-${version}.tar.xz" repo="gstreamer" version="1.14.1" />
   </autotools>
 
   <autotools id="gstreamer-vaapi">
-    <branch module="gstreamer-vaapi/gstreamer-vaapi-${version}.tar.xz" version="1.12.4"
-            repo="gstreamer"
-            hash="sha256:1c2d77242e1f30c4d1394636cae9f6877228a017960fca96881e0080d8b6e9c9"/>
+    <branch hash="sha:585c3ddb0c39220de0a33e5d0ed6196a108b8407ec3538d7c64617713b4434e8" module="gstreamer-vaapi/gstreamer-vaapi-${version}.tar.xz" repo="gstreamer" version="1.14.1" />
     <dependencies>
       <dep package="gstreamer"/>
       <dep package="gst-plugins-base"/>
