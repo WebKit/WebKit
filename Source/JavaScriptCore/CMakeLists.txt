@@ -124,8 +124,14 @@ if (USE_CAPSTONE)
     list(APPEND JavaScriptCore_LIBRARIES capstone)
 endif ()
 
-if (ATOMIC_INT64_REQUIRES_LIBATOMIC)
-    list(APPEND JavaScriptCore_LIBRARIES atomic)
+# Since r228149, on MIPS we need to link with -latomic, because
+# __atomic_fetch_add_8 is not available as a compiler intrinsic. It is
+# available on other platforms (including 32-bit Arm), so the link with
+# libatomic is only neede on MIPS.
+if (WTF_CPU_MIPS)
+    list(APPEND JavaScriptCore_LIBRARIES
+        -latomic
+    )
 endif ()
 
 set(JavaScriptCore_SCRIPTS_SOURCES_DIR "${JAVASCRIPTCORE_DIR}/Scripts")
