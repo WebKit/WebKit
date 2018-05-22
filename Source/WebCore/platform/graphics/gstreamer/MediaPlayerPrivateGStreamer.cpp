@@ -1155,8 +1155,13 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
 
         if (attemptNextLocation)
             issueError = !loadNextLocation();
-        if (issueError)
-            loadingFailed(error);
+        if (issueError) {
+            m_errorOccured = true;
+            if (m_networkState != error) {
+                m_networkState = error;
+                m_player->networkStateChanged();
+            }
+        }
         break;
     case GST_MESSAGE_EOS:
         didEnd();
