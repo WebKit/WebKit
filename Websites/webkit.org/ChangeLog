@@ -1,3 +1,26 @@
+2018-05-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add some additional demo content to webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=185892
+
+        Reviewed by Tim Horton.
+
+        Adds three demo pages, and some placeholder assets.
+
+        * demos/extrazoom/article/constitution.jpg: Added.
+        * demos/extrazoom/article/index.html: Added.
+        * demos/extrazoom/login/index.html: Added.
+        * demos/extrazoom/login/webkit.svg: Added.
+        * demos/extrazoom/recipes/butterchicken.jpg: Added.
+        * demos/extrazoom/recipes/chowder.jpg: Added.
+        * demos/extrazoom/recipes/hummus.jpg: Added.
+        * demos/extrazoom/recipes/index.html: Added.
+        * demos/extrazoom/recipes/padthai.jpg: Added.
+        * demos/extrazoom/recipes/pizza.jpg: Added.
+        * demos/extrazoom/recipes/salmon.jpg: Added.
+        * demos/extrazoom/recipes/steak.jpg: Added.
+        * demos/extrazoom/recipes/tacos.jpg: Added.
+
 2018-04-26  Ross Kirsling  <ross.kirsling@sony.com>
 
         Update code style guidelines to mention braced initialization style.

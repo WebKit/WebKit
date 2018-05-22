@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf8">
+<meta property="og:title" content="Generic login example">
+<html>
+<head>
+    <style>
+    body {
+        width: 100%;
+        margin: 0;
+        padding-top: 1em;
+        text-align: center;
+        font-family: system-ui;
+    }
+
+    #logo {
+        width: calc(min(80px, 20vw));
+    }
+
+    h1 {
+        margin-top: 0;
+        font-weight: 350;
+        font-size: 1.5em;
+    }
+
+    input {
+        width: calc(min(90%, 320px));
+        background-color: #EEE;
+        height: 2.4em;
+        margin: 0.5em auto;
+        font-size: 1.2em;
+        border: none;
+        border-radius: 1.2em;
+        -webkit-appearance: none;
+        box-sizing: border-box;
+        padding: 0 1em;
+        outline: none;
+        display: block;
+    }
+
+    input[type="submit"] {
+        color: white;
+        background-color: rgb(90, 200, 250);
+    }
+
+    input + input {
+        margin-top: 1em;
+    }
+
+    a {
+        font-size: 0.8em;
+    }
+
+    #links {
+        margin-top: 1em;
+    }
+
+    #links > a {
+        color: rgb(0, 122, 255);
+        text-decoration: none;
+    }
+    </style>
+</head>
+<body>
+    <img id="logo" src="webkit.svg"></img>
+    <form action="index.html" method="post">
+        <input aria-label="Email Address" type="email" placeholder="Email"></input>
+        <input aria-label="Password" type="password" placeholder="Password"></input>
+        <input type="submit" value="Log in"></input>
+    </form>
+    <div id="links">
+        <a href="#">Sign up</a>
+        <span>&nbsp;•&nbsp;</span>
+        <a href="#">Forgot your password?</a>
+    </div>
+</body>
+</html>
