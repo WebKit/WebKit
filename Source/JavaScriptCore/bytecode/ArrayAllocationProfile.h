@@ -56,7 +56,7 @@ public:
     }
     
     JS_EXPORT_PRIVATE void updateProfile();
-    
+
     static IndexingType selectIndexingTypeFor(ArrayAllocationProfile* profile)
     {
         if (!profile)
@@ -70,6 +70,8 @@ public:
             profile->updateLastAllocation(lastArray);
         return lastArray;
     }
+
+    void initializeIndexingMode(IndexingType recommendedIndexingMode) { m_currentIndexingType = recommendedIndexingMode; }
 
 private:
     

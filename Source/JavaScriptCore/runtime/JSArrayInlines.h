@@ -83,14 +83,14 @@ ALWAYS_INLINE double toLength(ExecState* exec, JSObject* obj)
     return lengthValue.toLength(exec);
 }
 
-ALWAYS_INLINE void JSArray::pushInline(ExecState* exec, JSValue value)
+inline void JSArray::pushInline(ExecState* exec, JSValue value)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     Butterfly* butterfly = this->butterfly();
 
-    switch (indexingType()) {
+    switch (indexingMode()) {
     case ArrayClass: {
         createInitialUndecided(vm, 0);
         FALLTHROUGH;
@@ -114,7 +114,7 @@ ALWAYS_INLINE void JSArray::pushInline(ExecState* exec, JSValue value)
         unsigned length = butterfly->publicLength();
         ASSERT(length <= butterfly->vectorLength());
         if (length < butterfly->vectorLength()) {
-            butterfly->contiguousInt32().at(length).setWithoutWriteBarrier(value);
+            butterfly->contiguousInt32().at(this, length).setWithoutWriteBarrier(value);
             butterfly->setPublicLength(length + 1);
             return;
         }
@@ -135,7 +135,7 @@ ALWAYS_INLINE void JSArray::pushInline(ExecState* exec, JSValue value)
         unsigned length = butterfly->publicLength();
         ASSERT(length <= butterfly->vectorLength());
         if (length < butterfly->vectorLength()) {
-            butterfly->contiguous().at(length).set(vm, this, value);
+            butterfly->contiguous().at(this, length).set(vm, this, value);
             butterfly->setPublicLength(length + 1);
             return;
         }
@@ -170,7 +170,7 @@ ALWAYS_INLINE void JSArray::pushInline(ExecState* exec, JSValue value)
         unsigned length = butterfly->publicLength();
         ASSERT(length <= butterfly->vectorLength());
         if (length < butterfly->vectorLength()) {
-            butterfly->contiguousDouble().at(length) = valueAsDouble;
+            butterfly->contiguousDouble().at(this, length) = valueAsDouble;
             butterfly->setPublicLength(length + 1);
             return;
         }
@@ -227,8 +227,13 @@ ALWAYS_INLINE void JSArray::pushInline(ExecState* exec, JSValue value)
         return;
     }
 
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
+    default: {
+        RELEASE_ASSERT(isCopyOnWrite(indexingMode()));
+        convertFromCopyOnWrite(vm);
+        scope.release();
+        // Reloop.
+        return pushInline(exec, value);
+    }
     }
 }
 

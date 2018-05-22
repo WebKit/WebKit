@@ -45,6 +45,7 @@
 #include "JSFixedArray.h"
 #include "JSFunction.h"
 #include "JSGeneratorFunction.h"
+#include "JSImmutableButterfly.h"
 #include "JSLexicalEnvironment.h"
 #include "JSTemplateObjectDescriptor.h"
 #include "LowLevelInterpreter.h"
@@ -1282,9 +1283,9 @@ UnlinkedArrayProfile BytecodeGenerator::newArrayProfile()
     return m_codeBlock->addArrayProfile();
 }
 
-UnlinkedArrayAllocationProfile BytecodeGenerator::newArrayAllocationProfile()
+UnlinkedArrayAllocationProfile BytecodeGenerator::newArrayAllocationProfile(IndexingType recommendedIndexingType)
 {
-    return m_codeBlock->addArrayAllocationProfile();
+    return m_codeBlock->addArrayAllocationProfile(recommendedIndexingType);
 }
 
 UnlinkedObjectAllocationProfile BytecodeGenerator::newObjectAllocationProfile()
@@ -3186,16 +3187,16 @@ RegisterID* BytecodeGenerator::addTemplateObjectConstant(Ref<TemplateObjectDescr
     return &m_constantPoolRegisters[index];
 }
 
-RegisterID* BytecodeGenerator::emitNewArrayBuffer(RegisterID* dst, JSFixedArray* array)
+RegisterID* BytecodeGenerator::emitNewArrayBuffer(RegisterID* dst, JSImmutableButterfly* array, IndexingType recommendedIndexingType)
 {
     emitOpcode(op_new_array_buffer);
     instructions().append(dst->index());
     instructions().append(addConstantValue(array)->index());
-    instructions().append(newArrayAllocationProfile());
+    instructions().append(newArrayAllocationProfile(recommendedIndexingType));
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elements, unsigned length)
+RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elements, unsigned length, IndexingType recommendedIndexingType)
 {
     Vector<RefPtr<RegisterID>, 16, UnsafeVectorOverflow> argv;
     for (ElementNode* n = elements; n; n = n->next()) {
@@ -3213,7 +3214,7 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
     instructions().append(dst->index());
     instructions().append(argv.size() ? argv[0]->index() : 0); // argv
     instructions().append(argv.size()); // argc
-    instructions().append(newArrayAllocationProfile());
+    instructions().append(newArrayAllocationProfile(recommendedIndexingType));
     return dst;
 }
 
@@ -3265,7 +3266,7 @@ RegisterID* BytecodeGenerator::emitNewArrayWithSize(RegisterID* dst, RegisterID*
     emitOpcode(op_new_array_with_size);
     instructions().append(dst->index());
     instructions().append(length->index());
-    instructions().append(newArrayAllocationProfile());
+    instructions().append(newArrayAllocationProfile(ArrayWithUndecided));
 
     return dst;
 }
@@ -3459,7 +3460,7 @@ ExpectedFunction BytecodeGenerator::emitExpectedFunctionSnippet(RegisterID* dst,
                 instructions().append(dst->index());
                 instructions().append(0);
                 instructions().append(0);
-                instructions().append(newArrayAllocationProfile());
+                instructions().append(newArrayAllocationProfile(ArrayWithUndecided));
             }
         }
         break;

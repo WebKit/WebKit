@@ -275,6 +275,7 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
     StructureID structureID = this->structureID();
     Structure* structure = vm.heap.structureIDTable().get(structureID);
     if (structure->isDictionary()) {
+        ASSERT(!isCopyOnWrite(indexingMode()));
         ASSERT(!structure->hasInferredTypes());
         
         unsigned currentAttributes;

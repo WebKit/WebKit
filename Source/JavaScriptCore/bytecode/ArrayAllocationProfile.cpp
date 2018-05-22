@@ -28,6 +28,8 @@
 
 #include "JSCInlines.h"
 
+#include <algorithm>
+
 namespace JSC {
 
 void ArrayAllocationProfile::updateProfile()
@@ -50,7 +52,14 @@ void ArrayAllocationProfile::updateProfile()
     if (!lastArray)
         return;
     if (LIKELY(Options::useArrayAllocationProfiling())) {
-        m_currentIndexingType = leastUpperBoundOfIndexingTypes(m_currentIndexingType, lastArray->indexingType());
+        // The basic model here is that we will upgrade ourselves to whatever the CoW version of lastArray is except ArrayStorage since we don't have CoW ArrayStorage.
+        IndexingType indexingType = leastUpperBoundOfIndexingTypes(m_currentIndexingType & IndexingTypeMask, lastArray->indexingType());
+        if (isCopyOnWrite(m_currentIndexingType)) {
+            if (indexingType > ArrayWithContiguous)
+                indexingType = ArrayWithContiguous;
+            indexingType |= CopyOnWrite;
+        }
+        m_currentIndexingType = indexingType;
         m_largestSeenVectorLength = std::min(std::max(m_largestSeenVectorLength, lastArray->getVectorLength()), BASE_CONTIGUOUS_VECTOR_LEN_MAX);
     }
     m_lastArray = nullptr;

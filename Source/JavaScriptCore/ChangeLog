@@ -1,3 +1,338 @@
+2018-05-22  Keith Miller  <keith_miller@apple.com>
+
+        We should have a CoW storage for NewArrayBuffer arrays.
+        https://bugs.webkit.org/show_bug.cgi?id=185003
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds copy on write storage for new array buffers. In
+        order to do this there needed to be significant changes to the
+        layout of IndexingType. The new indexing type has the following
+        shape:
+
+        struct IndexingTypeAndMisc {
+            struct IndexingModeIncludingHistory {
+                struct IndexingMode {
+                    struct IndexingType {
+                        uint8_t isArray:1;          // bit 0
+                        uint8_t shape:3;            // bit 1 - 3
+                    };
+                    uint8_t copyOnWrite:1;          // bit 4
+                };
+                uint8_t mayHaveIndexedAccessors:1;  // bit 5
+            };
+            uint8_t cellLockBits:2;                 // bit 6 - 7
+        };
+
+        For simplicity ArrayStorage shapes cannot be CoW. So the only
+        valid CoW indexing shapes are ArrayWithInt32, ArrayWithDouble, and
+        ArrayWithContiguous.
+
+        The backing store for a CoW array is a new class
+        JSImmutableButterfly, which looks exactly the same as a normal
+        butterfly except that it has a JSCell header. Like other
+        butterflies, JSImmutableButterfies are allocated out of the
+        Auxiliary Gigacage and are pointed to by JSCells in the same
+        way. However, when marking JSImmutableButterflies they are marked
+        as if they were a property.
+
+        With CoW arrays, the new_array_buffer bytecode will reallocate the
+        shared JSImmutableButterfly if it sees from the allocation profile
+        that the last array it allocated has transitioned to a different
+        indexing type. From then on, all arrays created by that
+        new_array_buffer bytecode will have the promoted indexing
+        type. This is more or less the same as what we used to do. The
+        only difference is that we don't promote all the way to array
+        storage even if we have seen it before.
+
+        Transitioning from a CoW indexing mode occurs whenever someone
+        tries to store to an element, grow the array, or add properties.
+        Storing or growing the array will call into code that does the
+        stupid thing of copying the butterfly then continue into the old
+        code. This doesn't end up costing us as future allocations will
+        use any upgraded indexing shape.  We get adding properties for
+        free by just changing the indexing mode on transition (our C++
+        code always updates the indexing mode).
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/ArrayAllocationProfile.cpp:
+        (JSC::ArrayAllocationProfile::updateProfile):
+        * bytecode/ArrayAllocationProfile.h:
+        (JSC::ArrayAllocationProfile::initializeIndexingMode):
+        * bytecode/ArrayProfile.cpp:
+        (JSC::dumpArrayModes):
+        (JSC::ArrayProfile::briefDescriptionWithoutUpdating):
+        * bytecode/ArrayProfile.h:
+        (JSC::asArrayModes):
+        (JSC::arrayModeFromStructure):
+        (JSC::arrayModesInclude):
+        (JSC::hasSeenCopyOnWriteArray):
+        * bytecode/BytecodeList.json:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/InlineAccess.cpp:
+        (JSC::InlineAccess::generateArrayLength):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::addArrayAllocationProfile):
+        (JSC::UnlinkedCodeBlock::decompressArrayAllocationProfile):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::newArrayAllocationProfile):
+        (JSC::BytecodeGenerator::emitNewArrayBuffer):
+        (JSC::BytecodeGenerator::emitNewArray):
+        (JSC::BytecodeGenerator::emitNewArrayWithSize):
+        (JSC::BytecodeGenerator::emitExpectedFunctionSnippet):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayNode::emitBytecode):
+        (JSC::ArrayPatternNode::bindValue const):
+        (JSC::ArrayPatternNode::emitDirectBinding):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGArgumentsUtilities.cpp:
+        (JSC::DFG::emitCodeToGetArgumentsArrayLength):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::fromObserved):
+        (JSC::DFG::ArrayMode::refine const):
+        (JSC::DFG::ArrayMode::alreadyChecked const):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::ArrayMode):
+        (JSC::DFG::ArrayMode::action const):
+        (JSC::DFG::ArrayMode::withSpeculation const):
+        (JSC::DFG::ArrayMode::withArrayClass const):
+        (JSC::DFG::ArrayMode::withType const):
+        (JSC::DFG::ArrayMode::withConversion const):
+        (JSC::DFG::ArrayMode::withTypeAndConversion const):
+        (JSC::DFG::ArrayMode::arrayModesThatPassFiltering const):
+        (JSC::DFG::ArrayMode::arrayModesWithIndexingShape const):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        (JSC::DFG::ByteCodeParser::handleIntrinsicGetter):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::attemptToForceStringArrayModeByToStringConversion):
+        (JSC::DFG::FixupPhase::attemptToMakeGetArrayLength):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::indexingType):
+        (JSC::DFG::Node::indexingMode):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        (JSC::DFG::SpeculativeJIT::jumpSlowForUnwantedArrayMode):
+        (JSC::DFG::SpeculativeJIT::arrayify):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnScopedArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        (JSC::DFG::SpeculativeJIT::compileCreateRest):
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+        (JSC::DFG::SpeculativeJIT::compileNewArrayBuffer):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutStructure):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArraySlice):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayBuffer):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileForwardVarargsWithSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::storeStructure):
+        (JSC::FTL::DFG::LowerDFGToB3::isArrayTypeForArrayify):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * generate-bytecode-files:
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeOfVarargs):
+        (JSC::loadVarargs):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitStoreStructureWithTypeInfo):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitStoreStructureWithTypeInfo):
+        * jit/JITOperations.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        * jit/Repatch.cpp:
+        (JSC::tryCachePutByID):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/Butterfly.h:
+        (JSC::ContiguousData::Data::Data):
+        (JSC::ContiguousData::Data::operator bool const):
+        (JSC::ContiguousData::Data::operator=):
+        (JSC::ContiguousData::Data::operator const T& const):
+        (JSC::ContiguousData::Data::set):
+        (JSC::ContiguousData::Data::setWithoutWriteBarrier):
+        (JSC::ContiguousData::Data::clear):
+        (JSC::ContiguousData::Data::get const):
+        (JSC::ContiguousData::atUnsafe):
+        (JSC::ContiguousData::at const): Deleted.
+        (JSC::ContiguousData::at): Deleted.
+        * runtime/ButterflyInlines.h:
+        (JSC::ContiguousData<T>::at const):
+        (JSC::ContiguousData<T>::at):
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createEmpty):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::allocateNewArrayBuffer):
+        * runtime/IndexingType.cpp:
+        (JSC::leastUpperBoundOfIndexingTypeAndType):
+        (JSC::leastUpperBoundOfIndexingTypeAndValue):
+        (JSC::dumpIndexingType):
+        * runtime/IndexingType.h:
+        (JSC::hasIndexedProperties):
+        (JSC::hasUndecided):
+        (JSC::hasInt32):
+        (JSC::hasDouble):
+        (JSC::hasContiguous):
+        (JSC::hasArrayStorage):
+        (JSC::hasAnyArrayStorage):
+        (JSC::hasSlowPutArrayStorage):
+        (JSC::shouldUseSlowPut):
+        (JSC::isCopyOnWrite):
+        (JSC::arrayIndexFromIndexingType):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+        (JSC::JSArray::put):
+        (JSC::JSArray::appendMemcpy):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::fastSlice):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::unshiftCountWithAnyIndexingType):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToArguments):
+        * runtime/JSArrayInlines.h:
+        (JSC::JSArray::pushInline):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::JSCell):
+        (JSC::JSCell::finishCreation):
+        (JSC::JSCell::indexingType const):
+        (JSC::JSCell::indexingMode const):
+        (JSC::JSCell::setStructure):
+        * runtime/JSFixedArray.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::haveABadTime):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::originalArrayStructureForIndexingType const):
+        (JSC::JSGlobalObject::arrayStructureForIndexingTypeDuringAllocation const):
+        (JSC::JSGlobalObject::isOriginalArrayStructure):
+        * runtime/JSImmutableButterfly.cpp: Added.
+        (JSC::JSImmutableButterfly::visitChildren):
+        (JSC::JSImmutableButterfly::copyToArguments):
+        * runtime/JSImmutableButterfly.h: Added.
+        (JSC::JSImmutableButterfly::createStructure):
+        (JSC::JSImmutableButterfly::tryCreate):
+        (JSC::JSImmutableButterfly::create):
+        (JSC::JSImmutableButterfly::publicLength const):
+        (JSC::JSImmutableButterfly::vectorLength const):
+        (JSC::JSImmutableButterfly::length const):
+        (JSC::JSImmutableButterfly::toButterfly const):
+        (JSC::JSImmutableButterfly::fromButterfly):
+        (JSC::JSImmutableButterfly::get const):
+        (JSC::JSImmutableButterfly::subspaceFor):
+        (JSC::JSImmutableButterfly::setIndex):
+        (JSC::JSImmutableButterfly::allocationSize):
+        (JSC::JSImmutableButterfly::JSImmutableButterfly):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::markAuxiliaryAndVisitOutOfLineProperties):
+        (JSC::JSObject::visitButterflyImpl):
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::createInitialInt32):
+        (JSC::JSObject::createInitialDouble):
+        (JSC::JSObject::createInitialContiguous):
+        (JSC::JSObject::convertUndecidedToInt32):
+        (JSC::JSObject::convertUndecidedToDouble):
+        (JSC::JSObject::convertUndecidedToContiguous):
+        (JSC::JSObject::convertInt32ToDouble):
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        (JSC::JSObject::convertDoubleToContiguous):
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+        (JSC::JSObject::createInitialForValueAndSet):
+        (JSC::JSObject::convertInt32ForValue):
+        (JSC::JSObject::convertFromCopyOnWrite):
+        (JSC::JSObject::ensureWritableInt32Slow):
+        (JSC::JSObject::ensureWritableDoubleSlow):
+        (JSC::JSObject::ensureWritableContiguousSlow):
+        (JSC::JSObject::ensureArrayStorageSlow):
+        (JSC::JSObject::ensureArrayStorageExistsAndEnterDictionaryIndexingMode):
+        (JSC::JSObject::switchToSlowPutArrayStorage):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::canDoFastPutDirectIndex):
+        (JSC::JSObject::defineOwnIndexedProperty):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithoutAttributes):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithArrayStorage):
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+        (JSC::JSObject::countElements):
+        (JSC::JSObject::ensureLengthSlow):
+        (JSC::JSObject::getEnumerableLength):
+        (JSC::JSObject::ensureInt32Slow): Deleted.
+        (JSC::JSObject::ensureDoubleSlow): Deleted.
+        (JSC::JSObject::ensureContiguousSlow): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectIndex):
+        (JSC::JSObject::canGetIndexQuickly):
+        (JSC::JSObject::getIndexQuickly):
+        (JSC::JSObject::tryGetIndexQuickly const):
+        (JSC::JSObject::canSetIndexQuickly):
+        (JSC::JSObject::setIndexQuickly):
+        (JSC::JSObject::initializeIndex):
+        (JSC::JSObject::initializeIndexWithoutBarrier):
+        (JSC::JSObject::ensureWritableInt32):
+        (JSC::JSObject::ensureWritableDouble):
+        (JSC::JSObject::ensureWritableContiguous):
+        (JSC::JSObject::ensureLength):
+        (JSC::JSObject::ensureInt32): Deleted.
+        (JSC::JSObject::ensureDouble): Deleted.
+        (JSC::JSObject::ensureContiguous): Deleted.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putDirectInternal):
+        * runtime/JSType.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::tryCreateUninitializedRegExpMatchesArray):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::addNewPropertyTransition):
+        (JSC::Structure::nonPropertyTransition):
+        * runtime/Structure.h:
+        * runtime/StructureIDBlob.h:
+        (JSC::StructureIDBlob::StructureIDBlob):
+        (JSC::StructureIDBlob::indexingModeIncludingHistory const):
+        (JSC::StructureIDBlob::setIndexingModeIncludingHistory):
+        (JSC::StructureIDBlob::indexingModeIncludingHistoryOffset):
+        (JSC::StructureIDBlob::indexingTypeIncludingHistory const): Deleted.
+        (JSC::StructureIDBlob::setIndexingTypeIncludingHistory): Deleted.
+        (JSC::StructureIDBlob::indexingTypeIncludingHistoryOffset): Deleted.
+        * runtime/StructureTransitionTable.h:
+        (JSC::newIndexingType):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2018-05-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r232052.

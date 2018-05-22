@@ -689,6 +689,7 @@ static void directPutByVal(CallFrame* callFrame, JSObject* baseObject, JSValue s
     VM& vm = callFrame->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     bool isStrictMode = callFrame->codeBlock()->isStrictMode();
+
     if (LIKELY(subscript.isUInt32())) {
         // Despite its name, JSValue::isUInt32 will return true only for positive boxed int32_t; all those values are valid array indices.
         byValInfo->tookSlowPath = true;
@@ -756,6 +757,9 @@ static OptimizationResult tryPutByValOptimize(ExecState* exec, JSValue baseValue
     OptimizationResult optimizationResult = OptimizationResult::NotOptimized;
 
     VM& vm = exec->vm();
+
+    if (baseValue.isObject() && isCopyOnWrite(baseValue.getObject()->indexingMode()))
+        return OptimizationResult::GiveUp;
 
     if (baseValue.isObject() && subscript.isInt32()) {
         JSObject* object = asObject(baseValue);

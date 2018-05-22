@@ -1,3 +1,14 @@
+2018-05-22  Keith Miller  <keith_miller@apple.com>
+
+        We should have a CoW storage for NewArrayBuffer arrays.
+        https://bugs.webkit.org/show_bug.cgi?id=185003
+
+        Reviewed by Filip Pizlo.
+
+        Test should have a real error that gives you the stack.
+
+        * js/slow-stress/script-tests/variadic-closure-call.js:
+
 2018-05-22  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-text] W3C test suite gardening

@@ -81,7 +81,7 @@ public:
 
         if (indexingType == ContiguousShape || indexingType == Int32Shape) {
             for (unsigned i = 0; i < length; i++) {
-                JSValue value = array->butterfly()->contiguous().at(i).get();
+                JSValue value = array->butterfly()->contiguous().at(array, i).get();
                 value = !!value ? value : jsUndefined();
                 result->buffer()[i].set(vm, result, value);
             }
@@ -90,7 +90,7 @@ public:
 
         if (indexingType == DoubleShape) {
             for (unsigned i = 0; i < length; i++) {
-                double d = array->butterfly()->contiguousDouble().at(i);
+                double d = array->butterfly()->contiguousDouble().at(array, i);
                 JSValue value = std::isnan(d) ? jsUndefined() : JSValue(JSValue::EncodeAsDouble, d);
                 result->buffer()[i].set(vm, result, value);
             }

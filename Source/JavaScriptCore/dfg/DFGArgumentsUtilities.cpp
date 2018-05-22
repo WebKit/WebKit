@@ -103,7 +103,7 @@ Node* emitCodeToGetArgumentsArrayLength(
 
     if (arguments->op() == NewArrayBuffer || arguments->op() == PhantomNewArrayBuffer) {
         return insertionSet.insertConstant(
-            nodeIndex, origin, jsNumber(arguments->castOperand<JSFixedArray*>()->length()));
+            nodeIndex, origin, jsNumber(arguments->castOperand<JSImmutableButterfly*>()->length()));
     }
     
     InlineCallFrame* inlineCallFrame = arguments->origin.semantic.inlineCallFrame;

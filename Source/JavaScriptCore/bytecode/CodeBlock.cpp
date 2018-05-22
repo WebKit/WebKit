@@ -35,6 +35,7 @@
 #include "BytecodeDumper.h"
 #include "BytecodeGenerator.h"
 #include "BytecodeLivenessAnalysis.h"
+#include "BytecodeStructs.h"
 #include "BytecodeUseDef.h"
 #include "CallLinkStatus.h"
 #include "CodeBlockSet.h"
@@ -599,12 +600,19 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         }
 
         case op_new_array:
-        case op_new_array_buffer:
-        case op_new_array_with_size: {
-            int arrayAllocationProfileIndex = pc[opLength - 1].u.operand;
-            instructions[i + opLength - 1] = &m_arrayAllocationProfiles[arrayAllocationProfileIndex];
+        case op_new_array_with_size:
+        case op_new_array_buffer: {
+            unsigned arrayAllocationProfileIndex;
+            IndexingType recommendedIndexingType;
+            std::tie(arrayAllocationProfileIndex, recommendedIndexingType) = UnlinkedCodeBlock::decompressArrayAllocationProfile(pc[opLength - 1].u.operand);
+
+            ArrayAllocationProfile* profile = &m_arrayAllocationProfiles[arrayAllocationProfileIndex];
+            if (pc[0].u.opcode == op_new_array_buffer)
+                profile->initializeIndexingMode(recommendedIndexingType);
+            instructions[i + opLength - 1] = profile;
             break;
         }
+
         case op_new_object: {
             int objectAllocationProfileIndex = pc[opLength - 1].u.operand;
             ObjectAllocationProfile* objectAllocationProfile = &m_objectAllocationProfiles[objectAllocationProfileIndex];

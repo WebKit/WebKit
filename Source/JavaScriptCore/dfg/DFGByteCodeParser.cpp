@@ -51,6 +51,7 @@
 #include "InstanceOfStatus.h"
 #include "JSCInlines.h"
 #include "JSFixedArray.h"
+#include "JSImmutableButterfly.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
 #include "NumberConstructor.h"
@@ -2427,6 +2428,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
             return false;
         
         NodeType op = LastNodeType;
+        Array::Action action = Array::Write;
         unsigned numArgs = 0; // Number of actual args; we add one for the backing store pointer.
         switch (intrinsic) {
         case AtomicsAddIntrinsic:
@@ -2454,6 +2456,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         case AtomicsLoadIntrinsic:
             op = AtomicsLoad;
             numArgs = 2;
+            action = Array::Read;
             break;
         case AtomicsOrIntrinsic:
             op = AtomicsOr;
@@ -2489,12 +2492,12 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         if (numArgs + 1 <= 3) {
             while (args.size() < 3)
                 args.append(nullptr);
-            result = addToGraph(op, OpInfo(ArrayMode(Array::SelectUsingPredictions).asWord()), OpInfo(prediction), args[0], args[1], args[2]);
+            result = addToGraph(op, OpInfo(ArrayMode(Array::SelectUsingPredictions, action).asWord()), OpInfo(prediction), args[0], args[1], args[2]);
         } else {
             for (Node* node : args)
                 addVarArgChild(node);
             addVarArgChild(nullptr);
-            result = addToGraph(Node::VarArg, op, OpInfo(ArrayMode(Array::SelectUsingPredictions).asWord()), OpInfo(prediction));
+            result = addToGraph(Node::VarArg, op, OpInfo(ArrayMode(Array::SelectUsingPredictions, action).asWord()), OpInfo(prediction));
         }
         
         set(VirtualRegister(resultOperand), result);
@@ -2529,7 +2532,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         insertChecks();
         VirtualRegister thisOperand = virtualRegisterForArgument(0, registerOffset);
         VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
-        Node* charCode = addToGraph(StringCharCodeAt, OpInfo(ArrayMode(Array::String).asWord()), get(thisOperand), get(indexOperand));
+        Node* charCode = addToGraph(StringCharCodeAt, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), get(thisOperand), get(indexOperand));
 
         set(VirtualRegister(resultOperand), charCode);
         return true;
@@ -2542,7 +2545,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         insertChecks();
         VirtualRegister thisOperand = virtualRegisterForArgument(0, registerOffset);
         VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
-        Node* charCode = addToGraph(StringCharAt, OpInfo(ArrayMode(Array::String).asWord()), get(thisOperand), get(indexOperand));
+        Node* charCode = addToGraph(StringCharAt, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), get(thisOperand), get(indexOperand));
 
         set(VirtualRegister(resultOperand), charCode);
         return true;
@@ -3206,7 +3209,7 @@ bool ByteCodeParser::handleIntrinsicGetter(int resultOperand, SpeculatedType pre
             ASSERT(arrayType != Array::Generic);
         });
 
-        Node* lengthNode = addToGraph(GetArrayLength, OpInfo(ArrayMode(arrayType).asWord()), thisNode);
+        Node* lengthNode = addToGraph(GetArrayLength, OpInfo(ArrayMode(arrayType, Array::Read).asWord()), thisNode);
 
         if (!logSize) {
             set(VirtualRegister(resultOperand), lengthNode);
@@ -3233,7 +3236,7 @@ bool ByteCodeParser::handleIntrinsicGetter(int resultOperand, SpeculatedType pre
             ASSERT(arrayType != Array::Generic);
         });
 
-        set(VirtualRegister(resultOperand), addToGraph(GetArrayLength, OpInfo(ArrayMode(arrayType).asWord()), thisNode));
+        set(VirtualRegister(resultOperand), addToGraph(GetArrayLength, OpInfo(ArrayMode(arrayType, Array::Read).asWord()), thisNode));
 
         return true;
 
@@ -3251,7 +3254,7 @@ bool ByteCodeParser::handleIntrinsicGetter(int resultOperand, SpeculatedType pre
             ASSERT(arrayType != Array::Generic);
         });
 
-        set(VirtualRegister(resultOperand), addToGraph(GetTypedArrayByteOffset, OpInfo(ArrayMode(arrayType).asWord()), thisNode));
+        set(VirtualRegister(resultOperand), addToGraph(GetTypedArrayByteOffset, OpInfo(ArrayMode(arrayType, Array::Read).asWord()), thisNode));
 
         return true;
     }
@@ -4569,18 +4572,19 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_new_array_buffer: {
-            FrozenValue* frozen = get(VirtualRegister(currentInstruction[2].u.operand))->constant();
-            JSFixedArray* fixedArray = frozen->cast<JSFixedArray*>();
-            ArrayAllocationProfile* profile = currentInstruction[3].u.arrayAllocationProfile;
+            auto& bytecode = *reinterpret_cast<OpNewArrayBuffer*>(currentInstruction);
+            // Unfortunately, we can't allocate a new JSImmutableButterfly if the profile tells us new information because we
+            // cannot allocate from compilation threads.
+            WTF::loadLoadFence();
+            FrozenValue* frozen = get(VirtualRegister(bytecode.immutableButterfly()))->constant();
+            WTF::loadLoadFence();
+            JSImmutableButterfly* immutableButterfly = frozen->cast<JSImmutableButterfly*>();
             NewArrayBufferData data { };
-            data.indexingType = profile->selectIndexingType();
-            data.vectorLengthHint = std::max<unsigned>(profile->vectorLengthHint(), fixedArray->length());
+            data.indexingMode = immutableButterfly->indexingMode();
+            // TODO: Do I need this?
+            data.vectorLengthHint = immutableButterfly->toButterfly()->vectorLength();
 
-            // If this statement has never executed, we'll have the wrong indexing type in the profile.
-            for (unsigned index = 0; index < fixedArray->length(); ++index)
-                data.indexingType = leastUpperBoundOfIndexingTypeAndValue(data.indexingType, fixedArray->get(index));
-            
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewArrayBuffer, OpInfo(frozen), OpInfo(data.asQuadWord)));
+            set(VirtualRegister(bytecode.dst()), addToGraph(NewArrayBuffer, OpInfo(frozen), OpInfo(data.asQuadWord)));
             NEXT_OPCODE(op_new_array_buffer);
         }
             

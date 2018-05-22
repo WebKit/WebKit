@@ -302,9 +302,16 @@ public:
 
     UnlinkedArrayProfile addArrayProfile() { return m_arrayProfileCount++; }
     unsigned numberOfArrayProfiles() { return m_arrayProfileCount; }
-    UnlinkedArrayAllocationProfile addArrayAllocationProfile() { return m_arrayAllocationProfileCount++; }
+    UnlinkedArrayAllocationProfile addArrayAllocationProfile(IndexingType recommendedIndexingType) { return (m_arrayAllocationProfileCount++) | recommendedIndexingType << 24; }
     unsigned numberOfArrayAllocationProfiles() { return m_arrayAllocationProfileCount; }
     UnlinkedObjectAllocationProfile addObjectAllocationProfile() { return m_objectAllocationProfileCount++; }
+    static std::tuple<unsigned, IndexingType> decompressArrayAllocationProfile(UnlinkedArrayAllocationProfile compressedProfile)
+    {
+        unsigned profile = (compressedProfile << 8) >> 8;
+        IndexingType recommendedIndexingType = compressedProfile >> 24;
+        return std::make_tuple<unsigned, IndexingType>(WTFMove(profile), WTFMove(recommendedIndexingType));
+
+    }
     unsigned numberOfObjectAllocationProfiles() { return m_objectAllocationProfileCount; }
     UnlinkedValueProfile addValueProfile() { return m_valueProfileCount++; }
     unsigned numberOfValueProfiles() { return m_valueProfileCount; }

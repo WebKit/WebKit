@@ -47,6 +47,7 @@ enum JSType : uint8_t {
     CodeBlockType,
 
     JSFixedArrayType,
+    JSImmutableButterflyType,
     JSSourceCodeType,
     JSScriptFetcherType,
     JSScriptFetchParametersType,

@@ -33,6 +33,20 @@
 
 namespace JSC {
 
+template<typename T>
+const typename ContiguousData<T>::Data ContiguousData<T>::at(const JSCell* owner, size_t index) const
+{
+    ASSERT(index < m_length);
+    return Data(m_data[index], owner->indexingMode());
+}
+
+template<typename T>
+typename ContiguousData<T>::Data ContiguousData<T>::at(const JSCell* owner, size_t index)
+{
+    ASSERT(index < m_length);
+    return Data(m_data[index], owner->indexingMode());
+}
+
 ALWAYS_INLINE unsigned Butterfly::availableContiguousVectorLength(size_t propertyCapacity, unsigned vectorLength)
 {
     size_t cellSize = totalSize(0, propertyCapacity, true, sizeof(EncodedJSValue) * vectorLength);

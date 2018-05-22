@@ -17,7 +17,7 @@ for (var i = 0; i < 100000; ++i) {
         args.push(j);
     var result = foo.apply(null, args);
     if (("" + result) != ("" + [294, 336, 378, 420, 462, 504, 546, 588][n - 8]))
-        throw "Error: bad result for i = " + i + ": " + result;
+        throw new Error("bad result for i = " + i + ": " + result);
 }
 
 // Start failing some arity checks.
@@ -28,6 +28,6 @@ for (var i = 0; i < 100000; ++i) {
         args.push(j);
     var result = foo.apply(null, args);
     if (("" + result) != ("" + [0/0, 0/0, 0/0, 3, 126, 168, 210, 252, 294, 336, 378, 420, 462, 504, 546, 588][n]))
-        throw "Error: bad result for i = " + i + ": " + result;
+        throw new Error("bad result for i = " + i + ": " + result);
 }
 

@@ -48,7 +48,7 @@ inline JSCell::JSCell(CreatingEarlyCellTag)
 
 inline JSCell::JSCell(VM&, Structure* structure)
     : m_structureID(structure->id())
-    , m_indexingTypeAndMisc(structure->indexingTypeIncludingHistory())
+    , m_indexingTypeAndMisc(structure->indexingModeIncludingHistory())
     , m_type(structure->typeInfo().type())
     , m_flags(structure->typeInfo().inlineTypeFlags())
     , m_cellState(CellState::DefinitelyWhite)
@@ -78,7 +78,7 @@ inline void JSCell::finishCreation(VM& vm, Structure* structure, CreatingEarlyCe
     if (structure) {
 #endif
         m_structureID = structure->id();
-        m_indexingTypeAndMisc = structure->indexingTypeIncludingHistory();
+        m_indexingTypeAndMisc = structure->indexingModeIncludingHistory();
         m_type = structure->typeInfo().type();
         m_flags = structure->typeInfo().inlineTypeFlags();
 #if ENABLE(GC_VALIDATION)
@@ -101,6 +101,11 @@ inline IndexingType JSCell::indexingTypeAndMisc() const
 }
 
 inline IndexingType JSCell::indexingType() const
+{
+    return indexingTypeAndMisc() & AllWritableArrayTypes;
+}
+
+inline IndexingType JSCell::indexingMode() const
 {
     return indexingTypeAndMisc() & AllArrayTypes;
 }
@@ -251,12 +256,12 @@ ALWAYS_INLINE void JSCell::setStructure(VM& vm, Structure* structure)
     m_structureID = structure->id();
     m_flags = TypeInfo::mergeInlineTypeFlags(structure->typeInfo().inlineTypeFlags(), m_flags);
     m_type = structure->typeInfo().type();
-    IndexingType newIndexingType = structure->indexingTypeIncludingHistory();
+    IndexingType newIndexingType = structure->indexingModeIncludingHistory();
     if (m_indexingTypeAndMisc != newIndexingType) {
         ASSERT(!(newIndexingType & ~AllArrayTypesAndHistory));
         for (;;) {
             IndexingType oldValue = m_indexingTypeAndMisc;
-            IndexingType newValue = (oldValue & ~AllArrayTypesAndHistory) | structure->indexingTypeIncludingHistory();
+            IndexingType newValue = (oldValue & ~AllArrayTypesAndHistory) | structure->indexingModeIncludingHistory();
             if (WTF::atomicCompareExchangeWeakRelaxed(&m_indexingTypeAndMisc, oldValue, newValue))
                 break;
         }

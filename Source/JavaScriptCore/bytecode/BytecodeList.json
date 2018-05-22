@@ -20,9 +20,12 @@
             { "name" : "op_new_object", "length" : 4 },
             { "name" : "op_new_array", "length" : 5 },
             { "name" : "op_new_array_with_size", "length" : 4 },
+            { "name" : "op_new_array_buffer", "offsets" :
+                       [{"dst" : "int"},
+                        {"immutableButterfly" : "int"},
+                        {"profile" : "ArrayAllocationProfile*"}]},
             { "name" : "op_new_array_with_spread", "length" : 5 },
             { "name" : "op_spread", "length" : 3 },
-            { "name" : "op_new_array_buffer", "length" : 4 },
             { "name" : "op_new_regexp", "length" : 3 },
             { "name" : "op_mov", "length" : 3 },
             { "name" : "op_not", "length" : 3 },

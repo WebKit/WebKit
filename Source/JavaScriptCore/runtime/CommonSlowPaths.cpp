@@ -51,6 +51,7 @@
 #include "JSCJSValue.h"
 #include "JSFixedArray.h"
 #include "JSGlobalObjectFunctions.h"
+#include "JSImmutableButterfly.h"
 #include "JSLexicalEnvironment.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSString.h"
@@ -96,6 +97,7 @@ namespace JSC {
 #define OP_C(index) (exec->r(pc[index].u.operand))
 
 #define GET(operand) (exec->uncheckedR(operand))
+#define GET_C(operand) (exec->r(operand))
 
 #define RETURN_TWO(first, second) do {       \
         return encodeResult(first, second);        \
@@ -1093,8 +1095,34 @@ SLOW_PATH_DECL(slow_path_new_array_with_spread)
 SLOW_PATH_DECL(slow_path_new_array_buffer)
 {
     BEGIN();
-    auto* fixedArray = jsCast<JSFixedArray*>(OP_C(2).jsValue());
-    RETURN(constructArray(exec, pc[3].u.arrayAllocationProfile, fixedArray->values(), fixedArray->length()));
+    auto* newArrayBuffer = bitwise_cast<OpNewArrayBuffer*>(pc);
+    ASSERT(exec->codeBlock()->isConstantRegisterIndex(newArrayBuffer->immutableButterfly()));
+    JSImmutableButterfly* immutableButterfly = bitwise_cast<JSImmutableButterfly*>(GET_C(newArrayBuffer->immutableButterfly()).jsValue().asCell());
+    auto* profile = newArrayBuffer->profile();
+
+    IndexingType indexingMode = profile->selectIndexingType();
+    Structure* structure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(indexingMode);
+    ASSERT(isCopyOnWrite(indexingMode));
+    ASSERT(!structure->outOfLineCapacity());
+
+    if (UNLIKELY(immutableButterfly->indexingMode() != indexingMode)) {
+        auto* newButterfly = JSImmutableButterfly::create(vm, indexingMode, immutableButterfly->length());
+        for (unsigned i = 0; i < immutableButterfly->length(); ++i)
+            newButterfly->setIndex(vm, i, immutableButterfly->get(i));
+        immutableButterfly = newButterfly;
+        CodeBlock* codeBlock = exec->codeBlock();
+
+        // FIXME: This is kinda gross and only works because we can't inline new_array_bufffer in the baseline.
+        // We also cannot allocate a new butterfly from compilation threads since it's invalid to allocate cells from
+        // a compilation thread.
+        WTF::storeStoreFence();
+        codeBlock->constantRegister(newArrayBuffer->immutableButterfly()).set(vm, codeBlock, immutableButterfly);
+        WTF::storeStoreFence();
+    }
+
+    JSArray* result = CommonSlowPaths::allocateNewArrayBuffer(vm, structure, immutableButterfly);
+    ASSERT(isCopyOnWrite(result->indexingMode()) || exec->lexicalGlobalObject()->isHavingABadTime());
+    RETURN(result);
 }
 
 SLOW_PATH_DECL(slow_path_spread)

@@ -44,12 +44,12 @@ struct Node;
 // that would otherwise occur, since we say things like "Int8Array" and "JSArray"
 // in lots of other places, to mean subtly different things.
 namespace Array {
-enum Action {
+enum Action : uint8_t {
     Read,
     Write
 };
 
-enum Type {
+enum Type : uint8_t {
     SelectUsingPredictions, // Implies that we need predictions to decide. We will never get to the backend in this mode.
     SelectUsingArguments, // Implies that we use the Node's arguments to decide. We will never get to the backend in this mode.
     Unprofiled, // Implies that array profiling didn't see anything. But that could be because the operands didn't comply with basic type assumptions (base is cell, property is int). This either becomes Generic or ForceExit depending on value profiling.
@@ -79,7 +79,7 @@ enum Type {
     AnyTypedArray
 };
 
-enum Class {
+enum Class : uint8_t {
     NonArray, // Definitely some object that is not a JSArray.
     OriginalNonArray, // Definitely some object that is not a JSArray, but that object has the original structure.
     Array, // Definitely a JSArray, and may or may not have custom properties or have undergone some other bizarre transitions.
@@ -87,19 +87,20 @@ enum Class {
     PossiblyArray // Some object that may or may not be a JSArray.
 };
 
-enum Speculation {
+enum Speculation : uint8_t {
     SaneChain, // In bounds and the array prototype chain is still intact, i.e. loading a hole doesn't require special treatment.
     
     InBounds, // In bounds and not loading a hole.
     ToHole, // Potentially storing to a hole.
     OutOfBounds // Out-of-bounds access and anything can happen.
 };
-enum Conversion {
+enum Conversion : uint8_t {
     AsIs,
     Convert
 };
 } // namespace Array
 
+const char* arrayActionToString(Array::Action);
 const char* arrayTypeToString(Array::Type);
 const char* arrayClassToString(Array::Class);
 const char* arraySpeculationToString(Array::Speculation);
@@ -121,44 +122,50 @@ public:
         u.asBytes.arrayClass = Array::NonArray;
         u.asBytes.speculation = Array::InBounds;
         u.asBytes.conversion = Array::AsIs;
+        u.asBytes.action = Array::Write;
     }
     
-    explicit ArrayMode(Array::Type type)
+    explicit ArrayMode(Array::Type type, Array::Action action)
     {
         u.asBytes.type = type;
         u.asBytes.arrayClass = Array::NonArray;
         u.asBytes.speculation = Array::InBounds;
         u.asBytes.conversion = Array::AsIs;
+        u.asBytes.action = action;
     }
     
-    ArrayMode(Array::Type type, Array::Class arrayClass)
+    ArrayMode(Array::Type type, Array::Class arrayClass, Array::Action action)
     {
         u.asBytes.type = type;
         u.asBytes.arrayClass = arrayClass;
         u.asBytes.speculation = Array::InBounds;
         u.asBytes.conversion = Array::AsIs;
+        u.asBytes.action = action;
     }
     
-    ArrayMode(Array::Type type, Array::Class arrayClass, Array::Speculation speculation, Array::Conversion conversion)
+    ArrayMode(Array::Type type, Array::Class arrayClass, Array::Speculation speculation, Array::Conversion conversion, Array::Action action)
     {
         u.asBytes.type = type;
         u.asBytes.arrayClass = arrayClass;
         u.asBytes.speculation = speculation;
         u.asBytes.conversion = conversion;
+        u.asBytes.action = action;
     }
     
-    ArrayMode(Array::Type type, Array::Class arrayClass, Array::Conversion conversion)
+    ArrayMode(Array::Type type, Array::Class arrayClass, Array::Conversion conversion, Array::Action action)
     {
         u.asBytes.type = type;
         u.asBytes.arrayClass = arrayClass;
         u.asBytes.speculation = Array::InBounds;
         u.asBytes.conversion = conversion;
+        u.asBytes.action = action;
     }
     
     Array::Type type() const { return static_cast<Array::Type>(u.asBytes.type); }
     Array::Class arrayClass() const { return static_cast<Array::Class>(u.asBytes.arrayClass); }
     Array::Speculation speculation() const { return static_cast<Array::Speculation>(u.asBytes.speculation); }
     Array::Conversion conversion() const { return static_cast<Array::Conversion>(u.asBytes.conversion); }
+    Array::Action action() const { return static_cast<Array::Action>(u.asBytes.action); }
     
     unsigned asWord() const { return u.asWord; }
     
@@ -171,12 +178,12 @@ public:
     
     ArrayMode withSpeculation(Array::Speculation speculation) const
     {
-        return ArrayMode(type(), arrayClass(), speculation, conversion());
+        return ArrayMode(type(), arrayClass(), speculation, conversion(), action());
     }
     
     ArrayMode withArrayClass(Array::Class arrayClass) const
     {
-        return ArrayMode(type(), arrayClass, speculation(), conversion());
+        return ArrayMode(type(), arrayClass, speculation(), conversion(), action());
     }
     
     ArrayMode withSpeculationFromProfile(const ConcurrentJSLocker& locker, ArrayProfile* profile, bool makeSafe) const
@@ -210,17 +217,17 @@ public:
     
     ArrayMode withType(Array::Type type) const
     {
-        return ArrayMode(type, arrayClass(), speculation(), conversion());
+        return ArrayMode(type, arrayClass(), speculation(), conversion(), action());
     }
     
     ArrayMode withConversion(Array::Conversion conversion) const
     {
-        return ArrayMode(type(), arrayClass(), speculation(), conversion);
+        return ArrayMode(type(), arrayClass(), speculation(), conversion, action());
     }
     
     ArrayMode withTypeAndConversion(Array::Type type, Array::Conversion conversion) const
     {
-        return ArrayMode(type, arrayClass(), speculation(), conversion);
+        return ArrayMode(type, arrayClass(), speculation(), conversion, action());
     }
     
     ArrayMode refine(Graph&, Node*, SpeculatedType base, SpeculatedType index, SpeculatedType value = SpecNone) const;
@@ -290,7 +297,7 @@ public:
     {
         return type() == Array::SlowPutArrayStorage;
     }
-    
+
     bool canCSEStorage() const
     {
         switch (type()) {
@@ -410,15 +417,19 @@ public:
     
     ArrayModes arrayModesThatPassFiltering() const
     {
+        ArrayModes result;
         switch (type()) {
         case Array::Generic:
             return ALL_ARRAY_MODES;
         case Array::Int32:
-            return arrayModesWithIndexingShape(Int32Shape);
+            result = arrayModesWithIndexingShape(Int32Shape);
+            break;
         case Array::Double:
-            return arrayModesWithIndexingShape(DoubleShape);
+            result = arrayModesWithIndexingShape(DoubleShape);
+            break;
         case Array::Contiguous:
-            return arrayModesWithIndexingShape(ContiguousShape);
+            result = arrayModesWithIndexingShape(ContiguousShape);
+            break;
         case Array::ArrayStorage:
             return arrayModesWithIndexingShape(ArrayStorageShape);
         case Array::SlowPutArrayStorage:
@@ -426,6 +437,10 @@ public:
         default:
             return asArrayModes(NonArray);
         }
+
+        if (action() == Array::Write)
+            result &= ~ALL_COPY_ON_WRITE_ARRAY_MODES;
+        return result;
     }
     
     bool getIndexedPropertyStorageMayTriggerGC() const
@@ -474,8 +489,12 @@ private:
             return asArrayModes(shape);
         case Array::Array:
         case Array::OriginalArray:
+            if (hasInt32(shape) || hasDouble(shape) || hasContiguous(shape))
+                return asArrayModes(shape | IsArray) | asArrayModes(shape | IsArray | CopyOnWrite);
             return asArrayModes(shape | IsArray);
         case Array::PossiblyArray:
+            if (hasInt32(shape) || hasDouble(shape) || hasContiguous(shape))
+                return asArrayModes(shape) | asArrayModes(shape | IsArray) | asArrayModes(shape | IsArray | CopyOnWrite);
             return asArrayModes(shape) | asArrayModes(shape | IsArray);
         default:
             // This is only necessary for C++ compilers that don't understand enums.
@@ -497,10 +516,12 @@ private:
             uint8_t type;
             uint8_t arrayClass;
             uint8_t speculation;
-            uint8_t conversion;
+            uint8_t conversion : 4;
+            uint8_t action : 4;
         } asBytes;
         unsigned asWord;
     } u;
+    static_assert(sizeof(decltype(u.asBytes)) == sizeof(decltype(u.asWord)), "the word form of ArrayMode should have the same size as the individual slices");
 };
 
 static inline bool canCSEStorage(const ArrayMode& arrayMode)

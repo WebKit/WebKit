@@ -302,11 +302,14 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
         zeroExtend32ToPtr(regT1, regT1);
     }
     emitArrayProfilingSiteWithCell(regT0, regT2, profile);
-    and32(TrustedImm32(IndexingShapeMask), regT2);
-    
+
     PatchableJump badType;
     JumpList slowCases;
-    
+
+    // TODO: Maybe we should do this inline?
+    addSlowCase(branchTest32(NonZero, regT2, TrustedImm32(CopyOnWrite)));
+    and32(TrustedImm32(IndexingShapeMask), regT2);
+
     JITArrayMode mode = chooseArrayMode(profile);
     switch (mode) {
     case JITInt32:
@@ -462,25 +465,9 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
     int base = currentInstruction[1].u.operand;
     int property = currentInstruction[2].u.operand;
     int value = currentInstruction[3].u.operand;
-    JITArrayMode mode = m_byValCompilationInfo[m_byValInstructionIndex].arrayMode;
     ByValInfo* byValInfo = m_byValCompilationInfo[m_byValInstructionIndex].byValInfo;
 
-    linkSlowCaseIfNotJSCell(iter, base); // base cell check
-    if (!isOperandConstantInt(property))
-        linkSlowCase(iter); // property int32 check
-    linkSlowCase(iter); // base not array check
-    
-    linkSlowCase(iter); // out of bounds
-    
-    switch (mode) {
-    case JITInt32:
-    case JITDouble:
-        linkSlowCase(iter); // value type check
-        break;
-    default:
-        break;
-    }
-    
+    linkAllSlowCases(iter);
     Label slowPath = label();
 
     emitGetVirtualRegister(base, regT0);

@@ -441,6 +441,12 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
         if (!slot.isCacheablePut() && !slot.isCacheableCustom() && !slot.isCacheableSetter())
             return GiveUpOnCache;
 
+        // FIXME: We should try to do something smarter here...
+        if (isCopyOnWrite(structure->indexingMode()))
+            return GiveUpOnCache;
+        // We can't end up storing to a CoW on the prototype since it shouldn't own properties.
+        ASSERT(!isCopyOnWrite(slot.base()->indexingMode()));
+
         if (!structure->propertyAccessesAreCacheable())
             return GiveUpOnCache;
 

@@ -39,6 +39,7 @@
 #include "JSCInlines.h"
 #include "JSFixedArray.h"
 #include "JSGeneratorFunction.h"
+#include "JSImmutableButterfly.h"
 #include "JSLexicalEnvironment.h"
 #include "RegExpObject.h"
 
@@ -458,11 +459,11 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
     }
 
     case PhantomNewArrayBuffer: {
-        JSFixedArray* array = nullptr;
+        JSImmutableButterfly* array = nullptr;
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location().kind() == NewArrayBufferPLoc) {
-                array = jsCast<JSFixedArray*>(JSValue::decode(values[i]));
+                array = jsCast<JSImmutableButterfly*>(JSValue::decode(values[i]));
                 break;
             }
         }
@@ -473,7 +474,9 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), exec->codeBlock());
         Instruction* currentInstruction = &codeBlock->instructions()[materialization->origin().bytecodeIndex];
         RELEASE_ASSERT(Interpreter::getOpcodeID(currentInstruction[0].u.opcode) == op_new_array_buffer);
-        return constructArray(exec, currentInstruction[3].u.arrayAllocationProfile, array->values(), array->length());
+        Structure* structure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(currentInstruction[3].u.arrayAllocationProfile->selectIndexingType());
+        ASSERT(!structure->outOfLineCapacity());
+        return JSArray::createWithButterfly(vm, nullptr, structure, array->toButterfly());
     }
 
     case PhantomNewArrayWithSpread: {

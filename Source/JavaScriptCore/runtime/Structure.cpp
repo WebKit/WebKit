@@ -273,7 +273,7 @@ Structure::Structure(VM& vm, Structure* previous, DeferredStructureTransitionWat
     setIsAddingPropertyForTransition(false);
  
     TypeInfo typeInfo = previous->typeInfo();
-    m_blob = StructureIDBlob(vm.heap.structureIDTable().allocateID(this), previous->indexingTypeIncludingHistory(), typeInfo);
+    m_blob = StructureIDBlob(vm.heap.structureIDTable().allocateID(this), previous->indexingModeIncludingHistory(), typeInfo);
     m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
 
     ASSERT(!previous->typeInfo().structureIsImmortal());
@@ -473,6 +473,7 @@ Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, Pro
     else
         maxTransitionLength = s_maxTransitionLength;
     if (structure->transitionCount() > maxTransitionLength) {
+        ASSERT(!isCopyOnWrite(structure->indexingMode()));
         Structure* transition = toCacheableDictionaryTransition(vm, structure, deferred);
         ASSERT(structure != transition);
         offset = transition->add(vm, propertyName, attributes);
@@ -496,7 +497,8 @@ Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, Pro
         ConcurrentJSLocker locker(transition->m_lock);
         transition->setIsAddingPropertyForTransition(true);
     }
-    
+
+    transition->m_blob.setIndexingModeIncludingHistory(structure->indexingModeIncludingHistory() & ~CopyOnWrite);
     transition->m_nameInPrevious = propertyName.uid();
     transition->setAttributesInPrevious(attributes);
     transition->setPropertyTable(vm, structure->takePropertyTableOrCloneIfPinned(vm));
@@ -647,13 +649,13 @@ PropertyTable* Structure::takePropertyTableOrCloneIfPinned(VM& vm)
 Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, NonPropertyTransition transitionKind)
 {
     unsigned attributes = toAttributes(transitionKind);
-    IndexingType indexingTypeIncludingHistory = newIndexingType(structure->indexingTypeIncludingHistory(), transitionKind);
+    IndexingType indexingModeIncludingHistory = newIndexingType(structure->indexingModeIncludingHistory(), transitionKind);
     
     if (changesIndexingType(transitionKind)) {
         if (JSGlobalObject* globalObject = structure->m_globalObject.get()) {
             if (globalObject->isOriginalArrayStructure(structure)) {
-                Structure* result = globalObject->originalArrayStructureForIndexingType(indexingTypeIncludingHistory);
-                if (result->indexingTypeIncludingHistory() == indexingTypeIncludingHistory) {
+                Structure* result = globalObject->originalArrayStructureForIndexingType(indexingModeIncludingHistory);
+                if (result->indexingModeIncludingHistory() == indexingModeIncludingHistory) {
                     structure->didTransitionFromThisStructure();
                     return result;
                 }
@@ -664,7 +666,7 @@ Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, NonPro
     Structure* existingTransition;
     if (!structure->isDictionary() && (existingTransition = structure->m_transitionTable.get(0, attributes))) {
         ASSERT(existingTransition->attributesInPrevious() == attributes);
-        ASSERT(existingTransition->indexingTypeIncludingHistory() == indexingTypeIncludingHistory);
+        ASSERT(existingTransition->indexingModeIncludingHistory() == indexingModeIncludingHistory);
         return existingTransition;
     }
     
@@ -672,7 +674,7 @@ Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, NonPro
     
     Structure* transition = create(vm, structure);
     transition->setAttributesInPrevious(attributes);
-    transition->m_blob.setIndexingTypeIncludingHistory(indexingTypeIncludingHistory);
+    transition->m_blob.setIndexingModeIncludingHistory(indexingModeIncludingHistory);
     
     if (preventsExtensions(transitionKind))
         transition->setDidPreventExtensions(true);

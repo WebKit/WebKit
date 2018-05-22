@@ -112,13 +112,13 @@ def toCpp(name):
 
 
 def writeInstructionAccessor(bytecodeHFile, typeName, name):
-    bytecodeHFile.write("    {0}& {1}() {{ return *reinterpret_cast<{0}*>(&m_{1}); }}\n".format(typeName, name))
-    bytecodeHFile.write("    const {0}& {1}() const {{ return *reinterpret_cast<const {0}*>(&m_{1}); }}\n".format(typeName, name))
+    bytecodeHFile.write("    {0}& {1}() {{ return *bitwise_cast<{0}*>(&m_{1}); }}\n".format(typeName, name))
+    bytecodeHFile.write("    const {0}& {1}() const {{ return *bitwise_cast<const {0}*>(&m_{1}); }}\n".format(typeName, name))
 
 
 def writeInstructionMember(bytecodeHFile, typeName, name):
     bytecodeHFile.write("    std::aligned_storage<sizeof({0}), sizeof(Instruction)>::type m_{1};\n".format(typeName, name))
-
+    bytecodeHFile.write("    static_assert(sizeof({0}) <= sizeof(Instruction), \"Size of {0} shouldn't be bigger than an Instruction.\");\n".format(typeName, name))
 
 def writeStruct(bytecodeHFile, bytecode):
     bytecodeHFile.write("struct {0} {{\n".format(toCpp(bytecode["name"])))

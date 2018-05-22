@@ -35,22 +35,42 @@ class CodeBlock;
 class LLIntOffsetsExtractor;
 
 // This is a bitfield where each bit represents an type of array access that we have seen.
-// There are 16 indexing types that use the lower bits.
+// There are 19 indexing types that use the lower bits.
 // There are 9 typed array types taking the bits 16 to 25.
 typedef unsigned ArrayModes;
 
-const ArrayModes Int8ArrayMode = 1 << 16;
-const ArrayModes Int16ArrayMode = 1 << 17;
-const ArrayModes Int32ArrayMode = 1 << 18;
-const ArrayModes Uint8ArrayMode = 1 << 19;
-const ArrayModes Uint8ClampedArrayMode = 1 << 20;
-const ArrayModes Uint16ArrayMode = 1 << 21;
-const ArrayModes Uint32ArrayMode = 1 << 22;
-const ArrayModes Float32ArrayMode = 1 << 23;
-const ArrayModes Float64ArrayMode = 1 << 24;
+const ArrayModes CopyOnWriteArrayWithInt32ArrayMode = 1 << 16;
+const ArrayModes CopyOnWriteArrayWithDoubleArrayMode = 1 << 17;
+const ArrayModes CopyOnWriteArrayWithContiguousArrayMode = 1 << 18;
 
-#define asArrayModes(type) \
-    (static_cast<unsigned>(1) << static_cast<unsigned>(type))
+const ArrayModes Int8ArrayMode = 1 << 19;
+const ArrayModes Int16ArrayMode = 1 << 20;
+const ArrayModes Int32ArrayMode = 1 << 21;
+const ArrayModes Uint8ArrayMode = 1 << 22;
+const ArrayModes Uint8ClampedArrayMode = 1 << 23;
+const ArrayModes Uint16ArrayMode = 1 << 24;
+const ArrayModes Uint32ArrayMode = 1 << 25;
+const ArrayModes Float32ArrayMode = 1 << 26;
+const ArrayModes Float64ArrayMode = 1 << 27;
+
+inline constexpr ArrayModes asArrayModes(IndexingType indexingMode)
+{
+    if (isCopyOnWrite(indexingMode)) {
+        switch (indexingMode) {
+        case CopyOnWriteArrayWithInt32:
+            return CopyOnWriteArrayWithInt32ArrayMode;
+        case CopyOnWriteArrayWithDouble:
+            return CopyOnWriteArrayWithDoubleArrayMode;
+        case CopyOnWriteArrayWithContiguous:
+            return CopyOnWriteArrayWithContiguousArrayMode;
+        default:
+            UNREACHABLE_FOR_PLATFORM();
+            return 0;
+        }
+    }
+
+    return static_cast<unsigned>(1) << static_cast<unsigned>(indexingMode);
+}
 
 #define ALL_TYPED_ARRAY_MODES \
     (Int8ArrayMode            \
@@ -73,6 +93,11 @@ const ArrayModes Float64ArrayMode = 1 << 24;
     | asArrayModes(NonArrayWithSlowPutArrayStorage)     \
     | ALL_TYPED_ARRAY_MODES)
 
+#define ALL_COPY_ON_WRITE_ARRAY_MODES                   \
+    (CopyOnWriteArrayWithInt32ArrayMode                 \
+    | CopyOnWriteArrayWithDoubleArrayMode               \
+    | CopyOnWriteArrayWithContiguousArrayMode)
+
 #define ALL_ARRAY_ARRAY_MODES                           \
     (asArrayModes(ArrayClass)                           \
     | asArrayModes(ArrayWithUndecided)                  \
@@ -80,7 +105,8 @@ const ArrayModes Float64ArrayMode = 1 << 24;
     | asArrayModes(ArrayWithDouble)                     \
     | asArrayModes(ArrayWithContiguous)                 \
     | asArrayModes(ArrayWithArrayStorage)               \
-    | asArrayModes(ArrayWithSlowPutArrayStorage))
+    | asArrayModes(ArrayWithSlowPutArrayStorage)        \
+    | ALL_COPY_ON_WRITE_ARRAY_MODES)
 
 #define ALL_ARRAY_MODES (ALL_NON_ARRAY_ARRAY_MODES | ALL_ARRAY_ARRAY_MODES)
 
@@ -109,7 +135,8 @@ inline ArrayModes arrayModeFromStructure(Structure* structure)
     case NotTypedArray:
         break;
     }
-    return asArrayModes(structure->indexingType());
+
+    return asArrayModes(structure->indexingMode());
 }
 
 void dumpArrayModes(PrintStream&, ArrayModes);
@@ -137,7 +164,10 @@ inline bool arrayModesAlreadyChecked(ArrayModes proven, ArrayModes expected)
 
 inline bool arrayModesInclude(ArrayModes arrayModes, IndexingType shape)
 {
-    return !!(arrayModes & (asArrayModes(NonArray | shape) | asArrayModes(ArrayClass | shape)));
+    ArrayModes modes = asArrayModes(NonArray | shape) | asArrayModes(ArrayClass | shape);
+    if (hasInt32(shape) || hasDouble(shape) || hasContiguous(shape))
+        modes |= asArrayModes(ArrayClass | shape | CopyOnWrite);
+    return !!(arrayModes & modes);
 }
 
 inline bool shouldUseSlowPutArrayStorage(ArrayModes arrayModes)
@@ -173,6 +203,11 @@ inline bool hasSeenArray(ArrayModes arrayModes)
 inline bool hasSeenNonArray(ArrayModes arrayModes)
 {
     return arrayModes & ALL_NON_ARRAY_ARRAY_MODES;
+}
+
+inline bool hasSeenCopyOnWriteArray(ArrayModes arrayModes)
+{
+    return arrayModes & ALL_COPY_ON_WRITE_ARRAY_MODES;
 }
 
 class ArrayProfile {
@@ -228,7 +263,7 @@ public:
     bool outOfBounds(const ConcurrentJSLocker&) const { return m_outOfBounds; }
     
     bool usesOriginalArrayStructures(const ConcurrentJSLocker&) const { return m_usesOriginalArrayStructures; }
-    
+
     CString briefDescription(const ConcurrentJSLocker&, CodeBlock*);
     CString briefDescriptionWithoutUpdating(const ConcurrentJSLocker&);
     

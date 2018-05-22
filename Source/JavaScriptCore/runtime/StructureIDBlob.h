@@ -40,10 +40,10 @@ public:
         u.doubleWord = 0xbbadbeef;
     }
 
-    StructureIDBlob(StructureID structureID, IndexingType indexingTypeIncludingHistory, const TypeInfo& typeInfo)
+    StructureIDBlob(StructureID structureID, IndexingType indexingModeIncludingHistory, const TypeInfo& typeInfo)
     {
         u.fields.structureID = structureID;
-        u.fields.indexingTypeIncludingHistory = indexingTypeIncludingHistory;
+        u.fields.indexingModeIncludingHistory = indexingModeIncludingHistory;
         u.fields.type = typeInfo.type();
         u.fields.inlineTypeFlags = typeInfo.inlineTypeFlags();
         u.fields.defaultCellState = CellState::DefinitelyWhite;
@@ -52,8 +52,8 @@ public:
     void operator=(const StructureIDBlob& other) { u.doubleWord = other.u.doubleWord; }
     
     StructureID structureID() const { return u.fields.structureID; }
-    IndexingType indexingTypeIncludingHistory() const { return u.fields.indexingTypeIncludingHistory; }
-    void setIndexingTypeIncludingHistory(IndexingType indexingTypeIncludingHistory) { u.fields.indexingTypeIncludingHistory = indexingTypeIncludingHistory; }
+    IndexingType indexingModeIncludingHistory() const { return u.fields.indexingModeIncludingHistory; }
+    void setIndexingModeIncludingHistory(IndexingType indexingModeIncludingHistory) { u.fields.indexingModeIncludingHistory = indexingModeIncludingHistory; }
     JSType type() const { return u.fields.type; }
     TypeInfo::InlineTypeFlags inlineTypeFlags() const { return u.fields.inlineTypeFlags; }
     
@@ -67,16 +67,16 @@ public:
         return OBJECT_OFFSETOF(StructureIDBlob, u.fields.structureID);
     }
 
-    static ptrdiff_t indexingTypeIncludingHistoryOffset()
+    static ptrdiff_t indexingModeIncludingHistoryOffset()
     {
-        return OBJECT_OFFSETOF(StructureIDBlob, u.fields.indexingTypeIncludingHistory);
+        return OBJECT_OFFSETOF(StructureIDBlob, u.fields.indexingModeIncludingHistory);
     }
 
 private:
     union {
         struct {
             StructureID structureID;
-            IndexingType indexingTypeIncludingHistory;
+            IndexingType indexingModeIncludingHistory;
             JSType type;
             TypeInfo::InlineTypeFlags inlineTypeFlags;
             CellState defaultCellState;

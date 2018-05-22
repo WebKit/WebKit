@@ -30,6 +30,7 @@
 #include "DirectArguments.h"
 #include "ExceptionHelpers.h"
 #include "FunctionCodeBlock.h"
+#include "JSImmutableButterfly.h"
 #include "ScopedArguments.h"
 #include "SlowPathReturnType.h"
 #include "StackAlignment.h"
@@ -249,6 +250,29 @@ static ALWAYS_INLINE void putDirectAccessorWithReify(VM& vm, ExecState* exec, JS
     }
     scope.release();
     baseObject->putDirectAccessor(exec, propertyName, accessor, attribute);
+}
+
+inline JSArray* allocateNewArrayBuffer(VM& vm, Structure* structure, JSImmutableButterfly* immutableButterfly)
+{
+    JSGlobalObject* globalObject = structure->globalObject();
+    Structure* originalStructure = globalObject->originalArrayStructureForIndexingType(immutableButterfly->indexingMode());
+    ASSERT(originalStructure->indexingMode() == immutableButterfly->indexingMode());
+    ASSERT(isCopyOnWrite(immutableButterfly->indexingMode()));
+    ASSERT(!structure->outOfLineCapacity());
+
+    JSArray* result = JSArray::createWithButterfly(vm, nullptr, originalStructure, immutableButterfly->toButterfly());
+    // FIXME: This works but it's slow. If we cared enough about the perf when having a bad time then we could fix it.
+    if (UNLIKELY(originalStructure != structure)) {
+        ASSERT(hasSlowPutArrayStorage(structure->indexingMode()));
+        ASSERT(globalObject->isHavingABadTime());
+
+        result->switchToSlowPutArrayStorage(vm);
+        ASSERT(result->butterfly() != immutableButterfly->toButterfly());
+        ASSERT(!result->butterfly()->arrayStorage()->m_sparseMap.get());
+        ASSERT(result->structureID() == structure->id());
+    }
+
+    return result;
 }
 
 } // namespace CommonSlowPaths

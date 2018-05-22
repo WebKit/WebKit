@@ -34,17 +34,27 @@ namespace JSC {
 /*
     Structure of the IndexingType
     =============================
-    Conceptually, the IndexingType looks like this:
+    Conceptually, the IndexingTypeAndMisc looks like this:
 
-    struct IndexingType {
-        uint8_t isArray:1;                    // bit 0
-        uint8_t shape:4;                      // bit 1 - 3
-        uint8_t mayHaveIndexedAccessors:1;    // bit 4
+    struct IndexingTypeAndMisc {
+        struct IndexingModeIncludingHistory {
+            struct IndexingMode {
+                struct IndexingType {
+                    uint8_t isArray:1;          // bit 0
+                    uint8_t shape:3;            // bit 1 - 3
+                };
+                uint8_t copyOnWrite:1;          // bit 4
+            };
+            uint8_t mayHaveIndexedAccessors:1;  // bit 5
+        };
+        uint8_t cellLockBits:2;                 // bit 6 - 7
     };
 
     The shape values (e.g. Int32Shape, ContiguousShape, etc) are an enumeration of
     various shapes (though not necessarily sequential in terms of their values).
     Hence, shape values are not bitwise exclusive with respect to each other.
+
+    It's also common to refer to shape + copyOnWrite as IndexingShapeWithWritability.
 */
 
 typedef uint8_t IndexingType;
@@ -53,7 +63,6 @@ typedef uint8_t IndexingType;
 static const IndexingType IsArray                  = 0x01;
 
 // The shape of the indexed property storage.
-static const IndexingType IndexingShapeMask               = 0x0E;
 static const IndexingType NoIndexingShape                 = 0x00;
 static const IndexingType UndecidedShape                  = 0x02; // Only useful for arrays.
 static const IndexingType Int32Shape                      = 0x04;
@@ -62,17 +71,25 @@ static const IndexingType ContiguousShape                 = 0x08;
 static const IndexingType ArrayStorageShape               = 0x0A;
 static const IndexingType SlowPutArrayStorageShape        = 0x0C;
 
+static const IndexingType IndexingShapeMask               = 0x0E;
 static const IndexingType IndexingShapeShift              = 1;
 static const IndexingType NumberOfIndexingShapes          = 7;
+static const IndexingType IndexingTypeMask                = IndexingShapeMask | IsArray;
+
+// Whether or not the butterfly is copy on write. If it is copy on write then the butterfly is actually a JSImmutableButterfly. This should only ever be set if there are no named properties.
+static const IndexingType CopyOnWrite                      = 0x10;
+static const IndexingType IndexingShapeAndWritabilityMask  = CopyOnWrite | IndexingShapeMask;
+static const IndexingType NumberOfCopyOnWriteIndexingModes = 3; // We only have copy on write for int32, double, and contiguous shapes.
+static const IndexingType NumberOfArrayIndexingModes       = NumberOfIndexingShapes + NumberOfCopyOnWriteIndexingModes;
 
 // Additional flags for tracking the history of the type. These are usually
 // masked off unless you ask for them directly.
-static const IndexingType MayHaveIndexedAccessors         = 0x10;
+static const IndexingType MayHaveIndexedAccessors         = 0x20;
 
 // The IndexingType field of JSCells is stolen for locks and remembering if the object has been a
 // prototype.
-static const IndexingType IndexingTypeLockIsHeld          = 0x20;
-static const IndexingType IndexingTypeLockHasParked       = 0x40;
+static const IndexingType IndexingTypeLockIsHeld          = 0x40;
+static const IndexingType IndexingTypeLockHasParked       = 0x80;
 
 // List of acceptable array types.
 static const IndexingType NonArray                        = 0x0;
@@ -88,6 +105,9 @@ static const IndexingType ArrayWithDouble                 = IsArray | DoubleShap
 static const IndexingType ArrayWithContiguous             = IsArray | ContiguousShape;
 static const IndexingType ArrayWithArrayStorage           = IsArray | ArrayStorageShape;
 static const IndexingType ArrayWithSlowPutArrayStorage    = IsArray | SlowPutArrayStorageShape;
+static const IndexingType CopyOnWriteArrayWithInt32       = IsArray | Int32Shape | CopyOnWrite;
+static const IndexingType CopyOnWriteArrayWithDouble      = IsArray | DoubleShape | CopyOnWrite;
+static const IndexingType CopyOnWriteArrayWithContiguous  = IsArray | ContiguousShape | CopyOnWrite;
 
 #define ALL_BLANK_INDEXING_TYPES \
     NonArray:                    \
@@ -96,17 +116,29 @@ static const IndexingType ArrayWithSlowPutArrayStorage    = IsArray | SlowPutArr
 #define ALL_UNDECIDED_INDEXING_TYPES \
     ArrayWithUndecided
 
-#define ALL_INT32_INDEXING_TYPES      \
-    NonArrayWithInt32:                \
+#define ALL_WRITABLE_INT32_INDEXING_TYPES      \
+    NonArrayWithInt32:                         \
     case ArrayWithInt32
 
-#define ALL_DOUBLE_INDEXING_TYPES     \
-    NonArrayWithDouble:               \
-    case ArrayWithDouble
+#define ALL_INT32_INDEXING_TYPES        \
+    ALL_WRITABLE_INT32_INDEXING_TYPES:  \
+    case CopyOnWriteArrayWithInt32
 
-#define ALL_CONTIGUOUS_INDEXING_TYPES \
-    NonArrayWithContiguous:           \
-    case ArrayWithContiguous
+#define ALL_WRITABLE_DOUBLE_INDEXING_TYPES     \
+    NonArrayWithDouble:                        \
+    case ArrayWithDouble                       \
+
+#define ALL_DOUBLE_INDEXING_TYPES       \
+    ALL_WRITABLE_DOUBLE_INDEXING_TYPES: \
+    case CopyOnWriteArrayWithDouble
+
+#define ALL_WRITABLE_CONTIGUOUS_INDEXING_TYPES    \
+    NonArrayWithContiguous:                       \
+    case ArrayWithContiguous                      \
+
+#define ALL_CONTIGUOUS_INDEXING_TYPES        \
+    ALL_WRITABLE_CONTIGUOUS_INDEXING_TYPES:  \
+    case CopyOnWriteArrayWithContiguous
 
 #define ARRAY_WITH_ARRAY_STORAGE_INDEXING_TYPES \
     ArrayWithArrayStorage:                      \
@@ -117,49 +149,61 @@ static const IndexingType ArrayWithSlowPutArrayStorage    = IsArray | SlowPutArr
     case NonArrayWithSlowPutArrayStorage:               \
     case ARRAY_WITH_ARRAY_STORAGE_INDEXING_TYPES
 
-static inline bool hasIndexedProperties(IndexingType indexingType)
+inline bool hasIndexedProperties(IndexingType indexingType)
 {
     return (indexingType & IndexingShapeMask) != NoIndexingShape;
 }
 
-static inline bool hasUndecided(IndexingType indexingType)
+inline bool hasUndecided(IndexingType indexingType)
 {
     return (indexingType & IndexingShapeMask) == UndecidedShape;
 }
 
-static inline bool hasInt32(IndexingType indexingType)
+inline bool hasInt32(IndexingType indexingType)
 {
     return (indexingType & IndexingShapeMask) == Int32Shape;
 }
 
-static inline bool hasDouble(IndexingType indexingType)
+inline bool hasDouble(IndexingType indexingType)
 {
     return (indexingType & IndexingShapeMask) == DoubleShape;
 }
 
-static inline bool hasContiguous(IndexingType indexingType)
+inline bool hasContiguous(IndexingType indexingType)
 {
     return (indexingType & IndexingShapeMask) == ContiguousShape;
 }
 
-static inline bool hasArrayStorage(IndexingType indexingType)
+inline bool hasArrayStorage(IndexingType indexingType)
 {
     return (indexingType & IndexingShapeMask) == ArrayStorageShape;
 }
 
-static inline bool hasAnyArrayStorage(IndexingType indexingType)
+inline bool hasAnyArrayStorage(IndexingType indexingType)
 {
     return static_cast<uint8_t>(indexingType & IndexingShapeMask) >= ArrayStorageShape;
 }
 
-static inline bool hasSlowPutArrayStorage(IndexingType indexingType)
+inline bool hasSlowPutArrayStorage(IndexingType indexingType)
 {
     return (indexingType & IndexingShapeMask) == SlowPutArrayStorageShape;
 }
 
-static inline bool shouldUseSlowPut(IndexingType indexingType)
+inline bool shouldUseSlowPut(IndexingType indexingType)
 {
     return hasSlowPutArrayStorage(indexingType);
+}
+
+inline constexpr bool isCopyOnWrite(IndexingType indexingMode)
+{
+    return indexingMode & CopyOnWrite;
+}
+
+inline unsigned arrayIndexFromIndexingType(IndexingType indexingType)
+{
+    if (isCopyOnWrite(indexingType))
+        return ((indexingType & IndexingShapeMask) - UndecidedShape + SlowPutArrayStorageShape) >> IndexingShapeShift;
+    return (indexingType & IndexingShapeMask) >> IndexingShapeShift;
 }
 
 inline IndexingType indexingTypeForValue(JSValue value)
@@ -182,10 +226,9 @@ IndexingType leastUpperBoundOfIndexingTypeAndValue(IndexingType, JSValue);
 void dumpIndexingType(PrintStream&, IndexingType);
 MAKE_PRINT_ADAPTOR(IndexingTypeDump, IndexingType, dumpIndexingType);
 
-// Mask of all possible types.
-static const IndexingType AllArrayTypes            = IndexingShapeMask | IsArray;
-
-// Mask of all possible types including the history.
+static const IndexingType AllWritableArrayTypes    = IndexingShapeMask | IsArray;
+static const IndexingType AllArrayTypes            = AllWritableArrayTypes | CopyOnWrite;
+static const IndexingType AllWritableArrayTypesAndHistory = AllWritableArrayTypes | MayHaveIndexedAccessors;
 static const IndexingType AllArrayTypesAndHistory  = AllArrayTypes | MayHaveIndexedAccessors;
 
 typedef LockAlgorithm<IndexingType, IndexingTypeLockIsHeld, IndexingTypeLockHasParked> IndexingTypeLockAlgorithm;

@@ -376,6 +376,7 @@ const DoubleShape              = constexpr DoubleShape
 const ContiguousShape          = constexpr ContiguousShape
 const ArrayStorageShape        = constexpr ArrayStorageShape
 const SlowPutArrayStorageShape = constexpr SlowPutArrayStorageShape
+const CopyOnWrite              = constexpr CopyOnWrite
 
 # Type constants.
 const StringType = constexpr StringType

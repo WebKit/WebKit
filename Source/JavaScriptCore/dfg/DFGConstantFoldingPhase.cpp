@@ -175,8 +175,10 @@ private:
             case ArrayifyToStructure: {
                 AbstractValue& value = m_state.forNode(node->child1());
                 RegisteredStructureSet set;
-                if (node->op() == ArrayifyToStructure)
+                if (node->op() == ArrayifyToStructure) {
                     set = node->structure();
+                    ASSERT(!isCopyOnWrite(node->structure()->indexingMode()));
+                }
                 else {
                     set = node->structureSet();
                     if ((SpecCellCheck & SpecEmpty) && node->child1().useKind() == CellUse && m_state.forNode(node->child1()).m_type & SpecEmpty) {
