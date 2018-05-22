@@ -210,12 +210,6 @@ public:
             
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node*& nodeRef = block->at(nodeIndex);
-                if (doesWrites(m_graph, nodeRef)) {
-                    if (verbose)
-                        dataLog("    Not hoisting ", nodeRef, " because it writes things.\n");
-                    continue;
-                }
-
                 for (unsigned stackIndex = loopStack.size(); stackIndex--;)
                     changed |= attemptHoist(block, nodeRef, loopStack[stackIndex]);
             }
@@ -242,37 +236,149 @@ private:
             return false;
         }
         
-        if (!edgesDominate(m_graph, node, data.preHeader)) {
-            if (verbose) {
-                dataLog(
-                    "    Not hoisting ", node, " because it isn't loop invariant.\n");
-            }
-            return false;
-        }
-        
-        // FIXME: At this point if the hoisting of the full node fails but the node has type checks,
-        // we could still hoist just the checks.
-        // https://bugs.webkit.org/show_bug.cgi?id=144525
-        
-        if (readsOverlap(m_graph, node, data.writes)) {
-            if (verbose) {
-                dataLog(
-                    "    Not hoisting ", node,
-                    " because it reads things that the loop writes.\n");
-            }
-            return false;
-        }
-        
         m_state.initializeTo(data.preHeader);
-
         NodeOrigin originalOrigin = node->origin;
         bool canSpeculateBlindly = !m_graph.hasGlobalExitSite(originalOrigin.semantic, HoistingFailed);
 
         // NOTE: We could just use BackwardsDominators here directly, since we already know that the
         // preHeader dominates fromBlock. But we wouldn't get anything from being so clever, since
         // dominance checks are O(1) and only a few integer compares.
-        bool addsBlindSpeculation = mayExit(m_graph, node, m_state)
-            && !m_graph.m_controlEquivalenceAnalysis->dominatesEquivalently(data.preHeader, fromBlock);
+        bool isControlEquivalent = m_graph.m_controlEquivalenceAnalysis->dominatesEquivalently(data.preHeader, fromBlock);
+
+        bool addsBlindSpeculation = !isControlEquivalent;
+        NodeOrigin terminalOrigin = data.preHeader->terminal()->origin;
+        Vector<Node*, 2> hoistedNodes; // This is sorted in the program order they will appear in the basic block we're hoisting to.
+
+        auto insertHoistedNode = [&] (Node* node) {
+            data.preHeader->insertBeforeTerminal(node);
+            node->owner = data.preHeader;
+            node->origin = terminalOrigin.withSemantic(node->origin.semantic);
+            node->origin.wasHoisted |= addsBlindSpeculation;
+            hoistedNodes.append(node);
+        };
+
+        auto updateAbstractState = [&] {
+            // We can trust what AI proves about edge proof statuses when hoisting to the preheader.
+            m_state.trustEdgeProofs();
+            for (unsigned i = 0; i < hoistedNodes.size(); ++i)
+                m_interpreter.execute(hoistedNodes[i]);
+            // However, when walking various inner loops below, the proof status of
+            // an edge may be trivially true, even if it's not true in the preheader
+            // we hoist to. We don't allow the below node executions to change the
+            // state of edge proofs. An example of where a proof is trivially true
+            // is if we have two loops, L1 and L2, where L2 is nested inside L1. The
+            // header for L1 dominates L2. We hoist a Check from L1's header into L1's
+            // preheader. However, inside L2's preheader, we can't trust that AI will
+            // tell us this edge is proven. It's proven in L2's preheader because L2
+            // is dominated by L1's header. However, the edge is not guaranteed to be
+            // proven inside L1's preheader.
+            m_state.dontTrustEdgeProofs();
+
+            // Modify the states at the end of the preHeader of the loop we hoisted to,
+            // and all pre-headers inside the loop. This isn't a stability bottleneck right now
+            // because most loops are small and most blocks belong to few loops.
+            for (unsigned bodyIndex = loop->size(); bodyIndex--;) {
+                BasicBlock* subBlock = loop->at(bodyIndex);
+                const NaturalLoop* subLoop = m_graph.m_ssaNaturalLoops->headerOf(subBlock);
+                if (!subLoop)
+                    continue;
+                BasicBlock* subPreHeader = m_data[subLoop->index()].preHeader;
+                // We may not have given this loop a pre-header because either it didn't have exitOK
+                // or the header had multiple predecessors that it did not dominate. In that case the
+                // loop wouldn't be a hoisting candidate anyway, so we don't have to do anything.
+                if (!subPreHeader)
+                    continue;
+                // The pre-header's tail may be unreachable, in which case we have nothing to do.
+                if (!subPreHeader->cfaDidFinish)
+                    continue;
+                // We handled this above.
+                if (subPreHeader == data.preHeader)
+                    continue;
+                m_state.initializeTo(subPreHeader);
+                for (unsigned i = 0; i < hoistedNodes.size(); ++i)
+                    m_interpreter.execute(hoistedNodes[i]);
+            }
+        };
+        
+        auto tryHoistChecks = [&] {
+            if (addsBlindSpeculation && !canSpeculateBlindly)
+                return false;
+
+            ASSERT(hoistedNodes.isEmpty());
+
+            Vector<Edge, 3> checks;
+            m_graph.doToChildren(node, [&] (Edge edge) {
+                if (!m_graph.m_ssaDominators->dominates(edge.node()->owner, data.preHeader))
+                    return;
+
+                if (!edge.willHaveCheck())
+                    return;
+
+                if ((m_state.forNode(edge).m_type & SpecEmpty) && checkMayCrashIfInputIsEmpty(edge.useKind())) {
+                    if (!canSpeculateBlindly)
+                        return;
+                    Node* checkNotEmpty = m_graph.addNode(CheckNotEmpty, originalOrigin, Edge(edge.node(), UntypedUse));
+                    insertHoistedNode(checkNotEmpty);
+                }
+
+                checks.append(edge);
+            });
+
+            if (checks.isEmpty())
+                return false;
+
+            AdjacencyList children;
+            NodeType checkOp = Check;
+            if (checks.size() <= AdjacencyList::Size) {
+                children = AdjacencyList(AdjacencyList::Fixed);
+                for (unsigned i = 0; i < checks.size(); ++i)
+                    children.setChild(i, checks[i]);
+            } else {
+                checkOp = CheckVarargs;
+                unsigned firstChild = m_graph.m_varArgChildren.size();
+                for (Edge edge : checks)
+                    m_graph.m_varArgChildren.append(edge);
+                children = AdjacencyList(AdjacencyList::Variable, firstChild, checks.size());
+            }
+
+            Node* check = m_graph.addNode(checkOp, originalOrigin, children);
+            insertHoistedNode(check);
+            updateAbstractState();
+
+            if (verbose)
+                dataLogLn("    Hoisted some checks from ", node, " and created a new Check ", check, ". Hoisted from ", *fromBlock, " to ", *data.preHeader);
+
+            return true;
+        };
+
+        if (!edgesDominate(m_graph, node, data.preHeader)) {
+            if (verbose) {
+                dataLog(
+                    "    Not hoisting ", node, " because it isn't loop invariant.\n");
+            }
+            return tryHoistChecks();
+        }
+
+        if (doesWrites(m_graph, node)) {
+            if (verbose)
+                dataLog("    Not hoisting ", node, " because it writes things.\n");
+            return tryHoistChecks();
+        }
+
+        // It's not safe to consult the AbstractState inside mayExit until we prove all edges
+        // dominate the pre-header we're hoisting to. We are more conservative above when assigning
+        // to this variable since we hadn't yet proven all edges dominate the pre-header. Above, we
+        // just assume mayExit is true. We refine that here since we can now consult the AbstractState.
+        addsBlindSpeculation = mayExit(m_graph, node, m_state) && !isControlEquivalent;
+
+        if (readsOverlap(m_graph, node, data.writes)) {
+            if (verbose) {
+                dataLog(
+                    "    Not hoisting ", node,
+                    " because it reads things that the loop writes.\n");
+            }
+            return tryHoistChecks();
+        }
         
         if (addsBlindSpeculation && !canSpeculateBlindly) {
             if (verbose) {
@@ -281,22 +387,8 @@ private:
                     *data.preHeader, ") is not control equivalent to the node's original block (",
                     *fromBlock, ") and hoisting had previously failed.\n");
             }
-            return false;
+            return tryHoistChecks();
         }
-        
-        // For abstract interpretation, these are in the reverse order that they appear in this
-        // vector.
-        Vector<Node*, 2> hoistedNodesReverse;
-        hoistedNodesReverse.append(node);
-
-        NodeOrigin terminalOrigin = data.preHeader->terminal()->origin;
-        
-        auto insertHoistedNode = [&] (Node* node) {
-            data.preHeader->insertBeforeTerminal(node);
-            node->owner = data.preHeader;
-            node->origin = terminalOrigin.withSemantic(node->origin.semantic);
-            node->origin.wasHoisted |= addsBlindSpeculation;
-        };
         
         if (!safeToExecute(m_state, m_graph, node)) {
             // See if we can rescue the situation by inserting blind speculations.
@@ -315,14 +407,13 @@ private:
                         
                         Node* check = m_graph.addNode(CheckNotEmpty, originalOrigin, Edge(edge.node(), UntypedUse));
                         insertHoistedNode(check);
-                        hoistedNodesReverse.append(check);
                     });
             } else {
                 if (verbose) {
                     dataLog(
                         "    Not hoisting ", node, " because it isn't safe to execute.\n");
                 }
-                return false;
+                return tryHoistChecks();
             }
         }
         
@@ -333,48 +424,7 @@ private:
         }
 
         insertHoistedNode(node);
-        
-        // We can trust what AI proves about edge proof statuses when hoisting to the preheader.
-        m_state.trustEdgeProofs();
-        m_state.initializeTo(data.preHeader);
-        for (unsigned i = hoistedNodesReverse.size(); i--;)
-            m_interpreter.execute(hoistedNodesReverse[i]);
-        // However, when walking various inner loops below, the proof status of
-        // an edge may be trivially true, even if it's not true in the preheader
-        // we hoist to. We don't allow the below node executions to change the
-        // state of edge proofs. An example of where a proof is trivially true
-        // is if we have two loops, L1 and L2, where L2 is nested inside L1. The
-        // header for L1 dominates L2. We hoist a Check from L1's header into L1's
-        // preheader. However, inside L2's preheader, we can't trust that AI will
-        // tell us this edge is proven. It's proven in L2's preheader because L2
-        // is dominated by L1's header. However, the edge is not guaranteed to be
-        // proven inside L1's preheader.
-        m_state.dontTrustEdgeProofs();
-
-        // Modify the states at the end of the preHeader of the loop we hoisted to,
-        // and all pre-headers inside the loop. This isn't a stability bottleneck right now
-        // because most loops are small and most blocks belong to few loops.
-        for (unsigned bodyIndex = loop->size(); bodyIndex--;) {
-            BasicBlock* subBlock = loop->at(bodyIndex);
-            const NaturalLoop* subLoop = m_graph.m_ssaNaturalLoops->headerOf(subBlock);
-            if (!subLoop)
-                continue;
-            BasicBlock* subPreHeader = m_data[subLoop->index()].preHeader;
-            // We may not have given this loop a pre-header because either it didn't have exitOK
-            // or the header had multiple predecessors that it did not dominate. In that case the
-            // loop wouldn't be a hoisting candidate anyway, so we don't have to do anything.
-            if (!subPreHeader)
-                continue;
-            // The pre-header's tail may be unreachable, in which case we have nothing to do.
-            if (!subPreHeader->cfaDidFinish)
-                continue;
-            // We handled this above.
-            if (subPreHeader == data.preHeader)
-                continue;
-            m_state.initializeTo(subPreHeader);
-            for (unsigned i = hoistedNodesReverse.size(); i--;)
-                m_interpreter.execute(hoistedNodesReverse[i]);
-        }
+        updateAbstractState();
 
         if (node->flags() & NodeHasVarArgs)
             nodeRef = m_graph.addNode(CheckVarargs, originalOrigin, m_graph.copyVarargChildren(node));

@@ -1,3 +1,24 @@
+2018-05-22  Saam Barati  <sbarati@apple.com>
+
+        DFG::LICMPhase should attempt to hoist edge type checks if hoisting the whole node fails
+        https://bugs.webkit.org/show_bug.cgi?id=144525
+
+        Reviewed by Filip Pizlo.
+
+        This patch teaches LICM to fall back to hoisting a node's type checks when
+        hoisting the entire node fails.
+        
+        This patch follow the same principles we use when deciding to hoist nodes in general:
+        - If the pre header is control equivalent to where the current check is, we
+        go ahead and hoist the check.
+        - Otherwise, if hoisting hasn't failed before, we go ahead and gamble and
+        hoist the check. If hoisting failed in the past, we will not hoist the check.
+
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::attemptHoist):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::checkMayCrashIfInputIsEmpty):
+
 2018-05-21  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of TLCs

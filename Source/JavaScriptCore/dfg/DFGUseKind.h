@@ -299,6 +299,33 @@ inline UseKind useKindForResult(NodeFlags result)
     }
 }
 
+inline bool checkMayCrashIfInputIsEmpty(UseKind kind)
+{
+#if USE(JSVALUE64)
+    switch (kind) {
+    case UntypedUse:
+    case Int32Use:
+    case KnownInt32Use:
+    case AnyIntUse:
+    case NumberUse:
+    case BooleanUse:
+    case KnownBooleanUse:
+    case CellUse:
+    case KnownCellUse:
+    case CellOrOtherUse:
+    case OtherUse:
+    case MiscUse:
+    case NotCellUse:
+        return false;
+    default:
+        return true;
+    }
+#else
+    UNUSED_PARAM(kind);
+    return true;
+#endif
+}
+
 } } // namespace JSC::DFG
 
 namespace WTF {
