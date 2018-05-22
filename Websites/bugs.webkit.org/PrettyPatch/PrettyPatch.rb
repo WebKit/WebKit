@@ -523,7 +523,7 @@ div:focus {
     clear: both;
 }
 </style>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
+<script src="https://webkit.org/ajax/libs/jquery/jquery-1.4.2.min.js"></script> 
 <script src="code-review.js?version=48"></script>
 </head>
 EOF

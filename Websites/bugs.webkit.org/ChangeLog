@@ -1,3 +1,13 @@
+2018-05-22  Roy Reapor  <rreapor@apple.com>
+
+        Host jquery on webkit.org instead of 3rd party
+        https://bugs.webkit.org/show_bug.cgi?id=185691
+
+        Reviewed by Alexey Proskuryakov.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review-test.html:
+
 2018-02-16  Ling Ho  <lingho@apple.com>
 
         Apply Bugzilla patches for CVE-2018-5123
