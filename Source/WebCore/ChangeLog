@@ -1,3 +1,20 @@
+2018-05-23  Nan Wang  <n_wang@apple.com>
+
+        AX: setValue on contenteditable should preserve whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=185897
+
+        Reviewed by Chris Fleizach.
+
+        RenderText is using its parent renderer's style to determine if
+        whitespace collapsing is necessary. So when setting the innerText
+        of the element in setValue, let's also set its style in order to 
+        preserve whitespaces.
+
+        Modified an existing test to cover this change.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::setValue):
+
 2018-05-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Silence GCC 8 warnings

@@ -1777,8 +1777,17 @@ void AccessibilityRenderObject::setValue(const String& string)
         downcast<HTMLInputElement>(element).setValue(string);
     else if (renderer.isTextArea() && is<HTMLTextAreaElement>(element))
         downcast<HTMLTextAreaElement>(element).setValue(string);
-    else if (is<HTMLElement>(element) && contentEditableAttributeIsEnabled(&element))
+    else if (is<HTMLElement>(element) && contentEditableAttributeIsEnabled(&element)) {
+        // Set the style to the element so the child Text node won't collapse spaces
+        if (is<RenderElement>(renderer)) {
+            RenderElement& renderElement = downcast<RenderElement>(renderer);
+            auto style = RenderStyle::create();
+            style.inheritFrom(renderElement.style());
+            style.setWhiteSpace(PRE);
+            renderElement.setStyleInternal(WTFMove(style));
+        }
         downcast<HTMLElement>(element).setInnerText(string);
+    }
 }
 
 bool AccessibilityRenderObject::supportsARIAOwns() const

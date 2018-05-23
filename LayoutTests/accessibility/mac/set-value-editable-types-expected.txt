@@ -9,7 +9,7 @@ Role: AXRole: AXTextArea
 Value: AXValue: current1
 Writable: true
 Value change notification received
-Updated Value: AXValue: new value
+Updated Value: AXValue:    leading and trailing spaces   
 PASS successfullyParsed is true
 
 TEST COMPLETE
