@@ -1,3 +1,13 @@
+2018-05-23  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement positioning for replaced out-of-flow elements
+        https://bugs.webkit.org/show_bug.cgi?id=185902
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowReplacedPosition const):
+
 2018-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Text can wrap between hyphens and commas

@@ -543,9 +543,94 @@ void FormattingContext::computeOutOfFlowNonReplacedPosition(LayoutContext& layou
     displayBox.setLeft(computedLeftValue);
 }
 
-void FormattingContext::computeOutOfFlowReplacedPosition(LayoutContext&, const Box&, Display::Box&) const
+void FormattingContext::computeOutOfFlowReplacedPosition(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
+    // 10.6.5 Absolutely positioned, replaced elements (top/bottom)
+    // 10.3.8 Absolutely positioned, replaced elements (left/right)
 
+    // At this point we've the size computed.
+    auto size = displayBox.size();
+    auto& style = layoutBox.style();
+
+    // 10.6.5 Absolutely positioned, replaced elements
+    //
+    // This situation is similar to the previous one, except that the element has an intrinsic height. The sequence of substitutions is now:
+    // The used value of 'height' is determined as for inline replaced elements. If 'margin-top' or 'margin-bottom' is specified as 'auto'
+    // its used value is determined by the rules below.
+    //
+    // 1. If both 'top' and 'bottom' have the value 'auto', replace 'top' with the element's static position.
+    // 2. If 'bottom' is 'auto', replace any 'auto' on 'margin-top' or 'margin-bottom' with '0'.
+    // 3. If at this point both 'margin-top' and 'margin-bottom' are still 'auto', solve the equation under the extra constraint that the two margins must get equal values.
+    // 4. If at this point there is only one 'auto' left, solve the equation for that value.
+    // 5. If at this point the values are over-constrained, ignore the value for 'bottom' and solve for that value.
+    auto top = style.logicalTop();
+    auto bottom = style.logicalBottom();
+    auto containingBlockHeight = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->height();
+    LayoutUnit computedTopValue;
+
+    if (!top.isAuto())
+        computedTopValue = valueForLength(top, containingBlockHeight);
+    else if (bottom.isAuto()) {
+        // #1
+        computedTopValue = displayBox.top();
+    } else {
+        // #4
+        auto marginTop = displayBox.marginTop();
+        auto marginBottom = displayBox.marginBottom();
+
+        auto paddingTop = displayBox.paddingTop();
+        auto paddingBottom = displayBox.paddingBottom();
+
+        auto borderTop = displayBox.borderTop();
+        auto borderBottom = displayBox.borderBottom();
+
+        computedTopValue = containingBlockHeight - (marginTop + borderTop + paddingTop + size.height() + paddingBottom + borderBottom + marginBottom + bottom.value());
+    }
+
+    displayBox.setTop(computedTopValue);
+
+
+    // 10.3.8 Absolutely positioned, replaced elements
+    //
+    // In this case, section 10.3.7 applies up through and including the constraint equation, but the rest of section 10.3.7 is replaced by the following rules:
+    //
+    // The used value of 'width' is determined as for inline replaced elements. 
+    //
+    // 1. If 'margin-left' or 'margin-right' is specified as 'auto' its used value is determined by the rules below.
+    // 2. If both 'left' and 'right' have the value 'auto', then if the 'direction' property of the element establishing the
+    //    static-position containing block is 'ltr', set 'left' to the static position; else if 'direction' is 'rtl', set 'right' to the static position.
+    // 3. If 'left' or 'right' are 'auto', replace any 'auto' on 'margin-left' or 'margin-right' with '0'.
+    // 4. If at this point both 'margin-left' and 'margin-right' are still 'auto', solve the equation under the extra constraint
+    //    that the two margins must get equal values, unless this would make them negative, in which case when the direction of
+    //    the containing block is 'ltr' ('rtl'), set 'margin-left' ('margin-right') to zero and solve for 'margin-right' ('margin-left').
+    // 5. If at this point there is an 'auto' left, solve the equation for that value.
+    // 6. If at this point the values are over-constrained, ignore the value for either 'left' (in case the 'direction'
+    //    property of the containing block is 'rtl') or 'right' (in case 'direction' is 'ltr') and solve for that value.
+    auto left = style.logicalLeft();
+    auto right = style.logicalRight();
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+    LayoutUnit computedLeftValue;
+
+    if (!left.isAuto())   
+        computedLeftValue = valueForLength(left, containingBlockWidth);
+    else if (right.isAuto()) {
+        // FIXME: take direction into account
+        computedLeftValue = displayBox.left();
+    } else {
+        // #5
+        auto marginLeft = displayBox.marginLeft();
+        auto marginRight = displayBox.marginRight();
+    
+        auto paddingLeft = displayBox.paddingLeft();
+        auto paddingRight = displayBox.paddingRight();
+
+        auto borderLeft = displayBox.borderLeft();
+        auto borderRight = displayBox.borderRight();
+
+        computedLeftValue = containingBlockWidth - (marginLeft + borderLeft + paddingLeft + size.width() + paddingRight + borderRight + marginRight + right.value());
+    }
+
+    displayBox.setLeft(computedLeftValue);
 }
 
 LayoutUnit FormattingContext::shrinkToFitWidth(LayoutContext&, const Box&) const
