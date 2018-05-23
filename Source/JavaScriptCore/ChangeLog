@@ -1,3 +1,20 @@
+2018-05-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Fix CachedCall's argument count if RegExp has named captures
+        https://bugs.webkit.org/show_bug.cgi?id=185587
+
+        Reviewed by Mark Lam.
+
+        If the given RegExp has named captures, the argument count of CachedCall in String#replace
+        should be increased by one. This causes crash with assertion in test262. This patch corrects
+        the argument count.
+
+        This patch also unifies source.is8Bit()/!source.is8Bit() code since they are now completely
+        the same.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+
 2018-05-22  Mark Lam  <mark.lam@apple.com>
 
         StringImpl utf8 conversion should not fail silently.

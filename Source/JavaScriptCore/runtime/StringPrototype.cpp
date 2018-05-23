@@ -565,140 +565,73 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
     if (global && callType == CallType::JS) {
         // regExp->numSubpatterns() + 1 for pattern args, + 2 for match start and string
         int argCount = regExp->numSubpatterns() + 1 + 2;
+        if (hasNamedCaptures)
+            ++argCount;
         JSFunction* func = jsCast<JSFunction*>(replaceValue);
         CachedCall cachedCall(exec, func, argCount);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        if (source.is8Bit()) {
-            while (true) {
-                int* ovector;
-                MatchResult result = regExpConstructor->performMatch(vm, regExp, string, source, startPosition, &ovector);
-                if (!result)
-                    break;
+        while (true) {
+            int* ovector;
+            MatchResult result = regExpConstructor->performMatch(vm, regExp, string, source, startPosition, &ovector);
+            if (!result)
+                break;
 
-                if (UNLIKELY(!sourceRanges.tryConstructAndAppend(lastIndex, result.start - lastIndex)))
-                    OUT_OF_MEMORY(exec, scope);
+            if (UNLIKELY(!sourceRanges.tryConstructAndAppend(lastIndex, result.start - lastIndex)))
+                OUT_OF_MEMORY(exec, scope);
 
-                unsigned i = 0;
-                cachedCall.clearArguments();
+            cachedCall.clearArguments();
 
-                JSObject* groups = nullptr;
+            JSObject* groups = nullptr;
 
-                if (hasNamedCaptures) {
-                    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-                    groups = JSFinalObject::create(vm, JSFinalObject::createStructure(vm, globalObject, globalObject->objectPrototype(), 0));
-                }
+            if (hasNamedCaptures) {
+                JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+                groups = JSFinalObject::create(vm, JSFinalObject::createStructure(vm, globalObject, globalObject->objectPrototype(), 0));
+            }
 
-                for (; i < regExp->numSubpatterns() + 1; ++i) {
-                    int matchStart = ovector[i * 2];
-                    int matchLen = ovector[i * 2 + 1] - matchStart;
+            for (unsigned i = 0; i < regExp->numSubpatterns() + 1; ++i) {
+                int matchStart = ovector[i * 2];
+                int matchLen = ovector[i * 2 + 1] - matchStart;
 
-                    JSValue patternValue;
+                JSValue patternValue;
 
-                    if (matchStart < 0)
-                        patternValue = jsUndefined();
-                    else
-                        patternValue = jsSubstring(&vm, source, matchStart, matchLen);
+                if (matchStart < 0)
+                    patternValue = jsUndefined();
+                else
+                    patternValue = jsSubstring(&vm, source, matchStart, matchLen);
 
-                    cachedCall.appendArgument(patternValue);
+                cachedCall.appendArgument(patternValue);
 
-                    if (i && hasNamedCaptures) {
-                        String groupName = regExp->getCaptureGroupName(i);
-                        if (!groupName.isEmpty())
-                            groups->putDirect(vm, Identifier::fromString(&vm, groupName), patternValue);
-                    }
-                }
-
-                cachedCall.appendArgument(jsNumber(result.start));
-                cachedCall.appendArgument(string);
-                if (hasNamedCaptures)
-                    cachedCall.appendArgument(groups);
-
-                cachedCall.setThis(jsUndefined());
-                if (UNLIKELY(cachedCall.hasOverflowedArguments())) {
-                    throwOutOfMemoryError(exec, scope);
-                    return nullptr;
-                }
-
-                JSValue jsResult = cachedCall.call();
-                RETURN_IF_EXCEPTION(scope, nullptr);
-                replacements.append(jsResult.toWTFString(exec));
-                RETURN_IF_EXCEPTION(scope, nullptr);
-
-                lastIndex = result.end;
-                startPosition = lastIndex;
-
-                // special case of empty match
-                if (result.empty()) {
-                    startPosition++;
-                    if (startPosition > sourceLen)
-                        break;
+                if (i && hasNamedCaptures) {
+                    String groupName = regExp->getCaptureGroupName(i);
+                    if (!groupName.isEmpty())
+                        groups->putDirect(vm, Identifier::fromString(&vm, groupName), patternValue);
                 }
             }
-        } else {
-            while (true) {
-                int* ovector;
-                MatchResult result = regExpConstructor->performMatch(vm, regExp, string, source, startPosition, &ovector);
-                if (!result)
+
+            cachedCall.appendArgument(jsNumber(result.start));
+            cachedCall.appendArgument(string);
+            if (hasNamedCaptures)
+                cachedCall.appendArgument(groups);
+
+            cachedCall.setThis(jsUndefined());
+            if (UNLIKELY(cachedCall.hasOverflowedArguments())) {
+                throwOutOfMemoryError(exec, scope);
+                return nullptr;
+            }
+
+            JSValue jsResult = cachedCall.call();
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            replacements.append(jsResult.toWTFString(exec));
+            RETURN_IF_EXCEPTION(scope, nullptr);
+
+            lastIndex = result.end;
+            startPosition = lastIndex;
+
+            // special case of empty match
+            if (result.empty()) {
+                startPosition++;
+                if (startPosition > sourceLen)
                     break;
-
-                if (UNLIKELY(!sourceRanges.tryConstructAndAppend(lastIndex, result.start - lastIndex)))
-                    OUT_OF_MEMORY(exec, scope);
-
-                unsigned i = 0;
-                cachedCall.clearArguments();
-
-                JSObject* groups = nullptr;
-
-                if (hasNamedCaptures) {
-                    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-                    groups = JSFinalObject::create(vm, JSFinalObject::createStructure(vm, globalObject, globalObject->objectPrototype(), 0));
-                }
-
-                for (; i < regExp->numSubpatterns() + 1; ++i) {
-                    int matchStart = ovector[i * 2];
-                    int matchLen = ovector[i * 2 + 1] - matchStart;
-
-                    JSValue patternValue;
-
-                    if (matchStart < 0)
-                        patternValue = jsUndefined();
-                    else
-                        patternValue = jsSubstring(&vm, source, matchStart, matchLen);
-
-                    cachedCall.appendArgument(patternValue);
-
-                    if (i && hasNamedCaptures) {
-                        String groupName = regExp->getCaptureGroupName(i);
-                        if (!groupName.isEmpty())
-                            groups->putDirect(vm, Identifier::fromString(&vm, groupName), patternValue);
-                    }
-                }
-
-                cachedCall.appendArgument(jsNumber(result.start));
-                cachedCall.appendArgument(string);
-                if (hasNamedCaptures)
-                    cachedCall.appendArgument(groups);
-
-                cachedCall.setThis(jsUndefined());
-                if (UNLIKELY(cachedCall.hasOverflowedArguments())) {
-                    throwOutOfMemoryError(exec, scope);
-                    return nullptr;
-                }
-
-                JSValue jsResult = cachedCall.call();
-                RETURN_IF_EXCEPTION(scope, nullptr);
-                replacements.append(jsResult.toWTFString(exec));
-                RETURN_IF_EXCEPTION(scope, nullptr);
-
-                lastIndex = result.end;
-                startPosition = lastIndex;
-
-                // special case of empty match
-                if (result.empty()) {
-                    startPosition++;
-                    if (startPosition > sourceLen)
-                        break;
-                }
             }
         }
     } else {

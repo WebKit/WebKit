@@ -1303,9 +1303,6 @@ test/built-ins/RegExp/lookBehind/variable-length.js:
 test/built-ins/RegExp/lookBehind/word-boundary.js:
   default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
   strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/named-groups/functional-replace-global.js:
-  default: "TypeError: undefined is not an object (evaluating 'groups.fst')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'groups.fst')"
 test/built-ins/RegExp/named-groups/groups-object-subclass-sans.js:
   default: 'Test262Error: Expected SameValue(Â«bÂ», Â«$<a>Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«bÂ», Â«$<a>Â») to be true'
