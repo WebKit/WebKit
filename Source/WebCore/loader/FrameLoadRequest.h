@@ -109,7 +109,6 @@ private:
     AtomicString m_downloadAttribute;
     InitiatedByMainFrame m_initiatedByMainFrame { InitiatedByMainFrame::Unknown };
     bool m_isCrossOriginWindowOpenNavigation { false };
-    bool m_isSystemPreview { false };
     SystemPreviewInfo m_systemPreviewInfo;
 };
 
