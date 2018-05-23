@@ -342,7 +342,7 @@ static void webkitAccessibleHyperlinkSetProperty(GObject* object, guint propId, 
         // No need to check and unref previous values of
         // priv->hyperlinkImpl as this is a CONSTRUCT ONLY property
         priv->hyperlinkImpl = WEBKIT_ACCESSIBLE(g_value_get_object(value));
-        g_object_weak_ref(G_OBJECT(priv->hyperlinkImpl), (GWeakNotify)g_object_unref, object);
+        g_object_weak_ref(G_OBJECT(priv->hyperlinkImpl), (GWeakNotify)(GCallback)g_object_unref, object);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, pspec);
@@ -397,17 +397,17 @@ GType webkitAccessibleHyperlinkGetType()
             sizeof(WebKitAccessibleHyperlinkClass),
             (GBaseInitFunc) 0,
             (GBaseFinalizeFunc) 0,
-            (GClassInitFunc) webkitAccessibleHyperlinkClassInit,
+            (GClassInitFunc)(GCallback) webkitAccessibleHyperlinkClassInit,
             (GClassFinalizeFunc) 0,
             0, /* class data */
             sizeof(WebKitAccessibleHyperlink), /* instance size */
             0, /* nb preallocs */
-            (GInstanceInitFunc) webkitAccessibleHyperlinkInit,
+            (GInstanceInitFunc)(GCallback) webkitAccessibleHyperlinkInit,
             0 /* value table */
         };
 
         static const GInterfaceInfo actionInfo = {
-            (GInterfaceInitFunc)(GInterfaceInitFunc)atkActionInterfaceInit,
+            (GInterfaceInitFunc)(GCallback)atkActionInterfaceInit,
             (GInterfaceFinalizeFunc) 0, 0
         };
 

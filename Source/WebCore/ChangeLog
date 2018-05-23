@@ -1,3 +1,21 @@
+2018-05-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Silence GCC 8 warnings
+        https://bugs.webkit.org/show_bug.cgi?id=185556
+
+        Reviewed by Žan Doberšek.
+
+        Silence remaining -Wcast-function-type warnings by casting through void (*)(void), aka
+        GCallback.
+
+        * accessibility/atk/WebKitAccessibleHyperlink.cpp:
+        (webkitAccessibleHyperlinkSetProperty):
+        (webkitAccessibleHyperlinkGetType):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetType):
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::getCredentialFromPersistentStorage):
+
 2018-05-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Move sizing/positioning logic to helper classes

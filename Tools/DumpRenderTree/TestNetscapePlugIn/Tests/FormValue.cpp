@@ -44,7 +44,7 @@ NPError FormValue::NPP_GetValue(NPPVariable variable, void *value)
         *((void**)value) = browser->memalloc(sizeof(formValueText));
         if (!*((void**)value))
             return NPERR_OUT_OF_MEMORY_ERROR;
-        strncpy(*((char**)value), formValueText, sizeof(formValueText));
+        snprintf(*((char**)value), sizeof(formValueText), "%s", formValueText);
         return NPERR_NO_ERROR;
     }
     return NPERR_GENERIC_ERROR;

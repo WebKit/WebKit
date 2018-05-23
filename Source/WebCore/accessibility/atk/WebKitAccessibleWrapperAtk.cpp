@@ -1177,7 +1177,7 @@ webkitAccessibleGetType(void)
             sizeof(WebKitAccessibleClass),
             (GBaseInitFunc) 0,
             (GBaseFinalizeFunc) 0,
-            (GClassInitFunc) webkitAccessibleClassInit,
+            (GClassInitFunc)(GCallback) webkitAccessibleClassInit,
             (GClassFinalizeFunc) 0,
             0, /* class data */
             sizeof(WebKitAccessible), /* instance size */
@@ -1194,20 +1194,20 @@ webkitAccessibleGetType(void)
 }
 
 static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
-    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleActionInterfaceInit), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleSelectionInterfaceInit), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleEditableTextInterfaceInit), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleTextInterfaceInit), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleComponentInterfaceInit), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleImageInterfaceInit), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleTableInterfaceInit), 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleActionInterfaceInit)), 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleSelectionInterfaceInit)), 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleEditableTextInterfaceInit)), 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleTextInterfaceInit)), 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleComponentInterfaceInit)), 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleImageInterfaceInit)), 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleTableInterfaceInit)), 0, 0},
 #if ATK_CHECK_VERSION(2,11,90)
-    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleTableCellInterfaceInit), 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleTableCellInterfaceInit)), 0, 0},
 #endif
-    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleHypertextInterfaceInit), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleHyperlinkImplInterfaceInit), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleDocumentInterfaceInit), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleValueInterfaceInit), 0, 0}
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleHypertextInterfaceInit)), 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleHyperlinkImplInterfaceInit)), 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleDocumentInterfaceInit)), 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleValueInterfaceInit)), 0, 0}
 };
 
 enum WAIType {
