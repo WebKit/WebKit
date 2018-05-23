@@ -1216,9 +1216,11 @@ inspector/agents/worker/WorkerRuntimeAgent.cpp
 layout/FloatingContext.cpp
 layout/FloatingState.cpp
 layout/FormattingContext.cpp
+layout/FormattingContextGeometry.cpp
 layout/FormattingState.cpp
 layout/LayoutContext.cpp
 layout/blockformatting/BlockFormattingContext.cpp
+layout/blockformatting/BlockFormattingContextGeometry.cpp
 layout/blockformatting/BlockFormattingState.cpp
 layout/blockformatting/BlockMarginCollapse.cpp
 layout/blockformatting/BlockInvalidation.cpp

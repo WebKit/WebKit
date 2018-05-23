@@ -1,3 +1,69 @@
+2018-05-23  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Move sizing/positioning logic to helper classes
+        https://bugs.webkit.org/show_bug.cgi?id=185898
+
+        Reviewed by Antti Koivisto.
+
+        The idea here is to move all the sizing and positioning logic to helper classes so that
+        the formatting context code stays lean.
+        This is similar to the dedicated BlockMarginCollapse class for the collapsing logic.
+        The helper classes have only static functions. These static functions do not mutate the associated DisplayBoxes,
+        but instead they simply retun the computed values.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowPosition const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowWidth const):
+        (WebCore::Layout::FormattingContext::computeFloatingWidth const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHeight const):
+        (WebCore::Layout::FormattingContext::computeFloatingHeight const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowNonReplacedHeight const): Deleted.
+        (WebCore::Layout::FormattingContext::computeFloatingNonReplacedHeight const): Deleted.
+        (WebCore::Layout::FormattingContext::computeReplacedHeight const): Deleted.
+        (WebCore::Layout::FormattingContext::computeReplacedWidth const): Deleted.
+        (WebCore::Layout::FormattingContext::contentHeightForFormattingContextRoot const): Deleted.
+        (WebCore::Layout::FormattingContext::computeFloatingNonReplacedWidth const): Deleted.
+        (WebCore::Layout::FormattingContext::computeOutOfFlowNonReplacedWidth const): Deleted.
+        (WebCore::Layout::FormattingContext::computeOutOfFlowReplacedHeight const): Deleted.
+        (WebCore::Layout::FormattingContext::computeOutOfFlowReplacedWidth const): Deleted.
+        (WebCore::Layout::FormattingContext::computeOutOfFlowNonReplacedPosition const): Deleted.
+        (WebCore::Layout::FormattingContext::computeOutOfFlowReplacedPosition const): Deleted.
+        (WebCore::Layout::FormattingContext::shrinkToFitWidth const): Deleted.
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp: Copied from Source/WebCore/layout/FormattingContext.cpp.
+        (WebCore::Layout::contentHeightForFormattingContextRoot):
+        (WebCore::Layout::shrinkToFitWidth):
+        (WebCore::Layout::FormattingContextGeometry::outOfFlowNonReplacedHeight):
+        (WebCore::Layout::FormattingContextGeometry::outOfFlowNonReplacedWidth):
+        (WebCore::Layout::FormattingContextGeometry::outOfFlowReplacedHeight):
+        (WebCore::Layout::FormattingContextGeometry::outOfFlowReplacedWidth):
+        (WebCore::Layout::FormattingContextGeometry::floatingNonReplacedHeight):
+        (WebCore::Layout::FormattingContextGeometry::floatingNonReplacedWidth):
+        (WebCore::Layout::FormattingContextGeometry::floatingReplacedHeight):
+        (WebCore::Layout::FormattingContextGeometry::floatingReplacedWidth):
+        (WebCore::Layout::FormattingContextGeometry::outOfFlowNonReplacedPosition):
+        (WebCore::Layout::FormattingContextGeometry::outOfFlowReplacedPosition):
+        (WebCore::Layout::FormattingContextGeometry::replacedHeight):
+        (WebCore::Layout::FormattingContextGeometry::replacedWidth):
+        * layout/FormattingContextGeometry.h: Copied from Source/WebCore/layout/blockformatting/BlockFormattingContext.h.
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeStaticPosition const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowHeight const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowWidth const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowNonReplacedWidth const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeInFlowNonReplacedHeight const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp: Added.
+        (WebCore::Layout::BlockFormattingContextGeometry::inFlowNonReplacedHeight):
+        (WebCore::Layout::BlockFormattingContextGeometry::inFlowNonReplacedWidth):
+        (WebCore::Layout::BlockFormattingContextGeometry::inFlowReplacedHeight):
+        (WebCore::Layout::BlockFormattingContextGeometry::inFlowReplacedWidth):
+        (WebCore::Layout::BlockFormattingContextGeometry::staticPosition):
+        * layout/blockformatting/BlockFormattingContextGeometry.h: Copied from Source/WebCore/layout/blockformatting/BlockFormattingContext.h.
+        * layout/displaytree/DisplayBox.h:
+
 2018-05-23  Antti Koivisto  <antti@apple.com>
 
         Page keeps reloading when viewing photos in google drive (due to too high canvas memory limits)
