@@ -1,3 +1,15 @@
+2018-05-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r232112.
+
+        The tests added with this change  are failing on the bots.
+
+        Reverted changeset:
+
+        "test262/Runner.pm: add unit tests"
+        https://bugs.webkit.org/show_bug.cgi?id=185783
+        https://trac.webkit.org/changeset/232112
+
 2018-05-23  Valerie R Young  <valerie@bocoup.com>
 
         test262/Runner.pm: add unit tests
