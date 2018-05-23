@@ -132,11 +132,11 @@ JIT::CodeRef<JITThunkPtrTag> JIT::stringGetByValStubGenerator(VM* vm)
 {
     JSInterfaceJIT jit(vm);
     JumpList failures;
-    failures.append(jit.branchStructure(NotEqual, Address(regT0, JSCell::structureIDOffset()), vm->stringStructure.get()));
+    failures.append(jit.branchIfNotString(regT0));
     
     // Load string length to regT1, and start the process of loading the data pointer into regT0
-    jit.load32(Address(regT0, ThunkHelpers::jsStringLengthOffset()), regT1);
-    jit.loadPtr(Address(regT0, ThunkHelpers::jsStringValueOffset()), regT0);
+    jit.load32(Address(regT0, JSString::offsetOfLength()), regT1);
+    jit.loadPtr(Address(regT0, JSString::offsetOfValue()), regT0);
     failures.append(jit.branchTest32(Zero, regT0));
     
     // Do an unsigned compare to simultaneously filter negative indices as well as indices that are too large
@@ -308,7 +308,7 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
 
     Jump nonCell = jump();
     linkSlowCase(iter); // base array check
-    Jump notString = branchStructure(NotEqual, Address(regT0, JSCell::structureIDOffset()), m_vm->stringStructure.get());
+    Jump notString = branchIfNotString(regT0);
     emitNakedCall(CodeLocationLabel<NoPtrTag>(m_vm->getCTIStub(stringGetByValStubGenerator).retaggedCode<NoPtrTag>()));
     Jump failed = branchTestPtr(Zero, regT0);
     emitStore(dst, regT1, regT0);

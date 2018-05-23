@@ -612,14 +612,14 @@ MacroAssemblerCodeRef<JITThunkPtrTag> unreachableGenerator(VM* vm)
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "unreachable thunk");
 }
 
-static void stringCharLoad(SpecializedThunkJIT& jit, VM* vm)
+static void stringCharLoad(SpecializedThunkJIT& jit)
 {
     // load string
-    jit.loadJSStringArgument(*vm, SpecializedThunkJIT::ThisArgument, SpecializedThunkJIT::regT0);
+    jit.loadJSStringArgument(SpecializedThunkJIT::ThisArgument, SpecializedThunkJIT::regT0);
 
     // Load string length to regT2, and start the process of loading the data pointer into regT0
-    jit.load32(MacroAssembler::Address(SpecializedThunkJIT::regT0, ThunkHelpers::jsStringLengthOffset()), SpecializedThunkJIT::regT2);
-    jit.loadPtr(MacroAssembler::Address(SpecializedThunkJIT::regT0, ThunkHelpers::jsStringValueOffset()), SpecializedThunkJIT::regT0);
+    jit.load32(MacroAssembler::Address(SpecializedThunkJIT::regT0, JSString::offsetOfLength()), SpecializedThunkJIT::regT2);
+    jit.loadPtr(MacroAssembler::Address(SpecializedThunkJIT::regT0, JSString::offsetOfValue()), SpecializedThunkJIT::regT0);
     jit.appendFailure(jit.branchTest32(MacroAssembler::Zero, SpecializedThunkJIT::regT0));
 
     // load index
@@ -653,7 +653,7 @@ static void charToString(SpecializedThunkJIT& jit, VM* vm, MacroAssembler::Regis
 MacroAssemblerCodeRef<JITThunkPtrTag> charCodeAtThunkGenerator(VM* vm)
 {
     SpecializedThunkJIT jit(vm, 1);
-    stringCharLoad(jit, vm);
+    stringCharLoad(jit);
     jit.returnInt32(SpecializedThunkJIT::regT0);
     return jit.finalize(vm->jitStubs->ctiNativeTailCall(vm), "charCodeAt");
 }
@@ -661,7 +661,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> charCodeAtThunkGenerator(VM* vm)
 MacroAssemblerCodeRef<JITThunkPtrTag> charAtThunkGenerator(VM* vm)
 {
     SpecializedThunkJIT jit(vm, 1);
-    stringCharLoad(jit, vm);
+    stringCharLoad(jit);
     charToString(jit, vm, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
     jit.returnJSCell(SpecializedThunkJIT::regT0);
     return jit.finalize(vm->jitStubs->ctiNativeTailCall(vm), "charAt");

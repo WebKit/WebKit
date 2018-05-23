@@ -55,14 +55,11 @@ JIT::CodeRef<JITThunkPtrTag> JIT::stringGetByValStubGenerator(VM* vm)
     JSInterfaceJIT jit(vm);
     JumpList failures;
     jit.tagReturnAddress();
-    failures.append(jit.branchStructure(
-        NotEqual, 
-        Address(regT0, JSCell::structureIDOffset()), 
-        vm->stringStructure.get()));
+    failures.append(jit.branchIfNotString(regT0));
 
     // Load string length to regT2, and start the process of loading the data pointer into regT0
-    jit.load32(Address(regT0, ThunkHelpers::jsStringLengthOffset()), regT2);
-    jit.loadPtr(Address(regT0, ThunkHelpers::jsStringValueOffset()), regT0);
+    jit.load32(Address(regT0, JSString::offsetOfLength()), regT2);
+    jit.loadPtr(Address(regT0, JSString::offsetOfValue()), regT0);
     failures.append(jit.branchTest32(Zero, regT0));
 
     // Do an unsigned compare to simultaneously filter negative indices as well as indices that are too large
@@ -252,9 +249,7 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
         linkSlowCase(iter); // property int32 check
     Jump nonCell = jump();
     linkSlowCase(iter); // base array check
-    Jump notString = branchStructure(NotEqual, 
-        Address(regT0, JSCell::structureIDOffset()), 
-        m_vm->stringStructure.get());
+    Jump notString = branchIfNotString(regT0);
     emitNakedCall(CodeLocationLabel<NoPtrTag>(m_vm->getCTIStub(stringGetByValStubGenerator).retaggedCode<NoPtrTag>()));
     Jump failed = branchTest64(Zero, regT0);
     emitPutVirtualRegister(dst, regT0);
@@ -1257,7 +1252,7 @@ void JIT::emitByValIdentifierCheck(ByValInfo* byValInfo, RegisterID cell, Regist
     if (propertyName.isSymbol())
         slowCases.append(branchPtr(NotEqual, cell, TrustedImmPtr(byValInfo->cachedSymbol.get())));
     else {
-        slowCases.append(branchStructure(NotEqual, Address(cell, JSCell::structureIDOffset()), m_vm->stringStructure.get()));
+        slowCases.append(branchIfNotString(cell));
         loadPtr(Address(cell, JSString::offsetOfValue()), scratch);
         slowCases.append(branchPtr(NotEqual, scratch, TrustedImmPtr(propertyName.impl())));
     }

@@ -99,9 +99,9 @@ ALWAYS_INLINE void JIT::emitPutIntToCallFrameHeader(RegisterID from, int entry)
 
 ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures)
 {
-    failures.append(branchStructure(NotEqual, Address(src, JSCell::structureIDOffset()), m_vm->stringStructure.get()));
-    failures.append(branch32(NotEqual, MacroAssembler::Address(src, ThunkHelpers::jsStringLengthOffset()), TrustedImm32(1)));
-    loadPtr(MacroAssembler::Address(src, ThunkHelpers::jsStringValueOffset()), dst);
+    failures.append(branchIfNotString(src));
+    failures.append(branch32(NotEqual, MacroAssembler::Address(src, JSString::offsetOfLength()), TrustedImm32(1)));
+    loadPtr(MacroAssembler::Address(src, JSString::offsetOfValue()), dst);
     failures.append(branchTest32(Zero, dst));
     loadPtr(MacroAssembler::Address(dst, StringImpl::flagsOffset()), regT1);
     loadPtr(MacroAssembler::Address(dst, StringImpl::dataOffset()), dst);
@@ -196,11 +196,6 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueRe
     emitStore(dst, returnValueGPR2, returnValueGPR);
 #endif
     return call;
-}
-
-ALWAYS_INLINE JIT::Jump JIT::checkStructure(RegisterID reg, Structure* structure)
-{
-    return branchStructure(NotEqual, Address(reg, JSCell::structureIDOffset()), structure);
 }
 
 ALWAYS_INLINE void JIT::linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator& iter, int vReg)

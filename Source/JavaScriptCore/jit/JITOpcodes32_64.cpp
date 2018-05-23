@@ -461,8 +461,8 @@ void JIT::emitSlow_op_eq(Instruction* currentInstruction, Vector<SlowCaseEntry>:
     genericCase.append(getSlowCase(iter)); // tags not equal
 
     linkSlowCase(iter); // tags equal and JSCell
-    genericCase.append(branchPtr(NotEqual, Address(regT0, JSCell::structureIDOffset()), TrustedImmPtr(m_vm->stringStructure.get())));
-    genericCase.append(branchPtr(NotEqual, Address(regT2, JSCell::structureIDOffset()), TrustedImmPtr(m_vm->stringStructure.get())));
+    genericCase.append(branchIfNotString(regT0));
+    genericCase.append(branchIfNotString(regT2));
 
     // String case.
     callOperation(operationCompareStringEq, regT0, regT2);
@@ -499,8 +499,8 @@ void JIT::compileOpEqJumpSlow(Vector<SlowCaseEntry>::iterator& iter, CompileOpEq
     genericCase.append(getSlowCase(iter)); // tags not equal
 
     linkSlowCase(iter); // tags equal and JSCell
-    genericCase.append(branchPtr(NotEqual, Address(regT0, JSCell::structureIDOffset()), TrustedImmPtr(m_vm->stringStructure.get())));
-    genericCase.append(branchPtr(NotEqual, Address(regT2, JSCell::structureIDOffset()), TrustedImmPtr(m_vm->stringStructure.get())));
+    genericCase.append(branchIfNotString(regT0));
+    genericCase.append(branchIfNotString(regT2));
 
     // String case.
     callOperation(operationCompareStringEq, regT0, regT2);
@@ -547,8 +547,8 @@ void JIT::emitSlow_op_neq(Instruction* currentInstruction, Vector<SlowCaseEntry>
     genericCase.append(getSlowCase(iter)); // tags not equal
 
     linkSlowCase(iter); // tags equal and JSCell
-    genericCase.append(branchPtr(NotEqual, Address(regT0, JSCell::structureIDOffset()), TrustedImmPtr(m_vm->stringStructure.get())));
-    genericCase.append(branchPtr(NotEqual, Address(regT2, JSCell::structureIDOffset()), TrustedImmPtr(m_vm->stringStructure.get())));
+    genericCase.append(branchIfNotString(regT0));
+    genericCase.append(branchIfNotString(regT2));
 
     // String case.
     callOperation(operationCompareStringEq, regT0, regT2);

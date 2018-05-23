@@ -797,8 +797,6 @@ namespace JSC {
 
         void emitRightShiftFastPath(Instruction* currentInstruction, OpcodeID);
 
-        Jump checkStructure(RegisterID reg, Structure* structure);
-
         void updateTopCallFrame();
 
         Call emitNakedCall(CodePtr<NoPtrTag> function = CodePtr<NoPtrTag>());

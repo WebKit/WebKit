@@ -80,7 +80,6 @@ public:
     friend class JSRopeString;
     friend class MarkStack;
     friend class SlotVisitor;
-    friend struct ThunkHelpers;
 
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal | OverridesToThis;
