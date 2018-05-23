@@ -29,6 +29,8 @@
 
 (import "common.sb")
 
+(deny lsopen)
+
 ;;;
 ;;; The following rules were originally contained in 'UIKit-apps.sb'. We are duplicating them here so we can
 ;;; remove unneeded sandbox extensions.

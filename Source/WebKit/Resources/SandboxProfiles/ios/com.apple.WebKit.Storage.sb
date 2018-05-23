@@ -29,6 +29,8 @@
 
 (import "common.sb")
 
+(deny lsopen)
+
 (allow file-read* file-write* (extension "com.apple.app-sandbox.read-write"))
 
 (deny sysctl*)

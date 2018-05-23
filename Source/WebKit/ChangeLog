@@ -1,3 +1,18 @@
+2018-05-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Close access to "lsopen" for non-UI process
+        https://bugs.webkit.org/show_bug.cgi?id=185890
+        <rdar://problem/39686511>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Close down access to 'lsopen' in the iOS sandboxes. These operations are
+        performed by the UIProcess on behalf of these helper processes.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Storage.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2018-05-22  Dean Jackson  <dino@apple.com>
 
         Optimized path zoom animation needs a valid UIImage and CGRect
