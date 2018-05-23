@@ -557,7 +557,14 @@ static inline double ymdhmsToSeconds(int year, long mon, long day, long hour, lo
     int mday = firstDayOfMonth[isLeapYear(year)][mon - 1];
     double ydays = daysFrom1970ToYear(year);
 
-    return (second + minute * secondsPerMinute + hour * secondsPerHour + (mday + day - 1 + ydays) * secondsPerDay);
+    double dateSeconds = second + minute * secondsPerMinute + hour * secondsPerHour + (mday + day - 1 + ydays) * secondsPerDay;
+
+    // Clamp to EcmaScript standard (ecma262/#sec-time-values-and-time-range) of
+    //  +/- 100,000,000 days from 01 January, 1970.
+    if (dateSeconds < -8640000000000.0 || dateSeconds > 8640000000000.0)
+        return std::numeric_limits<double>::quiet_NaN();
+    
+    return dateSeconds;
 }
 
 // We follow the recommendation of RFC 2822 to consider all
@@ -778,7 +785,7 @@ static char* parseES5TimePortion(char* currentPosition, long& hours, long& minut
 
 double parseES5DateFromNullTerminatedCharacters(const char* dateString)
 {
-    // This parses a date of the form defined in ECMA-262-5, section 15.9.1.15
+    // This parses a date of the form defined in ecma262/#sec-date-time-string-format
     // (similar to RFC 3339 / ISO 8601: YYYY-MM-DDTHH:mm:ss[.sss]Z).
     // In most cases it is intentionally strict (e.g. correct field widths, no stray whitespace).
     

@@ -1,3 +1,17 @@
+2018-05-23  Michael Saboff  <msaboff@apple.com>
+
+        Date.parse() doesn't properly handle input outside of ES Spec limits
+        https://bugs.webkit.org/show_bug.cgi?id=185868
+
+        Reviewed by Mark Lam.
+
+        New test.
+
+        * stress/date-parse-ranges.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+        (shouldBeNaN):
+
 2018-05-23  Rick Waldron  <waldron.rick@gmail.com>
 
         Conversion misspelled "Convertion" in error message string
