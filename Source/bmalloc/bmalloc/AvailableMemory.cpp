@@ -47,12 +47,14 @@ namespace bmalloc {
 
 static const size_t availableMemoryGuess = 512 * bmalloc::MB;
 
-static size_t computeAvailableMemory()
+#if BOS(DARWIN)
+static size_t memorySizeAccordingToKernel()
 {
 #if BPLATFORM(IOS_SIMULATOR)
-    // Pretend we have 512MB of memory to make cache sizes behave like on device.
-    return availableMemoryGuess;
-#elif BOS(DARWIN)
+    BUNUSED_PARAM(availableMemoryGuess);
+    // Pretend we have 1024MB of memory to make cache sizes behave like on device.
+    return 1024 * bmalloc::MB;
+#else
     host_basic_info_data_t hostInfo;
 
     mach_port_t host = mach_host_self();
@@ -61,11 +63,19 @@ static size_t computeAvailableMemory()
     mach_port_deallocate(mach_task_self(), host);
     if (r != KERN_SUCCESS)
         return availableMemoryGuess;
-    
+
     if (hostInfo.max_mem > std::numeric_limits<size_t>::max())
         return std::numeric_limits<size_t>::max();
 
-    size_t sizeAccordingToKernel = static_cast<size_t>(hostInfo.max_mem);
+    return static_cast<size_t>(hostInfo.max_mem);
+#endif
+}
+#endif
+
+static size_t computeAvailableMemory()
+{
+#if BOS(DARWIN)
+    size_t sizeAccordingToKernel = memorySizeAccordingToKernel();
 #if BPLATFORM(IOS)
     sizeAccordingToKernel = std::min(sizeAccordingToKernel, 840 * bmalloc::MB);
 #endif

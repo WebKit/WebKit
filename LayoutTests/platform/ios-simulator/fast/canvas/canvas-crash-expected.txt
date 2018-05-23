@@ -1,3 +1,3 @@
-CONSOLE MESSAGE: line 15: Total canvas memory use exceeds the maximum limit (256 MB).
+CONSOLE MESSAGE: line 15: Total canvas memory use exceeds the maximum limit (448 MB).
 CONSOLE MESSAGE: line 16: TypeError: null is not an object (evaluating 'ctx.putImageData')
 

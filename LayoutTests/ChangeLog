@@ -1,3 +1,13 @@
+2018-05-23  Antti Koivisto  <antti@apple.com>
+
+        Increase the simulated memory size on PLATFORM(IOS_SIMULATOR) from 512MB to 1024MB
+        https://bugs.webkit.org/show_bug.cgi?id=185908
+
+        Reviewed by Geoffrey Garen.
+
+        * platform/ios-simulator/fast/canvas/canvas-crash-expected.txt:
+        * platform/ios-simulator/fast/canvas/canvas-skia-excessive-size-expected.txt:
+
 2018-05-23  Alicia Boya García  <aboya@igalia.com>
 
         [GTK] Unreviewed test gardening

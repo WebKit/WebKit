@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 20: Total canvas memory use exceeds the maximum limit (256 MB).
+CONSOLE MESSAGE: line 20: Total canvas memory use exceeds the maximum limit (448 MB).
 This test checks to see if the browser survives the attempted creation of an excessively large canvas.
 
 Canvas 2d context = null!
