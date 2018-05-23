@@ -2105,6 +2105,9 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
     if (page.inspectorFrontendCount() > 0)
         return page.process();
 
+    if (m_automationSession)
+        return page.process();
+
     if (!page.process().hasCommittedAnyProvisionalLoads())
         return page.process();
 

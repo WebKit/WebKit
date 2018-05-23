@@ -1,3 +1,15 @@
+2018-05-23  Brian Burg  <bburg@apple.com>
+
+        Web Automation: disable process swap on navigation when an automation session is active
+        https://bugs.webkit.org/show_bug.cgi?id=185552
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        This is not intended to work right now. Opt out to avoid crashing
+        later when a process is deallocated unexpectedly.
+
 2018-05-23  Youenn Fablet  <youenn@apple.com>
 
         NetworkLoadChecker should check cached redirections
