@@ -1,3 +1,20 @@
+2018-05-23  Antti Koivisto  <antti@apple.com>
+
+        Page keeps reloading when viewing photos in google drive (due to too high canvas memory limits)
+        https://bugs.webkit.org/show_bug.cgi?id=185903
+        <rdar://problem/38420562>
+
+        Reviewed by Simon Fraser.
+
+        The canvas memory usage limits don't work on iOS since the current 2GB minimum limit is
+        larger than the maximum process size.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::maxActivePixelMemory):
+
+        Always base this on the reported ramSize() on iOS. Make it still fairly large to not risk breaking
+        any currently working content. In practice the limit computes to 448MB on device at the moment.
+
 2018-05-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement positioning for replaced out-of-flow elements
