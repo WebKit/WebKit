@@ -1,0 +1,6 @@
+These unit tests test:
+  webkit/Tools/Scripts/test262-runner
+  webkit/Tools/Scripts/test262-import
+
+Helper perl modules for these scripts are located in:
+  webkit/Tools/Scripts/test262/
