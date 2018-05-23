@@ -1,3 +1,33 @@
+2018-05-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Add notifyutil callbacks to dump the memory cache, and the list of live Pages and Documents
+        https://bugs.webkit.org/show_bug.cgi?id=185853
+
+        Reviewed by Keith Miller.
+
+        Add a notifyutil callback to dump the PageCache, which dumps the stats, and the list of live pages.
+        This can be invoked on iOS and macOS via "notifyutil -p com.apple.WebKit.showPageCache".
+        
+        Add a notifyutil callback that dumps the list of all Pages, and the list of all Documents, with
+        Document pointer address and URL.
+        This can be invoked on iOS and macOS via "notifyutil -p com.apple.WebKit.showAllDocuments".
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::PageCache):
+        (WebCore::PageCache::dump const):
+        * history/PageCache.h:
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::numberOfClients const):
+        (WebCore::CachedResource::count const): Deleted.
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::MemoryCache):
+        (WebCore::MemoryCache::pruneLiveResourcesToSize):
+        (WebCore::MemoryCache::dumpStats):
+        (WebCore::MemoryCache::dumpLRULists const):
+        * loader/cache/MemoryCache.h:
+        * page/mac/PageMac.mm:
+        (WebCore::Page::platformInitialize):
+
 2018-05-22  Dean Jackson  <dino@apple.com>
 
         Optimized path zoom animation needs a valid UIImage and CGRect

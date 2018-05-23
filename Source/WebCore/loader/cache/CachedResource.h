@@ -144,7 +144,7 @@ public:
     virtual void allClientsRemoved();
     void destroyDecodedDataIfNeeded();
 
-    unsigned count() const { return m_clients.size(); }
+    unsigned numberOfClients() const { return m_clients.size(); }
 
     Status status() const { return static_cast<Status>(m_status); }
     void setStatus(Status status) { m_status = status; }

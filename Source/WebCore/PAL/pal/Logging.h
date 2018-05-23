@@ -45,11 +45,10 @@ PAL_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 String logLevelString();
 bool isLogChannelEnabled(const String& name);
 PAL_EXPORT void setLogChannelToAccumulate(const String& name);
-#ifndef NDEBUG
-void registerNotifyCallback(const String& notifyID, WTF::Function<void()>&& callback);
-#endif
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
+PAL_EXPORT void registerNotifyCallback(const String&, WTF::Function<void()>&&);
 
 } // namespace PAL
 

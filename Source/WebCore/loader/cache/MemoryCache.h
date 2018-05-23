@@ -176,10 +176,9 @@ private:
     ~MemoryCache(); // Not implemented to make sure nobody accidentally calls delete -- WebCore does not delete singletons.
 
     LRUList& lruListFor(CachedResource&);
-#ifndef NDEBUG
+
     void dumpStats();
     void dumpLRULists(bool includeLive) const;
-#endif
 
     unsigned liveCapacity() const;
     unsigned deadCapacity() const;
@@ -190,16 +189,16 @@ private:
     CachedResourceMap& ensureSessionResourceMap(PAL::SessionID);
     CachedResourceMap* sessionResourceMap(PAL::SessionID) const;
 
-    bool m_disabled;  // Whether or not the cache is enabled.
-    bool m_inPruneResources;
+    bool m_disabled { false };
+    bool m_inPruneResources { false };
 
     unsigned m_capacity;
-    unsigned m_minDeadCapacity;
+    unsigned m_minDeadCapacity { 0 };
     unsigned m_maxDeadCapacity;
     Seconds m_deadDecodedDataDeletionInterval;
 
-    unsigned m_liveSize; // The number of bytes currently consumed by "live" resources in the cache.
-    unsigned m_deadSize; // The number of bytes currently consumed by "dead" resources in the cache.
+    unsigned m_liveSize { 0 }; // The number of bytes currently consumed by "live" resources in the cache.
+    unsigned m_deadSize { 0 }; // The number of bytes currently consumed by "dead" resources in the cache.
 
     // Size-adjusted and popularity-aware LRU list collection for cache objects.  This collection can hold
     // more resources than the cached resource map, since it can also hold "stale" multiple versions of objects that are

@@ -48,6 +48,7 @@
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
+#include <pal/Logging.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
@@ -277,7 +278,26 @@ PageCache& PageCache::singleton()
     static NeverDestroyed<PageCache> globalPageCache;
     return globalPageCache;
 }
-    
+
+PageCache::PageCache()
+{
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PAL::registerNotifyCallback("com.apple.WebKit.showPageCache", [] {
+            PageCache::singleton().dump();
+        });
+    });
+}
+
+void PageCache::dump() const
+{
+    WTFLogAlways("\nPage Cache:");
+    for (auto& item : m_items) {
+        CachedPage& cachedPage = *item->m_cachedPage;
+        WTFLogAlways("  Page %p, document %p %s", &cachedPage.page(), cachedPage.document(), cachedPage.document() ? cachedPage.document()->url().string().utf8().data() : "");
+    }
+}
+
 bool PageCache::canCache(Page& page) const
 {
     if (!m_maxSize) {
