@@ -108,12 +108,12 @@ void NetworkLoadChecker::checkRedirection(ResourceResponse& redirectResponse, Re
     auto error = validateResponse(redirectResponse);
     if (!error.isNull()) {
         auto errorMessage = makeString("Cross-origin redirection to ", request.url().string(), " denied by Cross-Origin Resource Sharing policy: ", error.localizedDescription());
-        handler(makeUnexpected(ResourceError { String { }, 0, request.url(), WTFMove(errorMessage), ResourceError::Type::AccessControl }));
+        handler(makeUnexpected(ResourceError { String { }, 0, redirectResponse.url(), WTFMove(errorMessage), ResourceError::Type::AccessControl }));
         return;
     }
 
     if (m_options.redirect != FetchOptions::Redirect::Follow) {
-        handler(accessControlErrorForValidationHandler(ASCIILiteral("Redirections are not allowed")));
+        handler(accessControlErrorForValidationHandler(makeString("Not allowed to follow a redirection while loading ", redirectResponse.url().string())));
         return;
     }
 

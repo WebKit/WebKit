@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Redirections are not allowed
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Fsimple.txt%3F&error
 CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Fsimple.txt%3F&error due to access control checks.
 CONSOLE MESSAGE: Response served by service worker has redirections
 CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/service-workers/service-worker/resources/simple.txt? due to access control checks.
@@ -8,6 +8,8 @@ CONSOLE MESSAGE: Response served by service worker is opaque redirect
 CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Fsimple.txt%3F&original-redirect-mode=follow&sw=manual due to access control checks.
 CONSOLE MESSAGE: Response served by service worker is opaque redirect
 CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Fsimple.txt%3F&original-redirect-mode=error&sw=manual due to access control checks.
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading https://localhost:9443/service-workers/service-worker/dummy?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Fsimple.txt%3F&original-redirect-mode=error&sw=gen
+CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/service-workers/service-worker/dummy?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Fsimple.txt%3F&original-redirect-mode=error&sw=gen due to access control checks.
 
 PASS initialize global state (service worker registration and caches) 
 PASS mode: "follow", non-intercepted request, no server redirect 

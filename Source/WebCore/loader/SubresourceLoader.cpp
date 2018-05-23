@@ -209,7 +209,12 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
     if (!redirectResponse.isNull()) {
         if (options().redirect != FetchOptions::Redirect::Follow) {
             if (options().redirect == FetchOptions::Redirect::Error) {
-                cancel(ResourceError { errorDomainWebKitInternal, 0, redirectResponse.url(), "Redirections are not allowed", ResourceError::Type::AccessControl });
+                ResourceError error { errorDomainWebKitInternal, 0, request().url(), makeString("Not allowed to follow a redirection while loading ", request().url().string()), ResourceError::Type::AccessControl };
+
+                if (m_frame && m_frame->document())
+                    m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, error.localizedDescription());
+
+                cancel(error);
                 return completionHandler(WTFMove(newRequest));
             }
 

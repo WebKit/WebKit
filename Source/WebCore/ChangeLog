@@ -1,3 +1,16 @@
+2018-05-23  Youenn Fablet  <youenn@apple.com>
+
+        NetworkLoadChecker should check cached redirections
+        https://bugs.webkit.org/show_bug.cgi?id=185849
+
+        Reviewed by Chris Dumez.
+
+        Covered by rebased tests.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+       Log the case of a redirection with fetch error mode.
+
 2018-05-23  Nan Wang  <n_wang@apple.com>
 
         AX: setValue on contenteditable should preserve whitespace

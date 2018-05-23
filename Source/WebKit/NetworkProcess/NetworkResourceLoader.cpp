@@ -230,7 +230,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
         }
         if (entry->redirectRequest()) {
             RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Handling redirect (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
-            loader->dispatchWillSendRequestForCacheEntry(WTFMove(entry));
+            loader->dispatchWillSendRequestForCacheEntry(WTFMove(request), WTFMove(entry));
             return;
         }
         if (loader->m_parameters.needsCertificateInfo && !entry->response().certificateInfo()) {
@@ -615,6 +615,9 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
 {
     ++m_redirectCount;
 
+    if (redirectResponse.source() == ResourceResponse::Source::Network && canUseCachedRedirect(request))
+        m_cache->storeRedirect(request, redirectResponse, redirectRequest);
+
     if (m_networkLoadChecker) {
         m_networkLoadChecker->checkRedirection(redirectResponse, WTFMove(redirectRequest), [protectedThis = makeRef(*this), this, storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy(), request = WTFMove(request), redirectResponse](auto&& result) mutable {
             if (!result.has_value()) {
@@ -622,9 +625,7 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
                     return;
 
                 if (m_parameters.options.redirect == FetchOptions::Redirect::Manual) {
-                    redirectResponse.setType(ResourceResponse::Type::Opaqueredirect);
-                    this->didReceiveResponse(WTFMove(redirectResponse));
-                    this->didFinishLoading({ });
+                    this->didFinishWithRedirectResponse(WTFMove(redirectResponse));
                     return;
                 }
 
@@ -634,7 +635,8 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
 
             if (storedCredentialsPolicy != m_networkLoadChecker->storedCredentialsPolicy()) {
                 // We need to restart the load to update the session according the new credential policy.
-                m_networkLoad->cancel();
+                if (m_networkLoad)
+                    m_networkLoad->cancel();
                 auto request = WTFMove(result.value());
                 m_networkLoadChecker->prepareRedirectedRequest(request);
 
@@ -656,12 +658,9 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
     continueWillSendRedirectedRequest(WTFMove(request), WTFMove(redirectRequest), WTFMove(redirectResponse));
 }
 
-void NetworkResourceLoader::continueWillSendRedirectedRequest(WebCore::ResourceRequest&& request, WebCore::ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
+void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
 {
     ASSERT(!isSynchronous());
-
-    if (canUseCachedRedirect(request))
-        m_cache->storeRedirect(request, redirectResponse, redirectRequest);
 
     if (m_parameters.shouldEnableFromOriginResponseHeader && shouldCancelCrossOriginLoad(redirectResponse, m_parameters.frameAncestorOrigins) && m_networkLoad) {
         didFailLoading(fromOriginResourceError(redirectResponse.url()));
@@ -669,6 +668,20 @@ void NetworkResourceLoader::continueWillSendRedirectedRequest(WebCore::ResourceR
     }
 
     send(Messages::WebResourceLoader::WillSendRequest(redirectRequest, sanitizeResponseIfPossible(WTFMove(redirectResponse), ResourceResponse::SanitizationType::Redirection)));
+}
+
+void NetworkResourceLoader::didFinishWithRedirectResponse(ResourceResponse&& redirectResponse)
+{
+    redirectResponse.setType(ResourceResponse::Type::Opaqueredirect);
+    didReceiveResponse(WTFMove(redirectResponse));
+
+    WebCore::NetworkLoadMetrics networkLoadMetrics;
+    networkLoadMetrics.markComplete();
+    networkLoadMetrics.responseBodyBytesReceived = 0;
+    networkLoadMetrics.responseBodyDecodedSize = 0;
+    send(Messages::WebResourceLoader::DidFinishResourceLoad { networkLoadMetrics });
+
+    cleanup(LoadResult::Success);
 }
 
 ResourceResponse NetworkResourceLoader::sanitizeResponseIfPossible(ResourceResponse&& response, ResourceResponse::SanitizationType type)
@@ -903,22 +916,15 @@ void NetworkResourceLoader::validateCacheEntry(std::unique_ptr<NetworkCache::Ent
     startNetworkLoad(WTFMove(revalidationRequest), FirstLoad::Yes);
 }
 
-void NetworkResourceLoader::dispatchWillSendRequestForCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)
+void NetworkResourceLoader::dispatchWillSendRequestForCacheEntry(ResourceRequest&& request, std::unique_ptr<NetworkCache::Entry>&& entry)
 {
     ASSERT(entry->redirectRequest());
     ASSERT(!m_isWaitingContinueWillSendRequestForCachedRedirect);
 
     LOG(NetworkCache, "(NetworkProcess) Executing cached redirect");
 
-    auto& response = entry->response();
-    if (m_parameters.shouldEnableFromOriginResponseHeader && shouldCancelCrossOriginLoad(response, m_parameters.frameAncestorOrigins) && m_networkLoad) {
-        didFailLoading(fromOriginResourceError(response.url()));
-        return;
-    }
-
-    ++m_redirectCount;
-    send(Messages::WebResourceLoader::WillSendRequest { *entry->redirectRequest(), sanitizeResponseIfPossible(ResourceResponse { response }, ResourceResponse::SanitizationType::Redirection) });
     m_isWaitingContinueWillSendRequestForCachedRedirect = true;
+    willSendRedirectedRequest(WTFMove(request), ResourceRequest { *entry->redirectRequest() }, ResourceResponse { entry->response() });
 }
 
 IPC::Connection* NetworkResourceLoader::messageSenderConnection()

@@ -362,6 +362,8 @@ webkit.org/b/179881 imported/w3c/web-platform-tests/encoding/eof-shift_jis.html 
 imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-extBa.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-extBb.html [ Skip ]
 
+# redirect-chain.php is generating some random number that appear in console error logging.
+http/tests/cache/disk-cache/redirect-chain-limits.html [ DumpJSConsoleLogInStdErr ]
 
 # Content encoding sniffing is only supported by CFNetwork.
 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Skip ]

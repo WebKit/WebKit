@@ -137,7 +137,7 @@ private:
     void didRetrieveCacheEntry(std::unique_ptr<NetworkCache::Entry>);
     void sendResultForCacheEntry(std::unique_ptr<NetworkCache::Entry>);
     void validateCacheEntry(std::unique_ptr<NetworkCache::Entry>);
-    void dispatchWillSendRequestForCacheEntry(std::unique_ptr<NetworkCache::Entry>);
+    void dispatchWillSendRequestForCacheEntry(WebCore::ResourceRequest&&, std::unique_ptr<NetworkCache::Entry>&&);
     void continueProcessingCachedEntryAfterDidReceiveResponse(std::unique_ptr<NetworkCache::Entry>);
 
     bool shouldInterruptLoadForXFrameOptions(const String&, const WebCore::URL&);
@@ -169,7 +169,7 @@ private:
 #endif
 
     void continueWillSendRedirectedRequest(WebCore::ResourceRequest&& request, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&);
-
+    void didFinishWithRedirectResponse(WebCore::ResourceResponse&&);
     WebCore::ResourceResponse sanitizeResponseIfPossible(WebCore::ResourceResponse&&, WebCore::ResourceResponse::SanitizationType);
 
     // ContentSecurityPolicyClient

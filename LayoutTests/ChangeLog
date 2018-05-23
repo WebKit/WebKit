@@ -1,3 +1,18 @@
+2018-05-23  Youenn Fablet  <youenn@apple.com>
+
+        NetworkLoadChecker should check cached redirections
+        https://bugs.webkit.org/show_bug.cgi?id=185849
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+        * http/tests/fetch/redirectmode-and-preload-expected.txt:
+        * http/tests/fetch/redirectmode-and-preload.html:
+        Removed tests that mix manual/error redirect mode with no-cors since this is no longer a valid possibility.
+        * http/tests/xmlhttprequest/access-control-and-redirects-async-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/access-control-and-redirects-async-expected.txt: Removed.
+
 2018-05-23  Nan Wang  <n_wang@apple.com>
 
         AX: setValue on contenteditable should preserve whitespace

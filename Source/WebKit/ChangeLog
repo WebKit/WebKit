@@ -1,3 +1,24 @@
+2018-05-23  Youenn Fablet  <youenn@apple.com>
+
+        NetworkLoadChecker should check cached redirections
+        https://bugs.webkit.org/show_bug.cgi?id=185849
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::checkRedirection):
+        Set the resource error url as done by WebCore SubresourceLoader.
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        Pass the resource request to dispatchWillSendRedirectedRequest now needs it.
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        Make sure that m_networkLoad is not null before cancelling it since we might be checking a cached redirection.
+        (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+        Ensure the redirect response is coming from the Network before adding it to the cache.
+        (WebKit::NetworkResourceLoader::dispatchWillSendRequestForCacheEntry):
+        Call willSendRedirectedRequest to make sure the cached redirect is validated.
+        * NetworkProcess/NetworkResourceLoader.h:
+
 2018-05-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebDriver: implement AutomationSessionClient::didDisconnectFromRemote
