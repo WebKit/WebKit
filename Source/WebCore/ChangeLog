@@ -1,3 +1,16 @@
+2018-05-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r232081.
+        https://bugs.webkit.org/show_bug.cgi?id=185895
+
+        Broke two API tests (Requested by bfulgham_ on #webkit).
+
+        Reverted changeset:
+
+        "Avoid keeping FormState alive longer than necessary"
+        https://bugs.webkit.org/show_bug.cgi?id=185877
+        https://trac.webkit.org/changeset/232081
+
 2018-05-22  Dean Jackson  <dino@apple.com>
 
         Optimized path zoom animation needs a valid UIImage and CGRect

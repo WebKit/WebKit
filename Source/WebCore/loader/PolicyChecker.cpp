@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
@@ -109,7 +109,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
     // Don't ask more than once for the same request or if we are loading an empty URL.
     // This avoids confusion on the part of the client.
     if (equalIgnoringHeaderFields(request, loader->lastCheckedRequest()) || (!request.isNull() && request.url().isEmpty())) {
-        function(ResourceRequest(request), { }, ShouldContinue::Yes);
+        function(ResourceRequest(request), nullptr, ShouldContinue::Yes);
         loader->setLastCheckedRequest(WTFMove(request));
         return;
     }
@@ -124,7 +124,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
 #endif
         if (isBackForwardLoadType(m_loadType))
             m_loadType = FrameLoadType::Reload;
-        function(WTFMove(request), { }, shouldContinue ? ShouldContinue::Yes : ShouldContinue::No);
+        function(WTFMove(request), nullptr, shouldContinue ? ShouldContinue::Yes : ShouldContinue::No);
         return;
     }
 
@@ -134,7 +134,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
             // reveal that the frame was blocked. This way, it looks like any other cross-origin page load.
             m_frame.ownerElement()->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
         }
-        function(WTFMove(request), { }, ShouldContinue::No);
+        function(WTFMove(request), nullptr, ShouldContinue::No);
         return;
     }
 
@@ -147,7 +147,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
 #if USE(QUICK_LOOK)
     // Always allow QuickLook-generated URLs based on the protocol scheme.
     if (!request.isNull() && isQuickLookPreviewURL(request.url()))
-        return function(WTFMove(request), makeWeakPtr(formState), ShouldContinue::Yes);
+        return function(WTFMove(request), formState, ShouldContinue::Yes);
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
@@ -168,7 +168,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
 
     m_delegateIsDecidingNavigationPolicy = true;
     String suggestedFilename = action.downloadAttribute().isEmpty() ? nullAtom() : action.downloadAttribute();
-    m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, didReceiveRedirectResponse, formState, policyDecisionMode, [this, function = WTFMove(function), request = ResourceRequest(request), formState = makeWeakPtr(formState), suggestedFilename = WTFMove(suggestedFilename), blobURLLifetimeExtension = WTFMove(blobURLLifetimeExtension)](PolicyAction policyAction) mutable {
+    m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, didReceiveRedirectResponse, formState, policyDecisionMode, [this, function = WTFMove(function), request = ResourceRequest(request), formState = makeRefPtr(formState), suggestedFilename = WTFMove(suggestedFilename), blobURLLifetimeExtension = WTFMove(blobURLLifetimeExtension)](PolicyAction policyAction) mutable {
         m_delegateIsDecidingNavigationPolicy = false;
 
         switch (policyAction) {
@@ -185,7 +185,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
                 handleUnimplementablePolicy(m_frame.loader().client().cannotShowURLError(request));
                 return function({ }, nullptr, ShouldContinue::No);
             }
-            return function(WTFMove(request), WTFMove(formState), ShouldContinue::Yes);
+            return function(WTFMove(request), formState.get(), ShouldContinue::Yes);
         }
         ASSERT_NOT_REACHED();
     });
@@ -201,7 +201,7 @@ void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, Re
 
     auto blobURLLifetimeExtension = extendBlobURLLifetimeIfNecessary(request);
 
-    m_frame.loader().client().dispatchDecidePolicyForNewWindowAction(navigationAction, request, formState, frameName, [frame = makeRef(m_frame), request, formState = makeWeakPtr(formState), frameName, navigationAction, function = WTFMove(function), blobURLLifetimeExtension = WTFMove(blobURLLifetimeExtension)](PolicyAction policyAction) mutable {
+    m_frame.loader().client().dispatchDecidePolicyForNewWindowAction(navigationAction, request, formState, frameName, [frame = makeRef(m_frame), request, formState = makeRefPtr(formState), frameName, navigationAction, function = WTFMove(function), blobURLLifetimeExtension = WTFMove(blobURLLifetimeExtension)](PolicyAction policyAction) mutable {
         switch (policyAction) {
         case PolicyAction::Download:
             frame->loader().client().startDownload(request);
@@ -213,7 +213,7 @@ void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, Re
             // It is invalid to get a "Suspend" policy for new windows, as the old document is not going away.
             RELEASE_ASSERT_NOT_REACHED();
         case PolicyAction::Use:
-            function(request, WTFMove(formState), frameName, navigationAction, ShouldContinue::Yes);
+            function(request, formState.get(), frameName, navigationAction, ShouldContinue::Yes);
             return;
         }
         ASSERT_NOT_REACHED();
