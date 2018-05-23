@@ -1,3 +1,18 @@
+2018-05-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebDriver: implement AutomationSessionClient::didDisconnectFromRemote
+        https://bugs.webkit.org/show_bug.cgi?id=185866
+
+        Reviewed by Brian Burg.
+
+        To handle the case of the session being closed by the browser, for example in case of a network process
+        crash. This is currently causing WebDriver tests to timeout in the bot.
+
+        * UIProcess/API/glib/WebKitAutomationSession.cpp: Add an implementation of didDisconnectFromRemote() to notify
+        the WebContext that the session will be closed.
+        * UIProcess/API/glib/WebKitWebContext.cpp: Remove the automation session when closed.
+        * UIProcess/API/glib/WebKitWebContextPrivate.h:
+
 2018-05-22  Brent Fulgham  <bfulgham@apple.com>
 
         Close access to "lsopen" for non-UI process

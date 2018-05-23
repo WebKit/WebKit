@@ -242,6 +242,12 @@ private:
 
     WebKitWebContext* m_webContext;
 };
+
+void webkitWebContextWillCloseAutomationSession(WebKitWebContext* webContext)
+{
+    webContext->priv->processPool->setAutomationSession(nullptr);
+    webContext->priv->automationSession = nullptr;
+}
 #endif // ENABLE(REMOTE_INSPECTOR)
 
 WEBKIT_DEFINE_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)

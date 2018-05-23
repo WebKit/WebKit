@@ -1,3 +1,15 @@
+2018-05-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebDriver: implement AutomationSessionClient::didDisconnectFromRemote
+        https://bugs.webkit.org/show_bug.cgi?id=185866
+
+        Reviewed by Brian Burg.
+
+        Close the dbus connection when receiving an empty target list.
+
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::setTargetList):
+
 2018-05-21  Olivier Blin  <olivier.blin@softathome.com>
 
         [WPE][WebDriver] add ICU include dirs
