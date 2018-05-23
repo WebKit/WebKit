@@ -758,7 +758,7 @@ public:
 
     void clear() { shrinkCapacity(0); }
 
-    void append(ValueType&& value) { append<ValueType>(std::forward<ValueType>(value)); }
+    ALWAYS_INLINE void append(ValueType&& value) { append<ValueType>(std::forward<ValueType>(value)); }
     template<typename U> void append(U&&);
     template<typename... Args> void constructAndAppend(Args&&...);
     template<typename... Args> bool tryConstructAndAppend(Args&&...);
@@ -1032,7 +1032,7 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::expandCapacity(siz
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
-T* Vector<T, inlineCapacity, OverflowHandler, minCapacity>::expandCapacity(size_t newMinCapacity, T* ptr)
+NEVER_INLINE T* Vector<T, inlineCapacity, OverflowHandler, minCapacity>::expandCapacity(size_t newMinCapacity, T* ptr)
 {
     if (ptr < begin() || ptr >= end()) {
         expandCapacity(newMinCapacity);
@@ -1244,7 +1244,7 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::shrinkCapacity(siz
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
 template<typename U>
-void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::append(const U* data, size_t dataSize)
+ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::append(const U* data, size_t dataSize)
 {
     size_t newSize = m_size + dataSize;
     if (newSize > capacity()) {
@@ -1261,7 +1261,7 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::append(const U* da
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
 template<typename U>
-bool Vector<T, inlineCapacity, OverflowHandler, minCapacity>::tryAppend(const U* data, size_t dataSize)
+ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity>::tryAppend(const U* data, size_t dataSize)
 {
     size_t newSize = m_size + dataSize;
     if (newSize > capacity()) {

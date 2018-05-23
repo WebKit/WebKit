@@ -1,3 +1,18 @@
+2018-05-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Speed up JetStream/base64
+        https://bugs.webkit.org/show_bug.cgi?id=185914
+
+        Reviewed by Michael Saboff.
+        
+        Make Vector<>::append ALWAYS_INLINE.
+
+        * wtf/Vector.h:
+        (WTF::Vector::append):
+        (WTF::minCapacity>::expandCapacity):
+        (WTF::minCapacity>::append):
+        (WTF::minCapacity>::tryAppend):
+
 2018-05-23  Michael Saboff  <msaboff@apple.com>
 
         Date.parse() doesn't properly handle input outside of ES Spec limits

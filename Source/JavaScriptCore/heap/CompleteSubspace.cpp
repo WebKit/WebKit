@@ -57,13 +57,6 @@ void* CompleteSubspace::allocate(VM& vm, size_t size, GCDeferralContext* deferra
     return allocateNonVirtual(vm, size, deferralContext, failureMode);
 }
 
-void* CompleteSubspace::allocateNonVirtual(VM& vm, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
-{
-    if (Allocator allocator = allocatorForNonVirtual(size, AllocatorForMode::AllocatorIfExists))
-        return allocator.allocate(deferralContext, failureMode);
-    return allocateSlow(vm, size, deferralContext, failureMode);
-}
-
 Allocator CompleteSubspace::allocatorForSlow(size_t size)
 {
     size_t index = MarkedSpace::sizeClassToIndex(size);

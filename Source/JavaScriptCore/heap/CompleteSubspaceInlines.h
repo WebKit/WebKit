@@ -25,14 +25,13 @@
 
 #pragma once
 
-#include "Allocator.h"
-#include "LocalAllocator.h"
-
 namespace JSC {
 
-ALWAYS_INLINE void* Allocator::allocate(GCDeferralContext* context, AllocationFailureMode mode) const
+ALWAYS_INLINE void* CompleteSubspace::allocateNonVirtual(VM& vm, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
-    return m_localAllocator->allocate(context, mode);
+    if (Allocator allocator = allocatorForNonVirtual(size, AllocatorForMode::AllocatorIfExists))
+        return allocator.allocate(deferralContext, failureMode);
+    return allocateSlow(vm, size, deferralContext, failureMode);
 }
 
 } // namespace JSC

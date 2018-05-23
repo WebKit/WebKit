@@ -295,7 +295,7 @@ void JSRopeString::resolveRope(ExecState* exec) const
 // we would likely have to place all of the constituent StringImpls into the
 // Vector before performing any concatenation, but by working backwards we likely
 // only fill the queue with the number of substrings at any given level in a
-// rope-of-ropes.)    
+// rope-of-ropes.)
 void JSRopeString::resolveRopeSlowCase8(LChar* buffer) const
 {
     LChar* position = buffer + length(); // We will be working backwards over the rope.

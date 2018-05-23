@@ -394,9 +394,9 @@
 		0F725CAA1C503DED00AD943A /* B3PureCSE.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F725CA61C503DED00AD943A /* B3PureCSE.h */; };
 		0F725CB01C506D3B00AD943A /* B3FoldPathConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F725CAE1C506D3B00AD943A /* B3FoldPathConstants.h */; };
 		0F74B93B1F89614800B935D3 /* PrototypeKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F74B93A1F89614500B935D3 /* PrototypeKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F75A060200D260B0038E2CF /* LocalAllocatorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F75A05A200D25F00038E2CF /* LocalAllocatorInlines.h */; };
+		0F75A060200D260B0038E2CF /* LocalAllocatorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F75A05A200D25F00038E2CF /* LocalAllocatorInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F75A061200D26180038E2CF /* LocalAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F75A057200D25F00038E2CF /* LocalAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F75A062200D261D0038E2CF /* AllocatorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F75A05D200D25F10038E2CF /* AllocatorInlines.h */; };
+		0F75A062200D261D0038E2CF /* AllocatorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F75A05D200D25F10038E2CF /* AllocatorInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F75A063200D261F0038E2CF /* Allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F75A054200D25EF0038E2CF /* Allocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F75A0662013E4F10038E2CF /* JITAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F75A0652013E4EF0038E2CF /* JITAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F766D2C15A8CC3A008F363E /* JITStubRoutineSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D2A15A8CC34008F363E /* JITStubRoutineSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -546,6 +546,8 @@
 		0FD0E5F01E46BF250006AB08 /* RegisterState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD0E5EF1E46BF230006AB08 /* RegisterState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD0E5F21E46C8AF0006AB08 /* CollectingScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD0E5F11E46C8AD0006AB08 /* CollectingScope.h */; };
 		0FD2C92416D01EE900C7803F /* StructureInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD2C92316D01EE900C7803F /* StructureInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD2FD9420B52BDE00F09441 /* CompleteSubspaceInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD2FD9320B52BDD00F09441 /* CompleteSubspaceInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD2FD9520B52BE200F09441 /* IsoSubspaceInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD2FD9220B52BDC00F09441 /* IsoSubspaceInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD3C82814115D4F00FD81CB /* DFGDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3C82214115D0E00FD81CB /* DFGDriver.h */; };
 		0FD3E4021B618AAF00C80E1E /* DFGAdaptiveInferredPropertyValueWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3E4001B618AAF00C80E1E /* DFGAdaptiveInferredPropertyValueWatchpoint.h */; };
 		0FD3E40A1B618B6600C80E1E /* ObjectPropertyCondition.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3E4041B618B6600C80E1E /* ObjectPropertyCondition.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2705,6 +2707,8 @@
 		0FD0E5EF1E46BF230006AB08 /* RegisterState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterState.h; sourceTree = "<group>"; };
 		0FD0E5F11E46C8AD0006AB08 /* CollectingScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectingScope.h; sourceTree = "<group>"; };
 		0FD2C92316D01EE900C7803F /* StructureInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureInlines.h; sourceTree = "<group>"; };
+		0FD2FD9220B52BDC00F09441 /* IsoSubspaceInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IsoSubspaceInlines.h; sourceTree = "<group>"; };
+		0FD2FD9320B52BDD00F09441 /* CompleteSubspaceInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompleteSubspaceInlines.h; sourceTree = "<group>"; };
 		0FD3C82014115CF800FD81CB /* DFGDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDriver.cpp; path = dfg/DFGDriver.cpp; sourceTree = "<group>"; };
 		0FD3C82214115D0E00FD81CB /* DFGDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDriver.h; path = dfg/DFGDriver.h; sourceTree = "<group>"; };
 		0FD3E3FF1B618AAF00C80E1E /* DFGAdaptiveInferredPropertyValueWatchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGAdaptiveInferredPropertyValueWatchpoint.cpp; path = dfg/DFGAdaptiveInferredPropertyValueWatchpoint.cpp; sourceTree = "<group>"; };
@@ -5635,6 +5639,7 @@
 				0FD0E5E61E43D3470006AB08 /* CollectorPhase.h */,
 				0FDCE1271FAFA859006F3901 /* CompleteSubspace.cpp */,
 				0FDCE1281FAFA859006F3901 /* CompleteSubspace.h */,
+				0FD2FD9320B52BDD00F09441 /* CompleteSubspaceInlines.h */,
 				146B14DB12EB5B12001BEC1B /* ConservativeRoots.cpp */,
 				149DAAF212EB559D0083B12B /* ConservativeRoots.h */,
 				0F41545A1FD20B1F001B58F6 /* ConstraintConcurrency.h */,
@@ -5710,6 +5715,7 @@
 				0FB4677B1FDDA6D8003FCB09 /* IsoCellSetInlines.h */,
 				0FDCE12C1FAFB4DE006F3901 /* IsoSubspace.cpp */,
 				0FDCE12B1FAFB4DE006F3901 /* IsoSubspace.h */,
+				0FD2FD9220B52BDC00F09441 /* IsoSubspaceInlines.h */,
 				0F5E0FE62086AD470097F0DE /* IsoSubspacePerVM.cpp */,
 				0F5E0FE52086AD460097F0DE /* IsoSubspacePerVM.h */,
 				0F766D2915A8CC34008F363E /* JITStubRoutineSet.cpp */,
@@ -8315,6 +8321,7 @@
 				0F4C91661C29F4F2004341A6 /* B3OriginDump.h in Headers */,
 				0FEC85261BDACDAC0080FF74 /* B3PatchpointSpecial.h in Headers */,
 				0FEC85281BDACDAC0080FF74 /* B3PatchpointValue.h in Headers */,
+				0FD2FD9520B52BE200F09441 /* IsoSubspaceInlines.h in Headers */,
 				799EF7C41C56ED96002B0534 /* B3PCToOriginMap.h in Headers */,
 				0FEC852A1BDACDAC0080FF74 /* B3PhaseScope.h in Headers */,
 				0F37308D1C0BD29100052BFA /* B3PhiChildren.h in Headers */,
@@ -8949,6 +8956,7 @@
 				BC18C4140E16F5CD00B34460 /* JavaScriptCore.h in Headers */,
 				BC18C4150E16F5CD00B34460 /* JavaScriptCorePrefix.h in Headers */,
 				1429D9300ED22D7000B89619 /* JIT.h in Headers */,
+				0FD2FD9420B52BDE00F09441 /* CompleteSubspaceInlines.h in Headers */,
 				FE1220271BE7F58C0039E6F2 /* JITAddGenerator.h in Headers */,
 				0F75A0662013E4F10038E2CF /* JITAllocator.h in Headers */,
 				FE3A06B21C10CB8900390FDD /* JITBitAndGenerator.h in Headers */,

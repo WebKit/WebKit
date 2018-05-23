@@ -43,17 +43,17 @@ public:
     Allocator allocatorForNonVirtual(size_t, AllocatorForMode);
     
     void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode) override;
-    JS_EXPORT_PRIVATE void* allocateNonVirtual(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
+    void* allocateNonVirtual(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
     
     static ptrdiff_t offsetOfAllocatorForSizeStep() { return OBJECT_OFFSETOF(CompleteSubspace, m_allocatorForSizeStep); }
     
     Allocator* allocatorForSizeStep() { return &m_allocatorForSizeStep[0]; }
 
 private:
-    Allocator allocatorForSlow(size_t);
+    JS_EXPORT_PRIVATE Allocator allocatorForSlow(size_t);
     
     // These slow paths are concerned with large allocations and allocator creation.
-    void* allocateSlow(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
+    JS_EXPORT_PRIVATE void* allocateSlow(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
     void* tryAllocateSlow(VM&, size_t, GCDeferralContext*);
     
     std::array<Allocator, MarkedSpace::numSizeClasses> m_allocatorForSizeStep;

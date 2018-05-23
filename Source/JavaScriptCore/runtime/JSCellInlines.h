@@ -25,14 +25,19 @@
 
 #pragma once
 
+#include "AllocatorInlines.h"
+#include "CompleteSubspaceInlines.h"
 #include "CPU.h"
 #include "CallFrame.h"
 #include "DeferGC.h"
+#include "FreeListInlines.h"
 #include "Handle.h"
+#include "IsoSubspaceInlines.h"
 #include "JSCast.h"
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
 #include "JSString.h"
+#include "LocalAllocatorInlines.h"
 #include "MarkedBlock.h"
 #include "Structure.h"
 #include "Symbol.h"

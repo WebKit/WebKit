@@ -1,3 +1,35 @@
+2018-05-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Speed up JetStream/base64
+        https://bugs.webkit.org/show_bug.cgi?id=185914
+
+        Reviewed by Michael Saboff.
+        
+        Make allocation fast paths ALWAYS_INLINE.
+        
+        This is a 1% speed-up on SunSpider, mostly because of base64. It also speeds up pdfjs by
+        ~6%.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/AllocatorInlines.h:
+        (JSC::Allocator::allocate const):
+        * heap/CompleteSubspace.cpp:
+        (JSC::CompleteSubspace::allocateNonVirtual): Deleted.
+        * heap/CompleteSubspace.h:
+        * heap/CompleteSubspaceInlines.h: Added.
+        (JSC::CompleteSubspace::allocateNonVirtual):
+        * heap/FreeListInlines.h:
+        (JSC::FreeList::allocate):
+        * heap/IsoSubspace.cpp:
+        (JSC::IsoSubspace::allocateNonVirtual): Deleted.
+        * heap/IsoSubspace.h:
+        (JSC::IsoSubspace::allocatorForNonVirtual):
+        * heap/IsoSubspaceInlines.h: Added.
+        (JSC::IsoSubspace::allocateNonVirtual):
+        * runtime/JSCellInlines.h:
+        * runtime/VM.h:
+
 2018-05-23  Rick Waldron  <waldron.rick@gmail.com>
 
         Conversion misspelled "Convertion" in error message string

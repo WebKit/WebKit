@@ -63,14 +63,6 @@ void* IsoSubspace::allocate(VM& vm, size_t size, GCDeferralContext* deferralCont
     return allocateNonVirtual(vm, size, deferralContext, failureMode);
 }
 
-void* IsoSubspace::allocateNonVirtual(VM&, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
-{
-    RELEASE_ASSERT(size == this->size());
-    Allocator allocator = allocatorForNonVirtual(size, AllocatorForMode::MustAlreadyHaveAllocator);
-    void* result = allocator.allocate(deferralContext, failureMode);
-    return result;
-}
-
 void IsoSubspace::didResizeBits(size_t blockIndex)
 {
     m_cellSets.forEach(

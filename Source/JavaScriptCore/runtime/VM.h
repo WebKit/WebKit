@@ -950,7 +950,7 @@ inline Heap* WeakSet::heap() const
 extern "C" void sanitizeStackForVMImpl(VM*);
 #endif
 
-void sanitizeStackForVM(VM*);
+JS_EXPORT_PRIVATE void sanitizeStackForVM(VM*);
 void logSanitizeStack(VM*);
 
 } // namespace JSC

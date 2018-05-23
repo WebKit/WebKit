@@ -490,6 +490,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/AlignedMemoryAllocator.h
     heap/AllocationFailureMode.h
     heap/Allocator.h
+    heap/AllocatorInlines.h
     heap/AllocatorForMode.h
     heap/BlockDirectory.h
     heap/BlockDirectoryInlines.h
@@ -500,6 +501,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/CollectionScope.h
     heap/CollectorPhase.h
     heap/CompleteSubspace.h
+    heap/CompleteSubspaceInlines.h
     heap/ConstraintConcurrency.h
     heap/ConstraintParallelism.h
     heap/ConstraintVolatility.h
@@ -533,10 +535,12 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/IncrementalSweeper.h
     heap/IsoCellSet.h
     heap/IsoSubspace.h
+    heap/IsoSubspaceInlines.h
     heap/IsoSubspacePerVM.h
     heap/LargeAllocation.h
     heap/ListableHandler.h
     heap/LocalAllocator.h
+    heap/LocalAllocatorInlines.h
     heap/LockDuringMarking.h
     heap/MachineStackMarker.h
     heap/MarkStack.h
