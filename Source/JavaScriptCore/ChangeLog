@@ -1,3 +1,13 @@
+2018-05-23  Rick Waldron  <waldron.rick@gmail.com>
+
+        Conversion misspelled "Convertion" in error message string
+        https://bugs.webkit.org/show_bug.cgi?id=185436
+
+        Reviewed by Saam Barati, Michael Saboff
+
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::toNumber const):
+
 2018-05-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Clean up stringGetByValStubGenerator

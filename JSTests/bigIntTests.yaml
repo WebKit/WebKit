@@ -135,3 +135,6 @@
 
 - path: stress/big-int-division.js
   cmd: runBigIntEnabled
+
+- path: stress/big-int-no-conversion-to-number.js
+  cmd: runBigIntEnabled

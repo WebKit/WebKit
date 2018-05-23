@@ -1026,7 +1026,7 @@ double JSBigInt::toNumber(ExecState* state) const
 {
     VM& vm = state->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    throwTypeError(state, scope, ASCIILiteral("Convertion from 'BigInt' to 'number' is not allowed."));
+    throwTypeError(state, scope, ASCIILiteral("Conversion from 'BigInt' to 'number' is not allowed."));
     return 0.0;
 }
 
