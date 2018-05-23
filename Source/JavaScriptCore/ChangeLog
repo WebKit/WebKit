@@ -1,3 +1,26 @@
+2018-05-23  Keith Miller  <keith_miller@apple.com>
+
+        InPlaceAbstractState should filter variables at the tail from a GetLocal by their flush format
+        https://bugs.webkit.org/show_bug.cgi?id=185923
+
+        Reviewed by Saam Barati.
+
+        Previously, we could confuse AI by overly broadening a type. This happens when a block in a
+        loop has a local mutated following a GetLocal but never SetLocaled to the stack. For example,
+
+        Block 1:
+        @1: GetLocal(loc42, FlushedInt32);
+        @2: PutStructure(Check: Cell: @1);
+        @3: Jump(Block 1);
+
+        Would cause us to claim that loc42 could be either an int32 or a some cell. However,
+        the type of an local cannot change without writing to it.
+
+        This fixes a crash in destructuring-rest-element.js
+
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::endBasicBlock):
+
 2018-05-23  Filip Pizlo  <fpizlo@apple.com>
 
         Speed up JetStream/base64

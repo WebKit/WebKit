@@ -236,21 +236,39 @@ bool InPlaceAbstractState::endBasicBlock()
             case Phi:
             case SetArgument:
             case PhantomLocal:
-            case Flush:
+            case Flush: {
                 // The block transfers the value from head to tail.
                 destination = variableAt(index);
                 break;
+            }
                 
-            case GetLocal:
+            case GetLocal: {
                 // The block refines the value with additional speculations.
                 destination = forNode(node);
+
+                // We need to make sure that we don't broaden the type beyond what the flush
+                // format says it will be. The value may claim to have changed abstract state
+                // but it's type cannot change without a store. For example:
+                //
+                // Block #1:
+                // 0: GetLocal(loc42, FlushFormatInt32)
+                // 1: PutStructure(Check: Cell: @0, ArrayStructure)
+                // ...
+                // 2: Branch(T: #1, F: #2)
+                //
+                // In this case the AbstractState of @0 will say it's an SpecArray but the only
+                // reason that would have happened is because we would have exited the cell check.
+
+                FlushFormat flushFormat = node->variableAccessData()->flushFormat();
+                destination.filter(typeFilterFor(flushFormat));
                 break;
-                
-            case SetLocal:
+            }
+            case SetLocal: {
                 // The block sets the variable, and potentially refines it, both
                 // before and after setting it.
                 destination = forNode(node->child1());
                 break;
+            }
                 
             default:
                 RELEASE_ASSERT_NOT_REACHED();
