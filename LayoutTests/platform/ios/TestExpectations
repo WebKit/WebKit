@@ -3443,3 +3443,8 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-jazh-425.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-jazh-426.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-jazh-427.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-010.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-011.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-115.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-116.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-006.html [ ImageOnlyFailure ]

@@ -1,3 +1,17 @@
+2018-05-22  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-text] W3C test suite gardening
+        https://bugs.webkit.org/show_bug.cgi?id=185879
+
+        Some more gardening on the css-text test suite.
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Text can wrap between hyphens and commas
