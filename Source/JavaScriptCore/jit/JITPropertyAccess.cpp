@@ -50,47 +50,6 @@
 namespace JSC {
 #if USE(JSVALUE64)
 
-JIT::CodeRef<JITThunkPtrTag> JIT::stringGetByValStubGenerator(VM* vm)
-{
-    JSInterfaceJIT jit(vm);
-    JumpList failures;
-    jit.tagReturnAddress();
-    failures.append(jit.branchIfNotString(regT0));
-
-    // Load string length to regT2, and start the process of loading the data pointer into regT0
-    jit.load32(Address(regT0, JSString::offsetOfLength()), regT2);
-    jit.loadPtr(Address(regT0, JSString::offsetOfValue()), regT0);
-    failures.append(jit.branchTest32(Zero, regT0));
-
-    // Do an unsigned compare to simultaneously filter negative indices as well as indices that are too large
-    failures.append(jit.branch32(AboveOrEqual, regT1, regT2));
-    
-    // Load the character
-    JumpList is16Bit;
-    JumpList cont8Bit;
-    // Load the string flags
-    jit.loadPtr(Address(regT0, StringImpl::flagsOffset()), regT2);
-    jit.loadPtr(Address(regT0, StringImpl::dataOffset()), regT0);
-    is16Bit.append(jit.branchTest32(Zero, regT2, TrustedImm32(StringImpl::flagIs8Bit())));
-    jit.load8(BaseIndex(regT0, regT1, TimesOne, 0), regT0);
-    cont8Bit.append(jit.jump());
-    is16Bit.link(&jit);
-    jit.load16(BaseIndex(regT0, regT1, TimesTwo, 0), regT0);
-    cont8Bit.link(&jit);
-
-    failures.append(jit.branch32(AboveOrEqual, regT0, TrustedImm32(0x100)));
-    jit.move(TrustedImmPtr(vm->smallStrings.singleCharacterStrings()), regT1);
-    jit.loadPtr(BaseIndex(regT1, regT0, ScalePtr, 0), regT0);
-    jit.ret();
-    
-    failures.link(&jit);
-    jit.move(TrustedImm32(0), regT0);
-    jit.ret();
-    
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "String get_by_val stub");
-}
-
 void JIT::emit_op_get_by_val(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
@@ -250,7 +209,7 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
     Jump nonCell = jump();
     linkSlowCase(iter); // base array check
     Jump notString = branchIfNotString(regT0);
-    emitNakedCall(CodeLocationLabel<NoPtrTag>(m_vm->getCTIStub(stringGetByValStubGenerator).retaggedCode<NoPtrTag>()));
+    emitNakedCall(CodeLocationLabel<NoPtrTag>(m_vm->getCTIStub(stringGetByValGenerator).retaggedCode<NoPtrTag>()));
     Jump failed = branchTest64(Zero, regT0);
     emitPutVirtualRegister(dst, regT0);
     emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_get_by_val));

@@ -51,6 +51,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> internalFunctionCallGenerator(VM*);
 MacroAssemblerCodeRef<JITThunkPtrTag> internalFunctionConstructGenerator(VM*);
 MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM*);
 MacroAssemblerCodeRef<JITThunkPtrTag> unreachableGenerator(VM*);
+MacroAssemblerCodeRef<JITThunkPtrTag> stringGetByValGenerator(VM*);
 
 MacroAssemblerCodeRef<JITThunkPtrTag> charCodeAtThunkGenerator(VM*);
 MacroAssemblerCodeRef<JITThunkPtrTag> charAtThunkGenerator(VM*);

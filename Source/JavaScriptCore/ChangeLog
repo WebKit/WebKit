@@ -1,5 +1,32 @@
 2018-05-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Clean up stringGetByValStubGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=185864
+
+        Reviewed by Saam Barati.
+
+        We clean up stringGetByValStubGenerator.
+
+        1. Unify 32bit and 64bit implementations.
+        2. Rename stringGetByValStubGenerator to stringGetByValGenerator, move it to ThunkGenerators.cpp.
+        3. Remove string type check since this code is invoked only when we know regT0 is JSString*.
+        4. Do not tag Cell in stringGetByValGenerator side. 32bit code stores Cell with tag in JITPropertyAccess32_64 side.
+        5. Fix invalid use of loadPtr for StringImpl::flags. Should use load32.
+
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::stringGetByValStubGenerator): Deleted.
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::stringGetByValStubGenerator): Deleted.
+        * jit/ThunkGenerators.cpp:
+        (JSC::stringGetByValGenerator):
+        * jit/ThunkGenerators.h:
+
+2018-05-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Use branchIfString/branchIfNotString instead of structure checkings
         https://bugs.webkit.org/show_bug.cgi?id=185810
 

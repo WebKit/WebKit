@@ -612,6 +612,58 @@ MacroAssemblerCodeRef<JITThunkPtrTag> unreachableGenerator(VM* vm)
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "unreachable thunk");
 }
 
+MacroAssemblerCodeRef<JITThunkPtrTag> stringGetByValGenerator(VM* vm)
+{
+    // regT0 is JSString*, and regT1 (64bit) or regT2 (32bit) is int index.
+    // Return regT0 = result JSString* if succeeds. Otherwise, return regT0 = 0.
+#if USE(JSVALUE64)
+    GPRReg stringGPR = GPRInfo::regT0;
+    GPRReg indexGPR = GPRInfo::regT1;
+    GPRReg scratchGPR = GPRInfo::regT2;
+#else
+    GPRReg stringGPR = GPRInfo::regT0;
+    GPRReg indexGPR = GPRInfo::regT2;
+    GPRReg scratchGPR = GPRInfo::regT1;
+#endif
+
+    JSInterfaceJIT jit(vm);
+    JSInterfaceJIT::JumpList failures;
+    jit.tagReturnAddress();
+
+    // Load string length to regT2, and start the process of loading the data pointer into regT0
+    jit.load32(JSInterfaceJIT::Address(stringGPR, JSString::offsetOfLength()), scratchGPR);
+    jit.loadPtr(JSInterfaceJIT::Address(stringGPR, JSString::offsetOfValue()), stringGPR);
+    failures.append(jit.branchTestPtr(JSInterfaceJIT::Zero, stringGPR));
+
+    // Do an unsigned compare to simultaneously filter negative indices as well as indices that are too large
+    failures.append(jit.branch32(JSInterfaceJIT::AboveOrEqual, indexGPR, scratchGPR));
+
+    // Load the character
+    JSInterfaceJIT::JumpList is16Bit;
+    JSInterfaceJIT::JumpList cont8Bit;
+    // Load the string flags
+    jit.load32(JSInterfaceJIT::Address(stringGPR, StringImpl::flagsOffset()), scratchGPR);
+    jit.loadPtr(JSInterfaceJIT::Address(stringGPR, StringImpl::dataOffset()), stringGPR);
+    is16Bit.append(jit.branchTest32(JSInterfaceJIT::Zero, scratchGPR, JSInterfaceJIT::TrustedImm32(StringImpl::flagIs8Bit())));
+    jit.load8(JSInterfaceJIT::BaseIndex(stringGPR, indexGPR, JSInterfaceJIT::TimesOne, 0), stringGPR);
+    cont8Bit.append(jit.jump());
+    is16Bit.link(&jit);
+    jit.load16(JSInterfaceJIT::BaseIndex(stringGPR, indexGPR, JSInterfaceJIT::TimesTwo, 0), stringGPR);
+    cont8Bit.link(&jit);
+
+    failures.append(jit.branch32(JSInterfaceJIT::AboveOrEqual, stringGPR, JSInterfaceJIT::TrustedImm32(0x100)));
+    jit.move(JSInterfaceJIT::TrustedImmPtr(vm->smallStrings.singleCharacterStrings()), indexGPR);
+    jit.loadPtr(JSInterfaceJIT::BaseIndex(indexGPR, stringGPR, JSInterfaceJIT::ScalePtr, 0), stringGPR);
+    jit.ret();
+
+    failures.link(&jit);
+    jit.move(JSInterfaceJIT::TrustedImm32(0), stringGPR);
+    jit.ret();
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "String get_by_val stub");
+}
+
 static void stringCharLoad(SpecializedThunkJIT& jit)
 {
     // load string
