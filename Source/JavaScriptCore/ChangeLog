@@ -1,3 +1,14 @@
+2018-05-22  Mark Lam  <mark.lam@apple.com>
+
+        BytecodeGeneratorification shouldn't add a ValueProfile if the JIT is disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=185896
+        <rdar://problem/40471403>
+
+        Reviewed by Saam Barati.
+
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::BytecodeGeneratorification::run):
+
 2018-05-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Fix CachedCall's argument count if RegExp has named captures

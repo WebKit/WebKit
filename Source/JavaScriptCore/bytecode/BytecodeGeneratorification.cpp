@@ -229,7 +229,9 @@ void BytecodeGeneratorification::run()
                 VirtualRegister operand = virtualRegisterForLocal(index);
                 Storage storage = storageForGeneratorLocal(index);
 
-                UnlinkedValueProfile profile = m_codeBlock->addValueProfile();
+                UnlinkedValueProfile profile = m_codeBlock->vm()->canUseJIT()
+                    ? m_codeBlock->addValueProfile()
+                    : static_cast<UnlinkedValueProfile>(-1);
                 fragment.appendInstruction(
                     op_get_from_scope,
                     operand.offset(), // dst
