@@ -1,3 +1,24 @@
+2018-05-23  Aakash Jain  <aakash_jain@apple.com>
+
+        Add Buildbot configuration for Opensource EWS
+        https://bugs.webkit.org/show_bug.cgi?id=185484
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/ews-build/config.json: Added, config file.
+        * BuildSlaveSupport/ews-build/factories.py: Added, basic template for factories.
+        * BuildSlaveSupport/ews-build/loadConfig.py: Added.
+        (loadBuilderConfig): Loads the configuration.
+        (checkValidWorker): Checks if the worker is valid.
+        (checkValidBuilder): Checks if the builder is valid.
+        (checkWorkersAndBuildersForConsistency): Check if workers and builders are consistent.
+        (checkWorkersAndBuildersForConsistency._find_worker_with_name):
+        (getBlackListedTags): Returns a list of keywords which should not be listed as tags.
+        (getValidTags): Returns a list of valid tags.
+        (getTagsForBuilder): Return a list of tags for given builder.
+        * BuildSlaveSupport/ews-build/loadConfig_unittest.py: unit-tests for loadConfig.py.
+        * BuildSlaveSupport/ews-build/master.cfg: Configuration for buildbot.
+
 2018-05-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Silence GCC 8 warnings

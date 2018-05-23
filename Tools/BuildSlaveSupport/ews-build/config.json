@@ -1,0 +1,280 @@
+{
+  "workers": [
+    {
+      "name": "webkit-misc",
+      "platform": "*"
+    },
+    {
+      "name": "tanty-gtk-wk2-ews",
+      "platform": "gtk"
+    },
+    {
+      "name": "ltilve-gtk-wk2-ews",
+      "platform": "gtk"
+    },
+    {
+      "name": "igalia-wpe-ews",
+      "platform": "wpe"
+    },
+    {
+      "name": "aperez-wpe-gcc5-ews",
+      "platform": "wpe"
+    },
+    {
+      "name": "aperez-wpe-gcc6-ews",
+      "platform": "wpe"
+    },
+    {
+      "name": "wincairo-ews-001",
+      "platform": "wincairo"
+    },
+    {
+      "name": "wincairo-ews-002",
+      "platform": "wincairo"
+    },
+    {
+      "name": "wincairo-ews-003",
+      "platform": "wincairo"
+    },
+    {
+      "name": "wincairo-ews-004",
+      "platform": "wincairo"
+    },
+    {
+      "name": "ews100",
+      "platform": "mac-sierra"
+    },
+    {
+      "name": "ews101",
+      "platform": "mac-sierra"
+    },
+    {
+      "name": "ews102",
+      "platform": "mac-sierra"
+    },
+    {
+      "name": "ews103",
+      "platform": "mac-sierra"
+    },
+    {
+      "name": "ews104",
+      "platform": "mac-sierra"
+    },
+    {
+      "name": "ews105",
+      "platform": "mac-sierra"
+    },
+    {
+      "name": "ews106",
+      "platform": "mac-sierra"
+    },
+    {
+      "name": "ews107",
+      "platform": "mac-sierra"
+    },
+    {
+      "name": "ews108",
+      "platform": "ios-11"
+    },
+    {
+      "name": "ews109",
+      "platform": "ios-11"
+    },
+    {
+      "name": "ews112",
+      "platform": "mac-sierra"
+    },
+    {
+      "name": "ews113",
+      "platform": "mac-sierra"
+    },
+    {
+      "name": "ews114",
+      "platform": "mac-sierra"
+    },
+    {
+      "name": "ews115",
+      "platform": "mac-sierra"
+    },
+    {
+      "name": "ews116",
+      "platform": "mac-sierra"
+    },
+    {
+      "name": "ews117",
+      "platform": "mac-sierra"
+    },
+    {
+      "name": "ews118",
+      "platform": "mac-high-sierra"
+    },
+    {
+      "name": "ews119",
+      "platform": "mac-high-sierra"
+    },
+    {
+      "name": "ews120",
+      "platform": "mac-high-sierra"
+    },
+    {
+      "name": "ews123",
+      "platform": "ios-11-simulator"
+    },
+    {
+      "name": "ews124",
+      "platform": "ios-11-simulator"
+    },
+    {
+      "name": "ews125",
+      "platform": "ios-11-simulator"
+    },
+    {
+      "name": "ews126",
+      "platform": "ios-11-simulator"
+    },
+    {
+      "name": "ews127",
+      "platform": "*"
+    },
+    {
+      "name": "ews128",
+      "platform": "*"
+    },
+    {
+      "name": "ews200",
+      "platform": "win"
+    },
+    {
+      "name": "ews201",
+      "platform": "win"
+    },
+    {
+      "name": "ews202",
+      "platform": "win"
+    },
+    {
+      "name": "ews203",
+      "platform": "win"
+    },
+    {
+      "name": "ews204",
+      "platform": "win"
+    },
+    {
+      "name": "ews205",
+      "platform": "win"
+    },
+    {
+      "name": "ews206",
+      "platform": "win"
+    },
+    {
+      "name": "ews207",
+      "platform": "win"
+    },
+    {
+      "name": "ews208",
+      "platform": "win"
+    }
+  ],
+  "builders": [
+    {
+      "name": "Style-EWS",
+      "factory": "StyleFactory",
+      "platform": "*",
+      "workernames": ["webkit-misc"]
+    },
+    {
+      "name": "GTK-Webkit2-EWS",
+      "factory": "GTKFactory",
+      "platform": "gtk",
+      "workernames": ["tanty-gtk-wk2-ews", "ltilve-gtk-wk2-ews"]
+    },
+    {
+      "name": "iOS-11-EWS",
+      "factory": "iOSFactory",
+      "platform": "ios-11",
+      "workernames": ["ews108", "ews109"]
+    },
+    {
+      "name": "iOS-11-Simulator-EWS",
+      "factory": "iOSSimulatorFactory",
+      "platform": "ios-11-simulator",
+      "workernames": ["ews123", "ews124", "ews125", "ews126"]
+    },
+    {
+      "name": "macOS-Sierra-Release-WK1-EWS",
+      "factory": "MacWK1Factory",
+      "platform": "mac-sierra",
+      "configuration": "Release",
+      "workernames": ["ews100", "ews101", "ews102", "ews103"]
+    },
+    {
+      "name": "macOS-Sierra-Release-WK2-EWS",
+      "factory": "MacWK2Factory",
+      "platform": "mac-sierra",
+      "configuration": "Release",
+      "workernames": ["ews104", "ews105", "ews106", "ews107"]
+    },
+    {
+      "name": "macOS-Sierra-Debug-WK1-EWS",
+      "factory": "MacWK1Factory",
+      "platform": "mac-sierra",
+      "configuration": "Debug",
+      "workernames": ["ews112", "ews113", "ews114", "ews115", "ews116"]
+    },
+    {
+      "name": "macOS-High-Sierra-Release-32bit-WK2-EWS",
+      "factory": "MacWK2Factory",
+      "platform": "mac-high-sierra",
+      "configuration": "Release",
+      "workernames": ["ews118", "ews119", "ews120"]
+    },
+    {
+      "name": "Windows-EWS",
+      "factory": "WindowsFactory",
+      "platform": "win",
+      "workernames": ["ews200", "ews201", "ews202", "ews203", "ews204", "ews205", "ews206", "ews207", "ews208"]
+    },
+    {
+      "name": "WinCairo-EWS",
+      "factory": "WinCairoFactory",
+      "platform": "wincairo",
+      "workernames": ["wincairo-ews-001", "wincairo-ews-002", "wincairo-ews-003", "wincairo-ews-004"]
+    },
+    {
+      "name": "WPE-EWS",
+      "factory": "WPEFactory",
+      "platform": "wpe",
+      "workernames": ["igalia-wpe-ews", "aperez-wpe-gcc5-ews", "aperez-wpe-gcc6-ews"]
+    },
+    {
+      "name": "JSC-tests-EWS",
+      "factory": "JSCTestsFactory",
+      "platform": "*",
+      "workernames": ["ews127", "ews128"]
+    },
+    {
+      "name": "Bindings-tests-EWS",
+      "factory": "BindingsFactory",
+      "platform": "*",
+      "workernames": ["webkit-misc"]
+    },
+    {
+      "name": "Webkitpy-tests-EWS",
+      "factory": "WebkitpyFactory",
+      "platform": "*",
+      "workernames": ["webkit-misc"]
+    }
+  ],
+  "schedulers": [
+    {
+      "type": "AnyBranchScheduler",
+      "name": "misc-trigger",
+      "treeStableTimer": 0,
+      "builderNames": ["Style-EWS", "JSC-tests-EWS", "macOS-Sierra-Release-WK1-EWS", "GTK-Webkit2-EWS", "macOS-Sierra-Release-WK2-EWS",
+                       "macOS-High-Sierra-Release-32bit-WK2-EWS", "WPE-EWS", "Windows-EWS", "iOS-11-EWS", "WinCairo-EWS", "iOS-11-Simulator-EWS",
+                       "Webkitpy-tests-EWS", "macOS-Sierra-Debug-WK1-EWS", "Bindings-tests-EWS"]
+    }
+  ]
+}
