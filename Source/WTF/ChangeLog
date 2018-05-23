@@ -1,3 +1,16 @@
+2018-05-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Prohibit shrinking the FastBitVector
+        https://bugs.webkit.org/show_bug.cgi?id=181020
+
+        Reviewed by Oliver Hunt.
+
+        Prohibit shrinking the FastBitVector. It's not prepared for this and the current usage does
+        not require it.
+
+        * wtf/FastBitVector.cpp:
+        (WTF::FastBitVectorWordOwner::resizeSlow):
+
 2018-05-22  Mark Lam  <mark.lam@apple.com>
 
         StringImpl utf8 conversion should not fail silently.

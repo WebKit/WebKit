@@ -42,6 +42,8 @@ void FastBitVectorWordOwner::setEqualsSlow(const FastBitVectorWordOwner& other)
 void FastBitVectorWordOwner::resizeSlow(size_t numBits)
 {
     size_t newLength = fastBitVectorArrayLength(numBits);
+
+    RELEASE_ASSERT(newLength >= arrayLength());
     
     // Use fastCalloc instead of fastRealloc because we expect the common
     // use case for this method to be initializing the size of the bitvector.
