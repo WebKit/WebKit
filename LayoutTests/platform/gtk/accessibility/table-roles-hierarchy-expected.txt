@@ -5,6 +5,7 @@ No	Country	Capital
 All	3 countries	3 capitals
 
 
+
 This shows the hierarchy of table roles.
 
 role: AXRole: AXTable

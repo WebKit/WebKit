@@ -1,3 +1,11 @@
+2018-05-23  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=185916
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/table-roles-hierarchy-expected.txt:
+
 2018-05-23  Antti Koivisto  <antti@apple.com>
 
         Page keeps reloading when viewing photos in google drive (due to too high canvas memory limits)
