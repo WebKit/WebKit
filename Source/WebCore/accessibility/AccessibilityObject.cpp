@@ -2984,7 +2984,7 @@ void AccessibilityObject::scrollToMakeVisible() const
         parentObject()->scrollToMakeVisible();
 
     if (auto* renderer = this->renderer())
-        renderer->scrollRectToVisible(SelectionRevealMode::Reveal, boundingBoxRect(), false, ScrollAlignment::alignCenterIfNotVisible, ScrollAlignment::alignCenterIfNotVisible);
+        renderer->scrollRectToVisible(SelectionRevealMode::Reveal, boundingBoxRect(), false, ScrollAlignment::alignCenterIfNotVisible, ScrollAlignment::alignCenterIfNotVisible, ShouldAllowCrossOriginScrolling::Yes);
 }
 
 void AccessibilityObject::scrollToMakeVisibleWithSubFocus(const IntRect& subfocus) const

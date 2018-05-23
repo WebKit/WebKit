@@ -676,7 +676,6 @@ public:
     SocketProvider* socketProvider() final;
 
     bool canNavigate(Frame* targetFrame);
-    Frame* findUnsafeParentScrollPropagationBoundary();
 
     bool usesStyleBasedEditability() const;
     void setHasElementUsingStyleBasedEditability();

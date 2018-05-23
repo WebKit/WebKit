@@ -179,7 +179,6 @@ FrameView::FrameView(Frame& frame)
     , m_overflowStatusDirty(true)
     , m_wasScrolledByUser(false)
     , m_inProgrammaticScroll(false)
-    , m_safeToPropagateScrollToParent(true)
     , m_delayedScrollEventTimer(*this, &FrameView::sendScrollEvent)
     , m_selectionRevealModeForFocusedElement(SelectionRevealMode::DoNotReveal)
     , m_delayedScrollToFocusedElementTimer(*this, &FrameView::scrollToFocusedElementTimerFired)
@@ -264,7 +263,6 @@ void FrameView::reset()
     m_updateEmbeddedObjectsTimer.stop();
     m_firstLayoutCallbackPending = false;
     m_wasScrolledByUser = false;
-    m_safeToPropagateScrollToParent = true;
     m_delayedScrollEventTimer.stop();
     m_shouldScrollToFocusedElement = false;
     m_delayedScrollToFocusedElementTimer.stop();
@@ -2323,7 +2321,7 @@ void FrameView::scrollToFocusedElementInternal()
 
     bool insideFixed;
     LayoutRect absoluteBounds = renderer->absoluteAnchorRect(&insideFixed);
-    renderer->scrollRectToVisible(m_selectionRevealModeForFocusedElement, absoluteBounds, insideFixed);
+    renderer->scrollRectToVisible(m_selectionRevealModeForFocusedElement, absoluteBounds, insideFixed, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, ShouldAllowCrossOriginScrolling::No);
 }
 
 void FrameView::contentsResized()
@@ -3059,6 +3057,23 @@ bool FrameView::shouldUpdate() const
     return true;
 }
 
+bool FrameView::safeToPropagateScrollToParent() const
+{
+    auto* document = frame().document();
+    if (!document)
+        return false;
+
+    auto* parentFrame = frame().tree().parent();
+    if (!parentFrame)
+        return false;
+
+    auto* parentDocument = parentFrame->document();
+    if (!parentDocument)
+        return false;
+
+    return document->securityOrigin().canAccess(parentDocument->securityOrigin());
+}
+
 void FrameView::scrollToAnchor()
 {
     RefPtr<ContainerNode> anchorNode = m_maintainScrollPositionAnchor;
@@ -3083,11 +3098,11 @@ void FrameView::scrollToAnchor()
     // Scroll nested layers and frames to reveal the anchor.
     // Align to the top and to the closest side (this matches other browsers).
     if (anchorNode->renderer()->style().isHorizontalWritingMode())
-        anchorNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, rect, insideFixed, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignTopAlways);
+        anchorNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, rect, insideFixed, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignTopAlways, ShouldAllowCrossOriginScrolling::No);
     else if (anchorNode->renderer()->style().isFlippedBlocksWritingMode())
-        anchorNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, rect, insideFixed, ScrollAlignment::alignRightAlways, ScrollAlignment::alignToEdgeIfNeeded);
+        anchorNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, rect, insideFixed, ScrollAlignment::alignRightAlways, ScrollAlignment::alignToEdgeIfNeeded, ShouldAllowCrossOriginScrolling::No);
     else
-        anchorNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, rect, insideFixed, ScrollAlignment::alignLeftAlways, ScrollAlignment::alignToEdgeIfNeeded);
+        anchorNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, rect, insideFixed, ScrollAlignment::alignLeftAlways, ScrollAlignment::alignToEdgeIfNeeded, ShouldAllowCrossOriginScrolling::No);
 
     if (AXObjectCache* cache = frame().document()->existingAXObjectCache())
         cache->handleScrolledToAnchor(anchorNode.get());

@@ -2504,7 +2504,7 @@ bool RenderLayer::allowsCurrentScroll() const
     return box->hasHorizontalOverflow() || box->hasVerticalOverflow();
 }
 
-void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const LayoutRect& absoluteRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
+void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const LayoutRect& absoluteRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY, ShouldAllowCrossOriginScrolling shouldAllowCrossOriginScrolling)
 {
     LOG_WITH_STREAM(Scrolling, stream << "Layer " << this << " scrollRectToVisible " << absoluteRect);
 
@@ -2556,7 +2556,7 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
                 scrollOffset = scrollOffset.constrainedBetween(IntPoint(), IntPoint(frameView.contentsSize()));
                 frameView.setScrollPosition(scrollOffset);
 
-                if (frameView.safeToPropagateScrollToParent()) {
+                if (shouldAllowCrossOriginScrolling == ShouldAllowCrossOriginScrolling::Yes || frameView.safeToPropagateScrollToParent()) {
                     parentLayer = ownerElement->renderer()->enclosingLayer();
                     // Convert the rect into the coordinate space of the parent frame's document.
                     newRect = frameView.contentsToContainingViewContents(enclosingIntRect(newRect));
@@ -2591,7 +2591,7 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
     }
     
     if (parentLayer)
-        parentLayer->scrollRectToVisible(revealMode, newRect, insideFixed, alignX, alignY);
+        parentLayer->scrollRectToVisible(revealMode, newRect, insideFixed, alignX, alignY, shouldAllowCrossOriginScrolling);
 }
 
 void RenderLayer::updateCompositingLayersAfterScroll()
@@ -2714,7 +2714,7 @@ LayoutRect RenderLayer::getRectToExpose(const LayoutRect &visibleRect, const Lay
 void RenderLayer::autoscroll(const IntPoint& positionInWindow)
 {
     IntPoint currentDocumentPosition = renderer().view().frameView().windowToContents(positionInWindow);
-    scrollRectToVisible(SelectionRevealMode::Reveal, LayoutRect(currentDocumentPosition, LayoutSize(1, 1)), false, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
+    scrollRectToVisible(SelectionRevealMode::Reveal, LayoutRect(currentDocumentPosition, LayoutSize(1, 1)), false, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded, ShouldAllowCrossOriginScrolling::Yes);
 }
 
 bool RenderLayer::canResize() const

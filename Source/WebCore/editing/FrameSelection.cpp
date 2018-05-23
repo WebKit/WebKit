@@ -2363,7 +2363,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
         if (RenderLayer* layer = start.deprecatedNode()->renderer()->enclosingLayer()) {
             if (!m_scrollingSuppressCount) {
                 layer->setAdjustForIOSCaretWhenScrolling(true);
-                layer->scrollRectToVisible(revealMode, rect, insideFixed, alignment, alignment);
+                layer->scrollRectToVisible(revealMode, rect, insideFixed, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes);
                 layer->setAdjustForIOSCaretWhenScrolling(false);
                 updateAppearance();
                 if (m_frame->page())
@@ -2374,7 +2374,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
         // FIXME: This code only handles scrolling the startContainer's layer, but
         // the selection rect could intersect more than just that.
         // See <rdar://problem/4799899>.
-        if (start.deprecatedNode()->renderer()->scrollRectToVisible(revealMode, rect, insideFixed, alignment, alignment))
+        if (start.deprecatedNode()->renderer()->scrollRectToVisible(revealMode, rect, insideFixed, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes))
             updateAppearance();
 #endif
     }

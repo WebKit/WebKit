@@ -218,7 +218,7 @@ public:
     void availableContentSizeChanged(AvailableSizeChangeReason) override;
 
     // "absoluteRect" is in scaled document coordinates.
-    void scrollRectToVisible(SelectionRevealMode, const LayoutRect& absoluteRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY);
+    void scrollRectToVisible(SelectionRevealMode, const LayoutRect& absoluteRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY, ShouldAllowCrossOriginScrolling);
 
     bool scrollsOverflow() const;
     bool hasScrollbars() const { return m_hBar || m_vBar; }

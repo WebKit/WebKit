@@ -741,12 +741,12 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         
     if (startNode && startNode->renderer()) {
 #if !PLATFORM(IOS)
-        startNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, enclosingIntRect(rangeRect), insideFixed, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
+        startNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, enclosingIntRect(rangeRect), insideFixed, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded, ShouldAllowCrossOriginScrolling::Yes);
 #else
         RenderLayer* layer = startNode->renderer()->enclosingLayer();
         if (layer) {
             layer->setAdjustForIOSCaretWhenScrolling(true);
-            startNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, enclosingIntRect(rangeRect), insideFixed, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
+            startNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, enclosingIntRect(rangeRect), insideFixed, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded, ShouldAllowCrossOriginScrolling::Yes);
             layer->setAdjustForIOSCaretWhenScrolling(false);
             _private->coreFrame->selection().setCaretRectNeedsUpdate();
             _private->coreFrame->selection().updateAppearance();
@@ -766,7 +766,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         RenderLayer* layer = startNode->renderer()->enclosingLayer();
         if (layer) {
             layer->setAdjustForIOSCaretWhenScrolling(true);
-            startNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, enclosingIntRect(rangeRect), insideFixed, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
+            startNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, enclosingIntRect(rangeRect), insideFixed, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded, ShouldAllowCrossOriginScrolling::Yes);
             layer->setAdjustForIOSCaretWhenScrolling(false);
 
             Frame *coreFrame = core(self);
