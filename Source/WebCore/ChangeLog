@@ -1,3 +1,17 @@
+2018-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Text can wrap between hyphens and commas
+        https://bugs.webkit.org/show_bug.cgi?id=185899
+        <rdar://problem/40118983>
+
+        Reviewed by Zalan Bujtas.
+
+        Chrome, Firefox, and ICU all agree that text shouldn't wrap there.
+
+        Test: fast/text/line-break-hyphen-comma.html
+
+        * rendering/BreakLines.cpp:
+
 2018-05-22  Simon Fraser  <simon.fraser@apple.com>
 
         Add notifyutil callbacks to dump the memory cache, and the list of live Pages and Documents

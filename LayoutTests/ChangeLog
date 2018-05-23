@@ -1,3 +1,14 @@
+2018-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Text can wrap between hyphens and commas
+        https://bugs.webkit.org/show_bug.cgi?id=185899
+        <rdar://problem/40118983>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/text/line-break-hyphen-comma-expected.html: Added.
+        * fast/text/line-break-hyphen-comma.html: Added.
+
 2018-05-22  David Fenton  <david_fenton@apple.com>
 
         Update test expectations for newly imported css-text layout tests
