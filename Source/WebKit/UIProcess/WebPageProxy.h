@@ -1309,6 +1309,8 @@ public:
     SuspendedPageProxy* suspendedPage() const { return m_suspendedPage.get(); }
     void suspendedPageClosed(SuspendedPageProxy&);
 
+    WebCore::IntRect syncRootViewToScreen(const WebCore::IntRect& viewRect);
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();

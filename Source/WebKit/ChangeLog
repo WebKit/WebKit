@@ -1,3 +1,97 @@
+2018-05-22  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r232090. rdar://problem/40306056
+
+    Optimized path zoom animation needs a valid UIImage and CGRect
+    https://bugs.webkit.org/show_bug.cgi?id=185883
+    <rdar://problem/40306056>
+    
+    Reviewed by Jon Lee.
+    
+    Source/WebCore:
+    
+    Pass the bounding box of the element that was clicked onto
+    the UI process, so it can perform an animation from that spot.
+    
+    This involved adding an IntRect to the ResourceRequest, and passing
+    that info into it from the HTMLAnchorElement, using a new struct
+    called SystemPreviewInfo.
+    
+    * html/HTMLAnchorElement.cpp:
+    (WebCore::HTMLAnchorElement::handleClick):
+    * loader/FrameLoadRequest.cpp:
+    (WebCore::FrameLoadRequest::FrameLoadRequest):
+    * loader/FrameLoadRequest.h:
+    (WebCore::FrameLoadRequest::FrameLoadRequest):
+    (WebCore::FrameLoadRequest::isSystemPreview const):
+    (WebCore::FrameLoadRequest::systemPreviewRect const):
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::urlSelected):
+    (WebCore::FrameLoader::loadURL):
+    * loader/FrameLoader.h:
+    (WebCore::FrameLoader::urlSelected):
+    * loader/FrameLoaderTypes.h:
+    * platform/network/ResourceRequestBase.cpp:
+    (WebCore::ResourceRequestBase::systemPreviewRect const):
+    (WebCore::ResourceRequestBase::setSystemPreviewRect):
+    * platform/network/ResourceRequestBase.h:
+    
+    Source/WebKit:
+    
+    Take the rectangle that was passed into the ResourceRequest and
+    use it for the origin of an animation into QuickLook.
+    
+    * Shared/WebCoreArgumentCoders.cpp:
+    (IPC::ArgumentCoder<ResourceRequest>::encode):
+    (IPC::ArgumentCoder<ResourceRequest>::decode):
+    * UIProcess/Cocoa/DownloadClient.mm:
+    (WebKit::DownloadClient::didStart):
+    * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+    (-[_WKPreviewControllerDelegate initWithSystemPreviewController:fromRect:]):
+    (-[_WKPreviewControllerDelegate presentingViewController]):
+    (-[_WKPreviewControllerDelegate previewController:frameForPreviewItem:inSourceView:]):
+    (-[_WKPreviewControllerDelegate previewController:transitionImageForPreviewItem:contentRect:]):
+    (WebKit::SystemPreviewController::start):
+    (-[_WKPreviewControllerDelegate initWithSystemPreviewController:]): Deleted.
+    * UIProcess/Downloads/DownloadProxy.h:
+    (WebKit::DownloadProxy::systemPreviewDownloadRect const):
+    * UIProcess/SystemPreviewController.h:
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::syncRootViewToScreen):
+    * UIProcess/WebPageProxy.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@232090 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-05-22  Dean Jackson  <dino@apple.com>
+
+            Optimized path zoom animation needs a valid UIImage and CGRect
+            https://bugs.webkit.org/show_bug.cgi?id=185883
+            <rdar://problem/40306056>
+
+            Reviewed by Jon Lee.
+
+            Take the rectangle that was passed into the ResourceRequest and
+            use it for the origin of an animation into QuickLook.
+
+            * Shared/WebCoreArgumentCoders.cpp:
+            (IPC::ArgumentCoder<ResourceRequest>::encode):
+            (IPC::ArgumentCoder<ResourceRequest>::decode):
+            * UIProcess/Cocoa/DownloadClient.mm:
+            (WebKit::DownloadClient::didStart):
+            * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+            (-[_WKPreviewControllerDelegate initWithSystemPreviewController:fromRect:]):
+            (-[_WKPreviewControllerDelegate presentingViewController]):
+            (-[_WKPreviewControllerDelegate previewController:frameForPreviewItem:inSourceView:]):
+            (-[_WKPreviewControllerDelegate previewController:transitionImageForPreviewItem:contentRect:]):
+            (WebKit::SystemPreviewController::start):
+            (-[_WKPreviewControllerDelegate initWithSystemPreviewController:]): Deleted.
+            * UIProcess/Downloads/DownloadProxy.h:
+            (WebKit::DownloadProxy::systemPreviewDownloadRect const):
+            * UIProcess/SystemPreviewController.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::syncRootViewToScreen):
+            * UIProcess/WebPageProxy.h:
+
 2018-05-18  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r231963. rdar://problem/40004666

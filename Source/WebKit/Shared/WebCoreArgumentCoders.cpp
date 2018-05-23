@@ -1237,7 +1237,14 @@ void ArgumentCoder<ResourceRequest>::encode(Encoder& encoder, const ResourceRequ
 {
     encoder << resourceRequest.cachePartition();
     encoder << resourceRequest.hiddenFromInspector();
-    encoder << resourceRequest.isSystemPreview();
+
+#if USE(SYSTEM_PREVIEW)
+    if (resourceRequest.isSystemPreview()) {
+        encoder << true;
+        encoder << resourceRequest.systemPreviewRect();
+    } else
+        encoder << false;
+#endif
 
     if (resourceRequest.encodingRequiresPlatformData()) {
         encoder << true;
@@ -1260,10 +1267,19 @@ bool ArgumentCoder<ResourceRequest>::decode(Decoder& decoder, ResourceRequest& r
         return false;
     resourceRequest.setHiddenFromInspector(isHiddenFromInspector);
 
+#if USE(SYSTEM_PREVIEW)
     bool isSystemPreview;
     if (!decoder.decode(isSystemPreview))
         return false;
     resourceRequest.setSystemPreview(isSystemPreview);
+
+    if (isSystemPreview) {
+        IntRect systemPreviewRect;
+        if (!decoder.decode(systemPreviewRect))
+            return false;
+        resourceRequest.setSystemPreviewRect(systemPreviewRect);
+    }
+#endif
 
     bool hasPlatformData;
     if (!decoder.decode(hasPlatformData))

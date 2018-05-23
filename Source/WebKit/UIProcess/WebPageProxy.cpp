@@ -3973,7 +3973,11 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
 
     uint64_t newNavigationID = navigation->navigationID();
     navigation->setWasUserInitiated(!!navigationActionData.userGestureTokenIdentifier);
+#if USE(SYSTEM_PREVIEW)
     navigation->setShouldForceDownload(!navigationActionData.downloadAttribute.isNull() || request.isSystemPreview());
+#else
+    navigation->setShouldForceDownload(!navigationActionData.downloadAttribute.isNull());
+#endif
     navigation->setCurrentRequest(ResourceRequest(request), m_process->coreProcessIdentifier());
     navigation->setCurrentRequestIsRedirect(navigationActionData.isRedirect);
     navigation->setTreatAsSameOriginNavigation(navigationActionData.treatAsSameOriginNavigation);
@@ -4439,7 +4443,12 @@ void WebPageProxy::rootViewToScreen(const IntRect& viewRect, Ref<Messages::WebPa
 {
     reply->send(m_pageClient.rootViewToScreen(viewRect));
 }
-    
+
+IntRect WebPageProxy::syncRootViewToScreen(const IntRect& viewRect)
+{
+    return m_pageClient.rootViewToScreen(viewRect);
+}
+
 #if PLATFORM(IOS)
 void WebPageProxy::accessibilityScreenToRootView(const IntPoint& screenPoint, IntPoint& windowPoint)
 {

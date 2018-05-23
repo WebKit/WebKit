@@ -78,7 +78,7 @@ void DownloadClient::didStart(WebProcessPool&, DownloadProxy& downloadProxy)
     if (downloadProxy.isSystemPreviewDownload()) {
         if (auto* webPage = downloadProxy.originatingPage()) {
             // FIXME: Update the MIME-type once it is known in the ResourceResponse.
-            webPage->systemPreviewController()->start(ASCIILiteral { "application/octet-stream" });
+            webPage->systemPreviewController()->start(ASCIILiteral { "application/octet-stream" }, downloadProxy.systemPreviewDownloadRect());
         }
         takeActivityToken(downloadProxy);
         return;

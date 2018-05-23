@@ -417,14 +417,19 @@ void HTMLAnchorElement::handleClick(Event& event)
     }
 #endif
 
-    bool isSystemPreview = false;
+    SystemPreviewInfo systemPreviewInfo;
 #if USE(SYSTEM_PREVIEW)
-    isSystemPreview = isSystemPreviewLink();
+    systemPreviewInfo.isSystemPreview = isSystemPreviewLink();
+
+    if (systemPreviewInfo.isSystemPreview) {
+        if (auto* child = firstElementChild())
+            systemPreviewInfo.systemPreviewRect = child->boundsInRootViewSpace();
+    }
 #endif
 
     ShouldSendReferrer shouldSendReferrer = hasRel(Relation::NoReferrer) ? NeverSendReferrer : MaybeSendReferrer;
     auto newFrameOpenerPolicy = hasRel(Relation::NoOpener) ? std::make_optional(NewFrameOpenerPolicy::Suppress) : std::nullopt;
-    frame->loader().urlSelected(completedURL, target(), &event, LockHistory::No, LockBackForwardList::No, shouldSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, isSystemPreview);
+    frame->loader().urlSelected(completedURL, target(), &event, LockHistory::No, LockBackForwardList::No, shouldSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, systemPreviewInfo);
 
     sendPings(completedURL);
 }
