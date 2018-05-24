@@ -1,3 +1,39 @@
+2018-05-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Use ASCIILiteral with applicationBundleIsEqualTo in RuntimeApplicationChecksCocoa
+        https://bugs.webkit.org/show_bug.cgi?id=185935
+
+        Reviewed by Yusuke Suzuki.
+
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::MacApplication::isSafari):
+        (WebCore::MacApplication::isAppleMail):
+        (WebCore::MacApplication::isIBooks):
+        (WebCore::MacApplication::isITunes):
+        (WebCore::MacApplication::isMicrosoftMessenger):
+        (WebCore::MacApplication::isAdobeInstaller):
+        (WebCore::MacApplication::isAOLInstantMessenger):
+        (WebCore::MacApplication::isMicrosoftMyDay):
+        (WebCore::MacApplication::isMicrosoftOutlook):
+        (WebCore::MacApplication::isQuickenEssentials):
+        (WebCore::MacApplication::isAperture):
+        (WebCore::MacApplication::isVersions):
+        (WebCore::MacApplication::isHRBlock):
+        (WebCore::MacApplication::isIAdProducer):
+        (WebCore::MacApplication::isSolidStateNetworksDownloader):
+        (WebCore::IOSApplication::isMobileMail):
+        (WebCore::IOSApplication::isMobileSafari):
+        (WebCore::IOSApplication::isWebBookmarksD):
+        (WebCore::IOSApplication::isDumpRenderTree):
+        (WebCore::IOSApplication::isMobileStore):
+        (WebCore::IOSApplication::isSpringBoard):
+        (WebCore::IOSApplication::isWebApp):
+        (WebCore::IOSApplication::isIBooks):
+        (WebCore::IOSApplication::isIBooksStorytime):
+        (WebCore::IOSApplication::isTheSecretSocietyHiddenMystery):
+        (WebCore::IOSApplication::isCardiogram):
+        (WebCore::IOSApplication::isNike):
+
 2018-05-23  Brent Fulgham  <bfulgham@apple.com>
 
         Avoid keeping FormState alive longer than necessary

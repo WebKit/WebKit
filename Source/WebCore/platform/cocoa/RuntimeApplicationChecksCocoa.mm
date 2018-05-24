@@ -82,91 +82,91 @@ static bool applicationBundleIsEqualTo(const String& bundleIdentifierString)
 
 bool MacApplication::isSafari()
 {
-    static bool isSafari = applicationBundleIsEqualTo("com.apple.Safari") || applicationBundleIsEqualTo("com.apple.SafariTechnologyPreview");
+    static bool isSafari = applicationBundleIsEqualTo(ASCIILiteral("com.apple.Safari")) || applicationBundleIsEqualTo(ASCIILiteral("com.apple.SafariTechnologyPreview"));
     return isSafari;
 }
 
 bool MacApplication::isAppleMail()
 {
-    static bool isAppleMail = applicationBundleIsEqualTo("com.apple.mail");
+    static bool isAppleMail = applicationBundleIsEqualTo(ASCIILiteral("com.apple.mail"));
     return isAppleMail;
 }
 
 bool MacApplication::isIBooks()
 {
-    static bool isIBooks = applicationBundleIsEqualTo("com.apple.iBooksX");
+    static bool isIBooks = applicationBundleIsEqualTo(ASCIILiteral("com.apple.iBooksX"));
     return isIBooks;
 }
 
 bool MacApplication::isITunes()
 {
-    static bool isITunes = applicationBundleIsEqualTo("com.apple.iTunes");
+    static bool isITunes = applicationBundleIsEqualTo(ASCIILiteral("com.apple.iTunes"));
     return isITunes;
 }
 
 bool MacApplication::isMicrosoftMessenger()
 {
-    static bool isMicrosoftMessenger = applicationBundleIsEqualTo("com.microsoft.Messenger");
+    static bool isMicrosoftMessenger = applicationBundleIsEqualTo(ASCIILiteral("com.microsoft.Messenger"));
     return isMicrosoftMessenger;
 }
 
 bool MacApplication::isAdobeInstaller()
 {
-    static bool isAdobeInstaller = applicationBundleIsEqualTo("com.adobe.Installers.Setup");
+    static bool isAdobeInstaller = applicationBundleIsEqualTo(ASCIILiteral("com.adobe.Installers.Setup"));
     return isAdobeInstaller;
 }
 
 bool MacApplication::isAOLInstantMessenger()
 {
-    static bool isAOLInstantMessenger = applicationBundleIsEqualTo("com.aol.aim.desktop");
+    static bool isAOLInstantMessenger = applicationBundleIsEqualTo(ASCIILiteral("com.aol.aim.desktop"));
     return isAOLInstantMessenger;
 }
 
 bool MacApplication::isMicrosoftMyDay()
 {
-    static bool isMicrosoftMyDay = applicationBundleIsEqualTo("com.microsoft.myday");
+    static bool isMicrosoftMyDay = applicationBundleIsEqualTo(ASCIILiteral("com.microsoft.myday"));
     return isMicrosoftMyDay;
 }
 
 bool MacApplication::isMicrosoftOutlook()
 {
-    static bool isMicrosoftOutlook = applicationBundleIsEqualTo("com.microsoft.Outlook");
+    static bool isMicrosoftOutlook = applicationBundleIsEqualTo(ASCIILiteral("com.microsoft.Outlook"));
     return isMicrosoftOutlook;
 }
 
 bool MacApplication::isQuickenEssentials()
 {
-    static bool isQuickenEssentials = applicationBundleIsEqualTo("com.intuit.QuickenEssentials");
+    static bool isQuickenEssentials = applicationBundleIsEqualTo(ASCIILiteral("com.intuit.QuickenEssentials"));
     return isQuickenEssentials;
 }
 
 bool MacApplication::isAperture()
 {
-    static bool isAperture = applicationBundleIsEqualTo("com.apple.Aperture");
+    static bool isAperture = applicationBundleIsEqualTo(ASCIILiteral("com.apple.Aperture"));
     return isAperture;
 }
 
 bool MacApplication::isVersions()
 {
-    static bool isVersions = applicationBundleIsEqualTo("com.blackpixel.versions");
+    static bool isVersions = applicationBundleIsEqualTo(ASCIILiteral("com.blackpixel.versions"));
     return isVersions;
 }
 
 bool MacApplication::isHRBlock()
 {
-    static bool isHRBlock = applicationBundleIsEqualTo("com.hrblock.tax.2010");
+    static bool isHRBlock = applicationBundleIsEqualTo(ASCIILiteral("com.hrblock.tax.2010"));
     return isHRBlock;
 }
 
 bool MacApplication::isIAdProducer()
 {
-    static bool isIAdProducer = applicationBundleIsEqualTo("com.apple.iAdProducer");
+    static bool isIAdProducer = applicationBundleIsEqualTo(ASCIILiteral("com.apple.iAdProducer"));
     return isIAdProducer;
 }
 
 bool MacApplication::isSolidStateNetworksDownloader()
 {
-    static bool isSolidStateNetworksDownloader = applicationBundleIsEqualTo("com.solidstatenetworks.awkhost");
+    static bool isSolidStateNetworksDownloader = applicationBundleIsEqualTo(ASCIILiteral("com.solidstatenetworks.awkhost"));
     return isSolidStateNetworksDownloader;
 }
 
@@ -176,19 +176,19 @@ bool MacApplication::isSolidStateNetworksDownloader()
 
 bool IOSApplication::isMobileMail()
 {
-    static bool isMobileMail = applicationBundleIsEqualTo("com.apple.mobilemail");
+    static bool isMobileMail = applicationBundleIsEqualTo(ASCIILiteral("com.apple.mobilemail"));
     return isMobileMail;
 }
 
 bool IOSApplication::isMobileSafari()
 {
-    static bool isMobileSafari = applicationBundleIsEqualTo("com.apple.mobilesafari");
+    static bool isMobileSafari = applicationBundleIsEqualTo(ASCIILiteral("com.apple.mobilesafari"));
     return isMobileSafari;
 }
 
 bool IOSApplication::isWebBookmarksD()
 {
-    static bool isWebBookmarksD = applicationBundleIsEqualTo("com.apple.webbookmarksd");
+    static bool isWebBookmarksD = applicationBundleIsEqualTo(ASCIILiteral("com.apple.webbookmarksd"));
     return isWebBookmarksD;
 }
 
@@ -196,25 +196,25 @@ bool IOSApplication::isDumpRenderTree()
 {
     // We use a prefix match instead of strict equality since multiple instances of DumpRenderTree
     // may be launched, where the bundle identifier of each instance has a unique suffix.
-    static bool isDumpRenderTree = applicationBundleIsEqualTo("org.webkit.DumpRenderTree"); // e.g. org.webkit.DumpRenderTree0
+    static bool isDumpRenderTree = applicationBundleIsEqualTo(ASCIILiteral("org.webkit.DumpRenderTree")); // e.g. org.webkit.DumpRenderTree0
     return isDumpRenderTree;
 }
 
 bool IOSApplication::isMobileStore()
 {
-    static bool isMobileStore = applicationBundleIsEqualTo("com.apple.MobileStore");
+    static bool isMobileStore = applicationBundleIsEqualTo(ASCIILiteral("com.apple.MobileStore"));
     return isMobileStore;
 }
 
 bool IOSApplication::isSpringBoard()
 {
-    static bool isSpringBoard = applicationBundleIsEqualTo("com.apple.springboard");
+    static bool isSpringBoard = applicationBundleIsEqualTo(ASCIILiteral("com.apple.springboard"));
     return isSpringBoard;
 }
 
 bool IOSApplication::isWebApp()
 {
-    static bool isWebApp = applicationBundleIsEqualTo("com.apple.webapp");
+    static bool isWebApp = applicationBundleIsEqualTo(ASCIILiteral("com.apple.webapp"));
     return isWebApp;
 }
 
@@ -226,31 +226,31 @@ bool IOSApplication::isWebProcess()
 
 bool IOSApplication::isIBooks()
 {
-    static bool isIBooks = applicationBundleIsEqualTo("com.apple.iBooks");
+    static bool isIBooks = applicationBundleIsEqualTo(ASCIILiteral("com.apple.iBooks"));
     return isIBooks;
 }
 
 bool IOSApplication::isIBooksStorytime()
 {
-    static bool isIBooksStorytime = applicationBundleIsEqualTo("com.apple.TVBooks");
+    static bool isIBooksStorytime = applicationBundleIsEqualTo(ASCIILiteral("com.apple.TVBooks"));
     return isIBooksStorytime;
 }
 
 bool IOSApplication::isTheSecretSocietyHiddenMystery()
 {
-    static bool isTheSecretSocietyHiddenMystery = applicationBundleIsEqualTo("com.g5e.secretsociety");
+    static bool isTheSecretSocietyHiddenMystery = applicationBundleIsEqualTo(ASCIILiteral("com.g5e.secretsociety"));
     return isTheSecretSocietyHiddenMystery;
 }
 
 bool IOSApplication::isCardiogram()
 {
-    static bool isCardiogram = applicationBundleIsEqualTo("com.cardiogram.ios.heart");
+    static bool isCardiogram = applicationBundleIsEqualTo(ASCIILiteral("com.cardiogram.ios.heart"));
     return isCardiogram;
 }
 
 bool IOSApplication::isNike()
 {
-    static bool isNike = applicationBundleIsEqualTo("com.nike.omega");
+    static bool isNike = applicationBundleIsEqualTo(ASCIILiteral("com.nike.omega"));
     return isNike;
 }
 
