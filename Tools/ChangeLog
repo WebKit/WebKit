@@ -1,3 +1,13 @@
+2018-05-24  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] Save some time disabling some compile options in the dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=185909
+
+        Reviewed by Philippe Normand.
+
+        * gstreamer/jhbuild.modules: Added  --disable-tests to gstreamer
+        and --disable-examples --disable-gtk-doc to gstreamer-vaapi.
+
 2018-05-23  Roy Reapor  <rreapor@apple.com>
 
         Use Helvetica on build.webkit.org webpages

@@ -40,7 +40,7 @@
     <branch repo="chromium.googlesource.com" checkoutdir="libvpx" tag="v1.7.0"/>
   </autotools>
 
-  <autotools id="gstreamer" autogen-sh="configure" autogenargs="--disable-gtk-doc --disable-introspection --disable-examples">
+  <autotools id="gstreamer" autogen-sh="configure" autogenargs="--disable-gtk-doc --disable-introspection --disable-examples --disable-tests">
     <dependencies>
       <dep package="orc"/>
     </dependencies>
@@ -88,7 +88,7 @@
     <branch hash="sha:eff80a02d2f2fb9f34b67e9a26e9954d3218c7aa18e863f2a47805fa7066029d" module="gst-libav/gst-libav-${version}.tar.xz" repo="gstreamer" version="1.14.1" />
   </autotools>
 
-  <autotools id="gstreamer-vaapi">
+  <autotools id="gstreamer-vaapi" autogen-sh="configure" autogenargs="--disable-examples --disable-gtk-doc">
     <branch hash="sha:585c3ddb0c39220de0a33e5d0ed6196a108b8407ec3538d7c64617713b4434e8" module="gstreamer-vaapi/gstreamer-vaapi-${version}.tar.xz" repo="gstreamer" version="1.14.1" />
     <dependencies>
       <dep package="gstreamer"/>
