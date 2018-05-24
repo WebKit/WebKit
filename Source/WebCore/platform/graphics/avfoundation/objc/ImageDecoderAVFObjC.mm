@@ -319,7 +319,7 @@ ImageDecoderAVFObjCSample* toSample(Iterator iter)
 RefPtr<ImageDecoderAVFObjC> ImageDecoderAVFObjC::create(SharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     // AVFoundation may not be available at runtime.
-    if (!getAVURLAssetClass())
+    if (!AVFoundationMIMETypeCache::singleton().isAvailable())
         return nullptr;
 
     if (!canLoad_VideoToolbox_VTCreateCGImageFromCVPixelBuffer())
@@ -350,24 +350,17 @@ ImageDecoderAVFObjC::~ImageDecoderAVFObjC() = default;
 
 bool ImageDecoderAVFObjC::supportsMediaType(MediaType type)
 {
-    if (type == MediaType::Video)
-        return getAVURLAssetClass() && canLoad_VideoToolbox_VTCreateCGImageFromCVPixelBuffer();
-    return false;
+    return type == MediaType::Video && AVFoundationMIMETypeCache::singleton().isAvailable();
 }
 
 bool ImageDecoderAVFObjC::supportsContentType(const ContentType& type)
 {
-    if (getAVURLAssetClass() && canLoad_VideoToolbox_VTCreateCGImageFromCVPixelBuffer())
-        return AVFoundationMIMETypeCache::singleton().types().contains(type.containerType());
-    return false;
+    return AVFoundationMIMETypeCache::singleton().supportsContentType(type);
 }
 
 bool ImageDecoderAVFObjC::canDecodeType(const String& mimeType)
 {
-    if (!supportsMediaType(MediaType::Video))
-        return nullptr;
-
-    return [getAVURLAssetClass() isPlayableExtendedMIMEType:mimeType];
+    return AVFoundationMIMETypeCache::singleton().canDecodeType(mimeType);
 }
 
 AVAssetTrack *ImageDecoderAVFObjC::firstEnabledTrack()

@@ -939,6 +939,10 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
     parameters.presentingApplicationPID = m_configuration->presentingApplicationPID();
 
+#if PLATFORM(COCOA)
+    parameters.mediaMIMETypes = process.mediaMIMETypes();
+#endif
+
     // Add any platform specific parameters
     platformInitializeWebProcess(parameters);
 

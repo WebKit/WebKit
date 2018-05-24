@@ -42,11 +42,11 @@ namespace WebCore {
 
 RefPtr<ImageDecoder> ImageDecoder::create(SharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
-#if HAVE(AVASSETREADER)
-    if (ImageDecoderAVFObjC::canDecodeType(mimeType))
-        return ImageDecoderAVFObjC::create(data, mimeType, alphaOption, gammaAndColorProfileOption);
-#else
     UNUSED_PARAM(mimeType);
+
+#if HAVE(AVASSETREADER)
+    if (!ImageDecoderCG::canDecodeType(mimeType) && ImageDecoderAVFObjC::canDecodeType(mimeType))
+        return ImageDecoderAVFObjC::create(data, mimeType, alphaOption, gammaAndColorProfileOption);
 #endif
 
 #if USE(CG)
@@ -60,24 +60,23 @@ RefPtr<ImageDecoder> ImageDecoder::create(SharedBuffer& data, const String& mime
 
 bool ImageDecoder::supportsMediaType(MediaType type)
 {
-    bool supports = false;
-#if HAVE(AVASSETREADER)
-    if (ImageDecoderAVFObjC::supportsMediaType(type))
-        supports = true;
-#endif
-
 #if USE(CG)
     if (ImageDecoderCG::supportsMediaType(type))
-        supports = true;
+        return true;
 #elif USE(DIRECT2D)
     if (ImageDecoderDirect2D::supportsMediaType(type))
-        supports = true;
+        return true;
 #else
     if (ScalableImageDecoder::supportsMediaType(type))
-        supports = true;
+        return true;
 #endif
 
-    return supports;
+#if HAVE(AVASSETREADER)
+    if (ImageDecoderAVFObjC::supportsMediaType(type))
+        return true;
+#endif
+
+    return false;
 }
 
 }

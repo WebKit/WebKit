@@ -33,6 +33,7 @@
 #include "IntPoint.h"
 #include "IntSize.h"
 #include "Logging.h"
+#include "MIMETypeRegistry.h"
 #include "SharedBuffer.h"
 #include "UTIRegistry.h"
 #include <pal/spi/cg/ImageIOSPI.h>
@@ -478,6 +479,11 @@ void ImageDecoderCG::setData(SharedBuffer& data, bool allDataReceived)
     RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateDirect(&data, data.size(), &providerCallbacks));
     CGImageSourceUpdateDataProvider(m_nativeDecoder.get(), dataProvider.get(), allDataReceived);
 #endif
+}
+
+bool ImageDecoderCG::canDecodeType(const String& mimeType)
+{
+    return MIMETypeRegistry::isSupportedImageMIMEType(mimeType);
 }
 
 }

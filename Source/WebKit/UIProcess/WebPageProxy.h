@@ -1313,6 +1313,10 @@ public:
 
     WebCore::IntRect syncRootViewToScreen(const WebCore::IntRect& viewRect);
 
+#if PLATFORM(COCOA)
+    Vector<String> mediaMIMETypes();
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();

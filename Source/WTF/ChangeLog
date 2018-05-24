@@ -1,3 +1,13 @@
+2018-05-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Avoid loading AVFoundation to check supported MIME types if possible
+        https://bugs.webkit.org/show_bug.cgi?id=185839
+        <rdar://problem/40182010>
+
+        Reviewed by Jer Noble.
+
+        * wtf/cocoa/SoftLinking.h: Add SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT.
+
 2018-05-23  Filip Pizlo  <fpizlo@apple.com>
 
         Speed up JetStream/base64

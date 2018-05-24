@@ -154,6 +154,10 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     encoder << shouldLogUserInteraction;
 #endif
+
+#if PLATFORM(COCOA)
+    encoder << mediaMIMETypes;
+#endif
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -398,6 +402,11 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     if (!decoder.decode(parameters.shouldLogUserInteraction))
+        return false;
+#endif
+
+#if PLATFORM(COCOA)
+    if (!decoder.decode(parameters.mediaMIMETypes))
         return false;
 #endif
 

@@ -219,6 +219,7 @@
 		07EE76EC1BE96DB000F89133 /* MockRealtimeVideoSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 07EE76EA1BE96DB000F89133 /* MockRealtimeVideoSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07EE76EF1BEA619800F89133 /* MockRealtimeVideoSourceMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 07EE76ED1BEA619800F89133 /* MockRealtimeVideoSourceMac.h */; };
 		07F04A942006B1E300AE2A0A /* ApplicationStateChangeListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F04A92200684BC00AE2A0A /* ApplicationStateChangeListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		07F4E93320B3587F002E3803 /* AVFoundationMIMETypeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C8AD121D073D630087C5CE /* AVFoundationMIMETypeCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07F876841AD580F900905849 /* MediaPlaybackTargetContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F876831AD4A94500905849 /* MediaPlaybackTargetContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07F944161864D046005D31CB /* PlatformMediaSessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CDAE8C081746B95700532D78 /* PlatformMediaSessionManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07FE99DD18807A7D00256648 /* MediaElementSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 07FE99DB18807A7D00256648 /* MediaElementSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -27120,6 +27121,7 @@
 				CDC675271EAEA9D400727C84 /* AVAudioSessionCaptureDevice.h in Headers */,
 				CDC675231EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.h in Headers */,
 				070363E2181A1CDC00C074A5 /* AVCaptureDeviceManager.h in Headers */,
+				07F4E93320B3587F002E3803 /* AVFoundationMIMETypeCache.h in Headers */,
 				070363E4181A1CDC00C074A5 /* AVMediaCaptureSource.h in Headers */,
 				CD336F6217F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.h in Headers */,
 				070363E6181A1CDC00C074A5 /* AVVideoCaptureSource.h in Headers */,

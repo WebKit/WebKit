@@ -48,6 +48,7 @@
 #import "WebsiteDataStoreParameters.h"
 #import <JavaScriptCore/ConfigFile.h>
 #import <JavaScriptCore/Options.h>
+#import <WebCore/AVFoundationMIMETypeCache.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/CPUMonitor.h>
 #import <WebCore/FileSystem.h>
@@ -181,6 +182,14 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
     // Priority decay on iOS 9 is impacting page load time so we fix the priority of the WebProcess' main thread (rdar://problem/22003112).
     pthread_set_fixedpriority_self();
 #endif
+
+    if (!parameters.mediaMIMETypes.isEmpty())
+        setMediaMIMETypes(parameters.mediaMIMETypes);
+    else {
+        AVFoundationMIMETypeCache::singleton().setCacheMIMETypesCallback([this](const Vector<String>& types) {
+            parentProcessConnection()->send(Messages::WebProcessProxy::CacheMediaMIMETypes(types), 0);
+        });
+    }
 }
 
 void WebProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
@@ -334,6 +343,7 @@ void WebProcess::stopRunLoop()
 
 void WebProcess::platformTerminate()
 {
+    AVFoundationMIMETypeCache::singleton().setCacheMIMETypesCallback(nullptr);
 }
 
 RetainPtr<CFDataRef> WebProcess::sourceApplicationAuditData() const
@@ -576,5 +586,10 @@ void WebProcess::scrollerStylePreferenceChanged(bool useOverlayScrollbars)
     static_cast<ScrollbarThemeMac&>(theme).preferencesChanged();
 }
 #endif    
+
+void WebProcess::setMediaMIMETypes(const Vector<String> types)
+{
+    AVFoundationMIMETypeCache::singleton().setSupportedTypes(types);
+}
 
 } // namespace WebKit

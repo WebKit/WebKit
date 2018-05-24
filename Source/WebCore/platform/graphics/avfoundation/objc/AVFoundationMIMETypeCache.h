@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AVFoundationMIMETypeCache_h
-#define AVFoundationMIMETypeCache_h
+#pragma once
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION)
+#if PLATFORM(COCOA)
 
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -34,24 +33,34 @@
 
 namespace WebCore {
 
+class ContentType;
+
 class AVFoundationMIMETypeCache {
 public:
-    static AVFoundationMIMETypeCache& singleton();
+    WEBCORE_EXPORT static AVFoundationMIMETypeCache& singleton();
 
-    AVFoundationMIMETypeCache();
+    bool supportsContentType(const ContentType&);
+    bool canDecodeType(const String&);
 
-    void loadTypes();
     const HashSet<String, ASCIICaseInsensitiveHash>& types();
+    bool isEmpty();
+    bool isAvailable() const;
+
+    using CacheMIMETypesCallback = std::function<void(const Vector<String>&)>;
+    void setCacheMIMETypesCallback(CacheMIMETypesCallback&& callback) { m_cacheTypeCallback = WTFMove(callback); }
+
+    WEBCORE_EXPORT void setSupportedTypes(const Vector<String>&);
 
 private:
-    enum MIMETypeLoadStatus { NotLoaded, Loading, Loaded };
+    friend NeverDestroyed<AVFoundationMIMETypeCache>;
+    AVFoundationMIMETypeCache() = default;
 
-    MIMETypeLoadStatus m_status { NotLoaded };
-    dispatch_queue_t m_loaderQueue;
-    Lock m_lock;
-    HashSet<String, ASCIICaseInsensitiveHash> m_cache;
+    void loadMIMETypes();
+
+    std::optional<HashSet<String, ASCIICaseInsensitiveHash>> m_cache;
+    CacheMIMETypesCallback m_cacheTypeCallback;
 };
 
 }
-#endif
+
 #endif

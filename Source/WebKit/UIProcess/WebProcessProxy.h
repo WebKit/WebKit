@@ -221,6 +221,11 @@ public:
     bool isInPrewarmedPool() const { return m_isInPrewarmedPool; }
     void setIsInPrewarmedPool(bool isInPrewarmedPool) { m_isInPrewarmedPool = isInPrewarmedPool; }
 
+#if PLATFORM(COCOA)
+    Vector<String> mediaMIMETypes();
+    void cacheMediaMIMETypes(const Vector<String>&);
+#endif
+
 protected:
     static uint64_t generatePageID();
     WebProcessProxy(WebProcessPool&, WebsiteDataStore&, IsInPrewarmedPool);
@@ -232,6 +237,10 @@ protected:
 
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
+
+#if PLATFORM(COCOA)
+    void cacheMediaMIMETypesInternal(const Vector<String>&);
+#endif
 
 private:
     // Called when the web process has crashed or we know that it will terminate soon.

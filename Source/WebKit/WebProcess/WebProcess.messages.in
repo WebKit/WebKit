@@ -135,4 +135,8 @@ messages -> WebProcess LegacyReceiver {
     ScrollerStylePreferenceChanged(bool useOvelayScrollbars)
 #endif
 #endif
+
+#if PLATFORM(COCOA)
+    SetMediaMIMETypes(Vector<String> types)
+#endif
 }

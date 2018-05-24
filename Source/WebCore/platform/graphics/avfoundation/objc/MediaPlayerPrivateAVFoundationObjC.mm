@@ -397,7 +397,7 @@ void MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(MediaEngineRegistra
 
     registrar([](MediaPlayer* player) { return std::make_unique<MediaPlayerPrivateAVFoundationObjC>(player); },
             getSupportedTypes, supportsType, originsInMediaCache, clearMediaCache, clearMediaCacheForOrigins, supportsKeySystem);
-    AVFoundationMIMETypeCache::singleton().loadTypes();
+    ASSERT(AVFoundationMIMETypeCache::singleton().isAvailable());
 }
 
 static AVAssetCacheType *assetCacheForPath(const String& path)
@@ -1681,7 +1681,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsType(const
     if (isUnsupportedMIMEType(containerType))
         return MediaPlayer::IsNotSupported;
 
-    if (!staticMIMETypeList().contains(containerType) && !AVFoundationMIMETypeCache::singleton().types().contains(containerType))
+    if (!staticMIMETypeList().contains(containerType) && !AVFoundationMIMETypeCache::singleton().canDecodeType(containerType))
         return MediaPlayer::IsNotSupported;
 
     // The spec says:
@@ -1710,7 +1710,7 @@ bool MediaPlayerPrivateAVFoundationObjC::supportsKeySystem(const String& keySyst
         if (!mimeType.isEmpty() && isUnsupportedMIMEType(mimeType))
             return false;
 
-        if (!mimeType.isEmpty() && !staticMIMETypeList().contains(mimeType) && !AVFoundationMIMETypeCache::singleton().types().contains(mimeType))
+        if (!mimeType.isEmpty() && !staticMIMETypeList().contains(mimeType) && !AVFoundationMIMETypeCache::singleton().canDecodeType(mimeType))
             return false;
 
         return true;

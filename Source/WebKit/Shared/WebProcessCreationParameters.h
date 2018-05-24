@@ -185,6 +185,10 @@ struct WebProcessCreationParameters {
     WebCore::SoupNetworkProxySettings proxySettings;
 #endif
 
+#if PLATFORM(COCOA)
+    Vector<String> mediaMIMETypes;
+#endif
+
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     bool shouldLogUserInteraction { false };
 #endif

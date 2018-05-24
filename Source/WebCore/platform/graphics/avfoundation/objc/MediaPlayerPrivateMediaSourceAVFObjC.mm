@@ -191,7 +191,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(MediaEngineRegist
 
     registrar([](MediaPlayer* player) { return std::make_unique<MediaPlayerPrivateMediaSourceAVFObjC>(player); },
         getSupportedTypes, supportsType, 0, 0, 0, 0);
-    AVFoundationMIMETypeCache::singleton().loadTypes();
+    ASSERT(AVFoundationMIMETypeCache::singleton().isAvailable());
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
@@ -219,7 +219,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(con
         return MediaPlayer::IsNotSupported;
 #endif
 
-    if (parameters.type.isEmpty() || !AVFoundationMIMETypeCache::singleton().types().contains(parameters.type.containerType()))
+    if (parameters.type.isEmpty() || !AVFoundationMIMETypeCache::singleton().canDecodeType(parameters.type.containerType()))
         return MediaPlayer::IsNotSupported;
 
     // The spec says:

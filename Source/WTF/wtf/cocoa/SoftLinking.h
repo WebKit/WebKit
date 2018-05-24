@@ -63,6 +63,13 @@
         return frameworkLibrary; \
     }
 
+#define SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT(framework) \
+    static bool framework##LibraryIsAvailable() \
+    { \
+        static bool frameworkLibraryIsAvailable = dlopen_preflight("/System/Library/Frameworks/" #framework ".framework/" #framework); \
+        return frameworkLibraryIsAvailable; \
+    }
+
 #define SOFT_LINK_FRAMEWORK_OPTIONAL(framework) \
     static void* framework##Library() \
     { \

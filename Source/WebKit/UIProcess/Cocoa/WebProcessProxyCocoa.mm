@@ -31,6 +31,8 @@
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKTypeRefWrapper.h"
+#import "WebProcessMessages.h"
+#import "WebProcessPool.h"
 #import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>
 
@@ -135,6 +137,39 @@ bool WebProcessProxy::platformIsBeingDebugged() const
         return false;
 
     return info.kp_proc.p_flag & P_TRACED;
+}
+
+static Vector<String>& mediaTypeCache()
+{
+    ASSERT(RunLoop::isMain());
+    static NeverDestroyed<Vector<String>> typeCache;
+    return typeCache;
+}
+
+void WebProcessProxy::cacheMediaMIMETypes(const Vector<String>& types)
+{
+    if (!mediaTypeCache().isEmpty())
+        return;
+
+    mediaTypeCache() = types;
+    for (auto& process : processPool().processes()) {
+        if (process != this)
+            cacheMediaMIMETypesInternal(types);
+    }
+}
+
+void WebProcessProxy::cacheMediaMIMETypesInternal(const Vector<String>& types)
+{
+    if (!mediaTypeCache().isEmpty())
+        return;
+
+    mediaTypeCache() = types;
+    send(Messages::WebProcess::SetMediaMIMETypes(types), 0);
+}
+
+Vector<String> WebProcessProxy::mediaMIMETypes()
+{
+    return mediaTypeCache();
 }
 
 }

@@ -240,6 +240,10 @@ public:
     void accessibilityProcessSuspendedNotification(bool);
 #endif
 
+#if PLATFORM(COCOA)
+    void setMediaMIMETypes(const Vector<String>);
+#endif
+
 private:
     WebProcess();
     ~WebProcess();

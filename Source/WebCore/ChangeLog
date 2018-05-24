@@ -1,3 +1,59 @@
+2018-05-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Avoid loading AVFoundation to check supported MIME types if possible
+        https://bugs.webkit.org/show_bug.cgi?id=185839
+        <rdar://problem/40182010>
+
+        Reviewed by Jer Noble.
+
+        Avoid loading AVFoundation to call +[AVURLAssetClass audiovisualMIMETypes] as long as possible,
+        and when they are loaded send the list to the UI process so it can pass it to all extant
+        and all new web processes so they can won't have call it at all.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create): Don't call ImageDecoderAVFObjC::canDecodeType if 
+        ImageDecoderCG can decode the type so we don't have to load AVFoundation.
+        (WebCore::ImageDecoder::supportsMediaType): Return as soon as a decoder class says
+        it supports a media type to avoid calling more than one. Call ImageDecoderAVFObjC last.
+
+        * platform/graphics/avfoundation/objc/AVFoundationMIMETypeCache.h:
+        (WebCore::AVFoundationMIMETypeCache::setCacheMIMETypesCallback):
+        * platform/graphics/avfoundation/objc/AVFoundationMIMETypeCache.mm:
+        (WebCore::AVFoundationMIMETypeCache::singleton): Simplify.
+        (WebCore::AVFoundationMIMETypeCache::setSupportedTypes): Cache the supplied list of types
+        so we won't have to load AVFoundation when asked for types later.
+        (WebCore::AVFoundationMIMETypeCache::types):
+        (WebCore::AVFoundationMIMETypeCache::supportsContentType): New convenience routine.
+        (WebCore::AVFoundationMIMETypeCache::canDecodeType): Ditto.
+        (WebCore::AVFoundationMIMETypeCache::isAvailable const): New, check to see if AVFoundation.framework
+        is available without actually loading it.
+        (WebCore::AVFoundationMIMETypeCache::loadMIMETypes): Load types if possible.
+        (WebCore::AVFoundationMIMETypeCache::AVFoundationMIMETypeCache): Deleted.
+        (WebCore::AVFoundationMIMETypeCache::loadTypes): Deleted.
+
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (WebCore::ImageDecoderAVFObjC::create): Use AVFoundationMIMETypeCache::isAvailable instead
+        of loading the frameworks.
+        (WebCore::ImageDecoderAVFObjC::supportsMediaType): Ditto.
+        (WebCore::ImageDecoderAVFObjC::supportsContentType): Use AVFoundationMIMETypeCache::supportsContentType.
+        (WebCore::ImageDecoderAVFObjC::canDecodeType): Use AVFoundationMIMETypeCache::canDecodeType.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::registerMediaEngine): ASSERT if the 
+        AVFoundationMIMETypeCache is empty, it shouldn't be possible to get here in that state.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsType): Use AVFoundationMIMETypeCache::supportsContentType.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsKeySystem): Use AVFoundationMIMETypeCache::canDecodeType.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine): ASSERT if the 
+        AVFoundationMIMETypeCache is empty, it shouldn't be possible to get here in that state.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::supportsType): Use AVFoundationMIMETypeCache::canDecodeType.
+
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoderCG::canDecodeType): New.
+        * platform/graphics/cg/ImageDecoderCG.h:
+
 2018-05-23  Chris Dumez  <cdumez@apple.com>
 
         RenderLayer::scrollRectToVisible() should not propagate a subframe's scroll to its cross-origin parent

@@ -1,3 +1,40 @@
+2018-05-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Avoid loading AVFoundation to check supported MIME types if possible
+        https://bugs.webkit.org/show_bug.cgi?id=185839
+        <rdar://problem/40182010>
+
+        Reviewed by Jer Noble.
+        
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const): Encode mediaMIMETypes.
+        (WebKit::WebProcessCreationParameters::decode): Decode mediaMIMETypes.
+        * Shared/WebProcessCreationParameters.h:
+
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::mediaTypeCache): Static Vector of media MIME types.
+        (WebKit::WebProcessProxy::cacheMediaMIMETypes): Cache the type list and pass it to every other
+        process proxy.
+        (WebKit::WebProcessProxy::cacheMediaMIMETypesInternal): Cache the type list and pass it to the
+        web process.
+        (WebKit::WebProcessProxy::mediaMIMETypes): Return the cached type list.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess): Set parameters.mediaMIMETypes.
+
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in: Add CacheMediaMIMETypes.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in: Add SetMediaMIMETypes.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess): Cache the MIME types if the list isn't
+        empty, else register with AVFoundationMIMETypeCache to be notified when it loads types.
+        AVFoundationMIMETypeCache to 
+        (WebKit::WebProcess::platformTerminate): Unregister with AVFoundationMIMETypeCache.
+        (WebKit::WebProcess::setMediaMIMETypes): Pass list of types to AVFoundationMIMETypeCache.
+
 2018-05-23  Brian Burg  <bburg@apple.com>
 
         Web Automation: disable process swap on navigation when an automation session is active

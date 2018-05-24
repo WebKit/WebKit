@@ -40,7 +40,8 @@ public:
     }
 
     static bool supportsMediaType(MediaType type) { return type == MediaType::Image; }
-    
+    static bool canDecodeType(const String&);
+
     size_t bytesDecodedToDetermineProperties() const final;
 
     EncodedDataStatus encodedDataStatus() const final;
