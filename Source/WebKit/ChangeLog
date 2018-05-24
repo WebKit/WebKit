@@ -1,3 +1,26 @@
+2018-05-24  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r230269): ASSERTION FAILED: sendRightCount == 1 at ProcessLauncherMac.mm(218)
+        https://bugs.webkit.org/show_bug.cgi?id=185687
+        <rdar://problem/39386361>
+
+        Reviewed by Brady Eidson.
+
+        In r230269 I added an assertion to help identify cases where we were doing bad
+        bookkeeping in our port send rights. I assumed that because we were adding
+        one send right, that when we went to close down the connection that we should
+        have only one send right.
+        
+        I have since discovered that this assumption is invalid, and that I should
+        only be checking that we have AT LEAST ONE send right at the time we attempt
+        to remove it.
+
+        This patch changes the assertion to confirm that we have at least one send
+        right before we remove the send right.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2018-05-24  Chris Dumez  <cdumez@apple.com>
 
         Some of the work in initializeLogChannelsIfNecessary() is unnecessary for release builds

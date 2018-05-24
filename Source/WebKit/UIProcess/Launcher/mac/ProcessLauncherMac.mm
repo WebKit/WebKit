@@ -215,7 +215,7 @@ void ProcessLauncher::launchProcess()
 #ifndef _NDEBUG
         mach_port_urefs_t sendRightCount = 0;
         mach_port_get_refs(mach_task_self(), listeningPort, MACH_PORT_RIGHT_SEND, &sendRightCount);
-        ASSERT(sendRightCount == 1);
+        ASSERT(sendRightCount >= 1);
 #endif
 
         // We failed to launch. Release the send right.
@@ -252,7 +252,7 @@ void ProcessLauncher::launchProcess()
 #ifndef _NDEBUG
             mach_port_urefs_t sendRightCount = 0;
             mach_port_get_refs(mach_task_self(), listeningPort, MACH_PORT_RIGHT_SEND, &sendRightCount);
-            ASSERT(sendRightCount == 1);
+            ASSERT(sendRightCount >= 1);
 #endif
 
             deallocateSendRightSafely(listeningPort);
