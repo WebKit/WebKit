@@ -90,6 +90,9 @@ public:
     void switchToParentFrame(Function<void (CommandResult&&)>&&);
     void getWindowRect(Function<void (CommandResult&&)>&&);
     void setWindowRect(std::optional<double> x, std::optional<double> y, std::optional<double> width, std::optional<double> height, Function<void (CommandResult&&)>&&);
+    void maximizeWindow(Function<void (CommandResult&&)>&&);
+    void minimizeWindow(Function<void (CommandResult&&)>&&);
+    void fullscreenWindow(Function<void (CommandResult&&)>&&);
     void findElements(const String& strategy, const String& selector, FindElementsMode, const String& rootElementID, Function<void (CommandResult&&)>&&);
     void getActiveElement(Function<void (CommandResult&&)>&&);
     void isElementSelected(const String& elementID, Function<void (CommandResult&&)>&&);

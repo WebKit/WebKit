@@ -26,8 +26,15 @@
 function enterFullscreen() {
 
     let callback = arguments[0];
-    if (!document.webkitFullscreenEnabled)
+    if (!document.webkitFullscreenEnabled) {
         callback(false);
+        return;
+    }
+
+    if (document.webkitIsFullScreen) {
+        callback(true);
+        return;
+    }
 
     let fullscreenChangeListener, fullscreenErrorListener;
     fullscreenChangeListener = (e) => {

@@ -151,6 +151,7 @@ public:
     void closeBrowsingContext(Inspector::ErrorString&, const String&) final;
     void switchToBrowsingContext(const String& browsingContextHandle, const String* optionalFrameHandle, Ref<SwitchToBrowsingContextCallback>&&) final;
     void setWindowFrameOfBrowsingContext(const String& handle, const JSON::Object* origin, const JSON::Object* size, Ref<SetWindowFrameOfBrowsingContextCallback>&&) final;
+    void maximizeWindowOfBrowsingContext(const String& handle, Ref<MaximizeWindowOfBrowsingContextCallback>&&) final;
     void hideWindowOfBrowsingContext(const String& handle, Ref<HideWindowOfBrowsingContextCallback>&&) final;
     void navigateBrowsingContext(const String& handle, const String& url, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<NavigateBrowsingContextCallback>&&) override;
     void goBackInBrowsingContext(const String&, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<GoBackInBrowsingContextCallback>&&) override;
@@ -213,6 +214,7 @@ private:
 
     void exitFullscreenWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
     void restoreWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
+    void maximizeWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
     void hideWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
 
     // Implemented in generated WebAutomationSessionMessageReceiver.cpp.

@@ -36,6 +36,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/IntRect.h>
 #include <WebCore/LinkIcon.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/text/CString.h>
 
 void webkitWebViewCreatePage(WebKitWebView*, Ref<API::PageConfiguration>&&);
@@ -74,6 +75,9 @@ WebKitWebResource* webkitWebViewGetLoadingWebResource(WebKitWebView*, uint64_t r
 void webKitWebViewDidReceiveSnapshot(WebKitWebView*, uint64_t callbackID, WebKit::WebImage*);
 #endif
 void webkitWebViewRemoveLoadingWebResource(WebKitWebView*, uint64_t resourceIdentifier);
+void webkitWebViewMaximizeWindow(WebKitWebView*, CompletionHandler<void()>&&);
+void webkitWebViewMinimizeWindow(WebKitWebView*, CompletionHandler<void()>&&);
+void webkitWebViewRestoreWindow(WebKitWebView*, CompletionHandler<void()>&&);
 void webkitWebViewEnterFullScreen(WebKitWebView*);
 void webkitWebViewExitFullScreen(WebKitWebView*);
 void webkitWebViewPopulateContextMenu(WebKitWebView*, const Vector<WebKit::WebContextMenuItemData>& proposedMenu, const WebKit::WebHitTestResultData&, GVariant*);

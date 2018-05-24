@@ -79,6 +79,9 @@ private:
     void switchToParentFrame(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getWindowRect(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void setWindowRect(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    void maximizeWindow(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    void minimizeWindow(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    void fullscreenWindow(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void findElement(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void findElements(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void findElementFromElement(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);

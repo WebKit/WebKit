@@ -25,6 +25,8 @@
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include <WebCore/GtkUtilities.h>
+#include <WebCore/PlatformDisplay.h>
+#include <WebCore/PlatformScreen.h>
 #include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
 
@@ -102,6 +104,154 @@ gboolean webkitWebViewRunFileChooser(WebKitWebView* webView, WebKitFileChooserRe
 #endif
 
     return TRUE;
+}
+
+struct WindowStateEvent {
+    enum class Type { Maximize, Minimize, Restore };
+
+    WindowStateEvent(Type type, CompletionHandler<void()>&& completionHandler)
+        : type(type)
+        , completionHandler(WTFMove(completionHandler))
+        , completeTimer(RunLoop::main(), this, &WindowStateEvent::complete)
+    {
+        // Complete the event if not done after one second.
+        completeTimer.startOneShot(1_s);
+    }
+
+    ~WindowStateEvent()
+    {
+        complete();
+    }
+
+    void complete()
+    {
+        if (auto handler = std::exchange(completionHandler, nullptr))
+            handler();
+    }
+
+    Type type;
+    CompletionHandler<void()> completionHandler;
+    RunLoop::Timer<WindowStateEvent> completeTimer;
+};
+
+static const char* gWindowStateEventID = "wk-window-state-event";
+
+static gboolean windowStateEventCallback(GtkWidget* window, GdkEventWindowState* event, WebKitWebView* view)
+{
+    auto* state = static_cast<WindowStateEvent*>(g_object_get_data(G_OBJECT(view), gWindowStateEventID));
+    if (!state) {
+        g_signal_handlers_disconnect_by_func(window, reinterpret_cast<gpointer>(windowStateEventCallback), view);
+        return FALSE;
+    }
+
+    bool eventCompleted = false;
+    switch (state->type) {
+    case WindowStateEvent::Type::Maximize:
+        if (event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED)
+            eventCompleted = true;
+        break;
+    case WindowStateEvent::Type::Minimize:
+        if ((event->new_window_state & GDK_WINDOW_STATE_ICONIFIED) || !gtk_widget_get_mapped(window))
+            eventCompleted = true;
+        break;
+    case WindowStateEvent::Type::Restore:
+        if (!(event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED) && !(event->new_window_state & GDK_WINDOW_STATE_ICONIFIED))
+            eventCompleted = true;
+        break;
+    }
+
+    if (eventCompleted) {
+        g_signal_handlers_disconnect_by_func(window, reinterpret_cast<gpointer>(windowStateEventCallback), view);
+        g_object_set_data(G_OBJECT(view), gWindowStateEventID, nullptr);
+    }
+
+    return FALSE;
+}
+
+void webkitWebViewMaximizeWindow(WebKitWebView* view, CompletionHandler<void()>&& completionHandler)
+{
+    auto* topLevel = gtk_widget_get_toplevel(GTK_WIDGET(view));
+    if (!gtk_widget_is_toplevel(topLevel)) {
+        completionHandler();
+        return;
+    }
+
+    auto* window = GTK_WINDOW(topLevel);
+    if (gtk_window_is_maximized(window)) {
+        completionHandler();
+        return;
+    }
+
+    g_object_set_data_full(G_OBJECT(view), gWindowStateEventID, new WindowStateEvent(WindowStateEvent::Type::Maximize, WTFMove(completionHandler)), [](gpointer userData) {
+        delete static_cast<WindowStateEvent*>(userData);
+    });
+    g_signal_connect_object(window, "window-state-event", G_CALLBACK(windowStateEventCallback), view, G_CONNECT_AFTER);
+    gtk_window_maximize(window);
+#if ENABLE(DEVELOPER_MODE)
+    // Xvfb doesn't support maximize, so we resize the window to the screen size.
+    if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::X11) {
+        const char* underXvfb = g_getenv("UNDER_XVFB");
+        if (!g_strcmp0(underXvfb, "yes")) {
+            auto screenRect = WebCore::screenAvailableRect(nullptr);
+            gtk_window_move(window, screenRect.x(), screenRect.y());
+            gtk_window_resize(window, screenRect.width(), screenRect.height());
+        }
+    }
+#endif
+    gtk_widget_show(topLevel);
+}
+
+void webkitWebViewMinimizeWindow(WebKitWebView* view, CompletionHandler<void()>&& completionHandler)
+{
+    auto* topLevel = gtk_widget_get_toplevel(GTK_WIDGET(view));
+    if (!gtk_widget_is_toplevel(topLevel)) {
+        completionHandler();
+        return;
+    }
+
+    auto* window = GTK_WINDOW(topLevel);
+    g_object_set_data_full(G_OBJECT(view), gWindowStateEventID, new WindowStateEvent(WindowStateEvent::Type::Minimize, WTFMove(completionHandler)), [](gpointer userData) {
+        delete static_cast<WindowStateEvent*>(userData);
+    });
+    g_signal_connect_object(window, "window-state-event", G_CALLBACK(windowStateEventCallback), view, G_CONNECT_AFTER);
+    gtk_window_iconify(window);
+    gtk_widget_hide(topLevel);
+}
+
+void webkitWebViewRestoreWindow(WebKitWebView* view, CompletionHandler<void()>&& completionHandler)
+{
+    auto* topLevel = gtk_widget_get_toplevel(GTK_WIDGET(view));
+    if (!gtk_widget_is_toplevel(topLevel)) {
+        completionHandler();
+        return;
+    }
+
+    auto* window = GTK_WINDOW(topLevel);
+    if (gtk_widget_get_mapped(topLevel) && !gtk_window_is_maximized(window)) {
+        completionHandler();
+        return;
+    }
+
+    g_object_set_data_full(G_OBJECT(view), gWindowStateEventID, new WindowStateEvent(WindowStateEvent::Type::Restore, WTFMove(completionHandler)), [](gpointer userData) {
+        delete static_cast<WindowStateEvent*>(userData);
+    });
+    g_signal_connect_object(window, "window-state-event", G_CALLBACK(windowStateEventCallback), view, G_CONNECT_AFTER);
+    if (gtk_window_is_maximized(window))
+        gtk_window_unmaximize(window);
+    if (!gtk_widget_get_mapped(topLevel))
+        gtk_window_deiconify(window);
+#if ENABLE(DEVELOPER_MODE)
+    // Xvfb doesn't support maximize, so we resize the window to the default size.
+    if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::X11) {
+        const char* underXvfb = g_getenv("UNDER_XVFB");
+        if (!g_strcmp0(underXvfb, "yes")) {
+            int x, y;
+            gtk_window_get_default_size(window, &x, &y);
+            gtk_window_resize(window, x, y);
+        }
+    }
+#endif
+    gtk_widget_show(topLevel);
 }
 
 /**

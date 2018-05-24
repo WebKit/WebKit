@@ -525,6 +525,22 @@ void WebAutomationSession::loadTimerFired()
     respondToPendingPageNavigationCallbacksWithTimeout(m_pendingEagerNavigationInBrowsingContextCallbacksPerPage);
 }
 
+void WebAutomationSession::maximizeWindowOfBrowsingContext(const String& browsingContextHandle, Ref<MaximizeWindowOfBrowsingContextCallback>&& callback)
+{
+    auto* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+
+    exitFullscreenWindowForPage(*page, [this, protectedThis = makeRef(*this), callback = WTFMove(callback), page = makeRefPtr(page)]() mutable {
+        auto& webPage = *page;
+        restoreWindowForPage(webPage, [this, callback = WTFMove(callback), page = WTFMove(page)]() mutable {
+            maximizeWindowForPage(*page, [callback = WTFMove(callback)]() {
+                callback->sendSuccess();
+            });
+        });
+    });
+}
+
 void WebAutomationSession::hideWindowOfBrowsingContext(const String& browsingContextHandle, Ref<HideWindowOfBrowsingContextCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
@@ -566,6 +582,11 @@ void WebAutomationSession::exitFullscreenWindowForPage(WebPageProxy& page, WTF::
 void WebAutomationSession::restoreWindowForPage(WebPageProxy& page, WTF::CompletionHandler<void()>&& completionHandler)
 {
     m_client->requestRestoreWindowOfPage(*this, page, WTFMove(completionHandler));
+}
+
+void WebAutomationSession::maximizeWindowForPage(WebPageProxy& page, WTF::CompletionHandler<void()>&& completionHandler)
+{
+    m_client->requestMaximizeWindowOfPage(*this, page, WTFMove(completionHandler));
 }
 
 void WebAutomationSession::hideWindowForPage(WebPageProxy& page, WTF::CompletionHandler<void()>&& completionHandler)

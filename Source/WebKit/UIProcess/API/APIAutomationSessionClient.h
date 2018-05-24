@@ -54,6 +54,7 @@ public:
     virtual String sessionIdentifier() const { return String(); }
     virtual void didDisconnectFromRemote(WebKit::WebAutomationSession&) { }
     virtual void requestNewPageWithOptions(WebKit::WebAutomationSession&, AutomationSessionBrowsingContextOptions, CompletionHandler<void(WebKit::WebPageProxy*)>&& completionHandler) { completionHandler(nullptr); }
+    virtual void requestMaximizeWindowOfPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
     virtual void requestHideWindowOfPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
     virtual void requestRestoreWindowOfPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
     virtual void requestSwitchToPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }

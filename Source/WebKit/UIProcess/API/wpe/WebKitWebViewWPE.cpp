@@ -37,6 +37,21 @@ gboolean webkitWebViewRunFileChooser(WebKitWebView*, WebKitFileChooserRequest*)
     return FALSE;
 }
 
+void webkitWebViewMaximizeWindow(WebKitWebView*, CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+
+void webkitWebViewMinimizeWindow(WebKitWebView*, CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+
+void webkitWebViewRestoreWindow(WebKitWebView*, CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+
 /**
  * webkit_web_view_new:
  * @backend: (transfer full): a #WebKitWebViewBackend

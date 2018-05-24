@@ -97,6 +97,30 @@ private:
             completionHandler(&webkitWebViewGetPage(webView));
     }
 
+    void requestMaximizeWindowOfPage(WebAutomationSession&, WebPageProxy& page, CompletionHandler<void()>&& completionHandler) override
+    {
+        if (auto* webView = webkitWebContextGetWebViewForPage(m_session->priv->webContext, &page))
+            webkitWebViewMaximizeWindow(webView, WTFMove(completionHandler));
+        else
+            completionHandler();
+    }
+
+    void requestHideWindowOfPage(WebAutomationSession&, WebPageProxy& page, CompletionHandler<void()>&& completionHandler) override
+    {
+        if (auto* webView = webkitWebContextGetWebViewForPage(m_session->priv->webContext, &page))
+            webkitWebViewMinimizeWindow(webView, WTFMove(completionHandler));
+        else
+            completionHandler();
+    }
+
+    void requestRestoreWindowOfPage(WebAutomationSession&, WebPageProxy& page, CompletionHandler<void()>&& completionHandler) override
+    {
+        if (auto* webView = webkitWebContextGetWebViewForPage(m_session->priv->webContext, &page))
+            webkitWebViewRestoreWindow(webView, WTFMove(completionHandler));
+        else
+            completionHandler();
+    }
+
     bool isShowingJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy& page) override
     {
         auto* webView = webkitWebContextGetWebViewForPage(m_session->priv->webContext, &page);

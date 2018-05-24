@@ -357,6 +357,14 @@
             "async": true
         },
         {
+            "name": "maximizeWindowOfBrowsingContext",
+            "description": "Causes the window of the specified browsing context to be maximized. This command implicitly exits fullscreen mode.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context whose window should be maximized." }
+            ],
+            "async": true
+        },
+        {
             "name": "hideWindowOfBrowsingContext",
             "description": "Causes the window of the specified browsing context to be hidden/minimized/iconified. This command implicitly exits fullscreen mode.",
             "parameters": [

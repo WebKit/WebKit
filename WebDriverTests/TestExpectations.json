@@ -203,19 +203,6 @@
             }
         }
     },
-    "imported/selenium/py/test/selenium/webdriver/common/window_tests.py": {
-        "subtests": {
-            "testShouldMaximizeTheWindow": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
-            },
-            "test_should_fullscreen_the_current_window": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
-            },
-            "test_should_minimize_the_current_window": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
-            }
-        }
-    },
     "imported/w3c/webdriver/tests/actions/key.py": {
         "subtests": {
             "test_single_printable_key_sends_correct_events[\\xe0-]": {
@@ -510,19 +497,6 @@
             },
             "test_invalid_multiple_codepoint_keys_fail[\u1100\u1161\u11a8c]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            }
-        }
-    },
-    "imported/w3c/webdriver/tests/maximize_window/maximize.py": {
-        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
-    },
-    "imported/w3c/webdriver/tests/maximize_window/user_prompts.py": {
-        "subtests": {
-            "test_handle_prompt_accept": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
-            },
-            "test_handle_prompt_missing_value": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
             }
         }
     },
@@ -1003,47 +977,8 @@
             }
         }
     },
-    "imported/w3c/webdriver/tests/fullscreen_window/fullscreen.py": {
-        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
-    },
-    "imported/w3c/webdriver/tests/fullscreen_window/user_prompts.py": {
-        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}},
-        "subtests": {
-            "test_handle_prompt_dismiss_and_notify": {
-                "expected": {"all": {"status": ["PASS"]}}
-            },
-            "test_handle_prompt_accept_and_notify": {
-                "expected": {"all": {"status": ["PASS"]}}
-            },
-            "test_handle_prompt_ignore": {
-                "expected": {"all": {"status": ["PASS"]}}
-            }
-        }
-    },
-    "imported/w3c/webdriver/tests/minimize_window/minimize.py": {
-        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
-    },
-    "imported/w3c/webdriver/tests/minimize_window/user_prompts.py": {
-        "subtests": {
-            "test_handle_prompt_accept": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
-            },
-            "test_handle_prompt_missing_value": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
-            }
-        }
-    },
     "imported/w3c/webdriver/tests/set_window_rect/set.py": {
         "subtests": {
-            "test_fully_exit_fullscreen": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
-            },
-            "test_restore_from_minimized": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
-            },
-            "test_restore_from_maximized": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
-            },
             "test_negative_x_y": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180418"}}
             }

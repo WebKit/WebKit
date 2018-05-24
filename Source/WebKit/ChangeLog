@@ -1,3 +1,35 @@
+2018-05-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: implement maximize, minimize and fullscreen window commands
+        https://bugs.webkit.org/show_bug.cgi?id=180398
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/API/APIAutomationSessionClient.h:
+        (API::AutomationSessionClient::requestMaximizeWindowOfPage): Added to allow clients maximize the window.
+        * UIProcess/API/glib/WebKitAutomationSession.cpp:
+        * UIProcess/API/glib/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
+        (WindowStateEvent::WindowStateEvent): Struct to handle window state events.
+        (WindowStateEvent::~WindowStateEvent): Complete the event.
+        (WindowStateEvent::complete): Call the completion handler is not called already.
+        (windowStateEventCallback): Handle window state event changes.
+        (webkitWebViewMaximizeWindow): Try to maximize the window and wait for the event.
+        (webkitWebViewMinimizeWindow): Try to minimize the window and wait for the event.
+        (webkitWebViewRestoreWindow): Try to unmaximize or unminimize the window and wait for the event.
+        * UIProcess/API/wpe/WebKitWebViewWPE.cpp:
+        (webkitWebViewMaximizeWindow):
+        (webkitWebViewMinimizeWindow):
+        (webkitWebViewRestoreWindow):
+        * UIProcess/Automation/Automation.json:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::maximizeWindowOfBrowsingContext): Exit fullscreen, restore the window and then
+        maximize it.
+        (WebKit::WebAutomationSession::maximizeWindowForPage): Ask the client to maximize the window of page.
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/atoms/EnterFullscreen.js:
+        (enterFullscreen): Return early if fullscreen is disabled or if window is already in fullscreen.
+
 2018-05-23  Eric Carlson  <eric.carlson@apple.com>
 
         Avoid loading AVFoundation to check supported MIME types if possible
