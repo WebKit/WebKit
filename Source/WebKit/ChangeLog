@@ -1,5 +1,24 @@
 2018-05-24  Brent Fulgham  <bfulgham@apple.com>
 
+        REGRESSION(r224908): [macOS] Media playback not honoring custom caption styles
+        https://bugs.webkit.org/show_bug.cgi?id=185955
+        <rdar://problem/40339278>
+
+        Reviewed by Eric Carlson.
+
+        In r224908 I removed access to the MediaAccessibility mach port, as well as
+        read/write access to various preferences associated with that process, as it
+        was no longer needed by modern WebKit media routines.
+
+        Detailed testing reveals that read access is still needed to these preferences
+        to properly handle custom caption styles.
+
+        This patch re-enables access to the media accessibility preferences.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2018-05-24  Brent Fulgham  <bfulgham@apple.com>
+
         REGRESSION(r230269): ASSERTION FAILED: sendRightCount == 1 at ProcessLauncherMac.mm(218)
         https://bugs.webkit.org/show_bug.cgi?id=185687
         <rdar://problem/39386361>

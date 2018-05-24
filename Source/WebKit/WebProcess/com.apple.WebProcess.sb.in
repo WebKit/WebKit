@@ -477,6 +477,7 @@
         "com.apple.driver.AppleBluetoothMultitouch.trackpad"
         "com.apple.driver.AppleHIDMouse"
         "com.apple.lookup.shared"
+        "com.apple.mediaaccessibility" ;; Needed for custom caption styles
         "com.apple.networkConnect"
         "com.apple.speech.voice.prefs"
         "com.apple.systemsound"
