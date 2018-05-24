@@ -134,6 +134,12 @@ void BlockFormattingContext::computeStaticPosition(LayoutContext& layoutContext,
     displayBox.setTopLeft(topLeft);
 }
 
+void BlockFormattingContext::computeInFlowPositionedPosition(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    auto topLeft = Geometry::inFlowPositionedPosition(layoutContext, layoutBox);
+    displayBox.setTopLeft(topLeft);
+}
+
 void BlockFormattingContext::computeInFlowHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     LayoutUnit computedHeight;

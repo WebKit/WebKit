@@ -137,6 +137,68 @@ LayoutPoint BlockFormattingContext::Geometry::staticPosition(LayoutContext& layo
     return topLeft;
 }
 
+LayoutPoint BlockFormattingContext::Geometry::inFlowPositionedPosition(LayoutContext& layoutContext, const Box& layoutBox)
+{
+    ASSERT(layoutBox.isInFlowPositioned());
+    // 9.4.3 Relative positioning
+    //
+    // The 'top' and 'bottom' properties move relatively positioned element(s) up or down without changing their size.
+    // Top' moves the boxes down, and 'bottom' moves them up. Since boxes are not split or stretched as a result of 'top' or 'bottom', the used values are always: top = -bottom.
+    //
+    // 1. If both are 'auto', their used values are both '0'.
+    // 2. If one of them is 'auto', it becomes the negative of the other.
+    // 3. If neither is 'auto', 'bottom' is ignored (i.e., the used value of 'bottom' will be minus the value of 'top').
+    auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
+    auto& style = layoutBox.style();
+
+    auto top = style.logicalTop();
+    auto bottom = style.logicalBottom();
+    LayoutUnit topDelta;
+
+    if (top.isAuto() && bottom.isAuto()) {
+        // #1
+        topDelta = 0;
+    } else if (top.isAuto()) {
+        // #2
+        topDelta = -bottom.value();
+    } else if (bottom.isAuto()) {
+        // #3 #4
+        topDelta = top.value();
+    }
+
+    // For relatively positioned elements, 'left' and 'right' move the box(es) horizontally, without changing their size.
+    // 'Left' moves the boxes to the right, and 'right' moves them to the left.
+    // Since boxes are not split or stretched as a result of 'left' or 'right', the used values are always: left = -right.
+    //
+    // 1. If both 'left' and 'right' are 'auto' (their initial values), the used values are '0' (i.e., the boxes stay in their original position).
+    // 2. If 'left' is 'auto', its used value is minus the value of 'right' (i.e., the boxes move to the left by the value of 'right').
+    // 3. If 'right' is specified as 'auto', its used value is minus the value of 'left'.
+    // 4. If neither 'left' nor 'right' is 'auto', the position is over-constrained, and one of them has to be ignored.
+    //    If the 'direction' property of the containing block is 'ltr', the value of 'left' wins and 'right' becomes -'left'.
+    //    If 'direction' of the containing block is 'rtl', 'right' wins and 'left' is ignored.
+    //
+    auto left = style.logicalLeft();
+    auto right = style.logicalRight();
+    LayoutUnit leftDelta;
+
+    if (left.isAuto() && right.isAuto()) {
+        // #1
+        leftDelta = 0;
+    } else if (left.isAuto()) {
+        // #2
+        leftDelta = -right.value();
+    } else if (right.isAuto()) {
+        // #3
+        leftDelta = left.value();
+    } else {
+        // #4
+        // FIXME: take direction into account
+        leftDelta = left.value();
+    }
+
+    return { displayBox.left() + leftDelta, displayBox.top() + topDelta };
+}
+
 }
 }
 

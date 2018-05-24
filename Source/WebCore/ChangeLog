@@ -1,5 +1,18 @@
 2018-05-24  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Implement position computation for inflow positioned elements
+        https://bugs.webkit.org/show_bug.cgi?id=185936
+
+        Reviewed by Antti Koivisto.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeInFlowPositionedPosition const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowPositionedPosition):
+
+2018-05-24  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Implement FormattingContext::placeInFlowPositionedChildren
         https://bugs.webkit.org/show_bug.cgi?id=185934
 

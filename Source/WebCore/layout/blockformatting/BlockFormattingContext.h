@@ -52,6 +52,7 @@ public:
 
 private:
     void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const override;
+    void computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const override;
     void computeInFlowWidth(LayoutContext&, const Box&, Display::Box&) const override;
     void computeInFlowHeight(LayoutContext&, const Box&, Display::Box&) const override;
 
@@ -65,6 +66,7 @@ private:
         static LayoutUnit inFlowNonReplacedWidth(LayoutContext&, const Box&);
 
         static LayoutPoint staticPosition(LayoutContext&, const Box&);
+        static LayoutPoint inFlowPositionedPosition(LayoutContext&, const Box&);
     };
 };
 
