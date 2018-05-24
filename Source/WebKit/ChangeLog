@@ -1,3 +1,21 @@
+2018-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Some of the work in initializeLogChannelsIfNecessary() is unnecessary for release builds
+        https://bugs.webkit.org/show_bug.cgi?id=185951
+
+        Reviewed by Geoffrey Garen.
+
+        Some of the work in initializeLogChannelsIfNecessary() is unnecessary for release builds and slows down
+        launch time. In particular, it is unnecessary to read NSDefaults to figure out which logging channels
+        should be enabled.
+
+        * Platform/foundation/LoggingFoundation.mm:
+        (WebKit::logLevelString):
+        * Platform/unix/LoggingUnix.cpp:
+        (WebKit::logLevelString):
+        * Platform/win/LoggingWin.cpp:
+        (WebKit::logLevelString):
+
 2018-05-24  Per Arne Vollan  <pvollan@apple.com>
 
         Crash under WebKit::PluginProxy::destroy()

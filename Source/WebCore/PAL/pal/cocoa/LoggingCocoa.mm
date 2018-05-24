@@ -32,11 +32,14 @@
 
 namespace PAL {
 
-static NSString * const defaultsDomain = @"PALLogging";
-
 String logLevelString()
 {
+#if !LOG_DISABLED
+    static NSString * const defaultsDomain = @"PALLogging";
     return [[NSUserDefaults standardUserDefaults] stringForKey:defaultsDomain];
+#else
+    return String();
+#endif
 }
 
 }

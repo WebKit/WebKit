@@ -33,7 +33,11 @@ namespace WebKit {
 
 String logLevelString()
 {
+#if !LOG_DISABLED
     return getenv("WEBKIT_DEBUG");
+#else
+    return String();
+#endif
 }
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
