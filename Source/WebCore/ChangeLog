@@ -1,3 +1,16 @@
+2018-05-23  Jer Noble  <jer.noble@apple.com>
+
+        [El Capitan] FAIL http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html
+        https://bugs.webkit.org/show_bug.cgi?id=185920
+
+        Reviewed by Eric Carlson.
+
+        Disable the recently added CORS checks for MediaElementAudioSourceNode on El Capitan; no custom media loading
+        is available there, so we don't have the ability to tell if HTMLMediaElement loads are CORS-valid.
+
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::setFormat):
+
 2018-05-17  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r229503. rdar://problem/39841080

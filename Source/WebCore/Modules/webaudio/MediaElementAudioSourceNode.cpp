@@ -67,7 +67,9 @@ MediaElementAudioSourceNode::~MediaElementAudioSourceNode()
 
 void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourceSampleRate)
 {
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MAX_ALLOWED >= 101200
     m_muted = wouldTaintOrigin();
+#endif
 
     if (numberOfChannels != m_sourceNumberOfChannels || sourceSampleRate != m_sourceSampleRate) {
         if (!numberOfChannels || numberOfChannels > AudioContext::maxNumberOfChannels() || sourceSampleRate < minSampleRate || sourceSampleRate > maxSampleRate) {
