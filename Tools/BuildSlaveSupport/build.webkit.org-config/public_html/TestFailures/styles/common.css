@@ -28,7 +28,7 @@ html {
 }
 
 body {
-    font-family: 'Open Sans';
+    font-family: 'Helvetica';
     font-size: 14px;
     margin: 0px;
 }
@@ -38,11 +38,11 @@ a {
 }
 
 .ui-widget-content {
-    font-family: 'Open Sans';
+    font-family: 'Helvetica';
 }
 
 .ui-widget button, button {
-    font-family: 'Open Sans';
+    font-family: 'Helvetica';
     border-radius: 2px;
     background-image: -webkit-linear-gradient(top,#f5f5f5,#f1f1f1);
     border: 1px solid rgba(0, 0, 0, 0.1);
