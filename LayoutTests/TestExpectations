@@ -1976,10 +1976,6 @@ http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-i
 
 media/event-queue-crash.html [ DumpJSConsoleLogInStdErr ]
 
-# This is flaky since r229831.
-webkit.org/b/183885 fast/loader/javascript-url-iframe-remove-on-navigate.html [ Pass Failure ]
-webkit.org/b/183885 fast/loader/javascript-url-iframe-remove-on-navigate-async-delegate.html [ Pass Failure ]
-
 webkit.org/b/172243 imported/w3c/web-platform-tests/IndexedDB/idbdatabase-createObjectStore-exception-order.htm [ Pass Failure ]
 
 webkit.org/b/179851 imported/w3c/web-platform-tests/html/browsers/offline/manifest_url_check.html [ Pass Failure ]

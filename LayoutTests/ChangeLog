@@ -1,5 +1,22 @@
 2018-05-23  Chris Dumez  <cdumez@apple.com>
 
+        Regression(r229831): fast/loader/javascript-url-iframe-remove-on-navigate-async-delegate.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=183885
+        <rdar://problem/38733968>
+
+        Reviewed by Youenn Fablet.
+
+        Stop loading an external URL as this is not what the test is testing and since the error message for
+        the external load causes flakiness.
+
+        * TestExpectations:
+        * fast/loader/javascript-url-iframe-remove-on-navigate-async-delegate-expected.txt:
+        * fast/loader/javascript-url-iframe-remove-on-navigate-async-delegate.html:
+        * fast/loader/javascript-url-iframe-remove-on-navigate-expected.txt:
+        * fast/loader/javascript-url-iframe-remove-on-navigate.html:
+
+2018-05-23  Chris Dumez  <cdumez@apple.com>
+
         RenderLayer::scrollRectToVisible() should not propagate a subframe's scroll to its cross-origin parent
         https://bugs.webkit.org/show_bug.cgi?id=185664
         <rdar://problem/36185260>
