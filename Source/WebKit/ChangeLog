@@ -1,5 +1,16 @@
 2018-05-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ input method unit tests after r232049.
+
+        Unit tests don't use a WebPageProxy.
+
+        * UIProcess/gtk/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::isViewFocused const):
+        (WebKit::InputMethodFilter::setEnabled):
+        * UIProcess/gtk/InputMethodFilter.h:
+
+2018-05-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: implement maximize, minimize and fullscreen window commands
         https://bugs.webkit.org/show_bug.cgi?id=180398
 
