@@ -1,3 +1,20 @@
+2018-05-24  Per Arne Vollan  <pvollan@apple.com>
+
+        Crash under WebKit::PluginProxy::destroy()
+        https://bugs.webkit.org/show_bug.cgi?id=185841
+        <rdar://problem/39936896>
+
+        Reviewed by Brent Fulgham.
+
+        A release assert in Connection::sencSync is failing since scripts are not allowed in this context,
+        and the WebKit process is allowed to process incoming messages while waiting for the sync reply.
+        In this context, scripts are disallowed in the method Element::addShadowRoot. To make sure the
+        WebContent process will not wait indefinitely for a reply from the Plugin process, use a timeout
+        of 1 second when sending the message.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::destroy):
+
 2018-05-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ input method unit tests after r232049.

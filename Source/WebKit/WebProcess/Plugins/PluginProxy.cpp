@@ -196,7 +196,9 @@ void PluginProxy::destroy()
     if (!m_connection)
         return;
 
-    m_connection->connection()->sendSync(Messages::WebProcessConnection::DestroyPlugin(m_pluginInstanceID, m_waitingOnAsynchronousInitialization), Messages::WebProcessConnection::DestroyPlugin::Reply(), 0);
+    // Although this message is sent synchronously, the Plugin process replies immediately (before performing any tasks) so this is only waiting for
+    // confirmation that the Plugin process received the DestroyPlugin message.
+    m_connection->connection()->sendSync(Messages::WebProcessConnection::DestroyPlugin(m_pluginInstanceID, m_waitingOnAsynchronousInitialization), Messages::WebProcessConnection::DestroyPlugin::Reply(), 0, 1_s, IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply);
     m_connection->removePluginProxy(this);
 }
 
