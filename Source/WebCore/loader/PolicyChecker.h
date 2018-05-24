@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
 
 #include "FrameLoaderTypes.h"
 #include "ResourceRequest.h"
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(CONTENT_FILTERING)
@@ -59,8 +60,8 @@ enum class ShouldContinue {
 
 enum class PolicyDecisionMode { Synchronous, Asynchronous };
 
-using NewWindowPolicyDecisionFunction = CompletionHandler<void(const ResourceRequest&, FormState*, const String& frameName, const NavigationAction&, ShouldContinue)>;
-using NavigationPolicyDecisionFunction = CompletionHandler<void(ResourceRequest&&, FormState*, ShouldContinue)>;
+using NewWindowPolicyDecisionFunction = CompletionHandler<void(const ResourceRequest&, WeakPtr<FormState>&&, const String& frameName, const NavigationAction&, ShouldContinue)>;
+using NavigationPolicyDecisionFunction = CompletionHandler<void(ResourceRequest&&, WeakPtr<FormState>&&, ShouldContinue)>;
 
 class PolicyChecker {
     WTF_MAKE_NONCOPYABLE(PolicyChecker);
@@ -68,9 +69,9 @@ class PolicyChecker {
 public:
     explicit PolicyChecker(Frame&);
 
-    void checkNavigationPolicy(ResourceRequest&&, bool didReceiveRedirectResponse, DocumentLoader*, FormState*, NavigationPolicyDecisionFunction&&, PolicyDecisionMode = PolicyDecisionMode::Asynchronous);
+    void checkNavigationPolicy(ResourceRequest&&, bool didReceiveRedirectResponse, DocumentLoader*, RefPtr<FormState>&&, NavigationPolicyDecisionFunction&&, PolicyDecisionMode = PolicyDecisionMode::Asynchronous);
     void checkNavigationPolicy(ResourceRequest&&, bool didReceiveRedirectResponse, NavigationPolicyDecisionFunction&&);
-    void checkNewWindowPolicy(NavigationAction&&, ResourceRequest&&, FormState*, const String& frameName, NewWindowPolicyDecisionFunction&&);
+    void checkNewWindowPolicy(NavigationAction&&, ResourceRequest&&, RefPtr<FormState>&&, const String& frameName, NewWindowPolicyDecisionFunction&&);
 
     void stopCheck();
 

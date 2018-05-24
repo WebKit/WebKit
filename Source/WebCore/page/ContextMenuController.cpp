@@ -196,7 +196,7 @@ static void openNewWindow(const URL& urlToLoad, Frame& frame, ShouldOpenExternal
     if (!newPage)
         return;
     newPage->chrome().show();
-    newPage->mainFrame().loader().loadFrameRequest(WTFMove(frameLoadRequest), nullptr, nullptr);
+    newPage->mainFrame().loader().loadFrameRequest(WTFMove(frameLoadRequest), nullptr, { });
 }
 
 #if PLATFORM(GTK)
@@ -397,7 +397,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         if (Frame* targetFrame = m_context.hitTestResult().targetFrame()) {
             ResourceRequest resourceRequest { m_context.hitTestResult().absoluteLinkURL(), frame->loader().outgoingReferrer() };
             FrameLoadRequest frameLoadRequest { *frame->document(), frame->document()->securityOrigin(), resourceRequest, { }, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Suppress, targetFrame->isMainFrame() ? ShouldOpenExternalURLsPolicy::ShouldAllow : ShouldOpenExternalURLsPolicy::ShouldNotAllow, InitiatedByMainFrame::Unknown };
-            targetFrame->loader().loadFrameRequest(WTFMove(frameLoadRequest), nullptr, nullptr);
+            targetFrame->loader().loadFrameRequest(WTFMove(frameLoadRequest), nullptr,  { });
         } else
             openNewWindow(m_context.hitTestResult().absoluteLinkURL(), *frame, ShouldOpenExternalURLsPolicy::ShouldAllow);
         break;

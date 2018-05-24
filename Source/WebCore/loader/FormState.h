@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #pragma once
 
 #include "FrameDestructionObserver.h"
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -49,6 +50,8 @@ public:
     Document& sourceDocument() const { return m_sourceDocument; }
     FormSubmissionTrigger formSubmissionTrigger() const { return m_formSubmissionTrigger; }
 
+    auto& weakPtrFactory() const { return m_weakFactory; }
+
 private:
     FormState(HTMLFormElement&, StringPairVector&& textFieldValues, Document&, FormSubmissionTrigger);
     void willDetachPage() override;
@@ -57,6 +60,7 @@ private:
     StringPairVector m_textFieldValues;
     Ref<Document> m_sourceDocument;
     FormSubmissionTrigger m_formSubmissionTrigger;
+    WeakPtrFactory<FormState> m_weakFactory;
 };
 
 } // namespace WebCore
