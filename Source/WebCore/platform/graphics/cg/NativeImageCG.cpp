@@ -86,7 +86,7 @@ void clearNativeImageSubimages(const NativeImagePtr& image)
 {
 #if CACHE_SUBIMAGES
     if (image)
-        subimageCache().clearImage(image.get());
+        SubimageCacheWithTimer::clearImage(image.get());
 #endif
 }
 

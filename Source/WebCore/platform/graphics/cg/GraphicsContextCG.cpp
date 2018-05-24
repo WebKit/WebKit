@@ -330,7 +330,7 @@ void GraphicsContext::drawNativeImage(const RetainPtr<CGImageRef>& image, const 
             adjustedDestRect.setHeight(subimageRect.height() / yScale);
 
 #if CACHE_SUBIMAGES
-            subImage = subimageCache().getSubimage(subImage.get(), subimageRect);
+            subImage = SubimageCacheWithTimer::getSubimage(subImage.get(), subimageRect);
 #else
             subImage = adoptCF(CGImageCreateWithImageInRect(subImage.get(), subimageRect));
 #endif

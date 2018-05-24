@@ -80,22 +80,26 @@ public:
         static const bool safeToCompareToEmptyOrDeleted = true;
     };
 
-    typedef HashSet<SubimageCacheEntry, SubimageCacheHash, SubimageCacheEntryTraits> SubimageCache;
-
-public:
-    SubimageCacheWithTimer();
-    RetainPtr<CGImageRef> getSubimage(CGImageRef, const FloatRect&);
-    void clearImage(CGImageRef);
+    static RetainPtr<CGImageRef> getSubimage(CGImageRef, const FloatRect&);
+    static void clearImage(CGImageRef);
 
 private:
+    typedef HashSet<SubimageCacheEntry, SubimageCacheHash, SubimageCacheEntryTraits> SubimageCacheHashSet;
+
+    SubimageCacheWithTimer();
     void invalidateCacheTimerFired();
 
-    HashCountedSet<CGImageRef> m_images;
-    SubimageCache m_cache;
-    DeferrableOneShotTimer m_timer;
-};
+    RetainPtr<CGImageRef> subimage(CGImageRef, const FloatRect&);
+    void clearImageAndSubimages(CGImageRef);
 
-SubimageCacheWithTimer& subimageCache();
+    HashCountedSet<CGImageRef> m_images;
+    SubimageCacheHashSet m_cache;
+    DeferrableOneShotTimer m_timer;
+
+    static SubimageCacheWithTimer& subimageCache();
+    static bool subimageCacheExists();
+    static SubimageCacheWithTimer* s_cache;
+};
 
 #endif // CACHE_SUBIMAGES
 

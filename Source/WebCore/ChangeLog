@@ -1,3 +1,69 @@
+2018-05-23  David Kilzer  <ddkilzer@apple.com>
+
+        Don't create the SubimageCache just to clear an image from it
+        <https://webkit.org/b/185757>
+
+        Reviewed by Said Abou-Hallawa.
+
+        To fix this we make SubimageCacheWithTimer::clearImage() a
+        static class method that checks whether the cache exists before
+        removing it.  We also make SubimageCacheWithTimer::getImage() a
+        static class method, and move more methods into the
+        SubimageCacheWithTimer class and make them private to reduce API
+        footprint.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawNativeImage): Switch to use new
+        SubimageCacheWithTimer::getSubimage() static class method.
+        * platform/graphics/cg/NativeImageCG.cpp:
+        (WebCore::clearNativeImageSubimages): Switch to use new
+        SubimageCacheWithTimer::clearImage() static class method which
+        returns early if the subimage cache has not been created yet.
+        This fixes the bug.
+
+        * platform/graphics/cg/SubimageCacheWithTimer.cpp:
+        (WebCore::SubimageCacheWithTimer::s_cache): Allocate space for
+        static class variable.
+        (WebCore::SubimageCacheWithTimer::getSubimage): Replace instance
+        method with new static class method that gets the subimage cache
+        singleton and calls the subimage() instance method.
+        (WebCore::SubimageCacheWithTimer::clearImage): Replace instance
+        methdod with new static class method that returns early if the
+        static cache singleton doesn't exist (fixes the bug), otherwise
+        calls the clearImageAndSubimages() instance method.
+        (WebCore::SubimageCacheWithTimer::subimage): Rename from
+        getSubimage().  Use `auto` after renaming SubimageCache typedef
+        to SubimageCacheHashSet.
+        (WebCore::SubimageCacheWithTimer::clearImageAndSubimages):
+        Rename from clearImage().  Modernize loops.
+        (WebCore::SubimageCacheWithTimer::subimageCache): Change
+        WebCore::subimageCache() to a static class method that creates
+        the subimage cache singleton if it doesn't exist yet, and
+        returns it.
+        (WebCore::SubimageCacheWithTimer::subimageCacheExists): Add.
+        Returns false if the subimage cache singleton has not been
+        created yet.
+
+        * platform/graphics/cg/SubimageCacheWithTimer.h:
+        - Rename typedef SubimageCache to SubimageCacheHashSet to avoid
+          general confusion.
+        (WebCore::SubimageCacheWithTimer::getSubimage):
+        (WebCore::SubimageCacheWithTimer::clearImage):
+        - Change to static class methods.
+        (WebCore::SubimageCacheWithTimer::SubimageCacheWithTimer):
+        - Make private.
+        (WebCore::SubimageCacheWithTimer::subimage):
+        - Rename from getSubimage() and make private.
+        (WebCore::SubimageCacheWithTimer::clearImageAndSubimages):
+        - Rename from clearImage() and make private.
+        (WebCore::SubimageCacheWithTimer::subimageCache):
+        - Rename from WebCore::subimageCache() and make a private static
+          class method.
+        (WebCore::SubimageCacheWithTimer::subimageCacheExists):
+        - Add private static class method.
+        (WebCore::SubimageCacheWithTimer::s_cache):
+        - Declare private static variable to hold singleton.
+
 2018-05-23  Eric Carlson  <eric.carlson@apple.com>
 
         Avoid loading AVFoundation to check supported MIME types if possible
