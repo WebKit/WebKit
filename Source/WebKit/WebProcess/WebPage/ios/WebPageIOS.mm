@@ -1141,7 +1141,31 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
         if (position.rootEditableElement())
             range = Range::create(*frame.document(), position, position);
         else
+#if !ENABLE(MINIMAL_SIMULATOR)
             range = wordRangeFromPosition(position);
+#else
+            switch (wkGestureState) {
+            case GestureRecognizerState::Began:
+                m_startingGestureRange = Range::create(*frame.document(), position, position);
+                break;
+            case GestureRecognizerState::Changed:
+                if (m_startingGestureRange) {
+                    if (m_startingGestureRange->startPosition() < position)
+                        range = Range::create(*frame.document(), m_startingGestureRange->startPosition(), position);
+                    else
+                        range = Range::create(*frame.document(), position, m_startingGestureRange->startPosition());
+                }
+                break;
+            case GestureRecognizerState::Ended:
+            case GestureRecognizerState::Cancelled:
+                m_startingGestureRange = nullptr;
+                break;
+            case GestureRecognizerState::Failed:
+            case GestureRecognizerState::Possible:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+#endif
         break;
 
     case GestureType::TapAndAHalf:
@@ -1291,6 +1315,7 @@ static RefPtr<Range> rangeAtWordBoundaryForPosition(Frame* frame, const VisibleP
 }
 
 void WebPage::clearSelection(){
+    m_startingGestureRange = nullptr;
     m_currentBlockSelection = nullptr;
     m_page->focusController().focusedOrMainFrame().selection().clear();
 }

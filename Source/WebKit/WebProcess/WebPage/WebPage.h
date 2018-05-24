@@ -1542,6 +1542,7 @@ private:
 
 #if PLATFORM(IOS)
     bool m_allowsMediaDocumentInlinePlayback { false };
+    RefPtr<WebCore::Range> m_startingGestureRange;
 #endif
 
 #if ENABLE(FULLSCREEN_API)
