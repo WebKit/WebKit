@@ -1,3 +1,18 @@
+2018-05-23  Dewei Zhu  <dewei_zhu@apple.com>
+
+        OSBuildFetcher should respect maxRevision while finding OS builds to report.
+        https://bugs.webkit.org/show_bug.cgi?id=185925
+
+        Reviewed by Ryosuke Niwa.
+
+        * server-tests/tools-os-build-fetcher-tests.js: Fix a typo in the unit tests.
+        Added unit tests for this change. Aslo convert an existing test using async.
+        * tools/js/os-build-fetcher.js:
+        (prototype._fetchAvailableBuilds): It should also use 'maxRevision' to filter builds to be reported.
+        It should use 'minRevisionOrder' when no commit has ever been submitted.
+        (prototype._commitsForAvailableBuilds): Takes 'maxOrder' as fifth argument.
+        'minOrder' and 'maxOrder' should be inclusive.
+
 2018-05-11  Dewei Zhu  <dewei_zhu@apple.com>
 
         Update ChartPane per change r231087.

@@ -61,8 +61,8 @@ class OSBuildFetcher {
             const url = `/api/commits/${escape(repositoryName)}/last-reported?from=${minRevisionOrder}&to=${maxRevisionOrder}`;
 
             return this._remoteAPI.getJSONWithStatus(url).then((result) => {
-                const minOrder = result['commits'].length == 1 ? parseInt(result['commits'][0]['order']) : 0;
-                return this._commitsForAvailableBuilds(repositoryName, command['command'], command['linesToIgnore'], minOrder);
+                const minOrder = result['commits'].length == 1 ? parseInt(result['commits'][0]['order']) + 1 : minRevisionOrder;
+                return this._commitsForAvailableBuilds(repositoryName, command['command'], command['linesToIgnore'], minOrder, maxRevisionOrder);
             }).then((commits) => {
                 const label = 'name' in command ? `"${command['name']}"` : `"${command['minRevision']}" to "${command['maxRevision']}"`;
                 this._logger.log(`Found ${commits.length} builds for ${label}`);
@@ -89,7 +89,7 @@ class OSBuildFetcher {
         return ((major * 100 + kind) * 10000 + minor) * 100 + variant;
     }
 
-    _commitsForAvailableBuilds(repository, command, linesToIgnore, minOrder)
+    _commitsForAvailableBuilds(repository, command, linesToIgnore, minOrder, maxOrder)
     {
         return this._subprocess.execute(command).then((output) => {
             let lines = output.split('\n');
@@ -98,7 +98,7 @@ class OSBuildFetcher {
                 lines = lines.filter((line) => !regex.exec(line));
             }
             return lines.map((revision) => ({repository, revision, 'order': this._computeOrder(revision)}))
-                .filter((commit) => commit['order'] > minOrder);
+                .filter((commit) => commit['order'] >= minOrder && commit['order'] <= maxOrder);
         });
     }
 
