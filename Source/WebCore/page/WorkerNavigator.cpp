@@ -36,7 +36,7 @@ WorkerNavigator::WorkerNavigator(ScriptExecutionContext& context, const String& 
 {
 }
 
-String WorkerNavigator::userAgent() const
+const String& WorkerNavigator::userAgent() const
 {
     return m_userAgent;
 }

@@ -1,5 +1,24 @@
 2018-05-24  Chris Dumez  <cdumez@apple.com>
 
+        Cache navigator.userAgent for performance
+        https://bugs.webkit.org/show_bug.cgi?id=185952
+
+        Reviewed by Geoffrey Garen.
+
+        Cache navigator.userAgent for performance. Previously, we would ask the client 5 times
+        while loading apple.com.
+
+        * page/Navigator.cpp:
+        (WebCore::Navigator::userAgent const):
+        * page/Navigator.h:
+        * page/NavigatorBase.h:
+        * page/NavigatorID.idl:
+        * page/WorkerNavigator.cpp:
+        (WebCore::WorkerNavigator::userAgent const):
+        * page/WorkerNavigator.h:
+
+2018-05-24  Chris Dumez  <cdumez@apple.com>
+
         Some of the work in initializeLogChannelsIfNecessary() is unnecessary for release builds
         https://bugs.webkit.org/show_bug.cgi?id=185951
 

@@ -39,7 +39,7 @@ public:
     DOMMimeTypeArray& mimeTypes();
     bool cookieEnabled() const;
     bool javaEnabled() const;
-    String userAgent() const final;
+    const String& userAgent() const final;
     bool onLine() const final;
     
 #if PLATFORM(IOS)
@@ -53,6 +53,7 @@ private:
 
     mutable RefPtr<DOMPluginArray> m_plugins;
     mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;
+    mutable String m_userAgent;
 };
 
 }
