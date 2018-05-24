@@ -30,7 +30,6 @@
 
 #import "DeprecatedGlobalSettings.h"
 #import "WebCoreThreadRun.h"
-#import <wtf/SoftLinking.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <AppSupport/CPNetworkObserver.h>
@@ -41,9 +40,6 @@
 - (BOOL)isNetworkReachable;
 @end
 #endif
-
-SOFT_LINK_PRIVATE_FRAMEWORK(AppSupport);
-SOFT_LINK_CLASS(AppSupport, CPNetworkObserver);
 
 @interface WebNetworkStateObserver : NSObject {
     void (^block)();
@@ -57,7 +53,7 @@ SOFT_LINK_CLASS(AppSupport, CPNetworkObserver);
 {
     if (!(self = [super init]))
         return nil;
-    [[getCPNetworkObserverClass() sharedNetworkObserver] addNetworkReachableObserver:self selector:@selector(networkStateChanged:)];
+    [[CPNetworkObserver sharedNetworkObserver] addNetworkReachableObserver:self selector:@selector(networkStateChanged:)];
     block = [observerBlock copy];
     return self;
 }
@@ -80,7 +76,7 @@ namespace WebCore {
 
 void NetworkStateNotifier::updateStateWithoutNotifying()
 {
-    m_isOnLine = [[getCPNetworkObserverClass() sharedNetworkObserver] isNetworkReachable];
+    m_isOnLine = [[CPNetworkObserver sharedNetworkObserver] isNetworkReachable];
 }
 
 void NetworkStateNotifier::startObserving()

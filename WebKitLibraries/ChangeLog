@@ -1,3 +1,15 @@
+2018-05-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] Hard link AppSupport instead of soft linking
+        https://bugs.webkit.org/show_bug.cgi?id=185959
+        <rdar://problem/40506538>
+
+        Reviewed by Timothy Horton.
+
+        * WebKitPrivateFrameworkStubs/iOS/10/AppSupport.framework/AppSupport.tbd:
+        * WebKitPrivateFrameworkStubs/iOS/11/AppSupport.framework/AppSupport.tbd:
+        Add stub for ObjC Class CPNetworkObserver.
+
 2018-03-17  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Implement authenticatorMakeCredential
