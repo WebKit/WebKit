@@ -32,6 +32,7 @@
 #import "NetscapePluginModule.h"
 #import "SandboxUtilities.h"
 #import <WebCore/PluginBlacklist.h>
+#import <pwd.h>
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
@@ -43,9 +44,13 @@ namespace WebKit {
 Vector<String> PluginInfoStore::pluginsDirectories()
 {
     Vector<String> pluginsDirectories;
+    pluginsDirectories.reserveInitialCapacity(2);
 
-    pluginsDirectories.append([NSHomeDirectory() stringByAppendingPathComponent:@"Library/Internet Plug-Ins"]);
-    pluginsDirectories.append("/Library/Internet Plug-Ins");
+    ASCIILiteral pluginPath { "/Library/Internet Plug-Ins" };
+
+    if (auto* pw = getpwuid(getuid()))
+        pluginsDirectories.uncheckedAppend(makeString(pw->pw_dir, pluginPath));
+    pluginsDirectories.uncheckedAppend(pluginPath);
     
     return pluginsDirectories;
 }

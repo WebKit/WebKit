@@ -1,3 +1,16 @@
+2018-05-24  Youenn Fablet  <youenn@apple.com>
+
+        Update plugin search path to look for user installed plugins
+        https://bugs.webkit.org/show_bug.cgi?id=185960
+
+        Reviewed by Brent Fulgham.
+
+        Now that UIProcess may be sandboxed, the home directory is no longer the user home directory.
+        Update the path to still look for plugins in the user home directory.
+
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::pluginsDirectories):
+
 2018-05-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         Adopt SecKeyProxy SPI in certificate based challenge response code
