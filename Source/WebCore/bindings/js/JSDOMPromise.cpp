@@ -53,16 +53,20 @@ static inline JSC::JSValue callFunction(JSC::ExecState& state, JSC::JSValue jsFu
 
 void DOMPromise::whenSettled(std::function<void()>&& callback)
 {
-    auto& state = *globalObject()->globalExec();
+    whenPromiseIsSettled(globalObject(), promise(), WTFMove(callback));
+}
+
+void DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSObject* promise, std::function<void()>&& callback)
+{
+    auto& state = *globalObject->globalExec();
     auto& vm = state.vm();
     JSLockHolder lock(vm);
-    auto* handler = JSC::JSNativeStdFunction::create(vm, globalObject(), 1, String { }, [callback = WTFMove(callback)] (ExecState*) mutable {
+    auto* handler = JSC::JSNativeStdFunction::create(vm, globalObject, 1, String { }, [callback = WTFMove(callback)] (ExecState*) mutable {
         callback();
         return JSC::JSValue::encode(JSC::jsUndefined());
     });
 
     const JSC::Identifier& privateName = vm.propertyNames->builtinNames().thenPrivateName();
-    auto* promise = this->promise();
     auto thenFunction = promise->get(&state, privateName);
     ASSERT(thenFunction.isFunction(vm));
 

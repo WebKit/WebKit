@@ -419,28 +419,31 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
         CONTAINER_RELEASE_LOG_IF_ALLOWED("jobResolvedWithRegistration: Update job %" PRIu64 " succeeded", job.identifier().toUInt64());
     }
 
-    WTF::Function<void()> notifyWhenResolvedIfNeeded = [] { };
+    std::function<void()> notifyWhenResolvedIfNeeded;
     if (shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes) {
-        notifyWhenResolvedIfNeeded = [connection = m_swConnection, registrationKey = data.key.isolatedCopy()]() mutable {
-            callOnMainThread([connection = WTFMove(connection), registrationKey = WTFMove(registrationKey)] {
+        notifyWhenResolvedIfNeeded = [connection = m_swConnection, registrationKey = data.key]() mutable {
+            callOnMainThread([connection = WTFMove(connection), registrationKey = registrationKey.isolatedCopy()] {
                 connection->didResolveRegistrationPromise(registrationKey);
             });
         };
     }
 
     if (isStopped()) {
-        notifyWhenResolvedIfNeeded();
+        if (notifyWhenResolvedIfNeeded)
+            notifyWhenResolvedIfNeeded();
         return;
     }
 
     if (!job.promise()) {
-        notifyWhenResolvedIfNeeded();
+        if (notifyWhenResolvedIfNeeded)
+            notifyWhenResolvedIfNeeded();
         return;
     }
 
     scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this), job = makeRef(job), data = WTFMove(data), notifyWhenResolvedIfNeeded = WTFMove(notifyWhenResolvedIfNeeded)](ScriptExecutionContext& context) mutable {
         if (isStopped() || !context.sessionID().isValid()) {
-            notifyWhenResolvedIfNeeded();
+            if (notifyWhenResolvedIfNeeded)
+                notifyWhenResolvedIfNeeded();
             return;
         }
 
@@ -448,9 +451,13 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
 
         CONTAINER_RELEASE_LOG_IF_ALLOWED("jobResolvedWithRegistration: Resolving promise for job %" PRIu64 ". Registration ID: %" PRIu64, job->identifier().toUInt64(), registration->identifier().toUInt64());
 
-        job->promise()->resolve<IDLInterface<ServiceWorkerRegistration>>(WTFMove(registration));
+        if (notifyWhenResolvedIfNeeded) {
+            job->promise()->whenSettled([notifyWhenResolvedIfNeeded = WTFMove(notifyWhenResolvedIfNeeded)] {
+                notifyWhenResolvedIfNeeded();
+            });
+        }
 
-        notifyWhenResolvedIfNeeded();
+        job->promise()->resolve<IDLInterface<ServiceWorkerRegistration>>(WTFMove(registration));
     });
 }
 

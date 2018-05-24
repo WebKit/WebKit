@@ -1,3 +1,25 @@
+2018-05-24  Chris Dumez  <cdumez@apple.com>
+
+        [iOS WK2] Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navigation-fetch-event.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=181499
+        <rdar://problem/36443428>
+
+        Reviewed by Youenn Fablet.
+
+        After resolving a registration promise, we send an IPC back to the StorageProcess
+        for synchronization purposes, to make sure the registration does not get updated
+        before the promise's JS code has been executed. However, resolving a promise
+        schedules a microtask to run the JS and we would therefore send the IPC back too
+        early, thus causing flakiness. We now only send the IPC back back only after that
+        microtask has run and the JS has been executed.
+
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::DeferredPromise::callFunction):
+        (WebCore::DeferredPromise::whenSettled):
+        * bindings/js/JSDOMPromiseDeferred.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::jobResolvedWithRegistration):
+
 2018-05-24  Jinho Bang  <zino@chromium.org>
 
         [PaymentRequest] Remove currencySystem member

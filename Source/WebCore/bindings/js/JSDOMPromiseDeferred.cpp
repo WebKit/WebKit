@@ -27,6 +27,7 @@
 #include "JSDOMPromiseDeferred.h"
 
 #include "DOMWindow.h"
+#include "JSDOMPromise.h"
 #include "JSDOMWindow.h"
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/Exception.h>
@@ -66,6 +67,11 @@ void DeferredPromise::callFunction(ExecState& exec, JSValue function, JSValue re
 
     if (m_mode == Mode::ClearPromiseOnResolve)
         clear();
+}
+
+void DeferredPromise::whenSettled(std::function<void()>&& callback)
+{
+    DOMPromise::whenPromiseIsSettled(globalObject(), deferred()->promise(), WTFMove(callback));
 }
 
 void DeferredPromise::reject()
