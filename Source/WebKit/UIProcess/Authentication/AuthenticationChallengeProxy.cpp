@@ -35,6 +35,10 @@
 #include "WebProcessProxy.h"
 #include "WebProtectionSpace.h"
 
+#if HAVE(SEC_KEY_PROXY)
+#include "SecKeyProxyStore.h"
+#endif
+
 namespace WebKit {
 
 AuthenticationChallengeProxy::AuthenticationChallengeProxy(WebCore::AuthenticationChallenge&& authenticationChallenge, uint64_t challengeID, IPC::Connection* connection)
@@ -70,6 +74,17 @@ void AuthenticationChallengeProxy::useCredential(WebCredential* credential)
         return;
     }
 
+#if HAVE(SEC_KEY_PROXY)
+    if (protectionSpace()->authenticationScheme() == WebCore::ProtectionSpaceAuthenticationSchemeClientCertificateRequested) {
+        if (!m_secKeyProxyStore) {
+            m_connection->send(Messages::AuthenticationManager::ContinueWithoutCredentialForChallenge(challengeID), 0);
+            return;
+        }
+        m_secKeyProxyStore->initialize(credential->credential());
+        sendClientCertificateCredentialOverXpc(challengeID, credential->credential());
+        return;
+    }
+#endif
     m_connection->send(Messages::AuthenticationManager::UseCredentialForChallenge(challengeID, credential->credential()), 0);
 }
 
@@ -118,5 +133,12 @@ WebProtectionSpace* AuthenticationChallengeProxy::protectionSpace() const
         
     return m_webProtectionSpace.get();
 }
+
+#if HAVE(SEC_KEY_PROXY)
+void AuthenticationChallengeProxy::setSecKeyProxyStore(SecKeyProxyStore& store)
+{
+    m_secKeyProxyStore = makeWeakPtr(store);
+}
+#endif
 
 } // namespace WebKit

@@ -50,6 +50,7 @@ class SecurityOrigin;
 
 namespace WebKit {
 
+class SecKeyProxyStore;
 class StorageManager;
 class WebPageProxy;
 class WebProcessPool;
@@ -177,6 +178,10 @@ public:
     
     static void allowWebsiteDataRecordsForAllOrigins();
 
+#if HAVE(SEC_KEY_PROXY)
+    void addSecKeyProxyStore(Ref<SecKeyProxyStore>&&);
+#endif
+
 private:
     explicit WebsiteDataStore(PAL::SessionID);
     explicit WebsiteDataStore(Configuration, PAL::SessionID);
@@ -228,6 +233,10 @@ private:
     
     String m_boundInterfaceIdentifier;
     AllowsCellularAccess m_allowsCellularAccess { AllowsCellularAccess::Yes };
+
+#if HAVE(SEC_KEY_PROXY)
+    Vector<Ref<SecKeyProxyStore>> m_secKeyProxyStores;
+#endif
 };
 
 }

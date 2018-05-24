@@ -1,3 +1,17 @@
+2018-05-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Adopt SecKeyProxy SPI in certificate based challenge response code
+        https://bugs.webkit.org/show_bug.cgi?id=185848
+        <rdar://problem/34586181>
+
+        Reviewed by Alex Christensen.
+
+        Add SPIs to support SecKeyProxy and convert xpc_endpoint_t to NSXPCListenerEndpoint vice versa.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cocoa/NSXPCConnectionSPI.h: Added.
+        * pal/spi/cocoa/SecKeyProxySPI.h: Added.
+
 2018-05-24  Chris Dumez  <cdumez@apple.com>
 
         Some of the work in initializeLogChannelsIfNecessary() is unnecessary for release builds

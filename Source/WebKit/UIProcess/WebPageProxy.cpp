@@ -208,6 +208,10 @@
 #include "WebResourceLoadStatisticsStore.h"
 #endif
 
+#if HAVE(SEC_KEY_PROXY)
+#include "SecKeyProxyStore.h"
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -6196,6 +6200,15 @@ void WebPageProxy::didReceiveAuthenticationChallengeProxy(uint64_t frameID, Ref<
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
+
+#if HAVE(SEC_KEY_PROXY)
+    ASSERT(authenticationChallenge->protectionSpace());
+    if (authenticationChallenge->protectionSpace()->authenticationScheme() == ProtectionSpaceAuthenticationSchemeClientCertificateRequested) {
+        auto secKeyProxyStore = SecKeyProxyStore::create();
+        authenticationChallenge->setSecKeyProxyStore(secKeyProxyStore);
+        m_websiteDataStore->addSecKeyProxyStore(WTFMove(secKeyProxyStore));
+    }
+#endif
 
     if (m_navigationClient)
         m_navigationClient->didReceiveAuthenticationChallenge(*this, authenticationChallenge.get());

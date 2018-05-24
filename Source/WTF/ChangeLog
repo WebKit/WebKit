@@ -1,3 +1,15 @@
+2018-05-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Adopt SecKeyProxy SPI in certificate based challenge response code
+        https://bugs.webkit.org/show_bug.cgi?id=185848
+        <rdar://problem/34586181>
+
+        Reviewed by Alex Christensen.
+
+        Add a condition macro to determine if SecKeyProxy SPI exists.
+
+        * wtf/Platform.h:
+
 2018-05-23  Eric Carlson  <eric.carlson@apple.com>
 
         Avoid loading AVFoundation to check supported MIME types if possible

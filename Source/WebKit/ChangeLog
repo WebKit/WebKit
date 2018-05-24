@@ -1,3 +1,60 @@
+2018-05-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Adopt SecKeyProxy SPI in certificate based challenge response code
+        https://bugs.webkit.org/show_bug.cgi?id=185848
+        <rdar://problem/34586181>
+
+        Reviewed by Alex Christensen.
+
+        This patch adopts SecKeyProxy SPI in HTTPS client certificate authentication code.
+        1) SecKeyProxy is a new SPI to relay crypto operations from one process to another. The owner process of the proxy
+        will behave like a server, and other owners of the SecKeys created from the proxy's endpoints will then behave
+        like clients. This client-server model allows more restricted sandbox for client processes, and meanwhile permits
+        them to relay crypto operations to the server process while maintaining the same SecKey interfaces as used for local operations.
+        2) Because of the client-server model, the server process, i.e. the UI Process in our case, needs to keep the proxy
+        object alive long enough for the client process, i.e. Network Processes in our case, to finish all operations, and then destroy
+        the proxy object afterward. The ideal place to hold such a proxy is WebsiteDataStore such that proxies could live with the
+        corresponding network session.
+        3) A new class called SecKeyProxyStore is then created to bind the lifetime of SecKeyProxy to the WebsiteDataStore while initializing
+        it correctly. At the time the authentication process reaches WebPageProxy::didReceiveAuthenticationChallengeProxy where we have
+        accesses to the WebsiteDataStore, we haven't yet been able to determine the Credential to authenticate the challenge. Therefore, we
+        have to reserve a place in the WebsiteDataStore ahead and then fill it with the right Credential. That's why SecKeyProxyStore exists.
+        In WebPageProxy::didReceiveAuthenticationChallengeProxy, we create a strong reference of SecKeyProxyStore which will eventually hold
+        a strong reference of the SecKeyProxy, and move it to the WebsiteDataStore. We also create a weak reference to SecKeyProxyStore
+        and move it to the AuthenticationChallenge. In this way, we indirectly bind the lifetime of SecKeyProxy to the WebsiteDataStore through
+        the strong reference and also we can initialize the proxy through the weak reference while a credential is finally determined.
+        4) Endpoints of the SecKeyProxy will be passed to the Network Process for creating the 'remote' SecKey. However, those endpoints are
+        of NSXPCListenerEndpoint type, which can only be passed with xpc connections and are not compatible with our IPC mechanism. In order
+        to pass endpoints around, this patch reuses the xpc connection that is used to bootstrap Network Processes from the UI Process. To do
+        so, it sends xpc messages at the place where original IPC messages are sent and overwrites the boostrap listener of the xpc connection
+        when Network Process is initialized. From the listener, it continues the original authentication code path.
+        5) Tests, again, are manually covered by tlstestwebkit.org. Noted, the prompting Keychain dialog in macOS should say Safari instead of
+        "com.apple.WebKit.Networking*" now.
+
+        * Shared/AuthenticationManagerCocoa.mm: Added.
+        (WebKit::AuthenticationManager::initializeConnection):
+        * Shared/Authentication/cocoa/AuthenticationManager.h:
+        * Shared/Authentication/cocoa/ClientCertificateAuthenticationXPCConstants.h:
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        (WebKit::AuthenticationChallengeProxy::useCredential):
+        (WebKit::AuthenticationChallengeProxy::setSecKeyProxyStore):
+        * UIProcess/Authentication/AuthenticationChallengeProxy.h:
+        * UIProcess/Authentication/cocoa/AuthenticationChallengeProxyCocoa.mm: Added.
+        (WebKit::AuthenticationChallengeProxy::sendClientCertificateCredentialOverXpc const):
+        * UIProcess/Authentication/cocoa/SecKeyProxyStore.h: Added.
+        (WebKit::SecKeyProxyStore::create):
+        (WebKit::SecKeyProxyStore::isInitialized const):
+        (WebKit::SecKeyProxyStore::get const):
+        (WebKit::SecKeyProxyStore::weakPtrFactory const):
+        * UIProcess/Authentication/cocoa/SecKeyProxyStore.mm: Added.
+        (WebKit::SecKeyProxyStore::initialize):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallengeProxy):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::addSecKeyProxyStore):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-05-24  Megan Gardner  <megan_gardner@apple.com>
 
         Fix Issues with Loupe Gesture

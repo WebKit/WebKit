@@ -33,6 +33,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/WeakPtr.h>
 
 namespace IPC {
 class MessageSender;
@@ -91,6 +92,11 @@ private:
         WebCore::AuthenticationChallenge challenge;
         ChallengeCompletionHandler completionHandler;
     };
+
+#if HAVE(SEC_KEY_PROXY)
+    // NetworkProcessSupplement
+    void initializeConnection(IPC::Connection*) final;
+#endif
     
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -109,6 +115,8 @@ private:
     ChildProcess& m_process;
 
     HashMap<uint64_t, Challenge> m_challenges;
+
+    WeakPtrFactory<AuthenticationManager> m_weakPtrFactory;
 };
 
 } // namespace WebKit
