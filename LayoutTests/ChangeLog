@@ -1,3 +1,14 @@
+2018-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: performance-api/performance-observer-entry-sort.html is flaky
+        ​https://bugs.webkit.org/show_bug.cgi?id=185385
+
+        Reviewed by Saam Barati.
+
+        Partially revert r232033 to see if the flaky failure comes back.
+
+        * performance-api/performance-observer-entry-sort.html:
+
 2018-05-24  Chris Dumez  <cdumez@apple.com>
 
         [iOS WK2] Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navigation-fetch-event.https.html is a flaky failure

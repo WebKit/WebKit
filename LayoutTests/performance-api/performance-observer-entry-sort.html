@@ -15,12 +15,9 @@ function assert(assertion)
 }
 
 function wait() {
-    let start = performance.now();
-    let now;
-    do {
-        now = performance.now();
-    } while (start === now);
-    assert(() => now > start);
+    let now = performance.now();
+    while (now === performance.now())
+        continue;
 }
 
 let observer = new PerformanceObserver((list) => {
