@@ -568,7 +568,7 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     Butterfly* butterfly = this->butterfly();
-    switch (indexingType()) {
+    switch (indexingMode()) {
     case ArrayClass:
         if (!newLength)
             return true;
@@ -580,6 +580,15 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
         }
         createInitialUndecided(vm, newLength);
         return true;
+
+    case CopyOnWriteArrayWithInt32:
+    case CopyOnWriteArrayWithDouble:
+    case CopyOnWriteArrayWithContiguous:
+        if (newLength == butterfly->publicLength())
+            return true;
+        convertFromCopyOnWrite(vm);
+        butterfly = this->butterfly();
+        FALLTHROUGH;
 
     case ArrayWithUndecided:
     case ArrayWithInt32:

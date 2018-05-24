@@ -1,3 +1,13 @@
+2018-05-23  Keith Miller  <keith_miller@apple.com>
+
+        Define length on CoW array should properly convert to writable
+        https://bugs.webkit.org/show_bug.cgi?id=185927
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/cow-define-length-as-value.js: Added.
+        (test):
+
 2018-05-23  Michael Saboff  <msaboff@apple.com>
 
         Date.parse() doesn't properly handle input outside of ES Spec limits
