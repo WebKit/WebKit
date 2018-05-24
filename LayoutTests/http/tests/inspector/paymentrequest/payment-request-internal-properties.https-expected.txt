@@ -10,8 +10,7 @@ INTERNAL PROPERTY: details: {
     "label": "Total",
     "amount": {
       "currency": "USD",
-      "value": "99.00",
-      "currencySystem": "<filtered>"
+      "value": "99.00"
     },
     "pending": false
   },
@@ -20,8 +19,7 @@ INTERNAL PROPERTY: details: {
       "label": "Item 1",
       "amount": {
         "currency": "USD",
-        "value": "90.00",
-        "currencySystem": "<filtered>"
+        "value": "90.00"
       },
       "pending": false
     },
@@ -29,8 +27,7 @@ INTERNAL PROPERTY: details: {
       "label": "Item 2",
       "amount": {
         "currency": "USD",
-        "value": "90.00",
-        "currencySystem": "<filtered>"
+        "value": "90.00"
       },
       "pending": true
     },
@@ -38,8 +35,7 @@ INTERNAL PROPERTY: details: {
       "label": "Item 3",
       "amount": {
         "currency": "USD",
-        "value": "9.00",
-        "currencySystem": "<filtered>"
+        "value": "9.00"
       },
       "pending": false
     }
@@ -50,8 +46,7 @@ INTERNAL PROPERTY: details: {
       "label": "Shipping Label 1",
       "amount": {
         "currency": "USD",
-        "value": "5.00",
-        "currencySystem": "<filtered>"
+        "value": "5.00"
       },
       "selected": false
     },
@@ -60,8 +55,7 @@ INTERNAL PROPERTY: details: {
       "label": "Shipping Label 2",
       "amount": {
         "currency": "USD",
-        "value": "10.00",
-        "currencySystem": "<filtered>"
+        "value": "10.00"
       },
       "selected": true
     }
@@ -73,8 +67,7 @@ INTERNAL PROPERTY: details: {
         "label": "Total",
         "amount": {
           "currency": "USD",
-          "value": "99.00",
-          "currencySystem": "<filtered>"
+          "value": "99.00"
         },
         "pending": false
       },
@@ -99,8 +92,7 @@ INTERNAL PROPERTY: details: {
     "label": "Total",
     "amount": {
       "currency": "USD",
-      "value": "9.99",
-      "currencySystem": "<filtered>"
+      "value": "9.99"
     },
     "pending": false
   },
@@ -124,8 +116,7 @@ INTERNAL PROPERTY: details: {
     "label": "Total",
     "amount": {
       "currency": "USD",
-      "value": "9.99",
-      "currencySystem": "<filtered>"
+      "value": "9.99"
     },
     "pending": false
   },
@@ -149,8 +140,7 @@ INTERNAL PROPERTY: details: {
     "label": "Total",
     "amount": {
       "currency": "USD",
-      "value": "9.99",
-      "currencySystem": "<filtered>"
+      "value": "9.99"
     },
     "pending": false
   },

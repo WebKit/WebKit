@@ -84,7 +84,6 @@ static JSObject* objectForPaymentCurrencyAmount(VM& vm, ExecState* exec, const P
     auto* object = constructEmptyObject(exec);
     object->putDirect(vm, Identifier::fromString(exec, "currency"), jsString(exec, paymentCurrencyAmount.currency));
     object->putDirect(vm, Identifier::fromString(exec, "value"), jsString(exec, paymentCurrencyAmount.value));
-    object->putDirect(vm, Identifier::fromString(exec, "currencySystem"), jsString(exec, paymentCurrencyAmount.currencySystem));
     return object;
 }
 

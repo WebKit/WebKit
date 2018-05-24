@@ -34,7 +34,6 @@ namespace WebCore {
 struct PaymentCurrencyAmount {
     String currency;
     String value;
-    String currencySystem;
 };
 
 } // namespace WebCore

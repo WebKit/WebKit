@@ -1,3 +1,13 @@
+2018-05-24  Jinho Bang  <zino@chromium.org>
+
+        [PaymentRequest] Remove currencySystem member
+        https://bugs.webkit.org/show_bug.cgi?id=185860
+
+        Reviewed by Andy Estes.
+
+        * http/tests/inspector/paymentrequest/payment-request-internal-properties.https-expected.txt:
+        * http/tests/inspector/paymentrequest/payment-request-internal-properties.https.html:
+
 2018-05-23  Chris Dumez  <cdumez@apple.com>
 
         Regression(r229831): fast/loader/javascript-url-iframe-remove-on-navigate-async-delegate.html is flaky

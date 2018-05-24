@@ -1,3 +1,27 @@
+2018-05-24  Jinho Bang  <zino@chromium.org>
+
+        [PaymentRequest] Remove currencySystem member
+        https://bugs.webkit.org/show_bug.cgi?id=185860
+
+        Reviewed by Andy Estes.
+
+        After a long discussion, Web Payment Working Group decided to remove
+        the `currencySystem` member[1]. The currency code should be well-formed
+        3-letter alphabetic code and is allowed even if that is not part of
+        the official ISO 4217 list.
+
+        [1] https://github.com/w3c/payment-request/pull/694
+
+        Test: http/tests/inspector/paymentrequest/payment-request-internal-properties.https.html
+
+        * Modules/paymentrequest/PaymentCurrencyAmount.h:
+        * Modules/paymentrequest/PaymentCurrencyAmount.idl:
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::checkAndCanonicalizeAmount):
+        (WebCore::checkAndCanonicalizeTotal):
+        * inspector/WebInjectedScriptHost.cpp:
+        (WebCore::objectForPaymentCurrencyAmount):
+
 2018-05-24  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement position computation for inflow positioned elements
