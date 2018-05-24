@@ -1,3 +1,23 @@
+2018-05-24  Keith Rollin  <krollin@apple.com>
+
+        Don't track resource load milestones in private sessions
+        https://bugs.webkit.org/show_bug.cgi?id=185828
+        <rdar://problem/40424197>
+
+        Reviewed by Brent Fulgham.
+
+        Bug 184838 adds the facility for tracing the beginning and ending of
+        resources loads and reporting so that historical information can be
+        gathered to assess the health of the networking stack. Disable this
+        facility for private browsing sessions.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::startTrackingResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::stopTrackingResourceLoad):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+
 2018-05-24  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r224908): [macOS] Media playback not honoring custom caption styles
