@@ -67,7 +67,7 @@ protected:
     const Box& root() const { return *m_root; }
 
     virtual void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const;
-    virtual void computeInFlowPositionedPosition(const Box&, Display::Box&) const;
+    virtual void computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const;
     virtual void computeOutOfFlowPosition(LayoutContext&, const Box&, Display::Box&) const;
 
     virtual void computeWidth(LayoutContext&, const Box&, Display::Box&) const;
@@ -86,7 +86,7 @@ protected:
     virtual LayoutUnit marginBottom(const Box&) const;
     virtual LayoutUnit marginRight(const Box&) const;
 
-    void placeInFlowPositionedChildren(const Container&) const;
+    void placeInFlowPositionedChildren(LayoutContext&, const Container&) const;
     void layoutOutOfFlowDescendants(LayoutContext&s) const;
 
 #ifndef NDEBUG

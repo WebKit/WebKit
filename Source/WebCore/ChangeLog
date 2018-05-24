@@ -1,3 +1,17 @@
+2018-05-24  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement FormattingContext::placeInFlowPositionedChildren
+        https://bugs.webkit.org/show_bug.cgi?id=185934
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeInFlowPositionedPosition const):
+        (WebCore::Layout::FormattingContext::placeInFlowPositionedChildren const):
+        * layout/FormattingContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+
 2018-05-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Use ASCIILiteral with applicationBundleIsEqualTo in RuntimeApplicationChecksCocoa
