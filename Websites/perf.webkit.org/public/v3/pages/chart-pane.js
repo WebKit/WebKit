@@ -239,9 +239,9 @@ class ChartPane extends ChartPaneBase {
         const repetitionCount = this.content('confirm-repetition').value;
 
         try {
-            const data = await (createWithTestGroup ?
+            const analysisTask = await (createWithTestGroup ?
                 AnalysisTask.create(name, startPoint, endPoint, 'Confirm', repetitionCount) : AnalysisTask.create(name, startPoint, endPoint));
-            newWindow.location.href = router.url('analysis/task/' + data['taskId']);
+            newWindow.location.href = router.url('analysis/task/' + analysisTask.id());
             this.fetchAnalysisTasks(true);
         } catch(error) {
             newWindow.location.href = router.url('analysis/task/create', {error: error});
