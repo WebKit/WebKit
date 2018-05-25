@@ -1,3 +1,16 @@
+2018-05-24  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Avoid dlopening QuickLooks in the common case where the main resource is HTML or plain text
+        https://bugs.webkit.org/show_bug.cgi?id=185966
+
+        Reviewed by Geoffrey Garen.
+
+        Avoid dlopening QuickLooks in the common case where the main resource is HTML or plain text
+        for performance reasons.
+
+        * loader/ios/PreviewLoader.mm:
+        (WebCore::PreviewLoader::shouldCreateForMIMEType):
+
 2018-05-24  Sam Weinig  <sam@webkit.org>
 
         Modernize RenderStyleConstants.h - Part 2

@@ -243,6 +243,9 @@ PreviewLoader::~PreviewLoader()
 
 bool PreviewLoader::shouldCreateForMIMEType(const String& mimeType)
 {
+    if (equalLettersIgnoringASCIICase(mimeType, "text/html") || equalLettersIgnoringASCIICase(mimeType, "text/plain"))
+        return false;
+
     static std::once_flag onceFlag;
     static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> supportedMIMETypes;
     std::call_once(onceFlag, [] {
