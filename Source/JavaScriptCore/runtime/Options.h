@@ -237,6 +237,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(double, mediumHeapRAMFraction, 0.5, Normal, nullptr) \
     v(double, mediumHeapGrowthFactor, 1.5, Normal, nullptr) \
     v(double, largeHeapGrowthFactor, 1.24, Normal, nullptr) \
+    v(double, miniVMHeapGrowthFactor, 1.27, Normal, nullptr) \
     v(double, criticalGCMemoryThreshold, 0.80, Normal, "percent memory in use the GC considers critical.  The collector is much more aggressive above this threshold") \
     v(double, minimumMutatorUtilization, 0, Normal, nullptr) \
     v(double, maximumMutatorUtilization, 0.7, Normal, nullptr) \
@@ -509,8 +510,9 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(bool, useBigInt, false, Normal, "If true, we will enable BigInt support.") \
     v(bool, useIntlNumberFormatToParts, enableIntlNumberFormatToParts, Normal, "If true, we will enable Intl.NumberFormat.prototype.formatToParts") \
     v(bool, useIntlPluralRules, enableIntlPluralRules, Normal, "If true, we will enable Intl.PluralRules.") \
-    v(bool, useArrayAllocationProfiling, true, Normal, "If true, we will use our normal array allocation profiling. If false, the allocation profile will always claim to be undecided.")\
-    v(bool, forcePolyProto, false, Normal, "If true, create_this will always create an object with a poly proto structure.")
+    v(bool, useArrayAllocationProfiling, true, Normal, "If true, we will use our normal array allocation profiling. If false, the allocation profile will always claim to be undecided.") \
+    v(bool, forcePolyProto, false, Normal, "If true, create_this will always create an object with a poly proto structure.") \
+    v(bool, forceMiniVMMode, false, Normal, "If true, it will force mini VM mode on.")
 
 
 enum OptionEquivalence {

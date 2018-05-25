@@ -556,6 +556,9 @@ private:
     void assertMarkStacksEmpty();
 
     void setBonusVisitorTask(RefPtr<SharedTask<void(SlotVisitor&)>>);
+
+    static bool useGenerationalGC();
+    static bool shouldSweepSynchronously();
     
     const HeapType m_heapType;
     const size_t m_ramSize;

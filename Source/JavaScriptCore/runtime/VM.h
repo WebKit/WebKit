@@ -558,6 +558,7 @@ public:
     static JS_EXPORT_PRIVATE bool canUseAssembler();
     static JS_EXPORT_PRIVATE bool canUseJIT();
     static JS_EXPORT_PRIVATE bool canUseRegExpJIT();
+    static JS_EXPORT_PRIVATE bool isInMiniMode();
 
     SourceProviderCache* addSourceProviderCache(SourceProvider*);
     void clearSourceProviderCaches();

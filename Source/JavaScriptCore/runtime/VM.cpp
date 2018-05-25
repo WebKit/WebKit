@@ -238,6 +238,11 @@ bool VM::canUseRegExpJIT()
 #endif
 }
 
+bool VM::isInMiniMode()
+{
+    return !canUseJIT() || Options::forceMiniVMMode();
+}
+
 VM::VM(VMType vmType, HeapType heapType)
     : m_apiLock(adoptRef(new JSLock(this)))
 #if USE(CF)

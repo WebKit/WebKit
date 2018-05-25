@@ -121,14 +121,14 @@ def getTests
     files.sort_by { | (path) | File.basename(path) }
 end
 
-def geomean(x)
-    score = x.inject(1.0, :*)
-    score ** (1.0 / x.length)
+def geomean(arr)
+    score = arr.inject(1.0, :*)
+    score ** (1.0 / arr.length)
 end
 
-def mean(x)
-    sum = x.inject(0.0, :+)
-    sum / x.length
+def mean(arr)
+    sum = arr.inject(0.0, :+)
+    sum / arr.length
 end
 
 def runTest(path, iters)

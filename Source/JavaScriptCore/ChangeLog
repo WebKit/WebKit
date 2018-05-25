@@ -1,5 +1,37 @@
 2018-05-25  Saam Barati  <sbarati@apple.com>
 
+        Make JSC have a mini mode that kicks in when the JIT is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=185931
+
+        Reviewed by Mark Lam.
+
+        This patch makes JSC have a mini VM mode. This currently only kicks in
+        when the process can't JIT. Mini VM now means a few things:
+        - We always use a 1.27x heap growth factor. This number was the best tradeoff
+          between memory use progression and time regression in run-testmem. We may
+          want to tune this more in the future as we make other mini VM changes.
+        - We always sweep synchronously.
+        - We disable generational GC.
+        
+        I'm going to continue to extend what mini VM mode means in future changes.
+        
+        This patch is a 50% memory progression and an ~8-9% time regression
+        on run-testmem when running in mini VM mode with the JIT disabled.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collectNow):
+        (JSC::Heap::finalize):
+        (JSC::Heap::useGenerationalGC):
+        (JSC::Heap::shouldSweepSynchronously):
+        (JSC::Heap::shouldDoFullCollection):
+        * heap/Heap.h:
+        * runtime/Options.h:
+        * runtime/VM.cpp:
+        (JSC::VM::isInMiniMode):
+        * runtime/VM.h:
+
+2018-05-25  Saam Barati  <sbarati@apple.com>
+
         Have a memory test where we can validate JSCs mini memory mode
         https://bugs.webkit.org/show_bug.cgi?id=185932
 
