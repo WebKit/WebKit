@@ -28,6 +28,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
+#include "ChildProcessMessages.h"
 #include "PluginProcessConnectionManagerMessages.h"
 #include "PluginProcessCreationParameters.h"
 #include "PluginProcessManager.h"
@@ -37,10 +38,6 @@
 #include "WebProcessProxy.h"
 #include <WebCore/NotImplemented.h>
 #include <wtf/RunLoop.h>
-
-#if OS(LINUX)
-#include "MemoryPressureMonitor.h"
-#endif
 
 using namespace WebCore;
 
@@ -155,6 +152,16 @@ void PluginProcessProxy::deleteWebsiteDataForHostNames(const Vector<String>& hos
     m_connection->send(Messages::PluginProcess::DeleteWebsiteDataForHostNames(hostNames, callbackID), 0);
 }
 
+#if OS(LINUX)
+void PluginProcessProxy::sendMemoryPressureEvent(bool isCritical)
+{
+    if (state() == State::Launching)
+        return;
+
+    m_connection->send(Messages::ChildProcess::DidReceiveMemoryPressureEvent(isCritical), 0);
+}
+#endif
+
 void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
 {
     // The plug-in process must have crashed or exited, send any pending sync replies we might have.
@@ -233,11 +240,6 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::I
         parameters.minimumLifetime = minimumLifetime;
         parameters.terminationTimeout = shutdownTimeout;
     }
-
-#if OS(LINUX)
-    if (MemoryPressureMonitor::isEnabled())
-        parameters.memoryPressureMonitorHandle = MemoryPressureMonitor::singleton().createHandle();
-#endif
 
     platformInitializePluginProcess(parameters);
 

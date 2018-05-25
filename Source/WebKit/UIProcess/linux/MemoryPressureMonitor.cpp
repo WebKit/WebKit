@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2016, 2018 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,15 +28,10 @@
 
 #if OS(LINUX)
 
-#include "Attachment.h"
-#include <errno.h>
-#include <fcntl.h>
-#include <mutex>
+#include "WebProcessPool.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/eventfd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <unistd.h>
 #include <wtf/Threading.h>
 #include <wtf/UniStdExtras.h>
@@ -48,8 +43,9 @@ static const size_t notSet = static_cast<size_t>(-1);
 static const Seconds s_minPollingInterval { 1_s };
 static const Seconds s_maxPollingInterval { 5_s };
 static const double s_minUsedMemoryPercentageForPolling = 50;
-static const double s_maxUsedMemoryPercentageForPolling = 90;
-static const int s_memoryPresurePercentageThreshold = 95;
+static const double s_maxUsedMemoryPercentageForPolling = 85;
+static const int s_memoryPresurePercentageThreshold = 90;
+static const int s_memoryPresurePercentageThresholdCritical = 95;
 
 static size_t lowWatermarkPages()
 {
@@ -208,44 +204,21 @@ static inline Seconds pollIntervalForUsedMemoryPercentage(int usedPercentage)
         return s_minPollingInterval;
 
     return s_minPollingInterval + (s_maxPollingInterval - s_minPollingInterval) *
-        ((usedPercentage - s_minUsedMemoryPercentageForPolling) / (s_maxUsedMemoryPercentageForPolling - s_minUsedMemoryPercentageForPolling));
-}
-
-static bool isSystemdMemoryPressureMonitorAvailable()
-{
-    int fd = open("/sys/fs/cgroup/memory/memory.pressure_level", O_CLOEXEC | O_RDONLY);
-    if (fd == -1)
-        return false;
-    close(fd);
-
-    fd = open("/sys/fs/cgroup/memory/cgroup.event_control", O_CLOEXEC | O_WRONLY);
-    if (fd == -1)
-        return false;
-    close(fd);
-
-    return true;
-}
-
-bool MemoryPressureMonitor::isEnabled()
-{
-    static std::once_flag onceFlag;
-    static bool enabled;
-    std::call_once(onceFlag, [] { enabled = !isSystemdMemoryPressureMonitorAvailable(); });
-    return enabled;
+        ((s_maxUsedMemoryPercentageForPolling - usedPercentage) / (s_maxUsedMemoryPercentageForPolling - s_minUsedMemoryPercentageForPolling));
 }
 
 MemoryPressureMonitor& MemoryPressureMonitor::singleton()
 {
-    ASSERT(isEnabled());
     static NeverDestroyed<MemoryPressureMonitor> memoryMonitor;
     return memoryMonitor;
 }
 
-MemoryPressureMonitor::MemoryPressureMonitor()
-    : m_eventFD(eventfd(0, EFD_CLOEXEC))
+void MemoryPressureMonitor::start()
 {
-    if (m_eventFD == -1)
+    if (m_started)
         return;
+
+    m_started = true;
 
     Thread::create("MemoryPressureMonitor", [this] {
         Seconds pollInterval = s_maxPollingInterval;
@@ -259,26 +232,15 @@ MemoryPressureMonitor::MemoryPressureMonitor()
             }
 
             if (usedPercentage >= s_memoryPresurePercentageThreshold) {
-                uint64_t fdEvent = 1;
-                ssize_t bytesWritten = write(m_eventFD, &fdEvent, sizeof(uint64_t));
-                if (bytesWritten != sizeof(uint64_t)) {
-                    WTFLogAlways("Error writing to MemoryPressureMonitor eventFD: %s", strerror(errno));
-                    break;
-                }
+                bool isCritical = (usedPercentage >= s_memoryPresurePercentageThresholdCritical);
+                for (auto* processPool : WebProcessPool::allProcessPools())
+                    processPool->sendMemoryPressureEvent(isCritical);
             }
             pollInterval = pollIntervalForUsedMemoryPercentage(usedPercentage);
         }
-        close(m_eventFD);
     })->detach();
 }
 
-IPC::Attachment MemoryPressureMonitor::createHandle() const
-{
-    int duplicatedHandle = dupCloseOnExec(m_eventFD);
-    if (duplicatedHandle == -1)
-        return { };
-    return IPC::Attachment(duplicatedHandle);
-}
 
 } // namespace WebKit
 

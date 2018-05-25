@@ -1,3 +1,18 @@
+2018-05-24  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Memory pressure monitor doesn't reliable notify all the subprocesses
+        https://bugs.webkit.org/show_bug.cgi?id=184261
+
+        Reviewed by Carlos Garcia Campos.
+
+        Receive the memory pressure notifications from the UIProcess memory monitor via WebKit IPC.
+
+        * wtf/MemoryPressureHandler.h:
+        * wtf/linux/MemoryPressureHandlerLinux.cpp:
+        (WTF::MemoryPressureHandler::triggerMemoryPressureEvent):
+        (WTF::MemoryPressureHandler::install):
+        (WTF::MemoryPressureHandler::uninstall):
+
 2018-05-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         Adopt SecKeyProxy SPI in certificate based challenge response code

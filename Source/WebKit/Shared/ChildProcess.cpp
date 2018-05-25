@@ -35,6 +35,10 @@
 #include <unistd.h>
 #endif
 
+#if OS(LINUX)
+#include <wtf/MemoryPressureHandler.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -215,6 +219,14 @@ void ChildProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReferen
     WTFLogAlways("Received invalid message: '%s::%s'", messageReceiverName.toString().data(), messageName.toString().data());
     CRASH();
 }
+
+#if OS(LINUX)
+void ChildProcess::didReceiveMemoryPressureEvent(bool isCritical)
+{
+    MemoryPressureHandler::singleton().triggerMemoryPressureEvent(isCritical);
+}
 #endif
+
+#endif // !PLATFORM(COCOA)
 
 } // namespace WebKit

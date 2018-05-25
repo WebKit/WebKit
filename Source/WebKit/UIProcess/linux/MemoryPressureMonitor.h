@@ -41,16 +41,13 @@ class MemoryPressureMonitor {
     friend NeverDestroyed<MemoryPressureMonitor>;
 public:
     static MemoryPressureMonitor& singleton();
-    static bool isEnabled();
+    void start();
 
     ~MemoryPressureMonitor();
 
-    IPC::Attachment createHandle() const;
-
 private:
-    MemoryPressureMonitor();
-
-    int m_eventFD { -1 };
+    MemoryPressureMonitor() = default;
+    bool m_started { false };
 };
 
 } // namespace WebKit

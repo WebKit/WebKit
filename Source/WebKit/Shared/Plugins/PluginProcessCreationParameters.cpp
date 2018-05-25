@@ -49,9 +49,6 @@ void PluginProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << acceleratedCompositingPort;
     IPC::encode(encoder, networkATSContext.get());
 #endif
-#if OS(LINUX)
-    encoder << memoryPressureMonitorHandle;
-#endif
 }
 
 bool PluginProcessCreationParameters::decode(IPC::Decoder& decoder, PluginProcessCreationParameters& result)
@@ -68,10 +65,6 @@ bool PluginProcessCreationParameters::decode(IPC::Decoder& decoder, PluginProces
     if (!decoder.decode(result.acceleratedCompositingPort))
         return false;
     if (!IPC::decode(decoder, result.networkATSContext))
-        return false;
-#endif
-#if OS(LINUX)
-    if (!decoder.decode(result.memoryPressureMonitorHandle))
         return false;
 #endif
 

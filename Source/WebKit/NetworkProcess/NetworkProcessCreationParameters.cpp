@@ -100,9 +100,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     encoder << logCookieInformation;
 #endif
-#if OS(LINUX)
-    encoder << memoryPressureMonitorHandle;
-#endif
 #if ENABLE(NETWORK_CAPTURE)
     encoder << recordReplayMode;
     encoder << recordReplayCacheLocation;
@@ -251,11 +248,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     if (!decoder.decode(result.logCookieInformation))
-        return false;
-#endif
-
-#if OS(LINUX)
-    if (!decoder.decode(result.memoryPressureMonitorHandle))
         return false;
 #endif
 

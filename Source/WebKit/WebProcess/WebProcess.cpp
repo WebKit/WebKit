@@ -270,8 +270,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     WebCore::setPresentingApplicationPID(parameters.presentingApplicationPID);
 
 #if OS(LINUX)
-    if (parameters.memoryPressureMonitorHandle.fileDescriptor() != -1)
-        MemoryPressureHandler::singleton().setMemoryPressureMonitorHandle(parameters.memoryPressureMonitorHandle.releaseFileDescriptor());
     MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
 #endif
 

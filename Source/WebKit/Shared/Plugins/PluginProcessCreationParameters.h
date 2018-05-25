@@ -27,7 +27,6 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-#include "Attachment.h"
 #include "PluginProcessAttributes.h"
 #include <wtf/Seconds.h>
 
@@ -57,9 +56,6 @@ struct PluginProcessCreationParameters {
 #if PLATFORM(COCOA)
     WTF::MachSendRight acceleratedCompositingPort;
     RetainPtr<CFDataRef> networkATSContext;
-#endif
-#if OS(LINUX)
-    IPC::Attachment memoryPressureMonitorHandle;
 #endif
 };
 

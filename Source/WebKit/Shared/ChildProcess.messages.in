@@ -24,4 +24,8 @@ messages -> ChildProcess {
     ShutDown()
     RegisterURLSchemeServiceWorkersCanHandle(String scheme)
     SetProcessSuppressionEnabled(bool flag)
+
+#if OS(LINUX)
+    void DidReceiveMemoryPressureEvent(bool isCritical)
+#endif
 }

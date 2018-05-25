@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "Attachment.h"
 #include "CacheModel.h"
 #include "NetworkSessionCreationParameters.h"
 #include "SandboxExtension.h"
@@ -114,10 +113,6 @@ struct NetworkProcessCreationParameters {
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     bool logCookieInformation { false };
-#endif
-
-#if OS(LINUX)
-    IPC::Attachment memoryPressureMonitorHandle;
 #endif
 
 #if ENABLE(NETWORK_CAPTURE)

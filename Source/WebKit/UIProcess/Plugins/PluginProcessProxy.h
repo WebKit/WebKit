@@ -82,6 +82,10 @@ public:
     void deleteWebsiteData(WallTime modifiedSince, WTF::Function<void ()>&& completionHandler);
     void deleteWebsiteDataForHostNames(const Vector<String>& hostNames, WTF::Function<void ()>&& completionHandler);
 
+#if OS(LINUX)
+    void sendMemoryPressureEvent(bool isCritical);
+#endif
+
     bool isValid() const { return m_connection; }
 
 #if PLUGIN_ARCHITECTURE(UNIX)

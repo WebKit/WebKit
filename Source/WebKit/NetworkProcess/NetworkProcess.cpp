@@ -232,10 +232,6 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     m_loadThrottleLatency = parameters.loadThrottleLatency;
     if (!m_suppressMemoryPressureHandler) {
         auto& memoryPressureHandler = MemoryPressureHandler::singleton();
-#if OS(LINUX)
-        if (parameters.memoryPressureMonitorHandle.fileDescriptor() != -1)
-            memoryPressureHandler.setMemoryPressureMonitorHandle(parameters.memoryPressureMonitorHandle.releaseFileDescriptor());
-#endif
         memoryPressureHandler.setLowMemoryHandler([this] (Critical critical, Synchronous) {
             lowMemoryHandler(critical);
         });

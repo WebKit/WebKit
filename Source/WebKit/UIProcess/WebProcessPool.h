@@ -165,6 +165,7 @@ public:
     template<typename T> void sendToNetworkingProcessRelaunchingIfNecessary(T&& message);
 
     // Sends the message to WebProcess or StorageProcess as approporiate for current process model.
+    template<typename T> void sendToStorageProcess(T&& message);
     template<typename T> void sendToStorageProcessRelaunchingIfNecessary(T&& message);
 
     void processDidFinishLaunching(WebProcessProxy*);
@@ -313,7 +314,9 @@ public:
 #endif
 
     void fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled);
-
+#if OS(LINUX)
+    void sendMemoryPressureEvent(bool isCritical);
+#endif
     void textCheckerStateChanged();
 
     Ref<API::Dictionary> plugInAutoStartOriginHashes() const;
@@ -711,6 +714,13 @@ void WebProcessPool::sendToNetworkingProcessRelaunchingIfNecessary(T&& message)
 {
     ensureNetworkProcess();
     m_networkProcess->send(std::forward<T>(message), 0);
+}
+
+template<typename T>
+void WebProcessPool::sendToStorageProcess(T&& message)
+{
+    if (m_storageProcess && m_storageProcess->canSendMessage())
+        m_storageProcess->send(std::forward<T>(message), 0);
 }
 
 template<typename T>

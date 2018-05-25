@@ -49,6 +49,7 @@
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxy.h"
 #include "PerActivityStateCPUUsageSampler.h"
+#include "PluginProcessManager.h"
 #include "SandboxExtension.h"
 #include "ServiceWorkerProcessProxy.h"
 #include "StatisticsData.h"
@@ -269,6 +270,10 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 
     platformInitialize();
 
+#if OS(LINUX)
+    MemoryPressureMonitor::singleton().start();
+#endif
+
     addMessageReceiver(Messages::WebProcessPool::messageReceiverName(), *this);
 
     // NOTE: These sub-objects must be initialized after m_messageReceiverMap..
@@ -413,6 +418,18 @@ void WebProcessPool::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnable
     sendToAllProcesses(Messages::WebProcess::FullKeyboardAccessModeChanged(fullKeyboardAccessEnabled));
 }
 
+#if OS(LINUX)
+void WebProcessPool::sendMemoryPressureEvent(bool isCritical)
+{
+    sendToAllProcesses(Messages::ChildProcess::DidReceiveMemoryPressureEvent(isCritical));
+    sendToNetworkingProcess(Messages::ChildProcess::DidReceiveMemoryPressureEvent(isCritical));
+    sendToStorageProcess(Messages::ChildProcess::DidReceiveMemoryPressureEvent(isCritical));
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    PluginProcessManager::singleton().sendMemoryPressureEvent(isCritical);
+#endif
+}
+#endif
+
 void WebProcessPool::textCheckerStateChanged()
 {
     sendToAllProcesses(Messages::WebProcess::SetTextCheckerState(TextChecker::state()));
@@ -488,11 +505,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     String parentBundleDirectory = this->parentBundleDirectory();
     if (!parentBundleDirectory.isEmpty())
         SandboxExtension::createHandle(parentBundleDirectory, SandboxExtension::Type::ReadOnly, parameters.parentBundleDirectoryExtensionHandle);
-#endif
-
-#if OS(LINUX)
-    if (MemoryPressureMonitor::isEnabled())
-        parameters.memoryPressureMonitorHandle = MemoryPressureMonitor::singleton().createHandle();
 #endif
 
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
@@ -923,8 +935,6 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
 #if OS(LINUX)
     parameters.shouldEnableMemoryPressureReliefLogging = true;
-    if (MemoryPressureMonitor::isEnabled())
-        parameters.memoryPressureMonitorHandle = MemoryPressureMonitor::singleton().createHandle();
 #endif
 
 #if PLATFORM(WAYLAND) && USE(EGL)

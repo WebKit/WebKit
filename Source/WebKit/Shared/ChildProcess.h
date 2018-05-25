@@ -107,6 +107,9 @@ protected:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     void registerURLSchemeServiceWorkersCanHandle(const String&) const;
+#if OS(LINUX)
+    void didReceiveMemoryPressureEvent(bool isCritical);
+#endif
 
 private:
     // IPC::MessageSender

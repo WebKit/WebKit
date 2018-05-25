@@ -64,6 +64,10 @@ public:
     void deleteWebsiteData(const PluginModuleInfo&, WallTime modifiedSince, WTF::Function<void ()>&& completionHandler);
     void deleteWebsiteDataForHostNames(const PluginModuleInfo&, const Vector<String>& hostNames, WTF::Function<void ()>&& completionHandler);
 
+#if OS(LINUX)
+    void sendMemoryPressureEvent(bool isCritical);
+#endif
+
 #if PLATFORM(COCOA)
     inline ProcessSuppressionDisabledToken processSuppressionDisabledToken();
     inline bool processSuppressionDisabled() const;

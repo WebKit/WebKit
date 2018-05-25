@@ -1,3 +1,82 @@
+2018-05-24  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Memory pressure monitor doesn't reliable notify all the subprocesses
+        https://bugs.webkit.org/show_bug.cgi?id=184261
+
+        Reviewed by Carlos Garcia Campos.
+
+        On Linux we had two implementations for getting notifications about memory pressure events:
+        - The memory cgroup (called systemd here).
+        - The UIProcess memory monitor (which delivered events via a shared eventfd)
+
+        The problem with the first is that it was usually not working on a standard machine due to
+        the special permissions or configurations required for memory cgroups, so the second one
+        (eventfd) was used as a fall-back in that case.
+        But this eventfd method is racy with more than one WebKit child process and it wasn't
+        reliably delivering the notifications.
+
+        This patch removes the memory cgroup implementation and modifies the UIProcess memory monitor
+        to deliver the events via WebKit IPC. This simplifies the code a lot and allows us to have
+        only one implementation that should work in any Linux machine.
+
+        The implementation now also triggers the event with information about the criticalness of it.
+
+        Previously a critical event was triggered always at a 95% of pressure.
+        Now a non-critical one is triggered at 90% and critical remains at a 95%.
+
+        Start triggering events early should compensate the fact than triggering the event via WebKit IPC is
+        a bit slower than doing that via an eventfd (or than listening on the memory cgroup event controller).
+
+        The events are delivered to all WebKit childs: WebProcess, NetworkProcess, StorageProcess, PluginProcess.
+
+        In the case of the StorageProcess a dummy controller is installed, which currently does nothing,
+        but leaves a note for a future implementation and at least allows to trigger platformReleaseMemory()
+        that on Linux/glibc should end calling malloc_trim()
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::didReceiveMessage):
+        (WebKit::PluginProcess::initializePluginProcess):
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::didReceiveMemoryPressureEvent):
+        * Shared/ChildProcess.h:
+        * Shared/ChildProcess.messages.in:
+        * Shared/Plugins/PluginProcessCreationParameters.cpp:
+        (WebKit::PluginProcessCreationParameters::encode const):
+        (WebKit::PluginProcessCreationParameters::decode):
+        * Shared/Plugins/PluginProcessCreationParameters.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::initializeProcess):
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::sendMemoryPressureEvent):
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::sendMemoryPressureEvent):
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::sendMemoryPressureEvent):
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * UIProcess/WebProcessPool.h:
+        (WebKit::WebProcessPool::sendToStorageProcess):
+        * UIProcess/linux/MemoryPressureMonitor.cpp:
+        (WebKit::pollIntervalForUsedMemoryPercentage): Fix equation for calculating the interval percentage.
+        (WebKit::MemoryPressureMonitor::singleton):
+        (WebKit::MemoryPressureMonitor::start):
+        * UIProcess/linux/MemoryPressureMonitor.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2018-05-24  Youenn Fablet  <youenn@apple.com>
 
         Update plugin search path to look for user installed plugins

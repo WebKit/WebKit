@@ -49,6 +49,8 @@
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/MainThread.h>
+#include <wtf/MemoryPressureHandler.h>
+
 
 #if ENABLE(SERVICE_WORKER)
 #include "WebSWServerToContextConnectionMessages.h"
@@ -555,6 +557,14 @@ void StorageProcess::disableServiceWorkerProcessTerminationDelay()
 #if !PLATFORM(COCOA)
 void StorageProcess::initializeProcess(const ChildProcessInitializationParameters&)
 {
+#if OS(LINUX)
+    auto& memoryPressureHandler = MemoryPressureHandler::singleton();
+    memoryPressureHandler.setLowMemoryHandler([this] (Critical, Synchronous) {
+        // FIXME: no lowMemoryHandler() implemented for StorageProcess currently.
+        // But at least define this setLowMemoryHandler() empty so platformReleaseMemory is called.
+    });
+    memoryPressureHandler.install();
+#endif
 }
 
 void StorageProcess::initializeProcessName(const ChildProcessInitializationParameters&)
@@ -564,6 +574,6 @@ void StorageProcess::initializeProcessName(const ChildProcessInitializationParam
 void StorageProcess::initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&)
 {
 }
-#endif
+#endif // !PLATFORM(COCOA)
 
 } // namespace WebKit

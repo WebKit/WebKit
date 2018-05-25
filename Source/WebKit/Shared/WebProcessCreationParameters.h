@@ -173,10 +173,6 @@ struct WebProcessCreationParameters {
     RetainPtr<CFDataRef> networkATSContext;
 #endif
 
-#if OS(LINUX)
-    IPC::Attachment memoryPressureMonitorHandle;
-#endif
-
 #if PLATFORM(WAYLAND)
     String waylandCompositorDisplayName;
 #endif

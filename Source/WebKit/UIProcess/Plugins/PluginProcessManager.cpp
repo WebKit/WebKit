@@ -131,6 +131,14 @@ PluginProcessProxy* PluginProcessManager::getPluginProcess(uint64_t pluginProces
     return nullptr;
 }
 
+#if OS(LINUX)
+void PluginProcessManager::sendMemoryPressureEvent(bool isCritical)
+{
+    for (auto& pluginProcess : m_pluginProcesses)
+        pluginProcess->sendMemoryPressureEvent(isCritical);
+}
+#endif
+
 PluginProcessProxy* PluginProcessManager::getOrCreatePluginProcess(uint64_t pluginProcessToken)
 {
     if (auto existingProcess = getPluginProcess(pluginProcessToken))

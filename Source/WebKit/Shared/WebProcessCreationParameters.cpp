@@ -139,10 +139,6 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     IPC::encode(encoder, networkATSContext.get());
 #endif
 
-#if OS(LINUX)
-    encoder << memoryPressureMonitorHandle;
-#endif
-
 #if PLATFORM(WAYLAND)
     encoder << waylandCompositorDisplayName;
 #endif
@@ -382,11 +378,6 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 
 #if PLATFORM(COCOA)
     if (!IPC::decode(decoder, parameters.networkATSContext))
-        return false;
-#endif
-
-#if OS(LINUX)
-    if (!decoder.decode(parameters.memoryPressureMonitorHandle))
         return false;
 #endif
 

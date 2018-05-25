@@ -30,6 +30,7 @@
 
 #include "ArgumentCoders.h"
 #include "Attachment.h"
+#include "ChildProcessMessages.h"
 #include "NetscapePlugin.h"
 #include "NetscapePluginModule.h"
 #include "PluginProcessConnectionMessages.h"
@@ -116,6 +117,13 @@ bool PluginProcess::shouldTerminate()
 
 void PluginProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
+#if OS(LINUX)
+    if (decoder.messageReceiverName() == Messages::ChildProcess::messageReceiverName()) {
+        ChildProcess::didReceiveMessage(connection, decoder);
+        return;
+    }
+#endif
+
     didReceivePluginProcessMessage(connection, decoder);
 }
 
@@ -124,10 +132,6 @@ void PluginProcess::initializePluginProcess(PluginProcessCreationParameters&& pa
     ASSERT(!m_pluginModule);
 
     auto& memoryPressureHandler = MemoryPressureHandler::singleton();
-#if OS(LINUX)
-    if (parameters.memoryPressureMonitorHandle.fileDescriptor() != -1)
-        memoryPressureHandler.setMemoryPressureMonitorHandle(parameters.memoryPressureMonitorHandle.releaseFileDescriptor());
-#endif
     memoryPressureHandler.setLowMemoryHandler([this] (Critical, Synchronous) {
         if (shouldTerminate())
             terminate();
