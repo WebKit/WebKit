@@ -1,5 +1,18 @@
 2018-05-25  Jeremy Jones  <jeremyj@apple.com>
 
+        Fullscreen element can be clipped by ancestor.
+        https://bugs.webkit.org/show_bug.cgi?id=185980
+        rdar://problem/40320006
+
+        Reviewed by Jer Noble.
+
+        Adds style to fullscreen css to prevent the fullscreen element from being clipped by an ancestor element.
+
+        * css/fullscreen.css:
+        (:-webkit-full-screen-ancestor:not(iframe)):
+
+2018-05-25  Jeremy Jones  <jeremyj@apple.com>
+
         Use correct AVKit delegate for picture in picture failure.
         https://bugs.webkit.org/show_bug.cgi?id=185981
         rdar://problem/40549652

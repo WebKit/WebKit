@@ -19,6 +19,7 @@
     -webkit-box-reflect: none !important;
     perspective: none !important;
     -webkit-transform-style: flat !important;
+    overflow: visible !important;
 }
 
 video:-webkit-full-screen, audio:-webkit-full-screen {
