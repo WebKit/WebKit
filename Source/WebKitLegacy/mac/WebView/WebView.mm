@@ -660,6 +660,18 @@ private:
 @synthesize contentImage=_contentImage;
 @synthesize estimatedBackgroundColor=_estimatedBackgroundColor;
 
+- (void)dealloc
+{
+    [_dataInteractionImage release];
+    [_textRectsInBoundingRectCoordinates release];
+    [_contentImageWithHighlight release];
+    [_contentImageWithoutSelection release];
+    [_contentImage release];
+    [_estimatedBackgroundColor release];
+
+    [super dealloc];
+}
+
 @end
 
 @implementation WebUITextIndicatorData (WebUITextIndicatorInternal)
@@ -705,18 +717,6 @@ private:
     _dataInteractionImage = [allocUIImageInstance() initWithCGImage:image scale:scale orientation:UIImageOrientationDownMirrored];
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_dataInteractionImage release];
-    [_textRectsInBoundingRectCoordinates release];
-    [_contentImageWithHighlight release];
-    [_contentImageWithoutSelection release];
-    [_contentImage release];
-    [_estimatedBackgroundColor release];
-    
-    [super dealloc];
 }
 
 @end

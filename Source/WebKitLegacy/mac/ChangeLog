@@ -1,3 +1,17 @@
+2018-05-25  David Kilzer  <ddkilzer@apple.com>
+
+        Fix issues with -dealloc methods found by clang static analyzer
+        <https://webkit.org/b/185887>
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebView/WebView.mm:
+        (-[WebUITextIndicatorData dealloc]):
+        - Move method implementation from (WebUITextIndicatorInternal)
+          category to the main category since this is public API.  This
+          fixes the false positive warning about a missing -dealloc
+          method.
+
 2018-05-24  Sam Weinig  <sam@webkit.org>
 
         Modernize RenderStyleConstants.h - Part 2

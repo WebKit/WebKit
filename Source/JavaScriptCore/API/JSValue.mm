@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,6 +64,21 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
 @implementation JSValue {
     JSValueRef m_value;
+}
+
+- (void)dealloc
+{
+    JSValueUnprotect([_context JSGlobalContextRef], m_value);
+    [_context release];
+    _context = nil;
+    [super dealloc];
+}
+
+- (NSString *)description
+{
+    if (id wrapped = tryUnwrapObjcObject([_context JSGlobalContextRef], m_value))
+        return [wrapped description];
+    return [self toString];
 }
 
 - (JSValueRef)JSValueRef
@@ -1136,21 +1151,6 @@ static StructTagHandler* handerForStructTag(const char* encodedType)
 {
     StructTagHandler* handler = handerForStructTag(structTag);
     return handler ? handler->valueToTypeSEL : nil;
-}
-
-- (void)dealloc
-{
-    JSValueUnprotect([_context JSGlobalContextRef], m_value);
-    [_context release];
-    _context = nil;
-    [super dealloc];
-}
-
-- (NSString *)description
-{
-    if (id wrapped = tryUnwrapObjcObject([_context JSGlobalContextRef], m_value))
-        return [wrapped description];
-    return [self toString];
 }
 
 NSInvocation *typeToValueInvocationFor(const char* encodedType)

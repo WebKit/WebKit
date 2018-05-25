@@ -66,8 +66,8 @@ static NSArray<UIVisualEffect *>* normalTransparencyEffects()
 @interface WKFullscreenStackView ()
 @property (nonatomic, readonly) UIStackView *_stackView;
 @property (nonatomic, readonly) UIVisualEffectView *_visualEffectView;
-@property (nonatomic) UIVisualEffectView *secondaryMaterialOverlayView;
-@property (nonatomic) NSArray<NSLayoutConstraint *> *secondaryMaterialOverlayViewConstraints;
+@property (nonatomic, assign) UIVisualEffectView *secondaryMaterialOverlayView;
+@property (nonatomic, retain) NSArray<NSLayoutConstraint *> *secondaryMaterialOverlayViewConstraints;
 @end
 
 @implementation WKFullscreenStackView
@@ -104,7 +104,7 @@ static NSArray<UIVisualEffect *>* normalTransparencyEffects()
     UIVisualEffectView *secondaryMaterialOverlayView = [[UIVisualEffectView alloc] initWithEffect:nil];
     [secondaryMaterialOverlayView setUserInteractionEnabled:NO];
     [secondaryMaterialOverlayView setBackgroundEffects:@[[UIVisualEffect effectCompositingColor:[UIColor blackColor] withMode:UICompositingModePlusDarker alpha:0.06]]];
-    return secondaryMaterialOverlayView;
+    return [secondaryMaterialOverlayView autorelease];
 }
 
 #pragma mark - External Interface
@@ -143,12 +143,21 @@ static NSArray<UIVisualEffect *>* normalTransparencyEffects()
     return self;
 }
 
+- (void)dealloc
+{
+    [_targetViewForSecondaryMaterialOverlay release];
+    [_visualEffectView release];
+    [_stackView release];
+    [_secondaryMaterialOverlayViewConstraints release];
+    [super dealloc];
+}
+
 - (void)setTargetViewForSecondaryMaterialOverlay:(UIView *)targetViewForSecondaryMaterialOverlay
 {
     if (_targetViewForSecondaryMaterialOverlay == targetViewForSecondaryMaterialOverlay)
         return;
 
-    _targetViewForSecondaryMaterialOverlay = targetViewForSecondaryMaterialOverlay;
+    _targetViewForSecondaryMaterialOverlay = [targetViewForSecondaryMaterialOverlay retain];
     [self setNeedsUpdateConstraints];
 }
 

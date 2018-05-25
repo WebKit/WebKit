@@ -148,6 +148,9 @@ private:
 
     _playbackClient.setInterface(nullptr);
 
+    [_target release];
+    [_location release];
+
     [super dealloc];
 }
 

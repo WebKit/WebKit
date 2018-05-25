@@ -1,3 +1,21 @@
+2018-05-25  David Kilzer  <ddkilzer@apple.com>
+
+        Fix issues with -dealloc methods found by clang static analyzer
+        <https://webkit.org/b/185887>
+
+        Reviewed by Joseph Pecoraro.
+
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController dealloc]): Release `_minTiming` and
+        `_maxTiming` to fix leaks.
+        * platform/ios/WebBackgroundTaskController.mm:
+        (-[WebBackgroundTaskController dealloc]): Release
+        `_backgroundTaskStartBlock` and `_backgroundTaskEndBlock` to fix
+        leaks.
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderRegistrationInfoList dealloc]): Release
+        `_teamData` to fix leak.
+
 2018-05-25  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] WebAnimation objects never get destroyed

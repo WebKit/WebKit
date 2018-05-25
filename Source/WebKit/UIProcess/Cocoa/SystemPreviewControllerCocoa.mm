@@ -51,20 +51,27 @@ SOFT_LINK_CLASS(QuickLook, QLItem);
 };
 
 @property (strong) NSItemProviderCompletionHandler completionHandler;
-@property (retain) NSString *mimeType;
+@property (copy) NSString *mimeType;
 
 @end
 
 @implementation _WKPreviewControllerDataSource
 
-- (id)initWithMIMEType:(NSString*)mimeType
+- (instancetype)initWithMIMEType:(NSString*)mimeType
 {
     if (!(self = [super init]))
         return nil;
 
-    self.mimeType = mimeType;
+    _mimeType = [mimeType copy];
 
     return self;
+}
+
+- (void)dealloc
+{
+    [_completionHandler release];
+    [_mimeType release];
+    [super dealloc];
 }
 
 - (NSInteger)numberOfPreviewItemsInPreviewController:(QLPreviewController *)controller

@@ -1,3 +1,45 @@
+2018-05-25  David Kilzer  <ddkilzer@apple.com>
+
+        Fix issues with -dealloc methods found by clang static analyzer
+        <https://webkit.org/b/185887>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm: Drive-by fix
+        to use `copy` for `mimeType` property.
+        (-[_WKPreviewControllerDataSource initWithMIMEType:]): Drive-by
+        fix to use `instancetype` instead of `id`.  Use -copy for
+        `mimeType` argument to match property definition.
+        (-[_WKPreviewControllerDataSource dealloc]): Add.  Release
+        `_completionHandler` and `_mimeType` to fix leaks.
+        * UIProcess/ios/WKPasswordView.mm:
+        (-[WKPasswordView dealloc]): Add.  Release
+        `_userDidEnterPassword` to fix leak.
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.h:
+        Drive-by clean-up to make `location` property `copy` instead of
+        `retain`.
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController dealloc]): Release `_target` and
+        `_location` to fix leaks.
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullscreenAnimationController dealloc]): Add.  Release
+        `_viewController` to fix leak.
+        * UIProcess/ios/fullscreen/WKFullscreenStackView.mm:
+        (@property secondaryMaterialOverlayView): Mark explicitly as
+        `assign` since this isn't a retained variable.
+        (@property secondaryMaterialOverlayViewConstraints): Mark
+        explicitly as `retain` since there is nothing to keep this
+        object alive.
+        (+[WKFullscreenStackView secondaryMaterialOverlayView]): Fix
+        leak by autoreleasing the return value.
+        (-[WKFullscreenStackView dealloc]): Release retained instance
+        variables to fix leaks.  Note that `_stackView` and
+        `_visualEffectView` are internally retained despite their
+        @property declarations.
+        (-[WKFullscreenStackView setTargetViewForSecondaryMaterialOverlay:]):
+        Retain @property targetViewForSecondaryMaterialOverlay to match
+        its declaration.
+
 2018-05-23  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Use DEFAULT_EXPERIMENTAL_FEATURES_ENABLED for Web Animations experimental features

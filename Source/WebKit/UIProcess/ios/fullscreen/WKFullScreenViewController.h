@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface WKFullScreenViewController : UIViewController
 @property (retain, nonatomic) id target;
 @property (assign, nonatomic) SEL action;
-@property (retain, nonatomic) NSString *location;
+@property (copy, nonatomic) NSString *location;
 @property (assign, nonatomic) BOOL prefersStatusBarHidden;
 @property (assign, nonatomic, getter=isPlaying) BOOL playing;
 @property (assign, nonatomic, getter=isPictureInPictureActive) BOOL pictureInPictureActive;
