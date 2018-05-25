@@ -1,5 +1,13 @@
 2018-05-25  Alex Christensen  <achristensen@webkit.org>
 
+        Fix internal iOS builds after r232198
+        https://bugs.webkit.org/show_bug.cgi?id=185986
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::sendTapHighlightForNodeIfNecessary):
+
+2018-05-25  Alex Christensen  <achristensen@webkit.org>
+
         URL::host should return a StringView to reduce allocations
         https://bugs.webkit.org/show_bug.cgi?id=185986
 
