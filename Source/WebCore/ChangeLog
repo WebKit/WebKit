@@ -1,3 +1,22 @@
+2018-05-25  Zalan Bujtas  <zalan@apple.com>
+
+        iBooks: text can disappear/flash during finger drag highlight
+        https://bugs.webkit.org/show_bug.cgi?id=185993
+        <rdar://problem/34026943>
+
+        Reviewed by Simon Fraser.
+
+        Reuse existing tiles when override rect is fully covered by the active grid.
+        Also, recover dropped tiles if override rect forces us to create new ones. 
+
+        Unable to create a reproducible test case.
+
+        * platform/ios/LegacyTileCache.h:
+        * platform/ios/LegacyTileCache.mm:
+        (WebCore::LegacyTileCache::setOverrideVisibleRect):
+        * platform/ios/LegacyTileLayer.mm:
+        (-[LegacyTileHostLayer renderInContext:]):
+
 2018-05-25  Eric Carlson  <eric.carlson@apple.com>
 
         Encode ISOWebVTTCue "strings" when logging

@@ -99,9 +99,13 @@ FloatRect LegacyTileCache::visibleRectInLayer(CALayer *layer) const
     return [layer convertRect:[m_window extendedVisibleRect] fromLayer:hostLayer()];
 }
 
-void LegacyTileCache::setOverrideVisibleRect(std::optional<FloatRect> rect)
+bool LegacyTileCache::setOverrideVisibleRect(const FloatRect& rect)
 {
     m_overrideVisibleRect = rect;
+    auto coveredByExistingTiles = false;
+    if (activeTileGrid())
+        coveredByExistingTiles = activeTileGrid()->tilesCover(enclosingIntRect(m_overrideVisibleRect.value()));
+    return coveredByExistingTiles;
 }
 
 bool LegacyTileCache::tilesOpaque() const

@@ -142,7 +142,8 @@ public:
     CALayer* hostLayer() const;
     unsigned tileCapacityForGrid(LegacyTileGrid*);
     Color colorForGridTileBorder(LegacyTileGrid*) const;
-    void setOverrideVisibleRect(std::optional<FloatRect>);
+    bool setOverrideVisibleRect(const FloatRect&);
+    void clearOverrideVisibleRect() { m_overrideVisibleRect = std::nullopt; }
 
     void doPendingRepaints();
 
