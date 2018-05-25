@@ -788,6 +788,10 @@ webkit.org/b/169238 fast/events/mouse-cursor-no-mousemove.html [ Pass Failure ]
 
 webkit.org/b/176122 media/video-controls-drop-and-restore-timeline.html [ Pass Failure ]
 
+# These are flaky media tests
+webkit.org/b/185962 media/video-play-require-user-gesture.html [ Pass Failure ]
+webkit.org/b/185962 media/video-play-audio-require-user-gesture.html [ Pass Failure ]
+
 # <rdar://problem/25010307>
 [ HighSierra+ ] http/tests/ssl/applepay/ApplePayError.html [ Pass ]
 [ HighSierra+ ] http/tests/ssl/applepay/ApplePaySessionV3.html [ Pass ]
