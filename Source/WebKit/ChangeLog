@@ -1,3 +1,17 @@
+2018-05-25  Chris Dumez  <cdumez@apple.com>
+
+        Avoid triggering network cache speculative revalidation for loads allowing expired content
+        https://bugs.webkit.org/show_bug.cgi?id=185985
+
+        Reviewed by Antti Koivisto.
+
+        Avoid triggering network cache speculative revalidation for loads allowing expired content
+        (e.g. history loads, restoring pages after crash or safari relaunch). This causes us to do
+        unnecessary revalidations, it is both wasteful and bad for performance.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::retrieve):
+
 2018-05-25  David Kilzer  <ddkilzer@apple.com>
 
         Fix issues with -dealloc methods found by clang static analyzer
