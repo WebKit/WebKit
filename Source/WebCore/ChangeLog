@@ -1,3 +1,19 @@
+2018-05-24  Dean Jackson  <dino@apple.com>
+
+        Need to provide a way to feature detect support for system preview
+        https://bugs.webkit.org/show_bug.cgi?id=185970
+        <rdar://problem/40538321>
+
+        Reviewed by Sam Weinig.
+
+        Update the supports function in the DOMTokenList that HTMLAnchorElement
+        produces for relList to return true for the system preview token.
+
+        Tested internally.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::relList const):
+
 2018-05-25  Chris Dumez  <cdumez@apple.com>
 
         Minor ApplicationCacheStorage clean up
