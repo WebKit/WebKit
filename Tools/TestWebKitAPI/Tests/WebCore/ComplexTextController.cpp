@@ -49,7 +49,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInRTL)
     FontCascadeDescription description;
     description.setOneFamily("Times");
     description.setComputedSize(80);
-    FontCascade font(description);
+    FontCascade font(WTFMove(description));
     font.update();
     auto spaceWidth = font.primaryFont().spaceWidth();
 
@@ -96,7 +96,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTL)
     FontCascadeDescription description;
     description.setOneFamily("Times");
     description.setComputedSize(80);
-    FontCascade font(description);
+    FontCascade font(WTFMove(description));
     font.update();
 
     Vector<FloatSize> advances = { FloatSize(), FloatSize(21.640625, 0.0), FloatSize(42.3046875, 0.0), FloatSize(55.8984375, 0.0), FloatSize(22.34375, 0.0) };
@@ -140,7 +140,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInLTR)
     FontCascadeDescription description;
     description.setOneFamily("LucidaGrande");
     description.setComputedSize(80);
-    FontCascade font(description);
+    FontCascade font(WTFMove(description));
     font.update();
     auto spaceWidth = font.primaryFont().spaceWidth();
 
@@ -183,7 +183,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInLTR)
     FontCascadeDescription description;
     description.setOneFamily("LucidaGrande");
     description.setComputedSize(80);
-    FontCascade font(description);
+    FontCascade font(WTFMove(description));
     font.update();
 
     Vector<FloatSize> advances = { FloatSize(76.347656, 0.000000), FloatSize(0.000000, 0.000000) };
@@ -220,7 +220,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTLNoOrigins)
     FontCascadeDescription description;
     description.setOneFamily("Times");
     description.setComputedSize(48);
-    FontCascade font(description);
+    FontCascade font(WTFMove(description));
     font.update();
 
     FloatSize initialAdvance = FloatSize(4.33996383363472, 12.368896925859);
@@ -266,7 +266,7 @@ TEST_F(ComplexTextControllerTest, LeadingExpansion)
     FontCascadeDescription description;
     description.setOneFamily("Times");
     description.setComputedSize(48);
-    FontCascade font(description);
+    FontCascade font(WTFMove(description));
     font.update();
 
     UChar characters[] = { 'a' };
@@ -296,7 +296,7 @@ TEST_F(ComplexTextControllerTest, VerticalAdvances)
     FontCascadeDescription description;
     description.setOneFamily("Times");
     description.setComputedSize(48);
-    FontCascade font(description);
+    FontCascade font(WTFMove(description));
     font.update();
 
     UChar characters[] = { 'a', 'b', 'c', 'd' };
@@ -340,7 +340,7 @@ TEST_F(ComplexTextControllerTest, TotalWidthWithJustification)
     FontCascadeDescription description;
     description.setOneFamily("Times");
     description.setComputedSize(80);
-    FontCascade font(description);
+    FontCascade font(WTFMove(description));
     font.update();
 
     Vector<FloatSize> advances = { FloatSize(1, 0), FloatSize(2, 0), FloatSize(4, 0), FloatSize(8, 0), FloatSize(16, 0) };

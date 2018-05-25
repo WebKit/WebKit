@@ -1548,12 +1548,12 @@ float RenderStyle::letterSpacing() const
     return m_inheritedData->fontCascade.letterSpacing();
 }
 
-bool RenderStyle::setFontDescription(const FontCascadeDescription& description)
+bool RenderStyle::setFontDescription(FontCascadeDescription&& description)
 {
     if (m_inheritedData->fontCascade.fontDescription() == description)
         return false;
     auto& cascade = m_inheritedData.access().fontCascade;
-    cascade = { description, cascade.letterSpacing(), cascade.wordSpacing() };
+    cascade = { WTFMove(description), cascade.letterSpacing(), cascade.wordSpacing() };
     return true;
 }
 
@@ -1642,7 +1642,7 @@ void RenderStyle::setFontSize(float size)
     description.setSpecifiedSize(size);
     description.setComputedSize(size);
 
-    setFontDescription(description);
+    setFontDescription(WTFMove(description));
     fontCascade().update(currentFontSelector);
 }
 
@@ -1653,7 +1653,7 @@ void RenderStyle::setFontVariationSettings(FontVariationSettings settings)
     auto description = fontDescription();
     description.setVariationSettings(WTFMove(settings));
 
-    setFontDescription(description);
+    setFontDescription(WTFMove(description));
     fontCascade().update(currentFontSelector);
 }
 #endif
@@ -1664,7 +1664,7 @@ void RenderStyle::setFontWeight(FontSelectionValue value)
     auto description = fontDescription();
     description.setWeight(value);
 
-    setFontDescription(description);
+    setFontDescription(WTFMove(description));
     fontCascade().update(currentFontSelector);
 }
 
@@ -1674,7 +1674,7 @@ void RenderStyle::setFontStretch(FontSelectionValue value)
     auto description = fontDescription();
     description.setStretch(value);
 
-    setFontDescription(description);
+    setFontDescription(WTFMove(description));
     fontCascade().update(currentFontSelector);
 }
 
@@ -1684,7 +1684,7 @@ void RenderStyle::setFontItalic(FontSelectionValue value)
     auto description = fontDescription();
     description.setItalic(value);
 
-    setFontDescription(description);
+    setFontDescription(WTFMove(description));
     fontCascade().update(currentFontSelector);
 }
 

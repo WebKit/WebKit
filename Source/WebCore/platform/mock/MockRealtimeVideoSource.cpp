@@ -336,17 +336,17 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
 
     fontDescription.setSpecifiedSize(m_baseFontSize);
     fontDescription.setComputedSize(m_baseFontSize);
-    FontCascade timeFont { fontDescription, 0, 0 };
+    FontCascade timeFont { FontCascadeDescription { fontDescription }, 0, 0 };
     timeFont.update(nullptr);
 
     fontDescription.setSpecifiedSize(m_bipBopFontSize);
     fontDescription.setComputedSize(m_bipBopFontSize);
-    FontCascade bipBopFont { fontDescription, 0, 0 };
+    FontCascade bipBopFont { FontCascadeDescription { fontDescription }, 0, 0 };
     bipBopFont.update(nullptr);
 
     fontDescription.setSpecifiedSize(m_statsFontSize);
     fontDescription.setComputedSize(m_statsFontSize);
-    FontCascade statsFont { fontDescription, 0, 0 };
+    FontCascade statsFont { WTFMove(fontDescription), 0, 0 };
     statsFont.update(nullptr);
 
     IntSize size = this->size();

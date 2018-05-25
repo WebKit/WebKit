@@ -66,7 +66,7 @@ static RenderStyle styleForFirstLetter(const RenderBlock& firstLetterBlock, cons
         float startingFontSize = ((firstLetterStyle.initialLetterHeight() - 1) * lineHeight + paragraph->style().fontMetrics().capHeight()) / capRatio;
         newFontDescription.setSpecifiedSize(startingFontSize);
         newFontDescription.setComputedSize(startingFontSize);
-        firstLetterStyle.setFontDescription(newFontDescription);
+        firstLetterStyle.setFontDescription(WTFMove(newFontDescription));
         firstLetterStyle.fontCascade().update(firstLetterStyle.fontCascade().fontSelector());
 
         int desiredCapHeight = (firstLetterStyle.initialLetterHeight() - 1) * lineHeight + paragraph->style().fontMetrics().capHeight();
@@ -75,7 +75,7 @@ static RenderStyle styleForFirstLetter(const RenderBlock& firstLetterBlock, cons
             auto newFontDescription = firstLetterStyle.fontDescription();
             newFontDescription.setSpecifiedSize(newFontDescription.specifiedSize() - 1);
             newFontDescription.setComputedSize(newFontDescription.computedSize() -1);
-            firstLetterStyle.setFontDescription(newFontDescription);
+            firstLetterStyle.setFontDescription(WTFMove(newFontDescription));
             firstLetterStyle.fontCascade().update(firstLetterStyle.fontCascade().fontSelector());
             actualCapHeight = firstLetterStyle.fontMetrics().capHeight();
         }

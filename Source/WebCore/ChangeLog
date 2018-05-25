@@ -1,5 +1,97 @@
 2018-05-24  Chris Dumez  <cdumez@apple.com>
 
+        Reduce copying of FontCascadeDescription objects by moving them around
+        https://bugs.webkit.org/show_bug.cgi?id=185963
+
+        Reviewed by Simon Fraser.
+
+        Reduce copying of FontCascadeDescription objects by moving them around when possible.
+
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueWebkitLocale):
+        (WebCore::StyleBuilderCustom::applyInitialFontFamily):
+        (WebCore::StyleBuilderCustom::applyInheritFontFamily):
+        (WebCore::StyleBuilderCustom::applyValueFontFamily):
+        (WebCore::StyleBuilderCustom::applyInheritFontVariantLigatures):
+        (WebCore::StyleBuilderCustom::applyInitialFontVariantLigatures):
+        (WebCore::StyleBuilderCustom::applyValueFontVariantLigatures):
+        (WebCore::StyleBuilderCustom::applyInheritFontVariantNumeric):
+        (WebCore::StyleBuilderCustom::applyInitialFontVariantNumeric):
+        (WebCore::StyleBuilderCustom::applyValueFontVariantNumeric):
+        (WebCore::StyleBuilderCustom::applyInheritFontVariantEastAsian):
+        (WebCore::StyleBuilderCustom::applyInitialFontVariantEastAsian):
+        (WebCore::StyleBuilderCustom::applyValueFontVariantEastAsian):
+        (WebCore::StyleBuilderCustom::applyInitialFontSize):
+        (WebCore::StyleBuilderCustom::applyInheritFontSize):
+        (WebCore::StyleBuilderCustom::applyInitialFontStyle):
+        (WebCore::StyleBuilderCustom::applyInheritFontStyle):
+        (WebCore::StyleBuilderCustom::applyValueFontStyle):
+        (WebCore::StyleBuilderCustom::applyValueFontSize):
+        * css/StyleResolver.cpp:
+        (WebCore::checkForOrientationChange):
+        (WebCore::StyleResolver::checkForTextSizeAdjust):
+        (WebCore::StyleResolver::checkForZoomChange):
+        (WebCore::StyleResolver::checkForGenericFamilyChange):
+        (WebCore::StyleResolver::initializeFontStyle):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::State::setFontDescription):
+        (WebCore::StyleResolver::setFontDescription):
+        * css/makeprop.pl:
+        (generateInitialValueSetter):
+        (generateInheritValueSetter):
+        (generateValueSetter):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFont):
+        * page/DebugPageOverlays.cpp:
+        (WebCore::NonFastScrollableRegionOverlay::drawRect):
+        * page/linux/ResourceUsageOverlayLinux.cpp:
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::FontCascade):
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::drawTextAtPoint const):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::drawText):
+        * platform/win/DragImageWin.cpp:
+        (WebCore::dragLabelFont):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::calculatePositionAndSize):
+        (WebCore::PopupMenuWin::paint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::combineTextIfNeeded):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::getReplacementTextGeometry const):
+        * rendering/RenderListBox.cpp:
+        (WebCore::bolder):
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::computeMarkerStyle const):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::setFontFromControlSize const):
+        * rendering/TextAutoSizing.cpp:
+        (WebCore::TextAutoSizingValue::adjustTextNodeSizes):
+        (WebCore::TextAutoSizingValue::reset):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setFontDescription):
+        (WebCore::RenderStyle::setFontSize):
+        (WebCore::RenderStyle::setFontVariationSettings):
+        (WebCore::RenderStyle::setFontWeight):
+        (WebCore::RenderStyle::setFontStretch):
+        (WebCore::RenderStyle::setFontItalic):
+        * rendering/style/RenderStyle.h:
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::computeNewScaledFontForStyle):
+        * rendering/updating/RenderTreeBuilderFirstLetter.cpp:
+        (WebCore::styleForFirstLetter):
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+
+2018-05-24  Chris Dumez  <cdumez@apple.com>
+
         Avoid constructing the string "all" repeatedly in MediaQueryParser
         https://bugs.webkit.org/show_bug.cgi?id=185961
 

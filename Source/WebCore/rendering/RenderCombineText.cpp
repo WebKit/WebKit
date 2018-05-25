@@ -124,7 +124,7 @@ void RenderCombineText::combineTextIfNeeded()
 
     description.setOrientation(Horizontal); // We are going to draw combined text horizontally.
 
-    FontCascade horizontalFont(description, style().fontCascade().letterSpacing(), style().fontCascade().wordSpacing());
+    FontCascade horizontalFont(FontCascadeDescription { description }, style().fontCascade().letterSpacing(), style().fontCascade().wordSpacing());
     horizontalFont.update(fontSelector);
     
     GlyphOverflow glyphOverflow;
@@ -137,14 +137,14 @@ void RenderCombineText::combineTextIfNeeded()
     m_isCombined = combinedTextWidth <= emWidth;
     
     if (m_isCombined)
-        shouldUpdateFont = m_combineFontStyle->setFontDescription(description); // Need to change font orientation to horizontal.
+        shouldUpdateFont = m_combineFontStyle->setFontDescription(WTFMove(description)); // Need to change font orientation to horizontal.
     else {
         // Need to try compressed glyphs.
         static const FontWidthVariant widthVariants[] = { HalfWidth, ThirdWidth, QuarterWidth };
         for (auto widthVariant : widthVariants) {
             description.setWidthVariant(widthVariant); // When modifying this, make sure to keep it in sync with FontPlatformData::isForTextCombine()!
 
-            FontCascade compressedFont(description, style().fontCascade().letterSpacing(), style().fontCascade().wordSpacing());
+            FontCascade compressedFont(FontCascadeDescription { description }, style().fontCascade().letterSpacing(), style().fontCascade().wordSpacing());
             compressedFont.update(fontSelector);
             
             glyphOverflow.left = glyphOverflow.top = glyphOverflow.right = glyphOverflow.bottom = 0;
@@ -154,7 +154,7 @@ void RenderCombineText::combineTextIfNeeded()
                 m_isCombined = true;
 
                 // Replace my font with the new one.
-                shouldUpdateFont = m_combineFontStyle->setFontDescription(description);
+                shouldUpdateFont = m_combineFontStyle->setFontDescription(WTFMove(description));
                 break;
             }
             
@@ -172,9 +172,9 @@ void RenderCombineText::combineTextIfNeeded()
         do {
             float computedSize = originalSize * scaleFactor;
             bestFitDescription.setComputedSize(computedSize);
-            shouldUpdateFont = m_combineFontStyle->setFontDescription(bestFitDescription);
+            shouldUpdateFont = m_combineFontStyle->setFontDescription(FontCascadeDescription { bestFitDescription });
         
-            FontCascade compressedFont(bestFitDescription, style().fontCascade().letterSpacing(), style().fontCascade().wordSpacing());
+            FontCascade compressedFont(WTFMove(bestFitDescription), style().fontCascade().letterSpacing(), style().fontCascade().wordSpacing());
             compressedFont.update(fontSelector);
             
             glyphOverflow.left = glyphOverflow.top = glyphOverflow.right = glyphOverflow.bottom = 0;

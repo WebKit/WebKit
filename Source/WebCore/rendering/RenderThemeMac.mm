@@ -791,7 +791,7 @@ void RenderThemeMac::setFontFromControlSize(StyleResolver&, RenderStyle& style, 
     // Reset line height
     style.setLineHeight(RenderStyle::initialLineHeight());
 
-    if (style.setFontDescription(fontDescription))
+    if (style.setFontDescription(WTFMove(fontDescription)))
         style.fontCascade().update(0);
 }
 

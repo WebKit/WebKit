@@ -189,7 +189,7 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
     fontDescription.setSpecifiedSize(12);
     fontDescription.setComputedSize(12);
     fontDescription.setWeight(FontSelectionValue(500));
-    FontCascade font(fontDescription, 0, 0);
+    FontCascade font(WTFMove(fontDescription), 0, 0);
     font.update(nullptr);
 
 #if ENABLE(TOUCH_EVENTS)

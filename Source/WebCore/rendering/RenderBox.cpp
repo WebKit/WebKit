@@ -392,7 +392,7 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
             // Propagate the body font back up to the RenderView and use it as
             // the basis of the grid.
             if (newStyle.fontDescription() != view().style().fontDescription()) {
-                view().mutableStyle().setFontDescription(newStyle.fontDescription());
+                view().mutableStyle().setFontDescription(FontCascadeDescription { newStyle.fontDescription() });
                 view().mutableStyle().fontCascade().update(&document().fontSelector());
             }
         }

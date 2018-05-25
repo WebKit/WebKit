@@ -1089,7 +1089,7 @@ static void checkForOrientationChange(RenderStyle* style)
     auto newFontDescription = fontDescription;
     newFontDescription.setNonCJKGlyphOrientation(glyphOrientation);
     newFontDescription.setOrientation(fontOrientation);
-    style->setFontDescription(newFontDescription);
+    style->setFontDescription(WTFMove(newFontDescription));
 }
 
 void StyleResolver::updateFont()
@@ -1736,7 +1736,7 @@ void StyleResolver::checkForTextSizeAdjust(RenderStyle* style)
         newFontDescription.setComputedSize(newFontDescription.specifiedSize() * style->textSizeAdjust().multiplier());
     else
         newFontDescription.setComputedSize(newFontDescription.specifiedSize());
-    style->setFontDescription(newFontDescription);
+    style->setFontDescription(WTFMove(newFontDescription));
 }
 #endif
 
@@ -1751,7 +1751,7 @@ void StyleResolver::checkForZoomChange(RenderStyle* style, const RenderStyle* pa
     const auto& childFont = style->fontDescription();
     auto newFontDescription = childFont;
     setFontSize(newFontDescription, childFont.specifiedSize());
-    style->setFontDescription(newFontDescription);
+    style->setFontDescription(WTFMove(newFontDescription));
 }
 
 void StyleResolver::checkForGenericFamilyChange(RenderStyle* style, const RenderStyle* parentStyle)
@@ -1782,7 +1782,7 @@ void StyleResolver::checkForGenericFamilyChange(RenderStyle* style, const Render
 
     auto newFontDescription = childFont;
     setFontSize(newFontDescription, size);
-    style->setFontDescription(newFontDescription);
+    style->setFontDescription(WTFMove(newFontDescription));
 }
 
 void StyleResolver::initializeFontStyle()
@@ -1793,7 +1793,7 @@ void StyleResolver::initializeFontStyle()
     fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
     setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueMedium, false, document()));
     fontDescription.setShouldAllowUserInstalledFonts(settings().shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No);
-    setFontDescription(fontDescription);
+    setFontDescription(WTFMove(fontDescription));
 }
 
 void StyleResolver::setFontSize(FontCascadeDescription& fontDescription, float size)

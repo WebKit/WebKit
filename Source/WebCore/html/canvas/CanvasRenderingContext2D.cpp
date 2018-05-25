@@ -150,14 +150,14 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     document.updateStyleIfNeeded();
 
     if (auto* computedStyle = canvas().computedStyle())
-        newStyle->setFontDescription(computedStyle->fontDescription());
+        newStyle->setFontDescription(FontCascadeDescription { computedStyle->fontDescription() });
     else {
         FontCascadeDescription defaultFontDescription;
         defaultFontDescription.setOneFamily(DefaultFontFamily);
         defaultFontDescription.setSpecifiedSize(DefaultFontSize);
         defaultFontDescription.setComputedSize(DefaultFontSize);
 
-        newStyle->setFontDescription(defaultFontDescription);
+        newStyle->setFontDescription(WTFMove(defaultFontDescription));
     }
 
     newStyle->fontCascade().update(&document.fontSelector());

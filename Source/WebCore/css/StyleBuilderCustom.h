@@ -782,7 +782,7 @@ inline void StyleBuilderCustom::applyValueWebkitLocale(StyleResolver& styleResol
         fontDescription.setLocale(nullAtom());
     else
         fontDescription.setLocale(primitiveValue.stringValue());
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void StyleBuilderCustom::applyValueWritingMode(StyleResolver& styleResolver, CSSValue& value)
@@ -914,7 +914,7 @@ inline void StyleBuilderCustom::applyInitialFontFamily(StyleResolver& styleResol
     if (!initialDesc.firstFamily().isEmpty())
         fontDescription.setFamilies(initialDesc.families());
 
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void StyleBuilderCustom::applyInheritFontFamily(StyleResolver& styleResolver)
@@ -924,7 +924,7 @@ inline void StyleBuilderCustom::applyInheritFontFamily(StyleResolver& styleResol
 
     fontDescription.setFamilies(parentFontDescription.families());
     fontDescription.setIsSpecifiedFont(parentFontDescription.isSpecifiedFont());
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void StyleBuilderCustom::applyValueFontFamily(StyleResolver& styleResolver, CSSValue& value)
@@ -1001,7 +1001,7 @@ inline void StyleBuilderCustom::applyValueFontFamily(StyleResolver& styleResolve
             styleResolver.setFontSize(fontDescription, Style::fontSizeForKeyword(sizeIdentifier, !oldFamilyUsedFixedDefaultSize, styleResolver.document()));
     }
 
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline bool StyleBuilderCustom::isValidDisplayValue(StyleResolver& styleResolver, EDisplay display)
@@ -1468,7 +1468,7 @@ inline void StyleBuilderCustom::applyInheritFontVariantLigatures(StyleResolver& 
     fontDescription.setVariantDiscretionaryLigatures(styleResolver.parentFontDescription().variantDiscretionaryLigatures());
     fontDescription.setVariantHistoricalLigatures(styleResolver.parentFontDescription().variantHistoricalLigatures());
     fontDescription.setVariantContextualAlternates(styleResolver.parentFontDescription().variantContextualAlternates());
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void StyleBuilderCustom::applyInitialFontVariantLigatures(StyleResolver& styleResolver)
@@ -1478,7 +1478,7 @@ inline void StyleBuilderCustom::applyInitialFontVariantLigatures(StyleResolver& 
     fontDescription.setVariantDiscretionaryLigatures(FontVariantLigatures::Normal);
     fontDescription.setVariantHistoricalLigatures(FontVariantLigatures::Normal);
     fontDescription.setVariantContextualAlternates(FontVariantLigatures::Normal);
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void StyleBuilderCustom::applyValueFontVariantLigatures(StyleResolver& styleResolver, CSSValue& value)
@@ -1489,7 +1489,7 @@ inline void StyleBuilderCustom::applyValueFontVariantLigatures(StyleResolver& st
     fontDescription.setVariantDiscretionaryLigatures(variantLigatures.discretionaryLigatures);
     fontDescription.setVariantHistoricalLigatures(variantLigatures.historicalLigatures);
     fontDescription.setVariantContextualAlternates(variantLigatures.contextualAlternates);
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void StyleBuilderCustom::applyInheritFontVariantNumeric(StyleResolver& styleResolver)
@@ -1500,7 +1500,7 @@ inline void StyleBuilderCustom::applyInheritFontVariantNumeric(StyleResolver& st
     fontDescription.setVariantNumericFraction(styleResolver.parentFontDescription().variantNumericFraction());
     fontDescription.setVariantNumericOrdinal(styleResolver.parentFontDescription().variantNumericOrdinal());
     fontDescription.setVariantNumericSlashedZero(styleResolver.parentFontDescription().variantNumericSlashedZero());
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void StyleBuilderCustom::applyInitialFontVariantNumeric(StyleResolver& styleResolver)
@@ -1511,7 +1511,7 @@ inline void StyleBuilderCustom::applyInitialFontVariantNumeric(StyleResolver& st
     fontDescription.setVariantNumericFraction(FontVariantNumericFraction::Normal);
     fontDescription.setVariantNumericOrdinal(FontVariantNumericOrdinal::Normal);
     fontDescription.setVariantNumericSlashedZero(FontVariantNumericSlashedZero::Normal);
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void StyleBuilderCustom::applyValueFontVariantNumeric(StyleResolver& styleResolver, CSSValue& value)
@@ -1523,7 +1523,7 @@ inline void StyleBuilderCustom::applyValueFontVariantNumeric(StyleResolver& styl
     fontDescription.setVariantNumericFraction(variantNumeric.fraction);
     fontDescription.setVariantNumericOrdinal(variantNumeric.ordinal);
     fontDescription.setVariantNumericSlashedZero(variantNumeric.slashedZero);
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void StyleBuilderCustom::applyInheritFontVariantEastAsian(StyleResolver& styleResolver)
@@ -1532,7 +1532,7 @@ inline void StyleBuilderCustom::applyInheritFontVariantEastAsian(StyleResolver& 
     fontDescription.setVariantEastAsianVariant(styleResolver.parentFontDescription().variantEastAsianVariant());
     fontDescription.setVariantEastAsianWidth(styleResolver.parentFontDescription().variantEastAsianWidth());
     fontDescription.setVariantEastAsianRuby(styleResolver.parentFontDescription().variantEastAsianRuby());
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void StyleBuilderCustom::applyInitialFontVariantEastAsian(StyleResolver& styleResolver)
@@ -1541,7 +1541,7 @@ inline void StyleBuilderCustom::applyInitialFontVariantEastAsian(StyleResolver& 
     fontDescription.setVariantEastAsianVariant(FontVariantEastAsianVariant::Normal);
     fontDescription.setVariantEastAsianWidth(FontVariantEastAsianWidth::Normal);
     fontDescription.setVariantEastAsianRuby(FontVariantEastAsianRuby::Normal);
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void StyleBuilderCustom::applyValueFontVariantEastAsian(StyleResolver& styleResolver, CSSValue& value)
@@ -1551,7 +1551,7 @@ inline void StyleBuilderCustom::applyValueFontVariantEastAsian(StyleResolver& st
     fontDescription.setVariantEastAsianVariant(variantEastAsian.variant);
     fontDescription.setVariantEastAsianWidth(variantEastAsian.width);
     fontDescription.setVariantEastAsianRuby(variantEastAsian.ruby);
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void StyleBuilderCustom::applyInitialFontSize(StyleResolver& styleResolver)
@@ -1564,7 +1564,7 @@ inline void StyleBuilderCustom::applyInitialFontSize(StyleResolver& styleResolve
 
     fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
     styleResolver.setFontSize(fontDescription, size);
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void StyleBuilderCustom::applyInheritFontSize(StyleResolver& styleResolver)
@@ -1578,7 +1578,7 @@ inline void StyleBuilderCustom::applyInheritFontSize(StyleResolver& styleResolve
     auto fontDescription = styleResolver.style()->fontDescription();
     fontDescription.setKeywordSize(parentFontDescription.keywordSize());
     styleResolver.setFontSize(fontDescription, size);
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 // When the CSS keyword "larger" is used, this function will attempt to match within the keyword
@@ -1620,7 +1620,7 @@ inline void StyleBuilderCustom::applyInitialFontStyle(StyleResolver& styleResolv
     auto fontDescription = styleResolver.fontDescription();
     fontDescription.setItalic(FontCascadeDescription::initialItalic());
     fontDescription.setFontStyleAxis(FontCascadeDescription::initialFontStyleAxis());
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void StyleBuilderCustom::applyInheritFontStyle(StyleResolver& styleResolver)
@@ -1628,7 +1628,7 @@ inline void StyleBuilderCustom::applyInheritFontStyle(StyleResolver& styleResolv
     auto fontDescription = styleResolver.fontDescription();
     fontDescription.setItalic(styleResolver.parentFontDescription().italic());
     fontDescription.setFontStyleAxis(styleResolver.parentFontDescription().fontStyleAxis());
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void StyleBuilderCustom::applyValueFontStyle(StyleResolver& styleResolver, CSSValue& value)
@@ -1637,7 +1637,7 @@ inline void StyleBuilderCustom::applyValueFontStyle(StyleResolver& styleResolver
     auto fontDescription = styleResolver.fontDescription();
     fontDescription.setItalic(StyleBuilderConverter::convertFontStyleFromValue(fontStyleValue));
     fontDescription.setFontStyleAxis(fontStyleValue.fontStyleValue->valueID() == CSSValueItalic ? FontStyleAxis::ital : FontStyleAxis::slnt);
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void StyleBuilderCustom::applyValueFontSize(StyleResolver& styleResolver, CSSValue& value)
@@ -1701,7 +1701,7 @@ inline void StyleBuilderCustom::applyValueFontSize(StyleResolver& styleResolver,
         return;
 
     styleResolver.setFontSize(fontDescription, std::min(maximumAllowedFontSize, size));
-    styleResolver.setFontDescription(fontDescription);
+    styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
 inline void StyleBuilderCustom::applyInitialGridTemplateAreas(StyleResolver& styleResolver)

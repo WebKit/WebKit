@@ -322,7 +322,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
     m_font = client()->menuStyle().font();
     auto d = m_font.fontDescription();
     d.setComputedSize(d.computedSize() * m_scaleFactor);
-    m_font = FontCascade(d, m_font.letterSpacing(), m_font.wordSpacing());
+    m_font = FontCascade(WTFMove(d), m_font.letterSpacing(), m_font.wordSpacing());
     m_font.update(m_popupClient->fontSelector());
 
     // First, determine the popup's height
@@ -345,7 +345,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
         if (client()->itemIsLabel(i)) {
             auto d = itemFont.fontDescription();
             d.setWeight(d.bolderWeight());
-            itemFont = FontCascade(d, itemFont.letterSpacing(), itemFont.wordSpacing());
+            itemFont = FontCascade(WTFMove(d), itemFont.letterSpacing(), itemFont.wordSpacing());
             itemFont.update(m_popupClient->fontSelector());
         }
 
@@ -650,7 +650,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
         if (client()->itemIsLabel(index)) {
             auto d = itemFont.fontDescription();
             d.setWeight(d.bolderWeight());
-            itemFont = FontCascade(d, itemFont.letterSpacing(), itemFont.wordSpacing());
+            itemFont = FontCascade(WTFMove(d), itemFont.letterSpacing(), itemFont.wordSpacing());
             itemFont.update(m_popupClient->fontSelector());
         }
         

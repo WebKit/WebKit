@@ -520,7 +520,7 @@ void FullscreenVideoController::draw()
     desc.setOneFamily(metrics.lfSmCaptionFont.lfFaceName);
 
     desc.setComputedSize(textSize);
-    FontCascade font = FontCascade(desc, 0, 0);
+    FontCascade font = FontCascade(WTFMove(desc), 0, 0);
     font.update(0);
 
     String s;

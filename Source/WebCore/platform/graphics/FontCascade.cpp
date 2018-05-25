@@ -77,11 +77,11 @@ FontCascade::FontCascade()
 {
 }
 
-FontCascade::FontCascade(const FontCascadeDescription& fd, float letterSpacing, float wordSpacing)
-    : m_fontDescription(fd)
+FontCascade::FontCascade(FontCascadeDescription&& fd, float letterSpacing, float wordSpacing)
+    : m_fontDescription(WTFMove(fd))
     , m_letterSpacing(letterSpacing)
     , m_wordSpacing(wordSpacing)
-    , m_useBackslashAsYenSymbol(useBackslashAsYenSignForFamily(fd.firstFamily()))
+    , m_useBackslashAsYenSymbol(useBackslashAsYenSignForFamily(m_fontDescription.firstFamily()))
     , m_enableKerning(computeEnableKerning())
     , m_requiresShaping(computeRequiresShaping())
 {

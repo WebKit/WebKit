@@ -123,7 +123,7 @@ RenderStyle resolveForDocument(const Document& document)
     fontDescription.setOrientation(fontOrientation);
     fontDescription.setNonCJKGlyphOrientation(glyphOrientation);
 
-    documentStyle.setFontDescription(fontDescription);
+    documentStyle.setFontDescription(WTFMove(fontDescription));
 
     documentStyle.fontCascade().update(&const_cast<Document&>(document).fontSelector());
 

@@ -853,7 +853,7 @@ sub generateInitialValueSetter {
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"font-property"}) {
     $setterContent .= $indent . "    auto fontDescription = styleResolver.fontDescription();\n";
     $setterContent .= $indent . "    fontDescription." . $setter . "(FontCascadeDescription::" . $initial . "());\n";
-    $setterContent .= $indent . "    styleResolver.setFontDescription(fontDescription);\n";
+    $setterContent .= $indent . "    styleResolver.setFontDescription(WTFMove(fontDescription));\n";
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"fill-layer-property"}) {
     $setterContent .= generateFillLayerPropertyInitialValueSetter($name, $indent . "    ");
   } else {
@@ -897,7 +897,7 @@ sub generateInheritValueSetter {
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"font-property"}) {
     $setterContent .= $indent . "    auto fontDescription = styleResolver.fontDescription();\n";
     $setterContent .= $indent . "    fontDescription." . $setter . "(styleResolver.parentFontDescription()." . $getter . "());\n";
-    $setterContent .= $indent . "    styleResolver.setFontDescription(fontDescription);\n";
+    $setterContent .= $indent . "    styleResolver.setFontDescription(WTFMove(fontDescription));\n";
     $didCallSetValue = 1;
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"fill-layer-property"}) {
     $setterContent .= generateFillLayerPropertyInheritValueSetter($name, $indent . "    ");
@@ -951,7 +951,7 @@ sub generateValueSetter {
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"font-property"}) {
     $setterContent .= $indent . "    auto fontDescription = styleResolver.fontDescription();\n";
     $setterContent .= $indent . "    fontDescription." . $setter . "(" . $convertedValue . ");\n";
-    $setterContent .= $indent . "    styleResolver.setFontDescription(fontDescription);\n";
+    $setterContent .= $indent . "    styleResolver.setFontDescription(WTFMove(fontDescription));\n";
     $didCallSetValue = 1;
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"fill-layer-property"}) {
     $setterContent .= generateFillLayerPropertyValueSetter($name, $indent . "    ");

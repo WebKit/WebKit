@@ -116,7 +116,7 @@ static FontCascade dragLabelFont(int size, bool bold, FontRenderingMode renderin
     description.setSpecifiedSize((float)size);
     description.setComputedSize((float)size);
     description.setRenderingMode(renderingMode);
-    result = FontCascade(description, 0, 0);
+    result = FontCascade(WTFMove(description), 0, 0);
     result.update(0);
     return result;
 }
