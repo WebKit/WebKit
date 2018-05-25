@@ -1,4 +1,18 @@
 =================
+WPE WebKit 2.21.2
+=================
+
+What' new in WPE WebKit 2.21.2?
+
+  - Add initial support for the fullscreen Web API.
+  - Add initial implementation of WebDriver advance user interaction commands.
+  - Add introspectable alternatives for functions using vargars to JavaScriptCore GLib API.
+  - Fix memory pressure monitor to reliably notify all subprocesses.
+  - Fix building with the Raspberry Pi userland GPU driver and certain versions of GStreamer-GL.
+  - Fix building with the ICU headers in a non-default directory.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.21.1
 =================
 
