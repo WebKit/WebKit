@@ -165,7 +165,7 @@ class TestExporter(object):
         return True
 
     def push_to_wpt_fork(self):
-        self.create_upload_remote_if_needed()
+        self.create_upload_remote()
         wpt_fork_branch_github_url = "https://github.com/" + self._username + "/web-platform-tests/tree/" + self._public_branch_name
         _log.info('Pushing branch ' + self._branch_name + " to " + self._git.remote(["get-url", self._wpt_fork_remote]).rstrip())
         _log.info('This may take some time')
@@ -179,8 +179,11 @@ class TestExporter(object):
             return
 
         _log.info('Making pull request')
-        description = self._bugzilla.fetch_bug_dictionary(self._bug_id)["title"]
-        pr_number = self.create_wpt_pull_request(self._wpt_fork_remote + ':' + self._public_branch_name, self._commit_message, self._commit_message + "\n" + description)
+        title = self._bugzilla.fetch_bug_dictionary(self._bug_id)["title"].replace("[", "\\[").replace("]", "\\]")
+        # NOTE: this should contain the exact string "WebKit export" to match the condition in
+        # https://github.com/web-platform-tests/wpt-pr-bot/blob/f53e625c4871010277dc68336b340b5cd86e2a10/lib/metadata/index.js#L87
+        description = "WebKit export from bug: [%s](https://bugs.webkit.org/show_bug.cgi?id=%s)" % (title, self._bug_id)
+        pr_number = self.create_wpt_pull_request(self._wpt_fork_remote + ':' + self._public_branch_name, self._commit_message, description)
         if pr_number:
             try:
                 self._github.add_label(pr_number, WEBKIT_EXPORT_PR_LABEL)
@@ -220,9 +223,10 @@ class TestExporter(object):
         self._filesystem.write_text_file(patch_file, patch_data)
         return patch_file
 
-    def create_upload_remote_if_needed(self):
-        if not self._wpt_fork_remote in self._git.remote([]):
-            self._git.remote(["add", self._wpt_fork_remote, self._wpt_fork_push_url])
+    def create_upload_remote(self):
+        if self._wpt_fork_remote in self._git.remote([]).splitlines():
+            self._git.remote(["remove", self._wpt_fork_remote])
+        self._git.remote(["add", self._wpt_fork_remote, self._wpt_fork_push_url])
 
     def do_export(self):
         git_patch_file = self.create_git_patch()

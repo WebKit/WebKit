@@ -1,3 +1,15 @@
+2018-05-25  Ms2ger  <Ms2ger@igalia.com>
+
+        Minor improvements to wpt exporter.
+        https://bugs.webkit.org/show_bug.cgi?id=185978
+
+        Reviewed by Youenn Fablet.
+
+        * Scripts/webkitpy/w3c/test_exporter.py:
+        (TestExporter.push_to_wpt_fork): Update call to create_upload_remote().
+        (TestExporter.make_pull_request): Improve the description of the created PR.
+        (TestExporter.create_upload_remote): Always update the remote to override any obsolete state.
+
 2018-05-25  Saam Barati  <sbarati@apple.com>
 
         Have a memory test where we can validate JSCs mini memory mode
