@@ -1,3 +1,19 @@
+2018-05-25  Jeremy Jones  <jeremyj@apple.com>
+
+        Use correct AVKit delegate for picture in picture failure.
+        https://bugs.webkit.org/show_bug.cgi?id=185981
+        rdar://problem/40549652
+
+        Reviewed by Eric Carlson.
+
+        No new tests since we don't have a way to simulate picture-in-picture failure.
+
+        Use the new name for this delegate callback.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerViewControllerDelegate playerViewController:failedToStartPictureInPictureWithError:]):
+        (-[WebAVPlayerViewControllerDelegate playerViewControllerFailedToStartPictureInPicture:withError:]): Deleted.
+
 2018-05-25  Zalan Bujtas  <zalan@apple.com>
 
         iBooks: text can disappear/flash during finger drag highlight
