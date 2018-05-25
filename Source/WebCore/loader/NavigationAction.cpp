@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,9 +32,17 @@
 #include "Document.h"
 #include "Event.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "HistoryItem.h"
 
 namespace WebCore {
+
+NavigationAction::Requester::Requester(const Document& document)
+    : m_url { URL { document.url() } }
+    , m_origin { makeRefPtr(document.securityOrigin()) }
+    , m_pageIDAndFrameIDPair { document.frame() ? std::make_pair(document.frame()->loader().client().pageID().value_or(0), document.frame()->loader().client().frameID().value_or(0)) : std::make_pair<uint64_t, uint64_t>(0, 0) }
+{
+}
 
 NavigationAction::NavigationAction() = default;
 NavigationAction::~NavigationAction() = default;
@@ -45,22 +53,20 @@ NavigationAction::NavigationAction(NavigationAction&&) = default;
 NavigationAction& NavigationAction::operator=(const NavigationAction&) = default;
 NavigationAction& NavigationAction::operator=(NavigationAction&&) = default;
 
-static bool shouldTreatAsSameOriginNavigation(Document& source, const URL& url)
+static bool shouldTreatAsSameOriginNavigation(const Document& document, const URL& url)
 {
-    return url.isBlankURL()
-        || url.protocolIsData()
-        || (url.protocolIsBlob() && source.securityOrigin().canRequest(url));
+    return url.isBlankURL() || url.protocolIsData() || (url.protocolIsBlob() && document.securityOrigin().canRequest(url));
 }
 
-NavigationAction::NavigationAction(Document& source, const ResourceRequest& resourceRequest, InitiatedByMainFrame initiatedByMainFrame, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Event* event, const AtomicString& downloadAttribute)
-    : m_sourceDocument { makeRefPtr(source) }
+NavigationAction::NavigationAction(Document& requester, const ResourceRequest& resourceRequest, InitiatedByMainFrame initiatedByMainFrame, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Event* event, const AtomicString& downloadAttribute)
+    : m_requester { requester }
     , m_resourceRequest { resourceRequest }
     , m_type { type }
     , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
     , m_initiatedByMainFrame { initiatedByMainFrame }
     , m_event { event }
     , m_downloadAttribute { downloadAttribute }
-    , m_treatAsSameOriginNavigation { shouldTreatAsSameOriginNavigation(source, resourceRequest.url()) }
+    , m_treatAsSameOriginNavigation { shouldTreatAsSameOriginNavigation(requester, resourceRequest.url()) }
 {
 }
 
@@ -77,15 +83,15 @@ static NavigationType navigationType(FrameLoadType frameLoadType, bool isFormSub
     return NavigationType::Other;
 }
 
-NavigationAction::NavigationAction(Document& source, const ResourceRequest& resourceRequest, InitiatedByMainFrame initiatedByMainFrame, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomicString& downloadAttribute)
-    : m_sourceDocument { makeRefPtr(source) }
+NavigationAction::NavigationAction(Document& requester, const ResourceRequest& resourceRequest, InitiatedByMainFrame initiatedByMainFrame, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomicString& downloadAttribute)
+    : m_requester { requester }
     , m_resourceRequest { resourceRequest }
     , m_type { navigationType(frameLoadType, isFormSubmission, !!event) }
     , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
     , m_initiatedByMainFrame { initiatedByMainFrame }
     , m_event { event }
     , m_downloadAttribute { downloadAttribute }
-    , m_treatAsSameOriginNavigation { shouldTreatAsSameOriginNavigation(source, resourceRequest.url()) }
+    , m_treatAsSameOriginNavigation { shouldTreatAsSameOriginNavigation(requester, resourceRequest.url()) }
 {
 }
 

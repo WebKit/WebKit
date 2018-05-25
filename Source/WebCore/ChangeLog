@@ -1,3 +1,38 @@
+2018-05-25  Daniel Bates  <dabates@apple.com>
+
+        NavigationAction should not hold a strong reference to a Document
+        https://bugs.webkit.org/show_bug.cgi?id=185712
+        <rdar://problem/40320916>
+
+        Reviewed by Brent Fulgham.
+
+        Have NavigationAction store all the relevant details callers need to know about the document
+        that initiated the navigation in an independent data structure, called NavigationAction::Requester,
+        as opposed to holding a RefPtr to the document itself. The benefit of this approach is that it
+        is a step towards ensuring that NavigationAction does not keep the document alive after navigating
+        to a new document given that DocumentLoader stores the NavigationAction for the last navigation.
+
+        * loader/NavigationAction.cpp:
+        (WebCore::NavigationAction::Requester::Requester): Track all relevant details of the document that
+        requested this navigation that are needed to support WebKit API/SPI. We hold the SecurityOrigin in
+        a RefPtr to avoid the need to explicitly define a copy constructor and copy-assignment constructor
+        because Requester needs to be copyable as NavigationAction, which owns a Requester, is copyable.
+        (WebCore::shouldTreatAsSameOriginNavigation): Fix some style nits.
+        (WebCore::NavigationAction::NavigationAction): Instantiate a Requester from the specified document.
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::Requester::url const): Added.
+        (WebCore::NavigationAction::Requester::securityOrigin const): Added.
+        (WebCore::NavigationAction::Requester::pageID const): Added.
+        (WebCore::NavigationAction::Requester::frameID const): Added.
+        (WebCore::NavigationAction::requester const): Returns details about the document that requested
+        this navigation, if applicable.
+        (WebCore::NavigationAction::isEmpty const): Update criterion for being empty to consider the
+        requester.
+        (WebCore::NavigationAction::setOpener): Extracted out the datatype of the parameter into a
+        type alias to avoid duplication and updated this code to use the alias.
+        (WebCore::NavigationAction::opener const): Ditto.
+        (WebCore::NavigationAction::sourceDocument const): Deleted.
+
 2018-05-25  Jeremy Jones  <jeremyj@apple.com>
 
         Fullscreen element can be clipped by ancestor.

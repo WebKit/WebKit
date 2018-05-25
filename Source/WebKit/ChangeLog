@@ -1,3 +1,16 @@
+2018-05-25  Daniel Bates  <dabates@apple.com>
+
+        NavigationAction should not hold a strong reference to a Document
+        https://bugs.webkit.org/show_bug.cgi?id=185712
+        <rdar://problem/40320916>
+
+        Reviewed by Brent Fulgham.
+
+        Update code to make use of NavigationAction::requester().
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2018-05-25  Tim Horton  <timothy_horton@apple.com>
 
         Ensure that the Web Content process doesn't sleep during initialization
