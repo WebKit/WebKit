@@ -1,3 +1,12 @@
+2018-05-25  David Fenton  <david_fenton@apple.com>
+
+        fast/text/user-installed-fonts/shadow-family.html and fast/text/user-installed-fonts/shadow-postscript-family.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=185994
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2018-05-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rebaseline two fast/forms/ios/ipad tests.
