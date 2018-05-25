@@ -1,3 +1,24 @@
+2018-05-25  Daniel Bates  <dabates@apple.com>
+
+        test-webkitpy messages logged using __main__ logger are not displayed
+        https://bugs.webkit.org/show_bug.cgi?id=185823
+
+        Rubber-stamped by Aakash Jain.
+
+        Configure the logger for __main__ so that messages that are logged before it parses its
+        command line arguments are printed to standard error.
+
+        Currently test-webkitpy creates a named logger (__main__) for its logging. However it does
+        not configure a stream to use for printing until after it parses its command line arguments
+        via webkitpy.test.printer.Printer.configure(). Messages logged until then are never written
+        to the console. We explicitly configure the __main__ logger instead of calling webkitpy.test.printer.Printer.configure()
+        earlier because the latter both configures a stream and filters logged messages based on
+        the specified verbosity. Logged messaged from code in __main__ should not be subject to
+        such filtering. So, we explicitly configure the __main__ logger.
+
+        * Scripts/webkitpy/test/main.py:
+        (main):
+
 2018-05-25  Saam Barati  <sbarati@apple.com>
 
         Make JSC have a mini mode that kicks in when the JIT is disabled

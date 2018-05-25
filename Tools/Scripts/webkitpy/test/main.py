@@ -36,6 +36,7 @@ import time
 import traceback
 import unittest
 
+from webkitpy.common.system.logutils import configure_logging
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.test.finder import Finder
 from webkitpy.test.printer import Printer
@@ -45,6 +46,8 @@ _log = logging.getLogger(__name__)
 
 
 def main():
+    configure_logging(logger=_log)
+
     up = os.path.dirname
     webkit_root = up(up(up(up(up(os.path.abspath(__file__))))))
 
