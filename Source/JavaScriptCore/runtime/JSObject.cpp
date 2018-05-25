@@ -2456,22 +2456,18 @@ bool JSObject::putIndexedDescriptor(ExecState* exec, SparseArrayEntry* entryInMa
     }
 
     if (descriptor.isAccessorDescriptor()) {
-        JSObject* getter = 0;
+        JSObject* getter = nullptr;
         if (descriptor.getterPresent())
             getter = descriptor.getterObject();
         else if (oldDescriptor.isAccessorDescriptor())
             getter = oldDescriptor.getterObject();
-        JSObject* setter = 0;
+        JSObject* setter = nullptr;
         if (descriptor.setterPresent())
             setter = descriptor.setterObject();
         else if (oldDescriptor.isAccessorDescriptor())
             setter = oldDescriptor.setterObject();
 
-        GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject());
-        if (getter)
-            accessor->setGetter(vm, exec->lexicalGlobalObject(), getter);
-        if (setter)
-            accessor->setSetter(vm, exec->lexicalGlobalObject(), setter);
+        GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject(), getter, setter);
 
         entryInMap->set(vm, map, accessor);
         entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~PropertyAttribute::ReadOnly;
@@ -3054,9 +3050,8 @@ bool JSObject::putDirectIndexSlowOrBeyondVectorLength(ExecState* exec, unsigned 
 
 bool JSObject::putDirectNativeIntrinsicGetter(VM& vm, JSGlobalObject* globalObject, Identifier name, NativeFunction nativeFunction, Intrinsic intrinsic, unsigned attributes)
 {
-    GetterSetter* accessor = GetterSetter::create(vm, globalObject);
     JSFunction* function = JSFunction::create(vm, globalObject, 0, makeString("get ", name.string()), nativeFunction, intrinsic);
-    accessor->setGetter(vm, globalObject, function);
+    GetterSetter* accessor = GetterSetter::create(vm, globalObject, function, nullptr);
     return putDirectNonIndexAccessor(vm, name, accessor, attributes);
 }
 
@@ -3414,11 +3409,9 @@ static bool putDescriptor(ExecState* exec, JSObject* target, PropertyName proper
     VM& vm = exec->vm();
     if (descriptor.isGenericDescriptor() || descriptor.isDataDescriptor()) {
         if (descriptor.isGenericDescriptor() && oldDescriptor.isAccessorDescriptor()) {
-            GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject());
-            if (oldDescriptor.getterPresent())
-                accessor->setGetter(vm, exec->lexicalGlobalObject(), oldDescriptor.getterObject());
-            if (oldDescriptor.setterPresent())
-                accessor->setSetter(vm, exec->lexicalGlobalObject(), oldDescriptor.setterObject());
+            JSObject* getter = oldDescriptor.getterPresent() ? oldDescriptor.getterObject() : nullptr;
+            JSObject* setter = oldDescriptor.setterPresent() ? oldDescriptor.setterObject() : nullptr;
+            GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject(), getter, setter);
             target->putDirectAccessor(exec, propertyName, accessor, attributes | PropertyAttribute::Accessor);
             return true;
         }
@@ -3433,16 +3426,14 @@ static bool putDescriptor(ExecState* exec, JSObject* target, PropertyName proper
         return true;
     }
     attributes &= ~PropertyAttribute::ReadOnly;
-    GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject());
 
-    if (descriptor.getterPresent())
-        accessor->setGetter(vm, exec->lexicalGlobalObject(), descriptor.getterObject());
-    else if (oldDescriptor.getterPresent())
-        accessor->setGetter(vm, exec->lexicalGlobalObject(), oldDescriptor.getterObject());
-    if (descriptor.setterPresent())
-        accessor->setSetter(vm, exec->lexicalGlobalObject(), descriptor.setterObject());
-    else if (oldDescriptor.setterPresent())
-        accessor->setSetter(vm, exec->lexicalGlobalObject(), oldDescriptor.setterObject());
+    JSObject* getter = descriptor.getterPresent()
+        ? descriptor.getterObject() : oldDescriptor.getterPresent()
+        ? oldDescriptor.getterObject() : nullptr;
+    JSObject* setter = descriptor.setterPresent()
+        ? descriptor.setterObject() : oldDescriptor.setterPresent()
+        ? oldDescriptor.setterObject() : nullptr;
+    GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject(), getter, setter);
 
     target->putDirectAccessor(exec, propertyName, accessor, attributes | PropertyAttribute::Accessor);
     return true;
@@ -3559,29 +3550,36 @@ bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, Prope
     JSValue accessor = object->getDirect(vm, propertyName);
     if (!accessor)
         return false;
-    GetterSetter* getterSetter;
+    JSObject* getter = nullptr;
+    JSObject* setter = nullptr;
     bool getterSetterChanged = false;
+
     if (accessor.isCustomGetterSetter()) {
-        getterSetter = GetterSetter::create(vm, exec->lexicalGlobalObject());
         auto* customGetterSetter = jsCast<CustomGetterSetter*>(accessor);
         if (customGetterSetter->setter())
-            getterSetter->setSetter(vm, exec->lexicalGlobalObject(), getCustomGetterSetterFunctionForGetterSetter(exec, propertyName, customGetterSetter, JSCustomGetterSetterFunction::Type::Setter));
+            setter = getCustomGetterSetterFunctionForGetterSetter(exec, propertyName, customGetterSetter, JSCustomGetterSetterFunction::Type::Setter);
         if (customGetterSetter->getter())
-            getterSetter->setGetter(vm, exec->lexicalGlobalObject(), getCustomGetterSetterFunctionForGetterSetter(exec, propertyName, customGetterSetter, JSCustomGetterSetterFunction::Type::Getter));
+            getter = getCustomGetterSetterFunctionForGetterSetter(exec, propertyName, customGetterSetter, JSCustomGetterSetterFunction::Type::Getter);
     } else {
         ASSERT(accessor.isGetterSetter());
-        getterSetter = jsCast<GetterSetter*>(accessor);
+        auto* getterSetter = jsCast<GetterSetter*>(accessor);
+        getter = getterSetter->getter();
+        setter = getterSetter->setter();
     }
     if (descriptor.setterPresent()) {
-        getterSetter = getterSetter->withSetter(vm, exec->lexicalGlobalObject(), descriptor.setterObject());
+        setter = descriptor.setterObject();
         getterSetterChanged = true;
     }
     if (descriptor.getterPresent()) {
-        getterSetter = getterSetter->withGetter(vm, exec->lexicalGlobalObject(), descriptor.getterObject());
+        getter = descriptor.getterObject();
         getterSetterChanged = true;
     }
+
     if (current.attributesEqual(descriptor) && !getterSetterChanged)
         return true;
+
+    GetterSetter* getterSetter = GetterSetter::create(vm, exec->lexicalGlobalObject(), getter, setter);
+
     object->methodTable(vm)->deleteProperty(object, exec, propertyName);
     RETURN_IF_EXCEPTION(scope, false);
     unsigned attrs = descriptor.attributesOverridingCurrent(current);

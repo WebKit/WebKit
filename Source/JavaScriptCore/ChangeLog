@@ -1,3 +1,42 @@
+2018-05-25  Mark Lam  <mark.lam@apple.com>
+
+        Enforce invariant that GetterSetter objects are invariant.
+        https://bugs.webkit.org/show_bug.cgi?id=185968
+        <rdar://problem/40541416>
+
+        Reviewed by Saam Barati.
+
+        The code already assumes the invariant that GetterSetter objects are immutable.
+        For example, the use of @tryGetById in builtins expect this invariant to be true.
+        The existing code mostly enforces this except for one case: JSObject's
+        validateAndApplyPropertyDescriptor, where it will re-use the same GetterSetter
+        object.
+
+        This patch enforces this invariant by removing the setGetter and setSetter methods
+        of GetterSetter, and requiring the getter/setter callback functions to be
+        specified at construction time.
+
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/GetterSetter.cpp:
+        (JSC::GetterSetter::withGetter): Deleted.
+        (JSC::GetterSetter::withSetter): Deleted.
+        * runtime/GetterSetter.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putIndexedDescriptor):
+        (JSC::JSObject::putDirectNativeIntrinsicGetter):
+        (JSC::putDescriptor):
+        (JSC::validateAndApplyPropertyDescriptor):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        * runtime/Lookup.cpp:
+        (JSC::reifyStaticAccessor):
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::PropertyDescriptor::slowGetterSetter):
+
 2018-05-25  Saam Barati  <sbarati@apple.com>
 
         Make JSC have a mini mode that kicks in when the JIT is disabled

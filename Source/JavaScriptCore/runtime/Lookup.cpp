@@ -29,19 +29,18 @@ namespace JSC {
 void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObject, PropertyName propertyName)
 {
     JSGlobalObject* globalObject = thisObject.globalObject();
-    GetterSetter* accessor = GetterSetter::create(vm, globalObject);
+    JSObject* getter = nullptr;
     if (value.accessorGetter()) {
-        JSFunction* function = nullptr;
         if (value.attributes() & PropertyAttribute::Builtin)
-            function = JSFunction::create(vm, value.builtinAccessorGetterGenerator()(vm), globalObject);
+            getter = JSFunction::create(vm, value.builtinAccessorGetterGenerator()(vm), globalObject);
         else {
             String getterName = tryMakeString(ASCIILiteral("get "), String(*propertyName.publicName()));
             if (!getterName)
                 return;
-            function = JSFunction::create(vm, globalObject, 0, getterName, value.accessorGetter());
+            getter = JSFunction::create(vm, globalObject, 0, getterName, value.accessorGetter());
         }
-        accessor->setGetter(vm, globalObject, function);
     }
+    GetterSetter* accessor = GetterSetter::create(vm, globalObject, getter, nullptr);
     thisObject.putDirectNonIndexAccessor(vm, propertyName, accessor, attributesForStructure(value.attributes()));
 }
 

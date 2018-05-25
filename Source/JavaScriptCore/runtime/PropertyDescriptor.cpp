@@ -75,17 +75,10 @@ void PropertyDescriptor::setUndefined()
 GetterSetter* PropertyDescriptor::slowGetterSetter(ExecState* exec)
 {
     VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    GetterSetter* getterSetter = GetterSetter::create(vm, globalObject);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    if (m_getter && !m_getter.isUndefined())
-        getterSetter->setGetter(vm, globalObject, jsCast<JSObject*>(m_getter));
-    if (m_setter && !m_setter.isUndefined())
-        getterSetter->setSetter(vm, globalObject, jsCast<JSObject*>(m_setter));
-
-    return getterSetter;
+    JSValue getter = m_getter && !m_getter.isUndefined() ? jsCast<JSObject*>(m_getter) : jsUndefined();
+    JSValue setter = m_setter && !m_setter.isUndefined() ? jsCast<JSObject*>(m_setter) : jsUndefined();
+    return GetterSetter::create(vm, globalObject, getter, setter);
 }
 
 JSValue PropertyDescriptor::getter() const
