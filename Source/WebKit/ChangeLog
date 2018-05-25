@@ -1,3 +1,24 @@
+2018-05-25  Tim Horton  <timothy_horton@apple.com>
+
+        Ensure that the Web Content process doesn't sleep during initialization
+        https://bugs.webkit.org/show_bug.cgi?id=185975
+        <rdar://problem/40548159>
+
+        Reviewed by Geoffrey Garen.
+
+        WebProcessPool::warmInitialProcess isn't worth much (or at least, as much
+        as it could be) if the Web Content process goes to sleep in the middle
+        of initializeWebProcess.
+
+        Keep the Web Content process alive until it has handled all messages
+        sent from WebProcessPool::initializeNewWebProcess.
+
+        This is a significant speedup on some benchmarks I've been running
+        that involve prewarming a process long before any content is loaded.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+
 2018-05-25  Chris Dumez  <cdumez@apple.com>
 
         WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback() unexpectedly constructs a process pool

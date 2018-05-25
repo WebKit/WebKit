@@ -93,6 +93,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
+#include <wtf/Scope.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -832,6 +833,14 @@ static void registerDisplayConfigurationCallback()
 
 void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDataStore& websiteDataStore)
 {
+    auto initializationActivityToken = process.throttler().backgroundActivityToken();
+    auto scopeExit = makeScopeExit([&process, initializationActivityToken] {
+        // Round-trip to the Web Content process before releasing the
+        // initialization activity token, so that we're sure that all
+        // messages sent from this function have been handled.
+        process.isResponsive([initializationActivityToken] (bool) { });
+    });
+
     ensureNetworkProcess();
 
     WebProcessCreationParameters parameters;
