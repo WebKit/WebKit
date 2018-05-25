@@ -1,5 +1,18 @@
 2018-05-24  Chris Dumez  <cdumez@apple.com>
 
+        Enable subsampling for progressive JPEG images
+        https://bugs.webkit.org/show_bug.cgi?id=185956
+
+        Reviewed by Said Abou-Hallawa.
+
+        Enable subsampling for progressive JPEG images now that it is supposed (rdar://problem/5191418).
+        I verified locally that such images are still loading and do not cause any hang on iOS.
+
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoderCG::frameAllowSubsamplingAtIndex const):
+
+2018-05-24  Chris Dumez  <cdumez@apple.com>
+
         Reduce copying of FontCascadeDescription objects by moving them around
         https://bugs.webkit.org/show_bug.cgi?id=185963
 

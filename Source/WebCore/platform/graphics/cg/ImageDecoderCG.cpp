@@ -366,23 +366,6 @@ Seconds ImageDecoderCG::frameDurationAtIndex(size_t index) const
 
 bool ImageDecoderCG::frameAllowSubsamplingAtIndex(size_t) const
 {
-    RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), 0, imageSourceOptions().get()));
-    if (!properties)
-        return false;
-    
-    CFDictionaryRef jfifProperties = static_cast<CFDictionaryRef>(CFDictionaryGetValue(properties.get(), kCGImagePropertyJFIFDictionary));
-    if (jfifProperties) {
-        CFBooleanRef isProgCFBool = static_cast<CFBooleanRef>(CFDictionaryGetValue(jfifProperties, kCGImagePropertyJFIFIsProgressive));
-        if (isProgCFBool) {
-            bool isProgressive = CFBooleanGetValue(isProgCFBool);
-            // Workaround for <rdar://problem/5184655> - Hang rendering very large progressive JPEG. Decoding progressive
-            // images hangs for a very long time right now. Until this is fixed, don't sub-sample progressive images. This
-            // will cause them to fail our large image check and they won't be decoded.
-            // FIXME: Remove once underlying issue is fixed (<rdar://problem/5191418>)
-            return !isProgressive;
-        }
-    }
-    
     return true;
 }
 
