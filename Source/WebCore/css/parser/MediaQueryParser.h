@@ -35,47 +35,13 @@
 #include "MediaQueryBlockWatcher.h"
 #include "MediaQueryExpression.h"
 #include "MediaQueryParserContext.h"
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class MediaQuerySet;
 struct CSSParserContext;
-
-class MediaQueryData {
-    WTF_MAKE_NONCOPYABLE(MediaQueryData);
-public:
-    MediaQueryData(MediaQueryParserContext context);
-    void clear();
-    void addExpression(CSSParserTokenRange&);
-    bool lastExpressionValid();
-    void removeLastExpression();
-    void setMediaType(const String&);
-    
-    MediaQuery::Restrictor restrictor() const { return m_restrictor; };
-    Vector<MediaQueryExpression>& expressions() { return m_expressions; }
-    String mediaType() const { return m_mediaType; }
-    
-    inline bool currentMediaQueryChanged() const
-    {
-        return (m_restrictor != MediaQuery::None || m_mediaTypeSet || m_expressions.size() > 0);
-    }
-    inline MediaQuery::Restrictor restrictor() { return m_restrictor; }
-
-    inline void setRestrictor(MediaQuery::Restrictor restrictor) { m_restrictor = restrictor; }
-
-    inline void setMediaFeature(const String& str) { m_mediaFeature = str; }
-    
-    inline void setMediaQueryParserContext(MediaQueryParserContext context) { m_context = context; }
-
-private:
-    MediaQuery::Restrictor m_restrictor;
-    String m_mediaType;
-    Vector<MediaQueryExpression> m_expressions;
-    String m_mediaFeature;
-    bool m_mediaTypeSet;
-    MediaQueryParserContext m_context;
-};
 
 class MediaQueryParser {
     WTF_MAKE_NONCOPYABLE(MediaQueryParser);
@@ -116,6 +82,40 @@ private:
     void handleBlocks(const CSSParserToken&);
     
     void commitMediaQuery();
+
+    class MediaQueryData {
+        WTF_MAKE_NONCOPYABLE(MediaQueryData);
+    public:
+        explicit MediaQueryData(MediaQueryParserContext);
+        void clear();
+        void addExpression(CSSParserTokenRange&);
+        bool lastExpressionValid();
+        void removeLastExpression();
+        void setMediaType(const String& mediaType) { m_mediaType = mediaType; }
+
+        MediaQuery::Restrictor restrictor() const { return m_restrictor; }
+        Vector<MediaQueryExpression>& expressions() { return m_expressions; }
+        const std::optional<String>& mediaType() const { return m_mediaType; }
+
+        bool currentMediaQueryChanged() const
+        {
+            return (m_restrictor != MediaQuery::None || m_mediaType || !m_expressions.isEmpty());
+        }
+        MediaQuery::Restrictor restrictor() { return m_restrictor; }
+
+        void setRestrictor(MediaQuery::Restrictor restrictor) { m_restrictor = restrictor; }
+
+        void setMediaFeature(const String& str) { m_mediaFeature = str; }
+
+        void setMediaQueryParserContext(MediaQueryParserContext context) { m_context = context; }
+
+    private:
+        MediaQuery::Restrictor m_restrictor { MediaQuery::None };
+        std::optional<String> m_mediaType;
+        Vector<MediaQueryExpression> m_expressions;
+        String m_mediaFeature;
+        MediaQueryParserContext m_context;
+    };
 
     State m_state;
     ParserType m_parserType;

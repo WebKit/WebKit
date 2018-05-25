@@ -140,7 +140,8 @@ void MediaQueryParser::commitMediaQuery()
 {
     // FIXME-NEWPARSER: Convoluted and awful, but we can't change the MediaQuerySet yet because of the
     // old parser.
-    MediaQuery mediaQuery = MediaQuery(m_mediaQueryData.restrictor(), m_mediaQueryData.mediaType(), WTFMove(m_mediaQueryData.expressions()));
+    static const NeverDestroyed<String> defaultMediaType = ASCIILiteral { "all" };
+    MediaQuery mediaQuery { m_mediaQueryData.restrictor(), m_mediaQueryData.mediaType().value_or(defaultMediaType), WTFMove(m_mediaQueryData.expressions()) };
     m_mediaQueryData.clear();
     m_querySet->addMediaQuery(WTFMove(mediaQuery));
 }
@@ -274,43 +275,32 @@ RefPtr<MediaQuerySet> MediaQueryParser::parseInternal(CSSParserTokenRange range)
     return m_querySet;
 }
 
-MediaQueryData::MediaQueryData(MediaQueryParserContext context)
-    : m_restrictor(MediaQuery::None)
-    , m_mediaType("all")
-    , m_mediaTypeSet(false)
-    , m_context(context)
+MediaQueryParser::MediaQueryData::MediaQueryData(MediaQueryParserContext context)
+    : m_context(context)
 {
 }
 
-void MediaQueryData::clear()
+void MediaQueryParser::MediaQueryData::clear()
 {
     m_restrictor = MediaQuery::None;
-    m_mediaType = "all";
-    m_mediaTypeSet = false;
+    m_mediaType = std::nullopt;
     m_mediaFeature = String();
     m_expressions.clear();
 }
 
-void MediaQueryData::addExpression(CSSParserTokenRange& range)
+void MediaQueryParser::MediaQueryData::addExpression(CSSParserTokenRange& range)
 {
-    MediaQueryExpression expression = MediaQueryExpression(m_mediaFeature, range, m_context);
-    m_expressions.append(WTFMove(expression));
+    m_expressions.append(MediaQueryExpression { m_mediaFeature, range, m_context });
 }
 
-bool MediaQueryData::lastExpressionValid()
+bool MediaQueryParser::MediaQueryData::lastExpressionValid()
 {
     return m_expressions.last().isValid();
 }
 
-void MediaQueryData::removeLastExpression()
+void MediaQueryParser::MediaQueryData::removeLastExpression()
 {
     m_expressions.removeLast();
-}
-
-void MediaQueryData::setMediaType(const String& mediaType)
-{
-    m_mediaType = mediaType;
-    m_mediaTypeSet = true;
 }
 
 } // namespace WebCore

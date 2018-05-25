@@ -1,3 +1,35 @@
+2018-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Avoid constructing the string "all" repeatedly in MediaQueryParser
+        https://bugs.webkit.org/show_bug.cgi?id=185961
+
+        Reviewed by Simon Fraser.
+
+        Avoid constructing the string "all" repeatedly in MediaQueryParser by:
+        - Having MediaQueryData use an std::optional<String> instead of a String
+        - Updating MediaQueryParser to use a static to store the default media type
+          and use it when the MediaQueryData's media type is std::nullopt.
+
+        Also do some cleanup.
+
+        * css/parser/MediaQueryParser.cpp:
+        (WebCore::MediaQueryParser::commitMediaQuery):
+        (WebCore::MediaQueryParser::MediaQueryData::MediaQueryData):
+        (WebCore::MediaQueryParser::MediaQueryData::clear):
+        (WebCore::MediaQueryParser::MediaQueryData::addExpression):
+        (WebCore::MediaQueryParser::MediaQueryData::lastExpressionValid):
+        (WebCore::MediaQueryParser::MediaQueryData::removeLastExpression):
+        * css/parser/MediaQueryParser.h:
+        (WebCore::MediaQueryParser::MediaQueryData::setMediaType):
+        (WebCore::MediaQueryParser::MediaQueryData::restrictor const):
+        (WebCore::MediaQueryParser::MediaQueryData::expressions):
+        (WebCore::MediaQueryParser::MediaQueryData::mediaType const):
+        (WebCore::MediaQueryParser::MediaQueryData::currentMediaQueryChanged const):
+        (WebCore::MediaQueryParser::MediaQueryData::restrictor):
+        (WebCore::MediaQueryParser::MediaQueryData::setRestrictor):
+        (WebCore::MediaQueryParser::MediaQueryData::setMediaFeature):
+        (WebCore::MediaQueryParser::MediaQueryData::setMediaQueryParserContext):
+
 2018-05-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Hard link AppSupport instead of soft linking
