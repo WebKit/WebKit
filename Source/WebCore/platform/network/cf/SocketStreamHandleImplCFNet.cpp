@@ -312,7 +312,7 @@ void SocketStreamHandleImpl::createStreams()
     if (m_connectionType == Unknown)
         return;
 
-    RetainPtr<CFStringRef> host = m_url.host().createCFString();
+    RetainPtr<CFStringRef> host = m_url.host().toString().createCFString();
 
     // Creating streams to final destination, not to proxy.
     CFReadStreamRef readStream = 0;

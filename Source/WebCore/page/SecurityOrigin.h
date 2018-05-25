@@ -202,7 +202,7 @@ public:
 
     bool isPotentiallyTrustworthy() const { return m_isPotentiallyTrustworthy; }
 
-    static bool isLocalHostOrLoopbackIPAddress(const String& host);
+    static bool isLocalHostOrLoopbackIPAddress(StringView);
 
     const SecurityOriginData& data() const { return m_data; }
 

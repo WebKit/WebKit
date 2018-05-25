@@ -333,7 +333,7 @@ void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
 
 String ResourceLoadStatistics::primaryDomain(const URL& url)
 {
-    return primaryDomain(url.host());
+    return primaryDomain(url.host().toString());
 }
 
 String ResourceLoadStatistics::primaryDomain(const String& host)

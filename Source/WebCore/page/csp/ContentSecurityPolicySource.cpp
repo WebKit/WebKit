@@ -64,8 +64,8 @@ bool ContentSecurityPolicySource::schemeMatches(const URL& url) const
 
 bool ContentSecurityPolicySource::hostMatches(const URL& url) const
 {
-    const String& host = url.host();
-    return equalIgnoringASCIICase(host, m_host) || (m_hostHasWildcard && host.endsWithIgnoringASCIICase("." + m_host));
+    auto host = url.host();
+    return equalIgnoringASCIICase(host, m_host) || (m_hostHasWildcard && host.endsWithIgnoringASCIICase(makeString(".", m_host)));
 
 }
 

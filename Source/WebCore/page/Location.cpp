@@ -94,7 +94,7 @@ String Location::hostname() const
     if (!m_frame)
         return String();
 
-    return url().host();
+    return url().host().toString();
 }
 
 String Location::port() const

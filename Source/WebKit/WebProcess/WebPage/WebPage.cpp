@@ -4848,9 +4848,7 @@ static bool needsHiddenContentEditableQuirk(bool needsQuirks, const URL& url)
     if (!needsQuirks)
         return false;
 
-    String host = url.host();
-    String path = url.path();
-    return equalLettersIgnoringASCIICase(host, "docs.google.com");
+    return equalLettersIgnoringASCIICase(url.host(), "docs.google.com");
 }
 
 static bool needsPlainTextQuirk(bool needsQuirks, const URL& url)
@@ -4858,7 +4856,7 @@ static bool needsPlainTextQuirk(bool needsQuirks, const URL& url)
     if (!needsQuirks)
         return false;
 
-    String host = url.host();
+    auto host = url.host();
 
     if (equalLettersIgnoringASCIICase(host, "twitter.com"))
         return true;
@@ -5431,8 +5429,8 @@ void WebPage::determinePrimarySnapshottedPlugIn()
 
     LOG(Plugins, "Primary Plug-In Detection: success - found a candidate plug-in - inform it.");
     m_didFindPrimarySnapshottedPlugin = true;
-    m_primaryPlugInPageOrigin = m_page->mainFrame().document()->baseURL().host();
-    m_primaryPlugInOrigin = candidatePlugIn->loadedUrl().host();
+    m_primaryPlugInPageOrigin = m_page->mainFrame().document()->baseURL().host().toString();
+    m_primaryPlugInOrigin = candidatePlugIn->loadedUrl().host().toString();
     m_primaryPlugInMimeType = candidatePlugIn->serviceType();
 
     candidatePlugIn->setIsPrimarySnapshottedPlugIn(true);

@@ -36,7 +36,7 @@ namespace WebCore {
 
 static bool isGoogle(const URL& url)
 {
-    String baseDomain = topPrivatelyControlledDomain(url.host());
+    String baseDomain = topPrivatelyControlledDomain(url.host().toString());
 
     // Our Google UA is *very* complicated to get right. Read
     // https://webkit.org/b/142074 carefully before changing. Test that Earth
@@ -60,7 +60,7 @@ static bool isGoogle(const URL& url)
 // that works in Chrome that WebKit cannot handle. Prefer other quirks instead.
 static bool urlRequiresChromeBrowser(const URL& url)
 {
-    String baseDomain = topPrivatelyControlledDomain(url.host());
+    String baseDomain = topPrivatelyControlledDomain(url.host().toString());
 
     // Needed for fonts on many sites to work with WebKit.
     // https://bugs.webkit.org/show_bug.cgi?id=147296
@@ -78,7 +78,7 @@ static bool urlRequiresChromeBrowser(const URL& url)
 
 static bool urlRequiresMacintoshPlatform(const URL& url)
 {
-    String domain = url.host();
+    String domain = url.host().toString();
     String baseDomain = topPrivatelyControlledDomain(domain);
 
     // At least finance.yahoo.com displays a mobile version with WebKitGTK+'s standard user agent.

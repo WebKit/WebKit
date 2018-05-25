@@ -155,10 +155,10 @@ StringView URL::protocol() const
     return StringView(m_string).substring(0, m_schemeEnd);
 }
 
-String URL::host() const
+StringView URL::host() const
 {
     unsigned start = hostStart();
-    return m_string.substring(start, m_hostEnd - start);
+    return StringView(m_string).substring(start, m_hostEnd - start);
 }
 
 std::optional<uint16_t> URL::port() const
@@ -180,8 +180,8 @@ std::optional<uint16_t> URL::port() const
 String URL::hostAndPort() const
 {
     if (auto port = this->port())
-        return host() + ':' + String::number(port.value());
-    return host();
+        return makeString(host(), ':', String::number(port.value()));
+    return host().toString();
 }
 
 String URL::protocolHostAndPort() const
@@ -796,7 +796,7 @@ bool URL::isMatchingDomain(const String& domain) const
     if (!host.endsWith(domain))
         return false;
 
-    return host.length() == domain.length() || host.characterAt(host.length() - domain.length() - 1) == '.';
+    return host.length() == domain.length() || host[host.length() - domain.length() - 1] == '.';
 }
 
 String encodeWithURLEscapeSequences(const String& input)

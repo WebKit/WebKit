@@ -1,3 +1,32 @@
+2018-05-25  Alex Christensen  <achristensen@webkit.org>
+
+        URL::host should return a StringView to reduce allocations
+        https://bugs.webkit.org/show_bug.cgi?id=185986
+
+        Reviewed by Geoff Garen.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::fetchDiskCacheEntries):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::areFrameAncestorsSameSite):
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::overrideSystemProxies):
+        * Shared/API/APIURL.h:
+        (API::URL::host const):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::addSingleCookie):
+        (WebKit::WebAutomationSession::deleteAllCookies):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pluginDidReceiveUserInteraction):
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp:
+        (WebKit::WebPluginInfoProvider::populatePluginCache):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::needsHiddenContentEditableQuirk):
+        (WebKit::needsPlainTextQuirk):
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn):
+
 2018-05-25  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.21.2 release.

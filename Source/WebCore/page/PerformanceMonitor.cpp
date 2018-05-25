@@ -148,7 +148,7 @@ static void reportPageOverPostLoadResourceThreshold(Page& page, ReportingReason 
     if (!document)
         return;
 
-    String domain = topPrivatelyControlledDomain(document->url().host());
+    String domain = topPrivatelyControlledDomain(document->url().host().toString());
     if (domain.isEmpty())
         return;
 

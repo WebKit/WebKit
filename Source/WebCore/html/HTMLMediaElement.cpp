@@ -7461,7 +7461,7 @@ String HTMLMediaElement::mediaSessionTitle() const
     if (!title.isEmpty())
         return title;
 
-    title = m_currentSrc.host();
+    title = m_currentSrc.host().toString();
 #if PLATFORM(MAC) || PLATFORM(IOS)
     if (!title.isEmpty())
         title = decodeHostName(title);
@@ -7524,7 +7524,7 @@ static bool needsSeekingSupportQuirk(Document& document)
     if (!document.settings().needsSiteSpecificQuirks())
         return false;
 
-    String host = document.topDocument().url().host();
+    auto host = document.topDocument().url().host();
     return equalLettersIgnoringASCIICase(host, "netflix.com") || host.endsWithIgnoringASCIICase(".netflix.com");
 }
 

@@ -435,7 +435,7 @@ void HTMLPlugInImageElement::restartSimilarPlugIns()
     // Restart any other snapshotted plugins in the page with the same origin. Note that they
     // may be in different frames, so traverse from the top of the document.
 
-    String plugInOrigin = m_loadedUrl.host();
+    auto plugInOrigin = m_loadedUrl.host();
     String mimeType = serviceType();
     Vector<Ref<HTMLPlugInImageElement>> similarPlugins;
 
@@ -469,9 +469,9 @@ void HTMLPlugInImageElement::userDidClickSnapshot(MouseEvent& event, bool forwar
     if (forwardEvent)
         m_pendingClickEventFromSnapshot = &event;
 
-    String plugInOrigin = m_loadedUrl.host();
+    auto plugInOrigin = m_loadedUrl.host();
     if (document().page() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(document().page()->mainFrame().document()->baseURL().protocol().toStringWithoutCopying()) && document().page()->settings().autostartOriginPlugInSnapshottingEnabled())
-        document().page()->plugInClient()->didStartFromOrigin(document().page()->mainFrame().document()->baseURL().host(), plugInOrigin, serviceType(), document().page()->sessionID());
+        document().page()->plugInClient()->didStartFromOrigin(document().page()->mainFrame().document()->baseURL().host().toString(), plugInOrigin.toString(), serviceType(), document().page()->sessionID());
 
     LOG(Plugins, "%p User clicked on snapshotted plug-in. Restart.", this);
     restartSnapshottedPlugIn();
@@ -675,7 +675,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const URL& url)
         return;
     }
 
-    if (document().page()->settings().autostartOriginPlugInSnapshottingEnabled() && document().page()->plugInClient() && document().page()->plugInClient()->shouldAutoStartFromOrigin(document().page()->mainFrame().document()->baseURL().host(), url.host(), serviceType())) {
+    if (document().page()->settings().autostartOriginPlugInSnapshottingEnabled() && document().page()->plugInClient() && document().page()->plugInClient()->shouldAutoStartFromOrigin(document().page()->mainFrame().document()->baseURL().host().toString(), url.host().toString(), serviceType())) {
         LOG(Plugins, "%p Plug-in from (%s, %s) is marked to auto-start, set to play", this, document().page()->mainFrame().document()->baseURL().host().utf8().data(), url.host().utf8().data());
         m_snapshotDecision = NeverSnapshot;
         return;

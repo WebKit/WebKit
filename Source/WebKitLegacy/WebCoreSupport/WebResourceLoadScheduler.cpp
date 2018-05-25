@@ -66,7 +66,7 @@ WebResourceLoadScheduler::HostInformation* WebResourceLoadScheduler::hostForURL(
         return m_nonHTTPProtocolHost;
 
     m_hosts.checkConsistency();
-    String hostName = url.host();
+    String hostName = url.host().toString();
     HostInformation* host = m_hosts.get(hostName);
     if (!host && createHostPolicy == CreateIfNotFound) {
         host = new HostInformation(hostName, maxRequestsInFlightPerHost);

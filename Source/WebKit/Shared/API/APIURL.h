@@ -64,7 +64,7 @@ public:
     WTF::String host() const
     {
         parseURLIfNecessary();
-        return m_parsedURL->isValid() ? m_parsedURL->host() : WTF::String();
+        return m_parsedURL->isValid() ? m_parsedURL->host().toString() : WTF::String();
     }
 
     WTF::String protocol() const

@@ -83,12 +83,12 @@ public:
         SecItemDelete((__bridge CFDictionaryRef) @{
             (id)kSecClass: (id)kSecClassKey,
             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
-            (id)kSecAttrLabel: WebCore::keygenKeychainItemName(url.host()),
+            (id)kSecAttrLabel: WebCore::keygenKeychainItemName(url.host().toString()),
         });
         SecItemDelete((__bridge CFDictionaryRef) @{
             (id)kSecClass: (id)kSecClassKey,
             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPublic,
-            (id)kSecAttrLabel: WebCore::keygenKeychainItemName(url.host()),
+            (id)kSecAttrLabel: WebCore::keygenKeychainItemName(url.host().toString()),
         });
     }
 };

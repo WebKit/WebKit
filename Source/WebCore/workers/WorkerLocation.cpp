@@ -48,7 +48,7 @@ String WorkerLocation::host() const
 
 String WorkerLocation::hostname() const
 {
-    return m_url.host();
+    return m_url.host().toString();
 }
 
 String WorkerLocation::port() const

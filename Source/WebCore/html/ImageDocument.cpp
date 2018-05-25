@@ -168,7 +168,7 @@ void ImageDocument::finishedParsing()
             // back on the hostname if there is no path.
             String name = decodeURLEscapeSequences(url().lastPathComponent());
             if (name.isEmpty())
-                name = url().host();
+                name = url().host().toString();
             setTitle(imageTitle(name, size));
         }
 

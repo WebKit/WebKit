@@ -50,7 +50,7 @@ struct SecurityOriginData {
     {
         return SecurityOriginData {
             url.protocol().isNull() ? emptyString() : url.protocol().toString().convertToASCIILowercase(),
-            url.host().isNull() ? emptyString() : url.host().convertToASCIILowercase(),
+            url.host().isNull() ? emptyString() : url.host().toString().convertToASCIILowercase(),
             url.port()
         };
     }

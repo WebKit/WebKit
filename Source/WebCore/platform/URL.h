@@ -104,7 +104,7 @@ public:
     WEBCORE_EXPORT String stringCenterEllipsizedToLength(unsigned length = 1024) const;
 
     WEBCORE_EXPORT StringView protocol() const;
-    WEBCORE_EXPORT String host() const;
+    WEBCORE_EXPORT StringView host() const;
     WEBCORE_EXPORT std::optional<uint16_t> port() const;
     WEBCORE_EXPORT String hostAndPort() const;
     WEBCORE_EXPORT String protocolHostAndPort() const;

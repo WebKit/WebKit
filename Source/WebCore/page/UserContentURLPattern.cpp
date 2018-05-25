@@ -125,7 +125,7 @@ bool UserContentURLPattern::matches(const URL& test) const
 
 bool UserContentURLPattern::matchesHost(const URL& test) const
 {
-    const String& host = test.host();
+    auto host = test.host();
     if (equalIgnoringASCIICase(host, m_host))
         return true;
 

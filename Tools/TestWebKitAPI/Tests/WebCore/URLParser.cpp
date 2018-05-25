@@ -64,7 +64,8 @@ struct ExpectedParts {
     }
 };
 
-static bool eq(const String& s1, const String& s2)
+template<typename T, typename U>
+bool eq(T&& s1, U&& s2)
 {
     EXPECT_STREQ(s1.utf8().data(), s2.utf8().data());
     return s1.utf8() == s2.utf8();
@@ -90,7 +91,7 @@ static void checkURL(const String& urlString, const ExpectedParts& parts, TestTa
 {
     auto url = URL(URL(), urlString);
     
-    EXPECT_TRUE(eq(parts.protocol, url.protocol().toString()));
+    EXPECT_TRUE(eq(parts.protocol, url.protocol()));
     EXPECT_TRUE(eq(parts.user, url.user()));
     EXPECT_TRUE(eq(parts.password, url.pass()));
     EXPECT_TRUE(eq(parts.host, url.host()));
@@ -117,7 +118,7 @@ static void checkRelativeURL(const String& urlString, const String& baseURLStrin
 {
     auto url = URL(URL(URL(), baseURLString), urlString);
     
-    EXPECT_TRUE(eq(parts.protocol, url.protocol().toString()));
+    EXPECT_TRUE(eq(parts.protocol, url.protocol()));
     EXPECT_TRUE(eq(parts.user, url.user()));
     EXPECT_TRUE(eq(parts.password, url.pass()));
     EXPECT_TRUE(eq(parts.host, url.host()));
@@ -146,7 +147,7 @@ static void checkURLDifferences(const String& urlString, const ExpectedParts& pa
     UNUSED_PARAM(partsOld); // FIXME: Remove all the old expected parts.
     auto url = URL(URL(), urlString);
     
-    EXPECT_TRUE(eq(partsNew.protocol, url.protocol().toString()));
+    EXPECT_TRUE(eq(partsNew.protocol, url.protocol()));
     EXPECT_TRUE(eq(partsNew.user, url.user()));
     EXPECT_TRUE(eq(partsNew.password, url.pass()));
     EXPECT_TRUE(eq(partsNew.host, url.host()));
@@ -175,7 +176,7 @@ static void checkRelativeURLDifferences(const String& urlString, const String& b
     UNUSED_PARAM(partsOld); // FIXME: Remove all the old expected parts.
     auto url = URL(URL(URL(), baseURLString), urlString);
     
-    EXPECT_TRUE(eq(partsNew.protocol, url.protocol().toString()));
+    EXPECT_TRUE(eq(partsNew.protocol, url.protocol()));
     EXPECT_TRUE(eq(partsNew.user, url.user()));
     EXPECT_TRUE(eq(partsNew.password, url.pass()));
     EXPECT_TRUE(eq(partsNew.host, url.host()));
@@ -213,7 +214,7 @@ static void checkURL(const String& urlString, const TextEncoding& encoding, cons
 {
     URLParser parser(urlString, { }, encoding);
     auto url = parser.result();
-    EXPECT_TRUE(eq(parts.protocol, url.protocol().toString()));
+    EXPECT_TRUE(eq(parts.protocol, url.protocol()));
     EXPECT_TRUE(eq(parts.user, url.user()));
     EXPECT_TRUE(eq(parts.password, url.pass()));
     EXPECT_TRUE(eq(parts.host, url.host()));
@@ -239,7 +240,7 @@ static void checkURL(const String& urlString, const String& baseURLString, const
     URLParser baseParser(baseURLString, { }, encoding);
     URLParser parser(urlString, baseParser.result(), encoding);
     auto url = parser.result();
-    EXPECT_TRUE(eq(parts.protocol, url.protocol().toString()));
+    EXPECT_TRUE(eq(parts.protocol, url.protocol()));
     EXPECT_TRUE(eq(parts.user, url.user()));
     EXPECT_TRUE(eq(parts.password, url.pass()));
     EXPECT_TRUE(eq(parts.host, url.host()));

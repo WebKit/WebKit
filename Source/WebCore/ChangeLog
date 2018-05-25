@@ -1,3 +1,79 @@
+2018-05-25  Alex Christensen  <achristensen@webkit.org>
+
+        URL::host should return a StringView to reduce allocations
+        https://bugs.webkit.org/show_bug.cgi?id=185986
+
+        Reviewed by Geoff Garen.
+
+        No change in behaviour.  Just fewer allocations.
+
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::isYouTubeURL):
+        (WebCore::processAndCreateYouTubeURL):
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::hostName):
+        (WebCore::WebSocketHandshake::host const):
+        * contentextensions/ContentExtension.cpp:
+        (WebCore::ContentExtensions::ContentExtension::populateConditionCacheIfNeeded):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAttribute):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaSessionTitle const):
+        (WebCore::needsSeekingSupportQuirk):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::restartSimilarPlugIns):
+        (WebCore::HTMLPlugInImageElement::userDidClickSnapshot):
+        (WebCore::HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::finishedParsing):
+        * html/URLUtils.h:
+        (WebCore::URLUtils<T>::hostname const):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setFirstPartyForCookies):
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::loadLink):
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::ResourceLoadStatistics::primaryDomain):
+        * loader/mac/LoaderNSURLExtras.mm:
+        (suggestedFilenameWithMIMEType):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::mouseDidMoveOverElement):
+        * page/Location.cpp:
+        (WebCore::Location::hostname const):
+        * page/Page.cpp:
+        (WebCore::Page::mainFrameLoadStarted):
+        * page/PerformanceMonitor.cpp:
+        (WebCore::reportPageOverPostLoadResourceThreshold):
+        * page/SecurityOrigin.cpp:
+        (WebCore::isLoopbackIPAddress):
+        (WebCore::shouldTreatAsPotentiallyTrustworthy):
+        (WebCore::SecurityOrigin::isLocalHostOrLoopbackIPAddress):
+        * page/SecurityOrigin.h:
+        * page/SecurityOriginData.h:
+        (WebCore::SecurityOriginData::fromURL):
+        * page/UserContentURLPattern.cpp:
+        (WebCore::UserContentURLPattern::matchesHost const):
+        * page/csp/ContentSecurityPolicySource.cpp:
+        (WebCore::ContentSecurityPolicySource::hostMatches const):
+        * platform/PublicSuffix.h:
+        * platform/URL.cpp:
+        (WebCore::URL::host const):
+        (WebCore::URL::hostAndPort const):
+        (WebCore::URL::isMatchingDomain const):
+        * platform/URL.h:
+        * platform/mac/SSLKeyGeneratorMac.mm:
+        (WebCore::signedPublicKeyAndChallengeString):
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::registrableDomainsAreEqual):
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::getPartitioningDomain):
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::createStreams):
+        * workers/WorkerLocation.cpp:
+        (WebCore::WorkerLocation::hostname const):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::performGetOriginsWithRegistrationsCallbacks):
+
 2018-05-24  Dean Jackson  <dino@apple.com>
 
         Need to provide a way to feature detect support for system preview

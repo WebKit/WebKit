@@ -59,7 +59,7 @@ TEST_F(URLTest, URLConstructorConstChar)
     EXPECT_TRUE(kurl.isValid());
 
     EXPECT_EQ(kurl.protocol() == "http", true);
-    EXPECT_EQ(String("www.example.com"), kurl.host());
+    EXPECT_EQ(String("www.example.com"), kurl.host().toString());
     EXPECT_TRUE(!!kurl.port());
     EXPECT_EQ(8080, kurl.port().value());
     EXPECT_EQ(String("username"), kurl.user());

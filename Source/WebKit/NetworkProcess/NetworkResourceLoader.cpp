@@ -364,7 +364,7 @@ void NetworkResourceLoader::abort()
 static bool areFrameAncestorsSameSite(const ResourceResponse& response, const Vector<RefPtr<SecurityOrigin>>& frameAncestorOrigins)
 {
 #if ENABLE(PUBLIC_SUFFIX_LIST)
-    auto responsePartition = ResourceRequest::partitionName(response.url().host());
+    auto responsePartition = ResourceRequest::partitionName(response.url().host().toString());
     return frameAncestorOrigins.findMatching([&](const auto& item) {
         return item->isUnique() || ResourceRequest::partitionName(item->host()) != responsePartition;
     }) == notFound;

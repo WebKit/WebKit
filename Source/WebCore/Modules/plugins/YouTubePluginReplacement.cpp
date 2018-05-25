@@ -176,7 +176,7 @@ static YouTubePluginReplacement::KeyValueMap queryKeysAndValues(const String& qu
     
 static bool isYouTubeURL(const URL& url)
 {
-    String hostName = url.host();
+    auto hostName = url.host();
     return equalLettersIgnoringASCIICase(hostName, "m.youtube.com")
         || equalLettersIgnoringASCIICase(hostName, "youtu.be")
         || equalLettersIgnoringASCIICase(hostName, "www.youtube.com")
@@ -203,7 +203,7 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
     if (!isYouTubeURL(url))
         return URL();
 
-    String hostName = url.host();
+    auto hostName = url.host();
     bool isYouTubeMobileWebAppURL = equalLettersIgnoringASCIICase(hostName, "m.youtube.com");
     isYouTubeShortenedURL = equalLettersIgnoringASCIICase(hostName, "youtu.be");
 

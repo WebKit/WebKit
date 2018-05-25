@@ -277,7 +277,7 @@ std::optional<ResourceError> SoupNetworkSession::checkTLSErrors(const URL& reque
     if (!tlsErrors)
         return std::nullopt;
 
-    auto it = clientCertificates().find(requestURL.host());
+    auto it = clientCertificates().find(requestURL.host().toString());
     if (it != clientCertificates().end() && it->value.contains(certificate))
         return std::nullopt;
 

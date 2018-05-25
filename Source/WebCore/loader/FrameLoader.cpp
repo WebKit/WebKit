@@ -1076,7 +1076,7 @@ void FrameLoader::setFirstPartyForCookies(const URL& url)
     for (Frame* frame = &m_frame; frame; frame = frame->tree().traverseNext(&m_frame))
         frame->document()->setFirstPartyForCookies(url);
 
-    String registrableDomain = ResourceRequest::partitionName(url.host());
+    String registrableDomain = ResourceRequest::partitionName(url.host().toString());
     for (Frame* frame = &m_frame; frame; frame = frame->tree().traverseNext(&m_frame)) {
         if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(frame->document()->url()) || registrableDomainsAreEqual(frame->document()->url(), registrableDomain))
             frame->document()->setFirstPartyForSameSiteCookies(url);

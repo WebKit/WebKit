@@ -866,7 +866,7 @@ void SWServer::performGetOriginsWithRegistrationsCallbacks()
     HashSet<SecurityOriginData> originsWithRegistrations;
     for (auto& key : m_registrations.keys()) {
         originsWithRegistrations.add(key.topOrigin());
-        originsWithRegistrations.add(SecurityOriginData { key.scope().protocol().toString(), key.scope().host(), key.scope().port() });
+        originsWithRegistrations.add(SecurityOriginData { key.scope().protocol().toString(), key.scope().host().toString(), key.scope().port() });
     }
 
     auto callbacks = WTFMove(m_getOriginsWithRegistrationsCallbacks);

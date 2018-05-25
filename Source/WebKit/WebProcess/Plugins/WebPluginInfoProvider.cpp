@@ -156,7 +156,7 @@ void WebPluginInfoProvider::populatePluginCache(const WebCore::Page& page)
     }
 
 #if PLATFORM(MAC)
-    String pageHost = page.mainFrame().loader().documentLoader()->responseURL().host();
+    String pageHost = page.mainFrame().loader().documentLoader()->responseURL().host().toString();
     if (pageHost.isNull())
         return;
     for (auto& info : m_cachedPlugins) {

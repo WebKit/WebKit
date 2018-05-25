@@ -48,7 +48,7 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
 
     if ([filename length] == 0 || [lastPathComponent isEqualToString:@"/"]) {
         // lastPathComponent is no good, try the host.
-        NSString *host = URL(url).host();
+        NSString *host = URL(url).host().toString();
         filename = filenameByFixingIllegalCharacters(host);
         if ([filename length] == 0) {
             // Can't make a filename using this URL, use "unknown".

@@ -2104,7 +2104,7 @@ void Page::mainFrameLoadStarted(const URL& destinationURL, FrameLoadType type)
 {
     String domain;
 #if ENABLE(PUBLIC_SUFFIX_LIST)
-    domain = topPrivatelyControlledDomain(destinationURL.host());
+    domain = topPrivatelyControlledDomain(destinationURL.host().toString());
 #else
     UNUSED_PARAM(destinationURL);
 #endif

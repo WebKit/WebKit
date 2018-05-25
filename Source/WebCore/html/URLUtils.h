@@ -186,7 +186,7 @@ void URLUtils<T>::setHost(const String& value)
 template <typename T>
 String URLUtils<T>::hostname() const
 {
-    return href().host();
+    return href().host().toString();
 }
 
 template <typename T>

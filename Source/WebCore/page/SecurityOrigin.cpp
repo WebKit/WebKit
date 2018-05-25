@@ -99,7 +99,7 @@ static bool shouldTreatAsUniqueOrigin(const URL& url)
     return false;
 }
 
-static bool isLoopbackIPAddress(const String& host)
+static bool isLoopbackIPAddress(StringView host)
 {
     // The IPv6 loopback address is 0:0:0:0:0:0:0:1, which compresses to ::1.
     if (host == "[::1]")
@@ -137,7 +137,7 @@ static bool shouldTreatAsPotentiallyTrustworthy(const String& protocol, const St
 
 bool shouldTreatAsPotentiallyTrustworthy(const URL& url)
 {
-    return shouldTreatAsPotentiallyTrustworthy(url.protocol().toStringWithoutCopying(), url.host());
+    return shouldTreatAsPotentiallyTrustworthy(url.protocol().toStringWithoutCopying(), url.host().toStringWithoutCopying());
 }
 
 SecurityOrigin::SecurityOrigin(const URL& url)
@@ -548,7 +548,7 @@ bool SecurityOrigin::isSameSchemeHostPort(const SecurityOrigin& other) const
     return true;
 }
 
-bool SecurityOrigin::isLocalHostOrLoopbackIPAddress(const String& host)
+bool SecurityOrigin::isLocalHostOrLoopbackIPAddress(StringView host)
 {
     if (isLoopbackIPAddress(host))
         return true;

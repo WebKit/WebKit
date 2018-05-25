@@ -198,11 +198,11 @@ String NetworkStorageSession::cookieStoragePartition(const ResourceRequest& requ
 static inline String getPartitioningDomain(const URL& url) 
 {
 #if ENABLE(PUBLIC_SUFFIX_LIST)
-    auto domain = topPrivatelyControlledDomain(url.host());
+    auto domain = topPrivatelyControlledDomain(url.host().toString());
     if (domain.isEmpty())
-        domain = url.host();
+        domain = url.host().toString();
 #else
-    auto domain = url.host();
+    auto domain = url.host().toString();
 #endif
     return domain;
 }
