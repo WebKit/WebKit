@@ -18,6 +18,7 @@ function wait() {
     let now = performance.now();
     while (now === performance.now())
         continue;
+    assert(() => now < performance.now());
 }
 
 let observer = new PerformanceObserver((list) => {
@@ -84,6 +85,7 @@ performance.measure("measure-matching-mark2-1", "mark2");
 wait(); // Ensure mark2 !== mark3 startTime by making sure performance.now advances.
 const mark3Time = performance.now();
 performance.mark("mark3");
+assert(() => mark3Time >= mark2Time);
 assert(() => mark3Time > mark2Time);
 performance.measure("measure3");
 performance.measure("measure-matching-mark2-2", "mark2");

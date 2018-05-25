@@ -1,3 +1,14 @@
+2018-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: performance-api/performance-observer-entry-sort.html is flaky
+        ​https://bugs.webkit.org/show_bug.cgi?id=185385
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        Add back some assertions in r232033 reverted in r232166.
+
+        * performance-api/performance-observer-entry-sort.html:
+
 2018-05-24  David Fenton  <david_fenton@apple.com>
 
         media/video-play-require-user-gesture.html and media/video-play-audio-require-user-gesture.html are flaky failures
