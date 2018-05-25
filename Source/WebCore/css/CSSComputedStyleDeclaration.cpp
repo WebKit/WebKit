@@ -1780,15 +1780,15 @@ static Ref<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecoration)
 static Ref<CSSValue> renderTextDecorationStyleFlagsToCSSValue(TextDecorationStyle textDecorationStyle)
 {
     switch (textDecorationStyle) {
-    case TextDecorationStyleSolid:
+    case TextDecorationStyle::Solid:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueSolid);
-    case TextDecorationStyleDouble:
+    case TextDecorationStyle::Double:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueDouble);
-    case TextDecorationStyleDotted:
+    case TextDecorationStyle::Dotted:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueDotted);
-    case TextDecorationStyleDashed:
+    case TextDecorationStyle::Dashed:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueDashed);
-    case TextDecorationStyleWavy:
+    case TextDecorationStyle::Wavy:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueWavy);
     }
 
@@ -2272,33 +2272,33 @@ static bool positionOffsetValueIsRendererDependent(const RenderStyle* style, Ren
 
 static CSSValueID convertToPageBreak(BreakBetween value)
 {
-    if (value == PageBreakBetween || value == LeftPageBreakBetween || value == RightPageBreakBetween
-        || value == RectoPageBreakBetween || value == VersoPageBreakBetween)
+    if (value == BreakBetween::Page || value == BreakBetween::LeftPage || value == BreakBetween::RightPage
+        || value == BreakBetween::RectoPage || value == BreakBetween::VersoPage)
         return CSSValueAlways; // CSS 2.1 allows us to map these to always.
-    if (value == AvoidBreakBetween || value == AvoidPageBreakBetween)
+    if (value == BreakBetween::Avoid || value == BreakBetween::AvoidPage)
         return CSSValueAvoid;
     return CSSValueAuto;
 }
 
 static CSSValueID convertToColumnBreak(BreakBetween value)
 {
-    if (value == ColumnBreakBetween)
+    if (value == BreakBetween::Column)
         return CSSValueAlways;
-    if (value == AvoidBreakBetween || value == AvoidColumnBreakBetween)
+    if (value == BreakBetween::Avoid || value == BreakBetween::AvoidColumn)
         return CSSValueAvoid;
     return CSSValueAuto;
 }
 
 static CSSValueID convertToPageBreak(BreakInside value)
 {
-    if (value == AvoidBreakInside || value == AvoidPageBreakInside)
+    if (value == BreakInside::Avoid || value == BreakInside::AvoidPage)
         return CSSValueAvoid;
     return CSSValueAuto;
 }
 
 static CSSValueID convertToColumnBreak(BreakInside value)
 {
-    if (value == AvoidBreakInside || value == AvoidColumnBreakInside)
+    if (value == BreakInside::Avoid || value == BreakInside::AvoidColumn)
         return CSSValueAvoid;
     return CSSValueAuto;
 }
@@ -2370,20 +2370,19 @@ Element* ComputedStyleExtractor::styledElement() const
     if (!m_element)
         return nullptr;
     PseudoElement* pseudoElement;
-    if (m_pseudoElementSpecifier == BEFORE && (pseudoElement = m_element->beforePseudoElement()))
+    if (m_pseudoElementSpecifier == PseudoId::Before && (pseudoElement = m_element->beforePseudoElement()))
         return pseudoElement;
-    if (m_pseudoElementSpecifier == AFTER && (pseudoElement = m_element->afterPseudoElement()))
+    if (m_pseudoElementSpecifier == PseudoId::After && (pseudoElement = m_element->afterPseudoElement()))
         return pseudoElement;
     return m_element.get();
 }
-
 
 RenderElement* ComputedStyleExtractor::styledRenderer() const
 {
     auto* element = styledElement();
     if (!element)
         return nullptr;
-    if (m_pseudoElementSpecifier != NOPSEUDO && element == m_element.get())
+    if (m_pseudoElementSpecifier != PseudoId::None && element == m_element.get())
         return nullptr;
     if (element->hasDisplayContents())
         return nullptr;
@@ -2478,14 +2477,14 @@ static inline const RenderStyle* computeRenderStyleForProperty(Element& element,
             ownedStyle = timeline->animatedStyleForRenderer(*renderer);
         else
             ownedStyle = renderer->animation().animatedStyleForRenderer(*renderer);
-        if (pseudoElementSpecifier && !element.isPseudoElement()) {
+        if (pseudoElementSpecifier != PseudoId::None && !element.isPseudoElement()) {
             // FIXME: This cached pseudo style will only exist if the animation has been run at least once.
             return ownedStyle->getCachedPseudoStyle(pseudoElementSpecifier);
         }
         return ownedStyle.get();
     }
 
-    return element.computedStyle(element.isPseudoElement() ? NOPSEUDO : pseudoElementSpecifier);
+    return element.computedStyle(element.isPseudoElement() ? PseudoId::None : pseudoElementSpecifier);
 }
 
 static Ref<CSSValue> shapePropertyValue(const RenderStyle& style, const ShapeValue* shapeValue)
@@ -2506,7 +2505,7 @@ static Ref<CSSValue> shapePropertyValue(const RenderStyle& style, const ShapeVal
 
     auto list = CSSValueList::createSpaceSeparated();
     list->append(valueForBasicShape(style, *shapeValue->shape()));
-    if (shapeValue->cssBox() != BoxMissing)
+    if (shapeValue->cssBox() != CSSBoxType::BoxMissing)
         list->append(CSSValuePool::singleton().createValue(shapeValue->cssBox()));
     return WTFMove(list);
 }
@@ -3016,7 +3015,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
         case CSSPropertyOrder:
             return cssValuePool.createValue(style.order(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyFloat:
-            if (style.display() != NONE && style.hasOutOfFlowPosition())
+            if (style.display() != DisplayType::None && style.hasOutOfFlowPosition())
                 return cssValuePool.createIdentifierValue(CSSValueNone);
             return cssValuePool.createValue(style.floating());
         case CSSPropertyFont: {
@@ -3145,7 +3144,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
                 return CSSPrimitiveValue::createIdentifier(CSSValueNoLimit);
             return CSSPrimitiveValue::create(style.hyphenationLimitLines(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitBorderFit:
-            if (style.borderFit() == BorderFitBorder)
+            if (style.borderFit() == BorderFit::Border)
                 return cssValuePool.createIdentifierValue(CSSValueBorder);
             return cssValuePool.createIdentifierValue(CSSValueLines);
 #if ENABLE(CSS_IMAGE_ORIENTATION)
@@ -3200,7 +3199,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
             float value;
             if (marginRight.isPercentOrCalculated()) {
                 // RenderBox gives a marginRight() that is the distance between the right-edge of the child box
-                // and the right-edge of the containing box, when display == BLOCK. Let's calculate the absolute
+                // and the right-edge of the containing box, when display == DisplayType::Block. Let's calculate the absolute
                 // value of the specified margin-right % instead of relying on RenderBox's marginRight() value.
                 value = minimumValueForLength(marginRight, downcast<RenderBox>(*renderer).containingBlockLogicalWidthForContent());
             } else
@@ -3345,20 +3344,20 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
             return renderEmphasisPositionFlagsToCSSValue(style.textEmphasisPosition());
         case CSSPropertyWebkitTextEmphasisStyle:
             switch (style.textEmphasisMark()) {
-            case TextEmphasisMarkNone:
+            case TextEmphasisMark::None:
                 return cssValuePool.createIdentifierValue(CSSValueNone);
-            case TextEmphasisMarkCustom:
+            case TextEmphasisMark::Custom:
                 return cssValuePool.createValue(style.textEmphasisCustomMark(), CSSPrimitiveValue::CSS_STRING);
-            case TextEmphasisMarkAuto:
+            case TextEmphasisMark::Auto:
                 ASSERT_NOT_REACHED();
 #if ASSERT_DISABLED
                 FALLTHROUGH;
 #endif
-            case TextEmphasisMarkDot:
-            case TextEmphasisMarkCircle:
-            case TextEmphasisMarkDoubleCircle:
-            case TextEmphasisMarkTriangle:
-            case TextEmphasisMarkSesame:
+            case TextEmphasisMark::Dot:
+            case TextEmphasisMark::Circle:
+            case TextEmphasisMark::DoubleCircle:
+            case TextEmphasisMark::Triangle:
+            case TextEmphasisMark::Sesame:
                 auto list = CSSValueList::createSpaceSeparated();
                 list->append(cssValuePool.createValue(style.textEmphasisFill()));
                 list->append(cssValuePool.createValue(style.textEmphasisMark()));
@@ -3560,16 +3559,16 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
             if (t) {
                 for (size_t i = 0; i < t->size(); ++i) {
                     switch (t->animation(i).fillMode()) {
-                    case AnimationFillModeNone:
+                    case AnimationFillMode::None:
                         list->append(cssValuePool.createIdentifierValue(CSSValueNone));
                         break;
-                    case AnimationFillModeForwards:
+                    case AnimationFillMode::Forwards:
                         list->append(cssValuePool.createIdentifierValue(CSSValueForwards));
                         break;
-                    case AnimationFillModeBackwards:
+                    case AnimationFillMode::Backwards:
                         list->append(cssValuePool.createIdentifierValue(CSSValueBackwards));
                         break;
-                    case AnimationFillModeBoth:
+                    case AnimationFillMode::Both:
                         list->append(cssValuePool.createIdentifierValue(CSSValueBoth));
                         break;
                     }
@@ -3608,11 +3607,14 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
             const AnimationList* t = style.animations();
             if (t) {
                 for (size_t i = 0; i < t->size(); ++i) {
-                    int prop = t->animation(i).playState();
-                    if (prop == AnimPlayStatePlaying)
+                    switch (t->animation(i).playState()) {
+                    case AnimationPlayState::Playing:
                         list->append(cssValuePool.createIdentifierValue(CSSValueRunning));
-                    else
+                        break;
+                    case AnimationPlayState::Paused:
                         list->append(cssValuePool.createIdentifierValue(CSSValuePaused));
+                        break;
+                    }
                 }
             } else
                 list->append(cssValuePool.createIdentifierValue(CSSValueRunning));
@@ -3705,7 +3707,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
             return WTFMove(list);
         }
         case CSSPropertyWebkitRtlOrdering:
-            return cssValuePool.createIdentifierValue(style.rtlOrdering() ? CSSValueVisual : CSSValueLogical);
+            return cssValuePool.createIdentifierValue(style.rtlOrdering() == Order::Visual ? CSSValueVisual : CSSValueLogical);
 #if ENABLE(TOUCH_EVENTS)
         case CSSPropertyWebkitTapHighlightColor:
             return currentColorOrValidColor(&style, style.tapHighlightColor());
@@ -3833,7 +3835,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
             if (is<ShapeClipPathOperation>(*operation)) {
                 auto& shapeOperation = downcast<ShapeClipPathOperation>(*operation);
                 list->append(valueForBasicShape(style, shapeOperation.basicShape()));
-                if (shapeOperation.referenceBox() != BoxMissing)
+                if (shapeOperation.referenceBox() != CSSBoxType::BoxMissing)
                     list->append(cssValuePool.createValue(shapeOperation.referenceBox()));
             }
             if (is<BoxClipPathOperation>(*operation))

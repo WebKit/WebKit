@@ -86,15 +86,40 @@ enum InterpolationQuality {
     InterpolationHigh
 };
 
-enum LineCap { ButtCap, RoundCap, SquareCap };
+enum LineCap {
+    ButtCap,
+    RoundCap,
+    SquareCap
+};
 
-enum LineJoin { MiterJoin, RoundJoin, BevelJoin };
+enum LineJoin {
+    MiterJoin,
+    RoundJoin,
+    BevelJoin
+};
 
-enum HorizontalAlignment { AlignLeft, AlignRight, AlignHCenter };
+enum HorizontalAlignment {
+    AlignLeft,
+    AlignRight,
+    AlignHCenter
+};
 
-enum TextBaseline { AlphabeticTextBaseline, TopTextBaseline, MiddleTextBaseline, BottomTextBaseline, IdeographicTextBaseline, HangingTextBaseline };
+enum TextBaseline {
+    AlphabeticTextBaseline,
+    TopTextBaseline,
+    MiddleTextBaseline,
+    BottomTextBaseline,
+    IdeographicTextBaseline,
+    HangingTextBaseline
+};
 
-enum TextAlign { StartTextAlign, EndTextAlign, LeftTextAlign, CenterTextAlign, RightTextAlign };
+enum TextAlign {
+    StartTextAlign,
+    EndTextAlign,
+    LeftTextAlign,
+    CenterTextAlign,
+    RightTextAlign
+};
 
 enum RenderingMode {
     Unaccelerated,
@@ -111,12 +136,6 @@ String compositeOperatorName(CompositeOperator, BlendMode);
 String blendModeName(BlendMode);
 bool parseBlendMode(const String&, BlendMode&);
 bool parseCompositeAndBlendOperator(const String&, CompositeOperator&, BlendMode&);
-
-String textAlignName(TextAlign);
-bool parseTextAlign(const String&, TextAlign&);
-
-String textBaselineName(TextBaseline);
-bool parseTextBaseline(const String&, TextBaseline&);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, BlendMode);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, CompositeOperator);

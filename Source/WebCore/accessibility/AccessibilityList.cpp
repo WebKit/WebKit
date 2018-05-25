@@ -163,7 +163,7 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
             
             // Rendered list items always count.
             if (listItem->isListItem()) {
-                if (!hasVisibleMarkers && (listItem->style().listStyleType() != NoneListStyle || listItem->style().listStyleImage() || childHasPseudoVisibleListItemMarkers(listItem)))
+                if (!hasVisibleMarkers && (listItem->style().listStyleType() != ListStyleType::None || listItem->style().listStyleImage() || childHasPseudoVisibleListItemMarkers(listItem)))
                     hasVisibleMarkers = true;
                 listItemCount++;
             } else if (listItem->node() && listItem->node()->hasTagName(liTag)) {

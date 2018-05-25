@@ -86,7 +86,7 @@ static inline RenderSVGResource* requestPaintingResource(OptionSet<RenderSVGReso
         break;
     }
 
-    if (style.insideLink() == InsideVisitedLink) {
+    if (style.insideLink() == InsideLink::InsideVisited) {
         // FIXME: This code doesn't support the uri component of the visited link paint, https://bugs.webkit.org/show_bug.cgi?id=70006
         SVGPaintType visitedPaintType = applyToFill ? svgStyle.visitedLinkFillPaintType() : svgStyle.visitedLinkStrokePaintType();
 

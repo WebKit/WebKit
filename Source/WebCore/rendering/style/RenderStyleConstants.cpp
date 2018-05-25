@@ -30,6 +30,17 @@
 
 namespace WebCore {
 
+TextStream& operator<<(TextStream& ts, Visibility visibility)
+{
+    switch (visibility) {
+    case Visibility::Visible: ts << "visible"; break;
+    case Visibility::Hidden: ts << "hidden"; break;
+    case Visibility::Collapse: ts << "collapse"; break;
+    }
+    
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, ImageRendering imageRendering)
 {
     switch (imageRendering) {
@@ -111,7 +122,7 @@ TextStream& operator<<(TextStream& ts, Edge edge)
 
 bool alwaysPageBreak(BreakBetween between)
 {
-    return between >= PageBreakBetween;
+    return between >= BreakBetween::Page;
 }
 
 const float defaultMiterLimit = 4;

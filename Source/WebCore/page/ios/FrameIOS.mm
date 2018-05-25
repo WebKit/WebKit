@@ -418,7 +418,7 @@ Node* Frame::nodeRespondingToClickEvents(const FloatPoint& viewportLocation, Flo
                 pointerCursorStillValid = false;
 
             // If we haven't reached the body, and we are still paying attention to pointer cursors, and the node has a pointer cursor...
-            if (pointerCursorStillValid && node->renderStyle() && node->renderStyle()->cursor() == CursorPointer)
+            if (pointerCursorStillValid && node->renderStyle() && node->renderStyle()->cursor() == CursorType::Pointer)
                 pointerCursorNode = node;
             // We want the lowest unbroken chain of pointer cursors.
             else if (pointerCursorNode)

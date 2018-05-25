@@ -71,7 +71,7 @@ RenderStyle RenderListItem::computeMarkerStyle() const
     fontDescription.setVariantNumericSpacing(FontVariantNumericSpacing::TabularNumbers);
     parentStyle.setFontDescription(WTFMove(fontDescription));
     parentStyle.fontCascade().update(&document().fontSelector());
-    if (auto markerStyle = getCachedPseudoStyle(MARKER, &parentStyle))
+    if (auto markerStyle = getCachedPseudoStyle(PseudoId::Marker, &parentStyle))
         return RenderStyle::clone(*markerStyle);
     auto markerStyle = RenderStyle::create();
     markerStyle.inheritFrom(parentStyle);

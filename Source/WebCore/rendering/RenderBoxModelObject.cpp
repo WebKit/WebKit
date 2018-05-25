@@ -2580,23 +2580,23 @@ LayoutRect RenderBoxModelObject::localCaretRectForEmptyElement(LayoutUnit width,
     CaretAlignment alignment = alignLeft;
 
     switch (currentStyle.textAlign()) {
-    case LEFT:
-    case WEBKIT_LEFT:
+    case TextAlignMode::Left:
+    case TextAlignMode::WebKitLeft:
         break;
-    case CENTER:
-    case WEBKIT_CENTER:
+    case TextAlignMode::Center:
+    case TextAlignMode::WebKitCenter:
         alignment = alignCenter;
         break;
-    case RIGHT:
-    case WEBKIT_RIGHT:
+    case TextAlignMode::Right:
+    case TextAlignMode::WebKitRight:
         alignment = alignRight;
         break;
-    case JUSTIFY:
-    case TASTART:
+    case TextAlignMode::Justify:
+    case TextAlignMode::Start:
         if (!currentStyle.isLeftToRightDirection())
             alignment = alignRight;
         break;
-    case TAEND:
+    case TextAlignMode::End:
         if (currentStyle.isLeftToRightDirection())
             alignment = alignRight;
         break;

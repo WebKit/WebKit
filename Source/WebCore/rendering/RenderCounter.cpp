@@ -140,14 +140,14 @@ static std::optional<CounterPlan> planCounter(RenderElement& renderer, const Ato
     auto& style = renderer.style();
 
     switch (style.styleType()) {
-    case NOPSEUDO:
+    case PseudoId::None:
         // Sometimes elements have more then one renderer. Only the first one gets the counter
         // LayoutTests/http/tests/css/counter-crash.html
         if (generatingElement->renderer() != &renderer)
             return std::nullopt;
         break;
-    case BEFORE:
-    case AFTER:
+    case PseudoId::Before:
+    case PseudoId::After:
         break;
     default:
         return std::nullopt; // Counters are forbidden from all other pseudo elements.
@@ -384,7 +384,7 @@ String RenderCounter::originalText() const
             if (!beforeAfterContainer->isAnonymous() && !beforeAfterContainer->isPseudoElement())
                 return String(); // RenderCounters are restricted to before and after pseudo elements
             PseudoId containerStyle = beforeAfterContainer->style().styleType();
-            if ((containerStyle == BEFORE) || (containerStyle == AFTER))
+            if ((containerStyle == PseudoId::Before) || (containerStyle == PseudoId::After))
                 break;
             beforeAfterContainer = beforeAfterContainer->parent();
         }

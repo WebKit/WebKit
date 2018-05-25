@@ -286,7 +286,7 @@ bool AXObjectCache::isNodeVisible(Node* node) const
     if (!renderer)
         return false;
     const RenderStyle& style = renderer->style();
-    if (style.display() == NONE || style.visibility() != VISIBLE)
+    if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
         return false;
     
     // We also need to consider aria hidden status.

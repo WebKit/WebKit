@@ -420,7 +420,7 @@ static inline void markCellDirtyWhenCollapsedBorderChanges(RenderTableCell* cell
 
 void RenderTableCell::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    ASSERT(style().display() == TABLE_CELL);
+    ASSERT(style().display() == DisplayType::TableCell);
     ASSERT(!row() || row()->rowIndexWasSet());
 
     RenderBlockFlow::styleDidChange(diff, oldStyle);
@@ -1198,7 +1198,7 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
 {
     ASSERT(paintInfo.phase == PaintPhaseCollapsedTableBorders);
 
-    if (!paintInfo.shouldPaintWithinRoot(*this) || style().visibility() != VISIBLE)
+    if (!paintInfo.shouldPaintWithinRoot(*this) || style().visibility() != Visibility::Visible)
         return;
 
     LayoutRect localRepaintRect = paintInfo.rect;
@@ -1271,11 +1271,11 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, const Lay
     if (!backgroundObject)
         return;
 
-    if (style().visibility() != VISIBLE)
+    if (style().visibility() != Visibility::Visible)
         return;
 
     RenderTable* tableElt = table();
-    if (!tableElt->collapseBorders() && style().emptyCells() == HIDE && !firstChild())
+    if (!tableElt->collapseBorders() && style().emptyCells() == EmptyCell::Hide && !firstChild())
         return;
 
     LayoutPoint adjustedPaintOffset = paintOffset;
@@ -1305,7 +1305,7 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoin
         return;
 
     RenderTable* table = this->table();
-    if (!table->collapseBorders() && style().emptyCells() == HIDE && !firstChild())
+    if (!table->collapseBorders() && style().emptyCells() == EmptyCell::Hide && !firstChild())
         return;
 
     LayoutRect paintRect = LayoutRect(paintOffset, frameRect().size());
@@ -1326,11 +1326,11 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoin
 
 void RenderTableCell::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (style().visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
+    if (style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhaseMask)
         return;
 
     RenderTable* tableElt = table();
-    if (!tableElt->collapseBorders() && style().emptyCells() == HIDE && !firstChild())
+    if (!tableElt->collapseBorders() && style().emptyCells() == EmptyCell::Hide && !firstChild())
         return;
    
     LayoutRect paintRect = LayoutRect(paintOffset, frameRect().size());
@@ -1370,7 +1370,7 @@ void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool ve
 
 RenderPtr<RenderTableCell> RenderTableCell::createTableCellWithStyle(Document& document, const RenderStyle& style)
 {
-    auto cell = createRenderer<RenderTableCell>(document, RenderStyle::createAnonymousStyleWithDisplay(style, TABLE_CELL));
+    auto cell = createRenderer<RenderTableCell>(document, RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::TableCell));
     cell->initializeStyle();
     return cell;
 }

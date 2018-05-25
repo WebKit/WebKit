@@ -335,7 +335,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
 
     if (!renderer().firstChild()) {
         m_visibleContentStatusDirty = false;
-        m_hasVisibleContent = renderer().style().visibility() == VISIBLE;
+        m_hasVisibleContent = renderer().style().visibility() == Visibility::Visible;
     }
 
     if (Element* element = renderer().element()) {
@@ -1264,14 +1264,14 @@ void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* o
     }
 
     if (m_visibleContentStatusDirty) {
-        if (renderer().style().visibility() == VISIBLE)
+        if (renderer().style().visibility() == Visibility::Visible)
             m_hasVisibleContent = true;
         else {
             // layer may be hidden but still have some visible content, check for this
             m_hasVisibleContent = false;
             RenderObject* r = renderer().firstChild();
             while (r) {
-                if (r->style().visibility() == VISIBLE && !r->hasLayer()) {
+                if (r->style().visibility() == Visibility::Visible && !r->hasLayer()) {
                     m_hasVisibleContent = true;
                     break;
                 }
@@ -3148,7 +3148,7 @@ Ref<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)
     RefPtr<Scrollbar> widget;
     ASSERT(rendererForScrollbar(renderer()));
     auto& actualRenderer = *rendererForScrollbar(renderer());
-    bool hasCustomScrollbarStyle = is<RenderBox>(actualRenderer) && downcast<RenderBox>(actualRenderer).style().hasPseudoStyle(SCROLLBAR);
+    bool hasCustomScrollbarStyle = is<RenderBox>(actualRenderer) && downcast<RenderBox>(actualRenderer).style().hasPseudoStyle(PseudoId::Scrollbar);
     if (hasCustomScrollbarStyle)
         widget = RenderScrollbar::createCustomScrollbar(*this, orientation, downcast<RenderBox>(actualRenderer).element());
     else {
@@ -3466,14 +3466,14 @@ bool RenderLayer::hasVerticalOverflow() const
 static bool styleRequiresScrollbar(const RenderStyle& style, ScrollbarOrientation axis)
 {
     Overflow overflow = axis == ScrollbarOrientation::HorizontalScrollbar ? style.overflowX() : style.overflowY();
-    bool overflowScrollActsLikeAuto = overflow == Overflow::Scroll && !style.hasPseudoStyle(SCROLLBAR) && ScrollbarTheme::theme().usesOverlayScrollbars();
+    bool overflowScrollActsLikeAuto = overflow == Overflow::Scroll && !style.hasPseudoStyle(PseudoId::Scrollbar) && ScrollbarTheme::theme().usesOverlayScrollbars();
     return overflow == Overflow::Scroll && !overflowScrollActsLikeAuto;
 }
 
 static bool styleDefinesAutomaticScrollbar(const RenderStyle& style, ScrollbarOrientation axis)
 {
     Overflow overflow = axis == ScrollbarOrientation::HorizontalScrollbar ? style.overflowX() : style.overflowY();
-    bool overflowScrollActsLikeAuto = overflow == Overflow::Scroll && !style.hasPseudoStyle(SCROLLBAR) && ScrollbarTheme::theme().usesOverlayScrollbars();
+    bool overflowScrollActsLikeAuto = overflow == Overflow::Scroll && !style.hasPseudoStyle(PseudoId::Scrollbar) && ScrollbarTheme::theme().usesOverlayScrollbars();
     return overflow == Overflow::Auto || overflow == Overflow::Overlay || overflowScrollActsLikeAuto;
 }
 
@@ -4094,23 +4094,23 @@ static inline LayoutRect computeReferenceBox(const RenderObject& renderer, const
     LayoutRect referenceBox;
     const auto& box = downcast<RenderBox>(renderer);
     switch (clippingPath.referenceBox()) {
-    case ContentBox:
+    case CSSBoxType::ContentBox:
         referenceBox = box.contentBoxRect();
         referenceBox.move(offsetFromRoot);
         break;
-    case PaddingBox:
+    case CSSBoxType::PaddingBox:
         referenceBox = box.paddingBoxRect();
         referenceBox.move(offsetFromRoot);
         break;
     // FIXME: Support margin-box. Use bounding client rect for now.
     // https://bugs.webkit.org/show_bug.cgi?id=127984
-    case MarginBox:
+    case CSSBoxType::MarginBox:
     // fill, stroke, view-box compute to border-box for HTML elements.
-    case Fill:
-    case Stroke:
-    case ViewBox:
-    case BorderBox:
-    case BoxMissing:
+    case CSSBoxType::Fill:
+    case CSSBoxType::Stroke:
+    case CSSBoxType::ViewBox:
+    case CSSBoxType::BorderBox:
+    case CSSBoxType::BoxMissing:
         referenceBox = box.borderBoxRect();
         referenceBox.move(offsetFromRoot);
         break;
@@ -6041,7 +6041,7 @@ bool RenderLayer::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect)
 
     // We can't use hasVisibleContent(), because that will be true if our renderer is hidden, but some child
     // is visible and that child doesn't cover the entire rect.
-    if (renderer().style().visibility() != VISIBLE)
+    if (renderer().style().visibility() != Visibility::Visible)
         return false;
 
     if (paintsWithFilters() && renderer().style().filter().hasFilterThatAffectsOpacity())
@@ -6730,7 +6730,7 @@ void RenderLayer::updateScrollableAreaSet(bool hasOverflow)
 void RenderLayer::updateScrollCornerStyle()
 {
     RenderElement* actualRenderer = rendererForScrollbar(renderer());
-    auto corner = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(SCROLLBAR_CORNER), &actualRenderer->style()) : nullptr;
+    auto corner = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(PseudoId::ScrollbarCorner), &actualRenderer->style()) : nullptr;
 
     if (!corner) {
         clearScrollCorner();
@@ -6757,7 +6757,7 @@ void RenderLayer::clearScrollCorner()
 void RenderLayer::updateResizerStyle()
 {
     RenderElement* actualRenderer = rendererForScrollbar(renderer());
-    auto resizer = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(RESIZER), &actualRenderer->style()) : nullptr;
+    auto resizer = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(PseudoId::Resizer), &actualRenderer->style()) : nullptr;
 
     if (!resizer) {
         clearResizer();

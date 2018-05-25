@@ -32,7 +32,7 @@ namespace WebCore {
 class CounterContent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CounterContent(const AtomicString& identifier, EListStyleType style, const AtomicString& separator)
+    CounterContent(const AtomicString& identifier, ListStyleType style, const AtomicString& separator)
         : m_identifier(identifier)
         , m_listStyle(style)
         , m_separator(separator)
@@ -40,12 +40,12 @@ public:
     }
 
     const AtomicString& identifier() const { return m_identifier; }
-    EListStyleType listStyle() const { return m_listStyle; }
+    ListStyleType listStyle() const { return m_listStyle; }
     const AtomicString& separator() const { return m_separator; }
 
 private:
     AtomicString m_identifier;
-    EListStyleType m_listStyle;
+    ListStyleType m_listStyle;
     AtomicString m_separator;
 };
 

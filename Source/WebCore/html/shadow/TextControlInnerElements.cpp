@@ -108,7 +108,7 @@ std::optional<ElementStyle> TextControlInnerElement::resolveCustomStyle(const Re
     newStyle->inheritFrom(*shadowHostStyle);
     newStyle->setFlexGrow(1);
     newStyle->setMinWidth(Length { 0, Fixed }); // Needed for correct shrinking.
-    newStyle->setDisplay(BLOCK);
+    newStyle->setDisplay(DisplayType::Block);
     newStyle->setDirection(LTR);
     // We don't want the shadow DOM to be editable, so we set this block to read-only in case the input itself is editable.
     newStyle->setUserModify(UserModify::ReadOnly);
@@ -197,7 +197,7 @@ std::optional<ElementStyle> TextControlPlaceholderElement::resolveCustomStyle(co
     auto style = resolveStyle(&parentStyle);
 
     auto& controlElement = downcast<HTMLTextFormControlElement>(*containingShadowRoot()->host());
-    style.renderStyle->setDisplay(controlElement.isPlaceholderVisible() ? BLOCK : NONE);
+    style.renderStyle->setDisplay(controlElement.isPlaceholderVisible() ? DisplayType::Block : DisplayType::None);
 
     if (is<HTMLInputElement>(controlElement)) {
         auto& inputElement = downcast<HTMLInputElement>(controlElement);

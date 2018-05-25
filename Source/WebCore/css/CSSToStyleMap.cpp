@@ -363,16 +363,16 @@ void CSSToStyleMap::mapAnimationFillMode(Animation& layer, const CSSValue& value
 
     switch (downcast<CSSPrimitiveValue>(value).valueID()) {
     case CSSValueNone:
-        layer.setFillMode(AnimationFillModeNone);
+        layer.setFillMode(AnimationFillMode::None);
         break;
     case CSSValueForwards:
-        layer.setFillMode(AnimationFillModeForwards);
+        layer.setFillMode(AnimationFillMode::Forwards);
         break;
     case CSSValueBackwards:
-        layer.setFillMode(AnimationFillModeBackwards);
+        layer.setFillMode(AnimationFillMode::Backwards);
         break;
     case CSSValueBoth:
-        layer.setFillMode(AnimationFillModeBoth);
+        layer.setFillMode(AnimationFillMode::Both);
         break;
     default:
         break;
@@ -423,7 +423,7 @@ void CSSToStyleMap::mapAnimationPlayState(Animation& layer, const CSSValue& valu
     if (!is<CSSPrimitiveValue>(value))
         return;
 
-    EAnimPlayState playState = (downcast<CSSPrimitiveValue>(value).valueID() == CSSValuePaused) ? AnimPlayStatePaused : AnimPlayStatePlaying;
+    AnimationPlayState playState = (downcast<CSSPrimitiveValue>(value).valueID() == CSSValuePaused) ? AnimationPlayState::Paused : AnimationPlayState::Playing;
     layer.setPlayState(playState);
 }
 

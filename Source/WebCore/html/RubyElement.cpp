@@ -53,9 +53,9 @@ Ref<RubyElement> RubyElement::create(Document& document)
 
 RenderPtr<RenderElement> RubyElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
-    if (style.display() == INLINE)
+    if (style.display() == DisplayType::Inline)
         return createRenderer<RenderRubyAsInline>(*this, WTFMove(style));
-    if (style.display() == BLOCK || style.display() == INLINE_BLOCK)
+    if (style.display() == DisplayType::Block || style.display() == DisplayType::InlineBlock)
         return createRenderer<RenderRubyAsBlock>(*this, WTFMove(style));
     return HTMLElement::createElementRenderer(WTFMove(style), insertionPosition);
 }

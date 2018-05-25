@@ -560,11 +560,11 @@ void TextIterator::advance()
 
 static bool hasVisibleTextNode(RenderText& renderer)
 {
-    if (renderer.style().visibility() == VISIBLE)
+    if (renderer.style().visibility() == Visibility::Visible)
         return true;
     if (is<RenderTextFragment>(renderer)) {
         if (auto firstLetter = downcast<RenderTextFragment>(renderer).firstLetter()) {
-            if (firstLetter->style().visibility() == VISIBLE)
+            if (firstLetter->style().visibility() == Visibility::Visible)
                 return true;
         }
     }
@@ -618,7 +618,7 @@ bool TextIterator::handleTextNode()
                 return false;
             }
         }
-        if (renderer.style().visibility() != VISIBLE && !(m_behavior & TextIteratorIgnoresStyleVisibility))
+        if (renderer.style().visibility() != Visibility::Visible && !(m_behavior & TextIteratorIgnoresStyleVisibility))
             return false;
         int rendererTextLength = rendererText.length();
         int end = (&textNode == m_endContainer) ? m_endOffset : INT_MAX;
@@ -632,7 +632,7 @@ bool TextIterator::handleTextNode()
     }
 
     if (const auto* layout = renderer.simpleLineLayout()) {
-        if (renderer.style().visibility() != VISIBLE && !(m_behavior & TextIteratorIgnoresStyleVisibility))
+        if (renderer.style().visibility() != Visibility::Visible && !(m_behavior & TextIteratorIgnoresStyleVisibility))
             return true;
         ASSERT(renderer.parent());
         ASSERT(is<RenderBlockFlow>(*renderer.parent()));
@@ -727,7 +727,7 @@ bool TextIterator::handleTextNode()
         handleTextNodeFirstLetter(downcast<RenderTextFragment>(renderer));
 
     if (!renderer.firstTextBox() && rendererText.length() && !shouldHandleFirstLetter) {
-        if (renderer.style().visibility() != VISIBLE && !(m_behavior & TextIteratorIgnoresStyleVisibility))
+        if (renderer.style().visibility() != Visibility::Visible && !(m_behavior & TextIteratorIgnoresStyleVisibility))
             return false;
         m_lastTextNodeEndedWithCollapsedSpace = true; // entire block is collapsed space
         return true;
@@ -753,7 +753,7 @@ void TextIterator::handleTextBox()
     Text& textNode = downcast<Text>(*m_node);
 
     auto& renderer = m_firstLetterText ? *m_firstLetterText : *textNode.renderer();
-    if (renderer.style().visibility() != VISIBLE && !(m_behavior & TextIteratorIgnoresStyleVisibility)) {
+    if (renderer.style().visibility() != Visibility::Visible && !(m_behavior & TextIteratorIgnoresStyleVisibility)) {
         m_textBox = nullptr;
         return;
     }
@@ -848,7 +848,7 @@ static inline RenderText* firstRenderTextInFirstLetter(RenderBoxModelObject* fir
 void TextIterator::handleTextNodeFirstLetter(RenderTextFragment& renderer)
 {
     if (auto* firstLetter = renderer.firstLetter()) {
-        if (firstLetter->style().visibility() != VISIBLE && !(m_behavior & TextIteratorIgnoresStyleVisibility))
+        if (firstLetter->style().visibility() != Visibility::Visible && !(m_behavior & TextIteratorIgnoresStyleVisibility))
             return;
         if (auto* firstLetterText = firstRenderTextInFirstLetter(firstLetter)) {
             m_handledFirstLetter = true;
@@ -867,7 +867,7 @@ bool TextIterator::handleReplacedElement()
         return false;
 
     auto& renderer = *m_node->renderer();
-    if (renderer.style().visibility() != VISIBLE && !(m_behavior & TextIteratorIgnoresStyleVisibility))
+    if (renderer.style().visibility() != Visibility::Visible && !(m_behavior & TextIteratorIgnoresStyleVisibility))
         return false;
 
     if (m_lastTextNodeEndedWithCollapsedSpace) {
@@ -1115,7 +1115,7 @@ bool TextIterator::shouldRepresentNodeOffsetZero()
     // If this node is unrendered or invisible the VisiblePosition checks below won't have much meaning.
     // Additionally, if the range we are iterating over contains huge sections of unrendered content, 
     // we would create VisiblePositions on every call to this function without this check.
-    if (!m_node->renderer() || m_node->renderer()->style().visibility() != VISIBLE
+    if (!m_node->renderer() || m_node->renderer()->style().visibility() != Visibility::Visible
         || (is<RenderBlockFlow>(*m_node->renderer()) && !downcast<RenderBlockFlow>(*m_node->renderer()).height() && !is<HTMLBodyElement>(*m_node)))
         return false;
 
@@ -1331,10 +1331,10 @@ void SimplifiedBackwardsTextIterator::advance()
         if (!m_handledNode && !(m_node == m_endContainer && !m_endOffset)) {
             auto* renderer = m_node->renderer();
             if (renderer && renderer->isText() && m_node->isTextNode()) {
-                if (renderer->style().visibility() == VISIBLE && m_offset > 0)
+                if (renderer->style().visibility() == Visibility::Visible && m_offset > 0)
                     m_handledNode = handleTextNode();
             } else if (renderer && (renderer->isImage() || renderer->isWidget())) {
-                if (renderer->style().visibility() == VISIBLE && m_offset > 0)
+                if (renderer->style().visibility() == Visibility::Visible && m_offset > 0)
                     m_handledNode = handleReplacedElement();
             } else
                 m_handledNode = handleNonTextNode();

@@ -74,7 +74,7 @@ void RenderTextFragment::styleDidChange(StyleDifference diff, const RenderStyle*
     RenderText::styleDidChange(diff, oldStyle);
 
     if (RenderBlock* block = blockForAccompanyingFirstLetter())
-        block->mutableStyle().removeCachedPseudoStyle(FIRST_LETTER);
+        block->mutableStyle().removeCachedPseudoStyle(PseudoId::FirstLetter);
 }
 
 void RenderTextFragment::setText(const String& newText, bool force)
@@ -110,7 +110,7 @@ RenderBlock* RenderTextFragment::blockForAccompanyingFirstLetter()
     for (auto& block : ancestorsOfType<RenderBlock>(*m_firstLetter)) {
         if (is<RenderMultiColumnFlow>(block))
             break;
-        if (block.style().hasPseudoStyle(FIRST_LETTER) && block.canHaveChildren())
+        if (block.style().hasPseudoStyle(PseudoId::FirstLetter) && block.canHaveChildren())
             return &block;
     }
     return nullptr;

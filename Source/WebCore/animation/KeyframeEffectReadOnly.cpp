@@ -1265,16 +1265,16 @@ Ref<const Animation> KeyframeEffectReadOnly::backingAnimationForCompositedRender
     switch (effectTiming->fill()) {
     case FillMode::None:
     case FillMode::Auto:
-        animation->setFillMode(AnimationFillModeNone);
+        animation->setFillMode(AnimationFillMode::None);
         break;
     case FillMode::Backwards:
-        animation->setFillMode(AnimationFillModeBackwards);
+        animation->setFillMode(AnimationFillMode::Backwards);
         break;
     case FillMode::Forwards:
-        animation->setFillMode(AnimationFillModeForwards);
+        animation->setFillMode(AnimationFillMode::Forwards);
         break;
     case FillMode::Both:
-        animation->setFillMode(AnimationFillModeBoth);
+        animation->setFillMode(AnimationFillMode::Both);
         break;
     }
 

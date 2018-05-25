@@ -39,7 +39,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMultiColumnSpannerPlaceholder);
 
 RenderPtr<RenderMultiColumnSpannerPlaceholder> RenderMultiColumnSpannerPlaceholder::createAnonymous(RenderMultiColumnFlow& fragmentedFlow, RenderBox& spanner, const RenderStyle& parentStyle)
 {
-    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(parentStyle, BLOCK);
+    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(parentStyle, DisplayType::Block);
     newStyle.setClear(Clear::Both); // We don't want floats in the row preceding the spanner to continue on the other side.
     auto placeholder = createRenderer<RenderMultiColumnSpannerPlaceholder>(fragmentedFlow, spanner, WTFMove(newStyle));
     placeholder->initializeStyle();

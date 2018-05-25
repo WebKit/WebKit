@@ -63,7 +63,7 @@ bool HTMLOptGroupElement::isFocusable() const
         return false;
     // Optgroup elements do not have a renderer.
     auto* style = const_cast<HTMLOptGroupElement&>(*this).computedStyle();
-    return style && style->display() != NONE;
+    return style && style->display() != DisplayType::None;
 }
 
 const AtomicString& HTMLOptGroupElement::formControlType() const

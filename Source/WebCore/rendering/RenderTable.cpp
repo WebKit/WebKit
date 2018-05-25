@@ -141,7 +141,7 @@ void RenderTable::willInsertTableColumn(RenderTableCol&, RenderObject*)
 void RenderTable::willInsertTableSection(RenderTableSection& child, RenderObject* beforeChild)
 {
     switch (child.style().display()) {
-    case TABLE_HEADER_GROUP:
+    case DisplayType::TableHeaderGroup:
         resetSectionPointerIfNotBefore(m_head, beforeChild);
         if (!m_head)
             m_head = makeWeakPtr(child);
@@ -151,14 +151,14 @@ void RenderTable::willInsertTableSection(RenderTableSection& child, RenderObject
                 m_firstBody = makeWeakPtr(child);
         }
         break;
-    case TABLE_FOOTER_GROUP:
+    case DisplayType::TableFooterGroup:
         resetSectionPointerIfNotBefore(m_foot, beforeChild);
         if (!m_foot) {
             m_foot = makeWeakPtr(child);
             break;
         }
         FALLTHROUGH;
-    case TABLE_ROW_GROUP:
+    case DisplayType::TableRowGroup:
         resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
         if (!m_firstBody)
             m_firstBody = makeWeakPtr(child);
@@ -356,8 +356,8 @@ void RenderTable::layoutCaptions(BottomCaptionLayoutPhase bottomCaptionLayoutPha
         return;
     // FIXME: Collapse caption margin.
     for (unsigned i = 0; i < m_captions.size(); ++i) {
-        if ((bottomCaptionLayoutPhase == BottomCaptionLayoutPhase::Yes && m_captions[i]->style().captionSide() != CAPBOTTOM)
-            || (bottomCaptionLayoutPhase == BottomCaptionLayoutPhase::No && m_captions[i]->style().captionSide() == CAPBOTTOM))
+        if ((bottomCaptionLayoutPhase == BottomCaptionLayoutPhase::Yes && m_captions[i]->style().captionSide() != CaptionSide::Bottom)
+            || (bottomCaptionLayoutPhase == BottomCaptionLayoutPhase::No && m_captions[i]->style().captionSide() == CaptionSide::Bottom))
             continue;
         layoutCaption(*m_captions[i]);
     }
@@ -425,7 +425,7 @@ void RenderTable::layout()
         LayoutUnit totalSectionLogicalHeight = 0;
         LayoutUnit oldTableLogicalTop = 0;
         for (unsigned i = 0; i < m_captions.size(); i++) {
-            if (m_captions[i]->style().captionSide() == CAPBOTTOM)
+            if (m_captions[i]->style().captionSide() == CaptionSide::Bottom)
                 continue;
             oldTableLogicalTop += m_captions[i]->logicalHeight() + m_captions[i]->marginBefore() + m_captions[i]->marginAfter();
         }
@@ -668,7 +668,7 @@ void RenderTable::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     PaintPhase paintPhase = paintInfo.phase;
-    if ((paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) && hasVisibleBoxDecorations() && style().visibility() == VISIBLE)
+    if ((paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) && hasVisibleBoxDecorations() && style().visibility() == Visibility::Visible)
         paintBoxDecorations(paintInfo, paintOffset);
 
     if (paintPhase == PaintPhaseMask) {
@@ -695,7 +695,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         }
     }
     
-    if (collapseBorders() && paintPhase == PaintPhaseChildBlockBackground && style().visibility() == VISIBLE) {
+    if (collapseBorders() && paintPhase == PaintPhaseChildBlockBackground && style().visibility() == Visibility::Visible) {
         recalcCollapsedBorders();
         // Using our cached sorted styles, we then do individual passes,
         // painting each style of border from lowest precedence to highest precedence.
@@ -712,7 +712,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     }
 
     // Paint outline.
-    if ((paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseSelfOutline) && hasOutline() && style().visibility() == VISIBLE)
+    if ((paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseSelfOutline) && hasOutline() && style().visibility() == Visibility::Visible)
         paintOutline(paintInfo, LayoutRect(paintOffset, size()));
 }
 
@@ -720,7 +720,7 @@ void RenderTable::adjustBorderBoxRectForPainting(LayoutRect& rect)
 {
     for (unsigned i = 0; i < m_captions.size(); i++) {
         LayoutUnit captionLogicalHeight = m_captions[i]->logicalHeight() + m_captions[i]->marginBefore() + m_captions[i]->marginAfter();
-        bool captionIsBefore = (m_captions[i]->style().captionSide() != CAPBOTTOM) ^ style().isFlippedBlocksWritingMode();
+        bool captionIsBefore = (m_captions[i]->style().captionSide() != CaptionSide::Bottom) ^ style().isFlippedBlocksWritingMode();
         if (style().isHorizontalWritingMode()) {
             rect.setHeight(rect.height() - captionLogicalHeight);
             if (captionIsBefore)
@@ -755,7 +755,7 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& p
 
 void RenderTable::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (style().visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
+    if (style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhaseMask)
         return;
 
     LayoutRect rect(paintOffset, size());
@@ -1013,11 +1013,11 @@ void RenderTable::recalcSections() const
     for (RenderObject* child = firstChild(); child; child = nextSibling) {
         nextSibling = child->nextSibling();
         switch (child->style().display()) {
-        case TABLE_COLUMN:
-        case TABLE_COLUMN_GROUP:
+        case DisplayType::TableColumn:
+        case DisplayType::TableColumnGroup:
             m_hasColElements = true;
             break;
-        case TABLE_HEADER_GROUP:
+        case DisplayType::TableHeaderGroup:
             if (is<RenderTableSection>(*child)) {
                 RenderTableSection& section = downcast<RenderTableSection>(*child);
                 if (!m_head)
@@ -1027,7 +1027,7 @@ void RenderTable::recalcSections() const
                 section.recalcCellsIfNeeded();
             }
             break;
-        case TABLE_FOOTER_GROUP:
+        case DisplayType::TableFooterGroup:
             if (is<RenderTableSection>(*child)) {
                 RenderTableSection& section = downcast<RenderTableSection>(*child);
                 if (!m_foot)
@@ -1037,7 +1037,7 @@ void RenderTable::recalcSections() const
                 section.recalcCellsIfNeeded();
             }
             break;
-        case TABLE_ROW_GROUP:
+        case DisplayType::TableRowGroup:
             if (is<RenderTableSection>(*child)) {
                 RenderTableSection& section = downcast<RenderTableSection>(*child);
                 if (!m_firstBody)
@@ -1528,7 +1528,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
 RenderPtr<RenderTable> RenderTable::createTableWithStyle(Document& document, const RenderStyle& style)
 {
-    auto table = createRenderer<RenderTable>(document, RenderStyle::createAnonymousStyleWithDisplay(style, style.display() == INLINE ? INLINE_TABLE : TABLE));
+    auto table = createRenderer<RenderTable>(document, RenderStyle::createAnonymousStyleWithDisplay(style, style.display() == DisplayType::Inline ? DisplayType::InlineTable : DisplayType::Table));
     table->initializeStyle();
     return table;
 }

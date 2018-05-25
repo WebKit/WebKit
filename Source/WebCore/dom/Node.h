@@ -202,10 +202,10 @@ public:
     bool isSVGElement() const { return getFlag(IsSVGFlag); }
     bool isMathMLElement() const { return getFlag(IsMathMLFlag); }
 
-    bool isPseudoElement() const { return pseudoId() != NOPSEUDO; }
-    bool isBeforePseudoElement() const { return pseudoId() == BEFORE; }
-    bool isAfterPseudoElement() const { return pseudoId() == AFTER; }
-    PseudoId pseudoId() const { return (isElementNode() && hasCustomStyleResolveCallbacks()) ? customPseudoId() : NOPSEUDO; }
+    bool isPseudoElement() const { return pseudoId() != PseudoId::None; }
+    bool isBeforePseudoElement() const { return pseudoId() == PseudoId::Before; }
+    bool isAfterPseudoElement() const { return pseudoId() == PseudoId::After; }
+    PseudoId pseudoId() const { return (isElementNode() && hasCustomStyleResolveCallbacks()) ? customPseudoId() : PseudoId::None; }
 
     virtual bool isMediaControlElement() const { return false; }
     virtual bool isMediaControls() const { return false; }
@@ -432,7 +432,7 @@ public:
     // Wrapper for nodes that don't have a renderer, but still cache the style (like HTMLOptionElement).
     const RenderStyle* renderStyle() const;
 
-    virtual const RenderStyle* computedStyle(PseudoId pseudoElementSpecifier = NOPSEUDO);
+    virtual const RenderStyle* computedStyle(PseudoId pseudoElementSpecifier = PseudoId::None);
 
     enum class InsertedIntoAncestorResult {
         Done,
@@ -643,7 +643,7 @@ private:
     virtual PseudoId customPseudoId() const
     {
         ASSERT(hasCustomStyleResolveCallbacks());
-        return NOPSEUDO;
+        return PseudoId::None;
     }
 
     WEBCORE_EXPORT void removedLastRef();

@@ -361,7 +361,7 @@ static inline bool emphasisPositionHasNeitherLeftNorRight(TextEmphasisPosition e
 bool InlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyle& style, bool& above) const
 {
     // This function returns true if there are text emphasis marks and they are suppressed by ruby text.
-    if (style.textEmphasisMark() == TextEmphasisMarkNone)
+    if (style.textEmphasisMark() == TextEmphasisMark::None)
         return false;
 
     TextEmphasisPosition emphasisPosition = style.textEmphasisPosition();
@@ -434,7 +434,7 @@ static MarkedText createMarkedTextFromSelectionInBox(const InlineTextBox& box)
 
 void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit /*lineTop*/, LayoutUnit /*lineBottom*/)
 {
-    if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != VISIBLE
+    if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible
         || m_truncation == cFullTruncation || paintInfo.phase == PaintPhaseOutline || !m_len)
         return;
 
@@ -1235,7 +1235,7 @@ float InlineTextBox::positionForOffset(unsigned offset) const
 TextRun InlineTextBox::createTextRun(bool ignoreCombinedText, bool ignoreHyphen) const
 {
     const auto& style = lineStyle();
-    TextRun textRun { text(ignoreCombinedText, ignoreHyphen), textPos(), expansion(), expansionBehavior(), direction(), dirOverride() || style.rtlOrdering() == VisualOrder, !renderer().canUseSimpleFontCodePath() };
+    TextRun textRun { text(ignoreCombinedText, ignoreHyphen), textPos(), expansion(), expansionBehavior(), direction(), dirOverride() || style.rtlOrdering() == Order::Visual, !renderer().canUseSimpleFontCodePath() };
     textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
     return textRun;
 }

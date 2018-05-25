@@ -120,7 +120,7 @@ private:
     explicit ShapeClipPathOperation(Ref<BasicShape>&& shape)
         : ClipPathOperation(Shape)
         , m_shape(WTFMove(shape))
-        , m_referenceBox(BoxMissing)
+        , m_referenceBox(CSSBoxType::BoxMissing)
     {
     }
 

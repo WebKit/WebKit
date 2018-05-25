@@ -137,7 +137,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
     // outline rect into parent coords before drawing.
     // FIXME: This means our focus ring won't share our rotation like it should.
     // We should instead disable our clip during PaintPhaseOutline
-    if (paintInfo.phase == PaintPhaseSelfOutline && style().outlineWidth() && style().visibility() == VISIBLE) {
+    if (paintInfo.phase == PaintPhaseSelfOutline && style().outlineWidth() && style().visibility() == Visibility::Visible) {
         IntRect paintRectInParent = enclosingIntRect(localToParentTransform().mapRect(repaintRect));
         paintOutline(paintInfo, paintRectInParent);
     }

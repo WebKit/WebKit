@@ -357,7 +357,7 @@ public:
         const RenderStyle* parentStyle() const { return m_parentStyle; }
         const RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
 
-        EInsideLink elementLinkState() const { return m_elementLinkState; }
+        InsideLink elementLinkState() const { return m_elementLinkState; }
 
         void setApplyPropertyToRegularStyle(bool isApply) { m_applyPropertyToRegularStyle = isApply; }
         void setApplyPropertyToVisitedLinkStyle(bool isApply) { m_applyPropertyToVisitedLinkStyle = isApply; }
@@ -409,7 +409,7 @@ public:
         std::unique_ptr<RenderStyle> m_ownedParentStyle;
         const RenderStyle* m_rootElementStyle { nullptr };
 
-        EInsideLink m_elementLinkState { NotInsideLink };
+        InsideLink m_elementLinkState { InsideLink::NotInside };
 
         bool m_applyPropertyToRegularStyle { true };
         bool m_applyPropertyToVisitedLinkStyle { false };

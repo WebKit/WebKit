@@ -152,7 +152,7 @@ bool PositionIterator::isCandidate() const
     if (!renderer)
         return false;
     
-    if (renderer->style().visibility() != VISIBLE)
+    if (renderer->style().visibility() != Visibility::Visible)
         return false;
 
     if (renderer->isBR())

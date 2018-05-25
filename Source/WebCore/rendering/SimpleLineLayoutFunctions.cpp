@@ -80,7 +80,7 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
         return;
 
     auto& style = flow.style();
-    if (style.visibility() != VISIBLE)
+    if (style.visibility() != Visibility::Visible)
         return;
 
     TextPainter textPainter(paintInfo.context());
@@ -143,7 +143,7 @@ bool hitTestFlow(const RenderBlockFlow& flow, const Layout& layout, const HitTes
         return false;
 
     auto& style = flow.style();
-    if (style.visibility() != VISIBLE || style.pointerEvents() == PE_NONE)
+    if (style.visibility() != Visibility::Visible || style.pointerEvents() == PointerEvents::None)
         return false;
 
     LayoutRect rangeRect = locationInContainer.boundingBox();

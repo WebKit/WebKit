@@ -50,7 +50,7 @@ struct SharingResolver::Context {
     const Update& update;
     const StyledElement& element;
     bool elementAffectedByClassRules;
-    EInsideLink elementLinkState;
+    InsideLink elementLinkState;
 };
 
 SharingResolver::SharingResolver(const Document& document, const DocumentRuleSets& ruleSets, const SelectorFilter& selectorFilter)

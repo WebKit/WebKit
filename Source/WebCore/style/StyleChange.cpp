@@ -35,7 +35,7 @@ Change determineChange(const RenderStyle& s1, const RenderStyle& s2)
 {
     if (s1.display() != s2.display())
         return Detach;
-    if (s1.hasPseudoStyle(FIRST_LETTER) != s2.hasPseudoStyle(FIRST_LETTER))
+    if (s1.hasPseudoStyle(PseudoId::FirstLetter) != s2.hasPseudoStyle(PseudoId::FirstLetter))
         return Detach;
     // We just detach if a renderer acquires or loses a column-span, since spanning elements
     // typically won't contain much content.
@@ -62,7 +62,7 @@ Change determineChange(const RenderStyle& s1, const RenderStyle& s2)
     // If the pseudoStyles have changed, we want any StyleChange that is not NoChange
     // because setStyle will do the right thing with anything else.
     if (s1.hasAnyPublicPseudoStyles()) {
-        for (PseudoId pseudoId = FIRST_PUBLIC_PSEUDOID; pseudoId < FIRST_INTERNAL_PSEUDOID; pseudoId = static_cast<PseudoId>(pseudoId + 1)) {
+        for (PseudoId pseudoId = PseudoId::FirstPublicPseudoId; pseudoId < PseudoId::FirstInternalPseudoId; pseudoId = static_cast<PseudoId>(static_cast<unsigned>(pseudoId) + 1)) {
             if (s1.hasPseudoStyle(pseudoId)) {
                 RenderStyle* ps2 = s2.getCachedPseudoStyle(pseudoId);
                 if (!ps2)

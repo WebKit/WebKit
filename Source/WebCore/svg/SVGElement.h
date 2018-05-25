@@ -172,7 +172,7 @@ protected:
     class InstanceInvalidationGuard;
 
 private:
-    const RenderStyle* computedStyle(PseudoId = NOPSEUDO) final;
+    const RenderStyle* computedStyle(PseudoId = PseudoId::None) final;
 
     virtual void clearTarget() { }
 

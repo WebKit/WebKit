@@ -1410,7 +1410,7 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
     const Cursor& iBeam = horizontalText ? iBeamCursor() : verticalTextCursor();
 
 #if ENABLE(CURSOR_VISIBILITY)
-    if (style && style->cursorVisibility() == CursorVisibilityAutoHide)
+    if (style && style->cursorVisibility() == CursorVisibility::AutoHide)
         startAutoHideCursorTimer();
     else
         cancelAutoHideCursorTimer();
@@ -1473,8 +1473,8 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
         && !m_capturingMouseEventsElement)
         return iBeam;
 
-    switch (style ? style->cursor() : CursorAuto) {
-    case CursorAuto: {
+    switch (style ? style->cursor() : CursorType::Auto) {
+    case CursorType::Auto: {
         bool editable = node->hasEditableStyle();
 
         if (useHandCursor(node, result.isOverLink(), shiftKey))
@@ -1492,75 +1492,75 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
             return iBeam;
         return pointerCursor();
     }
-    case CursorDefault:
+    case CursorType::Default:
         return pointerCursor();
-    case CursorNone:
+    case CursorType::None:
         return noneCursor();
-    case CursorContextMenu:
+    case CursorType::ContextMenu:
         return contextMenuCursor();
-    case CursorHelp:
+    case CursorType::Help:
         return helpCursor();
-    case CursorPointer:
+    case CursorType::Pointer:
         return handCursor();
-    case CursorProgress:
+    case CursorType::Progress:
         return progressCursor();
-    case CursorWait:
+    case CursorType::Wait:
         return waitCursor();
-    case CursorCell:
+    case CursorType::Cell:
         return cellCursor();
-    case CursorCrosshair:
+    case CursorType::Crosshair:
         return crossCursor();
-    case CursorText:
+    case CursorType::Text:
         return iBeamCursor();
-    case CursorVerticalText:
+    case CursorType::VerticalText:
         return verticalTextCursor();
-    case CursorAlias:
+    case CursorType::Alias:
         return aliasCursor();
-    case CursorCopy:
+    case CursorType::Copy:
         return copyCursor();
-    case CursorMove:
+    case CursorType::Move:
         return moveCursor();
-    case CursorNoDrop:
+    case CursorType::NoDrop:
         return noDropCursor();
-    case CursorNotAllowed:
+    case CursorType::NotAllowed:
         return notAllowedCursor();
-    case CursorGrab:
+    case CursorType::Grab:
         return grabCursor();
-    case CursorGrabbing:
+    case CursorType::Grabbing:
         return grabbingCursor();
-    case CursorEResize:
+    case CursorType::EResize:
         return eastResizeCursor();
-    case CursorNResize:
+    case CursorType::NResize:
         return northResizeCursor();
-    case CursorNeResize:
+    case CursorType::NEResize:
         return northEastResizeCursor();
-    case CursorNwResize:
+    case CursorType::NWResize:
         return northWestResizeCursor();
-    case CursorSResize:
+    case CursorType::SResize:
         return southResizeCursor();
-    case CursorSeResize:
+    case CursorType::SEResize:
         return southEastResizeCursor();
-    case CursorSwResize:
+    case CursorType::SWResize:
         return southWestResizeCursor();
-    case CursorWResize:
+    case CursorType::WResize:
         return westResizeCursor();
-    case CursorEwResize:
+    case CursorType::EWResize:
         return eastWestResizeCursor();
-    case CursorNsResize:
+    case CursorType::NSResize:
         return northSouthResizeCursor();
-    case CursorNeswResize:
+    case CursorType::NESWResize:
         return northEastSouthWestResizeCursor();
-    case CursorNwseResize:
+    case CursorType::NWSEResize:
         return northWestSouthEastResizeCursor();
-    case CursorColResize:
+    case CursorType::ColumnResize:
         return columnResizeCursor();
-    case CursorRowResize:
+    case CursorType::RowResize:
         return rowResizeCursor();
-    case CursorAllScroll:
+    case CursorType::AllScroll:
         return moveCursor();
-    case CursorZoomIn:
+    case CursorType::ZoomIn:
         return zoomInCursor();
-    case CursorZoomOut:
+    case CursorType::ZoomOut:
         return zoomOutCursor();
     }
     return pointerCursor();

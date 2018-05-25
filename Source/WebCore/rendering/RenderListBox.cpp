@@ -310,7 +310,7 @@ void RenderListBox::paintItem(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
 void RenderListBox::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (style().visibility() != VISIBLE)
+    if (style().visibility() != Visibility::Visible)
         return;
     
     if (paintInfo.phase == PaintPhaseForeground) {
@@ -386,17 +386,17 @@ void RenderListBox::paintScrollbar(PaintInfo& paintInfo, const LayoutPoint& pain
 
 static LayoutSize itemOffsetForAlignment(TextRun textRun, const RenderStyle* itemStyle, FontCascade itemFont, LayoutRect itemBoudingBox)
 {
-    ETextAlign actualAlignment = itemStyle->textAlign();
-    // FIXME: Firefox doesn't respect JUSTIFY. Should we?
-    // FIXME: Handle TAEND here
-    if (actualAlignment == TASTART || actualAlignment == JUSTIFY)
-      actualAlignment = itemStyle->isLeftToRightDirection() ? LEFT : RIGHT;
+    TextAlignMode actualAlignment = itemStyle->textAlign();
+    // FIXME: Firefox doesn't respect TextAlignMode::Justify. Should we?
+    // FIXME: Handle TextAlignMode::End here
+    if (actualAlignment == TextAlignMode::Start || actualAlignment == TextAlignMode::Justify)
+        actualAlignment = itemStyle->isLeftToRightDirection() ? TextAlignMode::Left : TextAlignMode::Right;
 
     LayoutSize offset = LayoutSize(0, itemFont.fontMetrics().ascent());
-    if (actualAlignment == RIGHT || actualAlignment == WEBKIT_RIGHT) {
+    if (actualAlignment == TextAlignMode::Right || actualAlignment == TextAlignMode::WebKitRight) {
         float textWidth = itemFont.width(textRun);
         offset.setWidth(itemBoudingBox.width() - textWidth - optionsSpacingHorizontal);
-    } else if (actualAlignment == CENTER || actualAlignment == WEBKIT_CENTER) {
+    } else if (actualAlignment == TextAlignMode::Center || actualAlignment == TextAlignMode::WebKitCenter) {
         float textWidth = itemFont.width(textRun);
         offset.setWidth((itemBoudingBox.width() - textWidth) / 2);
     } else
@@ -411,7 +411,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
 
     auto& itemStyle = *listItemElement->computedStyle();
 
-    if (itemStyle.visibility() == HIDDEN)
+    if (itemStyle.visibility() == Visibility::Hidden)
         return;
 
     String itemText;
@@ -465,7 +465,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
         backColor = itemStyle.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
 
     // Draw the background for this list box item
-    if (itemStyle.visibility() == HIDDEN)
+    if (itemStyle.visibility() == Visibility::Hidden)
         return;
 
     LayoutRect itemRect = itemBoundingBoxRect(paintOffset, listIndex);
@@ -914,7 +914,7 @@ void RenderListBox::logMockScrollAnimatorMessage(const String& message) const
 Ref<Scrollbar> RenderListBox::createScrollbar()
 {
     RefPtr<Scrollbar> widget;
-    bool hasCustomScrollbarStyle = style().hasPseudoStyle(SCROLLBAR);
+    bool hasCustomScrollbarStyle = style().hasPseudoStyle(PseudoId::Scrollbar);
     if (hasCustomScrollbarStyle)
         widget = RenderScrollbar::createCustomScrollbar(*this, VerticalScrollbar, &selectElement());
     else {

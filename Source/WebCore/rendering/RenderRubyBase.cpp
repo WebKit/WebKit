@@ -60,9 +60,9 @@ RenderRubyRun* RenderRubyBase::rubyRun() const
     return downcast<RenderRubyRun>(parent());
 }
 
-ETextAlign RenderRubyBase::textAlignmentForLine(bool /* endsWithSoftBreak */) const
+TextAlignMode RenderRubyBase::textAlignmentForLine(bool /* endsWithSoftBreak */) const
 {
-    return JUSTIFY;
+    return TextAlignMode::Justify;
 }
 
 void RenderRubyBase::adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const

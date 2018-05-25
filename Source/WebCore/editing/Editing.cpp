@@ -456,7 +456,7 @@ static bool isSpecialHTMLElement(const Node* node)
     if (!renderer)
         return false;
 
-    if (renderer->style().display() == TABLE || renderer->style().display() == INLINE_TABLE)
+    if (renderer->style().display() == DisplayType::Table || renderer->style().display() == DisplayType::InlineTable)
         return true;
 
     if (renderer->style().isFloating())
@@ -933,7 +933,7 @@ Ref<Element> createTabSpanElement(Document& document)
 bool isNodeRendered(const Node& node)
 {
     auto* renderer = node.renderer();
-    return renderer && renderer->style().visibility() == VISIBLE;
+    return renderer && renderer->style().visibility() == Visibility::Visible;
 }
 
 unsigned numEnclosingMailBlockquotes(const Position& position)

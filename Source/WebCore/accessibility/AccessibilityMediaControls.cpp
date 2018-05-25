@@ -176,7 +176,7 @@ String AccessibilityMediaControl::helpText() const
 
 bool AccessibilityMediaControl::computeAccessibilityIsIgnored() const
 {
-    if (!m_renderer || m_renderer->style().visibility() != VISIBLE || controlType() == MediaTimelineContainer)
+    if (!m_renderer || m_renderer->style().visibility() != Visibility::Visible || controlType() == MediaTimelineContainer)
         return true;
 
     return accessibilityIsIgnoredByDefault();
@@ -302,7 +302,7 @@ Ref<AccessibilityObject> AccessibilityMediaTimeDisplay::create(RenderObject* ren
 
 bool AccessibilityMediaTimeDisplay::computeAccessibilityIsIgnored() const
 {
-    if (!m_renderer || m_renderer->style().visibility() != VISIBLE)
+    if (!m_renderer || m_renderer->style().visibility() != Visibility::Visible)
         return true;
 
     if (!m_renderer->style().width().value())

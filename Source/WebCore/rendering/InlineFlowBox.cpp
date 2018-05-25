@@ -129,7 +129,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
                     || (parentStyle.verticalAlign() != VerticalAlign::Baseline && !isRootInlineBox()) || childStyle.verticalAlign() != VerticalAlign::Baseline)
                     shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
             }
-            if (childStyle.hasTextCombine() || childStyle.textEmphasisMark() != TextEmphasisMarkNone)
+            if (childStyle.hasTextCombine() || childStyle.textEmphasisMark() != TextEmphasisMark::None)
                 shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
         } else {
             if (child->renderer().isLineBreak()) {
@@ -156,7 +156,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
         const RenderStyle& childStyle = child->lineStyle();
         if (child->behavesLikeText()) {
             const RenderStyle* childStyle = &child->lineStyle();
-            if (childStyle->letterSpacing() < 0 || childStyle->textShadow() || childStyle->textEmphasisMark() != TextEmphasisMarkNone || childStyle->hasPositiveStrokeWidth())
+            if (childStyle->letterSpacing() < 0 || childStyle->textShadow() || childStyle->textEmphasisMark() != TextEmphasisMark::None || childStyle->hasPositiveStrokeWidth())
                 child->clearKnownToHaveNoOverflow();
         } else if (child->renderer().isReplaced()) {
             const RenderBox& box = downcast<RenderBox>(child->renderer());
@@ -684,7 +684,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
                 // Treat the leading on the first and last lines of ruby runs as not being part of the overall lineTop/lineBottom.
                 // Really this is a workaround hack for the fact that ruby should have been done as line layout and not done using
                 // inline-block.
-                if (renderer().style().isFlippedLinesWritingMode() == (child->renderer().style().rubyPosition() == RubyPositionAfter))
+                if (renderer().style().isFlippedLinesWritingMode() == (child->renderer().style().rubyPosition() == RubyPosition::After))
                     hasAnnotationsBefore = true;
                 else
                     hasAnnotationsAfter = true;
@@ -895,7 +895,7 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox& textBox, Glyp
     int rightGlyphOverflow = strokeOverflow + rightGlyphEdge;
 
     bool emphasisMarkIsAbove;
-    if (lineStyle.textEmphasisMark() != TextEmphasisMarkNone && textBox.emphasisMarkExistsAndIsAbove(lineStyle, emphasisMarkIsAbove)) {
+    if (lineStyle.textEmphasisMark() != TextEmphasisMark::None && textBox.emphasisMarkExistsAndIsAbove(lineStyle, emphasisMarkIsAbove)) {
         int emphasisMarkHeight = lineStyle.fontCascade().emphasisMarkHeight(lineStyle.textEmphasisMarkString());
         if (emphasisMarkIsAbove == !lineStyle.isFlippedLinesWritingMode())
             topGlyphOverflow = std::min(topGlyphOverflow, -emphasisMarkHeight);
@@ -1155,7 +1155,7 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         if (paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) {
             // Add ourselves to the paint info struct's list of inlines that need to paint their
             // outlines.
-            if (renderer().style().visibility() == VISIBLE && renderer().hasOutline() && !isRootInlineBox()) {
+            if (renderer().style().visibility() == Visibility::Visible && renderer().hasOutline() && !isRootInlineBox()) {
                 RenderInline& inlineFlow = downcast<RenderInline>(renderer());
 
                 RenderBlock* containingBlock = nullptr;
@@ -1335,7 +1335,7 @@ static LayoutRect clipRectForNinePieceImageStrip(InlineFlowBox* box, const NineP
 
 void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
+    if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhaseForeground)
         return;
 
     LayoutRect frameRect(this->frameRect());
@@ -1407,7 +1407,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
 
 void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
+    if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhaseMask)
         return;
 
     LayoutRect frameRect(this->frameRect());
@@ -1552,7 +1552,7 @@ LayoutUnit InlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allowedPosi
         if (is<InlineFlowBox>(*child))
             result = std::max(result, downcast<InlineFlowBox>(*child).computeOverAnnotationAdjustment(allowedPosition));
         
-        if (child->renderer().isReplaced() && is<RenderRubyRun>(child->renderer()) && child->renderer().style().rubyPosition() == RubyPositionBefore) {
+        if (child->renderer().isReplaced() && is<RenderRubyRun>(child->renderer()) && child->renderer().style().rubyPosition() == RubyPosition::Before) {
             auto& rubyRun = downcast<RenderRubyRun>(child->renderer());
             RenderRubyText* rubyText = rubyRun.rubyText();
             if (!rubyText)
@@ -1576,7 +1576,7 @@ LayoutUnit InlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allowedPosi
         if (is<InlineTextBox>(*child)) {
             const RenderStyle& childLineStyle = child->lineStyle();
             bool emphasisMarkIsAbove;
-            if (childLineStyle.textEmphasisMark() != TextEmphasisMarkNone && downcast<InlineTextBox>(*child).emphasisMarkExistsAndIsAbove(childLineStyle, emphasisMarkIsAbove) && emphasisMarkIsAbove) {
+            if (childLineStyle.textEmphasisMark() != TextEmphasisMark::None && downcast<InlineTextBox>(*child).emphasisMarkExistsAndIsAbove(childLineStyle, emphasisMarkIsAbove) && emphasisMarkIsAbove) {
                 if (!childLineStyle.isFlippedLinesWritingMode()) {
                     int topOfEmphasisMark = child->logicalTop() - childLineStyle.fontCascade().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
                     result = std::max(result, allowedPosition - topOfEmphasisMark);
@@ -1600,7 +1600,7 @@ LayoutUnit InlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allowedPos
         if (is<InlineFlowBox>(*child))
             result = std::max(result, downcast<InlineFlowBox>(*child).computeUnderAnnotationAdjustment(allowedPosition));
 
-        if (child->renderer().isReplaced() && is<RenderRubyRun>(child->renderer()) && child->renderer().style().rubyPosition() == RubyPositionAfter) {
+        if (child->renderer().isReplaced() && is<RenderRubyRun>(child->renderer()) && child->renderer().style().rubyPosition() == RubyPosition::After) {
             auto& rubyRun = downcast<RenderRubyRun>(child->renderer());
             RenderRubyText* rubyText = rubyRun.rubyText();
             if (!rubyText)
@@ -1625,7 +1625,7 @@ LayoutUnit InlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allowedPos
             const RenderStyle& childLineStyle = child->lineStyle();
             bool emphasisMarkIsAbove;
             downcast<InlineTextBox>(*child).emphasisMarkExistsAndIsAbove(childLineStyle, emphasisMarkIsAbove);
-            if (childLineStyle.textEmphasisMark() != TextEmphasisMarkNone && !emphasisMarkIsAbove) {
+            if (childLineStyle.textEmphasisMark() != TextEmphasisMark::None && !emphasisMarkIsAbove) {
                 if (!childLineStyle.isFlippedLinesWritingMode()) {
                     LayoutUnit bottomOfEmphasisMark = child->logicalBottom() + childLineStyle.fontCascade().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
                     result = std::max(result, bottomOfEmphasisMark - allowedPosition);
@@ -1655,7 +1655,7 @@ void InlineFlowBox::collectLeafBoxesInLogicalOrder(Vector<InlineBox*>& leafBoxes
         leafBoxesInLogicalOrder.append(leaf);
     }
 
-    if (renderer().style().rtlOrdering() == VisualOrder)
+    if (renderer().style().rtlOrdering() == Order::Visual)
         return;
 
     // Reverse of reordering of the line (L2 according to Bidi spec):

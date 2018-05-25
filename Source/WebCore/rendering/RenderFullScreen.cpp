@@ -71,7 +71,7 @@ static RenderStyle createFullScreenStyle()
     fullscreenStyle.setFontDescription({ });
     fullscreenStyle.fontCascade().update(nullptr);
 
-    fullscreenStyle.setDisplay(FLEX);
+    fullscreenStyle.setDisplay(DisplayType::Flex);
     fullscreenStyle.setJustifyContentPosition(ContentPosition::Center);
     fullscreenStyle.setAlignItemsPosition(ItemPosition::Center);
     fullscreenStyle.setFlexDirection(FlexDirection::Column);

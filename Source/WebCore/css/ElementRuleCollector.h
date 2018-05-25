@@ -95,7 +95,7 @@ private:
     const SelectorFilter* m_selectorFilter { nullptr };
 
     bool m_isPrintStyle { false };
-    PseudoStyleRequest m_pseudoStyleRequest { NOPSEUDO };
+    PseudoStyleRequest m_pseudoStyleRequest { PseudoId::None };
     SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };
     bool m_isMatchingSlottedPseudoElements { false };
     bool m_isMatchingHostPseudoClass { false };

@@ -55,16 +55,16 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
     auto* timing = effect()->timing();
 
     switch (animation.fillMode()) {
-    case AnimationFillModeNone:
+    case AnimationFillMode::None:
         timing->setFill(FillMode::None);
         break;
-    case AnimationFillModeBackwards:
+    case AnimationFillMode::Backwards:
         timing->setFill(FillMode::Backwards);
         break;
-    case AnimationFillModeForwards:
+    case AnimationFillMode::Forwards:
         timing->setFill(FillMode::Forwards);
         break;
-    case AnimationFillModeBoth:
+    case AnimationFillMode::Both:
         timing->setFill(FillMode::Both);
         break;
     }
@@ -88,9 +88,9 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
     timing->setIterations(iterationCount == Animation::IterationCountInfinite ? std::numeric_limits<double>::infinity() : iterationCount);
 
     // Synchronize the play state
-    if (backingAnimation().playState() == AnimPlayStatePlaying && playState() == WebAnimation::PlayState::Paused)
+    if (backingAnimation().playState() == AnimationPlayState::Playing && playState() == WebAnimation::PlayState::Paused)
         play();
-    else if (backingAnimation().playState() == AnimPlayStatePaused && playState() == WebAnimation::PlayState::Running)
+    else if (backingAnimation().playState() == AnimationPlayState::Paused && playState() == WebAnimation::PlayState::Running)
         pause();
 
     unsuspendEffectInvalidation();

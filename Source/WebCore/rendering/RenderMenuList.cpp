@@ -127,12 +127,12 @@ void RenderMenuList::adjustInnerStyle()
     if (document().page()->chrome().selectItemWritingDirectionIsNatural()) {
         // Items in the popup will not respect the CSS text-align and direction properties,
         // so we must adjust our own style to match.
-        innerStyle.setTextAlign(LEFT);
+        innerStyle.setTextAlign(TextAlignMode::Left);
         TextDirection direction = (m_buttonText && m_buttonText->text().defaultWritingDirection() == U_RIGHT_TO_LEFT) ? RTL : LTR;
         innerStyle.setDirection(direction);
 #if PLATFORM(IOS)
     } else if (document().page()->chrome().selectItemAlignmentFollowsMenuWritingDirection()) {
-        innerStyle.setTextAlign(style().direction() == LTR ? LEFT : RIGHT);
+        innerStyle.setTextAlign(style().direction() == LTR ? TextAlignMode::Left : TextAlignMode::Right);
         TextDirection direction;
         EUnicodeBidi unicodeBidi;
         if (multiple() && selectedOptionCount(*this) != 1) {
@@ -153,7 +153,7 @@ void RenderMenuList::adjustInnerStyle()
     } else if (m_optionStyle && document().page()->chrome().selectItemAlignmentFollowsMenuWritingDirection()) {
         if ((m_optionStyle->direction() != innerStyle.direction() || m_optionStyle->unicodeBidi() != innerStyle.unicodeBidi()))
             m_innerBlock->setNeedsLayoutAndPrefWidthsRecalc();
-        innerStyle.setTextAlign(style().isLeftToRightDirection() ? LEFT : RIGHT);
+        innerStyle.setTextAlign(style().isLeftToRightDirection() ? TextAlignMode::Left : TextAlignMode::Right);
         innerStyle.setDirection(m_optionStyle->direction());
         innerStyle.setUnicodeBidi(m_optionStyle->unicodeBidi());
     }
@@ -507,8 +507,8 @@ PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const
     getItemBackgroundColor(listIndex, itemBackgroundColor, itemHasCustomBackgroundColor);
 
     auto& style = *element->computedStyle();
-    return PopupMenuStyle(style.visitedDependentColorWithColorFilter(CSSPropertyColor), itemBackgroundColor, style.fontCascade(), style.visibility() == VISIBLE,
-        style.display() == NONE, true, style.textIndent(), style.direction(), isOverride(style.unicodeBidi()),
+    return PopupMenuStyle(style.visitedDependentColorWithColorFilter(CSSPropertyColor), itemBackgroundColor, style.fontCascade(), style.visibility() == Visibility::Visible,
+        style.display() == DisplayType::None, true, style.textIndent(), style.direction(), isOverride(style.unicodeBidi()),
         itemHasCustomBackgroundColor ? PopupMenuStyle::CustomBackgroundColor : PopupMenuStyle::DefaultBackgroundColor);
 }
 
@@ -546,7 +546,7 @@ PopupMenuStyle RenderMenuList::menuStyle() const
     const RenderStyle& styleToUse = m_innerBlock ? m_innerBlock->style() : style();
     IntRect absBounds = absoluteBoundingBoxRectIgnoringTransforms();
     return PopupMenuStyle(styleToUse.visitedDependentColorWithColorFilter(CSSPropertyColor), styleToUse.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor),
-        styleToUse.fontCascade(), styleToUse.visibility() == VISIBLE, styleToUse.display() == NONE,
+        styleToUse.fontCascade(), styleToUse.visibility() == Visibility::Visible, styleToUse.display() == DisplayType::None,
         style().hasAppearance() && style().appearance() == MenulistPart, styleToUse.textIndent(),
         style().direction(), isOverride(style().unicodeBidi()), PopupMenuStyle::DefaultBackgroundColor,
         PopupMenuStyle::SelectPopup, theme().popupMenuSize(styleToUse, absBounds));
@@ -559,7 +559,7 @@ HostWindow* RenderMenuList::hostWindow() const
 
 Ref<Scrollbar> RenderMenuList::createScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
 {
-    bool hasCustomScrollbarStyle = style().hasPseudoStyle(SCROLLBAR);
+    bool hasCustomScrollbarStyle = style().hasPseudoStyle(PseudoId::Scrollbar);
     if (hasCustomScrollbarStyle)
         return RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, &selectElement());
     return Scrollbar::createNativeScrollbar(scrollableArea, orientation, controlSize);

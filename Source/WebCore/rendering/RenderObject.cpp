@@ -1574,7 +1574,7 @@ int RenderObject::innerLineHeight() const
 void RenderObject::addAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
 {
     // Convert the style regions to absolute coordinates.
-    if (style().visibility() != VISIBLE || !is<RenderBox>(*this))
+    if (style().visibility() != Visibility::Visible || !is<RenderBox>(*this))
         return;
     
     auto& box = downcast<RenderBox>(*this);

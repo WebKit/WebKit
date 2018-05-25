@@ -586,9 +586,9 @@ static RefPtr<Inspector::Protocol::OverlayTypes::ElementData> buildObjectForElem
     }
 
     if (node->isPseudoElement()) {
-        if (node->pseudoId() == BEFORE)
+        if (node->pseudoId() == PseudoId::Before)
             elementData->setPseudoElement("before");
-        else if (node->pseudoId() == AFTER)
+        else if (node->pseudoId() == PseudoId::After)
             elementData->setPseudoElement("after");
     }
 

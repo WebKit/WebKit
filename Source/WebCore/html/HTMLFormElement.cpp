@@ -116,11 +116,11 @@ bool HTMLFormElement::rendererIsNeeded(const RenderStyle& style)
     if (!parentIsTableElementPart)
         return true;
 
-    EDisplay display = style.display();
-    bool formIsTablePart = display == TABLE || display == INLINE_TABLE || display == TABLE_ROW_GROUP
-        || display == TABLE_HEADER_GROUP || display == TABLE_FOOTER_GROUP || display == TABLE_ROW
-        || display == TABLE_COLUMN_GROUP || display == TABLE_COLUMN || display == TABLE_CELL
-        || display == TABLE_CAPTION;
+    DisplayType display = style.display();
+    bool formIsTablePart = display == DisplayType::Table || display == DisplayType::InlineTable || display == DisplayType::TableRowGroup
+        || display == DisplayType::TableHeaderGroup || display == DisplayType::TableFooterGroup || display == DisplayType::TableRow
+        || display == DisplayType::TableColumnGroup || display == DisplayType::TableColumn || display == DisplayType::TableCell
+        || display == DisplayType::TableCaption;
 
     return formIsTablePart;
 }

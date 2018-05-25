@@ -28,7 +28,7 @@ namespace WebCore {
 
 class RenderListItem;
 
-String listMarkerText(EListStyleType, int value);
+String listMarkerText(ListStyleType, int value);
 
 // Used to render the list item's marker.
 // The RenderListMarker always has to be a child of a RenderListItem.

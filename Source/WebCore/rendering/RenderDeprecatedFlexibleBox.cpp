@@ -147,7 +147,7 @@ static LayoutUnit marginWidthForChild(RenderBox* child)
 static bool childDoesNotAffectWidthOrFlexing(RenderObject* child)
 {
     // Positioned children and collapsed children don't affect the min/max width.
-    return child->isOutOfFlowPositioned() || child->style().visibility() == COLLAPSE;
+    return child->isOutOfFlowPositioned() || child->style().visibility() == Visibility::Collapse;
 }
 
 static LayoutUnit contentWidthForChild(RenderBox* child)
@@ -483,7 +483,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
             
             LayoutSize& childLayoutDelta = childLayoutDeltas[childIndex++];
             
-            if (child->style().visibility() == COLLAPSE) {
+            if (child->style().visibility() == Visibility::Collapse) {
                 // visibility: collapsed children do not participate in our positioning.
                 // But we need to lay them out.
                 layoutChildIfNeededApplyingDelta(child, childLayoutDelta);
@@ -577,7 +577,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
 
                     // Now distribute the space to objects.
                     for (RenderBox* child = iterator.first(); child && spaceAvailableThisPass && totalFlex; child = iterator.next()) {
-                        if (child->style().visibility() == COLLAPSE)
+                        if (child->style().visibility() == Visibility::Collapse)
                             continue;
 
                         if (allowedChildFlex(child, expanding, i)) {
@@ -727,7 +727,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             
             LayoutSize& childLayoutDelta = childLayoutDeltas[childIndex++];
 
-            if (child->style().visibility() == COLLAPSE) {
+            if (child->style().visibility() == Visibility::Collapse) {
                 // visibility: collapsed children do not participate in our positioning.
                 // But we need to lay them down.
                 layoutChildIfNeededApplyingDelta(child, childLayoutDelta);

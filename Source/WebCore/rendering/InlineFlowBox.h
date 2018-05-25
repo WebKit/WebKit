@@ -62,7 +62,7 @@ public:
         // an invisible marker exists.  The side effect of having an invisible marker is that the quirks mode behavior of shrinking lines with no
         // text children must not apply.  This change also means that gaps will exist between image bullet list items.  Even when the list bullet
         // is an image, the line is still considered to be immune from the quirk.
-        m_hasTextChildren = renderer.style().display() == LIST_ITEM;
+        m_hasTextChildren = renderer.style().display() == DisplayType::ListItem;
         m_hasTextDescendants = m_hasTextChildren;
     }
 

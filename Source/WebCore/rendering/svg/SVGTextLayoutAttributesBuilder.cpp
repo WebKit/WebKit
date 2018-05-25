@@ -82,7 +82,7 @@ static inline void processRenderSVGInlineText(const RenderSVGInlineText& text, u
 {
     auto& string = text.text();
     auto length = string.length();
-    if (text.style().whiteSpace() == PRE) {
+    if (text.style().whiteSpace() == WhiteSpace::Pre) {
         atCharacter += length;
         return;
     }

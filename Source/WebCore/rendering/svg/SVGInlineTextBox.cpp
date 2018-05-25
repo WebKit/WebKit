@@ -181,7 +181,7 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
     ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
     ASSERT(truncation() == cNoTruncation);
 
-    if (renderer().style().visibility() != VISIBLE)
+    if (renderer().style().visibility() != Visibility::Visible)
         return;
 
     auto& parentRenderer = parent()->renderer();
@@ -239,7 +239,7 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
     ASSERT(truncation() == cNoTruncation);
 
-    if (renderer().style().visibility() != VISIBLE)
+    if (renderer().style().visibility() != Visibility::Visible)
         return;
 
     // Note: We're explicitely not supporting composition & custom underlines and custom highlighters - unlike InlineTextBox.
@@ -265,7 +265,7 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     const RenderStyle* selectionStyle = &style;
     if (hasSelection && shouldPaintSelectionHighlight) {
-        selectionStyle = parentRenderer.getCachedPseudoStyle(SELECTION);
+        selectionStyle = parentRenderer.getCachedPseudoStyle(PseudoId::Selection);
         if (selectionStyle) {
             const SVGRenderStyle& svgSelectionStyle = selectionStyle->svgStyle();
 
@@ -395,7 +395,7 @@ TextRun SVGInlineTextBox::constructTextRun(const RenderStyle& style, const SVGTe
                 , 0 /* padding, only relevant for justified text, not relevant for SVG */
                 , AllowTrailingExpansion
                 , direction()
-                , dirOverride() || style.rtlOrdering() == VisualOrder /* directionalOverride */);
+                , dirOverride() || style.rtlOrdering() == Order::Visual /* directionalOverride */);
 
     // We handle letter & word spacing ourselves.
     run.disableSpacing();
@@ -480,7 +480,7 @@ void SVGInlineTextBox::paintDecoration(GraphicsContext& context, TextDecoration 
     auto& decorationRenderer = findRendererDefininingTextDecoration(parent());
     const RenderStyle& decorationStyle = decorationRenderer.style();
 
-    if (decorationStyle.visibility() == HIDDEN)
+    if (decorationStyle.visibility() == Visibility::Hidden)
         return;
 
     const SVGRenderStyle& svgDecorationStyle = decorationStyle.svgStyle();
@@ -647,7 +647,7 @@ bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult&
     ASSERT(!isLineBreak());
 
     PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_TEXT_HITTESTING, request, renderer().style().pointerEvents());
-    bool isVisible = renderer().style().visibility() == VISIBLE;
+    bool isVisible = renderer().style().visibility() == Visibility::Visible;
     if (isVisible || !hitRules.requireVisible) {
         if ((hitRules.canHitStroke && (renderer().style().svgStyle().hasStroke() || !hitRules.requireStroke))
             || (hitRules.canHitFill && (renderer().style().svgStyle().hasFill() || !hitRules.requireFill))) {

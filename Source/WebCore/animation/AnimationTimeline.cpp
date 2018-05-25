@@ -144,7 +144,7 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
         return;
 
     // In case this element is newly getting a "display: none" we need to cancel all of its animations and disregard new ones.
-    if (oldStyle && oldStyle->hasAnimations() && oldStyle->display() != NONE && newStyle.display() == NONE) {
+    if (oldStyle && oldStyle->hasAnimations() && oldStyle->display() != DisplayType::None && newStyle.display() == DisplayType::None) {
         if (m_elementToCSSAnimationByName.contains(&element)) {
             for (const auto& cssAnimationsByNameMapItem : m_elementToCSSAnimationByName.take(&element))
                 cancelOrRemoveDeclarativeAnimation(cssAnimationsByNameMapItem.value);
@@ -229,7 +229,7 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
         return;
 
     // In case this element is newly getting a "display: none" we need to cancel all of its animations and disregard new ones.
-    if (oldStyle && oldStyle->hasTransitions() && oldStyle->display() != NONE && newStyle.display() == NONE) {
+    if (oldStyle && oldStyle->hasTransitions() && oldStyle->display() != DisplayType::None && newStyle.display() == DisplayType::None) {
         if (m_elementToCSSTransitionByCSSPropertyID.contains(&element)) {
             for (const auto& cssTransitionsByCSSPropertyIDMapItem : m_elementToCSSTransitionByCSSPropertyID.take(&element))
                 cancelOrRemoveDeclarativeAnimation(cssTransitionsByCSSPropertyIDMapItem.value);

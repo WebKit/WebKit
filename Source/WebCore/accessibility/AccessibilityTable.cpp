@@ -262,7 +262,7 @@ bool AccessibilityTable::isDataTable() const
             const RenderStyle& renderStyle = cell->style();
 
             // If the empty-cells style is set, we'll call it a data table.
-            if (renderStyle.emptyCells() == HIDE)
+            if (renderStyle.emptyCells() == EmptyCell::Hide)
                 return true;
 
             // If a cell has matching bordered sides, call it a (fully) bordered cell.

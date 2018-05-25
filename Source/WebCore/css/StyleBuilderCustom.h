@@ -156,7 +156,7 @@ private:
 
     template <CSSPropertyID id>
     static void applyTextOrBoxShadowValue(StyleResolver&, CSSValue&);
-    static bool isValidDisplayValue(StyleResolver&, EDisplay);
+    static bool isValidDisplayValue(StyleResolver&, DisplayType);
 
     enum CounterBehavior {Increment = 0, Reset};
     template <CounterBehavior counterBehavior>
@@ -394,9 +394,9 @@ inline void StyleBuilderCustom::applyValueImageResolution(StyleResolver& styleRe
     for (auto& item : downcast<CSSValueList>(value)) {
         CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(item.get());
         if (primitiveValue.valueID() == CSSValueFromImage)
-            source = ImageResolutionFromImage;
+            source = ImageResolutionSource::FromImage;
         else if (primitiveValue.valueID() == CSSValueSnap)
-            snap = ImageResolutionSnapPixels;
+            snap = ImageResolutionSnap::Pixels;
         else
             resolution = primitiveValue.doubleValue(CSSPrimitiveValue::CSS_DPPX);
     }
@@ -656,7 +656,7 @@ static inline float computeBaseSpecifiedFontSize(const Document& document, const
 {
     float result = style.specifiedFontSize();
     auto* frame = document.frame();
-    if (frame && style.textZoom() != TextZoomReset)
+    if (frame && style.textZoom() != TextZoom::Reset)
         result *= frame->textZoomFactor();
     result *= style.effectiveZoom();
     if (percentageAutosizingEnabled)
@@ -815,9 +815,9 @@ inline void StyleBuilderCustom::applyValueWebkitTextZoom(StyleResolver& styleRes
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.valueID() == CSSValueNormal)
-        styleResolver.style()->setTextZoom(TextZoomNormal);
+        styleResolver.style()->setTextZoom(TextZoom::Normal);
     else if (primitiveValue.valueID() == CSSValueReset)
-        styleResolver.style()->setTextZoom(TextZoomReset);
+        styleResolver.style()->setTextZoom(TextZoom::Reset);
     styleResolver.state().setFontDirty(true);
 }
 
@@ -1004,23 +1004,23 @@ inline void StyleBuilderCustom::applyValueFontFamily(StyleResolver& styleResolve
     styleResolver.setFontDescription(WTFMove(fontDescription));
 }
 
-inline bool StyleBuilderCustom::isValidDisplayValue(StyleResolver& styleResolver, EDisplay display)
+inline bool StyleBuilderCustom::isValidDisplayValue(StyleResolver& styleResolver, DisplayType display)
 {
-    if (is<SVGElement>(styleResolver.element()) && styleResolver.style()->styleType() == NOPSEUDO)
-        return display == INLINE || display == BLOCK || display == NONE;
+    if (is<SVGElement>(styleResolver.element()) && styleResolver.style()->styleType() == PseudoId::None)
+        return display == DisplayType::Inline || display == DisplayType::Block || display == DisplayType::None;
     return true;
 }
 
 inline void StyleBuilderCustom::applyInheritDisplay(StyleResolver& styleResolver)
 {
-    EDisplay display = styleResolver.parentStyle()->display();
+    DisplayType display = styleResolver.parentStyle()->display();
     if (isValidDisplayValue(styleResolver, display))
         styleResolver.style()->setDisplay(display);
 }
 
 inline void StyleBuilderCustom::applyValueDisplay(StyleResolver& styleResolver, CSSValue& value)
 {
-    EDisplay display = downcast<CSSPrimitiveValue>(value);
+    DisplayType display = downcast<CSSPrimitiveValue>(value);
     if (isValidDisplayValue(styleResolver, display))
         styleResolver.style()->setDisplay(display);
 }
@@ -1118,8 +1118,8 @@ inline void StyleBuilderCustom::applyValueWebkitTextEmphasisStyle(StyleResolver&
 
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.isString()) {
-        styleResolver.style()->setTextEmphasisFill(TextEmphasisFillFilled);
-        styleResolver.style()->setTextEmphasisMark(TextEmphasisMarkCustom);
+        styleResolver.style()->setTextEmphasisFill(TextEmphasisFill::Filled);
+        styleResolver.style()->setTextEmphasisMark(TextEmphasisMark::Custom);
         styleResolver.style()->setTextEmphasisCustomMark(primitiveValue.stringValue());
         return;
     }
@@ -1128,9 +1128,9 @@ inline void StyleBuilderCustom::applyValueWebkitTextEmphasisStyle(StyleResolver&
 
     if (primitiveValue.valueID() == CSSValueFilled || primitiveValue.valueID() == CSSValueOpen) {
         styleResolver.style()->setTextEmphasisFill(primitiveValue);
-        styleResolver.style()->setTextEmphasisMark(TextEmphasisMarkAuto);
+        styleResolver.style()->setTextEmphasisMark(TextEmphasisMark::Auto);
     } else {
-        styleResolver.style()->setTextEmphasisFill(TextEmphasisFillFilled);
+        styleResolver.style()->setTextEmphasisFill(TextEmphasisFill::Filled);
         styleResolver.style()->setTextEmphasisMark(primitiveValue);
     }
 }
@@ -1219,13 +1219,13 @@ inline void StyleBuilderCustom::applyValueCursor(StyleResolver& styleResolver, C
 {
     styleResolver.style()->clearCursorList();
     if (is<CSSPrimitiveValue>(value)) {
-        ECursor cursor = downcast<CSSPrimitiveValue>(value);
+        CursorType cursor = downcast<CSSPrimitiveValue>(value);
         if (styleResolver.style()->cursor() != cursor)
             styleResolver.style()->setCursor(cursor);
         return;
     }
 
-    styleResolver.style()->setCursor(CursorAuto);
+    styleResolver.style()->setCursor(CursorType::Auto);
     auto& list = downcast<CSSValueList>(value);
     for (auto& item : list) {
         if (is<CSSCursorImageValue>(item)) {
@@ -1414,7 +1414,7 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
             didSet = true;
         } else if (contentValue.isAttr()) {
             // FIXME: Can a namespace be specified for an attr(foo)?
-            if (styleResolver.style()->styleType() == NOPSEUDO)
+            if (styleResolver.style()->styleType() == PseudoId::None)
                 styleResolver.style()->setHasAttrContent();
             else
                 const_cast<RenderStyle*>(styleResolver.parentStyle())->setHasAttrContent();
@@ -1426,10 +1426,10 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
             styleResolver.ruleSets().mutableFeatures().registerContentAttribute(attr.localName());
         } else if (contentValue.isCounter()) {
             auto* counterValue = contentValue.counterValue();
-            EListStyleType listStyleType = NoneListStyle;
+            ListStyleType listStyleType = ListStyleType::None;
             CSSValueID listStyleIdent = counterValue->listStyleIdent();
             if (listStyleIdent != CSSValueNone)
-                listStyleType = static_cast<EListStyleType>(listStyleIdent - CSSValueDisc);
+                listStyleType = static_cast<ListStyleType>(listStyleIdent - CSSValueDisc);
             auto counter = std::make_unique<CounterContent>(counterValue->identifier(), listStyleType, counterValue->separator());
             styleResolver.style()->setContent(WTFMove(counter), didSet);
             didSet = true;
@@ -1600,7 +1600,7 @@ inline float StyleBuilderCustom::smallerFontSize(float size)
 
 inline float StyleBuilderCustom::determineRubyTextSizeMultiplier(StyleResolver& styleResolver)
 {
-    if (styleResolver.style()->rubyPosition() != RubyPositionInterCharacter)
+    if (styleResolver.style()->rubyPosition() != RubyPosition::InterCharacter)
         return 0.5f;
 
     // FIXME: This hack is to ensure tone marks are the same size as
@@ -1810,7 +1810,7 @@ void StyleBuilderCustom::applyValueAlt(StyleResolver& styleResolver, CSSValue& v
         styleResolver.style()->setContentAltText(primitiveValue.stringValue());
     else if (primitiveValue.isAttr()) {
         // FIXME: Can a namespace be specified for an attr(foo)?
-        if (styleResolver.style()->styleType() == NOPSEUDO)
+        if (styleResolver.style()->styleType() == PseudoId::None)
             styleResolver.style()->setUnique();
         else
             const_cast<RenderStyle*>(styleResolver.parentStyle())->setUnique();

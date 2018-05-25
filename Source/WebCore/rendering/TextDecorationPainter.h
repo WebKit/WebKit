@@ -67,7 +67,7 @@ public:
         TextDecorationStyle linethroughStyle;
     };
     // FIXME: Make requestedDecorations an OptionSet<TextDecoration>. See <https://bugs.webkit.org/show_bug.cgi?id=176844>.
-    static Styles stylesForRenderer(const RenderObject&, unsigned requestedDecorations, bool firstLineStyle = false, PseudoId = NOPSEUDO);
+    static Styles stylesForRenderer(const RenderObject&, unsigned requestedDecorations, bool firstLineStyle = false, PseudoId = PseudoId::None);
 
 private:
     GraphicsContext& m_context;

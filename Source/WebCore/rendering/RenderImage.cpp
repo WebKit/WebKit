@@ -297,7 +297,7 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
 {
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     double scale = style().imageResolution();
-    if (style().imageResolutionSnap() == ImageResolutionSnapPixels)
+    if (style().imageResolutionSnap() == ImageResolutionSnap::Pixels)
         scale = roundForImpreciseConversion<int>(scale);
     if (scale <= 0)
         scale = 1;

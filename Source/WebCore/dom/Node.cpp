@@ -680,7 +680,7 @@ static Node::Editability computeEditabilityFromComputedStyle(const Node& startNo
         auto* style = node->isDocumentNode() ? node->renderStyle() : const_cast<Node*>(node)->computedStyle();
         if (!style)
             continue;
-        if (style->display() == NONE)
+        if (style->display() == DisplayType::None)
             continue;
 #if ENABLE(USERSELECT_ALL)
         // Elements with user-select: all style are considered atomic

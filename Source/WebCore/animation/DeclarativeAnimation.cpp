@@ -67,7 +67,7 @@ void DeclarativeAnimation::initialize(const Element& target, const RenderStyle* 
     setTimeline(&target.document().timeline());
     downcast<KeyframeEffectReadOnly>(effect())->computeDeclarativeAnimationBlendingKeyframes(oldStyle, newStyle);
     syncPropertiesWithBackingAnimation();
-    if (backingAnimation().playState() == AnimPlayStatePlaying)
+    if (backingAnimation().playState() == AnimationPlayState::Playing)
         play();
     else
         pause();

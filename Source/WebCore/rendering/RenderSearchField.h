@@ -51,7 +51,7 @@ private:
     void willBeDestroyed() override;
     LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
     void updateFromElement() override;
-    EVisibility visibilityForCancelButton() const;
+    Visibility visibilityForCancelButton() const;
     const AtomicString& autosaveName() const;
 
     // PopupMenuClient methods

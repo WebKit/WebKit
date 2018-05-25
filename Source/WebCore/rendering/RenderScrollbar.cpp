@@ -188,22 +188,22 @@ static PseudoId pseudoForScrollbarPart(ScrollbarPart part)
         case ForwardButtonStartPart:
         case BackButtonEndPart:
         case ForwardButtonEndPart:
-            return SCROLLBAR_BUTTON;
+            return PseudoId::ScrollbarButton;
         case BackTrackPart:
         case ForwardTrackPart:
-            return SCROLLBAR_TRACK_PIECE;
+            return PseudoId::ScrollbarTrackPiece;
         case ThumbPart:
-            return SCROLLBAR_THUMB;
+            return PseudoId::ScrollbarThumb;
         case TrackBGPart:
-            return SCROLLBAR_TRACK;
+            return PseudoId::ScrollbarTrack;
         case ScrollbarBGPart:
-            return SCROLLBAR;
+            return PseudoId::Scrollbar;
         case NoPart:
         case AllParts:
             break;
     }
     ASSERT_NOT_REACHED();
-    return SCROLLBAR;
+    return PseudoId::Scrollbar;
 }
 
 void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType)
@@ -212,9 +212,9 @@ void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType)
         return;
 
     std::unique_ptr<RenderStyle> partStyle = getScrollbarPseudoStyle(partType, pseudoForScrollbarPart(partType));
-    bool needRenderer = partStyle && partStyle->display() != NONE;
+    bool needRenderer = partStyle && partStyle->display() != DisplayType::None;
 
-    if (needRenderer && partStyle->display() != BLOCK) {
+    if (needRenderer && partStyle->display() != DisplayType::Block) {
         // See if we are a button that should not be visible according to OS settings.
         ScrollbarButtonsPlacement buttonsPlacement = theme().buttonsPlacement();
         switch (partType) {

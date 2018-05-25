@@ -100,7 +100,7 @@ double AnimationBase::duration() const
 
 bool AnimationBase::playStatePlaying() const
 {
-    return m_animation->playState() == AnimPlayStatePlaying;
+    return m_animation->playState() == AnimationPlayState::Playing;
 }
 
 bool AnimationBase::animationsMatch(const Animation& animation) const
@@ -552,7 +552,7 @@ void AnimationBase::fireAnimationEventsIfNeeded()
     }
 }
 
-void AnimationBase::updatePlayState(EAnimPlayState playState)
+void AnimationBase::updatePlayState(AnimationPlayState playState)
 {
     if (!m_compositeAnimation)
         return;
@@ -560,7 +560,7 @@ void AnimationBase::updatePlayState(EAnimPlayState playState)
     // When we get here, we can have one of 4 desired states: running, paused, suspended, paused & suspended.
     // The state machine can be in one of two states: running, paused.
     // Set the state machine to the desired state.
-    bool pause = playState == AnimPlayStatePaused || m_compositeAnimation->isSuspended();
+    bool pause = playState == AnimationPlayState::Paused || m_compositeAnimation->isSuspended();
 
     if (pause == paused() && !isNew())
         return;

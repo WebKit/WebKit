@@ -119,7 +119,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
     float height = lineStyle.fontCascade().fontMetrics().floatHeight();
     GlyphOverflow overflowResult;
     
-    if (decorationStyle == TextDecorationStyleWavy) {
+    if (decorationStyle == TextDecorationStyle::Wavy) {
         getWavyStrokeParameters(lineStyle.computedFontPixelSize(), controlPointDistance, step);
         wavyOffset = wavyOffsetFromDecoration();
         overflowResult.left = strokeThickness;
@@ -131,7 +131,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
         // Compensate for the integral ceiling in GraphicsContext::computeLineBoundsAndAntialiasingModeForText()
         int underlineOffset = 1;
         underlineOffset += computeUnderlineOffset(lineStyle.textUnderlinePosition(), lineStyle.fontMetrics(), inlineTextBox, strokeThickness);
-        if (decorationStyle == TextDecorationStyleWavy) {
+        if (decorationStyle == TextDecorationStyle::Wavy) {
             extendIntToFloat(overflowResult.bottom, underlineOffset + wavyOffset + controlPointDistance + strokeThickness - height);
             extendIntToFloat(overflowResult.top, -(underlineOffset + wavyOffset - controlPointDistance - strokeThickness));
         } else {
@@ -140,7 +140,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
         }
     }
     if (decoration & TextDecorationOverline) {
-        if (decorationStyle == TextDecorationStyleWavy) {
+        if (decorationStyle == TextDecorationStyle::Wavy) {
             extendIntToFloat(overflowResult.bottom, -wavyOffset + controlPointDistance + strokeThickness - height);
             extendIntToFloat(overflowResult.top, wavyOffset + controlPointDistance + strokeThickness);
         } else {
@@ -150,7 +150,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
     }
     if (decoration & TextDecorationLineThrough) {
         float baseline = lineStyle.fontMetrics().floatAscent();
-        if (decorationStyle == TextDecorationStyleWavy) {
+        if (decorationStyle == TextDecorationStyle::Wavy) {
             extendIntToFloat(overflowResult.bottom, 2 * baseline / 3 + controlPointDistance + strokeThickness - height);
             extendIntToFloat(overflowResult.top, -(2 * baseline / 3 - controlPointDistance - strokeThickness));
         } else {

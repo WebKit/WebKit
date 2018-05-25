@@ -241,7 +241,7 @@ public:
     void invalidateParentChildList();
 #endif
 
-    bool visibleToHitTesting() const { return renderer().style().visibility() == VISIBLE && renderer().style().pointerEvents() != PE_NONE; }
+    bool visibleToHitTesting() const { return renderer().style().visibility() == Visibility::Visible && renderer().style().pointerEvents() != PointerEvents::None; }
 
     const RenderStyle& lineStyle() const { return m_bitfields.firstLine() ? renderer().firstLineStyle() : renderer().style(); }
     

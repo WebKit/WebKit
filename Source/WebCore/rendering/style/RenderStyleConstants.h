@@ -77,30 +77,32 @@ enum class StyleDifferenceContextSensitiveProperty {
 };
 
 // Static pseudo styles. Dynamic ones are produced on the fly.
-enum PseudoId : unsigned char {
-    // The order must be NOP ID, public IDs, and then internal IDs.
-    NOPSEUDO,
-    FIRST_LINE,
-    FIRST_LETTER,
-    MARKER,
-    BEFORE,
-    AFTER,
-    SELECTION,
-    SCROLLBAR,
+enum class PseudoId : unsigned char {
+    // The order must be None, public IDs, and then internal IDs.
+    None,
 
-    // Internal IDs follow:
-    SCROLLBAR_THUMB,
-    SCROLLBAR_BUTTON,
-    SCROLLBAR_TRACK,
-    SCROLLBAR_TRACK_PIECE,
-    SCROLLBAR_CORNER,
-    RESIZER,
+    // Public:
+    FirstLine,
+    FirstLetter,
+    Marker,
+    Before,
+    After,
+    Selection,
+    Scrollbar,
 
-    AFTER_LAST_INTERNAL_PSEUDOID,
+    // Internal:
+    ScrollbarThumb,
+    ScrollbarButton,
+    ScrollbarTrack,
+    ScrollbarTrackPiece,
+    ScrollbarCorner,
+    Resizer,
 
-    FIRST_PUBLIC_PSEUDOID = FIRST_LINE,
-    FIRST_INTERNAL_PSEUDOID = SCROLLBAR_THUMB,
-    PUBLIC_PSEUDOID_MASK = ((1 << FIRST_INTERNAL_PSEUDOID) - 1) & ~((1 << FIRST_PUBLIC_PSEUDOID) - 1)
+    AfterLastInternalPseudoId,
+
+    FirstPublicPseudoId = FirstLine,
+    FirstInternalPseudoId = ScrollbarThumb,
+    PublicPseudoIdMask = ((1 << FirstInternalPseudoId) - 1) & ~((1 << FirstPublicPseudoId) - 1)
 };
 
 class PseudoIdSet {
@@ -124,14 +126,14 @@ public:
 
     bool has(PseudoId pseudoId) const
     {
-        ASSERT((sizeof(m_data) * 8) > pseudoId);
-        return m_data & (1U << pseudoId);
+        ASSERT((sizeof(m_data) * 8) > static_cast<unsigned>(pseudoId));
+        return m_data & (1U << static_cast<unsigned>(pseudoId));
     }
 
     void add(PseudoId pseudoId)
     {
-        ASSERT((sizeof(m_data) * 8) > pseudoId);
-        m_data |= (1U << pseudoId);
+        ASSERT((sizeof(m_data) * 8) > static_cast<unsigned>(pseudoId));
+        m_data |= (1U << static_cast<unsigned>(pseudoId));
     }
 
     void merge(PseudoIdSet source)
@@ -543,14 +545,14 @@ enum class Resize {
 };
 
 // The order of this enum must match the order of the list style types in CSSValueKeywords.in.
-enum EListStyleType {
+enum class ListStyleType {
     Disc,
     Circle,
     Square,
-    DecimalListStyle,
+    Decimal,
     DecimalLeadingZero,
     ArabicIndic,
-    BinaryListStyle,
+    Binary,
     Bengali,
     Cambodian,
     Khmer,
@@ -624,7 +626,7 @@ enum EListStyleType {
     Katakana,
     HiraganaIroha,
     KatakanaIroha,
-    NoneListStyle
+    None
 };
 
 enum class QuoteType {
@@ -634,50 +636,50 @@ enum class QuoteType {
     NoCloseQuote
 };
 
-enum EBorderFit {
-    BorderFitBorder,
-    BorderFitLines
+enum class BorderFit {
+    Border,
+    Lines
 };
 
-enum EAnimationFillMode {
-    AnimationFillModeNone,
-    AnimationFillModeForwards,
-    AnimationFillModeBackwards,
-    AnimationFillModeBoth
+enum class AnimationFillMode {
+    None,
+    Forwards,
+    Backwards,
+    Both
 };
 
-enum EAnimPlayState {
-    AnimPlayStatePlaying = 0x0,
-    AnimPlayStatePaused = 0x1
+enum class AnimationPlayState {
+    Playing = 0x0,
+    Paused = 0x1
 };
 
-enum EWhiteSpace {
-    NORMAL,
-    PRE,
-    PRE_WRAP,
-    PRE_LINE,
-    NOWRAP,
-    KHTML_NOWRAP
+enum class WhiteSpace {
+    Normal,
+    Pre,
+    PreWrap,
+    PreLine,
+    NoWrap,
+    KHTMLNoWrap
 };
 
 // The order of this enum must match the order of the text align values in CSSValueKeywords.in.
-enum ETextAlign {
-    LEFT,
-    RIGHT,
-    CENTER,
-    JUSTIFY,
-    WEBKIT_LEFT,
-    WEBKIT_RIGHT,
-    WEBKIT_CENTER,
-    TASTART,
-    TAEND,
+enum class TextAlignMode {
+    Left,
+    Right,
+    Center,
+    Justify,
+    WebKitLeft,
+    WebKitRight,
+    WebKitCenter,
+    Start,
+    End,
 };
 
-enum ETextTransform {
-    CAPITALIZE,
-    UPPERCASE,
-    LOWERCASE,
-    TTNONE
+enum class TextTransform {
+    Capitalize,
+    Uppercase,
+    Lowercase,
+    None
 };
 
 #if ENABLE(LETTERPRESS)
@@ -686,216 +688,218 @@ static const size_t TextDecorationBits = 5;
 static const size_t TextDecorationBits = 4;
 #endif
 enum TextDecoration {
-    TextDecorationNone = 0x0,
-    TextDecorationUnderline = 0x1,
-    TextDecorationOverline = 0x2,
-    TextDecorationLineThrough = 0x4,
-    TextDecorationBlink = 0x8,
+    TextDecorationNone          = 0,
+    TextDecorationUnderline     = 1 << 0,
+    TextDecorationOverline      = 1 << 1,
+    TextDecorationLineThrough   = 1 << 2,
+    TextDecorationBlink         = 1 << 3,
 #if ENABLE(LETTERPRESS)
-    TextDecorationLetterpress = 0x10,
+    TextDecorationLetterpress   = 1 << 4,
 #endif
 };
 inline TextDecoration operator|(TextDecoration a, TextDecoration b) { return TextDecoration(int(a) | int(b)); }
 inline TextDecoration& operator|=(TextDecoration& a, TextDecoration b) { return a = a | b; }
 
-enum TextDecorationStyle {
-    TextDecorationStyleSolid,
-    TextDecorationStyleDouble,
-    TextDecorationStyleDotted,
-    TextDecorationStyleDashed,
-    TextDecorationStyleWavy
+enum class TextDecorationStyle {
+    Solid,
+    Double,
+    Dotted,
+    Dashed,
+    Wavy
 };
 
 #if ENABLE(CSS3_TEXT)
-enum TextAlignLast {
-    TextAlignLastAuto,
-    TextAlignLastStart,
-    TextAlignLastEnd,
-    TextAlignLastLeft,
-    TextAlignLastRight,
-    TextAlignLastCenter,
-    TextAlignLastJustify
+enum class TextAlignLast {
+    Auto,
+    Start,
+    End,
+    Left,
+    Right,
+    Center,
+    Justify
 };
 
-enum TextJustify {
-    TextJustifyAuto,
-    TextJustifyNone,
-    TextJustifyInterWord,
-    TextJustifyDistribute
+enum class TextJustify {
+    Auto,
+    None,
+    InterWord,
+    Distribute
 };
 #endif // CSS3_TEXT
 
 enum TextDecorationSkipItems {
-    TextDecorationSkipNone = 0,
-    TextDecorationSkipInk = 1 << 0,
-    TextDecorationSkipObjects = 1 << 1,
-    TextDecorationSkipAuto = 1 << 2
+    TextDecorationSkipNone      = 0,
+    TextDecorationSkipInk       = 1 << 0,
+    TextDecorationSkipObjects   = 1 << 1,
+    TextDecorationSkipAuto      = 1 << 2
 };
 typedef unsigned TextDecorationSkip;
 
 enum TextUnderlinePosition {
     // FIXME: Implement support for 'under left' and 'under right' values.
-    TextUnderlinePositionAuto = 0x1,
-    TextUnderlinePositionAlphabetic = 0x2,
-    TextUnderlinePositionUnder = 0x4
+    TextUnderlinePositionAuto       = 1 << 0,
+    TextUnderlinePositionAlphabetic = 1 << 1,
+    TextUnderlinePositionUnder      = 1 << 2
 };
 
-enum TextZoom {
-    TextZoomNormal,
-    TextZoomReset
+enum class TextZoom {
+    Normal,
+    Reset
 };
 
-enum BreakBetween {
-    AutoBreakBetween,
-    AvoidBreakBetween,
-    AvoidColumnBreakBetween,
-    AvoidPageBreakBetween,
-    ColumnBreakBetween,
-    PageBreakBetween,
-    LeftPageBreakBetween,
-    RightPageBreakBetween,
-    RectoPageBreakBetween,
-    VersoPageBreakBetween
+enum class BreakBetween {
+    Auto,
+    Avoid,
+    AvoidColumn,
+    AvoidPage,
+    Column,
+    Page,
+    LeftPage,
+    RightPage,
+    RectoPage,
+    VersoPage
 };
 bool alwaysPageBreak(BreakBetween);
     
-enum BreakInside {
-    AutoBreakInside,
-    AvoidBreakInside,
-    AvoidColumnBreakInside,
-    AvoidPageBreakInside
+enum class BreakInside {
+    Auto,
+    Avoid,
+    AvoidColumn,
+    AvoidPage
 };
 
 enum HangingPunctuation {
-    NoHangingPunctuation = 0,
-    FirstHangingPunctuation = 1 << 0,
-    LastHangingPunctuation = 1 << 1,
-    AllowEndHangingPunctuation = 1 << 2,
-    ForceEndHangingPunctuation = 1 << 3
+    NoHangingPunctuation        = 0,
+    FirstHangingPunctuation     = 1 << 0,
+    LastHangingPunctuation      = 1 << 1,
+    AllowEndHangingPunctuation  = 1 << 2,
+    ForceEndHangingPunctuation  = 1 << 3
 };
 inline HangingPunctuation operator|(HangingPunctuation a, HangingPunctuation b) { return HangingPunctuation(int(a) | int(b)); }
 inline HangingPunctuation& operator|=(HangingPunctuation& a, HangingPunctuation b) { return a = a | b; }
 
-enum EEmptyCell {
-    SHOW,
-    HIDE
+enum class EmptyCell {
+    Show,
+    Hide
 };
 
-enum ECaptionSide {
-    CAPTOP,
-    CAPBOTTOM,
-    CAPLEFT,
-    CAPRIGHT
+enum class CaptionSide {
+    Top,
+    Bottom,
+    Left,
+    Right
 };
 
-enum EListStylePosition {
-    OUTSIDE,
-    INSIDE
+enum class ListStylePosition {
+    Outside,
+    Inside
 };
 
-enum EVisibility {
-    VISIBLE,
-    HIDDEN,
-    COLLAPSE
+enum class Visibility {
+    Visible,
+    Hidden,
+    Collapse
 };
 
-enum ECursor {
+WTF::TextStream& operator<<(WTF::TextStream&, Visibility);
+
+enum class CursorType {
     // The following must match the order in CSSValueKeywords.in.
-    CursorAuto,
-    CursorDefault,
-    // CursorNone
-    CursorContextMenu,
-    CursorHelp,
-    CursorPointer,
-    CursorProgress,
-    CursorWait,
-    CursorCell,
-    CursorCrosshair,
-    CursorText,
-    CursorVerticalText,
-    CursorAlias,
-    // CursorCopy
-    CursorMove,
-    CursorNoDrop,
-    CursorNotAllowed,
-    CursorGrab,
-    CursorGrabbing,
-    CursorEResize,
-    CursorNResize,
-    CursorNeResize,
-    CursorNwResize,
-    CursorSResize,
-    CursorSeResize,
-    CursorSwResize,
-    CursorWResize,
-    CursorEwResize,
-    CursorNsResize,
-    CursorNeswResize,
-    CursorNwseResize,
-    CursorColResize,
-    CursorRowResize,
-    CursorAllScroll,
-    CursorZoomIn,
-    CursorZoomOut,
+    Auto,
+    Default,
+    // None
+    ContextMenu,
+    Help,
+    Pointer,
+    Progress,
+    Wait,
+    Cell,
+    Crosshair,
+    Text,
+    VerticalText,
+    Alias,
+    // Copy
+    Move,
+    NoDrop,
+    NotAllowed,
+    Grab,
+    Grabbing,
+    EResize,
+    NResize,
+    NEResize,
+    NWResize,
+    SResize,
+    SEResize,
+    SWResize,
+    WResize,
+    EWResize,
+    NSResize,
+    NESWResize,
+    NWSEResize,
+    ColumnResize,
+    RowResize,
+    AllScroll,
+    ZoomIn,
+    ZoomOut,
 
     // The following are handled as exceptions so don't need to match.
-    CursorCopy,
-    CursorNone
+    Copy,
+    None
 };
 
 #if ENABLE(CURSOR_VISIBILITY)
-enum CursorVisibility {
-    CursorVisibilityAuto,
-    CursorVisibilityAutoHide,
+enum class CursorVisibility {
+    Auto,
+    AutoHide,
 };
 #endif
 
 // The order of this enum must match the order of the display values in CSSValueKeywords.in.
-enum EDisplay {
-    INLINE,
-    BLOCK,
-    LIST_ITEM,
-    COMPACT,
-    INLINE_BLOCK,
-    TABLE,
-    INLINE_TABLE,
-    TABLE_ROW_GROUP,
-    TABLE_HEADER_GROUP,
-    TABLE_FOOTER_GROUP,
-    TABLE_ROW,
-    TABLE_COLUMN_GROUP,
-    TABLE_COLUMN,
-    TABLE_CELL,
-    TABLE_CAPTION,
-    BOX,
-    INLINE_BOX,
-    FLEX,
-    WEBKIT_FLEX,
-    INLINE_FLEX,
-    WEBKIT_INLINE_FLEX,
-    CONTENTS,
-    GRID,
-    INLINE_GRID,
-    NONE
+enum class DisplayType {
+    Inline,
+    Block,
+    ListItem,
+    Compact,
+    InlineBlock,
+    Table,
+    InlineTable,
+    TableRowGroup,
+    TableHeaderGroup,
+    TableFooterGroup,
+    TableRow,
+    TableColumnGroup,
+    TableColumn,
+    TableCell,
+    TableCaption,
+    Box,
+    InlineBox,
+    Flex,
+    WebKitFlex,
+    InlineFlex,
+    WebKitInlineFlex,
+    Contents,
+    Grid,
+    InlineGrid,
+    None
 };
 
-enum EInsideLink {
-    NotInsideLink,
-    InsideUnvisitedLink,
-    InsideVisitedLink
+enum class InsideLink {
+    NotInside,
+    InsideUnvisited,
+    InsideVisited
 };
     
-enum EPointerEvents {
-    PE_NONE,
-    PE_AUTO,
-    PE_STROKE,
-    PE_FILL,
-    PE_PAINTED,
-    PE_VISIBLE,
-    PE_VISIBLE_STROKE,
-    PE_VISIBLE_FILL,
-    PE_VISIBLE_PAINTED,
-    PE_ALL
+enum class PointerEvents {
+    None,
+    Auto,
+    Stroke,
+    Fill,
+    Painted,
+    Visible,
+    VisibleStroke,
+    VisibleFill,
+    VisiblePainted,
+    All
 };
 
 enum class TransformStyle3D {
@@ -919,42 +923,42 @@ enum class LineClamp {
     Percentage
 };
 
-enum Hyphens {
-    HyphensNone,
-    HyphensManual,
-    HyphensAuto
+enum class Hyphens {
+    None,
+    Manual,
+    Auto
 };
 
 enum ESpeakAs {
-    SpeakNormal = 0,
-    SpeakSpellOut = 1 << 0,
-    SpeakDigits = 1 << 1,
+    SpeakNormal             = 0,
+    SpeakSpellOut           = 1 << 0,
+    SpeakDigits             = 1 << 1,
     SpeakLiteralPunctuation = 1 << 2,
-    SpeakNoPunctuation = 1 << 3
+    SpeakNoPunctuation      = 1 << 3
 };
 inline ESpeakAs operator|(ESpeakAs a, ESpeakAs b) { return ESpeakAs(int(a) | int(b)); }
 inline ESpeakAs& operator|=(ESpeakAs& a, ESpeakAs b) { return a = a | b; }
 
-enum TextEmphasisFill {
-    TextEmphasisFillFilled,
-    TextEmphasisFillOpen
+enum class TextEmphasisFill {
+    Filled,
+    Open
 };
 
-enum TextEmphasisMark {
-    TextEmphasisMarkNone,
-    TextEmphasisMarkAuto,
-    TextEmphasisMarkDot,
-    TextEmphasisMarkCircle,
-    TextEmphasisMarkDoubleCircle,
-    TextEmphasisMarkTriangle,
-    TextEmphasisMarkSesame,
-    TextEmphasisMarkCustom
+enum class TextEmphasisMark {
+    None,
+    Auto,
+    Dot,
+    Circle,
+    DoubleCircle,
+    Triangle,
+    Sesame,
+    Custom
 };
 
 enum TextEmphasisPositions {
-    TextEmphasisPositionOver = 1 << 0,
+    TextEmphasisPositionOver  = 1 << 0,
     TextEmphasisPositionUnder = 1 << 1,
-    TextEmphasisPositionLeft = 1 << 2,
+    TextEmphasisPositionLeft  = 1 << 2,
     TextEmphasisPositionRight = 1 << 3
 };
 typedef unsigned TextEmphasisPosition;
@@ -980,58 +984,58 @@ enum class ImageRendering {
 
 WTF::TextStream& operator<<(WTF::TextStream&, ImageRendering);
 
-enum ImageResolutionSource {
-    ImageResolutionSpecified = 0,
-    ImageResolutionFromImage
+enum class ImageResolutionSource {
+    Specified = 0,
+    FromImage
 };
 
-enum ImageResolutionSnap {
-    ImageResolutionNoSnap = 0,
-    ImageResolutionSnapPixels
+enum class ImageResolutionSnap {
+    None = 0,
+    Pixels
 };
 
-enum Order {
-    LogicalOrder = 0,
-    VisualOrder
+enum class Order {
+    Logical = 0,
+    Visual
 };
 
-enum ColumnAxis {
-    HorizontalColumnAxis,
-    VerticalColumnAxis,
-    AutoColumnAxis
+enum class ColumnAxis {
+    Horizontal,
+    Vertical,
+    Auto
 };
 
-enum ColumnProgression {
-    NormalColumnProgression,
-    ReverseColumnProgression
+enum class ColumnProgression {
+    Normal,
+    Reverse
 };
 
-enum LineSnap {
-    LineSnapNone,
-    LineSnapBaseline,
-    LineSnapContain
+enum class LineSnap {
+    None,
+    Baseline,
+    Contain
 };
 
-enum LineAlign {
-    LineAlignNone,
-    LineAlignEdges
+enum class LineAlign {
+    None,
+    Edges
 };
 
-enum RubyPosition {
-    RubyPositionBefore,
-    RubyPositionAfter,
-    RubyPositionInterCharacter
+enum class RubyPosition {
+    Before,
+    After,
+    InterCharacter
 };
 
 static const size_t GridAutoFlowBits = 4;
 enum InternalGridAutoFlowAlgorithm {
-    InternalAutoFlowAlgorithmSparse = 0x1,
-    InternalAutoFlowAlgorithmDense = 0x2,
+    InternalAutoFlowAlgorithmSparse = 1 << 0,
+    InternalAutoFlowAlgorithmDense  = 1 << 1,
 };
 
 enum InternalGridAutoFlowDirection {
-    InternalAutoFlowDirectionRow = 0x4,
-    InternalAutoFlowDirectionColumn = 0x8
+    InternalAutoFlowDirectionRow    = 1 << 2,
+    InternalAutoFlowDirectionColumn = 1 << 3
 };
 
 enum GridAutoFlow {
@@ -1041,10 +1045,10 @@ enum GridAutoFlow {
     AutoFlowColumnDense = InternalAutoFlowAlgorithmDense | InternalAutoFlowDirectionColumn
 };
 
-enum AutoRepeatType {
-    NoAutoRepeat,
-    AutoFill,
-    AutoFit
+enum class AutoRepeatType {
+    None,
+    Fill,
+    Fit
 };
 
 // Reasonable maximum to prevent insane font sizes from causing crashes on some platforms (such as Windows).
@@ -1070,7 +1074,7 @@ enum class Isolation {
 };
 
 // Fill, Stroke, ViewBox are just used for SVG.
-enum CSSBoxType {
+enum class CSSBoxType {
     BoxMissing = 0,
     MarginBox,
     BorderBox,

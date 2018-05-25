@@ -91,14 +91,14 @@ static void updateStyleForContentRenderers(RenderElement& pseudoRenderer, const 
 
 void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, const std::optional<Style::ElementUpdate>& update, PseudoId pseudoId)
 {
-    PseudoElement* pseudoElement = pseudoId == BEFORE ? current.beforePseudoElement() : current.afterPseudoElement();
+    PseudoElement* pseudoElement = pseudoId == PseudoId::Before ? current.beforePseudoElement() : current.afterPseudoElement();
 
     if (auto* renderer = pseudoElement ? pseudoElement->renderer() : nullptr)
         m_updater.renderTreePosition().invalidateNextSibling(*renderer);
 
     if (!needsPseudoElement(update)) {
         if (pseudoElement) {
-            if (pseudoId == BEFORE)
+            if (pseudoId == PseudoId::Before)
                 removeBeforePseudoElement(current, m_updater.m_builder);
             else
                 removeAfterPseudoElement(current, m_updater.m_builder);
@@ -116,13 +116,13 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
         return;
 
     if (newPseudoElement) {
-        if (pseudoId == BEFORE)
+        if (pseudoId == PseudoId::Before)
             current.setBeforePseudoElement(newPseudoElement.releaseNonNull());
         else
             current.setAfterPseudoElement(newPseudoElement.releaseNonNull());
     }
 
-    if (update->style->display() == CONTENTS) {
+    if (update->style->display() == DisplayType::Contents) {
         // For display:contents we create an inline wrapper that inherits its
         // style from the display:contents style.
         auto contentsStyle = RenderStyle::createPtr();

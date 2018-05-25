@@ -177,8 +177,8 @@ static BOOL isLookalikeCharacter(std::optional<UChar32> previousCodePoint, UChar
         case 0x233F: /* APL FUNCTIONAL SYMBOL SLASH BAR */
         case 0x23AE: /* INTEGRAL EXTENSION */
         case 0x244A: /* OCR DOUBLE BACKSLASH */
-        case 0x2571: /* BOX DRAWINGS LIGHT DIAGONAL UPPER RIGHT TO LOWER LEFT */
-        case 0x2572: /* BOX DRAWINGS LIGHT DIAGONAL UPPER LEFT TO LOWER RIGHT */
+        case 0x2571: /* DisplayType::Box DRAWINGS LIGHT DIAGONAL UPPER RIGHT TO LOWER LEFT */
+        case 0x2572: /* DisplayType::Box DRAWINGS LIGHT DIAGONAL UPPER LEFT TO LOWER RIGHT */
         case 0x29F6: /* SOLIDUS WITH OVERBAR */
         case 0x29F8: /* BIG SOLIDUS */
         case 0x2AFB: /* TRIPLE SOLIDUS BINARY RELATION */

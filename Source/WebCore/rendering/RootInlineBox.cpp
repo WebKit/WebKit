@@ -160,7 +160,7 @@ float RootInlineBox::placeEllipsisBox(bool ltr, float blockLeftEdge, float block
 
 void RootInlineBox::paintEllipsisBox(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom) const
 {
-    if (hasEllipsisBox() && paintInfo.shouldPaintWithinRoot(renderer()) && renderer().style().visibility() == VISIBLE
+    if (hasEllipsisBox() && paintInfo.shouldPaintWithinRoot(renderer()) && renderer().style().visibility() == Visibility::Visible
             && paintInfo.phase == PaintPhaseForeground)
         ellipsisBox()->paint(paintInfo, paintOffset, lineTop, lineBottom);
 }
@@ -335,7 +335,7 @@ LayoutUnit RootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
 {
     // If our block doesn't have snapping turned on, do nothing.
     // FIXME: Implement bounds snapping.
-    if (blockFlow().style().lineSnap() == LineSnapNone)
+    if (blockFlow().style().lineSnap() == LineSnap::None)
         return 0;
 
     // Get the current line grid and offset.
@@ -382,7 +382,7 @@ LayoutUnit RootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
             firstTextTop = pageLogicalTop + lineGridBox->logicalTop() - lineGrid->borderAndPaddingBefore() + lineGridPaginationOrigin;
     }
 
-    if (blockFlow().style().lineSnap() == LineSnapContain) {
+    if (blockFlow().style().lineSnap() == LineSnap::Contain) {
         // Compute the desired offset from the text-top of a grid line.
         // Look at our height (logicalHeight()).
         // Look at the total available height. It's going to be (textBottom - textTop) + (n-1)*(multiple with leading)
@@ -460,7 +460,7 @@ GapRects RootInlineBox::lineSelectionGap(RenderBlock& rootBlock, const LayoutPoi
                 logicalRect.move(renderer().isHorizontalWritingMode() ? offsetFromRootBlock : LayoutSize(offsetFromRootBlock.height(), offsetFromRootBlock.width()));
                 LayoutRect gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
                 if (isPreviousBoxSelected && gapRect.width() > 0 && gapRect.height() > 0) {
-                    if (paintInfo && box->parent()->renderer().style().visibility() == VISIBLE)
+                    if (paintInfo && box->parent()->renderer().style().visibility() == Visibility::Visible)
                         paintInfo->context().fillRect(gapRect, box->parent()->renderer().selectionBackgroundColor());
                     // VisibleSelection may be non-contiguous, see comment above.
                     result.uniteCenter(gapRect);
@@ -498,20 +498,20 @@ IntRect RootInlineBox::computeCaretRect(float logicalLeftPosition, unsigned care
 
     bool rightAligned = false;
     switch (blockStyle.textAlign()) {
-    case RIGHT:
-    case WEBKIT_RIGHT:
+    case TextAlignMode::Right:
+    case TextAlignMode::WebKitRight:
         rightAligned = true;
         break;
-    case LEFT:
-    case WEBKIT_LEFT:
-    case CENTER:
-    case WEBKIT_CENTER:
+    case TextAlignMode::Left:
+    case TextAlignMode::WebKitLeft:
+    case TextAlignMode::Center:
+    case TextAlignMode::WebKitCenter:
         break;
-    case JUSTIFY:
-    case TASTART:
+    case TextAlignMode::Justify:
+    case TextAlignMode::Start:
         rightAligned = !blockStyle.isLeftToRightDirection();
         break;
-    case TAEND:
+    case TextAlignMode::End:
         rightAligned = blockStyle.isLeftToRightDirection();
         break;
     }

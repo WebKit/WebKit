@@ -524,8 +524,8 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
 std::unique_ptr<OrderedTrackIndexSet> RenderGrid::computeEmptyTracksForAutoRepeat(Grid& grid, GridTrackSizingDirection direction) const
 {
     bool isRowAxis = direction == ForColumns;
-    if ((isRowAxis && style().gridAutoRepeatColumnsType() != AutoFit)
-        || (!isRowAxis && style().gridAutoRepeatRowsType() != AutoFit))
+    if ((isRowAxis && style().gridAutoRepeatColumnsType() != AutoRepeatType::Fit)
+        || (!isRowAxis && style().gridAutoRepeatRowsType() != AutoRepeatType::Fit))
         return nullptr;
 
     std::unique_ptr<OrderedTrackIndexSet> emptyTrackIndexes;

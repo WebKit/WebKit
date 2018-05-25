@@ -152,28 +152,28 @@ bool Box::isDescendantOf(Container& container) const
 
 bool Box::isInlineBlockBox() const
 {
-    return m_style.display() == INLINE_BLOCK;
+    return m_style.display() == DisplayType::InlineBlock;
 }
 
 bool Box::isBlockLevelBox() const
 {
     // Block level elements generate block level boxes.
     auto display = m_style.display();
-    return display == BLOCK || display == LIST_ITEM || display == TABLE;
+    return display == DisplayType::Block || display == DisplayType::ListItem || display == DisplayType::Table;
 }
 
 bool Box::isInlineLevelBox() const
 {
     // Inline level elements generate inline level boxes.
     auto display = m_style.display();
-    return display == INLINE || display == INLINE_BLOCK || display == INLINE_TABLE;
+    return display == DisplayType::Inline || display == DisplayType::InlineBlock || display == DisplayType::InlineTable;
 }
 
 bool Box::isBlockContainerBox() const
 {
     // Inline level elements generate inline level boxes.
     auto display = m_style.display();
-    return display == BLOCK || display == LIST_ITEM || display == INLINE_BLOCK || display == TABLE_CELL || display == TABLE_CAPTION; // TODO && !replaced element
+    return display == DisplayType::Block || display == DisplayType::ListItem || display == DisplayType::InlineBlock || display == DisplayType::TableCell || display == DisplayType::TableCaption; // TODO && !replaced element
 }
 
 bool Box::isInitialContainingBlock() const

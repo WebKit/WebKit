@@ -39,7 +39,7 @@ namespace WebCore {
 
 static RenderStyle styleForFirstLetter(const RenderBlock& firstLetterBlock, const RenderObject& firstLetterContainer)
 {
-    auto* containerFirstLetterStyle = firstLetterBlock.getCachedPseudoStyle(FIRST_LETTER, &firstLetterContainer.firstLineStyle());
+    auto* containerFirstLetterStyle = firstLetterBlock.getCachedPseudoStyle(PseudoId::FirstLetter, &firstLetterContainer.firstLineStyle());
     // FIXME: There appears to be some path where we have a first letter renderer without first letter style.
     ASSERT(containerFirstLetterStyle);
     auto firstLetterStyle = RenderStyle::clone(containerFirstLetterStyle ? *containerFirstLetterStyle : firstLetterContainer.firstLineStyle());
@@ -82,7 +82,7 @@ static RenderStyle styleForFirstLetter(const RenderBlock& firstLetterBlock, cons
     }
 
     // Force inline display (except for floating first-letters).
-    firstLetterStyle.setDisplay(firstLetterStyle.isFloating() ? BLOCK : INLINE);
+    firstLetterStyle.setDisplay(firstLetterStyle.isFloating() ? DisplayType::Block : DisplayType::Inline);
     // CSS2 says first-letter can't be positioned.
     firstLetterStyle.setPosition(PositionType::Static);
     return firstLetterStyle;
@@ -121,7 +121,7 @@ RenderTreeBuilder::FirstLetter::FirstLetter(RenderTreeBuilder& builder)
 
 void RenderTreeBuilder::FirstLetter::updateAfterDescendants(RenderBlock& block)
 {
-    if (!block.style().hasPseudoStyle(FIRST_LETTER))
+    if (!block.style().hasPseudoStyle(PseudoId::FirstLetter))
         return;
     if (!supportsFirstLetter(block))
         return;
@@ -140,7 +140,7 @@ void RenderTreeBuilder::FirstLetter::updateAfterDescendants(RenderBlock& block)
 
     // If the child already has style, then it has already been created, so we just want
     // to update it.
-    if (firstLetterRenderer->parent()->style().styleType() == FIRST_LETTER) {
+    if (firstLetterRenderer->parent()->style().styleType() == PseudoId::FirstLetter) {
         updateStyle(block, *firstLetterRenderer);
         return;
     }
@@ -170,7 +170,7 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
     if (Style::determineChange(firstLetter->style(), pseudoStyle) == Style::Detach) {
         // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
         RenderPtr<RenderBoxModelObject> newFirstLetter;
-        if (pseudoStyle.display() == INLINE)
+        if (pseudoStyle.display() == DisplayType::Inline)
             newFirstLetter = createRenderer<RenderInline>(firstLetterBlock.document(), WTFMove(pseudoStyle));
         else
             newFirstLetter = createRenderer<RenderBlockFlow>(firstLetterBlock.document(), WTFMove(pseudoStyle));
@@ -205,7 +205,7 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderBlock& firstLetterBlo
     RenderElement* firstLetterContainer = currentTextChild.parent();
     auto pseudoStyle = styleForFirstLetter(firstLetterBlock, *firstLetterContainer);
     RenderPtr<RenderBoxModelObject> newFirstLetter;
-    if (pseudoStyle.display() == INLINE)
+    if (pseudoStyle.display() == DisplayType::Inline)
         newFirstLetter = createRenderer<RenderInline>(firstLetterBlock.document(), WTFMove(pseudoStyle));
     else
         newFirstLetter = createRenderer<RenderBlockFlow>(firstLetterBlock.document(), WTFMove(pseudoStyle));

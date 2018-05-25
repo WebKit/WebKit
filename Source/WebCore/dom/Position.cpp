@@ -685,7 +685,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
 
         // skip position in unrendered or invisible node
         RenderObject* renderer = currentNode.renderer();
-        if (!renderer || renderer->style().visibility() != VISIBLE)
+        if (!renderer || renderer->style().visibility() != Visibility::Visible)
             continue;
         ensureLineBoxesIfNeeded(*renderer);
         if (rule == CanCrossEditingBoundary && boundaryCrossed) {
@@ -820,7 +820,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
 
         // skip position in unrendered or invisible node
         auto* renderer = currentNode.renderer();
-        if (!renderer || renderer->style().visibility() != VISIBLE)
+        if (!renderer || renderer->style().visibility() != Visibility::Visible)
             continue;
         ensureLineBoxesIfNeeded(*renderer);
         if (rule == CanCrossEditingBoundary && boundaryCrossed) {
@@ -995,7 +995,7 @@ bool Position::isCandidate() const
     if (!renderer)
         return false;
 
-    if (renderer->style().visibility() != VISIBLE)
+    if (renderer->style().visibility() != Visibility::Visible)
         return false;
 
     if (renderer->isBR()) {
@@ -1058,7 +1058,7 @@ bool Position::rendersInDifferentPosition(const Position& position) const
     if (!positionRenderer)
         return false;
 
-    if (renderer->style().visibility() != VISIBLE || positionRenderer->style().visibility() != VISIBLE)
+    if (renderer->style().visibility() != Visibility::Visible || positionRenderer->style().visibility() != Visibility::Visible)
         return false;
     
     if (deprecatedNode() == position.deprecatedNode()) {

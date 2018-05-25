@@ -418,7 +418,7 @@ bool RenderBlockFlow::willCreateColumns(std::optional<unsigned> desiredColumnCou
     if (!firstChild())
         return false;
 
-    if (style().styleType() != NOPSEUDO)
+    if (style().styleType() != PseudoId::None)
         return false;
 
     // If overflow-y is set to paged-x or paged-y on the body or html element, we'll handle the paginating in the RenderView instead.
@@ -568,7 +568,7 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
     // FIXME: This repaint logic should be moved into a separate helper function!
     // Repaint with our new bounds if they are different from our old bounds.
     bool didFullRepaint = repainter.repaintAfterLayout();
-    if (!didFullRepaint && repaintLogicalTop != repaintLogicalBottom && (styleToUse.visibility() == VISIBLE || enclosingLayer()->hasVisibleContent())) {
+    if (!didFullRepaint && repaintLogicalTop != repaintLogicalBottom && (styleToUse.visibility() == Visibility::Visible || enclosingLayer()->hasVisibleContent())) {
         // FIXME: We could tighten up the left and right invalidation points if we let layoutInlineChildren fill them in based off the particular lines
         // it had to lay out. We wouldn't need the hasOverflowClip() hack in that case either.
         LayoutUnit repaintLogicalLeft = logicalLeftVisualOverflow();
@@ -1501,7 +1501,7 @@ LayoutUnit RenderBlockFlow::applyBeforeBreak(RenderBox& child, LayoutUnit logica
     bool checkColumnBreaks = fragmentedFlow && fragmentedFlow->shouldCheckColumnBreaks();
     bool checkPageBreaks = !checkColumnBreaks && view().frameView().layoutContext().layoutState()->pageLogicalHeight(); // FIXME: Once columns can print we have to check this.
     bool checkFragmentBreaks = false;
-    bool checkBeforeAlways = (checkColumnBreaks && child.style().breakBefore() == ColumnBreakBetween)
+    bool checkBeforeAlways = (checkColumnBreaks && child.style().breakBefore() == BreakBetween::Column)
         || (checkPageBreaks && alwaysPageBreak(child.style().breakBefore()));
     if (checkBeforeAlways && inNormalFlow(child) && hasNextPage(logicalOffset, IncludePageBoundary)) {
         if (checkColumnBreaks) {
@@ -1526,7 +1526,7 @@ LayoutUnit RenderBlockFlow::applyAfterBreak(RenderBox& child, LayoutUnit logical
     bool checkColumnBreaks = fragmentedFlow && fragmentedFlow->shouldCheckColumnBreaks();
     bool checkPageBreaks = !checkColumnBreaks && view().frameView().layoutContext().layoutState()->pageLogicalHeight(); // FIXME: Once columns can print we have to check this.
     bool checkFragmentBreaks = false;
-    bool checkAfterAlways = (checkColumnBreaks && child.style().breakAfter() == ColumnBreakBetween)
+    bool checkAfterAlways = (checkColumnBreaks && child.style().breakAfter() == BreakBetween::Column)
         || (checkPageBreaks && alwaysPageBreak(child.style().breakAfter()));
     if (checkAfterAlways && inNormalFlow(child) && hasNextPage(logicalOffset, IncludePageBoundary)) {
         LayoutUnit marginOffset = marginInfo.canCollapseWithMarginBefore() ? LayoutUnit() : marginInfo.margin();
@@ -1854,7 +1854,7 @@ LayoutUnit RenderBlockFlow::adjustForUnsplittableChild(RenderBox& child, LayoutU
         if (!hasUniformPageLogicalHeight && !pushToNextPageWithMinimumLogicalHeight(remainingLogicalHeight, logicalOffset, childLogicalHeight))
             return logicalOffset;
         auto result = logicalOffset + remainingLogicalHeight;
-        bool isInitialLetter = child.isFloating() && child.style().styleType() == FIRST_LETTER && child.style().initialLetterDrop() > 0;
+        bool isInitialLetter = child.isFloating() && child.style().styleType() == PseudoId::FirstLetter && child.style().initialLetterDrop() > 0;
         if (isInitialLetter) {
             // Increase our logical height to ensure that lines all get pushed along with the letter.
             setLogicalHeight(logicalOffset + remainingLogicalHeight);
@@ -2035,7 +2035,7 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
 void RenderBlockFlow::updateStylesForColumnChildren()
 {
     for (auto* child = firstChildBox(); child && (child->isInFlowRenderFragmentedFlow() || child->isRenderMultiColumnSet()); child = child->nextSiblingBox())
-        child->setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
+        child->setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), DisplayType::Block));
 }
 
 void RenderBlockFlow::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
@@ -2345,7 +2345,7 @@ void RenderBlockFlow::computeLogicalLocationForFloat(FloatingObject& floatingObj
     LayoutUnit floatLogicalLeft;
 
     bool insideFragmentedFlow = enclosingFragmentedFlow();
-    bool isInitialLetter = childBox.style().styleType() == FIRST_LETTER && childBox.style().initialLetterDrop() > 0;
+    bool isInitialLetter = childBox.style().styleType() == PseudoId::FirstLetter && childBox.style().initialLetterDrop() > 0;
     
     if (isInitialLetter) {
         int letterClearance = lowestInitialLetterLogicalBottom() - logicalTopOffset;
@@ -2615,7 +2615,7 @@ LayoutUnit RenderBlockFlow::lowestInitialLetterLogicalBottom() const
     auto end = floatingObjectSet.end();
     for (auto it = floatingObjectSet.begin(); it != end; ++it) {
         const auto& floatingObject = *it->get();
-        if (floatingObject.isPlaced() && floatingObject.renderer().style().styleType() == FIRST_LETTER && floatingObject.renderer().style().initialLetterDrop() > 0)
+        if (floatingObject.isPlaced() && floatingObject.renderer().style().styleType() == PseudoId::FirstLetter && floatingObject.renderer().style().initialLetterDrop() > 0)
             lowestFloatBottom = std::max(lowestFloatBottom, logicalBottomForFloat(floatingObject));
     }
     return lowestFloatBottom;
@@ -2907,7 +2907,7 @@ bool RenderBlockFlow::hitTestInlineChildren(const HitTestRequest& request, HitTe
 
 void RenderBlockFlow::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit& right) const
 {
-    if (style().visibility() != VISIBLE)
+    if (style().visibility() != Visibility::Visible)
         return;
 
     // We don't deal with relative positioning.  Our assumption is that you shrink to fit the lines without accounting
@@ -2926,7 +2926,7 @@ void RenderBlockFlow::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutU
             if (!obj->isFloatingOrOutOfFlowPositioned()) {
                 if (is<RenderBlockFlow>(*obj) && !obj->hasOverflowClip())
                     downcast<RenderBlockFlow>(*obj).adjustForBorderFit(x + obj->x(), left, right);
-                else if (obj->style().visibility() == VISIBLE) {
+                else if (obj->style().visibility() == Visibility::Visible) {
                     // We are a replaced element or some kind of non-block-flow object.
                     left = std::min(left, x + obj->x());
                     right = std::max(right, x + obj->x() + obj->width());
@@ -2953,7 +2953,7 @@ void RenderBlockFlow::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutU
 
 void RenderBlockFlow::fitBorderToLinesIfNeeded()
 {
-    if (style().borderFit() == BorderFitBorder || hasOverrideContentLogicalWidth())
+    if (style().borderFit() == BorderFit::Border || hasOverrideContentLogicalWidth())
         return;
 
     // Walk any normal flow lines to snugly fit.
@@ -3153,7 +3153,7 @@ RootInlineBox* RenderBlockFlow::lineAtIndex(int i) const
 {
     ASSERT(i >= 0);
 
-    if (style().visibility() != VISIBLE)
+    if (style().visibility() != Visibility::Visible)
         return nullptr;
 
     if (childrenInline()) {
@@ -3176,7 +3176,7 @@ RootInlineBox* RenderBlockFlow::lineAtIndex(int i) const
 
 int RenderBlockFlow::lineCount(const RootInlineBox* stopRootInlineBox, bool* found) const
 {
-    if (style().visibility() != VISIBLE)
+    if (style().visibility() != Visibility::Visible)
         return 0;
 
     int count = 0;
@@ -3214,7 +3214,7 @@ int RenderBlockFlow::lineCount(const RootInlineBox* stopRootInlineBox, bool* fou
 
 static int getHeightForLineCount(const RenderBlockFlow& block, int lineCount, bool includeEdgeBorderPadding, bool forward, int& count)
 {
-    if (block.style().visibility() != VISIBLE)
+    if (block.style().visibility() != Visibility::Visible)
         return -1;
 
     // FIXME: Orthogonal writing modes don't work here, but it's not even clear how they should behave anyway.
@@ -3264,7 +3264,7 @@ int RenderBlockFlow::logicalHeightExcludingLineCount(int lineCount)
 
 void RenderBlockFlow::clearTruncation()
 {
-    if (style().visibility() != VISIBLE)
+    if (style().visibility() != Visibility::Visible)
         return;
 
     if (childrenInline() && hasMarkupTruncation()) {
@@ -3323,7 +3323,7 @@ RenderText* RenderBlockFlow::findClosestTextAtAbsolutePoint(const FloatPoint& po
     if (!block->childrenInline()) {
         // Look among our immediate children for an alternate box that contains the point.
         for (RenderBox* child = block->firstChildBox(); child; child = child->nextSiblingBox()) {
-            if (!child->height() || child->style().visibility() != WebCore::VISIBLE || child->isFloatingOrOutOfFlowPositioned())
+            if (!child->height() || child->style().visibility() != WebCore::Visibility::Visible || child->isFloatingOrOutOfFlowPositioned())
                 continue;
             float top = child->y();
             
@@ -3707,7 +3707,7 @@ static inline bool resizeTextPermitted(const RenderObject& renderer)
 
 int RenderBlockFlow::lineCountForTextAutosizing()
 {
-    if (style().visibility() != VISIBLE)
+    if (style().visibility() != Visibility::Visible)
         return 0;
     if (childrenInline())
         return lineCount();
@@ -3888,7 +3888,7 @@ void RenderBlockFlow::setComputedColumnCountAndWidth(int count, LayoutUnit width
         return;
     multiColumnFlow()->setColumnCountAndWidth(count, width);
     multiColumnFlow()->setProgressionIsInline(style().hasInlineColumnAxis());
-    multiColumnFlow()->setProgressionIsReversed(style().columnProgression() == ReverseColumnProgression);
+    multiColumnFlow()->setProgressionIsReversed(style().columnProgression() == ColumnProgression::Reverse);
 }
 
 void RenderBlockFlow::updateColumnProgressionFromStyle(RenderStyle& style)
@@ -3905,7 +3905,7 @@ void RenderBlockFlow::updateColumnProgressionFromStyle(RenderStyle& style)
     }
 
     bool oldProgressionIsReversed = multiColumnFlow()->progressionIsReversed();
-    bool newProgressionIsReversed = style.columnProgression() == ReverseColumnProgression;
+    bool newProgressionIsReversed = style.columnProgression() == ColumnProgression::Reverse;
     if (oldProgressionIsReversed != newProgressionIsReversed) {
         multiColumnFlow()->setProgressionIsReversed(newProgressionIsReversed);
         needsLayout = true;
@@ -3933,7 +3933,7 @@ unsigned RenderBlockFlow::computedColumnCount() const
 bool RenderBlockFlow::isTopLayoutOverflowAllowed() const
 {
     bool hasTopOverflow = RenderBlock::isTopLayoutOverflowAllowed();
-    if (!multiColumnFlow() || style().columnProgression() == NormalColumnProgression)
+    if (!multiColumnFlow() || style().columnProgression() == ColumnProgression::Normal)
         return hasTopOverflow;
     
     if (!(isHorizontalWritingMode() ^ !style().hasInlineColumnAxis()))
@@ -3945,7 +3945,7 @@ bool RenderBlockFlow::isTopLayoutOverflowAllowed() const
 bool RenderBlockFlow::isLeftLayoutOverflowAllowed() const
 {
     bool hasLeftOverflow = RenderBlock::isLeftLayoutOverflowAllowed();
-    if (!multiColumnFlow() || style().columnProgression() == NormalColumnProgression)
+    if (!multiColumnFlow() || style().columnProgression() == ColumnProgression::Normal)
         return hasLeftOverflow;
     
     if (isHorizontalWritingMode() ^ !style().hasInlineColumnAxis())

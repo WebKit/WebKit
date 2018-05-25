@@ -151,49 +151,49 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
     }
 
     switch (style.display()) {
-    case NONE:
-    case CONTENTS:
+    case DisplayType::None:
+    case DisplayType::Contents:
         return nullptr;
-    case INLINE:
+    case DisplayType::Inline:
         if (creationType == CreateAllRenderers)
             return createRenderer<RenderInline>(element, WTFMove(style));
         FALLTHROUGH; // Fieldsets should make a block flow if display:inline is set.
-    case BLOCK:
-    case INLINE_BLOCK:
-    case COMPACT:
+    case DisplayType::Block:
+    case DisplayType::InlineBlock:
+    case DisplayType::Compact:
         return createRenderer<RenderBlockFlow>(element, WTFMove(style));
-    case LIST_ITEM:
+    case DisplayType::ListItem:
         return createRenderer<RenderListItem>(element, WTFMove(style));
-    case FLEX:
-    case INLINE_FLEX:
-    case WEBKIT_FLEX:
-    case WEBKIT_INLINE_FLEX:
+    case DisplayType::Flex:
+    case DisplayType::InlineFlex:
+    case DisplayType::WebKitFlex:
+    case DisplayType::WebKitInlineFlex:
         return createRenderer<RenderFlexibleBox>(element, WTFMove(style));
-    case GRID:
-    case INLINE_GRID:
+    case DisplayType::Grid:
+    case DisplayType::InlineGrid:
         return createRenderer<RenderGrid>(element, WTFMove(style));
-    case BOX:
-    case INLINE_BOX:
+    case DisplayType::Box:
+    case DisplayType::InlineBox:
         return createRenderer<RenderDeprecatedFlexibleBox>(element, WTFMove(style));
     default: {
         if (creationType == OnlyCreateBlockAndFlexboxRenderers)
             return createRenderer<RenderBlockFlow>(element, WTFMove(style));
         switch (style.display()) {
-        case TABLE:
-        case INLINE_TABLE:
+        case DisplayType::Table:
+        case DisplayType::InlineTable:
             return createRenderer<RenderTable>(element, WTFMove(style));
-        case TABLE_CELL:
+        case DisplayType::TableCell:
             return createRenderer<RenderTableCell>(element, WTFMove(style));
-        case TABLE_CAPTION:
+        case DisplayType::TableCaption:
             return createRenderer<RenderTableCaption>(element, WTFMove(style));
-        case TABLE_ROW_GROUP:
-        case TABLE_HEADER_GROUP:
-        case TABLE_FOOTER_GROUP:
+        case DisplayType::TableRowGroup:
+        case DisplayType::TableHeaderGroup:
+        case DisplayType::TableFooterGroup:
             return createRenderer<RenderTableSection>(element, WTFMove(style));
-        case TABLE_ROW:
+        case DisplayType::TableRow:
             return createRenderer<RenderTableRow>(element, WTFMove(style));
-        case TABLE_COLUMN_GROUP:
-        case TABLE_COLUMN:
+        case DisplayType::TableColumnGroup:
+        case DisplayType::TableColumn:
             return createRenderer<RenderTableCol>(element, WTFMove(style));
         default:
             break;
@@ -215,7 +215,7 @@ std::unique_ptr<RenderStyle> RenderElement::computeFirstLineStyle() const
         RenderBlock* firstLineBlock = rendererForFirstLineStyle.firstLineBlock();
         if (!firstLineBlock)
             return nullptr;
-        auto* firstLineStyle = firstLineBlock->getCachedPseudoStyle(FIRST_LINE, &style());
+        auto* firstLineStyle = firstLineBlock->getCachedPseudoStyle(PseudoId::FirstLine, &style());
         if (!firstLineStyle)
             return nullptr;
         return RenderStyle::clonePtr(*firstLineStyle);
@@ -237,7 +237,7 @@ std::unique_ptr<RenderStyle> RenderElement::computeFirstLineStyle() const
             return nullptr;
 
         auto style = composedTreeParentElement->styleResolver().styleForElement(*composedTreeParentElement, &parentStyle).renderStyle;
-        ASSERT(style->display() == CONTENTS);
+        ASSERT(style->display() == DisplayType::Contents);
 
         // We act as if there was an unstyled <span> around the text node. Only styling happens via inheritance.
         auto firstLineStyle = RenderStyle::createPtr();
@@ -650,7 +650,7 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
 {
     // FIXME: We could save this call when the change only affected non-inherited properties.
     for (auto& elementChild : childrenOfType<RenderElement>(*this)) {
-        if (!elementChild.isAnonymous() || elementChild.style().styleType() != NOPSEUDO)
+        if (!elementChild.isAnonymous() || elementChild.style().styleType() != PseudoId::None)
             continue;
 
         if (propagationType == PropagateToBlockChildrenOnly && !is<RenderBlock>(elementChild))
@@ -724,9 +724,9 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         // Keep layer hierarchy visibility bits up to date if visibility changes.
         if (m_style.visibility() != newStyle.visibility()) {
             if (RenderLayer* layer = enclosingLayer()) {
-                if (newStyle.visibility() == VISIBLE)
+                if (newStyle.visibility() == Visibility::Visible)
                     layer->setHasVisibleContent();
-                else if (layer->hasVisibleContent() && (this == &layer->renderer() || layer->renderer().style().visibility() != VISIBLE)) {
+                else if (layer->hasVisibleContent() && (this == &layer->renderer() || layer->renderer().style().visibility() != Visibility::Visible)) {
                     layer->dirtyVisibleContentStatus();
                     if (diff > StyleDifference::RepaintLayer)
                         repaint();
@@ -751,7 +751,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
             setFloating(false);
             clearPositionedState();
         }
-        if (newStyle.hasPseudoStyle(FIRST_LINE) || oldStyle->hasPseudoStyle(FIRST_LINE))
+        if (newStyle.hasPseudoStyle(PseudoId::FirstLine) || oldStyle->hasPseudoStyle(PseudoId::FirstLine))
             invalidateCachedFirstLineStyle();
 
         setHorizontalWritingMode(true);
@@ -853,7 +853,7 @@ void RenderElement::insertedIntoTree()
 
     // If |this| is visible but this object was not, tell the layer it has some visible content
     // that needs to be drawn and layer visibility optimization can't be used
-    if (parent()->style().visibility() != VISIBLE && style().visibility() == VISIBLE && !hasLayer()) {
+    if (parent()->style().visibility() != Visibility::Visible && style().visibility() == Visibility::Visible && !hasLayer()) {
         if (!layer)
             layer = parent()->enclosingLayer();
         if (layer)
@@ -867,7 +867,7 @@ void RenderElement::willBeRemovedFromTree()
 {
     // If we remove a visible child from an invisible parent, we don't know the layer visibility any more.
     RenderLayer* layer = nullptr;
-    if (parent()->style().visibility() != VISIBLE && style().visibility() == VISIBLE && !hasLayer()) {
+    if (parent()->style().visibility() != Visibility::Visible && style().visibility() == Visibility::Visible && !hasLayer()) {
         if ((layer = parent()->enclosingLayer()))
             layer->dirtyVisibleContentStatus();
     }
@@ -1079,7 +1079,7 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
 
     bool fullRepaint = selfNeedsLayout();
     // Presumably a background or a border exists if border-fit:lines was specified.
-    if (!fullRepaint && style().borderFit() == BorderFitLines)
+    if (!fullRepaint && style().borderFit() == BorderFit::Lines)
         fullRepaint = true;
     if (!fullRepaint) {
         // This ASSERT fails due to animations. See https://bugs.webkit.org/show_bug.cgi?id=37048
@@ -1208,7 +1208,7 @@ bool RenderElement::isVisibleInDocumentRect(const IntRect& documentRect) const
 {
     if (document().activeDOMObjectsAreSuspended())
         return false;
-    if (style().visibility() != VISIBLE)
+    if (style().visibility() != Visibility::Visible)
         return false;
     if (view().frameView().isOffscreen())
         return false;
@@ -1320,7 +1320,7 @@ bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visib
 
 const RenderStyle* RenderElement::getCachedPseudoStyle(PseudoId pseudo, const RenderStyle* parentStyle) const
 {
-    if (pseudo < FIRST_INTERNAL_PSEUDOID && !style().hasPseudoStyle(pseudo))
+    if (pseudo < PseudoId::FirstInternalPseudoId && !style().hasPseudoStyle(pseudo))
         return nullptr;
 
     RenderStyle* cachedStyle = style().getCachedPseudoStyle(pseudo);
@@ -1335,7 +1335,7 @@ const RenderStyle* RenderElement::getCachedPseudoStyle(PseudoId pseudo, const Re
 
 std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const PseudoStyleRequest& pseudoStyleRequest, const RenderStyle* parentStyle, const RenderStyle* ownStyle) const
 {
-    if (pseudoStyleRequest.pseudoId < FIRST_INTERNAL_PSEUDOID && !ownStyle && !style().hasPseudoStyle(pseudoStyleRequest.pseudoId))
+    if (pseudoStyleRequest.pseudoId < PseudoId::FirstInternalPseudoId && !ownStyle && !style().hasPseudoStyle(pseudoStyleRequest.pseudoId))
         return nullptr;
 
     if (!parentStyle) {
@@ -1384,11 +1384,11 @@ std::unique_ptr<RenderStyle> RenderElement::selectionPseudoStyle() const
     if (ShadowRoot* root = element()->containingShadowRoot()) {
         if (root->mode() == ShadowRootMode::UserAgent) {
             if (Element* shadowHost = element()->shadowHost())
-                return shadowHost->renderer()->getUncachedPseudoStyle(PseudoStyleRequest(SELECTION));
+                return shadowHost->renderer()->getUncachedPseudoStyle(PseudoStyleRequest(PseudoId::Selection));
         }
     }
 
-    return getUncachedPseudoStyle(PseudoStyleRequest(SELECTION));
+    return getUncachedPseudoStyle(PseudoStyleRequest(PseudoId::Selection));
 }
 
 Color RenderElement::selectionForegroundColor() const

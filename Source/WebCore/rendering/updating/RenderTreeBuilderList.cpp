@@ -78,7 +78,7 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
 {
     auto& style = listItemRenderer.style();
 
-    if (style.listStyleType() == NoneListStyle && (!style.listStyleImage() || style.listStyleImage()->errorOccurred())) {
+    if (style.listStyleType() == ListStyleType::None && (!style.listStyleImage() || style.listStyleImage()->errorOccurred())) {
         if (auto* marker = listItemRenderer.markerRenderer())
             m_builder.destroy(*marker);
         return;

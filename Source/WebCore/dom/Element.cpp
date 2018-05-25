@@ -522,12 +522,12 @@ bool Element::isFocusable() const
         // Elements in canvas fallback content are not rendered, but they are allowed to be
         // focusable as long as their canvas is displayed and visible.
         if (auto* canvas = ancestorsOfType<HTMLCanvasElement>(*this).first())
-            return canvas->renderer() && canvas->renderer()->style().visibility() == VISIBLE;
+            return canvas->renderer() && canvas->renderer()->style().visibility() == Visibility::Visible;
     }
 
     // FIXME: Even if we are not visible, we might have a child that is visible.
     // Hyatt wants to fix that some day with a "has visible content" flag or the like.
-    if (!renderer() || renderer()->style().visibility() != VISIBLE)
+    if (!renderer() || renderer()->style().visibility() != Visibility::Visible)
         return false;
 
     return true;
@@ -1548,12 +1548,12 @@ bool Element::hasDisplayContents() const
         return false;
 
     const RenderStyle* style = elementRareData()->computedStyle();
-    return style && style->display() == CONTENTS;
+    return style && style->display() == DisplayType::Contents;
 }
 
 void Element::storeDisplayContentsStyle(std::unique_ptr<RenderStyle> style)
 {
-    ASSERT(style && style->display() == CONTENTS);
+    ASSERT(style && style->display() == DisplayType::Contents);
     ASSERT(!renderer() || isPseudoElement());
     ensureElementRareData().setComputedStyle(WTFMove(style));
 }
@@ -1669,7 +1669,7 @@ const AtomicString& Element::imageSourceURL() const
 
 bool Element::rendererIsNeeded(const RenderStyle& style)
 {
-    return style.display() != NONE && style.display() != CONTENTS;
+    return style.display() != DisplayType::None && style.display() != DisplayType::Contents;
 }
 
 RenderPtr<RenderElement> Element::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
@@ -2722,9 +2722,9 @@ void Element::willBecomeFullscreenElement()
 static PseudoElement* beforeOrAfterPseudoElement(Element& host, PseudoId pseudoElementSpecifier)
 {
     switch (pseudoElementSpecifier) {
-    case BEFORE:
+    case PseudoId::Before:
         return host.beforePseudoElement();
-    case AFTER:
+    case PseudoId::After:
         return host.afterPseudoElement();
     default:
         return nullptr;
@@ -2802,7 +2802,7 @@ const RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
     if (!style)
         style = &resolveComputedStyle();
 
-    if (pseudoElementSpecifier) {
+    if (pseudoElementSpecifier != PseudoId::None) {
         if (auto* cachedPseudoStyle = style->getCachedPseudoStyle(pseudoElementSpecifier))
             return cachedPseudoStyle;
         return &resolvePseudoElementStyle(pseudoElementSpecifier);

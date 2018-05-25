@@ -104,7 +104,7 @@ void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomicSt
 
 bool HTMLIFrameElement::rendererIsNeeded(const RenderStyle& style)
 {
-    return isURLAllowed() && style.display() != NONE;
+    return isURLAllowed() && style.display() != DisplayType::None;
 }
 
 RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

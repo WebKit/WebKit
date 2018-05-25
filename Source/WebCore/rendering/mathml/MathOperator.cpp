@@ -708,7 +708,7 @@ void MathOperator::paintHorizontalGlyphAssembly(const RenderStyle& style, PaintI
 
 void MathOperator::paint(const RenderStyle& style, PaintInfo& info, const LayoutPoint& paintOffset)
 {
-    if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground || style.visibility() != VISIBLE)
+    if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground || style.visibility() != Visibility::Visible)
         return;
 
     // Make a copy of the PaintInfo because applyTransform will modify its rect.

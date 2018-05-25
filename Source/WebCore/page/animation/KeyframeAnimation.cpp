@@ -163,9 +163,9 @@ bool KeyframeAnimation::animate(CompositeAnimation& compositeAnimation, const Re
     
     // If we have not yet started, we will not have a valid start time, so just start the animation if needed.
     if (isNew()) {
-        if (m_animation->playState() == AnimPlayStatePlaying && !compositeAnimation.isSuspended())
+        if (m_animation->playState() == AnimationPlayState::Playing && !compositeAnimation.isSuspended())
             updateStateMachine(AnimationStateInput::StartAnimation, -1);
-        else if (m_animation->playState() == AnimPlayStatePaused)
+        else if (m_animation->playState() == AnimationPlayState::Paused)
             updateStateMachine(AnimationStateInput::PlayStatePaused, -1);
     }
 

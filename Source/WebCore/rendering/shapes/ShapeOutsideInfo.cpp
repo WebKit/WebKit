@@ -72,10 +72,10 @@ FloatSize ShapeOutsideInfo::shapeToRendererSize(const FloatSize& size) const
 
 static inline CSSBoxType referenceBox(const ShapeValue& shapeValue)
 {
-    if (shapeValue.cssBox() == BoxMissing) {
+    if (shapeValue.cssBox() == CSSBoxType::BoxMissing) {
         if (shapeValue.type() == ShapeValue::Type::Image)
-            return ContentBox;
-        return MarginBox;
+            return CSSBoxType::ContentBox;
+        return CSSBoxType::MarginBox;
     }
     return shapeValue.cssBox();
 }
@@ -84,30 +84,30 @@ void ShapeOutsideInfo::setReferenceBoxLogicalSize(LayoutSize newReferenceBoxLogi
 {
     bool isHorizontalWritingMode = m_renderer.containingBlock()->style().isHorizontalWritingMode();
     switch (referenceBox(*m_renderer.style().shapeOutside())) {
-    case MarginBox:
+    case CSSBoxType::MarginBox:
         if (isHorizontalWritingMode)
             newReferenceBoxLogicalSize.expand(m_renderer.horizontalMarginExtent(), m_renderer.verticalMarginExtent());
         else
             newReferenceBoxLogicalSize.expand(m_renderer.verticalMarginExtent(), m_renderer.horizontalMarginExtent());
         break;
-    case BorderBox:
+    case CSSBoxType::BorderBox:
         break;
-    case PaddingBox:
+    case CSSBoxType::PaddingBox:
         if (isHorizontalWritingMode)
             newReferenceBoxLogicalSize.shrink(m_renderer.horizontalBorderExtent(), m_renderer.verticalBorderExtent());
         else
             newReferenceBoxLogicalSize.shrink(m_renderer.verticalBorderExtent(), m_renderer.horizontalBorderExtent());
         break;
-    case ContentBox:
+    case CSSBoxType::ContentBox:
         if (isHorizontalWritingMode)
             newReferenceBoxLogicalSize.shrink(m_renderer.horizontalBorderAndPaddingExtent(), m_renderer.verticalBorderAndPaddingExtent());
         else
             newReferenceBoxLogicalSize.shrink(m_renderer.verticalBorderAndPaddingExtent(), m_renderer.horizontalBorderAndPaddingExtent());
         break;
-    case Fill:
-    case Stroke:
-    case ViewBox:
-    case BoxMissing:
+    case CSSBoxType::Fill:
+    case CSSBoxType::Stroke:
+    case CSSBoxType::ViewBox:
+    case CSSBoxType::BoxMissing:
         ASSERT_NOT_REACHED();
         break;
     }
@@ -224,14 +224,22 @@ static inline LayoutUnit borderAndPaddingBeforeInWritingMode(const RenderBox& re
 LayoutUnit ShapeOutsideInfo::logicalTopOffset() const
 {
     switch (referenceBox(*m_renderer.style().shapeOutside())) {
-    case MarginBox: return -m_renderer.marginBefore(&m_renderer.containingBlock()->style());
-    case BorderBox: return LayoutUnit();
-    case PaddingBox: return borderBeforeInWritingMode(m_renderer, m_renderer.containingBlock()->style().writingMode());
-    case ContentBox: return borderAndPaddingBeforeInWritingMode(m_renderer, m_renderer.containingBlock()->style().writingMode());
-    case Fill: break;
-    case Stroke: break;
-    case ViewBox: break;
-    case BoxMissing: break;
+    case CSSBoxType::MarginBox:
+        return -m_renderer.marginBefore(&m_renderer.containingBlock()->style());
+    case CSSBoxType::BorderBox:
+        return LayoutUnit();
+    case CSSBoxType::PaddingBox:
+        return borderBeforeInWritingMode(m_renderer, m_renderer.containingBlock()->style().writingMode());
+    case CSSBoxType::ContentBox:
+        return borderAndPaddingBeforeInWritingMode(m_renderer, m_renderer.containingBlock()->style().writingMode());
+    case CSSBoxType::Fill:
+        break;
+    case CSSBoxType::Stroke:
+        break;
+    case CSSBoxType::ViewBox:
+        break;
+    case CSSBoxType::BoxMissing:
+        break;
     }
     
     ASSERT_NOT_REACHED();
@@ -272,14 +280,22 @@ LayoutUnit ShapeOutsideInfo::logicalLeftOffset() const
         return LayoutUnit();
     
     switch (referenceBox(*m_renderer.style().shapeOutside())) {
-    case MarginBox: return -m_renderer.marginStart(&m_renderer.containingBlock()->style());
-    case BorderBox: return LayoutUnit();
-    case PaddingBox: return borderStartWithStyleForWritingMode(m_renderer, m_renderer.containingBlock()->style());
-    case ContentBox: return borderAndPaddingStartWithStyleForWritingMode(m_renderer, m_renderer.containingBlock()->style());
-    case Fill: break;
-    case Stroke: break;
-    case ViewBox: break;
-    case BoxMissing: break;
+    case CSSBoxType::MarginBox:
+        return -m_renderer.marginStart(&m_renderer.containingBlock()->style());
+    case CSSBoxType::BorderBox:
+        return LayoutUnit();
+    case CSSBoxType::PaddingBox:
+        return borderStartWithStyleForWritingMode(m_renderer, m_renderer.containingBlock()->style());
+    case CSSBoxType::ContentBox:
+        return borderAndPaddingStartWithStyleForWritingMode(m_renderer, m_renderer.containingBlock()->style());
+    case CSSBoxType::Fill:
+        break;
+    case CSSBoxType::Stroke:
+        break;
+    case CSSBoxType::ViewBox:
+        break;
+    case CSSBoxType::BoxMissing:
+        break;
     }
 
     ASSERT_NOT_REACHED();

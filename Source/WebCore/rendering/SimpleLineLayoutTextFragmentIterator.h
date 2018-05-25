@@ -106,7 +106,7 @@ public:
         explicit Style(const RenderStyle&, bool useSimplifiedTextMeasuring);
 
         const FontCascade& font;
-        ETextAlign textAlign;
+        TextAlignMode textAlign;
         bool hasKerningOrLigatures;
         bool collapseWhitespace;
         bool preserveNewline;

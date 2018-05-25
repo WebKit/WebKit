@@ -114,7 +114,7 @@ int RenderFileUploadControl::maxFilenameWidth() const
 
 void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (style().visibility() != VISIBLE)
+    if (style().visibility() != Visibility::Visible)
         return;
     
     // Push a clip.

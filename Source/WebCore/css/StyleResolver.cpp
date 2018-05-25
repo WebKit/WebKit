@@ -359,11 +359,11 @@ ElementStyle StyleResolver::styleForElement(const Element& element, const Render
 
     if (element.isLink()) {
         style.setIsLink(true);
-        EInsideLink linkState = state.elementLinkState();
-        if (linkState != NotInsideLink) {
+        InsideLink linkState = state.elementLinkState();
+        if (linkState != InsideLink::NotInside) {
             bool forceVisited = InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassVisited);
             if (forceVisited)
-                linkState = InsideVisitedLink;
+                linkState = InsideLink::InsideVisited;
         }
         style.setInsideLink(linkState);
     }
@@ -673,53 +673,53 @@ static void addIntrinsicMargins(RenderStyle& style)
     }
 }
 
-static EDisplay equivalentBlockDisplay(const RenderStyle& style, const Document& document)
+static DisplayType equivalentBlockDisplay(const RenderStyle& style, const Document& document)
 {
     switch (auto display = style.display()) {
-    case BLOCK:
-    case TABLE:
-    case BOX:
-    case FLEX:
-    case WEBKIT_FLEX:
-    case GRID:
+    case DisplayType::Block:
+    case DisplayType::Table:
+    case DisplayType::Box:
+    case DisplayType::Flex:
+    case DisplayType::WebKitFlex:
+    case DisplayType::Grid:
         return display;
 
-    case LIST_ITEM:
+    case DisplayType::ListItem:
         // It is a WinIE bug that floated list items lose their bullets, so we'll emulate the quirk, but only in quirks mode.
         if (document.inQuirksMode() && style.isFloating())
-            return BLOCK;
+            return DisplayType::Block;
         return display;
-    case INLINE_TABLE:
-        return TABLE;
-    case INLINE_BOX:
-        return BOX;
-    case INLINE_FLEX:
-    case WEBKIT_INLINE_FLEX:
-        return FLEX;
-    case INLINE_GRID:
-        return GRID;
+    case DisplayType::InlineTable:
+        return DisplayType::Table;
+    case DisplayType::InlineBox:
+        return DisplayType::Box;
+    case DisplayType::InlineFlex:
+    case DisplayType::WebKitInlineFlex:
+        return DisplayType::Flex;
+    case DisplayType::InlineGrid:
+        return DisplayType::Grid;
 
-    case INLINE:
-    case COMPACT:
-    case INLINE_BLOCK:
-    case TABLE_ROW_GROUP:
-    case TABLE_HEADER_GROUP:
-    case TABLE_FOOTER_GROUP:
-    case TABLE_ROW:
-    case TABLE_COLUMN_GROUP:
-    case TABLE_COLUMN:
-    case TABLE_CELL:
-    case TABLE_CAPTION:
-        return BLOCK;
-    case CONTENTS:
+    case DisplayType::Inline:
+    case DisplayType::Compact:
+    case DisplayType::InlineBlock:
+    case DisplayType::TableRowGroup:
+    case DisplayType::TableHeaderGroup:
+    case DisplayType::TableFooterGroup:
+    case DisplayType::TableRow:
+    case DisplayType::TableColumnGroup:
+    case DisplayType::TableColumn:
+    case DisplayType::TableCell:
+    case DisplayType::TableCaption:
+        return DisplayType::Block;
+    case DisplayType::Contents:
         ASSERT_NOT_REACHED();
-        return CONTENTS;
-    case NONE:
+        return DisplayType::Contents;
+    case DisplayType::None:
         ASSERT_NOT_REACHED();
-        return NONE;
+        return DisplayType::None;
     }
     ASSERT_NOT_REACHED();
-    return BLOCK;
+    return DisplayType::Block;
 }
 
 // CSS requires text-decoration to be reset at each DOM element for tables, 
@@ -727,8 +727,8 @@ static EDisplay equivalentBlockDisplay(const RenderStyle& style, const Document&
 // and absolute or relatively positioned elements.
 static bool doesNotInheritTextDecoration(const RenderStyle& style, const Element* element)
 {
-    return style.display() == TABLE || style.display() == INLINE_TABLE
-        || style.display() == INLINE_BLOCK || style.display() == INLINE_BOX || (element && isAtShadowBoundary(*element))
+    return style.display() == DisplayType::Table || style.display() == DisplayType::InlineTable
+        || style.display() == DisplayType::InlineBlock || style.display() == DisplayType::InlineBox || (element && isAtShadowBoundary(*element))
         || style.isFloating() || style.hasOutOfFlowPosition();
 }
 
@@ -742,9 +742,9 @@ static bool isScrollableOverflow(Overflow overflow)
 void StyleResolver::adjustStyleForInterCharacterRuby()
 {
     RenderStyle* style = m_state.style();
-    if (style->rubyPosition() != RubyPositionInterCharacter || !m_state.element() || !m_state.element()->hasTagName(rtTag))
+    if (style->rubyPosition() != RubyPosition::InterCharacter || !m_state.element() || !m_state.element()->hasTagName(rtTag))
         return;
-    style->setTextAlign(CENTER);
+    style->setTextAlign(TextAlignMode::Center);
     if (style->isHorizontalWritingMode())
         style->setWritingMode(LeftToRightWritingMode);
 }
@@ -796,20 +796,20 @@ static void adjustDisplayContentsStyle(RenderStyle& style, const Element* elemen
 {
     bool displayContentsEnabled = is<HTMLSlotElement>(element) || RuntimeEnabledFeatures::sharedFeatures().displayContentsEnabled();
     if (!displayContentsEnabled) {
-        style.setDisplay(INLINE);
+        style.setDisplay(DisplayType::Inline);
         return;
     }
     if (!element) {
-        if (style.styleType() != BEFORE && style.styleType() != AFTER)
-            style.setDisplay(NONE);
+        if (style.styleType() != PseudoId::Before && style.styleType() != PseudoId::After)
+            style.setDisplay(DisplayType::None);
         return;
     }
     if (element->document().documentElement() == element) {
-        style.setDisplay(BLOCK);
+        style.setDisplay(DisplayType::Block);
         return;
     }
     if (hasEffectiveDisplayNoneForDisplayContents(*element))
-        style.setDisplay(NONE);
+        style.setDisplay(DisplayType::None);
 }
 
 void StyleResolver::adjustSVGElementStyle(const SVGElement& svgElement, RenderStyle& style)
@@ -826,7 +826,7 @@ void StyleResolver::adjustSVGElementStyle(const SVGElement& svgElement, RenderSt
 
     // SVG text layout code expects us to be a block-level style element.
     if ((svgElement.hasTagName(SVGNames::foreignObjectTag) || svgElement.hasTagName(SVGNames::textTag)) && style.isDisplayInlineType())
-        style.setDisplay(BLOCK);
+        style.setDisplay(DisplayType::Block);
 }
 
 void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element* element)
@@ -839,10 +839,10 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
     // Cache our original display.
     style.setOriginalDisplay(style.display());
 
-    if (style.display() == CONTENTS)
+    if (style.display() == DisplayType::Contents)
         adjustDisplayContentsStyle(style, element);
 
-    if (style.display() != NONE && style.display() != CONTENTS) {
+    if (style.display() != DisplayType::None && style.display() != DisplayType::Contents) {
         if (element) {
             // If we have a <td> that specifies a float property, in quirks mode we just drop the float
             // property.
@@ -850,33 +850,33 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
             // these tags to retain their display types.
             if (document().inQuirksMode()) {
                 if (element->hasTagName(tdTag)) {
-                    style.setDisplay(TABLE_CELL);
+                    style.setDisplay(DisplayType::TableCell);
                     style.setFloating(Float::No);
                 } else if (is<HTMLTableElement>(*element))
-                    style.setDisplay(style.isDisplayInlineType() ? INLINE_TABLE : TABLE);
+                    style.setDisplay(style.isDisplayInlineType() ? DisplayType::InlineTable : DisplayType::Table);
             }
 
             if (element->hasTagName(tdTag) || element->hasTagName(thTag)) {
-                if (style.whiteSpace() == KHTML_NOWRAP) {
+                if (style.whiteSpace() == WhiteSpace::KHTMLNoWrap) {
                     // Figure out if we are really nowrapping or if we should just
                     // use normal instead. If the width of the cell is fixed, then
-                    // we don't actually use NOWRAP.
+                    // we don't actually use WhiteSpace::NoWrap.
                     if (style.width().isFixed())
-                        style.setWhiteSpace(NORMAL);
+                        style.setWhiteSpace(WhiteSpace::Normal);
                     else
-                        style.setWhiteSpace(NOWRAP);
+                        style.setWhiteSpace(WhiteSpace::NoWrap);
                 }
             }
 
             // Tables never support the -webkit-* values for text-align and will reset back to the default.
-            if (is<HTMLTableElement>(*element) && (style.textAlign() == WEBKIT_LEFT || style.textAlign() == WEBKIT_CENTER || style.textAlign() == WEBKIT_RIGHT))
-                style.setTextAlign(TASTART);
+            if (is<HTMLTableElement>(*element) && (style.textAlign() == TextAlignMode::WebKitLeft || style.textAlign() == TextAlignMode::WebKitCenter || style.textAlign() == TextAlignMode::WebKitRight))
+                style.setTextAlign(TextAlignMode::Start);
 
             // Frames and framesets never honor position:relative or position:absolute. This is necessary to
             // fix a crash where a site tries to position these objects. They also never honor display.
             if (element->hasTagName(frameTag) || element->hasTagName(framesetTag)) {
                 style.setPosition(PositionType::Static);
-                style.setDisplay(BLOCK);
+                style.setDisplay(DisplayType::Block);
             }
 
             // Ruby text does not support float or position. This might change with evolution of the specification.
@@ -890,10 +890,10 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
             // just a single declaration that sets the 'text-align' property to the value 'center'.
             // https://html.spec.whatwg.org/multipage/rendering.html#rendering
             if (element->hasTagName(thTag) && !style.hasExplicitlySetTextAlign() && parentStyle.textAlign() == RenderStyle::initialTextAlign())
-                style.setTextAlign(CENTER);
+                style.setTextAlign(TextAlignMode::Center);
 
             if (element->hasTagName(legendTag))
-                style.setDisplay(BLOCK);
+                style.setDisplay(DisplayType::Block);
         }
 
         // Absolute/fixed positioned elements, floating elements and the document element need block-like outside display.
@@ -902,28 +902,28 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
 
         // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
         // clear how that should work.
-        if (style.display() == INLINE && style.styleType() == NOPSEUDO && style.writingMode() != parentStyle.writingMode())
-            style.setDisplay(INLINE_BLOCK);
+        if (style.display() == DisplayType::Inline && style.styleType() == PseudoId::None && style.writingMode() != parentStyle.writingMode())
+            style.setDisplay(DisplayType::InlineBlock);
 
         // After performing the display mutation, check table rows. We do not honor position:relative or position:sticky on
         // table rows or cells. This has been established for position:relative in CSS2.1 (and caused a crash in containingBlock()
         // on some sites).
-        if ((style.display() == TABLE_HEADER_GROUP || style.display() == TABLE_ROW_GROUP
-            || style.display() == TABLE_FOOTER_GROUP || style.display() == TABLE_ROW)
+        if ((style.display() == DisplayType::TableHeaderGroup || style.display() == DisplayType::TableRowGroup
+            || style.display() == DisplayType::TableFooterGroup || style.display() == DisplayType::TableRow)
             && style.position() == PositionType::Relative)
             style.setPosition(PositionType::Static);
 
         // writing-mode does not apply to table row groups, table column groups, table rows, and table columns.
         // FIXME: Table cells should be allowed to be perpendicular or flipped with respect to the table, though.
-        if (style.display() == TABLE_COLUMN || style.display() == TABLE_COLUMN_GROUP || style.display() == TABLE_FOOTER_GROUP
-            || style.display() == TABLE_HEADER_GROUP || style.display() == TABLE_ROW || style.display() == TABLE_ROW_GROUP
-            || style.display() == TABLE_CELL)
+        if (style.display() == DisplayType::TableColumn || style.display() == DisplayType::TableColumnGroup || style.display() == DisplayType::TableFooterGroup
+            || style.display() == DisplayType::TableHeaderGroup || style.display() == DisplayType::TableRow || style.display() == DisplayType::TableRowGroup
+            || style.display() == DisplayType::TableCell)
             style.setWritingMode(parentStyle.writingMode());
 
         // FIXME: Since we don't support block-flow on flexible boxes yet, disallow setting
         // of block-flow to anything other than TopToBottomWritingMode.
         // https://bugs.webkit.org/show_bug.cgi?id=46418 - Flexible box support.
-        if (style.writingMode() != TopToBottomWritingMode && (style.display() == BOX || style.display() == INLINE_BOX))
+        if (style.writingMode() != TopToBottomWritingMode && (style.display() == DisplayType::Box || style.display() == DisplayType::InlineBox))
             style.setWritingMode(TopToBottomWritingMode);
 
         // https://www.w3.org/TR/css-display/#transformations
@@ -979,8 +979,8 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
             bool isVertical = style.marqueeDirection() == MarqueeDirection::Up || style.marqueeDirection() == MarqueeDirection::Down;
             // Make horizontal marquees not wrap.
             if (!isVertical) {
-                style.setWhiteSpace(NOWRAP);
-                style.setTextAlign(TASTART);
+                style.setWhiteSpace(WhiteSpace::NoWrap);
+                style.setTextAlign(TextAlignMode::Start);
             }
             // Apparently this is the expected legacy behavior.
             if (isVertical && style.height().isAuto())
@@ -1010,8 +1010,8 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
 
     // Table rows, sections and the table itself will support overflow:hidden and will ignore scroll/auto.
     // FIXME: Eventually table sections will support auto and scroll.
-    if (style.display() == TABLE || style.display() == INLINE_TABLE
-        || style.display() == TABLE_ROW_GROUP || style.display() == TABLE_ROW) {
+    if (style.display() == DisplayType::Table || style.display() == DisplayType::InlineTable
+        || style.display() == DisplayType::TableRowGroup || style.display() == DisplayType::TableRow) {
         if (style.overflowX() != Overflow::Visible && style.overflowX() != Overflow::Hidden)
             style.setOverflowX(Overflow::Visible);
         if (style.overflowY() != Overflow::Visible && style.overflowY() != Overflow::Hidden)
@@ -1052,7 +1052,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         RenderTheme::singleton().adjustStyle(*this, style, element, m_state.hasUAAppearance(), m_state.borderData(), m_state.backgroundData(), m_state.backgroundColor());
 
     // If we have first-letter pseudo style, do not share this style.
-    if (style.hasPseudoStyle(FIRST_LETTER))
+    if (style.hasPseudoStyle(PseudoId::FirstLetter))
         style.setUnique();
 
     // FIXME: when dropping the -webkit prefix on transform-style, we should also have opacity < 1 cause flattening.
@@ -1112,7 +1112,7 @@ void StyleResolver::updateFont()
 
 Vector<RefPtr<StyleRule>> StyleResolver::styleRulesForElement(const Element* element, unsigned rulesToInclude)
 {
-    return pseudoStyleRulesForElement(element, NOPSEUDO, rulesToInclude);
+    return pseudoStyleRulesForElement(element, PseudoId::None, rulesToInclude);
 }
 
 Vector<RefPtr<StyleRule>> StyleResolver::pseudoStyleRulesForElement(const Element* element, PseudoId pseudoId, unsigned rulesToInclude)
@@ -1279,7 +1279,7 @@ static bool isCacheableInMatchedPropertiesCache(const Element& element, const Re
     if (&element == element.document().documentElement())
         return false;
     // content:attr() value depends on the element it is being applied to.
-    if (style->hasAttrContent() || (style->styleType() != NOPSEUDO && parentStyle->hasAttrContent()))
+    if (style->hasAttrContent() || (style->styleType() != PseudoId::None && parentStyle->hasAttrContent()))
         return false;
     if (style->hasAppearance())
         return false;
@@ -1339,7 +1339,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         // element context. This is fast and saves memory by reusing the style data structures.
         state.style()->copyNonInheritedFrom(*cacheItem->renderStyle);
         if (state.parentStyle()->inheritedDataShared(cacheItem->parentRenderStyle.get()) && !isAtShadowBoundary(element)) {
-            EInsideLink linkStatus = state.style()->insideLink();
+            InsideLink linkStatus = state.style()->insideLink();
             // If the cache item parent style has identical inherited properties to the current parent style then the
             // resulting style will be identical too. We copy the inherited properties over from the cache and are done.
             state.style()->inheritFrom(*cacheItem->renderStyle);
@@ -2237,7 +2237,7 @@ void StyleResolver::CascadedProperties::Property::apply(StyleResolver& resolver,
         resolver.applyProperty(id, cssValue[SelectorChecker::MatchDefault], SelectorChecker::MatchDefault, matchResult);
     }
 
-    if (state.style()->insideLink() == NotInsideLink)
+    if (state.style()->insideLink() == InsideLink::NotInside)
         return;
 
     if (cssValue[SelectorChecker::MatchLink]) {

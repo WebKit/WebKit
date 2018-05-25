@@ -271,7 +271,7 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     if (!oldStyle || oldStyle->fontCascade() != newStyle.fontCascade())
         m_canUseSimplifiedTextMeasuring = computeCanUseSimplifiedTextMeasuring();
 
-    ETextTransform oldTransform = oldStyle ? oldStyle->textTransform() : TTNONE;
+    TextTransform oldTransform = oldStyle ? oldStyle->textTransform() : TextTransform::None;
     TextSecurity oldSecurity = oldStyle ? oldStyle->textSecurity() : TextSecurity::None;
     if (needsResetText || oldTransform != newStyle.textTransform() || oldSecurity != newStyle.textSecurity())
         RenderText::setText(originalText(), true);
@@ -808,7 +808,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
     float maxWordWidth = std::numeric_limits<float>::max();
     unsigned minimumPrefixLength = 0;
     unsigned minimumSuffixLength = 0;
-    if (style.hyphens() == HyphensAuto && canHyphenate(style.locale())) {
+    if (style.hyphens() == Hyphens::Auto && canHyphenate(style.locale())) {
         maxWordWidth = 0;
 
         // Map 'hyphenate-limit-{before,after}: auto;' to 2.
@@ -865,7 +865,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
             ASSERT(lastWordBoundary == i);
             lastWordBoundary++;
             continue;
-        } else if (c == softHyphen && style.hyphens() != HyphensNone) {
+        } else if (c == softHyphen && style.hyphens() != Hyphens::None) {
             ASSERT(i >= lastWordBoundary);
             currMaxWidth += widthFromCache(font, lastWordBoundary, i - lastWordBoundary, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
             if (!firstGlyphLeftOverflow)
@@ -877,7 +877,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
         bool hasBreak = breakAll || isBreakable(breakIterator, i, nextBreakable, breakNBSP, canUseLineBreakShortcut, keepAllWords);
         bool betweenWords = true;
         unsigned j = i;
-        while (c != '\n' && !isSpaceAccordingToStyle(c, style) && c != '\t' && (c != softHyphen || style.hyphens() == HyphensNone)) {
+        while (c != '\n' && !isSpaceAccordingToStyle(c, style) && c != '\t' && (c != softHyphen || style.hyphens() == Hyphens::None)) {
             j++;
             if (j == length)
                 break;
@@ -902,7 +902,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
                 w = widthFromCache(font, i, wordLen + 1, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style) - wordTrailingSpaceWidth.value();
             else {
                 w = widthFromCache(font, i, wordLen, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
-                if (c == softHyphen && style.hyphens() != HyphensNone)
+                if (c == softHyphen && style.hyphens() != Hyphens::None)
                     currMinWidth = hyphenWidth(*this, font);
             }
 
@@ -1005,7 +1005,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
     if (!style.autoWrap())
         m_minWidth = m_maxWidth;
 
-    if (style.whiteSpace() == PRE) {
+    if (style.whiteSpace() == WhiteSpace::Pre) {
         if (firstLine)
             m_beginMinWidth = m_maxWidth;
         m_endMinWidth = currMaxWidth;
@@ -1137,13 +1137,13 @@ LayoutUnit RenderText::topOfFirstText() const
 String applyTextTransform(const RenderStyle& style, const String& text, UChar previousCharacter)
 {
     switch (style.textTransform()) {
-    case TTNONE:
+    case TextTransform::None:
         return text;
-    case CAPITALIZE:
+    case TextTransform::Capitalize:
         return capitalize(text, previousCharacter); // FIXME: Need to take locale into account.
-    case UPPERCASE:
+    case TextTransform::Uppercase:
         return text.convertToUppercaseWithLocale(style.locale());
-    case LOWERCASE:
+    case TextTransform::Lowercase:
         return text.convertToLowercaseWithLocale(style.locale());
     }
     ASSERT_NOT_REACHED();

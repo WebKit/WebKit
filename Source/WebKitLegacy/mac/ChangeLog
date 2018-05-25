@@ -1,3 +1,16 @@
+2018-05-24  Sam Weinig  <sam@webkit.org>
+
+        Modernize RenderStyleConstants.h - Part 2
+        https://bugs.webkit.org/show_bug.cgi?id=185901
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (searchForLabelsBeforeElement):
+        * WebView/WebView.mm:
+        (nsTextAlignmentFromRenderStyle):
+        Update for new enum names.
+
 2018-05-22  Chris Dumez  <cdumez@apple.com>
 
         Regression(AsyncPolicyDelegates): Box.app login Window is blank

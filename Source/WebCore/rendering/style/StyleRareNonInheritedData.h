@@ -185,7 +185,7 @@ public:
     unsigned marginBeforeCollapse : 2; // MarginCollapse
     unsigned marginAfterCollapse : 2; // MarginCollapse
     unsigned appearance : 6; // EAppearance
-    unsigned borderFit : 1; // EBorderFit
+    unsigned borderFit : 1; // BorderFit
     unsigned textCombine : 1; // CSS3 text-combine properties
 
     unsigned textDecorationStyle : 3; // TextDecorationStyle

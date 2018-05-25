@@ -287,7 +287,7 @@ bottom
 -webkit-baseline-middle
 //
 // CSS_PROP_TEXT_ALIGN:
-// The order here must match the order of the ETextAlign enum in RenderStyleConstants.h.
+// The order here must match the order of the TextAlignMode enum in RenderStyleConstants.h.
 //
 -webkit-auto
 left
@@ -312,7 +312,7 @@ outside
 inside
 //
 // CSS_PROP_LIST_STYLE_TYPE:
-// The order here must match the order of the EListStyleType enum in RenderStyleConstants.h.
+// The order here must match the order of the ListStyleType enum in RenderStyleConstants.h.
 //
 disc
 circle
@@ -397,7 +397,7 @@ katakana-iroha
 //none
 //
 // CSS_PROP_DISPLAY:
-// The order here must match the order of the EDisplay enum in RenderStyleConstants.h.
+// The order here must match the order of the DisplayType enum in RenderStyleConstants.h.
 //
 inline
 block
@@ -426,7 +426,7 @@ inline-grid
 //none
 //
 // CSS_PROP_CURSOR:
-// The order here must match the order of the ECursor enum in RenderStyleConstants.h.
+// The order here must match the order of the CursorType enum in RenderStyleConstants.h.
 //
 auto
 default

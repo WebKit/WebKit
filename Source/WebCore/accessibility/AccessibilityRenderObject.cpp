@@ -1144,7 +1144,7 @@ AccessibilityObjectInclusion AccessibilityRenderObject::defaultObjectInclusion()
     if (!m_renderer)
         return AccessibilityObjectInclusion::IgnoreObject;
 
-    if (m_renderer->style().visibility() != VISIBLE) {
+    if (m_renderer->style().visibility() != Visibility::Visible) {
         // aria-hidden is meant to override visibility as the determinant in AX hierarchy inclusion.
         if (equalLettersIgnoringASCIICase(getAttribute(aria_hiddenAttr), "false"))
             return AccessibilityObjectInclusion::DefaultBehavior;
@@ -1596,7 +1596,7 @@ bool AccessibilityRenderObject::isUnvisited() const
         return true;
 
     // FIXME: Is it a privacy violation to expose unvisited information to accessibility APIs?
-    return m_renderer->style().isLink() && m_renderer->style().insideLink() == InsideUnvisitedLink;
+    return m_renderer->style().isLink() && m_renderer->style().insideLink() == InsideLink::InsideUnvisited;
 }
 
 bool AccessibilityRenderObject::isVisited() const
@@ -1605,7 +1605,7 @@ bool AccessibilityRenderObject::isVisited() const
         return false;
 
     // FIXME: Is it a privacy violation to expose visited information to accessibility APIs?
-    return m_renderer->style().isLink() && m_renderer->style().insideLink() == InsideVisitedLink;
+    return m_renderer->style().isLink() && m_renderer->style().insideLink() == InsideLink::InsideVisited;
 }
 
 void AccessibilityRenderObject::setElementAttributeValue(const QualifiedName& attributeName, bool value)
@@ -1783,7 +1783,7 @@ void AccessibilityRenderObject::setValue(const String& string)
             RenderElement& renderElement = downcast<RenderElement>(renderer);
             auto style = RenderStyle::create();
             style.inheritFrom(renderElement.style());
-            style.setWhiteSpace(PRE);
+            style.setWhiteSpace(WhiteSpace::Pre);
             renderElement.setStyleInternal(WTFMove(style));
         }
         downcast<HTMLElement>(element).setInnerText(string);

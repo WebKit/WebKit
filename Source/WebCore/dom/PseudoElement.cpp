@@ -54,9 +54,9 @@ String PseudoElement::pseudoElementNameForEvents(PseudoId pseudoId)
     static NeverDestroyed<const String> after(MAKE_STATIC_STRING_IMPL("::after"));
     static NeverDestroyed<const String> before(MAKE_STATIC_STRING_IMPL("::before"));
     switch (pseudoId) {
-    case AFTER:
+    case PseudoId::After:
         return after;
-    case BEFORE:
+    case PseudoId::Before:
         return before;
     default:
         return emptyString();
@@ -68,7 +68,7 @@ PseudoElement::PseudoElement(Element& host, PseudoId pseudoId)
     , m_hostElement(&host)
     , m_pseudoId(pseudoId)
 {
-    ASSERT(pseudoId == BEFORE || pseudoId == AFTER);
+    ASSERT(pseudoId == PseudoId::Before || pseudoId == PseudoId::After);
     setHasCustomStyleResolveCallbacks();
 }
 

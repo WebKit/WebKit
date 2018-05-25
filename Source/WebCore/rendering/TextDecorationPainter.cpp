@@ -221,19 +221,19 @@ static StrokeStyle textDecorationStyleToStrokeStyle(TextDecorationStyle decorati
 {
     StrokeStyle strokeStyle = SolidStroke;
     switch (decorationStyle) {
-    case TextDecorationStyleSolid:
+    case TextDecorationStyle::Solid:
         strokeStyle = SolidStroke;
         break;
-    case TextDecorationStyleDouble:
+    case TextDecorationStyle::Double:
         strokeStyle = DoubleStroke;
         break;
-    case TextDecorationStyleDotted:
+    case TextDecorationStyle::Dotted:
         strokeStyle = DottedStroke;
         break;
-    case TextDecorationStyleDashed:
+    case TextDecorationStyle::Dashed:
         strokeStyle = DashedStroke;
         break;
-    case TextDecorationStyleWavy:
+    case TextDecorationStyle::Wavy:
         strokeStyle = WavyStroke;
         break;
     }
@@ -252,7 +252,7 @@ TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, unsigned 
     , m_decorations { OptionSet<TextDecoration>::fromRaw(decorations) }
     , m_wavyOffset { wavyOffsetFromDecoration() }
     , m_isPrinting { renderer.document().printing() }
-    , m_styles { styles ? *WTFMove(styles) : stylesForRenderer(renderer, decorations, isFirstLine, NOPSEUDO) }
+    , m_styles { styles ? *WTFMove(styles) : stylesForRenderer(renderer, decorations, isFirstLine, PseudoId::None) }
     , m_lineStyle { isFirstLine ? renderer.firstLineStyle() : renderer.style() }
 {
 }
@@ -273,21 +273,21 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
 
         auto strokeStyle = textDecorationStyleToStrokeStyle(style);
 
-        if (style == TextDecorationStyleWavy)
+        if (style == TextDecorationStyle::Wavy)
             strokeWavyTextDecoration(m_context, start, end, textDecorationThickness, m_lineStyle.computedFontPixelSize());
         else if (decoration == TextDecorationUnderline || decoration == TextDecorationOverline) {
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
             if ((m_lineStyle.textDecorationSkip() == TextDecorationSkipInk || m_lineStyle.textDecorationSkip() == TextDecorationSkipAuto) && m_isHorizontal) {
                 if (!m_context.paintingDisabled())
-                    drawSkipInkUnderline(m_context, *m_font, textRun, textOrigin, localOrigin, offset, m_width, m_isPrinting, style == TextDecorationStyleDouble, strokeStyle);
+                    drawSkipInkUnderline(m_context, *m_font, textRun, textOrigin, localOrigin, offset, m_width, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle);
             } else
                 // FIXME: Need to support text-decoration-skip: none.
 #endif
-                m_context.drawLineForText(start, m_width, m_isPrinting, style == TextDecorationStyleDouble, strokeStyle);
+                m_context.drawLineForText(start, m_width, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle);
             
         } else {
             ASSERT(decoration == TextDecorationLineThrough);
-            m_context.drawLineForText(start, m_width, m_isPrinting, style == TextDecorationStyleDouble, strokeStyle);
+            m_context.drawLineForText(start, m_width, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle);
         }
     };
 
@@ -336,13 +336,13 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
         // These decorations should match the visual overflows computed in visualOverflowForDecorations().
         if (m_decorations.contains(TextDecorationUnderline)) {
             int offset = computeUnderlineOffset(m_lineStyle.textUnderlinePosition(), m_lineStyle.fontMetrics(), m_inlineTextBox, textDecorationThickness);
-            float wavyOffset = m_styles.underlineStyle == TextDecorationStyleWavy ? m_wavyOffset : 0;
+            float wavyOffset = m_styles.underlineStyle == TextDecorationStyle::Wavy ? m_wavyOffset : 0;
             FloatPoint start = localOrigin + FloatSize(0, offset + wavyOffset);
             FloatPoint end = localOrigin + FloatSize(m_width, offset + wavyOffset);
             paintDecoration(TextDecorationUnderline, m_styles.underlineStyle, m_styles.underlineColor, start, end, offset);
         }
         if (m_decorations.contains(TextDecorationOverline)) {
-            float wavyOffset = m_styles.overlineStyle == TextDecorationStyleWavy ? m_wavyOffset : 0;
+            float wavyOffset = m_styles.overlineStyle == TextDecorationStyle::Wavy ? m_wavyOffset : 0;
             FloatPoint start = localOrigin - FloatSize(0, wavyOffset);
             FloatPoint end = localOrigin + FloatSize(m_width, -wavyOffset);
             paintDecoration(TextDecorationOverline, m_styles.overlineStyle, m_styles.overlineColor, start, end, 0);
@@ -401,7 +401,7 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
     };
 
     auto styleForRenderer = [&] (const RenderObject& renderer) -> const RenderStyle& {
-        if (pseudoId != NOPSEUDO && renderer.style().hasPseudoStyle(pseudoId)) {
+        if (pseudoId != PseudoId::None && renderer.style().hasPseudoStyle(pseudoId)) {
             if (is<RenderText>(renderer))
                 return *downcast<RenderText>(renderer).getCachedPseudoStyle(pseudoId);
             return *downcast<RenderElement>(renderer).getCachedPseudoStyle(pseudoId);

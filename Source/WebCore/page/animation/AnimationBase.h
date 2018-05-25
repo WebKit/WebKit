@@ -108,7 +108,7 @@ public:
     }
 
     // Called to change to or from paused state
-    void updatePlayState(EAnimPlayState);
+    void updatePlayState(AnimationPlayState);
     bool playStatePlaying() const;
 
     bool waitingToStart() const { return m_animationState == AnimationState::New || m_animationState == AnimationState::StartWaitTimer || m_animationState == AnimationState::PausedNew; }

@@ -48,7 +48,7 @@ TextFragmentIterator::Style::Style(const RenderStyle& style, bool useSimplifiedT
     , keepAllWordsForCJK(style.wordBreak() == WordBreak::KeepAll)
     , wordSpacing(font.wordSpacing())
     , tabWidth(collapseWhitespace ? 0 : style.tabSize())
-    , shouldHyphenate(style.hyphens() == HyphensAuto && canHyphenate(style.locale()))
+    , shouldHyphenate(style.hyphens() == Hyphens::Auto && canHyphenate(style.locale()))
     , hyphenStringWidth(shouldHyphenate ? (useSimplifiedTextMeasuring ? font.widthForSimpleText(style.hyphenString()) : font.width(TextRun(String(style.hyphenString())))) : 0)
     , hyphenLimitBefore(style.hyphenationLimitBefore() < 0 ? 2 : style.hyphenationLimitBefore())
     , hyphenLimitAfter(style.hyphenationLimitAfter() < 0 ? 2 : style.hyphenationLimitAfter())

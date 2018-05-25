@@ -62,9 +62,9 @@ public:
 
 private:
     const Element& m_element;
-    EDisplay m_previousDisplay;
-    EVisibility m_previousVisibility;
-    EVisibility m_previousImplicitVisibility;
+    DisplayType m_previousDisplay;
+    Visibility m_previousVisibility;
+    Visibility m_previousImplicitVisibility;
 };
 #endif // PLATFORM(IOS)
 
@@ -257,13 +257,13 @@ void RenderTreeUpdater::popParentsToDepth(unsigned depth)
 void RenderTreeUpdater::updateBeforeDescendants(Element& element, const Style::ElementUpdates* updates)
 {
     if (updates)
-        generatedContent().updatePseudoElement(element, updates->beforePseudoElementUpdate, BEFORE);
+        generatedContent().updatePseudoElement(element, updates->beforePseudoElementUpdate, PseudoId::Before);
 }
 
 void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::ElementUpdates* updates)
 {
     if (updates)
-        generatedContent().updatePseudoElement(element, updates->afterPseudoElementUpdate, AFTER);
+        generatedContent().updatePseudoElement(element, updates->afterPseudoElementUpdate, PseudoId::After);
 
     auto* renderer = element.renderer();
     if (!renderer)
@@ -317,13 +317,13 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         }
 
         // display:none cancels animations.
-        auto teardownType = update.style->display() == NONE ? TeardownType::RendererUpdateCancelingAnimations : TeardownType::RendererUpdate;
+        auto teardownType = update.style->display() == DisplayType::None ? TeardownType::RendererUpdateCancelingAnimations : TeardownType::RendererUpdate;
         tearDownRenderers(element, teardownType, m_builder);
 
         renderingParent().didCreateOrDestroyChildRenderer = true;
     }
 
-    bool hasDisplayContents = update.style->display() == CONTENTS;
+    bool hasDisplayContents = update.style->display() == DisplayType::Contents;
     if (hasDisplayContents)
         element.storeDisplayContentsStyle(RenderStyle::clonePtr(*update.style));
     else
@@ -640,34 +640,34 @@ RenderView& RenderTreeUpdater::renderView()
 }
 
 #if PLATFORM(IOS)
-static EVisibility elementImplicitVisibility(const Element& element)
+static Visibility elementImplicitVisibility(const Element& element)
 {
     auto* renderer = element.renderer();
     if (!renderer)
-        return VISIBLE;
+        return Visibility::Visible;
 
     auto& style = renderer->style();
 
     auto width = style.width();
     auto height = style.height();
     if ((width.isFixed() && width.value() <= 0) || (height.isFixed() && height.value() <= 0))
-        return HIDDEN;
+        return Visibility::Hidden;
 
     auto top = style.top();
     auto left = style.left();
     if (left.isFixed() && width.isFixed() && -left.value() >= width.value())
-        return HIDDEN;
+        return Visibility::Hidden;
 
     if (top.isFixed() && height.isFixed() && -top.value() >= height.value())
-        return HIDDEN;
-    return VISIBLE;
+        return Visibility::Hidden;
+    return Visibility::Visible;
 }
 
 CheckForVisibilityChange::CheckForVisibilityChange(const Element& element)
     : m_element(element)
-    , m_previousDisplay(element.renderStyle() ? element.renderStyle()->display() : NONE)
-    , m_previousVisibility(element.renderStyle() ? element.renderStyle()->visibility() : HIDDEN)
-    , m_previousImplicitVisibility(WKObservingContentChanges() && WKObservedContentChange() != WKContentVisibilityChange ? elementImplicitVisibility(element) : VISIBLE)
+    , m_previousDisplay(element.renderStyle() ? element.renderStyle()->display() : DisplayType::None)
+    , m_previousVisibility(element.renderStyle() ? element.renderStyle()->visibility() : Visibility::Hidden)
+    , m_previousImplicitVisibility(WKObservingContentChanges() && WKObservedContentChange() != WKContentVisibilityChange ? elementImplicitVisibility(element) : Visibility::Visible)
 {
 }
 
@@ -680,8 +680,8 @@ CheckForVisibilityChange::~CheckForVisibilityChange()
     auto* style = m_element.renderStyle();
     if (!style)
         return;
-    if ((m_previousDisplay == NONE && style->display() != NONE) || (m_previousVisibility == HIDDEN && style->visibility() != HIDDEN)
-        || (m_previousImplicitVisibility == HIDDEN && elementImplicitVisibility(m_element) == VISIBLE))
+    if ((m_previousDisplay == DisplayType::None && style->display() != DisplayType::None) || (m_previousVisibility == Visibility::Hidden && style->visibility() != Visibility::Hidden)
+        || (m_previousImplicitVisibility == Visibility::Hidden && elementImplicitVisibility(m_element) == Visibility::Visible))
         WKSetObservedContentChange(WKContentVisibilityChange);
 }
 #endif

@@ -81,7 +81,7 @@ public:
     static String convertStringOrAuto(StyleResolver&, const CSSValue&);
     static String convertStringOrNone(StyleResolver&, const CSSValue&);
     static TextEmphasisPosition convertTextEmphasisPosition(StyleResolver&, const CSSValue&);
-    static ETextAlign convertTextAlign(StyleResolver&, const CSSValue&);
+    static TextAlignMode convertTextAlign(StyleResolver&, const CSSValue&);
     static RefPtr<ClipPathOperation> convertClipPath(StyleResolver&, const CSSValue&);
     static Resize convertResize(StyleResolver&, const CSSValue&);
     static int convertMarqueeRepetition(StyleResolver&, const CSSValue&);
@@ -502,7 +502,7 @@ inline TextEmphasisPosition StyleBuilderConverter::convertTextEmphasisPosition(S
     return position;
 }
 
-inline ETextAlign StyleBuilderConverter::convertTextAlign(StyleResolver& styleResolver, const CSSValue& value)
+inline TextAlignMode StyleBuilderConverter::convertTextAlign(StyleResolver& styleResolver, const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     ASSERT(primitiveValue.isValueID());
@@ -511,10 +511,10 @@ inline ETextAlign StyleBuilderConverter::convertTextAlign(StyleResolver& styleRe
         return primitiveValue;
 
     auto* parentStyle = styleResolver.parentStyle();
-    if (parentStyle->textAlign() == TASTART)
-        return parentStyle->isLeftToRightDirection() ? LEFT : RIGHT;
-    if (parentStyle->textAlign() == TAEND)
-        return parentStyle->isLeftToRightDirection() ? RIGHT : LEFT;
+    if (parentStyle->textAlign() == TextAlignMode::Start)
+        return parentStyle->isLeftToRightDirection() ? TextAlignMode::Left : TextAlignMode::Right;
+    if (parentStyle->textAlign() == TextAlignMode::End)
+        return parentStyle->isLeftToRightDirection() ? TextAlignMode::Right : TextAlignMode::Left;
     return parentStyle->textAlign();
 }
 
@@ -532,7 +532,7 @@ inline RefPtr<ClipPathOperation> StyleBuilderConverter::convertClipPath(StyleRes
         return nullptr;
     }
 
-    CSSBoxType referenceBox = BoxMissing;
+    CSSBoxType referenceBox = CSSBoxType::BoxMissing;
     RefPtr<ClipPathOperation> operation;
 
     for (auto& currentValue : downcast<CSSValueList>(value)) {
@@ -548,14 +548,14 @@ inline RefPtr<ClipPathOperation> StyleBuilderConverter::convertClipPath(StyleRes
                 || primitiveValue.valueID() == CSSValueFill
                 || primitiveValue.valueID() == CSSValueStroke
                 || primitiveValue.valueID() == CSSValueViewBox);
-            ASSERT(referenceBox == BoxMissing);
+            ASSERT(referenceBox == CSSBoxType::BoxMissing);
             referenceBox = primitiveValue;
         }
     }
     if (operation)
         downcast<ShapeClipPathOperation>(*operation).setReferenceBox(referenceBox);
     else {
-        ASSERT(referenceBox != BoxMissing);
+        ASSERT(referenceBox != CSSBoxType::BoxMissing);
         operation = BoxClipPathOperation::create(referenceBox);
     }
 
@@ -775,7 +775,7 @@ inline RefPtr<ShapeValue> StyleBuilderConverter::convertShapeValue(StyleResolver
         return ShapeValue::create(styleResolver.styleImage(value).releaseNonNull());
 
     RefPtr<BasicShape> shape;
-    CSSBoxType referenceBox = BoxMissing;
+    CSSBoxType referenceBox = CSSBoxType::BoxMissing;
     for (auto& currentValue : downcast<CSSValueList>(value)) {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(currentValue.get());
         if (primitiveValue.isShape())
@@ -794,7 +794,7 @@ inline RefPtr<ShapeValue> StyleBuilderConverter::convertShapeValue(StyleResolver
     if (shape)
         return ShapeValue::create(shape.releaseNonNull(), referenceBox);
 
-    if (referenceBox != BoxMissing)
+    if (referenceBox != CSSBoxType::BoxMissing)
         return ShapeValue::create(referenceBox);
 
     ASSERT_NOT_REACHED();
@@ -923,7 +923,7 @@ inline bool StyleBuilderConverter::createGridTrackList(const CSSValue& value, Tr
             unsigned autoRepeatIndex = 0;
             CSSValueID autoRepeatID = downcast<CSSGridAutoRepeatValue>(currentValue.get()).autoRepeatID();
             ASSERT(autoRepeatID == CSSValueAutoFill || autoRepeatID == CSSValueAutoFit);
-            tracksData.m_autoRepeatType = autoRepeatID == CSSValueAutoFill ? AutoFill : AutoFit;
+            tracksData.m_autoRepeatType = autoRepeatID == CSSValueAutoFill ? AutoRepeatType::Fill : AutoRepeatType::Fit;
             for (auto& autoRepeatValue : downcast<CSSValueList>(currentValue.get())) {
                 if (is<CSSGridLineNamesValue>(autoRepeatValue)) {
                     createGridLineNamesList(autoRepeatValue.get(), autoRepeatIndex, tracksData.m_autoRepeatNamedGridLines, tracksData.m_autoRepeatOrderedNamedGridLines);
@@ -1078,7 +1078,7 @@ inline GridAutoFlow StyleBuilderConverter::convertGridAutoFlow(StyleResolver&, c
 inline CSSToLengthConversionData StyleBuilderConverter::csstoLengthConversionDataWithTextZoomFactor(StyleResolver& styleResolver)
 {
     if (auto* frame = styleResolver.document().frame()) {
-        float textZoomFactor = styleResolver.style()->textZoom() != TextZoomReset ? frame->textZoomFactor() : 1.0f;
+        float textZoomFactor = styleResolver.style()->textZoom() != TextZoom::Reset ? frame->textZoomFactor() : 1.0f;
         return styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(styleResolver.style()->effectiveZoom() * textZoomFactor);
     }
     return styleResolver.state().cssToLengthConversionData();
@@ -1468,9 +1468,9 @@ inline BreakBetween StyleBuilderConverter::convertPageBreakBetween(StyleResolver
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.valueID() == CSSValueAlways)
-        return PageBreakBetween;
+        return BreakBetween::Page;
     if (primitiveValue.valueID() == CSSValueAvoid)
-        return AvoidPageBreakBetween;
+        return BreakBetween::AvoidPage;
     return primitiveValue;
 }
 
@@ -1478,7 +1478,7 @@ inline BreakInside StyleBuilderConverter::convertPageBreakInside(StyleResolver&,
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.valueID() == CSSValueAvoid)
-        return AvoidPageBreakInside;
+        return BreakInside::AvoidPage;
     return primitiveValue;
 }
 
@@ -1486,9 +1486,9 @@ inline BreakBetween StyleBuilderConverter::convertColumnBreakBetween(StyleResolv
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.valueID() == CSSValueAlways)
-        return ColumnBreakBetween;
+        return BreakBetween::Column;
     if (primitiveValue.valueID() == CSSValueAvoid)
-        return AvoidColumnBreakBetween;
+        return BreakBetween::AvoidColumn;
     return primitiveValue;
 }
 
@@ -1496,7 +1496,7 @@ inline BreakInside StyleBuilderConverter::convertColumnBreakInside(StyleResolver
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.valueID() == CSSValueAvoid)
-        return AvoidColumnBreakInside;
+        return BreakInside::AvoidColumn;
     return primitiveValue;
 }
     

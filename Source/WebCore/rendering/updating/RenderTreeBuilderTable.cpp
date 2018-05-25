@@ -139,8 +139,8 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTable&
     auto* parentCandidate = beforeChild;
     while (parentCandidate && parentCandidate->parent()->isAnonymous()
         && !is<RenderTableSection>(*parentCandidate)
-        && parentCandidate->style().display() != TABLE_CAPTION
-        && parentCandidate->style().display() != TABLE_COLUMN_GROUP)
+        && parentCandidate->style().display() != DisplayType::TableCaption
+        && parentCandidate->style().display() != DisplayType::TableColumnGroup)
         parentCandidate = parentCandidate->parent();
 
     if (parentCandidate && is<RenderTableSection>(*parentCandidate) && parentCandidate->isAnonymous() && !parent.isAfterContent(parentCandidate)) {
@@ -150,8 +150,8 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTable&
     }
 
     if (beforeChild && !is<RenderTableSection>(*beforeChild)
-        && beforeChild->style().display() != TABLE_CAPTION
-        && beforeChild->style().display() != TABLE_COLUMN_GROUP)
+        && beforeChild->style().display() != DisplayType::TableCaption
+        && beforeChild->style().display() != DisplayType::TableColumnGroup)
         beforeChild = nullptr;
 
     auto newSection = RenderTableSection::createAnonymousWithParentRenderer(parent);

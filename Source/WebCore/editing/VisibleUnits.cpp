@@ -1181,7 +1181,7 @@ Node* findStartOfParagraph(Node* startNode, Node* highestRoot, Node* startBlock,
             continue;
         }
         const RenderStyle& style = r->style();
-        if (style.visibility() != VISIBLE) {
+        if (style.visibility() != Visibility::Visible) {
             n = NodeTraversal::previousPostOrder(*n, startBlock);
             continue;
         }
@@ -1243,7 +1243,7 @@ Node* findEndOfParagraph(Node* startNode, Node* highestRoot, Node* stayInsideBlo
             continue;
         }
         const RenderStyle& style = r->style();
-        if (style.visibility() != VISIBLE) {
+        if (style.visibility() != Visibility::Visible) {
             n = NodeTraversal::next(*n, stayInsideBlock);
             continue;
         }

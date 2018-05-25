@@ -1,3 +1,853 @@
+2018-05-24  Sam Weinig  <sam@webkit.org>
+
+        Modernize RenderStyleConstants.h - Part 2
+        https://bugs.webkit.org/show_bug.cgi?id=185901
+
+        Reviewed by Simon Fraser.
+
+        Modernized the second set of enums in RenderStyleConstants.h by:
+            - Converting them to enum classes
+            - Renaming them to remove unnecessary prefix 'E's
+            - Renaming values to take advantage of enum class scoping (e.g. StyleDifferenceEqual -> StyleDifference::Equal)
+            - Renaming to match modern conventions (e.g BNONE -> None)
+            - Reformatting them so that each value is on its own line.
+
+        Modernizes the following enums:
+            PseudoId
+            ListStyleType (renamed from EListStyleType)
+            BorderFit (renamed from EBorderFit)
+            AnimationFillMode (renamed from EAnimationFillMode)
+            AnimationPlayState (renamed from EAnimPlayState)
+            WhiteSpace (renamed from EWhiteSpace)
+            TextAlignMode (renamed from ETextAlign)
+            TextTransform (renamed from ETextTransform)
+            TextDecorationStyle
+            TextAlignLast
+            TextJustify
+            TextZoom
+            BreakBetween
+            BreakInside
+            EmptyCell (renamed from EEmptyCell)
+            CaptionSide (renamed from ECaptionSide)
+            ListStylePosition (renamed from EListStylePosition)
+            Visibility (renamed from EVisibility)
+            CursorType (renamed from ECursor)
+            CursorVisibility
+            DisplayType (renamed from EDisplay)
+            InsideLink (renamed from EInsideLink)
+            PointerEvents (renamed from EPointerEvents)
+            Hyphens
+            TextEmphasisFill
+            TextEmphasisMark
+            ImageResolutionSource
+            ImageResolutionSnap
+            Order
+            ColumnAxis
+            ColumnProgression
+            LineSnap
+            LineAlign
+            RubyPosition
+            AutoRepeatType
+            CSSBoxType
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::isNodeVisible const):
+        * accessibility/AccessibilityList.cpp:
+        (WebCore::AccessibilityList::determineAccessibilityRole):
+        * accessibility/AccessibilityMediaControls.cpp:
+        (WebCore::AccessibilityMediaControl::computeAccessibilityIsIgnored const):
+        (WebCore::AccessibilityMediaTimeDisplay::computeAccessibilityIsIgnored const):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isDOMHidden const):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::defaultObjectInclusion const):
+        (WebCore::AccessibilityRenderObject::isUnvisited const):
+        (WebCore::AccessibilityRenderObject::isVisited const):
+        (WebCore::AccessibilityRenderObject::setValue):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isDataTable const):
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (getAttributeSetForAccessibilityObject):
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::updateCSSAnimationsForElement):
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElement):
+        * animation/CSSAnimation.cpp:
+        (WebCore::CSSAnimation::syncPropertiesWithBackingAnimation):
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::initialize):
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::backingAnimationForCompositedRenderer const):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::renderTextDecorationStyleFlagsToCSSValue):
+        (WebCore::convertToPageBreak):
+        (WebCore::convertToColumnBreak):
+        (WebCore::ComputedStyleExtractor::styledElement const):
+        (WebCore::ComputedStyleExtractor::styledRenderer const):
+        (WebCore::computeRenderStyleForProperty):
+        (WebCore::shapePropertyValue):
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator CaptionSide const):
+        (WebCore::CSSPrimitiveValue::operator CursorType const):
+        (WebCore::CSSPrimitiveValue::operator CursorVisibility const):
+        (WebCore::CSSPrimitiveValue::operator DisplayType const):
+        (WebCore::CSSPrimitiveValue::operator EmptyCell const):
+        (WebCore::CSSPrimitiveValue::operator ListStylePosition const):
+        (WebCore::CSSPrimitiveValue::operator ListStyleType const):
+        (WebCore::CSSPrimitiveValue::operator BreakBetween const):
+        (WebCore::CSSPrimitiveValue::operator BreakInside const):
+        (WebCore::CSSPrimitiveValue::operator TextAlignMode const):
+        (WebCore::CSSPrimitiveValue::operator TextAlignLast const):
+        (WebCore::CSSPrimitiveValue::operator TextJustify const):
+        (WebCore::CSSPrimitiveValue::operator TextDecorationStyle const):
+        (WebCore::CSSPrimitiveValue::operator TextTransform const):
+        (WebCore::CSSPrimitiveValue::operator Visibility const):
+        (WebCore::CSSPrimitiveValue::operator WhiteSpace const):
+        (WebCore::CSSPrimitiveValue::operator RubyPosition const):
+        (WebCore::CSSPrimitiveValue::operator TextEmphasisFill const):
+        (WebCore::CSSPrimitiveValue::operator TextEmphasisMark const):
+        (WebCore::CSSPrimitiveValue::operator PointerEvents const):
+        (WebCore::CSSPrimitiveValue::operator Hyphens const):
+        (WebCore::CSSPrimitiveValue::operator LineSnap const):
+        (WebCore::CSSPrimitiveValue::operator LineAlign const):
+        (WebCore::CSSPrimitiveValue::operator Order const):
+        (WebCore::CSSPrimitiveValue::operator BorderFit const):
+        (WebCore::CSSPrimitiveValue::operator ColumnAxis const):
+        (WebCore::CSSPrimitiveValue::operator ColumnProgression const):
+        (WebCore::CSSPrimitiveValue::operator CSSBoxType const):
+        (WebCore::CSSPrimitiveValue::operator TextZoom const):
+        (WebCore::CSSPrimitiveValue::operator ECaptionSide const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator ECursor const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EDisplay const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EEmptyCell const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EListStylePosition const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EListStyleType const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator ETextAlign const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator ETextTransform const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EVisibility const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EWhiteSpace const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EPointerEvents const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EBorderFit const): Deleted.
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapAnimationFillMode):
+        (WebCore::CSSToStyleMap::mapAnimationPlayState):
+        * css/CSSValueKeywords.in:
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRules):
+        (WebCore::ElementRuleCollector::ruleMatches):
+        (WebCore::ElementRuleCollector::collectMatchingRulesForList):
+        * css/ElementRuleCollector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::match const):
+        (WebCore::SelectorChecker::matchHostPseudoClass const):
+        (WebCore::hasScrollbarPseudoElement):
+        (WebCore::SelectorChecker::matchRecursively const):
+        * css/SelectorChecker.h:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertTextAlign):
+        (WebCore::StyleBuilderConverter::convertClipPath):
+        (WebCore::StyleBuilderConverter::convertShapeValue):
+        (WebCore::StyleBuilderConverter::createGridTrackList):
+        (WebCore::StyleBuilderConverter::csstoLengthConversionDataWithTextZoomFactor):
+        (WebCore::StyleBuilderConverter::convertPageBreakBetween):
+        (WebCore::StyleBuilderConverter::convertPageBreakInside):
+        (WebCore::StyleBuilderConverter::convertColumnBreakBetween):
+        (WebCore::StyleBuilderConverter::convertColumnBreakInside):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueImageResolution):
+        (WebCore::computeBaseSpecifiedFontSize):
+        (WebCore::StyleBuilderCustom::applyValueWebkitTextZoom):
+        (WebCore::StyleBuilderCustom::isValidDisplayValue):
+        (WebCore::StyleBuilderCustom::applyInheritDisplay):
+        (WebCore::StyleBuilderCustom::applyValueDisplay):
+        (WebCore::StyleBuilderCustom::applyValueWebkitTextEmphasisStyle):
+        (WebCore::StyleBuilderCustom::applyValueCursor):
+        (WebCore::StyleBuilderCustom::applyValueContent):
+        (WebCore::StyleBuilderCustom::determineRubyTextSizeMultiplier):
+        (WebCore::StyleBuilderCustom::applyValueAlt):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForElement):
+        (WebCore::equivalentBlockDisplay):
+        (WebCore::doesNotInheritTextDecoration):
+        (WebCore::StyleResolver::adjustStyleForInterCharacterRuby):
+        (WebCore::adjustDisplayContentsStyle):
+        (WebCore::StyleResolver::adjustSVGElementStyle):
+        (WebCore::StyleResolver::adjustRenderStyle):
+        (WebCore::StyleResolver::styleRulesForElement):
+        (WebCore::isCacheableInMatchedPropertiesCache):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::CascadedProperties::Property::apply):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::State::elementLinkState const):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::constructFragmentsInternal):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateRequestedPseudoElementEqualsToSelectorPseudoElement):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateMarkPseudoStyleForPseudoElement):
+        * dom/Document.cpp:
+        (WebCore::Document::styleForElementIgnoringPendingStylesheets):
+        (WebCore::Document::isPageBoxVisible):
+        (WebCore::Document::setVisuallyOrdered):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::isFocusable const):
+        (WebCore::Element::hasDisplayContents const):
+        (WebCore::Element::storeDisplayContentsStyle):
+        (WebCore::Element::rendererIsNeeded):
+        (WebCore::beforeOrAfterPseudoElement):
+        (WebCore::Element::computedStyle):
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::computeEditabilityFromComputedStyle):
+        * dom/Node.h:
+        (WebCore::Node::isPseudoElement const):
+        (WebCore::Node::isBeforePseudoElement const):
+        (WebCore::Node::isAfterPseudoElement const):
+        (WebCore::Node::pseudoId const):
+        (WebCore::Node::customPseudoId const):
+        * dom/Position.cpp:
+        (WebCore::Position::upstream const):
+        (WebCore::Position::downstream const):
+        (WebCore::Position::isCandidate const):
+        (WebCore::Position::rendersInDifferentPosition const):
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::isCandidate const):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::pseudoElementNameForEvents):
+        (WebCore::PseudoElement::PseudoElement):
+        * dom/VisitedLinkState.cpp:
+        (WebCore::VisitedLinkState::determineLinkStateSlowCase):
+        * dom/VisitedLinkState.h:
+        (WebCore::VisitedLinkState::determineLinkState):
+        * editing/Editing.cpp:
+        (WebCore::isSpecialHTMLElement):
+        (WebCore::isNodeRendered):
+        * editing/TextIterator.cpp:
+        (WebCore::hasVisibleTextNode):
+        (WebCore::TextIterator::handleTextNode):
+        (WebCore::TextIterator::handleTextBox):
+        (WebCore::TextIterator::handleTextNodeFirstLetter):
+        (WebCore::TextIterator::handleReplacedElement):
+        (WebCore::TextIterator::shouldRepresentNodeOffsetZero):
+        (WebCore::SimplifiedBackwardsTextIterator::advance):
+        * editing/VisibleUnits.cpp:
+        (WebCore::findStartOfParagraph):
+        (WebCore::findEndOfParagraph):
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::setTextAlignmentForChangedBaseWritingDirection):
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::isFocusable const):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::rendererIsNeeded):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::rendererIsNeeded):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::createInnerTextStyle):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::isFocusable const):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::isFocusable const):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::createInnerTextStyle):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setSelectionRange):
+        (WebCore::HTMLTextFormControlElement::adjustInnerTextStyle const):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::autoplayPermitted const):
+        (WebCore::isMainContentForPurposesOfAutoplay):
+        * html/RubyElement.cpp:
+        (WebCore::RubyElement::createElementRenderer):
+        * html/RubyTextElement.cpp:
+        (WebCore::RubyTextElement::createElementRenderer):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::resolveCustomStyle):
+        (WebCore::TextControlPlaceholderElement::resolveCustomStyle):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForElementData):
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getMatchedStylesForNode):
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::pseudoElementType):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        * inspector/agents/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::buildObjectForLayer):
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isInlineBlockBox const):
+        (WebCore::Layout::Box::isBlockLevelBox const):
+        (WebCore::Layout::Box::isInlineLevelBox const):
+        (WebCore::Layout::Box::isBlockContainerBox const):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+        * page/Frame.cpp:
+        (WebCore::Frame::searchForLabelsAboveCell):
+        (WebCore::Frame::searchForLabelsBeforeElement):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::createScrollbar):
+        (WebCore::FrameView::adjustScrollStepForFixedContent):
+        (WebCore::FrameView::updateScrollCorner):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::playStatePlaying const):
+        (WebCore::AnimationBase::updatePlayState):
+        * page/animation/AnimationBase.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        (WebCore::CompositeAnimation::suspendAnimations):
+        (WebCore::CompositeAnimation::resumeAnimations):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::nodeRespondingToClickEvents):
+        * platform/animation/Animation.cpp:
+        (WebCore::Animation::Animation):
+        * platform/animation/Animation.h:
+        (WebCore::Animation::clearPlayState):
+        (WebCore::Animation::fillMode const):
+        (WebCore::Animation::playState const):
+        (WebCore::Animation::setFillMode):
+        (WebCore::Animation::setPlayState):
+        (WebCore::Animation::fillsBackwards const):
+        (WebCore::Animation::fillsForwards const):
+        (WebCore::Animation::initialFillMode):
+        (WebCore::Animation::initialPlayState):
+        * platform/graphics/GraphicsTypes.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/ios/wak/WAKWindow.mm:
+        (-[WAKWindow dumpTiles]):
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::isLookalikeCharacter):
+        * rendering/ClipPathOperation.h:
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::visibleToHitTesting const):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow):
+        (WebCore::InlineFlowBox::paint):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        (WebCore::InlineFlowBox::computeOverAnnotationAdjustment const):
+        (WebCore::InlineFlowBox::computeUnderAnnotationAdjustment const):
+        (WebCore::InlineFlowBox::collectLeafBoxesInLogicalOrder const):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::emphasisMarkExistsAndIsAbove const):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::createTextRun const):
+        * rendering/PointerEventsHitRules.cpp:
+        (WebCore::PointerEventsHitRules::PointerEventsHitRules):
+        * rendering/PointerEventsHitRules.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeStartPositionDeltaForChildAvoidingFloats):
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::shouldPaintSelectionGaps const):
+        (WebCore::RenderBlock::adjustLogicalLeftOffsetForLine const):
+        (WebCore::RenderBlock::adjustLogicalRightOffsetForLine const):
+        (WebCore::isChildHitTestCandidate):
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths const):
+        (WebCore::RenderBlock::firstLineBlock const):
+        (WebCore::findFirstLetterBlock):
+        (WebCore::RenderBlock::getFirstLetter):
+        (WebCore::RenderBlock::createAnonymousBlockWithStyleAndDisplay):
+        (WebCore::RenderBlock::childBoxIsUnsplittableForFragmentation const):
+        (WebCore::RenderBlock::constructTextRun):
+        (WebCore::RenderBlock::layoutExcludedChildren):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::createAnonymousWithParentRendererAndDisplay):
+        (WebCore::RenderBlock::createAnonymousBlock const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willCreateColumns const):
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::RenderBlockFlow::applyBeforeBreak):
+        (WebCore::RenderBlockFlow::applyAfterBreak):
+        (WebCore::RenderBlockFlow::adjustForUnsplittableChild):
+        (WebCore::RenderBlockFlow::updateStylesForColumnChildren):
+        (WebCore::RenderBlockFlow::computeLogicalLocationForFloat):
+        (WebCore::RenderBlockFlow::lowestInitialLetterLogicalBottom const):
+        (WebCore::RenderBlockFlow::adjustForBorderFit const):
+        (WebCore::RenderBlockFlow::fitBorderToLinesIfNeeded):
+        (WebCore::RenderBlockFlow::lineAtIndex const):
+        (WebCore::RenderBlockFlow::lineCount const):
+        (WebCore::getHeightForLineCount):
+        (WebCore::RenderBlockFlow::clearTruncation):
+        (WebCore::RenderBlockFlow::findClosestTextAtAbsolutePoint):
+        (WebCore::RenderBlockFlow::lineCountForTextAutosizing):
+        (WebCore::RenderBlockFlow::setComputedColumnCountAndWidth):
+        (WebCore::RenderBlockFlow::updateColumnProgressionFromStyle):
+        (WebCore::RenderBlockFlow::isTopLayoutOverflowAllowed const):
+        (WebCore::RenderBlockFlow::isLeftLayoutOverflowAllowed const):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::constructLine):
+        (WebCore::RenderBlockFlow::textAlignmentForLine const):
+        (WebCore::RenderBlockFlow::updateLogicalWidthForAlignment):
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForLine):
+        (WebCore::expansionBehaviorForInlineTextBox):
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlockFlow::checkFloatInCleanLine):
+        (WebCore::RenderBlockFlow::deleteEllipsisLineBoxes):
+        (WebCore::RenderBlockFlow::checkLinesForTextOverflow):
+        (WebCore::RenderBlockFlow::startAlignedOffsetForLine):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::hasVerticalScrollbarWithAutoBehavior const):
+        (WebCore::RenderBox::hasHorizontalScrollbarWithAutoBehavior const):
+        (WebCore::isCandidateForOpaquenessTest):
+        (WebCore::RenderBox::paintMask):
+        (WebCore::RenderBox::paintClippingMask):
+        (WebCore::RenderBox::positionLineBox):
+        (WebCore::RenderBox::clippedOverflowRectForRepaint const):
+        (WebCore::RenderBox::computeLogicalWidthInFragment const):
+        (WebCore::RenderBox::computeInlineDirectionMargins const):
+        (WebCore::RenderBox::skipContainingBlockForPercentHeightCalculation const):
+        (WebCore::RenderBox::positionForPoint):
+        (WebCore::RenderBox::isUnsplittableForPagination const):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::localCaretRectForEmptyElement):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderCounter.cpp:
+        (WebCore::planCounter):
+        (WebCore::RenderCounter::originalText const):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::childDoesNotAffectWidthOrFlexing):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        * rendering/RenderDetailsMarker.cpp:
+        (WebCore::RenderDetailsMarker::paint):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor):
+        (WebCore::RenderElement::computeFirstLineStyle const):
+        (WebCore::RenderElement::propagateStyleToAnonymousChildren):
+        (WebCore::RenderElement::styleWillChange):
+        (WebCore::RenderElement::insertedIntoTree):
+        (WebCore::RenderElement::willBeRemovedFromTree):
+        (WebCore::RenderElement::repaintAfterLayoutIfNeeded):
+        (WebCore::RenderElement::isVisibleInDocumentRect const):
+        (WebCore::RenderElement::getCachedPseudoStyle const):
+        (WebCore::RenderElement::getUncachedPseudoStyle const):
+        (WebCore::RenderElement::selectionPseudoStyle const):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::visibleToHitTesting const):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::createFullScreenStyle):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeEmptyTracksForAutoRepeat const):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::repaintOrMarkForLayout):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::willBeDestroyed):
+        (WebCore::updateStyleOfAnonymousBlockContinuations):
+        (WebCore::RenderInline::updateAlwaysCreateLineBoxes):
+        (WebCore::RenderInline::clippedOverflowRectForRepaint const):
+        (WebCore::RenderInline::addAnnotatedRegions):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateDescendantDependentFlags):
+        (WebCore::RenderLayer::createScrollbar):
+        (WebCore::styleRequiresScrollbar):
+        (WebCore::styleDefinesAutomaticScrollbar):
+        (WebCore::computeReferenceBox):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterDescendants):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::scrollbarHasDisplayNone):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPlugin const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForFrame const):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintObject):
+        (WebCore::itemOffsetForAlignment):
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        (WebCore::RenderListBox::createScrollbar):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::computeMarkerStyle const):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::effectiveListMarkerType):
+        (WebCore::listMarkerSuffix):
+        (WebCore::listMarkerText):
+        (WebCore::RenderListMarker::paint):
+        (WebCore::RenderListMarker::updateContent):
+        (WebCore::RenderListMarker::computePreferredLogicalWidths):
+        (WebCore::RenderListMarker::updateMargins):
+        (WebCore::RenderListMarker::suffix const):
+        (WebCore::RenderListMarker::isInside const):
+        (WebCore::RenderListMarker::getRelativeMarkerRect):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderMediaControlElements.cpp:
+        (WebCore::RenderMediaVolumeSliderContainer::layout):
+        (WebCore::RenderTextTrackContainerElement::layout):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::adjustInnerStyle):
+        (WebCore::if):
+        (RenderMenuList::itemStyle const):
+        (RenderMenuList::menuStyle const):
+        (RenderMenuList::createScrollbar):
+        * rendering/RenderMultiColumnSpannerPlaceholder.cpp:
+        (WebCore::RenderMultiColumnSpannerPlaceholder::createAnonymous):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addAnnotatedRegions):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isAnonymousBlock const):
+        (WebCore::RenderObject::isBeforeContent const):
+        (WebCore::RenderObject::isAfterContent const):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::shouldPaint):
+        (WebCore::RenderReplaced::clippedOverflowRectForRepaint const):
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::textAlignmentForLine const):
+        * rendering/RenderRubyBase.h:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::createRubyBase const):
+        (WebCore::RenderRubyRun::staticCreateRubyRun):
+        (WebCore::RenderRubyRun::layoutBlock):
+        * rendering/RenderRubyText.cpp:
+        (WebCore::RenderRubyText::textAlignmentForLine const):
+        (WebCore::RenderRubyText::adjustInlineDirectionLineBounds const):
+        * rendering/RenderRubyText.h:
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::pseudoForScrollbarPart):
+        (WebCore::RenderScrollbar::updateScrollbarPart):
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::updateCancelButtonVisibility const):
+        (WebCore::RenderSearchField::visibilityForCancelButton const):
+        (WebCore::RenderSearchField::menuStyle const):
+        (WebCore::RenderSearchField::createScrollbar):
+        * rendering/RenderSearchField.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::willInsertTableSection):
+        (WebCore::RenderTable::layoutCaptions):
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::paintObject):
+        (WebCore::RenderTable::adjustBorderBoxRectForPainting):
+        (WebCore::RenderTable::paintMask):
+        (WebCore::RenderTable::recalcSections const):
+        (WebCore::RenderTable::createTableWithStyle):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::styleDidChange):
+        (WebCore::RenderTableCell::paintCollapsedBorders):
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        (WebCore::RenderTableCell::paintBoxDecorations):
+        (WebCore::RenderTableCell::paintMask):
+        (WebCore::RenderTableCell::createTableCellWithStyle):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::updateFromElement):
+        (WebCore::RenderTableCol::isChildAllowed const):
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::styleDidChange):
+        (WebCore::RenderTableRow::paintOutlineForRowIfNeeded):
+        (WebCore::RenderTableRow::createTableRowWithStyle):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addCell):
+        (WebCore::RenderTableSection::paint):
+        (WebCore::RenderTableSection::createTableSectionWithStyle):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::styleDidChange):
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        (WebCore::applyTextTransform):
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::styleDidChange):
+        (WebCore::RenderTextFragment::blockForAccompanyingFirstLetter):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustMenuListStyle const):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::adjustMenuListButtonStyle const):
+        * rendering/RenderView.cpp:
+        (WebCore::rendererObscuresBackground):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidget):
+        (WebCore::RenderWidget::styleDidChange):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::paintEllipsisBox const):
+        (WebCore::RootInlineBox::lineSnapAdjustment const):
+        (WebCore::RootInlineBox::lineSelectionGap):
+        (WebCore::RootInlineBox::computeCaretRect const):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForFontAndText):
+        (WebCore::SimpleLineLayout::canUseForStyle):
+        (WebCore::SimpleLineLayout::computeLineLeft):
+        (WebCore::SimpleLineLayout::updateLineConstrains):
+        (WebCore::SimpleLineLayout::createLineRuns):
+        (WebCore::SimpleLineLayout::textAlignForLine):
+        (WebCore::SimpleLineLayout::closeLineEndingAndAdjustRuns):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        (WebCore::SimpleLineLayout::hitTestFlow):
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::Style::Style):
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::textDecorationStyleToStrokeStyle):
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+        (WebCore::collectStylesForRenderer):
+        * rendering/TextDecorationPainter.h:
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::BreakingContext):
+        (WebCore::BreakingContext::clearLineBreakIfFitsOnLine):
+        (WebCore::BreakingContext::handleBR):
+        (WebCore::BreakingContext::handleOutOfFlowPositioned):
+        (WebCore::BreakingContext::handleText):
+        (WebCore::BreakingContext::canBreakAtThisPosition):
+        (WebCore::BreakingContext::handleEndOfLine):
+        * rendering/line/LineInlineHeaders.h:
+        (WebCore::shouldCollapseWhiteSpace):
+        * rendering/line/LineWidth.cpp:
+        (WebCore::newFloatShrinksLine):
+        * rendering/mathml/MathOperator.cpp:
+        (WebCore::MathOperator::paint):
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::paint):
+        * rendering/mathml/RenderMathMLMath.cpp:
+        (WebCore::RenderMathMLMath::layoutBlock):
+        * rendering/mathml/RenderMathMLMenclose.cpp:
+        (WebCore::RenderMathMLMenclose::paint):
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::paint):
+        * rendering/mathml/RenderMathMLToken.cpp:
+        (WebCore::RenderMathMLToken::paint):
+        * rendering/shapes/BoxShape.cpp:
+        (WebCore::computeRoundedRectForBoxShape):
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::referenceBox):
+        (WebCore::ShapeOutsideInfo::setReferenceBoxLogicalSize):
+        (WebCore::ShapeOutsideInfo::logicalTopOffset const):
+        (WebCore::ShapeOutsideInfo::logicalLeftOffset const):
+        * rendering/style/CounterContent.h:
+        (WebCore::CounterContent::CounterContent):
+        (WebCore::CounterContent::listStyle const):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::createAnonymousStyleWithDisplay):
+        (WebCore::RenderStyle::createStyleInheritingFromPseudoStyle):
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::hasUniquePseudoStyle const):
+        (WebCore::RenderStyle::getCachedPseudoStyle const):
+        (WebCore::RenderStyle::addCachedPseudoStyle):
+        (WebCore::RenderStyle::changeRequiresLayout const):
+        (WebCore::requiresPainting):
+        (WebCore::RenderStyle::hyphenString const):
+        (WebCore::RenderStyle::textEmphasisMarkString const):
+        (WebCore::RenderStyle::visitedDependentColor const):
+        (WebCore::RenderStyle::textEmphasisMark const):
+        (WebCore::RenderStyle::setColumnStylesFromPaginationMode):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setStyleType):
+        (WebCore::RenderStyle::setRTLOrdering):
+        (WebCore::RenderStyle::display const):
+        (WebCore::RenderStyle::visibility const):
+        (WebCore::RenderStyle::textAlign const):
+        (WebCore::RenderStyle::textTransform const):
+        (WebCore::RenderStyle::whiteSpace const):
+        (WebCore::RenderStyle::emptyCells const):
+        (WebCore::RenderStyle::captionSide const):
+        (WebCore::RenderStyle::listStyleType const):
+        (WebCore::RenderStyle::listStylePosition const):
+        (WebCore::RenderStyle::cursor const):
+        (WebCore::RenderStyle::insideLink const):
+        (WebCore::RenderStyle::borderFit const):
+        (WebCore::RenderStyle::pointerEvents const):
+        (WebCore::RenderStyle::setDisplay):
+        (WebCore::RenderStyle::setOriginalDisplay):
+        (WebCore::RenderStyle::setVisibility):
+        (WebCore::RenderStyle::setTextAlign):
+        (WebCore::RenderStyle::setTextTransform):
+        (WebCore::RenderStyle::setTextDecorationStyle):
+        (WebCore::RenderStyle::setTextDecorationSkip):
+        (WebCore::RenderStyle::setTextUnderlinePosition):
+        (WebCore::RenderStyle::setDirection):
+        (WebCore::RenderStyle::setTextZoom):
+        (WebCore::RenderStyle::setWhiteSpace):
+        (WebCore::RenderStyle::setEmptyCells):
+        (WebCore::RenderStyle::setCaptionSide):
+        (WebCore::RenderStyle::setListStyleType):
+        (WebCore::RenderStyle::setListStylePosition):
+        (WebCore::RenderStyle::setCursor):
+        (WebCore::RenderStyle::setCursorVisibility):
+        (WebCore::RenderStyle::setInsideLink):
+        (WebCore::RenderStyle::setHyphens):
+        (WebCore::RenderStyle::setBorderFit):
+        (WebCore::RenderStyle::setColumnAxis):
+        (WebCore::RenderStyle::setColumnProgression):
+        (WebCore::RenderStyle::setTextEmphasisFill):
+        (WebCore::RenderStyle::setTextEmphasisMark):
+        (WebCore::RenderStyle::setRubyPosition):
+        (WebCore::RenderStyle::setBreakBefore):
+        (WebCore::RenderStyle::setBreakAfter):
+        (WebCore::RenderStyle::setBreakInside):
+        (WebCore::RenderStyle::setHangingPunctuation):
+        (WebCore::RenderStyle::setLineSnap):
+        (WebCore::RenderStyle::setLineAlign):
+        (WebCore::RenderStyle::setPointerEvents):
+        (WebCore::RenderStyle::initialDisplay):
+        (WebCore::RenderStyle::initialBreakBetween):
+        (WebCore::RenderStyle::initialBreakInside):
+        (WebCore::RenderStyle::initialCaptionSide):
+        (WebCore::RenderStyle::initialColumnAxis):
+        (WebCore::RenderStyle::initialColumnProgression):
+        (WebCore::RenderStyle::initialEmptyCells):
+        (WebCore::RenderStyle::initialListStylePosition):
+        (WebCore::RenderStyle::initialListStyleType):
+        (WebCore::RenderStyle::initialTextTransform):
+        (WebCore::RenderStyle::initialVisibility):
+        (WebCore::RenderStyle::initialWhiteSpace):
+        (WebCore::RenderStyle::initialCursor):
+        (WebCore::RenderStyle::initialTextAlign):
+        (WebCore::RenderStyle::initialTextDecorationStyle):
+        (WebCore::RenderStyle::initialTextZoom):
+        (WebCore::RenderStyle::initialHyphens):
+        (WebCore::RenderStyle::initialBorderFit):
+        (WebCore::RenderStyle::initialRTLOrdering):
+        (WebCore::RenderStyle::initialPointerEvents):
+        (WebCore::RenderStyle::initialTextEmphasisColor):
+        (WebCore::RenderStyle::initialTextEmphasisFill):
+        (WebCore::RenderStyle::initialTextEmphasisMark):
+        (WebCore::RenderStyle::initialRubyPosition):
+        (WebCore::RenderStyle::initialImageResolutionSource):
+        (WebCore::RenderStyle::initialImageResolutionSnap):
+        (WebCore::RenderStyle::initialTextAlignLast):
+        (WebCore::RenderStyle::initialTextJustify):
+        (WebCore::RenderStyle::initialCursorVisibility):
+        (WebCore::RenderStyle::initialGridAutoRepeatType):
+        (WebCore::RenderStyle::initialLineSnap):
+        (WebCore::RenderStyle::initialLineAlign):
+        (WebCore::RenderStyle::NonInheritedFlags::hasAnyPublicPseudoStyles const):
+        (WebCore::RenderStyle::originalDisplay const):
+        (WebCore::RenderStyle::NonInheritedFlags::hasPseudoStyle const):
+        (WebCore::RenderStyle::NonInheritedFlags::setHasPseudoStyle):
+        (WebCore::RenderStyle::NonInheritedFlags::setHasPseudoStyles):
+        (WebCore::RenderStyle::autoWrap):
+        (WebCore::RenderStyle::preserveNewline):
+        (WebCore::RenderStyle::collapseWhiteSpace):
+        (WebCore::RenderStyle::breakOnlyAfterWhiteSpace const):
+        (WebCore::RenderStyle::hasInlineColumnAxis const):
+        (WebCore::RenderStyle::isDisplayRegionType const):
+        (WebCore::RenderStyle::isDisplayReplacedType):
+        (WebCore::RenderStyle::isDisplayInlineType):
+        (WebCore::RenderStyle::isDisplayFlexibleBox):
+        (WebCore::RenderStyle::isDisplayGridBox):
+        (WebCore::RenderStyle::isDisplayFlexibleOrGridBox):
+        (WebCore::pseudoElementRendererIsNeeded):
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        (WebCore::alwaysPageBreak):
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::PseudoIdSet::has const):
+        (WebCore::PseudoIdSet::add):
+        * rendering/style/ShapeValue.h:
+        * rendering/style/StyleMultiColData.cpp:
+        (WebCore::StyleMultiColData::StyleMultiColData):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        (WebCore::RenderSVGImage::nodeAtFloatPoint):
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::styleDidChange):
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::checkIntersection):
+        (WebCore::RenderSVGModelObject::checkEnclosure):
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::requestPaintingResource):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::pathOnlyClipping):
+        (WebCore::RenderSVGResourceClipper::drawContentIntoMaskImage):
+        (WebCore::RenderSVGResourceClipper::calculateClipContentRepaintRect):
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::drawContentIntoMaskImage):
+        (WebCore::RenderSVGResourceMasker::calculateMaskContentRepaintRect):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::clippedOverflowRectForRepaint const):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::paint):
+        (WebCore::RenderSVGShape::nodeAtFloatPoint):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::nodeAtFloatPoint):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintSelectionBackground):
+        (WebCore::SVGInlineTextBox::paint):
+        (WebCore::SVGInlineTextBox::constructTextRun const):
+        (WebCore::SVGInlineTextBox::paintDecoration):
+        (WebCore::SVGInlineTextBox::nodeAtPoint):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::clippedOverflowRectForRepaint):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp:
+        (WebCore::processRenderSVGInlineText):
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::measureTextRenderer):
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::RenderTreeBuilder::Block::detach):
+        * rendering/updating/RenderTreeBuilderFirstLetter.cpp:
+        (WebCore::styleForFirstLetter):
+        (WebCore::RenderTreeBuilder::FirstLetter::updateAfterDescendants):
+        (WebCore::RenderTreeBuilder::FirstLetter::updateStyle):
+        (WebCore::RenderTreeBuilder::FirstLetter::createRenderers):
+        * rendering/updating/RenderTreeBuilderInline.cpp:
+        (WebCore::RenderTreeBuilder::Inline::attachIgnoringContinuation):
+        (WebCore::RenderTreeBuilder::Inline::newChildIsInline):
+        * rendering/updating/RenderTreeBuilderList.cpp:
+        (WebCore::RenderTreeBuilder::List::updateItemMarker):
+        * rendering/updating/RenderTreeBuilderMathML.cpp:
+        (WebCore::RenderTreeBuilder::MathML::createMathMLOperator):
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::RenderTreeBuilder::MultiColumn::createFragmentedFlow):
+        (WebCore::RenderTreeBuilder::MultiColumn::processPossibleSpannerDescendant):
+        * rendering/updating/RenderTreeBuilderRuby.cpp:
+        (WebCore::isAnonymousRubyInlineBlock):
+        (WebCore::isRubyBeforeBlock):
+        (WebCore::isRubyAfterBlock):
+        (WebCore::createAnonymousRubyInlineBlock):
+        * rendering/updating/RenderTreeBuilderTable.cpp:
+        (WebCore::RenderTreeBuilder::Table::findOrCreateParentForChild):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateBeforeDescendants):
+        (WebCore::RenderTreeUpdater::updateAfterDescendants):
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+        (WebCore::elementImplicitVisibility):
+        (WebCore::CheckForVisibilityChange::CheckForVisibilityChange):
+        (WebCore::CheckForVisibilityChange::~CheckForVisibilityChange):
+        * rendering/updating/RenderTreeUpdaterGeneratedContent.cpp:
+        (WebCore::RenderTreeUpdater::GeneratedContent::updatePseudoElement):
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::visualOverflowForDecorations):
+        * style/StyleChange.cpp:
+        (WebCore::Style::determineChange):
+        * style/StyleFontSizeFunctions.cpp:
+        (WebCore::Style::computedFontSizeFromSpecifiedSize):
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+        * style/StyleSharingResolver.cpp:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::affectsRenderedSubtree):
+        (WebCore::Style::TreeResolver::resolveElement):
+        (WebCore::Style::TreeResolver::resolvePseudoStyle):
+        (WebCore::Style::TreeResolver::parentBoxStyle const):
+        (WebCore::Style::createInheritedDisplayContentsStyleIfNeeded):
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+        * svg/SVGElement.h:
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::createElementRenderer):
+
 2018-05-24  Chris Dumez  <cdumez@apple.com>
 
         Enable subsampling for progressive JPEG images

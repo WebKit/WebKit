@@ -47,7 +47,7 @@ static inline bool isAnonymousRubyInlineBlock(const RenderObject* object)
         || !isRuby(object->parent())
         || is<RenderRubyRun>(*object)
         || (object->isInline() && (object->isBeforeContent() || object->isAfterContent()))
-        || (object->isAnonymous() && is<RenderBlock>(*object) && object->style().display() == INLINE_BLOCK));
+        || (object->isAnonymous() && is<RenderBlock>(*object) && object->style().display() == DisplayType::InlineBlock));
 
     return object
         && isRuby(object->parent())
@@ -60,7 +60,7 @@ static inline bool isRubyBeforeBlock(const RenderObject* object)
     return isAnonymousRubyInlineBlock(object)
         && !object->previousSibling()
         && downcast<RenderBlock>(*object).firstChild()
-        && downcast<RenderBlock>(*object).firstChild()->style().styleType() == BEFORE;
+        && downcast<RenderBlock>(*object).firstChild()->style().styleType() == PseudoId::Before;
 }
 
 static inline bool isRubyAfterBlock(const RenderObject* object)
@@ -68,7 +68,7 @@ static inline bool isRubyAfterBlock(const RenderObject* object)
     return isAnonymousRubyInlineBlock(object)
         && !object->nextSibling()
         && downcast<RenderBlock>(*object).firstChild()
-        && downcast<RenderBlock>(*object).firstChild()->style().styleType() == AFTER;
+        && downcast<RenderBlock>(*object).firstChild()->style().styleType() == PseudoId::After;
 }
 
 #ifndef ASSERT_DISABLED
@@ -97,7 +97,7 @@ static inline RenderBlock* rubyAfterBlock(const RenderElement* ruby)
 
 static auto createAnonymousRubyInlineBlock(RenderObject& ruby)
 {
-    auto newBlock = createRenderer<RenderBlockFlow>(ruby.document(), RenderStyle::createAnonymousStyleWithDisplay(ruby.style(), INLINE_BLOCK));
+    auto newBlock = createRenderer<RenderBlockFlow>(ruby.document(), RenderStyle::createAnonymousStyleWithDisplay(ruby.style(), DisplayType::InlineBlock));
     newBlock->initializeStyle();
     return newBlock;
 }

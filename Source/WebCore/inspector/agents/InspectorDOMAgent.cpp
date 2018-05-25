@@ -1372,10 +1372,10 @@ static String documentBaseURLString(Document* document)
 static bool pseudoElementType(PseudoId pseudoId, Inspector::Protocol::DOM::PseudoType* type)
 {
     switch (pseudoId) {
-    case BEFORE:
+    case PseudoId::Before:
         *type = Inspector::Protocol::DOM::PseudoType::Before;
         return true;
-    case AFTER:
+    case PseudoId::After:
         *type = Inspector::Protocol::DOM::PseudoType::After;
         return true;
     default:
@@ -1500,7 +1500,7 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
         if (state != Inspector::Protocol::DOM::CustomElementState::Builtin)
             value->setCustomElementState(state);
 
-        if (element.pseudoId()) {
+        if (element.pseudoId() != PseudoId::None) {
             Inspector::Protocol::DOM::PseudoType pseudoType;
             if (pseudoElementType(element.pseudoId(), &pseudoType))
                 value->setPseudoType(pseudoType);

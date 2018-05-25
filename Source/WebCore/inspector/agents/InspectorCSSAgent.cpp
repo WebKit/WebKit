@@ -438,7 +438,7 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString& errorString, int no
 
     Element* originalElement = element;
     PseudoId elementPseudoId = element->pseudoId();
-    if (elementPseudoId) {
+    if (elementPseudoId != PseudoId::None) {
         element = downcast<PseudoElement>(*element).hostElement();
         if (!element) {
             errorString = ASCIILiteral("Pseudo element has no parent");
@@ -455,7 +455,7 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString& errorString, int no
         // Pseudo elements.
         if (!includePseudo || *includePseudo) {
             auto pseudoElements = JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>::create();
-            for (PseudoId pseudoId = FIRST_PUBLIC_PSEUDOID; pseudoId < AFTER_LAST_INTERNAL_PSEUDOID; pseudoId = static_cast<PseudoId>(pseudoId + 1)) {
+            for (PseudoId pseudoId = PseudoId::FirstPublicPseudoId; pseudoId < PseudoId::AfterLastInternalPseudoId; pseudoId = static_cast<PseudoId>(static_cast<unsigned>(pseudoId) + 1)) {
                 auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, pseudoId, StyleResolver::AllCSSRules);
                 if (!matchedRules.isEmpty()) {
                     auto matches = Inspector::Protocol::CSS::PseudoIdMatches::create()
@@ -477,7 +477,7 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString& errorString, int no
                 StyleResolver& parentStyleResolver = parentElement->styleResolver();
                 auto parentMatchedRules = parentStyleResolver.styleRulesForElement(parentElement, StyleResolver::AllCSSRules);
                 auto entry = Inspector::Protocol::CSS::InheritedStyleEntry::create()
-                    .setMatchedCSSRules(buildArrayForMatchedRuleList(parentMatchedRules, styleResolver, *parentElement, NOPSEUDO))
+                    .setMatchedCSSRules(buildArrayForMatchedRuleList(parentMatchedRules, styleResolver, *parentElement, PseudoId::None))
                     .release();
                 if (is<StyledElement>(*parentElement) && downcast<StyledElement>(*parentElement).cssomStyle().length()) {
                     auto& styleSheet = asInspectorStyleSheet(downcast<StyledElement>(*parentElement));
@@ -893,7 +893,7 @@ RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> InspectorCSSAgent::bu
     auto result = JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>::create();
 
     SelectorChecker::CheckingContext context(SelectorChecker::Mode::CollectingRules);
-    context.pseudoId = pseudoId ? pseudoId : element.pseudoId();
+    context.pseudoId = pseudoId != PseudoId::None ? pseudoId : element.pseudoId();
     SelectorChecker selectorChecker(element.document());
 
     for (auto& matchedRule : matchedRules) {

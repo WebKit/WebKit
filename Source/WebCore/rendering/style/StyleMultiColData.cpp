@@ -32,8 +32,8 @@ StyleMultiColData::StyleMultiColData()
     , autoCount(true)
     , fill(static_cast<unsigned>(RenderStyle::initialColumnFill()))
     , columnSpan(false)
-    , axis(RenderStyle::initialColumnAxis())
-    , progression(RenderStyle::initialColumnProgression())
+    , axis(static_cast<unsigned>(RenderStyle::initialColumnAxis()))
+    , progression(static_cast<unsigned>(RenderStyle::initialColumnProgression()))
 {
 }
 
