@@ -1797,7 +1797,7 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     RefPtr<Frame> frame = document().frame();
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
         if (auto* timeline = document().existingTimeline())
-            timeline->cancelDeclarativeAnimationsForElement(*this);
+            timeline->removeAnimationsForElement(*this);
     } else if (frame)
         frame->animation().cancelAnimations(*this);
 

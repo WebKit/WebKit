@@ -63,6 +63,7 @@ public:
 
     AnimationEffectReadOnly* effect() const { return m_effect.get(); }
     void setEffect(RefPtr<AnimationEffectReadOnly>&&);
+    void setEffectInternal(RefPtr<AnimationEffectReadOnly>&&, bool = false);
     AnimationTimeline* timeline() const { return m_timeline.get(); }
     virtual void setTimeline(RefPtr<AnimationTimeline>&&);
 

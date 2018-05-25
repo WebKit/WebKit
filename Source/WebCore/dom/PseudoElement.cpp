@@ -92,7 +92,7 @@ void PseudoElement::clearHostElement()
 
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
         if (auto* timeline = document().existingTimeline())
-            timeline->cancelDeclarativeAnimationsForElement(*this);
+            timeline->removeAnimationsForElement(*this);
     } else if (auto* frame = document().frame())
         frame->animation().cancelAnimations(*this);
 

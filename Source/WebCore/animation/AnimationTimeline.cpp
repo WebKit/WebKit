@@ -51,12 +51,6 @@ AnimationTimeline::AnimationTimeline(ClassType classType)
 
 AnimationTimeline::~AnimationTimeline()
 {
-    m_animations.clear();
-    m_elementToAnimationsMap.clear();
-    m_elementToCSSAnimationsMap.clear();
-    m_elementToCSSTransitionsMap.clear();
-    m_elementToCSSAnimationByName.clear();
-    m_elementToCSSTransitionByCSSPropertyID.clear();
 }
 
 void AnimationTimeline::addAnimation(Ref<WebAnimation>&& animation)
@@ -85,7 +79,7 @@ void AnimationTimeline::setCurrentTime(Seconds currentTime)
     timingModelDidChange();
 }
 
-HashMap<Element*, Vector<RefPtr<WebAnimation>>>& AnimationTimeline::relevantMapForAnimation(WebAnimation& animation)
+HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>>& AnimationTimeline::relevantMapForAnimation(WebAnimation& animation)
 {
     if (animation.isCSSAnimation())
         return m_elementToCSSAnimationsMap;
@@ -96,42 +90,71 @@ HashMap<Element*, Vector<RefPtr<WebAnimation>>>& AnimationTimeline::relevantMapF
 
 void AnimationTimeline::animationWasAddedToElement(WebAnimation& animation, Element& element)
 {
-    auto result = relevantMapForAnimation(animation).ensure(&element, [] {
-        return Vector<RefPtr<WebAnimation>> { };
-    });
-    result.iterator->value.append(&animation);
+    relevantMapForAnimation(animation).ensure(&element, [] {
+        return ListHashSet<RefPtr<WebAnimation>> { };
+    }).iterator->value.add(&animation);
 }
 
 void AnimationTimeline::animationWasRemovedFromElement(WebAnimation& animation, Element& element)
 {
+    // First, we clear this animation from one of the m_elementToCSSAnimationsMap, m_elementToCSSTransitionsMap
+    // or m_elementToAnimationsMap map, whichever is relevant to this type of animation.
     auto& map = relevantMapForAnimation(animation);
     auto iterator = map.find(&element);
     if (iterator == map.end())
         return;
 
     auto& animations = iterator->value;
-    animations.removeFirst(&animation);
+    animations.remove(&animation);
     if (!animations.size())
         map.remove(iterator);
+
+    // Now, if we're dealing with a declarative animation, we remove it from either the m_elementToCSSAnimationByName
+    // or the m_elementToCSSTransitionByCSSPropertyID map, whichever is relevant to this type of animation.
+    if (is<CSSAnimation>(animation)) {
+        auto iterator = m_elementToCSSAnimationByName.find(&element);
+        if (iterator != m_elementToCSSAnimationByName.end()) {
+            auto& cssAnimationsByName = iterator->value;
+            auto& name = downcast<CSSAnimation>(animation).animationName();
+            cssAnimationsByName.remove(name);
+            if (cssAnimationsByName.isEmpty())
+                m_elementToCSSAnimationByName.remove(&element);
+        }
+    } else if (is<CSSTransition>(animation)) {
+        auto iterator = m_elementToCSSTransitionByCSSPropertyID.find(&element);
+        if (iterator != m_elementToCSSTransitionByCSSPropertyID.end()) {
+            auto& cssTransitionsByProperty = iterator->value;
+            auto property = downcast<CSSTransition>(animation).property();
+            cssTransitionsByProperty.remove(property);
+            if (cssTransitionsByProperty.isEmpty())
+                m_elementToCSSTransitionByCSSPropertyID.remove(&element);
+        }
+    }
 }
 
 Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& element) const
 {
     Vector<RefPtr<WebAnimation>> animations;
-    if (m_elementToCSSAnimationsMap.contains(&element))
-        animations.appendVector(m_elementToCSSAnimationsMap.get(&element));
-    if (m_elementToCSSTransitionsMap.contains(&element))
-        animations.appendVector(m_elementToCSSTransitionsMap.get(&element));
-    if (m_elementToAnimationsMap.contains(&element))
-        animations.appendVector(m_elementToAnimationsMap.get(&element));
+    if (m_elementToCSSAnimationsMap.contains(&element)) {
+        const auto& cssAnimations = m_elementToCSSAnimationsMap.get(&element);
+        animations.appendRange(cssAnimations.begin(), cssAnimations.end());
+    }
+    if (m_elementToCSSTransitionsMap.contains(&element)) {
+        const auto& cssTransitions = m_elementToCSSTransitionsMap.get(&element);
+        animations.appendRange(cssTransitions.begin(), cssTransitions.end());
+    }
+    if (m_elementToAnimationsMap.contains(&element)) {
+        const auto& webAnimations = m_elementToAnimationsMap.get(&element);
+        animations.appendRange(webAnimations.begin(), webAnimations.end());
+    }
     return animations;
 }
 
-void AnimationTimeline::cancelDeclarativeAnimationsForElement(Element& element)
+void AnimationTimeline::removeAnimationsForElement(Element& element)
 {
-    for (const auto& animation : animationsForElement(element)) {
-        if (is<DeclarativeAnimation>(animation))
-            animation->cancel();
+    for (auto& animation : animationsForElement(element)) {
+        animation->setEffectInternal(nullptr);
+        removeAnimation(animation.releaseNonNull());
     }
 }
 
@@ -289,7 +312,7 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
                     if (cssTransitionsByProperty.contains(property)) {
                         if (cssTransitionsByProperty.get(property)->matchesBackingAnimationAndStyles(backingAnimation, oldStyle, newStyle))
                             continue;
-                        removeDeclarativeAnimation(cssTransitionsByProperty.take(property));
+                        removeAnimation(cssTransitionsByProperty.take(property).releaseNonNull());
                     }
                     // Now we can create a new CSSTransition with the new backing animation provided it has a valid
                     // duration and the from and to values are distinct.
@@ -315,19 +338,13 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
         m_elementToCSSTransitionByCSSPropertyID.remove(&element);
 }
 
-void AnimationTimeline::removeDeclarativeAnimation(RefPtr<DeclarativeAnimation> animation)
-{
-    animation->setEffect(nullptr);
-    removeAnimation(animation.releaseNonNull());
-}
-
 void AnimationTimeline::cancelOrRemoveDeclarativeAnimation(RefPtr<DeclarativeAnimation> animation)
 {
     auto phase = animation->effect()->phase();
     if (phase != AnimationEffectReadOnly::Phase::Idle && phase != AnimationEffectReadOnly::Phase::After)
         animation->cancel();
     else
-        removeDeclarativeAnimation(animation);
+        removeAnimation(animation.releaseNonNull());
 }
 
 String AnimationTimeline::description()

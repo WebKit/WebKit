@@ -4023,7 +4023,6 @@ webkit.org/b/183393 fast/loader/redirect-to-invalid-url-using-meta-refresh-disal
 webkit.org/b/183393 fast/loader/window-open-to-invalid-url-disallowed.html [ Skip ]
 
 webkit.org/b/183569 webanimations/css-animations.html [ Failure ]
-webkit.org/b/183569 webanimations/css-transitions.html [ Failure ]
 
 webkit.org/b/183953 imported/mozilla/css-animations/test_animation-cancel.html [ Failure ]
 webkit.org/b/183953 imported/mozilla/css-animations/test_animation-finish.html [ Failure ]

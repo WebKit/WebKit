@@ -1,3 +1,77 @@
+2018-05-25  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] WebAnimation objects never get destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=185917
+        <rdar://problem/39539371>
+
+        Reviewed by Dean Jackson and Antti Koivisto.
+
+        The AnimationTimeline class keeps references to WebAnimation objects organized in various ways. First, there
+        are three main maps across which all animations are stored, one for non-subclass WebAnimation objects
+        (m_elementToAnimationsMap), one for CSSSAnimation objects (m_elementToCSSAnimationsMap) and one for CSSTranstion
+        objects (m_elementToCSSTransitionsMap). On top of that, we also keep a map to access CSSAnimation objects for
+        a given element by CSS animation name (m_elementToCSSAnimationByName) and another map to access CSSTransition 
+        objects for a given element by CSS property (m_elementToCSSTransitionByCSSPropertyID).
+
+        None of the RefPtr<WebAnimation> stored in these maps would get cleared when the document would get torn down,
+        which would also prevent the AnimationTimeline (and its DocumentTimeline subclass) from being destroyed.
+
+        We now ensure that element and document tear-down correctly removes animations and clears those maps, which
+        in turn allows the DocumentTimeline to be destroyed, fixing the significant memory leak introduced by Web Animations
+        so far.
+
+        Finally, we change the collection type for those maps to be ListHashRef instead of Vector to guarantee we only
+        add an animation once per collection due to changes in how setEffect() and setTimeline() operate.
+
+        Test: animations/leak-document-with-css-animation.html
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::~AnimationTimeline): There is no need to clear those tables as they'll need to be empty
+        for the AnimationTimeline to even be destroyed.
+        (WebCore::AnimationTimeline::relevantMapForAnimation): Change to use ListHashRef instead of Vector.
+        (WebCore::AnimationTimeline::animationWasAddedToElement): Change to use ListHashRef instead of Vector.
+        (WebCore::AnimationTimeline::animationWasRemovedFromElement): When an animation is removed from an element, ensure that
+        references to this animation stored in the m_elementToCSSAnimationByName and m_elementToCSSTransitionByCSSPropertyID maps
+        are cleared.
+        (WebCore::AnimationTimeline::animationsForElement const): Change to use ListHashRef instead of Vector.
+        (WebCore::AnimationTimeline::removeAnimationsForElement): Instead of just calling cancel() on all known declarative animations
+        (this method used to be called cancelDeclarativeAnimationsForElement()), we now set the effect of known animations, declarative
+        or not, for the provided element which will in turn call animationWasRemovedFromElement() and remove the animation from all
+        maps that might keep a reference to it.
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElement): Replace call to removeDeclarativeAnimation() with a simple call
+        to removeAnimation() which will remove references for this animation from the relevant maps.
+        (WebCore::AnimationTimeline::cancelOrRemoveDeclarativeAnimation): Ditto.
+        (WebCore::AnimationTimeline::cancelDeclarativeAnimationsForElement): Deleted.
+        (WebCore::AnimationTimeline::removeDeclarativeAnimation): Deleted.
+        * animation/AnimationTimeline.h:
+        (WebCore::AnimationTimeline::elementToAnimationsMap): Change to use ListHashRef instead of Vector.
+        (WebCore::AnimationTimeline::elementToCSSAnimationsMap): Change to use ListHashRef instead of Vector.
+        (WebCore::AnimationTimeline::elementToCSSTransitionsMap): Change to use ListHashRef instead of Vector.
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::setEffect): In the case of a declarative animation, we don't want to remove the animation from the relevant
+        maps because while the effect was set via the API, the element still has a transition or animation set up and we must not break the
+        timeline-to-animation relationship.
+        (WebCore::WebAnimation::setEffectInternal): Factor parts of setEffect() out into a new method that can be called from
+        AnimationTimeline::removeAnimationsForElement() to reset the m_effect member and correctly call animationWasRemovedFromElement()
+        without all the Web Animations machinery of setEffect(), which is a public API that has unwanted side effects (such as rejecting
+        promises).
+        (WebCore::WebAnimation::setTimeline): In the case of a declarative animation, we don't want to remove the animation from the
+        relevant maps because, while the timeline was set via the API, the element still has a transition or animation set up and we must
+        not break the relationship.
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::~DocumentTimeline):
+        (WebCore::DocumentTimeline::detachFromDocument): Close the GenericTaskQueues when detaching from the document as it's too late to
+        perform this work in the destructor. We also cancel the schedule timer which we had forgotten to do before.
+        * animation/WebAnimation.h:
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction):
+        * dom/Element.cpp:
+        (WebCore::Element::removedFromAncestor):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::clearHostElement):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+
 2018-05-24  Chris Dumez  <cdumez@apple.com>
 
         Avoid doing unnecessary work in Document::shouldEnforceContentDispositionAttachmentSandbox() when setting is disabled

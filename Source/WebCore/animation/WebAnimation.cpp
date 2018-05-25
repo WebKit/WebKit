@@ -119,30 +119,44 @@ void WebAnimation::setEffect(RefPtr<AnimationEffectReadOnly>&& newEffect)
         newEffect->animation()->setEffect(nullptr);
 
     // 7. Let the target effect of animation be new effect.
-    m_effect = WTFMove(newEffect);
+    // In the case of a declarative animation, we don't want to remove the animation from the relevant maps because
+    // while the effect was set via the API, the element still has a transition or animation set up and we must
+    // not break the timeline-to-animation relationship.
+    setEffectInternal(WTFMove(newEffect), isDeclarativeAnimation());
 
     // 8. Run the procedure to update an animation’s finished state for animation with the did seek flag set to false,
     // and the synchronously notify flag set to false.
     updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
 
+    timingModelDidChange();
+}
+
+void WebAnimation::setEffectInternal(RefPtr<AnimationEffectReadOnly>&& newEffect, bool doNotRemoveFromTimeline)
+{
+    auto oldEffect = m_effect;
+
+    m_effect = WTFMove(newEffect);
+
+    Element* previousTarget = nullptr;
+    if (is<KeyframeEffectReadOnly>(oldEffect))
+        previousTarget = downcast<KeyframeEffectReadOnly>(oldEffect.get())->target();
+
+    Element* newTarget = nullptr;
+    if (is<KeyframeEffectReadOnly>(m_effect))
+        newTarget = downcast<KeyframeEffectReadOnly>(m_effect.get())->target();
+
     // Update the effect-to-animation relationships and the timeline's animation map.
     if (oldEffect) {
         oldEffect->setAnimation(nullptr);
-        if (m_timeline && is<KeyframeEffectReadOnly>(oldEffect)) {
-            if (auto* target = downcast<KeyframeEffectReadOnly>(oldEffect.get())->target())
-                m_timeline->animationWasRemovedFromElement(*this, *target);
-        }
+        if (!doNotRemoveFromTimeline && m_timeline && previousTarget && previousTarget != newTarget)
+            m_timeline->animationWasRemovedFromElement(*this, *previousTarget);
     }
 
     if (m_effect) {
         m_effect->setAnimation(this);
-        if (m_timeline && is<KeyframeEffectReadOnly>(m_effect)) {
-            if (auto* target = downcast<KeyframeEffectReadOnly>(m_effect.get())->target())
-                m_timeline->animationWasAddedToElement(*this, *target);
-        }
+        if (m_timeline && newTarget && previousTarget != newTarget)
+            m_timeline->animationWasAddedToElement(*this, *newTarget);
     }
-
-    timingModelDidChange();
 }
 
 void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
@@ -168,7 +182,10 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
         auto* keyframeEffect = downcast<KeyframeEffectReadOnly>(m_effect.get());
         auto* target = keyframeEffect->target();
         if (target) {
-            if (m_timeline)
+            // In the case of a declarative animation, we don't want to remove the animation from the relevant maps because
+            // while the timeline was set via the API, the element still has a transition or animation set up and we must
+            // not break the relationship.
+            if (m_timeline && !isDeclarativeAnimation())
                 m_timeline->animationWasRemovedFromElement(*this, *target);
             if (timeline)
                 timeline->animationWasAddedToElement(*this, *target);

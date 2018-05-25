@@ -2336,11 +2336,6 @@ void Document::prepareForDestruction()
     if (m_hasPreparedForDestruction)
         return;
 
-    if (m_timeline) {
-        m_timeline->detachFromDocument();
-        m_timeline = nullptr;
-    }
-
     if (m_frame)
         m_frame->animation().detachFromDocument(this);
 
@@ -2432,6 +2427,11 @@ void Document::prepareForDestruction()
     }
 
     detachFromFrame();
+
+    if (m_timeline) {
+        m_timeline->detachFromDocument();
+        m_timeline = nullptr;
+    }
 
     m_hasPreparedForDestruction = true;
 

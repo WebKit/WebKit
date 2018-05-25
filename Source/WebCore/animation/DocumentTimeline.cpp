@@ -61,12 +61,13 @@ DocumentTimeline::DocumentTimeline(Document& document, PlatformDisplayID display
 
 DocumentTimeline::~DocumentTimeline()
 {
-    m_invalidationTaskQueue.close();
-    m_eventDispatchTaskQueue.close();
 }
 
 void DocumentTimeline::detachFromDocument()
 {
+    m_invalidationTaskQueue.close();
+    m_eventDispatchTaskQueue.close();
+    m_animationScheduleTimer.stop();
     m_document = nullptr;
 }
 

@@ -59,7 +59,7 @@ public:
 
     const ListHashSet<RefPtr<WebAnimation>>& animations() const { return m_animations; }
     Vector<RefPtr<WebAnimation>> animationsForElement(Element&) const;
-    void cancelDeclarativeAnimationsForElement(Element&);
+    void removeAnimationsForElement(Element&);
     void animationWasAddedToElement(WebAnimation&, Element&);
     void animationWasRemovedFromElement(WebAnimation&, Element&);
 
@@ -79,21 +79,20 @@ protected:
 
     bool hasElementAnimations() const { return !m_elementToAnimationsMap.isEmpty() || !m_elementToCSSAnimationsMap.isEmpty() || !m_elementToCSSTransitionsMap.isEmpty(); }
 
-    const HashMap<Element*, Vector<RefPtr<WebAnimation>>>& elementToAnimationsMap() { return m_elementToAnimationsMap; }
-    const HashMap<Element*, Vector<RefPtr<WebAnimation>>>& elementToCSSAnimationsMap() { return m_elementToCSSAnimationsMap; }
-    const HashMap<Element*, Vector<RefPtr<WebAnimation>>>& elementToCSSTransitionsMap() { return m_elementToCSSTransitionsMap; }
-    void removeDeclarativeAnimation(RefPtr<DeclarativeAnimation>);
+    const HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>>& elementToAnimationsMap() { return m_elementToAnimationsMap; }
+    const HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>>& elementToCSSAnimationsMap() { return m_elementToCSSAnimationsMap; }
+    const HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>>& elementToCSSTransitionsMap() { return m_elementToCSSTransitionsMap; }
 
 private:
-    HashMap<Element*, Vector<RefPtr<WebAnimation>>>& relevantMapForAnimation(WebAnimation&);
+    HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>>& relevantMapForAnimation(WebAnimation&);
     void cancelOrRemoveDeclarativeAnimation(RefPtr<DeclarativeAnimation>);
     RefPtr<WebAnimation> cssAnimationForElementAndProperty(Element&, CSSPropertyID);
 
     ClassType m_classType;
     std::optional<Seconds> m_currentTime;
-    HashMap<Element*, Vector<RefPtr<WebAnimation>>> m_elementToAnimationsMap;
-    HashMap<Element*, Vector<RefPtr<WebAnimation>>> m_elementToCSSAnimationsMap;
-    HashMap<Element*, Vector<RefPtr<WebAnimation>>> m_elementToCSSTransitionsMap;
+    HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>> m_elementToAnimationsMap;
+    HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>> m_elementToCSSAnimationsMap;
+    HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>> m_elementToCSSTransitionsMap;
     ListHashSet<RefPtr<WebAnimation>> m_animations;
 
     HashMap<Element*, HashMap<String, RefPtr<CSSAnimation>>> m_elementToCSSAnimationByName;
