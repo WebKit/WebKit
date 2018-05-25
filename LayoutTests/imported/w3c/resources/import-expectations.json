@@ -59,6 +59,7 @@
     "web-platform-tests/css-timing": "skip", 
     "web-platform-tests/css-typed-om": "skip", 
     "web-platform-tests/css-values": "skip", 
+    "web-platform-tests/css/WOFF2": "import", 
     "web-platform-tests/css/css-align": "import", 
     "web-platform-tests/css/css-color": "import", 
     "web-platform-tests/css/css-display": "import", 

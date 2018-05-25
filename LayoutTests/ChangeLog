@@ -1,3 +1,18 @@
+2018-05-24  Frederic Wang  <fwang@igalia.com>
+
+        Import Web Platform Tests for WOFF2
+        https://bugs.webkit.org/show_bug.cgi?id=179108
+
+        Reviewed by Youenn Fablet.
+
+        Layout/fast/text contains only two tests for WOFF2. This commit imports the WPT tests in
+        order to improve test coverage. However, for now we only run them on the GTK port because
+        they don't pass on other platforms (bug 185939) and because WPT tests are slow (bug 178277).
+        Maintainers for other platforms can decide whether they want to unskip them later.
+
+        * TestExpectations: By default skip the WOFF2 test on all platforms.
+        * platform/gtk/TestExpectations: Run tests on the GTK port and mark failures for 4 of them.
+
 2018-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: performance-api/performance-observer-entry-sort.html is flaky
