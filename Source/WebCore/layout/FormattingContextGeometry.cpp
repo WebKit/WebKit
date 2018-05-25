@@ -525,6 +525,32 @@ LayoutUnit FormattingContext::Geometry::replacedWidth(LayoutContext&, const Box&
     return computedWidthValue;
 }
 
+Display::Box::Edges FormattingContext::Geometry::computedBorder(LayoutContext&, const Box& layoutBox)
+{
+    auto& style = layoutBox.style();
+    return {
+        style.borderTop().width(),
+        style.borderLeft().width(),
+        style.borderBottom().width(),
+        style.borderRight().width()
+    };
+}
+
+std::optional<Display::Box::Edges> FormattingContext::Geometry::computedPadding(LayoutContext& layoutContext, const Box& layoutBox)
+{
+    if (!layoutBox.isPaddingApplicable())
+        return std::nullopt;
+
+    auto& style = layoutBox.style();
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+    return Display::Box::Edges(
+        valueForLength(style.paddingTop(), containingBlockWidth),
+        valueForLength(style.paddingLeft(), containingBlockWidth),
+        valueForLength(style.paddingBottom(), containingBlockWidth),
+        valueForLength(style.paddingRight(), containingBlockWidth)
+    );
+}
+
 }
 }
 #endif

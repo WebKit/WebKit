@@ -97,17 +97,29 @@ private:
         BoxSizing boxSizing { BoxSizing::ContentBox };
     };
 
-    void setRect(const LayoutRect&);
     void setTopLeft(const LayoutPoint&);
     void setTop(LayoutUnit);
     void setLeft(LayoutUnit);
-    void setSize(const LayoutSize&);
     void setWidth(LayoutUnit);
     void setHeight(LayoutUnit);
 
-    void setMargin(LayoutUnit marginTop, LayoutUnit marginLeft, LayoutUnit marginRight, LayoutUnit marginBottom);
-    void setBorder(LayoutUnit borderTop, LayoutUnit borderLeft, LayoutUnit borderRight, LayoutUnit borderBottom);
-    void setPadding(LayoutUnit paddingTop, LayoutUnit paddingLeft, LayoutUnit paddingRight, LayoutUnit paddingBottom);
+    struct Edges {
+        Edges() = default;
+        Edges(LayoutUnit top, LayoutUnit left, LayoutUnit bottom, LayoutUnit right)
+            : top(top)
+            , left(left)
+            , bottom(bottom)
+            , right(right)
+            { }
+
+        LayoutUnit top;
+        LayoutUnit left;
+        LayoutUnit bottom;
+        LayoutUnit right;
+    };
+    void setMargin(Edges);
+    void setBorder(Edges);
+    void setPadding(Edges);
 
 #if !ASSERT_DISABLED
     void invalidateTop() { m_hasValidTop = false; }
@@ -115,7 +127,6 @@ private:
     void invalidateWidth() { m_hasValidWidth = false; }
     void invalidateHeight() { m_hasValidHeight = false; }
     void invalidatePosition();
-    void invalidateSize();
     void invalidateMargin() { m_hasValidMargin = false; }
     void invalidateBorder() { m_hasValidBorder = false; }
     void invalidatePadding() { m_hasValidPadding = false; }
@@ -125,8 +136,6 @@ private:
     bool hasValidGeometry() const { return hasValidPosition() && hasValidSize(); }
     
     void setHasValidPosition();
-    void setHasValidSize();
-    void setHasValidGeometry();
     
     void setHasValidMargin();
     void setHasValidBorder();
@@ -137,20 +146,9 @@ private:
 
     LayoutRect m_rect;
 
-    LayoutUnit m_marginTop;
-    LayoutUnit m_marginLeft;
-    LayoutUnit m_marginBottom;
-    LayoutUnit m_marginRight;
-
-    LayoutUnit m_borderTop;
-    LayoutUnit m_borderLeft;
-    LayoutUnit m_borderBottom;
-    LayoutUnit m_borderRight;
-
-    LayoutUnit m_paddingTop;
-    LayoutUnit m_paddingLeft;
-    LayoutUnit m_paddingBottom;
-    LayoutUnit m_paddingRight;
+    Edges m_margin;
+    Edges m_border;
+    Edges m_padding;
 
 #if !ASSERT_DISABLED
     bool m_hasValidTop { false };
@@ -170,28 +168,10 @@ inline void Box::invalidatePosition()
     invalidateLeft();
 }
 
-inline void Box::invalidateSize()
-{
-    invalidateWidth();
-    invalidateHeight();
-}
-
 inline void Box::setHasValidPosition()
 {
     m_hasValidTop = true;
     m_hasValidLeft = true;
-}
-
-inline void Box::setHasValidSize()
-{
-    m_hasValidWidth = true;
-    m_hasValidHeight = true;
-}
-
-inline void Box::setHasValidGeometry()
-{
-    setHasValidPosition();
-    setHasValidSize();
 }
 #endif
 
@@ -255,14 +235,6 @@ inline LayoutUnit Box::height() const
     return m_rect.height();
 }
 
-inline void Box::setRect(const LayoutRect& rect)
-{
-#if !ASSERT_DISABLED
-    setHasValidGeometry();
-#endif
-    m_rect = rect;
-}
-
 inline void Box::setTopLeft(const LayoutPoint& topLeft)
 {
 #if !ASSERT_DISABLED
@@ -287,19 +259,12 @@ inline void Box::setLeft(LayoutUnit left)
     m_rect.setX(left);
 }
 
-inline void Box::setSize(const LayoutSize& size)
-{
-#if !ASSERT_DISABLED
-    setHasValidSize();
-#endif
-    m_rect.setSize(size);
-}
-
 inline void Box::setWidth(LayoutUnit width)
 {
 #if !ASSERT_DISABLED
     m_hasValidWidth = true;
 #endif
+    ASSERT(m_hasValidLeft);
     m_rect.setWidth(width);
 }
 
@@ -308,112 +273,104 @@ inline void Box::setHeight(LayoutUnit height)
 #if !ASSERT_DISABLED
     m_hasValidHeight = true;
 #endif
+    ASSERT(m_hasValidTop);
     m_rect.setHeight(height);
 }
 
-inline void Box::setMargin(LayoutUnit marginTop, LayoutUnit marginLeft, LayoutUnit marginRight, LayoutUnit marginBottom)
+inline void Box::setMargin(Edges margin)
 {
 #if !ASSERT_DISABLED
     void setHasValidMargin();
 #endif
-    m_marginTop = marginTop;
-    m_marginLeft = marginLeft;
-    m_marginBottom = marginBottom;
-    m_marginRight = marginRight;
+    m_margin = margin;
 }
 
-inline void Box::setBorder(LayoutUnit borderTop, LayoutUnit borderLeft, LayoutUnit borderRight, LayoutUnit borderBottom)
+inline void Box::setBorder(Edges border)
 {
 #if !ASSERT_DISABLED
     void setHasValidBorder();
 #endif
-    m_borderTop = borderTop;
-    m_borderLeft = borderLeft;
-    m_borderBottom = borderBottom;
-    m_borderRight = borderRight;
+    m_border = border;
 }
 
-inline void Box::setPadding(LayoutUnit paddingTop, LayoutUnit paddingLeft, LayoutUnit paddingRight, LayoutUnit paddingBottom)
+inline void Box::setPadding(Edges padding)
 {
 #if !ASSERT_DISABLED
     void setHasValidPadding();
 #endif
-    m_paddingTop = paddingTop;
-    m_paddingLeft = paddingLeft;
-    m_paddingBottom = paddingBottom;
-    m_paddingRight = paddingRight;
+    m_padding = padding;
 }
 
 inline LayoutUnit Box::marginTop() const
 {
     ASSERT(m_hasValidMargin);
-    return m_marginTop;
+    return m_margin.top;
 }
 
 inline LayoutUnit Box::marginLeft() const
 {
     ASSERT(m_hasValidMargin);
-    return m_marginLeft;
+    return m_margin.left;
 }
 
 inline LayoutUnit Box::marginBottom() const
 {
     ASSERT(m_hasValidMargin);
-    return m_marginBottom;
+    return m_margin.bottom;
 }
 
 inline LayoutUnit Box::marginRight() const
 {
     ASSERT(m_hasValidMargin);
-    return m_marginRight;
+    return m_margin.right;
 }
 
 inline LayoutUnit Box::paddingTop() const
 {
     ASSERT(m_hasValidPadding);
-    return m_paddingTop;
+    return m_padding.top;
 }
 
 inline LayoutUnit Box::paddingLeft() const
 {
     ASSERT(m_hasValidPadding);
-    return m_paddingLeft;
+    return m_padding.left;
 }
 
 inline LayoutUnit Box::paddingBottom() const
 {
     ASSERT(m_hasValidPadding);
-    return m_paddingBottom;
+    return m_padding.bottom;
 }
 
 inline LayoutUnit Box::paddingRight() const
 {
     ASSERT(m_hasValidPadding);
-    return m_paddingRight;
+    return m_padding.right;
 }
 
 inline LayoutUnit Box::borderTop() const
 {
     ASSERT(m_hasValidBorder);
-    return m_borderTop;
+    return m_border.top;
 }
 
 inline LayoutUnit Box::borderLeft() const
 {
     ASSERT(m_hasValidBorder);
-    return m_borderLeft;
+    return m_border.left;
 }
 
 inline LayoutUnit Box::borderBottom() const
 {
     ASSERT(m_hasValidBorder);
-    return m_borderBottom;
+    return m_border.bottom;
 }
 
 inline LayoutUnit Box::borderRight() const
 {
     ASSERT(m_hasValidBorder);
-    return m_borderRight;
+    return m_border.right;
 }
 
 }

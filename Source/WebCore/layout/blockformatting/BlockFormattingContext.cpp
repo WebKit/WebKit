@@ -75,7 +75,8 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             auto& displayBox = layoutPair.displayBox;
             
             computeWidth(layoutContext, layoutBox, displayBox);
-            computeStaticPosition(layoutContext, layoutBox, layoutPair.displayBox);
+            computeBorderAndPadding(layoutContext, layoutBox, displayBox);
+            computeStaticPosition(layoutContext, layoutBox, displayBox);
             if (layoutBox.establishesFormattingContext()) {
                 auto formattingContext = layoutContext.formattingContext(layoutBox);
                 formattingContext->layout(layoutContext, layoutContext.establishedFormattingState(layoutBox, *formattingContext));

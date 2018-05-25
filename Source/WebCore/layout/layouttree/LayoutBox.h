@@ -88,6 +88,8 @@ public:
     bool isInlineBox() const { return m_baseTypeFlags & InlineBoxFlag; }
     bool isInlineContainer() const { return m_baseTypeFlags & InlineContainerFlag; }
 
+    bool isPaddingApplicable() const;
+
     const RenderStyle& style() const { return m_style; }
     auto& weakPtrFactory() const { return m_weakFactory; }
 

@@ -1,3 +1,54 @@
+2018-05-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement border and padding computation
+        https://bugs.webkit.org/show_bug.cgi?id=185972
+
+        Reviewed by Antti Koivisto.
+
+        This patch also removes redundant Display::Box methods and adds a lightweight Edge struct.
+        (Since padding is optional, if during layout we mistakenly try to access paddingTop/Left/Bottom/Right, Display::Box will assert!)
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeBorderAndPadding const):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::computedBorder):
+        (WebCore::Layout::FormattingContext::Geometry::computedPadding):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::marginBox const):
+        (WebCore::Display::Box::paddingBox const):
+        (WebCore::Display::Box::contentBox const):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::Edges::Edges):
+        (WebCore::Display::Box::setHasValidPosition):
+        (WebCore::Display::Box::setWidth):
+        (WebCore::Display::Box::setHeight):
+        (WebCore::Display::Box::setMargin):
+        (WebCore::Display::Box::setBorder):
+        (WebCore::Display::Box::setPadding):
+        (WebCore::Display::Box::marginTop const):
+        (WebCore::Display::Box::marginLeft const):
+        (WebCore::Display::Box::marginBottom const):
+        (WebCore::Display::Box::marginRight const):
+        (WebCore::Display::Box::paddingTop const):
+        (WebCore::Display::Box::paddingLeft const):
+        (WebCore::Display::Box::paddingBottom const):
+        (WebCore::Display::Box::paddingRight const):
+        (WebCore::Display::Box::borderTop const):
+        (WebCore::Display::Box::borderLeft const):
+        (WebCore::Display::Box::borderBottom const):
+        (WebCore::Display::Box::borderRight const):
+        (WebCore::Display::Box::invalidateSize): Deleted.
+        (WebCore::Display::Box::setHasValidSize): Deleted.
+        (WebCore::Display::Box::setHasValidGeometry): Deleted.
+        (WebCore::Display::Box::setRect): Deleted.
+        (WebCore::Display::Box::setSize): Deleted.
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isPaddingEnabled const):
+        * layout/layouttree/LayoutBox.h:
+
 2018-05-25  David Kilzer  <ddkilzer@apple.com>
 
         Fix issues with -dealloc methods found by clang static analyzer

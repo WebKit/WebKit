@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayBox.h"
 #include "FloatingState.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -35,10 +36,6 @@ namespace WebCore {
 
 class LayoutPoint;
 class LayoutUnit;
-
-namespace Display {
-class Box;
-}
 
 namespace Layout {
 
@@ -86,6 +83,8 @@ protected:
     virtual LayoutUnit marginBottom(const Box&) const;
     virtual LayoutUnit marginRight(const Box&) const;
 
+    void computeBorderAndPadding(LayoutContext&, const Box&, Display::Box&) const;
+
     void placeInFlowPositionedChildren(LayoutContext&, const Container&) const;
     void layoutOutOfFlowDescendants(LayoutContext&s) const;
 
@@ -113,6 +112,9 @@ protected:
 
         static LayoutUnit replacedHeight(LayoutContext&, const Box&);
         static LayoutUnit replacedWidth(LayoutContext&, const Box&);
+
+        static Display::Box::Edges computedBorder(LayoutContext&, const Box&);
+        static std::optional<Display::Box::Edges> computedPadding(LayoutContext&, const Box&);
     };
 
 private:

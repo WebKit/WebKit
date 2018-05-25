@@ -155,6 +155,13 @@ LayoutUnit FormattingContext::marginRight(const Box&) const
     return 0;
 }
 
+void FormattingContext::computeBorderAndPadding(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    displayBox.setBorder(Geometry::computedBorder(layoutContext, layoutBox));
+    if (auto padding = Geometry::computedPadding(layoutContext, layoutBox))
+        displayBox.setPadding(*padding);
+}
+
 void FormattingContext::placeInFlowPositionedChildren(LayoutContext& layoutContext, const Container& container) const
 {
     // If this container also establishes a formatting context, then positioning already has happend in that the formatting context.

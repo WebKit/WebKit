@@ -226,6 +226,13 @@ bool Box::isOverflowVisible() const
     return m_style.overflowX() == Overflow::Visible || m_style.overflowY() == Overflow::Visible;
 }
 
+bool Box::isPaddingApplicable() const
+{
+    // 8.4 Padding properties:
+    // Applies to: all elements except table-row-group, table-header-group, table-footer-group, table-row, table-column-group and table-column
+    return true;
+}
+
 }
 }
 

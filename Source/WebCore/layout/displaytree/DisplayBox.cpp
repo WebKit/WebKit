@@ -56,10 +56,10 @@ LayoutRect Box::marginBox() const
     ASSERT(m_hasValidMargin);
     auto marginBox = borderBox();
 
-    marginBox.shiftXEdgeTo(marginBox.x() + m_marginLeft);
-    marginBox.shiftYEdgeTo(marginBox.y() + m_marginTop);
-    marginBox.shiftMaxXEdgeTo(marginBox.maxX() - m_marginRight);
-    marginBox.shiftMaxYEdgeTo(marginBox.maxY() - m_marginBottom);
+    marginBox.shiftXEdgeTo(marginBox.x() + m_margin.left);
+    marginBox.shiftYEdgeTo(marginBox.y() + m_margin.top);
+    marginBox.shiftMaxXEdgeTo(marginBox.maxX() - m_margin.right);
+    marginBox.shiftMaxYEdgeTo(marginBox.maxY() - m_margin.bottom);
 
     return marginBox;
 }
@@ -82,10 +82,10 @@ LayoutRect Box::paddingBox() const
     ASSERT(m_hasValidBorder);
     auto paddingBox = borderBox();
 
-    paddingBox.shiftXEdgeTo(paddingBox.x() + m_borderLeft);
-    paddingBox.shiftYEdgeTo(paddingBox.y() + m_borderTop);
-    paddingBox.shiftMaxXEdgeTo(paddingBox.maxX() - m_borderRight);
-    paddingBox.shiftMaxYEdgeTo(paddingBox.maxY() - m_borderBottom);
+    paddingBox.shiftXEdgeTo(paddingBox.x() + m_border.left);
+    paddingBox.shiftYEdgeTo(paddingBox.y() + m_border.top);
+    paddingBox.shiftMaxXEdgeTo(paddingBox.maxX() - m_border.right);
+    paddingBox.shiftMaxYEdgeTo(paddingBox.maxY() - m_border.bottom);
 
     return paddingBox;
 }
@@ -99,10 +99,10 @@ LayoutRect Box::contentBox() const
     ASSERT(m_hasValidPadding);
     auto contentBox = paddingBox();
 
-    contentBox.shiftXEdgeTo(contentBox.x() + m_paddingLeft);
-    contentBox.shiftYEdgeTo(contentBox.y() + m_paddingTop);
-    contentBox.shiftMaxXEdgeTo(contentBox.maxX() - m_paddingRight);
-    contentBox.shiftMaxYEdgeTo(contentBox.maxY() - m_paddingBottom);
+    contentBox.shiftXEdgeTo(contentBox.x() + m_padding.left);
+    contentBox.shiftYEdgeTo(contentBox.y() + m_padding.top);
+    contentBox.shiftMaxXEdgeTo(contentBox.maxX() - m_padding.right);
+    contentBox.shiftMaxYEdgeTo(contentBox.maxY() - m_padding.bottom);
 
     return contentBox;
 }
