@@ -1,3 +1,75 @@
+2018-05-25  Chris Dumez  <cdumez@apple.com>
+
+        Drop support for NSURLCache in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=185990
+
+        Reviewed by Geoffrey Garen.
+
+        Drop support for NSURLCache in WebKit2 now that the WebKit network cache is stable.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setCacheModel):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        (WebKit::NetworkProcess::clearDiskCache):
+        (WebKit::NetworkProcess::platformSetURLCacheSize): Deleted.
+        (WebKit::clearNSURLCache): Deleted.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        (): Deleted.
+        (WebKit::NetworkSessionCocoa::setUsesNetworkCache): Deleted.
+        * NetworkProcess/curl/NetworkProcessCurl.cpp:
+        (WebKit::NetworkProcess::platformSetURLCacheSize): Deleted.
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformSetURLCacheSize): Deleted.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        (WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory):
+        (WebKit::WebProcessPool::isNetworkCacheEnabled): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::suggestedFilenameForResourceWithURL const):
+        (WebKit::WebFrame::mimeTypeForResourceWithURL const):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getResourceDataFromFrame):
+        (WebKit::WebPage::hasLocalDataForURL):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::platformHasLocalDataForURL): Deleted.
+        (WebKit::WebPage::cachedResponseMIMETypeForURL): Deleted.
+        (WebKit::WebPage::cachedSuggestedFilenameForURL): Deleted.
+        (WebKit::WebPage::cachedResponseDataForURL): Deleted.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformHasLocalDataForURL): Deleted.
+        (WebKit::WebPage::cachedSuggestedFilenameForURL): Deleted.
+        (WebKit::WebPage::cachedResponseMIMETypeForURL): Deleted.
+        (WebKit::WebPage::cachedResponseDataForURL): Deleted.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::accessibilityRemoteObject):
+        (WebKit::WebPage::platformHasLocalDataForURL): Deleted.
+        (WebKit::cachedResponseForURL): Deleted.
+        (WebKit::WebPage::cachedSuggestedFilenameForURL): Deleted.
+        (WebKit::WebPage::cachedResponseMIMETypeForURL): Deleted.
+        (WebKit::WebPage::cachedResponseDataForURL): Deleted.
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::platformHasLocalDataForURL): Deleted.
+        (WebKit::WebPage::cachedResponseMIMETypeForURL): Deleted.
+        (WebKit::WebPage::cachedSuggestedFilenameForURL): Deleted.
+        (WebKit::WebPage::cachedResponseDataForURL): Deleted.
+        * WebProcess/WebPage/wpe/WebPageWPE.cpp:
+        (WebKit::WebPage::platformHasLocalDataForURL): Deleted.
+        (WebKit::WebPage::cachedResponseMIMETypeForURL): Deleted.
+        (WebKit::WebPage::cachedSuggestedFilenameForURL): Deleted.
+        (WebKit::WebPage::cachedResponseDataForURL): Deleted.
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2018-05-25  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal iOS builds after r232198

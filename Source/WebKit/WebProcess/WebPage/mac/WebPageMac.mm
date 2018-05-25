@@ -677,48 +677,6 @@ WKAccessibilityWebPageObject* WebPage::accessibilityRemoteObject()
 {
     return m_mockAccessibilityElement.get();
 }
-         
-bool WebPage::platformHasLocalDataForURL(const WebCore::URL& url)
-{
-    NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:url];
-    [request setValue:(NSString*)userAgent(url) forHTTPHeaderField:@"User-Agent"];
-    NSCachedURLResponse *cachedResponse;
-    auto* storageSession = NetworkStorageSession::storageSession(corePage()->sessionID());
-    if (CFURLStorageSessionRef platformSession = storageSession ? storageSession->platformSession() : nullptr)
-        cachedResponse = cachedResponseForRequest(platformSession, request);
-    else
-        cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
-    [request release];
-    
-    return cachedResponse;
-}
-
-static NSCachedURLResponse *cachedResponseForURL(WebPage* webPage, const URL& url)
-{
-    RetainPtr<NSMutableURLRequest> request = adoptNS([[NSMutableURLRequest alloc] initWithURL:url]);
-    [request setValue:(NSString *)webPage->userAgent(url) forHTTPHeaderField:@"User-Agent"];
-
-    auto* storageSession = NetworkStorageSession::storageSession(webPage->corePage()->sessionID());
-    if (CFURLStorageSessionRef platformSession = storageSession ? storageSession->platformSession() : nullptr)
-        return cachedResponseForRequest(platformSession, request.get());
-
-    return [[NSURLCache sharedURLCache] cachedResponseForRequest:request.get()];
-}
-
-String WebPage::cachedSuggestedFilenameForURL(const URL& url)
-{
-    return [[cachedResponseForURL(this, url) response] suggestedFilename];
-}
-
-String WebPage::cachedResponseMIMETypeForURL(const URL& url)
-{
-    return [[cachedResponseForURL(this, url) response] MIMEType];
-}
-
-RefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const URL& url)
-{
-    return SharedBuffer::create([cachedResponseForURL(this, url) data]);
-}
 
 bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
 {

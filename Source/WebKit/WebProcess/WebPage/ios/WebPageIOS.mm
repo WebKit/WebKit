@@ -487,30 +487,6 @@ WKAccessibilityWebPageObject* WebPage::accessibilityRemoteObject()
     return 0;
 }
 
-bool WebPage::platformHasLocalDataForURL(const WebCore::URL&)
-{
-    notImplemented();
-    return false;
-}
-
-String WebPage::cachedSuggestedFilenameForURL(const URL&)
-{
-    notImplemented();
-    return String();
-}
-
-String WebPage::cachedResponseMIMETypeForURL(const URL&)
-{
-    notImplemented();
-    return String();
-}
-
-RefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const URL&)
-{
-    notImplemented();
-    return nullptr;
-}
-
 bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest&)
 {
     notImplemented();

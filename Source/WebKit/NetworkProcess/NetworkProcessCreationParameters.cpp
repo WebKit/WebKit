@@ -51,7 +51,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << cacheStorageDirectoryExtensionHandle;
     encoder << diskCacheDirectory;
     encoder << diskCacheDirectoryExtensionHandle;
-    encoder << shouldEnableNetworkCache;
     encoder << shouldEnableNetworkCacheEfficacyLogging;
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     encoder << shouldEnableNetworkCacheSpeculativeRevalidation;
@@ -72,8 +71,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(COCOA)
     encoder << parentProcessName;
     encoder << uiProcessBundleIdentifier;
-    encoder << nsURLCacheMemoryCapacity;
-    encoder << nsURLCacheDiskCapacity;
     encoder << sourceApplicationBundleIdentifier;
     encoder << sourceApplicationSecondaryIdentifier;
 #if PLATFORM(IOS)
@@ -156,8 +153,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
     result.diskCacheDirectoryExtensionHandle = WTFMove(*diskCacheDirectoryExtensionHandle);
 
-    if (!decoder.decode(result.shouldEnableNetworkCache))
-        return false;
     if (!decoder.decode(result.shouldEnableNetworkCacheEfficacyLogging))
         return false;
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
@@ -201,10 +196,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.parentProcessName))
         return false;
     if (!decoder.decode(result.uiProcessBundleIdentifier))
-        return false;
-    if (!decoder.decode(result.nsURLCacheMemoryCapacity))
-        return false;
-    if (!decoder.decode(result.nsURLCacheDiskCapacity))
         return false;
     if (!decoder.decode(result.sourceApplicationBundleIdentifier))
         return false;

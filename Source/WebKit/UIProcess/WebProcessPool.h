@@ -413,7 +413,6 @@ public:
     static String legacyPlatformDefaultApplicationCacheDirectory();
     static String legacyPlatformDefaultNetworkCacheDirectory();
     static String legacyPlatformDefaultJavaScriptConfigurationDirectory();
-    static bool isNetworkCacheEnabled();
 
     bool resourceLoadStatisticsEnabled() { return m_resourceLoadStatisticsEnabled; }
     void setResourceLoadStatisticsEnabled(bool);

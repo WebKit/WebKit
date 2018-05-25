@@ -781,7 +781,7 @@ String WebFrame::suggestedFilenameForResourceWithURL(const URL& url) const
     if (resource)
         return resource->response().suggestedFilename();
 
-    return page()->cachedSuggestedFilenameForURL(url);
+    return String();
 }
 
 String WebFrame::mimeTypeForResourceWithURL(const URL& url) const
@@ -802,7 +802,7 @@ String WebFrame::mimeTypeForResourceWithURL(const URL& url) const
     if (resource)
         return resource->mimeType();
 
-    return page()->cachedResponseMIMETypeForURL(url);
+    return String();
 }
 
 void WebFrame::setTextDirection(const String& direction)

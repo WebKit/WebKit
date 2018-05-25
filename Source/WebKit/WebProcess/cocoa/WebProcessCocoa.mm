@@ -147,6 +147,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
         JSC::processConfigFile(javaScriptConfigFile.latin1().data(), "com.apple.WebKit.WebContent", parameters.uiProcessBundleIdentifier.latin1().data());
     }
 
+    // Disable NSURLCache.
     auto urlCache = adoptNS([[NSURLCache alloc] initWithMemoryCapacity:0 diskCapacity:0 diskPath:nil]);
     [NSURLCache setSharedURLCache:urlCache.get()];
 

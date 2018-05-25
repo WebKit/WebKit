@@ -724,12 +724,8 @@ void NetworkProcess::setCacheModel(uint32_t cm)
     if (m_diskCacheSizeOverride >= 0)
         urlCacheDiskCapacity = m_diskCacheSizeOverride;
 
-    if (m_cache) {
+    if (m_cache)
         m_cache->setCapacity(urlCacheDiskCapacity);
-        return;
-    }
-
-    platformSetURLCacheSize(urlCacheMemoryCapacity, urlCacheDiskCapacity);
 }
 
 void NetworkProcess::setCanHandleHTTPSServerTrustEvaluation(bool value)

@@ -27,6 +27,7 @@
 #import "NetworkProcess.h"
 
 #import "CookieStorageUtilsCF.h"
+#import "Logging.h"
 #import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkResourceLoader.h"
@@ -88,7 +89,6 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     NetworkSessionCocoa::setSourceApplicationAuditTokenData(sourceApplicationAuditData());
     NetworkSessionCocoa::setSourceApplicationBundleIdentifier(parameters.sourceApplicationBundleIdentifier);
     NetworkSessionCocoa::setSourceApplicationSecondaryIdentifier(parameters.sourceApplicationSecondaryIdentifier);
-    NetworkSessionCocoa::setUsesNetworkCache(parameters.shouldEnableNetworkCache);
 #if PLATFORM(IOS)
     NetworkSessionCocoa::setCTDataConnectionServiceType(parameters.ctDataConnectionServiceType);
 #endif
@@ -107,7 +107,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     // - disk cache size passed from UI process is effectively a minimum size.
     // One non-obvious constraint is that we need to use -setSharedURLCache: even in testing mode, to prevent creating a default one on disk later, when some other code touches the cache.
 
-    ASSERT(!m_diskCacheIsDisabledForTesting || !parameters.nsURLCacheDiskCapacity);
+    ASSERT(!m_diskCacheIsDisabledForTesting);
 
     if (!parameters.cacheStorageDirectory.isNull()) {
         m_cacheStorageDirectory = parameters.cacheStorageDirectory;
@@ -119,46 +119,28 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     initializeWiFiAssertions(parameters);
 #endif
 
-    if (!m_diskCacheDirectory.isNull()) {
-        SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
-        if (parameters.shouldEnableNetworkCache) {
-            OptionSet<NetworkCache::Cache::Option> cacheOptions { NetworkCache::Cache::Option::RegisterNotify };
-            if (parameters.shouldEnableNetworkCacheEfficacyLogging)
-                cacheOptions |= NetworkCache::Cache::Option::EfficacyLogging;
-            if (parameters.shouldUseTestingNetworkSession)
-                cacheOptions |= NetworkCache::Cache::Option::TestingMode;
+    if (m_diskCacheDirectory.isNull())
+        return;
+
+    SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
+    OptionSet<NetworkCache::Cache::Option> cacheOptions { NetworkCache::Cache::Option::RegisterNotify };
+    if (parameters.shouldEnableNetworkCacheEfficacyLogging)
+        cacheOptions |= NetworkCache::Cache::Option::EfficacyLogging;
+    if (parameters.shouldUseTestingNetworkSession)
+        cacheOptions |= NetworkCache::Cache::Option::TestingMode;
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-            if (parameters.shouldEnableNetworkCacheSpeculativeRevalidation)
-                cacheOptions |= NetworkCache::Cache::Option::SpeculativeRevalidation;
+    if (parameters.shouldEnableNetworkCacheSpeculativeRevalidation)
+        cacheOptions |= NetworkCache::Cache::Option::SpeculativeRevalidation;
 #endif
-            m_cache = NetworkCache::Cache::open(m_diskCacheDirectory, cacheOptions);
 
-            if (m_cache) {
-                // Disable NSURLCache.
-                auto urlCache(adoptNS([[NSURLCache alloc] initWithMemoryCapacity:0 diskCapacity:0 diskPath:nil]));
-                [NSURLCache setSharedURLCache:urlCache.get()];
-                return;
-            }
-        }
-        String nsURLCacheDirectory = m_diskCacheDirectory;
-#if PLATFORM(IOS)
-        // NSURLCache path is relative to network process cache directory.
-        // This puts cache files under <container>/Library/Caches/com.apple.WebKit.Networking/
-        nsURLCacheDirectory = ".";
-#endif
-        [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
-            initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
-            diskCapacity:parameters.nsURLCacheDiskCapacity
-            diskPath:nsURLCacheDirectory]).get()];
-    }
-}
+    m_cache = NetworkCache::Cache::open(m_diskCacheDirectory, cacheOptions);
+    if (!m_cache)
+        RELEASE_LOG_ERROR(NetworkCache, "Failed to initialize the WebKit network disk cache");
 
-void NetworkProcess::platformSetURLCacheSize(unsigned urlCacheMemoryCapacity, uint64_t urlCacheDiskCapacity)
-{
-    NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
-    [nsurlCache setMemoryCapacity:urlCacheMemoryCapacity];
-    if (!m_diskCacheIsDisabledForTesting)
-        [nsurlCache setDiskCapacity:std::max<uint64_t>(urlCacheDiskCapacity, [nsurlCache diskCapacity])]; // Don't shrink a big disk cache, since that would cause churn.
+    // Disable NSURLCache.
+    auto urlCache(adoptNS([[NSURLCache alloc] initWithMemoryCapacity:0 diskCapacity:0 diskPath:nil]));
+    [NSURLCache setSharedURLCache:urlCache.get()];
+    return;
 }
 
 RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const
@@ -182,21 +164,6 @@ void NetworkProcess::clearHSTSCache(WebCore::NetworkStorageSession& session, Wal
     _CFNetworkResetHSTSHostsSinceDate(session.platformSession(), (__bridge CFDateRef)date);
 }
 
-static void clearNSURLCache(dispatch_group_t group, WallTime modifiedSince, Function<void ()>&& completionHandler)
-{
-    dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), BlockPtr<void()>::fromCallable([modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
-        NSURLCache *cache = [NSURLCache sharedURLCache];
-
-        NSTimeInterval timeInterval = modifiedSince.secondsSinceEpoch().seconds();
-        NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
-        [cache removeCachedResponsesSinceDate:date];
-
-        dispatch_async(dispatch_get_main_queue(), BlockPtr<void()>::fromCallable([completionHandler = WTFMove(completionHandler)] {
-            completionHandler();
-        }).get());
-    }).get());
-}
-
 void NetworkProcess::clearDiskCache(WallTime modifiedSince, Function<void ()>&& completionHandler)
 {
     if (!m_clearCacheDispatchGroup)
@@ -204,15 +171,11 @@ void NetworkProcess::clearDiskCache(WallTime modifiedSince, Function<void ()>&& 
 
     if (auto* cache = NetworkProcess::singleton().cache()) {
         auto group = m_clearCacheDispatchGroup;
-        dispatch_group_async(group, dispatch_get_main_queue(), BlockPtr<void()>::fromCallable([cache, group, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
-            cache->clear(modifiedSince, [group, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
-                // FIXME: Probably not necessary.
-                clearNSURLCache(group, modifiedSince, WTFMove(completionHandler));
+        dispatch_group_async(group, dispatch_get_main_queue(), BlockPtr<void()>::fromCallable([cache, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
+            cache->clear(modifiedSince, [completionHandler = WTFMove(completionHandler)] () mutable {
             });
         }).get());
-        return;
     }
-    clearNSURLCache(m_clearCacheDispatchGroup, modifiedSince, WTFMove(completionHandler));
 }
 
 #if PLATFORM(COCOA)

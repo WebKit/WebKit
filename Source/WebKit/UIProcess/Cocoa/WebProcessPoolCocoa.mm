@@ -284,10 +284,6 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
 {
-    NSURLCache *urlCache = [NSURLCache sharedURLCache];
-    parameters.nsURLCacheMemoryCapacity = [urlCache memoryCapacity];
-    parameters.nsURLCacheDiskCapacity = [urlCache diskCapacity];
-
     parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
     parameters.uiProcessBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
 
@@ -297,7 +293,6 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.httpsProxy = [defaults stringForKey:WebKit2HTTPSProxyDefaultsKey];
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
 
-    parameters.shouldEnableNetworkCache = isNetworkCacheEnabled();
     parameters.shouldEnableNetworkCacheEfficacyLogging = [defaults boolForKey:WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey];
 
     parameters.sourceApplicationBundleIdentifier = m_configuration->sourceApplicationBundleIdentifier();
@@ -482,8 +477,7 @@ String WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory()
     if (!cachePath)
         cachePath = @"~/Library/Caches/com.apple.WebKit.WebProcess";
 
-    if (isNetworkCacheEnabled())
-        cachePath = [cachePath stringByAppendingPathComponent:@"WebKitCache"];
+    cachePath = [cachePath stringByAppendingPathComponent:@"WebKitCache"];
 
     return stringByResolvingSymlinksInPath([cachePath stringByStandardizingPath]);
 }
@@ -514,17 +508,6 @@ void WebProcessPool::setJavaScriptConfigurationFileEnabledFromDefaults()
     setJavaScriptConfigurationFileEnabled([defaults boolForKey:@"WebKitJavaScriptCoreUseConfigFile"]);
 }
 #endif
-
-bool WebProcessPool::isNetworkCacheEnabled()
-{
-    registerUserDefaultsIfNeeded();
-
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-
-    bool networkCacheEnabledByDefaults = [defaults boolForKey:WebKitNetworkCacheEnabledDefaultsKey];
-
-    return networkCacheEnabledByDefaults && linkedOnOrAfter(SDKVersion::FirstWithNetworkCache);
-}
 
 bool WebProcessPool::omitPDFSupport()
 {

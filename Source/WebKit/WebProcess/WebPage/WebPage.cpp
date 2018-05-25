@@ -3056,13 +3056,9 @@ static RefPtr<SharedBuffer> resourceDataForFrame(Frame* frame, const URL& resour
 void WebPage::getResourceDataFromFrame(uint64_t frameID, const String& resourceURLString, CallbackID callbackID)
 {
     RefPtr<SharedBuffer> buffer;
-    if (WebFrame* frame = WebProcess::singleton().webFrame(frameID)) {
+    if (auto* frame = WebProcess::singleton().webFrame(frameID)) {
         URL resourceURL(URL(), resourceURLString);
         buffer = resourceDataForFrame(frame->coreFrame(), resourceURL);
-        if (!buffer) {
-            // Try to get the resource data from the cache.
-            buffer = cachedResponseDataForURL(resourceURL);
-        }
     }
 
     // FIXME: Use SharedBufferDataReference.
@@ -4101,7 +4097,7 @@ bool WebPage::hasLocalDataForURL(const URL& url)
     if (documentLoader && documentLoader->subresource(url))
         return true;
 
-    return platformHasLocalDataForURL(url);
+    return false;
 }
 
 void WebPage::setCustomTextEncodingName(const String& encoding)

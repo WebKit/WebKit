@@ -672,9 +672,6 @@ public:
 #endif
 
     bool hasLocalDataForURL(const WebCore::URL&);
-    String cachedResponseMIMETypeForURL(const WebCore::URL&);
-    String cachedSuggestedFilenameForURL(const WebCore::URL&);
-    RefPtr<WebCore::SharedBuffer> cachedResponseDataForURL(const WebCore::URL&);
 
     static bool canHandleRequest(const WebCore::ResourceRequest&);
 
@@ -1153,8 +1150,6 @@ private:
 
     void loadDataImpl(uint64_t navigationID, Ref<WebCore::SharedBuffer>&&, const String& MIMEType, const String& encodingName, const WebCore::URL& baseURL, const WebCore::URL& failingURL, const UserData&);
     void loadStringImpl(uint64_t navigationID, const String&, const String& MIMEType, const WebCore::URL& baseURL, const WebCore::URL& failingURL, const UserData&);
-
-    bool platformHasLocalDataForURL(const WebCore::URL&);
 
     // Actions
     void tryClose();

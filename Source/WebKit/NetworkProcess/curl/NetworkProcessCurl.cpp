@@ -49,11 +49,6 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
         supplement<WebCookieManager>()->setCookiePersistentStorage(parameters.cookiePersistentStorageFile);
 }
 
-void NetworkProcess::platformSetURLCacheSize(unsigned, uint64_t)
-{
-    notImplemented();
-}
-
 void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
 {
     notImplemented();

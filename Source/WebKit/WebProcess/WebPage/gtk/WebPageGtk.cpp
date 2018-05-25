@@ -157,34 +157,10 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
     return true;
 }
 
-bool WebPage::platformHasLocalDataForURL(const URL&)
-{
-    notImplemented();
-    return false;
-}
-
-String WebPage::cachedResponseMIMETypeForURL(const URL&)
-{
-    notImplemented();
-    return String();
-}
-
 bool WebPage::platformCanHandleRequest(const ResourceRequest&)
 {
     notImplemented();
     return false;
-}
-
-String WebPage::cachedSuggestedFilenameForURL(const URL&)
-{
-    notImplemented();
-    return String();
-}
-
-RefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const URL&)
-{
-    notImplemented();
-    return 0;
 }
 
 String WebPage::platformUserAgent(const URL& url) const

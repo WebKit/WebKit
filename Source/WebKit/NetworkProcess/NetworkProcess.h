@@ -243,9 +243,6 @@ private:
     void setNetworkProxySettings(const WebCore::SoupNetworkProxySettings&);
 #endif
 
-    // Platform Helpers
-    void platformSetURLCacheSize(unsigned urlCacheMemoryCapacity, uint64_t urlCacheDiskCapacity);
-
 #if PLATFORM(COCOA)
     static void setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier);
 #endif

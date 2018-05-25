@@ -61,7 +61,6 @@ struct NetworkProcessCreationParameters {
     SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
     String diskCacheDirectory;
     SandboxExtension::Handle diskCacheDirectoryExtensionHandle;
-    bool shouldEnableNetworkCache { false };
     bool shouldEnableNetworkCacheEfficacyLogging { false };
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     bool shouldEnableNetworkCacheSpeculativeRevalidation { false };
@@ -84,8 +83,6 @@ struct NetworkProcessCreationParameters {
 #if PLATFORM(COCOA)
     String parentProcessName;
     String uiProcessBundleIdentifier;
-    uint64_t nsURLCacheMemoryCapacity;
-    uint64_t nsURLCacheDiskCapacity;
     String sourceApplicationBundleIdentifier;
     String sourceApplicationSecondaryIdentifier;
 #if PLATFORM(IOS)

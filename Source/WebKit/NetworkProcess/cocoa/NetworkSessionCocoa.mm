@@ -573,8 +573,6 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
 @end
 
 namespace WebKit {
-    
-static bool usesNetworkCache { false };
 
 #if !ASSERT_DISABLED
 static bool sessionsCreated = false;
@@ -634,11 +632,6 @@ void NetworkSessionCocoa::setSourceApplicationSecondaryIdentifier(const String& 
     globalSourceApplicationSecondaryIdentifier() = identifier;
 }
 
-void NetworkSessionCocoa::setUsesNetworkCache(bool value)
-{
-    usesNetworkCache = value;
-}
-
 #if PLATFORM(IOS)
 void NetworkSessionCocoa::setCTDataConnectionServiceType(const String& type)
 {
@@ -676,8 +669,8 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& para
     if (parameters.allowsCellularAccess == AllowsCellularAccess::No)
         configuration.allowsCellularAccess = NO;
 
-    if (usesNetworkCache)
-        configuration.URLCache = nil;
+    // The WebKit network cache was already queried.
+    configuration.URLCache = nil;
 
     if (auto& data = globalSourceApplicationAuditTokenData())
         configuration._sourceApplicationAuditTokenData = (NSData *)data.get();
