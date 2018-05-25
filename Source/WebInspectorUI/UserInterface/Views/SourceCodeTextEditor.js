@@ -1815,6 +1815,12 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             var rects = this.rectsForRange(candidate.hoveredTokenRange);
             bounds = WI.Rect.unionOfRects(rects);
 
+            if (this._popover && this._popover.visible) {
+                let intersection = bounds.intersectionWithRect(this._popover.frame);
+                if (intersection.size.width && intersection.size.height)
+                    return;
+            }
+
             shouldHighlightRange = true;
         }
 

@@ -1,3 +1,19 @@
+2018-05-25  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Popover dismissed while attempting to move cursor inside
+        https://bugs.webkit.org/show_bug.cgi?id=185741
+        <rdar://problem/40340938>
+
+        Reviewed by Joseph Pecoraro.
+
+        Hovering a token within the bounds of the current popover should not
+        show a new popover. This prevents the popover from being dismissed when
+        the cursor passes over a token under the transparent portion of the
+        popover frame.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype._showPopover):
+
 2018-05-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r232052.
