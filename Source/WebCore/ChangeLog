@@ -1,5 +1,15 @@
 2018-05-24  Chris Dumez  <cdumez@apple.com>
 
+        Avoid doing unnecessary work in Document::shouldEnforceContentDispositionAttachmentSandbox() when setting is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=185964
+
+        Reviewed by Geoffrey Garen.
+
+        * dom/Document.cpp:
+        (WebCore::Document::shouldEnforceContentDispositionAttachmentSandbox const):
+
+2018-05-24  Chris Dumez  <cdumez@apple.com>
+
         [iOS] Avoid dlopening QuickLooks in the common case where the main resource is HTML or plain text
         https://bugs.webkit.org/show_bug.cgi?id=185966
 
