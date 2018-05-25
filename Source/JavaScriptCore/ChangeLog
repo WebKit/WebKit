@@ -1,5 +1,31 @@
 2018-05-25  Mark Lam  <mark.lam@apple.com>
 
+        MachineContext's instructionPointer() should handle null PCs correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=186004
+        <rdar://problem/40570067>
+
+        Reviewed by Saam Barati.
+
+        instructionPointer() returns a MacroAssemblerCodePtr<CFunctionPtrTag>.  However,
+        MacroAssemblerCodePtr's constructor does not accept a null pointer value and will
+        assert accordingly with a debug ASSERT.  This is inconsequential for release
+        builds, but to avoid this assertion failure, we should check for a null PC and
+        return MacroAssemblerCodePtr<CFunctionPtrTag>(nullptr) instead (which uses the
+        MacroAssemblerCodePtr(std::nullptr_t) version of the constructor instead).
+
+        Alternatively, we can change all of MacroAssemblerCodePtr's constructors to check
+        for null pointers, but I rather not do that yet.  In general,
+        MacroAssemblerCodePtrs are constructed with non-null pointers, and I prefer to
+        leave it that way for now.
+
+        Note: this assertion failure only manifests when we have signal traps enabled,
+        and encounter a null pointer deref.
+
+        * runtime/MachineContext.h:
+        (JSC::MachineContext::instructionPointer):
+
+2018-05-25  Mark Lam  <mark.lam@apple.com>
+
         Enforce invariant that GetterSetter objects are invariant.
         https://bugs.webkit.org/show_bug.cgi?id=185968
         <rdar://problem/40541416>
