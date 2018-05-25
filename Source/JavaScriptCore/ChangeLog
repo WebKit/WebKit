@@ -1,3 +1,25 @@
+2018-05-25  Saam Barati  <sbarati@apple.com>
+
+        Have a memory test where we can validate JSCs mini memory mode
+        https://bugs.webkit.org/show_bug.cgi?id=185932
+
+        Reviewed by Mark Lam.
+
+        This patch adds the testmem CLI. It takes as input a file to run
+        and the number of iterations to run it (by default it runs it
+        20 times). Each iteration runs in a new JSContext. Each JSContext
+        belongs to a VM that is created once. When finished, the CLI dumps
+        out the peak memory usage of the process, the memory usage at the end
+        of running all the iterations of the process, and the total time it
+        took to run all the iterations.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * testmem: Added.
+        * testmem/testmem.mm: Added.
+        (description):
+        (Footprint::now):
+        (main):
+
 2018-05-25  David Kilzer  <ddkilzer@apple.com>
 
         Fix issues with -dealloc methods found by clang static analyzer

@@ -1,3 +1,34 @@
+2018-05-25  Saam Barati  <sbarati@apple.com>
+
+        Have a memory test where we can validate JSCs mini memory mode
+        https://bugs.webkit.org/show_bug.cgi?id=185932
+
+        Reviewed by Mark Lam.
+
+        This patch adds the run-testmem script. This runs the new testmem
+        CLI against the contents in the testmem benchmark. The contents of testmem
+        contain tests from ARES-6, Sunspider, Octane, and JetStream.
+        
+        One iteration of the benchmark comprises of running each testmem test for
+        a certain number of iterations. We collect the peak memory usage, the memory
+        usage after running all the iterations, and the time it takes to run all the
+        iterations. We then run the entire benchmark 3 times over. For each test, we
+        compute the arithmetic mean over each iteration for time, peak memory, and
+        end memory. The benchmark then computes a time score and memory score.
+        
+        peak memory score = geomean({peak memory of each individual test})
+        end memory score = geomean({end memory of each individual test})
+        memory score = geomean({peak memory score, end memory score})
+        time score = geomean({time score of each individual test})
+        
+        We want the memory score to weigh improvements to peak memory usage and
+        memory usage at the end equally.
+        
+        We plan to tune this benchmark in JSC's mini mode by improving the memory
+        score while ensuring the time score is not more than 10-15% regressed.
+
+        * Scripts/run-testmem: Added.
+
 2018-05-25  Sihui Liu  <sihui_liu@apple.com>
 
         [WKHTTPCookieStore getAllCookies] returns inconsistent creation time
