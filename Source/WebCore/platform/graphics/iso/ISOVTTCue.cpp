@@ -27,15 +27,9 @@
 #include "ISOVTTCue.h"
 
 #include "Logging.h"
-#include <JavaScriptCore/ArrayBuffer.h>
+#include "URL.h"
 #include <JavaScriptCore/DataView.h>
-#include <JavaScriptCore/Int8Array.h>
-#include <JavaScriptCore/JSCInlines.h>
-#include <JavaScriptCore/TypedArrayInlines.h>
 #include <wtf/JSONValues.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 
 using JSC::DataView;
 
@@ -59,7 +53,7 @@ protected:
         }
 
         Vector<LChar> characters;
-        characters.reserveInitialCapacity((size_t)characterCount);
+        characters.reserveInitialCapacity(static_cast<size_t>(characterCount));
         while (characterCount--) {
             int8_t character = 0;
             if (!checkedRead<int8_t>(character, view, localOffset, BigEndian))
@@ -117,12 +111,11 @@ String ISOWebVTTCue::toJSONString() const
 #if !LOG_DISABLED
     object->setString(ASCIILiteral("text"), m_cueText);
 #endif
-    object->setString(ASCIILiteral("sourceId"), m_sourceID);
-    object->setString(ASCIILiteral("id"), m_identifier);
+    object->setString(ASCIILiteral("sourceId"), encodeWithURLEscapeSequences(m_sourceID));
+    object->setString(ASCIILiteral("id"), encodeWithURLEscapeSequences(m_identifier));
 
-    object->setString(ASCIILiteral("originalStartTime"), m_originalStartTime);
-    object->setString(ASCIILiteral("settings"), m_settings);
-    object->setString(ASCIILiteral("cueText"), m_cueText);
+    object->setString(ASCIILiteral("originalStartTime"), encodeWithURLEscapeSequences(m_originalStartTime));
+    object->setString(ASCIILiteral("settings"), encodeWithURLEscapeSequences(m_settings));
 
     object->setDouble(ASCIILiteral("presentationTime"), m_presentationTime.toDouble());
     object->setDouble(ASCIILiteral("duration"), m_duration.toDouble());

@@ -1,3 +1,15 @@
+2018-05-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Encode ISOWebVTTCue "strings" when logging
+        https://bugs.webkit.org/show_bug.cgi?id=185991
+        <rdar://problem/40563902>
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/iso/ISOVTTCue.cpp:
+        (WebCore::ISOWebVTTCue::toJSONString const): Use encodeWithURLEscapeSequences for all Strings
+        taken from ISO boxes.
+
 2018-05-25  Alex Christensen  <achristensen@webkit.org>
 
         URL::host should return a StringView to reduce allocations
