@@ -1,3 +1,10 @@
+2018-05-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rebaseline two fast/forms/ios/ipad tests.
+
+        * fast/forms/ios/ipad/select-form-run-twice-expected.txt:
+        * fast/forms/ios/ipad/unfocus-inside-fixed-hittest-expected.txt:
+
 2018-05-25  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] WebAnimation objects never get destroyed
