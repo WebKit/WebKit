@@ -6327,7 +6327,16 @@ void ByteCodeParser::parseBlock(unsigned limit)
             default:
                 op = NewFunction;
             }
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(op, OpInfo(frozen), get(VirtualRegister(currentInstruction[2].u.operand))));
+            Node* scope = get(VirtualRegister(currentInstruction[2].u.operand));
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(op, OpInfo(frozen), scope));
+            // Ideally we wouldn't have to do this Phantom. But:
+            //
+            // For the constant case: we must do it because otherwise we would have no way of knowing
+            // that the scope is live at OSR here.
+            //
+            // For the non-constant case: NewFunction could be DCE'd, but baseline's implementation
+            // won't be able to handle an Undefined scope.
+            addToGraph(Phantom, scope);
             static_assert(OPCODE_LENGTH(op_new_func) == OPCODE_LENGTH(op_new_generator_func), "The length of op_new_func should be equal to one of op_new_generator_func");
             static_assert(OPCODE_LENGTH(op_new_func) == OPCODE_LENGTH(op_new_async_func), "The length of op_new_func should be equal to one of op_new_async_func");
             static_assert(OPCODE_LENGTH(op_new_func) == OPCODE_LENGTH(op_new_async_generator_func), "The length of op_new_func should be equal to one of op_new_async_generator_func");
@@ -6354,8 +6363,16 @@ void ByteCodeParser::parseBlock(unsigned limit)
             default:
                 op = NewFunction;
             }
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(op, OpInfo(frozen), get(VirtualRegister(currentInstruction[2].u.operand))));
-    
+            Node* scope = get(VirtualRegister(currentInstruction[2].u.operand));
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(op, OpInfo(frozen), scope));
+            // Ideally we wouldn't have to do this Phantom. But:
+            //
+            // For the constant case: we must do it because otherwise we would have no way of knowing
+            // that the scope is live at OSR here.
+            //
+            // For the non-constant case: NewFunction could be DCE'd, but baseline's implementation
+            // won't be able to handle an Undefined scope.
+            addToGraph(Phantom, scope);
             static_assert(OPCODE_LENGTH(op_new_func_exp) == OPCODE_LENGTH(op_new_generator_func_exp), "The length of op_new_func_exp should be equal to one of op_new_generator_func_exp");
             static_assert(OPCODE_LENGTH(op_new_func_exp) == OPCODE_LENGTH(op_new_async_func_exp), "The length of op_new_func_exp should be equal to one of op_new_async_func_exp");
             static_assert(OPCODE_LENGTH(op_new_func_exp) == OPCODE_LENGTH(op_new_async_generator_func_exp), "The length of op_new_func_exp should be equal to one of op_new_async_func_exp");

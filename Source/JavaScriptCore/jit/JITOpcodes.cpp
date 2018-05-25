@@ -1035,20 +1035,13 @@ void JIT::emit_op_new_async_func(Instruction* currentInstruction)
     
 void JIT::emitNewFuncExprCommon(Instruction* currentInstruction)
 {
-    Jump notUndefinedScope;
     int dst = currentInstruction[1].u.operand;
 #if USE(JSVALUE64)
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-    notUndefinedScope = branchIfNotUndefined(regT0);
 #else
     emitLoadPayload(currentInstruction[2].u.operand, regT0);
-    notUndefinedScope = branch32(NotEqual, tagFor(currentInstruction[2].u.operand), TrustedImm32(JSValue::UndefinedTag));
 #endif
-    storeTrustedValue(jsUndefined(), addressFor(dst));
 
-    Jump done = jump();
-    notUndefinedScope.link(this);
-        
     FunctionExecutable* function = m_codeBlock->functionExpr(currentInstruction[3].u.operand);
     OpcodeID opcodeID = Interpreter::getOpcodeID(currentInstruction->u.opcode);
 
@@ -1062,8 +1055,6 @@ void JIT::emitNewFuncExprCommon(Instruction* currentInstruction)
         ASSERT(opcodeID == op_new_async_generator_func_exp);
         callOperation(operationNewAsyncGeneratorFunction, dst, regT0, function);
     }
-
-    done.link(this);
 }
 
 void JIT::emit_op_new_func_exp(Instruction* currentInstruction)

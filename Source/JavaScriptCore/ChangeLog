@@ -1,3 +1,31 @@
+2018-05-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [Baseline] Remove a hack for DCE removal of NewFunction
+        https://bugs.webkit.org/show_bug.cgi?id=185945
+
+        Reviewed by Saam Barati.
+
+        This `undefined` check in baseline is originally introduced in r177871. The problem was,
+        when NewFunction is removed in DFG DCE, its referencing scope DFG node  is also removed.
+        While op_new_func_xxx want to have scope for function creation, DFG OSR exit cannot
+        retrieve this into the stack since the scope is not referenced from anywhere.
+
+        In r177871, we fixed this by accepting `undefined` scope in the baseline op_new_func_xxx
+        implementation. But rather than that, just emitting `Phantom` for this scope is clean
+        and consistent to the other DFG nodes like GetClosureVar.
+
+        This patch emits Phantom instead, and removes unnecessary `undefined` check in baseline.
+        While we emit Phantom, it is not testable since NewFunction is guarded by MovHint which
+        is not removed in DFG. And in FTL, NewFunction will be converted to PhantomNewFunction
+        if it is not referenced. And scope node is kept by PutHint. But emitting Phantom is nice
+        since it conservatively guards the scope, and it does not introduce any additional overhead
+        compared to the current status.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitNewFuncExprCommon):
+
 2018-05-23  Keith Miller  <keith_miller@apple.com>
 
         Expose $vm if window.internals is exposed
