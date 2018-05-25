@@ -1188,7 +1188,7 @@ VisualViewportAPIEnabled:
 
 WebAnimationsEnabled:
   type: bool
-  defaultValue: true
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
   humanReadableName: "Web Animations"
   humanReadableDescription: "Web Animations prototype"
   category: experimental
@@ -1196,7 +1196,7 @@ WebAnimationsEnabled:
 
 WebAnimationsCSSIntegrationEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
   humanReadableName: "Web Animations and CSS Integration"
   humanReadableDescription: "Expose CSS Animations and CSS Transitions through getAnimations()"
   category: experimental
