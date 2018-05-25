@@ -1,5 +1,17 @@
 2018-05-25  Chris Dumez  <cdumez@apple.com>
 
+        Minor ApplicationCacheStorage clean up
+        https://bugs.webkit.org/show_bug.cgi?id=185984
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCopyOriginsWithApplicationCache):
+
+2018-05-25  Chris Dumez  <cdumez@apple.com>
+
         Avoid triggering network cache speculative revalidation for loads allowing expired content
         https://bugs.webkit.org/show_bug.cgi?id=185985
 

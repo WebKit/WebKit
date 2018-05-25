@@ -1,3 +1,24 @@
+2018-05-25  Chris Dumez  <cdumez@apple.com>
+
+        Minor ApplicationCacheStorage clean up
+        https://bugs.webkit.org/show_bug.cgi?id=185984
+
+        Reviewed by Youenn Fablet.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::getManifestURLs):
+        (WebCore::ApplicationCacheStorage::deleteCacheGroup):
+        (WebCore::ApplicationCacheStorage::originsWithCache):
+        (WebCore::ApplicationCacheStorage::deleteAllCaches):
+        (WebCore::ApplicationCacheStorage::deleteCacheForOrigin):
+        (WebCore::ApplicationCacheStorage::ApplicationCacheStorage):
+        (WebCore::ApplicationCacheStorage::cacheDirectory const): Deleted.
+        (WebCore::ApplicationCacheStorage::cacheGroupSize): Deleted.
+        (WebCore::ApplicationCacheStorage::getOriginsWithCache): Deleted.
+        (WebCore::ApplicationCacheStorage::create): Deleted.
+        * loader/appcache/ApplicationCacheStorage.h:
+        (WebCore::ApplicationCacheStorage::create):
+
 2018-05-25  Sihui Liu  <sihui_liu@apple.com>
 
         [WKHTTPCookieStore getAllCookies] returns inconsistent creation time

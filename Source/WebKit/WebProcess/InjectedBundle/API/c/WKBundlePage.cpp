@@ -686,8 +686,7 @@ void WKBundlePageResetApplicationCacheOriginQuota(WKBundlePageRef page, WKString
 
 WKArrayRef WKBundlePageCopyOriginsWithApplicationCache(WKBundlePageRef page)
 {
-    HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
-    toImpl(page)->corePage()->applicationCacheStorage().getOriginsWithCache(origins);
+    auto origins = toImpl(page)->corePage()->applicationCacheStorage().originsWithCache();
 
     Vector<RefPtr<API::Object>> originIdentifiers;
     originIdentifiers.reserveInitialCapacity(origins.size());

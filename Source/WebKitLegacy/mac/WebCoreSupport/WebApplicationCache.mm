@@ -123,14 +123,12 @@ static NSString *applicationCachePath()
 
 + (NSArray *)originsWithCache
 {
-    HashSet<RefPtr<SecurityOrigin>> coreOrigins;
-    webApplicationCacheStorage().getOriginsWithCache(coreOrigins);
+    auto coreOrigins = webApplicationCacheStorage().originsWithCache();
     
     NSMutableArray *webOrigins = [[[NSMutableArray alloc] initWithCapacity:coreOrigins.size()] autorelease];
     
-    HashSet<RefPtr<SecurityOrigin>>::const_iterator end = coreOrigins.end();
-    for (HashSet<RefPtr<SecurityOrigin>>::const_iterator it = coreOrigins.begin(); it != end; ++it) {
-        RetainPtr<WebSecurityOrigin> webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:(*it).get()]);
+    for (auto& coreOrigin : coreOrigins) {
+        auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:coreOrigin.ptr()]);
         [webOrigins addObject:webOrigin.get()];
     }
     

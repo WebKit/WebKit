@@ -447,12 +447,11 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
 
             WebsiteData websiteData;
 
-            HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
             // FIXME: getOriginsWithCache should return a collection of SecurityOriginDatas.
-            storage->getOriginsWithCache(origins);
+            auto origins = storage->originsWithCache();
 
             for (auto& origin : origins) {
-                uint64_t size = fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes) ? storage->diskUsageForOrigin(*origin) : 0;
+                uint64_t size = fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes) ? storage->diskUsageForOrigin(origin) : 0;
                 WebsiteData::Entry entry { origin->data(), WebsiteDataType::OfflineWebApplicationCache, size };
 
                 websiteData.entries.append(WTFMove(entry));

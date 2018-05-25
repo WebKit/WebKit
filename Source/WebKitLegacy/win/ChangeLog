@@ -1,3 +1,13 @@
+2018-05-25  Chris Dumez  <cdumez@apple.com>
+
+        Minor ApplicationCacheStorage clean up
+        https://bugs.webkit.org/show_bug.cgi?id=185984
+
+        Reviewed by Youenn Fablet.
+
+        * WebApplicationCache.cpp:
+        (WebApplicationCache::originsWithCache):
+
 2018-05-24  Chris Dumez  <cdumez@apple.com>
 
         Reduce copying of FontCascadeDescription objects by moving them around
