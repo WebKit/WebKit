@@ -1,3 +1,18 @@
+2018-05-25  Sihui Liu  <sihui_liu@apple.com>
+
+        [WKHTTPCookieStore getAllCookies] returns inconsistent creation time
+        https://bugs.webkit.org/show_bug.cgi?id=185041
+        <rdar://problem/34684214>
+
+        Reviewed by Geoffrey Garen.
+
+        Set creationtime property when creating Cookie object to keep consistency after conversion.
+
+        New API test: WebKit.WKHTTPCookieStoreCreationTime.
+
+        * platform/network/cocoa/CookieCocoa.mm:
+        (WebCore::Cookie::operator NSHTTPCookie * const):
+
 2018-05-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement border and padding computation
