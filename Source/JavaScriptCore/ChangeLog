@@ -1,3 +1,24 @@
+2018-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Rename Array#flatten to flat
+        https://bugs.webkit.org/show_bug.cgi?id=186012
+
+        Reviewed by Saam Barati.
+
+        Rename Array#flatten to Array#flat. This rename is done in TC39 since flatten
+        conflicts with the mootools' function name.
+
+        * builtins/ArrayPrototype.js:
+        (globalPrivate.flatIntoArray):
+        (flat):
+        (globalPrivate.flatIntoArrayWithCallback):
+        (flatMap):
+        (globalPrivate.flattenIntoArray): Deleted.
+        (flatten): Deleted.
+        (globalPrivate.flattenIntoArrayWithCallback): Deleted.
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+
 2018-05-25  Mark Lam  <mark.lam@apple.com>
 
         for-in loops should preserve and restore the TDZ stack for each of its internal loops.

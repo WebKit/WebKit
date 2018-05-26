@@ -34,54 +34,54 @@ function shouldThrow(func, errorMessage) {
         throw new Error(`bad error: ${String(error)}`);
 }
 
-shouldBe([].flatten.length, 0);
-shouldBe([].flatten.name, `flatten`);
+shouldBe([].flat.length, 0);
+shouldBe([].flat.name, `flat`);
 
-shouldBeArray([].flatten(), []);
-shouldBeArray([0, 1, 2, 3, , 4].flatten(), [0, 1, 2, 3, 4]);
-shouldBeArray([,,,,,].flatten(), []);
+shouldBeArray([].flat(), []);
+shouldBeArray([0, 1, 2, 3, , 4].flat(), [0, 1, 2, 3, 4]);
+shouldBeArray([,,,,,].flat(), []);
 
-shouldBeArray([].flatten(0), []);
-shouldBeArray([0, 1, 2, 3, , 4].flatten(0), [0, 1, 2, 3, 4]);
-shouldBeArray([,,,,,].flatten(0), []);
+shouldBeArray([].flat(0), []);
+shouldBeArray([0, 1, 2, 3, , 4].flat(0), [0, 1, 2, 3, 4]);
+shouldBeArray([,,,,,].flat(0), []);
 
-shouldBeArray([].flatten(-1), []);
-shouldBeArray([0, 1, 2, 3, , 4].flatten(-1), [0, 1, 2, 3, 4]);
-shouldBeArray([,,,,,].flatten(-1), []);
+shouldBeArray([].flat(-1), []);
+shouldBeArray([0, 1, 2, 3, , 4].flat(-1), [0, 1, 2, 3, 4]);
+shouldBeArray([,,,,,].flat(-1), []);
 
-shouldBeArray([[],[]].flatten(), []);
-shouldBeArray([[0],[1]].flatten(), [0,1]);
-shouldBeArray([[0],[],1].flatten(), [0,1]);
-shouldBeArray([[0],[[]],1].flatten(), [0,[],1]);
-shouldBeArray([[0],[[]],1].flatten(1), [0,[],1]);
-shouldBeArray([[0],[[]],1].flatten(2), [0,1]);
+shouldBeArray([[],[]].flat(), []);
+shouldBeArray([[0],[1]].flat(), [0,1]);
+shouldBeArray([[0],[],1].flat(), [0,1]);
+shouldBeArray([[0],[[]],1].flat(), [0,[],1]);
+shouldBeArray([[0],[[]],1].flat(1), [0,[],1]);
+shouldBeArray([[0],[[]],1].flat(2), [0,1]);
 
-shouldBeArray([[],[]].flatten(0), [[],[]]);
-shouldBeArray([[0],[1]].flatten(0), [[0],[1]]);
-shouldBeArray([[0],[],1].flatten(0), [[0],[],1]);
-shouldBeArray([[0],[[]],1].flatten(0), [[0],[[]],1]);
+shouldBeArray([[],[]].flat(0), [[],[]]);
+shouldBeArray([[0],[1]].flat(0), [[0],[1]]);
+shouldBeArray([[0],[],1].flat(0), [[0],[],1]);
+shouldBeArray([[0],[[]],1].flat(0), [[0],[[]],1]);
 
-shouldBeArray([[[[[[[[[[[[[[[[[[[[[42]]]]]]]]]]]]]]]]]]]]].flatten(Infinity), [42]);
+shouldBeArray([[[[[[[[[[[[[[[[[[[[[42]]]]]]]]]]]]]]]]]]]]].flat(Infinity), [42]);
 
 var array = [];
-shouldBe(array.flatten() !== array, true);
+shouldBe(array.flat() !== array, true);
 
 class DerivedArray extends Array { }
-shouldBe((new DerivedArray).flatten() instanceof DerivedArray, true);
-var flatten = [].flatten;
+shouldBe((new DerivedArray).flat() instanceof DerivedArray, true);
+var flat = [].flat;
 var realm = createGlobalObject();
-shouldBe(flatten.call({}) instanceof Array, true);
-shouldBe(flatten.call(new realm.Array) instanceof Array, true);
+shouldBe(flat.call({}) instanceof Array, true);
+shouldBe(flat.call(new realm.Array) instanceof Array, true);
 var array2 = new realm.Array;
 array2.constructor = 0;
 
 shouldThrow(() => {
-    flatten.call(array2);
+    flat.call(array2);
 }, `TypeError: 0 is not a constructor`);
 
 var array2 = new realm.Array;
 array2.constructor = undefined;
-shouldBe(flatten.call(array2) instanceof Array, true);
+shouldBe(flat.call(array2) instanceof Array, true);
 
 var array2 = new realm.Array;
 array2.constructor = {
@@ -89,7 +89,7 @@ array2.constructor = {
         return null;
     }
 };
-shouldBe(flatten.call(array2) instanceof Array, true);
+shouldBe(flat.call(array2) instanceof Array, true);
 
 var array2 = new realm.Array;
 array2.constructor = {
@@ -97,7 +97,7 @@ array2.constructor = {
         return undefined;
     }
 };
-shouldBe(flatten.call(array2) instanceof Array, true);
+shouldBe(flat.call(array2) instanceof Array, true);
 
 var array2 = new realm.Array;
 array2.constructor = {
@@ -105,4 +105,4 @@ array2.constructor = {
         return DerivedArray;
     }
 };
-shouldBe(flatten.call(array2) instanceof DerivedArray, true);
+shouldBe(flat.call(array2) instanceof DerivedArray, true);

@@ -633,36 +633,6 @@ test/built-ins/Array/prototype/concat/is-concat-spreadable-proxy.js:
 test/built-ins/Array/prototype/filter/target-array-with-non-writable-property.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
-test/built-ins/Array/prototype/flat/array-like-objects.js:
-  default: "TypeError: undefined is not an object (evaluating '[].flat.call')"
-  strict mode: "TypeError: undefined is not an object (evaluating '[].flat.call')"
-test/built-ins/Array/prototype/flat/bound-function-call.js:
-  default: "TypeError: undefined is not an object (evaluating '[].flat.bind')"
-  strict mode: "TypeError: undefined is not an object (evaluating '[].flat.bind')"
-test/built-ins/Array/prototype/flat/empty-array-elements.js:
-  default: "TypeError: [].flat is not a function. (In '[].flat()', '[].flat' is undefined)"
-  strict mode: "TypeError: [].flat is not a function. (In '[].flat()', '[].flat' is undefined)"
-test/built-ins/Array/prototype/flat/empty-object-elements.js:
-  default: "TypeError: [a].flat is not a function. (In '[a].flat()', '[a].flat' is undefined)"
-  strict mode: "TypeError: [a].flat is not a function. (In '[a].flat()', '[a].flat' is undefined)"
-test/built-ins/Array/prototype/flat/length.js:
-  default: "TypeError: undefined is not an object (evaluating 'Array.prototype.flat.length')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Array.prototype.flat.length')"
-test/built-ins/Array/prototype/flat/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'Array.prototype.flat.name')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Array.prototype.flat.name')"
-test/built-ins/Array/prototype/flat/non-numeric-depth-should-not-throw.js:
-  default: "TypeError: a.flat is not a function. (In 'a.flat(depthNum)', 'a.flat' is undefined)"
-  strict mode: "TypeError: a.flat is not a function. (In 'a.flat(depthNum)', 'a.flat' is undefined)"
-test/built-ins/Array/prototype/flat/null-undefined-elements.js:
-  default: "TypeError: [1, null, void 0].flat is not a function. (In '[1, null, void 0].flat()', '[1, null, void 0].flat' is undefined)"
-  strict mode: "TypeError: [1, null, void 0].flat is not a function. (In '[1, null, void 0].flat()', '[1, null, void 0].flat' is undefined)"
-test/built-ins/Array/prototype/flat/positive-infinity.js:
-  default: "TypeError: a.flat is not a function. (In 'a.flat(Number.POSITIVE_INFINITY)', 'a.flat' is undefined)"
-  strict mode: "TypeError: a.flat is not a function. (In 'a.flat(Number.POSITIVE_INFINITY)', 'a.flat' is undefined)"
-test/built-ins/Array/prototype/flat/prop-desc.js:
-  default: 'Test262Error: `typeof Array.prototype.flat` is `function` Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-  strict mode: 'Test262Error: `typeof Array.prototype.flat` is `function` Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
 test/built-ins/Array/prototype/indexOf/15.4.4.14-3-28.js:
   default: 'Test262Error: Array.prototype.indexOf.call(obj, targetObj) Expected SameValue(Â«-1Â», Â«0Â») to be true'
   strict mode: 'Test262Error: Array.prototype.indexOf.call(obj, targetObj) Expected SameValue(Â«-1Â», Â«0Â») to be true'

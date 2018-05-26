@@ -767,7 +767,7 @@ function arraySpeciesCreate(array, length)
 }
 
 @globalPrivate
-function flattenIntoArray(target, source, sourceLength, targetIndex, depth)
+function flatIntoArray(target, source, sourceLength, targetIndex, depth)
 {
     "use strict";
 
@@ -775,7 +775,7 @@ function flattenIntoArray(target, source, sourceLength, targetIndex, depth)
         if (sourceIndex in source) {
             var element = source[sourceIndex];
             if (depth > 0 && @isArray(element))
-                targetIndex = @flattenIntoArray(target, element, @toLength(element.length), targetIndex, depth - 1);
+                targetIndex = @flatIntoArray(target, element, @toLength(element.length), targetIndex, depth - 1);
             else {
                 if (targetIndex >= @MAX_SAFE_INTEGER)
                     @throwTypeError("flatten array exceeds 2**53 - 1");
@@ -787,11 +787,11 @@ function flattenIntoArray(target, source, sourceLength, targetIndex, depth)
     return targetIndex;
 }
 
-function flatten()
+function flat()
 {
     "use strict";
 
-    var array = @toObject(this, "Array.prototype.flatten requires that |this| not be null or undefined");
+    var array = @toObject(this, "Array.prototype.flat requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
     var depthNum = 1;
@@ -801,12 +801,12 @@ function flatten()
 
     var result = @arraySpeciesCreate(array, 0);
 
-    @flattenIntoArray(result, array, length, 0, depthNum);
+    @flatIntoArray(result, array, length, 0, depthNum);
     return result;
 }
 
 @globalPrivate
-function flattenIntoArrayWithCallback(target, source, sourceLength, targetIndex, callback, thisArg)
+function flatIntoArrayWithCallback(target, source, sourceLength, targetIndex, callback, thisArg)
 {
     "use strict";
 
@@ -814,7 +814,7 @@ function flattenIntoArrayWithCallback(target, source, sourceLength, targetIndex,
         if (sourceIndex in source) {
             var element = callback.@call(thisArg, source[sourceIndex], sourceIndex, source);
             if (@isArray(element))
-                targetIndex = @flattenIntoArray(target, element, @toLength(element.length), targetIndex, 0);
+                targetIndex = @flatIntoArray(target, element, @toLength(element.length), targetIndex, 0);
             else {
                 if (targetIndex >= @MAX_SAFE_INTEGER)
                     @throwTypeError("flatten array exceeds 2**53 - 1");
@@ -840,5 +840,5 @@ function flatMap(callback)
 
     var result = @arraySpeciesCreate(array, 0);
 
-    return @flattenIntoArrayWithCallback(result, array, length, 0, callback, thisArg);
+    return @flatIntoArrayWithCallback(result, array, length, 0, callback, thisArg);
 }

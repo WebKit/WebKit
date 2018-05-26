@@ -74,8 +74,8 @@ ALL PROPERTIES:
     indexOf
     lastIndexOf
     filter
+    flat
     flatMap
-    flatten
     reduce
     reduceRight
     map
@@ -127,8 +127,8 @@ OWN PROPERTIES:
     indexOf
     lastIndexOf
     filter
+    flat
     flatMap
-    flatten
     reduce
     reduceRight
     map
@@ -165,8 +165,8 @@ DISPLAYABLE PROPERTIES:
     indexOf
     lastIndexOf
     filter
+    flat
     flatMap
-    flatten
     reduce
     reduceRight
     map
@@ -203,8 +203,8 @@ ALL PROPERTIES:
     indexOf
     lastIndexOf
     filter
+    flat
     flatMap
-    flatten
     reduce
     reduceRight
     map
