@@ -110,9 +110,11 @@ void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::unlockSlow(Atomic<
     // be held and parked if someone attempts to lock just as we are unlocking.
     for (;;) {
         uint8_t oldByteValue = lock.load();
-        RELEASE_ASSERT(
-            (oldByteValue & mask) == isHeldBit
-            || (oldByteValue & mask) == (isHeldBit | hasParkedBit));
+        if ((oldByteValue & mask) != isHeldBit
+            && (oldByteValue & mask) != (isHeldBit | hasParkedBit)) {
+            dataLog("Invalid value for lock: ", oldByteValue, "\n");
+            RELEASE_ASSERT_NOT_REACHED();
+        }
         
         if ((oldByteValue & mask) == isHeldBit) {
             if (lock.compareExchangeWeak(oldByteValue, Hooks::unlockHook(oldByteValue & ~isHeldBit)))

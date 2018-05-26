@@ -1,3 +1,26 @@
+2018-05-26  Filip Pizlo  <fpizlo@apple.com>
+
+        testair sometimes crashes due to races in initialization of ARC4RandomNumberGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=186014
+
+        Reviewed by Yusuke Suzuki.
+        
+        testair launches a bunch of threads and the threads do B3 things that use random numbers.
+        Sometimes two threads will initialize the random number generator at the same time, because
+        that's what happens when you use static NeverDestroyed<>.
+        
+        This changes that code to use std::call_once to initialize the shared
+        ARC4RandomNumberGenerator.
+        
+        Also, this adds a diagnostic message to the lock's assertion. This assertion was the symptom
+        of the race, and knowing the state of the lock when the assertion fired gave a darn good clue
+        about what was going on: the lock's value was 0 at time of unlock, implying that another
+        thread reinitialized the lock to zero by rerunning the constructor.
+
+        * wtf/CryptographicallyRandomNumber.cpp:
+        * wtf/LockAlgorithmInlines.h:
+        (WTF::Hooks>::unlockSlow):
+
 2018-05-25  Michael Saboff  <msaboff@apple.com>
 
         JavaScriptCore: Disable 32-bit JIT on Windows
