@@ -1,3 +1,13 @@
+2018-05-25  Mark Lam  <mark.lam@apple.com>
+
+        for-in loops should preserve and restore the TDZ stack for each of its internal loops.
+        https://bugs.webkit.org/show_bug.cgi?id=185995
+        <rdar://problem/40173142>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-185995.js: Added.
+
 2018-05-23  Keith Miller  <keith_miller@apple.com>
 
         Define length on CoW array should properly convert to writable

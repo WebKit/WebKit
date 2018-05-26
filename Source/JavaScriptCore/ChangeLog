@@ -1,5 +1,24 @@
 2018-05-25  Mark Lam  <mark.lam@apple.com>
 
+        for-in loops should preserve and restore the TDZ stack for each of its internal loops.
+        https://bugs.webkit.org/show_bug.cgi?id=185995
+        <rdar://problem/40173142>
+
+        Reviewed by Saam Barati.
+
+        This is because there's no guarantee that any of the loop bodies will be
+        executed.  Hence, there's no guarantee that the TDZ variables will have been
+        initialized after each loop body.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::preserveTDZStack):
+        (JSC::BytecodeGenerator::restoreTDZStack):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitBytecode):
+
+2018-05-25  Mark Lam  <mark.lam@apple.com>
+
         MachineContext's instructionPointer() should handle null PCs correctly.
         https://bugs.webkit.org/show_bug.cgi?id=186004
         <rdar://problem/40570067>
