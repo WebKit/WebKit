@@ -51,13 +51,13 @@ Content-Range
 Cookie
 Cookie2
 Cross-Origin-Options
+Cross-Origin-Resource-Policy
 Date
 DNT
 Default-Style
 ETag
 Expect
 Expires
-From-Origin
 Host
 If-Match
 If-Modified-Since

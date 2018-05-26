@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Cancelled load to http://127.0.0.1:8800/WebKit/cross-origin-resource-policy/resources/iframe.py?corp=same because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/WebKit/cross-origin-resource-policy/resources/iframe.py?corp=same due to access control checks.
+
+PASS Load an iframe that has Cross-Origin-Resource-Policy header 
+

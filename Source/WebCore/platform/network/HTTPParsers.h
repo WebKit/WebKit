@@ -64,7 +64,7 @@ enum XFrameOptionsDisposition {
     XFrameOptionsConflict
 };
 
-enum class FromOriginDisposition {
+enum class CrossOriginResourcePolicy {
     None,
     Same,
     SameSite,
@@ -117,7 +117,7 @@ bool isCrossOriginSafeRequestHeader(HTTPHeaderName, const String&);
 
 String normalizeHTTPMethod(const String&);
 
-WEBCORE_EXPORT FromOriginDisposition parseFromOriginHeader(const String&);
+WEBCORE_EXPORT CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView);
 CrossOriginOptions parseCrossOriginOptionsHeader(StringView);
 
 inline bool isHTTPSpace(UChar character)

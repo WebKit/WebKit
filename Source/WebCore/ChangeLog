@@ -1,3 +1,21 @@
+2018-05-25  Youenn Fablet  <youenn@apple.com>
+
+        Migrate From-Origin to Cross-Origin-Resource-Policy
+        https://bugs.webkit.org/show_bug.cgi?id=185840
+
+        Reviewed by Chris Dumez.
+
+        Tests: http/wpt/cross-origin-resource-policy/fetch-in-iframe.html
+               http/wpt/cross-origin-resource-policy/fetch.html
+               http/wpt/cross-origin-resource-policy/iframe-loads.html
+               http/wpt/cross-origin-resource-policy/image-loads.html
+               http/wpt/cross-origin-resource-policy/script-loads.html
+
+        * platform/network/HTTPHeaderNames.in:
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseCrossOriginResourcePolicyHeader):
+        * platform/network/HTTPParsers.h:
+
 2018-05-25  Daniel Bates  <dabates@apple.com>
 
         NavigationAction should not hold a strong reference to a Document

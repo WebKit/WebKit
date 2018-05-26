@@ -369,7 +369,7 @@ http/tests/cache/disk-cache/redirect-chain-limits.html [ DumpJSConsoleLogInStdEr
 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Skip ]
 
 # Only supported in WebKit2.
-http/tests/from-origin/ [ Skip ]
+http/wpt/cross-origin-resource-policy/ [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.

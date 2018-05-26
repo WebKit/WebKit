@@ -1,3 +1,35 @@
+2018-05-25  Youenn Fablet  <youenn@apple.com>
+
+        Migrate From-Origin to Cross-Origin-Resource-Policy
+        https://bugs.webkit.org/show_bug.cgi?id=185840
+
+        Reviewed by Chris Dumez.
+
+        Migrating From-Origin tests to Cross-Origin-Resource-Policy tests.
+        Given the scope of the header is reduced to no-cors and no ancestor checks,
+        We cover the new header with fetch/image/script loads.
+
+        * TestExpectations:
+        * http/tests/from-origin: Removed.
+        * http/wpt/cross-origin-resource-policy/fetch-expected.txt: Added.
+        * http/wpt/cross-origin-resource-policy/fetch-in-iframe-expected.txt: Added.
+        * http/wpt/cross-origin-resource-policy/fetch-in-iframe.html: Added.
+        * http/wpt/cross-origin-resource-policy/fetch.html: Added.
+        * http/wpt/cross-origin-resource-policy/iframe-loads-expected.txt: Added.
+        * http/wpt/cross-origin-resource-policy/iframe-loads.html: Added.
+        * http/wpt/cross-origin-resource-policy/image-loads-expected.txt: Added.
+        * http/wpt/cross-origin-resource-policy/image-loads.html: Added.
+        * http/wpt/cross-origin-resource-policy/resources/green.png: Added.
+        * http/wpt/cross-origin-resource-policy/resources/hello.py: Added.
+        * http/wpt/cross-origin-resource-policy/resources/iframe.py: Added.
+        * http/wpt/cross-origin-resource-policy/resources/iframeFetch.html: Added.
+        * http/wpt/cross-origin-resource-policy/resources/image.py: Added.
+        * http/wpt/cross-origin-resource-policy/resources/redirect.py: Added.
+        * http/wpt/cross-origin-resource-policy/resources/script.py: Added.
+        * http/wpt/cross-origin-resource-policy/script-loads-expected.txt: Added.
+        * http/wpt/cross-origin-resource-policy/script-loads.html: Added.
+        * platform/wk2/TestExpectations:
+
 2018-05-25  David Fenton  <david_fenton@apple.com>
 
         fast/text/user-installed-fonts/shadow-family.html and fast/text/user-installed-fonts/shadow-postscript-family.html are flaky

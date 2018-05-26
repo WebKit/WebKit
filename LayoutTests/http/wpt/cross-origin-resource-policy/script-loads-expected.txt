@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: Cancelled load to http://127.0.0.1:8800/WebKit/cross-origin-resource-policy/resources/script.py?corp=same&acao=* because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Cancelled load to http://127.0.0.1:8800/WebKit/cross-origin-resource-policy/resources/script.py?corp=same-site&acao=* because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+
+PASS Same-origin script load with a 'Cross-Origin-Resource-Policy: same' response header. 
+PASS Same-origin script load with a 'Cross-Origin-Resource-Policy: same-site' response header. 
+PASS Cross-origin cors script load with a 'Cross-Origin-Resource-Policy: same' response header. 
+PASS Cross-origin cors script load with a 'Cross-Origin-Resource-Policy: same-site' response header. 
+PASS Cross-origin no-cors script load with a 'Cross-Origin-Resource-Policy: same' response header. 
+PASS Cross-origin no-cors script load with a 'Cross-Origin-Resource-Policy: same-site' response header. 
+

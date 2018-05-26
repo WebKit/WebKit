@@ -897,20 +897,20 @@ String normalizeHTTPMethod(const String& method)
     return method;
 }
 
-FromOriginDisposition parseFromOriginHeader(const String& header)
+CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView header)
 {
     auto strippedHeader = stripLeadingAndTrailingHTTPSpaces(header);
 
     if (strippedHeader.isEmpty())
-        return FromOriginDisposition::None;
+        return CrossOriginResourcePolicy::None;
 
     if (equalLettersIgnoringASCIICase(strippedHeader, "same"))
-        return FromOriginDisposition::Same;
+        return CrossOriginResourcePolicy::Same;
 
     if (equalLettersIgnoringASCIICase(strippedHeader, "same-site"))
-        return FromOriginDisposition::SameSite;
+        return CrossOriginResourcePolicy::SameSite;
 
-    return FromOriginDisposition::Invalid;
+    return CrossOriginResourcePolicy::Invalid;
 }
 
 CrossOriginOptions parseCrossOriginOptionsHeader(StringView header)

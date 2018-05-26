@@ -1,3 +1,31 @@
+2018-05-25  Youenn Fablet  <youenn@apple.com>
+
+        Migrate From-Origin to Cross-Origin-Resource-Policy
+        https://bugs.webkit.org/show_bug.cgi?id=185840
+
+        Reviewed by Chris Dumez.
+
+        Do Cross-Origin-Resource-Policy (CORP) checks in NetworkLoadChecker instead of NetworkResourceLoader directly.
+        Make sure CORP only applies to no-cors loads.
+        Remove ancestor checks and only consider the document origin making the load.
+        This means that in case of cross-origin redirection to same-origin, the redirection will be CORP-checked,
+        the final response will not be CORP-checked but will be opaque.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::validateCrossOriginResourcePolicyPolicy):
+        (WebKit::NetworkLoadChecker::validateResponse):
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::dispatchWillSendRequestForCacheEntry):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        Send ancestor information for navigation loads only.
+
 2018-05-25  Daniel Bates  <dabates@apple.com>
 
         NavigationAction should not hold a strong reference to a Document

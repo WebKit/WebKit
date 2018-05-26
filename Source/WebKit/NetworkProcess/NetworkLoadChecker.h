@@ -110,6 +110,8 @@ private:
     uint64_t m_webFrameID;
     ResourceLoadIdentifier m_loadIdentifier;
 
+    bool shouldCrossOriginResourcePolicyPolicyCancelLoad(const WebCore::ResourceResponse&);
+
     WebCore::FetchOptions m_options;
     WebCore::StoredCredentialsPolicy m_storedCredentialsPolicy;
     PAL::SessionID m_sessionID;

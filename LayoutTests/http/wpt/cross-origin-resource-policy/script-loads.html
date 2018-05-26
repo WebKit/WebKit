@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="/common/get-host-info.sub.js"></script>
+</head>
+<body>
+    <div id="testDiv"></div>
+    <script>
+const host = get_host_info();
+const remoteBaseURL = host.HTTP_REMOTE_ORIGIN + window.location.pathname.replace(/\/[^\/]*$/, '/') ;
+const ok = true;
+const ko = false;
+
+function loadScript(url, shoudLoad, corsMode)
+{
+    promise_test(() => {
+        const script = document.createElement("script");
+        if (corsMode)
+            script.crossOrigin = corsMode;
+        script.src = url;
+        return new Promise((resolve, reject) => {
+            script.onload = shoudLoad ? resolve : reject;
+            script.onerror = shoudLoad ? reject : resolve;
+            testDiv.appendChild(script);
+        });
+    }, title);
+}
+
+title = "Same-origin script load with a 'Cross-Origin-Resource-Policy: same' response header.";
+loadScript("./resources/script.py?corp=same", ok);
+
+title = "Same-origin script load with a 'Cross-Origin-Resource-Policy: same-site' response header.";
+loadScript("./resources/script.py?corp=same-site", ok);
+
+title = "Cross-origin cors script load with a 'Cross-Origin-Resource-Policy: same' response header.";
+loadScript(remoteBaseURL + "resources/script.py?corp=same&acao=*", ok, "anonymous");
+
+title = "Cross-origin cors script load with a 'Cross-Origin-Resource-Policy: same-site' response header.";
+loadScript(remoteBaseURL + "resources/script.py?corp=same-site&acao=*", ok, "anonymous");
+
+title = "Cross-origin no-cors script load with a 'Cross-Origin-Resource-Policy: same' response header.";
+loadScript(remoteBaseURL + "resources/script.py?corp=same&acao=*", ko);
+
+title = "Cross-origin no-cors script load with a 'Cross-Origin-Resource-Policy: same-site' response header.";
+loadScript(remoteBaseURL + "resources/script.py?corp=same-site&acao=*", ko);
+    </script>
+</body>
+</html>

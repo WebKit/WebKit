@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="/common/get-host-info.sub.js"></script>
+</head>
+<body>
+    <div id="testDiv"></div>
+    <script>
+const host = get_host_info();
+const remoteBaseURL = host.HTTP_REMOTE_ORIGIN + window.location.pathname.replace(/\/[^\/]*$/, '/') ;
+const ok = true;
+const ko = false;
+
+function loadImage(url, shoudLoad, corsMode)
+{
+    promise_test(() => {
+        const img = new Image();
+        if (corsMode)
+            img.crossOrigin = corsMode;
+        img.src = url;
+        return new Promise((resolve, reject) => {
+            img.onload = shoudLoad ? resolve : reject;
+            img.onerror = shoudLoad ? reject : resolve;
+            testDiv.appendChild(img);
+        }).finally(() => {
+            testDiv.innerHTML = "";
+        });
+    }, title)
+}
+
+title = "Same-origin image load with a 'Cross-Origin-Resource-Policy: same' response header.";
+loadImage("./resources/image.py?corp=same", ok);
+
+title = "Same-origin image load with a 'Cross-Origin-Resource-Policy: same-site' response header.";
+loadImage("./resources/image.py?corp=same-site", ok);
+
+title = "Cross-origin cors image load with a 'Cross-Origin-Resource-Policy: same' response header.";
+loadImage(remoteBaseURL + "resources/image.py?corp=same&acao=*", ok, "anonymous");
+
+title = "Cross-origin cors image load with a 'Cross-Origin-Resource-Policy: same-site' response header.";
+loadImage(remoteBaseURL + "resources/image.py?corp=same-site&acao=*", ok, "anonymous");
+
+title = "Cross-origin no-cors image load with a 'Cross-Origin-Resource-Policy: same' response header.";
+loadImage(remoteBaseURL + "resources/image.py?corp=same&acao=*", ko);
+
+title = "Cross-origin no-cors image load with a 'Cross-Origin-Resource-Policy: same-site' response header.";
+loadImage(remoteBaseURL + "resources/image.py?corp=same-site&acao=*", ko);
+    </script>
+</body>
+</html>

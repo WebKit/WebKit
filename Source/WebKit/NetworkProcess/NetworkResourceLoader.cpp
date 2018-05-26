@@ -361,48 +361,6 @@ void NetworkResourceLoader::abort()
     cleanup(LoadResult::Cancel);
 }
 
-static bool areFrameAncestorsSameSite(const ResourceResponse& response, const Vector<RefPtr<SecurityOrigin>>& frameAncestorOrigins)
-{
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    auto responsePartition = ResourceRequest::partitionName(response.url().host().toString());
-    return frameAncestorOrigins.findMatching([&](const auto& item) {
-        return item->isUnique() || ResourceRequest::partitionName(item->host()) != responsePartition;
-    }) == notFound;
-#else
-    UNUSED_PARAM(response);
-    UNUSED_PARAM(frameAncestorOrigins);
-    return false;
-#endif
-}
-
-static bool areFrameAncestorsSameOrigin(const ResourceResponse& response, const Vector<RefPtr<SecurityOrigin>>& frameAncestorOrigins)
-{
-    return frameAncestorOrigins.findMatching([responseOrigin = SecurityOrigin::create(response.url())](const auto& item) {
-        return !item->isSameOriginAs(responseOrigin);
-    }) == notFound;
-}
-
-static bool shouldCancelCrossOriginLoad(const ResourceResponse& response, const Vector<RefPtr<SecurityOrigin>>& frameAncestorOrigins)
-{
-    auto fromOriginDirective = WebCore::parseFromOriginHeader(response.httpHeaderField(WebCore::HTTPHeaderName::FromOrigin));
-    switch (fromOriginDirective) {
-    case WebCore::FromOriginDisposition::None:
-    case WebCore::FromOriginDisposition::Invalid:
-        return false;
-    case WebCore::FromOriginDisposition::Same:
-        return !areFrameAncestorsSameOrigin(response, frameAncestorOrigins);
-    case WebCore::FromOriginDisposition::SameSite:
-        return !areFrameAncestorsSameSite(response, frameAncestorOrigins);
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-static ResourceError fromOriginResourceError(const URL& url)
-{
-    return { errorDomainWebKitInternal, 0, url, ASCIILiteral { "Cancelled load because it violates the resource's From-Origin response header." }, ResourceError::Type::AccessControl };
-}
-
 bool NetworkResourceLoader::shouldInterruptLoadForXFrameOptions(const String& xFrameOptions, const URL& url)
 {
     if (isMainFrameLoad())
@@ -491,21 +449,20 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     if (m_cacheEntryForValidation)
         return ShouldContinueDidReceiveResponse::Yes;
 
-    ResourceError error;
-    if (m_parameters.shouldEnableFromOriginResponseHeader && shouldCancelCrossOriginLoad(m_response, m_parameters.frameAncestorOrigins))
-        error = fromOriginResourceError(m_response.url());
-    if (error.isNull() && isMainResource() && shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(m_response)) {
+    if (isMainResource() && shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(m_response)) {
         send(Messages::WebResourceLoader::StopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied { });
         return ShouldContinueDidReceiveResponse::No;
     }
-    if (error.isNull() && m_networkLoadChecker)
-        error = m_networkLoadChecker->validateResponse(m_response);
-    if (!error.isNull()) {
-        RunLoop::main().dispatch([protectedThis = makeRef(*this), error = WTFMove(error)] {
-            if (protectedThis->m_networkLoad)
-                protectedThis->didFailLoading(error);
-        });
-        return ShouldContinueDidReceiveResponse::No;
+
+    if (m_networkLoadChecker) {
+        auto error = m_networkLoadChecker->validateResponse(m_response);
+        if (!error.isNull()) {
+            RunLoop::main().dispatch([protectedThis = makeRef(*this), error = WTFMove(error)] {
+                if (protectedThis->m_networkLoad)
+                    protectedThis->didFailLoading(error);
+            });
+            return ShouldContinueDidReceiveResponse::No;
+        }
     }
 
     auto response = sanitizeResponseIfPossible(ResourceResponse { m_response }, ResourceResponse::SanitizationType::CrossOriginSafe);
@@ -662,11 +619,6 @@ void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& 
 {
     ASSERT(!isSynchronous());
 
-    if (m_parameters.shouldEnableFromOriginResponseHeader && shouldCancelCrossOriginLoad(redirectResponse, m_parameters.frameAncestorOrigins) && m_networkLoad) {
-        didFailLoading(fromOriginResourceError(redirectResponse.url()));
-        return;
-    }
-
     send(Messages::WebResourceLoader::WillSendRequest(redirectRequest, sanitizeResponseIfPossible(WTFMove(redirectResponse), ResourceResponse::SanitizationType::Redirection)));
 }
 
@@ -804,19 +756,16 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
 {
     auto response = entry->response();
 
-    ResourceError error;
-    if (m_parameters.shouldEnableFromOriginResponseHeader && shouldCancelCrossOriginLoad(response, m_parameters.frameAncestorOrigins))
-        error = fromOriginResourceError(response.url());
-    if (error.isNull() && isMainResource() && shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(response)) {
+    if (isMainResource() && shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(response)) {
         send(Messages::WebResourceLoader::StopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied { });
         return;
     }
-    if (error.isNull() && m_networkLoadChecker)
-        error = m_networkLoadChecker->validateResponse(response);
-
-    if (!error.isNull()) {
-        didFailLoading(error);
-        return;
+    if (m_networkLoadChecker) {
+        auto error = m_networkLoadChecker->validateResponse(response);
+        if (!error.isNull()) {
+            didFailLoading(error);
+            return;
+        }
     }
 
     response = sanitizeResponseIfPossible(WTFMove(response), ResourceResponse::SanitizationType::CrossOriginSafe);

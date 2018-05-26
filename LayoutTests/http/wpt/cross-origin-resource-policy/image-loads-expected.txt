@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: Cancelled load to http://127.0.0.1:8800/WebKit/cross-origin-resource-policy/resources/image.py?corp=same&acao=* because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Cannot load image http://127.0.0.1:8800/WebKit/cross-origin-resource-policy/resources/image.py?corp=same&acao=* due to access control checks.
+CONSOLE MESSAGE: Cancelled load to http://127.0.0.1:8800/WebKit/cross-origin-resource-policy/resources/image.py?corp=same-site&acao=* because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Cannot load image http://127.0.0.1:8800/WebKit/cross-origin-resource-policy/resources/image.py?corp=same-site&acao=* due to access control checks.
+
+PASS Same-origin image load with a 'Cross-Origin-Resource-Policy: same' response header. 
+PASS Same-origin image load with a 'Cross-Origin-Resource-Policy: same-site' response header. 
+PASS Cross-origin cors image load with a 'Cross-Origin-Resource-Policy: same' response header. 
+PASS Cross-origin cors image load with a 'Cross-Origin-Resource-Policy: same-site' response header. 
+PASS Cross-origin no-cors image load with a 'Cross-Origin-Resource-Policy: same' response header. 
+PASS Cross-origin no-cors image load with a 'Cross-Origin-Resource-Policy: same-site' response header. 
+

@@ -32,27 +32,27 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-TEST(HTTPParsers, ParseFromOriginHeader)
+TEST(HTTPParsers, ParseCrossOriginResourcePolicyHeader)
 {
-    EXPECT_TRUE(parseFromOriginHeader("") == FromOriginDisposition::None);
-    EXPECT_TRUE(parseFromOriginHeader(" ") == FromOriginDisposition::None);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("") == CrossOriginResourcePolicy::None);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader(" ") == CrossOriginResourcePolicy::None);
 
-    EXPECT_TRUE(parseFromOriginHeader("same") == FromOriginDisposition::Same);
-    EXPECT_TRUE(parseFromOriginHeader("Same") == FromOriginDisposition::Same);
-    EXPECT_TRUE(parseFromOriginHeader("SAME") == FromOriginDisposition::Same);
-    EXPECT_TRUE(parseFromOriginHeader(" same ") == FromOriginDisposition::Same);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("same") == CrossOriginResourcePolicy::Same);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("Same") == CrossOriginResourcePolicy::Same);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("SAME") == CrossOriginResourcePolicy::Same);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader(" same ") == CrossOriginResourcePolicy::Same);
 
-    EXPECT_TRUE(parseFromOriginHeader("same-site") == FromOriginDisposition::SameSite);
-    EXPECT_TRUE(parseFromOriginHeader("Same-Site") == FromOriginDisposition::SameSite);
-    EXPECT_TRUE(parseFromOriginHeader("SAME-SITE") == FromOriginDisposition::SameSite);
-    EXPECT_TRUE(parseFromOriginHeader(" same-site ") == FromOriginDisposition::SameSite);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("same-site") == CrossOriginResourcePolicy::SameSite);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("Same-Site") == CrossOriginResourcePolicy::SameSite);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("SAME-SITE") == CrossOriginResourcePolicy::SameSite);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader(" same-site ") == CrossOriginResourcePolicy::SameSite);
 
-    EXPECT_TRUE(parseFromOriginHeader("zame") == FromOriginDisposition::Invalid);
-    EXPECT_TRUE(parseFromOriginHeader("samesite") == FromOriginDisposition::Invalid);
-    EXPECT_TRUE(parseFromOriginHeader("same site") == FromOriginDisposition::Invalid);
-    EXPECT_TRUE(parseFromOriginHeader("same–site") == FromOriginDisposition::Invalid);
-    EXPECT_TRUE(parseFromOriginHeader("SAMESITE") == FromOriginDisposition::Invalid);
-    EXPECT_TRUE(parseFromOriginHeader("") == FromOriginDisposition::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("zame") == CrossOriginResourcePolicy::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("samesite") == CrossOriginResourcePolicy::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("same site") == CrossOriginResourcePolicy::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("same–site") == CrossOriginResourcePolicy::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("SAMESITE") == CrossOriginResourcePolicy::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("") == CrossOriginResourcePolicy::Invalid);
 }
 
 } // namespace TestWebKitAPI

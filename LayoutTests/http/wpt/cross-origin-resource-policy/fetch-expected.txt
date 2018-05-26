@@ -1,0 +1,26 @@
+CONSOLE MESSAGE: Cancelled load to http://127.0.0.1:8800/WebKit/cross-origin-resource-policy/resources/hello.py?corp=same because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/WebKit/cross-origin-resource-policy/resources/hello.py?corp=same due to access control checks.
+CONSOLE MESSAGE: Cancelled load to http://127.0.0.1:8800/WebKit/cross-origin-resource-policy/resources/hello.py?corp=same-site because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/WebKit/cross-origin-resource-policy/resources/hello.py?corp=same-site due to access control checks.
+CONSOLE MESSAGE: Cancelled load to https://localhost:9443/WebKit/cross-origin-resource-policy/resources/hello.py?corp=same because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/WebKit/cross-origin-resource-policy/resources/hello.py?corp=same due to access control checks.
+CONSOLE MESSAGE: Cancelled load to http://localhost:8801/WebKit/cross-origin-resource-policy/resources/hello.py?corp=same because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/WebKit/cross-origin-resource-policy/resources/hello.py?corp=same due to access control checks.
+CONSOLE MESSAGE: Cancelled load to http://127.0.0.1:8800/WebKit/cross-origin-resource-policy/resources/hello.py?corp=same because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/WebKit/cross-origin-resource-policy/resources/hello.py?corp=same due to access control checks.
+CONSOLE MESSAGE: Cross-origin redirection to http://localhost:8800/WebKit/cross-origin-resource-policy/resources/hello.py?corp=same denied by Cross-Origin Resource Sharing policy: Cancelled load to http://127.0.0.1:8800/WebKit/cross-origin-resource-policy/resources/redirect.py?corp=same&redirectTo=http%3A%2F%2Flocalhost%3A8800%2FWebKit%2Fcross-origin-resource-policy%2Fresources%2Fhello.py%3Fcorp%3Dsame because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/WebKit/cross-origin-resource-policy/resources/redirect.py?corp=same&redirectTo=http%3A%2F%2Flocalhost%3A8800%2FWebKit%2Fcross-origin-resource-policy%2Fresources%2Fhello.py%3Fcorp%3Dsame due to access control checks.
+
+PASS Same-origin fetch with a 'Cross-Origin-Resource-Policy: same' response header. 
+PASS Same-origin fetch with a 'Cross-Origin-Resource-Policy: same-site' response header. 
+PASS Cross-origin cors fetch with a 'Cross-Origin-Resource-Policy: same' response header. 
+PASS Cross-origin cors fetch with a 'Cross-Origin-Resource-Policy: same-site' response header. 
+PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same' response header. 
+PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-site' response header. 
+PASS Cross-origin no-cors fetch to a same-site URL with a 'Cross-Origin-Resource-Policy: same-site' response header. 
+PASS Cross-origin no-cors fetch to a same-site URL with a 'Cross-Origin-Resource-Policy: same' response header. 
+PASS Valid cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-site' response header. 
+PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same' response header after a redirection. 
+PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same' response header after a cross-origin redirection. 
+PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same' redirect response header. 
+

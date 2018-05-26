@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: Cancelled load to http://localhost:8800/WebKit/cross-origin-resource-policy/resources/hello.py?corp=same because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/WebKit/cross-origin-resource-policy/resources/hello.py?corp=same due to access control checks.
+CONSOLE MESSAGE: Cancelled load to http://localhost:8800/WebKit/cross-origin-resource-policy/resources/hello.py?corp=same-site because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/WebKit/cross-origin-resource-policy/resources/hello.py?corp=same-site due to access control checks.
+CONSOLE MESSAGE: Cancelled load to http://localhost:8800/WebKit/cross-origin-resource-policy/resources/hello.py?corp=same because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/WebKit/cross-origin-resource-policy/resources/hello.py?corp=same due to access control checks.
+
+PASS Cross-origin fetch in a data: iframe load fails if the server blocks cross-origin loads with a 'Cross-Origin-Resource-Policy: same' response header. 
+PASS Cross-origin fetch in a data: iframe load fails if the server blocks cross-origin loads with a 'Cross-Origin-Resource-Policy: same-site' response header. 
+PASS Cross-origin fetch in a cross origin iframe load fails if the server blocks cross-origin loads with a 'Cross-Origin-Resource-Policy: same' response header. 
+PASS Same-origin fetch in a cross origin iframe load succeeds if the server blocks cross-origin loads with a 'Cross-Origin-Resource-Policy: same' response header. 
+
