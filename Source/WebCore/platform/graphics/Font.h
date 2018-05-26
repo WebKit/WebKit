@@ -199,10 +199,7 @@ public:
     const BitVector& glyphsSupportedByAllPetiteCaps() const;
 #endif
 
-#if PLATFORM(COCOA) || USE(HARFBUZZ)
     bool canRenderCombiningCharacterSequence(const UChar*, size_t) const;
-#endif
-
     bool applyTransforms(GlyphBufferGlyph*, GlyphBufferAdvance*, size_t glyphCount, bool enableKerning, bool requiresShaping) const;
 
 #if PLATFORM(WIN)
@@ -295,10 +292,6 @@ private:
     mutable std::optional<BitVector> m_glyphsSupportedByAllSmallCaps;
     mutable std::optional<BitVector> m_glyphsSupportedByPetiteCaps;
     mutable std::optional<BitVector> m_glyphsSupportedByAllPetiteCaps;
-#endif
-
-#if PLATFORM(COCOA) || USE(HARFBUZZ)
-    mutable std::unique_ptr<HashMap<String, bool>> m_combiningCharacterSequenceSupport;
 #endif
 
 #if PLATFORM(WIN)

@@ -1,3 +1,26 @@
+2018-05-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Improve the performance of Font::canRenderCombiningCharacterSequence()
+        https://bugs.webkit.org/show_bug.cgi?id=185933
+
+        Reviewed by Ryosuke Niwa.
+
+        We don't need to create a whole CTLine just to determine whether or not a font supports rendering a grapheme cluster.
+        Instead, the right way to do it is just see if the font's cmap table supports every code point in the cluster.
+
+        This patch reports a 2% progression on the attached PerformanceTest.
+
+        Test: Layout/ComplexLongUnique.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::canRenderCombiningCharacterSequence const):
+        * platform/graphics/Font.h:
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::provideStringAndAttributes): Deleted.
+        (WebCore::Font::canRenderCombiningCharacterSequence const): Deleted.
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::Font::canRenderCombiningCharacterSequence const): Deleted.
+
 2018-05-25  Eric Carlson  <eric.carlson@apple.com>
 
         Captions are sized incorrectly in PiP mode

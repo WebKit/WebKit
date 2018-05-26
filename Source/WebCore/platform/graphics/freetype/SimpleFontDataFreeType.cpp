@@ -187,45 +187,4 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     return width ? width : m_spaceWidth;
 }
 
-#if USE(HARFBUZZ)
-bool Font::canRenderCombiningCharacterSequence(const UChar* characters, size_t length) const
-{
-    if (!m_combiningCharacterSequenceSupport)
-        m_combiningCharacterSequenceSupport = std::make_unique<HashMap<String, bool>>();
-
-    WTF::HashMap<String, bool>::AddResult addResult = m_combiningCharacterSequenceSupport->add(String(characters, length), false);
-    if (!addResult.isNewEntry)
-        return addResult.iterator->value;
-
-    UErrorCode error = U_ZERO_ERROR;
-    Vector<UChar, 4> normalizedCharacters(length);
-#if COMPILER(GCC_OR_CLANG)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-    int32_t normalizedLength = unorm_normalize(characters, length, UNORM_NFC, UNORM_UNICODE_3_2, &normalizedCharacters[0], length, &error);
-#if COMPILER(GCC_OR_CLANG)
-#pragma GCC diagnostic pop
-#endif
-    if (U_FAILURE(error))
-        return false;
-
-    CairoFtFaceLocker cairoFtFaceLocker(m_platformData.scaledFont());
-    FT_Face face = cairoFtFaceLocker.ftFace();
-    if (!face)
-        return false;
-
-    UChar32 character;
-    unsigned clusterLength = 0;
-    SurrogatePairAwareTextIterator iterator(normalizedCharacters.data(), 0, normalizedLength, normalizedLength);
-    for (iterator.advance(clusterLength); iterator.consume(character, clusterLength); iterator.advance(clusterLength)) {
-        if (!FcFreeTypeCharIndex(face, character))
-            return false;
-    }
-
-    addResult.iterator->value = true;
-    return true;
-}
-#endif
-
 }

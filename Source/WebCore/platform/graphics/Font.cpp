@@ -513,4 +513,14 @@ bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps fontVariantC
 }
 #endif
 
+bool Font::canRenderCombiningCharacterSequence(const UChar* characters, size_t length) const
+{
+    ASSERT(isMainThread());
+
+    for (UChar32 codePoint : StringView(characters, length).codePoints()) {
+        if (!glyphForCharacter(codePoint))
+            return false;
+    }
+    return true;
+}
 } // namespace WebCore
