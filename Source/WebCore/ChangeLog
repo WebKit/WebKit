@@ -1,3 +1,40 @@
+2018-05-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement margin computation
+        https://bugs.webkit.org/show_bug.cgi?id=186008
+
+        Reviewed by Antti Koivisto.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeMargin const):
+        (WebCore::Layout::FormattingContext::marginTop const): Deleted.
+        (WebCore::Layout::FormattingContext::marginLeft const): Deleted.
+        (WebCore::Layout::FormattingContext::marginBottom const): Deleted.
+        (WebCore::Layout::FormattingContext::marginRight const): Deleted.
+        * layout/FormattingContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        (WebCore::Layout::BlockFormattingContext::computeMargin const):
+        (WebCore::Layout::BlockFormattingContext::marginTop const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::marginBottom const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeight):
+        (WebCore::Layout::BlockFormattingContext::Geometry::computedMargin):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::_isMarginBottomCollapsedWithParent):
+        (WebCore::Layout::collapsedMarginBottomFromLastChild):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginTop):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBottom):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::isMarginTopCollapsedWithParentMarginBottom):
+        (WebCore::Layout::BlockMarginCollapse::marginTop): Deleted.
+        (WebCore::Layout::BlockMarginCollapse::marginBottom): Deleted.
+        (WebCore::Layout::BlockMarginCollapse::isMarginBottomCollapsedWithParent): Deleted.
+        (WebCore::Layout::BlockMarginCollapse::isMarginTopCollapsedWithParentMarginBottom): Deleted.
+        * layout/blockformatting/BlockMarginCollapse.h: Removed.
+
 2018-05-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Delete unnecessary WebCascadeList in ComplexTextController

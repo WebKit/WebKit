@@ -64,7 +64,7 @@ LayoutUnit BlockFormattingContext::Geometry::inFlowNonReplacedHeight(LayoutConte
     // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin...
     auto* lastInFlowChild = downcast<Container>(layoutBox).lastInFlowChild();
     ASSERT(lastInFlowChild);
-    if (!BlockMarginCollapse::isMarginBottomCollapsedWithParent(*lastInFlowChild)) {
+    if (!BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent(*lastInFlowChild)) {
         auto* lastInFlowDisplayBox = layoutContext.displayBoxForLayoutBox(*lastInFlowChild);
         ASSERT(lastInFlowDisplayBox);
         return lastInFlowDisplayBox->bottom() + lastInFlowDisplayBox->marginBottom();
@@ -72,7 +72,7 @@ LayoutUnit BlockFormattingContext::Geometry::inFlowNonReplacedHeight(LayoutConte
 
     // 3. the bottom border edge of the last in-flow child whose top margin doesn't collapse with the element's bottom margin
     auto* inFlowChild = lastInFlowChild;
-    while (inFlowChild && BlockMarginCollapse::isMarginTopCollapsedWithParentMarginBottom(*inFlowChild))
+    while (inFlowChild && BlockFormattingContext::MarginCollapse::isMarginTopCollapsedWithParentMarginBottom(*inFlowChild))
         inFlowChild = inFlowChild->previousInFlowSibling();
     if (inFlowChild) {
         auto* inFlowDisplayBox = layoutContext.displayBoxForLayoutBox(*inFlowChild);
@@ -197,6 +197,19 @@ LayoutPoint BlockFormattingContext::Geometry::inFlowPositionedPosition(LayoutCon
     }
 
     return { displayBox.left() + leftDelta, displayBox.top() + topDelta };
+}
+
+Display::Box::Edges BlockFormattingContext::Geometry::computedMargin(LayoutContext& layoutContext, const Box& layoutBox)
+{
+    auto& style = layoutBox.style();
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+
+    return Display::Box::Edges(
+        BlockFormattingContext::MarginCollapse::marginTop(layoutBox),
+        valueForLength(style.marginLeft(), containingBlockWidth),
+        BlockFormattingContext::MarginCollapse::marginBottom(layoutBox),
+        valueForLength(style.marginRight(), containingBlockWidth)
+    );
 }
 
 }

@@ -135,24 +135,9 @@ void FormattingContext::computeFloatingHeight(LayoutContext& layoutContext, cons
     displayBox.setHeight(computedHeight);
 }
 
-LayoutUnit FormattingContext::marginTop(const Box&) const
+void FormattingContext::computeMargin(LayoutContext&, const Box&, Display::Box& displayBox) const
 {
-    return 0;
-}
-
-LayoutUnit FormattingContext::marginLeft(const Box&) const
-{
-    return 0;
-}
-
-LayoutUnit FormattingContext::marginBottom(const Box&) const
-{
-    return 0;
-}
-
-LayoutUnit FormattingContext::marginRight(const Box&) const
-{
-    return 0;
+    displayBox.setMargin({ 0, 0, 0, 0 });
 }
 
 void FormattingContext::computeBorderAndPadding(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const

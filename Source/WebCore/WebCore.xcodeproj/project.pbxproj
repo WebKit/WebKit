@@ -400,7 +400,6 @@
 		115CFA7E208B8E10001E6991 /* InlineFormattingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA7C208B8E10001E6991 /* InlineFormattingState.h */; };
 		115CFA82208B8EDA001E6991 /* FloatingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA80208B8EDA001E6991 /* FloatingState.h */; };
 		115CFA86208B9066001E6991 /* FloatingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA84208B9066001E6991 /* FloatingContext.h */; };
-		115CFA8A208B921A001E6991 /* BlockMarginCollapse.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA88208B921A001E6991 /* BlockMarginCollapse.h */; };
 		115CFA97208B952B001E6991 /* LayoutBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA95208B952B001E6991 /* LayoutBox.h */; };
 		119340791FE8B92300935F1E /* RenderTreeBuilderTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340771FE8B92300935F1E /* RenderTreeBuilderTable.h */; };
 		1193408A1FEB355D00935F1E /* RenderTreeBuilderRuby.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340881FEB355D00935F1E /* RenderTreeBuilderRuby.h */; };
@@ -5754,7 +5753,6 @@
 		115CFA81208B8EDA001E6991 /* FloatingState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FloatingState.cpp; sourceTree = "<group>"; };
 		115CFA84208B9066001E6991 /* FloatingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FloatingContext.h; sourceTree = "<group>"; };
 		115CFA85208B9066001E6991 /* FloatingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FloatingContext.cpp; sourceTree = "<group>"; };
-		115CFA88208B921A001E6991 /* BlockMarginCollapse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlockMarginCollapse.h; sourceTree = "<group>"; };
 		115CFA89208B921A001E6991 /* BlockMarginCollapse.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlockMarginCollapse.cpp; sourceTree = "<group>"; };
 		115CFA95208B952B001E6991 /* LayoutBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutBox.h; sourceTree = "<group>"; };
 		115CFA96208B952B001E6991 /* LayoutBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutBox.cpp; sourceTree = "<group>"; };
@@ -15727,7 +15725,6 @@
 				1123AFDA209ABB2000736ACC /* BlockInvalidation.cpp */,
 				1123AFD9209ABB2000736ACC /* BlockInvalidation.h */,
 				115CFA89208B921A001E6991 /* BlockMarginCollapse.cpp */,
-				115CFA88208B921A001E6991 /* BlockMarginCollapse.h */,
 			);
 			path = blockformatting;
 			sourceTree = "<group>";
@@ -27168,7 +27165,6 @@
 				976D6C7F122B8A3D001FD1F7 /* BlobURL.h in Headers */,
 				115CFA6E208AFAB7001E6991 /* BlockFormattingContext.h in Headers */,
 				115CFA7A208B8D9D001E6991 /* BlockFormattingState.h in Headers */,
-				115CFA8A208B921A001E6991 /* BlockMarginCollapse.h in Headers */,
 				BC5EB5E10E81BE8700B25965 /* BorderData.h in Headers */,
 				589556ED18D4A44000764B03 /* BorderEdge.h in Headers */,
 				BC5EB5DB0E81B7EA00B25965 /* BorderValue.h in Headers */,

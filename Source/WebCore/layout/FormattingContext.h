@@ -78,11 +78,7 @@ protected:
     virtual void computeFloatingHeight(LayoutContext&, const Box&, Display::Box&) const;
     virtual void computeInFlowHeight(LayoutContext&, const Box&, Display::Box&) const = 0;
 
-    virtual LayoutUnit marginTop(const Box&) const;
-    virtual LayoutUnit marginLeft(const Box&) const;
-    virtual LayoutUnit marginBottom(const Box&) const;
-    virtual LayoutUnit marginRight(const Box&) const;
-
+    virtual void computeMargin(LayoutContext&, const Box&, Display::Box&) const;
     void computeBorderAndPadding(LayoutContext&, const Box&, Display::Box&) const;
 
     void placeInFlowPositionedChildren(LayoutContext&, const Container&) const;

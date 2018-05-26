@@ -29,7 +29,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BlockFormattingState.h"
-#include "BlockMarginCollapse.h"
 #include "DisplayBox.h"
 #include "FloatingContext.h"
 #include "FloatingState.h"
@@ -75,6 +74,7 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             auto& displayBox = layoutPair.displayBox;
             
             computeWidth(layoutContext, layoutBox, displayBox);
+            computeMargin(layoutContext, layoutBox, displayBox);
             computeBorderAndPadding(layoutContext, layoutBox, displayBox);
             computeStaticPosition(layoutContext, layoutBox, displayBox);
             if (layoutBox.establishesFormattingContext()) {
@@ -169,14 +169,9 @@ void BlockFormattingContext::computeInFlowWidth(LayoutContext& layoutContext, co
     displayBox.setWidth(computedWidth);
 }
 
-LayoutUnit BlockFormattingContext::marginTop(const Box& layoutBox) const
+void BlockFormattingContext::computeMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    return BlockMarginCollapse::marginTop(layoutBox);
-}
-
-LayoutUnit BlockFormattingContext::marginBottom(const Box& layoutBox) const
-{
-    return BlockMarginCollapse::marginBottom(layoutBox);
+    displayBox.setMargin(Geometry::computedMargin(layoutContext, layoutBox));
 }
 
 }

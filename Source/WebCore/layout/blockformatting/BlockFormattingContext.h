@@ -55,10 +55,8 @@ private:
     void computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const override;
     void computeInFlowWidth(LayoutContext&, const Box&, Display::Box&) const override;
     void computeInFlowHeight(LayoutContext&, const Box&, Display::Box&) const override;
+    void computeMargin(LayoutContext&, const Box&, Display::Box&) const override;
 
-    LayoutUnit marginTop(const Box&) const override;
-    LayoutUnit marginBottom(const Box&) const override;
-    
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry {
     public:
@@ -67,6 +65,22 @@ private:
 
         static LayoutPoint staticPosition(LayoutContext&, const Box&);
         static LayoutPoint inFlowPositionedPosition(LayoutContext&, const Box&);
+
+        static Display::Box::Edges computedMargin(LayoutContext&, const Box&);
+    };
+    
+    // This class implements margin collapsing for block formatting context.
+    class MarginCollapse {
+    public:
+        static LayoutUnit marginTop(const Box&);
+        static LayoutUnit marginBottom(const Box&);
+
+        static bool isMarginBottomCollapsedWithParent(const Box&);
+        static bool isMarginTopCollapsedWithParentMarginBottom(const Box&);
+    
+    private:
+        static LayoutUnit collapsedMarginBottomFromLastChild(const Box&);
+        static LayoutUnit nonCollapsedMarginBottom(const Box&);
     };
 };
 
