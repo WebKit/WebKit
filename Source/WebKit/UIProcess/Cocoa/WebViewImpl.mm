@@ -1393,6 +1393,9 @@ void WebViewImpl::didRelaunchProcess()
 void WebViewImpl::setDrawsBackground(bool drawsBackground)
 {
     m_page->setDrawsBackground(drawsBackground);
+
+    // Make sure updateLayer gets called on the web view.
+    [m_view setNeedsDisplay:YES];
 }
 
 bool WebViewImpl::drawsBackground() const
@@ -1403,6 +1406,9 @@ bool WebViewImpl::drawsBackground() const
 void WebViewImpl::setBackgroundColor(NSColor *backgroundColor)
 {
     m_backgroundColor = backgroundColor;
+
+    // Make sure updateLayer gets called on the web view.
+    [m_view setNeedsDisplay:YES];
 }
 
 NSColor *WebViewImpl::backgroundColor() const
@@ -1634,12 +1640,6 @@ void WebViewImpl::updateLayer()
         [m_view layer].backgroundColor = CGColorGetConstantColor(draws ? kCGColorWhite : kCGColorClear);
     else
         [m_view layer].backgroundColor = [m_backgroundColor CGColor];
-
-    // If asynchronous geometry updates have been sent by forceAsyncDrawingAreaSizeUpdate,
-    // then subsequent calls to setFrameSize should not result in us waiting for the did
-    // udpate response if setFrameSize is called.
-    if (frameSizeUpdatesDisabled())
-        return;
 }
 
 void WebViewImpl::drawRect(CGRect rect)

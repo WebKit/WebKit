@@ -2894,6 +2894,7 @@ void FrameView::setTransparent(bool isTransparent)
         return;
 
     renderView()->compositor().rootBackgroundTransparencyChanged();
+    setNeedsLayout();
 }
 
 bool FrameView::hasOpaqueBackground() const
@@ -2909,7 +2910,7 @@ Color FrameView::baseBackgroundColor() const
 void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
 {
     bool wasOpaque = m_baseBackgroundColor.isOpaque();
-    
+
     if (!backgroundColor.isValid())
         m_baseBackgroundColor = Color::white;
     else
@@ -2919,6 +2920,7 @@ void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
         return;
 
     recalculateScrollbarOverlayStyle();
+    setNeedsLayout();
 
     if (m_baseBackgroundColor.isOpaque() != wasOpaque)
         renderView()->compositor().rootBackgroundTransparencyChanged();
@@ -2930,6 +2932,8 @@ void FrameView::updateBackgroundRecursively(const Color& backgroundColor, bool t
         if (FrameView* view = frame->view()) {
             view->setTransparent(transparent);
             view->setBaseBackgroundColor(backgroundColor);
+            if (view->needsLayout())
+                view->layoutContext().scheduleLayout();
         }
     }
 }

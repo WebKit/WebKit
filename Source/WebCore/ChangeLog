@@ -1,3 +1,25 @@
+2018-05-25  Timothy Hatcher  <timothy@apple.com>
+
+        Setting drawsBackground to YES on a WKView doesn't take effect immediately
+        https://bugs.webkit.org/show_bug.cgi?id=185885
+        rdar://problem/39706506
+
+        Reviewed by Simon Fraser.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::createView): Always call updateBackgroundRecursively, it handles
+        invalid colors correctly already.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setTransparent): Call setNeedsLayout() since base background color
+        and transparent is used to update layers.
+        (WebCore::FrameView::setBaseBackgroundColor): Ditto.
+        (WebCore::FrameView::updateBackgroundRecursively): Schedule layout if needed.
+        * page/FrameView.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::viewHasTransparentBackground const): Use baseBackgroundColor
+        instead of hardcoding white.
+        (WebCore::RenderLayerCompositor::rootBackgroundTransparencyChanged): Fixed incorrect changed logging.
+
 2018-05-25  Youenn Fablet  <youenn@apple.com>
 
         Migrate From-Origin to Cross-Origin-Resource-Policy

@@ -702,8 +702,6 @@ static void validate(WKWebViewConfiguration *configuration)
     [self _updateAccessibilityEventsEnabled];
 #endif
 
-    _page->setBackgroundExtendsBeyondPage(true);
-
     if (NSString *applicationNameForUserAgent = configuration.applicationNameForUserAgent)
         _page->setApplicationNameForUserAgent(applicationNameForUserAgent);
 

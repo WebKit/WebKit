@@ -1,3 +1,29 @@
+2018-05-25  Timothy Hatcher  <timothy@apple.com>
+
+        Setting drawsBackground to YES on a WKView doesn't take effect immediately
+        https://bugs.webkit.org/show_bug.cgi?id=185885
+        rdar://problem/39706506
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]): Removed setBackgroundExtendsBeyondPage(true)
+        since it is now the default.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setDrawsBackground): Make sure updateLayer gets called on the web view
+        by calling setNeedsDisplay:YES.
+        (WebKit::WebViewImpl::setBackgroundColor): Ditto.
+        (WebKit::WebViewImpl::updateLayer): Removed dead code.
+        * UIProcess/WebPageProxy.h: Make m_backgroundExtendsBeyondPage default to true. WebKit was
+        always turning this on during WKWebView initializtion, which would cause the scroll
+        shadow layer to be created, flash black because of no background, then destroyed soon
+        after once WebKit's message to turn it on got delivered.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebPage::WebPage): Call setBackgroundExtendsBeyondPage earlier to avoid creating the scroll
+        shadow layer, since backgroundShouldExtendBeyondPage defautls to false in WebCore for WK1.
+        (WebKit::WebPage::setDrawsBackground): Use updateBackgroundRecursively to propagate the
+        correct base background color.
+
 2018-05-25  Youenn Fablet  <youenn@apple.com>
 
         Migrate From-Origin to Cross-Origin-Resource-Policy

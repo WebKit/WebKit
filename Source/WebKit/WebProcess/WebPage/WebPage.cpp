@@ -461,6 +461,8 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     m_mainFrame = WebFrame::createWithCoreMainFrame(this, &m_page->mainFrame());
     m_drawingArea->updatePreferences(parameters.store);
 
+    setBackgroundExtendsBeyondPage(parameters.backgroundExtendsBeyondPage);
+
 #if ENABLE(GEOLOCATION)
     WebCore::provideGeolocationTo(m_page.get(), *new WebGeolocationClient(*this));
 #endif
@@ -521,8 +523,6 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
         m_scrollbarOverlayStyle = static_cast<ScrollbarOverlayStyle>(parameters.scrollbarOverlayStyle.value());
     else
         m_scrollbarOverlayStyle = std::optional<ScrollbarOverlayStyle>();
-
-    setBackgroundExtendsBeyondPage(parameters.backgroundExtendsBeyondPage);
 
     setTopContentInset(parameters.topContentInset);
 
@@ -2651,9 +2651,10 @@ void WebPage::setDrawsBackground(bool drawsBackground)
 
     m_drawsBackground = drawsBackground;
 
-    for (Frame* coreFrame = m_mainFrame->coreFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
-        if (FrameView* view = coreFrame->view())
-            view->setTransparent(!drawsBackground);
+    if (FrameView* frameView = mainFrameView()) {
+        Color backgroundColor = drawsBackground ? Color::white : Color::transparent;
+        bool isTransparent = !drawsBackground;
+        frameView->updateBackgroundRecursively(backgroundColor, isTransparent);
     }
 
     m_drawingArea->pageBackgroundTransparencyChanged();
