@@ -144,6 +144,7 @@ void VideoFullscreenLayerManagerObjC::setVideoFullscreenFrame(FloatRect videoFul
         return;
 
     [m_videoLayer setFrame:m_videoFullscreenFrame];
+    syncTextTrackBounds();
 }
 
 void VideoFullscreenLayerManagerObjC::didDestroyVideoLayer()
@@ -167,8 +168,7 @@ void VideoFullscreenLayerManagerObjC::syncTextTrackBounds()
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-    CGRect textFrame = m_videoLayer ? m_videoInlineFrame : m_videoFullscreenFrame;
-    [m_textTrackRepresentationLayer setFrame:textFrame];
+    [m_textTrackRepresentationLayer setFrame:m_videoFullscreenFrame];
 
     [CATransaction commit];
 }

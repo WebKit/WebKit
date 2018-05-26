@@ -1,3 +1,20 @@
+2018-05-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Captions are sized incorrectly in PiP mode
+        https://bugs.webkit.org/show_bug.cgi?id=186005
+        <rdar://problem/39729718>
+
+        Reviewed by Dean Jackson.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateSizes): Only sync text track bounds 
+        when the size actually changes.
+
+        * platform/graphics/avfoundation/objc/VideoFullscreenLayerManagerObjC.mm:
+        (WebCore::VideoFullscreenLayerManagerObjC::setVideoFullscreenFrame): Call syncTextTrackBounds.
+        (WebCore::VideoFullscreenLayerManagerObjC::syncTextTrackBounds): Set the text track layer size
+        to m_videoFullscreenFrame, it is always set the size of the PiP/Fullscreen layer.
+
 2018-05-25  Timothy Hatcher  <timothy@apple.com>
 
         Setting drawsBackground to YES on a WKView doesn't take effect immediately

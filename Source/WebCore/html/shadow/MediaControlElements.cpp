@@ -1382,8 +1382,6 @@ void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
     if (!document().page())
         return;
 
-    mediaElement->syncTextTrackBounds();
-
     IntRect videoBox;
     if (m_textTrackRepresentation) {
         videoBox = m_textTrackRepresentation->bounds();
@@ -1401,6 +1399,7 @@ void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
 
     m_videoDisplaySize = videoBox;
     m_updateTextTrackRepresentationStyle = true;
+    mediaElement->syncTextTrackBounds();
 
     // FIXME (121170): This function is called during layout, and should lay out the text tracks immediately.
     m_updateTimer.startOneShot(0_s);
