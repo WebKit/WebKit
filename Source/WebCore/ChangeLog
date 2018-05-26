@@ -1,5 +1,30 @@
 2018-05-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [Cocoa] Delete unnecessary WebCascadeList in ComplexTextController
+        https://bugs.webkit.org/show_bug.cgi?id=186007
+
+        Reviewed by Zalan Bujtas.
+
+        Inside ComplexTextController::collectComplexTextRuns(), we chop up text based on which fonts should be
+        used to render which grapheme clusters. For each grapheme cluster, we run through the font-family list
+        in FontCascade::fontForCombiningCharacterSequence() and find the first font that can render the cluster.
+        If no items can render the cluster, we construct a WebCascadeList and let CoreText try to figure out
+        which fonts can render which clusters.
+
+        Except there's no point, because we just determined that no font in the list can be used to render the
+        cluster. CoreText isn't magic; it isn't going to somehow disagree with us. WebCascadeList is just
+        useless code.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        (-[WebCascadeList initWithFont:character:]): Deleted.
+        (-[WebCascadeList count]): Deleted.
+        (-[WebCascadeList objectAtIndex:]): Deleted.
+
+2018-05-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Improve the performance of Font::canRenderCombiningCharacterSequence()
         https://bugs.webkit.org/show_bug.cgi?id=185933
 

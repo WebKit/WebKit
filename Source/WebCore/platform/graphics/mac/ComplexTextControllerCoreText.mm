@@ -32,64 +32,6 @@
 #include <wtf/WeakPtr.h>
 #include <CoreText/CoreText.h>
 
-// Note: CTFontDescriptorRefs can live forever in caches inside CoreText, so this object can too.
-@interface WebCascadeList : NSArray {
-    @private
-    WeakPtr<WebCore::FontCascade> _font;
-    UChar32 _character;
-    NSUInteger _count;
-    Vector<RetainPtr<CTFontDescriptorRef>, 16> _fontDescriptors;
-}
-
-- (id)initWithFont:(const WebCore::FontCascade*)font character:(UChar32)character;
-
-@end
-
-@implementation WebCascadeList
-
-- (id)initWithFont:(const WebCore::FontCascade*)font character:(UChar32)character
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _font = font->createWeakPtr();
-    _character = character;
-
-    // By the time a WebCascadeList is used, the FontCascade has already been asked to realize all of its
-    // Fonts, so this loop does not hit the FontCache.
-    while (!_font->fallbackRangesAt(_count).isNull())
-        _count++;
-
-    return self;
-}
-
-- (NSUInteger)count
-{
-    return _font ? _count : 0;
-}
-
-- (id)objectAtIndex:(NSUInteger)index
-{
-    if (!_font)
-        return nil;
-
-    CTFontDescriptorRef fontDescriptor;
-    if (index < _fontDescriptors.size()) {
-        if ((fontDescriptor = _fontDescriptors[index].get()))
-            return (id)fontDescriptor;
-    } else
-        _fontDescriptors.grow(index + 1);
-
-    const WebCore::Font* font = _font->fallbackRangesAt(index).fontForCharacter(_character);
-    if (!font)
-        font = &_font->fallbackRangesAt(index).fontForFirstRange();
-    fontDescriptor = CTFontCopyFontDescriptor(font->platformData().ctFont());
-    _fontDescriptors[index] = adoptCF(fontDescriptor);
-    return (id)fontDescriptor;
-}
-
-@end
-
 namespace WebCore {
 
 ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font& font, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd)
@@ -191,16 +133,9 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         font = m_font.fallbackRangesAt(0).fontForCharacter(baseCharacter);
         if (!font)
             font = &m_font.fallbackRangesAt(0).fontForFirstRange();
-
-        RetainPtr<WebCascadeList> cascadeList = adoptNS([[WebCascadeList alloc] initWithFont:&m_font character:baseCharacter]);
-
         stringAttributes = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, font->getCFStringAttributes(m_font.enableKerning(), font->platformData().orientation())));
-        static const void* attributeKeys[] = { kCTFontCascadeListAttribute };
-        const void* values[] = { cascadeList.get() };
-        RetainPtr<CFDictionaryRef> attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, attributeKeys, values, sizeof(attributeKeys) / sizeof(*attributeKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-        RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
-        RetainPtr<CTFontRef> fontWithCascadeList = adoptCF(CTFontCreateCopyWithAttributes(font->platformData().ctFont(), m_font.pixelSize(), 0, fontDescriptor.get()));
-        CFDictionarySetValue(const_cast<CFMutableDictionaryRef>(stringAttributes.get()), kCTFontAttributeName, fontWithCascadeList.get());
+        // We don't know which font should be used to render this grapheme cluster, so enable CoreText's fallback mechanism by using the CTFont which doesn't have CoreText's fallback disabled.
+        CFDictionarySetValue(const_cast<CFMutableDictionaryRef>(stringAttributes.get()), kCTFontAttributeName, font->platformData().font());
     } else
         stringAttributes = font->getCFStringAttributes(m_font.enableKerning(), font->platformData().orientation());
 
@@ -236,6 +171,8 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         ASSERT(CFGetTypeID(ctRun) == CTRunGetTypeID());
         CFRange runRange = CTRunGetStringRange(ctRun);
         const Font* runFont = font;
+        // If isSystemFallback is false, it means we disabled CoreText's font fallback mechanism, which means all the runs must use this exact font.
+        // Therefore, we only need to inspect which font was actually used if isSystemFallback is true.
         if (isSystemFallback) {
             CFDictionaryRef runAttributes = CTRunGetAttributes(ctRun);
             CTFontRef runCTFont = static_cast<CTFontRef>(CFDictionaryGetValue(runAttributes, kCTFontAttributeName));
