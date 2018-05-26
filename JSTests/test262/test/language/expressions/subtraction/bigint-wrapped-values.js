@@ -5,36 +5,41 @@ description: subtraction operator ToNumeric with BigInt operands
 esid: sec-subtraction-operator-minus-runtime-semantics-evaluation
 features: [BigInt, Symbol.toPrimitive, computed-property-names]
 ---*/
+assert.sameValue(Object(2n) - 1n, 1n, 'The result of (Object(2n) - 1n) is 1n');
+assert.sameValue(3n - Object(2n), 1n, 'The result of (3n - Object(2n)) is 1n');
 
-assert.sameValue(Object(2n) - 1n, 1n, "ToPrimitive: unbox object with internal slot");
-assert.sameValue(3n - Object(2n), 1n, "ToPrimitive: unbox object with internal slot");
-assert.sameValue(({
+assert.sameValue({
   [Symbol.toPrimitive]: function() {
     return 2n;
   }
-}) - 1n, 1n, "ToPrimitive: @@toPrimitive");
+} - 1n, 1n, 'The result of (({[Symbol.toPrimitive]: function() {return 2n;}}) - 1n) is 1n');
+
 assert.sameValue(3n - {
   [Symbol.toPrimitive]: function() {
     return 2n;
   }
-}, 1n, "ToPrimitive: @@toPrimitive");
-assert.sameValue(({
+}, 1n, 'The result of (3n - {[Symbol.toPrimitive]: function() {return 2n;}}) is 1n');
+
+assert.sameValue({
   valueOf: function() {
     return 2n;
   }
-}) - 1n, 1n, "ToPrimitive: valueOf");
+} - 1n, 1n, 'The result of (({valueOf: function() {return 2n;}}) - 1n) is 1n');
+
 assert.sameValue(3n - {
   valueOf: function() {
     return 2n;
   }
-}, 1n, "ToPrimitive: valueOf");
-assert.sameValue(({
+}, 1n, 'The result of (3n - {valueOf: function() {return 2n;}}) is 1n');
+
+assert.sameValue({
   toString: function() {
     return 2n;
   }
-}) - 1n, 1n, "ToPrimitive: toString");
+} - 1n, 1n, 'The result of (({toString: function() {return 2n;}}) - 1n) is 1n');
+
 assert.sameValue(3n - {
   toString: function() {
     return 2n;
   }
-}, 1n, "ToPrimitive: toString");
+}, 1n, 'The result of (3n - {toString: function() {return 2n;}}) is 1n');

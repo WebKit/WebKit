@@ -15,7 +15,7 @@ features: [Intl.Locale]
 ---*/
 
 verifyProperty(Intl.Locale.prototype.maximize, 'length', {
-  value: 1,
+  value: 0,
   writable: false,
   enumerable: false,
   configurable: true

@@ -1,6 +1,5 @@
 // Copyright (C) 2017 Josh Wolfe. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
-
 /*---
 description: Comparisons of BigInt and non-finite Number values
 esid: sec-abstract-relational-comparison
@@ -18,14 +17,13 @@ info: |
     g. If x is +∞, or y is -∞, return false.
 features: [BigInt]
 ---*/
-
-assert.sameValue(1n <= Infinity, true, "1n <= Infinity");
-assert.sameValue(Infinity <= 1n, false, "Infinity <= 1n");
-assert.sameValue(-1n <= Infinity, true, "-1n <= Infinity");
-assert.sameValue(Infinity <= -1n, false, "Infinity <= -1n");
-assert.sameValue(1n <= -Infinity, false, "1n <= -Infinity");
-assert.sameValue(-Infinity <= 1n, true, "-Infinity <= 1n");
-assert.sameValue(-1n <= -Infinity, false, "-1n <= -Infinity");
-assert.sameValue(-Infinity <= -1n, true, "-Infinity <= -1n");
-assert.sameValue(0n <= NaN, false, "0n <= NaN");
-assert.sameValue(NaN <= 0n, false, "NaN <= 0n");
+assert.sameValue(1n <= Infinity, true, 'The result of (1n <= Infinity) is true');
+assert.sameValue(Infinity <= 1n, false, 'The result of (Infinity <= 1n) is false');
+assert.sameValue(-1n <= Infinity, true, 'The result of (-1n <= Infinity) is true');
+assert.sameValue(Infinity <= -1n, false, 'The result of (Infinity <= -1n) is false');
+assert.sameValue(1n <= -Infinity, false, 'The result of (1n <= -Infinity) is false');
+assert.sameValue(-Infinity <= 1n, true, 'The result of (-Infinity <= 1n) is true');
+assert.sameValue(-1n <= -Infinity, false, 'The result of (-1n <= -Infinity) is false');
+assert.sameValue(-Infinity <= -1n, true, 'The result of (-Infinity <= -1n) is true');
+assert.sameValue(0n <= NaN, false, 'The result of (0n <= NaN) is false');
+assert.sameValue(NaN <= 0n, false, 'The result of (NaN <= 0n) is false');

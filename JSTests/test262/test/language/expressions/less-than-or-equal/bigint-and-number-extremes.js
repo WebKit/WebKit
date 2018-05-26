@@ -1,6 +1,5 @@
 // Copyright (C) 2017 Josh Wolfe. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
-
 /*---
 description: Comparisons of BigInt and Number values
 esid: sec-abstract-relational-comparison
@@ -19,24 +18,37 @@ info: |
     h. If the mathematical value of nx is less than the mathematical value of ny, return true, otherwise return false.
 features: [BigInt]
 ---*/
+assert.sameValue(1n <= Number.MAX_VALUE, true, 'The result of (1n <= Number.MAX_VALUE) is true');
+assert.sameValue(Number.MAX_VALUE <= 1n, false, 'The result of (Number.MAX_VALUE <= 1n) is false');
 
-assert.sameValue(1n <= Number.MAX_VALUE, true, "1n <= Number.MAX_VALUE");
-assert.sameValue(Number.MAX_VALUE <= 1n, false, "Number.MAX_VALUE <= 1n");
-assert.sameValue(1n <= -Number.MAX_VALUE, false, "1n <= -Number.MAX_VALUE");
-assert.sameValue(-Number.MAX_VALUE <= 1n, true, "-Number.MAX_VALUE <= 1n");
+assert.sameValue(
+  1n <= -Number.MAX_VALUE,
+  false,
+  'The result of (1n <= -Number.MAX_VALUE) is false'
+);
+
+assert.sameValue(-Number.MAX_VALUE <= 1n, true, 'The result of (-Number.MAX_VALUE <= 1n) is true');
+
 assert.sameValue(
   0xfffffffffffff7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn <= Number.MAX_VALUE,
   true,
-  "0xfffffffffffff7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn <= Number.MAX_VALUE");
+  'The result of (0xfffffffffffff7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn <= Number.MAX_VALUE) is true'
+);
+
 assert.sameValue(
   Number.MAX_VALUE <= 0xfffffffffffff7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn,
   false,
-  "Number.MAX_VALUE <= 0xfffffffffffff7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn");
+  'The result of (Number.MAX_VALUE <= 0xfffffffffffff7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn) is false'
+);
+
 assert.sameValue(
   0xfffffffffffff800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001n <= Number.MAX_VALUE,
   false,
-  "0xfffffffffffff800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001n <= Number.MAX_VALUE");
+  'The result of (0xfffffffffffff800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001n <= Number.MAX_VALUE) is false'
+);
+
 assert.sameValue(
   Number.MAX_VALUE <= 0xfffffffffffff800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001n,
   true,
-  "Number.MAX_VALUE <= 0xfffffffffffff800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001n");
+  'The result of (Number.MAX_VALUE <= 0xfffffffffffff800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001n) is true'
+);

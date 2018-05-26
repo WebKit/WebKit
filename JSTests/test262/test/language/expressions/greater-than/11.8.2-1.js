@@ -4,25 +4,22 @@
 /*---
 es5id: 11.8.2-1
 description: >
-    11.8.2 Greater-than Operator - Partial left to right order
-    enforced when using Greater-than operator: valueOf > valueOf
+  11.8.2 Greater-than Operator - Partial left to right order
+  enforced when using Greater-than operator: valueOf > valueOf
 ---*/
 
-        var accessed = false;
-        var obj1 = {
-            valueOf: function () {
-                accessed = true;
-                return 3;
-            }
-        };
-        var obj2 = {
-            valueOf: function () {
-                if (accessed === true) {
-                    return 4;
-                } else {
-                    return 2;
-                }
-            }
-        };
+var accessed = false;
+var obj1 = {
+  valueOf: function () {
+    accessed = true;
+    return 3;
+  }
+};
+var obj2 = {
+  valueOf: function () {
+    return 4;
+  }
+};
 
-assert(!(obj1 > obj2), '!(obj1 > obj2) !== true');
+assert.sameValue(obj1 > obj2, false, 'The result of (obj1 > obj2) is false');
+assert.sameValue(accessed, true, 'The value of accessed is true');

@@ -24,8 +24,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Number.prototype.toLocaleString.length, 0);
-
-verifyNotEnumerable(Number.prototype.toLocaleString, "length");
-verifyNotWritable(Number.prototype.toLocaleString, "length");
-verifyConfigurable(Number.prototype.toLocaleString, "length");
+verifyProperty(Number.prototype.toLocaleString, 'length', {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

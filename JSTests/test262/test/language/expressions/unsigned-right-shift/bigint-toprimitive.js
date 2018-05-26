@@ -6,7 +6,6 @@ esid: sec-unsigned-right-shift-operator-runtime-semantics-evaluation
 info: After ToNumeric type coercion, unsigned-right-shift always throws for BigInt operands
 features: [BigInt, Symbol.toPrimitive, computed-property-names]
 ---*/
-
 function err() {
   throw new Test262Error();
 }
@@ -18,332 +17,397 @@ assert.throws(TypeError, function() {
     [Symbol.toPrimitive]: function() {
       return 2n;
     },
+
     valueOf: err,
     toString: err
   }) >>> 0n;
-}, "ToPrimitive: @@toPrimitive takes precedence");
+}, '({[Symbol.toPrimitive]: function() {return 2n;}, valueOf: err, toString: err}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     [Symbol.toPrimitive]: function() {
       return 2n;
     },
+
     valueOf: err,
     toString: err
   };
-}, "ToPrimitive: @@toPrimitive takes precedence");
+}, '0n >>> {[Symbol.toPrimitive]: function() {return 2n;}, valueOf: err, toString: err} throws TypeError');
+
 assert.throws(TypeError, function() {
   ({
     valueOf: function() {
       return 2n;
     },
+
     toString: err
   }) >>> 0n;
-}, "ToPrimitive: valueOf takes precedence over toString");
+}, '({valueOf: function() {return 2n;}, toString: err}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     valueOf: function() {
       return 2n;
     },
+
     toString: err
   };
-}, "ToPrimitive: valueOf takes precedence over toString");
+}, '0n >>> {valueOf: function() {return 2n;}, toString: err} throws TypeError');
+
 assert.throws(TypeError, function() {
   ({
     toString: function() {
       return 2n;
     }
   }) >>> 0n;
-}, "ToPrimitive: toString with no valueOf");
+}, '({toString: function() {return 2n;}}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     toString: function() {
       return 2n;
     }
   };
-}, "ToPrimitive: toString with no valueOf");
+}, '0n >>> {toString: function() {return 2n;}} throws TypeError');
+
 assert.throws(TypeError, function() {
   ({
     [Symbol.toPrimitive]: undefined,
+
     valueOf: function() {
       return 2n;
     }
   }) >>> 0n;
-}, "ToPrimitive: skip @@toPrimitive when it's undefined");
+}, '({[Symbol.toPrimitive]: undefined, valueOf: function() {return 2n;}}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     [Symbol.toPrimitive]: undefined,
+
     valueOf: function() {
       return 2n;
     }
   };
-}, "ToPrimitive: skip @@toPrimitive when it's undefined");
+}, '0n >>> {[Symbol.toPrimitive]: undefined, valueOf: function() {return 2n;}} throws TypeError');
+
 assert.throws(TypeError, function() {
   ({
     [Symbol.toPrimitive]: null,
+
     valueOf: function() {
       return 2n;
     }
   }) >>> 0n;
-}, "ToPrimitive: skip @@toPrimitive when it's null");
+}, '({[Symbol.toPrimitive]: null, valueOf: function() {return 2n;}}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     [Symbol.toPrimitive]: null,
+
     valueOf: function() {
       return 2n;
     }
   };
-}, "ToPrimitive: skip @@toPrimitive when it's null");
+}, '0n >>> {[Symbol.toPrimitive]: null, valueOf: function() {return 2n;}} throws TypeError');
+
 assert.throws(TypeError, function() {
   ({
     valueOf: null,
+
     toString: function() {
       return 2n;
     }
   }) >>> 0n;
-}, "ToPrimitive: skip valueOf when it's not callable");
+}, '({valueOf: null, toString: function() {return 2n;}}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     valueOf: null,
+
     toString: function() {
       return 2n;
     }
   };
-}, "ToPrimitive: skip valueOf when it's not callable");
+}, '0n >>> {valueOf: null, toString: function() {return 2n;}} throws TypeError');
+
 assert.throws(TypeError, function() {
   ({
     valueOf: 1,
+
     toString: function() {
       return 2n;
     }
   }) >>> 0n;
-}, "ToPrimitive: skip valueOf when it's not callable");
+}, '({valueOf: 1, toString: function() {return 2n;}}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     valueOf: 1,
+
     toString: function() {
       return 2n;
     }
   };
-}, "ToPrimitive: skip valueOf when it's not callable");
+}, '0n >>> {valueOf: 1, toString: function() {return 2n;}} throws TypeError');
+
 assert.throws(TypeError, function() {
   ({
     valueOf: {},
+
     toString: function() {
       return 2n;
     }
   }) >>> 0n;
-}, "ToPrimitive: skip valueOf when it's not callable");
+}, '({valueOf: {}, toString: function() {return 2n;}}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     valueOf: {},
+
     toString: function() {
       return 2n;
     }
   };
-}, "ToPrimitive: skip valueOf when it's not callable");
+}, '0n >>> {valueOf: {}, toString: function() {return 2n;}} throws TypeError');
+
 assert.throws(TypeError, function() {
   ({
     valueOf: function() {
       return {};
     },
+
     toString: function() {
       return 2n;
     }
   }) >>> 0n;
-}, "ToPrimitive: skip valueOf when it returns an object");
+}, '({valueOf: function() {return {};}, toString: function() {return 2n;}}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     valueOf: function() {
       return {};
     },
+
     toString: function() {
       return 2n;
     }
   };
-}, "ToPrimitive: skip valueOf when it returns an object");
+}, '0n >>> {valueOf: function() {return {};}, toString: function() {return 2n;}} throws TypeError');
+
 assert.throws(TypeError, function() {
   ({
     valueOf: function() {
       return Object(12345);
     },
+
     toString: function() {
       return 2n;
     }
   }) >>> 0n;
-}, "ToPrimitive: skip valueOf when it returns an object");
+}, '({valueOf: function() {return Object(12345);}, toString: function() {return 2n;}}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     valueOf: function() {
       return Object(12345);
     },
+
     toString: function() {
       return 2n;
     }
   };
-}, "ToPrimitive: skip valueOf when it returns an object");
+}, '0n >>> {valueOf: function() {return Object(12345);}, toString: function() {return 2n;}} throws TypeError');
+
 assert.throws(TypeError, function() {
   ({
     [Symbol.toPrimitive]: 1
   }) >>> 0n;
-}, "ToPrimitive: throw when @@toPrimitive is not callable");
+}, '({[Symbol.toPrimitive]: 1}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     [Symbol.toPrimitive]: 1
   };
-}, "ToPrimitive: throw when @@toPrimitive is not callable");
+}, '0n >>> {[Symbol.toPrimitive]: 1} throws TypeError');
+
 assert.throws(TypeError, function() {
   ({
     [Symbol.toPrimitive]: {}
   }) >>> 0n;
-}, "ToPrimitive: throw when @@toPrimitive is not callable");
+}, '({[Symbol.toPrimitive]: {}}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     [Symbol.toPrimitive]: {}
   };
-}, "ToPrimitive: throw when @@toPrimitive is not callable");
+}, '0n >>> {[Symbol.toPrimitive]: {}} throws TypeError');
+
 assert.throws(TypeError, function() {
   ({
     [Symbol.toPrimitive]: function() {
       return Object(1);
     }
   }) >>> 0n;
-}, "ToPrimitive: throw when @@toPrimitive returns an object");
+}, '({[Symbol.toPrimitive]: function() {return Object(1);}}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     [Symbol.toPrimitive]: function() {
       return Object(1);
     }
   };
-}, "ToPrimitive: throw when @@toPrimitive returns an object");
+}, '0n >>> {[Symbol.toPrimitive]: function() {return Object(1);}} throws TypeError');
+
 assert.throws(TypeError, function() {
   ({
     [Symbol.toPrimitive]: function() {
       return {};
     }
   }) >>> 0n;
-}, "ToPrimitive: throw when @@toPrimitive returns an object");
+}, '({[Symbol.toPrimitive]: function() {return {};}}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     [Symbol.toPrimitive]: function() {
       return {};
     }
   };
-}, "ToPrimitive: throw when @@toPrimitive returns an object");
+}, '0n >>> {[Symbol.toPrimitive]: function() {return {};}} throws TypeError');
+
 assert.throws(MyError, function() {
   ({
     [Symbol.toPrimitive]: function() {
       throw new MyError();
     }
   }) >>> 0n;
-}, "ToPrimitive: propagate errors from @@toPrimitive");
+}, '({[Symbol.toPrimitive]: function() {throw new MyError();}}) >>> 0n throws MyError');
+
 assert.throws(MyError, function() {
   0n >>> {
     [Symbol.toPrimitive]: function() {
       throw new MyError();
     }
   };
-}, "ToPrimitive: propagate errors from @@toPrimitive");
+}, '0n >>> {[Symbol.toPrimitive]: function() {throw new MyError();}} throws MyError');
+
 assert.throws(MyError, function() {
   ({
     valueOf: function() {
       throw new MyError();
     }
   }) >>> 0n;
-}, "ToPrimitive: propagate errors from valueOf");
+}, '({valueOf: function() {throw new MyError();}}) >>> 0n throws MyError');
+
 assert.throws(MyError, function() {
   0n >>> {
     valueOf: function() {
       throw new MyError();
     }
   };
-}, "ToPrimitive: propagate errors from valueOf");
+}, '0n >>> {valueOf: function() {throw new MyError();}} throws MyError');
+
 assert.throws(MyError, function() {
   ({
     toString: function() {
       throw new MyError();
     }
   }) >>> 0n;
-}, "ToPrimitive: propagate errors from toString");
+}, '({toString: function() {throw new MyError();}}) >>> 0n throws MyError');
+
 assert.throws(MyError, function() {
   0n >>> {
     toString: function() {
       throw new MyError();
     }
   };
-}, "ToPrimitive: propagate errors from toString");
+}, '0n >>> {toString: function() {throw new MyError();}} throws MyError');
+
 assert.throws(TypeError, function() {
   ({
     valueOf: null,
     toString: null
   }) >>> 0n;
-}, "ToPrimitive: throw when skipping both valueOf and toString");
+}, '({valueOf: null, toString: null}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     valueOf: null,
     toString: null
   };
-}, "ToPrimitive: throw when skipping both valueOf and toString");
+}, '0n >>> {valueOf: null, toString: null} throws TypeError');
+
 assert.throws(TypeError, function() {
   ({
     valueOf: 1,
     toString: 1
   }) >>> 0n;
-}, "ToPrimitive: throw when skipping both valueOf and toString");
+}, '({valueOf: 1, toString: 1}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     valueOf: 1,
     toString: 1
   };
-}, "ToPrimitive: throw when skipping both valueOf and toString");
+}, '0n >>> {valueOf: 1, toString: 1} throws TypeError');
+
 assert.throws(TypeError, function() {
   ({
     valueOf: {},
     toString: {}
   }) >>> 0n;
-}, "ToPrimitive: throw when skipping both valueOf and toString");
+}, '({valueOf: {}, toString: {}}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     valueOf: {},
     toString: {}
   };
-}, "ToPrimitive: throw when skipping both valueOf and toString");
+}, '0n >>> {valueOf: {}, toString: {}} throws TypeError');
+
 assert.throws(TypeError, function() {
   ({
     valueOf: function() {
       return Object(1);
     },
+
     toString: function() {
       return Object(1);
     }
   }) >>> 0n;
-}, "ToPrimitive: throw when skipping both valueOf and toString");
+}, '({valueOf: function() {return Object(1);}, toString: function() {return Object(1);}}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     valueOf: function() {
       return Object(1);
     },
+
     toString: function() {
       return Object(1);
     }
   };
-}, "ToPrimitive: throw when skipping both valueOf and toString");
+}, '0n >>> {valueOf: function() {return Object(1);}, toString: function() {return Object(1);}} throws TypeError');
+
 assert.throws(TypeError, function() {
   ({
     valueOf: function() {
       return {};
     },
+
     toString: function() {
       return {};
     }
   }) >>> 0n;
-}, "ToPrimitive: throw when skipping both valueOf and toString");
+}, '({valueOf: function() {return {};}, toString: function() {return {};}}) >>> 0n throws TypeError');
+
 assert.throws(TypeError, function() {
   0n >>> {
     valueOf: function() {
       return {};
     },
+
     toString: function() {
       return {};
     }
   };
-}, "ToPrimitive: throw when skipping both valueOf and toString");
+}, '0n >>> {valueOf: function() {return {};}, toString: function() {return {};}} throws TypeError');

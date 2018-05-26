@@ -9,7 +9,7 @@ info: |
     Intl.Locale( tag [, options] )
 
     7. If Type(tag) is not String or Object, throw a TypeError exception.
-features: [Intl.Locale]
+features: [Intl.Locale, Symbol]
 ---*/
 
 assert.throws(TypeError, function() {

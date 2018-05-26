@@ -16,14 +16,14 @@ features: [Intl.Locale]
 ---*/
 
 assert.sameValue(
-    typeof Intl.Locale.prototype.maximize,
-    'function',
-    "typeof Intl.Locale.prototype.maximize is function"
+  typeof Intl.Locale.prototype.maximize,
+  'function',
+  'typeof Intl.Locale.prototype.maximize is function'
 );
 
 verifyProperty(Intl.Locale.prototype, 'maximize', {
   writable: true,
   enumerable: false,
-  configurable: false,
+  configurable: true,
 });
 

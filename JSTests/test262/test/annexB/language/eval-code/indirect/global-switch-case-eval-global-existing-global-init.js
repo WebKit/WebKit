@@ -2,7 +2,7 @@
 // - src/annex-b-fns/eval-global-existing-global-init.case
 // - src/annex-b-fns/eval-global/indirect-switch-case.template
 /*---
-description: Variable binding is set to `undefined` (Function declaration in the `case` clause of a `switch` statement in eval code)
+description: Variable binding is left in place by legacy function hoisting (Function declaration in the `case` clause of a `switch` statement in eval code)
 esid: sec-web-compat-evaldeclarationinstantiation
 es6id: B.3.3.3
 flags: [generated, noStrict]
@@ -12,17 +12,7 @@ info: |
 
     [...]
     i. If varEnvRec is a global Environment Record, then
-       i. Perform ? varEnvRec.CreateGlobalFunctionBinding(F, undefined, true).
-    [...]
-
-    8.1.1.4.18 CreateGlobalFunctionBinding
-
-    [...]
-    5. If existingProp is undefined or existingProp.[[Configurable]] is true,
-       then
-       [...]
-    6. Else,
-       a. Let desc be the PropertyDescriptor{[[Value]]: V }.
+       i. Perform ? varEnvRec.CreateGlobalVarBinding(F, true).
     [...]
 
 ---*/
@@ -35,15 +25,22 @@ Object.defineProperty(fnGlobalObject(), 'f', {
 
 (0,eval)(
   'var global = fnGlobalObject();\
-  assert.sameValue(f, undefined, "binding is initialized to `undefined`");\
+  assert.sameValue(f, "x", "binding is not reinitialized");\
   \
   verifyProperty(global, "f", {\
     enumerable: true,\
     writable: true,\
     configurable: false\
-  });switch (1) {' +
+  }, { restore: true });switch (1) {' +
   '  case 1:' +
   '    function f() {  }' +
   '}\
   '
 );
+
+assert.sameValue(typeof f, "function");
+verifyProperty(global, "f", {
+  enumerable: true,
+  writable: true,
+  configurable: false
+});

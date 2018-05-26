@@ -1,6 +1,5 @@
 // Copyright (C) 2017 Robin Templeton. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
-
 /*---
 description: If the BigInt base and exponent are both 0n, return 1n
 esid: sec-exp-operator-runtime-semantics-evaluation
@@ -18,5 +17,4 @@ info: |
   ...
 features: [BigInt]
 ---*/
-
-assert.sameValue(0n ** 0n, 1n);
+assert.sameValue(0n ** 0n, 1n, 'The result of (0n ** 0n) is 1n');

@@ -1,3 +1,511 @@
+2018-05-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Upgrade test262 to May 24 version
+        https://bugs.webkit.org/show_bug.cgi?id=185937
+
+        Reviewed by Darin Adler.
+
+        * test262/expectations.yaml:
+        * test262/harness/doneprintHandle.js:
+        (DONE):
+        * test262/latest-changes-summary.txt:
+        * test262/test/annexB/language/eval-code/direct/global-block-decl-eval-global-existing-global-init.js:
+        * test262/test/annexB/language/eval-code/direct/global-block-decl-eval-global-existing-non-enumerable-global-init.js: Added.
+        * test262/test/annexB/language/eval-code/direct/global-if-decl-else-decl-a-eval-global-existing-global-init.js:
+        * test262/test/annexB/language/eval-code/direct/global-if-decl-else-decl-a-eval-global-existing-non-enumerable-global-init.js: Copied from JSTests/test262/test/annexB/language/eval-code/direct/global-if-decl-else-decl-a-eval-global-existing-global-init.js.
+        * test262/test/annexB/language/eval-code/direct/global-if-decl-else-decl-b-eval-global-existing-global-init.js:
+        * test262/test/annexB/language/eval-code/direct/global-if-decl-else-decl-b-eval-global-existing-non-enumerable-global-init.js: Copied from JSTests/test262/test/annexB/language/eval-code/direct/global-if-decl-else-decl-b-eval-global-existing-global-init.js.
+        * test262/test/annexB/language/eval-code/direct/global-if-decl-else-stmt-eval-global-existing-global-init.js:
+        * test262/test/annexB/language/eval-code/direct/global-if-decl-else-stmt-eval-global-existing-non-enumerable-global-init.js: Copied from JSTests/test262/test/annexB/language/eval-code/direct/global-if-decl-else-stmt-eval-global-existing-global-init.js.
+        * test262/test/annexB/language/eval-code/direct/global-if-decl-no-else-eval-global-existing-global-init.js:
+        * test262/test/annexB/language/eval-code/direct/global-if-decl-no-else-eval-global-existing-non-enumerable-global-init.js: Copied from JSTests/test262/test/annexB/language/eval-code/direct/global-if-decl-no-else-eval-global-existing-global-init.js.
+        * test262/test/annexB/language/eval-code/direct/global-if-stmt-else-decl-eval-global-existing-global-init.js:
+        * test262/test/annexB/language/eval-code/direct/global-if-stmt-else-decl-eval-global-existing-non-enumerable-global-init.js: Copied from JSTests/test262/test/annexB/language/eval-code/direct/global-if-stmt-else-decl-eval-global-existing-global-init.js.
+        * test262/test/annexB/language/eval-code/direct/global-switch-case-eval-global-existing-global-init.js:
+        * test262/test/annexB/language/eval-code/direct/global-switch-case-eval-global-existing-non-enumerable-global-init.js: Added.
+        * test262/test/annexB/language/eval-code/direct/global-switch-dflt-eval-global-existing-global-init.js:
+        * test262/test/annexB/language/eval-code/direct/global-switch-dflt-eval-global-existing-non-enumerable-global-init.js: Added.
+        * test262/test/annexB/language/eval-code/indirect/global-block-decl-eval-global-existing-global-init.js:
+        * test262/test/annexB/language/eval-code/indirect/global-block-decl-eval-global-existing-non-enumerable-global-init.js: Added.
+        * test262/test/annexB/language/eval-code/indirect/global-if-decl-else-decl-a-eval-global-existing-global-init.js:
+        * test262/test/annexB/language/eval-code/indirect/global-if-decl-else-decl-a-eval-global-existing-non-enumerable-global-init.js: Copied from JSTests/test262/test/annexB/language/eval-code/indirect/global-if-decl-else-decl-a-eval-global-existing-global-init.js.
+        * test262/test/annexB/language/eval-code/indirect/global-if-decl-else-decl-b-eval-global-existing-global-init.js:
+        * test262/test/annexB/language/eval-code/indirect/global-if-decl-else-decl-b-eval-global-existing-non-enumerable-global-init.js: Copied from JSTests/test262/test/annexB/language/eval-code/indirect/global-if-decl-else-decl-b-eval-global-existing-global-init.js.
+        * test262/test/annexB/language/eval-code/indirect/global-if-decl-else-stmt-eval-global-existing-global-init.js:
+        * test262/test/annexB/language/eval-code/indirect/global-if-decl-else-stmt-eval-global-existing-non-enumerable-global-init.js: Copied from JSTests/test262/test/annexB/language/eval-code/indirect/global-if-decl-else-stmt-eval-global-existing-global-init.js.
+        * test262/test/annexB/language/eval-code/indirect/global-if-decl-no-else-eval-global-existing-global-init.js:
+        * test262/test/annexB/language/eval-code/indirect/global-if-decl-no-else-eval-global-existing-non-enumerable-global-init.js: Copied from JSTests/test262/test/annexB/language/eval-code/indirect/global-if-decl-no-else-eval-global-existing-global-init.js.
+        * test262/test/annexB/language/eval-code/indirect/global-if-stmt-else-decl-eval-global-existing-global-init.js:
+        * test262/test/annexB/language/eval-code/indirect/global-if-stmt-else-decl-eval-global-existing-non-enumerable-global-init.js: Copied from JSTests/test262/test/annexB/language/eval-code/indirect/global-if-stmt-else-decl-eval-global-existing-global-init.js.
+        * test262/test/annexB/language/eval-code/indirect/global-switch-case-eval-global-existing-global-init.js:
+        * test262/test/annexB/language/eval-code/indirect/global-switch-case-eval-global-existing-non-enumerable-global-init.js: Added.
+        * test262/test/annexB/language/eval-code/indirect/global-switch-dflt-eval-global-existing-global-init.js:
+        * test262/test/annexB/language/eval-code/indirect/global-switch-dflt-eval-global-existing-non-enumerable-global-init.js: Added.
+        * test262/test/annexB/language/global-code/block-decl-global-existing-global-init.js: Added.
+        (262.evalScript.f):
+        * test262/test/annexB/language/global-code/block-decl-global-existing-non-enumerable-global-init.js: Added.
+        (262.evalScript.f):
+        * test262/test/annexB/language/global-code/if-decl-else-decl-a-global-existing-global-init.js: Added.
+        (262.evalScript.true.f):
+        (else._f):
+        * test262/test/annexB/language/global-code/if-decl-else-decl-a-global-existing-non-enumerable-global-init.js: Added.
+        (262.evalScript.true.f):
+        (else._f):
+        * test262/test/annexB/language/global-code/if-decl-else-decl-b-global-existing-global-init.js: Added.
+        (262.evalScript.false._f):
+        (else.f):
+        * test262/test/annexB/language/global-code/if-decl-else-decl-b-global-existing-non-enumerable-global-init.js: Added.
+        (262.evalScript.false._f):
+        (else.f):
+        * test262/test/annexB/language/global-code/if-decl-else-stmt-global-existing-global-init.js: Added.
+        (262.evalScript.true.f):
+        * test262/test/annexB/language/global-code/if-decl-else-stmt-global-existing-non-enumerable-global-init.js: Added.
+        (262.evalScript.true.f):
+        * test262/test/annexB/language/global-code/if-decl-no-else-global-existing-global-init.js: Added.
+        (262.evalScript.true.f):
+        * test262/test/annexB/language/global-code/if-decl-no-else-global-existing-non-enumerable-global-init.js: Added.
+        (262.evalScript.true.f):
+        * test262/test/annexB/language/global-code/if-stmt-else-decl-global-existing-global-init.js: Added.
+        (else.f):
+        * test262/test/annexB/language/global-code/if-stmt-else-decl-global-existing-non-enumerable-global-init.js: Added.
+        (else.f):
+        * test262/test/annexB/language/global-code/switch-case-global-existing-global-init.js: Added.
+        (262.evalScript.switch.case.1):
+        (262.evalScript.switch):
+        * test262/test/annexB/language/global-code/switch-case-global-existing-non-enumerable-global-init.js: Added.
+        (262.evalScript.switch.case.1):
+        (262.evalScript.switch):
+        * test262/test/annexB/language/global-code/switch-dflt-global-existing-global-init.js: Added.
+        (262.evalScript.switch.default):
+        (262.evalScript.switch):
+        * test262/test/annexB/language/global-code/switch-dflt-global-existing-non-enumerable-global-init.js: Added.
+        (262.evalScript.switch.default):
+        (262.evalScript.switch):
+        * test262/test/built-ins/Array/prototype/flat/array-like-objects.js: Renamed from JSTests/test262/test/built-ins/Array/prototype/flatten/array-like-objects.js.
+        * test262/test/built-ins/Array/prototype/flat/bound-function-call.js: Renamed from JSTests/test262/test/built-ins/Array/prototype/flatten/bound-function-call.js.
+        * test262/test/built-ins/Array/prototype/flat/empty-array-elements.js: Renamed from JSTests/test262/test/built-ins/Array/prototype/flatten/empty-array-elements.js.
+        * test262/test/built-ins/Array/prototype/flat/empty-object-elements.js: Renamed from JSTests/test262/test/built-ins/Array/prototype/flatten/empty-object-elements.js.
+        * test262/test/built-ins/Array/prototype/flat/length.js: Added.
+        * test262/test/built-ins/Array/prototype/flat/name.js: Added.
+        * test262/test/built-ins/Array/prototype/flat/non-numeric-depth-should-not-throw.js: Renamed from JSTests/test262/test/built-ins/Array/prototype/flatten/non-numeric-depth-should-not-throw.js.
+        * test262/test/built-ins/Array/prototype/flat/non-object-ctor-throws.js: Renamed from JSTests/test262/test/built-ins/Array/prototype/flatten/non-object-ctor-throws.js.
+        * test262/test/built-ins/Array/prototype/flat/null-undefined-elements.js: Added.
+        * test262/test/built-ins/Array/prototype/flat/null-undefined-input-throws.js: Renamed from JSTests/test262/test/built-ins/Array/prototype/flatten/null-undefined-input-throws.js.
+        * test262/test/built-ins/Array/prototype/flat/positive-infinity.js: Renamed from JSTests/test262/test/built-ins/Array/prototype/flatten/positive-infinity.js.
+        * test262/test/built-ins/Array/prototype/flat/prop-desc.js: Renamed from JSTests/test262/test/built-ins/Array/prototype/flatten/prop-desc.js.
+        * test262/test/built-ins/Array/prototype/flat/symbol-object-create-null-depth-throws.js: Renamed from JSTests/test262/test/built-ins/Array/prototype/flatten/symbol-object-create-null-depth-throws.js.
+        * test262/test/built-ins/Array/prototype/flatten/length.js: Removed.
+        * test262/test/built-ins/Array/prototype/flatten/name.js: Removed.
+        * test262/test/built-ins/Array/prototype/flatten/null-undefined-elements.js: Removed.
+        * test262/test/built-ins/AsyncGeneratorPrototype/next/name.js:
+        * test262/test/built-ins/AsyncGeneratorPrototype/return/name.js:
+        * test262/test/built-ins/AsyncGeneratorPrototype/throw/name.js:
+        * test262/test/built-ins/Math/acosh/nan-returns.js:
+        * test262/test/built-ins/Math/asinh/asinh-specialVals.js:
+        * test262/test/built-ins/Math/atanh/atanh-specialVals.js:
+        * test262/test/built-ins/Math/cbrt/cbrt-specialValues.js:
+        * test262/test/built-ins/Math/cbrt/prop-desc.js:
+        * test262/test/built-ins/Math/cosh/cosh-specialVals.js:
+        * test262/test/built-ins/Math/expm1/expm1-specialVals.js:
+        * test262/test/built-ins/Math/log10/Log10-specialVals.js:
+        * test262/test/built-ins/Math/log2/log2-basicTests.js:
+        * test262/test/built-ins/Math/sign/sign-specialVals.js:
+        * test262/test/built-ins/Math/sinh/sinh-specialVals.js:
+        * test262/test/built-ins/Math/tanh/tanh-specialVals.js:
+        * test262/test/built-ins/Math/trunc/trunc-sampleTests.js:
+        * test262/test/built-ins/Math/trunc/trunc-specialVals.js:
+        * test262/test/built-ins/Object/internals/DefineOwnProperty/consistent-value-regexp-dollar1.js: Added.
+        * test262/test/built-ins/Object/internals/DefineOwnProperty/consistent-writable-regexp-dollar1.js: Added.
+        * test262/test/intl402/Intl/getCanonicalLocales/descriptor.js:
+        * test262/test/intl402/Intl/getCanonicalLocales/duplicates.js:
+        * test262/test/intl402/Locale/constructor-getter-order.js: Added.
+        (new.Intl.Locale.toString):
+        (get language):
+        (get script):
+        (get region):
+        (get calendar):
+        (get collation):
+        (get hourCycle):
+        (get caseFirst):
+        (get numeric):
+        (get numberingSystem):
+        * test262/test/intl402/Locale/constructor-locale-object.js: Added.
+        * test262/test/intl402/Locale/constructor-non-iana-canon.js: Added.
+        * test262/test/intl402/Locale/constructor-options-casefirst-invalid.js: Added.
+        (valueOf):
+        (const.invalidCaseFirstOption.of.invalidCaseFirstOptions.new.Intl.Locale):
+        * test262/test/intl402/Locale/constructor-options-casefirst-valid.js: Added.
+        (toString):
+        * test262/test/intl402/Locale/constructor-options-collation-invalid.js: Added.
+        (const.invalidCollationOption.of.invalidCollationOptions.new.Intl.Locale):
+        * test262/test/intl402/Locale/constructor-options-collation-valid.js: Added.
+        * test262/test/intl402/Locale/constructor-options-hourcycle-invalid.js: Added.
+        (const.invalidHourCycleOption.of.invalidHourCycleOptions.new.Intl.Locale):
+        * test262/test/intl402/Locale/constructor-options-hourcycle-valid.js: Added.
+        (toString):
+        * test262/test/intl402/Locale/constructor-options-language-grandfathered.js: Added.
+        * test262/test/intl402/Locale/constructor-options-language-valid.js:
+        (toString):
+        * test262/test/intl402/Locale/constructor-options-numberingsystem-invalid.js: Added.
+        (const.invalidNumberingSystemOption.of.invalidNumberingSystemOptions.new.Intl.Locale):
+        * test262/test/intl402/Locale/constructor-options-numberingsystem-valid.js: Added.
+        * test262/test/intl402/Locale/constructor-options-numeric-valid.js: Added.
+        (valueOf):
+        * test262/test/intl402/Locale/constructor-options-region-valid.js:
+        * test262/test/intl402/Locale/constructor-options-script-valid.js:
+        (toString):
+        * test262/test/intl402/Locale/constructor-parse-twice.js: Added.
+        * test262/test/intl402/Locale/constructor-tag-tostring.js: Added.
+        (CustomError):
+        (WrongCustomError):
+        (const.errors.get Symbol):
+        (throw.new.CustomError):
+        (throw.new.CustomError.get toString):
+        (throw.new.CustomError.get valueOf):
+        (throw.new.WrongCustomError.get valueOf):
+        (throw.new.WrongCustomError):
+        * test262/test/intl402/Locale/constructor-unicode-ext-invalid.js: Added.
+        * test262/test/intl402/Locale/constructor-unicode-ext-valid.js: Added.
+        (canonical.of.Object.entries):
+        * test262/test/intl402/Locale/extensions-grandfathered.js: Added.
+        (of.testData.value.of.Object.entries):
+        * test262/test/intl402/Locale/extensions-private.js: Added.
+        * test262/test/intl402/Locale/getters-grandfathered.js: Added.
+        * test262/test/intl402/Locale/getters-missing.js: Added.
+        * test262/test/intl402/Locale/getters-privateuse.js: Added.
+        * test262/test/intl402/Locale/getters.js: Added.
+        * test262/test/intl402/Locale/invalid-tag-throws-symbol.js:
+        * test262/test/intl402/Locale/likely-subtags-grandfathered.js: Added.
+        * test262/test/intl402/Locale/prop-desc.js:
+        * test262/test/intl402/Locale/prototype/baseName/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/calendar/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/caseFirst/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/collation/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/constructor/prop-desc.js: Copied from JSTests/test262/test/intl402/Locale/prototype/constructor.js.
+        * test262/test/intl402/Locale/prototype/hourCycle/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/language/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/maximize/length.js:
+        * test262/test/intl402/Locale/prototype/maximize/prop-desc.js:
+        * test262/test/intl402/Locale/prototype/minimize/length.js: Copied from JSTests/test262/test/intl402/Locale/prototype/maximize/length.js.
+        * test262/test/intl402/Locale/prototype/minimize/name.js: Added.
+        * test262/test/intl402/Locale/prototype/minimize/prop-desc.js: Copied from JSTests/test262/test/intl402/Locale/prototype/constructor.js.
+        * test262/test/intl402/Locale/prototype/numberingSystem/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/numeric/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/region/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/script/prop-desc.js: Added.
+        * test262/test/intl402/Locale/prototype/toString/prop-desc.js: Renamed from JSTests/test262/test/intl402/Locale/prototype/constructor.js.
+        * test262/test/intl402/Locale/prototype/toStringTag/toStringTag.js: Renamed from JSTests/test262/test/intl402/Locale/prototype/toStringTag.js.
+        * test262/test/intl402/Number/prototype/toLocaleString/length.js:
+        * test262/test/intl402/NumberFormat/length.js:
+        * test262/test/intl402/NumberFormat/name.js:
+        * test262/test/intl402/NumberFormat/prop-desc.js:
+        * test262/test/intl402/PluralRules/length.js:
+        * test262/test/intl402/PluralRules/name.js:
+        * test262/test/intl402/PluralRules/prop-desc.js: Copied from JSTests/test262/test/intl402/NumberFormat/prop-desc.js.
+        * test262/test/language/expressions/addition/bigint-and-number.js:
+        * test262/test/language/expressions/addition/bigint-arithmetic.js:
+        (testAdd): Deleted.
+        * test262/test/language/expressions/addition/bigint-errors.js:
+        (Symbol.toPrimitive):
+        (0n.Symbol.toPrimitive):
+        (valueOf):
+        (0n.valueOf):
+        (toString):
+        (0n.toString):
+        * test262/test/language/expressions/addition/bigint-toprimitive.js:
+        * test262/test/language/expressions/addition/bigint-wrapped-values.js:
+        * test262/test/language/expressions/bitwise-and/bigint-and-number.js:
+        * test262/test/language/expressions/bitwise-and/bigint-errors.js:
+        (Symbol.toPrimitive):
+        (0n.Symbol.toPrimitive):
+        (valueOf):
+        (0n.valueOf):
+        (toString):
+        (0n.toString):
+        * test262/test/language/expressions/bitwise-and/bigint-non-primitive.js:
+        (assert.sameValue.Symbol.toPrimitive):
+        (assert.sameValue.0b011n.Symbol.toPrimitive):
+        (assert.sameValue.valueOf):
+        (assert.sameValue.0b011n.valueOf):
+        (assert.sameValue.toString):
+        (assert.sameValue.0b011n.toString):
+        * test262/test/language/expressions/bitwise-and/bigint-toprimitive.js:
+        * test262/test/language/expressions/bitwise-and/bigint-wrapped-values.js:
+        * test262/test/language/expressions/bitwise-not/bigint-non-primitive.js:
+        (assert.sameValue.Symbol.toPrimitive):
+        (assert.sameValue.valueOf):
+        (assert.sameValue.toString):
+        * test262/test/language/expressions/bitwise-or/bigint-and-number.js:
+        * test262/test/language/expressions/bitwise-or/bigint-errors.js:
+        (Symbol.toPrimitive):
+        (0n.Symbol.toPrimitive):
+        (valueOf):
+        (0n.valueOf):
+        (toString):
+        (0n.toString):
+        * test262/test/language/expressions/bitwise-or/bigint-non-primitive.js:
+        (assert.sameValue.Symbol.toPrimitive):
+        (assert.sameValue.0b011n.Symbol.toPrimitive):
+        (assert.sameValue.valueOf):
+        (assert.sameValue.0b011n.valueOf):
+        (assert.sameValue.toString):
+        (assert.sameValue.0b011n.toString):
+        * test262/test/language/expressions/bitwise-or/bigint-toprimitive.js:
+        * test262/test/language/expressions/bitwise-or/bigint-wrapped-values.js:
+        * test262/test/language/expressions/bitwise-xor/bigint-and-number.js:
+        * test262/test/language/expressions/bitwise-xor/bigint-errors.js:
+        (Symbol.toPrimitive):
+        (0n.Symbol.toPrimitive):
+        (valueOf):
+        (0n.valueOf):
+        (toString):
+        (0n.toString):
+        * test262/test/language/expressions/bitwise-xor/bigint-non-primitive.js:
+        (assert.sameValue.Symbol.toPrimitive):
+        (assert.sameValue.0b011n.Symbol.toPrimitive):
+        (assert.sameValue.valueOf):
+        (assert.sameValue.0b011n.valueOf):
+        (assert.sameValue.toString):
+        (assert.sameValue.0b011n.toString):
+        * test262/test/language/expressions/bitwise-xor/bigint-toprimitive.js:
+        * test262/test/language/expressions/bitwise-xor/bigint-wrapped-values.js:
+        * test262/test/language/expressions/division/bigint-and-number.js:
+        * test262/test/language/expressions/division/bigint-arithmetic.js:
+        (testDiv): Deleted.
+        * test262/test/language/expressions/division/bigint-complex-infinity.js:
+        * test262/test/language/expressions/division/bigint-errors.js:
+        (Symbol.toPrimitive):
+        (0n.Symbol.toPrimitive):
+        (valueOf):
+        (0n.valueOf):
+        (toString):
+        (0n.toString):
+        * test262/test/language/expressions/division/bigint-toprimitive.js:
+        * test262/test/language/expressions/division/bigint-wrapped-values.js:
+        * test262/test/language/expressions/does-not-equals/bigint-and-bigint.js:
+        * test262/test/language/expressions/does-not-equals/bigint-and-boolean.js:
+        * test262/test/language/expressions/does-not-equals/bigint-and-incomparable-primitive.js:
+        * test262/test/language/expressions/does-not-equals/bigint-and-non-finite.js:
+        * test262/test/language/expressions/does-not-equals/bigint-and-number-extremes.js:
+        * test262/test/language/expressions/does-not-equals/bigint-and-number.js:
+        * test262/test/language/expressions/does-not-equals/bigint-and-object.js:
+        (assert.sameValue.0n.valueOf):
+        (assert.sameValue.valueOf):
+        (assert.sameValue.0n.toString):
+        (assert.sameValue.toString):
+        (assert.sameValue.900719925474099101n.valueOf):
+        (assert.sameValue.900719925474099101n.toString):
+        * test262/test/language/expressions/does-not-equals/bigint-and-string.js:
+        * test262/test/language/expressions/equals/bigint-and-bigint.js:
+        * test262/test/language/expressions/equals/bigint-and-boolean.js:
+        * test262/test/language/expressions/equals/bigint-and-incomparable-primitive.js:
+        * test262/test/language/expressions/equals/bigint-and-non-finite.js:
+        * test262/test/language/expressions/equals/bigint-and-number-extremes.js:
+        * test262/test/language/expressions/equals/bigint-and-number.js:
+        * test262/test/language/expressions/equals/bigint-and-object.js:
+        (assert.sameValue.0n.valueOf):
+        (assert.sameValue.valueOf):
+        (assert.sameValue.0n.toString):
+        (assert.sameValue.toString):
+        (assert.sameValue.900719925474099101n.valueOf):
+        (assert.sameValue.900719925474099101n.toString):
+        * test262/test/language/expressions/equals/bigint-and-string.js:
+        * test262/test/language/expressions/exponentiation/bigint-and-number.js:
+        * test262/test/language/expressions/exponentiation/bigint-arithmetic.js:
+        (testExpt): Deleted.
+        * test262/test/language/expressions/exponentiation/bigint-errors.js:
+        (Symbol.toPrimitive):
+        (0n.Symbol.toPrimitive):
+        (valueOf):
+        (0n.valueOf):
+        (toString):
+        (0n.toString):
+        * test262/test/language/expressions/exponentiation/bigint-negative-exponent-throws.js: Renamed from JSTests/test262/test/language/expressions/exponentiation/bigint-exp-operator-negative-throws.js.
+        * test262/test/language/expressions/exponentiation/bigint-toprimitive.js:
+        * test262/test/language/expressions/exponentiation/bigint-wrapped-values.js:
+        * test262/test/language/expressions/exponentiation/bigint-zero-base-zero-exponent.js:
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-bigint.js:
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-incomparable-string.js:
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-non-finite.js:
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-number-extremes.js:
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-number.js:
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-string.js:
+        * test262/test/language/expressions/greater-than/11.8.2-1.js:
+        (obj1.valueOf):
+        (obj2.valueOf):
+        * test262/test/language/expressions/greater-than/11.8.2-2.js:
+        (obj1.valueOf):
+        (obj2.toString):
+        * test262/test/language/expressions/greater-than/11.8.2-3.js:
+        (obj1.toString):
+        (obj2.valueOf):
+        * test262/test/language/expressions/greater-than/11.8.2-4.js:
+        (obj1.toString):
+        (obj2.toString):
+        * test262/test/language/expressions/greater-than/bigint-and-bigint.js:
+        * test262/test/language/expressions/greater-than/bigint-and-boolean.js:
+        * test262/test/language/expressions/greater-than/bigint-and-incomparable-string.js:
+        * test262/test/language/expressions/greater-than/bigint-and-non-finite.js:
+        * test262/test/language/expressions/greater-than/bigint-and-number-extremes.js:
+        * test262/test/language/expressions/greater-than/bigint-and-number.js:
+        * test262/test/language/expressions/greater-than/bigint-and-string.js:
+        * test262/test/language/expressions/greater-than/bigint-and-symbol.js: Added.
+        * test262/test/language/expressions/left-shift/bigint-and-number.js:
+        * test262/test/language/expressions/left-shift/bigint-errors.js:
+        (Symbol.toPrimitive):
+        (0n.Symbol.toPrimitive):
+        (valueOf):
+        (0n.valueOf):
+        (toString):
+        (0n.toString):
+        * test262/test/language/expressions/left-shift/bigint-non-primitive.js:
+        (assert.sameValue.Symbol.toPrimitive):
+        (assert.sameValue.valueOf):
+        (assert.sameValue.toString):
+        (assert.sameValue.0b101n.Symbol.toPrimitive):
+        (assert.sameValue.0b101n.valueOf):
+        (assert.sameValue.0b101n.toString):
+        (valueOf):
+        * test262/test/language/expressions/left-shift/bigint-toprimitive.js:
+        * test262/test/language/expressions/left-shift/bigint-wrapped-values.js:
+        * test262/test/language/expressions/less-than-or-equal/11.8.3-1.js:
+        (obj1.valueOf):
+        (obj2.valueOf):
+        * test262/test/language/expressions/less-than-or-equal/11.8.3-2.js:
+        (obj1.valueOf):
+        (obj2.toString):
+        * test262/test/language/expressions/less-than-or-equal/11.8.3-3.js:
+        (obj1.toString):
+        (obj2.valueOf):
+        * test262/test/language/expressions/less-than-or-equal/11.8.3-4.js:
+        (obj1.toString):
+        (obj2.toString):
+        * test262/test/language/expressions/less-than-or-equal/11.8.3-5.js: Removed.
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-bigint.js:
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-incomparable-string.js:
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-non-finite.js:
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-number-extremes.js:
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-number.js:
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-string.js:
+        * test262/test/language/expressions/less-than/bigint-and-bigint.js:
+        * test262/test/language/expressions/less-than/bigint-and-boolean.js:
+        * test262/test/language/expressions/less-than/bigint-and-incomparable-string.js:
+        * test262/test/language/expressions/less-than/bigint-and-non-finite.js:
+        * test262/test/language/expressions/less-than/bigint-and-number-extremes.js:
+        * test262/test/language/expressions/less-than/bigint-and-number.js:
+        * test262/test/language/expressions/less-than/bigint-and-string.js:
+        * test262/test/language/expressions/less-than/bigint-and-symbol.js: Added.
+        * test262/test/language/expressions/modulus/bigint-and-number.js:
+        * test262/test/language/expressions/modulus/bigint-arithmetic.js:
+        (testMod): Deleted.
+        * test262/test/language/expressions/modulus/bigint-errors.js:
+        (Symbol.toPrimitive):
+        (0n.Symbol.toPrimitive):
+        (valueOf):
+        (0n.valueOf):
+        (toString):
+        (0n.toString):
+        * test262/test/language/expressions/modulus/bigint-modulo-zero.js:
+        * test262/test/language/expressions/modulus/bigint-toprimitive.js:
+        * test262/test/language/expressions/modulus/bigint-wrapped-values.js:
+        * test262/test/language/expressions/multiplication/bigint-and-number.js:
+        * test262/test/language/expressions/multiplication/bigint-arithmetic.js:
+        (testMul): Deleted.
+        * test262/test/language/expressions/multiplication/bigint-errors.js:
+        (Symbol.toPrimitive):
+        (0n.Symbol.toPrimitive):
+        (valueOf):
+        (0n.valueOf):
+        (toString):
+        (0n.toString):
+        * test262/test/language/expressions/multiplication/bigint-toprimitive.js:
+        * test262/test/language/expressions/multiplication/bigint-wrapped-values.js:
+        * test262/test/language/expressions/right-shift/bigint-and-number.js:
+        * test262/test/language/expressions/right-shift/bigint-errors.js:
+        (Symbol.toPrimitive):
+        (0n.Symbol.toPrimitive):
+        (valueOf):
+        (0n.valueOf):
+        (toString):
+        (0n.toString):
+        * test262/test/language/expressions/right-shift/bigint-non-primitive.js:
+        (assert.sameValue.Symbol.toPrimitive):
+        (assert.sameValue.valueOf):
+        (assert.sameValue.toString):
+        (assert.sameValue.0b101n.Symbol.toPrimitive):
+        (assert.sameValue.0b101n.valueOf):
+        (assert.sameValue.0b101n.toString):
+        (valueOf):
+        * test262/test/language/expressions/right-shift/bigint-toprimitive.js:
+        * test262/test/language/expressions/right-shift/bigint-wrapped-values.js:
+        * test262/test/language/expressions/strict-does-not-equals/bigint-and-bigint.js:
+        * test262/test/language/expressions/strict-does-not-equals/bigint-and-boolean.js:
+        * test262/test/language/expressions/strict-does-not-equals/bigint-and-incomparable-primitive.js:
+        * test262/test/language/expressions/strict-does-not-equals/bigint-and-non-finite.js:
+        * test262/test/language/expressions/strict-does-not-equals/bigint-and-number-extremes.js:
+        * test262/test/language/expressions/strict-does-not-equals/bigint-and-number.js:
+        * test262/test/language/expressions/strict-does-not-equals/bigint-and-object.js:
+        (assert.sameValue.0n.valueOf):
+        (assert.sameValue.valueOf):
+        (assert.sameValue.0n.toString):
+        (assert.sameValue.toString):
+        (assert.sameValue.900719925474099101n.valueOf):
+        (assert.sameValue.900719925474099101n.toString):
+        * test262/test/language/expressions/strict-does-not-equals/bigint-and-string.js:
+        * test262/test/language/expressions/strict-equals/bigint-and-bigint.js:
+        * test262/test/language/expressions/strict-equals/bigint-and-boolean.js:
+        * test262/test/language/expressions/strict-equals/bigint-and-incomparable-primitive.js:
+        * test262/test/language/expressions/strict-equals/bigint-and-non-finite.js:
+        * test262/test/language/expressions/strict-equals/bigint-and-number-extremes.js:
+        * test262/test/language/expressions/strict-equals/bigint-and-number.js:
+        * test262/test/language/expressions/strict-equals/bigint-and-object.js:
+        (assert.sameValue.0n.valueOf):
+        (assert.sameValue.valueOf):
+        (assert.sameValue.0n.toString):
+        (assert.sameValue.toString):
+        (assert.sameValue.900719925474099101n.valueOf):
+        (assert.sameValue.900719925474099101n.toString):
+        * test262/test/language/expressions/strict-equals/bigint-and-string.js:
+        * test262/test/language/expressions/subtraction/bigint-and-number.js:
+        * test262/test/language/expressions/subtraction/bigint-arithmetic.js:
+        (testSub): Deleted.
+        * test262/test/language/expressions/subtraction/bigint-errors.js:
+        (Symbol.toPrimitive):
+        (0n.Symbol.toPrimitive):
+        (valueOf):
+        (0n.valueOf):
+        (toString):
+        (0n.toString):
+        * test262/test/language/expressions/subtraction/bigint-toprimitive.js:
+        * test262/test/language/expressions/subtraction/bigint-wrapped-values.js:
+        * test262/test/language/expressions/unary-minus/bigint-non-primitive.js:
+        (assert.sameValue.Symbol.toPrimitive):
+        (assert.sameValue.valueOf):
+        (assert.sameValue.toString):
+        * test262/test/language/expressions/unary-plus/bigint-throws.js:
+        * test262/test/language/expressions/unsigned-right-shift/bigint-and-number.js:
+        * test262/test/language/expressions/unsigned-right-shift/bigint-errors.js:
+        (Symbol.toPrimitive):
+        (0n.Symbol.toPrimitive):
+        (valueOf):
+        (0n.valueOf):
+        (toString):
+        (0n.toString):
+        * test262/test/language/expressions/unsigned-right-shift/bigint-non-primitive.js:
+        (Symbol.toPrimitive):
+        (valueOf):
+        (toString):
+        (0b101n.Symbol.toPrimitive):
+        (0b101n.valueOf):
+        (0b101n.toString):
+        (valueOf.valueOf):
+        * test262/test/language/expressions/unsigned-right-shift/bigint-toprimitive.js:
+        * test262/test/language/expressions/unsigned-right-shift/bigint-wrapped-values.js:
+        * test262/test/language/literals/numeric/numeric-followed-by-ident.js: Added.
+        * test262/test/language/literals/string/line-continuation-double.js: Added.
+        * test262/test/language/literals/string/line-continuation-single.js: Added.
+        * test262/test262-Revision.txt:
+
 2018-05-25  Mark Lam  <mark.lam@apple.com>
 
         for-in loops should preserve and restore the TDZ stack for each of its internal loops.

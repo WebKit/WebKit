@@ -24,6 +24,8 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(Intl, "NumberFormat");
-verifyWritable(Intl, "NumberFormat");
-verifyConfigurable(Intl, "NumberFormat");
+verifyProperty(Intl, 'NumberFormat', {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

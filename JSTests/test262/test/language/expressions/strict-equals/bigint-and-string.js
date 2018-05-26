@@ -1,6 +1,5 @@
 // Copyright (C) 2017 Josh Wolfe. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
-
 /*---
 description: Strict equality comparison of BigInt and String values
 esid: sec-strict-equality-comparison
@@ -9,40 +8,59 @@ info: |
 
 features: [BigInt]
 ---*/
+assert.sameValue(0n === '', false, 'The result of (0n === "") is false');
+assert.sameValue('' === 0n, false, 'The result of ("" === 0n) is false');
+assert.sameValue(0n === '-0', false, 'The result of (0n === "-0") is false');
+assert.sameValue('-0' === 0n, false, 'The result of ("-0" === 0n) is false');
+assert.sameValue(0n === '0', false, 'The result of (0n === "0") is false');
+assert.sameValue('0' === 0n, false, 'The result of ("0" === 0n) is false');
+assert.sameValue(0n === '-1', false, 'The result of (0n === "-1") is false');
+assert.sameValue('-1' === 0n, false, 'The result of ("-1" === 0n) is false');
+assert.sameValue(0n === '1', false, 'The result of (0n === "1") is false');
+assert.sameValue('1' === 0n, false, 'The result of ("1" === 0n) is false');
+assert.sameValue(0n === 'foo', false, 'The result of (0n === "foo") is false');
+assert.sameValue('foo' === 0n, false, 'The result of ("foo" === 0n) is false');
+assert.sameValue(1n === '', false, 'The result of (1n === "") is false');
+assert.sameValue('' === 1n, false, 'The result of ("" === 1n) is false');
+assert.sameValue(1n === '-0', false, 'The result of (1n === "-0") is false');
+assert.sameValue('-0' === 1n, false, 'The result of ("-0" === 1n) is false');
+assert.sameValue(1n === '0', false, 'The result of (1n === "0") is false');
+assert.sameValue('0' === 1n, false, 'The result of ("0" === 1n) is false');
+assert.sameValue(1n === '-1', false, 'The result of (1n === "-1") is false');
+assert.sameValue('-1' === 1n, false, 'The result of ("-1" === 1n) is false');
+assert.sameValue(1n === '1', false, 'The result of (1n === "1") is false');
+assert.sameValue('1' === 1n, false, 'The result of ("1" === 1n) is false');
+assert.sameValue(1n === 'foo', false, 'The result of (1n === "foo") is false');
+assert.sameValue('foo' === 1n, false, 'The result of ("foo" === 1n) is false');
+assert.sameValue(-1n === '-', false, 'The result of (-1n === "-") is false');
+assert.sameValue('-' === -1n, false, 'The result of ("-" === -1n) is false');
+assert.sameValue(-1n === '-0', false, 'The result of (-1n === "-0") is false');
+assert.sameValue('-0' === -1n, false, 'The result of ("-0" === -1n) is false');
+assert.sameValue(-1n === '-1', false, 'The result of (-1n === "-1") is false');
+assert.sameValue('-1' === -1n, false, 'The result of ("-1" === -1n) is false');
+assert.sameValue(-1n === '-foo', false, 'The result of (-1n === "-foo") is false');
+assert.sameValue('-foo' === -1n, false, 'The result of ("-foo" === -1n) is false');
 
-assert.sameValue(0n === "", false, '0n === ""');
-assert.sameValue("" === 0n, false, '"" === 0n');
-assert.sameValue(0n === "-0", false, '0n === "-0"');
-assert.sameValue("-0" === 0n, false, '"-0" === 0n');
-assert.sameValue(0n === "0", false, '0n === "0"');
-assert.sameValue("0" === 0n, false, '"0" === 0n');
-assert.sameValue(0n === "-1", false, '0n === "-1"');
-assert.sameValue("-1" === 0n, false, '"-1" === 0n');
-assert.sameValue(0n === "1", false, '0n === "1"');
-assert.sameValue("1" === 0n, false, '"1" === 0n');
-assert.sameValue(0n === "foo", false, '0n === "foo"');
-assert.sameValue("foo" === 0n, false, '"foo" === 0n');
-assert.sameValue(1n === "", false, '1n === ""');
-assert.sameValue("" === 1n, false, '"" === 1n');
-assert.sameValue(1n === "-0", false, '1n === "-0"');
-assert.sameValue("-0" === 1n, false, '"-0" === 1n');
-assert.sameValue(1n === "0", false, '1n === "0"');
-assert.sameValue("0" === 1n, false, '"0" === 1n');
-assert.sameValue(1n === "-1", false, '1n === "-1"');
-assert.sameValue("-1" === 1n, false, '"-1" === 1n');
-assert.sameValue(1n === "1", false, '1n === "1"');
-assert.sameValue("1" === 1n, false, '"1" === 1n');
-assert.sameValue(1n === "foo", false, '1n === "foo"');
-assert.sameValue("foo" === 1n, false, '"foo" === 1n');
-assert.sameValue(-1n === "-", false, '-1n === "-"');
-assert.sameValue("-" === -1n, false, '"-" === -1n');
-assert.sameValue(-1n === "-0", false, '-1n === "-0"');
-assert.sameValue("-0" === -1n, false, '"-0" === -1n');
-assert.sameValue(-1n === "-1", false, '-1n === "-1"');
-assert.sameValue("-1" === -1n, false, '"-1" === -1n');
-assert.sameValue(-1n === "-foo", false, '-1n === "-foo"');
-assert.sameValue("-foo" === -1n, false, '"-foo" === -1n');
-assert.sameValue(900719925474099101n === "900719925474099101", false, '900719925474099101n === "900719925474099101"');
-assert.sameValue("900719925474099101" === 900719925474099101n, false, '"900719925474099101" === 900719925474099101n');
-assert.sameValue(900719925474099102n === "900719925474099101", false, '900719925474099102n === "900719925474099101"');
-assert.sameValue("900719925474099101" === 900719925474099102n, false, '"900719925474099101" === 900719925474099102n');
+assert.sameValue(
+  900719925474099101n === '900719925474099101',
+  false,
+  'The result of (900719925474099101n === "900719925474099101") is false'
+);
+
+assert.sameValue(
+  '900719925474099101' === 900719925474099101n,
+  false,
+  'The result of ("900719925474099101" === 900719925474099101n) is false'
+);
+
+assert.sameValue(
+  900719925474099102n === '900719925474099101',
+  false,
+  'The result of (900719925474099102n === "900719925474099101") is false'
+);
+
+assert.sameValue(
+  '900719925474099101' === 900719925474099102n,
+  false,
+  'The result of ("900719925474099101" === 900719925474099102n) is false'
+);

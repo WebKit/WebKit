@@ -110,8 +110,6 @@ test/annexB/language/eval-code/direct/func-switch-dflt-eval-func-skip-early-err-
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/func-switch-dflt-eval-func-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/eval-code/direct/global-block-decl-eval-global-existing-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«xÂ», Â«undefinedÂ») to be true'
 test/annexB/language/eval-code/direct/global-block-decl-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/global-block-decl-eval-global-skip-early-err-for-in.js:
@@ -124,8 +122,6 @@ test/annexB/language/eval-code/direct/global-block-decl-eval-global-skip-early-e
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/global-block-decl-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/eval-code/direct/global-if-decl-else-decl-a-eval-global-existing-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«xÂ», Â«undefinedÂ») to be true'
 test/annexB/language/eval-code/direct/global-if-decl-else-decl-a-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/global-if-decl-else-decl-a-eval-global-skip-early-err-for-in.js:
@@ -138,8 +134,6 @@ test/annexB/language/eval-code/direct/global-if-decl-else-decl-a-eval-global-ski
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/global-if-decl-else-decl-a-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/eval-code/direct/global-if-decl-else-decl-b-eval-global-existing-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«xÂ», Â«undefinedÂ») to be true'
 test/annexB/language/eval-code/direct/global-if-decl-else-decl-b-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/global-if-decl-else-decl-b-eval-global-skip-early-err-for-in.js:
@@ -152,8 +146,6 @@ test/annexB/language/eval-code/direct/global-if-decl-else-decl-b-eval-global-ski
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/global-if-decl-else-decl-b-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/eval-code/direct/global-if-decl-else-stmt-eval-global-existing-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«xÂ», Â«undefinedÂ») to be true'
 test/annexB/language/eval-code/direct/global-if-decl-else-stmt-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/global-if-decl-else-stmt-eval-global-skip-early-err-for-in.js:
@@ -166,8 +158,6 @@ test/annexB/language/eval-code/direct/global-if-decl-else-stmt-eval-global-skip-
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/global-if-decl-else-stmt-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/eval-code/direct/global-if-decl-no-else-eval-global-existing-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«xÂ», Â«undefinedÂ») to be true'
 test/annexB/language/eval-code/direct/global-if-decl-no-else-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/global-if-decl-no-else-eval-global-skip-early-err-for-in.js:
@@ -180,8 +170,6 @@ test/annexB/language/eval-code/direct/global-if-decl-no-else-eval-global-skip-ea
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/global-if-decl-no-else-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/eval-code/direct/global-if-stmt-else-decl-eval-global-existing-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«xÂ», Â«undefinedÂ») to be true'
 test/annexB/language/eval-code/direct/global-if-stmt-else-decl-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/global-if-stmt-else-decl-eval-global-skip-early-err-for-in.js:
@@ -194,8 +182,6 @@ test/annexB/language/eval-code/direct/global-if-stmt-else-decl-eval-global-skip-
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/global-if-stmt-else-decl-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/eval-code/direct/global-switch-case-eval-global-existing-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«xÂ», Â«undefinedÂ») to be true'
 test/annexB/language/eval-code/direct/global-switch-case-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/global-switch-case-eval-global-skip-early-err-for-in.js:
@@ -208,8 +194,6 @@ test/annexB/language/eval-code/direct/global-switch-case-eval-global-skip-early-
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/global-switch-case-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/eval-code/direct/global-switch-dflt-eval-global-existing-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«xÂ», Â«undefinedÂ») to be true'
 test/annexB/language/eval-code/direct/global-switch-dflt-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/global-switch-dflt-eval-global-skip-early-err-for-in.js:
@@ -224,8 +208,6 @@ test/annexB/language/eval-code/direct/global-switch-dflt-eval-global-skip-early-
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/var-env-lower-lex-catch-non-strict.js:
   default: "SyntaxError: Can't create duplicate variable in eval: 'err'"
-test/annexB/language/eval-code/indirect/global-block-decl-eval-global-existing-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«xÂ», Â«undefinedÂ») to be true'
 test/annexB/language/eval-code/indirect/global-block-decl-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-block-decl-eval-global-skip-early-err-for-in.js:
@@ -238,8 +220,6 @@ test/annexB/language/eval-code/indirect/global-block-decl-eval-global-skip-early
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-block-decl-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/eval-code/indirect/global-if-decl-else-decl-a-eval-global-existing-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«xÂ», Â«undefinedÂ») to be true'
 test/annexB/language/eval-code/indirect/global-if-decl-else-decl-a-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-if-decl-else-decl-a-eval-global-skip-early-err-for-in.js:
@@ -252,8 +232,6 @@ test/annexB/language/eval-code/indirect/global-if-decl-else-decl-a-eval-global-s
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-if-decl-else-decl-a-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/eval-code/indirect/global-if-decl-else-decl-b-eval-global-existing-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«xÂ», Â«undefinedÂ») to be true'
 test/annexB/language/eval-code/indirect/global-if-decl-else-decl-b-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-if-decl-else-decl-b-eval-global-skip-early-err-for-in.js:
@@ -266,8 +244,6 @@ test/annexB/language/eval-code/indirect/global-if-decl-else-decl-b-eval-global-s
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-if-decl-else-decl-b-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/eval-code/indirect/global-if-decl-else-stmt-eval-global-existing-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«xÂ», Â«undefinedÂ») to be true'
 test/annexB/language/eval-code/indirect/global-if-decl-else-stmt-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-if-decl-else-stmt-eval-global-skip-early-err-for-in.js:
@@ -280,8 +256,6 @@ test/annexB/language/eval-code/indirect/global-if-decl-else-stmt-eval-global-ski
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-if-decl-else-stmt-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/eval-code/indirect/global-if-decl-no-else-eval-global-existing-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«xÂ», Â«undefinedÂ») to be true'
 test/annexB/language/eval-code/indirect/global-if-decl-no-else-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-if-decl-no-else-eval-global-skip-early-err-for-in.js:
@@ -294,8 +268,6 @@ test/annexB/language/eval-code/indirect/global-if-decl-no-else-eval-global-skip-
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-if-decl-no-else-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/eval-code/indirect/global-if-stmt-else-decl-eval-global-existing-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«xÂ», Â«undefinedÂ») to be true'
 test/annexB/language/eval-code/indirect/global-if-stmt-else-decl-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-if-stmt-else-decl-eval-global-skip-early-err-for-in.js:
@@ -308,8 +280,6 @@ test/annexB/language/eval-code/indirect/global-if-stmt-else-decl-eval-global-ski
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-if-stmt-else-decl-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/eval-code/indirect/global-switch-case-eval-global-existing-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«xÂ», Â«undefinedÂ») to be true'
 test/annexB/language/eval-code/indirect/global-switch-case-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-switch-case-eval-global-skip-early-err-for-in.js:
@@ -322,8 +292,6 @@ test/annexB/language/eval-code/indirect/global-switch-case-eval-global-skip-earl
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-switch-case-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/eval-code/indirect/global-switch-dflt-eval-global-existing-global-init.js:
-  default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«xÂ», Â«undefinedÂ») to be true'
 test/annexB/language/eval-code/indirect/global-switch-dflt-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-switch-dflt-eval-global-skip-early-err-for-in.js:
@@ -445,6 +413,8 @@ test/annexB/language/global-code/block-decl-global-existing-block-fn-no-init.js:
   default: 'Test262Error: Expected SameValue(Â«function f() {  }Â», Â«undefinedÂ») to be true'
 test/annexB/language/global-code/block-decl-global-existing-fn-update.js:
   default: 'Test262Error: Expected SameValue(Â«outer declarationÂ», Â«inner declarationÂ») to be true'
+test/annexB/language/global-code/block-decl-global-existing-non-enumerable-global-init.js:
+  default: 'Test262Error: descriptor should not be enumerable; descriptor should be configurable'
 test/annexB/language/global-code/block-decl-global-init.js:
   default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«function f() {  }Â», Â«undefinedÂ») to be true'
 test/annexB/language/global-code/block-decl-global-no-skip-try.js:
@@ -469,6 +439,8 @@ test/annexB/language/global-code/if-decl-else-decl-a-global-existing-block-fn-no
   default: 'Test262Error: Expected SameValue(Â«function f() {  }Â», Â«undefinedÂ») to be true'
 test/annexB/language/global-code/if-decl-else-decl-a-global-existing-fn-update.js:
   default: 'Test262Error: Expected SameValue(Â«outer declarationÂ», Â«inner declarationÂ») to be true'
+test/annexB/language/global-code/if-decl-else-decl-a-global-existing-non-enumerable-global-init.js:
+  default: 'Test262Error: descriptor should not be enumerable; descriptor should be configurable'
 test/annexB/language/global-code/if-decl-else-decl-a-global-init.js:
   default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«function f() {  }Â», Â«undefinedÂ») to be true'
 test/annexB/language/global-code/if-decl-else-decl-a-global-no-skip-try.js:
@@ -493,6 +465,8 @@ test/annexB/language/global-code/if-decl-else-decl-b-global-existing-block-fn-no
   default: 'Test262Error: Expected SameValue(Â«function f() {  }Â», Â«undefinedÂ») to be true'
 test/annexB/language/global-code/if-decl-else-decl-b-global-existing-fn-update.js:
   default: 'Test262Error: Expected SameValue(Â«outer declarationÂ», Â«inner declarationÂ») to be true'
+test/annexB/language/global-code/if-decl-else-decl-b-global-existing-non-enumerable-global-init.js:
+  default: 'Test262Error: descriptor should not be enumerable; descriptor should be configurable'
 test/annexB/language/global-code/if-decl-else-decl-b-global-init.js:
   default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«function f() {  }Â», Â«undefinedÂ») to be true'
 test/annexB/language/global-code/if-decl-else-decl-b-global-no-skip-try.js:
@@ -517,6 +491,8 @@ test/annexB/language/global-code/if-decl-else-stmt-global-existing-block-fn-no-i
   default: 'Test262Error: Expected SameValue(Â«function f() {  }Â», Â«undefinedÂ») to be true'
 test/annexB/language/global-code/if-decl-else-stmt-global-existing-fn-update.js:
   default: 'Test262Error: Expected SameValue(Â«outer declarationÂ», Â«inner declarationÂ») to be true'
+test/annexB/language/global-code/if-decl-else-stmt-global-existing-non-enumerable-global-init.js:
+  default: 'Test262Error: descriptor should not be enumerable; descriptor should be configurable'
 test/annexB/language/global-code/if-decl-else-stmt-global-init.js:
   default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«function f() {  }Â», Â«undefinedÂ») to be true'
 test/annexB/language/global-code/if-decl-else-stmt-global-no-skip-try.js:
@@ -541,6 +517,8 @@ test/annexB/language/global-code/if-decl-no-else-global-existing-block-fn-no-ini
   default: 'Test262Error: Expected SameValue(Â«function f() {  }Â», Â«undefinedÂ») to be true'
 test/annexB/language/global-code/if-decl-no-else-global-existing-fn-update.js:
   default: 'Test262Error: Expected SameValue(Â«outer declarationÂ», Â«inner declarationÂ») to be true'
+test/annexB/language/global-code/if-decl-no-else-global-existing-non-enumerable-global-init.js:
+  default: 'Test262Error: descriptor should not be enumerable; descriptor should be configurable'
 test/annexB/language/global-code/if-decl-no-else-global-init.js:
   default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«function f() {  }Â», Â«undefinedÂ») to be true'
 test/annexB/language/global-code/if-decl-no-else-global-no-skip-try.js:
@@ -565,6 +543,8 @@ test/annexB/language/global-code/if-stmt-else-decl-global-existing-block-fn-no-i
   default: 'Test262Error: Expected SameValue(Â«function f() {  }Â», Â«undefinedÂ») to be true'
 test/annexB/language/global-code/if-stmt-else-decl-global-existing-fn-update.js:
   default: 'Test262Error: Expected SameValue(Â«outer declarationÂ», Â«inner declarationÂ») to be true'
+test/annexB/language/global-code/if-stmt-else-decl-global-existing-non-enumerable-global-init.js:
+  default: 'Test262Error: descriptor should not be enumerable; descriptor should be configurable'
 test/annexB/language/global-code/if-stmt-else-decl-global-init.js:
   default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«function f() {  }Â», Â«undefinedÂ») to be true'
 test/annexB/language/global-code/if-stmt-else-decl-global-no-skip-try.js:
@@ -589,6 +569,8 @@ test/annexB/language/global-code/switch-case-global-existing-block-fn-no-init.js
   default: 'Test262Error: Expected SameValue(Â«function f() {  }Â», Â«undefinedÂ») to be true'
 test/annexB/language/global-code/switch-case-global-existing-fn-update.js:
   default: 'Test262Error: Expected SameValue(Â«outer declarationÂ», Â«inner declarationÂ») to be true'
+test/annexB/language/global-code/switch-case-global-existing-non-enumerable-global-init.js:
+  default: 'Test262Error: descriptor should not be enumerable; descriptor should be configurable'
 test/annexB/language/global-code/switch-case-global-init.js:
   default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«function f() {  }Â», Â«undefinedÂ») to be true'
 test/annexB/language/global-code/switch-case-global-no-skip-try.js:
@@ -613,6 +595,8 @@ test/annexB/language/global-code/switch-dflt-global-existing-block-fn-no-init.js
   default: 'Test262Error: Expected SameValue(Â«function f() {  }Â», Â«undefinedÂ») to be true'
 test/annexB/language/global-code/switch-dflt-global-existing-fn-update.js:
   default: 'Test262Error: Expected SameValue(Â«outer declarationÂ», Â«inner declarationÂ») to be true'
+test/annexB/language/global-code/switch-dflt-global-existing-non-enumerable-global-init.js:
+  default: 'Test262Error: descriptor should not be enumerable; descriptor should be configurable'
 test/annexB/language/global-code/switch-dflt-global-init.js:
   default: 'Test262Error: binding is initialized to `undefined` Expected SameValue(Â«function f() {  }Â», Â«undefinedÂ») to be true'
 test/annexB/language/global-code/switch-dflt-global-no-skip-try.js:
@@ -649,6 +633,36 @@ test/built-ins/Array/prototype/concat/is-concat-spreadable-proxy.js:
 test/built-ins/Array/prototype/filter/target-array-with-non-writable-property.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
+test/built-ins/Array/prototype/flat/array-like-objects.js:
+  default: "TypeError: undefined is not an object (evaluating '[].flat.call')"
+  strict mode: "TypeError: undefined is not an object (evaluating '[].flat.call')"
+test/built-ins/Array/prototype/flat/bound-function-call.js:
+  default: "TypeError: undefined is not an object (evaluating '[].flat.bind')"
+  strict mode: "TypeError: undefined is not an object (evaluating '[].flat.bind')"
+test/built-ins/Array/prototype/flat/empty-array-elements.js:
+  default: "TypeError: [].flat is not a function. (In '[].flat()', '[].flat' is undefined)"
+  strict mode: "TypeError: [].flat is not a function. (In '[].flat()', '[].flat' is undefined)"
+test/built-ins/Array/prototype/flat/empty-object-elements.js:
+  default: "TypeError: [a].flat is not a function. (In '[a].flat()', '[a].flat' is undefined)"
+  strict mode: "TypeError: [a].flat is not a function. (In '[a].flat()', '[a].flat' is undefined)"
+test/built-ins/Array/prototype/flat/length.js:
+  default: "TypeError: undefined is not an object (evaluating 'Array.prototype.flat.length')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Array.prototype.flat.length')"
+test/built-ins/Array/prototype/flat/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Array.prototype.flat.name')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Array.prototype.flat.name')"
+test/built-ins/Array/prototype/flat/non-numeric-depth-should-not-throw.js:
+  default: "TypeError: a.flat is not a function. (In 'a.flat(depthNum)', 'a.flat' is undefined)"
+  strict mode: "TypeError: a.flat is not a function. (In 'a.flat(depthNum)', 'a.flat' is undefined)"
+test/built-ins/Array/prototype/flat/null-undefined-elements.js:
+  default: "TypeError: [1, null, void 0].flat is not a function. (In '[1, null, void 0].flat()', '[1, null, void 0].flat' is undefined)"
+  strict mode: "TypeError: [1, null, void 0].flat is not a function. (In '[1, null, void 0].flat()', '[1, null, void 0].flat' is undefined)"
+test/built-ins/Array/prototype/flat/positive-infinity.js:
+  default: "TypeError: a.flat is not a function. (In 'a.flat(Number.POSITIVE_INFINITY)', 'a.flat' is undefined)"
+  strict mode: "TypeError: a.flat is not a function. (In 'a.flat(Number.POSITIVE_INFINITY)', 'a.flat' is undefined)"
+test/built-ins/Array/prototype/flat/prop-desc.js:
+  default: 'Test262Error: `typeof Array.prototype.flat` is `function` Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+  strict mode: 'Test262Error: `typeof Array.prototype.flat` is `function` Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
 test/built-ins/Array/prototype/indexOf/15.4.4.14-3-28.js:
   default: 'Test262Error: Array.prototype.indexOf.call(obj, targetObj) Expected SameValue(Â«-1Â», Â«0Â») to be true'
   strict mode: 'Test262Error: Array.prototype.indexOf.call(obj, targetObj) Expected SameValue(Â«-1Â», Â«0Â») to be true'
@@ -1201,7 +1215,7 @@ test/built-ins/Object/internals/DefineOwnProperty/consistent-value-function-argu
   default: 'Test262Error: Expected SameValue(Â«nullÂ», Â«[object Arguments]Â») to be true'
 test/built-ins/Object/internals/DefineOwnProperty/consistent-value-function-caller.js:
   default: 'Test262Error: Expected SameValue(Â«nullÂ», Â«function g() {'
-test/built-ins/Object/internals/DefineOwnProperty/consistent-value-regexp-$1.js:
+test/built-ins/Object/internals/DefineOwnProperty/consistent-value-regexp-dollar1.js:
   default: 'Test262Error: Expected SameValue(Â«Â», Â«xÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«Â», Â«xÂ») to be true'
 test/built-ins/Object/keys/property-traps-order-with-proxied-array.js:
@@ -1886,16 +1900,55 @@ test/intl402/Intl/getCanonicalLocales/preferred-grandfathered.js:
 test/intl402/Intl/getCanonicalLocales/preferred-variant.js:
   default: 'Test262Error: Expected SameValue(Â«ja-Latn-hepburn-heplocÂ», Â«ja-Latn-alalc97Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«ja-Latn-hepburn-heplocÂ», Â«ja-Latn-alalc97Â») to be true'
+test/intl402/Locale/constructor-getter-order.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale')"
+test/intl402/Locale/constructor-locale-object.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"en-US\")')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"en-US\")')"
+test/intl402/Locale/constructor-non-iana-canon.js:
+  default: 'Test262Error: Expected SameValue(Â«moÂ», Â«roÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«moÂ», Â«roÂ») to be true'
 test/intl402/Locale/constructor-options-calendar-invalid.js:
   default: 'Test262Error:  is an invalid calendar option value Expected a RangeError but got a TypeError'
   strict mode: 'Test262Error:  is an invalid calendar option value Expected a RangeError but got a TypeError'
 test/intl402/Locale/constructor-options-calendar-valid.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+test/intl402/Locale/constructor-options-casefirst-invalid.js:
+  default: 'Test262Error:  is an invalid caseFirst option value Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error:  is an invalid caseFirst option value Expected a RangeError but got a TypeError'
+test/intl402/Locale/constructor-options-casefirst-valid.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+test/intl402/Locale/constructor-options-collation-invalid.js:
+  default: 'Test262Error: a is an invalid collation option value Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: a is an invalid collation option value Expected a RangeError but got a TypeError'
+test/intl402/Locale/constructor-options-collation-valid.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+test/intl402/Locale/constructor-options-hourcycle-invalid.js:
+  default: 'Test262Error:  is an invalid hourCycle option value Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error:  is an invalid hourCycle option value Expected a RangeError but got a TypeError'
+test/intl402/Locale/constructor-options-hourcycle-valid.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+test/intl402/Locale/constructor-options-language-grandfathered.js:
+  default: 'Test262Error: Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
 test/intl402/Locale/constructor-options-language-invalid.js:
   default: 'Test262Error:  is an invalid language option value Expected a RangeError but got a TypeError'
   strict mode: 'Test262Error:  is an invalid language option value Expected a RangeError but got a TypeError'
 test/intl402/Locale/constructor-options-language-valid.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+test/intl402/Locale/constructor-options-numberingsystem-invalid.js:
+  default: 'Test262Error: a is an invalid numberingSystem option value Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: a is an invalid numberingSystem option value Expected a RangeError but got a TypeError'
+test/intl402/Locale/constructor-options-numberingsystem-valid.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+test/intl402/Locale/constructor-options-numeric-valid.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
 test/intl402/Locale/constructor-options-region-invalid.js:
@@ -1908,11 +1961,41 @@ test/intl402/Locale/constructor-options-script-invalid.js:
   default: 'Test262Error:  is an invalid script option value Expected a RangeError but got a TypeError'
   strict mode: 'Test262Error:  is an invalid script option value Expected a RangeError but got a TypeError'
 test/intl402/Locale/constructor-options-script-valid.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"en\", options)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"en\", options)')"
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+test/intl402/Locale/constructor-parse-twice.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(tag, options)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(tag, options)')"
+test/intl402/Locale/constructor-tag-tostring.js:
+  default: 'Test262Error: Expected a CustomError but got a TypeError'
+  strict mode: 'Test262Error: Expected a CustomError but got a TypeError'
+test/intl402/Locale/constructor-unicode-ext-invalid.js:
+  default: 'Test262Error: Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
+test/intl402/Locale/constructor-unicode-ext-valid.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(langtag)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(langtag)')"
+test/intl402/Locale/extensions-grandfathered.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(tag, options)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(tag, options)')"
+test/intl402/Locale/extensions-private.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"x-default\", {"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"x-default\", {"
 test/intl402/Locale/function-prototype.js:
   default: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Intl.Locale)')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Intl.Locale)')"
+test/intl402/Locale/getters-grandfathered.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"i-default\")')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"i-default\")')"
+test/intl402/Locale/getters-missing.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"sv\")')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"sv\")')"
+test/intl402/Locale/getters-privateuse.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"x-private\")')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"x-private\")')"
+test/intl402/Locale/getters.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(langtag)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(langtag)')"
 test/intl402/Locale/instance-extensibility.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en')')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en')')"
@@ -1925,13 +2008,34 @@ test/intl402/Locale/invalid-tag-throws.js:
 test/intl402/Locale/length.js:
   default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/intl402/Locale/likely-subtags-grandfathered.js:
+  default: 'Test262Error: Expected SameValue(Â«en-GB-oedÂ», Â«en-GB-oxendictÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«en-GB-oedÂ», Â«en-GB-oxendictÂ») to be true'
 test/intl402/Locale/name.js:
   default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
 test/intl402/Locale/prop-desc.js:
-  default: 'Test262Error: typeof Intl.Locale is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-  strict mode: 'Test262Error: typeof Intl.Locale is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-test/intl402/Locale/prototype/constructor.js:
+  default: 'Test262Error: obj should have an own property Locale'
+  strict mode: 'Test262Error: obj should have an own property Locale'
+test/intl402/Locale/prototype/baseName/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/calendar/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/caseFirst/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/collation/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/constructor/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/hourCycle/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/language/prop-desc.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
 test/intl402/Locale/prototype/maximize/length.js:
@@ -1943,10 +2047,34 @@ test/intl402/Locale/prototype/maximize/name.js:
 test/intl402/Locale/prototype/maximize/prop-desc.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/minimize/length.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/minimize/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/minimize/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/numberingSystem/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/numeric/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
 test/intl402/Locale/prototype/prop-desc.js:
   default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/intl402/Locale/prototype/toStringTag.js:
+test/intl402/Locale/prototype/region/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/script/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/toString/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/toStringTag/toStringTag.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
 test/intl402/Number/prototype/toLocaleString/returns-same-results-as-NumberFormat.js:
@@ -1992,8 +2120,8 @@ test/intl402/PluralRules/default-options-object-prototype.js:
   default: 'Test262Error: Expected SameValue(Â«ordinalÂ», Â«cardinalÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«ordinalÂ», Â«cardinalÂ») to be true'
 test/intl402/PluralRules/length.js:
-  default: 'Test262Error: Expected obj[length] to have configurable:true.'
-  strict mode: 'Test262Error: Expected obj[length] to have configurable:true.'
+  default: 'Test262Error: descriptor should be configurable'
+  strict mode: 'Test262Error: descriptor should be configurable'
 test/intl402/TypedArray/prototype/toLocaleString/calls-toLocaleString-number-elements.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«à¹.à¹à¹à¹Â») to be true (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«à¹.à¹à¹à¹Â») to be true (Testing with Float64Array.)'

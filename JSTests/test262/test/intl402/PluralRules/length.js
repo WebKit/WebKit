@@ -8,8 +8,9 @@ author: Zibi Braniecki
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Intl.PluralRules.length, 0);
-
-verifyNotEnumerable(Intl.PluralRules, "length");
-verifyNotWritable(Intl.PluralRules, "length");
-verifyConfigurable(Intl.PluralRules, "length");
+verifyProperty(Intl.PluralRules, 'length', {
+  value: 0,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

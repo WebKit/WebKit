@@ -15,30 +15,46 @@ info: |
 
     ApplyOptionsToTag( tag, options )
     ...
-    9. If tag matches the langtag production, then
-        a. If language is not undefined, then
+    9. If tag matches neither the privateuse nor the grandfathered production, then
+        b. If language is not undefined, then
             i. Set tag to tag with the substring corresponding to the language production replaced by the string language.
 
 features: [Intl.Locale]
 ---*/
 
 const validLanguageOptions = [
-  [undefined, "en"],
-  [null, "null"],
-  ["zh-cmn", "cmn"],
-  ["ZH-CMN", "cmn"],
-  ["abcd", "abcd"],
-  ["abcde", "abcde"],
-  ["abcdef", "abcdef"],
-  ["abcdefg", "abcdefg"],
-  ["abcdefgh", "abcdefgh"],
-  [{ toString() { return "de" } }, "de"],
+  [undefined, undefined],
+  [null, 'null'],
+  ['zh-cmn', 'cmn'],
+  ['ZH-CMN', 'cmn'],
+  ['abcd', 'abcd'],
+  ['abcde', 'abcde'],
+  ['abcdef', 'abcdef'],
+  ['abcdefg', 'abcdefg'],
+  ['abcdefgh', 'abcdefgh'],
+  [{ toString() { return 'de' } }, 'de'],
 ];
 for (const [language, expected] of validLanguageOptions) {
   let options = { language };
+  let expect = expected || 'en';
+
   assert.sameValue(
     new Intl.Locale('en', options).toString(),
+    expect,
+    `new Intl.Locale('en', options).toString() equals the value of ${expect}`
+  );
+
+  expect = (expected || 'en') + '-US';
+  assert.sameValue(
+    new Intl.Locale('en-US', options).toString(),
     expected,
-    `new Intl.Locale('en', options).toString() equals the value of ${expected}`
+    `new Intl.Locale('en-US', options).toString() equals the value of ${expect}`
+  );
+
+  expect = expected || 'en-els';
+  assert.sameValue(
+    new Intl.Locale('en-els', options).toString(),
+    expect,
+    `new Intl.Locale('en-els', options).toString() equals the value of ${expect}`
   );
 }

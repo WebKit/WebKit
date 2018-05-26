@@ -4,23 +4,30 @@
 /*---
 esid: sec-intl.locale
 description: >
-    The value of the [[Prototype]] internal slot of the Intl.Locale constructor is the
-    intrinsic object %FunctionPrototype%.
+  "Locale" property of Intl.
 info: |
-  The value of Intl.Locale.prototype is %LocalePrototype%.
+  Intl.Locale (...)
 
-  This property has the attributes
-  { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: false }.
+  7 Requirements for Standard Built-in ECMAScript Objects
+
+    Unless specified otherwise in this document, the objects, functions, and constructors
+    described in this standard are subject to the generic requirements and restrictions
+    specified for standard built-in ECMAScript objects in the ECMAScript 2018 Language
+    Specification, 9th edition, clause 17, or successor.
+
+  17 ECMAScript Standard Built-in Objects:
+
+    Every other data property described in clauses 18 through 26 and in Annex B.2 has the
+    attributes { [[Writable]]: true, [[Enumerable]]: false, [[Configurable]]: true }
+    unless otherwise specified.
 
 includes: [propertyHelper.js]
 features: [Intl.Locale]
 ---*/
 
-assert.sameValue(typeof Intl.Locale, "function", "typeof Intl.Locale is function");
-
 verifyProperty(Intl, "Locale", {
   value: Intl.Locale,
-  writable: false,
+  writable: true,
   enumerable: false,
-  configurable: false,
+  configurable: true,
 });
