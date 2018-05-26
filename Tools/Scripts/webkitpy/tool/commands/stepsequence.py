@@ -79,7 +79,7 @@ class StepSequence(object):
             QueueEngine.exit_after_handled_error(e)
         except ScriptError as e:
             if not options.quiet:
-                _log.error(e.message_with_output())
+                _log.error(e.message_with_output(output_limit=5000))
             if options.parent_command:
                 command = tool.command_by_name(options.parent_command)
                 command.handle_script_error(tool, state, e)

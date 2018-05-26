@@ -160,7 +160,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
     @classmethod
     def handle_script_error(cls, tool, state, script_error):
         # FIXME: Why does this not exit(1) like the superclass does?
-        _log.error(script_error.message_with_output())
+        _log.error(script_error.message_with_output(output_limit=5000))
 
     @classmethod
     def load_ews_classes(cls):

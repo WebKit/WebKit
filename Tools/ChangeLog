@@ -1,3 +1,18 @@
+2018-05-25  Aakash Jain  <aakash_jain@apple.com>
+
+        Display detailed error logs when a script fails in EWS
+        https://bugs.webkit.org/show_bug.cgi?id=175696
+        <rdar://problem/34841885>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/tool/bot/queueengine.py: Set output_limit to 5000 characters instead of default 500 characters.
+        * Scripts/webkitpy/tool/commands/abstractsequencedcommand.py: Ditto.
+        * Scripts/webkitpy/tool/commands/download.py: Ditto.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py: Ditto.
+        * Scripts/webkitpy/tool/commands/queues.py: Ditto.
+        * Scripts/webkitpy/tool/commands/stepsequence.py: Ditto.
+
 2018-05-25  Daniel Bates  <dabates@apple.com>
 
         test-webkitpy messages logged using __main__ logger are not displayed

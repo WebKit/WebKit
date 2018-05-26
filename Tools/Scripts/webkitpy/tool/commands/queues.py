@@ -367,7 +367,7 @@ class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTas
     def _error_message_for_bug(self, task, patch, script_error):
         message = self._failing_tests_message(task, patch)
         if not message:
-            message = script_error.message_with_output()
+            message = script_error.message_with_output(output_limit=5000)
         results_link = self._tool.status_server.results_url_for_status(task.failure_status_id)
         return "%s\nFull output: %s" % (message, results_link)
 
@@ -415,7 +415,7 @@ class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTas
         # Hitting this error handler should be pretty rare.  It does occur,
         # however, when a patch no longer applies to top-of-tree in the final
         # land step.
-        _log.error(script_error.message_with_output())
+        _log.error(script_error.message_with_output(output_limit=5000))
 
     @classmethod
     def handle_checkout_needs_update(cls, tool, state, options, error):

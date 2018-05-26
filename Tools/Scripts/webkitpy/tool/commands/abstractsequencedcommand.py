@@ -49,7 +49,7 @@ class AbstractSequencedCommand(Command):
         try:
             state = self._prepare_state(options, args, tool)
         except ScriptError as e:
-            _log.error(e.message_with_output())
+            _log.error(e.message_with_output(output_limit=5000))
             self._exit(e.exit_code or 2)
 
         self._sequence.run_and_handle_errors(tool, options, state)
