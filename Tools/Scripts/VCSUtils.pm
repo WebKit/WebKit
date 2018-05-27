@@ -938,6 +938,7 @@ sub parseSvnDiffHeader($$)
     my $copiedFromPath;
     my $foundHeaderEnding;
     my $isBinary;
+    my $isDeletion;
     my $isNew;
     my $sourceRevision;
     my $svnConvertedText;
@@ -992,7 +993,15 @@ sub parseSvnDiffHeader($$)
     }
 
     if (!$foundHeaderEnding) {
-        die("Did not find end of header block corresponding to index path \"$indexPath\".");
+        if (-z $indexPath) {
+            # Delete an empty file.
+            $isDeletion = 1;
+        } elsif (! -e $indexPath) {
+            # Add an empty file.
+            $isNew = 1;
+        } else {
+            die "Did not find end of header block corresponding to index path \"$indexPath\".";
+        }
     }
 
     my %header;
@@ -1000,6 +1009,7 @@ sub parseSvnDiffHeader($$)
     $header{copiedFromPath} = $copiedFromPath if $copiedFromPath;
     $header{indexPath} = $indexPath;
     $header{isBinary} = $isBinary if $isBinary;
+    $header{isDeletion} = $isDeletion if $isDeletion;
     $header{isNew} = $isNew if $isNew;
     $header{sourceRevision} = $sourceRevision if $sourceRevision;
     $header{svnConvertedText} = $svnConvertedText;

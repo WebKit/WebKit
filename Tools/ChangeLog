@@ -1,3 +1,36 @@
+2018-05-27  David Kilzer  <ddkilzer@apple.com>
+
+        svn-apply fails when a patch has an empty file
+        <https://webkit.org/b/29684>
+
+        Reviewed by Daniel Bates.
+
+        Prior to this change, applying the following patches resulted in:
+        - svn: add empty file     (failure)
+        - svn: delete empty file  (failure)
+        - svn: rename empty file  (failure)
+        - git: add empty file     (false-positive success)
+        - git: delete empty file  (success)
+        - git: rename empty file  (failure)
+
+        * Scripts/VCSUtils.pm:
+        (parseSvnDiffHeader): Handle the case when there is no patch
+        following the header.  If the file exists and is empty, that
+        means it's a deletion.  If the file does not exist, that means
+        it's an addition. Everything else is a fatal error.
+        * Scripts/svn-apply:
+        (patch):
+        - Only apply a patch for deletion if it has one or more text
+          chunks.
+        - Add a case to handle adding an empty file (an addition with no
+          text chunks), and verify the file doesn't exist yet.
+        - Any unhandled patch is a fatal error.
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnDiffHeader.pl:
+        Add tests for adding an empty file and deleting an empty file.
+        * Scripts/webkitperl/VCSUtils_unittest/resources/empty.txt: Add.
+        Used by parseSvnDiffHeader.pl unit test for "add an empty file"
+        test case.
+
 2018-05-25  Aakash Jain  <aakash_jain@apple.com>
 
         Display detailed error logs when a script fails in EWS

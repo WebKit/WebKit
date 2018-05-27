@@ -363,7 +363,7 @@ sub patch($)
                 handleBinaryChange($fullPath, $patch) if $patch;
             }
         } elsif ($deletion) {
-            applyPatch($patch, $fullPath, ["--force"]) if $patch;
+            applyPatch($patch, $fullPath, ["--force"]) if ($patch && $hasTextChunks);
             scmRemove($fullPath);
         } elsif ($addition && $hasTextChunks) {
             # Addition
@@ -374,6 +374,14 @@ sub patch($)
             my $escapedFullPath = escapeSubversionPath("$fullPath.orig");
             # What is this for?
             system("svn", "stat", "$escapedFullPath") if isSVN() && -e "$fullPath.orig";
+        } elsif ($addition && !$hasTextChunks) {
+            # Add empty file.
+            die "\"$fullPath\" already exists" if -e $fullPath;
+            open(my $FH, ">>", $fullPath) or die "Could not open \"$fullPath\" for writing: $!";
+            close($FH);
+            scmAdd($fullPath);
+        } else {
+            die "Can't handle patch for \"$fullPath\".";
         }
     }
 
