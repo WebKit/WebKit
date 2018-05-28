@@ -1,4 +1,17 @@
 =================
+WebKitGTK+ 2.21.3
+=================
+
+What's new in WebKitGTK+ 2.21.3?
+
+  - Ensure memory monitor properly notifies all child processes.
+  - Add maximize, minimize and fullscreen window commands to WebDriver.
+  - Fix a network process crash when trying to get cookies of about:blank page.
+  - Fix UI process crash when closing the window under Wayland.
+  - Disable Gigacage if mmap fails to allocate in Linux.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.21.2
 =================
 
