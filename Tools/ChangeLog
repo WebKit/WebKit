@@ -1,5 +1,48 @@
 2018-05-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [Win][MiniBrowser] Add MainWindow class
+        https://bugs.webkit.org/show_bug.cgi?id=185814
+
+        Reviewed by Per Arne Vollan.
+
+        This is a sub task of Bug 184770. Added a new class MainWindow to
+        represent the main window which will be shared among WK1 and WK2.
+
+        This change is partial so that it's easy to review this patch.
+        I'll move more functions into MainWindow.cpp, and remove more
+        global variables in forthcoming patches.
+
+        * MiniBrowser/win/CMakeLists.txt: Added MainWindow.cpp.
+        * MiniBrowser/win/Common.cpp: Removed MainWindow related global
+        variables hMainWnd, hURLBarWnd, hBackButtonWnd and
+        hForwardButtonWnd. Added a new global variable gMainWindow.
+        (WndProc): Moved to MainWindow.cpp.
+        (resizeSubViews): Ditto.
+        (ToggleMenuFlag): Removed static to be called from MainWindow.cpp.
+        (ToggleMenuItem): Ditto.
+        (CustomUserAgent): Follow the global variables removal.
+        (DisplayAuthDialog): Ditto.
+        (loadURL): Ditto.
+        (WndProc): Renamed to MainWindow::WndProc.
+        * MiniBrowser/win/MainWindow.cpp: Added.
+        (MainWindow::registerClass): Renamed from MyRegisterClass of WinMain.cpp.
+        (MainWindow::init): Extracted MainWindow initialization code from wWinMain.
+        (MainWindow::resizeSubViews): Moved from Common.cpp.
+        (MainWindow::WndProc): Ditto.
+        * MiniBrowser/win/MainWindow.h: Added.
+        (MainWindow::hwnd):
+        (MainWindow::browserWindow):
+        * MiniBrowser/win/MiniBrowser.cpp:
+        (MiniBrowser::init):
+        (MiniBrowser::prepareViews): Extract some code into MiniBrowser::loadDefaultHTML.
+        (MiniBrowser::loadDefaultHTML): Extracted from MiniBrowser::prepareViews.
+        * MiniBrowser/win/MiniBrowser.h:
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain): Extracted MainWindow initialization code into MainWindow::init.
+        (MyRegisterClass): Moved to MainWindow.cpp.
+
+2018-05-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [Win][MiniBrowser] Remove URL argument of MiniBrowser::init
         https://bugs.webkit.org/show_bug.cgi?id=185969
 

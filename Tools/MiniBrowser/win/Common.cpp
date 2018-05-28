@@ -27,6 +27,7 @@
  */
 
 #include "DOMDefaultImpl.h"
+#include "MainWindow.h"
 #include "MiniBrowser.h"
 #include "MiniBrowserReplace.h"
 #include <WebKitLegacy/WebKitCOMAPI.h>
@@ -55,12 +56,6 @@
 #include <vector>
 #include <wininet.h>
 
-#define MAX_LOADSTRING 100
-#define URLBAR_HEIGHT  24
-#define CONTROLBUTTON_WIDTH 24
-
-static const int maxHistorySize = 10;
-
 #ifndef WM_DPICHANGED
 #define WM_DPICHANGED 0x02E0
 #endif
@@ -70,34 +65,18 @@ typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequ
 
 // Global Variables:
 HINSTANCE hInst;
-HWND hMainWnd;
-HWND hURLBarWnd;
-HGDIOBJ hURLFont;
-HWND hBackButtonWnd;
-HWND hForwardButtonWnd;
 HWND hCacheWnd;
 WNDPROC DefEditProc = nullptr;
 WNDPROC DefButtonProc = nullptr;
-WNDPROC DefWebKitProc = nullptr;
-HWND gViewWindow = 0;
+
+MainWindow* gMainWindow = nullptr;
 MiniBrowser* gMiniBrowser = nullptr;
-TCHAR szTitle[MAX_LOADSTRING]; // The title bar text
-TCHAR szWindowClass[MAX_LOADSTRING]; // the main window class name
 
 // Support moving the transparent window
 POINT s_windowPosition = { 100, 100 };
 SIZE s_windowSize = { 500, 200 };
 
 // Forward declarations of functions included in this code module:
-ATOM MyRegisterClass(HINSTANCE hInstance);
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK CustomUserAgent(HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK EditProc(HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK BackButtonProc(HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK ForwardButtonProc(HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK ReloadButtonProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK Caches(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK AuthDialogProc(HWND, UINT, WPARAM, LPARAM);
 
 static void loadURL(BSTR urlBStr);
@@ -105,27 +84,6 @@ static void updateStatistics(HWND hDlg);
 
 namespace WebCore {
 float deviceScaleFactorForWindow(HWND);
-}
-
-static void resizeSubViews()
-{
-    float scaleFactor = WebCore::deviceScaleFactorForWindow(hMainWnd);
-
-    RECT rcClient;
-    GetClientRect(hMainWnd, &rcClient);
-
-    int height = scaleFactor * URLBAR_HEIGHT;
-    int width = scaleFactor * CONTROLBUTTON_WIDTH;
-
-    MoveWindow(hBackButtonWnd, 0, 0, width, height, TRUE);
-    MoveWindow(hForwardButtonWnd, width, 0, width, height, TRUE);
-    MoveWindow(hURLBarWnd, width * 2, 0, rcClient.right, height, TRUE);
-
-    ::SendMessage(hURLBarWnd, static_cast<UINT>(WM_SETFONT), reinterpret_cast<WPARAM>(gMiniBrowser->urlBarFont()), TRUE);
-
-    if (gMiniBrowser->usesLayeredWebView() || !gViewWindow)
-        return;
-    MoveWindow(gViewWindow, 0, height, rcClient.right, rcClient.bottom - height, TRUE);
 }
 
 static void computeFullDesktopFrame()
@@ -277,7 +235,7 @@ void PrintView(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     ::DeleteDC(printDC);
 }
 
-static void ToggleMenuFlag(HWND hWnd, UINT menuID)
+void ToggleMenuFlag(HWND hWnd, UINT menuID)
 {
     HMENU menu = ::GetMenu(hWnd);
 
@@ -319,7 +277,7 @@ static void turnOffOtherUserAgents(HMENU menu)
     }
 }
 
-static bool ToggleMenuItem(HWND hWnd, UINT menuID)
+bool ToggleMenuItem(HWND hWnd, UINT menuID)
 {
     if (!gMiniBrowser)
         return false;
@@ -397,96 +355,6 @@ static bool ToggleMenuItem(HWND hWnd, UINT menuID)
     ::SetMenuItemInfo(menu, menuID, FALSE, &info);
 
     return true;
-}
-
-static const int dragBarHeight = 30;
-
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch (message) {
-    case WM_COMMAND: {
-        int wmId = LOWORD(wParam);
-        int wmEvent = HIWORD(wParam);
-        if (wmId >= IDM_HISTORY_LINK0 && wmId <= IDM_HISTORY_LINK9) {
-            if (gMiniBrowser)
-                gMiniBrowser->navigateToHistory(hWnd, wmId);
-            break;
-        }
-        // Parse the menu selections:
-        switch (wmId) {
-        case IDM_ABOUT:
-            DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-            break;
-        case IDM_EXIT:
-            DestroyWindow(hWnd);
-            break;
-        case IDM_PRINT:
-            PrintView(hWnd, message, wParam, lParam);
-            break;
-        case IDM_WEB_INSPECTOR:
-            if (gMiniBrowser)
-                gMiniBrowser->launchInspector();
-            break;
-        case IDM_CACHES:
-            if (!::IsWindow(hCacheWnd)) {
-                hCacheWnd = CreateDialog(hInst, MAKEINTRESOURCE(IDD_CACHES), hWnd, Caches);
-                ::ShowWindow(hCacheWnd, SW_SHOW);
-            }
-            break;
-        case IDM_HISTORY_BACKWARD:
-        case IDM_HISTORY_FORWARD:
-            if (gMiniBrowser)
-                gMiniBrowser->navigateForwardOrBackward(hWnd, wmId);
-            break;
-        case IDM_UA_OTHER:
-            if (wmEvent)
-                ToggleMenuItem(hWnd, wmId);
-            else
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_USER_AGENT), hWnd, CustomUserAgent);
-            break;
-        case IDM_ACTUAL_SIZE:
-            if (gMiniBrowser)
-                gMiniBrowser->resetZoom();
-            break;
-        case IDM_ZOOM_IN:
-            if (gMiniBrowser)
-                gMiniBrowser->zoomIn();
-            break;
-        case IDM_ZOOM_OUT:
-            if (gMiniBrowser)
-                gMiniBrowser->zoomOut();
-            break;
-        case IDM_SHOW_LAYER_TREE:
-            if (gMiniBrowser)
-                gMiniBrowser->showLayerTree();
-            break;
-        default:
-            if (!ToggleMenuItem(hWnd, wmId))
-                return DefWindowProc(hWnd, message, wParam, lParam);
-        }
-        }
-        break;
-    case WM_DESTROY:
-#if USE(CF)
-        CFRunLoopStop(CFRunLoopGetMain());
-#endif
-        PostQuitMessage(0);
-        break;
-    case WM_SIZE:
-        if (!gMiniBrowser || !gMiniBrowser->hasWebView())
-            return DefWindowProc(hWnd, message, wParam, lParam);
-
-        resizeSubViews();
-        break;
-    case WM_DPICHANGED:
-        if (gMiniBrowser)
-            gMiniBrowser->updateDeviceScaleFactor();
-        return DefWindowProc(hWnd, message, wParam, lParam);
-    default:
-        return DefWindowProc(hWnd, message, wParam, lParam);
-    }
-
-    return 0;
 }
 
 LRESULT CALLBACK EditProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
@@ -601,7 +469,7 @@ INT_PTR CALLBACK CustomUserAgent(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
             _bstr_t bstr(buffer);
             if (bstr.length()) {
                 gMiniBrowser->setUserAgent(bstr);
-                ::PostMessage(hMainWnd, static_cast<UINT>(WM_COMMAND), MAKELPARAM(IDM_UA_OTHER, 1), 0);
+                ::PostMessage(gMainWindow->hwnd(), static_cast<UINT>(WM_COMMAND), MAKELPARAM(IDM_UA_OTHER, 1), 0);
             }
         }
 
@@ -616,7 +484,7 @@ INT_PTR CALLBACK CustomUserAgent(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 
 HRESULT DisplayAuthDialog(std::wstring& username, std::wstring& password)
 {
-    auto result = DialogBox(hInst, MAKEINTRESOURCE(IDD_AUTH), hMainWnd, AuthDialogProc);
+    auto result = DialogBox(hInst, MAKEINTRESOURCE(IDD_AUTH), gMainWindow->hwnd(), AuthDialogProc);
     if (!result)
         return E_FAIL;
 
@@ -669,7 +537,7 @@ static void loadURL(BSTR passedURL)
     if (FAILED(gMiniBrowser->loadURL(passedURL)))
         return;
 
-    SetFocus(gViewWindow);
+    SetFocus(gMiniBrowser->hwnd());
 }
 
 static void setWindowText(HWND dialog, UINT field, _bstr_t value)
