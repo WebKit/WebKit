@@ -1,3 +1,18 @@
+2018-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add clz32 / clz64 for MSVC
+        https://bugs.webkit.org/show_bug.cgi?id=186023
+
+        Reviewed by Daniel Bates.
+
+        This patch adds efficient implementations of clz32 and clz64 for MSVC.
+        While MSVC has _lzcnt intrinsic, it is only valid if the CPU has lzcnt instruction.
+        Instead of checking cpuid here, we just use _BitScanReverse and _BitScanReverse64.
+
+        * wtf/MathExtras.h:
+        (WTF::clz32):
+        (WTF::clz64):
+
 2018-05-26  Filip Pizlo  <fpizlo@apple.com>
 
         testair sometimes crashes due to races in initialization of ARC4RandomNumberGenerator

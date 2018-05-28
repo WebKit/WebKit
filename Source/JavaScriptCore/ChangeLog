@@ -1,3 +1,16 @@
+2018-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add clz32 / clz64 for MSVC
+        https://bugs.webkit.org/show_bug.cgi?id=186023
+
+        Reviewed by Daniel Bates.
+
+        Move clz32 and clz64 to WTF.
+
+        * runtime/MathCommon.h:
+        (JSC::clz32): Deleted.
+        (JSC::clz64): Deleted.
+
 2018-05-27  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement "+" and "-" unary operation

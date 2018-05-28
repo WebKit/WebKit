@@ -524,6 +524,56 @@ void shuffleVector(VectorType& vector, const RandomFunc& randomFunc)
     shuffleVector(vector, vector.size(), randomFunc);
 }
 
+inline unsigned clz32(uint32_t number)
+{
+#if COMPILER(GCC_OR_CLANG)
+    if (number)
+        return __builtin_clz(number);
+    return 32;
+#elif COMPILER(MSVC)
+    // Visual Studio 2008 or upper have __lzcnt, but we can't detect Intel AVX at compile time.
+    // So we use bit-scan-reverse operation to calculate clz.
+    unsigned long ret = 0;
+    if (_BitScanReverse(&ret, number))
+        return 31 - ret;
+    return 32;
+#else
+    unsigned zeroCount = 0;
+    for (int i = 31; i >= 0; i--) {
+        if (!(number >> i))
+            zeroCount++;
+        else
+            break;
+    }
+    return zeroCount;
+#endif
+}
+
+inline unsigned clz64(uint64_t number)
+{
+#if COMPILER(GCC_OR_CLANG)
+    if (number)
+        return __builtin_clzll(number);
+    return 64;
+#elif COMPILER(MSVC)
+    // Visual Studio 2008 or upper have __lzcnt, but we can't detect Intel AVX at compile time.
+    // So we use bit-scan-reverse operation to calculate clz.
+    unsigned long ret = 0;
+    if (_BitScanReverse64(&ret, number))
+        return 63 - ret;
+    return 64;
+#else
+    unsigned zeroCount = 0;
+    for (int i = 63; i >= 0; i--) {
+        if (!(number >> i))
+            zeroCount++;
+        else
+            break;
+    }
+    return zeroCount;
+#endif
+}
+
 } // namespace WTF
 
 using WTF::opaque;
@@ -531,5 +581,7 @@ using WTF::preciseIndexMaskPtr;
 using WTF::preciseIndexMaskShift;
 using WTF::preciseIndexMaskShiftForSize;
 using WTF::shuffleVector;
+using WTF::clz32;
+using WTF::clz64;
 
 #endif // #ifndef WTF_MathExtras_h
