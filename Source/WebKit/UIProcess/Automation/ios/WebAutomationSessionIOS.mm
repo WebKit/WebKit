@@ -163,8 +163,10 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
     BOOL isTabKey = [text isEqualToString:@"\t"];
 
     [text enumerateSubstringsInRange:NSMakeRange(0, text.length) options:NSStringEnumerationByComposedCharacterSequences usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
-        [eventsToBeSent addObject:[[::WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:substring charactersIgnoringModifiers:substring modifiers:m_currentModifiers isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:0 isTabKey:isTabKey]];
-        [eventsToBeSent addObject:[[::WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:CFAbsoluteTimeGetCurrent() characters:substring charactersIgnoringModifiers:substring modifiers:m_currentModifiers isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:0 isTabKey:isTabKey]];
+        auto keyDownEvent = adoptNS([[::WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:substring charactersIgnoringModifiers:substring modifiers:m_currentModifiers isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:0 isTabKey:isTabKey]);
+        [eventsToBeSent addObject:keyDownEvent.get()];
+        auto keyUpEvent = adoptNS([[::WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:CFAbsoluteTimeGetCurrent() characters:substring charactersIgnoringModifiers:substring modifiers:m_currentModifiers isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:0 isTabKey:isTabKey]);
+        [eventsToBeSent addObject:keyUpEvent.get()];
     }];
 
     sendSynthesizedEventsToPage(page, eventsToBeSent.get());

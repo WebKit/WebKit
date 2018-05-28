@@ -721,8 +721,14 @@ int main(int argc, char *argv[])
             if (len[toggle] < 0)
             {
                 fprintf (stderr, "opus_encode() returned %d\n", len[toggle]);
+                free(data[0]);
+                if (use_inbandfec)
+                    free(data[1]);
                 fclose(fin);
                 fclose(fout);
+                free(in);
+                free(out);
+                free(fbytes);
                 return EXIT_FAILURE;
             }
             curr_mode_count += frame_size;
@@ -740,6 +746,14 @@ int main(int argc, char *argv[])
            if ((err = opus_packet_pad(data[toggle], len[toggle], new_len)) != OPUS_OK)
            {
               fprintf(stderr, "padding failed: %s\n", opus_strerror(err));
+              free(data[0]);
+              if (use_inbandfec)
+                  free(data[1]);
+              fclose(fin);
+              fclose(fout);
+              free(in);
+              free(out);
+              free(fbytes);
               return EXIT_FAILURE;
            }
            len[toggle] = new_len;
@@ -751,15 +765,39 @@ int main(int argc, char *argv[])
             int_to_char(len[toggle], int_field);
             if (fwrite(int_field, 1, 4, fout) != 4) {
                fprintf(stderr, "Error writing.\n");
+               free(data[0]);
+               if (use_inbandfec)
+                   free(data[1]);
+               fclose(fin);
+               fclose(fout);
+               free(in);
+               free(out);
+               free(fbytes);
                return EXIT_FAILURE;
             }
             int_to_char(enc_final_range[toggle], int_field);
             if (fwrite(int_field, 1, 4, fout) != 4) {
                fprintf(stderr, "Error writing.\n");
+               free(data[0]);
+               if (use_inbandfec)
+                   free(data[1]);
+               fclose(fin);
+               fclose(fout);
+               free(in);
+               free(out);
+               free(fbytes);
                return EXIT_FAILURE;
             }
             if (fwrite(data[toggle], 1, len[toggle], fout) != (unsigned)len[toggle]) {
                fprintf(stderr, "Error writing.\n");
+               free(data[0]);
+               if (use_inbandfec)
+                   free(data[1]);
+               fclose(fin);
+               fclose(fout);
+               free(in);
+               free(out);
+               free(fbytes);
                return EXIT_FAILURE;
             }
             tot_samples += nb_encoded;
@@ -803,6 +841,14 @@ int main(int argc, char *argv[])
                        }
                        if (fwrite(fbytes, sizeof(short)*channels, output_samples-skip, fout) != (unsigned)(output_samples-skip)){
                           fprintf(stderr, "Error writing.\n");
+                          free(data[0]);
+                          if (use_inbandfec)
+                              free(data[1]);
+                          fclose(fin);
+                          fclose(fout);
+                          free(in);
+                          free(out);
+                          free(fbytes);
                           return EXIT_FAILURE;
                        }
                        tot_out += output_samples-skip;
@@ -829,8 +875,14 @@ int main(int argc, char *argv[])
                          (long)count,
                          (unsigned long)enc_final_range[toggle^use_inbandfec],
                          (unsigned long)dec_final_range);
+            free(data[0]);
+            if (use_inbandfec)
+                free(data[1]);
             fclose(fin);
             fclose(fout);
+            free(in);
+            free(out);
+            free(fbytes);
             return EXIT_FAILURE;
         }
 

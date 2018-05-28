@@ -1,3 +1,34 @@
+2018-05-27  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix warnings about leaks found by clang static analyzer
+        <https://webkit.org/b/186009>
+        <rdar://problem/40574267>
+
+        Reviewed by Daniel Bates.
+
+        * Modules/webauthn/cocoa/LocalAuthenticator.mm:
+        (WebCore::LocalAuthenticator::makeCredential):
+        (WebCore::LocalAuthenticator::getAssertion):
+        (WebCore::LocalAuthenticator::issueClientCertificate const):
+        - Don't leak CF objects in early return paths, and get rid of
+          `retained*` variables, by making original variables use
+          RetainPtr<>.
+        * bridge/objc/WebScriptObject.mm:
+        (+[WebUndefined allocWithZone:]): Modernize WebUndefined by
+        using NeverDestroyed<RetainPr<WebUndefined>> type.  Explicitly
+        retain the object returned on each call.
+        (+[WebUndefined undefined]): Explicitly autorelease the object
+        returned.  Note that neither of these changes fixes the static
+        analyzer warnings in this source file.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::exernalDeviceDisplayNameForPlayer): Use RetainPtr<> to
+        stop leaking NSString objects in a loop.
+        * platform/ios/wak/WAKWindow.h:
+        (-[WAKWindow _newFirstResponderAfterResigning]): Mark as
+        NS_RETURNS_NOT_RETAINED like the corresponding AppKit method
+        since this doesn't return a new object.  This fixes some
+        false-positive leaks warnings.
+
 2018-05-27  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Avoid importing directly from subumbrella frameworks

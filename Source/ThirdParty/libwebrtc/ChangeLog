@@ -1,3 +1,31 @@
+2018-05-27  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix warnings about leaks found by clang static analyzer
+        <https://webkit.org/b/186009>
+        <rdar://problem/40574267>
+
+        Reviewed by Daniel Bates.
+
+        * Source/third_party/opus/src/src/opus_compare.c:
+        * Source/third_party/opus/src/src/opus_demo.c:
+        (main):
+        - Free allocated memory on early returns.
+        * Source/third_party/usrsctp/usrsctplib/user_mbuf.c:
+        (clust_constructor_dup):
+        (mb_ctor_clust):
+        - Free allocated memory if `m` is NULL.
+        * Source/third_party/usrsctp/usrsctplib/user_socket.c:
+        (usrsctp_connect): Free `sa` memory if getsockaddr() returns an
+        error, but still allocates memory for `sa`.
+        * WebKit/patch-opus.diff: Add patch for opus changes.
+        * WebKit/patch-usrsctp: Rename empty file to patch-usrsctp.diff.
+        * WebKit/patch-usrsctp.diff: Add patch for usrsctp changes.
+        * libwebrtc.xcodeproj/project.pbxproj: Remove opus_compare.c,
+        opus_demo.c, and repacketizer_demo.c from opus target.  This
+        code is for stand-alone tools, and although it may be removed
+        during dead code linking, we don't need to spend time compiling
+        it.
+
 2018-05-07  Youenn Fablet  <youenn@apple.com>
 
         Activate ARC for libwebrtc Objective C files

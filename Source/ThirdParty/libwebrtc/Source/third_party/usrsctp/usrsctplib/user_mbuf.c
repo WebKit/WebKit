@@ -232,7 +232,8 @@ static int clust_constructor_dup(caddr_t m_clust, struct mbuf* m)
 		m->m_ext.ext_size = size;
 		m->m_ext.ext_type = type;
 		m->m_ext.ref_cnt = refcnt;
-	}
+	} else
+		SCTP_ZONE_FREE(zone_ext_refcnt, refcnt);
 
 	return (0);
 }
@@ -527,7 +528,8 @@ mb_ctor_clust(void *mem, void *arg, int flgs)
 		m->m_ext.ext_size = size;
 		m->m_ext.ext_type = type;
 		m->m_ext.ref_cnt = refcnt;
-	}
+	} else
+		SCTP_ZONE_FREE(zone_ext_refcnt, refcnt);
 #endif
 	return (0);
 }

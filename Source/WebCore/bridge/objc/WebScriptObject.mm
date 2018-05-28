@@ -656,10 +656,10 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 {
     UNUSED_PARAM(unusedZone);
 
-    static WebUndefined *sharedUndefined = 0;
-    if (!sharedUndefined)
-        sharedUndefined = [super allocWithZone:NULL];
-    return sharedUndefined;
+    static NeverDestroyed<RetainPtr<WebUndefined>> sharedUndefined;
+    if (!sharedUndefined.get())
+        sharedUndefined.get() = adoptNS([super allocWithZone:nullptr]);
+    return [sharedUndefined.get() retain];
 }
 
 - (NSString *)description
@@ -715,7 +715,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
 + (WebUndefined *)undefined
 {
-    return [WebUndefined allocWithZone:NULL];
+    return [[WebUndefined allocWithZone:NULL] autorelease];
 }
 
 @end

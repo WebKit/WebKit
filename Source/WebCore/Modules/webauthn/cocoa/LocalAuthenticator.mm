@@ -296,27 +296,26 @@ void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const Publi
                 attestedCredentialData.appendVector(credentialId);
 
                 // credentialPublicKey
-                CFDataRef publicKeyDataRef = nullptr;
+                RetainPtr<CFDataRef> publicKeyDataRef;
                 {
                     auto publicKey = adoptCF(SecKeyCopyPublicKey(privateKey));
                     CFErrorRef errorRef = nullptr;
-                    publicKeyDataRef = SecKeyCopyExternalRepresentation(publicKey.get(), &errorRef);
+                    publicKeyDataRef = adoptCF(SecKeyCopyExternalRepresentation(publicKey.get(), &errorRef));
                     auto retainError = adoptCF(errorRef);
                     if (errorRef) {
                         LOG_ERROR("Couldn't export the public key: %@", (NSError*)errorRef);
                         exceptionCallback({ UnknownError, ASCIILiteral("Unknown internal error.") });
                         return;
                     }
-                    ASSERT(((NSData *)publicKeyDataRef).length == (1 + 2*ES256KeySizeInBytes)); // 04 | X | Y
+                    ASSERT(((NSData *)publicKeyDataRef.get()).length == (1 + 2 * ES256KeySizeInBytes)); // 04 | X | Y
                 }
-                auto retainPublicKeyData = adoptCF(publicKeyDataRef);
 
                 // COSE Encoding
                 // FIXME(183535): Improve CBOR encoder to work with bytes directly.
                 Vector<uint8_t> x(ES256KeySizeInBytes);
-                [(NSData *)publicKeyDataRef getBytes: x.data() range:NSMakeRange(1, ES256KeySizeInBytes)];
+                [(NSData *)publicKeyDataRef.get() getBytes: x.data() range:NSMakeRange(1, ES256KeySizeInBytes)];
                 Vector<uint8_t> y(ES256KeySizeInBytes);
-                [(NSData *)publicKeyDataRef getBytes: y.data() range:NSMakeRange(1 + ES256KeySizeInBytes, ES256KeySizeInBytes)];
+                [(NSData *)publicKeyDataRef.get() getBytes: y.data() range:NSMakeRange(1 + ES256KeySizeInBytes, ES256KeySizeInBytes)];
                 cbor::CBORValue::MapValue publicKeyMap;
                 publicKeyMap[cbor::CBORValue(COSE::kty)] = cbor::CBORValue(COSE::EC2);
                 publicKeyMap[cbor::CBORValue(COSE::alg)] = cbor::CBORValue(COSE::ES256);
@@ -344,15 +343,14 @@ void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const Publi
                 {
                     CFErrorRef errorRef = nullptr;
                     // FIXME(183652): Reduce prompt for biometrics
-                    CFDataRef signatureRef = SecKeyCreateSignature(privateKey, kSecKeyAlgorithmECDSASignatureMessageX962SHA256, (__bridge CFDataRef)[NSData dataWithBytes:authData.data() length:authData.size()], &errorRef);
+                    auto signatureRef = adoptCF(SecKeyCreateSignature(privateKey, kSecKeyAlgorithmECDSASignatureMessageX962SHA256, (__bridge CFDataRef)[NSData dataWithBytes:authData.data() length:authData.size()], &errorRef));
                     auto retainError = adoptCF(errorRef);
                     if (errorRef) {
                         LOG_ERROR("Couldn't generate the signature: %@", (NSError*)errorRef);
                         exceptionCallback({ UnknownError, ASCIILiteral("Unknown internal error.") });
                         return;
                     }
-                    auto retainSignature = adoptCF(signatureRef);
-                    NSData *nsSignature = (NSData *)signatureRef;
+                    auto nsSignature = (NSData *)signatureRef.get();
                     signature.append(reinterpret_cast<const uint8_t*>(nsSignature.bytes), nsSignature.length);
                 }
                 attestationStatementMap[cbor::CBORValue("alg")] = cbor::CBORValue(COSE::ES256);
@@ -502,15 +500,14 @@ void LocalAuthenticator::getAssertion(const Vector<uint8_t>& hash, const PublicK
 
             CFErrorRef errorRef = nullptr;
             // FIXME: Converting CFTypeRef to SecKeyRef is quite subtle here.
-            CFDataRef signatureRef = SecKeyCreateSignature((__bridge SecKeyRef)((id)privateKeyRef), kSecKeyAlgorithmECDSASignatureMessageX962SHA256, (__bridge CFDataRef)dataToSign, &errorRef);
+            auto signatureRef = adoptCF(SecKeyCreateSignature((__bridge SecKeyRef)((id)privateKeyRef), kSecKeyAlgorithmECDSASignatureMessageX962SHA256, (__bridge CFDataRef)dataToSign, &errorRef));
             auto retainError = adoptCF(errorRef);
             if (errorRef) {
                 LOG_ERROR("Couldn't generate the signature: %@", (NSError*)errorRef);
                 exceptionCallback({ UnknownError, ASCIILiteral("Unknown internal error.") });
                 return;
             }
-            auto retainSignature = adoptCF(signatureRef);
-            NSData *nsSignature = (NSData *)signatureRef;
+            auto nsSignature = (NSData *)signatureRef.get();
             signature.append(reinterpret_cast<const uint8_t*>(nsSignature.bytes), nsSignature.length);
         }
 
@@ -554,10 +551,10 @@ void LocalAuthenticator::issueClientCertificate(const String& rpId, const String
     // Apple Attestation
     ASSERT(hash.size() <= 32);
 
-    SecAccessControlRef accessControlRef;
+    RetainPtr<SecAccessControlRef> accessControlRef;
     {
         CFErrorRef errorRef = nullptr;
-        accessControlRef = SecAccessControlCreateWithFlags(NULL, kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly, kSecAccessControlPrivateKeyUsage | kSecAccessControlUserPresence, &errorRef);
+        accessControlRef = adoptCF(SecAccessControlCreateWithFlags(NULL, kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly, kSecAccessControlPrivateKeyUsage | kSecAccessControlUserPresence, &errorRef));
         auto retainError = adoptCF(errorRef);
         if (errorRef) {
             LOG_ERROR("Couldn't create ACL: %@", (NSError *)errorRef);
@@ -565,7 +562,6 @@ void LocalAuthenticator::issueClientCertificate(const String& rpId, const String
             return;
         }
     }
-    auto retainAccessControl = adoptCF(accessControlRef);
 
     String label(username);
     label.append("@" + rpId);
@@ -578,7 +574,7 @@ void LocalAuthenticator::issueClientCertificate(const String& rpId, const String
         kMAOptionsBAAValidity: @(1440), // Last one day.
         kMAOptionsBAASCRTAttestation: @(NO),
         kMAOptionsBAANonce: [NSData dataWithBytes:hash.data() length:hash.size()],
-        kMAOptionsBAAAccessControls: (id)accessControlRef,
+        kMAOptionsBAAAccessControls: (id)accessControlRef.get(),
         kMAOptionsBAAOIDSToInclude: @[kMAOptionsBAAOIDNonce]
     };
 

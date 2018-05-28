@@ -2802,8 +2802,10 @@ static NSString *exernalDeviceDisplayNameForPlayer(AVPlayerType *player)
             return [outputContext deviceName];
 
         auto outputDeviceNames = adoptNS([[NSMutableArray alloc] init]);
-        for (AVOutputDevice *outputDevice in [outputContext outputDevices])
-            [outputDeviceNames addObject:[[outputDevice name] copy]];
+        for (AVOutputDevice *outputDevice in [outputContext outputDevices]) {
+            auto outputDeviceName = adoptNS([[outputDevice name] copy]);
+            [outputDeviceNames addObject:outputDeviceName.get()];
+        }
 
         return [outputDeviceNames componentsJoinedByString:@" + "];
     }

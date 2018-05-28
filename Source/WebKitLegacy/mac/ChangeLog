@@ -1,3 +1,16 @@
+2018-05-27  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix warnings about leaks found by clang static analyzer
+        <https://webkit.org/b/186009>
+        <rdar://problem/40574267>
+
+        Reviewed by Daniel Bates.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView doCommandBySelector:]): Fix use of an
+        uninitialized boolean variable (`eventWasHandled`) that only
+        happened on iOS.
+
 2018-05-27  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Avoid importing directly from subumbrella frameworks

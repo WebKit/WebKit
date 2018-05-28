@@ -1,3 +1,18 @@
+2018-05-27  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix warnings about leaks found by clang static analyzer
+        <https://webkit.org/b/186009>
+        <rdar://problem/40574267>
+
+        Reviewed by Daniel Bates.
+
+        * UIProcess/Automation/ios/WebAutomationSessionIOS.mm:
+        (WebKit::WebAutomationSession::platformSimulateKeySequence): Fix
+        leak of two WebEvent objects that happened in a loop.
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        (-[_WKPreviewControllerDelegate previewController:transitionImageForPreviewItem:contentRect:]):
+        Fix leak of a UIImage.
+
 2018-05-27  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Avoid importing directly from subumbrella frameworks

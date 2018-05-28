@@ -183,7 +183,7 @@ SOFT_LINK_CLASS(QuickLook, QLItem);
         }
     }
 
-    return [UIImage new];
+    return [[UIImage new] autorelease];
 }
 
 @end

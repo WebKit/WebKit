@@ -2131,11 +2131,14 @@ done1:
 
 int usrsctp_connect(struct socket *so, struct sockaddr *name, int namelen)
 {
-	struct sockaddr *sa;
+	struct sockaddr *sa = NULL;
 
 	errno = getsockaddr(&sa, (caddr_t)name, namelen);
-	if (errno)
+	if (errno) {
+		if (sa)
+			FREE(sa, M_SONAME);
 		return (-1);
+	}
 
 	errno = user_connect(so, sa);
 	FREE(sa, M_SONAME);

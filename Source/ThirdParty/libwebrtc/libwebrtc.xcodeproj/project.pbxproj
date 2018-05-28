@@ -1260,16 +1260,13 @@
 		5C4B4AB71E42C574002651C8 /* mlp_data.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4A951E42C52D002651C8 /* mlp_data.c */; };
 		5C4B4AB81E42C574002651C8 /* mlp.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4A961E42C52D002651C8 /* mlp.c */; };
 		5C4B4AB91E42C574002651C8 /* mlp.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4A971E42C52D002651C8 /* mlp.h */; };
-		5C4B4ABA1E42C574002651C8 /* opus_compare.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4A981E42C52D002651C8 /* opus_compare.c */; };
 		5C4B4ABB1E42C574002651C8 /* opus_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4A991E42C52D002651C8 /* opus_decoder.c */; };
-		5C4B4ABC1E42C574002651C8 /* opus_demo.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4A9A1E42C52D002651C8 /* opus_demo.c */; };
 		5C4B4ABD1E42C574002651C8 /* opus_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4A9B1E42C52D002651C8 /* opus_encoder.c */; };
 		5C4B4ABE1E42C574002651C8 /* opus_multistream_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4A9C1E42C52D002651C8 /* opus_multistream_decoder.c */; };
 		5C4B4ABF1E42C574002651C8 /* opus_multistream_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4A9D1E42C52D002651C8 /* opus_multistream_encoder.c */; };
 		5C4B4AC01E42C574002651C8 /* opus_multistream.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4A9E1E42C52D002651C8 /* opus_multistream.c */; };
 		5C4B4AC11E42C574002651C8 /* opus_private.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4A9F1E42C52D002651C8 /* opus_private.h */; };
 		5C4B4AC21E42C574002651C8 /* opus.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AA01E42C52D002651C8 /* opus.c */; };
-		5C4B4AC31E42C574002651C8 /* repacketizer_demo.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AA11E42C52D002651C8 /* repacketizer_demo.c */; };
 		5C4B4AC41E42C574002651C8 /* repacketizer.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AA21E42C52D002651C8 /* repacketizer.c */; };
 		5C4B4AC51E42C574002651C8 /* tansig_table.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AA31E42C52D002651C8 /* tansig_table.h */; };
 		5C4B4C191E431F75002651C8 /* bitrate_adjuster.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4C101E431F75002651C8 /* bitrate_adjuster.cc */; };
@@ -12449,9 +12446,7 @@
 				5C5F40971E978FDB00D94279 /* NSQ_del_dec_sse.c in Sources */,
 				5C5F40981E978FDB00D94279 /* NSQ_sse.c in Sources */,
 				5C4B4AC21E42C574002651C8 /* opus.c in Sources */,
-				5C4B4ABA1E42C574002651C8 /* opus_compare.c in Sources */,
 				5C4B4ABB1E42C574002651C8 /* opus_decoder.c in Sources */,
-				5C4B4ABC1E42C574002651C8 /* opus_demo.c in Sources */,
 				5C4B4ABD1E42C574002651C8 /* opus_encoder.c in Sources */,
 				5C4B4AC01E42C574002651C8 /* opus_multistream.c in Sources */,
 				5C4B4ABE1E42C574002651C8 /* opus_multistream_decoder.c in Sources */,
@@ -12472,7 +12467,6 @@
 				5CDD8F4C1E43CB1E00621E92 /* regularize_correlations_FIX.c in Sources */,
 				5CDD8EF71E43C9F600621E92 /* regularize_correlations_FLP.c in Sources */,
 				5C4B4AC41E42C574002651C8 /* repacketizer.c in Sources */,
-				5C4B4AC31E42C574002651C8 /* repacketizer_demo.c in Sources */,
 				5CDD8E811E43C80C00621E92 /* resampler.c in Sources */,
 				5CDD8E781E43C80C00621E92 /* resampler_down2.c in Sources */,
 				5CDD8E771E43C80C00621E92 /* resampler_down2_3.c in Sources */,

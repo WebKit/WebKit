@@ -6754,8 +6754,8 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
             Editor::Command command = [self coreCommandBySelector:selector];
             if (command.isSupported())
                 eventWasHandled = command.execute(event);
-#if PLATFORM(MAC)
             else {
+#if PLATFORM(MAC)
                 // If WebKit does not support this command, we need to pass the selector to super.
                 _private->selectorForDoCommandBySelector = selector;
 
@@ -6767,8 +6767,10 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
                 [sink detach];
 
                 _private->selectorForDoCommandBySelector = 0;
-            }
+#else
+                eventWasHandled = false;
 #endif
+            }
         }
 
         if (parameters)
