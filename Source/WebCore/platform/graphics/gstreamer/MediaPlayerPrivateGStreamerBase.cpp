@@ -301,21 +301,22 @@ static std::pair<Vector<GRefPtr<GstEvent>>, Vector<String>> extractEventsAndSyst
 {
     const GstStructure* structure = gst_message_get_structure(message);
 
-    const GValue* streamEncryptionAllowedSystemsValue = gst_structure_get_value(structure, "stream-encryption-systems");
-    ASSERT(streamEncryptionAllowedSystemsValue && G_VALUE_HOLDS(streamEncryptionAllowedSystemsValue, G_TYPE_STRV));
-    const char** streamEncryptionAllowedSystems = reinterpret_cast<const char**>(g_value_get_boxed(streamEncryptionAllowedSystemsValue));
-    ASSERT(streamEncryptionAllowedSystems);
-    Vector<String> streamEncryptionAllowedSystemsVector;
-    unsigned i;
-    for (i = 0; streamEncryptionAllowedSystems[i]; ++i)
-        streamEncryptionAllowedSystemsVector.append(streamEncryptionAllowedSystems[i]);
-
     const GValue* streamEncryptionEventsList = gst_structure_get_value(structure, "stream-encryption-events");
     ASSERT(streamEncryptionEventsList && GST_VALUE_HOLDS_LIST(streamEncryptionEventsList));
     unsigned streamEncryptionEventsListSize = gst_value_list_get_size(streamEncryptionEventsList);
     Vector<GRefPtr<GstEvent>> streamEncryptionEventsVector;
+
+    unsigned i;
     for (i = 0; i < streamEncryptionEventsListSize; ++i)
         streamEncryptionEventsVector.append(GRefPtr<GstEvent>(static_cast<GstEvent*>(g_value_get_boxed(gst_value_list_get_value(streamEncryptionEventsList, i)))));
+
+    Vector<String> streamEncryptionAllowedSystemsVector;
+    const GValue* streamEncryptionAllowedSystemsValue = gst_structure_get_value(structure, "avalaible-stream-encryption-systems");
+    const char** streamEncryptionAllowedSystems = reinterpret_cast<const char**>(g_value_get_boxed(streamEncryptionAllowedSystemsValue));
+    if (streamEncryptionAllowedSystems) {
+        for (i = 0; streamEncryptionAllowedSystems[i]; ++i)
+            streamEncryptionAllowedSystemsVector.append(streamEncryptionAllowedSystems[i]);
+    }
 
     return std::make_pair(streamEncryptionEventsVector, streamEncryptionAllowedSystemsVector);
 }

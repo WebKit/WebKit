@@ -1,0 +1,30 @@
+From 43a540b1cd9f162d3dae5d50e36703dfaf558a3e Mon Sep 17 00:00:00 2001
+From: Thibault Saunier <tsaunier@igalia.com>
+Date: Fri, 25 May 2018 10:49:21 +0200
+Subject: [PATCH 2/3] qtdemux: Do not unref a NULL stream_tags
+
+stream->stream_tags is reset to NULL once we expose the stream and
+these have been consumed, we need to check that when cleaning up
+the stream.
+---
+ gst/isomp4/qtdemux.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index ec4a8adfd..4116f4c69 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -2600,7 +2600,9 @@ gst_qtdemux_stream_clear (QtDemuxStream * stream)
+     entry->sparse = FALSE;
+   }
+ 
+-  gst_tag_list_unref (stream->stream_tags);
++  if (stream->stream_tags)
++    gst_tag_list_unref (stream->stream_tags);
++
+   stream->stream_tags = gst_tag_list_new_empty ();
+   gst_tag_list_set_scope (stream->stream_tags, GST_TAG_SCOPE_STREAM);
+   g_free (stream->redirect_uri);
+-- 
+2.17.0
+

@@ -1,3 +1,20 @@
+2018-05-28  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Handle changes in the "drm-preferred-decryption-system-id" NEED_CONTEXT message.
+        https://bugs.webkit.org/show_bug.cgi?id=185948
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        - The "stream-encryption-systems" field of the "drm-preferred-decryption-system-id" query was renamed to
+          "avalaible-stream-encryption-systems"
+        - It can now be NULL, meaning there is no decryptor avalaible.
+
+        Tests: imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-*
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::extractEventsAndSystemsFromMessage): Handle NULL value for "avalaible-stream-encryption-systems",
+        moved some code to make the order of the Arrays in the pair clearer.
+
 2018-05-27  Dan Bernstein  <mitz@apple.com>
 
         Reverted the changes made for https://webkit.org/b/186016

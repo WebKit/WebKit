@@ -1,0 +1,33 @@
+From 3e063703b3a51b8aaa7f75f36c4660c583a60e93 Mon Sep 17 00:00:00 2001
+From: Thibault Saunier <tsaunier@igalia.com>
+Date: Fri, 25 May 2018 10:17:29 +0200
+Subject: [PATCH 1/3] qtdemux: Do not run the preferred decryptor context query
+ if no decryptor avalaible
+
+Ultimately this avoids a segfault as the code expect a non NULL array
+here.
+---
+ gst/isomp4/qtdemux.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index 3e8ce7860..ec4a8adfd 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -8056,6 +8056,13 @@ gst_qtdemux_request_protection_context (GstQTDemux * qtdemux,
+   g_ptr_array_add (qtdemux->protection_system_ids, NULL);
+   filtered_sys_ids = gst_protection_filter_systems_by_available_decryptors (
+       (const gchar **) qtdemux->protection_system_ids->pdata);
++
++  if (!filtered_sys_ids) {
++    GST_INFO_OBJECT (element,
++        "No avalaible decryptor, not worth asking the user to choose.");
++    return;
++  }
++
+   g_ptr_array_remove_index (qtdemux->protection_system_ids,
+       qtdemux->protection_system_ids->len - 1);
+   GST_TRACE_OBJECT (qtdemux, "detected %u protection systems, we have "
+-- 
+2.17.0
+

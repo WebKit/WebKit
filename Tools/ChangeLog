@@ -1,3 +1,20 @@
+2018-05-28  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Handle changes in the "drm-preferred-decryption-system-id" NEED_CONTEXT message.
+        https://bugs.webkit.org/show_bug.cgi?id=185948
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        When the patch introducing gst_protection_filter_systems_by_available_decryptors was merged, we changed sensibly its behaviour
+        concerning the way empty results is represented (now returning NULL instead of an array of 1(NULL) element) and this change was not
+        properly taken into account in the qtdemux patch that uses it and got upstreamed. Those 3 new patches fixe that and change the
+        NEED_CONTEXT field names to clarify the meaning of "stream-encryption-systems".
+
+        * gstreamer/jhbuild.modules:
+        * gstreamer/patches/gst-plugins-good-0001-qtdemux-Do-not-run-the-preferred-decryptor-context-q.patch: Added. Merged upstream as 3e063703b3a51b8aaa7f75f36c4660c583a60e93
+        * gstreamer/patches/gst-plugins-good-0002-qtdemux-Do-not-unref-a-NULL-stream_tags.patch: Added. Merged upstream as 43a540b1cd9f162d3dae5d50e36703dfaf558a3e
+        * gstreamer/patches/gst-plugins-good-0003-qtdemux-Clarify-field-name-about-stream-encryption-s.patch: Added.
+
 2018-05-27  Dan Bernstein  <mitz@apple.com>
 
         Reverted the changes made for https://webkit.org/b/186016
