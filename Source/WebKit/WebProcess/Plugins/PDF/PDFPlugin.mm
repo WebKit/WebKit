@@ -50,7 +50,7 @@
 #import <JavaScriptCore/JSObjectRef.h>
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
-#import <PDFKit/PDFKit.h>
+#import <Quartz/Quartz.h>
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ArchiveResource.h>

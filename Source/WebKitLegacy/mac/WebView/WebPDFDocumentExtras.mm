@@ -30,7 +30,7 @@
 #import <wtf/RetainPtr.h>
 
 #if !PLATFORM(IOS)
-#import <PDFKit/PDFDocument.h>
+#import <Quartz/Quartz.h>
 #endif
 
 static void appendValuesInPDFNameSubtreeToVector(CGPDFDictionaryRef subtree, Vector<CGPDFObjectRef>& values)

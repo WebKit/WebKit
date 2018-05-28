@@ -43,7 +43,11 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#include <ColorSync/ColorSyncPriv.h>
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
+#import <ColorSync/ColorSyncPriv.h>
+#else
+#import <ApplicationServices/ApplicationServicesPriv.h>
+#endif
 
 #else
 

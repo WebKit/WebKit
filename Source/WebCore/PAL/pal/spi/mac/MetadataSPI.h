@@ -27,7 +27,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#include <Metadata/MetadataPriv.h>
+#include <CoreServices/CoreServicesPriv.h>
 
 #endif
 

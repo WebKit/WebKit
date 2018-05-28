@@ -28,7 +28,7 @@
 
 #if !PLATFORM(IOS)
 
-#import <PDFKit/PDFKit.h>
+#import <Quartz/Quartz.h>
 #import <WebKitLegacy/WebDocumentInternal.h>
 
 @class WebDataSource;

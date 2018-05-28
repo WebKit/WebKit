@@ -27,7 +27,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#include <SpeechSynthesis/SpeechSynthesisPriv.h>
+#include <ApplicationServices/ApplicationServicesPriv.h>
 
 #endif
 
