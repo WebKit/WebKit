@@ -45,6 +45,7 @@
 #include "UnicodeBidi.h"
 #include "WritingMode.h"
 #include <wtf/MathExtras.h>
+#include <wtf/OptionSet.h>
 
 #if ENABLE(CSS_IMAGE_ORIENTATION)
 #include "ImageOrientation.h"
@@ -1635,27 +1636,27 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineBreak e)
     }
 }
 
-template<> inline CSSPrimitiveValue::operator HangingPunctuation() const
+template<> inline CSSPrimitiveValue::operator OptionSet<HangingPunctuation>() const
 {
     ASSERT(isValueID());
     
     switch (m_value.valueID) {
     case CSSValueNone:
-        return NoHangingPunctuation;
+        return OptionSet<HangingPunctuation> { };
     case CSSValueFirst:
-        return FirstHangingPunctuation;
+        return HangingPunctuation::First;
     case CSSValueLast:
-        return LastHangingPunctuation;
+        return HangingPunctuation::Last;
     case CSSValueAllowEnd:
-        return AllowEndHangingPunctuation;
+        return HangingPunctuation::AllowEnd;
     case CSSValueForceEnd:
-        return ForceEndHangingPunctuation;
+        return HangingPunctuation::ForceEnd;
     default:
         break;
     }
     
     ASSERT_NOT_REACHED();
-    return NoHangingPunctuation;
+    return OptionSet<HangingPunctuation> { };
 }
 
 template<> inline CSSPrimitiveValue::operator LineBreak() const
@@ -2579,31 +2580,31 @@ template<> inline CSSPrimitiveValue::operator TextJustify() const
 }
 #endif // CSS3_TEXT
 
-template<> inline CSSPrimitiveValue::operator TextDecoration() const
+template<> inline CSSPrimitiveValue::operator OptionSet<TextDecoration>() const
 {
     ASSERT(isValueID());
 
     switch (m_value.valueID) {
     case CSSValueNone:
-        return TextDecorationNone;
+        return OptionSet<TextDecoration> { };
     case CSSValueUnderline:
-        return TextDecorationUnderline;
+        return TextDecoration::Underline;
     case CSSValueOverline:
-        return TextDecorationOverline;
+        return TextDecoration::Overline;
     case CSSValueLineThrough:
-        return TextDecorationLineThrough;
+        return TextDecoration::LineThrough;
     case CSSValueBlink:
-        return TextDecorationBlink;
+        return TextDecoration::Blink;
 #if ENABLE(LETTERPRESS)
     case CSSValueWebkitLetterpress:
-        return TextDecorationLetterpress;
+        return TextDecoration::Letterpress;
 #endif
     default:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return TextDecorationNone;
+    return OptionSet<TextDecoration> { };
 }
 
 template<> inline CSSPrimitiveValue::operator TextDecorationStyle() const
@@ -2629,18 +2630,18 @@ template<> inline CSSPrimitiveValue::operator TextDecorationStyle() const
     return TextDecorationStyle::Solid;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextUnderlinePosition e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(OptionSet<TextUnderlinePosition> e)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_VALUE_ID;
-    switch (e) {
-    case TextUnderlinePositionAuto:
+    switch (static_cast<TextUnderlinePosition>(e.toRaw())) {
+    case TextUnderlinePosition::Auto:
         m_value.valueID = CSSValueAuto;
         break;
-    case TextUnderlinePositionAlphabetic:
+    case TextUnderlinePosition::Alphabetic:
         m_value.valueID = CSSValueAlphabetic;
         break;
-    case TextUnderlinePositionUnder:
+    case TextUnderlinePosition::Under:
         m_value.valueID = CSSValueUnder;
         break;
     }
@@ -2648,17 +2649,17 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextUnderlinePosition e)
     // FIXME: Implement support for 'under left' and 'under right' values.
 }
 
-template<> inline CSSPrimitiveValue::operator TextUnderlinePosition() const
+template<> inline CSSPrimitiveValue::operator OptionSet<TextUnderlinePosition>() const
 {
     ASSERT(isValueID());
 
     switch (m_value.valueID) {
     case CSSValueAuto:
-        return TextUnderlinePositionAuto;
+        return TextUnderlinePosition::Auto;
     case CSSValueAlphabetic:
-        return TextUnderlinePositionAlphabetic;
+        return TextUnderlinePosition::Alphabetic;
     case CSSValueUnder:
-        return TextUnderlinePositionUnder;
+        return TextUnderlinePosition::Under;
     default:
         break;
     }
@@ -2666,7 +2667,7 @@ template<> inline CSSPrimitiveValue::operator TextUnderlinePosition() const
     // FIXME: Implement support for 'under left' and 'under right' values.
 
     ASSERT_NOT_REACHED();
-    return TextUnderlinePositionAuto;
+    return TextUnderlinePosition::Auto;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextSecurity e)
@@ -3820,24 +3821,24 @@ template<> inline CSSPrimitiveValue::operator LineAlign() const
     return LineAlign::None;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ESpeakAs e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(SpeakAs e)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_VALUE_ID;
     switch (e) {
-    case SpeakNormal:
+    case SpeakAs::Normal:
         m_value.valueID = CSSValueNormal;
         break;
-    case SpeakSpellOut:
+    case SpeakAs::SpellOut:
         m_value.valueID = CSSValueSpellOut;
         break;
-    case SpeakDigits:
+    case SpeakAs::Digits:
         m_value.valueID = CSSValueDigits;
         break;
-    case SpeakLiteralPunctuation:
+    case SpeakAs::LiteralPunctuation:
         m_value.valueID = CSSValueLiteralPunctuation;
         break;
-    case SpeakNoPunctuation:
+    case SpeakAs::NoPunctuation:
         m_value.valueID = CSSValueNoPunctuation;
         break;
     }
@@ -3874,27 +3875,27 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Order e)
     }
 }
 
-template<> inline CSSPrimitiveValue::operator ESpeakAs() const
+template<> inline CSSPrimitiveValue::operator OptionSet<SpeakAs>() const
 {
     ASSERT(isValueID());
 
     switch (m_value.valueID) {
     case CSSValueNormal:
-        return SpeakNormal;
+        return OptionSet<SpeakAs> { };
     case CSSValueSpellOut:
-        return SpeakSpellOut;
+        return SpeakAs::SpellOut;
     case CSSValueDigits:
-        return SpeakDigits;
+        return SpeakAs::Digits;
     case CSSValueLiteralPunctuation:
-        return SpeakLiteralPunctuation;
+        return SpeakAs::LiteralPunctuation;
     case CSSValueNoPunctuation:
-        return SpeakNoPunctuation;
+        return SpeakAs::NoPunctuation;
     default:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return SpeakNormal;
+    return OptionSet<SpeakAs> { };
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(BlendMode blendMode)

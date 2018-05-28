@@ -147,7 +147,7 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_inheritedFlags.visibility = static_cast<unsigned>(initialVisibility());
     m_inheritedFlags.textAlign = static_cast<unsigned>(initialTextAlign());
     m_inheritedFlags.textTransform = static_cast<unsigned>(initialTextTransform());
-    m_inheritedFlags.textDecorations = initialTextDecoration();
+    m_inheritedFlags.textDecorations = initialTextDecoration().toRaw();
     m_inheritedFlags.cursor = static_cast<unsigned>(initialCursor());
 #if ENABLE(CURSOR_VISIBILITY)
     m_inheritedFlags.cursorVisibility = static_cast<unsigned>(initialCursorVisibility());
@@ -539,8 +539,8 @@ inline bool RenderStyle::changeAffectsVisualOverflow(const RenderStyle& other) c
         || m_rareNonInheritedData->textDecorationStyle != other.m_rareNonInheritedData->textDecorationStyle) {
         // Underlines are always drawn outside of their textbox bounds when text-underline-position: under;
         // is specified. We can take an early out here.
-        if (textUnderlinePosition() == TextUnderlinePositionUnder
-            || other.textUnderlinePosition() == TextUnderlinePositionUnder)
+        if (textUnderlinePosition() == TextUnderlinePosition::Under
+            || other.textUnderlinePosition() == TextUnderlinePosition::Under)
             return true;
         return visualOverflowForDecorations(*this, nullptr) != visualOverflowForDecorations(other, nullptr);
     }

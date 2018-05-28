@@ -200,7 +200,7 @@ static AvoidanceReasonFlags canUseForStyle(const RenderStyle& style, IncludeReas
     AvoidanceReasonFlags reasons = { };
     if (style.textOverflow() == TextOverflow::Ellipsis)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
-    if ((style.textDecorationsInEffect() & TextDecorationUnderline) && style.textUnderlinePosition() == TextUnderlinePositionUnder)
+    if ((style.textDecorationsInEffect() & TextDecoration::Underline) && style.textUnderlinePosition() == TextUnderlinePosition::Under)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedUnderlineDecoration, reasons, includeReasons);
     // Non-visible overflow should be pretty easy to support.
     if (style.overflowX() != Overflow::Visible || style.overflowY() != Overflow::Visible)
@@ -289,7 +289,7 @@ AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, IncludeRea
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOutline, reasons, includeReasons);
     if (flow.isRubyText() || flow.isRubyBase())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsRuby, reasons, includeReasons);
-    if (flow.style().hangingPunctuation() != NoHangingPunctuation)
+    if (!flow.style().hangingPunctuation().isEmpty())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHangingPunctuation, reasons, includeReasons);
     
     // Printing does pagination without a flow thread.

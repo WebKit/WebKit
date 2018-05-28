@@ -353,9 +353,9 @@ bool InlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     return false;
 }
 
-static inline bool emphasisPositionHasNeitherLeftNorRight(TextEmphasisPosition emphasisPosition)
+static inline bool emphasisPositionHasNeitherLeftNorRight(OptionSet<TextEmphasisPosition> emphasisPosition)
 {
-    return !(emphasisPosition & TextEmphasisPositionLeft) && !(emphasisPosition & TextEmphasisPositionRight);
+    return !(emphasisPosition & TextEmphasisPosition::Left) && !(emphasisPosition & TextEmphasisPosition::Right);
 }
 
 bool InlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyle& style, bool& above) const
@@ -364,19 +364,19 @@ bool InlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyle& style, bool&
     if (style.textEmphasisMark() == TextEmphasisMark::None)
         return false;
 
-    TextEmphasisPosition emphasisPosition = style.textEmphasisPosition();
-    ASSERT(!((emphasisPosition & TextEmphasisPositionOver) && (emphasisPosition & TextEmphasisPositionUnder)));
-    ASSERT(!((emphasisPosition & TextEmphasisPositionLeft) && (emphasisPosition & TextEmphasisPositionRight)));
+    auto emphasisPosition = style.textEmphasisPosition();
+    ASSERT(!((emphasisPosition & TextEmphasisPosition::Over) && (emphasisPosition & TextEmphasisPosition::Under)));
+    ASSERT(!((emphasisPosition & TextEmphasisPosition::Left) && (emphasisPosition & TextEmphasisPosition::Right)));
     
     if (emphasisPositionHasNeitherLeftNorRight(emphasisPosition))
-        above = emphasisPosition & TextEmphasisPositionOver;
+        above = emphasisPosition.contains(TextEmphasisPosition::Over);
     else if (style.isHorizontalWritingMode())
-        above = emphasisPosition & TextEmphasisPositionOver;
+        above = emphasisPosition.contains(TextEmphasisPosition::Over);
     else
-        above = emphasisPosition & TextEmphasisPositionRight;
+        above = emphasisPosition.contains(TextEmphasisPosition::Right);
     
-    if ((style.isHorizontalWritingMode() && (emphasisPosition & TextEmphasisPositionUnder))
-        || (!style.isHorizontalWritingMode() && (emphasisPosition & TextEmphasisPositionLeft)))
+    if ((style.isHorizontalWritingMode() && (emphasisPosition & TextEmphasisPosition::Under))
+        || (!style.isHorizontalWritingMode() && (emphasisPosition & TextEmphasisPosition::Left)))
         return true; // Ruby text is always over, so it cannot suppress emphasis marks under.
 
     RenderBlock* containingBlock = renderer().containingBlock();
@@ -568,8 +568,8 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     paintMarkedTexts(paintInfo, TextPaintPhase::Foreground, boxRect, coalescedStyledMarkedTexts);
 
     // Paint decorations
-    TextDecoration textDecorations = lineStyle.textDecorationsInEffect();
-    if (textDecorations != TextDecorationNone && paintInfo.phase != PaintPhaseSelection) {
+    auto textDecorations = lineStyle.textDecorationsInEffect();
+    if (!textDecorations.isEmpty() && paintInfo.phase != PaintPhaseSelection) {
         TextRun textRun = createTextRun();
         unsigned length = textRun.length();
         if (m_truncation != cNoTruncation)
@@ -1061,7 +1061,7 @@ void InlineTextBox::paintMarkedTextDecoration(PaintInfo& paintInfo, const FloatR
     }
 
     // 2. Paint
-    TextDecorationPainter decorationPainter { context, static_cast<unsigned>(lineStyle().textDecorationsInEffect()), renderer(), isFirstLine(), markedText.style.textDecorationStyles };
+    TextDecorationPainter decorationPainter { context, lineStyle().textDecorationsInEffect(), renderer(), isFirstLine(), markedText.style.textDecorationStyles };
     decorationPainter.setInlineTextBox(this);
     decorationPainter.setFont(lineFont());
     decorationPainter.setWidth(snappedSelectionRect.width());

@@ -2505,9 +2505,9 @@ NSAttributedString *editingAttributedStringFromRange(Range& range, IncludeImages
         if (!renderer)
             continue;
         const RenderStyle& style = renderer->style();
-        if (style.textDecorationsInEffect() & TextDecorationUnderline)
+        if (style.textDecorationsInEffect() & TextDecoration::Underline)
             [attrs.get() setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
-        if (style.textDecorationsInEffect() & TextDecorationLineThrough)
+        if (style.textDecorationsInEffect() & TextDecoration::LineThrough)
             [attrs.get() setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
         if (auto font = style.fontCascade().primaryFont().getCTFont())
             [attrs.get() setObject:toNSFont(font) forKey:NSFontAttributeName];

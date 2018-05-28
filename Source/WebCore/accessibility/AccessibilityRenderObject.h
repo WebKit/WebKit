@@ -274,7 +274,7 @@ private:
     bool elementAttributeValue(const QualifiedName&) const;
     void setElementAttributeValue(const QualifiedName&, bool);
     
-    ESpeakAs speakAsProperty() const override;
+    OptionSet<SpeakAs> speakAsProperty() const override;
     
     const String liveRegionStatus() const override;
     const String liveRegionRelevant() const override;

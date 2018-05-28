@@ -28,7 +28,7 @@ namespace WebCore {
 
 StyleVisualData::StyleVisualData()
     : hasClip(false)
-    , textDecoration(RenderStyle::initialTextDecoration())
+    , textDecoration(RenderStyle::initialTextDecoration().toRaw())
     , zoom(RenderStyle::initialZoom())
 {
 }

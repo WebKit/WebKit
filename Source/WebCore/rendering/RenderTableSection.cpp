@@ -168,10 +168,10 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
 
     // ### mozilla still seems to do the old HTML way, even for strict DTD
     // (see the annotation on table cell layouting in the CSS specs and the testcase below:
-    // <DisplayType::Table border>
+    // <TABLE border>
     // <TR><TD>1 <TD rowspan="2">2 <TD>3 <TD>4
     // <TR><TD colspan="2">5
-    // </DisplayType::Table>
+    // </TABLE>
     while (m_cCol < nCols && (cellAt(insertionRow, m_cCol).hasCells() || cellAt(insertionRow, m_cCol).inColSpan))
         m_cCol++;
 

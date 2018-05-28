@@ -4097,8 +4097,8 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     RenderObject* prevFloat = 0;
     bool isPrevChildInlineFlow = false;
     bool shouldBreakLineAfterText = false;
-    bool canHangPunctuationAtStart = styleToUse.hangingPunctuation() & FirstHangingPunctuation;
-    bool canHangPunctuationAtEnd = styleToUse.hangingPunctuation() & LastHangingPunctuation;
+    bool canHangPunctuationAtStart = styleToUse.hangingPunctuation().contains(HangingPunctuation::First);
+    bool canHangPunctuationAtEnd = styleToUse.hangingPunctuation().contains(HangingPunctuation::Last);
     RenderText* lastText = nullptr;
 
     bool addedStartPunctuationHang = false;

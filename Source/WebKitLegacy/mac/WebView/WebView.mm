@@ -9920,7 +9920,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const RenderStyle* style)
                     String value = typingStyle->style()->getPropertyValue(CSSPropertyWebkitTextDecorationsInEffect);
                     [_private->_textTouchBarItemController setTextIsUnderlined:value.contains("underline")];
                 } else
-                    [_private->_textTouchBarItemController setTextIsUnderlined:(style->textDecorationsInEffect() & TextDecorationUnderline)];
+                    [_private->_textTouchBarItemController setTextIsUnderlined:style->textDecorationsInEffect().contains(TextDecoration::Underline)];
 
                 Color textColor = style->visitedDependentColor(CSSPropertyColor);
                 if (textColor.isValid())

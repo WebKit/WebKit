@@ -405,18 +405,18 @@ NSArray *convertToNSArray(const AccessibilityObject::AccessibilityChildrenVector
 
 - (NSArray<NSString *> *)baseAccessibilitySpeechHint
 {
-    ESpeakAs speak = m_object->speakAsProperty();
+    auto speak = m_object->speakAsProperty();
     NSMutableArray<NSString *> *hints = [NSMutableArray array];
-    if (speak & SpeakSpellOut)
+    if (speak & SpeakAs::SpellOut)
         [hints addObject:@"spell-out"];
     else
         [hints addObject:@"normal"];
 
-    if (speak & SpeakDigits)
+    if (speak & SpeakAs::Digits)
         [hints addObject:@"digits"];
-    if (speak & SpeakLiteralPunctuation)
+    if (speak & SpeakAs::LiteralPunctuation)
         [hints addObject:@"literal-punctuation"];
-    if (speak & SpeakNoPunctuation)
+    if (speak & SpeakAs::NoPunctuation)
         [hints addObject:@"no-punctuation"];
     
     return hints;

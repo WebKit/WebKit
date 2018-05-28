@@ -162,11 +162,11 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_JUSTIFICATION), "fill");
     }
 
-    result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_UNDERLINE), (style->textDecoration() & TextDecorationUnderline) ? "single" : "none");
+    result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_UNDERLINE), (style->textDecoration() & TextDecoration::Underline) ? "single" : "none");
 
     result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_STYLE), style->fontCascade().italic() ? "italic" : "normal");
 
-    result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_STRIKETHROUGH), (style->textDecoration() & TextDecorationLineThrough) ? "true" : "false");
+    result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_STRIKETHROUGH), (style->textDecoration() & TextDecoration::LineThrough) ? "true" : "false");
 
     result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_INVISIBLE), (style->visibility() == Visibility::Hidden) ? "true" : "false");
 

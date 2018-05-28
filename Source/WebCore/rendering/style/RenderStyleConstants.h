@@ -687,18 +687,16 @@ static const size_t TextDecorationBits = 5;
 #else
 static const size_t TextDecorationBits = 4;
 #endif
-enum TextDecoration {
-    TextDecorationNone          = 0,
-    TextDecorationUnderline     = 1 << 0,
-    TextDecorationOverline      = 1 << 1,
-    TextDecorationLineThrough   = 1 << 2,
-    TextDecorationBlink         = 1 << 3,
+enum class TextDecoration {
+    None          = 0,
+    Underline     = 1 << 0,
+    Overline      = 1 << 1,
+    LineThrough   = 1 << 2,
+    Blink         = 1 << 3,
 #if ENABLE(LETTERPRESS)
-    TextDecorationLetterpress   = 1 << 4,
+    Letterpress   = 1 << 4,
 #endif
 };
-inline TextDecoration operator|(TextDecoration a, TextDecoration b) { return TextDecoration(int(a) | int(b)); }
-inline TextDecoration& operator|=(TextDecoration& a, TextDecoration b) { return a = a | b; }
 
 enum class TextDecorationStyle {
     Solid,
@@ -727,19 +725,19 @@ enum class TextJustify {
 };
 #endif // CSS3_TEXT
 
-enum TextDecorationSkipItems {
-    TextDecorationSkipNone      = 0,
-    TextDecorationSkipInk       = 1 << 0,
-    TextDecorationSkipObjects   = 1 << 1,
-    TextDecorationSkipAuto      = 1 << 2
+enum class TextDecorationSkip {
+    None      = 0,
+    Ink       = 1 << 0,
+    Objects   = 1 << 1,
+    Auto      = 1 << 2
 };
-typedef unsigned TextDecorationSkip;
 
-enum TextUnderlinePosition {
+// FIXME: There is no reason for the values in the enum to be powers of two.
+enum class TextUnderlinePosition {
     // FIXME: Implement support for 'under left' and 'under right' values.
-    TextUnderlinePositionAuto       = 1 << 0,
-    TextUnderlinePositionAlphabetic = 1 << 1,
-    TextUnderlinePositionUnder      = 1 << 2
+    Auto       = 1 << 0,
+    Alphabetic = 1 << 1,
+    Under      = 1 << 2
 };
 
 enum class TextZoom {
@@ -768,15 +766,13 @@ enum class BreakInside {
     AvoidPage
 };
 
-enum HangingPunctuation {
-    NoHangingPunctuation        = 0,
-    FirstHangingPunctuation     = 1 << 0,
-    LastHangingPunctuation      = 1 << 1,
-    AllowEndHangingPunctuation  = 1 << 2,
-    ForceEndHangingPunctuation  = 1 << 3
+enum class HangingPunctuation {
+    None      = 0,
+    First     = 1 << 0,
+    Last      = 1 << 1,
+    AllowEnd  = 1 << 2,
+    ForceEnd  = 1 << 3
 };
-inline HangingPunctuation operator|(HangingPunctuation a, HangingPunctuation b) { return HangingPunctuation(int(a) | int(b)); }
-inline HangingPunctuation& operator|=(HangingPunctuation& a, HangingPunctuation b) { return a = a | b; }
 
 enum class EmptyCell {
     Show,
@@ -929,15 +925,13 @@ enum class Hyphens {
     Auto
 };
 
-enum ESpeakAs {
-    SpeakNormal             = 0,
-    SpeakSpellOut           = 1 << 0,
-    SpeakDigits             = 1 << 1,
-    SpeakLiteralPunctuation = 1 << 2,
-    SpeakNoPunctuation      = 1 << 3
+enum class SpeakAs {
+    Normal             = 0,
+    SpellOut           = 1 << 0,
+    Digits             = 1 << 1,
+    LiteralPunctuation = 1 << 2,
+    NoPunctuation      = 1 << 3
 };
-inline ESpeakAs operator|(ESpeakAs a, ESpeakAs b) { return ESpeakAs(int(a) | int(b)); }
-inline ESpeakAs& operator|=(ESpeakAs& a, ESpeakAs b) { return a = a | b; }
 
 enum class TextEmphasisFill {
     Filled,
@@ -955,13 +949,12 @@ enum class TextEmphasisMark {
     Custom
 };
 
-enum TextEmphasisPositions {
-    TextEmphasisPositionOver  = 1 << 0,
-    TextEmphasisPositionUnder = 1 << 1,
-    TextEmphasisPositionLeft  = 1 << 2,
-    TextEmphasisPositionRight = 1 << 3
+enum class TextEmphasisPosition {
+    Over  = 1 << 0,
+    Under = 1 << 1,
+    Left  = 1 << 2,
+    Right = 1 << 3
 };
-typedef unsigned TextEmphasisPosition;
 
 enum class TextOrientation {
     Mixed,

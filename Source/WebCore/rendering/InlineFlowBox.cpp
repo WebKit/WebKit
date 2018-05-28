@@ -745,7 +745,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
     }
 }
 
-void InlineFlowBox::maxLogicalBottomForTextDecorationLine(float& maxLogicalBottom, const RenderElement* decorationRenderer, TextDecoration textDecoration) const
+void InlineFlowBox::maxLogicalBottomForTextDecorationLine(float& maxLogicalBottom, const RenderElement* decorationRenderer, OptionSet<TextDecoration> textDecoration) const
 {
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
         if (child->renderer().isOutOfFlowPositioned())
@@ -760,13 +760,13 @@ void InlineFlowBox::maxLogicalBottomForTextDecorationLine(float& maxLogicalBotto
         if (is<InlineFlowBox>(*child))
             downcast<InlineFlowBox>(*child).maxLogicalBottomForTextDecorationLine(maxLogicalBottom, decorationRenderer, textDecoration);
         else {
-            if (child->isInlineTextBox() || child->lineStyle().textDecorationSkip() == TextDecorationSkipNone)
+            if (child->isInlineTextBox() || child->lineStyle().textDecorationSkip().isEmpty())
                 maxLogicalBottom = std::max<float>(maxLogicalBottom, child->logicalBottom());
         }
     }
 }
 
-void InlineFlowBox::minLogicalTopForTextDecorationLine(float& minLogicalTop, const RenderElement* decorationRenderer, TextDecoration textDecoration) const
+void InlineFlowBox::minLogicalTopForTextDecorationLine(float& minLogicalTop, const RenderElement* decorationRenderer, OptionSet<TextDecoration> textDecoration) const
 {
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
         if (child->renderer().isOutOfFlowPositioned())
@@ -781,7 +781,7 @@ void InlineFlowBox::minLogicalTopForTextDecorationLine(float& minLogicalTop, con
         if (is<InlineFlowBox>(*child))
             downcast<InlineFlowBox>(*child).minLogicalTopForTextDecorationLine(minLogicalTop, decorationRenderer, textDecoration);
         else {
-            if (child->isInlineTextBox() || child->lineStyle().textDecorationSkip() == TextDecorationSkipNone)
+            if (child->isInlineTextBox() || child->lineStyle().textDecorationSkip().isEmpty())
                 minLogicalTop = std::min<float>(minLogicalTop, child->logicalTop());
         }
     }

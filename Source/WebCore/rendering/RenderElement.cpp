@@ -1539,7 +1539,7 @@ LayoutRect RenderElement::absoluteAnchorRect(bool* insideFixed) const
     return enclosingLayoutRect(FloatRect(upperLeft, lowerRight.expandedTo(upperLeft) - upperLeft));
 }
 
-const RenderElement* RenderElement::enclosingRendererWithTextDecoration(TextDecoration textDecoration, bool firstLine) const
+const RenderElement* RenderElement::enclosingRendererWithTextDecoration(OptionSet<TextDecoration> textDecoration, bool firstLine) const
 {
     const RenderElement* current = this;
     do {

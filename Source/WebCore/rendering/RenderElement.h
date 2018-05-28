@@ -195,7 +195,7 @@ public:
     bool hasCounterNodeMap() const { return m_hasCounterNodeMap; }
     void setHasCounterNodeMap(bool f) { m_hasCounterNodeMap = f; }
 
-    const RenderElement* enclosingRendererWithTextDecoration(TextDecoration, bool firstLine) const;
+    const RenderElement* enclosingRendererWithTextDecoration(OptionSet<TextDecoration>, bool firstLine) const;
     void drawLineForBoxSide(GraphicsContext&, const FloatRect&, BoxSide, Color, BorderStyle, float adjacentWidth1, float adjacentWidth2, bool antialias = false) const;
 
 #if ENABLE(TEXT_AUTOSIZING)

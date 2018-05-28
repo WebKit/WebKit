@@ -763,9 +763,9 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     const FontCascade& font = style.fontCascade();
     bool isFixedPitch = font.isFixedPitch();
     bool canHyphenate = style.hyphens() == Hyphens::Auto && WebCore::canHyphenate(style.locale());
-    bool canHangPunctuationAtStart = style.hangingPunctuation() & FirstHangingPunctuation;
-    bool canHangPunctuationAtEnd = style.hangingPunctuation() & LastHangingPunctuation;
-    bool canHangStopOrCommaAtLineEnd = style.hangingPunctuation() & AllowEndHangingPunctuation;
+    bool canHangPunctuationAtStart = style.hangingPunctuation().contains(HangingPunctuation::First);
+    bool canHangPunctuationAtEnd = style.hangingPunctuation().contains(HangingPunctuation::Last);
+    bool canHangStopOrCommaAtLineEnd = style.hangingPunctuation().contains(HangingPunctuation::AllowEnd);
     int endPunctuationIndex = canHangPunctuationAtEnd && m_collapseWhiteSpace ? renderText.lastCharacterIndexStrippingSpaces() : renderText.text().length() - 1;
     unsigned lastSpace = m_current.offset();
     float wordSpacing = m_currentStyle->fontCascade().wordSpacing();

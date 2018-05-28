@@ -94,7 +94,7 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
     }
 
     std::optional<TextDecorationPainter> textDecorationPainter;
-    if (style.textDecorationsInEffect() != TextDecorationNone) {
+    if (!style.textDecorationsInEffect().isEmpty()) {
         const RenderText* textRenderer = childrenOfType<RenderText>(flow).first();
         if (textRenderer) {
             textDecorationPainter.emplace(paintInfo.context(), style.textDecorationsInEffect(), *textRenderer, false);

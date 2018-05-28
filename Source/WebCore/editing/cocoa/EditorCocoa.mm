@@ -71,10 +71,10 @@ void Editor::getTextDecorationAttributesRespectingTypingStyle(const RenderStyle&
                 [result setObject:@(NSUnderlineStyleSingle) forKey:NSUnderlineStyleAttributeName];
         }
     } else {
-        int decoration = style.textDecorationsInEffect();
-        if (decoration & TextDecorationLineThrough)
+        auto decoration = style.textDecorationsInEffect();
+        if (decoration & TextDecoration::LineThrough)
             [result setObject:@(NSUnderlineStyleSingle) forKey:NSStrikethroughStyleAttributeName];
-        if (decoration & TextDecorationUnderline)
+        if (decoration & TextDecoration::Underline)
             [result setObject:@(NSUnderlineStyleSingle) forKey:NSUnderlineStyleAttributeName];
     }
 }

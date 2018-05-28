@@ -1,3 +1,142 @@
+2018-05-27  Sam Weinig  <sam@webkit.org>
+
+        Modernize RenderStyleConstants.h - Part 3
+        https://bugs.webkit.org/show_bug.cgi?id=186015
+
+        Reviewed by Yusuke Suzuki.
+
+        Modernized the third and final set of enums in RenderStyleConstants.h by:
+            - Converting them to enum classes
+            - Renaming them to remove unnecessary prefix 'E's
+            - Renaming values to take advantage of enum class scoping (e.g. StyleDifferenceEqual -> StyleDifference::Equal)
+
+        Modernizes the following enums:
+            TextDecoration
+            TextDecorationSkip (renamed from TextDecorationSkipItems)
+            TextUnderlinePosition
+            HangingPunctuation
+            SpeakAs (renamed from ESpeakAs)
+            TextEmphasisPosition (renamed from TextEmphasisPositions)
+
+        This final set of enums are mostly (TextUnderlinePosition isn't really) used as bitmasks,
+        so this change also converts their uses to use OptionSet. 
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::speakAsProperty const):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::speakAsProperty const):
+        (WebCore::AccessibilityRenderObject::hasPlainText const):
+        (WebCore::AccessibilityRenderObject::hasUnderline const):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (AXAttributeStringSetStyle):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase baseAccessibilitySpeechHint]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXAttributeStringSetStyle):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::renderTextDecorationFlagsToCSSValue):
+        (WebCore::renderTextDecorationSkipFlagsToCSSValue):
+        (WebCore::renderEmphasisPositionFlagsToCSSValue):
+        (WebCore::speakAsToCSSValue):
+        (WebCore::hangingPunctuationToCSSValue):
+        * css/CSSLineBoxContainValue.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator HangingPunctuation const):
+        (WebCore::CSSPrimitiveValue::operator TextDecoration const):
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator TextUnderlinePosition const):
+        (WebCore::CSSPrimitiveValue::operator SpeakAs const):
+        (WebCore::CSSPrimitiveValue::operator ESpeakAs const): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertTextDecoration):
+        (WebCore::StyleBuilderConverter::valueToEmphasisPosition):
+        (WebCore::StyleBuilderConverter::convertTextEmphasisPosition):
+        (WebCore::StyleBuilderConverter::convertTextUnderlinePosition):
+        (WebCore::StyleBuilderConverter::valueToDecorationSkip):
+        (WebCore::StyleBuilderConverter::convertTextDecorationSkip):
+        (WebCore::StyleBuilderConverter::convertSpeakAs):
+        (WebCore::StyleBuilderConverter::convertHangingPunctuation):
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::getTextDecorationAttributesRespectingTypingStyle const):
+        * editing/cocoa/HTMLConverter.mm:
+        (WebCore::editingAttributedStringFromRange):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::maxLogicalBottomForTextDecorationLine const):
+        (WebCore::InlineFlowBox::minLogicalTopForTextDecorationLine const):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::emphasisPositionHasNeitherLeftNorRight):
+        (WebCore::InlineTextBox::emphasisMarkExistsAndIsAbove const):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintMarkedTextDecoration):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeInlinePreferredLogicalWidths const):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::setLogicalWidthForTextRun):
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::enclosingRendererWithTextDecoration const):
+        * rendering/RenderElement.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addCell):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForStyle):
+        (WebCore::SimpleLineLayout::canUseForWithReason):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::TextDecorationPainter::TextDecorationPainter):
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+        (WebCore::collectStylesForRenderer):
+        (WebCore::TextDecorationPainter::stylesForRenderer):
+        * rendering/TextDecorationPainter.h:
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::computeTextPaintStyle):
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleText):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::changeAffectsVisualOverflow const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::textDecorationsInEffect const):
+        (WebCore::RenderStyle::textDecoration const):
+        (WebCore::RenderStyle::textDecorationSkip const):
+        (WebCore::RenderStyle::hangingPunctuation const):
+        (WebCore::RenderStyle::textEmphasisPosition const):
+        (WebCore::RenderStyle::speakAs const):
+        (WebCore::RenderStyle::addToTextDecorationsInEffect):
+        (WebCore::RenderStyle::setTextDecorationsInEffect):
+        (WebCore::RenderStyle::setTextDecoration):
+        (WebCore::RenderStyle::setTextDecorationSkip):
+        (WebCore::RenderStyle::setSpeakAs):
+        (WebCore::RenderStyle::setTextEmphasisPosition):
+        (WebCore::RenderStyle::setHangingPunctuation):
+        (WebCore::RenderStyle::initialHangingPunctuation):
+        (WebCore::RenderStyle::initialTextDecoration):
+        (WebCore::RenderStyle::initialTextDecorationSkip):
+        (WebCore::RenderStyle::initialTextUnderlinePosition):
+        (WebCore::RenderStyle::initialSpeakAs):
+        (WebCore::RenderStyle::initialTextEmphasisPosition):
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::operator|): Deleted.
+        (WebCore::operator|=): Deleted.
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        * rendering/style/StyleVisualData.cpp:
+        (WebCore::StyleVisualData::StyleVisualData):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paint):
+        (WebCore::positionOffsetForDecoration):
+        (WebCore::thicknessForDecoration):
+        (WebCore::findRendererDefininingTextDecoration):
+        (WebCore::SVGInlineTextBox::paintDecoration):
+        (WebCore::SVGInlineTextBox::paintDecorationWithStyle):
+        * rendering/svg/SVGInlineTextBox.h:
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::computeUnderlineOffset):
+        (WebCore::visualOverflowForDecorations):
+
 2018-05-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement margin computation

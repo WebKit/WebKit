@@ -945,7 +945,7 @@ AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
     return firstAccessibleObjectFromNode(linkedNode);
 }
 
-ESpeakAs AccessibilityRenderObject::speakAsProperty() const
+OptionSet<SpeakAs> AccessibilityRenderObject::speakAsProperty() const
 {
     if (!m_renderer)
         return AccessibilityObject::speakAsProperty();
@@ -3600,7 +3600,7 @@ bool AccessibilityRenderObject::hasPlainText() const
     const RenderStyle& style = m_renderer->style();
     return style.fontDescription().weight() == normalWeightValue()
         && style.fontDescription().italic() == normalItalicValue()
-        && style.textDecorationsInEffect() == TextDecorationNone;
+        && style.textDecorationsInEffect().isEmpty();
 }
 
 bool AccessibilityRenderObject::hasSameFont(RenderObject* renderer) const
@@ -3632,7 +3632,7 @@ bool AccessibilityRenderObject::hasUnderline() const
     if (!m_renderer)
         return false;
     
-    return m_renderer->style().textDecorationsInEffect() & TextDecorationUnderline;
+    return m_renderer->style().textDecorationsInEffect().contains(TextDecoration::Underline);
 }
 
 String AccessibilityRenderObject::nameForMSAA() const

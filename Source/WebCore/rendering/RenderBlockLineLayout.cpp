@@ -532,7 +532,7 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     }
 
     // Include text decoration visual overflow as part of the glyph overflow.
-    if (renderer.style().textDecorationsInEffect() != TextDecorationNone)
+    if (!renderer.style().textDecorationsInEffect().isEmpty())
         glyphOverflow.extendTo(visualOverflowForDecorations(run->box()->lineStyle(), downcast<InlineTextBox>(run->box())));
 
     if (!glyphOverflow.isEmpty()) {
@@ -830,8 +830,8 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
     WordMeasurements& wordMeasurements)
 {
     bool needsWordSpacing = false;
-    bool canHangPunctuationAtStart = style().hangingPunctuation() & FirstHangingPunctuation;
-    bool canHangPunctuationAtEnd = style().hangingPunctuation() & LastHangingPunctuation;
+    bool canHangPunctuationAtStart = style().hangingPunctuation().contains(HangingPunctuation::First);
+    bool canHangPunctuationAtEnd = style().hangingPunctuation().contains(HangingPunctuation::Last);
     bool isLTR = style().isLeftToRightDirection();
     float totalLogicalWidth = lineBox->getFlowSpacingLogicalWidth();
     unsigned expansionOpportunityCount = 0;

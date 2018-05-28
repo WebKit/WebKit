@@ -69,6 +69,7 @@
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/OptionSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
@@ -365,11 +366,11 @@ public:
     const Length& textIndent() const { return m_rareInheritedData->indent; }
     TextAlignMode textAlign() const { return static_cast<TextAlignMode>(m_inheritedFlags.textAlign); }
     TextTransform textTransform() const { return static_cast<TextTransform>(m_inheritedFlags.textTransform); }
-    TextDecoration textDecorationsInEffect() const { return static_cast<TextDecoration>(m_inheritedFlags.textDecorations); }
-    TextDecoration textDecoration() const { return static_cast<TextDecoration>(m_visualData->textDecoration); }
+    OptionSet<TextDecoration> textDecorationsInEffect() const { return OptionSet<TextDecoration>::fromRaw(m_inheritedFlags.textDecorations); }
+    OptionSet<TextDecoration> textDecoration() const { return OptionSet<TextDecoration>::fromRaw(m_visualData->textDecoration); }
     TextDecorationStyle textDecorationStyle() const { return static_cast<TextDecorationStyle>(m_rareNonInheritedData->textDecorationStyle); }
-    TextDecorationSkip textDecorationSkip() const { return static_cast<TextDecorationSkip>(m_rareInheritedData->textDecorationSkip); }
-    TextUnderlinePosition textUnderlinePosition() const { return static_cast<TextUnderlinePosition>(m_rareInheritedData->textUnderlinePosition); }
+    OptionSet<TextDecorationSkip> textDecorationSkip() const { return OptionSet<TextDecorationSkip>::fromRaw(m_rareInheritedData->textDecorationSkip); }
+    OptionSet<TextUnderlinePosition> textUnderlinePosition() const { return OptionSet<TextUnderlinePosition>::fromRaw(m_rareInheritedData->textUnderlinePosition); }
 
 #if ENABLE(CSS3_TEXT)
     TextIndentLine textIndentLine() const { return static_cast<TextIndentLine>(m_rareInheritedData->textIndentLine); }
@@ -488,7 +489,7 @@ public:
     BreakBetween breakBefore() const { return static_cast<BreakBetween>(m_rareNonInheritedData->breakBefore); }
     BreakBetween breakAfter() const { return static_cast<BreakBetween>(m_rareNonInheritedData->breakAfter); }
 
-    HangingPunctuation hangingPunctuation() const { return static_cast<HangingPunctuation>(m_rareInheritedData->hangingPunctuation); }
+    OptionSet<HangingPunctuation> hangingPunctuation() const { return OptionSet<HangingPunctuation>::fromRaw(m_rareInheritedData->hangingPunctuation); }
 
     float outlineOffset() const;
     const ShadowData* textShadow() const { return m_rareInheritedData->textShadow.get(); }
@@ -620,7 +621,7 @@ public:
     TextEmphasisFill textEmphasisFill() const { return static_cast<TextEmphasisFill>(m_rareInheritedData->textEmphasisFill); }
     TextEmphasisMark textEmphasisMark() const;
     const AtomicString& textEmphasisCustomMark() const { return m_rareInheritedData->textEmphasisCustomMark; }
-    TextEmphasisPosition textEmphasisPosition() const { return static_cast<TextEmphasisPosition>(m_rareInheritedData->textEmphasisPosition); }
+    OptionSet<TextEmphasisPosition> textEmphasisPosition() const { return OptionSet<TextEmphasisPosition>::fromRaw(m_rareInheritedData->textEmphasisPosition); }
     const AtomicString& textEmphasisMarkString() const;
 
     RubyPosition rubyPosition() const { return static_cast<RubyPosition>(m_rareInheritedData->rubyPosition); }
@@ -746,7 +747,7 @@ public:
     float imageResolution() const { return m_rareInheritedData->imageResolution; }
 #endif
     
-    ESpeakAs speakAs() const { return static_cast<ESpeakAs>(m_rareInheritedData->speakAs); }
+    OptionSet<SpeakAs> speakAs() const { return OptionSet<SpeakAs>::fromRaw(m_rareInheritedData->speakAs); }
 
     FilterOperations& mutableFilter() { return m_rareNonInheritedData.access().filter.access().operations; }
     const FilterOperations& filter() const { return m_rareNonInheritedData->filter->operations; }
@@ -915,12 +916,12 @@ public:
     void setTextIndent(Length&& length) { SET_VAR(m_rareInheritedData, indent, WTFMove(length)); }
     void setTextAlign(TextAlignMode v) { m_inheritedFlags.textAlign = static_cast<unsigned>(v); }
     void setTextTransform(TextTransform v) { m_inheritedFlags.textTransform = static_cast<unsigned>(v); }
-    void addToTextDecorationsInEffect(TextDecoration v) { m_inheritedFlags.textDecorations |= v; }
-    void setTextDecorationsInEffect(TextDecoration v) { m_inheritedFlags.textDecorations = v; }
-    void setTextDecoration(TextDecoration v) { SET_VAR(m_visualData, textDecoration, v); }
+    void addToTextDecorationsInEffect(OptionSet<TextDecoration> v) { m_inheritedFlags.textDecorations |= static_cast<unsigned>(v.toRaw()); }
+    void setTextDecorationsInEffect(OptionSet<TextDecoration> v) { m_inheritedFlags.textDecorations = v.toRaw(); }
+    void setTextDecoration(OptionSet<TextDecoration> v) { SET_VAR(m_visualData, textDecoration, v.toRaw()); }
     void setTextDecorationStyle(TextDecorationStyle v) { SET_VAR(m_rareNonInheritedData, textDecorationStyle, static_cast<unsigned>(v)); }
-    void setTextDecorationSkip(TextDecorationSkip skip) { SET_VAR(m_rareInheritedData, textDecorationSkip, static_cast<unsigned>(skip)); }
-    void setTextUnderlinePosition(TextUnderlinePosition v) { SET_VAR(m_rareInheritedData, textUnderlinePosition, static_cast<unsigned>(v)); }
+    void setTextDecorationSkip(OptionSet<TextDecorationSkip> skip) { SET_VAR(m_rareInheritedData, textDecorationSkip, skip.toRaw()); }
+    void setTextUnderlinePosition(OptionSet<TextUnderlinePosition> v) { SET_VAR(m_rareInheritedData, textUnderlinePosition, v.toRaw()); }
     void setDirection(TextDirection v) { m_inheritedFlags.direction = static_cast<unsigned>(v); }
     void setHasExplicitlySetDirection(bool v) { m_nonInheritedFlags.hasExplicitlySetDirection = v; }
     void setLineHeight(Length&&);
@@ -1145,14 +1146,14 @@ public:
     void setTransformOriginZ(float f) { SET_NESTED_VAR(m_rareNonInheritedData, transform, z, f); }
     void setTransformBox(TransformBox box) { SET_NESTED_VAR(m_rareNonInheritedData, transform, transformBox, box); }
 
-    void setSpeakAs(ESpeakAs s) { SET_VAR(m_rareInheritedData, speakAs, s); }
+    void setSpeakAs(OptionSet<SpeakAs> s) { SET_VAR(m_rareInheritedData, speakAs, s.toRaw()); }
     void setTextCombine(TextCombine v) { SET_VAR(m_rareNonInheritedData, textCombine, static_cast<unsigned>(v)); }
     void setTextDecorationColor(const Color& c) { SET_VAR(m_rareNonInheritedData, textDecorationColor, c); }
     void setTextEmphasisColor(const Color& c) { SET_VAR(m_rareInheritedData, textEmphasisColor, c); }
     void setTextEmphasisFill(TextEmphasisFill fill) { SET_VAR(m_rareInheritedData, textEmphasisFill, static_cast<unsigned>(fill)); }
     void setTextEmphasisMark(TextEmphasisMark mark) { SET_VAR(m_rareInheritedData, textEmphasisMark, static_cast<unsigned>(mark)); }
     void setTextEmphasisCustomMark(const AtomicString& mark) { SET_VAR(m_rareInheritedData, textEmphasisCustomMark, mark); }
-    void setTextEmphasisPosition(TextEmphasisPosition position) { SET_VAR(m_rareInheritedData, textEmphasisPosition, position); }
+    void setTextEmphasisPosition(OptionSet<TextEmphasisPosition> position) { SET_VAR(m_rareInheritedData, textEmphasisPosition, static_cast<unsigned>(position.toRaw())); }
     bool setTextOrientation(TextOrientation);
 
     void setObjectFit(ObjectFit fit) { SET_VAR(m_rareNonInheritedData, objectFit, static_cast<unsigned>(fit)); }
@@ -1173,7 +1174,7 @@ public:
     void setBreakAfter(BreakBetween breakBehavior) { SET_VAR(m_rareNonInheritedData, breakAfter, static_cast<unsigned>(breakBehavior)); }
     void setBreakInside(BreakInside breakBehavior) { SET_VAR(m_rareNonInheritedData, breakInside, static_cast<unsigned>(breakBehavior)); }
     
-    void setHangingPunctuation(HangingPunctuation punctuation) { SET_VAR(m_rareInheritedData, hangingPunctuation, static_cast<unsigned>(punctuation)); }
+    void setHangingPunctuation(OptionSet<HangingPunctuation> punctuation) { SET_VAR(m_rareInheritedData, hangingPunctuation, punctuation.toRaw()); }
 
     // End CSS3 Setters
 
@@ -1434,7 +1435,7 @@ public:
     static Float initialFloating() { return Float::No; }
     static BreakBetween initialBreakBetween() { return BreakBetween::Auto; }
     static BreakInside initialBreakInside() { return BreakInside::Auto; }
-    static HangingPunctuation initialHangingPunctuation() { return NoHangingPunctuation; }
+    static OptionSet<HangingPunctuation> initialHangingPunctuation() { return OptionSet<HangingPunctuation> { }; }
     static TableLayoutType initialTableLayout() { return TableLayoutType::Auto; }
     static BorderCollapse initialBorderCollapse() { return BorderCollapse::Separate; }
     static BorderStyle initialBorderStyle() { return BorderStyle::None; }
@@ -1479,10 +1480,10 @@ public:
     static short initialOrphans() { return 2; }
     static Length initialLineHeight() { return Length(-100.0f, Percent); }
     static TextAlignMode initialTextAlign() { return TextAlignMode::Start; }
-    static TextDecoration initialTextDecoration() { return TextDecorationNone; }
+    static OptionSet<TextDecoration> initialTextDecoration() { return OptionSet<TextDecoration> { }; }
     static TextDecorationStyle initialTextDecorationStyle() { return TextDecorationStyle::Solid; }
-    static TextDecorationSkip initialTextDecorationSkip() { return TextDecorationSkipAuto; }
-    static TextUnderlinePosition initialTextUnderlinePosition() { return TextUnderlinePositionAuto; }
+    static OptionSet<TextDecorationSkip> initialTextDecorationSkip() { return TextDecorationSkip::Auto; }
+    static OptionSet<TextUnderlinePosition> initialTextUnderlinePosition() { return TextUnderlinePosition::Auto; }
     static float initialZoom() { return 1.0f; }
     static TextZoom initialTextZoom() { return TextZoom::Normal; }
     static float initialOutlineOffset() { return 0; }
@@ -1523,7 +1524,7 @@ public:
     static OverflowWrap initialOverflowWrap() { return OverflowWrap::Normal; }
     static NBSPMode initialNBSPMode() { return NBSPMode::Normal; }
     static LineBreak initialLineBreak() { return LineBreak::Auto; }
-    static ESpeakAs initialSpeakAs() { return SpeakNormal; }
+    static OptionSet<SpeakAs> initialSpeakAs() { return OptionSet<SpeakAs> { }; }
     static Hyphens initialHyphens() { return Hyphens::Manual; }
     static short initialHyphenationLimitBefore() { return -1; }
     static short initialHyphenationLimitAfter() { return -1; }
@@ -1558,7 +1559,7 @@ public:
     static TextEmphasisFill initialTextEmphasisFill() { return TextEmphasisFill::Filled; }
     static TextEmphasisMark initialTextEmphasisMark() { return TextEmphasisMark::None; }
     static const AtomicString& initialTextEmphasisCustomMark() { return nullAtom(); }
-    static TextEmphasisPosition initialTextEmphasisPosition() { return TextEmphasisPositionOver | TextEmphasisPositionRight; }
+    static OptionSet<TextEmphasisPosition> initialTextEmphasisPosition() { return { TextEmphasisPosition::Over, TextEmphasisPosition::Right }; }
     static RubyPosition initialRubyPosition() { return RubyPosition::Before; }
     static LineBoxContain initialLineBoxContain() { return LineBoxContainBlock | LineBoxContainInline | LineBoxContainReplaced; }
     static ImageOrientationEnum initialImageOrientation() { return OriginTopLeft; }

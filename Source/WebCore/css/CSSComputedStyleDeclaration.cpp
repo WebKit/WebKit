@@ -1756,19 +1756,19 @@ static Ref<CSSPrimitiveValue> valueForFamily(const AtomicString& family)
     return CSSValuePool::singleton().createFontFamilyValue(family);
 }
 
-static Ref<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecoration)
+static Ref<CSSValue> renderTextDecorationFlagsToCSSValue(OptionSet<TextDecoration> textDecoration)
 {
     auto& cssValuePool = CSSValuePool::singleton();
     // Blink value is ignored.
     auto list = CSSValueList::createSpaceSeparated();
-    if (textDecoration & TextDecorationUnderline)
+    if (textDecoration & TextDecoration::Underline)
         list->append(cssValuePool.createIdentifierValue(CSSValueUnderline));
-    if (textDecoration & TextDecorationOverline)
+    if (textDecoration & TextDecoration::Overline)
         list->append(cssValuePool.createIdentifierValue(CSSValueOverline));
-    if (textDecoration & TextDecorationLineThrough)
+    if (textDecoration & TextDecoration::LineThrough)
         list->append(cssValuePool.createIdentifierValue(CSSValueLineThrough));
 #if ENABLE(LETTERPRESS)
-    if (textDecoration & TextDecorationLetterpress)
+    if (textDecoration & TextDecoration::Letterpress)
         list->append(cssValuePool.createIdentifierValue(CSSValueWebkitLetterpress));
 #endif
 
@@ -1796,16 +1796,17 @@ static Ref<CSSValue> renderTextDecorationStyleFlagsToCSSValue(TextDecorationStyl
     return CSSValuePool::singleton().createExplicitInitialValue();
 }
 
-static Ref<CSSValue> renderTextDecorationSkipFlagsToCSSValue(TextDecorationSkip textDecorationSkip)
+static Ref<CSSValue> renderTextDecorationSkipFlagsToCSSValue(OptionSet<TextDecorationSkip> textDecorationSkip)
 {
-    switch (textDecorationSkip) {
-    case TextDecorationSkipAuto:
+    // FIXME: This should probably return a CSSValueList with the set of all TextDecorationSkips.
+    switch (static_cast<TextDecorationSkip>(textDecorationSkip.toRaw())) {
+    case TextDecorationSkip::Auto:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
-    case TextDecorationSkipNone:
+    case TextDecorationSkip::None:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
-    case TextDecorationSkipInk:
+    case TextDecorationSkip::Ink:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueInk);
-    case TextDecorationSkipObjects:
+    case TextDecorationSkip::Objects:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueObjects);
     }
 
@@ -1813,55 +1814,53 @@ static Ref<CSSValue> renderTextDecorationSkipFlagsToCSSValue(TextDecorationSkip 
     return CSSValuePool::singleton().createExplicitInitialValue();
 }
 
-static Ref<CSSValue> renderEmphasisPositionFlagsToCSSValue(TextEmphasisPosition textEmphasisPosition)
+static Ref<CSSValue> renderEmphasisPositionFlagsToCSSValue(OptionSet<TextEmphasisPosition> textEmphasisPosition)
 {
-    ASSERT(!((textEmphasisPosition & TextEmphasisPositionOver) && (textEmphasisPosition & TextEmphasisPositionUnder)));
-    ASSERT(!((textEmphasisPosition & TextEmphasisPositionLeft) && (textEmphasisPosition & TextEmphasisPositionRight)));
+    ASSERT(!((textEmphasisPosition & TextEmphasisPosition::Over) && (textEmphasisPosition & TextEmphasisPosition::Under)));
+    ASSERT(!((textEmphasisPosition & TextEmphasisPosition::Left) && (textEmphasisPosition & TextEmphasisPosition::Right)));
     auto& cssValuePool = CSSValuePool::singleton();
     auto list = CSSValueList::createSpaceSeparated();
-    if (textEmphasisPosition & TextEmphasisPositionOver)
+    if (textEmphasisPosition & TextEmphasisPosition::Over)
         list->append(cssValuePool.createIdentifierValue(CSSValueOver));
-    if (textEmphasisPosition & TextEmphasisPositionUnder)
+    if (textEmphasisPosition & TextEmphasisPosition::Under)
         list->append(cssValuePool.createIdentifierValue(CSSValueUnder));
-    if (textEmphasisPosition & TextEmphasisPositionLeft)
+    if (textEmphasisPosition & TextEmphasisPosition::Left)
         list->append(cssValuePool.createIdentifierValue(CSSValueLeft));
-    if (textEmphasisPosition & TextEmphasisPositionRight)
+    if (textEmphasisPosition & TextEmphasisPosition::Right)
         list->append(cssValuePool.createIdentifierValue(CSSValueRight));
     if (!list->length())
         return cssValuePool.createIdentifierValue(CSSValueNone);
     return WTFMove(list);
 }
 
-static Ref<CSSValue> speakAsToCSSValue(ESpeakAs speakAs)
+static Ref<CSSValue> speakAsToCSSValue(OptionSet<SpeakAs> speakAs)
 {
     auto& cssValuePool = CSSValuePool::singleton();
     auto list = CSSValueList::createSpaceSeparated();
-    if (speakAs & SpeakNormal)
-        list->append(cssValuePool.createIdentifierValue(CSSValueNormal));
-    if (speakAs & SpeakSpellOut)
+    if (speakAs & SpeakAs::SpellOut)
         list->append(cssValuePool.createIdentifierValue(CSSValueSpellOut));
-    if (speakAs & SpeakDigits)
+    if (speakAs & SpeakAs::Digits)
         list->append(cssValuePool.createIdentifierValue(CSSValueDigits));
-    if (speakAs & SpeakLiteralPunctuation)
+    if (speakAs & SpeakAs::LiteralPunctuation)
         list->append(cssValuePool.createIdentifierValue(CSSValueLiteralPunctuation));
-    if (speakAs & SpeakNoPunctuation)
+    if (speakAs & SpeakAs::NoPunctuation)
         list->append(cssValuePool.createIdentifierValue(CSSValueNoPunctuation));
     if (!list->length())
         return cssValuePool.createIdentifierValue(CSSValueNormal);
     return WTFMove(list);
 }
     
-static Ref<CSSValue> hangingPunctuationToCSSValue(HangingPunctuation hangingPunctuation)
+static Ref<CSSValue> hangingPunctuationToCSSValue(OptionSet<HangingPunctuation> hangingPunctuation)
 {
     auto& cssValuePool = CSSValuePool::singleton();
     auto list = CSSValueList::createSpaceSeparated();
-    if (hangingPunctuation & FirstHangingPunctuation)
+    if (hangingPunctuation & HangingPunctuation::First)
         list->append(cssValuePool.createIdentifierValue(CSSValueFirst));
-    if (hangingPunctuation & AllowEndHangingPunctuation)
+    if (hangingPunctuation & HangingPunctuation::AllowEnd)
         list->append(cssValuePool.createIdentifierValue(CSSValueAllowEnd));
-    if (hangingPunctuation & ForceEndHangingPunctuation)
+    if (hangingPunctuation & HangingPunctuation::ForceEnd)
         list->append(cssValuePool.createIdentifierValue(CSSValueForceEnd));
-    if (hangingPunctuation & LastHangingPunctuation)
+    if (hangingPunctuation & HangingPunctuation::Last)
         list->append(cssValuePool.createIdentifierValue(CSSValueLast));
     if (!list->length())
         return cssValuePool.createIdentifierValue(CSSValueNone);
