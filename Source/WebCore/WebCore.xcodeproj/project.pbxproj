@@ -391,25 +391,34 @@
 		0FFD4D6118651FA300512F6E /* AsyncScrollingCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFD4D5F18651FA300512F6E /* AsyncScrollingCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		10FB084B14E15C7E00A3DB98 /* PublicURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 10FB084A14E15C7E00A3DB98 /* PublicURLManager.h */; };
 		112B34D51E60B98300BB310A /* SimpleLineLayoutPagination.h in Headers */ = {isa = PBXBuildFile; fileRef = 112B34D41E60B98300BB310A /* SimpleLineLayoutPagination.h */; };
+		11310CF120BA4A1B0065A8D0 /* Invalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = 115F7805209CBCBD00739C13 /* Invalidation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		11310CF220BA4A320065A8D0 /* LayoutTreeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 11100FD7209514DF0081AA6C /* LayoutTreeBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		11310CF320BA4A370065A8D0 /* LayoutReplaced.h in Headers */ = {isa = PBXBuildFile; fileRef = 111C615620AD1AE1005B82FA /* LayoutReplaced.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		11310CF420BA4A3D0065A8D0 /* LayoutIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 11100FC72092764C0081AA6C /* LayoutIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		11310CF520BA4A4C0065A8D0 /* LayoutDescendantIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 11B042FB20B0E21400828A6B /* LayoutDescendantIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		11310CF620BA4A560065A8D0 /* LayoutChildIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 11100FC920927CBC0081AA6C /* LayoutChildIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		11310CF720BA4A620065A8D0 /* LayoutAncestorIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 11100FCA2092868D0081AA6C /* LayoutAncestorIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		11310CF820BA4A6A0065A8D0 /* InlineInvalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = 1123AFDC209ABBBA00736ACC /* InlineInvalidation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		11310CF920BA4A7D0065A8D0 /* BlockInvalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = 1123AFD9209ABB2000736ACC /* BlockInvalidation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		113409DA203E038000C66915 /* RenderTreeBuilderContinuation.h in Headers */ = {isa = PBXBuildFile; fileRef = 113409D8203E038000C66915 /* RenderTreeBuilderContinuation.h */; };
 		113D0B521F9FDD2B00F611BB /* FrameViewLayoutContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 113D0B501F9FDD2B00F611BB /* FrameViewLayoutContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		115CFA6A208AF7D0001E6991 /* FormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA68208AF7D0001E6991 /* FormattingContext.h */; };
-		115CFA6E208AFAB7001E6991 /* BlockFormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA6C208AFAB6001E6991 /* BlockFormattingContext.h */; };
-		115CFA76208AFE30001E6991 /* FormattingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA74208AFE30001E6991 /* FormattingState.h */; };
-		115CFA7A208B8D9D001E6991 /* BlockFormattingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA78208B8D9D001E6991 /* BlockFormattingState.h */; };
-		115CFA7E208B8E10001E6991 /* InlineFormattingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA7C208B8E10001E6991 /* InlineFormattingState.h */; };
-		115CFA82208B8EDA001E6991 /* FloatingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA80208B8EDA001E6991 /* FloatingState.h */; };
-		115CFA86208B9066001E6991 /* FloatingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA84208B9066001E6991 /* FloatingContext.h */; };
-		115CFA97208B952B001E6991 /* LayoutBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA95208B952B001E6991 /* LayoutBox.h */; };
+		115CFA6A208AF7D0001E6991 /* FormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA68208AF7D0001E6991 /* FormattingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		115CFA6E208AFAB7001E6991 /* BlockFormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA6C208AFAB6001E6991 /* BlockFormattingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		115CFA76208AFE30001E6991 /* FormattingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA74208AFE30001E6991 /* FormattingState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		115CFA7A208B8D9D001E6991 /* BlockFormattingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA78208B8D9D001E6991 /* BlockFormattingState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		115CFA7E208B8E10001E6991 /* InlineFormattingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA7C208B8E10001E6991 /* InlineFormattingState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		115CFA82208B8EDA001E6991 /* FloatingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA80208B8EDA001E6991 /* FloatingState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		115CFA86208B9066001E6991 /* FloatingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA84208B9066001E6991 /* FloatingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		115CFA97208B952B001E6991 /* LayoutBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA95208B952B001E6991 /* LayoutBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		119340791FE8B92300935F1E /* RenderTreeBuilderTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340771FE8B92300935F1E /* RenderTreeBuilderTable.h */; };
 		1193408A1FEB355D00935F1E /* RenderTreeBuilderRuby.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340881FEB355D00935F1E /* RenderTreeBuilderRuby.h */; };
 		119340971FED715500935F1E /* RenderTreeBuilderFormControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340951FED715500935F1E /* RenderTreeBuilderFormControls.h */; };
 		119340A31FEE024000935F1E /* RenderTreeBuilderBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340A11FEE024000935F1E /* RenderTreeBuilderBlock.h */; };
-		1199FA46208E35A3002358CC /* LayoutContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1199FA44208E35A3002358CC /* LayoutContainer.h */; };
-		1199FA4B208E37B6002358CC /* LayoutBlockContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1199FA49208E37B6002358CC /* LayoutBlockContainer.h */; };
-		1199FA4F208E3899002358CC /* LayoutInlineContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1199FA4D208E3899002358CC /* LayoutInlineContainer.h */; };
-		1199FA53208E38D3002358CC /* LayoutInlineBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 1199FA51208E38D3002358CC /* LayoutInlineBox.h */; };
-		1199FA5B208E3C7F002358CC /* DisplayBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 1199FA59208E3C7F002358CC /* DisplayBox.h */; };
+		1199FA46208E35A3002358CC /* LayoutContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1199FA44208E35A3002358CC /* LayoutContainer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1199FA4B208E37B6002358CC /* LayoutBlockContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1199FA49208E37B6002358CC /* LayoutBlockContainer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1199FA4F208E3899002358CC /* LayoutInlineContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1199FA4D208E3899002358CC /* LayoutInlineContainer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1199FA53208E38D3002358CC /* LayoutInlineBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 1199FA51208E38D3002358CC /* LayoutInlineBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1199FA5B208E3C7F002358CC /* DisplayBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 1199FA59208E3C7F002358CC /* DisplayBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		11CB2789203BA570004A1DC9 /* RenderTreeBuilderFullScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 11CB2787203BA570004A1DC9 /* RenderTreeBuilderFullScreen.h */; };
 		11E067EE1E6246E500162D16 /* SimpleLineLayoutCoverage.h in Headers */ = {isa = PBXBuildFile; fileRef = 11E067ED1E6246E500162D16 /* SimpleLineLayoutCoverage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400D7A817136EA70077CE05 /* ScriptWrappableInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 1400D7A717136EA70077CE05 /* ScriptWrappableInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1957,8 +1966,8 @@
 		6ED8C37A183BFF8C009E53BD /* BoxShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED8C378183BFF8C009E53BD /* BoxShape.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */; };
 		6F222B761AB52D8A0094651A /* WebGLVertexArrayObjectBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F222B751AB52D8A0094651A /* WebGLVertexArrayObjectBase.cpp */; };
-		6F7CA3C6208C2957002F29AB /* LayoutContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F7CA3C4208C2956002F29AB /* LayoutContext.h */; };
-		6F7CA3CA208C2B2E002F29AB /* InlineFormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F7CA3C8208C2B2E002F29AB /* InlineFormattingContext.h */; };
+		6F7CA3C6208C2957002F29AB /* LayoutContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F7CA3C4208C2956002F29AB /* LayoutContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6F7CA3CA208C2B2E002F29AB /* InlineFormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F7CA3C8208C2B2E002F29AB /* InlineFormattingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F995A151A70756200A735F4 /* WebGLSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A131A70756200A735F4 /* WebGLSync.cpp */; };
 		6F995A161A70756200A735F4 /* WebGLSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A141A70756200A735F4 /* WebGLSync.h */; };
 		6F995A1F1A7078B100A735F4 /* WebGLQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A171A7078B100A735F4 /* WebGLQuery.cpp */; };
@@ -5788,6 +5797,7 @@
 		11CB2787203BA570004A1DC9 /* RenderTreeBuilderFullScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderFullScreen.h; sourceTree = "<group>"; };
 		11E067EB1E62461300162D16 /* SimpleLineLayoutCoverage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutCoverage.cpp; sourceTree = "<group>"; };
 		11E067ED1E6246E500162D16 /* SimpleLineLayoutCoverage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutCoverage.h; sourceTree = "<group>"; };
+		11FF02D520BA3C810083F25B /* Verification.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Verification.cpp; sourceTree = "<group>"; };
 		1400D7A717136EA70077CE05 /* ScriptWrappableInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptWrappableInlines.h; sourceTree = "<group>"; };
 		1402645D0AFDC19B005919E2 /* LoggingMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LoggingMac.mm; sourceTree = "<group>"; };
 		1403B90C09EB124500797C7F /* DOMWindow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindow.idl; sourceTree = "<group>"; };
@@ -15685,6 +15695,7 @@
 				115F7805209CBCBD00739C13 /* Invalidation.h */,
 				6F7CA3C5208C2956002F29AB /* LayoutContext.cpp */,
 				6F7CA3C4208C2956002F29AB /* LayoutContext.h */,
+				11FF02D520BA3C810083F25B /* Verification.cpp */,
 			);
 			path = layout;
 			sourceTree = "<group>";
@@ -27165,6 +27176,7 @@
 				976D6C7F122B8A3D001FD1F7 /* BlobURL.h in Headers */,
 				115CFA6E208AFAB7001E6991 /* BlockFormattingContext.h in Headers */,
 				115CFA7A208B8D9D001E6991 /* BlockFormattingState.h in Headers */,
+				11310CF920BA4A7D0065A8D0 /* BlockInvalidation.h in Headers */,
 				BC5EB5E10E81BE8700B25965 /* BorderData.h in Headers */,
 				589556ED18D4A44000764B03 /* BorderEdge.h in Headers */,
 				BC5EB5DB0E81B7EA00B25965 /* BorderValue.h in Headers */,
@@ -28247,6 +28259,7 @@
 				A8CFF5E30A155A05000A4234 /* InlineFlowBox.h in Headers */,
 				6F7CA3CA208C2B2E002F29AB /* InlineFormattingContext.h in Headers */,
 				115CFA7E208B8E10001E6991 /* InlineFormattingState.h in Headers */,
+				11310CF820BA4A6A0065A8D0 /* InlineInvalidation.h in Headers */,
 				BCE789161120D6080060ECE5 /* InlineIterator.h in Headers */,
 				AA4C3A770B2B1679002334A2 /* InlineStyleSheetOwner.h in Headers */,
 				BCEA485A097D93020094C9E4 /* InlineTextBox.h in Headers */,
@@ -28302,6 +28315,7 @@
 				E134F5AB12EE343F004EC58D /* IntRectHash.h in Headers */,
 				B27535750B053814002CE64F /* IntSize.h in Headers */,
 				B27535760B053814002CE64F /* IntSizeHash.h in Headers */,
+				11310CF120BA4A1B0065A8D0 /* Invalidation.h in Headers */,
 				2D0B4AAB18DA1CCD00434DE1 /* IOSurface.h in Headers */,
 				1C21E57D183ED1FF001C289D /* IOSurfacePool.h in Headers */,
 				71247E381FEA5F86008C08CE /* IterationCompositeOperation.h in Headers */,
@@ -29165,18 +29179,24 @@
 				E4916FF7195DF6A0005AB349 /* LayerFlushThrottleState.h in Headers */,
 				580371641A66F1D300BAF519 /* LayerFragment.h in Headers */,
 				7AA3A6A0194B59B6001CBD24 /* LayerPool.h in Headers */,
+				11310CF720BA4A620065A8D0 /* LayoutAncestorIterator.h in Headers */,
 				1199FA4B208E37B6002358CC /* LayoutBlockContainer.h in Headers */,
 				115CFA97208B952B001E6991 /* LayoutBox.h in Headers */,
+				11310CF620BA4A560065A8D0 /* LayoutChildIterator.h in Headers */,
 				1199FA46208E35A3002358CC /* LayoutContainer.h in Headers */,
 				6F7CA3C6208C2957002F29AB /* LayoutContext.h in Headers */,
+				11310CF520BA4A4C0065A8D0 /* LayoutDescendantIterator.h in Headers */,
 				1199FA53208E38D3002358CC /* LayoutInlineBox.h in Headers */,
 				1199FA4F208E3899002358CC /* LayoutInlineContainer.h in Headers */,
+				11310CF420BA4A3D0065A8D0 /* LayoutIterator.h in Headers */,
 				931D72F615FE695300C4C07E /* LayoutMilestones.h in Headers */,
 				141DC051164834B900371E5A /* LayoutPoint.h in Headers */,
 				141DC053164834B900371E5A /* LayoutRect.h in Headers */,
 				A12538D413F9B60A00024754 /* LayoutRepainter.h in Headers */,
+				11310CF320BA4A370065A8D0 /* LayoutReplaced.h in Headers */,
 				141DC054164834B900371E5A /* LayoutSize.h in Headers */,
 				2D9066070BE141D400956998 /* LayoutState.h in Headers */,
+				11310CF220BA4A320065A8D0 /* LayoutTreeBuilder.h in Headers */,
 				141DC0481648348F00371E5A /* LayoutUnit.h in Headers */,
 				CDE8B5ED1A69777300B4B66A /* LegacyCDMPrivateClearKey.h in Headers */,
 				CDF4B7121E0087AE00E235A2 /* LegacyCDMSession.h in Headers */,

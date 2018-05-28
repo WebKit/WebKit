@@ -1219,6 +1219,7 @@ layout/FormattingContext.cpp
 layout/FormattingContextGeometry.cpp
 layout/FormattingState.cpp
 layout/LayoutContext.cpp
+layout/Verification.cpp
 layout/blockformatting/BlockFormattingContext.cpp
 layout/blockformatting/BlockFormattingContextGeometry.cpp
 layout/blockformatting/BlockFormattingState.cpp

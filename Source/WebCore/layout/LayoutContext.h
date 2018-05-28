@@ -35,6 +35,10 @@
 
 namespace WebCore {
 
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+class RenderView;
+#endif
+
 namespace Display {
 class Box;
 }
@@ -75,6 +79,9 @@ public:
     FormattingState& formattingStateForBox(const Box&) const;
     FormattingState& establishedFormattingState(const Box& formattingContextRoot, const FormattingContext&);
     std::unique_ptr<FormattingContext> formattingContext(const Box& formattingContextRoot);
+
+    // For testing purposes only
+    void verifyAndOutputMismatchingLayoutTree(const RenderView&) const;
 
 private:
     WeakPtr<Box> m_root;

@@ -1,3 +1,20 @@
+2018-05-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add layout tree verification.
+        https://bugs.webkit.org/show_bug.cgi?id=186018
+
+        Reviewed by Antti Koivisto.
+
+        Compare layout and render tree geometry and output the mismtaching rectangles.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj: Add missing headers and make then private.
+        * layout/LayoutContext.h:
+        * layout/Verification.cpp: Added.
+        (WebCore::Layout::outputMismatchedBoxInformationIfNeeded):
+        (WebCore::Layout::verifySubtree):
+        (WebCore::Layout::LayoutContext::verifyAndOutputLayoutTree const):
+
 2018-05-28  Sam Weinig  <sam@webkit.org>
 
         Modernize SVGRenderStyleDefs.h
