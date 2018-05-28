@@ -118,7 +118,7 @@ RefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderElement& r
 
         effectElement.setStandardAttributes(effect.get());
         if (effectElement.renderer())
-            effect->setOperatingColorSpace(effectElement.renderer()->style().svgStyle().colorInterpolationFilters() == CI_LINEARRGB ? ColorSpaceLinearRGB : ColorSpaceSRGB);
+            effect->setOperatingColorSpace(effectElement.renderer()->style().svgStyle().colorInterpolationFilters() == ColorInterpolation::LinearRGB ? ColorSpaceLinearRGB : ColorSpaceSRGB);
 
         builder->add(effectElement.result(), effect);
         m_effects.append(*effect);

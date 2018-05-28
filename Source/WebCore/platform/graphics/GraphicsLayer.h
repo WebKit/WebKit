@@ -690,7 +690,7 @@ protected:
 
 #if USE(CA)
     Path m_shapeLayerPath;
-    WindRule m_shapeLayerWindRule { RULE_NONZERO };
+    WindRule m_shapeLayerWindRule { WindRule::NonZero };
 #endif
 };
 

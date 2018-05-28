@@ -1,3 +1,229 @@
+2018-05-28  Sam Weinig  <sam@webkit.org>
+
+        Modernize SVGRenderStyleDefs.h
+        https://bugs.webkit.org/show_bug.cgi?id=186024
+
+        Reviewed by Daniel Bates.
+
+        Modernized the set of enums in SVGRenderStyleDefs.h and WindRule.h by:
+            - Converting them to enum classes
+            - Renaming them to remove unnecessary prefix 'E's
+            - Renaming values to take advantage of enum class scoping (e.g. StyleDifferenceEqual -> StyleDifference::Equal)
+            - Renaming to match modern conventions (e.g BNONE -> None)
+
+        Modernizes the following enums:
+            SVGPaintType
+            BaselineShift (renamed from EBaselineShift)
+            TextAnchor (renamed from ETextAnchor)
+            ColorInterpolation (renamed from EColorInterpolation)
+            ColorRendering (renamed from EColorRendering)
+            ShapeRendering (renamed from EShapeRendering)
+            GlyphOrientation (renamed from EGlyphOrientation)
+            AlignmentBaseline (renamed from EAlignmentBaseline)
+            DominantBaseline (renamed from EDominantBaseline)
+            VectorEffect (renamed from EVectorEffect)
+            BufferedRendering (renamed from EBufferedRendering)
+            MaskType (renamed from EMaskType)
+            WindRule
+
+        * css/CSSBasicShapes.cpp:
+        (WebCore::buildPathString):
+        (WebCore::buildPolygonString):
+        * css/CSSBasicShapes.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator WindRule const):
+        (WebCore::CSSPrimitiveValue::operator AlignmentBaseline const):
+        (WebCore::CSSPrimitiveValue::operator BufferedRendering const):
+        (WebCore::CSSPrimitiveValue::operator ColorInterpolation const):
+        (WebCore::CSSPrimitiveValue::operator ColorRendering const):
+        (WebCore::CSSPrimitiveValue::operator DominantBaseline const):
+        (WebCore::CSSPrimitiveValue::operator ShapeRendering const):
+        (WebCore::CSSPrimitiveValue::operator TextAnchor const):
+        (WebCore::CSSPrimitiveValue::operator VectorEffect const):
+        (WebCore::CSSPrimitiveValue::operator MaskType const):
+        (WebCore::CSSPrimitiveValue::operator EAlignmentBaseline const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EBufferedRendering const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EColorInterpolation const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EColorRendering const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EDominantBaseline const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EShapeRendering const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator ETextAnchor const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EVectorEffect const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EMaskType const): Deleted.
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::glyphOrientationToCSSPrimitiveValue):
+        (WebCore::ComputedStyleExtractor::adjustSVGPaintForCurrentColor const):
+        (WebCore::ComputedStyleExtractor::svgPropertyValue):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertGlyphOrientation):
+        (WebCore::StyleBuilderConverter::convertGlyphOrientationOrAuto):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueBaselineShift):
+        (WebCore::StyleBuilderCustom::applyValueFill):
+        (WebCore::StyleBuilderCustom::applyValueStroke):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeBasicShapePolygon):
+        (WebCore::consumeBasicShapePath):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::toWindRule):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::PropertyWrapperSVGPaint::PropertyWrapperSVGPaint):
+        * platform/graphics/FloatPolygon.cpp:
+        (WebCore::FloatPolygon::contains const):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::shapeLayerWindRule const):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/GraphicsTypes.cpp:
+        (WebCore::operator<<):
+        * platform/graphics/Path.h:
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::drawInsetShadow):
+        (WebCore::ShadowBlur::drawInsetShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithTiling):
+        * platform/graphics/WindRule.h:
+        (): Deleted.
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayerCocoa::shapeWindRule const):
+        (PlatformCALayerCocoa::setShapeWindRule):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::calculateDrawingMode):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        (WebCore::GraphicsContext::clipPath):
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::contains const):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::drawAnimation):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::buildReferenceFilter):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::clipBorderSidePolygon):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::paintOutline):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::computeClipPath const):
+        * rendering/style/BasicShapes.h:
+        (WebCore::BasicShape::windRule const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::fillPaintType const):
+        (WebCore::RenderStyle::setFillPaintColor):
+        (WebCore::RenderStyle::strokePaintType const):
+        (WebCore::RenderStyle::setStrokePaintColor):
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::initialAlignmentBaseline):
+        (WebCore::SVGRenderStyle::initialDominantBaseline):
+        (WebCore::SVGRenderStyle::initialBaselineShift):
+        (WebCore::SVGRenderStyle::initialVectorEffect):
+        (WebCore::SVGRenderStyle::initialBufferedRendering):
+        (WebCore::SVGRenderStyle::initialClipRule):
+        (WebCore::SVGRenderStyle::initialColorInterpolation):
+        (WebCore::SVGRenderStyle::initialColorInterpolationFilters):
+        (WebCore::SVGRenderStyle::initialColorRendering):
+        (WebCore::SVGRenderStyle::initialFillRule):
+        (WebCore::SVGRenderStyle::initialShapeRendering):
+        (WebCore::SVGRenderStyle::initialTextAnchor):
+        (WebCore::SVGRenderStyle::initialGlyphOrientationHorizontal):
+        (WebCore::SVGRenderStyle::initialGlyphOrientationVertical):
+        (WebCore::SVGRenderStyle::initialFillPaintType):
+        (WebCore::SVGRenderStyle::initialStrokePaintType):
+        (WebCore::SVGRenderStyle::initialMaskType):
+        (WebCore::SVGRenderStyle::setAlignmentBaseline):
+        (WebCore::SVGRenderStyle::setDominantBaseline):
+        (WebCore::SVGRenderStyle::setBaselineShift):
+        (WebCore::SVGRenderStyle::setVectorEffect):
+        (WebCore::SVGRenderStyle::setBufferedRendering):
+        (WebCore::SVGRenderStyle::setClipRule):
+        (WebCore::SVGRenderStyle::setColorInterpolation):
+        (WebCore::SVGRenderStyle::setColorInterpolationFilters):
+        (WebCore::SVGRenderStyle::setColorRendering):
+        (WebCore::SVGRenderStyle::setFillRule):
+        (WebCore::SVGRenderStyle::setShapeRendering):
+        (WebCore::SVGRenderStyle::setTextAnchor):
+        (WebCore::SVGRenderStyle::setGlyphOrientationHorizontal):
+        (WebCore::SVGRenderStyle::setGlyphOrientationVertical):
+        (WebCore::SVGRenderStyle::setMaskType):
+        (WebCore::SVGRenderStyle::alignmentBaseline const):
+        (WebCore::SVGRenderStyle::dominantBaseline const):
+        (WebCore::SVGRenderStyle::baselineShift const):
+        (WebCore::SVGRenderStyle::vectorEffect const):
+        (WebCore::SVGRenderStyle::bufferedRendering const):
+        (WebCore::SVGRenderStyle::clipRule const):
+        (WebCore::SVGRenderStyle::colorInterpolation const):
+        (WebCore::SVGRenderStyle::colorInterpolationFilters const):
+        (WebCore::SVGRenderStyle::colorRendering const):
+        (WebCore::SVGRenderStyle::fillRule const):
+        (WebCore::SVGRenderStyle::shapeRendering const):
+        (WebCore::SVGRenderStyle::textAnchor const):
+        (WebCore::SVGRenderStyle::glyphOrientationHorizontal const):
+        (WebCore::SVGRenderStyle::glyphOrientationVertical const):
+        (WebCore::SVGRenderStyle::fillPaintType const):
+        (WebCore::SVGRenderStyle::strokePaintType const):
+        (WebCore::SVGRenderStyle::maskType const):
+        (WebCore::SVGRenderStyle::visitedLinkFillPaintType const):
+        (WebCore::SVGRenderStyle::visitedLinkStrokePaintType const):
+        (WebCore::SVGRenderStyle::hasStroke const):
+        (WebCore::SVGRenderStyle::hasFill const):
+        (WebCore::SVGRenderStyle::setBitDefaults):
+        * rendering/style/SVGRenderStyleDefs.h:
+        (WebCore::StyleFillData::create):
+        (WebCore::StyleFillData::operator!= const):
+        (WebCore::StyleStrokeData::create):
+        (WebCore::StyleStrokeData::operator!= const):
+        (WebCore::StyleStopData::create):
+        (WebCore::StyleStopData::operator!= const):
+        (WebCore::StyleTextData::create):
+        (WebCore::StyleTextData::operator!= const):
+        (WebCore::StyleMiscData::create):
+        (WebCore::StyleMiscData::operator!= const):
+        (WebCore::StyleShadowSVGData::create):
+        (WebCore::StyleShadowSVGData::operator!= const):
+        (WebCore::StyleResourceData::create):
+        (WebCore::StyleResourceData::operator!= const):
+        (WebCore::StyleInheritedResourceData::create):
+        (WebCore::StyleInheritedResourceData::operator!= const):
+        (WebCore::StyleLayoutData::create):
+        (WebCore::StyleLayoutData::operator!= const):
+        (): Deleted.
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::updateShapeFromElement):
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::requestPaintingResource):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::pathOnlyClipping):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::buildPrimitives const):
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        (WebCore::RenderSVGResourceMasker::drawContentIntoMaskImage):
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::applyResource):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::paint):
+        * rendering/svg/RenderSVGShape.h:
+        (WebCore::RenderSVGShape::hasNonScalingStroke const):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle):
+        (WebCore::writeSVGInlineTextBox):
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::paintingResourceFromSVGPaint):
+        * rendering/svg/SVGTextChunk.cpp:
+        (WebCore::SVGTextChunk::SVGTextChunk):
+        * rendering/svg/SVGTextLayoutEngineBaseline.cpp:
+        (WebCore::SVGTextLayoutEngineBaseline::calculateBaselineShift const):
+        (WebCore::SVGTextLayoutEngineBaseline::dominantBaselineToAlignmentBaseline const):
+        (WebCore::SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift const):
+        (WebCore::SVGTextLayoutEngineBaseline::calculateGlyphOrientationAngle const):
+        * rendering/svg/SVGTextLayoutEngineBaseline.h:
+
 2018-05-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Web Animations] Test webanimations/css-animations.html is crashing

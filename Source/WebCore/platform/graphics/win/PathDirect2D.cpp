@@ -114,7 +114,7 @@ void Path::createGeometryWithFillMode(WindRule webkitFillMode, COMPtr<ID2D1Geome
 {
     RELEASE_ASSERT(m_path);
 
-    auto fillMode = (webkitFillMode == RULE_EVENODD) ? D2D1_FILL_MODE_ALTERNATE : D2D1_FILL_MODE_WINDING;
+    auto fillMode = (webkitFillMode == WindRule::EvenOdd) ? D2D1_FILL_MODE_ALTERNATE : D2D1_FILL_MODE_WINDING;
 
     if (fillMode == m_path->GetFillMode()) {
         path = m_path;

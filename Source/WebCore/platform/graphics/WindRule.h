@@ -25,17 +25,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WindRule_h
-#define WindRule_h
+#pragma once
 
 namespace WebCore {
 
-enum WindRule {
-    RULE_NONZERO = 0,
-    RULE_EVENODD = 1
+enum class WindRule {
+    NonZero = 0,
+    EvenOdd = 1
 };
 
 }
-
-#endif // WindRule_h
-

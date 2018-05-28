@@ -121,7 +121,7 @@ namespace WebCore {
         
         static Path polygonPathFromPoints(const Vector<FloatPoint>&);
 
-        bool contains(const FloatPoint&, WindRule rule = RULE_NONZERO) const;
+        bool contains(const FloatPoint&, WindRule = WindRule::NonZero) const;
         bool strokeContains(StrokeStyleApplier*, const FloatPoint&) const;
         // fastBoundingRect() should equal or contain boundingRect(); boundingRect()
         // should perfectly bound the points within the path.

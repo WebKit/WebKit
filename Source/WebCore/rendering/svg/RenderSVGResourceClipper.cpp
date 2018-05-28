@@ -78,7 +78,7 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, const 
     // If the current clip-path gets clipped itself, we have to fallback to masking.
     if (!style().svgStyle().clipperResource().isEmpty())
         return false;
-    WindRule clipRule = RULE_NONZERO;
+    WindRule clipRule = WindRule::NonZero;
     Path clipPath = Path();
 
     // If clip-path only contains one visible shape or path, we can use path-based clipping. Invisible

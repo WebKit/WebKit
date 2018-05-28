@@ -312,7 +312,7 @@ void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
 
         if (renderingContext.isRenderingPrepared()) {
             const SVGRenderStyle& svgStyle = style().svgStyle();
-            if (svgStyle.shapeRendering() == SR_CRISPEDGES)
+            if (svgStyle.shapeRendering() == ShapeRendering::CrispEdges)
                 childPaintInfo.context().setShouldAntialias(false);
 
             fillStrokeMarkers(childPaintInfo);

@@ -138,10 +138,10 @@ TextStream& operator<<(TextStream& ts, BlendMode blendMode)
 TextStream& operator<<(TextStream& ts, WindRule rule)
 {
     switch (rule) {
-    case RULE_NONZERO:
+    case WindRule::NonZero:
         ts << "NON-ZERO";
         break;
-    case RULE_EVENODD:
+    case WindRule::EvenOdd:
         ts << "EVEN-ODD";
         break;
     }

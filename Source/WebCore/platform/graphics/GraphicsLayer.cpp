@@ -346,7 +346,7 @@ WindRule GraphicsLayer::shapeLayerWindRule() const
 #if USE(CA)
     return m_shapeLayerWindRule;
 #else
-    return RULE_NONZERO;
+    return WindRule::NonZero;
 #endif
 }
 

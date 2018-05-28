@@ -134,8 +134,8 @@ public:
     static Color convertSVGColor(StyleResolver&, const CSSValue&);
     static StyleSelfAlignmentData convertSelfOrDefaultAlignmentData(StyleResolver&, const CSSValue&);
     static StyleContentAlignmentData convertContentAlignmentData(StyleResolver&, const CSSValue&);
-    static EGlyphOrientation convertGlyphOrientation(StyleResolver&, const CSSValue&);
-    static EGlyphOrientation convertGlyphOrientationOrAuto(StyleResolver&, const CSSValue&);
+    static GlyphOrientation convertGlyphOrientation(StyleResolver&, const CSSValue&);
+    static GlyphOrientation convertGlyphOrientationOrAuto(StyleResolver&, const CSSValue&);
     static std::optional<Length> convertLineHeight(StyleResolver&, const CSSValue&, float multiplier = 1.f);
     static FontSynthesis convertFontSynthesis(StyleResolver&, const CSSValue&);
     
@@ -1383,22 +1383,22 @@ inline StyleContentAlignmentData StyleBuilderConverter::convertContentAlignmentD
     return alignmentData;
 }
 
-inline EGlyphOrientation StyleBuilderConverter::convertGlyphOrientation(StyleResolver&, const CSSValue& value)
+inline GlyphOrientation StyleBuilderConverter::convertGlyphOrientation(StyleResolver&, const CSSValue& value)
 {
     float angle = fabsf(fmodf(downcast<CSSPrimitiveValue>(value).floatValue(), 360.0f));
     if (angle <= 45.0f || angle > 315.0f)
-        return GO_0DEG;
+        return GlyphOrientation::Degrees0;
     if (angle > 45.0f && angle <= 135.0f)
-        return GO_90DEG;
+        return GlyphOrientation::Degrees90;
     if (angle > 135.0f && angle <= 225.0f)
-        return GO_180DEG;
-    return GO_270DEG;
+        return GlyphOrientation::Degrees180;
+    return GlyphOrientation::Degrees270;
 }
 
-inline EGlyphOrientation StyleBuilderConverter::convertGlyphOrientationOrAuto(StyleResolver& styleResolver, const CSSValue& value)
+inline GlyphOrientation StyleBuilderConverter::convertGlyphOrientationOrAuto(StyleResolver& styleResolver, const CSSValue& value)
 {
     if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueAuto)
-        return GO_AUTO;
+        return GlyphOrientation::Auto;
     return convertGlyphOrientation(styleResolver, value);
 }
 

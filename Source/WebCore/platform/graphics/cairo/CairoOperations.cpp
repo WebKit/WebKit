@@ -117,7 +117,7 @@ static void clipForPatternFilling(cairo_t* cr, const FloatSize& patternSize, con
 
 static void prepareForFilling(cairo_t* cr, const Cairo::FillSource& fillSource, PatternAdjustment patternAdjustment)
 {
-    cairo_set_fill_rule(cr, fillSource.fillRule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
+    cairo_set_fill_rule(cr, fillSource.fillRule == WindRule::EvenOdd ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
 
     bool adjustForAlpha = patternAdjustment == AdjustPatternForGlobalAlpha;
 
@@ -1261,7 +1261,7 @@ void clipPath(PlatformContextCairo& platformContext, const Path& path, WindRule 
         setPathOnCairoContext(cr, path.platformPath()->context());
 
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
-    cairo_set_fill_rule(cr, clipRule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
+    cairo_set_fill_rule(cr, clipRule == WindRule::EvenOdd ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
     cairo_clip(cr);
     cairo_set_fill_rule(cr, savedFillRule);
 

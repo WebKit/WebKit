@@ -4139,7 +4139,7 @@ Path RenderLayer::computeClipPath(const LayoutSize& offsetFromRoot, LayoutRect& 
         FloatRoundedRect shapeRect = computeRoundedRectForBoxShape(clipPath.referenceBox(), downcast<RenderBox>(renderer())).pixelSnappedRoundedRectForPainting(deviceSaleFactor);
         shapeRect.move(offsetFromRoot);
 
-        windRule = RULE_NONZERO;
+        windRule = WindRule::NonZero;
         return clipPath.pathForReferenceRect(shapeRect);
     }
     

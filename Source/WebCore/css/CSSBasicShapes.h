@@ -195,7 +195,7 @@ public:
 
 private:
     CSSBasicShapePolygon()
-        : m_windRule(RULE_NONZERO)
+        : m_windRule(WindRule::NonZero)
     {
     }
 
@@ -230,7 +230,7 @@ private:
     bool equals(const CSSBasicShape&) const final;
 
     std::unique_ptr<SVGPathByteStream> m_byteStream;
-    WindRule m_windRule { RULE_NONZERO };
+    WindRule m_windRule { WindRule::NonZero };
 };
 
 } // namespace WebCore

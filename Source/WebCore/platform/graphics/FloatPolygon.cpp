@@ -198,7 +198,7 @@ bool FloatPolygon::contains(const FloatPoint& point) const
 {
     if (!m_boundingBox.contains(point))
         return false;
-    return fillRule() == RULE_NONZERO ? containsNonZero(point) : containsEvenOdd(point);
+    return fillRule() == WindRule::NonZero ? containsNonZero(point) : containsEvenOdd(point);
 }
 
 bool VertexPair::overlapsRect(const FloatRect& rect) const

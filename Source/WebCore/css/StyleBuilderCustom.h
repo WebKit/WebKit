@@ -1032,19 +1032,19 @@ inline void StyleBuilderCustom::applyValueBaselineShift(StyleResolver& styleReso
     if (primitiveValue.isValueID()) {
         switch (primitiveValue.valueID()) {
         case CSSValueBaseline:
-            svgStyle.setBaselineShift(BS_BASELINE);
+            svgStyle.setBaselineShift(BaselineShift::Baseline);
             break;
         case CSSValueSub:
-            svgStyle.setBaselineShift(BS_SUB);
+            svgStyle.setBaselineShift(BaselineShift::Sub);
             break;
         case CSSValueSuper:
-            svgStyle.setBaselineShift(BS_SUPER);
+            svgStyle.setBaselineShift(BaselineShift::Super);
             break;
         default:
             break;
         }
     } else {
-        svgStyle.setBaselineShift(BS_LENGTH);
+        svgStyle.setBaselineShift(BaselineShift::Length);
         svgStyle.setBaselineShiftValue(SVGLengthValue::fromCSSPrimitiveValue(primitiveValue));
     }
 }
@@ -1269,18 +1269,18 @@ inline void StyleBuilderCustom::applyValueFill(StyleResolver& styleResolver, CSS
         return;
 
     Color color;
-    auto paintType = SVG_PAINTTYPE_RGBCOLOR;
+    auto paintType = SVGPaintType::RGBColor;
     if (localValue->isURI()) {
-        paintType = SVG_PAINTTYPE_URI;
+        paintType = SVGPaintType::URI;
         url = localValue->stringValue();
     } else if (localValue->isValueID() && localValue->valueID() == CSSValueNone)
-        paintType = url.isEmpty() ? SVG_PAINTTYPE_NONE : SVG_PAINTTYPE_URI_NONE;
+        paintType = url.isEmpty() ? SVGPaintType::None : SVGPaintType::URINone;
     else if (localValue->isValueID() && localValue->valueID() == CSSValueCurrentcolor) {
         color = styleResolver.style()->color();
-        paintType = url.isEmpty() ? SVG_PAINTTYPE_CURRENTCOLOR : SVG_PAINTTYPE_URI_CURRENTCOLOR;
+        paintType = url.isEmpty() ? SVGPaintType::CurrentColor : SVGPaintType::URICurrentColor;
     } else {
         color = styleResolver.colorFromPrimitiveValue(*localValue);
-        paintType = url.isEmpty() ? SVG_PAINTTYPE_RGBCOLOR : SVG_PAINTTYPE_URI_RGBCOLOR;
+        paintType = url.isEmpty() ? SVGPaintType::RGBColor : SVGPaintType::URIRGBColor;
     }
     svgStyle.setFillPaint(paintType, color, url, styleResolver.applyPropertyToRegularStyle(), styleResolver.applyPropertyToVisitedLinkStyle());
 }
@@ -1313,18 +1313,18 @@ inline void StyleBuilderCustom::applyValueStroke(StyleResolver& styleResolver, C
         return;
 
     Color color;
-    auto paintType = SVG_PAINTTYPE_RGBCOLOR;
+    auto paintType = SVGPaintType::RGBColor;
     if (localValue->isURI()) {
-        paintType = SVG_PAINTTYPE_URI;
+        paintType = SVGPaintType::URI;
         url = downcast<CSSPrimitiveValue>(localValue)->stringValue();
     } else if (localValue->isValueID() && localValue->valueID() == CSSValueNone)
-        paintType = url.isEmpty() ? SVG_PAINTTYPE_NONE : SVG_PAINTTYPE_URI_NONE;
+        paintType = url.isEmpty() ? SVGPaintType::None : SVGPaintType::URINone;
     else if (localValue->isValueID() && localValue->valueID() == CSSValueCurrentcolor) {
         color = styleResolver.style()->color();
-        paintType = url.isEmpty() ? SVG_PAINTTYPE_CURRENTCOLOR : SVG_PAINTTYPE_URI_CURRENTCOLOR;
+        paintType = url.isEmpty() ? SVGPaintType::CurrentColor : SVGPaintType::URICurrentColor;
     } else {
         color = styleResolver.colorFromPrimitiveValue(*localValue);
-        paintType = url.isEmpty() ? SVG_PAINTTYPE_RGBCOLOR : SVG_PAINTTYPE_URI_RGBCOLOR;
+        paintType = url.isEmpty() ? SVGPaintType::RGBColor : SVGPaintType::URIRGBColor;
     }
     svgStyle.setStrokePaint(paintType, color, url, styleResolver.applyPropertyToRegularStyle(), styleResolver.applyPropertyToVisitedLinkStyle());
 }

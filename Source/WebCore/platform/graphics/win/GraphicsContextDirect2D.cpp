@@ -1241,7 +1241,7 @@ void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const Float
     WindRule oldFillRule = fillRule();
     Color oldFillColor = fillColor();
 
-    setFillRule(RULE_EVENODD);
+    setFillRule(WindRule::EvenOdd);
     setFillColor(color);
 
     // fillRectWithRoundedHole() assumes that the edges of rect are clipped out, so we only care about shadows cast around inside the hole.
@@ -1312,7 +1312,7 @@ void GraphicsContext::clipOut(const Path& path)
     boundingRect.appendGeometry(path.platformPath());
 
     COMPtr<ID2D1GeometryGroup> pathToClip;
-    boundingRect.createGeometryWithFillMode(RULE_EVENODD, pathToClip);
+    boundingRect.createGeometryWithFillMode(WindRule::EvenOdd, pathToClip);
 
     m_data->clip(pathToClip.get());
 }

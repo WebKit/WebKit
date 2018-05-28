@@ -687,7 +687,7 @@ static inline bool calculateDrawingMode(const GraphicsContextState& state, CGPat
 {
     bool shouldFill = state.fillPattern || state.fillColor.isVisible();
     bool shouldStroke = state.strokePattern || (state.strokeStyle != NoStroke && state.strokeColor.isVisible());
-    bool useEOFill = state.fillRule == RULE_EVENODD;
+    bool useEOFill = state.fillRule == WindRule::EvenOdd;
 
     if (shouldFill) {
         if (shouldStroke) {
@@ -774,7 +774,7 @@ void GraphicsContext::fillPath(const Path& path)
             CGContextAddPath(layerContext, path.platformPath());
             CGContextConcatCTM(layerContext, m_state.fillGradient->gradientSpaceTransform());
 
-            if (fillRule() == RULE_EVENODD)
+            if (fillRule() == WindRule::EvenOdd)
                 CGContextEOClip(layerContext);
             else
                 CGContextClip(layerContext);
@@ -788,7 +788,7 @@ void GraphicsContext::fillPath(const Path& path)
             CGContextStateSaver stateSaver(context);
             CGContextConcatCTM(context, m_state.fillGradient->gradientSpaceTransform());
 
-            if (fillRule() == RULE_EVENODD)
+            if (fillRule() == WindRule::EvenOdd)
                 CGContextEOClip(context);
             else
                 CGContextClip(context);
@@ -802,11 +802,11 @@ void GraphicsContext::fillPath(const Path& path)
     if (m_state.fillPattern)
         applyFillPattern();
 #if USE_DRAW_PATH_DIRECT
-    CGContextDrawPathDirect(context, fillRule() == RULE_EVENODD ? kCGPathEOFill : kCGPathFill, path.platformPath(), nullptr);
+    CGContextDrawPathDirect(context, fillRule() == WindRule::EvenOdd ? kCGPathEOFill : kCGPathFill, path.platformPath(), nullptr);
 #else
     CGContextBeginPath(context);
     CGContextAddPath(context, path.platformPath());
-    if (fillRule() == RULE_EVENODD)
+    if (fillRule() == WindRule::EvenOdd)
         CGContextEOFillPath(context);
     else
         CGContextFillPath(context);
@@ -1034,7 +1034,7 @@ void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const Float
     WindRule oldFillRule = fillRule();
     Color oldFillColor = fillColor();
 
-    setFillRule(RULE_EVENODD);
+    setFillRule(WindRule::EvenOdd);
     setFillColor(color);
 
     // fillRectWithRoundedHole() assumes that the edges of rect are clipped out, so we only care about shadows cast around inside the hole.
@@ -1127,7 +1127,7 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
         CGContextBeginPath(platformContext());
         CGContextAddPath(platformContext(), path.platformPath());
 
-        if (clipRule == RULE_EVENODD)
+        if (clipRule == WindRule::EvenOdd)
             CGContextEOClip(context);
         else
             CGContextClip(context);

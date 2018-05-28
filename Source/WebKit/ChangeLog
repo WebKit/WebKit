@@ -1,3 +1,16 @@
+2018-05-28  Sam Weinig  <sam@webkit.org>
+
+        Modernize SVGRenderStyleDefs.h
+        https://bugs.webkit.org/show_bug.cgi?id=186024
+
+        Reviewed by Daniel Bates.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::applyPropertiesToLayer):
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        Update for new enum names.
+
 2018-05-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.21.3 release.

@@ -1046,7 +1046,7 @@ bool CanvasRenderingContext2DBase::isFullCanvasCompositeMode(CompositeOperator o
 
 static WindRule toWindRule(CanvasFillRule rule)
 {
-    return rule == CanvasFillRule::Nonzero ? RULE_NONZERO : RULE_EVENODD;
+    return rule == CanvasFillRule::Nonzero ? WindRule::NonZero : WindRule::EvenOdd;
 }
 
 void CanvasRenderingContext2DBase::fill(CanvasFillRule windingRule)

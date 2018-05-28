@@ -89,7 +89,7 @@ struct FillSource {
     } gradient;
     Color color;
 
-    WindRule fillRule { RULE_NONZERO };
+    WindRule fillRule { WindRule::NonZero };
 };
 
 struct StrokeSource {

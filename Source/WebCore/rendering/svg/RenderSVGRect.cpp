@@ -93,7 +93,7 @@ void RenderSVGRect::updateShapeFromElement()
 
 #if USE(CG)
     // CoreGraphics can inflate the stroke by 1px when drawing a rectangle with antialiasing disabled at non-integer coordinates, we need to compensate.
-    if (style().svgStyle().shapeRendering() == SR_CRISPEDGES)
+    if (style().svgStyle().shapeRendering() == ShapeRendering::CrispEdges)
         m_strokeBoundingBox.inflate(1);
 #endif
 }

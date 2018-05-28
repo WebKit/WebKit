@@ -214,10 +214,10 @@ static void applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTre
         ASSERT([layer isKindOfClass:[CAShapeLayer class]]);
         CAShapeLayer *shapeLayer = (CAShapeLayer *)layer;
         switch (properties.windRule) {
-        case RULE_NONZERO:
+        case WindRule::NonZero:
             shapeLayer.fillRule = @"non-zero";
             break;
-        case RULE_EVENODD:
+        case WindRule::EvenOdd:
             shapeLayer.fillRule = @"even-odd";
             break;
         }

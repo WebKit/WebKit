@@ -388,7 +388,7 @@ bool Path::contains(const FloatPoint& point, WindRule rule) const
         return false;
     cairo_t* cr = platformPath()->context();
     cairo_fill_rule_t cur = cairo_get_fill_rule(cr);
-    cairo_set_fill_rule(cr, rule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
+    cairo_set_fill_rule(cr, rule == WindRule::EvenOdd ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
     bool contains = cairo_in_fill(cr, point.x(), point.y());
     cairo_set_fill_rule(cr, cur);
     return contains;

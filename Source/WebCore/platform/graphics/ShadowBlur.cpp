@@ -608,7 +608,7 @@ void ShadowBlur::drawInsetShadow(const AffineTransform& transform, const IntRect
         else
             path.addRoundedRect(holeRect);
 
-        shadowContext.setFillRule(RULE_EVENODD);
+        shadowContext.setFillRule(WindRule::EvenOdd);
         shadowContext.setFillColor(Color::black);
         shadowContext.fillPath(path);
 
@@ -682,7 +682,7 @@ void ShadowBlur::drawInsetShadowWithoutTiling(GraphicsContext& graphicsContext, 
         else
             path.addRoundedRect(holeRect);
 
-        shadowContext.setFillRule(RULE_EVENODD);
+        shadowContext.setFillRule(WindRule::EvenOdd);
         shadowContext.setFillColor(Color::black);
         shadowContext.fillPath(path);
 
@@ -743,7 +743,7 @@ void ShadowBlur::drawInsetShadowWithTiling(GraphicsContext& graphicsContext, con
         GraphicsContext& shadowContext = m_layerImage->context();
         GraphicsContextStateSaver shadowStateSaver(shadowContext);
         shadowContext.clearRect(templateBounds);
-        shadowContext.setFillRule(RULE_EVENODD);
+        shadowContext.setFillRule(WindRule::EvenOdd);
         shadowContext.setFillColor(Color::black);
 
         Path path;
@@ -779,7 +779,7 @@ void ShadowBlur::drawInsetShadowWithTiling(GraphicsContext& graphicsContext, con
 
     {
         GraphicsContextStateSaver fillStateSaver(graphicsContext);
-        graphicsContext.setFillRule(RULE_EVENODD);
+        graphicsContext.setFillRule(WindRule::EvenOdd);
         graphicsContext.setFillColor(m_color);
         graphicsContext.clearShadow();
         graphicsContext.fillPath(exteriorPath);

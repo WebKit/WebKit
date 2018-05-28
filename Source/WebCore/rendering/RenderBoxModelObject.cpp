@@ -1929,7 +1929,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
             else
                 path.addRect(pixelSnappedInnerBorder.rect());
             
-            graphicsContext.setFillRule(RULE_EVENODD);
+            graphicsContext.setFillRule(WindRule::EvenOdd);
             graphicsContext.setFillColor(edges[firstVisibleEdge].color());
             graphicsContext.fillPath(path);
             return;
@@ -1946,7 +1946,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
                 }
             }
 
-            graphicsContext.setFillRule(RULE_NONZERO);
+            graphicsContext.setFillRule(WindRule::NonZero);
             graphicsContext.setFillColor(edges[firstVisibleEdge].color());
             graphicsContext.fillPath(path);
             return;
@@ -2205,7 +2205,7 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
     if (firstEdgeMatches == secondEdgeMatches) {
         bool wasAntialiased = graphicsContext.shouldAntialias();
         graphicsContext.setShouldAntialias(!firstEdgeMatches);
-        graphicsContext.clipPath(Path::polygonPathFromPoints(quad), RULE_NONZERO);
+        graphicsContext.clipPath(Path::polygonPathFromPoints(quad), WindRule::NonZero);
         graphicsContext.setShouldAntialias(wasAntialiased);
         return;
     }
@@ -2220,7 +2220,7 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
     };
     bool wasAntialiased = graphicsContext.shouldAntialias();
     graphicsContext.setShouldAntialias(!firstEdgeMatches);
-    graphicsContext.clipPath(Path::polygonPathFromPoints(firstQuad), RULE_NONZERO);
+    graphicsContext.clipPath(Path::polygonPathFromPoints(firstQuad), WindRule::NonZero);
 
     Vector<FloatPoint> secondQuad = {
         quad[0],
@@ -2231,7 +2231,7 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
     };
     // Antialiasing affects the second side.
     graphicsContext.setShouldAntialias(!secondEdgeMatches);
-    graphicsContext.clipPath(Path::polygonPathFromPoints(secondQuad), RULE_NONZERO);
+    graphicsContext.clipPath(Path::polygonPathFromPoints(secondQuad), WindRule::NonZero);
 
     graphicsContext.setShouldAntialias(wasAntialiased);
 }
