@@ -1,3 +1,25 @@
+2018-05-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Remove URL argument of MiniBrowser::init
+        https://bugs.webkit.org/show_bug.cgi?id=185969
+
+        Reviewed by Alex Christensen.
+
+        MiniBrowser::init takes URL argument, but it's used only for
+        loading default HTML if URL is not given.
+
+        - Add a new method MiniBrowser::loadHTMLString
+        - Remove loadHTMLString process from MiniBrowser::prepareViews
+
+        * MiniBrowser/win/MiniBrowser.cpp:
+        (MiniBrowser::init): Removed `requestedURL` argument.
+        (MiniBrowser::prepareViews): Ditto.
+        (MiniBrowser::loadHTMLString): New.
+        (MiniBrowser::loadURL): Return E_INVALIDARG if passedURL is null instead of calling loadHTMLString.
+        * MiniBrowser/win/MiniBrowser.h: Removed URL argument. Added loadHTMLString.
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain): Call MiniBrowser::loadHTMLString if URL is not given.
+
 2018-05-27  David Kilzer  <ddkilzer@apple.com>
 
         svn-apply fails when a patch has an empty file

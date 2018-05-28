@@ -98,7 +98,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     gMiniBrowser = new MiniBrowser(hMainWnd, hURLBarWnd, usesLayeredWebView, pageLoadTesting);
     if (!gMiniBrowser)
         goto exit;
-    HRESULT hr = gMiniBrowser->init(requestedURL);
+    HRESULT hr = gMiniBrowser->init();
     if (FAILED(hr))
         goto exit;
 
@@ -113,6 +113,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     if (requestedURL.length())
         loadURL(requestedURL.GetBSTR());
+    else
+        gMiniBrowser->loadHTMLString(_bstr_t(defaultHTML).GetBSTR());
 
 #pragma warning(disable:4509)
 

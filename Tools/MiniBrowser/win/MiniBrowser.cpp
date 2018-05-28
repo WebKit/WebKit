@@ -69,7 +69,7 @@ MiniBrowser::MiniBrowser(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, b
 {
 }
 
-HRESULT MiniBrowser::init(_bstr_t& requestedURL)
+HRESULT MiniBrowser::init()
 {
     updateDeviceScaleFactor();
 
@@ -135,7 +135,7 @@ HRESULT MiniBrowser::init(_bstr_t& requestedURL)
     if (usesLayeredWebView())
         clientRect = { s_windowPosition.x, s_windowPosition.y, s_windowPosition.x + s_windowSize.cx, s_windowPosition.y + s_windowSize.cy };
 
-    hr = prepareViews(m_hMainWnd, clientRect, requestedURL.GetBSTR());
+    hr = prepareViews(m_hMainWnd, clientRect);
     if (FAILED(hr))
         return hr;
 
@@ -157,7 +157,7 @@ bool MiniBrowser::setCacheFolder()
     return true;
 }
 
-HRESULT MiniBrowser::prepareViews(HWND mainWnd, const RECT& clientRect, const BSTR& requestedURL)
+HRESULT MiniBrowser::prepareViews(HWND mainWnd, const RECT& clientRect)
 {
     if (!m_webView)
         return E_FAIL;
@@ -170,15 +170,6 @@ HRESULT MiniBrowser::prepareViews(HWND mainWnd, const RECT& clientRect, const BS
     if (FAILED(hr))
         return hr;
 
-    if (!requestedURL) {
-        IWebFramePtr frame;
-        hr = m_webView->mainFrame(&frame.GetInterfacePtr());
-        if (FAILED(hr))
-            return hr;
-
-        frame->loadHTMLString(_bstr_t(defaultHTML).GetBSTR(), 0);
-    }
-
     hr = m_webViewPrivate->setTransparent(m_useLayeredWebView);
     if (FAILED(hr))
         return hr;
@@ -189,6 +180,17 @@ HRESULT MiniBrowser::prepareViews(HWND mainWnd, const RECT& clientRect, const BS
 
     hr = m_webViewPrivate->viewWindow(&m_viewWnd);
 
+    return hr;
+}
+
+HRESULT MiniBrowser::loadHTMLString(const BSTR& str)
+{
+    IWebFramePtr frame;
+    HRESULT hr = m_webView->mainFrame(&frame.GetInterfacePtr());
+    if (FAILED(hr))
+        return hr;
+
+    frame->loadHTMLString(str, 0);
     return hr;
 }
 
@@ -463,6 +465,9 @@ bool MiniBrowser::goForward()
 
 HRESULT MiniBrowser::loadURL(const BSTR& passedURL)
 {
+    if (!passedURL)
+        return E_INVALIDARG;
+
     _bstr_t urlBStr(passedURL);
     if (!!urlBStr && (::PathFileExists(urlBStr) || ::PathIsUNC(urlBStr))) {
         TCHAR fileURL[INTERNET_MAX_URL_LENGTH];
@@ -476,9 +481,6 @@ HRESULT MiniBrowser::loadURL(const BSTR& passedURL)
     HRESULT hr = m_webView->mainFrame(&frame.GetInterfacePtr());
     if (FAILED(hr))
         return hr;
-
-    if (!passedURL)
-        return frame->loadHTMLString(_bstr_t(defaultHTML).GetBSTR(), 0);
 
     IWebMutableURLRequestPtr request;
     hr = WebKitCreateInstance(CLSID_WebMutableURLRequest, 0, IID_IWebMutableURLRequest, (void**)&request);

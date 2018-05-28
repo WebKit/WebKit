@@ -49,9 +49,10 @@ class MiniBrowser {
 public:
     MiniBrowser(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false, bool pageLoadTesting = false);
 
-    HRESULT init(_bstr_t& requestedURL);
-    HRESULT prepareViews(HWND mainWnd, const RECT& clientRect, const BSTR& requestedURL);
+    HRESULT init();
+    HRESULT prepareViews(HWND mainWnd, const RECT& clientRect);
 
+    HRESULT loadHTMLString(const BSTR&);
     HRESULT loadURL(const BSTR& passedURL);
 
     void showLastVisitedSites(IWebView&);
