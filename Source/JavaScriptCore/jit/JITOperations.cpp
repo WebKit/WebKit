@@ -1797,7 +1797,7 @@ void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, Uni
     ASSERT(object && object->isObject());
     JSObject* baseObject = asObject(object);
 
-    ASSERT(getter || setter);
+    ASSERT(getterCell || setterCell);
     JSObject* getter = getterCell ? getterCell->getObject() : nullptr;
     JSObject* setter = setterCell ? setterCell->getObject() : nullptr;
     GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject(), getter, setter);

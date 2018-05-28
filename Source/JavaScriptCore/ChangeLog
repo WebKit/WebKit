@@ -1,3 +1,9 @@
+2018-05-27  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the 32-bit !ASSERT_DISABLED build after r232211.
+
+        * jit/JITOperations.cpp:
+
 2018-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Rename Array#flatten to flat
