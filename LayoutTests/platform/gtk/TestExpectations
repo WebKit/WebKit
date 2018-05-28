@@ -1138,8 +1138,6 @@ webkit.org/b/175419 http/tests/workers/service [ Skip ]
 webkit.org/b/175419 http/wpt/service-workers [ Failure Pass ]
 webkit.org/b/175419 http/tests/inspector/network/resource-response-service-worker.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers [ Skip ]
-webkit.org/b/175419 http/tests/appcache/main-resource-redirect-with-sw.html [ Skip ]
-webkit.org/b/175419 http/tests/appcache/main-resource-redirect.html [ Skip ]
 webkit.org/b/175419 http/wpt/service-workers/navigation-redirect-main-frame.https.html [ Skip ]
 webkit.org/b/175419 http/wpt/service-workers/third-party-registration.html [ Skip ]
 
@@ -1372,8 +1370,6 @@ webkit.org/b/83878 media/track/track-mode.html [ Failure Pass ]
 
 webkit.org/b/49179 animations/stop-animation-on-suspend.html [ Failure Pass ]
 webkit.org/b/49179 legacy-animation-engine/animations/stop-animation-on-suspend.html [ Failure Pass ]
-
-webkit.org/b/61121 http/tests/appcache/interrupted-update.html [ Failure Pass ]
 
 webkit.org/b/94119 storage/websql/database-lock-after-reload.html [ Failure Pass ]
 webkit.org/b/132283 storage/websql/read-transactions-running-concurrently.html [ Failure Pass ]
@@ -1819,7 +1815,7 @@ webkit.org/b/160133 css3/masking/mask-svg-no-fragmentId-tiled.html [ ImageOnlyFa
 
 webkit.org/b/160135 http/tests/security/contentSecurityPolicy/video-with-http-url-allowed-by-csp-media-src-star.html [ Failure Pass ]
 webkit.org/b/160136 http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Failure Pass ]
-webkit.org/b/142488 http/tests/appcache/404-resource-with-slow-main-resource.php [ Failure Pass ]
+webkit.org/b/142488 http/tests/appcache/404-resource-with-slow-main-resource.php [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/162685 http/tests/cache/disk-cache/disk-cache-204-status-code.html [ Failure Pass ]
 
 webkit.org/b/160137 svg/custom/non-scaling-stroke-update.svg [ ImageOnlyFailure Pass ]
@@ -2230,8 +2226,6 @@ webkit.org/b/168373 media/media-fullscreen-loop-inline.html [ Timeout ]
 webkit.org/b/168373 media/media-source/media-source-error-crash.html [ Timeout ]
 webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Timeout ]
 
-webkit.org/b/168569 http/tests/appcache/main-resource-fallback-for-network-error-crash.html [ Timeout ]
-
 webkit.org/b/169211 fast/parser/adoption-agency-unload-iframe-4.html [ Timeout ]
 
 webkit.org/b/172284 svg/animations/animated-svg-image-outside-viewport-paused.html [ Timeout ]
@@ -2499,9 +2493,6 @@ Bug(GTK) fast/forms/select/popup-closes-on-blur.html [ Failure ]
 # Shared workers disabled with the Network Process
 webkit.org/b/139357 fast/workers/worker-crash-with-invalid-location.html [ Skip ]
 webkit.org/b/139357 http/tests/media/video-accept-encoding.html [ Failure ]
-
-# Appcache manifest is still downloaded in the WebProcess
-webkit.org/b/138736 http/tests/appcache/auth.html [ Skip ]
 
 # There is no network load scheduling or prioritization with NetworkProcess.
 webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure Pass ]

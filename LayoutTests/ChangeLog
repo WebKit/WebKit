@@ -1,5 +1,20 @@
 2018-05-28  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [GTK][WPE] AppCache test gardening
+
+        Some appcache tests were flaky due to console output, see
+        https://bugs.webkit.org/show_bug.cgi?id=185431 for more info.
+        Fixing those by dumping the output to stderr instead.
+
+        At the same time, clean up the expectations for appcache tests,
+        many were now passing, so several old bugs got closed now.
+
+        Unreviewed gardening.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+2018-05-28  Claudio Saavedra  <csaavedra@igalia.com>
+
         [GTK][WPE] transitions/interrupted-transition-hardware.html failing
 
         Unreviewed gardening, image-only failure.
