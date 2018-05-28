@@ -1,5 +1,80 @@
 2018-05-28  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Add Rect interface to Display::Box
+        https://bugs.webkit.org/show_bug.cgi?id=186019
+
+        Reviewed by Antti Koivisto.
+
+        Having a dedicated Rect class and moving the geometry invalidation to it enables us to call
+        displayBox.contentBox().left() even when the widht/height are not computed yet.
+        Also having Rect with top/left/bottom/right interface is more aligned with the rest of the layout code than x/y/maxX/maxY.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::contentHeightForFormattingContextRoot):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticPosition):
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::marginBox const):
+        (WebCore::Display::Box::borderBox const):
+        (WebCore::Display::Box::paddingBox const):
+        (WebCore::Display::Box::contentBox const):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::Rect::invalidateTop):
+        (WebCore::Display::Box::Rect::invalidateLeft):
+        (WebCore::Display::Box::Rect::invalidateWidth):
+        (WebCore::Display::Box::Rect::invalidateHeight):
+        (WebCore::Display::Box::Rect::hasValidPosition const):
+        (WebCore::Display::Box::Rect::hasValidSize const):
+        (WebCore::Display::Box::Rect::hasValidGeometry const):
+        (WebCore::Display::Box::rect const):
+        (WebCore::Display::Box::top const):
+        (WebCore::Display::Box::left const):
+        (WebCore::Display::Box::bottom const):
+        (WebCore::Display::Box::right const):
+        (WebCore::Display::Box::topLeft const):
+        (WebCore::Display::Box::bottomRight const):
+        (WebCore::Display::Box::size const):
+        (WebCore::Display::Box::width const):
+        (WebCore::Display::Box::height const):
+        (WebCore::Display::Box::setTopLeft):
+        (WebCore::Display::Box::setTop):
+        (WebCore::Display::Box::setLeft):
+        (WebCore::Display::Box::setWidth):
+        (WebCore::Display::Box::setHeight):
+        (WebCore::Display::Box::Rect::invalidatePosition):
+        (WebCore::Display::Box::Rect::setHasValidPosition):
+        (WebCore::Display::Box::Rect::Rect):
+        (WebCore::Display::Box::Rect::top const):
+        (WebCore::Display::Box::Rect::left const):
+        (WebCore::Display::Box::Rect::bottom const):
+        (WebCore::Display::Box::Rect::right const):
+        (WebCore::Display::Box::Rect::topLeft const):
+        (WebCore::Display::Box::Rect::bottomRight const):
+        (WebCore::Display::Box::Rect::size const):
+        (WebCore::Display::Box::Rect::width const):
+        (WebCore::Display::Box::Rect::height const):
+        (WebCore::Display::Box::Rect::setTopLeft):
+        (WebCore::Display::Box::Rect::setTop):
+        (WebCore::Display::Box::Rect::setLeft):
+        (WebCore::Display::Box::Rect::setWidth):
+        (WebCore::Display::Box::Rect::setHeight):
+        (WebCore::Display::Box::Rect::shiftLeftTo):
+        (WebCore::Display::Box::Rect::shiftRightTo):
+        (WebCore::Display::Box::Rect::shiftTopTo):
+        (WebCore::Display::Box::Rect::shiftBottomTo):
+        (WebCore::Display::Box::Rect::expand):
+        (WebCore::Display::Box::invalidateTop): Deleted.
+        (WebCore::Display::Box::invalidateLeft): Deleted.
+        (WebCore::Display::Box::invalidateWidth): Deleted.
+        (WebCore::Display::Box::invalidateHeight): Deleted.
+        (WebCore::Display::Box::hasValidPosition const): Deleted.
+        (WebCore::Display::Box::hasValidSize const): Deleted.
+        (WebCore::Display::Box::hasValidGeometry const): Deleted.
+        (WebCore::Display::Box::invalidatePosition): Deleted.
+        (WebCore::Display::Box::setHasValidPosition): Deleted.
+
+2018-05-28  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Add formatting context testing codepath in FrameViewLayoutContext
         https://bugs.webkit.org/show_bug.cgi?id=186036
 

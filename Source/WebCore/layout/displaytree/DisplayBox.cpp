@@ -51,58 +51,58 @@ Box::Style::Style(const RenderStyle& style)
 
 }
 
-LayoutRect Box::marginBox() const
+Box::Rect Box::marginBox() const
 {
     ASSERT(m_hasValidMargin);
     auto marginBox = borderBox();
 
-    marginBox.shiftXEdgeTo(marginBox.x() + m_margin.left);
-    marginBox.shiftYEdgeTo(marginBox.y() + m_margin.top);
-    marginBox.shiftMaxXEdgeTo(marginBox.maxX() - m_margin.right);
-    marginBox.shiftMaxYEdgeTo(marginBox.maxY() - m_margin.bottom);
+    marginBox.shiftLeftTo(marginBox.left() + m_margin.left);
+    marginBox.shiftBottomTo(marginBox.top() + m_margin.top);
+    marginBox.shiftRightTo(marginBox.right() - m_margin.right);
+    marginBox.shiftBottomTo(marginBox.bottom() - m_margin.bottom);
 
     return marginBox;
 }
 
-LayoutRect Box::borderBox() const
+Box::Rect Box::borderBox() const
 {
     if (m_style.boxSizing == BoxSizing::BorderBox)
-        return LayoutRect( { }, size());
+        return Box::Rect( { }, size());
 
     // Width is content box.
     ASSERT(m_hasValidBorder);
     ASSERT(m_hasValidPadding);
     auto borderBoxSize = size();
-    borderBoxSize.expand(borderLeft() + paddingLeft() + paddingRight() + borderRight() , borderTop() + paddingTop() + paddingBottom() + borderBottom());
-    return LayoutRect( { }, borderBoxSize);
+    borderBoxSize.expand(borderLeft() + paddingLeft() + paddingRight() + borderRight(), borderTop() + paddingTop() + paddingBottom() + borderBottom());
+    return Box::Rect( { }, borderBoxSize);
 }
 
-LayoutRect Box::paddingBox() const
+Box::Rect Box::paddingBox() const
 {
     ASSERT(m_hasValidBorder);
     auto paddingBox = borderBox();
 
-    paddingBox.shiftXEdgeTo(paddingBox.x() + m_border.left);
-    paddingBox.shiftYEdgeTo(paddingBox.y() + m_border.top);
-    paddingBox.shiftMaxXEdgeTo(paddingBox.maxX() - m_border.right);
-    paddingBox.shiftMaxYEdgeTo(paddingBox.maxY() - m_border.bottom);
+    paddingBox.shiftLeftTo(paddingBox.left() + m_border.left);
+    paddingBox.shiftTopTo(paddingBox.top() + m_border.top);
+    paddingBox.shiftRightTo(paddingBox.left() - m_border.right);
+    paddingBox.shiftBottomTo(paddingBox.bottom() - m_border.bottom);
 
     return paddingBox;
 }
 
-LayoutRect Box::contentBox() const
+Box::Rect Box::contentBox() const
 {
     if (m_style.boxSizing == BoxSizing::ContentBox)
-        return LayoutRect(LayoutPoint(0, 0), size());
+        return Box::Rect(LayoutPoint(0, 0), size());
 
     // Width is border box.
     ASSERT(m_hasValidPadding);
     auto contentBox = paddingBox();
 
-    contentBox.shiftXEdgeTo(contentBox.x() + m_padding.left);
-    contentBox.shiftYEdgeTo(contentBox.y() + m_padding.top);
-    contentBox.shiftMaxXEdgeTo(contentBox.maxX() - m_padding.right);
-    contentBox.shiftMaxYEdgeTo(contentBox.maxY() - m_padding.bottom);
+    contentBox.shiftLeftTo(contentBox.left() + m_padding.left);
+    contentBox.shiftTopTo(contentBox.top() + m_padding.top);
+    contentBox.shiftBottomTo(contentBox.bottom() - m_padding.bottom);
+    contentBox.shiftRightTo(contentBox.right() - m_padding.right);
 
     return contentBox;
 }

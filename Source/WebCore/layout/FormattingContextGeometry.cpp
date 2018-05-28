@@ -53,8 +53,8 @@ static LayoutUnit contentHeightForFormattingContextRoot(LayoutContext& layoutCon
     auto* firstDisplayBox = layoutContext.displayBoxForLayoutBox(*formattingRootContainer.firstInFlowChild());
     auto* lastDisplayBox = layoutContext.displayBoxForLayoutBox(*formattingRootContainer.lastInFlowChild());
 
-    auto top = firstDisplayBox->marginBox().y();
-    auto bottom = lastDisplayBox->marginBox().maxY();
+    auto top = firstDisplayBox->marginBox().top();
+    auto bottom = lastDisplayBox->marginBox().bottom();
     // FIXME: add floating support.
     return bottom - top;
 }

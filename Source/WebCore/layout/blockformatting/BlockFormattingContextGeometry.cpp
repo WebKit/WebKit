@@ -125,8 +125,8 @@ LayoutPoint BlockFormattingContext::Geometry::staticPosition(LayoutContext& layo
     // In a block formatting context, each box's left outer edge touches the left edge of the containing block (for right-to-left formatting, right edges touch).
     auto containingBlockContentBox = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->contentBox();
     // Start from the top of the container's content box.
-    auto top = containingBlockContentBox.y();
-    auto left = containingBlockContentBox.x();
+    auto top = containingBlockContentBox.top();
+    auto left = containingBlockContentBox.left();
     if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
         auto& previousInFlowDisplayBox = *layoutContext.displayBoxForLayoutBox(*previousInFlowSibling);
         top = previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.marginBottom();
