@@ -937,17 +937,19 @@ private:
                         node->mergeFlags(NodeMayHaveNonNumberResult);
                     break;
                 }
+                case ValueNegate:
                 case ArithNegate: {
-                    // We'd like to assert here that the arith profile for the result of negate never
-                    // sees a non-number, but we can't. It's true that negate never produces a non-number.
-                    // But sometimes we'll end up grabbing the wrong ArithProfile during OSR exit, and
-                    // profiling the wrong value, leading the ArithProfile to think it observed a non-number result.
                     if (arithProfile->lhsObservedType().sawNumber() || arithProfile->didObserveDouble())
                         node->mergeFlags(NodeMayHaveDoubleResult);
                     if (arithProfile->didObserveNegZeroDouble() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
                         node->mergeFlags(NodeMayNegZeroInBaseline);
                     if (arithProfile->didObserveInt32Overflow() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
                         node->mergeFlags(NodeMayOverflowInt32InBaseline);
+                    if (arithProfile->didObserveNonNumber()) {
+                        // FIXME: We should add support to BigInt into speculation
+                        // https://bugs.webkit.org/show_bug.cgi?id=182470
+                        node->mergeFlags(NodeMayHaveNonNumberResult);
+                    }
                     break;
                 }
                 
@@ -4714,7 +4716,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_negate: {
             Node* op1 = get(VirtualRegister(currentInstruction[2].u.operand));
-            set(VirtualRegister(currentInstruction[1].u.operand), makeSafe(addToGraph(ArithNegate, op1)));
+            if (op1->hasNumberResult())
+                set(VirtualRegister(currentInstruction[1].u.operand), makeSafe(addToGraph(ArithNegate, op1)));
+            else
+                set(VirtualRegister(currentInstruction[1].u.operand), makeSafe(addToGraph(ValueNegate, op1)));
             NEXT_OPCODE(op_negate);
         }
 

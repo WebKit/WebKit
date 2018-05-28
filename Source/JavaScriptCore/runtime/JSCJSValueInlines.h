@@ -1100,7 +1100,7 @@ ALWAYS_INLINE bool JSValue::strictEqualSlowCaseInline(ExecState* exec, JSValue v
     if (v1.asCell()->isString() && v2.asCell()->isString())
         return asString(v1)->equal(exec, asString(v2));
     if (v1.isBigInt() && v2.isBigInt())
-        return JSBigInt::equals(asBigInt(v1.asCell()), asBigInt(v2.asCell()));
+        return JSBigInt::equals(asBigInt(v1), asBigInt(v2));
     return v1 == v2;
 }
 

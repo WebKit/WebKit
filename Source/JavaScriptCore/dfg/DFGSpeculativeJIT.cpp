@@ -4478,6 +4478,18 @@ void SpeculativeJIT::compileArithSub(Node* node)
     }
 }
 
+void SpeculativeJIT::compileValueNegate(Node* node)
+{
+    CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
+    ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
+    Instruction* instruction = &baselineCodeBlock->instructions()[node->origin.semantic.bytecodeIndex];
+    JITNegIC* negIC = m_jit.codeBlock()->addJITNegIC(arithProfile, instruction);
+    auto repatchingFunction = operationArithNegateOptimize;
+    auto nonRepatchingFunction = operationArithNegate;
+    bool needsScratchGPRReg = true;
+    compileMathIC(node, negIC, needsScratchGPRReg, repatchingFunction, nonRepatchingFunction);
+}
+
 void SpeculativeJIT::compileArithNegate(Node* node)
 {
     switch (node->child1().useKind()) {
@@ -4552,15 +4564,7 @@ void SpeculativeJIT::compileArithNegate(Node* node)
     }
         
     default: {
-        CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
-        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-        Instruction* instruction = &baselineCodeBlock->instructions()[node->origin.semantic.bytecodeIndex];
-        JITNegIC* negIC = m_jit.codeBlock()->addJITNegIC(arithProfile, instruction);
-        auto repatchingFunction = operationArithNegateOptimize;
-        auto nonRepatchingFunction = operationArithNegate;
-        bool needsScratchGPRReg = true;
-        compileMathIC(node, negIC, needsScratchGPRReg, repatchingFunction, nonRepatchingFunction);
-        return;
+        RELEASE_ASSERT_NOT_REACHED();
     }
     }
 }

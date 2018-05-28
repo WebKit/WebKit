@@ -2705,7 +2705,14 @@ ALWAYS_INLINE static EncodedJSValue unprofiledNegate(ExecState* exec, EncodedJSV
     NativeCallFrameTracer tracer(&vm, exec);
     
     JSValue operand = JSValue::decode(encodedOperand);
-    double number = operand.toNumber(exec);
+    
+    JSValue primValue = operand.toPrimitive(exec, PreferNumber);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    
+    if (primValue.isBigInt())
+        return JSValue::encode(JSBigInt::unaryMinus(vm, asBigInt(primValue)));
+    
+    double number = primValue.toNumber(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsNumber(-number));
 }
@@ -2718,9 +2725,19 @@ ALWAYS_INLINE static EncodedJSValue profiledNegate(ExecState* exec, EncodedJSVal
 
     JSValue operand = JSValue::decode(encodedOperand);
     arithProfile.observeLHS(operand);
-    double number = operand.toNumber(exec);
+    
+    JSValue primValue = operand.toPrimitive(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    
+    if (primValue.isBigInt()) {
+        JSBigInt* result = JSBigInt::unaryMinus(vm, asBigInt(primValue));
+        arithProfile.observeResult(result);
 
+        return JSValue::encode(result);
+    }
+
+    double number = primValue.toNumber(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     JSValue result = jsNumber(-number);
     arithProfile.observeResult(result);
     return JSValue::encode(result);
@@ -2754,7 +2771,16 @@ EncodedJSValue JIT_OPERATION operationArithNegateProfiledOptimize(ExecState* exe
     exec->codeBlock()->dumpMathICStats();
 #endif
     
-    double number = operand.toNumber(exec);
+    JSValue primValue = operand.toPrimitive(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    
+    if (primValue.isBigInt()) {
+        JSBigInt* result = JSBigInt::unaryMinus(vm, asBigInt(primValue));
+        arithProfile->observeResult(result);
+        return JSValue::encode(result);
+    }
+
+    double number = primValue.toNumber(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     JSValue result = jsNumber(-number);
     arithProfile->observeResult(result);
@@ -2777,7 +2803,15 @@ EncodedJSValue JIT_OPERATION operationArithNegateOptimize(ExecState* exec, Encod
     exec->codeBlock()->dumpMathICStats();
 #endif
 
-    double number = operand.toNumber(exec);
+    JSValue primValue = operand.toPrimitive(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    
+    if (primValue.isBigInt()) {
+        JSBigInt* result = JSBigInt::unaryMinus(vm, asBigInt(primValue));
+        return JSValue::encode(result);
+    }
+
+    double number = primValue.toNumber(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsNumber(-number));
 }

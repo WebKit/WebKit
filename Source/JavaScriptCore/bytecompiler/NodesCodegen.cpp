@@ -125,7 +125,7 @@ JSValue StringNode::jsValue(BytecodeGenerator& generator) const
 
 JSValue BigIntNode::jsValue(BytecodeGenerator& generator) const
 {
-    return generator.addBigIntConstant(m_value, m_radix);
+    return generator.addBigIntConstant(m_value, m_radix, m_sign);
 }
 
 // ------------------------------ NumberNode ----------------------------------

@@ -584,6 +584,9 @@ private:
         case ToThis:
             compileToThis();
             break;
+        case ValueNegate:
+            compileValueNegate();
+            break;
         case ValueAdd:
             compileValueAdd();
             break;
@@ -2709,7 +2712,18 @@ private:
         LValue result = vmCall(Double, m_out.operation(operationArithFRound), m_callFrame, argument);
         setDouble(result);
     }
-    
+
+    void compileValueNegate()
+    {
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
+        CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
+        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(m_node->origin.semantic.bytecodeIndex);
+        Instruction* instruction = &baselineCodeBlock->instructions()[m_node->origin.semantic.bytecodeIndex];
+        auto repatchingFunction = operationArithNegateOptimize;
+        auto nonRepatchingFunction = operationArithNegate;
+        compileUnaryMathIC<JITNegGenerator>(arithProfile, instruction, repatchingFunction, nonRepatchingFunction);
+    }
+
     void compileArithNegate()
     {
         switch (m_node->child1().useKind()) {
@@ -2758,13 +2772,7 @@ private:
         }
             
         default:
-            DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
-            CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
-            ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(m_node->origin.semantic.bytecodeIndex);
-            Instruction* instruction = &baselineCodeBlock->instructions()[m_node->origin.semantic.bytecodeIndex];
-            auto repatchingFunction = operationArithNegateOptimize;
-            auto nonRepatchingFunction = operationArithNegate;
-            compileUnaryMathIC<JITNegGenerator>(arithProfile, instruction, repatchingFunction, nonRepatchingFunction);
+            DFG_CRASH(m_graph, m_node, "Bad use kind");
             break;
         }
     }

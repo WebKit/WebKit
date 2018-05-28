@@ -162,6 +162,9 @@ namespace JSC { namespace DFG {
     macro(ArithSqrt, NodeResultDouble | NodeMustGenerate) \
     macro(ArithUnary, NodeResultDouble | NodeMustGenerate) \
     \
+    /* BigInt is a valid operand for negate operations */\
+    macro(ValueNegate, NodeResultJS | NodeMustGenerate) \
+    \
     /* Add of values may either be arithmetic, or result in string concatenation. */\
     macro(ValueAdd, NodeResultJS | NodeMustGenerate) \
     \

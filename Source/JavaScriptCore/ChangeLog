@@ -1,3 +1,86 @@
+2018-05-27  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement "+" and "-" unary operation
+        https://bugs.webkit.org/show_bug.cgi?id=182214
+
+        Reviewed by Yusuke Suzuki.
+
+        This Patch is implementing support to "-" unary operation on BigInt.
+        It is also changing the logic of ASTBuilder::makeNegateNode to
+        calculate BigInt literals with properly sign, avoiding
+        unecessary operation. It required a refactoring into
+        JSBigInt::parseInt to consider the sign as parameter.
+
+        We are also introducing a new DFG Node called ValueNegate to handle BigInt negate
+        operations. With the introduction of BigInt, it is not true
+        that every negate operation returns a Number. As ArithNegate is a
+        node that considers its result is always a Number, like all other
+        Arith<Operation>, we decided to keep this consistency and use ValueNegate when
+        speculation indicates that the operand is a BigInt.
+        This design is following the same distinction between ArithAdd and
+        ValueAdd. Also, this new node will make simpler the introduction of
+        optimizations when we create speculation paths for BigInt in future
+        patches.
+
+        In the case of "+" unary operation on BigInt, the current semantic we already have
+        is correctly, since it needs to throw TypeError because of ToNumber call[1].
+        In such case, we are adding tests to verify other edge cases.
+
+        [1] - https://tc39.github.io/proposal-bigint/#sec-unary-plus-operator
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addBigIntConstant):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BigIntNode::jsValue const):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::arithNodeFlags):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueNegate):
+        (JSC::DFG::SpeculativeJIT::compileArithNegate):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueNegate):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithNegate):
+        * jit/JITOperations.cpp:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createBigIntWithSign):
+        (JSC::ASTBuilder::createBigIntFromUnaryOperation):
+        (JSC::ASTBuilder::makeNegateNode):
+        * parser/NodeConstructors.h:
+        (JSC::BigIntNode::BigIntNode):
+        * parser/Nodes.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::updateArithProfileForUnaryArithOp):
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::parseInt):
+        * runtime/JSBigInt.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::strictEqualSlowCaseInline):
+
 2018-05-27  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the 32-bit !ASSERT_DISABLED build after r232211.

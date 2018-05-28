@@ -1,3 +1,14 @@
+2018-05-27  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement "+" and "-" unary operation
+        https://bugs.webkit.org/show_bug.cgi?id=182214
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/big-int-negate-basic.js: Added.
+        * stress/big-int-negate-jit.js: Added.
+        * stress/big-int-unary-plus.js: Added.
+
 2018-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Rename Array#flatten to flat

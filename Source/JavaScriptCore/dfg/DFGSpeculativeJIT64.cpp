@@ -2165,6 +2165,10 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ValueNegate:
+        compileValueNegate(node);
+        break;
+
     case ValueAdd:
         compileValueAdd(node);
         break;

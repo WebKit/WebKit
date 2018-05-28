@@ -1072,6 +1072,10 @@ private:
     {
         return new (m_parserArena) DoubleNode(location, d);
     }
+    ExpressionNode* createBigIntWithSign(const JSTokenLocation& location, const Identifier& bigInt, uint8_t radix, bool sign)
+    {
+        return new (m_parserArena) BigIntNode(location, bigInt, radix, sign);
+    }
     ExpressionNode* createNumberFromBinaryOperation(const JSTokenLocation& location, double value, const NumberNode& originalNodeA, const NumberNode& originalNodeB)
     {
         if (originalNodeA.isIntegerNode() && originalNodeB.isIntegerNode())
@@ -1083,6 +1087,10 @@ private:
         if (originalNode.isIntegerNode())
             return createIntegerLikeNumber(location, value);
         return createDoubleLikeNumber(location, value);
+    }
+    ExpressionNode* createBigIntFromUnaryOperation(const JSTokenLocation& location, bool sign, const BigIntNode& originalNode)
+    {
+        return createBigIntWithSign(location, originalNode.identifier(), originalNode.radix(), sign);
     }
 
     void tryInferNameInPattern(DestructuringPattern pattern, ExpressionNode* defaultValue)
@@ -1154,6 +1162,11 @@ ExpressionNode* ASTBuilder::makeNegateNode(const JSTokenLocation& location, Expr
     if (n->isNumber()) {
         const NumberNode& numberNode = static_cast<const NumberNode&>(*n);
         return createNumberFromUnaryOperation(location, -numberNode.value(), numberNode);
+    }
+
+    if (n->isBigInt()) {
+        const BigIntNode& bigIntNode = static_cast<const BigIntNode&>(*n);
+        return createBigIntFromUnaryOperation(location, !bigIntNode.sign(), bigIntNode);
     }
 
     return new (m_parserArena) NegateNode(location, n);

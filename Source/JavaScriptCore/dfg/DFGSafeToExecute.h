@@ -219,6 +219,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ArithCeil:
     case ArithTrunc:
     case ArithUnary:
+    case ValueNegate:
     case ValueAdd:
     case TryGetById:
     case DeleteById:

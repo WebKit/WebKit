@@ -345,7 +345,12 @@ namespace JSC {
     class BigIntNode final : public ConstantNode {
     public:
         BigIntNode(const JSTokenLocation&, const Identifier&, uint8_t radix);
+        BigIntNode(const JSTokenLocation&, const Identifier&, uint8_t radix, bool sign);
         const Identifier& value() { return m_value; }
+
+        const Identifier& identifier() const { return m_value; }
+        uint8_t radix() const { return m_radix; }
+        bool sign() const { return m_sign; }
 
     private:
         bool isBigInt() const final { return true; }
@@ -353,6 +358,7 @@ namespace JSC {
 
         const Identifier& m_value;
         const uint8_t m_radix;
+        const bool m_sign;
     };
 
     class ThrowableExpressionData {

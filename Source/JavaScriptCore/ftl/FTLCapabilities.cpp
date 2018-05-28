@@ -86,6 +86,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetGlobalVar:
     case GetGlobalLexicalVariable:
     case PutGlobalVariable:
+    case ValueNegate:
     case ValueAdd:
     case StrCat:
     case ArithAdd:

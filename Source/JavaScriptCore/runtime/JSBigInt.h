@@ -72,13 +72,16 @@ public:
     void setLength(unsigned length) { m_length = length; }
     unsigned length() const { return m_length; }
 
-    enum ErrorParseMode {
+    enum class ErrorParseMode {
         ThrowExceptions,
         IgnoreExceptions
     };
 
-    static JSBigInt* parseInt(ExecState*, VM&, StringView, uint8_t radix, ErrorParseMode = ThrowExceptions);
-    static JSBigInt* parseInt(ExecState*, StringView, ErrorParseMode = ThrowExceptions);
+    enum class ParseIntMode { DisallowEmptyString, AllowEmptyString };
+    enum class ParseIntSign { Unsigned, Signed };
+
+    static JSBigInt* parseInt(ExecState*, VM&, StringView, uint8_t radix, ErrorParseMode = ErrorParseMode::ThrowExceptions, ParseIntSign = ParseIntSign::Unsigned);
+    static JSBigInt* parseInt(ExecState*, StringView, ErrorParseMode = ErrorParseMode::ThrowExceptions);
     static JSBigInt* stringToBigInt(ExecState*, StringView);
 
     std::optional<uint8_t> singleDigitValueForString();
@@ -156,7 +159,7 @@ private:
     static JSBigInt* parseInt(ExecState*, CharType*  data, unsigned length, ErrorParseMode);
 
     template <typename CharType>
-    static JSBigInt* parseInt(ExecState*, VM&, CharType* data, unsigned length, unsigned startIndex, unsigned radix, ErrorParseMode, bool allowEmptyString = true);
+    static JSBigInt* parseInt(ExecState*, VM&, CharType* data, unsigned length, unsigned startIndex, unsigned radix, ErrorParseMode, ParseIntSign = ParseIntSign::Signed, ParseIntMode = ParseIntMode::AllowEmptyString);
 
     static JSBigInt* allocateFor(ExecState*, VM&, unsigned radix, unsigned charcount);
 

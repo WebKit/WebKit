@@ -245,6 +245,7 @@ private:
             break;
         }
 
+        case ValueNegate:
         case ArithNegate: {
             SpeculatedType prediction = node->child1()->prediction();
             if (prediction) {
@@ -256,6 +257,11 @@ private:
                     changed |= mergePrediction(speculatedDoubleTypeForPrediction(node->child1()->prediction()));
                 else {
                     changed |= mergePrediction(SpecInt32Only);
+                    if (node->op() == ValueNegate && node->mayHaveNonNumberResult()) {
+                        // FIXME: We should add support to BigInt into speculatio
+                        // https://bugs.webkit.org/show_bug.cgi?id=182470
+                        changed |= mergePrediction(SpecBigInt);
+                    }
                     if (node->mayHaveDoubleResult())
                         changed |= mergePrediction(SpecBytecodeDouble);
                 }
@@ -1038,6 +1044,7 @@ private:
         case GetLocal:
         case SetLocal:
         case UInt32ToNumber:
+        case ValueNegate:
         case ValueAdd:
         case ArithAdd:
         case ArithSub:

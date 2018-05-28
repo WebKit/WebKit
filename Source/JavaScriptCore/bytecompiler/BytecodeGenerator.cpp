@@ -3161,11 +3161,12 @@ RegisterID* BytecodeGenerator::emitNewObject(RegisterID* dst)
     return dst;
 }
 
-JSValue BytecodeGenerator::addBigIntConstant(const Identifier& identifier, uint8_t radix)
+JSValue BytecodeGenerator::addBigIntConstant(const Identifier& identifier, uint8_t radix, bool sign)
 {
-    return m_bigIntMap.ensure(BigIntMapEntry(identifier.impl(), radix), [&] {
+    return m_bigIntMap.ensure(BigIntMapEntry(identifier.impl(), radix, sign), [&] {
         auto scope = DECLARE_CATCH_SCOPE(*vm());
-        JSBigInt* bigIntInMap = JSBigInt::parseInt(nullptr, *vm(), identifier.string(), radix);
+        auto parseIntSign = sign ? JSBigInt::ParseIntSign::Signed : JSBigInt::ParseIntSign::Unsigned;
+        JSBigInt* bigIntInMap = JSBigInt::parseInt(nullptr, *vm(), identifier.string(), radix, JSBigInt::ErrorParseMode::ThrowExceptions, parseIntSign);
         // FIXME: [ESNext] Enables a way to throw an error on ByteCodeGenerator step
         // https://bugs.webkit.org/show_bug.cgi?id=180139
         scope.assertNoException();

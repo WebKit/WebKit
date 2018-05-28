@@ -215,11 +215,11 @@ JSBigInt* JSBigInt::parseInt(ExecState* state, StringView s, ErrorParseMode pars
     return parseInt(state, s.characters16(), s.length(), parserMode);
 }
 
-JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, StringView s, uint8_t radix, ErrorParseMode parserMode)
+JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, StringView s, uint8_t radix, ErrorParseMode parserMode, ParseIntSign sign)
 {
     if (s.is8Bit())
-        return parseInt(state, vm, s.characters8(), s.length(), 0, radix, parserMode, false);
-    return parseInt(state, vm, s.characters16(), s.length(), 0, radix, parserMode, false);
+        return parseInt(state, vm, s.characters8(), s.length(), 0, radix, parserMode, sign, ParseIntMode::DisallowEmptyString);
+    return parseInt(state, vm, s.characters16(), s.length(), 0, radix, parserMode, sign, ParseIntMode::DisallowEmptyString);
 }
 
 JSBigInt* JSBigInt::stringToBigInt(ExecState* state, StringView s)
@@ -1054,42 +1054,42 @@ JSBigInt* JSBigInt::parseInt(ExecState* state, CharType*  data, unsigned length,
     // Check Radix from frist characters
     if (static_cast<unsigned>(p) + 1 < static_cast<unsigned>(length) && data[p] == '0') {
         if (isASCIIAlphaCaselessEqual(data[p + 1], 'b'))
-            return parseInt(state, vm, data, length, p + 2, 2, errorParseMode, false);
+            return parseInt(state, vm, data, length, p + 2, 2, errorParseMode, ParseIntSign::Unsigned, ParseIntMode::DisallowEmptyString);
         
         if (isASCIIAlphaCaselessEqual(data[p + 1], 'x'))
-            return parseInt(state, vm, data, length, p + 2, 16, errorParseMode, false);
+            return parseInt(state, vm, data, length, p + 2, 16, errorParseMode, ParseIntSign::Unsigned, ParseIntMode::DisallowEmptyString);
         
         if (isASCIIAlphaCaselessEqual(data[p + 1], 'o'))
-            return parseInt(state, vm, data, length, p + 2, 8, errorParseMode, false);
+            return parseInt(state, vm, data, length, p + 2, 8, errorParseMode, ParseIntSign::Unsigned, ParseIntMode::DisallowEmptyString);
     }
 
-    bool sign = false;
+    ParseIntSign sign = ParseIntSign::Unsigned;
     if (p < length) {
         if (data[p] == '+')
             ++p;
         else if (data[p] == '-') {
-            sign = true;
+            sign = ParseIntSign::Signed;
             ++p;
         }
     }
 
-    JSBigInt* result = parseInt(state, vm, data, length, p, 10, errorParseMode);
+    JSBigInt* result = parseInt(state, vm, data, length, p, 10, errorParseMode, sign);
 
     if (result && !result->isZero())
-        result->setSign(sign);
+        result->setSign(sign == ParseIntSign::Signed);
 
     return result;
 }
 
 template <typename CharType>
-JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, CharType* data, unsigned length, unsigned startIndex, unsigned radix, ErrorParseMode errorParseMode, bool allowEmptyString)
+JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, CharType* data, unsigned length, unsigned startIndex, unsigned radix, ErrorParseMode errorParseMode, ParseIntSign sign, ParseIntMode parseMode)
 {
     ASSERT(length >= 0);
     unsigned p = startIndex;
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!allowEmptyString && startIndex == length) {
+    if (parseMode != ParseIntMode::AllowEmptyString && startIndex == length) {
         ASSERT(state);
         if (errorParseMode == ErrorParseMode::ThrowExceptions)
             throwVMError(state, scope, createSyntaxError(state, "Failed to parse String to BigInt"));
@@ -1133,6 +1133,7 @@ JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, CharType* data, unsigned 
         result->inplaceMultiplyAdd(static_cast<Digit>(radix), static_cast<Digit>(digit));
     }
 
+    result->setSign(sign == ParseIntSign::Signed ? true : false);
     if (p == length)
         return result->rightTrim(vm);
 

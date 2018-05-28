@@ -97,6 +97,15 @@ namespace JSC {
         : ConstantNode(location, ResultType::bigIntType())
         , m_value(value)
         , m_radix(radix)
+        , m_sign(false)
+    {
+    }
+    
+    inline BigIntNode::BigIntNode(const JSTokenLocation& location, const Identifier& value, uint8_t radix, bool sign)
+        : ConstantNode(location, ResultType::bigIntType())
+        , m_value(value)
+        , m_radix(radix)
+        , m_sign(sign)
     {
     }
 

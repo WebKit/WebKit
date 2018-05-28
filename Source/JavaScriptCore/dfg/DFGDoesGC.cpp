@@ -97,6 +97,7 @@ bool doesGC(Graph& graph, Node* node)
     case ArithFRound:
     case ArithUnary:
     case ValueAdd:
+    case ValueNegate:
     case TryGetById:
     case GetById:
     case GetByIdFlush:

@@ -1026,7 +1026,7 @@ namespace JSC {
         void allocateCalleeSaveSpace();
         void allocateAndEmitScope();
 
-        using BigIntMapEntry = std::pair<UniquedStringImpl*, uint8_t>;
+        using BigIntMapEntry = std::tuple<UniquedStringImpl*, uint8_t, bool>;
 
         using NumberMap = HashMap<double, JSValue>;
         using IdentifierStringMap = HashMap<UniquedStringImpl*, JSString*, IdentifierRepHash>;
@@ -1122,7 +1122,7 @@ namespace JSC {
 
     public:
         JSString* addStringConstant(const Identifier&);
-        JSValue addBigIntConstant(const Identifier&, uint8_t radix);
+        JSValue addBigIntConstant(const Identifier&, uint8_t radix, bool sign);
         RegisterID* addTemplateObjectConstant(Ref<TemplateObjectDescriptor>&&);
 
         Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>& instructions() { return m_instructions; }

@@ -369,26 +369,29 @@ static void updateArithProfileForUnaryArithOp(Instruction* pc, JSValue result, J
 {
     ArithProfile& profile = *bitwise_cast<ArithProfile*>(&pc[3].u.operand);
     profile.observeLHS(operand);
-    ASSERT(result.isNumber());
-    if (!result.isInt32()) {
-        if (operand.isInt32())
-            profile.setObservedInt32Overflow();
-
-        double doubleVal = result.asNumber();
-        if (!doubleVal && std::signbit(doubleVal))
-            profile.setObservedNegZeroDouble();
-        else {
-            profile.setObservedNonNegZeroDouble();
-
-            // The Int52 overflow check here intentionally omits 1ll << 51 as a valid negative Int52 value.
-            // Therefore, we will get a false positive if the result is that value. This is intentionally
-            // done to simplify the checking algorithm.
-            static const int64_t int52OverflowPoint = (1ll << 51);
-            int64_t int64Val = static_cast<int64_t>(std::abs(doubleVal));
-            if (int64Val >= int52OverflowPoint)
-                profile.setObservedInt52Overflow();
+    ASSERT(result.isNumber() || result.isBigInt());
+    if (result.isNumber()) {
+        if (!result.isInt32()) {
+            if (operand.isInt32())
+                profile.setObservedInt32Overflow();
+            
+            double doubleVal = result.asNumber();
+            if (!doubleVal && std::signbit(doubleVal))
+                profile.setObservedNegZeroDouble();
+            else {
+                profile.setObservedNonNegZeroDouble();
+                
+                // The Int52 overflow check here intentionally omits 1ll << 51 as a valid negative Int52 value.
+                // Therefore, we will get a false positive if the result is that value. This is intentionally
+                // done to simplify the checking algorithm.
+                static const int64_t int52OverflowPoint = (1ll << 51);
+                int64_t int64Val = static_cast<int64_t>(std::abs(doubleVal));
+                if (int64Val >= int52OverflowPoint)
+                    profile.setObservedInt52Overflow();
+            }
         }
-    }
+    } else
+        profile.setObservedNonNumber();
 }
 #else
 static void updateArithProfileForUnaryArithOp(Instruction*, JSValue, JSValue) { }
@@ -398,7 +401,18 @@ SLOW_PATH_DECL(slow_path_negate)
 {
     BEGIN();
     JSValue operand = OP_C(2).jsValue();
-    JSValue result = jsNumber(-operand.toNumber(exec));
+    JSValue primValue = operand.toPrimitive(exec, PreferNumber);
+    CHECK_EXCEPTION();
+
+    if (primValue.isBigInt()) {
+        JSBigInt* result = JSBigInt::unaryMinus(exec->vm(), asBigInt(primValue));
+        RETURN_WITH_PROFILING(result, {
+            updateArithProfileForUnaryArithOp(pc, result, operand);
+        });
+    }
+    
+    JSValue result = jsNumber(-primValue.toNumber(exec));
+    CHECK_EXCEPTION();
     RETURN_WITH_PROFILING(result, {
         updateArithProfileForUnaryArithOp(pc, result, operand);
     });

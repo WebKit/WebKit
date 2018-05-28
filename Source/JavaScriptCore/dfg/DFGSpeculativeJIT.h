@@ -1348,6 +1348,7 @@ public:
     void compileArithAbs(Node*);
     void compileArithClz32(Node*);
     void compileArithSub(Node*);
+    void compileValueNegate(Node*);
     void compileArithNegate(Node*);
     void compileArithMul(Node*);
     void compileArithDiv(Node*);
