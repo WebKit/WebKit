@@ -39,11 +39,28 @@
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+#include "LayoutContainer.h"
+#include "LayoutContext.h"
+#include "LayoutTreeBuilder.h"
+#endif
+
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+static void layoutUsingFormattingContext(const RenderView& renderView)
+{
+    auto initialContainingBlock = Layout::TreeBuilder::createLayoutTree(renderView);
+    auto layoutContext = std::make_unique<Layout::LayoutContext>();
+    layoutContext->initializeRoot(*initialContainingBlock, renderView.size());
+    layoutContext->updateLayout();
+    layoutContext->verifyAndOutputMismatchingLayoutTree(renderView);
+} 
+#endif
 
 static bool isObjectAncestorContainerOf(RenderElement& ancestor, RenderElement& descendant)
 {
@@ -189,6 +206,9 @@ void FrameViewLayoutContext::layout()
         RenderTreeNeedsLayoutChecker checker(*layoutRoot);
 #endif
         layoutRoot->layout();
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    layoutUsingFormattingContext(*renderView());
+#endif
         ++m_layoutCount;
 #if ENABLE(TEXT_AUTOSIZING)
         applyTextSizingIfNeeded(*layoutRoot.get());

@@ -1,5 +1,23 @@
 2018-05-28  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Add formatting context testing codepath in FrameViewLayoutContext
+        https://bugs.webkit.org/show_bug.cgi?id=186036
+
+        Reviewed by Antti Koivisto.
+
+        This is to verify the formatting context layout correctness.
+
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::LayoutContext):
+        (WebCore::Layout::LayoutContext::initializeRoot):
+        * layout/LayoutContext.h:
+        (WebCore::Layout::LayoutContext::displayBoxForLayoutBox const):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+        (WebCore::FrameViewLayoutContext::layout):
+
+2018-05-28  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Add layout tree verification.
         https://bugs.webkit.org/show_bug.cgi?id=186018
 
