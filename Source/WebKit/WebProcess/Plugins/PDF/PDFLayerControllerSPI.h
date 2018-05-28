@@ -28,7 +28,7 @@
 
 #if ENABLE(PDFKIT_PLUGIN)
 
-#import <Quartz/Quartz.h>
+#import <PDFKit/PDFKit.h>
 
 @class CPReadingModel;
 @class PDFViewLayout;

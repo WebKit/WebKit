@@ -30,7 +30,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #if PLATFORM(MAC)
-#import <ApplicationServices/ApplicationServicesPriv.h>
+#import <LaunchServices/LaunchServicesPriv.h>
 #elif PLATFORM(IOS)
 #import <MobileCoreServices/LSAppLinkPriv.h>
 #endif

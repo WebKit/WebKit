@@ -31,7 +31,7 @@
 #import "PDFKitImports.h"
 #import "PDFLayerControllerSPI.h"
 #import "PDFPlugin.h"
-#import <Quartz/Quartz.h>
+#import <PDFKit/PDFKit.h>
 #import <WebCore/Event.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/HTMLElement.h>

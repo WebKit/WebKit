@@ -33,7 +33,8 @@
 #import "PlatformScreen.h"
 #import "Scrollbar.h"
 #import "WindowsKeyboardCodes.h"
-#import <Carbon/Carbon.h>
+#import <HIToolbox/CarbonEvents.h>
+#import <HIToolbox/Events.h>
 #import <mach/mach_time.h>
 #import <pal/spi/mac/HIToolboxSPI.h>
 #import <pal/spi/mac/NSEventSPI.h>

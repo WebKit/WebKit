@@ -1,5 +1,11 @@
 2018-05-27  Dan Bernstein  <mitz@apple.com>
 
+        Reverted the changes made for https://webkit.org/b/186016
+
+        They broke the USE(APPLE_INTERNAL_SDK) Sierra build.
+
+2018-05-27  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Avoid importing directly from subumbrella frameworks
         https://bugs.webkit.org/show_bug.cgi?id=186016
 

@@ -29,7 +29,7 @@
 
 #import "PlatformUtilities.h"
 #import "WebCoreTestSupport.h"
-#import <Carbon/Carbon.h>
+#import <HIToolbox/CarbonEvents.h>
 #import <IOKit/pwr_mgt/IOPMLib.h>
 #import <JavaScriptCore/JSContext.h>
 #import <WebCore/Settings.h>

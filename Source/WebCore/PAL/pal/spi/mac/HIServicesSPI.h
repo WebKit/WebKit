@@ -29,7 +29,9 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#include <ApplicationServices/ApplicationServicesPriv.h>
+#include <HIServices/AXTextMarker.h>
+#include <HIServices/CoreCursor.h>
+#include <HIServices/CoreDrag.h>
 
 #else
 

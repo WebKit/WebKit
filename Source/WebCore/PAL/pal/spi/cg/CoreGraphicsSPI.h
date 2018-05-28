@@ -33,24 +33,13 @@
 #endif
 
 #if PLATFORM(MAC)
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
 #include <ColorSync/ColorSync.h>
-#else
-#include <ApplicationServices/ApplicationServices.h>
-#endif
 #endif
 
 #if USE(APPLE_INTERNAL_SDK)
 
 #if PLATFORM(MAC)
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
 #include <ColorSync/ColorSyncPriv.h>
-#else
-#include <ApplicationServices/ApplicationServicesPriv.h>
-#ifdef confirm
-#undef confirm
-#endif
-#endif
 #endif
 #include <CoreGraphics/CGFontCache.h>
 #include <CoreGraphics/CoreGraphicsPrivate.h>

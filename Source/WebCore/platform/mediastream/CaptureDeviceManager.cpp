@@ -36,7 +36,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/StringHash.h>
 
-namespace WebCore {
+using namespace WebCore;
 
 CaptureDeviceManager::~CaptureDeviceManager() = default;
 
@@ -69,6 +69,5 @@ void CaptureDeviceManager::removeCaptureDeviceChangedObserver(ObserverToken toke
     m_observers.remove(token);
 }
 
-} // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

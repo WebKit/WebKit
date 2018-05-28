@@ -32,14 +32,9 @@
 #import "FrameView.h"
 #import "HostWindow.h"
 #import "ScreenProperties.h"
+#import <ColorSync/ColorSync.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/ProcessPrivilege.h>
-
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
-#import <ColorSync/ColorSync.h>
-#else
-#import <ApplicationServices/ApplicationServices.h>
-#endif
 
 extern "C" {
 bool CGDisplayUsesInvertedPolarity(void);

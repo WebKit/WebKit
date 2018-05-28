@@ -37,16 +37,19 @@
 #import <WebCore/SystemVersion.h>
 #import <mach/mach.h>
 #import <mach/task.h>
-#import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pwd.h>
 #import <stdlib.h>
 #import <sysexits.h>
 #import <wtf/Scope.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <HIServices/ProcessesPriv.h>
+#endif
+
 typedef bool (^LSServerConnectionAllowedBlock) ( CFDictionaryRef optionsRef );
 extern "C" void _LSSetApplicationLaunchServicesServerConnectionStatus(uint64_t flags, LSServerConnectionAllowedBlock block);
-extern "C" CFDictionaryRef _LSApplicationCheckIn(LSSessionID sessionID, CFDictionaryRef applicationInfo);
+extern "C" CFDictionaryRef _LSApplicationCheckIn(int sessionID, CFDictionaryRef applicationInfo);
 
 extern "C" OSStatus SetApplicationIsDaemon(Boolean isDaemon);
 
@@ -75,7 +78,7 @@ void ChildProcess::setApplicationIsDaemon()
 void ChildProcess::launchServicesCheckIn()
 {
     _LSSetApplicationLaunchServicesServerConnectionStatus(0, 0);
-    RetainPtr<CFDictionaryRef> unused = _LSApplicationCheckIn(kLSDefaultSessionID, CFBundleGetInfoDictionary(CFBundleGetMainBundle()));
+    RetainPtr<CFDictionaryRef> unused = _LSApplicationCheckIn(-2, CFBundleGetInfoDictionary(CFBundleGetMainBundle()));
 }
 
 void ChildProcess::platformInitialize()

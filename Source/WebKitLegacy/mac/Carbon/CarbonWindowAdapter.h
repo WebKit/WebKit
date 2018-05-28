@@ -28,7 +28,8 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <Carbon/Carbon.h>
+#import <HIToolbox/CarbonEvents.h>
+#import <HIToolbox/MacWindows.h>
 
 @interface CarbonWindowAdapter : NSWindow 
 {
