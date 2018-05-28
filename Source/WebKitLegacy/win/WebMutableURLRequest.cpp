@@ -356,7 +356,7 @@ HRESULT WebMutableURLRequest::setValue(_In_ BSTR value, _In_ BSTR field)
 
 HRESULT WebMutableURLRequest::setAllowsAnyHTTPSCertificate()
 {
-    ResourceHandle::setHostAllowsAnyHTTPSCertificate(m_request.url().host());
+    ResourceHandle::setHostAllowsAnyHTTPSCertificate(m_request.url().host().toString());
 
     return S_OK;
 }
@@ -368,7 +368,7 @@ HRESULT WebMutableURLRequest::setClientCertificate(ULONG_PTR cert)
 
     PCCERT_CONTEXT certContext = reinterpret_cast<PCCERT_CONTEXT>(cert);
     RetainPtr<CFDataRef> certData = WebCore::copyCertificateToData(certContext);
-    ResourceHandle::setClientCertificate(m_request.url().host(), certData.get());
+    ResourceHandle::setClientCertificate(m_request.url().host().toString(), certData.get());
     return S_OK;
 }
 

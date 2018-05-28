@@ -1,3 +1,18 @@
+2018-05-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r232198) [WinCairo] cannot convert from 'WTF::StringView' to 'const WTF::String'
+        https://bugs.webkit.org/show_bug.cgi?id=186027
+
+        Unreviewed build fix
+
+        No new tests (No behavior change).
+
+        * platform/network/curl/AuthenticationChallengeCurl.cpp:
+        (WebCore::AuthenticationChallenge::protectionSpaceFromHandle):
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::setupTransfer):
+        (WebCore::CurlRequest::willSetupSslCtx):
+
 2018-05-27  Sam Weinig  <sam@webkit.org>
 
         Modernize RenderStyleConstants.h - Part 3

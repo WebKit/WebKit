@@ -76,7 +76,7 @@ ProtectionSpace AuthenticationChallenge::protectionSpaceFromHandle(const CurlRes
         removeLeadingAndTrailingQuotes(realm);
     }
 
-    return ProtectionSpace(response.url().host(), static_cast<int>(port), protectionSpaceServerTypeFromURI(response.url()), realm, scheme);
+    return ProtectionSpace(response.url().host().toString(), static_cast<int>(port), protectionSpaceServerTypeFromURI(response.url()), realm, scheme);
 }
 
 void AuthenticationChallenge::removeLeadingAndTrailingQuotes(String& value)

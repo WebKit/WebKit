@@ -226,7 +226,7 @@ CURL* CurlRequest::setupTransfer()
     if (!cipherList.isEmpty())
         m_curlHandle->setSslCipherList(cipherList.utf8().data());
 
-    auto sslClientCertificate = sslHandle.getSSLClientCertificate(m_request.url().host());
+    auto sslClientCertificate = sslHandle.getSSLClientCertificate(m_request.url().host().toString());
     if (sslClientCertificate) {
         m_curlHandle->setSslCert(sslClientCertificate->first.utf8().data());
         m_curlHandle->setSslCertType("P12");
@@ -252,7 +252,7 @@ CURLcode CurlRequest::willSetupSslCtx(void* sslCtx)
         return CURLE_ABORTED_BY_CALLBACK;
 
     if (!m_sslVerifier)
-        m_sslVerifier = std::make_unique<CurlSSLVerifier>(m_curlHandle.get(), m_request.url().host(), sslCtx);
+        m_sslVerifier = std::make_unique<CurlSSLVerifier>(m_curlHandle.get(), m_request.url().host().toString(), sslCtx);
     return CURLE_OK;
 }
 
