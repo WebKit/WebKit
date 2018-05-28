@@ -3399,6 +3399,8 @@ webkit.org/b/185912 fast/canvas/webgl/index-validation-with-subsequent-draws.htm
 
 webkit.org/b/185913 fast/dom/HTMLAnchorElement/anchor-file-blob-download-then-revoke.html [ Failure ]
 
+webkit.org/b/186035 transitions/interrupted-transition-hardware.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
