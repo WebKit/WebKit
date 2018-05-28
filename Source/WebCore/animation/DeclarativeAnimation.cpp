@@ -123,7 +123,7 @@ void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
     auto* animationEffect = effect();
 
     auto isPending = pending();
-    auto iteration = animationEffect ? animationEffect->currentIteration().value() : 0;
+    auto iteration = animationEffect ? animationEffect->currentIteration().value_or(0) : 0;
     auto currentPhase = animationEffect ? animationEffect->phase() : phaseWithoutEffect();
 
     bool wasActive = m_previousPhase == AnimationEffectReadOnly::Phase::Active;

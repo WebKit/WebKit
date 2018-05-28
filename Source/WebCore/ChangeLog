@@ -1,3 +1,18 @@
+2018-05-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Web Animations] Test webanimations/css-animations.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=186031
+
+        Reviewed by Antoine Quint.
+
+        This is another case of std::optional value being used while it's nullopt, I guess this started to fail when we
+        stopped using the WTF implementation of std::optional. The problem is that we try to get the current iteration
+        of a declarative animation when the active time is unresolved.
+
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::invalidateDOMEvents): Use value_or(0) instead of value() to get the current
+        iteration of the effect.
+
 2018-05-28  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Handle changes in the "drm-preferred-decryption-system-id" NEED_CONTEXT message.
