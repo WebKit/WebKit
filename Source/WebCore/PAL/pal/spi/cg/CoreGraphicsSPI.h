@@ -47,6 +47,9 @@
 #include <ColorSync/ColorSyncPriv.h>
 #else
 #include <ApplicationServices/ApplicationServicesPriv.h>
+#ifdef confirm
+#undef confirm
+#endif
 #endif
 #endif
 #include <CoreGraphics/CGFontCache.h>

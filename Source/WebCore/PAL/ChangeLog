@@ -1,5 +1,11 @@
 2018-05-27  Dan Bernstein  <mitz@apple.com>
 
+        Tried to fix the pre-High Sierra USE(APPLE_INTERNAL_SDK) build
+
+        * pal/spi/cg/CoreGraphicsSPI.h: #undef confirm, which is defined by ApplicationServicesPriv.h.
+
+2018-05-27  Dan Bernstein  <mitz@apple.com>
+
         Tried to fix the 32-bit USE(APPLE_INTERNAL_SDK) build.
 
         * pal/spi/mac/QuickDrawSPI.h: Import ApplicationServicesPriv.h instead of QuickDrawPriv.h.
