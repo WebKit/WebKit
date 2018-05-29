@@ -1,3 +1,77 @@
+2018-05-29  Brendan McLoughlin  <brendan@bocoup.com>
+
+        Export changes to web-platform-test as part of the webkit-patch upload workflow
+        https://bugs.webkit.org/show_bug.cgi?id=184914
+
+        Reviewed by Youenn Fablet.
+
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (Upload):
+        (CreateBug.execute):
+        (WPTChangeExport):
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/wptchangeexport.py: Added.
+        (WPTChangeExport):
+        (WPTChangeExport.options):
+        (WPTChangeExport.run):
+        * Scripts/webkitpy/w3c/common.py:
+        * Scripts/webkitpy/w3c/test_exporter.py:
+        (WebPlatformTestExporter):
+        (WebPlatformTestExporter.__init__):
+        (WebPlatformTestExporter.username):
+        (WebPlatformTestExporter.token):
+        (WebPlatformTestExporter._github):
+        (WebPlatformTestExporter._wpt_fork_branch_github_url):
+        (WebPlatformTestExporter._wpt_fork_remote):
+        (WebPlatformTestExporter._wpt_fork_push_url):
+        (WebPlatformTestExporter._git):
+        (WebPlatformTestExporter._branch_name):
+        (WebPlatformTestExporter._public_branch_name):
+        (WebPlatformTestExporter._wpt_patch):
+        (WebPlatformTestExporter.has_wpt_changes):
+        (WebPlatformTestExporter._find_filename):
+        (WebPlatformTestExporter._is_ignored_file):
+        (WebPlatformTestExporter._strip_ignored_files_from_diff):
+        (WebPlatformTestExporter.write_git_patch_file):
+        (WebPlatformTestExporter._prompt_for_token):
+        (WebPlatformTestExporter._prompt_for_username):
+        (WebPlatformTestExporter._ensure_username_and_token):
+        (WebPlatformTestExporter._validate_and_save_token):
+        (WebPlatformTestExporter.create_branch_with_patch):
+        (WebPlatformTestExporter.push_to_wpt_fork):
+        (WebPlatformTestExporter.make_pull_request):
+        (WebPlatformTestExporter.delete_local_branch):
+        (WebPlatformTestExporter.create_upload_remote_if_needed):
+        (WebPlatformTestExporter.do_export):
+        (parse_args):
+        (TestExporter): Deleted.
+        (TestExporter.__init__): Deleted.
+        (TestExporter._ensure_wpt_repository): Deleted.
+        (TestExporter._fetch_wpt_repository): Deleted.
+        (TestExporter._ensure_new_branch_name): Deleted.
+        (TestExporter.download_and_commit_patch): Deleted.
+        (TestExporter.clean): Deleted.
+        (TestExporter.create_branch_with_patch): Deleted.
+        (TestExporter.push_to_wpt_fork): Deleted.
+        (TestExporter.make_pull_request): Deleted.
+        (TestExporter.create_wpt_pull_request): Deleted.
+        (TestExporter.delete_local_branch): Deleted.
+        (TestExporter.create_git_patch): Deleted.
+        (TestExporter.create_upload_remote): Deleted.
+        (TestExporter.do_export): Deleted.
+        * Scripts/webkitpy/w3c/test_exporter_unittest.py:
+        (TestExporterTest.MockGit):
+        (TestExporterTest.MockGit.create_patch):
+        (TestExporterTest.test_export):
+        (TestExporterTest.test_export_with_specific_branch):
+        (TestExporterTest):
+        (TestExporterTest.test_export_interactive_mode):
+        (TestExporterTest.test_export_invalid_token):
+        (TestExporterTest.test_export_wrong_token):
+        (TestExporterTest.test_has_wpt_changes):
+        (TestExporterTest.test_has_no_wpt_changes_for_no_diff):
+        (TestExporterTest.test_ignore_changes_to_expected_file):
+
 2018-05-29  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MiniBrowser] Move WK1 specific code from Common.cpp to MiniBrowser.cpp
