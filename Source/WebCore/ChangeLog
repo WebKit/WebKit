@@ -1,3 +1,18 @@
+2018-05-29  Chris Dumez  <cdumez@apple.com>
+
+        Avoid unnecessary String allocation in isPublicSuffix(const String&)
+        https://bugs.webkit.org/show_bug.cgi?id=186054
+
+        Reviewed by Sam Weinig.
+
+        Avoid unnecessary String allocation in isPublicSuffix(const String&) by calling directly
+        the decodeHostName() overload taking in a NSString*. This overload returns a NSString*,
+        which is what we need. We would previously call the overloading taking in a String, which
+        would return a String, which we would have to convert back to a NSString*.
+
+        * platform/mac/PublicSuffixMac.mm:
+        (WebCore::isPublicSuffix):
+
 2018-05-29  Alex Christensen  <achristensen@webkit.org>
 
         Do even fewer allocations in URL host operations
