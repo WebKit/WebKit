@@ -1,3 +1,31 @@
+2018-05-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [Baseline] Merge loading functionalities
+        https://bugs.webkit.org/show_bug.cgi?id=185907
+
+        Reviewed by Saam Barati.
+
+        This patch unifies emitXXXLoad functions in 32bit and 64bit.
+
+        * jit/JITInlines.h:
+        (JSC::JIT::emitDoubleGetByVal):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitDoubleLoad):
+        (JSC::JIT::emitContiguousLoad):
+        (JSC::JIT::emitArrayStorageLoad):
+        (JSC::JIT::emitIntTypedArrayGetByVal):
+        (JSC::JIT::emitFloatTypedArrayGetByVal):
+        Define register usage first, and share the same code in 32bit and 64bit.
+
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitSlow_op_put_by_val):
+        Now C-stack is always enabled in JIT platform and temporary registers increases from 5 to 6 in x86.
+        We can remove this special handling.
+
+        (JSC::JIT::emitContiguousLoad): Deleted.
+        (JSC::JIT::emitDoubleLoad): Deleted.
+        (JSC::JIT::emitArrayStorageLoad): Deleted.
+
 2018-05-29  Saam Barati  <sbarati@apple.com>
 
         JSC should put bmalloc's scavenger into mini mode

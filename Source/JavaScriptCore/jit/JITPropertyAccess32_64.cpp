@@ -184,48 +184,6 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeOffset, notIndex, badType, mode, profile, done, nextHotPath));
 }
 
-JIT::JumpList JIT::emitContiguousLoad(Instruction*, PatchableJump& badType, IndexingType expectedShape)
-{
-    JumpList slowCases;
-    
-    badType = patchableBranch32(NotEqual, regT1, TrustedImm32(expectedShape));
-    loadPtr(Address(regT0, JSObject::butterflyOffset()), regT3);
-    slowCases.append(branch32(AboveOrEqual, regT2, Address(regT3, Butterfly::offsetOfPublicLength())));
-    load32(BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1); // tag
-    load32(BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0); // payload
-    slowCases.append(branchIfEmpty(regT1));
-    
-    return slowCases;
-}
-
-JIT::JumpList JIT::emitDoubleLoad(Instruction*, PatchableJump& badType)
-{
-    JumpList slowCases;
-    
-    badType = patchableBranch32(NotEqual, regT1, TrustedImm32(DoubleShape));
-    loadPtr(Address(regT0, JSObject::butterflyOffset()), regT3);
-    slowCases.append(branch32(AboveOrEqual, regT2, Address(regT3, Butterfly::offsetOfPublicLength())));
-    loadDouble(BaseIndex(regT3, regT2, TimesEight), fpRegT0);
-    slowCases.append(branchDouble(DoubleNotEqualOrUnordered, fpRegT0, fpRegT0));
-    
-    return slowCases;
-}
-
-JIT::JumpList JIT::emitArrayStorageLoad(Instruction*, PatchableJump& badType)
-{
-    JumpList slowCases;
-    
-    add32(TrustedImm32(-ArrayStorageShape), regT1, regT3);
-    badType = patchableBranch32(Above, regT3, TrustedImm32(SlowPutArrayStorageShape - ArrayStorageShape));
-    loadPtr(Address(regT0, JSObject::butterflyOffset()), regT3);
-    slowCases.append(branch32(AboveOrEqual, regT2, Address(regT3, ArrayStorage::vectorLengthOffset())));
-    load32(BaseIndex(regT3, regT2, TimesEight, ArrayStorage::vectorOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1); // tag
-    load32(BaseIndex(regT3, regT2, TimesEight, ArrayStorage::vectorOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0); // payload
-    slowCases.append(branchIfEmpty(regT1));
-    
-    return slowCases;
-}
-
 JITGetByIdGenerator JIT::emitGetByValWithCachedId(ByValInfo* byValInfo, Instruction* currentInstruction, const Identifier& propertyName, Jump& fastDoneCase, Jump& slowDoneCase, JumpList& slowCases)
 {
     int dst = currentInstruction[1].u.operand;
@@ -499,31 +457,12 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
     
     bool isDirect = Interpreter::getOpcodeID(currentInstruction->u.opcode) == op_put_by_val_direct;
 
-#if CPU(X86)
-    // FIXME: We only have 5 temp registers, but need 6 to make this call, therefore we materialize
-    // our own call. When we finish moving JSC to the C call stack, we'll get another register so
-    // we can use the normal case.
-    unsigned pokeOffset = 0;
-    poke(GPRInfo::callFrameRegister, pokeOffset++);
-    emitLoad(base, regT0, regT1);
-    poke(regT1, pokeOffset++);
-    poke(regT0, pokeOffset++);
-    emitLoad(property, regT0, regT1);
-    poke(regT1, pokeOffset++);
-    poke(regT0, pokeOffset++);
-    emitLoad(value, regT0, regT1);
-    poke(regT1, pokeOffset++);
-    poke(regT0, pokeOffset++);
-    poke(TrustedImmPtr(byValInfo), pokeOffset++);
-    Call call = appendCallWithExceptionCheck(isDirect ? operationDirectPutByValOptimize : operationPutByValOptimize);
-#else
     // The register selection below is chosen to reduce register swapping on ARM.
     // Swapping shouldn't happen on other platforms.
     emitLoad(base, regT2, regT1);
     emitLoad(property, regT3, regT0);
     emitLoad(value, regT5, regT4);
     Call call = callOperation(isDirect ? operationDirectPutByValOptimize : operationPutByValOptimize, JSValueRegs(regT2, regT1), JSValueRegs(regT3, regT0), JSValueRegs(regT5, regT4), byValInfo);
-#endif
 
     m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
     m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;

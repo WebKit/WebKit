@@ -31,22 +31,17 @@
 
 namespace JSC {
 
+inline MacroAssembler::JumpList JIT::emitDoubleGetByVal(Instruction* instruction, PatchableJump& badType)
+{
 #if USE(JSVALUE64)
-inline MacroAssembler::JumpList JIT::emitDoubleGetByVal(Instruction* instruction, PatchableJump& badType)
-{
-    JumpList slowCases = emitDoubleLoad(instruction, badType);
-    moveDoubleTo64(fpRegT0, regT0);
-    sub64(tagTypeNumberRegister, regT0);
-    return slowCases;
-}
+    JSValueRegs result = JSValueRegs(regT0);
 #else
-inline MacroAssembler::JumpList JIT::emitDoubleGetByVal(Instruction* instruction, PatchableJump& badType)
-{
+    JSValueRegs result = JSValueRegs(regT1, regT0);
+#endif
     JumpList slowCases = emitDoubleLoad(instruction, badType);
-    moveDoubleToInts(fpRegT0, regT0, regT1);
+    boxDouble(fpRegT0, result);
     return slowCases;
 }
-#endif // USE(JSVALUE64)
 
 ALWAYS_INLINE MacroAssembler::JumpList JIT::emitLoadForArrayMode(Instruction* currentInstruction, JITArrayMode arrayMode, PatchableJump& badType)
 {

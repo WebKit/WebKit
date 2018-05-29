@@ -125,48 +125,6 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeOffset, notIndex, badType, mode, profile, done, nextHotPath));
 }
 
-JIT::JumpList JIT::emitDoubleLoad(Instruction*, PatchableJump& badType)
-{
-    JumpList slowCases;
-    
-    badType = patchableBranch32(NotEqual, regT2, TrustedImm32(DoubleShape));
-    loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
-    slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength())));
-    loadDouble(BaseIndex(regT2, regT1, TimesEight), fpRegT0);
-    slowCases.append(branchDouble(DoubleNotEqualOrUnordered, fpRegT0, fpRegT0));
-    
-    return slowCases;
-}
-
-JIT::JumpList JIT::emitContiguousLoad(Instruction*, PatchableJump& badType, IndexingType expectedShape)
-{
-    JumpList slowCases;
-    
-    badType = patchableBranch32(NotEqual, regT2, TrustedImm32(expectedShape));
-    loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
-    slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength())));
-    load64(BaseIndex(regT2, regT1, TimesEight), regT0);
-    slowCases.append(branchTest64(Zero, regT0));
-    
-    return slowCases;
-}
-
-JIT::JumpList JIT::emitArrayStorageLoad(Instruction*, PatchableJump& badType)
-{
-    JumpList slowCases;
-
-    add32(TrustedImm32(-ArrayStorageShape), regT2, regT3);
-    badType = patchableBranch32(Above, regT3, TrustedImm32(SlowPutArrayStorageShape - ArrayStorageShape));
-
-    loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
-    slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, ArrayStorage::vectorLengthOffset())));
-
-    load64(BaseIndex(regT2, regT1, TimesEight, ArrayStorage::vectorOffset()), regT0);
-    slowCases.append(branchTest64(Zero, regT0));
-    
-    return slowCases;
-}
-
 JITGetByIdGenerator JIT::emitGetByValWithCachedId(ByValInfo* byValInfo, Instruction* currentInstruction, const Identifier& propertyName, Jump& fastDoneCase, Jump& slowDoneCase, JumpList& slowCases)
 {
     // base: regT0
@@ -1119,9 +1077,6 @@ void JIT::emit_op_put_to_arguments(Instruction* currentInstruction)
     emitWriteBarrier(arguments, value, ShouldFilterValue);
 }
 
-#endif // USE(JSVALUE64)
-
-#if USE(JSVALUE64)
 void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode)
 {
     Jump valueNotCell;
@@ -1392,6 +1347,87 @@ void JIT::privateCompilePutByValWithCachedId(ByValInfo* byValInfo, ReturnAddress
     MacroAssembler::repatchCall(CodeLocationCall<NoPtrTag>(MacroAssemblerCodePtr<NoPtrTag>(returnAddress)), FunctionPtr<OperationPtrTag>(putKind == Direct ? operationDirectPutByValGeneric : operationPutByValGeneric));
 }
 
+JIT::JumpList JIT::emitDoubleLoad(Instruction*, PatchableJump& badType)
+{
+#if USE(JSVALUE64)
+    RegisterID base = regT0;
+    RegisterID property = regT1;
+    RegisterID indexing = regT2;
+    RegisterID scratch = regT3;
+#else
+    RegisterID base = regT0;
+    RegisterID property = regT2;
+    RegisterID indexing = regT1;
+    RegisterID scratch = regT3;
+#endif
+
+    JumpList slowCases;
+
+    badType = patchableBranch32(NotEqual, indexing, TrustedImm32(DoubleShape));
+    loadPtr(Address(base, JSObject::butterflyOffset()), scratch);
+    slowCases.append(branch32(AboveOrEqual, property, Address(scratch, Butterfly::offsetOfPublicLength())));
+    loadDouble(BaseIndex(scratch, property, TimesEight), fpRegT0);
+    slowCases.append(branchDouble(DoubleNotEqualOrUnordered, fpRegT0, fpRegT0));
+
+    return slowCases;
+}
+
+JIT::JumpList JIT::emitContiguousLoad(Instruction*, PatchableJump& badType, IndexingType expectedShape)
+{
+#if USE(JSVALUE64)
+    RegisterID base = regT0;
+    RegisterID property = regT1;
+    RegisterID indexing = regT2;
+    JSValueRegs result = JSValueRegs(regT0);
+    RegisterID scratch = regT3;
+#else
+    RegisterID base = regT0;
+    RegisterID property = regT2;
+    RegisterID indexing = regT1;
+    JSValueRegs result = JSValueRegs(regT1, regT0);
+    RegisterID scratch = regT3;
+#endif
+
+    JumpList slowCases;
+
+    badType = patchableBranch32(NotEqual, indexing, TrustedImm32(expectedShape));
+    loadPtr(Address(base, JSObject::butterflyOffset()), scratch);
+    slowCases.append(branch32(AboveOrEqual, property, Address(scratch, Butterfly::offsetOfPublicLength())));
+    loadValue(BaseIndex(scratch, property, TimesEight), result);
+    slowCases.append(branchIfEmpty(result));
+
+    return slowCases;
+}
+
+JIT::JumpList JIT::emitArrayStorageLoad(Instruction*, PatchableJump& badType)
+{
+#if USE(JSVALUE64)
+    RegisterID base = regT0;
+    RegisterID property = regT1;
+    RegisterID indexing = regT2;
+    JSValueRegs result = JSValueRegs(regT0);
+    RegisterID scratch = regT3;
+#else
+    RegisterID base = regT0;
+    RegisterID property = regT2;
+    RegisterID indexing = regT1;
+    JSValueRegs result = JSValueRegs(regT1, regT0);
+    RegisterID scratch = regT3;
+#endif
+
+    JumpList slowCases;
+
+    add32(TrustedImm32(-ArrayStorageShape), indexing, scratch);
+    badType = patchableBranch32(Above, scratch, TrustedImm32(SlowPutArrayStorageShape - ArrayStorageShape));
+
+    loadPtr(Address(base, JSObject::butterflyOffset()), scratch);
+    slowCases.append(branch32(AboveOrEqual, property, Address(scratch, ArrayStorage::vectorLengthOffset())));
+
+    loadValue(BaseIndex(scratch, property, TimesEight, ArrayStorage::vectorOffset()), result);
+    slowCases.append(branchIfEmpty(result));
+
+    return slowCases;
+}
 
 JIT::JumpList JIT::emitDirectArgumentsGetByVal(Instruction*, PatchableJump& badType)
 {
@@ -1484,17 +1520,17 @@ JIT::JumpList JIT::emitIntTypedArrayGetByVal(Instruction*, PatchableJump& badTyp
 #if USE(JSVALUE64)
     RegisterID base = regT0;
     RegisterID property = regT1;
-    RegisterID resultPayload = regT0;
+    JSValueRegs result = JSValueRegs(regT0);
     RegisterID scratch = regT3;
     RegisterID scratch2 = regT4;
 #else
     RegisterID base = regT0;
     RegisterID property = regT2;
-    RegisterID resultPayload = regT0;
-    RegisterID resultTag = regT1;
+    JSValueRegs result = JSValueRegs(regT1, regT0);
     RegisterID scratch = regT3;
     RegisterID scratch2 = regT4;
 #endif
+    RegisterID resultPayload = result.payloadGPR();
     
     JumpList slowCases;
     
@@ -1530,22 +1566,12 @@ JIT::JumpList JIT::emitIntTypedArrayGetByVal(Instruction*, PatchableJump& badTyp
         
         convertInt32ToDouble(resultPayload, fpRegT0);
         addDouble(AbsoluteAddress(&twoToThe32), fpRegT0);
-#if USE(JSVALUE64)
-        moveDoubleTo64(fpRegT0, resultPayload);
-        sub64(tagTypeNumberRegister, resultPayload);
-#else
-        moveDoubleToInts(fpRegT0, resultPayload, resultTag);
-#endif
-        
+        boxDouble(fpRegT0, result);
         done = jump();
         canBeInt.link(this);
     }
 
-#if USE(JSVALUE64)
-    or64(tagTypeNumberRegister, resultPayload);
-#else
-    move(TrustedImm32(JSValue::Int32Tag), resultTag);
-#endif
+    boxInt32(resultPayload, result);
     if (done.isSet())
         done.link(this);
     return slowCases;
@@ -1558,14 +1584,13 @@ JIT::JumpList JIT::emitFloatTypedArrayGetByVal(Instruction*, PatchableJump& badT
 #if USE(JSVALUE64)
     RegisterID base = regT0;
     RegisterID property = regT1;
-    RegisterID resultPayload = regT0;
+    JSValueRegs result = JSValueRegs(regT0);
     RegisterID scratch = regT3;
     RegisterID scratch2 = regT4;
 #else
     RegisterID base = regT0;
     RegisterID property = regT2;
-    RegisterID resultPayload = regT0;
-    RegisterID resultTag = regT1;
+    JSValueRegs result = JSValueRegs(regT1, regT0);
     RegisterID scratch = regT3;
     RegisterID scratch2 = regT4;
 #endif
@@ -1596,12 +1621,7 @@ JIT::JumpList JIT::emitFloatTypedArrayGetByVal(Instruction*, PatchableJump& badT
     loadDouble(TrustedImmPtr(&NaN), fpRegT0);
     notNaN.link(this);
     
-#if USE(JSVALUE64)
-    moveDoubleTo64(fpRegT0, resultPayload);
-    sub64(tagTypeNumberRegister, resultPayload);
-#else
-    moveDoubleToInts(fpRegT0, resultPayload, resultTag);
-#endif
+    boxDouble(fpRegT0, result);
     return slowCases;    
 }
 
