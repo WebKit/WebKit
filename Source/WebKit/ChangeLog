@@ -1,3 +1,32 @@
+2018-05-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Tighten sandbox profiles for Networking Processes to restrict accesses to macOS/iOS Keychains
+        https://bugs.webkit.org/show_bug.cgi?id=162948
+        <rdar://problem/40558894>
+
+        Reviewed by Brent Fulgham.
+
+        The patch conditionally tighten sandbox profiles for Networking Processes to remove Keychain related
+        permissions and some security permisssions that are not needed. Also it conditionally remove the
+        Process Privilege for Networking Processes to access Credentials.
+
+        In addition, it remove process privilege assertions for SecItemShim as it is supposed to work in processes
+        that don't have privileges to access Keychains and delegate all operations to UI Process via IPC. Also,
+        the patch disables SecItemShim for Networking Process conditionally.
+
+        * Configurations/Network-iOS.entitlements:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::sendSecItemRequest):
+        (WebKit::webSecItemCopyMatching):
+        (WebKit::webSecItemAdd):
+        (WebKit::webSecItemUpdate):
+        (WebKit::webSecItemDelete):
+        (WebKit::initializeSecItemShim):
+
 2018-05-29  Chris Dumez  <cdumez@apple.com>
 
         Store 0-lifetime stylesheets / scripts into the disk cache for faster history navigations

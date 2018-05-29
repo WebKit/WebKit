@@ -84,7 +84,7 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
 
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
-#if ENABLE(SEC_ITEM_SHIM)
+#if ENABLE(SEC_ITEM_SHIM) && !HAVE(SEC_KEY_PROXY)
     initializeSecItemShim(*this);
 #endif
     platformInitializeNetworkProcessCocoa(parameters);

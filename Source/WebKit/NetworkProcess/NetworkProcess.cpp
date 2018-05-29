@@ -217,7 +217,11 @@ void NetworkProcess::lowMemoryHandler(Critical critical)
 
 void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&& parameters)
 {
+#if HAVE(SEC_KEY_PROXY)
+    WTF::setProcessPrivileges({ ProcessPrivilege::CanAccessRawCookies });
+#else
     WTF::setProcessPrivileges({ ProcessPrivilege::CanAccessRawCookies, ProcessPrivilege::CanAccessCredentials });
+#endif
     WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
     WebCore::setPresentingApplicationPID(parameters.presentingApplicationPID);
     platformInitializeNetworkProcess(parameters);

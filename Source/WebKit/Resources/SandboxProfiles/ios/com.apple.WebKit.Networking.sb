@@ -74,9 +74,11 @@
 
 ;; Security framework
 (allow mach-lookup
+#if !HAVE(SEC_KEY_PROXY)
+    (global-name "com.apple.accountsd.accountmanager")
+#endif
     (global-name "com.apple.ocspd")
-    (global-name "com.apple.securityd")
-    (global-name "com.apple.accountsd.accountmanager"))
+    (global-name "com.apple.securityd"))
 
 (deny file-write-create
        (vnode-type SYMLINK))

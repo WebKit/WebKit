@@ -104,7 +104,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 {
     platformInitializeNetworkProcessCocoa(parameters);
 
-#if ENABLE(SEC_ITEM_SHIM)
+#if ENABLE(SEC_ITEM_SHIM) && !HAVE(SEC_KEY_PROXY)
     initializeSecItemShim(*this);
 #endif
 
