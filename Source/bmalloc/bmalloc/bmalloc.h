@@ -121,5 +121,7 @@ inline double percentAvailableMemoryInUse()
 BEXPORT void setScavengerThreadQOSClass(qos_class_t overrideClass);
 #endif
 
+BEXPORT void enableMiniMode();
+
 } // namespace api
 } // namespace bmalloc

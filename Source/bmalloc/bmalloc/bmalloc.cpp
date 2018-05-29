@@ -116,5 +116,10 @@ void decommitAlignedPhysical(void* object, size_t size, HeapKind kind)
     heap.externalDecommit(object, size);
 }
 
+void enableMiniMode()
+{
+    PerProcess<Scavenger>::get()->enableMiniMode();
+}
+
 } } // namespace bmalloc::api
 

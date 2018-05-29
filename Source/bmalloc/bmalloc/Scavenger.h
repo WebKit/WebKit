@@ -72,6 +72,8 @@ public:
     // It's unlikely, but possible.
     size_t footprint();
 
+    void enableMiniMode();
+
 private:
     enum class State { Sleep, Run, RunSoon };
     
@@ -108,6 +110,8 @@ private:
 #endif
     
     Vector<DeferredDecommit> m_deferredDecommits;
+
+    bool m_isInMiniMode { false };
 };
 
 } // namespace bmalloc

@@ -250,6 +250,8 @@ void fastDecommitAlignedMemory(void* ptr, size_t size)
     OSAllocator::decommit(ptr, size);
 }
 
+void fastEnableMiniMode() { }
+
 } // namespace WTF
 
 #else // defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
@@ -381,6 +383,11 @@ void fastCommitAlignedMemory(void* ptr, size_t size)
 void fastDecommitAlignedMemory(void* ptr, size_t size)
 {
     bmalloc::api::decommitAlignedPhysical(ptr, size);
+}
+
+void fastEnableMiniMode()
+{
+    bmalloc::api::enableMiniMode();
 }
 
 } // namespace WTF

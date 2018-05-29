@@ -1,3 +1,18 @@
+2018-05-29  Saam Barati  <sbarati@apple.com>
+
+        JSC should put bmalloc's scavenger into mini mode
+        https://bugs.webkit.org/show_bug.cgi?id=185988
+
+        Reviewed by Michael Saboff.
+
+        When we InitializeThreading, we'll now enable bmalloc's mini mode
+        if the VM is in mini mode. This is an 8-10% progression on the footprint
+        at end score in run-testmem, making it a 4-5% memory score progression.
+        It's between a 0-1% regression in its time score.
+
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+
 2018-05-29  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] Fix Array.prototype.concat fast case when single argument is Proxy

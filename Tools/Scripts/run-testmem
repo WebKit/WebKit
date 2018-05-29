@@ -133,7 +133,12 @@ end
 
 def runTest(path, iters)
     command = "#{getTestmemPath} #{path} #{iters}"
-    stdout, stderr, exitCode = Open3.capture3({"DYLD_FRAMEWORK_PATH" => getBuildDirectory}, command)
+    environment = {
+        "DYLD_FRAMEWORK_PATH" => getBuildDirectory,
+        "JSC_useJIT" => "false",
+        "JSC_useRegExpJIT" => "false",
+    }
+    stdout, stderr, exitCode = Open3.capture3(environment, command)
 
     if $verbose
         puts stdout

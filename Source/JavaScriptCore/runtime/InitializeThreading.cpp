@@ -81,6 +81,9 @@ void initializeThreading()
 #if ENABLE(WEBASSEMBLY)
         Wasm::Thunks::initialize();
 #endif
+
+        if (VM::isInMiniMode())
+            WTF::fastEnableMiniMode();
     });
 }
 
