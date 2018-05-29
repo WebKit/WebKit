@@ -1,5 +1,12 @@
 2018-05-28  Zalan Bujtas  <zalan@apple.com>
 
+        Unreviewed build fix.
+
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::Rect::operator LayoutRect const):
+
+2018-05-28  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Add Rect interface to Display::Box
         https://bugs.webkit.org/show_bug.cgi?id=186019
 

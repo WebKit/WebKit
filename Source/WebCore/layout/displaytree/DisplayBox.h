@@ -82,6 +82,8 @@ public:
 
         void expand(LayoutUnit, LayoutUnit);
 
+        operator LayoutRect() const { return m_rect; }
+
     private:
 #if !ASSERT_DISABLED
         void invalidateTop() { m_hasValidTop = false; }
