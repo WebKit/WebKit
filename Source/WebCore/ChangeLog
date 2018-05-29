@@ -1,3 +1,17 @@
+2018-05-29  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Update "qtdemux: Clarify field name about stream-encryption-system" patch
+        https://bugs.webkit.org/show_bug.cgi?id=186040
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        s/avalaible-stream-encryption-systems/available-stream-encryption-systems/g
+
+        Tests: imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-*
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::extractEventsAndSystemsFromMessage):
+
 2018-05-28  Zalan Bujtas  <zalan@apple.com>
 
         Unreviewed build fix.

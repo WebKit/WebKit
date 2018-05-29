@@ -311,7 +311,7 @@ static std::pair<Vector<GRefPtr<GstEvent>>, Vector<String>> extractEventsAndSyst
         streamEncryptionEventsVector.append(GRefPtr<GstEvent>(static_cast<GstEvent*>(g_value_get_boxed(gst_value_list_get_value(streamEncryptionEventsList, i)))));
 
     Vector<String> streamEncryptionAllowedSystemsVector;
-    const GValue* streamEncryptionAllowedSystemsValue = gst_structure_get_value(structure, "avalaible-stream-encryption-systems");
+    const GValue* streamEncryptionAllowedSystemsValue = gst_structure_get_value(structure, "available-stream-encryption-systems");
     const char** streamEncryptionAllowedSystems = reinterpret_cast<const char**>(g_value_get_boxed(streamEncryptionAllowedSystemsValue));
     if (streamEncryptionAllowedSystems) {
         for (i = 0; streamEncryptionAllowedSystems[i]; ++i)

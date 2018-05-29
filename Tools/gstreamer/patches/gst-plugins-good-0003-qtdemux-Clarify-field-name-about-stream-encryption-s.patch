@@ -1,13 +1,12 @@
-From 3de36f28377398e07ad8b90366db9b6b7544c09a Mon Sep 17 00:00:00 2001
+From 0fbde2a07928ba79b7a4ddb4585f6b1de36a74bb Mon Sep 17 00:00:00 2001
 From: Thibault Saunier <tsaunier@igalia.com>
 Date: Fri, 25 May 2018 12:28:04 +0200
-Subject: [PATCH 3/3] qtdemux: Clarify field name about
- stream-encryption-system
+Subject: [PATCH] qtdemux: Clarify field name about stream-encryption-system
 
-This field is actually only informatory but the user can potentially
+This field is actually only informatory and the user can potentially
 choose something else. EME tests in WebKit testsuite actually doesn't
 take it into and force another encryption system to be used, and expects
-to be given the occasion to be so.
+to be given the occasion to do so.
 
 This basically also reverts 3e063703b3a51b8aaa7f75f36c4660c583a60e93.
 ---
@@ -15,10 +14,10 @@ This basically also reverts 3e063703b3a51b8aaa7f75f36c4660c583a60e93.
  1 file changed, 5 insertions(+), 8 deletions(-)
 
 diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
-index 4116f4c69..a7ef6e634 100644
+index bd3a00ccf..515687353 100644
 --- a/gst/isomp4/qtdemux.c
 +++ b/gst/isomp4/qtdemux.c
-@@ -8059,12 +8059,6 @@ gst_qtdemux_request_protection_context (GstQTDemux * qtdemux,
+@@ -8096,12 +8096,6 @@ gst_qtdemux_request_protection_context (GstQTDemux * qtdemux,
    filtered_sys_ids = gst_protection_filter_systems_by_available_decryptors (
        (const gchar **) qtdemux->protection_system_ids->pdata);
  
@@ -31,22 +30,22 @@ index 4116f4c69..a7ef6e634 100644
    g_ptr_array_remove_index (qtdemux->protection_system_ids,
        qtdemux->protection_system_ids->len - 1);
    GST_TRACE_OBJECT (qtdemux, "detected %u protection systems, we have "
-@@ -8096,7 +8090,8 @@ gst_qtdemux_request_protection_context (GstQTDemux * qtdemux,
+@@ -8133,7 +8127,8 @@ gst_qtdemux_request_protection_context (GstQTDemux * qtdemux,
    query = gst_query_new_context ("drm-preferred-decryption-system-id");
    st = gst_query_writable_structure (query);
    gst_structure_set (st, "track-id", G_TYPE_UINT, stream->track_id,
 -      "stream-encryption-systems", G_TYPE_STRV, filtered_sys_ids, NULL);
-+      "avalaible-stream-encryption-systems", G_TYPE_STRV, filtered_sys_ids,
++      "available-stream-encryption-systems", G_TYPE_STRV, filtered_sys_ids,
 +      NULL);
    gst_structure_set_value (st, "stream-encryption-events", &event_list);
    if (gst_qtdemux_run_query (element, query, GST_PAD_SRC)) {
      gst_query_parse_context (query, &ctxt);
-@@ -8120,7 +8115,9 @@ gst_qtdemux_request_protection_context (GstQTDemux * qtdemux,
+@@ -8157,7 +8152,9 @@ gst_qtdemux_request_protection_context (GstQTDemux * qtdemux,
          "drm-preferred-decryption-system-id");
      st = (GstStructure *) gst_message_get_structure (msg);
      gst_structure_set (st, "track-id", G_TYPE_UINT, stream->track_id,
 -        "stream-encryption-systems", G_TYPE_STRV, filtered_sys_ids, NULL);
-+        "avalaible-stream-encryption-systems", G_TYPE_STRV, filtered_sys_ids,
++        "available-stream-encryption-systems", G_TYPE_STRV, filtered_sys_ids,
 +        NULL);
 +
      gst_structure_set_value (st, "stream-encryption-events", &event_list);

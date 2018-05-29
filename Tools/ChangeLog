@@ -1,3 +1,15 @@
+2018-05-29  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Update "qtdemux: Clarify field name about stream-encryption-system" patch
+        https://bugs.webkit.org/show_bug.cgi?id=186040
+
+        The patch we merge contained a type and was merged in upstream GStreamer fixing that
+        (s/avalaible/available/).
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * gstreamer/patches/gst-plugins-good-0003-qtdemux-Clarify-field-name-about-stream-encryption-s.patch:
+
 2018-05-28  Sihui Liu  <sihui_liu@apple.com>
 
         Add an API test to check process privilege when using Cookie API
