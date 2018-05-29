@@ -1,3 +1,19 @@
+2018-05-29  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement support for "<" and ">" relational operation
+        https://bugs.webkit.org/show_bug.cgi?id=185379
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/big-int-greater-than-general.js: Added.
+        * stress/big-int-greater-than-jit.js: Added.
+        * stress/big-int-greater-than-order-of-evaluation.js: Added.
+        * stress/big-int-greater-than-wrapped-values.js: Added.
+        * stress/big-int-less-than-general.js: Added.
+        * stress/big-int-less-than-jit.js: Added.
+        * stress/big-int-less-than-order-of-evaluation.js: Added.
+        * stress/big-int-less-than-wrapped-values.js: Added.
+
 2018-05-29  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] Fix Array.prototype.concat fast case when single argument is Proxy

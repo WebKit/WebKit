@@ -157,6 +157,69 @@ ALWAYS_INLINE JSValue jsStringFromArguments(ExecState* exec, JSValue thisValue)
     return ropeBuilder.release();
 }
 
+ALWAYS_INLINE bool bigIntCompareLess(CallFrame* callFrame, JSValue v1, JSValue v2)
+{
+    ASSERT(v1.isBigInt() || v2.isBigInt());
+    ASSERT(v1.isPrimitive() && v2.isPrimitive());
+
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    
+    if (v1.isBigInt() && v2.isBigInt())
+        return JSBigInt::compare(asBigInt(v1), asBigInt(v2)) == JSBigInt::ComparisonResult::LessThan;
+    
+    if (v1.isBigInt()) {
+        JSValue primValue = v2;
+        if (primValue.isString()) {
+            JSBigInt* bigIntValue = JSBigInt::stringToBigInt(callFrame, asString(primValue)->value(callFrame));
+            RETURN_IF_EXCEPTION(scope, false);
+            if (!bigIntValue)
+                return false;
+
+            return JSBigInt::compare(asBigInt(v1), bigIntValue) == JSBigInt::ComparisonResult::LessThan;
+        }
+
+        if (primValue.isBigInt())
+            return JSBigInt::compare(asBigInt(v1), asBigInt(primValue)) == JSBigInt::ComparisonResult::LessThan;
+
+        double numberValue = primValue.toNumber(callFrame);
+        RETURN_IF_EXCEPTION(scope, false);
+        return JSBigInt::compareToDouble(asBigInt(v1), numberValue) == JSBigInt::ComparisonResult::LessThan;
+    }
+    
+    JSValue primValue = v1;
+    if (primValue.isString()) {
+        JSBigInt* bigIntValue = JSBigInt::stringToBigInt(callFrame, asString(primValue)->value(callFrame));
+        RETURN_IF_EXCEPTION(scope, false);
+        if (!bigIntValue)
+            return false;
+
+        return JSBigInt::compare(bigIntValue, asBigInt(v2)) == JSBigInt::ComparisonResult::LessThan;
+    }
+    
+    if (primValue.isBigInt())
+        return JSBigInt::compare(asBigInt(primValue), asBigInt(v2)) == JSBigInt::ComparisonResult::LessThan;
+    
+    double numberValue = primValue.toNumber(callFrame);
+    RETURN_IF_EXCEPTION(scope, false);
+    return JSBigInt::compareToDouble(asBigInt(v2), numberValue) == JSBigInt::ComparisonResult::GreaterThan;
+}
+
+ALWAYS_INLINE bool toPrimitiveNumeric(CallFrame* callFrame, JSValue v, JSValue& p, double& n)
+{
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    
+    p = v.toPrimitive(callFrame, PreferNumber);
+    RETURN_IF_EXCEPTION(scope, false);
+    if (p.isBigInt())
+        return true;
+    
+    n = p.toNumber(callFrame);
+    RETURN_IF_EXCEPTION(scope, false);
+    return !p.isString();
+}
+
 // See ES5 11.8.1/11.8.2/11.8.5 for definition of leftFirst, this value ensures correct
 // evaluation ordering for argument conversions for '<' and '>'. For '<' pass the value
 // true, for leftFirst, for '>' pass the value false (and reverse operand order).
@@ -182,18 +245,24 @@ ALWAYS_INLINE bool jsLess(CallFrame* callFrame, JSValue v1, JSValue v2)
     bool wasNotString1;
     bool wasNotString2;
     if (leftFirst) {
-        wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
+        wasNotString1 = toPrimitiveNumeric(callFrame, v1, p1, n1);
         RETURN_IF_EXCEPTION(scope, false);
-        wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+        wasNotString2 = toPrimitiveNumeric(callFrame, v2, p2, n2);
     } else {
-        wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+        wasNotString2 = toPrimitiveNumeric(callFrame, v2, p2, n2);
         RETURN_IF_EXCEPTION(scope, false);
-        wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
+        wasNotString1 = toPrimitiveNumeric(callFrame, v1, p1, n1);
     }
     RETURN_IF_EXCEPTION(scope, false);
 
-    if (wasNotString1 | wasNotString2)
+    if (wasNotString1 | wasNotString2) {
+        if (p1.isBigInt() || p2.isBigInt()) {
+            scope.release();
+            return bigIntCompareLess(callFrame, p1, p2);
+        }
+
         return n1 < n2;
+    }
     return codePointCompareLessThan(asString(p1)->value(callFrame), asString(p2)->value(callFrame));
 }
 

@@ -585,10 +585,26 @@ bool JSBigInt::equals(JSBigInt* x, JSBigInt* y)
     return true;
 }
 
+JSBigInt::ComparisonResult JSBigInt::compare(JSBigInt* x, JSBigInt* y)
+{
+    bool xSign = x->sign();
+
+    if (xSign != y->sign())
+        return xSign ? ComparisonResult::LessThan : ComparisonResult::GreaterThan;
+
+    ComparisonResult result = absoluteCompare(x, y);
+    if (result == ComparisonResult::GreaterThan)
+        return xSign ? ComparisonResult::LessThan : ComparisonResult::GreaterThan;
+    if (result == ComparisonResult::LessThan)
+        return xSign ? ComparisonResult::GreaterThan : ComparisonResult::LessThan;
+
+    return ComparisonResult::Equal; 
+}
+
 inline JSBigInt::ComparisonResult JSBigInt::absoluteCompare(JSBigInt* x, JSBigInt* y)
 {
-    ASSERT(!x->length() || x->digit(0));
-    ASSERT(!y->length() || y->digit(0));
+    ASSERT(!x->length() || x->digit(x->length() - 1));
+    ASSERT(!y->length() || y->digit(y->length() - 1));
 
     int diff = x->length() - y->length();
     if (diff)

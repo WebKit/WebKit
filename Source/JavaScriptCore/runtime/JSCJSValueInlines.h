@@ -592,7 +592,7 @@ inline bool JSValue::isSymbol() const
 
 inline bool JSValue::isPrimitive() const
 {
-    return !isCell() || asCell()->isString() || asCell()->isSymbol();
+    return !isCell() || asCell()->isString() || asCell()->isSymbol() || asCell()->isBigInt();
 }
 
 inline bool JSValue::isGetterSetter() const

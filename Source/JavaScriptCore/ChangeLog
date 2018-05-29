@@ -1,3 +1,32 @@
+2018-05-29  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement support for "<" and ">" relational operation
+        https://bugs.webkit.org/show_bug.cgi?id=185379
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is changing the ``jsLess``` operation to follow the
+        semantics of Abstract Relational Comparison[1] that supports BigInt.
+        For that, we create 2 new helper functions ```bigIntCompareLess``` and
+        ```toPrimitiveNumeric``` that considers BigInt as a valid type to be
+        compared.
+
+        [1] - https://tc39.github.io/proposal-bigint/#sec-abstract-relational-comparison
+
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::unequalSign):
+        (JSC::JSBigInt::absoluteGreater):
+        (JSC::JSBigInt::absoluteLess):
+        (JSC::JSBigInt::compare):
+        (JSC::JSBigInt::absoluteCompare):
+        * runtime/JSBigInt.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::isPrimitive const):
+        * runtime/Operations.h:
+        (JSC::bigIntCompareLess):
+        (JSC::toPrimitiveNumeric):
+        (JSC::jsLess):
+
 2018-05-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [Baseline] Merge loading functionalities

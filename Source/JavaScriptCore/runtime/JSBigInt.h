@@ -87,8 +87,16 @@ public:
     std::optional<uint8_t> singleDigitValueForString();
     String toString(ExecState*, unsigned radix);
     
+    enum class ComparisonResult {
+        Equal,
+        Undefined,
+        GreaterThan,
+        LessThan
+    };
+    
     JS_EXPORT_PRIVATE static bool equals(JSBigInt*, JSBigInt*);
     bool equalsToNumber(JSValue);
+    static ComparisonResult compare(JSBigInt* x, JSBigInt* y);
 
     bool getPrimitiveNumber(ExecState*, double& number, JSValue& result) const;
     double toNumber(ExecState*) const;
@@ -97,17 +105,12 @@ public:
 
     static JSBigInt* multiply(ExecState*, JSBigInt* x, JSBigInt* y);
     
+    ComparisonResult static compareToDouble(JSBigInt* x, double y);
+
     static JSBigInt* divide(ExecState*, JSBigInt* x, JSBigInt* y);
     static JSBigInt* unaryMinus(VM&, JSBigInt* x);
     
 private:
-
-    enum class ComparisonResult {
-        Equal,
-        Undefined,
-        GreaterThan,
-        LessThan
-    };
 
     using Digit = uintptr_t;
     static constexpr unsigned bitsPerByte = 8;
@@ -152,8 +155,6 @@ private:
     static String toStringGeneric(ExecState*, JSBigInt*, unsigned radix);
 
     bool isZero();
-
-    ComparisonResult static compareToDouble(JSBigInt* x, double y);
 
     template <typename CharType>
     static JSBigInt* parseInt(ExecState*, CharType*  data, unsigned length, ErrorParseMode);
