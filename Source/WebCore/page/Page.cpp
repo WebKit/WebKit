@@ -2368,6 +2368,14 @@ void Page::setUnobscuredSafeAreaInsets(const FloatBoxExtent& insets)
     }
 }
 
+bool Page::defaultAppearance() const
+{
+    FrameView* view = mainFrame().view();
+    if (!view || !equalLettersIgnoringASCIICase(view->mediaType(), "screen"))
+        return true;
+    return m_defaultAppearance;
+}
+
 void Page::setFullscreenInsetTop(double inset)
 {
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {

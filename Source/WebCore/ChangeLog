@@ -1,3 +1,22 @@
+2018-05-29  Timothy Hatcher  <timothy@apple.com>
+
+        Printing does not apply the right colors in all cases.
+
+        https://bugs.webkit.org/show_bug.cgi?id=186066
+        rdar://problem/40274975
+
+        Reviewed by Tim Horton.
+
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::setEmulatedMedia): Call RenderTheme::platformColorsDidChange
+        to invalidate the color cache.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustMediaTypeForPrinting): Ditto.
+        * page/Page.cpp:
+        (WebCore::Page::defaultAppearance const): Added. Use default when not screen.
+        * page/Page.h:
+        (WebCore::Page::defaultAppearance const): Deleted.
+
 2018-05-29  Per Arne Vollan  <pvollan@apple.com>
 
         Create typedef for HashMap<PlatformDisplayID, ScreenProperties>

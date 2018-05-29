@@ -342,7 +342,7 @@ public:
     bool useSystemAppearance() const { return m_useSystemAppearance; }
     void setUseSystemAppearance(bool a) { m_useSystemAppearance = a; }
     
-    bool defaultAppearance() const { return m_defaultAppearance; }
+    bool defaultAppearance() const;
     void setDefaultAppearance(bool a) { m_defaultAppearance = a; }
 
 #if ENABLE(TEXT_AUTOSIZING)

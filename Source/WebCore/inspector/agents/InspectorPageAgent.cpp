@@ -55,6 +55,7 @@
 #include "MemoryCache.h"
 #include "Page.h"
 #include "RenderObject.h"
+#include "RenderTheme.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -785,8 +786,10 @@ void InspectorPageAgent::setEmulatedMedia(ErrorString&, const String& media)
         return;
 
     m_emulatedMedia = media;
-    Document* document = m_page.mainFrame().document();
-    if (document) {
+
+    RenderTheme::singleton().platformColorsDidChange();
+
+    if (auto document = m_page.mainFrame().document()) {
         document->styleScope().didChangeStyleSheetEnvironment();
         document->updateLayout();
     }
