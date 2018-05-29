@@ -1,3 +1,23 @@
+2018-05-29  Chris Dumez  <cdumez@apple.com>
+
+        Store 0-lifetime stylesheets / scripts into the disk cache for faster history navigations
+        https://bugs.webkit.org/show_bug.cgi?id=186060
+        <rdar://problem/40627270>
+
+        Reviewed by Geoffrey Garen.
+
+        Tweak our storeUnconditionallyForHistoryNavigation logic to match resources whose priority
+        is High, not just VeryHigh. Per logic in CachedResource::defaultPriorityForResourceType(Type),
+        This now matches stylesheets and scripts in addition to main resources.
+
+        I found that in case of a history navigation to apple.com, a significant number of scripts
+        and stylesheets had to be loaded from the network because our previous heuristic decided
+        not to store them (because their priority was not VeryHigh and because their max-age was
+        0).
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::makeStoreDecision):
+
 2018-05-28  Jeff Miller  <jeffm@apple.com>
 
         Expose additional WKMenuItemIdentifier strings
