@@ -1,3 +1,71 @@
+2018-05-29  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Handle relative length units
+        https://bugs.webkit.org/show_bug.cgi?id=186047
+
+        Reviewed by Dean Jackson.
+
+        In order to correctly handle relative units, such as "em", "vw" and "vh", we need to do two things.
+
+        First, because we need to apply the cascade to correctly compute relative lengths, we need to delay the computation of
+        "blending keyframes" to when we have both keyframes data and a valid target. This also means that we need to reset blending
+        keyframes when the target changes. As a result, old call sites of updateBlendingKeyframes() have been replaced by a call to
+        m_blendingKeyframes.clear() and the method now gets called as part of apply() with the RenderStyle of the targeted element
+        as a parameter.
+
+        Second, and as a result of the first change, we need to update the accelerated animation state based on animation
+        progress rather than when calling specific methods, such as Animation.play() and Animation.pause(), since blending
+        keyframes may not be available at those more specific call sites. We now have a new updateAcceleratedAnimationState()
+        method that gets called as part of apply(). We also rename animationPlayStateDidChange() to animationSuspensionStateDidChange()
+        since this method was specific to suspension and had a confusing name.
+
+        * animation/AnimationEffectReadOnly.h: Rename animationPlayStateDidChange() to animationSuspensionStateDidChange().
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::getKeyframes): Fix a crash that revealed itself after other changes in this patch. We would later
+        call into ComputedStyleExtractor::animationSuspensionStateDidChange() and this would yield an assertion because we'd call potentially
+        call it with a custom CSS property.
+        (WebCore::KeyframeEffectReadOnly::processKeyframes): Reset blending keyframes instead of calling updateBlendingKeyframes() since
+        blending keyframes is now performed asynchronously upon style resolution.
+        (WebCore::KeyframeEffectReadOnly::updateBlendingKeyframes): Take the target's RenderStyle as a parameter and use it to reset the
+        associated StyleResolver's state, just like we do in StyleResolver::keyframeStylesForAnimation(), so that the CSS cascade is correctly
+        accounted for when computing values using relative length units. Since blending keyframes can now be computed several times for a
+        given set of keyframes, since the effect's target may change, we also need to create a copy of the MutableStyleProperties to pass
+        to StyleRuleKeyframe::create().
+        (WebCore::KeyframeEffectReadOnly::setTarget): Reset blending keyframes instead of calling updateBlendingKeyframes() since
+        blending keyframes is now performed asynchronously upon style resolution.
+        (WebCore::KeyframeEffectReadOnly::apply): Update blending keyframes and the accelerated animation state.
+        (WebCore::KeyframeEffectReadOnly::getAnimatedStyle): Make sure we have blending keyframes with a call to updateBlendingKeyframes()
+        in case the animation hasn't naturally progressed when this method is called.
+        (WebCore::KeyframeEffectReadOnly::setAnimatedPropertiesInStyle): Make sure we have blending keyframes with a call to
+        updateBlendingKeyframes() in case the animation hasn't naturally progressed when this method is called.
+        (WebCore::KeyframeEffectReadOnly::updateAcceleratedAnimationState): Account for the animation's local time and play state to update
+        the accelerated animation state.
+        (WebCore::KeyframeEffectReadOnly::addPendingAcceleratedAction): Record the last accelerated action in a member variable which we can
+        use to determine if we're running accelerated accounting for uncommited changes.
+        (WebCore::KeyframeEffectReadOnly::animationDidSeek): Only record an AcceleratedAction::Seek action if we're already running accelerated.
+        (WebCore::KeyframeEffectReadOnly::animationSuspensionStateDidChange): Only record an AcceleratedAction::Pause or AcceleratedAction::Play
+        action if we're already running accelerated.
+        (WebCore::KeyframeEffectReadOnly::applyPendingAcceleratedActions): Ensure we clone and clear the list of accelerated actions and check that
+        we have any cloned actions before proceeding any further. Then we can stop accounting for m_startedAccelerated since the list of accelerated
+        actions already account for animation state changes.
+        (WebCore::KeyframeEffectReadOnly::animationPlayStateDidChange): Deleted.
+        * animation/KeyframeEffectReadOnly.h:
+        (WebCore::KeyframeEffectReadOnly::isRunningAccelerated const): Account for the m_lastRecordedAcceleratedAction to identify whether we're running.
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::play): Stop calling animationPlayStateDidChange() directly since the accelerated animation state is now updated when
+        the animation's effect is applied.
+        (WebCore::WebAnimation::pause): Stop calling animationPlayStateDidChange() directly since the accelerated animation state is now updated when
+        the animation's effect is applied.
+        (WebCore::WebAnimation::resolve): Make sure we update the finished state prior to applying the animation's effect since the play state can
+        change when updating the finished state and KeyframeEffectReadOnly::updateAcceleratedAnimationState(), which is called when calling into
+        KeyframeEffectReadOnly::apply(), relies on it to correctly update the accelerated animation state.
+        (WebCore::WebAnimation::setSuspended): Rename animationPlayStateDidChange() to animationSuspensionStateDidChange().
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::setNewStateWithElement): Add a new public method to reset a StyleResolver's state such that we can call it when creating
+        blending keyframes for JS-originated animations just like we do when creating blending keyframes for CSS Animations in keyframeStylesForAnimation().
+        (WebCore::StyleResolver::keyframeStylesForAnimation): Use the new setNewStateWithElement() method.
+        * css/StyleResolver.h:
+
 2018-05-29  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Update "qtdemux: Clarify field name about stream-encryption-system" patch

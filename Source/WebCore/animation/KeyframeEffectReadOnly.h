@@ -98,14 +98,14 @@ public:
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
     void apply(RenderStyle&) override;
     void invalidate() override;
-    void animationPlayStateDidChange(WebAnimation::PlayState) final;
     void animationDidSeek() final;
+    void animationSuspensionStateDidChange(bool) final;
     void applyPendingAcceleratedActions();
-    bool isRunningAccelerated() const { return m_startedAccelerated; }
+    bool isRunningAccelerated() const { return m_lastRecordedAcceleratedAction != AcceleratedAction::Stop; }
 
     RenderElement* renderer() const override;
     const RenderStyle& currentStyle() const override;
-    bool isAccelerated() const override { return m_startedAccelerated; }
+    bool isAccelerated() const override { return m_shouldRunAccelerated; }
     bool filterFunctionListsMatch() const override { return m_filterFunctionListsMatch; }
     bool transformFunctionListsMatch() const override { return m_transformFunctionListsMatch; }
 #if ENABLE(FILTERS_LEVEL_2)
@@ -133,14 +133,15 @@ protected:
     KeyframeEffectReadOnly(ClassType, Ref<AnimationEffectTimingReadOnly>&&, Element*);
 
 private:
-    enum class AcceleratedAction { Play, Pause, Seek };
+    enum class AcceleratedAction { Play, Pause, Seek, Stop };
     void addPendingAcceleratedAction(AcceleratedAction);
+    void updateAcceleratedAnimationState();
     void setAnimatedPropertiesInStyle(RenderStyle&, double);
     TimingFunction* timingFunctionForKeyframeAtIndex(size_t);
     Ref<const Animation> backingAnimationForCompositedRenderer() const;
     void computedNeedsForcedLayout();
     void computeStackingContextImpact();
-    void updateBlendingKeyframes();
+    void updateBlendingKeyframes(RenderStyle&);
     void computeCSSAnimationBlendingKeyframes();
     void computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
     void computeShouldRunAccelerated();
@@ -154,11 +155,10 @@ private:
 
     bool checkForMatchingFilterFunctionLists(CSSPropertyID, const std::function<const FilterOperations& (const RenderStyle&)>&) const;
 
+    AcceleratedAction m_lastRecordedAcceleratedAction { AcceleratedAction::Stop };
     bool m_shouldRunAccelerated { false };
     bool m_needsForcedLayout { false };
     bool m_triggersStackingContext { false };
-    bool m_started { false };
-    bool m_startedAccelerated { false };
     bool m_transformFunctionListsMatch { false };
     bool m_filterFunctionListsMatch { false };
 #if ENABLE(FILTERS_LEVEL_2)

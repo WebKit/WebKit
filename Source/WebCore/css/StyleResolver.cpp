@@ -340,6 +340,12 @@ static inline bool isAtShadowBoundary(const Element& element)
     return parentNode && parentNode->isShadowRoot();
 }
 
+void StyleResolver::setNewStateWithElement(const Element& element)
+{
+    // Apply the declaration to the style. This is a simplified version of the logic in styleForElement.
+    m_state = State(element, nullptr);
+}
+
 ElementStyle StyleResolver::styleForElement(const Element& element, const RenderStyle* parentStyle, const RenderStyle* parentBoxStyle, RuleMatchingBehavior matchingBehavior, const SelectorFilter* selectorFilter)
 {
     RELEASE_ASSERT(!m_isDeleted);
@@ -514,8 +520,7 @@ void StyleResolver::keyframeStylesForAnimation(const Element& element, const Ren
 
     // Construct and populate the style for each keyframe.
     for (auto& keyframe : *keyframes) {
-        // Apply the declaration to the style. This is a simplified version of the logic in styleForElement.
-        m_state = State(element, nullptr);
+        setNewStateWithElement(element);
 
         // Add this keyframe style to all the indicated key times
         for (auto key : keyframe->keys()) {

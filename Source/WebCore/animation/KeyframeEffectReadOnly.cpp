@@ -30,6 +30,7 @@
 #include "AnimationEffectTimingReadOnly.h"
 #include "CSSAnimation.h"
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSKeyframeRule.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleDeclaration.h"
@@ -535,6 +536,8 @@ Vector<Strong<JSObject>> KeyframeEffectReadOnly::getKeyframes(ExecState& state)
             // 3. For each animation property-value pair specified on keyframe, declaration, perform the following steps:
             auto& style = *keyframe.style();
             for (auto cssPropertyId : keyframe.properties()) {
+                if (cssPropertyId == CSSPropertyCustom)
+                    continue;
                 // 1. Let property name be the result of applying the animation property name to IDL attribute name algorithm to the property name of declaration.
                 auto propertyName = CSSPropertyIDToIDLAttributeName(cssPropertyId);
                 // 2. Let IDL value be the result of serializing the property value of declaration by passing declaration to the algorithm to serialize a CSS value.
@@ -659,35 +662,29 @@ ExceptionOr<void> KeyframeEffectReadOnly::processKeyframes(ExecState& state, Str
 
     m_parsedKeyframes = WTFMove(parsedKeyframes);
 
-    updateBlendingKeyframes();
+    m_blendingKeyframes.clear();
 
     return { };
 }
 
-void KeyframeEffectReadOnly::updateBlendingKeyframes()
+void KeyframeEffectReadOnly::updateBlendingKeyframes(RenderStyle& elementStyle)
 {
-    if (!m_target)
+    if (!m_blendingKeyframes.isEmpty() || !m_target)
         return;
 
     KeyframeList keyframeList("keyframe-effect-" + createCanonicalUUIDString());
     StyleResolver& styleResolver = m_target->styleResolver();
 
     for (auto& keyframe : m_parsedKeyframes) {
+        styleResolver.setNewStateWithElement(*m_target);
         KeyframeValue keyframeValue(keyframe.computedOffset, nullptr);
-        auto renderStyle = RenderStyle::createPtr();
-        // We need to call update() on the FontCascade or we'll hit an ASSERT when parsing font-related properties.
-        renderStyle->fontCascade().update(nullptr);
 
-        auto& styleProperties = keyframe.style;
-        for (unsigned i = 0; i < styleProperties->propertyCount(); ++i) {
-            auto cssPropertyId = styleProperties->propertyAt(i).id();
-            keyframeValue.addProperty(cssPropertyId);
-            keyframeList.addProperty(cssPropertyId);
-            styleResolver.applyPropertyToStyle(cssPropertyId, styleProperties->propertyAt(i).value(), WTFMove(renderStyle));
-            renderStyle = styleResolver.state().takeStyle();
-        }
+        auto styleProperties = keyframe.style->immutableCopyIfNeeded();
+        for (unsigned i = 0; i < styleProperties->propertyCount(); ++i)
+            keyframeList.addProperty(styleProperties->propertyAt(i).id());
 
-        keyframeValue.setStyle(RenderStyle::clonePtr(*renderStyle));
+        auto keyframeRule = StyleRuleKeyframe::create(WTFMove(styleProperties));
+        keyframeValue.setStyle(styleResolver.styleForKeyframe(&elementStyle, keyframeRule.ptr(), keyframeValue));
         keyframeList.insert(WTFMove(keyframeValue));
     }
 
@@ -948,7 +945,7 @@ void KeyframeEffectReadOnly::setTarget(RefPtr<Element>&& newTarget)
     if (auto* effectAnimation = animation())
         effectAnimation->effectTargetDidChange(previousTarget.get(), m_target.get());
 
-    updateBlendingKeyframes();
+    m_blendingKeyframes.clear();
 
     // We need to invalidate the effect now that the target has changed
     // to ensure the effect's styles are applied to the new target right away.
@@ -964,20 +961,13 @@ void KeyframeEffectReadOnly::apply(RenderStyle& targetStyle)
     if (!m_target)
         return;
 
-    auto progress = iterationProgress();
-    if (m_startedAccelerated && (!progress || progress.value() >= 1)) {
-        m_startedAccelerated = false;
-        animation()->acceleratedStateDidChange();
-    }
+    updateBlendingKeyframes(targetStyle);
 
+    updateAcceleratedAnimationState();
+
+    auto progress = iterationProgress();
     if (!progress)
         return;
-
-    if (!m_started && !m_startedAccelerated && m_shouldRunAccelerated) {
-        m_startedAccelerated = true;
-        animation()->acceleratedStateDidChange();
-    }
-    m_started = true;
 
     setAnimatedPropertiesInStyle(targetStyle, progress.value());
 
@@ -1006,10 +996,7 @@ void KeyframeEffectReadOnly::computeShouldRunAccelerated()
 
 void KeyframeEffectReadOnly::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle)
 {
-    if (!animation())
-        return;
-
-    if (!m_blendingKeyframes.size())
+    if (!m_target || !animation())
         return;
 
     auto progress = iterationProgress();
@@ -1029,6 +1016,10 @@ void KeyframeEffectReadOnly::setAnimatedPropertiesInStyle(RenderStyle& targetSty
     //
     // The effect value of a single property referenced by a keyframe effect as one of its target properties,
     // for a given iteration progress, current iteration and underlying value is calculated as follows.
+
+    updateBlendingKeyframes(targetStyle);
+    if (m_blendingKeyframes.isEmpty())
+        return;
 
     bool isCSSAnimation = is<CSSAnimation>(animation());
 
@@ -1187,26 +1178,64 @@ TimingFunction* KeyframeEffectReadOnly::timingFunctionForKeyframeAtIndex(size_t 
     return downcast<DeclarativeAnimation>(effectAnimation)->backingAnimation().timingFunction();
 }
 
-void KeyframeEffectReadOnly::animationPlayStateDidChange(WebAnimation::PlayState playState)
-{
-    if (playState == WebAnimation::PlayState::Running)
-        addPendingAcceleratedAction(AcceleratedAction::Play);
-    else if (playState == WebAnimation::PlayState::Paused)
-        addPendingAcceleratedAction(AcceleratedAction::Pause);
-};
-
-void KeyframeEffectReadOnly::animationDidSeek()
-{
-    addPendingAcceleratedAction(AcceleratedAction::Seek);
-}
-
-void KeyframeEffectReadOnly::addPendingAcceleratedAction(AcceleratedAction action)
+void KeyframeEffectReadOnly::updateAcceleratedAnimationState()
 {
     if (!m_shouldRunAccelerated)
         return;
 
+    auto localTime = animation()->currentTime();
+
+    // If we don't have a localTime or localTime < 0, we either don't have a start time or we're before the startTime
+    // so we shouldn't be running.
+    if (!localTime || localTime.value() < 0_s) {
+        if (isRunningAccelerated())
+            addPendingAcceleratedAction(AcceleratedAction::Stop);
+        return;
+    }
+
+    auto playState = animation()->playState();
+    if (playState == WebAnimation::PlayState::Paused) {
+        if (m_lastRecordedAcceleratedAction != AcceleratedAction::Pause) {
+            if (m_lastRecordedAcceleratedAction == AcceleratedAction::Stop)
+                addPendingAcceleratedAction(AcceleratedAction::Play);
+            addPendingAcceleratedAction(AcceleratedAction::Pause);
+        }
+        return;
+    }
+
+    if (playState == WebAnimation::PlayState::Finished) {
+        if (isRunningAccelerated())
+            addPendingAcceleratedAction(AcceleratedAction::Stop);
+        return;
+    }
+
+    if (playState == WebAnimation::PlayState::Running && localTime >= 0_s) {
+        if (m_lastRecordedAcceleratedAction != AcceleratedAction::Play)
+            addPendingAcceleratedAction(AcceleratedAction::Play);
+        return;
+    }
+}
+
+void KeyframeEffectReadOnly::addPendingAcceleratedAction(AcceleratedAction action)
+{
     m_pendingAcceleratedActions.append(action);
+    if (action != AcceleratedAction::Seek)
+        m_lastRecordedAcceleratedAction = action;
     animation()->acceleratedStateDidChange();
+}
+
+void KeyframeEffectReadOnly::animationDidSeek()
+{
+    // There is no need to seek if we're not playing an animation already. If seeking
+    // means we're moving into an active state, we'll pick this up in apply().
+    if (m_shouldRunAccelerated && isRunningAccelerated())
+        addPendingAcceleratedAction(AcceleratedAction::Seek);
+}
+
+void KeyframeEffectReadOnly::animationSuspensionStateDidChange(bool animationIsSuspended)
+{
+    if (m_shouldRunAccelerated)
+        addPendingAcceleratedAction(animationIsSuspended ? AcceleratedAction::Pause : AcceleratedAction::Play);
 }
 
 void KeyframeEffectReadOnly::applyPendingAcceleratedActions()
@@ -1216,34 +1245,39 @@ void KeyframeEffectReadOnly::applyPendingAcceleratedActions()
     // pending accelerated actions.
     m_needsForcedLayout = false;
 
+    auto pendingAccelerationActions = m_pendingAcceleratedActions;
+    m_pendingAcceleratedActions.clear();
+
+    if (pendingAccelerationActions.isEmpty())
+        return;
+
     auto* renderer = this->renderer();
     if (!renderer || !renderer->isComposited())
         return;
 
     auto* compositedRenderer = downcast<RenderBoxModelObject>(renderer);
-    if (m_startedAccelerated) {
-        auto timeOffset = animation()->currentTime().value().seconds();
-        if (timing()->delay() < 0_s)
-            timeOffset = -timing()->delay().seconds();
 
-        for (const auto& action : m_pendingAcceleratedActions) {
-            switch (action) {
-            case AcceleratedAction::Play:
-                compositedRenderer->startAnimation(timeOffset, backingAnimationForCompositedRenderer().ptr(), m_blendingKeyframes);
-                break;
-            case AcceleratedAction::Pause:
-                compositedRenderer->animationPaused(timeOffset, m_blendingKeyframes.animationName());
-                break;
-            case AcceleratedAction::Seek:
-                compositedRenderer->animationSeeked(timeOffset, m_blendingKeyframes.animationName());
-                break;
-            }
+    auto timeOffset = animation()->currentTime().value().seconds();
+    if (timing()->delay() < 0_s)
+        timeOffset = -timing()->delay().seconds();
+
+    for (const auto& action : pendingAccelerationActions) {
+        switch (action) {
+        case AcceleratedAction::Play:
+            compositedRenderer->startAnimation(timeOffset, backingAnimationForCompositedRenderer().ptr(), m_blendingKeyframes);
+            break;
+        case AcceleratedAction::Pause:
+            compositedRenderer->animationPaused(timeOffset, m_blendingKeyframes.animationName());
+            break;
+        case AcceleratedAction::Seek:
+            compositedRenderer->animationSeeked(timeOffset, m_blendingKeyframes.animationName());
+            break;
+        case AcceleratedAction::Stop:
+            compositedRenderer->animationFinished(m_blendingKeyframes.animationName());
+            if (!m_target->document().renderTreeBeingDestroyed())
+                m_target->invalidateStyleAndLayerComposition();
+            break;
         }
-        m_pendingAcceleratedActions.clear();
-    } else {
-        compositedRenderer->animationFinished(m_blendingKeyframes.animationName());
-        if (!m_target->document().renderTreeBeingDestroyed())
-            m_target->invalidateStyleAndLayerComposition();
     }
 }
 

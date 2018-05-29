@@ -801,9 +801,6 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
     // 9. Run the procedure to update an animation's finished state for animation with the did seek flag set to false, and the synchronously notify flag set to false.
     updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
 
-    if (m_effect)
-        m_effect->animationPlayStateDidChange(PlayState::Running);
-
     return { };
 }
 
@@ -899,9 +896,6 @@ ExceptionOr<void> WebAnimation::pause()
 
     // 8. Run the procedure to update an animation's finished state for animation with the did seek flag set to false, and the synchronously notify flag set to false.
     updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
-
-    if (m_effect)
-        m_effect->animationPlayStateDidChange(PlayState::Paused);
 
     return { };
 }
@@ -1027,10 +1021,10 @@ Seconds WebAnimation::timeToNextRequiredTick() const
 
 void WebAnimation::resolve(RenderStyle& targetStyle)
 {
+    updateFinishedState(DidSeek::No, SynchronouslyNotify::Yes);
+
     if (m_effect)
         m_effect->apply(targetStyle);
-
-    updateFinishedState(DidSeek::No, SynchronouslyNotify::Yes);
 }
 
 void WebAnimation::setSuspended(bool isSuspended)
@@ -1040,12 +1034,8 @@ void WebAnimation::setSuspended(bool isSuspended)
 
     m_isSuspended = isSuspended;
 
-    if (!is<KeyframeEffectReadOnly>(m_effect))
-        return;
-
-    auto& keyframeEffect = downcast<KeyframeEffectReadOnly>(*m_effect);
-    if (keyframeEffect.isRunningAccelerated() && playState() == PlayState::Running)
-        keyframeEffect.animationPlayStateDidChange(isSuspended ? PlayState::Paused : PlayState::Running);
+    if (m_effect && playState() == PlayState::Running)
+        m_effect->animationSuspensionStateDidChange(isSuspended);
 }
 
 void WebAnimation::acceleratedStateDidChange()
