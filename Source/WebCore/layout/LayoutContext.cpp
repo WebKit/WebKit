@@ -51,12 +51,13 @@ LayoutContext::LayoutContext()
 
 void LayoutContext::initializeRoot(const Container& root, const LayoutSize& containerSize)
 {
+    ASSERT(root.establishesFormattingContext());
+
     m_root = makeWeakPtr(const_cast<Container&>(root));
     auto& displayBox = createDisplayBox(root);
     // Root is always at 0 0 with no margin 
     displayBox.setTopLeft({ });
-    displayBox.setWidth(containerSize.width());
-    displayBox.setHeight(containerSize.height());
+    displayBox.setSize(containerSize);
     displayBox.setMargin({ });
 
     auto& style = root.style();
@@ -66,14 +67,16 @@ void LayoutContext::initializeRoot(const Container& root, const LayoutSize& cont
         style.borderLeft().width(),
         style.borderBottom().width(),
         style.borderRight().width()
-
     });
+
     displayBox.setPadding({
         valueForLength(style.paddingTop(), containerSize.width()),
         valueForLength(style.paddingLeft(), containerSize.width()),
         valueForLength(style.paddingBottom(), containerSize.width()),
         valueForLength(style.paddingRight(), containerSize.width())
     });
+
+    m_formattingContextRootListForLayout.add(&root);
 }
 
 void LayoutContext::updateLayout()

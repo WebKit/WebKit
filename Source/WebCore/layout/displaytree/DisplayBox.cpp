@@ -48,7 +48,6 @@ Box::~Box()
 Box::Style::Style(const RenderStyle& style)
     : boxSizing(style.boxSizing())
 {
-
 }
 
 Box::Rect Box::marginBox() const
@@ -66,15 +65,17 @@ Box::Rect Box::marginBox() const
 
 Box::Rect Box::borderBox() const
 {
+    auto rect = m_rect.clone();
+    rect.setTopLeft({ });
+
     if (m_style.boxSizing == BoxSizing::BorderBox)
-        return Box::Rect( { }, size());
+        return rect;
 
     // Width is content box.
     ASSERT(m_hasValidBorder);
     ASSERT(m_hasValidPadding);
-    auto borderBoxSize = size();
-    borderBoxSize.expand(borderLeft() + paddingLeft() + paddingRight() + borderRight(), borderTop() + paddingTop() + paddingBottom() + borderBottom());
-    return Box::Rect( { }, borderBoxSize);
+    rect.expand(borderLeft() + paddingLeft() + paddingRight() + borderRight(), borderTop() + paddingTop() + paddingBottom() + borderBottom());
+    return rect;
 }
 
 Box::Rect Box::paddingBox() const
@@ -92,8 +93,11 @@ Box::Rect Box::paddingBox() const
 
 Box::Rect Box::contentBox() const
 {
-    if (m_style.boxSizing == BoxSizing::ContentBox)
-        return Box::Rect(LayoutPoint(0, 0), size());
+    if (m_style.boxSizing == BoxSizing::ContentBox) {
+        auto rect = m_rect.clone();
+        rect.setTopLeft({ });
+        return rect;
+    }
 
     // Width is border box.
     ASSERT(m_hasValidPadding);

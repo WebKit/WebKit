@@ -55,7 +55,6 @@ public:
     class Rect {
     public:
         Rect() = default;
-        Rect(const LayoutPoint&, const LayoutSize&);
         
         LayoutUnit top() const;
         LayoutUnit left() const;
@@ -74,6 +73,7 @@ public:
         void setTopLeft(const LayoutPoint&);
         void setWidth(LayoutUnit);
         void setHeight(LayoutUnit);
+        void setSize(const LayoutSize&);
 
         void shiftLeftTo(LayoutUnit);
         void shiftRightTo(LayoutUnit);
@@ -82,7 +82,8 @@ public:
 
         void expand(LayoutUnit, LayoutUnit);
 
-        operator LayoutRect() const { return m_rect; }
+        Rect clone() const;
+        operator LayoutRect() const;
 
     private:
 #if !ASSERT_DISABLED
@@ -97,6 +98,7 @@ public:
         bool hasValidGeometry() const { return hasValidPosition() && hasValidSize(); }
     
         void setHasValidPosition();
+        void setHasValidSize();
 
         bool m_hasValidTop { false };
         bool m_hasValidLeft { false };
@@ -156,6 +158,7 @@ private:
     void setLeft(LayoutUnit left) { m_rect.setLeft(left); }
     void setWidth(LayoutUnit width) { m_rect.setWidth(width); }
     void setHeight(LayoutUnit height) { m_rect.setHeight(height); }
+    void setSize(const LayoutSize& size) { m_rect.setSize(size); }
 
     struct Edges {
         Edges() = default;
@@ -180,9 +183,9 @@ private:
     void invalidateBorder() { m_hasValidBorder = false; }
     void invalidatePadding() { m_hasValidPadding = false; }
 
-    void setHasValidMargin();
-    void setHasValidBorder();
-    void setHasValidPadding();
+    void setHasValidMargin() { m_hasValidMargin = true; }
+    void setHasValidBorder() { m_hasValidBorder = true; }
+    void setHasValidPadding() { m_hasValidPadding = true; }
 #endif
 
     const Style m_style;
@@ -212,13 +215,13 @@ inline void Box::Rect::setHasValidPosition()
     m_hasValidTop = true;
     m_hasValidLeft = true;
 }
-#endif
 
-inline Box::Rect::Rect(const LayoutPoint& topLeft, const LayoutSize& size)
-    : m_rect(topLeft, size)
+inline void Box::Rect::setHasValidSize()
 {
-
+    m_hasValidWidth = true;
+    m_hasValidHeight = true;
 }
+#endif
 
 inline LayoutUnit Box::Rect::top() const
 {
@@ -316,6 +319,14 @@ inline void Box::Rect::setHeight(LayoutUnit height)
     m_rect.setHeight(height);
 }
 
+inline void Box::Rect::setSize(const LayoutSize& size)
+{
+#if !ASSERT_DISABLED
+    setHasValidSize();
+#endif
+    m_rect.setSize(size);
+}
+
 inline void Box::Rect::shiftLeftTo(LayoutUnit left)
 {
     ASSERT(m_hasValidLeft);
@@ -346,10 +357,29 @@ inline void Box::Rect::expand(LayoutUnit width, LayoutUnit height)
     m_rect.expand(width, height);
 }
 
+inline Box::Rect Box::Rect::clone() const
+{
+    Rect rect;
+#if !ASSERT_DISABLED
+    rect.m_hasValidTop = m_hasValidTop;
+    rect.m_hasValidLeft = m_hasValidLeft;
+    rect.m_hasValidWidth = m_hasValidWidth;
+    rect.m_hasValidHeight  = m_hasValidHeight;
+#endif 
+    rect.m_rect = m_rect;
+    return rect;
+}
+
+inline Box::Rect::operator LayoutRect() const
+{
+    ASSERT(hasValidGeometry()); 
+    return m_rect;
+}
+
 inline void Box::setMargin(Edges margin)
 {
 #if !ASSERT_DISABLED
-    void setHasValidMargin();
+    setHasValidMargin();
 #endif
     m_margin = margin;
 }
@@ -357,7 +387,7 @@ inline void Box::setMargin(Edges margin)
 inline void Box::setBorder(Edges border)
 {
 #if !ASSERT_DISABLED
-    void setHasValidBorder();
+    setHasValidBorder();
 #endif
     m_border = border;
 }
@@ -365,7 +395,7 @@ inline void Box::setBorder(Edges border)
 inline void Box::setPadding(Edges padding)
 {
 #if !ASSERT_DISABLED
-    void setHasValidPadding();
+    setHasValidPadding();
 #endif
     m_padding = padding;
 }

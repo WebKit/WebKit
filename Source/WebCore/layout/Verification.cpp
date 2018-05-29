@@ -56,7 +56,7 @@ static void outputMismatchingBoxInformationIfNeeded(TextStream& stream, const La
     auto* displayBox = context.displayBoxForLayoutBox(layoutBox);
     ASSERT(displayBox);
 
-    if (renderer.marginBoxRect() != displayBox->marginBox())
+    if (renderer.frameRect() != displayBox->rect())
         outputRect("frameBox", renderer.frameRect(), displayBox->rect());
 
     if (renderer.marginBoxRect() != displayBox->marginBox())

@@ -1,3 +1,38 @@
+2018-05-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Miscellaneous fixes to ensure no assertion in LayoutContext::layout
+        https://bugs.webkit.org/show_bug.cgi?id=186052
+
+        Reviewed by Antti Koivisto.
+
+        With this patch, LayoutContext::layout() does not assert on <html><body><div></div></body></html> anymore.
+
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::initializeRoot): New context root is always a layout root.
+        * layout/LayoutContext.h:
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingBoxInformationIfNeeded):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const): we need computed margin/border/padding for width computation  
+        * layout/displaytree/DisplayBox.cpp: Add clone() method to be able to carry over the 'hasValid*' bits.
+        (WebCore::Display::Box::Style::Style):
+        (WebCore::Display::Box::borderBox const):
+        (WebCore::Display::Box::contentBox const):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::Rect::operator LayoutRect const):
+        (WebCore::Display::Box::setSize):
+        (WebCore::Display::Box::setHasValidMargin):
+        (WebCore::Display::Box::setHasValidBorder):
+        (WebCore::Display::Box::setHasValidPadding):
+        (WebCore::Display::Box::Rect::setHasValidPosition):
+        (WebCore::Display::Box::Rect::setHasValidSize):
+        (WebCore::Display::Box::Rect::setSize):
+        (WebCore::Display::Box::Rect::clone const):
+        (WebCore::Display::Box::setMargin):
+        (WebCore::Display::Box::setBorder):
+        (WebCore::Display::Box::setPadding):
+        (WebCore::Display::Box::Rect::Rect): Deleted.
+
 2018-05-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] "Significant area painted" rendering progress event is rarely fired

@@ -77,11 +77,11 @@ public:
     FormattingState& establishedFormattingState(const Box& formattingContextRoot, const FormattingContext&);
     std::unique_ptr<FormattingContext> formattingContext(const Box& formattingContextRoot);
 
-    // For testing purposes only
-    void verifyAndOutputMismatchingLayoutTree(const RenderView&) const;
-
     Display::Box& createDisplayBox(const Box&);
     Display::Box* displayBoxForLayoutBox(const Box& layoutBox) const { return m_layoutToDisplayBox.get(&layoutBox); }
+
+    // For testing purposes only
+    void verifyAndOutputMismatchingLayoutTree(const RenderView&) const;
 
 private:
     WeakPtr<Container> m_root;
