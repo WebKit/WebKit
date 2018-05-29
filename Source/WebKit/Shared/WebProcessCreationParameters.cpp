@@ -410,7 +410,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.primaryDisplayID))
         return false;
 
-    std::optional<HashMap<WebCore::PlatformDisplayID, WebCore::ScreenProperties>> screenPropertiesMap;
+    std::optional<WebCore::ScreenPropertiesMap> screenPropertiesMap;
     decoder >> screenPropertiesMap;
     if (!screenPropertiesMap)
         return false;

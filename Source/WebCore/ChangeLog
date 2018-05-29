@@ -1,3 +1,18 @@
+2018-05-29  Per Arne Vollan  <pvollan@apple.com>
+
+        Create typedef for HashMap<PlatformDisplayID, ScreenProperties>
+        https://bugs.webkit.org/show_bug.cgi?id=186056
+
+        Reviewed by Brent Fulgham.
+
+        No new tests, no change in behavior.
+
+        * platform/PlatformScreen.h:
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::screenProperties):
+        (WebCore::getScreenProperties):
+        (WebCore::setScreenProperties):
+
 2018-05-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS WK1: Occasional crash in sanitizedMarkupForFragmentInDocument

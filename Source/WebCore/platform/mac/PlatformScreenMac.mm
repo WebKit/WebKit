@@ -96,9 +96,9 @@ static NSScreen *screen(Widget* widget)
     return screen(displayID(widget));
 }
 
-static HashMap<PlatformDisplayID, ScreenProperties>& screenProperties()
+static ScreenPropertiesMap& screenProperties()
 {
-    static NeverDestroyed<HashMap<PlatformDisplayID, ScreenProperties>> screenProperties;
+    static NeverDestroyed<ScreenPropertiesMap> screenProperties;
     return screenProperties;
 }
 
@@ -108,11 +108,11 @@ static PlatformDisplayID& primaryScreenDisplayID()
     return primaryScreenDisplayID;
 }
 
-std::pair<PlatformDisplayID, HashMap<PlatformDisplayID, ScreenProperties>> getScreenProperties()
+std::pair<PlatformDisplayID, ScreenPropertiesMap> getScreenProperties()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
 
-    HashMap<PlatformDisplayID, ScreenProperties> screenProperties;
+    ScreenPropertiesMap screenProperties;
     std::optional<PlatformDisplayID> firstScreen;
 
     for (NSScreen *screen in [NSScreen screens]) {
@@ -138,7 +138,7 @@ std::pair<PlatformDisplayID, HashMap<PlatformDisplayID, ScreenProperties>> getSc
     return { WTFMove(*firstScreen), WTFMove(screenProperties) };
 }
 
-void setScreenProperties(PlatformDisplayID primaryScreenID, const HashMap<PlatformDisplayID, ScreenProperties>& properties)
+void setScreenProperties(PlatformDisplayID primaryScreenID, const ScreenPropertiesMap& properties)
 {
     primaryScreenDisplayID() = primaryScreenID;
     screenProperties() = properties;
