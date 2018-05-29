@@ -781,7 +781,7 @@ void VM::shrinkFootprint()
 {
     sanitizeStackForVM(this);
     deleteAllCode(DeleteAllCodeIfNotCollecting);
-    heap.collectNow(Synchronousness::Sync);
+    heap.collectNow(Synchronousness::Sync, CollectionScope::Full);
     WTF::releaseFastMallocFreeMemory();
     // FIXME: Consider stopping various automatic threads here.
     // https://bugs.webkit.org/show_bug.cgi?id=185447
