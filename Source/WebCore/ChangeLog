@@ -1,3 +1,21 @@
+2018-05-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] "Significant area painted" rendering progress event is rarely fired
+        https://bugs.webkit.org/show_bug.cgi?id=186042
+        <rdar://problem/40604182>
+
+        Reviewed by Tim Horton.
+
+        Makes a minor tweak to the size of the relevant view rect in extra zoom mode, such that it's no wider than the
+        visible content rect. Previously, the width of this rect has hard-coded to a value optimized for macOS (980),
+        which makes it difficult for content laid out at device width in extra zoom mode to cover a significant portion
+        of the relevant view rect.
+
+        Test: RenderingProgressTests.FirstPaintWithSignificantArea
+
+        * page/Page.cpp:
+        (WebCore::relevantViewRect):
+
 2018-05-29  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Handle relative length units

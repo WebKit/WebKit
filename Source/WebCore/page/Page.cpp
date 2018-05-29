@@ -1856,14 +1856,20 @@ void Page::resetRelevantPaintedObjectCounter()
 
 static LayoutRect relevantViewRect(RenderView* view)
 {
+    LayoutRect viewRect = view->viewRect();
+
+    float relevantViewRectWidth = 980;
+#if ENABLE(EXTRA_ZOOM_MODE)
+    // FIXME(186051): Consider limiting the relevant rect width to the view width everywhere.
+    relevantViewRectWidth = std::min<float>(viewRect.width().toFloat(), relevantViewRectWidth);
+#endif
+
     // DidHitRelevantRepaintedObjectsAreaThreshold is a LayoutMilestone intended to indicate that
     // a certain relevant amount of content has been drawn to the screen. This is the rect that
     // has been determined to be relevant in the context of this goal. We may choose to tweak
     // the rect over time, much like we may choose to tweak gMinimumPaintedAreaRatio and
     // gMaximumUnpaintedAreaRatio. But this seems to work well right now.
-    LayoutRect relevantViewRect = LayoutRect(0, 0, 980, 1300);
-
-    LayoutRect viewRect = view->viewRect();
+    LayoutRect relevantViewRect { 0, 0, relevantViewRectWidth, 1300 };
     // If the viewRect is wider than the relevantViewRect, center the relevantViewRect.
     if (viewRect.width() > relevantViewRect.width())
         relevantViewRect.setX((viewRect.width() - relevantViewRect.width()) / 2);

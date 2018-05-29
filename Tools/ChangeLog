@@ -1,3 +1,23 @@
+2018-05-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] "Significant area painted" rendering progress event is rarely fired
+        https://bugs.webkit.org/show_bug.cgi?id=186042
+        <rdar://problem/40604182>
+
+        Reviewed by Tim Horton.
+
+        Adds a new API test to check that the "significant area painting" rendering milestone is dispatched when a
+        significant portion of the page has been painted before document load is finished.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/paint-significant-area-milestone.html: Added.
+        * TestWebKitAPI/Tests/ios/RenderingProgressTests.mm: Added.
+        (-[MissingResourceSchemeHandler webView:stopURLSchemeTask:]):
+        (-[MissingResourceSchemeHandler webView:startURLSchemeTask:]):
+        (-[RenderingProgressHandler initWithHandler:]):
+        (-[RenderingProgressHandler _webView:renderingProgressDidChange:]):
+        (TEST):
+
 2018-05-29  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Update "qtdemux: Clarify field name about stream-encryption-system" patch
