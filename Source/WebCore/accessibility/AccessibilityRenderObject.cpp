@@ -1778,15 +1778,15 @@ void AccessibilityRenderObject::setValue(const String& string)
     else if (renderer.isTextArea() && is<HTMLTextAreaElement>(element))
         downcast<HTMLTextAreaElement>(element).setValue(string);
     else if (is<HTMLElement>(element) && contentEditableAttributeIsEnabled(&element)) {
-        // Set the style to the element so the child Text node won't collapse spaces
-        if (is<RenderElement>(renderer)) {
-            RenderElement& renderElement = downcast<RenderElement>(renderer);
-            auto style = RenderStyle::create();
-            style.inheritFrom(renderElement.style());
-            style.setWhiteSpace(WhiteSpace::Pre);
-            renderElement.setStyleInternal(WTFMove(style));
+        // We should use the editor's insertText to mimic typing into the contenteditable field.
+        // Also only do this when the field is in editing mode.
+        if (Frame* frame = renderer.document().frame()) {
+            Editor& editor = frame->editor();
+            if (element.shouldUseInputMethod()) {
+                editor.clearText();
+                editor.insertText(string, nullptr);
+            }
         }
-        downcast<HTMLElement>(element).setInnerText(string);
     }
 }
 

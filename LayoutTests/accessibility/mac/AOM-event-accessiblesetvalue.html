@@ -63,8 +63,16 @@
            axNode = accessibilityController.accessibleElementById("contenteditable");
            node.onaccessiblesetvalue = function(event) {
               debug("contenteditable accessible set value to: " + event.value);
-              testSlider();
            };
+           accessibilityController.addNotificationListener(function(element, notification) {
+               if (notification == "AXValueChanged") {
+                   shouldBe("axNode.stringValue", "'AXValue: contenteditable new value'");
+                   node.blur();
+                   accessibilityController.removeNotificationListener();
+                   testSlider();
+               }
+           });
+           node.focus();
            axNode.setValue("contenteditable new value");
        }
        

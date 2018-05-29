@@ -37,6 +37,8 @@
             var writable = axElement.isAttributeSettable("AXValue");
             debug("Writable: " + writable);
 
+            document.getElementById(idValue).focus();
+
             axElement.setValue("   leading and trailing spaces   ");
         }
 

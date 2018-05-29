@@ -1,3 +1,15 @@
+2018-05-29  Nan Wang  <n_wang@apple.com>
+
+        AX: setValue on contenteditable should preserve whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=185897
+
+        Reviewed by Ryosuke Niwa.
+
+        * accessibility/mac/AOM-event-accessiblesetvalue-expected.txt:
+        * accessibility/mac/AOM-event-accessiblesetvalue.html:
+        * accessibility/mac/set-value-editable-types-expected.txt:
+        * accessibility/mac/set-value-editable-types.html:
+
 2018-05-29  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Handle relative length units
