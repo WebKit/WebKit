@@ -79,9 +79,9 @@ RetainPtr<CFURLRef> URL::createCFURL() const
     return createCFURLFromBuffer(buffer.data(), buffer.size());
 }
 
-bool URL::hostIsIPAddress(const String& host)
+bool URL::hostIsIPAddress(StringView host)
 {
-    return [host _web_looksLikeIPAddress];
+    return [host.createNSStringWithoutCopying().get() _web_looksLikeIPAddress];
 }
 
 }

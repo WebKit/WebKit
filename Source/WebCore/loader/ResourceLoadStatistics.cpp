@@ -333,22 +333,23 @@ void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
 
 String ResourceLoadStatistics::primaryDomain(const URL& url)
 {
-    return primaryDomain(url.host().toString());
+    return primaryDomain(url.host());
 }
 
-String ResourceLoadStatistics::primaryDomain(const String& host)
+String ResourceLoadStatistics::primaryDomain(StringView host)
 {
     if (host.isNull() || host.isEmpty())
         return ASCIILiteral("nullOrigin");
 
+    String hostString = host.toString();
 #if ENABLE(PUBLIC_SUFFIX_LIST)
-    String primaryDomain = topPrivatelyControlledDomain(host);
+    String primaryDomain = topPrivatelyControlledDomain(hostString);
     // We will have an empty string here if there is no TLD. Use the host as a fallback.
     if (!primaryDomain.isEmpty())
         return primaryDomain;
 #endif
 
-    return host;
+    return hostString;
 }
 
 }

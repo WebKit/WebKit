@@ -1060,7 +1060,7 @@ TextStream& operator<<(TextStream& ts, const URL& url)
 }
 
 #if !PLATFORM(COCOA) && !USE(SOUP)
-bool URL::hostIsIPAddress(const String& host)
+bool URL::hostIsIPAddress(StringView host)
 {
     // Assume that any host that ends with a digit is trying to be an IP address.
     return !host.isEmpty() && isASCIIDigit(host[host.length() - 1]);

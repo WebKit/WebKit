@@ -51,7 +51,7 @@ struct ResourceLoadStatistics {
     ResourceLoadStatistics& operator=(ResourceLoadStatistics&&) = default;
 
     WEBCORE_EXPORT static String primaryDomain(const URL&);
-    WEBCORE_EXPORT static String primaryDomain(const String& host);
+    WEBCORE_EXPORT static String primaryDomain(StringView host);
 
     WEBCORE_EXPORT void encode(KeyedEncoder&) const;
     WEBCORE_EXPORT bool decode(KeyedDecoder&, unsigned modelVersion);

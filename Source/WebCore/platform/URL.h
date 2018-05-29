@@ -176,7 +176,7 @@ public:
     unsigned hostStart() const;
     unsigned hostEnd() const;
 
-    WEBCORE_EXPORT static bool hostIsIPAddress(const String&);
+    WEBCORE_EXPORT static bool hostIsIPAddress(StringView);
 
     unsigned pathStart() const;
     unsigned pathEnd() const;
