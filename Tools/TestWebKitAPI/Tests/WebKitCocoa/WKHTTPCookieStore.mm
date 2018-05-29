@@ -32,6 +32,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Seconds.h>
 #import <wtf/text/WTFString.h>
@@ -192,6 +193,41 @@ static void runTestWithWebsiteDataStore(WKWebsiteDataStore* dataStore)
 TEST(WebKit, WKHTTPCookieStore)
 {
     runTestWithWebsiteDataStore([WKWebsiteDataStore defaultDataStore]);
+}
+
+TEST(WebKit, WKHTTPCookieStoreProcessPrivilege)
+{
+    // Make sure UI process has no privilege at the beginning.
+    WTF::setProcessPrivileges({ });
+
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:[] {
+        gotFlag = true;
+    }];
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+
+    globalCookieStore = [[WKWebsiteDataStore defaultDataStore] httpCookieStore];
+
+    RetainPtr<NSHTTPCookie> cookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookiePath: @"/",
+        NSHTTPCookieName: @"Cookie",
+        NSHTTPCookieValue: @"Value",
+        NSHTTPCookieDomain: @".www.webkit.org",
+    }];
+
+    [globalCookieStore setCookie:cookie.get() completionHandler:[]() {
+        gotFlag = true;
+    }];
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+
+
+    [globalCookieStore getAllCookies:^(NSArray<NSHTTPCookie *>*cookies) {
+        ASSERT_EQ(1u, cookies.count);
+        gotFlag = true;
+    }];
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
 }
 
 TEST(WebKit, WKHTTPCookieStoreHttpOnly) 
