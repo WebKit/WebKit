@@ -1,5 +1,31 @@
 2018-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] JSBigInt::digitDiv has undefined behavior which causes test failures
+        https://bugs.webkit.org/show_bug.cgi?id=186022
+
+        Reviewed by Darin Adler.
+
+        digitDiv performs Value64Bit >> 64 / Value32Bit >> 32, which is undefined behavior. And zero mask
+        creation has an issue (`s` should be casted to signed one before negating). They cause test failures
+        in non x86 / x86_64 environments. x86 and x86_64 work well since they have a fast path written
+        in asm.
+
+        This patch fixes digitDiv by carefully avoiding undefined behaviors. We mask the left value of the
+        rshift with `digitBits - 1`, which makes `digitBits` 0 while it keeps 0 <= n < digitBits values.
+        This makes the target rshift well-defined in C++. While produced value by the rshift covers 0 <= `s` < 64 (32
+        in 32bit envirnoment) cases, this rshift does not shift if `s` is 0. sZeroMask clears the value
+        if `s` is 0, so that `s == 0` case is also covered. Note that `s == 64` never happens since `divisor`
+        is never 0 here. We add assertion for that. We also fixes `sZeroMask` calculation.
+
+        This patch also fixes naming convention for constant values.
+
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::digitMul):
+        (JSC::JSBigInt::digitDiv):
+        * runtime/JSBigInt.h:
+
+2018-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [WTF] Add clz32 / clz64 for MSVC
         https://bugs.webkit.org/show_bug.cgi?id=186023
 

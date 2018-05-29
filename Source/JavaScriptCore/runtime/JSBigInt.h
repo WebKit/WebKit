@@ -110,17 +110,17 @@ private:
     };
 
     using Digit = uintptr_t;
-    static constexpr const unsigned bitsPerByte = 8;
-    static constexpr const unsigned digitBits = sizeof(Digit) * bitsPerByte;
-    static constexpr const unsigned halfDigitBits = digitBits / 2;
-    static constexpr const Digit halfDigitMask = (1ull << halfDigitBits) - 1;
-    static constexpr const int maxInt = 0x7FFFFFFF;
+    static constexpr unsigned bitsPerByte = 8;
+    static constexpr unsigned digitBits = sizeof(Digit) * bitsPerByte;
+    static constexpr unsigned halfDigitBits = digitBits / 2;
+    static constexpr Digit halfDigitMask = (1ull << halfDigitBits) - 1;
+    static constexpr int maxInt = 0x7FFFFFFF;
     
     // The maximum length that the current implementation supports would be
     // maxInt / digitBits. However, we use a lower limit for now, because
     // raising it later is easier than lowering it.
     // Support up to 1 million bits.
-    static const unsigned maxLength = 1024 * 1024 / (sizeof(void*) * bitsPerByte);
+    static constexpr unsigned maxLength = 1024 * 1024 / (sizeof(void*) * bitsPerByte);
     
     static uint64_t calculateMaximumCharactersRequired(unsigned length, unsigned radix, Digit lastDigit, bool sign);
     

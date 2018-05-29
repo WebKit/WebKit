@@ -354,7 +354,7 @@ inline JSBigInt::Digit JSBigInt::digitSub(Digit a, Digit b, Digit& borrow)
 // Returns the low half of the result. High half is in {high}.
 inline JSBigInt::Digit JSBigInt::digitMul(Digit a, Digit b, Digit& high)
 {
-#if HAVE_TWO_DIGIT
+#if HAVE(TWO_DIGIT)
     TwoDigit result = static_cast<TwoDigit>(a) * static_cast<TwoDigit>(b);
     high = result >> digitBits;
 
@@ -433,49 +433,59 @@ inline JSBigInt::Digit JSBigInt::digitDiv(Digit high, Digit low, Digit divisor, 
     remainder = rem;
     return quotient;
 #else
-    static const Digit kHalfDigitBase = 1ull << halfDigitBits;
+    static constexpr Digit halfDigitBase = 1ull << halfDigitBits;
     // Adapted from Warren, Hacker's Delight, p. 152.
 #if USE(JSVALUE64)
     unsigned s = clz64(divisor);
 #else
     unsigned s = clz32(divisor);
 #endif
+    // If {s} is digitBits here, it causes an undefined behavior.
+    // But {s} is never digitBits since {divisor} is never zero here.
+    ASSERT(s != digitBits);
     divisor <<= s;
-    
+
     Digit vn1 = divisor >> halfDigitBits;
     Digit vn0 = divisor & halfDigitMask;
 
-    // {s} can be 0. "low >> digitBits == low" on x86, so we "&" it with
-    // {s_zero_mask} which is 0 if s == 0 and all 1-bits otherwise.
+    // {sZeroMask} which is 0 if s == 0 and all 1-bits otherwise.
+    // {s} can be 0. If {s} is 0, performing "low >> (digitBits - s)" must not be done since it causes an undefined behavior
+    // since `>> digitBits` is undefied in C++. Quoted from C++ spec, "The type of the result is that of the promoted left operand.
+    // The behavior is undefined if the right operand is negative, or greater than or equal to the length in bits of the promoted
+    // left operand". We mask the right operand of the shift by {shiftMask} (`digitBits - 1`), which makes `digitBits - 0` zero.
+    // This shifting produces a value which covers 0 < {s} <= (digitBits - 1) cases. {s} == digitBits never happen as we asserted.
+    // Since {sZeroMask} clears the value in the case of {s} == 0, {s} == 0 case is also covered.
     STATIC_ASSERT(sizeof(intptr_t) == sizeof(Digit));
-    Digit sZeroMask = static_cast<Digit>(static_cast<intptr_t>(-s) >> (digitBits - 1));
-    Digit un32 = (high << s) | ((low >> (digitBits - s)) & sZeroMask);
+    Digit sZeroMask = static_cast<Digit>((-static_cast<intptr_t>(s)) >> (digitBits - 1));
+    static constexpr unsigned shiftMask = digitBits - 1;
+    Digit un32 = (high << s) | ((low >> ((digitBits - s) & shiftMask)) & sZeroMask);
+
     Digit un10 = low << s;
     Digit un1 = un10 >> halfDigitBits;
     Digit un0 = un10 & halfDigitMask;
     Digit q1 = un32 / vn1;
     Digit rhat = un32 - q1 * vn1;
 
-    while (q1 >= kHalfDigitBase || q1 * vn0 > rhat * kHalfDigitBase + un1) {
+    while (q1 >= halfDigitBase || q1 * vn0 > rhat * halfDigitBase + un1) {
         q1--;
         rhat += vn1;
-        if (rhat >= kHalfDigitBase)
+        if (rhat >= halfDigitBase)
             break;
     }
 
-    Digit un21 = un32 * kHalfDigitBase + un1 - q1 * divisor;
+    Digit un21 = un32 * halfDigitBase + un1 - q1 * divisor;
     Digit q0 = un21 / vn1;
     rhat = un21 - q0 * vn1;
 
-    while (q0 >= kHalfDigitBase || q0 * vn0 > rhat * kHalfDigitBase + un0) {
+    while (q0 >= halfDigitBase || q0 * vn0 > rhat * halfDigitBase + un0) {
         q0--;
         rhat += vn1;
-        if (rhat >= kHalfDigitBase)
+        if (rhat >= halfDigitBase)
             break;
     }
 
-    remainder = (un21 * kHalfDigitBase + un0 - q0 * divisor) >> s;
-    return q1 * kHalfDigitBase + q0;
+    remainder = (un21 * halfDigitBase + un0 - q0 * divisor) >> s;
+    return q1 * halfDigitBase + q0;
 #endif
 }
 
@@ -843,8 +853,8 @@ constexpr uint8_t maxBitsPerCharTable[] = {
     162, 163, 165, 166,                         // 33..36
 };
 
-static const unsigned bitsPerCharTableShift = 5;
-static const size_t bitsPerCharTableMultiplier = 1u << bitsPerCharTableShift;
+static constexpr unsigned bitsPerCharTableShift = 5;
+static constexpr size_t bitsPerCharTableMultiplier = 1u << bitsPerCharTableShift;
 
 // Compute (an overapproximation of) the length of the resulting string:
 // Divide bit length of the BigInt by bits representable per character.
