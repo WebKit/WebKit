@@ -1,3 +1,13 @@
+2018-05-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, follow-up after r232244
+        https://bugs.webkit.org/show_bug.cgi?id=186023
+
+        _BitScanReverse64 is available only in X86_64 and ARM.
+
+        * wtf/MathExtras.h:
+        (WTF::clz64):
+
 2018-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Add clz32 / clz64 for MSVC

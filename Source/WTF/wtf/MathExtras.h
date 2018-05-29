@@ -555,9 +555,10 @@ inline unsigned clz64(uint64_t number)
     if (number)
         return __builtin_clzll(number);
     return 64;
-#elif COMPILER(MSVC)
+#elif COMPILER(MSVC) && !CPU(X86)
     // Visual Studio 2008 or upper have __lzcnt, but we can't detect Intel AVX at compile time.
     // So we use bit-scan-reverse operation to calculate clz.
+    // _BitScanReverse64 is defined in X86_64 and ARM in MSVC supported environments.
     unsigned long ret = 0;
     if (_BitScanReverse64(&ret, number))
         return 63 - ret;
