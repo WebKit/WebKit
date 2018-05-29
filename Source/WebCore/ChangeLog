@@ -1,3 +1,21 @@
+2018-05-29  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Don't assert on m_actionsStart when setting actions on DFA nodes
+        https://bugs.webkit.org/show_bug.cgi?id=185979
+        <rdar://problem/39669458>
+
+        Reviewed by Geoffrey Garen.
+
+        DFANode::setActions is called immediately after the node is created, and once again to set
+        the actions of catch-all regular expressions (.*) on the root node. That works because
+        m_actionsStart is initially 0, since the root was the first node to be created, but may fail
+        after minimizing the DFA, when the root may no longer be the first node, and therefore
+        m_actionsStart would not be 0, even if there are no actions attached to that node.
+
+        Test: http/tests/contentextensions/root-actions.html
+
+        * contentextensions/DFANode.h:
+
 2018-05-29  Nan Wang  <n_wang@apple.com>
 
         AX: setValue on contenteditable should preserve whitespace

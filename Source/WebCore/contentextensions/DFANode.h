@@ -145,7 +145,6 @@ public:
 
     void setActions(uint32_t start, uint16_t length)
     {
-        ASSERT(!m_actionsStart);
         ASSERT(!m_actionsLength);
         m_actionsStart = start;
         m_actionsLength = length;
