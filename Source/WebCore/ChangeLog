@@ -1,3 +1,26 @@
+2018-05-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS WK1: Occasional crash in sanitizedMarkupForFragmentInDocument
+        https://bugs.webkit.org/show_bug.cgi?id=186011
+
+        Reviewed by David Kilzer.
+
+        The crash was caused by the HTML parser in sanitizedMarkupForFragmentInDocument yielding in the web thread
+        when _WebThreadLock() sets webThreadShouldYield to true in the main thread.
+
+        No new tests. This is occasionally caught by existing tests.
+
+        * editing/markup.cpp:
+        (WebCore::createPageForSanitizingWebContent): Fixed the bug by making the HTML parser never yield.
+        Also release-assert that the body is never null here.
+        (WebCore::sanitizedMarkupForFragmentInDocument): Removed superflous call to WTFMove since appendChild
+        takes a reference, not a Ref.
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::overlayPage): Deployed the same fix.
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::insertDataSynchronously): Added.
+        * loader/DocumentWriter.h:
+
 2018-05-29  Chris Dumez  <cdumez@apple.com>
 
         Avoid unnecessary String allocation in isPublicSuffix(const String&)

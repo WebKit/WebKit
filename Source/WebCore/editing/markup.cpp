@@ -189,10 +189,12 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
     FrameLoader& loader = frame.loader();
     static char markup[] = "<!DOCTYPE html><html><body></body></html>";
     ASSERT(loader.activeDocumentLoader());
-    loader.activeDocumentLoader()->writer().setMIMEType("text/html");
-    loader.activeDocumentLoader()->writer().begin();
-    loader.activeDocumentLoader()->writer().addData(markup, sizeof(markup));
-    loader.activeDocumentLoader()->writer().end();
+    auto& writer = loader.activeDocumentLoader()->writer();
+    writer.setMIMEType("text/html");
+    writer.begin();
+    writer.insertDataSynchronously(String(markup));
+    writer.end();
+    RELEASE_ASSERT(page->mainFrame().document()->body());
 
     return page;
 }
@@ -859,7 +861,7 @@ String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Do
 
     auto bodyElement = makeRefPtr(document.body());
     ASSERT(bodyElement);
-    bodyElement->appendChild(WTFMove(fragment));
+    bodyElement->appendChild(fragment.get());
 
     auto range = Range::create(document);
     range->selectNodeContents(*bodyElement);

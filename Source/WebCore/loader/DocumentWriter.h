@@ -51,8 +51,9 @@ public:
     bool begin();
     bool begin(const URL&, bool dispatchWindowObjectAvailable = true, Document* ownerDocument = nullptr);
     void addData(const char* bytes, size_t length);
+    void insertDataSynchronously(const String&); // For an internal use only to prevent the parser from yielding.
     WEBCORE_EXPORT void end();
-    
+
     void setFrame(Frame* frame) { m_frame = frame; }
 
     WEBCORE_EXPORT void setEncoding(const String& encoding, bool userChosen);

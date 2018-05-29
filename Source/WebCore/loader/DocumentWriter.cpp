@@ -253,6 +253,14 @@ void DocumentWriter::addData(const char* bytes, size_t length)
     m_parser->appendBytes(*this, bytes, length);
 }
 
+void DocumentWriter::insertDataSynchronously(const String& markup)
+{
+    ASSERT(m_state != NotStartedWritingState);
+    ASSERT(m_state != FinishedWritingState);
+    ASSERT(m_parser);
+    m_parser->insert(markup);
+}
+
 void DocumentWriter::end()
 {
     ASSERT(m_frame->page());
