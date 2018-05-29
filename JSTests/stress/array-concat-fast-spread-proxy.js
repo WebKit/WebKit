@@ -1,4 +1,5 @@
-// This file tests is concat spreadable.
+// This file tests is concat spreadable when taking the fast path
+// (single argument, JSArray receiver)
 
 function arrayEq(a, b) {
     if (a.length !== b.length)
@@ -13,18 +14,18 @@ function arrayEq(a, b) {
 
 {
     let array = [1,2,3];
-    let {proxy:p, revoke} = Proxy.revocable(array, { get : function(o, k) { return o[k]; } });
+    let {proxy:p, revoke} = Proxy.revocable([4, 5], {});
 
     // Test it works with proxies by default
-    for (let i = 0; i < 100000; i++) {
-        if (!arrayEq(Array.prototype.concat.call(p,p), [1,2,3,1,2,3]))
+    for (let i = 0; i < 10000; i++) {
+        if (!arrayEq(Array.prototype.concat.call(array, p), [1,2,3,4,5]))
             throw "failed normally with a proxy"
     }
 
     // Test it works with spreadable false.
     p[Symbol.isConcatSpreadable] = false;
-    for (let i = 0; i < 100000; i++) {
-        if (!arrayEq(Array.prototype.concat.call(p,p), [p,p]))
+    for (let i = 0; i < 10000; i++) {
+        if (!arrayEq(Array.prototype.concat.call(array,p), [1,2,3,p]))
             throw "failed with no spread"
     }
 
@@ -32,7 +33,7 @@ function arrayEq(a, b) {
     revoke();
     passed = true;
     try {
-        Array.prototype.concat.call(p,[]);
+        Array.prototype.concat.call(array,p);
         passed = false;
     } catch (e) { }
     if (!passed)

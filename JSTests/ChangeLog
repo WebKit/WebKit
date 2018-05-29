@@ -1,3 +1,15 @@
+2018-05-29  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] Fix Array.prototype.concat fast case when single argument is Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=184267
+
+        Reviewed by Saam Barati.
+
+        * stress/array-concat-fast-spread-proxy.js: Copied from JSTests/stress/array-concat-spread-proxy.js.
+        (arrayEq):
+        (catch):
+        * stress/array-concat-spread-proxy.js:
+
 2018-05-27  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement "+" and "-" unary operation

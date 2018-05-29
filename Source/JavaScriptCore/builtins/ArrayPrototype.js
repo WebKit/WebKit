@@ -678,7 +678,7 @@ function concat(first)
     if (@argumentCount() === 1
         && @isJSArray(this)
         && this.@isConcatSpreadableSymbol === @undefined
-        && (!@isObject(first) || first.@isConcatSpreadableSymbol === @undefined)) {
+        && (!@isObject(first) || (!@isProxyObject(first) && first.@isConcatSpreadableSymbol === @undefined))) {
 
         let result = @concatMemcpy(this, first);
         if (result !== null)

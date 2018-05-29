@@ -1,3 +1,19 @@
+2018-05-29  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] Fix Array.prototype.concat fast case when single argument is Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=184267
+
+        Reviewed by Saam Barati.
+
+        Before this patch, the fast case for Array.prototype.concat was taken if
+        there was a single argument passed to the function, which is either a
+        non-JSCell, or an ObjectType JSCell not marked as concat-spreadable.
+        This incorrectly prevented Proxy objects from being spread when
+        they were the only argument passed to A.prototype.concat(), violating ECMA-262.
+
+        * builtins/ArrayPrototype.js:
+        (concat):
+
 2018-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] JSBigInt::digitDiv has undefined behavior which causes test failures
