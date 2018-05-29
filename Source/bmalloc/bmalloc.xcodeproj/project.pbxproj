@@ -86,6 +86,7 @@
 		141D9B001C8E51C0000ABBA0 /* List.h in Headers */ = {isa = PBXBuildFile; fileRef = 141D9AFF1C8E51C0000ABBA0 /* List.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142B44361E2839E7001DA6E9 /* DebugHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142B44341E2839E7001DA6E9 /* DebugHeap.cpp */; };
 		142B44371E2839E7001DA6E9 /* DebugHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = 142B44351E2839E7001DA6E9 /* DebugHeap.h */; };
+		142FC6222096409E00A99362 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 142FC6212096409E00A99362 /* Foundation.framework */; };
 		143CB81C19022BC900B16A45 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143CB81A19022BC900B16A45 /* Mutex.cpp */; };
 		143CB81D19022BC900B16A45 /* Mutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 143CB81B19022BC900B16A45 /* Mutex.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1440AFCB1A95261100837FAA /* Zone.h in Headers */ = {isa = PBXBuildFile; fileRef = 1440AFCA1A95261100837FAA /* Zone.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -245,6 +246,7 @@
 		1421A87718EE462A00B4DD68 /* Algorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Algorithm.h; path = bmalloc/Algorithm.h; sourceTree = "<group>"; };
 		142B44341E2839E7001DA6E9 /* DebugHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DebugHeap.cpp; path = bmalloc/DebugHeap.cpp; sourceTree = "<group>"; };
 		142B44351E2839E7001DA6E9 /* DebugHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DebugHeap.h; path = bmalloc/DebugHeap.h; sourceTree = "<group>"; };
+		142FC6212096409E00A99362 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		143CB81A19022BC900B16A45 /* Mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Mutex.cpp; path = bmalloc/Mutex.cpp; sourceTree = "<group>"; };
 		143CB81B19022BC900B16A45 /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Mutex.h; path = bmalloc/Mutex.h; sourceTree = "<group>"; };
 		143E29ED18CAE90500FE8A0F /* SmallPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmallPage.h; path = bmalloc/SmallPage.h; sourceTree = "<group>"; };
@@ -312,6 +314,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				142FC6222096409E00A99362 /* Foundation.framework in Frameworks */,
 				14CC394C18EA8858004AFE34 /* libbmalloc.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -337,6 +340,7 @@
 		0F7EB7F91F95414C00F1ABCB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				142FC6212096409E00A99362 /* Foundation.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -576,8 +580,8 @@
 				1448C30118F3754C00502839 /* bmalloc.h in Headers */,
 				0F7EB84D1F9541C700F1ABCB /* BMalloced.h in Headers */,
 				14C919C918FCC59F0028DB43 /* BPlatform.h in Headers */,
-				7939885B2076EEB60074A2E7 /* BulkDecommit.h in Headers */,
 				4426E2831C839547008EB042 /* BSoftLinking.h in Headers */,
+				7939885B2076EEB60074A2E7 /* BulkDecommit.h in Headers */,
 				14DD789C18F48D4A00950702 /* BumpAllocator.h in Headers */,
 				140FA00319CE429C00FFD3C8 /* BumpRange.h in Headers */,
 				14DD789918F48D4A00950702 /* Cache.h in Headers */,
