@@ -991,9 +991,6 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
 #if PLATFORM(MAC)
     registerDisplayConfigurationCallback();
-
-    auto screenProperties = WebCore::getScreenProperties();
-    process.send(Messages::WebProcess::SetScreenProperties(screenProperties.first, screenProperties.second), 0);
 #endif
 }
 

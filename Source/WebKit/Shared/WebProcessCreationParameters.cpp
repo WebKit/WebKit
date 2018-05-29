@@ -154,6 +154,11 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(COCOA)
     encoder << mediaMIMETypes;
 #endif
+
+#if PLATFORM(MAC)
+    encoder << primaryDisplayID;
+    encoder << screenPropertiesMap;
+#endif
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -399,6 +404,17 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 #if PLATFORM(COCOA)
     if (!decoder.decode(parameters.mediaMIMETypes))
         return false;
+#endif
+
+#if PLATFORM(MAC)
+    if (!decoder.decode(parameters.primaryDisplayID))
+        return false;
+
+    std::optional<HashMap<WebCore::PlatformDisplayID, WebCore::ScreenProperties>> screenPropertiesMap;
+    decoder >> screenPropertiesMap;
+    if (!screenPropertiesMap)
+        return false;
+    parameters.screenPropertiesMap = WTFMove(*screenPropertiesMap);
 #endif
 
     return true;

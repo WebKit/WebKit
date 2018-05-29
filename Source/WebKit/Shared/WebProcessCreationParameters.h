@@ -41,6 +41,11 @@
 #include <wtf/MachSendRight.h>
 #endif
 
+#if PLATFORM(MAC)
+#include <WebCore/PlatformScreen.h>
+#include <WebCore/ScreenProperties.h>
+#endif
+
 #if USE(SOUP)
 #include "HTTPCookieAcceptPolicy.h"
 #include <WebCore/SoupNetworkProxySettings.h>
@@ -187,6 +192,11 @@ struct WebProcessCreationParameters {
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     bool shouldLogUserInteraction { false };
+#endif
+
+#if PLATFORM(MAC)
+    WebCore::PlatformDisplayID primaryDisplayID { 0 };
+    HashMap<WebCore::PlatformDisplayID, WebCore::ScreenProperties> screenPropertiesMap;
 #endif
 };
 

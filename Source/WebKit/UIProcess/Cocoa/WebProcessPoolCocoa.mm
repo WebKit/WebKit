@@ -280,6 +280,12 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     parameters.shouldLogUserInteraction = [defaults boolForKey:WebKitLogCookieInformationDefaultsKey];
 #endif
+    
+#if PLATFORM(MAC)
+    auto screenProperties = WebCore::getScreenProperties();
+    parameters.primaryDisplayID = screenProperties.first;
+    parameters.screenPropertiesMap = WTFMove(screenProperties.second);
+#endif
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)

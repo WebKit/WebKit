@@ -1,3 +1,24 @@
+2018-05-29  Per Arne Vollan  <pvollan@apple.com>
+
+        Follow-up fixes after r228907.
+        https://bugs.webkit.org/show_bug.cgi?id=183338
+
+        Reviewed by Brent Fulgham.
+
+        Add screen properties to the WebProcess creation parameters, instead of sending
+        them in a message to the WebProcess just after starting it up.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2018-05-29  Sihui Liu  <sihui_liu@apple.com>
 
         Unable to remove IndexedDB Databases with Cocoa API removeDataOfTypes

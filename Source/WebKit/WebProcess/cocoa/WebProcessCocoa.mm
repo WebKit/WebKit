@@ -191,6 +191,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
             parentProcessConnection()->send(Messages::WebProcessProxy::CacheMediaMIMETypes(types), 0);
         });
     }
+
+#if PLATFORM(MAC)
+    WebCore::setScreenProperties(parameters.primaryDisplayID, parameters.screenPropertiesMap);
+#endif
 }
 
 void WebProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
