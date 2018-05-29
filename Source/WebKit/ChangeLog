@@ -1,3 +1,22 @@
+2018-05-28  Jeff Miller  <jeffm@apple.com>
+
+        Expose additional WKMenuItemIdentifier strings
+        https://bugs.webkit.org/show_bug.cgi?id=186041
+
+        Reviewed by Dan Bernstein.
+
+        Expose identifiers for media-related menu items.
+
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiers.mm:
+        Define new identifiers.
+
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiersPrivate.h:
+        Declare new identifiers.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::menuItemIdentifier):
+        Map to new identifiers.
+
 2018-05-29  Geoffrey Garen  <ggaren@apple.com>
 
         Removed some unused WebSQL trackers

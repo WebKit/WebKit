@@ -354,11 +354,17 @@ static NSString *menuItemIdentifier(const ContextMenuAction action)
     case ContextMenuItemTagCopyLinkToClipboard:
         return _WKMenuItemIdentifierCopyLink;
 
+    case ContextMenuItemTagCopyMediaLinkToClipboard:
+        return _WKMenuItemIdentifierCopyMediaLink;
+
     case ContextMenuItemTagDownloadImageToDisk:
         return _WKMenuItemIdentifierDownloadImage;
 
     case ContextMenuItemTagDownloadLinkToDisk:
         return _WKMenuItemIdentifierDownloadLinkedFile;
+
+    case ContextMenuItemTagDownloadMediaToDisk:
+        return _WKMenuItemIdentifierDownloadMedia;
 
     case ContextMenuItemTagGoBack:
         return _WKMenuItemIdentifierGoBack;
@@ -384,6 +390,9 @@ static NSString *menuItemIdentifier(const ContextMenuAction action)
     case ContextMenuItemTagOpenLinkInNewWindow:
         return _WKMenuItemIdentifierOpenLinkInNewWindow;
 
+    case ContextMenuItemTagOpenMediaInNewWindow:
+        return _WKMenuItemIdentifierOpenMediaInNewWindow;
+
     case ContextMenuItemTagPaste:
         return _WKMenuItemIdentifierPaste;
 
@@ -395,6 +404,9 @@ static NSString *menuItemIdentifier(const ContextMenuAction action)
 
     case ContextMenuItemTagToggleMediaControls:
         return _WKMenuItemIdentifierShowHideMediaControls;
+
+    case ContextMenuItemTagToggleVideoEnhancedFullscreen:
+        return _WKMenuItemIdentifierToggleEnhancedFullScreen;
 
     case ContextMenuItemTagToggleVideoFullscreen:
         return _WKMenuItemIdentifierToggleFullScreen;
