@@ -1,3 +1,18 @@
+2018-05-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed some unused WebSQL trackers
+        https://bugs.webkit.org/show_bug.cgi?id=186026
+
+        Reviewed by Dan Bernstein.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        * NetworkProcess/NetworkProcess.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::m_nonVisibleProcessCleanupTimer):
+        (WebKit::m_webSQLiteDatabaseTracker): Deleted.
+        * WebProcess/WebProcess.h:
+
 2018-05-29  Per Arne Vollan  <pvollan@apple.com>
 
         Follow-up fixes after r228907.
