@@ -1,3 +1,16 @@
+2018-05-29  Sihui Liu  <sihui_liu@apple.com>
+
+        Unable to remove IndexedDB Databases with Cocoa API removeDataOfTypes
+        https://bugs.webkit.org/show_bug.cgi?id=185835
+        <rdar://problem/39142257>
+
+        Reviewed by Chris Dumez.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBPersistence.mm:
+        (TEST):
+
 2018-05-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] "Significant area painted" rendering progress event is rarely fired

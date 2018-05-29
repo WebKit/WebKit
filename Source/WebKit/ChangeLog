@@ -1,3 +1,17 @@
+2018-05-29  Sihui Liu  <sihui_liu@apple.com>
+
+        Unable to remove IndexedDB Databases with Cocoa API removeDataOfTypes
+        https://bugs.webkit.org/show_bug.cgi?id=185835
+        <rdar://problem/39142257>
+
+        Reviewed by Chris Dumez.
+
+        Fix a wrong if condition: databases should be closed and deleted if websiteDataTypes contains 
+        WebsiteDataType::IndexedDBDatabases.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::deleteWebsiteDataForOrigins):
+
 2018-05-28  Sam Weinig  <sam@webkit.org>
 
         Modernize SVGRenderStyleDefs.h
