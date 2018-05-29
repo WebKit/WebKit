@@ -38,20 +38,19 @@
 #include "PrintWebUIDelegate.h"
 #include "ResourceLoadDelegate.h"
 #include "WebDownloadDelegate.h"
+#include <WebCore/COMPtr.h>
 #include <WebKitLegacy/WebKitCOMAPI.h>
-#include <wtf/ExportMacros.h>
-#include <wtf/Platform.h>
-
-#if USE(CF)
-#include <CoreFoundation/CFRunLoop.h>
-#endif
-
 #include <algorithm>
 #include <cassert>
 #include <functional>
 #include <memory>
 #include <string>
 #include <vector>
+#include <wtf/text/WTFString.h>
+
+#if USE(CF)
+#include <WebKitLegacy/CFDictionaryPropertyBag.h>
+#endif
 
 namespace WebCore {
 float deviceScaleFactorForWindow(HWND);
@@ -624,4 +623,273 @@ void MiniBrowser::updateDeviceScaleFactor()
 {
     m_deviceScaleFactor = WebCore::deviceScaleFactorForWindow(m_hMainWnd);
     generateFontForScaleFactor(m_deviceScaleFactor);
+}
+
+static BOOL CALLBACK AbortProc(HDC hDC, int Error)
+{
+    MSG msg;
+    while (::PeekMessage(&msg, 0, 0, 0, PM_REMOVE)) {
+        ::TranslateMessage(&msg);
+        ::DispatchMessage(&msg);
+    }
+
+    return TRUE;
+}
+
+static HDC getPrinterDC()
+{
+    PRINTDLG pdlg;
+    memset(&pdlg, 0, sizeof(PRINTDLG));
+    pdlg.lStructSize = sizeof(PRINTDLG);
+    pdlg.Flags = PD_PRINTSETUP | PD_RETURNDC;
+
+    ::PrintDlg(&pdlg);
+
+    return pdlg.hDC;
+}
+
+static void initDocStruct(DOCINFO* di, TCHAR* docname)
+{
+    memset(di, 0, sizeof(DOCINFO));
+    di->cbSize = sizeof(DOCINFO);
+    di->lpszDocName = docname;
+}
+
+void MiniBrowser::print()
+{
+    HDC printDC = getPrinterDC();
+    if (!printDC) {
+        ::MessageBox(0, L"Error creating printing DC", L"Error", MB_APPLMODAL | MB_OK);
+        return;
+    }
+
+    if (::SetAbortProc(printDC, AbortProc) == SP_ERROR) {
+        ::MessageBox(0, L"Error setting up AbortProc", L"Error", MB_APPLMODAL | MB_OK);
+        return;
+    }
+
+    IWebFramePtr frame = mainFrame();
+    if (!frame)
+        return;
+
+    IWebFramePrivatePtr framePrivate;
+    if (FAILED(frame->QueryInterface(&framePrivate.GetInterfacePtr())))
+        return;
+
+    framePrivate->setInPrintingMode(TRUE, printDC);
+
+    UINT pageCount = 0;
+    framePrivate->getPrintedPageCount(printDC, &pageCount);
+
+    DOCINFO di;
+    initDocStruct(&di, L"WebKit Doc");
+    ::StartDoc(printDC, &di);
+
+    // FIXME: Need CoreGraphics implementation
+    void* graphicsContext = 0;
+    for (size_t page = 1; page <= pageCount; ++page) {
+        ::StartPage(printDC);
+        framePrivate->spoolPages(printDC, page, page, graphicsContext);
+        ::EndPage(printDC);
+    }
+
+    framePrivate->setInPrintingMode(FALSE, printDC);
+
+    ::EndDoc(printDC);
+    ::DeleteDC(printDC);
+}
+
+static void setWindowText(HWND dialog, UINT field, _bstr_t value)
+{
+    ::SetDlgItemText(dialog, field, value);
+}
+
+static void setWindowText(HWND dialog, UINT field, UINT value)
+{
+    String valueStr = WTF::String::number(value);
+
+    setWindowText(dialog, field, _bstr_t(valueStr.utf8().data()));
+}
+
+typedef _com_ptr_t<_com_IIID<IPropertyBag, &__uuidof(IPropertyBag)>> IPropertyBagPtr;
+
+static void setWindowText(HWND dialog, UINT field, IPropertyBagPtr statistics, const _bstr_t& key)
+{
+    _variant_t var;
+    V_VT(&var) = VT_UI8;
+    if (FAILED(statistics->Read(key, &var.GetVARIANT(), nullptr)))
+        return;
+
+    unsigned long long value = V_UI8(&var);
+    String valueStr = WTF::String::number(value);
+
+    setWindowText(dialog, field, _bstr_t(valueStr.utf8().data()));
+}
+
+static void setWindowText(HWND dialog, UINT field, CFDictionaryRef dictionary, CFStringRef key, UINT& total)
+{
+    CFNumberRef countNum = static_cast<CFNumberRef>(CFDictionaryGetValue(dictionary, key));
+    if (!countNum)
+        return;
+
+    int count = 0;
+    CFNumberGetValue(countNum, kCFNumberIntType, &count);
+
+    setWindowText(dialog, field, static_cast<UINT>(count));
+    total += count;
+}
+
+void MiniBrowser::updateStatistics(HWND dialog)
+{
+    IWebCoreStatisticsPtr webCoreStatistics = statistics();
+    if (!webCoreStatistics)
+        return;
+
+    IPropertyBagPtr statistics;
+    HRESULT hr = webCoreStatistics->memoryStatistics(&statistics.GetInterfacePtr());
+    if (FAILED(hr))
+        return;
+
+    // FastMalloc.
+    setWindowText(dialog, IDC_RESERVED_VM, statistics, "FastMallocReservedVMBytes");
+    setWindowText(dialog, IDC_COMMITTED_VM, statistics, "FastMallocCommittedVMBytes");
+    setWindowText(dialog, IDC_FREE_LIST_BYTES, statistics, "FastMallocFreeListBytes");
+
+    // WebCore Cache.
+#if USE(CF)
+    IWebCachePtr webCache = this->webCache();
+
+    int dictCount = 6;
+    IPropertyBag* cacheDict[6] = { 0 };
+    if (FAILED(webCache->statistics(&dictCount, cacheDict)))
+        return;
+
+    COMPtr<CFDictionaryPropertyBag> counts, sizes, liveSizes, decodedSizes, purgableSizes;
+    counts.adoptRef(reinterpret_cast<CFDictionaryPropertyBag*>(cacheDict[0]));
+    sizes.adoptRef(reinterpret_cast<CFDictionaryPropertyBag*>(cacheDict[1]));
+    liveSizes.adoptRef(reinterpret_cast<CFDictionaryPropertyBag*>(cacheDict[2]));
+    decodedSizes.adoptRef(reinterpret_cast<CFDictionaryPropertyBag*>(cacheDict[3]));
+    purgableSizes.adoptRef(reinterpret_cast<CFDictionaryPropertyBag*>(cacheDict[4]));
+
+    static CFStringRef imagesKey = CFSTR("images");
+    static CFStringRef stylesheetsKey = CFSTR("style sheets");
+    static CFStringRef xslKey = CFSTR("xsl");
+    static CFStringRef scriptsKey = CFSTR("scripts");
+
+    if (counts) {
+        UINT totalObjects = 0;
+        setWindowText(dialog, IDC_IMAGES_OBJECT_COUNT, counts->dictionary(), imagesKey, totalObjects);
+        setWindowText(dialog, IDC_CSS_OBJECT_COUNT, counts->dictionary(), stylesheetsKey, totalObjects);
+        setWindowText(dialog, IDC_XSL_OBJECT_COUNT, counts->dictionary(), xslKey, totalObjects);
+        setWindowText(dialog, IDC_JSC_OBJECT_COUNT, counts->dictionary(), scriptsKey, totalObjects);
+        setWindowText(dialog, IDC_TOTAL_OBJECT_COUNT, totalObjects);
+    }
+
+    if (sizes) {
+        UINT totalBytes = 0;
+        setWindowText(dialog, IDC_IMAGES_BYTES, sizes->dictionary(), imagesKey, totalBytes);
+        setWindowText(dialog, IDC_CSS_BYTES, sizes->dictionary(), stylesheetsKey, totalBytes);
+        setWindowText(dialog, IDC_XSL_BYTES, sizes->dictionary(), xslKey, totalBytes);
+        setWindowText(dialog, IDC_JSC_BYTES, sizes->dictionary(), scriptsKey, totalBytes);
+        setWindowText(dialog, IDC_TOTAL_BYTES, totalBytes);
+    }
+
+    if (liveSizes) {
+        UINT totalLiveBytes = 0;
+        setWindowText(dialog, IDC_IMAGES_LIVE_COUNT, liveSizes->dictionary(), imagesKey, totalLiveBytes);
+        setWindowText(dialog, IDC_CSS_LIVE_COUNT, liveSizes->dictionary(), stylesheetsKey, totalLiveBytes);
+        setWindowText(dialog, IDC_XSL_LIVE_COUNT, liveSizes->dictionary(), xslKey, totalLiveBytes);
+        setWindowText(dialog, IDC_JSC_LIVE_COUNT, liveSizes->dictionary(), scriptsKey, totalLiveBytes);
+        setWindowText(dialog, IDC_TOTAL_LIVE_COUNT, totalLiveBytes);
+    }
+
+    if (decodedSizes) {
+        UINT totalDecoded = 0;
+        setWindowText(dialog, IDC_IMAGES_DECODED_COUNT, decodedSizes->dictionary(), imagesKey, totalDecoded);
+        setWindowText(dialog, IDC_CSS_DECODED_COUNT, decodedSizes->dictionary(), stylesheetsKey, totalDecoded);
+        setWindowText(dialog, IDC_XSL_DECODED_COUNT, decodedSizes->dictionary(), xslKey, totalDecoded);
+        setWindowText(dialog, IDC_JSC_DECODED_COUNT, decodedSizes->dictionary(), scriptsKey, totalDecoded);
+        setWindowText(dialog, IDC_TOTAL_DECODED, totalDecoded);
+    }
+
+    if (purgableSizes) {
+        UINT totalPurgable = 0;
+        setWindowText(dialog, IDC_IMAGES_PURGEABLE_COUNT, purgableSizes->dictionary(), imagesKey, totalPurgable);
+        setWindowText(dialog, IDC_CSS_PURGEABLE_COUNT, purgableSizes->dictionary(), stylesheetsKey, totalPurgable);
+        setWindowText(dialog, IDC_XSL_PURGEABLE_COUNT, purgableSizes->dictionary(), xslKey, totalPurgable);
+        setWindowText(dialog, IDC_JSC_PURGEABLE_COUNT, purgableSizes->dictionary(), scriptsKey, totalPurgable);
+        setWindowText(dialog, IDC_TOTAL_PURGEABLE, totalPurgable);
+    }
+#endif
+
+    // JavaScript Heap.
+    setWindowText(dialog, IDC_JSC_HEAP_SIZE, statistics, "JavaScriptHeapSize");
+    setWindowText(dialog, IDC_JSC_HEAP_FREE, statistics, "JavaScriptFreeSize");
+
+    UINT count;
+    if (SUCCEEDED(webCoreStatistics->javaScriptObjectsCount(&count)))
+        setWindowText(dialog, IDC_TOTAL_JSC_HEAP_OBJECTS, count);
+    if (SUCCEEDED(webCoreStatistics->javaScriptGlobalObjectsCount(&count)))
+        setWindowText(dialog, IDC_GLOBAL_JSC_HEAP_OBJECTS, count);
+    if (SUCCEEDED(webCoreStatistics->javaScriptProtectedObjectsCount(&count)))
+        setWindowText(dialog, IDC_PROTECTED_JSC_HEAP_OBJECTS, count);
+
+    // Font and Glyph Caches.
+    if (SUCCEEDED(webCoreStatistics->cachedFontDataCount(&count)))
+        setWindowText(dialog, IDC_TOTAL_FONT_OBJECTS, count);
+    if (SUCCEEDED(webCoreStatistics->cachedFontDataInactiveCount(&count)))
+        setWindowText(dialog, IDC_INACTIVE_FONT_OBJECTS, count);
+    if (SUCCEEDED(webCoreStatistics->glyphPageCount(&count)))
+        setWindowText(dialog, IDC_GLYPH_PAGES, count);
+
+    // Site Icon Database.
+    if (SUCCEEDED(webCoreStatistics->iconPageURLMappingCount(&count)))
+        setWindowText(dialog, IDC_PAGE_URL_MAPPINGS, count);
+    if (SUCCEEDED(webCoreStatistics->iconRetainedPageURLCount(&count)))
+        setWindowText(dialog, IDC_RETAINED_PAGE_URLS, count);
+    if (SUCCEEDED(webCoreStatistics->iconRecordCount(&count)))
+        setWindowText(dialog, IDC_SITE_ICON_RECORDS, count);
+    if (SUCCEEDED(webCoreStatistics->iconsWithDataCount(&count)))
+        setWindowText(dialog, IDC_SITE_ICONS_WITH_DATA, count);
+}
+
+void MiniBrowser::setPreference(UINT menuID, bool enable)
+{
+    if (!standardPreferences() || !privatePreferences())
+        return;
+
+    switch (menuID) {
+    case IDM_AVFOUNDATION:
+        standardPreferences()->setAVFoundationEnabled(enable);
+        break;
+    case IDM_ACC_COMPOSITING:
+        privatePreferences()->setAcceleratedCompositingEnabled(enable);
+        break;
+    case IDM_WK_FULLSCREEN:
+        privatePreferences()->setFullScreenEnabled(enable);
+        break;
+    case IDM_COMPOSITING_BORDERS:
+        privatePreferences()->setShowDebugBorders(enable);
+        privatePreferences()->setShowRepaintCounter(enable);
+        break;
+    case IDM_DEBUG_INFO_LAYER:
+        privatePreferences()->setShowTiledScrollingIndicator(enable);
+        break;
+    case IDM_INVERT_COLORS:
+        privatePreferences()->setShouldInvertColors(enable);
+        break;
+    case IDM_DISABLE_IMAGES:
+        standardPreferences()->setLoadsImagesAutomatically(!enable);
+        break;
+    case IDM_DISABLE_STYLES:
+        privatePreferences()->setAuthorAndUserStylesEnabled(!enable);
+        break;
+    case IDM_DISABLE_JAVASCRIPT:
+        standardPreferences()->setJavaScriptEnabled(!enable);
+        break;
+    case IDM_DISABLE_LOCAL_FILE_RESTRICTIONS:
+        privatePreferences()->setAllowUniversalAccessFromFileURLs(enable);
+        privatePreferences()->setAllowFileAccessFromFileURLs(enable);
+        break;
+    }
 }

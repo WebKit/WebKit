@@ -1,3 +1,35 @@
+2018-05-29  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Move WK1 specific code from Common.cpp to MiniBrowser.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=186029
+
+        Reviewed by Alex Christensen.
+
+        This is a sub task of Bug 184770.
+
+        * MiniBrowser/win/Common.cpp:
+        (ToggleMenuItem): Extracted WK1 specific code to MiniBrowser::setPreference.
+        (Caches): Call MiniBrowser::updateStatistics instead of updateStatistics.
+        (AbortProc): Moved to MiniBrowser.cpp.
+        (getPrinterDC): Ditto.
+        (initDocStruct): Ditto.
+        (PrintView): Ditto.
+        (ToggleMenuFlag): Ditto.
+        (setWindowText): Ditto.
+        (updateStatistics): Ditto.
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::WndProc): Call MiniBrowser::print instead of PrintView.
+        * MiniBrowser/win/MiniBrowser.cpp:
+        (AbortProc): Moved from Common.cpp.
+        (getPrinterDC): Moved from Common.cpp.
+        (initDocStruct): Moved from Common.cpp.
+        (setWindowText): Moved from Common.cpp.
+        (MiniBrowser::print): Renamed from PrintView of Common.cpp.
+        (MiniBrowser::updateStatistics): Renamed from updateStatistics of Common.cpp.
+        (MiniBrowser::setPreference): Extracted from ToggleMenuItem of Common.cpp.
+        * MiniBrowser/win/MiniBrowser.h: Add method declarations.
+        * MiniBrowser/win/MiniBrowserWebHost.cpp: Removed duplicated IWebFramePtr typedef.
+
 2018-05-29  Saam Barati  <sbarati@apple.com>
 
         JSC should put bmalloc's scavenger into mini mode

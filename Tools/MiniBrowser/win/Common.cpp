@@ -31,14 +31,9 @@
 #include "MiniBrowser.h"
 #include "MiniBrowserReplace.h"
 #include <WebKitLegacy/WebKitCOMAPI.h>
-#include <wtf/ExportMacros.h>
-#include <wtf/Platform.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
 
 #if USE(CF)
 #include <CoreFoundation/CFRunLoop.h>
-#include <WebKitLegacy/CFDictionaryPropertyBag.h>
 #endif
 
 #include <cassert>
@@ -60,9 +55,6 @@
 #define WM_DPICHANGED 0x02E0
 #endif
 
-typedef _com_ptr_t<_com_IIID<IWebFrame, &__uuidof(IWebFrame)>> IWebFramePtr;
-typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
-
 // Global Variables:
 HINSTANCE hInst;
 HWND hCacheWnd;
@@ -80,7 +72,6 @@ SIZE s_windowSize = { 500, 200 };
 INT_PTR CALLBACK AuthDialogProc(HWND, UINT, WPARAM, LPARAM);
 
 static void loadURL(BSTR urlBStr);
-static void updateStatistics(HWND hDlg);
 
 namespace WebCore {
 float deviceScaleFactorForWindow(HWND);
@@ -159,100 +150,6 @@ void createCrashReport(EXCEPTION_POINTERS* exceptionPointers)
     }
 }
 
-static BOOL CALLBACK AbortProc(HDC hDC, int Error)
-{
-    MSG msg;
-    while (::PeekMessage(&msg, 0, 0, 0, PM_REMOVE)) {
-        ::TranslateMessage(&msg);
-        ::DispatchMessage(&msg);
-    }
-
-    return TRUE;
-}
-
-static HDC getPrinterDC()
-{
-    PRINTDLG pdlg;
-    memset(&pdlg, 0, sizeof(PRINTDLG));
-    pdlg.lStructSize = sizeof(PRINTDLG);
-    pdlg.Flags = PD_PRINTSETUP | PD_RETURNDC;
-
-    ::PrintDlg(&pdlg);
-
-    return pdlg.hDC;
-}
-
-static void initDocStruct(DOCINFO* di, TCHAR* docname)
-{
-    memset(di, 0, sizeof(DOCINFO));
-    di->cbSize = sizeof(DOCINFO);
-    di->lpszDocName = docname;
-}
-
-typedef _com_ptr_t<_com_IIID<IWebFramePrivate, &__uuidof(IWebFramePrivate)>> IWebFramePrivatePtr;
-
-void PrintView(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    HDC printDC = getPrinterDC();
-    if (!printDC) {
-        ::MessageBoxW(0, L"Error creating printing DC", L"Error", MB_APPLMODAL | MB_OK);
-        return;
-    }
-
-    if (::SetAbortProc(printDC, AbortProc) == SP_ERROR) {
-        ::MessageBoxW(0, L"Error setting up AbortProc", L"Error", MB_APPLMODAL | MB_OK);
-        return;
-    }
-
-    IWebFramePtr frame = gMiniBrowser->mainFrame();
-    if (!frame)
-        return;
-
-    IWebFramePrivatePtr framePrivate;
-    if (FAILED(frame->QueryInterface(&framePrivate.GetInterfacePtr())))
-        return;
-
-    framePrivate->setInPrintingMode(TRUE, printDC);
-
-    UINT pageCount = 0;
-    framePrivate->getPrintedPageCount(printDC, &pageCount);
-
-    DOCINFO di;
-    initDocStruct(&di, L"WebKit Doc");
-    ::StartDoc(printDC, &di);
-
-    // FIXME: Need CoreGraphics implementation
-    void* graphicsContext = 0;
-    for (size_t page = 1; page <= pageCount; ++page) {
-        ::StartPage(printDC);
-        framePrivate->spoolPages(printDC, page, page, graphicsContext);
-        ::EndPage(printDC);
-    }
-
-    framePrivate->setInPrintingMode(FALSE, printDC);
-
-    ::EndDoc(printDC);
-    ::DeleteDC(printDC);
-}
-
-void ToggleMenuFlag(HWND hWnd, UINT menuID)
-{
-    HMENU menu = ::GetMenu(hWnd);
-
-    MENUITEMINFO info;
-    ::memset(&info, 0x00, sizeof(info));
-    info.cbSize = sizeof(info);
-    info.fMask = MIIM_STATE;
-
-    if (!::GetMenuItemInfo(menu, menuID, FALSE, &info))
-        return;
-
-    BOOL newState = !(info.fState & MFS_CHECKED);
-    info.fState = (newState) ? MFS_CHECKED : MFS_UNCHECKED;
-
-    ::SetMenuItemInfo(menu, menuID, FALSE, &info);
-}
-
 static bool menuItemIsChecked(const MENUITEMINFO& info)
 {
     return info.fState & MFS_CHECKED;
@@ -284,52 +181,7 @@ bool ToggleMenuItem(HWND hWnd, UINT menuID)
 
     HMENU menu = ::GetMenu(hWnd);
 
-    MENUITEMINFO info;
-    ::memset(&info, 0x00, sizeof(info));
-    info.cbSize = sizeof(info);
-    info.fMask = MIIM_STATE;
-
-    if (!::GetMenuItemInfo(menu, menuID, FALSE, &info))
-        return false;
-
-    BOOL newState = !menuItemIsChecked(info);
-
-    if (!gMiniBrowser->standardPreferences() || !gMiniBrowser->privatePreferences())
-        return false;
-
     switch (menuID) {
-    case IDM_AVFOUNDATION:
-        gMiniBrowser->standardPreferences()->setAVFoundationEnabled(newState);
-        break;
-    case IDM_ACC_COMPOSITING:
-        gMiniBrowser->privatePreferences()->setAcceleratedCompositingEnabled(newState);
-        break;
-    case IDM_WK_FULLSCREEN:
-        gMiniBrowser->privatePreferences()->setFullScreenEnabled(newState);
-        break;
-    case IDM_COMPOSITING_BORDERS:
-        gMiniBrowser->privatePreferences()->setShowDebugBorders(newState);
-        gMiniBrowser->privatePreferences()->setShowRepaintCounter(newState);
-        break;
-    case IDM_DEBUG_INFO_LAYER:
-        gMiniBrowser->privatePreferences()->setShowTiledScrollingIndicator(newState);
-        break;
-    case IDM_INVERT_COLORS:
-        gMiniBrowser->privatePreferences()->setShouldInvertColors(newState);
-        break;
-    case IDM_DISABLE_IMAGES:
-        gMiniBrowser->standardPreferences()->setLoadsImagesAutomatically(!newState);
-        break;
-    case IDM_DISABLE_STYLES:
-        gMiniBrowser->privatePreferences()->setAuthorAndUserStylesEnabled(!newState);
-        break;
-    case IDM_DISABLE_JAVASCRIPT:
-        gMiniBrowser->standardPreferences()->setJavaScriptEnabled(!newState);
-        break;
-    case IDM_DISABLE_LOCAL_FILE_RESTRICTIONS:
-        gMiniBrowser->privatePreferences()->setAllowUniversalAccessFromFileURLs(newState);
-        gMiniBrowser->privatePreferences()->setAllowFileAccessFromFileURLs(newState);
-        break;
     case IDM_UA_DEFAULT:
     case IDM_UA_SAFARI_8_0:
     case IDM_UA_SAFARI_IOS_8_IPHONE:
@@ -346,13 +198,20 @@ bool ToggleMenuItem(HWND hWnd, UINT menuID)
         // The actual user agent string will be set by the custom user agent dialog
         turnOffOtherUserAgents(menu);
         break;
-    default:
-        return false;
     }
 
-    info.fState = (newState) ? MFS_CHECKED : MFS_UNCHECKED;
+    MENUITEMINFO info = { };
+    info.cbSize = sizeof(info);
+    info.fMask = MIIM_STATE;
 
+    if (!::GetMenuItemInfo(menu, menuID, FALSE, &info))
+        return false;
+
+    BOOL newState = !menuItemIsChecked(info);
+    info.fState = (newState) ? MFS_CHECKED : MFS_UNCHECKED;
     ::SetMenuItemInfo(menu, menuID, FALSE, &info);
+
+    gMiniBrowser->setPreference(menuID, newState);
 
     return true;
 }
@@ -437,7 +296,7 @@ INT_PTR CALLBACK Caches(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         return (INT_PTR)TRUE;
 
     case WM_PAINT:
-        updateStatistics(hDlg);
+        gMiniBrowser->updateStatistics(hDlg);
         break;
     }
 
@@ -538,163 +397,6 @@ static void loadURL(BSTR passedURL)
         return;
 
     SetFocus(gMiniBrowser->hwnd());
-}
-
-static void setWindowText(HWND dialog, UINT field, _bstr_t value)
-{
-    ::SetDlgItemText(dialog, field, value);
-}
-
-static void setWindowText(HWND dialog, UINT field, UINT value)
-{
-    String valueStr = WTF::String::number(value);
-
-    setWindowText(dialog, field, _bstr_t(valueStr.utf8().data()));
-}
-
-typedef _com_ptr_t<_com_IIID<IPropertyBag, &__uuidof(IPropertyBag)>> IPropertyBagPtr;
-
-static void setWindowText(HWND dialog, UINT field, IPropertyBagPtr statistics, const _bstr_t& key)
-{
-    _variant_t var;
-    V_VT(&var) = VT_UI8;
-    if (FAILED(statistics->Read(key, &var.GetVARIANT(), nullptr)))
-        return;
-
-    unsigned long long value = V_UI8(&var);
-    String valueStr = WTF::String::number(value);
-
-    setWindowText(dialog, field, _bstr_t(valueStr.utf8().data()));
-}
-
-static void setWindowText(HWND dialog, UINT field, CFDictionaryRef dictionary, CFStringRef key, UINT& total)
-{
-    CFNumberRef countNum = static_cast<CFNumberRef>(CFDictionaryGetValue(dictionary, key));
-    if (!countNum)
-        return;
-
-    int count = 0;
-    CFNumberGetValue(countNum, kCFNumberIntType, &count);
-
-    setWindowText(dialog, field, static_cast<UINT>(count));
-    total += count;
-}
-
-static void updateStatistics(HWND dialog)
-{
-    if (!gMiniBrowser)
-        return;
-
-    IWebCoreStatisticsPtr webCoreStatistics = gMiniBrowser->statistics();
-    if (!webCoreStatistics)
-        return;
-
-    IPropertyBagPtr statistics;
-    HRESULT hr = webCoreStatistics->memoryStatistics(&statistics.GetInterfacePtr());
-    if (FAILED(hr))
-        return;
-
-    // FastMalloc.
-    setWindowText(dialog, IDC_RESERVED_VM, statistics, "FastMallocReservedVMBytes");
-    setWindowText(dialog, IDC_COMMITTED_VM, statistics, "FastMallocCommittedVMBytes");
-    setWindowText(dialog, IDC_FREE_LIST_BYTES, statistics, "FastMallocFreeListBytes");
-
-    // WebCore Cache.
-#if USE(CF)
-    IWebCachePtr webCache = gMiniBrowser->webCache();
-
-    int dictCount = 6;
-    IPropertyBag* cacheDict[6] = { 0 };
-    if (FAILED(webCache->statistics(&dictCount, cacheDict)))
-        return;
-
-    COMPtr<CFDictionaryPropertyBag> counts, sizes, liveSizes, decodedSizes, purgableSizes;
-    counts.adoptRef(reinterpret_cast<CFDictionaryPropertyBag*>(cacheDict[0]));
-    sizes.adoptRef(reinterpret_cast<CFDictionaryPropertyBag*>(cacheDict[1]));
-    liveSizes.adoptRef(reinterpret_cast<CFDictionaryPropertyBag*>(cacheDict[2]));
-    decodedSizes.adoptRef(reinterpret_cast<CFDictionaryPropertyBag*>(cacheDict[3]));
-    purgableSizes.adoptRef(reinterpret_cast<CFDictionaryPropertyBag*>(cacheDict[4]));
-
-    static CFStringRef imagesKey = CFSTR("images");
-    static CFStringRef stylesheetsKey = CFSTR("style sheets");
-    static CFStringRef xslKey = CFSTR("xsl");
-    static CFStringRef scriptsKey = CFSTR("scripts");
-
-    if (counts) {
-        UINT totalObjects = 0;
-        setWindowText(dialog, IDC_IMAGES_OBJECT_COUNT, counts->dictionary(), imagesKey, totalObjects);
-        setWindowText(dialog, IDC_CSS_OBJECT_COUNT, counts->dictionary(), stylesheetsKey, totalObjects);
-        setWindowText(dialog, IDC_XSL_OBJECT_COUNT, counts->dictionary(), xslKey, totalObjects);
-        setWindowText(dialog, IDC_JSC_OBJECT_COUNT, counts->dictionary(), scriptsKey, totalObjects);
-        setWindowText(dialog, IDC_TOTAL_OBJECT_COUNT, totalObjects);
-    }
-
-    if (sizes) {
-        UINT totalBytes = 0;
-        setWindowText(dialog, IDC_IMAGES_BYTES, sizes->dictionary(), imagesKey, totalBytes);
-        setWindowText(dialog, IDC_CSS_BYTES, sizes->dictionary(), stylesheetsKey, totalBytes);
-        setWindowText(dialog, IDC_XSL_BYTES, sizes->dictionary(), xslKey, totalBytes);
-        setWindowText(dialog, IDC_JSC_BYTES, sizes->dictionary(), scriptsKey, totalBytes);
-        setWindowText(dialog, IDC_TOTAL_BYTES, totalBytes);
-    }
-
-    if (liveSizes) {
-        UINT totalLiveBytes = 0;
-        setWindowText(dialog, IDC_IMAGES_LIVE_COUNT, liveSizes->dictionary(), imagesKey, totalLiveBytes);
-        setWindowText(dialog, IDC_CSS_LIVE_COUNT, liveSizes->dictionary(), stylesheetsKey, totalLiveBytes);
-        setWindowText(dialog, IDC_XSL_LIVE_COUNT, liveSizes->dictionary(), xslKey, totalLiveBytes);
-        setWindowText(dialog, IDC_JSC_LIVE_COUNT, liveSizes->dictionary(), scriptsKey, totalLiveBytes);
-        setWindowText(dialog, IDC_TOTAL_LIVE_COUNT, totalLiveBytes);
-    }
-
-    if (decodedSizes) {
-        UINT totalDecoded = 0;
-        setWindowText(dialog, IDC_IMAGES_DECODED_COUNT, decodedSizes->dictionary(), imagesKey, totalDecoded);
-        setWindowText(dialog, IDC_CSS_DECODED_COUNT, decodedSizes->dictionary(), stylesheetsKey, totalDecoded);
-        setWindowText(dialog, IDC_XSL_DECODED_COUNT, decodedSizes->dictionary(), xslKey, totalDecoded);
-        setWindowText(dialog, IDC_JSC_DECODED_COUNT, decodedSizes->dictionary(), scriptsKey, totalDecoded);
-        setWindowText(dialog, IDC_TOTAL_DECODED, totalDecoded);
-    }
-
-    if (purgableSizes) {
-        UINT totalPurgable = 0;
-        setWindowText(dialog, IDC_IMAGES_PURGEABLE_COUNT, purgableSizes->dictionary(), imagesKey, totalPurgable);
-        setWindowText(dialog, IDC_CSS_PURGEABLE_COUNT, purgableSizes->dictionary(), stylesheetsKey, totalPurgable);
-        setWindowText(dialog, IDC_XSL_PURGEABLE_COUNT, purgableSizes->dictionary(), xslKey, totalPurgable);
-        setWindowText(dialog, IDC_JSC_PURGEABLE_COUNT, purgableSizes->dictionary(), scriptsKey, totalPurgable);
-        setWindowText(dialog, IDC_TOTAL_PURGEABLE, totalPurgable);
-    }
-#endif
-
-    // JavaScript Heap.
-    setWindowText(dialog, IDC_JSC_HEAP_SIZE, statistics, "JavaScriptHeapSize");
-    setWindowText(dialog, IDC_JSC_HEAP_FREE, statistics, "JavaScriptFreeSize");
-
-    UINT count;
-    if (SUCCEEDED(webCoreStatistics->javaScriptObjectsCount(&count)))
-        setWindowText(dialog, IDC_TOTAL_JSC_HEAP_OBJECTS, count);
-    if (SUCCEEDED(webCoreStatistics->javaScriptGlobalObjectsCount(&count)))
-        setWindowText(dialog, IDC_GLOBAL_JSC_HEAP_OBJECTS, count);
-    if (SUCCEEDED(webCoreStatistics->javaScriptProtectedObjectsCount(&count)))
-        setWindowText(dialog, IDC_PROTECTED_JSC_HEAP_OBJECTS, count);
-
-    // Font and Glyph Caches.
-    if (SUCCEEDED(webCoreStatistics->cachedFontDataCount(&count)))
-        setWindowText(dialog, IDC_TOTAL_FONT_OBJECTS, count);
-    if (SUCCEEDED(webCoreStatistics->cachedFontDataInactiveCount(&count)))
-        setWindowText(dialog, IDC_INACTIVE_FONT_OBJECTS, count);
-    if (SUCCEEDED(webCoreStatistics->glyphPageCount(&count)))
-        setWindowText(dialog, IDC_GLYPH_PAGES, count);
-
-    // Site Icon Database.
-    if (SUCCEEDED(webCoreStatistics->iconPageURLMappingCount(&count)))
-        setWindowText(dialog, IDC_PAGE_URL_MAPPINGS, count);
-    if (SUCCEEDED(webCoreStatistics->iconRetainedPageURLCount(&count)))
-        setWindowText(dialog, IDC_RETAINED_PAGE_URLS, count);
-    if (SUCCEEDED(webCoreStatistics->iconRecordCount(&count)))
-        setWindowText(dialog, IDC_SITE_ICON_RECORDS, count);
-    if (SUCCEEDED(webCoreStatistics->iconsWithDataCount(&count)))
-        setWindowText(dialog, IDC_SITE_ICONS_WITH_DATA, count);
 }
 
 static void parseCommandLine(bool& usesLayeredWebView, bool& useFullDesktop, bool& pageLoadTesting, _bstr_t& requestedURL)

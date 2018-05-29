@@ -49,7 +49,6 @@ INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK CustomUserAgent(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK Caches(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK AuthDialogProc(HWND, UINT, WPARAM, LPARAM);
-void PrintView(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 bool ToggleMenuItem(HWND hWnd, UINT menuID);
 
 std::wstring MainWindow::s_windowClass;
@@ -166,7 +165,7 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
             DestroyWindow(hWnd);
             break;
         case IDM_PRINT:
-            PrintView(hWnd, message, wParam, lParam);
+            gMiniBrowser->print();
             break;
         case IDM_WEB_INSPECTOR:
             if (gMiniBrowser)

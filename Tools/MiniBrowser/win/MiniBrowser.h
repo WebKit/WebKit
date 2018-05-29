@@ -44,6 +44,7 @@ typedef _com_ptr_t<_com_IIID<IWebCoreStatistics, &__uuidof(IWebCoreStatistics)>>
 typedef _com_ptr_t<_com_IIID<IWebCache, &__uuidof(IWebCache)>> IWebCachePtr;
 typedef _com_ptr_t<_com_IIID<IWebResourceLoadDelegate, &__uuidof(IWebResourceLoadDelegate)>> IWebResourceLoadDelegatePtr;
 typedef _com_ptr_t<_com_IIID<IWebDownloadDelegate, &__uuidof(IWebDownloadDelegate)>> IWebDownloadDelegatePtr;
+typedef _com_ptr_t<_com_IIID<IWebFramePrivate, &__uuidof(IWebFramePrivate)>> IWebFramePrivatePtr;
 
 class MiniBrowser {
 public:
@@ -99,6 +100,10 @@ public:
 
     HGDIOBJ urlBarFont() { return m_hURLBarFont; }
     HWND hwnd() { return m_viewWnd; }
+
+    void print();
+    void updateStatistics(HWND dialog);
+    void setPreference(UINT menuID, bool enable);
 
 private:
     void subclassForLayeredWindow();
