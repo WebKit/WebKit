@@ -32,11 +32,14 @@
 
 namespace WebCore {
 
+class URL;
 typedef Vector<char, 512> URLCharBuffer;
 
 WEBCORE_EXPORT RetainPtr<CFURLRef> createCFURLFromBuffer(const char*, size_t, CFURLRef baseURL = 0);
 WEBCORE_EXPORT void getURLBytes(CFURLRef, URLCharBuffer&);
 WEBCORE_EXPORT void getURLBytes(CFURLRef, CString&);
+
+bool isCFURLSameOrigin(CFURLRef, const URL&);
 
 }
 

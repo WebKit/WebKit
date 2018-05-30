@@ -1,3 +1,20 @@
+2018-05-29  Youenn Fablet  <youenn@apple.com>
+
+        Add a consistency check between URL and CFURL
+        https://bugs.webkit.org/show_bug.cgi?id=182444
+        <rdar://problem/37164835>
+
+        Reviewed by Geoff Garen.
+
+        DRT code expected a non null URL which is no longer the case now.
+        Updated DRT to remove that assumption.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::redirectionDestinationForURL):
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+
 2018-05-29  Brendan McLoughlin  <brendan@bocoup.com>
 
         Export changes to web-platform-test as part of the webkit-patch upload workflow

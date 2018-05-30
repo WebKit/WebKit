@@ -2335,9 +2335,16 @@ void TestRunner::addURLToRedirect(std::string origin, std::string destination)
     m_URLsToRedirect[origin] = destination;
 }
 
-const std::string& TestRunner::redirectionDestinationForURL(std::string origin)
+const char* TestRunner::redirectionDestinationForURL(const char* origin)
 {
-    return m_URLsToRedirect[origin];
+    if (!origin)
+        return nullptr;
+
+    auto iterator = m_URLsToRedirect.find(origin);
+    if (iterator == m_URLsToRedirect.end())
+        return nullptr;
+
+    return iterator->second.data();
 }
 
 void TestRunner::setShouldPaintBrokenImage(bool shouldPaintBrokenImage)

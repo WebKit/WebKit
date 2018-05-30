@@ -1,3 +1,28 @@
+2018-05-29  Youenn Fablet  <youenn@apple.com>
+
+        Add a consistency check between URL and CFURL
+        https://bugs.webkit.org/show_bug.cgi?id=186057
+        <rdar://problem/40258457>
+
+        Reviewed by Geoff Garen.
+
+        It is important that WebCore::URL used in WebCore and CFURL that gets serialized in the network pipe remain consistent.
+        Otherwise, we will end-up with odd bugs.
+
+        We add such a check when creating a CFURL from an URL.
+        To make things more consistent, we also rely now more on WebCore::URL instead of directly creating a CFURL.
+
+        * platform/URL.h:
+        * platform/cf/CFURLExtras.cpp:
+        (WebCore::isCFURLSameOrigin):
+        * platform/cf/CFURLExtras.h:
+        * platform/cf/URLCF.cpp:
+        (WebCore::URL::createCFURL const):
+        * platform/mac/URLMac.mm:
+        (WebCore::URL::createCFURL const):
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::URLWithUserTypedString):
+
 2018-05-29  Timothy Hatcher  <timothy@apple.com>
 
         Printing does not apply the right colors in all cases.

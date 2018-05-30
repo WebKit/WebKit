@@ -69,14 +69,22 @@ RetainPtr<CFURLRef> URL::createCFURL() const
         return reinterpret_cast<CFURLRef>(adoptNS([[NSURL alloc] initWithString:@""]).get());
     }
 
+    RetainPtr<CFURLRef> cfURL;
+
     // Fast path if the input data is 8-bit to avoid copying into a temporary buffer.
     if (LIKELY(m_string.is8Bit()))
-        return createCFURLFromBuffer(reinterpret_cast<const char*>(m_string.characters8()), m_string.length());
+        cfURL = createCFURLFromBuffer(reinterpret_cast<const char*>(m_string.characters8()), m_string.length());
+    else {
+        // Slower path.
+        URLCharBuffer buffer;
+        copyToBuffer(buffer);
+        cfURL = createCFURLFromBuffer(buffer.data(), buffer.size());
+    }
 
-    // Slower path.
-    URLCharBuffer buffer;
-    copyToBuffer(buffer);
-    return createCFURLFromBuffer(buffer.data(), buffer.size());
+    if (protocolIsInHTTPFamily() && !isCFURLSameOrigin(cfURL.get(), *this))
+        return nullptr;
+
+    return cfURL;
 }
 
 bool URL::hostIsIPAddress(StringView host)

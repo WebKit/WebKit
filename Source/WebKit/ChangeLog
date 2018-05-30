@@ -1,3 +1,16 @@
+2018-05-29  Youenn Fablet  <youenn@apple.com>
+
+        Add a consistency check between URL and CFURL
+        https://bugs.webkit.org/show_bug.cgi?id=186057
+        <rdar://problem/40258457>
+
+        Reviewed by Geoff Garen.
+
+        * Shared/Cocoa/WKNSURLExtras.mm:
+        (+[NSURL _web_URLWithWTFString:relativeToURL:]):
+        (urlWithWTFString): Deleted.
+        (+[NSURL _web_URLWithWTFString:]): Deleted.
+
 2018-05-29  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused WebPage::dummy

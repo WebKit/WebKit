@@ -59,7 +59,12 @@ RetainPtr<CFURLRef> URL::createCFURL() const
     // which is clearly wrong.
     URLCharBuffer buffer;
     copyToBuffer(buffer);
-    return createCFURLFromBuffer(buffer.data(), buffer.size());
+    auto cfURL = createCFURLFromBuffer(buffer.data(), buffer.size());
+
+    if (protocolIsInHTTPFamily() && !isCFURLSameOrigin(cfURL.get(), *this))
+        return nullptr;
+
+    return cfURL;
 }
 #endif
 

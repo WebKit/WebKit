@@ -886,7 +886,7 @@ static NSData *dataWithUserTypedString(NSString *string)
     return [NSData dataWithBytesNoCopy:outBytes length:outLength]; // adopts outBytes
 }
 
-NSURL *URLWithUserTypedString(NSString *string, NSURL *URL)
+NSURL *URLWithUserTypedString(NSString *string, NSURL *nsURL)
 {
     if (!string)
         return nil;
@@ -895,11 +895,8 @@ NSURL *URLWithUserTypedString(NSString *string, NSURL *URL)
     if (!string)
         return nil;
 
-    NSData *data = dataWithUserTypedString(string);
-    if (!data)
-        return [NSURL URLWithString:@""];
-
-    return URLWithData(data, URL);
+    URL url { URL { nsURL }, string };
+    return (__bridge NSURL*) url.createCFURL().autorelease();
 }
 
 NSURL *URLWithUserTypedStringDeprecated(NSString *string, NSURL *URL)
