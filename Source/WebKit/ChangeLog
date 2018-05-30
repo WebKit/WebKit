@@ -1,3 +1,19 @@
+2018-05-30  Chris Dumez  <cdumez@apple.com>
+
+        Take a background process assertion in WebPageProxy::callAfterNextPresentationUpdate()
+        https://bugs.webkit.org/show_bug.cgi?id=186097
+        <rdar://problem/40651225>
+
+        Reviewed by Dan Bernstein.
+
+        Refactor fix landed in r232298 so that we rely on the existing Callback infrastructure
+        to take a background process assertion.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::callAfterNextPresentationUpdate):
+
 2018-05-30  Aditya Keerthi  <akeerthi@apple.com>
 
         Fix the ENABLE(DATALIST_ELEMENT) build
