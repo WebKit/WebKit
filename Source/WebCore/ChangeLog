@@ -1,5 +1,20 @@
 2018-05-30  Youenn Fablet  <youenn@apple.com>
 
+        Revert changes made to URLWithUserTypedString made in https://trac.webkit.org/changeset/232281
+        https://bugs.webkit.org/show_bug.cgi?id=186108
+        <rdar://problem/40663065>
+
+        Reviewed by Alex Christensen.
+
+        Covered by existing API tests.
+
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::URLWithUserTypedString):
+        Return early if WebCore::URL is not able to create a CFURL.
+        Use CFURL otherwise to keep the existing behavior as much as possible.
+
+2018-05-30  Youenn Fablet  <youenn@apple.com>
+
         Rename FromOrigin runtime flag to CrossOriginResourcePolicy and enable it by default
         https://bugs.webkit.org/show_bug.cgi?id=186082
 

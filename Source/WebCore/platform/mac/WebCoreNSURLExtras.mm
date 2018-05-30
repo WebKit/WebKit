@@ -895,8 +895,18 @@ NSURL *URLWithUserTypedString(NSString *string, NSURL *nsURL)
     if (!string)
         return nil;
 
+    // Let's check whether the URL is bogus.
     URL url { URL { nsURL }, string };
-    return (__bridge NSURL*) url.createCFURL().autorelease();
+    if (!url.createCFURL())
+        return nil;
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=186057
+    // We should be able to use url.createCFURL instead of using directly CFURL parsing routines.
+    NSData *data = dataWithUserTypedString(string);
+    if (!data)
+        return [NSURL URLWithString:@""];
+
+    return URLWithData(data, nsURL);
 }
 
 NSURL *URLWithUserTypedStringDeprecated(NSString *string, NSURL *URL)
