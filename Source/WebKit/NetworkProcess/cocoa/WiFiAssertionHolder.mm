@@ -23,33 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WiFiAssertionHolder.h"
+#import "config.h"
+#import "WiFiAssertionHolder.h"
 
 #if HAVE(MOBILE_WIFI)
 
 #if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WiFiAssertionHolderAdditions.cpp>
+#import <WebKitAdditions/WiFiAssertionHolderAdditions.mm>
 #else
-static void holdWiFiAssertion()
+static void holdWiFiAssertion(const WiFiAssertionHolder&)
 {
 }
 
-static void releaseWiFiAssertion()
+static void releaseWiFiAssertion(const WiFiAssertionHolder&)
 {
 }
 #endif
 
 namespace WebKit {
 
-WiFiAssertionHolder::WiFiAssertionHolder()
+WiFiAssertionHolder::WiFiAssertionHolder(bool shouldHoldWiFiAssertion)
+    : m_shouldHoldWiFiAssertion { shouldHoldWiFiAssertion }
 {
-    holdWiFiAssertion();
+    holdWiFiAssertion(*this);
 }
 
 WiFiAssertionHolder::~WiFiAssertionHolder()
 {
-    releaseWiFiAssertion();
+    releaseWiFiAssertion(*this);
 }
 
 } // namespace WebKit

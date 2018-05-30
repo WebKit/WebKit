@@ -1,3 +1,36 @@
+2018-05-29  Andy Estes  <aestes@apple.com>
+
+        [Wi-Fi Assertions] Track whether WiFiAssertionHolder should actually hold a Wi-Fi assertion
+        https://bugs.webkit.org/show_bug.cgi?id=185983
+        <rdar://problem/40205486>
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Network-iOS.entitlements:
+
+        Added a needed entitlement.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/WiFiAssertionHolder.h:
+        (WebKit::WiFiAssertionHolder::shouldHoldWiFiAssertion const):
+
+        Track whether WiFiAssertionHolder should actually hold a Wi-Fi assertion.
+
+        * NetworkProcess/cocoa/WiFiAssertionHolder.mm: Renamed from Source/WebKit/NetworkProcess/cocoa/WiFiAssertionHolder.cpp.
+        (holdWiFiAssertion):
+        (releaseWiFiAssertion):
+        (WebKit::WiFiAssertionHolder::WiFiAssertionHolder):
+        (WebKit::WiFiAssertionHolder::~WiFiAssertionHolder):
+
+        Changed holdWiFiAssertion() and releaseWiFiAssertion() to take the
+        WiFiAssertionHolder as an argument.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
+        Added a needed sandbox extension.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-05-29  Youenn Fablet  <youenn@apple.com>
 
         Add a consistency check between URL and CFURL

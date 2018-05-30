@@ -1582,7 +1582,7 @@
 		A1C512C9190656E500448914 /* WebPreviewLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1C512C7190656E500448914 /* WebPreviewLoaderClient.h */; };
 		A1D420471DB5578500BB6B0D /* WKContextMenuListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1EA02351DABFF7E0096021F /* WKContextMenuListener.cpp */; };
 		A1DAFDDF207E9B16005E8A52 /* WiFiAssertionHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DAFDDD207E9B16005E8A52 /* WiFiAssertionHolder.h */; };
-		A1DAFDE0207E9B16005E8A52 /* WiFiAssertionHolder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DAFDDE207E9B16005E8A52 /* WiFiAssertionHolder.cpp */; };
+		A1DAFDE0207E9B16005E8A52 /* WiFiAssertionHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1DAFDDE207E9B16005E8A52 /* WiFiAssertionHolder.mm */; };
 		A1DF631218E0B7C8003A3E2A /* DownloadClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1DF631018E0B7C8003A3E2A /* DownloadClient.mm */; };
 		A1DF631318E0B7C8003A3E2A /* DownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF631118E0B7C8003A3E2A /* DownloadClient.h */; };
 		A1E688701F6E2BAB007006A6 /* QuarantineSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1E6886F1F6E2BAB007006A6 /* QuarantineSPI.h */; };
@@ -4073,7 +4073,7 @@
 		A1C512C6190656E500448914 /* WebPreviewLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPreviewLoaderClient.cpp; path = ios/WebPreviewLoaderClient.cpp; sourceTree = "<group>"; };
 		A1C512C7190656E500448914 /* WebPreviewLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPreviewLoaderClient.h; path = ios/WebPreviewLoaderClient.h; sourceTree = "<group>"; };
 		A1DAFDDD207E9B16005E8A52 /* WiFiAssertionHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WiFiAssertionHolder.h; path = NetworkProcess/cocoa/WiFiAssertionHolder.h; sourceTree = "<group>"; };
-		A1DAFDDE207E9B16005E8A52 /* WiFiAssertionHolder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WiFiAssertionHolder.cpp; path = NetworkProcess/cocoa/WiFiAssertionHolder.cpp; sourceTree = "<group>"; };
+		A1DAFDDE207E9B16005E8A52 /* WiFiAssertionHolder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WiFiAssertionHolder.mm; path = NetworkProcess/cocoa/WiFiAssertionHolder.mm; sourceTree = "<group>"; };
 		A1DF631018E0B7C8003A3E2A /* DownloadClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DownloadClient.mm; sourceTree = "<group>"; };
 		A1DF631118E0B7C8003A3E2A /* DownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadClient.h; sourceTree = "<group>"; };
 		A1E6886F1F6E2BAB007006A6 /* QuarantineSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuarantineSPI.h; sourceTree = "<group>"; };
@@ -6944,8 +6944,8 @@
 				7EC4F0F918E4A945008056AF /* NetworkProcessCocoa.mm */,
 				532159501DBAE6D70054AA3C /* NetworkSessionCocoa.h */,
 				5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */,
-				A1DAFDDE207E9B16005E8A52 /* WiFiAssertionHolder.cpp */,
 				A1DAFDDD207E9B16005E8A52 /* WiFiAssertionHolder.h */,
+				A1DAFDDE207E9B16005E8A52 /* WiFiAssertionHolder.mm */,
 			);
 			name = cocoa;
 			sourceTree = "<group>";
@@ -11213,7 +11213,7 @@
 				83EE575B1DB7D61100C74C50 /* WebValidationMessageClient.cpp in Sources */,
 				2DFC7DBC1BCCC19500C1548C /* WebViewImpl.mm in Sources */,
 				C0337DD1127A2980008FF4F4 /* WebWheelEvent.cpp in Sources */,
-				A1DAFDE0207E9B16005E8A52 /* WiFiAssertionHolder.cpp in Sources */,
+				A1DAFDE0207E9B16005E8A52 /* WiFiAssertionHolder.mm in Sources */,
 				868160D0187645570021E79D /* WindowServerConnection.mm in Sources */,
 				29CD55AB128E294F00133C85 /* WKAccessibilityWebPageObjectBase.mm in Sources */,
 				29232DF818B2A9AE00D0596F /* WKAccessibilityWebPageObjectIOS.mm in Sources */,

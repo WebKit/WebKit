@@ -34,8 +34,13 @@ namespace WebKit {
 class WiFiAssertionHolder {
     WTF_MAKE_NONCOPYABLE(WiFiAssertionHolder);
 public:
-    WiFiAssertionHolder();
+    explicit WiFiAssertionHolder(bool shouldHoldWiFiAssertion);
     ~WiFiAssertionHolder();
+
+    bool shouldHoldWiFiAssertion() const { return m_shouldHoldWiFiAssertion; }
+
+private:
+    bool m_shouldHoldWiFiAssertion;
 };
 
 } // namespace WebKit

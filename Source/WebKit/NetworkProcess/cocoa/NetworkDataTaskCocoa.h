@@ -74,10 +74,10 @@ public:
     uint64_t pageID() const { return m_pageID; };
 
 #if ENABLE(WIFI_ASSERTIONS)
-    void acquireWiFiAssertion()
+    void maybeHoldWiFiAssertion(bool shouldHoldWiFiAssertion)
     {
         ASSERT(!m_wiFiAssertionHolder);
-        m_wiFiAssertionHolder.emplace();
+        m_wiFiAssertionHolder.emplace(shouldHoldWiFiAssertion);
     }
 #endif
 
