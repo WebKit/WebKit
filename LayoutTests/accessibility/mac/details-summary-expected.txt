@@ -2,6 +2,9 @@ Some open info
 Details about the open topic.
 
 Some open info
+Some open info
+Details about the open topic.
+
 This tests some basic attributes about the details element.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -24,6 +27,8 @@ PASS details1.isExpanded is true
 PASS summary1.isExpanded is true
 PASS details2.subrole is 'AXSubrole: AXDetails'
 PASS details2.isExpanded is false
+PASS details3.subrole is 'AXSubrole: AXApplicationGroup'
+PASS details3.isExpanded is true
 Received AXExpandedChanged notification 
 Received AXExpandedChanged notification 
 PASS successfullyParsed is true

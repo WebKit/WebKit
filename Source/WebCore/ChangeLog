@@ -1,3 +1,19 @@
+2018-05-29  Nan Wang  <n_wang@apple.com>
+
+        AX: macOS VoiceOver doesn't announce when details element is expanded when using role group
+        https://bugs.webkit.org/show_bug.cgi?id=180866
+        <rdar://problem/36074338>
+
+        Reviewed by Chris Fleizach.
+
+        We should use is<HTMLDetailsElement> to check for the details parent instead
+        of using the role.
+
+        Added test cases to the existing test.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isExpanded const):
+
 2018-05-29  Youenn Fablet  <youenn@apple.com>
 
         Add a consistency check between URL and CFURL

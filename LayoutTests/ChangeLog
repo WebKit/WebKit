@@ -1,3 +1,14 @@
+2018-05-29  Nan Wang  <n_wang@apple.com>
+
+        AX: macOS VoiceOver doesn't announce when details element is expanded when using role group
+        https://bugs.webkit.org/show_bug.cgi?id=180866
+        <rdar://problem/36074338>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/details-summary-expected.txt:
+        * accessibility/mac/details-summary.html:
+
 2018-05-29  Tadeu Zagallo  <tzagallo@apple.com>
 
         Don't assert on m_actionsStart when setting actions on DFA nodes

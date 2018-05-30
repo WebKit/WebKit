@@ -15,6 +15,11 @@
   <p>Details about the open topic.</p>
 </details>
 
+<details open id="details3" role="group">
+  <summary>Some open info</summary>
+  <p>Details about the open topic.</p>
+</details>
+
 <p id="description"></p>
 <div id="console"></div>
 
@@ -79,6 +84,11 @@
         var details2 = accessibilityController.accessibleElementById("details2");
         shouldBe("details2.subrole", "'AXSubrole: AXDetails'");
         shouldBeFalse("details2.isExpanded");
+
+        // Expanded status should be correct when detail has group role
+        var details3 = accessibilityController.accessibleElementById("details3");
+        shouldBe("details3.subrole", "'AXSubrole: AXApplicationGroup'");
+        shouldBeTrue("details3.isExpanded");
     }
 
 </script>
