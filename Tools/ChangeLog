@@ -1,3 +1,12 @@
+2018-05-30  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=186098
+
+        Unreviewed gardening.
+
+        * TestWebKitAPI/glib/TestExpectations.json: update expectations.
+
 2018-05-29  Youenn Fablet  <youenn@apple.com>
 
         Add a consistency check between URL and CFURL

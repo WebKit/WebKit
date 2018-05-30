@@ -287,6 +287,7 @@ webkit.org/b/169916 css3/blending/blend-mode-body-element.html [ ImageOnlyFailur
 webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-child.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-double.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-with-siblings.html [ ImageOnlyFailure ]
+webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-transformed-blending.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/blend-mode-clip-rect-accelerated-blending.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/blend-mode-html-element-screen.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/blend-mode-isolated-group-1.html [ Missing Failure ]
@@ -1188,6 +1189,9 @@ webkit.org/b/184295 http/wpt/loading/redirect-headers.html [ Skip ]
 # NowPlaying is macOS and iOS only.
 http/tests/media/now-playing-info-private-browsing.html [ Skip ]
 http/tests/media/now-playing-info.html [ Skip ]
+
+# Font collections
+webkit.org/b/186086 fast/text/font-collection.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -3391,6 +3395,10 @@ webkit.org/b/185912 fast/canvas/webgl/index-validation-with-subsequent-draws.htm
 webkit.org/b/185913 fast/dom/HTMLAnchorElement/anchor-file-blob-download-then-revoke.html [ Failure ]
 
 webkit.org/b/186035 transitions/interrupted-transition-hardware.html [ ImageOnlyFailure ]
+webkit.org/b/186099 editing/caret/caret-in-empty-cell.html [ ImageOnlyFailure ]
+webkit.org/b/186100 css3/color-filters/color-filter-color-property-list-item.html [ ImageOnlyFailure ]
+webkit.org/b/186100 css3/color-filters/color-filter-opacity.html [ ImageOnlyFailure ]
+webkit.org/b/186100 fast/hidpi/filters-turbulence.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

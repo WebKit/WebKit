@@ -142,6 +142,9 @@
     },
     "TestWTF": {
         "subtests": {
+            "WTF_Condition.TenProducersTenConsumersOneSlot": {
+                "expected": {"all": {"slow": true}}
+            },
             "WTF_DateMath.calculateLocalTimeOffset": {
                 "expected": {"wpe": {"status": ["FAIL"]}}
             },
@@ -149,6 +152,9 @@
                 "expected": {"all": {"slow": true}}
             },
             "WTF_Lock.ContendedLongSection": {
+                "expected": {"all": {"slow": true}}
+            },
+            "WTF_Lock.ManyContendedLongSections": {
                 "expected": {"all": {"slow": true}}
             },
             "WTF_Lock.ManyContendedShortSections": {
@@ -187,7 +193,7 @@
                 "expected": {"wpe": {"status": ["FAIL"]}}
             },
             "/webkit/WebKitWebView/load-failed-with-tls-errors": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
+                "expected": {"all": {"status": ["FAIL"]}}
             },
             "/webkit/WebKitWebView/insecure-content": {
                 "expected": {"wpe": {"status": ["FAIL"]}}

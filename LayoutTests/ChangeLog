@@ -1,3 +1,18 @@
+2018-05-30  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=186098
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+          - css3/blending/blend-mode-clip-accelerated-transformed-blending.html: passing since r230479, failing again since 230991.
+          - fast/text/font-collection.html: fails due to a lack of font collection support
+          - editing/caret/caret-in-empty-cell.html: fails since it was added
+          - css3/color-filters/color-filter-color-property-list-item.html: fails since it was added
+          - css3/color-filters/color-filter-opacity.html: fails since it was added
+          - fast/hidpi/filters-turbulence.html: fails since it was added
+
 2018-05-30  Stephen McGruer  <smcgruer@chromium.org>
 
         iOS: setting 'defaultValue' of input type=date from script should cause a UI update
