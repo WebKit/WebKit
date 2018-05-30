@@ -31,14 +31,20 @@
 
 @interface JSVirtualMachine(JSPrivate)
 
+- (void)shrinkFootprint; // FIXME: Remove this SPI when clients move to shrinkFootprintWhenIdle: https://bugs.webkit.org/show_bug.cgi?id=186071
+
 /*!
 @method
 @discussion Shrinks the memory footprint of the VM by deleting various internal caches,
- running synchronous garbage collection, and releasing memory back to the OS. For this
- to free as much memory as possible, do not call this when JavaScript is running on the stack.
+ running synchronous garbage collection, and releasing memory back to the OS. Note: this
+ API waits until no JavaScript is running on the stack before it frees any memory. It's
+ best to call this API when no JavaScript is running on the stack for this reason. However, if
+ you do call this API when JavaScript is running on the stack, the API will wait until all JavaScript
+ on the stack finishes running to free memory back to the OS. Therefore, calling this
+ API may not synchronously free memory.
 */
 
-- (void)shrinkFootprint; // FIXME: Annotate this with NS_AVAILABLE: <rdar://problem/40071332>.
+- (void)shrinkFootprintWhenIdle; // FIXME: Annotate this with NS_AVAILABLE: <rdar://problem/40071332>.
 
 @end
 

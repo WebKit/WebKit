@@ -777,14 +777,16 @@ void VM::deleteAllCode(DeleteAllCodeEffort effort)
     });
 }
 
-void VM::shrinkFootprint()
+void VM::shrinkFootprintWhenIdle()
 {
-    sanitizeStackForVM(this);
-    deleteAllCode(DeleteAllCodeIfNotCollecting);
-    heap.collectNow(Synchronousness::Sync, CollectionScope::Full);
-    WTF::releaseFastMallocFreeMemory();
-    // FIXME: Consider stopping various automatic threads here.
-    // https://bugs.webkit.org/show_bug.cgi?id=185447
+    whenIdle([=] () {
+        sanitizeStackForVM(this);
+        deleteAllCode(DeleteAllCodeIfNotCollecting);
+        heap.collectNow(Synchronousness::Sync, CollectionScope::Full);
+        // FIXME: Consider stopping various automatic threads here.
+        // https://bugs.webkit.org/show_bug.cgi?id=185447
+        WTF::releaseFastMallocFreeMemory();
+    });
 }
 
 SourceProviderCache* VM::addSourceProviderCache(SourceProvider* sourceProvider)
