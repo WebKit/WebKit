@@ -1000,9 +1000,11 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
         return;
 
     auto& input = downcast<HTMLInputElement>(*o.node());
-    auto* dataList = downcast<HTMLDataListElement>(input.list());
-    if (!dataList)
+
+    if (!input.list())
         return;
+
+    auto& dataList = downcast<HTMLDataListElement>(*input.list());
 
     double min = input.minimum();
     double max = input.maximum();
@@ -1051,7 +1053,7 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
         tickRegionSideMargin = trackBounds.y() + (thumbSize.width() - tickSize.width() * zoomFactor) / 2.0;
         tickRegionWidth = trackBounds.height() - thumbSize.width();
     }
-    Ref<HTMLCollection> options = dataList->options();
+    Ref<HTMLCollection> options = dataList.options();
     GraphicsContextStateSaver stateSaver(paintInfo.context());
     paintInfo.context().setFillColor(o.style().visitedDependentColorWithColorFilter(CSSPropertyColor));
     for (unsigned i = 0; Node* node = options->item(i); i++) {

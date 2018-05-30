@@ -56,6 +56,10 @@
 #include <WebCore/RenderElement.h>
 #include <wtf/UUID.h>
 
+#if ENABLE(DATALIST_ELEMENT)
+#include <WebCore/HTMLDataListElement.h>
+#endif
+
 namespace WebKit {
 
 template <typename T>

@@ -4832,7 +4832,7 @@
 		F5973DE015CFB2030027F804 /* LocaleMac.h in Headers */ = {isa = PBXBuildFile; fileRef = F5973DDE15CFB2030027F804 /* LocaleMac.h */; };
 		F59C96001255B23F000623C0 /* BaseDateAndTimeInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F59C95FE1255B23F000623C0 /* BaseDateAndTimeInputType.h */; };
 		F5A154281279534D00D0B0C0 /* ValidationMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A154261279534D00D0B0C0 /* ValidationMessage.h */; };
-		F5C041DB0FFCA7CE00839D4A /* HTMLDataListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C041D80FFCA7CE00839D4A /* HTMLDataListElement.h */; };
+		F5C041DB0FFCA7CE00839D4A /* HTMLDataListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C041D80FFCA7CE00839D4A /* HTMLDataListElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F5C041E70FFCA96D00839D4A /* JSHTMLDataListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C041E20FFCA96D00839D4A /* JSHTMLDataListElement.h */; };
 		F5E0C65C1643C42C00D6CB69 /* BaseChooserOnlyDateAndTimeInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F5E0C65A1643C42C00D6CB69 /* BaseChooserOnlyDateAndTimeInputType.h */; };
 		F916C48E0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F916C48C0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h */; };

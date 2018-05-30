@@ -1,3 +1,12 @@
+2018-05-30  Aditya Keerthi  <akeerthi@apple.com>
+
+        Fix the ENABLE(DATALIST_ELEMENT) build
+        https://bugs.webkit.org/show_bug.cgi?id=186105
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+
 2018-05-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a quick build fix for r232276.
