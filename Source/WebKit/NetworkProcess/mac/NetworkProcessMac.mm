@@ -104,7 +104,8 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 {
     platformInitializeNetworkProcessCocoa(parameters);
 
-#if ENABLE(SEC_ITEM_SHIM) && !HAVE(SEC_KEY_PROXY)
+#if ENABLE(SEC_ITEM_SHIM)
+    // SecItemShim is needed for CFNetwork APIs that query Keychains beneath us.
     initializeSecItemShim(*this);
 #endif
 

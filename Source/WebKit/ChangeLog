@@ -1,3 +1,15 @@
+2018-05-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a quick build fix for r232276.
+
+        Enabled SecItemShim again as it turns out to be useful for CFNetwork APIs that
+        query Keychains underneath us.
+
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+
 2018-05-30  Jer Noble  <jer.noble@apple.com>
 
         Auto-pip should use main content heuristic.
