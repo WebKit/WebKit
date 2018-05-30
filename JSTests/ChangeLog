@@ -1,5 +1,11 @@
 2018-05-30  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, uncomment erroneously commented test code.
+
+        * stress/error-stack-trace-limit.js:
+
+2018-05-30  Keith Miller  <keith_miller@apple.com>
+
         LLInt get_by_id prototype caching doesn't properly handle changes
         https://bugs.webkit.org/show_bug.cgi?id=186112
 

@@ -47,17 +47,17 @@ function testLimit(testID, updateLimit, reentryCount, expectedLimit, expectedNum
         assertEquals(testID + 3, numberOfFrames(exception.stack), expectedNumberOfFrames);
 }
 
-// testLimit(1000, () => { Error.stackTraceLimit = 0 }, 1000, 0, 0);
-// // note: Chrome always prints a header line. So, Chrome expects "Error" here.
-// assertEquals(1100, exception.stack, "");
+testLimit(1000, () => { Error.stackTraceLimit = 0 }, 1000, 0, 0);
+// note: Chrome always prints a header line. So, Chrome expects "Error" here.
+assertEquals(1100, exception.stack, "");
 
-// testLimit(2000, () => { Error.stackTraceLimit = 10 }, 1000, 10, 10);
-// testLimit(3000, () => { Error.stackTraceLimit = 100 }, 1000, 100, 100);
-// testLimit(4000, () => { Error.stackTraceLimit = 1000 }, 1000, 1000, 1000);
+testLimit(2000, () => { Error.stackTraceLimit = 10 }, 1000, 10, 10);
+testLimit(3000, () => { Error.stackTraceLimit = 100 }, 1000, 100, 100);
+testLimit(4000, () => { Error.stackTraceLimit = 1000 }, 1000, 1000, 1000);
 
-// // expectedNumberOfFrames includes (1) global + (2) testLimit + (3) 1000 recursion of
-// // recurse() + (4) recurse() which discovered x == 0 i.e. expectedNumberOfFrames == 1003.
-// testLimit(5000, () => { Error.stackTraceLimit = 2000 }, 1000, 2000, 1003);
+// expectedNumberOfFrames includes (1) global + (2) testLimit + (3) 1000 recursion of
+// recurse() + (4) recurse() which discovered x == 0 i.e. expectedNumberOfFrames == 1003.
+testLimit(5000, () => { Error.stackTraceLimit = 2000 }, 1000, 2000, 1003);
 
 var value = { };
 testLimit(6000, () => { Error.stackTraceLimit = value }, 1000, value, undefined);
