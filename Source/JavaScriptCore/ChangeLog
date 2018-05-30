@@ -1,3 +1,20 @@
+2018-05-30  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement support for "%" operation
+        https://bugs.webkit.org/show_bug.cgi?id=184327
+
+        Reviewed by Yusuke Suzuki.
+
+        We are introducing the support of BigInt into remainder (a.k.a mod)
+        operation.
+
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::remainder):
+        (JSC::JSBigInt::rightTrim):
+        * runtime/JSBigInt.h:
+
 2018-05-30  Saam Barati  <sbarati@apple.com>
 
         AI for Atomics.load() is too conservative in always clobbering world

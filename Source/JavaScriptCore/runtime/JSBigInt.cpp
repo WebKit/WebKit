@@ -323,6 +323,43 @@ JSBigInt* JSBigInt::unaryMinus(VM& vm, JSBigInt* x)
     return result;
 }
 
+JSBigInt* JSBigInt::remainder(ExecState* state, JSBigInt* x, JSBigInt* y)
+{
+    // 1. If y is 0n, throw a RangeError exception.
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    
+    if (y->isZero()) {
+        throwRangeError(state, scope, ASCIILiteral("0 is an invalid divisor value."));
+        return nullptr;
+    }
+
+    // 2. Return the JSBigInt representing x modulo y.
+    // See https://github.com/tc39/proposal-bigint/issues/84 though.
+    if (absoluteCompare(x, y) == ComparisonResult::LessThan)
+        return x;
+
+    JSBigInt* remainder;
+    if (y->length() == 1) {
+        Digit divisor = y->digit(0);
+        if (divisor == 1)
+            return createZero(vm);
+
+        Digit remainderDigit;
+        absoluteDivWithDigitDivisor(vm, x, divisor, nullptr, remainderDigit);
+        if (!remainderDigit)
+            return createZero(vm);
+
+        remainder = createWithLength(vm, 1);
+        remainder->setDigit(0, remainderDigit);
+    } else
+        absoluteDivWithBigIntDivisor(vm, x, y, nullptr, &remainder);
+
+    remainder->setSign(x->sign());
+    return remainder->rightTrim(vm);
+}
+
+
 #if USE(JSVALUE32_64)
 #define HAVE_TWO_DIGIT 1
 typedef uint64_t TwoDigit;
@@ -993,14 +1030,19 @@ String JSBigInt::toStringGeneric(ExecState* state, JSBigInt* x, unsigned radix)
 
 JSBigInt* JSBigInt::rightTrim(VM& vm)
 {
-    if (isZero())
+    if (isZero()) {
+        ASSERT(!sign());
         return this;
+    }
 
-    unsigned nonZeroIndex = m_length - 1;
-    while (!digit(nonZeroIndex))
+    int nonZeroIndex = m_length - 1;
+    while (nonZeroIndex >= 0 && !digit(nonZeroIndex))
         nonZeroIndex--;
 
-    if (nonZeroIndex == m_length - 1)
+    if (nonZeroIndex < 0)
+        return createZero(vm);
+
+    if (nonZeroIndex == static_cast<int>(m_length - 1))
         return this;
 
     unsigned newLength = nonZeroIndex + 1;

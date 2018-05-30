@@ -560,10 +560,25 @@ SLOW_PATH_DECL(slow_path_div)
 SLOW_PATH_DECL(slow_path_mod)
 {
     BEGIN();
-    double a = OP_C(2).jsValue().toNumber(exec);
-    if (UNLIKELY(throwScope.exception()))
-        RETURN(JSValue());
-    double b = OP_C(3).jsValue().toNumber(exec);
+    JSValue left = OP_C(2).jsValue();
+    JSValue right = OP_C(3).jsValue();
+    auto leftNumeric = left.toNumeric(exec);
+    CHECK_EXCEPTION();
+    auto rightNumeric = right.toNumeric(exec);
+    CHECK_EXCEPTION();
+    
+    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
+        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
+            JSBigInt* result = JSBigInt::remainder(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
+            CHECK_EXCEPTION();
+            RETURN(result);
+        }
+
+        THROW(createTypeError(exec, "Invalid mix of BigInt and other type in remainder operation."));
+    }
+    
+    double a = WTF::get<double>(leftNumeric);
+    double b = WTF::get<double>(rightNumeric);
     RETURN(jsNumber(jsMod(a, b)));
 }
 

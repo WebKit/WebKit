@@ -138,3 +138,28 @@
 
 - path: stress/big-int-no-conversion-to-number.js
   cmd: runBigIntEnabled
+
+- path: stress/big-int-mod-memory-stress.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-mod-to-primitive-precedence.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-mod-to-primitive.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-mod-type-error.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-mod-wrapped-value.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-mod.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-div-to-primitive-precedence.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-mod-jit.js
+  cmd: runBigIntEnabled
+

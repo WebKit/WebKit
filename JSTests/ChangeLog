@@ -1,3 +1,18 @@
+2018-05-30  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement support for "%" operation
+        https://bugs.webkit.org/show_bug.cgi?id=184327
+
+        Reviewed by Yusuke Suzuki.
+
+        * bigIntTests.yaml:
+        * stress/big-int-mod-memory-stress.js: Added.
+        * stress/big-int-mod-to-primitive-precedence.js: Added.
+        * stress/big-int-mod-to-primitive.js: Added.
+        * stress/big-int-mod-type-error.js: Added.
+        * stress/big-int-mod-wrapped-value.js: Added.
+        * stress/big-int-mod.js: Added.
+
 2018-05-29  Caitlin Potter  <caitp@igalia.com>
 
         [JSTests] update test262 expectations after r232261

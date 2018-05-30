@@ -108,6 +108,7 @@ public:
     ComparisonResult static compareToDouble(JSBigInt* x, double y);
 
     static JSBigInt* divide(ExecState*, JSBigInt* x, JSBigInt* y);
+    static JSBigInt* remainder(ExecState*, JSBigInt* x, JSBigInt* y);
     static JSBigInt* unaryMinus(VM&, JSBigInt* x);
     
 private:
