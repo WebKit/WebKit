@@ -7351,7 +7351,9 @@ void WebPageProxy::callAfterNextPresentationUpdate(WTF::Function<void (CallbackB
         return;
     }
 
-    m_drawingArea->dispatchAfterEnsuringDrawing(WTFMove(callback));
+    m_drawingArea->dispatchAfterEnsuringDrawing([callback = WTFMove(callback), backgroundActivity = m_process->throttler().backgroundActivityToken()](CallbackBase::Error error) {
+        callback(error);
+    });
 }
 
 void WebPageProxy::setShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocument)
