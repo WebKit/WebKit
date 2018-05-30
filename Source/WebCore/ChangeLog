@@ -1,5 +1,15 @@
 2018-05-29  Nan Wang  <n_wang@apple.com>
 
+        Unreviewed, follow-up after r232285
+        https://bugs.webkit.org/show_bug.cgi?id=180871
+
+        Removed redundant null check.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isExpanded const):
+
+2018-05-29  Nan Wang  <n_wang@apple.com>
+
         AX: macOS VoiceOver doesn't announce when details element is expanded when using role group
         https://bugs.webkit.org/show_bug.cgi?id=180866
         <rdar://problem/36074338>
