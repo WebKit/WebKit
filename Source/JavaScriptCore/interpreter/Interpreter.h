@@ -120,7 +120,7 @@ namespace JSC {
         NEVER_INLINE HandlerInfo* unwind(VM&, CallFrame*&, Exception*, UnwindStart);
         void notifyDebuggerOfExceptionToBeThrown(VM&, CallFrame*, Exception*);
         NEVER_INLINE void debug(CallFrame*, DebugHookType);
-        static JSString* stackTraceAsString(VM&, const Vector<StackFrame>&);
+        static String stackTraceAsString(VM&, const Vector<StackFrame>&);
 
         static EncodedJSValue JSC_HOST_CALL constructWithErrorConstructor(ExecState*);
         static EncodedJSValue JSC_HOST_CALL callErrorConstructor(ExecState*);

@@ -384,6 +384,7 @@ public:
     IsoSubspace structureSpace;
     IsoSubspace weakSetSpace;
     IsoSubspace weakMapSpace;
+    IsoSubspace errorInstanceSpace;
 #if ENABLE(WEBASSEMBLY)
     IsoSubspace webAssemblyCodeBlockSpace;
     IsoSubspace webAssemblyFunctionSpace;

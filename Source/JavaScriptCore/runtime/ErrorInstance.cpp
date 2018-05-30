@@ -23,6 +23,7 @@
 
 #include "CodeBlock.h"
 #include "InlineCallFrame.h"
+#include "Interpreter.h"
 #include "JSScope.h"
 #include "JSCInlines.h"
 #include "ParseInt.h"
@@ -202,17 +203,49 @@ String ErrorInstance::sanitizedToString(ExecState* exec)
     return builder.toString();
 }
 
+void ErrorInstance::finalizeUnconditionally(VM& vm)
+{
+    if (!m_stackTrace)
+        return;
+
+    // We don't want to keep our stack traces alive forever if the user doesn't access the stack trace.
+    // If we did, we might end up keeping functions (and their global objects) alive that happened to
+    // get caught in a trace.
+    for (const auto& frame : *m_stackTrace.get()) {
+        if (!frame.isMarked()) {
+            computeErrorInfo(vm);
+            return;
+        }
+    }
+}
+
+void ErrorInstance::computeErrorInfo(VM& vm)
+{
+    ASSERT(!m_errorInfoMaterialized);
+
+    if (m_stackTrace && !m_stackTrace->isEmpty()) {
+        getLineColumnAndSource(m_stackTrace.get(), m_line, m_column, m_sourceURL);
+        m_stackString = Interpreter::stackTraceAsString(vm, *m_stackTrace.get());
+        m_stackTrace = nullptr;
+    }
+}
+
 bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm)
 {
     if (m_errorInfoMaterialized)
         return false;
-    
-    addErrorInfo(vm, m_stackTrace.get(), this);
-    {
-        auto locker = holdLock(cellLock());
-        m_stackTrace = nullptr;
+
+    computeErrorInfo(vm);
+
+    if (!m_stackString.isNull()) {
+        putDirect(vm, vm.propertyNames->line, jsNumber(m_line));
+        putDirect(vm, vm.propertyNames->column, jsNumber(m_column));
+        if (!m_sourceURL.isEmpty())
+            putDirect(vm, vm.propertyNames->sourceURL, jsString(&vm, WTFMove(m_sourceURL)));
+
+        putDirect(vm, vm.propertyNames->stack, jsString(&vm, WTFMove(m_stackString)), static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
-    
+
     m_errorInfoMaterialized = true;
     return true;
 }
@@ -225,21 +258,6 @@ bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm, PropertyName propertyNa
         || propertyName == vm.propertyNames->stack)
         return materializeErrorInfoIfNeeded(vm);
     return false;
-}
-
-void ErrorInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    ErrorInstance* thisObject = jsCast<ErrorInstance*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
-
-    {
-        auto locker = holdLock(thisObject->cellLock());
-        if (thisObject->m_stackTrace) {
-            for (StackFrame& frame : *thisObject->m_stackTrace)
-                frame.visitChildren(visitor);
-        }
-    }
 }
 
 bool ErrorInstance::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

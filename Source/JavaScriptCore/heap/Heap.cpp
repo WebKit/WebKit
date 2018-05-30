@@ -594,6 +594,7 @@ void Heap::finalizeUnconditionalFinalizers()
     finalizeMarkedUnconditionalFinalizers<ExecutableToCodeBlockEdge>(vm()->executableToCodeBlockEdgesWithFinalizers);
     finalizeMarkedUnconditionalFinalizers<JSWeakSet>(vm()->weakSetSpace);
     finalizeMarkedUnconditionalFinalizers<JSWeakMap>(vm()->weakMapSpace);
+    finalizeMarkedUnconditionalFinalizers<ErrorInstance>(vm()->errorInstanceSpace);
 
 #if ENABLE(WEBASSEMBLY)
     finalizeMarkedUnconditionalFinalizers<JSWebAssemblyCodeBlock>(vm()->webAssemblyCodeBlockSpace);

@@ -1,3 +1,43 @@
+2018-05-29  Keith Miller  <keith_miller@apple.com>
+
+        Error instances should not strongly hold onto StackFrames
+        https://bugs.webkit.org/show_bug.cgi?id=185996
+
+        Reviewed by Mark Lam.
+
+        Previously, we would hold onto all the StackFrames until the the user
+        looked at one of the properties on the Error object. This patch makes us
+        only weakly retain the StackFrames and collect all the information
+        if we are about to collect any frame.
+
+        This patch also adds a method to $vm that returns the heaps count
+        of live global objects.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::stackTraceAsString):
+        * interpreter/Interpreter.h:
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::finalizeUnconditionally):
+        (JSC::ErrorInstance::computeErrorInfo):
+        (JSC::ErrorInstance::materializeErrorInfoIfNeeded):
+        (JSC::ErrorInstance::visitChildren): Deleted.
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::subspaceFor):
+        * runtime/JSFunction.cpp:
+        (JSC::getCalculatedDisplayName):
+        * runtime/StackFrame.h:
+        (JSC::StackFrame::isMarked const):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::functionGlobalObjectCount):
+        (JSC::JSDollarVM::finishCreation):
+
 2018-05-30  Keith Miller  <keith_miller@apple.com>
 
         LLInt get_by_id prototype caching doesn't properly handle changes

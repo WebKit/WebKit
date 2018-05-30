@@ -575,7 +575,7 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
     ASSERT(results.size() == results.capacity());
 }
 
-JSString* Interpreter::stackTraceAsString(VM& vm, const Vector<StackFrame>& stackTrace)
+String Interpreter::stackTraceAsString(VM& vm, const Vector<StackFrame>& stackTrace)
 {
     // FIXME: JSStringJoiner could be more efficient than StringBuilder here.
     StringBuilder builder;
@@ -584,7 +584,7 @@ JSString* Interpreter::stackTraceAsString(VM& vm, const Vector<StackFrame>& stac
         if (i != stackTrace.size() - 1)
             builder.append('\n');
     }
-    return jsString(&vm, builder.toString());
+    return builder.toString();
 }
 
 ALWAYS_INLINE static HandlerInfo* findExceptionHandler(StackVisitor& visitor, CodeBlock* codeBlock, RequiredHandler requiredHandler)

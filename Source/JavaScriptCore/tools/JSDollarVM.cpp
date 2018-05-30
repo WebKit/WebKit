@@ -1687,6 +1687,11 @@ static EncodedJSValue JSC_HOST_CALL functionEnableExceptionFuzz(ExecState*)
     return JSValue::encode(jsUndefined());
 }
 
+static EncodedJSValue JSC_HOST_CALL functionGlobalObjectCount(ExecState* exec)
+{
+    return JSValue::encode(jsNumber(exec->vm().heap.globalObjectCount()));
+}
+
 static EncodedJSValue JSC_HOST_CALL functionGlobalObjectForObject(ExecState* exec)
 {
     JSValue value = exec->argument(0);
@@ -1843,6 +1848,7 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "enableExceptionFuzz", functionEnableExceptionFuzz, 0);
 
+    addFunction(vm, "globalObjectCount", functionGlobalObjectCount, 0);
     addFunction(vm, "globalObjectForObject", functionGlobalObjectForObject, 1);
 
     addFunction(vm, "getGetterSetter", functionGetGetterSetter, 2);

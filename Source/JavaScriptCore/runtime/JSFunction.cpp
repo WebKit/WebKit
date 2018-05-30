@@ -213,7 +213,7 @@ const String JSFunction::calculatedDisplayName(VM& vm)
     const String actualName = name(vm);
     if (!actualName.isEmpty() || isHostOrBuiltinFunction())
         return actualName;
-    
+
     return jsExecutable()->inferredName().string();
 }
 
@@ -626,10 +626,31 @@ ConstructType JSFunction::getConstructData(JSCell* cell, ConstructData& construc
 
 String getCalculatedDisplayName(VM& vm, JSObject* object)
 {
-    if (JSFunction* function = jsDynamicCast<JSFunction*>(vm, object))
-        return function->calculatedDisplayName(vm);
-    if (InternalFunction* function = jsDynamicCast<InternalFunction*>(vm, object))
-        return function->calculatedDisplayName(vm);
+    if (!jsDynamicCast<JSFunction*>(vm, object) && !jsDynamicCast<InternalFunction*>(vm, object))
+        return emptyString();
+
+
+    Structure* structure = object->structure(vm);
+    unsigned attributes;
+    // This function may be called when the mutator isn't running and we are lazily generating a stack trace.
+    PropertyOffset offset = structure->getConcurrently(vm.propertyNames->displayName.impl(), attributes);
+    if (offset != invalidOffset && !(attributes & (PropertyAttribute::Accessor | PropertyAttribute::CustomAccessor))) {
+        JSValue displayName = object->getDirect(offset);
+        if (displayName && displayName.isString())
+            return asString(displayName)->tryGetValue();
+    }
+
+    if (auto* function = jsDynamicCast<JSFunction*>(vm, object)) {
+        const String actualName = function->name(vm);
+        if (!actualName.isEmpty() || function->isHostOrBuiltinFunction())
+            return actualName;
+
+        return function->jsExecutable()->inferredName().string();
+    }
+    if (auto* function = jsDynamicCast<InternalFunction*>(vm, object))
+        return function->name();
+
+
     return emptyString();
 }
 

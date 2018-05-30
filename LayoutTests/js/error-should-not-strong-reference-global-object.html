@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+function foo(frames) {
+    frames = document.getElementsByTagName("iframe");
+    for (let i = 1; i < frames.length; i++) {
+
+        document.body.removeChild(frames[i]);
+    }
+    throw new Error(0);
+}
+
+const iframeCount = 10;
+function setup() {
+    for (let i = 0; i < iframeCount; ++i) {
+        let iframe = document.createElement("iframe");
+        document.body.appendChild(iframe);
+        iframe.contentWindow.foo = new iframe.contentWindow.Function("frames", "i", "frames[i].foo(frames, i - 1);");
+    }
+}
+
+let errors = [];
+function run() {
+    setup();
+    let frames = window.frames;
+
+    frames = [window].concat(Array.from(frames));
+    let last = frames.length - 1;
+    try {
+        frames[last].foo(frames, last);
+    } catch (e) {
+        errors.push(e);
+    }
+}
+
+for (let i = 0; i < 50; i++)
+    run();
+
+$vm.gc();
+// We shouldn't have more than 10% of the global objects we allocated.
+if ($vm.globalObjectCount() >= 51)
+    throw new Error("There are more global objects than there should be");
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
