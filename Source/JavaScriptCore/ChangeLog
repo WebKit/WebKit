@@ -1,3 +1,25 @@
+2018-05-30  Keith Miller  <keith_miller@apple.com>
+
+        LLInt get_by_id prototype caching doesn't properly handle changes
+        https://bugs.webkit.org/show_bug.cgi?id=186112
+
+        Reviewed by Filip Pizlo.
+
+        The caching would sometimes fail to track that a prototype had changed
+        and wouldn't update its set of watchpoints.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        * bytecode/CodeBlock.h:
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h:
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::key const):
+        * bytecode/ObjectPropertyConditionSet.h:
+        (JSC::ObjectPropertyConditionSet::size const):
+        * bytecode/Watchpoint.h:
+        (JSC::Watchpoint::Watchpoint): Deleted.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+
 2018-05-30  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "%" operation

@@ -67,7 +67,8 @@ public:
     }
 
     bool isValidAndWatchable() const;
-    
+
+    size_t size() const { return m_data ? m_data->vector.size() : 0; }
     bool isEmpty() const
     {
         return !m_data;

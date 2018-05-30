@@ -68,9 +68,7 @@ class Watchpoint : public BasicRawSentinelNode<Watchpoint> {
     WTF_MAKE_NONCOPYABLE(Watchpoint);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Watchpoint()
-    {
-    }
+    Watchpoint() = default;
     
     virtual ~Watchpoint();
 

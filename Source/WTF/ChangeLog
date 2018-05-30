@@ -1,3 +1,19 @@
+2018-05-30  Keith Miller  <keith_miller@apple.com>
+
+        LLInt get_by_id prototype caching doesn't properly handle changes
+        https://bugs.webkit.org/show_bug.cgi?id=186112
+
+        Reviewed by Filip Pizlo.
+
+        Mark some methods const.
+
+        * wtf/Bag.h:
+        (WTF::Bag::begin const):
+        (WTF::Bag::end const):
+        (WTF::Bag::unwrappedHead const):
+        (WTF::Bag::end): Deleted.
+        (WTF::Bag::unwrappedHead): Deleted.
+
 2018-05-30  Alex Christensen  <achristensen@webkit.org>
 
         Reduce String allocations
