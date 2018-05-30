@@ -6386,7 +6386,9 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (void)_denyNextUserMediaRequest
 {
+#if ENABLE(MEDIA_STREAM)
     WebKit::UserMediaProcessManager::singleton().denyNextUserMediaRequest();
+#endif
 }
 @end
 
