@@ -292,6 +292,16 @@
         _processPoolConfiguration->setCacheModel(WebKit::CacheModelPrimaryWebBrowser);
 }
 
+- (BOOL)suppressesConnectionTerminationOnSystemChange
+{
+    return _processPoolConfiguration->suppressesConnectionTerminationOnSystemChange();
+}
+
+- (void)setSuppressesConnectionTerminationOnSystemChange:(BOOL)suppressesConnectionTerminationOnSystemChange
+{
+    _processPoolConfiguration->setSuppressesConnectionTerminationOnSystemChange(suppressesConnectionTerminationOnSystemChange);
+}
+
 #if PLATFORM(IOS)
 - (NSString *)CTDataConnectionServiceType
 {

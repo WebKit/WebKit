@@ -54,9 +54,10 @@
 
 using namespace WebKit;
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+// FIXME: Remove this once rdar://problem/40650244 is in a build.
 @interface NSURLSessionConfiguration (WKStaging)
-@property (nullable, copy) NSSet *_suppressedAutoAddedHTTPHeaders;
+@property (copy) NSDictionary *_socketStreamProperties;
 @end
 #endif
 
@@ -699,6 +700,12 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& para
     configuration._timingDataOptions = _TimingDataOptionsEnableW3CNavigationTiming;
 #else
     setCollectsTimingData();
+#endif
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+    // FIXME: Replace @"kCFStreamPropertyAutoErrorOnSystemChange" with a constant from the SDK once rdar://problem/40650244 is in a build.
+    if (NetworkProcess::singleton().suppressesConnectionTerminationOnSystemChange())
+        configuration._socketStreamProperties = @{ @"kCFStreamPropertyAutoErrorOnSystemChange" : @(NO) };
 #endif
 
     auto* storageSession = WebCore::NetworkStorageSession::storageSession(parameters.sessionID);

@@ -134,6 +134,9 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
 #if ENABLE(WIFI_ASSERTIONS)
     copy->m_wirelessContextIdentifier = this->m_wirelessContextIdentifier;
 #endif
+#if PLATFORM(COCOA)
+    copy->m_suppressesConnectionTerminationOnSystemChange = this->m_suppressesConnectionTerminationOnSystemChange;
+#endif
 
     return copy;
 }

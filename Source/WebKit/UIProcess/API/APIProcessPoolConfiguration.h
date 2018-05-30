@@ -152,6 +152,11 @@ public:
     void setWirelessContextIdentifier(unsigned wirelessContextIdentifier) { m_wirelessContextIdentifier = wirelessContextIdentifier; }
 #endif
 
+#if PLATFORM(COCOA)
+    bool suppressesConnectionTerminationOnSystemChange() const { return m_suppressesConnectionTerminationOnSystemChange; }
+    void setSuppressesConnectionTerminationOnSystemChange(bool suppressesConnectionTerminationOnSystemChange) { m_suppressesConnectionTerminationOnSystemChange = suppressesConnectionTerminationOnSystemChange; }
+#endif
+
 private:
     bool m_shouldHaveLegacyDataStore { false };
 
@@ -194,6 +199,10 @@ private:
 
 #if ENABLE(WIFI_ASSERTIONS)
     unsigned m_wirelessContextIdentifier { 0 };
+#endif
+
+#if PLATFORM(COCOA)
+    bool m_suppressesConnectionTerminationOnSystemChange { false };
 #endif
 };
 
