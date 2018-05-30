@@ -1,3 +1,10 @@
+2018-05-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix attempt after https://trac.webkit.org/r232198
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createCFURLConnection): Added some toString() calls.
+
 2018-05-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Miscellaneous fixes to get closer to geometry correctness

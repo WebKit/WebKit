@@ -169,7 +169,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
 #if PLATFORM(IOS)
     sslProps = adoptCF(ResourceHandle::createSSLPropertiesFromNSURLRequest(firstRequest()));
 #else
-    if (allowsAnyHTTPSCertificateHosts().contains(firstRequest().url().host())) {
+    if (allowsAnyHTTPSCertificateHosts().contains(firstRequest().url().host().toString())) {
         sslProps = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -182,7 +182,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
 #endif
     }
 
-    auto clientCert = clientCertificates().find(firstRequest().url().host());
+    auto clientCert = clientCertificates().find(firstRequest().url().host().toString());
     if (clientCert != clientCertificates().end()) {
         if (!sslProps)
             sslProps = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
