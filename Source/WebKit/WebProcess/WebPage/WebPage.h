@@ -298,6 +298,7 @@ public:
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     PlaybackSessionManager& playbackSessionManager();
     VideoFullscreenManager& videoFullscreenManager();
+    void videoControlsManagerDidChange();
 #endif
 
 #if PLATFORM(IOS)

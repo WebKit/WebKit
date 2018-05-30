@@ -65,10 +65,14 @@ public:
 
     WebCore::Element* element();
 
+    void videoControlsManagerDidChange();
+
     void close();
 
 protected:
     WebFullScreenManager(WebPage*);
+
+    void setPIPStandbyElement(WebCore::HTMLVideoElement*);
 
     void setAnimatingFullScreen(bool);
     void requestExitFullScreen();

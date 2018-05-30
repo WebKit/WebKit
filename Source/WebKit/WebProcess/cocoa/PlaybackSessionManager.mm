@@ -278,19 +278,21 @@ void PlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElem
     }
 
     addClientForContext(m_controlsManagerContextId);
+
+    m_page->videoControlsManagerDidChange();
     m_page->send(Messages::PlaybackSessionManagerProxy::SetUpPlaybackControlsManagerWithID(m_controlsManagerContextId), m_page->pageID());
 }
 
 void PlaybackSessionManager::clearPlaybackControlsManager()
 {
-#if PLATFORM(MAC)
     if (!m_controlsManagerContextId)
         return;
 
     removeClientForContext(m_controlsManagerContextId);
     m_controlsManagerContextId = 0;
+
+    m_page->videoControlsManagerDidChange();
     m_page->send(Messages::PlaybackSessionManagerProxy::ClearPlaybackControlsManager(), m_page->pageID());
-#endif
 }
 
 uint64_t PlaybackSessionManager::contextIdForMediaElement(WebCore::HTMLMediaElement& mediaElement)
@@ -299,6 +301,18 @@ uint64_t PlaybackSessionManager::contextIdForMediaElement(WebCore::HTMLMediaElem
     uint64_t contextId = addResult.iterator->value;
     ensureModel(contextId).setMediaElement(&mediaElement);
     return contextId;
+}
+
+WebCore::HTMLMediaElement* PlaybackSessionManager::currentPlaybackControlsElement() const
+{
+    if (!m_controlsManagerContextId)
+        return nullptr;
+
+    auto iter = m_contextMap.find(m_controlsManagerContextId);
+    if (iter == m_contextMap.end())
+        return nullptr;
+
+    return std::get<0>(iter->value)->mediaElement();
 }
 
 #pragma mark Interface to PlaybackSessionInterfaceContext:

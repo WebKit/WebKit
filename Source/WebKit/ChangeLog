@@ -1,5 +1,31 @@
 2018-05-30  Jer Noble  <jer.noble@apple.com>
 
+        Auto-pip should use main content heuristic.
+        https://bugs.webkit.org/show_bug.cgi?id=186065
+        <rdar://problem/35862502>
+
+        Reviewed by Eric Carlson.
+
+        Make the m_pipStandbyElement clearable, which will allow the auto-pip mechanism to be torn down. Add
+        a WebProcess-side notification when the main content changes, to facilitate this.
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::videoControlsManagerDidChange):
+        (WebKit::WebFullScreenManager::setPIPStandbyElement):
+        (WebKit::WebFullScreenManager::didEnterFullScreen):
+        (WebKit::WebFullScreenManager::willExitFullScreen):
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::videoControlsManagerDidChange):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/cocoa/PlaybackSessionManager.h:
+        * WebProcess/cocoa/PlaybackSessionManager.mm:
+        (WebKit::PlaybackSessionManager::setUpPlaybackControlsManager):
+        (WebKit::PlaybackSessionManager::clearPlaybackControlsManager):
+        (WebKit::PlaybackSessionManager::currentPlaybackControlsElement const):
+
+2018-05-30  Jer Noble  <jer.noble@apple.com>
+
         Fix a few issues in WKFullScreenViewController
         https://bugs.webkit.org/show_bug.cgi?id=186067
         <rdar://problem/40630944>

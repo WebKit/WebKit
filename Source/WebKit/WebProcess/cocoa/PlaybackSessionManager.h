@@ -109,6 +109,8 @@ public:
     void clearPlaybackControlsManager();
     uint64_t contextIdForMediaElement(WebCore::HTMLMediaElement&);
 
+    WebCore::HTMLMediaElement* currentPlaybackControlsElement() const;
+
 protected:
     friend class PlaybackSessionInterfaceContext;
     friend class VideoFullscreenManager;

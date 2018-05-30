@@ -3289,6 +3289,15 @@ VideoFullscreenManager& WebPage::videoFullscreenManager()
         m_videoFullscreenManager = VideoFullscreenManager::create(*this, playbackSessionManager());
     return *m_videoFullscreenManager;
 }
+
+void WebPage::videoControlsManagerDidChange()
+{
+#if ENABLE(FULLSCREEN_API)
+    if (auto* manager = fullScreenManager())
+        manager->videoControlsManagerDidChange();
+#endif
+}
+
 #endif
 
 #if PLATFORM(IOS)
