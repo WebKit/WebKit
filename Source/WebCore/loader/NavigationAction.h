@@ -30,6 +30,7 @@
 
 #include "BackForwardItemIdentifier.h"
 #include "FrameLoaderTypes.h"
+#include "LayoutPoint.h"
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
 #include "UserGestureIndicator.h"
@@ -40,7 +41,12 @@ namespace WebCore {
 class Document;
 class Event;
 class HistoryItem;
+class MouseEvent;
+class UIEventWithKeyState;
 
+// NavigationAction should never hold a strong reference to the originating document either directly
+// or indirectly as doing so prevents its destruction even after navigating away from it because
+// DocumentLoader keeps around the NavigationAction for the last navigation.
 class NavigationAction {
 public:
     NavigationAction();
@@ -71,6 +77,27 @@ public:
     };
     const std::optional<Requester>& requester() const { return m_requester; }
 
+    struct UIEventWithKeyStateData {
+        UIEventWithKeyStateData(const UIEventWithKeyState&);
+
+        bool isTrusted;
+        bool shiftKey;
+        bool ctrlKey;
+        bool altKey;
+        bool metaKey;
+    };
+    struct MouseEventData : UIEventWithKeyStateData {
+        MouseEventData(const MouseEvent&);
+
+        LayoutPoint absoluteLocation;
+        FloatPoint locationInRootViewCoordinates;
+        unsigned short button;
+        unsigned short syntheticClickType;
+        bool buttonDown;
+    };
+    const std::optional<UIEventWithKeyStateData>& keyStateEventData() const { return m_keyStateEventData; }
+    const std::optional<MouseEventData>& mouseEventData() const { return m_mouseEventData; }
+
     NavigationAction copyWithShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy) const;
 
     bool isEmpty() const { return !m_requester || m_requester->url().isEmpty() || m_resourceRequest.url().isEmpty(); }
@@ -79,7 +106,6 @@ public:
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
 
     NavigationType type() const { return m_type; }
-    const Event* event() const { return m_event.get(); }
 
     bool processingUserGesture() const { return m_userGestureToken ? m_userGestureToken->processingUserGesture() : false; }
     RefPtr<UserGestureToken> userGestureToken() const { return m_userGestureToken; }
@@ -101,12 +127,15 @@ public:
     const std::optional<BackForwardItemIdentifier>& targetBackForwardItemIdentifier() const { return m_targetBackForwardItemIdentifier; }
 
 private:
+    // Do not add a strong reference to the originating document or a subobject that holds the
+    // originating document. See comment above the class for more details.
     std::optional<Requester> m_requester;
     ResourceRequest m_resourceRequest;
     NavigationType m_type;
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy;
     InitiatedByMainFrame m_initiatedByMainFrame;
-    RefPtr<Event> m_event;
+    std::optional<UIEventWithKeyStateData> m_keyStateEventData;
+    std::optional<MouseEventData> m_mouseEventData;
     RefPtr<UserGestureToken> m_userGestureToken { UserGestureIndicator::currentUserGesture() };
     AtomicString m_downloadAttribute;
     bool m_treatAsSameOriginNavigation;

@@ -30,10 +30,10 @@
 #include "NavigationAction.h"
 
 #include "Document.h"
-#include "Event.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HistoryItem.h"
+#include "MouseEvent.h"
 
 namespace WebCore {
 
@@ -41,6 +41,25 @@ NavigationAction::Requester::Requester(const Document& document)
     : m_url { URL { document.url() } }
     , m_origin { makeRefPtr(document.securityOrigin()) }
     , m_pageIDAndFrameIDPair { document.frame() ? std::make_pair(document.frame()->loader().client().pageID().value_or(0), document.frame()->loader().client().frameID().value_or(0)) : std::make_pair<uint64_t, uint64_t>(0, 0) }
+{
+}
+
+NavigationAction::UIEventWithKeyStateData::UIEventWithKeyStateData(const UIEventWithKeyState& uiEvent)
+    : isTrusted { uiEvent.isTrusted() }
+    , shiftKey { uiEvent.shiftKey() }
+    , ctrlKey { uiEvent.ctrlKey() }
+    , altKey { uiEvent.altKey() }
+    , metaKey { uiEvent.metaKey() }
+{
+}
+
+NavigationAction::MouseEventData::MouseEventData(const MouseEvent& mouseEvent)
+    : UIEventWithKeyStateData { mouseEvent }
+    , absoluteLocation { mouseEvent.absoluteLocation() }
+    , locationInRootViewCoordinates { mouseEvent.locationInRootViewCoordinates() }
+    , button { mouseEvent.button() }
+    , syntheticClickType { mouseEvent.syntheticClickType() }
+    , buttonDown { mouseEvent.buttonDown() }
 {
 }
 
@@ -58,13 +77,30 @@ static bool shouldTreatAsSameOriginNavigation(const Document& document, const UR
     return url.isBlankURL() || url.protocolIsData() || (url.protocolIsBlob() && document.securityOrigin().canRequest(url));
 }
 
+static std::optional<NavigationAction::UIEventWithKeyStateData> keyStateDataForFirstEventWithKeyState(Event* event)
+{
+    if (UIEventWithKeyState* uiEvent = findEventWithKeyState(event))
+        return NavigationAction::UIEventWithKeyStateData { *uiEvent };
+    return std::nullopt;
+}
+
+static std::optional<NavigationAction::MouseEventData> mouseEventDataForFirstMouseEvent(Event* event)
+{
+    for (Event* e = event; e; e = e->underlyingEvent()) {
+        if (e->isMouseEvent())
+            return NavigationAction::MouseEventData { static_cast<const MouseEvent&>(*e) };
+    }
+    return std::nullopt;
+}
+
 NavigationAction::NavigationAction(Document& requester, const ResourceRequest& resourceRequest, InitiatedByMainFrame initiatedByMainFrame, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Event* event, const AtomicString& downloadAttribute)
     : m_requester { requester }
     , m_resourceRequest { resourceRequest }
     , m_type { type }
     , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
     , m_initiatedByMainFrame { initiatedByMainFrame }
-    , m_event { event }
+    , m_keyStateEventData { keyStateDataForFirstEventWithKeyState(event) }
+    , m_mouseEventData { mouseEventDataForFirstMouseEvent(event) }
     , m_downloadAttribute { downloadAttribute }
     , m_treatAsSameOriginNavigation { shouldTreatAsSameOriginNavigation(requester, resourceRequest.url()) }
 {
@@ -89,7 +125,8 @@ NavigationAction::NavigationAction(Document& requester, const ResourceRequest& r
     , m_type { navigationType(frameLoadType, isFormSubmission, !!event) }
     , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
     , m_initiatedByMainFrame { initiatedByMainFrame }
-    , m_event { event }
+    , m_keyStateEventData { keyStateDataForFirstEventWithKeyState(event) }
+    , m_mouseEventData { mouseEventDataForFirstMouseEvent(event) }
     , m_downloadAttribute { downloadAttribute }
     , m_treatAsSameOriginNavigation { shouldTreatAsSameOriginNavigation(requester, resourceRequest.url()) }
 {

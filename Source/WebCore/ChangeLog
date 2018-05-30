@@ -1,3 +1,32 @@
+2018-05-30  Daniel Bates  <dabates@apple.com>
+
+        NavigationAction does not need to hold initiating DOM Event
+        https://bugs.webkit.org/show_bug.cgi?id=185958
+        <rdar://problem/40531539>
+
+        Reviewed by Simon Fraser.
+
+        Take a similar approach as was done in <https://bugs.webkit.org/show_bug.cgi?id=185712>
+        and have NavigationAction hold only as many details of the initiating DOM Event as
+        necessary to support WebKit functionality. Retaining a DOM Event effectively retains
+        the document that associated with the event. And DocumentLoader always keeps around
+        the NavigationAction of the last navigation for the "benefit of the various policy handlers".
+        Therefore, having NavigationAction hold only the relevant details of the DOM Event
+        instead of the DOM Event itself we avoid keeping the document we navigated from alive
+        longer than necessary. 
+
+        * dom/MouseRelatedEvent.h:
+        * dom/UIEventWithKeyState.h:
+        * loader/NavigationAction.cpp:
+        (WebCore::NavigationAction::UIEventWithKeyStateData::UIEventWithKeyStateData): Added.
+        (WebCore::NavigationAction::MouseEventData::MouseEventData): Added.
+        (WebCore::keyStateDataForFirstEventWithKeyState): Added.
+        (WebCore::mouseEventDataForFirstMouseEvent): Added.
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::keyStateEventData const): Added.
+        (WebCore::NavigationAction::mouseEventData const): Added
+        (WebCore::NavigationAction::event const): Deleted.
+
 2018-05-30  Youenn Fablet  <youenn@apple.com>
 
         Revert changes made to URLWithUserTypedString made in https://trac.webkit.org/changeset/232281

@@ -81,6 +81,6 @@ protected:
     bool m_capsLockKey { false };
 };
 
-WEBCORE_EXPORT UIEventWithKeyState* findEventWithKeyState(Event*);
+UIEventWithKeyState* findEventWithKeyState(Event*);
 
 } // namespace WebCore

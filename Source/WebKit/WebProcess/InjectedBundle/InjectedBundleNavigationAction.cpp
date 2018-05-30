@@ -38,79 +38,57 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static const MouseEvent* mouseEventForNavigationAction(const NavigationAction& navigationAction)
+static WebMouseEvent::Button mouseButtonForMouseEventData(const std::optional<NavigationAction::MouseEventData>& mouseEventData)
 {
-    for (const Event* e = navigationAction.event(); e; e = e->underlyingEvent()) {
-        if (e->isMouseEvent())
-            return static_cast<const MouseEvent*>(e);
-    }
-    return 0;
+    if (mouseEventData && mouseEventData->buttonDown && mouseEventData->isTrusted)
+        return static_cast<WebMouseEvent::Button>(mouseEventData->button);
+    return WebMouseEvent::NoButton;
 }
 
-static WebMouseEvent::Button mouseButtonForMouseEvent(const MouseEvent* mouseEvent)
+static WebMouseEvent::SyntheticClickType syntheticClickTypeForMouseEventData(const std::optional<NavigationAction::MouseEventData>& mouseEventData)
 {
-    if (!mouseEvent)
-        return WebMouseEvent::NoButton;
-
-    if (!mouseEvent->buttonDown() || !mouseEvent->isTrusted())
-        return WebMouseEvent::NoButton;
-
-    return static_cast<WebMouseEvent::Button>(mouseEvent->button());
-}
-
-static WebMouseEvent::SyntheticClickType syntheticClickTypeForMouseEvent(const MouseEvent* mouseEvent)
-{
-    if (!mouseEvent)
-        return WebMouseEvent::NoTap;
-    
-    if (!mouseEvent->buttonDown() || !mouseEvent->isTrusted())
-        return WebMouseEvent::NoTap;
-    
-    return static_cast<WebMouseEvent::SyntheticClickType>(mouseEvent->syntheticClickType());
+    if (mouseEventData && mouseEventData->buttonDown && mouseEventData->isTrusted)
+        return static_cast<WebMouseEvent::SyntheticClickType>(mouseEventData->syntheticClickType);
+    return WebMouseEvent::NoTap;
 }
     
-static FloatPoint clickLocationInRootViewCoordinatesForMouseEvent(const MouseEvent* mouseEvent)
+static FloatPoint clickLocationInRootViewCoordinatesForMouseEventData(const std::optional<NavigationAction::MouseEventData>& mouseEventData)
 {
-    if (!mouseEvent)
-        return { };
-    
-    if (!mouseEvent->buttonDown() || !mouseEvent->isTrusted())
-        return { };
-    
-    return mouseEvent->locationInRootViewCoordinates();
+    if (mouseEventData && mouseEventData->buttonDown && mouseEventData->isTrusted)
+        return mouseEventData->locationInRootViewCoordinates;
+    return { };
 }
 
 WebEvent::Modifiers InjectedBundleNavigationAction::modifiersForNavigationAction(const NavigationAction& navigationAction)
 {
     uint32_t modifiers = 0;
-    const UIEventWithKeyState* keyStateEvent = findEventWithKeyState(const_cast<Event*>(navigationAction.event()));
-    if (keyStateEvent && keyStateEvent->isTrusted()) {
-        if (keyStateEvent->shiftKey())
+    auto keyStateEventData = navigationAction.keyStateEventData();
+    if (keyStateEventData && keyStateEventData->isTrusted) {
+        if (keyStateEventData->shiftKey)
             modifiers |= WebEvent::ShiftKey;
-        if (keyStateEvent->ctrlKey())
+        if (keyStateEventData->ctrlKey)
             modifiers |= WebEvent::ControlKey;
-        if (keyStateEvent->altKey())
+        if (keyStateEventData->altKey)
             modifiers |= WebEvent::AltKey;
-        if (keyStateEvent->metaKey())
+        if (keyStateEventData->metaKey)
             modifiers |= WebEvent::MetaKey;
     }
-
     return static_cast<WebEvent::Modifiers>(modifiers);
 }
 
 WebMouseEvent::Button InjectedBundleNavigationAction::mouseButtonForNavigationAction(const NavigationAction& navigationAction)
 {
-    return mouseButtonForMouseEvent(mouseEventForNavigationAction(navigationAction));
+    return mouseButtonForMouseEventData(navigationAction.mouseEventData());
 }
 
 WebMouseEvent::SyntheticClickType InjectedBundleNavigationAction::syntheticClickTypeForNavigationAction(const NavigationAction& navigationAction)
 {
-    return syntheticClickTypeForMouseEvent(mouseEventForNavigationAction(navigationAction));
+    return syntheticClickTypeForMouseEventData(navigationAction.mouseEventData());
 }
     
 FloatPoint InjectedBundleNavigationAction::clickLocationInRootViewCoordinatesForNavigationAction(const NavigationAction& navigationAction)
 {
-    return clickLocationInRootViewCoordinatesForMouseEvent(mouseEventForNavigationAction(navigationAction));
+    return clickLocationInRootViewCoordinatesForMouseEventData(navigationAction.mouseEventData());
 }
 
 Ref<InjectedBundleNavigationAction> InjectedBundleNavigationAction::create(WebFrame* frame, const NavigationAction& action, RefPtr<FormState>&& formState)
@@ -126,9 +104,9 @@ InjectedBundleNavigationAction::InjectedBundleNavigationAction(WebFrame* frame, 
     , m_shouldOpenExternalURLs(navigationAction.shouldOpenExternalURLsPolicy() == ShouldOpenExternalURLsPolicy::ShouldAllow || navigationAction.shouldOpenExternalURLsPolicy() == ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes)
     , m_shouldTryAppLinks(navigationAction.shouldOpenExternalURLsPolicy() == ShouldOpenExternalURLsPolicy::ShouldAllow)
 {
-    if (const MouseEvent* mouseEvent = mouseEventForNavigationAction(navigationAction)) {
-        m_hitTestResult = InjectedBundleHitTestResult::create(frame->coreFrame()->eventHandler().hitTestResultAtPoint(mouseEvent->absoluteLocation()));
-        m_mouseButton   = mouseButtonForMouseEvent(mouseEvent);
+    if (auto mouseEventData = navigationAction.mouseEventData()) {
+        m_hitTestResult = InjectedBundleHitTestResult::create(frame->coreFrame()->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation));
+        m_mouseButton = mouseButtonForMouseEventData(mouseEventData);
         m_syntheticClickType = syntheticClickTypeForNavigationAction(navigationAction);
         m_clickLocationInRootViewCoordinates = clickLocationInRootViewCoordinatesForNavigationAction(navigationAction);
     }

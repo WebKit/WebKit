@@ -1555,28 +1555,19 @@ String WebFrameLoaderClient::userAgent(const URL& url)
     return [webView _userAgentString];
 }
 
-static const MouseEvent* findMouseEvent(const Event* event)
-{
-    for (const Event* e = event; e; e = e->underlyingEvent())
-        if (e->isMouseEvent())
-            return static_cast<const MouseEvent*>(e);
-    return 0;
-}
-
 NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& action, FormState* formState) const
 {
     unsigned modifierFlags = 0;
-    const Event* event = action.event();
 #if !PLATFORM(IOS)
-    const UIEventWithKeyState* keyStateEvent = findEventWithKeyState(const_cast<Event*>(event));
-    if (keyStateEvent && keyStateEvent->isTrusted()) {
-        if (keyStateEvent->ctrlKey())
+    auto keyStateEventData = action.keyStateEventData();
+    if (keyStateEventData && keyStateEventData->isTrusted) {
+        if (keyStateEventData->ctrlKey)
             modifierFlags |= NSEventModifierFlagControl;
-        if (keyStateEvent->altKey())
+        if (keyStateEventData->altKey)
             modifierFlags |= NSEventModifierFlagOption;
-        if (keyStateEvent->shiftKey())
+        if (keyStateEventData->shiftKey)
             modifierFlags |= NSEventModifierFlagShift;
-        if (keyStateEvent->metaKey())
+        if (keyStateEventData->metaKey)
             modifierFlags |= NSEventModifierFlagCommand;
     }
 #else
@@ -1592,14 +1583,14 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& act
         originalURL, WebActionOriginalURLKey,
         nil];
 
-    if (const MouseEvent* mouseEvent = findMouseEvent(event)) {
+    if (auto mouseEventData = action.mouseEventData()) {
         WebElementDictionary *element = [[WebElementDictionary alloc]
-            initWithHitTestResult:core(m_webFrame.get())->eventHandler().hitTestResultAtPoint(mouseEvent->absoluteLocation())];
+            initWithHitTestResult:core(m_webFrame.get())->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation)];
         [result setObject:element forKey:WebActionElementKey];
         [element release];
 
-        if (mouseEvent->isTrusted())
-            [result setObject:[NSNumber numberWithInt:mouseEvent->button()] forKey:WebActionButtonKey];
+        if (mouseEventData->isTrusted)
+            [result setObject:[NSNumber numberWithInt:mouseEventData->button] forKey:WebActionButtonKey];
         else
             [result setObject:[NSNumber numberWithInt:WebCore::NoButton] forKey:WebActionButtonKey];
     }
