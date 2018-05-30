@@ -62,11 +62,19 @@ bool ContentSecurityPolicySource::schemeMatches(const URL& url) const
     return equalIgnoringASCIICase(url.protocol(), m_scheme);
 }
 
+static bool wildcardMatches(StringView host, const String& hostWithWildcard)
+{
+    auto hostLength = host.length();
+    auto hostWithWildcardLength = hostWithWildcard.length();
+    return host.endsWithIgnoringASCIICase(hostWithWildcard)
+        && hostLength > hostWithWildcardLength
+        && host[hostLength - hostWithWildcardLength - 1] == '.';
+}
+
 bool ContentSecurityPolicySource::hostMatches(const URL& url) const
 {
     auto host = url.host();
-    return equalIgnoringASCIICase(host, m_host) || (m_hostHasWildcard && host.endsWithIgnoringASCIICase(makeString(".", m_host)));
-
+    return equalIgnoringASCIICase(host, m_host) || (m_hostHasWildcard && wildcardMatches(host, m_host));
 }
 
 bool ContentSecurityPolicySource::pathMatches(const URL& url) const

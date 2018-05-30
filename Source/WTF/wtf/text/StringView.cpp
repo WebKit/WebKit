@@ -33,6 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
+#include <wtf/text/StringBuffer.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/UTF8.h>
 
@@ -204,6 +205,35 @@ bool StringView::GraphemeClusters::Iterator::operator==(const Iterator& other) c
 bool StringView::GraphemeClusters::Iterator::operator!=(const Iterator& other) const
 {
     return !(*this == other);
+}
+
+enum class ASCIICase { Lower, Upper };
+
+template<ASCIICase type, typename CharacterType>
+String convertASCIICase(const CharacterType* input, unsigned length)
+{
+    if (!input)
+        return { };
+
+    StringBuffer<CharacterType> buffer(length);
+    CharacterType* characters = buffer.characters();
+    for (unsigned i = 0; i < length; ++i)
+        characters[i] = type == ASCIICase::Lower ? toASCIILower(input[i]) : toASCIIUpper(input[i]);
+    return String::adopt(WTFMove(buffer));
+}
+
+String StringView::convertToASCIILowercase() const
+{
+    if (m_is8Bit)
+        return convertASCIICase<ASCIICase::Lower>(static_cast<const LChar*>(m_characters), m_length);
+    return convertASCIICase<ASCIICase::Lower>(static_cast<const UChar*>(m_characters), m_length);
+}
+
+String StringView::convertToASCIIUppercase() const
+{
+    if (m_is8Bit)
+        return convertASCIICase<ASCIICase::Upper>(static_cast<const LChar*>(m_characters), m_length);
+    return convertASCIICase<ASCIICase::Upper>(static_cast<const UChar*>(m_characters), m_length);
 }
 
 #if CHECK_STRINGVIEW_LIFETIME

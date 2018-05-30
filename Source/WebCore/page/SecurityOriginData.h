@@ -49,8 +49,8 @@ struct SecurityOriginData {
     static SecurityOriginData fromURL(const URL& url)
     {
         return SecurityOriginData {
-            url.protocol().isNull() ? emptyString() : url.protocol().toString().convertToASCIILowercase(),
-            url.host().isNull() ? emptyString() : url.host().toString().convertToASCIILowercase(),
+            url.protocol().isNull() ? emptyString() : url.protocol().convertToASCIILowercase(),
+            url.host().isNull() ? emptyString() : url.host().convertToASCIILowercase(),
             url.port()
         };
     }

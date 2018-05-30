@@ -33,6 +33,14 @@
 
 namespace WTF {
 
+RetainPtr<CFStringRef> StringView::createCFString() const
+{
+    if (is8Bit())
+        return adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, characters8(), length(), kCFStringEncodingISOLatin1, false));
+    
+    return adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(characters16()), length()));
+}
+
 RetainPtr<CFStringRef> StringView::createCFStringWithoutCopying() const
 {
     if (is8Bit())

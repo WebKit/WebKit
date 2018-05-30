@@ -98,6 +98,7 @@ public:
 
 #if USE(CF)
     // This function converts null strings to empty strings.
+    WTF_EXPORT_PRIVATE RetainPtr<CFStringRef> createCFString() const;
     WTF_EXPORT_PRIVATE RetainPtr<CFStringRef> createCFStringWithoutCopying() const;
 #endif
 
@@ -135,6 +136,9 @@ public:
 
     WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringView&) const;
     WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringView&, unsigned startOffset) const;
+
+    WTF_EXPORT_PRIVATE String convertToASCIILowercase() const;
+    WTF_EXPORT_PRIVATE String convertToASCIIUppercase() const;
 
     bool contains(UChar) const;
     WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(const StringView&) const;

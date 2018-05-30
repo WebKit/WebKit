@@ -39,6 +39,7 @@
 #include <wtf/UUID.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/TextStream.h>
 
@@ -180,7 +181,7 @@ std::optional<uint16_t> URL::port() const
 String URL::hostAndPort() const
 {
     if (auto port = this->port())
-        return makeString(host(), ':', String::number(port.value()));
+        return makeString(host(), ':', static_cast<unsigned>(port.value()));
     return host().toString();
 }
 

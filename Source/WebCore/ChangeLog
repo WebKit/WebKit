@@ -1,3 +1,33 @@
+2018-05-30  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce String allocations
+        https://bugs.webkit.org/show_bug.cgi?id=186059
+
+        Reviewed by Darin Adler.
+
+        Don't allocate Strings just to convert it to another form.
+        Based mostly on Darin's feedback on bug 185986.
+
+        No change in behavior.
+
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::hostName):
+        (WebCore::WebSocketHandshake::host const):
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumePseudo):
+        (WebCore::CSSSelectorParser::consumeANPlusB):
+        * loader/mac/LoaderNSURLExtras.mm:
+        (suggestedFilenameWithMIMEType):
+        * page/SecurityOriginData.h:
+        (WebCore::SecurityOriginData::fromURL):
+        * page/csp/ContentSecurityPolicySource.cpp:
+        (WebCore::wildcardMatches):
+        (WebCore::ContentSecurityPolicySource::hostMatches const):
+        * platform/URL.cpp:
+        (WebCore::URL::hostAndPort const):
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::createStreams):
+
 2018-05-30  Jer Noble  <jer.noble@apple.com>
 
         Media elements outside fullscreen should not be considered main content.

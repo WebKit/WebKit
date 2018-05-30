@@ -48,8 +48,8 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
 
     if ([filename length] == 0 || [lastPathComponent isEqualToString:@"/"]) {
         // lastPathComponent is no good, try the host.
-        NSString *host = URL(url).host().toString();
-        filename = filenameByFixingIllegalCharacters(host);
+        auto host = URL(url).host().createNSString();
+        filename = filenameByFixingIllegalCharacters(host.get());
         if ([filename length] == 0) {
             // Can't make a filename using this URL, use "unknown".
             filename = copyImageUnknownFileLabel();
