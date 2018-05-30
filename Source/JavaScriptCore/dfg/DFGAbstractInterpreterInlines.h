@@ -1815,8 +1815,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case AtomicsStore:
     case AtomicsSub:
     case AtomicsXor: {
-        if (node->op() != GetByVal)
-            clobberWorld();
+        if (node->op() != GetByVal) {
+            unsigned numExtraArgs = numExtraAtomicsArgs(node->op());
+            Edge storageEdge = m_graph.child(node, 2 + numExtraArgs);
+            if (!storageEdge)
+                clobberWorld();
+        }
         switch (node->arrayMode().type()) {
         case Array::SelectUsingPredictions:
         case Array::Unprofiled:

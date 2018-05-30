@@ -1,3 +1,18 @@
+2018-05-30  Saam Barati  <sbarati@apple.com>
+
+        AI for Atomics.load() is too conservative in always clobbering world
+        https://bugs.webkit.org/show_bug.cgi?id=185738
+        <rdar://problem/40342214>
+
+        Reviewed by Yusuke Suzuki.
+
+        It fails the assertion that Fil added for catching disagreements between
+        AI and clobberize. This patch fixes that. You'd run into this if you
+        manually enabled SAB in a build and ran any SAB tests.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2018-05-30  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r232212): Broke Win32 Builds
