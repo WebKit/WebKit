@@ -730,10 +730,6 @@ WebPage::~WebPage()
 #endif
 }
 
-void WebPage::dummy(bool&)
-{
-}
-
 IPC::Connection* WebPage::messageSenderConnection()
 {
     return WebProcess::singleton().parentProcessConnection();

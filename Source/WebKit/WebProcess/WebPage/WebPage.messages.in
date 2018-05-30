@@ -357,10 +357,6 @@ messages -> WebPage LegacyReceiver {
     SetVolumeOfMediaElement(double volume, uint64_t elementID)
 #endif
 
-    // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require
-    // any synchronous messages, and should be removed when <rdar://problem/8775115> is fixed.
-    Dummy() -> (bool dummyReturn)
-
     SetCanRunBeforeUnloadConfirmPanel(bool canRunBeforeUnloadConfirmPanel)
     SetCanRunModal(bool canRunModal)
 

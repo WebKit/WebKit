@@ -760,10 +760,6 @@ public:
     bool hasCompositionForTesting();
     void confirmCompositionForTesting(const String& compositionString);
 
-    // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require
-    // any synchronous messages, and should be removed when <rdar://problem/8775115> is fixed.
-    void dummy(bool&);
-
 #if PLATFORM(COCOA)
     bool isSpeaking();
     void speak(const String&);
