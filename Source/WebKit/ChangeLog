@@ -1,3 +1,19 @@
+2018-05-30  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] -[WKFullScreenViewController viewWillAppear:] should call [super viewWillAppeear:]
+        <https://webkit.org/b/186103>
+        <rdar://problem/40655695>
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (WKFullScreenViewControllerPlaybackSessionModelClient::setInterface):
+        Drive-by clean up.  For consistency, we always use the same
+        variable in the body of the `if` statement that was used in the
+        condition.
+        (-[WKFullScreenViewController viewWillAppear:]): Call
+        [super viewWillAppeear:] to fulfill API contract.
+
 2018-05-30  Chris Dumez  <cdumez@apple.com>
 
         Take a background process assertion in WebPageProxy::callAfterNextPresentationUpdate()
