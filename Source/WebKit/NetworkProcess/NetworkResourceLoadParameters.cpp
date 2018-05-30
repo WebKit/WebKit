@@ -97,7 +97,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
 
     encoder.encodeEnum(preflightPolicy);
 
-    encoder << shouldEnableFromOriginResponseHeader;
+    encoder << shouldEnableCrossOriginResourcePolicy;
 
     encoder << frameAncestorOrigins;
 
@@ -205,11 +205,11 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     if (!decoder.decodeEnum(result.preflightPolicy))
         return false;
 
-    std::optional<bool> shouldEnableFromOriginResponseHeader;
-    decoder >> shouldEnableFromOriginResponseHeader;
-    if (!shouldEnableFromOriginResponseHeader)
+    std::optional<bool> shouldEnableCrossOriginResourcePolicy;
+    decoder >> shouldEnableCrossOriginResourcePolicy;
+    if (!shouldEnableCrossOriginResourcePolicy)
         return false;
-    result.shouldEnableFromOriginResponseHeader = *shouldEnableFromOriginResponseHeader;
+    result.shouldEnableCrossOriginResourcePolicy = *shouldEnableCrossOriginResourcePolicy;
 
     if (!decoder.decode(result.frameAncestorOrigins))
         return false;

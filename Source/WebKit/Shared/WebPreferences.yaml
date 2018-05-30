@@ -1253,11 +1253,11 @@ RestrictedHTTPResponseAccess:
     category: experimental
     webcoreBinding: RuntimeEnabledFeatures
 
-FromOriginResponseHeaderEnabled:
+CrossOriginResourcePolicyEnabled:
     type: bool
-    defaultValue: false
-    humanReadableName: "From-Origin Response Header"
-    humanReadableDescription: "Support for the From-Origin Response Header"
+    defaultValue: true
+    humanReadableName: "Cross-Origin-Resource-Policy Response Header"
+    humanReadableDescription: "Support for the Cross-Origin-Resource-Policy Response Header"
     category: experimental
     webcoreBinding: RuntimeEnabledFeatures
 

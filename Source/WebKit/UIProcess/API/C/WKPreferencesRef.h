@@ -320,8 +320,8 @@ WK_EXPORT bool WKPreferencesGetRestrictedHTTPResponseAccess(WKPreferencesRef pre
 WK_EXPORT void WKPreferencesSetRestrictedHTTPResponseAccess(WKPreferencesRef preferencesRef, bool allow);
 
 // Defaults to false.
-WK_EXPORT bool WKPreferencesGetFromOriginResponseHeaderEnabled(WKPreferencesRef preferencesRef);
-WK_EXPORT void WKPreferencesSetFromOriginResponseHeaderEnabled(WKPreferencesRef preferencesRef, bool allow);
+WK_EXPORT bool WKPreferencesGetCrossOriginResourcePolicyEnabled(WKPreferencesRef preferencesRef);
+WK_EXPORT void WKPreferencesSetCrossOriginResourcePolicyEnabled(WKPreferencesRef preferencesRef, bool allow);
 
 #ifdef __cplusplus
 }

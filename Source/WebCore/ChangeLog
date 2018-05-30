@@ -1,3 +1,18 @@
+2018-05-30  Youenn Fablet  <youenn@apple.com>
+
+        Rename FromOrigin runtime flag to CrossOriginResourcePolicy and enable it by default
+        https://bugs.webkit.org/show_bug.cgi?id=186082
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setCrossOriginResourcePolicyEnabled):
+        (WebCore::RuntimeEnabledFeatures::crossOriginResourcePolicyEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setFromOriginResponseHeaderEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::fromOriginResponseHeaderEnabled const): Deleted.
+
 2018-05-30  Chris Dumez  <cdumez@apple.com>
 
         Referrer-Policy response header is ignored

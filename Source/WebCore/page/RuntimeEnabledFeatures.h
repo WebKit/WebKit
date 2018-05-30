@@ -250,8 +250,8 @@ public:
     void setRestrictedHTTPResponseAccess(bool isEnabled) { m_isRestrictedHTTPResponseAccess = isEnabled; }
     bool restrictedHTTPResponseAccess() const { return m_isRestrictedHTTPResponseAccess; }
 
-    void setFromOriginResponseHeaderEnabled(bool isEnabled) { m_fromOriginResponseHeaderEnabled = isEnabled; }
-    bool fromOriginResponseHeaderEnabled() const { return m_fromOriginResponseHeaderEnabled; }
+    void setCrossOriginResourcePolicyEnabled(bool isEnabled) { m_crossOriginResourcePolicyEnabled = isEnabled; }
+    bool crossOriginResourcePolicyEnabled() const { return m_crossOriginResourcePolicyEnabled; }
     
     void setWebGLCompressedTextureASTCSupportEnabled(bool isEnabled) { m_isWebGLCompressedTextureASTCSupportEnabled = isEnabled; }
     bool webGLCompressedTextureASTCSupportEnabled() const { return m_isWebGLCompressedTextureASTCSupportEnabled; }
@@ -399,7 +399,7 @@ private:
 
     bool m_isRestrictedHTTPResponseAccess { true };
 
-    bool m_fromOriginResponseHeaderEnabled { false };
+    bool m_crossOriginResourcePolicyEnabled { true };
 
     bool m_isWebGLCompressedTextureASTCSupportEnabled { false };
 
