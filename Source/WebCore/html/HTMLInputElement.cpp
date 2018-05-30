@@ -728,6 +728,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
         setFormControlValueMatchesRenderer(false);
         updateValidity();
         m_valueAttributeWasUpdatedAfterParsing = !m_parsingInProgress;
+        m_inputType->valueAttributeChanged();
     } else if (name == checkedAttr) {
         if (m_inputType->isCheckable())
             invalidateStyleForSubtree();

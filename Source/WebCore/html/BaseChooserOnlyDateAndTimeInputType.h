@@ -53,6 +53,7 @@ private:
     void handleKeyupEvent(KeyboardEvent&) override;
     void accessKeyAction(bool sendMouseEvents) override;
     bool isMouseFocusable() const override;
+    void valueAttributeChanged() override;
 
     // DateTimeChooserClient functions:
     void didChooseValue(const String&) override;

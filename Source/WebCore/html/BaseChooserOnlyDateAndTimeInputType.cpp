@@ -134,5 +134,11 @@ bool BaseChooserOnlyDateAndTimeInputType::isMouseFocusable() const
     return element().isTextFormControlFocusable();
 }
 
+void BaseChooserOnlyDateAndTimeInputType::valueAttributeChanged()
+{
+    if (!element().hasDirtyValue())
+        updateAppearance();
+}
+
 }
 #endif

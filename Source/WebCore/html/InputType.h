@@ -265,6 +265,7 @@ public:
     virtual void capsLockStateMayHaveChanged();
     virtual void updateAutoFillButton();
     virtual String defaultToolTip() const;
+    virtual void valueAttributeChanged();
     virtual bool matchesIndeterminatePseudoClass() const;
     virtual bool shouldAppearIndeterminate() const;
     virtual bool supportsSelectionAPI() const;

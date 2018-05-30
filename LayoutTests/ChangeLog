@@ -1,3 +1,13 @@
+2018-05-30  Stephen McGruer  <smcgruer@chromium.org>
+
+        iOS: setting 'defaultValue' of input type=date from script should cause a UI update
+        https://bugs.webkit.org/show_bug.cgi?id=185982
+
+        Reviewed by Darin Adler.
+
+        * fast/forms/date/date-appearance-defaultValue-expected.html: Added.
+        * fast/forms/date/date-appearance-defaultValue.html: Added.
+
 2018-05-29  Frederic Wang  <fwang@igalia.com>
 
         Import WPT tests for CSS animations

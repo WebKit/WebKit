@@ -1,3 +1,21 @@
+2018-05-30  Stephen McGruer  <smcgruer@chromium.org>
+
+        iOS: setting 'defaultValue' of input type=date from script should cause a UI update
+        https://bugs.webkit.org/show_bug.cgi?id=185982
+
+        Reviewed by Darin Adler.
+
+        Test: fast/forms/date/date-appearance-defaultValue.html
+
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::valueAttributeChanged):
+        * html/BaseChooserOnlyDateAndTimeInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute):
+        * html/InputType.cpp:
+        (WebCore::InputType::valueAttributeChanged):
+        * html/InputType.h:
+
 2018-05-29  Nan Wang  <n_wang@apple.com>
 
         Unreviewed, follow-up after r232285

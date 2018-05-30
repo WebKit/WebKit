@@ -936,6 +936,10 @@ bool InputType::hasTouchEventHandler() const
 }
 #endif
 
+void InputType::valueAttributeChanged()
+{
+}
+
 String InputType::defaultToolTip() const
 {
     return String();
