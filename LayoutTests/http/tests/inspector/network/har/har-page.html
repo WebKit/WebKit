@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="../../resources/inspector-test.js"></script>
+<script src="../../../cookies/resources/cookie-utilities.js"></script>
 <script>
 function test()
 {
@@ -49,6 +50,10 @@ function test()
             return "<filtered>";
         }
 
+        // Sort cookies by name to make cookie order deterministic between test runs.
+        if (key === "cookies")
+            value.sort((a, b) => { return a.name - b.name; });
+
         // Since cache may or may not be used, timing data may be variable.
         // NOTE: SSL should always be -1 for this test case.
         if (key === "time")
@@ -77,10 +82,14 @@ function test()
         async test() {
             InspectorTest.reloadPage({ignoreCache: true});
             await InspectorTest.awaitEvent("LoadComplete");
+            InspectorTest.evaluateInPage("setup()");
+            await InspectorTest.awaitEvent("SetupComplete");
 
             let resources = [WI.frameResourceManager.mainFrame.mainResource, ...WI.frameResourceManager.mainFrame.resourceCollection];
             let har = await WI.HARBuilder.buildArchive(resources);
             InspectorTest.json(har, HARJSONFilter);
+            InspectorTest.evaluateInPage("cleanup()");
+            await InspectorTest.awaitEvent("CleanComplete");
         }
     });
 
@@ -91,6 +100,31 @@ function test()
 <body onload="runTest()">
 <p>HAR Page Test.</p>
 <script>
+async function setup()
+{
+    await resetCookies();
+    await setCookie("simple", "simple");
+    await setCookie("path", "path", {"path": "/A/B/C"}); // This cookie will not be sent in subsequent requests from this page.
+
+    // Secure cookies will only be sent in subsequent requests from this page if the page was served over HTTPS.
+    await setCookie("secure", "secure", {"secure": null});
+    await setCookie("secure-and-http-only", "secure-and-http-only", {"secure": null, "HttpOnly": null});
+
+    await setCookie("with-expiration", "with-expiration", {"Expires": new Date("01/04/5000").toGMTString()});
+    await setCookie("http-only", "http-only", {"HttpOnly": null});
+    await setCookie("same-site-strict", "same-site-strict", {"SameSite": "Strict", "path": "/"});
+    await setCookie("same-site-implicit-strict", "same-site-implicit-strict", {"SameSite": null, "path": "/"});
+    await setCookie("same-site-strict-because-invalid-SameSite-value", "same-site-strict-because-invalid-SameSite-value", {"SameSite": "invalid", "path": "/"});
+    await setCookie("same-site-lax", "same-site-lax", {"SameSite": "Lax", "path": "/"});
+    TestPage.dispatchEventToFrontend("SetupComplete");
+}
+
+async function cleanup()
+{
+    await resetCookies();
+    TestPage.dispatchEventToFrontend("CleanComplete");
+}
+
 window.addEventListener("load", () => {
     TestPage.dispatchEventToFrontend("LoadComplete");
 });

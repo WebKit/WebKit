@@ -16,6 +16,12 @@
             "description": "Coordinate system used by supplied coordinates."
         },
         {
+            "id": "CookieSameSitePolicy",
+            "type": "string",
+            "enum": ["None", "Lax", "Strict"],
+            "description": "Same-Site policy of a cookie."
+        },
+        {
             "id": "Frame",
             "type": "object",
             "description": "Information about the Frame on the page.",
@@ -76,7 +82,8 @@
                 { "name": "size", "type": "integer", "description": "Cookie size." },
                 { "name": "httpOnly", "type": "boolean", "description": "True if cookie is http-only." },
                 { "name": "secure", "type": "boolean", "description": "True if cookie is secure." },
-                { "name": "session", "type": "boolean", "description": "True in case of session cookie." }
+                { "name": "session", "type": "boolean", "description": "True in case of session cookie." },
+                { "name": "sameSite", "$ref": "CookieSameSitePolicy", "description": "Cookie Same-Site policy." }
             ]
         }
     ],

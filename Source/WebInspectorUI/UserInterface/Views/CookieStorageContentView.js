@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015, 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,7 +73,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
     {
         // FIXME <https://webkit.org/b/151400>: If there are no cookies, add placeholder explanatory text.
         if (!this._dataGrid) {
-            var columns = {name: {}, value: {}, domain: {}, path: {}, expires: {}, size: {}, http: {}, secure: {}};
+            var columns = {name: {}, value: {}, domain: {}, path: {}, expires: {}, size: {}, http: {}, secure: {}, sameSite: {} };
 
             columns.name.title = WI.UIString("Name");
             columns.name.sortable = true;
@@ -87,30 +87,34 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
             columns.domain.title = WI.UIString("Domain");
             columns.domain.sortable = true;
-            columns.domain.width = "7%";
+            columns.domain.width = "6%";
 
             columns.path.title = WI.UIString("Path");
             columns.path.sortable = true;
-            columns.path.width = "7%";
+            columns.path.width = "6%";
 
             columns.expires.title = WI.UIString("Expires");
             columns.expires.sortable = true;
-            columns.expires.width = "7%";
+            columns.expires.width = "6%";
 
             columns.size.title = WI.UIString("Size");
             columns.size.aligned = "right";
             columns.size.sortable = true;
-            columns.size.width = "7%";
+            columns.size.width = "6%";
 
             columns.http.title = WI.UIString("HTTP");
             columns.http.aligned = "centered";
             columns.http.sortable = true;
-            columns.http.width = "7%";
+            columns.http.width = "6%";
 
             columns.secure.title = WI.UIString("Secure");
             columns.secure.aligned = "centered";
             columns.secure.sortable = true;
-            columns.secure.width = "7%";
+            columns.secure.width = "6%";
+
+            columns.sameSite.title = WI.UIString("Same-Site");
+            columns.sameSite.sortable = true;
+            columns.sameSite.width = "6%";
 
             this._dataGrid = new WI.DataGrid(columns, null, this._deleteCallback.bind(this));
             this._dataGrid.columnChooserEnabled = true;
@@ -125,7 +129,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         console.assert(this._dataGrid);
         this._dataGrid.removeChildren();
 
-        for (var cookie of this._cookies) {
+        for (let cookie of this._cookies) {
             const checkmark = "\u2713";
             var data = {
                 name: cookie.name,
@@ -136,6 +140,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
                 size: Number.bytesToString(cookie.size),
                 http: cookie.httpOnly ? checkmark : "",
                 secure: cookie.secure ? checkmark : "",
+                sameSite: cookie.sameSite ? WI.Cookie.displayNameForSameSiteType(WI.Cookie.parseSameSiteAttributeValue(cookie.sameSite)) : "",
             };
 
             if (cookie.type !== WI.CookieType.Request)
@@ -203,6 +208,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             case "size": comparator = numberCompare.bind(this, "size"); break;
             case "http": comparator = localeCompare.bind(this, "http"); break;
             case "secure": comparator = localeCompare.bind(this, "secure"); break;
+            case "sameSite": comparator = localeCompare.bind(this, "sameSite"); break;
             case "name":
             default: comparator = localeCompare.bind(this, "name"); break;
         }

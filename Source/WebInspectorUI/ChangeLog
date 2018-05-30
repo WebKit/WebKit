@@ -1,3 +1,38 @@
+2018-05-30  Daniel Bates  <dabates@apple.com>
+
+        Web Inspector: Annotate Same-Site cookies
+        https://bugs.webkit.org/show_bug.cgi?id=184897
+        <rdar://problem/35178209>
+
+        Reviewed by Brian Burg.
+
+        Add a new column for the value of the Same-Site cookie attribute to the resource cookie content
+        view (shown for a resource under the Network tab) and cookie storage content view (shown under
+        the Storage tab).
+
+        The SameSite column in the resource cookie content view reflects the parsing of the Same-Site
+        attribute from the HTTP response by Web Inspector. This parsing is materially consistent with
+        the parsing of the SameSite atttribute in CFNetwork. The Same-Site column in the cookie storage
+        content view reflects the Same-Site cookie policy associated with the cookies provided by the
+        network stack, if supported. This column will be blank on systems whose network stack does not
+        support Same-Site cookies (e.g libsoup).
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/HARBuilder.js:
+        (WI.HARBuilder.cookies):
+        * UserInterface/Models/Cookie.js:
+        (WI.Cookie):
+        (WI.Cookie.displayNameForSameSiteType):
+        (WI.Cookie.parseSameSiteAttributeValue):
+        (WI.Cookie.parseSetCookieResponseHeader):
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WI.CookieStorageContentView.prototype._rebuildTable):
+        (WI.CookieStorageContentView.prototype._sortDataGrid):
+        * UserInterface/Views/ResourceCookiesContentView.js:
+        (WI.ResourceCookiesContentView.prototype.tablePopulateCell):
+        (WI.ResourceCookiesContentView.prototype._generateSortComparator):
+        (WI.ResourceCookiesContentView.prototype._refreshResponseCookiesSection):
+
 2018-05-25  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Popover dismissed while attempting to move cursor inside

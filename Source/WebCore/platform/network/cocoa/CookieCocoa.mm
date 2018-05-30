@@ -26,6 +26,19 @@
 #import "config.h"
 #import "Cookie.h"
 
+// FIXME: Remove NS_ASSUME_NONNULL_BEGIN/END and all _Nullable annotations once we remove the NSHTTPCookie forward declaration below.
+NS_ASSUME_NONNULL_BEGIN
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 && __MAC_OS_X_VERSION_MAX_ALLOWED < 101500) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000 && __IPHONE_OS_VERSION_MAX_ALLOWED < 130000)
+typedef NSString * NSHTTPCookieStringPolicy;
+@interface NSHTTPCookie (Staging)
+@property (nullable, readonly, copy) NSHTTPCookieStringPolicy sameSitePolicy;
+@end
+
+static NSString * const NSHTTPCookieSameSiteLax = @"lax";
+static NSString * const NSHTTPCookieSameSiteStrict = @"strict";
+#endif
+
 namespace WebCore {
 
 static Vector<uint16_t> portVectorFromList(NSArray<NSNumber *> *portList)
@@ -39,7 +52,7 @@ static Vector<uint16_t> portVectorFromList(NSArray<NSNumber *> *portList)
     return ports;
 }
 
-static NSString *portStringFromVector(const Vector<uint16_t>& ports)
+static NSString * _Nullable portStringFromVector(const Vector<uint16_t>& ports)
 {
     if (ports.isEmpty())
         return nil;
@@ -71,6 +84,32 @@ static double cookieCreated(NSHTTPCookie *cookie)
     return 0;
 }
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+static Cookie::SameSitePolicy coreSameSitePolicy(NSHTTPCookieStringPolicy _Nullable policy)
+{
+    if (!policy)
+        return Cookie::SameSitePolicy::None;
+    if ([policy isEqualToString:NSHTTPCookieSameSiteLax])
+        return Cookie::SameSitePolicy::Lax;
+    if ([policy isEqualToString:NSHTTPCookieSameSiteStrict])
+        return Cookie::SameSitePolicy::Strict;
+    ASSERT_NOT_REACHED();
+    return Cookie::SameSitePolicy::None;
+}
+
+static NSHTTPCookieStringPolicy _Nullable nsSameSitePolicy(Cookie::SameSitePolicy policy)
+{
+    switch (policy) {
+    case Cookie::SameSitePolicy::None:
+        return nil;
+    case Cookie::SameSitePolicy::Lax:
+        return NSHTTPCookieSameSiteLax;
+    case Cookie::SameSitePolicy::Strict:
+        return NSHTTPCookieSameSiteStrict;
+    }
+}
+#endif
+
 Cookie::Cookie(NSHTTPCookie *cookie)
     : name { cookie.name }
     , value { cookie.value }
@@ -85,14 +124,18 @@ Cookie::Cookie(NSHTTPCookie *cookie)
     , commentURL { cookie.commentURL }
     , ports { portVectorFromList(cookie.portList) }
 {
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+    if ([cookie respondsToSelector:@selector(sameSitePolicy)])
+        sameSite = coreSameSitePolicy(cookie.sameSitePolicy);
+#endif
 }
 
-Cookie::operator NSHTTPCookie *() const
+Cookie::operator NSHTTPCookie * _Nullable () const
 {
     if (isNull())
         return nil;
 
-    NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithCapacity:13];
+    NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithCapacity:14];
 
     if (!comment.isNull())
         [properties setObject:(NSString *)comment forKey:NSHTTPCookieComment];
@@ -134,6 +177,11 @@ Cookie::operator NSHTTPCookie *() const
     if (httpOnly)
         [properties setObject:@YES forKey:@"HttpOnly"];
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+    if (auto* sameSitePolicy = nsSameSitePolicy(sameSite))
+        [properties setObject:sameSitePolicy forKey:@"SameSite"];
+#endif
+
     [properties setObject:@"1" forKey:NSHTTPCookieVersion];
 
     return [NSHTTPCookie cookieWithProperties:properties];
@@ -155,5 +203,7 @@ unsigned Cookie::hash() const
     ASSERT(!isNull());
     return static_cast<NSHTTPCookie *>(*this).hash;
 }
+
+NS_ASSUME_NONNULL_END
 
 } // namespace WebCore

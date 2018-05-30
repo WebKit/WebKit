@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Joseph Pecoraro. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #pragma once
 
 #include "URL.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -85,6 +86,9 @@ struct Cookie {
     String comment;
     URL commentURL;
     Vector<uint16_t> ports;
+
+    enum class SameSitePolicy { None, Lax, Strict };
+    SameSitePolicy sameSite { SameSitePolicy::None };
 };
 
 struct CookieHash {
@@ -115,6 +119,7 @@ void Cookie::encode(Encoder& encoder) const
     encoder << comment;
     encoder << commentURL;
     encoder << ports;
+    encoder << sameSite;
 }
 
 template<class Decoder>
@@ -145,6 +150,8 @@ std::optional<Cookie> Cookie::decode(Decoder& decoder)
         return std::nullopt;
     if (!decoder.decode(cookie.ports))
         return std::nullopt;
+    if (!decoder.decode(cookie.sameSite))
+        return std::nullopt;
     return cookie;
 }
 
@@ -160,4 +167,12 @@ namespace WTF {
         static void constructDeletedValue(WebCore::Cookie& slot) { slot = WebCore::Cookie(WTF::HashTableDeletedValue); }
         static bool isDeletedValue(const WebCore::Cookie& slot) { return slot.name.isHashTableDeletedValue(); }
     };
+    template<> struct EnumTraits<WebCore::Cookie::SameSitePolicy> {
+    using values = EnumValues<
+        WebCore::Cookie::SameSitePolicy,
+        WebCore::Cookie::SameSitePolicy::None,
+        WebCore::Cookie::SameSitePolicy::Lax,
+        WebCore::Cookie::SameSitePolicy::Strict
+    >;
+};
 }

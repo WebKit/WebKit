@@ -89,6 +89,9 @@ WI.ResourceCookiesContentView = class ResourceCookiesContentView extends WI.Cont
         case "httpOnly":
             cell.textContent = cookie.httpOnly ? checkmark : zeroWidthSpace;
             break;
+        case "sameSite":
+            cell.textContent = cookie.sameSite === WI.Cookie.SameSiteType.None ? emDash : WI.Cookie.displayNameForSameSiteType(cookie.sameSite);
+            break;
         }
 
         return cell;
@@ -146,6 +149,7 @@ WI.ResourceCookiesContentView = class ResourceCookiesContentView extends WI.Cont
         case "value":
         case "domain":
         case "path":
+        case "sameSite":
             // String.
             comparator = (a, b) => (a[sortColumnIdentifier] || "").extendedLocaleCompare(b[sortColumnIdentifier] || "");
             break;
@@ -248,6 +252,7 @@ WI.ResourceCookiesContentView = class ResourceCookiesContentView extends WI.Cont
             this._responseCookiesTable.addColumn(new WI.TableColumn("maxAge", WI.unlocalizedString("Max-Age"), {maxWidth: 90, align: "right"}));
             this._responseCookiesTable.addColumn(new WI.TableColumn("secure", WI.unlocalizedString("Secure"), {minWidth: 55, maxWidth: 65, align: "center"}));
             this._responseCookiesTable.addColumn(new WI.TableColumn("httpOnly", WI.unlocalizedString("HttpOnly"), {minWidth: 55, maxWidth: 65, align: "center"}));
+            this._responseCookiesTable.addColumn(new WI.TableColumn("sameSite", WI.unlocalizedString("SameSite"), {minWidth: 55, maxWidth: 65}));
             if (!this._responseCookiesTable.sortColumnIdentifier) {
                 this._responseCookiesTable.sortOrder = WI.Table.SortOrder.Ascending;
                 this._responseCookiesTable.sortColumnIdentifier = "name";

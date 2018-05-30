@@ -336,6 +336,20 @@ void InspectorPageAgent::navigate(ErrorString&, const String& url)
     frame.loader().changeLocation(WTFMove(frameLoadRequest));
 }
 
+static Inspector::Protocol::Page::CookieSameSitePolicy cookieSameSitePolicyJSON(Cookie::SameSitePolicy policy)
+{
+    switch (policy) {
+    case Cookie::SameSitePolicy::None:
+        return Inspector::Protocol::Page::CookieSameSitePolicy::None;
+    case Cookie::SameSitePolicy::Lax:
+        return Inspector::Protocol::Page::CookieSameSitePolicy::Lax;
+    case Cookie::SameSitePolicy::Strict:
+        return Inspector::Protocol::Page::CookieSameSitePolicy::Strict;
+    }
+    ASSERT_NOT_REACHED();
+    return Inspector::Protocol::Page::CookieSameSitePolicy::None;
+}
+
 static Ref<Inspector::Protocol::Page::Cookie> buildObjectForCookie(const Cookie& cookie)
 {
     return Inspector::Protocol::Page::Cookie::create()
@@ -348,6 +362,7 @@ static Ref<Inspector::Protocol::Page::Cookie> buildObjectForCookie(const Cookie&
         .setHttpOnly(cookie.httpOnly)
         .setSecure(cookie.secure)
         .setSession(cookie.session)
+        .setSameSite(cookieSameSitePolicyJSON(cookie.sameSite))
         .release();
 }
 

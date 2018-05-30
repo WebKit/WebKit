@@ -811,6 +811,7 @@ localizedStrings["Reveal in Sources Tab"] = "Reveal in Sources Tab";
 localizedStrings["Right"] = "Right";
 localizedStrings["Role"] = "Role";
 localizedStrings["Rule"] = "Rule";
+localizedStrings["Same-Site"] = "Same-Site";
 localizedStrings["Samples"] = "Samples";
 localizedStrings["Save File"] = "Save File";
 localizedStrings["Save Selected"] = "Save Selected";

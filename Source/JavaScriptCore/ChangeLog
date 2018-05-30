@@ -1,3 +1,15 @@
+2018-05-30  Daniel Bates  <dabates@apple.com>
+
+        Web Inspector: Annotate Same-Site cookies
+        https://bugs.webkit.org/show_bug.cgi?id=184897
+        <rdar://problem/35178209>
+
+        Reviewed by Brian Burg.
+
+        Update protocol to include cookie Same-Site policy.
+
+        * inspector/protocol/Page.json:
+
 2018-05-29  Keith Miller  <keith_miller@apple.com>
 
         Error instances should not strongly hold onto StackFrames

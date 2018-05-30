@@ -25,7 +25,7 @@
 
 WI.Cookie = class Cookie
 {
-    constructor(type, name, value, raw, expires, maxAge, path, domain, secure, httpOnly)
+    constructor(type, name, value, raw, expires, maxAge, path, domain, secure, httpOnly, sameSite)
     {
         console.assert(Object.values(WI.Cookie.Type).includes(type));
         console.assert(typeof name === "string");
@@ -37,6 +37,7 @@ WI.Cookie = class Cookie
         console.assert(!domain || typeof domain === "string");
         console.assert(!secure || typeof secure === "boolean");
         console.assert(!httpOnly || typeof httpOnly === "boolean");
+        console.assert(!sameSite || Object.values(WI.Cookie.SameSiteType).includes(sameSite));
 
         this.type = type;
         this.name = name || "";
@@ -50,6 +51,7 @@ WI.Cookie = class Cookie
             this.domain = domain || null;
             this.secure = secure || false;
             this.httpOnly = httpOnly || false;
+            this.sameSite = sameSite || WI.Cookie.SameSiteType.None;
         }
     }
 
@@ -99,6 +101,35 @@ WI.Cookie = class Cookie
         return cookies;
     }
 
+    static displayNameForSameSiteType(sameSiteType)
+    {
+        switch (sameSiteType) {
+        case WI.Cookie.SameSiteType.None:
+            return WI.unlocalizedString("None");
+        case WI.Cookie.SameSiteType.Lax:
+            return WI.unlocalizedString("Lax");
+        case WI.Cookie.SameSiteType.Strict:
+            return WI.unlocalizedString("Strict");
+        default:
+            console.error("Invalid SameSite type", sameSiteType);
+            return sameSiteType;
+        }
+    }
+
+    // Derived from <https://tools.ietf.org/html/draft-west-first-party-cookies-06#section-3.2>.
+    static parseSameSiteAttributeValue(attributeValue)
+    {
+        if (!attributeValue)
+            return WI.Cookie.SameSiteType.Strict;
+        switch (attributeValue.toLowerCase()) {
+        case "lax":
+            return WI.Cookie.SameSiteType.Lax;
+        case "strict":
+        default:
+            return WI.Cookie.SameSiteType.Strict;
+        }
+    }
+
     static parseSetCookieResponseHeader(header)
     {
         if (!header)
@@ -122,6 +153,7 @@ WI.Cookie = class Cookie
         let domain = null;
         let secure = false;
         let httpOnly = false;
+        let sameSite = WI.Cookie.SameSiteType.None;
 
         // Parse Attributes
         let remaining = header.substr(nameValueMatch[0].length);
@@ -171,17 +203,27 @@ WI.Cookie = class Cookie
                 console.assert(!attributeValue);
                 httpOnly = true;
                 break;
+            case "samesite":
+                sameSite = WI.Cookie.parseSameSiteAttributeValue(attributeValue);
+                break;
             default:
                 console.warn("Unknown Cookie attribute:", attribute);
                 break;
             }
         }
 
-        return new WI.Cookie(WI.Cookie.Type.Response, name, value, header, expires, maxAge, path, domain, secure, httpOnly);
+        return new WI.Cookie(WI.Cookie.Type.Response, name, value, header, expires, maxAge, path, domain, secure, httpOnly, sameSite);
     }
 }
 
 WI.Cookie.Type = {
     Request: "request",
     Response: "response",
+};
+
+// Keep these in sync with the "CookieSameSitePolicy" enum defined by the "Page" domain.
+WI.Cookie.SameSiteType = {
+    None: "None",
+    Lax: "Lax",
+    Strict: "Strict",
 };
