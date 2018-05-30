@@ -1,3 +1,21 @@
+2018-05-30  David Kilzer  <ddkilzer@apple.com>
+
+        ANGLE: Fix clang static analyzer issues in GetExecutablePath() and GetExecutableDirectory()
+        <https://webkit.org/b/186106>
+        <rdar://problem/40659179>
+
+        Reviewed by Alex Christensen.
+
+        * src/common/system_utils_linux.cpp:
+        (angle::GetExecutablePath):
+        (angle::GetExecutableDirectory):
+        * src/common/system_utils_mac.cpp:
+        (angle::GetExecutablePath):
+        (angle::GetExecutableDirectory):
+        * src/common/system_utils_win.cpp:
+        (angle::GetExecutablePath):
+        (angle::GetExecutableDirectory):
+
 2018-05-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r232052.

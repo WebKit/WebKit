@@ -54,14 +54,14 @@ std::string GetExecutableDirectoryImpl()
 const char *GetExecutablePath()
 {
     // TODO(jmadill): Make global static string thread-safe.
-    const static std::string &exePath = GetExecutablePathImpl();
+    const static std::string exePath = GetExecutablePathImpl();
     return exePath.c_str();
 }
 
 const char *GetExecutableDirectory()
 {
     // TODO(jmadill): Make global static string thread-safe.
-    const static std::string &exeDir = GetExecutableDirectoryImpl();
+    const static std::string exeDir = GetExecutableDirectoryImpl();
     return exeDir.c_str();
 }
 
