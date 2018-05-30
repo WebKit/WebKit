@@ -67,7 +67,7 @@ public:
             return;
 
         if (m_interface && m_interface->playbackSessionModel())
-            interface->playbackSessionModel()->removeClient(*this);
+            m_interface->playbackSessionModel()->removeClient(*this);
         m_interface = interface;
         if (m_interface && m_interface->playbackSessionModel())
             interface->playbackSessionModel()->addClient(*this);
@@ -360,7 +360,7 @@ private:
 @dynamic _effectiveFullscreenInsetTop;
 - (CGFloat)_effectiveFullscreenInsetTop
 {
-    if (!self.prefersStatusBarHidden)
+    if (self.prefersStatusBarHidden)
         return 0;
 
     CGRect cancelFrame = _cancelButton.get().frame;

@@ -1,3 +1,18 @@
+2018-05-30  Jer Noble  <jer.noble@apple.com>
+
+        Fix a few issues in WKFullScreenViewController
+        https://bugs.webkit.org/show_bug.cgi?id=186067
+        <rdar://problem/40630944>
+
+        Reviewed by Darin Adler.
+
+        The check in setInterface() is checking the wrong pointer:
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (WKFullScreenViewControllerPlaybackSessionModelClient::setInterface):
+
+        The check in -_effectiveFullscreenInsetTop is backwards:
+        (-[WKFullScreenViewController _effectiveFullscreenInsetTop]):
+
 2018-05-30  Chris Dumez  <cdumez@apple.com>
 
         Take a background process assertion in WebPageProxy::callAfterNextPresentationUpdate()
