@@ -1,3 +1,15 @@
+2018-05-30  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [MIPS] Fix build on MIPS32r1
+        https://bugs.webkit.org/show_bug.cgi?id=185944
+
+        Reviewed by Yusuke Suzuki.
+
+        Only use instructions on MIPS32r2 or later. mthc1 and mfhc1 are not supported
+        on MIPS32r1.
+
+        * offlineasm/mips.rb:
+
 2018-05-29  Saam Barati  <sbarati@apple.com>
 
         Add a version of JSVirtualMachine shrinkFootprint that runs when the VM goes idle
