@@ -44,6 +44,8 @@ static RefPtr<CSSPrimitiveValue> glyphOrientationToCSSPrimitiveValue(GlyphOrient
     case GlyphOrientation::Auto:
         return nullptr;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static RefPtr<CSSValue> strokeDashArrayToCSSValueList(const Vector<SVGLengthValue>& dashes)
