@@ -74,6 +74,9 @@ public:
     bool isBlockContainerBox() const;
     bool isInitialContainingBlock() const;
 
+    bool isDocumentBox() const;
+    bool isBodyBox() const;
+
     const Container* parent() const { return m_parent; }
     const Box* nextSibling() const { return m_nextSibling; }
     const Box* nextInFlowSibling() const;

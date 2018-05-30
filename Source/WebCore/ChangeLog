@@ -1,3 +1,34 @@
+2018-05-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Miscellaneous fixes to get closer to geometry correctness
+        https://bugs.webkit.org/show_bug.cgi?id=186083
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::computedBorder):
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::initializeRoot):
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingBoxInformationIfNeeded):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::isStretchedToViewport):
+        (WebCore::Layout::initialContainingBlock):
+        (WebCore::Layout::computedInFlowNonReplacedComputedHeight):
+        (WebCore::Layout::inFlowNonReplacedComputedWidth):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeight): lambda should capture the specification part. 
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidth):
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::marginBox const):
+        (WebCore::Display::Box::paddingBox const):
+        (WebCore::Display::Box::contentBox const):
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isDocumentBox const):
+        (WebCore::Layout::Box::isBodyBox const):
+        * layout/layouttree/LayoutBox.h:
+        * rendering/style/BorderValue.h: ignore border-width when type is hidden or none. 
+        (WebCore::BorderValue::boxModelWidth const):
+
 2018-05-30  Stephen McGruer  <smcgruer@chromium.org>
 
         iOS: setting 'defaultValue' of input type=date from script should cause a UI update

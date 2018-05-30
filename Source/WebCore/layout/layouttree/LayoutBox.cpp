@@ -181,6 +181,18 @@ bool Box::isInitialContainingBlock() const
     return !parent();
 }
 
+bool Box::isDocumentBox() const
+{
+    // return document().documentElement() == &element();
+    return false;
+}
+
+bool Box::isBodyBox() const
+{
+    // return element().hasTagName(HTMLNames::bodyTag);
+    return false;
+}
+
 const Box* Box::nextInFlowSibling() const
 {
     if (auto* nextSibling = this->nextSibling()) {

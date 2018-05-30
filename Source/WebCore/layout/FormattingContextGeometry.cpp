@@ -529,10 +529,10 @@ Display::Box::Edges FormattingContext::Geometry::computedBorder(LayoutContext&, 
 {
     auto& style = layoutBox.style();
     return {
-        style.borderTop().width(),
-        style.borderLeft().width(),
-        style.borderBottom().width(),
-        style.borderRight().width()
+        style.borderTop().boxModelWidth(),
+        style.borderLeft().boxModelWidth(),
+        style.borderBottom().boxModelWidth(),
+        style.borderRight().boxModelWidth()
     };
 }
 

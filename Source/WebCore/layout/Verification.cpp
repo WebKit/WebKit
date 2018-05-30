@@ -68,7 +68,7 @@ static void outputMismatchingBoxInformationIfNeeded(TextStream& stream, const La
     if (renderer.paddingBoxRect() != displayBox->paddingBox())
         outputRect("paddingBox", renderer.paddingBoxRect(), displayBox->paddingBox());
 
-    if (renderer.marginBoxRect() != displayBox->contentBox())
+    if (renderer.contentBoxRect() != displayBox->contentBox())
         outputRect("contentBox", renderer.contentBoxRect(), displayBox->contentBox());
 
     stream.nextLine();

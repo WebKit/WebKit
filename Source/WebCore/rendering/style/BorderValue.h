@@ -72,6 +72,8 @@ public:
 
     float width() const { return m_width; }
     BorderStyle style() const { return static_cast<BorderStyle>(m_style); }
+    
+    float boxModelWidth() const;
 
 protected:
     float m_width { 3 };
@@ -82,5 +84,14 @@ protected:
     // This is only used by OutlineValue but moved here to keep the bits packed.
     unsigned m_isAuto : 1; // OutlineIsAuto
 };
+
+inline float BorderValue::boxModelWidth() const
+{
+    auto style = this->style();
+    if (style == BorderStyle::None || style == BorderStyle::Hidden)
+        return 0;
+
+    return width();
+}
 
 } // namespace WebCore

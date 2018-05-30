@@ -56,7 +56,7 @@ Box::Rect Box::marginBox() const
     auto marginBox = borderBox();
 
     marginBox.shiftLeftTo(marginBox.left() + m_margin.left);
-    marginBox.shiftBottomTo(marginBox.top() + m_margin.top);
+    marginBox.shiftTopTo(marginBox.top() + m_margin.top);
     marginBox.shiftRightTo(marginBox.right() - m_margin.right);
     marginBox.shiftBottomTo(marginBox.bottom() - m_margin.bottom);
 
@@ -85,7 +85,7 @@ Box::Rect Box::paddingBox() const
 
     paddingBox.shiftLeftTo(paddingBox.left() + m_border.left);
     paddingBox.shiftTopTo(paddingBox.top() + m_border.top);
-    paddingBox.shiftRightTo(paddingBox.left() - m_border.right);
+    paddingBox.shiftRightTo(paddingBox.right() - m_border.right);
     paddingBox.shiftBottomTo(paddingBox.bottom() - m_border.bottom);
 
     return paddingBox;
@@ -105,8 +105,8 @@ Box::Rect Box::contentBox() const
 
     contentBox.shiftLeftTo(contentBox.left() + m_padding.left);
     contentBox.shiftTopTo(contentBox.top() + m_padding.top);
-    contentBox.shiftBottomTo(contentBox.bottom() - m_padding.bottom);
     contentBox.shiftRightTo(contentBox.right() - m_padding.right);
+    contentBox.shiftBottomTo(contentBox.bottom() - m_padding.bottom);
 
     return contentBox;
 }

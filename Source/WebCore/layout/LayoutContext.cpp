@@ -61,12 +61,12 @@ void LayoutContext::initializeRoot(const Container& root, const LayoutSize& cont
     displayBox.setMargin({ });
 
     auto& style = root.style();
-    // FIXME: m_root could very well be a formatting context root with ancestors and resolvable border and padding (as opposed to the topmost root)  
+    // FIXME: m_root could very well be a formatting context root with ancestors and resolvable border and padding (as opposed to the topmost root)
     displayBox.setBorder({
-        style.borderTop().width(),
-        style.borderLeft().width(),
-        style.borderBottom().width(),
-        style.borderRight().width()
+        style.borderTop().boxModelWidth(),
+        style.borderLeft().boxModelWidth(),
+        style.borderBottom().boxModelWidth(),
+        style.borderRight().boxModelWidth()
     });
 
     displayBox.setPadding({

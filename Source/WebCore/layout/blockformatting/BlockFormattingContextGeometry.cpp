@@ -33,87 +33,124 @@
 namespace WebCore {
 namespace Layout {
 
+static bool isStretchedToViewport(const Box& layoutBox)
+{
+    ASSERT(layoutBox.isInFlow());
+    // In quirks mode, body and html stretch to the viewport.
+    // if (!layoutBox.document().inQuirksMode())
+    //    return false;
+
+    if (!layoutBox.isDocumentBox() || !layoutBox.isBodyBox())
+        return false;
+
+    return layoutBox.style().logicalHeight().isAuto();
+}
+
+static const Container& initialContainingBlock(const Box& layoutBox)
+{
+    auto* containingBlock = layoutBox.containingBlock();
+    while (containingBlock->containingBlock())
+        containingBlock = containingBlock->containingBlock();
+    return *containingBlock;
+}
+
 LayoutUnit BlockFormattingContext::Geometry::inFlowNonReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isInFlow() && !layoutBox.replaced());
 
-    // https://www.w3.org/TR/CSS22/visudet.html
-    // If 'height' is 'auto', the height depends on whether the element has any block-level children and whether it has padding or borders:
-    // The element's height is the distance from its top content edge to the first applicable of the following:
-    // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
-    // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin
-    //    does not collapse with the element's bottom margin
-    // 3. the bottom border edge of the last in-flow child whose top margin doesn't collapse with the element's bottom margin
-    // 4. zero, otherwise
-    // Only children in the normal flow are taken into account (i.e., floating boxes and absolutely positioned boxes are ignored,
-    // and relatively positioned boxes are considered without their offset). Note that the child box may be an anonymous block box.
-    if (!layoutBox.style().logicalHeight().isAuto()) {
-        // FIXME: Only fixed values yet.
-        return layoutBox.style().logicalHeight().value();
-    }
+    auto compute = [&]() -> LayoutUnit {
+        // https://www.w3.org/TR/CSS22/visudet.html
+        // If 'height' is 'auto', the height depends on whether the element has any block-level children and whether it has padding or borders:
+        // The element's height is the distance from its top content edge to the first applicable of the following:
+        // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
+        // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin
+        //    does not collapse with the element's bottom margin
+        // 3. the bottom border edge of the last in-flow child whose top margin doesn't collapse with the element's bottom margin
+        // 4. zero, otherwise
+        // Only children in the normal flow are taken into account (i.e., floating boxes and absolutely positioned boxes are ignored,
+        // and relatively positioned boxes are considered without their offset). Note that the child box may be an anonymous block box.
+        if (!layoutBox.style().logicalHeight().isAuto()) {
+            // FIXME: Only fixed values yet.
+            return layoutBox.style().logicalHeight().value();
+        }
 
-    if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowChild())
+        if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowChild())
+            return 0;
+
+        // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
+        if (layoutBox.establishesInlineFormattingContext()) {
+            // height = lastLineBox().bottom();
+            return 0;
+        }
+
+        // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin...
+        auto* lastInFlowChild = downcast<Container>(layoutBox).lastInFlowChild();
+        ASSERT(lastInFlowChild);
+        if (!BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent(*lastInFlowChild)) {
+            auto* lastInFlowDisplayBox = layoutContext.displayBoxForLayoutBox(*lastInFlowChild);
+            ASSERT(lastInFlowDisplayBox);
+            return lastInFlowDisplayBox->bottom() + lastInFlowDisplayBox->marginBottom();
+        }
+
+        // 3. the bottom border edge of the last in-flow child whose top margin doesn't collapse with the element's bottom margin
+        auto* inFlowChild = lastInFlowChild;
+        while (inFlowChild && BlockFormattingContext::MarginCollapse::isMarginTopCollapsedWithParentMarginBottom(*inFlowChild))
+            inFlowChild = inFlowChild->previousInFlowSibling();
+        if (inFlowChild) {
+            auto* inFlowDisplayBox = layoutContext.displayBoxForLayoutBox(*inFlowChild);
+            ASSERT(inFlowDisplayBox);
+            return inFlowDisplayBox->top() + inFlowDisplayBox->borderBox().height();
+        }
+
+        // 4. zero, otherwise
         return 0;
+    };
 
-    // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
-    if (layoutBox.establishesInlineFormattingContext()) {
-        // height = lastLineBox().bottom();
-        return 0;
-    }
-
-    // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin...
-    auto* lastInFlowChild = downcast<Container>(layoutBox).lastInFlowChild();
-    ASSERT(lastInFlowChild);
-    if (!BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent(*lastInFlowChild)) {
-        auto* lastInFlowDisplayBox = layoutContext.displayBoxForLayoutBox(*lastInFlowChild);
-        ASSERT(lastInFlowDisplayBox);
-        return lastInFlowDisplayBox->bottom() + lastInFlowDisplayBox->marginBottom();
-    }
-
-    // 3. the bottom border edge of the last in-flow child whose top margin doesn't collapse with the element's bottom margin
-    auto* inFlowChild = lastInFlowChild;
-    while (inFlowChild && BlockFormattingContext::MarginCollapse::isMarginTopCollapsedWithParentMarginBottom(*inFlowChild))
-        inFlowChild = inFlowChild->previousInFlowSibling();
-    if (inFlowChild) {
-        auto* inFlowDisplayBox = layoutContext.displayBoxForLayoutBox(*inFlowChild);
-        ASSERT(inFlowDisplayBox);
-        return inFlowDisplayBox->top() + inFlowDisplayBox->borderBox().height();
-    }
-
-    // 4. zero, otherwise
-    return 0;
+    auto computedHeight = compute();
+    if (!isStretchedToViewport(layoutBox))
+        return computedHeight;
+    auto initialContainingBlockHeight = layoutContext.displayBoxForLayoutBox(initialContainingBlock(layoutBox))->contentBox().height();
+    return std::max(computedHeight, initialContainingBlockHeight);
 }
 
 LayoutUnit BlockFormattingContext::Geometry::inFlowNonReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isInFlow() && !layoutBox.replaced());
 
-    // 10.3.3 Block-level, non-replaced elements in normal flow
-    // The following constraints must hold among the used values of the other properties:
-    // 'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width' + 'margin-right' = width of containing block
+    auto compute = [&]() {
+        // 10.3.3 Block-level, non-replaced elements in normal flow
+        // The following constraints must hold among the used values of the other properties:
+        // 'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width' + 'margin-right' = width of containing block
 
-    // If 'width' is set to 'auto', any other 'auto' values become '0' and 'width' follows from the resulting equality.
-    auto& style = layoutBox.style();
-    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+        // If 'width' is set to 'auto', any other 'auto' values become '0' and 'width' follows from the resulting equality.
+        auto& style = layoutBox.style();
+        auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
 
-    LayoutUnit computedWidthValue;
-    auto width = style.logicalWidth();
-    if (width.isAuto()) {
-        auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
-        auto marginLeft = displayBox.marginLeft();
-        auto marginRight = displayBox.marginRight();
+        LayoutUnit computedWidthValue;
+        auto width = style.logicalWidth();
+        if (width.isAuto()) {
+            auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
+            auto marginLeft = displayBox.marginLeft();
+            auto marginRight = displayBox.marginRight();
 
-        auto paddingLeft = displayBox.paddingLeft();
-        auto paddingRight = displayBox.paddingRight();
+            auto paddingLeft = displayBox.paddingLeft();
+            auto paddingRight = displayBox.paddingRight();
 
-        auto borderLeft = displayBox.borderLeft();
-        auto borderRight = displayBox.borderRight();
+            auto borderLeft = displayBox.borderLeft();
+            auto borderRight = displayBox.borderRight();
 
-        computedWidthValue = containingBlockWidth - (marginLeft + borderLeft + paddingLeft + paddingRight + borderRight + marginRight);
-    } else
-        computedWidthValue = valueForLength(width, containingBlockWidth);
+            computedWidthValue = containingBlockWidth - (marginLeft + borderLeft + paddingLeft + paddingRight + borderRight + marginRight);
+        } else
+            computedWidthValue = valueForLength(width, containingBlockWidth);
 
-    return computedWidthValue;
+        return computedWidthValue;
+    };
+
+    auto computedWidth = compute();
+    if (!isStretchedToViewport(layoutBox))
+        return computedWidth;
+    auto initialContainingBlockWidth = layoutContext.displayBoxForLayoutBox(initialContainingBlock(layoutBox))->contentBox().width();
+    return std::max(computedWidth, initialContainingBlockWidth);
 }
 
 LayoutPoint BlockFormattingContext::Geometry::staticPosition(LayoutContext& layoutContext, const Box& layoutBox)
