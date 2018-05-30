@@ -30,20 +30,20 @@ function loadImage(url, shoudLoad, corsMode)
     }, title)
 }
 
-title = "Same-origin image load with a 'Cross-Origin-Resource-Policy: same' response header.";
-loadImage("./resources/image.py?corp=same", ok);
+title = "Same-origin image load with a 'Cross-Origin-Resource-Policy: same-origin' response header.";
+loadImage("./resources/image.py?corp=same-origin", ok);
 
 title = "Same-origin image load with a 'Cross-Origin-Resource-Policy: same-site' response header.";
 loadImage("./resources/image.py?corp=same-site", ok);
 
-title = "Cross-origin cors image load with a 'Cross-Origin-Resource-Policy: same' response header.";
-loadImage(remoteBaseURL + "resources/image.py?corp=same&acao=*", ok, "anonymous");
+title = "Cross-origin cors image load with a 'Cross-Origin-Resource-Policy: same-origin' response header.";
+loadImage(remoteBaseURL + "resources/image.py?corp=same-origin&acao=*", ok, "anonymous");
 
 title = "Cross-origin cors image load with a 'Cross-Origin-Resource-Policy: same-site' response header.";
 loadImage(remoteBaseURL + "resources/image.py?corp=same-site&acao=*", ok, "anonymous");
 
-title = "Cross-origin no-cors image load with a 'Cross-Origin-Resource-Policy: same' response header.";
-loadImage(remoteBaseURL + "resources/image.py?corp=same&acao=*", ko);
+title = "Cross-origin no-cors image load with a 'Cross-Origin-Resource-Policy: same-origin' response header.";
+loadImage(remoteBaseURL + "resources/image.py?corp=same-origin&acao=*", ko);
 
 title = "Cross-origin no-cors image load with a 'Cross-Origin-Resource-Policy: same-site' response header.";
 loadImage(remoteBaseURL + "resources/image.py?corp=same-site&acao=*", ko);

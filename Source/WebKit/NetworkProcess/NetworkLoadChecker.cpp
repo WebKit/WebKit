@@ -141,7 +141,7 @@ bool NetworkLoadChecker::shouldCrossOriginResourcePolicyPolicyCancelLoad(const R
     case CrossOriginResourcePolicy::None:
     case CrossOriginResourcePolicy::Invalid:
         return false;
-    case CrossOriginResourcePolicy::Same:
+    case CrossOriginResourcePolicy::SameOrigin:
         return true;
     case CrossOriginResourcePolicy::SameSite: {
 #if ENABLE(PUBLIC_SUFFIX_LIST)

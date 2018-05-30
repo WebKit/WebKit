@@ -21,7 +21,7 @@ function with_iframe(url) {
 }
 
 promise_test(async() => {
-    const url = remoteBaseURL + "resources/iframe.py?corp=same";
+    const url = remoteBaseURL + "resources/iframe.py?corp=same-origin";
 
     await new Promise((resolve, reject) => {
         return fetch(url, { mode: "no-cors" }).then(reject, resolve);

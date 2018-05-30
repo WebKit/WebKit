@@ -1,3 +1,13 @@
+2018-05-30  Youenn Fablet  <youenn@apple.com>
+
+        Rename CrossOriginResourcePolicy same to same-origin
+        https://bugs.webkit.org/show_bug.cgi?id=186080
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::shouldCrossOriginResourcePolicyPolicyCancelLoad):
+
 2018-05-30  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] -[WKFullScreenViewController viewWillAppear:] should call [super viewWillAppeear:]

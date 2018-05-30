@@ -66,7 +66,7 @@ enum XFrameOptionsDisposition {
 
 enum class CrossOriginResourcePolicy {
     None,
-    Same,
+    SameOrigin,
     SameSite,
     Invalid
 };

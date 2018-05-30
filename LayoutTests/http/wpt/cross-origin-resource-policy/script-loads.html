@@ -28,20 +28,20 @@ function loadScript(url, shoudLoad, corsMode)
     }, title);
 }
 
-title = "Same-origin script load with a 'Cross-Origin-Resource-Policy: same' response header.";
-loadScript("./resources/script.py?corp=same", ok);
+title = "Same-origin script load with a 'Cross-Origin-Resource-Policy: same-origin' response header.";
+loadScript("./resources/script.py?corp=same-origin", ok);
 
 title = "Same-origin script load with a 'Cross-Origin-Resource-Policy: same-site' response header.";
 loadScript("./resources/script.py?corp=same-site", ok);
 
-title = "Cross-origin cors script load with a 'Cross-Origin-Resource-Policy: same' response header.";
-loadScript(remoteBaseURL + "resources/script.py?corp=same&acao=*", ok, "anonymous");
+title = "Cross-origin cors script load with a 'Cross-Origin-Resource-Policy: same-origin' response header.";
+loadScript(remoteBaseURL + "resources/script.py?corp=same-origin&acao=*", ok, "anonymous");
 
 title = "Cross-origin cors script load with a 'Cross-Origin-Resource-Policy: same-site' response header.";
 loadScript(remoteBaseURL + "resources/script.py?corp=same-site&acao=*", ok, "anonymous");
 
-title = "Cross-origin no-cors script load with a 'Cross-Origin-Resource-Policy: same' response header.";
-loadScript(remoteBaseURL + "resources/script.py?corp=same&acao=*", ko);
+title = "Cross-origin no-cors script load with a 'Cross-Origin-Resource-Policy: same-origin' response header.";
+loadScript(remoteBaseURL + "resources/script.py?corp=same-origin&acao=*", ko);
 
 title = "Cross-origin no-cors script load with a 'Cross-Origin-Resource-Policy: same-site' response header.";
 loadScript(remoteBaseURL + "resources/script.py?corp=same-site&acao=*", ko);

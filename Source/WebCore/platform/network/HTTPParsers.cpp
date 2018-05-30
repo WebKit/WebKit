@@ -904,8 +904,8 @@ CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView header
     if (strippedHeader.isEmpty())
         return CrossOriginResourcePolicy::None;
 
-    if (equalLettersIgnoringASCIICase(strippedHeader, "same"))
-        return CrossOriginResourcePolicy::Same;
+    if (equalLettersIgnoringASCIICase(strippedHeader, "same-origin"))
+        return CrossOriginResourcePolicy::SameOrigin;
 
     if (equalLettersIgnoringASCIICase(strippedHeader, "same-site"))
         return CrossOriginResourcePolicy::SameSite;
