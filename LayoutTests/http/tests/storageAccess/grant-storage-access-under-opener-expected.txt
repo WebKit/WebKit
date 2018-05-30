@@ -1,3 +1,7 @@
+CONSOLE MESSAGE: line 54: Running test.
+CONSOLE MESSAGE: line 67: About to call testRunner.statisticsUpdateCookiePartitioning().
+CONSOLE MESSAGE: line 69: About to open the new window.
+CONSOLE MESSAGE: line 43: About to open the third party iframe.
 Tests that a cross-origin window from a prevalent domain with non-recent user interaction gets immediate storage access under its opener.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

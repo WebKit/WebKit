@@ -1,3 +1,17 @@
+2018-05-30  John Wilander  <wilander@apple.com>
+
+        Add console logging to grant-storage-access-under-opener.html to assess its flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=183714
+        <rdar://problem/38666060>
+
+        Unreviewed test gardening.
+
+        * http/tests/storageAccess/grant-storage-access-under-opener-expected.txt:
+        * http/tests/storageAccess/grant-storage-access-under-opener.html:
+            Now outputs console log entries, step by step, to see where the timeouts happen.
+        * platform/ios-wk2/TestExpectations:
+            Switched to [ Pass ] on iOS Debug to maximize chance of seeing the flakiness.
+
 2018-05-29  Keith Miller  <keith_miller@apple.com>
 
         Error instances should not strongly hold onto StackFrames
