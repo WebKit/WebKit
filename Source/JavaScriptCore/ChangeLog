@@ -1,3 +1,15 @@
+2018-05-30  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r232212): Broke Win32 Builds
+        https://bugs.webkit.org/show_bug.cgi?id=186061
+
+        Reviewed by Yusuke Suzuki.
+
+        Changed Windows builds with the JIT disabled to generate and use LLIntAssembly.h
+        instead of LowLevelInterpreterWin.asm.
+
+        * CMakeLists.txt:
+
 2018-05-30  Dominik Infuehr  <dinfuehr@igalia.com>
 
         [MIPS] Fix build on MIPS32r1
