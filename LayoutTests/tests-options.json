@@ -404,6 +404,9 @@
     "imported/w3c/web-platform-tests/cors/status-async.htm": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-animations/animationevent-types.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/dom/nodes/Document-characterSet-normalization.html": [
         "slow"
     ],

@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-iteration-count-calc.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animationevent-interface.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animationevent-interface.js
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animationevent-pseudoelement.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animationevent-types.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/pending-style-changes-001.html

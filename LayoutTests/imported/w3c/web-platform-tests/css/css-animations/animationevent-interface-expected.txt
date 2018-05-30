@@ -1,0 +1,19 @@
+
+PASS the event is an instance of AnimationEvent 
+PASS the event inherts from Event 
+PASS Missing type argument 
+PASS type argument is string 
+PASS type argument is null 
+PASS event type set to undefined 
+PASS animationName has default value of empty string 
+PASS elapsedTime has default value of 0.0 
+PASS animationName is readonly 
+PASS elapsedTime is readonly 
+PASS animationEventInit argument is null 
+PASS animationEventInit argument is undefined 
+PASS animationEventInit argument is empty dictionary 
+FAIL AnimationEvent.pseudoElement initialized from the dictionary assert_equals: expected (string) "::testPseudo" but got (undefined) undefined
+PASS animationName set to 'sample' 
+PASS elapsedTime set to 0.5 
+PASS AnimationEventInit properties set value 
+

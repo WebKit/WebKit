@@ -1,3 +1,13 @@
+2018-05-29  Frederic Wang  <fwang@igalia.com>
+
+        Import WPT tests for CSS animations
+        https://bugs.webkit.org/show_bug.cgi?id=186046
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations: Mark some tests requiring support for reftest-wait as failing/flacky.
+        * tests-options.json: Mark animationevent-types.html as slow.
+
 2018-05-29  Nan Wang  <n_wang@apple.com>
 
         AX: macOS VoiceOver doesn't announce when details element is expanded when using role group

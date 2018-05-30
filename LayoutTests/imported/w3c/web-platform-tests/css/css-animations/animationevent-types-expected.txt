@@ -1,0 +1,6 @@
+Filler Text
+
+FAIL animationstart event is instanceof AnimationEvent assert_idl_attribute: animationstart has pseudoElement property property "pseudoElement" not found in prototype chain
+FAIL animationend event is instanceof AnimationEvent assert_idl_attribute: animationstart has pseudoElement property property "pseudoElement" not found in prototype chain
+FAIL animationiteration event is instanceof AnimationEvent assert_idl_attribute: animationstart has pseudoElement property property "pseudoElement" not found in prototype chain
+

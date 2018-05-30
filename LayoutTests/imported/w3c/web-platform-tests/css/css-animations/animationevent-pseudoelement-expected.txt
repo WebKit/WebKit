@@ -1,0 +1,3 @@
+
+FAIL AnimationEvent should have the correct pseudoElement memeber assert_equals: expected (string) "::before" but got (undefined) undefined
+

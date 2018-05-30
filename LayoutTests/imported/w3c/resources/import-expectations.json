@@ -61,6 +61,7 @@
     "web-platform-tests/css-values": "skip", 
     "web-platform-tests/css/WOFF2": "import", 
     "web-platform-tests/css/css-align": "import", 
+    "web-platform-tests/css/css-animations/": "import", 
     "web-platform-tests/css/css-color": "import", 
     "web-platform-tests/css/css-display": "import", 
     "web-platform-tests/css/css-grid": "import", 
