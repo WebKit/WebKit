@@ -624,12 +624,6 @@ test/built-ins/Array/of/return-abrupt-from-data-property.js:
 test/built-ins/Array/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«Â», Â«Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«Â», Â«Â») to be true'
-test/built-ins/Array/prototype/concat/is-concat-spreadable-is-array-proxy-revoked.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Array/prototype/concat/is-concat-spreadable-proxy.js:
-  default: 'Test262Error: Proxy for an array Expected SameValue(Â«1Â», Â«0Â») to be true'
-  strict mode: 'Test262Error: Proxy for an array Expected SameValue(Â«1Â», Â«0Â») to be true'
 test/built-ins/Array/prototype/filter/target-array-with-non-writable-property.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
