@@ -1,3 +1,15 @@
+2018-05-30  Chris Dumez  <cdumez@apple.com>
+
+        Referrer-Policy response header is ignored
+        https://bugs.webkit.org/show_bug.cgi?id=186037
+        <rdar://problem/40600335>
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline existing WPT now that one more check is passing.
+
+        * web-platform-tests/fetch/api/policies/referrer-origin-expected.txt:
+
 2018-05-29  Frederic Wang  <fwang@igalia.com>
 
         Import WPT tests for CSS animations

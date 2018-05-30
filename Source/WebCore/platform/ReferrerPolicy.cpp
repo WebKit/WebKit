@@ -25,12 +25,16 @@
 #include "config.h"
 #include "ReferrerPolicy.h"
 
+#include "HTTPParsers.h"
+
 namespace WebCore {
-    
-std::optional<ReferrerPolicy> parseReferrerPolicy(StringView policy, ShouldParseLegacyKeywords shouldParseLegacyKeywords)
+
+enum class ShouldParseLegacyKeywords { No, Yes };
+
+static std::optional<ReferrerPolicy> parseReferrerPolicyToken(StringView policy, ShouldParseLegacyKeywords shouldParseLegacyKeywords)
 {
-    // "never" / "default" / "always" are legacy keywords that we support. They were defined in:
-    // https://www.w3.org/TR/2014/WD-referrer-policy-20140807/#referrer-policy-delivery-meta
+    // "never" / "default" / "always" are legacy keywords that we support and still defined in the HTML specification:
+    // https://html.spec.whatwg.org/#meta-referrer
     if (shouldParseLegacyKeywords == ShouldParseLegacyKeywords::Yes) {
         if (equalLettersIgnoringASCIICase(policy, "never"))
             return ReferrerPolicy::NoReferrer;
@@ -39,7 +43,7 @@ std::optional<ReferrerPolicy> parseReferrerPolicy(StringView policy, ShouldParse
         if (equalLettersIgnoringASCIICase(policy, "default"))
             return ReferrerPolicy::NoReferrerWhenDowngrade;
     }
-    
+
     if (equalLettersIgnoringASCIICase(policy, "no-referrer"))
         return ReferrerPolicy::NoReferrer;
     if (equalLettersIgnoringASCIICase(policy, "unsafe-url"))
@@ -58,7 +62,31 @@ std::optional<ReferrerPolicy> parseReferrerPolicy(StringView policy, ShouldParse
         return ReferrerPolicy::NoReferrerWhenDowngrade;
     if (!policy.isNull() && policy.isEmpty())
         return ReferrerPolicy::EmptyString;
+
+    return std::nullopt;
+}
     
+std::optional<ReferrerPolicy> parseReferrerPolicy(StringView policyString, ReferrerPolicySource source)
+{
+    switch (source) {
+    case ReferrerPolicySource::HTTPHeader: {
+        policyString = stripLeadingAndTrailingHTTPSpaces(policyString);
+        if (policyString.isEmpty())
+            return std::nullopt;
+
+        // Implementing https://www.w3.org/TR/2017/CR-referrer-policy-20170126/#parse-referrer-policy-from-header.
+        std::optional<ReferrerPolicy> result;
+        for (auto tokenView : policyString.split(',')) {
+            auto token = parseReferrerPolicyToken(stripLeadingAndTrailingHTTPSpaces(tokenView), ShouldParseLegacyKeywords::No);
+            if (token && token.value() != ReferrerPolicy::EmptyString)
+                result = token.value();
+        }
+        return result;
+    }
+    case ReferrerPolicySource::MetaTag:
+        return parseReferrerPolicyToken(policyString, ShouldParseLegacyKeywords::Yes);
+    }
+    ASSERT_NOT_REACHED();
     return std::nullopt;
 }
 

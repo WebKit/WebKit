@@ -1,3 +1,25 @@
+2018-05-30  Chris Dumez  <cdumez@apple.com>
+
+        Referrer-Policy response header is ignored
+        https://bugs.webkit.org/show_bug.cgi?id=186037
+        <rdar://problem/40600335>
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * http/tests/security/referrer-policy-header-and-meta-tag-emptyString-expected.txt: Added.
+        * http/tests/security/referrer-policy-header-and-meta-tag-emptyString.html: Added.
+        * http/tests/security/referrer-policy-header-and-meta-tag-expected.txt: Added.
+        * http/tests/security/referrer-policy-header-and-meta-tag.html: Added.
+        * http/tests/security/referrer-policy-header-expected.txt: Added.
+        * http/tests/security/referrer-policy-header.html: Added.
+        * http/tests/security/referrer-policy-invalid-expected.txt:
+        * http/tests/security/referrer-policy-invalid.html:
+        * http/tests/security/resources/postReferrer.php: Added.
+        * http/tests/security/resources/serve-referrer-policy-and-meta-tag.php: Added.
+        * http/tests/security/resources/serve-referrer-policy-and-test.php: Added.
+
 2018-05-30  Youenn Fablet  <youenn@apple.com>
 
         Rename CrossOriginResourcePolicy same to same-origin

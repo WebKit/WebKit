@@ -588,18 +588,10 @@ bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceR
 
 void SubresourceLoader::updateReferrerPolicy(const String& referrerPolicyValue)
 {
-    if (referrerPolicyValue.isEmpty())
-        return;
-    
-    // Implementing https://www.w3.org/TR/2017/CR-referrer-policy-20170126/#parse-referrer-policy-from-header.
-    ReferrerPolicy referrerPolicy = ReferrerPolicy::EmptyString;
-    for (auto tokenView : StringView { referrerPolicyValue }.split(',')) {
-        auto token = parseReferrerPolicy(stripLeadingAndTrailingHTTPSpaces(tokenView), ShouldParseLegacyKeywords::No);
-        if (token && token.value() != ReferrerPolicy::EmptyString)
-            referrerPolicy = token.value();
+    if (auto referrerPolicy = parseReferrerPolicy(referrerPolicyValue, ReferrerPolicySource::HTTPHeader)) {
+        ASSERT(*referrerPolicy != ReferrerPolicy::EmptyString);
+        setReferrerPolicy(*referrerPolicy);
     }
-    if (referrerPolicy != ReferrerPolicy::EmptyString)
-        setReferrerPolicy(referrerPolicy);
 }
 
 void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)

@@ -1,11 +1,11 @@
-CONSOLE MESSAGE: line 8: Failed to set referrer policy: The value 'invalid' is not one of 'no-referrer', 'no-referrer-when-downgrade', 'same-origin', 'origin', 'strict-origin', 'origin-when-cross-origin', 'strict-origin-when-cross-origin' or 'unsafe-url'. Defaulting to 'no-referrer'.
-This test checks an invalid referrer policy when navigating from an insecure URL to another insecure URL. The test passes if the printed referrer is empty.
+CONSOLE MESSAGE: line 8: Failed to set referrer policy: The value 'invalid' is not one of 'no-referrer', 'no-referrer-when-downgrade', 'same-origin', 'origin', 'strict-origin', 'origin-when-cross-origin', 'strict-origin-when-cross-origin' or 'unsafe-url'.
+This test checks an invalid referrer policy when navigating from an insecure URL to another insecure URL. The test passes if the printed referrer is not empty.
 
 
 
 --------
 Frame: '<!--frame1-->'
 --------
-HTTP Referer header is empty
-Referrer is empty
+HTTP Referer header is http://127.0.0.1:8000/security/resources/referrer-policy-start.html?invalid
+Referrer is http://127.0.0.1:8000/security/resources/referrer-policy-start.html?invalid
 

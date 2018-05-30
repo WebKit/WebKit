@@ -1,4 +1,4 @@
 
-FAIL Request's referrer is origin assert_equals: request's referrer is http://localhost:8800/ expected "http://localhost:8800/" but got "http://localhost:8800/fetch/api/policies/referrer-origin.html"
+PASS Request's referrer is origin 
 FAIL Cross-origin referrer is overridden by client origin promise_test: Unhandled rejection with value: object "TypeError: Referrer is not same-origin."
 

@@ -98,7 +98,7 @@ void HTMLMetaElement::process()
         document().processWebAppOrientations();
 #endif
     else if (equalLettersIgnoringASCIICase(name(), "referrer"))
-        document().processReferrerPolicy(contentValue);
+        document().processReferrerPolicy(contentValue, ReferrerPolicySource::MetaTag);
 
     const AtomicString& httpEquivValue = attributeWithoutSynchronization(http_equivAttr);
     if (!httpEquivValue.isNull())

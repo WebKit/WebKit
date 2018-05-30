@@ -50,9 +50,8 @@ enum class ReferrerPolicy {
     UnsafeUrl
 };
 
-enum class ShouldParseLegacyKeywords { No, Yes };
-    
-std::optional<ReferrerPolicy> parseReferrerPolicy(StringView, ShouldParseLegacyKeywords);
+enum class ReferrerPolicySource { MetaTag, HTTPHeader };
+std::optional<ReferrerPolicy> parseReferrerPolicy(StringView, ReferrerPolicySource);
 
 }
 
