@@ -82,6 +82,11 @@ enum EventThrottlingBehavior {
     "unresponsive"
 };
 
+[Conditional=VIDEO] enum PlaybackControlsPurpose {
+    "ControlsManager",
+    "NowPlaying"
+};
+
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     Conditional=VIDEO,
@@ -616,4 +621,6 @@ enum EventThrottlingBehavior {
     boolean usingAppleInternalSDK();
 
     [Conditional=VIDEO, MayThrowException] readonly attribute NowPlayingState nowPlayingState;
+
+    [Conditional=VIDEO] HTMLMediaElement bestMediaElementForShowingPlaybackControlsManager(PlaybackControlsPurpose purpose);
 };

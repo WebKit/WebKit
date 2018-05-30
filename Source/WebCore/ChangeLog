@@ -1,3 +1,29 @@
+2018-05-30  Jer Noble  <jer.noble@apple.com>
+
+        Media elements outside fullscreen should not be considered main content.
+        https://bugs.webkit.org/show_bug.cgi?id=186063
+        <rdar://problem/40630437>
+
+        Reviewed by Eric Carlson.
+
+        Test: platform/mac/media/video-best-element-for-playback-controls-purpose.html
+
+        Media elements outside the current fullscreen element are not visible, and thus should not be considered
+        main content.
+
+        Drive-by fix: set the m_hasEverNotifiedAboutPlaying before dispatching the 'playing' event, so that
+        tests can check bestMediaElementForShowingPlaybackControlsManager() in the 'playing' handler.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::notifyAboutPlaying):
+        * html/HTMLMediaElement.h:
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::canShowControlsManager const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::bestMediaElementForShowingPlaybackControlsManager):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-05-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, silence a -Wreturn-type warning

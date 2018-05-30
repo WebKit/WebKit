@@ -40,6 +40,10 @@
 #include "MediaSessionInterruptionProvider.h"
 #endif
 
+#if ENABLE(VIDEO)
+#include "MediaElementSession.h"
+#endif
+
 namespace WebCore {
 
 class AnimationTimeline;
@@ -679,6 +683,9 @@ public:
         bool registeredAsNowPlayingApplication;
     };
     ExceptionOr<NowPlayingState> nowPlayingState() const;
+
+    using PlaybackControlsPurpose = MediaElementSession::PlaybackControlsPurpose;
+    HTMLMediaElement* bestMediaElementForShowingPlaybackControlsManager(PlaybackControlsPurpose);
 
 private:
     explicit Internals(Document&);

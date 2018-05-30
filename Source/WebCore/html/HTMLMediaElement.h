@@ -155,7 +155,7 @@ public:
 
     static HashSet<HTMLMediaElement*>& allMediaElements();
 
-    static HTMLMediaElement* bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose);
+    WEBCORE_EXPORT static HTMLMediaElement* bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose);
 
     static bool isRunningDestructor();
 

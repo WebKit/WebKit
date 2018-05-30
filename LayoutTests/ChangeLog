@@ -1,3 +1,14 @@
+2018-05-30  Jer Noble  <jer.noble@apple.com>
+
+        Media elements outside fullscreen should not be considered main content.
+        https://bugs.webkit.org/show_bug.cgi?id=186063
+        <rdar://problem/40630437>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/media/video-best-element-for-playback-controls-purpose-expected.txt: Added.
+        * platform/mac/media/video-best-element-for-playback-controls-purpose.html: Added.
+
 2018-05-30  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Unreviewed test gardening

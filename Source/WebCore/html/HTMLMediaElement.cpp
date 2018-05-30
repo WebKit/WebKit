@@ -1120,10 +1120,10 @@ void HTMLMediaElement::notifyAboutPlaying(PlayPromiseVector&& pendingPlayPromise
 {
     Ref<HTMLMediaElement> protectedThis(*this); // The 'playing' event can make arbitrary DOM mutations.
     m_playbackStartedTime = currentMediaTime().toDouble();
+    m_hasEverNotifiedAboutPlaying = true;
     dispatchEvent(Event::create(eventNames().playingEvent, false, true));
     resolvePendingPlayPromises(WTFMove(pendingPlayPromises));
 
-    m_hasEverNotifiedAboutPlaying = true;
     scheduleUpdatePlaybackControlsManager();
 }
 
