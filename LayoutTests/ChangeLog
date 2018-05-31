@@ -1,3 +1,9 @@
+2018-05-31  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening after r232336.
+
+        * platform/gtk/TestExpectations:
+
 2018-05-30  Nan Wang  <n_wang@apple.com>
 
         AX: VoiceOver on macOS does not announce fieldset description from aria-describedby when focussing inputs
