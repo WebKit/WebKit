@@ -72,6 +72,7 @@ bool DeprecatedGlobalSettings::gAllowsAnySSLCertificate = false;
 bool DeprecatedGlobalSettings::gNetworkDataUsageTrackingEnabled = false;
 bool DeprecatedGlobalSettings::gAVKitEnabled = false;
 bool DeprecatedGlobalSettings::gShouldOptOutOfNetworkStateObservation = false;
+bool DeprecatedGlobalSettings::gDisableScreenSizeOverride = false;
 #endif
 bool DeprecatedGlobalSettings::gManageAudioSession = false;
 

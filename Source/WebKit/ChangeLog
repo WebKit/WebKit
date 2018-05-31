@@ -1,3 +1,16 @@
+2018-05-31  Megan Gardner  <megan_gardner@apple.com>
+
+        Add setting to allow override screen size to be disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=186109
+
+        Reviewed by Andy Estes.
+
+        Pipe the needed settings through to WebCore.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_configurationPreferenceValues):
+
 2018-05-31  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Add JIT entitlements to WebContent process and plugin process on macOS

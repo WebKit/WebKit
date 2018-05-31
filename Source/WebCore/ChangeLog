@@ -1,3 +1,21 @@
+2018-05-31  Megan Gardner  <megan_gardner@apple.com>
+
+        Add setting to allow override screen size to be disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=186109
+
+        Reviewed by Andy Estes.
+
+        Not Testable, and for debug only.
+
+        Pipe settings and use them to ignore override screen size if setting is set. 
+
+        * page/DeprecatedGlobalSettings.cpp:
+        * page/DeprecatedGlobalSettings.h:
+        (WebCore::DeprecatedGlobalSettings::setDisableScreenSizeOverride):
+        (WebCore::DeprecatedGlobalSettings::disableScreenSizeOverride):
+        * page/Settings.yaml:
+        * platform/ios/PlatformScreenIOS.mm:
+
 2018-05-31  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r216119): DocumentLoader::detachFromFrame still encounters nullptr frame

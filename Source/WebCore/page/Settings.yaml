@@ -150,6 +150,8 @@ resourceUsageOverlayVisible:
   initial: false
   onChange: resourceUsageOverlayVisibleChanged
   condition: RESOURCE_USAGE
+disableScreenSizeOverride:
+  initial: false
 
 # This is a quirk we are pro-actively applying to old applications. It changes keyboard event dispatching,
 # making keyIdentifier available on keypress events, making charCode available on keydown/keyup events,

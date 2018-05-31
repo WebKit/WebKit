@@ -999,6 +999,12 @@ TiledScrollingIndicatorVisible:
   category: debug
   webcoreName: showTiledScrollingIndicator
 
+DisableScreenSizeOverride:
+    type: bool
+    defaultValue: false
+    category: debug
+    condition: PLATFORM(IOS)
+
 SimpleLineLayoutDebugBordersEnabled:
   type: bool
   defaultValue: false
