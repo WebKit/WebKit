@@ -713,6 +713,8 @@ http/tests/navigation/process-swap-window-open.html [ Pass ]
 # Cross-Origin-Resource-Policy response header is only implemented in WebKit2.
 http/wpt/cross-origin-resource-policy/ [ Pass ]
 
+http/tests/navigation/useragent-reload.php [ Pass ]
+
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################
 

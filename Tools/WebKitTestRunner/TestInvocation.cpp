@@ -877,6 +877,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetCustomUserAgent")) {
+        WKStringRef userAgent = static_cast<WKStringRef>(messageBody);
+        WKPageSetCustomUserAgent(TestController::singleton().mainWebView()->page(), userAgent);
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetStorageAccessAPIEnabled")) {
         WKBooleanRef accept = static_cast<WKBooleanRef>(messageBody);
         WKCookieManagerSetStorageAccessAPIEnabled(WKContextGetCookieManager(TestController::singleton().context()), WKBooleanGetValue(accept));

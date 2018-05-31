@@ -323,6 +323,7 @@ interface TestRunner {
 
     void setWebRTCLegacyAPIEnabled(boolean value);
     void setMDNSICECandidatesEnabled(boolean value);
+    void setCustomUserAgent(DOMString userAgent);
 
     void terminateNetworkProcess();
     void terminateServiceWorkerProcess();

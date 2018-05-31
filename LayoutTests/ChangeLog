@@ -1,3 +1,17 @@
+2018-05-30  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r224684): User-agent seen by page does not change when modified by the develop menu options after reloading.
+        <rdar://problem/34918109> and https://bugs.webkit.org/show_bug.cgi?id=186111
+
+        Reviewed by Andy Estes.
+
+        * TestExpectations: Skip in WK1
+        * platform/wk2/TestExpectations: Enable in WK2
+
+        * http/tests/navigation/resources/user-agent-script.php: Added.
+        * http/tests/navigation/useragent-reload-expected.txt: Added.
+        * http/tests/navigation/useragent-reload.php: Added.
+
 2018-05-30  Daniel Bates  <dabates@apple.com>
 
         Web Inspector: Annotate Same-Site cookies

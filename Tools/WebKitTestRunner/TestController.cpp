@@ -786,6 +786,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options)
     // FIXME: We should be testing the default.
     WKPageSetBackgroundExtendsBeyondPage(m_mainWebView->page(), false);
 
+    WKPageSetCustomUserAgent(m_mainWebView->page(), nullptr);
+
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("Reset"));
     WKRetainPtr<WKMutableDictionaryRef> resetMessageBody = adoptWK(WKMutableDictionaryCreate());
 
