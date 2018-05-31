@@ -1852,7 +1852,13 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
     // Create a circle to be used for the clipping path in the badge, as well as the drop shadow.
     RetainPtr<CGPathRef> circle = adoptCF(CGPathCreateWithRoundedRect(absoluteBadgeRect, badgeDimension / 2, badgeDimension / 2, nullptr));
 
-    CGContextRef ctx = paintInfo.context().platformContext();
+    auto& graphicsContext = paintInfo.context();
+    if (graphicsContext.paintingDisabled())
+        return;
+
+    CGContextRef ctx = graphicsContext.platformContext();
+    if (!ctx)
+        return;
 
     CGContextSaveGState(ctx);
 
