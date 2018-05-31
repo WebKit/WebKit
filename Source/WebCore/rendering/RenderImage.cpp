@@ -594,7 +594,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         imageResource().cachedImage()->addPendingImageDrawingClient(*this);
 
 #if USE(SYSTEM_PREVIEW)
-    if (imageElement && imageElement->isSystemPreviewImage())
+    if (imageElement && imageElement->isSystemPreviewImage() && drawResult == ImageDrawResult::DidDraw)
         theme().paintSystemPreviewBadge(*img, paintInfo, rect);
 #endif
 

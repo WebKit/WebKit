@@ -1,3 +1,17 @@
+2018-05-31  Dean Jackson  <dino@apple.com>
+
+        Don't paint the System Preview badge if the image isn't fully decoded
+        https://bugs.webkit.org/show_bug.cgi?id=186158
+        <rdar://problem/40454866>
+
+        Reviewed by Antoine Quint.
+
+        Only paint the system preview badge if the image itself said
+        that it succeeded in drawing.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect): Check the ImageDrawResult.
+
 2018-05-31  David Kilzer  <ddkilzer@apple.com>
 
         Implement checked cast for DDResultRef once DDResultGetCFTypeID() is available
