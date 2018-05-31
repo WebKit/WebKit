@@ -1,3 +1,10 @@
+2018-05-31  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, apply review comments from Darin after r232310.
+
+        * platform/ReferrerPolicy.cpp:
+        (WebCore::parseReferrerPolicy):
+
 2018-05-31  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Margin box is border box + margins.

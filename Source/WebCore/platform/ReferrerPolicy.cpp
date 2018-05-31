@@ -70,10 +70,6 @@ std::optional<ReferrerPolicy> parseReferrerPolicy(StringView policyString, Refer
 {
     switch (source) {
     case ReferrerPolicySource::HTTPHeader: {
-        policyString = stripLeadingAndTrailingHTTPSpaces(policyString);
-        if (policyString.isEmpty())
-            return std::nullopt;
-
         // Implementing https://www.w3.org/TR/2017/CR-referrer-policy-20170126/#parse-referrer-policy-from-header.
         std::optional<ReferrerPolicy> result;
         for (auto tokenView : policyString.split(',')) {
