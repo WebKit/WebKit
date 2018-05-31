@@ -59,6 +59,7 @@ AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
+AXLinkRelationshipType: 
 AXElementBusy: 0
 AXPath: <AXLink>
 
@@ -92,6 +93,7 @@ AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
+AXLinkRelationshipType: 
 AXElementBusy: 0
 AXPath: <AXLink>
 

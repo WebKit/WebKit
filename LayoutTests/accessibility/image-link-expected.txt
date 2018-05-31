@@ -32,6 +32,7 @@ AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXURL: http://www.wowhead.com/?item=33924
 AXAccessKey: (null)
+AXLinkRelationshipType: 
 AXElementBusy: 0
 
 
@@ -65,6 +66,7 @@ AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXURL: LayoutTests/accessibility/resources/cake.png
 AXAccessKey: (null)
+AXLinkRelationshipType: 
 AXElementBusy: 0
 
 

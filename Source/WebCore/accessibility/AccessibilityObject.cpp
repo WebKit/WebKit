@@ -2527,6 +2527,11 @@ const AtomicString& AccessibilityObject::datetimeAttributeValue() const
     return getAttribute(datetimeAttr);
 }
     
+const AtomicString& AccessibilityObject::linkRelValue() const
+{
+    return getAttribute(relAttr);
+}
+    
 const String AccessibilityObject::keyShortcutsValue() const
 {
     return getAttribute(aria_keyshortcutsAttr);

@@ -1823,6 +1823,14 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     return m_object->canSetValueAttribute();
 }
 
+- (NSString *)accessibilityLinkRelationshipType
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    
+    return m_object->linkRelValue();
+}
+
 - (BOOL)accessibilityRequired
 {
     if (![self _prepareAccessibilityCall])

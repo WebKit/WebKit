@@ -1,3 +1,17 @@
+2018-05-30  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Expose link rel type to voiceover
+        https://bugs.webkit.org/show_bug.cgi?id=186084
+        <rdar://problem/40640871>
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/image-link-expected.txt:
+        * accessibility/image-map2-expected.txt:
+        * accessibility/mac/document-links-expected.txt:
+        * accessibility/mac/linkrel-expected.txt: Added.
+        * accessibility/mac/linkrel.html: Added.
+
 2018-05-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline http/wpt/service-workers/header-filtering.https.html after r232310.

@@ -29,6 +29,7 @@ AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
+AXLinkRelationshipType: 
 AXElementBusy: 0
 AXPath: <AXLink>
 
@@ -62,6 +63,7 @@ AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
+AXLinkRelationshipType: 
 AXElementBusy: 0
 AXPath: <AXLink>
 
@@ -95,6 +97,7 @@ AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXURL: http://webkit.org/
 AXAccessKey: (null)
+AXLinkRelationshipType: 
 AXElementBusy: 0
 
 ------------
@@ -127,6 +130,7 @@ AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXURL: LayoutTests/accessibility/mac/document-links.html#asdf
 AXAccessKey: (null)
+AXLinkRelationshipType: 
 AXElementBusy: 0
 
 ------------
