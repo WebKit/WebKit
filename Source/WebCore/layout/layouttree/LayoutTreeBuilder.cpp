@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutBlockContainer.h"
+#include "LayoutBox.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContainer.h"
 #include "LayoutInlineBox.h"
@@ -46,21 +47,44 @@ namespace Layout {
 
 std::unique_ptr<Container> TreeBuilder::createLayoutTree(const RenderView& renderView)
 {
-    std::unique_ptr<Container> initialContainingBlock(new BlockContainer(RenderStyle::clone(renderView.style())));
+    std::unique_ptr<Container> initialContainingBlock(new BlockContainer(std::nullopt, RenderStyle::clone(renderView.style())));
     TreeBuilder::createSubTree(renderView, *initialContainingBlock);
     return initialContainingBlock;
 }
 
 void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& rootContainer)
 {
+    auto elementAttributes = [] (const RenderElement& renderer) -> std::optional<Box::ElementAttributes> {
+        if (renderer.isDocumentElementRenderer())
+            return Box::ElementAttributes { Box::ElementType::Document };
+        if (auto* element = renderer.element()) {
+            if (element->hasTagName(HTMLNames::bodyTag))
+                return Box::ElementAttributes { Box::ElementType::Body };
+            if (element->hasTagName(HTMLNames::colTag))
+                return Box::ElementAttributes { Box::ElementType::TableColumn };
+            if (element->hasTagName(HTMLNames::trTag))
+                return Box::ElementAttributes { Box::ElementType::TableRow };
+            if (element->hasTagName(HTMLNames::colgroupTag))
+                return Box::ElementAttributes { Box::ElementType::TableColumnGroup };
+            if (element->hasTagName(HTMLNames::tbodyTag))
+                return Box::ElementAttributes { Box::ElementType::TableRowGroup };
+            if (element->hasTagName(HTMLNames::theadTag))
+                return Box::ElementAttributes { Box::ElementType::TableHeaderGroup };
+            if (element->hasTagName(HTMLNames::tfootTag))
+                return Box::ElementAttributes { Box::ElementType::TableFooterGroup };
+        } 
+        return std::nullopt;
+    };
+
     // Skip RenderText (and some others) for now.
     for (auto& child : childrenOfType<RenderElement>(rootRenderer)) {
         Box* box = nullptr;
+
         if (is<RenderBlock>(child)) {
-            box = new BlockContainer(RenderStyle::clone(child.style()));
+            box = new BlockContainer(elementAttributes(child), RenderStyle::clone(child.style()));
             createSubTree(child, downcast<Container>(*box));
         } else if (is<RenderInline>(child)) {
-            box = new InlineContainer(RenderStyle::clone(child.style()));
+            box = new InlineContainer(elementAttributes(child), RenderStyle::clone(child.style()));
             createSubTree(child, downcast<Container>(*box));
         } else
             ASSERT_NOT_IMPLEMENTED_YET();

@@ -39,7 +39,7 @@ namespace Layout {
 class InlineBox : public Box {
     WTF_MAKE_ISO_ALLOCATED(InlineBox);
 public:
-    InlineBox(RenderStyle&&, BaseTypeFlags);
+    InlineBox(std::optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags);
 };
 
 }

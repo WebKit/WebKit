@@ -66,7 +66,7 @@ public:
     const Container& formattingContextRoot() const;
     bool isDescendantOf(Container&) const;
 
-    bool isAnonymous() const { return m_isAnonymous; }
+    bool isAnonymous() const { return !m_elementAttributes; }
 
     bool isBlockLevelBox() const;
     bool isInlineLevelBox() const;
@@ -74,8 +74,8 @@ public:
     bool isBlockContainerBox() const;
     bool isInitialContainingBlock() const;
 
-    bool isDocumentBox() const;
-    bool isBodyBox() const;
+    bool isDocumentBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Document; }
+    bool isBodyBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Body; }
 
     const Container* parent() const { return m_parent; }
     const Box* nextSibling() const { return m_nextSibling; }
@@ -99,13 +99,28 @@ public:
     std::optional<const Replaced> replaced() const { return m_replaced; }
 
 protected:
+    enum class ElementType {
+        Document,
+        Body,
+        TableColumn,
+        TableRow,
+        TableColumnGroup,
+        TableRowGroup,
+        TableHeaderGroup,
+        TableFooterGroup 
+    };
+
+    struct ElementAttributes {
+        ElementType elementType;
+    };
+
     enum BaseTypeFlag {
         ContainerFlag         = 1 << 0,
         BlockContainerFlag    = 1 << 1,
         InlineBoxFlag         = 1 << 2,
         InlineContainerFlag   = 1 << 3
     };
-    Box(RenderStyle&&, BaseTypeFlags);
+    Box(std::optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags);
 
     bool isOverflowVisible() const;
 
@@ -113,10 +128,10 @@ private:
     void setParent(Container& parent) { m_parent = &parent; }
     void setNextSibling(Box& nextSibling) { m_nextSibling = &nextSibling; }
     void setPreviousSibling(Box& previousSibling) { m_previousSibling = &previousSibling; }
-    void setIsAnonymous() { m_isAnonymous = true; }
 
     WeakPtrFactory<Box> m_weakFactory;
     RenderStyle m_style;
+    std::optional<ElementAttributes> m_elementAttributes;
 
     Container* m_parent { nullptr };
     Box* m_previousSibling { nullptr };
@@ -125,8 +140,6 @@ private:
     std::optional<const Replaced> m_replaced;
 
     unsigned m_baseTypeFlags : 4;
-    unsigned m_isAnonymous : 1;
-
 };
 
 }

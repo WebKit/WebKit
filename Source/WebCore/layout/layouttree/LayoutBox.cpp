@@ -36,10 +36,10 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Box);
 
-Box::Box(RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+Box::Box(std::optional<ElementAttributes> attributes, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : m_style(WTFMove(style))
+    , m_elementAttributes(attributes)
     , m_baseTypeFlags(baseTypeFlags)
-    , m_isAnonymous(false)
 {
 }
 
@@ -181,18 +181,6 @@ bool Box::isInitialContainingBlock() const
     return !parent();
 }
 
-bool Box::isDocumentBox() const
-{
-    // return document().documentElement() == &element();
-    return false;
-}
-
-bool Box::isBodyBox() const
-{
-    // return element().hasTagName(HTMLNames::bodyTag);
-    return false;
-}
-
 const Box* Box::nextInFlowSibling() const
 {
     if (auto* nextSibling = this->nextSibling()) {
@@ -242,7 +230,15 @@ bool Box::isPaddingApplicable() const
 {
     // 8.4 Padding properties:
     // Applies to: all elements except table-row-group, table-header-group, table-footer-group, table-row, table-column-group and table-column
-    return true;
+    if (!m_elementAttributes)
+        return false;
+    auto elementType = m_elementAttributes.value().elementType;
+    return elementType != ElementType::TableRowGroup
+        && elementType != ElementType::TableHeaderGroup
+        && elementType != ElementType::TableFooterGroup
+        && elementType != ElementType::TableRow
+        && elementType != ElementType::TableColumnGroup
+        && elementType != ElementType::TableColumn;
 }
 
 }

@@ -36,8 +36,8 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Container);
 
-Container::Container(RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : Box(WTFMove(style), baseTypeFlags | ContainerFlag)
+Container::Container(std::optional<ElementAttributes> attributes, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+    : Box(attributes, WTFMove(style), baseTypeFlags | ContainerFlag)
 {
 }
 

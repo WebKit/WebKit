@@ -44,7 +44,7 @@ public:
     bool establishesInlineFormattingContext() const final;
 
 protected:
-    BlockContainer(RenderStyle&&, BaseTypeFlags = BlockContainerFlag);
+    BlockContainer(std::optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags = BlockContainerFlag);
 
 };
 

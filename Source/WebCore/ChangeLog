@@ -1,3 +1,41 @@
+2018-05-31  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Layout code needs to know the type of the Element associated with a Layout::Box
+        https://bugs.webkit.org/show_bug.cgi?id=186117
+
+        Reviewed by Antti Koivisto.
+
+        Since these attributes don't change during layout, we could just pass them in to Layout::Box instead
+        of keep querying the Element.
+
+        * layout/layouttree/LayoutBlockContainer.cpp:
+        (WebCore::Layout::BlockContainer::BlockContainer):
+        * layout/layouttree/LayoutBlockContainer.h:
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::Box):
+        (WebCore::Layout::Box::isPaddingApplicable const):
+        (WebCore::Layout::Box::isDocumentBox const): Deleted.
+        (WebCore::Layout::Box::isBodyBox const): Deleted.
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::isAnonymous const):
+        (WebCore::Layout::Box::isDocumentBox const):
+        (WebCore::Layout::Box::isBodyBox const):
+        (WebCore::Layout::Box::ElementAttributes::ElementAttributes):
+        (WebCore::Layout::Box::setPreviousSibling):
+        (WebCore::Layout::Box::setIsAnonymous): Deleted.
+        * layout/layouttree/LayoutContainer.cpp:
+        (WebCore::Layout::Container::Container):
+        * layout/layouttree/LayoutContainer.h:
+        * layout/layouttree/LayoutInlineBox.cpp:
+        (WebCore::Layout::InlineBox::InlineBox):
+        * layout/layouttree/LayoutInlineBox.h:
+        * layout/layouttree/LayoutInlineContainer.cpp:
+        (WebCore::Layout::InlineContainer::InlineContainer):
+        * layout/layouttree/LayoutInlineContainer.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutTree):
+        (WebCore::Layout::TreeBuilder::createSubTree):
+
 2018-05-31  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed iOS build fix after r232335.

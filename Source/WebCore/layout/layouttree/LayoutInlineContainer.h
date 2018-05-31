@@ -42,7 +42,7 @@ public:
     friend class TreeBuilder;
 
 protected:
-    InlineContainer(RenderStyle&&, BaseTypeFlags = InlineContainerFlag);
+    InlineContainer(std::optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags = InlineContainerFlag);
 };
 
 }

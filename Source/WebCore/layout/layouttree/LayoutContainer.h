@@ -56,7 +56,7 @@ public:
     const Vector<WeakPtr<Box>>& outOfFlowDescendants() { return m_outOfFlowDescendants; }
 
 protected:
-    Container(RenderStyle&&, BaseTypeFlags);
+    Container(std::optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags);
 
 private:
     void setFirstChild(Box&);
