@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,22 +42,21 @@ public:
     explicit ImageInputType(HTMLInputElement&);
 
 private:
-    const AtomicString& formControlType() const override;
-    bool isFormDataAppendable() const override;
-    bool appendFormData(DOMFormData&, bool) const override;
-    bool supportsValidation() const override;
-    RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) override;
-    void handleDOMActivateEvent(Event&) override;
-    void altAttributeChanged() override;
-    void srcAttributeChanged() override;
-    void attach() override;
-    bool shouldRespectAlignAttribute() override;
-    bool canBeSuccessfulSubmitButton() override;
-    bool isImageButton() const override;
-    bool isEnumeratable() override;
-    bool shouldRespectHeightAndWidthAttributes() override;
-    unsigned height() const override;
-    unsigned width() const override;
+    const AtomicString& formControlType() const final;
+    bool isFormDataAppendable() const final;
+    bool appendFormData(DOMFormData&, bool) const final;
+    bool supportsValidation() const final;
+    RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) final;
+    void handleDOMActivateEvent(Event&) final;
+    void attributeChanged(const QualifiedName&) final;
+    void attach() final;
+    bool shouldRespectAlignAttribute() final;
+    bool canBeSuccessfulSubmitButton() final;
+    bool isImageButton() const final;
+    bool isEnumeratable() final;
+    bool shouldRespectHeightAndWidthAttributes() final;
+    unsigned height() const final;
+    unsigned width() const final;
 
     IntPoint m_clickLocation; // Valid only during HTMLFormElement::prepareForSubmission().
 };

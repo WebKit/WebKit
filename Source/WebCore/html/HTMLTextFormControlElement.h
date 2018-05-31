@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -106,7 +106,7 @@ protected:
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
     void disabledStateChanged() override;
-    void readOnlyAttributeChanged() override;
+    void readOnlyStateChanged() override;
     virtual bool isInnerTextElementEditable() const;
     void updateInnerTextElementEditability();
 

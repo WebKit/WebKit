@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -95,9 +95,11 @@ bool BaseDateAndTimeInputType::isSteppable() const
     return true;
 }
 
-void BaseDateAndTimeInputType::minOrMaxAttributeChanged()
+void BaseDateAndTimeInputType::attributeChanged(const QualifiedName& name)
 {
-    element().invalidateStyleForSubtree();
+    if (name == maxAttr || name == minAttr)
+        element().invalidateStyleForSubtree();
+    InputType::attributeChanged(name);
 }
 
 Decimal BaseDateAndTimeInputType::parseToNumber(const String& source, const Decimal& defaultValue) const

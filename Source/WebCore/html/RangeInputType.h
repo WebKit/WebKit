@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -58,7 +59,7 @@ private:
     Decimal parseToNumber(const String&, const Decimal&) const final;
     String serialize(const Decimal&) const final;
     void accessKeyAction(bool sendMouseEvents) final;
-    void minOrMaxAttributeChanged() final;
+    void attributeChanged(const QualifiedName&) final;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior) final;
     String fallbackValue() const final;
     String sanitizeValue(const String& proposedValue) const final;
@@ -81,7 +82,7 @@ private:
     void handleTouchEvent(TouchEvent&) final;
 #endif
 
-    void disabledAttributeChanged() final;
+    void disabledStateChanged() final;
 
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS) && ENABLE(TOUCH_SLIDER)
     bool hasTouchEventHandler() const final;

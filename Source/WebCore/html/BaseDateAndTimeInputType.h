@@ -67,7 +67,7 @@ private:
     bool typeMismatch() const override;
     bool valueMissing(const String&) const override;
     Decimal defaultValueForStepUp() const override;
-    void minOrMaxAttributeChanged() override;
+    void attributeChanged(const QualifiedName&) override;
     bool isSteppable() const override;
     virtual String serializeWithMilliseconds(double) const;
     String localizeValue(const String&) const override;

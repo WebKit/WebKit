@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -55,13 +56,12 @@ protected:
     HTMLElement* capsLockIndicatorElement() const final;
     HTMLElement* autoFillButtonElement() const final;
 
-protected:
     virtual bool needsContainer() const;
     void createShadowSubtree() override;
     void destroyShadowSubtree() override;
-    void attributeChanged(const QualifiedName&) final;
-    void disabledAttributeChanged() final;
-    void readonlyAttributeChanged() final;
+    void attributeChanged(const QualifiedName&) override;
+    void disabledStateChanged() final;
+    void readOnlyStateChanged() final;
     bool supportsReadOnly() const final;
     void handleFocusEvent(Node* oldFocusedNode, FocusDirection) final;
     void handleBlurEvent() final;

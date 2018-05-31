@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -61,8 +62,7 @@ private:
     String badInputText() const final;
     bool supportsPlaceholder() const final;
     bool isNumberField() const final;
-    void minOrMaxAttributeChanged() final;
-    void stepAttributeChanged() final;
+    void attributeChanged(const QualifiedName&) final;
 };
 
 } // namespace WebCore

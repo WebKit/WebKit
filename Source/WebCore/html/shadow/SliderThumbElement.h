@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,6 @@
 namespace WebCore {
 
 class HTMLInputElement;
-class FloatPoint;
 class TouchEvent;
 
 class SliderThumbElement final : public HTMLDivElement {
@@ -55,30 +54,31 @@ public:
     void handleTouchEvent(TouchEvent&);
 #endif
 
-    void disabledAttributeChanged();
+    void hostDisabledStateChanged();
 
 private:
     SliderThumbElement(Document&);
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
-    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) override;
-    bool isDisabledFormControl() const override;
-    bool matchesReadWritePseudoClass() const override;
-    RefPtr<Element> focusDelegate() override;
+    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) final;
+    bool isDisabledFormControl() const final;
+    bool matchesReadWritePseudoClass() const final;
+    RefPtr<Element> focusDelegate() final;
+
 #if !PLATFORM(IOS)
-    void defaultEventHandler(Event&) override;
-    bool willRespondToMouseMoveEvents() override;
-    bool willRespondToMouseClickEvents() override;
+    void defaultEventHandler(Event&) final;
+    bool willRespondToMouseMoveEvents() final;
+    bool willRespondToMouseClickEvents() final;
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    void didAttachRenderers() override;
+    void didAttachRenderers() final;
 #endif
-    void willDetachRenderers() override;
+    void willDetachRenderers() final;
 
-    std::optional<ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) override;
-    const AtomicString& shadowPseudoId() const override;
+    std::optional<ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) final;
+    const AtomicString& shadowPseudoId() const final;
 
     void startDragging();
     void stopDragging();
@@ -98,14 +98,14 @@ private:
 #endif
 
     AtomicString m_shadowPseudoId;
-    bool m_inDragMode;
+    bool m_inDragMode { false };
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     // FIXME: Currently it is safe to use 0, but this may need to change
     // if touch identifiers change in the future and can be 0.
     static const unsigned NoIdentifier = 0;
-    unsigned m_exclusiveTouchIdentifier;
-    bool m_isRegisteredAsTouchEventListener;
+    unsigned m_exclusiveTouchIdentifier { NoIdentifier };
+    bool m_isRegisteredAsTouchEventListener { false };
 #endif
 };
 
@@ -123,7 +123,7 @@ public:
     void updateAppearance(const RenderStyle* parentStyle);
 
 private:
-    bool isSliderThumb() const override;
+    bool isSliderThumb() const final;
 };
 
 // --------------------------------
@@ -135,10 +135,10 @@ public:
 
 private:
     SliderContainerElement(Document&);
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    std::optional<ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) override;
-    const AtomicString& shadowPseudoId() const override;
-    bool isSliderContainerElement() const override { return true; }
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    std::optional<ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) final;
+    const AtomicString& shadowPseudoId() const final;
+    bool isSliderContainerElement() const final { return true; }
 
     AtomicString m_shadowPseudoId;
 };

@@ -234,11 +234,6 @@ public:
     virtual void addSearchResult();
     virtual void attach();
     virtual void detach();
-    virtual void minOrMaxAttributeChanged();
-    virtual void stepAttributeChanged();
-    virtual void altAttributeChanged();
-    virtual void srcAttributeChanged();
-    virtual void maxResultsAttributeChanged();
     virtual bool shouldRespectAlignAttribute();
     virtual FileList* files();
     virtual void setFiles(RefPtr<FileList>&&);
@@ -257,15 +252,13 @@ public:
     virtual bool supportsReadOnly() const;
     virtual void updateInnerTextValue();
     virtual void updatePlaceholderText();
-    virtual void attributeChanged(const QualifiedName&);
-    virtual void multipleAttributeChanged();
-    virtual void disabledAttributeChanged();
-    virtual void readonlyAttributeChanged();
-    virtual void requiredAttributeChanged();
+    virtual void attributeChanged(const QualifiedName&) { }
+    virtual void disabledStateChanged() { }
+    virtual void readOnlyStateChanged() { }
+    virtual void requiredStateChanged() { }
     virtual void capsLockStateMayHaveChanged();
     virtual void updateAutoFillButton();
     virtual String defaultToolTip() const;
-    virtual void valueAttributeChanged();
     virtual bool matchesIndeterminatePseudoClass() const;
     virtual bool shouldAppearIndeterminate() const;
     virtual bool supportsSelectionAPI() const;

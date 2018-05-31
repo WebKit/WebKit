@@ -595,29 +595,9 @@ void InputType::detach()
 {
 }
 
-void InputType::altAttributeChanged()
-{
-}
-
-void InputType::srcAttributeChanged()
-{
-}
-
-void InputType::maxResultsAttributeChanged()
-{
-}
-
 bool InputType::shouldRespectAlignAttribute()
 {
     return false;
-}
-
-void InputType::minOrMaxAttributeChanged()
-{
-}
-
-void InputType::stepAttributeChanged()
-{
 }
 
 bool InputType::canBeSuccessfulSubmitButton()
@@ -896,26 +876,6 @@ void InputType::updatePlaceholderText()
 {
 }
 
-void InputType::attributeChanged(const QualifiedName&)
-{
-}
-
-void InputType::multipleAttributeChanged()
-{
-}
-
-void InputType::disabledAttributeChanged()
-{
-}
-
-void InputType::readonlyAttributeChanged()
-{
-}
-
-void InputType::requiredAttributeChanged()
-{
-}
-
 void InputType::capsLockStateMayHaveChanged()
 {
 }
@@ -935,10 +895,6 @@ bool InputType::hasTouchEventHandler() const
     return false;
 }
 #endif
-
-void InputType::valueAttributeChanged()
-{
-}
 
 String InputType::defaultToolTip() const
 {

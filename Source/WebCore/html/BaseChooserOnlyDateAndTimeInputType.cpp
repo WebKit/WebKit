@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,10 +65,10 @@ void BaseChooserOnlyDateAndTimeInputType::createShadowSubtree()
     auto valueContainer = HTMLDivElement::create(element().document());
     valueContainer->setPseudo(valueContainerPseudo);
     element().userAgentShadowRoot()->appendChild(valueContainer);
-    updateAppearance();
+    updateInnerTextValue();
 }
 
-void BaseChooserOnlyDateAndTimeInputType::updateAppearance()
+void BaseChooserOnlyDateAndTimeInputType::updateInnerTextValue()
 {
     RefPtr<Node> node = element().userAgentShadowRoot()->firstChild();
     if (!is<HTMLElement>(node))
@@ -84,7 +85,7 @@ void BaseChooserOnlyDateAndTimeInputType::setValue(const String& value, bool val
 {
     BaseDateAndTimeInputType::setValue(value, valueChanged, eventBehavior);
     if (valueChanged)
-        updateAppearance();
+        updateInnerTextValue();
 }
 
 void BaseChooserOnlyDateAndTimeInputType::detach()
@@ -134,11 +135,15 @@ bool BaseChooserOnlyDateAndTimeInputType::isMouseFocusable() const
     return element().isTextFormControlFocusable();
 }
 
-void BaseChooserOnlyDateAndTimeInputType::valueAttributeChanged()
+void BaseChooserOnlyDateAndTimeInputType::attributeChanged(const QualifiedName& name)
 {
-    if (!element().hasDirtyValue())
-        updateAppearance();
+    if (name == valueAttr) {
+        if (!element().hasDirtyValue())
+            updateInnerTextValue();
+    }
+    BaseDateAndTimeInputType::attributeChanged(name);
 }
 
 }
+
 #endif

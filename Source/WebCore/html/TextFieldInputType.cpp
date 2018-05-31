@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -348,13 +348,14 @@ void TextFieldInputType::destroyShadowSubtree()
     m_container = nullptr;
 }
 
-void TextFieldInputType::attributeChanged(const QualifiedName& attributeName)
+void TextFieldInputType::attributeChanged(const QualifiedName& name)
 {
-    if (attributeName == valueAttr || attributeName == placeholderAttr)
+    if (name == valueAttr || name == placeholderAttr)
         updateInnerTextValue();
+    InputType::attributeChanged(name);
 }
 
-void TextFieldInputType::disabledAttributeChanged()
+void TextFieldInputType::disabledStateChanged()
 {
     if (m_innerSpinButton)
         m_innerSpinButton->releaseCapture();
@@ -362,7 +363,7 @@ void TextFieldInputType::disabledAttributeChanged()
     updateAutoFillButton();
 }
 
-void TextFieldInputType::readonlyAttributeChanged()
+void TextFieldInputType::readOnlyStateChanged()
 {
     if (m_innerSpinButton)
         m_innerSpinButton->releaseCapture();

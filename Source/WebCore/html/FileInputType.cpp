@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -281,7 +281,7 @@ void FileInputType::createShadowSubtree()
     element().userAgentShadowRoot()->appendChild(element().multiple() ? UploadButtonElement::createForMultiple(element().document()): UploadButtonElement::create(element().document()));
 }
 
-void FileInputType::disabledAttributeChanged()
+void FileInputType::disabledStateChanged()
 {
     ASSERT(element().shadowRoot());
 
@@ -293,16 +293,16 @@ void FileInputType::disabledAttributeChanged()
         button->setBooleanAttribute(disabledAttr, element().isDisabledFormControl());
 }
 
-void FileInputType::multipleAttributeChanged()
+void FileInputType::attributeChanged(const QualifiedName& name)
 {
-    ASSERT(element().shadowRoot());
-
-    auto root = element().userAgentShadowRoot();
-    if (!root)
-        return;
-
-    if (auto button = makeRefPtr(childrenOfType<UploadButtonElement>(*root).first()))
-        button->setValue(element().multiple() ? fileButtonChooseMultipleFilesLabel() : fileButtonChooseFileLabel());
+    if (name == multipleAttr) {
+        ASSERT(element().shadowRoot());
+        if (auto root = element().userAgentShadowRoot()) {
+            if (auto button = makeRefPtr(childrenOfType<UploadButtonElement>(*root).first()))
+                button->setValue(element().multiple() ? fileButtonChooseMultipleFilesLabel() : fileButtonChooseFileLabel());
+        }
+    }
+    BaseClickableWithKeyInputType::attributeChanged(name);
 }
 
 void FileInputType::requestIcon(const Vector<String>& paths)

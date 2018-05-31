@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -186,9 +186,9 @@ bool RangeInputType::hasTouchEventHandler() const
 #endif
 #endif // ENABLE(TOUCH_EVENTS)
 
-void RangeInputType::disabledAttributeChanged()
+void RangeInputType::disabledStateChanged()
 {
-    typedSliderThumbElement().disabledAttributeChanged();
+    typedSliderThumbElement().hostDisabledStateChanged();
 }
 
 void RangeInputType::handleKeydownEvent(KeyboardEvent& event)
@@ -317,15 +317,18 @@ void RangeInputType::accessKeyAction(bool sendMouseEvents)
     element().dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
-void RangeInputType::minOrMaxAttributeChanged()
+void RangeInputType::attributeChanged(const QualifiedName& name)
 {
-    InputType::minOrMaxAttributeChanged();
+    // FIXME: Don't we need to do this work for precisionAttr too?
+    if (name == maxAttr || name == minAttr) {
+        // Sanitize the value.
+        auto& element = this->element();
+        if (element.hasDirtyValue())
+            element.setValue(element.value());
 
-    // Sanitize the value.
-    if (element().hasDirtyValue())
-        element().setValue(element().value());
-
-    typedSliderThumbElement().setPositionFromValue();
+        typedSliderThumbElement().setPositionFromValue();
+    }
+    InputType::attributeChanged(name);
 }
 
 void RangeInputType::setValue(const String& value, bool valueChanged, TextFieldEventBehavior eventBehavior)

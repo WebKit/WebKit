@@ -1,3 +1,122 @@
+2018-05-28  Darin Adler  <darin@apple.com>
+
+        Straighten out HTMLInputElement attribute handling
+        https://bugs.webkit.org/show_bug.cgi?id=186043
+
+        Reviewed by Daniel Bates.
+
+        * dom/RadioButtonGroups.cpp:
+        (WebCore::RadioButtonGroup::requiredStateChanged): Renamed from requiredAttributeChanged,
+        and changed to take a reference.
+        (WebCore::RadioButtonGroups::requiredStateChanged): Ditto.
+        * dom/RadioButtonGroups.h: Updated for changes above.
+
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::createShadowSubtree): Call
+        updateInnerTextValue by its new name.
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::updateInnerTextValue): Renamed
+        from updateAppearance.
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::setValue): Call
+        updateInnerTextValue by its new name.
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::attributeChanged): Override this
+        instead of valueAttributeChanged.
+        * html/BaseChooserOnlyDateAndTimeInputType.h: Tighten up inheritance a bit.
+        Also use final a bit more and update for changes above.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::attributeChanged): Replaced
+        minOrMaxAttributeChanged with this override, checking for the attribute names.
+        * html/BaseDateAndTimeInputType.h: Updated for changes above.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::disabledStateChanged): Renamed from disabledAttributeChanged.
+        (WebCore::FileInputType::attributeChanged): Replaced
+        multipleAttributeChanged with this override, checking for the attribute names.
+        * html/FileInputType.h: Updated for changes above.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::parseAttribute): Updated function names to say
+        "state changed" rather than "attribute changed" if they are called only when the
+        computed value is changed, not the raw attribute value.
+        (WebCore::HTMLFormControlElement::readOnlyStateChanged): Updated name.
+        (WebCore::HTMLFormControlElement::requiredStateChanged): Ditto.
+        * html/HTMLFormControlElement.h: Updated for changes above.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute): Removed the code to call lots of specific
+        attribute changed functions that have now been deleted. Also removed empty code for a
+        couple of attributes.
+        (WebCore::HTMLInputElement::disabledStateChanged): Added. Forward call to input type.
+        (WebCore::HTMLInputElement::readOnlyStateChanged): Ditto.
+        (WebCore::HTMLInputElement::requiredStateChanged): Renamed from requiredAttributeChanged.
+        * html/HTMLInputElement.h: Updated for changes above.
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::readOnlyStateChanged): Renamed from
+        readOnlyAttributeChanged. Also fixed incorrect call to base class. This may have
+        fixed a bug: With some work we could probably create a test case to demonstrate that.
+        * html/HTMLTextFormControlElement.h: Updated for changes above.
+
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::attributeChanged): Replaced
+        altAttributeChanged and srcAttributeChanged with this override, checking for the
+        attribute names.
+        * html/ImageInputType.h: Updated for changes above.
+
+        * html/InputType.cpp:
+        (WebCore::InputType::altAttributeChanged): Deleted.
+        (WebCore::InputType::srcAttributeChanged): Deleted.
+        (WebCore::InputType::maxResultsAttributeChanged): Deleted.
+        (WebCore::InputType::minOrMaxAttributeChanged): Deleted.
+        (WebCore::InputType::stepAttributeChanged): Deleted.
+        (WebCore::InputType::valueAttributeChanged): Deleted.
+        (WebCore::InputType::attributeChanged): Moved to header as an inline so derived
+        classes can call through to the base class with the empty function inlined.
+        (WebCore::InputType::multipleAttributeChanged): Deleted.
+        (WebCore::InputType::disabledAttributeChanged): Moved to header as an inline.
+        (WebCore::InputType::readonlyAttributeChanged): Ditto.
+        (WebCore::InputType::requiredAttributeChanged): Ditto.
+        * html/InputType.h: Updated for changes above.
+
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::attributeChanged): Replaced
+        minOrMaxAttributeChanged and stepAttributeChanged with this override, checking
+        for the attribute names.
+        * html/NumberInputType.h: Updated for changes above.
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::disabledStateChanged): Renamed from
+        disabledAttributeChanged.
+        (WebCore::RangeInputType::attributeChanged): Replaced
+        minOrMaxAttributeChanged with this override, checking for the attribute names.
+        * html/RangeInputType.h: Updated for changes above.
+
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::SearchInputType): Removed unneeded initialization of
+        RefPtr data members to nullptr.
+        (WebCore::updateResultButtonPseudoType): Removed unneeded if statement; the two
+        cases above cover 0, and less than 0, so there is no need to check for greater
+        than 0 for the third case.
+        (WebCore::SearchInputType::attributeChanged): Replaced
+        maxResultsAttributeChanged with this override, checking for the attribute name.
+        * html/SearchInputType.h: Updated for changes above and marked more
+        member functions final.
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::attributeChanged): Added a call through to the
+        base class to match the style of other overrides of this function.
+        (WebCore::TextFieldInputType::disabledStateChanged): Renamed from disabledAttributeChanged.
+        (WebCore::TextFieldInputType::readOnlyStateChanged): Renamed from readonlyAttributeChanged.
+        * html/TextFieldInputType.h: Updated for changes above. Also made attributeChanged no
+        longer be marked final since derived classes now override it.
+
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::SliderThumbElement): Moved some data member initialization
+        from this constructor to the class definition.
+        (WebCore::SliderThumbElement::hostDisabledStateChanged): Renamed from disabledAttributeChanged.
+        * html/shadow/SliderThumbElement.h: Updated for changes above and marked more
+        member functions final.
+
 2018-05-30  Nan Wang  <n_wang@apple.com>
 
         AX: VoiceOver on macOS does not announce fieldset description from aria-describedby when focussing inputs

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -159,12 +159,12 @@ void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const Ato
         bool wasReadOnly = m_isReadOnly;
         m_isReadOnly = !value.isNull();
         if (wasReadOnly != m_isReadOnly)
-            readOnlyAttributeChanged();
+            readOnlyStateChanged();
     } else if (name == requiredAttr) {
         bool wasRequired = m_isRequired;
         m_isRequired = !value.isNull();
         if (wasRequired != m_isRequired)
-            requiredAttributeChanged();
+            requiredStateChanged();
     } else
         HTMLElement::parseAttribute(name, value);
 }
@@ -182,13 +182,13 @@ void HTMLFormControlElement::disabledStateChanged()
         renderer()->theme().stateChanged(*renderer(), ControlStates::EnabledState);
 }
 
-void HTMLFormControlElement::readOnlyAttributeChanged()
+void HTMLFormControlElement::readOnlyStateChanged()
 {
     setNeedsWillValidateCheck();
     invalidateStyleForSubtree();
 }
 
-void HTMLFormControlElement::requiredAttributeChanged()
+void HTMLFormControlElement::requiredStateChanged()
 {
     updateValidity();
     // Style recalculation is needed because style selectors may include

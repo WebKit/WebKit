@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -207,11 +207,6 @@ void RenderSliderContainer::layout()
 
 SliderThumbElement::SliderThumbElement(Document& document)
     : HTMLDivElement(HTMLNames::divTag, document)
-    , m_inDragMode(false)
-#if ENABLE(IOS_TOUCH_EVENTS)
-    , m_exclusiveTouchIdentifier(NoIdentifier)
-    , m_isRegisteredAsTouchEventListener(false)
-#endif
 {
     setHasCustomStyleResolveCallbacks();
 }
@@ -384,6 +379,7 @@ void SliderThumbElement::defaultEventHandler(Event& event)
 #endif
 
 #if !PLATFORM(IOS)
+
 bool SliderThumbElement::willRespondToMouseMoveEvents()
 {
     const auto input = hostInput();
@@ -401,6 +397,7 @@ bool SliderThumbElement::willRespondToMouseClickEvents()
 
     return HTMLDivElement::willRespondToMouseClickEvents();
 }
+
 #endif // !PLATFORM(IOS)
 
 void SliderThumbElement::willDetachRenderers()
@@ -415,6 +412,7 @@ void SliderThumbElement::willDetachRenderers()
 }
 
 #if ENABLE(IOS_TOUCH_EVENTS)
+
 unsigned SliderThumbElement::exclusiveTouchIdentifier() const
 {
     return m_exclusiveTouchIdentifier;
@@ -569,9 +567,10 @@ void SliderThumbElement::unregisterForTouchEvents()
     document().removeTouchEventHandler(*this);
     m_isRegisteredAsTouchEventListener = false;
 }
+
 #endif // ENABLE(IOS_TOUCH_EVENTS)
 
-void SliderThumbElement::disabledAttributeChanged()
+void SliderThumbElement::hostDisabledStateChanged()
 {
     if (isDisabledFormControl())
         stopDragging();
