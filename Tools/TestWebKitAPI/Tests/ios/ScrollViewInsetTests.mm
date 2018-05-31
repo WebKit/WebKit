@@ -76,23 +76,32 @@ namespace TestWebKitAPI {
 static const CGFloat viewHeight = 500;
 static NSString *veryTallDocumentMarkup = @"<meta name='viewport' content='width=device-width, initial-scale=1'><body style='width: 100%; height: 5000px'>";
 
+static void waitUntilInnerHeightIs(TestWKWebView *webView, CGFloat expectedValue)
+{
+    int tries = 0;
+    do {
+        Util::sleep(0.1);
+    } while ([[webView objectByEvaluatingJavaScript:@"innerHeight"] floatValue] != expectedValue && ++tries <= 100);
+}
+
 TEST(ScrollViewInsetTests, InnerHeightWithLargeTopContentInset)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, viewHeight)]);
     [webView scrollView].contentInset = UIEdgeInsetsMake(400, 0, 0, 0);
     [webView synchronouslyLoadHTMLString:veryTallDocumentMarkup];
+
     [webView stringByEvaluatingJavaScript:@"scrollTo(0, 10)"];
-    [webView waitForNextPresentationUpdate];
+    waitUntilInnerHeightIs(webView.get(), viewHeight);
     EXPECT_EQ(viewHeight, [[webView objectByEvaluatingJavaScript:@"innerHeight"] floatValue]);
     EXPECT_EQ(10, [[webView objectByEvaluatingJavaScript:@"pageYOffset"] floatValue]);
 
     [webView stringByEvaluatingJavaScript:@"scrollBy(0, -10)"];
-    [webView waitForNextPresentationUpdate];
+    waitUntilInnerHeightIs(webView.get(), viewHeight);
     EXPECT_EQ(viewHeight, [[webView objectByEvaluatingJavaScript:@"innerHeight"] floatValue]);
     EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"pageYOffset"] floatValue]);
 
     [webView stringByEvaluatingJavaScript:@"scrollBy(0, 20)"];
-    [webView waitForNextPresentationUpdate];
+    waitUntilInnerHeightIs(webView.get(), viewHeight);
     EXPECT_EQ(viewHeight, [[webView objectByEvaluatingJavaScript:@"innerHeight"] floatValue]);
     EXPECT_EQ(20, [[webView objectByEvaluatingJavaScript:@"pageYOffset"] floatValue]);
 }

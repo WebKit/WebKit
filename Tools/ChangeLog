@@ -1,3 +1,19 @@
+2018-05-31  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] API test ScrollViewInsetTests.InnerHeightWithLargeTopContentInset is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=184893
+        <rdar://problem/39747271>
+
+        Reviewed by Wenson Hsieh.
+
+        Update test to wait until the view is the expected height instead of
+        calling waitForNextPresentationUpdate once and expect the view to
+        have the right height. This fixes the flakiness.
+
+        * TestWebKitAPI/Tests/ios/ScrollViewInsetTests.mm:
+        (TestWebKitAPI::waitUntilInnerHeightIs):
+        (TestWebKitAPI::TEST):
+
 2018-05-31  Leo Balter  <leonardo.balter@gmail.com>
 
         test262-runner should run in verbose mode in automation
