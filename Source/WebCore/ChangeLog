@@ -1,3 +1,16 @@
+2018-05-31  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add quirks mode setter/getting to LayoutContext
+        https://bugs.webkit.org/show_bug.cgi?id=186122
+
+        Reviewed by Antti Koivisto.
+
+        * layout/LayoutContext.h:
+        (WebCore::Layout::LayoutContext::setInQuirksMode):
+        (WebCore::Layout::LayoutContext::inQuirksMode const):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
 2018-05-30  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
 
         [GTK] Hardcoded text color in input fields

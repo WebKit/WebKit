@@ -33,12 +33,12 @@
 namespace WebCore {
 namespace Layout {
 
-static bool isStretchedToViewport(const Box& layoutBox)
+static bool isStretchedToViewport(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isInFlow());
     // In quirks mode, body and html stretch to the viewport.
-    // if (!layoutBox.document().inQuirksMode())
-    //    return false;
+    if (!layoutContext.inQuirksMode())
+        return false;
 
     if (!layoutBox.isDocumentBox() || !layoutBox.isBodyBox())
         return false;
@@ -107,7 +107,7 @@ LayoutUnit BlockFormattingContext::Geometry::inFlowNonReplacedHeight(LayoutConte
     };
 
     auto computedHeight = compute();
-    if (!isStretchedToViewport(layoutBox))
+    if (!isStretchedToViewport(layoutContext, layoutBox))
         return computedHeight;
     auto initialContainingBlockHeight = layoutContext.displayBoxForLayoutBox(initialContainingBlock(layoutBox))->contentBox().height();
     return std::max(computedHeight, initialContainingBlockHeight);
@@ -147,7 +147,7 @@ LayoutUnit BlockFormattingContext::Geometry::inFlowNonReplacedWidth(LayoutContex
     };
 
     auto computedWidth = compute();
-    if (!isStretchedToViewport(layoutBox))
+    if (!isStretchedToViewport(layoutContext, layoutBox))
         return computedWidth;
     auto initialContainingBlockWidth = layoutContext.displayBoxForLayoutBox(initialContainingBlock(layoutBox))->contentBox().width();
     return std::max(computedWidth, initialContainingBlockWidth);

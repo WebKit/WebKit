@@ -63,6 +63,7 @@ public:
     void initializeRoot(const Container&, const LayoutSize&);
     void updateLayout();
     void styleChanged(const Box&, StyleDiff);
+    void setInQuirksMode(bool inQuirksMode) { m_inQuirksMode = inQuirksMode; }
 
     enum class UpdateType {
         Overflow = 1 << 0,
@@ -80,6 +81,7 @@ public:
     Display::Box& createDisplayBox(const Box&);
     Display::Box* displayBoxForLayoutBox(const Box& layoutBox) const { return m_layoutToDisplayBox.get(&layoutBox); }
 
+    bool inQuirksMode() const { return m_inQuirksMode; }
     // For testing purposes only
     void verifyAndOutputMismatchingLayoutTree(const RenderView&) const;
 
@@ -88,6 +90,7 @@ private:
     HashSet<const Container*> m_formattingContextRootListForLayout;
     HashMap<const Box*, std::unique_ptr<FormattingState>> m_formattingStates;
     HashMap<const Box*, std::unique_ptr<Display::Box>> m_layoutToDisplayBox;
+    bool m_inQuirksMode { false };
 };
 
 }

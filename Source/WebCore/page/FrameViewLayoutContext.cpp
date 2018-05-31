@@ -57,6 +57,7 @@ static void layoutUsingFormattingContext(const RenderView& renderView)
     auto initialContainingBlock = Layout::TreeBuilder::createLayoutTree(renderView);
     auto layoutContext = std::make_unique<Layout::LayoutContext>();
     layoutContext->initializeRoot(*initialContainingBlock, renderView.size());
+    layoutContext->setInQuirksMode(renderView.document().inQuirksMode());
     layoutContext->updateLayout();
     layoutContext->verifyAndOutputMismatchingLayoutTree(renderView);
 } 
