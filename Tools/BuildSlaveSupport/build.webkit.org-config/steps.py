@@ -367,7 +367,7 @@ class RunTest262Tests(TestWithFailureCount):
     description = ["test262-tests running"]
     descriptionDone = ["test262-tests"]
     failedTestsFormatString = "%d Test262 test%s failed"
-    command = ["perl", "./Tools/Scripts/test262-runner", WithProperties("--%(configuration)s")]
+    command = ["perl", "./Tools/Scripts/test262-runner", "--verbose", WithProperties("--%(configuration)s")]
 
     def start(self):
         appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))

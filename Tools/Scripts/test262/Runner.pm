@@ -683,7 +683,7 @@ sub processResult {
         if ($verbose) {
             my $featuresList = '';
             $featuresList = "\nFeatures: " . join(', ', @{ $data->{features} }) if $data->{features};
-            $suffixMsg = "$result$featuresList\n\n";
+            $suffixMsg = "$result$featuresList\n";
         }
 
         print "$newFail$failMsg$suffixMsg";
@@ -693,11 +693,15 @@ sub processResult {
     } elsif ($scenario ne 'skip' && !$currentfailure) {
         if ($expectedfailure) {
             print "NEW PASS $file ($scenario)\n";
-            print "\n" if $verbose;
+        } elsif ($verbose) {
+            print "PASS $file ($scenario)\n";
         }
 
         $resultdata{result} = 'PASS';
     } else {
+        if ($verbose) {
+            print "SKIP $file\n";
+        }
         $resultdata{result} = 'SKIP';
     }
 
