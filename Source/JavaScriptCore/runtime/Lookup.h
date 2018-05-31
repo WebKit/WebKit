@@ -222,7 +222,7 @@ inline BuiltinGenerator HashTableValue::builtinAccessorSetterGenerator() const
 
 inline bool getStaticPropertySlotFromTable(VM& vm, const ClassInfo* classInfo, const HashTable& table, JSObject* thisObject, PropertyName propertyName, PropertySlot& slot)
 {
-    if (thisObject->staticPropertiesReified())
+    if (thisObject->staticPropertiesReified(vm))
         return false;
 
     auto* entry = table.entry(propertyName);
@@ -257,8 +257,8 @@ inline bool replaceStaticPropertySlot(VM& vm, JSObject* thisObject, PropertyName
     if (!thisObject->putDirect(vm, propertyName, value))
         return false;
 
-    if (!thisObject->staticPropertiesReified())
-        thisObject->JSObject::setStructure(vm, Structure::attributeChangeTransition(vm, thisObject->structure(), propertyName, 0));
+    if (!thisObject->staticPropertiesReified(vm))
+        thisObject->JSObject::setStructure(vm, Structure::attributeChangeTransition(vm, thisObject->structure(vm), propertyName, 0));
 
     return true;
 }
@@ -325,19 +325,19 @@ inline void reifyStaticProperty(VM& vm, const ClassInfo* classInfo, const Proper
         if (value.attributes() & PropertyAttribute::Accessor)
             reifyStaticAccessor(vm, value, thisObj, propertyName);
         else
-            thisObj.putDirectBuiltinFunction(vm, thisObj.globalObject(), propertyName, value.builtinGenerator()(vm), attributesForStructure(value.attributes()));
+            thisObj.putDirectBuiltinFunction(vm, thisObj.globalObject(vm), propertyName, value.builtinGenerator()(vm), attributesForStructure(value.attributes()));
         return;
     }
 
     if (value.attributes() & PropertyAttribute::Function) {
         if (value.attributes() & PropertyAttribute::DOMJITFunction) {
             thisObj.putDirectNativeFunction(
-                vm, thisObj.globalObject(), propertyName, value.functionLength(),
+                vm, thisObj.globalObject(vm), propertyName, value.functionLength(),
                 value.function(), value.intrinsic(), value.signature(), attributesForStructure(value.attributes()));
             return;
         }
         thisObj.putDirectNativeFunction(
-            vm, thisObj.globalObject(), propertyName, value.functionLength(),
+            vm, thisObj.globalObject(vm), propertyName, value.functionLength(),
             value.function(), value.intrinsic(), attributesForStructure(value.attributes()));
         return;
     }

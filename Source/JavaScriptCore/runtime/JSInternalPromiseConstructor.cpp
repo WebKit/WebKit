@@ -59,8 +59,8 @@ Structure* JSInternalPromiseConstructor::createStructure(VM& vm, JSGlobalObject*
 
 static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)
 {
-    JSGlobalObject* globalObject = exec->jsCallee()->globalObject();
     VM& vm = exec->vm();
+    JSGlobalObject* globalObject = exec->jsCallee()->globalObject(vm);
     JSInternalPromise* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
     promise->initialize(exec, globalObject, exec->argument(0));
     return JSValue::encode(promise);

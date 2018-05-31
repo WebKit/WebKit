@@ -1662,7 +1662,7 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentReceiveBroadcast(ExecState* exec
 
     JSValue callback = exec->argument(0);
     CallData callData;
-    CallType callType = getCallData(callback, callData);
+    CallType callType = getCallData(vm, callback, callData);
     if (callType == CallType::None)
         return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("Expected callback"))));
     
@@ -1932,7 +1932,7 @@ EncodedJSValue JSC_HOST_CALL functionHasCustomProperties(ExecState* exec)
 {
     JSValue value = exec->argument(0);
     if (value.isObject())
-        return JSValue::encode(jsBoolean(asObject(value)->hasCustomProperties()));
+        return JSValue::encode(jsBoolean(asObject(value)->hasCustomProperties(exec->vm())));
     return JSValue::encode(jsBoolean(false));
 }
 

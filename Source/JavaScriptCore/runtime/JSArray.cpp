@@ -861,7 +861,7 @@ bool JSArray::shiftCountWithArrayStorage(VM& vm, unsigned startIndex, unsigned c
         // Adjust the Butterfly and the index bias. We only need to do this here because we're changing
         // the start of the Butterfly, which needs to point at the first indexed property in the used
         // portion of the vector.
-        Butterfly* butterfly = this->butterfly()->shift(structure(), count);
+        Butterfly* butterfly = this->butterfly()->shift(structure(vm), count);
         storage = butterfly->arrayStorage();
         storage->m_indexBias += count;
 
@@ -1031,7 +1031,7 @@ bool JSArray::unshiftCountWithArrayStorage(ExecState* exec, unsigned startIndex,
     auto locker = holdLock(cellLock());
     
     if (moveFront && storage->m_indexBias >= count) {
-        Butterfly* newButterfly = storage->butterfly()->unshift(structure(), count);
+        Butterfly* newButterfly = storage->butterfly()->unshift(structure(vm), count);
         storage = newButterfly->arrayStorage();
         storage->m_indexBias -= count;
         storage->setVectorLength(vectorLength + count);
@@ -1335,7 +1335,8 @@ bool JSArray::isIteratorProtocolFastAndNonObservable()
     if (!globalObject->isArrayPrototypeIteratorProtocolFastAndNonObservable())
         return false;
 
-    Structure* structure = this->structure();
+    VM& vm = globalObject->vm();
+    Structure* structure = this->structure(vm);
     // This is the fast case. Many arrays will be an original array.
     if (globalObject->isOriginalArrayStructure(structure))
         return true;
@@ -1343,7 +1344,6 @@ bool JSArray::isIteratorProtocolFastAndNonObservable()
     if (structure->mayInterceptIndexedAccesses())
         return false;
 
-    VM& vm = globalObject->vm();
     if (getPrototypeDirect(vm) != globalObject->arrayPrototype())
         return false;
 

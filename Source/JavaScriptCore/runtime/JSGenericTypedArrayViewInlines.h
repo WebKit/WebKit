@@ -451,7 +451,7 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex(
     }
 
     if (propertyName > MAX_ARRAY_INDEX) {
-        return thisObject->methodTable()->getOwnPropertySlot(
+        return thisObject->methodTable(exec->vm())->getOwnPropertySlot(
             thisObject, exec, Identifier::from(exec, propertyName), slot);
     }
     
@@ -470,7 +470,7 @@ bool JSGenericTypedArrayView<Adaptor>::putByIndex(
 
     if (propertyName > MAX_ARRAY_INDEX) {
         PutPropertySlot slot(JSValue(thisObject), shouldThrow);
-        return thisObject->methodTable()->put(thisObject, exec, Identifier::from(exec, propertyName), value, slot);
+        return thisObject->methodTable(exec->vm())->put(thisObject, exec, Identifier::from(exec, propertyName), value, slot);
     }
     
     return thisObject->setIndex(exec, propertyName, value);
@@ -480,7 +480,7 @@ template<typename Adaptor>
 bool JSGenericTypedArrayView<Adaptor>::deletePropertyByIndex(
     JSCell* cell, ExecState* exec, unsigned propertyName)
 {
-    return cell->methodTable()->deleteProperty(cell, exec, Identifier::from(exec, propertyName));
+    return cell->methodTable(exec->vm())->deleteProperty(cell, exec, Identifier::from(exec, propertyName));
 }
 
 template<typename Adaptor>
@@ -570,10 +570,10 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBuf
     VM& vm = *heap->vm();
     DeferGCForAWhile deferGC(*heap);
     
-    RELEASE_ASSERT(!thisObject->hasIndexingHeader());
+    RELEASE_ASSERT(!thisObject->hasIndexingHeader(vm));
     thisObject->setButterfly(vm, Butterfly::createOrGrowArrayRight(
-        thisObject->butterfly(), vm, thisObject, thisObject->structure(),
-        thisObject->structure()->outOfLineCapacity(), false, 0, 0));
+        thisObject->butterfly(), vm, thisObject, thisObject->structure(vm),
+        thisObject->structure(vm)->outOfLineCapacity(), false, 0, 0));
 
     RefPtr<ArrayBuffer> buffer;
     

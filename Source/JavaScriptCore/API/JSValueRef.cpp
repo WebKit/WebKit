@@ -265,7 +265,7 @@ bool JSValueIsInstanceOfConstructor(JSContextRef ctx, JSValueRef value, JSObject
     JSValue jsValue = toJS(exec, value);
 
     JSObject* jsConstructor = toJS(constructor);
-    if (!jsConstructor->structure()->typeInfo().implementsHasInstance())
+    if (!jsConstructor->structure(vm)->typeInfo().implementsHasInstance())
         return false;
     bool result = jsConstructor->hasInstance(exec, jsValue); // false if an exception is thrown
     handleExceptionIfNeeded(scope, exec, exception);

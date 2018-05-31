@@ -510,6 +510,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
     if (UNLIKELY(exception))
         return exception.value();
 
+    JSGlobalObject* globalObject = m_instance->globalObject(vm);
     forEachElement([&] (const Wasm::Element& element, uint32_t tableIndex) {
         for (uint32_t i = 0; i < element.functionIndices.size(); ++i) {
             // FIXME: This essentially means we're exporting an import.
@@ -532,7 +533,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
                 }
 
                 table->setFunction(vm, tableIndex,
-                    WebAssemblyWrapperFunction::create(vm, m_instance->globalObject(), functionImport, functionIndex, m_instance.get(), signatureIndex));
+                    WebAssemblyWrapperFunction::create(vm, globalObject, functionImport, functionIndex, m_instance.get(), signatureIndex));
                 ++tableIndex;
                 continue;
             }
@@ -545,7 +546,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
             // Does (new Instance(...)).exports.foo === table.get(0)?
             // https://bugs.webkit.org/show_bug.cgi?id=165825
             WebAssemblyFunction* function = WebAssemblyFunction::create(
-                vm, m_instance->globalObject(), signature.argumentCount(), String(), m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
+                vm, globalObject, signature.argumentCount(), String(), m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
 
             table->setFunction(vm, tableIndex, function);
             ++tableIndex;
@@ -566,7 +567,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
 
     if (JSObject* startFunction = m_startFunction.get()) {
         CallData callData;
-        CallType callType = JSC::getCallData(startFunction, callData);
+        CallType callType = JSC::getCallData(vm, startFunction, callData);
         call(exec, startFunction, callType, callData, jsUndefined(), *vm.emptyList);
         RETURN_IF_EXCEPTION(scope, { });
     }

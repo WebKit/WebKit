@@ -173,7 +173,8 @@ void Debugger::detach(JSGlobalObject* globalObject, ReasonForDetach reason)
     // stack, since we won't get further debugger callbacks to do so. Also, resume execution,
     // since there's no point in staying paused once a window closes.
     // We know there is an entry scope, otherwise, m_currentCallFrame would be null.
-    if (m_isPaused && m_currentCallFrame && globalObject->vm().entryScope->globalObject() == globalObject) {
+    VM& vm = globalObject->vm();
+    if (m_isPaused && m_currentCallFrame && vm.entryScope->globalObject() == globalObject) {
         m_currentCallFrame = nullptr;
         m_pauseOnCallFrame = nullptr;
         continueProgram();

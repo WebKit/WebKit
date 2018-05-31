@@ -650,7 +650,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     for (const ObjectPropertyCondition& condition : m_conditionSet) {
         RELEASE_ASSERT(!m_polyProtoAccessChain);
 
-        Structure* structure = condition.object()->structure();
+        Structure* structure = condition.object()->structure(vm);
 
         if (condition.isWatchableAssumingImpurePropertyWatchpoint()) {
             structure->addTransitionWatchpoint(state.addWatchpoint(condition));
@@ -710,7 +710,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             if (!hasAlternateBase())
                 currStructure = structure();
             else
-                currStructure = alternateBase()->structure();
+                currStructure = alternateBase()->structure(vm);
             currStructure->startWatchingPropertyForReplacements(vm, offset());
         }
 
@@ -1239,7 +1239,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         if (!hasAlternateBase())
             currStructure = structure();
         else
-            currStructure = alternateBase()->structure();
+            currStructure = alternateBase()->structure(vm);
         currStructure->startWatchingPropertyForReplacements(vm, offset());
         
         this->as<IntrinsicGetterAccessCase>().emitIntrinsicGetter(state);

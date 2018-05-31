@@ -150,7 +150,7 @@ JSC::JSObject* InjectedScriptManager::createInjectedScript(const String& source,
         return nullptr;
 
     CallData callData;
-    CallType callType = getCallData(functionValue, callData);
+    CallType callType = getCallData(vm, functionValue, callData);
     if (callType == CallType::None)
         return nullptr;
 

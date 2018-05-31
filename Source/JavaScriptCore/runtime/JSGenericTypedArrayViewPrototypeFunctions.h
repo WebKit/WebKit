@@ -452,7 +452,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSlice(VM& vm, ExecSta
     ASSERT(!args.hasOverflowed());
 
     JSArrayBufferView* result = speciesConstruct(exec, thisObject, args, [&]() {
-        Structure* structure = callee->globalObject()->typedArrayStructure(ViewClass::TypedArrayStorageType);
+        Structure* structure = callee->globalObject(vm)->typedArrayStructure(ViewClass::TypedArrayStorageType);
         return ViewClass::createUninitialized(exec, structure, length);
     });
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -548,10 +548,10 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewPrivateFuncSubarrayCreate(VM&v
 
     unsigned newByteOffset = thisObject->byteOffset() + offset * ViewClass::elementSize;
 
-    JSObject* defaultConstructor = callee->globalObject()->typedArrayConstructor(ViewClass::TypedArrayStorageType);
+    JSObject* defaultConstructor = callee->globalObject(vm)->typedArrayConstructor(ViewClass::TypedArrayStorageType);
     JSValue species = exec->uncheckedArgument(2);
     if (species == defaultConstructor) {
-        Structure* structure = callee->globalObject()->typedArrayStructure(ViewClass::TypedArrayStorageType);
+        Structure* structure = callee->globalObject(vm)->typedArrayStructure(ViewClass::TypedArrayStorageType);
 
         scope.release();
         return JSValue::encode(ViewClass::create(
@@ -561,7 +561,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewPrivateFuncSubarrayCreate(VM&v
     }
 
     MarkedArgumentBuffer args;
-    args.append(vm.m_typedArrayController->toJS(exec, thisObject->globalObject(), arrayBuffer.get()));
+    args.append(vm.m_typedArrayController->toJS(exec, thisObject->globalObject(vm), arrayBuffer.get()));
     args.append(jsNumber(newByteOffset));
     args.append(jsNumber(length));
     ASSERT(!args.hasOverflowed());

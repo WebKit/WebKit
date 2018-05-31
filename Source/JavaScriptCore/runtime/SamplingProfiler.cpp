@@ -504,7 +504,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
                 FrameType result = FrameType::Unknown;
                 CallData callData;
                 CallType callType;
-                callType = getCallData(calleeCell, callData);
+                callType = getCallData(m_vm, calleeCell, callData);
                 if (callType == CallType::Host)
                     result = FrameType::Host;
 
@@ -716,7 +716,7 @@ String SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
         return String();
 
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    ExecState* exec = callee->globalObject()->globalExec();
+    ExecState* exec = callee->globalObject(vm)->globalExec();
     auto getPropertyIfPureOperation = [&] (const Identifier& ident) -> String {
         PropertySlot slot(callee, PropertySlot::InternalMethodType::VMInquiry);
         PropertyName propertyName(ident);

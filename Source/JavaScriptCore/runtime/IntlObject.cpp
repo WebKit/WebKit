@@ -497,7 +497,7 @@ Vector<String> canonicalizeLocaleList(ExecState& state, JSValue locales)
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSGlobalObject* globalObject = state.jsCallee()->globalObject();
+    JSGlobalObject* globalObject = state.jsCallee()->globalObject(vm);
     Vector<String> seen;
 
     if (locales.isUndefined())
@@ -588,7 +588,8 @@ String defaultLocale(ExecState& state)
     // WebCore's global objects will have their own ideas of how to determine the language. It may
     // be determined by WebCore-specific logic like some WK settings. Usually this will return the
     // same thing as userPreferredLanguages()[0].
-    if (auto defaultLanguage = state.jsCallee()->globalObject()->globalObjectMethodTable()->defaultLanguage) {
+    VM& vm = state.vm();
+    if (auto defaultLanguage = state.jsCallee()->globalObject(vm)->globalObjectMethodTable()->defaultLanguage) {
         String locale = defaultLanguage();
         if (!locale.isEmpty())
             return canonicalizeLanguageTag(locale);
@@ -792,7 +793,7 @@ static JSArray* lookupSupportedLocales(ExecState& state, const HashSet<String>& 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     size_t len = requestedLocales.size();
-    JSGlobalObject* globalObject = state.jsCallee()->globalObject();
+    JSGlobalObject* globalObject = state.jsCallee()->globalObject(vm);
     JSArray* subset = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), 0);
     if (!subset) {
         throwOutOfMemoryError(&state, scope);
@@ -907,7 +908,7 @@ EncodedJSValue JSC_HOST_CALL intlObjectFuncGetCanonicalLocales(ExecState* state)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     auto length = localeList.size();
 
-    JSGlobalObject* globalObject = state->jsCallee()->globalObject();
+    JSGlobalObject* globalObject = state->jsCallee()->globalObject(vm);
     JSArray* localeArray = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), length);
     if (!localeArray) {
         throwOutOfMemoryError(state, scope);

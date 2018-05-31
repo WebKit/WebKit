@@ -348,7 +348,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
     JSC::JSValue function = [self _imp]->get(exec, Identifier::fromString(exec, String(name)));
     CallData callData;
-    CallType callType = getCallData(function, callData);
+    CallType callType = getCallData(vm, function, callData);
     if (callType == CallType::None)
         return nil;
 

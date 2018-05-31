@@ -60,7 +60,7 @@ JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject
 
         ASSERT(!functionName.isNull());
         function = callback->get(exec, functionName);
-        callType = getCallData(function, callData);
+        callType = getCallData(vm, function, callData);
         if (callType == CallType::None) {
             returnedException = JSC::Exception::create(vm, createTypeError(exec));
             return JSValue();

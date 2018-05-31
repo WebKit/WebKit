@@ -177,7 +177,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
     ASSERT(vm->heap.isDeferred());
     ASSERT(endColumn() != UINT_MAX);
 
-    JSGlobalObject* globalObject = scope->globalObject();
+    JSGlobalObject* globalObject = scope->globalObject(*vm);
     ExecState* exec = globalObject->globalExec();
 
     if (classInfo(*vm) == EvalExecutable::info()) {
@@ -331,7 +331,7 @@ JSObject* ScriptExecutable::prepareForExecutionImpl(
     DeferGCForAWhile deferGC(vm.heap);
 
     if (vm.getAndClearFailNextNewCodeBlock()) {
-        auto& state = *scope->globalObject()->globalExec();
+        auto& state = *scope->globalObject(vm)->globalExec();
         return throwException(&state, throwScope, createError(&state, ASCIILiteral("Forced Failure")));
     }
 

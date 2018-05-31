@@ -28,7 +28,7 @@ namespace JSC {
 
 void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObject, PropertyName propertyName)
 {
-    JSGlobalObject* globalObject = thisObject.globalObject();
+    JSGlobalObject* globalObject = thisObject.globalObject(vm);
     JSObject* getter = nullptr;
     if (value.accessorGetter()) {
         if (value.attributes() & PropertyAttribute::Builtin)
@@ -46,7 +46,7 @@ void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObje
 
 bool setUpStaticFunctionSlot(VM& vm, const ClassInfo* classInfo, const HashTableValue* entry, JSObject* thisObject, PropertyName propertyName, PropertySlot& slot)
 {
-    ASSERT(thisObject->globalObject());
+    ASSERT(thisObject->globalObject(vm));
     ASSERT(entry->attributes() & PropertyAttribute::BuiltinOrFunctionOrAccessorOrLazyProperty);
     unsigned attributes;
     bool isAccessor = entry->attributes() & PropertyAttribute::Accessor;
@@ -55,7 +55,7 @@ bool setUpStaticFunctionSlot(VM& vm, const ClassInfo* classInfo, const HashTable
     if (!isValidOffset(offset)) {
         // If a property is ever deleted from an object with a static table, then we reify
         // all static functions at that time - after this we shouldn't be re-adding anything.
-        if (thisObject->staticPropertiesReified())
+        if (thisObject->staticPropertiesReified(vm))
             return false;
 
         reifyStaticProperty(vm, classInfo, propertyName, *entry, *thisObject);

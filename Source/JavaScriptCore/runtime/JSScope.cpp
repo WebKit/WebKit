@@ -161,9 +161,10 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
             return true;
         }
 
+        Structure* structure = globalObject->structure(vm);
         if (!slot.isCacheableValue()
-            || !globalObject->structure()->propertyAccessesAreCacheable()
-            || (globalObject->structure()->hasReadOnlyOrGetterSetterPropertiesExcludingProto() && getOrPut == Put)) {
+            || !structure->propertyAccessesAreCacheable()
+            || (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() && getOrPut == Put)) {
             // We know the property will be at global scope, but we don't know how to cache it.
             ASSERT(!scope->next());
             op = ResolveOp(makeType(GlobalProperty, needsVarInjectionChecks), 0, 0, 0, 0, 0);
@@ -171,7 +172,7 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
         }
 
         
-        WatchpointState state = globalObject->structure()->ensurePropertyReplacementWatchpointSet(exec->vm(), slot.cachedOffset())->state();
+        WatchpointState state = structure->ensurePropertyReplacementWatchpointSet(vm, slot.cachedOffset())->state();
         if (state == IsWatched && getOrPut == Put) {
             // The field exists, but because the replacement watchpoint is still intact. This is
             // kind of dangerous. We have two options:
@@ -182,7 +183,7 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
             // We go with option (2) here because it seems less evil.
             op = ResolveOp(makeType(GlobalProperty, needsVarInjectionChecks), depth, 0, 0, 0, 0);
         } else
-            op = ResolveOp(makeType(GlobalProperty, needsVarInjectionChecks), depth, globalObject->structure(), 0, 0, slot.cachedOffset());
+            op = ResolveOp(makeType(GlobalProperty, needsVarInjectionChecks), depth, structure, 0, 0, slot.cachedOffset());
         return true;
     }
 

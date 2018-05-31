@@ -388,7 +388,7 @@ void HeapVerifier::reportCell(CellProfile& profile, int cycleIndex, HeapVerifier
 
     if (profile.isLive() && profile.isJSCell()) {
         JSCell* jsCell = profile.jsCell();
-        Structure* structure = jsCell->structure();
+        Structure* structure = jsCell->structure(*vm);
         dataLog(" structure:", RawPointer(structure));
         if (jsCell->isObject()) {
             JSObject* obj = static_cast<JSObject*>(cell);

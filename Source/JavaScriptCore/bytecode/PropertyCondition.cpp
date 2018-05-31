@@ -321,7 +321,7 @@ bool PropertyCondition::isWatchableWhenValid(
             break;
         case EnsureWatchability:
             set = structure->ensurePropertyReplacementWatchpointSet(
-                *Heap::heap(structure)->vm(), offset);
+                *structure->vm(), offset);
             break;
         }
         
@@ -389,7 +389,7 @@ bool PropertyCondition::isValidValueForPresence(VM& vm, JSValue value) const
 
 PropertyCondition PropertyCondition::attemptToMakeEquivalenceWithoutBarrier(VM& vm, JSObject* base) const
 {
-    Structure* structure = base->structure();
+    Structure* structure = base->structure(vm);
     if (!structure->isValidOffset(offset()))
         return PropertyCondition();
     JSValue value = base->getDirect(offset());

@@ -122,7 +122,7 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeGetterCompare(ExecState* state
     JSBoundFunction* boundCompare = collator->boundCompare();
     // 2. If collator.[[boundCompare]] is undefined,
     if (!boundCompare) {
-        JSGlobalObject* globalObject = collator->globalObject();
+        JSGlobalObject* globalObject = collator->globalObject(vm);
         // a. Let F be a new built-in function object as defined in 11.3.4.
         // b. The value of F’s length property is 2.
         JSFunction* targetObject = JSFunction::create(vm, globalObject, 2, ASCIILiteral("compare"), IntlCollatorFuncCompare, NoIntrinsic);

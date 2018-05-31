@@ -41,7 +41,7 @@ void InferredStructureWatchpoint::fireInternal(const FireDetail&)
     if (!inferredType->isLive())
         return;
     
-    inferredType->removeStructure();
+    inferredType->removeStructure(*inferredType->vm());
 }
 
 } // namespace JSC

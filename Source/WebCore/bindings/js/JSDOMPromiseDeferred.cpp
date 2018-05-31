@@ -52,7 +52,7 @@ void DeferredPromise::callFunction(ExecState& exec, JSValue function, JSValue re
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     CallData callData;
-    CallType callType = getCallData(function, callData);
+    CallType callType = getCallData(vm, function, callData);
     ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;
@@ -207,7 +207,7 @@ JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::ExecState& state, co
     auto rejectionValue = createTypeError(&state, errorMessage);
 
     CallData callData;
-    auto callType = getCallData(rejectFunction, callData);
+    auto callType = getCallData(state.vm(), rejectFunction, callData);
     ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;

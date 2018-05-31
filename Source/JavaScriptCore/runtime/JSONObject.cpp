@@ -819,7 +819,7 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
     
     JSValue function = exec->uncheckedArgument(1);
     CallData callData;
-    CallType callType = getCallData(function, callData);
+    CallType callType = getCallData(vm, function, callData);
     if (callType == CallType::None)
         return JSValue::encode(unfiltered);
     scope.release();

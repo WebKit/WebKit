@@ -766,7 +766,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(VM& vm, ExecState* exec,
 
     String replacementString;
     CallData callData;
-    CallType callType = getCallData(replaceValue, callData);
+    CallType callType = getCallData(vm, replaceValue, callData);
     if (callType == CallType::None) {
         replacementString = replaceValue.toWTFString(exec);
         RETURN_IF_EXCEPTION(scope, nullptr);
@@ -792,7 +792,7 @@ static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, ExecState* exec,
         return jsString;
 
     CallData callData;
-    CallType callType = getCallData(replaceValue, callData);
+    CallType callType = getCallData(vm, replaceValue, callData);
     if (callType != CallType::None) {
         MarkedArgumentBuffer args;
         args.append(jsSubstring(exec, string, matchStart, searchString.impl()->length()));
@@ -1812,7 +1812,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIterator(ExecState* exec)
         return throwVMTypeError(exec, scope);
     JSString* string = thisValue.toString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    return JSValue::encode(JSStringIterator::create(exec, exec->jsCallee()->globalObject()->stringIteratorStructure(), string));
+    return JSValue::encode(JSStringIterator::create(exec, exec->jsCallee()->globalObject(vm)->stringIteratorStructure(), string));
 }
 
 enum class NormalizationForm {

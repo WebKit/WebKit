@@ -622,7 +622,7 @@ private:
                         if (m_graph.watchCondition(condition))
                             continue;
 
-                        Structure* structure = condition.object()->structure();
+                        Structure* structure = condition.object()->structure(m_graph.m_vm);
                         if (!condition.structureEnsuresValidity(structure)) {
                             allGood = false;
                             break;
@@ -1149,7 +1149,7 @@ private:
     {
         {
             StructureRegistrationResult result;
-            m_graph.registerStructure(cell->structure(), result);
+            m_graph.registerStructure(cell->structure(m_graph.m_vm), result);
             if (result == StructureRegisteredAndWatched)
                 return;
         }

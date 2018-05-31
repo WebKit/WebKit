@@ -68,7 +68,7 @@ JSC::JSValue forwardFunctionCallToBackingMap(JSC::ExecState& state, JSC::JSObjec
     ASSERT(function);
 
     JSC::CallData callData;
-    JSC::CallType callType = JSC::getCallData(function, callData);
+    JSC::CallType callType = JSC::getCallData(state.vm(), function, callData);
     ASSERT(callType != JSC::CallType::None);
     JSC::MarkedArgumentBuffer arguments;
     for (size_t cptr = 0; cptr < state.argumentCount(); ++cptr)
@@ -85,7 +85,7 @@ JSC::JSValue forwardForEachCallToBackingMap(JSC::ExecState& state, JSDOMGlobalOb
     getBackingMap(state, mapLike);
 
     JSC::CallData callData;
-    JSC::CallType callType = JSC::getCallData(function, callData);
+    JSC::CallType callType = JSC::getCallData(state.vm(), function, callData);
     ASSERT(callType != JSC::CallType::None);
     JSC::MarkedArgumentBuffer arguments;
     for (size_t cptr = 0; cptr < state.argumentCount(); ++cptr)

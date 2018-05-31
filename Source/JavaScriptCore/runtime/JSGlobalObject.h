@@ -901,7 +901,7 @@ public:
     WeakRandom& weakRandom() { return m_weakRandom; }
 
     bool needsSiteSpecificQuirks() const { return m_needsSiteSpecificQuirks; }
-    JS_EXPORT_PRIVATE void exposeDollarVM();
+    JS_EXPORT_PRIVATE void exposeDollarVM(VM&);
 
 #if JSC_OBJC_API_ENABLED
     JSWrapperMap* wrapperMap() const { return m_wrapperMap.get(); }

@@ -45,7 +45,7 @@ JSValue iteratorNext(ExecState* exec, IterationRecord iterationRecord, JSValue a
     JSValue nextFunction = iterationRecord.nextMethod;
 
     CallData nextFunctionCallData;
-    CallType nextFunctionCallType = getCallData(nextFunction, nextFunctionCallData);
+    CallType nextFunctionCallType = getCallData(vm, nextFunction, nextFunctionCallData);
     if (nextFunctionCallType == CallType::None)
         return throwTypeError(exec, scope);
 
@@ -108,7 +108,7 @@ void iteratorClose(ExecState* exec, IterationRecord iterationRecord)
     }
 
     CallData returnFunctionCallData;
-    CallType returnFunctionCallType = getCallData(returnFunction, returnFunctionCallData);
+    CallType returnFunctionCallType = getCallData(vm, returnFunction, returnFunctionCallData);
     if (returnFunctionCallType == CallType::None) {
         if (exception)
             throwException(exec, throwScope, exception);
@@ -193,7 +193,7 @@ IterationRecord iteratorForIterable(ExecState& state, JSObject* object, JSValue 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     CallData iteratorMethodCallData;
-    CallType iteratorMethodCallType = getCallData(iteratorMethod, iteratorMethodCallData);
+    CallType iteratorMethodCallType = getCallData(vm, iteratorMethod, iteratorMethodCallData);
     if (iteratorMethodCallType == CallType::None) {
         throwTypeError(&state, scope);
         return { };
@@ -223,7 +223,7 @@ IterationRecord iteratorForIterable(ExecState* state, JSValue iterable)
     RETURN_IF_EXCEPTION(scope, { });
     
     CallData iteratorFunctionCallData;
-    CallType iteratorFunctionCallType = getCallData(iteratorFunction, iteratorFunctionCallData);
+    CallType iteratorFunctionCallType = getCallData(vm, iteratorFunction, iteratorFunctionCallData);
     if (iteratorFunctionCallType == CallType::None) {
         throwTypeError(state, scope);
         return { };

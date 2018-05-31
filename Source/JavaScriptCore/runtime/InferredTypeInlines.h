@@ -37,7 +37,7 @@ inline void InferredType::finalizeUnconditionally(VM& vm)
         if (Heap::isMarked(m_structure->structure.get()))
             return;
         
-        removeStructure();
+        removeStructure(vm);
     }
     
     vm.inferredTypesWithFinalizers.remove(this);

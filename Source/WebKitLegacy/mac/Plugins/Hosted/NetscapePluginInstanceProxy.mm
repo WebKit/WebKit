@@ -921,7 +921,7 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
     ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
     JSValue function = object->get(exec, methodName);
     CallData callData;
-    CallType callType = getCallData(function, callData);
+    CallType callType = getCallData(vm, function, callData);
     if (callType == CallType::None)
         return false;
 

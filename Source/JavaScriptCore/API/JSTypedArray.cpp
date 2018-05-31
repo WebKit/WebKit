@@ -301,7 +301,7 @@ JSObjectRef JSObjectGetTypedArrayBuffer(JSContextRef ctx, JSObjectRef objectRef,
     JSObject* object = toJS(objectRef);
 
     if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(vm, object))
-        return toRef(vm.m_typedArrayController->toJS(exec, typedArray->globalObject(), typedArray->possiblySharedBuffer()));
+        return toRef(vm.m_typedArrayController->toJS(exec, typedArray->globalObject(vm), typedArray->possiblySharedBuffer()));
 
     return nullptr;
 }

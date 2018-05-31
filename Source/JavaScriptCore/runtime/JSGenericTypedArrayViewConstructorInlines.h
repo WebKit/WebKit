@@ -167,7 +167,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
             // it should not be observable that we do not use the iterator.
 
             if (!iteratorFunc.isUndefined()
-                && (iteratorFunc != object->globalObject()->arrayProtoValuesFunction()
+                && (iteratorFunc != object->globalObject(vm)->arrayProtoValuesFunction()
                     || lengthSlot.isAccessor() || lengthSlot.isCustom() || lengthSlot.isTaintedByOpaqueObject()
                     || hasAnyArrayStorage(object->indexingType()))) {
 
@@ -211,7 +211,7 @@ EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     InternalFunction* function = jsCast<InternalFunction*>(exec->jsCallee());
-    Structure* parentStructure = function->globalObject()->typedArrayStructure(ViewClass::TypedArrayStorageType);
+    Structure* parentStructure = function->globalObject(vm)->typedArrayStructure(ViewClass::TypedArrayStorageType);
     Structure* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), parentStructure);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 

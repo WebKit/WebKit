@@ -40,7 +40,7 @@ JSObject* construct(ExecState* exec, JSValue constructorObject, const ArgList& a
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     ConstructData constructData;
-    ConstructType constructType = getConstructData(constructorObject, constructData);
+    ConstructType constructType = getConstructData(vm, constructorObject, constructData);
     if (constructType == ConstructType::None)
         return throwTypeError(exec, scope, errorMessage);
 

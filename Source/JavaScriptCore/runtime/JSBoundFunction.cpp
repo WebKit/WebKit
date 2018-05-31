@@ -50,7 +50,7 @@ EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionCall(ExecState* exec)
         executable->entrypointFor(CodeForCall, MustCheckArity);
     }
     CallData callData;
-    CallType callType = getCallData(targetFunction, callData);
+    CallType callType = getCallData(exec->vm(), targetFunction, callData);
     ASSERT(callType != CallType::None);
     return JSValue::encode(call(exec, targetFunction, callType, callData, boundFunction->boundThis(), args));
 }
@@ -77,7 +77,7 @@ EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
 
     JSObject* targetFunction = boundFunction->targetFunction();
     CallData callData;
-    CallType callType = getCallData(targetFunction, callData);
+    CallType callType = getCallData(vm, targetFunction, callData);
     ASSERT(callType != CallType::None);
     scope.release();
     return JSValue::encode(call(exec, targetFunction, callType, callData, boundFunction->boundThis(), args));
@@ -94,7 +94,7 @@ EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionConstruct(ExecState* exec)
 
     JSFunction* targetFunction = jsCast<JSFunction*>(boundFunction->targetFunction());
     ConstructData constructData;
-    ConstructType constructType = getConstructData(targetFunction, constructData);
+    ConstructType constructType = getConstructData(exec->vm(), targetFunction, constructData);
     ASSERT(constructType != ConstructType::None);
     return JSValue::encode(construct(exec, targetFunction, constructType, constructData, args));
 }
@@ -121,7 +121,7 @@ EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(ExecState* exec)
 
     JSObject* targetFunction = boundFunction->targetFunction();
     ConstructData constructData;
-    ConstructType constructType = getConstructData(targetFunction, constructData);
+    ConstructType constructType = getConstructData(vm, targetFunction, constructData);
     ASSERT(constructType != ConstructType::None);
     scope.release();
     return JSValue::encode(construct(exec, targetFunction, constructType, constructData, args));
@@ -160,7 +160,7 @@ inline Structure* getBoundFunctionStructure(VM& vm, ExecState* exec, JSGlobalObj
     // It would be nice if the structure map was keyed global objects in addition to the other things. Unfortunately, it is not
     // currently. Whoever works on caching structure changes for prototype transistions should consider this problem as well.
     // See: https://bugs.webkit.org/show_bug.cgi?id=152738
-    if (prototype.isObject() && prototype.getObject()->globalObject() == globalObject) {
+    if (prototype.isObject() && prototype.getObject()->globalObject(vm) == globalObject) {
         result = vm.structureCache.emptyStructureForPrototypeFromBaseStructure(globalObject, prototype.getObject(), result);
         ASSERT_WITH_SECURITY_IMPLICATION(result->globalObject() == globalObject);
     } else
@@ -176,7 +176,7 @@ JSBoundFunction* JSBoundFunction::create(VM& vm, ExecState* exec, JSGlobalObject
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     ConstructData constructData;
-    ConstructType constructType = JSC::getConstructData(targetFunction, constructData);
+    ConstructType constructType = JSC::getConstructData(vm, targetFunction, constructData);
     bool canConstruct = constructType != ConstructType::None;
     
     bool slowCase = boundArgs || !getJSFunction(targetFunction);
@@ -211,7 +211,7 @@ JSArray* JSBoundFunction::boundArgsCopy(ExecState* exec)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSArray* result = constructEmptyArray(exec, nullptr, globalObject());
+    JSArray* result = constructEmptyArray(exec, nullptr, globalObject(vm));
     RETURN_IF_EXCEPTION(scope, nullptr);
     for (unsigned i = 0; i < m_boundArgs->length(); ++i) {
         result->push(exec, m_boundArgs->getIndexQuickly(i));

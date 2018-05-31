@@ -1274,7 +1274,7 @@ JSValue Graph::tryGetConstantProperty(
     // incompatible with the getDirect we're trying to do. The easiest way to do that is to
     // determine if the structure belongs to the proven set.
     
-    if (!structureSet.toStructureSet().contains(object->structure()))
+    if (!structureSet.toStructureSet().contains(object->structure(m_vm)))
         return JSValue();
     
     return object->getDirect(offset);

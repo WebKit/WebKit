@@ -454,7 +454,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
 
     // 11. Let localeData be the value of %DateTimeFormat%.[[localeData]].
     // 12. Let r be ResolveLocale( %DateTimeFormat%.[[availableLocales]], requestedLocales, opt, %DateTimeFormat%.[[relevantExtensionKeys]], localeData).
-    const HashSet<String> availableLocales = exec.jsCallee()->globalObject()->intlDateTimeFormatAvailableLocales();
+    const HashSet<String> availableLocales = exec.jsCallee()->globalObject(vm)->intlDateTimeFormatAvailableLocales();
     HashMap<String, String> resolved = resolveLocale(exec, availableLocales, requestedLocales, localeOpt, IntlDTFInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlDTFInternal::relevantExtensionKeys), IntlDTFInternal::localeData);
 
     // 13. Set dateTimeFormat.[[locale]] to the value of r.[[locale]].
@@ -1001,7 +1001,7 @@ JSValue IntlDateTimeFormat::formatToParts(ExecState& exec, double value)
     if (U_FAILURE(status))
         return throwTypeError(&exec, scope, ASCIILiteral("failed to format date value"));
 
-    JSGlobalObject* globalObject = exec.jsCallee()->globalObject();
+    JSGlobalObject* globalObject = exec.jsCallee()->globalObject(vm);
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (!parts)
         return throwOutOfMemoryError(&exec, scope);

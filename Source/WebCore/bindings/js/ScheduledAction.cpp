@@ -96,7 +96,7 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     CallData callData;
-    CallType callType = getCallData(m_function.get(), callData);
+    CallType callType = getCallData(vm, m_function.get(), callData);
     if (callType == CallType::None)
         return;
 

@@ -676,7 +676,7 @@ SLOW_PATH_DECL(slow_path_is_object_or_null)
 SLOW_PATH_DECL(slow_path_is_function)
 {
     BEGIN();
-    RETURN(jsBoolean(jsIsFunctionType(OP_C(2).jsValue())));
+    RETURN(jsBoolean(OP_C(2).jsValue().isFunction(vm)));
 }
 
 SLOW_PATH_DECL(slow_path_in_by_val)
@@ -1176,7 +1176,7 @@ SLOW_PATH_DECL(slow_path_spread)
     {
         JSFunction* iterationFunction = globalObject->iteratorProtocolFunction();
         CallData callData;
-        CallType callType = JSC::getCallData(iterationFunction, callData);
+        CallType callType = JSC::getCallData(vm, iterationFunction, callData);
         ASSERT(callType != CallType::None);
 
         MarkedArgumentBuffer arguments;

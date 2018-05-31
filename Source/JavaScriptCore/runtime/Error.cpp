@@ -160,7 +160,7 @@ private:
 
 std::unique_ptr<Vector<StackFrame>> getStackTrace(ExecState* exec, VM& vm, JSObject* obj, bool useCurrentFrame)
 {
-    JSGlobalObject* globalObject = obj->globalObject();
+    JSGlobalObject* globalObject = obj->globalObject(vm);
     ErrorConstructor* errorConstructor = globalObject->errorConstructor();
     if (!errorConstructor->stackTraceLimit())
         return nullptr;

@@ -155,7 +155,7 @@ JSValue JSJavaScriptCallFrame::scopeDescriptions(ExecState* exec)
 
 JSValue JSJavaScriptCallFrame::caller(ExecState* exec) const
 {
-    return toJS(exec, globalObject(), impl().caller());
+    return toJS(exec, globalObject(exec->vm()), impl().caller());
 }
 
 JSValue JSJavaScriptCallFrame::sourceID(ExecState*) const
@@ -203,7 +203,7 @@ JSValue JSJavaScriptCallFrame::scopeChain(ExecState* exec) const
         return { };
     }
 
-    return constructArray(exec, nullptr, globalObject(), list);
+    return constructArray(exec, nullptr, globalObject(vm), list);
 }
 
 JSValue JSJavaScriptCallFrame::thisObject(ExecState*) const

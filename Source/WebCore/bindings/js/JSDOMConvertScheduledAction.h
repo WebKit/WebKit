@@ -39,7 +39,7 @@ template<> struct Converter<IDLScheduledAction> : DefaultConverter<IDLScheduledA
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         JSC::CallData callData;
-        if (getCallData(value, callData) == JSC::CallType::None) {
+        if (getCallData(vm, value, callData) == JSC::CallType::None) {
             auto code = Converter<IDLDOMString>::convert(state, value);
             RETURN_IF_EXCEPTION(scope, nullptr);
             return ScheduledAction::create(globalObject.world(), WTFMove(code));

@@ -55,7 +55,7 @@ JSValue JSMapIterator::createPair(CallFrame* callFrame, JSValue key, JSValue val
     args.append(key);
     args.append(value);
     ASSERT(!args.hasOverflowed());
-    JSGlobalObject* globalObject = callFrame->jsCallee()->globalObject();
+    JSGlobalObject* globalObject = callFrame->jsCallee()->globalObject(callFrame->vm());
     return constructArray(callFrame, 0, globalObject, args);
 }
 

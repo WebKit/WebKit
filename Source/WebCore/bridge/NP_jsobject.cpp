@@ -189,7 +189,7 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
         // Call the function object.
         JSValue function = obj->imp;
         CallData callData;
-        CallType callType = getCallData(function, callData);
+        CallType callType = getCallData(vm, function, callData);
         if (callType == CallType::None)
             return false;
         
@@ -241,7 +241,7 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         ExecState* exec = globalObject->globalExec();
         JSValue function = obj->imp->get(exec, identifierFromNPIdentifier(exec, i->string()));
         CallData callData;
-        CallType callType = getCallData(function, callData);
+        CallType callType = getCallData(vm, function, callData);
         if (callType == CallType::None)
             return false;
 
@@ -532,7 +532,7 @@ bool _NPN_Construct(NPP, NPObject* o, const NPVariant* args, uint32_t argCount, 
         // Call the constructor object.
         JSValue constructor = obj->imp;
         ConstructData constructData;
-        ConstructType constructType = getConstructData(constructor, constructData);
+        ConstructType constructType = getConstructData(vm, constructor, constructData);
         if (constructType == ConstructType::None)
             return false;
         

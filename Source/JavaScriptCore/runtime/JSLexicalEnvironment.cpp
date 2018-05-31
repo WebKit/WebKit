@@ -94,16 +94,17 @@ bool JSLexicalEnvironment::getOwnPropertySlot(JSObject* object, ExecState* exec,
     if (symbolTableGet(thisObject, propertyName, slot))
         return true;
 
+    VM& vm = exec->vm();
     unsigned attributes;
-    if (JSValue value = thisObject->getDirect(exec->vm(), propertyName, attributes)) {
+    if (JSValue value = thisObject->getDirect(vm, propertyName, attributes)) {
         slot.setValue(thisObject, attributes, value);
         return true;
     }
 
     // We don't call through to JSObject because there's no way to give a 
     // lexical environment object getter properties or a prototype.
-    ASSERT(!thisObject->hasGetterSetterProperties());
-    ASSERT(thisObject->getPrototypeDirect(exec->vm()).isNull());
+    ASSERT(!thisObject->hasGetterSetterProperties(vm));
+    ASSERT(thisObject->getPrototypeDirect(vm).isNull());
     return false;
 }
 
@@ -121,7 +122,7 @@ bool JSLexicalEnvironment::put(JSCell* cell, ExecState* exec, PropertyName prope
     // We don't call through to JSObject because __proto__ and getter/setter 
     // properties are non-standard extensions that other implementations do not
     // expose in the lexicalEnvironment object.
-    ASSERT(!thisObject->hasGetterSetterProperties());
+    ASSERT(!thisObject->hasGetterSetterProperties(exec->vm()));
     return thisObject->putOwnDataProperty(exec->vm(), propertyName, value, slot);
 }
 

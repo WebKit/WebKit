@@ -133,7 +133,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(ExecState* st
     JSBoundFunction* boundFormat = nf->boundFormat();
     // 2. If nf.[[boundFormat]] is undefined,
     if (!boundFormat) {
-        JSGlobalObject* globalObject = nf->globalObject();
+        JSGlobalObject* globalObject = nf->globalObject(vm);
         // a. Let F be a new built-in function object as defined in 11.3.4.
         // b. The value of F’s length property is 1.
         JSFunction* targetObject = JSFunction::create(vm, globalObject, 1, ASCIILiteral("format"), IntlNumberFormatFuncFormatNumber, NoIntrinsic);

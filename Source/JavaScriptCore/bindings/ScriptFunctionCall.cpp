@@ -115,7 +115,7 @@ JSValue ScriptFunctionCall::call(bool& hadException)
     }
 
     CallData callData;
-    CallType callType = getCallData(function, callData);
+    CallType callType = getCallData(vm, function, callData);
     if (callType == CallType::None)
         return { };
 

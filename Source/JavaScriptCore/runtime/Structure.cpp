@@ -346,7 +346,7 @@ void Structure::findStructuresAndMapForMaterialization(Vector<Structure*, 8>& st
 
 PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable)
 {
-    ASSERT(structure()->classInfo() == info());
+    ASSERT(structure(vm)->classInfo() == info());
     ASSERT(!isAddingPropertyForTransition());
     
     DeferGC deferGC(vm.heap);
@@ -897,7 +897,7 @@ void Structure::willStoreValueSlow(
     InferredTypeTable::StoredPropertyAge age)
 {
     ASSERT(!isCompilationThread());
-    ASSERT(structure()->classInfo() == info());
+    ASSERT(structure(vm)->classInfo() == info());
     ASSERT(!hasBeenDictionary());
 
     ASSERT_WITH_MESSAGE(VM::canUseJIT(), "We don't want to use memory for inferred types unless we're using the JIT.");

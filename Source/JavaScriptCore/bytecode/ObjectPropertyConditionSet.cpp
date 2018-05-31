@@ -189,7 +189,7 @@ static const bool verbose = false;
 ObjectPropertyCondition generateCondition(
     VM& vm, JSCell* owner, JSObject* object, UniquedStringImpl* uid, PropertyCondition::Kind conditionKind)
 {
-    Structure* structure = object->structure();
+    Structure* structure = object->structure(vm);
     if (ObjectPropertyConditionSetInternal::verbose)
         dataLog("Creating condition ", conditionKind, " for ", pointerDump(structure), "\n");
 
@@ -207,14 +207,14 @@ ObjectPropertyCondition generateCondition(
         if (structure->hasPolyProto())
             return ObjectPropertyCondition();
         result = ObjectPropertyCondition::absence(
-            vm, owner, object, uid, object->structure()->storedPrototypeObject());
+            vm, owner, object, uid, object->structure(vm)->storedPrototypeObject());
         break;
     }
     case PropertyCondition::AbsenceOfSetEffect: {
         if (structure->hasPolyProto())
             return ObjectPropertyCondition();
         result = ObjectPropertyCondition::absenceOfSetEffect(
-            vm, owner, object, uid, object->structure()->storedPrototypeObject());
+            vm, owner, object, uid, object->structure(vm)->storedPrototypeObject());
         break;
     }
     case PropertyCondition::Equivalence: {
@@ -411,7 +411,7 @@ ObjectPropertyConditionSet generateConditionsForInstanceOf(
             }
             conditions.append(
                 ObjectPropertyCondition::hasPrototype(
-                    vm, owner, object, object->structure()->storedPrototypeObject()));
+                    vm, owner, object, object->structure(vm)->storedPrototypeObject()));
             return true;
         });
     if (result.isValid()) {

@@ -61,7 +61,7 @@ extern "C" void JIT_OPERATION operationPopulateObjectInOSR(
     switch (materialization->type()) {
     case PhantomNewObject: {
         JSFinalObject* object = jsCast<JSFinalObject*>(JSValue::decode(*encodedValue));
-        Structure* structure = object->structure();
+        Structure* structure = object->structure(vm);
 
         // Figure out what the heck to populate the object with. Use
         // getPropertiesConcurrently() because that happens to be

@@ -62,9 +62,10 @@ Ref<ReadableStream> ReadableStream::create(JSC::ExecState& execState, RefPtr<Rea
 namespace ReadableStreamInternal {
 static inline JSC::JSValue callFunction(JSC::ExecState& state, JSC::JSValue jsFunction, JSC::JSValue thisValue, const JSC::ArgList& arguments)
 {
-    auto scope = DECLARE_CATCH_SCOPE(state.vm());
+    VM& vm = state.vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
     JSC::CallData callData;
-    auto callType = JSC::getCallData(jsFunction, callData);
+    auto callType = JSC::getCallData(vm, jsFunction, callData);
     ASSERT(callType != JSC::CallType::None);
     auto result = call(&state, jsFunction, callType, callData, thisValue, arguments);
     scope.assertNoException();

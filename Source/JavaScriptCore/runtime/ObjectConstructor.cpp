@@ -115,9 +115,9 @@ void ObjectConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Obj
 // ES 19.1.1.1 Object([value])
 static ALWAYS_INLINE JSObject* constructObject(ExecState* exec, JSValue newTarget)
 {
+    VM& vm = exec->vm();
     ObjectConstructor* objectConstructor = jsCast<ObjectConstructor*>(exec->jsCallee());
-    JSGlobalObject* globalObject = objectConstructor->globalObject();
-    VM& vm = globalObject->vm();
+    JSGlobalObject* globalObject = objectConstructor->globalObject(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // We need to check newTarget condition in this caller side instead of InternalFunction::createSubclassStructure side.
@@ -313,7 +313,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorAssign(ExecState* exec)
         RETURN_IF_EXCEPTION(scope, { });
 
         if (targetCanPerformFastPut) {
-            if (!source->staticPropertiesReified()) {
+            if (!source->staticPropertiesReified(vm)) {
                 source->reifyAllStaticProperties(exec);
                 RETURN_IF_EXCEPTION(scope, { });
             }
@@ -524,7 +524,7 @@ bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
         RETURN_IF_EXCEPTION(scope, false);
         if (!get.isUndefined()) {
             CallData callData;
-            if (getCallData(get, callData) == CallType::None) {
+            if (getCallData(vm, get, callData) == CallType::None) {
                 throwTypeError(exec, scope, ASCIILiteral("Getter must be a function."));
                 return false;
             }
@@ -540,7 +540,7 @@ bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
         RETURN_IF_EXCEPTION(scope, false);
         if (!set.isUndefined()) {
             CallData callData;
-            if (getCallData(set, callData) == CallType::None) {
+            if (getCallData(vm, set, callData) == CallType::None) {
                 throwTypeError(exec, scope, ASCIILiteral("Setter must be a function."));
                 return false;
             }

@@ -623,7 +623,7 @@ static InlineCacheAction tryCacheInByID(
         if (forceICFailure(exec))
             return GiveUpOnCache;
         
-        if (!base->structure()->propertyAccessesAreCacheable() || (!wasFound && !base->structure()->propertyAccessesAreCacheableForAbsence()))
+        if (!base->structure(vm)->propertyAccessesAreCacheable() || (!wasFound && !base->structure(vm)->propertyAccessesAreCacheableForAbsence()))
             return GiveUpOnCache;
         
         if (wasFound) {

@@ -1517,8 +1517,8 @@ JSCell* JIT_OPERATION operationNewArrayBuffer(ExecState* exec, Structure* arrayS
     auto* immutableButterfly = jsCast<JSImmutableButterfly*>(immutableButterflyCell);
     ASSERT(arrayStructure->indexingMode() == immutableButterfly->indexingMode() || hasAnyArrayStorage(arrayStructure->indexingMode()));
     auto* result = CommonSlowPaths::allocateNewArrayBuffer(vm, arrayStructure, immutableButterfly);
-    ASSERT(result->indexingMode() == result->structure()->indexingMode());
-    ASSERT(result->structure() == arrayStructure);
+    ASSERT(result->indexingMode() == result->structure(vm)->indexingMode());
+    ASSERT(result->structure(vm) == arrayStructure);
     return result;
 }
 
@@ -1838,7 +1838,7 @@ char* JIT_OPERATION operationAllocateComplexPropertyStorageWithInitialCapacity(E
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    ASSERT(!object->structure()->outOfLineCapacity());
+    ASSERT(!object->structure(vm)->outOfLineCapacity());
     return reinterpret_cast<char*>(
         object->allocateMoreOutOfLineStorage(vm, 0, initialOutOfLineCapacity));
 }
@@ -1849,7 +1849,7 @@ char* JIT_OPERATION operationAllocateComplexPropertyStorage(ExecState* exec, JSO
     NativeCallFrameTracer tracer(&vm, exec);
 
     return reinterpret_cast<char*>(
-        object->allocateMoreOutOfLineStorage(vm, object->structure()->outOfLineCapacity(), newSize));
+        object->allocateMoreOutOfLineStorage(vm, object->structure(vm)->outOfLineCapacity(), newSize));
 }
 
 char* JIT_OPERATION operationEnsureInt32(ExecState* exec, JSCell* cell)
@@ -2587,7 +2587,7 @@ JSCell* JIT_OPERATION operationSpreadGeneric(ExecState* exec, JSCell* iterable)
     {
         JSFunction* iterationFunction = globalObject->iteratorProtocolFunction();
         CallData callData;
-        CallType callType = JSC::getCallData(iterationFunction, callData);
+        CallType callType = JSC::getCallData(vm, iterationFunction, callData);
         ASSERT(callType != CallType::None);
 
         MarkedArgumentBuffer arguments;

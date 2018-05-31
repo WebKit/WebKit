@@ -194,7 +194,8 @@ static ALWAYS_INLINE void setLength(ExecState* exec, VM& vm, JSObject* obj, unsi
 
 ALWAYS_INLINE bool speciesWatchpointIsValid(ExecState* exec, JSObject* thisObject)
 {
-    JSGlobalObject* globalObject = thisObject->globalObject();
+    VM& vm = exec->vm();
+    JSGlobalObject* globalObject = thisObject->globalObject(vm);
     ArrayPrototype* arrayPrototype = globalObject->arrayPrototype();
 
     if (globalObject->arraySpeciesWatchpoint().stateOnJSThread() == ClearWatchpoint) {
@@ -202,8 +203,8 @@ ALWAYS_INLINE bool speciesWatchpointIsValid(ExecState* exec, JSObject* thisObjec
         ASSERT(globalObject->arraySpeciesWatchpoint().stateOnJSThread() != ClearWatchpoint);
     }
 
-    return !thisObject->hasCustomProperties()
-        && arrayPrototype == thisObject->getPrototypeDirect(globalObject->vm())
+    return !thisObject->hasCustomProperties(vm)
+        && arrayPrototype == thisObject->getPrototypeDirect(vm)
         && globalObject->arraySpeciesWatchpoint().stateOnJSThread() == IsWatched;
 }
 
@@ -238,7 +239,7 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstru
         RETURN_IF_EXCEPTION(scope, exceptionResult());
         if (constructor.isConstructor()) {
             JSObject* constructorObject = jsCast<JSObject*>(constructor);
-            if (exec->lexicalGlobalObject() != constructorObject->globalObject())
+            if (exec->lexicalGlobalObject() != constructorObject->globalObject(vm))
                 return std::make_pair(SpeciesConstructResult::FastPath, nullptr);;
         }
         if (constructor.isObject()) {
@@ -406,7 +407,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
     if (!function.isCell())
         customJoinCase = true;
     CallData callData;
-    CallType callType = getCallData(function, callData);
+    CallType callType = getCallData(vm, function, callData);
     if (callType == CallType::None)
         customJoinCase = true;
 
@@ -485,7 +486,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
             JSValue conversionFunction = element.get(exec, vm.propertyNames->toLocaleString);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
             CallData callData;
-            CallType callType = getCallData(conversionFunction, callData);
+            CallType callType = getCallData(vm, conversionFunction, callData);
             if (callType != CallType::None) {
 #if ENABLE(INTL)
                 element = call(exec, conversionFunction, callType, callData, element, arguments);
@@ -1418,7 +1419,7 @@ void ArrayPrototype::tryInitializeSpeciesWatchpoint(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (ArrayPrototypeInternal::verbose)
-        dataLog("Initializing Array species watchpoints for Array.prototype: ", pointerDump(this), " with structure: ", pointerDump(this->structure()), "\nand Array: ", pointerDump(this->globalObject()->arrayConstructor()), " with structure: ", pointerDump(this->globalObject()->arrayConstructor()->structure()), "\n");
+        dataLog("Initializing Array species watchpoints for Array.prototype: ", pointerDump(this), " with structure: ", pointerDump(this->structure(vm)), "\nand Array: ", pointerDump(this->globalObject(vm)->arrayConstructor()), " with structure: ", pointerDump(this->globalObject(vm)->arrayConstructor()->structure(vm)), "\n");
     // First we need to make sure that the Array.prototype.constructor property points to Array
     // and that Array[Symbol.species] is the primordial GetterSetter.
 
@@ -1428,7 +1429,7 @@ void ArrayPrototype::tryInitializeSpeciesWatchpoint(ExecState* exec)
         prototypeStructure = prototypeStructure->flattenDictionaryStructure(vm, this);
     RELEASE_ASSERT(!prototypeStructure->isDictionary());
 
-    JSGlobalObject* globalObject = this->globalObject();
+    JSGlobalObject* globalObject = this->globalObject(vm);
     ArrayConstructor* arrayConstructor = globalObject->arrayConstructor();
 
     auto invalidateWatchpoint = [&] {

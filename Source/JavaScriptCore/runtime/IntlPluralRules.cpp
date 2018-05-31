@@ -125,7 +125,7 @@ void IntlPluralRules::initializePluralRules(ExecState& exec, JSValue locales, JS
     RETURN_IF_EXCEPTION(scope, void());
     localeOpt.add(vm.propertyNames->localeMatcher.string(), localeMatcher);
 
-    const HashSet<String> availableLocales = exec.jsCallee()->globalObject()->intlNumberFormatAvailableLocales();
+    const HashSet<String> availableLocales = exec.jsCallee()->globalObject(vm)->intlNumberFormatAvailableLocales();
     HashMap<String, String> resolved = resolveLocale(exec, availableLocales, requestedLocales, localeOpt, nullptr, 0, IntlPRInternal::localeData);
     m_locale = resolved.get(vm.propertyNames->locale.string());
     if (m_locale.isEmpty()) {
@@ -215,7 +215,7 @@ JSObject* IntlPluralRules::resolvedOptions(ExecState& exec)
     }
 
 #if JSC_ICU_HAS_PLURALRULES_KEYWORDS
-    JSGlobalObject* globalObject = exec.jsCallee()->globalObject();
+    JSGlobalObject* globalObject = exec.jsCallee()->globalObject(vm);
     JSArray* categories = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (!categories)
         return throwOutOfMemoryError(&exec, scope);

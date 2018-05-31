@@ -102,7 +102,7 @@ static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBa
 
             {
                 auto throwScope = DECLARE_THROW_SCOPE(*vm);
-                JSGlobalObject* globalObject = instance->globalObject();
+                JSGlobalObject* globalObject = instance->globalObject(*vm);
                 auto* error = ErrorInstance::create(exec, *vm, globalObject->typeErrorConstructor()->errorStructure(), ASCIILiteral("i64 not allowed as return type or argument to an imported function"));
                 throwException(exec, throwScope, error);
             }
@@ -667,6 +667,8 @@ void* wasmToJSException(ExecState* exec, Wasm::ExceptionType type, Instance* was
     wasmInstance->storeTopCallFrame(exec);
     JSWebAssemblyInstance* instance = wasmInstance->owner<JSWebAssemblyInstance>();
     JSGlobalObject* globalObject = instance->globalObject();
+
+    // Do not retrieve VM& from ExecState since ExecState's callee is not a JSCell.
     VM& vm = globalObject->vm();
 
     {

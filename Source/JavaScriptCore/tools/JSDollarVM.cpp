@@ -1696,7 +1696,7 @@ static EncodedJSValue JSC_HOST_CALL functionGlobalObjectForObject(ExecState* exe
 {
     JSValue value = exec->argument(0);
     RELEASE_ASSERT(value.isObject());
-    JSGlobalObject* globalObject = jsCast<JSObject*>(value)->globalObject();
+    JSGlobalObject* globalObject = jsCast<JSObject*>(value)->globalObject(exec->vm());
     RELEASE_ASSERT(globalObject);
     return JSValue::encode(globalObject);
 }
@@ -1772,7 +1772,7 @@ void JSDollarVM::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
 
-    JSGlobalObject* globalObject = structure(vm)->globalObject();
+    JSGlobalObject* globalObject = this->globalObject(vm);
 
     auto addFunction = [&] (VM& vm, const char* name, NativeFunction function, unsigned arguments) {
         JSDollarVM::addFunction(vm, globalObject, name, function, arguments);

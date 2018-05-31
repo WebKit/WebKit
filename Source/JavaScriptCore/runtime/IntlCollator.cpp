@@ -224,7 +224,7 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
         opt.add(ASCIILiteral("kf"), caseFirst);
     }
 
-    auto& availableLocales = state.jsCallee()->globalObject()->intlCollatorAvailableLocales();
+    auto& availableLocales = state.jsCallee()->globalObject(vm)->intlCollatorAvailableLocales();
     auto result = resolveLocale(state, availableLocales, requestedLocales, opt, relevantCollatorExtensionKeys, WTF_ARRAY_LENGTH(relevantCollatorExtensionKeys), localeData);
 
     m_locale = result.get(ASCIILiteral("locale"));

@@ -67,7 +67,7 @@ Structure* StructureCache::emptyStructureForPrototypeFromBaseStructure(JSGlobalO
 {
     // We currently do not have inline capacity static analysis for subclasses and all internal function constructors have a default inline capacity of 0.
     IndexingType indexingType = baseStructure->indexingType();
-    if (prototype->anyObjectInChainMayInterceptIndexedAccesses() && hasIndexedProperties(indexingType))
+    if (prototype->anyObjectInChainMayInterceptIndexedAccesses(globalObject->vm()) && hasIndexedProperties(indexingType))
         indexingType = (indexingType & ~IndexingShapeMask) | SlowPutArrayStorageShape;
 
     return createEmptyStructure(globalObject, prototype, baseStructure->typeInfo(), baseStructure->classInfo(), indexingType, 0, false, nullptr);

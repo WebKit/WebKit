@@ -452,7 +452,7 @@ private:
 
         case GetGlobalObject: {
             if (JSObject* object = m_node->child1()->dynamicCastConstant<JSObject*>(vm())) {
-                m_graph.convertToConstant(m_node, object->globalObject());
+                m_graph.convertToConstant(m_node, object->globalObject(vm()));
                 m_changed = true;
                 break;
             }

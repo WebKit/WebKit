@@ -220,7 +220,7 @@ JSGlobalObject* CallFrame::wasmAwareLexicalGlobalObject(VM& vm)
 #if ENABLE(WEBASSEMBLY)
     if (!callee().isWasm())
         return lexicalGlobalObject();
-    return vm.wasmContext.load()->owner<JSWebAssemblyInstance>()->globalObject();
+    return vm.wasmContext.load()->owner<JSWebAssemblyInstance>()->globalObject(vm);
 #else
     UNUSED_PARAM(vm);
     return lexicalGlobalObject();

@@ -77,7 +77,7 @@ void JSWindowProxy::setWindow(VM& vm, JSDOMGlobalObject& window)
 {
     ASSERT(window.classInfo() == JSDOMWindow::info() || window.classInfo() == JSRemoteDOMWindow::info());
     setTarget(vm, &window);
-    structure()->setGlobalObject(vm, &window);
+    structure(vm)->setGlobalObject(vm, &window);
     GCController::singleton().garbageCollectSoon();
 }
 
@@ -107,11 +107,11 @@ void JSWindowProxy::setWindow(AbstractDOMWindow& domWindow)
         window = JSDOMWindow::create(vm, &windowStructure, downcast<DOMWindow>(domWindow), this);
     }
 
-    prototype->structure()->setGlobalObject(vm, window);
+    prototype->structure(vm)->setGlobalObject(vm, window);
 
     auto& propertiesStructure = *JSDOMWindowProperties::createStructure(vm, window, JSEventTarget::prototype(vm, *window));
     auto& properties = *JSDOMWindowProperties::create(&propertiesStructure, *window);
-    prototype->structure()->setPrototypeWithoutTransition(vm, &properties);
+    prototype->structure(vm)->setPrototypeWithoutTransition(vm, &properties);
 
     setWindow(vm, *window);
 

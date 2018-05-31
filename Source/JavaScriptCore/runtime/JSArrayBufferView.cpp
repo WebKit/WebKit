@@ -199,12 +199,14 @@ void JSArrayBufferView::finalize(JSCell* cell)
 
 JSArrayBuffer* JSArrayBufferView::unsharedJSBuffer(ExecState* exec)
 {
-    return exec->vm().m_typedArrayController->toJS(exec, globalObject(), unsharedBuffer());
+    VM& vm = exec->vm();
+    return vm.m_typedArrayController->toJS(exec, globalObject(vm), unsharedBuffer());
 }
 
 JSArrayBuffer* JSArrayBufferView::possiblySharedJSBuffer(ExecState* exec)
 {
-    return exec->vm().m_typedArrayController->toJS(exec, globalObject(), possiblySharedBuffer());
+    VM& vm = exec->vm();
+    return vm.m_typedArrayController->toJS(exec, globalObject(vm), possiblySharedBuffer());
 }
 
 void JSArrayBufferView::neuter()

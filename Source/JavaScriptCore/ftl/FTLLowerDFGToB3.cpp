@@ -6313,8 +6313,8 @@ private:
                 // SaneChainOutOfBounds.
                 // https://bugs.webkit.org/show_bug.cgi?id=144668
                 
-                m_graph.registerAndWatchStructureTransition(globalObject->stringPrototype()->structure());
-                m_graph.registerAndWatchStructureTransition(globalObject->objectPrototype()->structure());
+                m_graph.registerAndWatchStructureTransition(globalObject->stringPrototype()->structure(vm()));
+                m_graph.registerAndWatchStructureTransition(globalObject->objectPrototype()->structure(vm()));
 
                 prototypeChainIsSane = globalObject->stringPrototypeChainIsSane();
             }

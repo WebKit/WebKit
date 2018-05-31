@@ -1,3 +1,13 @@
+2018-05-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Pass VM& parameter as much as possible
+        https://bugs.webkit.org/show_bug.cgi?id=186085
+
+        Reviewed by Saam Barati.
+
+        * Plugins/PluginPackage.cpp:
+        (WebCore::NPN_Invoke):
+
 2018-05-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r232316) [Win] error C2039: 'event': is not a member of 'WebCore::NavigationAction'

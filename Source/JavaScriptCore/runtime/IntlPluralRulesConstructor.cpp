@@ -118,7 +118,7 @@ EncodedJSValue JSC_HOST_CALL IntlPluralRulesConstructorFuncSupportedLocalesOf(Ex
 
     // 13.3.2 Intl.PluralRules.supportedLocalesOf (locales [, options ])
     // https://tc39.github.io/ecma402/#sec-intl.pluralrules.supportedlocalesof
-    JSGlobalObject* globalObject = state->jsCallee()->globalObject();
+    JSGlobalObject* globalObject = state->jsCallee()->globalObject(vm);
     const HashSet<String> availableLocales = globalObject->intlNumberFormatAvailableLocales();
 
     Vector<String> requestedLocales = canonicalizeLocaleList(*state, state->argument(0));

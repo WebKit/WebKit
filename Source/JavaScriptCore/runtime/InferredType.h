@@ -247,7 +247,7 @@ private:
     // watchpoint set.
     bool set(const ConcurrentJSLocker&, VM&, Descriptor);
     
-    void removeStructure();
+    void removeStructure(VM&);
     
     friend class InferredStructure;
     friend class InferredStructureWatchpoint;

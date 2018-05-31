@@ -184,7 +184,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     RETURN_IF_EXCEPTION(scope, void());
     opt.add(ASCIILiteral("localeMatcher"), matcher);
 
-    auto& availableLocales = state.jsCallee()->globalObject()->intlNumberFormatAvailableLocales();
+    auto& availableLocales = state.jsCallee()->globalObject(vm)->intlNumberFormatAvailableLocales();
     auto result = resolveLocale(state, availableLocales, requestedLocales, opt, relevantNumberExtensionKeys, WTF_ARRAY_LENGTH(relevantNumberExtensionKeys), IntlNFInternal::localeData);
 
     m_locale = result.get(ASCIILiteral("locale"));
@@ -538,7 +538,7 @@ JSValue IntlNumberFormat::formatToParts(ExecState& exec, double value)
         fieldType = ufieldpositer_next(fieldItr.get(), &beginIndex, &endIndex);
     }
 
-    JSGlobalObject* globalObject = exec.jsCallee()->globalObject();
+    JSGlobalObject* globalObject = exec.jsCallee()->globalObject(vm);
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (!parts)
         return throwOutOfMemoryError(&exec, scope);

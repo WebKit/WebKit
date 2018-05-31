@@ -1165,7 +1165,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToJSON(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     CallData callData;
-    CallType callType = getCallData(toISOValue, callData);
+    CallType callType = getCallData(vm, toISOValue, callData);
     if (callType == CallType::None)
         return throwVMTypeError(exec, scope, ASCIILiteral("toISOString is not a function"));
 

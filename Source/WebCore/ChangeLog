@@ -1,3 +1,64 @@
+2018-05-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Pass VM& parameter as much as possible
+        https://bugs.webkit.org/show_bug.cgi?id=186085
+
+        Reviewed by Saam Barati.
+
+        No behavior change.
+
+        * bindings/js/JSCSSRuleListCustom.cpp:
+        (WebCore::JSCSSRuleListOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMBuiltinConstructorBase.cpp:
+        (WebCore::JSDOMBuiltinConstructorBase::callFunctionWithCurrentArguments):
+        * bindings/js/JSDOMConvertScheduledAction.h:
+        (WebCore::Converter<IDLScheduledAction>::convert):
+        * bindings/js/JSDOMIterator.h:
+        (WebCore::iteratorForEach):
+        * bindings/js/JSDOMMapLike.cpp:
+        (WebCore::forwardFunctionCallToBackingMap):
+        (WebCore::forwardForEachCallToBackingMap):
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::callFunction):
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::DeferredPromise::callFunction):
+        (WebCore::createRejectedPromiseWithTypeError):
+        * bindings/js/JSDeprecatedCSSOMValueCustom.cpp:
+        (WebCore::JSDeprecatedCSSOMValueOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::JSNodeListOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::pluginElementCustomPut):
+        (WebCore::callPlugin):
+        * bindings/js/JSWindowProxy.cpp:
+        (WebCore::JSWindowProxy::setWindow):
+        * bindings/js/ReadableStream.cpp:
+        (WebCore::ReadableStreamInternal::callFunction):
+        * bindings/js/ReadableStreamDefaultController.cpp:
+        (WebCore::callFunction):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::executeFunctionInContext):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::getProperty):
+        (WebCore::CloneSerializer::serialize):
+        * bindings/js/StructuredClone.cpp:
+        (WebCore::structuredCloneArrayBufferView):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::initScript):
+        * bridge/NP_jsobject.cpp:
+        * bridge/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        * testing/Internals.cpp:
+        (WebCore::Internals::cloneArrayBuffer):
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::injectInternalsObject):
+
 2018-05-28  Darin Adler  <darin@apple.com>
 
         Straighten out HTMLInputElement attribute handling

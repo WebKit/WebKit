@@ -484,13 +484,11 @@ bool InferredType::set(const ConcurrentJSLocker& locker, VM& vm, Descriptor newD
     return shouldFireWatchpointSet;
 }
 
-void InferredType::removeStructure()
+void InferredType::removeStructure(VM& vm)
 {
     // FIXME: Find an elegant and cheap way to thread information about why we got here into the fire
     // detail in set().
     
-    VM& vm = *Heap::heap(this)->vm();
-
     Descriptor oldDescriptor;
     Descriptor newDescriptor;
     {

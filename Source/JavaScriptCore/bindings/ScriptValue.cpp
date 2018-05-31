@@ -76,10 +76,11 @@ static RefPtr<JSON::Value> jsToInspectorValue(ExecState& scriptState, JSValue va
             }
             return WTFMove(inspectorArray);
         }
+        VM& vm = scriptState.vm();
         auto inspectorObject = JSON::Object::create();
         auto& object = *value.getObject();
-        PropertyNameArray propertyNames(&scriptState.vm(), PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-        object.methodTable()->getOwnPropertyNames(&object, &scriptState, propertyNames, EnumerationMode());
+        PropertyNameArray propertyNames(&vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
+        object.methodTable(vm)->getOwnPropertyNames(&object, &scriptState, propertyNames, EnumerationMode());
         for (auto& name : propertyNames) {
             auto inspectorValue = jsToInspectorValue(scriptState, object.get(&scriptState, name), maxDepth);
             if (!inspectorValue)

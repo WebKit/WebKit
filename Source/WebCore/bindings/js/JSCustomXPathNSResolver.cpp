@@ -69,12 +69,13 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     JSLockHolder lock(commonVM());
 
     ExecState* exec = m_globalObject->globalExec();
+    VM& vm = exec->vm();
         
     JSValue function = m_customResolver->get(exec, Identifier::fromString(exec, "lookupNamespaceURI"));
     CallData callData;
-    CallType callType = getCallData(function, callData);
+    CallType callType = getCallData(vm, function, callData);
     if (callType == CallType::None) {
-        callType = m_customResolver->methodTable()->getCallData(m_customResolver.get(), callData);
+        callType = m_customResolver->methodTable(vm)->getCallData(m_customResolver.get(), callData);
         if (callType == CallType::None) {
             if (PageConsoleClient* console = m_globalObject->wrapped().console())
                 console->addMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("XPathNSResolver does not have a lookupNamespaceURI method."));

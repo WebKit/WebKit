@@ -61,7 +61,7 @@ void AbstractModuleRecord::finishCreation(ExecState* exec, VM& vm)
     ASSERT(inherits(vm, info()));
 
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSMap* map = JSMap::create(exec, vm, globalObject()->mapStructure());
+    JSMap* map = JSMap::create(exec, vm, globalObject(vm)->mapStructure());
     scope.releaseAssertNoException();
     m_dependenciesMap.set(vm, this, map);
     putDirect(vm, Identifier::fromString(&vm, ASCIILiteral("dependenciesMap")), m_dependenciesMap.get());

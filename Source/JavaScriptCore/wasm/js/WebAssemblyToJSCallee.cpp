@@ -37,7 +37,7 @@ const ClassInfo WebAssemblyToJSCallee::s_info = { "WebAssemblyToJSCallee", &Base
 
 WebAssemblyToJSCallee* WebAssemblyToJSCallee::create(VM& vm, JSWebAssemblyModule* module)
 {
-    Structure* structure = module->globalObject()->webAssemblyToJSCalleeStructure();
+    Structure* structure = module->globalObject(vm)->webAssemblyToJSCalleeStructure();
     WebAssemblyToJSCallee* callee = new (NotNull, allocateCell<WebAssemblyToJSCallee>(vm.heap)) WebAssemblyToJSCallee(vm, structure);
     callee->finishCreation(vm, module);
     return callee;

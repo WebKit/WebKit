@@ -38,7 +38,7 @@ const ClassInfo DebuggerScope::s_info = { "DebuggerScope", &Base::s_info, nullpt
 
 DebuggerScope* DebuggerScope::create(VM& vm, JSScope* scope)
 {
-    Structure* structure = scope->globalObject()->debuggerScopeStructure();
+    Structure* structure = scope->globalObject(vm)->debuggerScopeStructure();
     DebuggerScope* debuggerScope = new (NotNull, allocateCell<DebuggerScope>(vm.heap)) DebuggerScope(vm, structure, scope);
     debuggerScope->finishCreation(vm);
     return debuggerScope;
@@ -114,7 +114,7 @@ bool DebuggerScope::put(JSCell* cell, ExecState* exec, PropertyName propertyName
         return false;
     JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
     slot.setThisValue(JSValue(thisObject));
-    return thisObject->methodTable()->put(thisObject, exec, propertyName, value, slot);
+    return thisObject->methodTable(exec->vm())->put(thisObject, exec, propertyName, value, slot);
 }
 
 bool DebuggerScope::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
@@ -124,7 +124,7 @@ bool DebuggerScope::deleteProperty(JSCell* cell, ExecState* exec, PropertyName p
     if (!scope->isValid())
         return false;
     JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
-    return thisObject->methodTable()->deleteProperty(thisObject, exec, propertyName);
+    return thisObject->methodTable(exec->vm())->deleteProperty(thisObject, exec, propertyName);
 }
 
 void DebuggerScope::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
@@ -134,7 +134,7 @@ void DebuggerScope::getOwnPropertyNames(JSObject* object, ExecState* exec, Prope
     if (!scope->isValid())
         return;
     JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
-    thisObject->methodTable()->getPropertyNames(thisObject, exec, propertyNames, mode);
+    thisObject->methodTable(exec->vm())->getPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 bool DebuggerScope::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
@@ -144,7 +144,7 @@ bool DebuggerScope::defineOwnProperty(JSObject* object, ExecState* exec, Propert
     if (!scope->isValid())
         return false;
     JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
-    return thisObject->methodTable()->defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
+    return thisObject->methodTable(exec->vm())->defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 }
 
 DebuggerScope* DebuggerScope::next()

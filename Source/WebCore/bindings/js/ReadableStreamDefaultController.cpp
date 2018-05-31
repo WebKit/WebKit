@@ -44,7 +44,7 @@ namespace WebCore {
 static inline JSC::JSValue callFunction(JSC::ExecState& state, JSC::JSValue jsFunction, JSC::JSValue thisValue, const JSC::ArgList& arguments)
 {
     JSC::CallData callData;
-    auto callType = JSC::getCallData(jsFunction, callData);
+    auto callType = JSC::getCallData(state.vm(), jsFunction, callData);
     return call(&state, jsFunction, callType, callData, thisValue, arguments);
 }
 

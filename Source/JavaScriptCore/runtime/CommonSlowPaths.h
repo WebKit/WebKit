@@ -143,12 +143,13 @@ inline void tryCachePutToScopeGlobal(
     }
     
     if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
+        VM& vm = exec->vm();
         JSGlobalObject* globalObject = codeBlock->globalObject();
         ASSERT(globalObject == scope || globalObject->varInjectionWatchpoint()->hasBeenInvalidated());
         if (!slot.isCacheablePut()
             || slot.base() != scope
             || scope != globalObject
-            || !scope->structure()->propertyAccessesAreCacheable())
+            || !scope->structure(vm)->propertyAccessesAreCacheable())
             return;
         
         if (slot.type() == PutPropertySlot::NewProperty) {
@@ -157,11 +158,10 @@ inline void tryCachePutToScopeGlobal(
             return;
         }
         
-        VM& vm = exec->vm();
-        scope->structure()->didCachePropertyReplacement(vm, slot.cachedOffset());
+        scope->structure(vm)->didCachePropertyReplacement(vm, slot.cachedOffset());
 
         ConcurrentJSLocker locker(codeBlock->m_lock);
-        pc[5].u.structure.set(vm, codeBlock, scope->structure());
+        pc[5].u.structure.set(vm, codeBlock, scope->structure(vm));
         pc[6].u.operand = slot.cachedOffset();
     }
 }
@@ -195,7 +195,7 @@ inline void tryCacheGetFromScopeGlobal(
         CodeBlock* codeBlock = exec->codeBlock();
         JSGlobalObject* globalObject = codeBlock->globalObject();
         ASSERT(scope == globalObject || globalObject->varInjectionWatchpoint()->hasBeenInvalidated());
-        if (slot.isCacheableValue() && slot.slotBase() == scope && scope == globalObject && scope->structure()->propertyAccessesAreCacheable()) {
+        if (slot.isCacheableValue() && slot.slotBase() == scope && scope == globalObject && scope->structure(vm)->propertyAccessesAreCacheable()) {
             Structure* structure = scope->structure(vm);
             {
                 ConcurrentJSLocker locker(codeBlock->m_lock);
@@ -209,7 +209,7 @@ inline void tryCacheGetFromScopeGlobal(
 
 inline bool canAccessArgumentIndexQuickly(JSObject& object, uint32_t index)
 {
-    switch (object.structure()->typeInfo().type()) {
+    switch (object.type()) {
     case DirectArgumentsType: {
         DirectArguments* directArguments = jsCast<DirectArguments*>(&object);
         if (directArguments->isMappedArgumentInDFG(index))

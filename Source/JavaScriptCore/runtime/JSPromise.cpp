@@ -65,7 +65,7 @@ void JSPromise::initialize(ExecState* exec, JSGlobalObject* globalObject, JSValu
 {
     JSFunction* initializePromise = globalObject->initializePromiseFunction();
     CallData callData;
-    CallType callType = JSC::getCallData(initializePromise, callData);
+    CallType callType = JSC::getCallData(exec->vm(), initializePromise, callData);
     ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;
@@ -101,7 +101,7 @@ JSPromise* JSPromise::resolve(JSGlobalObject& globalObject, JSValue value)
 
     auto* promiseResolveFunction = globalObject.promiseResolveFunction();
     CallData callData;
-    auto callType = JSC::getCallData(promiseResolveFunction, callData);
+    auto callType = JSC::getCallData(vm, promiseResolveFunction, callData);
     ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;

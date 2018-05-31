@@ -623,13 +623,16 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
     return result;
 }
 
-bool JSObjectIsConstructor(JSContextRef, JSObjectRef object)
+bool JSObjectIsConstructor(JSContextRef ctx, JSObjectRef object)
 {
+    ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
+    JSLockHolder locker(vm);
     if (!object)
         return false;
     JSObject* jsObject = toJS(object);
     ConstructData constructData;
-    return jsObject->methodTable()->getConstructData(jsObject, constructData) != ConstructType::None;
+    return jsObject->methodTable(vm)->getConstructData(jsObject, constructData) != ConstructType::None;
 }
 
 JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

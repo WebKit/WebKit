@@ -58,7 +58,7 @@ JSInternalPromise* JSInternalPromise::then(ExecState* exec, JSFunction* onFulfil
     JSObject* function = jsCast<JSObject*>(get(exec, vm.propertyNames->builtinNames().thenPublicName()));
     RETURN_IF_EXCEPTION(scope, nullptr);
     CallData callData;
-    CallType callType = JSC::getCallData(function, callData);
+    CallType callType = JSC::getCallData(vm, function, callData);
     ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;

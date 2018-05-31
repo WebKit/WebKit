@@ -206,7 +206,7 @@ template<typename JSIterator> JSC::JSValue iteratorForEach(JSC::ExecState& state
     JSC::JSValue thisValue = state.argument(1);
 
     JSC::CallData callData;
-    JSC::CallType callType = JSC::getCallData(callback, callData);
+    JSC::CallType callType = JSC::getCallData(state.vm(), callback, callData);
     if (callType == JSC::CallType::None)
         return throwTypeError(&state, scope, ASCIILiteral("Cannot call callback"));
 

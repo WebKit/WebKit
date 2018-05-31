@@ -87,7 +87,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     RELEASE_ASSERT(scope);
-    JSGlobalObject* globalObject = scope->globalObject();
+    JSGlobalObject* globalObject = scope->globalObject(vm);
     RELEASE_ASSERT(globalObject);
     ASSERT(&globalObject->vm() == &vm);
 

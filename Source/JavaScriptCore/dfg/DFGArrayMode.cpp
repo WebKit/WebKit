@@ -239,8 +239,8 @@ ArrayMode ArrayMode::refine(
         // If we have an OriginalArray and the JSArray prototype chain is sane,
         // any indexed access always return undefined. We have a fast path for that.
         JSGlobalObject* globalObject = graph.globalObjectFor(node->origin.semantic);
-        Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure();
-        Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
+        Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure(graph.m_vm);
+        Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(graph.m_vm);
         if ((node->op() == GetByVal || canBecomeGetArrayLength(graph, node))
             && arrayClass() == Array::OriginalArray
             && !graph.hasExitSite(node->origin.semantic, OutOfBounds)
