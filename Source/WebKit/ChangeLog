@@ -1,3 +1,20 @@
+2018-05-31  Brent Fulgham  <bfulgham@apple.com>
+
+        Don't attempt to extend sandbox when running tests with mock media devices
+        https://bugs.webkit.org/show_bug.cgi?id=186150
+        <rdar://problem/40690875>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Avoid attempting to issue a sandbox extension to actual media devices when
+        running with Mock capture devices.
+
+        Also handle the 'denyNextRequest' test state outside of the USE(APPLE_INTERNAL_SDK)
+        guards, since it is needed for Open Source builds as well.
+
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::willCreateMediaStream):
+
 2018-05-31  Antti Koivisto  <antti@apple.com>
 
         WebKit memory management: Safari jetsams on some websites when zooming and scrolling
