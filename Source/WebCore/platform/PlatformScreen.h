@@ -81,7 +81,9 @@ WEBCORE_EXPORT CGColorSpaceRef screenColorSpace(Widget* = nullptr);
 #if PLATFORM(MAC)
 struct ScreenProperties;
 
-NSScreen *screen(NSWindow *);
+WEBCORE_EXPORT PlatformDisplayID displayID(NSScreen *);
+
+WEBCORE_EXPORT NSScreen *screen(NSWindow *);
 NSScreen *screen(PlatformDisplayID);
 
 FloatRect screenRectForDisplay(PlatformDisplayID);

@@ -1,3 +1,25 @@
+2018-05-31  Per Arne Vollan  <pvollan@apple.com>
+
+        Add OpenGL display mask to WebPage creation parameters.
+        https://bugs.webkit.org/show_bug.cgi?id=186163
+        <rdar://problem/40634504>
+
+        Reviewed by Brent Fulgham.
+
+        To make sure the OpenGL display mask is always available, include it in the WebPage creation parameters.
+        The OpenGL display mask is sent to the WebProcess when the platform display ID changes, but that is not
+        early enough in all cases. If the OpenGL display mask is not set, only OpenGL software rendering is offered
+        on some hardware configurations.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_credentialsMessenger):
+
 2018-05-31  Brent Fulgham  <bfulgham@apple.com>
 
         Add a rule to allow reading files with prefix /private/var/db/CVMS/cvmsCodeSignObj

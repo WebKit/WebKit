@@ -46,7 +46,7 @@ namespace WebCore {
 // These functions scale between screen and page coordinates because JavaScript/DOM operations
 // assume that the screen and the page share the same coordinate system.
 
-static PlatformDisplayID displayID(NSScreen *screen)
+PlatformDisplayID displayID(NSScreen *screen)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return [[[screen deviceDescription] objectForKey:@"NSScreenNumber"] intValue];

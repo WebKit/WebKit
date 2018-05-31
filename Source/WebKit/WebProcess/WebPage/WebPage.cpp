@@ -156,6 +156,7 @@
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/GraphicsContext3D.h>
 #include <WebCore/HTMLAttachmentElement.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLImageElement.h>
@@ -616,6 +617,10 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #if PLATFORM(IOS)
     setViewportConfigurationViewLayoutSize(parameters.viewportConfigurationViewLayoutSize);
     setMaximumUnobscuredSize(parameters.maximumUnobscuredSize);
+#endif
+    
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    GraphicsContext3D::setOpenGLDisplayMask(parameters.displayMask);
 #endif
 }
 
