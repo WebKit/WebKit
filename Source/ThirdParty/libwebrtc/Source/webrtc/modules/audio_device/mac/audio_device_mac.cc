@@ -19,6 +19,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <libkern/OSAtomic.h>  // OSAtomicCompareAndSwap()
 #include <mach/mach.h>         // mach_task_self()
+#include <memory>              // std::make_unique<>() and std::unique_ptr<>()
 #include <sys/sysctl.h>        // sysctlbyname()
 
 namespace webrtc {
@@ -1564,8 +1565,8 @@ int32_t AudioDeviceMac::GetNumberDevices(const AudioObjectPropertyScope scope,
     return 0;
   }
 
-  AudioDeviceID* deviceIds = (AudioDeviceID*)malloc(size);
   UInt32 numberDevices = size / sizeof(AudioDeviceID);
+  auto deviceIds = std::make_unique<AudioDeviceID[]>(numberDevices);
   AudioBufferList* bufferList = NULL;
   UInt32 numberScopedDevices = 0;
 
@@ -1597,7 +1598,7 @@ int32_t AudioDeviceMac::GetNumberDevices(const AudioObjectPropertyScope scope,
   bool listOK = true;
 
   WEBRTC_CA_LOG_ERR(AudioObjectGetPropertyData(
-      kAudioObjectSystemObject, &propertyAddress, 0, NULL, &size, deviceIds));
+      kAudioObjectSystemObject, &propertyAddress, 0, NULL, &size, deviceIds.get()));
   if (err != noErr) {
     listOK = false;
   } else {
@@ -1641,23 +1642,12 @@ int32_t AudioDeviceMac::GetNumberDevices(const AudioObjectPropertyScope scope,
   }
 
   if (!listOK) {
-    if (deviceIds) {
-      free(deviceIds);
-      deviceIds = NULL;
-    }
-
     if (bufferList) {
       free(bufferList);
       bufferList = NULL;
     }
 
     return -1;
-  }
-
-  // Happy ending
-  if (deviceIds) {
-    free(deviceIds);
-    deviceIds = NULL;
   }
 
   return numberScopedDevices;

@@ -1,3 +1,16 @@
+2018-05-31  David Kilzer  <ddkilzer@apple.com>
+
+        Fix leak of AudioDeviceID array due to an early return in AudioDeviceMac::GetNumberDevices()
+        <https://webkit.org/b/186152>
+        <rdar://problem/40692824>
+
+        Reviewed by Alex Christensen.
+
+        * Source/webrtc/modules/audio_device/mac/audio_device_mac.cc:
+        Use std::make_unique<> so that memory is allocated and
+        deallocated automatically.  Remove manual calls to free().
+        * WebKit/0011-Fix-AudioDeviceID-array-leak.patch: Add.
+
 2018-05-30  David Kilzer  <ddkilzer@apple.com>
 
         Fix leak of a CVPixelBufferRef due to early rerturn in -[RTCVideoEncoderH264 encode:codecSpecificInfo:frameTypes:]
