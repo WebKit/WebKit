@@ -55,10 +55,10 @@ Box::Rect Box::marginBox() const
     ASSERT(m_hasValidMargin);
     auto marginBox = borderBox();
 
-    marginBox.shiftLeftTo(marginBox.left() + m_margin.left);
-    marginBox.shiftTopTo(marginBox.top() + m_margin.top);
-    marginBox.shiftRightTo(marginBox.right() - m_margin.right);
-    marginBox.shiftBottomTo(marginBox.bottom() - m_margin.bottom);
+    marginBox.shiftLeftTo(marginBox.left() - m_margin.left);
+    marginBox.shiftTopTo(marginBox.top() - m_margin.top);
+    marginBox.shiftRightTo(marginBox.right() + m_margin.right);
+    marginBox.shiftBottomTo(marginBox.bottom() + m_margin.bottom);
 
     return marginBox;
 }
