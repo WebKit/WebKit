@@ -142,6 +142,8 @@ float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVertic
         ASSERT_NOT_REACHED();
         return 0;
     }
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 float SVGTextLayoutEngineBaseline::calculateGlyphOrientationAngle(bool isVerticalText, const SVGRenderStyle& style, const UChar& character) const

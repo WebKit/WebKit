@@ -1,3 +1,11 @@
+2018-05-31  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Windows build after r232246.
+        https://bugs.webkit.org/show_bug.cgi?id=186024
+
+        * rendering/svg/SVGTextLayoutEngineBaseline.cpp:
+        (WebCore::SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift const):
+
 2018-05-31  Chris Dumez  <cdumez@apple.com>
 
         Fix memory leak under NetworkStateNotifier::updateStateWithoutNotifying()
