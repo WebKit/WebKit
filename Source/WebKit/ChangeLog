@@ -1,3 +1,53 @@
+2018-05-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] WebProcess needs TCC entitlements for media capture (Take 2)
+        https://bugs.webkit.org/show_bug.cgi?id=185526
+        <rdar://problem/36674649>
+
+        Reviewed by Alexey Proskuryakov.
+
+        In Bug 181995 I added TCC entitlements for media capture to the macOS entitlements used for
+        relocatable builds. These changes also need to apply to system builds of WebKit.
+
+        Previously we had not needed an entitlements file for system builds of WebKit, so only provided
+        an entitlements file for our relocatable build targets. Now we need entitlements when building
+        on recent macOS targets using internal SDKs.
+
+        Since these various scenarios are beginning to multiple, this patch dynamically generates the
+        entitlements file.
+
+        This patch does the following:
+
+        1. Changes the "WebContent-OSX.entitlements" to hold the TCC entitlements needed for media capture, and rename
+           to "WebContent-OSX-restricted.entitlements".
+        2. Removes the unneeded "com.apple.private.xpc.domain-extension" from WebContent-OSX.entitlement, and dynamically
+           adds it using a new build step using the script 'process-webcontent-entitlements.sh'
+        3. Updates DebugRelease.xcconfig to use the 'Safari Engineering' signing key for internal builds.
+        4. Updates WebContentService.xcconfig to remove the CODE_SIGN_ENTITLEMENTS_OSX_WITH_XPC_DOMAIN_EXTENSION_YES target
+           since we no longer need a custom entitlement file for this case.
+        5. Updates WebContentService.Development.xcconfig to remove CODE_SIGN_ENTITLEMENTS_COCOA_TOUCH_NO since it is no
+           longer needed.
+        6. Deletes the file Configurations/WebContent.Development.entitlements since it is no longer needed.
+        7. Revises the WebContent process sandbox to allow camera and microphone access without needing TCC
+           entitlements, since those cannot be applied without an internal SDK.
+        8. Revises the UserMediaProcessManager to not pass dynamic sandbox extensions to the WebContent process
+           when building with the public SDK since those entitlements cannot be added or consumed in Open
+           Source builds.
+
+        We want to use the TCC entitlements when building with the internal SDK on recent macOS builds.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/WebContent-OSX-restricted.entitlements: Renamed from Source/WebKit/Configurations/WebContent-OSX.entitlements.
+        * Configurations/WebContent.Development.entitlements: Removed.
+        * Configurations/WebContentService.Development.xcconfig:
+        * Configurations/WebContentService.xcconfig:
+        * Scripts/process-webcontent-entitlements.sh: Added.
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::willCreateMediaStream): Don't bother creating and sending sandbox extensions for
+        camera and microphone control for builds that cannot support them.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-05-30  Daniel Bates  <dabates@apple.com>
 
         NavigationAction does not need to hold initiating DOM Event

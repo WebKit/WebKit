@@ -26,6 +26,4 @@
 SKIP_INSTALL = YES;
 SKIP_INSTALL[sdk=macosx*] = $(WK_RELOCATABLE_FRAMEWORKS);
 
-CODE_SIGN_ENTITLEMENTS_COCOA_TOUCH_NO = Configurations/WebContent.Development.entitlements;
-
 WK_XPC_SERVICE_VARIANT = Development;

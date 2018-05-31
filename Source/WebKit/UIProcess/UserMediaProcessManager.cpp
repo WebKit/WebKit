@@ -128,7 +128,7 @@ void UserMediaProcessManager::muteCaptureMediaStreamsExceptIn(WebPageProxy& page
 
 bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestManagerProxy& proxy, bool withAudio, bool withVideo)
 {
-#if ENABLE(SANDBOX_EXTENSIONS)
+#if ENABLE(SANDBOX_EXTENSIONS) && USE(APPLE_INTERNAL_SDK)
     auto& processStartingCapture = proxy.page().process();
 
     ASSERT(stateMap().contains(&processStartingCapture));
