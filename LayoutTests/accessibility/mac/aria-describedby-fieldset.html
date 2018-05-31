@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<form>
+    <fieldset aria-describedby="hint">
+      <span id="hint">Some hint</span>
+      <input id="yes" type="radio" value="yes" >
+      <label for="yes">Yes</label>
+      <input id="no" type="radio" value="no">
+      <label for="no">No</label>
+    </fieldset>
+  </form>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests form controls use their fieldset parent's description as AXHelp.");
+
+    if (window.accessibilityController) {
+
+        var yesRadio = accessibilityController.accessibleElementById("yes");
+        var noRadio = accessibilityController.accessibleElementById("no");
+        shouldBe("yesRadio.helpText", "'AXHelp: Some hint'");
+        shouldBe("noRadio.helpText", "'AXHelp: Some hint'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

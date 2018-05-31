@@ -1,3 +1,18 @@
+2018-05-30  Nan Wang  <n_wang@apple.com>
+
+        AX: VoiceOver on macOS does not announce fieldset description from aria-describedby when focussing inputs
+        https://bugs.webkit.org/show_bug.cgi?id=185246
+        <rdar://problem/39939028>
+
+        Reviewed by Chris Fleizach.
+
+        Exposed the fieldset's description to its form control children.
+
+        Test: accessibility/mac/aria-describedby-fieldset.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::helpText const):
+
 2018-05-30  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Expose link rel type to voiceover
