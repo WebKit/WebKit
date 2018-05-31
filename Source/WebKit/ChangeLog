@@ -1,5 +1,24 @@
 2018-05-31  Brent Fulgham  <bfulgham@apple.com>
 
+        [macOS] Add JIT entitlements to WebContent process and plugin process on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=184485
+        <rdar://problem/37556535>
+
+        Reviewed by Dan Bernstein.
+
+        This patch builds on the changes from Bug 185526 to add support for a JIT entitlement. It makes the
+        following changes:
+
+        1. Adds a new 'WebContent-OSX.entitlements file that unconditionally adds the JIT entitlement for all builds.
+        2. Modifies the PluginService.entitlements to unconditionally add the JIT entitlement.
+
+        * Configurations/PluginService.entitlements: Updated to add the JIT entitlement.
+        * Configurations/WebContent-OSX.entitlements: Updated to add the JIT entitlement.
+        * Configurations/WebContentService.xcconfig: Updated to use the new 'WebContent-OSX.entitlements' file.
+        * WebKit.xcodeproj/project.pbxproj:
+
+2018-05-31  Brent Fulgham  <bfulgham@apple.com>
+
         Don't attempt to extend sandbox when running tests with mock media devices
         https://bugs.webkit.org/show_bug.cgi?id=186150
         <rdar://problem/40690875>
