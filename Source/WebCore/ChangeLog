@@ -1,3 +1,20 @@
+2018-05-31  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r216119): DocumentLoader::detachFromFrame still encounters nullptr frame
+        https://bugs.webkit.org/show_bug.cgi?id=186081
+        <rdar://problem/34918109>
+
+        Reviewed by David Kilzer.
+
+        The nullptr check that was removed in r216119 was still needed because when the DocumentLoader
+        is in 'm_waitingForNavigationPolicy' or in 'm_waitingForContentPolicy', a call to the policy checker
+        to stopCheck we will clear the frame as part of the cleanup phase.
+
+        If m_frame is nullptr after cancelPolicyCheckIfNeeded, our work is already done so just return.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::detachFromFrame):
+
 2018-05-31  Dean Jackson  <dino@apple.com>
 
         Don't paint the System Preview badge if the image isn't fully decoded

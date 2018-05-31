@@ -1185,6 +1185,13 @@ void DocumentLoader::detachFromFrame()
 
     cancelPolicyCheckIfNeeded();
 
+    // cancelPolicyCheckIfNeeded can clear m_frame if the policy check
+    // is stopped, resulting in a recursive call into this detachFromFrame.
+    // If m_frame is nullptr after cancelPolicyCheckIfNeeded, our work is
+    // already done so just return.
+    if (!m_frame)
+        return;
+
     InspectorInstrumentation::loaderDetachedFromFrame(*m_frame, *this);
 
     observeFrame(nullptr);
