@@ -1,3 +1,19 @@
+2018-05-30  Dean Jackson  <dino@apple.com>
+
+        WebContent crashes with system preview content
+        https://bugs.webkit.org/show_bug.cgi?id=186118
+
+        Reviewed by Myles Maxfield.
+
+        We were receiving crash reports on iOS devices when getting
+        platformContext() from a GraphicsContext. This usually
+        occurred when the page was invisible. Debugging showed that
+        it was trying to draw with a disabled context.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintSystemPreviewBadge): Early
+        return if the context has painting disabled.
+
 2018-05-30  Daniel Bates  <dabates@apple.com>
 
         Web Inspector: Annotate Same-Site cookies
