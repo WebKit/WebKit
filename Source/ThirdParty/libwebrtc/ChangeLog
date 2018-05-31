@@ -1,3 +1,17 @@
+2018-05-30  David Kilzer  <ddkilzer@apple.com>
+
+        Fix leak of a CVPixelBufferRef due to early rerturn in -[RTCVideoEncoderH264 encode:codecSpecificInfo:frameTypes:]
+        <https://webkit.org/b/186114>
+        <rdar://problem/40668097>
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 encode:codecSpecificInfo:frameTypes:]):
+        Call CVBufferRelease(pixelBuffer) before early return to free
+        it.
+        * WebKit/0010-Fix-RTCVideoEncoderH264-CVPixelBuffer-leak.patch: Add.
+
 2018-05-27  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Fix warnings about leaks found by clang static analyzer

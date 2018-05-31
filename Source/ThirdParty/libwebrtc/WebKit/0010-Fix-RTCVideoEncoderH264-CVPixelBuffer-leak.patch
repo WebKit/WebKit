@@ -1,0 +1,12 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm
+index 42f940426ae..16a841d9458 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm
+@@ -429,6 +429,7 @@ - (NSInteger)encode:(RTCVideoFrame *)frame
+       }
+       _frameScaleBuffer.shrink_to_fit();
+       if (![rtcPixelBuffer cropAndScaleTo:pixelBuffer withTempBuffer:_frameScaleBuffer.data()]) {
++        CVBufferRelease(pixelBuffer);
+         return WEBRTC_VIDEO_CODEC_ERROR;
+       }
+     }

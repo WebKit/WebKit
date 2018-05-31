@@ -429,6 +429,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
       }
       _frameScaleBuffer.shrink_to_fit();
       if (![rtcPixelBuffer cropAndScaleTo:pixelBuffer withTempBuffer:_frameScaleBuffer.data()]) {
+        CVBufferRelease(pixelBuffer);
         return WEBRTC_VIDEO_CODEC_ERROR;
       }
     }
