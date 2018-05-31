@@ -1,3 +1,15 @@
+2018-05-31  David Kilzer  <ddkilzer@apple.com>
+
+        Implement checked cast for DDResultRef once DDResultGetCFTypeID() is available
+        <https://webkit.org/b/184554>
+        <rdar://problem/36241894>
+
+        Reviewed by Brent Fulgham.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::detectItemAtPositionWithRange): Implement checked cast
+        for DDResultRef.
+
 2018-05-31  Alex Christensen  <achristensen@webkit.org>
 
         Fix Windows build after r232246.
