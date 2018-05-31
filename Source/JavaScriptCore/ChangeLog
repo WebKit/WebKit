@@ -1,3 +1,20 @@
+2018-05-30  Saam Barati  <sbarati@apple.com>
+
+        DFG combined liveness needs to say that the machine CodeBlock's arguments are live
+        https://bugs.webkit.org/show_bug.cgi?id=186121
+        <rdar://problem/39377796>
+
+        Reviewed by Keith Miller.
+
+        DFG's combined liveness was reporting that the machine CodeBlock's |this|
+        argument was dead at certain points in the program. However, a CodeBlock's
+        arguments are considered live for the entire function. This fixes a bug
+        where object allocation sinking phase skipped materializing an allocation
+        because it thought that the argument it was associated with, |this|, was dead.
+
+        * dfg/DFGCombinedLiveness.cpp:
+        (JSC::DFG::liveNodesAtHead):
+
 2018-05-30  Daniel Bates  <dabates@apple.com>
 
         Web Inspector: Annotate Same-Site cookies

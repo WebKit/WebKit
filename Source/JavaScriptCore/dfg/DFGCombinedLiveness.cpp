@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ NodeSet liveNodesAtHead(Graph& graph, BasicBlock* block)
     }
     
     AvailabilityMap& availabilityMap = block->ssa->availabilityAtHead;
-    graph.forAllLocalsLiveInBytecode(
+    graph.forAllLiveInBytecode(
         block->at(0)->origin.forExit,
         [&] (VirtualRegister reg) {
             availabilityMap.closeStartingWithLocal(
