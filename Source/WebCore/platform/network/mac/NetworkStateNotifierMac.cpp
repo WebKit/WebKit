@@ -61,7 +61,7 @@ void NetworkStateNotifier::updateStateWithoutNotifying()
             continue;
 
         auto key = adoptCF(SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, interfaceName, kSCEntNetIPv4));
-        if (SCDynamicStoreCopyValue(m_store.get(), key.get())) {
+        if (auto value = adoptCF(SCDynamicStoreCopyValue(m_store.get(), key.get()))) {
             m_isOnLine = true;
             return;
         }

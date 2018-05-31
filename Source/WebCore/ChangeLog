@@ -1,3 +1,14 @@
+2018-05-31  Chris Dumez  <cdumez@apple.com>
+
+        Fix memory leak under NetworkStateNotifier::updateStateWithoutNotifying()
+        https://bugs.webkit.org/show_bug.cgi?id=186149
+        <rdar://problem/40674537>
+
+        Reviewed by Geoffrey Garen.
+
+        * platform/network/mac/NetworkStateNotifierMac.cpp:
+        (WebCore::NetworkStateNotifier::updateStateWithoutNotifying):
+
 2018-05-31  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Layout code needs to know the type of the Element associated with a Layout::Box
