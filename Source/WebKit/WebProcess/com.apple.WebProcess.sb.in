@@ -111,6 +111,8 @@
     ;; Needed by <rdar://problem/40093461>, remove when <rdar://problem/39402555> is fixed.
     (allow file-read* file-write-unlink
         (prefix "/private/tmp/cvmsCodeSignObj"))
+    (allow file-read*
+        (prefix "/private/var/db/CVMS/cvmsCodeSignObj"))
 #endif
     ;; OpenCL
     (allow iokit-open

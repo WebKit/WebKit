@@ -1,3 +1,13 @@
+2018-05-31  Brent Fulgham  <bfulgham@apple.com>
+
+        Add a rule to allow reading files with prefix /private/var/db/CVMS/cvmsCodeSignObj
+        https://bugs.webkit.org/show_bug.cgi?id=186157
+        <rdar://problem/40666437>
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-05-31  Megan Gardner  <megan_gardner@apple.com>
 
         Add setting to allow override screen size to be disabled.
