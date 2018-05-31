@@ -1,3 +1,12 @@
+2018-05-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update expected results for BuildStepsConstructorTest
+        https://bugs.webkit.org/show_bug.cgi?id=186119
+
+        Reviewed by Alex Christensen.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py: Add missing entries for 'WinCairo 64-bit' bots.
+
 2018-05-31  Sihui Liu  <sihui_liu@apple.com>
 
         [iOS] TestWebKitAPI.WebKit.WKHTTPCookieStoreWithoutProcessPool fails because cookies use different files with/without processpool
