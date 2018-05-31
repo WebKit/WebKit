@@ -35,13 +35,13 @@
 
 namespace WebCore {
 
-class BaseChooserOnlyDateAndTimeInputType : protected BaseDateAndTimeInputType, private DateTimeChooserClient {
+class BaseChooserOnlyDateAndTimeInputType : public BaseDateAndTimeInputType, private DateTimeChooserClient {
 protected:
     explicit BaseChooserOnlyDateAndTimeInputType(HTMLInputElement& element) : BaseDateAndTimeInputType(element) { }
     ~BaseChooserOnlyDateAndTimeInputType();
 
 private:
-    void updateInnerTextValue();
+    void updateInnerTextValue() override;
     void closeDateTimeChooser();
 
     // InputType functions:

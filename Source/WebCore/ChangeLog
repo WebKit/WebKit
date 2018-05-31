@@ -1,5 +1,12 @@
 2018-05-31  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed iOS build fix after r232335.
+
+        * html/BaseChooserOnlyDateAndTimeInputType.h:
+        * html/BaseDateAndTimeInputType.h:
+
+2018-05-31  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, apply review comments from Darin after r232310.
 
         * platform/ReferrerPolicy.cpp:
