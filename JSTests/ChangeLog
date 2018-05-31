@@ -1,3 +1,10 @@
+2018-05-31  Keith Miller  <keith_miller@apple.com>
+
+        Rebaseline test for change in Error.stack behavior.
+
+        * stress/error-stack-trace-limit.js:
+        (numberOfFrames):
+
 2018-05-30  Saam Barati  <sbarati@apple.com>
 
         DFG combined liveness needs to say that the machine CodeBlock's arguments are live
