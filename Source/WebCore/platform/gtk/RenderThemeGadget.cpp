@@ -30,6 +30,7 @@
 
 #include "FloatRect.h"
 #include "GRefPtrGtk.h"
+#include <mutex>
 
 namespace WebCore {
 
@@ -72,6 +73,26 @@ static void appendElementToPath(GtkWidgetPath* path, const RenderThemeGadget::In
         gtk_widget_path_iter_add_class(path, -1, className);
 }
 
+static GtkStyleContext* baseStyleContext()
+{
+    // Leaking here on purpose for it not to be destroyed unsafely at exit time.
+    static GtkStyleContext* baseContext;
+    static std::once_flag onceFlag;
+
+    std::call_once(onceFlag, []() {
+        GRefPtr<GtkWidgetPath> path = adoptGRef(gtk_widget_path_new());
+        gtk_widget_path_append_type(path.get(), GTK_TYPE_WINDOW);
+        gtk_widget_path_iter_set_object_name(path.get(), -1, "window");
+        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_BACKGROUND);
+
+        baseContext = gtk_style_context_new();
+        gtk_style_context_set_path(baseContext, path.get());
+        gtk_style_context_set_parent(baseContext, nullptr);
+    });
+
+    return baseContext;
+}
+
 RenderThemeGadget::RenderThemeGadget(const RenderThemeGadget::Info& info, RenderThemeGadget* parent, const Vector<RenderThemeGadget::Info> siblings, unsigned position)
 {
     GRefPtr<GtkWidgetPath> path = parent ? adoptGRef(gtk_widget_path_copy(gtk_style_context_get_path(parent->context()))) : adoptGRef(gtk_widget_path_new());
@@ -82,7 +103,7 @@ RenderThemeGadget::RenderThemeGadget(const RenderThemeGadget::Info& info, Render
         gtk_widget_path_append_with_siblings(path.get(), siblingsPath.get(), position);
     } else
         appendElementToPath(path.get(), info);
-    m_context = createStyleContext(path.get(), parent ? parent->context() : nullptr);
+    m_context = createStyleContext(path.get(), parent ? parent->context() : baseStyleContext());
 }
 
 RenderThemeGadget::~RenderThemeGadget() = default;

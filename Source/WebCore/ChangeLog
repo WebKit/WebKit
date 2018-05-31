@@ -1,3 +1,29 @@
+2018-05-30  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
+        [GTK] Hardcoded text color in input fields
+        https://bugs.webkit.org/show_bug.cgi?id=126907
+
+        Reviewed by Carlos Garcia Campos.
+
+        Set text color in input fields to foreground theme color.
+        Also, set "window.background" as base GtkStyleContext to mimic
+        GTK applications and fix some theme bugs.
+
+        No new tests required. ManualTests/gtk/theme.html already covers it.
+
+        * platform/gtk/RenderThemeGadget.cpp:
+        (WebCore::baseStyleContext): Added.
+        (WebCore::RenderThemeGadget::RenderThemeGadget):
+        Use "window.background" GtkStyleContext instead of
+        null parent for RenderThemeGadgets.
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::adjustButtonStyle const):
+        Set color as foreground theme color.
+        (WebCore::RenderThemeGtk::adjustTextFieldStyle const): Ditto.
+        (WebCore::RenderThemeGtk::adjustTextAreaStyle const): Ditto.
+        (WebCore::RenderThemeGtk::adjustSearchFieldStyle const): Ditto.
+        * rendering/RenderThemeGtk.h: adjustTextAreaStyle() overriden.
+
 2018-05-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Pass VM& parameter as much as possible
