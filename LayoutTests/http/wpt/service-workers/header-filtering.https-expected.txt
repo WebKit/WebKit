@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Failed to set referrer policy: The value 'whatever' is not one of 'no-referrer', 'no-referrer-when-downgrade', 'same-origin', 'origin', 'strict-origin', 'origin-when-cross-origin', 'strict-origin-when-cross-origin' or 'unsafe-url'.
 
 PASS Prepare tests: setup worker and register the client 
 PASS Prepare tests: Add a frame controlled by service worker 

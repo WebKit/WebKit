@@ -1,3 +1,11 @@
+2018-05-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline http/wpt/service-workers/header-filtering.https.html after r232310.
+
+        Unreviewed test gardening.
+
+        * http/wpt/service-workers/header-filtering.https-expected.txt:
+
 2018-05-30  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r224684): User-agent seen by page does not change when modified by the develop menu options after reloading.
