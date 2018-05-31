@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cpm-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cpm-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cpm-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-in-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-in-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-in-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-iteration-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-iteration-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-iteration-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-strict.html

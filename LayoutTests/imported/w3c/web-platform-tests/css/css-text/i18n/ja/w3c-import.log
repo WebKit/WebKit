@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cpm-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cpm-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cpm-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-hyphens-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-hyphens-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-hyphens-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-in-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-in-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-in-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-iteration-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-iteration-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-iteration-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-po-loose.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-po-normal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-po-strict.html
