@@ -84,6 +84,7 @@ enum Class : uint8_t {
     OriginalNonArray, // Definitely some object that is not a JSArray, but that object has the original structure.
     Array, // Definitely a JSArray, and may or may not have custom properties or have undergone some other bizarre transitions.
     OriginalArray, // Definitely a JSArray, and still has one of the primordial JSArray structures for the global object that this code block (possibly inlined code block) belongs to.
+    OriginalCopyOnWriteArray, // Definitely a copy on write JSArray, and still has one of the primordial JSArray copy on write structures for the global object that this code block (possibly inlined code block) belongs to.
     PossiblyArray // Some object that may or may not be a JSArray.
 };
 
@@ -205,9 +206,15 @@ public:
         Array::Class myArrayClass;
 
         if (isJSArray()) {
-            if (profile->usesOriginalArrayStructures(locker) && benefitsFromOriginalArray())
-                myArrayClass = Array::OriginalArray;
-            else
+            if (profile->usesOriginalArrayStructures(locker) && benefitsFromOriginalArray()) {
+                ArrayModes arrayModes = profile->observedArrayModes(locker);
+                if (hasSeenCopyOnWriteArray(arrayModes) && !hasSeenWritableArray(arrayModes))
+                    myArrayClass = Array::OriginalCopyOnWriteArray;
+                else if (!hasSeenCopyOnWriteArray(arrayModes) && hasSeenWritableArray(arrayModes))
+                    myArrayClass = Array::OriginalArray;
+                else
+                    myArrayClass = Array::Array;
+            } else
                 myArrayClass = Array::Array;
         } else
             myArrayClass = arrayClass();
@@ -256,6 +263,7 @@ public:
         switch (arrayClass()) {
         case Array::Array:
         case Array::OriginalArray:
+        case Array::OriginalCopyOnWriteArray:
             return true;
         default:
             return false;
@@ -264,7 +272,7 @@ public:
     
     bool isJSArrayWithOriginalStructure() const
     {
-        return arrayClass() == Array::OriginalArray;
+        return arrayClass() == Array::OriginalArray || arrayClass() == Array::OriginalCopyOnWriteArray;
     }
     
     bool isSaneChain() const
@@ -487,10 +495,14 @@ private:
         case Array::NonArray:
         case Array::OriginalNonArray:
             return asArrayModes(shape);
+        case Array::OriginalCopyOnWriteArray:
+            ASSERT(hasInt32(shape) || hasDouble(shape) || hasContiguous(shape));
+            return asArrayModes(shape | IsArray) | asArrayModes(shape | IsArray | CopyOnWrite);
         case Array::Array:
-        case Array::OriginalArray:
             if (hasInt32(shape) || hasDouble(shape) || hasContiguous(shape))
                 return asArrayModes(shape | IsArray) | asArrayModes(shape | IsArray | CopyOnWrite);
+            FALLTHROUGH;
+        case Array::OriginalArray:
             return asArrayModes(shape | IsArray);
         case Array::PossiblyArray:
             if (hasInt32(shape) || hasDouble(shape) || hasContiguous(shape))
@@ -544,6 +556,7 @@ static inline bool neverNeedsStorage(const ArrayMode&)
 namespace WTF {
 
 class PrintStream;
+void printInternal(PrintStream&, JSC::DFG::Array::Action);
 void printInternal(PrintStream&, JSC::DFG::Array::Type);
 void printInternal(PrintStream&, JSC::DFG::Array::Class);
 void printInternal(PrintStream&, JSC::DFG::Array::Speculation);

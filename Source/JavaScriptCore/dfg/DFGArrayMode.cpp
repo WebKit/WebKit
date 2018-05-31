@@ -86,6 +86,7 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJSLocker& locker, ArrayProfile
 
     case asArrayModes(NonArrayWithInt32):
     case asArrayModes(ArrayWithInt32):
+    case asArrayModes(CopyOnWriteArrayWithInt32):
     case asArrayModes(NonArrayWithInt32) | asArrayModes(ArrayWithInt32):
     case asArrayModes(NonArrayWithInt32) | asArrayModes(CopyOnWriteArrayWithInt32):
     case asArrayModes(ArrayWithInt32) | asArrayModes(CopyOnWriteArrayWithInt32):
@@ -94,6 +95,7 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJSLocker& locker, ArrayProfile
 
     case asArrayModes(NonArrayWithDouble):
     case asArrayModes(ArrayWithDouble):
+    case asArrayModes(CopyOnWriteArrayWithDouble):
     case asArrayModes(NonArrayWithDouble) | asArrayModes(ArrayWithDouble):
     case asArrayModes(NonArrayWithDouble) | asArrayModes(CopyOnWriteArrayWithDouble):
     case asArrayModes(ArrayWithDouble) | asArrayModes(CopyOnWriteArrayWithDouble):
@@ -102,6 +104,7 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJSLocker& locker, ArrayProfile
 
     case asArrayModes(NonArrayWithContiguous):
     case asArrayModes(ArrayWithContiguous):
+    case asArrayModes(CopyOnWriteArrayWithContiguous):
     case asArrayModes(NonArrayWithContiguous) | asArrayModes(ArrayWithContiguous):
     case asArrayModes(NonArrayWithContiguous) | asArrayModes(CopyOnWriteArrayWithContiguous):
     case asArrayModes(ArrayWithContiguous) | asArrayModes(CopyOnWriteArrayWithContiguous):
@@ -242,7 +245,7 @@ ArrayMode ArrayMode::refine(
         Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure(graph.m_vm);
         Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(graph.m_vm);
         if ((node->op() == GetByVal || canBecomeGetArrayLength(graph, node))
-            && arrayClass() == Array::OriginalArray
+            && isJSArrayWithOriginalStructure()
             && !graph.hasExitSite(node->origin.semantic, OutOfBounds)
             && arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
             && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
@@ -361,6 +364,23 @@ Structure* ArrayMode::originalArrayStructure(Graph& graph, const CodeOrigin& cod
     JSGlobalObject* globalObject = graph.globalObjectFor(codeOrigin);
     
     switch (arrayClass()) {
+    case Array::OriginalCopyOnWriteArray: {
+        if (conversion() == Array::AsIs) {
+            switch (type()) {
+            case Array::Int32:
+                return globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithInt32);
+            case Array::Double:
+                return globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithDouble);
+            case Array::Contiguous:
+                return globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous);
+            default:
+                CRASH();
+                return nullptr;
+            }
+        }
+        FALLTHROUGH;
+    }
+
     case Array::OriginalArray: {
         switch (type()) {
         case Array::Int32:
@@ -558,6 +578,18 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
     return false;
 }
 
+const char* arrayActionToString(Array::Action action)
+{
+    switch (action) {
+    case Array::Read:
+        return "Read";
+    case Array::Write:
+        return "Write";
+    default:
+        return "Unknown!";
+    }
+}
+
 const char* arrayTypeToString(Array::Type type)
 {
     switch (type) {
@@ -625,6 +657,8 @@ const char* arrayClassToString(Array::Class arrayClass)
         return "Array";
     case Array::OriginalArray:
         return "OriginalArray";
+    case Array::OriginalCopyOnWriteArray:
+        return "OriginalCopyOnWriteArray";
     case Array::NonArray:
         return "NonArray";
     case Array::OriginalNonArray:
@@ -785,12 +819,17 @@ bool ArrayMode::permitsBoundsCheckLowering() const
 
 void ArrayMode::dump(PrintStream& out) const
 {
-    out.print(type(), "+", arrayClass(), "+", speculation(), "+", conversion());
+    out.print(type(), "+", arrayClass(), "+", speculation(), "+", conversion(), "+", action());
 }
 
 } } // namespace JSC::DFG
 
 namespace WTF {
+
+void printInternal(PrintStream& out, JSC::DFG::Array::Action action)
+{
+    out.print(JSC::DFG::arrayActionToString(action));
+}
 
 void printInternal(PrintStream& out, JSC::DFG::Array::Type type)
 {

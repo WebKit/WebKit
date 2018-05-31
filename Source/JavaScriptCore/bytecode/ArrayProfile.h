@@ -98,14 +98,17 @@ inline constexpr ArrayModes asArrayModes(IndexingType indexingMode)
     | CopyOnWriteArrayWithDoubleArrayMode               \
     | CopyOnWriteArrayWithContiguousArrayMode)
 
-#define ALL_ARRAY_ARRAY_MODES                           \
+#define ALL_WRITABLE_ARRAY_ARRAY_MODES                  \
     (asArrayModes(ArrayClass)                           \
     | asArrayModes(ArrayWithUndecided)                  \
     | asArrayModes(ArrayWithInt32)                      \
     | asArrayModes(ArrayWithDouble)                     \
     | asArrayModes(ArrayWithContiguous)                 \
     | asArrayModes(ArrayWithArrayStorage)               \
-    | asArrayModes(ArrayWithSlowPutArrayStorage)        \
+    | asArrayModes(ArrayWithSlowPutArrayStorage))
+
+#define ALL_ARRAY_ARRAY_MODES                           \
+    (ALL_WRITABLE_ARRAY_ARRAY_MODES                     \
     | ALL_COPY_ON_WRITE_ARRAY_MODES)
 
 #define ALL_ARRAY_MODES (ALL_NON_ARRAY_ARRAY_MODES | ALL_ARRAY_ARRAY_MODES)
@@ -203,6 +206,11 @@ inline bool hasSeenArray(ArrayModes arrayModes)
 inline bool hasSeenNonArray(ArrayModes arrayModes)
 {
     return arrayModes & ALL_NON_ARRAY_ARRAY_MODES;
+}
+
+inline bool hasSeenWritableArray(ArrayModes arrayModes)
+{
+    return arrayModes & ALL_WRITABLE_ARRAY_ARRAY_MODES;
 }
 
 inline bool hasSeenCopyOnWriteArray(ArrayModes arrayModes)

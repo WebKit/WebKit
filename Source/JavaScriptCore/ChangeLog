@@ -1,3 +1,45 @@
+2018-05-31  Keith Miller  <keith_miller@apple.com>
+
+        DFGArrayModes needs to know more about CoW arrays
+        https://bugs.webkit.org/show_bug.cgi?id=186162
+
+        Reviewed by Filip Pizlo.
+
+        This patch fixes two issues in DFGArrayMode.
+
+        1) fromObserved was missing switch cases for when the only observed ArrayModes are CopyOnWrite.
+        2) DFGArrayModes needs to track if the ArrayClass is an OriginalCopyOnWriteArray in order
+        to vend an accurate original structure.
+
+        Additionally, this patch fixes some places in Bytecode parsing where we told the array mode
+        we were doing a read but actually doing a write. Also, DFGArrayMode will now print the
+        action it is expecting when being dumped.
+
+        * bytecode/ArrayProfile.h:
+        (JSC::hasSeenWritableArray):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::fromObserved):
+        (JSC::DFG::ArrayMode::refine const):
+        (JSC::DFG::ArrayMode::originalArrayStructure const):
+        (JSC::DFG::arrayActionToString):
+        (JSC::DFG::arrayClassToString):
+        (JSC::DFG::ArrayMode::dump const):
+        (WTF::printInternal):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::withProfile const):
+        (JSC::DFG::ArrayMode::isJSArray const):
+        (JSC::DFG::ArrayMode::isJSArrayWithOriginalStructure const):
+        (JSC::DFG::ArrayMode::arrayModesWithIndexingShape const):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::jumpSlowForUnwantedArrayMode):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::isArrayTypeForArrayify):
+
 2018-05-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Pass VM& parameter as much as possible
