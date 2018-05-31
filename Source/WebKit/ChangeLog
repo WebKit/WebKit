@@ -1,3 +1,32 @@
+2018-05-31  Antti Koivisto  <antti@apple.com>
+
+        WebKit memory management: Safari jetsams on some websites when zooming and scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=186091
+        <rdar://problem/36315010>
+
+        Reviewed by Geoff Garen.
+
+        When zooming a page rapidly the visible rect and the page zoom level may get momentarily out of sync.
+        When this happens we may generate tiles for a much larger area than needed and run out of memory
+        building the next layer tree transaction. Running out of memory is more likely if the page has lots of
+        tiled layers in addition to the main content layer.
+
+        We already have code for dealing with the scale mismatch for zoom-out case (where this would cause
+        visibly missing tiles). This patch enables the same exact adjustment for zoom-in case (where the
+        symptom is creating too many tiles).
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::adjustExposedRectForNewScale):
+
+        Do some renames to make it clear that this can both expand and contract the visible rect.
+        Bail out if there is nothing to do.
+
+        (WebKit::WebPage::updateVisibleContentRects):
+
+        Call adjustExposedRectForNewScale directly and unconditionally.
+
+        (WebKit::adjustExposedRectForBoundedScale): Deleted.
+
 2018-05-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Pass VM& parameter as much as possible
