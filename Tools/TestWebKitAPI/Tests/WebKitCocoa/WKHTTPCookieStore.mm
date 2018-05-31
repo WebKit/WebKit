@@ -468,8 +468,7 @@ static bool finished;
 @implementation CookieUIDelegate
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
-    auto cookies = String(message.UTF8String);
-    EXPECT_TRUE(cookies == "PersistentCookieName=CookieValue; SessionCookieName=CookieValue" || cookies == "SessionCookieName=CookieValue; PersistentCookieName=CookieValue");
+    EXPECT_STREQ("PersistentCookieName=CookieValue; SessionCookieName=CookieValue", message.UTF8String);
     finished = true;
     completionHandler();
 }
@@ -490,7 +489,7 @@ TEST(WebKit, WKHTTPCookieStoreWithoutProcessPool)
         NSHTTPCookieDomain: @"127.0.0.1",
         NSHTTPCookieExpires: [NSDate distantFuture],
     }];
-    NSString *alertCookieHTML = @"<script>alert(document.cookie);</script>";
+    NSString *alertCookieHTML = @"<script>var cookies = document.cookie.split(';'); for (let i = 0; i < cookies.length; i ++) { cookies[i] = cookies[i].trim(); } cookies.sort(); alert(cookies.join('; '));</script>";
 
     // NonPersistentDataStore
     RetainPtr<WKWebsiteDataStore> ephemeralStoreWithCookies = [WKWebsiteDataStore nonPersistentDataStore];
