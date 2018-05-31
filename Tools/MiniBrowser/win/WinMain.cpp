@@ -29,8 +29,10 @@
 #pragma warning(disable: 4091)
 
 #include "stdafx.h"
+#include "Common.h"
 #include "MiniBrowserLibResource.h"
-#include "Common.cpp"
+#include "MiniBrowserReplace.h"
+#include <WebKitLegacy/WebKitCOMAPI.h>
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpstrCmdLine, _In_ int nCmdShow)
 {
@@ -74,7 +76,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     hAccelTable = LoadAccelerators(hInst, MAKEINTRESOURCE(IDC_MINIBROWSER));
 
     if (requestedURL.length())
-        loadURL(requestedURL.GetBSTR());
+        gMainWindow->loadURL(requestedURL.GetBSTR());
     else
         gMiniBrowser->loadHTMLString(_bstr_t(defaultHTML).GetBSTR());
 

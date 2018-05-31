@@ -1,3 +1,51 @@
+2018-05-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Move MainWindow related code from Common.cpp to MainWindow.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=186079
+
+        Reviewed by Alex Christensen.
+
+        This is a sub task of Bug 184770.
+
+        This change is partial. I'm going to remove global variables
+        gMainWindow and gMiniBrowser and convert more functions to
+        MainWindow's methods in follow-up patches.
+
+        * MiniBrowser/win/CMakeLists.txt: Added Common.cpp
+        * MiniBrowser/win/Common.cpp:
+        (menuItemIsChecked): Moved to MainWindow.cpp.
+        (turnOffOtherUserAgents): Ditto.
+        (EditProc): Ditto.
+        (BackButtonProc): Ditto.
+        (ForwardButtonProc): Ditto.
+        (About): Ditto.
+        (Caches): Ditto.
+        (CustomUserAgent): Ditto.
+        (AuthDialogProc): Ditto.
+        (DisplayAuthDialog): Converted to MainWindow's method.
+        (ToggleMenuItem): Ditto.
+        (loadURL): Ditto.
+        * MiniBrowser/win/Common.h:
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::init): Call SetFocus at the end of the construction.
+        (MainWindow::WndProc):
+        (menuItemIsChecked): Moved from Common.cpp.
+        (turnOffOtherUserAgents): Ditto.
+        (EditProc): Ditto.
+        (BackButtonProc): Ditto.
+        (ForwardButtonProc): Ditto.
+        (About): Ditto.
+        (Caches): Ditto.
+        (CustomUserAgent): Ditto.
+        (authDialogProc): Ditto.
+        (MainWindow::displayAuthDialog): Converted from a function of Common.cpp.
+        (MainWindow::toggleMenuItem): Ditto.
+        (MainWindow::loadURL): Ditto.
+        * MiniBrowser/win/MainWindow.h: Added method declarations.
+        * MiniBrowser/win/MiniBrowser.h: Added pragma once.
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain): Include Common.h instead of Common.cpp.
+
 2018-05-30  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r224684): User-agent seen by page does not change when modified by the develop menu options after reloading.

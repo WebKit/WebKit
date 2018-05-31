@@ -25,7 +25,17 @@
 
 #pragma once
 
-bool getAppDataFolder(_bstr_t& directory);
+#include "stdafx.h"
+#include "MainWindow.h"
+#include "MiniBrowser.h"
 
+void computeFullDesktopFrame();
+bool getAppDataFolder(_bstr_t& directory);
+void parseCommandLine(bool& usesLayeredWebView, bool& useFullDesktop, bool& pageLoadTesting, _bstr_t& requestedURL);
+void createCrashReport(EXCEPTION_POINTERS*);
+
+extern HINSTANCE hInst;
+extern MainWindow* gMainWindow;
+extern MiniBrowser* gMiniBrowser;
 extern POINT s_windowPosition;
 extern SIZE s_windowSize;

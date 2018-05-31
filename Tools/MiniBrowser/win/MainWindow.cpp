@@ -25,6 +25,8 @@
 
 #include "stdafx.h"
 #include "MainWindow.h"
+
+#include "Common.h"
 #include "MiniBrowser.h"
 #include "MiniBrowserLibResource.h"
 
@@ -34,22 +36,17 @@ float deviceScaleFactorForWindow(HWND);
 
 static constexpr int controlButtonWidth = 24;
 
-extern MainWindow* gMainWindow;
-extern MiniBrowser* gMiniBrowser;
-extern WNDPROC DefEditProc;
-extern WNDPROC DefButtonProc;
-extern HINSTANCE hInst;
-extern HWND hCacheWnd;
+static HWND hCacheWnd;
+static WNDPROC DefEditProc = nullptr;
+static WNDPROC DefButtonProc = nullptr;
 
-LRESULT CALLBACK EditProc(HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK BackButtonProc(HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK ForwardButtonProc(HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK ReloadButtonProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK CustomUserAgent(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK Caches(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK AuthDialogProc(HWND, UINT, WPARAM, LPARAM);
-bool ToggleMenuItem(HWND hWnd, UINT menuID);
+static LRESULT CALLBACK EditProc(HWND, UINT, WPARAM, LPARAM);
+static LRESULT CALLBACK BackButtonProc(HWND, UINT, WPARAM, LPARAM);
+static LRESULT CALLBACK ForwardButtonProc(HWND, UINT, WPARAM, LPARAM);
+static LRESULT CALLBACK ReloadButtonProc(HWND, UINT, WPARAM, LPARAM);
+static INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
+static INT_PTR CALLBACK CustomUserAgent(HWND, UINT, WPARAM, LPARAM);
+static INT_PTR CALLBACK Caches(HWND, UINT, WPARAM, LPARAM);
 
 std::wstring MainWindow::s_windowClass;
 
@@ -110,8 +107,6 @@ bool MainWindow::init(HINSTANCE hInstance, bool usesLayeredWebView, bool pageLoa
     SetWindowLongPtr(m_hBackButtonWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(BackButtonProc));
     SetWindowLongPtr(m_hForwardButtonWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(ForwardButtonProc));
 
-    SetFocus(m_hURLBarWnd);
-
     m_browserWindow = std::make_unique<MiniBrowser>(m_hMainWnd, m_hURLBarWnd, usesLayeredWebView, pageLoadTesting);
     if (!m_browserWindow)
         return false;
@@ -120,6 +115,7 @@ bool MainWindow::init(HINSTANCE hInstance, bool usesLayeredWebView, bool pageLoa
         return false;
 
     resizeSubViews();
+    SetFocus(m_hURLBarWnd);
     return true;
 }
 
@@ -184,7 +180,7 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
             break;
         case IDM_UA_OTHER:
             if (wmEvent)
-                ToggleMenuItem(hWnd, wmId);
+                gMainWindow->toggleMenuItem(wmId);
             else
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_USER_AGENT), hWnd, CustomUserAgent);
             break;
@@ -205,7 +201,7 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
                 gMiniBrowser->showLayerTree();
             break;
         default:
-            if (!ToggleMenuItem(hWnd, wmId))
+            if (!gMainWindow->toggleMenuItem(wmId))
                 return DefWindowProc(hWnd, message, wParam, lParam);
         }
         }
@@ -231,4 +227,251 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
     }
 
     return 0;
+}
+
+static bool menuItemIsChecked(const MENUITEMINFO& info)
+{
+    return info.fState & MFS_CHECKED;
+}
+
+static void turnOffOtherUserAgents(HMENU menu)
+{
+    MENUITEMINFO info;
+    ::memset(&info, 0x00, sizeof(info));
+    info.cbSize = sizeof(info);
+    info.fMask = MIIM_STATE;
+
+    // Must unset the other menu items:
+    for (UINT menuToClear = IDM_UA_DEFAULT; menuToClear <= IDM_UA_OTHER; ++menuToClear) {
+        if (!::GetMenuItemInfo(menu, menuToClear, FALSE, &info))
+            continue;
+        if (!menuItemIsChecked(info))
+            continue;
+
+        info.fState = MFS_UNCHECKED;
+        ::SetMenuItemInfo(menu, menuToClear, FALSE, &info);
+    }
+}
+
+bool MainWindow::toggleMenuItem(UINT menuID)
+{
+    HMENU menu = ::GetMenu(hwnd());
+
+    switch (menuID) {
+    case IDM_UA_DEFAULT:
+    case IDM_UA_SAFARI_8_0:
+    case IDM_UA_SAFARI_IOS_8_IPHONE:
+    case IDM_UA_SAFARI_IOS_8_IPAD:
+    case IDM_UA_IE_11:
+    case IDM_UA_CHROME_MAC:
+    case IDM_UA_CHROME_WIN:
+    case IDM_UA_FIREFOX_MAC:
+    case IDM_UA_FIREFOX_WIN:
+        m_browserWindow->setUserAgent(menuID);
+        turnOffOtherUserAgents(menu);
+        break;
+    case IDM_UA_OTHER:
+        // The actual user agent string will be set by the custom user agent dialog
+        turnOffOtherUserAgents(menu);
+        break;
+    }
+
+    MENUITEMINFO info = { };
+    info.cbSize = sizeof(info);
+    info.fMask = MIIM_STATE;
+
+    if (!::GetMenuItemInfo(menu, menuID, FALSE, &info))
+        return false;
+
+    BOOL newState = !menuItemIsChecked(info);
+    info.fState = (newState) ? MFS_CHECKED : MFS_UNCHECKED;
+    ::SetMenuItemInfo(menu, menuID, FALSE, &info);
+
+    m_browserWindow->setPreference(menuID, newState);
+
+    return true;
+}
+
+LRESULT CALLBACK EditProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message) {
+    case WM_CHAR:
+        if (wParam == 13) {
+            // Enter Key
+            wchar_t strPtr[INTERNET_MAX_URL_LENGTH];
+            *((LPWORD)strPtr) = INTERNET_MAX_URL_LENGTH;
+            int strLen = SendMessage(hDlg, EM_GETLINE, 0, (LPARAM)strPtr);
+
+            strPtr[strLen] = 0;
+            _bstr_t bstr(strPtr);
+            gMainWindow->loadURL(bstr.GetBSTR());
+
+            return 0;
+        }
+    default:
+        return CallWindowProc(DefEditProc, hDlg, message, wParam, lParam);
+    }
+}
+
+LRESULT CALLBACK BackButtonProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message) {
+    case WM_LBUTTONUP:
+        gMiniBrowser->goBack();
+    default:
+        return CallWindowProc(DefButtonProc, hDlg, message, wParam, lParam);
+    }
+}
+
+LRESULT CALLBACK ForwardButtonProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message) {
+    case WM_LBUTTONUP:
+        gMiniBrowser->goForward();
+    default:
+        return CallWindowProc(DefButtonProc, hDlg, message, wParam, lParam);
+    }
+}
+
+// Message handler for about box.
+INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    UNREFERENCED_PARAMETER(lParam);
+    switch (message) {
+    case WM_INITDIALOG:
+        return (INT_PTR)TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
+            EndDialog(hDlg, LOWORD(wParam));
+            return (INT_PTR)TRUE;
+        }
+        break;
+    }
+    return (INT_PTR)FALSE;
+}
+
+INT_PTR CALLBACK Caches(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    UNREFERENCED_PARAMETER(lParam);
+    switch (message) {
+    case WM_INITDIALOG:
+        ::SetTimer(hDlg, IDT_UPDATE_STATS, 1000, nullptr);
+        return (INT_PTR)TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
+            ::KillTimer(hDlg, IDT_UPDATE_STATS);
+            ::DestroyWindow(hDlg);
+            hCacheWnd = 0;
+            return (INT_PTR)TRUE;
+        }
+        break;
+
+    case IDT_UPDATE_STATS:
+        ::InvalidateRect(hDlg, nullptr, FALSE);
+        return (INT_PTR)TRUE;
+
+    case WM_PAINT:
+        gMiniBrowser->updateStatistics(hDlg);
+        break;
+    }
+
+    return (INT_PTR)FALSE;
+}
+
+INT_PTR CALLBACK CustomUserAgent(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    UNREFERENCED_PARAMETER(lParam);
+    switch (message) {
+    case WM_INITDIALOG: {
+        HWND edit = ::GetDlgItem(hDlg, IDC_USER_AGENT_INPUT);
+        _bstr_t userAgent;
+        if (gMiniBrowser)
+            userAgent = gMiniBrowser->userAgent();
+
+        ::SetWindowText(edit, static_cast<LPCTSTR>(userAgent));
+        return (INT_PTR)TRUE;
+    }
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK) {
+            HWND edit = ::GetDlgItem(hDlg, IDC_USER_AGENT_INPUT);
+
+            TCHAR buffer[1024];
+            int strLen = ::GetWindowText(edit, buffer, 1024);
+            buffer[strLen] = 0;
+
+            _bstr_t bstr(buffer);
+            if (bstr.length()) {
+                gMiniBrowser->setUserAgent(bstr);
+                ::PostMessage(gMainWindow->hwnd(), static_cast<UINT>(WM_COMMAND), MAKELPARAM(IDM_UA_OTHER, 1), 0);
+            }
+        }
+
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
+            ::EndDialog(hDlg, LOWORD(wParam));
+            return (INT_PTR)TRUE;
+        }
+        break;
+    }
+    return (INT_PTR)FALSE;
+}
+
+static INT_PTR CALLBACK authDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message) {
+    case WM_INITDIALOG: {
+        HWND edit = ::GetDlgItem(hDlg, IDC_AUTH_USER);
+        ::SetWindowText(edit, static_cast<LPCTSTR>(L""));
+
+        edit = ::GetDlgItem(hDlg, IDC_AUTH_PASSWORD);
+        ::SetWindowText(edit, static_cast<LPCTSTR>(L""));
+        return (INT_PTR)TRUE;
+    }
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
+            INT_PTR result { };
+
+            if (LOWORD(wParam) == IDOK) {
+                TCHAR user[256];
+                int strLen = ::GetWindowText(::GetDlgItem(hDlg, IDC_AUTH_USER), user, 256);
+                user[strLen] = 0;
+
+                TCHAR pass[256];
+                strLen = ::GetWindowText(::GetDlgItem(hDlg, IDC_AUTH_PASSWORD), pass, 256);
+                pass[strLen] = 0;
+
+                result = reinterpret_cast<INT_PTR>(new std::pair<std::wstring, std::wstring>(user, pass));
+            }
+
+            ::EndDialog(hDlg, result);
+            return (INT_PTR)TRUE;
+        }
+        break;
+    }
+    return (INT_PTR)FALSE;
+}
+
+HRESULT MainWindow::displayAuthDialog(std::wstring& username, std::wstring& password)
+{
+    auto result = DialogBox(hInst, MAKEINTRESOURCE(IDD_AUTH), hwnd(), authDialogProc);
+    if (!result)
+        return E_FAIL;
+
+    auto pair = reinterpret_cast<std::pair<std::wstring, std::wstring>*>(result);
+    username = pair->first;
+    password = pair->second;
+    delete pair;
+
+    return S_OK;
+}
+
+void MainWindow::loadURL(BSTR url)
+{
+    if (FAILED(m_browserWindow->loadURL(url)))
+        return;
+
+    SetFocus(m_browserWindow->hwnd());
 }

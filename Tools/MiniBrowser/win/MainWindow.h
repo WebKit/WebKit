@@ -37,11 +37,16 @@ public:
     void resizeSubViews();
     HWND hwnd() const { return m_hMainWnd; }
     MiniBrowser* browserWindow() const { return m_browserWindow.get(); }
+
+    void loadURL(BSTR url);
+    HRESULT displayAuthDialog(std::wstring& username, std::wstring& password);
     
 private:
     static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
     static void registerClass(HINSTANCE hInstance);
     static std::wstring s_windowClass;
+
+    bool toggleMenuItem(UINT menuID);
 
     HWND m_hMainWnd { nullptr };
     HWND m_hURLBarWnd { nullptr };
