@@ -6,7 +6,7 @@ def main(request, response):
         ("Access-Control-Allow-Credentials", "true"),
         ("Access-Control-Allow-Methods", "GET, POST, HEAD"),
         ("Timing-Allow-Origin", "*"),
-        ("Referrer-Policy", "whatever"),
+        ("Referrer-Policy", "origin"),
         ("SourceMap", "1"),
         ("x-sourcemap", "2"),
         ("Access-Control-Expose-Headers", "x-Header1, content-length"),

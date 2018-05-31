@@ -1,3 +1,17 @@
+2018-05-31  Chris Dumez  <cdumez@apple.com>
+
+        Update http/wpt/service-workers/header-filtering.https.html to use a valid Referrer-Policy
+        https://bugs.webkit.org/show_bug.cgi?id=186148
+
+        Reviewed by Youenn Fablet.
+
+        Update http/wpt/service-workers/header-filtering.https.html to use a valid Referrer-Policy to
+        avoid logging a console message.
+
+        * http/wpt/service-workers/header-filtering.https-expected.txt:
+        * http/wpt/service-workers/resources/response-full-of-headers.py:
+        (main):
+
 2018-05-31  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [wpe] update the TestExpectations for encrypted-media after some investigations
