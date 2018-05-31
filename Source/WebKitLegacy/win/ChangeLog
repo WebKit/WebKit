@@ -1,3 +1,14 @@
+2018-05-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r232316) [Win] error C2039: 'event': is not a member of 'WebCore::NavigationAction'
+        https://bugs.webkit.org/show_bug.cgi?id=186125
+
+        Unreviewed build fix
+
+        * WebActionPropertyBag.cpp:
+        (WebActionPropertyBag::Read):
+        (findMouseEvent): Deleted.
+
 2018-05-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r232198) [WinCairo] cannot convert from 'WTF::StringView' to 'const WTF::String'
