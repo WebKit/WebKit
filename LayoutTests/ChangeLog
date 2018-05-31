@@ -1,3 +1,21 @@
+2018-05-31  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
+        [wpe] update the TestExpectations for encrypted-media after some investigations
+        https://bugs.webkit.org/show_bug.cgi?id=185593
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        After the fix 185725 and some investigations, the WPE platform TestExpectations should be updated
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-destroy-persistent-license.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-waitingforkey.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key.https-expected.txt:
+
 2018-05-31  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening after r232336.

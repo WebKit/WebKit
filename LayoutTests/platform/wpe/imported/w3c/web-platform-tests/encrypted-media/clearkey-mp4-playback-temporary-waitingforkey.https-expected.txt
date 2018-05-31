@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT org.w3.clearkey, successful playback, temporary, mp4, waitingforkey event, 1 key Test timed out
+Pass	org.w3.clearkey, successful playback, temporary, mp4, waitingforkey event, 1 key 
 

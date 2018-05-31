@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Waiting for a key. Test timed out
+Pass	Waiting for a key.
 
