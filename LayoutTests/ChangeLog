@@ -1,3 +1,16 @@
+2018-06-01  Youenn Fablet  <youenn@apple.com>
+
+        http/tests/appcache/deferred-events.html is flaky due to console log messages
+        https://bugs.webkit.org/show_bug.cgi?id=185543
+
+        Reviewed by Chris Dumez.
+
+        Update the test to wait for the onerror callback.
+        At that time, all console logging should be done.
+
+        * http/tests/appcache/deferred-events-expected.txt:
+        * http/tests/appcache/deferred-events.html:
+
 2018-05-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Add Symbol.prototype.description getter

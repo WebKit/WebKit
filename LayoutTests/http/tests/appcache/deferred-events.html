@@ -2,6 +2,7 @@
 <head>
   <script type="text/javascript">
     var onloadHasBeenCalled = false;
+    var oncheckingAfterOnload = false;
 
     if (window.testRunner) {
         testRunner.dumpAsText()
@@ -9,8 +10,17 @@
     }
 
     window.applicationCache.onchecking = function() {
-        if (onloadHasBeenCalled)
-            document.getElementById('result').innerHTML = "SUCCESS"
+        oncheckingAfterOnload = onloadHasBeenCalled;
+    }
+
+    window.applicationCache.onerror = function() {
+        document.getElementById('result').innerHTML = oncheckingAfterOnload ? "PASS" : "FAIL";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    window.applicationCache.oncached = function() {
+        document.getElementById('result').innerHTML = "FAIL: oncached event received";
         if (window.testRunner)
             testRunner.notifyDone();
     }
