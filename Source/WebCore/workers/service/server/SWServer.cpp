@@ -70,10 +70,6 @@ HashSet<SWServer*>& SWServer::allServers()
 
 SWServer::~SWServer()
 {
-    RELEASE_ASSERT(m_connections.isEmpty());
-    RELEASE_ASSERT(m_registrations.isEmpty());
-    RELEASE_ASSERT(m_jobQueues.isEmpty());
-    
     allServers().remove(this);
 }
 

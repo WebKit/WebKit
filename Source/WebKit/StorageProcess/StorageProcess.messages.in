@@ -35,6 +35,8 @@ messages -> StorageProcess LegacyReceiver {
     DidGetSandboxExtensionsForBlobFiles(uint64_t requestID, WebKit::SandboxExtension::HandleArray extensions)
 #endif
 
+    DestroySession(PAL::SessionID sessionID)
+
 #if ENABLE(SERVICE_WORKER)
     DidNotHandleFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier)
     DidFailFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier)

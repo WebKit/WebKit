@@ -82,9 +82,6 @@ Engine::~Engine()
 
 Engine& Engine::from(PAL::SessionID sessionID)
 {
-    if (sessionID.isEphemeral())
-        sessionID = PAL::SessionID::legacyPrivateSessionID();
-
     auto addResult = globalEngineMap().add(sessionID, nullptr);
     if (addResult.isNewEntry)
         addResult.iterator->value = Engine::create(NetworkProcess::singleton().cacheStorageDirectory(sessionID));

@@ -284,6 +284,16 @@ void StorageProcess::createStorageToWebProcessConnection(bool isServiceWorkerPro
 #endif
 }
 
+void StorageProcess::destroySession(PAL::SessionID sessionID)
+{
+#if ENABLE(SERVICE_WORKER)
+    m_swServers.remove(sessionID);
+    m_swDatabasePaths.remove(sessionID);
+#else
+    UNUSED_PARAM(sessionID);
+#endif
+}
+
 void StorageProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, uint64_t callbackID)
 {
     auto websiteData = std::make_unique<WebsiteData>();
@@ -423,10 +433,6 @@ void StorageProcess::didGetSandboxExtensionsForBlobFiles(uint64_t requestID, San
 SWServer& StorageProcess::swServerForSession(PAL::SessionID sessionID)
 {
     ASSERT(sessionID.isValid());
-
-    // Use the same SWServer for all ephemeral sessions.
-    if (sessionID.isEphemeral())
-        sessionID = PAL::SessionID::legacyPrivateSessionID();
 
     auto result = m_swServers.add(sessionID, nullptr);
     if (!result.isNewEntry) {

@@ -1,3 +1,23 @@
+2018-06-01  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r230567): Unable to log into twitter.com in private sessions
+        https://bugs.webkit.org/show_bug.cgi?id=186205
+        <rdar://problem/40670799>
+
+        Reviewed by Youenn Fablet.
+
+        We were using the same SWServer for all private sessions and the SWServer's sessionID would
+        be legacyPrivateSessionID(). As a result, the service worker's sessionID would be legacyPrivateSessionID()
+        as well and would not match the sessionID of its client pages. This sessionID mismatch was
+        causing the breakage.
+
+        Instead of using the same SWServer of all private sessions, we now go back to using a SWServer
+        per private session. However, we now make sure that the SWServer gets destroyed whenever its
+        corresponding session gets destroyed.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::~SWServer):
+
 2018-06-01  Youenn Fablet  <youenn@apple.com>
 
         Add an option to restrict communication to localhost sockets

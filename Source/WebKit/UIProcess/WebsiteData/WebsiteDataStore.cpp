@@ -32,6 +32,7 @@
 #include "NetworkProcessMessages.h"
 #include "StorageManager.h"
 #include "StorageProcessCreationParameters.h"
+#include "StorageProcessMessages.h"
 #include "WebCookieManagerProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
@@ -116,8 +117,10 @@ WebsiteDataStore::~WebsiteDataStore()
     if (m_sessionID.isValid() && m_sessionID != PAL::SessionID::defaultSessionID()) {
         ASSERT(nonDefaultDataStores().get(m_sessionID) == this);
         nonDefaultDataStores().remove(m_sessionID);
-        for (auto& processPool : WebProcessPool::allProcessPools())
+        for (auto& processPool : WebProcessPool::allProcessPools()) {
             processPool->sendToNetworkingProcess(Messages::NetworkProcess::DestroySession(m_sessionID));
+            processPool->sendToStorageProcess(Messages::StorageProcess::DestroySession(m_sessionID));
+        }
     }
 }
 
@@ -1462,16 +1465,21 @@ void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Functio
     }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, WTFMove(callback), m_sessionID.isEphemeral(), [this, protectedThis = makeRef(*this)] (const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst) {
-        updatePrevalentDomainsToPartitionOrBlockCookies(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst);
-    }, [this, protectedThis = makeRef(*this)] (const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void(bool hasAccess)>&& callback) {
-        hasStorageAccessForFrameHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
-    }, [this, protectedThis = makeRef(*this)] (const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, WTF::CompletionHandler<void(bool wasGranted)>&& callback) {
-        grantStorageAccessHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
-    }, [this, protectedThis = makeRef(*this)] () {
-        removeAllStorageAccessHandler();
-    }, [this, protectedThis = makeRef(*this)] (const Vector<String>& domainsToRemove) {
-        removePrevalentDomains(domainsToRemove);
+    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, WTFMove(callback), m_sessionID.isEphemeral(), [weakThis = makeWeakPtr(*this)] (const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst) {
+        if (weakThis)
+            weakThis->updatePrevalentDomainsToPartitionOrBlockCookies(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst);
+    }, [weakThis = makeWeakPtr(*this)] (const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void(bool hasAccess)>&& callback) {
+        if (weakThis)
+            weakThis->hasStorageAccessForFrameHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
+    }, [weakThis = makeWeakPtr(*this)] (const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, WTF::CompletionHandler<void(bool wasGranted)>&& callback) {
+        if (weakThis)
+            weakThis->grantStorageAccessHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
+    }, [weakThis = makeWeakPtr(*this)] () {
+        if (weakThis)
+            weakThis->removeAllStorageAccessHandler();
+    }, [weakThis = makeWeakPtr(*this)] (const Vector<String>& domainsToRemove) {
+        if (weakThis)
+            weakThis->removePrevalentDomains(domainsToRemove);
     });
 #else
     m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, WTFMove(callback), m_sessionID.isEphemeral());

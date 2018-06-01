@@ -37,6 +37,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
@@ -182,6 +183,8 @@ public:
     void addSecKeyProxyStore(Ref<SecKeyProxyStore>&&);
 #endif
 
+    auto& weakPtrFactory() const { return m_weakFactory; }
+
 private:
     explicit WebsiteDataStore(PAL::SessionID);
     explicit WebsiteDataStore(Configuration, PAL::SessionID);
@@ -212,6 +215,7 @@ private:
 
     void maybeRegisterWithSessionIDMap();
 
+    WeakPtrFactory<WebsiteDataStore> m_weakFactory;
     const PAL::SessionID m_sessionID;
 
     const Configuration m_configuration;
