@@ -1,3 +1,79 @@
+2018-06-01  Daniel Bates  <dabates@apple.com>
+
+        Add some tests for lldb_webkit.py
+        https://bugs.webkit.org/show_bug.cgi?id=183744
+
+        Reviewed by Alexey Proskuryakov.
+
+        Adds some tests to ensure we do not regress LLDB pretty-printing of WTF::StringImpl
+        and WTF::String objects.
+
+        The tests make use of the LLDB Python API (lldb.py) and a simple debug-built test
+        program, lldbWebKitTester, to run. For now, we only support building lldbWebKitTester
+        on Mac.
+
+        * Makefile: Build the simple test tool lldbWebKitTester on Mac.
+        * Scripts/build-lldbwebkittester: Added.
+        (buildProjectOrDie):
+        * Scripts/dump-class-layout: Extract logic to compute the path to the LLDB Python module
+        from here to Scripts/webkitpy/common/system/systemhost.py so that it can used by both
+        this script and lldb/lldb_webkit_unittest.py. Also import the lldb module at the top of
+        the file and take advantage of Python's default error semantics to throw an exception
+        if the import fails instead of handling it ourself. This has the side effect that we
+        now always import the LLDB Python module even if this script is invoked with --help.
+        If this turns out to be a significant annoyance then we can look to dynamically import
+        the module as we did before this change.
+        (webkit_build_dir):
+        (main):
+        (developer_dir): Deleted.
+        (import_lldb): Deleted.
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py: Update FIXME comment to reflect
+        that fact that test-webkitpy does not support class and module fixtures. This is because
+        test-webkitpy currently implements parallelism by breaking down existing test classes
+        into individual test methods itself and having each worker run exactly one test method (via
+        unittest.TestLoader.loadTestsFromName()) at a time. As a result of this reorganization,
+        setUpModule()/setUpClass() are called for each test method as opposed to once per test
+        class/test module.
+        (remove_dir): Ditto.
+        * Scripts/webkitpy/common/system/systemhost.py:
+        (SystemHost):
+        (SystemHost.path_to_lldb_python_directory): Added.
+        * Scripts/webkitpy/test/main.py:
+        (_find_lldb_webkit_tester): Returns whether there exists a Debug or Release-built lldbWebKitTester.
+        (_build_lldb_webkit_tester): Builds lldbWebKitTester. For now, we only support building
+        lldbWebKitTester on Mac.
+        (main): Add Tools/lldb to the test search path if the platform has lldb.py.
+        (Tester.run): Pass a boolean as to whether we will run the lldb_webkit unit tests.
+        (Tester._run_tests): Modified to take a boolean as to whether to run the lldb_webkit unit tests.
+        If we will run these tests then build lldbWebKitTester if it has not already been built as the
+        unit tests depend on this program.
+        * lldb/lldbWebKitTester/Configurations/Base.xcconfig: Added.
+        * lldb/lldbWebKitTester/Configurations/DebugRelease.xcconfig: Added.
+        * lldb/lldbWebKitTester/Configurations/lldbWebKitTester.xcconfig: Added.
+        * lldb/lldbWebKitTester/Makefile: Added.
+        * lldb/lldbWebKitTester/lldbWebKitTester.xcodeproj/project.pbxproj: Added.
+        * lldb/lldbWebKitTester/main.cpp: Added.
+        (breakForTestingSummaryProviders):
+        (utf16String):
+        (testSummaryProviders):
+        (main):
+        * lldb/lldb_webkit_unittest.py: Added.
+        (destroy_cached_debug_session):
+        (LLDBDebugSession):
+        (LLDBDebugSession.setup):
+        (LLDBDebugSession.tearDown):
+        (TestSummaryProviders):
+        (TestSummaryProviders.setUpClass):
+        (TestSummaryProviders._sbFrame):
+        (TestSummaryProviders.serial_test_WTFStringImpl_SummaryProvider_null_string):
+        (TestSummaryProviders.serial_test_WTFStringImpl_SummaryProvider_empty_string):
+        (TestSummaryProviders.serial_test_WTFStringImpl_SummaryProvider_8bit_string):
+        (TestSummaryProviders.serial_test_WTFStringImpl_SummaryProvider_16bit_string):
+        (TestSummaryProviders.serial_test_WTFString_SummaryProvider_null_string):
+        (TestSummaryProviders.serial_test_WTFString_SummaryProvider_empty_string):
+        (TestSummaryProviders.serial_test_WTFString_SummaryProvider_8bit_string):
+        (TestSummaryProviders.serial_test_WTFString_SummaryProvider_16bit_string):
+
 2018-06-01  Frederic Wang  <fwang@igalia.com>
 
         export-w3c-test-changes cannot apply patches when some w3c-import.log files are changed

@@ -2,7 +2,7 @@ MODULES = DumpRenderTree WebKitTestRunner MiniBrowser ../Source/ThirdParty/gtest
 
 ifneq (,$(SDKROOT))
 	ifeq (,$(findstring macosx,$(SDKROOT)))
-		MODULES = DumpRenderTree WebKitTestRunner ../Source/ThirdParty/gtest/xcode TestWebKitAPI
+		MODULES = DumpRenderTree WebKitTestRunner ../Source/ThirdParty/gtest/xcode TestWebKitAPI lldb/lldbWebKitTester
 	endif
 	ifneq (,$(findstring iphone,$(SDKROOT)))
 		MODULES += MobileMiniBrowser

@@ -31,6 +31,9 @@ import os
 import subprocess
 from sets import Set
 
+from webkitpy.common.system.systemhost import SystemHost
+sys.path.append(SystemHost().path_to_lldb_python_directory())
+import lldb
 
 framework = "WebCore"
 build_directory = ""
@@ -40,21 +43,6 @@ arch = None
 def webkit_build_dir():
     scriptpath = os.path.dirname(os.path.realpath(__file__))
     return subprocess.check_output([os.path.join(scriptpath, "webkit-build-directory"), "--top-level"]).strip()
-
-def developer_dir():
-    return subprocess.check_output(["xcode-select", "--print-path"])
-
-def import_lldb():
-    xcode_contents_path = os.path.split(developer_dir())[0]
-    lldb_framework_path = os.path.join(xcode_contents_path, "SharedFrameworks", "LLDB.framework", "Resources", "Python")
-    sys.path.append(lldb_framework_path)
-
-    LLDB_MODULE_NAME = "lldb"
-    try:
-        globals()[LLDB_MODULE_NAME] = __import__(LLDB_MODULE_NAME)
-    except ImportError:
-        print "Failed to import {} from {}".format(LLDB_MODULE_NAME, lldb_framework_path)
-        sys.exit(1)
 
 def verify_type(target, type):
     typename = type.GetName()
@@ -196,7 +184,6 @@ def main():
         build_dir = args.build_directory
 
     target_path = os.path.join(build_dir, args.config, args.framework + ".framework", args.framework);
-    import_lldb()
     dump_class(target_path, args.classname, args.arch)
 
 if __name__ == "__main__":
