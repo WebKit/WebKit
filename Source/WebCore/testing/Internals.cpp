@@ -2826,6 +2826,14 @@ void Internals::webkitDidExitFullScreenForElement(Element& element)
     document->webkitDidExitFullScreenForElement(&element);
 }
 
+bool Internals::isAnimatingFullScreen() const
+{
+    Document* document = contextDocument();
+    if (!document)
+        return false;
+    return document->isAnimatingFullScreen();
+}
+
 #endif
 
 void Internals::setFullscreenInsetTop(double inset)

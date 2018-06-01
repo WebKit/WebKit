@@ -1,3 +1,16 @@
+2018-06-01  Jeremy Jones  <jeremyj@apple.com>
+
+        Keyboard focus should exit fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=185617
+        rdar://problem/34697938
+
+        Reviewed by Ryosuke Niwa.
+
+        While in element fullscreen, initiating keyboard focus should exit fullscreen in iOS.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::elementDidFocus):
+
 2018-06-01  Chris Dumez  <cdumez@apple.com>
 
         Regression(r230567): Unable to log into twitter.com in private sessions

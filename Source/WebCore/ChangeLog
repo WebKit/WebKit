@@ -1,5 +1,25 @@
 2018-06-01  Jeremy Jones  <jeremyj@apple.com>
 
+        Keyboard focus should exit fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=185617
+        rdar://problem/34697938
+
+        Reviewed by Ryosuke Niwa.
+
+        No opensource test because feature is not enabled.
+
+        While in element fullscreen, initiating keyboard focus should exit fullscreen in iOS.
+
+        Improve fullscreen testability by exposing isAnimatingFullScreen.
+
+        * dom/Document.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::isAnimatingFullScreen const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+2018-06-01  Jeremy Jones  <jeremyj@apple.com>
+
         Don't continue playing in background when auto-picture-in-picture is disabled.
         https://bugs.webkit.org/show_bug.cgi?id=186089
         rdar://problem/40314314

@@ -4962,6 +4962,12 @@ void WebPage::elementDidFocus(WebCore::Node* node)
         m_isAssistingNodeDueToUserInteraction |= m_userIsInteracting;
 
 #if PLATFORM(IOS)
+
+#if ENABLE(FULLSCREEN_API)
+        if (node->document().webkitIsFullScreen())
+            node->document().webkitCancelFullScreen();
+#endif
+
         ++m_currentAssistedNodeIdentifier;
         AssistedNodeInformation information;
         getAssistedNodeInformation(information);

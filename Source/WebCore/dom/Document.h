@@ -1149,7 +1149,7 @@ public:
     bool fullScreenIsAllowedForElement(Element*) const;
     void fullScreenElementRemoved();
     void removeFullScreenElementOfSubtree(Node&, bool amongChildrenOnly = false);
-    bool isAnimatingFullScreen() const;
+    WEBCORE_EXPORT bool isAnimatingFullScreen() const;
     WEBCORE_EXPORT void setAnimatingFullScreen(bool);
 
     WEBCORE_EXPORT bool webkitFullscreenEnabled() const;

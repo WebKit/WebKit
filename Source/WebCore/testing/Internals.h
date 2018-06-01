@@ -390,6 +390,7 @@ public:
     void webkitDidEnterFullScreenForElement(Element&);
     void webkitWillExitFullScreenForElement(Element&);
     void webkitDidExitFullScreenForElement(Element&);
+    bool isAnimatingFullScreen() const;
 #endif
 
     void setFullscreenInsetTop(double);
