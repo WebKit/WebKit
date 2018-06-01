@@ -1,3 +1,12 @@
+2018-06-01  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, build fix for r232276.
+
+        iOS sandbox profiles don't preprocess macros. Therefore, remove the whole
+        macro condition block.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2018-06-01  Sihui Liu  <sihui_liu@apple.com>
 
         Stop using StorageTracker.db in LocalStorageDatabaseTracker
