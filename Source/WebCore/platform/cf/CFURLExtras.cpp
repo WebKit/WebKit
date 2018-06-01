@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CFURLExtras.h"
 
+#include "URL.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -57,6 +58,24 @@ void getURLBytes(CFURLRef url, CString& result)
     result = CString::newUninitialized(bytesLength, bytes);
     CFIndex finalLength = CFURLGetBytes(url, reinterpret_cast<UInt8*>(bytes), bytesLength);
     ASSERT_UNUSED(finalLength, finalLength == bytesLength);
+}
+
+bool isCFURLSameOrigin(CFURLRef cfURL, const URL& url)
+{
+    ASSERT(url.protocolIsInHTTPFamily());
+
+    if (url.hasUsername() || url.hasPassword())
+        return protocolHostAndPortAreEqual(url, URL { cfURL });
+
+    URLCharBuffer bytes;
+    getURLBytes(cfURL, bytes);
+    StringView cfURLString { reinterpret_cast<const LChar*>(bytes.data()), static_cast<unsigned>(bytes.size()) };
+
+    if (!url.hasPath())
+        return StringView { url.string() } == cfURLString;
+
+    auto urlWithoutPath = StringView { url.string() }.substring(0, url.pathStart() + 1);
+    return cfURLString.startsWith(urlWithoutPath);
 }
 
 }

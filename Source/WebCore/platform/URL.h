@@ -121,6 +121,7 @@ public:
     bool hasPassword() const;
     bool hasQuery() const;
     bool hasFragment() const;
+    bool hasPath() const;
 
     // Unlike user() and pass(), these functions don't decode escape sequences.
     // This is necessary for accurate round-tripping, because encoding doesn't encode '%' characters.
@@ -213,8 +214,6 @@ private:
     static bool protocolIs(const String&, const char*);
     void init(const URL&, const String&, const TextEncoding&);
     void copyToBuffer(Vector<char, 512>& buffer) const;
-
-    bool hasPath() const;
 
     String m_string;
     bool m_isValid : 1;

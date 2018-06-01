@@ -182,9 +182,8 @@ BOOL isAllowedHost(NSString *host)
         [newRequest setValue:nil forHTTPHeaderField:nsHeader];
         [nsHeader release];
     }
-    const std::string& destination = gTestRunner->redirectionDestinationForURL([[url absoluteString] UTF8String]);
-    if (destination.length())
-        [newRequest setURL:[NSURL URLWithString:[NSString stringWithUTF8String:destination.data()]]];
+    if (auto* destination = gTestRunner->redirectionDestinationForURL([[url absoluteString] UTF8String]))
+        [newRequest setURL:[NSURL URLWithString:[NSString stringWithUTF8String:destination]]];
 
     return [newRequest autorelease];
 }

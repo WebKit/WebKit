@@ -1,3 +1,88 @@
+2018-05-31  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r232281. rdar://problem/40641066
+
+    Add a consistency check between URL and CFURL
+    Source/WebCore:
+    
+    https://bugs.webkit.org/show_bug.cgi?id=186057
+    <rdar://problem/40258457>
+    
+    Reviewed by Geoff Garen.
+    
+    It is important that WebCore::URL used in WebCore and CFURL that gets serialized in the network pipe remain consistent.
+    Otherwise, we will end-up with odd bugs.
+    
+    We add such a check when creating a CFURL from an URL.
+    To make things more consistent, we also rely now more on WebCore::URL instead of directly creating a CFURL.
+    
+    * platform/URL.h:
+    * platform/cf/CFURLExtras.cpp:
+    (WebCore::isCFURLSameOrigin):
+    * platform/cf/CFURLExtras.h:
+    * platform/cf/URLCF.cpp:
+    (WebCore::URL::createCFURL const):
+    * platform/mac/URLMac.mm:
+    (WebCore::URL::createCFURL const):
+    * platform/mac/WebCoreNSURLExtras.mm:
+    (WebCore::URLWithUserTypedString):
+    
+    Source/WebKit:
+    
+    https://bugs.webkit.org/show_bug.cgi?id=186057
+    <rdar://problem/40258457>
+    
+    Reviewed by Geoff Garen.
+    
+    * Shared/Cocoa/WKNSURLExtras.mm:
+    (+[NSURL _web_URLWithWTFString:relativeToURL:]):
+    (urlWithWTFString): Deleted.
+    (+[NSURL _web_URLWithWTFString:]): Deleted.
+    
+    Tools:
+    
+    https://bugs.webkit.org/show_bug.cgi?id=182444
+    <rdar://problem/37164835>
+    
+    Reviewed by Geoff Garen.
+    
+    DRT code expected a non null URL which is no longer the case now.
+    Updated DRT to remove that assumption.
+    
+    * DumpRenderTree/TestRunner.cpp:
+    (TestRunner::redirectionDestinationForURL):
+    * DumpRenderTree/TestRunner.h:
+    * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+    (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@232281 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-05-29  Youenn Fablet  <youenn@apple.com>
+
+            Add a consistency check between URL and CFURL
+            https://bugs.webkit.org/show_bug.cgi?id=186057
+            <rdar://problem/40258457>
+
+            Reviewed by Geoff Garen.
+
+            It is important that WebCore::URL used in WebCore and CFURL that gets serialized in the network pipe remain consistent.
+            Otherwise, we will end-up with odd bugs.
+
+            We add such a check when creating a CFURL from an URL.
+            To make things more consistent, we also rely now more on WebCore::URL instead of directly creating a CFURL.
+
+            * platform/URL.h:
+            * platform/cf/CFURLExtras.cpp:
+            (WebCore::isCFURLSameOrigin):
+            * platform/cf/CFURLExtras.h:
+            * platform/cf/URLCF.cpp:
+            (WebCore::URL::createCFURL const):
+            * platform/mac/URLMac.mm:
+            (WebCore::URL::createCFURL const):
+            * platform/mac/WebCoreNSURLExtras.mm:
+            (WebCore::URLWithUserTypedString):
+
 2018-05-23  Jer Noble  <jer.noble@apple.com>
 
         [El Capitan] FAIL http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html
