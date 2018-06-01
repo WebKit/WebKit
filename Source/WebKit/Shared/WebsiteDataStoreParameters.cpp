@@ -89,11 +89,7 @@ std::optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC
 WebsiteDataStoreParameters WebsiteDataStoreParameters::privateSessionParameters(PAL::SessionID sessionID)
 {
     ASSERT(sessionID.isEphemeral());
-    return { { }, { }, { }, { }, WebsiteDataStore::defaultCacheStoragePerOriginQuota, { }, { sessionID, { }, { }, AllowsCellularAccess::Yes
-#if PLATFORM(COCOA)
-        , nullptr
-#endif
-    }};
+    return { { }, { }, { }, { }, WebsiteDataStore::defaultCacheStoragePerOriginQuota, { }, { sessionID, { }, { }, AllowsCellularAccess::Yes }};
 }
 
 } // namespace WebKit
