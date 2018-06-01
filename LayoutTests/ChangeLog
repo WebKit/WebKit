@@ -1,3 +1,12 @@
+2018-06-01  David Fenton  <david_fenton@apple.com>
+
+        Skip fetch/api/redirect/redirect-method.html and fetch/api/redirect/redirect-method-worker.html on macOS debug.
+        https://bugs.webkit.org/show_bug.cgi?id=184365
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2018-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         ResourceLoader::cancel() shouldn't synchronously fire load event on document

@@ -1746,8 +1746,8 @@ webkit.org/b/184116 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_cre
 
 webkit.org/b/177616 [ HighSierra+ ] http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Timeout ]
 
-[ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-worker.html [ Crash ]
-[ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.html [ Crash ]
+webkit.org/b/184365 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-worker.html [ Skip ]
+webkit.org/b/184365 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.html [ Skip ]
 
 webkit.org/b/184610 media/video-volume-slider-drag.html [ Pass Timeout ]
 
