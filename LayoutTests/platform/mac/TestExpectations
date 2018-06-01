@@ -1669,8 +1669,6 @@ webkit.org/b/177388 inspector/canvas/shaderProgram-add-remove-webgl.html [ Pass 
 
 webkit.org/b/177826 inspector/dom/csp-big5-hash.html [ Pass Timeout ]
 
-webkit.org/b/178465 [ Debug ] fast/html/marquee-reparent-check.html [ Skip ]
-
 webkit.org/b/175998 http/tests/security/mixedContent/insecure-css-with-secure-cookies.html [ Pass Failure ]
 
 # AVContentKeySession not available pre-High Sierra

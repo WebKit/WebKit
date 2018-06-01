@@ -1,3 +1,16 @@
+2018-06-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Unskip fast/html/marquee-reparent-check.html on macOS debug.
+        https://bugs.webkit.org/show_bug.cgi?id=178465
+        <rdar://problem/35052953>
+
+        Reviewed by Geoffrey Garen.
+
+        Unskipping test since the debug assertion is no longer reproducible in
+        current sources on shipping software.
+
+        * platform/mac/TestExpectations:
+
 2018-05-31  Per Arne Vollan  <pvollan@apple.com>
 
         Skip http/tests/security/referrer-policy-header.html on Windows.
