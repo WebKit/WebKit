@@ -57,13 +57,13 @@ public:
     //
     // path - The directory.
     // fileName - The file name.
-    static String appendDatabaseFileNameToPath(const String& path, const String& fileName);
+    WEBCORE_EXPORT static String appendDatabaseFileNameToPath(const String& path, const String& fileName);
 
     // Makes sure the given directory exists, by creating all missing directories
     // on the given path.
     //
     // path - The directory.
-    static bool ensureDatabaseDirectoryExists(const String& path);
+    WEBCORE_EXPORT static bool ensureDatabaseDirectoryExists(const String& path);
 
     // If 'checkPathOnly' is false, then this method only checks if the given file exists.
     // If 'checkPathOnly' is true, then this method makes sure all directories on the
@@ -97,8 +97,8 @@ public:
 #endif
     
     static long long getDatabaseFileSize(const String& fileName);
-    static double databaseCreationTime(const String& fileName);
-    static double databaseModificationTime(const String& fileName);
+    WEBCORE_EXPORT static double databaseCreationTime(const String& fileName);
+    WEBCORE_EXPORT static double databaseModificationTime(const String& fileName);
 
 private:
     // do not instantiate this class

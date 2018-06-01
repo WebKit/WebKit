@@ -27,8 +27,6 @@
 
 #include "Connection.h"
 #include "LocalStorageDatabaseTracker.h"
-#include <WebCore/SecurityOriginData.h>
-#include <WebCore/SecurityOriginHash.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>

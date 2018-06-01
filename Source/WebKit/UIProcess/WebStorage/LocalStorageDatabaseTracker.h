@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/SQLiteDatabase.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/HashSet.h>
 #include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
@@ -34,11 +34,6 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebCore {
-class SecurityOrigin;
-struct SecurityOriginData;
-}
 
 namespace WebKit {
 
@@ -62,8 +57,8 @@ public:
 
     struct OriginDetails {
         String originIdentifier;
-        std::optional<time_t> creationTime;
-        std::optional<time_t> modificationTime;
+        WallTime creationTime;
+        WallTime modificationTime;
     };
     Vector<OriginDetails> originDetails();
 
@@ -71,26 +66,14 @@ private:
     LocalStorageDatabaseTracker(Ref<WorkQueue>&&, const String& localStorageDirectory);
 
     String databasePath(const String& filename) const;
-    String trackerDatabasePath() const;
 
     enum DatabaseOpeningStrategy {
         CreateIfNonExistent,
         SkipIfNonExistent
     };
-    void openTrackerDatabase(DatabaseOpeningStrategy);
-
-    void importOriginIdentifiers();
-    void updateTrackerDatabaseFromLocalStorageDatabaseFiles();
-
-    void addDatabaseWithOriginIdentifier(const String& originIdentifier, const String& databasePath);
-    void removeDatabaseWithOriginIdentifier(const String& originIdentifier);
-    String pathForDatabaseWithOriginIdentifier(const String& originIdentifier);
 
     RefPtr<WorkQueue> m_queue;
     String m_localStorageDirectory;
-
-    WebCore::SQLiteDatabase m_database;
-    HashSet<String> m_origins;
 
 #if PLATFORM(IOS)
     void platformMaybeExcludeFromBackup() const;

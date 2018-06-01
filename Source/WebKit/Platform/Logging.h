@@ -52,6 +52,7 @@ extern "C" {
     M(KeyHandling) \
     M(Layers) \
     M(Loading) \
+    M(LocalStorageDatabaseTracker) \
     M(MouseHandling) \
     M(Network) \
     M(NetworkCache) \
