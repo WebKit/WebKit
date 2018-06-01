@@ -247,9 +247,16 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
         return;
 
     auto* display = gtk_widget_get_display(m_webView);
+#if GTK_CHECK_VERSION(3, 22, 0)
     auto* monitor = gdk_display_get_monitor_at_window(display, gtk_widget_get_window(m_webView));
     GdkRectangle area;
     gdk_monitor_get_workarea(monitor, &area);
+#else
+    auto* screen = gtk_widget_get_screen(m_webView);
+    gint monitor = gdk_screen_get_monitor_at_window(screen, gtk_widget_get_window(m_webView));
+    GdkRectangle area;
+    gdk_screen_get_monitor_workarea(screen, monitor, &area);
+#endif
     int width = std::min(rect.width(), area.width);
     size_t itemCount = std::min<size_t>(items.size(), (area.height / 3) / itemHeight);
 
@@ -292,8 +299,13 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
         m_device = gtk_get_current_event_device();
     if (m_device && gdk_device_get_display(m_device) != display)
         m_device = nullptr;
+#if GTK_CHECK_VERSION(3, 20, 0)
     if (!m_device)
         m_device = gdk_seat_get_pointer(gdk_display_get_default_seat(display));
+#else
+    if (!m_device)
+        m_device = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(display));
+#endif
     ASSERT(m_device);
     if (gdk_device_get_source(m_device) == GDK_SOURCE_KEYBOARD)
         m_device = gdk_device_get_associated_device(m_device);

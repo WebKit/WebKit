@@ -1,5 +1,12 @@
 2018-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Try to fix GTK+ build with old versions of GTK+ after r232390.
+
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::showPopupMenu):
+
+2018-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Switch to use a popup window with a tree view instead of a menu for option menu default implementation
         https://bugs.webkit.org/show_bug.cgi?id=186146
 
