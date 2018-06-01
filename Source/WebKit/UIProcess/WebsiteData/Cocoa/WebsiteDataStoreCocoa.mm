@@ -55,7 +55,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     resolveDirectoriesIfNecessary();
 
     WebsiteDataStoreParameters parameters;
-    parameters.networkSessionParameters = { m_sessionID, nullptr, m_boundInterfaceIdentifier, m_allowsCellularAccess };
+    parameters.networkSessionParameters = { m_sessionID, nullptr, m_boundInterfaceIdentifier, m_allowsCellularAccess, m_proxyConfiguration };
 
     auto cookieFile = resolvedCookieStorageFile();
 

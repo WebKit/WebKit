@@ -30,6 +30,10 @@
 #include <wtf/EnumTraits.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(COCOA)
+#include "ArgumentCodersCF.h"
+#endif
+
 namespace WebKit {
 
 class LegacyCustomProtocolManager;
@@ -44,6 +48,9 @@ struct NetworkSessionCreationParameters {
     LegacyCustomProtocolManager* legacyCustomProtocolManager { nullptr };
     String boundInterfaceIdentifier;
     AllowsCellularAccess allowsCellularAccess { AllowsCellularAccess::Yes };
+#if PLATFORM(COCOA)
+    RetainPtr<CFDictionaryRef> proxyConfiguration;
+#endif
 };
 
 inline void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
@@ -51,6 +58,9 @@ inline void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) cons
     encoder << sessionID;
     encoder << boundInterfaceIdentifier;
     encoder << allowsCellularAccess;
+#if PLATFORM(COCOA)
+    IPC::encode(encoder, proxyConfiguration.get());
+#endif
 }
 
 inline std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::decode(IPC::Decoder& decoder)
@@ -69,7 +79,20 @@ inline std::optional<NetworkSessionCreationParameters> NetworkSessionCreationPar
     if (!allowsCellularAccess)
         return std::nullopt;
 
-    return {{ sessionID, nullptr, WTFMove(*boundInterfaceIdentifier), WTFMove(*allowsCellularAccess) }};
+#if PLATFORM(COCOA)
+    RetainPtr<CFDictionaryRef> proxyConfiguration;
+    if (!IPC::decode(decoder, proxyConfiguration))
+        return std::nullopt;
+#endif
+
+    return {{ sessionID
+        , nullptr
+        , WTFMove(*boundInterfaceIdentifier)
+        , WTFMove(*allowsCellularAccess)
+#if PLATFORM(COCOA)
+        , WTFMove(proxyConfiguration)
+#endif
+    }};
 }
 
 } // namespace WebKit

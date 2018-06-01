@@ -1,3 +1,16 @@
+2018-06-01  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Apply patch. rdar://problem/40688638
+
+    2018-06-01  Alex Christensen  <achristensen@webkit.org>
+
+            Add WKWebsiteDataStorePrivate._proxyConfiguration SPI
+            ​https://bugs.webkit.org/show_bug.cgi?id=185179
+
+            Reviewed by Andy Estes.
+
+            * pal/spi/cf/CFNetworkSPI.h:
+
 2018-05-02  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r231242. rdar://problem/39860939
