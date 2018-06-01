@@ -1,5 +1,21 @@
 2018-05-31  Saam Barati  <sbarati@apple.com>
 
+        PutStructure AI rule needs to call didFoldClobberStructures when the incoming value's structure set is clear
+        https://bugs.webkit.org/show_bug.cgi?id=186169
+
+        Reviewed by Mark Lam.
+
+        If we don't do this, the CFA validation rule about StructureID being
+        clobbered but AI not clobbering or folding a clobber will cause us
+        to crash. Simon was running into this yesterday on arstechnica.com.
+        I couldn't come up with a test case for this, but it's obvious
+        what the issue is by looking at the IR dump at the time of the crash.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
+2018-05-31  Saam Barati  <sbarati@apple.com>
+
         JSImmutableButterfly should align its variable storage
         https://bugs.webkit.org/show_bug.cgi?id=186159
 
