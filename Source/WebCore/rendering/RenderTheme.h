@@ -305,6 +305,8 @@ protected:
     virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, const Element*) const;
     virtual bool paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) { return true; }
 
+    virtual void adjustListboxStyle(StyleResolver&, RenderStyle&, const Element*) const { };
+
     virtual bool paintPushButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintSquareButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 

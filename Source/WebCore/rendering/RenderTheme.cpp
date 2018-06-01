@@ -213,6 +213,8 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
         return adjustMenuListStyle(styleResolver, style, element);
     case MenulistButtonPart:
         return adjustMenuListButtonStyle(styleResolver, style, element);
+    case ListboxPart:
+        return adjustListboxStyle(styleResolver, style, element);
     case MediaPlayButtonPart:
     case MediaCurrentTimePart:
     case MediaTimeRemainingPart:

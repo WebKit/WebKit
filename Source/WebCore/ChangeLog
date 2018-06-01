@@ -1,3 +1,25 @@
+2018-06-01  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
+        [GTK] Difficult to read combo box text in dark theme
+        https://bugs.webkit.org/show_bug.cgi?id=165072
+
+        Reviewed by Carlos Garcia Campos.
+
+        Set listbox foreground color to theme color to fix hard-to-read
+        text color in combo box while using dark theme.
+
+        No new tests required. ManualTests/gtk/theme.html already covers it.
+        See the "Option Lists" section.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        Adjust style for ListboxPart as well.
+        * rendering/RenderTheme.h: Add adjustListboxStyle()
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::adjustListboxStyle const):
+        Set color to the theme foreground color.
+        * rendering/RenderThemeGtk.h: adjustListboxStyle() overriden.
+
 2018-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Switch to use a popup window with a tree view instead of a menu for option menu default implementation

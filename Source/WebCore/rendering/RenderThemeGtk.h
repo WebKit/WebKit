@@ -133,6 +133,8 @@ private:
     bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     bool paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
+    void adjustListboxStyle(StyleResolver&, RenderStyle&, const Element*) const override;
+
     void adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintSearchFieldResultsDecorationPart(const RenderBox&, const PaintInfo&, const IntRect&) override;
 
