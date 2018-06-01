@@ -96,7 +96,11 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
     if (!parentFrame)
         return;
 
-    parentFrame->loader().subframeLoader().requestFrame(*this, m_URL, getNameAttribute(), lockHistory, lockBackForwardList);
+    String frameName = getNameAttribute();
+    if (frameName.isNull() && UNLIKELY(document().settings().needsFrameNameFallbackToIdQuirk()))
+        frameName = getIdAttribute();
+
+    parentFrame->loader().subframeLoader().requestFrame(*this, m_URL, frameName, lockHistory, lockBackForwardList);
 }
 
 void HTMLFrameElementBase::parseAttribute(const QualifiedName& name, const AtomicString& value)

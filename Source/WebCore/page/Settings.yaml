@@ -105,6 +105,8 @@ allowCrossOriginSubresourcesToAskForCredentials:
   initial: false
 needsStorageAccessFromFileURLsQuirk:
   initial: true
+needsFrameNameFallbackToIdQuirk:
+  initial: false
 useAnonymousModeWhenFetchingMaskImages:
   initial: true
 javaScriptCanOpenWindowsAutomatically:

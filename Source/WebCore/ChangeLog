@@ -1,5 +1,19 @@
 2018-06-01  Chris Dumez  <cdumez@apple.com>
 
+        REGRESSION (r231456): Colloquy is broken
+        https://bugs.webkit.org/show_bug.cgi?id=186197
+        <rdar://problem/40722960>
+
+        Reviewed by Timothy Hatcher.
+
+        Restore pre-r231456 behavior for Colloquy app so that it works again.
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::openURL):
+        * page/Settings.yaml:
+
+2018-06-01  Chris Dumez  <cdumez@apple.com>
+
         Regression(r230567): Unable to log into twitter.com in private sessions
         https://bugs.webkit.org/show_bug.cgi?id=186205
         <rdar://problem/40670799>

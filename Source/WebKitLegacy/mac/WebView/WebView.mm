@@ -2704,6 +2704,12 @@ static bool fastDocumentTeardownEnabled()
     return needsQuirk;
 }
 
+- (BOOL)_needsFrameNameFallbackToIdQuirk
+{
+    static BOOL needsQuirk = _CFAppVersionCheckLessThan(CFSTR("info.colloquy"), -1, 2.5);
+    return needsQuirk;
+}
+
 - (BOOL)_needsIsLoadingInAPISenseQuirk
 {
     static BOOL needsQuirk = _CFAppVersionCheckLessThan(CFSTR("com.apple.iAdProducer"), -1, 2.1);
@@ -3004,6 +3010,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setNeedsAdobeFrameReloadingQuirk([self _needsAdobeFrameReloadingQuirk]);
     settings.setTreatsAnyTextCSSLinkAsStylesheet([self _needsLinkElementTextCSSQuirk]);
+    settings.setNeedsFrameNameFallbackToIdQuirk([self _needsFrameNameFallbackToIdQuirk]);
     settings.setNeedsKeyboardEventDisambiguationQuirks([self _needsKeyboardEventDisambiguationQuirks]);
     settings.setEnforceCSSMIMETypeInNoQuirksMode(!_CFAppVersionCheckLessThan(CFSTR("com.apple.iWeb"), -1, 2.1));
     settings.setNeedsIsLoadingInAPISenseQuirk([self _needsIsLoadingInAPISenseQuirk]);
