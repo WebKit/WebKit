@@ -3037,6 +3037,9 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     enumerator = generator.emitGetPropertyEnumerator(generator.newTemporary(), base.get());
 
+    BytecodeGenerator::PreservedTDZStack preservedTDZStack;
+    generator.preserveTDZStack(preservedTDZStack);
+
     // Indexed property loop.
     {
         Ref<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
@@ -3076,6 +3079,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.emitJump(end.get());
         generator.emitLabel(loopEnd.get());
     }
+    generator.restoreTDZStack(preservedTDZStack);
 
     // Structure property loop.
     {
@@ -3116,6 +3120,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.emitJump(end.get());
         generator.emitLabel(loopEnd.get());
     }
+    generator.restoreTDZStack(preservedTDZStack);
 
     // Generic property loop.
     {
