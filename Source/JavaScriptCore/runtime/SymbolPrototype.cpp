@@ -34,6 +34,7 @@
 
 namespace JSC {
 
+static EncodedJSValue JSC_HOST_CALL symbolProtoGetterDescription(ExecState*);
 static EncodedJSValue JSC_HOST_CALL symbolProtoFuncToString(ExecState*);
 static EncodedJSValue JSC_HOST_CALL symbolProtoFuncValueOf(ExecState*);
 
@@ -47,6 +48,7 @@ const ClassInfo SymbolPrototype::s_info = { "Symbol", &Base::s_info, &symbolProt
 
 /* Source for SymbolPrototype.lut.h
 @begin symbolPrototypeTable
+  description       symbolProtoGetterDescription    DontEnum|Accessor 0
   toString          symbolProtoFuncToString         DontEnum|Function 0
   valueOf           symbolProtoFuncValueOf          DontEnum|Function 0
 @end
@@ -69,28 +71,45 @@ void SymbolPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 // ------------------------------ Functions ---------------------------
 
+static const char* SymbolDescriptionTypeError = "Symbol.prototype.description requires that |this| be a symbol or a symbol object";
 static const char* SymbolToStringTypeError = "Symbol.prototype.toString requires that |this| be a symbol or a symbol object";
 static const char* SymbolValueOfTypeError = "Symbol.prototype.valueOf requires that |this| be a symbol or a symbol object";
+
+inline Symbol* tryExtractSymbol(VM& vm, JSValue thisValue)
+{
+    if (thisValue.isSymbol())
+        return asSymbol(thisValue);
+
+    if (!thisValue.isObject())
+        return nullptr;
+    JSObject* thisObject = asObject(thisValue);
+    if (!thisObject->inherits<SymbolObject>(vm))
+        return nullptr;
+    return asSymbol(jsCast<SymbolObject*>(thisObject)->internalValue());
+}
+
+EncodedJSValue JSC_HOST_CALL symbolProtoGetterDescription(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Symbol* symbol = tryExtractSymbol(vm, exec->thisValue());
+    if (!symbol)
+        return throwVMTypeError(exec, scope, SymbolDescriptionTypeError);
+    scope.release();
+    return JSValue::encode(jsString(&vm, symbol->description()));
+}
 
 EncodedJSValue JSC_HOST_CALL symbolProtoFuncToString(ExecState* exec)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = exec->thisValue();
-    Symbol* symbol = nullptr;
-    if (thisValue.isSymbol())
-        symbol = asSymbol(thisValue);
-    else {
-        if (!thisValue.isObject())
-            return throwVMTypeError(exec, scope, SymbolToStringTypeError);
-        JSObject* thisObject = asObject(thisValue);
-        if (!thisObject->inherits<SymbolObject>(vm))
-            return throwVMTypeError(exec, scope, SymbolToStringTypeError);
-        symbol = asSymbol(jsCast<SymbolObject*>(thisObject)->internalValue());
-    }
-
-    return JSValue::encode(jsNontrivialString(exec, symbol->descriptiveString()));
+    Symbol* symbol = tryExtractSymbol(vm, exec->thisValue());
+    if (!symbol)
+        return throwVMTypeError(exec, scope, SymbolToStringTypeError);
+    scope.release();
+    return JSValue::encode(jsNontrivialString(&vm, symbol->descriptiveString()));
 }
 
 EncodedJSValue JSC_HOST_CALL symbolProtoFuncValueOf(ExecState* exec)
@@ -98,18 +117,12 @@ EncodedJSValue JSC_HOST_CALL symbolProtoFuncValueOf(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = exec->thisValue();
-    if (thisValue.isSymbol())
-        return JSValue::encode(thisValue);
-
-    if (!thisValue.isObject())
+    Symbol* symbol = tryExtractSymbol(vm, exec->thisValue());
+    if (!symbol)
         return throwVMTypeError(exec, scope, SymbolValueOfTypeError);
 
-    JSObject* thisObject = asObject(thisValue);
-    if (!thisObject->inherits<SymbolObject>(vm))
-        return throwVMTypeError(exec, scope, SymbolValueOfTypeError);
-
-    return JSValue::encode(jsCast<SymbolObject*>(thisObject)->internalValue());
+    scope.release();
+    return JSValue::encode(symbol);
 }
 
 } // namespace JSC

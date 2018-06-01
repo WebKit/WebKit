@@ -103,6 +103,11 @@ String Symbol::descriptiveString() const
     return makeString("Symbol(", String(privateName().uid()), ')');
 }
 
+String Symbol::description() const
+{
+    return privateName().uid();
+}
+
 Symbol* Symbol::create(VM& vm)
 {
     Symbol* symbol = new (NotNull, allocateCell<Symbol>(vm.heap)) Symbol(vm);

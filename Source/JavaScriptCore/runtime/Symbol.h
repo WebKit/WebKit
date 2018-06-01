@@ -57,6 +57,7 @@ public:
 
     const PrivateName& privateName() const { return m_privateName; }
     String descriptiveString() const;
+    String description() const;
 
     JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
     bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;

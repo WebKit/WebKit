@@ -1,3 +1,26 @@
+2018-05-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add Symbol.prototype.description getter
+        https://bugs.webkit.org/show_bug.cgi?id=186053
+
+        Reviewed by Keith Miller.
+
+        Symbol.prototype.description accessor  is now stage 3[1].
+        This adds a getter to retrieve [[Description]] value from Symbol.
+        Previously, Symbol#toString() returns `Symbol(${description})` value.
+        So users need to extract `description` part if they want it.
+
+        [1]: https://tc39.github.io/proposal-Symbol-description/
+
+        * runtime/Symbol.cpp:
+        (JSC::Symbol::description const):
+        * runtime/Symbol.h:
+        * runtime/SymbolPrototype.cpp:
+        (JSC::tryExtractSymbol):
+        (JSC::symbolProtoGetterDescription):
+        (JSC::symbolProtoFuncToString):
+        (JSC::symbolProtoFuncValueOf):
+
 2018-06-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Correct values and members of JSBigInt appropriately

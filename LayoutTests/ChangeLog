@@ -1,3 +1,13 @@
+2018-05-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add Symbol.prototype.description getter
+        https://bugs.webkit.org/show_bug.cgi?id=186053
+
+        Reviewed by Keith Miller.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2018-06-01  Brent Fulgham  <bfulgham@apple.com>
 
         Unskip fast/html/marquee-reparent-check.html on macOS debug.
