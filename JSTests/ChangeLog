@@ -1,3 +1,20 @@
+2018-05-31  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement support for "=<" and ">=" relational operation
+        https://bugs.webkit.org/show_bug.cgi?id=185929
+
+        Reviewed by Yusuke Suzuki.
+
+        * bigIntTests.yaml:
+        * stress/big-int-greater-than-or-equal-jit.js: Added.
+        * stress/big-int-greater-than-or-equal-order-of-evaluation.js: Added.
+        * stress/big-int-greater-than-or-equal-wrapped-values.js: Added.
+        * stress/big-int-greater-than-or-equal.js: Added.
+        * stress/big-int-less-than-or-equal-general.js: Added.
+        * stress/big-int-less-than-or-equal-jit.js: Added.
+        * stress/big-int-less-than-or-equal-order-of-evaluation.js: Added.
+        * stress/big-int-less-than-or-equal-wrapped-values.js: Added.
+
 2018-05-31  Saam Barati  <sbarati@apple.com>
 
         Cache toString results for CoW arrays

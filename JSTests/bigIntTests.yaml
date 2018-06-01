@@ -139,6 +139,30 @@
 - path: stress/big-int-no-conversion-to-number.js
   cmd: runBigIntEnabled
 
+- path: stress/big-int-greater-than-or-equal-general.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-greater-than-or-equal-jit.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-greater-than-or-equal-order-of-evaluation.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-greater-than-or-equal-wrapped-values.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-less-than-or-equal-jit.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-less-than-or-equal-order-of-evaluation.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-less-than-or-equal-wrapped-values.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-less-than-or-equal-general.js
+  cmd: runBigIntEnabled
+
 - path: stress/big-int-mod-memory-stress.js
   cmd: runBigIntEnabled
 

@@ -87,6 +87,11 @@ public:
     std::optional<uint8_t> singleDigitValueForString();
     String toString(ExecState*, unsigned radix);
     
+    enum class ComparisonMode {
+        LessThan,
+        LessThanOrEqual
+    };
+
     enum class ComparisonResult {
         Equal,
         Undefined,
