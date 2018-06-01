@@ -33,16 +33,19 @@ namespace JSC {
 
 class LLIntPrototypeLoadAdaptiveStructureWatchpoint : public Watchpoint {
 public:
+    LLIntPrototypeLoadAdaptiveStructureWatchpoint() = default;
     LLIntPrototypeLoadAdaptiveStructureWatchpoint(const ObjectPropertyCondition&, Instruction*);
 
     void install();
+
+    const ObjectPropertyCondition& key() const { return m_key; }
 
 protected:
     void fireInternal(const FireDetail&) override;
 
 private:
     ObjectPropertyCondition m_key;
-    Instruction* m_getByIdInstruction;
+    Instruction* m_getByIdInstruction { nullptr };
 };
 
 } // namespace JSC

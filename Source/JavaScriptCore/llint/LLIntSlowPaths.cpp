@@ -671,15 +671,18 @@ static void setupGetByIdPrototypeCache(ExecState* exec, VM& vm, Instruction* pc,
 
     PropertyOffset offset = invalidOffset;
     CodeBlock::StructureWatchpointMap& watchpointMap = codeBlock->llintGetByIdWatchpointMap();
-    auto result = watchpointMap.add(structure, Bag<LLIntPrototypeLoadAdaptiveStructureWatchpoint>());
+    Bag<LLIntPrototypeLoadAdaptiveStructureWatchpoint> watchpoints;
     for (ObjectPropertyCondition condition : conditions) {
         if (!condition.isWatchable())
             return;
         if (condition.condition().kind() == PropertyCondition::Presence)
             offset = condition.condition().offset();
-        result.iterator->value.add(condition, pc)->install();
+        watchpoints.add(condition, pc)->install();
     }
+
     ASSERT((offset == invalidOffset) == slot.isUnset());
+    auto result = watchpointMap.add(std::make_tuple(structure, pc), WTFMove(watchpoints));
+    ASSERT_UNUSED(result, result.isNewEntry);
 
     ConcurrentJSLocker locker(codeBlock->m_lock);
 
