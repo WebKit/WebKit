@@ -1,3 +1,24 @@
+2018-05-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [Baseline] Store constant directly in emit_op_mov
+        https://bugs.webkit.org/show_bug.cgi?id=186182
+
+        Reviewed by Saam Barati.
+
+        In the old code, we first move a constant to a register and store it to the specified address.
+        But in 64bit JSC, we can directly store a constant to the specified address. This reduces the
+        generated code size. Since the old code was emitting a constant in a code anyway, this change
+        never increases the size of the generated code.
+
+        * jit/JITInlines.h:
+        (JSC::JIT::emitGetVirtualRegister):
+        We remove this obsolete comment. Our OSR relies on the fact that values are stored and loaded
+        from the stack. If we transfer values in registers without loading values from the stack, it
+        breaks this assumption.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_mov):
+
 2018-05-31  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "=<" and ">=" relational operation

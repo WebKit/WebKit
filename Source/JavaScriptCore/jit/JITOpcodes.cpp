@@ -57,8 +57,17 @@ void JIT::emit_op_mov(Instruction* currentInstruction)
     int dst = currentInstruction[1].u.operand;
     int src = currentInstruction[2].u.operand;
 
-    emitGetVirtualRegister(src, regT0);
-    emitPutVirtualRegister(dst);
+    if (m_codeBlock->isConstantRegisterIndex(src)) {
+        JSValue value = m_codeBlock->getConstant(src);
+        if (!value.isNumber())
+            store64(TrustedImm64(JSValue::encode(value)), addressFor(dst));
+        else
+            store64(Imm64(JSValue::encode(value)), addressFor(dst));
+        return;
+    }
+
+    load64(addressFor(src), regT0);
+    store64(regT0, addressFor(dst));
 }
 
 
