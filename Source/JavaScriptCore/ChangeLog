@@ -1,3 +1,68 @@
+2018-06-01  Keith Miller  <keith_miller@apple.com>
+
+        move should only emit the move if it's actually needed
+        https://bugs.webkit.org/show_bug.cgi?id=186123
+
+        Reviewed by Saam Barati.
+
+        This patch relpaces move with moveToDestinationIfNeeded. This
+        will prevent us from emiting moves to the same location. The old
+        move, has been renamed to emitMove and made private.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitMove):
+        (JSC::BytecodeGenerator::emitGetGlobalPrivate):
+        (JSC::BytecodeGenerator::emitGetAsyncIterator):
+        (JSC::BytecodeGenerator::move): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::move):
+        (JSC::BytecodeGenerator::moveToDestinationIfNeeded): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThisNode::emitBytecode):
+        (JSC::SuperNode::emitBytecode):
+        (JSC::NewTargetNode::emitBytecode):
+        (JSC::ResolveNode::emitBytecode):
+        (JSC::TaggedTemplateNode::emitBytecode):
+        (JSC::ArrayNode::emitBytecode):
+        (JSC::ObjectLiteralNode::emitBytecode):
+        (JSC::EvalFunctionCallNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putByIdDirect):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putByIdDirectPrivate):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putByValDirect):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_toNumber):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_toString):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_toObject):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_idWithProfile):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isJSArray):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isProxyObject):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isRegExpObject):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isObject):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isDerivedArray):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isMap):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isSet):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        (JSC::emitPostIncOrDec):
+        (JSC::PostfixNode::emitBracket):
+        (JSC::PostfixNode::emitDot):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::PrefixNode::emitBracket):
+        (JSC::PrefixNode::emitDot):
+        (JSC::LogicalOpNode::emitBytecode):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::AssignDotNode::emitBytecode):
+        (JSC::AssignBracketNode::emitBytecode):
+        (JSC::FunctionNode::emitBytecode):
+        (JSC::ClassExprNode::emitBytecode):
+        (JSC::DestructuringAssignmentNode::emitBytecode):
+        (JSC::ArrayPatternNode::emitDirectBinding):
+        (JSC::ObjectPatternNode::bindValue const):
+        (JSC::AssignmentElementNode::bindValue const):
+        (JSC::ObjectSpreadExpressionNode::emitBytecode):
+
 2018-05-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [Baseline] Store constant directly in emit_op_mov
