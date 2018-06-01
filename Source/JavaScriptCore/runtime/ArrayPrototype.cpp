@@ -36,6 +36,7 @@
 #include "JSArrayInlines.h"
 #include "JSCBuiltins.h"
 #include "JSCInlines.h"
+#include "JSImmutableButterfly.h"
 #include "JSStringJoiner.h"
 #include "Lookup.h"
 #include "ObjectConstructor.h"

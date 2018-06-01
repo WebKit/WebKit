@@ -1,3 +1,14 @@
+2018-06-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix the watchOS build after r232385
+        https://bugs.webkit.org/show_bug.cgi?id=186203
+
+        Reviewed by Keith Miller.
+
+        Add a missing header include for JSImmutableButterfly.
+
+        * runtime/ArrayPrototype.cpp:
+
 2018-05-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Add Symbol.prototype.description getter
