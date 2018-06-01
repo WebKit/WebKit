@@ -37,10 +37,20 @@
 namespace WebKit {
 using namespace WebCore;
 
+enum Columns {
+    Label,
+    Tooltip,
+    IsGroup,
+    IsSelected,
+    IsEnabled,
+    Index,
+
+    Count
+};
+
 WebPopupMenuProxyGtk::WebPopupMenuProxyGtk(GtkWidget* webView, WebPopupMenuProxy::Client& client)
     : WebPopupMenuProxy(client)
     , m_webView(webView)
-    , m_dismissMenuTimer(RunLoop::main(), this, &WebPopupMenuProxyGtk::dismissMenuTimerFired)
 {
 }
 
@@ -49,95 +59,263 @@ WebPopupMenuProxyGtk::~WebPopupMenuProxyGtk()
     cancelTracking();
 }
 
-void WebPopupMenuProxyGtk::populatePopupMenu(const Vector<WebPopupItem>& items)
+void WebPopupMenuProxyGtk::selectItem(unsigned itemIndex)
 {
-    int itemIndex = 0;
-    for (const auto& item : items) {
-        if (item.m_type == WebPopupItem::Separator) {
-            GtkWidget* menuItem = gtk_separator_menu_item_new();
-            gtk_menu_shell_append(GTK_MENU_SHELL(m_popup), menuItem);
-            gtk_widget_show(menuItem);
-        } else {
-            GtkWidget* menuItem = gtk_menu_item_new_with_label(item.m_text.utf8().data());
-            gtk_widget_set_tooltip_text(menuItem, item.m_toolTip.utf8().data());
-            gtk_widget_set_sensitive(menuItem, item.m_isEnabled);
-            g_object_set_data(G_OBJECT(menuItem), "popup-menu-item-index", GINT_TO_POINTER(itemIndex));
-            g_signal_connect(menuItem, "activate", G_CALLBACK(menuItemActivated), this);
-            g_signal_connect(menuItem, "select", G_CALLBACK(selectItemCallback), this);
-            gtk_menu_shell_append(GTK_MENU_SHELL(m_popup), menuItem);
-            gtk_widget_show(menuItem);
-        }
-        itemIndex++;
+    if (m_client)
+        m_client->setTextFromItemForPopupMenu(this, itemIndex);
+    m_selectedItem = itemIndex;
+}
+
+void WebPopupMenuProxyGtk::activateItem(std::optional<unsigned> itemIndex)
+{
+    if (m_client)
+        m_client->valueChangedForPopupMenu(this, itemIndex.value_or(m_selectedItem.value_or(-1)));
+}
+
+bool WebPopupMenuProxyGtk::activateItemAtPath(GtkTreePath* path)
+{
+    auto* model = gtk_tree_view_get_model(GTK_TREE_VIEW(m_treeView));
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter(model, &iter, path);
+    gboolean isGroup, isEnabled;
+    guint index;
+    gtk_tree_model_get(model, &iter, Columns::IsGroup, &isGroup, Columns::IsEnabled, &isEnabled, Columns::Index, &index, -1);
+    if (isGroup || !isEnabled)
+        return false;
+
+    activateItem(index);
+    hidePopupMenu();
+    return true;
+}
+
+void WebPopupMenuProxyGtk::treeViewRowActivatedCallback(GtkTreeView*, GtkTreePath* path, GtkTreeViewColumn*, WebPopupMenuProxyGtk* popupMenu)
+{
+    popupMenu->activateItemAtPath(path);
+}
+
+gboolean WebPopupMenuProxyGtk::treeViewButtonReleaseEventCallback(GtkWidget* treeView, GdkEventButton* event, WebPopupMenuProxyGtk* popupMenu)
+{
+    if (event->button != GDK_BUTTON_PRIMARY)
+        return FALSE;
+
+    GUniqueOutPtr<GtkTreePath> path;
+    if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeView), event->x, event->y, &path.outPtr(), nullptr, nullptr, nullptr))
+        return FALSE;
+
+    return popupMenu->activateItemAtPath(path.get());
+}
+
+gboolean WebPopupMenuProxyGtk::buttonPressEventCallback(GtkWidget* widget, GdkEventButton* event, WebPopupMenuProxyGtk* popupMenu)
+{
+    if (!popupMenu->m_device)
+        return FALSE;
+
+    popupMenu->hidePopupMenu();
+    return TRUE;
+}
+
+gboolean WebPopupMenuProxyGtk::keyPressEventCallback(GtkWidget* widget, GdkEventKey* event, WebPopupMenuProxyGtk* popupMenu)
+{
+    if (!popupMenu->m_device)
+        return FALSE;
+
+    if (event->keyval == GDK_KEY_Escape) {
+        popupMenu->hidePopupMenu();
+        return TRUE;
     }
+
+    if (popupMenu->typeAheadFind(event))
+        return TRUE;
+
+    // Forward the event to the tree view.
+    gtk_widget_event(popupMenu->m_treeView, reinterpret_cast<GdkEvent*>(event));
+    return TRUE;
+}
+
+void WebPopupMenuProxyGtk::createPopupMenu(const Vector<WebPopupItem>& items, int32_t selectedIndex)
+{
+    ASSERT(!m_popup);
+
+    GRefPtr<GtkTreeStore> model = adoptGRef(gtk_tree_store_new(Columns::Count, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_UINT));
+    GtkTreeIter parentIter;
+    unsigned index = 0;
+    m_paths.reserveInitialCapacity(items.size());
+    for (const auto& item : items) {
+        if (item.m_isLabel) {
+            gtk_tree_store_insert_with_values(model.get(), &parentIter, nullptr, -1,
+                Columns::Label, item.m_text.stripWhiteSpace().utf8().data(),
+                Columns::IsGroup, TRUE,
+                Columns::IsEnabled, TRUE,
+                -1);
+            // We never need the path for group labels.
+            m_paths.uncheckedAppend(nullptr);
+        } else {
+            GtkTreeIter iter;
+            bool isSelected = selectedIndex && static_cast<unsigned>(selectedIndex) == index;
+            gtk_tree_store_insert_with_values(model.get(), &iter, item.m_text.startsWith("    ") ? &parentIter : nullptr, -1,
+                Columns::Label, item.m_text.stripWhiteSpace().utf8().data(),
+                Columns::Tooltip, item.m_toolTip.isEmpty() ? nullptr : item.m_toolTip.utf8().data(),
+                Columns::IsGroup, FALSE,
+                Columns::IsSelected, isSelected,
+                Columns::IsEnabled, item.m_isEnabled,
+                Columns::Index, index,
+                -1);
+            if (isSelected) {
+                ASSERT(!m_selectedItem);
+                m_selectedItem = index;
+            }
+            m_paths.uncheckedAppend(GUniquePtr<GtkTreePath>(gtk_tree_model_get_path(GTK_TREE_MODEL(model.get()), &iter)));
+        }
+        index++;
+    }
+
+    m_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model.get()));
+    auto* treeView = GTK_TREE_VIEW(m_treeView);
+    g_signal_connect(treeView, "row-activated", G_CALLBACK(treeViewRowActivatedCallback), this);
+    g_signal_connect_after(treeView, "button-release-event", G_CALLBACK(treeViewButtonReleaseEventCallback), this);
+    gtk_tree_view_set_tooltip_column(treeView, Columns::Tooltip);
+    gtk_tree_view_set_show_expanders(treeView, FALSE);
+    gtk_tree_view_set_level_indentation(treeView, 12);
+    gtk_tree_view_set_enable_search(treeView, FALSE);
+    gtk_tree_view_set_activate_on_single_click(treeView, TRUE);
+    gtk_tree_view_set_hover_selection(treeView, TRUE);
+    gtk_tree_view_set_headers_visible(treeView, FALSE);
+    gtk_tree_view_insert_column_with_data_func(treeView, 0, nullptr, gtk_cell_renderer_text_new(), [](GtkTreeViewColumn*, GtkCellRenderer* renderer, GtkTreeModel* model, GtkTreeIter* iter, gpointer) {
+        GUniqueOutPtr<char> label;
+        gboolean isGroup, isEnabled;
+        gtk_tree_model_get(model, iter, Columns::Label, &label.outPtr(), Columns::IsGroup, &isGroup, Columns::IsEnabled, &isEnabled, -1);
+        if (isGroup) {
+            GUniquePtr<char> markup(g_strdup_printf("<b>%s</b>", label.get()));
+            g_object_set(renderer, "markup", markup.get(), nullptr);
+        } else
+            g_object_set(renderer, "text", label.get(), "sensitive", isEnabled, nullptr);
+    }, nullptr, nullptr);
+    gtk_tree_view_expand_all(treeView);
+
+    auto* selection = gtk_tree_view_get_selection(treeView);
+    gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
+    gtk_tree_selection_unselect_all(selection);
+    gtk_tree_selection_set_select_function(selection, [](GtkTreeSelection*, GtkTreeModel* model, GtkTreePath* path, gboolean selected, gpointer) -> gboolean {
+        GtkTreeIter iter;
+        gtk_tree_model_get_iter(model, &iter, path);
+        gboolean isGroup, isEnabled;
+        gtk_tree_model_get(model, &iter, Columns::IsGroup, &isGroup, Columns::IsEnabled, &isEnabled, -1);
+        return !isGroup && isEnabled;
+    }, nullptr, nullptr);
+
+    auto* swindow = gtk_scrolled_window_new(nullptr, nullptr);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+    gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swindow), GTK_SHADOW_ETCHED_IN);
+    gtk_container_add(GTK_CONTAINER(swindow), m_treeView);
+    gtk_widget_show(m_treeView);
+
+    m_popup = gtk_window_new(GTK_WINDOW_POPUP);
+    g_signal_connect(m_popup, "button-press-event", G_CALLBACK(buttonPressEventCallback), this);
+    g_signal_connect(m_popup, "key-press-event", G_CALLBACK(keyPressEventCallback), this);
+    gtk_window_set_type_hint(GTK_WINDOW(m_popup), GDK_WINDOW_TYPE_HINT_COMBO);
+    gtk_window_set_resizable(GTK_WINDOW(m_popup), FALSE);
+    gtk_container_add(GTK_CONTAINER(m_popup), swindow);
+    gtk_widget_show(swindow);
+}
+
+void WebPopupMenuProxyGtk::show()
+{
+    if (m_selectedItem) {
+        auto& selectedPath = m_paths[m_selectedItem.value()];
+        ASSERT(selectedPath);
+        gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(m_treeView), selectedPath.get(), nullptr, TRUE, 0.5, 0);
+        gtk_tree_view_set_cursor(GTK_TREE_VIEW(m_treeView), selectedPath.get(), nullptr, FALSE);
+    }
+    gtk_widget_grab_focus(m_treeView);
+    gtk_widget_show(m_popup);
 }
 
 void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, double /* pageScaleFactor */, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex)
 {
-    ASSERT(!m_popup);
-    m_popup = gtk_menu_new();
-    g_signal_connect(m_popup, "key-press-event", G_CALLBACK(keyPressEventCallback), this);
-    g_signal_connect(m_popup, "unmap", G_CALLBACK(menuUnmappedCallback), this);
+    createPopupMenu(items, selectedIndex);
+    ASSERT(m_popup);
 
-    populatePopupMenu(items);
-    gtk_menu_set_active(GTK_MENU(m_popup), selectedIndex);
+    GtkRequisition treeViewRequisition;
+    gtk_widget_get_preferred_size(m_treeView, &treeViewRequisition, nullptr);
+    auto* column = gtk_tree_view_get_column(GTK_TREE_VIEW(m_treeView), Columns::Label);
+    gint itemHeight;
+    gtk_tree_view_column_cell_get_size(column, nullptr, nullptr, nullptr, nullptr, &itemHeight);
+    gint verticalSeparator;
+    gtk_widget_style_get(m_treeView, "vertical-separator", &verticalSeparator, nullptr);
+    itemHeight += verticalSeparator;
+    if (!itemHeight)
+        return;
 
-    resetTypeAheadFindState();
+    auto* display = gtk_widget_get_display(m_webView);
+    auto* monitor = gdk_display_get_monitor_at_window(display, gtk_widget_get_window(m_webView));
+    GdkRectangle area;
+    gdk_monitor_get_workarea(monitor, &area);
+    int width = std::min(rect.width(), area.width);
+    size_t itemCount = std::min<size_t>(items.size(), (area.height / 3) / itemHeight);
 
+    auto* swindow = GTK_SCROLLED_WINDOW(gtk_bin_get_child(GTK_BIN(m_popup)));
+    // Disable scrollbars when there's only one item to ensure the scrolled window doesn't take them into account when calculating its minimum size.
+    gtk_scrolled_window_set_policy(swindow, GTK_POLICY_NEVER, itemCount > 1 ? GTK_POLICY_AUTOMATIC : GTK_POLICY_NEVER);
+    gtk_widget_realize(m_treeView);
+    gtk_tree_view_columns_autosize(GTK_TREE_VIEW(m_treeView));
+    gtk_scrolled_window_set_min_content_width(swindow, width);
+    gtk_widget_set_size_request(m_popup, width, -1);
+    gtk_scrolled_window_set_min_content_height(swindow, itemCount * itemHeight);
+
+    GtkRequisition menuRequisition;
+    gtk_widget_get_preferred_size(m_popup, &menuRequisition, nullptr);
     IntPoint menuPosition = convertWidgetPointToScreenPoint(m_webView, rect.location());
-    menuPosition.move(0, rect.height());
+    // FIXME: We can't ensure the menu will be on screen in Wayland.
+    // https://blog.gtk.org/2016/07/15/future-of-relative-window-positioning/
+    // https://gitlab.gnome.org/GNOME/gtk/issues/997
+    if (menuPosition.x() + menuRequisition.width > area.x + area.width)
+        menuPosition.setX(area.x + area.width - menuRequisition.width);
 
-    // This approach follows the one in gtkcombobox.c.
-    GtkRequisition requisition;
-    gtk_widget_set_size_request(m_popup, -1, -1);
-    gtk_widget_get_preferred_size(m_popup, &requisition, nullptr);
-    gtk_widget_set_size_request(m_popup, std::max(rect.width(), requisition.width), -1);
+    if (menuPosition.y() + rect.height() + menuRequisition.height <= area.y + area.height
+        || menuPosition.y() - area.y < (area.y + area.height) - (menuPosition.y() + rect.height()))
+        menuPosition.move(0, rect.height());
+    else
+        menuPosition.move(0, -menuRequisition.height);
+    gtk_window_move(GTK_WINDOW(m_popup), menuPosition.x(), menuPosition.y());
 
-    if (int itemCount = items.size()) {
-        GUniquePtr<GList> children(gtk_container_get_children(GTK_CONTAINER(m_popup)));
-        int i;
-        GList* child;
-        for (i = 0, child = children.get(); i < itemCount; i++, child = g_list_next(child)) {
-            if (i > selectedIndex)
-                break;
-
-            GtkWidget* item = GTK_WIDGET(child->data);
-            GtkRequisition itemRequisition;
-            gtk_widget_get_preferred_size(item, &itemRequisition, nullptr);
-            menuPosition.setY(menuPosition.y() - itemRequisition.height);
-        }
-    } else {
-        // Center vertically the empty popup in the combo box area.
-        menuPosition.setY(menuPosition.y() - rect.height() / 2);
+    auto* toplevel = gtk_widget_get_toplevel(m_webView);
+    if (GTK_IS_WINDOW(toplevel)) {
+        gtk_window_set_transient_for(GTK_WINDOW(m_popup), GTK_WINDOW(toplevel));
+        gtk_window_group_add_window(gtk_window_get_group(GTK_WINDOW(toplevel)), GTK_WINDOW(m_popup));
     }
-
-    gtk_menu_attach_to_widget(GTK_MENU(m_popup), GTK_WIDGET(m_webView), nullptr);
+    gtk_window_set_attached_to(GTK_WINDOW(m_popup), m_webView);
+    gtk_window_set_screen(GTK_WINDOW(m_popup), gtk_widget_get_screen(m_webView));
 
     const GdkEvent* event = m_client->currentlyProcessedMouseDownEvent() ? m_client->currentlyProcessedMouseDownEvent()->nativeEvent() : nullptr;
-    gtk_menu_popup_for_device(GTK_MENU(m_popup), event ? gdk_event_get_device(event) : nullptr, nullptr, nullptr,
-        [](GtkMenu*, gint* x, gint* y, gboolean* pushIn, gpointer userData) {
-            // We can pass a pointer to the menuPosition local variable because the nested main loop ensures this is called in the function context.
-            IntPoint* menuPosition = static_cast<IntPoint*>(userData);
-            *x = menuPosition->x();
-            *y = menuPosition->y();
-            *pushIn = menuPosition->y() < 0;
-        }, &menuPosition, nullptr, event && event->type == GDK_BUTTON_PRESS ? event->button.button : 1,
-        event ? gdk_event_get_time(event) : GDK_CURRENT_TIME);
+    m_device = event ? gdk_event_get_device(event) : nullptr;
+    if (!m_device)
+        m_device = gtk_get_current_event_device();
+    if (m_device && gdk_device_get_display(m_device) != display)
+        m_device = nullptr;
+    if (!m_device)
+        m_device = gdk_seat_get_pointer(gdk_display_get_default_seat(display));
+    ASSERT(m_device);
+    if (gdk_device_get_source(m_device) == GDK_SOURCE_KEYBOARD)
+        m_device = gdk_device_get_associated_device(m_device);
 
-    // Now that the menu has a position, schedule a resize to make sure it's resized to fit vertically in the work area.
-    gtk_widget_queue_resize(m_popup);
+#if GTK_CHECK_VERSION(3, 20, 0)
+    gtk_grab_add(m_popup);
+    auto grabResult = gdk_seat_grab(gdk_device_get_seat(m_device), gtk_widget_get_window(m_popup), GDK_SEAT_CAPABILITY_ALL, TRUE, nullptr, nullptr, [](GdkSeat*, GdkWindow*, gpointer userData) {
+        static_cast<WebPopupMenuProxyGtk*>(userData)->show();
+    }, this);
+#else
+    gtk_device_grab_add(m_popup, m_device, TRUE);
+    auto grabResult = gdk_device_grab(m_device, gtk_widget_get_window(m_popup), GDK_OWNERSHIP_WINDOW, TRUE,
+        static_cast<GdkEventMask>(GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK), nullptr, GDK_CURRENT_TIME);
+    show();
+#endif
 
     // PopupMenu can fail to open when there is no mouse grab.
     // Ensure WebCore does not go into some pesky state.
-    if (!gtk_widget_get_visible(m_popup)) {
+    if (grabResult != GDK_GRAB_SUCCESS) {
        m_client->failedToShowPopupMenu();
        return;
     }
-
-    // This ensures that the active item gets selected after popping up the menu, and
-    // as it says in "gtkcombobox.c" (line ~1606): it's ugly, but gets the job done.
-    GtkWidget* activeChild = gtk_menu_get_active(GTK_MENU(m_popup));
-    if (activeChild && gtk_widget_get_visible(activeChild))
-        gtk_menu_shell_select_item(GTK_MENU_SHELL(m_popup), activeChild);
 }
 
 void WebPopupMenuProxyGtk::hidePopupMenu()
@@ -145,8 +323,28 @@ void WebPopupMenuProxyGtk::hidePopupMenu()
     if (!m_popup)
         return;
 
-    gtk_menu_popdown(GTK_MENU(m_popup));
-    resetTypeAheadFindState();
+    if (m_device) {
+#if GTK_CHECK_VERSION(3, 20, 0)
+        gdk_seat_ungrab(gdk_device_get_seat(m_device));
+        gtk_grab_remove(m_popup);
+#else
+        gdk_device_ungrab(m_device, GDK_CURRENT_TIME);
+        gtk_device_grab_remove(m_popup, m_device);
+#endif
+        gtk_window_set_transient_for(GTK_WINDOW(m_popup), nullptr);
+        gtk_window_set_attached_to(GTK_WINDOW(m_popup), nullptr);
+        m_device = nullptr;
+    }
+
+    activateItem(std::nullopt);
+
+    if (m_currentSearchString) {
+        g_string_free(m_currentSearchString, TRUE);
+        m_currentSearchString = nullptr;
+    }
+
+    gtk_widget_destroy(m_popup);
+    m_popup = nullptr;
 }
 
 void WebPopupMenuProxyGtk::cancelTracking()
@@ -154,123 +352,90 @@ void WebPopupMenuProxyGtk::cancelTracking()
     if (!m_popup)
         return;
 
-    m_dismissMenuTimer.stop();
     g_signal_handlers_disconnect_matched(m_popup, G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
     hidePopupMenu();
-    gtk_widget_destroy(m_popup);
-    m_popup = nullptr;
+}
+
+std::optional<unsigned> WebPopupMenuProxyGtk::typeAheadFindIndex(GdkEventKey* event)
+{
+    gunichar keychar = gdk_keyval_to_unicode(event->keyval);
+    if (!g_unichar_isprint(keychar))
+        return std::nullopt;
+
+    if (event->time < m_previousKeyEventTime)
+        return std::nullopt;
+
+    static const uint32_t typeaheadTimeoutMs = 1000;
+    if (event->time - m_previousKeyEventTime > typeaheadTimeoutMs) {
+        if (m_currentSearchString)
+            g_string_truncate(m_currentSearchString, 0);
+    }
+    m_previousKeyEventTime = event->time;
+
+    if (!m_currentSearchString)
+        m_currentSearchString = g_string_new(nullptr);
+    g_string_append_unichar(m_currentSearchString, keychar);
+
+    int prefixLength = -1;
+    if (keychar == m_repeatingCharacter)
+        prefixLength = 1;
+    else
+        m_repeatingCharacter = m_currentSearchString->len == 1 ? keychar : '\0';
+
+    GtkTreeModel* model;
+    GtkTreeIter iter;
+    guint selectedIndex = 0;
+    if (gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(m_treeView)), &model, &iter))
+        gtk_tree_model_get(model, &iter, Columns::Index, &selectedIndex, -1);
+
+    unsigned index = selectedIndex;
+    if (m_repeatingCharacter != '\0')
+        index++;
+    auto itemCount = m_paths.size();
+    index %= itemCount;
+
+    GUniquePtr<char> normalizedPrefix(g_utf8_normalize(m_currentSearchString->str, prefixLength, G_NORMALIZE_ALL));
+    GUniquePtr<char> prefix(normalizedPrefix ? g_utf8_casefold(normalizedPrefix.get(), -1) : nullptr);
+    if (!prefix)
+        return std::nullopt;
+
+    model = gtk_tree_view_get_model(GTK_TREE_VIEW(m_treeView));
+    for (unsigned i = 0; i < itemCount; i++, index = (index + 1) % itemCount) {
+        auto& path = m_paths[index];
+        if (!path || !gtk_tree_model_get_iter(model, &iter, path.get()))
+            continue;
+
+        GUniqueOutPtr<char> label;
+        gboolean isEnabled;
+        gtk_tree_model_get(model, &iter, Columns::Label, &label.outPtr(), Columns::IsEnabled, &isEnabled, -1);
+        if (!isEnabled)
+            continue;
+
+        GUniquePtr<char> normalizedText(g_utf8_normalize(label.get(), -1, G_NORMALIZE_ALL));
+        GUniquePtr<char> text(normalizedText ? g_utf8_casefold(normalizedText.get(), -1) : nullptr);
+        if (!text)
+            continue;
+
+        if (!strncmp(prefix.get(), text.get(), strlen(prefix.get())))
+            return index;
+    }
+
+    return std::nullopt;
 }
 
 bool WebPopupMenuProxyGtk::typeAheadFind(GdkEventKey* event)
 {
-    // If we were given a non-printable character just skip it.
-    gunichar unicodeCharacter = gdk_keyval_to_unicode(event->keyval);
-    if (!g_unichar_isprint(unicodeCharacter)) {
-        resetTypeAheadFindState();
+    auto searchIndex = typeAheadFindIndex(event);
+    if (!searchIndex)
         return false;
-    }
 
-    glong charactersWritten;
-    GUniquePtr<gunichar2> utf16String(g_ucs4_to_utf16(&unicodeCharacter, 1, nullptr, &charactersWritten, nullptr));
-    if (!utf16String) {
-        resetTypeAheadFindState();
-        return false;
-    }
-
-    // If the character is the same as the last character, the user is probably trying to
-    // cycle through the menulist entries. This matches the WebCore behavior for collapsed menulists.
-    static const uint32_t searchTimeoutMs = 1000;
-    bool repeatingCharacter = unicodeCharacter != m_previousKeyEventCharacter;
-    if (event->time - m_previousKeyEventTimestamp > searchTimeoutMs)
-        m_currentSearchString = String(reinterpret_cast<UChar*>(utf16String.get()), charactersWritten);
-    else if (repeatingCharacter)
-        m_currentSearchString.append(String(reinterpret_cast<UChar*>(utf16String.get()), charactersWritten));
-
-    m_previousKeyEventTimestamp = event->time;
-    m_previousKeyEventCharacter = unicodeCharacter;
-
-    GUniquePtr<GList> children(gtk_container_get_children(GTK_CONTAINER(m_popup)));
-    if (!children)
-        return true;
-
-    // We case fold before searching, because strncmp does not handle non-ASCII characters.
-    GUniquePtr<gchar> searchStringWithCaseFolded(g_utf8_casefold(m_currentSearchString.utf8().data(), -1));
-    size_t prefixLength = strlen(searchStringWithCaseFolded.get());
-
-    // If a menu item has already been selected, start searching from the current
-    // item down the list. This will make multiple key presses of the same character
-    // advance the selection.
-    GList* currentChild = children.get();
-    if (m_currentlySelectedMenuItem) {
-        currentChild = g_list_find(children.get(), m_currentlySelectedMenuItem);
-        if (!currentChild) {
-            m_currentlySelectedMenuItem = nullptr;
-            currentChild = children.get();
-        }
-
-        // Repeating characters should iterate.
-        if (repeatingCharacter) {
-            if (GList* nextChild = g_list_next(currentChild))
-                currentChild = nextChild;
-        }
-    }
-
-    GList* firstChild = currentChild;
-    do {
-        currentChild = g_list_next(currentChild);
-        if (!currentChild)
-            currentChild = children.get();
-
-        GUniquePtr<gchar> itemText(g_utf8_casefold(gtk_menu_item_get_label(GTK_MENU_ITEM(currentChild->data)), -1));
-        if (!strncmp(searchStringWithCaseFolded.get(), itemText.get(), prefixLength)) {
-            gtk_menu_shell_select_item(GTK_MENU_SHELL(m_popup), GTK_WIDGET(currentChild->data));
-            break;
-        }
-    } while (currentChild != firstChild);
+    auto& path = m_paths[searchIndex.value()];
+    ASSERT(path);
+    gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(m_treeView), path.get(), nullptr, TRUE, 0.5, 0);
+    gtk_tree_view_set_cursor(GTK_TREE_VIEW(m_treeView), path.get(), nullptr, FALSE);
+    selectItem(searchIndex.value());
 
     return true;
-}
-
-void WebPopupMenuProxyGtk::resetTypeAheadFindState()
-{
-    m_currentlySelectedMenuItem = nullptr;
-    m_previousKeyEventCharacter = 0;
-    m_previousKeyEventTimestamp = 0;
-    m_currentSearchString = emptyString();
-}
-
-void WebPopupMenuProxyGtk::menuItemActivated(GtkMenuItem* menuItem, WebPopupMenuProxyGtk* popupMenu)
-{
-    popupMenu->m_dismissMenuTimer.stop();
-    if (popupMenu->m_client)
-        popupMenu->m_client->valueChangedForPopupMenu(popupMenu, GPOINTER_TO_INT(g_object_get_data(G_OBJECT(menuItem), "popup-menu-item-index")));
-}
-
-void WebPopupMenuProxyGtk::dismissMenuTimerFired()
-{
-    if (m_client)
-        m_client->valueChangedForPopupMenu(this, -1);
-}
-
-void WebPopupMenuProxyGtk::menuUnmappedCallback(GtkWidget*, WebPopupMenuProxyGtk* popupMenu)
-{
-    if (!popupMenu->m_client)
-        return;
-
-    // When an item is activated, the menu is first hidden and then activate signal is emitted, so at this point we don't know
-    // if the menu has been hidden because an item has been selected or because the menu has been dismissed. Wait until the next
-    // main loop iteration to dismiss the menu, if an item is activated the timer will be cancelled.
-    popupMenu->m_dismissMenuTimer.startOneShot(0_s);
-}
-
-void WebPopupMenuProxyGtk::selectItemCallback(GtkWidget* item, WebPopupMenuProxyGtk* popupMenu)
-{
-    popupMenu->setCurrentlySelectedMenuItem(item);
-}
-
-gboolean WebPopupMenuProxyGtk::keyPressEventCallback(GtkWidget*, GdkEventKey* event, WebPopupMenuProxyGtk* popupMenu)
-{
-    return popupMenu->typeAheadFind(event);
 }
 
 } // namespace WebKit

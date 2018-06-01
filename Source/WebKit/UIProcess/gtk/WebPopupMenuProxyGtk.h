@@ -17,16 +17,21 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebPopupMenuProxyGtk_h
-#define WebPopupMenuProxyGtk_h
+#pragma once
 
 #include "WebPopupMenuProxy.h"
-#include <wtf/RunLoop.h>
+#include <WebCore/GUniquePtrGtk.h>
+#include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 typedef struct _GMainLoop GMainLoop;
+typedef struct _GdkDevice GdkDevice;
+typedef struct _GdkEventButton GdkEventButton;
 typedef struct _GdkEventKey GdkEventKey;
+typedef struct _GtkTreePath GtkTreePath;
+typedef struct _GtkTreeView GtkTreeView;
+typedef struct _GtkTreeViewColumn GtkTreeViewColumn;
 
 namespace WebCore {
 class IntRect;
@@ -48,36 +53,37 @@ public:
     void hidePopupMenu() override;
     void cancelTracking() override;
 
+    virtual void selectItem(unsigned itemIndex);
+    virtual void activateItem(std::optional<unsigned> itemIndex);
+
 protected:
     WebPopupMenuProxyGtk(GtkWidget*, WebPopupMenuProxy::Client&);
 
     GtkWidget* m_webView { nullptr };
 
 private:
-    void setCurrentlySelectedMenuItem(GtkWidget* item) { m_currentlySelectedMenuItem = item; }
-    void populatePopupMenu(const Vector<WebPopupItem>&);
-    void dismissMenuTimerFired();
-
+    void createPopupMenu(const Vector<WebPopupItem>&, int32_t selectedIndex);
+    void show();
+    bool activateItemAtPath(GtkTreePath*);
+    std::optional<unsigned> typeAheadFindIndex(GdkEventKey*);
     bool typeAheadFind(GdkEventKey*);
-    void resetTypeAheadFindState();
 
-    static void menuItemActivated(GtkMenuItem*, WebPopupMenuProxyGtk*);
-    static void selectItemCallback(GtkWidget*, WebPopupMenuProxyGtk*);
+    static gboolean buttonPressEventCallback(GtkWidget*, GdkEventButton*, WebPopupMenuProxyGtk*);
     static gboolean keyPressEventCallback(GtkWidget*, GdkEventKey*, WebPopupMenuProxyGtk*);
-    static void menuUnmappedCallback(GtkWidget*, WebPopupMenuProxyGtk*);
+    static void treeViewRowActivatedCallback(GtkTreeView*, GtkTreePath*, GtkTreeViewColumn*, WebPopupMenuProxyGtk*);
+    static gboolean treeViewButtonReleaseEventCallback(GtkWidget*, GdkEventButton*, WebPopupMenuProxyGtk*);
 
     GtkWidget* m_popup { nullptr };
+    GtkWidget* m_treeView { nullptr };
+    GdkDevice* m_device { nullptr };
 
-    RunLoop::Timer<WebPopupMenuProxyGtk> m_dismissMenuTimer;
+    Vector<GUniquePtr<GtkTreePath>> m_paths;
+    std::optional<unsigned> m_selectedItem;
 
     // Typeahead find.
-    unsigned m_previousKeyEventCharacter { 0 };
-    uint32_t m_previousKeyEventTimestamp { 0 };
-    GtkWidget* m_currentlySelectedMenuItem { nullptr };
-    String m_currentSearchString;
+    gunichar m_repeatingCharacter { '\0' };
+    uint32_t m_previousKeyEventTime { 0 };
+    GString* m_currentSearchString { nullptr };
 };
 
 } // namespace WebKit
-
-
-#endif // WebPopupMenuProxyGtk_h

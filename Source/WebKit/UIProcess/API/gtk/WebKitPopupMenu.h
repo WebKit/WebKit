@@ -34,8 +34,7 @@ public:
     }
     ~WebKitPopupMenu() = default;
 
-    void selectItem(unsigned);
-    void activateItem(int32_t);
+    void activateItem(std::optional<unsigned> itemIndex) override;
 
 private:
     WebKitPopupMenu(GtkWidget*, WebPopupMenuProxy::Client&);
@@ -45,7 +44,6 @@ private:
     void cancelTracking() override;
 
     GRefPtr<WebKitOptionMenu> m_menu;
-    std::optional<unsigned> m_selectedItem;
 };
 
 } // namespace WebKit

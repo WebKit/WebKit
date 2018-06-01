@@ -27,6 +27,7 @@ namespace WTF {
 
 WTF_DEFINE_GPTR_DELETER(GdkEvent, gdk_event_free)
 WTF_DEFINE_GPTR_DELETER(GtkIconInfo, gtk_icon_info_free)
+WTF_DEFINE_GPTR_DELETER(GtkTreePath, gtk_tree_path_free)
 
 } // namespace WTF
 

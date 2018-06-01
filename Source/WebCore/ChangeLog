@@ -1,3 +1,14 @@
+2018-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Switch to use a popup window with a tree view instead of a menu for option menu default implementation
+        https://bugs.webkit.org/show_bug.cgi?id=186146
+
+        Reviewed by Michael Catanzaro.
+
+        Make it possible to use GUniquePtr with GtkTreePath.
+
+        * platform/gtk/GUniquePtrGtk.h:
+
 2018-05-31  Per Arne Vollan  <pvollan@apple.com>
 
         Add OpenGL display mask to WebPage creation parameters.
