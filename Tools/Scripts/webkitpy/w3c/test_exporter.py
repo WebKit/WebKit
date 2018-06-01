@@ -37,13 +37,13 @@ from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.w3c.wpt_github import WPTGitHub
 from webkitpy.w3c.wpt_linter import WPTLinter
-from webkitpy.w3c.common import WPT_GH_ORG
+from webkitpy.w3c.common import WPT_GH_ORG, WPT_GH_REPO_NAME, WPT_GH_URL
 from webkitpy.common.memoized import memoized
 
 _log = logging.getLogger(__name__)
 
 WEBKIT_WPT_DIR = 'LayoutTests/imported/w3c/web-platform-tests'
-WPT_PR_URL = "https://github.com/%s/web-platform-tests/pull/" % WPT_GH_ORG
+WPT_PR_URL = "%s/pull/" % WPT_GH_URL
 WEBKIT_EXPORT_PR_LABEL = 'webkit-export'
 
 EXCLUDED_FILE_SUFFIXES = ['-expected.txt', '.worker.html', '.any.html', '.any.worker.html']
@@ -102,7 +102,7 @@ class WebPlatformTestExporter(object):
     @property
     @memoized
     def _wpt_fork_branch_github_url(self):
-        return "https://github.com/" + self.username + "/web-platform-tests/tree/" + self._public_branch_name
+        return "https://github.com/%s/%s/tree/%s" % (self.username, WPT_GH_REPO_NAME, self._public_branch_name)
 
     @property
     @memoized
@@ -118,14 +118,14 @@ class WebPlatformTestExporter(object):
     def _wpt_fork_push_url(self):
         wpt_fork_push_url = self._options.repository_remote_url
         if not wpt_fork_push_url:
-            wpt_fork_push_url = "https://" + self.username + "@github.com/" + self.username + "/web-platform-tests.git"
+            wpt_fork_push_url = "https://%s@github.com/%s/%s.git" % (self.username, self.username, WPT_GH_REPO_NAME)
 
         return wpt_fork_push_url
 
     @property
     @memoized
     def _git(self):
-        return self._ensure_wpt_repository("https://github.com/w3c/web-platform-tests.git", self._options.repository_directory, self._gitClass)
+        return self._ensure_wpt_repository("%s.git" % WPT_GH_URL, self._options.repository_directory, self._gitClass)
 
     @property
     @memoized
@@ -215,7 +215,7 @@ class WebPlatformTestExporter(object):
             if not self._token:
                 self._token = self._prompt_for_token(options)
             if not self._token:
-                _log.info("Missing GitHub token, the script will not be able to create a pull request to W3C web-platform-tests repository.")
+                _log.info("Missing GitHub token, the script will not be able to create a pull request to %s's %s repository." % (WPT_GH_ORG, WPT_GH_REPO_NAME))
 
         if self._token:
             self._validate_and_save_token(self._username, self._token)
@@ -322,7 +322,7 @@ class WebPlatformTestExporter(object):
                 self._github.add_label(pr_number, WEBKIT_EXPORT_PR_LABEL)
             except Exception as e:
                 _log.warning(e)
-                _log.info('Could not add label "%s" to pr #%s. User "%s" may not have permission to update labels in the w3c/web-platform-test repo.' % (WEBKIT_EXPORT_PR_LABEL, pr_number, self.username))
+                _log.info('Could not add label "%s" to pr #%s. User "%s" may not have permission to update labels in the %s/%s repo.' % (WEBKIT_EXPORT_PR_LABEL, pr_number, self.username, WPT_GH_ORG, WPT_GH_REPO_NAME))
         if self._bug_id and pr_number:
             self._bugzilla.post_comment_to_bug(self._bug_id, "Submitted web-platform-tests pull request: " + WPT_PR_URL + str(pr_number))
 
@@ -387,10 +387,10 @@ def parse_args(args):
     'Tools/Scripts/export-w3c-test-changes -c -g HEAD -b XYZ' will do the following:
     - Clone web-platform-tests repository if not done already and set it up for pushing branches.
     - Gather WebKit bug id XYZ bug and changes to apply to web-platform-tests repository based on the HEAD commit
-    - Create a remote branch named webkit-XYZ on https://github.com/USERNAME/web-platform-tests.git repository based on the locally applied patch.
+    - Create a remote branch named webkit-XYZ on https://github.com/USERNAME/%s.git repository based on the locally applied patch.
     -    USERNAME may be set using the environment variable GITHUB_USERNAME or as a command line option. It is then stored in git config as github.username.
     -    Github credential may be set using the environment variable GITHUB_TOKEN or as a command line option. (Please provide a valid GitHub 'Personal access token' with 'repo' as scope). It is then stored in git config as github.token.
-    - Make the related pull request on https://github.com/w3c/web-platform-tests.git repository.
+    - Make the related pull request on %s.git repository.
     - Clean the local Git repository
     Notes:
     - It is safer to provide a bug id using -b option (bug id from a git commit is not always working).
@@ -399,7 +399,7 @@ def parse_args(args):
     FIXME:
     - The script is not yet able to update an existing pull request
     - Need a way to monitor the progress of the pul request so that status of all pending pull requests can be done at import time.
-    """
+    """ % (WPT_GH_REPO_NAME, WPT_GH_URL)
     parser = argparse.ArgumentParser(prog='export-w3c-test-changes ...', description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('-g', '--git-commit', dest='git_commit', default=None, help='Git commit to apply')

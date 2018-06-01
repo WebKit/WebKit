@@ -1,3 +1,29 @@
+2018-05-31  Frederic Wang  <fwang@igalia.com>
+
+        export-w3c-test-changes should use the new location & name of the WPT repo
+        https://bugs.webkit.org/show_bug.cgi?id=186135
+
+        Reviewed by Youenn Fablet.
+
+        Web platform tests have been moved to GitHub's web-platform-tests/wpt. This patch updates the
+        corresponding variables to use the new organization and repository name. It also refactors a
+        bit the code to reduce the amount of hardcoded strings.
+
+        * Scripts/webkitpy/w3c/common.py: Use org web-platform-tests, repo name wpt. Also removes the
+        final slash to WPT_GH_URL, so it can be used for repo URL too.
+        * Scripts/webkitpy/w3c/test_exporter.py: Import more symbols and define WPT_PR_URL from
+        WPT_GH_URL.
+        (WebPlatformTestExporter._wpt_fork_branch_github_url): Use WPT_GH_REPO_NAME.
+        (WebPlatformTestExporter._wpt_fork_push_url): Use WPT_GH_REPO_NAME.
+        (WebPlatformTestExporter._git): Use  WPT_GH_URL.
+        (WebPlatformTestExporter._ensure_username_and_token): Use WPT_GH_ORG, WPT_GH_REPO_NAME.
+        (WebPlatformTestExporter.make_pull_request): Use WPT_GH_ORG, WPT_GH_REPO_NAME.
+        (parse_args): Use WPT_GH_REPO_NAME, WPT_GH_URL.
+        * Scripts/webkitpy/w3c/test_exporter_unittest.py:
+        (TestExporterTest.test_export): Update organization and repository names for the remote
+        branch and pull request.
+        (TestExporterTest.test_export_with_specific_branch): Update repository name.
+
 2018-05-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update expected results for BuildStepsConstructorTest

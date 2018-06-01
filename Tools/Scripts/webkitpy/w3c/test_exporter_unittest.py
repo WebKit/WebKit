@@ -139,7 +139,7 @@ class TestExporterTest(unittest.TestCase):
             'apply_mail_patch patch.temp ',
             'commit -a -m WebKit export of https://bugs.webkit.org/show_bug.cgi?id=1234',
             'remote ',
-            'remote add USER https://USER@github.com/USER/web-platform-tests.git',
+            'remote add USER https://USER@github.com/USER/wpt.git',
             'remote get-url USER',
             'push USER wpt-export-for-webkit-1234:wpt-export-for-webkit-1234 -f',
             'checkout master',
@@ -148,7 +148,7 @@ class TestExporterTest(unittest.TestCase):
             'reset hard origin/master'])
         self.assertEquals(exporter._bugzilla.calls, [
             'fetch bug 1234',
-            'post comment to bug 1234 : Submitted web-platform-tests pull request: https://github.com/w3c/web-platform-tests/pull/5678'])
+            'post comment to bug 1234 : Submitted web-platform-tests pull request: https://github.com/web-platform-tests/wpt/pull/5678'])
         self.assertEquals(mock_linter.calls, ['/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests', 'lint'])
 
     def test_export_with_specific_branch(self):
@@ -166,7 +166,7 @@ class TestExporterTest(unittest.TestCase):
             'apply_mail_patch patch.temp ',
             'commit -a -m WebKit export of https://bugs.webkit.org/show_bug.cgi?id=1234',
             'remote ',
-            'remote add USER https://USER@github.com/USER/web-platform-tests.git',
+            'remote add USER https://USER@github.com/USER/wpt.git',
             'remote get-url USER',
             'push USER wpt-export-for-webkit-1234:wpt-export-branch -f',
             'checkout master',
