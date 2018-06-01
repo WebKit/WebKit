@@ -1,3 +1,25 @@
+2018-05-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Some tests for webkitdirectory API fail when tests are in an APFS file system
+        https://bugs.webkit.org/show_bug.cgi?id=186184
+
+        Reviewed by Chris Dumez.
+
+        On an APFS volume, files may not be listed in the lexicologically order and the size of a directory
+        may defer from that of HFS+. To make the test results consistent on either file systems,
+        sort file entries lexicologically by the name and list two possible directory sizes as the expectation.
+
+        Added a new helper function, shouldBeOneOfValues, which takes an array of values as the expectation.
+
+        * editing/pasteboard/entries-api/datatransfer-items-drop-directoryReader.html:
+        * editing/pasteboard/entries-api/datatransfer-items-drop-getAsEntry-expected.txt:
+        * editing/pasteboard/entries-api/datatransfer-items-drop-getAsEntry.html:
+        * fast/forms/file/entries-api/drag-folder-webkitEntries-expected.txt:
+        * fast/forms/file/entries-api/drag-folder-webkitEntries.html:
+        * fast/forms/file/entries-api/webkitdirectory-drag-folder.html:
+        * resources/js-test.js:
+        (shouldBeOneOfValues): Added.
+
 2018-06-01  Daniel Bates  <dabates@apple.com>
 
         http/tests/inspector/network/har/har-page.html should actually sort dumped cookies by name

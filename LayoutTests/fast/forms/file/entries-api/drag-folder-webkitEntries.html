@@ -48,7 +48,7 @@ function changed(event)
     shouldBeEqualToString("files[0].type", "text/plain");
 
     shouldBeEqualToString("files[1].name", "testFiles");
-    shouldBe("files[1].size", "272");
+    shouldBeOneOfValues("files[1].size", [272, 256]);
     shouldBeEqualToString("files[1].type", "");
 
     finishJSTest();

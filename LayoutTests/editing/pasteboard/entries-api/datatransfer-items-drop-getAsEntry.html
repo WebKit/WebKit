@@ -37,7 +37,7 @@ dropzone.ondrop = function(e) {
     shouldBeEqualToString("secondDataTransferItem.type", "");
     secondFile = secondDataTransferItem.getAsFile();
     shouldBeEqualToString("secondFile.name", "testFiles");
-    shouldBe("secondFile.size", "272"); // Chrome returns folder size, Firefox returns 0.
+    shouldBeOneOfValues("secondFile.size", [272, 256]); // Chrome returns folder size, Firefox returns 0. 256 in APFS, 272 in HFS+ 
     shouldBeEqualToString("secondFile.type", "");
 
     secondEntry = secondDataTransferItem.webkitGetAsEntry();

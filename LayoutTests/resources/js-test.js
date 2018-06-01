@@ -284,6 +284,45 @@ function shouldBe(_a, _b, _quiet)
         testFailed(_a + " should be " + stringify(_bv) + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
 }
 
+function shouldBeOneOfValues(_a, _values)
+{
+    if ((typeof _a != "function" && typeof _a != "string"))
+        debug("WARN: shouldBeOneOfValues() expects the first argument to be a function or a string");
+    if (!Array.isArray(_values)) {
+        testFailed("The second argument to shouldBeOneOfValues() must be an array of values");
+        return;
+    }
+
+    var _exception;
+    var _av;
+    try {
+        _av = (typeof _a == "function" ? _a() : eval(_a));
+    } catch (e) {
+        _exception = e;
+    }
+
+    var stringifiedValues = '';
+    for (var i = 0; i < _values.length; ++i) {
+        if (i) {
+            if (i + 1 == _values.length)
+                stringifiedValues += ', and ';
+            else
+                stringifiedValues += ','
+        }
+        stringifiedValues += "`" + stringify(_values[i]) + "`";
+    }
+    if (_exception)
+        testFailed(_a + " should be one of " + stringifiedValues + ". Threw exception " + _exception);
+    else {
+        var matchedValue = _values.find(function (value) { return isResultCorrect(_av, value); });
+        if (matchedValue) {
+            testPassed(_a + " is one of " + stringifiedValues);
+        } else {
+            testFailed(_a + " should be one of " + stringifiedValues + ". Was " + stringify(_av) + ".");
+        }
+    }
+}
+
 // Execute condition every 5 milliseconds until it succeeds.
 function _waitForCondition(condition, completionHandler)
 {
