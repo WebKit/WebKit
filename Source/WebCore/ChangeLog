@@ -1,3 +1,20 @@
+2018-06-01  Jeremy Jones  <jeremyj@apple.com>
+
+        Don't continue playing in background when auto-picture-in-picture is disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=186089
+        rdar://problem/40314314
+
+        Reviewed by Eric Carlson.
+
+        No new tests because we don't have a way to test auto-pip.
+
+        With the refactoring work done in VideoFullscreenInterfaceAVKit, HTMLMediaElement no longer has to anticipate 
+        auto-pip when if it should pause on suspend. Instead VideoFullscreenInterfaceAVKit proactively updates 
+        videoFullscreenMode, so checking for PIP is sufficient.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction const):
+
 2018-06-01  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r231456): Colloquy is broken
