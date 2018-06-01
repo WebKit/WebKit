@@ -1,3 +1,24 @@
+2018-05-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] InById should be converted to MatchStructure
+        https://bugs.webkit.org/show_bug.cgi?id=185803
+
+        Reviewed by Keith Miller.
+
+        * microbenchmarks/in-by-id-match.js: Added.
+        (test):
+        * microbenchmarks/in-by-id-removed.js: Added.
+        (test):
+        * stress/in-by-id-constant.js: Added.
+        (shouldBe):
+        (test1):
+        * stress/in-by-id-match-invalid.js: Added.
+        (shouldBe):
+        (test1):
+        * stress/in-by-id-match.js: Added.
+        (shouldBe):
+        (test1):
+
 2018-05-31  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "=<" and ">=" relational operation

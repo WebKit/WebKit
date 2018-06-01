@@ -48,6 +48,7 @@
 #include "FunctionCodeBlock.h"
 #include "GetByIdStatus.h"
 #include "Heap.h"
+#include "InByIdStatus.h"
 #include "InstanceOfStatus.h"
 #include "JSCInlines.h"
 #include "JSFixedArray.h"
@@ -4805,21 +4806,27 @@ void ByteCodeParser::parseBlock(unsigned limit)
             if (JSObject* commonPrototype = status.commonPrototype()) {
                 addToGraph(CheckCell, OpInfo(m_graph.freeze(commonPrototype)), prototype);
                 
+                bool allOK = true;
                 MatchStructureData* data = m_graph.m_matchStructureData.add();
                 for (const InstanceOfVariant& variant : status.variants()) {
-                    check(variant.conditionSet());
+                    if (!check(variant.conditionSet())) {
+                        allOK = false;
+                        break;
+                    }
                     for (Structure* structure : variant.structureSet()) {
                         MatchStructureVariant matchVariant;
                         matchVariant.structure = m_graph.registerStructure(structure);
                         matchVariant.result = variant.isHit();
                         
-                        data->variants.append(matchVariant);
+                        data->variants.append(WTFMove(matchVariant));
                     }
                 }
                 
-                Node* match = addToGraph(MatchStructure, OpInfo(data), value);
-                set(VirtualRegister(bytecode.dst()), match);
-                NEXT_OPCODE(op_instanceof);
+                if (allOK) {
+                    Node* match = addToGraph(MatchStructure, OpInfo(data), value);
+                    set(VirtualRegister(bytecode.dst()), match);
+                    NEXT_OPCODE(op_instanceof);
+                }
             }
             
             set(VirtualRegister(bytecode.dst()), addToGraph(InstanceOf, value, prototype));
@@ -6423,10 +6430,39 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_in_by_id: {
             Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
-            set(VirtualRegister(currentInstruction[1].u.operand),
-                addToGraph(InById, OpInfo(identifierNumber), base));
+            UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
+
+            InByIdStatus status = InByIdStatus::computeFor(
+                m_inlineStackTop->m_profiledBlock, m_dfgCodeBlock,
+                m_inlineStackTop->m_stubInfos, m_dfgStubInfos,
+                currentCodeOrigin(), uid);
+
+            if (status.isSimple()) {
+                bool allOK = true;
+                MatchStructureData* data = m_graph.m_matchStructureData.add();
+                for (const InByIdVariant& variant : status.variants()) {
+                    if (!check(variant.conditionSet())) {
+                        allOK = false;
+                        break;
+                    }
+                    for (Structure* structure : variant.structureSet()) {
+                        MatchStructureVariant matchVariant;
+                        matchVariant.structure = m_graph.registerStructure(structure);
+                        matchVariant.result = variant.isHit();
+
+                        data->variants.append(WTFMove(matchVariant));
+                    }
+                }
+
+                if (allOK) {
+                    Node* match = addToGraph(MatchStructure, OpInfo(data), base);
+                    set(VirtualRegister(currentInstruction[1].u.operand), match);
+                    NEXT_OPCODE(op_in_by_id);
+                }
+            }
+
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(InById, OpInfo(identifierNumber), base));
             NEXT_OPCODE(op_in_by_id);
-            break;
         }
 
         case op_get_enumerable_length: {

@@ -219,6 +219,8 @@ bytecode/FunctionCodeBlock.cpp
 bytecode/GetByIdStatus.cpp
 bytecode/GetByIdVariant.cpp
 bytecode/GetterSetterAccessCase.cpp
+bytecode/InByIdStatus.cpp
+bytecode/InByIdVariant.cpp
 bytecode/InlineAccess.cpp
 bytecode/InlineCallFrame.cpp
 bytecode/InlineCallFrameSet.cpp

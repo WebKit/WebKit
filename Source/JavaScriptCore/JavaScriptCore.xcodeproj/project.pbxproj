@@ -1702,6 +1702,8 @@
 		E328DAE91D38D005001A2529 /* BytecodeGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D264281D38C042000BE174 /* BytecodeGraph.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E328DAEB1D38D005001A2529 /* BytecodeRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D2642A1D38C042000BE174 /* BytecodeRewriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E32AB2441DCD75F400D7533A /* MacroAssemblerHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3305FB320B0F78800CEB82B /* InByIdStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = E3305FAF20B0F78700CEB82B /* InByIdStatus.h */; };
+		E3305FB520B0F78800CEB82B /* InByIdVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = E3305FB120B0F78800CEB82B /* InByIdVariant.h */; };
 		E33637A61B63220200EE0840 /* ReflectObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E33637A41B63220200EE0840 /* ReflectObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33B3E261B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E33B3E251B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h */; };
 		E33E8D1D1B9013C300346B52 /* JSNativeStdFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E8D1B1B9013C300346B52 /* JSNativeStdFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4568,6 +4570,10 @@
 		E326C4961ECBEF5700A9A905 /* ClassInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClassInfo.cpp; sourceTree = "<group>"; };
 		E3282BB91FE930A300EDAF71 /* YarrErrorCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = YarrErrorCode.cpp; path = yarr/YarrErrorCode.cpp; sourceTree = "<group>"; };
 		E3282BBA1FE930A400EDAF71 /* YarrErrorCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YarrErrorCode.h; path = yarr/YarrErrorCode.h; sourceTree = "<group>"; };
+		E3305FAF20B0F78700CEB82B /* InByIdStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InByIdStatus.h; sourceTree = "<group>"; };
+		E3305FB020B0F78700CEB82B /* InByIdVariant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InByIdVariant.cpp; sourceTree = "<group>"; };
+		E3305FB120B0F78800CEB82B /* InByIdVariant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InByIdVariant.h; sourceTree = "<group>"; };
+		E3305FB220B0F78800CEB82B /* InByIdStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InByIdStatus.cpp; sourceTree = "<group>"; };
 		E33637A31B63220200EE0840 /* ReflectObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReflectObject.cpp; sourceTree = "<group>"; };
 		E33637A41B63220200EE0840 /* ReflectObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectObject.h; sourceTree = "<group>"; };
 		E33B3E251B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorInstrumentationObject.lut.h; sourceTree = "<group>"; };
@@ -4912,9 +4918,9 @@
 				14BD59BF0A3E8F9000BAF59C /* testapi */,
 				0FEC85AD1BDB5CF10080FF74 /* testb3 */,
 				FE533CAC1F217DB40016A1FE /* testmasm */,
+				79281BDC20B62B3E002E2A60 /* testmem */,
 				6511230514046A4C002B101D /* testRegExp */,
 				932F5BD90822A1C700736975 /* JavaScriptCore.framework */,
-				79281BDC20B62B3E002E2A60 /* testmem */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6286,8 +6292,8 @@
 		79ABCC5520B7812600323D5F /* testmem2 */ = {
 			isa = PBXGroup;
 			children = (
-				79ABCC5620B7812600323D5F /* testmem2.m */,
 				79ABCC5820B7812600323D5F /* testmem2.1 */,
+				79ABCC5620B7812600323D5F /* testmem2.m */,
 			);
 			path = testmem2;
 			sourceTree = "<group>";
@@ -7675,6 +7681,10 @@
 				14AD91081DCA92940014F9FE /* GlobalCodeBlock.h */,
 				0F0B83A814BCF55E00885B4F /* HandlerInfo.h */,
 				0FB399BD20AF6B380017E213 /* ICStatusUtils.h */,
+				E3305FB220B0F78800CEB82B /* InByIdStatus.cpp */,
+				E3305FAF20B0F78700CEB82B /* InByIdStatus.h */,
+				E3305FB020B0F78700CEB82B /* InByIdVariant.cpp */,
+				E3305FB120B0F78800CEB82B /* InByIdVariant.h */,
 				7905BB661D12050E0019FE57 /* InlineAccess.cpp */,
 				7905BB671D12050E0019FE57 /* InlineAccess.h */,
 				148A7BED1B82975A002D9157 /* InlineCallFrame.cpp */,
@@ -8365,7 +8375,6 @@
 				0F4C91661C29F4F2004341A6 /* B3OriginDump.h in Headers */,
 				0FEC85261BDACDAC0080FF74 /* B3PatchpointSpecial.h in Headers */,
 				0FEC85281BDACDAC0080FF74 /* B3PatchpointValue.h in Headers */,
-				0FD2FD9520B52BE200F09441 /* IsoSubspaceInlines.h in Headers */,
 				799EF7C41C56ED96002B0534 /* B3PCToOriginMap.h in Headers */,
 				0FEC852A1BDACDAC0080FF74 /* B3PhaseScope.h in Headers */,
 				0F37308D1C0BD29100052BFA /* B3PhiChildren.h in Headers */,
@@ -8493,6 +8502,7 @@
 				A7E5A3A81797432D00E893C0 /* CompilationResult.h in Headers */,
 				0F4F11E8209BCDAB00709654 /* CompilerTimingScope.h in Headers */,
 				0FDCE12A1FAFA85F006F3901 /* CompleteSubspace.h in Headers */,
+				0FD2FD9420B52BDE00F09441 /* CompleteSubspaceInlines.h in Headers */,
 				BC18C3F40E16F5CD00B34460 /* Completion.h in Headers */,
 				0F6FC751196110A800E1D02D /* ComplexGetStatus.h in Headers */,
 				0FDB2CEA174896C7007B3C1B /* ConcurrentJSLock.h in Headers */,
@@ -8990,6 +9000,7 @@
 				0FB467801FDDA6F1003FCB09 /* IsoCellSet.h in Headers */,
 				0FB467811FDDA6F7003FCB09 /* IsoCellSetInlines.h in Headers */,
 				0FDCE12D1FAFB4E5006F3901 /* IsoSubspace.h in Headers */,
+				0FD2FD9520B52BE200F09441 /* IsoSubspaceInlines.h in Headers */,
 				0F5E0FE72086AD480097F0DE /* IsoSubspacePerVM.h in Headers */,
 				8B9F6D561D5912FA001C739F /* IterationKind.h in Headers */,
 				FE4D55B81AE716CA0052E459 /* IterationStatus.h in Headers */,
@@ -9000,7 +9011,6 @@
 				BC18C4140E16F5CD00B34460 /* JavaScriptCore.h in Headers */,
 				BC18C4150E16F5CD00B34460 /* JavaScriptCorePrefix.h in Headers */,
 				1429D9300ED22D7000B89619 /* JIT.h in Headers */,
-				0FD2FD9420B52BDE00F09441 /* CompleteSubspaceInlines.h in Headers */,
 				FE1220271BE7F58C0039E6F2 /* JITAddGenerator.h in Headers */,
 				0F75A0662013E4F10038E2CF /* JITAllocator.h in Headers */,
 				FE3A06B21C10CB8900390FDD /* JITBitAndGenerator.h in Headers */,

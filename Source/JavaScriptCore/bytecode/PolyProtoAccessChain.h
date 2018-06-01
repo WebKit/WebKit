@@ -29,6 +29,7 @@
 
 namespace JSC {
 
+class JSCell;
 class JSGlobalObject;
 class JSObject;
 class PropertySlot;

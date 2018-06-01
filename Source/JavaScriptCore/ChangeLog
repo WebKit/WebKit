@@ -1,3 +1,59 @@
+2018-05-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] InById should be converted to MatchStructure
+        https://bugs.webkit.org/show_bug.cgi?id=185803
+
+        Reviewed by Keith Miller.
+
+        MatchStructure is introduced for instanceof optimization. But this node
+        is also useful for InById node. This patch converts InById to MatchStructure
+        node with CheckStructures if possible by using InByIdStatus.
+
+        Added microbenchmarks show improvements.
+
+                                   baseline                  patched
+
+        in-by-id-removed       18.1196+-0.8108     ^     16.1702+-0.9773        ^ definitely 1.1206x faster
+        in-by-id-match         16.3912+-0.2608     ^     15.2736+-0.8173        ^ definitely 1.0732x faster
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/InByIdStatus.cpp: Added.
+        (JSC::InByIdStatus::appendVariant):
+        (JSC::InByIdStatus::computeFor):
+        (JSC::InByIdStatus::hasExitSite):
+        (JSC::InByIdStatus::computeForStubInfo):
+        (JSC::InByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::InByIdStatus::filter):
+        (JSC::InByIdStatus::dump const):
+        * bytecode/InByIdStatus.h: Added.
+        (JSC::InByIdStatus::InByIdStatus):
+        (JSC::InByIdStatus::state const):
+        (JSC::InByIdStatus::isSet const):
+        (JSC::InByIdStatus::operator bool const):
+        (JSC::InByIdStatus::isSimple const):
+        (JSC::InByIdStatus::numVariants const):
+        (JSC::InByIdStatus::variants const):
+        (JSC::InByIdStatus::at const):
+        (JSC::InByIdStatus::operator[] const):
+        (JSC::InByIdStatus::takesSlowPath const):
+        * bytecode/InByIdVariant.cpp: Added.
+        (JSC::InByIdVariant::InByIdVariant):
+        (JSC::InByIdVariant::attemptToMerge):
+        (JSC::InByIdVariant::dump const):
+        (JSC::InByIdVariant::dumpInContext const):
+        * bytecode/InByIdVariant.h: Added.
+        (JSC::InByIdVariant::isSet const):
+        (JSC::InByIdVariant::operator bool const):
+        (JSC::InByIdVariant::structureSet const):
+        (JSC::InByIdVariant::structureSet):
+        (JSC::InByIdVariant::conditionSet const):
+        (JSC::InByIdVariant::offset const):
+        (JSC::InByIdVariant::isHit const):
+        * bytecode/PolyProtoAccessChain.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2018-06-01  Keith Miller  <keith_miller@apple.com>
 
         move should only emit the move if it's actually needed
