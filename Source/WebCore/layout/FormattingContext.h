@@ -81,26 +81,25 @@ protected:
     // This class implements generic positioning and sizing.
     class Geometry {
     public:
-        static LayoutUnit outOfFlowNonReplacedHeight(LayoutContext&, const Box&);
-        static LayoutUnit outOfFlowNonReplacedWidth(LayoutContext&, const Box&);
+        static LayoutUnit outOfFlowHeight(LayoutContext&, const Box&);
+        static LayoutUnit outOfFlowWidth(LayoutContext&, const Box&);
 
-        static LayoutUnit outOfFlowReplacedHeight(LayoutContext&, const Box&);
-        static LayoutUnit outOfFlowReplacedWidth(LayoutContext&, const Box&);
+        static LayoutUnit floatingHeight(LayoutContext&, const Box&);
+        static LayoutUnit floatingWidth(LayoutContext&, const Box&);
 
-        static LayoutUnit floatingNonReplacedHeight(LayoutContext&, const Box&);
-        static LayoutUnit floatingNonReplacedWidth(LayoutContext&, const Box&);
-
-        static LayoutUnit floatingReplacedHeight(LayoutContext&, const Box&);
-        static LayoutUnit floatingReplacedWidth(LayoutContext&, const Box&);
-
-        static LayoutPoint outOfFlowNonReplacedPosition(LayoutContext&, const Box&);
-        static LayoutPoint outOfFlowReplacedPosition(LayoutContext&, const Box&);
+        static LayoutPoint outOfFlowPosition(LayoutContext&, const Box&);
 
         static LayoutUnit inlineReplacedHeight(LayoutContext&, const Box&);
         static LayoutUnit inlineReplacedWidth(LayoutContext&, const Box&);
 
         static Display::Box::Edges computedBorder(LayoutContext&, const Box&);
         static std::optional<Display::Box::Edges> computedPadding(LayoutContext&, const Box&);
+
+    private:
+        static LayoutUnit outOfFlowReplacedHeight(LayoutContext&, const Box&);
+        static LayoutUnit outOfFlowReplacedWidth(LayoutContext&, const Box&);
+        static LayoutUnit floatingReplacedHeight(LayoutContext&, const Box&);
+        static LayoutUnit floatingReplacedWidth(LayoutContext&, const Box&);
     };
 
 private:

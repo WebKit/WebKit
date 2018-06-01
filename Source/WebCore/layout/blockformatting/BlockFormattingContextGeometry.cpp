@@ -236,6 +236,28 @@ LayoutPoint BlockFormattingContext::Geometry::inFlowPositionedPosition(LayoutCon
     return { displayBox.left() + leftDelta, displayBox.top() + topDelta };
 }
 
+LayoutUnit BlockFormattingContext::Geometry::inFlowHeight(LayoutContext& layoutContext, const Box& layoutBox)
+{
+    ASSERT(layoutBox.isInFlow());
+
+    if (!layoutBox.replaced())
+        return inFlowNonReplacedHeight(layoutContext, layoutBox);
+    // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block'
+    // replaced elements in normal flow and floating replaced elements
+    return FormattingContext::Geometry::inlineReplacedHeight(layoutContext, layoutBox);
+}
+
+LayoutUnit BlockFormattingContext::Geometry::inFlowWidth(LayoutContext& layoutContext, const Box& layoutBox)
+{
+    ASSERT(layoutBox.isInFlow());
+
+    if (!layoutBox.replaced())
+        return inFlowNonReplacedWidth(layoutContext, layoutBox);
+    // 10.3.4 Block-level, replaced elements in normal flow
+    // The used value of 'width' is determined as for inline replaced elements
+    return FormattingContext::Geometry::inlineReplacedWidth(layoutContext, layoutBox);
+}
+
 Display::Box::Edges BlockFormattingContext::Geometry::computedMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     auto& style = layoutBox.style();

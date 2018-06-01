@@ -1,5 +1,63 @@
 2018-06-01  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Simplify the formatting class implementation by pushing down some of the logic to the Geometry class
+        https://bugs.webkit.org/show_bug.cgi?id=186179
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowPosition const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowWidth const):
+        (WebCore::Layout::FormattingContext::computeFloatingWidth const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHeight const):
+        (WebCore::Layout::FormattingContext::computeFloatingHeight const):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::outOfFlowNonReplacedHeight):
+        (WebCore::Layout::outOfFlowNonReplacedWidth):
+        (WebCore::Layout::outOfFlowReplacedHeight):
+        (WebCore::Layout::outOfFlowReplacedWidth):
+        (WebCore::Layout::floatingNonReplacedHeight):
+        (WebCore::Layout::floatingNonReplacedWidth):
+        (WebCore::Layout::floatingReplacedHeight):
+        (WebCore::Layout::floatingReplacedWidth):
+        (WebCore::Layout::outOfFlowNonReplacedPosition):
+        (WebCore::Layout::outOfFlowReplacedPosition):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowHeight):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowWidth):
+        (WebCore::Layout::FormattingContext::Geometry::floatingHeight):
+        (WebCore::Layout::FormattingContext::Geometry::floatingWidth):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowPosition):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeight):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidth):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHeight): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedWidth): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHeight): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedWidth): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedHeight): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidth): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedHeight): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidth): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedPosition): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedPosition): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::replacedHeight): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::replacedWidth): Deleted.
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeStaticPosition const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowPositionedPosition const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowHeight const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowWidth const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::inFlowNonReplacedHeight):
+        (WebCore::Layout::inFlowNonReplacedWidth):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeight):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowWidth):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeight): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidth): Deleted.
+
+2018-06-01  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Push FormattingContext::computeWidth/computeHeight logic from the base to the subclasses.
         https://bugs.webkit.org/show_bug.cgi?id=186172
 

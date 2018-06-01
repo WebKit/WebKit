@@ -51,62 +51,27 @@ FormattingContext::~FormattingContext()
 
 void FormattingContext::computeOutOfFlowPosition(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    LayoutPoint computedTopLeft;
-
-    if (layoutBox.replaced())
-        computedTopLeft = Geometry::outOfFlowReplacedPosition(layoutContext, layoutBox);
-    else
-        computedTopLeft = Geometry::outOfFlowNonReplacedPosition(layoutContext, layoutBox);
-
-    displayBox.setTopLeft(computedTopLeft);
-}
-
-void FormattingContext::computeOutOfFlowWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
-{
-    LayoutUnit computedWidth;
-
-    if (layoutBox.replaced())
-        computedWidth = Geometry::outOfFlowReplacedWidth(layoutContext, layoutBox);
-    else 
-        computedWidth = Geometry::outOfFlowNonReplacedWidth(layoutContext, layoutBox);
-
-    displayBox.setWidth(computedWidth);
-}
-
-void FormattingContext::computeOutOfFlowHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
-{
-    LayoutUnit computedHeight;
-
-    if (layoutBox.replaced())
-        computedHeight = Geometry::outOfFlowReplacedHeight(layoutContext, layoutBox);
-    else
-        computedHeight = Geometry::outOfFlowNonReplacedHeight(layoutContext, layoutBox);
-
-    displayBox.setHeight(computedHeight);
+    displayBox.setTopLeft(Geometry::outOfFlowPosition(layoutContext, layoutBox));
 }
 
 void FormattingContext::computeFloatingHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    LayoutUnit computedHeight;
+    displayBox.setHeight(Geometry::floatingHeight(layoutContext, layoutBox));
+}
 
-    if (layoutBox.replaced())
-        computedHeight = Geometry::floatingReplacedHeight(layoutContext, layoutBox);
-    else
-        computedHeight = Geometry::floatingNonReplacedHeight(layoutContext, layoutBox);
+void FormattingContext::computeOutOfFlowWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    displayBox.setWidth(Geometry::outOfFlowWidth(layoutContext, layoutBox));
+}
 
-    displayBox.setHeight(computedHeight);
+void FormattingContext::computeOutOfFlowHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    displayBox.setHeight(Geometry::outOfFlowHeight(layoutContext, layoutBox));
 }
 
 void FormattingContext::computeFloatingWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    LayoutUnit computedWidth;
-
-    if (layoutBox.replaced())
-        computedWidth = Geometry::floatingReplacedWidth(layoutContext, layoutBox);
-    else
-        computedWidth = Geometry::floatingNonReplacedWidth(layoutContext, layoutBox);
-
-    displayBox.setWidth(computedWidth);
+    displayBox.setWidth(Geometry::floatingWidth(layoutContext, layoutBox));
 }
 
 void FormattingContext::computeBorderAndPadding(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const

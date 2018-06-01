@@ -64,7 +64,7 @@ static LayoutUnit shrinkToFitWidth(LayoutContext&, const Box&)
     return { };
 }
 
-LayoutUnit FormattingContext::Geometry::outOfFlowNonReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox)
+static LayoutUnit outOfFlowNonReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced());
 
@@ -128,7 +128,7 @@ LayoutUnit FormattingContext::Geometry::outOfFlowNonReplacedHeight(LayoutContext
     return computedHeightValue;
 }
 
-LayoutUnit FormattingContext::Geometry::outOfFlowNonReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox)
+static LayoutUnit outOfFlowNonReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced());
     
@@ -204,7 +204,7 @@ LayoutUnit FormattingContext::Geometry::outOfFlowReplacedWidth(LayoutContext& la
     return inlineReplacedWidth(layoutContext, layoutBox);
 }
 
-LayoutUnit FormattingContext::Geometry::floatingNonReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox)
+static LayoutUnit floatingNonReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isFloatingPositioned() && !layoutBox.replaced());
     // 10.6.6 Complicated cases
@@ -216,7 +216,7 @@ LayoutUnit FormattingContext::Geometry::floatingNonReplacedHeight(LayoutContext&
     return height.isAuto() ? contentHeightForFormattingContextRoot(layoutContext, layoutBox) : LayoutUnit(height.value());
 }
 
-LayoutUnit FormattingContext::Geometry::floatingNonReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox)
+static LayoutUnit floatingNonReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isFloatingPositioned() && !layoutBox.replaced());
     // 10.3.5 Floating, non-replaced elements
@@ -243,8 +243,10 @@ LayoutUnit FormattingContext::Geometry::floatingReplacedWidth(LayoutContext& lay
     return inlineReplacedWidth(layoutContext, layoutBox);
 }
 
-LayoutPoint FormattingContext::Geometry::outOfFlowNonReplacedPosition(LayoutContext& layoutContext, const Box& layoutBox)
+static LayoutPoint outOfFlowNonReplacedPosition(LayoutContext& layoutContext, const Box& layoutBox)
 {
+    ASSERT(layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced());
+
     // 10.3.7 Absolutely positioned, non-replaced elements (left/right)
     // 10.6.4 Absolutely positioned, non-replaced elements (top/bottom)
 
@@ -338,8 +340,10 @@ LayoutPoint FormattingContext::Geometry::outOfFlowNonReplacedPosition(LayoutCont
     return { computedLeftValue, computedTopValue };
 }
 
-LayoutPoint FormattingContext::Geometry::outOfFlowReplacedPosition(LayoutContext& layoutContext, const Box& layoutBox)
+static LayoutPoint outOfFlowReplacedPosition(LayoutContext& layoutContext, const Box& layoutBox)
 {
+    ASSERT(layoutBox.isOutOfFlowPositioned() && layoutBox.replaced());
+
     // 10.6.5 Absolutely positioned, replaced elements (top/bottom)
     // 10.3.8 Absolutely positioned, replaced elements (left/right)
 
@@ -425,6 +429,51 @@ LayoutPoint FormattingContext::Geometry::outOfFlowReplacedPosition(LayoutContext
     }
 
     return { computedLeftValue, computedTopValue };
+}
+
+LayoutUnit FormattingContext::Geometry::outOfFlowHeight(LayoutContext& layoutContext, const Box& layoutBox)
+{
+    ASSERT(layoutBox.isOutOfFlowPositioned());
+
+    if (!layoutBox.replaced())
+        return outOfFlowNonReplacedHeight(layoutContext, layoutBox);
+    return outOfFlowReplacedHeight(layoutContext, layoutBox);
+}
+
+LayoutUnit FormattingContext::Geometry::outOfFlowWidth(LayoutContext& layoutContext, const Box& layoutBox)
+{
+    ASSERT(layoutBox.isOutOfFlowPositioned());
+
+    if (!layoutBox.replaced())
+        return outOfFlowNonReplacedWidth(layoutContext, layoutBox);
+    return outOfFlowReplacedWidth(layoutContext, layoutBox);
+}
+
+LayoutUnit FormattingContext::Geometry::floatingHeight(LayoutContext& layoutContext, const Box& layoutBox)
+{
+    ASSERT(layoutBox.isFloatingPositioned());
+
+    if (!layoutBox.replaced())
+        return floatingNonReplacedHeight(layoutContext, layoutBox);
+    return floatingReplacedHeight(layoutContext, layoutBox);
+}
+
+LayoutUnit FormattingContext::Geometry::floatingWidth(LayoutContext& layoutContext, const Box& layoutBox)
+{
+    ASSERT(layoutBox.isFloatingPositioned());
+
+    if (!layoutBox.replaced())
+        return floatingNonReplacedWidth(layoutContext, layoutBox);
+    return floatingReplacedWidth(layoutContext, layoutBox);
+}
+
+LayoutPoint FormattingContext::Geometry::outOfFlowPosition(LayoutContext& layoutContext, const Box& layoutBox)
+{
+    ASSERT(layoutBox.isOutOfFlowPositioned());
+
+    if (!layoutBox.replaced())
+        return outOfFlowNonReplacedPosition(layoutContext, layoutBox);
+    return outOfFlowReplacedPosition(layoutContext, layoutBox);
 }
 
 LayoutUnit FormattingContext::Geometry::inlineReplacedHeight(LayoutContext&, const Box& layoutBox)

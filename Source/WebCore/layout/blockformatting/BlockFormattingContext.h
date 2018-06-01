@@ -63,13 +63,17 @@ private:
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry {
     public:
-        static LayoutUnit inFlowNonReplacedHeight(LayoutContext&, const Box&);
-        static LayoutUnit inFlowNonReplacedWidth(LayoutContext&, const Box&);
+        static LayoutUnit inFlowHeight(LayoutContext&, const Box&);
+        static LayoutUnit inFlowWidth(LayoutContext&, const Box&);
 
         static LayoutPoint staticPosition(LayoutContext&, const Box&);
         static LayoutPoint inFlowPositionedPosition(LayoutContext&, const Box&);
 
         static Display::Box::Edges computedMargin(LayoutContext&, const Box&);
+
+    private:
+        static LayoutUnit inFlowNonReplacedHeight(LayoutContext&, const Box&);
+        static LayoutUnit inFlowNonReplacedWidth(LayoutContext&, const Box&);
     };
     
     // This class implements margin collapsing for block formatting context.

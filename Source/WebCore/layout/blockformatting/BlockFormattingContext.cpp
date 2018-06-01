@@ -131,14 +131,12 @@ Ref<FloatingState> BlockFormattingContext::createOrFindFloatingState(LayoutConte
 
 void BlockFormattingContext::computeStaticPosition(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    auto topLeft = Geometry::staticPosition(layoutContext, layoutBox);
-    displayBox.setTopLeft(topLeft);
+    displayBox.setTopLeft(Geometry::staticPosition(layoutContext, layoutBox));
 }
 
 void BlockFormattingContext::computeInFlowPositionedPosition(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    auto topLeft = Geometry::inFlowPositionedPosition(layoutContext, layoutBox);
-    displayBox.setTopLeft(topLeft);
+    displayBox.setTopLeft(Geometry::inFlowPositionedPosition(layoutContext, layoutBox));
 }
 
 void BlockFormattingContext::computeWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
@@ -165,30 +163,12 @@ void BlockFormattingContext::computeHeight(LayoutContext& layoutContext, const B
 
 void BlockFormattingContext::computeInFlowHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    LayoutUnit computedHeight;
-
-    if (layoutBox.replaced()) {
-        // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block'
-        // replaced elements in normal flow and floating replaced elements
-        computedHeight = FormattingContext::Geometry::inlineReplacedHeight(layoutContext, layoutBox);
-    } else
-        computedHeight = Geometry::inFlowNonReplacedHeight(layoutContext, layoutBox);
-
-    displayBox.setHeight(computedHeight);
+    displayBox.setHeight(Geometry::inFlowHeight(layoutContext, layoutBox));
 }
 
 void BlockFormattingContext::computeInFlowWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    LayoutUnit computedWidth;
-
-    if (layoutBox.replaced()) {
-        // 10.3.4 Block-level, replaced elements in normal flow
-        // The used value of 'width' is determined as for inline replaced elements
-        computedWidth = FormattingContext::Geometry::inlineReplacedWidth(layoutContext, layoutBox);
-    } else
-        computedWidth = Geometry::inFlowNonReplacedWidth(layoutContext, layoutBox);
-
-    displayBox.setWidth(computedWidth);
+    displayBox.setWidth(Geometry::inFlowWidth(layoutContext, layoutBox));
 }
 
 void BlockFormattingContext::computeMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
