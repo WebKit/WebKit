@@ -49,6 +49,7 @@ private:
     void requestSwitchToPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&&) override;
     void requestHideWindowOfPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&&) override;
     void requestRestoreWindowOfPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&&) override;
+    void requestMaximizeWindowOfPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&&) override;
 
     bool isShowingJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
     void dismissCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
@@ -66,6 +67,7 @@ private:
         bool requestSwitchToWebView : 1;
         bool requestHideWindowOfWebView : 1;
         bool requestRestoreWindowOfWebView : 1;
+        bool requestMaximizeWindowOfWebView : 1;
         bool isShowingJavaScriptDialogForWebView : 1;
         bool dismissCurrentJavaScriptDialogForWebView : 1;
         bool acceptCurrentJavaScriptDialogForWebView : 1;
@@ -78,6 +80,7 @@ private:
         bool requestSwitchToPage : 1;
         bool requestHideWindowOfPage : 1;
         bool requestRestoreWindowOfPage : 1;
+        bool requestMaximizeWindowOfPage : 1;
         bool isShowingJavaScriptDialogOnPage : 1;
         bool dismissCurrentJavaScriptDialogOnPage : 1;
         bool acceptCurrentJavaScriptDialogOnPage : 1;

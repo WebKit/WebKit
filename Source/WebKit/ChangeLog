@@ -1,3 +1,19 @@
+2018-05-31  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Web Automation: use the session delegate to perform window maximize
+        https://bugs.webkit.org/show_bug.cgi?id=186167
+        <rdar://problem/40544391>
+
+        Reviewed by Timothy Hatcher.
+
+        Add plumbing to hand off window maximizing to the session delegate.
+
+        * UIProcess/API/Cocoa/_WKAutomationSessionDelegate.h:
+        * UIProcess/Cocoa/AutomationSessionClient.h:
+        * UIProcess/Cocoa/AutomationSessionClient.mm:
+        (WebKit::AutomationSessionClient::AutomationSessionClient):
+        (WebKit::AutomationSessionClient::requestMaximizeWindowOfPage):
+
 2018-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Try to fix GTK+ build with old versions of GTK+ after r232390.
