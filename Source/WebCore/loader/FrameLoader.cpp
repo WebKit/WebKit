@@ -787,9 +787,20 @@ void FrameLoader::finishedParsing()
     m_frame.view()->restoreScrollbar();
 }
 
-void FrameLoader::loadDone()
+void FrameLoader::loadDone(LoadCompletionType type)
 {
-    checkCompleted();
+    if (type == LoadCompletionType::Finish)
+        checkCompleted();
+    else
+        scheduleCheckCompleted();
+}
+
+void FrameLoader::subresourceLoadDone(LoadCompletionType type)
+{
+    if (type == LoadCompletionType::Finish)
+        checkLoadComplete();
+    else
+        scheduleCheckLoadComplete();
 }
 
 bool FrameLoader::allChildrenAreComplete() const
@@ -812,6 +823,7 @@ bool FrameLoader::allAncestorsAreComplete() const
 
 void FrameLoader::checkCompleted()
 {
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     m_shouldCallCheckCompleted = false;
 
     // Have we completed before?
@@ -886,6 +898,11 @@ void FrameLoader::checkCompleted()
 }
 
 void FrameLoader::checkTimerFired()
+{
+    checkCompletenessNow();
+}
+
+void FrameLoader::checkCompletenessNow()
 {
     Ref<Frame> protect(m_frame);
 
@@ -1765,9 +1782,20 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItem
 
     setProvisionalDocumentLoader(nullptr);
 
-    m_checkTimer.stop();
-
     m_inStopAllLoaders = false;    
+}
+
+void FrameLoader::stopAllLoadersAndCheckCompleteness()
+{
+    stopAllLoaders();
+
+    if (!m_checkTimer.isActive())
+        return;
+
+    m_checkTimer.stop();
+    m_checkingLoadCompleteForDetachment = true;
+    checkCompletenessNow();
+    m_checkingLoadCompleteForDetachment = false;
 }
 
 void FrameLoader::stopForUserCancel(bool deferCheckLoadComplete)
@@ -2395,8 +2423,9 @@ void FrameLoader::checkLoadCompleteForThisFrame()
         }
         
         case FrameStateCommittedPage: {
-            DocumentLoader* dl = m_documentLoader.get();            
-            if (!dl || (dl->isLoadingInAPISense() && !dl->isStopping()))
+            if (!m_documentLoader)
+                return;
+            if (m_documentLoader->isLoadingInAPISense() && !m_documentLoader->isStopping() && !m_checkingLoadCompleteForDetachment)
                 return;
 
             setState(FrameStateComplete);
@@ -2425,7 +2454,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 }
             }
 
-            const ResourceError& error = dl->mainDocumentError();
+            const ResourceError& error = m_documentLoader->mainDocumentError();
 
             AXObjectCache::AXLoadingEvent loadingEvent;
             if (!error.isNull()) {
@@ -2619,11 +2648,16 @@ void FrameLoader::dispatchOnloadEvents()
 
 void FrameLoader::frameDetached()
 {
-    // Calling stopAllLoaders() can cause the frame to be deallocated, including the frame loader.
+    // Calling stopAllLoadersAndCheckCompleteness() can cause the frame to be deallocated, including the frame loader.
     Ref<Frame> protectedFrame(m_frame);
 
+    if (m_checkTimer.isActive()) {
+        m_checkTimer.stop();
+        checkCompletenessNow();
+    }
+
     if (m_frame.document()->pageCacheState() != Document::InPageCache) {
-        stopAllLoaders();
+        stopAllLoadersAndCheckCompleteness();
         m_frame.document()->stopActiveDOMObjects();
     }
 

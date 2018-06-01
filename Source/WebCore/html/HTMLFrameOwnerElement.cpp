@@ -77,10 +77,6 @@ void HTMLFrameOwnerElement::clearContentFrame()
 
 void HTMLFrameOwnerElement::disconnectContentFrame()
 {
-    // FIXME: Currently we don't do this in removedFrom because this causes an
-    // unload event in the subframe which could execute script that could then
-    // reach up into this document and then attempt to look back down. We should
-    // see if this behavior is really needed as Gecko does not allow this.
     if (RefPtr<Frame> frame = contentFrame()) {
         Ref<Frame> protect(*frame);
         frame->loader().frameDetached();

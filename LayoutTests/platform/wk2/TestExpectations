@@ -565,6 +565,24 @@ platform/mac/fast/events/objc-event-api.html
 # https://bugs.webkit.org/show_bug.cgi?id=64285
 editing/pasteboard/datatransfer-items-drop-plaintext-file.html
 editing/pasteboard/datatransfer-types-dropping-text-file.html
+editing/pasteboard/drag-and-drop-image-contenteditable.html
+editing/pasteboard/drag-and-drop-inputimage-contenteditable.html
+editing/pasteboard/drag-and-drop-objectimage-contenteditable.html
+editing/pasteboard/drag-drop-copy-content.html
+editing/pasteboard/drag-drop-dead-frame.html
+editing/pasteboard/drag-drop-input-textarea.html
+editing/pasteboard/drag-drop-list.html
+editing/pasteboard/drag-drop-modifies-page.html
+editing/pasteboard/drag-drop-url-text.html
+editing/pasteboard/drag-image-in-about-blank-frame.html
+editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
+editing/pasteboard/drag-list-item.html
+editing/pasteboard/drag-selected-image-to-contenteditable.html
+editing/pasteboard/drop-file-svg.html
+editing/pasteboard/drop-inputtext-acquires-style.html
+editing/pasteboard/drop-link.html
+editing/pasteboard/drop-text-events.html
+editing/pasteboard/drop-text-without-selection.html
 editing/pasteboard/entries-api
 editing/pasteboard/file-drag-to-editable.html [ Skip ]
 editing/pasteboard/file-input-files-access.html

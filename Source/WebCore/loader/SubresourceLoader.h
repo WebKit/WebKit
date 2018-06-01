@@ -95,7 +95,7 @@ private:
 
     void didReceiveDataOrBuffer(const char*, int, RefPtr<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
 
-    void notifyDone();
+    void notifyDone(LoadCompletionType);
 
     void reportResourceTiming(const NetworkLoadMetrics&);
 

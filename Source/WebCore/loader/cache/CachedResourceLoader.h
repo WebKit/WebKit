@@ -132,7 +132,7 @@ public:
 
     void removeCachedResource(CachedResource&);
 
-    void loadDone(bool shouldPerformPostLoadActions = true);
+    void loadDone(LoadCompletionType, bool shouldPerformPostLoadActions = true);
 
     WEBCORE_EXPORT void garbageCollectDocumentResources();
 

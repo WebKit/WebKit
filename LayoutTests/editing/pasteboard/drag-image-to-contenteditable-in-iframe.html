@@ -10,14 +10,15 @@ function log(message) {
     li.appendChild(text);
 }
 
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
 function runTest() {
     if (!window.testRunner) {
         log("To run this test manually attempt to drag and drop Abe after the broken image in the editable div");
         return;
     }
-
-    testRunner.waitUntilDone();
-
+    
     //find abe
     var dragme = document.getElementById("dragme");
     x1 = dragme.offsetLeft + 20;
@@ -34,8 +35,14 @@ function runTest() {
     eventSender.leapForward(500);
     eventSender.mouseMoveTo(x2, y2);
     eventSender.mouseUp();
-    
-    testRunner.notifyDone();
+
+    if (window.testRunner) {
+        var pasted_image = drag_target.contentDocument.querySelector('.target');
+        if (pasted_image.complete)
+            testRunner.notifyDone();
+        else
+            pasted_image.onload = function () { testRunner.notifyDone(); }
+    }
 }
 
 </script>
@@ -44,7 +51,7 @@ function runTest() {
 <body onload="runTest()">
     <p>This tests that we can drag an image into the last position of a content editable div in an iframe that already contains an image, without crashing.</p>
     
-    <img id="dragme" src="../resources/abe.png"/>
+    <img id="dragme" class="target" src="../resources/abe.png"/>
     <iframe id="drag_target" src="resources/drag-image-to-contenteditable-iframe.html"></iframe>
     <ul id="console"></ul>
 </body>

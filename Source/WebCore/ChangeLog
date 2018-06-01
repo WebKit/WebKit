@@ -1,3 +1,77 @@
+2018-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ResourceLoader::cancel() shouldn't synchronously fire load event on document
+        https://bugs.webkit.org/show_bug.cgi?id=185284
+
+        Reviewed by Antti Koivisto.
+
+        Because a resource loading can be canceled as a node is removed a document or CachedResource is destructed,
+        it's not safe to synchronously fire load event on document upon cancelation. This patch makes the cancellation
+        of a resource load schedule m_checkTimer in FrameLoader to fire a load event asynchronously instead.
+
+        Specifically, this patch makes FrameLoader::loadDone call FrameLoader::scheduleCheckCompleted when the load
+        had failed or cancled instead of calling FrameLoader::checkCompleted which can synchronously fire load event.
+        To differentiate the two cases, new enum LoadCompletionType has been added to FrameLoader::loadDone and related
+        functions. To avoid calling the navigation delegate too early, the same abstraction for checkLoadComplete()
+        has been added in the form of FrameLoader::subresourceLoadDone.
+
+        Unfortunately, delaying calls to checkCompleted() and checkLoadComplete() by a timer can result in client
+        callbacks such as didFinishLoadForFrame and didFailLoadWithError to never get called when the frame gets
+        detached from the parent after the last resource had stopped loading but before the timer fires. To preserve
+        these deleagte callbacks, this patch expedites the timer in FrameLoader::frameDetached and Page::goToItem by
+        by invoking newly added stopAllLoadersAndCheckCompleteness, which stops all loading and then immediately invokes
+        checkCompleted() and checkLoadComplete() synchronously if m_checkTimer had been started.
+
+        Tests: http/tests/preload/dynamic_removing_preload.html
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::beginLoadTimerFired): Removed superfluous call to checkLoadComplete since
+        cachedResourceLoader's loadDone would call checkLoadComplete anyway.
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::disconnectContentFrame): Removed the misleading comment added in r140090.
+        Firefox DOES indeed fire unload event in the content document of a removed frame. While this comment made
+        it sound like this function isn't called when a frame is removed from the tree when in reality we simply
+        remove a frame prior to removing the node via disconnectSubframesIfNeeded.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::removeSubresourceLoader):
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::loadDone):
+        (WebCore::FrameLoader::subresourceLoadDone):
+        (WebCore::FrameLoader::checkCompleted): Added a release assert that this function is only called when it's safe
+        to execute scripts.
+        (WebCore::FrameLoader::checkTimerFired):
+        (WebCore::FrameLoader::checkCompletenessNow):Extracted from checkTimerFired.
+        (WebCore::FrameLoader::stopAllLoaders): Removed the code to stop m_checkTimer introduced in r53655.
+        Stopping the timer here would prevent FrameLoader::frameDetached to detect the case when stopping the loader
+        scheduled a load completion check. Also stopping this timer without clearing the corresponding booleans:
+        m_checkingLoadCompleteForDetachment and m_checkingLoadCompleteForDetachment is problematic. The assertion
+        r53655 addressed is now addressed by explicitly checking & clearing the timer in frameDetached.
+        (WebCore::FrameLoader::stopAllLoadersAndCheckCompleteness): Added.
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame): Avoid an early exit when the newly added boolean
+        m_checkingLoadCompleteForDetachment is set since m_isStopping is no longer set in frameDetached in order
+        to invoke didFailLoadWithError when detaching a frame.
+        (WebCore::FrameLoader::frameDetached): Call checkCompletenessNow in the case the frame had already been
+        completed loading. Also call stopAllLoadersAndCheckCompleteness in the case stopping loading would complete
+        the loading before stopping active DOM objects.
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::m_checkingLoadCompleteForDetachment): Added.
+        * loader/FrameLoaderTypes.h:
+        (WebCore::LoadCompletionType): Added.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFail):
+        (WebCore::SubresourceLoader::didCancel):
+        (WebCore::SubresourceLoader::notifyDone):
+        * loader/SubresourceLoader.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::loadDone):
+        * loader/cache/CachedResourceLoader.h:
+        * page/Page.cpp:
+        (WebCore::Page::goToItem): Call stopAllLoadersAndCheckCompleteness instead of stopAllLoaders since stopping
+        loading here may complete loading.
+
 2018-06-01  Sihui Liu  <sihui_liu@apple.com>
 
         Stop using StorageTracker.db in LocalStorageDatabaseTracker

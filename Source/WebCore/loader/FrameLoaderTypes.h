@@ -155,6 +155,11 @@ struct SystemPreviewInfo {
     bool isSystemPreview { false };
 };
 
+enum class LoadCompletionType {
+    Finish,
+    Cancel
+};
+
 } // namespace WebCore
 
 namespace WTF {

@@ -1,3 +1,26 @@
+2018-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ResourceLoader::cancel() shouldn't synchronously fire load event on document
+        https://bugs.webkit.org/show_bug.cgi?id=185284
+        <rdar://problem/39994507>
+
+        Reviewed by Antti Koivisto.
+
+        Fixed the tests as needed, and skipped more drag & drop tests in WebKitTestRunner as drag & drop isn't supported.
+
+        * editing/pasteboard/drag-image-to-contenteditable-in-iframe.html: Fixed the test. Explicitly invoke
+        testRunner.waitUntilDone() to wait until the iframe is loaded. Because "load" event in DOM only fires after
+        all subframes are loaded but the load delegate callback fires as long as subresources in the main frame
+        had finished loading, DumpRenderTree would finish the test prematurely otherwise. The old code happens to
+        work before this patch because we happen to not invoke FrameLoader::checkComplete at the "right" moment.
+        The WebCore change now triggers such a check and prematurely end the test without this fix to the test.
+        * http/tests/xmlhttprequest/reentrant-cancel-expected.txt:
+        * http/tests/xmlhttprequest/reentrant-cancel.html: Canceling XHR inside addElement is no longer
+        firing load event synchronously as expected. Added a code to end the test after the load event.
+        * http/wpt/service-workers/clone-opaque-being-loaded-response.html:
+        * platform/mac-wk2/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2018-05-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Some tests for webkitdirectory API fail when tests are in an APFS file system

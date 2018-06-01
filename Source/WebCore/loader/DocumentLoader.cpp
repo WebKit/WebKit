@@ -1625,7 +1625,7 @@ void DocumentLoader::addSubresourceLoader(ResourceLoader* loader)
     m_subresourceLoaders.add(loader->identifier(), loader);
 }
 
-void DocumentLoader::removeSubresourceLoader(ResourceLoader* loader)
+void DocumentLoader::removeSubresourceLoader(LoadCompletionType type, ResourceLoader* loader)
 {
     ASSERT(loader->identifier());
 
@@ -1633,7 +1633,7 @@ void DocumentLoader::removeSubresourceLoader(ResourceLoader* loader)
         return;
     checkLoadComplete();
     if (Frame* frame = m_frame)
-        frame->loader().checkLoadComplete();
+        frame->loader().subresourceLoadDone(type);
 }
 
 void DocumentLoader::addPlugInStreamLoader(ResourceLoader& loader)

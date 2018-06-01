@@ -269,7 +269,7 @@ public:
     void setPopUpPolicy(PopUpPolicy popUpPolicy) { m_popUpPolicy = popUpPolicy; }
 
     void addSubresourceLoader(ResourceLoader*);
-    void removeSubresourceLoader(ResourceLoader*);
+    void removeSubresourceLoader(LoadCompletionType, ResourceLoader*);
     void addPlugInStreamLoader(ResourceLoader&);
     void removePlugInStreamLoader(ResourceLoader&);
 

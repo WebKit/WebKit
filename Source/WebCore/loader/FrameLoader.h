@@ -138,6 +138,7 @@ public:
     static void reportAuthenticationChallengeBlocked(Frame*, const URL&, const String& reason);
 
     // FIXME: These are all functions which stop loads. We have too many.
+    void stopAllLoadersAndCheckCompleteness();
     WEBCORE_EXPORT void stopAllLoaders(ClearProvisionalItemPolicy = ShouldClearProvisionalItem);
     WEBCORE_EXPORT void stopForUserCancel(bool deferCheckLoadComplete = false);
     void stop();
@@ -253,7 +254,8 @@ public:
 
     void setOutgoingReferrer(const URL&);
 
-    void loadDone();
+    void loadDone(LoadCompletionType);
+    void subresourceLoadDone(LoadCompletionType);
     void finishedParsing();
     void checkCompleted();
 
@@ -319,6 +321,7 @@ private:
     bool allChildrenAreComplete() const; // immediate children, not all descendants
 
     void checkTimerFired();
+    void checkCompletenessNow();
 
     void loadSameDocumentItem(HistoryItem&);
     void loadDifferentDocumentItem(HistoryItem&, FrameLoadType, FormSubmissionCacheLoadPolicy, NavigationPolicyCheck);
@@ -466,6 +469,8 @@ private:
     std::optional<ResourceLoadPriority> m_overrideResourceLoadPriorityForTesting;
     bool m_isStrictRawResourceValidationPolicyDisabledForTesting { false };
     bool m_currentLoadShouldCheckNavigationPolicy { true };
+
+    bool m_checkingLoadCompleteForDetachment { false };
 
     URL m_previousURL;
     RefPtr<HistoryItem> m_requestedHistoryItem;

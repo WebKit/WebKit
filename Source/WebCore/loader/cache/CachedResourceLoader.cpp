@@ -1299,13 +1299,15 @@ void CachedResourceLoader::removeCachedResource(CachedResource& resource)
     m_documentResources.remove(resource.url());
 }
 
-void CachedResourceLoader::loadDone(bool shouldPerformPostLoadActions)
+void CachedResourceLoader::loadDone(LoadCompletionType type, bool shouldPerformPostLoadActions)
 {
     RefPtr<DocumentLoader> protectDocumentLoader(m_documentLoader);
     RefPtr<Document> protectDocument(m_document);
 
+    ASSERT(shouldPerformPostLoadActions || type == LoadCompletionType::Cancel);
+
     if (frame())
-        frame()->loader().loadDone();
+        frame()->loader().loadDone(type);
 
     if (shouldPerformPostLoadActions)
         performPostLoadActions();
