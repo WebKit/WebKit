@@ -1,3 +1,13 @@
+2018-06-01  Frederic Wang  <fwang@igalia.com>
+
+        export-w3c-test-changes cannot apply patches when some w3c-import.log files are changed
+        https://bugs.webkit.org/show_bug.cgi?id=186133
+
+        Reviewed by Youenn Fablet.
+
+        * Scripts/webkitpy/w3c/test_exporter.py: Exclude w3c-import.log from the diff.
+        * Scripts/webkitpy/w3c/test_exporter_unittest.py: Add unit test.
+
 2018-05-31  Frederic Wang  <fwang@igalia.com>
 
         export-w3c-test-changes should use the new location & name of the WPT repo
