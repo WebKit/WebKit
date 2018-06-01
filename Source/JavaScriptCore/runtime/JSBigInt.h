@@ -37,7 +37,7 @@ namespace JSC {
 
 class JSBigInt final : public JSCell {
     using Base = JSCell;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesToThis;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal | OverridesToThis;
 
 public:
 
@@ -46,10 +46,7 @@ public:
     enum class InitializationType { None, WithZero };
     void initialize(InitializationType);
 
-    static void visitChildren(JSCell*, SlotVisitor&);
-
     static size_t estimatedSize(JSCell*);
-    static size_t allocationSize(unsigned length);
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
     static JSBigInt* createZero(VM&);
@@ -61,8 +58,6 @@ public:
     static JSBigInt* createFrom(VM&, bool value);
 
     DECLARE_EXPORT_INFO;
-
-    void finishCreation(VM&);
 
     JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
 
@@ -175,6 +170,7 @@ private:
 
     void inplaceMultiplyAdd(Digit multiplier, Digit part);
     
+    static size_t allocationSize(unsigned length);
     static size_t offsetOfData();
     Digit* dataStorage();
 

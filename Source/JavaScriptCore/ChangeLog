@@ -1,3 +1,25 @@
+2018-06-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Correct values and members of JSBigInt appropriately
+        https://bugs.webkit.org/show_bug.cgi?id=186196
+
+        Reviewed by Darin Adler.
+
+        This patch cleans up a bit to select more appropriate values and members of JSBigInt.
+
+        1. JSBigInt's structure should be StructureIsImmortal.
+        2. JSBigInt::allocationSize should be annotated with `inline`.
+        3. Remove JSBigInt::visitChildren since it is completely the same to JSCell::visitChildren.
+        4. Remove JSBigInt::finishCreation since it is completely the same to JSCell::finishCreation.
+
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::allocationSize):
+        (JSC::JSBigInt::allocateFor):
+        (JSC::JSBigInt::compareToDouble):
+        (JSC::JSBigInt::visitChildren): Deleted.
+        (JSC::JSBigInt::finishCreation): Deleted.
+        * runtime/JSBigInt.h:
+
 2018-05-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] InById should be converted to MatchStructure

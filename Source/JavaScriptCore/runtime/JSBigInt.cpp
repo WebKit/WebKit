@@ -61,13 +61,6 @@ namespace JSC {
 const ClassInfo JSBigInt::s_info =
     { "JSBigInt", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSBigInt) };
 
-void JSBigInt::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    JSBigInt* thisObject = jsCast<JSBigInt*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
-}
-
 JSBigInt::JSBigInt(VM& vm, Structure* structure, unsigned length)
     : Base(vm, structure)
     , m_length(length)
@@ -92,7 +85,7 @@ JSBigInt* JSBigInt::createZero(VM& vm)
     return zeroBigInt;
 }
 
-size_t JSBigInt::allocationSize(unsigned length)
+inline size_t JSBigInt::allocationSize(unsigned length)
 {
     size_t sizeWithPadding = WTF::roundUpToMultipleOf<sizeof(size_t)>(sizeof(JSBigInt));
     return sizeWithPadding + length * sizeof(Digit);
@@ -104,12 +97,6 @@ JSBigInt* JSBigInt::createWithLength(VM& vm, unsigned length)
     bigInt->finishCreation(vm);
     return bigInt;
 }
-
-void JSBigInt::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-}
-
 
 JSBigInt* JSBigInt::createFrom(VM& vm, int32_t value)
 {
@@ -1058,7 +1045,6 @@ JSBigInt* JSBigInt::rightTrim(VM& vm)
 JSBigInt* JSBigInt::allocateFor(ExecState* state, VM& vm, unsigned radix, unsigned charcount)
 {
     ASSERT(2 <= radix && radix <= 36);
-    ASSERT(charcount >= 0);
 
     size_t bitsPerChar = maxBitsPerCharTable[radix];
     size_t chars = charcount;
@@ -1320,7 +1306,7 @@ JSBigInt::ComparisonResult JSBigInt::compareToDouble(JSBigInt* x, double y)
 
     // 0-indexed position of {x}'s most significant bit within the {msd}.
     int msdTopBit = digitBits - 1 - msdLeadingZeros;
-    ASSERT(msdTopBit == (xBitLength - 1) % digitBits);
+    ASSERT(msdTopBit == static_cast<int>((xBitLength - 1) % digitBits));
     
     // Shifted chunk of {mantissa} for comparing with {digit}.
     Digit compareMantissa;
