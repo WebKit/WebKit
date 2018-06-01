@@ -1,3 +1,19 @@
+2018-05-31  Saam Barati  <sbarati@apple.com>
+
+        JSImmutableButterfly should align its variable storage
+        https://bugs.webkit.org/show_bug.cgi?id=186159
+
+        Reviewed by Mark Lam.
+
+        I'm also making the use of reinterpret_cast and bitwise_cast consistent
+        inside of JSImmutableButterfly. I switched everything to use bitwise_cast.
+
+        * runtime/JSImmutableButterfly.h:
+        (JSC::JSImmutableButterfly::toButterfly const):
+        (JSC::JSImmutableButterfly::fromButterfly):
+        (JSC::JSImmutableButterfly::offsetOfData):
+        (JSC::JSImmutableButterfly::allocationSize):
+
 2018-05-31  Keith Miller  <keith_miller@apple.com>
 
         DFGArrayModes needs to know more about CoW arrays
