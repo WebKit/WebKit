@@ -1,5 +1,9 @@
 2018-05-31  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Revert r231540. rdar://problem/40050814
+
+2018-05-31  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r232219. rdar://problem/40641075
 
     for-in loops should preserve and restore the TDZ stack for each of its internal loops.
