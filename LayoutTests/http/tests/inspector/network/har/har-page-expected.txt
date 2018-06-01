@@ -540,16 +540,16 @@ HAR Page Test.
               "value": "http-only"
             },
             {
+              "name": "same-site-strict",
+              "value": "same-site-strict"
+            },
+            {
               "name": "simple",
               "value": "simple"
             },
             {
               "name": "with-expiration",
               "value": "with-expiration"
-            },
-            {
-              "name": "same-site-strict",
-              "value": "same-site-strict"
             }
           ],
           "headers": "<filtered>",
@@ -607,20 +607,20 @@ HAR Page Test.
               "value": "http-only"
             },
             {
-              "name": "simple",
-              "value": "simple"
-            },
-            {
-              "name": "with-expiration",
-              "value": "with-expiration"
-            },
-            {
               "name": "same-site-implicit-strict",
               "value": "same-site-implicit-strict"
             },
             {
               "name": "same-site-strict",
               "value": "same-site-strict"
+            },
+            {
+              "name": "simple",
+              "value": "simple"
+            },
+            {
+              "name": "with-expiration",
+              "value": "with-expiration"
             }
           ],
           "headers": "<filtered>",
@@ -678,14 +678,6 @@ HAR Page Test.
               "value": "http-only"
             },
             {
-              "name": "simple",
-              "value": "simple"
-            },
-            {
-              "name": "with-expiration",
-              "value": "with-expiration"
-            },
-            {
               "name": "same-site-implicit-strict",
               "value": "same-site-implicit-strict"
             },
@@ -696,6 +688,14 @@ HAR Page Test.
             {
               "name": "same-site-strict-because-invalid-SameSite-value",
               "value": "same-site-strict-because-invalid-SameSite-value"
+            },
+            {
+              "name": "simple",
+              "value": "simple"
+            },
+            {
+              "name": "with-expiration",
+              "value": "with-expiration"
             }
           ],
           "headers": "<filtered>",

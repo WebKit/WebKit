@@ -50,9 +50,12 @@ function test()
             return "<filtered>";
         }
 
-        // Sort cookies by name to make cookie order deterministic between test runs.
-        if (key === "cookies")
-            value.sort((a, b) => { return a.name - b.name; });
+        // Sort cookies by name to make cookie order deterministic between test runs. We assume
+        // that cookies have names that consist of only ASCII characters.
+        if (key === "cookies") {
+            value.sort((a, b) => { return a.name === b.name ? 0 : (a.name < b.name ? -1 : 1); });
+            return value;
+        }
 
         // Since cache may or may not be used, timing data may be variable.
         // NOTE: SSL should always be -1 for this test case.

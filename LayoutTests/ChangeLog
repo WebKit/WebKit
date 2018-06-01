@@ -1,3 +1,17 @@
+2018-06-01  Daniel Bates  <dabates@apple.com>
+
+        http/tests/inspector/network/har/har-page.html should actually sort dumped cookies by name
+        https://bugs.webkit.org/show_bug.cgi?id=186137
+
+        Reviewed by Joseph Pecoraro.
+
+        JavaScript does not support comparison of String data types using the minus operator. Instead
+        implement the string comparator using relational operators and the identity operator.
+
+        * http/tests/inspector/network/har/har-page-expected.txt:
+        * http/tests/inspector/network/har/har-page.html:
+        * platform/gtk/TestExpectations: Unskip test.
+
 2018-06-01  Youenn Fablet  <youenn@apple.com>
 
         http/tests/appcache/deferred-events.html is flaky due to console log messages

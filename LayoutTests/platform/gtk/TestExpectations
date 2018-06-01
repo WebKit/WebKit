@@ -3407,8 +3407,6 @@ webkit.org/b/186100 css3/color-filters/color-filter-color-property-list-item.htm
 webkit.org/b/186100 css3/color-filters/color-filter-opacity.html [ ImageOnlyFailure ]
 webkit.org/b/186100 fast/hidpi/filters-turbulence.html [ ImageOnlyFailure ]
 
-webkit.org/b/186137 http/tests/inspector/network/har/har-page.html [ Failure ]
-
 webkit.org/b/186138 imported/mozilla/css-transitions/test_event-dispatch.html [ Failure ]
 
 webkit.org/b/186139 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property.html [ Failure ]
