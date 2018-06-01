@@ -54,6 +54,8 @@ InByIdStatus InByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& map
         return InByIdStatus(TakesSlowPath);
 #else
     UNUSED_PARAM(map);
+    UNUSED_PARAM(bytecodeIndex);
+    UNUSED_PARAM(uid);
 #endif
 
     return result;
