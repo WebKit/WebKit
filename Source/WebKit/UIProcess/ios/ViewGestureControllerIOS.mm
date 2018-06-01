@@ -296,27 +296,34 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
 
     m_webPageProxyForBackForwardListForCurrentSwipe->goToBackForwardItem(*targetItem);
 
-    if (auto drawingArea = m_webPageProxy.drawingArea()) {
-        uint64_t pageID = m_webPageProxy.pageID();
-        GestureID gestureID = m_currentGestureID;
-        drawingArea->dispatchAfterEnsuringDrawing([pageID, gestureID] (CallbackBase::Error error) {
-            if (auto gestureController = controllerForGesture(pageID, gestureID))
-                gestureController->willCommitPostSwipeTransitionLayerTree(error == CallbackBase::Error::None);
-        });
-        drawingArea->hideContentUntilPendingUpdate();
-    } else {
+    if (!m_webPageProxy.drawingArea()) {
         removeSwipeSnapshot();
         return;
     }
 
-    // FIXME: Should we wait for VisuallyNonEmptyLayout like we do on Mac?
-    m_snapshotRemovalTracker.start(SnapshotRemovalTracker::RenderTreeSizeThreshold
-        | SnapshotRemovalTracker::RepaintAfterNavigation
-        | SnapshotRemovalTracker::MainFrameLoad
-        | SnapshotRemovalTracker::SubresourceLoads
-        | SnapshotRemovalTracker::ScrollPositionRestoration, [this] {
-            this->removeSwipeSnapshot();
-    });
+    m_provisionalLoadCallback = [this] {
+        if (auto drawingArea = m_webPageProxy.drawingArea()) {
+            uint64_t pageID = m_webPageProxy.pageID();
+            GestureID gestureID = m_currentGestureID;
+            drawingArea->dispatchAfterEnsuringDrawing([pageID, gestureID] (CallbackBase::Error error) {
+                if (auto gestureController = controllerForGesture(pageID, gestureID))
+                    gestureController->willCommitPostSwipeTransitionLayerTree(error == CallbackBase::Error::None);
+            });
+            drawingArea->hideContentUntilPendingUpdate();
+        } else {
+            removeSwipeSnapshot();
+            return;
+        }
+
+        // FIXME: Should we wait for VisuallyNonEmptyLayout like we do on Mac?
+        m_snapshotRemovalTracker.start(SnapshotRemovalTracker::RenderTreeSizeThreshold
+            | SnapshotRemovalTracker::RepaintAfterNavigation
+            | SnapshotRemovalTracker::MainFrameLoad
+            | SnapshotRemovalTracker::SubresourceLoads
+            | SnapshotRemovalTracker::ScrollPositionRestoration, [this] {
+                this->removeSwipeSnapshot();
+        });
+    };
 
     if (ViewSnapshot* snapshot = targetItem->snapshot()) {
         m_backgroundColorForCurrentSnapshot = snapshot->backgroundColor();

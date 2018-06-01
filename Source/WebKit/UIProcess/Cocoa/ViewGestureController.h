@@ -122,6 +122,7 @@ public:
 
     WebCore::Color backgroundColorForCurrentSnapshot() const { return m_backgroundColorForCurrentSnapshot; }
 
+    void didStartProvisionalLoadForMainFrame();
     void didFinishLoadForMainFrame() { didReachMainFrameLoadTerminalState(); }
     void didFailLoadForMainFrame() { didReachMainFrameLoadTerminalState(); }
     void didFirstVisuallyNonEmptyLayoutForMainFrame();
@@ -295,6 +296,7 @@ private:
     uint64_t m_snapshotRemovalTargetRenderTreeSize { 0 };
 #endif
 
+    WTF::Function<void()> m_provisionalLoadCallback;
     SnapshotRemovalTracker m_snapshotRemovalTracker;
 };
 

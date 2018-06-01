@@ -1,3 +1,35 @@
+2018-06-01  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r230876): Swipe navigation snapshot may get removed too early
+        https://bugs.webkit.org/show_bug.cgi?id=186168
+        <rdar://problem/39743617>
+
+        Reviewed by Tim Horton.
+
+        The swipe navigation snapshot would get removed too early when receiving a paint
+        event after requesting a history navigation but before the provisional load has
+        actually started. This is because of the asynchronous navigation policy decision
+        which occurs after requesting to navigate. To address the issue, we now start
+        listening for events only after the provisional load has started.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didStartProvisionalLoadForMainFrame]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/Cocoa/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::didStartProvisionalLoadForMainFrame):
+        (WebKit::ViewGestureController::didReachMainFrameLoadTerminalState):
+        (WebKit::ViewGestureController::didSameDocumentNavigationForMainFrame):
+        * UIProcess/Cocoa/ViewGestureController.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didStartProvisionalLoadForMainFrame):
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::didStartProvisionalLoadForMainFrame):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+
 2018-06-01  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, build fix for r232276.

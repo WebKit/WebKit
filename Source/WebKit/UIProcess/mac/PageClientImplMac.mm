@@ -755,6 +755,12 @@ void PageClientImpl::didRemoveNavigationGestureSnapshot()
 #endif
 }
 
+void PageClientImpl::didStartProvisionalLoadForMainFrame()
+{
+    if (auto gestureController = m_impl->gestureController())
+        gestureController->didStartProvisionalLoadForMainFrame();
+}
+
 void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
 {
     if (auto gestureController = m_impl->gestureController())

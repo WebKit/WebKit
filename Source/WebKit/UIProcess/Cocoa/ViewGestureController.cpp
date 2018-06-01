@@ -127,6 +127,12 @@ bool ViewGestureController::canSwipeInDirection(SwipeDirection direction) const
     return !!backForwardList.forwardItem();
 }
 
+void ViewGestureController::didStartProvisionalLoadForMainFrame()
+{
+    if (auto provisionalLoadCallback = WTFMove(m_provisionalLoadCallback))
+        provisionalLoadCallback();
+}
+
 
 void ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame()
 {
@@ -155,6 +161,12 @@ void ViewGestureController::didRestoreScrollPosition()
 
 void ViewGestureController::didReachMainFrameLoadTerminalState()
 {
+    if (m_provisionalLoadCallback) {
+        m_provisionalLoadCallback = nullptr;
+        removeSwipeSnapshot();
+        return;
+    }
+
     if (!m_snapshotRemovalTracker.eventOccurred(SnapshotRemovalTracker::MainFrameLoad))
         return;
 
@@ -179,6 +191,12 @@ void ViewGestureController::didReachMainFrameLoadTerminalState()
 
 void ViewGestureController::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType type)
 {
+    if (m_provisionalLoadCallback) {
+        m_provisionalLoadCallback = nullptr;
+        removeSwipeSnapshot();
+        return;
+    }
+
     bool cancelledOutstandingEvent = false;
 
     // Same-document navigations don't have a main frame load or first visually non-empty layout.

@@ -2829,6 +2829,12 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     }
 }
 
+- (void)_didStartProvisionalLoadForMainFrame
+{
+    if (_gestureController)
+        _gestureController->didStartProvisionalLoadForMainFrame();
+}
+
 - (void)_didFinishLoadForMainFrame
 {
     if (_gestureController)

@@ -205,6 +205,7 @@ private:
     NSView *activeView() const;
     NSWindow *activeWindow() const;
 
+    void didStartProvisionalLoadForMainFrame() override;
     void didFirstVisuallyNonEmptyLayoutForMainFrame() override;
     void didFinishLoadForMainFrame() override;
     void didFailLoadForMainFrame() override;
