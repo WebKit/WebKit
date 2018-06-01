@@ -63,22 +63,12 @@ protected:
 
     const Box& root() const { return *m_root; }
 
-    virtual void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const;
-    virtual void computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const;
-    virtual void computeOutOfFlowPosition(LayoutContext&, const Box&, Display::Box&) const;
+    virtual void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const = 0;
+    virtual void computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const = 0;
 
-    virtual void computeWidth(LayoutContext&, const Box&, Display::Box&) const;
-    virtual void computeHeight(LayoutContext&, const Box&, Display::Box&) const;
+    void computeFloatingHeight(LayoutContext&, const Box&, Display::Box&) const;
+    void computeFloatingWidth(LayoutContext&, const Box&, Display::Box&) const;
 
-    virtual void computeOutOfFlowWidth(LayoutContext&, const Box&, Display::Box&) const;
-    virtual void computeFloatingWidth(LayoutContext&, const Box&, Display::Box&) const;
-    virtual void computeInFlowWidth(LayoutContext&, const Box&, Display::Box&) const = 0;
-
-    virtual void computeOutOfFlowHeight(LayoutContext&, const Box&, Display::Box&) const;
-    virtual void computeFloatingHeight(LayoutContext&, const Box&, Display::Box&) const;
-    virtual void computeInFlowHeight(LayoutContext&, const Box&, Display::Box&) const = 0;
-
-    virtual void computeMargin(LayoutContext&, const Box&, Display::Box&) const;
     void computeBorderAndPadding(LayoutContext&, const Box&, Display::Box&) const;
 
     void placeInFlowPositionedChildren(LayoutContext&, const Container&) const;
@@ -106,14 +96,18 @@ protected:
         static LayoutPoint outOfFlowNonReplacedPosition(LayoutContext&, const Box&);
         static LayoutPoint outOfFlowReplacedPosition(LayoutContext&, const Box&);
 
-        static LayoutUnit replacedHeight(LayoutContext&, const Box&);
-        static LayoutUnit replacedWidth(LayoutContext&, const Box&);
+        static LayoutUnit inlineReplacedHeight(LayoutContext&, const Box&);
+        static LayoutUnit inlineReplacedWidth(LayoutContext&, const Box&);
 
         static Display::Box::Edges computedBorder(LayoutContext&, const Box&);
         static std::optional<Display::Box::Edges> computedPadding(LayoutContext&, const Box&);
     };
 
 private:
+    void computeOutOfFlowPosition(LayoutContext&, const Box&, Display::Box&) const;
+    void computeOutOfFlowHeight(LayoutContext&, const Box&, Display::Box&) const;
+    void computeOutOfFlowWidth(LayoutContext&, const Box&, Display::Box&) const;
+
     WeakPtr<Box> m_root;
 };
 

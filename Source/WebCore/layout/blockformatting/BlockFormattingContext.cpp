@@ -141,6 +141,28 @@ void BlockFormattingContext::computeInFlowPositionedPosition(LayoutContext& layo
     displayBox.setTopLeft(topLeft);
 }
 
+void BlockFormattingContext::computeWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    if (layoutBox.isInFlow())
+        return computeInFlowWidth(layoutContext, layoutBox, displayBox);
+
+    if (layoutBox.isFloatingPositioned())
+        return computeFloatingWidth(layoutContext, layoutBox, displayBox);
+
+    ASSERT_NOT_REACHED();
+}
+
+void BlockFormattingContext::computeHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    if (layoutBox.isInFlow())
+        return computeInFlowHeight(layoutContext, layoutBox, displayBox);
+
+    if (layoutBox.isFloatingPositioned())
+        return computeFloatingHeight(layoutContext, layoutBox, displayBox);
+
+    ASSERT_NOT_REACHED();
+}
+
 void BlockFormattingContext::computeInFlowHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     LayoutUnit computedHeight;
@@ -148,7 +170,7 @@ void BlockFormattingContext::computeInFlowHeight(LayoutContext& layoutContext, c
     if (layoutBox.replaced()) {
         // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block'
         // replaced elements in normal flow and floating replaced elements
-        computedHeight = FormattingContext::Geometry::replacedHeight(layoutContext, layoutBox);
+        computedHeight = FormattingContext::Geometry::inlineReplacedHeight(layoutContext, layoutBox);
     } else
         computedHeight = Geometry::inFlowNonReplacedHeight(layoutContext, layoutBox);
 
@@ -162,7 +184,7 @@ void BlockFormattingContext::computeInFlowWidth(LayoutContext& layoutContext, co
     if (layoutBox.replaced()) {
         // 10.3.4 Block-level, replaced elements in normal flow
         // The used value of 'width' is determined as for inline replaced elements
-        computedWidth = FormattingContext::Geometry::replacedWidth(layoutContext, layoutBox);
+        computedWidth = FormattingContext::Geometry::inlineReplacedWidth(layoutContext, layoutBox);
     } else
         computedWidth = Geometry::inFlowNonReplacedWidth(layoutContext, layoutBox);
 

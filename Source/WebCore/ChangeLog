@@ -1,3 +1,43 @@
+2018-06-01  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Push FormattingContext::computeWidth/computeHeight logic from the base to the subclasses.
+        https://bugs.webkit.org/show_bug.cgi?id=186172
+
+        Reviewed by Antti Koivisto.
+
+        FormattingContext::computeWidth/computeHeight virtual functions have very little benefit and in the long run
+        it's better if we keep the number of virtual functions to the minimum necessary.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeFloatingWidth const):
+        (WebCore::Layout::FormattingContext::computeStaticPosition const): Deleted.
+        (WebCore::Layout::FormattingContext::computeInFlowPositionedPosition const): Deleted.
+        (WebCore::Layout::FormattingContext::computeWidth const): Deleted.
+        (WebCore::Layout::FormattingContext::computeHeight const): Deleted.
+        (WebCore::Layout::FormattingContext::computeMargin const): Deleted.
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHeight):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedWidth):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedHeight):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidth):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeight):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidth):
+        (WebCore::Layout::FormattingContext::Geometry::replacedHeight): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::replacedWidth): Deleted.
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeWidth const):
+        (WebCore::Layout::BlockFormattingContext::computeHeight const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowHeight const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowWidth const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeStaticPosition const):
+        (WebCore::Layout::InlineFormattingContext::computeInFlowPositionedPosition const):
+        (WebCore::Layout::InlineFormattingContext::computeInFlowWidth const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::computeInFlowHeight const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+
 2018-06-01  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
 
         [GTK] Difficult to read combo box text in dark theme

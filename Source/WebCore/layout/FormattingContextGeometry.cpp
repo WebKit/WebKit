@@ -192,7 +192,7 @@ LayoutUnit FormattingContext::Geometry::outOfFlowReplacedHeight(LayoutContext& l
     // 10.6.5 Absolutely positioned, replaced elements
     //
     // The used value of 'height' is determined as for inline replaced elements.
-    return replacedHeight(layoutContext, layoutBox);
+    return inlineReplacedHeight(layoutContext, layoutBox);
 }
 
 LayoutUnit FormattingContext::Geometry::outOfFlowReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox)
@@ -201,7 +201,7 @@ LayoutUnit FormattingContext::Geometry::outOfFlowReplacedWidth(LayoutContext& la
     // 10.3.8 Absolutely positioned, replaced elements
     //
     // The used value of 'width' is determined as for inline replaced elements.
-    return replacedWidth(layoutContext, layoutBox);
+    return inlineReplacedWidth(layoutContext, layoutBox);
 }
 
 LayoutUnit FormattingContext::Geometry::floatingNonReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox)
@@ -231,7 +231,7 @@ LayoutUnit FormattingContext::Geometry::floatingReplacedHeight(LayoutContext& la
     ASSERT(layoutBox.isFloatingPositioned() && layoutBox.replaced());
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block'
     // replaced elements in normal flow and floating replaced elements
-    return replacedHeight(layoutContext, layoutBox);
+    return inlineReplacedHeight(layoutContext, layoutBox);
 }
 
 LayoutUnit FormattingContext::Geometry::floatingReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox)
@@ -240,7 +240,7 @@ LayoutUnit FormattingContext::Geometry::floatingReplacedWidth(LayoutContext& lay
     // 10.3.6 Floating, replaced elements
     //
     // The used value of 'width' is determined as for inline replaced elements.
-    return replacedWidth(layoutContext, layoutBox);
+    return inlineReplacedWidth(layoutContext, layoutBox);
 }
 
 LayoutPoint FormattingContext::Geometry::outOfFlowNonReplacedPosition(LayoutContext& layoutContext, const Box& layoutBox)
@@ -427,11 +427,9 @@ LayoutPoint FormattingContext::Geometry::outOfFlowReplacedPosition(LayoutContext
     return { computedLeftValue, computedTopValue };
 }
 
-LayoutUnit FormattingContext::Geometry::replacedHeight(LayoutContext&, const Box& layoutBox)
+LayoutUnit FormattingContext::Geometry::inlineReplacedHeight(LayoutContext&, const Box& layoutBox)
 {
     ASSERT((layoutBox.isOutOfFlowPositioned() || layoutBox.isFloatingPositioned() || layoutBox.isInFlow()) && layoutBox.replaced());
-    // 10.6.5 Absolutely positioned, replaced elements. The used value of 'height' is determined as for inline replaced elements.
-
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block' replaced elements in normal flow and floating replaced elements
     //
     // 1. If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic height, then that intrinsic height is the used value of 'height'.
@@ -471,14 +469,9 @@ LayoutUnit FormattingContext::Geometry::replacedHeight(LayoutContext&, const Box
     return computedHeightValue;
 }
 
-LayoutUnit FormattingContext::Geometry::replacedWidth(LayoutContext&, const Box& layoutBox)
+LayoutUnit FormattingContext::Geometry::inlineReplacedWidth(LayoutContext&, const Box& layoutBox)
 {
     ASSERT((layoutBox.isOutOfFlowPositioned() || layoutBox.isFloatingPositioned() || layoutBox.isInFlow()) && layoutBox.replaced());
-
-    // 10.3.4 Block-level, replaced elements in normal flow: The used value of 'width' is determined as for inline replaced elements.
-    // 10.3.6 Floating, replaced elements: The used value of 'width' is determined as for inline replaced elements.
-    // 10.3.8 Absolutely positioned, replaced elements: The used value of 'width' is determined as for inline replaced elements.
-
     // 10.3.2 Inline, replaced elements
     //
     // 1. If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic width, then that intrinsic width is the used value of 'width'.

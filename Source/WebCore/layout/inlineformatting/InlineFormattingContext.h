@@ -48,8 +48,8 @@ public:
     Ref<FloatingState> createOrFindFloatingState(LayoutContext&) const override;
 
 private:
-    void computeInFlowWidth(LayoutContext&, const Box&, Display::Box&) const override;
-    void computeInFlowHeight(LayoutContext&, const Box&, Display::Box&) const override;
+    void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const override;
+    void computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const override;
 
 };
 

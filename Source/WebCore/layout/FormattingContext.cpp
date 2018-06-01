@@ -49,14 +49,6 @@ FormattingContext::~FormattingContext()
 {
 }
 
-void FormattingContext::computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const
-{
-}
-
-void FormattingContext::computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const
-{
-}
-
 void FormattingContext::computeOutOfFlowPosition(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     LayoutPoint computedTopLeft;
@@ -69,24 +61,6 @@ void FormattingContext::computeOutOfFlowPosition(LayoutContext& layoutContext, c
     displayBox.setTopLeft(computedTopLeft);
 }
 
-void FormattingContext::computeWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
-{
-    if (layoutBox.isOutOfFlowPositioned())
-        return computeOutOfFlowWidth(layoutContext, layoutBox, displayBox);
-    if (layoutBox.isFloatingPositioned())
-        return computeFloatingWidth(layoutContext, layoutBox, displayBox);
-    return computeInFlowWidth(layoutContext, layoutBox, displayBox);
-}
-
-void FormattingContext::computeHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
-{
-    if (layoutBox.isOutOfFlowPositioned())
-        return computeOutOfFlowHeight(layoutContext, layoutBox, displayBox);
-    if (layoutBox.isFloatingPositioned())
-        return computeFloatingHeight(layoutContext, layoutBox, displayBox);
-    return computeInFlowHeight(layoutContext, layoutBox, displayBox);
-}
-
 void FormattingContext::computeOutOfFlowWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     LayoutUnit computedWidth;
@@ -95,18 +69,6 @@ void FormattingContext::computeOutOfFlowWidth(LayoutContext& layoutContext, cons
         computedWidth = Geometry::outOfFlowReplacedWidth(layoutContext, layoutBox);
     else 
         computedWidth = Geometry::outOfFlowNonReplacedWidth(layoutContext, layoutBox);
-
-    displayBox.setWidth(computedWidth);
-}
-
-void FormattingContext::computeFloatingWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
-{
-    LayoutUnit computedWidth;
-
-    if (layoutBox.replaced())
-        computedWidth = Geometry::floatingReplacedWidth(layoutContext, layoutBox);
-    else
-        computedWidth = Geometry::floatingNonReplacedWidth(layoutContext, layoutBox);
 
     displayBox.setWidth(computedWidth);
 }
@@ -135,9 +97,16 @@ void FormattingContext::computeFloatingHeight(LayoutContext& layoutContext, cons
     displayBox.setHeight(computedHeight);
 }
 
-void FormattingContext::computeMargin(LayoutContext&, const Box&, Display::Box& displayBox) const
+void FormattingContext::computeFloatingWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    displayBox.setMargin({ 0, 0, 0, 0 });
+    LayoutUnit computedWidth;
+
+    if (layoutBox.replaced())
+        computedWidth = Geometry::floatingReplacedWidth(layoutContext, layoutBox);
+    else
+        computedWidth = Geometry::floatingNonReplacedWidth(layoutContext, layoutBox);
+
+    displayBox.setWidth(computedWidth);
 }
 
 void FormattingContext::computeBorderAndPadding(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
