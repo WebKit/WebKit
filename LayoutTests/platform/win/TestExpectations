@@ -4093,3 +4093,5 @@ webkit.org/b/185678 animations/missing-from-to.html [ Failure ]
 webkit.org/b/185765 fast/images/animated-image-mp4-crash.html [ Skip ]
 
 webkit.org/b/185678 fast/css-generated-content/pseudo-animation.html [ Failure ]
+
+webkit.org/b/186183 http/tests/security/referrer-policy-header.html [ Skip ]
