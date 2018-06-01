@@ -1,3 +1,18 @@
+2018-06-01  Youenn Fablet  <youenn@apple.com>
+
+        Add an option to restrict communication to localhost sockets
+        https://bugs.webkit.org/show_bug.cgi?id=186208
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+        Add an option in LibWebRTCProvider to restrict to localhost sockets.
+        Use that option when Internals is used.
+
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+
 2018-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         ResourceLoader::cancel() shouldn't synchronously fire load event on document

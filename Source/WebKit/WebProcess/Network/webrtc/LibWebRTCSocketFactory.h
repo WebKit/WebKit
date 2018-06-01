@@ -49,6 +49,8 @@ public:
 
     rtc::AsyncPacketSocket* createNewConnectionSocket(LibWebRTCSocket&, uint64_t newConnectionSocketIdentifier, const rtc::SocketAddress&);
 
+    void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
+
 private:
     rtc::AsyncPacketSocket* CreateUdpSocket(const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort) final;
     rtc::AsyncPacketSocket* CreateServerTcpSocket(const rtc::SocketAddress&, uint16_t min_port, uint16_t max_port, int options) final;
@@ -62,6 +64,7 @@ private:
     // We can own resolvers as we control their Destroy method.
     HashMap<uint64_t, std::unique_ptr<LibWebRTCResolver>> m_resolvers;
     static uint64_t s_uniqueResolverIdentifier;
+    bool m_disableNonLocalhostConnections { false };
 };
 
 } // namespace WebKit

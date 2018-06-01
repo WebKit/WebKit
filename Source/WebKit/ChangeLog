@@ -1,3 +1,26 @@
+2018-06-01  Youenn Fablet  <youenn@apple.com>
+
+        Add an option to restrict communication to localhost sockets
+        https://bugs.webkit.org/show_bug.cgi?id=186208
+
+        Reviewed by Eric Carlson.
+
+        Implement restriction to localhost sockets by setting any IP address to 127.0.0.1.
+        This is done on WebProcess side just before requesting to open the socket by NetworkProcess.
+
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.h:
+        (WebKit::LibWebRTCNetwork::disableNonLocalhostConnections):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::LibWebRTCProvider::disableNonLocalhostConnections):
+        (WebKit::LibWebRTCProvider::registerMDNSName):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::prepareSocketAddress):
+        (WebKit::LibWebRTCSocketFactory::CreateServerTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::CreateUdpSocket):
+        (WebKit::LibWebRTCSocketFactory::CreateClientTcpSocket):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.h:
+
 2018-06-01  Chris Dumez  <cdumez@apple.com>
 
         Regression(r230876): Swipe navigation snapshot may get removed too early

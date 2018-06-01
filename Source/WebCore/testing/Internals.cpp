@@ -493,7 +493,9 @@ void Internals::resetToConsistentState(Page& page)
     printContextForTesting() = nullptr;
 
 #if USE(LIBWEBRTC)
-    WebCore::useRealRTCPeerConnectionFactory(page.libWebRTCProvider());
+    auto& rtcProvider = page.libWebRTCProvider();
+    WebCore::useRealRTCPeerConnectionFactory(rtcProvider);
+    rtcProvider.disableNonLocalhostConnections();
 #endif
 
     page.settings().setStorageAccessAPIEnabled(false);

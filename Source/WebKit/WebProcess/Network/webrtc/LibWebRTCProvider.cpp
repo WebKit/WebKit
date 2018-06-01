@@ -41,12 +41,17 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
     return WebCore::LibWebRTCProvider::createPeerConnection(observer, WebProcess::singleton().libWebRTCNetwork().monitor(), WebProcess::singleton().libWebRTCNetwork().socketFactory(), WTFMove(configuration));
 }
 
+void LibWebRTCProvider::disableNonLocalhostConnections()
+{
+    WebProcess::singleton().libWebRTCNetwork().disableNonLocalhostConnections();
+}
+
 void LibWebRTCProvider::unregisterMDNSNames(uint64_t documentIdentifier)
 {
     WebProcess::singleton().libWebRTCNetwork().mdnsRegister().unregisterMDNSNames(documentIdentifier);
 }
 
-    void LibWebRTCProvider::registerMDNSName(PAL::SessionID sessionID, uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&& callback)
+void LibWebRTCProvider::registerMDNSName(PAL::SessionID sessionID, uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&& callback)
 {
     WebProcess::singleton().libWebRTCNetwork().mdnsRegister().registerMDNSName(sessionID, documentIdentifier, ipAddress, WTFMove(callback));
 }

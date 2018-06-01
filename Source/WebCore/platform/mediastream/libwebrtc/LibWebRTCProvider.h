@@ -107,6 +107,8 @@ public:
     void disableEnumeratingAllNetworkInterfaces() { m_enableEnumeratingAllNetworkInterfaces = false; }
     void enableEnumeratingAllNetworkInterfaces() { m_enableEnumeratingAllNetworkInterfaces = true; }
 
+    virtual void disableNonLocalhostConnections() { };
+
 protected:
     LibWebRTCProvider() = default;
 

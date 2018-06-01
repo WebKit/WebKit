@@ -44,6 +44,8 @@ public:
     WebRTCMonitor& monitor() { return m_webNetworkMonitor; }
     LibWebRTCSocketFactory& socketFactory() { return m_socketFactory; }
 
+    void disableNonLocalhostConnections() { socketFactory().disableNonLocalhostConnections(); }
+
     WebRTCSocket socket(uint64_t identifier) { return WebRTCSocket(socketFactory(), identifier); }
     WebRTCResolver resolver(uint64_t identifier) { return WebRTCResolver(socketFactory(), identifier); }
 #endif
