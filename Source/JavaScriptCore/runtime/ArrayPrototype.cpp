@@ -385,8 +385,142 @@ void unshift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned curre
     }
 }
 
-static bool canUseFastJoin(const JSObject*);
-static JSValue fastJoin(ExecState&, JSObject*, StringView, unsigned);
+inline bool canUseFastJoin(const JSObject* thisObject)
+{
+    switch (thisObject->indexingType()) {
+    case ALL_CONTIGUOUS_INDEXING_TYPES:
+    case ALL_INT32_INDEXING_TYPES:
+    case ALL_DOUBLE_INDEXING_TYPES:
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+
+inline bool holesMustForwardToPrototype(VM& vm, JSObject* object)
+{
+    return object->structure(vm)->holesMustForwardToPrototype(vm, object);
+}
+
+inline bool isHole(double value)
+{
+    return std::isnan(value);
+}
+
+inline bool isHole(const WriteBarrier<Unknown>& value)
+{
+    return !value;
+}
+
+template<typename T>
+inline bool containsHole(T* data, unsigned length)
+{
+    for (unsigned i = 0; i < length; ++i) {
+        if (isHole(data[i]))
+            return true;
+    }
+    return false;
+}
+
+inline JSValue fastJoin(ExecState& state, JSObject* thisObject, StringView separator, unsigned length, bool* sawHoles = nullptr)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    switch (thisObject->indexingType()) {
+    case ALL_INT32_INDEXING_TYPES: {
+        auto& butterfly = *thisObject->butterfly();
+        if (UNLIKELY(length > butterfly.publicLength()))
+            break;
+        JSStringJoiner joiner(state, separator, length);
+        RETURN_IF_EXCEPTION(scope, { });
+        auto data = butterfly.contiguous().data();
+        bool holesKnownToBeOK = false;
+        for (unsigned i = 0; i < length; ++i) {
+            JSValue value = data[i].get();
+            if (LIKELY(value))
+                joiner.appendNumber(vm, value.asInt32());
+            else {
+                if (sawHoles)
+                    *sawHoles = true;
+                if (!holesKnownToBeOK) {
+                    if (holesMustForwardToPrototype(vm, thisObject))
+                        goto generalCase;
+                    holesKnownToBeOK = true;
+                }
+                joiner.appendEmptyString();
+            }
+        }
+        scope.release();
+        return joiner.join(state);
+    }
+    case ALL_CONTIGUOUS_INDEXING_TYPES: {
+        auto& butterfly = *thisObject->butterfly();
+        if (UNLIKELY(length > butterfly.publicLength()))
+            break;
+        JSStringJoiner joiner(state, separator, length);
+        RETURN_IF_EXCEPTION(scope, { });
+        auto data = butterfly.contiguous().data();
+        bool holesKnownToBeOK = false;
+        for (unsigned i = 0; i < length; ++i) {
+            if (JSValue value = data[i].get()) {
+                if (!joiner.appendWithoutSideEffects(state, value))
+                    goto generalCase;
+            } else {
+                if (sawHoles)
+                    *sawHoles = true;
+                if (!holesKnownToBeOK) {
+                    if (holesMustForwardToPrototype(vm, thisObject))
+                        goto generalCase;
+                    holesKnownToBeOK = true;
+                }
+                joiner.appendEmptyString();
+            }
+        }
+        scope.release();
+        return joiner.join(state);
+    }
+    case ALL_DOUBLE_INDEXING_TYPES: {
+        auto& butterfly = *thisObject->butterfly();
+        if (UNLIKELY(length > butterfly.publicLength()))
+            break;
+        JSStringJoiner joiner(state, separator, length);
+        RETURN_IF_EXCEPTION(scope, { });
+        auto data = butterfly.contiguousDouble().data();
+        bool holesKnownToBeOK = false;
+        for (unsigned i = 0; i < length; ++i) {
+            double value = data[i];
+            if (LIKELY(!isHole(value)))
+                joiner.appendNumber(vm, value);
+            else {
+                if (sawHoles)
+                    *sawHoles = true;
+                if (!holesKnownToBeOK) {
+                    if (holesMustForwardToPrototype(vm, thisObject))
+                        goto generalCase;
+                    holesKnownToBeOK = true;
+                }
+                joiner.appendEmptyString();
+            }
+        }
+        scope.release();
+        return joiner.join(state);
+    }
+    }
+
+generalCase:
+    JSStringJoiner joiner(state, separator, length);
+    RETURN_IF_EXCEPTION(scope, { });
+    for (unsigned i = 0; i < length; ++i) {
+        JSValue element = thisObject->getIndex(&state, i);
+        RETURN_IF_EXCEPTION(scope, { });
+        joiner.append(state, element);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    scope.release();
+    return joiner.join(state);
+}
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
 {
@@ -435,7 +569,25 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
     if (LIKELY(canUseFastJoin(thisArray))) {
         const LChar comma = ',';
         scope.release();
-        return JSValue::encode(fastJoin(*exec, thisArray, { &comma, 1 }, length));
+
+        bool isCoW = isCopyOnWrite(thisArray->indexingMode());
+        JSImmutableButterfly* immutableButterfly = nullptr;
+        if (isCoW) {
+            immutableButterfly = JSImmutableButterfly::fromButterfly(thisArray->butterfly());
+            auto iter = vm.heap.immutableButterflyToStringCache.find(immutableButterfly);
+            if (iter != vm.heap.immutableButterflyToStringCache.end())
+                return JSValue::encode(iter->value);
+        }
+
+        bool sawHoles = false;
+        JSValue result = fastJoin(*exec, thisArray, { &comma, 1 }, length, &sawHoles);
+
+        if (!sawHoles && result && isJSString(result) && isCoW) {
+            ASSERT(JSImmutableButterfly::fromButterfly(thisArray->butterfly()) == immutableButterfly);
+            vm.heap.immutableButterflyToStringCache.add(immutableButterfly, jsCast<JSString*>(result));
+        }
+
+        return JSValue::encode(result);
     }
 
     JSStringJoiner joiner(*exec, ',', length);
@@ -504,30 +656,6 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
     return JSValue::encode(stringJoiner.join(*exec));
 }
 
-static inline bool isHole(double value)
-{
-    return std::isnan(value);
-}
-
-static inline bool isHole(const WriteBarrier<Unknown>& value)
-{
-    return !value;
-}
-
-template<typename T> static inline bool containsHole(T* data, unsigned length)
-{
-    for (unsigned i = 0; i < length; ++i) {
-        if (isHole(data[i]))
-            return true;
-    }
-    return false;
-}
-
-static inline bool holesMustForwardToPrototype(VM& vm, JSObject* object)
-{
-    return object->structure(vm)->holesMustForwardToPrototype(vm, object);
-}
-
 static JSValue slowJoin(ExecState& exec, JSObject* thisObject, JSString* separator, uint64_t length)
 {
     VM& vm = exec.vm();
@@ -574,112 +702,6 @@ static JSValue slowJoin(ExecState& exec, JSObject* thisObject, JSString* separat
     }
     // 10. Return R.
     return r;
-}
-
-static inline bool canUseFastJoin(const JSObject* thisObject)
-{
-    switch (thisObject->indexingType()) {
-    case ALL_CONTIGUOUS_INDEXING_TYPES:
-    case ALL_INT32_INDEXING_TYPES:
-    case ALL_DOUBLE_INDEXING_TYPES:
-        return true;
-    default:
-        break;
-    }
-    return false;
-}
-
-static inline JSValue fastJoin(ExecState& state, JSObject* thisObject, StringView separator, unsigned length)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    switch (thisObject->indexingType()) {
-    case ALL_INT32_INDEXING_TYPES: {
-        auto& butterfly = *thisObject->butterfly();
-        if (UNLIKELY(length > butterfly.publicLength()))
-            break;
-        JSStringJoiner joiner(state, separator, length);
-        RETURN_IF_EXCEPTION(scope, { });
-        auto data = butterfly.contiguous().data();
-        bool holesKnownToBeOK = false;
-        for (unsigned i = 0; i < length; ++i) {
-            JSValue value = data[i].get();
-            if (LIKELY(value))
-                joiner.appendNumber(vm, value.asInt32());
-            else {
-                if (!holesKnownToBeOK) {
-                    if (holesMustForwardToPrototype(vm, thisObject))
-                        goto generalCase;
-                    holesKnownToBeOK = true;
-                }
-                joiner.appendEmptyString();
-            }
-        }
-        scope.release();
-        return joiner.join(state);
-    }
-    case ALL_CONTIGUOUS_INDEXING_TYPES: {
-        auto& butterfly = *thisObject->butterfly();
-        if (UNLIKELY(length > butterfly.publicLength()))
-            break;
-        JSStringJoiner joiner(state, separator, length);
-        RETURN_IF_EXCEPTION(scope, { });
-        auto data = butterfly.contiguous().data();
-        bool holesKnownToBeOK = false;
-        for (unsigned i = 0; i < length; ++i) {
-            if (JSValue value = data[i].get()) {
-                if (!joiner.appendWithoutSideEffects(state, value))
-                    goto generalCase;
-            } else {
-                if (!holesKnownToBeOK) {
-                    if (holesMustForwardToPrototype(vm, thisObject))
-                        goto generalCase;
-                    holesKnownToBeOK = true;
-                }
-                joiner.appendEmptyString();
-            }
-        }
-        scope.release();
-        return joiner.join(state);
-    }
-    case ALL_DOUBLE_INDEXING_TYPES: {
-        auto& butterfly = *thisObject->butterfly();
-        if (UNLIKELY(length > butterfly.publicLength()))
-            break;
-        JSStringJoiner joiner(state, separator, length);
-        RETURN_IF_EXCEPTION(scope, { });
-        auto data = butterfly.contiguousDouble().data();
-        bool holesKnownToBeOK = false;
-        for (unsigned i = 0; i < length; ++i) {
-            double value = data[i];
-            if (LIKELY(!isHole(value)))
-                joiner.appendNumber(vm, value);
-            else {
-                if (!holesKnownToBeOK) {
-                    if (holesMustForwardToPrototype(vm, thisObject))
-                        goto generalCase;
-                    holesKnownToBeOK = true;
-                }
-                joiner.appendEmptyString();
-            }
-        }
-        scope.release();
-        return joiner.join(state);
-    }
-    }
-
-generalCase:
-    JSStringJoiner joiner(state, separator, length);
-    RETURN_IF_EXCEPTION(scope, { });
-    for (unsigned i = 0; i < length; ++i) {
-        JSValue element = thisObject->getIndex(&state, i);
-        RETURN_IF_EXCEPTION(scope, { });
-        joiner.append(state, element);
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-    scope.release();
-    return joiner.join(state);
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)

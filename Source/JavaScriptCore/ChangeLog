@@ -1,5 +1,35 @@
 2018-05-31  Saam Barati  <sbarati@apple.com>
 
+        Cache toString results for CoW arrays
+        https://bugs.webkit.org/show_bug.cgi?id=186160
+
+        Reviewed by Keith Miller.
+
+        This patch makes it so that we cache the result of toString on
+        arrays with a CoW butterfly. This cache lives on Heap and is
+        cleared after every GC. We only cache the toString result when
+        the CoW butterfly doesn't have a hole (currently, all CoW arrays
+        have a hole, but this isn't an invariant we want to rely on). The
+        reason for this is that if there is a hole, the value may be loaded
+        from the prototype, and the cache may produce a stale result.
+        
+        This is a ~4% speedup on the ML subtest in ARES. And is a ~1% overall
+        progression on ARES.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::finalize):
+        (JSC::Heap::addCoreConstraints):
+        * heap/Heap.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::canUseFastJoin):
+        (JSC::holesMustForwardToPrototype):
+        (JSC::isHole):
+        (JSC::containsHole):
+        (JSC::fastJoin):
+        (JSC::arrayProtoFuncToString):
+
+2018-05-31  Saam Barati  <sbarati@apple.com>
+
         PutStructure AI rule needs to call didFoldClobberStructures when the incoming value's structure set is clear
         https://bugs.webkit.org/show_bug.cgi?id=186169
 

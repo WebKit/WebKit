@@ -68,6 +68,7 @@ class IncrementalSweeper;
 class JITStubRoutine;
 class JITStubRoutineSet;
 class JSCell;
+class JSImmutableButterfly;
 class JSValue;
 class LLIntOffsetsExtractor;
 class MachineThreads;
@@ -380,6 +381,8 @@ public:
     void forEachSlotVisitor(const Func&);
     
     Seconds totalGCTime() const { return m_totalGCTime; }
+
+    HashMap<JSImmutableButterfly*, JSString*> immutableButterflyToStringCache;
 
 private:
     friend class AllocatingScope;
