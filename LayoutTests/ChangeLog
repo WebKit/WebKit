@@ -1,3 +1,23 @@
+2018-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move tests in LayoutTests/editing to appropriate subdirectories
+        https://bugs.webkit.org/show_bug.cgi?id=186212
+
+        Rubber-stamped by Wenson Hsieh.
+
+        Moved the following four tests in LayoutTests/editing to its subdirectories.
+
+        * editing/input/composition-underline-color-expected-mismatch.html: Moved from editing/composition-underline-color-expected-mismatch.html.
+        * editing/input/composition-underline-color.html: Move from editing/composition-underline-color.html.
+        * editing/input/marked-text-appearance-expected-mismatch.html: Copied from LayoutTests/editing/marked-text-appearance-expected-mismatch.html.
+        * editing/input/marked-text-appearance.html: Moved from editing/marked-text-appearance.html.
+        * editing/selection/rtl-to-ltr-editing-word-move-spin-expected.txt: Moved from editing/rtl-to-ltr-editing-word-move-spin-expected.txt.
+        * editing/selection/rtl-to-ltr-editing-word-move-spin.html: Moved from editing/rtl-to-ltr-editing-word-move-spin.html.
+        * editing/selection/simple-line-layout-caret-is-gone-expected.txt: Moved from editing/simple-line-layout-caret-is-gone-expected.txt.
+        * editing/selection/simple-line-layout-caret-is-gone.html: Moved from editing/simple-line-layout-caret-is-gone.html.
+        * editing/style/apply-style-iframe-crash-expected.txt: Moved from editing/apply-style-iframe-crash-expected.txt.
+        * editing/style/apply-style-iframe-crash.html: Moved from editing/apply-style-iframe-crash.html.
+
 2018-06-01  David Fenton  <david_fenton@apple.com>
 
         Skip fetch/api/redirect/redirect-method.html and fetch/api/redirect/redirect-method-worker.html on macOS debug.
