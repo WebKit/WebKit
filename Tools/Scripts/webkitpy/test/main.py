@@ -1,6 +1,5 @@
 # Copyright (C) 2012 Google, Inc.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
-# Copyright (C) 2018 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -38,58 +37,26 @@ import traceback
 import unittest
 
 from webkitpy.common.system.logutils import configure_logging
-from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.filesystem import FileSystem
-from webkitpy.common.system.systemhost import SystemHost
-from webkitpy.port.config import Config
 from webkitpy.test.finder import Finder
 from webkitpy.test.printer import Printer
 from webkitpy.test.runner import Runner, unit_test_name
 
 _log = logging.getLogger(__name__)
 
-_host = SystemHost()
-_webkit_root = None
-
-
-def _find_lldb_webkit_tester():
-    config = Config(_host.executive, _host.filesystem)
-    lldb_webkit_tester_executable = os.path.join(config.build_directory(config.default_configuration()), 'lldbWebKitTester')
-    return os.path.isfile(lldb_webkit_tester_executable) and os.access(lldb_webkit_tester_executable, os.X_OK)
-
-
-def _build_lldb_webkit_tester():
-    if not _host.platform.is_mac():
-        _log.error('lldbWebKitTester is not supported on this platform.')
-        return False
-    config = Config(_host.executive, _host.filesystem)
-    build_lldbwebkittester = os.path.join(_webkit_root, 'Tools', 'Scripts', 'build-lldbwebkittester')
-    return _host.executive.run_command([build_lldbwebkittester, config.flag_for_configuration(config.default_configuration())], return_exit_code=True) == 0
-
 
 def main():
-    global _webkit_root
     configure_logging(logger=_log)
 
     up = os.path.dirname
-    _webkit_root = up(up(up(up(up(os.path.abspath(__file__))))))
+    webkit_root = up(up(up(up(up(os.path.abspath(__file__))))))
 
     tester = Tester()
-    tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts'), 'webkitpy')
+    tester.add_tree(os.path.join(webkit_root, 'Tools', 'Scripts'), 'webkitpy')
 
     # There is no WebKit2 on Windows, so we don't need to run WebKit2 unittests on it.
     if not (sys.platform.startswith('win') or sys.platform == 'cygwin'):
-        tester.add_tree(os.path.join(_webkit_root, 'Source', 'WebKit', 'Scripts'), 'webkit')
-
-    lldb_python_directory = _host.path_to_lldb_python_directory()
-    if os.path.isdir(lldb_python_directory):
-        if lldb_python_directory not in sys.path:
-            sys.path.append(lldb_python_directory)
-        tester.add_tree(os.path.join(_webkit_root, 'Tools', 'lldb'))
-        will_run_lldb_webkit_tests = True
-    else:
-        _log.info("Skipping lldb_webkit tests; could not find path to lldb.py '{}'.".format(lldb_python_directory))
-        will_run_lldb_webkit_tests = False
+        tester.add_tree(os.path.join(webkit_root, 'Source', 'WebKit', 'Scripts'), 'webkit')
 
     tester.skip(('webkitpy.common.checkout.scm.scm_unittest',), 'are really, really, slow', 31818)
     if sys.platform.startswith('win'):
@@ -104,11 +71,11 @@ def main():
         from google.appengine.dist import use_library
         use_library('django', '1.2')
         dev_appserver.fix_sys_path()
-        tester.add_tree(os.path.join(_webkit_root, 'Tools', 'QueueStatusServer'))
+        tester.add_tree(os.path.join(webkit_root, 'Tools', 'QueueStatusServer'))
     else:
         _log.info('Skipping QueueStatusServer tests; the Google AppEngine Python SDK is not installed.')
 
-    return not tester.run(will_run_lldb_webkit_tests=will_run_lldb_webkit_tests)
+    return not tester.run()
 
 
 def _print_results_as_json(stream, all_test_names, failures, errors):
@@ -164,7 +131,7 @@ class Tester(object):
 
         return parser.parse_args(argv)
 
-    def run(self, will_run_lldb_webkit_tests=False):
+    def run(self):
         self._options, args = self._parse_args()
         self.printer.configure(self._options)
 
@@ -175,9 +142,9 @@ class Tester(object):
             _log.error('No tests to run')
             return False
 
-        return self._run_tests(names, will_run_lldb_webkit_tests)
+        return self._run_tests(names)
 
-    def _run_tests(self, names, will_run_lldb_webkit_tests):
+    def _run_tests(self, names):
         # Make sure PYTHONPATH is set up properly.
         sys.path = self.finder.additional_paths(sys.path) + sys.path
 
@@ -186,14 +153,6 @@ class Tester(object):
         self.printer.write_update("Checking autoinstalled packages ...")
         from webkitpy.thirdparty import autoinstall_everything
         autoinstall_everything()
-
-        if will_run_lldb_webkit_tests:
-            self.printer.write_update("Checking lldbWebKitTester ...")
-            if not _find_lldb_webkit_tester():
-                self.printer.write_update("Building lldbWebKitTester ...")
-                if not _build_lldb_webkit_tester():
-                    _log.error('Failed to build lldbWebKitTester.')
-                    return False
 
         if self._options.coverage:
             _log.warning("Checking code coverage, so running things serially")

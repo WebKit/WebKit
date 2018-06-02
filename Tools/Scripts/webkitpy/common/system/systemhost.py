@@ -47,8 +47,3 @@ class SystemHost(object):
 
     def symbolicate_crash_log_if_needed(self, path):
         return self.filesystem.read_text_file(path)
-
-    def path_to_lldb_python_directory(self):
-        if not self.platform.is_mac():
-            return ''
-        return self.executive.run_command(['xcrun', 'lldb', '--python-path'], return_stderr=False).rstrip()
