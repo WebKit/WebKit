@@ -40,7 +40,6 @@
 #include "StructureIDTable.h"
 #include "Synchronousness.h"
 #include "WeakHandleOwner.h"
-#include "WeakReferenceHarvester.h"
 #include <wtf/AutomaticThread.h>
 #include <wtf/ConcurrentPtrHashSet.h>
 #include <wtf/Deque.h>
@@ -673,8 +672,6 @@ private:
     ConcurrentPtrHashSet m_opaqueRoots;
 
     static const size_t s_blockFragmentLength = 32;
-
-    ListableHandler<WeakReferenceHarvester>::List m_weakReferenceHarvesters;
 
     ParallelHelperClient m_helperClient;
     RefPtr<SharedTask<void(SlotVisitor&)>> m_bonusVisitorTask;

@@ -150,7 +150,6 @@
 		0F235BE217178E1C00690C7F /* FTLThunks.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BCC17178E1C00690C7F /* FTLThunks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F235BEC17178E7300690C7F /* DFGOSRExitBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BE817178E7300690C7F /* DFGOSRExitBase.h */; };
 		0F235BEE17178E7300690C7F /* DFGOSRExitPreparation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BEA17178E7300690C7F /* DFGOSRExitPreparation.h */; };
-		0F242DA713F3B1E8007ADD4C /* WeakReferenceHarvester.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E54117EA9F5900ABB217 /* AssemblyHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E53C17EA9F5900ABB217 /* AssemblyHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E54217EA9F5900ABB217 /* CCallHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E53D17EA9F5900ABB217 /* CCallHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E54317EA9F5900ABB217 /* FPRInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E53E17EA9F5900ABB217 /* FPRInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2063,7 +2062,6 @@
 		0F235BE817178E7300690C7F /* DFGOSRExitBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSRExitBase.h; path = dfg/DFGOSRExitBase.h; sourceTree = "<group>"; };
 		0F235BE917178E7300690C7F /* DFGOSRExitPreparation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSRExitPreparation.cpp; path = dfg/DFGOSRExitPreparation.cpp; sourceTree = "<group>"; };
 		0F235BEA17178E7300690C7F /* DFGOSRExitPreparation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSRExitPreparation.h; path = dfg/DFGOSRExitPreparation.h; sourceTree = "<group>"; };
-		0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakReferenceHarvester.h; sourceTree = "<group>"; };
 		0F24E53B17EA9F5900ABB217 /* AssemblyHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AssemblyHelpers.cpp; sourceTree = "<group>"; };
 		0F24E53C17EA9F5900ABB217 /* AssemblyHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssemblyHelpers.h; sourceTree = "<group>"; };
 		0F24E53D17EA9F5900ABB217 /* CCallHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCallHelpers.h; sourceTree = "<group>"; };
@@ -5821,7 +5819,6 @@
 				14F7256414EE265E00B1652B /* WeakHandleOwner.h */,
 				14E84F9D14EE1ACC00D6D5D4 /* WeakImpl.h */,
 				14BE7D3217135CF400D1807A /* WeakInlines.h */,
-				0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */,
 				14E84F9B14EE1ACC00D6D5D4 /* WeakSet.cpp */,
 				14E84F9C14EE1ACC00D6D5D4 /* WeakSet.h */,
 				14150132154BB13F005D8C98 /* WeakSetInlines.h */,
@@ -9627,7 +9624,6 @@
 				E3A32BC71FC83147007D7E76 /* WeakMapImpl.h in Headers */,
 				E393ADD81FE702D00022D681 /* WeakMapImplInlines.h in Headers */,
 				A7CA3AE617DA41AE006538AF /* WeakMapPrototype.h in Headers */,
-				0F242DA713F3B1E8007ADD4C /* WeakReferenceHarvester.h in Headers */,
 				14E84FA114EE1ACC00D6D5D4 /* WeakSet.h in Headers */,
 				709FB86A1AE335C60039D069 /* WeakSetConstructor.h in Headers */,
 				14150133154BB13F005D8C98 /* WeakSetInlines.h in Headers */,

@@ -45,9 +45,6 @@ void WeakMapImpl<WeakMapBucket>::visitChildren(JSCell* cell, SlotVisitor& visito
     WeakMapImpl* thisObject = jsCast<WeakMapImpl*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-
-    if (isWeakMap())
-        visitor.addWeakReferenceHarvester(&thisObject->m_deadKeyCleaner);
     visitor.reportExtraMemoryVisited(thisObject->m_capacity * sizeof(WeakMapBucket));
 }
 
@@ -59,16 +56,18 @@ size_t WeakMapImpl<WeakMapBucket>::estimatedSize(JSCell* cell)
 }
 
 template <>
-void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::visitWeakReferences(SlotVisitor&)
+void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::visitOutputConstraints(JSCell*, SlotVisitor&)
 {
     // Only JSWeakMap needs to harvest value references
 }
 
 template <>
-void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::visitWeakReferences(SlotVisitor& visitor)
+void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::visitOutputConstraints(JSCell* cell, SlotVisitor& visitor)
 {
-    auto* buffer = this->buffer();
-    for (uint32_t index = 0; index < m_capacity; ++index) {
+    auto* thisObject = jsCast<WeakMapImpl*>(cell);
+    auto locker = holdLock(thisObject->cellLock());
+    auto* buffer = thisObject->buffer();
+    for (uint32_t index = 0; index < thisObject->m_capacity; ++index) {
         auto* bucket = buffer + index;
         if (bucket->isEmpty() || bucket->isDeleted())
             continue;

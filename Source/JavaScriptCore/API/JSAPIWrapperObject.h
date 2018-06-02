@@ -29,7 +29,6 @@
 #include "JSBase.h"
 #include "JSCPoison.h"
 #include "JSDestructibleObject.h"
-#include "WeakReferenceHarvester.h"
 #include <wtf/Poisoned.h>
 
 #if JSC_OBJC_API_ENABLED || defined(JSC_GLIB_API_ENABLED)

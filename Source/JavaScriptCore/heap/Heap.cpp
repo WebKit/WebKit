@@ -782,7 +782,6 @@ void Heap::endMarking()
         });
 
     assertMarkStacksEmpty();
-    m_weakReferenceHarvesters.removeAll();
 
     RELEASE_ASSERT(m_raceMarkStack->isEmpty());
     
@@ -2717,14 +2716,6 @@ void Heap::addCoreConstraints()
         ConstraintVolatility::GreyedByMarking);
     
     m_constraintSet->add(
-        "Wrh", "Weak Reference Harvesters",
-        [this] (SlotVisitor& slotVisitor) {
-            for (WeakReferenceHarvester* current = m_weakReferenceHarvesters.head(); current; current = current->next())
-                current->visitWeakReferences(slotVisitor);
-        },
-        ConstraintVolatility::GreyedByMarking);
-    
-    m_constraintSet->add(
         "O", "Output",
         [] (SlotVisitor& slotVisitor) {
             VM& vm = slotVisitor.vm();
@@ -2740,6 +2731,7 @@ void Heap::addCoreConstraints()
             };
             
             add(vm.executableToCodeBlockEdgesWithConstraints);
+            add(vm.weakMapSpace);
         },
         ConstraintVolatility::GreyedByMarking,
         ConstraintParallelism::Parallel);

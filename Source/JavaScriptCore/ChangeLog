@@ -1,5 +1,47 @@
 2018-06-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Remove WeakReferenceHarvester
+        https://bugs.webkit.org/show_bug.cgi?id=186102
+
+        Reviewed by Filip Pizlo.
+
+        After several cleanups, now JSWeakMap becomes the last user of WeakReferenceHarvester.
+        Since JSWeakMap is already managed in IsoSubspace, we can iterate marked JSWeakMap
+        by using output constraints & Subspace iteration.
+
+        This patch removes WeakReferenceHarvester. Instead of managing this linked-list, our
+        output constraint set iterates marked JSWeakMap by using Subspace.
+
+        And we also add locking for JSWeakMap's rehash and output constraint visiting.
+
+        Attached microbenchmark does not show any regression.
+
+        * API/JSAPIWrapperObject.h:
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        (JSC::Heap::endMarking):
+        (JSC::Heap::addCoreConstraints):
+        * heap/Heap.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::addWeakReferenceHarvester): Deleted.
+        * heap/SlotVisitor.h:
+        * heap/WeakReferenceHarvester.h: Removed.
+        * runtime/WeakMapImpl.cpp:
+        (JSC::WeakMapImpl<WeakMapBucket>::visitChildren):
+        (JSC::WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::visitOutputConstraints):
+        (JSC::WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::visitOutputConstraints):
+        (JSC::WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::visitWeakReferences): Deleted.
+        (JSC::WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::visitWeakReferences): Deleted.
+        * runtime/WeakMapImpl.h:
+        (JSC::WeakMapImpl::WeakMapImpl):
+        (JSC::WeakMapImpl::finishCreation):
+        (JSC::WeakMapImpl::rehash):
+        (JSC::WeakMapImpl::makeAndSetNewBuffer):
+        (JSC::WeakMapImpl::DeadKeyCleaner::target): Deleted.
+
+2018-06-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Object.create should have intrinsic
         https://bugs.webkit.org/show_bug.cgi?id=186200
 

@@ -567,7 +567,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/WeakHandleOwner.h
     heap/WeakImpl.h
     heap/WeakInlines.h
-    heap/WeakReferenceHarvester.h
     heap/WeakSet.h
     heap/WeakSetInlines.h
 

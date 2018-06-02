@@ -45,7 +45,6 @@ class MarkedBlock;
 class MarkingConstraint;
 class MarkingConstraintSolver;
 template<typename T> class Weak;
-class WeakReferenceHarvester;
 template<typename T, typename Traits> class WriteBarrierBase;
 
 typedef uint32_t HeapVersion;
@@ -140,8 +139,6 @@ public:
     void reportExternalMemoryVisited(size_t);
 #endif
     
-    void addWeakReferenceHarvester(WeakReferenceHarvester*);
-
     void dump(PrintStream&) const;
 
     bool isBuildingHeapSnapshot() const { return !!m_heapSnapshotBuilder; }

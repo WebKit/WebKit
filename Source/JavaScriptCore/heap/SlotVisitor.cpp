@@ -753,11 +753,6 @@ void SlotVisitor::donateAndDrain(MonotonicTime timeout)
     drain(timeout);
 }
 
-void SlotVisitor::addWeakReferenceHarvester(WeakReferenceHarvester* weakReferenceHarvester)
-{
-    m_heap.m_weakReferenceHarvesters.addThreadSafe(weakReferenceHarvester);
-}
-
 void SlotVisitor::didRace(const VisitRaceKey& race)
 {
     if (Options::verboseVisitRace())

@@ -207,18 +207,19 @@ public:
 
     WeakMapImpl(VM& vm, Structure* structure)
         : Base(vm, structure)
-        , m_keyCount(0)
-        , m_deleteCount(0)
-        , m_capacity(4)
     {
     }
+
+    static constexpr uint32_t initialCapacity = 4;
 
     void finishCreation(VM& vm)
     {
         ASSERT_WITH_MESSAGE(WeakMapBucket<WeakMapBucketDataKey>::offsetOfKey() == WeakMapBucket<WeakMapBucketDataKeyValue>::offsetOfKey(), "We assume this to be true in the DFG and FTL JIT.");
 
         Base::finishCreation(vm);
-        makeAndSetNewBuffer();
+
+        auto locker = holdLock(cellLock());
+        makeAndSetNewBuffer(locker, initialCapacity);
     }
 
     // WeakMap operations must not cause GC. We model operations in DFG based on this guarantee.
@@ -309,6 +310,7 @@ public:
         return &vm.weakSetSpace;
     }
 
+    static void visitOutputConstraints(JSCell*, SlotVisitor&);
     void finalizeUnconditionally(VM&);
 
 private:
@@ -403,15 +405,20 @@ private:
         // function must not touch any GC related features. This is why we do not allocate WeakMapBuffer
         // in auxiliary buffer.
 
+        // This rehash modifies m_buffer which is not GC-managed buffer. But m_buffer can be touched in
+        // visitOutputConstraints. Thus, we should guard it with cellLock.
+        auto locker = holdLock(cellLock());
+
         uint32_t oldCapacity = m_capacity;
         MallocPtr<WeakMapBufferType, JSValueMalloc> oldBuffer = WTFMove(m_buffer);
 
+        uint32_t capacity = m_capacity;
         if (mode == RehashMode::RemoveBatching) {
             ASSERT(shouldShrink());
-            m_capacity = nextCapacityAfterBatchRemoval(m_capacity, m_keyCount);
+            capacity = nextCapacityAfterBatchRemoval(capacity, m_keyCount);
         } else
-            m_capacity = nextCapacity(m_capacity, m_keyCount);
-        makeAndSetNewBuffer();
+            capacity = nextCapacity(capacity, m_keyCount);
+        makeAndSetNewBuffer(locker, capacity);
 
         auto* buffer = this->buffer();
         const uint32_t mask = m_capacity - 1;
@@ -449,11 +456,12 @@ private:
         }
     }
 
-    void makeAndSetNewBuffer()
+    void makeAndSetNewBuffer(const AbstractLocker&, uint32_t capacity)
     {
-        ASSERT(!(m_capacity & (m_capacity - 1)));
+        ASSERT(!(capacity & (capacity - 1)));
 
-        m_buffer = WeakMapBufferType::create(m_capacity);
+        m_buffer = WeakMapBufferType::create(capacity);
+        m_capacity = capacity;
         ASSERT(m_buffer);
         assertBufferIsEmpty();
     }
@@ -469,27 +477,10 @@ private:
     template<typename Appender>
     void takeSnapshotInternal(unsigned limit, Appender);
 
-    class DeadKeyCleaner : public WeakReferenceHarvester {
-    public:
-        WeakMapImpl* target()
-        {
-            return bitwise_cast<WeakMapImpl*>(bitwise_cast<char*>(this) - OBJECT_OFFSETOF(WeakMapImpl, m_deadKeyCleaner));
-        }
-
-    private:
-        void visitWeakReferences(SlotVisitor& visitor) override
-        {
-            target()->visitWeakReferences(visitor);
-        }
-    };
-
-    void visitWeakReferences(SlotVisitor&);
-
     MallocPtr<WeakMapBufferType, JSValueMalloc> m_buffer;
-    uint32_t m_keyCount;
-    uint32_t m_deleteCount;
-    uint32_t m_capacity;
-    DeadKeyCleaner m_deadKeyCleaner;
+    uint32_t m_capacity { 0 };
+    uint32_t m_keyCount { 0 };
+    uint32_t m_deleteCount { 0 };
 };
 
 } // namespace JSC
