@@ -541,6 +541,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
         auto* page = [self._webView _page];
         auto* manager = self._manager;
         if (page && manager) {
+            [self._webView becomeFirstResponder];
             manager->didEnterFullScreen();
             manager->setAnimatingFullScreen(false);
             page->setSuppressVisibilityUpdates(false);
@@ -624,6 +625,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     [webView setAutoresizingMask:[_webViewPlaceholder autoresizingMask]];
 
     [[webView window] makeKeyAndVisible];
+    [webView becomeFirstResponder];
 
     _viewState.applyTo(webView.get());
 

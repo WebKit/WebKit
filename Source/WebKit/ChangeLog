@@ -1,5 +1,19 @@
 2018-06-02  Jeremy Jones  <jeremyj@apple.com>
 
+        Make WKWebView firstResponder after entering or exiting fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=186088
+        rdar://problem/40387859
+
+        Reviewed by Jer Noble.
+
+        Update first responder when WKWebView moves to a new window, otherwise there won't be a first responder.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController _completedExitFullScreen]):
+
+2018-06-02  Jeremy Jones  <jeremyj@apple.com>
+
         Exit fullscreen when javascript alerts are presented.
         https://bugs.webkit.org/show_bug.cgi?id=185619
         rdar://problem/35724264
