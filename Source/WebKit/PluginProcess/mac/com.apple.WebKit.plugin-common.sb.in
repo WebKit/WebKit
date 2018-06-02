@@ -528,9 +528,10 @@
    ((original-%finalize %finalize)
     (webkit-%finalize
         (lambda ()
-            (if (defined? 'vnode-type)
-                (deny file-write-create
-                      (vnode-type SYMLINK)))
+            (if (not (defined? 'allow-symlinks))
+                (if (defined? 'vnode-type)
+                    (deny file-write-create
+                        (vnode-type SYMLINK))))
             ;; Reserve a namespace for additional protected extended attributes.
             (deny file-read-xattr file-write-xattr (xattr #"^com\.apple\.security\.private\."))
             ;; FIXME: Should be removed once <rdar://problem/16329087> is fixed.

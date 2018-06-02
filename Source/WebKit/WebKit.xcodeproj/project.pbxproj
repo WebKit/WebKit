@@ -928,6 +928,8 @@
 		4131F3D11F96BCCC0059995A /* ServiceWorkerClientFetch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4131F3D01F96BCC80059995A /* ServiceWorkerClientFetch.cpp */; };
 		4131F3E21F9880840059995A /* WebServiceWorkerFetchTaskClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4131F3E01F98712C0059995A /* WebServiceWorkerFetchTaskClient.cpp */; };
 		4135FBD11F4FB8090074C47B /* CacheStorageEngineCaches.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4135FBCF1F4FB7F20074C47B /* CacheStorageEngineCaches.cpp */; };
+		414DD37920BF43F5006959FB /* com.cisco.webex.plugin.gpc64.sb in Resources */ = {isa = PBXBuildFile; fileRef = 414DD37820BF43EA006959FB /* com.cisco.webex.plugin.gpc64.sb */; };
+		414DD37A20BF49A5006959FB /* com.cisco.webex.plugin.gpc64.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 414DD37820BF43EA006959FB /* com.cisco.webex.plugin.gpc64.sb */; };
 		414DEDD71F9EDDE50047C40D /* ServiceWorkerProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 414DEDD51F9EDDDF0047C40D /* ServiceWorkerProcessProxy.h */; };
 		414DEDD81F9EDDE50047C40D /* ServiceWorkerProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 414DEDD61F9EDDE00047C40D /* ServiceWorkerProcessProxy.cpp */; };
 		41897ECF1F415D620016FA42 /* WebCacheStorageConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41897ECE1F415D5C0016FA42 /* WebCacheStorageConnection.cpp */; };
@@ -2333,6 +2335,7 @@
 				7CB16FEF1724BA23007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb in Copy Plug-in Sandbox Profiles */,
 				7CB16FF01724BA24007A0A95 /* com.apple.QuickTime Plugin.plugin.sb in Copy Plug-in Sandbox Profiles */,
 				7A772C8D1DDD4A25000F34F1 /* com.apple.WebKit.plugin-common.sb in Copy Plug-in Sandbox Profiles */,
+				414DD37A20BF49A5006959FB /* com.cisco.webex.plugin.gpc64.sb in Copy Plug-in Sandbox Profiles */,
 				A102A7081EC0EEE900D81D82 /* com.macromedia.Flash Player ESR.plugin.sb in Copy Plug-in Sandbox Profiles */,
 				7CB16FF21724BA28007A0A95 /* com.macromedia.Flash Player.plugin.sb in Copy Plug-in Sandbox Profiles */,
 				7CB16FF31724BA2F007A0A95 /* com.microsoft.SilverlightPlugin.sb in Copy Plug-in Sandbox Profiles */,
@@ -3314,6 +3317,7 @@
 		4131F3E01F98712C0059995A /* WebServiceWorkerFetchTaskClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebServiceWorkerFetchTaskClient.cpp; sourceTree = "<group>"; };
 		4135FBCF1F4FB7F20074C47B /* CacheStorageEngineCaches.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageEngineCaches.cpp; sourceTree = "<group>"; };
 		4135FBD01F4FB7F20074C47B /* CacheStorageEngineCaches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageEngineCaches.h; sourceTree = "<group>"; };
+		414DD37820BF43EA006959FB /* com.cisco.webex.plugin.gpc64.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.cisco.webex.plugin.gpc64.sb; sourceTree = "<group>"; };
 		414DEDD51F9EDDDF0047C40D /* ServiceWorkerProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerProcessProxy.h; sourceTree = "<group>"; };
 		414DEDD61F9EDDE00047C40D /* ServiceWorkerProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerProcessProxy.cpp; sourceTree = "<group>"; };
 		4151E5C31FBB90A900E47E2D /* FormDataReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormDataReference.h; sourceTree = "<group>"; };
@@ -6929,6 +6933,7 @@
 				E19BDA8419365F4B00B97F57 /* com.apple.appstore.CodeRedeemerNetscapePlugin.sb */,
 				7CB16FE21724B9B5007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb */,
 				7CB16FE31724B9B5007A0A95 /* com.apple.QuickTime Plugin.plugin.sb */,
+				414DD37820BF43EA006959FB /* com.cisco.webex.plugin.gpc64.sb */,
 				7A5E39491D5BD8A700B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb */,
 				7CB16FE51724B9B5007A0A95 /* com.macromedia.Flash Player.plugin.sb */,
 				7CB16FE61724B9B5007A0A95 /* com.microsoft.SilverlightPlugin.sb */,
@@ -10083,6 +10088,7 @@
 				E17AE2C316B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb in Resources */,
 				E115C716190F8A2500ECC516 /* com.apple.WebKit.Storage.sb in Resources */,
 				E11D35AE16B63D1B006D23D7 /* com.apple.WebProcess.sb in Resources */,
+				414DD37920BF43F5006959FB /* com.cisco.webex.plugin.gpc64.sb in Resources */,
 				6BE969C11E54D452008B7483 /* corePrediction_model in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
 				3FB08E431F60B240005E5312 /* iOS.xcassets in Resources */,
