@@ -235,6 +235,14 @@ ALWAYS_INLINE void JIT::addJump(Jump jump, int relativeOffset)
     m_jmpTable.append(JumpTable(jump, m_bytecodeOffset + relativeOffset));
 }
 
+ALWAYS_INLINE void JIT::addJump(const JumpList& jumpList, int relativeOffset)
+{
+    ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
+
+    for (auto& jump : jumpList.jumps())
+        addJump(jump, relativeOffset);
+}
+
 ALWAYS_INLINE void JIT::emitJumpSlowToHot(Jump jump, int relativeOffset)
 {
     ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.

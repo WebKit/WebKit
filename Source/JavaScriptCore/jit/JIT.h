@@ -305,6 +305,7 @@ namespace JSC {
         void addSlowCase(const JumpList&);
         void addSlowCase();
         void addJump(Jump, int);
+        void addJump(const JumpList&, int);
         void emitJumpSlowToHot(Jump, int);
 
         void compileOpCall(OpcodeID, Instruction*, unsigned callLinkInfoIndex);

@@ -1,3 +1,17 @@
+2018-06-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Baseline op_jtrue emits an insane amount of code
+        https://bugs.webkit.org/show_bug.cgi?id=185708
+
+        Reviewed by Filip Pizlo.
+
+        * stress/logical-not-masquerades-as-undefined.js: Added.
+        (shouldBe):
+        (test):
+        * stress/logical-not.js: Added.
+        (shouldBe):
+        (test):
+
 2018-06-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove WeakReferenceHarvester

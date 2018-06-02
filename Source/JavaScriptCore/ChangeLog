@@ -1,3 +1,128 @@
+2018-06-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Baseline op_jtrue emits an insane amount of code
+        https://bugs.webkit.org/show_bug.cgi?id=185708
+
+        Reviewed by Filip Pizlo.
+
+        op_jtrue / op_jfalse bloats massive amount of code. This patch attempts to reduce the size of this code by,
+
+        1. op_jtrue / op_jfalse immediately jumps if the condition met. We add AssemblyHelpers::branchIf{Truthy,Falsey}
+           to jump directly. This tightens the code.
+
+        2. Align our emitConvertValueToBoolean implementation to FTL's boolify function. It emits less code.
+
+        This reduces the code size of op_jtrue in x64 from 220 bytes to 164 bytes.
+
+        [  12] jtrue             arg1, 6(->18)
+              0x7f233170162c: mov 0x30(%rbp), %rax
+              0x7f2331701630: mov %rax, %rsi
+              0x7f2331701633: xor $0x6, %rsi
+              0x7f2331701637: test $0xfffffffffffffffe, %rsi
+              0x7f233170163e: jnz 0x7f2331701654
+              0x7f2331701644: cmp $0x7, %eax
+              0x7f2331701647: setz %sil
+              0x7f233170164b: movzx %sil, %esi
+              0x7f233170164f: jmp 0x7f2331701705
+              0x7f2331701654: test %rax, %r14
+              0x7f2331701657: jz 0x7f233170169c
+              0x7f233170165d: cmp %r14, %rax
+              0x7f2331701660: jb 0x7f2331701675
+              0x7f2331701666: test %eax, %eax
+              0x7f2331701668: setnz %sil
+              0x7f233170166c: movzx %sil, %esi
+              0x7f2331701670: jmp 0x7f2331701705
+              0x7f2331701675: lea (%r14,%rax), %rsi
+              0x7f2331701679: movq %rsi, %xmm0
+              0x7f233170167e: xorps %xmm1, %xmm1
+              0x7f2331701681: ucomisd %xmm1, %xmm0
+              0x7f2331701685: jz 0x7f2331701695
+              0x7f233170168b: mov $0x1, %esi
+              0x7f2331701690: jmp 0x7f2331701705
+              0x7f2331701695: xor %esi, %esi
+              0x7f2331701697: jmp 0x7f2331701705
+              0x7f233170169c: test %rax, %r15
+              0x7f233170169f: jnz 0x7f2331701703
+              0x7f23317016a5: cmp $0x1, 0x5(%rax)
+              0x7f23317016a9: jnz 0x7f23317016c1
+              0x7f23317016af: mov 0x8(%rax), %esi
+              0x7f23317016b2: test %esi, %esi
+              0x7f23317016b4: setnz %sil
+              0x7f23317016b8: movzx %sil, %esi
+              0x7f23317016bc: jmp 0x7f2331701705
+              0x7f23317016c1: test $0x1, 0x6(%rax)
+              0x7f23317016c5: jz 0x7f23317016f9
+              0x7f23317016cb: mov (%rax), %esi
+              0x7f23317016cd: mov $0x7f23315000c8, %rdx
+              0x7f23317016d7: mov (%rdx), %rdx
+              0x7f23317016da: mov (%rdx,%rsi,8), %rsi
+              0x7f23317016de: mov $0x7f2330de0000, %rdx
+              0x7f23317016e8: cmp %rdx, 0x18(%rsi)
+              0x7f23317016ec: jnz 0x7f23317016f9
+              0x7f23317016f2: xor %esi, %esi
+              0x7f23317016f4: jmp 0x7f2331701705
+              0x7f23317016f9: mov $0x1, %esi
+              0x7f23317016fe: jmp 0x7f2331701705
+              0x7f2331701703: xor %esi, %esi
+              0x7f2331701705: test %esi, %esi
+              0x7f2331701707: jnz 0x7f233170171b
+
+        [  12] jtrue             arg1, 6(->18)
+              0x7f6c8710156c: mov 0x30(%rbp), %rax
+              0x7f6c87101570: test %rax, %r15
+              0x7f6c87101573: jnz 0x7f6c871015c8
+              0x7f6c87101579: cmp $0x1, 0x5(%rax)
+              0x7f6c8710157d: jnz 0x7f6c87101592
+              0x7f6c87101583: cmp $0x0, 0x8(%rax)
+              0x7f6c87101587: jnz 0x7f6c87101623
+              0x7f6c8710158d: jmp 0x7f6c87101615
+              0x7f6c87101592: test $0x1, 0x6(%rax)
+              0x7f6c87101596: jz 0x7f6c87101623
+              0x7f6c8710159c: mov (%rax), %esi
+              0x7f6c8710159e: mov $0x7f6c86f000e0, %rdx
+              0x7f6c871015a8: mov (%rdx), %rdx
+              0x7f6c871015ab: mov (%rdx,%rsi,8), %rsi
+              0x7f6c871015af: mov $0x7f6c867e0000, %rdx
+              0x7f6c871015b9: cmp %rdx, 0x18(%rsi)
+              0x7f6c871015bd: jnz 0x7f6c87101623
+              0x7f6c871015c3: jmp 0x7f6c87101615
+              0x7f6c871015c8: cmp %r14, %rax
+              0x7f6c871015cb: jb 0x7f6c871015de
+              0x7f6c871015d1: test %eax, %eax
+              0x7f6c871015d3: jnz 0x7f6c87101623
+              0x7f6c871015d9: jmp 0x7f6c87101615
+              0x7f6c871015de: test %rax, %r14
+              0x7f6c871015e1: jz 0x7f6c87101602
+              0x7f6c871015e7: lea (%r14,%rax), %rsi
+              0x7f6c871015eb: movq %rsi, %xmm0
+              0x7f6c871015f0: xorps %xmm1, %xmm1
+              0x7f6c871015f3: ucomisd %xmm1, %xmm0
+              0x7f6c871015f7: jz 0x7f6c87101615
+              0x7f6c871015fd: jmp 0x7f6c87101623
+              0x7f6c87101602: mov $0x7, %r11
+              0x7f6c8710160c: cmp %r11, %rax
+              0x7f6c8710160f: jz 0x7f6c87101623
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitConvertValueToBoolean):
+        (JSC::AssemblyHelpers::branchIfValue):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfTruthy):
+        (JSC::AssemblyHelpers::branchIfFalsey):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::addJump):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+
 2018-06-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove WeakReferenceHarvester

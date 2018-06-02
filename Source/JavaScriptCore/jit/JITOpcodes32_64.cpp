@@ -347,12 +347,10 @@ void JIT::emit_op_jfalse(Instruction* currentInstruction)
     emitLoad(cond, regT1, regT0);
 
     JSValueRegs value(regT1, regT0);
-    GPRReg scratch = regT2;
-    GPRReg result = regT3;
+    GPRReg scratch1 = regT2;
+    GPRReg scratch2 = regT3;
     bool shouldCheckMasqueradesAsUndefined = true;
-    emitConvertValueToBoolean(*vm(), value, result, scratch, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, m_codeBlock->globalObject());
-
-    addJump(branchTest32(Zero, result), target);
+    addJump(branchIfFalsey(*vm(), value, scratch1, scratch2, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, m_codeBlock->globalObject()), target);
 }
 
 void JIT::emit_op_jtrue(Instruction* currentInstruction)
@@ -363,11 +361,9 @@ void JIT::emit_op_jtrue(Instruction* currentInstruction)
     emitLoad(cond, regT1, regT0);
     bool shouldCheckMasqueradesAsUndefined = true;
     JSValueRegs value(regT1, regT0);
-    GPRReg scratch = regT2;
-    GPRReg result = regT3;
-    emitConvertValueToBoolean(*vm(), value, result, scratch, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, m_codeBlock->globalObject());
-
-    addJump(branchTest32(NonZero, result), target);
+    GPRReg scratch1 = regT2;
+    GPRReg scratch2 = regT3;
+    addJump(branchIfTruthy(*vm(), value, scratch1, scratch2, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, m_codeBlock->globalObject()), target);
 }
 
 void JIT::emit_op_jeq_null(Instruction* currentInstruction)
