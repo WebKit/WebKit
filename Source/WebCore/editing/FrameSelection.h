@@ -341,7 +341,9 @@ private:
 
     RefPtr<EditingStyle> m_typingStyle;
 
+#if ENABLE(TEXT_CARET)
     Timer m_caretBlinkTimer;
+#endif
     Timer m_appearanceUpdateTimer;
     // The painted bounds of the caret in absolute coordinates
     IntRect m_absCaretBounds;

@@ -1,5 +1,24 @@
 2018-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Editor can hold references to Documents after you navigate away
+        https://bugs.webkit.org/show_bug.cgi?id=186215
+
+        Reviewed by Simon Fraser.
+
+        Clear the various member variables that can hold onto a document in Editor::clear and FrameSelection::prepareForDestruction.
+
+        Test: editing/selection/navigation-clears-editor-state.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::clear):
+        * editing/Editor.h:
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::FrameSelection):
+        (WebCore::FrameSelection::prepareForDestruction):
+        * editing/FrameSelection.h:
+
+2018-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
         ResourceLoader::cancel() shouldn't synchronously fire load event on document
         https://bugs.webkit.org/show_bug.cgi?id=185284
 

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests navigating away from a document after setting a selection deletes the document.');
+jsTestIsAsync = true;
+
+function appendIframe()
+{
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+    iframe.contentDocument.body.innerHTML = '<p>hello</p>';
+    return iframe;
+}
+
+function setEditorStates(iframe)
+{
+    iframe.contentDocument.designMode = 'on';
+    iframe.contentWindow.getSelection().setPosition(iframe.contentDocument.body, 1);
+    iframe.contentDocument.execCommand('bold', false, null);
+}
+
+function wait(duration)
+{
+    return new Promise(function (resolve) {
+        setTimeout(resolve, 0);
+    });
+}
+
+var frame;
+var initialDocumentCount;
+async function runTest()
+{
+    initialDocumentCount = internals.numberOfLiveDocuments();
+
+    evalAndLog('iframe = appendIframe()');
+
+    await wait(0); // Make sure the transient document created by inserting an iframe is removed.
+    GCController.collect();
+
+    shouldBe('internals.numberOfLiveDocuments()', 'initialDocumentCount + 1');
+    setEditorStates(iframe);
+
+    await wait(0); // Wait for UI update timer to fire.
+
+    evalAndLog('iframe.src = "resources/select-iframe-focusin-document-crash-frame.html"');
+    iframe.onload = () => {
+        GCController.collect();
+        shouldBe('internals.numberOfLiveDocuments()', 'initialDocumentCount + 1');
+        finishJSTest();                
+    }
+}
+
+if (!window.GCController || !window.internals) {
+    debug('This test requires GCController and internals');
+} else {
+    if (window.testRunner)
+        setTimeout(() => testRunner.notifyDone(), 3000);
+    // Clear out any lingering documents from the previous tests.
+    GCController.collect();
+    GCController.collect();
+    runTest();
+
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+This tests navigating away from a document after setting a selection deletes the document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+iframe = appendIframe()
+PASS internals.numberOfLiveDocuments() is initialDocumentCount + 1
+iframe.src = "resources/select-iframe-focusin-document-crash-frame.html"
+PASS internals.numberOfLiveDocuments() is initialDocumentCount + 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

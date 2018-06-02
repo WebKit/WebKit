@@ -1165,6 +1165,7 @@ Editor::~Editor() = default;
 
 void Editor::clear()
 {
+    m_lastEditCommand = nullptr;
     if (m_compositionNode) {
         m_compositionNode = nullptr;
         if (EditorClient* client = this->client())
@@ -1173,6 +1174,14 @@ void Editor::clear()
     m_customCompositionUnderlines.clear();
     m_shouldStyleWithCSS = false;
     m_defaultParagraphSeparator = EditorParagraphSeparatorIsDiv;
+    m_mark = { };
+    m_oldSelectionForEditorUIUpdate = { };
+    m_editorUIUpdateTimer.stop();
+
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
+    m_telephoneNumberDetectionUpdateTimer.stop();
+    m_detectedTelephoneNumberRanges.clear();
+#endif
 }
 
 bool Editor::insertText(const String& text, Event* triggeringEvent, TextEventInputType inputType)
