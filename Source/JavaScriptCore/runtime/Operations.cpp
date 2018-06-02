@@ -23,7 +23,6 @@
 #include "Operations.h"
 
 #include "Error.h"
-#include "JSBigInt.h"
 #include "JSCInlines.h"
 #include "JSObject.h"
 #include "JSString.h"
@@ -65,19 +64,10 @@ NEVER_INLINE JSValue jsAddSlowCase(CallFrame* callFrame, JSValue v1, JSValue v2)
         return jsString(callFrame, p1String, asString(p2));
     }
 
-    auto leftNumeric = p1.toNumeric(callFrame);
+    double p1Number = p1.toNumber(callFrame);
     RETURN_IF_EXCEPTION(scope, { });
-    auto rightNumeric = p2.toNumeric(callFrame);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric))
-            return JSBigInt::add(vm, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
-
-        return throwTypeError(callFrame, scope, ASCIILiteral("Invalid mix of BigInt and other type in addition."));
-    }
-
-    return jsNumber(WTF::get<double>(leftNumeric) + WTF::get<double>(rightNumeric));
+    scope.release();
+    return jsNumber(p1Number + p2.toNumber(callFrame));
 }
 
 JSValue jsTypeStringForValue(VM& vm, JSGlobalObject* globalObject, JSValue v)

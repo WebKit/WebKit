@@ -7,6 +7,6 @@ try {
   message = error.message;
 }
 
-if (message !== "Invalid mix of BigInt and other type in addition.") {
+if (message !== "Conversion from 'BigInt' to 'number' is not allowed.") {
   throw new Error("Error message has changed to something unexpected");
 }
