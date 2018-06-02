@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CatchScope.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "Identifier.h"

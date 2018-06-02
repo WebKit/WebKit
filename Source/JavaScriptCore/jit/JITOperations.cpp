@@ -2816,34 +2816,23 @@ EncodedJSValue JIT_OPERATION operationArithNegateOptimize(ExecState* exec, Encod
     return JSValue::encode(jsNumber(-number));
 }
 
-ALWAYS_INLINE static EncodedJSValue unprofiledSub(VM& vm, ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+ALWAYS_INLINE static EncodedJSValue unprofiledSub(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue op1 = JSValue::decode(encodedOp1);
     JSValue op2 = JSValue::decode(encodedOp2);
-
-    double a = op1.toNumber(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    double b = op2.toNumber(exec);
-    return JSValue::encode(jsNumber(a - b));
+    
+    return JSValue::encode(jsSub(exec, op1, op2));
 }
 
-ALWAYS_INLINE static EncodedJSValue profiledSub(VM& vm, ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ArithProfile& arithProfile, bool shouldObserveLHSAndRHSTypes = true)
+ALWAYS_INLINE static EncodedJSValue profiledSub(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ArithProfile& arithProfile, bool shouldObserveLHSAndRHSTypes = true)
 {
-    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue op1 = JSValue::decode(encodedOp1);
     JSValue op2 = JSValue::decode(encodedOp2);
 
     if (shouldObserveLHSAndRHSTypes)
         arithProfile.observeLHSAndRHS(op1, op2);
 
-    double a = op1.toNumber(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    double b = op2.toNumber(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    
-    JSValue result = jsNumber(a - b);
+    JSValue result = jsSub(exec, op1, op2);
     arithProfile.observeResult(result);
     return JSValue::encode(result);
 }
@@ -2852,7 +2841,7 @@ EncodedJSValue JIT_OPERATION operationValueSub(ExecState* exec, EncodedJSValue e
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    return unprofiledSub(*vm, exec, encodedOp1, encodedOp2);
+    return unprofiledSub(exec, encodedOp1, encodedOp2);
 }
 
 EncodedJSValue JIT_OPERATION operationValueSubProfiled(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ArithProfile* arithProfile)
@@ -2862,7 +2851,7 @@ EncodedJSValue JIT_OPERATION operationValueSubProfiled(ExecState* exec, EncodedJ
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
 
-    return profiledSub(*vm, exec, encodedOp1, encodedOp2, *arithProfile);
+    return profiledSub(exec, encodedOp1, encodedOp2, *arithProfile);
 }
 
 EncodedJSValue JIT_OPERATION operationValueSubOptimize(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITSubIC* subIC)
@@ -2879,7 +2868,7 @@ EncodedJSValue JIT_OPERATION operationValueSubOptimize(ExecState* exec, EncodedJ
     exec->codeBlock()->dumpMathICStats();
 #endif
 
-    return unprofiledSub(*vm, exec, encodedOp1, encodedOp2);
+    return unprofiledSub(exec, encodedOp1, encodedOp2);
 }
 
 EncodedJSValue JIT_OPERATION operationValueSubNoOptimize(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITSubIC*)
@@ -2887,7 +2876,7 @@ EncodedJSValue JIT_OPERATION operationValueSubNoOptimize(ExecState* exec, Encode
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
 
-    return unprofiledSub(*vm, exec, encodedOp1, encodedOp2);
+    return unprofiledSub(exec, encodedOp1, encodedOp2);
 }
 
 EncodedJSValue JIT_OPERATION operationValueSubProfiledOptimize(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITSubIC* subIC)
@@ -2905,7 +2894,7 @@ EncodedJSValue JIT_OPERATION operationValueSubProfiledOptimize(ExecState* exec, 
     exec->codeBlock()->dumpMathICStats();
 #endif
 
-    return profiledSub(*vm, exec, encodedOp1, encodedOp2, *arithProfile, false);
+    return profiledSub(exec, encodedOp1, encodedOp2, *arithProfile, false);
 }
 
 EncodedJSValue JIT_OPERATION operationValueSubProfiledNoOptimize(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITSubIC* subIC)
@@ -2915,7 +2904,7 @@ EncodedJSValue JIT_OPERATION operationValueSubProfiledNoOptimize(ExecState* exec
 
     ArithProfile* arithProfile = subIC->arithProfile();
     ASSERT(arithProfile);
-    return profiledSub(*vm, exec, encodedOp1, encodedOp2, *arithProfile);
+    return profiledSub(exec, encodedOp1, encodedOp2, *arithProfile);
 }
 
 void JIT_OPERATION operationProcessTypeProfilerLog(ExecState* exec)
