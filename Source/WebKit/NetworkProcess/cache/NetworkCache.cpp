@@ -276,7 +276,7 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     }
 
     bool isMainResource = originalRequest.requester() == WebCore::ResourceRequest::Requester::Main;
-    bool storeUnconditionallyForHistoryNavigation = isMainResource || originalRequest.priority() >= WebCore::ResourceLoadPriority::High;
+    bool storeUnconditionallyForHistoryNavigation = isMainResource || originalRequest.priority() == WebCore::ResourceLoadPriority::VeryHigh;
     if (!storeUnconditionallyForHistoryNavigation) {
         auto now = WallTime::now();
         bool hasNonZeroLifetime = !response.cacheControlContainsNoCache() && WebCore::computeFreshnessLifetimeForHTTPFamily(response, now) > 0_ms;
