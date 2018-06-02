@@ -1,3 +1,66 @@
+2018-06-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Object.create should have intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=186200
+
+        Reviewed by Filip Pizlo.
+
+        Object.create is used in various JS code. `Object.create(null)` is particularly used
+        to create empty plain object with null [[Prototype]]. We can find `Object.create(null)`
+        call in ARES-6/Babylon code.
+
+        This patch adds ObjectCreateIntrinsic to JSC. DFG recognizes it and produces ObjectCreate
+        DFG node. DFG AI and constant folding attempt to convert it to NewObject when prototype
+        object is null. It offers significant performance boost for `Object.create(null)`.
+
+                                                         baseline                  patched
+
+        object-create-null                           53.7940+-1.5297     ^     19.8846+-0.6584        ^ definitely 2.7053x faster
+        object-create-unknown-object-prototype       38.9977+-1.1364     ^     37.2207+-0.6143        ^ definitely 1.0477x faster
+        object-create-untyped-prototype              22.5632+-0.6917           22.2539+-0.6876          might be 1.0139x faster
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToNewObject):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectCreate):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileObjectCreate):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::nullPrototypeObjectStructure const):
+        * runtime/ObjectConstructor.cpp:
+
 2018-06-02  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for addition operations

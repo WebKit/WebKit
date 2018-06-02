@@ -1472,6 +1472,7 @@ public:
     void compileNewArrayWithSize(Node*);
     void compileNewTypedArray(Node*);
     void compileToThis(Node*);
+    void compileObjectCreate(Node*);
     void compileCreateThis(Node*);
     void compileNewObject(Node*);
     void compileToPrimitive(Node*);

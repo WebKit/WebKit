@@ -255,6 +255,7 @@ namespace JSC { namespace DFG {
     macro(CheckSubClass, NodeMustGenerate) \
     macro(ParseInt, NodeMustGenerate | NodeResultJS) \
     macro(GetPrototypeOf, NodeMustGenerate | NodeResultJS) \
+    macro(ObjectCreate, NodeMustGenerate | NodeResultJS) \
     \
     /* Atomics object functions. */\
     macro(AtomicsAdd, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \

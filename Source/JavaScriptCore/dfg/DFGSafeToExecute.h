@@ -171,6 +171,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case IdentityWithProfile:
     case ToThis:
     case CreateThis:
+    case ObjectCreate:
     case GetCallee:
     case SetCallee:
     case GetArgumentCountIncludingThis:

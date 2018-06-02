@@ -113,6 +113,8 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "RegExpTestFastIntrinsic";
     case RegExpMatchFastIntrinsic:
         return "RegExpMatchFastIntrinsic";
+    case ObjectCreateIntrinsic:
+        return "ObjectCreateIntrinsic";
     case ObjectGetPrototypeOfIntrinsic:
         return "ObjectGetPrototypeOfIntrinsic";
     case ObjectIsIntrinsic:

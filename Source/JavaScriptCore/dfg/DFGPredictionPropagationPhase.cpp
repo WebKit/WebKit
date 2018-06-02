@@ -906,6 +906,7 @@ private:
             break;
         }
             
+        case ObjectCreate:
         case CreateThis:
         case NewObject: {
             setPrediction(SpecFinalObject);

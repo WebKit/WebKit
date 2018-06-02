@@ -12172,6 +12172,47 @@ void SpeculativeJIT::compileToThis(Node* node)
     jsValueResult(tempRegs, node);
 }
 
+void SpeculativeJIT::compileObjectCreate(Node* node)
+{
+    switch (node->child1().useKind()) {
+    case ObjectUse: {
+        SpeculateCellOperand prototype(this, node->child1());
+
+        GPRReg prototypeGPR = prototype.gpr();
+
+        speculateObject(node->child1(), prototypeGPR);
+
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+        callOperation(operationObjectCreateObject, resultGPR, prototypeGPR);
+        m_jit.exceptionCheck();
+
+        cellResult(resultGPR, node);
+        break;
+    }
+
+    case UntypedUse: {
+        JSValueOperand prototype(this, node->child1());
+
+        JSValueRegs prototypeRegs = prototype.jsValueRegs();
+
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+        callOperation(operationObjectCreate, resultGPR, prototypeRegs);
+        m_jit.exceptionCheck();
+
+        cellResult(resultGPR, node);
+        break;
+    }
+
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
 void SpeculativeJIT::compileCreateThis(Node* node)
 {
     // Note that there is not so much profit to speculate here. The only things we

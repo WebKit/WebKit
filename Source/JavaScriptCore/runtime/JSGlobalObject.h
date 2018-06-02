@@ -339,7 +339,7 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_glibCallbackFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_glibWrapperObjectStructure;
 #endif
-    LazyProperty<JSGlobalObject, Structure> m_nullPrototypeObjectStructure;
+    WriteBarrier<Structure> m_nullPrototypeObjectStructure;
     WriteBarrier<Structure> m_calleeStructure;
     WriteBarrier<Structure> m_strictFunctionStructure;
     WriteBarrier<Structure> m_arrowFunctionStructure;
@@ -654,7 +654,7 @@ public:
     Structure* glibWrapperObjectStructure() const { return m_glibWrapperObjectStructure.get(this); }
 #endif
     Structure* dateStructure() const { return m_dateStructure.get(this); }
-    Structure* nullPrototypeObjectStructure() const { return m_nullPrototypeObjectStructure.get(this); }
+    Structure* nullPrototypeObjectStructure() const { return m_nullPrototypeObjectStructure.get(); }
     Structure* errorStructure() const { return m_errorStructure.get(); }
     Structure* calleeStructure() const { return m_calleeStructure.get(); }
     Structure* strictFunctionStructure() const { return m_strictFunctionStructure.get(); }

@@ -1489,6 +1489,23 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
 
+    case ObjectCreate: {
+        switch (node->child1().useKind()) {
+        case ObjectUse:
+            read(HeapObjectCount);
+            write(HeapObjectCount);
+            return;
+        case UntypedUse:
+            read(World);
+            write(Heap);
+            return;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+    }
+
+
     case NewObject:
     case NewRegexp:
     case NewStringObject:

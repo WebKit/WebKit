@@ -537,10 +537,7 @@ void JSGlobalObject::init(VM& vm)
             init.set(JSWithScope::createStructure(init.vm, init.owner, jsNull()));
         });
     
-    m_nullPrototypeObjectStructure.initLater(
-        [] (const Initializer<Structure>& init) {
-            init.set(JSFinalObject::createStructure(init.vm, init.owner, jsNull(), JSFinalObject::defaultInlineCapacity()));
-        });
+    m_nullPrototypeObjectStructure.set(vm, this, JSFinalObject::createStructure(vm, this, jsNull(), JSFinalObject::defaultInlineCapacity()));
     
     m_callbackFunctionStructure.initLater(
         [] (const Initializer<Structure>& init) {
@@ -1394,7 +1391,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     thisObject->m_glibCallbackFunctionStructure.visit(visitor);
     thisObject->m_glibWrapperObjectStructure.visit(visitor);
 #endif
-    thisObject->m_nullPrototypeObjectStructure.visit(visitor);
+    visitor.append(thisObject->m_nullPrototypeObjectStructure);
     visitor.append(thisObject->m_errorStructure);
     visitor.append(thisObject->m_calleeStructure);
     visitor.append(thisObject->m_strictFunctionStructure);

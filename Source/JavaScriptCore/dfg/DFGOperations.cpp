@@ -248,6 +248,34 @@ EncodedJSValue JIT_OPERATION operationToThisStrict(ExecState* exec, EncodedJSVal
     return JSValue::encode(JSValue::decode(encodedOp).toThis(exec, StrictMode));
 }
 
+JSCell* JIT_OPERATION operationObjectCreate(ExecState* exec, EncodedJSValue encodedPrototype)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue prototype = JSValue::decode(encodedPrototype);
+
+    if (!prototype.isObject() && !prototype.isNull()) {
+        throwVMTypeError(exec, scope, ASCIILiteral("Object prototype may only be an Object or null."));
+        return nullptr;
+    }
+
+    if (prototype.isObject()) {
+        scope.release();
+        return constructEmptyObject(exec, asObject(prototype));
+    }
+    scope.release();
+    return constructEmptyObject(exec, exec->lexicalGlobalObject()->nullPrototypeObjectStructure());
+}
+
+JSCell* JIT_OPERATION operationObjectCreateObject(ExecState* exec, JSObject* prototype)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    return constructEmptyObject(exec, prototype);
+}
+
 JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor, uint32_t inlineCapacity)
 {
     VM& vm = exec->vm();

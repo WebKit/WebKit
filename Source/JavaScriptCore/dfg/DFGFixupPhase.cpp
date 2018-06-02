@@ -1446,6 +1446,15 @@ private:
             break;
         }
 
+        case ObjectCreate: {
+            if (node->child1()->shouldSpeculateObject()) {
+                fixEdge<ObjectUse>(node->child1());
+                node->clearFlags(NodeMustGenerate);
+                break;
+            }
+            break;
+        }
+
         case CheckStringIdent: {
             fixEdge<StringIdentUse>(node->child1());
             break;

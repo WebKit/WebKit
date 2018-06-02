@@ -76,7 +76,7 @@ const ClassInfo ObjectConstructor::s_info = { "Function", &InternalFunction::s_i
   keys                      objectConstructorKeys                       DontEnum|Function 1
   defineProperty            objectConstructorDefineProperty             DontEnum|Function 3
   defineProperties          objectConstructorDefineProperties           DontEnum|Function 2
-  create                    objectConstructorCreate                     DontEnum|Function 2
+  create                    objectConstructorCreate                     DontEnum|Function 2 ObjectCreateIntrinsic
   seal                      objectConstructorSeal                       DontEnum|Function 1
   freeze                    objectConstructorFreeze                     DontEnum|Function 1
   preventExtensions         objectConstructorPreventExtensions          DontEnum|Function 1
