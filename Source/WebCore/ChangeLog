@@ -1,3 +1,14 @@
+2018-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ResourceLoader::cancel() shouldn't synchronously fire load event on document
+        https://bugs.webkit.org/show_bug.cgi?id=185284
+
+        Revert the erroneous change to SSFontSelector::beginLoadTimerFired(), which broke CancelLoading.CancelFontSubresource.
+        FrameLoader::loadDone calls checkCompleted, not checkLoadComplete so we still need to call checkLoadComplete here.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::beginLoadTimerFired): 
+
 2018-06-01  Jeremy Jones  <jeremyj@apple.com>
 
         Keyboard focus should exit fullscreen.
