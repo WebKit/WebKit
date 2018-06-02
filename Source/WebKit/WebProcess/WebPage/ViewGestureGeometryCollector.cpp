@@ -54,6 +54,10 @@ using namespace WebCore;
 
 namespace WebKit {
 
+#if PLATFORM(IOS)
+static const double minimumScaleDifferenceForZooming = 0.3;
+#endif
+
 ViewGestureGeometryCollector::ViewGestureGeometryCollector(WebPage& webPage)
     : m_webPage(webPage)
 #if PLATFORM(MAC)
@@ -90,8 +94,6 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
 
 #if PLATFORM(IOS)
     if (m_webPage.platformPrefersTextLegibilityBasedZoomScaling()) {
-        static const double minimumScaleDifferenceForZooming = 0.05;
-
         auto textLegibilityScales = computeTextLegibilityScales(viewportMinimumScale, viewportMaximumScale);
         if (!textLegibilityScales) {
             dispatchDidCollectGeometryForSmartMagnificationGesture({ }, { }, { }, false, 0, 0);
@@ -143,10 +145,8 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
     static const double maximumNumberOfTextRunsToConsider = 200;
 
     static const double targetLegibilityFontSize = 12;
-    static const double firstTextLegibilityScaleRatio = 0.5;
-    static const double secondTextLegibilityScaleRatio = 0.1;
-    static const double minimumDifferenceBetweenTextLegibilityScales = 0.2;
-    static const double fallbackTextLegibilityScale = 1;
+    static const double textLegibilityScaleRatio = 0.1;
+    static const double defaultTextLegibilityZoomScale = 1;
 
     computeMinimumAndMaximumViewportScales(viewportMinimumScale, viewportMaximumScale);
     if (m_cachedTextLegibilityScales)
@@ -193,31 +193,24 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
         return first.fontSize < second.fontSize;
     });
 
-    double firstTextLegibilityScale = 0;
-    double secondTextLegibilityScale = 0;
+    double defaultScale = clampTo<double>(defaultTextLegibilityZoomScale, viewportMinimumScale, viewportMaximumScale);
+    double textLegibilityScale = defaultScale;
     double currentSampledTextLength = 0;
     for (auto& fontSizeAndCount : sortedFontSizesAndCounts) {
         currentSampledTextLength += fontSizeAndCount.count;
         double ratioOfTextUnderCurrentFontSize = currentSampledTextLength / totalSampledTextLength;
-        LOG(ViewGestures, "About %.2f%% of text is smaller than font size %tu", ratioOfTextUnderCurrentFontSize * 100, fontSizeAndCount.fontSize);
-        if (!firstTextLegibilityScale && ratioOfTextUnderCurrentFontSize >= firstTextLegibilityScaleRatio)
-            firstTextLegibilityScale = targetLegibilityFontSize / fontSizeAndCount.fontSize;
-        if (!secondTextLegibilityScale && ratioOfTextUnderCurrentFontSize >= secondTextLegibilityScaleRatio)
-            secondTextLegibilityScale = targetLegibilityFontSize / fontSizeAndCount.fontSize;
+        if (ratioOfTextUnderCurrentFontSize >= textLegibilityScaleRatio) {
+            textLegibilityScale = clampTo<double>(targetLegibilityFontSize / fontSizeAndCount.fontSize, viewportMinimumScale, viewportMaximumScale);
+            break;
+        }
     }
 
-    if (sortedFontSizesAndCounts.isEmpty()) {
-        firstTextLegibilityScale = fallbackTextLegibilityScale;
-        secondTextLegibilityScale = fallbackTextLegibilityScale;
-    } else if (secondTextLegibilityScale - firstTextLegibilityScale < minimumDifferenceBetweenTextLegibilityScales)
+    auto firstTextLegibilityScale = std::min<double>(textLegibilityScale, defaultScale);
+    auto secondTextLegibilityScale = std::max<double>(textLegibilityScale, defaultScale);
+    if (secondTextLegibilityScale - firstTextLegibilityScale < minimumScaleDifferenceForZooming)
         firstTextLegibilityScale = secondTextLegibilityScale;
 
-    secondTextLegibilityScale = clampTo<double>(secondTextLegibilityScale, viewportMinimumScale, viewportMaximumScale);
-    firstTextLegibilityScale = clampTo<double>(firstTextLegibilityScale, viewportMinimumScale, viewportMaximumScale);
-
-    LOG(ViewGestures, "The computed text legibility scales are: (%.2f, %.2f)", firstTextLegibilityScale, secondTextLegibilityScale);
-
-    m_cachedTextLegibilityScales = std::optional<std::pair<double, double>> {{ firstTextLegibilityScale, secondTextLegibilityScale }};
+    m_cachedTextLegibilityScales.emplace(std::pair<double, double> { firstTextLegibilityScale, secondTextLegibilityScale });
     return m_cachedTextLegibilityScales;
 }
 

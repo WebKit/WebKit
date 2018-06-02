@@ -1,3 +1,17 @@
+2018-06-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] The user should always be able to double tap to zoom to a scale of at least 1
+        https://bugs.webkit.org/show_bug.cgi?id=186209
+        <rdar://problem/40529255>
+
+        Reviewed by Tim Horton.
+
+        Add a test to verify that double tapping zooms in on a page where all the text is large enough to be legible at
+        initial scale.
+
+        * fast/events/extrazoom/double-tap-to-zoom-with-large-text-expected.txt: Added.
+        * fast/events/extrazoom/double-tap-to-zoom-with-large-text.html: Added.
+
 2018-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Editor can hold references to Documents after you navigate away
