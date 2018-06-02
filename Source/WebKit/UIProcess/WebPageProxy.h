@@ -356,6 +356,7 @@ public:
     bool addsVisitedLinks() const { return m_addsVisitedLinks; }
     void setAddsVisitedLinks(bool addsVisitedLinks) { m_addsVisitedLinks = addsVisitedLinks; }
 
+    void exitFullscreenImmediately();
     void fullscreenMayReturnToInline();
     void didEnterFullscreen();
     void didExitFullscreen();

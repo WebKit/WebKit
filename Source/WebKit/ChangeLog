@@ -1,3 +1,24 @@
+2018-06-02  Jeremy Jones  <jeremyj@apple.com>
+
+        Exit fullscreen when javascript alerts are presented.
+        https://bugs.webkit.org/show_bug.cgi?id=185619
+        rdar://problem/35724264
+
+        Reviewed by Jer Noble.
+
+        Prevent users from being trapped in fullscreen by alert cycles.
+        Prevent fullscreen from becoming unresponsive due to alerts hidden behind fullscreen.
+
+        Fullscreen exit is initiated here in the UI process so that fullscreen UI is torn down immediately,
+        before the alert is shown.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::exitFullscreenImmediately):
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+        * UIProcess/WebPageProxy.h:
+
 2018-06-02  Youenn Fablet  <youenn@apple.com>
 
         Add a sandbox profile for com.cisco.webex.plugin.gpc64 plugin

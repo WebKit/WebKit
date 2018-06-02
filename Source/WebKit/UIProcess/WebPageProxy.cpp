@@ -4244,6 +4244,19 @@ void WebPageProxy::showPage()
     m_uiClient->showPage(this);
 }
 
+void WebPageProxy::exitFullscreenImmediately()
+{
+#if ENABLE(FULLSCREEN_API)
+    if (fullScreenManager())
+        fullScreenManager()->close();
+#endif
+
+#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    if (videoFullscreenManager())
+        videoFullscreenManager()->requestHideAndExitFullscreen();
+#endif
+}
+
 void WebPageProxy::fullscreenMayReturnToInline()
 {
     m_uiClient->fullscreenMayReturnToInline(this);
@@ -4273,6 +4286,10 @@ void WebPageProxy::runJavaScriptAlert(uint64_t frameID, const SecurityOriginData
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
+#if PLATFORM(IOS)
+    exitFullscreenImmediately();
+#endif
+
     // Since runJavaScriptAlert() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer().stop();
 
@@ -4287,6 +4304,10 @@ void WebPageProxy::runJavaScriptConfirm(uint64_t frameID, const SecurityOriginDa
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
+
+#if PLATFORM(IOS)
+    exitFullscreenImmediately();
+#endif
 
     // Since runJavaScriptConfirm() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer().stop();
@@ -4304,6 +4325,9 @@ void WebPageProxy::runJavaScriptPrompt(uint64_t frameID, const SecurityOriginDat
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
+#if PLATFORM(IOS)
+    exitFullscreenImmediately();
+#endif
     // Since runJavaScriptPrompt() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer().stop();
 
