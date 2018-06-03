@@ -1081,12 +1081,6 @@ static void adjustSearchFieldIconStyle(RenderThemePart themePart, RenderStyle& s
 }
 #endif
 
-void RenderThemeGtk::adjustListboxStyle(StyleResolver&, RenderStyle& style, const Element* element) const
-{
-    if (element)
-        style.setColor(styleColor(ListBox, element->isDisabledFormControl() ? GTK_STATE_FLAG_INSENSITIVE : GTK_STATE_FLAG_NORMAL, StyleColorForeground));
-}
-
 bool RenderThemeGtk::paintTextArea(const RenderObject& o, const PaintInfo& i, const FloatRect& r)
 {
     return paintTextField(o, i, r);

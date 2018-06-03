@@ -3,6 +3,21 @@
         REGRESSION(r232338): [GTK] Broke a few layout tests
         https://bugs.webkit.org/show_bug.cgi?id=186244
 
+        Unreviewed, also rollout r232392.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::adjustListboxStyle const): Deleted.
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::adjustListboxStyle const): Deleted.
+        * rendering/RenderThemeGtk.h:
+
+2018-06-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r232338): [GTK] Broke a few layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=186244
+
         Unreviewed, rollout r232338.
 
         * platform/gtk/RenderThemeGadget.cpp:
