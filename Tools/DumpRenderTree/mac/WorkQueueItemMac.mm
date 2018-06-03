@@ -41,9 +41,9 @@
 bool LoadItem::invoke() const
 {
     RetainPtr<CFStringRef> urlCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, m_url.get()));
-    NSString *urlNS = (NSString *)urlCF.get();
+    NSString *urlNS = (__bridge NSString *)urlCF.get();
     RetainPtr<CFStringRef> targetCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, m_target.get()));
-    NSString *targetNS = (NSString *)targetCF.get();
+    NSString *targetNS = (__bridge NSString *)targetCF.get();
 
     WebFrame *targetFrame;
     if (targetNS && [targetNS length])
@@ -61,11 +61,11 @@ bool LoadHTMLStringItem::invoke() const
 
     if (m_unreachableURL) {
         RetainPtr<CFStringRef> unreachableURLCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, m_unreachableURL.get()));
-        [mainFrame loadAlternateHTMLString:(NSString *)contentCF.get() baseURL:[NSURL URLWithString:(NSString *)baseURLCF.get()] forUnreachableURL:[NSURL URLWithString:(NSString *)unreachableURLCF.get()]];
+        [mainFrame loadAlternateHTMLString:(__bridge NSString *)contentCF.get() baseURL:[NSURL URLWithString:(__bridge NSString *)baseURLCF.get()] forUnreachableURL:[NSURL URLWithString:(__bridge NSString *)unreachableURLCF.get()]];
         return true;
     }
 
-    [mainFrame loadHTMLString:(NSString *)contentCF.get() baseURL:[NSURL URLWithString:(NSString *)baseURLCF.get()]];
+    [mainFrame loadHTMLString:(__bridge NSString *)contentCF.get() baseURL:[NSURL URLWithString:(__bridge NSString *)baseURLCF.get()]];
     return true;
 }
 
@@ -78,7 +78,7 @@ bool ReloadItem::invoke() const
 bool ScriptItem::invoke() const
 {
     RetainPtr<CFStringRef> scriptCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, m_script.get()));
-    NSString *scriptNS = (NSString *)scriptCF.get();
+    NSString *scriptNS = (__bridge NSString *)scriptCF.get();
     [[mainFrame webView] stringByEvaluatingJavaScriptFromString:scriptNS];
     return true;
 }

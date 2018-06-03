@@ -61,8 +61,8 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     [globalWebViewConfiguration release];
     globalWebViewConfiguration = [[WKWebViewConfiguration alloc] init];
 
-    globalWebViewConfiguration.processPool = (WKProcessPool *)context;
-    globalWebViewConfiguration.websiteDataStore = (WKWebsiteDataStore *)WKContextGetWebsiteDataStore(context);
+    globalWebViewConfiguration.processPool = (__bridge WKProcessPool *)context;
+    globalWebViewConfiguration.websiteDataStore = (__bridge WKWebsiteDataStore *)WKContextGetWebsiteDataStore(context);
     globalWebViewConfiguration._allowUniversalAccessFromFileURLs = YES;
     globalWebViewConfiguration._applePayEnabled = YES;
 
@@ -71,7 +71,7 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     WKCookieManagerSetStorageAccessAPIEnabled(WKContextGetCookieManager(context), true);
 #endif
 
-    WKWebsiteDataStore* poolWebsiteDataStore = (WKWebsiteDataStore *)WKContextGetWebsiteDataStore((WKContextRef)globalWebViewConfiguration.processPool);
+    WKWebsiteDataStore* poolWebsiteDataStore = (__bridge WKWebsiteDataStore *)WKContextGetWebsiteDataStore((__bridge WKContextRef)globalWebViewConfiguration.processPool);
     [poolWebsiteDataStore _setCacheStoragePerOriginQuota: 400 * 1024];
     if (libraryPath) {
         String cacheStorageDirectory = String(libraryPath) + '/' + "CacheStorage";
@@ -113,7 +113,7 @@ void TestController::cocoaPlatformInitialize()
 WKContextRef TestController::platformContext()
 {
 #if WK_API_ENABLED
-    return (WKContextRef)globalWebViewConfiguration.processPool;
+    return (__bridge WKContextRef)globalWebViewConfiguration.processPool;
 #else
     return nullptr;
 #endif
@@ -122,7 +122,7 @@ WKContextRef TestController::platformContext()
 WKPreferencesRef TestController::platformPreferences()
 {
 #if WK_API_ENABLED
-    return (WKPreferencesRef)globalWebViewConfiguration.preferences;
+    return (__bridge WKPreferencesRef)globalWebViewConfiguration.preferences;
 #else
     return nullptr;
 #endif
@@ -174,7 +174,7 @@ WKContextRef TestController::platformAdjustContext(WKContextRef context, WKConte
 {
 #if WK_API_ENABLED
     initializeWebViewConfiguration(libraryPathForTesting(), injectedBundlePath(), context, contextConfiguration);
-    return (WKContextRef)globalWebViewConfiguration.processPool;
+    return (__bridge WKContextRef)globalWebViewConfiguration.processPool;
 #else
     return nullptr;
 #endif

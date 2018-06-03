@@ -546,4 +546,4 @@ NSString *NSTextInsertionUndoableAttributeName;
 
 @end
 
-#endif // !PLATFORM(IOS)
+#endif // PLATFORM(MAC)

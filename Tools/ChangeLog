@@ -1,3 +1,129 @@
+2018-06-02  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Update some code to be more ARC-compatible to prepare for future ARC adoption
+        https://bugs.webkit.org/show_bug.cgi?id=186227
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/mac/AccessibilityCommonMac.mm:
+        (+[NSString stringWithJSStringRef:]): Use CFBridgingRelease instead of autorelease.
+        (-[NSString createJSStringRef]): Add __bridge to a bridging typecast.
+
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm: Add a missing include.
+
+        * DumpRenderTree/mac/AccessibilityNotificationHandler.mm:
+        (-[NSString createJSStringRef]): Add __bridge to a bridging typecast.
+        * DumpRenderTree/mac/AccessibilityTextMarkerMac.mm:
+        (AccessibilityTextMarker::isEqual): Ditto.
+        (AccessibilityTextMarkerRange::isEqual): Ditto.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (-[DumpRenderTree _waitForWebThread]): Use @autoreleasepool instead of NSAutoreleasePool.
+        (DumpRenderTreeMain): Ditto.
+        (WebThreadLockAfterDelegateCallbacksHaveCompleted): Ditto.
+        (runTest): Ditto.
+
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.mm:
+        (copyFile): Use a std::pair to return both a URL and an error rather than using an
+        out argument for the NSError.
+        (-[DumpRenderTreeFilePromiseReceiver receivePromisedFilesAtDestination:options:operationQueue:reader:]):
+        Updated for the above change.
+
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        (-[DumpRenderTreeWindow _addToOpenWindows]): Add __bridge to a bridging typecast.
+        (-[DumpRenderTreeWindow close]): Ditto.
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        (setDisplayColorProfile): Ditto.
+
+        * DumpRenderTree/mac/PolicyDelegate.mm: Add a missing include.
+
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+        Add __bridge to a bridging typecast.
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (-[APITestDelegateIPhone initWithTestRunner:utf8Data:baseURL:]): Ditto.
+        (TestRunner::apiTestNewWindowDataLoadBaseURL): Use @autoreleasepool instead of NSAutoreleasePool.
+
+        * DumpRenderTree/mac/TextInputControllerMac.m: Fix a comment.
+
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::replaceTextAtRange): Add __bridge to a bridging typecast.
+        (WTR::UIScriptController::contentsOfUserInterfaceItem const): Ditto.
+        (WTR::UIScriptController::overridePreference): Ditto.
+        * DumpRenderTree/mac/WorkQueueItemMac.mm:
+        (LoadItem::invoke const): Ditto.
+        (LoadHTMLStringItem::invoke const): Ditto.
+        (ScriptItem::invoke const): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (+[NSString stringWithJSStringRef:]): Use CFBridgingRelease instead of autorelease.
+        (-[NSString createJSStringRef]): Add __bridge to a bridging typecast.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityCommonMac.mm:
+        (+[NSString stringWithJSStringRef:]): Use CFBridgingRelease instead of autorelease.
+        (-[NSString createJSStringRef]): Add __bridge to a bridging typecast.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityControllerMac.mm:
+        (WTR::AccessibilityController::accessibleElementById): Add __bridge to a bridging typecast.
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityNotificationHandler.mm:
+        (-[NSString createJSStringRef]): Ditto.
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityTextMarkerMac.mm:
+        (WTR::AccessibilityTextMarker::isEqual): Ditto.
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityTextMarkerRangeMac.mm:
+        (WTR::AccessibilityTextMarkerRange::isEqual): Ditto.
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::setSelectedVisibleTextRange): Ditto.
+        (WTR::AccessibilityUIElement::lineTextMarkerRangeForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::textMarkerRangeLength): Ditto.
+        (WTR::AccessibilityUIElement::previousTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::nextTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::stringForTextMarkerRange): Ditto.
+        (WTR::AccessibilityUIElement::textMarkerRangeForMarkers): Ditto.
+        (WTR::AccessibilityUIElement::startTextMarkerForTextMarkerRange): Ditto.
+        (WTR::AccessibilityUIElement::endTextMarkerForTextMarkerRange): Ditto.
+        (WTR::AccessibilityUIElement::accessibilityElementForTextMarker): Ditto.
+        (WTR::createJSStringRef): Ditto.
+        (WTR::AccessibilityUIElement::attributedStringForTextMarkerRange): Ditto.
+        (WTR::AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions): Ditto.
+        (WTR::AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute): Ditto.
+        (WTR::AccessibilityUIElement::indexForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::isTextMarkerValid): Ditto.
+        (WTR::AccessibilityUIElement::leftWordTextMarkerRangeForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::rightWordTextMarkerRangeForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::previousWordStartTextMarkerForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::nextWordEndTextMarkerForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::paragraphTextMarkerRangeForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::previousParagraphStartTextMarkerForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::nextParagraphEndTextMarkerForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::sentenceTextMarkerRangeForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::previousSentenceStartTextMarkerForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::nextSentenceEndTextMarkerForTextMarker): Ditto.
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration): Ditto.
+        (WTR::TestController::platformContext): Ditto.
+        (WTR::TestController::platformPreferences): Ditto.
+        (WTR::TestController::platformAdjustContext): Ditto.
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView): Ditto.
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::initializeInjectedBundlePath): Ditto.
+        (WTR::TestController::initializeTestPluginDirectory): Ditto.
+        (WTR::TestController::platformConfigureViewForTest): Ditto.
+
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::nsString): Use CFBridgingRelease instead of autorelease.
+        (WTR::UIScriptController::platformPlayBackEventStream): Add __bridge to a bridging
+        typecast.
+
+        * WebKitTestRunner/mac/WebKitTestRunnerDraggingInfo.mm: Add a missing include.
+
+        * WebKitTestRunner/mac/WebKitTestRunnerPasteboard.mm:
+        (-[LocalPasteboard setPropertyList:forType:]): Add _bridge to a bridging typecast.
+        (-[LocalPasteboard setString:forType:]): Ditto.
+
+        * WebKitTestRunner/mac/main.mm:
+        (main): Use @autoreleasepool instead of NSAutoreleasePool.
+
 2018-06-02  Keith Miller  <keith_miller@apple.com>
 
         run-jsc should pass the option to use dollar vm by default

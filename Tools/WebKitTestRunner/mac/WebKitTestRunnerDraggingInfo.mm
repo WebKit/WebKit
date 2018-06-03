@@ -29,6 +29,7 @@
 #import "EventSenderProxy.h"
 #import "PlatformWebView.h"
 #import "TestController.h"
+#import "TestRunnerWKWebView.h"
 
 using namespace WTR;
 

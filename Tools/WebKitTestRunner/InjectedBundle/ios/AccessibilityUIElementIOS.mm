@@ -108,13 +108,12 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
     if (!jsStringRef)
         return nil;
     
-    CFStringRef cfString = JSStringCopyCFString(kCFAllocatorDefault, jsStringRef);
-    return [(NSString *)cfString autorelease];
+    return CFBridgingRelease(JSStringCopyCFString(kCFAllocatorDefault, jsStringRef));
 }
 
 - (JSStringRef)createJSStringRef
 {
-    return JSStringCreateWithCFString((CFStringRef)self);
+    return JSStringCreateWithCFString((__bridge CFStringRef)self);
 }
 
 @end

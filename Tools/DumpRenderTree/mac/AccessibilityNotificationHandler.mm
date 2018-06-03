@@ -52,7 +52,7 @@
 
 - (JSStringRef)createJSStringRef
 {
-    return JSStringCreateWithCFString((CFStringRef)self);
+    return JSStringCreateWithCFString((__bridge CFStringRef)self);
 }
 
 @end

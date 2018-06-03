@@ -34,8 +34,8 @@
 #import <Foundation/Foundation.h>
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
-#import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLView.h>
 
 AccessibilityController::AccessibilityController()

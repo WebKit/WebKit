@@ -46,7 +46,7 @@ namespace WTR {
 
 NSString *nsString(JSStringRef string)
 {
-    return (NSString *)adoptCF(JSStringCopyCFString(kCFAllocatorDefault, string)).autorelease();
+    return CFBridgingRelease(JSStringCopyCFString(kCFAllocatorDefault, string));
 }
 
 void UIScriptController::doAsyncTask(JSValueRef callback)
@@ -236,7 +236,7 @@ void UIScriptController::completeBackSwipe(JSValueRef callback)
 void UIScriptController::platformPlayBackEventStream(JSStringRef eventStream, JSValueRef callback)
 {
     RetainPtr<CFStringRef> stream = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, eventStream));
-    playBackEvents(m_context, (NSString *)stream.get(), callback);
+    playBackEvents(m_context, (__bridge NSString *)stream.get(), callback);
 }
 
 void UIScriptController::firstResponderSuppressionForWebView(bool shouldSuppress)

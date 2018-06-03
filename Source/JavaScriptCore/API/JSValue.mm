@@ -686,9 +686,8 @@ static JSContainerConvertor::Task valueToObjectWithoutCopy(JSGlobalContextRef co
         } else if (JSValueIsString(context, value)) {
             // Would be nice to unique strings, too.
             JSStringRef jsstring = JSValueToStringCopy(context, value, 0);
-            NSString * stringNS = (NSString *)JSStringCopyCFString(kCFAllocatorDefault, jsstring);
+            primitive = CFBridgingRelease(JSStringCopyCFString(kCFAllocatorDefault, jsstring));
             JSStringRelease(jsstring);
-            primitive = [stringNS autorelease];
         } else if (JSValueIsNull(context, value))
             primitive = [NSNull null];
         else {
@@ -749,7 +748,7 @@ static id containerValueToObject(JSGlobalContextRef context, JSContainerConverto
             for (size_t i = 0; i < length; ++i) {
                 JSStringRef propertyName = JSPropertyNameArrayGetNameAtIndex(propertyNameArray, i);
                 if (id objc = convertor.convert(JSObjectGetProperty(context, js, propertyName, 0)))
-                    dictionary[[(NSString *)JSStringCopyCFString(kCFAllocatorDefault, propertyName) autorelease]] = objc;
+                    dictionary[(__bridge NSString *)adoptCF(JSStringCopyCFString(kCFAllocatorDefault, propertyName)).get()] = objc;
             }
 
             JSPropertyNameArrayRelease(propertyNameArray);
@@ -797,9 +796,9 @@ id valueToString(JSGlobalContextRef context, JSValueRef value, JSValueRef* excep
         return nil;
     }
 
-    RetainPtr<CFStringRef> stringCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsstring));
+    NSString *string = CFBridgingRelease(JSStringCopyCFString(kCFAllocatorDefault, jsstring));
     JSStringRelease(jsstring);
-    return (NSString *)stringCF.autorelease();
+    return string;
 }
 
 id valueToDate(JSGlobalContextRef context, JSValueRef value, JSValueRef* exception)

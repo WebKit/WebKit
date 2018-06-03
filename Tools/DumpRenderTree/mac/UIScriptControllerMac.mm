@@ -70,7 +70,7 @@ void UIScriptController::replaceTextAtRange(JSStringRef text, int location, int 
 {
     auto textToInsert = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, text));
     auto rangeAttribute = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:NSStringFromRange(NSMakeRange(location == -1 ? NSNotFound : location, length)), NSTextInputReplacementRangeAttributeName, nil]);
-    auto textAndRange = adoptNS([[NSAttributedString alloc] initWithString:(NSString *)textToInsert.get() attributes:rangeAttribute.get()]);
+    auto textAndRange = adoptNS([[NSAttributedString alloc] initWithString:(__bridge NSString *)textToInsert.get() attributes:rangeAttribute.get()]);
 
     [mainFrame.webView insertText:textAndRange.get()];
 }
@@ -98,7 +98,7 @@ JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfac
 #if JSC_OBJC_API_ENABLED
     WebView *webView = [mainFrame webView];
     RetainPtr<CFStringRef> interfaceItemCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, interfaceItem));
-    NSDictionary *contentDictionary = [webView _contentsOfUserInterfaceItem:(NSString *)interfaceItemCF.get()];
+    NSDictionary *contentDictionary = [webView _contentsOfUserInterfaceItem:(__bridge NSString *)interfaceItemCF.get()];
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:contentDictionary inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 #else
     UNUSED_PARAM(interfaceItem);
@@ -112,7 +112,7 @@ void UIScriptController::overridePreference(JSStringRef preferenceRef, JSStringR
 
     RetainPtr<CFStringRef> value = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, valueRef));
     if (JSStringIsEqualToUTF8CString(preferenceRef, "WebKitMinimumFontSize"))
-        preferences.minimumFontSize = [(NSString *)value.get() doubleValue];
+        preferences.minimumFontSize = [(__bridge NSString *)value.get() doubleValue];
 }
 
 void UIScriptController::simulateRotation(DeviceOrientation*, JSValueRef)

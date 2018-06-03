@@ -121,16 +121,14 @@ RefPtr<ObjcInstance> ObjcInstance::create(id instance, RefPtr<RootObject>&& root
 ObjcInstance::~ObjcInstance() 
 {
     // Both -finalizeForWebScript and -dealloc/-finalize of _instance may require autorelease pools.
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
+        ASSERT(_instance);
+        wrapperCache().remove(_instance.get());
 
-    ASSERT(_instance);
-    wrapperCache().remove(_instance.get());
-
-    if ([_instance.get() respondsToSelector:@selector(finalizeForWebScript)])
-        [_instance.get() performSelector:@selector(finalizeForWebScript)];
-    _instance = 0;
-
-    [pool drain];
+        if ([_instance.get() respondsToSelector:@selector(finalizeForWebScript)])
+            [_instance.get() performSelector:@selector(finalizeForWebScript)];
+        _instance = 0;
+    }
 }
 
 void ObjcInstance::virtualBegin()

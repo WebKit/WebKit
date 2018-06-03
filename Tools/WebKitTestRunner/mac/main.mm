@@ -57,15 +57,12 @@ static void disableAppNapInUIProcess()
 
 int main(int argc, const char* argv[])
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    [NSApplication sharedApplication];
-    setDefaultsToConsistentValuesForTesting();
-    disableAppNapInUIProcess(); // For secondary processes, app nap is disabled using WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled().
-
-    {
+    @autoreleasepool {
+        [NSApplication sharedApplication];
+        setDefaultsToConsistentValuesForTesting();
+        disableAppNapInUIProcess(); // For secondary processes, app nap is disabled using WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled().
         WTR::TestController controller(argc, argv);
     }
-    [pool drain];
     return 0;
 }
 

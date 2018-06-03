@@ -29,7 +29,7 @@ namespace WTR {
     
 bool AccessibilityTextMarkerRange::isEqual(AccessibilityTextMarkerRange* other)
 {
-    return [(id)platformTextMarkerRange() isEqual:(id)other->platformTextMarkerRange()];
+    return [(__bridge id)platformTextMarkerRange() isEqual:(__bridge id)other->platformTextMarkerRange()];
 }
     
 } // namespace WTR

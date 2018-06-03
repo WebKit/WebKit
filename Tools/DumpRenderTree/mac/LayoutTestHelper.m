@@ -147,7 +147,7 @@ static void saveDisplayColorProfiles(NSArray *displayUUIDStrings)
 static void setDisplayColorProfile(NSString *displayUUIDString, NSURL *colorProfileURL)
 {
     NSDictionary *profileInfo = @{
-        (NSString *)kColorSyncDeviceDefaultProfileID : colorProfileURL
+        (__bridge NSString *)kColorSyncDeviceDefaultProfileID : colorProfileURL
     };
 
     CFUUIDRef uuid = CFUUIDCreateFromString(kCFAllocatorDefault, (CFStringRef)displayUUIDString);

@@ -172,7 +172,7 @@ BOOL isAllowedHost(NSString *host)
         }
     }
 
-    if (disallowedURLs && CFSetContainsValue(disallowedURLs, url))
+    if (disallowedURLs && CFSetContainsValue(disallowedURLs, (__bridge CFURLRef)url))
         return nil;
 
     NSMutableURLRequest *newRequest = [request mutableCopy];

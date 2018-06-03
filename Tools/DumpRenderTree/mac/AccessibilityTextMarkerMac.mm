@@ -48,7 +48,7 @@ AccessibilityTextMarker::~AccessibilityTextMarker()
 
 bool AccessibilityTextMarker::isEqual(AccessibilityTextMarker* other)
 {
-    return [(id)platformTextMarker() isEqual:(id)other->platformTextMarker()];
+    return [(__bridge id)platformTextMarker() isEqual:(__bridge id)other->platformTextMarker()];
 }
 
 PlatformTextMarker AccessibilityTextMarker::platformTextMarker() const 
@@ -74,7 +74,7 @@ AccessibilityTextMarkerRange::~AccessibilityTextMarkerRange()
 
 bool AccessibilityTextMarkerRange::isEqual(AccessibilityTextMarkerRange* other)
 {
-    return [(id)platformTextMarkerRange() isEqual:(id)other->platformTextMarkerRange()];
+    return [(__bridge id)platformTextMarkerRange() isEqual:(__bridge id)other->platformTextMarkerRange()];
 }
 
 PlatformTextMarkerRange AccessibilityTextMarkerRange::platformTextMarkerRange() const

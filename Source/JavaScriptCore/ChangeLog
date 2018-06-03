@@ -1,3 +1,18 @@
+2018-06-02  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Update some code to be more ARC-compatible to prepare for future ARC adoption
+        https://bugs.webkit.org/show_bug.cgi?id=186227
+
+        Reviewed by Dan Bernstein.
+
+        * API/JSContext.mm:
+        (-[JSContext name]): Use CFBridgingRelease instead of autorelease.
+        * API/JSValue.mm:
+        (valueToObjectWithoutCopy): Use CFBridgingRelease instead of autorelease.
+        (containerValueToObject): Use adoptCF instead of autorelease. This is not only more
+        ARC-compatible, but more efficient.
+        (valueToString): Use CFBridgingRelease instead of autorelease.
+
 2018-06-02  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for addition operations

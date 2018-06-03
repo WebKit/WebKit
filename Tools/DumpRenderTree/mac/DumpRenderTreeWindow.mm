@@ -68,7 +68,7 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
     if (!openWindowsRef)
         openWindowsRef = CFArrayCreateMutable(NULL, 0, &NonRetainingArrayCallbacks);
 
-    CFArrayAppendValue(openWindowsRef, self);
+    CFArrayAppendValue(openWindowsRef, (__bridge CFTypeRef)self);
 }
 
 #if !PLATFORM(IOS)
@@ -102,7 +102,7 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     CFRange arrayRange = CFRangeMake(0, CFArrayGetCount(openWindowsRef));
-    CFIndex i = CFArrayGetFirstIndexOfValue(openWindowsRef, arrayRange, self);
+    CFIndex i = CFArrayGetFirstIndexOfValue(openWindowsRef, arrayRange, (__bridge CFTypeRef)self);
     if (i != kCFNotFound)
         CFArrayRemoveValueAtIndex(openWindowsRef, i);
 

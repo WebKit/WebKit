@@ -1337,9 +1337,9 @@ static const char **_argv;
         [self _webThreadInvoked];
     });
     while (!_hasFlushedWebThreadRunQueue) {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
-        [pool release];
+        @autoreleasepool {
+            [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+        }
     }
 }
 
@@ -1367,23 +1367,25 @@ int DumpRenderTreeMain(int argc, const char *argv[])
 #if PLATFORM(IOS)
     _UIApplicationLoadWebKit();
 #endif
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    setDefaultsToConsistentValuesForTesting(); // Must be called before NSApplication initialization.
+    @autoreleasepool {
+        setDefaultsToConsistentValuesForTesting(); // Must be called before NSApplication initialization.
 
 #if !PLATFORM(IOS)
-    [DumpRenderTreeApplication sharedApplication]; // Force AppKit to init itself
+        [DumpRenderTreeApplication sharedApplication]; // Force AppKit to init itself
 
-    dumpRenderTree(argc, argv);
+        dumpRenderTree(argc, argv);
 #else
-    _argc = argc;
-    _argv = argv;
-    UIApplicationMain(argc, (char**)argv, @"DumpRenderTree", @"DumpRenderTree");
+        _argc = argc;
+        _argv = argv;
+        UIApplicationMain(argc, (char**)argv, @"DumpRenderTree", @"DumpRenderTree");
 #endif
-    [WebCoreStatistics garbageCollectJavaScriptObjects];
-    [WebCoreStatistics emptyCache]; // Otherwise SVGImages trigger false positives for Frame/Node counts
-    JSC::finalizeStatsAtEndOfTesting();
-    [pool release];
+
+        [WebCoreStatistics garbageCollectJavaScriptObjects];
+        [WebCoreStatistics emptyCache]; // Otherwise SVGImages trigger false positives for Frame/Node counts
+        JSC::finalizeStatsAtEndOfTesting();
+    }
+
     returningFromMain = true;
     return 0;
 }
@@ -1867,9 +1869,9 @@ static void WebThreadLockAfterDelegateCallbacksHaveCompleted()
     });
 
     while (dispatch_semaphore_wait(delegateSemaphore, DISPATCH_TIME_NOW)) {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
-        [pool release];
+        @autoreleasepool {
+            [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+        }
     }
 
     WebThreadLock();
@@ -1994,70 +1996,70 @@ static void runTest(const string& inputLine)
     if (ignoreWebCoreNodeLeaks)
         [WebCoreStatistics startIgnoringWebCoreNodeLeaks];
 
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    [mainFrame loadRequest:[NSURLRequest requestWithURL:url]];
-    [pool release];
+    @autoreleasepool {
+        [mainFrame loadRequest:[NSURLRequest requestWithURL:url]];
+    }
 
     while (!done) {
-        pool = [[NSAutoreleasePool alloc] init];
-        CFRunLoopRunInMode(kCFRunLoopDefaultMode, 10, false);
-        [pool release];
+        @autoreleasepool {
+            CFRunLoopRunInMode(kCFRunLoopDefaultMode, 10, false);
+        }
     }
 
 #if PLATFORM(IOS)
     [(DumpRenderTree *)UIApp _waitForWebThread];
     WebThreadLockAfterDelegateCallbacksHaveCompleted();
 #endif
-    pool = [[NSAutoreleasePool alloc] init];
-    [EventSendingController clearSavedEvents];
-    [[mainFrame webView] setSelectedDOMRange:nil affinity:NSSelectionAffinityDownstream];
 
-    workQueue.clear();
+    @autoreleasepool {
+        [EventSendingController clearSavedEvents];
+        [[mainFrame webView] setSelectedDOMRange:nil affinity:NSSelectionAffinityDownstream];
 
-    // If the test page could have possibly opened the Web Inspector frontend,
-    // then try to close it in case it was accidentally left open.
-    if (shouldEnableDeveloperExtras(pathOrURL.c_str())) {
-        gTestRunner->closeWebInspector();
-        gTestRunner->setDeveloperExtrasEnabled(false);
-    }
+        workQueue.clear();
+
+        // If the test page could have possibly opened the Web Inspector frontend,
+        // then try to close it in case it was accidentally left open.
+        if (shouldEnableDeveloperExtras(pathOrURL.c_str())) {
+            gTestRunner->closeWebInspector();
+            gTestRunner->setDeveloperExtrasEnabled(false);
+        }
 
 #if PLATFORM(MAC)
-    // Make sure the WebView is parented, since the test may have unparented it.
-    WebView *webView = [mainFrame webView];
-    if (![webView superview])
-        [[mainWindow contentView] addSubview:webView];
+        // Make sure the WebView is parented, since the test may have unparented it.
+        WebView *webView = [mainFrame webView];
+        if (![webView superview])
+            [[mainWindow contentView] addSubview:webView];
 #endif
 
-    if (gTestRunner->closeRemainingWindowsWhenComplete()) {
-        NSArray* array = [DumpRenderTreeWindow openWindows];
+        if (gTestRunner->closeRemainingWindowsWhenComplete()) {
+            NSArray* array = [DumpRenderTreeWindow openWindows];
 
-        unsigned count = [array count];
-        for (unsigned i = 0; i < count; i++) {
-            NSWindow *window = [array objectAtIndex:i];
+            unsigned count = [array count];
+            for (unsigned i = 0; i < count; i++) {
+                NSWindow *window = [array objectAtIndex:i];
 
-            // Don't try to close the main window
-            if (window == [[mainFrame webView] window])
-                continue;
+                // Don't try to close the main window
+                if (window == [[mainFrame webView] window])
+                    continue;
 
 #if !PLATFORM(IOS)
-            WebView *webView = [[[window contentView] subviews] objectAtIndex:0];
+                WebView *webView = [[[window contentView] subviews] objectAtIndex:0];
 #else
-            ASSERT([[window contentView] isKindOfClass:[WebView class]]);
-            WebView *webView = (WebView *)[window contentView];
+                ASSERT([[window contentView] isKindOfClass:[WebView class]]);
+                WebView *webView = (WebView *)[window contentView];
 #endif
 
-            [webView close];
-            [window close];
+                [webView close];
+                [window close];
+            }
         }
+
+        resetWebViewToConsistentStateBeforeTesting(options);
+
+        // Loading an empty request synchronously replaces the document with a blank one, which is necessary
+        // to stop timers, WebSockets and other activity that could otherwise spill output into next test's results.
+        [mainFrame loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@""]]];
     }
-
-    resetWebViewToConsistentStateBeforeTesting(options);
-
-    // Loading an empty request synchronously replaces the document with a blank one, which is necessary
-    // to stop timers, WebSockets and other activity that could otherwise spill output into next test's results.
-    [mainFrame loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@""]]];
-
-    [pool release];
 
     // We should only have our main window left open when we're done
     ASSERT(CFArrayGetCount(openWindowsRef) == 1);

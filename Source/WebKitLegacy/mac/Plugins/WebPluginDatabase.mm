@@ -248,79 +248,80 @@ static NSArray *additionalWebPlugInPaths;
 {
     // This method does a bit of autoreleasing, so create an autorelease pool to ensure that calling
     // -refresh multiple times does not bloat the default pool.
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
-    // Create map from plug-in path to WebBasePluginPackage
-    if (!plugins)
-        plugins = [[NSMutableDictionary alloc] initWithCapacity:12];
+    @autoreleasepool {
+        // Create map from plug-in path to WebBasePluginPackage
+        if (!plugins)
+            plugins = [[NSMutableDictionary alloc] initWithCapacity:12];
 
-    // Find all plug-ins on disk
-    NSMutableSet *newPlugins = [self _scanForNewPlugins];
+        // Find all plug-ins on disk
+        NSMutableSet *newPlugins = [self _scanForNewPlugins];
 
-    // Find plug-ins to remove from database (i.e., plug-ins that no longer exist on disk)
-    NSMutableSet *pluginsToRemove = [NSMutableSet set];
-    NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
-    WebBasePluginPackage *plugin;
-    while ((plugin = [pluginEnumerator nextObject]) != nil) {
-        // Any plug-ins that were removed from disk since the last refresh should be removed from
-        // the database.
-        if (![newPlugins containsObject:plugin])
-            [pluginsToRemove addObject:plugin];
-            
-        // Remove every member of 'plugins' from 'newPlugins'.  After this loop exits, 'newPlugins'
-        // will be the set of new plug-ins that should be added to the database.
-        [newPlugins removeObject:plugin];
-    }
+        // Find plug-ins to remove from database (i.e., plug-ins that no longer exist on disk)
+        NSMutableSet *pluginsToRemove = [NSMutableSet set];
+        NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
+        WebBasePluginPackage *plugin;
+        while ((plugin = [pluginEnumerator nextObject]) != nil) {
+            // Any plug-ins that were removed from disk since the last refresh should be removed from
+            // the database.
+            if (![newPlugins containsObject:plugin])
+                [pluginsToRemove addObject:plugin];
+
+            // Remove every member of 'plugins' from 'newPlugins'. After this loop exits, 'newPlugins'
+            // will be the set of new plug-ins that should be added to the database.
+            [newPlugins removeObject:plugin];
+        }
 
 #if !LOG_DISABLED
-    if ([newPlugins count] > 0)
-        LOG(Plugins, "New plugins:\n%@", newPlugins);
-    if ([pluginsToRemove count] > 0)
-        LOG(Plugins, "Removed plugins:\n%@", pluginsToRemove);
+        if ([newPlugins count] > 0)
+            LOG(Plugins, "New plugins:\n%@", newPlugins);
+        if ([pluginsToRemove count] > 0)
+            LOG(Plugins, "Removed plugins:\n%@", pluginsToRemove);
 #endif
 
-    // Remove plugins from database
-    pluginEnumerator = [pluginsToRemove objectEnumerator];
-    while ((plugin = [pluginEnumerator nextObject]) != nil) 
-        [self _removePlugin:plugin];
-    
-    // Add new plugins to database
-    pluginEnumerator = [newPlugins objectEnumerator];
-    while ((plugin = [pluginEnumerator nextObject]) != nil)
-        [self _addPlugin:plugin];
+        // Remove plugins from database
+        pluginEnumerator = [pluginsToRemove objectEnumerator];
+        while ((plugin = [pluginEnumerator nextObject]) != nil)
+            [self _removePlugin:plugin];
 
-    // Build a list of MIME types.
-    NSMutableSet *MIMETypes = [[NSMutableSet alloc] init];
-    pluginEnumerator = [plugins objectEnumerator];
-    while ((plugin = [pluginEnumerator nextObject])) {
-        const PluginInfo& pluginInfo = [plugin pluginInfo];
-        for (size_t i = 0; i < pluginInfo.mimes.size(); ++i)
-            [MIMETypes addObject:pluginInfo.mimes[i].type];
-    }
-    
-    // Register plug-in views and representations.
-    NSEnumerator *MIMEEnumerator = [MIMETypes objectEnumerator];
-    NSString *MIMEType;
-    while ((MIMEType = [MIMEEnumerator nextObject]) != nil) {
-        [registeredMIMETypes addObject:MIMEType];
+        // Add new plugins to database
+        pluginEnumerator = [newPlugins objectEnumerator];
+        while ((plugin = [pluginEnumerator nextObject]) != nil)
+            [self _addPlugin:plugin];
 
-        if ([WebView canShowMIMETypeAsHTML:MIMEType])
-            // Don't allow plug-ins to override our core HTML types.
-            continue;
-        plugin = [self pluginForMIMEType:MIMEType];
-        if ([plugin isJavaPlugIn])
-            // Don't register the Java plug-in for a document view since Java files should be downloaded when not embedded.
-            continue;
-        if ([plugin isQuickTimePlugIn] && [[WebFrameView _viewTypesAllowImageTypeOmission:NO] objectForKey:MIMEType])
-            // Don't allow the QT plug-in to override any types because it claims many that we can handle ourselves.
-            continue;
-        
-        if (self == sharedDatabase)
-            [WebView _registerPluginMIMEType:MIMEType];
+        // Build a list of MIME types.
+        NSMutableSet *MIMETypes = [[NSMutableSet alloc] init];
+        pluginEnumerator = [plugins objectEnumerator];
+        while ((plugin = [pluginEnumerator nextObject])) {
+            const PluginInfo& pluginInfo = [plugin pluginInfo];
+            for (size_t i = 0; i < pluginInfo.mimes.size(); ++i)
+                [MIMETypes addObject:pluginInfo.mimes[i].type];
+        }
+
+        // Register plug-in views and representations.
+        NSEnumerator *MIMEEnumerator = [MIMETypes objectEnumerator];
+        NSString *MIMEType;
+        while ((MIMEType = [MIMEEnumerator nextObject]) != nil) {
+            [registeredMIMETypes addObject:MIMEType];
+
+            if ([WebView canShowMIMETypeAsHTML:MIMEType]) {
+                // Don't allow plug-ins to override our core HTML types.
+                continue;
+            }
+            plugin = [self pluginForMIMEType:MIMEType];
+            if ([plugin isJavaPlugIn]) {
+                // Don't register the Java plug-in for a document view since Java files should be downloaded when not embedded.
+                continue;
+            }
+            if ([plugin isQuickTimePlugIn] && [[WebFrameView _viewTypesAllowImageTypeOmission:NO] objectForKey:MIMEType]) {
+                // Don't allow the QT plug-in to override any types because it claims many that we can handle ourselves.
+                continue;
+            }
+
+            if (self == sharedDatabase)
+                [WebView _registerPluginMIMEType:MIMEType];
+        }
+        [MIMETypes release];
     }
-    [MIMETypes release];
-    
-    [pool drain];
 }
 
 - (BOOL)isMIMETypeRegistered:(NSString *)MIMEType

@@ -189,8 +189,8 @@ static NSMutableDictionary *localPasteboards;
 {
     CFDataRef data = 0;
     if (propertyList)
-        data = CFPropertyListCreateXMLData(0, propertyList);
-    BOOL result = [self setData:(NSData *)data forType:dataType];
+        data = CFPropertyListCreateXMLData(0, (__bridge CFTypeRef)propertyList);
+    BOOL result = [self setData:(__bridge NSData *)data forType:dataType];
     if (data)
         CFRelease(data);
     return result;
@@ -205,7 +205,7 @@ static NSMutableDictionary *localPasteboards;
         else
             data = CFStringCreateExternalRepresentation(0, (CFStringRef)string, kCFStringEncodingUTF8, 0);
     }
-    BOOL result = [self setData:(NSData *)data forType:dataType];
+    BOOL result = [self setData:(__bridge NSData *)data forType:dataType];
     if (data)
         CFRelease(data);
     return result;

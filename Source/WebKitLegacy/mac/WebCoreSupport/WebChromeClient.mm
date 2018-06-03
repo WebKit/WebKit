@@ -558,9 +558,9 @@ void WebChromeClient::setStatusbarText(const String& status)
 {
     // We want the temporaries allocated here to be released even before returning to the 
     // event loop; see <http://bugs.webkit.org/show_bug.cgi?id=9880>.
-    NSAutoreleasePool* localPool = [[NSAutoreleasePool alloc] init];
-    CallUIDelegate(m_webView, @selector(webView:setStatusText:), (NSString *)status);
-    [localPool drain];
+    @autoreleasepool {
+        CallUIDelegate(m_webView, @selector(webView:setStatusText:), (NSString *)status);
+    }
 }
 
 bool WebChromeClient::supportsImmediateInvalidation()

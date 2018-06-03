@@ -32,6 +32,7 @@
 #import "DumpRenderTree.h"
 #import "TestRunner.h"
 #import <WebKit/DOMElement.h>
+#import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebView.h>
