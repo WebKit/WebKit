@@ -1,3 +1,12 @@
+2018-06-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK test expectations gardening
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/editing/selection/simple-line-layout-caret-is-gone-expected.txt: Renamed from LayoutTests/platform/gtk/editing/simple-line-layout-caret-is-gone-expected.txt.
+        * platform/gtk/editing/style/apply-style-iframe-crash-expected.txt: Renamed from LayoutTests/platform/gtk/editing/apply-style-iframe-crash-expected.txt.
+
 2018-06-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] The user should always be able to double tap to zoom to a scale of at least 1

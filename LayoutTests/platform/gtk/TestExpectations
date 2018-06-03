@@ -228,7 +228,6 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-dur
 # Crash in bug #176019
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-endofstream.html [ Failure Crash ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-errors.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-preload.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-seekable.html [ Failure ]
@@ -585,42 +584,16 @@ webkit.org/b/79203 fast/mediastream/mock-media-source.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ Pass Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-dtmf.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Failure Crash ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-single-dialog.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Timeout Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-setRemoteDescription-offer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 # Crash is webkit.org/b/184292
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Failure Pass Crash ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-AddRemoveStream.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-add-removeTrack.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-addTrack-reuse-sender.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-addTransceiver.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-closed-state.html [ Timeout ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-createAnswer.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-createOffer.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-datachannel.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-have-local-offer.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-have-local-pranswer.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-have-remote-offer.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-have-remote-pranswer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-ice.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-answer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-legacy-stream-based-api.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-localDescription.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-callbacks-single-dialog.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-more-media-to-negotiate.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-overloaded-operations-params.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-overloaded-operations.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-remoteDescription.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stable.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-statsSelector.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCTrackEvent-constructor.html [ Failure ]
 webkit.org/b/79203 webaudio/mediastreamaudiosourcenode.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Crash ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Crash ]
@@ -1309,7 +1282,16 @@ webkit.org/b/184781 [ Release ] plugins/unavailable-plugin-indicator-obscurity.h
 
 webkit.org/b/185546 media/video-playbackrate.html [ Crash Pass ]
 
-webkit.org/b/185910 media/video-duration-known-after-eos.html [ Crash ]
+webkit.org/b/185910 media/video-duration-known-after-eos.html [ Crash Pass ]
+
+webkit.org/b/180253 [ Debug ] compositing/geometry/clipped-video-controller.html [ Crash ]
+webkit.org/b/180253 [ Debug ] fast/canvas/webgl/oes-texture-half-float-with-video.html [ Crash ]
+webkit.org/b/180253 [ Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html [ Crash ]
+webkit.org/b/180253 [ Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Crash ]
+webkit.org/b/180253 [ Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Crash ]
+webkit.org/b/180253 [ Debug ] fast/events/media-focus-in-standalone-media-document.html [ Crash ]
+webkit.org/b/180253 [ Debug ] fullscreen/video-controls-timeline.html [ Crash ]
+webkit.org/b/180253 [ Debug ] http/tests/appcache/video.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1939,7 +1921,8 @@ webkit.org/b/183608 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapK
 
 webkit.org/b/183609 inspector/unit-tests/throttle.html [ Pass Failure ]
 
-webkit.org/b/183214 compositing/video/poster.html [ Pass ImageOnlyFailure ]
+# Crash is bug #180253
+webkit.org/b/183214 compositing/video/poster.html [ Pass ImageOnlyFailure Crash ]
 
 webkit.org/b/183903 http/tests/media/video-buffered-range-contains-currentTime.html [ Crash Pass ]
 
@@ -2399,7 +2382,6 @@ webkit.org/b/157179 editing/pasteboard/drag-list-item.html [ Failure ]
 webkit.org/b/157179 fast/events/ondragenter.html [ Failure ]
 webkit.org/b/157179 fast/events/drag-customData.html  [ Timeout ]
 webkit.org/b/157179 fast/events/drag-and-drop-autoscroll-inner-frame.html [ Timeout ]
-webkit.org/b/157179 fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html [ Timeout ]
 
 # Need support for internals.settings.setDeviceSupportsMouse
 fast/events/touch/scroll-without-mouse-lacks-mousemove-events.html
@@ -2497,8 +2479,6 @@ Bug(GTK) http/tests/security/xssAuditor/xss-filter-bypass-sjis.html [ Failure ]
 Bug(GTK) fast/backgrounds/background-position-parsing.html [ Failure ]
 
 Bug(GTK) fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
-
-Bug(GTK) fast/forms/select/popup-closes-on-blur.html [ Failure ]
 
 # Shared workers disabled with the Network Process
 webkit.org/b/139357 fast/workers/worker-crash-with-invalid-location.html [ Skip ]
@@ -3047,7 +3027,8 @@ webkit.org/b/163186 editing/pasteboard/onpaste-text-html.html [ Failure ]
 # Failing since a new URLParser has been enabled on r207162
 webkit.org/b/163335 fast/loader/file-URL-with-port-number.html [ Timeout ]
 
-webkit.org/b/163383 accessibility/meter-element.html [ Failure ]
+# Crash is bug #186251
+webkit.org/b/163383 accessibility/meter-element.html [ Failure Crash ]
 
 webkit.org/b/163512 media/media-controls-accessibility.html [ Failure ]
 webkit.org/b/163521 media/tab-focus-inside-media-elements.html [ Failure ]
@@ -3300,12 +3281,6 @@ webkit.org/b/180805 inspector/canvas/requestContent-bitmaprenderer.html [ Failur
 
 webkit.org/b/181659 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Failure ]
 
-webkit.org/b/181660 webgl/1.0.2/conformance/limits/gl-min-textures.html [ Failure ]
-webkit.org/b/181660 webgl/1.0.3/conformance/glsl/bugs/sampler-array-using-loop-index.html [ Failure ]
-webkit.org/b/181660 fast/canvas/webgl/webgl-depth-texture.html [ Failure ]
-
-webkit.org/b/181661 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Failure ]
-
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-auto-fill-button.html [ Missing Failure ]
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button.html [ Missing Failure ]
 
@@ -3546,7 +3521,7 @@ webkit.org/b/160119 legacy-animation-engine/animations/negative-delay.html [ Pas
 
 webkit.org/b/160119 css3/masking/mask-base64.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/160119 media/video-object-fit-change.html [ ImageOnlyFailure ]
+webkit.org/b/160119 media/video-object-fit-change.html [ Pass ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of tests failing due to THREADED COMPOSITOR enablement. Don't put random test

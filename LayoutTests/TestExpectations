@@ -602,7 +602,7 @@ webkit.org/b/162517 [ Debug ] imported/w3c/web-platform-tests/html/the-xhtml-syn
 webkit.org/b/175588 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-all-global-events.html [ Skip ]
 
 # Tests that are flaky due to console log / error messages
-webkit.org/b/169565 imported/w3c/web-platform-tests/cors/basic.htm [ Failure ]
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/basic.htm [ Failure Pass ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/credentials-flag.htm [ Failure ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/preflight-cache.htm [ Failure ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/preflight-failure.htm [ Failure ]
@@ -662,7 +662,7 @@ webkit.org/b/161312 imported/w3c/web-platform-tests/html/semantics/document-meta
 webkit.org/b/178241 imported/w3c/web-platform-tests/fetch/api/basic/integrity.html [ Pass Failure ]
 webkit.org/b/178241 imported/w3c/web-platform-tests/fetch/api/basic/integrity-worker.html [ Pass Failure ]
 
-imported/w3c/web-platform-tests/fetch/http-cache/partial.html [ Failure ]
+imported/w3c/web-platform-tests/fetch/http-cache/partial.html [ Failure Pass ]
 webkit.org/b/159724 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Failure Pass ]
 
 # Flaky tests due to always changing assertion error message
@@ -1117,7 +1117,7 @@ webkit.org/b/148650 fast/repaint/add-table-overpaint.html [ Pass Failure ]
 webkit.org/b/148801 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-b.xht [ ImageOnlyFailure ]
 webkit.org/b/148801 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-multiple-boxes-c.xht [ ImageOnlyFailure ]
 webkit.org/b/148801 imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-multiple-boxes-c.xht [ ImageOnlyFailure ]
-webkit.org/b/148801 imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-b.xht [ ImageOnlyFailure ]
+webkit.org/b/148801 imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-b.xht [ ImageOnlyFailure Pass ]
 
 # lab/lch not supported
 imported/w3c/web-platform-tests/css/css-color/lab-001.html [ Skip ]
@@ -1156,12 +1156,12 @@ webkit.org/b/180209 imported/w3c/web-platform-tests/css/css-color/rgba-008.html 
 # Initial failures on the import of css-color
 imported/w3c/web-platform-tests/css/css-color/currentcolor-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-color/t31-color-text-a.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-color/t32-opacity-offscreen-with-alpha-c.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-color/t421-rgb-values-meaning-b.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-color/t32-opacity-offscreen-with-alpha-c.xht [ ImageOnlyFailure Pass ]
+imported/w3c/web-platform-tests/css/css-color/t421-rgb-values-meaning-b.xht [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/css/css-color/t424-hsl-basic-a.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-color/t424-hsl-parsing-f.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-color/t425-hsla-parsing-f.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-color/t425-hsla-values-b.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-color/t425-hsla-values-b.xht [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/css/css-color/t44-currentcolor-inherited-c.xht [ ImageOnlyFailure ]
 
 # Many CSS WG multicol-1 tests fail with 1px differences
@@ -1629,10 +1629,10 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-017.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-percentage-001.xht [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-001.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-018.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-020.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-018.html [ ImageOnlyFailure Pass ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-020.html [ ImageOnlyFailure Pass ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-026.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-028.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-028.html [ ImageOnlyFailure Pass ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-001.xht [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-002.xht [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-004.xht [ ImageOnlyFailure ]
@@ -1643,7 +1643,7 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-tailoring-003.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-tailoring-005.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-006.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-018.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-018.html [ ImageOnlyFailure Pass ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-019.html [ ImageOnlyFailure Pass ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-020.html [ ImageOnlyFailure Pass ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-021.html [ ImageOnlyFailure Pass ]
