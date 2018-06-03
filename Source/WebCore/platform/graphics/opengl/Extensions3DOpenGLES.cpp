@@ -66,6 +66,23 @@ Extensions3DOpenGLES::Extensions3DOpenGLES(GraphicsContext3D* context, bool useI
 
 Extensions3DOpenGLES::~Extensions3DOpenGLES() = default;
 
+bool Extensions3DOpenGLES::isEnabled(const String& name)
+{
+    // Return false immediately if the extension is not supported by the drivers.
+    bool enabled = Extensions3DOpenGLCommon::isEnabled(name);
+    if (!enabled)
+        return false;
+
+    // For GL_EXT_robustness, check that the context supports robust access.
+    if (name == "GL_EXT_robustness") {
+        GLint robustAccess = GL_FALSE;
+        m_context->getIntegerv(Extensions3D::CONTEXT_ROBUST_ACCESS, &robustAccess);
+        return robustAccess == GL_TRUE;
+    }
+
+    return true;
+}
+
 void Extensions3DOpenGLES::framebufferTexture2DMultisampleIMG(unsigned long target, unsigned long attachment, unsigned long textarget, unsigned int texture, int level, unsigned long samples)
 {
     if (m_glFramebufferTexture2DMultisampleIMG)

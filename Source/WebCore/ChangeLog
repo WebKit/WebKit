@@ -1,3 +1,39 @@
+2018-06-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WebGL] GL_EXT_robustness utilization should depend on CONTEXT_ROBUST_ACCESS value
+        https://bugs.webkit.org/show_bug.cgi?id=186187
+
+        Reviewed by Carlos Garcia Campos.
+
+        Don't utilize the GL_EXT_robustness extension for reading pixels from
+        the GPU if the underlying OpenGL context did not enable robust access
+        support upon creation. For EGL contexts, this would be done by passing
+        EGL_CONTEXT_OPENGL_ROBUST_ACCESS_EXT and EGL_TRUE key-value pair in the
+        attribute list passed to eglCreateContext() (as specified in the
+        EGL_EXT_create_context_robustness extension), but at the moment this
+        capability is not utilized.
+
+        As such, on drivers that implement GL_EXT_robustness support, pixel
+        reads done in WebGLRenderingContextBase end up using glReadnPixels(),
+        but that fails to successfully read anything due to the context
+        rejecting such calls.
+
+        GL_EXT_robustness is specific to OpenGL ES versions, so to fix this,
+        Extensions3DOpenGLES overrides the isEnabled() method. That override
+        returns false immediately if the inherited isEnabled() implementation
+        returns false. Otherwise it returns true, unless the tested extension
+        is GL_EXT_robustness, in which case we now check that the context's
+        CONTEXT_ROBUST_ACCESS state value is true, meaning the context was
+        created with robust access support enabled.
+
+        No new tests are possible because this is optional driver-provided
+        functionality that Web content cannot have effect on.
+
+        * platform/graphics/Extensions3D.h:
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp:
+        (WebCore::Extensions3DOpenGLES::isEnabled):
+        * platform/graphics/opengl/Extensions3DOpenGLES.h:
+
 2018-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Editor can hold references to Documents after you navigate away

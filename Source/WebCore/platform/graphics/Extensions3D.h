@@ -109,6 +109,7 @@ public:
         GUILTY_CONTEXT_RESET_ARB = 0x8253,
         INNOCENT_CONTEXT_RESET_ARB = 0x8254,
         UNKNOWN_CONTEXT_RESET_ARB = 0x8255,
+        CONTEXT_ROBUST_ACCESS = 0x90F3,
 
         // GL_EXT/OES_packed_depth_stencil enums
         DEPTH24_STENCIL8 = 0x88F0,
