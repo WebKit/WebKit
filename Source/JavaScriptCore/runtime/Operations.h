@@ -348,6 +348,26 @@ ALWAYS_INLINE JSValue jsAdd(CallFrame* callFrame, JSValue v1, JSValue v2)
     return jsAddSlowCase(callFrame, v1, v2);
 }
 
+ALWAYS_INLINE JSValue jsSub(ExecState* exec, JSValue v1, JSValue v2)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto leftNumeric = v1.toNumeric(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto rightNumeric = v2.toNumeric(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
+        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric))
+            return JSBigInt::sub(vm, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
+
+        return throwTypeError(exec, scope, ASCIILiteral("Invalid mix of BigInt and other type in subtraction."));
+    }
+
+    return jsNumber(WTF::get<double>(leftNumeric) - WTF::get<double>(rightNumeric));
+}
+
 ALWAYS_INLINE JSValue jsMul(ExecState* state, JSValue v1, JSValue v2)
 {
     VM& vm = state->vm();

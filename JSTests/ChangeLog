@@ -1,3 +1,27 @@
+2018-06-02  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement support for addition operations
+        https://bugs.webkit.org/show_bug.cgi?id=179002
+
+        Reviewed by Yusuke Suzuki.
+
+        * bigIntTests.yaml:
+        * stress/addition-order-evaluation.js: Added.
+        * stress/big-int-add-wrapped-value.js: Added.
+        * stress/big-int-addition-basic.js: Added.
+        * stress/big-int-addition-jit.js: Added.
+        * stress/big-int-addition-memory-stress.js: Added.
+        * stress/big-int-addition-string-coercion.js: Added.
+        * stress/big-int-addition-to-primitive-precedence.js: Added.
+        * stress/big-int-addition-to-primitive.js: Added.
+        * stress/big-int-addition-type-error.js: Added.
+        * stress/big-int-no-conversion-to-number.js:
+        * stress/big-int-sub-wrapped-value.js: Added.
+        * stress/big-int-subtraction-basic.js: Added.
+        * stress/big-int-subtraction-jit.js: Added.
+        * stress/big-int-subtraction-type-error.js: Added.
+        * stress/sub-order-evaluation.js: Added.
+
 2018-06-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r232439.

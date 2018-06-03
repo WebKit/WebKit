@@ -107,6 +107,8 @@ public:
     
     ComparisonResult static compareToDouble(JSBigInt* x, double y);
 
+    static JSBigInt* add(VM&, JSBigInt* x, JSBigInt* y);
+    static JSBigInt* sub(VM&, JSBigInt* x, JSBigInt* y);
     static JSBigInt* divide(ExecState*, JSBigInt* x, JSBigInt* y);
     static JSBigInt* remainder(ExecState*, JSBigInt* x, JSBigInt* y);
     static JSBigInt* unaryMinus(VM&, JSBigInt* x);
@@ -169,6 +171,8 @@ private:
     JSBigInt* rightTrim(VM&);
 
     void inplaceMultiplyAdd(Digit multiplier, Digit part);
+    static JSBigInt* absoluteAdd(VM&, JSBigInt* x, JSBigInt* y, bool resultSign);
+    static JSBigInt* absoluteSub(VM&, JSBigInt* x, JSBigInt* y, bool resultSign);
     
     static size_t allocationSize(unsigned length);
     static size_t offsetOfData();

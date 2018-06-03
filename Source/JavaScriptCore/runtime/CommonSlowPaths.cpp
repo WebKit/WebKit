@@ -405,7 +405,7 @@ SLOW_PATH_DECL(slow_path_negate)
     CHECK_EXCEPTION();
 
     if (primValue.isBigInt()) {
-        JSBigInt* result = JSBigInt::unaryMinus(exec->vm(), asBigInt(primValue));
+        JSBigInt* result = JSBigInt::unaryMinus(vm, asBigInt(primValue));
         RETURN_WITH_PROFILING(result, {
             updateArithProfileForUnaryArithOp(pc, result, operand);
         });
@@ -517,11 +517,23 @@ SLOW_PATH_DECL(slow_path_sub)
     BEGIN();
     JSValue left = OP_C(2).jsValue();
     JSValue right = OP_C(3).jsValue();
-    double a = left.toNumber(exec);
-    if (UNLIKELY(throwScope.exception()))
-        RETURN(JSValue());
-    double b = right.toNumber(exec);
-    JSValue result = jsNumber(a - b);
+    auto leftNumeric = left.toNumeric(exec);
+    CHECK_EXCEPTION();
+    auto rightNumeric = right.toNumeric(exec);
+    CHECK_EXCEPTION();
+
+    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
+        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
+            JSBigInt* result = JSBigInt::sub(vm, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
+            RETURN_WITH_PROFILING(result, {
+                updateArithProfileForBinaryArithOp(exec, pc, result, left, right);
+            });
+        }
+
+        THROW(createTypeError(exec, "Invalid mix of BigInt and other type in subtraction."));
+    }
+
+    JSValue result = jsNumber(WTF::get<double>(leftNumeric) - WTF::get<double>(rightNumeric));
     RETURN_WITH_PROFILING(result, {
         updateArithProfileForBinaryArithOp(exec, pc, result, left, right);
     });
@@ -539,7 +551,7 @@ SLOW_PATH_DECL(slow_path_div)
 
     if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSValue result(JSBigInt::divide(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric)));
+            JSBigInt* result = JSBigInt::divide(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
             CHECK_EXCEPTION();
             RETURN_WITH_PROFILING(result, {
                 updateArithProfileForBinaryArithOp(exec, pc, result, left, right);

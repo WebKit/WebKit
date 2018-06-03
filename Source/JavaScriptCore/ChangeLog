@@ -1,3 +1,40 @@
+2018-06-02  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement support for addition operations
+        https://bugs.webkit.org/show_bug.cgi?id=179002
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is implementing support to BigInt Operands into binary "+"
+        and binary "-" operators. Right now, we have limited support to DFG
+        and FTL JIT layers, but we plan to fix this support in future
+        patches.
+
+        * jit/JITOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::parseInt):
+        (JSC::JSBigInt::stringToBigInt):
+        (JSC::JSBigInt::toString):
+        (JSC::JSBigInt::multiply):
+        (JSC::JSBigInt::divide):
+        (JSC::JSBigInt::remainder):
+        (JSC::JSBigInt::add):
+        (JSC::JSBigInt::sub):
+        (JSC::JSBigInt::absoluteAdd):
+        (JSC::JSBigInt::absoluteSub):
+        (JSC::JSBigInt::toStringGeneric):
+        (JSC::JSBigInt::allocateFor):
+        (JSC::JSBigInt::toNumber const):
+        (JSC::JSBigInt::getPrimitiveNumber const):
+        * runtime/JSBigInt.h:
+        * runtime/JSCJSValueInlines.h:
+        * runtime/Operations.cpp:
+        (JSC::jsAddSlowCase):
+        * runtime/Operations.h:
+        (JSC::jsSub):
+
 2018-06-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r232439.
