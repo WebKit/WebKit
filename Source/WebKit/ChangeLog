@@ -1,3 +1,21 @@
+2018-06-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Make sure that the fencePort received over IPC has the expected disposition (SEND)
+        https://bugs.webkit.org/show_bug.cgi?id=186211
+        <rdar://problem/37814171>
+
+        Reviewed by Geoffrey Garen.
+
+        It is possible (though very unlikely) for a message to be recevied that has the wrong mach port disposition.
+        If this happens, we shouldn't manipulate the passed mach_port_t or pass it on to other API. We already
+        drop messages that violate this expectation in the IPC layer, but code handling IPC::Attachment data types
+        are not checking this value.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setTopContentInsetFenced):
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::setVideoLayerFrameFenced):
+
 2018-06-02  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r232275.

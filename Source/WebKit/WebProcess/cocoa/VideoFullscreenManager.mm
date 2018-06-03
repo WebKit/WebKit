@@ -564,6 +564,11 @@ void VideoFullscreenManager::setVideoLayerFrameFenced(uint64_t contextId, WebCor
 {
     LOG(Fullscreen, "VideoFullscreenManager::setVideoLayerFrameFenced(%p, %x)", this, contextId);
 
+    if (fencePort.disposition() != MACH_MSG_TYPE_MOVE_SEND) {
+        LOG(Fullscreen, "VideoFullscreenManager::setVideoLayerFrameFenced(%p, %x) Received an invalid fence port: %d, disposition: %d", this, contextId, fencePort.port(), fencePort.disposition());
+        return;
+    }
+
     RefPtr<VideoFullscreenModelVideoElement> model;
     RefPtr<VideoFullscreenInterfaceContext> interface;
     std::tie(model, interface) = ensureModelAndInterface(contextId);
@@ -573,8 +578,8 @@ void VideoFullscreenManager::setVideoLayerFrameFenced(uint64_t contextId, WebCor
         bounds = FloatRect(0, 0, videoRect.width(), videoRect.height());
     }
     
-    if (interface->layerHostingContext())
-        interface->layerHostingContext()->setFencePort(fencePort.port());
+    if (auto* context = interface->layerHostingContext())
+        context->setFencePort(fencePort.port());
     model->setVideoLayerFrame(bounds);
     deallocateSendRightSafely(fencePort.port());
 }
