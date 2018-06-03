@@ -493,53 +493,8 @@ void RenderThemeGtk::adjustRepaintRect(const RenderObject& renderObject, FloatRe
 }
 #endif // GTK_CHECK_VERSION(3, 20, 0)
 
-enum StyleColorType { StyleColorBackground, StyleColorForeground };
-
-#if GTK_CHECK_VERSION(3, 20, 0)
-static Color styleColor(RenderThemePart themePart, GtkStateFlags state, StyleColorType colorType)
+void RenderThemeGtk::adjustButtonStyle(StyleResolver&, RenderStyle& style, const Element*) const
 {
-    RenderThemeGadget* gadget = nullptr;
-    switch (themePart) {
-    default:
-        ASSERT_NOT_REACHED();
-        FALLTHROUGH;
-    case Entry:
-        gadget = &static_cast<RenderThemeEntry&>(RenderThemeWidget::getOrCreate(RenderThemeWidget::Type::Entry)).entry();
-        break;
-    case EntrySelection:
-        gadget = static_cast<RenderThemeEntry&>(RenderThemeWidget::getOrCreate(RenderThemeWidget::Type::SelectedEntry)).selection();
-        break;
-    case ListBox:
-        gadget = &static_cast<RenderThemeListView&>(RenderThemeWidget::getOrCreate(RenderThemeWidget::Type::ListView)).treeview();
-        break;
-    case Button:
-        gadget = &static_cast<RenderThemeButton&>(RenderThemeWidget::getOrCreate(RenderThemeWidget::Type::Button)).button();
-        break;
-    }
-
-    ASSERT(gadget);
-    gadget->setState(state);
-    return colorType == StyleColorBackground ? gadget->backgroundColor() : gadget->color();
-}
-#else
-static Color styleColor(RenderThemePart themePart, GtkStateFlags state, StyleColorType colorType)
-{
-    GRefPtr<GtkStyleContext> context = createStyleContext(themePart);
-    gtk_style_context_set_state(context.get(), state);
-
-    GdkRGBA gdkRGBAColor;
-    if (colorType == StyleColorBackground)
-        gtk_style_context_get_background_color(context.get(), state, &gdkRGBAColor);
-    else
-        gtk_style_context_get_color(context.get(), state, &gdkRGBAColor);
-    return gdkRGBAColor;
-}
-#endif // GTK_CHECK_VERSION(3, 20, 0)
-
-void RenderThemeGtk::adjustButtonStyle(StyleResolver&, RenderStyle& style, const Element* element) const
-{
-    if (element)
-        style.setColor(styleColor(Button, element->isDisabledFormControl() ? GTK_STATE_FLAG_INSENSITIVE : GTK_STATE_FLAG_NORMAL, StyleColorForeground));
     // Some layout tests check explicitly that buttons ignore line-height.
     if (style.appearance() == PushButtonPart)
         style.setLineHeight(RenderStyle::initialLineHeight());
@@ -990,9 +945,6 @@ static IntSize spinButtonSize()
 
 void RenderThemeGtk::adjustTextFieldStyle(StyleResolver&, RenderStyle& style, const Element* element) const
 {
-    if (element)
-        style.setColor(styleColor(Entry, element->isDisabledFormControl() ? GTK_STATE_FLAG_INSENSITIVE : GTK_STATE_FLAG_NORMAL, StyleColorForeground));
-
     if (!is<HTMLInputElement>(element) || !shouldHaveSpinButton(downcast<HTMLInputElement>(*element)))
         return;
 
@@ -1129,12 +1081,6 @@ static void adjustSearchFieldIconStyle(RenderThemePart themePart, RenderStyle& s
 }
 #endif
 
-void RenderThemeGtk::adjustTextAreaStyle(StyleResolver&, RenderStyle& style, const Element* element) const
-{
-    if (element)
-        style.setColor(styleColor(Entry, element->isDisabledFormControl() ? GTK_STATE_FLAG_INSENSITIVE : GTK_STATE_FLAG_NORMAL, StyleColorForeground));
-}
-
 void RenderThemeGtk::adjustListboxStyle(StyleResolver&, RenderStyle& style, const Element* element) const
 {
     if (element)
@@ -1260,10 +1206,8 @@ bool RenderThemeGtk::paintSearchFieldCancelButton(const RenderBox& renderObject,
 }
 #endif // GTK_CHECK_VERSION(3, 20, 0)
 
-void RenderThemeGtk::adjustSearchFieldStyle(StyleResolver&, RenderStyle& style, const Element* element) const
+void RenderThemeGtk::adjustSearchFieldStyle(StyleResolver&, RenderStyle& style, const Element*) const
 {
-    if (element)
-        style.setColor(styleColor(Entry, element->isDisabledFormControl() ? GTK_STATE_FLAG_INSENSITIVE : GTK_STATE_FLAG_NORMAL, StyleColorForeground));
     // We cannot give a proper rendering when border radius is active, unfortunately.
     style.resetBorderRadius();
     style.setLineHeight(RenderStyle::initialLineHeight());
@@ -1734,6 +1678,49 @@ Seconds RenderThemeGtk::caretBlinkInterval() const
 
     return 500_us * time;
 }
+
+enum StyleColorType { StyleColorBackground, StyleColorForeground };
+
+#if GTK_CHECK_VERSION(3, 20, 0)
+static Color styleColor(RenderThemePart themePart, GtkStateFlags state, StyleColorType colorType)
+{
+    RenderThemeGadget* gadget = nullptr;
+    switch (themePart) {
+    default:
+        ASSERT_NOT_REACHED();
+        FALLTHROUGH;
+    case Entry:
+        gadget = &static_cast<RenderThemeEntry&>(RenderThemeWidget::getOrCreate(RenderThemeWidget::Type::Entry)).entry();
+        break;
+    case EntrySelection:
+        gadget = static_cast<RenderThemeEntry&>(RenderThemeWidget::getOrCreate(RenderThemeWidget::Type::SelectedEntry)).selection();
+        break;
+    case ListBox:
+        gadget = &static_cast<RenderThemeListView&>(RenderThemeWidget::getOrCreate(RenderThemeWidget::Type::ListView)).treeview();
+        break;
+    case Button:
+        gadget = &static_cast<RenderThemeButton&>(RenderThemeWidget::getOrCreate(RenderThemeWidget::Type::Button)).button();
+        break;
+    }
+
+    ASSERT(gadget);
+    gadget->setState(state);
+    return colorType == StyleColorBackground ? gadget->backgroundColor() : gadget->color();
+}
+#else
+static Color styleColor(RenderThemePart themePart, GtkStateFlags state, StyleColorType colorType)
+{
+    GRefPtr<GtkStyleContext> context = createStyleContext(themePart);
+    gtk_style_context_set_state(context.get(), state);
+
+    GdkRGBA gdkRGBAColor;
+    if (colorType == StyleColorBackground)
+        gtk_style_context_get_background_color(context.get(), state, &gdkRGBAColor);
+    else
+        gtk_style_context_get_color(context.get(), state, &gdkRGBAColor);
+    return gdkRGBAColor;
+}
+#endif // GTK_CHECK_VERSION(3, 20, 0)
 
 Color RenderThemeGtk::platformActiveSelectionBackgroundColor() const
 {

@@ -1,3 +1,21 @@
+2018-06-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r232338): [GTK] Broke a few layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=186244
+
+        Unreviewed, rollout r232338.
+
+        * platform/gtk/RenderThemeGadget.cpp:
+        (WebCore::RenderThemeGadget::RenderThemeGadget):
+        (WebCore::baseStyleContext): Deleted.
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::adjustButtonStyle const):
+        (WebCore::RenderThemeGtk::adjustTextFieldStyle const):
+        (WebCore::RenderThemeGtk::adjustSearchFieldStyle const):
+        (WebCore::styleColor):
+        (WebCore::RenderThemeGtk::adjustTextAreaStyle const): Deleted.
+        * rendering/RenderThemeGtk.h:
+
 2018-06-03  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] MediaPlayer.framework is not always available

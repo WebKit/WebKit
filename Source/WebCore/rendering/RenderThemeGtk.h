@@ -118,8 +118,6 @@ private:
 
     void adjustTextFieldStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) override;
-
-    void adjustTextAreaStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
     LengthBox popupInternalPaddingBox(const RenderStyle&) const override;
