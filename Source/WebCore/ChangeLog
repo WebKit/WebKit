@@ -1,3 +1,14 @@
+2018-06-03  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] MediaPlayer.framework is not always available
+        https://bugs.webkit.org/show_bug.cgi?id=186220
+        <rdar://problem/40571286>
+
+        Reviewed by Tim Horton.
+
+        * platform/ios/RemoteCommandListenerIOS.mm:
+        (WebCore::RemoteCommandListener::create):
+
 2018-06-02  Darin Adler  <darin@apple.com>
 
         [Cocoa] Update some code to be more ARC-compatible to prepare for future ARC adoption

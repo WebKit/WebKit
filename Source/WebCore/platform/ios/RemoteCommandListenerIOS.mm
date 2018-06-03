@@ -33,7 +33,7 @@
 #import <MediaPlayer/MPRemoteCommandEvent.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK(MediaPlayer)
+SOFT_LINK_FRAMEWORK_OPTIONAL(MediaPlayer)
 SOFT_LINK_CLASS(MediaPlayer, MPRemoteCommandCenter)
 SOFT_LINK_CLASS(MediaPlayer, MPSeekCommandEvent)
 SOFT_LINK_CLASS(MediaPlayer, MPChangePlaybackPositionCommandEvent)
@@ -42,6 +42,9 @@ namespace WebCore {
 
 std::unique_ptr<RemoteCommandListener> RemoteCommandListener::create(RemoteCommandListenerClient& client)
 {
+    if (!MediaPlayerLibrary())
+        return nullptr;
+
     return std::make_unique<RemoteCommandListenerIOS>(client);
 }
 
