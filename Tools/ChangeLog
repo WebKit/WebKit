@@ -1,3 +1,12 @@
+2018-06-02  Keith Miller  <keith_miller@apple.com>
+
+        run-jsc should pass the option to use dollar vm by default
+        https://bugs.webkit.org/show_bug.cgi?id=186170
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/run-jsc:
+
 2018-06-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r232421.
