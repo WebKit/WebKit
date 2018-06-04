@@ -538,7 +538,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/IsoSubspaceInlines.h
     heap/IsoSubspacePerVM.h
     heap/LargeAllocation.h
-    heap/ListableHandler.h
     heap/LocalAllocator.h
     heap/LocalAllocatorInlines.h
     heap/LockDuringMarking.h

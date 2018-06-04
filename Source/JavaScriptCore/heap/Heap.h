@@ -32,7 +32,6 @@
 #include "HandleSet.h"
 #include "HeapFinalizerCallback.h"
 #include "HeapObserver.h"
-#include "ListableHandler.h"
 #include "MarkedBlock.h"
 #include "MarkedSpace.h"
 #include "MutatorState.h"
