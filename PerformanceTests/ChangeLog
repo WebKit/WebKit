@@ -1,3 +1,19 @@
+2018-06-04  Jon Lee  <jonlee@apple.com>
+
+        Remove unnecessary MotionMark controllers
+        https://bugs.webkit.org/show_bug.cgi?id=186255
+
+        Reviewed by Said Abou-Hallawa.
+
+        Get rid of the ramp30 and the fixed-with-a-step controllers, which aren't used for testing
+        or debugging.
+
+        * MotionMark/developer.html: Move the "ramp" option as first, since that is the default
+        controller for the benchmark.
+        * MotionMark/resources/debug-runner/motionmark.js:
+        * MotionMark/resources/runner/motionmark.js: Added missing copyright notice.
+        * MotionMark/tests/resources/main.js:
+
 2018-05-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Improve the performance of Font::canRenderCombiningCharacterSequence()

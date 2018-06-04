@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -265,33 +265,6 @@ FixedController = Utilities.createSubclass(Controller,
         this.intervalSamplingLength = 0;
     }
 );
-
-StepController = Utilities.createSubclass(Controller,
-    function(benchmark, options)
-    {
-        Controller.call(this, benchmark, options);
-        this.initialComplexity = options["complexity"];
-        this.intervalSamplingLength = 0;
-        this._stepped = false;
-        this._stepTime = options["test-interval"] / 2;
-    }, {
-
-    start: function(startTimestamp, stage)
-    {
-        Controller.prototype.start.call(this, startTimestamp, stage);
-        this._stepTime += startTimestamp;
-    },
-
-    tune: function(timestamp, stage)
-    {
-        if (this._stepped || timestamp < this._stepTime)
-            return;
-
-        this.mark(Strings.json.samplingEndTimeOffset, timestamp);
-        this._stepped = true;
-        stage.tune(stage.complexity() * 3);
-    }
-});
 
 AdaptiveController = Utilities.createSubclass(Controller,
     function(benchmark, options)
@@ -628,19 +601,6 @@ RampController = Utilities.createSubclass(Controller,
     }
 });
 
-Ramp30Controller = Utilities.createSubclass(RampController,
-    function(benchmark, options)
-    {
-        RampController.call(this, benchmark, options);
-    }, {
-
-    frameLengthDesired: 1000/30,
-    frameLengthDesiredThreshold: 1000/29,
-    frameLengthTierThreshold: 1000/20,
-    frameLengthRampLowerThreshold: 1000/20,
-    frameLengthRampUpperThreshold: 1000/12
-});
-
 Stage = Utilities.createClass(
     function()
     {
@@ -875,17 +835,12 @@ Benchmark = Utilities.createClass(
         case "fixed":
             this._controller = new FixedController(this, options);
             break;
-        case "step":
-            this._controller = new StepController(this, options);
-            break;
         case "adaptive":
             this._controller = new AdaptiveController(this, options);
             break;
         case "ramp":
             this._controller = new RampController(this, options);
             break;
-        case "ramp30":
-            this._controller = new Ramp30Controller(this, options);
         }
     }, {
 
