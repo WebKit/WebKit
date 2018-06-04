@@ -2,6 +2,22 @@
 
         Unreviewed WPE gardening.
 
+        Adding platform-specific baselines for three http/tests/cache/ tests.
+        Updating baseline for the security/block-test.html test.
+        Adding failure expectations for a few other failures, linking to existing bugs.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/http/tests/cache: Added.
+        * platform/wpe/http/tests/cache/disk-cache: Added.
+        * platform/wpe/http/tests/cache/disk-cache/redirect-chain-limits-expected.txt: Added.
+        * platform/wpe/http/tests/cache/iframe-304-crash-expected.txt: Added.
+        * platform/wpe/http/tests/cache/network-error-during-revalidation-expected.txt: Added.
+        * platform/wpe/security/block-test-expected.txt:
+
+2018-06-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening.
+
         Manage the W3C test failures by rebaselining what can be rebaselined, and adding
         failing expectations for the rest of the failures. This mostly addresses the
         new CSS Text tests that were imported lately, as well as changes in console logging.

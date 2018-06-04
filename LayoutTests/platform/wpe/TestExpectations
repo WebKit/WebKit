@@ -1171,3 +1171,16 @@ webkit.org/b/185676 fullscreen/video-controls-rtl.html [ Failure ]
 webkit.org/b/185676 fullscreen/full-screen-plugin.html [ Timeout ]
 
 webkit.org/b/186035 transitions/interrupted-transition-hardware.html [ ImageOnlyFailure ]
+
+webkit.org/b/185714 js/intl-numberformat-format-to-parts.html [ Failure ]
+webkit.org/b/185714 js/intl-pluralrules.html [ Failure ]
+
+webkit.org/b/184779 transitions/clip-path-path-transitions.html [ Failure ]
+webkit.org/b/184779 transitions/clip-path-transitions.html [ Failure ]
+
+webkit.org/b/186141 svg/dom/SVGGeometry-isPointInStroke.xhtml [ Failure ]
+
+webkit.org/b/185254 http/tests/cache/disk-cache/redirect-chain-limits.html [ Failure ]
+
+webkit.org/b/184501 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures.worker.html [ Failure ]
+webkit.org/b/184501 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes.worker.html [ Failure ]
