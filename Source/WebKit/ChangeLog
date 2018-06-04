@@ -1,3 +1,20 @@
+2018-06-04  Youenn Fablet  <youenn@apple.com>
+
+        NetworkCORSPreflightChecker should set the preflight request User-Agent header
+        https://bugs.webkit.org/show_bug.cgi?id=186254
+        <rdar://problem/40293504>
+
+        Reviewed by Chris Dumez.
+
+        Some servers misbehave if the User-Agent header is not set properly on preflight requests.
+        Set it to the same value as the request triggering the preflight.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::startPreflight):
+        * NetworkProcess/NetworkCORSPreflightChecker.h:
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::checkCORSRequestWithPreflight):
+
 2018-06-03  Andy Estes  <aestes@apple.com>
 
         [Wi-Fi Assertions] Resume assertions when NetworkProcess::cancelPrepareToSuspend is called

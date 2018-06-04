@@ -2,6 +2,7 @@
 PASS CORS [DELETE], server allows 
 PASS CORS [DELETE], server refuses 
 PASS CORS [PUT], server allows 
+PASS CORS [PUT], server allows, check preflight has user agent 
 PASS CORS [PUT], server refuses 
 PASS CORS [PATCH], server allows 
 PASS CORS [PATCH], server refuses 

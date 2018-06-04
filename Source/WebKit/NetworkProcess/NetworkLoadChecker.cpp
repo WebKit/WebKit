@@ -354,6 +354,7 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
         WTFMove(requestForPreflight),
         *m_origin,
         request.httpReferrer(),
+        request.httpUserAgent(),
         m_sessionID,
         m_storedCredentialsPolicy
     };

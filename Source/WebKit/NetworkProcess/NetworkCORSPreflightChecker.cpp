@@ -64,6 +64,9 @@ void NetworkCORSPreflightChecker::startPreflight()
     loadParameters.sessionID = m_parameters.sessionID;
     loadParameters.request = createAccessControlPreflightRequest(m_parameters.originalRequest, m_parameters.sourceOrigin, m_parameters.referrer);
     loadParameters.shouldFollowRedirects = false;
+    if (!m_parameters.userAgent.isNull())
+        loadParameters.request.setHTTPHeaderField(HTTPHeaderName::UserAgent, m_parameters.userAgent);
+
     if (auto* networkSession = SessionTracker::networkSession(loadParameters.sessionID)) {
         m_task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
         m_task->resume();

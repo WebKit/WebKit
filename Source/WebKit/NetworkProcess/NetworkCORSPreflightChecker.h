@@ -46,6 +46,7 @@ public:
         WebCore::ResourceRequest originalRequest;
         Ref<WebCore::SecurityOrigin> sourceOrigin;
         String referrer;
+        String userAgent;
         PAL::SessionID sessionID;
         WebCore::StoredCredentialsPolicy storedCredentialsPolicy;
     };
