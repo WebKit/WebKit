@@ -1,5 +1,18 @@
 2018-06-03  Andy Estes  <aestes@apple.com>
 
+        [Wi-Fi Assertions] Resume assertions when NetworkProcess::cancelPrepareToSuspend is called
+        https://bugs.webkit.org/show_bug.cgi?id=186247
+
+        Reviewed by Tim Horton.
+
+        Since we suspended assertions in prepareToSuspend, we need to resume them if
+        cancelPrepareToSuspend is called.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::cancelPrepareToSuspend):
+
+2018-06-03  Andy Estes  <aestes@apple.com>
+
         [iOS] Add a needed networking process entitlement
         https://bugs.webkit.org/show_bug.cgi?id=186246
         <rdar://problem/39578861>
