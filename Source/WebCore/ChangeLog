@@ -1,3 +1,18 @@
+2018-06-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Merge width and margin computation for block-level, non-replaced and inline,replaced element in normal flow
+        https://bugs.webkit.org/show_bug.cgi?id=186225
+
+        Reviewed by Antti Koivisto.
+
+        This patch merges the width and horizontal margin computation for
+        https://www.w3.org/TR/CSS22/visudet.html#inline-replaced-width and https://www.w3.org/TR/CSS22/visudet.html#blockwidth
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+
 2018-06-01  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Merge width and horizontal margin computation

@@ -519,10 +519,12 @@ LayoutUnit FormattingContext::Geometry::inlineReplacedHeight(LayoutContext&, con
     return computedHeightValue;
 }
 
-FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(LayoutContext&, const Box& layoutBox)
+FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT((layoutBox.isOutOfFlowPositioned() || layoutBox.isFloatingPositioned() || layoutBox.isInFlow()) && layoutBox.replaced());
     // 10.3.2 Inline, replaced elements
+    //
+    // A computed value of 'auto' for 'margin-left' or 'margin-right' becomes a used value of '0'.
     //
     // 1. If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic width, then that intrinsic width is the used value of 'width'.
     //
@@ -539,10 +541,21 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::inlineR
     // 5. Otherwise, if 'width' has a computed value of 'auto', but none of the conditions above are met, then the used value of 'width' becomes 300px.
     //    If 300px is too wide to fit the device, UAs should use the width of the largest rectangle that has a 2:1 ratio and fits the device instead.
     auto& style = layoutBox.style();
+    LayoutUnit computedWidthValue;
+    LayoutUnit computedMarginLeft;
+    LayoutUnit computedMarginRight;
+
+    {
+        auto marginLeft = style.marginLeft();
+        auto marginRight = style.marginRight();
+        auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+
+        computedMarginLeft = marginLeft.isAuto() ? LayoutUnit(0) : valueForLength(marginLeft, containingBlockWidth);
+        computedMarginRight = marginRight.isAuto() ? LayoutUnit(0) : valueForLength(marginRight, containingBlockWidth);
+    }
+
     auto width = style.logicalWidth();
     auto height = style.logicalHeight();
-
-    LayoutUnit computedWidthValue;
     auto replaced = layoutBox.replaced();
     ASSERT(replaced);
 
