@@ -2,17 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>com.apple.private.accounts.bundleidspoofing</key>
+	<true/>
 	<key>com.apple.private.ids.link-preferences</key>
 	<true/>
-	<key>com.apple.wifi.manager-access</key>
+	<key>com.apple.private.ids.messaging</key>
 	<true/>
-	<key>com.apple.private.accounts.bundleidspoofing</key>
+	<key>com.apple.private.network.socket-delegate</key>
+	<true/>
+	<key>com.apple.wifi.manager-access</key>
 	<true/>
 	<key>seatbelt-profiles</key>
 	<array>
 		<string>com.apple.WebKit.Networking</string>
 	</array>
-	<key>com.apple.private.network.socket-delegate</key>
-	<true/>
 </dict>
 </plist>

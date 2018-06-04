@@ -1,3 +1,15 @@
+2018-06-03  Andy Estes  <aestes@apple.com>
+
+        [iOS] Add a needed networking process entitlement
+        https://bugs.webkit.org/show_bug.cgi?id=186246
+        <rdar://problem/39578861>
+
+        Reviewed by Brent Fulgham.
+
+        Also sorted the existing entitlements.
+
+        * Configurations/Network-iOS.entitlements:
+
 2018-06-03  Brent Fulgham  <bfulgham@apple.com>
 
         Make sure that the fencePort received over IPC has the expected disposition (SEND)
