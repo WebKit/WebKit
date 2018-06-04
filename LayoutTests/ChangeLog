@@ -1,3 +1,11 @@
+2018-06-04  Per Arne Vollan  <pvollan@apple.com>
+
+        Rebaseline editing/style/apply-style-iframe-crash.html on Windows.
+
+        Unreviewed test gardening.
+
+        * platform/win/editing/style/apply-style-iframe-crash-expected.txt: Added.
+
 2018-06-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening.
