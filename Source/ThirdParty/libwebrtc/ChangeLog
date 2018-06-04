@@ -1,3 +1,16 @@
+2018-06-04  Youenn Fablet  <youenn@apple.com>
+
+        [WK1] Add an option to restrict communication to localhost sockets
+        https://bugs.webkit.org/show_bug.cgi?id=186249
+
+        Reviewed by Eric Carlson.
+
+        Export new symbols used for WK1.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
 2018-05-31  David Kilzer  <ddkilzer@apple.com>
 
         Fix leak of AudioDeviceID array due to an early return in AudioDeviceMac::GetNumberDevices()

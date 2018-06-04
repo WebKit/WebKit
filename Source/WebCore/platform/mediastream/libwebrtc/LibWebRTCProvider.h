@@ -107,7 +107,7 @@ public:
     void disableEnumeratingAllNetworkInterfaces() { m_enableEnumeratingAllNetworkInterfaces = false; }
     void enableEnumeratingAllNetworkInterfaces() { m_enableEnumeratingAllNetworkInterfaces = true; }
 
-    virtual void disableNonLocalhostConnections() { };
+    virtual void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
 
 protected:
     LibWebRTCProvider() = default;
@@ -123,6 +123,7 @@ protected:
     bool m_useNetworkThreadWithSocketServer { true };
 
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> m_factory;
+    bool m_disableNonLocalhostConnections { false };
 #endif
 };
 

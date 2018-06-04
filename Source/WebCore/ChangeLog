@@ -1,3 +1,23 @@
+2018-06-04  Youenn Fablet  <youenn@apple.com>
+
+        [WK1] Add an option to restrict communication to localhost sockets
+        https://bugs.webkit.org/show_bug.cgi?id=186249
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+        Set explicitly webrtc socket IP address to 127.0.0.1 in testing mode.
+        For that purpose, we need WK1 to create a wrapper around a socket factory,
+        this wrapper being responsible of setting or not the IP address to 127.0.0.1.
+
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::prepareSocketAddress):
+        (WebCore::BasicPacketSocketFactory::BasicPacketSocketFactory):
+        (WebCore::BasicPacketSocketFactory::setDisableNonLocalhostConnections):
+        (WebCore::BasicPacketSocketFactory::CreateClientTcpSocket):
+        (WebCore::LibWebRTCProvider::createPeerConnection):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+
 2018-06-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Merge width and margin computation for block-level, non-replaced and inline,replaced element in normal flow

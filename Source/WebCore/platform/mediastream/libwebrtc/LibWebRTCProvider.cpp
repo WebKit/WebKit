@@ -34,6 +34,7 @@
 #include <webrtc/api/audio_codecs/builtin_audio_encoder_factory.h>
 #include <webrtc/api/peerconnectionfactoryproxy.h>
 #include <webrtc/modules/audio_processing/include/audio_processing.h>
+#include <webrtc/p2p/base/basicpacketsocketfactory.h>
 #include <webrtc/p2p/client/basicportallocator.h>
 #include <webrtc/pc/peerconnectionfactory.h>
 #include <webrtc/rtc_base/physicalsocketserver.h>
@@ -51,11 +52,50 @@ UniqueRef<LibWebRTCProvider> LibWebRTCProvider::create()
 #endif
 
 #if USE(LIBWEBRTC)
+static inline rtc::SocketAddress prepareSocketAddress(const rtc::SocketAddress& address, bool disableNonLocalhostConnections)
+{
+    auto result = address;
+    if (disableNonLocalhostConnections)
+        result.SetIP("127.0.0.1");
+    return result;
+}
+
+class BasicPacketSocketFactory : public rtc::BasicPacketSocketFactory {
+public:
+    explicit BasicPacketSocketFactory(rtc::Thread& networkThread)
+        : m_socketFactory(makeUniqueRef<rtc::BasicPacketSocketFactory>(&networkThread))
+    {
+    }
+
+    void setDisableNonLocalhostConnections(bool disableNonLocalhostConnections) { m_disableNonLocalhostConnections = disableNonLocalhostConnections; }
+
+    rtc::AsyncPacketSocket* CreateUdpSocket(const rtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort) final
+    {
+        return m_socketFactory->CreateUdpSocket(prepareSocketAddress(address, m_disableNonLocalhostConnections), minPort, maxPort);
+    }
+
+    rtc::AsyncPacketSocket* CreateServerTcpSocket(const rtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort, int options) final
+    {
+        return m_socketFactory->CreateServerTcpSocket(prepareSocketAddress(address, m_disableNonLocalhostConnections), minPort, maxPort, options);
+    }
+
+    rtc::AsyncPacketSocket* CreateClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, const rtc::ProxyInfo& info, const std::string& name, int options)
+    {
+        return m_socketFactory->CreateClientTcpSocket(prepareSocketAddress(localAddress, m_disableNonLocalhostConnections), remoteAddress, info, name, options);
+    }
+
+private:
+    bool m_disableNonLocalhostConnections { false };
+    UniqueRef<rtc::BasicPacketSocketFactory> m_socketFactory;
+};
+
 struct PeerConnectionFactoryAndThreads : public rtc::MessageHandler {
     std::unique_ptr<rtc::Thread> networkThread;
     std::unique_ptr<rtc::Thread> signalingThread;
     bool networkThreadWithSocketServer { false };
     std::unique_ptr<LibWebRTCAudioModule> audioDeviceModule;
+    std::unique_ptr<rtc::NetworkManager> networkManager;
+    std::unique_ptr<BasicPacketSocketFactory> packetSocketFactory;
 
 private:
     void OnMessage(rtc::Message*);
@@ -164,17 +204,20 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
 {
     // Default WK1 implementation.
     ASSERT(m_useNetworkThreadWithSocketServer);
-    auto* factory = this->factory();
-    if (!factory)
-        return nullptr;
+    auto& factoryAndThreads = getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer);
 
-    return m_factory->CreatePeerConnection(configuration, nullptr, nullptr, &observer);
+    if (!factoryAndThreads.networkManager)
+        factoryAndThreads.networkManager = std::make_unique<rtc::BasicNetworkManager>();
+
+    if (!factoryAndThreads.packetSocketFactory)
+        factoryAndThreads.packetSocketFactory = std::make_unique<BasicPacketSocketFactory>(*factoryAndThreads.networkThread);
+    factoryAndThreads.packetSocketFactory->setDisableNonLocalhostConnections(m_disableNonLocalhostConnections);
+
+    return createPeerConnection(observer, *factoryAndThreads.networkManager, *factoryAndThreads.packetSocketFactory, WTFMove(configuration));
 }
 
 rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, rtc::NetworkManager& networkManager, rtc::PacketSocketFactory& packetSocketFactory, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
-    ASSERT(!m_useNetworkThreadWithSocketServer);
-
     auto& factoryAndThreads = getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer);
 
     std::unique_ptr<cricket::BasicPortAllocator> portAllocator;
