@@ -217,7 +217,7 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
 ExceptionOr<void> FetchRequest::setBody(FetchBody::Init&& body)
 {
     if (!methodCanHaveBody(m_request))
-        return Exception { TypeError };
+        return Exception { TypeError, makeString("Request has method '", m_request.httpMethod(), "' and cannot have a body") };
 
     ASSERT(scriptExecutionContext());
     extractBody(*scriptExecutionContext(), WTFMove(body));
@@ -231,7 +231,7 @@ ExceptionOr<void> FetchRequest::setBody(FetchRequest& request)
 {
     if (!request.isBodyNull()) {
         if (!methodCanHaveBody(m_request))
-            return Exception { TypeError };
+            return Exception { TypeError, makeString("Request has method '", m_request.httpMethod(), "' and cannot have a body") };
         // FIXME: If body has a readable stream, we should pipe it to this new body stream.
         m_body = WTFMove(request.m_body);
         request.setDisturbed();
@@ -291,7 +291,7 @@ ResourceRequest FetchRequest::resourceRequest() const
 ExceptionOr<Ref<FetchRequest>> FetchRequest::clone(ScriptExecutionContext& context)
 {
     if (isDisturbedOrLocked())
-        return Exception { TypeError };
+        return Exception { TypeError, ASCIILiteral("Body is disturbed or locked") };
 
     auto clone = adoptRef(*new FetchRequest(context, std::nullopt, FetchHeaders::create(m_headers.get()), ResourceRequest { m_request }, FetchOptions { m_options}, String { m_referrer }));
     clone->cloneBody(*this);

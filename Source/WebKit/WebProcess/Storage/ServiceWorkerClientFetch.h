@@ -32,6 +32,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include <WebCore/FetchIdentifier.h>
+#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoader.h>
 #include <wtf/CompletionHandler.h>
 
@@ -64,7 +65,7 @@ private:
     void didReceiveData(const IPC::DataReference&, int64_t encodedDataLength);
     void didReceiveFormData(const IPC::FormDataReference&);
     void didFinish();
-    void didFail();
+    void didFail(WebCore::ResourceError&&);
     void didNotHandle();
 
     void continueLoadingAfterCheckingResponse();
@@ -82,6 +83,7 @@ private:
     bool m_isCheckingResponse { false };
     bool m_didFinish { false };
     bool m_didFail { false };
+    WebCore::ResourceError m_error;
 
     WebCore::ServiceWorkerRegistrationIdentifier m_serviceWorkerRegistrationIdentifier;
 };

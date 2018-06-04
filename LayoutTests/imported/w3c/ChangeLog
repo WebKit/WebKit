@@ -1,3 +1,16 @@
+2018-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Update Fetch code to provide more useful exception messages
+        https://bugs.webkit.org/show_bug.cgi?id=186156
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline tests that have different output.
+
+        * web-platform-tests/fetch/api/headers/header-values-expected.txt:
+        * web-platform-tests/fetch/api/headers/header-values-normalize-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-network-error.https-expected.txt:
+
 2018-06-04  Youenn Fablet  <youenn@apple.com>
 
         NetworkCORSPreflightChecker should set the preflight request User-Agent header

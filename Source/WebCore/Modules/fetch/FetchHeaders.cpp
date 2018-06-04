@@ -35,10 +35,12 @@ namespace WebCore {
 
 static ExceptionOr<bool> canWriteHeader(const String& name, const String& value, FetchHeaders::Guard guard)
 {
-    if (!isValidHTTPToken(name) || !isValidHTTPHeaderValue(value))
-        return Exception { TypeError };
+    if (!isValidHTTPToken(name))
+        return Exception { TypeError, makeString("Invalid header name: '", name, "'") };
+    if (!isValidHTTPHeaderValue(value))
+        return Exception { TypeError, makeString("Header '", name, "' has invalid value: '", value, "'") };
     if (guard == FetchHeaders::Guard::Immutable)
-        return Exception { TypeError };
+        return Exception { TypeError, ASCIILiteral("Headers object's guard is 'immutable'") };
     if (guard == FetchHeaders::Guard::Request && isForbiddenHeaderName(name))
         return false;
     if (guard == FetchHeaders::Guard::RequestNoCors && !isSimpleHeader(name, value))
@@ -146,14 +148,14 @@ ExceptionOr<void> FetchHeaders::remove(const String& name)
 ExceptionOr<String> FetchHeaders::get(const String& name) const
 {
     if (!isValidHTTPToken(name))
-        return Exception { TypeError };
+        return Exception { TypeError, makeString("Invalid header name: '", name, "'") };
     return m_headers.get(name);
 }
 
 ExceptionOr<bool> FetchHeaders::has(const String& name) const
 {
     if (!isValidHTTPToken(name))
-        return Exception { TypeError };
+        return Exception { TypeError, makeString("Invalid header name: '", name, "'") };
     return m_headers.contains(name);
 }
 

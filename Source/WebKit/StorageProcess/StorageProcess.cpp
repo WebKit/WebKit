@@ -473,10 +473,10 @@ void StorageProcess::createServerToContextConnection(const SecurityOriginData& s
         parentProcessConnection()->send(Messages::StorageProcessProxy::EstablishWorkerContextConnectionToStorageProcess(securityOrigin), 0);
 }
 
-void StorageProcess::didFailFetch(SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier fetchIdentifier)
+void StorageProcess::didFailFetch(SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier fetchIdentifier, const ResourceError& error)
 {
     if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->didFailFetch(fetchIdentifier);
+        connection->didFailFetch(fetchIdentifier, error);
 }
 
 void StorageProcess::didNotHandleFetch(SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier fetchIdentifier)

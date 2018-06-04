@@ -221,9 +221,10 @@ void ServiceWorkerClientFetch::didFinish()
     });
 }
 
-void ServiceWorkerClientFetch::didFail()
+void ServiceWorkerClientFetch::didFail(ResourceError&& error)
 {
     m_didFail = true;
+    m_error = WTFMove(error);
 
     if (m_isCheckingResponse)
         return;
@@ -232,7 +233,7 @@ void ServiceWorkerClientFetch::didFail()
         if (!m_loader)
             return;
 
-        m_loader->didFail({ ResourceError::Type::General });
+        m_loader->didFail(m_error);
 
         if (auto callback = WTFMove(m_callback))
             callback(Result::Succeeded);
@@ -285,7 +286,7 @@ void ServiceWorkerClientFetch::continueLoadingAfterCheckingResponse()
     }
 
     if (m_didFail) {
-        didFail();
+        didFail(WTFMove(m_error));
         return;
     }
 

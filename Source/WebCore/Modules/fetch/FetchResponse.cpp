@@ -36,6 +36,7 @@
 #include "ReadableStreamSink.h"
 #include "ResourceError.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -143,10 +144,12 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::redirect(ScriptExecutionContext& 
 {
     // FIXME: Tighten the URL parsing algorithm according https://url.spec.whatwg.org/#concept-url-parser.
     URL requestURL = context.completeURL(url);
-    if (!requestURL.isValid() || !requestURL.user().isEmpty() || !requestURL.pass().isEmpty())
-        return Exception { TypeError };
+    if (!requestURL.isValid())
+        return Exception { TypeError, makeString("Redirection URL '", requestURL.string(), "' is invalid") };
+    if (!requestURL.user().isEmpty() || !requestURL.pass().isEmpty())
+        return Exception { TypeError, ASCIILiteral("Redirection URL contains credentials") };
     if (!ResourceResponse::isRedirectionStatusCode(status))
-        return Exception { RangeError };
+        return Exception { RangeError, makeString("Status code ", status, "is not a redirection status code") };
     auto redirectResponse = adoptRef(*new FetchResponse(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
     redirectResponse->m_internalResponse.setHTTPStatusCode(status);
     redirectResponse->m_internalResponse.setHTTPHeaderField(HTTPHeaderName::Location, requestURL.string());
@@ -163,7 +166,7 @@ FetchResponse::FetchResponse(ScriptExecutionContext& context, std::optional<Fetc
 ExceptionOr<Ref<FetchResponse>> FetchResponse::clone(ScriptExecutionContext& context)
 {
     if (isDisturbedOrLocked())
-        return Exception { TypeError };
+        return Exception { TypeError, ASCIILiteral("Body is disturbed or locked") };
 
     ASSERT(scriptExecutionContext());
 

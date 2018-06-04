@@ -35,6 +35,7 @@ class FetchEvent;
 struct FetchOptions;
 class FetchResponse;
 class FormData;
+class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
 struct ServiceWorkerClientIdentifier;
@@ -50,7 +51,7 @@ public:
     virtual void didReceiveResponse(const ResourceResponse&) = 0;
     virtual void didReceiveData(Ref<SharedBuffer>&&) = 0;
     virtual void didReceiveFormDataAndFinish(Ref<FormData>&&) = 0;
-    virtual void didFail() = 0;
+    virtual void didFail(const ResourceError&) = 0;
     virtual void didFinish() = 0;
     virtual void didNotHandle() = 0;
     virtual void cancel() = 0;

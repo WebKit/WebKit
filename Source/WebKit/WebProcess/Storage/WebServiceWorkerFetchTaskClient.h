@@ -51,7 +51,7 @@ private:
     void didReceiveResponse(const WebCore::ResourceResponse&) final;
     void didReceiveData(Ref<WebCore::SharedBuffer>&&) final;
     void didReceiveFormDataAndFinish(Ref<WebCore::FormData>&&) final;
-    void didFail() final;
+    void didFail(const WebCore::ResourceError&) final;
     void didFinish() final;
     void didNotHandle() final;
     void cancel() final;
@@ -67,7 +67,7 @@ private:
         // FetchLoaderClient API
         void didReceiveResponse(const WebCore::ResourceResponse&) final { }
         void didReceiveData(const char* data, size_t size) final { client->didReceiveBlobChunk(data, size); }
-        void didFail(const WebCore::ResourceError&) final { client->didFail(); }
+        void didFail(const WebCore::ResourceError& error) final { client->didFail(error); }
         void didSucceed() final { client->didFinishBlobLoading(); }
 
         Ref<WebServiceWorkerFetchTaskClient> client;

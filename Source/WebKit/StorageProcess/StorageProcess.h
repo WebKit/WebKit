@@ -43,6 +43,7 @@ class FormDataReference;
 }
 
 namespace WebCore {
+class ResourceError;
 class SWServer;
 class ServiceWorkerRegistrationKey;
 struct MessageWithMessagePorts;
@@ -141,7 +142,7 @@ private:
     void didReceiveFetchData(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, const IPC::DataReference&, int64_t encodedDataLength);
     void didReceiveFetchFormData(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, const IPC::FormDataReference&);
     void didFinishFetch(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier);
-    void didFailFetch(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier);
+    void didFailFetch(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, const WebCore::ResourceError&);
     void didNotHandleFetch(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier);
 
     void postMessageToServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);

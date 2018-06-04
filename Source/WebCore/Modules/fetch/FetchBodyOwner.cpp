@@ -98,7 +98,7 @@ void FetchBodyOwner::arrayBuffer(Ref<DeferredPromise>&& promise)
         return;
     }
     if (isDisturbedOrLocked()) {
-        promise->reject(TypeError);
+        promise->reject(Exception { TypeError, ASCIILiteral("Body is disturbed or locked") });
         return;
     }
     m_isDisturbed = true;
@@ -112,7 +112,7 @@ void FetchBodyOwner::blob(Ref<DeferredPromise>&& promise)
         return;
     }
     if (isDisturbedOrLocked()) {
-        promise->reject(TypeError);
+        promise->reject(Exception { TypeError, ASCIILiteral("Body is disturbed or locked") });
         return;
     }
     m_isDisturbed = true;
@@ -146,7 +146,7 @@ void FetchBodyOwner::updateContentType()
 void FetchBodyOwner::consumeOnceLoadingFinished(FetchBodyConsumer::Type type, Ref<DeferredPromise>&& promise)
 {
     if (isDisturbedOrLocked()) {
-        promise->reject(TypeError);
+        promise->reject(Exception { TypeError, ASCIILiteral("Body is disturbed or locked") });
         return;
     }
     m_isDisturbed = true;
@@ -160,7 +160,7 @@ void FetchBodyOwner::formData(Ref<DeferredPromise>&& promise)
         return;
     }
     if (isDisturbedOrLocked()) {
-        promise->reject(TypeError);
+        promise->reject(Exception { TypeError, ASCIILiteral("Body is disturbed or locked") });
         return;
     }
     m_isDisturbed = true;
@@ -174,7 +174,7 @@ void FetchBodyOwner::json(Ref<DeferredPromise>&& promise)
         return;
     }
     if (isDisturbedOrLocked()) {
-        promise->reject(TypeError);
+        promise->reject(Exception { TypeError, ASCIILiteral("Body is disturbed or locked") });
         return;
     }
     m_isDisturbed = true;
@@ -188,7 +188,7 @@ void FetchBodyOwner::text(Ref<DeferredPromise>&& promise)
         return;
     }
     if (isDisturbedOrLocked()) {
-        promise->reject(TypeError);
+        promise->reject(Exception { TypeError, ASCIILiteral("Body is disturbed or locked") });
         return;
     }
     m_isDisturbed = true;

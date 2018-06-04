@@ -2,21 +2,21 @@
 PASS XMLHttpRequest with value %00 
 PASS fetch() with value %00 
 FAIL XMLHttpRequest with value %01 The string did not match the expected pattern.
-FAIL fetch() with value %01 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %01 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %02 The string did not match the expected pattern.
-FAIL fetch() with value %02 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %02 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %03 The string did not match the expected pattern.
-FAIL fetch() with value %03 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %03 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %04 The string did not match the expected pattern.
-FAIL fetch() with value %04 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %04 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %05 The string did not match the expected pattern.
-FAIL fetch() with value %05 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %05 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %06 The string did not match the expected pattern.
-FAIL fetch() with value %06 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %06 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %07 The string did not match the expected pattern.
-FAIL fetch() with value %07 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %07 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %08 The string did not match the expected pattern.
-FAIL fetch() with value %08 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %08 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 PASS XMLHttpRequest with value %09 
 PASS fetch() with value %09 
 PASS XMLHttpRequest with value %0A 
@@ -24,41 +24,41 @@ PASS fetch() with value %0A
 PASS XMLHttpRequest with value %0D 
 PASS fetch() with value %0D 
 FAIL XMLHttpRequest with value %0E The string did not match the expected pattern.
-FAIL fetch() with value %0E promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %0E promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %0F The string did not match the expected pattern.
-FAIL fetch() with value %0F promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %0F promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %10 The string did not match the expected pattern.
-FAIL fetch() with value %10 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %10 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %11 The string did not match the expected pattern.
-FAIL fetch() with value %11 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %11 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %12 The string did not match the expected pattern.
-FAIL fetch() with value %12 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %12 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %13 The string did not match the expected pattern.
-FAIL fetch() with value %13 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %13 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %14 The string did not match the expected pattern.
-FAIL fetch() with value %14 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %14 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %15 The string did not match the expected pattern.
-FAIL fetch() with value %15 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %15 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %16 The string did not match the expected pattern.
-FAIL fetch() with value %16 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %16 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %17 The string did not match the expected pattern.
-FAIL fetch() with value %17 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %17 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %18 The string did not match the expected pattern.
-FAIL fetch() with value %18 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %18 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %19 The string did not match the expected pattern.
-FAIL fetch() with value %19 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %19 promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %1A The string did not match the expected pattern.
-FAIL fetch() with value %1A promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %1A promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %1B The string did not match the expected pattern.
-FAIL fetch() with value %1B promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %1B promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %1C The string did not match the expected pattern.
-FAIL fetch() with value %1C promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %1C promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %1D The string did not match the expected pattern.
-FAIL fetch() with value %1D promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %1D promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %1E The string did not match the expected pattern.
-FAIL fetch() with value %1E promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %1E promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 FAIL XMLHttpRequest with value %1F The string did not match the expected pattern.
-FAIL fetch() with value %1F promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL fetch() with value %1F promise_test: Unhandled rejection with value: object "TypeError: Header 'val1' has invalid value: ''"
 PASS XMLHttpRequest with value %20 
 PASS fetch() with value %20 
 

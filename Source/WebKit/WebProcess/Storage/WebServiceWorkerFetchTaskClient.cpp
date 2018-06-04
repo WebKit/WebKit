@@ -32,6 +32,8 @@
 #include "FormDataReference.h"
 #include "StorageProcessMessages.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebErrors.h"
+#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SWContextManager.h>
 #include <wtf/RunLoop.h>
@@ -85,7 +87,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&
     callOnMainThread([this, protectedThis = makeRef(*this), blobURL = blobURL.isolatedCopy()] () {
         auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(m_serviceWorkerIdentifier);
         if (!serviceWorkerThreadProxy) {
-            didFail();
+            didFail(internalError(blobURL));
             return;
         }
 
@@ -93,7 +95,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&
         auto loader = serviceWorkerThreadProxy->createBlobLoader(*m_blobLoader, blobURL);
         if (!loader) {
             m_blobLoader = std::nullopt;
-            didFail();
+            didFail(internalError(blobURL));
             return;
         }
 
@@ -117,12 +119,12 @@ void WebServiceWorkerFetchTaskClient::didFinishBlobLoading()
     std::exchange(m_blobLoader, std::nullopt);
 }
 
-void WebServiceWorkerFetchTaskClient::didFail()
+void WebServiceWorkerFetchTaskClient::didFail(const ResourceError& error)
 {
     if (!m_connection)
         return;
 
-    m_connection->send(Messages::StorageProcess::DidFailFetch { m_serverConnectionIdentifier, m_fetchIdentifier }, 0);
+    m_connection->send(Messages::StorageProcess::DidFailFetch { m_serverConnectionIdentifier, m_fetchIdentifier, error }, 0);
 
     cleanup();
 }

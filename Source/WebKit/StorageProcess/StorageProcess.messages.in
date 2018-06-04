@@ -39,7 +39,7 @@ messages -> StorageProcess LegacyReceiver {
 
 #if ENABLE(SERVICE_WORKER)
     DidNotHandleFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier)
-    DidFailFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier)
+    DidFailFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, WebCore::ResourceError error)
     DidReceiveFetchResponse(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, WebCore::ResourceResponse response)
     DidReceiveFetchData(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, IPC::DataReference data, int64_t encodedDataLength)
     DidReceiveFetchFormData(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, IPC::FormDataReference data)

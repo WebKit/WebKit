@@ -1,3 +1,29 @@
+2018-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Update Fetch code to provide more useful exception messages
+        https://bugs.webkit.org/show_bug.cgi?id=186156
+
+        Reviewed by Youenn Fablet.
+
+        Provide more useful error messages in our Loading / Fetch code.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::didFailFetch):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::didFailFetch):
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp:
+        (WebKit::ServiceWorkerClientFetch::didFail):
+        (WebKit::ServiceWorkerClientFetch::continueLoadingAfterCheckingResponse):
+        * WebProcess/Storage/ServiceWorkerClientFetch.h:
+        * WebProcess/Storage/ServiceWorkerClientFetch.messages.in:
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish):
+        (WebKit::WebServiceWorkerFetchTaskClient::didFail):
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.h:
+
 2018-06-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit on watchOS] Remove all uses of the EXTRA_ZOOM_MODE compiler flag

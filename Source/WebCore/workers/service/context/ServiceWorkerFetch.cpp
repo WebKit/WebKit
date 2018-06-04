@@ -46,7 +46,7 @@ namespace ServiceWorkerFetch {
 static void processResponse(Ref<Client>&& client, FetchResponse* response)
 {
     if (!response) {
-        client->didFail();
+        client->didFail(ResourceError { errorDomainWebKitInternal, 0, URL(), ASCIILiteral("Response is null") });
         return;
     }
     auto protectedResponse = makeRef(*response);
@@ -54,14 +54,14 @@ static void processResponse(Ref<Client>&& client, FetchResponse* response)
     client->didReceiveResponse(response->resourceResponse());
 
     if (response->loadingError()) {
-        client->didFail();
+        client->didFail(*response->loadingError());
         return;
     }
 
     if (response->isBodyReceivedByChunk()) {
         response->consumeBodyReceivedByChunk([client = WTFMove(client)] (auto&& result) mutable {
             if (result.hasException()) {
-                client->didFail();
+                client->didFail(ResourceError { errorDomainWebKitInternal, 0, URL(), result.exception().message() });
                 return;
             }
 
@@ -108,6 +108,7 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     if (isNavigation)
         options.redirect = FetchOptions::Redirect::Manual;
 
+    URL requestURL = request.url();
     auto fetchRequest = FetchRequest::create(globalScope, WTFMove(body), WTFMove(requestHeaders),  WTFMove(request), WTFMove(options), WTFMove(referrer));
 
     FetchEvent::Init init;
@@ -129,7 +130,7 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
 
     if (!event->respondWithEntered()) {
         if (event->defaultPrevented()) {
-            client->didFail();
+            client->didFail(ResourceError { errorDomainWebKitInternal, 0, requestURL, ASCIILiteral("Fetch event was canceled") });
             return;
         }
         client->didNotHandle();
