@@ -1,3 +1,39 @@
+2018-06-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening.
+
+        Manage the W3C test failures by rebaselining what can be rebaselined, and adding
+        failing expectations for the rest of the failures. This mostly addresses the
+        new CSS Text tests that were imported lately, as well as changes in console logging.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/access-control-basic-cors-safelisted-request-headers-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/access-control-basic-get-fail-non-simple-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/access-control-basic-post-with-non-cors-safelisted-content-type-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-infinite-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-infinite-sync-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-network-error-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-network-error-sync-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-text: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-text/white-space: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-001-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-004-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-016-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-017-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapse-002-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.worker-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-worker-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/security: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+
 2018-06-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         More unreviewed GTK test gardening

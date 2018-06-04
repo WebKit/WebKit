@@ -1,0 +1,14 @@
+
+FAIL linebreak only assert_equals: expected 129 but got 136
+FAIL spaces linebreak assert_equals: expected 129 but got 136
+FAIL linebreak spaces assert_equals: expected 129 but got 136
+FAIL spaces linebreak spaces assert_equals: expected 129 but got 136
+FAIL multiple linebreaks assert_equals: expected 129 but got 136
+FAIL multiple linebreaks + spaces assert_equals: expected 129 but got 136
+日本語 中国话
+日本語 中国话
+日本語 中国话
+日本語 中国话
+日本語 中国话
+日本語 中国话
+日本語中国话

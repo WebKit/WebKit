@@ -239,6 +239,13 @@ imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.
 Bug(WPE) imported/w3c/web-platform-tests/css/css-color [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/css/css-multicol [ Skip ]
 
+webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-control-chars-001.html [ ImageOnlyFailure ]
+webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-002.html [ ImageOnlyFailure ]
+webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-003.html [ ImageOnlyFailure ]
+webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-016.html [ ImageOnlyFailure ]
+webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-007.html [ ImageOnlyFailure ]
+webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-lo-000.html [ ImageOnlyFailure ]
+
 # WPT: cssom
 # ==========
 imported/w3c/web-platform-tests/cssom [ Pass ]
@@ -266,6 +273,8 @@ webkit.org/b/179881 imported/w3c/web-platform-tests/encoding/eof-shift_jis.html 
 # -----------------------------------------------
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-service-worker.https.html [ Failure ]
+
+webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.html [ Failure ]
 
 # Skip anything related to WebAuthN
 # ---------------------------------

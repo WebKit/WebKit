@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 22: Preflight response is not successful
+CONSOLE MESSAGE: line 22: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-basic-cors-safelisted-request-headers.py due to access control checks.
+
+FAIL Request with CORS-safelisted headers  A network error occurred.
+
