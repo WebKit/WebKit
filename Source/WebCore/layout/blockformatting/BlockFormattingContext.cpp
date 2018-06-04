@@ -73,10 +73,9 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             auto& layoutBox = layoutPair.layoutBox;
             auto& displayBox = layoutPair.displayBox;
             
-            computeMargin(layoutContext, layoutBox, displayBox);
             computeBorderAndPadding(layoutContext, layoutBox, displayBox);
+            computeWidthAndMargin(layoutContext, layoutBox, displayBox);
             computeStaticPosition(layoutContext, layoutBox, displayBox);
-            computeWidth(layoutContext, layoutBox, displayBox);
             if (layoutBox.establishesFormattingContext()) {
                 auto formattingContext = layoutContext.formattingContext(layoutBox);
                 formattingContext->layout(layoutContext, layoutContext.establishedFormattingState(layoutBox, *formattingContext));
@@ -139,13 +138,13 @@ void BlockFormattingContext::computeInFlowPositionedPosition(LayoutContext& layo
     displayBox.setTopLeft(Geometry::inFlowPositionedPosition(layoutContext, layoutBox));
 }
 
-void BlockFormattingContext::computeWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+void BlockFormattingContext::computeWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     if (layoutBox.isInFlow())
-        return computeInFlowWidth(layoutContext, layoutBox, displayBox);
+        return computeInFlowWidthAndMargin(layoutContext, layoutBox, displayBox);
 
     if (layoutBox.isFloatingPositioned())
-        return computeFloatingWidth(layoutContext, layoutBox, displayBox);
+        return computeFloatingWidthAndMargin(layoutContext, layoutBox, displayBox);
 
     ASSERT_NOT_REACHED();
 }
@@ -166,14 +165,11 @@ void BlockFormattingContext::computeInFlowHeight(LayoutContext& layoutContext, c
     displayBox.setHeight(Geometry::inFlowHeight(layoutContext, layoutBox));
 }
 
-void BlockFormattingContext::computeInFlowWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+void BlockFormattingContext::computeInFlowWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    displayBox.setWidth(Geometry::inFlowWidth(layoutContext, layoutBox));
-}
-
-void BlockFormattingContext::computeMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
-{
-    displayBox.setMargin(Geometry::computedMargin(layoutContext, layoutBox));
+    auto widthAndMargin = Geometry::inFlowWidthAndMargin(layoutContext, layoutBox);
+    displayBox.setWidth(widthAndMargin.width);
+    displayBox.setHorizontalMargin(widthAndMargin.margin);
 }
 
 }

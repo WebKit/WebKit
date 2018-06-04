@@ -113,7 +113,7 @@ LayoutUnit BlockFormattingContext::Geometry::inFlowNonReplacedHeight(LayoutConte
     return std::max(computedHeight, initialContainingBlockHeight);
 }
 
-LayoutUnit BlockFormattingContext::Geometry::inFlowNonReplacedWidth(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isInFlow() && !layoutBox.replaced());
 
@@ -143,14 +143,14 @@ LayoutUnit BlockFormattingContext::Geometry::inFlowNonReplacedWidth(LayoutContex
         } else
             computedWidthValue = valueForLength(width, containingBlockWidth);
 
-        return computedWidthValue;
+        return FormattingContext::Geometry::WidthAndMargin { computedWidthValue, { } };
     };
 
-    auto computedWidth = compute();
+    auto computedWidthAndMarginValue = compute();
     if (!isStretchedToViewport(layoutContext, layoutBox))
-        return computedWidth;
+        return computedWidthAndMarginValue;
     auto initialContainingBlockWidth = layoutContext.displayBoxForLayoutBox(initialContainingBlock(layoutBox))->contentBox().width();
-    return std::max(computedWidth, initialContainingBlockWidth);
+    return FormattingContext::Geometry::WidthAndMargin { std::max(computedWidthAndMarginValue.width, initialContainingBlockWidth), { } };
 }
 
 LayoutPoint BlockFormattingContext::Geometry::staticPosition(LayoutContext& layoutContext, const Box& layoutBox)
@@ -247,28 +247,15 @@ LayoutUnit BlockFormattingContext::Geometry::inFlowHeight(LayoutContext& layoutC
     return FormattingContext::Geometry::inlineReplacedHeight(layoutContext, layoutBox);
 }
 
-LayoutUnit BlockFormattingContext::Geometry::inFlowWidth(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isInFlow());
 
     if (!layoutBox.replaced())
-        return inFlowNonReplacedWidth(layoutContext, layoutBox);
+        return inFlowNonReplacedWidthAndMargin(layoutContext, layoutBox);
     // 10.3.4 Block-level, replaced elements in normal flow
     // The used value of 'width' is determined as for inline replaced elements
-    return FormattingContext::Geometry::inlineReplacedWidth(layoutContext, layoutBox);
-}
-
-Display::Box::Edges BlockFormattingContext::Geometry::computedMargin(LayoutContext& layoutContext, const Box& layoutBox)
-{
-    auto& style = layoutBox.style();
-    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
-
-    return Display::Box::Edges(
-        BlockFormattingContext::MarginCollapse::marginTop(layoutBox),
-        valueForLength(style.marginLeft(), containingBlockWidth),
-        BlockFormattingContext::MarginCollapse::marginBottom(layoutBox),
-        valueForLength(style.marginRight(), containingBlockWidth)
-    );
+    return FormattingContext::Geometry::inlineReplacedWidthAndMargin(layoutContext, layoutBox);
 }
 
 }

@@ -52,13 +52,14 @@ Box::Style::Style(const RenderStyle& style)
 
 Box::Rect Box::marginBox() const
 {
-    ASSERT(m_hasValidMargin);
+    ASSERT(m_hasValidHorizontalMargin);
+    ASSERT(m_hasValidVerticalMargin);
     auto marginBox = borderBox();
 
-    marginBox.shiftLeftTo(marginBox.left() - m_margin.left);
-    marginBox.shiftTopTo(marginBox.top() - m_margin.top);
-    marginBox.shiftRightTo(marginBox.right() + m_margin.right);
-    marginBox.shiftBottomTo(marginBox.bottom() + m_margin.bottom);
+    marginBox.shiftLeftTo(marginBox.left() - m_margin.horizontal.left);
+    marginBox.shiftTopTo(marginBox.top() - m_margin.vertical.top);
+    marginBox.shiftRightTo(marginBox.right() + m_margin.horizontal.right);
+    marginBox.shiftBottomTo(marginBox.bottom() + m_margin.vertical.bottom);
 
     return marginBox;
 }
@@ -83,10 +84,10 @@ Box::Rect Box::paddingBox() const
     ASSERT(m_hasValidBorder);
     auto paddingBox = borderBox();
 
-    paddingBox.shiftLeftTo(paddingBox.left() + m_border.left);
-    paddingBox.shiftTopTo(paddingBox.top() + m_border.top);
-    paddingBox.shiftRightTo(paddingBox.right() - m_border.right);
-    paddingBox.shiftBottomTo(paddingBox.bottom() - m_border.bottom);
+    paddingBox.shiftLeftTo(paddingBox.left() + m_border.horizontal.left);
+    paddingBox.shiftTopTo(paddingBox.top() + m_border.vertical.top);
+    paddingBox.shiftRightTo(paddingBox.right() - m_border.horizontal.right);
+    paddingBox.shiftBottomTo(paddingBox.bottom() - m_border.vertical.bottom);
 
     return paddingBox;
 }
@@ -103,10 +104,10 @@ Box::Rect Box::contentBox() const
     ASSERT(m_hasValidPadding);
     auto contentBox = paddingBox();
 
-    contentBox.shiftLeftTo(contentBox.left() + m_padding.left);
-    contentBox.shiftTopTo(contentBox.top() + m_padding.top);
-    contentBox.shiftRightTo(contentBox.right() - m_padding.right);
-    contentBox.shiftBottomTo(contentBox.bottom() - m_padding.bottom);
+    contentBox.shiftLeftTo(contentBox.left() + m_padding.horizontal.left);
+    contentBox.shiftTopTo(contentBox.top() + m_padding.vertical.top);
+    contentBox.shiftRightTo(contentBox.right() - m_padding.horizontal.right);
+    contentBox.shiftBottomTo(contentBox.bottom() - m_padding.vertical.bottom);
 
     return contentBox;
 }

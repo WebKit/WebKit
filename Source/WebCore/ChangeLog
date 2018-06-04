@@ -1,3 +1,71 @@
+2018-06-01  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Merge width and horizontal margin computation
+        https://bugs.webkit.org/show_bug.cgi?id=186217
+
+        Reviewed by Antti Koivisto.
+
+        We could certainly compute width and maring separately, but to match each steps defined
+        at https://www.w3.org/TR/CSS22/visudet.html, we should just merge width and horizontal margin computations
+        (followed by height and vertical margins).
+        Use 0 computed marings for now.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeFloatingWidthAndMargin const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowWidthAndMargin const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHeight const):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowWidth const): Deleted.
+        (WebCore::Layout::FormattingContext::computeFloatingWidth const): Deleted.
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::computedPadding):
+        (WebCore::Layout::outOfFlowNonReplacedWidth): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedWidth): Deleted.
+        (WebCore::Layout::floatingNonReplacedWidth): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidth): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowWidth): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::floatingWidth): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidth): Deleted.
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::initializeRoot):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::computeWidth const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeInFlowWidth const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeMargin const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidth): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowWidth): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::computedMargin): Deleted.
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::marginBox const):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::setHasValidVerticalMargin):
+        (WebCore::Display::Box::setHasValidHorizontalMargin):
+        (WebCore::Display::Box::invalidateMargin):
+        (WebCore::Display::Box::setHorizontalMargin):
+        (WebCore::Display::Box::setVerticalMargin):
+        (WebCore::Display::Box::marginTop const):
+        (WebCore::Display::Box::marginLeft const):
+        (WebCore::Display::Box::marginBottom const):
+        (WebCore::Display::Box::marginRight const):
+        (WebCore::Display::Box::Edges::Edges): Deleted.
+        (WebCore::Display::Box::setHasValidMargin): Deleted.
+        (WebCore::Display::Box::setMargin): Deleted.
+
 2018-06-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r232338): [GTK] Broke a few layout tests

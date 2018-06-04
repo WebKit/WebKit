@@ -51,29 +51,26 @@ public:
     Ref<FloatingState> createOrFindFloatingState(LayoutContext&) const override;
 
 private:
-    void computeWidth(LayoutContext&, const Box&, Display::Box&) const;
+    void computeWidthAndMargin(LayoutContext&, const Box&, Display::Box&) const;
     void computeHeight(LayoutContext&, const Box&, Display::Box&) const;
 
     void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const override;
     void computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const override;
-    void computeInFlowWidth(LayoutContext&, const Box&, Display::Box&) const;
+    void computeInFlowWidthAndMargin(LayoutContext&, const Box&, Display::Box&) const;
     void computeInFlowHeight(LayoutContext&, const Box&, Display::Box&) const;
-    void computeMargin(LayoutContext&, const Box&, Display::Box&) const;
 
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry {
     public:
         static LayoutUnit inFlowHeight(LayoutContext&, const Box&);
-        static LayoutUnit inFlowWidth(LayoutContext&, const Box&);
+        static FormattingContext::Geometry::WidthAndMargin inFlowWidthAndMargin(LayoutContext&, const Box&);
 
         static LayoutPoint staticPosition(LayoutContext&, const Box&);
         static LayoutPoint inFlowPositionedPosition(LayoutContext&, const Box&);
 
-        static Display::Box::Edges computedMargin(LayoutContext&, const Box&);
-
     private:
         static LayoutUnit inFlowNonReplacedHeight(LayoutContext&, const Box&);
-        static LayoutUnit inFlowNonReplacedWidth(LayoutContext&, const Box&);
+        static FormattingContext::Geometry::WidthAndMargin inFlowNonReplacedWidthAndMargin(LayoutContext&, const Box&);
     };
     
     // This class implements margin collapsing for block formatting context.

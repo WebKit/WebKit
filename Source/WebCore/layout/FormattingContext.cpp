@@ -59,19 +59,23 @@ void FormattingContext::computeFloatingHeight(LayoutContext& layoutContext, cons
     displayBox.setHeight(Geometry::floatingHeight(layoutContext, layoutBox));
 }
 
-void FormattingContext::computeOutOfFlowWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+void FormattingContext::computeFloatingWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    displayBox.setWidth(Geometry::outOfFlowWidth(layoutContext, layoutBox));
+    auto widthAndMargin = Geometry::floatingWidthAndMargin(layoutContext, layoutBox);
+    displayBox.setWidth(widthAndMargin.width);
+    displayBox.setHorizontalMargin(widthAndMargin.margin);
+}
+
+void FormattingContext::computeOutOfFlowWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    auto widthAndMargin = Geometry::outOfFlowWidthAndMargin(layoutContext, layoutBox);
+    displayBox.setWidth(widthAndMargin.width);
+    displayBox.setHorizontalMargin(widthAndMargin.margin);
 }
 
 void FormattingContext::computeOutOfFlowHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     displayBox.setHeight(Geometry::outOfFlowHeight(layoutContext, layoutBox));
-}
-
-void FormattingContext::computeFloatingWidth(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
-{
-    displayBox.setWidth(Geometry::floatingWidth(layoutContext, layoutBox));
 }
 
 void FormattingContext::computeBorderAndPadding(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
@@ -107,7 +111,7 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext)
         // of a hypothetical box that would have been the first box of the element if its specified 'position' value had been 'static' and
         // its specified 'float' had been 'none' and its specified 'clear' had been 'none'.
         computeStaticPosition(layoutContext, layoutBox, displayBox);
-        computeOutOfFlowWidth(layoutContext, layoutBox, displayBox);
+        computeOutOfFlowWidthAndMargin(layoutContext, layoutBox, displayBox);
 
         ASSERT(layoutBox.establishesFormattingContext());
         auto formattingContext = layoutContext.formattingContext(layoutBox);
