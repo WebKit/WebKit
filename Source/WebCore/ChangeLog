@@ -1,3 +1,70 @@
+2018-06-04  Timothy Hatcher  <timothy@apple.com>
+
+        Selection color is dark when using Safari in dark mode.
+
+        https://bugs.webkit.org/show_bug.cgi?id=186288
+        rdar://problem/38438625
+
+        Reviewed by Simon Fraser.
+
+        Pass StyleColor::Options to all of the selection color functions.
+        Removed supportsSelectionForegroundColors() from RenderThemeMac,
+        to get the default of true, since the forground colors in dark mode
+        can be different now. Use new semantic color methods on NSColor.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::selectionColor const):
+        (WebCore::RenderElement::selectionBackgroundColor const):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::activeSelectionBackgroundColor const):
+        (WebCore::RenderTheme::inactiveSelectionBackgroundColor const):
+        (WebCore::RenderTheme::activeSelectionForegroundColor const):
+        (WebCore::RenderTheme::inactiveSelectionForegroundColor const):
+        (WebCore::RenderTheme::activeListBoxSelectionBackgroundColor const):
+        (WebCore::RenderTheme::activeListBoxSelectionForegroundColor const):
+        (WebCore::RenderTheme::inactiveListBoxSelectionForegroundColor const):
+        (WebCore::RenderTheme::platformActiveSelectionBackgroundColor const):
+        (WebCore::RenderTheme::platformActiveSelectionForegroundColor const):
+        (WebCore::RenderTheme::platformInactiveSelectionBackgroundColor const):
+        (WebCore::RenderTheme::platformInactiveSelectionForegroundColor const):
+        (WebCore::RenderTheme::platformActiveListBoxSelectionBackgroundColor const):
+        (WebCore::RenderTheme::platformActiveListBoxSelectionForegroundColor const):
+        (WebCore::RenderTheme::platformInactiveListBoxSelectionBackgroundColor const):
+        (WebCore::RenderTheme::platformInactiveListBoxSelectionForegroundColor const):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::platformActiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeGtk::platformInactiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeGtk::platformActiveSelectionForegroundColor const):
+        (WebCore::RenderThemeGtk::platformInactiveSelectionForegroundColor const):
+        (WebCore::RenderThemeGtk::platformActiveListBoxSelectionBackgroundColor const):
+        (WebCore::RenderThemeGtk::platformActiveListBoxSelectionForegroundColor const):
+        (WebCore::RenderThemeGtk::platformInactiveListBoxSelectionForegroundColor const):
+        * rendering/RenderThemeGtk.h:
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::platformActiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeIOS::platformInactiveSelectionBackgroundColor const):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformActiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeMac::platformInactiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeMac::platformActiveSelectionForegroundColor const):
+        (WebCore::RenderThemeMac::platformInactiveSelectionForegroundColor const):
+        (WebCore::RenderThemeMac::platformActiveListBoxSelectionBackgroundColor const):
+        (WebCore::RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor const):
+        (WebCore::RenderThemeMac::platformActiveListBoxSelectionForegroundColor const):
+        (WebCore::RenderThemeMac::platformInactiveListBoxSelectionForegroundColor const):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::platformActiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeWin::platformInactiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeWin::platformActiveSelectionForegroundColor const):
+        (WebCore::RenderThemeWin::platformInactiveSelectionForegroundColor const):
+        * rendering/RenderThemeWin.h:
+
 2018-06-04  Chris Dumez  <cdumez@apple.com>
 
         Update Fetch code to provide more useful exception messages

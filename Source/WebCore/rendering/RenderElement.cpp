@@ -1372,8 +1372,8 @@ Color RenderElement::selectionColor(CSSPropertyID colorProperty) const
     }
 
     if (frame().selection().isFocusedAndActive())
-        return theme().activeSelectionForegroundColor();
-    return theme().inactiveSelectionForegroundColor();
+        return theme().activeSelectionForegroundColor(document().styleColorOptions());
+    return theme().inactiveSelectionForegroundColor(document().styleColorOptions());
 }
 
 std::unique_ptr<RenderStyle> RenderElement::selectionPseudoStyle() const
@@ -1414,8 +1414,8 @@ Color RenderElement::selectionBackgroundColor() const
         return pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor).blendWithWhite();
 
     if (frame().selection().isFocusedAndActive())
-        return theme().activeSelectionBackgroundColor();
-    return theme().inactiveSelectionBackgroundColor();
+        return theme().activeSelectionBackgroundColor(document().styleColorOptions());
+    return theme().inactiveSelectionBackgroundColor(document().styleColorOptions());
 }
 
 bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const

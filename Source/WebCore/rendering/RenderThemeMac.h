@@ -53,12 +53,14 @@ public:
 
     bool isControlStyled(const RenderStyle&, const BorderData&, const FillLayer&, const Color& backgroundColor) const final;
 
-    Color platformActiveSelectionBackgroundColor() const final;
-    Color platformInactiveSelectionBackgroundColor() const final;
-    Color platformActiveListBoxSelectionBackgroundColor() const final;
-    Color platformActiveListBoxSelectionForegroundColor() const final;
+    Color platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const final;
+    Color platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const final;
+    Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const final;
+    Color platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const final;
+    Color platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const final;
+    Color platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const final;
     Color platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const final;
-    Color platformInactiveListBoxSelectionForegroundColor() const final;
+    Color platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const final;
     Color platformFocusRingColor(OptionSet<StyleColor::Options>) const final;
 
     ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) final { return SmallScrollbar; }
@@ -113,8 +115,6 @@ private:
 #if ENABLE(SERVICE_CONTROLS)
     String imageControlsStyleSheet() const final;
 #endif
-
-    bool supportsSelectionForegroundColors() const final { return false; }
 
     bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) final;
     void adjustTextFieldStyle(StyleResolver&, RenderStyle&, const Element*) const final;

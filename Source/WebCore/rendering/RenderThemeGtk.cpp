@@ -1716,27 +1716,27 @@ static Color styleColor(RenderThemePart themePart, GtkStateFlags state, StyleCol
 }
 #endif // GTK_CHECK_VERSION(3, 20, 0)
 
-Color RenderThemeGtk::platformActiveSelectionBackgroundColor() const
+Color RenderThemeGtk::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
 {
     return styleColor(EntrySelection, static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), StyleColorBackground);
 }
 
-Color RenderThemeGtk::platformInactiveSelectionBackgroundColor() const
+Color RenderThemeGtk::platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
 {
     return styleColor(EntrySelection, GTK_STATE_FLAG_SELECTED, StyleColorBackground);
 }
 
-Color RenderThemeGtk::platformActiveSelectionForegroundColor() const
+Color RenderThemeGtk::platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const
 {
     return styleColor(EntrySelection, static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), StyleColorForeground);
 }
 
-Color RenderThemeGtk::platformInactiveSelectionForegroundColor() const
+Color RenderThemeGtk::platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const
 {
     return styleColor(EntrySelection, GTK_STATE_FLAG_SELECTED, StyleColorForeground);
 }
 
-Color RenderThemeGtk::platformActiveListBoxSelectionBackgroundColor() const
+Color RenderThemeGtk::platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
 {
     return styleColor(ListBox, static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), StyleColorBackground);
 }
@@ -1746,12 +1746,12 @@ Color RenderThemeGtk::platformInactiveListBoxSelectionBackgroundColor(OptionSet<
     return styleColor(ListBox, GTK_STATE_FLAG_SELECTED, StyleColorBackground);
 }
 
-Color RenderThemeGtk::platformActiveListBoxSelectionForegroundColor() const
+Color RenderThemeGtk::platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const
 {
     return styleColor(ListBox, static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), StyleColorForeground);
 }
 
-Color RenderThemeGtk::platformInactiveListBoxSelectionForegroundColor() const
+Color RenderThemeGtk::platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const
 {
     return styleColor(ListBox, GTK_STATE_FLAG_SELECTED, StyleColorForeground);
 }

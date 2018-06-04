@@ -70,16 +70,16 @@ public:
     int baselinePosition(const RenderBox&) const override;
 
     // The platform selection color.
-    Color platformActiveSelectionBackgroundColor() const override;
-    Color platformInactiveSelectionBackgroundColor() const override;
-    Color platformActiveSelectionForegroundColor() const override;
-    Color platformInactiveSelectionForegroundColor() const override;
+    Color platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
+    Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
+    Color platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const override;
+    Color platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const override;
 
     // List Box selection color
-    Color platformActiveListBoxSelectionBackgroundColor() const override;
-    Color platformActiveListBoxSelectionForegroundColor() const override;
+    Color platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
+    Color platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const override;
     Color platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
-    Color platformInactiveListBoxSelectionForegroundColor() const override;
+    Color platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const override;
 
     Seconds caretBlinkInterval() const override;
 

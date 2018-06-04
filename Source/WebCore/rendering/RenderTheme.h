@@ -133,16 +133,16 @@ public:
     virtual bool supportsDataListUI(const AtomicString&) const { return false; }
 
     // Text selection colors.
-    Color activeSelectionBackgroundColor() const;
-    Color inactiveSelectionBackgroundColor() const;
-    Color activeSelectionForegroundColor() const;
-    Color inactiveSelectionForegroundColor() const;
+    Color activeSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
+    Color inactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
+    Color activeSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
+    Color inactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
 
     // List box selection colors
-    Color activeListBoxSelectionBackgroundColor() const;
-    Color activeListBoxSelectionForegroundColor() const;
+    Color activeListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
+    Color activeListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
     Color inactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
-    Color inactiveListBoxSelectionForegroundColor() const;
+    Color inactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
 
     // Highlighting colors for TextMatches.
     virtual Color platformActiveTextSearchHighlightColor() const;
@@ -255,15 +255,15 @@ protected:
     virtual void updateCachedSystemFontDescription(CSSValueID systemFontID, FontCascadeDescription&) const = 0;
 
     // The platform selection color.
-    virtual Color platformActiveSelectionBackgroundColor() const;
-    virtual Color platformInactiveSelectionBackgroundColor() const;
-    virtual Color platformActiveSelectionForegroundColor() const;
-    virtual Color platformInactiveSelectionForegroundColor() const;
+    virtual Color platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
+    virtual Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
+    virtual Color platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
+    virtual Color platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
 
-    virtual Color platformActiveListBoxSelectionBackgroundColor() const;
+    virtual Color platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
     virtual Color platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
-    virtual Color platformActiveListBoxSelectionForegroundColor() const;
-    virtual Color platformInactiveListBoxSelectionForegroundColor() const;
+    virtual Color platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
+    virtual Color platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
 
     virtual bool supportsSelectionForegroundColors() const { return true; }
     virtual bool supportsListBoxSelectionForegroundColors() const { return true; }

@@ -579,38 +579,38 @@ LayoutPoint RenderTheme::volumeSliderOffsetFromMuteButton(const RenderBox& muteB
 
 #endif
 
-Color RenderTheme::activeSelectionBackgroundColor() const
+Color RenderTheme::activeSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
 {
     if (!m_activeSelectionBackgroundColor.isValid())
-        m_activeSelectionBackgroundColor = platformActiveSelectionBackgroundColor().blendWithWhite();
+        m_activeSelectionBackgroundColor = platformActiveSelectionBackgroundColor(options).blendWithWhite();
     return m_activeSelectionBackgroundColor;
 }
 
-Color RenderTheme::inactiveSelectionBackgroundColor() const
+Color RenderTheme::inactiveSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
 {
     if (!m_inactiveSelectionBackgroundColor.isValid())
-        m_inactiveSelectionBackgroundColor = platformInactiveSelectionBackgroundColor().blendWithWhite();
+        m_inactiveSelectionBackgroundColor = platformInactiveSelectionBackgroundColor(options).blendWithWhite();
     return m_inactiveSelectionBackgroundColor;
 }
 
-Color RenderTheme::activeSelectionForegroundColor() const
+Color RenderTheme::activeSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
 {
     if (!m_activeSelectionForegroundColor.isValid() && supportsSelectionForegroundColors())
-        m_activeSelectionForegroundColor = platformActiveSelectionForegroundColor();
+        m_activeSelectionForegroundColor = platformActiveSelectionForegroundColor(options);
     return m_activeSelectionForegroundColor;
 }
 
-Color RenderTheme::inactiveSelectionForegroundColor() const
+Color RenderTheme::inactiveSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
 {
     if (!m_inactiveSelectionForegroundColor.isValid() && supportsSelectionForegroundColors())
-        m_inactiveSelectionForegroundColor = platformInactiveSelectionForegroundColor();
+        m_inactiveSelectionForegroundColor = platformInactiveSelectionForegroundColor(options);
     return m_inactiveSelectionForegroundColor;
 }
 
-Color RenderTheme::activeListBoxSelectionBackgroundColor() const
+Color RenderTheme::activeListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
 {
     if (!m_activeListBoxSelectionBackgroundColor.isValid())
-        m_activeListBoxSelectionBackgroundColor = platformActiveListBoxSelectionBackgroundColor();
+        m_activeListBoxSelectionBackgroundColor = platformActiveListBoxSelectionBackgroundColor(options);
     return m_activeListBoxSelectionBackgroundColor;
 }
 
@@ -621,63 +621,63 @@ Color RenderTheme::inactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor:
     return m_inactiveListBoxSelectionBackgroundColor;
 }
 
-Color RenderTheme::activeListBoxSelectionForegroundColor() const
+Color RenderTheme::activeListBoxSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
 {
     if (!m_activeListBoxSelectionForegroundColor.isValid() && supportsListBoxSelectionForegroundColors())
-        m_activeListBoxSelectionForegroundColor = platformActiveListBoxSelectionForegroundColor();
+        m_activeListBoxSelectionForegroundColor = platformActiveListBoxSelectionForegroundColor(options);
     return m_activeListBoxSelectionForegroundColor;
 }
 
-Color RenderTheme::inactiveListBoxSelectionForegroundColor() const
+Color RenderTheme::inactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
 {
     if (!m_inactiveListBoxSelectionForegroundColor.isValid() && supportsListBoxSelectionForegroundColors())
-        m_inactiveListBoxSelectionForegroundColor = platformInactiveListBoxSelectionForegroundColor();
+        m_inactiveListBoxSelectionForegroundColor = platformInactiveListBoxSelectionForegroundColor(options);
     return m_inactiveListBoxSelectionForegroundColor;
 }
 
-Color RenderTheme::platformActiveSelectionBackgroundColor() const
+Color RenderTheme::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
 {
     // Use a blue color by default if the platform theme doesn't define anything.
     return Color(0, 0, 255);
 }
 
-Color RenderTheme::platformActiveSelectionForegroundColor() const
+Color RenderTheme::platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const
 {
     // Use a white color by default if the platform theme doesn't define anything.
     return Color::white;
 }
 
-Color RenderTheme::platformInactiveSelectionBackgroundColor() const
+Color RenderTheme::platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
 {
     // Use a grey color by default if the platform theme doesn't define anything.
     // This color matches Firefox's inactive color.
     return Color(176, 176, 176);
 }
 
-Color RenderTheme::platformInactiveSelectionForegroundColor() const
+Color RenderTheme::platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const
 {
     // Use a black color by default.
     return Color::black;
 }
 
-Color RenderTheme::platformActiveListBoxSelectionBackgroundColor() const
+Color RenderTheme::platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
 {
-    return platformActiveSelectionBackgroundColor();
+    return platformActiveSelectionBackgroundColor(options);
 }
 
-Color RenderTheme::platformActiveListBoxSelectionForegroundColor() const
+Color RenderTheme::platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
 {
-    return platformActiveSelectionForegroundColor();
+    return platformActiveSelectionForegroundColor(options);
 }
 
-Color RenderTheme::platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
+Color RenderTheme::platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
 {
-    return platformInactiveSelectionBackgroundColor();
+    return platformInactiveSelectionBackgroundColor(options);
 }
 
-Color RenderTheme::platformInactiveListBoxSelectionForegroundColor() const
+Color RenderTheme::platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
 {
-    return platformInactiveSelectionForegroundColor();
+    return platformInactiveSelectionForegroundColor(options);
 }
 
 int RenderTheme::baselinePosition(const RenderBox& box) const

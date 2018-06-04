@@ -1101,12 +1101,12 @@ bool RenderThemeIOS::paintFileUploadIconDecorations(const RenderObject&, const R
     return false;
 }
 
-Color RenderThemeIOS::platformActiveSelectionBackgroundColor() const
+Color RenderThemeIOS::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
 {
     return Color::transparent;
 }
 
-Color RenderThemeIOS::platformInactiveSelectionBackgroundColor() const
+Color RenderThemeIOS::platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
 {
     return Color::transparent;
 }

@@ -109,8 +109,8 @@ protected:
     void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintSearchFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    Color platformActiveSelectionBackgroundColor() const override;
-    Color platformInactiveSelectionBackgroundColor() const override;
+    Color platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
+    Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
 
 #if ENABLE(TOUCH_EVENTS)
     Color platformTapHighlightColor() const override { return 0x4D1A1A1A; }

@@ -291,29 +291,77 @@ String RenderThemeMac::imageControlsStyleSheet() const
 
 #endif
 
-Color RenderThemeMac::platformActiveSelectionBackgroundColor() const
+Color RenderThemeMac::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
 {
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseSystemAppearance), options.contains(StyleColor::Options::UseDefaultAppearance));
     return colorFromNSColor([NSColor selectedTextBackgroundColor]);
 }
 
-Color RenderThemeMac::platformInactiveSelectionBackgroundColor() const
+Color RenderThemeMac::platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseSystemAppearance), options.contains(StyleColor::Options::UseDefaultAppearance));
+    return colorFromNSColor([NSColor unemphasizedSelectedTextBackgroundColor]);
+#else
+    UNUSED_PARAM(options);
     return colorFromNSColor([NSColor secondarySelectedControlColor]);
+#endif
 }
 
-Color RenderThemeMac::platformActiveListBoxSelectionBackgroundColor() const
+Color RenderThemeMac::platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
 {
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseSystemAppearance), options.contains(StyleColor::Options::UseDefaultAppearance));
+    return colorFromNSColor([NSColor selectedTextColor]);
+}
+
+Color RenderThemeMac::platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseSystemAppearance), options.contains(StyleColor::Options::UseDefaultAppearance));
+    return colorFromNSColor([NSColor unemphasizedSelectedTextColor]);
+#else
+    UNUSED_PARAM(options);
+    return colorFromNSColor([NSColor textColor]);
+#endif
+}
+
+Color RenderThemeMac::platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseSystemAppearance), options.contains(StyleColor::Options::UseDefaultAppearance));
+    return colorFromNSColor([NSColor selectedContentBackgroundColor]);
+#else
+    UNUSED_PARAM(options);
     return colorFromNSColor([NSColor alternateSelectedControlColor]);
+#endif
 }
 
-Color RenderThemeMac::platformActiveListBoxSelectionForegroundColor() const
+Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
 {
-    return Color::white;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseSystemAppearance), options.contains(StyleColor::Options::UseDefaultAppearance));
+    return colorFromNSColor([NSColor unemphasizedSelectedContentBackgroundColor]);
+#else
+    UNUSED_PARAM(options);
+    return colorFromNSColor([NSColor secondarySelectedControlColor]);
+#endif
 }
 
-Color RenderThemeMac::platformInactiveListBoxSelectionForegroundColor() const
+Color RenderThemeMac::platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
 {
-    return Color::black;
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseSystemAppearance), options.contains(StyleColor::Options::UseDefaultAppearance));
+    return colorFromNSColor([NSColor alternateSelectedControlTextColor]);
+}
+
+Color RenderThemeMac::platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseSystemAppearance), options.contains(StyleColor::Options::UseDefaultAppearance));
+    return colorFromNSColor([NSColor unemphasizedSelectedTextColor]);
+#else
+    UNUSED_PARAM(options);
+    return colorFromNSColor([NSColor selectedControlTextColor]);
+#endif
 }
 
 Color RenderThemeMac::platformFocusRingColor(OptionSet<StyleColor::Options> options) const
@@ -321,14 +369,6 @@ Color RenderThemeMac::platformFocusRingColor(OptionSet<StyleColor::Options> opti
     if (usesTestModeFocusRingColor())
         return oldAquaFocusRingColor();
     return systemColor(CSSValueWebkitFocusRingColor, options);
-}
-
-Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
-{
-    const bool useSystemAppearance = options.contains(StyleColor::Options::UseSystemAppearance);
-    const bool useDefaultAppearance = options.contains(StyleColor::Options::UseDefaultAppearance);
-    LocalDefaultSystemAppearance localAppearance(useSystemAppearance, useDefaultAppearance);
-    return platformInactiveSelectionBackgroundColor();
 }
 
 static FontSelectionValue toFontWeight(NSInteger appKitFontWeight)
