@@ -3032,7 +3032,7 @@ void WebPage::didReceivePasswordForQuickLookDocument(const String& password)
 
 bool WebPage::platformPrefersTextLegibilityBasedZoomScaling() const
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     return true;
 #else
     return false;

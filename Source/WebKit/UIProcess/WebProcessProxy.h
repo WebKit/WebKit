@@ -213,7 +213,7 @@ public:
     void suspendWebPageProxy(WebPageProxy&, API::Navigation&);
     void suspendedPageWasDestroyed(SuspendedPageProxy&);
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     void takeBackgroundActivityTokenForFullscreenInput();
     void releaseBackgroundActivityTokenForFullscreenInput();
 #endif
@@ -361,7 +361,7 @@ private:
     bool m_hasCommittedAnyProvisionalLoads { false };
     bool m_isInPrewarmedPool;
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     ProcessThrottler::BackgroundActivityToken m_backgroundActivityTokenForFullscreenFormControls;
 #endif
 };

@@ -296,7 +296,7 @@ bool MediaControlsHost::compactMode() const
     if (m_simulateCompactMode)
         return true;
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     return true;
 #else
     return false;

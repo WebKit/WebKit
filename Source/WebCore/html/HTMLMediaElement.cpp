@@ -5287,7 +5287,7 @@ void HTMLMediaElement::updatePlayState(UpdateState updateState)
         if (!m_waitingToEnterFullscreen)
             enterFullscreen();
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
         // FIXME: Investigate doing this for all builds.
         return;
 #endif

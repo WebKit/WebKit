@@ -127,7 +127,7 @@
 
 @end
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
 
 @interface WKContentView (ExtraZoomMode) <WKFocusedFormControlViewDelegate, WKSelectMenuListViewControllerDelegate, WKTextInputListViewControllerDelegate>
 @end
@@ -1975,7 +1975,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     [_textSelectionAssistant willStartScrollingOverflow];
     _page->setIsScrollingOrZooming(true);
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     [_focusedFormControlView disengageFocusedFormControlNavigation];
 #endif
 }
@@ -1995,7 +1995,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     }
     _page->setIsScrollingOrZooming(false);
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     [_focusedFormControlView engageFocusedFormControlNavigation];
 #endif
 }
@@ -3968,7 +3968,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     if (self.isFirstResponder && !self.suppressAssistantSelectionView)
         [_textSelectionAssistant activateSelection];
 
-#if !ENABLE(EXTRA_ZOOM_MODE)
+#if !PLATFORM(WATCHOS)
     [self reloadInputViews];
 #endif
 }
@@ -4052,7 +4052,7 @@ static bool isAssistableInputType(InputType type)
         // The default behavior is to allow node assistance if the user is interacting.
         // We also allow node assistance if the keyboard already is showing, unless we're in extra zoom mode.
         shouldShowKeyboard = userIsInteracting
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
             || (_isChangingFocus && ![_focusedFormControlView isHidden])
 #else
             || _isChangingFocus
@@ -4107,7 +4107,7 @@ static bool isAssistableInputType(InputType type)
     if (![self isFirstResponder])
         [self becomeFirstResponder];
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     [self addFocusedFormControlOverlay];
     if (!_isChangingFocus)
         [self presentViewControllerForCurrentAssistedNode];
@@ -4133,7 +4133,7 @@ static bool isAssistableInputType(InputType type)
     
     [self _displayFormNodeInputView];
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     if (_isChangingFocus)
         [_focusedFormControlView reloadData:YES];
 #endif
@@ -4167,7 +4167,7 @@ static bool isAssistableInputType(InputType type)
     // The name is misleading, but this actually clears the selection views and removes any selection.
     [_webSelectionAssistant resignedFirstResponder];
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     [self dismissAllInputViewControllers:YES];
     if (!_isChangingFocus)
         [self removeFocusedFormControlOverlay];
@@ -4198,13 +4198,13 @@ static bool isAssistableInputType(InputType type)
 
 - (void)reloadContextViewForPresentedListViewController
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]])
         [(WKTextInputListViewController *)_presentedFullScreenInputViewController.get() reloadContextView];
 #endif
 }
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
 
 - (void)addFocusedFormControlOverlay
 {
@@ -4472,11 +4472,11 @@ static bool isAssistableInputType(InputType type)
     return self.assistedNodeSelectOptions[index].isSelected;
 }
 
-#endif // ENABLE(EXTRA_ZOOM_MODE)
+#endif // PLATFORM(WATCHOS)
 
 - (void)_wheelChangedWithEvent:(UIEvent *)event
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     if ([_focusedFormControlView handleWheelEvent:event])
         return;
 #endif
@@ -5481,7 +5481,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (void)_simulateTextEntered:(NSString *)text
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]])
         [(WKTextInputListViewController *)_presentedFullScreenInputViewController.get() enterText:text];
 #else
@@ -5500,7 +5500,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (void)selectFormAccessoryPickerRow:(NSInteger)rowIndex
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKSelectMenuListViewController class]])
         [(WKSelectMenuListViewController *)_presentedFullScreenInputViewController.get() selectItemAtIndex:rowIndex];
 #else
@@ -5519,7 +5519,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (NSString *)formInputLabel
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     if (_presentedFullScreenInputViewController)
         return [self inputLabelTextForViewController:(id)_presentedFullScreenInputViewController.get()];
 #endif
@@ -5528,7 +5528,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (void)setTimePickerValueToHour:(NSInteger)hour minute:(NSInteger)minute
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKTimePickerViewController class]])
         [(WKTimePickerViewController *)_presentedFullScreenInputViewController.get() setHour:hour minute:minute];
 #endif

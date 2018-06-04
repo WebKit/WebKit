@@ -47,7 +47,7 @@ static bool constraintsAreAllRelative(const ViewportConfiguration::Parameters& c
 
 static float platformDeviceWidthOverride()
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     return 320;
 #else
     return 0;
@@ -56,7 +56,7 @@ static float platformDeviceWidthOverride()
 
 static bool shouldOverrideShrinkToFitArgument()
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     return true;
 #else
     return false;
@@ -68,7 +68,7 @@ static bool needsUpdateAfterChangingDisabledAdaptations(const OptionSet<Disabled
     if (oldDisabledAdaptations == newDisabledAdaptations)
         return false;
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     if (oldDisabledAdaptations.contains(DisabledAdaptations::ExtraZoomMode) != newDisabledAdaptations.contains(DisabledAdaptations::ExtraZoomMode))
         return true;
 #endif

@@ -1034,7 +1034,7 @@ String webCryptoMasterKeyKeychainComment()
 
 #endif
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
 
 String numberPadOKButtonTitle()
 {

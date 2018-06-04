@@ -141,7 +141,7 @@ private:
 
     void purgeCaches() override;
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     String extraDefaultStyleSheet() final;
 #endif
 

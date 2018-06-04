@@ -88,7 +88,7 @@ class WebPageProxy;
 #import <WebKitAdditions/WKContentViewInteractionAdditionsBefore.h>
 #endif
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
 @class WKFocusedFormControlView;
 #endif
 
@@ -254,7 +254,7 @@ struct WKAutoCorrectionData {
     RetainPtr<_UITextDragCaretView> _editDropCaretView;
 #endif
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     RetainPtr<WKFocusedFormControlView> _focusedFormControlView;
     RetainPtr<UIViewController> _presentedFullScreenInputViewController;
     RetainPtr<UINavigationController> _inputNavigationViewControllerForFullScreenInputs;

@@ -285,7 +285,7 @@ void VideoFullscreenControllerContext::didSetupFullscreen()
 
 void VideoFullscreenControllerContext::willExitFullscreen()
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = makeRefPtr(this), this] () mutable {
         m_fullscreenModel->willExitFullscreen();

@@ -80,7 +80,7 @@ SettingsBase::~SettingsBase() = default;
 
 float SettingsBase::defaultMinimumZoomFontSize()
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     return 30;
 #else
     return 15;
@@ -96,7 +96,7 @@ bool SettingsBase::defaultTextAutosizingEnabled()
 
 bool SettingsBase::defaultDownloadableBinaryFontsEnabled()
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     return false;
 #else
     return true;

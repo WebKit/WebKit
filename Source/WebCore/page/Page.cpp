@@ -1860,7 +1860,7 @@ static LayoutRect relevantViewRect(RenderView* view)
     LayoutRect viewRect = view->viewRect();
 
     float relevantViewRectWidth = 980;
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     // FIXME(186051): Consider limiting the relevant rect width to the view width everywhere.
     relevantViewRectWidth = std::min<float>(viewRect.width().toFloat(), relevantViewRectWidth);
 #endif

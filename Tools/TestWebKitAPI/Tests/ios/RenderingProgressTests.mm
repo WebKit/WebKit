@@ -48,7 +48,7 @@
 
 @end
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
 
 TEST(RenderingProgressTests, FirstPaintWithSignificantArea)
 {
@@ -71,6 +71,6 @@ TEST(RenderingProgressTests, FirstPaintWithSignificantArea)
     TestWebKitAPI::Util::run(&observedSignificantPaint);
 }
 
-#endif // ENABLE(EXTRA_ZOOM_MODE)
+#endif // PLATFORM(WATCHOS)
 
 #endif // WK_API_ENABLED

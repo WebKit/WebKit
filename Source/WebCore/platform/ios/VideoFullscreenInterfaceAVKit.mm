@@ -560,7 +560,7 @@ NS_ASSUME_NONNULL_END
 
     _fullscreenInterface = interface;
     _avPlayerViewController = adoptNS([allocAVPlayerViewControllerInstance() initWithPlayerLayerView:interface->playerLayerView()]);
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     _avPlayerViewController.get().delegate = self;
 #endif
 
@@ -578,7 +578,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)enterFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError * __nullable error))completionHandler
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     _presentingViewController = _fullscreenInterface->presentingViewController();
 
     _avPlayerViewController.get().view.frame = _presentingViewController.get().view.frame;
@@ -593,7 +593,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)exitFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError * __nullable error))completionHandler
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     if (!_presentingViewController)
         return;
 
@@ -607,7 +607,7 @@ NS_ASSUME_NONNULL_END
 #endif
 }
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
 #define MY_NO_RETURN NO_RETURN_DUE_TO_ASSERT
 #else
 #define MY_NO_RETURN
@@ -615,7 +615,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)startPictureInPicture MY_NO_RETURN
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     ASSERT_NOT_REACHED();
 #else
     [_avPlayerViewController.get() startPictureInPicture];
@@ -624,7 +624,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)stopPictureInPicture MY_NO_RETURN
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     ASSERT_NOT_REACHED();
 #else
     [_avPlayerViewController.get() stopPictureInPicture];
@@ -633,7 +633,7 @@ NS_ASSUME_NONNULL_END
 
 - (BOOL)isPictureInPicturePossible
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     return NO;
 #else
     return _avPlayerViewController.get().isPictureInPicturePossible;
@@ -642,7 +642,7 @@ NS_ASSUME_NONNULL_END
 
 - (BOOL)isPictureInPictureActive
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     return NO;
 #else
     return _avPlayerViewController.get().isPictureInPictureActive;
@@ -651,7 +651,7 @@ NS_ASSUME_NONNULL_END
 
 - (BOOL)pictureInPictureActive
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     return NO;
 #else
     return _avPlayerViewController.get().pictureInPictureActive;
@@ -660,7 +660,7 @@ NS_ASSUME_NONNULL_END
 
 - (BOOL)pictureInPictureWasStartedWhenEnteringBackground
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     return NO;
 #else
     return _avPlayerViewController.get().pictureInPictureWasStartedWhenEnteringBackground;
@@ -674,7 +674,7 @@ NS_ASSUME_NONNULL_END
 
 - (BOOL)showsPlaybackControls
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     return YES;
 #else
     return _avPlayerViewController.get().showsPlaybackControls;
@@ -683,7 +683,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)setShowsPlaybackControls:(BOOL)showsPlaybackControls
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     UNUSED_PARAM(showsPlaybackControls);
 #else
     _avPlayerViewController.get().showsPlaybackControls = showsPlaybackControls;
@@ -692,7 +692,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)setAllowsPictureInPicturePlayback:(BOOL)allowsPictureInPicturePlayback
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     UNUSED_PARAM(allowsPictureInPicturePlayback);
 #else
     _avPlayerViewController.get().allowsPictureInPicturePlayback = allowsPictureInPicturePlayback;
@@ -701,7 +701,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)setDelegate:(id <AVPlayerViewControllerDelegate>)delegate
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     ASSERT(!delegate || [delegate respondsToSelector:@selector(playerViewController:shouldExitFullScreenWithReason:)]);
     _delegate = id<AVPlayerViewControllerDelegate_WebKitOnly>(delegate);
 #else
@@ -839,7 +839,7 @@ void VideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const Int
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-#if !ENABLE(EXTRA_ZOOM_MODE)
+#if !PLATFORM(WATCHOS)
     if (![[m_parentView window] _isHostedInAnotherProcess]) {
         if (!m_window)
             m_window = adoptNS([allocUIWindowInstance() initWithFrame:[[getUIScreenClass() mainScreen] bounds]]);
@@ -878,7 +878,7 @@ void VideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const Int
     [m_playerViewController setAllowsPictureInPicturePlayback:m_allowsPictureInPicturePlayback];
     [playerController() setPictureInPicturePossible:m_allowsPictureInPicturePlayback];
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     m_viewController = model()->createVideoFullscreenViewController(m_playerViewController.get().avPlayerViewController);
 #endif
 
@@ -1269,7 +1269,7 @@ bool VideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason(VideoFullscre
     if (!m_watchdogTimer.isActive() && !ignoreWatchdogForDebugging)
         m_watchdogTimer.startOneShot(defaultWatchdogTimerInterval);
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     if (m_fullscreenChangeObserver) {
         m_waitingForPreparedToExit = true;
         m_fullscreenChangeObserver->willExitFullscreen();
@@ -1612,7 +1612,7 @@ void VideoFullscreenInterfaceAVKit::doSetup()
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-#if !ENABLE(EXTRA_ZOOM_MODE)
+#if !PLATFORM(WATCHOS)
     if (![[m_parentView window] _isHostedInAnotherProcess] && !m_window) {
         if (!m_window)
             m_window = adoptNS([allocUIWindowInstance() initWithFrame:[[getUIScreenClass() mainScreen] bounds]]);
@@ -1652,7 +1652,7 @@ void VideoFullscreenInterfaceAVKit::doSetup()
     [m_playerViewController setAllowsPictureInPicturePlayback:m_allowsPictureInPicturePlayback];
     [playerController() setPictureInPicturePossible:m_allowsPictureInPicturePlayback];
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     m_viewController = model()->createVideoFullscreenViewController(m_playerViewController.get().avPlayerViewController);
 #endif
 
@@ -1883,7 +1883,7 @@ bool VideoFullscreenInterfaceAVKit::isPlayingVideoInEnhancedFullscreen() const
 
 bool WebCore::supportsPictureInPicture()
 {
-#if PLATFORM(IOS) && HAVE(AVKIT) && !ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(IOS) && HAVE(AVKIT) && !PLATFORM(WATCHOS)
     return [getAVPictureInPictureControllerClass() isPictureInPictureSupported];
 #else
     return false;

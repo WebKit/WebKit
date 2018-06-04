@@ -709,7 +709,7 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
 
 - (BOOL)platformSupportsPickerViewController
 {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     return NO;
 #else
     return YES;

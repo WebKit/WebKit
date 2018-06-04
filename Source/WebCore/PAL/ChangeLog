@@ -1,3 +1,15 @@
+2018-06-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WebKit on watchOS] Remove all uses of the EXTRA_ZOOM_MODE compiler flag
+        https://bugs.webkit.org/show_bug.cgi?id=186279
+
+        Reviewed by Tim Horton.
+
+        Replaces uses of ENABLE(EXTRA_ZOOM_MODE) with PLATFORM(WATCHOS).
+
+        * pal/cf/CoreMediaSoftLink.h:
+        * pal/spi/cocoa/AVKitSPI.h:
+
 2018-05-30  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add an SPI to suppress connection termination errors from CFNetwork when network interfaces change

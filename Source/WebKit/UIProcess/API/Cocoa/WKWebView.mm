@@ -658,7 +658,7 @@ static void validate(WKWebViewConfiguration *configuration)
     if (NSNumber *enabledValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFastClickingDisabled"])
         _fastClickingIsDisabled = enabledValue.boolValue;
     else {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
         _fastClickingIsDisabled = YES;
 #else
         _fastClickingIsDisabled = NO;
@@ -726,7 +726,7 @@ static void validate(WKWebViewConfiguration *configuration)
 
 #if PLATFORM(IOS)
     _dragInteractionPolicy = _WKDragInteractionPolicyDefault;
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     _allowsViewportShrinkToFit = YES;
 #else
     _allowsViewportShrinkToFit = NO;
@@ -2172,7 +2172,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     double currentScale = contentZoomScale(self);
     double scale = currentScale;
     if (allowScaling) {
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
         const CGFloat minimumMarginForZoomingToEntireFocusRectInWebViewCoordinates = 10;
         const CGFloat maximumMarginForZoomingToEntireFocusRectInWebViewCoordinates = 35;
 

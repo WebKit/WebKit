@@ -149,7 +149,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     _contentInsetAdjustmentBehaviorWasExternallyOverridden = (self.contentInsetAdjustmentBehavior != UIScrollViewContentInsetAdjustmentAutomatic);
 #endif
     
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     [self _configureScrollingForExtraZoomMode];
 #endif
 
@@ -334,7 +334,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 {
     [super addGestureRecognizer:gestureRecognizer];
 
-#if ENABLE(EXTRA_ZOOM_MODE)
+#if PLATFORM(WATCHOS)
     if (gestureRecognizer == self.pinchGestureRecognizer)
         gestureRecognizer.allowedTouchTypes = @[];
 #endif
