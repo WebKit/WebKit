@@ -59,6 +59,7 @@ class VersionNameMap(object):
                 'El Capitan': Version(10, 11),
                 'Sierra': Version(10, 12),
                 'High Sierra': Version(10, 13),
+                'Mojave': Version(10, 14),
             },
             'ios': self._automap_to_major_version('iOS', minimum=Version(10), maximum=Version(11)),
             'tvos': self._automap_to_major_version('tvOS', minimum=Version(10), maximum=Version(11)),

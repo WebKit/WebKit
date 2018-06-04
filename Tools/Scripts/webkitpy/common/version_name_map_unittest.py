@@ -36,6 +36,11 @@ class VersionMapTestCase(unittest.TestCase):
 
     def test_mac_version_by_name(self):
         map = VersionNameMap()
+        self.assertEqual(('mac', Version(10, 14)), map.from_name('Mojave'))
+        self.assertEqual(('mac', Version(10, 14)), map.from_name('mojave'))
+        self.assertEqual(('mac', Version(10, 13)), map.from_name('High Sierra'))
+        self.assertEqual(('mac', Version(10, 13)), map.from_name('high sierra'))
+        self.assertEqual(('mac', Version(10, 13)), map.from_name('highsierra'))
         self.assertEqual(('mac', Version(10, 12)), map.from_name('Sierra'))
         self.assertEqual(('mac', Version(10, 12)), map.from_name('sierra'))
         self.assertEqual(('mac', Version(10, 11)), map.from_name('El Capitan'))
@@ -52,6 +57,9 @@ class VersionMapTestCase(unittest.TestCase):
 
     def test_mac_name_by_version(self):
         map = VersionNameMap()
+        self.assertEqual('Mojave', map.to_name(version=Version(10, 14), platform='mac'))
+        self.assertEqual('High Sierra', map.to_name(version=Version(10, 13), platform='mac'))
+        self.assertEqual('High Sierra', map.to_name(version=Version(10, 13, 3), platform='mac'))
         self.assertEqual('Sierra', map.to_name(version=Version(10, 12), platform='mac'))
         self.assertEqual('El Capitan', map.to_name(version=Version(10, 11), platform='mac'))
         self.assertEqual('El Capitan', map.to_name(version=Version(10, 11, 3), platform='mac'))

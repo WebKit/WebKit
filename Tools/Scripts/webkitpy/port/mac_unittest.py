@@ -74,6 +74,9 @@ class MacTest(darwin_testcase.DarwinTest):
         self.assert_name('mac', 'highsierra', 'mac-highsierra')
         self.assert_name('mac-highsierra', 'elcapitan', 'mac-highsierra')
         self.assert_name('mac-highsierra', 'sierra', 'mac-highsierra')
+        self.assert_name('mac', 'mojave', 'mac-mojave')
+        self.assert_name('mac-mojave', 'sierra', 'mac-mojave')
+        self.assert_name('mac-mojave', 'highsierra', 'mac-mojave')
         self.assertRaises(AssertionError, self.assert_name, 'mac-tiger', 'leopard', 'mac-leopard')
 
     def test_setup_environ_for_server(self):

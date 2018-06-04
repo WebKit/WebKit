@@ -25,6 +25,7 @@
 
 Dashboard = {
     Platform: {
+        macOSMojave: { name: "macos-mojave", readableName: "macOS Mojave", order: 6 },
         macOSHighSierra: { name: "macos-highsierra", readableName: "macOS High Sierra", order: 7 },
         macOSSierra: { name: "macos-sierra", readableName: "macOS Sierra", order: 8 },
         iOS11Simulator: { name: "ios-simulator-11", readableName: "iOS 11 Simulator", order: 20 },
