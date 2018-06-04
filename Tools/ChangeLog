@@ -1,3 +1,33 @@
+2018-06-03  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Remove gMiniBrowser global variable
+        https://bugs.webkit.org/show_bug.cgi?id=186134
+
+        Reviewed by Brent Fulgham.
+
+        It should not be assumed there is only one main window and one browser
+        window to support multiple windows properly. gMainWindow and
+        gMiniBrowser global variables should be removed. This change
+        removes gMiniBrowser.
+
+        * MiniBrowser/win/Common.cpp: Removed gMiniBrowser global variable.
+        * MiniBrowser/win/Common.h: Ditto.
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::init):
+        (MainWindow::WndProc):
+        (EditProc): Post WM_COMMAND if the enter key is pressed in URL bar.
+        (MainWindow::cachesDialogProc): Renamed from Caches.
+        (MainWindow::customUserAgentDialogProc): Renamed from CustomUserAgent.
+        (MainWindow::onURLBarEnter): Extracted from EditProc.
+        (BackButtonProc): Deleted.
+        (ForwardButtonProc): Deleted.
+        (Caches): Renamed to MainWindow::cachesDialogProc.
+        (CustomUserAgent): Renamed to MainWindow::customUserAgentDialogProc.
+        * MiniBrowser/win/MainWindow.h: Convert hCacheWnd global variable to a member variable of MainWindow.
+        * MiniBrowser/win/MiniBrowserLibResource.h:
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain):
+
 2018-06-02  Darin Adler  <darin@apple.com>
 
         [Cocoa] Update some code to be more ARC-compatible to prepare for future ARC adoption

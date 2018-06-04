@@ -36,6 +36,5 @@ void createCrashReport(EXCEPTION_POINTERS*);
 
 extern HINSTANCE hInst;
 extern MainWindow* gMainWindow;
-extern MiniBrowser* gMiniBrowser;
 extern POINT s_windowPosition;
 extern SIZE s_windowSize;

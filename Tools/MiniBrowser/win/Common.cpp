@@ -36,7 +36,6 @@
 // Global Variables:
 HINSTANCE hInst;
 MainWindow* gMainWindow = nullptr;
-MiniBrowser* gMiniBrowser = nullptr;
 
 // Support moving the transparent window
 POINT s_windowPosition = { 100, 100 };

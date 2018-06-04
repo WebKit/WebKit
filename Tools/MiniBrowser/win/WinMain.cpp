@@ -70,7 +70,6 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     if (FAILED(hr))
         goto exit;
 
-    gMiniBrowser = gMainWindow->browserWindow();
     ShowWindow(gMainWindow->hwnd(), nCmdShow);
 
     hAccelTable = LoadAccelerators(hInst, MAKEINTRESOURCE(IDC_MINIBROWSER));
@@ -78,7 +77,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     if (requestedURL.length())
         gMainWindow->loadURL(requestedURL.GetBSTR());
     else
-        gMiniBrowser->loadHTMLString(_bstr_t(defaultHTML).GetBSTR());
+        gMainWindow->browserWindow()->loadHTMLString(_bstr_t(defaultHTML).GetBSTR());
 
 #pragma warning(disable:4509)
 

@@ -43,14 +43,18 @@ public:
     
 private:
     static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+    static INT_PTR CALLBACK customUserAgentDialogProc(HWND, UINT, WPARAM, LPARAM);
+    static INT_PTR CALLBACK cachesDialogProc(HWND, UINT, WPARAM, LPARAM);
     static void registerClass(HINSTANCE hInstance);
     static std::wstring s_windowClass;
 
     bool toggleMenuItem(UINT menuID);
+    void onURLBarEnter();
 
     HWND m_hMainWnd { nullptr };
     HWND m_hURLBarWnd { nullptr };
     HWND m_hBackButtonWnd { nullptr };
     HWND m_hForwardButtonWnd { nullptr };
+    HWND m_hCacheWnd { nullptr };
     std::unique_ptr<MiniBrowser> m_browserWindow;
 };
