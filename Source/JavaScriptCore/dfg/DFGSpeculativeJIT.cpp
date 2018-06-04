@@ -12939,6 +12939,17 @@ void SpeculativeJIT::compileExtractCatchLocal(Node* node)
     jsValueResult(resultRegs, node);
 }
 
+void SpeculativeJIT::compileClearCatchLocals(Node* node)
+{
+    ScratchBuffer* scratchBuffer = m_jit.jitCode()->common.catchOSREntryBuffer;
+    ASSERT(scratchBuffer);
+    GPRTemporary scratch(this);
+    GPRReg scratchGPR = scratch.gpr();
+    m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), scratchGPR);
+    m_jit.storePtr(TrustedImmPtr(nullptr), scratchGPR);
+    noResult(node);
+}
+
 void SpeculativeJIT::compileProfileType(Node* node)
 {
     JSValueOperand value(this, node->child1());

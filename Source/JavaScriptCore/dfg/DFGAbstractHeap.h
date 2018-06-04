@@ -77,6 +77,7 @@ namespace JSC { namespace DFG {
     macro(JSWeakMapFields) \
     macro(JSWeakSetFields) \
     macro(InternalState) \
+    macro(CatchLocals) \
     macro(Absolute) \
     /* DOMJIT tells the heap range with the pair of integers. */\
     macro(DOMState) \

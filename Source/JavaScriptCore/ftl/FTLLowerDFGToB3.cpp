@@ -567,6 +567,9 @@ private:
         case ExtractCatchLocal:
             compileExtractCatchLocal();
             break;
+        case ClearCatchLocals:
+            compileClearCatchLocals();
+            break;
         case GetStack:
             compileGetStack();
             break;
@@ -1693,6 +1696,13 @@ private:
     {
         EncodedJSValue* buffer = static_cast<EncodedJSValue*>(m_ftlState.jitCode->common.catchOSREntryBuffer->dataBuffer());
         setJSValue(m_out.load64(m_out.absolute(buffer + m_node->catchOSREntryIndex())));
+    }
+
+    void compileClearCatchLocals()
+    {
+        ScratchBuffer* scratchBuffer = m_ftlState.jitCode->common.catchOSREntryBuffer;
+        ASSERT(scratchBuffer);
+        m_out.storePtr(m_out.constIntPtr(0), m_out.absolute(scratchBuffer->addressOfActiveLength()));
     }
     
     void compileGetStack()

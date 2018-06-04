@@ -3529,6 +3529,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case LoopHint:
     case ZombieHint:
     case ExitOK:
+    case ClearCatchLocals:
         break;
 
     case CheckTypeInfoFlags: {

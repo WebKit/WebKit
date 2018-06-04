@@ -1214,6 +1214,7 @@ private:
         case InitializeEntrypointArguments:
         case WeakSetAdd:
         case WeakMapSet:
+        case ClearCatchLocals:
             break;
             
         // This gets ignored because it only pretends to produce a value.

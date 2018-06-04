@@ -400,6 +400,7 @@ MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(ExecState* ex
         ++index;
     });
 
+    // The active length of catchOSREntryBuffer will be zeroed by ClearCatchLocals node.
     dfgCommon->catchOSREntryBuffer->setActiveLength(sizeof(JSValue) * index);
     return catchEntrypoint->machineCode;
 }

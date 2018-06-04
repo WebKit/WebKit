@@ -1480,6 +1480,7 @@ public:
     void compileLogShadowChickenTail(Node*);
     void compileHasIndexedProperty(Node*);
     void compileExtractCatchLocal(Node*);
+    void compileClearCatchLocals(Node*);
     void compileProfileType(Node*);
 
     void moveTrueTo(GPRReg);
