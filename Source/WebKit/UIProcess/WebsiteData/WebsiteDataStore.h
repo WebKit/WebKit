@@ -159,6 +159,10 @@ public:
     void setAllowsCellularAccess(AllowsCellularAccess allows) { m_allowsCellularAccess = allows; }
     AllowsCellularAccess allowsCellularAccess() { return m_allowsCellularAccess; }
 
+#if PLATFORM(COCOA)
+    void setProxyConfiguration(CFDictionaryRef configuration) { m_proxyConfiguration = configuration; }
+    CFDictionaryRef proxyConfiguration() { return m_proxyConfiguration.get(); }
+#endif
     static void allowWebsiteDataRecordsForAllOrigins();
 
 private:
@@ -205,6 +209,7 @@ private:
 #if PLATFORM(COCOA)
     Vector<uint8_t> m_uiProcessCookieStorageIdentifier;
     RetainPtr<CFHTTPCookieStorageRef> m_cfCookieStorage;
+    RetainPtr<CFDictionaryRef> m_proxyConfiguration;
 #endif
     HashSet<WebCore::Cookie> m_pendingCookies;
     

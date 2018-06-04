@@ -84,6 +84,7 @@ private:
     RetainPtr<WKNetworkSessionDelegate> m_statelessSessionDelegate;
 
     String m_boundInterfaceIdentifier;
+    RetainPtr<CFDictionaryRef> m_proxyConfiguration;
 };
 
 } // namespace WebKit

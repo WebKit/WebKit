@@ -552,6 +552,16 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     WebKit::WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(value);
 }
 
+- (void)_setProxyConfiguration:(NSDictionary *)configuration
+{
+    _websiteDataStore->websiteDataStore().setProxyConfiguration((CFDictionaryRef)configuration);
+}
+
+- (NSDictionary *)_proxyConfiguration
+{
+    return (NSDictionary *)_websiteDataStore->websiteDataStore().proxyConfiguration();
+}
+
 - (void)_resourceLoadStatisticsSetShouldSubmitTelemetry:(BOOL)value
 {
     auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();

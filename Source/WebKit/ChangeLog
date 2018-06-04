@@ -1,3 +1,37 @@
+2018-06-04  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Apply patch. rdar://problem/40688638
+
+    2018-06-04  Alex Christensen  <achristensen@webkit.org>
+
+            Add WKWebsiteDataStorePrivate._proxyConfiguration SPI
+            https://bugs.webkit.org/show_bug.cgi?id=185179
+
+            Reviewed by Andy Estes.
+
+            * NetworkProcess/NetworkSessionCreationParameters.h:
+            (WebKit::NetworkSessionCreationParameters::encode const):
+            (WebKit::NetworkSessionCreationParameters::decode):
+            * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+            (WebKit::NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeeded):
+            * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+            * Shared/WebsiteDataStoreParameters.cpp:
+            (WebKit::WebsiteDataStoreParameters::privateSessionParameters):
+            * Shared/cf/ArgumentCodersCF.cpp:
+            (IPC::encode):
+            (IPC::decode):
+            * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+            (-[WKWebsiteDataStore _setProxyConfiguration:]):
+            (-[WKWebsiteDataStore _proxyConfiguration]):
+            * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+            * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+            (WebKit::WebsiteDataStore::parameters):
+            * UIProcess/WebsiteData/WebsiteDataStore.h:
+            (WebKit::WebsiteDataStore::setProxyConfiguration):
+            (WebKit::WebsiteDataStore::proxyConfiguration):
+
 2018-05-31  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r232281. rdar://problem/40641066
