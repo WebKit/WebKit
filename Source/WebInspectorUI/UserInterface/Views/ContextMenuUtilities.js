@@ -120,7 +120,7 @@ WI.appendContextMenuItemsForURL = function(contextMenu, url, options)
     }
 
     contextMenu.appendItem(WI.UIString("Copy Link Address"), () => {
-        InspectorFrontendHost.copyText(sourceCode.url);
+        InspectorFrontendHost.copyText(url);
     });
 };
 
