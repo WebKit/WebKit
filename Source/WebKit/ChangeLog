@@ -1,3 +1,15 @@
+2018-06-04  Jeremy Jones  <jeremyj@apple.com>
+
+        Disable keyboard in fullscreen ios.
+        https://bugs.webkit.org/show_bug.cgi?id=186058
+
+        Reviewed by Jer Noble.
+
+        Disallow keyboard in ios fullscreen. This will still allow select keys useful for playback.
+
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::supportsFullScreen):
+
 2018-06-04  Youenn Fablet  <youenn@apple.com>
 
         NetworkCORSPreflightChecker should set the preflight request User-Agent header

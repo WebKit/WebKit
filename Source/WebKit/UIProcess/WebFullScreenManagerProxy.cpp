@@ -103,7 +103,11 @@ void WebFullScreenManagerProxy::requestExitFullScreen()
 
 void WebFullScreenManagerProxy::supportsFullScreen(bool withKeyboard, bool& supports)
 {
+#if PLATFORM(IOS)
+    supports = !withKeyboard;
+#else
     supports = true;
+#endif
 }
 
 void WebFullScreenManagerProxy::saveScrollPosition()
