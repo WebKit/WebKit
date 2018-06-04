@@ -549,7 +549,7 @@ input::-webkit-strong-password-auto-fill-button {
     -webkit-user-select: none !important;
     pointer-events: none !important;
     text-align: right !important;
-    color: black !important;
+    color: rgba(0, 0, 0, 0.8) !important;
     padding-left: 6px !important;
     white-space: nowrap !important;
 }

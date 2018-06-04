@@ -2023,11 +2023,11 @@ static Ref<CSSLinearGradientValue> autoFillStrongPasswordMaskImage()
 {
     CSSGradientColorStop firstStop;
     firstStop.m_color = CSSValuePool::singleton().createColorValue(Color::black);
-    firstStop.m_position = CSSValuePool::singleton().createValue(3, CSSPrimitiveValue::UnitType::CSS_EMS);
+    firstStop.m_position = CSSValuePool::singleton().createValue(50, CSSPrimitiveValue::UnitType::CSS_PERCENTAGE);
 
     CSSGradientColorStop secondStop;
     secondStop.m_color = CSSValuePool::singleton().createColorValue(Color::transparent);
-    secondStop.m_position = CSSValuePool::singleton().createValue(7, CSSPrimitiveValue::UnitType::CSS_EMS);
+    secondStop.m_position = CSSValuePool::singleton().createValue(100, CSSPrimitiveValue::UnitType::CSS_PERCENTAGE);
 
     auto gradient = CSSLinearGradientValue::create(CSSGradientRepeat::NonRepeating, CSSGradientType::CSSLinearGradient);
     gradient->setAngle(CSSValuePool::singleton().createValue(90, CSSPrimitiveValue::UnitType::CSS_DEG));
@@ -2050,7 +2050,9 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
 
     textBlockStyle.setDisplay(DisplayType::Block);
 
-    if (hasAutoFillStrongPasswordButton()) {
+    if (hasAutoFillStrongPasswordButton() && !isDisabledOrReadOnly()) {
+        textBlockStyle.setDisplay(DisplayType::InlineBlock);
+        textBlockStyle.setMaxWidth(Length { 100, Percent });
         textBlockStyle.setColor({ 0.0f, 0.0f, 0.0f, 0.6f });
         textBlockStyle.setTextOverflow(TextOverflow::Clip);
         textBlockStyle.setMaskImage(styleResolver().styleImage(autoFillStrongPasswordMaskImage()));
