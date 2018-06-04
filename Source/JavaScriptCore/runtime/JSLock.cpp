@@ -199,6 +199,9 @@ void JSLock::willReleaseLock()
     if (vm) {
         vm->drainMicrotasks();
 
+        if (!vm->topCallFrame)
+            vm->clearLastException();
+
         vm->heap.releaseDelayedReleasedObjects();
         vm->setStackPointerAtVMEntry(nullptr);
         
