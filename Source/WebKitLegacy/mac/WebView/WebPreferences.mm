@@ -634,7 +634,7 @@ public:
         [NSNumber numberWithBool:NO], WebKitWebGPUEnabledPreferenceKey,
 #endif
         [NSNumber numberWithBool:NO], WebKitCacheAPIEnabledPreferenceKey,
-        [NSNumber numberWithBool:NO], WebKitCrossOriginOptionsSupportEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES], WebKitCrossOriginWindowPolicySupportEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitFetchAPIEnabledPreferenceKey,
 
 #if ENABLE(STREAMS_API)
@@ -3011,14 +3011,14 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitCacheAPIEnabledPreferenceKey];
 }
 
-- (BOOL)crossOriginOptionsSupportEnabled
+- (BOOL)crossOriginWindowPolicySupportEnabled
 {
-    return [self _boolValueForKey:WebKitCrossOriginOptionsSupportEnabledPreferenceKey];
+    return [self _boolValueForKey:WebKitCrossOriginWindowPolicySupportEnabledPreferenceKey];
 }
 
-- (void)setCrossOriginOptionsSupportEnabled:(BOOL)flag
+- (void)setCrossOriginWindowPolicySupportEnabled:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitCrossOriginOptionsSupportEnabledPreferenceKey];
+    [self _setBoolValue:flag forKey:WebKitCrossOriginWindowPolicySupportEnabledPreferenceKey];
 }
 
 - (BOOL)fetchAPIEnabled

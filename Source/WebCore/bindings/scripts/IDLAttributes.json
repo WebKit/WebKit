@@ -163,7 +163,7 @@
         },
         "DoNotCheckSecurityIf": {
             "contextsAllowed": ["attribute", "operation"],
-            "values": ["CrossOriginOptionsAllow", "CrossOriginOptionsAllowPostMessage"]
+            "values": ["CrossOriginWindowPolicyAllow", "CrossOriginWindowPolicyAllowPostMessage"]
         },
         "DoNotCheckSecurityOnGetter": {
             "contextsAllowed": ["attribute"]

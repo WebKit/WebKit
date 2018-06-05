@@ -279,8 +279,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setServerTimingEnabled(BOOL);
 
     // IWebPreferencesPrivate7
-    virtual HRESULT STDMETHODCALLTYPE crossOriginOptionsSupportEnabled(_Out_ BOOL*);
-    virtual HRESULT STDMETHODCALLTYPE setCrossOriginOptionsSupportEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE crossOriginWindowPolicySupportEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setCrossOriginWindowPolicySupportEnabled(BOOL);
 
     // WebPreferences
 

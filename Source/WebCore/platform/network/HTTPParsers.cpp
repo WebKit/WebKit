@@ -913,19 +913,19 @@ CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView header
     return CrossOriginResourcePolicy::Invalid;
 }
 
-CrossOriginOptions parseCrossOriginOptionsHeader(StringView header)
+CrossOriginWindowPolicy parseCrossOriginWindowPolicyHeader(StringView header)
 {
     header = stripLeadingAndTrailingHTTPSpaces(header);
     if (header.isEmpty())
-        return CrossOriginOptions::Allow;
+        return CrossOriginWindowPolicy::Allow;
 
     if (equalLettersIgnoringASCIICase(header, "deny"))
-        return CrossOriginOptions::Deny;
+        return CrossOriginWindowPolicy::Deny;
 
     if (equalLettersIgnoringASCIICase(header, "allow-postmessage"))
-        return CrossOriginOptions::AllowPostMessage;
+        return CrossOriginWindowPolicy::AllowPostMessage;
 
-    return CrossOriginOptions::Allow;
+    return CrossOriginWindowPolicy::Allow;
 }
 
 }

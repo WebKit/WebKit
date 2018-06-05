@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Tests that 'Cross-Origin-Options: deny / allow-postmessage' prevents a cross-origin iframe from navigating us</title>
+<title>Tests that 'Cross-Origin-Window-Policy: deny / allow-postmessage' prevents a cross-origin iframe from navigating us</title>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="/common/utils.js"></script>
@@ -22,7 +22,7 @@ promise_test(t => {
             }, 200);
         });
     });
-}, "'Cross-Origin-Options: deny' prevents navigation from cross-origin sub-frame (using <a target=_top>)");
+}, "'Cross-Origin-Window-Policy: deny' prevents navigation from cross-origin sub-frame (using <a target=_top>)");
 
 promise_test(t => {
     return withPopup("navigation-from-subframe-frame.py?value=allow-postmessage&target=_top", false /* isCrossOrigin */).then((result) => {
@@ -34,7 +34,7 @@ promise_test(t => {
             }, 200);
         });
     });
-}, "'Cross-Origin-Options: allow-postmessage' prevents navigation from cross-origin sub-frame (using <a target=_top>)");
+}, "'Cross-Origin-Window-Policy: allow-postmessage' prevents navigation from cross-origin sub-frame (using <a target=_top>)");
 
 promise_test(t => {
     return withPopup("navigation-from-subframe-frame.py?value=allow&target=_top", false /* isCrossOrigin */).then((result) => {
@@ -44,7 +44,7 @@ promise_test(t => {
             };
         });
     });
-}, "'Cross-Origin-Options: allow' does not prevent navigation from cross-origin sub-frame (using <a target=_top>)");
+}, "'Cross-Origin-Window-Policy: allow' does not prevent navigation from cross-origin sub-frame (using <a target=_top>)");
 
 promise_test(t => {
     return withPopup("navigation-from-subframe-frame.py?value=deny&target=_parent", false /* isCrossOrigin */).then((result) => {
@@ -56,7 +56,7 @@ promise_test(t => {
             }, 200);
         });
     });
-}, "'Cross-Origin-Options: deny' prevents navigation from cross-origin sub-frame (using <a target=_parent>)");
+}, "'Cross-Origin-Window-Policy: deny' prevents navigation from cross-origin sub-frame (using <a target=_parent>)");
 
 promise_test(t => {
     return withPopup("navigation-from-subframe-frame.py?value=allow-postmessage&target=_parent", false /* isCrossOrigin */).then((result) => {
@@ -68,7 +68,7 @@ promise_test(t => {
             }, 200);
         });
     });
-}, "'Cross-Origin-Options: allow-postmessage' prevents navigation from cross-origin sub-frame (using <a target=_parent>)");
+}, "'Cross-Origin-Window-Policy: allow-postmessage' prevents navigation from cross-origin sub-frame (using <a target=_parent>)");
 
 promise_test(t => {
     return withPopup("navigation-from-subframe-frame.py?value=allow&target=_parent", false /* isCrossOrigin */).then((result) => {
@@ -78,7 +78,7 @@ promise_test(t => {
             }; 
         });
     });
-}, "'Cross-Origin-Options: allow' does not prevent navigation from cross-origin sub-frame (using <a target=_parent>)");
+}, "'Cross-Origin-Window-Policy: allow' does not prevent navigation from cross-origin sub-frame (using <a target=_parent>)");
 
 promise_test(t => {
     return withPopup("navigation-from-subframe-frame.py?value=deny&target=foo1", false /* isCrossOrigin */, "foo1").then((result) => {
@@ -90,7 +90,7 @@ promise_test(t => {
             }, 200);
         });
     }); 
-}, "'Cross-Origin-Options: deny' prevents navigation from cross-origin sub-frame (using <a target=windowName)");
+}, "'Cross-Origin-Window-Policy: deny' prevents navigation from cross-origin sub-frame (using <a target=windowName)");
 
 promise_test(t => {
     return withPopup("navigation-from-subframe-frame.py?value=allow-postmessage&target=foo2", false /* isCrossOrigin */, "foo2").then((result) => {
@@ -102,7 +102,7 @@ promise_test(t => {
             }, 200);
         });
     });
-}, "'Cross-Origin-Options: allow-postmessage' prevents navigation from cross-origin sub-frame (using <a target=windowName)");
+}, "'Cross-Origin-Window-Policy: allow-postmessage' prevents navigation from cross-origin sub-frame (using <a target=windowName)");
 
 promise_test(t => {
     return withPopup("navigation-from-subframe-frame.py?value=allow&target=foo3", false /* isCrossOrigin */, "foo3").then((result) => {
@@ -112,7 +112,7 @@ promise_test(t => {
             };
         });
     });
-}, "'Cross-Origin-Options: allow' does not prevent navigation from cross-origin sub-frame (using <a target=windowName>)");
+}, "'Cross-Origin-Window-Policy: allow' does not prevent navigation from cross-origin sub-frame (using <a target=windowName>)");
 
 </script>
 </body>

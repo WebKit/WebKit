@@ -789,7 +789,7 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     prefsPrivate->setServerTimingEnabled(TRUE);
     // FIXME: WebGL2
     // FIXME: WebRTC
-    prefsPrivate->setCrossOriginOptionsSupportEnabled(TRUE);
+    prefsPrivate->setCrossOriginWindowPolicySupportEnabled(TRUE);
 }
 
 static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)

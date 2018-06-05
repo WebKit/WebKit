@@ -234,6 +234,6 @@ interface IWebPreferencesPrivate6 : IWebPreferencesPrivate5
 [uuid(9A49D1DE-53DD-11E8-95E6-003EE1C28AB6)]
 interface IWebPreferencesPrivate7 : IWebPreferencesPrivate6
 {
-    HRESULT crossOriginOptionsSupportEnabled([out, retval] BOOL* enabled);
-    HRESULT setCrossOriginOptionsSupportEnabled([in] BOOL enabled);
+    HRESULT crossOriginWindowPolicySupportEnabled([out, retval] BOOL* enabled);
+    HRESULT setCrossOriginWindowPolicySupportEnabled([in] BOOL enabled);
 }

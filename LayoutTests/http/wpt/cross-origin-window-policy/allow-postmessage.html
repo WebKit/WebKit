@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Tests that postMessage() works when 'Cross-Origin-Options: allow-postmessage' HTTP header is served</title>
+<title>Tests that postMessage() works when 'Cross-Origin-Window-Policy: allow-postmessage' HTTP header is served</title>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="/common/utils.js"></script>
@@ -13,7 +13,7 @@
 <script>
 
 promise_test(function(test) {
-    return withIframe("cross-origin-options-allow-postmessage-pong.html", true /* isCrossOrigin */).then((f) => {
+    return withIframe("cross-origin-window-policy-allow-postmessage-pong.html", true /* isCrossOrigin */).then((f) => {
         return new Promise((resolve) => {
             window.onmessage = (msg) => {
                 window.onmessage = null;
@@ -25,10 +25,10 @@ promise_test(function(test) {
             f.contentWindow.postMessage("PING", "*");
         });
     });
-}, "postMessage() on Cross-origin iframe with 'Cross-Origin-Options: allow-postmessage' HTTP header");
+}, "postMessage() on Cross-origin iframe with 'Cross-Origin-Window-Policy: allow-postmessage' HTTP header");
 
 promise_test(function(test) {
-    return withPopup("cross-origin-options-allow-postmessage-pong.html", true /* isCrossOrigin */).then((result) => {
+    return withPopup("cross-origin-window-policy-allow-postmessage-pong.html", true /* isCrossOrigin */).then((result) => {
         return new Promise((resolve) => {
             window.onmessage = (msg) => {
                 window.onmessage = null;
@@ -40,7 +40,7 @@ promise_test(function(test) {
             result.window.postMessage("PING", "*");
         });
     });
-}, "postMessage() on Cross-origin popup with 'Cross-Origin-Options: allow-postmessage' HTTP header");
+}, "postMessage() on Cross-origin popup with 'Cross-Origin-Window-Policy: allow-postmessage' HTTP header");
 
 </script>
 </body>

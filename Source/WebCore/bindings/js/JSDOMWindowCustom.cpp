@@ -56,10 +56,10 @@
 namespace WebCore {
 using namespace JSC;
 
-static CrossOriginOptions effectiveCrossOriginOptionsForAccess(ExecState& state, AbstractDOMWindow& target)
+static CrossOriginWindowPolicy effectiveCrossOriginWindowPolicyForAccess(ExecState& state, AbstractDOMWindow& target)
 {
-    static_assert(CrossOriginOptions::Deny < CrossOriginOptions::AllowPostMessage && CrossOriginOptions::AllowPostMessage < CrossOriginOptions::Allow, "More restrictive cross-origin options should have lower values");
-    return std::min(activeDOMWindow(state).crossOriginOptions(), target.crossOriginOptions());
+    static_assert(CrossOriginWindowPolicy::Deny < CrossOriginWindowPolicy::AllowPostMessage && CrossOriginWindowPolicy::AllowPostMessage < CrossOriginWindowPolicy::Allow, "More restrictive cross-origin options should have lower values");
+    return std::min(activeDOMWindow(state).crossOriginWindowPolicy(), target.crossOriginWindowPolicy());
 }
 
 EncodedJSValue JSC_HOST_CALL jsDOMWindowInstanceFunctionShowModalDialog(ExecState*);
@@ -100,18 +100,18 @@ bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject
         return true;
     }
 
-    switch (effectiveCrossOriginOptionsForAccess(state, window)) {
-    case CrossOriginOptions::AllowPostMessage:
+    switch (effectiveCrossOriginWindowPolicyForAccess(state, window)) {
+    case CrossOriginWindowPolicy::AllowPostMessage:
         if (propertyName == builtinNames.postMessagePublicName()) {
             slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum), windowType == DOMWindowType::Remote ? nonCachingStaticFunctionGetter<jsRemoteDOMWindowInstanceFunctionPostMessage, 0> : nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionPostMessage, 2>);
             return true;
         }
         FALLTHROUGH;
-    case CrossOriginOptions::Deny:
+    case CrossOriginWindowPolicy::Deny:
         throwSecurityError(state, scope, errorMessage);
         slot.setUndefined();
         return false;
-    case CrossOriginOptions::Allow:
+    case CrossOriginWindowPolicy::Allow:
         break;
     }
 
@@ -253,13 +253,13 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, 
 
     // (1) First, indexed properties.
     // These are also allowed cross-origin, so come before the access check.
-    switch (effectiveCrossOriginOptionsForAccess(*state, window)) {
-    case CrossOriginOptions::Deny:
-    case CrossOriginOptions::AllowPostMessage:
+    switch (effectiveCrossOriginWindowPolicyForAccess(*state, window)) {
+    case CrossOriginWindowPolicy::Deny:
+    case CrossOriginWindowPolicy::AllowPostMessage:
         if (isCrossOriginAccess())
             break;
         FALLTHROUGH;
-    case CrossOriginOptions::Allow:
+    case CrossOriginWindowPolicy::Allow:
         if (frame && index < frame->tree().scopedChildCount()) {
             slot.setValue(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), toJS(state, frame->tree().scopedChild(index)->document()->domWindow()));
             return true;
@@ -348,15 +348,15 @@ static void addCrossOriginWindowPropertyNames(ExecState& state, AbstractDOMWindo
         &static_cast<JSVMClientData*>(vm.clientData)->builtinNames().windowPublicName()
     };
 
-    switch (effectiveCrossOriginOptionsForAccess(state, window)) {
-    case CrossOriginOptions::Allow:
+    switch (effectiveCrossOriginWindowPolicyForAccess(state, window)) {
+    case CrossOriginWindowPolicy::Allow:
         for (auto* property : properties)
             propertyNames.add(*property);
         break;
-    case CrossOriginOptions::AllowPostMessage:
+    case CrossOriginWindowPolicy::AllowPostMessage:
         propertyNames.add(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().postMessagePublicName());
         break;
-    case CrossOriginOptions::Deny:
+    case CrossOriginWindowPolicy::Deny:
         break;
     }
 }
@@ -371,11 +371,11 @@ static void addScopedChildrenIndexes(ExecState& state, DOMWindow& window, Proper
     if (!frame)
         return;
 
-    switch (effectiveCrossOriginOptionsForAccess(state, window)) {
-    case CrossOriginOptions::Allow:
+    switch (effectiveCrossOriginWindowPolicyForAccess(state, window)) {
+    case CrossOriginWindowPolicy::Allow:
         break;
-    case CrossOriginOptions::Deny:
-    case CrossOriginOptions::AllowPostMessage:
+    case CrossOriginWindowPolicy::Deny:
+    case CrossOriginWindowPolicy::AllowPostMessage:
         return;
     }
 

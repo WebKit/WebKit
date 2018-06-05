@@ -1,3 +1,20 @@
+2018-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Rename "Cross-Origin-Options" HTTP header to "Cross-Origin-Window-Policy"
+        https://bugs.webkit.org/show_bug.cgi?id=186287
+        <rdar://problem/40783352>
+
+        Reviewed by Youenn Fablet.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences crossOriginWindowPolicySupportEnabled]):
+        (-[WebPreferences setCrossOriginWindowPolicySupportEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2018-06-02  Darin Adler  <darin@apple.com>
 
         [Cocoa] Update some code to be more ARC-compatible to prepare for future ARC adoption

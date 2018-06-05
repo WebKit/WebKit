@@ -50,8 +50,8 @@ Content-Type
 Content-Range
 Cookie
 Cookie2
-Cross-Origin-Options
 Cross-Origin-Resource-Policy
+Cross-Origin-Window-Policy
 Date
 DNT
 Default-Style

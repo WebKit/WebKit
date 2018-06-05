@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Tests calling postMessage() on a window with 'Cross-Origin-Options: allow-postmessage' from a window with 'Cross-Origin-Options: deny'</title>
+<title>Tests calling postMessage() on a window with 'Cross-Origin-Window-Policy: allow-postmessage' from a window with 'Cross-Origin-Window-Policy: deny'</title>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="/common/utils.js"></script>
@@ -13,18 +13,18 @@
 <script>
 
 promise_test(function(test) {
-    return withIframe("cross-origin-options-allow-postmessage-pong.html", true /* isCrossOrigin */).then((f) => {
+    return withIframe("cross-origin-window-policy-allow-postmessage-pong.html", true /* isCrossOrigin */).then((f) => {
         assert_throws("SecurityError", function() { f.contentWindow.length }, "length property access");
         assert_throws("SecurityError", function() { f.contentWindow.postMessage("PING", "*"); }, "Calling postMessage() should throw");
     });
-}, "postMessage() on Cross-origin iframe with 'Cross-Origin-Options: allow-postmessage' but current window has 'deny' option");
+}, "postMessage() on Cross-origin iframe with 'Cross-Origin-Window-Policy: allow-postmessage' but current window has 'deny' option");
 
 promise_test(function(test) {
-    return withPopup("cross-origin-options-allow-postmessage-pong.html", true /* isCrossOrigin */).then((result) => {
+    return withPopup("cross-origin-window-policy-allow-postmessage-pong.html", true /* isCrossOrigin */).then((result) => {
         assert_throws("SecurityError", function() { result.window.length }, "length property access");
         assert_throws("SecurityError", function() { result.window.postMessage("PING", "*"); }, "Calling postMessage() should throw");
     });
-}, "postMessage() on Cross-origin popup with 'Cross-Origin-Options: allow-postmessage' but current window has 'deny' option");
+}, "postMessage() on Cross-origin popup with 'Cross-Origin-Window-Policy: allow-postmessage' but current window has 'deny' option");
 
 </script>
 </body>

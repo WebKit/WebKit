@@ -862,7 +862,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setAccessibilityObjectModelEnabled:YES];
     [preferences setVisualViewportAPIEnabled:YES];
     [preferences setColorFilterEnabled:YES];
-    [preferences setCrossOriginOptionsSupportEnabled:YES];
+    [preferences setCrossOriginWindowPolicySupportEnabled:YES];
     [preferences setServerTimingEnabled:YES];
 }
 

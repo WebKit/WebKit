@@ -1,3 +1,39 @@
+2018-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Rename "Cross-Origin-Options" HTTP header to "Cross-Origin-Window-Policy"
+        https://bugs.webkit.org/show_bug.cgi?id=186287
+        <rdar://problem/40783352>
+
+        Reviewed by Youenn Fablet.
+
+        * http/wpt/cross-origin-options/allow-postmessage-expected.txt: Removed.
+        * http/wpt/cross-origin-options/allow-postmessage-from-deny-expected.txt: Removed.
+        * http/wpt/cross-origin-options/allow-postmessage-from-deny.html.headers: Removed.
+        * http/wpt/cross-origin-options/cross-origin-options-header-expected.txt: Removed.
+        * http/wpt/cross-origin-options/navigation-from-opener-via-open-target-expected.txt: Removed.
+        * http/wpt/cross-origin-options/navigation-from-subframe-via-anchor-target-expected.txt: Removed.
+        * http/wpt/cross-origin-options/resources/cross-origin-options-allow-postmessage-pong.html.headers: Removed.
+        * http/wpt/cross-origin-window-policy/allow-postmessage-expected.txt: Added.
+        * http/wpt/cross-origin-window-policy/allow-postmessage-from-deny-expected.txt: Added.
+        * http/wpt/cross-origin-window-policy/allow-postmessage-from-deny.html: Renamed from LayoutTests/http/wpt/cross-origin-options/allow-postmessage-from-deny.html.
+        * http/wpt/cross-origin-window-policy/allow-postmessage-from-deny.html.headers: Added.
+        * http/wpt/cross-origin-window-policy/allow-postmessage.html: Renamed from LayoutTests/http/wpt/cross-origin-options/allow-postmessage.html.
+        * http/wpt/cross-origin-window-policy/cross-origin-window-policy-header-expected.txt: Added.
+        * http/wpt/cross-origin-window-policy/cross-origin-window-policy-header.html: Renamed from LayoutTests/http/wpt/cross-origin-options/cross-origin-options-header.html.
+        * http/wpt/cross-origin-window-policy/navigation-from-opener-via-open-target-expected.txt: Added.
+        * http/wpt/cross-origin-window-policy/navigation-from-opener-via-open-target.html: Renamed from LayoutTests/http/wpt/cross-origin-options/navigation-from-opener-via-open-target.html.
+        * http/wpt/cross-origin-window-policy/navigation-from-subframe-via-anchor-target-expected.txt: Added.
+        * http/wpt/cross-origin-window-policy/navigation-from-subframe-via-anchor-target.html: Renamed from LayoutTests/http/wpt/cross-origin-options/navigation-from-subframe-via-anchor-target.html.
+        * http/wpt/cross-origin-window-policy/resources/cross-origin-window-policy-allow-postmessage-pong.html: Renamed from LayoutTests/http/wpt/cross-origin-options/resources/cross-origin-options-allow-postmessage-pong.html.
+        * http/wpt/cross-origin-window-policy/resources/cross-origin-window-policy-allow-postmessage-pong.html.headers: Added.
+        * http/wpt/cross-origin-window-policy/resources/destination.html: Renamed from LayoutTests/http/wpt/cross-origin-options/resources/destination.html.
+        * http/wpt/cross-origin-window-policy/resources/navigate-parent-via-anchor.html: Renamed from LayoutTests/http/wpt/cross-origin-options/resources/navigate-parent-via-anchor.html.
+        * http/wpt/cross-origin-window-policy/resources/navigation-from-subframe-frame.py: Renamed from LayoutTests/http/wpt/cross-origin-options/resources/navigation-from-subframe-frame.py.
+        (main):
+        * http/wpt/cross-origin-window-policy/resources/serve-cross-origin-window-policy-header.py: Renamed from LayoutTests/http/wpt/cross-origin-options/resources/serve-cross-origin-options-header.py.
+        (main):
+        * http/wpt/cross-origin-window-policy/resources/utils.js: Renamed from LayoutTests/http/wpt/cross-origin-options/resources/utils.js.
+
 2018-06-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Moved the corresponding expected results for the tests moved in r232430.

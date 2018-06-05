@@ -1,4 +1,4 @@
-const RESOURCES_DIR = "/WebKit/cross-origin-options/resources/";
+const RESOURCES_DIR = "/WebKit/cross-origin-window-policy/resources/";
 
 function isCrossOriginWindow(w)
 {

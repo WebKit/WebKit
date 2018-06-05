@@ -4707,9 +4707,9 @@ sub GenerateAttributeGetterBodyDefinition
         AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
         if ($interface->type->name eq "DOMWindow") {
             if ($attribute->extendedAttributes->{DoNotCheckSecurityIf}) {
-                my $crossOriginOptions = GetCrossOriginsOptionsFromExtendedAttributeValue($attribute->extendedAttributes->{DoNotCheckSecurityIf});
+                my $crossOriginWindowPolicy = GetCrossOriginsOptionsFromExtendedAttributeValue($attribute->extendedAttributes->{DoNotCheckSecurityIf});
                 AddToImplIncludes("HTTPParsers.h", $conditional);
-                push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindowGivenMinimumCrossOriginOptions(&state, thisObject.wrapped(), $crossOriginOptions, ThrowSecurityError))\n");
+                push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindowGivenMinimumCrossOriginWindowPolicy(&state, thisObject.wrapped(), $crossOriginWindowPolicy, ThrowSecurityError))\n");
             } else {
                 push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&state, thisObject.wrapped(), ThrowSecurityError))\n");
             }
@@ -4824,9 +4824,9 @@ sub GetCrossOriginsOptionsFromExtendedAttributeValue
 {
     my $extendedAttributeValue = shift;
 
-    return "CrossOriginOptions::Allow" if $extendedAttributeValue eq "CrossOriginOptionsAllow";
-    return "CrossOriginOptions::AllowPostMessage" if $extendedAttributeValue eq "CrossOriginOptionsAllowPostMessage";
-    die "Unsupported CrossOriginOptions: " + $extendedAttributeValue;
+    return "CrossOriginWindowPolicy::Allow" if $extendedAttributeValue eq "CrossOriginWindowPolicyAllow";
+    return "CrossOriginWindowPolicy::AllowPostMessage" if $extendedAttributeValue eq "CrossOriginWindowPolicyAllowPostMessage";
+    die "Unsupported CrossOriginWindowPolicy: " + $extendedAttributeValue;
 }
 
 sub GenerateAttributeSetterBodyDefinition
@@ -4852,9 +4852,9 @@ sub GenerateAttributeSetterBodyDefinition
         AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
         if ($interface->type->name eq "DOMWindow") {
             if ($attribute->extendedAttributes->{DoNotCheckSecurityIf}) {
-                my $crossOriginOptions = GetCrossOriginsOptionsFromExtendedAttributeValue($attribute->extendedAttributes->{DoNotCheckSecurityIf});
+                my $crossOriginWindowPolicy = GetCrossOriginsOptionsFromExtendedAttributeValue($attribute->extendedAttributes->{DoNotCheckSecurityIf});
                 AddToImplIncludes("HTTPParsers.h", $conditional);
-                push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindowGivenMinimumCrossOriginOptions(&state, thisObject.wrapped(), $crossOriginOptions, ThrowSecurityError))\n");
+                push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindowGivenMinimumCrossOriginWindowPolicy(&state, thisObject.wrapped(), $crossOriginWindowPolicy, ThrowSecurityError))\n");
             } else {
                 push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&state, thisObject.wrapped(), ThrowSecurityError))\n");
             }
@@ -5079,9 +5079,9 @@ sub GenerateOperationBodyDefinition
             AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
             if ($interface->type->name eq "DOMWindow") {
                 if ($operation->extendedAttributes->{DoNotCheckSecurityIf}) {
-                    my $crossOriginOptions = GetCrossOriginsOptionsFromExtendedAttributeValue($operation->extendedAttributes->{DoNotCheckSecurityIf});
+                    my $crossOriginWindowPolicy = GetCrossOriginsOptionsFromExtendedAttributeValue($operation->extendedAttributes->{DoNotCheckSecurityIf});
                     AddToImplIncludes("HTTPParsers.h", $conditional);
-                    push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindowGivenMinimumCrossOriginOptions(state, castedThis->wrapped(), $crossOriginOptions, ThrowSecurityError))\n");
+                    push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindowGivenMinimumCrossOriginWindowPolicy(state, castedThis->wrapped(), $crossOriginWindowPolicy, ThrowSecurityError))\n");
                 } else {
                     push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped(), ThrowSecurityError))\n");
                 }

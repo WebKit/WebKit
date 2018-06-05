@@ -1,3 +1,48 @@
+2018-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Rename "Cross-Origin-Options" HTTP header to "Cross-Origin-Window-Policy"
+        https://bugs.webkit.org/show_bug.cgi?id=186287
+        <rdar://problem/40783352>
+
+        Reviewed by Youenn Fablet.
+
+        Tests: http/wpt/cross-origin-window-policy/allow-postmessage-from-deny.html
+               http/wpt/cross-origin-window-policy/allow-postmessage.html
+               http/wpt/cross-origin-window-policy/cross-origin-window-policy-header.html
+               http/wpt/cross-origin-window-policy/navigation-from-opener-via-open-target.html
+               http/wpt/cross-origin-window-policy/navigation-from-subframe-via-anchor-target.html
+
+        * bindings/js/JSDOMBindingSecurity.cpp:
+        (WebCore::BindingSecurity::shouldAllowAccessToDOMWindowGivenMinimumCrossOriginWindowPolicy):
+        * bindings/js/JSDOMBindingSecurity.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::effectiveCrossOriginWindowPolicyForAccess):
+        (WebCore::jsDOMWindowGetOwnPropertySlotRestrictedAccess):
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+        (WebCore::addCrossOriginWindowPropertyNames):
+        (WebCore::addScopedChildrenIndexes):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributeGetterBodyDefinition):
+        (GetCrossOriginsOptionsFromExtendedAttributeValue):
+        (GenerateAttributeSetterBodyDefinition):
+        (GenerateOperationBodyDefinition):
+        * bindings/scripts/IDLAttributes.json:
+        * dom/Document.cpp:
+        (WebCore::Document::canNavigate):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument):
+        * page/AbstractDOMWindow.cpp:
+        (WebCore::AbstractDOMWindow::AbstractDOMWindow):
+        * page/AbstractDOMWindow.h:
+        (WebCore::AbstractDOMWindow::crossOriginWindowPolicy):
+        (WebCore::AbstractDOMWindow::setCrossOriginWindowPolicy):
+        * page/DOMWindow.idl:
+        * page/Settings.yaml:
+        * platform/network/HTTPHeaderNames.in:
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseCrossOriginWindowPolicyHeader):
+        * platform/network/HTTPParsers.h:
+
 2018-06-04  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r231291): InputType should hold a WeakPtr to its HTMLInputElement

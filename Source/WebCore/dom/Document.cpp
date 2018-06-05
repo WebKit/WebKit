@@ -3185,11 +3185,11 @@ bool Document::canNavigate(Frame* targetFrame)
         return true;
 
     if (m_frame != targetFrame) {
-        auto sourceCrossOriginOptions = m_frame->window() ? m_frame->window()->crossOriginOptions() : CrossOriginOptions::Allow;
-        auto destinationCrossOriginOptions = targetFrame->window() ? targetFrame->window()->crossOriginOptions() : CrossOriginOptions::Allow;
-        if (sourceCrossOriginOptions != CrossOriginOptions::Allow || destinationCrossOriginOptions != CrossOriginOptions::Allow) {
+        auto sourceCrossOriginWindowPolicy = m_frame->window() ? m_frame->window()->crossOriginWindowPolicy() : CrossOriginWindowPolicy::Allow;
+        auto destinationCrossOriginWindowPolicy = targetFrame->window() ? targetFrame->window()->crossOriginWindowPolicy() : CrossOriginWindowPolicy::Allow;
+        if (sourceCrossOriginWindowPolicy != CrossOriginWindowPolicy::Allow || destinationCrossOriginWindowPolicy != CrossOriginWindowPolicy::Allow) {
             if (m_frame->document() && targetFrame->document() && !m_frame->document()->securityOrigin().canAccess(targetFrame->document()->securityOrigin())) {
-                printNavigationErrorMessage(targetFrame, url(), ASCIILiteral("Navigation was not allowed due to Cross-Origin-Options header."));
+                printNavigationErrorMessage(targetFrame, url(), ASCIILiteral("Navigation was not allowed due to Cross-Origin-Window-Policy header."));
                 return false;
             }
         }

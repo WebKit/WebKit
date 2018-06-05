@@ -1,6 +1,6 @@
 def main(request, response):
     headers = [("Content-Type", "text/html"),
-               ("Cross-Origin-Options", request.GET['value']),]
+               ("Cross-Origin-Window-Policy", request.GET['value']),]
     return 200, headers, """TEST
         <iframe name="subframe"></iframe>
         <script>

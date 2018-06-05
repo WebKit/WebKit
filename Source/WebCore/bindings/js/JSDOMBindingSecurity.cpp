@@ -100,16 +100,16 @@ bool BindingSecurity::shouldAllowAccessToNode(JSC::ExecState& state, Node* targe
     return !target || canAccessDocument(&state, &target->document(), LogSecurityError);
 }
 
-bool BindingSecurity::shouldAllowAccessToDOMWindowGivenMinimumCrossOriginOptions(JSC::ExecState* state, DOMWindow& target, CrossOriginOptions minimumCrossOriginOptions, SecurityReportingOption reportingOption)
+bool BindingSecurity::shouldAllowAccessToDOMWindowGivenMinimumCrossOriginWindowPolicy(JSC::ExecState* state, DOMWindow& target, CrossOriginWindowPolicy minimumCrossOriginWindowPolicy, SecurityReportingOption reportingOption)
 {
     DOMWindow& source = activeDOMWindow(*state);
-    ASSERT(minimumCrossOriginOptions > CrossOriginOptions::Deny);
+    ASSERT(minimumCrossOriginWindowPolicy > CrossOriginWindowPolicy::Deny);
 
-    static_assert(CrossOriginOptions::Deny < CrossOriginOptions::AllowPostMessage && CrossOriginOptions::AllowPostMessage < CrossOriginOptions::Allow, "More restrictive cross-origin options should have lower values");
+    static_assert(CrossOriginWindowPolicy::Deny < CrossOriginWindowPolicy::AllowPostMessage && CrossOriginWindowPolicy::AllowPostMessage < CrossOriginWindowPolicy::Allow, "More restrictive cross-origin options should have lower values");
 
     // Fast path.
-    auto effectiveCrossOriginOptions = std::min(source.crossOriginOptions(), target.crossOriginOptions());
-    if (effectiveCrossOriginOptions >= minimumCrossOriginOptions)
+    auto effectiveCrossOriginWindowPolicy = std::min(source.crossOriginWindowPolicy(), target.crossOriginWindowPolicy());
+    if (effectiveCrossOriginWindowPolicy >= minimumCrossOriginWindowPolicy)
         return true;
 
     return shouldAllowAccessToDOMWindow(state, target, reportingOption);

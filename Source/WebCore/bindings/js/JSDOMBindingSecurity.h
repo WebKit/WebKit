@@ -36,7 +36,7 @@ class DOMWindow;
 class Frame;
 class Node;
 
-enum class CrossOriginOptions;
+enum class CrossOriginWindowPolicy;
 
 void printErrorMessageForFrame(Frame*, const String& message);
 
@@ -55,7 +55,7 @@ bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*, SecurityReportingOption =
 bool shouldAllowAccessToFrame(JSC::ExecState&, Frame&, String& message);
 bool shouldAllowAccessToNode(JSC::ExecState&, Node*);
 
-bool shouldAllowAccessToDOMWindowGivenMinimumCrossOriginOptions(JSC::ExecState*, DOMWindow&, CrossOriginOptions, SecurityReportingOption = LogSecurityError);
+bool shouldAllowAccessToDOMWindowGivenMinimumCrossOriginWindowPolicy(JSC::ExecState*, DOMWindow&, CrossOriginWindowPolicy, SecurityReportingOption = LogSecurityError);
 
 };
 

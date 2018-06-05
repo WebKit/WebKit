@@ -1097,11 +1097,11 @@ ConstantPropertiesEnabled:
   humanReadableDescription: "Enable CSS constant() values"
   category: experimental
 
-CrossOriginOptionsSupportEnabled:
+CrossOriginWindowPolicySupportEnabled:
   type: bool
   defaultValue: true
-  humanReadableName: "Cross-Origin-Options HTTP Header"
-  humanReadableDescription: "Enable support for Cross-Origin-Options HTTP Header"
+  humanReadableName: "Cross-Origin-Window-Policy HTTP Header"
+  humanReadableDescription: "Enable support for Cross-Origin-Window-Policy HTTP Header"
   category: experimental
 
 SpringTimingFunctionEnabled:

@@ -72,7 +72,7 @@ enum class CrossOriginResourcePolicy {
 };
 
 // Should be sorted from most restrictive to most permissive.
-enum class CrossOriginOptions {
+enum class CrossOriginWindowPolicy {
     Deny,
     AllowPostMessage,
     Allow,
@@ -118,7 +118,7 @@ bool isCrossOriginSafeRequestHeader(HTTPHeaderName, const String&);
 String normalizeHTTPMethod(const String&);
 
 WEBCORE_EXPORT CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView);
-CrossOriginOptions parseCrossOriginOptionsHeader(StringView);
+CrossOriginWindowPolicy parseCrossOriginWindowPolicyHeader(StringView);
 
 inline bool isHTTPSpace(UChar character)
 {

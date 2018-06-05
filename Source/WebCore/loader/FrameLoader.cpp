@@ -747,11 +747,11 @@ void FrameLoader::didBeginDocument(bool dispatch)
                 m_frame.document()->setContentLanguage(headerContentLanguage);
         }
 
-        if (m_frame.settings().crossOriginOptionsSupportEnabled()) {
-            String crossOriginOptionsHeader = m_documentLoader->response().httpHeaderField(HTTPHeaderName::CrossOriginOptions);
-            if (!crossOriginOptionsHeader.isNull()) {
+        if (m_frame.settings().crossOriginWindowPolicySupportEnabled()) {
+            String crossOriginWindowPolicyHeader = m_documentLoader->response().httpHeaderField(HTTPHeaderName::CrossOriginWindowPolicy);
+            if (!crossOriginWindowPolicyHeader.isNull()) {
                 ASSERT(m_frame.window());
-                m_frame.window()->setCrossOriginOptions(parseCrossOriginOptionsHeader(crossOriginOptionsHeader));
+                m_frame.window()->setCrossOriginWindowPolicy(parseCrossOriginWindowPolicyHeader(crossOriginWindowPolicyHeader));
             }
         }
     }
