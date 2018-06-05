@@ -672,7 +672,9 @@ public:
     // The threading protocol here is as follows:
     // - You can call scratchBufferForSize from any thread.
     // - You can only set the ScratchBuffer's activeLength from the main thread.
+    // - You can only write to entries in the ScratchBuffer from the main thread.
     ScratchBuffer* scratchBufferForSize(size_t size);
+    void clearScratchBuffers();
 
     EncodedJSValue* exceptionFuzzingBuffer(size_t size)
     {

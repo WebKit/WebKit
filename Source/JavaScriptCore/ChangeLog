@@ -1,3 +1,29 @@
+2018-06-04  Saam Barati  <sbarati@apple.com>
+
+        Set the activeLength of all ScratchBuffers to zero when exiting the VM
+        https://bugs.webkit.org/show_bug.cgi?id=186284
+        <rdar://problem/40780738>
+
+        Reviewed by Keith Miller.
+
+        Simon recently found instances where we leak global objects from the
+        ScratchBuffer. Yusuke found that we forgot to set the active length
+        back to zero when doing catch OSR entry in the DFG/FTL. His solution
+        to this was adding a node that cleared the active length. This is
+        a good node to have, but it's not a complete solution: the DFG/FTL
+        could OSR exit before that node executes, which would cause us to leak
+        the data in it.
+        
+        This patch makes it so that we set each scratch buffer's active length
+        to zero on VM exit. This helps prevent leaks for JS code that eventually
+        exits the VM (which is essentially all code on the web and all API users).
+
+        * runtime/VM.cpp:
+        (JSC::VM::clearScratchBuffers):
+        * runtime/VM.h:
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::~VMEntryScope):
+
 2018-06-04  Keith Miller  <keith_miller@apple.com>
 
         JSLock should clear last exception when releasing the lock

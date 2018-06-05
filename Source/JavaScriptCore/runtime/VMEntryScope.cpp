@@ -82,6 +82,8 @@ VMEntryScope::~VMEntryScope()
 
     for (auto& listener : m_didPopListeners)
         listener();
+
+    m_vm.clearScratchBuffers();
 }
 
 } // namespace JSC

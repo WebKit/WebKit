@@ -1233,4 +1233,11 @@ ScratchBuffer* VM::scratchBufferForSize(size_t size)
     return result;
 }
 
+void VM::clearScratchBuffers()
+{
+    auto lock = holdLock(m_scratchBufferLock);
+    for (auto* scratchBuffer : m_scratchBuffers)
+        scratchBuffer->setActiveLength(0);
+}
+
 } // namespace JSC
