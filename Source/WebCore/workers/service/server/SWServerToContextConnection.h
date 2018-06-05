@@ -29,6 +29,7 @@
 
 #include "SecurityOriginData.h"
 #include "ServiceWorkerClientQueryOptions.h"
+#include "ServiceWorkerContextData.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerTypes.h"
 #include <wtf/RefCounted.h>
@@ -73,6 +74,7 @@ public:
     WEBCORE_EXPORT void findClientByIdentifier(uint64_t clientIdRequestIdentifier, ServiceWorkerIdentifier, ServiceWorkerClientIdentifier);
     WEBCORE_EXPORT void matchAll(uint64_t requestIdentifier, ServiceWorkerIdentifier, const ServiceWorkerClientQueryOptions&);
     WEBCORE_EXPORT void claim(uint64_t requestIdentifier, ServiceWorkerIdentifier);
+    WEBCORE_EXPORT void setScriptResource(ServiceWorkerIdentifier, URL&& scriptURL, String&& script, URL&& responseURL, String&& mimeType);
 
     static SWServerToContextConnection* connectionForOrigin(const SecurityOriginData&);
 

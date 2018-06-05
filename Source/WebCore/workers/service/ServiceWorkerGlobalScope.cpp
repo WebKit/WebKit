@@ -130,6 +130,22 @@ void ServiceWorkerGlobalScope::updateExtendedEventsSet(ExtendableEvent* newEvent
     });
 }
 
+const ServiceWorkerContextData::ImportedScript* ServiceWorkerGlobalScope::scriptResource(const URL& url) const
+{
+    auto iterator = m_contextData.scriptResourceMap.find(url);
+    return iterator == m_contextData.scriptResourceMap.end() ? nullptr : &iterator->value;
+}
+
+void ServiceWorkerGlobalScope::setScriptResource(const URL& url, ServiceWorkerContextData::ImportedScript&& script)
+{
+    callOnMainThread([threadIdentifier = thread().identifier(), url = url.isolatedCopy(), script = script.isolatedCopy()] {
+        if (auto* connection = SWContextManager::singleton().connection())
+            connection->setScriptResource(threadIdentifier, url, script);
+    });
+
+    m_contextData.scriptResourceMap.set(url, WTFMove(script));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

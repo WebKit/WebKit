@@ -735,6 +735,12 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "TerminateStorageProcess")) {
+        ASSERT(!messageBody);
+        TestController::singleton().terminateStorageProcess();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "TerminateNetworkProcess")) {
         ASSERT(!messageBody);
         TestController::singleton().terminateNetworkProcess();

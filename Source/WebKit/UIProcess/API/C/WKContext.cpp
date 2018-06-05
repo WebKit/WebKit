@@ -611,6 +611,11 @@ void WKContextTerminateServiceWorkerProcess(WKContextRef context)
     toImpl(context)->terminateServiceWorkerProcesses();
 }
 
+void WKContextTerminateStorageProcess(WKContextRef context)
+{
+    toImpl(context)->terminateStorageProcess();
+}
+
 ProcessID WKContextGetNetworkProcessIdentifier(WKContextRef contextRef)
 {
     return toImpl(contextRef)->networkProcessIdentifier();

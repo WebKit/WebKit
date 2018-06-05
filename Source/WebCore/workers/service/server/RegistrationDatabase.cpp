@@ -47,37 +47,48 @@
 
 namespace WebCore {
 
-static const int schemaVersion = 1;
+static const uint64_t schemaVersion = 2;
 
-static const String v1RecordsTableSchema(const String& tableName)
+static const String recordsTableSchema(const String& tableName)
 {
-    return makeString("CREATE TABLE ", tableName, " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, origin TEXT NOT NULL ON CONFLICT FAIL, scopeURL TEXT NOT NULL ON CONFLICT FAIL, topOrigin TEXT NOT NULL ON CONFLICT FAIL, lastUpdateCheckTime DOUBLE NOT NULL ON CONFLICT FAIL, updateViaCache TEXT NOT NULL ON CONFLICT FAIL, scriptURL TEXT NOT NULL ON CONFLICT FAIL, script TEXT NOT NULL ON CONFLICT FAIL, workerType TEXT NOT NULL ON CONFLICT FAIL, contentSecurityPolicy BLOB NOT NULL ON CONFLICT FAIL)");
+    return makeString("CREATE TABLE ", tableName, " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, origin TEXT NOT NULL ON CONFLICT FAIL, scopeURL TEXT NOT NULL ON CONFLICT FAIL, topOrigin TEXT NOT NULL ON CONFLICT FAIL, lastUpdateCheckTime DOUBLE NOT NULL ON CONFLICT FAIL, updateViaCache TEXT NOT NULL ON CONFLICT FAIL, scriptURL TEXT NOT NULL ON CONFLICT FAIL, script TEXT NOT NULL ON CONFLICT FAIL, workerType TEXT NOT NULL ON CONFLICT FAIL, contentSecurityPolicy BLOB NOT NULL ON CONFLICT FAIL, scriptResourceMap BLOB NOT NULL ON CONFLICT FAIL)");
 }
 
-static const String v1RecordsTableSchema()
+static const String recordsTableSchema()
 {
     ASSERT(!isMainThread());
-    static NeverDestroyed<WTF::String> schema(v1RecordsTableSchema("Records"));
+    static NeverDestroyed<String> schema(recordsTableSchema("Records"));
     return schema;
 }
 
-static const String v1RecordsTableSchemaAlternate()
+static const String recordsTableSchemaAlternate()
 {
     ASSERT(!isMainThread());
-    static NeverDestroyed<WTF::String> schema(v1RecordsTableSchema("\"Records\""));
+    static NeverDestroyed<String> schema(recordsTableSchema("\"Records\""));
     return schema;
+}
+
+static inline String databaseFilenameFromVersion(uint64_t version)
+{
+    return makeString("ServiceWorkerRegistrations-", String::number(version), ".sqlite3");
 }
 
 static const String& databaseFilename()
 {
     ASSERT(isMainThread());
-    static NeverDestroyed<String> filename = makeString("ServiceWorkerRegistrations-", String::number(schemaVersion), ".sqlite3");
+    static NeverDestroyed<String> filename = databaseFilenameFromVersion(schemaVersion);
     return filename;
 }
 
 String serviceWorkerRegistrationDatabaseFilename(const String& databaseDirectory)
 {
     return FileSystem::pathByAppendingComponent(databaseDirectory, databaseFilename());
+}
+
+static inline void cleanOldDatabases(const String& databaseDirectory)
+{
+    for (uint64_t version = 1; version < schemaVersion; ++version)
+        SQLiteFileSystem::deleteDatabaseFile(FileSystem::pathByAppendingComponent(databaseDirectory, databaseFilenameFromVersion(version)));
 }
 
 RegistrationDatabase::RegistrationDatabase(RegistrationStore& store, const String& databaseDirectory)
@@ -103,6 +114,8 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
 {
     ASSERT(!isMainThread());
     ASSERT(!m_database);
+
+    cleanOldDatabases(m_databaseDirectory);
 
     LOG(ServiceWorker, "ServiceWorker RegistrationDatabase opening file %s", fullFilename.utf8().data());
 
@@ -166,7 +179,7 @@ String RegistrationDatabase::ensureValidRecordsTable()
 
         // If there is no Records table at all, create it and then bail.
         if (sqliteResult == SQLITE_DONE) {
-            if (!m_database->executeCommand(v1RecordsTableSchema()))
+            if (!m_database->executeCommand(recordsTableSchema()))
                 return String::format("Could not create Records table in database (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return { };
         }
@@ -179,7 +192,7 @@ String RegistrationDatabase::ensureValidRecordsTable()
 
     ASSERT(!currentSchema.isEmpty());
     
-    if (currentSchema == v1RecordsTableSchema() || currentSchema == v1RecordsTableSchemaAlternate())
+    if (currentSchema == recordsTableSchema() || currentSchema == recordsTableSchemaAlternate())
         return { };
 
     // This database has a Records table but it is not a schema we expect.
@@ -275,7 +288,7 @@ void RegistrationDatabase::doPushChanges(Vector<ServiceWorkerContextData>&& data
     SQLiteTransaction transaction(*m_database);
     transaction.begin();
 
-    SQLiteStatement sql(*m_database, ASCIILiteral("INSERT INTO Records VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+    SQLiteStatement sql(*m_database, ASCIILiteral("INSERT INTO Records VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
     if (sql.prepare() != SQLITE_OK) {
         RELEASE_LOG_ERROR(ServiceWorker, "Failed to prepare statement to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
         return;
@@ -294,8 +307,11 @@ void RegistrationDatabase::doPushChanges(Vector<ServiceWorkerContextData>&& data
             continue;
         }
 
-        WTF::Persistence::Encoder encoder;
-        data.contentSecurityPolicy.encode(encoder);
+        WTF::Persistence::Encoder cspEncoder;
+        data.contentSecurityPolicy.encode(cspEncoder);
+
+        WTF::Persistence::Encoder scriptResourceMapEncoder;
+        scriptResourceMapEncoder.encode(data.scriptResourceMap);
 
         if (sql.bindText(1, data.registration.key.toDatabaseKey()) != SQLITE_OK
             || sql.bindText(2, data.registration.scopeURL.protocolHostAndPort()) != SQLITE_OK
@@ -306,7 +322,8 @@ void RegistrationDatabase::doPushChanges(Vector<ServiceWorkerContextData>&& data
             || sql.bindText(7, data.scriptURL.string()) != SQLITE_OK
             || sql.bindText(8, data.script) != SQLITE_OK
             || sql.bindText(9, workerTypeToString(data.workerType)) != SQLITE_OK
-            || sql.bindBlob(10, encoder.buffer(), encoder.bufferSize()) != SQLITE_OK
+            || sql.bindBlob(10, cspEncoder.buffer(), cspEncoder.bufferSize()) != SQLITE_OK
+            || sql.bindBlob(11, scriptResourceMapEncoder.buffer(), scriptResourceMapEncoder.bufferSize()) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(ServiceWorker, "Failed to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return;
@@ -341,10 +358,20 @@ String RegistrationDatabase::importRecords()
 
         Vector<uint8_t> contentSecurityPolicyData;
         sql.getColumnBlobAsVector(9, contentSecurityPolicyData);
-        WTF::Persistence::Decoder decoder(contentSecurityPolicyData.data(), contentSecurityPolicyData.size());
+        WTF::Persistence::Decoder cspDecoder(contentSecurityPolicyData.data(), contentSecurityPolicyData.size());
         ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
-        if (contentSecurityPolicyData.size() && !ContentSecurityPolicyResponseHeaders::decode(decoder, contentSecurityPolicy))
+        if (contentSecurityPolicyData.size() && !ContentSecurityPolicyResponseHeaders::decode(cspDecoder, contentSecurityPolicy))
             continue;
+
+        Vector<uint8_t> scriptResourceMapData;
+        sql.getColumnBlobAsVector(10, scriptResourceMapData);
+        HashMap<URL, ServiceWorkerContextData::ImportedScript> scriptResourceMap;
+
+        WTF::Persistence::Decoder scriptResourceMapDecoder(scriptResourceMapData.data(), scriptResourceMapData.size());
+        if (scriptResourceMapData.size()) {
+            if (!scriptResourceMapDecoder.decode(scriptResourceMap))
+                continue;
+        }
 
         // Validate the input for this registration.
         // If any part of this input is invalid, let's skip this registration.
@@ -356,7 +383,7 @@ String RegistrationDatabase::importRecords()
         auto registrationIdentifier = generateObjectIdentifier<ServiceWorkerRegistrationIdentifierType>();
         auto serviceWorkerData = ServiceWorkerData { workerIdentifier, scriptURL, ServiceWorkerState::Activated, *workerType, registrationIdentifier };
         auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, URL(originURL, scopePath), *updateViaCache, lastUpdateCheckTime, std::nullopt, std::nullopt, WTFMove(serviceWorkerData) };
-        auto contextData = ServiceWorkerContextData { std::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(scriptURL), *workerType, m_store.server().sessionID(), true };
+        auto contextData = ServiceWorkerContextData { std::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(scriptURL), *workerType, m_store.server().sessionID(), true, WTFMove(scriptResourceMap) };
 
         postTaskReply(createCrossThreadTask(*this, &RegistrationDatabase::addRegistrationToStore, WTFMove(contextData)));
     }

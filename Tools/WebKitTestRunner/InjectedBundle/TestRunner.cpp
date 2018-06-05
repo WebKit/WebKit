@@ -1244,6 +1244,12 @@ void TestRunner::terminateServiceWorkerProcess()
     WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr);
 }
 
+void TestRunner::terminateStorageProcess()
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("TerminateStorageProcess"));
+    WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr);
+}
+
 static unsigned nextUIScriptCallbackID()
 {
     static unsigned callbackID = FirstUIScriptCallbackID;

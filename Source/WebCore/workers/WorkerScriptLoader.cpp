@@ -29,9 +29,11 @@
 
 #include "ContentSecurityPolicy.h"
 #include "FetchIdioms.h"
+#include "MIMETypeRegistry.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
 #include "ServiceWorker.h"
+#include "ServiceWorkerGlobalScope.h"
 #include "TextResourceDecoder.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerScriptLoaderClient.h"
@@ -44,7 +46,7 @@ WorkerScriptLoader::WorkerScriptLoader() = default;
 
 WorkerScriptLoader::~WorkerScriptLoader() = default;
 
-void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, FetchOptions::Mode mode, FetchOptions::Cache cachePolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, const String& initiatorIdentifier)
+std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, FetchOptions::Mode mode, FetchOptions::Cache cachePolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, const String& initiatorIdentifier)
 {
     ASSERT(scriptExecutionContext);
     auto& workerGlobalScope = downcast<WorkerGlobalScope>(*scriptExecutionContext);
@@ -52,9 +54,22 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     m_url = url;
     m_destination = FetchOptions::Destination::Script;
 
+#if ENABLE(SERVICE_WORKER)
+    bool isServiceWorkerGlobalScope = is<ServiceWorkerGlobalScope>(workerGlobalScope);
+
+    if (isServiceWorkerGlobalScope) {
+        if (auto* scriptResource = downcast<ServiceWorkerGlobalScope>(workerGlobalScope).scriptResource(url)) {
+            m_script.append(scriptResource->script);
+            m_responseURL = URL { URL { }, scriptResource->responseURL };
+            m_responseMIMEType = scriptResource->mimeType;
+            return std::nullopt;
+        }
+    }
+#endif
+
     std::unique_ptr<ResourceRequest> request(createResourceRequest(initiatorIdentifier));
     if (!request)
-        return;
+        return std::nullopt;
 
     ASSERT_WITH_SECURITY_IMPLICATION(is<WorkerGlobalScope>(scriptExecutionContext));
 
@@ -70,11 +85,25 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
     options.destination = m_destination;
 #if ENABLE(SERVICE_WORKER)
-    options.serviceWorkersMode = workerGlobalScope.isServiceWorkerGlobalScope() ? ServiceWorkersMode::None : ServiceWorkersMode::All;
+    options.serviceWorkersMode = isServiceWorkerGlobalScope ? ServiceWorkersMode::None : ServiceWorkersMode::All;
     if (auto* activeServiceWorker = workerGlobalScope.activeServiceWorker())
         options.serviceWorkerRegistrationIdentifier = activeServiceWorker->registrationIdentifier();
 #endif
     WorkerThreadableLoader::loadResourceSynchronously(workerGlobalScope, WTFMove(*request), *this, options);
+
+    // If the fetching attempt failed, throw a NetworkError exception and abort all these steps.
+    if (failed())
+        return Exception { NetworkError, error().localizedDescription() };
+
+#if ENABLE(SERVICE_WORKER)
+    if (isServiceWorkerGlobalScope) {
+        if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(responseMIMEType()))
+            return Exception { NetworkError, ASCIILiteral("mime type is not a supported JavaScript mime type") };
+
+        downcast<ServiceWorkerGlobalScope>(workerGlobalScope).setScriptResource(url, ServiceWorkerContextData::ImportedScript { script(), m_responseURL, m_responseMIMEType });
+    }
+#endif
+    return std::nullopt;
 }
 
 void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, FetchOptions&& fetchOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, ServiceWorkersMode serviceWorkerMode, WorkerScriptLoaderClient& client)

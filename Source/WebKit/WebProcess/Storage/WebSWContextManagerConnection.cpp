@@ -278,6 +278,11 @@ void WebSWContextManagerConnection::skipWaiting(ServiceWorkerIdentifier serviceW
     m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::SkipWaiting(serviceWorkerIdentifier, callbackID), 0);
 }
 
+void WebSWContextManagerConnection::setScriptResource(ServiceWorkerIdentifier serviceWorkerIdentifier, const URL& url, const ServiceWorkerContextData::ImportedScript& script)
+{
+    m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::SetScriptResource { serviceWorkerIdentifier, url, script.script, script.responseURL, script.mimeType }, 0);
+}
+
 void WebSWContextManagerConnection::workerTerminated(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::WorkerTerminated(serviceWorkerIdentifier), 0);

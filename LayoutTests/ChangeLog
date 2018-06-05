@@ -1,3 +1,17 @@
+2018-06-05  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorker registration should store any script fetched through importScripts
+        https://bugs.webkit.org/show_bug.cgi?id=182444
+        <rdar://problem/37164835>
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/service-workers/persistent-importScripts-expected.txt: Added.
+        * http/wpt/service-workers/persistent-importScripts.html: Added.
+        * http/wpt/service-workers/resources/persistent-importScripts-script.py: Added.
+        * http/wpt/service-workers/resources/persistent-importScripts-worker.js: Added.
+        * http/wpt/service-workers/resources/routines.js: Added.
+
 2018-06-05  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement support for new blockquote, caption, and paragraph ARIA roles

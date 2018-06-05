@@ -132,6 +132,18 @@ template<typename T> struct CrossThreadCopierBase<false, false, HashSet<T> > {
     }
 };
 
+// Default specialization for HashMaps of CrossThreadCopyable classes
+template<typename K, typename V> struct CrossThreadCopierBase<false, false, HashMap<K, V> > {
+    typedef HashMap<K, V> Type;
+    static Type copy(const Type& source)
+    {
+        Type destination;
+        for (auto& keyValue : source)
+            destination.add(CrossThreadCopier<K>::copy(keyValue.key), CrossThreadCopier<V>::copy(keyValue.value));
+        return destination;
+    }
+};
+
 // Default specialization for std::optional of CrossThreadCopyable class.
 template<typename T> struct CrossThreadCopierBase<false, false, std::optional<T>> {
     typedef std::optional<T> Type;

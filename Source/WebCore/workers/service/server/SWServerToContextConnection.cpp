@@ -131,6 +131,12 @@ void SWServerToContextConnection::skipWaiting(ServiceWorkerIdentifier serviceWor
     didFinishSkipWaiting(callbackID);
 }
 
+void SWServerToContextConnection::setScriptResource(ServiceWorkerIdentifier serviceWorkerIdentifier, URL&& scriptURL, String&& script, URL&& responseURL, String&& mimeType)
+{
+    if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
+        worker->setScriptResource(WTFMove(scriptURL), ServiceWorkerContextData::ImportedScript { WTFMove(script), WTFMove(responseURL), WTFMove(mimeType) });
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

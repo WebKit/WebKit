@@ -1,3 +1,24 @@
+2018-06-05  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorker registration should store any script fetched through importScripts
+        https://bugs.webkit.org/show_bug.cgi?id=182444
+        <rdar://problem/37164835>
+
+        Reviewed by Chris Dumez.
+
+        Add C API to kill storage process.
+        In case a Storage Process is closed or crashed, ensure that all its related service worker processes also exit.
+
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextTerminateStorageProcess):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::webToStorageProcessConnectionClosed):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::setScriptResource):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+
 2018-06-05  Brent Fulgham  <bfulgham@apple.com>
 
         Revise DEFAULT_EXPERIMENTAL_FEATURES_ENABLED to work properly on Apple builds

@@ -134,7 +134,7 @@ void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data)
     auto registrationPtr = registration.get();
     addRegistration(WTFMove(registration));
 
-    auto worker = SWServerWorker::create(*this, *registrationPtr, data.scriptURL, data.script, data.contentSecurityPolicy, data.workerType, data.serviceWorkerIdentifier);
+    auto worker = SWServerWorker::create(*this, *registrationPtr, data.scriptURL, data.script, data.contentSecurityPolicy, data.workerType, data.serviceWorkerIdentifier, HashMap<URL, ServiceWorkerContextData::ImportedScript> { data.scriptResourceMap });
     registrationPtr->updateRegistrationState(ServiceWorkerRegistrationState::Active, worker.ptr());
     worker->setState(ServiceWorkerState::Activated);
 }
@@ -496,9 +496,9 @@ void SWServer::removeClientServiceWorkerRegistration(Connection& connection, Ser
         registration->removeClientServiceWorkerRegistration(connection.identifier());
 }
 
-void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const String& script, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, WorkerType type)
+void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const String& script, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, WorkerType type, HashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap)
 {
-    tryInstallContextData({ jobDataIdentifier, registration.data(), generateObjectIdentifier<ServiceWorkerIdentifierType>(), script, contentSecurityPolicy, url, type, sessionID(), false });
+    tryInstallContextData({ jobDataIdentifier, registration.data(), generateObjectIdentifier<ServiceWorkerIdentifierType>(), script, contentSecurityPolicy, url, type, sessionID(), false, WTFMove(scriptResourceMap) });
 }
 
 void SWServer::tryInstallContextData(ServiceWorkerContextData&& data)
@@ -543,7 +543,7 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     auto* registration = m_registrations.get(data.registration.key);
     RELEASE_ASSERT(registration);
 
-    auto worker = SWServerWorker::create(*this, *registration, data.scriptURL, data.script, data.contentSecurityPolicy, data.workerType, data.serviceWorkerIdentifier);
+    auto worker = SWServerWorker::create(*this, *registration, data.scriptURL, data.script, data.contentSecurityPolicy, data.workerType, data.serviceWorkerIdentifier, HashMap<URL, ServiceWorkerContextData::ImportedScript> { data.scriptResourceMap });
 
     auto* connection = worker->contextConnection();
     ASSERT(connection);

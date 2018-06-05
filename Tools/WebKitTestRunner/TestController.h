@@ -199,6 +199,7 @@ public:
 
     void terminateNetworkProcess();
     void terminateServiceWorkerProcess();
+    void terminateStorageProcess();
 
     void removeAllSessionCredentials();
 

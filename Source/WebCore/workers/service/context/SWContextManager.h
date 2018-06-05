@@ -54,12 +54,13 @@ public:
         virtual void didFinishActivation(ServiceWorkerIdentifier) = 0;
         virtual void setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier, bool) = 0;
         virtual void workerTerminated(ServiceWorkerIdentifier) = 0;
-        virtual void skipWaiting(ServiceWorkerIdentifier, WTF::Function<void()>&& callback) = 0;
+        virtual void skipWaiting(ServiceWorkerIdentifier, Function<void()>&&) = 0;
+        virtual void setScriptResource(ServiceWorkerIdentifier, const URL&, const ServiceWorkerContextData::ImportedScript&) = 0;
 
-        using FindClientByIdentifierCallback = WTF::CompletionHandler<void(ExceptionOr<std::optional<ServiceWorkerClientData>>&&)>;
+        using FindClientByIdentifierCallback = CompletionHandler<void(ExceptionOr<std::optional<ServiceWorkerClientData>>&&)>;
         virtual void findClientByIdentifier(ServiceWorkerIdentifier, ServiceWorkerClientIdentifier, FindClientByIdentifierCallback&&) = 0;
         virtual void matchAll(ServiceWorkerIdentifier, const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&) = 0;
-        virtual void claim(ServiceWorkerIdentifier, WTF::CompletionHandler<void()>&&) = 0;
+        virtual void claim(ServiceWorkerIdentifier, CompletionHandler<void()>&&) = 0;
     };
 
     WEBCORE_EXPORT void setConnection(std::unique_ptr<Connection>&&);

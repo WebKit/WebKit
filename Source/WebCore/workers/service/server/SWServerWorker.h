@@ -29,11 +29,11 @@
 
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "ServiceWorkerClientData.h"
+#include "ServiceWorkerContextData.h"
 #include "ServiceWorkerData.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerRegistrationKey.h"
 #include "ServiceWorkerTypes.h"
-#include "URL.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -94,6 +94,7 @@ public:
     WEBCORE_EXPORT std::optional<ServiceWorkerClientData> findClientByIdentifier(const ServiceWorkerClientIdentifier&) const;
     void matchAll(const ServiceWorkerClientQueryOptions&, const ServiceWorkerClientsMatchAllCallback&);
     void claim();
+    void setScriptResource(URL&&, ServiceWorkerContextData::ImportedScript&&);
 
     void skipWaiting();
     bool isSkipWaitingFlagSet() const { return m_isSkipWaitingFlagSet; }
@@ -110,7 +111,7 @@ public:
     WEBCORE_EXPORT SWServerToContextConnection* contextConnection();
 
 private:
-    SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const String& script, const ContentSecurityPolicyResponseHeaders&,  WorkerType, ServiceWorkerIdentifier);
+    SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const String& script, const ContentSecurityPolicyResponseHeaders&,  WorkerType, ServiceWorkerIdentifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
 
     void callWhenActivatedHandler(bool success);
 
@@ -123,7 +124,8 @@ private:
     State m_state { State::NotRunning };
     mutable std::optional<ClientOrigin> m_origin;
     bool m_isSkipWaitingFlagSet { false };
-    Vector<WTF::Function<void(bool)>> m_whenActivatedHandlers;
+    Vector<Function<void(bool)>> m_whenActivatedHandlers;
+    HashMap<URL, ServiceWorkerContextData::ImportedScript> m_scriptResourceMap;
 };
 
 } // namespace WebCore

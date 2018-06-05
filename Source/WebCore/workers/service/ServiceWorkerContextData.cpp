@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "ServiceWorkerContextData.h"
+#include <wtf/CrossThreadCopier.h>
 
 #if ENABLE(SERVICE_WORKER)
 
@@ -32,7 +33,7 @@ namespace WebCore {
 
 ServiceWorkerContextData ServiceWorkerContextData::isolatedCopy() const
 {
-    return { jobDataIdentifier, registration.isolatedCopy(), serviceWorkerIdentifier, script.isolatedCopy(), contentSecurityPolicy.isolatedCopy(), scriptURL.isolatedCopy(), workerType, sessionID, loadedFromDisk };
+    return { jobDataIdentifier, registration.isolatedCopy(), serviceWorkerIdentifier, script.isolatedCopy(), contentSecurityPolicy.isolatedCopy(), scriptURL.isolatedCopy(), workerType, sessionID, loadedFromDisk, crossThreadCopy(scriptResourceMap) };
 }
 
 } // namespace WebCore

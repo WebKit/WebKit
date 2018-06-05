@@ -2400,6 +2400,11 @@ void TestController::terminateServiceWorkerProcess()
     WKContextTerminateServiceWorkerProcess(platformContext());
 }
 
+void TestController::terminateStorageProcess()
+{
+    WKContextTerminateStorageProcess(platformContext());
+}
+
 #if !PLATFORM(COCOA)
 void TestController::platformWillRunTest(const TestInvocation&)
 {

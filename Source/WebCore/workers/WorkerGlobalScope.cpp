@@ -33,7 +33,6 @@
 #include "IDBConnectionProxy.h"
 #include "ImageBitmapOptions.h"
 #include "InspectorInstrumentation.h"
-#include "MIMETypeRegistry.h"
 #include "Performance.h"
 #include "ScheduledAction.h"
 #include "ScriptSourceCode.h"
@@ -285,16 +284,9 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const Vector<String>& urls)
             return Exception { NetworkError };
 
         auto scriptLoader = WorkerScriptLoader::create();
-        scriptLoader->loadSynchronously(this, url, FetchOptions::Mode::NoCors, cachePolicy, shouldBypassMainWorldContentSecurityPolicy ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective, resourceRequestIdentifier());
-
-        // If the fetching attempt failed, throw a NetworkError exception and abort all these steps.
-        if (scriptLoader->failed())
-            return Exception { NetworkError, scriptLoader->error().localizedDescription() };
-
-#if ENABLE(SERVICE_WORKER)
-        if (isServiceWorkerGlobalScope && !MIMETypeRegistry::isSupportedJavaScriptMIMEType(scriptLoader->responseMIMEType()))
-            return Exception { NetworkError };
-#endif
+        auto cspEnforcement = shouldBypassMainWorldContentSecurityPolicy ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective;
+        if (auto exception = scriptLoader->loadSynchronously(this, url, FetchOptions::Mode::NoCors, cachePolicy, cspEnforcement, resourceRequestIdentifier()))
+            return WTFMove(*exception);
 
         InspectorInstrumentation::scriptImported(*this, scriptLoader->identifier(), scriptLoader->script());
 

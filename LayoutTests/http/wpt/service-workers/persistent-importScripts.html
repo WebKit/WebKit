@@ -1,0 +1,54 @@
+<html>
+<head>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+function getRandomIdFromWorker(worker)
+{
+    worker.postMessage("getRandomId");
+    return new Promise(function(resolve) {
+      navigator.serviceWorker.addEventListener('message', function(e) {
+            resolve(e.data);
+        });
+    });
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+var registration;
+var worker;
+async function doTest() {
+    if (!window.testRunner)
+        return Promise.reject('Internals API needed for this test');
+
+    registration = await navigator.serviceWorker.register("resources/persistent-importScripts-worker.js");
+    if (registration.installing) {
+        worker = registration.installing;
+        await waitForState(worker, "activated");
+    } else
+        worker = registration.active;
+
+    let frame = await withIframe("resources");
+    let randomId = await getRandomIdFromWorker(worker);
+
+    if (!window.location.hash.length) {
+        if (window.testRunner)
+            testRunner.terminateStorageProcess();
+        await waitFor(100);
+        window.location += "?test#" + randomId;
+        return;
+    }
+
+    document.body.innerHTML = ("#" + randomId) == window.location.hash ? "PASS" : "FAIL";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+doTest();
+
+</script>
+</body>
+</html>

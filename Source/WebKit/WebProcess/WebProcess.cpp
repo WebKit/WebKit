@@ -1180,6 +1180,13 @@ void WebProcess::webToStorageProcessConnectionClosed(WebToStorageProcessConnecti
     ASSERT(m_webToStorageProcessConnection == connection);
 
     m_webToStorageProcessConnection = nullptr;
+
+#if ENABLE(SERVICE_WORKER)
+    if (SWContextManager::singleton().connection()) {
+        RELEASE_LOG(ServiceWorker, "Service worker process is exiting because its storage process is gone");
+        _exit(EXIT_SUCCESS);
+    }
+#endif
 }
 
 WebToStorageProcessConnection& WebProcess::ensureWebToStorageProcessConnection(PAL::SessionID initialSessionID)

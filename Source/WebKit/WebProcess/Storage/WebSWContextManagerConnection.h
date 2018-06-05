@@ -70,8 +70,9 @@ private:
     void workerTerminated(WebCore::ServiceWorkerIdentifier) final;
     void findClientByIdentifier(WebCore::ServiceWorkerIdentifier, WebCore::ServiceWorkerClientIdentifier, FindClientByIdentifierCallback&&) final;
     void matchAll(WebCore::ServiceWorkerIdentifier, const WebCore::ServiceWorkerClientQueryOptions&, WebCore::ServiceWorkerClientsMatchAllCallback&&) final;
-    void claim(WebCore::ServiceWorkerIdentifier, WTF::CompletionHandler<void()>&&) final;
-    void skipWaiting(WebCore::ServiceWorkerIdentifier, WTF::Function<void()>&& callback) final;
+    void claim(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&) final;
+    void skipWaiting(WebCore::ServiceWorkerIdentifier, Function<void()>&&) final;
+    void setScriptResource(WebCore::ServiceWorkerIdentifier, const WebCore::URL&, const WebCore::ServiceWorkerContextData::ImportedScript&) final;
 
     // IPC messages.
     void serviceWorkerStartedWithMessage(std::optional<WebCore::ServiceWorkerJobDataIdentifier>, WebCore::ServiceWorkerIdentifier, const String& exceptionMessage) final;

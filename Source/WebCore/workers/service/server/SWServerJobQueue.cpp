@@ -97,8 +97,10 @@ void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, con
         return;
     }
 
+    // FIXME: Update all the imported scripts as per spec. For now, we just do as if there is none.
+
     // FIXME: Support the proper worker type (classic vs module)
-    m_server.updateWorker(connection, job.identifier(), *registration, job.scriptURL, result.script, result.contentSecurityPolicy, WorkerType::Classic);
+    m_server.updateWorker(connection, job.identifier(), *registration, job.scriptURL, result.script, result.contentSecurityPolicy, WorkerType::Classic, { });
 }
 
 // https://w3c.github.io/ServiceWorker/#update-algorithm
