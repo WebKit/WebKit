@@ -57,19 +57,22 @@ double BaseDateAndTimeInputType::valueAsDate() const
 
 ExceptionOr<void> BaseDateAndTimeInputType::setValueAsDate(double value) const
 {
-    element().setValue(serializeWithMilliseconds(value));
+    ASSERT(element());
+    element()->setValue(serializeWithMilliseconds(value));
     return { };
 }
 
 double BaseDateAndTimeInputType::valueAsDouble() const
 {
-    const Decimal value = parseToNumber(element().value(), Decimal::nan());
+    ASSERT(element());
+    const Decimal value = parseToNumber(element()->value(), Decimal::nan());
     return value.isFinite() ? value.toDouble() : DateComponents::invalidMilliseconds();
 }
 
 ExceptionOr<void> BaseDateAndTimeInputType::setValueAsDecimal(const Decimal& newValue, TextFieldEventBehavior eventBehavior) const
 {
-    element().setValue(serialize(newValue), eventBehavior);
+    ASSERT(element());
+    element()->setValue(serialize(newValue), eventBehavior);
     return { };
 }
 
@@ -80,7 +83,8 @@ bool BaseDateAndTimeInputType::typeMismatchFor(const String& value) const
 
 bool BaseDateAndTimeInputType::typeMismatch() const
 {
-    return typeMismatchFor(element().value());
+    ASSERT(element());
+    return typeMismatchFor(element()->value());
 }
 
 Decimal BaseDateAndTimeInputType::defaultValueForStepUp() const
@@ -136,8 +140,9 @@ String BaseDateAndTimeInputType::serialize(const Decimal& value) const
 
 String BaseDateAndTimeInputType::serializeWithComponents(const DateComponents& date) const
 {
+    ASSERT(element());
     Decimal step;
-    if (!element().getAllowedValueStep(&step))
+    if (!element()->getAllowedValueStep(&step))
         return date.toString();
     if (step.remainder(msecPerMinute).isZero())
         return date.toString(DateComponents::None);
@@ -157,13 +162,15 @@ String BaseDateAndTimeInputType::localizeValue(const String& proposedValue) cons
     if (!parseToDateComponents(proposedValue, &date))
         return proposedValue;
 
-    String localized = element().locale().formatDateTime(date);
+    ASSERT(element());
+    String localized = element()->locale().formatDateTime(date);
     return localized.isEmpty() ? proposedValue : localized;
 }
 
 String BaseDateAndTimeInputType::visibleValue() const
 {
-    return localizeValue(element().value());
+    ASSERT(element());
+    return localizeValue(element()->value());
 }
 
 String BaseDateAndTimeInputType::sanitizeValue(const String& proposedValue) const
@@ -183,13 +190,15 @@ bool BaseDateAndTimeInputType::shouldRespectListAttribute()
 
 bool BaseDateAndTimeInputType::valueMissing(const String& value) const
 {
-    return element().isRequired() && value.isEmpty();
+    ASSERT(element());
+    return element()->isRequired() && value.isEmpty();
 }
 
 #if PLATFORM(IOS)
 bool BaseDateAndTimeInputType::isKeyboardFocusable(KeyboardEvent*) const
 {
-    return !element().isReadOnly() && element().isTextFormControlFocusable();
+    ASSERT(element());
+    return !element()->isReadOnly() && element()->isTextFormControlFocusable();
 }
 #endif
 

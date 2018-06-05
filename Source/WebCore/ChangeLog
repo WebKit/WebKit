@@ -1,3 +1,44 @@
+2018-06-05  Antoine Quint  <graouts@apple.com>
+
+        Fix the iOS build after r232496
+        https://bugs.webkit.org/show_bug.cgi?id=186304
+
+        Reviewed by Brent Fulgham.
+
+        The changes in r232496 changed the InputType::element() signature from HTMLInputElement&
+        to HTMLInputElement* and some call sites did not expect that.
+
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::handleDOMActivateEvent):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::createShadowSubtree):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::updateInnerTextValue):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::didChooseValue):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::handleKeydownEvent):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::handleKeypressEvent):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::accessKeyAction):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::isMouseFocusable const):
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::setValueAsDate const):
+        (WebCore::BaseDateAndTimeInputType::valueAsDouble const):
+        (WebCore::BaseDateAndTimeInputType::setValueAsDecimal const):
+        (WebCore::BaseDateAndTimeInputType::typeMismatch const):
+        (WebCore::BaseDateAndTimeInputType::serializeWithComponents const):
+        (WebCore::BaseDateAndTimeInputType::localizeValue const):
+        (WebCore::BaseDateAndTimeInputType::visibleValue const):
+        (WebCore::BaseDateAndTimeInputType::valueMissing const):
+        (WebCore::BaseDateAndTimeInputType::isKeyboardFocusable const):
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::createStepRange const):
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::createStepRange const):
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::valueAsDate const):
+        (WebCore::MonthInputType::createStepRange const):
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::createStepRange const):
+        * html/WeekInputType.cpp:
+        (WebCore::WeekInputType::createStepRange const):
+
 2018-06-03  Darin Adler  <darin@apple.com>
 
         Simplify and remove some unused video element code (helpful for ARC-compatibility)
