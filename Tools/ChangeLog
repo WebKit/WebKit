@@ -1,3 +1,20 @@
+2018-06-05  Saam Barati  <sbarati@apple.com>
+
+        run-testmem should have a dry run option and an option to parse the stdout of executing the dry run
+        https://bugs.webkit.org/show_bug.cgi?id=186293
+
+        Reviewed by Mark Lam.
+
+        This makes it easier to execute run-testmem on a device that doesn't have ruby
+        on it. run-testmem now has a --dry option that will output commands to execute
+        in bash. To run on a device that doesn't have ruby, just put its output into
+        a bash script, and copy the PerformanceTests/testmem directory onto that device,
+        and execute the bash script. Running that bash script will give you raw output.
+        Make a file with that output and pass it into run-testmem using the --parse option.
+        run-testmem will parse the raw output and compute the benchmark score.
+
+        * Scripts/run-testmem:
+
 2018-06-05  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorker registration should store any script fetched through importScripts
