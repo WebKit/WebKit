@@ -1,5 +1,12 @@
 2018-06-04  Dan Bernstein  <mitz@apple.com>
 
+        Restored code signing behavior when WK_USE_RESTRICTED_ENTITLEMENTS isn’t set.
+
+        * Configurations/DebugRelease.xcconfig: Use ad-hoc code signing when
+          WK_USE_RESTRICTED_ENTITLEMENTS isn’t set.
+
+2018-06-04  Dan Bernstein  <mitz@apple.com>
+
         Removed a reference to a file that was deleted in r231190.
 
         * WebKit.xcodeproj/project.pbxproj: Removed the reference to WebProcessShim.xcconfig.
