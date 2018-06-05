@@ -168,6 +168,31 @@ class TestParserTest(unittest.TestCase):
 
         self.assertTrue(test_info['manualtest'], 'test_info is None')
 
+    def test_analyze_css_manual_test(self):
+        """ Tests analyze_test() using a css manual test """
+
+        test_path = os.path.join(os.path.sep, 'some', 'madeup', 'path')
+        parser = TestParser(options, os.path.join(test_path, 'somefile.html'))
+
+        for content in ["", "flag1", "flag1 flag2", "flag1 flag2 flag3", "asis"]:
+            test_html = """
+<head>
+  <meta name="flags" content="%s">
+</head>""" % content
+            test_info = parser.analyze_test(test_contents=test_html)
+            self.assertEqual(test_info, None, 'test_info should be None')
+
+        for flag in ["animated", "font", "history", "interact", "paged", "speech", "userstyle"]:
+            test_html = """
+<head>
+  <meta name="flags" content="flag1 flag2">
+  <meta name="flags" content="flag3 %s flag4 flag5">
+  <meta name="flags" content="flag6">
+</head>
+""" % flag
+            test_info = parser.analyze_test(test_contents=test_html)
+            self.assertTrue(test_info['manualtest'], 'test with CSS flag %s should be manual' % flag)
+
     def test_analyze_pixel_test_all_true(self):
         """ Tests analyze_test() using a test that is neither a reftest or jstest with all=False """
 

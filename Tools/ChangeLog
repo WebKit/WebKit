@@ -1,3 +1,17 @@
+2018-06-04  Frederic Wang  <fwang@igalia.com>
+
+        import-w3c-tests should rely on <meta name="flags"> to detect CSS manual tests
+        https://bugs.webkit.org/show_bug.cgi?id=186261
+
+        Reviewed by Youenn Fablet.
+
+        * Scripts/webkitpy/w3c/test_parser.py:
+        (TestParser.is_wpt_manualtest): Add code to detect whether a file is a manual test
+        from its <meta name="flags"> tags. This is based on SourceFile::content_is_css_manual from
+        the WPT repository.
+        * Scripts/webkitpy/w3c/test_parser_unittest.py: Add a test to verify whether files with
+        <meta name="flags"> are manual or non-manual according to CSS WG rules.
+
 2018-06-04  Dan Bernstein  <mitz@apple.com>
 
         Fixed building ImageDiff with the default build system in the Xcode 10 developer beta.

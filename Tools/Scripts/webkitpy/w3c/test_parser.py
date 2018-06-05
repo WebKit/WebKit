@@ -138,8 +138,23 @@ class TestParser(object):
         return bool(self.test_doc.find(src=re.compile('[\'\"/]?/resources/testharness')))
 
     def is_wpt_manualtest(self):
-        """Returns whether the test is a manual test according WPT rules (i.e. file ends with -manual.htm path)."""
-        return self.filename.endswith('-manual.htm') or self.filename.endswith('-manual.html')
+        """Returns whether the test is a manual test according WPT rules."""
+        # General rule for manual test i.e. file ends with -manual.htm path
+        # See https://web-platform-tests.org/writing-tests/manual.html#requirements-for-a-manual-test
+        if self.filename.endswith('-manual.htm') or self.filename.endswith('-manual.html'):
+            return True
+
+        # Rule specific to CSS WG manual tests i.e. rely on <meta name="flags">
+        # See https://web-platform-tests.org/writing-tests/css-metadata.html#requirement-flags
+        # For further details and discussions, see the following links:
+        # https://github.com/web-platform-tests/wpt/issues/5381
+        # https://github.com/web-platform-tests/wpt/issues/5293
+        for match in self.test_doc.findAll(name='meta', attrs={'name': 'flags', 'content': True}):
+            css_flags = set(match['content'].split())
+            if bool(css_flags & {"animated", "font", "history", "interact", "paged", "speech", "userstyle"}):
+                return True
+
+        return False
 
     def is_slow_test(self):
         return any([match.name == 'meta' and match['name'] == 'timeout' for match in self.test_doc.findAll(content='long')])
