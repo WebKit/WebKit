@@ -713,17 +713,17 @@ static bool anyPointerEvaluate(CSSValue* value, const CSSToLengthConversionData&
     return pointerEvaluate(value, cssToLengthConversionData, frame, prefix);
 }
     
-static bool defaultAppearanceEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
+static bool prefersDarkInterfaceEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {
-    bool defaultAppearance = false;
-    
+    bool prefersDarkInterface = false;
+
     if (!frame.page()->defaultAppearance())
-        defaultAppearance = true;
-    
+        prefersDarkInterface = true;
+
     if (!value)
-        return defaultAppearance;
-    
-    return downcast<CSSPrimitiveValue>(*value).valueID() == (defaultAppearance ? CSSValuePrefers : CSSValueNoPreference);
+        return prefersDarkInterface;
+
+    return downcast<CSSPrimitiveValue>(*value).valueID() == (prefersDarkInterface ? CSSValuePrefers : CSSValueNoPreference);
 }
 
 static bool prefersReducedMotionEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)

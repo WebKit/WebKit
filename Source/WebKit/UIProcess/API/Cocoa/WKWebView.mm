@@ -470,11 +470,10 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     return static_cast<uint32_t>(WebCore::UserInterfaceLayoutDirection::LTR);
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebViewAndWKWebViewAdditions.mm>
-#else
-- (bool)_defaultAppearance { return true; }
-#endif
+- (bool)_defaultAppearance
+{
+    return _impl->useDefaultAppearance();
+}
 
 #endif // PLATFORM(MAC)
 

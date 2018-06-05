@@ -5013,6 +5013,19 @@ bool WebViewImpl::useSystemAppearance()
     return m_page->useSystemAppearance();
 }
 
+bool WebViewImpl::useDefaultAppearance()
+{
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    if (!useSystemAppearance())
+        return true;
+
+    NSAppearanceName appearance = [[m_view effectiveAppearance] bestMatchFromAppearancesWithNames:@[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
+    return [appearance isEqualToString:NSAppearanceNameAqua];
+#else
+    return true;
+#endif
+}
+
 void WebViewImpl::setDefaultAppearance(bool defaultAppearance)
 {
     m_page->setDefaultAppearance(defaultAppearance);

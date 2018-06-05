@@ -1,3 +1,22 @@
+2018-06-05  Timothy Hatcher  <timothy@apple.com>
+
+        Clean up LocalDefaultSystemAppearance and prefers-dark-interface media query
+
+        https://bugs.webkit.org/show_bug.cgi?id=186323
+        rdar://problem/38382252
+
+        Reviewed by Tim Horton.
+
+        * css/MediaFeatureNames.h:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::prefersDarkInterfaceEvaluate):
+        (WebCore::defaultAppearanceEvaluate): Deleted.
+        * css/MediaQueryExpression.cpp:
+        (WebCore::featureWithValidIdent):
+        (WebCore::isFeatureValidWithoutValue):
+        * platform/mac/LocalDefaultSystemAppearance.mm:
+        (WebCore::LocalDefaultSystemAppearance::LocalDefaultSystemAppearance):
+
 2018-06-05  Darin Adler  <darin@apple.com>
 
         [Cocoa] Improve some soft linking compatibility with ARC

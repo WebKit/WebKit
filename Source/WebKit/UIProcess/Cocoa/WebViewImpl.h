@@ -539,6 +539,7 @@ public:
     void setUseSystemAppearance(bool);
     bool useSystemAppearance();
     void setDefaultAppearance(bool);
+    bool useDefaultAppearance();
 
 private:
 #if HAVE(TOUCH_BAR)

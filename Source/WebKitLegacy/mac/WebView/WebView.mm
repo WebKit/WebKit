@@ -5275,12 +5275,18 @@ static Vector<String> toStringVector(NSArray* patterns)
     return insets;
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebViewAndWKWebViewAdditions.mm>
-#else
-- (bool)_defaultAppearance { return true; }
-#endif
+- (bool)_defaultAppearance
+{
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    if (![self _useSystemAppearance])
+        return true;
 
+    NSAppearanceName appearance = [[self effectiveAppearance] bestMatchFromAppearancesWithNames:@[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
+    return [appearance isEqualToString:NSAppearanceNameAqua];
+#else
+    return true;
+#endif
+}
 
 - (void)_updateDefaultAppearance
 {

@@ -1,3 +1,20 @@
+2018-06-05  Timothy Hatcher  <timothy@apple.com>
+
+        Clean up LocalDefaultSystemAppearance and prefers-dark-interface media query
+
+        https://bugs.webkit.org/show_bug.cgi?id=186323
+        rdar://problem/38382252
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _defaultAppearance]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _defaultAppearance]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::useDefaultAppearance):
+
 2018-06-05  Sihui Liu  <sihui_liu@apple.com>
 
         [iOS] TestWebKitAPI.WebKit.WKHTTPCookieStoreWithoutProcessPool fails because cookies aren't flushed to file

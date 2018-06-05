@@ -1620,11 +1620,10 @@ static _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::Scrol
     _data->_impl->setShouldSuppressFirstResponderChanges(shouldSuppress);
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebViewAndWKWebViewAdditions.mm>
-#else
-- (bool)_defaultAppearance { return true; }
-#endif
+- (bool)_defaultAppearance
+{
+    return _data->_impl->useDefaultAppearance();
+}
 
 - (void)effectiveAppearanceDidChange
 {

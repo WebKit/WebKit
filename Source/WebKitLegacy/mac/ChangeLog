@@ -1,3 +1,15 @@
+2018-06-05  Timothy Hatcher  <timothy@apple.com>
+
+        Clean up LocalDefaultSystemAppearance and prefers-dark-interface media query
+
+        https://bugs.webkit.org/show_bug.cgi?id=186323
+        rdar://problem/38382252
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebView.mm:
+        (-[WebView _defaultAppearance]):
+
 2018-06-05  Brent Fulgham  <bfulgham@apple.com>
 
         Revise DEFAULT_EXPERIMENTAL_FEATURES_ENABLED to work properly on Apple builds
