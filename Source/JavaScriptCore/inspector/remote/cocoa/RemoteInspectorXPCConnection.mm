@@ -142,10 +142,10 @@ NSDictionary *RemoteInspectorXPCConnection::deserializeMessage(xpc_object_t obje
         return nil;
     }
 
-    RetainPtr<CFDictionaryRef> dictionary = adoptCF((CFDictionaryRef)_CFXPCCreateCFObjectFromXPCMessage(xpcDictionary));
+    auto dictionary = _CFXPCCreateCFObjectFromXPCMessage(xpcDictionary);
     ASSERT_WITH_MESSAGE(dictionary, "Unable to deserialize xpc message");
-    ASSERT(CFGetTypeID(dictionary.get()) == CFDictionaryGetTypeID());
-    return (NSDictionary *)dictionary.autorelease();
+    ASSERT(CFGetTypeID(dictionary) == CFDictionaryGetTypeID());
+    return CFBridgingRelease(dictionary);
 }
 
 void RemoteInspectorXPCConnection::handleEvent(xpc_object_t object)

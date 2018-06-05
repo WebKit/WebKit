@@ -1,3 +1,25 @@
+2018-06-05  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Update some JavaScriptCore code to be more ready for ARC
+        https://bugs.webkit.org/show_bug.cgi?id=186301
+
+        Reviewed by Anders Carlsson.
+
+        * API/JSContext.mm:
+        (-[JSContext evaluateScript:withSourceURL:]): Use __bridge for typecast.
+        (-[JSContext setName:]): Removed unnecessary call to copy, since the
+        JSStringCreateWithCFString function already reads the characters out
+        of the string and does not retain the string, so there is no need to
+        make an immutable copy. And used __bridge for typecast.
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::receivedProxyApplicationSetupMessage):
+        Ditto.
+
+        * inspector/remote/cocoa/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::deserializeMessage):
+        Use CFBridgingRelease instead of autorelease for a CF dictionary that
+        we return as an NSDictionary.
+
 2018-06-04  Keith Miller  <keith_miller@apple.com>
 
         Remove missing files from JavaScriptCore Xcode project

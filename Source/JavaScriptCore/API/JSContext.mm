@@ -100,8 +100,8 @@
 - (JSValue *)evaluateScript:(NSString *)script withSourceURL:(NSURL *)sourceURL
 {
     JSValueRef exceptionValue = nullptr;
-    JSStringRef scriptJS = JSStringCreateWithCFString((CFStringRef)script);
-    JSStringRef sourceURLJS = sourceURL ? JSStringCreateWithCFString((CFStringRef)[sourceURL absoluteString]) : nullptr;
+    JSStringRef scriptJS = JSStringCreateWithCFString((__bridge CFStringRef)script);
+    JSStringRef sourceURLJS = sourceURL ? JSStringCreateWithCFString((__bridge CFStringRef)[sourceURL absoluteString]) : nullptr;
     JSValueRef result = JSEvaluateScript(m_context, scriptJS, nullptr, sourceURLJS, 0, &exceptionValue);
     if (sourceURLJS)
         JSStringRelease(sourceURLJS);
@@ -202,7 +202,7 @@
 
 - (void)setName:(NSString *)name
 {
-    JSStringRef nameJS = name ? JSStringCreateWithCFString((CFStringRef)[[name copy] autorelease]) : nullptr;
+    JSStringRef nameJS = name ? JSStringCreateWithCFString((__bridge CFStringRef)name) : nullptr;
     JSGlobalContextSetName(m_context, nameJS);
     if (nameJS)
         JSStringRelease(nameJS);
