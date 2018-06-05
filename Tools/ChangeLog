@@ -1,3 +1,16 @@
+2018-06-04  Daniel Bates  <dabates@apple.com>
+
+        Typo in MockBugzillaQueries.fetch_attachment_ids_from_review_queue()
+        https://bugs.webkit.org/show_bug.cgi?id=186290
+
+        Reviewed by Aakash Jain.
+
+        Although the usefulness of the code in MockBugzillaQueries.fetch_attachment_ids_from_review_queue() is
+        questionable we should fix a typo when calling this mocked function with argument since.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        (MockBugzillaQueries.fetch_attachment_ids_from_review_queue):
+
 2018-06-04  Dan Bernstein  <mitz@apple.com>
 
         Fixed building with the macOS Mojave seed SDK.

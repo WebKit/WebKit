@@ -297,7 +297,7 @@ class MockBugzillaQueries(object):
         unreviewed_patches = sum([bug.unreviewed_patches()
                                   for bug in self._all_bugs()], [])
         if since:
-            unreviewed_pacthes = [patch for patch in unreviewed_patches
+            unreviewed_patches = [patch for patch in unreviewed_patches
                                         if patch.attach_date() >= since]
         return map(lambda patch: patch.id(), unreviewed_patches)
 
