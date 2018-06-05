@@ -194,6 +194,7 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         this._addClassContainer.addEventListener("click", this._addClassContainerClicked.bind(this));
 
         this._addClassInput = this._addClassContainer.createChild("input", "class-name-input");
+        this._addClassInput.spellcheck = false;
         this._addClassInput.setAttribute("placeholder", WI.UIString("Add New Class"));
         this._addClassInput.addEventListener("keypress", this._addClassInputKeyPressed.bind(this));
         this._addClassInput.addEventListener("blur", this._addClassInputBlur.bind(this));
