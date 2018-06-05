@@ -84,7 +84,7 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (isMenuListPopup() || isMenuListOption())
         return AccessibilityObjectInclusion::IgnoreObject;
 
-    if (roleValue() == AccessibilityRole::Caption)
+    if (roleValue() == AccessibilityRole::Caption && ariaRoleAttribute() == AccessibilityRole::Unknown)
         return AccessibilityObjectInclusion::IgnoreObject;
     
     if (roleValue() == AccessibilityRole::Mark)

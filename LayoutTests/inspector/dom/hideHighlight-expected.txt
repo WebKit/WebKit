@@ -21,7 +21,7 @@ PASS: Should be no highlight.
 
 -- Running test case: HighlightNode
 PASS: Should be one highlighted node.
-Highlighted Element Data: {"tagName":"p","idValue":"target","size":{"width":500,"height":100},"role":""}
+Highlighted Element Data: {"tagName":"p","idValue":"target","size":{"width":500,"height":100},"role":"paragraph"}
 
 -- Running test case: HideHighlight
 PASS: Should be no highlight.

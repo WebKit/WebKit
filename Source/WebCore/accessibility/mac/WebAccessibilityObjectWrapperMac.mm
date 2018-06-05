@@ -1991,6 +1991,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { AccessibilityRole::GraphicsDocument, NSAccessibilityGroupRole },
         { AccessibilityRole::GraphicsObject, NSAccessibilityGroupRole },
         { AccessibilityRole::GraphicsSymbol, NSAccessibilityImageRole },
+        { AccessibilityRole::Caption, NSAccessibilityGroupRole },
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     

@@ -499,8 +499,14 @@ div[role=article]
 div[role=banner]
       AXRole: AXLandmarkBanner
       
+div[role=blockquote]
+      AXRole: AXBlockquote
+      
 div[role=button]
       AXRole: AXButton
+      
+div[role=caption]
+      AXRole: AXCaption
       
 div[role=checkbox]
       AXRole: AXCheckBox
@@ -744,6 +750,9 @@ div[role=navigation]
       
 div[role=note]
       AXRole: AXComment
+      
+div[role=paragraph]
+      AXRole: AXParagraph
       
 div[role=presentation]
       AXRole: 

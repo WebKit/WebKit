@@ -1,3 +1,23 @@
+2018-06-05  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Implement support for new blockquote, caption, and paragraph ARIA roles
+        https://bugs.webkit.org/show_bug.cgi?id=186274
+
+        Reviewed by Chris Fleizach.
+
+        Add the three new ARIA roles to the internal rolemap so that they are treated in
+        the same fashion as their HTML element counterparts. Also ensure that an element
+        with an explicit caption role does not get pruned from the macOS accessibility tree.
+
+        No new tests. Instead add the roles to the existing role-exposure tests.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::initializeRoleMap):
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject const):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilityRoleMap):
+
 2018-06-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Merge width and margin computation for block-level, replaced elements in normal flow

@@ -98,6 +98,25 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:banner, xml-roles:banner, tag:div, toolkit:WebKitGtk
 ------------
+AXRole: AXBlockquote
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 0.000000, 0.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:blockquote, xml-roles:blockquote, tag:div, toolkit:WebKitGtk
+------------
 AXRole: AXButton
 AXParent: AXWebArea
 AXChildren: 0
@@ -116,6 +135,25 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:button, xml-roles:button, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXCaption
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 0.000000, 0.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:caption, xml-roles:caption, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXCheckBox
 AXParent: AXWebArea
@@ -516,6 +554,25 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:note, xml-roles:note, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXParagraph
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 0.000000, 0.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 1
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:paragraph, xml-roles:paragraph, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXProgressIndicator
 AXParent: AXWebArea
@@ -1659,7 +1716,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: html-id:description, tag:p, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:paragraph, html-id:description, tag:p, toolkit:WebKitGtk
 ------------
 
 PASS successfullyParsed is true

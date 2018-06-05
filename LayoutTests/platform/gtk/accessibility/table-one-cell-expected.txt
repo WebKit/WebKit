@@ -18,4 +18,4 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: tag:p, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:paragraph, tag:p, toolkit:WebKitGtk

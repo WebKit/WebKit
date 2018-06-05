@@ -834,10 +834,20 @@ div[role=banner]
       AXSubrole: AXLandmarkBanner
       AXRoleDescription: banner
       
+div[role=blockquote]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
+      
 div[role=button]
       AXRole: AXButton
       AXSubrole: 
       AXRoleDescription: button
+      
+div[role=caption]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
       
 div[role=checkbox]
       AXRole: AXCheckBox
@@ -1243,6 +1253,11 @@ div[role=note]
       AXRole: AXGroup
       AXSubrole: AXDocumentNote
       AXRoleDescription: note
+      
+div[role=paragraph]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
       
 div[role=presentation]
       AXRole: 

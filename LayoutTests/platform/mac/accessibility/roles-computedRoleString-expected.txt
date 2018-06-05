@@ -48,7 +48,7 @@ PASS: meter -> progressbar.
 PASS: nav -> navigation. 
 PASS: ol -> list. 
 PASS: li -> listitem. 
-PASS: p -> . 
+PASS: p -> paragraph. 
 PASS: pre -> . 
 PASS: progress -> progressbar. 
 PASS: samp -> . 
@@ -99,7 +99,9 @@ PASS: div[role="alertdialog"] -> alertdialog.
 PASS: div[role="application"] -> application. 
 PASS: div[role="article"] -> article. 
 PASS: div[role="banner"] -> banner. 
+PASS: div[role="blockquote"] -> blockquote. 
 PASS: div[role="button"] -> button. 
+PASS: div[role="caption"] -> caption. 
 PASS: div[role="checkbox"] -> checkbox. 
 PASS: div[role="combobox"] -> combobox. 
 PASS: div[role="complementary"] -> complementary. 
@@ -141,6 +143,7 @@ PASS: div[role="menuitemcheckbox"] -> menuitemcheckbox.
 PASS: div[role="menuitemradio"] -> menuitemradio. 
 PASS: div[role="navigation"] -> navigation. 
 PASS: div[role="note"] -> note. 
+PASS: div[role="paragraph"] -> paragraph. 
 PASS: div[role="progressbar"] -> progressbar. 
 PASS: div[role="radiogroup"] -> radiogroup. 
 PASS: div[role="radio"] -> radio. 

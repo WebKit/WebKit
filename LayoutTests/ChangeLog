@@ -1,3 +1,28 @@
+2018-06-05  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Implement support for new blockquote, caption, and paragraph ARIA roles
+        https://bugs.webkit.org/show_bug.cgi?id=186274
+
+        Reviewed by Chris Fleizach.
+
+        Add the three ARIA roles to the existing role-exposure tests and update
+        expectations accordingly. Also update several additional GTK tests because
+        the mapping of these ARIA roles results in new object attributes appearing
+        for native HTML blockquote, paragraph, and caption elements.
+
+        * accessibility/gtk/object-attributes-expected.txt:
+        * accessibility/gtk/xml-roles-exposed-expected.txt:
+        * accessibility/gtk/xml-roles-exposed.html:
+        * accessibility/roles-computedRoleString-expected.txt:
+        * accessibility/roles-computedRoleString.html:
+        * accessibility/roles-exposed.html:
+        * inspector/dom/hideHighlight-expected.txt:
+        * platform/gtk/accessibility/roles-computedRoleString-expected.txt:
+        * platform/gtk/accessibility/roles-exposed-expected.txt:
+        * platform/gtk/accessibility/table-one-cell-expected.txt:
+        * platform/mac/accessibility/roles-computedRoleString-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2018-06-04  Chris Dumez  <cdumez@apple.com>
 
         Rename "Cross-Origin-Options" HTTP header to "Cross-Origin-Window-Policy"
