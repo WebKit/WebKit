@@ -40,6 +40,8 @@ namespace API {
 HTTPCookieStore::HTTPCookieStore(WebsiteDataStore& websiteDataStore)
     : m_owningDataStore(websiteDataStore.websiteDataStore())
 {
+    if (!m_owningDataStore->processPoolForCookieStorageOperations())
+        registerForNewProcessPoolNotifications();
 }
 
 HTTPCookieStore::~HTTPCookieStore()
@@ -151,7 +153,6 @@ void HTTPCookieStore::registerObserver(Observer& observer)
     auto* pool = m_owningDataStore->processPoolForCookieStorageOperations();
 
     if (!pool) {
-        registerForNewProcessPoolNotifications();
         ASSERT(!m_observingUIProcessCookies);
 
         // Listen for cookie notifications in the UIProcess in the meantime.
@@ -203,10 +204,8 @@ void HTTPCookieStore::cookieManagerDestroyed()
 
     auto* pool = m_owningDataStore->processPoolForCookieStorageOperations();
 
-    if (!pool) {
-        registerForNewProcessPoolNotifications();
+    if (!pool)
         return;
-    }
 
     m_observedCookieManagerProxy = pool->supplement<WebKit::WebCookieManagerProxy>();
     m_observedCookieManagerProxy->registerObserver(m_owningDataStore->sessionID(), *m_cookieManagerProxyObserver);
@@ -217,8 +216,6 @@ void HTTPCookieStore::registerForNewProcessPoolNotifications()
     ASSERT(!m_processPoolCreationListenerIdentifier);
 
     m_processPoolCreationListenerIdentifier = WebProcessPool::registerProcessPoolCreationListener([this](WebProcessPool& newProcessPool) {
-        ASSERT(m_cookieManagerProxyObserver);
-
         if (!m_owningDataStore->isAssociatedProcessPool(newProcessPool))
             return;
 
@@ -227,9 +224,10 @@ void HTTPCookieStore::registerForNewProcessPoolNotifications()
         WebCore::NetworkStorageSession::defaultStorageSession().flushCookieStore();
         newProcessPool.ensureNetworkProcess();
 
-
-        m_observedCookieManagerProxy = newProcessPool.supplement<WebKit::WebCookieManagerProxy>();
-        m_observedCookieManagerProxy->registerObserver(m_owningDataStore->sessionID(), *m_cookieManagerProxyObserver);
+        if (m_cookieManagerProxyObserver) {
+            m_observedCookieManagerProxy = newProcessPool.supplement<WebKit::WebCookieManagerProxy>();
+            m_observedCookieManagerProxy->registerObserver(m_owningDataStore->sessionID(), *m_cookieManagerProxyObserver);
+        }
         unregisterForNewProcessPoolNotifications();
     });
 }
