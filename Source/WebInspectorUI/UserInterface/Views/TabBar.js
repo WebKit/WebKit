@@ -47,7 +47,7 @@ WI.TabBar = class TabBar extends WI.View
         }
 
         this._tabPickerTabBarItem = new WI.PinnedTabBarItem("Images/TabPicker.svg", WI.UIString("Show hidden tabs"));
-        this._tabPickerTabBarItem.element.classList.add("tab-picker");
+        this._tabPickerTabBarItem.element.classList.add("tab-picker", "hidden");
         this._tabPickerTabBarItem.element.addEventListener("contextmenu", this._handleTabPickerTabContextMenu.bind(this));
         this.addTabBarItem(this._tabPickerTabBarItem, {suppressAnimations: true});
     }

@@ -1,3 +1,13 @@
+2018-06-05  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Tab picker is briefly visible when TabBar initially shown
+        https://bugs.webkit.org/show_bug.cgi?id=186317
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar): Picker should be initially hidden.
+
 2018-06-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Text in "Add New Class" in auto-capitalizes
