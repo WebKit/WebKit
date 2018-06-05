@@ -1,7 +1,14 @@
 2018-06-04  Dan Bernstein  <mitz@apple.com>
 
-        Fixed building with a shared build directory with XCBuild, which is the default build system
-        in the Xcode 10 developer beta.
+        Fixed building ImageDiff with the default build system in the Xcode 10 developer beta.
+
+        * ImageDiff/cg/Configurations/Base.xcconfig: Use #include? to include
+          HaveInternalSDK.xcconfig, since it may not be preent.
+
+2018-06-04  Dan Bernstein  <mitz@apple.com>
+
+        Fixed building TestWebKitAPI with a shared build directory with XCBuild, which is the
+        default build system in the Xcode 10 developer beta.
 
         * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Changed the reference to the
           built libWTF.a to be relative to the built products directory.
