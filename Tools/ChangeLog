@@ -1,3 +1,32 @@
+2018-06-05  Robin Morisset  <rmorisset@apple.com>
+
+        Add a grammar (in antlr4 format) to the WSL spec.
+        https://bugs.webkit.org/show_bug.cgi?id=186310
+
+        Rubberstamped by Filip Pizlo
+
+        It is just the raw rules, without much comments and no typesetting.
+        Compiles to any of Java/JS/C++/etc.. with antlr4 (requires a JDK)
+
+        It does not exactly match the parser of the current js implementation of WSL, it:
+        - Accepts negative literals
+        - Reserves keywords fallthrough/auto
+        - Refuses '_' as a valid identifier
+        - Accepts several capitalizations for Null/True/False
+        - Accepts variable declarations at the top-level
+        - Correctly parses ternary expressions
+        - Forbids empty extension list for protocols
+        - Does not allow a space between '[' and ']' in type suffixes
+        - Correctly parses nested generics
+        - Accepts a 'fallthrough;' statement (for switches)
+        - Refuses chained relational operator (e.g. x < y < z)
+        - Generally a completely different structure for parsing effectful expressions, although it probably accepts about the same language
+        - Currently only accepts literals and identifiers as constexpr (while the js parser accepts way too much, including '(x += 42)')
+        There are probably more differences that I missed. The js parser will probably have to be mostly rewritten to follow the spec more closely (and fix all the bugs).
+        I will try to see if it can be automatically derived from the antlr4 grammar.
+
+        * WebGPUShadingLanguageRI/SpecWork/WSL.g4: Added.
+
 2018-06-04  Frederic Wang  <fwang@igalia.com>
 
         import-w3c-tests should rely on <meta name="flags"> to detect CSS manual tests
