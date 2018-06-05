@@ -1,3 +1,10 @@
+2018-06-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Moved the corresponding expected results for the tests moved in r232430.
+
+        * platform/ios/editing/selection/simple-line-layout-caret-is-gone-expected.txt: Moved from LayoutTests/platform/ios/editing/simple-line-layout-caret-is-gone-expected.txt.
+        * platform/wincairo/editing/selection/simple-line-layout-caret-is-gone-expected.txt: Moved from LayoutTests/platform/wincairo/editing/simple-line-layout-caret-is-gone-expected.txt.
+
 2018-06-04  Dean Jackson  <dino@apple.com>
 
         AR Badging on transparent thumbnail images makes the glyph look really dark
