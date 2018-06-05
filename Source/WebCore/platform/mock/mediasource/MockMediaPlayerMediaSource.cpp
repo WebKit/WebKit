@@ -94,7 +94,7 @@ void MockMediaPlayerMediaSource::load(const String&)
 
 void MockMediaPlayerMediaSource::load(const String&, MediaSourcePrivateClient* source)
 {
-    m_mediaSourcePrivate = MockMediaSourcePrivate::create(this, source);
+    m_mediaSourcePrivate = MockMediaSourcePrivate::create(*this, *source);
 }
 
 void MockMediaPlayerMediaSource::cancelLoad()
@@ -268,7 +268,7 @@ void MockMediaPlayerMediaSource::seekCompleted()
         });
 }
 
-std::optional<PlatformVideoPlaybackQualityMetrics> MockMediaPlayerMediaSource::videoPlaybackQualityMetrics()
+std::optional<VideoPlaybackQualityMetrics> MockMediaPlayerMediaSource::videoPlaybackQualityMetrics()
 {
     return m_mediaSourcePrivate ? m_mediaSourcePrivate->videoPlaybackQualityMetrics() : std::nullopt;
 }

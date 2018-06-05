@@ -73,10 +73,10 @@ public:
     RetainPtr<CVPixelBufferRef> imageForTime(const MediaTime&, ImageForTimeFlags = ExactTime);
     void flush();
 
-    unsigned long totalVideoFrames() { return m_totalVideoFrames; }
-    unsigned long droppedVideoFrames() { return m_droppedVideoFrames; }
-    unsigned long corruptedVideoFrames() { return m_corruptedVideoFrames; }
-    MediaTime totalFrameDelay() { return m_totalFrameDelay; }
+    unsigned totalVideoFrames() const { return m_totalVideoFrames; }
+    unsigned droppedVideoFrames() const { return m_droppedVideoFrames; }
+    unsigned corruptedVideoFrames() const { return m_corruptedVideoFrames; }
+    MediaTime totalFrameDelay() const { return m_totalFrameDelay; }
 
 private:
     enum Mode {
@@ -122,15 +122,15 @@ private:
     std::function<void()> m_notificationCallback;
     std::function<void()> m_hasAvailableFrameCallback;
     RetainPtr<CFArrayRef> m_qosTiers;
-    long m_currentQosTier { 0 };
-    unsigned long m_framesSinceLastQosCheck { 0 };
+    int m_currentQosTier { 0 };
+    unsigned m_framesSinceLastQosCheck { 0 };
     double m_decodeRatioMovingAverage { 0 };
 
     bool m_invalidated { false };
     int m_framesBeingDecoded { 0 };
-    unsigned long m_totalVideoFrames { 0 };
-    unsigned long m_droppedVideoFrames { 0 };
-    unsigned long m_corruptedVideoFrames { 0 };
+    unsigned m_totalVideoFrames { 0 };
+    unsigned m_droppedVideoFrames { 0 };
+    unsigned m_corruptedVideoFrames { 0 };
     MediaTime m_totalFrameDelay;
 };
 

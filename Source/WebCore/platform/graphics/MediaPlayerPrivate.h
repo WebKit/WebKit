@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaPlayerPrivate_h
-#define MediaPlayerPrivate_h
+#pragma once
 
 #if ENABLE(VIDEO)
 
 #include "MediaPlayer.h"
 #include "PlatformTimeRanges.h"
-#include <wtf/Function.h>
-#include <wtf/Forward.h>
 
 namespace WebCore {
-
-class IntRect;
-class IntSize;
-class MediaPlaybackTarget;
-class PlatformTextTrack;
 
 class MediaPlayerPrivateInterface {
     WTF_MAKE_NONCOPYABLE(MediaPlayerPrivateInterface); WTF_MAKE_FAST_ALLOCATED;
@@ -56,7 +48,6 @@ public:
     virtual void cancelLoad() = 0;
     
     virtual void prepareToPlay() { }
-    virtual PlatformMedia platformMedia() const { return NoPlatformMedia; }
     virtual PlatformLayer* platformLayer() const { return 0; }
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
@@ -274,7 +265,7 @@ public:
     virtual bool ended() const { return false; }
 
 #if ENABLE(MEDIA_SOURCE)
-    virtual std::optional<PlatformVideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() { return std::nullopt; }
+    virtual std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() { return std::nullopt; }
 #endif
 
 #if ENABLE(AVF_CAPTIONS)
@@ -287,9 +278,12 @@ public:
 
     virtual void applicationWillResignActive() { }
     virtual void applicationDidBecomeActive() { }
+
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
+    virtual AVPlayer *objCAVFoundationAVPlayer() const { return nullptr; }
+#endif
 };
 
 }
 
-#endif
 #endif

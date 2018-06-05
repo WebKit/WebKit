@@ -172,7 +172,6 @@ protected:
     void cancelLoad() override = 0;
 
     void prepareToPlay() override;
-    PlatformMedia platformMedia() const override = 0;
 
     void play() override;
     void pause() override;

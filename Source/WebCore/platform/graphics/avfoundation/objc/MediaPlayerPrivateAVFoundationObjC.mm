@@ -1154,15 +1154,6 @@ MediaPlayerPrivateAVFoundation::ItemStatus MediaPlayerPrivateAVFoundationObjC::p
     return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusReadyToPlay;
 }
 
-PlatformMedia MediaPlayerPrivateAVFoundationObjC::platformMedia() const
-{
-    INFO_LOG(LOGIDENTIFIER);
-    PlatformMedia pm;
-    pm.type = PlatformMedia::AVFoundationMediaPlayerType;
-    pm.media.avfMediaPlayer = m_avPlayer.get();
-    return pm;
-}
-
 PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
 {
     return m_videoFullscreenLayerManager->videoInlineLayer();

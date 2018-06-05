@@ -1014,11 +1014,6 @@ bool MediaPlayerPrivateGStreamerBase::supportsFullscreen() const
     return true;
 }
 
-PlatformMedia MediaPlayerPrivateGStreamerBase::platformMedia() const
-{
-    return NoPlatformMedia;
-}
-
 MediaPlayer::MovieLoadType MediaPlayerPrivateGStreamerBase::movieLoadType() const
 {
     if (m_readyState == MediaPlayer::HaveNothing)

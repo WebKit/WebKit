@@ -524,15 +524,6 @@ MediaPlayerPrivateAVFoundation::ItemStatus MediaPlayerPrivateAVFoundationCF::pla
     return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusReadyToPlay;
 }
 
-PlatformMedia MediaPlayerPrivateAVFoundationCF::platformMedia() const
-{
-    LOG(Media, "MediaPlayerPrivateAVFoundationCF::platformMedia(%p)", this);
-    PlatformMedia pm;
-    pm.type = PlatformMedia::AVFoundationCFMediaPlayerType;
-    pm.media.avcfMediaPlayer = (AVCFPlayer*)avPlayer(m_avfWrapper);
-    return pm;
-}
-
 PlatformLayer* MediaPlayerPrivateAVFoundationCF::platformLayer() const
 {
     ASSERT(isMainThread());

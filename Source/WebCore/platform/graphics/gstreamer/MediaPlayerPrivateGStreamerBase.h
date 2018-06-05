@@ -112,7 +112,6 @@ public:
     virtual MediaTime maxTimeLoaded() const { return MediaTime::zeroTime(); }
 
     bool supportsFullscreen() const override;
-    PlatformMedia platformMedia() const override;
 
     MediaPlayer::MovieLoadType movieLoadType() const override;
     virtual bool isLiveStream() const = 0;

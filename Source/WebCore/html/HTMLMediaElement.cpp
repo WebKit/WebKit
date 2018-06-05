@@ -6023,11 +6023,6 @@ void HTMLMediaElement::willStopBeingFullscreenElement()
         fullscreenModeChanged(VideoFullscreenModeNone);
 }
 
-PlatformMedia HTMLMediaElement::platformMedia() const
-{
-    return m_player ? m_player->platformMedia() : NoPlatformMedia;
-}
-
 PlatformLayer* HTMLMediaElement::platformLayer() const
 {
     return m_player ? m_player->platformLayer() : nullptr;

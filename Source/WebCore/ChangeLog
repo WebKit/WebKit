@@ -1,3 +1,108 @@
+2018-06-03  Darin Adler  <darin@apple.com>
+
+        Simplify and remove some unused video element code (helpful for ARC-compatibility)
+        https://bugs.webkit.org/show_bug.cgi?id=186258
+
+        Reviewed by Daniel Bates.
+
+        My main mission was to remove the PlatformMedia struct, which had a union
+        of Objective-C object pointers in it, which doesn't work in ARC. However, I
+        found some other unused code to remove and simple mistakes to fix.
+
+        * Modules/mediasource/VideoPlaybackQuality.cpp:
+        (WebCore::VideoPlaybackQuality::create): Use unsigned instead of unsigned long,
+        since IDL "unsigned long" really means unsigned.
+        (WebCore::VideoPlaybackQuality::VideoPlaybackQuality): Ditto.
+        * Modules/mediasource/VideoPlaybackQuality.h: Updated for the above.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::platformMedia const): Deleted.
+        * html/HTMLMediaElement.h: Updated for the above.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::MediaPlayer): Moved initialization of many data members
+        to the class definition.
+        (WebCore::MediaPlayer::load): Use nullptr instead of 0.
+        (WebCore::MediaPlayer::platformMedia const): Deleted.
+        (WebCore::MediaPlayer::videoPlaybackQualityMetrics): Updated name of return type.
+        (WebCore::MediaPlayer::objCAVFoundationAVPlayer const): Added. Replaces
+        platformMedia for the one case where it was being used.
+        * platform/graphics/MediaPlayer.h: Removed unneeded includes. Re-sorted things.
+        Updated for the above. Removed PlatformMedia struct and NoPlatformMedia constant.
+        Removed explicit constructor in MediaEngineSupportParameters. Renamed
+        PlatformVideoPlaybackQualityMetrics struct to VideoPlaybackQualityMetrics,
+        removed its constructor, and changed types from unsigned long to unsigned.
+        Un-nested #if statements. Removed some Chromium-specific comments.
+
+        * platform/graphics/MediaPlayerPrivate.h: Removed unneeded includes and
+        forward declarations. Removed platformMedia. Updated return type for
+        videoPlaybackQualityMetrics. Added objCAVFoundationAVPlayer.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        Removed platformMedia.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::platformMedia const): Deleted.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+        Updated for the above.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        Added override of objCAVFoundationAVPlayer. Removed platformMedia.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformMedia const): Deleted.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        Removed platformMedia. Updated return type for videoPlaybackQualityMetrics.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::platformMedia const): Deleted.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::videoPlaybackQualityMetrics):
+        Updated return type, changed to use aggregate initialization instead of
+        calling a constructor, and added casts to unsigned.
+
+        * platform/graphics/cocoa/WebCoreDecompressionSession.h: Switched from
+        unsigned long to unsigned for frame counts and from long to int for
+        quality of service tier.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::platformMedia): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        Updated for the above.
+
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+        Removed videoPlaybackQualityMetrics since it was overriding a derived function
+        without changing its behavior, and the type has changed.
+
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::load): Pass two references.
+        (WebCore::MockMediaPlayerMediaSource::videoPlaybackQualityMetrics):
+        Updated return type.
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.h: Updated for the above.
+
+        * platform/mock/mediasource/MockMediaSourcePrivate.cpp:
+        (WebCore::MockMediaSourcePrivate::create): Return a Ref, take references.
+        (WebCore::MockMediaSourcePrivate::MockMediaSourcePrivate): Moved most data
+        member initialization into the class definition. Take references.
+        (WebCore::MockMediaSourcePrivate::~MockMediaSourcePrivate): Use a modern for loop.
+        (WebCore::MockMediaSourcePrivate::durationChanged): Update since m_player is a
+        reference.
+        (WebCore::MockMediaSourcePrivate::markEndOfStream): Ditto.
+        (WebCore::MockMediaSourcePrivate::readyState): Ditto.
+        (WebCore::MockMediaSourcePrivate::setReadyState): Ditto.
+        (WebCore::MockMediaSourcePrivate::waitForSeekCompleted): Ditto.
+        (WebCore::MockMediaSourcePrivate::seekCompleted): Ditto.
+        (WebCore::MockMediaSourcePrivate::removeSourceBuffer): Use Vector::removeFirst
+        instead of find/remove pairs.
+        (WebCore::MockMediaSourcePrivate::sourceBufferPrivateDidChangeActiveState): Ditto.
+        (WebCore::MockMediaSourcePrivate::seekToTime): Use modern for loop.
+        (WebCore::MockMediaSourcePrivate::videoPlaybackQualityMetrics): Updated return
+        type, changed to use aggregate initialization instead of calling a constructor.
+        * platform/mock/mediasource/MockMediaSourcePrivate.h: Updated for the above.
+
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+        (WebCore::MockSourceBufferPrivate::readyState): Updated since player is now
+        a reference.
+        (WebCore::MockSourceBufferPrivate::setReadyState): Ditto.
+
 2018-06-04  Darin Adler  <darin@apple.com>
 
         [Cocoa] Improve smart pointer support for ARC (OSObjectPtr/DispatchPtr)

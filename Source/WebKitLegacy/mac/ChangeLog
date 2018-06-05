@@ -1,3 +1,42 @@
+2018-06-03  Darin Adler  <darin@apple.com>
+
+        Simplify and remove some unused video element code (helpful for ARC-compatibility)
+        https://bugs.webkit.org/show_bug.cgi?id=186258
+
+        Reviewed by Daniel Bates.
+
+        * WebView/WebVideoFullscreenController.h: Removed some unneeded includes and
+        forward declarations. Removed methods that don't need to be public.
+
+        * WebView/WebVideoFullscreenController.mm: Added additional includes. Removed
+        #if COMPILER(CLANG) since that's all we use on Mac. Moved fields into an
+        unnamed category in here and also replaced the HUDWindowControllerDelegate
+        with the unnamed category. Removed unused NSWindow category defining the
+        isOnActiveSpace, which is not called anywhere in this file at this time.
+        (-[WebVideoFullscreenController setupVideoOverlay:]): Deleted. Moved the code
+        into setVideoElement.
+        (-[WebVideoFullscreenController windowDidLoad]): Slightly rearranged the code
+        and removed unneeded typecast.
+        (-[WebVideoFullscreenController videoElement]): Updated to not rely on a
+        using statement at the top of the file.
+        (-[WebVideoFullscreenController setVideoElement:]): Added a comment about
+        the many side effects and special considerations that this method that sounds
+        like a setter has. Updated code to use the new
+        MediaPlayer::objCAVFoundationAVPlayer function instead of the old
+        HTMLVideoElement::platformMedia function. Also straightened out the logic a
+        bit and added some FIXME comments about small problems noticed but not fixed.
+        (-[WebVideoFullscreenController delegate]): Deleted. Was never called.
+        (-[WebVideoFullscreenController setDelegate:]): Deleted. Was never called.
+        (-[WebVideoFullscreenController windowDidExitFullscreen]): Removed unneeded
+        typecast. Removed call to updatePowerAssertions method.
+        (-[WebVideoFullscreenController windowDidEnterFullscreen]): Removed call to
+        updatePowerAssertions method.
+        (-[WebVideoFullscreenController updatePowerAssertions]): Deleted. This method
+        set _displaySleepEnabler to nullptr, but nothing was ever setting it to anything
+        else, so this was dead code that did nothing.
+        (-[WebVideoFullscreenController rateChanged:]): Removed call to
+        updatePowerAssertions method.
+
 2018-06-04  Chris Dumez  <cdumez@apple.com>
 
         Rename "Cross-Origin-Options" HTTP header to "Cross-Origin-Window-Policy"

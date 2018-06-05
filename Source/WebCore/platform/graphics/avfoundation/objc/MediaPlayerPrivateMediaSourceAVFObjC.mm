@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -273,14 +273,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::cancelLoad()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::prepareToPlay()
 {
-}
-
-PlatformMedia MediaPlayerPrivateMediaSourceAVFObjC::platformMedia() const
-{
-    PlatformMedia pm;
-    pm.type = PlatformMedia::AVFoundationAssetType;
-    pm.media.avfAsset = m_asset.get();
-    return pm;
 }
 
 PlatformLayer* MediaPlayerPrivateMediaSourceAVFObjC::platformLayer() const
@@ -665,27 +657,27 @@ size_t MediaPlayerPrivateMediaSourceAVFObjC::extraMemoryCost() const
     return 0;
 }
 
-std::optional<PlatformVideoPlaybackQualityMetrics> MediaPlayerPrivateMediaSourceAVFObjC::videoPlaybackQualityMetrics()
+std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateMediaSourceAVFObjC::videoPlaybackQualityMetrics()
 {
     if (m_decompressionSession) {
-        return PlatformVideoPlaybackQualityMetrics(
+        return VideoPlaybackQualityMetrics {
             m_decompressionSession->totalVideoFrames(),
             m_decompressionSession->droppedVideoFrames(),
             m_decompressionSession->corruptedVideoFrames(),
             m_decompressionSession->totalFrameDelay().toDouble()
-        );
+        };
     }
 
     auto metrics = [m_sampleBufferDisplayLayer videoPerformanceMetrics];
     if (!metrics)
         return std::nullopt;
 
-    return PlatformVideoPlaybackQualityMetrics(
-        [metrics totalNumberOfVideoFrames],
-        [metrics numberOfDroppedVideoFrames],
-        [metrics numberOfCorruptedVideoFrames],
+    return VideoPlaybackQualityMetrics {
+        static_cast<unsigned>([metrics totalNumberOfVideoFrames]),
+        static_cast<unsigned>([metrics numberOfDroppedVideoFrames]),
+        static_cast<unsigned>([metrics numberOfCorruptedVideoFrames]),
         [metrics totalFrameDelay]
-    );
+    };
 }
 
 #pragma mark -

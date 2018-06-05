@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,21 +33,21 @@ namespace WebCore {
 class VideoPlaybackQuality : public RefCounted<VideoPlaybackQuality> {
     WTF_MAKE_NONCOPYABLE(VideoPlaybackQuality)
 public:
-    static Ref<VideoPlaybackQuality> create(double creationTime, unsigned long totalVideoFrames, unsigned long droppedVideoFrames, unsigned long corruptedVideoFrames, double totalFrameDelay);
+    static Ref<VideoPlaybackQuality> create(double creationTime, unsigned totalVideoFrames, unsigned droppedVideoFrames, unsigned corruptedVideoFrames, double totalFrameDelay);
 
     double creationTime() const { return m_creationTime; }
-    unsigned long totalVideoFrames() const { return m_totalVideoFrames; }
-    unsigned long droppedVideoFrames() const { return m_droppedVideoFrames; }
-    unsigned long corruptedVideoFrames() const { return m_corruptedVideoFrames; }
+    unsigned totalVideoFrames() const { return m_totalVideoFrames; }
+    unsigned droppedVideoFrames() const { return m_droppedVideoFrames; }
+    unsigned corruptedVideoFrames() const { return m_corruptedVideoFrames; }
     double totalFrameDelay() const { return m_totalFrameDelay; }
 
-protected:
-    VideoPlaybackQuality(double creationTime, unsigned long totalVideoFrames, unsigned long droppedVideoFrames, unsigned long corruptedVideoFrames, double totalFrameDelay);
+private:
+    VideoPlaybackQuality(double creationTime, unsigned totalVideoFrames, unsigned droppedVideoFrames, unsigned corruptedVideoFrames, double totalFrameDelay);
 
     double m_creationTime;
-    unsigned long m_totalVideoFrames;
-    unsigned long m_droppedVideoFrames;
-    unsigned long m_corruptedVideoFrames;
+    unsigned m_totalVideoFrames;
+    unsigned m_droppedVideoFrames;
+    unsigned m_corruptedVideoFrames;
     double m_totalFrameDelay;
 };
 

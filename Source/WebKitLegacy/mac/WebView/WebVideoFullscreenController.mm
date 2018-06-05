@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(VIDEO) && PLATFORM(MAC)
-
 #import "WebVideoFullscreenController.h"
+
+#if ENABLE(VIDEO) && PLATFORM(MAC)
 
 #import "WebVideoFullscreenHUDWindowController.h"
 #import "WebWindowAnimation.h"
+#import <AVFoundation/AVPlayer.h>
 #import <AVFoundation/AVPlayerLayer.h>
 #import <Carbon/Carbon.h>
 #import <WebCore/HTMLVideoElement.h>
@@ -37,17 +38,12 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 
-using WebCore::HTMLVideoElement;
-
-#if COMPILER(CLANG)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#endif
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 
-using WebCore::PlatformMedia;
 @interface WebVideoFullscreenWindow : NSWindow<NSAnimationDelegate> {
     SEL _controllerActionOnAnimationEnd;
     WebWindowScaleAnimation *_fullscreenAnimation; // (retain)
@@ -55,17 +51,11 @@ using WebCore::PlatformMedia;
 - (void)animateFromRect:(NSRect)startRect toRect:(NSRect)endRect withSubAnimation:(NSAnimation *)subAnimation controllerAction:(SEL)controllerAction;
 @end
 
-@interface WebVideoFullscreenController(HUDWindowControllerDelegate) <WebVideoFullscreenHUDWindowControllerDelegate>
-- (void)requestExitFullscreenWithAnimation:(BOOL)animation;
-- (void)updateMenuAndDockForFullscreen;
-- (void)updatePowerAssertions;
-@end
-
-@interface NSWindow(IsOnActiveSpaceAdditionForTigerAndLeopard)
-- (BOOL)isOnActiveSpace;
+@interface WebVideoFullscreenController () <WebVideoFullscreenHUDWindowControllerDelegate>
 @end
 
 @implementation WebVideoFullscreenController
+
 - (id)init
 {
     // Do not defer window creation, to make sure -windowNumber is created (needed by WebWindowScaleAnimation).
@@ -91,57 +81,58 @@ using WebCore::PlatformMedia;
     return (WebVideoFullscreenWindow *)[super window];
 }
 
-- (void)setupVideoOverlay:(CALayer *)layer
-{
-    WebVideoFullscreenWindow *window = [self fullscreenWindow];
-    [(NSView*)[window contentView] setLayer:layer];
-    [[window contentView] setWantsLayer:YES];
-}
-
 - (void)windowDidLoad
 {
-    WebVideoFullscreenWindow *window = [self fullscreenWindow];
+    auto window = [self fullscreenWindow];
+    auto contentView = [window contentView];
+
     [window setHasShadow:YES]; // This is nicer with a shadow.
     [window setLevel:NSPopUpMenuWindowLevel-1];
-    [(NSView*)[window contentView] setLayer:[CALayer layer]];
-    [[window contentView] setWantsLayer:YES];
+
+    [contentView setLayer:[CALayer layer]];
+    [contentView setWantsLayer:YES];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidResignActive:) name:NSApplicationDidResignActiveNotification object:NSApp];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidChangeScreenParameters:) name:NSApplicationDidChangeScreenParametersNotification object:NSApp];
 }
 
-- (HTMLVideoElement*)videoElement
+- (WebCore::HTMLVideoElement *)videoElement
 {
     return _videoElement.get();
 }
 
-- (void)setVideoElement:(HTMLVideoElement*)videoElement
+// FIXME: This method is not really a setter. The caller relies on its side effects, and it's
+// called once each time we enter full screen. So it should have a different name.
+- (void)setVideoElement:(WebCore::HTMLVideoElement *)videoElement
 {
+    ASSERT(videoElement);
     _videoElement = videoElement;
 
-    if (!_videoElement)
+    if (![self isWindowLoaded])
+        return;
+    auto corePlayer = videoElement->player();
+    if (!corePlayer)
+        return;
+    auto player = corePlayer->objCAVFoundationAVPlayer();
+    if (!player)
         return;
 
-    if ([self isWindowLoaded]) {
-        if (_videoElement->platformMedia().type == PlatformMedia::AVFoundationMediaPlayerType) {
-            AVPlayer *player = _videoElement->platformMedia().media.avfMediaPlayer;
-            RetainPtr<AVPlayerLayer> layer = adoptNS([allocAVPlayerLayerInstance() init]);
-            [self setupVideoOverlay:layer.get()];
-            [layer.get() setPlayer:player];
+    auto contentView = [[self fullscreenWindow] contentView];
 
-            [player addObserver:self forKeyPath:@"rate" options:0 context:nullptr];
-        }
-    }
-}
+    auto layer = adoptNS([allocAVPlayerLayerInstance() init]);
+    [layer setPlayer:player];
 
-- (id <WebVideoFullscreenControllerDelegate>)delegate
-{
-    return _delegate;
-}
+    [contentView setLayer:layer.get()];
 
-- (void)setDelegate:(id <WebVideoFullscreenControllerDelegate>)delegate
-{
-    _delegate = delegate;
+    // FIXME: The windowDidLoad method already called this, so it should
+    // not be necessary to do it again here.
+    [contentView setWantsLayer:YES];
+
+    // FIXME: This can be called multiple times, and won't necessarily be
+    // balanced by calls to windowDidExitFullscreen in some cases, so it
+    // would be better to change things so the observer is reliably added
+    // only once and guaranteed removed even in unusual edge cases.
+    [player addObserver:self forKeyPath:@"rate" options:0 context:nullptr];
 }
 
 - (CGFloat)clearFadeAnimation
@@ -156,15 +147,14 @@ using WebCore::PlatformMedia;
 
 - (void)windowDidExitFullscreen
 {
-    CALayer *layer = [(NSView*)[[self window] contentView] layer];
+    CALayer *layer = [[[self window] contentView] layer];
     if ([layer isKindOfClass:getAVPlayerLayerClass()])
-        [[(AVPlayerLayer*)layer player] removeObserver:self forKeyPath:@"rate"];
+        [[(AVPlayerLayer *)layer player] removeObserver:self forKeyPath:@"rate"];
 
     [self clearFadeAnimation];
     [[self window] close];
     [self setWindow:nil];
     [self updateMenuAndDockForFullscreen];   
-    [self updatePowerAssertions];
     [_hudController setDelegate:nil];
     [_hudController release];
     _hudController = nil;
@@ -185,7 +175,6 @@ using WebCore::PlatformMedia;
     [_hudController setDelegate:self];
 
     [self updateMenuAndDockForFullscreen];
-    [self updatePowerAssertions];
     [NSCursor setHiddenUntilMouseMoves:YES];
     
     // Give the HUD keyboard focus initially
@@ -338,11 +327,6 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
     NSApp.presentationOptions = options;
 }
 
-- (void)updatePowerAssertions
-{
-    _displaySleepDisabler = nullptr;
-}
-
 // MARK: -
 // MARK: Window callback
 
@@ -387,7 +371,6 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 {
     UNUSED_PARAM(unusedNotification);
     [_hudController updateRate];
-    [self updatePowerAssertions];
 }
 
 @end
@@ -423,9 +406,9 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
     return NO;
 }
 
-- (void)mouseDown:(NSEvent *)theEvent
+- (void)mouseDown:(NSEvent *)event
 {
-    UNUSED_PARAM(theEvent);
+    UNUSED_PARAM(event);
 }
 
 - (void)cancelOperation:(id)sender
@@ -436,7 +419,6 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 
 - (void)animatedResizeDidEnd
 {
-    // Call our windowController.
     if (_controllerActionOnAnimationEnd)
         [[self windowController] performSelector:_controllerActionOnAnimationEnd];
     _controllerActionOnAnimationEnd = NULL;
@@ -519,16 +501,14 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
     [self animatedResizeDidEnd];
 }
 
-- (void)mouseMoved:(NSEvent *)theEvent
+- (void)mouseMoved:(NSEvent *)event
 {
-    UNUSED_PARAM(theEvent);
+    UNUSED_PARAM(event);
     [[self windowController] fadeHUDIn];
 }
 
 @end
 
-#if COMPILER(CLANG)
 #pragma clang diagnostic pop
-#endif
 
-#endif /* ENABLE(VIDEO) */
+#endif

@@ -171,7 +171,6 @@ public:
 
     bool doesHaveAttribute(const AtomicString&, AtomicString* value = nullptr) const override;
 
-    WEBCORE_EXPORT PlatformMedia platformMedia() const;
     PlatformLayer* platformLayer() const;
     bool isVideoLayerInline();
     void setPreparedToReturnVideoLayerToInline(bool);

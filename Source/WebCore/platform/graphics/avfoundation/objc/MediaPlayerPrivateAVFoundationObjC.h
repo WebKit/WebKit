@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaPlayerPrivateAVFoundationObjC_h
-#define MediaPlayerPrivateAVFoundationObjC_h
+#pragma once
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
@@ -37,24 +36,17 @@ OBJC_CLASS AVAssetImageGenerator;
 OBJC_CLASS AVAssetResourceLoadingRequest;
 OBJC_CLASS AVMediaSelectionGroup;
 OBJC_CLASS AVOutputContext;
-OBJC_CLASS AVPlayer;
 OBJC_CLASS AVPlayerItem;
 OBJC_CLASS AVPlayerItemLegibleOutput;
-OBJC_CLASS AVPlayerItemTrack;
 OBJC_CLASS AVPlayerItemVideoOutput;
 OBJC_CLASS AVPlayerLayer;
 OBJC_CLASS AVURLAsset;
 OBJC_CLASS NSArray;
-OBJC_CLASS NSURLAuthenticationChallenge;
+OBJC_CLASS WebCoreAVFLoaderDelegate;
 OBJC_CLASS WebCoreAVFMovieObserver;
 OBJC_CLASS WebCoreAVFPullDelegate;
 
 typedef struct objc_object* id;
-
-#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
-OBJC_CLASS WebCoreAVFLoaderDelegate;
-OBJC_CLASS AVAssetResourceLoadingRequest;
-#endif
 
 typedef struct CGImage *CGImageRef;
 typedef struct __CVBuffer *CVPixelBufferRef;
@@ -66,14 +58,12 @@ class AudioTrackPrivateAVFObjC;
 class CDMInstanceFairPlayStreamingAVFObjC;
 class CDMSessionAVFoundationObjC;
 class InbandMetadataTextTrackPrivateAVF;
-class InbandTextTrackPrivateAVFObjC;
 class MediaSelectionGroupAVFObjC;
 class PixelBufferConformerCV;
-class VideoTrackPrivateAVFObjC;
-class WebCoreAVFResourceLoader;
-class TextureCacheCV;
 class VideoFullscreenLayerManagerObjC;
 class VideoTextureCopierCV;
+class VideoTrackPrivateAVFObjC;
+class WebCoreAVFResourceLoader;
 
 class MediaPlayerPrivateAVFoundationObjC : public MediaPlayerPrivateAVFoundation {
 public:
@@ -95,7 +85,7 @@ public:
     void flushCues();
 #endif
     AVPlayer *avPlayer() const { return m_avPlayer.get(); }
-    
+
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     bool shouldWaitForLoadingOfResource(AVAssetResourceLoadingRequest*);
     void didCancelLoadingRequest(AVAssetResourceLoadingRequest*);
@@ -169,8 +159,6 @@ private:
     static bool isAvailable();
 
     void cancelLoad() override;
-
-    PlatformMedia platformMedia() const override;
 
     void platformSetVisible(bool) override;
     void platformPlay() override;
@@ -335,6 +323,8 @@ private:
     const char* logClassName() const final { return "MediaPlayerPrivateAVFoundationObjC"; }
 #endif
 
+    AVPlayer *objCAVFoundationAVPlayer() const final { return m_avPlayer.get(); }
+
     WeakPtrFactory<MediaPlayerPrivateAVFoundationObjC> m_weakPtrFactory;
 
     RetainPtr<AVURLAsset> m_avAsset;
@@ -435,5 +425,4 @@ private:
 
 }
 
-#endif
 #endif

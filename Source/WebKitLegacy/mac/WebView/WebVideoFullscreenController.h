@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <wtf/Platform.h>
-
 #if PLATFORM(MAC) && ENABLE(VIDEO)
 
-#import <AppKit/NSScreen.h>
 #import <AppKit/NSWindowController.h>
 #import <wtf/RefPtr.h>
-
-namespace PAL {
-class SleepDisabler;
-}
 
 namespace WebCore {
 class HTMLVideoElement;
 }
 
-@protocol WebVideoFullscreenControllerDelegate;
 @class WebVideoFullscreenHUDWindowController;
 @class WebWindowFadeAnimation;
-@class CALayer;
 
 @interface WebVideoFullscreenController : NSWindowController {
-@private
-    RefPtr<WebCore::HTMLVideoElement> _videoElement; // (retain)
-    id <WebVideoFullscreenControllerDelegate> _delegate; // (assign)
+    RefPtr<WebCore::HTMLVideoElement> _videoElement;
 
     NSWindow *_backgroundFullscreenWindow; // (retain)
     WebVideoFullscreenHUDWindowController *_hudController; // (retain)
@@ -56,16 +45,10 @@ class HTMLVideoElement;
 
     BOOL _isEndingFullscreen;
     BOOL _forceDisableAnimation;
-
-    std::unique_ptr<PAL::SleepDisabler> _displaySleepDisabler;
 }
 
-- (id <WebVideoFullscreenControllerDelegate>)delegate;
-- (void)setDelegate:(id <WebVideoFullscreenControllerDelegate>)delegate;
-
-- (void)setupVideoOverlay:(CALayer*)layer;
-- (void)setVideoElement:(WebCore::HTMLVideoElement*)videoElement;
-- (WebCore::HTMLVideoElement*)videoElement;
+- (void)setVideoElement:(WebCore::HTMLVideoElement *)videoElement;
+- (WebCore::HTMLVideoElement *)videoElement;
 
 - (void)enterFullscreen:(NSScreen *)screen;
 - (void)exitFullscreen;
