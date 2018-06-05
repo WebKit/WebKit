@@ -219,17 +219,17 @@ void WebCoreDecompressionSession::ensureDecompressionSessionForSample(CMSampleBu
 
     if (!m_decompressionSession) {
         CMVideoFormatDescriptionRef videoFormatDescription = CMSampleBufferGetFormatDescription(sample);
-        NSDictionary* videoDecoderSpecification = @{ (NSString *)kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder: @YES };
+        auto videoDecoderSpecification = @{ (__bridge NSString *)kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder: @YES };
 
         NSDictionary *attributes;
         if (m_mode == OpenGL) {
             attributes = nil;
         } else {
             ASSERT(m_mode == RGB);
-            attributes = @{(NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA)};
+            attributes = @{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) };
         }
         VTDecompressionSessionRef decompressionSessionOut = nullptr;
-        if (noErr == VTDecompressionSessionCreate(kCFAllocatorDefault, videoFormatDescription, (CFDictionaryRef)videoDecoderSpecification, (CFDictionaryRef)attributes, nullptr, &decompressionSessionOut)) {
+        if (noErr == VTDecompressionSessionCreate(kCFAllocatorDefault, videoFormatDescription, (__bridge CFDictionaryRef)videoDecoderSpecification, (__bridge CFDictionaryRef)attributes, nullptr, &decompressionSessionOut)) {
             m_decompressionSession = adoptCF(decompressionSessionOut);
             CFArrayRef rawSuggestedQualityOfServiceTiers = nullptr;
             VTSessionCopyProperty(decompressionSessionOut, kVTDecompressionPropertyKey_SuggestedQualityOfServiceTiers, kCFAllocatorDefault, &rawSuggestedQualityOfServiceTiers);
@@ -562,7 +562,7 @@ void WebCoreDecompressionSession::resetQosTier()
         return;
 
     auto tier = (CFDictionaryRef)CFArrayGetValueAtIndex(m_qosTiers.get(), m_currentQosTier);
-    LOG(Media, "WebCoreDecompressionSession::resetQosTier(%p) - currentQosTier(%ld), tier(%@)", this, m_currentQosTier, [(NSDictionary *)tier description]);
+    LOG(Media, "WebCoreDecompressionSession::resetQosTier(%p) - currentQosTier(%ld), tier(%@)", this, m_currentQosTier, [(__bridge NSDictionary *)tier description]);
 
     VTSessionSetProperties(m_decompressionSession.get(), tier);
     m_framesSinceLastQosCheck = 0;

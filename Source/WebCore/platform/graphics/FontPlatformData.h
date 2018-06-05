@@ -278,12 +278,12 @@ private:
 // NSFonts and CTFontRefs are toll-free-bridged.
 inline CTFontRef toCTFont(NSFont *font)
 {
-    return (CTFontRef)font;
+    return (__bridge CTFontRef)font;
 }
 
 inline NSFont *toNSFont(CTFontRef font)
 {
-    return (NSFont *)font;
+    return (__bridge NSFont *)font;
 }
 
 #endif

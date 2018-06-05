@@ -180,14 +180,14 @@ JSValue convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType typ
     
     switch (type) {
         case ObjcObjectType: {
-            id obj = *(id*)buffer;
+            id obj = *(const id*)buffer;
             if ([obj isKindOfClass:[NSString class]])
                 return convertNSStringToString(exec, (NSString *)obj);
             if ([obj isKindOfClass:webUndefinedClass()])
                 return jsUndefined();
-            if ((CFBooleanRef)obj == kCFBooleanTrue)
+            if ((__bridge CFBooleanRef)obj == kCFBooleanTrue)
                 return jsBoolean(true);
-            if ((CFBooleanRef)obj == kCFBooleanFalse)
+            if ((__bridge CFBooleanRef)obj == kCFBooleanFalse)
                 return jsBoolean(false);
             if ([obj isKindOfClass:[NSNumber class]])
                 return jsNumber([obj doubleValue]);

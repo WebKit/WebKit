@@ -219,7 +219,7 @@ static NSArray *speechSynthesisGetVoiceIdentifiers()
     // Get all the voices offered by TTS.
     // By default speech only returns "premium" voices, which does not include all the
     // international voices. This allows us to offer speech synthesis for all supported languages.
-    return [(NSArray *)CopySpeechSynthesisVoicesForMode((CFArrayRef)@[ @"VoiceGroupDefault", @"VoiceGroupCompact" ]) autorelease];
+    return CFBridgingRelease(CopySpeechSynthesisVoicesForMode((__bridge CFArrayRef)@[ @"VoiceGroupDefault", @"VoiceGroupCompact" ]));
 }
 
 static NSString *speechSynthesisGetDefaultVoiceIdentifierForLocale(NSLocale *userLocale)
@@ -227,7 +227,7 @@ static NSString *speechSynthesisGetDefaultVoiceIdentifierForLocale(NSLocale *use
     if (!userLocale)
         return nil;
 
-    return (NSString *)GetIdentifierStringForPreferredVoiceInListWithLocale((CFArrayRef)speechSynthesisGetVoiceIdentifiers(), (CFLocaleRef)userLocale);
+    return (__bridge NSString *)GetIdentifierStringForPreferredVoiceInListWithLocale((__bridge CFArrayRef)speechSynthesisGetVoiceIdentifiers(), (__bridge CFLocaleRef)userLocale);
 }
 
 void PlatformSpeechSynthesizer::initializeVoiceList()

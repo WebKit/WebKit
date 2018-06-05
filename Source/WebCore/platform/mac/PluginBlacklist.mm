@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,7 +79,7 @@ std::unique_ptr<PluginBlacklist> PluginBlacklist::create(NSDictionary *propertyL
     NSMutableDictionary *bundleIDToBlockedVersions = [NSMutableDictionary dictionary];
     NSMutableSet *bundleIDsWithAvailableUpdates = [NSMutableSet set];
     
-    for (NSString *osVersionComponent in splitOSVersion((NSString *)osVersion)) {
+    for (NSString *osVersionComponent in splitOSVersion((__bridge NSString *)osVersion)) {
         NSDictionary *bundleIDs = [dictionary objectForKey:osVersionComponent];
         if (!bundleIDs)
             continue;
@@ -119,10 +119,6 @@ std::unique_ptr<PluginBlacklist> PluginBlacklist::create(NSDictionary *propertyL
 
 PluginBlacklist::~PluginBlacklist()
 {
-    CFRelease(m_bundleIDToMinimumSecureVersion);
-    CFRelease(m_bundleIDToMinimumCompatibleVersion);
-    CFRelease(m_bundleIDToBlockedVersions);
-    CFRelease(m_bundleIDsWithAvailableUpdates);
 }
 
 NSArray *PluginBlacklist::splitOSVersion(NSString *osVersion)
@@ -173,20 +169,11 @@ bool PluginBlacklist::isUpdateAvailable(NSString *bundleIdentifier) const
 }
 
 PluginBlacklist::PluginBlacklist(NSDictionary *bundleIDToMinimumSecureVersion, NSDictionary *bundleIDToMinimumCompatibleVersion, NSDictionary *bundleIDToBlockedVersions, NSSet *bundleIDsWithAvailableUpdates)
-    : m_bundleIDToMinimumSecureVersion([bundleIDToMinimumSecureVersion copy])
-    , m_bundleIDToMinimumCompatibleVersion([bundleIDToMinimumCompatibleVersion copy])
-    , m_bundleIDToBlockedVersions([bundleIDToBlockedVersions copy])
-    , m_bundleIDsWithAvailableUpdates([bundleIDsWithAvailableUpdates copy])
+    : m_bundleIDToMinimumSecureVersion { adoptNS([bundleIDToMinimumSecureVersion copy]) }
+    , m_bundleIDToMinimumCompatibleVersion { adoptNS([bundleIDToMinimumCompatibleVersion copy]) }
+    , m_bundleIDToBlockedVersions { adoptNS([bundleIDToBlockedVersions copy]) }
+    , m_bundleIDsWithAvailableUpdates { adoptNS([bundleIDsWithAvailableUpdates copy]) }
 {
-    // This ensures that the dictionaries do not get destroyed under Objective-C grabage collection.
-    CFRetain(m_bundleIDToMinimumSecureVersion);
-    [m_bundleIDToMinimumSecureVersion release];
-    CFRetain(m_bundleIDToMinimumCompatibleVersion);
-    [m_bundleIDToMinimumCompatibleVersion release];
-    CFRetain(m_bundleIDToBlockedVersions);
-    [m_bundleIDToBlockedVersions release];
-    CFRetain(m_bundleIDsWithAvailableUpdates);
-    [m_bundleIDsWithAvailableUpdates release];
 }
 
 }

@@ -85,12 +85,12 @@ namespace WebCore {
 
 Ref<SharedBuffer> SharedBuffer::create(NSData *nsData)
 {
-    return adoptRef(*new SharedBuffer((CFDataRef)nsData));
+    return adoptRef(*new SharedBuffer((__bridge CFDataRef)nsData));
 }
 
 void SharedBuffer::append(NSData *nsData)
 {
-    return append((CFDataRef)nsData);
+    return append((__bridge CFDataRef)nsData);
 }
 
 RetainPtr<NSData> SharedBuffer::createNSData() const

@@ -1031,7 +1031,7 @@ static PlatformFont *_font(Element& element)
     auto* renderer = element.renderer();
     if (!renderer)
         return nil;
-    return (PlatformFont *)renderer->style().fontCascade().primaryFont().getCTFont();
+    return (__bridge PlatformFont *)renderer->style().fontCascade().primaryFont().getCTFont();
 }
 
 #define UIFloatIsZero(number) (fabs(number - 0) < FLT_EPSILON)
@@ -2447,7 +2447,7 @@ static RetainPtr<NSFileWrapper> fileWrapperForElement(HTMLImageElement& element)
     if (is<RenderImage>(renderer)) {
         auto* image = downcast<RenderImage>(*renderer).cachedImage();
         if (image && !image->errorOccurred()) {
-            RetainPtr<NSFileWrapper> wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:(NSData *)image->imageForRenderer(renderer)->tiffRepresentation()]);
+            RetainPtr<NSFileWrapper> wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:(__bridge NSData *)image->imageForRenderer(renderer)->tiffRepresentation()]);
             [wrapper setPreferredFilename:@"image.tiff"];
             return wrapper;
         }

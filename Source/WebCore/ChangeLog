@@ -1,3 +1,205 @@
+2018-06-03  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Update more code to be more ARC-compatible to prepare for future ARC adoption
+        https://bugs.webkit.org/show_bug.cgi?id=186245
+
+        Reviewed by Daniel Bates.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (convertToNSArray): Explicitly cast to WebAccessibilityObjectWrapperBase so we don't
+        make method calls on WebAccessibilityObjectWrapper, a forward-declared class.
+        (-[WebAccessibilityObjectWrapperBase convertPathToScreenSpace:]): Use CFAutorelease
+        for the CGPathRef return value instead of Objective-C autorelease. Another option
+        would be to use RetainPtr for the return type instead.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXObjectIsTextMarker): Use __bridge for bridging typecast.
+        (AXObjectIsTextMarkerRange): Ditto.
+        (AXTextMarkerRange): Ditto.
+        (AXTextMarkerRangeStart): Ditto.
+        (AXTextMarkerRangeEnd): Ditto.
+        (isTextMarkerIgnored): Ditto.
+        (accessibilityObjectForTextMarker): Ditto.
+        (-[WebAccessibilityObjectWrapper characterOffsetForTextMarker:]): Ditto.
+        (-[WebAccessibilityObjectWrapper visiblePositionForTextMarker:]): Ditto.
+        (visiblePositionForStartOfTextMarkerRange): Ditto.
+        (visiblePositionForEndOfTextMarkerRange): Ditto.
+        (AXAttributeStringSetFont): Ditto. Also use @{} syntax to make NSDictionary
+        and @() to make NSNumber.
+        (AXAttributeStringSetColor): Use __bridge for bridging typecast, rearranging
+        code so that the typecasts are on function arguments, not local variables,
+        which makes lifetimes clearer.
+        (AXAttributeStringSetElement): Use __bridge for bridging typecast.
+        (WebTransformCGPathToNSBezierPath):
+        (-[WebAccessibilityObjectWrapper bezierPathFromPath:]): Added a bridging
+        typecast when passing an NSBezierPath through as a void* context argument;
+        silent conversion to void* is not compatible with ARC.
+        (createAccessibilityRoleMap): Use __unsafe_unretained for a table of
+        NSString constants.
+
+        * bindings/js/ScriptControllerMac.mm:
+        (WebCore::ScriptController::createScriptInstanceForWidget): Use __bridge
+        for bridging typecast.
+
+        * bridge/objc/objc_class.mm:
+        (JSC::Bindings::ObjcClass::classForIsA): Added bridging typecasts
+        to convert a Class into a CFTypeRef.
+        (JSC::Bindings::ObjcClass::methodNamed const): Use __bridge for bridging
+        typecast.
+        (JSC::Bindings::ObjcClass::fieldNamed const): Ditto.
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::invokeObjcMethod): Ditto.
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcField::valueFromInstance const): Ditto.
+        (JSC::Bindings::ObjcField::setValueToInstance const): Ditto.
+        * bridge/objc/objc_utility.mm:
+        (JSC::Bindings::convertObjcValueToValue): Ditto. Also add a missing const
+        to make it clearer to the compiler that the code is correct.
+        * crypto/mac/SerializedCryptoKeyWrapMac.mm:
+        (WebCore::createAndStoreMasterKey): Ditto.
+        (WebCore::findMasterKey): Ditto.
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::detectItemAtPositionWithRange): Ditto.
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::fontAttributesForSelectionStart const): Ditto.
+        * editing/cocoa/HTMLConverter.mm:
+        (_font): Ditto.
+        (fileWrapperForElement): Ditto.
+        * fileapi/FileCocoa.mm:
+        (WebCore::File::shouldReplaceFile): Ditto.
+        * loader/archive/cf/LegacyWebArchiveMac.mm:
+        (WebCore::LegacyWebArchive::createResourceResponseFromMacArchivedData): Ditto.
+        * page/mac/TextIndicatorWindow.mm:
+        (-[WebTextIndicatorView initWithFrame:textIndicator:margin:offset:]): Ditto.
+        (createContentCrossfadeAnimation): Ditto.
+        * platform/cocoa/LocalizedStringsCocoa.mm:
+        (WebCore::localizedString): Ditto.
+        * platform/cocoa/SharedBufferCocoa.mm:
+        (WebCore::SharedBuffer::create): Ditto.
+        (WebCore::SharedBuffer::append): Ditto.
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::toCTFont): Ditto.
+        (WebCore::toNSFont): Ditto.
+        * platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm:
+        (WebCore::assetTrackMeetsHardwareDecodeRequirements): Ditto.
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (WebCore::ImageDecoderAVFObjC::storeSampleBuffer): Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::updateLastImage): Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateCurrentFrameImage): Ditto.
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::MediaDescriptionAVFObjC::MediaDescriptionAVFObjC): Ditto.
+        (WebCore::bufferWasConsumedCallback): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample): Ditto.
+        * platform/graphics/avfoundation/objc/VideoFullscreenLayerManagerObjC.mm:
+        (WebCore::VideoFullscreenLayerManagerObjC::updateVideoFullscreenInlineImage): Ditto.
+        (WebCore::VideoFullscreenLayerManagerObjC::setVideoFullscreenLayer): Ditto.
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayerCocoa::create): Ditto.
+        (PlatformCALayer::platformCALayer): Ditto.
+        (PlatformCALayerCocoa::superlayer const): Ditto.
+        (PlatformCALayerCocoa::contents const): Ditto.
+        (PlatformCALayerCocoa::setContents): Ditto.
+        * platform/graphics/cocoa/IOSurface.h: Ditto.
+        * platform/graphics/cocoa/TextTrackRepresentationCocoa.mm:
+        (TextTrackRepresentationCocoa::update): Ditto.
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::ensureDecompressionSessionForSample): Ditto.
+        (WebCore::WebCoreDecompressionSession::resetQosTier): Ditto.
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        (-[WebGLLayer display]): Ditto.
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::BitmapImage::nsImage): Ditto.
+        (WebCore::BitmapImage::snapshotNSImage): Ditto.
+        * platform/graphics/mac/WebLayer.mm:
+        (-[WebLayer drawInContext:]): Ditto.
+        (-[WebSimpleLayer setNeedsDisplay]): Ditto.
+        (-[WebSimpleLayer setNeedsDisplayInRect:]): Ditto.
+        (-[WebSimpleLayer display]): Ditto.
+        (-[WebSimpleLayer drawInContext:]): Ditto.
+
+        * platform/mac/CursorMac.mm:
+        (WebCore::cursor): Mark pointer __strong to match the globals it points to.
+
+        * platform/mac/FileSystemMac.mm:
+        (WebCore::FileSystem::setMetadataURL): Use RetainPtr instead of autorelease.
+
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::bufferForType): Use __bridge for bridging
+        typecast.
+        * platform/mac/PlatformSpeechSynthesizerMac.mm:
+        (WebCore::speechSynthesisGetVoiceIdentifiers): Ditto.
+        (WebCore::speechSynthesisGetDefaultVoiceIdentifierForLocale): Ditto.
+
+        * platform/mac/PluginBlacklist.h: Use RetainPtr instead of explicit retain
+        and release for NSDictionary and NSSet.
+        * platform/mac/PluginBlacklist.mm:
+        (WebCore::PluginBlacklist::create): Use __bridge for bridging typecast.
+        (WebCore::PluginBlacklist::~PluginBlacklist): Remove explicit CFRelease calls.
+        (WebCore::PluginBlacklist::PluginBlacklist): Add adoptNS calls and remove
+        explciit CFRetain/release pairs.
+
+        * platform/mac/PublicSuffixMac.mm:
+        (WebCore::isPublicSuffix): Use __bridge for bridging typecast.
+        * platform/mac/RemoteCommandListenerMac.mm:
+        (WebCore::RemoteCommandListenerMac::RemoteCommandListenerMac): Ditto.
+        * platform/mac/SerializedPlatformRepresentationMac.mm:
+        (WebCore::jsValueWithDictionaryInContext): Ditto.
+        * platform/mac/URLMac.mm:
+        (WebCore::URL::URL): Ditto.
+        (WebCore::URL::createCFURL const): Ditto.
+
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::collectRangesThatNeedMapping): Mark pointer __strong to match the
+        local variable it eventually points to.
+        (WebCore::stringByTrimmingWhitespace): Use __bridge for bridging typecast.
+        (WebCore::URLByTruncatingOneCharacterBeforeComponent): Use
+        CFBridgingRelease instead of autorelease, reducing typecasts.
+        (WebCore::URLByRemovingComponentAndSubsequentCharacter): Ditto.
+        (WebCore::userVisibleString): Use __bridge for bridging typecast.
+        (WebCore::isUserVisibleURL): Ditto.
+
+        * platform/mac/WebGLBlacklist.mm:
+        (WebCore::WebGLBlacklist::create): Use __bridge for bridging typecast.
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::setPreset): Ditto.
+        (WebCore::AVVideoCaptureSource::setupCaptureSession): Ditto. Also use @()
+        instead of NSNumber.
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSourceMac::CMSampleBufferFromPixelBuffer): Ditto.
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody): Ditto.
+
+        * platform/network/cocoa/ResourceResponseCocoa.mm: Use CFStringRef and
+        CFSTR for constant string array commonHeaderFields rather than using
+        NSString * and then relying on implicit bridging conversion.
+
+        * platform/network/mac/CertificateInfoMac.mm:
+        (WebCore::CertificateInfo::dump const): Use __bridge for bridging typecast.
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::createHTTPBodyNSInputStream): Ditto.
+        (WebCore::httpBodyFromStream): Ditto.
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::ResourceError::ResourceError): Ditto.
+        (WebCore::ResourceError::cfError const): Ditto.
+
+        * rendering/RenderThemeMac.mm:
+        (-[WebCoreTextFieldCell _coreUIDrawOptionsWithFrame:inView:includeFocus:]):
+        Use CFSTR("") instead of @"" for a string that is passed to CFDIctionaryRef.
+        (WebCore::AttachmentLayout::layOutTitle): Use __bridge for bridging typecast.
+        (WebCore::AttachmentLayout::layOutSubtitle): Ditto.
+
+        * testing/cocoa/WebArchiveDumpSupport.mm:
+        (WebCoreTestSupport::createCFURLResponseFromResponseData): Use __bridge for
+        bridging typecast.
+        (WebCoreTestSupport::supportedNonImageMIMETypes): Deleted.
+        (WebCoreTestSupport::convertWebResourceDataToString): Use the
+        MIMETypeRegistry::isSupportedNonImageMIMEType function directly instead of
+        building a CFArray out of MIMETypeRegistry::getSupportedNonImageMIMETypes
+        and using CFArrayContainsValue. This is both much more direct and much more
+        efficient as well.
+
 2018-06-04  Timothy Hatcher  <timothy@apple.com>
 
         [Win] REGRESSION(r232486) 'WebCore::RenderTheme::activeListBoxSelectionBackgroundColor': function does not take 0 arguments

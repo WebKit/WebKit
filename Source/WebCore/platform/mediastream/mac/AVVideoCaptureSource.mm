@@ -285,7 +285,7 @@ bool AVVideoCaptureSource::setPreset(NSString *preset)
     @try {
         session().sessionPreset = preset;
 #if PLATFORM(MAC)
-        auto settingsDictionary = @{ (NSString*)kCVPixelBufferPixelFormatTypeKey: @(videoCaptureFormat), (NSString*)kCVPixelBufferWidthKey: @(size.width()), (NSString*)kCVPixelBufferHeightKey: @(size.height()), };
+        auto settingsDictionary = @{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(videoCaptureFormat), (__bridge NSString *)kCVPixelBufferWidthKey: @(size.width()), (__bridge NSString *)kCVPixelBufferHeightKey: @(size.height()), };
         [m_videoOutput setVideoSettings:settingsDictionary];
 #endif
     } @catch(NSException *exception) {
@@ -405,8 +405,8 @@ bool AVVideoCaptureSource::setupCaptureSession()
     if (m_pendingPreset) {
 #if PLATFORM(MAC)
         auto size = sizeForPreset(m_pendingPreset.get());
-        [settingsDictionary.get() setObject:[NSNumber numberWithInt:size.width()] forKey:(NSString*)kCVPixelBufferWidthKey];
-        [settingsDictionary.get() setObject:[NSNumber numberWithInt:size.height()] forKey:(NSString*)kCVPixelBufferHeightKey];
+        [settingsDictionary setObject:@(size.width()) forKey:(__bridge NSString *)kCVPixelBufferWidthKey];
+        [settingsDictionary setObject:@(size.height()) forKey:(__bridge NSString *)kCVPixelBufferHeightKey];
 #endif
     }
 

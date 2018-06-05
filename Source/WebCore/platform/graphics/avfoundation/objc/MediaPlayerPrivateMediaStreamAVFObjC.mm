@@ -1056,7 +1056,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateCurrentFrameImage()
         return;
 
     if (!m_imagePainter.pixelBufferConformer)
-        m_imagePainter.pixelBufferConformer = std::make_unique<PixelBufferConformerCV>((CFDictionaryRef)@{ (NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });
+        m_imagePainter.pixelBufferConformer = std::make_unique<PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });
 
     ASSERT(m_imagePainter.pixelBufferConformer);
     if (!m_imagePainter.pixelBufferConformer)
@@ -1177,7 +1177,6 @@ WTFLogChannel& MediaPlayerPrivateMediaStreamAVFObjC::logChannel() const
     return LogMedia;
 }
 #endif
-
 
 }
 

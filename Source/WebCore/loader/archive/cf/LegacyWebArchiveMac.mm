@@ -45,7 +45,7 @@ ResourceResponse LegacyWebArchive::createResourceResponseFromMacArchivedData(CFD
     
     NSURLResponse *response = nil;
 #if USE(SECURE_ARCHIVER_API)
-    auto unarchiver = secureUnarchiverFromData((NSData *)responseData);
+    auto unarchiver = secureUnarchiverFromData((__bridge NSData *)responseData);
     @try {
         response = [unarchiver decodeObjectOfClass:[NSURLResponse class] forKey:LegacyWebArchiveResourceResponseKey];
 #else

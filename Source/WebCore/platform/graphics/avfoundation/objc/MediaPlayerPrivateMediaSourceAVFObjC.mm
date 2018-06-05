@@ -559,8 +559,8 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastImage()
     ASSERT(m_lastPixelBuffer);
 
     if (!m_rgbConformer) {
-        NSDictionary *attributes = @{ (NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) };
-        m_rgbConformer = std::make_unique<PixelBufferConformerCV>((CFDictionaryRef)attributes);
+        auto attributes = @{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) };
+        m_rgbConformer = std::make_unique<PixelBufferConformerCV>((__bridge CFDictionaryRef)attributes);
     }
 
     m_lastImage = m_rgbConformer->createImageFromPixelBuffer(m_lastPixelBuffer.get());

@@ -125,7 +125,7 @@ static Class coreCursorClass()
 
 static NSCursor *cursor(const char *name)
 {
-    NSCursor **slot = 0;
+    __strong NSCursor **slot = nullptr;
     
     if (!strcmp(name, "BusyButClickable"))
         slot = &busyButClickableNSCursor;

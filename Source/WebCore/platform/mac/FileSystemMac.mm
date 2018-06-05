@@ -66,8 +66,8 @@ void FileSystem::setMetadataURL(const String& path, const String& metadataURLStr
         if (!referrer.isNull())
             [whereFromAttribute addObject:referrer];
 
-        MDItemSetAttribute(item.get(), kMDItemWhereFroms, whereFromAttribute.get());
-        MDItemSetAttribute(item.get(), kMDItemDownloadedDate, @[ [NSDate date] ]);
+        MDItemSetAttribute(item.get(), kMDItemWhereFroms, (__bridge CFArrayRef)whereFromAttribute.get());
+        MDItemSetAttribute(item.get(), kMDItemDownloadedDate, (__bridge CFArrayRef)@[ [NSDate date] ]);
     });
 }
 

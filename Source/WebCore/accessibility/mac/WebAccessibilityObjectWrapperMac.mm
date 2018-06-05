@@ -442,36 +442,36 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 
 #pragma mark SystemInterface wrappers
 
-static inline BOOL AXObjectIsTextMarker(id obj)
+static inline BOOL AXObjectIsTextMarker(id object)
 {
-    return obj != nil && CFGetTypeID(obj) == AXTextMarkerGetTypeID();
+    return object && CFGetTypeID((__bridge CFTypeRef)object) == AXTextMarkerGetTypeID();
 }
 
-static inline BOOL AXObjectIsTextMarkerRange(id obj)
+static inline BOOL AXObjectIsTextMarkerRange(id object)
 {
-    return obj != nil && CFGetTypeID(obj) == AXTextMarkerRangeGetTypeID();
+    return object && CFGetTypeID((__bridge CFTypeRef)object) == AXTextMarkerRangeGetTypeID();
 }
 
 static id AXTextMarkerRange(id startMarker, id endMarker)
 {
     ASSERT(startMarker != nil);
     ASSERT(endMarker != nil);
-    ASSERT(CFGetTypeID(startMarker) == AXTextMarkerGetTypeID());
-    ASSERT(CFGetTypeID(endMarker) == AXTextMarkerGetTypeID());
+    ASSERT(CFGetTypeID((__bridge CFTypeRef)startMarker) == AXTextMarkerGetTypeID());
+    ASSERT(CFGetTypeID((__bridge CFTypeRef)endMarker) == AXTextMarkerGetTypeID());
     return CFBridgingRelease(AXTextMarkerRangeCreate(kCFAllocatorDefault, (AXTextMarkerRef)startMarker, (AXTextMarkerRef)endMarker));
 }
 
 static id AXTextMarkerRangeStart(id range)
 {
     ASSERT(range != nil);
-    ASSERT(CFGetTypeID(range) == AXTextMarkerRangeGetTypeID());
+    ASSERT(CFGetTypeID((__bridge CFTypeRef)range) == AXTextMarkerRangeGetTypeID());
     return CFBridgingRelease(AXTextMarkerRangeCopyStartMarker((AXTextMarkerRangeRef)range));
 }
 
 static id AXTextMarkerRangeEnd(id range)
 {
     ASSERT(range != nil);
-    ASSERT(CFGetTypeID(range) == AXTextMarkerRangeGetTypeID());
+    ASSERT(CFGetTypeID((__bridge CFTypeRef)range) == AXTextMarkerRangeGetTypeID());
     return CFBridgingRelease(AXTextMarkerRangeCopyEndMarker((AXTextMarkerRangeRef)range));
 }
 
@@ -565,7 +565,7 @@ static bool isTextMarkerIgnored(id textMarker)
         return false;
     
     TextMarkerData textMarkerData;
-    if (!getBytesFromAXTextMarker(textMarker, &textMarkerData, sizeof(textMarkerData)))
+    if (!getBytesFromAXTextMarker((__bridge CFTypeRef)textMarker, &textMarkerData, sizeof(textMarkerData)))
         return false;
     
     return textMarkerData.ignored;
@@ -582,7 +582,7 @@ static AccessibilityObject* accessibilityObjectForTextMarker(AXObjectCache* cach
         return nullptr;
     
     TextMarkerData textMarkerData;
-    if (!getBytesFromAXTextMarker(textMarker, &textMarkerData, sizeof(textMarkerData)))
+    if (!getBytesFromAXTextMarker((__bridge CFTypeRef)textMarker, &textMarkerData, sizeof(textMarkerData)))
         return nullptr;
     return cache->accessibilityObjectForTextMarkerData(textMarkerData);
 }
@@ -703,7 +703,7 @@ static CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, CFType
 
 - (CharacterOffset)characterOffsetForTextMarker:(id)textMarker
 {
-    return characterOffsetForTextMarker(m_object->axObjectCache(), textMarker);
+    return characterOffsetForTextMarker(m_object->axObjectCache(), (__bridge CFTypeRef)textMarker);
 }
 
 static id textMarkerForVisiblePosition(AXObjectCache* cache, const VisiblePosition& visiblePos)
@@ -750,17 +750,17 @@ static VisiblePosition visiblePositionForTextMarker(AXObjectCache* cache, CFType
 
 - (VisiblePosition)visiblePositionForTextMarker:(id)textMarker
 {
-    return visiblePositionForTextMarker(m_object->axObjectCache(), textMarker);
+    return visiblePositionForTextMarker(m_object->axObjectCache(), (__bridge CFTypeRef)textMarker);
 }
 
 static VisiblePosition visiblePositionForStartOfTextMarkerRange(AXObjectCache* cache, id textMarkerRange)
 {
-    return visiblePositionForTextMarker(cache, AXTextMarkerRangeStart(textMarkerRange));
+    return visiblePositionForTextMarker(cache, (__bridge CFTypeRef)AXTextMarkerRangeStart(textMarkerRange));
 }
 
 static VisiblePosition visiblePositionForEndOfTextMarkerRange(AXObjectCache* cache, id textMarkerRange)
 {
-    return visiblePositionForTextMarker(cache, AXTextMarkerRangeEnd(textMarkerRange));
+    return visiblePositionForTextMarker(cache, (__bridge CFTypeRef)AXTextMarkerRangeEnd(textMarkerRange));
 }
 
 static id textMarkerRangeFromMarkers(id textMarker1, id textMarker2)
@@ -784,14 +784,13 @@ static void AXAttributeStringSetFont(NSMutableAttributedString *attrString, NSSt
         return;
 
     if (font) {
-        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-            static_cast<NSString *>(adoptCF(CTFontCopyPostScriptName(font)).get()), NSAccessibilityFontNameKey,
-            static_cast<NSString *>(adoptCF(CTFontCopyFamilyName(font)).get()), NSAccessibilityFontFamilyKey,
-            static_cast<NSString *>(adoptCF(CTFontCopyDisplayName(font)).get()), NSAccessibilityVisibleNameKey,
-            [NSNumber numberWithFloat:CTFontGetSize(font)], NSAccessibilityFontSizeKey,
-            nil];
-        
-        [attrString addAttribute:attribute value:dict range:range];
+        NSDictionary *dictionary = @{
+            NSAccessibilityFontNameKey: (__bridge NSString *)adoptCF(CTFontCopyPostScriptName(font)).get(),
+            NSAccessibilityFontFamilyKey: (__bridge NSString *)adoptCF(CTFontCopyFamilyName(font)).get(),
+            NSAccessibilityVisibleNameKey: (__bridge NSString *)adoptCF(CTFontCopyDisplayName(font)).get(),
+            NSAccessibilityFontSizeKey: @(CTFontGetSize(font)),
+        };
+        [attrString addAttribute:attribute value:dictionary range:range];
     } else
         [attrString removeAttribute:attribute range:range];
     
@@ -804,9 +803,9 @@ static void AXAttributeStringSetColor(NSMutableAttributedString* attrString, NSS
 
     if (color) {
         CGColorRef cgColor = color.CGColor;
-        CGColorRef existingColor = (CGColorRef)[attrString attribute:attribute atIndex:range.location effectiveRange:nil];
-        if (!existingColor || !CGColorEqualToColor(existingColor, cgColor))
-            [attrString addAttribute:attribute value:(id)cgColor range:range];
+        id existingColor = [attrString attribute:attribute atIndex:range.location effectiveRange:nil];
+        if (!existingColor || !CGColorEqualToColor((__bridge CGColorRef)existingColor, cgColor))
+            [attrString addAttribute:attribute value:(__bridge id)cgColor range:range];
     } else
         [attrString removeAttribute:attribute range:range];
 }
@@ -997,7 +996,7 @@ static void AXAttributeStringSetElement(NSMutableAttributedString* attrString, N
         
         AXUIElementRef axElement = NSAccessibilityCreateAXUIElementRef(objectWrapper);
         if (axElement) {
-            [attrString addAttribute:attribute value:(id)axElement range:range];
+            [attrString addAttribute:attribute value:(__bridge id)axElement range:range];
             CFRelease(axElement);
         }
     } else
@@ -1789,9 +1788,9 @@ static NSMutableArray *convertStringsToNSArray(const Vector<String>& vector)
     }
 }
 
-static void WebTransformCGPathToNSBezierPath(void *info, const CGPathElement *element)
+static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *element)
 {
-    NSBezierPath *bezierPath = (NSBezierPath *)info;
+    NSBezierPath *bezierPath = (__bridge NSBezierPath *)info;
     switch (element->type) {
     case kCGPathElementMoveToPoint:
         [bezierPath moveToPoint:NSPointFromCGPoint(element->points[0])];
@@ -1813,7 +1812,7 @@ static void WebTransformCGPathToNSBezierPath(void *info, const CGPathElement *el
 - (NSBezierPath *)bezierPathFromPath:(CGPathRef)path
 {
     NSBezierPath *bezierPath = [NSBezierPath bezierPath];
-    CGPathApply(path, bezierPath, WebTransformCGPathToNSBezierPath);
+    CGPathApply(path, (__bridge void*)bezierPath, WebTransformCGPathToNSBezierPath);
     return bezierPath;
 }
 
@@ -1851,7 +1850,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
 {
     struct RoleEntry {
         AccessibilityRole value;
-        NSString* string;
+        __unsafe_unretained NSString *string;
     };
     
     static const RoleEntry roles[] = {

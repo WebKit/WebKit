@@ -141,7 +141,7 @@ static void freeData(void *, const void *data, size_t /* size */)
 #endif
 
     _context->markLayerComposited();
-    PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
+    PlatformCALayer* layer = PlatformCALayer::platformCALayer((__bridge void*)self);
     if (layer && layer->owner())
         layer->owner()->platformCALayerLayerDidDisplay(layer);
 }

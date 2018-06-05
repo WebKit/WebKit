@@ -118,7 +118,7 @@ ResourceError::ResourceError(NSError *nsError)
 }
 
 ResourceError::ResourceError(CFErrorRef cfError)
-    : ResourceError((NSError *)cfError)
+    : ResourceError { (__bridge NSError *)cfError }
 {
 }
 
@@ -201,7 +201,7 @@ ResourceError::operator NSError *() const
 
 CFErrorRef ResourceError::cfError() const
 {
-    return (CFErrorRef)nsError();
+    return (__bridge CFErrorRef)nsError();
 }
 
 ResourceError::operator CFErrorRef() const

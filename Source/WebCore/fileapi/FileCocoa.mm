@@ -54,7 +54,7 @@ bool File::shouldReplaceFile(const String& path)
         return false;
     }
 
-    return UTTypeConformsTo((CFStringRef)uti, kUTTypePackage);
+    return UTTypeConformsTo((__bridge CFStringRef)uti, kUTTypePackage);
 }
 
 void File::computeNameAndContentTypeForReplacedFile(const String& path, const String& nameOverride, String& effectiveName, String& effectiveContentType)

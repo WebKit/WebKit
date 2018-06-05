@@ -241,7 +241,7 @@ JSC::JSValue ObjcInstance::invokeObjcMethod(ExecState* exec, ObjcMethod* method)
 
         // Invoke invokeUndefinedMethodFromWebScript:withArguments:, pass JavaScript function
         // name as first (actually at 2) argument and array of args as second.
-        NSString* jsName = (NSString* )method->javaScriptName();
+        NSString* jsName = (__bridge NSString *)method->javaScriptName();
         [invocation setArgument:&jsName atIndex:2];
 
         NSMutableArray* objcArgs = [NSMutableArray array];

@@ -50,7 +50,7 @@ NSString *localizedNSString(NSString *key)
 String localizedString(const char* key)
 {
     RetainPtr<CFStringRef> keyString = adoptCF(CFStringCreateWithCStringNoCopy(0, key, kCFStringEncodingUTF8, kCFAllocatorNull));
-    return localizedNSString((NSString *)keyString.get());
+    return localizedNSString((__bridge NSString *)keyString.get());
 }
 
 String copyImageUnknownFileLabel()

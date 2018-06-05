@@ -59,7 +59,7 @@ RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& pasteboardT
     NSData *data = [m_pasteboard.get() dataForType:pasteboardType];
     if (!data)
         return nullptr;
-    return SharedBuffer::create([[data copy] autorelease]);
+    return SharedBuffer::create(adoptNS([data copy]).get());
 }
 
 int PlatformPasteboard::numberOfFiles() const

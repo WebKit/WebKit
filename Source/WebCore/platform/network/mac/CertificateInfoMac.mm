@@ -108,7 +108,7 @@ void CertificateInfo::dump() const
         NSLog(@"  Entries: %ld\n", entries);
         for (CFIndex i = 0; i < entries; ++i) {
             RetainPtr<CFStringRef> summary = adoptCF(SecCertificateCopySubjectSummary(SecTrustGetCertificateAtIndex(trust(), i)));
-            NSLog(@"  %@", (NSString *)summary.get());
+            NSLog(@"  %@", (__bridge NSString *)summary.get());
         }
 
         return;
@@ -121,7 +121,7 @@ void CertificateInfo::dump() const
         NSLog(@"  Entries: %ld\n", entries);
         for (CFIndex i = 0; i < entries; ++i) {
             RetainPtr<CFStringRef> summary = adoptCF(SecCertificateCopySubjectSummary(checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(m_certificateChain.get(), i))));
-            NSLog(@"  %@", (NSString *)summary.get());
+            NSLog(@"  %@", (__bridge NSString *)summary.get());
         }
 
         return;

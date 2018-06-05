@@ -111,8 +111,8 @@ CertificateInfo ResourceResponse::platformCertificateInfo() const
 #endif
 }
 
-static NSString* const commonHeaderFields[] = {
-    @"Age", @"Cache-Control", @"Content-Type", @"Date", @"Etag", @"Expires", @"Last-Modified", @"Pragma"
+static CFStringRef const commonHeaderFields[] = {
+    CFSTR("Age"), CFSTR("Cache-Control"), CFSTR("Content-Type"), CFSTR("Date"), CFSTR("Etag"), CFSTR("Expires"), CFSTR("Last-Modified"), CFSTR("Pragma")
 };
 
 NSURLResponse *ResourceResponse::nsURLResponse() const

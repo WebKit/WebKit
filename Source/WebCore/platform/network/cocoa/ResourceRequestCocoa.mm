@@ -243,7 +243,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
 
     if (NSInputStream *bodyStream = [nsRequest HTTPBodyStream]) {
         // For streams, provide a Content-Length to avoid using chunked encoding, and to get accurate total length in callbacks.
-        NSString *lengthString = [bodyStream propertyForKey:(NSString *)formDataStreamLengthPropertyName()];
+        NSString *lengthString = [bodyStream propertyForKey:(__bridge NSString *)formDataStreamLengthPropertyName()];
         if (lengthString) {
             [nsRequest setValue:lengthString forHTTPHeaderField:@"Content-Length"];
             // Since resource request is already marked updated, we need to keep it up to date too.

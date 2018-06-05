@@ -157,7 +157,7 @@ static const double progressAnimationNumFrames = 256;
 {
     // FIXME: This is a workaround for <rdar://problem/11385461>. When that bug is resolved, we should remove this code.
     CFMutableDictionaryRef coreUIDrawOptions = CFDictionaryCreateMutableCopy(NULL, 0, [super _coreUIDrawOptionsWithFrame:cellFrame inView:controlView includeFocus:includeFocus]);
-    CFDictionarySetValue(coreUIDrawOptions, @"borders only", kCFBooleanTrue);
+    CFDictionarySetValue(coreUIDrawOptions, CFSTR("borders only"), kCFBooleanTrue);
     CFAutorelease(coreUIDrawOptions);
     return coreUIDrawOptions;
 }
@@ -2270,8 +2270,8 @@ void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
         return;
 
     NSDictionary *textAttributes = @{
-        (id)kCTFontAttributeName: (id)font.get(),
-        (id)kCTForegroundColorAttributeName: (NSColor *)cachedCGColor(titleTextColorForAttachment(attachment))
+        (__bridge id)kCTFontAttributeName: (__bridge id)font.get(),
+        (__bridge id)kCTForegroundColorAttributeName: (__bridge NSColor *)cachedCGColor(titleTextColorForAttachment(attachment))
     };
     RetainPtr<NSAttributedString> attributedTitle = adoptNS([[NSAttributedString alloc] initWithString:title attributes:textAttributes]);
     RetainPtr<CTFramesetterRef> titleFramesetter = adoptCF(CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedTitle.get()));
@@ -2328,8 +2328,8 @@ void AttachmentLayout::layOutSubtitle(const RenderAttachment& attachment)
     CFStringRef language = 0; // By not specifying a language we use the system language.
     RetainPtr<CTFontRef> font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, attachmentSubtitleFontSize, language));
     NSDictionary *textAttributes = @{
-        (id)kCTFontAttributeName: (id)font.get(),
-        (id)kCTForegroundColorAttributeName: (NSColor *)cachedCGColor(subtitleColor)
+        (__bridge id)kCTFontAttributeName: (__bridge id)font.get(),
+        (__bridge id)kCTForegroundColorAttributeName: (__bridge NSColor *)cachedCGColor(subtitleColor)
     };
     RetainPtr<NSAttributedString> attributedSubtitleText = adoptNS([[NSAttributedString alloc] initWithString:subtitleText attributes:textAttributes]);
     subtitleLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)attributedSubtitleText.get()));

@@ -38,7 +38,7 @@ bool isPublicSuffix(const String& domain)
 {
     // Explicitly cast the domain to a NSString before calling decodeHostName() so we get a NSString back instead of a String.
     NSString *host = decodeHostName((NSString *)domain);
-    return host && _CFHostIsDomainTopLevel((CFStringRef)host);
+    return host && _CFHostIsDomainTopLevel((__bridge CFStringRef)host);
 }
 
 String topPrivatelyControlledDomain(const String& domain)

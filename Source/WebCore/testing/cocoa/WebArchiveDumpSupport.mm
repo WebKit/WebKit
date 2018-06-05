@@ -44,7 +44,7 @@ static CFURLResponseRef createCFURLResponseFromResponseData(CFDataRef responseDa
 {
     NSURLResponse *response;
 #if USE(SECURE_ARCHIVER_API)
-    auto unarchiver = secureUnarchiverFromData((NSData *)responseData);
+    auto unarchiver = secureUnarchiverFromData((__bridge NSData *)responseData);
     @try {
         response = [unarchiver decodeObjectOfClass:[NSURLResponse class] forKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
 #else
@@ -60,7 +60,7 @@ static CFURLResponseRef createCFURLResponseFromResponseData(CFDataRef responseDa
     }
 
     if (![response isKindOfClass:[NSHTTPURLResponse class]])
-        return CFURLResponseCreate(kCFAllocatorDefault, (CFURLRef)response.URL, (CFStringRef)response.MIMEType, response.expectedContentLength, (CFStringRef)response.textEncodingName, kCFURLCacheStorageAllowed);
+        return CFURLResponseCreate(kCFAllocatorDefault, (__bridge CFURLRef)response.URL, (__bridge CFStringRef)response.MIMEType, response.expectedContentLength, (__bridge CFStringRef)response.textEncodingName, kCFURLCacheStorageAllowed);
 
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
 
@@ -69,17 +69,9 @@ static CFURLResponseRef createCFURLResponseFromResponseData(CFDataRef responseDa
 
     NSDictionary *headerFields = httpResponse.allHeaderFields;
     for (NSString *headerField in [headerFields keyEnumerator])
-        CFHTTPMessageSetHeaderFieldValue(httpMessage.get(), (CFStringRef)headerField, (CFStringRef)[headerFields objectForKey:headerField]);
+        CFHTTPMessageSetHeaderFieldValue(httpMessage.get(), (__bridge CFStringRef)headerField, (__bridge CFStringRef)[headerFields objectForKey:headerField]);
 
-    return CFURLResponseCreateWithHTTPResponse(kCFAllocatorDefault, (CFURLRef)response.URL, httpMessage.get(), kCFURLCacheStorageAllowed);
-}
-
-static CFArrayRef supportedNonImageMIMETypes()
-{
-    auto array = adoptNS([[NSMutableArray alloc] init]);
-    for (auto& mimeType : MIMETypeRegistry::getSupportedNonImageMIMETypes())
-        [array addObject:mimeType];
-    return (CFArrayRef)array.autorelease();
+    return CFURLResponseCreateWithHTTPResponse(kCFAllocatorDefault, (__bridge CFURLRef)response.URL, httpMessage.get(), kCFURLCacheStorageAllowed);
 }
 
 static void convertMIMEType(CFMutableStringRef mimeType)
@@ -95,8 +87,7 @@ static void convertWebResourceDataToString(CFMutableDictionaryRef resource)
     CFStringLowercase(mimeType, CFLocaleGetSystem());
     convertMIMEType(mimeType);
 
-    CFArrayRef supportedMIMETypes = supportedNonImageMIMETypes();
-    if (CFStringHasPrefix(mimeType, CFSTR("text/")) || CFArrayContainsValue(supportedMIMETypes, CFRangeMake(0, CFArrayGetCount(supportedMIMETypes)), mimeType)) {
+    if (CFStringHasPrefix(mimeType, CFSTR("text/")) || MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType)) {
         CFStringRef textEncodingName = static_cast<CFStringRef>(CFDictionaryGetValue(resource, CFSTR("WebResourceTextEncodingName")));
         CFStringEncoding stringEncoding;
         if (textEncodingName && CFStringGetLength(textEncodingName))

@@ -143,7 +143,7 @@ RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& 
         if (!weakThis)
             return;
         weakThis->m_client.didReceiveRemoteControlCommand(platformCommand, &argument);
-        completion(static_cast<CFArrayRef>(@[@(status)]));
+        completion((__bridge CFArrayRef)@[@(status)]);
     });
 #endif // USE(MEDIAREMOTE)
 }

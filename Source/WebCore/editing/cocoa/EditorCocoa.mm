@@ -89,7 +89,7 @@ RetainPtr<NSDictionary> Editor::fontAttributesForSelectionStart() const
     RetainPtr<NSMutableDictionary> attributes = adoptNS([[NSMutableDictionary alloc] init]);
 
     if (auto ctFont = style->fontCascade().primaryFont().getCTFont())
-        [attributes setObject:(id)ctFont forKey:NSFontAttributeName];
+        [attributes setObject:(__bridge id)ctFont forKey:NSFontAttributeName];
 
     // FIXME: Why would we not want to retrieve these attributes on iOS?
 #if PLATFORM(MAC)

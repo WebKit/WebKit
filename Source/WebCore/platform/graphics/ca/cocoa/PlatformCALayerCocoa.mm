@@ -75,7 +75,7 @@ Ref<PlatformCALayer> PlatformCALayerCocoa::create(LayerType layerType, PlatformC
 
 Ref<PlatformCALayer> PlatformCALayerCocoa::create(void* platformLayer, PlatformCALayerClient* owner)
 {
-    return adoptRef(*new PlatformCALayerCocoa(static_cast<PlatformLayer*>(platformLayer), owner));
+    return adoptRef(*new PlatformCALayerCocoa((__bridge CALayer *)platformLayer, owner));
 }
 
 static NSString * const platformCALayerPointer = @"WKPlatformCALayer";
@@ -87,7 +87,7 @@ PlatformCALayer* PlatformCALayer::platformCALayer(void* platformLayer)
     // Pointer to PlatformCALayer is kept in a key of the CALayer
     PlatformCALayer* platformCALayer = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    platformCALayer = static_cast<PlatformCALayer*>([[static_cast<CALayer*>(platformLayer) valueForKey:platformCALayerPointer] pointerValue]);
+    platformCALayer = static_cast<PlatformCALayer*>([[(__bridge CALayer *)platformLayer valueForKey:platformCALayerPointer] pointerValue]);
     END_BLOCK_OBJC_EXCEPTIONS
     return platformCALayer;
 }
@@ -416,7 +416,7 @@ void PlatformCALayerCocoa::copyContentsFromLayer(PlatformCALayer* layer)
 
 PlatformCALayer* PlatformCALayerCocoa::superlayer() const
 {
-    return platformCALayer([m_layer superlayer]);
+    return platformCALayer((__bridge void*)[m_layer superlayer]);
 }
 
 void PlatformCALayerCocoa::removeFromSuperlayer()
@@ -741,13 +741,13 @@ void PlatformCALayerCocoa::setSupportsSubpixelAntialiasedText(bool supportsSubpi
 
 CFTypeRef PlatformCALayerCocoa::contents() const
 {
-    return [m_layer contents];
+    return (__bridge CFTypeRef)[m_layer contents];
 }
 
 void PlatformCALayerCocoa::setContents(CFTypeRef value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer setContents:static_cast<id>(const_cast<void*>(value))];
+    [m_layer setContents:(__bridge id)value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

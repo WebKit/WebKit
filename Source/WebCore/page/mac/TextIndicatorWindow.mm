@@ -228,7 +228,7 @@ static bool indicatorWantsManualAnimation(const TextIndicator& indicator)
         [textLayer setBorderColor:borderColor.get()];
         [textLayer setBorderWidth:borderWidth];
         [textLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
-        [textLayer setContents:(id)contentsImage.get()];
+        [textLayer setContents:(__bridge id)contentsImage.get()];
 
         RetainPtr<CAShapeLayer> maskLayer = adoptNS([[CAShapeLayer alloc] init]);
         [maskLayer setPath:translatedPath.platformPath()];
@@ -266,7 +266,7 @@ static RetainPtr<CABasicAnimation> createContentCrossfadeAnimation(CFTimeInterva
 {
     RetainPtr<CABasicAnimation> crossfadeAnimation = [CABasicAnimation animationWithKeyPath:@"contents"];
     RetainPtr<CGImageRef> contentsImage = textIndicator.contentImage()->nativeImage();
-    [crossfadeAnimation setToValue:(id)contentsImage.get()];
+    [crossfadeAnimation setToValue:(__bridge id)contentsImage.get()];
     [crossfadeAnimation setFillMode:kCAFillModeForwards];
     [crossfadeAnimation setRemovedOnCompletion:NO];
     [crossfadeAnimation setDuration:duration];

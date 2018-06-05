@@ -457,7 +457,7 @@ protected:
         , m_isText([track hasMediaCharacteristic:AVMediaCharacteristicLegible])
     {
         NSArray* formatDescriptions = [track formatDescriptions];
-        CMFormatDescriptionRef description = [formatDescriptions count] ? (CMFormatDescriptionRef)[formatDescriptions objectAtIndex:0] : 0;
+        CMFormatDescriptionRef description = [formatDescriptions count] ? (__bridge CMFormatDescriptionRef)[formatDescriptions objectAtIndex:0] : 0;
         if (description) {
             FourCharCode codec = CMFormatDescriptionGetMediaSubType(description);
             m_codec = AtomicString(reinterpret_cast<LChar*>(&codec), 4);
@@ -488,7 +488,7 @@ static void bufferWasConsumedCallback(CMNotificationCenterRef, const void*, CFSt
         return;
 
     ASSERT(CFGetTypeID(payload) == CFDictionaryGetTypeID());
-    auto context = (WebBufferConsumedContext *)[(NSDictionary *)payload valueForKey:kBufferConsumedContext];
+    WebBufferConsumedContext *context = [(__bridge NSDictionary *)payload valueForKey:kBufferConsumedContext];
     if (!context)
         return;
 
@@ -1099,7 +1099,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
                 CMSampleBufferRef rawSampleCopy;
                 CMSampleBufferCreateCopy(kCFAllocatorDefault, platformSample.sample.cmSampleBuffer, &rawSampleCopy);
                 auto sampleCopy = adoptCF(rawSampleCopy);
-                CMSetAttachment(sampleCopy.get(), kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed, @{kBufferConsumedContext: context.get()}, kCMAttachmentMode_ShouldNotPropagate);
+                CMSetAttachment(sampleCopy.get(), kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed, (__bridge CFDictionaryRef)@{kBufferConsumedContext: context.get()}, kCMAttachmentMode_ShouldNotPropagate);
                 [m_displayLayer enqueueSampleBuffer:sampleCopy.get()];
             } else
                 [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];

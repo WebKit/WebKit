@@ -66,7 +66,7 @@ RefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(
     if (!widgetView)
         return nullptr;
 
-    auto rootObject = createRootObject(widgetView);
+    auto rootObject = createRootObject((__bridge void*)widgetView);
 
     if ([widgetView respondsToSelector:@selector(createPluginBindingsInstance:)])
         return [widgetView createPluginBindingsInstance:WTFMove(rootObject)];

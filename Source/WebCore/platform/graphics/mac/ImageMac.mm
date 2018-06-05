@@ -118,7 +118,7 @@ NSImage* BitmapImage::nsImage()
     if (!data)
         return nullptr;
     
-    m_nsImage = adoptNS([[NSImage alloc] initWithData:(NSData*)data]);
+    m_nsImage = adoptNS([[NSImage alloc] initWithData:(__bridge NSData *)data]);
     return m_nsImage.get();
 }
 
@@ -132,7 +132,7 @@ RetainPtr<NSImage> BitmapImage::snapshotNSImage()
     if (!data)
         return nullptr;
 
-    return adoptNS([[NSImage alloc] initWithData:(NSData*)data.get()]);
+    return adoptNS([[NSImage alloc] initWithData:(__bridge NSData *)data.get()]);
 }
 #endif
 

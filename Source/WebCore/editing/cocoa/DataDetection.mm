@@ -103,7 +103,7 @@ static RetainPtr<DDActionContext> detectItemAtPositionWithRange(VisiblePosition 
         return nullptr;
 
     RetainPtr<DDActionContext> actionContext = adoptNS([allocDDActionContextInstance() init]);
-    [actionContext setAllResults:@[ (id)mainResult ]];
+    [actionContext setAllResults:@[ (__bridge id)mainResult ]];
     [actionContext setMainResult:mainResult];
 
     Vector<FloatQuad> quads;

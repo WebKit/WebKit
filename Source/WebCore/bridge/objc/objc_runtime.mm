@@ -104,7 +104,7 @@ JSValue ObjcField::valueFromInstance(ExecState* exec, const Instance* instance) 
     JSLock::DropAllLocks dropAllLocks(exec); // Can't put this inside the @try scope because it unwinds incorrectly.
 
     @try {
-        if (id objcValue = [targetObject valueForKey:(NSString *)_name.get()])
+        if (id objcValue = [targetObject valueForKey:(__bridge NSString *)_name.get()])
             result = convertObjcValueToValue(exec, &objcValue, ObjcObjectType, instance->rootObject());
         {
             JSLockHolder lock(exec);
@@ -139,7 +139,7 @@ bool ObjcField::setValueToInstance(ExecState* exec, const Instance* instance, JS
     JSLock::DropAllLocks dropAllLocks(exec); // Can't put this inside the @try scope because it unwinds incorrectly.
 
     @try {
-        [targetObject setValue:value forKey:(NSString *)_name.get()];
+        [targetObject setValue:value forKey:(__bridge NSString *)_name.get()];
         {
             JSLockHolder lock(exec);
             ObjcInstance::moveGlobalExceptionToExecState(exec);

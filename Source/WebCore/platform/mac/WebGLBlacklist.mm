@@ -170,7 +170,7 @@ std::unique_ptr<WebGLBlacklist> WebGLBlacklist::create(NSDictionary *propertyLis
 {
     CFDictionaryRef systemVersionDictionary = _CFCopySystemVersionDictionary();
     CFStringRef osBuild = static_cast<CFStringRef>(CFDictionaryGetValue(systemVersionDictionary, _kCFSystemVersionBuildVersionKey));
-    OSBuildInfo buildInfo = buildInfoFromOSBuildString((NSString *)osBuild);
+    OSBuildInfo buildInfo = buildInfoFromOSBuildString((__bridge NSString *)osBuild);
     CFRelease(systemVersionDictionary);
 
     if (!buildInfo.major)

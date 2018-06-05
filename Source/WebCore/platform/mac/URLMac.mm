@@ -47,14 +47,14 @@ URL::URL(NSURL *url)
 
     // FIXME: Why is it OK to ignore base URL here?
     CString urlBytes;
-    getURLBytes(reinterpret_cast<CFURLRef>(url), urlBytes);
+    getURLBytes((__bridge CFURLRef)url, urlBytes);
     URLParser parser(urlBytes.data());
     *this = parser.result();
 }
 
 URL::operator NSURL *() const
 {
-    // Creating a toll-free bridged CFURL, because a real NSURL would not preserve the original string.
+    // Creating a toll-free bridged CFURL because creation with NSURL methods would not preserve the original string.
     // We'll need fidelity when round-tripping via CFURLGetBytes().
     return (NSURL *)createCFURL().autorelease();
 }
@@ -66,7 +66,7 @@ RetainPtr<CFURLRef> URL::createCFURL() const
 
     if (isEmpty()) {
         // We use the toll-free bridge between NSURL and CFURL to create a CFURLRef supporting both empty and null values.
-        return reinterpret_cast<CFURLRef>(adoptNS([[NSURL alloc] initWithString:@""]).get());
+        return (__bridge CFURLRef)adoptNS([[NSURL alloc] initWithString:@""]).get();
     }
 
     RetainPtr<CFURLRef> cfURL;
