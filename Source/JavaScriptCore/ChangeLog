@@ -1,3 +1,17 @@
+2018-06-04  Keith Miller  <keith_miller@apple.com>
+
+        Add test for CoW conversions in the DFG/FTL
+        https://bugs.webkit.org/show_bug.cgi?id=186295
+
+        Reviewed by Saam Barati.
+
+        Add a function to $vm that returns a JSString containing the
+        dataLog dump of the indexingMode of an Object.
+
+        * tools/JSDollarVM.cpp:
+        (JSC::functionIndexingMode):
+        (JSC::JSDollarVM::finishCreation):
+
 2018-06-04  Saam Barati  <sbarati@apple.com>
 
         Set the activeLength of all ScratchBuffers to zero when exiting the VM

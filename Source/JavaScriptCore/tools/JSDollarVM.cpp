@@ -1366,6 +1366,18 @@ static EncodedJSValue JSC_HOST_CALL functionPrintStack(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
+// Gets the dataLog dump of the indexingMode of the passed value.
+// Usage: print("indexingMode = " + $vm.indexingMode(jsValue))
+static EncodedJSValue JSC_HOST_CALL functionIndexingMode(ExecState* exec)
+{
+    if (!exec->argument(0).isObject())
+        return encodedJSUndefined();
+
+    WTF::StringPrintStream stream;
+    stream.print(IndexingTypeDump(exec->uncheckedArgument(0).getObject()->indexingMode()));
+    return JSValue::encode(jsString(exec, stream.toString()));
+}
+
 // Gets the dataLog dump of a given JS value as a string.
 // Usage: print("value = " + $vm.value(jsValue))
 static EncodedJSValue JSC_HOST_CALL functionValue(ExecState* exec)
@@ -1811,6 +1823,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "printCallFrame", functionPrintCallFrame, 0);
     addFunction(vm, "printStack", functionPrintStack, 0);
 
+    addFunction(vm, "indexingMode", functionIndexingMode, 1);
     addFunction(vm, "value", functionValue, 1);
     addFunction(vm, "getpid", functionGetPID, 0);
 
