@@ -311,9 +311,9 @@ Color RenderThemeWin::platformActiveSelectionForegroundColor(OptionSet<StyleColo
     return Color(GetRValue(color), GetGValue(color), GetBValue(color));
 }
 
-Color RenderThemeWin::platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeWin::platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
 {
-    return platformActiveSelectionForegroundColor();
+    return platformActiveSelectionForegroundColor(options);
 }
 
 static void fillFontDescription(FontCascadeDescription& fontDescription, LOGFONT& logFont, float fontSize)

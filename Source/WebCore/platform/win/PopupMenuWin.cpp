@@ -621,8 +621,8 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
         Color optionBackgroundColor, optionTextColor;
         PopupMenuStyle itemStyle = client()->itemStyle(index);
         if (index == focusedIndex()) {
-            optionBackgroundColor = RenderTheme::singleton().activeListBoxSelectionBackgroundColor();
-            optionTextColor = RenderTheme::singleton().activeListBoxSelectionForegroundColor();
+            optionBackgroundColor = RenderTheme::singleton().activeListBoxSelectionBackgroundColor({ });
+            optionTextColor = RenderTheme::singleton().activeListBoxSelectionForegroundColor({ });
         } else {
             optionBackgroundColor = itemStyle.backgroundColor();
             optionTextColor = itemStyle.foregroundColor();
