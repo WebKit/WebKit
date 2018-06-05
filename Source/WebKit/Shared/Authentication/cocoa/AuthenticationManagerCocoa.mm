@@ -83,7 +83,7 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
                 auto certificate = adoptCF(SecCertificateCreateWithData(nullptr, cfData.get()));
                 if (!certificate)
                     return;
-                [certificates addObject:(id)certificate.get()];
+                [certificates addObject:(__bridge id)certificate.get()];
             }
         }
 

@@ -162,14 +162,12 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
 static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *protocol)
 {
     unsigned conformingProtocolCount;
-    Protocol** conformingProtocols = protocol_copyProtocolList(interface->_protocol, &conformingProtocolCount);
+    auto conformingProtocols = protocol_copyProtocolList(interface->_protocol, &conformingProtocolCount);
 
     for (unsigned i = 0; i < conformingProtocolCount; ++i) {
-        Protocol* conformingProtocol = conformingProtocols[i];
-
+        auto conformingProtocol = conformingProtocols[i];
         if (conformingProtocol == @protocol(NSObject))
             continue;
-
         initializeMethods(interface, conformingProtocol);
     }
 

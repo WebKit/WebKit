@@ -845,7 +845,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
         RetainPtr<CABasicAnimation> shadowPositionAnimation = transientZoomSnapAnimationForKeyPath("position");
         [shadowPositionAnimation setToValue:[NSValue valueWithPoint:shadowLayerPositionForFrame(frameView, constrainedOrigin)]];
         RetainPtr<CABasicAnimation> shadowPathAnimation = transientZoomSnapAnimationForKeyPath("shadowPath");
-        [shadowPathAnimation setToValue:(id)shadowPath.get()];
+        [shadowPathAnimation setToValue:(__bridge id)shadowPath.get()];
 
         [shadowCALayer addAnimation:shadowBoundsAnimation.get() forKey:@"transientZoomCommitShadowBounds"];
         [shadowCALayer addAnimation:shadowPositionAnimation.get() forKey:@"transientZoomCommitShadowPosition"];

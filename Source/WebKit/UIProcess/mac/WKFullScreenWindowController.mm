@@ -249,7 +249,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
         [_webViewPlaceholder setAction:@selector(cancelOperation:)];
     }
     [_webViewPlaceholder setTarget:nil];
-    [_webViewPlaceholder setContents:(id)webViewContents.get()];
+    [_webViewPlaceholder setContents:(__bridge id)webViewContents.get()];
     self.savedConstraints = _webView.superview.constraints;
     [self _replaceView:_webView with:_webViewPlaceholder.get()];
     

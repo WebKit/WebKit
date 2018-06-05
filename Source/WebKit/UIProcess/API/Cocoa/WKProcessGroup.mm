@@ -66,7 +66,7 @@ using namespace WebKit;
 
 static void didCreateConnection(WKContextRef, WKConnectionRef connectionRef, const void* clientInfo)
 {
-    WKProcessGroup *processGroup = (WKProcessGroup *)clientInfo;
+    auto processGroup = (__bridge WKProcessGroup *)clientInfo;
     auto delegate = processGroup->_delegate.get();
 
     if ([delegate respondsToSelector:@selector(processGroup:didCreateConnectionToWebProcessPlugIn:)])
@@ -87,7 +87,7 @@ static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef con
 
 static WKTypeRef getInjectedBundleInitializationUserData(WKContextRef, const void* clientInfo)
 {
-    WKProcessGroup *processGroup = (WKProcessGroup *)clientInfo;
+    auto processGroup = (__bridge WKProcessGroup *)clientInfo;
     auto delegate = processGroup->_delegate.get();
 
     if ([delegate respondsToSelector:@selector(processGroupWillCreateConnectionToWebProcessPlugIn:)]) {
@@ -105,7 +105,7 @@ static void setUpInjectedBundleClient(WKProcessGroup *processGroup, WKContextRef
     memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
 
     injectedBundleClient.base.version = 1;
-    injectedBundleClient.base.clientInfo = processGroup;
+    injectedBundleClient.base.clientInfo = (__bridge void*)processGroup;
     injectedBundleClient.getInjectedBundleInitializationUserData = getInjectedBundleInitializationUserData;
 
     WKContextSetInjectedBundleClient(contextRef, &injectedBundleClient.base);
@@ -223,7 +223,7 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
 
 - (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host
 {
-    _processPool->allowSpecificHTTPSCertificateForHost(WebCertificateInfo::create(WebCore::CertificateInfo((CFArrayRef)certificateChain)).ptr(), host);
+    _processPool->allowSpecificHTTPSCertificateForHost(WebCertificateInfo::create(WebCore::CertificateInfo((__bridge CFArrayRef)certificateChain)).ptr(), host);
 }
 
 #if PLATFORM(IOS)

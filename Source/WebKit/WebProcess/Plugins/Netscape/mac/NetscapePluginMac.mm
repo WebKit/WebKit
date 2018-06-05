@@ -167,7 +167,7 @@ NPError NetscapePlugin::popUpContextMenu(NPMenu* npMenu)
     if (!convertPoint(m_currentMouseEvent->data.mouse.pluginX, m_currentMouseEvent->data.mouse.pluginY, NPCoordinateSpacePlugin, screenX, screenY, NPCoordinateSpaceScreen))
         ASSERT_NOT_REACHED();
 
-    _NSPopUpCarbonMenu3(reinterpret_cast<NSMenu *>(npMenu), nil, nil, NSMakePoint(screenX, screenY), -1, nil, 0, nil, NSPopUpMenuTypeContext, nil);
+    _NSPopUpCarbonMenu3((__bridge NSMenu *)npMenu, nil, nil, NSMakePoint(screenX, screenY), -1, nil, 0, nil, NSPopUpMenuTypeContext, nil);
     return NPERR_NO_ERROR;
 }
 

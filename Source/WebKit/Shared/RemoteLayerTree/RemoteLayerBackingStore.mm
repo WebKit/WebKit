@@ -411,7 +411,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
             break;
         case LayerContentsType::CAMachPort:
             ASSERT(m_frontBufferSendRight);
-            layer.contents = (id)adoptCF(CAMachPortCreate(m_frontBufferSendRight.leakSendRight())).get();
+            layer.contents = (__bridge id)adoptCF(CAMachPortCreate(m_frontBufferSendRight.leakSendRight())).get();
             break;
         }
         return;
@@ -419,7 +419,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
 #endif
 
     ASSERT(!acceleratesDrawing());
-    layer.contents = (id)m_frontBuffer.bitmap->makeCGImageCopy().get();
+    layer.contents = (__bridge id)m_frontBuffer.bitmap->makeCGImageCopy().get();
 }
 
 RetainPtr<CGContextRef> RemoteLayerBackingStore::takeFrontContextPendingFlush()

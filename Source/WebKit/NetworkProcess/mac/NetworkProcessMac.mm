@@ -97,7 +97,7 @@ static void overrideSystemProxies(const String& httpProxy, const String& httpsPr
     }
 
     if ([proxySettings count] > 0)
-        _CFNetworkSetOverrideSystemProxySettings((CFDictionaryRef)proxySettings);
+        _CFNetworkSetOverrideSystemProxySettings((__bridge CFDictionaryRef)proxySettings);
 }
 
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
@@ -115,7 +115,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 
 void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
 {
-    [NSURLRequest setAllowsSpecificHTTPSCertificate:(NSArray *)certificateInfo.certificateChain() forHost:(NSString *)host];
+    [NSURLRequest setAllowsSpecificHTTPSCertificate:(__bridge NSArray *)certificateInfo.certificateChain() forHost:(NSString *)host];
 }
 
 void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)

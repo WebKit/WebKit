@@ -60,9 +60,9 @@ Vector<String> PluginInfoStore::pluginPathsInDirectory(const String& directory)
     Vector<String> pluginPaths;
 
     RetainPtr<CFStringRef> directoryCFString = directory.createCFString();
-    NSArray *filenames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:(NSString *)directoryCFString.get() error:nil];
+    NSArray *filenames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:(__bridge NSString *)directoryCFString.get() error:nil];
     for (NSString *filename in filenames)
-        pluginPaths.append([(NSString *)directoryCFString.get() stringByAppendingPathComponent:filename]);
+        pluginPaths.append([(__bridge NSString *)directoryCFString.get() stringByAppendingPathComponent:filename]);
     
     return pluginPaths;
 }

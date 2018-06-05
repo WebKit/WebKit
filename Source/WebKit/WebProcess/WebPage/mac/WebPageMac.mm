@@ -734,7 +734,7 @@ void WebPage::setTopOverhangImage(WebImage* image)
 
     layer->setSize(image->size());
     layer->setPosition(FloatPoint(0, -image->size().height()));
-    layer->platformLayer().contents = (id)image->bitmap().makeCGImageCopy().get();
+    layer->platformLayer().contents = (__bridge id)image->bitmap().makeCGImageCopy().get();
 }
 
 void WebPage::setBottomOverhangImage(WebImage* image)
@@ -748,7 +748,7 @@ void WebPage::setBottomOverhangImage(WebImage* image)
         return;
 
     layer->setSize(image->size());
-    layer->platformLayer().contents = (id)image->bitmap().makeCGImageCopy().get();
+    layer->platformLayer().contents = (__bridge id)image->bitmap().makeCGImageCopy().get();
 }
 
 void WebPage::updateHeaderAndFooterLayersForDeviceScaleChange(float scaleFactor)

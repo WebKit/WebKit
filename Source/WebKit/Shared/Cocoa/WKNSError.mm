@@ -34,7 +34,7 @@
 
 - (NSObject *)_web_createTarget
 {
-    return [(NSError *)static_cast<API::Error*>(&self._apiObject)->platformError().cfError() copy];
+    return [(__bridge NSError *)static_cast<API::Error*>(&self._apiObject)->platformError().cfError() copy];
 }
 
 #pragma mark NSCopying protocol implementation

@@ -85,6 +85,13 @@ public:
         other.m_ptr = nullptr;
     }
 
+    OSObjectPtr(T ptr)
+        : m_ptr(ptr)
+    {
+        if (m_ptr)
+            retainOSObject(m_ptr);
+    }
+
     OSObjectPtr& operator=(const OSObjectPtr& other)
     {
         OSObjectPtr ptr = other;
@@ -105,6 +112,13 @@ public:
             releaseOSObject(m_ptr);
         m_ptr = nullptr;
 
+        return *this;
+    }
+
+    OSObjectPtr& operator=(T other)
+    {
+        OSObjectPtr ptr = other;
+        swap(ptr);
         return *this;
     }
 

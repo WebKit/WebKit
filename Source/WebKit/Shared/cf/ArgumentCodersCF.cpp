@@ -624,7 +624,7 @@ bool decode(Decoder& decoder, RetainPtr<CFURLRef>& result)
     if (urlBytes.isEmpty()) {
         // CFURL can't hold an empty URL, unlike NSURL.
         // FIXME: This discards base URL, which seems incorrect.
-        result = reinterpret_cast<CFURLRef>([NSURL URLWithString:@""]);
+        result = (__bridge CFURLRef)[NSURL URLWithString:@""];
         return true;
     }
 #endif

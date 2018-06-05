@@ -50,7 +50,7 @@ using namespace WebCore;
 - (String)_web_originalDataAsWTFString
 {
     CString originalData;
-    getURLBytes((CFURLRef)self, originalData);
+    getURLBytes((__bridge CFURLRef)self, originalData);
     return String::fromUTF8(originalData);
 }
 

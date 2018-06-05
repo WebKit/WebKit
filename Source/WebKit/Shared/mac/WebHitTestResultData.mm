@@ -48,7 +48,7 @@ void WebHitTestResultData::platformEncode(IPC::Encoder& encoder) const
     auto archiver = secureArchiver();
     [archiver encodeObject:detectedDataActionContext.get() forKey:@"actionContext"];
 
-    IPC::encode(encoder, reinterpret_cast<CFDataRef>(archiver.get().encodedData));
+    IPC::encode(encoder, (__bridge CFDataRef)archiver.get().encodedData);
 
     encoder << detectedDataBoundingBox;
     encoder << detectedDataOriginatingPageOverlay;
@@ -73,7 +73,7 @@ bool WebHitTestResultData::platformDecode(IPC::Decoder& decoder, WebHitTestResul
     if (!IPC::decode(decoder, data))
         return false;
 
-    auto unarchiver = secureUnarchiverFromData((NSData *)data.get());
+    auto unarchiver = secureUnarchiverFromData((__bridge NSData *)data.get());
     @try {
         hitTestResultData.detectedDataActionContext = [unarchiver decodeObjectOfClass:getDDActionContextClass() forKey:@"actionContext"];
     } @catch (NSException *exception) {

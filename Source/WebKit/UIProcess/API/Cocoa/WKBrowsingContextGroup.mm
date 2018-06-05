@@ -124,7 +124,7 @@ static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
 
     for (id entry in array) {
         if ([entry isKindOfClass:[NSString class]])
-            strings.uncheckedAppend(adoptRef(toImpl(WKStringCreateWithCFString((CFStringRef)entry))));
+            strings.uncheckedAppend(adoptRef(toImpl(WKStringCreateWithCFString((__bridge CFStringRef)entry))));
     }
 
     return toAPI(&API::Array::create(WTFMove(strings)).leakRef());
@@ -135,8 +135,8 @@ static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
     if (!source)
         CRASH();
 
-    WKRetainPtr<WKStringRef> wkSource = adoptWK(WKStringCreateWithCFString((CFStringRef)source));
-    WKRetainPtr<WKURLRef> wkBaseURL = adoptWK(WKURLCreateWithCFURL((CFURLRef)baseURL));
+    WKRetainPtr<WKStringRef> wkSource = adoptWK(WKStringCreateWithCFString((__bridge CFStringRef)source));
+    WKRetainPtr<WKURLRef> wkBaseURL = adoptWK(WKURLCreateWithCFURL((__bridge CFURLRef)baseURL));
     auto wkWhitelist = createWKArray(whitelist);
     auto wkBlacklist = createWKArray(blacklist);
     WKUserContentInjectedFrames injectedFrames = mainFrameOnly ? kWKInjectInTopFrameOnly : kWKInjectInAllFrames;
@@ -154,8 +154,8 @@ static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
     if (!source)
         CRASH();
 
-    WKRetainPtr<WKStringRef> wkSource = adoptWK(WKStringCreateWithCFString((CFStringRef)source));
-    WKRetainPtr<WKURLRef> wkBaseURL = adoptWK(WKURLCreateWithCFURL((CFURLRef)baseURL));
+    WKRetainPtr<WKStringRef> wkSource = adoptWK(WKStringCreateWithCFString((__bridge CFStringRef)source));
+    WKRetainPtr<WKURLRef> wkBaseURL = adoptWK(WKURLCreateWithCFURL((__bridge CFURLRef)baseURL));
     auto wkWhitelist = createWKArray(whitelist);
     auto wkBlacklist = createWKArray(blacklist);
     WKUserContentInjectedFrames injectedFrames = mainFrameOnly ? kWKInjectInTopFrameOnly : kWKInjectInAllFrames;

@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+#include "WKContentRuleListInternal.h"
 #include "WebCompiledContentRuleList.h"
 #include <WebCore/ContentExtensionCompiler.h>
 #include <WebCore/ContentExtensionError.h>

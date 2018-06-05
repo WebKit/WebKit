@@ -302,12 +302,12 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (void)_setProxyConfiguration:(NSDictionary *)configuration
 {
-    _websiteDataStore->websiteDataStore().setProxyConfiguration((CFDictionaryRef)configuration);
+    _websiteDataStore->websiteDataStore().setProxyConfiguration((__bridge CFDictionaryRef)configuration);
 }
 
 - (NSDictionary *)_proxyConfiguration
 {
-    return (NSDictionary *)_websiteDataStore->websiteDataStore().proxyConfiguration();
+    return (__bridge NSDictionary *)_websiteDataStore->websiteDataStore().proxyConfiguration();
 }
 
 - (void)_resourceLoadStatisticsSetShouldSubmitTelemetry:(BOOL)value

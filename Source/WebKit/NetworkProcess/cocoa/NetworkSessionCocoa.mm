@@ -677,7 +677,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& para
     configuration.URLCache = nil;
 
     if (auto& data = globalSourceApplicationAuditTokenData())
-        configuration._sourceApplicationAuditTokenData = (NSData *)data.get();
+        configuration._sourceApplicationAuditTokenData = (__bridge NSData *)data.get();
 
     auto& sourceApplicationBundleIdentifier = globalSourceApplicationBundleIdentifier();
     if (!sourceApplicationBundleIdentifier.isEmpty()) {

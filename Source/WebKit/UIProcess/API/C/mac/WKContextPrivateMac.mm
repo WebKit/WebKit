@@ -49,7 +49,7 @@ bool WKContextIsPlugInUpdateAvailable(WKContextRef contextRef, WKStringRef plugI
 #if PLATFORM(IOS)
     return false;
 #else
-    return WebCore::PluginBlacklist::isPluginUpdateAvailable((NSString *)adoptCF(WKStringCopyCFString(kCFAllocatorDefault, plugInBundleIdentifierRef)).get());
+    return WebCore::PluginBlacklist::isPluginUpdateAvailable((__bridge NSString *)adoptCF(WKStringCopyCFString(kCFAllocatorDefault, plugInBundleIdentifierRef)).get());
 #endif
 }
 

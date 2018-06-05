@@ -294,7 +294,7 @@ void RemoteLayerTreeHost::detachRootLayer()
 static void recursivelyMapIOSurfaceBackingStore(CALayer *layer)
 {
     if (layer.contents && CFGetTypeID(layer.contents) == CAMachPortGetTypeID()) {
-        MachSendRight port = MachSendRight::create(CAMachPortGetPort((CAMachPortRef)layer.contents));
+        MachSendRight port = MachSendRight::create(CAMachPortGetPort((__bridge CAMachPortRef)layer.contents));
         auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(port), sRGBColorSpaceRef());
         layer.contents = surface ? surface->asLayerContents() : nil;
     }

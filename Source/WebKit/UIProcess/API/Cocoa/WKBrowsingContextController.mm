@@ -296,7 +296,7 @@ static HashMap<WebPageProxy*, WKBrowsingContextController *>& browsingContextCon
 - (NSArray *)certificateChain
 {
     if (WebFrameProxy* mainFrame = _page->mainFrame())
-        return mainFrame->certificateInfo() ? (NSArray *)mainFrame->certificateInfo()->certificateInfo().certificateChain() : nil;
+        return mainFrame->certificateInfo() ? (__bridge NSArray *)mainFrame->certificateInfo()->certificateInfo().certificateChain() : nil;
 
     return nil;
 }
@@ -328,7 +328,7 @@ static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WK
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    auto browsingContext = (__bridge WKBrowsingContextController *)clientInfo;
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextControllerDidStartProvisionalLoad:)])
@@ -340,7 +340,7 @@ static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, W
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    auto browsingContext = (__bridge WKBrowsingContextController *)clientInfo;
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextControllerDidReceiveServerRedirectForProvisionalLoad:)])
@@ -352,7 +352,7 @@ static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef f
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    auto browsingContext = (__bridge WKBrowsingContextController *)clientInfo;
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextController:didFailProvisionalLoadWithError:)])
@@ -364,7 +364,7 @@ static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    auto browsingContext = (__bridge WKBrowsingContextController *)clientInfo;
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextControllerDidCommitLoad:)])
@@ -376,7 +376,7 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    auto browsingContext = (__bridge WKBrowsingContextController *)clientInfo;
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextControllerDidFinishLoad:)])
@@ -388,7 +388,7 @@ static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErr
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    auto browsingContext = (__bridge WKBrowsingContextController *)clientInfo;
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextController:didFailLoadWithError:)])
@@ -397,7 +397,7 @@ static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErr
 
 static bool canAuthenticateAgainstProtectionSpaceInFrame(WKPageRef page, WKFrameRef frame, WKProtectionSpaceRef protectionSpace, const void *clientInfo)
 {
-    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    auto browsingContext = (__bridge WKBrowsingContextController *)clientInfo;
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextController:canAuthenticateAgainstProtectionSpace:)])
@@ -408,7 +408,7 @@ static bool canAuthenticateAgainstProtectionSpaceInFrame(WKPageRef page, WKFrame
 
 static void didReceiveAuthenticationChallengeInFrame(WKPageRef page, WKFrameRef frame, WKAuthenticationChallengeRef authenticationChallenge, const void *clientInfo)
 {
-    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    auto browsingContext = (__bridge WKBrowsingContextController *)clientInfo;
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextController:didReceiveAuthenticationChallenge:)])
@@ -417,7 +417,7 @@ static void didReceiveAuthenticationChallengeInFrame(WKPageRef page, WKFrameRef 
 
 static void didStartProgress(WKPageRef page, const void* clientInfo)
 {
-    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    auto browsingContext = (__bridge WKBrowsingContextController *)clientInfo;
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextControllerDidStartProgress:)])
@@ -426,7 +426,7 @@ static void didStartProgress(WKPageRef page, const void* clientInfo)
 
 static void didChangeProgress(WKPageRef page, const void* clientInfo)
 {
-    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    auto browsingContext = (__bridge WKBrowsingContextController *)clientInfo;
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextController:estimatedProgressChangedTo:)])
@@ -435,7 +435,7 @@ static void didChangeProgress(WKPageRef page, const void* clientInfo)
 
 static void didFinishProgress(WKPageRef page, const void* clientInfo)
 {
-    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    auto browsingContext = (__bridge WKBrowsingContextController *)clientInfo;
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextControllerDidFinishProgress:)])
@@ -444,7 +444,7 @@ static void didFinishProgress(WKPageRef page, const void* clientInfo)
 
 static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void *clientInfo)
 {
-    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    auto browsingContext = (__bridge WKBrowsingContextController *)clientInfo;
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if (![loadDelegate respondsToSelector:@selector(browsingContextControllerDidChangeBackForwardList:addedItem:removedItems:)])
@@ -457,7 +457,7 @@ static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef ad
 
 static void processDidCrash(WKPageRef page, const void* clientInfo)
 {
-    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    auto browsingContext = (__bridge WKBrowsingContextController *)clientInfo;
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextControllerWebProcessDidCrash:)])
@@ -470,7 +470,7 @@ static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, 
     memset(&loaderClient, 0, sizeof(loaderClient));
 
     loaderClient.base.version = 4;
-    loaderClient.base.clientInfo = browsingContext;
+    loaderClient.base.clientInfo = (__bridge void*)browsingContext;
     loaderClient.didStartProvisionalLoadForFrame = didStartProvisionalLoadForFrame;
     loaderClient.didReceiveServerRedirectForProvisionalLoadForFrame = didReceiveServerRedirectForProvisionalLoadForFrame;
     loaderClient.didFailProvisionalLoadWithErrorForFrame = didFailProvisionalLoadWithErrorForFrame;
@@ -520,11 +520,11 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     memset(&policyClient, 0, sizeof(policyClient));
 
     policyClient.base.version = 2;
-    policyClient.base.clientInfo = browsingContext;
+    policyClient.base.clientInfo = (__bridge void*)browsingContext;
 
     policyClient.decidePolicyForNavigationAction = [](WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKFrameRef originatingFrame, WKURLRequestRef originalRequest, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
     {
-        WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+        auto browsingContext = (__bridge WKBrowsingContextController *)clientInfo;
         auto policyDelegate = browsingContext->_policyDelegate.get();
 
         if ([policyDelegate respondsToSelector:@selector(browsingContextController:decidePolicyForNavigationAction:decisionHandler:)]) {
@@ -549,7 +549,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 
     policyClient.decidePolicyForNewWindowAction = [](WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
     {
-        WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+        auto browsingContext = (__bridge WKBrowsingContextController *)clientInfo;
         auto policyDelegate = browsingContext->_policyDelegate.get();
 
         if ([policyDelegate respondsToSelector:@selector(browsingContextController:decidePolicyForNewWindowAction:decisionHandler:)]) {
@@ -569,7 +569,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 
     policyClient.decidePolicyForResponse = [](WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, bool canShowMIMEType, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
     {
-        WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+        auto browsingContext = (__bridge WKBrowsingContextController *)clientInfo;
         auto policyDelegate = browsingContext->_policyDelegate.get();
 
         if ([policyDelegate respondsToSelector:@selector(browsingContextController:decidePolicyForResponseAction:decisionHandler:)]) {

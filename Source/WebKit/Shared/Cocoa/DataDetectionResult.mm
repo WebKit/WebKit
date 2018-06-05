@@ -43,7 +43,7 @@ void DataDetectionResult::encode(IPC::Encoder& encoder) const
 {
     auto archiver = secureArchiver();
     [archiver encodeObject:results.get() forKey:@"dataDetectorResults"];
-    IPC::encode(encoder, reinterpret_cast<CFDataRef>(archiver.get().encodedData));
+    IPC::encode(encoder, (__bridge CFDataRef)archiver.get().encodedData);
 }
 
 bool DataDetectionResult::decode(IPC::Decoder& decoder, DataDetectionResult& result)
@@ -52,7 +52,7 @@ bool DataDetectionResult::decode(IPC::Decoder& decoder, DataDetectionResult& res
     if (!IPC::decode(decoder, data))
         return false;
 
-    auto unarchiver = secureUnarchiverFromData((NSData *)data.get());
+    auto unarchiver = secureUnarchiverFromData((__bridge NSData *)data.get());
     @try {
         result.results = [unarchiver decodeObjectOfClasses:[NSSet setWithArray:@[ [NSArray class], getDDScannerResultClass()] ] forKey:@"dataDetectorResults"];
     } @catch (NSException *exception) {

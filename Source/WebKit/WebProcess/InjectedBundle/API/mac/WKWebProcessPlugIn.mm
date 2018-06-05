@@ -54,7 +54,7 @@ using namespace WebKit;
 
 static void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
 {
-    WKWebProcessPlugInController *plugInController = (WKWebProcessPlugInController *)clientInfo;
+    auto plugInController = (__bridge WKWebProcessPlugInController *)clientInfo;
     id <WKWebProcessPlugIn> principalClassInstance = plugInController->_principalClassInstance.get();
 
     if ([principalClassInstance respondsToSelector:@selector(webProcessPlugIn:didCreateBrowserContextController:)])
@@ -63,7 +63,7 @@ static void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* 
 
 static void willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
 {
-    WKWebProcessPlugInController *plugInController = (WKWebProcessPlugInController *)clientInfo;
+    auto plugInController = (__bridge WKWebProcessPlugInController *)clientInfo;
     id <WKWebProcessPlugIn> principalClassInstance = plugInController->_principalClassInstance.get();
 
     if ([principalClassInstance respondsToSelector:@selector(webProcessPlugIn:willDestroyBrowserContextController:)])
@@ -76,7 +76,7 @@ static void setUpBundleClient(WKWebProcessPlugInController *plugInController, In
     memset(&bundleClient, 0, sizeof(bundleClient));
 
     bundleClient.base.version = 1;
-    bundleClient.base.clientInfo = plugInController;
+    bundleClient.base.clientInfo = (__bridge void*)plugInController;
     bundleClient.didCreatePage = didCreatePage;
     bundleClient.willDestroyPage = willDestroyPage;
 

@@ -1,3 +1,183 @@
+2018-06-05  Darin Adler  <darin@apple.com>
+
+        [Cocoa] More preparation for ARC, focusing on WebKit and smart pointers
+        https://bugs.webkit.org/show_bug.cgi?id=186314
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa): Use __bridge for cast.
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::overrideSystemProxies): Ditto.
+        (WebKit::NetworkProcess::allowSpecificHTTPSCertificateForHost): Ditto.
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::sendMessage): Ditto.
+        (IPC::readFromMachPort): Ditto.
+
+        * Platform/mac/StringUtilities.mm:
+        (WebKit::formattedPhoneNumberString): Use __bridge for cast and
+        CFBridgingRelease instead of an explicit autorelease.
+
+        * Shared/API/Cocoa/_WKRemoteObjectInterface.mm:
+        (initializeMethods): Use auto instead of an explicit type so that we get
+        the correct type for the result of protocol_copyProtocolList.
+
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (-[_WKRemoteObjectRegistry _sendInvocation:interface:]): Added a
+        bridging cast to void* because that's needed to call _Block_signature
+        under ARC and harmless outside ARC.
+
+        * Shared/API/c/cf/WKStringCF.mm:
+        (WKStringCreateWithCFString): Use __bridge for cast.
+        * Shared/API/c/cf/WKURLCF.mm:
+        (WKURLCreateWithCFURL): Ditto.
+        * Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm:
+        (WebKit::AuthenticationManager::initializeConnection): Ditto.
+        * Shared/Cocoa/DataDetectionResult.mm:
+        (WebKit::DataDetectionResult::encode const): Ditto.
+        (WebKit::DataDetectionResult::decode): Ditto.
+        * Shared/Cocoa/WKNSError.mm:
+        (-[WKNSError _web_createTarget]): Ditto.
+        * Shared/Cocoa/WKNSURLExtras.mm:
+        (-[NSURL _web_originalDataAsWTFString]): Ditto.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer): Removed balanced calls to both
+        adoptOSObject and xpc_retain and instead rely on the assignment
+        operator just added to OSObjectPtr.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler): Use __bridge for cast.
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer): Ditto.
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::decode): Ditto.
+        * Shared/mac/ArgumentCodersMac.mm:
+        (IPC::isSerializableValue): Ditto.
+        (IPC::encode): Ditto.
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::encodeNSError): Ditto. Also use CFSTR("")" instead of @""
+        when we need a CFString.
+        (IPC::decodeNSError): Ditto.
+        (IPC::ArgumentCoder<ProtectionSpace>::encodePlatformData): Ditto.
+        (IPC::ArgumentCoder<ProtectionSpace>::decodePlatformData): Ditto.
+        (IPC::ArgumentCoder<Credential>::encodePlatformData): Ditto.
+        (IPC::ArgumentCoder<Credential>::decodePlatformData): Ditto.
+        (IPC::ArgumentCoder<ContentFilterUnblockHandler>::encode): Ditto.
+        (IPC::ArgumentCoder<ContentFilterUnblockHandler>::decode): Ditto.
+        (IPC::ArgumentCoder<MediaPlaybackTargetContext>::encodePlatformData): Ditto.
+        (IPC::ArgumentCoder<MediaPlaybackTargetContext>::decodePlatformData): Ditto.
+        * Shared/mac/WebHitTestResultData.mm:
+        (WebKit::WebHitTestResultData::platformEncode const): Ditto.
+        (WebKit::WebHitTestResultData::platformDecode): Ditto.
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextIsPlugInUpdateAvailable): Ditto.
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController certificateChain]): Ditto.
+        (didStartProvisionalLoadForFrame): Ditto.
+        (didReceiveServerRedirectForProvisionalLoadForFrame): Ditto.
+        (didFailProvisionalLoadWithErrorForFrame): Ditto.
+        (didCommitLoadForFrame): Ditto.
+        (didFinishLoadForFrame): Ditto.
+        (didFailLoadWithErrorForFrame): Ditto.
+        (canAuthenticateAgainstProtectionSpaceInFrame): Ditto.
+        (didReceiveAuthenticationChallengeInFrame): Ditto.
+        (didStartProgress): Ditto.
+        (didChangeProgress): Ditto.
+        (didFinishProgress): Ditto.
+        (didChangeBackForwardList): Ditto.
+        (processDidCrash): Ditto.
+        (setUpPageLoaderClient): Ditto.
+        (setUpPagePolicyClient): Ditto.
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.mm:
+        (createWKArray): Ditto.
+        (-[WKBrowsingContextGroup addUserStyleSheet:baseURL:whitelistedURLPatterns:blacklistedURLPatterns:mainFrameOnly:]): Ditto.
+        (-[WKBrowsingContextGroup addUserScript:baseURL:whitelistedURLPatterns:blacklistedURLPatterns:injectionTime:mainFrameOnly:]): Ditto.
+        * UIProcess/API/Cocoa/WKConnection.mm:
+        (didReceiveMessage): Ditto.
+        (didClose): Ditto.
+        (setUpClient): Ditto.
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (didCreateConnection): Ditto.
+        (getInjectedBundleInitializationUserData): Ditto.
+        (setUpInjectedBundleClient): Ditto.
+        (-[WKProcessGroup _setAllowsSpecificHTTPSCertificate:forHost:]): Ditto.
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setAllowsSpecificHTTPSCertificate:forHost:]): Ditto.
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _setProxyConfiguration:]): Ditto.
+        (-[WKWebsiteDataStore _proxyConfiguration]): Ditto.
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        (-[_WKThumbnailView _didTakeSnapshot:]): Ditto.
+
+        * UIProcess/API/Cocoa/_WKUserContentFilter.mm: Added a missing include.
+
+        * UIProcess/Authentication/mac/WebCredentialMac.mm:
+        (WebKit::chain): Use __bridge for cast.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory):
+        Use CFBridgingRelease instead of adoptNS.
+        (WebKit::privateBrowsingSession): Use __bridge for cast.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::provideDataForPasteboard): Use __bridge for cast.
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::pluginPathsInDirectory): Ditto.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::recursivelyMapIOSurfaceBackingStore): Ditto.
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture): Ditto.
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]): Ditto.
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu): Ditto.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm:
+        (didCreatePage): Ditto.
+        (willDestroyPage): Ditto.
+        (setUpBundleClient): Ditto.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (didStartProvisionalLoadForFrame): Ditto.
+        (didReceiveServerRedirectForProvisionalLoadForFrame): Ditto.
+        (didFinishLoadForFrame): Ditto.
+        (globalObjectIsAvailableForFrame): Ditto.
+        (didRemoveFrameFromHierarchy): Ditto.
+        (didCommitLoadForFrame): Ditto.
+        (didFinishDocumentLoadForFrame): Ditto.
+        (didFailProvisionalLoadWithErrorForFrame): Ditto.
+        (didFailLoadWithErrorForFrame): Ditto.
+        (didSameDocumentNavigationForFrame): Ditto.
+        (didLayoutForFrame): Ditto.
+        (didReachLayoutMilestone): Ditto.
+        (didFirstVisuallyNonEmptyLayoutForFrame): Ditto.
+        (didHandleOnloadEventsForFrame): Ditto.
+        (userAgentForURL): Ditto.
+        (setUpPageLoaderClient): Ditto.
+        (willSendRequestForFrame): Ditto.
+        (didInitiateLoadForResource): Ditto.
+        (didFinishLoadForResource): Ditto.
+        (didFailLoadForResource): Ditto.
+        (setUpResourceLoadClient): Ditto.
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::initialize): Ditto.
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::popUpContextMenu): Ditto.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h: Put functions that return NSData inside
+        an #ifdef __OBJC__ and use __bridge for cast.
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::declareAndWriteDragImage): Use __bridge for cast.
+
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.mm:
+        (WebKit::PlatformCALayerRemoteCustom::contents const): Added a bridging cast.
+        (WebKit::PlatformCALayerRemoteCustom::setContents): Use __bridge for cast.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::commitTransientZoom): Ditto.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::setTopOverhangImage): Ditto.
+        (WebKit::WebPage::setBottomOverhangImage): Ditto.
+
 2018-06-05  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorker registration should store any script fetched through importScripts

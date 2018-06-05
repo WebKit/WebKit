@@ -1,5 +1,18 @@
 2018-06-05  Darin Adler  <darin@apple.com>
 
+        [Cocoa] More preparation for ARC, focusing on WebKit and smart pointers
+        https://bugs.webkit.org/show_bug.cgi?id=186314
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/BlockPtr.h: Put Block_copy/release calls into #if since they are
+        not needed under ARC.
+
+        * wtf/OSObjectPtr.h: Added constructor and assignment operator so we can
+        work with OS objects without adopting them.
+
+2018-06-05  Darin Adler  <darin@apple.com>
+
         [Cocoa] Improve some soft linking compatibility with ARC
         https://bugs.webkit.org/show_bug.cgi?id=186309
 

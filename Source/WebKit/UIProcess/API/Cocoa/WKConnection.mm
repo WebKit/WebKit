@@ -51,7 +51,7 @@ using namespace WebKit;
 
 static void didReceiveMessage(WKConnectionRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
 {
-    WKConnection *connection = (WKConnection *)clientInfo;
+    auto connection = (__bridge WKConnection *)clientInfo;
     auto delegate = connection->_delegate.get();
 
     if ([delegate respondsToSelector:@selector(connection:didReceiveMessageWithName:body:)]) {
@@ -63,7 +63,7 @@ static void didReceiveMessage(WKConnectionRef, WKStringRef messageName, WKTypeRe
 
 static void didClose(WKConnectionRef, const void* clientInfo)
 {
-    WKConnection *connection = (WKConnection *)clientInfo;
+    auto connection = (__bridge WKConnection *)clientInfo;
     auto delegate = connection->_delegate.get();
 
     if ([delegate respondsToSelector:@selector(connectionDidClose:)])
@@ -76,7 +76,7 @@ static void setUpClient(WKConnection *wrapper, WebConnection& connection)
     memset(&client, 0, sizeof(client));
 
     client.base.version = 0;
-    client.base.clientInfo = wrapper;
+    client.base.clientInfo = (__bridge void*)wrapper;
     client.didReceiveMessage = didReceiveMessage;
     client.didClose = didClose;
 

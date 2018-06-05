@@ -3895,7 +3895,7 @@ void WebViewImpl::provideDataForPasteboard(NSPasteboard *pasteboard, NSString *t
     // FIXME: need to support NSRTFDPboardType
 
     if ([type isEqual:WebCore::legacyTIFFPasteboardType()] && m_promisedImage) {
-        [pasteboard setData:(NSData *)m_promisedImage->tiffRepresentation() forType:WebCore::legacyTIFFPasteboardType()];
+        [pasteboard setData:(__bridge NSData *)m_promisedImage->tiffRepresentation() forType:WebCore::legacyTIFFPasteboardType()];
         m_promisedImage = nullptr;
     }
 }

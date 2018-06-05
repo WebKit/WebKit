@@ -54,7 +54,7 @@ WKURLRef WKURLCreateWithCFURL(CFURLRef cfURL)
 
 #if WK_API_ENABLED
     // Since WKNSURL is an internal class with no subclasses, we can do a simple equality check.
-    if (object_getClass((NSURL *)cfURL) == wkNSURLClass())
+    if (object_getClass((__bridge NSURL *)cfURL) == wkNSURLClass())
         return toAPI(static_cast<API::URL*>(&[(WKNSURL *)[(NSURL *)cfURL retain] _apiObject]));
 #endif
 

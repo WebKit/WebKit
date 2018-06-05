@@ -73,7 +73,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         return false;
     }
 
-    m_platformBundle = [[NSBundle alloc] initWithURL:(NSURL *)bundleURL.get()];
+    m_platformBundle = [[NSBundle alloc] initWithURL:(__bridge NSURL *)bundleURL.get()];
     if (!m_platformBundle) {
         WTFLogAlways("InjectedBundle::load failed - Could not create the bundle.\n");
         return false;

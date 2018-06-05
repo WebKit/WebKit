@@ -83,7 +83,7 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
 
     ChildProcessInitializationParameters parameters;
     if (priorityBoostMessage)
-        parameters.priorityBoostMessage = adoptOSObject(xpc_retain(priorityBoostMessage));
+        parameters.priorityBoostMessage = priorityBoostMessage;
 
     if (!delegate.getConnectionIdentifier(parameters.connectionIdentifier))
         exit(EXIT_FAILURE);
