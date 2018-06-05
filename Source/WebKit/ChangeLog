@@ -1,3 +1,16 @@
+2018-06-05  Jeremy Jones  <jeremyj@apple.com>
+
+        secheuristic should only use touch began and ended, not changed.
+        https://bugs.webkit.org/show_bug.cgi?id=186318
+        rdar://problem/39781486
+
+        Reviewed by Jer Noble.
+
+        Filter out change events so swiping gestures don't trigger the heuristic.
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController _touchDetected:]):
+
 2018-06-05  Darin Adler  <darin@apple.com>
 
         [Cocoa] More preparation for ARC, focusing on WebKit and smart pointers
