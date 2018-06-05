@@ -1,3 +1,10 @@
+2018-06-04  Dan Bernstein  <mitz@apple.com>
+
+        Made PAL build with the macOS Mojave SDK.
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h:
+
 2018-06-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit on watchOS] Remove all uses of the EXTRA_ZOOM_MODE compiler flag
