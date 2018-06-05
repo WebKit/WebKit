@@ -56,10 +56,11 @@ bool ImageInputType::isFormDataAppendable() const
 
 bool ImageInputType::appendFormData(DOMFormData& formData, bool) const
 {
-    if (!element().isActivatedSubmit())
+    ASSERT(element());
+    if (!element()->isActivatedSubmit())
         return false;
 
-    auto& name = element().name();
+    auto& name = element()->name();
     if (name.isEmpty()) {
         formData.append(ASCIILiteral("x"), String::number(m_clickLocation.x()));
         formData.append(ASCIILiteral("y"), String::number(m_clickLocation.y()));
@@ -69,7 +70,7 @@ bool ImageInputType::appendFormData(DOMFormData& formData, bool) const
     formData.append(makeString(name, ".x"), String::number(m_clickLocation.x()));
     formData.append(makeString(name, ".y"), String::number(m_clickLocation.y()));
 
-    auto value = element().value();
+    auto value = element()->value();
     if (!value.isEmpty())
         formData.append(name, value);
 
@@ -83,13 +84,14 @@ bool ImageInputType::supportsValidation() const
 
 void ImageInputType::handleDOMActivateEvent(Event& event)
 {
-    Ref<HTMLInputElement> element(this->element());
-    if (element->isDisabledFormControl() || !element->form())
+    ASSERT(element());
+    Ref<HTMLInputElement> protectedElement(*element());
+    if (protectedElement->isDisabledFormControl() || !protectedElement->form())
         return;
 
-    Ref<HTMLFormElement> protectedForm(*element->form());
+    Ref<HTMLFormElement> protectedForm(*protectedElement->form());
 
-    element->setActivatedSubmit(true);
+    protectedElement->setActivatedSubmit(true);
 
     m_clickLocation = IntPoint();
     if (event.underlyingEvent()) {
@@ -103,30 +105,34 @@ void ImageInputType::handleDOMActivateEvent(Event& event)
 
     // Update layout before processing form actions in case the style changes
     // the Form or button relationships.
-    element->document().updateLayoutIgnorePendingStylesheets();
+    protectedElement->document().updateLayoutIgnorePendingStylesheets();
 
-    if (auto currentForm = element->form())
+    if (auto currentForm = protectedElement->form())
         currentForm->prepareForSubmission(event); // Event handlers can run.
 
-    element->setActivatedSubmit(false);
+    protectedElement->setActivatedSubmit(false);
     event.setDefaultHandled();
 }
 
 RenderPtr<RenderElement> ImageInputType::createInputRenderer(RenderStyle&& style)
 {
-    return createRenderer<RenderImage>(element(), WTFMove(style));
+    ASSERT(element());
+    return createRenderer<RenderImage>(*element(), WTFMove(style));
 }
 
 void ImageInputType::attributeChanged(const QualifiedName& name)
 {
     if (name == altAttr) {
-        auto* renderer = element().renderer();
-        if (is<RenderImage>(renderer))
-            downcast<RenderImage>(*renderer).updateAltText();
+        if (auto* element = this->element()) {
+            auto* renderer = element->renderer();
+            if (is<RenderImage>(renderer))
+                downcast<RenderImage>(*renderer).updateAltText();
+        }
     } else if (name == srcAttr) {
-        auto& element = this->element();
-        if (element.renderer())
-            element.ensureImageLoader().updateFromElementIgnoringPreviousError();
+        if (auto* element = this->element()) {
+            if (element->renderer())
+                element->ensureImageLoader().updateFromElementIgnoringPreviousError();
+        }
     }
     BaseButtonInputType::attributeChanged(name);
 }
@@ -135,10 +141,11 @@ void ImageInputType::attach()
 {
     BaseButtonInputType::attach();
 
-    HTMLImageLoader& imageLoader = element().ensureImageLoader();
+    ASSERT(element());
+    HTMLImageLoader& imageLoader = element()->ensureImageLoader();
     imageLoader.updateFromElement();
 
-    auto* renderer = downcast<RenderImage>(element().renderer());
+    auto* renderer = downcast<RenderImage>(element()->renderer());
     if (!renderer)
         return;
 
@@ -181,7 +188,8 @@ bool ImageInputType::shouldRespectHeightAndWidthAttributes()
 
 unsigned ImageInputType::height() const
 {
-    Ref<HTMLInputElement> element(this->element());
+    ASSERT(element());
+    Ref<HTMLInputElement> element(*this->element());
 
     element->document().updateLayout();
 
@@ -202,7 +210,8 @@ unsigned ImageInputType::height() const
 
 unsigned ImageInputType::width() const
 {
-    Ref<HTMLInputElement> element(this->element());
+    ASSERT(element());
+    Ref<HTMLInputElement> element(*this->element());
 
     element->document().updateLayout();
 

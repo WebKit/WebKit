@@ -304,8 +304,9 @@ public:
     virtual String displayString() const;
 
 protected:
-    explicit InputType(HTMLInputElement& element) : m_element(element) { }
-    HTMLInputElement& element() const { return m_element; }
+    explicit InputType(HTMLInputElement& element)
+        : m_element(makeWeakPtr(element)) { }
+    HTMLInputElement* element() const { return m_element.get(); }
     Chrome* chrome() const;
     Decimal parseToNumberOrNaN(const String&) const;
 
@@ -314,7 +315,7 @@ private:
     ExceptionOr<void> applyStep(int count, AnyStepHandling, TextFieldEventBehavior);
 
     // Raw pointer because the HTMLInputElement object owns this InputType object.
-    HTMLInputElement& m_element;
+    WeakPtr<HTMLInputElement> m_element;
 };
 
 } // namespace WebCore

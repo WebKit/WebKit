@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2009 Michelangelo De Simone <micdesim@gmail.com>
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -58,9 +59,10 @@ const AtomicString& EmailInputType::formControlType() const
 
 bool EmailInputType::typeMismatchFor(const String& value) const
 {
+    ASSERT(element());
     if (value.isEmpty())
         return false;
-    if (!element().multiple())
+    if (!element()->multiple())
         return !isValidEmailAddress(value);
     Vector<String> addresses;
     value.split(',', true, addresses);
@@ -73,12 +75,14 @@ bool EmailInputType::typeMismatchFor(const String& value) const
 
 bool EmailInputType::typeMismatch() const
 {
-    return typeMismatchFor(element().value());
+    ASSERT(element());
+    return typeMismatchFor(element()->value());
 }
 
 String EmailInputType::typeMismatchText() const
 {
-    return element().multiple() ? validationMessageTypeMismatchForMultipleEmailText() : validationMessageTypeMismatchForEmailText();
+    ASSERT(element());
+    return element()->multiple() ? validationMessageTypeMismatchForMultipleEmailText() : validationMessageTypeMismatchForEmailText();
 }
 
 bool EmailInputType::isEmailField() const
@@ -94,7 +98,8 @@ bool EmailInputType::supportsSelectionAPI() const
 String EmailInputType::sanitizeValue(const String& proposedValue) const
 {
     String noLineBreakValue = proposedValue.removeCharacters(isHTMLLineBreak);
-    if (!element().multiple())
+    ASSERT(element());
+    if (!element()->multiple())
         return stripLeadingAndTrailingHTMLSpaces(noLineBreakValue);
     Vector<String> addresses;
     noLineBreakValue.split(',', true, addresses);

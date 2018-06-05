@@ -193,27 +193,31 @@ bool InputType::shouldSaveAndRestoreFormControlState() const
 
 FormControlState InputType::saveFormControlState() const
 {
-    auto currentValue = element().value();
-    if (currentValue == element().defaultValue())
+    ASSERT(element());
+    auto currentValue = element()->value();
+    if (currentValue == element()->defaultValue())
         return { };
     return { { currentValue } };
 }
 
 void InputType::restoreFormControlState(const FormControlState& state)
 {
-    element().setValue(state[0]);
+    ASSERT(element());
+    element()->setValue(state[0]);
 }
 
 bool InputType::isFormDataAppendable() const
 {
+    ASSERT(element());
     // There is no form data unless there's a name for non-image types.
-    return !element().name().isEmpty();
+    return !element()->name().isEmpty();
 }
 
 bool InputType::appendFormData(DOMFormData& formData, bool) const
 {
+    ASSERT(element());
     // Always successful.
-    formData.append(element().name(), element().value());
+    formData.append(element()->name(), element()->value());
     return true;
 }
 
@@ -319,7 +323,8 @@ double InputType::maximum() const
 
 bool InputType::sizeShouldIncludeDecoration(int, int& preferredSize) const
 {
-    preferredSize = element().size();
+    ASSERT(element());
+    preferredSize = element()->size();
     return false;
 }
 
@@ -390,7 +395,8 @@ String InputType::valueMissingText() const
 
 String InputType::validationMessage() const
 {
-    String value = element().value();
+    ASSERT(element());
+    String value = element()->value();
 
     // The order of the following checks is meaningful. e.g. We'd like to show the
     // badInput message even if the control has other validation errors.
@@ -406,11 +412,11 @@ String InputType::validationMessage() const
     if (patternMismatch(value))
         return validationMessagePatternMismatchText();
 
-    if (element().tooShort())
-        return validationMessageTooShortText(numGraphemeClusters(value), element().minLength());
+    if (element()->tooShort())
+        return validationMessageTooShortText(numGraphemeClusters(value), element()->minLength());
 
-    if (element().tooLong())
-        return validationMessageTooLongText(numGraphemeClusters(value), element().effectiveMaxLength());
+    if (element()->tooLong())
+        return validationMessageTooLongText(numGraphemeClusters(value), element()->effectiveMaxLength());
 
     if (!isSteppable())
         return emptyString();
@@ -480,12 +486,14 @@ bool InputType::shouldSubmitImplicitly(Event& event)
 
 RenderPtr<RenderElement> InputType::createInputRenderer(RenderStyle&& style)
 {
-    return RenderPtr<RenderElement>(RenderElement::createFor(element(), WTFMove(style)));
+    ASSERT(element());
+    return RenderPtr<RenderElement>(RenderElement::createFor(*element(), WTFMove(style)));
 }
 
 void InputType::blur()
 {
-    element().defaultBlur();
+    ASSERT(element());
+    element()->defaultBlur();
 }
 
 void InputType::createShadowSubtree()
@@ -494,7 +502,8 @@ void InputType::createShadowSubtree()
 
 void InputType::destroyShadowSubtree()
 {
-    RefPtr<ShadowRoot> root = element().userAgentShadowRoot();
+    ASSERT(element());
+    RefPtr<ShadowRoot> root = element()->userAgentShadowRoot();
     if (!root)
         return;
 
@@ -533,14 +542,16 @@ DateComponents::Type InputType::dateType() const
 
 void InputType::dispatchSimulatedClickIfActive(KeyboardEvent& event) const
 {
-    if (element().active())
-        element().dispatchSimulatedClick(&event);
+    ASSERT(element());
+    if (element()->active())
+        element()->dispatchSimulatedClick(&event);
     event.setDefaultHandled();
 }
 
 Chrome* InputType::chrome() const
 {
-    if (Page* page = element().document().page())
+    ASSERT(element());
+    if (Page* page = element()->document().page())
         return &page->chrome();
     return nullptr;
 }
@@ -557,12 +568,14 @@ bool InputType::hasCustomFocusLogic() const
 
 bool InputType::isKeyboardFocusable(KeyboardEvent* event) const
 {
-    return !element().isReadOnly() && element().isTextFormControlKeyboardFocusable(event);
+    ASSERT(element());
+    return !element()->isReadOnly() && element()->isTextFormControlKeyboardFocusable(event);
 }
 
 bool InputType::isMouseFocusable() const
 {
-    return element().isTextFormControlMouseFocusable();
+    ASSERT(element());
+    return element()->isTextFormControlMouseFocusable();
 }
 
 bool InputType::shouldUseInputMethod() const
@@ -580,7 +593,8 @@ void InputType::handleBlurEvent()
 
 void InputType::accessKeyAction(bool)
 {
-    element().focus(false);
+    ASSERT(element());
+    element()->focus(false);
 }
 
 void InputType::addSearchResult()
@@ -651,17 +665,20 @@ bool InputType::storesValueSeparateFromAttribute()
 
 void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior)
 {
-    element().setValueInternal(sanitizedValue, eventBehavior);
-    element().invalidateStyleForSubtree();
+    ASSERT(element());
+    element()->setValueInternal(sanitizedValue, eventBehavior);
+    element()->invalidateStyleForSubtree();
     if (!valueChanged)
         return;
+
     switch (eventBehavior) {
     case DispatchChangeEvent:
-        element().dispatchFormControlChangeEvent();
+        element()->dispatchFormControlChangeEvent();
         break;
     case DispatchInputAndChangeEvent:
-        element().dispatchFormControlInputEvent();
-        element().dispatchFormControlChangeEvent();
+        element()->dispatchFormControlInputEvent();
+        if (auto element = this->element())
+            element->dispatchFormControlChangeEvent();
         break;
     case DispatchNoEvent:
         break;
@@ -688,7 +705,8 @@ String InputType::localizeValue(const String& proposedValue) const
 
 String InputType::visibleValue() const
 {
-    return element().value();
+    ASSERT(element());
+    return element()->value();
 }
 
 bool InputType::isEmptyValue() const
@@ -944,7 +962,8 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
     if (!stepRange.hasStep())
         return Exception { InvalidStateError };
 
-    const Decimal current = parseToNumberOrNaN(element().value());
+    ASSERT(element());
+    const Decimal current = parseToNumberOrNaN(element()->value());
     if (!current.isFinite())
         return Exception { InvalidStateError };
     Decimal newValue = current + stepRange.step() * count;
@@ -957,7 +976,7 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
     if (newValue < stepRange.minimum())
         newValue = stepRange.minimum();
 
-    if (!equalLettersIgnoringASCIICase(element().attributeWithoutSynchronization(stepAttr), "any"))
+    if (!equalLettersIgnoringASCIICase(element()->attributeWithoutSynchronization(stepAttr), "any"))
         newValue = stepRange.alignValueForStep(current, newValue);
 
     if (newValue - stepRange.maximum() > acceptableErrorValue)
@@ -969,8 +988,8 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
     if (result.hasException())
         return result;
 
-    if (AXObjectCache* cache = element().document().existingAXObjectCache())
-        cache->postNotification(&element(), AXObjectCache::AXValueChanged);
+    if (AXObjectCache* cache = element()->document().existingAXObjectCache())
+        cache->postNotification(element(), AXObjectCache::AXValueChanged);
 
     return result;
 }
@@ -1057,7 +1076,8 @@ void InputType::stepUpFromRenderer(int n)
     else
         sign = 0;
 
-    String currentStringValue = element().value();
+    ASSERT(element());
+    String currentStringValue = element()->value();
     Decimal current = parseToNumberOrNaN(currentStringValue);
     if (!current.isFinite()) {
         current = defaultValueForStepUp();
@@ -1071,7 +1091,7 @@ void InputType::stepUpFromRenderer(int n)
     if ((sign > 0 && current < stepRange.minimum()) || (sign < 0 && current > stepRange.maximum()))
         setValueAsDecimal(sign > 0 ? stepRange.minimum() : stepRange.maximum(), DispatchInputAndChangeEvent);
     else {
-        if (stepMismatch(element().value())) {
+        if (stepMismatch(element()->value())) {
             ASSERT(!step.isZero());
             const Decimal base = stepRange.stepBase();
             Decimal newValue;

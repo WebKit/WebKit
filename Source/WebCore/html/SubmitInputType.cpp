@@ -48,9 +48,10 @@ const AtomicString& SubmitInputType::formControlType() const
 
 bool SubmitInputType::appendFormData(DOMFormData& formData, bool) const
 {
-    if (!element().isActivatedSubmit())
+    ASSERT(element());
+    if (!element()->isActivatedSubmit())
         return false;
-    formData.append(element().name(), element().valueWithDefault());
+    formData.append(element()->name(), element()->valueWithDefault());
     return true;
 }
 
@@ -61,20 +62,21 @@ bool SubmitInputType::supportsRequired() const
 
 void SubmitInputType::handleDOMActivateEvent(Event& event)
 {
-    Ref<HTMLInputElement> element(this->element());
-    if (element->isDisabledFormControl() || !element->form())
+    ASSERT(element());
+    Ref<HTMLInputElement> protectedElement(*element());
+    if (protectedElement->isDisabledFormControl() || !protectedElement->form())
         return;
 
-    Ref<HTMLFormElement> protectedForm(*element->form());
+    Ref<HTMLFormElement> protectedForm(*protectedElement->form());
 
     // Update layout before processing form actions in case the style changes
     // the Form or button relationships.
-    element->document().updateLayoutIgnorePendingStylesheets();
+    protectedElement->document().updateLayoutIgnorePendingStylesheets();
 
-    element->setActivatedSubmit(true);
-    if (auto currentForm = element->form())
+    protectedElement->setActivatedSubmit(true);
+    if (auto currentForm = protectedElement->form())
         currentForm->prepareForSubmission(event); // Event handlers can run.
-    element->setActivatedSubmit(false);
+    protectedElement->setActivatedSubmit(false);
     event.setDefaultHandled();
 }
 

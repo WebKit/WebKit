@@ -1,3 +1,214 @@
+2018-06-04  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r231291): InputType should hold a WeakPtr to its HTMLInputElement
+        https://bugs.webkit.org/show_bug.cgi?id=186096
+        <rdar://problem/40651015>
+
+        Reviewed by Ryosuke Niwa.
+
+        Now that the InputType may be kept alive as part of in-flight form submissions, we
+        shouldn't assume that the referenced HTMLInputElement is still valid before using it.
+
+        The only time we should be lacking a referencing element is in cases where the InputType
+        is changing, either through a change in the HTMLInputElement's type attribute. In those
+        cases we should check for a valid HTMLInputElement. In other cases, we should ASSERT.
+
+        * html/BaseButtonInputType.cpp:
+        (WebCore::BaseButtonInputType::createInputRenderer):
+        (WebCore::BaseButtonInputType::setValue):
+        * html/BaseCheckableInputType.cpp:
+        (WebCore::BaseCheckableInputType::saveFormControlState const):
+        (WebCore::BaseCheckableInputType::restoreFormControlState):
+        (WebCore::BaseCheckableInputType::appendFormData const):
+        (WebCore::BaseCheckableInputType::handleKeydownEvent):
+        (WebCore::BaseCheckableInputType::accessKeyAction):
+        (WebCore::BaseCheckableInputType::setValue):
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::attributeChanged): Add a nullptr check
+        here, since this is called directly by code that causes the old InputType to be removed,
+        which could leave us with a nullptr element().
+        * html/BaseClickableWithKeyInputType.cpp:
+        (WebCore::BaseClickableWithKeyInputType::handleKeydownEvent):
+        (WebCore::BaseClickableWithKeyInputType::handleKeypressEvent):
+        (WebCore::BaseClickableWithKeyInputType::accessKeyAction):
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::attributeChanged): Add a nullptr check
+        here, since this is called directly by code that causes the old InputType to be removed,
+        which could leave us with a nullptr element().
+        * html/BaseTextInputType.cpp:
+        (WebCore::BaseTextInputType::patternMismatch const):
+        * html/CheckboxInputType.cpp:
+        (WebCore::CheckboxInputType::valueMissing const):
+        (WebCore::CheckboxInputType::willDispatchClick):
+        (WebCore::CheckboxInputType::didDispatchClick):
+        (WebCore::CheckboxInputType::shouldAppearIndeterminate const):
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::valueAsColor const):
+        (WebCore::ColorInputType::createShadowSubtree):
+        (WebCore::ColorInputType::handleDOMActivateEvent):
+        (WebCore::ColorInputType::didChooseColor):
+        (WebCore::ColorInputType::updateColorSwatch):
+        (WebCore::ColorInputType::shadowColorSwatch const):
+        (WebCore::ColorInputType::elementRectRelativeToRootView const):
+        (WebCore::ColorInputType::shouldShowSuggestions const):
+        (WebCore::ColorInputType::suggestions const):
+        * html/EmailInputType.cpp:
+        (WebCore::EmailInputType::typeMismatchFor const):
+        (WebCore::EmailInputType::typeMismatch const):
+        (WebCore::EmailInputType::typeMismatchText const):
+        (WebCore::EmailInputType::sanitizeValue const):
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::appendFormData const):
+        (WebCore::FileInputType::attributeChanged): Add a nullptr check here, since
+        this is called directly by code that causes the old InputType to be removed,
+        which could leave us with a nullptr element().
+        (WebCore::FileInputType::valueMissing const):
+        (WebCore::FileInputType::valueMissingText const):
+        (WebCore::FileInputType::handleDOMActivateEvent):
+        (WebCore::FileInputType::createInputRenderer):
+        (WebCore::FileInputType::setValue):
+        (WebCore::FileInputType::createShadowSubtree):
+        (WebCore::FileInputType::disabledAttributeChanged):
+        (WebCore::FileInputType::multipleAttributeChanged):
+        (WebCore::FileInputType::allowsDirectories const):
+        (WebCore::FileInputType::setFiles):
+        (WebCore::FileInputType::iconLoaded):
+        (WebCore::FileInputType::receiveDroppedFiles):
+        (WebCore::FileInputType::defaultToolTip const):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::weakPtrFactory const):
+        * html/HiddenInputType.cpp:
+        (WebCore::HiddenInputType::saveFormControlState const):
+        (WebCore::HiddenInputType::restoreFormControlState):
+        (WebCore::HiddenInputType::setValue):
+        (WebCore::HiddenInputType::appendFormData const):
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::appendFormData const):
+        (WebCore::ImageInputType::handleDOMActivateEvent):
+        (WebCore::ImageInputType::createInputRenderer):
+        (WebCore::ImageInputType::altAttributeChanged):
+        (WebCore::ImageInputType::srcAttributeChanged):
+        (WebCore::ImageInputType::attach):
+        (WebCore::ImageInputType::height const):
+        (WebCore::ImageInputType::width const):
+        * html/InputType.cpp:
+        (WebCore::InputType::saveFormControlState const):
+        (WebCore::InputType::restoreFormControlState):
+        (WebCore::InputType::isFormDataAppendable const):
+        (WebCore::InputType::appendFormData const):
+        (WebCore::InputType::sizeShouldIncludeDecoration const):
+        (WebCore::InputType::validationMessage const):
+        (WebCore::InputType::createInputRenderer):
+        (WebCore::InputType::blur):
+        (WebCore::InputType::destroyShadowSubtree):
+        (WebCore::InputType::dispatchSimulatedClickIfActive const):
+        (WebCore::InputType::chrome const):
+        (WebCore::InputType::isKeyboardFocusable const):
+        (WebCore::InputType::isMouseFocusable const):
+        (WebCore::InputType::accessKeyAction):
+        (WebCore::InputType::setValue):
+        (WebCore::InputType::visibleValue const):
+        (WebCore::InputType::applyStep):
+        (WebCore::InputType::stepUpFromRenderer):
+        * html/InputType.h:
+        (WebCore::InputType::InputType):
+        (WebCore::InputType::element const):
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::attributeChanged): Add a nullptr check here, since
+        this is called directly by code that causes the old InputType to be removed,
+        which could leave us with a nullptr element().
+        (WebCore::NumberInputType::setValue):
+        (WebCore::NumberInputType::valueAsDouble const):
+        (WebCore::NumberInputType::setValueAsDouble const):
+        (WebCore::NumberInputType::setValueAsDecimal const):
+        (WebCore::NumberInputType::typeMismatch const):
+        (WebCore::NumberInputType::createStepRange const):
+        (WebCore::NumberInputType::sizeShouldIncludeDecoration const):
+        (WebCore::NumberInputType::decorationWidth const):
+        (WebCore::NumberInputType::localizeValue const):
+        (WebCore::NumberInputType::visibleValue const):
+        (WebCore::NumberInputType::convertFromVisibleValue const):
+        (WebCore::NumberInputType::hasBadInput const):
+        (WebCore::NumberInputType::minOrMaxAttributeChanged):
+        (WebCore::NumberInputType::stepAttributeChanged):
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::valueMissing const):
+        (WebCore::RadioInputType::handleKeydownEvent):
+        (WebCore::RadioInputType::handleKeyupEvent):
+        (WebCore::RadioInputType::isKeyboardFocusable const):
+        (WebCore::RadioInputType::shouldSendChangeEventAfterCheckedChanged):
+        (WebCore::RadioInputType::willDispatchClick):
+        (WebCore::RadioInputType::didDispatchClick):
+        (WebCore::RadioInputType::matchesIndeterminatePseudoClass const):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::attributeChanged): Add a nullptr check here, since
+        this is called directly by code that causes the old InputType to be removed,
+        which could leave us with a nullptr element().
+        (WebCore::RangeInputType::valueAsDouble const):
+        (WebCore::RangeInputType::setValueAsDecimal const):
+        (WebCore::RangeInputType::createStepRange const):
+        (WebCore::RangeInputType::handleMouseDownEvent):
+        (WebCore::RangeInputType::handleTouchEvent):
+        (WebCore::RangeInputType::handleKeydownEvent):
+        (WebCore::RangeInputType::createShadowSubtree):
+        (WebCore::RangeInputType::sliderTrackElement const):
+        (WebCore::RangeInputType::createInputRenderer):
+        (WebCore::RangeInputType::accessKeyAction):
+        (WebCore::RangeInputType::minOrMaxAttributeChanged):
+        (WebCore::RangeInputType::setValue):
+        (WebCore::RangeInputType::updateTickMarkValues):
+        * html/ResetInputType.cpp:
+        (WebCore::ResetInputType::handleDOMActivateEvent):
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::addSearchResult):
+        (WebCore::SearchInputType::maxResultsAttributeChanged):
+        (WebCore::SearchInputType::createInputRenderer):
+        (WebCore::SearchInputType::createShadowSubtree):
+        (WebCore::SearchInputType::handleKeydownEvent):
+        (WebCore::SearchInputType::startSearchEventTimer):
+        (WebCore::SearchInputType::searchEventTimerFired):
+        (WebCore::SearchInputType::searchEventsShouldBeDispatched const):
+        (WebCore::SearchInputType::didSetValueByUserEdit):
+        (WebCore::SearchInputType::sizeShouldIncludeDecoration const):
+        * html/SubmitInputType.cpp:
+        (WebCore::SubmitInputType::appendFormData const):
+        (WebCore::SubmitInputType::handleDOMActivateEvent):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::attributeChanged): Add a nullptr check here, since
+        this is called directly by code that causes the old InputType to be removed,
+        which could leave us with a nullptr element().
+        (WebCore::TextFieldInputType::isKeyboardFocusable const):
+        (WebCore::TextFieldInputType::isMouseFocusable const):
+        (WebCore::TextFieldInputType::valueMissing const):
+        (WebCore::TextFieldInputType::setValue):
+        (WebCore::TextFieldInputType::handleKeydownEvent):
+        (WebCore::TextFieldInputType::handleKeydownEventForSpinButton):
+        (WebCore::TextFieldInputType::forwardEvent):
+        (WebCore::TextFieldInputType::elementDidBlur):
+        (WebCore::TextFieldInputType::handleFocusEvent):
+        (WebCore::TextFieldInputType::handleBlurEvent):
+        (WebCore::TextFieldInputType::createInputRenderer):
+        (WebCore::TextFieldInputType::shouldHaveSpinButton const):
+        (WebCore::TextFieldInputType::shouldHaveCapsLockIndicator const):
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        (WebCore::TextFieldInputType::handleBeforeTextInsertedEvent):
+        (WebCore::TextFieldInputType::updatePlaceholderText):
+        (WebCore::TextFieldInputType::appendFormData const):
+        (WebCore::TextFieldInputType::subtreeHasChanged):
+        (WebCore::TextFieldInputType::didSetValueByUserEdit):
+        (WebCore::TextFieldInputType::updateInnerTextValue):
+        (WebCore::TextFieldInputType::focusAndSelectSpinButtonOwner):
+        (WebCore::TextFieldInputType::shouldSpinButtonRespondToMouseEvents):
+        (WebCore::TextFieldInputType::shouldSpinButtonRespondToWheelEvents):
+        (WebCore::TextFieldInputType::shouldDrawCapsLockIndicator const):
+        (WebCore::TextFieldInputType::shouldDrawAutoFillButton const):
+        (WebCore::TextFieldInputType::autoFillButtonElementWasClicked):
+        (WebCore::TextFieldInputType::createContainer):
+        (WebCore::TextFieldInputType::createAutoFillButton):
+        (WebCore::TextFieldInputType::updateAutoFillButton):
+        * html/URLInputType.cpp:
+        (WebCore::URLInputType::typeMismatch const):
+
 2018-06-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed iOS build fix with recent SDKs.

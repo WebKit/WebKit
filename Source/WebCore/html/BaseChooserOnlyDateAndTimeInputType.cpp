@@ -138,8 +138,10 @@ bool BaseChooserOnlyDateAndTimeInputType::isMouseFocusable() const
 void BaseChooserOnlyDateAndTimeInputType::attributeChanged(const QualifiedName& name)
 {
     if (name == valueAttr) {
-        if (!element().hasDirtyValue())
-            updateInnerTextValue();
+        if (auto* element = this->element()) {
+            if (!element->hasDirtyValue())
+                updateInnerTextValue();
+        }
     }
     BaseDateAndTimeInputType::attributeChanged(name);
 }

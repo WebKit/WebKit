@@ -52,12 +52,14 @@ FormControlState HiddenInputType::saveFormControlState() const
 {
     // valueAttributeWasUpdatedAfterParsing() never be true for form controls create by createElement() or cloneNode().
     // It's OK for now because we restore values only to form controls created by parsing.
-    return element().valueAttributeWasUpdatedAfterParsing() ? FormControlState { { element().value() } } : FormControlState { };
+    ASSERT(element());
+    return element()->valueAttributeWasUpdatedAfterParsing() ? FormControlState { { element()->value() } } : FormControlState { };
 }
 
 void HiddenInputType::restoreFormControlState(const FormControlState& state)
 {
-    element().setAttributeWithoutSynchronization(valueAttr, state[0]);
+    ASSERT(element());
+    element()->setAttributeWithoutSynchronization(valueAttr, state[0]);
 }
 
 bool HiddenInputType::supportsValidation() const
@@ -87,7 +89,8 @@ bool HiddenInputType::storesValueSeparateFromAttribute()
 
 void HiddenInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior)
 {
-    element().setAttributeWithoutSynchronization(valueAttr, sanitizedValue);
+    ASSERT(element());
+    element()->setAttributeWithoutSynchronization(valueAttr, sanitizedValue);
 }
 
 bool HiddenInputType::isHiddenType() const
@@ -97,7 +100,8 @@ bool HiddenInputType::isHiddenType() const
 
 bool HiddenInputType::appendFormData(DOMFormData& formData, bool isMultipartForm) const
 {
-    auto name = element().name();
+    ASSERT(element());
+    auto name = element()->name();
 
     if (equalIgnoringASCIICase(name, "_charset_")) {
         formData.append(name, String { formData.encoding().name() });

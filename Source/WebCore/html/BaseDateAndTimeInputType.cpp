@@ -97,8 +97,10 @@ bool BaseDateAndTimeInputType::isSteppable() const
 
 void BaseDateAndTimeInputType::attributeChanged(const QualifiedName& name)
 {
-    if (name == maxAttr || name == minAttr)
-        element().invalidateStyleForSubtree();
+    if (name == maxAttr || name == minAttr) {
+        if (auto* element = this->element())
+            element->invalidateStyleForSubtree();
+    }
     InputType::attributeChanged(name);
 }
 

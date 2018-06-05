@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2009 Michelangelo De Simone <micdesim@gmail.com>
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,9 +40,10 @@ bool BaseTextInputType::isTextType() const
 
 bool BaseTextInputType::patternMismatch(const String& value) const
 {
+    ASSERT(element());
     // FIXME: We should execute RegExp parser first to check validity instead of creating an actual RegularExpression.
     // https://bugs.webkit.org/show_bug.cgi?id=183361
-    const AtomicString& rawPattern = element().attributeWithoutSynchronization(patternAttr);
+    const AtomicString& rawPattern = element()->attributeWithoutSynchronization(patternAttr);
     if (rawPattern.isNull() || value.isEmpty() || !JSC::Yarr::RegularExpression(rawPattern, JSC::Yarr::TextCaseSensitive, JSC::Yarr::MultilineDisabled, JSC::Yarr::UnicodeAwareMode).isValid())
         return false;
     String pattern = "^(?:" + rawPattern + ")$";

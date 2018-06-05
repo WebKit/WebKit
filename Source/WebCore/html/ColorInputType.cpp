@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -111,20 +111,22 @@ String ColorInputType::sanitizeValue(const String& proposedValue) const
 
 Color ColorInputType::valueAsColor() const
 {
-    return parseSimpleColorValue(element().value()).value();
+    ASSERT(element());
+    return parseSimpleColorValue(element()->value()).value();
 }
 
 void ColorInputType::createShadowSubtree()
 {
-    ASSERT(element().shadowRoot());
+    ASSERT(element());
+    ASSERT(element()->shadowRoot());
 
-    Document& document = element().document();
+    Document& document = element()->document();
     auto wrapperElement = HTMLDivElement::create(document);
     wrapperElement->setPseudo(AtomicString("-webkit-color-swatch-wrapper", AtomicString::ConstructFromLiteral));
     auto colorSwatch = HTMLDivElement::create(document);
     colorSwatch->setPseudo(AtomicString("-webkit-color-swatch", AtomicString::ConstructFromLiteral));
     wrapperElement->appendChild(colorSwatch);
-    element().userAgentShadowRoot()->appendChild(wrapperElement);
+    element()->userAgentShadowRoot()->appendChild(wrapperElement);
 
     updateColorSwatch();
 }
@@ -143,7 +145,8 @@ void ColorInputType::setValue(const String& value, bool valueChanged, TextFieldE
 
 void ColorInputType::handleDOMActivateEvent(Event& event)
 {
-    if (element().isDisabledFormControl() || !element().renderer())
+    ASSERT(element());
+    if (element()->isDisabledFormControl() || !element()->renderer())
         return;
 
     if (!UserGestureIndicator::processingUserGesture())
@@ -181,12 +184,13 @@ bool ColorInputType::shouldResetOnDocumentActivation()
 
 void ColorInputType::didChooseColor(const Color& color)
 {
-    if (element().isDisabledFormControl() || color == valueAsColor())
+    ASSERT(element());
+    if (element()->isDisabledFormControl() || color == valueAsColor())
         return;
     EventQueueScope scope;
-    element().setValueFromRenderer(color.serialized());
+    element()->setValueFromRenderer(color.serialized());
     updateColorSwatch();
-    element().dispatchFormControlChangeEvent();
+    element()->dispatchFormControlChangeEvent();
 }
 
 void ColorInputType::didEndChooser()
@@ -206,12 +210,14 @@ void ColorInputType::updateColorSwatch()
     if (!colorSwatch)
         return;
 
-    colorSwatch->setInlineStyleProperty(CSSPropertyBackgroundColor, element().value(), false);
+    ASSERT(element());
+    colorSwatch->setInlineStyleProperty(CSSPropertyBackgroundColor, element()->value(), false);
 }
 
 HTMLElement* ColorInputType::shadowColorSwatch() const
 {
-    RefPtr<ShadowRoot> shadow = element().userAgentShadowRoot();
+    ASSERT(element());
+    RefPtr<ShadowRoot> shadow = element()->userAgentShadowRoot();
     if (!shadow)
         return nullptr;
 
@@ -224,9 +230,10 @@ HTMLElement* ColorInputType::shadowColorSwatch() const
 
 IntRect ColorInputType::elementRectRelativeToRootView() const
 {
-    if (!element().renderer())
+    ASSERT(element());
+    if (!element()->renderer())
         return IntRect();
-    return element().document().view()->contentsToRootView(element().renderer()->absoluteBoundingBoxRect());
+    return element()->document().view()->contentsToRootView(element()->renderer()->absoluteBoundingBoxRect());
 }
 
 Color ColorInputType::currentColor()
@@ -237,7 +244,8 @@ Color ColorInputType::currentColor()
 bool ColorInputType::shouldShowSuggestions() const
 {
 #if ENABLE(DATALIST_ELEMENT)
-    return element().hasAttributeWithoutSynchronization(listAttr);
+    ASSERT(element());
+    return element()->hasAttributeWithoutSynchronization(listAttr);
 #else
     return false;
 #endif
@@ -247,7 +255,8 @@ Vector<Color> ColorInputType::suggestions() const
 {
     Vector<Color> suggestions;
 #if ENABLE(DATALIST_ELEMENT)
-    if (auto dataList = element().dataList()) {
+    ASSERT(element());
+    if (auto dataList = element()->dataList()) {
         Ref<HTMLCollection> options = dataList->options();
         unsigned length = options->length();
         suggestions.reserveInitialCapacity(length);
