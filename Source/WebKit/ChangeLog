@@ -1,3 +1,9 @@
+2018-06-04  Dan Bernstein  <mitz@apple.com>
+
+        Removed a reference to a file that was deleted in r231190.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed the reference to WebProcessShim.xcconfig.
+
 2018-06-04  Chris Dumez  <cdumez@apple.com>
 
         Update Fetch code to provide more useful exception messages
