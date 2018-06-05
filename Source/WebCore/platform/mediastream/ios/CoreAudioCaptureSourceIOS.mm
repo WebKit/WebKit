@@ -38,9 +38,9 @@ typedef AVAudioSession AVAudioSessionType;
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVAudioSession)
 
-SOFT_LINK_POINTER(AVFoundation, AVAudioSessionInterruptionNotification, NSString *)
-SOFT_LINK_POINTER(AVFoundation, AVAudioSessionInterruptionTypeKey, NSString *)
-SOFT_LINK_POINTER(AVFoundation, AVAudioSessionMediaServicesWereResetNotification, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVAudioSessionInterruptionNotification, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVAudioSessionInterruptionTypeKey, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVAudioSessionMediaServicesWereResetNotification, NSString *)
 
 #define AVAudioSession getAVAudioSessionClass()
 #define AVAudioSessionInterruptionNotification getAVAudioSessionInterruptionNotification()

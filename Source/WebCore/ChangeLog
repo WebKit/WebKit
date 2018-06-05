@@ -1,3 +1,29 @@
+2018-06-05  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Improve some soft linking compatibility with ARC
+        https://bugs.webkit.org/show_bug.cgi?id=186309
+
+        Reviewed by Anders Carlsson.
+
+        * platform/audio/ios/AudioSessionIOS.mm: Use SOFT_LINK_CONSTANT instead of SOFT_LINK_POINTER
+        for NSString constants.
+        * platform/audio/ios/MediaSessionManagerIOS.mm: Ditto.
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm: Ditto.
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm: Ditto.
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm: Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm: Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::synchronizeTextTrackState): Use __bridge for
+        some bridging casts.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateLastImage): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processCue): Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm: Use
+        SOFT_LINK_CONSTANT instead of SOFT_LINK_POINTER for NSString constants.
+        * platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm: Ditto.
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm: Ditto.
+        * platform/mediastream/mac/AVMediaCaptureSource.mm: Ditto.
+        * platform/mediastream/mac/AVVideoCaptureSource.mm: Ditto.
+
 2018-06-05  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorker registration should store any script fetched through importScripts

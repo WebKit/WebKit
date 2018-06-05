@@ -64,9 +64,6 @@ SOFT_LINK(MediaToolbox, MTAudioProcessingTapGetStorage, void*, (MTAudioProcessin
 SOFT_LINK(MediaToolbox, MTAudioProcessingTapGetSourceAudio, OSStatus, (MTAudioProcessingTapRef tap, CMItemCount numberFrames, AudioBufferList *bufferListInOut, MTAudioProcessingTapFlags *flagsOut, CMTimeRange *timeRangeOut, CMItemCount *numberFramesOut), (tap, numberFrames, bufferListInOut, flagsOut, timeRangeOut, numberFramesOut))
 SOFT_LINK_MAY_FAIL(MediaToolbox, MTAudioProcessingTapCreate, OSStatus, (CFAllocatorRef allocator, const MTAudioProcessingTapCallbacks *callbacks, MTAudioProcessingTapCreationFlags flags, MTAudioProcessingTapRef *tapOut), (allocator, callbacks, flags, tapOut))
 
-SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicAudible, NSString *)
-#define AVMediaCharacteristicAudible getAVMediaCharacteristicAudible()
-
 namespace WebCore {
 
 using namespace PAL;

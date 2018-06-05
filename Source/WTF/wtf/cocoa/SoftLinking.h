@@ -270,7 +270,7 @@
     { \
         void* constant = dlsym(framework##Library(), #name); \
         RELEASE_ASSERT_WITH_MESSAGE(constant, "%s", dlerror()); \
-        constant##name = *static_cast<type*>(constant); \
+        constant##name = *static_cast<type const *>(constant); \
         get##name = name##Function; \
         return constant##name; \
     }
@@ -297,7 +297,7 @@
         void* constant = dlsym(framework##Library(), #name); \
         if (!constant) \
             return false; \
-        constant##name = *static_cast<type*>(constant); \
+        constant##name = *static_cast<type const *>(constant); \
         get##name = name##Function; \
         return true; \
     }
@@ -429,7 +429,7 @@
         dispatch_once(&once, ^{ \
             void* constant = dlsym(framework##Library(), #variableName); \
             RELEASE_ASSERT_WITH_MESSAGE(constant, "%s", dlerror()); \
-            constant##framework##variableName = *static_cast<variableType*>(constant); \
+            constant##framework##variableName = *static_cast<variableType const *>(constant); \
         }); \
         return constant##framework##variableName; \
     } \
@@ -457,7 +457,7 @@
         void* constant = dlsym(framework##Library(), #variableName); \
         if (!constant) \
             return false; \
-        constant##framework##variableName = *static_cast<variableType*>(constant); \
+        constant##framework##variableName = *static_cast<variableType const *>(constant); \
         return true; \
     } \
     bool canLoad_##framework##_##variableName(); \

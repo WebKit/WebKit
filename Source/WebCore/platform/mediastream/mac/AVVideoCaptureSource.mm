@@ -85,7 +85,7 @@ SOFT_LINK_CLASS(AVFoundation, AVFrameRateRange)
 #define AVCaptureVideoPreviewLayer getAVCaptureVideoPreviewLayerClass()
 #define AVFrameRateRange getAVFrameRateRangeClass()
 
-SOFT_LINK_POINTER(AVFoundation, AVMediaTypeVideo, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVMediaTypeVideo, NSString *)
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionPreset1280x720, NSString *)
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionPreset960x540, NSString *)
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionPreset640x480, NSString *)
