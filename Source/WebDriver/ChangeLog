@@ -1,3 +1,16 @@
+2018-06-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] WebDriver: stop making mandatory to provide a browser path if wpe:browserOptions is present in capabilities
+        https://bugs.webkit.org/show_bug.cgi?id=186264
+
+        Reviewed by Žan Doberšek.
+
+        Everything should be optional. Do not consider invalid to not provide a browser binary when wpe:browserOptions
+        is present.
+
+        * wpe/WebDriverServiceWPE.cpp:
+        (WebDriver::WebDriverService::platformParseCapabilities const):
+
 2018-05-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: implement maximize, minimize and fullscreen window commands

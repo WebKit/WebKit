@@ -81,22 +81,21 @@ bool WebDriverService::platformMatchCapability(const String&, const RefPtr<JSON:
 
 void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapabilities, Capabilities& capabilities) const
 {
+    capabilities.browserBinary = String("dyz");
+    capabilities.browserArguments = Vector<String> { ASCIILiteral("--automation") };
+
     RefPtr<JSON::Object> browserOptions;
-    if (!matchedCapabilities.getObject(ASCIILiteral("wpe:browserOptions"), browserOptions)) {
-        capabilities.browserBinary = String("dyz");
-        capabilities.browserArguments = Vector<String> { ASCIILiteral("--automation") };
+    if (!matchedCapabilities.getObject(ASCIILiteral("wpe:browserOptions"), browserOptions))
         return;
-    }
 
     String browserBinary;
-    browserOptions->getString(ASCIILiteral("binary"), browserBinary);
-    ASSERT(!browserBinary.isNull());
-    capabilities.browserBinary = browserBinary;
+    if (browserOptions->getString(ASCIILiteral("binary"), browserBinary))
+        capabilities.browserBinary = browserBinary;
 
-    capabilities.browserArguments = Vector<String>();
     RefPtr<JSON::Array> browserArguments;
-    if (browserOptions->getArray(ASCIILiteral("args"), browserArguments)) {
+    if (browserOptions->getArray(ASCIILiteral("args"), browserArguments) && browserArguments->length()) {
         unsigned browserArgumentsLength = browserArguments->length();
+        capabilities.browserArguments = Vector<String>();
         capabilities.browserArguments->reserveInitialCapacity(browserArgumentsLength);
         for (unsigned i = 0; i < browserArgumentsLength; ++i) {
             RefPtr<JSON::Value> value = browserArguments->get(i);
