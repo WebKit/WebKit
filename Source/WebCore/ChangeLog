@@ -1,3 +1,10 @@
+2018-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed iOS build fix with recent SDKs.
+
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+
 2018-06-04  Dean Jackson  <dino@apple.com>
 
         AR Badging on transparent thumbnail images makes the glyph look really dark

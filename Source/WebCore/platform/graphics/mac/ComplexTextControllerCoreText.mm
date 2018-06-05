@@ -151,7 +151,11 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         static CFDictionaryRef rtlTypesetterOptions = CFDictionaryCreate(kCFAllocatorDefault, optionKeys, rtlOptionValues, WTF_ARRAY_LENGTH(optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 
         ProviderInfo info = { cp, length, stringAttributes.get() };
+        // FIXME: Some SDKs complain that the second parameter below cannot be null.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
         RetainPtr<CTTypesetterRef> typesetter = adoptCF(CTTypesetterCreateWithUniCharProviderAndOptions(&provideStringAndAttributes, 0, &info, m_run.ltr() ? ltrTypesetterOptions : rtlTypesetterOptions));
+#pragma clang diagnostic pop
 
         line = adoptCF(CTTypesetterCreateLine(typesetter.get(), CFRangeMake(0, 0)));
     } else {
