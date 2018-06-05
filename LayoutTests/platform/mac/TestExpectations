@@ -1780,3 +1780,10 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-115.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-116.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-006.html [ ImageOnlyFailure ]
+
+# Color Well is turned off
+accessibility/color-well.html [ Skip ]
+fast/forms/color [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color.html [ Skip ]
+fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
+fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]

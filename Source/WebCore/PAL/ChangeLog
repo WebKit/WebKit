@@ -1,5 +1,19 @@
 2018-06-05  Brent Fulgham  <bfulgham@apple.com>
 
+        Adjust compile and runtime flags to match shippable state of features
+        https://bugs.webkit.org/show_bug.cgi?id=186319
+        <rdar://problem/40352045>
+
+        Reviewed by Maciej Stachowiak, Jon Lee, and others.
+
+        * Configurations/DebugRelease.xcconfig: Update to match WebKit definition of
+        WK_RELOCATABLE_FRAMEWORKS so that ENABLE(EXPERIMENTAL_FEATURES) is defined properly for
+        Cocoa builds.
+        * Configurations/FeatureDefines.xcconfig: Don't build ENABLE_INPUT_TYPE_COLOR
+        or ENABLE_INPUT_TYPE_COLOR_POPOVER.
+
+2018-06-05  Brent Fulgham  <bfulgham@apple.com>
+
         Revise DEFAULT_EXPERIMENTAL_FEATURES_ENABLED to work properly on Apple builds
         https://bugs.webkit.org/show_bug.cgi?id=186286
         <rdar://problem/40782992>

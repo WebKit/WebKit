@@ -44,5 +44,7 @@ SDKROOT_YES = macosx.internal;
 
 OTHER_CPLUSPLUSFLAGS = $(inherited) -ftemplate-depth=256;
 
+WK_RELOCATABLE_FRAMEWORKS = YES;
+
 WK_CCACHE_DIR = $(SRCROOT)/../ccache;
 #include "../../ccache/ccache.xcconfig"

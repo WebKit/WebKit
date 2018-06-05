@@ -1,3 +1,20 @@
+2018-06-05  Brent Fulgham  <bfulgham@apple.com>
+
+        Adjust compile and runtime flags to match shippable state of features
+        https://bugs.webkit.org/show_bug.cgi?id=186319
+        <rdar://problem/40352045>
+
+        Reviewed by Maciej Stachowiak, Jon Lee, and others.
+
+        This patch revises the compile time and runtime state for various features to match their
+        suitability for end-user releases.
+
+        * TestWebKitAPI/Configurations/DebugRelease.xcconfig: Update to match WebKit definition of
+        WK_RELOCATABLE_FRAMEWORKS so that ENABLE(EXPERIMENTAL_FEATURES) is defined properly for
+        Cocoa builds.
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig: Don't build ENABLE_INPUT_TYPE_COLOR
+        or ENABLE_INPUT_TYPE_COLOR_POPOVER.
+
 2018-06-05  Saam Barati  <sbarati@apple.com>
 
         run-testmem should have a dry run option and an option to parse the stdout of executing the dry run

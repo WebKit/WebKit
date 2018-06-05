@@ -1,3 +1,20 @@
+2018-06-05  Brent Fulgham  <bfulgham@apple.com>
+
+        Adjust compile and runtime flags to match shippable state of features
+        https://bugs.webkit.org/show_bug.cgi?id=186319
+        <rdar://problem/40352045>
+
+        Reviewed by Maciej Stachowiak, Jon Lee, and others.
+
+        Change the default state of various experimental features so that they are off by default in production
+        builds, since they are still under development.
+
+        Turn 'CacheAPIEnabled' and 'SubresourceIntegrityEnabled' on by default, since both features have been
+        shipping for a full cycle and have proven to be stable in production.
+
+        * Configurations/FeatureDefines.xcconfig: Don't build ENABLE_INPUT_TYPE_COLOR
+        or ENABLE_INPUT_TYPE_COLOR_POPOVER.
+        * Shared/WebPreferences.yaml: 
 2018-06-05  Timothy Hatcher  <timothy@apple.com>
 
         Clean up LocalDefaultSystemAppearance and prefers-dark-interface media query

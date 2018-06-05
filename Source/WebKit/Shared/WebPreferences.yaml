@@ -94,7 +94,7 @@ Accelerated2dCanvasEnabled:
 
 CSSAnimationTriggersEnabled:
   type: bool
-  defaultValue: true
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
   webcoreBinding: RuntimeEnabledFeatures
   webcoreName: animationTriggersEnabled
   condition: ENABLE(CSS_ANIMATIONS_LEVEL_2)
@@ -661,7 +661,7 @@ MenuItemElementEnabled:
 
 EncryptedMediaAPIEnabled:
   type: bool
-  defaultValue: true
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
   humanReadableName: "Modern Encrypted Media API"
   humanReadableDescription: "Modern Encrypted Media API"
   webcoreBinding: RuntimeEnabledFeatures
@@ -1077,7 +1077,7 @@ AsyncFrameScrollingEnabled:
 
 CacheAPIEnabled:
   type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  defaultValue: true
   humanReadableName: "Cache API"
   humanReadableDescription: "Enable Cache API"
   category: experimental
@@ -1092,7 +1092,7 @@ ColorFilterEnabled:
 
 ConstantPropertiesEnabled:
   type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  defaultValue: true
   humanReadableName: "Constant Properties"
   humanReadableDescription: "Enable CSS constant() values"
   category: experimental
@@ -1106,14 +1106,14 @@ CrossOriginWindowPolicySupportEnabled:
 
 SpringTimingFunctionEnabled:
   type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  defaultValue: true
   humanReadableName: "CSS Spring Animations"
   humanReadableDescription: "CSS Spring Animation prototype"
   category: experimental
 
 ImageBitmapOffscreenCanvasEnabled:
   type: bool
-  defaultValue: true
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
   humanReadableName: "ImageBitmap and OffscreenCanvas"
   humanReadableDescription: "Support for the ImageBitmap and OffscreenCanvas APIs"
   category: experimental
@@ -1121,7 +1121,7 @@ ImageBitmapOffscreenCanvasEnabled:
 
 LinkPreloadEnabled:
   type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  defaultValue: true
   humanReadableName: "Link Preload"
   humanReadableDescription: "Link preload support"
   category: experimental
@@ -1146,7 +1146,7 @@ MDNSICECandidatesEnabled:
 
 IsSecureContextAttributeEnabled:
   type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  defaultValue: true
   humanReadableName: "Secure Contexts API"
   humanReadableDescription: "Enable Secure Contexts API"
   category: experimental
@@ -1180,7 +1180,7 @@ StorageAccessAPIEnabled:
 
 SubresourceIntegrityEnabled:
   type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  defaultValue: true
   humanReadableName: "SubresourceIntegrity"
   humanReadableDescription: "Enable SubresourceIntegrity"
   category: experimental
