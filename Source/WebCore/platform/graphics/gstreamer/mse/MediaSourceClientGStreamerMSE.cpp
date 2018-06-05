@@ -23,6 +23,7 @@
 
 #include "AppendPipeline.h"
 #include "MediaPlayerPrivateGStreamerMSE.h"
+#include "PlaybackPipeline.h"
 #include "WebKitMediaSourceGStreamer.h"
 #include <gst/gst.h>
 

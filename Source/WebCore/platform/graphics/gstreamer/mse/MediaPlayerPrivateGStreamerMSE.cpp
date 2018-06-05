@@ -36,6 +36,7 @@
 #include "MediaDescription.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
+#include "PlaybackPipeline.h"
 #include "SourceBufferPrivateGStreamer.h"
 #include "TimeRanges.h"
 #include "URL.h"
