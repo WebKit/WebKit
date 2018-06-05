@@ -188,8 +188,7 @@
 #define DISABLED_ADAPTATIONS_META_TAG_ENABLED false
 #endif
 
-// Cocoa ports must disable experimental features on release branches for now.
-#if ENABLE(EXPERIMENTAL_FEATURES) || PLATFORM(COCOA)
+#if ENABLE(EXPERIMENTAL_FEATURES)
 #define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED true
 #else
 #define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED false
