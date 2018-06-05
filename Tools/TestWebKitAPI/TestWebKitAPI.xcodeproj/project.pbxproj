@@ -1569,7 +1569,7 @@
 		7C83E0231D0A5AE400FEBCF3 /* TestWTF */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestWTF; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C83E0261D0A5B8D00FEBCF3 /* TestWTF.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestWTF.xcconfig; sourceTree = "<group>"; };
 		7C83E0271D0A5B8D00FEBCF3 /* TestWTFLibrary.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestWTFLibrary.xcconfig; sourceTree = "<group>"; };
-		7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libWTF.a; path = ../../../../../Builds/Debug/libWTF.a; sourceTree = "<group>"; };
+		7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C83E0331D0A5F2700FEBCF3 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		7C83E0361D0A5F7000FEBCF3 /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
 		7C83E0391D0A602700FEBCF3 /* UtilitiesCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = UtilitiesCocoa.mm; path = cocoa/UtilitiesCocoa.mm; sourceTree = "<group>"; };
