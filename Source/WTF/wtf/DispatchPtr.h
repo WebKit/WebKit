@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +25,20 @@
 
 #pragma once
 
-#if PLATFORM(COCOA)
-
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
 
-template <typename T> class DispatchPtr;
-template <typename T> DispatchPtr<T> adoptDispatch(T dispatchObject);
+// FIXME: Use OSObjectPtr instead in the three places this is used and then
+// delete this. When this class template was originally created os_retain
+// did not yet work with dispatch_data_t, but it now does on versions of
+// Cocoa platforms that WebKit supports and WebKit already uses OSObjectPtr
+// for dispatch_data_t in multiple places.
 
-// FIXME: Use OSObjectPtr instead when it works with dispatch_data_t on all platforms.
+template<typename T> class DispatchPtr;
+template<typename T> DispatchPtr<T> adoptDispatch(T dispatchObject);
+
 template<typename T> class DispatchPtr {
 public:
     DispatchPtr()
@@ -45,19 +48,26 @@ public:
     explicit DispatchPtr(T ptr)
         : m_ptr(ptr)
     {
+#if !defined(__OBJC__) || !__has_feature(objc_arc)
         if (m_ptr)
             dispatch_retain(m_ptr);
+#endif
     }
     DispatchPtr(const DispatchPtr& other)
         : m_ptr(other.m_ptr)
     {
+#if !defined(__OBJC__) || !__has_feature(objc_arc)
         if (m_ptr)
             dispatch_retain(m_ptr);
+
+#endif
     }
     ~DispatchPtr()
     {
+#if !defined(__OBJC__) || !__has_feature(objc_arc)
         if (m_ptr)
             dispatch_release(m_ptr);
+#endif
     }
 
     DispatchPtr& operator=(const DispatchPtr& other)
@@ -69,9 +79,13 @@ public:
 
     DispatchPtr& operator=(std::nullptr_t)
     {
+#if defined(__OBJC__) && __has_feature(objc_arc)
+        m_ptr = nullptr;
+#else
         auto ptr = std::exchange(m_ptr, nullptr);
         if (LIKELY(ptr != nullptr))
             dispatch_release(ptr);
+#endif
         return *this;
     }
 
@@ -99,5 +113,3 @@ template <typename T> DispatchPtr<T> adoptDispatch(T dispatchObject)
 
 using WTF::DispatchPtr;
 using WTF::adoptDispatch;
-
-#endif

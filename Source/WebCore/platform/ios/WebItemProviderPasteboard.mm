@@ -38,7 +38,6 @@
 #import <WebCore/Pasteboard.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/BlockPtr.h>
-#import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 

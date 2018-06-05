@@ -51,7 +51,6 @@
 #import <wtf/MainThread.h>
 #import <wtf/MediaTime.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/OSObjectPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/Vector.h>
 

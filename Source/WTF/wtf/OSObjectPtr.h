@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OSObjectPtr_h
-#define OSObjectPtr_h
+#pragma once
 
 #include <os/object.h>
 #include <wtf/Assertions.h>
@@ -38,13 +37,21 @@ template<typename T> OSObjectPtr<T> adoptOSObject(T);
 template<typename T>
 static inline void retainOSObject(T ptr)
 {
+#if defined(__OBJC__) && __has_feature(objc_arc)
+    UNUSED_PARAM(ptr);
+#else
     os_retain(ptr);
+#endif
 }
 
 template<typename T>
 static inline void releaseOSObject(T ptr)
 {
+#if defined(__OBJC__) && __has_feature(objc_arc)
+    UNUSED_PARAM(ptr);
+#else
     os_release(ptr);
+#endif
 }
 
 template<typename T> class OSObjectPtr {
@@ -132,5 +139,3 @@ template<typename T> inline OSObjectPtr<T> adoptOSObject(T ptr)
 
 using WTF::OSObjectPtr;
 using WTF::adoptOSObject;
-
-#endif // OSObjectPtr_h

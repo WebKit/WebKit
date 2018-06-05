@@ -1,3 +1,18 @@
+2018-06-04  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Improve smart pointer support for ARC (OSObjectPtr/DispatchPtr)
+        https://bugs.webkit.org/show_bug.cgi?id=186300
+
+        Reviewed by Daniel Bates.
+
+        * wtf/DispatchPtr.h: Don't call dispatch_retain or dispatch_release
+        since ARC will automatically do it for us in the same places we are
+        doing it here.
+
+        * wtf/OSObjectPtr.h:
+        (WTF::retainOSObject): Don't call os_retain since ARC will do it.
+        (WTF::releaseOSObject): Don't call os_release since ARC will do it.
+
 2018-05-31  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r232212.

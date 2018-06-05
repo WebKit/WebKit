@@ -1,3 +1,14 @@
+2018-06-04  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Improve smart pointer support for ARC (OSObjectPtr/DispatchPtr)
+        https://bugs.webkit.org/show_bug.cgi?id=186300
+
+        Reviewed by Daniel Bates.
+
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm: Removed unnecessary
+        include of OSObjectPtr.h.
+        * platform/ios/WebItemProviderPasteboard.mm: Ditto.
+
 2018-06-05  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement support for new blockquote, caption, and paragraph ARIA roles
