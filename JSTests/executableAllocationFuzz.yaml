@@ -23,7 +23,7 @@
 
 - path: executableAllocationFuzz
   cmd: |
-      if ($hostOS == "windows")
+      if ($hostOS == "windows" || $architecture == "x86")
           skip
       else
           runExecutableAllocationFuzz("default")

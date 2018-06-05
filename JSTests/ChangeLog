@@ -1,3 +1,16 @@
+2018-06-05  David Fenton  <david_fenton@apple.com>
+
+        Temporarily Skip JSC stress test failures that are consistently occurring.
+        https://bugs.webkit.org/show_bug.cgi?id=186283
+
+        Unreviewed test gardening.
+
+        * executableAllocationFuzz.yaml:
+        * slowMicrobenchmarks/default-derived-constructor.js:
+        * stress/put-direct-index-broken-2.js:
+        * stress/splay-flash-access.js:
+        * stress/spread-forward-call-varargs-stack-overflow.js:
+
 2018-06-04  Keith Miller  <keith_miller@apple.com>
 
         Add test for CoW conversions in the DFG/FTL

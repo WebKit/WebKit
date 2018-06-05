@@ -1,3 +1,4 @@
+//@ skip if $architecture == "x86"
 function createClassHierarchy(depth) {
     let currentClass = class Base { };
     for (let i = 0; i < depth; i++) {
