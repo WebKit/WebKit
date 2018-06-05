@@ -1700,8 +1700,6 @@
 		E328DAE91D38D005001A2529 /* BytecodeGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D264281D38C042000BE174 /* BytecodeGraph.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E328DAEB1D38D005001A2529 /* BytecodeRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D2642A1D38C042000BE174 /* BytecodeRewriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E32AB2441DCD75F400D7533A /* MacroAssemblerHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E3305FB320B0F78800CEB82B /* InByIdStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = E3305FAF20B0F78700CEB82B /* InByIdStatus.h */; };
-		E3305FB520B0F78800CEB82B /* InByIdVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = E3305FB120B0F78800CEB82B /* InByIdVariant.h */; };
 		E33637A61B63220200EE0840 /* ReflectObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E33637A41B63220200EE0840 /* ReflectObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33B3E261B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E33B3E251B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h */; };
 		E33E8D1D1B9013C300346B52 /* JSNativeStdFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E8D1B1B9013C300346B52 /* JSNativeStdFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3661,8 +3659,6 @@
 		79A899FE1D38612E00D18C73 /* JITMathICForwards.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITMathICForwards.h; sourceTree = "<group>"; };
 		79ABB17B1E5CCB570045B9A6 /* AirDisassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirDisassembler.cpp; path = b3/air/AirDisassembler.cpp; sourceTree = "<group>"; };
 		79ABB17C1E5CCB570045B9A6 /* AirDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirDisassembler.h; path = b3/air/AirDisassembler.h; sourceTree = "<group>"; };
-		79ABCC5620B7812600323D5F /* testmem2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = testmem2.m; sourceTree = "<group>"; };
-		79ABCC5820B7812600323D5F /* testmem2.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testmem2.1; sourceTree = "<group>"; };
 		79AC30FE1F99536300484FD7 /* ObjectAllocationProfileInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectAllocationProfileInlines.h; sourceTree = "<group>"; };
 		79AF0BE31D3EFD4C00E95FA5 /* JITMathICInlineResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITMathICInlineResult.h; sourceTree = "<group>"; };
 		79B00CB81C6AB07E0088C65D /* ProxyConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyConstructor.cpp; sourceTree = "<group>"; };
@@ -4311,24 +4307,6 @@
 		AD2FCC261DB838C400B3E736 /* WebAssemblyPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyPrototype.cpp; path = js/WebAssemblyPrototype.cpp; sourceTree = "<group>"; };
 		AD2FCC271DB838C400B3E736 /* WebAssemblyPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyPrototype.h; path = js/WebAssemblyPrototype.h; sourceTree = "<group>"; };
 		AD2FCC321DC4045300B3E736 /* WasmFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmFormat.cpp; sourceTree = "<group>"; };
-		AD3F1E471F4BA78600669912 /* WABase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WABase.h; sourceTree = "<group>"; };
-		AD3F1E4A1F4DE68C00669912 /* WAInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WAInstance.h; sourceTree = "<group>"; };
-		AD3F1E4B1F4DE68C00669912 /* WATable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WATable.h; sourceTree = "<group>"; };
-		AD3F1E4C1F4DE68C00669912 /* WAMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WAMemory.h; sourceTree = "<group>"; };
-		AD3F1E521F4F4AE500669912 /* WAMemory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WAMemory.cpp; sourceTree = "<group>"; };
-		AD3F1E531F4F4AE500669912 /* WAModule.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WAModule.cpp; sourceTree = "<group>"; };
-		AD3F1E541F4F4AE500669912 /* WAInstance.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WAInstance.cpp; sourceTree = "<group>"; };
-		AD3F1E551F4F4AE500669912 /* WATable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WATable.cpp; sourceTree = "<group>"; };
-		AD3F1E641F50E57F00669912 /* WAException.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WAException.h; sourceTree = "<group>"; };
-		AD3F1E651F50E57F00669912 /* WAException.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WAException.cpp; sourceTree = "<group>"; };
-		AD3F1E681F547CB600669912 /* WAMemoryDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WAMemoryDescriptor.cpp; sourceTree = "<group>"; };
-		AD3F1E691F547CB600669912 /* WAMemoryDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WAMemoryDescriptor.h; sourceTree = "<group>"; };
-		AD3F1E6A1F547CB600669912 /* WAImportObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WAImportObject.h; sourceTree = "<group>"; };
-		AD3F1E6B1F547CB800669912 /* WATableDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WATableDescriptor.h; sourceTree = "<group>"; };
-		AD3F1E6C1F547CB800669912 /* WAImportObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WAImportObject.cpp; sourceTree = "<group>"; };
-		AD3F1E6D1F547CB800669912 /* WATableDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WATableDescriptor.cpp; sourceTree = "<group>"; };
-		AD3F1E701F54C3AA00669912 /* WAFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WAFunction.h; sourceTree = "<group>"; };
-		AD3F1E711F54C3AA00669912 /* WAFunction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WAFunction.cpp; sourceTree = "<group>"; };
 		AD412B311E7B2E8A008AF157 /* WasmContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmContext.cpp; sourceTree = "<group>"; };
 		AD412B321E7B2E8A008AF157 /* WasmContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmContext.h; sourceTree = "<group>"; };
 		AD412B351E7B57C0008AF157 /* AllowMacroScratchRegisterUsageIf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllowMacroScratchRegisterUsageIf.h; sourceTree = "<group>"; };
@@ -4374,8 +4352,6 @@
 		ADE802961E08F1C90058DE78 /* WebAssemblyLinkErrorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyLinkErrorPrototype.cpp; path = js/WebAssemblyLinkErrorPrototype.cpp; sourceTree = "<group>"; };
 		ADE802971E08F1C90058DE78 /* WebAssemblyLinkErrorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyLinkErrorPrototype.h; path = js/WebAssemblyLinkErrorPrototype.h; sourceTree = "<group>"; };
 		ADE8029D1E08F2260058DE78 /* WebAssemblyLinkErrorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyLinkErrorConstructor.cpp; path = js/WebAssemblyLinkErrorConstructor.cpp; sourceTree = "<group>"; };
-		ADFC30F71F47A7B8006451D3 /* WebAssembly.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAssembly.h; sourceTree = "<group>"; };
-		ADFC30F91F47A8C0006451D3 /* WAModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WAModule.h; sourceTree = "<group>"; };
 		B59F89371891AD3300D5CCDC /* UnlinkedInstructionStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkedInstructionStream.h; sourceTree = "<group>"; };
 		B59F89381891ADB500D5CCDC /* UnlinkedInstructionStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnlinkedInstructionStream.cpp; sourceTree = "<group>"; };
 		BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ToolExecutable.xcconfig; sourceTree = "<group>"; };
@@ -4950,7 +4926,6 @@
 				86EC9DB31328DF44002B2AD7 /* dfg */,
 				0FF4272E158EBCCE004CB9FF /* disassembler */,
 				E3FF752D1D9CE9EA00C7E16D /* domjit */,
-				79ABCC5520B7812600323D5F /* testmem2 */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				0FEA09FC1705137F00BB722C /* ftl */,
 				142E312A134FF0A600AFADB5 /* heap */,
@@ -5906,26 +5881,6 @@
 				86F3EEB616855A5B0077B92A /* ObjcRuntimeExtras.h */,
 				E124A8F60E555775003091F1 /* OpaqueJSString.cpp */,
 				E124A8F50E555775003091F1 /* OpaqueJSString.h */,
-				AD3F1E471F4BA78600669912 /* WABase.h */,
-				AD3F1E651F50E57F00669912 /* WAException.cpp */,
-				AD3F1E641F50E57F00669912 /* WAException.h */,
-				AD3F1E711F54C3AA00669912 /* WAFunction.cpp */,
-				AD3F1E701F54C3AA00669912 /* WAFunction.h */,
-				AD3F1E6C1F547CB800669912 /* WAImportObject.cpp */,
-				AD3F1E6A1F547CB600669912 /* WAImportObject.h */,
-				AD3F1E541F4F4AE500669912 /* WAInstance.cpp */,
-				AD3F1E4A1F4DE68C00669912 /* WAInstance.h */,
-				AD3F1E521F4F4AE500669912 /* WAMemory.cpp */,
-				AD3F1E4C1F4DE68C00669912 /* WAMemory.h */,
-				AD3F1E681F547CB600669912 /* WAMemoryDescriptor.cpp */,
-				AD3F1E691F547CB600669912 /* WAMemoryDescriptor.h */,
-				AD3F1E531F4F4AE500669912 /* WAModule.cpp */,
-				ADFC30F91F47A8C0006451D3 /* WAModule.h */,
-				AD3F1E551F4F4AE500669912 /* WATable.cpp */,
-				AD3F1E4B1F4DE68C00669912 /* WATable.h */,
-				AD3F1E6D1F547CB800669912 /* WATableDescriptor.cpp */,
-				AD3F1E6B1F547CB800669912 /* WATableDescriptor.h */,
-				ADFC30F71F47A7B8006451D3 /* WebAssembly.h */,
 				5DE3D0F40DD8DDFB00468714 /* WebKitAvailability.h */,
 			);
 			path = API;
@@ -6281,15 +6236,6 @@
 				7954BE0A20B62D63009BC83A /* testmem.mm */,
 			);
 			name = testmem;
-			sourceTree = "<group>";
-		};
-		79ABCC5520B7812600323D5F /* testmem2 */ = {
-			isa = PBXGroup;
-			children = (
-				79ABCC5820B7812600323D5F /* testmem2.1 */,
-				79ABCC5620B7812600323D5F /* testmem2.m */,
-			);
-			path = testmem2;
 			sourceTree = "<group>";
 		};
 		7ACDDECF1E252ACA0097AFEB /* cocoa */ = {
