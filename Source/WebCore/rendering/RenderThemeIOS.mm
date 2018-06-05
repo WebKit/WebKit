@@ -1871,8 +1871,15 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
     CGContextSetFillColorWithColor(ctx, circleColor.get());
     CGContextSetShadowWithColor(ctx, CGSizeZero, 16, shadowColor.get());
 
+    // Clip out the circle to only show the shadow.
+    CGContextBeginPath(ctx);
+    CGContextAddRect(ctx, rect);
+    CGContextAddPath(ctx, circle.get());
+    CGContextClosePath(ctx);
+    CGContextEOClip(ctx);
+
     // Draw a slightly smaller circle with a shadow, otherwise we'll see a fringe of the solid
-    // black circle around the edges of the cliped path below.
+    // black circle around the edges of the clipped path below.
     CGContextBeginPath(ctx);
     CGRect slightlySmallerAbsoluteBadgeRect = CGRectMake(absoluteBadgeRect.origin.x + 0.5, absoluteBadgeRect.origin.y + 0.5, badgeDimension - 1, badgeDimension - 1);
     RetainPtr<CGPathRef> slightlySmallerCircle = adoptCF(CGPathCreateWithRoundedRect(slightlySmallerAbsoluteBadgeRect, slightlySmallerAbsoluteBadgeRect.size.width / 2, slightlySmallerAbsoluteBadgeRect.size.height / 2, nullptr));
