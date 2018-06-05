@@ -70,7 +70,7 @@ private:
 
     private:
         static LayoutUnit inFlowNonReplacedHeight(LayoutContext&, const Box&);
-        static FormattingContext::Geometry::WidthAndMargin inFlowNonReplacedWidthAndMargin(LayoutContext&, const Box&);
+        static FormattingContext::Geometry::WidthAndMargin inFlowNonReplacedWidthAndMargin(LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = std::nullopt);
     };
     
     // This class implements margin collapsing for block formatting context.

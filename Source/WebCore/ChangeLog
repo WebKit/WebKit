@@ -1,3 +1,21 @@
+2018-06-05  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Merge width and margin computation for block-level, replaced elements in normal flow
+        https://bugs.webkit.org/show_bug.cgi?id=186270
+
+        Reviewed by Sam Weinig.
+
+        https://www.w3.org/TR/CSS22/visudet.html#block-replaced-width
+        10.3.4 Block-level, replaced elements in normal flow
+
+        The used value of 'width' is determined as for inline replaced elements.
+        Then the rules for non-replaced block-level elements are applied to determine the margins.
+
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowWidthAndMargin):
+
 2018-06-04  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer][MSE] MediaPlayerPrivateGStreamerMSE.h includes and forward declares PlaybackPipeline
