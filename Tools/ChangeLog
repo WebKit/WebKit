@@ -1,3 +1,21 @@
+2018-06-05  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r232082): Websites get loaded inside of Messages App chat transcript
+        https://bugs.webkit.org/show_bug.cgi?id=186331
+        <rdar://problem/40735446>
+
+        Reviewed by Darin Adler.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/mac/NoPolicyDelegateResponse.mm:
+        (-[NoDecidePolicyForNavigationActionDecisionDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]):
+        (-[NoDecidePolicyForNavigationActionDecisionDelegate webView:didStartProvisionalLoadForFrame:]):
+        (TestWebKitAPI::TEST):
+        (-[NoPolicyDelegateDecisionDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]): Deleted.
+        (-[NoPolicyDelegateDecisionDelegate webView:decidePolicyForMIMEType:request:frame:decisionListener:]): Deleted.
+        (-[NoPolicyDelegateDecisionDelegate webView:didFinishLoadForFrame:]): Deleted.
+
 2018-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         DataInteractionTests ContentEditableToTextarea and ContentEditableToContentEditable are failing on recent iOS 12

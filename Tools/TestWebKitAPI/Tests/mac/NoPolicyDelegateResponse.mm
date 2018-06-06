@@ -28,21 +28,16 @@
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-@interface NoPolicyDelegateDecisionDelegate : NSObject <WebPolicyDelegate, WebFrameLoadDelegate> {
-}
-@end
-
 static bool didFinishLoad;
 static bool didNavigationActionCheck;
 static bool didNavigationResponseCheck;
+static bool didStartProvisionalLoad;
 
-@implementation NoPolicyDelegateDecisionDelegate
-
-- (void)webView:(WebView *)webView decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener
-{
-    // Implements decidePolicyForNavigationAction but fails to call the decision listener.
-    didNavigationActionCheck = YES;
+@interface NoDecidePolicyForMIMETypeDecisionDelegate : NSObject <WebPolicyDelegate, WebFrameLoadDelegate> {
 }
+@end
+
+@implementation NoDecidePolicyForMIMETypeDecisionDelegate
 
 - (void)webView:(WebView *)webView decidePolicyForMIMEType:(NSString *)type request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener
 {
@@ -57,12 +52,31 @@ static bool didNavigationResponseCheck;
 
 @end
 
+@interface NoDecidePolicyForNavigationActionDecisionDelegate : NSObject <WebPolicyDelegate, WebFrameLoadDelegate> {
+}
+@end
+
+@implementation NoDecidePolicyForNavigationActionDecisionDelegate
+
+- (void)webView:(WebView *)webView decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener
+{
+    // Implements decidePolicyForNavigationAction but fails to call the decision listener.
+    didNavigationActionCheck = YES;
+}
+
+- (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)frame
+{
+    didStartProvisionalLoad = true;
+}
+
+@end
+
 namespace TestWebKitAPI {
 
-TEST(WebKitLegacy, NoPolicyDelegateDecision)
+TEST(WebKitLegacy, NoDecidePolicyForMIMETypeDecision)
 {
     auto webView = adoptNS([[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil]);
-    auto delegate = adoptNS([NoPolicyDelegateDecisionDelegate new]);
+    auto delegate = adoptNS([NoDecidePolicyForMIMETypeDecisionDelegate new]);
 
     webView.get().frameLoadDelegate = delegate.get();
     webView.get().policyDelegate = delegate.get();
@@ -70,8 +84,21 @@ TEST(WebKitLegacy, NoPolicyDelegateDecision)
 
     Util::run(&didFinishLoad);
 
-    EXPECT_TRUE(didNavigationActionCheck);
     EXPECT_TRUE(didNavigationResponseCheck);
+}
+
+TEST(WebKitLegacy, NoDecidePolicyForNavigationActionDecision)
+{
+    auto webView = adoptNS([[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil]);
+    auto delegate = adoptNS([NoDecidePolicyForNavigationActionDecisionDelegate new]);
+
+    webView.get().frameLoadDelegate = delegate.get();
+    webView.get().policyDelegate = delegate.get();
+    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"verboseMarkup" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+
+    Util::run(&didNavigationActionCheck);
+
+    EXPECT_FALSE(didStartProvisionalLoad);
 }
 
 } // namespace TestWebKitAPI

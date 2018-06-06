@@ -1,3 +1,34 @@
+2018-06-05  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r232082): Websites get loaded inside of Messages App chat transcript
+        https://bugs.webkit.org/show_bug.cgi?id=186331
+        <rdar://problem/40735446>
+
+        Reviewed by Darin Adler.
+
+        r232082 made it so that if the client implements decidePolicyForMIMEType / decidePolicyForNavigationAction
+        but does not call use / ignore on the listener, then we would do "use" by default.
+        The intention was to restore pre-AsyncPolicyDelegates behavior and unbreak Box.app. However,
+        the pre-AsyncPolicyDelegates behavior was only to "use" by default for decidePolicyForMIMEType,
+        not decidePolicyForNavigationAction. Doing "use" by default for decidePolicyForNavigationAction
+        is new behavior and it breaks Messages.app. This patch updates r232082 so that we now do call
+        "use" by default on the listener for decidePolicyForMIMEType and "ignore" by default for other
+        policy decisions. This should restore pre-AsyncPolicyDelegates behavior. This fixes Messages.app
+        and Box.app is still working properly.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebFrameLoaderClient::dispatchWillSubmitForm):
+        (WebFrameLoaderClient::setUpPolicyListener):
+        (-[WebFramePolicyListener initWithFrame:policyFunction:defaultPolicy:]):
+        (-[WebFramePolicyListener initWithFrame:policyFunction:defaultPolicy:appLinkURL:]):
+        (-[WebFramePolicyListener dealloc]):
+        (-[WebFramePolicyListener initWithFrame:policyFunction:]): Deleted.
+        (-[WebFramePolicyListener initWithFrame:policyFunction:appLinkURL:]): Deleted.
+
 2018-06-05  Brent Fulgham  <bfulgham@apple.com>
 
         Adjust compile and runtime flags to match shippable state of features
