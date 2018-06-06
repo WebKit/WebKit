@@ -124,8 +124,6 @@ struct NetworkProcessCreationParameters {
     Vector<String> urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
     Vector<String> urlSchemesRegisteredAsCORSEnabled;
 
-    bool tracksResourceLoadMilestones { false };
-    
 #if ENABLE(WIFI_ASSERTIONS)
     unsigned wirelessContextIdentifier { 0 };
 #endif

@@ -542,17 +542,9 @@ void NetworkConnectionToWebProcess::resetOriginAccessWhitelists()
     SecurityPolicy::resetOriginAccessWhitelists();
 }
 
-static bool networkActivityTrackingEnabled()
-{
-    return NetworkProcess::singleton().tracksResourceLoadMilestones();
-}
-
 std::optional<NetworkActivityTracker> NetworkConnectionToWebProcess::startTrackingResourceLoad(uint64_t pageID, ResourceLoadIdentifier resourceID, bool isMainResource, const PAL::SessionID& sessionID)
 {
     if (sessionID.isEphemeral())
-        return std::nullopt;
-
-    if (!networkActivityTrackingEnabled())
         return std::nullopt;
 
     // Either get the existing root activity tracker for this page or create a
@@ -603,9 +595,6 @@ std::optional<NetworkActivityTracker> NetworkConnectionToWebProcess::startTracki
 
 void NetworkConnectionToWebProcess::stopTrackingResourceLoad(ResourceLoadIdentifier resourceID, NetworkActivityTracker::CompletionCode code)
 {
-    if (!networkActivityTrackingEnabled())
-        return;
-
     auto itemIndex = findNetworkActivityTracker(resourceID);
     if (itemIndex == notFound)
         return;
@@ -616,9 +605,6 @@ void NetworkConnectionToWebProcess::stopTrackingResourceLoad(ResourceLoadIdentif
 
 void NetworkConnectionToWebProcess::stopAllNetworkActivityTracking()
 {
-    if (!networkActivityTrackingEnabled())
-        return;
-
     for (auto& activityTracker : m_networkActivityTrackers)
         activityTracker.networkActivity.complete(NetworkActivityTracker::CompletionCode::None);
 
@@ -627,9 +613,6 @@ void NetworkConnectionToWebProcess::stopAllNetworkActivityTracking()
 
 void NetworkConnectionToWebProcess::stopAllNetworkActivityTrackingForPage(uint64_t pageID)
 {
-    if (!networkActivityTrackingEnabled())
-        return;
-
     for (auto& activityTracker : m_networkActivityTrackers) {
         if (activityTracker.pageID == pageID)
             activityTracker.networkActivity.complete(NetworkActivityTracker::CompletionCode::None);

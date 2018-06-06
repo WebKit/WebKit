@@ -159,8 +159,6 @@ public:
     NetworkContentRuleListManager& networkContentRuleListManager() { return m_NetworkContentRuleListManager; }
 #endif
 
-    bool tracksResourceLoadMilestones() const { return m_tracksResourceLoadMilestones; }
-
 private:
     NetworkProcess();
     ~NetworkProcess();
@@ -297,8 +295,6 @@ private:
 #if ENABLE(CONTENT_EXTENSIONS)
     NetworkContentRuleListManager m_NetworkContentRuleListManager;
 #endif
-
-    bool m_tracksResourceLoadMilestones { false };
 };
 
 } // namespace WebKit

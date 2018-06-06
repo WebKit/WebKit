@@ -188,16 +188,6 @@ void WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(WKContextConfig
     toImpl(configuration)->setProcessSwapsOnWindowOpenWithOpener(swaps);
 }
 
-bool WKContextConfigurationTracksResourceLoadMilestones(WKContextConfigurationRef configuration)
-{
-    return toImpl(configuration)->tracksResourceLoadMilestones();
-}
-
-void WKContextConfigurationSetTracksResourceLoadMilestones(WKContextConfigurationRef configuration, bool track)
-{
-    toImpl(configuration)->setTracksResourceLoadMilestones(track);
-}
-
 int64_t WKContextConfigurationDiskCacheSizeOverride(WKContextConfigurationRef configuration)
 {
     return toImpl(configuration)->diskCacheSizeOverride();

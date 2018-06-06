@@ -1,3 +1,45 @@
+2018-06-05  Keith Rollin  <krollin@apple.com>
+
+        Remove tracksResourceLoadMilestones support
+        https://bugs.webkit.org/show_bug.cgi?id=186329
+        <rdar://problem/40829898>
+
+        Reviewed by Darin Adler.
+
+        Remove the mechanism for enabling/disabling the tracking of
+        resource-load milestones. This was initially added in order to enable
+        the tracking only for Safari. However, the decision has been made to
+        enable the tracking for all WebKit clients, so it's now enabled
+        unconditionally.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::startTrackingResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::stopTrackingResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::stopAllNetworkActivityTracking):
+        (WebKit::NetworkConnectionToWebProcess::stopAllNetworkActivityTrackingForPage):
+        (WebKit::networkActivityTrackingEnabled): Deleted.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::tracksResourceLoadMilestones const): Deleted.
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationTracksResourceLoadMilestones): Deleted.
+        (WKContextConfigurationSetTracksResourceLoadMilestones): Deleted.
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration tracksResourceLoadMilestones]): Deleted.
+        (-[_WKProcessPoolConfiguration setTracksResourceLoadMilestones:]): Deleted.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2018-06-05  Darin Adler  <darin@apple.com>
 
         [Cocoa] Retire DispatchPtr, and add more move semantics and simpler #ifs to other smart pointers

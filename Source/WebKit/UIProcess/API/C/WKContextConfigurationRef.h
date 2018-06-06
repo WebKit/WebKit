@@ -77,9 +77,6 @@ WK_EXPORT void WKContextConfigurationSetAlwaysKeepAndReuseSwappedProcesses(WKCon
 WK_EXPORT bool WKContextConfigurationProcessSwapsOnWindowOpenWithOpener(WKContextConfigurationRef configuration);
 WK_EXPORT void WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(WKContextConfigurationRef configuration, bool swaps);
 
-WK_EXPORT bool WKContextConfigurationTracksResourceLoadMilestones(WKContextConfigurationRef configuration);
-WK_EXPORT void WKContextConfigurationSetTracksResourceLoadMilestones(WKContextConfigurationRef configuration, bool track);
-
 WK_EXPORT int64_t WKContextConfigurationDiskCacheSizeOverride(WKContextConfigurationRef configuration);
 WK_EXPORT void WKContextConfigurationSetDiskCacheSizeOverride(WKContextConfigurationRef configuration, int64_t size);
     

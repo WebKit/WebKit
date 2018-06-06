@@ -519,8 +519,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     parameters.urlSchemesRegisteredAsCORSEnabled = copyToVector(m_schemesToRegisterAsCORSEnabled);
     parameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest = copyToVector(m_schemesToRegisterAsCanDisplayOnlyIfCanRequest);
 
-    parameters.tracksResourceLoadMilestones = m_configuration->tracksResourceLoadMilestones();
-
     // Add any platform specific parameters
     platformInitializeNetworkProcess(parameters);
 

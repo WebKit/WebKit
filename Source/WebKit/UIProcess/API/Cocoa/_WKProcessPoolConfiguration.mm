@@ -269,16 +269,6 @@
     return _processPoolConfiguration->processSwapsOnWindowOpenWithOpener();
 }
 
-- (BOOL)tracksResourceLoadMilestones
-{
-    return _processPoolConfiguration->tracksResourceLoadMilestones();
-}
-
-- (void)setTracksResourceLoadMilestones:(BOOL)track
-{
-    _processPoolConfiguration->setTracksResourceLoadMilestones(track);
-}
-
 - (BOOL)pageCacheEnabled
 {
     return _processPoolConfiguration->cacheModel() != WebKit::CacheModelDocumentViewer;
