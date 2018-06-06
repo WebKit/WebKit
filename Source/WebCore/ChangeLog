@@ -1,3 +1,17 @@
+2018-06-05  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (231817): Videos permanently blank out after switching out of a tab and back in
+        https://bugs.webkit.org/show_bug.cgi?id=186326
+        <rdar://problem/40778157>
+
+        Reviewed by Eric Carlson.
+
+        Check whether the element is visible in the viewport when the web view itself becomes visible, and if so, clear the m_elementIsHiddenUntilVisibleInViewport flag.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::visibilityChanged):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+
 2018-06-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Move inflow, replaced width and margin computation to a dedicated function.

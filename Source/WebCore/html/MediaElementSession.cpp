@@ -167,6 +167,8 @@ void MediaElementSession::visibilityChanged()
 
     if (m_element.elementIsHidden() && !m_element.isFullscreen())
         m_elementIsHiddenUntilVisibleInViewport = true;
+    else if (m_element.isVisibleInViewport())
+        m_elementIsHiddenUntilVisibleInViewport = false;
 }
 
 void MediaElementSession::isVisibleInViewportChanged()

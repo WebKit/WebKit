@@ -1,3 +1,14 @@
+2018-06-05  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (231817): Videos permanently blank out after switching out of a tab and back in
+        https://bugs.webkit.org/show_bug.cgi?id=186326
+        <rdar://problem/40778157>
+
+        Reviewed by Eric Carlson.
+
+        * media/video-buffering-allowed-expected.txt:
+        * media/video-buffering-allowed.html:
+
 2018-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Spelling errors in the middle of an inserted paragraph are not displayed

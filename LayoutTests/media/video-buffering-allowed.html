@@ -31,6 +31,14 @@
             run('document.body.insertBefore(video, document.body.firstChild)');
             await testExpectedEventually('internals.elementShouldBufferData(video)', true);
 
+            consoleWrite('* Simulate the view becoming invisible.');
+            run('internals.setPageVisibility(false)');
+            await testExpectedEventually('internals.elementShouldBufferData(video)', false);
+
+            consoleWrite('* Simulate the view becoming visible.');
+            run('internals.setPageVisibility(true)');
+            await testExpectedEventually('internals.elementShouldBufferData(video)', true);
+
             consoleWrite('* display:none the video element.');
             run('video.style.display = "none"');
             await testExpectedEventually('internals.elementShouldBufferData(video)', true);

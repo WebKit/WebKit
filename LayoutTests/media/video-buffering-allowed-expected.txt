@@ -16,6 +16,12 @@ EXPECTED (internals.elementShouldBufferData(video) == 'true') OK
 * Re-insert the video element into the document.
 RUN(document.body.insertBefore(video, document.body.firstChild))
 EXPECTED (internals.elementShouldBufferData(video) == 'true') OK
+* Simulate the view becoming invisible.
+RUN(internals.setPageVisibility(false))
+EXPECTED (internals.elementShouldBufferData(video) == 'false') OK
+* Simulate the view becoming visible.
+RUN(internals.setPageVisibility(true))
+EXPECTED (internals.elementShouldBufferData(video) == 'true') OK
 * display:none the video element.
 RUN(video.style.display = "none")
 EXPECTED (internals.elementShouldBufferData(video) == 'true') OK
