@@ -171,72 +171,31 @@ Controller = Utilities.createClass(
         return this._sampler.processSamples();
     },
 
-    _processComplexitySamples: function(complexitySamples, complexityAverageSamples)
+    _processComplexitySamples: function(complexitySamples)
     {
-        complexityAverageSamples.addField(Strings.json.complexity, 0);
-        complexityAverageSamples.addField(Strings.json.frameLength, 1);
-        complexityAverageSamples.addField(Strings.json.measurements.stdev, 2);
-
         complexitySamples.sort(function(a, b) {
             return complexitySamples.getFieldInDatum(a, Strings.json.complexity) - complexitySamples.getFieldInDatum(b, Strings.json.complexity);
         });
-
-        // Samples averaged based on complexity
-        var currentComplexity = -1;
-        var experimentAtComplexity;
-        function addSample() {
-            var mean = experimentAtComplexity.mean();
-            var stdev = experimentAtComplexity.standardDeviation();
-
-            var averageSample = complexityAverageSamples.createDatum();
-            complexityAverageSamples.push(averageSample);
-            complexityAverageSamples.setFieldInDatum(averageSample, Strings.json.complexity, currentComplexity);
-            complexityAverageSamples.setFieldInDatum(averageSample, Strings.json.frameLength, mean);
-            complexityAverageSamples.setFieldInDatum(averageSample, Strings.json.measurements.stdev, stdev);
-        }
-        complexitySamples.forEach(function(sample) {
-            var sampleComplexity = complexitySamples.getFieldInDatum(sample, Strings.json.complexity);
-            if (sampleComplexity != currentComplexity) {
-                if (currentComplexity > -1)
-                    addSample();
-
-                currentComplexity = sampleComplexity;
-                experimentAtComplexity = new Experiment;
-            }
-            experimentAtComplexity.sample(complexitySamples.getFieldInDatum(sample, Strings.json.frameLength));
-        });
-        // Finish off the last one
-        addSample();
     },
 
-    processSamples: function(results)
+    _processMarks: function()
     {
-        var complexityExperiment = new Experiment;
-        var smoothedFrameLengthExperiment = new Experiment;
-
-        var samples = this._sampler.samples;
-
         for (var markName in this._marks)
             this._marks[markName].time -= this._startTimestamp;
-        results[Strings.json.marks] = this._marks;
-
-        results[Strings.json.samples] = {};
-
+        return this._marks;
+    },
+    _processControllerSamples: function()
+    {
         var controllerSamples = new SampleData;
-        results[Strings.json.samples][Strings.json.controller] = controllerSamples;
-
         controllerSamples.addField(Strings.json.time, 0);
         controllerSamples.addField(Strings.json.complexity, 1);
         controllerSamples.addField(Strings.json.frameLength, 2);
         controllerSamples.addField(Strings.json.smoothedFrameLength, 3);
 
-        var complexitySamples = new SampleData(controllerSamples.fieldMap);
-        results[Strings.json.samples][Strings.json.complexity] = complexitySamples;
-
+        var samples = this._sampler.samples;
         samples[0].forEach(function(timestamp, i) {
             var sample = controllerSamples.createDatum();
             controllerSamples.push(sample);
-            complexitySamples.push(sample);
 
             // Represent time in milliseconds
             controllerSamples.setFieldInDatum(sample, Strings.json.time, timestamp - this._startTimestamp);
@@ -251,9 +210,23 @@ Controller = Utilities.createClass(
                 controllerSamples.setFieldInDatum(sample, Strings.json.smoothedFrameLength, samples[2][i]);
         }, this);
 
-        var complexityAverageSamples = new SampleData;
-        results[Strings.json.samples][Strings.json.complexityAverage] = complexityAverageSamples;
-        this._processComplexitySamples(complexitySamples, complexityAverageSamples);
+        return controllerSamples;
+    },
+
+    processSamples: function(results)
+    {
+        results[Strings.json.marks] = this._processMarks();
+
+        var controllerSamples = this._processControllerSamples();
+        var complexitySamples = new SampleData(controllerSamples.fieldMap);
+
+        results[Strings.json.samples] = {};
+        results[Strings.json.samples][Strings.json.controller] = controllerSamples;
+        results[Strings.json.samples][Strings.json.complexity] = complexitySamples;
+        controllerSamples.forEach(function (sample) {
+            complexitySamples.push(sample);
+        });
+        this._processComplexitySamples(complexitySamples);
     }
 });
 
@@ -546,16 +519,17 @@ RampController = Utilities.createSubclass(Controller,
 
     processSamples: function(results)
     {
-        Controller.prototype.processSamples.call(this, results);
-
+        results[Strings.json.marks] = this._processMarks();
         // Have samplingTimeOffset represent time 0
         var startTimestamp = this._marks[Strings.json.samplingStartTimeOffset].time;
-
         for (var markName in results[Strings.json.marks]) {
             results[Strings.json.marks][markName].time -= startTimestamp;
         }
 
-        var controllerSamples = results[Strings.json.samples][Strings.json.controller];
+        results[Strings.json.samples] = {};
+
+        var controllerSamples = this._processControllerSamples();
+        results[Strings.json.samples][Strings.json.controller] = controllerSamples;
         controllerSamples.forEach(function(timeSample) {
             controllerSamples.setFieldInDatum(timeSample, Strings.json.time, controllerSamples.getFieldInDatum(timeSample, Strings.json.time) - startTimestamp);
         });
@@ -595,9 +569,7 @@ RampController = Utilities.createSubclass(Controller,
                 complexitySamples.push(controllerSamples.at(j));
         });
 
-        var complexityAverageSamples = new SampleData;
-        results[Strings.json.samples][Strings.json.complexityAverage] = complexityAverageSamples;
-        this._processComplexitySamples(complexitySamples, complexityAverageSamples);
+        this._processComplexitySamples(complexitySamples);
     }
 });
 
