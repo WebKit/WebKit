@@ -249,10 +249,8 @@ private:
     WebCore::IntSize pdfDocumentSize() const { return m_pdfDocumentSize; }
     void setPDFDocumentSize(WebCore::IntSize size) { m_pdfDocumentSize = size; }
 
-#ifdef __OBJC__
     NSData *liveData() const;
-    NSData *rawData() const { return (__bridge NSData *)m_data.get(); }
-#endif
+    NSData *rawData() const { return (NSData *)m_data.get(); }
 
     WebFrame* webFrame() const { return m_frame; }
 

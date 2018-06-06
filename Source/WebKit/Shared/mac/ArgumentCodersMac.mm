@@ -243,7 +243,7 @@ static inline bool isSerializableValue(id value)
 #else
     auto fontClass = [UIFont class];
 #endif
-    return ![value isKindOfClass:fontClass] || isSerializableFont((__bridge CTFontRef)value);
+    return ![value isKindOfClass:fontClass] || isSerializableFont(reinterpret_cast<CTFontRef>(value));
 }
 
 static inline RetainPtr<NSDictionary> filterUnserializableValues(NSDictionary *dictionary)
@@ -425,7 +425,7 @@ bool decode(Decoder& decoder, RetainPtr<NSFont>& result)
 
 void encode(Encoder& encoder, NSNumber *number)
 {
-    encode(encoder, (__bridge CFNumberRef)number);
+    encode(encoder, (CFNumberRef)number);
 }
 
 bool decode(Decoder& decoder, RetainPtr<NSNumber>& result)
@@ -440,7 +440,7 @@ bool decode(Decoder& decoder, RetainPtr<NSNumber>& result)
 
 void encode(Encoder& encoder, NSString *string)
 {
-    encode(encoder, (__bridge CFStringRef)string);
+    encode(encoder, (CFStringRef)string);
 }
 
 bool decode(Decoder& decoder, RetainPtr<NSString>& result)
@@ -492,7 +492,7 @@ bool decode(Decoder& decoder, RetainPtr<NSArray>& result)
 
 void encode(Encoder& encoder, NSDate *date)
 {
-    encode(encoder, (__bridge CFDateRef)date);
+    encode(encoder, (CFDateRef)date);
 }
 
 bool decode(Decoder& decoder, RetainPtr<NSDate>& result)
@@ -507,7 +507,7 @@ bool decode(Decoder& decoder, RetainPtr<NSDate>& result)
 
 void encode(Encoder& encoder, NSData *data)
 {
-    encode(encoder, (__bridge CFDataRef)data);
+    encode(encoder, (CFDataRef)data);
 }
 
 bool decode(Decoder& decoder, RetainPtr<NSData>& result)
@@ -522,7 +522,7 @@ bool decode(Decoder& decoder, RetainPtr<NSData>& result)
 
 void encode(Encoder& encoder, NSURL *URL)
 {
-    encode(encoder, (__bridge CFURLRef)URL);
+    encode(encoder, (CFURLRef)URL);
 }
 
 bool decode(Decoder& decoder, RetainPtr<NSURL>& result)

@@ -1,5 +1,9 @@
 2018-06-06  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Revert r232520. rdar://problem/40857773
+
+2018-06-06  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r232548. rdar://problem/40838449
 
     REGRESSION (r232301) - Unable to enter video fullscreen
