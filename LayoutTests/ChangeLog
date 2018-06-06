@@ -1,5 +1,18 @@
 2018-06-06  Jer Noble  <jer.noble@apple.com>
 
+        REGRESSION (r231817?): Layout Test media/track/track-delete-during-setup.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=185889
+        <rdar://problem/40583180>
+
+        Reviewed by Eric Carlson.
+
+        Modify the track-delete-during-setup.html test to end on video element suspend in
+        addition to canplaythrough.
+
+        * media/track/track-delete-during-setup.html:
+
+2018-06-06  Jer Noble  <jer.noble@apple.com>
+
         Regions outside of the fullscreen window are exposed during zoom operations
         https://bugs.webkit.org/show_bug.cgi?id=186330
         <rdar://problem/34698009>

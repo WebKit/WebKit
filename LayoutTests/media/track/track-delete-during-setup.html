@@ -23,6 +23,11 @@
                 setTimeout("endTest()", 100);
             }
 
+            function suspend()
+            {
+                setTimeout("endTest()", 100);
+            }
+
             function start()
             {
                 consoleWrite("<feOffset>");
@@ -37,5 +42,5 @@
             }
         </script>
     <body onload="start()">
-<command><aside><kbd><video oncanplaythrough="canplaythrough()" > 
+<command><aside><kbd><video oncanplaythrough="canplaythrough()" onsuspend="suspend()">
             <track src="captions-webvtt/metadata.vtt" onload="metadataTrackLoaded()">
