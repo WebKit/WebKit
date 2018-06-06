@@ -1,5 +1,19 @@
 2018-06-06  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Add margin computation for floating, replaced elements.
+        https://bugs.webkit.org/show_bug.cgi?id=186337
+
+        Reviewed by Antti Koivisto.
+
+        If 'margin-left' or 'margin-right' are computed as 'auto', their used value is '0'.
+
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+
+2018-06-06  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Add margin computation for floating, no-replaced elements.
         https://bugs.webkit.org/show_bug.cgi?id=186334
 

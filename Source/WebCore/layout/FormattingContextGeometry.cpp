@@ -255,8 +255,18 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatin
     ASSERT(layoutBox.isFloatingPositioned() && layoutBox.replaced());
     // 10.3.6 Floating, replaced elements
     //
-    // The used value of 'width' is determined as for inline replaced elements.
-    return inlineReplacedWidthAndMargin(layoutContext, layoutBox);
+    // 1. If 'margin-left' or 'margin-right' are computed as 'auto', their used value is '0'.
+    // 2. The used value of 'width' is determined as for inline replaced elements.
+    auto& style = layoutBox.style();
+    std::optional<LayoutUnit> computedMarginLeftValue;
+    std::optional<LayoutUnit> computedMarginRightValue;
+
+    if (style.marginLeft().isAuto())
+        computedMarginLeftValue = LayoutUnit { 0 };
+    if (style.marginRight().isAuto())
+        computedMarginRightValue = LayoutUnit { 0 };
+
+    return inlineReplacedWidthAndMargin(layoutContext, layoutBox, computedMarginLeftValue, computedMarginRightValue);
 }
 
 static LayoutPoint outOfFlowNonReplacedPosition(LayoutContext& layoutContext, const Box& layoutBox)
@@ -534,7 +544,8 @@ LayoutUnit FormattingContext::Geometry::inlineReplacedHeight(LayoutContext&, con
     return computedHeightValue;
 }
 
-FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox,
+    std::optional<LayoutUnit> precomputedMarginLeft, std::optional<LayoutUnit> precomputedMarginRight)
 {
     ASSERT((layoutBox.isOutOfFlowPositioned() || layoutBox.isFloatingPositioned() || layoutBox.isInFlow()) && layoutBox.replaced());
     // 10.3.2 Inline, replaced elements
@@ -556,19 +567,26 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::inlineR
     // 5. Otherwise, if 'width' has a computed value of 'auto', but none of the conditions above are met, then the used value of 'width' becomes 300px.
     //    If 300px is too wide to fit the device, UAs should use the width of the largest rectangle that has a 2:1 ratio and fits the device instead.
     auto& style = layoutBox.style();
-    LayoutUnit computedWidthValue;
-    LayoutUnit computedMarginLeftValue;
-    LayoutUnit computedMarginRightValue;
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
 
-    {
-        auto marginLeft = style.marginLeft();
+    auto computeMarginRight = [&]() {
+        if (precomputedMarginRight)
+            return precomputedMarginRight.value();
         auto marginRight = style.marginRight();
-        auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+        return marginRight.isAuto() ? LayoutUnit { 0 } : valueForLength(marginRight, containingBlockWidth);
+    };
 
-        computedMarginLeftValue = marginLeft.isAuto() ? LayoutUnit(0) : valueForLength(marginLeft, containingBlockWidth);
-        computedMarginRightValue = marginRight.isAuto() ? LayoutUnit(0) : valueForLength(marginRight, containingBlockWidth);
-    }
+    auto computeMarginLeft = [&]() {
+        if (precomputedMarginLeft)
+            return precomputedMarginLeft.value();
+        auto marginLeft = style.marginLeft();
+        return marginLeft.isAuto() ? LayoutUnit { 0 } : valueForLength(marginLeft, containingBlockWidth);
+    };
 
+    LayoutUnit computedMarginLeftValue = computeMarginLeft();
+    LayoutUnit computedMarginRightValue = computeMarginRight();
+
+    LayoutUnit computedWidthValue;
     auto width = style.logicalWidth();
     auto height = style.logicalHeight();
     auto replaced = layoutBox.replaced();

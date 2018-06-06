@@ -95,7 +95,8 @@ protected:
         static LayoutPoint outOfFlowPosition(LayoutContext&, const Box&);
 
         static LayoutUnit inlineReplacedHeight(LayoutContext&, const Box&);
-        static WidthAndMargin inlineReplacedWidthAndMargin(LayoutContext&, const Box&);
+        static WidthAndMargin inlineReplacedWidthAndMargin(LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedMarginLeft = { },
+            std::optional<LayoutUnit> precomputedMarginRight = { });
 
         static Display::Box::Edges computedBorder(LayoutContext&, const Box&);
         static std::optional<Display::Box::Edges> computedPadding(LayoutContext&, const Box&);
