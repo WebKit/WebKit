@@ -1,3 +1,15 @@
+2018-06-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add margin computation for floating, no-replaced elements.
+        https://bugs.webkit.org/show_bug.cgi?id=186334
+
+        Reviewed by Antti Koivisto.
+
+        If 'margin-left', or 'margin-right' are computed as 'auto', their used value is '0'.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+
 2018-06-06  Antti Koivisto  <antti@apple.com>
 
         Use minimal coverage rect for tiled layers when under memory pressure

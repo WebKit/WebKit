@@ -220,11 +220,26 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatin
 {
     ASSERT(layoutBox.isFloatingPositioned() && !layoutBox.replaced());
     // 10.3.5 Floating, non-replaced elements
+    //
+    // 1. If 'margin-left', or 'margin-right' are computed as 'auto', their used value is '0'.
+    // 2. If 'width' is computed as 'auto', the used value is the "shrink-to-fit" width.
+    auto& style = layoutBox.style();
+    auto width = style.logicalWidth();
+    LayoutUnit computedMarginLeftValue;
+    LayoutUnit computedMarginRightValue;
 
-    // If 'width' is computed as 'auto', the used value is the "shrink-to-fit" width.
-    auto width = layoutBox.style().logicalWidth();
+    {
+        auto marginLeft = style.marginLeft();
+        auto marginRight = style.marginRight();
+        auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+        // #1
+        computedMarginLeftValue = marginLeft.isAuto() ? LayoutUnit(0) : valueForLength(marginLeft, containingBlockWidth);
+        computedMarginRightValue = marginRight.isAuto() ? LayoutUnit(0) : valueForLength(marginRight, containingBlockWidth);
+    }
+
+    // #2
     auto computedWidthValue = width.isAuto() ? shrinkToFitWidth(layoutContext, layoutBox) : LayoutUnit(width.value());
-    return FormattingContext::Geometry::WidthAndMargin { computedWidthValue, { } };
+    return FormattingContext::Geometry::WidthAndMargin { computedWidthValue, { computedMarginLeftValue, computedMarginRightValue } };
 }
 
 LayoutUnit FormattingContext::Geometry::floatingReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox)
