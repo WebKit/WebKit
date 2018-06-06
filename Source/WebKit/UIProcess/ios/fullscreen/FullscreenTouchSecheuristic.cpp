@@ -78,7 +78,7 @@ double FullscreenTouchSecheuristic::distanceScore(const CGPoint& nextLocation, c
 double FullscreenTouchSecheuristic::attenuationFactor(Seconds delta)
 {
     double normalizedTimeDelta = delta / m_rampDownSpeed;
-    return normalizedTimeDelta * m_weight;
+    return std::max(std::min(normalizedTimeDelta * m_weight, 1.0), 0.0);
 }
 
 }

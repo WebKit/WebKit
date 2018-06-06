@@ -1,3 +1,16 @@
+2018-06-06  Jeremy Jones  <jeremyj@apple.com>
+
+        attenuationFactor should be in range [0,1]
+        https://bugs.webkit.org/show_bug.cgi?id=186320
+        rdar://problem/40821456
+
+        Reviewed by Jer Noble.
+
+        If attenuationFactor is outside of this range it can cause false positives.
+
+        * UIProcess/ios/fullscreen/FullscreenTouchSecheuristic.cpp:
+        (WebKit::FullscreenTouchSecheuristic::attenuationFactor):
+
 2018-06-06  Tim Horton  <timothy_horton@apple.com>
 
         Move animated resize into the layer tree transaction, and make it asynchronous
