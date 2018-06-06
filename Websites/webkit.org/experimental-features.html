@@ -94,6 +94,10 @@ function testWebAnimations() {
     return !!window.Animation;
 }
 
+function testWebAnimationsCSSIntegration() {
+    return !!window.CSSAnimation;
+}
+
 function testWebGL2() {
     let canvas = document.createElement("canvas");
     return canvas.getContext("webgl2");
@@ -146,6 +150,7 @@ window.addEventListener("load", function () {
         <div class="test" id="SubtleCrypto"><p>SubtleCrypto</p></div>
         <div class="test" id="VariationFonts"><p>Variation Fonts</p></div>
         <div class="test" id="WebAnimations"><p>Web Animations</p></div>
+        <div class="test" id="WebAnimationsCSSIntegration"><p>Web Animations and CSS Integration</p></div>
         <div class="test" id="WebGL2"><p>WebGL 2.0</p></div>
         <div class="test" id="WebGPU"><p>WebGPU</p></div>
         <div class="test" id="WebRTC"><p>WebRTC</p></div>
