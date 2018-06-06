@@ -1,3 +1,88 @@
+2018-06-06  Tim Horton  <timothy_horton@apple.com>
+
+        Move animated resize into the layer tree transaction, and make it asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=186130
+        <rdar://problem/38477288>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::setScrollPosition):
+        (WebKit::RemoteLayerTreeTransaction::dynamicViewportSizeUpdateID const):
+        (WebKit::RemoteLayerTreeTransaction::setDynamicViewportSizeUpdateID):
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode const):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::willCommitLayerTree):
+        Add scrollPosition to the transaction on all platforms, not just Mac.
+        Add the optional dynamicViewportSizeUpdateID to the transaction, representing
+        the most recent dynamicViewportSizeUpdate that commit contains, if any.
+
+        * Shared/ios/DynamicViewportSizeUpdate.h:
+        Added a typedef for DynamicViewportSizeUpdateID, and move the mode enum here.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::dynamicViewportUpdateChangedTarget): Deleted.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+        (WebKit::WebPageProxy::didCommitLayerTree):
+        (WebKit::WebPageProxy::synchronizeDynamicViewportUpdate): Deleted.
+        (WebKit::WebPageProxy::dynamicViewportUpdateChangedTarget): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::synchronizeDynamicViewportUpdate): Deleted.
+        Remove dynamicViewportUpdateChangedTarget and synchronizeDynamicViewportUpdate.
+        Move dynamicViewportSizeUpdateID maintenance into WKWebView.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _processDidExit]):
+        Remove _resizeAnimationTransformTransactionID. We now instead pack
+        the resize ID inside the transaction, instead of separately sending
+        back a transaction ID to wait for.
+
+        (-[WKWebView _didCommitLayerTreeDuringAnimatedResize:]):
+        (-[WKWebView _didCommitLayerTree:]):
+        Added, factored out of _didCommitLayerTree:.
+        If the transaction includes the result of the most recently-sent resize,
+        store the requisite adjustments required to counter the new scale and
+        scroll offset, update the resizeAnimationView, and, if endAnimatedResize
+        has already been called, call _didCompleteAnimatedResize to tear down
+        the animation view and put things back together.
+
+        Add some code so that if a commit arrives before the resize, we update
+        the scale of the resize animation view to keep the width fitting.
+
+        (activeMaximumUnobscuredSize):
+        (activeOrientation):
+        Move these because the code that depends on them moved.
+
+        (-[WKWebView _didCompleteAnimatedResize]):
+        Broken out of _endAnimatedResize. This can now be called from
+        either endAnimatedResize or _didCommitLayerTreeDuringAnimatedResize,
+        depending on which is called first.
+
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        Don't create a new resize view if we still have one. Otherwise, we'll
+        get the view ordering all wrong when making the second one. This
+        didn't previously cause trouble, because we don't have a lot of
+        WKScrollView subviews, but it totally could.
+
+        Adopt _initialContentOffsetForScrollView just to make this code more clear.
+
+        (-[WKWebView _endAnimatedResize]):
+        (-[WKWebView _dynamicViewportUpdateChangedTargetToScale:position:nextValidLayerTreeTransactionID:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+
+
 2018-06-05  Per Arne Vollan  <pvollan@apple.com>
 
         Move OpenGL display mask to screen data struct.

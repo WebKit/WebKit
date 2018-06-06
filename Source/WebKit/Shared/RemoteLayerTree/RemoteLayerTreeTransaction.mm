@@ -533,9 +533,8 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
     encoder << m_minStableLayoutViewportOrigin;
     encoder << m_maxStableLayoutViewportOrigin;
 
-#if PLATFORM(MAC)
     encoder << m_scrollPosition;
-#endif
+
     encoder << m_pageExtendedBackgroundColor;
     encoder << m_pageScaleFactor;
     encoder << m_minimumScaleFactor;
@@ -563,6 +562,8 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
     encoder << hasEditorState();
     if (m_editorState)
         encoder << *m_editorState;
+
+    encoder << m_dynamicViewportSizeUpdateID;
 }
 
 bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTransaction& result)
@@ -624,11 +625,9 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
 
     if (!decoder.decode(result.m_maxStableLayoutViewportOrigin))
         return false;
-    
-#if PLATFORM(MAC)
+
     if (!decoder.decode(result.m_scrollPosition))
         return false;
-#endif
     
     if (!decoder.decode(result.m_pageExtendedBackgroundColor))
         return false;
@@ -691,6 +690,9 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
             return false;
         result.setEditorState(editorState);
     }
+
+    if (!decoder.decode(result.m_dynamicViewportSizeUpdateID))
+        return false;
 
     return true;
 }

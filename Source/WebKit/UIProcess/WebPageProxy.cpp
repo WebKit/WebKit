@@ -5963,9 +5963,6 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #if PLATFORM(IOS)
     m_firstLayerTreeTransactionIdAfterDidCommitLoad = 0;
     m_lastVisibleContentRectUpdate = VisibleContentRectUpdateInfo();
-    m_dynamicViewportSizeUpdateWaitingForTarget = false;
-    m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit = false;
-    m_dynamicViewportSizeUpdateLayerTreeTransactionID = 0;
     m_hasNetworkRequestsOnSuspended = false;
     m_isKeyboardAnimatingIn = false;
     m_isScrollingOrZooming = false;
