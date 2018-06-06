@@ -55,9 +55,15 @@ using WebCore::clickToExitFullScreenText;
     _effectView.get().autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
     _effectView.get().blendingMode = NSVisualEffectBlendingModeWithinWindow;
     _effectView.get().hidden = YES;
-    _effectView.get().material = NSVisualEffectMaterialLight;
     _effectView.get().state = NSVisualEffectStateActive;
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    _effectView.get().material = NSVisualEffectMaterialPopover;
+#else
+    _effectView.get().material = NSVisualEffectMaterialLight;
     _effectView.get().appearance = [NSAppearance appearanceNamed:NSAppearanceNameVibrantLight];
+#endif
+
     [self addSubview:_effectView.get()];
 
     _exitWarning = adoptNS([[NSTextField alloc] initWithFrame:NSZeroRect]);

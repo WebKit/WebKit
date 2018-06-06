@@ -1,3 +1,17 @@
+2018-06-06  Timothy Hatcher  <timothy@apple.com>
+
+        Wrong NSVisualEffectMaterial used for exit full screen overlay in dark mode.
+
+        https://bugs.webkit.org/show_bug.cgi?id=186350
+        rdar://problem/39135535
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac/WebCoreFullScreenPlaceholderView.mm:
+        (-[WebCoreFullScreenPlaceholderView initWithFrame:]):
+        Use the NSVisualEffectMaterialFullScreenUI on macOS 10.14 and don't
+        set an explicit NSAppearance.
+
 2018-06-06  Jer Noble  <jer.noble@apple.com>
 
         Regions outside of the fullscreen window are exposed during zoom operations
