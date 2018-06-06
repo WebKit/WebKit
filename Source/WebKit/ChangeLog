@@ -1,3 +1,16 @@
+2018-06-06  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r232301) - Unable to enter video fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=186357
+        <rdar://problem/40838449>
+
+        Reviewed by Jon Lee.
+
+        Only set up the standby fullscreen element if we are in element fullscreen.
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::videoControlsManagerDidChange):
+
 2018-06-06  Jeremy Jones  <jeremyj@apple.com>
 
         attenuationFactor should be in range [0,1]
