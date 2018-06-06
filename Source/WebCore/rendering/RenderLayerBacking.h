@@ -98,6 +98,9 @@ public:
     GraphicsLayer* foregroundLayer() const { return m_foregroundLayer.get(); }
     GraphicsLayer* backgroundLayer() const { return m_backgroundLayer.get(); }
     bool backgroundLayerPaintsFixedRootBackground() const { return m_backgroundLayerPaintsFixedRootBackground; }
+
+    bool requiresBackgroundLayer() const { return m_requiresBackgroundLayer; }
+    void setRequiresBackgroundLayer(bool);
     
     bool hasScrollingLayer() const { return m_scrollingLayer != nullptr; }
     GraphicsLayer* scrollingLayer() const { return m_scrollingLayer.get(); }
@@ -384,6 +387,7 @@ private:
     bool m_canCompositeBackdropFilters { false };
 #endif
     bool m_backgroundLayerPaintsFixedRootBackground { false };
+    bool m_requiresBackgroundLayer { false };
     bool m_paintsSubpixelAntialiasedText { false }; // This is for logging only.
 };
 

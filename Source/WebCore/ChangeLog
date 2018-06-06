@@ -1,5 +1,32 @@
 2018-06-06  Jer Noble  <jer.noble@apple.com>
 
+        Regions outside of the fullscreen window are exposed during zoom operations
+        https://bugs.webkit.org/show_bug.cgi?id=186330
+        <rdar://problem/34698009>
+
+        Reviewed by Simon Fraser.
+
+        Test: fullscreen/full-screen-layer-dump.html
+
+        Introduce the concept of "requiresBackgroundLayer" to RenderLayerBacking, for use by
+        RenderFullScreen. Previously, the backgroundLayer in RenderLayerBacking was only used
+        by the root renderer with fixed backgrounds. Give the RenderFullScreen a background layer
+        that's approximately 3x as tall and wide as the renderer itself, so nothing is exposed
+        during pinch operations.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::updateDrawsContent):
+        (WebCore::RenderLayerBacking::setRequiresBackgroundLayer):
+        (WebCore::RenderLayerBacking::updateBackgroundLayer):
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedBackgroundColor):
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        * rendering/RenderLayerBacking.h:
+
+2018-06-06  Jer Noble  <jer.noble@apple.com>
+
         Set the AVAssetResourceLoaderRequest's contentType to AVStreamingKeyDeliveryContentKeyType in the case of a FPS key request.
         https://bugs.webkit.org/show_bug.cgi?id=186328
         <rdar://problem/40829228>

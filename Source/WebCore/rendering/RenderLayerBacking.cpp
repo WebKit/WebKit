@@ -217,6 +217,9 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
     }
     
     createPrimaryGraphicsLayer();
+#if ENABLE(FULLSCREEN_API)
+    setRequiresBackgroundLayer(layer.renderer().isRenderFullScreen());
+#endif
 
     if (auto* tiledBacking = this->tiledBacking()) {
         tiledBacking->setIsInWindow(renderer().page().isInWindow());
@@ -670,7 +673,7 @@ bool RenderLayerBacking::updateConfiguration()
     setBackgroundLayerPaintsFixedRootBackground(compositor().needsFixedRootBackgroundLayer(m_owningLayer));
     
     // The background layer is currently only used for fixed root backgrounds.
-    if (updateBackgroundLayer(m_backgroundLayerPaintsFixedRootBackground))
+    if (updateBackgroundLayer(m_backgroundLayerPaintsFixedRootBackground || m_requiresBackgroundLayer))
         layerConfigChanged = true;
 
     if (updateForegroundLayer(compositor().needsContentsCompositingLayer(m_owningLayer)))
@@ -1031,7 +1034,7 @@ void RenderLayerBacking::updateGeometry()
         positionOverflowControlsLayers();
     }
 
-    if (!m_isMainFrameRenderViewLayer && !m_isFrameLayerWithTiledBacking) {
+    if (!m_isMainFrameRenderViewLayer && !m_isFrameLayerWithTiledBacking && !m_requiresBackgroundLayer) {
         // For non-root layers, background is always painted by the primary graphics layer.
         ASSERT(!m_backgroundLayer);
         // Subpixel offset from graphics layer or size changed.
@@ -1120,6 +1123,10 @@ void RenderLayerBacking::updateGeometry()
             const FrameView& frameView = renderer().view().frameView();
             backgroundPosition = frameView.scrollPositionForFixedPosition();
             backgroundSize = frameView.layoutSize();
+        } else {
+            auto boundingBox = renderer().objectBoundingBox();
+            backgroundPosition = boundingBox.location();
+            backgroundSize = boundingBox.size();
         }
         m_backgroundLayer->setPosition(backgroundPosition);
         m_backgroundLayer->setSize(backgroundSize);
@@ -1386,7 +1393,7 @@ void RenderLayerBacking::updateDrawsContent(PaintedContentsInfo& contentsInfo)
         m_graphicsLayer->setSupportsSubpixelAntialiasedText(m_paintsSubpixelAntialiasedText);
 
     if (m_backgroundLayer)
-        m_backgroundLayer->setDrawsContent(hasPaintedContent);
+        m_backgroundLayer->setDrawsContent(m_backgroundLayerPaintsFixedRootBackground ? hasPaintedContent : contentsInfo.paintsBoxDecorations());
 }
 
 // Return true if the layer changed.
@@ -1442,6 +1449,11 @@ void RenderLayerBacking::setBackgroundLayerPaintsFixedRootBackground(bool backgr
         ASSERT(m_isFrameLayerWithTiledBacking);
         renderer().view().frameView().removeSlowRepaintObject(*renderer().view().rendererForRootBackground());
     }
+}
+
+void RenderLayerBacking::setRequiresBackgroundLayer(bool requiresBackgroundLayer)
+{
+    m_requiresBackgroundLayer = requiresBackgroundLayer;
 }
 
 bool RenderLayerBacking::requiresHorizontalScrollbarLayer() const
@@ -1640,8 +1652,9 @@ bool RenderLayerBacking::updateBackgroundLayer(bool needsBackgroundLayer)
     
     if (layerChanged) {
         m_graphicsLayer->setNeedsDisplay();
-        // This assumes that the background layer is only used for fixed backgrounds, which is currently a correct assumption.
-        compositor().fixedRootBackgroundLayerChanged();
+
+        if (m_backgroundLayerPaintsFixedRootBackground)
+            compositor().fixedRootBackgroundLayerChanged();
     }
     
     return layerChanged;
@@ -1890,6 +1903,19 @@ Color RenderLayerBacking::rendererBackgroundColor() const
 
 void RenderLayerBacking::updateDirectlyCompositedBackgroundColor(PaintedContentsInfo& contentsInfo, bool& didUpdateContentsRect)
 {
+    if (m_backgroundLayer && !m_backgroundLayerPaintsFixedRootBackground && !contentsInfo.paintsBoxDecorations()) {
+        m_graphicsLayer->setContentsToSolidColor(Color());
+        m_backgroundLayer->setContentsToSolidColor(rendererBackgroundColor());
+
+        FloatRect contentsRect = backgroundBoxForSimpleContainerPainting();
+        // NOTE: This is currently only used by RenderFullScreen, which we want to be
+        // big enough to hide overflow areas of the root.
+        contentsRect.inflate(contentsRect.size());
+        m_backgroundLayer->setContentsRect(contentsRect);
+        m_backgroundLayer->setContentsClippingRect(FloatRoundedRect(contentsRect));
+        return;
+    }
+
     if (!contentsInfo.isSimpleContainer() || (is<RenderBox>(renderer()) && !downcast<RenderBox>(renderer()).paintsOwnBackground())) {
         m_graphicsLayer->setContentsToSolidColor(Color());
         return;
@@ -2519,7 +2545,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
     if (paintingPhase & GraphicsLayerPaintCompositedScroll)
         paintFlags |= RenderLayer::PaintLayerPaintingCompositingScrollingPhase;
 
-    if (graphicsLayer == m_backgroundLayer.get())
+    if (graphicsLayer == m_backgroundLayer.get() && m_backgroundLayerPaintsFixedRootBackground)
         paintFlags |= (RenderLayer::PaintLayerPaintingRootBackgroundOnly | RenderLayer::PaintLayerPaintingCompositingForegroundPhase); // Need PaintLayerPaintingCompositingForegroundPhase to walk child layers.
     else if (compositor().fixedRootBackgroundLayer())
         paintFlags |= RenderLayer::PaintLayerPaintingSkipRootBackground;
