@@ -16,6 +16,10 @@ description("WebKit should not crash after the text has changed and results are 
     + " The test succeeds when WebKit does not crash and 'wellcome' has spelling marker.");
 
 initSpellTest("destination", "Spell wellcome. Is it broken?", function(textNode) {
+    misspellingString = () => {
+        const range = internals.markerRangeForNode(textNode, "spelling", 0);
+        return range ? range.toString() : null;
+    };
     // Select the text "Is it broken?".
     var deleteRange = document.createRange();
     deleteRange.setStart(textNode, 15);
@@ -25,9 +29,7 @@ initSpellTest("destination", "Spell wellcome. Is it broken?", function(textNode)
     shouldBeEqualToString("window.getSelection().toString()", " Is it broken?");
     // Del key to delete the text "Is it broken?".
     eventSender.keyDown(String.fromCharCode(0x007F), null);
-
-    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
-    shouldBecomeEqualToString("spellingMarkerRange.toString()", "wellcome", function() {
+    shouldBecomeEqualToString("misspellingString()", "wellcome", function() {
         document.getElementById("destination").innerHTML = "";
         finishJSTest();
     });

@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS internals.markerCountForNode(destination.childNodes[0], "spelling") became different from 0
 PASS window.getSelection().toString() is " Is it broken?"
-PASS spellingMarkerRange.toString() became "wellcome"
+PASS misspellingString() became "wellcome"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -2371,12 +2371,59 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
         if (isGrammarCheckingEnabled())
             textCheckingOptions |= TextCheckingTypeGrammar;
 
-        VisibleSelection adjacentWords = VisibleSelection(startOfWord(wordStart, LeftWordIfOnBoundary), endOfWord(wordStart, RightWordIfOnBoundary));
-        if (textCheckingOptions & TextCheckingTypeGrammar) {
-            VisibleSelection selectedSentence = VisibleSelection(startOfSentence(wordStart), endOfSentence(wordStart));
-            markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, adjacentWords.toNormalizedRange().get(), selectedSentence.toNormalizedRange().get());
-        } else
-            markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, adjacentWords.toNormalizedRange().get(), adjacentWords.toNormalizedRange().get());
+        auto sentenceStart = startOfSentence(wordStart);
+        auto sentenceEnd = endOfSentence(wordStart);
+        VisibleSelection fullSentence(sentenceStart, sentenceEnd);
+        auto fullSentenceRange = fullSentence.toNormalizedRange();
+        if (!fullSentenceRange)
+            return;
+
+        auto spellCheckingStart = wordStart;
+        auto spellCheckingEnd = wordStart;
+
+        // FIXME: The following logic doesn't handle adding spelling markers due to retro sentence corrections when an
+        // incorrectly spelled range is separated from the start of the current word by a text node inside an element
+        // with spellcheck disabled. To fix this, we need to refactor markAllMisspellingsAndBadGrammarInRanges so that
+        // it can handle a list of spelling ranges, alongside the grammar range.
+        while (sentenceStart < spellCheckingStart) {
+            auto previousPosition = spellCheckingStart.previous(CannotCrossEditingBoundary);
+            if (previousPosition.isNull() || previousPosition == spellCheckingStart)
+                break;
+
+            auto* container = previousPosition.deepEquivalent().downstream().containerNode();
+            if (auto* containerElement = is<Element>(container) ? downcast<Element>(container) : container->parentElement()) {
+                if (!containerElement->isSpellCheckingEnabled())
+                    break;
+            }
+
+            spellCheckingStart = previousPosition;
+        }
+
+        while (spellCheckingEnd < sentenceEnd) {
+            auto nextPosition = spellCheckingEnd.next(CannotCrossEditingBoundary);
+            if (nextPosition.isNull() || nextPosition == spellCheckingEnd)
+                break;
+
+            auto* container = nextPosition.deepEquivalent().upstream().containerNode();
+            if (auto* containerElement = is<Element>(container) ? downcast<Element>(container) : container->parentElement()) {
+                if (!containerElement->isSpellCheckingEnabled())
+                    break;
+            }
+
+            spellCheckingEnd = nextPosition;
+        }
+
+        auto spellCheckingRange = VisibleSelection(spellCheckingStart, spellCheckingEnd).toNormalizedRange();
+        if (!spellCheckingRange)
+            return;
+
+        // The spelling and grammar markers in these ranges are recomputed. This is because typing a word may
+        // cause any other part of the current sentence to lose or gain spelling correction markers, due to
+        // sentence retro correction. As such, we expand the spell checking range to encompass as much of the
+        // full sentence as we can, respecting boundaries where spellchecking is disabled.
+        fullSentenceRange->ownerDocument().markers().removeMarkers(fullSentenceRange.get(), DocumentMarker::Grammar);
+        spellCheckingRange->ownerDocument().markers().removeMarkers(spellCheckingRange.get(), DocumentMarker::Spelling);
+        markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, spellCheckingRange.get(), fullSentenceRange.get());
         return;
     }
 

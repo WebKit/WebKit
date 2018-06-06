@@ -348,7 +348,6 @@ webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
 
 # <rdar://problem/26399598>
 [ Sierra+ ] editing/spelling/spellcheck-async.html [ Failure ]
-[ Sierra+ ] editing/spelling/markers.html [ Failure ]
 [ Sierra+ ] editing/spelling/spelling-unified-emulation.html [ Failure ]
 
 # <rdar://problem/26050923> The result is probably still a pass, but we don't have a way

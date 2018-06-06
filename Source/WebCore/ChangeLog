@@ -1,3 +1,41 @@
+2018-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Spelling errors in the middle of an inserted paragraph are not displayed
+        https://bugs.webkit.org/show_bug.cgi?id=185584
+        <rdar://problem/38676081>
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently when typing, we only consider the range of adjacent words when determining where to place spelling
+        correction markers, even though we provide NSSpellChecker with the full context of the sentence (and get back
+        results encompassing the full range). In macOS Mojave, NSSpellChecker may now return spell checking results that
+        include correctly spelled words that are misused in the context of the sentence. This means that while typing a
+        sentence, a different part of the sentence may gain or lose spelling markers as a result.
+
+        To support this, WebKit needs to mark or unmark spelling corrections in the full range of the sentence whenever
+        a full word is typed (since the context of other words within the sentence may have changed, resulting in
+        different platform spellchecking results). In markMisspellingsAfterTypingToWord, we expand the spell checking
+        range past the adjacent words so that it encompasses the largest subrange of the full sentence that includes the
+        start of the typed word, and does not include any position that is under an element with `spellcheck=false`.
+
+        This guarantees that we don't erroneously place spelling document markers under elements where spellchecking is
+        disabled, while allowing for sentence retro corrections when spellchecking is enabled. However, this doesn't
+        handle the case where an element with spellchecking disabled lies between a sentence retro correction range and
+        the currently typed word. In the future, we could fix this by refactoring SpellCheckRequest to track a list of
+        non-contiguous spelling correction ranges — see the FIXME in markMisspellingsAfterTypingToWord for more detail.
+
+        Covered by 2 new layout tests, as well as an existing spell-checking test that should now be passing.
+
+        Tests: editing/spelling/retro-correction-spelling-markers.html
+               editing/spelling/spelling-markers-after-pasting-sentence.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+        Add an internal testing helper to determine whether retro sentence corrections are enabled.
+
 2018-06-05  Darin Adler  <darin@apple.com>
 
         [Cocoa] Retire DispatchPtr, and add more move semantics and simpler #ifs to other smart pointers

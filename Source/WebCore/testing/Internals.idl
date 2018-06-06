@@ -258,6 +258,7 @@ enum EventThrottlingBehavior {
 
     void updateEditorUINowIfScheduled();
 
+    readonly attribute boolean sentenceRetroCorrectionEnabled;
     boolean hasSpellingMarker(long from, long length);
     boolean hasGrammarMarker(long from, long length);
     boolean hasAutocorrectedMarker(long from, long length);

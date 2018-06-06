@@ -52,15 +52,16 @@ var elementWithGrammarAndSpellingIssue = createEditableElement(container);
 typeText(elementWithGrammarAndSpellingIssue, 'orange,zz,apple.');
 
 var misspellings = [
-    { marker:'grammar',  issue:'a' },
-    { marker:'spelling', issue:'zz' },
-    { marker:'grammar',  issue:'orange,zz,apple.' }
+    { marker: internals.sentenceRetroCorrectionEnabled ? 'spelling' : 'grammar',  issue: 'a' },
+    { marker: 'spelling', issue: 'zz' },
+    { marker: 'grammar',  issue: 'orange,zz,apple.' },
+    { marker: 'spelling',  issue: 'orange,zz,apple' },
 ];
 
 var tests = [
     function() { verifyDesiredMarkers(elementWithGrammarIssue, misspellings.slice(0, 1)) },
     function() { verifyDesiredMarkers(elementWithSpellingIssue, misspellings.slice(1, 2)) },
-    function() { verifyDesiredMarkers(elementWithGrammarAndSpellingIssue, misspellings.slice(1, 3)) },
+    function() { verifyDesiredMarkers(elementWithGrammarAndSpellingIssue, misspellings.slice(2, 4)) },
 
     // Those expect to have only one kind of markers either spelling or grammar.
     function() { verifyUnexpectedMarkers(elementWithGrammarIssue, misspellings.slice(0, 1)) },
@@ -80,7 +81,7 @@ function verifyDesiredMarkers(e, misspellings)
     if (!nextMisspellingData)
         return done();
 
-    debug("Checking " + nextMisspellingData.marker + " issue on '" + element.firstChild.nodeValue + "'");
+    debug("Checking for issue on '" + element.firstChild.nodeValue + "'");
 
     shouldBecomeDifferent('internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0)', "null", function() {
         range = internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0);
@@ -101,7 +102,7 @@ function verifyUnexpectedMarkers(e, misspellings)
     else if (nextMisspellingData.marker == 'spelling')
         oppositeMarker = 'grammar';
 
-    debug("Checking " + oppositeMarker + " issue on '" + element.firstChild.nodeValue + "'");
+    debug("Checking for no other issues on '" + element.firstChild.nodeValue + "'");
 
     shouldBecomeEqual('internals.markerCountForNode(element.firstChild, oppositeMarker)', '0', function() {
         debug("");

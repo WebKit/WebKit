@@ -1,3 +1,40 @@
+2018-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Spelling errors in the middle of an inserted paragraph are not displayed
+        https://bugs.webkit.org/show_bug.cgi?id=185584
+        <rdar://problem/38676081>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds 2 new spellchecking tests, and refactors some existing tests.
+
+        * editing/spelling/grammar-expected.txt:
+        * editing/spelling/grammar.html:
+        * editing/spelling/markers-expected.txt:
+        * editing/spelling/markers.html:
+
+        Tweaked so that these tests pass regardless of whether sentence retro correction is enabled or disabled.
+
+        * editing/spelling/retro-correction-spelling-markers-expected.txt: Added.
+        * editing/spelling/retro-correction-spelling-markers.html: Added.
+
+        Tests that typing at the end of a sentence will mark other parts of the sentence as misspellings, if retro
+        sentence correction is enabled.
+
+        * editing/spelling/spelling-changed-text-expected.txt:
+        * editing/spelling/spelling-changed-text.html:
+
+        Tweaked to correctly wait for the marker range to become the expected value.
+
+        * editing/spelling/spelling-markers-after-pasting-sentence-expected.txt: Added.
+        * editing/spelling/spelling-markers-after-pasting-sentence.html: Added.
+
+        Tests that after pasting a sentence with misspelled words, those misspelled words will be marked as misspellings.
+
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-06-05  Brent Fulgham  <bfulgham@apple.com>
 
         Adjust compile and runtime flags to match shippable state of features
