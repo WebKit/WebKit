@@ -1,3 +1,12 @@
+2018-06-06  David Fenton  <david_fenton@apple.com>
+
+        [macOS WK2 Release] Layout Test media/video-trackmenu-selection.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=186055
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2018-06-06  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r231817?): Layout Test media/track/track-delete-during-setup.html is a flaky timeout
