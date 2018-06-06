@@ -389,7 +389,6 @@ messages -> WebPageProxy {
 #endif
 
 #if PLATFORM(IOS)
-    DynamicViewportUpdateChangedTarget(double newTargetScale, WebCore::FloatPoint newScrollPosition, uint64_t dynamicViewportSizeUpdateID)
     CouldNotRestorePageState()
     RestorePageState(std::optional<WebCore::FloatPoint> scrollPosition, WebCore::FloatPoint scrollOrigin, WebCore::RectEdges<float> obscuredInsetsOnSave, double scale)
     RestorePageCenterAndScale(std::optional<WebCore::FloatPoint> unobscuredCenter, double scale)

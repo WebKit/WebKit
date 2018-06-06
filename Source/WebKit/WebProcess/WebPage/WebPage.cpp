@@ -3222,11 +3222,13 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
     layerTransaction.setAvoidsUnsafeArea(m_viewportConfiguration.avoidsUnsafeArea());
     layerTransaction.setIsInStableState(m_isInStableState);
     layerTransaction.setAllowsUserScaling(allowsUserScaling());
+    if (m_pendingDynamicViewportSizeUpdateID) {
+        layerTransaction.setDynamicViewportSizeUpdateID(*m_pendingDynamicViewportSizeUpdateID);
+        m_pendingDynamicViewportSizeUpdateID = std::nullopt;
+    }
 #endif
 
-#if PLATFORM(MAC)
     layerTransaction.setScrollPosition(frameView->scrollPosition());
-#endif
 
     if (m_hasPendingEditorStateUpdate) {
         layerTransaction.setEditorState(editorState());

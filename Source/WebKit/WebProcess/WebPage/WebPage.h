@@ -107,6 +107,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "DynamicViewportSizeUpdate.h"
 #include <WebCore/VisibleSelection.h>
 #include <wtf/RetainPtr.h>
 OBJC_CLASS CALayer;
@@ -882,8 +883,7 @@ public:
     void setViewportConfigurationViewLayoutSize(const WebCore::FloatSize&);
     void setMaximumUnobscuredSize(const WebCore::FloatSize&);
     void setDeviceOrientation(int32_t);
-    void dynamicViewportSizeUpdate(const WebCore::FloatSize& viewLayoutSize, const WebCore::FloatSize& maximumUnobscuredSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& targetUnobscuredSafeAreaInsets, double scale, int32_t deviceOrientation, uint64_t dynamicViewportSizeUpdateID);
-    void synchronizeDynamicViewportUpdate(double& newTargetScale, WebCore::FloatPoint& newScrollPosition, uint64_t& nextValidLayerTreeTransactionID);
+    void dynamicViewportSizeUpdate(const WebCore::FloatSize& viewLayoutSize, const WebCore::FloatSize& maximumUnobscuredSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& targetUnobscuredSafeAreaInsets, double scale, int32_t deviceOrientation, DynamicViewportSizeUpdateID);
     std::optional<float> scaleFromUIProcess(const VisibleContentRectUpdateInfo&) const;
     void updateVisibleContentRects(const VisibleContentRectUpdateInfo&, MonotonicTime oldestTimestamp);
     bool scaleWasSetByUIProcess() const { return m_scaleWasSetByUIProcess; }
@@ -1650,6 +1650,7 @@ private:
     WebCore::FloatPoint m_pendingSyntheticClickLocation;
     WebCore::FloatRect m_previousExposedContentRect;
     uint64_t m_currentAssistedNodeIdentifier { 0 };
+    std::optional<DynamicViewportSizeUpdateID> m_pendingDynamicViewportSizeUpdateID;
 #endif
 
     WebCore::Timer m_layerVolatilityTimer;

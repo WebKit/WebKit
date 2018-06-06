@@ -33,6 +33,7 @@
 #import "APISerializedScriptValue.h"
 #import "CompletionHandlerCallChecker.h"
 #import "DiagnosticLoggingClient.h"
+#import "DynamicViewportSizeUpdate.h"
 #import "FindClient.h"
 #import "FrontBoardServicesSPI.h"
 #import "FullscreenClient.h"
@@ -176,12 +177,6 @@
 - (UIViewController *)_viewControllerForSupportedInterfaceOrientations;
 @end
 
-enum class DynamicViewportUpdateMode {
-    NotResizing,
-    ResizingWithAnimation,
-    ResizingWithDocumentHidden,
-};
-
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(IOS)
@@ -311,9 +306,10 @@ static std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOve
     BOOL _hasCommittedLoadForMainFrame;
     BOOL _needsResetViewStateAfterCommitLoadForMainFrame;
     uint64_t _firstPaintAfterCommitLoadTransactionID;
-    DynamicViewportUpdateMode _dynamicViewportUpdateMode;
+    WebKit::DynamicViewportUpdateMode _dynamicViewportUpdateMode;
+    WebKit::DynamicViewportSizeUpdateID _currentDynamicViewportSizeUpdateID;
     CATransform3D _resizeAnimationTransformAdjustments;
-    std::optional<uint64_t> _resizeAnimationTransformTransactionID;
+    CGFloat _animatedResizeOriginalContentWidth;
     RetainPtr<UIView> _resizeAnimationView;
     CGFloat _lastAdjustmentForScroller;
     std::optional<CGRect> _frozenVisibleContentRect;
@@ -348,6 +344,8 @@ static std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOve
     BOOL _hadDelayedUpdateVisibleContentRects;
 
     int _activeAnimatedResizeCount;
+    BOOL _waitingForEndAnimatedResize;
+    BOOL _waitingForCommitAfterAnimatedResize;
 
     Vector<WTF::Function<void ()>> _snapshotsDeferredDuringResize;
     RetainPtr<NSMutableArray> _stableStatePresentationUpdateCallbacks;
@@ -357,14 +355,12 @@ static std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOve
     BOOL _hasScheduledVisibleRectUpdate;
     BOOL _visibleContentRectUpdateScheduledFromScrollViewInStableState;
     Vector<BlockPtr<void ()>> _visibleContentRectUpdateCallbacks;
+
+    _WKDragInteractionPolicy _dragInteractionPolicy;
 #endif
 #if PLATFORM(MAC)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
     RetainPtr<WKTextFinderClient> _textFinderClient;
-#endif
-
-#if PLATFORM(IOS)
-    _WKDragInteractionPolicy _dragInteractionPolicy;
 #endif
 }
 
@@ -1663,7 +1659,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 - (void)_processDidExit
 {
     [self _hidePasswordView];
-    if (!_customContentView && _dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing) {
+    if (!_customContentView && _dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {
         NSUInteger indexOfResizeAnimationView = [[_scrollView subviews] indexOfObject:_resizeAnimationView.get()];
         [_scrollView insertSubview:_contentView.get() atIndex:indexOfResizeAnimationView];
         [_scrollView insertSubview:[_contentView unscaledView] atIndex:indexOfResizeAnimationView + 1];
@@ -1681,7 +1677,10 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     _initialScaleFactor = 1;
     _hasCommittedLoadForMainFrame = NO;
     _needsResetViewStateAfterCommitLoadForMainFrame = NO;
-    _dynamicViewportUpdateMode = DynamicViewportUpdateMode::NotResizing;
+    _dynamicViewportUpdateMode = WebKit::DynamicViewportUpdateMode::NotResizing;
+    _waitingForEndAnimatedResize = NO;
+    _waitingForCommitAfterAnimatedResize = NO;
+    _animatedResizeOriginalContentWidth = 0;
     [_contentView setHidden:NO];
     _scrollOffsetToRestore = std::nullopt;
     _unobscuredCenterToRestore = std::nullopt;
@@ -1697,7 +1696,6 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
     _firstPaintAfterCommitLoadTransactionID = 0;
     _firstTransactionIDAfterPageRestore = std::nullopt;
-    _resizeAnimationTransformTransactionID = std::nullopt;
 
     _hasScheduledVisibleRectUpdate = NO;
     _commitDidRestoreScrollPosition = NO;
@@ -1753,6 +1751,49 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     return WTF::areEssentiallyEqual(a, b);
 }
 
+- (void)_didCommitLayerTreeDuringAnimatedResize:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
+{
+    auto updateID = layerTreeTransaction.dynamicViewportSizeUpdateID();
+    if (updateID && *updateID == _currentDynamicViewportSizeUpdateID) {
+        double pageScale = layerTreeTransaction.pageScaleFactor();
+        WebCore::IntPoint scrollPosition = layerTreeTransaction.scrollPosition();
+
+        CGFloat animatingScaleTarget = [[_resizeAnimationView layer] transform].m11;
+        double currentTargetScale = animatingScaleTarget * [[_contentView layer] transform].m11;
+        double scale = pageScale / currentTargetScale;
+        _resizeAnimationTransformAdjustments = CATransform3DMakeScale(scale, scale, 1);
+
+        CGPoint newContentOffset = [self _contentOffsetAdjustedForObscuredInset:CGPointMake(scrollPosition.x() * pageScale, scrollPosition.y() * pageScale)];
+        CGPoint currentContentOffset = [_scrollView contentOffset];
+
+        _resizeAnimationTransformAdjustments.m41 = (currentContentOffset.x - newContentOffset.x) / animatingScaleTarget;
+        _resizeAnimationTransformAdjustments.m42 = (currentContentOffset.y - newContentOffset.y) / animatingScaleTarget;
+
+        [_resizeAnimationView layer].sublayerTransform = _resizeAnimationTransformAdjustments;
+
+        // If we've already passed endAnimatedResize, immediately complete
+        // the resize when we have an up-to-date layer tree. Otherwise,
+        // we will defer completion until endAnimatedResize.
+        _waitingForCommitAfterAnimatedResize = NO;
+        if (!_waitingForEndAnimatedResize)
+            [self _didCompleteAnimatedResize];
+
+        return;
+    }
+
+    // If a commit arrives during the live part of a resize but before the
+    // layer tree takes the current resize into account, it could change the
+    // WKContentView's size. Update the resizeAnimationView's scale to ensure
+    // we continue to fill the width of the resize target.
+
+    if (_waitingForEndAnimatedResize)
+        return;
+
+    auto newViewLayoutSize = [self activeViewLayoutSize:self.bounds];
+    CGFloat resizeAnimationViewScale = _animatedResizeOriginalContentWidth / newViewLayoutSize.width();
+    [[_resizeAnimationView layer] setSublayerTransform:CATransform3DMakeScale(resizeAnimationViewScale, resizeAnimationViewScale, 1)];
+}
+
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
 {
     if (![self usesStandardContentView])
@@ -1762,15 +1803,8 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
     bool needUpdateVisibleContentRects = _page->updateLayoutViewportParameters(layerTreeTransaction);
 
-    if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing) {
-        if (_resizeAnimationTransformTransactionID && layerTreeTransaction.transactionID() >= _resizeAnimationTransformTransactionID.value()) {
-            _resizeAnimationTransformTransactionID = std::nullopt;
-            [_resizeAnimationView layer].sublayerTransform = _resizeAnimationTransformAdjustments;
-            if (_dynamicViewportUpdateMode == DynamicViewportUpdateMode::ResizingWithDocumentHidden) {
-                [_contentView setHidden:NO];
-                [self _endAnimatedResize];
-            }
-        }
+    if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {
+        [self _didCommitLayerTreeDuringAnimatedResize:layerTreeTransaction];
         return;
     }
 
@@ -1870,25 +1904,6 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     _commitDidRestoreScrollPosition = NO;
 }
 
-- (void)_dynamicViewportUpdateChangedTargetToScale:(double)newScale position:(CGPoint)newScrollPosition nextValidLayerTreeTransactionID:(uint64_t)nextValidLayerTreeTransactionID
-{
-    LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView " << _page->pageID() << " _dynamicViewportUpdateChangedTargetToScale:] " <<  newScale << " _dynamicViewportUpdateMode " << (int)_dynamicViewportUpdateMode);
-
-    if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing) {
-        CGFloat animatingScaleTarget = [[_resizeAnimationView layer] transform].m11;
-        double currentTargetScale = animatingScaleTarget * [[_contentView layer] transform].m11;
-        double scale = newScale / currentTargetScale;
-        _resizeAnimationTransformAdjustments = CATransform3DMakeScale(scale, scale, 1);
-
-        CGPoint newContentOffset = [self _contentOffsetAdjustedForObscuredInset:CGPointMake(newScrollPosition.x * newScale, newScrollPosition.y * newScale)];
-        CGPoint currentContentOffset = [_scrollView contentOffset];
-
-        _resizeAnimationTransformAdjustments.m41 = (currentContentOffset.x - newContentOffset.x) / animatingScaleTarget;
-        _resizeAnimationTransformAdjustments.m42 = (currentContentOffset.y - newContentOffset.y) / animatingScaleTarget;
-        _resizeAnimationTransformTransactionID = nextValidLayerTreeTransactionID;
-    }
-}
-
 - (void)_couldNotRestorePageState
 {
     // The gestureController may be waiting for the scroll position to be restored
@@ -1901,7 +1916,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
 - (void)_restorePageScrollPosition:(std::optional<WebCore::FloatPoint>)scrollPosition scrollOrigin:(WebCore::FloatPoint)scrollOrigin previousObscuredInset:(WebCore::FloatBoxExtent)obscuredInsets scale:(double)scale
 {
-    if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing)
+    if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing)
         return;
 
     if (![self usesStandardContentView])
@@ -1919,7 +1934,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
 - (void)_restorePageStateToUnobscuredCenter:(std::optional<WebCore::FloatPoint>)center scale:(double)scale
 {
-    if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing)
+    if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing)
         return;
 
     if (![self usesStandardContentView])
@@ -2034,7 +2049,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_scrollToContentScrollPosition:(WebCore::FloatPoint)scrollPosition scrollOrigin:(WebCore::IntPoint)scrollOrigin
 {
-    if (_commitDidRestoreScrollPosition || _dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing)
+    if (_commitDidRestoreScrollPosition || _dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing)
         return;
 
     WebCore::FloatPoint contentOffset = WebCore::ScrollableArea::scrollOffsetFromPosition(scrollPosition, toFloatSize(scrollOrigin));
@@ -2614,7 +2629,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     CGRect bounds = self.bounds;
     [_scrollView setFrame:bounds];
 
-    if (_dynamicViewportUpdateMode == DynamicViewportUpdateMode::NotResizing) {
+    if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing) {
         if (!_overridesViewLayoutSize)
             [self _dispatchSetViewLayoutSize:[self activeViewLayoutSize:self.bounds]];
         if (!_overridesMaximumUnobscuredSize)
@@ -2776,7 +2791,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         return;
     }
 
-    if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing
+    if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing
         || (_needsResetViewStateAfterCommitLoadForMainFrame && ![_contentView sizeChangedSinceLastVisibleContentRectUpdate])
         || [_scrollView isZoomBouncing]
         || _currentlyAdjustingScrollViewInsetsForKeyboard)
@@ -2832,6 +2847,84 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 {
     if (_gestureController)
         _gestureController->didStartProvisionalLoadForMainFrame();
+}
+
+static WebCore::FloatSize activeMaximumUnobscuredSize(WKWebView *webView, const CGRect& bounds)
+{
+    return WebCore::FloatSize(webView->_overridesMaximumUnobscuredSize ? webView->_maximumUnobscuredSizeOverride : bounds.size);
+}
+
+static int32_t activeOrientation(WKWebView *webView)
+{
+    return webView->_overridesInterfaceOrientation ? deviceOrientationForUIInterfaceOrientation(webView->_interfaceOrientationOverride) : webView->_page->deviceOrientation();
+}
+
+- (void)_didCompleteAnimatedResize
+{
+    if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing)
+        return;
+
+    [_contentView setHidden:NO];
+
+    if (!_resizeAnimationView) {
+        // Paranoia. If _resizeAnimationView is null we'll end up setting a zero scale on the content view.
+        RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _endAnimatedResize:] - _resizeAnimationView is nil", self);
+        _dynamicViewportUpdateMode = WebKit::DynamicViewportUpdateMode::NotResizing;
+        return;
+    }
+
+    --_activeAnimatedResizeCount;
+    NSUInteger indexOfResizeAnimationView = [[_scrollView subviews] indexOfObject:_resizeAnimationView.get()];
+    [_scrollView insertSubview:_contentView.get() atIndex:indexOfResizeAnimationView];
+    [_scrollView insertSubview:[_contentView unscaledView] atIndex:indexOfResizeAnimationView + 1];
+
+    CALayer *contentLayer = [_contentView layer];
+    CGFloat adjustmentScale = _resizeAnimationTransformAdjustments.m11;
+    contentLayer.sublayerTransform = CATransform3DIdentity;
+
+    CGFloat animatingScaleTarget = [[_resizeAnimationView layer] transform].m11;
+    CATransform3D contentLayerTransform = contentLayer.transform;
+    CGFloat currentScale = [[_resizeAnimationView layer] transform].m11 * contentLayerTransform.m11;
+
+    // We cannot use [UIScrollView setZoomScale:] directly because the UIScrollView delegate would get a callback with
+    // an invalid contentOffset. The real content offset is only set below.
+    // Since there is no public API for setting both the zoomScale and the contentOffset, we set the zoomScale manually
+    // on the zoom layer and then only change the contentOffset.
+    CGFloat adjustedScale = adjustmentScale * currentScale;
+    contentLayerTransform.m11 = adjustedScale;
+    contentLayerTransform.m22 = adjustedScale;
+    contentLayer.transform = contentLayerTransform;
+
+    CGPoint currentScrollOffset = [_scrollView contentOffset];
+    double horizontalScrollAdjustement = _resizeAnimationTransformAdjustments.m41 * animatingScaleTarget;
+    double verticalScrollAdjustment = _resizeAnimationTransformAdjustments.m42 * animatingScaleTarget;
+
+    [_scrollView setContentSize:roundScrollViewContentSize(*_page, [_contentView frame].size)];
+    [_scrollView setContentOffset:CGPointMake(currentScrollOffset.x - horizontalScrollAdjustement, currentScrollOffset.y - verticalScrollAdjustment)];
+
+    [_resizeAnimationView removeFromSuperview];
+    _resizeAnimationView = nil;
+    _resizeAnimationTransformAdjustments = CATransform3DIdentity;
+
+    _dynamicViewportUpdateMode = WebKit::DynamicViewportUpdateMode::NotResizing;
+    [self _scheduleVisibleContentRectUpdate];
+
+    CGRect newBounds = self.bounds;
+    auto newViewLayoutSize = [self activeViewLayoutSize:newBounds];
+    auto newMaximumUnobscuredSize = activeMaximumUnobscuredSize(self, newBounds);
+    int32_t newOrientation = activeOrientation(self);
+
+    if (!_lastSentViewLayoutSize || newViewLayoutSize != _lastSentViewLayoutSize.value())
+        [self _dispatchSetViewLayoutSize:newViewLayoutSize];
+
+    if (!_lastSentMaximumUnobscuredSize || newMaximumUnobscuredSize != _lastSentMaximumUnobscuredSize.value())
+        [self _dispatchSetMaximumUnobscuredSize:WebCore::FloatSize(newMaximumUnobscuredSize)];
+
+    if (!_lastSentDeviceOrientation || newOrientation != _lastSentDeviceOrientation.value())
+        [self _dispatchSetDeviceOrientation:newOrientation];
+
+    while (!_snapshotsDeferredDuringResize.isEmpty())
+        _snapshotsDeferredDuringResize.takeLast()();
 }
 
 - (void)_didFinishLoadForMainFrame
@@ -4216,16 +4309,6 @@ WEBCORE_COMMAND(yankAndSelect)
 #endif
 
 #if PLATFORM(IOS)
-static WebCore::FloatSize activeMaximumUnobscuredSize(WKWebView *webView, const CGRect& bounds)
-{
-    return WebCore::FloatSize(webView->_overridesMaximumUnobscuredSize ? webView->_maximumUnobscuredSizeOverride : bounds.size);
-}
-
-static int32_t activeOrientation(WKWebView *webView)
-{
-    return webView->_overridesInterfaceOrientation ? deviceOrientationForUIInterfaceOrientation(webView->_interfaceOrientationOverride) : webView->_page->deviceOrientation();
-}
-
 - (void (^)(void))_retainActiveFocusedState
 {
     ++_activeFocusedStateRetainCount;
@@ -5007,7 +5090,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _overridesViewLayoutSize = YES;
     _viewLayoutSizeOverride = viewLayoutSizeOverride;
 
-    if (_dynamicViewportUpdateMode == DynamicViewportUpdateMode::NotResizing)
+    if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing)
         [self _dispatchSetViewLayoutSize:WebCore::FloatSize(viewLayoutSizeOverride)];
 
 }
@@ -5083,7 +5166,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _overridesInterfaceOrientation = YES;
     _interfaceOrientationOverride = interfaceOrientation;
 
-    if (_dynamicViewportUpdateMode == DynamicViewportUpdateMode::NotResizing)
+    if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing)
         [self _dispatchSetDeviceOrientation:deviceOrientationForUIInterfaceOrientation(_interfaceOrientationOverride)];
 }
 
@@ -5111,7 +5194,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _overridesMaximumUnobscuredSize = YES;
     _maximumUnobscuredSizeOverride = size;
 
-    if (_dynamicViewportUpdateMode == DynamicViewportUpdateMode::NotResizing)
+    if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing)
         [self _dispatchSetMaximumUnobscuredSize:WebCore::FloatSize(size)];
 }
 
@@ -5156,7 +5239,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         return;
     }
 
-    _dynamicViewportUpdateMode = DynamicViewportUpdateMode::ResizingWithAnimation;
+    _dynamicViewportUpdateMode = WebKit::DynamicViewportUpdateMode::ResizingWithAnimation;
 
     auto oldViewLayoutSize = [self activeViewLayoutSize:self.bounds];
     auto oldMaximumUnobscuredSize = activeMaximumUnobscuredSize(self, oldBounds);
@@ -5175,7 +5258,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
     ASSERT_WITH_MESSAGE(!(_overridesViewLayoutSize && newViewLayoutSize.isEmpty()), "Clients controlling the layout size should maintain a valid layout size to minimize layouts.");
     if (CGRectIsEmpty(newBounds) || newViewLayoutSize.isEmpty() || CGRectIsEmpty(futureUnobscuredRectInSelfCoordinates) || CGRectIsEmpty(contentViewBounds)) {
-        _dynamicViewportUpdateMode = DynamicViewportUpdateMode::NotResizing;
+        _dynamicViewportUpdateMode = WebKit::DynamicViewportUpdateMode::NotResizing;
         [self _frameOrBoundsChanged];
         if (_overridesViewLayoutSize)
             [self _dispatchSetViewLayoutSize:newViewLayoutSize];
@@ -5193,7 +5276,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         && oldMaximumUnobscuredSize == newMaximumUnobscuredSize
         && oldOrientation == newOrientation
         && UIEdgeInsetsEqualToEdgeInsets(oldObscuredInsets, newObscuredInsets)) {
-        _dynamicViewportUpdateMode = DynamicViewportUpdateMode::NotResizing;
+        _dynamicViewportUpdateMode = WebKit::DynamicViewportUpdateMode::NotResizing;
         [self _scheduleVisibleContentRectUpdate];
         return;
     }
@@ -5201,12 +5284,14 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     ++_activeAnimatedResizeCount;
     _resizeAnimationTransformAdjustments = CATransform3DIdentity;
 
-    NSUInteger indexOfContentView = [[_scrollView subviews] indexOfObject:_contentView.get()];
-    _resizeAnimationView = adoptNS([[UIView alloc] init]);
-    [_resizeAnimationView layer].name = @"ResizeAnimation";
-    [_scrollView insertSubview:_resizeAnimationView.get() atIndex:indexOfContentView];
-    [_resizeAnimationView addSubview:_contentView.get()];
-    [_resizeAnimationView addSubview:[_contentView unscaledView]];
+    if (!_resizeAnimationView) {
+        NSUInteger indexOfContentView = [[_scrollView subviews] indexOfObject:_contentView.get()];
+        _resizeAnimationView = adoptNS([[UIView alloc] init]);
+        [_resizeAnimationView layer].name = @"ResizeAnimation";
+        [_scrollView insertSubview:_resizeAnimationView.get() atIndex:indexOfContentView];
+        [_resizeAnimationView addSubview:_contentView.get()];
+        [_resizeAnimationView addSubview:[_contentView unscaledView]];
+    }
 
     CGSize contentSizeInContentViewCoordinates = contentViewBounds.size;
     [_scrollView setMinimumZoomScale:std::min(newViewLayoutSize.width() / contentSizeInContentViewCoordinates.width, [_scrollView minimumZoomScale])];
@@ -5214,8 +5299,8 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
     // Compute the new scale to keep the current content width in the scrollview.
     CGFloat oldWebViewWidthInContentViewCoordinates = oldUnobscuredContentRect.width();
-    CGFloat visibleContentViewWidthInContentCoordinates = std::min(contentSizeInContentViewCoordinates.width, oldWebViewWidthInContentViewCoordinates);
-    CGFloat targetScale = newViewLayoutSize.width() / visibleContentViewWidthInContentCoordinates;
+    _animatedResizeOriginalContentWidth = std::min(contentSizeInContentViewCoordinates.width, oldWebViewWidthInContentViewCoordinates);
+    CGFloat targetScale = newViewLayoutSize.width() / _animatedResizeOriginalContentWidth;
     CGFloat resizeAnimationViewAnimationScale = targetScale / contentZoomScale(self);
     [_resizeAnimationView setTransform:CGAffineTransformMakeScale(resizeAnimationViewAnimationScale, resizeAnimationViewAnimationScale)];
 
@@ -5243,7 +5328,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     if (oldUnobscuredContentRect.maxY() > contentSizeInContentViewCoordinates.height - 1)
         contentOffset.y = maxVerticalOffset;
     if (oldUnobscuredContentRect.y() < 1)
-        contentOffset.y = -_obscuredInsets.top;
+        contentOffset.y = [self _initialContentOffsetForScrollView].y;
 
     // FIXME: if we have content centered after double tap to zoom, we should also try to keep that rect in view.
     [_scrollView setContentSize:roundScrollViewContentSize(*_page, futureContentSizeInSelfCoordinates)];
@@ -5259,9 +5344,12 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _lastSentMaximumUnobscuredSize = newMaximumUnobscuredSize;
     _lastSentDeviceOrientation = newOrientation;
 
-    _page->dynamicViewportSizeUpdate(newViewLayoutSize, newMaximumUnobscuredSize, visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, futureUnobscuredRectInSelfCoordinates, unobscuredSafeAreaInsetsExtent, targetScale, newOrientation);
+    _page->dynamicViewportSizeUpdate(newViewLayoutSize, newMaximumUnobscuredSize, visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, futureUnobscuredRectInSelfCoordinates, unobscuredSafeAreaInsetsExtent, targetScale, newOrientation, ++_currentDynamicViewportSizeUpdateID);
     if (WebKit::DrawingAreaProxy* drawingArea = _page->drawingArea())
         drawingArea->setSize(WebCore::IntSize(newBounds.size));
+
+    _waitingForCommitAfterAnimatedResize = YES;
+    _waitingForEndAnimatedResize = YES;
 }
 
 - (void)_endAnimatedResize
@@ -5271,84 +5359,20 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     if ([_customContentView respondsToSelector:@selector(web_endAnimatedResize)])
         [_customContentView web_endAnimatedResize];
 
-    if (_dynamicViewportUpdateMode == DynamicViewportUpdateMode::NotResizing)
-        return;
-
-    _page->synchronizeDynamicViewportUpdate();
-
-    // synchronizeDynamicViewportUpdate() may cause this function to re-enter via _didCommitLayerTree, so check _dynamicViewportUpdateMode again.
-    if (_dynamicViewportUpdateMode == DynamicViewportUpdateMode::NotResizing)
-        return;
-
-    if (!_resizeAnimationView) {
-        // Paranoia. If _resizeAnimationView is null we'll end up setting a zero scale on the content view.
-        RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _endAnimatedResize:] - _resizeAnimationView is nil", self);
-        _dynamicViewportUpdateMode = DynamicViewportUpdateMode::NotResizing;
-        [_contentView setHidden:NO];
-        return;
-    }
-
-    --_activeAnimatedResizeCount;
-    NSUInteger indexOfResizeAnimationView = [[_scrollView subviews] indexOfObject:_resizeAnimationView.get()];
-    [_scrollView insertSubview:_contentView.get() atIndex:indexOfResizeAnimationView];
-    [_scrollView insertSubview:[_contentView unscaledView] atIndex:indexOfResizeAnimationView + 1];
-
-    CALayer *contentViewLayer = [_contentView layer];
-    CGFloat adjustmentScale = _resizeAnimationTransformAdjustments.m11;
-    contentViewLayer.sublayerTransform = CATransform3DIdentity;
-
-    CGFloat animatingScaleTarget = [[_resizeAnimationView layer] transform].m11;
-    CALayer *contentLayer = [_contentView layer];
-    CATransform3D contentLayerTransform = contentLayer.transform;
-    CGFloat currentScale = [[_resizeAnimationView layer] transform].m11 * contentLayerTransform.m11;
-
-    // We cannot use [UIScrollView setZoomScale:] directly because the UIScrollView delegate would get a callback with
-    // an invalid contentOffset. The real content offset is only set below.
-    // Since there is no public API for setting both the zoomScale and the contentOffset, we set the zoomScale manually
-    // on the zoom layer and then only change the contentOffset.
-    CGFloat adjustedScale = adjustmentScale * currentScale;
-    contentLayerTransform.m11 = adjustedScale;
-    contentLayerTransform.m22 = adjustedScale;
-    contentLayer.transform = contentLayerTransform;
-
-    CGPoint currentScrollOffset = [_scrollView contentOffset];
-    double horizontalScrollAdjustement = _resizeAnimationTransformAdjustments.m41 * animatingScaleTarget;
-    double verticalScrollAdjustment = _resizeAnimationTransformAdjustments.m42 * animatingScaleTarget;
-
-    [_scrollView setContentSize:roundScrollViewContentSize(*_page, [_contentView frame].size)];
-    [_scrollView setContentOffset:CGPointMake(currentScrollOffset.x - horizontalScrollAdjustement, currentScrollOffset.y - verticalScrollAdjustment)];
-
-    [_resizeAnimationView removeFromSuperview];
-    _resizeAnimationView = nil;
-    _resizeAnimationTransformAdjustments = CATransform3DIdentity;
-
-    _dynamicViewportUpdateMode = DynamicViewportUpdateMode::NotResizing;
-    [_contentView setHidden:NO];
-    [self _scheduleVisibleContentRectUpdate];
-
-    CGRect newBounds = self.bounds;
-    auto newViewLayoutSize = [self activeViewLayoutSize:newBounds];
-    auto newMaximumUnobscuredSize = activeMaximumUnobscuredSize(self, newBounds);
-    int32_t newOrientation = activeOrientation(self);
-
-    if (!_lastSentViewLayoutSize || newViewLayoutSize != _lastSentViewLayoutSize.value())
-        [self _dispatchSetViewLayoutSize:newViewLayoutSize];
-    if (!_lastSentMaximumUnobscuredSize || newMaximumUnobscuredSize != _lastSentMaximumUnobscuredSize.value())
-        [self _dispatchSetMaximumUnobscuredSize:WebCore::FloatSize(newMaximumUnobscuredSize)];
-    if (!_lastSentDeviceOrientation || newOrientation != _lastSentDeviceOrientation.value())
-        [self _dispatchSetDeviceOrientation:newOrientation];
-
-    while (!_snapshotsDeferredDuringResize.isEmpty())
-        _snapshotsDeferredDuringResize.takeLast()();
+    // If we already have an up-to-date layer tree, immediately complete
+    // the resize. Otherwise, we will defer completion until we do.
+    _waitingForEndAnimatedResize = NO;
+    if (!_waitingForCommitAfterAnimatedResize)
+        [self _didCompleteAnimatedResize];
 }
 
 - (void)_resizeWhileHidingContentWithUpdates:(void (^)(void))updateBlock
 {
     LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView " << _page->pageID() << " _resizeWhileHidingContentWithUpdates:]");
     [self _beginAnimatedResizeWithUpdates:updateBlock];
-    if (_dynamicViewportUpdateMode == DynamicViewportUpdateMode::ResizingWithAnimation) {
+    if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::ResizingWithAnimation) {
         [_contentView setHidden:YES];
-        _dynamicViewportUpdateMode = DynamicViewportUpdateMode::ResizingWithDocumentHidden;
+        _dynamicViewportUpdateMode = WebKit::DynamicViewportUpdateMode::ResizingWithDocumentHidden;
     }
 }
 
@@ -5359,7 +5383,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler
 {
-    if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing) {
+    if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {
         // Defer snapshotting until after the current resize completes.
         void (^copiedCompletionHandler)(CGImageRef) = [completionHandler copy];
         RetainPtr<WKWebView> retainedSelf = self;
