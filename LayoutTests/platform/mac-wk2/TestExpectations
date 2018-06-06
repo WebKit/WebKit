@@ -879,3 +879,5 @@ webkit.org/b/184245 http/tests/workers/service/service-worker-cache-api.https.ht
 webkit.org/b/177380 http/tests/cache-storage/cache-records-persistency.https.html [ Pass Failure ]
 
 webkit.org/b/184937 transitions/opacity-transition-zindex.html [ Skip ]
+
+webkit.org/b/186362 [ Release ] http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction.html [ Skip ]
