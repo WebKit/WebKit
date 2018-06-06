@@ -360,7 +360,7 @@ window.suitesManager =
         var link = Utilities.createElement("span", {}, testElement);
         link.classList.add("link");
         link.textContent = "link";
-        link.suiteName = Utilities.stripNonASCIICharacters(suiteCheckbox.suite.name);
+        link.suiteName = Utilities.stripUnwantedCharactersForURL(suiteCheckbox.suite.name);
         link.testName = test.name;
         link.onclick = function(event) {
             var element = event.target;
@@ -369,7 +369,7 @@ window.suitesManager =
             var options = optionsManager.updateLocalStorageFromUI();
             Utilities.extendObject(options, {
                 "suite-name": element.suiteName,
-                "test-name": Utilities.stripNonASCIICharacters(element.testName)
+                "test-name": Utilities.stripUnwantedCharactersForURL(element.testName)
             });
             var complexity = suitesManager._editElement(element.parentNode).value;
             if (complexity)
@@ -481,19 +481,22 @@ window.suitesManager =
 
     suitesFromQueryString: function(suiteName, testName)
     {
+        suiteName = decodeURIComponent(suiteName);
+        testName = decodeURIComponent(testName);
+
         var suites = [];
         var suiteRegExp = new RegExp(suiteName, "i");
         var testRegExp = new RegExp(testName, "i");
 
         for (var i = 0; i < Suites.length; ++i) {
             var suite = Suites[i];
-            if (!Utilities.stripNonASCIICharacters(suite.name).match(suiteRegExp))
+            if (!Utilities.stripUnwantedCharactersForURL(suite.name).match(suiteRegExp))
                 continue;
 
             var test;
             for (var j = 0; j < suite.tests.length; ++j) {
                 suiteTest = suite.tests[j];
-                if (Utilities.stripNonASCIICharacters(suiteTest.name).match(testRegExp)) {
+                if (Utilities.stripUnwantedCharactersForURL(suiteTest.name).match(testRegExp)) {
                     test = suiteTest;
                     break;
                 }

@@ -1,3 +1,19 @@
+2018-06-06  Jon Lee  <jonlee@apple.com>
+
+        Strip out more characters when creating permalinks
+        https://bugs.webkit.org/show_bug.cgi?id=186259
+
+        Reviewed by Said Abou-Hallawa.
+
+        Tests and suites may have names that make permalinks to the tests less readable when
+        shared. Expand the set of characters that are stripped out of the names.
+
+        * MotionMark/resources/debug-runner/motionmark.js: Refactor to call
+        stripUnwantedCharactersForURL. For existing links, decode the suite and test names.
+        * MotionMark/resources/extensions.js:
+        (Utilities.stripUnwantedCharactersForURL): Rename from stripNonASCIICharacters.
+        Remove any non-alphanumeric character.
+
 2018-06-04  Jon Lee  <jonlee@apple.com>
 
         Remove unnecessary MotionMark controllers

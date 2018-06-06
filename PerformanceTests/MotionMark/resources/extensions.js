@@ -147,9 +147,9 @@ Utilities =
         element.style[property] = element.style[this.browserPrefix().js + property[0].toUpperCase() + property.substr(1)] = value;
     },
 
-    stripNonASCIICharacters: function(inputString)
+    stripUnwantedCharactersForURL: function(inputString)
     {
-        return inputString.replace(/[ .,]/g, '');
+        return inputString.replace(/\W/g, '');
     },
 
     convertObjectToQueryString: function(object)
