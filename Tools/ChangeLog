@@ -1,3 +1,21 @@
+2018-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        DataInteractionTests ContentEditableToTextarea and ContentEditableToContentEditable are failing on recent iOS 12
+        https://bugs.webkit.org/show_bug.cgi?id=186325
+        <rdar://problem/40527850>
+
+        Reviewed by Tim Horton.
+
+        Tweak these API tests so that they're robust against changes to how NSAttributedStrings are serialized in item
+        providers ("public.rtf" vs. "com.apple.flat-rtfd"). Across all versions of iOS, just verify that either rich
+        text type is present in the list of dragged type identifiers, and that the rich text type is placed at a higher
+        fidelity than plain text.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (checkRichTextTypePrecedesPlainTextType):
+        (TestWebKitAPI::TEST):
+        (checkTypeIdentifierPrecedesOtherTypeIdentifier): Deleted.
+
 2018-06-05  Brent Fulgham  <bfulgham@apple.com>
 
         Adjust compile and runtime flags to match shippable state of features

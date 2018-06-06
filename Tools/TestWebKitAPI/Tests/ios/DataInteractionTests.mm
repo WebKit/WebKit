@@ -118,12 +118,15 @@ static void checkSelectionRectsWithLogging(NSArray *expected, NSArray *observed)
     EXPECT_TRUE([expected isEqualToArray:observed]);
 }
 
-static void checkTypeIdentifierPrecedesOtherTypeIdentifier(DataInteractionSimulator *simulator, NSString *firstType, NSString *secondType)
+static void checkRichTextTypePrecedesPlainTextType(DataInteractionSimulator *simulator)
 {
+    // At least one of "com.apple.flat-rtfd" or "public.rtf" is expected to have higher precedence than "public.utf8-plain-text".
     NSArray *registeredTypes = [simulator.sourceItemProviders.firstObject registeredTypeIdentifiers];
-    EXPECT_TRUE([registeredTypes containsObject:firstType]);
-    EXPECT_TRUE([registeredTypes containsObject:secondType]);
-    EXPECT_TRUE([registeredTypes indexOfObject:firstType] < [registeredTypes indexOfObject:secondType]);
+    auto indexOfRTFType = [registeredTypes indexOfObject:(NSString *)kUTTypeRTF];
+    auto indexOfFlatRTFDType = [registeredTypes indexOfObject:(NSString *)kUTTypeFlatRTFD];
+    auto indexOfPlainTextType = [registeredTypes indexOfObject:(NSString *)kUTTypeUTF8PlainText];
+    EXPECT_NE((NSInteger)indexOfPlainTextType, NSNotFound);
+    EXPECT_TRUE((indexOfRTFType != NSNotFound && indexOfRTFType < indexOfPlainTextType) || (indexOfFlatRTFDType != NSNotFound && indexOfFlatRTFDType < indexOfPlainTextType));
 }
 
 static void checkFirstTypeIsPresentAndSecondTypeIsMissing(DataInteractionSimulator *simulator, CFStringRef firstType, CFStringRef secondType)
@@ -350,12 +353,7 @@ TEST(DataInteractionTests, ContentEditableToContentEditable)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 961, 227) ], [dataInteractionSimulator finalSelectionRects]);
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
-    NSString *richTextTypeIdentifier = (NSString *)kUTTypeRTF;
-#else
-    NSString *richTextTypeIdentifier = (NSString *)kUTTypeRTFD;
-#endif
-    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), richTextTypeIdentifier, (NSString *)kUTTypeUTF8PlainText);
+    checkRichTextTypePrecedesPlainTextType(dataInteractionSimulator.get());
 }
 
 TEST(DataInteractionTests, ContentEditableToTextarea)
@@ -375,12 +373,7 @@ TEST(DataInteractionTests, ContentEditableToTextarea)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(6, 203, 990, 232) ], [dataInteractionSimulator finalSelectionRects]);
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
-    NSString *richTextTypeIdentifier = (NSString *)kUTTypeRTF;
-#else
-    NSString *richTextTypeIdentifier = (NSString *)kUTTypeRTFD;
-#endif
-    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), richTextTypeIdentifier, (NSString *)kUTTypeUTF8PlainText);
+    checkRichTextTypePrecedesPlainTextType(dataInteractionSimulator.get());
 }
 
 TEST(DataInteractionTests, ContentEditableMoveParagraphs)
