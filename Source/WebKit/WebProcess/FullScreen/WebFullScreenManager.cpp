@@ -89,7 +89,12 @@ void WebFullScreenManager::videoControlsManagerDidChange()
 {
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement();
-    setPIPStandbyElement(is<HTMLVideoElement>(currentPlaybackControlsElement) ? downcast<HTMLVideoElement>(currentPlaybackControlsElement) : nullptr);
+    if (!m_element || !is<HTMLVideoElement>(currentPlaybackControlsElement)) {
+        setPIPStandbyElement(nullptr);
+        return;
+    }
+
+    setPIPStandbyElement(downcast<HTMLVideoElement>(currentPlaybackControlsElement));
 #endif
 }
 
