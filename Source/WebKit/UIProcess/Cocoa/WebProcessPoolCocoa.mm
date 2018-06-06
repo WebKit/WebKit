@@ -282,9 +282,8 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 #endif
     
 #if PLATFORM(MAC)
-    auto screenProperties = WebCore::getScreenProperties();
-    parameters.primaryDisplayID = screenProperties.first;
-    parameters.screenPropertiesMap = WTFMove(screenProperties.second);
+    auto screenProperties = WebCore::collectScreenProperties();
+    parameters.screenProperties = WTFMove(screenProperties);
 #endif
 }
 

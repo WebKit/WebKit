@@ -185,10 +185,6 @@ struct WebPageCreationParameters {
 #if ENABLE(CONTENT_EXTENSIONS)
     Vector<std::pair<String, WebCompiledContentRuleListData>> contentRuleLists;
 #endif
-    
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    CGOpenGLDisplayMask displayMask { 0 };
-#endif
 };
 
 } // namespace WebKit

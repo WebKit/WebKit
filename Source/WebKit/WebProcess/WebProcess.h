@@ -371,7 +371,7 @@ private:
     void didReceiveSyncWebProcessMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
 #if PLATFORM(MAC)
-    void setScreenProperties(uint32_t primaryScreenID, const HashMap<uint32_t, WebCore::ScreenProperties>&);
+    void setScreenProperties(const WebCore::ScreenProperties&);
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     void scrollerStylePreferenceChanged(bool useOverlayScrollbars);
 #endif

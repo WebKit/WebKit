@@ -2778,11 +2778,6 @@ void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID)
         return;
 
     m_process->send(Messages::WebPage::WindowScreenDidChange(displayID), m_pageID);
-
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    auto currentDisplaymask = CGDisplayIDToOpenGLDisplayMask(displayID);
-    m_process->send(Messages::WebPage::OpenGLDisplayMaskChanged(currentDisplaymask), m_pageID);
-#endif
 }
 
 float WebPageProxy::deviceScaleFactor() const
@@ -6172,12 +6167,6 @@ WebPageCreationParameters WebPageProxy::creationParameters()
 
 #if ENABLE(APPLICATION_MANIFEST)
     parameters.applicationManifest = m_configuration->applicationManifest() ? std::optional<WebCore::ApplicationManifest>(m_configuration->applicationManifest()->applicationManifest()) : std::nullopt;
-#endif
-
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    auto screen = WebCore::screen(m_pageClient.platformWindow());
-    auto displayID = WebCore::displayID(screen);
-    parameters.displayMask = CGDisplayIDToOpenGLDisplayMask(displayID);
 #endif
 
     m_process->addWebUserContentControllerProxy(m_userContentController, parameters);

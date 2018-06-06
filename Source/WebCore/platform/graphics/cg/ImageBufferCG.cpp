@@ -96,7 +96,7 @@ std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize
     RenderingMode renderingMode = context.renderingMode();
     IntSize scaledSize = ImageBuffer::compatibleBufferSize(size, context);
     bool success = false;
-    std::unique_ptr<ImageBuffer> buffer(new ImageBuffer(scaledSize, 1, colorSpace.get(), renderingMode, success));
+    std::unique_ptr<ImageBuffer> buffer(new ImageBuffer(scaledSize, 1, colorSpace.get(), renderingMode, nullptr, success));
 
     if (!success)
         return nullptr;
@@ -106,7 +106,7 @@ std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize
     return buffer;
 }
 
-ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, CGColorSpaceRef colorSpace, RenderingMode renderingMode, bool& success)
+ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, CGColorSpaceRef colorSpace, RenderingMode renderingMode, const HostWindow* hostWindow, bool& success)
     : m_logicalSize(size)
     , m_resolutionScale(resolutionScale)
 {
@@ -152,12 +152,14 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, CGColorSp
         FloatSize userBounds = sizeForDestinationSize(FloatSize(width.unsafeGet(), height.unsafeGet()));
         m_data.surface = IOSurface::create(m_data.backingStoreSize, IntSize(userBounds), colorSpace);
         if (m_data.surface) {
-            cgContext = m_data.surface->ensurePlatformContext();
+            cgContext = m_data.surface->ensurePlatformContext(hostWindow);
             if (cgContext)
                 CGContextClearRect(cgContext.get(), FloatRect(FloatPoint(), userBounds));
             else
                 m_data.surface = nullptr;
         }
+#else
+        UNUSED_PARAM(hostWindow);
 #endif
         if (!cgContext)
             accelerateRendering = false; // If allocation fails, fall back to non-accelerated path.
@@ -193,8 +195,8 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, CGColorSp
     success = true;
 }
 
-ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpace imageColorSpace, RenderingMode renderingMode, bool& success)
-    : ImageBuffer(size, resolutionScale, cachedCGColorSpace(imageColorSpace), renderingMode, success)
+ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpace imageColorSpace, RenderingMode renderingMode, const HostWindow* hostWindow, bool& success)
+    : ImageBuffer(size, resolutionScale, cachedCGColorSpace(imageColorSpace), renderingMode, hostWindow, success)
 {
 }
 

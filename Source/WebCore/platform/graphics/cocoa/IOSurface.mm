@@ -272,7 +272,7 @@ void IOSurface::setContextSize(IntSize contextSize)
     m_contextSize = contextSize;
 }
 
-CGContextRef IOSurface::ensurePlatformContext()
+CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
 {
     if (m_cgContext)
         return m_cgContext.get();
@@ -301,8 +301,13 @@ CGContextRef IOSurface::ensurePlatformContext()
     m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_contextSize.width(), m_contextSize.height(), bitsPerComponent, bitsPerPixel, m_colorSpace.get(), bitmapInfo));
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    if (uint32_t mask = GraphicsContext3D::getOpenGLDisplayMask())
-        CGIOSurfaceContextSetDisplayMask(m_cgContext.get(), mask);
+    if (auto displayMask = primaryOpenGLDisplayMask()) {
+        if (hostWindow && hostWindow->displayID())
+            displayMask = displayMaskForDisplay(hostWindow->displayID());
+        CGIOSurfaceContextSetDisplayMask(m_cgContext.get(), displayMask);
+    }
+#else
+    UNUSED_PARAM(hostWindow);
 #endif
 
     return m_cgContext.get();

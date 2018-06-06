@@ -96,9 +96,9 @@ static NSScreen *screen(Widget* widget)
     return screen(displayID(widget));
 }
 
-static ScreenPropertiesMap& screenProperties()
+static ScreenProperties& screenProperties()
 {
-    static NeverDestroyed<ScreenPropertiesMap> screenProperties;
+    static NeverDestroyed<ScreenProperties> screenProperties;
     return screenProperties;
 }
 
@@ -108,12 +108,11 @@ static PlatformDisplayID& primaryScreenDisplayID()
     return primaryScreenDisplayID;
 }
 
-std::pair<PlatformDisplayID, ScreenPropertiesMap> getScreenProperties()
+ScreenProperties collectScreenProperties()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
 
-    ScreenPropertiesMap screenProperties;
-    std::optional<PlatformDisplayID> firstScreen;
+    ScreenProperties screenProperties;
 
     for (NSScreen *screen in [NSScreen screens]) {
         auto displayID = WebCore::displayID(screen);
@@ -128,46 +127,63 @@ std::pair<PlatformDisplayID, ScreenPropertiesMap> getScreenProperties()
         bool screenSupportsExtendedColor = [screen canRepresentDisplayGamut:NSDisplayGamutP3];
         bool screenHasInvertedColors = CGDisplayUsesInvertedPolarity();
         bool screenIsMonochrome = CGDisplayUsesForceToGray();
+        uint32_t displayMask = CGDisplayIDToOpenGLDisplayMask(displayID);
 
-        screenProperties.set(displayID, ScreenProperties { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, screenIsMonochrome });
+        screenProperties.screenDataMap.set(displayID, ScreenData { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, screenIsMonochrome, displayMask });
 
-        if (!firstScreen)
-            firstScreen = displayID;
+        if (!screenProperties.primaryDisplayID)
+            screenProperties.primaryDisplayID = displayID;
     }
 
-    return { WTFMove(*firstScreen), WTFMove(screenProperties) };
+    return screenProperties;
 }
 
-void setScreenProperties(PlatformDisplayID primaryScreenID, const ScreenPropertiesMap& properties)
+void setScreenProperties(const ScreenProperties& properties)
 {
-    primaryScreenDisplayID() = primaryScreenID;
     screenProperties() = properties;
 }
 
-ScreenProperties screenProperties(PlatformDisplayID screendisplayID)
+static ScreenData screenData(PlatformDisplayID screendisplayID)
 {
-    RELEASE_ASSERT(!screenProperties().isEmpty());
+    RELEASE_ASSERT(!screenProperties().screenDataMap.isEmpty());
 
     // Return property of the first screen if the screen is not found in the map.
     auto displayID = screendisplayID ? screendisplayID : primaryScreenDisplayID();
     if (displayID) {
-        auto screenPropertiesForDisplay = screenProperties().find(displayID);
-        if (screenPropertiesForDisplay != screenProperties().end())
+        auto screenPropertiesForDisplay = screenProperties().screenDataMap.find(displayID);
+        if (screenPropertiesForDisplay != screenProperties().screenDataMap.end())
             return screenPropertiesForDisplay->value;
     }
 
     // Last resort: use the first item in the screen list.
-    return screenProperties().begin()->value;
+    return screenProperties().screenDataMap.begin()->value;
 }
 
-static ScreenProperties getScreenProperties(Widget* widget)
+uint32_t primaryOpenGLDisplayMask()
 {
-    return screenProperties(displayID(widget));
+    if (!screenProperties().screenDataMap.isEmpty())
+        return screenData(primaryScreenDisplayID()).displayMask;
+    
+    return 0;
+}
+
+uint32_t displayMaskForDisplay(PlatformDisplayID displayID)
+{
+    if (!screenProperties().screenDataMap.isEmpty())
+        return screenData(displayID).displayMask;
+    
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+static ScreenData getScreenProperties(Widget* widget)
+{
+    return screenData(displayID(widget));
 }
 
 bool screenIsMonochrome(Widget* widget)
 {
-    if (!screenProperties().isEmpty())
+    if (!screenProperties().screenDataMap.isEmpty())
         return getScreenProperties(widget).screenIsMonochrome;
 
     // This is a system-wide accessibility setting, same on all screens.
@@ -177,8 +193,8 @@ bool screenIsMonochrome(Widget* widget)
 
 bool screenHasInvertedColors()
 {
-    if (!screenProperties().isEmpty())
-        return screenProperties(primaryScreenDisplayID()).screenHasInvertedColors;
+    if (!screenProperties().screenDataMap.isEmpty())
+        return screenData(primaryScreenDisplayID()).screenHasInvertedColors;
 
     // This is a system-wide accessibility setting, same on all screens.
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -187,7 +203,7 @@ bool screenHasInvertedColors()
 
 int screenDepth(Widget* widget)
 {
-    if (!screenProperties().isEmpty()) {
+    if (!screenProperties().screenDataMap.isEmpty()) {
         auto screenDepth = getScreenProperties(widget).screenDepth;
         ASSERT(screenDepth);
         return screenDepth;
@@ -199,7 +215,7 @@ int screenDepth(Widget* widget)
 
 int screenDepthPerComponent(Widget* widget)
 {
-    if (!screenProperties().isEmpty()) {
+    if (!screenProperties().screenDataMap.isEmpty()) {
         auto depthPerComponent = getScreenProperties(widget).screenDepthPerComponent;
         ASSERT(depthPerComponent);
         return depthPerComponent;
@@ -211,8 +227,8 @@ int screenDepthPerComponent(Widget* widget)
 
 FloatRect screenRectForDisplay(PlatformDisplayID displayID)
 {
-    if (!screenProperties().isEmpty()) {
-        auto screenRect = screenProperties(displayID).screenRect;
+    if (!screenProperties().screenDataMap.isEmpty()) {
+        auto screenRect = screenData(displayID).screenRect;
         ASSERT(!screenRect.isEmpty());
         return screenRect;
     }
@@ -228,7 +244,7 @@ FloatRect screenRectForPrimaryScreen()
 
 FloatRect screenRect(Widget* widget)
 {
-    if (!screenProperties().isEmpty())
+    if (!screenProperties().screenDataMap.isEmpty())
         return getScreenProperties(widget).screenRect;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -237,7 +253,7 @@ FloatRect screenRect(Widget* widget)
 
 FloatRect screenAvailableRect(Widget* widget)
 {
-    if (!screenProperties().isEmpty())
+    if (!screenProperties().screenDataMap.isEmpty())
         return getScreenProperties(widget).screenAvailableRect;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -262,7 +278,7 @@ NSScreen *screen(PlatformDisplayID displayID)
 
 CGColorSpaceRef screenColorSpace(Widget* widget)
 {
-    if (!screenProperties().isEmpty())
+    if (!screenProperties().screenDataMap.isEmpty())
         return getScreenProperties(widget).colorSpace.get();
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -271,7 +287,7 @@ CGColorSpaceRef screenColorSpace(Widget* widget)
 
 bool screenSupportsExtendedColor(Widget* widget)
 {
-    if (!screenProperties().isEmpty())
+    if (!screenProperties().screenDataMap.isEmpty())
         return getScreenProperties(widget).screenSupportsExtendedColor;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));

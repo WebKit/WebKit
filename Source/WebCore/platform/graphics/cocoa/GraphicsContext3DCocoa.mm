@@ -36,6 +36,7 @@
 #import "Extensions3DOpenGL.h"
 #import "GraphicsContext.h"
 #import "HTMLCanvasElement.h"
+#import "HostWindow.h"
 #import "ImageBuffer.h"
 #import "Logging.h"
 #import "WebGLLayer.h"
@@ -60,13 +61,13 @@
 #import <OpenGL/gl.h>
 #endif
 
+#if PLATFORM(MAC)
+#import "ScreenProperties.h"
+#endif
+
 namespace WebCore {
 
 static const unsigned statusCheckThreshold = 5;
-
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-std::optional<CGOpenGLDisplayMask> GraphicsContext3D::m_displayMask;
-#endif
 
 #if HAVE(APPLE_GRAPHICS_CONTROL)
 
@@ -424,7 +425,7 @@ static void identifyAndSetCurrentGPU(CGLPixelFormatObj pixelFormatObj, int numPi
 }
 #endif
 
-GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWindow*, GraphicsContext3D::RenderStyle, GraphicsContext3D* sharedContext)
+GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle, GraphicsContext3D* sharedContext)
     : m_attrs(attrs)
 #if PLATFORM(IOS)
     , m_compiler(SH_ESSL_OUTPUT)
@@ -432,6 +433,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     , m_private(std::make_unique<GraphicsContext3DPrivate>(this))
 {
 #if USE(OPENGL_ES)
+    UNUSED_PARAM(hostWindow);
     EAGLRenderingAPI api = m_attrs.useGLES3 ? kEAGLRenderingAPIOpenGLES3 : kEAGLRenderingAPIOpenGLES2;
     if (!sharedContext)
         m_contextObj = [[EAGLContext alloc] initWithAPI:api];
@@ -492,8 +494,13 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     CGLSetParameter(m_contextObj, kCGLCPAbortOnGPURestartStatusBlacklisted, &abortOnBlacklist);
     
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    if (m_displayMask.has_value())
-        identifyAndSetCurrentGPU(pixelFormatObj, numPixelFormats, m_displayMask.value(), m_contextObj);
+    if (auto displayMask = primaryOpenGLDisplayMask()) {
+        if (hostWindow && hostWindow->displayID())
+            displayMask = displayMaskForDisplay(hostWindow->displayID());
+        identifyAndSetCurrentGPU(pixelFormatObj, numPixelFormats, displayMask, m_contextObj);
+    }
+#else
+    UNUSED_PARAM(hostWindow);
 #endif
 
     CGLDestroyPixelFormat(pixelFormatObj);
@@ -789,20 +796,6 @@ void GraphicsContext3D::simulateContextChanged()
     manager().updateAllContexts();
 }
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-void GraphicsContext3D::setOpenGLDisplayMask(CGOpenGLDisplayMask displayMask)
-{
-    m_displayMask = displayMask;
-}
-    
-CGOpenGLDisplayMask GraphicsContext3D::getOpenGLDisplayMask()
-{
-    if (m_displayMask.has_value())
-        return m_displayMask.value();
-    return 0;
-}
-#endif
-
 bool GraphicsContext3D::allowOfflineRenderers() const
 {
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
@@ -812,7 +805,7 @@ bool GraphicsContext3D::allowOfflineRenderers() const
     // all offline renderers need to be considered when finding a pixel format.
     // In WebKit legacy, there will still be a WindowServer connection, and
     // m_displayMask will not be set in this case.
-    if (m_displayMask.has_value())
+    if (primaryOpenGLDisplayMask())
         return true;
 #endif
         

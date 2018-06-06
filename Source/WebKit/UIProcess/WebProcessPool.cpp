@@ -439,8 +439,8 @@ void WebProcessPool::textCheckerStateChanged()
 void WebProcessPool::screenPropertiesStateChanged()
 {
 #if PLATFORM(MAC)
-    auto screenProperties = WebCore::getScreenProperties();
-    sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties.first, screenProperties.second));
+    auto screenProperties = WebCore::collectScreenProperties();
+    sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
 #endif
 }
 
@@ -810,9 +810,9 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
 #if PLATFORM(MAC)
 static void displayReconfigurationCallBack(CGDirectDisplayID display, CGDisplayChangeSummaryFlags flags, void *userInfo)
 {
-    auto screenProperties = WebCore::getScreenProperties();
+    auto screenProperties = WebCore::collectScreenProperties();
     for (auto& processPool : WebProcessPool::allProcessPools())
-        processPool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties.first, screenProperties.second));
+        processPool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
 }
 
 static void registerDisplayConfigurationCallback()

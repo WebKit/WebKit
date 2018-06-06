@@ -1,3 +1,47 @@
+2018-06-05  Per Arne Vollan  <pvollan@apple.com>
+
+        Move OpenGL display mask to screen data struct.
+        https://bugs.webkit.org/show_bug.cgi?id=186198
+        <rdar://problem/40724854>
+
+        Reviewed by Brent Fulgham.
+
+        Currently, the OpenGL display mask is a global in the WebContent process. This is not correct in all cases, since
+        it is possible to have two Web views in the same WebContent process, displayed on different displays. This can be
+        resolved by moving the OpenGL display mask to a new ScreenData struct, containing information specific to each
+        display. The display ID of the host window is used to find the OpenGL display mask when needed. This patch makes
+        the host window available when creating an IOSurface, in order to find the right OpenGL display mask. If no host
+        window is available, the OpenGL display mask of the main display is used.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::windowScreenDidChange):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::screenPropertiesStateChanged):
+        (WebKit::displayReconfigurationCallBack):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_credentialsMessenger):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::openGLDisplayMaskChanged): Deleted.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setScreenProperties):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2018-06-05  Keith Rollin  <krollin@apple.com>
 
         Remove tracksResourceLoadMilestones support

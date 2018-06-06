@@ -1147,13 +1147,6 @@ void WebPage::setShouldPlayToPlaybackTarget(uint64_t contextId, bool shouldPlay)
 }
 #endif
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-void WebPage::openGLDisplayMaskChanged(uint32_t displayMask)
-{
-    GraphicsContext3D::setOpenGLDisplayMask(displayMask);
-}
-#endif
-
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

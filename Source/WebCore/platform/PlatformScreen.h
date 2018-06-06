@@ -95,12 +95,11 @@ WEBCORE_EXPORT NSRect toDeviceSpace(const FloatRect&, NSWindow *source);
 
 NSPoint flipScreenPoint(const NSPoint&, NSScreen *);
 
-typedef HashMap<PlatformDisplayID, ScreenProperties> ScreenPropertiesMap;
+WEBCORE_EXPORT ScreenProperties collectScreenProperties();
+WEBCORE_EXPORT void setScreenProperties(const ScreenProperties&);
 
-WEBCORE_EXPORT std::pair<PlatformDisplayID, ScreenPropertiesMap> getScreenProperties();
-WEBCORE_EXPORT void setScreenProperties(PlatformDisplayID primaryScreenID, const ScreenPropertiesMap&);
-ScreenProperties screenProperties(PlatformDisplayID);
-
+uint32_t primaryOpenGLDisplayMask();
+uint32_t displayMaskForDisplay(PlatformDisplayID);
 #endif
 
 #if PLATFORM(IOS)

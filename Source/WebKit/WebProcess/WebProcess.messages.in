@@ -130,7 +130,7 @@ messages -> WebProcess LegacyReceiver {
     UpdateActivePages()
 
 #if PLATFORM(MAC)
-    SetScreenProperties(uint32_t primaryScreenID, HashMap<uint32_t, WebCore::ScreenProperties> screenProperties)
+    SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     ScrollerStylePreferenceChanged(bool useOvelayScrollbars)
 #endif

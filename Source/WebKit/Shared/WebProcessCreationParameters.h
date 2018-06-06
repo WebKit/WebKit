@@ -195,8 +195,7 @@ struct WebProcessCreationParameters {
 #endif
 
 #if PLATFORM(MAC)
-    WebCore::PlatformDisplayID primaryDisplayID { 0 };
-    WebCore::ScreenPropertiesMap screenPropertiesMap;
+    WebCore::ScreenProperties screenProperties;
 #endif
 };
 

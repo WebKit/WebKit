@@ -119,9 +119,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if ENABLE(CONTENT_EXTENSIONS)
     encoder << contentRuleLists;
 #endif
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    encoder << displayMask;
-#endif
 }
 
 std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
@@ -344,11 +341,6 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!contentRuleLists)
         return std::nullopt;
     parameters.contentRuleLists = WTFMove(*contentRuleLists);
-#endif
-
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    if (!decoder.decode(parameters.displayMask))
-        return std::nullopt;
 #endif
 
     return WTFMove(parameters);

@@ -913,7 +913,8 @@ void HTMLCanvasElement::createImageBuffer() const
 
     RenderingMode renderingMode = shouldAccelerate(size()) ? Accelerated : Unaccelerated;
 
-    setImageBuffer(ImageBuffer::create(size(), renderingMode));
+    auto hostWindow = (document().view() && document().view()->root()) ? document().view()->root()->hostWindow() : nullptr;
+    setImageBuffer(ImageBuffer::create(size(), renderingMode, 1, ColorSpaceSRGB, hostWindow));
     if (!m_imageBuffer)
         return;
     m_imageBuffer->context().setShadowsIgnoreTransforms(true);

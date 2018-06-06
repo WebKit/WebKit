@@ -49,7 +49,8 @@ class Image;
 class ImageData;
 class IntPoint;
 class IntRect;
-
+class HostWindow;
+    
 enum BackingStoreCopy {
     CopyBackingStore, // Guarantee subsequent draws don't affect the copy.
     DontCopyBackingStore // Subsequent draws may affect the copy.
@@ -65,7 +66,7 @@ class ImageBuffer {
     friend class IOSurface;
 public:
     // Will return a null pointer on allocation failure.
-    WEBCORE_EXPORT static std::unique_ptr<ImageBuffer> create(const FloatSize&, RenderingMode, float resolutionScale = 1, ColorSpace = ColorSpaceSRGB);
+    WEBCORE_EXPORT static std::unique_ptr<ImageBuffer> create(const FloatSize&, RenderingMode, float resolutionScale = 1, ColorSpace = ColorSpaceSRGB, const HostWindow* = nullptr);
 #if USE(DIRECT2D)
     WEBCORE_EXPORT static std::unique_ptr<ImageBuffer> create(const FloatSize&, RenderingMode, const GraphicsContext*, float resolutionScale = 1, ColorSpace = ColorSpaceSRGB);
 #endif
@@ -164,9 +165,9 @@ private:
 
     // This constructor will place its success into the given out-variable
     // so that create() knows when it should return failure.
-    WEBCORE_EXPORT ImageBuffer(const FloatSize&, float resolutionScale, ColorSpace, RenderingMode, bool& success);
+    WEBCORE_EXPORT ImageBuffer(const FloatSize&, float resolutionScale, ColorSpace, RenderingMode, const HostWindow*, bool& success);
 #if USE(CG)
-    ImageBuffer(const FloatSize&, float resolutionScale, CGColorSpaceRef, RenderingMode, bool& success);
+    ImageBuffer(const FloatSize&, float resolutionScale, CGColorSpaceRef, RenderingMode, const HostWindow*, bool& success);
     RetainPtr<CFDataRef> toCFData(const String& mimeType, std::optional<double> quality, PreserveResolution) const;
 #elif USE(DIRECT2D)
     ImageBuffer(const FloatSize&, float resolutionScale, ColorSpace, RenderingMode, const GraphicsContext*, bool& success);

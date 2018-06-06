@@ -38,6 +38,8 @@ class TextStream;
 
 namespace WebCore {
 
+class HostWindow;
+    
 class IOSurface final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -107,7 +109,7 @@ public:
 #endif
     IOSurfaceRef surface() const { return m_surface.get(); }
     WEBCORE_EXPORT GraphicsContext& ensureGraphicsContext();
-    WEBCORE_EXPORT CGContextRef ensurePlatformContext();
+    WEBCORE_EXPORT CGContextRef ensurePlatformContext(const HostWindow* = nullptr);
 
     enum class SurfaceState {
         Valid,

@@ -156,8 +156,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 
 #if PLATFORM(MAC)
-    encoder << primaryDisplayID;
-    encoder << screenPropertiesMap;
+    encoder << screenProperties;
 #endif
 }
 
@@ -407,14 +406,11 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 #endif
 
 #if PLATFORM(MAC)
-    if (!decoder.decode(parameters.primaryDisplayID))
+    std::optional<WebCore::ScreenProperties> screenProperties;
+    decoder >> screenProperties;
+    if (!screenProperties)
         return false;
-
-    std::optional<WebCore::ScreenPropertiesMap> screenPropertiesMap;
-    decoder >> screenPropertiesMap;
-    if (!screenPropertiesMap)
-        return false;
-    parameters.screenPropertiesMap = WTFMove(*screenPropertiesMap);
+    parameters.screenProperties = WTFMove(*screenProperties);
 #endif
 
     return true;

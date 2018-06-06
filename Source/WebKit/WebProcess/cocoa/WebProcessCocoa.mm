@@ -193,7 +193,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
     }
 
 #if PLATFORM(MAC)
-    WebCore::setScreenProperties(parameters.primaryDisplayID, parameters.screenPropertiesMap);
+    WebCore::setScreenProperties(parameters.screenProperties);
 #endif
 }
 

@@ -618,10 +618,6 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     setViewportConfigurationViewLayoutSize(parameters.viewportConfigurationViewLayoutSize);
     setMaximumUnobscuredSize(parameters.maximumUnobscuredSize);
 #endif
-    
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    GraphicsContext3D::setOpenGLDisplayMask(parameters.displayMask);
-#endif
 }
 
 #if ENABLE(WEB_RTC)
