@@ -1,3 +1,14 @@
+2018-06-06  Jer Noble  <jer.noble@apple.com>
+
+        Set the AVAssetResourceLoaderRequest's contentType to AVStreamingKeyDeliveryContentKeyType in the case of a FPS key request.
+        https://bugs.webkit.org/show_bug.cgi?id=186328
+        <rdar://problem/40829228>
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::attemptToDecryptWithInstance):
+
 2018-06-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add margin computation for floating, replaced elements.
