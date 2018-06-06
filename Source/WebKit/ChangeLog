@@ -1,3 +1,7 @@
+2018-06-06  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r232528. rdar://problem/40858098
+
 2018-06-05  Per Arne Vollan  <pvollan@apple.com>
 
         Move OpenGL display mask to screen data struct.

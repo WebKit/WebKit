@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef NetworkCacheData_h
+#define NetworkCacheData_h
 
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/SHA1.h>
@@ -31,7 +32,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
-#include <wtf/OSObjectPtr.h>
+#include <wtf/DispatchPtr.h>
 #endif
 
 #if USE(SOUP)
@@ -56,7 +57,7 @@ public:
 
 #if PLATFORM(COCOA)
     enum class Backing { Buffer, Map };
-    Data(OSObjectPtr<dispatch_data_t>&&, Backing = Backing::Buffer);
+    Data(DispatchPtr<dispatch_data_t>, Backing = Backing::Buffer);
 #endif
 #if USE(SOUP)
     Data(GRefPtr<SoupBuffer>&&, int fd = -1);
@@ -84,7 +85,7 @@ public:
 #endif
 private:
 #if PLATFORM(COCOA)
-    mutable OSObjectPtr<dispatch_data_t> m_dispatchData;
+    mutable DispatchPtr<dispatch_data_t> m_dispatchData;
 #endif
 #if USE(SOUP)
     mutable GRefPtr<SoupBuffer> m_buffer;
@@ -106,5 +107,6 @@ std::optional<Salt> readOrMakeSalt(const String& path);
 SHA1::Digest computeSHA1(const Data&, const Salt&);
 
 }
-
 }
+
+#endif

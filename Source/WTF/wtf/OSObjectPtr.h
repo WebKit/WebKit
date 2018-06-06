@@ -26,25 +26,28 @@
 #pragma once
 
 #include <os/object.h>
+#include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
 
-template<typename> class OSObjectPtr;
+template<typename T> class OSObjectPtr;
 template<typename T> OSObjectPtr<T> adoptOSObject(T);
 
-template<typename T> static inline void retainOSObject(T ptr)
+template<typename T>
+static inline void retainOSObject(T ptr)
 {
-#if __has_feature(objc_arc)
+#if defined(__OBJC__) && __has_feature(objc_arc)
     UNUSED_PARAM(ptr);
 #else
     os_retain(ptr);
 #endif
 }
 
-template<typename T> static inline void releaseOSObject(T ptr)
+template<typename T>
+static inline void releaseOSObject(T ptr)
 {
-#if __has_feature(objc_arc)
+#if defined(__OBJC__) && __has_feature(objc_arc)
     UNUSED_PARAM(ptr);
 #else
     os_release(ptr);
@@ -77,13 +80,13 @@ public:
     }
 
     OSObjectPtr(OSObjectPtr&& other)
-        : m_ptr(WTFMove(other.m_ptr))
+        : m_ptr(other.m_ptr)
     {
         other.m_ptr = nullptr;
     }
 
     OSObjectPtr(T ptr)
-        : m_ptr(WTFMove(ptr))
+        : m_ptr(ptr)
     {
         if (m_ptr)
             retainOSObject(m_ptr);
@@ -108,12 +111,13 @@ public:
         if (m_ptr)
             releaseOSObject(m_ptr);
         m_ptr = nullptr;
+
         return *this;
     }
 
     OSObjectPtr& operator=(T other)
     {
-        OSObjectPtr ptr = WTFMove(other);
+        OSObjectPtr ptr = other;
         swap(ptr);
         return *this;
     }
@@ -133,7 +137,7 @@ public:
 private:
     struct AdoptOSObject { };
     OSObjectPtr(AdoptOSObject, T ptr)
-        : m_ptr(WTFMove(ptr))
+        : m_ptr(ptr)
     {
     }
 
@@ -142,7 +146,7 @@ private:
 
 template<typename T> inline OSObjectPtr<T> adoptOSObject(T ptr)
 {
-    return OSObjectPtr<T> { typename OSObjectPtr<T>::AdoptOSObject { }, WTFMove(ptr) };
+    return OSObjectPtr<T>(typename OSObjectPtr<T>::AdoptOSObject { }, ptr);
 }
 
 } // namespace WTF

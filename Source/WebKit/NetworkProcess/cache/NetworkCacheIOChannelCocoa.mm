@@ -67,7 +67,7 @@ IOChannel::IOChannel(const String& filePath, Type type)
     int fd = ::open(path.data(), oflag, mode);
     m_fileDescriptor = fd;
 
-    m_dispatchIO = adoptOSObject(dispatch_io_create(DISPATCH_IO_RANDOM, fd, dispatch_get_global_queue(useLowIOPriority ? DISPATCH_QUEUE_PRIORITY_BACKGROUND : DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [fd](int) {
+    m_dispatchIO = adoptDispatch(dispatch_io_create(DISPATCH_IO_RANDOM, fd, dispatch_get_global_queue(useLowIOPriority ? DISPATCH_QUEUE_PRIORITY_BACKGROUND : DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [fd](int) {
         close(fd);
     }));
     ASSERT(m_dispatchIO.get());
@@ -95,7 +95,8 @@ void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, Function<void
         ASSERT_UNUSED(done, done || !didCallCompletionHandler);
         if (didCallCompletionHandler)
             return;
-        Data data { OSObjectPtr<dispatch_data_t> { fileData } };
+        DispatchPtr<dispatch_data_t> fileDataPtr(fileData);
+        Data data(fileDataPtr);
         auto callback = WTFMove(completionHandler);
         callback(data, error);
         didCallCompletionHandler = true;

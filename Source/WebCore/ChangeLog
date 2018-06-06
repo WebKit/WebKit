@@ -1,3 +1,7 @@
+2018-06-06  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r232528. rdar://problem/40858098
+
 2018-06-06  Jer Noble  <jer.noble@apple.com>
 
         Regions outside of the fullscreen window are exposed during zoom operations

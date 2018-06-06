@@ -31,7 +31,7 @@
 
 #if USE(COCOA_EVENT_LOOP)
 #include <dispatch/dispatch.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/DispatchPtr.h>
 #endif
 
 #if USE(GLIB)
@@ -43,14 +43,17 @@ namespace WebCore {
 
 class FileMonitor {
 public:
-    enum class FileChangeType { Modification, Removal };
+    enum class FileChangeType {
+        Modification,
+        Removal
+    };
 
     WEBCORE_EXPORT FileMonitor(const String&, Ref<WorkQueue>&& handlerQueue, WTF::Function<void(FileChangeType)>&& modificationHandler);
     WEBCORE_EXPORT ~FileMonitor();
 
 private:
 #if USE(COCOA_EVENT_LOOP)
-    OSObjectPtr<dispatch_source_t> m_platformMonitor;
+    DispatchPtr<dispatch_source_t> m_platformMonitor;
 #endif
 #if USE(GLIB)
     static void fileChangedCallback(GFileMonitor*, GFile*, GFile*, GFileMonitorEvent, FileMonitor*);
