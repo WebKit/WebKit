@@ -132,7 +132,10 @@ void ServicesOverlayController::Highlight::paintContents(const GraphicsLayer*, G
 
     CGContextRef cgContext = graphicsContext.platformContext();
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CGLayerRef highlightLayer = DDHighlightGetLayerWithContext(ddHighlight(), cgContext);
+#pragma clang diagnostic pop
     CGRect highlightBoundingRect = DDHighlightGetBoundingRect(ddHighlight());
     highlightBoundingRect.origin = CGPointZero;
 

@@ -1,3 +1,10 @@
+2018-06-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, fix the macOS build with recent SDKs.
+
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::Highlight::paintContents):
+
 2018-06-05  Brent Fulgham  <bfulgham@apple.com>
 
         Adjust compile and runtime flags to match shippable state of features
