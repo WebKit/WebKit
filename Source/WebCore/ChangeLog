@@ -1,3 +1,55 @@
+2018-06-06  Antoine Quint  <graouts@apple.com>
+
+        Rename color-filter to -apple-color-filter and do not expose it to Web content
+        https://bugs.webkit.org/show_bug.cgi?id=186306
+        <rdar://problem/39874167>
+
+        Reviewed by Simon Fraser.
+
+        Rename the color-filter CSS property to -apple-color-filter.
+
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::checkForMatchingColorFilterFunctionLists):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::image):
+        (WebCore::CSSGradientValue::computeStops):
+        (WebCore::CSSGradientValue::knownToBeOpaque const):
+        * css/CSSProperties.json:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::checkForMatchingColorFilterFunctionLists):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::checkForMatchingColorFilterFunctionLists):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintMarkedTextForeground):
+        (WebCore::InlineTextBox::paintMarkedTextDecoration):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresRepaint const):
+        (WebCore::RenderStyle::visitedDependentColorWithColorFilter const):
+        (WebCore::RenderStyle::colorByApplyingColorFilter const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::mutableAppleColorFilter):
+        (WebCore::RenderStyle::appleColorFilter const):
+        (WebCore::RenderStyle::hasAppleColorFilter const):
+        (WebCore::RenderStyle::setAppleColorFilter):
+        (WebCore::RenderStyle::initialAppleColorFilter):
+        (WebCore::RenderStyle::mutableColorFilter): Deleted.
+        (WebCore::RenderStyle::colorFilter const): Deleted.
+        (WebCore::RenderStyle::hasColorFilter const): Deleted.
+        (WebCore::RenderStyle::setColorFilter): Deleted.
+        (WebCore::RenderStyle::initialColorFilter): Deleted.
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        (WebCore::StyleRareInheritedData::hasColorFilters const):
+        * rendering/style/StyleRareInheritedData.h:
+
 2018-06-06  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r231817?): Layout Test media/track/track-delete-during-setup.html is a flaky timeout

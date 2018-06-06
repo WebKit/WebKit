@@ -52,7 +52,7 @@ RefPtr<Image> CSSGradientValue::image(RenderElement& renderer, const FloatSize& 
 {
     if (size.isEmpty())
         return nullptr;
-    bool cacheable = isCacheable() && !renderer.style().hasColorFilter();
+    bool cacheable = isCacheable() && !renderer.style().hasAppleColorFilter();
     if (cacheable) {
         if (!clients().contains(&renderer))
             return nullptr;
@@ -241,8 +241,8 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
                 offset = stop.m_position->floatValue(CSSPrimitiveValue::CSS_NUMBER);
 
             Color color = stop.m_resolvedColor;
-            if (style.hasColorFilter())
-                style.colorFilter().transformColor(color);
+            if (style.hasAppleColorFilter())
+                style.appleColorFilter().transformColor(color);
             result.uncheckedAppend({ offset, color });
         }
 
@@ -264,8 +264,8 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
         stops[i].isMidpoint = stop.isMidpoint;
 
         Color color = stop.m_resolvedColor;
-        if (style.hasColorFilter())
-            style.colorFilter().transformColor(color);
+        if (style.hasAppleColorFilter())
+            style.appleColorFilter().transformColor(color);
 
         stops[i].color = color;
 
@@ -579,12 +579,12 @@ bool CSSGradientValue::isCacheable() const
 
 bool CSSGradientValue::knownToBeOpaque(const RenderElement& renderer) const
 {
-    bool hasColorFilter = renderer.style().hasColorFilter();
+    bool hasColorFilter = renderer.style().hasAppleColorFilter();
 
     for (auto& stop : m_stops) {
         if (hasColorFilter) {
             Color stopColor = stop.m_resolvedColor;
-            renderer.style().colorFilter().transformColor(stopColor);
+            renderer.style().appleColorFilter().transformColor(stopColor);
             if (!stopColor.isOpaque())
                 return false;
         }

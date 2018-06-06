@@ -143,7 +143,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyClear,
     CSSPropertyClip,
     CSSPropertyColor,
-    CSSPropertyColorFilter,
+    CSSPropertyAppleColorFilter,
     CSSPropertyCounterIncrement,
     CSSPropertyCounterReset,
     CSSPropertyContent,
@@ -3849,8 +3849,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
             return shapePropertyValue(style, style.shapeOutside());
         case CSSPropertyFilter:
             return valueForFilter(style, style.filter());
-        case CSSPropertyColorFilter:
-            return valueForFilter(style, style.colorFilter());
+        case CSSPropertyAppleColorFilter:
+            return valueForFilter(style, style.appleColorFilter());
 #if ENABLE(FILTERS_LEVEL_2)
         case CSSPropertyWebkitBackdropFilter:
             return valueForFilter(style, style.backdropFilter());

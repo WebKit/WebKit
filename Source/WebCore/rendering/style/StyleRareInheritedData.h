@@ -159,7 +159,7 @@ public:
 
     AtomicString textEmphasisCustomMark;
     RefPtr<QuotesData> quotes;
-    DataRef<StyleFilterData> colorFilter;
+    DataRef<StyleFilterData> appleColorFilter;
 
     AtomicString lineGrid;
     unsigned tabSize;

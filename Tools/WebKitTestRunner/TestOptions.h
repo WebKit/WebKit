@@ -57,6 +57,7 @@ struct TestOptions {
     bool allowCrossOriginSubresourcesToAskForCredentials { false };
     bool enableWebAnimationsCSSIntegration { false };
     bool enableProcessSwapOnNavigation { false };
+    bool enableColorFilter { false };
 
     float deviceScaleFactor { 1 };
     Vector<String> overrideLanguages;
@@ -88,7 +89,8 @@ struct TestOptions {
             || applicationManifest != options.applicationManifest
             || allowCrossOriginSubresourcesToAskForCredentials != options.allowCrossOriginSubresourcesToAskForCredentials
             || enableWebAnimationsCSSIntegration != options.enableWebAnimationsCSSIntegration
-            || enableProcessSwapOnNavigation != options.enableProcessSwapOnNavigation)
+            || enableProcessSwapOnNavigation != options.enableProcessSwapOnNavigation
+            || enableColorFilter != options.enableColorFilter)
             return false;
 
         return true;

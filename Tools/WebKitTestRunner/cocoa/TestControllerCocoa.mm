@@ -147,6 +147,9 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
     if (options.enableAttachmentElement)
         [copiedConfiguration _setAttachmentElementEnabled: YES];
 
+    if (options.enableColorFilter)
+        [copiedConfiguration _setColorFilterEnabled: YES];
+
     if (options.applicationManifest.length()) {
         auto manifestPath = [NSString stringWithUTF8String:options.applicationManifest.c_str()];
         NSString *text = [NSString stringWithContentsOfFile:manifestPath usedEncoding:nullptr error:nullptr];

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
 
 <html>
 <head>
@@ -45,43 +45,43 @@
 
 
     @keyframes grayscale-anim {
-        from { color-filter: grayscale(0); }
-        to   { color-filter: grayscale(1); }
+        from { -apple-color-filter: grayscale(0); }
+        to   { -apple-color-filter: grayscale(1); }
     }
 
     @keyframes sepia-anim {
-        from { color-filter: sepia(0); }
-        to   { color-filter: sepia(1); }
+        from { -apple-color-filter: sepia(0); }
+        to   { -apple-color-filter: sepia(1); }
     }
 
     @keyframes saturate-anim {
-        from { color-filter: saturate(0); }
-        to   { color-filter: saturate(1); }
+        from { -apple-color-filter: saturate(0); }
+        to   { -apple-color-filter: saturate(1); }
     }
 
     @keyframes huerotate-anim {
-        from { color-filter: hue-rotate(0); }
-        to   { color-filter: hue-rotate(180deg); }
+        from { -apple-color-filter: hue-rotate(0); }
+        to   { -apple-color-filter: hue-rotate(180deg); }
     }
 
     @keyframes invert-anim {
-        from { color-filter: invert(0); }
-        to   { color-filter: invert(1); }
+        from { -apple-color-filter: invert(0); }
+        to   { -apple-color-filter: invert(1); }
     }
 
     @keyframes opacity-anim {
-        from { color-filter: opacity(1); }
-        to   { color-filter: opacity(0); }
+        from { -apple-color-filter: opacity(1); }
+        to   { -apple-color-filter: opacity(0); }
     }
 
     @keyframes brightness-anim {
-        from { color-filter: brightness(1); }
-        to   { color-filter: brightness(0); }
+        from { -apple-color-filter: brightness(1); }
+        to   { -apple-color-filter: brightness(0); }
     }
 
     @keyframes contrast-anim {
-        from { color-filter: contrast(1); }
-        to   { color-filter: contrast(0); }
+        from { -apple-color-filter: contrast(1); }
+        to   { -apple-color-filter: contrast(0); }
     }
 
   </style>
@@ -89,14 +89,14 @@
   <script type="text/javascript">
     const expectedValues = [
       // [animation-name, time, element-id, property, expected-value, tolerance]
-      ["grayscale-anim",  1, "grayscale-box", "colorFilter", 'grayscale(0.5)', 0.05],
-      ["sepia-anim",  1, "sepia-box", "colorFilter", 'sepia(0.5)', 0.05],
-      ["saturate-anim",  1, "saturate-box", "colorFilter", 'saturate(0.5)', 0.05],
-      ["huerotate-anim",  1, "huerotate-box", "colorFilter", 'hue-rotate(90deg)', 2],
-      ["invert-anim",  1, "invert-box", "colorFilter", 'invert(0.5)', 0.05],
-      ["opacity-anim",  1, "opacity-box", "colorFilter", 'opacity(0.5)', 0.05],
-      ["brightness-anim",  1, "brightness-box", "colorFilter", 'brightness(0.5)', 0.05],
-      ["contrast-anim",  1, "contrast-box", "colorFilter", 'contrast(0.5)', 0.05],
+      ["grayscale-anim",  1, "grayscale-box", "-apple-color-filter", 'grayscale(0.5)', 0.05],
+      ["sepia-anim",  1, "sepia-box", "-apple-color-filter", 'sepia(0.5)', 0.05],
+      ["saturate-anim",  1, "saturate-box", "-apple-color-filter", 'saturate(0.5)', 0.05],
+      ["huerotate-anim",  1, "huerotate-box", "-apple-color-filter", 'hue-rotate(90deg)', 2],
+      ["invert-anim",  1, "invert-box", "-apple-color-filter", 'invert(0.5)', 0.05],
+      ["opacity-anim",  1, "opacity-box", "-apple-color-filter", 'opacity(0.5)', 0.05],
+      ["brightness-anim",  1, "brightness-box", "-apple-color-filter", 'brightness(0.5)', 0.05],
+      ["contrast-anim",  1, "contrast-box", "-apple-color-filter", 'contrast(0.5)', 0.05],
     ];
     
     runAnimationTest(expectedValues);

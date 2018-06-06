@@ -1,3 +1,30 @@
+2018-06-06  Antoine Quint  <graouts@apple.com>
+
+        Rename color-filter to -apple-color-filter and do not expose it to Web content
+        https://bugs.webkit.org/show_bug.cgi?id=186306
+        <rdar://problem/39874167>
+
+        Reviewed by Simon Fraser.
+
+        Change the ColorFilter setting to no longer be exposed as an experimental feature and ensure it's turned off by default.
+        To allow internal clients to use the -apple-color-filter property, we expose a new _colorFilterEnabled property as SPI
+        to WKWebViewConfigurationPrivate.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetColorFilterEnabled):
+        (WKPreferencesGetColorFilterEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _setAttachmentElementEnabled:]):
+        (-[WKWebViewConfiguration _colorFilterEnabled]):
+        (-[WKWebViewConfiguration _setColorFilterEnabled:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+
 2018-06-06  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r232301) - Unable to enter video fullscreen

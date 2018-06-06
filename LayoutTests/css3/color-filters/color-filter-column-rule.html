@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
 <html>
     <head>
-        <title>CSS Test: color-filter affects column-rule color</title>
+        <title>CSS Test: -apple-color-filter affects column-rule color</title>
         <link rel="author" title="Apple" href="http://www.apple.com/">
-        <link rel="match" href="color-filter-column-rule-expected.html">
+        <link rel="match" href="-apple-color-filter-column-rule-expected.html">
 
-        <meta name="assert" content="color-filter affects column-rule color">
+        <meta name="assert" content="-apple-color-filter affects column-rule color">
         <style type="text/css">
             .test
             {
@@ -17,7 +17,7 @@
                 column-rule-width: 100px;
                 column-rule-color: rgb(255, 128, 255);
                 column-rule-style: solid;
-                color-filter: invert();
+                -apple-color-filter: invert();
             }
         </style>
     </head>

@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
 <html>
     <head>
-        <title>CSS Test: color-filter affects outline color</title>
+        <title>CSS Test: -apple-color-filter affects outline color</title>
         <link rel="author" title="Apple" href="http://www.apple.com/">
-        <link rel="match" href="color-filter-outline-expected.html">
+        <link rel="match" href="-apple-color-filter-outline-expected.html">
 
-        <meta name="assert" content="color-filter affects outline color">
+        <meta name="assert" content="-apple-color-filter affects outline color">
         <style type="text/css">
             .test
             {
@@ -14,7 +14,7 @@
                 margin: 50px;
                 background-color: rgb(255, 128, 255);
                 outline: 20px solid yellow;
-                color-filter: invert();
+                -apple-color-filter: invert();
             }
         </style>
     </head>

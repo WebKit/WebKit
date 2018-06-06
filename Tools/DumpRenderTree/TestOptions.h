@@ -42,6 +42,7 @@ struct TestOptions {
     bool enableInspectorAdditions { false };
     bool dumpJSConsoleLogInStdErr { false };
     bool allowCrossOriginSubresourcesToAskForCredentials { false };
+    bool enableColorFilter { false };
 
     TestOptions(const std::string& pathOrURL, const std::string& absolutePath);
     bool webViewIsCompatibleWithOptions(const TestOptions&) const;

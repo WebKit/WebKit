@@ -216,7 +216,7 @@ static inline FilterOperations blendFunc(const CSSPropertyBlendingClient* anim, 
         listsMatch = anim->backdropFilterFunctionListsMatch();
         break;
 #endif
-    case CSSPropertyColorFilter:
+    case CSSPropertyAppleColorFilter:
         listsMatch = anim->colorFilterFunctionListsMatch();
         break;
     default:
@@ -1564,7 +1564,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 #if ENABLE(FILTERS_LEVEL_2)
         new PropertyWrapperFilter(CSSPropertyWebkitBackdropFilter, &RenderStyle::backdropFilter, &RenderStyle::setBackdropFilter),
 #endif
-        new PropertyWrapperFilter(CSSPropertyColorFilter, &RenderStyle::colorFilter, &RenderStyle::setColorFilter),
+        new PropertyWrapperFilter(CSSPropertyAppleColorFilter, &RenderStyle::appleColorFilter, &RenderStyle::setAppleColorFilter),
 
         new PropertyWrapperClipPath(CSSPropertyWebkitClipPath, &RenderStyle::clipPath, &RenderStyle::setClipPath),
 

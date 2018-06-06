@@ -1,3 +1,73 @@
+2018-06-06  Antoine Quint  <graouts@apple.com>
+
+        Rename color-filter to -apple-color-filter and do not expose it to Web content
+        https://bugs.webkit.org/show_bug.cgi?id=186306
+        <rdar://problem/39874167>
+
+        Reviewed by Simon Fraser.
+
+        Update tests for color-filter to test -apple-color-filter and explicitly turn the feature on since it's disabled by default.
+        We also update a test to not use the colorFilter accessor and setter on CSSStyleDeclaration because using an -apple- prefix
+        will no longer expose such a getter or setter, using getPropertyValue() and setProperty() instead.
+
+        * animations/resources/animation-test-helpers.js:
+        (getPropertyValue):
+        (comparePropertyValue):
+        * css3/color-filters/color-filter-animation-expected.txt:
+        * css3/color-filters/color-filter-animation.html:
+        * css3/color-filters/color-filter-backgrounds-borders-expected.html:
+        * css3/color-filters/color-filter-backgrounds-borders.html:
+        * css3/color-filters/color-filter-box-shadow-expected.html:
+        * css3/color-filters/color-filter-box-shadow.html:
+        * css3/color-filters/color-filter-brightness-expected.html:
+        * css3/color-filters/color-filter-brightness.html:
+        * css3/color-filters/color-filter-caret-color-expected.html:
+        * css3/color-filters/color-filter-caret-color.html:
+        * css3/color-filters/color-filter-color-property-expected.html:
+        * css3/color-filters/color-filter-color-property-list-item-expected.html:
+        * css3/color-filters/color-filter-color-property-list-item.html:
+        * css3/color-filters/color-filter-color-property.html:
+        * css3/color-filters/color-filter-color-text-decorations-expected.html:
+        * css3/color-filters/color-filter-color-text-decorations.html:
+        * css3/color-filters/color-filter-column-rule-expected.html:
+        * css3/color-filters/color-filter-column-rule.html:
+        * css3/color-filters/color-filter-contrast-expected.html:
+        * css3/color-filters/color-filter-contrast.html:
+        * css3/color-filters/color-filter-current-color-expected.html:
+        * css3/color-filters/color-filter-current-color.html:
+        * css3/color-filters/color-filter-filter-list-expected.html:
+        * css3/color-filters/color-filter-filter-list.html:
+        * css3/color-filters/color-filter-gradients-expected.html:
+        * css3/color-filters/color-filter-gradients.html:
+        * css3/color-filters/color-filter-grayscale-expected.html:
+        * css3/color-filters/color-filter-grayscale.html:
+        * css3/color-filters/color-filter-hue-rotate-expected.html:
+        * css3/color-filters/color-filter-hue-rotate.html:
+        * css3/color-filters/color-filter-inherits-expected.html:
+        * css3/color-filters/color-filter-inherits.html:
+        * css3/color-filters/color-filter-invert-expected.html:
+        * css3/color-filters/color-filter-invert.html:
+        * css3/color-filters/color-filter-opacity-expected.html:
+        * css3/color-filters/color-filter-opacity.html:
+        * css3/color-filters/color-filter-outline-expected.html:
+        * css3/color-filters/color-filter-outline.html:
+        * css3/color-filters/color-filter-parsing-expected.txt:
+        * css3/color-filters/color-filter-parsing.html:
+        * css3/color-filters/color-filter-saturate-expected.html:
+        * css3/color-filters/color-filter-saturate.html:
+        * css3/color-filters/color-filter-sepia-expected.html:
+        * css3/color-filters/color-filter-sepia.html:
+        * css3/color-filters/color-filter-text-decoration-shadow-expected.html:
+        * css3/color-filters/color-filter-text-decoration-shadow.html:
+        * css3/color-filters/color-filter-text-emphasis-expected.html:
+        * css3/color-filters/color-filter-text-emphasis.html:
+        * css3/color-filters/color-filter-text-shadow-expected.html:
+        * css3/color-filters/color-filter-text-shadow.html:
+        * css3/color-filters/color-filter-text-stroke-expected.html:
+        * css3/color-filters/color-filter-text-stroke.html:
+        * css3/color-filters/svg/color-filter-inline-svg-expected.html:
+        * css3/color-filters/svg/color-filter-inline-svg.html:
+
 2018-06-06  David Fenton  <david_fenton@apple.com>
 
         [macOS WK2 Release] Layout Test media/video-trackmenu-selection.html is flaky

@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
 <html>
     <head>
-        <title>CSS Test: color-filter affects currentColor</title>
+        <title>CSS Test: -apple-color-filter affects currentColor</title>
         <link rel="author" title="Apple" href="http://www.apple.com/">
-        <link rel="match" href="color-filter-current-color-expected.html">
+        <link rel="match" href="-apple-color-filter-current-color-expected.html">
 
-        <meta name="assert" content="color-filter affects currentColor">
+        <meta name="assert" content="-apple-color-filter affects currentColor">
         <style type="text/css">
             .test
             {
@@ -14,7 +14,7 @@
                 margin: 10px;
                 color: rgb(255, 128, 255);
                 border: 4px solid yellow;
-                color-filter: invert();
+                -apple-color-filter: invert();
             }
             
             .first

@@ -11,8 +11,8 @@ PASS Parse invert
 PASS Parse opacity() 
 PASS Parse saturate() 
 PASS Parse sepia() 
-PASS drop-shadow() is not allowed in color-filter 
-PASS blur() is not allowed in color-filter 
+PASS drop-shadow() is not allowed in -apple-color-filter 
+PASS blur() is not allowed in -apple-color-filter 
 PASS Canonicalize grayscale() argument 
 PASS Canonicalize hue-rotate() argument 
 PASS Negative value for brightness() is invalid 
