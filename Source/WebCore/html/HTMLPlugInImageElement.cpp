@@ -72,6 +72,9 @@ static const Seconds removeSnapshotTimerDelay { 1500_ms };
 
 static const String titleText(Page& page, const String& mimeType)
 {
+    if (mimeType.isEmpty())
+        return snapshottedPlugInLabelTitle();
+
     // FIXME: It's not consistent to get a string from the page's chrome client, but then cache it globally.
     // If it's global, it should come from elsewhere. If it's per-page then it should be cached per page.
     static NeverDestroyed<HashMap<String, String>> mimeTypeToLabelTitleMap;
@@ -85,6 +88,9 @@ static const String titleText(Page& page, const String& mimeType)
 
 static const String subtitleText(Page& page, const String& mimeType)
 {
+    if (mimeType.isEmpty())
+        return snapshottedPlugInLabelSubtitle();
+
     // FIXME: It's not consistent to get a string from the page's chrome client, but then cache it globally.
     // If it's global, it should come from elsewhere. If it's per-page then it should be cached per page.
     static NeverDestroyed<HashMap<String, String>> mimeTypeToLabelSubtitleMap;

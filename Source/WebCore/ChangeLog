@@ -1,3 +1,16 @@
+2018-06-06  Antoine Quint  <graouts@apple.com>
+
+        Use the default label for snapshotted plug-ins if no mime-type is available
+        https://bugs.webkit.org/show_bug.cgi?id=186348
+
+        Reviewed by Jon Lee.
+
+        In case the mime-type is not available, use the default labels otherwise we'd crash trying to look up the empty string in the HashMap.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::titleText):
+        (WebCore::subtitleText):
+
 2018-06-06  Timothy Hatcher  <timothy@apple.com>
 
         Wrong NSVisualEffectMaterial used for exit full screen overlay in dark mode.
