@@ -2,7 +2,6 @@ set(PAL_PUBLIC_HEADERS
     ExportMacros.h
     FileSizeFormatter.h
     HysteresisActivity.h
-    LogInitialization.h
     LogMacros.h
     Logging.h
     SessionID.h

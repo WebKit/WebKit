@@ -25,28 +25,9 @@
 
 #pragma once
 
-#include "LogMacros.h"
-#include <wtf/Assertions.h>
 #include <wtf/Forward.h>
 
 namespace PAL {
-
-#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX PALLog
-#endif
-
-#define PAL_LOG_CHANNELS(M) \
-    M(Network) \
-
-PAL_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
-
-String logLevelString();
-bool isLogChannelEnabled(const String& name);
-PAL_EXPORT void setLogChannelToAccumulate(const String& name);
-
-#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 PAL_EXPORT void registerNotifyCallback(const String&, WTF::Function<void()>&&);
 

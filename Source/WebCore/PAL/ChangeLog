@@ -1,3 +1,25 @@
+2018-06-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Logging macros are sensitive to pal/Logging.h vs Logging.h include order
+        https://bugs.webkit.org/show_bug.cgi?id=185893
+
+        Reviewed by Zalan Bujtas.
+        
+        Remove unused functionality from pal/Logging code until we need it. Primarily this removes the
+        #define LOG_CHANNEL_PREFIX from pal/Logging.h, which caused include-order problems with unified sources.
+        
+        Future work should move shared logging code up to WTF (or into PAL).
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/CMakeLists.txt:
+        * pal/LogInitialization.h: Removed.
+        * pal/Logging.cpp:
+        (PAL::isLogChannelEnabled): Deleted.
+        (PAL::setLogChannelToAccumulate): Deleted.
+        (PAL::initializeLogChannelsIfNecessary): Deleted.
+        * pal/Logging.h:
+        * pal/cocoa/LoggingCocoa.mm: Removed.
+
 2018-06-05  Brent Fulgham  <bfulgham@apple.com>
 
         Adjust compile and runtime flags to match shippable state of features
