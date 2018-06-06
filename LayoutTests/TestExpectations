@@ -2010,3 +2010,5 @@ webkit.org/b/48451 animations/3d/transform-origin-vs-functions.html [ Pass Failu
 webkit.org/b/184800 http/tests/workers/worker-importScripts-banned-mimetype.html [ Pass Timeout ]
 
 webkit.org/b/184802 http/tests/security/contentTypeOptions/nosniff-importScript-blocked.html [ Pass Timeout ]
+
+webkit.org/b/181100 inspector/worker/worker-recover-if-inspector-close.html [ Pass Failure ]
