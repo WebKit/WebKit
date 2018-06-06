@@ -216,7 +216,7 @@ FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::in
     if (!isStretchedToViewport(layoutContext, layoutBox))
         return computedWidthAndMarginValue;
     auto initialContainingBlockWidth = layoutContext.displayBoxForLayoutBox(initialContainingBlock(layoutBox))->contentBox().width();
-    return FormattingContext::Geometry::WidthAndMargin { std::max(computedWidthAndMarginValue.width, initialContainingBlockWidth), { } };
+    return FormattingContext::Geometry::WidthAndMargin { std::max(computedWidthAndMarginValue.width, initialContainingBlockWidth), { computedWidthAndMarginValue.margin } };
 }
 
 LayoutPoint BlockFormattingContext::Geometry::staticPosition(LayoutContext& layoutContext, const Box& layoutBox)

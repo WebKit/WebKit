@@ -1,3 +1,15 @@
+2018-06-05  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add missing margins for inflow, non replaced block and replaced inline elements
+        https://bugs.webkit.org/show_bug.cgi?id=186332
+
+        Reviewed by Darin Adler.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+
 2018-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Spelling errors in the middle of an inserted paragraph are not displayed

@@ -542,16 +542,16 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::inlineR
     //    If 300px is too wide to fit the device, UAs should use the width of the largest rectangle that has a 2:1 ratio and fits the device instead.
     auto& style = layoutBox.style();
     LayoutUnit computedWidthValue;
-    LayoutUnit computedMarginLeft;
-    LayoutUnit computedMarginRight;
+    LayoutUnit computedMarginLeftValue;
+    LayoutUnit computedMarginRightValue;
 
     {
         auto marginLeft = style.marginLeft();
         auto marginRight = style.marginRight();
         auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
 
-        computedMarginLeft = marginLeft.isAuto() ? LayoutUnit(0) : valueForLength(marginLeft, containingBlockWidth);
-        computedMarginRight = marginRight.isAuto() ? LayoutUnit(0) : valueForLength(marginRight, containingBlockWidth);
+        computedMarginLeftValue = marginLeft.isAuto() ? LayoutUnit(0) : valueForLength(marginLeft, containingBlockWidth);
+        computedMarginRightValue = marginRight.isAuto() ? LayoutUnit(0) : valueForLength(marginRight, containingBlockWidth);
     }
 
     auto width = style.logicalWidth();
@@ -578,7 +578,7 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::inlineR
         computedWidthValue = 300;
     }
 
-    return WidthAndMargin { computedWidthValue, { } };
+    return WidthAndMargin { computedWidthValue, { computedMarginLeftValue, computedMarginRightValue } };
 }
 
 Display::Box::Edges FormattingContext::Geometry::computedBorder(LayoutContext&, const Box& layoutBox)
