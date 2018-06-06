@@ -2429,6 +2429,9 @@ FloatRect GraphicsLayerCA::adjustTiledLayerVisibleRect(TiledBacking* tiledBackin
     if (oldVisibleRect.isEmpty() || newSize != oldSize || !newVisibleRect.intersects(oldVisibleRect))
         return newVisibleRect;
 
+    if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
+        return newVisibleRect;
+
     const float paddingMultiplier = 2;
 
     float leftEdgeDelta = paddingMultiplier * (newVisibleRect.x() - oldVisibleRect.x());

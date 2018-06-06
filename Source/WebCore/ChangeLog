@@ -1,3 +1,16 @@
+2018-06-06  Antti Koivisto  <antti@apple.com>
+
+        Use minimal coverage rect for tiled layers when under memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=186185
+        <rdar://problem/40713608>
+
+        Reviewed by Darin Adler.
+
+        We do this for the main content layer already.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::adjustTiledLayerVisibleRect):
+
 2018-06-05  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Only expose CSSAnimation and CSSTransition if the WebAnimationsCSSIntegration runtime flag is enabled
