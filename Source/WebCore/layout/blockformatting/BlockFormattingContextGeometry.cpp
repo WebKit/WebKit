@@ -219,6 +219,23 @@ FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::in
     return FormattingContext::Geometry::WidthAndMargin { std::max(computedWidthAndMarginValue.width, initialContainingBlockWidth), { computedWidthAndMarginValue.margin } };
 }
 
+FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
+{
+    ASSERT(layoutBox.isInFlow() && layoutBox.replaced());
+
+    // 10.3.4 Block-level, replaced elements in normal flow
+    //
+    // 1. The used value of 'width' is determined as for inline replaced elements.
+    // 2. Then the rules for non-replaced block-level elements are applied to determine the margins.
+
+    // #1
+    auto inlineReplacedWidthAndMargin = FormattingContext::Geometry::inlineReplacedWidthAndMargin(layoutContext, layoutBox);
+    // #2
+    auto inlineReplacedWidthAndBlockNonReplacedMargin = inFlowNonReplacedWidthAndMargin(layoutContext, layoutBox, inlineReplacedWidthAndMargin.width);
+    ASSERT(inlineReplacedWidthAndMargin.width == inlineReplacedWidthAndBlockNonReplacedMargin.width);
+    return inlineReplacedWidthAndBlockNonReplacedMargin;
+}
+
 LayoutPoint BlockFormattingContext::Geometry::staticPosition(LayoutContext& layoutContext, const Box& layoutBox)
 {
     // https://www.w3.org/TR/CSS22/visuren.html#block-formatting
@@ -319,17 +336,7 @@ FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::in
 
     if (!layoutBox.replaced())
         return inFlowNonReplacedWidthAndMargin(layoutContext, layoutBox);
-    // 10.3.4 Block-level, replaced elements in normal flow
-    //
-    // 1. The used value of 'width' is determined as for inline replaced elements.
-    // 2. Then the rules for non-replaced block-level elements are applied to determine the margins.
-
-    // #1
-    auto inlineReplacedWidthAndMargin = FormattingContext::Geometry::inlineReplacedWidthAndMargin(layoutContext, layoutBox);
-    // #2
-    auto inlineReplacedWidthAndBlockNonReplacedMargin = Geometry::inFlowNonReplacedWidthAndMargin(layoutContext, layoutBox, inlineReplacedWidthAndMargin.width);
-    ASSERT(inlineReplacedWidthAndMargin.width == inlineReplacedWidthAndBlockNonReplacedMargin.width);
-    return inlineReplacedWidthAndBlockNonReplacedMargin;
+    return inFlowReplacedWidthAndMargin(layoutContext, layoutBox);
 }
 
 }
