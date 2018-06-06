@@ -1,3 +1,26 @@
+2018-06-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Adjust compile and runtime flags to match shippable state of features (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=186319
+        <rdar://problem/40352045>
+
+        Unreviewed test fix.
+
+        TestWebKitAPI was timing out because 'color' input types are no longer support. I also discovered that the
+        ASSERT_STREQ macro returns on error, which causes tests to time out whenever a 'done = true' call (needed to
+        end the test) is done after ASSERT_STREQ, which might fail and return early, preventing the flag from being
+        set.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InjectedBundleNodeHandleIsTextField.mm:
+        (-[InjectedBundleNodeHandleIsTextField webProcessPlugIn:didCreateBrowserContextController:]): Make testing of
+        the 'color' input type conditional on the feature being part of the build.
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[AutoFillDelegate _webView:didClickAutoFillButtonWithUserInfo:]): Set the 'done=true' state before performing
+        string equality assertions, since they do an early return and bypass the end state of the test.
+        (-[DidResignInputElementStrongPasswordAppearanceDelegate _webView:didResignInputElementStrongPasswordAppearanceWithUserInfo:]): Ditto.
+        (-[AutoFillAvailableDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]): Ditto.
+        (-[InjectedBundleNodeHandleIsTextFieldDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]): Ditto.
+
 2018-06-05  Chris Dumez  <cdumez@apple.com>
 
         Regression(r232082): Websites get loaded inside of Messages App chat transcript

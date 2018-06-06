@@ -523,9 +523,9 @@ static bool readyForClick;
 
 - (void)_webView:(WKWebView *)webView didClickAutoFillButtonWithUserInfo:(id <NSSecureCoding>)userInfo
 {
+    done = true;
     ASSERT_TRUE([(id<NSObject>)userInfo isKindOfClass:[NSString class]]);
     ASSERT_STREQ([(NSString*)userInfo UTF8String], "user data string");
-    done = true;
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
@@ -560,9 +560,9 @@ static bool readytoResign;
 
 - (void)_webView:(WKWebView *)webView didResignInputElementStrongPasswordAppearanceWithUserInfo:(id <NSSecureCoding>)userInfo
 {
+    done = true;
     ASSERT_TRUE([(id<NSObject>)userInfo isKindOfClass:[NSString class]]);
     ASSERT_STREQ([(NSString*)userInfo UTF8String], "user data string");
-    done = true;
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
@@ -611,8 +611,8 @@ TEST(WebKit, DidResignInputElementStrongPasswordAppearanceWhenFormIsReset)
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler
 {
     completionHandler();
-    ASSERT_STREQ(message.UTF8String, "autofill available");
     done = true;
+    ASSERT_STREQ(message.UTF8String, "autofill available");
 }
 
 @end
@@ -635,8 +635,8 @@ TEST(WebKit, AutoFillAvailable)
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler
 {
     completionHandler();
-    ASSERT_STREQ(message.UTF8String, "isTextField success");
     done = true;
+    ASSERT_STREQ(message.UTF8String, "isTextField success");
 }
 
 @end
