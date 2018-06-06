@@ -50,7 +50,6 @@ set(WTF_PUBLIC_HEADERS
     DeprecatedOptional.h
     Deque.h
     DisallowCType.h
-    DispatchPtr.h
     Dominators.h
     DoublyLinkedList.h
     DumbPtrTraits.h

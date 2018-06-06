@@ -1,3 +1,14 @@
+2018-06-05  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Retire DispatchPtr, and add more move semantics and simpler #ifs to other smart pointers
+        https://bugs.webkit.org/show_bug.cgi?id=186324
+
+        Reviewed by Anders Carlsson.
+
+        * platform/FileMonitor.h: Use OSObjectPtr instead of DispatchPtr.
+        * platform/cocoa/FileMonitorCocoa.mm:
+        (WebCore::FileMonitor::FileMonitor): Ditto.
+
 2018-06-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, fix the macOS build with recent SDKs.

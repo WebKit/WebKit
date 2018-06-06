@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,14 +97,13 @@ public:
 
         new (&block->f) F { std::move(function) };
 
-#if defined(__OBJC__) && __has_feature(objc_arc)
-        BlockPtr blockPtr { (__bridge_transfer BlockType)block };
+#if __has_feature(objc_arc)
+        return BlockPtr { (__bridge_transfer BlockType)block };
 #else
         BlockPtr blockPtr;
         blockPtr.m_block = reinterpret_cast<BlockType>(block);
-#endif
-
         return blockPtr;
+#endif
     }
 
     BlockPtr()
@@ -113,8 +112,8 @@ public:
     }
 
     BlockPtr(BlockType block)
-#if defined(__OBJC__) && __has_feature(objc_arc)
-        : m_block(block)
+#if __has_feature(objc_arc)
+        : m_block(WTFMove(block))
 #else
         : m_block(Block_copy(block))
 #endif
@@ -122,7 +121,7 @@ public:
     }
 
     BlockPtr(const BlockPtr& other)
-#if defined(__OBJC__) && __has_feature(objc_arc)
+#if __has_feature(objc_arc)
         : m_block(other.m_block)
 #else
         : m_block(Block_copy(other.m_block))
@@ -137,14 +136,14 @@ public:
     
     ~BlockPtr()
     {
-#if !defined(__OBJC__) || !__has_feature(objc_arc)
+#if !__has_feature(objc_arc)
         Block_release(m_block);
 #endif
     }
 
     BlockPtr& operator=(const BlockPtr& other)
     {
-#if defined(__OBJC__) && __has_feature(objc_arc)
+#if __has_feature(objc_arc)
         m_block = other.m_block;
 #else
         if (this != &other) {
@@ -160,7 +159,7 @@ public:
     {
         ASSERT(this != &other);
 
-#if !defined(__OBJC__) || !__has_feature(objc_arc)
+#if !__has_feature(objc_arc)
         Block_release(m_block);
 #endif
         m_block = std::exchange(other.m_block, nullptr);

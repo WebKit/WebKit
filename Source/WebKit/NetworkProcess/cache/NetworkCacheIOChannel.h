@@ -69,7 +69,7 @@ private:
     int m_fileDescriptor { 0 };
     std::atomic<bool> m_wasDeleted { false }; // Try to narrow down a crash, https://bugs.webkit.org/show_bug.cgi?id=165659
 #if PLATFORM(COCOA)
-    DispatchPtr<dispatch_io_t> m_dispatchIO;
+    OSObjectPtr<dispatch_io_t> m_dispatchIO;
 #endif
 #if USE(SOUP)
     GRefPtr<GInputStream> m_inputStream;

@@ -1,5 +1,20 @@
 2018-06-05  Darin Adler  <darin@apple.com>
 
+        [Cocoa] Retire DispatchPtr, and add more move semantics and simpler #ifs to other smart pointers
+        https://bugs.webkit.org/show_bug.cgi?id=186324
+
+        Reviewed by Anders Carlsson.
+
+        * WTF.xcodeproj/project.pbxproj: Removed DispatchPtr.h.
+        * wtf/BlockPtr.h: Remove unneeded checks for __OBJC__. Added some use
+        of WTFMove.
+        * wtf/CMakeLists.txt: Removed DispatchPtr.h.
+        * wtf/DispatchPtr.h: Removed. We no longer need to support Mavericks.
+        * wtf/OSObjectPtr.h: Remove unneeded checks for __OBJC__. Added some use
+        of WTFMove.
+
+2018-06-05  Darin Adler  <darin@apple.com>
+
         [Cocoa] More preparation for ARC, focusing on WebKit and smart pointers
         https://bugs.webkit.org/show_bug.cgi?id=186314
 

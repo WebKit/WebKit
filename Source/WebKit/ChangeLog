@@ -1,3 +1,26 @@
+2018-06-05  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Retire DispatchPtr, and add more move semantics and simpler #ifs to other smart pointers
+        https://bugs.webkit.org/show_bug.cgi?id=186324
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/cache/NetworkCacheData.h: Use OSObjectPtr instead of
+        DispatchPtr and also use an rvalue reference in the constructor.
+        * NetworkProcess/cache/NetworkCacheDataCocoa.mm:
+        (WebKit::NetworkCache::Data::Data): Use adoptOSObject, rvalue reference
+        and WTFMove.
+        (WebKit::NetworkCache::Data::empty): Use OSObjectPtr.
+        (WebKit::NetworkCache::Data::data const): Use adoptOSObject.
+        (WebKit::NetworkCache::Data::subrange const): Ditto.
+        (WebKit::NetworkCache::concatenate): Ditto.
+        (WebKit::NetworkCache::Data::adoptMap): Ditto. Also use WTFMove.
+
+        * NetworkProcess/cache/NetworkCacheIOChannel.h: Use OSObjectPtr.
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        (WebKit::NetworkCache::IOChannel::IOChannel): Use adoptOSObject.
+        (WebKit::NetworkCache::IOChannel::read): Use OSObjectPtr.
+
 2018-06-05  Brent Fulgham  <bfulgham@apple.com>
 
         Adjust compile and runtime flags to match shippable state of features

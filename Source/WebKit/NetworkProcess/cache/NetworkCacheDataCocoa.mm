@@ -35,13 +35,13 @@ namespace WebKit {
 namespace NetworkCache {
 
 Data::Data(const uint8_t* data, size_t size)
-    : m_dispatchData(adoptDispatch(dispatch_data_create(data, size, nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT)))
+    : m_dispatchData(adoptOSObject(dispatch_data_create(data, size, nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT)))
     , m_size(size)
 {
 }
 
-Data::Data(DispatchPtr<dispatch_data_t> dispatchData, Backing backing)
-    : m_dispatchData(dispatchData)
+Data::Data(OSObjectPtr<dispatch_data_t>&& dispatchData, Backing backing)
+    : m_dispatchData(WTFMove(dispatchData))
     , m_size(m_dispatchData ? dispatch_data_get_size(m_dispatchData.get()) : 0)
     , m_isMap(m_size && backing == Backing::Map)
 {
@@ -49,7 +49,7 @@ Data::Data(DispatchPtr<dispatch_data_t> dispatchData, Backing backing)
 
 Data Data::empty()
 {
-    return { DispatchPtr<dispatch_data_t>(dispatch_data_empty) };
+    return { OSObjectPtr<dispatch_data_t> { dispatch_data_empty } };
 }
 
 const uint8_t* Data::data() const
@@ -57,7 +57,7 @@ const uint8_t* Data::data() const
     if (!m_data && m_dispatchData) {
         const void* data;
         size_t size;
-        m_dispatchData = adoptDispatch(dispatch_data_create_map(m_dispatchData.get(), &data, &size));
+        m_dispatchData = adoptOSObject(dispatch_data_create_map(m_dispatchData.get(), &data, &size));
         ASSERT(size == m_size);
         m_data = static_cast<const uint8_t*>(data);
     }
@@ -80,7 +80,7 @@ bool Data::apply(const Function<bool (const uint8_t*, size_t)>& applier) const
 
 Data Data::subrange(size_t offset, size_t size) const
 {
-    return { adoptDispatch(dispatch_data_create_subrange(dispatchData(), offset, size)) };
+    return { adoptOSObject(dispatch_data_create_subrange(dispatchData(), offset, size)) };
 }
 
 Data concatenate(const Data& a, const Data& b)
@@ -89,17 +89,18 @@ Data concatenate(const Data& a, const Data& b)
         return b;
     if (b.isNull())
         return a;
-    return { adoptDispatch(dispatch_data_create_concat(a.dispatchData(), b.dispatchData())) };
+    return { adoptOSObject(dispatch_data_create_concat(a.dispatchData(), b.dispatchData())) };
 }
 
 Data Data::adoptMap(void* map, size_t size, int fd)
 {
-    ASSERT(map && map != MAP_FAILED);
+    ASSERT(map);
+    ASSERT(map != MAP_FAILED);
     close(fd);
-    auto bodyMap = adoptDispatch(dispatch_data_create(map, size, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [map, size] {
+    auto bodyMap = adoptOSObject(dispatch_data_create(map, size, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [map, size] {
         munmap(map, size);
     }));
-    return { bodyMap, Data::Backing::Map };
+    return { WTFMove(bodyMap), Data::Backing::Map };
 }
 
 RefPtr<SharedMemory> Data::tryCreateSharedMemory() const

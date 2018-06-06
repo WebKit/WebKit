@@ -50,7 +50,7 @@ FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF:
     }
 
     // The source (platformMonitor) retains the dispatch queue.
-    m_platformMonitor = adoptDispatch(dispatch_source_create(DISPATCH_SOURCE_TYPE_VNODE, handle, monitorMask, handlerQueue->dispatchQueue()));
+    m_platformMonitor = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_VNODE, handle, monitorMask, handlerQueue->dispatchQueue()));
 
     LOG(ResourceLoadStatistics, "Creating monitor %p", m_platformMonitor.get());
 
