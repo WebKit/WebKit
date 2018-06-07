@@ -554,7 +554,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
 
             if (teardownType == TeardownType::Full || teardownType == TeardownType::RendererUpdateCancelingAnimations) {
                 if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-                    if (timeline)
+                    if (timeline && document.renderTreeBeingDestroyed())
                         timeline->removeAnimationsForElement(element);
                 } else
                     animationController.cancelAnimations(element);

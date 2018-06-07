@@ -47,6 +47,11 @@ DeclarativeAnimation::DeclarativeAnimation(Element& target, const Animation& bac
 
 DeclarativeAnimation::~DeclarativeAnimation()
 {
+}
+
+void DeclarativeAnimation::prepareAnimationForRemoval()
+{
+    WebAnimation::prepareAnimationForRemoval();
     m_eventQueue.close();
 }
 

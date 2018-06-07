@@ -153,7 +153,7 @@ Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& el
 void AnimationTimeline::removeAnimationsForElement(Element& element)
 {
     for (auto& animation : animationsForElement(element)) {
-        animation->setEffectInternal(nullptr);
+        animation->prepareAnimationForRemoval();
         removeAnimation(animation.releaseNonNull());
     }
 }

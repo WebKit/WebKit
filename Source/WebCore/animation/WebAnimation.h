@@ -109,6 +109,7 @@ public:
     void unsuspendEffectInvalidation();
     void setSuspended(bool);
     bool isSuspended() const { return m_isSuspended; }
+    virtual void prepareAnimationForRemoval();
 
     String description();
 

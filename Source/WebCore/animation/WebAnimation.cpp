@@ -70,6 +70,11 @@ WebAnimation::~WebAnimation()
 {
 }
 
+void WebAnimation::prepareAnimationForRemoval()
+{
+    setEffectInternal(nullptr);
+}
+
 void WebAnimation::suspendEffectInvalidation()
 {
     ++m_suspendCount;

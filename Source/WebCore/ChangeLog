@@ -1,3 +1,30 @@
+2018-06-07  Antoine Quint  <graouts@apple.com>
+
+        [ASan / StressGC] DumpRenderTree crashed in com.apple.WebCore: WebCore::EventTarget::ref + 16
+        https://bugs.webkit.org/show_bug.cgi?id=186207
+        <rdar://problem/40568747>
+
+        Reviewed by Dean Jackson.
+
+        Ensure that we clear the DOM event queue for declarative animations once an animation is cleared for
+        an element since the element can be deleted before events get dispatched asynchronouly for this animation.
+
+        We also only call AnimationTimeline::removeAnimationsForElement() from RenderTreeUpdater::tearDownRenderers()
+        in the case where we're tearing down the whole document as otherwise this would yield early clearing of the event
+        queue in the case where an element would get a "display: none" style.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::removeAnimationsForElement):
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::~DeclarativeAnimation):
+        (WebCore::DeclarativeAnimation::prepareAnimationForRemoval):
+        * animation/DeclarativeAnimation.h:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::prepareAnimationForRemoval):
+        * animation/WebAnimation.h:
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+
 2018-06-07  Don Olmstead  <don.olmstead@sony.com>
 
         [CoordGraphics] Fix compilation errors around USE(COORDINATED_GRAPHICS)
