@@ -76,7 +76,7 @@
                 break;
             case "#step6":
                 // Load localhost under 127.0.0.1 and check that it gets its non-partitioned cookie after user interaction.
-                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After user interaction, should receive one non-partitioned, first party cookie.", finishTest);
+                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After user interaction, should still only receive one partitioned, third party cookie.", finishTest);
                 break;
         }
     }

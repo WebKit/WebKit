@@ -36,8 +36,8 @@ Client-side document.cookie: partitionedThirdPartyCookie=value
 --------
 Frame: '<!--frame5-->'
 --------
-After user interaction, should receive non-partitioned cookies set in a first-party context and in a third-party context.
-Received cookie named 'firstPartyCookie'.
-Received cookie named 'thirdPartyCookie'.
-Did not receive cookie named 'partitionedThirdPartyCookie'.
-Client-side document.cookie: firstPartyCookie=value,thirdPartyCookie=value
+After user interaction, should should still only receive a partitioned, third-party cookie.
+Did not receive cookie named 'firstPartyCookie'.
+Did not receive cookie named 'thirdPartyCookie'.
+Received cookie named 'partitionedThirdPartyCookie'.
+Client-side document.cookie: partitionedThirdPartyCookie=value

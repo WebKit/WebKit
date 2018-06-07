@@ -65,7 +65,7 @@
                 openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should only receive partitioned, third party cookie.", setUserInteractionAndContinue);
                 break;
             case "#step5":
-                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After user interaction, should only receive non-partitioned, first party cookie.", finishTest);
+                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After user interaction, should still only receive a partitioned, third-party cookie.", finishTest);
                 break;
         }
     }

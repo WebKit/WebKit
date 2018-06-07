@@ -1,5 +1,26 @@
 2018-06-07  Brent Fulgham  <bfulgham@apple.com>
 
+        Remove unused debug mode conditions
+        https://bugs.webkit.org/show_bug.cgi?id=186358
+        <rdar://problem/39117121>
+
+        Reviewed by Zalan Bujtas.
+
+        Rebase test expectations after behavior change.
+
+        * http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context-expected.txt:
+        * http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html:
+        * http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-with-partitioning-timeout-expected.txt:
+        * http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-with-partitioning-timeout.html:
+        * http/tests/resourceLoadStatistics/partitioned-cookies-with-and-without-user-interaction-expected.txt:
+        * http/tests/resourceLoadStatistics/partitioned-cookies-with-and-without-user-interaction.html:
+        * http/tests/resourceLoadStatistics/third-party-cookie-with-and-without-user-interaction-expected.txt:
+        * http/tests/resourceLoadStatistics/third-party-cookie-with-and-without-user-interaction.html:
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-recent-user-interaction-expected.txt
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-recent-user-interaction.html
+
+2018-06-07  Brent Fulgham  <bfulgham@apple.com>
+
         Handle Storage Access API calls in the absence of an attached frame
         https://bugs.webkit.org/show_bug.cgi?id=186373
         <rdar://problem/40028265>

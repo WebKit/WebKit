@@ -1,3 +1,17 @@
+2018-06-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove unused debug mode conditions
+        https://bugs.webkit.org/show_bug.cgi?id=186358
+        <rdar://problem/39117121>
+
+        Reviewed by Zalan Bujtas.
+
+        Remove some unused code paths related to ResourceLoadStatistics debug mode.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::logUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::shouldPartitionCookies const):
+
 2018-06-07  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r232520): Crash under IPC::ArgumentCoder<WebCore::Credential>::encodePlatformData
