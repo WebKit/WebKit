@@ -206,6 +206,17 @@ void CachedResourceRequest::updateAccordingCacheMode()
     }
 }
 
+void CachedResourceRequest::updateAcceptEncodingHeader()
+{
+    if (!m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::Range))
+        return;
+
+    // FIXME: rdar://problem/40879225. Media engines triggering the load should not set this Accept-Encoding header.
+    ASSERT(!m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::AcceptEncoding) || m_options.destination == FetchOptions::Destination::Audio || m_options.destination == FetchOptions::Destination::Video);
+
+    m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::AcceptEncoding, ASCIILiteral("identity"));
+}
+
 void CachedResourceRequest::removeFragmentIdentifierIfNeeded()
 {
     URL url = MemoryCache::removeFragmentIdentifierIfNeeded(m_resourceRequest.url());

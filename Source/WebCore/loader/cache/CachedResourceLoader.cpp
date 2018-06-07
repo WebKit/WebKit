@@ -727,6 +727,7 @@ void CachedResourceLoader::updateHTTPRequestHeaders(CachedResource::Type type, C
     }
 
     request.updateAccordingCacheMode();
+    request.updateAcceptEncodingHeader();
 }
 
 static FetchOptions::Destination destinationForType(CachedResource::Type type)

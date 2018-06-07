@@ -1,3 +1,20 @@
+2018-06-06  Youenn Fablet  <youenn@apple.com>
+
+        Add Accept-Encoding: identity to Range requests
+        https://bugs.webkit.org/show_bug.cgi?id=186335
+        <rdar://problem/40837190>
+
+        Reviewed by Eric Carlson.
+
+        Tests: imported/w3c/web-platform-tests/fetch/range/general.any.html
+               imported/w3c/web-platform-tests/fetch/range/general.any.worker.html
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::updateHTTPRequestHeaders):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::updateAcceptEncodingHeader):
+        * loader/cache/CachedResourceRequest.h:
+
 2018-06-06  Per Arne Vollan  <pvollan@apple.com>
 
         Display links are sometimes not notifying WebCore when fired.

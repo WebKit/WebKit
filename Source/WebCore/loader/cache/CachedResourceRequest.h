@@ -80,6 +80,8 @@ public:
     void upgradeInsecureRequestIfNeeded(Document&);
     void setAcceptHeaderIfNone(CachedResource::Type);
     void updateAccordingCacheMode();
+    void updateAcceptEncodingHeader();
+
     void removeFragmentIdentifierIfNeeded();
 #if ENABLE(CONTENT_EXTENSIONS)
     void applyBlockedStatus(const ContentExtensions::BlockedStatus&, Page*);
