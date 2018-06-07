@@ -30,6 +30,8 @@
 
 #if ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)
 
+#include "ScrollingTree.h"
+
 namespace WebCore {
 
 Ref<ScrollingTreeStickyNode> ScrollingTreeStickyNode::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)

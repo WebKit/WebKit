@@ -48,7 +48,7 @@ enum PlatformWheelEventGranularity : uint8_t {
     ScrollByPixelWheelEvent,
 };
 
-#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
+#if ENABLE(ASYNC_SCROLLING)
 
 enum PlatformWheelEventPhase : uint8_t {
     PlatformWheelEventPhaseNone = 0,
@@ -146,7 +146,7 @@ public:
     bool useLatchedEventElement() const { return false; }
 #endif
 
-#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
+#if ENABLE(ASYNC_SCROLLING)
     PlatformWheelEventPhase phase() const { return m_phase; }
     PlatformWheelEventPhase momentumPhase() const { return m_momentumPhase; }
     bool isEndOfNonMomentumScroll() const;
@@ -171,7 +171,7 @@ protected:
     // Scrolling velocity in pixels per second.
     FloatSize m_scrollingVelocity;
 
-#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
+#if ENABLE(ASYNC_SCROLLING)
     PlatformWheelEventPhase m_phase { PlatformWheelEventPhaseNone };
     PlatformWheelEventPhase m_momentumPhase { PlatformWheelEventPhaseNone };
 #endif

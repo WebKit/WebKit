@@ -26,6 +26,8 @@
 #include "config.h"
 #include "TextureMapperPlatformLayerBuffer.h"
 
+#if USE(COORDINATED_GRAPHICS_THREADED)
+
 #include "NotImplemented.h"
 
 namespace WebCore {
@@ -80,3 +82,5 @@ void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textu
 }
 
 } // namespace WebCore
+
+#endif // USE(COORDINATED_GRAPHICS_THREADED)

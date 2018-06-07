@@ -267,15 +267,21 @@ void ThreadedCompositor::sceneUpdateFinished()
     {
         LockHolder locker(m_attributes.lock);
         shouldDispatchDisplayRefreshCallback = m_attributes.clientRendersNextFrame
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
             || m_displayRefreshMonitor->requiresDisplayRefreshCallback();
+#else
+            ;
+#endif
         shouldCoordinateUpdateCompletionWithClient = m_attributes.coordinateUpdateCompletionWithClient;
     }
 
     LockHolder stateLocker(m_compositingRunLoop->stateLock());
 
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     // Schedule the DisplayRefreshMonitor callback, if necessary.
     if (shouldDispatchDisplayRefreshCallback)
         m_displayRefreshMonitor->dispatchDisplayRefreshCallback();
+#endif
 
     // Mark the scene update as completed if no coordination is required and if not in a forced repaint.
     if (!shouldCoordinateUpdateCompletionWithClient && !m_inForceRepaint)

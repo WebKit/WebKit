@@ -25,12 +25,12 @@
 
 #pragma once
 
+#if USE(COORDINATED_GRAPHICS_THREADED)
+
 #include "BitmapTextureGL.h"
 #include "TextureMapperGLHeaders.h"
 #include "TextureMapperPlatformLayer.h"
 #include <wtf/MonotonicTime.h>
-
-#if USE(COORDINATED_GRAPHICS_THREADED)
 
 namespace WebCore {
 
@@ -80,4 +80,4 @@ private:
 
 } // namespace WebCore
 
-#endif // COORDINATED_GRAPHICS_THREADED
+#endif // USE(COORDINATED_GRAPHICS_THREADED)

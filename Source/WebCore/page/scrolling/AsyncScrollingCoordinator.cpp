@@ -46,6 +46,7 @@
 #include "ScrollingStateTree.h"
 #include "Settings.h"
 #include "WheelEventTestTrigger.h"
+#include <wtf/ProcessID.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -369,7 +370,7 @@ void AsyncScrollingCoordinator::reconcileScrollingState(FrameView& frameView, co
     bool oldProgrammaticScroll = frameView.inProgrammaticScroll();
     frameView.setInProgrammaticScroll(programmaticScroll);
 
-    LOG_WITH_STREAM(Scrolling, stream << getpid() << " AsyncScrollingCoordinator " << this << " reconcileScrollingState scrollPosition " << scrollPosition << " programmaticScroll " << programmaticScroll << " stability " << viewportRectStability << " " << scrollingLayerPositionAction);
+    LOG_WITH_STREAM(Scrolling, stream << getCurrentProcessID() << " AsyncScrollingCoordinator " << this << " reconcileScrollingState scrollPosition " << scrollPosition << " programmaticScroll " << programmaticScroll << " stability " << viewportRectStability << " " << scrollingLayerPositionAction);
 
     std::optional<FloatRect> layoutViewportRect;
 
@@ -492,7 +493,7 @@ void AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions(const
     if (!m_scrollingStateTree->rootStateNode())
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << getpid() << " AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions for viewport rect " << viewportRect);
+    LOG_WITH_STREAM(Scrolling, stream << getCurrentProcessID() << " AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions for viewport rect " << viewportRect);
 
     m_scrollingStateTree->rootStateNode()->reconcileLayerPositionForViewportRect(viewportRect, action);
 }

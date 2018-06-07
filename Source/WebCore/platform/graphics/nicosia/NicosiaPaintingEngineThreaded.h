@@ -28,6 +28,8 @@
 
 #pragma once
 
+#if USE(COORDINATED_GRAPHICS_THREADED)
+
 #include "NicosiaPaintingEngine.h"
 
 typedef struct _GThreadPool GThreadPool;
@@ -46,3 +48,5 @@ private:
 };
 
 } // namespace Nicosia
+
+#endif // USE(COORDINATED_GRAPHICS_THREADED)

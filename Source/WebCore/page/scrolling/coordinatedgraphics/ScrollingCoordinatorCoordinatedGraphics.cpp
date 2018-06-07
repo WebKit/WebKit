@@ -28,7 +28,7 @@
 #include "config.h"
 #include "ScrollingCoordinatorCoordinatedGraphics.h"
 
-#if USE(COORDINATED_GRAPHICS)
+#if ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)
 
 #include "ScrollingThread.h"
 #include "ScrollingTreeCoordinatedGraphics.h"
@@ -93,4 +93,4 @@ void ScrollingCoordinatorCoordinatedGraphics::commitTreeState()
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS)
+#endif // ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)

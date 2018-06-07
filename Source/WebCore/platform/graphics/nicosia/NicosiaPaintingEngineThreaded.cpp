@@ -29,6 +29,8 @@
 #include "config.h"
 #include "NicosiaPaintingEngineThreaded.h"
 
+#if USE(COORDINATED_GRAPHICS_THREADED)
+
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "NicosiaBuffer.h"
@@ -102,3 +104,5 @@ bool PaintingEngineThreaded::paint(GraphicsLayer& layer, Ref<Buffer>&& buffer, c
 }
 
 } // namespace Nicosia
+
+#endif // USE(COORDINATED_GRAPHICS_THREADED)

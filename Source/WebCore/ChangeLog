@@ -1,3 +1,24 @@
+2018-06-07  Don Olmstead  <don.olmstead@sony.com>
+
+        [CoordGraphics] Fix compilation errors around USE(COORDINATED_GRAPHICS)
+        https://bugs.webkit.org/show_bug.cgi?id=186374
+
+        Reviewed by Žan Doberšek.
+
+        No new tests. No change in behavior.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::reconcileScrollingState):
+        (WebCore::AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions):
+        * page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp:
+        * page/scrolling/coordinatedgraphics/ScrollingTreeFixedNode.cpp:
+        * page/scrolling/coordinatedgraphics/ScrollingTreeStickyNode.cpp:
+        * platform/PlatformWheelEvent.h:
+        * platform/graphics/nicosia/NicosiaPaintingEngineThreaded.cpp:
+        * platform/graphics/nicosia/NicosiaPaintingEngineThreaded.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp:
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.h:
+
 2018-06-07  Thibault Saunier  <tsaunier@igalia.com> and Alejandro G. Castro  <alex@igalia.com>
 
         [GTK][WPE] Start implementing MediaStream API
