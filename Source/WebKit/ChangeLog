@@ -1,3 +1,21 @@
+2018-06-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Use the same overloaded addInputString in WKContentViewInteraction
+        https://bugs.webkit.org/show_bug.cgi?id=186376
+        <rdar://problem/18498360>
+
+        Reviewed by Brent Fulgham.
+
+        Different overloaded variants of [UIKeyboardImpl -addInputString] behaves differently. We should use the same
+        overloaded variant consistently: [UIKeyboardImpl -addInputString:withFlags:withInputManagerHint:].
+
+        Sadly, there is no test case for this change as:
+        1) UIScriptController has troubles simulating '\r' keyboard event, and
+        2) API test couldn't simulate proper UI keyboard events.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _interpretKeyEvent:isCharEvent:]):
+
 2018-06-07  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r224134) Client certificate challenges don't always appear

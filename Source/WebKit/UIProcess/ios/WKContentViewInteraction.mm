@@ -3742,7 +3742,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     case kWebReturnKey:
         if (contentEditable && isCharEvent) {
             // Map \r from HW keyboard to \n to match the behavior of the soft keyboard.
-            [keyboard addInputString:@"\n" withFlags:0];
+            [keyboard addInputString:@"\n" withFlags:0 withInputManagerHint:nil];
             return YES;
         }
         break;
