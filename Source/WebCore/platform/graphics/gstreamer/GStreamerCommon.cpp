@@ -30,6 +30,7 @@
 #include <mutex>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 
 #if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
 #define GST_USE_UNSTABLE_API
@@ -318,6 +319,52 @@ bool gstRegistryHasElementForMediaType(GList* elementFactories, const char* caps
 
     gst_plugin_feature_list_free(candidates);
     return result;
+}
+
+static void simpleBusMessageCallback(GstBus*, GstMessage* message, GstBin* pipeline)
+{
+    switch (GST_MESSAGE_TYPE(message)) {
+    case GST_MESSAGE_ERROR:
+        GST_ERROR_OBJECT(pipeline, "Got message: %" GST_PTR_FORMAT, message);
+        {
+            WTF::String dotFileName = String::format("%s_error", GST_OBJECT_NAME(pipeline));
+            GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(pipeline, GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
+        }
+        break;
+    case GST_MESSAGE_STATE_CHANGED:
+        if (GST_MESSAGE_SRC(message) == GST_OBJECT(pipeline)) {
+            GstState oldState, newState, pending;
+            gst_message_parse_state_changed(message, &oldState, &newState, &pending);
+
+            GST_INFO_OBJECT(pipeline, "State changed (old: %s, new: %s, pending: %s)",
+                gst_element_state_get_name(oldState),
+                gst_element_state_get_name(newState),
+                gst_element_state_get_name(pending));
+
+            WTF::String dotFileName = String::format("%s_%s_%s",
+                GST_OBJECT_NAME(pipeline),
+                gst_element_state_get_name(oldState),
+                gst_element_state_get_name(newState));
+
+            GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(pipeline), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+void disconnectSimpleBusMessageCallback(GstElement *pipeline)
+{
+    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(pipeline)));
+    g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(simpleBusMessageCallback), pipeline);
+}
+
+void connectSimpleBusMessageCallback(GstElement *pipeline)
+{
+    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(pipeline)));
+    gst_bus_add_signal_watch_full(bus.get(), RunLoopSourcePriority::RunLoopDispatcher);
+    g_signal_connect(bus.get(), "message", G_CALLBACK(simpleBusMessageCallback), pipeline);
 }
 
 }

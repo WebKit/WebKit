@@ -207,6 +207,8 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'VideoSinkGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'WebKitWebSourceGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'audio', 'gstreamer', 'WebKitWebAudioSourceGStreamer.cpp'),
+      os.path.join('Source', 'WebCore', 'platform', 'mediastream', 'gstreamer', 'GStreamerMediaStreamSource.h'),
+      os.path.join('Source', 'WebCore', 'platform', 'mediastream', 'gstreamer', 'GStreamerMediaStreamSource.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'network', 'soup', 'ProxyResolverSoup.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'network', 'soup', 'ProxyResolverSoup.h')],
      ["-readability/naming",

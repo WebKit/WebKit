@@ -55,7 +55,7 @@ public:
     }
 };
 
-#if !PLATFORM(MAC) && !PLATFORM(IOS)
+#if !PLATFORM(MAC) && !PLATFORM(IOS) && !(USE(GSTREAMER) && USE(LIBWEBRTC))
 CaptureSourceOrError MockRealtimeAudioSource::create(const String& deviceID, const String& name, const MediaConstraints* constraints)
 {
     auto source = adoptRef(*new MockRealtimeAudioSource(deviceID, name));

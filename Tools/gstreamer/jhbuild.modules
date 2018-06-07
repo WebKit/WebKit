@@ -57,7 +57,9 @@
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
-    <branch hash="sha:1026c7c3082d825d9b5d034c1a6dd8a4ebab60eb3738b0a0afde4ad2dc0b0db5" module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" repo="gstreamer" version="1.14.1" />
+    <branch hash="sha:1026c7c3082d825d9b5d034c1a6dd8a4ebab60eb3738b0a0afde4ad2dc0b0db5" module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" repo="gstreamer" version="1.14.1" >
+      <patch file="gst-plugins-base-0001-parsebin-Post-STREAM_COLLECTION-on-EVENT_STREAM_COLL.patch" strip="1"/> <!-- Merged as 89d0e9cc92a86aa0227ee87406737b6d31670aea -->
+    </branch>
   </autotools>
 
   <autotools id="gst-plugins-good" autogen-sh="configure" autogenargs="--disable-examples --disable-gtk-doc --disable-introspection">

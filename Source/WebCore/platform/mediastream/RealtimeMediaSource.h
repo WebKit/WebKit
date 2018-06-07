@@ -216,7 +216,7 @@ public:
 
     virtual void monitorOrientation(OrientationNotifier&) { }
 
-    void captureFailed();
+    virtual void captureFailed();
 
     // Testing only
     virtual void delaySamples(Seconds) { };

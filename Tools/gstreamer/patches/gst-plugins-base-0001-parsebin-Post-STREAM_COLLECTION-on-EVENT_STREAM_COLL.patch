@@ -1,0 +1,33 @@
+From 89d0e9cc92a86aa0227ee87406737b6d31670aea Mon Sep 17 00:00:00 2001
+From: Thibault Saunier <tsaunier@igalia.com>
+Date: Wed, 18 Apr 2018 16:06:07 -0300
+Subject: [PATCH] parsebin: Post STREAM_COLLECTION on EVENT_STREAM_COLLECTION
+
+Otherwise decodebin won't get notified about STREAM_COLLECTION comming
+from the sources and thus will never get informored about it. Without
+being informed about the stream collection decodebin won't be able to
+select any streams. It ends up not creating any output for the streams
+defined from outside parserbin.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=795364
+---
+ gst/playback/gstparsebin.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/gst/playback/gstparsebin.c b/gst/playback/gstparsebin.c
+index 4c5bfc19d..f9662eb49 100644
+--- a/gst/playback/gstparsebin.c
++++ b/gst/playback/gstparsebin.c
+@@ -4046,6 +4046,9 @@ gst_parse_pad_event (GstPad * pad, GstPadProbeInfo * info, gpointer user_data)
+       GstStreamCollection *collection = NULL;
+       gst_event_parse_stream_collection (event, &collection);
+       gst_parse_pad_update_stream_collection (parsepad, collection);
++      gst_element_post_message (GST_ELEMENT (parsepad->parsebin),
++          gst_message_new_stream_collection (GST_OBJECT (parsepad->parsebin),
++              collection));
+       break;
+     }
+     case GST_EVENT_EOS:{
+-- 
+2.17.0
+

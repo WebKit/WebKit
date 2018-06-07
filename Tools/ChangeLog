@@ -1,3 +1,15 @@
+2018-06-07  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GTK][WPE] Start implementing MediaStream API
+        https://bugs.webkit.org/show_bug.cgi?id=185787
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/webkitpy/style/checker.py: Apply special formatting rules for new GObject subclasses.
+        * gstreamer/jhbuild.modules: Added a patch for the gst-plugins-base.
+        * gstreamer/patches/gst-plugins-base-0001-parsebin-Post-STREAM_COLLECTION-on-EVENT_STREAM_COLL.patch:
+        Added this fix to gst-plugings-base to fix the decodebin3. Merged as 89d0e9cc92a86aa0227ee87406737b6d31670aea
+
 2018-06-07  Brendan McLoughlin  <brendan@bocoup.com>
 
         Update web-platform-tests github location in webkitpy.w3c.test_importer

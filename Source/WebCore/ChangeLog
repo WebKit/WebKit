@@ -1,3 +1,120 @@
+2018-06-07  Thibault Saunier  <tsaunier@igalia.com> and Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] Start implementing MediaStream API
+        https://bugs.webkit.org/show_bug.cgi?id=185787
+
+        Reviewed by Philippe Normand.
+
+        We are adding all the required classes to make the
+        MediaStream API work, that means our own RealtimeMediaSourceCenterLibWebRTC
+        for the platform, the GStreamerCaptureDeviceManager, the audio/video capturers
+        and their respective audio/video sources as well as a dedicated GStreamer Source
+        that adds support for using MediaStream stream inside playbin3.
+        We are using the GstDeviceMonitor to list devices on the devices.
+
+        Enable mediastream tests.
+
+        * platform/GStreamer.cmake: Added the new files to the compilation.
+        * platform/audio/AudioStreamDescription.h: Added new GStreamer type.
+        * platform/audio/PlatformAudioData.h: Added new GStreamer type for
+        the GStreamerAudioData class.
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::simpleBusMessageCallback): This function and the next
+        one help us to connect a monitoring callback to a pipeline for
+        debugging.
+        (WebCore::connectSimpleBusMessageCallback): Ditto.
+        * platform/graphics/gstreamer/GStreamerCommon.h: Ditto
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::load): Make use of the loadFull() method.
+        (WebCore::MediaPlayerPrivateGStreamer::loadFull): Very similar to load()
+        but allows specifying what pipeline type to use (null to let the function determine
+        which one should be used). This is required as we force to always use playbin3 for the
+        mediastream source as it relies on the GstStream API.
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition const): Style fix.
+        (WebCore::MediaPlayerPrivateGStreamer::naturalSize const): Added, use MediaStream specific information if available.
+        (WebCore::MediaPlayerPrivateGStreamer::updateTracks): Some style fixes.
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): Enhance dotfiles names.
+        (WebCore::MediaPlayerPrivateGStreamer::processTableOfContentsEntry): Minor formatting fix.
+        (WebCore::MediaPlayerPrivateGStreamer::sourceSetup): Set MediaStream on WebKitMediaStreamSource when setting it up.
+        (WebCore::MediaPlayerPrivateGStreamer::supportsType): Advertise that we support MediaStream if support is built.
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin): Make sure playbin3 is forced when loading a MediaStream.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h: Add a reference to the MediaStream object and declare loadFull and naturalSize override.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::registerWebKitGStreamerElements): Register the new MediaStreamSrc element.
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp:
+        (WebCore::VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer): Make sure that MediaStream MAIN tracks are selected by default. We have no way to do it in MediaStreamSrc now as the GstStreamCollection is recreated by parsebin.
+        * platform/mediastream/RealtimeMediaSource.h: Make CaptureFailed a virtual method as in our mocks we require need to make
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::singleton): Remove the code
+        used for compilation for the platform when we do not have a
+        RealtimeMediaSourceCenterLibWebRTC. Now we return the proper class
+        for the platform.
+        * platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp:
+        Added class representing the RealtimeMediaSource for the Audio
+        with GStreamer.
+        * platform/mediastream/gstreamer/GStreamerAudioCaptureSource.h:
+        Ditto.
+        * platform/mediastream/gstreamer/GStreamerAudioCapturer.cpp: Added
+        this class that represents the GStreamer pipeline that captures
+        audio from the system devices, it inherits from GStreamerCapturer.
+        * platform/mediastream/gstreamer/GStreamerAudioCapturer.h: Dito.
+        * platform/mediastream/gstreamer/GStreamerAudioData.h: Added this
+        class implementing PlatformAudioData for the GStreamer platform,
+        used to pass the samples information.
+        * platform/mediastream/gstreamer/GStreamerAudioStreamDescription.h:
+        Added this class implementing AudioStreamDescription to export the
+        information about the audio stream to libwebrtc.
+        * platform/mediastream/gstreamer/GStreamerCaptureDevice.h: Added
+        this base class for the audio and video capturing devices, it
+        implements general WebKit CaptureDevice class.
+        * platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.cpp:
+        Added this class that implements the system monitor to get the
+        list of available devices in the system. It uses GstDeviceMonitor
+        to handle the operation. It uses two singleton device managers one
+        for audio and another one for video, as required by the
+        RealtimeMediaSourceCenter design.
+        * platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.h: Ditto.
+        * platform/mediastream/gstreamer/GStreamerCapturer.cpp: Added this
+        base class representing how GStreamer captures the media from the
+        input devices in the system. Two classes inherit from this one to
+        capture audio and video. It setups the GStreamer pipeline and adds
+        functions to control it.
+        * platform/mediastream/gstreamer/GStreamerCapturer.h: Ditto.
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp: Added.
+        Implements a subclass of GstBin as a source element that will contain several
+        GstAppSrc, basically one per MediaStreamTrackPrivate of the MediaStreamPrivate
+        passed in parameter. It adds Observers on the MediaStreamTracks and
+        pushes the data to the sources as required. The element implements the GstURIHandler
+        interface so it can be used in playbin. The MediaPlayerPrivateGStreamer is responsible
+        for passing the MediaStreamPrivate object to the source when required.
+        (WebCore::webkitMediaStreamSrcPadProbeCb): Event probe that fixes stream_start events (setting the ID etc)
+        and finally add src pads to the pipeline.
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.h: Ditto.
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        Added this RealtimeMediaSource representing the source of the
+        video data for the GStreamer platform. It handles the settings and
+        capabilities of the source and creates the capturer used to
+        control the operation of the stream.
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.h: Ditto.
+        * platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp: Added
+        this class that inherits from the GStreamerCapturer and controls
+        the GStreamer pipelines of the video streams of the system.
+        * platform/mediastream/gstreamer/GStreamerVideoCapturer.h: Ditto.
+        * platform/mediastream/gstreamer/MockGStreamerAudioCaptureSource.cpp: Added. Implementation of a Mock capturer for audio stream.
+        Subclasses GStreamerAudioCapturer and wraps a MockRealtimeAudioSource so that the behaviour is the same a MockRealtimeAudioSource
+        but still the GStreamer implementation code paths are tested.
+        * platform/mediastream/gstreamer/MockGStreamerAudioCaptureSource.h: Ditto.
+        * platform/mediastream/gstreamer/MockGStreamerVideoCaptureSource.cpp: Added. Implementation of a Mock capturer for video stream.
+        Subclasses GStreamerVideoCapturer and wraps a MockRealtimeVideoSource so that the behaviour is the same a MockRealtimeVideoSource
+        but still the GStreamer implementation code paths are tested.
+        * platform/mediastream/gstreamer/MockGStreamerVideoCaptureSource.h: Ditto.
+        * platform/mediastream/gstreamer/RealtimeMediaSourceCenterLibWebRTC.cpp:
+        Added this class that implements the key RealtimeMediaSourceCenter
+        functions to configure the base class for the platform, using the
+        other GStreamer classes.
+        * platform/mock/MockRealtimeAudioSource.cpp: Do not build ::create if GStreamer implementation is built
+        * platform/mock/MockRealtimeVideoSource.cpp: Do not build ::create if GStreamer implementation is built
+
 2018-06-07  Brent Fulgham  <bfulgham@apple.com>
 
         Handle Storage Access API calls in the absence of an attached frame

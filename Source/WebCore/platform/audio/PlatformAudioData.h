@@ -34,6 +34,7 @@ public:
     enum class Kind {
         None,
         WebAudioBufferList,
+        GStreamerAudioData,
     };
 
     virtual Kind kind() const { return Kind::None; }
