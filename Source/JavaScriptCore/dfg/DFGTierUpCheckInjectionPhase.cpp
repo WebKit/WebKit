@@ -122,8 +122,7 @@ public:
                         if (it != naturalLoopToLoopHint.end())
                             descriptor.osrEntryCandidates.append(it->value);
                     }
-                    if (!descriptor.osrEntryCandidates.isEmpty())
-                        tierUpHierarchy.add(bytecodeIndex, WTFMove(descriptor));
+                    tierUpHierarchy.add(bytecodeIndex, WTFMove(descriptor));
                 }
                 break;
             }

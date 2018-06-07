@@ -1,3 +1,15 @@
+2018-06-07  Saam Barati  <sbarati@apple.com>
+
+        TierUpCheckInjectionPhase systematically never puts the outer-most loop in an inner loop's vector of outer loops
+        https://bugs.webkit.org/show_bug.cgi?id=186386
+
+        Reviewed by Filip Pizlo.
+
+        This looks like an 8% speedup on Kraken's imaging-gaussian-blur subtest.
+
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+
 2018-06-02  Filip Pizlo  <fpizlo@apple.com>
 
         FunctionRareData::m_objectAllocationProfileWatchpoint is racy
