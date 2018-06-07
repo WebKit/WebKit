@@ -61,6 +61,7 @@ BEGIN {
        &appDisplayNameFromBundle
        &appendToEnvironmentVariableList
        &archCommandLineArgumentsForRestrictedEnvironmentVariables
+       &availableXcodeSDKs
        &baseProductDir
        &chdirWebKit
        &checkFrameworks
@@ -503,33 +504,70 @@ sub extractNonMacOSHostConfiguration
     return @args;
 }
 
+# FIXME: Convert to json <rdar://problem/21594308>
+sub parseAvailableXcodeSDKs($)
+{
+    my @outputToParse = @{$_[0]};
+    my @result = ();
+    foreach my $line (@outputToParse) {
+        # Examples:
+        #    iOS 12.0 -sdk iphoneos12.0
+        #    Simulator - iOS 12.0 -sdk iphonesimulator12.0
+        #    macOS 10.14 -sdk macosx10.14
+        if ($line =~ /-sdk (\D+)([\d\.]+)(\D*)\n/) {
+            if ($3) {
+                push @result, "$1.$3";
+            } else {
+                push @result, "$1";
+            }
+        }
+    }
+    return @result;
+}
+
+sub availableXcodeSDKs
+{
+    my @output = `xcodebuild -showsdks`;
+    return parseAvailableXcodeSDKs(\@output);
+}
+
 sub determineXcodeSDK
 {
     return if defined $xcodeSDK;
     my $sdk;
+    
+    # The user explicitly specified the sdk, don't assume anything
     if (checkForArgumentAndRemoveFromARGVGettingValue("--sdk", \$sdk)) {
         $xcodeSDK = $sdk;
+        return;
     }
     if (checkForArgumentAndRemoveFromARGV("--device") || checkForArgumentAndRemoveFromARGV("--ios-device")) {
-        my $hasInternalSDK = exitStatus(system("xcrun --sdk iphoneos.internal --show-sdk-version > /dev/null 2>&1")) == 0;
-        $xcodeSDK ||= $hasInternalSDK ? "iphoneos.internal" : "iphoneos";
+        $xcodeSDK ||= "iphoneos";
     }
     if (checkForArgumentAndRemoveFromARGV("--simulator") || checkForArgumentAndRemoveFromARGV("--ios-simulator")) {
         $xcodeSDK ||= 'iphonesimulator';
     }
     if (checkForArgumentAndRemoveFromARGV("--tvos-device")) {
-        my $hasInternalSDK = exitStatus(system("xcrun --sdk appletvos.internal --show-sdk-version > /dev/null 2>&1")) == 0;
-        $xcodeSDK ||=  $hasInternalSDK ? "appletvos.internal" : "appletvos";
+        $xcodeSDK ||=  "appletvos";
     }
     if (checkForArgumentAndRemoveFromARGV("--tvos-simulator")) {
         $xcodeSDK ||= "appletvsimulator";
     }
     if (checkForArgumentAndRemoveFromARGV("--watchos-device")) {
-        my $hasInternalSDK = exitStatus(system("xcrun --sdk watchos.internal --show-sdk-version > /dev/null 2>&1")) == 0;
-        $xcodeSDK ||=  $hasInternalSDK ? "watchos.internal" : "watchos";
+        $xcodeSDK ||=  "watchos";
     }
     if (checkForArgumentAndRemoveFromARGV("--watchos-simulator")) {
         $xcodeSDK ||= "watchsimulator";
+    }
+    return if !defined $xcodeSDK;
+    
+    # Prefer the internal version of an sdk, if it exists.
+    my @availableSDKs = availableXcodeSDKs();
+
+    foreach my $sdk (@availableSDKs) {
+        next if $sdk ne "$xcodeSDK.internal";
+        $xcodeSDK = $sdk;
+        last;
     }
 }
 

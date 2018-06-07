@@ -1,3 +1,20 @@
+2018-06-07  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitperl: Generalize .internal SDK suffix
+        https://bugs.webkit.org/show_bug.cgi?id=186352
+        <rdar://problem/40853947>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/build-webkit:
+        * Scripts/package-root:
+        (usage):
+        * Scripts/webkitdirs.pm:
+        (parseAvailableXcodeSDKS): Parse 'xcodebuild -showsdks' output.
+        (availableXcodeSDKS): Generate a list of all available Xcode SDKs on this machine.
+        (determineXcodeSDK): Always prefer .internal SDKs if available.
+        * Scripts/webkitperl/webkitdirs_unittest/availableXcodeSDKS.pl:
+        
 2018-06-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MiniBrowser] Support multiple windows properly

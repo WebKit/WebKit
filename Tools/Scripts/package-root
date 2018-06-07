@@ -47,9 +47,9 @@ sub usage()
       --help                            Show this help message
       --sdk                             Specifies SDK for which the roots are staged
                                         (Default: currently installed Base SDK)
-      --ios-device                      Equivalent to --sdk iphoneos.internal
+      --ios-device                      Use "iphoneos.internal" SDK if installed, else "iphoneos" SDK (iOS only)
       --device                          DEPRECATED alias of --ios-device
-      --ios-simulator                   Equivalent to --sdk iphonesimulator
+      --ios-simulator                   Use "iphonesimulator.internal" SDK if installed, else "iphonesimulator" SDK (iOS only)
       --simulator                       DEPRECATED alias of --ios-simulator
       --debug                           Package roots from Debug-<platform>
       --release                         Package roots from Release-<platform>
