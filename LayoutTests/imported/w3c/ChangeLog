@@ -1,3 +1,12 @@
+2018-06-07  Brendan McLoughlin  <brendan@bocoup.com>
+
+        Update web-platform-tests github location in webkitpy.w3c.test_importer
+        https://bugs.webkit.org/show_bug.cgi?id=186392
+
+        Reviewed by Youenn Fablet.
+
+        * resources/TestRepositories:
+
 2018-06-06  Youenn Fablet  <youenn@apple.com>
 
         HTTP Header values validation is too strict

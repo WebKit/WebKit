@@ -1,3 +1,13 @@
+2018-06-07  Brendan McLoughlin  <brendan@bocoup.com>
+
+        Update web-platform-tests github location in webkitpy.w3c.test_importer
+        https://bugs.webkit.org/show_bug.cgi?id=186392
+
+        Reviewed by Youenn Fablet.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.write_import_log):
+
 2018-06-07  Jonathan Bedard  <jbedard@apple.com>
 
         webkitperl: Generalize .internal SDK suffix

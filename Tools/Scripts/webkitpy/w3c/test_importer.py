@@ -79,6 +79,7 @@ import mimetypes
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
+from webkitpy.w3c.common import WPT_GH_URL
 from webkitpy.w3c.test_parser import TestParser
 from webkitpy.w3c.test_converter import convert_for_webkit
 from webkitpy.w3c.test_downloader import TestDownloader
@@ -583,7 +584,7 @@ class TestImporter(object):
         import_log.append('The tests in this directory were imported from the W3C repository.\n')
         import_log.append('Do NOT modify these tests directly in WebKit.\n')
         import_log.append('Instead, create a pull request on the WPT github:\n')
-        import_log.append('\thttps://github.com/w3c/web-platform-tests\n\n')
+        import_log.append('\t%s\n\n' % WPT_GH_URL)
         import_log.append('Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport\n\n')
         import_log.append('Do NOT modify or remove this file.\n\n')
         import_log.append('------------------------------------------------------------------------\n')
