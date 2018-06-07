@@ -10,10 +10,11 @@ describe('CommitLogViewer', () => {
             'models/repository.js',
             'models/commit-set.js',
             'models/commit-log.js',
+            '../shared/common-component-base.js',
             'components/base.js',
             'components/spinner-icon.js',
             'components/commit-log-viewer.js'];
-        return context.importScripts(scripts, 'ComponentBase', 'CommitLogViewer', 'Repository', 'CommitLog', 'RemoteAPI').then(() => {
+        return context.importScripts(scripts, 'CommonComponentBase', 'ComponentBase', 'CommitLogViewer', 'Repository', 'CommitLog', 'RemoteAPI').then(() => {
             return context.symbols.CommitLogViewer;
         });
     }

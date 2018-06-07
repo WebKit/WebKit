@@ -1,6 +1,6 @@
 
 describe('EditableText', () => {
-    const scripts = ['instrumentation.js', 'components/base.js', 'components/editable-text.js'];
+    const scripts = ['instrumentation.js', '../shared/common-component-base.js', 'components/base.js', 'components/editable-text.js'];
 
     it('show the set text', () => {
         const context = new BrowsingContext();

@@ -1,7 +1,8 @@
 
-class ComponentBase {
+class ComponentBase extends CommonComponentBase {
     constructor(name)
     {
+        super();
         this._componentName = name || ComponentBase._componentByClass.get(new.target);
 
         const currentlyConstructed = ComponentBase._currentlyConstructedByInterface;
@@ -144,39 +145,56 @@ class ComponentBase {
         ComponentBase._componentsToRenderOnResize.delete(component);
     }
 
-    renderReplace(element, content) { ComponentBase.renderReplace(element, content); }
-
-    static renderReplace(element, content)
-    {
-        element.innerHTML = '';
-        if (content)
-            ComponentBase._addContentToElement(element, content);
-    }
-
     _ensureShadowTree()
     {
         if (this._shadow)
             return;
 
-        const newTarget = this.__proto__.constructor;
-        const htmlTemplate = newTarget['htmlTemplate'];
-        const cssTemplate = newTarget['cssTemplate'];
+        const thisClass = this.__proto__.constructor;
 
-        if (!htmlTemplate && !cssTemplate)
+        let content;
+        let stylesheet;
+        if (!thisClass._parsed) {
+            thisClass._parsed = true;
+
+            const contentTemplate = thisClass['contentTemplate'];
+            if (contentTemplate)
+                content = ComponentBase._constructNodeTreeFromTemplate(contentTemplate);
+            else if (thisClass.htmlTemplate) {
+                const templateElement = document.createElement('template');
+                templateElement.innerHTML = thisClass.htmlTemplate();
+                content = [templateElement.content];
+            }
+
+            const styleTemplate = thisClass['styleTemplate'];
+            if (styleTemplate)
+                stylesheet = ComponentBase._constructStylesheetFromTemplate(styleTemplate);
+            else if (thisClass.cssTemplate)
+                stylesheet = thisClass.cssTemplate();
+
+            thisClass._parsedContent = content;
+            thisClass._parsedStylesheet = stylesheet;
+        } else {
+            content = thisClass._parsedContent;
+            stylesheet = thisClass._parsedStylesheet;
+        }
+
+        if (!content && !stylesheet)
             return;
 
         const shadow = this._element.attachShadow({mode: 'closed'});
 
-        if (htmlTemplate) {
-            const template = document.createElement('template');
-            template.innerHTML = newTarget.htmlTemplate();
-            shadow.appendChild(document.importNode(template.content, true));
-            this._recursivelyReplaceUnknownElementsByComponents(shadow);
+        if (content) {
+            for (const node of content)
+                shadow.appendChild(document.importNode(node, true));
+            this._recursivelyUpgradeUnknownElements(shadow, (node) => {
+                return node instanceof Element ? ComponentBase._componentByName.get(node.localName) : null;
+            });
         }
 
-        if (cssTemplate) {
+        if (stylesheet) {
             const style = document.createElement('style');
-            style.textContent = newTarget.cssTemplate();
+            style.textContent = stylesheet;
             shadow.appendChild(style);
         }
         this._shadow = shadow;
@@ -184,29 +202,6 @@ class ComponentBase {
     }
 
     didConstructShadowTree() { }
-
-    _recursivelyReplaceUnknownElementsByComponents(parent)
-    {
-        let nextSibling;
-        for (let child = parent.firstChild; child; child = child.nextSibling) {
-            if (child instanceof HTMLElement && !child.component) {
-                const elementInterface = ComponentBase._componentByName.get(child.localName);
-                if (elementInterface) {
-                    const component = new elementInterface();
-                    const newChild = component.element();
-
-                    for (let i = 0; i < child.attributes.length; i++) {
-                        const attr = child.attributes[i];
-                        newChild.setAttribute(attr.name, attr.value);
-                    }
-
-                    parent.replaceChild(newChild, child);
-                    child = newChild;
-                }
-            }
-            this._recursivelyReplaceUnknownElementsByComponents(child);
-        }
-    }
 
     static defineElement(name, elementInterface)
     {
@@ -254,68 +249,6 @@ class ComponentBase {
         customElements.define(name, elementClass);
     }
 
-    static createElement(name, attributes, content)
-    {
-        var element = document.createElement(name);
-        if (!content && (Array.isArray(attributes) || attributes instanceof Node
-            || attributes instanceof ComponentBase || typeof(attributes) != 'object')) {
-            content = attributes;
-            attributes = {};
-        }
-
-        if (attributes) {
-            for (let name in attributes) {
-                if (name.startsWith('on'))
-                    element.addEventListener(name.substring(2), attributes[name]);
-                else if (attributes[name] === true)
-                    element.setAttribute(name, name);
-                else if (attributes[name] !== false)
-                    element.setAttribute(name, attributes[name]);
-            }
-        }
-
-        if (content)
-            ComponentBase._addContentToElement(element, content);
-
-        return element;
-    }
-
-    static _addContentToElement(element, content)
-    {
-        if (Array.isArray(content)) {
-            for (var nestedChild of content)
-                this._addContentToElement(element, nestedChild);
-        } else if (content instanceof Node)
-            element.appendChild(content);
-         else if (content instanceof ComponentBase)
-            element.appendChild(content.element());
-        else
-            element.appendChild(document.createTextNode(content));
-    }
-
-    static createLink(content, titleOrCallback, callback, isExternal)
-    {
-        var title = titleOrCallback;
-        if (callback === undefined) {
-            title = content;
-            callback = titleOrCallback;
-        }
-
-        var attributes = {
-            href: '#',
-            title: title,
-        };
-
-        if (typeof(callback) === 'string')
-            attributes['href'] = callback;
-        else
-            attributes['onclick'] = ComponentBase.createEventHandler(callback);
-
-        if (isExternal)
-            attributes['target'] = '_blank';
-        return ComponentBase.createElement('a', attributes, content);
-    }
-
     createEventHandler(callback) { return ComponentBase.createEventHandler(callback); }
     static createEventHandler(callback)
     {
@@ -326,6 +259,10 @@ class ComponentBase {
         };
     }
 }
+
+CommonComponentBase._context = document;
+CommonComponentBase._isNode = (node) => node instanceof Node;
+CommonComponentBase._baseClass = ComponentBase;
 
 ComponentBase.useNativeCustomElements = !!window.customElements;
 ComponentBase._componentByName = new Map;

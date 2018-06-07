@@ -27,6 +27,7 @@ mocha.setup('bdd');
 <script src="chart-revision-range-tests.js"></script>
 <script src="commit-log-viewer-tests.js"></script>
 <script src="test-group-form-tests.js"></script>
+<script src="markup-page-tests.js"></script>
 <script>
 
 afterEach(() => {
@@ -224,10 +225,11 @@ const ChartTest = {
             'models/metric.js',
             'models/commit-set.js',
             'models/commit-log.js',
+            '../shared/common-component-base.js',
             'components/base.js',
             'components/time-series-chart.js',
             'components/interactive-time-series-chart.js'],
-            'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart',
+            'CommonComponentBase', 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart',
             'Platform', 'Metric', 'Test', 'Repository', 'MeasurementSet', 'MockRemoteAPI', 'AsyncTask').then(() => {
                 return context.symbols.TimeSeriesChart;
             })

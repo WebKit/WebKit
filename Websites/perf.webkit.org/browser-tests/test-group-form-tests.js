@@ -1,6 +1,6 @@
 
 describe('TestGroupFormTests', () => {
-    const scripts = ['instrumentation.js', 'components/base.js', 'components/test-group-form.js'];
+    const scripts = ['instrumentation.js', '../shared/common-component-base.js', 'components/base.js', 'components/test-group-form.js'];
 
     function createTestGroupFormWithContext(context)
     {

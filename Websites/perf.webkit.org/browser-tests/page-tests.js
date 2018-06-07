@@ -4,7 +4,7 @@ describe('Page', function() {
     describe('open', () => {
         it('must replace the content of document.body', async () => {
             const context = new BrowsingContext();
-            const Page = await context.importScripts(['instrumentation.js', 'components/base.js', 'pages/page.js'], 'Page');
+            const Page = await context.importScripts(['instrumentation.js', '../shared/common-component-base.js', 'components/base.js', 'pages/page.js'], 'Page');
 
             class SomePage extends Page {
                 constructor() { super('some page'); }
@@ -25,7 +25,7 @@ describe('Page', function() {
 
         it('must update the document title', async () => {
             const context = new BrowsingContext();
-            const Page = await context.importScripts(['instrumentation.js', 'components/base.js', 'pages/page.js'], 'Page');
+            const Page = await context.importScripts(['instrumentation.js', '../shared/common-component-base.js', 'components/base.js', 'pages/page.js'], 'Page');
 
             class SomePage extends Page {
                 constructor() { super('some page'); }
@@ -41,7 +41,7 @@ describe('Page', function() {
 
         it('must enqueue itself to render', async () => {
             const context = new BrowsingContext();
-            const [Page, ComponentBase] = await context.importScripts(['instrumentation.js', 'components/base.js', 'pages/page.js'], 'Page', 'ComponentBase');
+            const [Page, ComponentBase] = await context.importScripts(['instrumentation.js', '../shared/common-component-base.js', 'components/base.js', 'pages/page.js'], 'Page', 'ComponentBase');
 
             let renderCount = 0;
             class SomePage extends Page {
@@ -62,7 +62,7 @@ describe('Page', function() {
         it('must update the current page of the router', async () => {
             const context = new BrowsingContext();
             const [Page, PageRouter, ComponentBase] = await context.importScripts(
-                ['instrumentation.js', 'components/base.js', 'pages/page.js', 'pages/page-router.js'],
+                ['instrumentation.js', '../shared/common-component-base.js', 'components/base.js', 'pages/page.js', 'pages/page-router.js'],
                 'Page', 'PageRouter', 'ComponentBase');
 
             class SomePage extends Page {
@@ -83,7 +83,7 @@ describe('Page', function() {
         it('must not enqueue itself to render if the router is set and the current page is not itself', async () => {
             const context = new BrowsingContext();
             const [Page, PageRouter, ComponentBase] = await context.importScripts(
-                ['instrumentation.js', 'components/base.js', 'pages/page.js', 'pages/page-router.js'],
+                ['instrumentation.js', '../shared/common-component-base.js', 'components/base.js', 'pages/page.js', 'pages/page-router.js'],
                 'Page', 'PageRouter', 'ComponentBase');
 
             let someRenderCount = 0;

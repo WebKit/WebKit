@@ -4,7 +4,7 @@ describe('PageRouter', () => {
         it('should choose the longest match', async () => {
             const context = new BrowsingContext();
             const [Page, PageRouter, ComponentBase] = await context.importScripts(
-                ['instrumentation.js', 'components/base.js', 'pages/page.js', 'pages/page-router.js'],
+                ['instrumentation.js', '../shared/common-component-base.js', 'components/base.js', 'pages/page.js', 'pages/page-router.js'],
                 'Page', 'PageRouter', 'ComponentBase');
 
             let someRenderCount = 0;

@@ -1,6 +1,6 @@
 
 describe('CloseButton', () => {
-    const scripts = ['instrumentation.js', 'components/base.js', 'components/button-base.js', 'components/close-button.js'];
+    const scripts = ['instrumentation.js', '../shared/common-component-base.js', 'components/base.js', 'components/button-base.js', 'components/close-button.js'];
 
     it('must dispatch "activate" action when the anchor is clicked', () => {
         const context = new BrowsingContext();

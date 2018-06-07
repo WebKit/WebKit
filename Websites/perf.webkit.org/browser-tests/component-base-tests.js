@@ -1,10 +1,18 @@
 
 describe('ComponentBase', function() {
 
+    async function importComponentBase(context)
+    {
+        const [Instrumentation, CommonComponentBase, ComponentBase] = await context.importScripts(
+            ['instrumentation.js', '../shared/common-component-base.js', 'components/base.js'],
+            'Instrumentation', 'CommonComponentBase', 'ComponentBase');
+        return ComponentBase;
+    }
+
     function createTestToCheckExistenceOfShadowTree(callback, options = {htmlTemplate: false, cssTemplate: true})
     {
         const context = new BrowsingContext();
-        return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+        return importComponentBase(context).then((ComponentBase) => {
             class SomeComponent extends ComponentBase { }
             if (options.htmlTemplate)
                 SomeComponent.htmlTemplate = () => { return '<div id="div" style="height: 10px;"></div>'; };
@@ -20,7 +28,7 @@ describe('ComponentBase', function() {
 
     it('must enqueue a connected component to render', () => {
         const context = new BrowsingContext();
-        return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+        return importComponentBase(context).then((ComponentBase) => {
             let renderCall = 0;
             class SomeComponent extends ComponentBase {
                 render() { renderCall++; }
@@ -46,7 +54,7 @@ describe('ComponentBase', function() {
 
     it('must enqueue a connected component to render upon a resize event if enqueueToRenderOnResize is true', () => {
         const context = new BrowsingContext();
-        return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+        return importComponentBase(context).then((ComponentBase) => {
             class SomeComponent extends ComponentBase {
                 static get enqueueToRenderOnResize() { return true; }
             }
@@ -70,7 +78,7 @@ describe('ComponentBase', function() {
 
     it('must not enqueue a disconnected component to render upon a resize event if enqueueToRenderOnResize is true', () => {
         const context = new BrowsingContext();
-        return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+        return importComponentBase(context).then((ComponentBase) => {
             class SomeComponent extends ComponentBase {
                 static get enqueueToRenderOnResize() { return true; }
             }
@@ -92,13 +100,13 @@ describe('ComponentBase', function() {
 
     describe('constructor', () => {
         it('is a function', () => {
-            return new BrowsingContext().importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(new BrowsingContext()).then((ComponentBase) => {
                 expect(ComponentBase).to.be.a('function');
             });
         });
 
         it('can be instantiated', () => {
-            return new BrowsingContext().importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(new BrowsingContext()).then((ComponentBase) => {
                 let callCount = 0;
                 class SomeComponent extends ComponentBase {
                     constructor() {
@@ -123,7 +131,7 @@ describe('ComponentBase', function() {
     describe('element()', () => {
         it('must return an element', () => {
             const context = new BrowsingContext();
-            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 class SomeComponent extends ComponentBase { }
                 let instance = new SomeComponent('some-component');
                 expect(instance.element()).to.be.a(context.global.HTMLElement);
@@ -131,7 +139,8 @@ describe('ComponentBase', function() {
         });
 
         it('must return an element whose component() matches the component', () => {
-            return new BrowsingContext().importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+            const context = new BrowsingContext();
+            return importComponentBase(context).then((ComponentBase) => {
                 class SomeComponent extends ComponentBase { }
                 let instance = new SomeComponent('some-component');
                 expect(instance.element().component()).to.be(instance);
@@ -161,7 +170,7 @@ describe('ComponentBase', function() {
         });
 
         it('must return the element matching the id if an id is specified', () => {
-            return new BrowsingContext().importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(new BrowsingContext()).then((ComponentBase) => {
                 class SomeComponent extends ComponentBase {
                     static htmlTemplate() { return '<div id="part1" title="foo"></div><div id="part1"></div>'; }
                 }
@@ -174,6 +183,28 @@ describe('ComponentBase', function() {
                 expect(instance.content('part2')).to.be(null);
             });
         });
+
+        it('it must create DOM tree from contentTemplate', async () => {
+            const context = new BrowsingContext();
+            const ComponentBase = await importComponentBase(context);
+            class SomeComponent extends ComponentBase { };
+            SomeComponent.contentTemplate = ['div', {id: 'container'}, 'hello, world'];
+            const instance = new SomeComponent('some-component');
+            const container = instance.content('container');
+            expect(container).to.be.a(context.global.HTMLDivElement);
+            expect(container.textContent).to.be('hello, world');
+        });
+
+        it('it must create stylsheet from styleTemplate', async () => {
+            const context = new BrowsingContext();
+            const ComponentBase = await importComponentBase(context);
+            class SomeComponent extends ComponentBase { };
+            SomeComponent.contentTemplate = ['span', 'hello, world'];
+            SomeComponent.styleTemplate = {':host': {'font-weight': 'bold'}};
+            const instance = new SomeComponent('some-component');
+            context.document.body.append(instance.element());
+            expect(context.global.getComputedStyle(instance.content().firstChild).fontWeight).to.be('bold');
+        });
     });
 
     describe('part()', () => {
@@ -185,7 +216,7 @@ describe('ComponentBase', function() {
         });
 
         it('must return the component matching the id if an id is specified', () => {
-            return new BrowsingContext().importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(new BrowsingContext()).then((ComponentBase) => {
                 class SomeComponent extends ComponentBase { }
                 ComponentBase.defineElement('some-component', SomeComponent);
 
@@ -206,7 +237,7 @@ describe('ComponentBase', function() {
 
     describe('dispatchAction()', () => {
         it('must invoke a callback specified in listenToAction', () => {
-            return new BrowsingContext().importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(new BrowsingContext()).then((ComponentBase) => {
                 class SomeComponent extends ComponentBase { }
                 ComponentBase.defineElement('some-component', SomeComponent);
 
@@ -227,7 +258,7 @@ describe('ComponentBase', function() {
         });
 
         it('must not do anything when there are no callbacks', () => {
-            return new BrowsingContext().importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(new BrowsingContext()).then((ComponentBase) => {
                 class SomeComponent extends ComponentBase { }
                 ComponentBase.defineElement('some-component', SomeComponent);
 
@@ -240,7 +271,7 @@ describe('ComponentBase', function() {
     describe('enqueueToRender()', () => {
         it('must not immediately call render()', () => {
             const context = new BrowsingContext();
-            return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 context.global.requestAnimationFrame = () => {}
 
                 let renderCallCount = 0;
@@ -259,7 +290,7 @@ describe('ComponentBase', function() {
 
         it('must request an animation frame exactly once', () => {
             const context = new BrowsingContext();
-            return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 let requestAnimationFrameCount = 0;
                 context.global.requestAnimationFrame = () => { requestAnimationFrameCount++; }
 
@@ -286,7 +317,7 @@ describe('ComponentBase', function() {
 
         it('must invoke render() when the callback to requestAnimationFrame is called', () => {
             const context = new BrowsingContext();
-            return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 let callback = null;
                 context.global.requestAnimationFrame = (newCallback) => {
                     expect(callback).to.be(null);
@@ -321,7 +352,7 @@ describe('ComponentBase', function() {
 
         it('must immediately invoke render() on a component enqueued inside another render() call', () => {
             const context = new BrowsingContext();
-            return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 let callback = null;
                 context.global.requestAnimationFrame = (newCallback) => {
                     expect(callback).to.be(null);
@@ -366,7 +397,7 @@ describe('ComponentBase', function() {
 
         it('must request a new animation frame once it exited the callback from requestAnimationFrame', () => {
             const context = new BrowsingContext();
-            return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 let requestAnimationFrameCount = 0;
                 let callback = null;
                 context.global.requestAnimationFrame = (newCallback) => {
@@ -449,7 +480,7 @@ describe('ComponentBase', function() {
 
         it('must invoke didConstructShadowTree after creating the shadow tree', () => {
             const context = new BrowsingContext();
-            return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 let didConstructShadowTreeCount = 0;
                 let htmlTemplateCount = 0;
 
@@ -482,7 +513,7 @@ describe('ComponentBase', function() {
 
         it('should create an element of the specified name', () => {
             const context = new BrowsingContext();
-            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 const div = ComponentBase.createElement('div');
                 expect(div).to.be.a(context.global.HTMLDivElement);
             });
@@ -490,7 +521,7 @@ describe('ComponentBase', function() {
 
         it('should create an element with the specified attributes', () => {
             const context = new BrowsingContext();
-            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 const input = ComponentBase.createElement('input', {'title': 'hi', 'id': 'foo', 'required': false, 'checked': true});
                 expect(input).to.be.a(context.global.HTMLInputElement);
                 expect(input.attributes.length).to.be(3);
@@ -499,13 +530,13 @@ describe('ComponentBase', function() {
                 expect(input.attributes[1].localName).to.be('id');
                 expect(input.attributes[1].value).to.be('foo');
                 expect(input.attributes[2].localName).to.be('checked');
-                expect(input.attributes[2].value).to.be('checked');
+                expect(input.attributes[2].value).to.be('');
             });
         });
 
         it('should create an element with the specified event handlers and attributes', () => {
             const context = new BrowsingContext();
-            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 let clickCount = 0;
                 const div = ComponentBase.createElement('div', {'title': 'hi', 'onclick': () => clickCount++});
                 expect(div).to.be.a(context.global.HTMLDivElement);
@@ -520,7 +551,7 @@ describe('ComponentBase', function() {
 
         it('should create an element with the specified children when there is no attribute specified', () => {
             const context = new BrowsingContext();
-            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 const element = ComponentBase.createElement;
                 const span = element('span');
                 const div = element('div', [span, 'hi']);
@@ -535,7 +566,7 @@ describe('ComponentBase', function() {
 
         it('should create an element with the specified children when the second argument is a span', () => {
             const context = new BrowsingContext();
-            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 const element = ComponentBase.createElement;
                 const span = element('span');
                 const div = element('div', span);
@@ -548,7 +579,7 @@ describe('ComponentBase', function() {
 
         it('should create an element with the specified children when the second argument is a Text node', () => {
             const context = new BrowsingContext();
-            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 const element = ComponentBase.createElement;
                 const text = context.document.createTextNode('hi');
                 const div = element('div', text);
@@ -561,7 +592,7 @@ describe('ComponentBase', function() {
 
         it('should create an element with the specified children when the second argument is a component', () => {
             const context = new BrowsingContext();
-            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 class SomeComponent extends ComponentBase { };
                 ComponentBase.defineElement('some-component', SomeComponent);
                 const element = ComponentBase.createElement;
@@ -576,7 +607,7 @@ describe('ComponentBase', function() {
 
         it('should create an element with the specified attributes and children', () => {
             const context = new BrowsingContext();
-            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 const element = ComponentBase.createElement;
                 const span = element('span');
                 const div = element('div', {'lang': 'en'}, [span, 'hi']);
@@ -597,7 +628,7 @@ describe('ComponentBase', function() {
 
         it('must define a custom element with a class of an appropriate name', () => {
             const context = new BrowsingContext();
-            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 class SomeComponent extends ComponentBase { }
                 ComponentBase.defineElement('some-component', SomeComponent);
 
@@ -609,7 +640,7 @@ describe('ComponentBase', function() {
 
         it('must define a custom element that can be instantiated via document.createElement', () => {
             const context = new BrowsingContext();
-            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 let instances = [];
                 class SomeComponent extends ComponentBase {
                     constructor() {
@@ -632,7 +663,7 @@ describe('ComponentBase', function() {
 
         it('must define a custom element that can be instantiated via new', () => {
             const context = new BrowsingContext();
-            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return importComponentBase(context).then((ComponentBase) => {
                 let instances = [];
                 class SomeComponent extends ComponentBase {
                     constructor() {

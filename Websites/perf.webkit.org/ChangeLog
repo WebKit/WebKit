@@ -1,3 +1,149 @@
+2018-06-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add the basic support for writing components in node.js
+        https://bugs.webkit.org/show_bug.cgi?id=186299
+
+        Reviewed by Antti Koivisto.
+
+        Add the basic support for writing components in node.js for generating rich email notifications.
+
+        To do this, this patch introduces MarkupComponentBase and MarkupPage which implement similar API
+        to ComponentBase and Page classes of v3 UI code. This enables us to share code between frontend
+        and the backend in the future. Because there is no support for declarative custom elements or
+        shadow root in HTML, MarkupComponentBase uses a similar but distinct concept of "content" tree
+        to represent the "DOM" tree for a component. When generating the HTML, MarkupComponentBase and
+        MarkupPage collectively transforms stylesheets and flattens the tree into a single HTML. In order
+        to keep this flatteneing logic simple, MarkupComponentBase only supports a very small subset of
+        CSS selectors to select elements by their local names and class names.
+
+        Specifically, each class name and element name based selectors are replaced by a globally unique
+        class name based selector, and each element which matches the selector is applied of the same
+        globally unique class name. The transformation is applied when constructing the "content" tree
+        as well as calls to renderReplace.
+
+        Because much of v3 frontend code relies on DOM API, this patch also implements the simplest form
+        of a fake DOM API as MarkupNode, MarkupParentNode, MarkupElement, and MarkupText. In order to avoid
+        reimplementing HTML & CSS parsers, this patch introduces the concept of content and style templates
+        to ComponentBase which are JSON alternatives to HTML & CSS template strings which can be used in
+        both frontend & backend.
+
+        * browser-tests/close-button-tests.js: Include CommonComponentBase.
+        * browser-tests/commit-log-viewer-tests.js: Ditto.
+        * browser-tests/component-base-tests.js: Ditto. Added a test cases for content & style templates.
+        (async.importComponentBase): Added.
+        * browser-tests/editable-text-tests.js: Include CommonComponentBase.
+        * browser-tests/index.html:
+        * browser-tests/markup-page-tests.js: Added.
+        * browser-tests/page-router-tests.js: Include CommonComponentBase.
+        * browser-tests/page-tests.js: Ditto.
+        * browser-tests/test-group-form-tests.js: Ditto.
+        * public/shared/common-component-base.js: Added.
+        (CommonComponentBase): Extracted out of ComponentBase.
+        (CommonComponentBase.prototype.renderReplace): Added.
+        (CommonComponentBase.renderReplace): Moved from ComponentBase.
+        (CommonComponentBase.prototype._recursivelyUpgradeUnknownElements): Moved and renamed from
+        ComponentBase's _recursivelyReplaceUnknownElementsByComponents.
+        (CommonComponentBase.prototype._upgradeUnknownElement): Extracted out of the same function.
+        (CommonComponentBase._constructStylesheetFromTemplate): Added.
+        (CommonComponentBase._constructNodeTreeFromTemplate): Added.
+        (CommonComponentBase.prototype.createElement): Added.
+        (CommonComponentBase.createElement): Moved from ComponentBase.
+        (CommonComponentBase._addContentToElement): Moved from ComponentBase.
+        (CommonComponentBase.prototype.createLink): Added.
+        (CommonComponentBase.createLink): Moved from ComponentBase.
+        (CommonComponentBase._context): Added. Set to document in a browser and MarkupDocument in node.js.
+        (CommonComponentBase._isNode): Added. Set to a function which does instanceof Node/MarkupNode check.
+        (CommonComponentBase._baseClass): Added. Set to ComponentBase or MarkupComponentBase.
+        * public/v3/components/base.js:
+        (ComponentBase):
+        (ComponentBase.prototype._ensureShadowTree): Added the support for the content and style templates.
+        Also avoid parsing the html template each time a component is instantiated by caching the result.
+        * public/v3/index.html:
+        * tools/js/markup-component.js: Added.
+        (MarkupDocument): Added. A fake Document.
+        (MarkupDocument.prototype.createContentRoot): A substitude for attachShadow.
+        (MarkupDocument.prototype.createElement):
+        (MarkupDocument.prototype.createTextNode):
+        (MarkupDocument.prototype._idForClone):
+        (MarkupDocument.prototype.reset):
+        (MarkupDocument.prototype.markup):
+        (MarkupDocument.prototype.escapeAttributeValue):
+        (MarkupDocument.prototype.escapeNodeData):
+        (MarkupNode): Added. A fake Node. Each node gets an unique ID.
+        (MarkupNode.prototype._markup):
+        (MarkupNode.prototype.clone): Implemented by the leave class.
+        (MarkupNode.prototype._cloneNodeData):
+        (MarkupNode.prototype.remove):
+        (MarkupParentNode): Added. An equivalent of ContainerNode in WebCore.
+        (MarkupParentNode.prototype.get childNodes):
+        (MarkupParentNode.prototype._cloneNodeData):
+        (MarkupParentNode.prototype.appendChild):
+        (MarkupParentNode.prototype.removeChild):
+        (MarkupParentNode.prototype.removeAllChildren):
+        (MarkupParentNode.prototype.replaceChild):
+        (MarkupContentRoot): Added. Used like a shadow tree.
+        (MarkupContentRoot.prototype._markup): Added.
+        (MarkupElement): Added. A fake Element. It also implements a subset of IDL attributes implemented by
+        subclasses such as HTMLInputElement for simplicity.
+        (MarkupElement.prototype.get id): Added.
+        (MarkupElement.prototype.get localName): Added.
+        (MarkupElement.prototype.clone): Added.
+        (MarkupElement.prototype.appendChild): Added.
+        (MarkupElement.prototype.addEventListener): Added.
+        (MarkupElement.prototype.setAttribute): Added.
+        (MarkupElement.prototype.getAttribute): Added.
+        (MarkupElement.prototype.get attributes): Added.
+        (MarkupElement.prototype.get textContent): Added.
+        (MarkupElement.prototype.set textContent): Added.
+        (MarkupElement.prototype._serializeStyle): Added.
+        (MarkupElement.prototype._markup): Added. Flattens the tree with content tree like copy & paste so
+        this can't be used to implement innerHTML.
+        (MarkupElement.prototype.get value): Added.
+        (MarkupElement.prototype.set value): Added.
+        (MarkupElement.prototype.get style): Added. Returns a fake writeonly CSSStyleDeclaration.
+        (MarkupElement.prototype.set style): Added.
+        (MarkupElement.get selfClosingNames): Added. A small list of self-closing tags for the HTML generation.
+        (MarkupText): Added.
+        (MarkupText.prototype.clone): Added.
+        (MarkupText.prototype._markup): Added.
+        (MarkupText.prototype.get data): Added.
+        (MarkupText.prototype.set data): Added.
+        (MarkupComponentBase): Added.
+        (MarkupComponentBase.prototype.element): Added. Like ComponentBase's element.
+        (MarkupComponentBase.prototype.content): Added. Like ComponentBase's content.
+        (MarkupComponentBase.prototype._findElementRecursivelyById): Added. A fake getElementById.
+        (MarkupComponentBase.prototype.render): Added. Like ComponentBase's render.
+        (MarkupComponentBase.prototype.runRenderLoop): Added. In ComponentBase, we use requestAnimationFrame.
+        In MarkupComponentBase, we keep rendering until the queue drains empty.
+        (MarkupComponentBase.prototype.renderReplace): Added. Like ComponentBase's renderReplace but applies
+        the transformation of classes to workaround the lack of shadow tree support in scriptless HTML.
+        (MarkupComponentBase.prototype._applyStyleOverrides): Added. Recursively applies the transformation.
+        (MarkupComponentBase.prototype._ensureContentTree): Added. Like ComponentBase's _ensureShadowTree.
+        (MarkupComponentBase.reset): Added.
+        (MarkupComponentBase._parseTemplates): Added. Parses the content & style templates, and generates the
+        transformed fake DOM tree and stylesheet text whereby selectors in each component is modified to be
+        unique across all components. The function to apply the necessary changes to an element is saved in
+        the global map of components, and later used in renderReplace via _applyStyleOverrides.
+        (MarkupComponentBase.defineElement): Added. Like ComponentBase's defineElement.
+        (MarkupComponentBase.prototype.createEventHandler): Added.
+        (MarkupComponentBase.createEventHandler): Added.
+        (MarkupPage): Added. The top-level component responsible for generating a DOCTYPE, head, and body.
+        (MarkupPage.prototype.pageTitle): Added.
+        (MarkupPage.prototype.content): Added. Overrides the one in MarkupComponentBase to return what would
+        be the content of the body element as opposed to the html element for the connivance of subclasses,
+        and to match the behavior of the frontend Page class.
+        (MarkupPage.prototype.render): Added.
+        (MarkupPage.prototype._updateComponentsStylesheet): Added. Concatenates the transformed stylesheet of
+        all components used.
+        (MarkupPage.get contentTemplate): Added.
+        (MarkupPage.prototype.generateMarkup): Added. Enqueues the page to render, spin the render loop, and
+        generates the HTML. We enqueue the page twice in order to invoke _updateComponentsStylesheet after
+        all subcomponent had finished rendering.
+        * unit-tests/markup-component-base-tests.js: Added.
+        * unit-tests/markup-element-tests.js: Added.
+        (.createElement): Added.
+        * unit-tests/markup-page-tests.js: Added.
+
 2018-05-23  Dewei Zhu  <dewei_zhu@apple.com>
 
         OSBuildFetcher should respect maxRevision while finding OS builds to report.
