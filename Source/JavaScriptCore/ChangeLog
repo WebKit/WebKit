@@ -1,3 +1,31 @@
+2018-06-07  Saam Barati  <sbarati@apple.com>
+
+        Make DFG to FTL OSR entry code more sane by removing bad RELEASE_ASSERTS and making it trigger compiles in outer loops before inner ones
+        https://bugs.webkit.org/show_bug.cgi?id=186218
+        <rdar://problem/38449540>
+
+        Reviewed by Filip Pizlo.
+
+        This patch makes tierUpCommon a tad bit more sane. There are a few things
+        that I did:
+        - There were a few release asserts that were crashing. Those release asserts
+        were incorrect. They were making assumptions about how the code and data
+        structures were ordered that were wrong. This patch removes them. The code
+        was using the loop hierarchy vector to make assumptions about which loop we
+        were currently executing in, which is incorrect. The only information that
+        can be used about where we're currently executing is the bytecode index we're
+        at.
+        - This makes it so that we go back to trying to compile outer loops before
+        inner loops. JF accidentally reverted this behavior that Ben implemented.
+        JF made it so that we just compiled the inner most loop. I make this
+        functionality work by first triggering a compile for the outer most loop
+        that the code is currently executing in and that can perform OSR entry.
+        However, some programs can get stuck in inner loops. The code works by
+        progressively asking inner loops to compile if program execution has not
+        yet reached an outer loop.
+
+        * dfg/DFGOperations.cpp:
+
 2018-06-06  Guillaume Emont  <guijemont@igalia.com>
 
         ArityFixup should adjust SP first on 32-bit platforms too
