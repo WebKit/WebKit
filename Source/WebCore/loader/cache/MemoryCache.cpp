@@ -333,7 +333,6 @@ void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestr
 
             // Destroy our decoded data. This will remove us from m_liveDecodedResources, and possibly move us
             // to a different LRU list in m_allResources.
-            WTFLogAlways("pruneLiveResourcesToSize: trying to prune %p", current);
             current->destroyDecodedData();
 
             if (targetSize && m_liveSize <= targetSize)

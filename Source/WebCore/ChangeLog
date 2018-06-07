@@ -1,3 +1,10 @@
+2018-06-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove a log that was left in by mistake.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::pruneLiveResourcesToSize):
+
 2018-06-07  Antoine Quint  <graouts@apple.com>
 
         [ASan / StressGC] DumpRenderTree crashed in com.apple.WebCore: WebCore::EventTarget::ref + 16
