@@ -29,6 +29,7 @@
 #include <comip.h>
 #include <memory>
 #include <vector>
+#include <wtf/RefCounted.h>
 
 typedef _com_ptr_t<_com_IIID<IWebFrame, &__uuidof(IWebFrame)>> IWebFramePtr;
 typedef _com_ptr_t<_com_IIID<IWebView, &__uuidof(IWebView)>> IWebViewPtr;
@@ -47,9 +48,12 @@ typedef _com_ptr_t<_com_IIID<IWebResourceLoadDelegate, &__uuidof(IWebResourceLoa
 typedef _com_ptr_t<_com_IIID<IWebDownloadDelegate, &__uuidof(IWebDownloadDelegate)>> IWebDownloadDelegatePtr;
 typedef _com_ptr_t<_com_IIID<IWebFramePrivate, &__uuidof(IWebFramePrivate)>> IWebFramePrivatePtr;
 
-class MiniBrowser {
+class MiniBrowser : public RefCounted<MiniBrowser> {
 public:
-    MiniBrowser(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false, bool pageLoadTesting = false);
+    static Ref<MiniBrowser> create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false, bool pageLoadTesting = false);
+
+    ULONG AddRef();
+    ULONG Release();
 
     HRESULT init();
     HRESULT prepareViews(HWND mainWnd, const RECT& clientRect);
@@ -107,6 +111,7 @@ public:
     void setPreference(UINT menuID, bool enable);
 
 private:
+    MiniBrowser(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting);
     void subclassForLayeredWindow();
     void generateFontForScaleFactor(float);
     bool setCacheFolder();

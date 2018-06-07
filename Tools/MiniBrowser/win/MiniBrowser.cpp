@@ -60,12 +60,30 @@ static const int maxHistorySize = 10;
 
 typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
 
+Ref<MiniBrowser> MiniBrowser::create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting)
+{
+    return adoptRef(*new MiniBrowser(mainWnd, urlBarWnd, useLayeredWebView, pageLoadTesting));
+}
+
 MiniBrowser::MiniBrowser(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting)
     : m_hMainWnd(mainWnd)
     , m_hURLBarWnd(urlBarWnd)
     , m_useLayeredWebView(useLayeredWebView)
     , m_pageLoadTestClient(std::make_unique<PageLoadTestClient>(this, pageLoadTesting))
 {
+}
+
+ULONG MiniBrowser::AddRef()
+{
+    ref();
+    return refCount();
+}
+
+ULONG MiniBrowser::Release()
+{
+    auto count = refCount();
+    deref();
+    return --count;
 }
 
 HRESULT MiniBrowser::init()
@@ -111,11 +129,11 @@ HRESULT MiniBrowser::init()
     if (FAILED(hr))
         return hr;
 
-    hr = setUIDelegate(new PrintWebUIDelegate());
+    hr = setUIDelegate(new PrintWebUIDelegate(*this));
     if (FAILED (hr))
         return hr;
 
-    hr = setAccessibilityDelegate(new AccessibilityDelegate());
+    hr = setAccessibilityDelegate(new AccessibilityDelegate(*this));
     if (FAILED (hr))
         return hr;
 
@@ -124,7 +142,7 @@ HRESULT MiniBrowser::init()
         return hr;
 
     IWebDownloadDelegatePtr downloadDelegate;
-    downloadDelegate.Attach(new WebDownloadDelegate());
+    downloadDelegate.Attach(new WebDownloadDelegate(*this));
     hr = setDownloadDelegate(downloadDelegate);
     if (FAILED(hr))
         return hr;

@@ -29,9 +29,12 @@
 
 #include <WebKitLegacy/WebKit.h>
 
+class MiniBrowser;
+
 class PrintWebUIDelegate : public IWebUIDelegate {
 public:
-    PrintWebUIDelegate() { }
+    PrintWebUIDelegate(MiniBrowser& client)
+        : m_client(client) { }
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
@@ -103,7 +106,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE paintCustomScrollCorner(_In_opt_ IWebView*, _In_ HDC, RECT) { return E_NOTIMPL; }
 
 private:
-    int m_refCount { 1 };
+    MiniBrowser& m_client;
     HWND m_modalDialogParent { nullptr };
 };
 

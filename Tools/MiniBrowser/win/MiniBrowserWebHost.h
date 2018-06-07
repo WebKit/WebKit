@@ -80,6 +80,5 @@ private:
     HWND m_hURLBarWnd { 0 };
     HGDIOBJ m_URLBarFont { 0 };
     HGDIOBJ m_oldFont { 0 };
-    ULONG m_refCount { 1 };
     MiniBrowser* m_client { nullptr };
 };

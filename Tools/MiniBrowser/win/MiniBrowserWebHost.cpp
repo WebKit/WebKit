@@ -130,16 +130,12 @@ HRESULT MiniBrowserWebHost::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void**
 
 ULONG MiniBrowserWebHost::AddRef()
 {
-    return ++m_refCount;
+    return m_client->AddRef();
 }
 
 ULONG MiniBrowserWebHost::Release()
 {
-    ULONG newRef = --m_refCount;
-    if (!newRef)
-        delete(this);
-
-    return newRef;
+    return m_client->Release();
 }
 
 typedef _com_ptr_t<_com_IIID<IDOMDocument, &__uuidof(IDOMDocument)>> IDOMDocumentPtr;

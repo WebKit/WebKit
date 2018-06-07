@@ -1,3 +1,72 @@
+2018-06-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Support multiple windows properly
+        https://bugs.webkit.org/show_bug.cgi?id=186263
+
+        Reviewed by Ryosuke Niwa.
+
+        The current implementation of
+        PrintWebUIDelegate::createWebViewWithRequest is wrong. It is using
+        CreateProcess to open a new window, and doesn't return the new
+        instance of IWebView. As the result, for example, window.close
+        doesn't work as expected.
+
+        In this change, a new MainWindow is created and return the
+        IWebView in PrintWebUIDelegate::createWebViewWithRequest.
+
+        In addition to it, this change unifies the lifetime of MiniBrowser
+        and its delegates AccessibilityDelegate, PrintWebUIDelegate,
+        ResourceLoadDelegate and WebDownloadDelegate in order to keep
+        MiniBrowser alive as long as the delegates live. Because the
+        window of webview keeps references of such delegates and accesses
+        those after MiniBrowser destruction.
+
+        * MiniBrowser/win/MainWindow.h: Added s_numInstances class member
+        to count the number of instance to close the application. Do not
+        use unique_ptr for m_browserWindow because it has ref count now.
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::MainWindow): Increment s_numInstances.
+        (MainWindow::~MainWindow): Decrement s_numInstances.
+        (MainWindow::create):
+        (MainWindow::init):
+        (MainWindow::WndProc): Rename thiz to thisWindow. Keep this
+        instance alive during this function by using RefPtr<MainWindow>.
+        Deref the MainWindow instance on WM_DESTROY. Quit the application
+        when the last MainWindow is closed.
+        (MainWindow::cachesDialogProc): Rename thiz to thisWindow.
+        (MainWindow::customUserAgentDialogProc): Ditto.
+        * MiniBrowser/win/MiniBrowser.h: Added declarations AddRef and Release.
+        * MiniBrowser/win/MiniBrowser.cpp:
+        (MiniBrowser::create):
+        (MiniBrowser::AddRef):
+        (MiniBrowser::Release):
+        (MiniBrowser::init): Passes this to the constructors of delegates.
+        * MiniBrowser/win/AccessibilityDelegate.cpp:
+        (AccessibilityDelegate::AddRef): Delegate to MiniBrowser.
+        (AccessibilityDelegate::Release): Ditto.
+        * MiniBrowser/win/AccessibilityDelegate.h: Removed m_refCount.
+        (AccessibilityDelegate::AccessibilityDelegate):
+        * MiniBrowser/win/MiniBrowserWebHost.cpp:
+        (MiniBrowserWebHost::AddRef): Delegate to MiniBrowser.
+        (MiniBrowserWebHost::Release): Ditto.
+        * MiniBrowser/win/MiniBrowserWebHost.h: Removed m_refCount.
+        * MiniBrowser/win/PrintWebUIDelegate.cpp:
+        (PrintWebUIDelegate::createWebViewWithRequest): Create a new
+        MainWindow and return the IWebView.
+        (PrintWebUIDelegate::AddRef): Delegate to MiniBrowser.
+        (PrintWebUIDelegate::Release): Ditto.
+        * MiniBrowser/win/PrintWebUIDelegate.h: Removed m_refCount.
+        (PrintWebUIDelegate::PrintWebUIDelegate):
+        * MiniBrowser/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::AddRef): Delegate to MiniBrowser.
+        (ResourceLoadDelegate::Release): Ditto.
+        * MiniBrowser/win/ResourceLoadDelegate.h: Removed m_refCount.
+        * MiniBrowser/win/WebDownloadDelegate.cpp:
+        (WebDownloadDelegate::WebDownloadDelegate):
+        (WebDownloadDelegate::AddRef): Delegate to MiniBrowser.
+        (WebDownloadDelegate::Release): Ditto.
+        * MiniBrowser/win/WebDownloadDelegate.h: Removed m_refCount.
+
 2018-06-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MiniBrowser] Remove gMainWindow global variable

@@ -56,16 +56,12 @@ HRESULT ResourceLoadDelegate::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void
 
 ULONG ResourceLoadDelegate::AddRef()
 {
-    return ++m_refCount;
+    return m_client->AddRef();
 }
 
 ULONG ResourceLoadDelegate::Release()
 {
-    ULONG newRef = --m_refCount;
-    if (!newRef)
-        delete this;
-
-    return newRef;
+    return m_client->Release();
 }
 
 HRESULT ResourceLoadDelegate::identifierForInitialRequest(_In_opt_ IWebView*, _In_opt_ IWebURLRequest*, _In_opt_ IWebDataSource*, unsigned long identifier)

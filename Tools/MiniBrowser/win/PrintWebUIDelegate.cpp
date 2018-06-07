@@ -27,6 +27,8 @@
 #include "stdafx.h"
 #include "PrintWebUIDelegate.h"
 
+#include "Common.h"
+#include "MainWindow.h"
 #if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
@@ -61,26 +63,21 @@ HRESULT PrintWebUIDelegate::createWebViewWithRequest(_In_opt_ IWebView*, _In_opt
     if (!request)
         return E_POINTER;
 
-    TCHAR executablePath[MAX_PATH];
-    DWORD length = ::GetModuleFileName(GetModuleHandle(0), executablePath, ARRAYSIZE(executablePath));
-    if (!length)
+    auto& newWindow = MainWindow::create().leakRef();
+    bool ok = newWindow.init(hInst);
+    if (!ok)
         return E_FAIL;
+    ShowWindow(newWindow.hwnd(), SW_SHOW);
 
-    _bstr_t url;
-    HRESULT hr = request->URL(&url.GetBSTR());
+    *newWebView = newWindow.browserWindow()->webView();
+    IWebFramePtr frame;
+    HRESULT hr;
+    hr = (*newWebView)->mainFrame(&frame.GetInterfacePtr());
     if (FAILED(hr))
-        return E_FAIL;
-
-    if (!url)
-        return S_OK;
-
-    std::wstring command = std::wstring(L"\"") + executablePath + L"\" " + (const wchar_t*)url;
-
-    PROCESS_INFORMATION processInformation;
-    STARTUPINFOW startupInfo;
-    memset(&startupInfo, 0, sizeof(startupInfo));
-    if (!::CreateProcessW(0, (LPWSTR)command.c_str(), 0, 0, 0, 0, 0, 0, &startupInfo, &processInformation))
-        return E_FAIL;
+        return hr;
+    hr = frame->loadRequest(request);
+    if (FAILED(hr))
+        return hr;
 
     return S_OK;
 }
@@ -151,16 +148,12 @@ HRESULT PrintWebUIDelegate::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void**
 
 ULONG PrintWebUIDelegate::AddRef()
 {
-    return ++m_refCount;
+    return m_client.AddRef();
 }
 
 ULONG PrintWebUIDelegate::Release()
 {
-    ULONG newRef = --m_refCount;
-    if (!newRef)
-        delete this;
-
-    return newRef;
+    return m_client.Release();
 }
 
 typedef _com_ptr_t<_com_IIID<IWebFrame, &__uuidof(IWebFrame)>> IWebFramePtr;

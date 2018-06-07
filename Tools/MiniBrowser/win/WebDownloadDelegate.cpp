@@ -28,9 +28,11 @@
 #include "stdafx.h"
 #include "WebDownloadDelegate.h"
 
+#include "MiniBrowser.h"
 #include <shlobj.h>
 
-WebDownloadDelegate::WebDownloadDelegate()
+WebDownloadDelegate::WebDownloadDelegate(MiniBrowser& client)
+    : m_client(client)
 {
 }
 
@@ -57,17 +59,12 @@ HRESULT WebDownloadDelegate::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void*
 
 ULONG WebDownloadDelegate::AddRef()
 {
-    m_refCount++;
-    return m_refCount;
+    return m_client.AddRef();
 }
 
 ULONG WebDownloadDelegate::Release()
 {
-    m_refCount--;
-    int refCount = m_refCount;
-    if (!refCount)
-        delete this;
-    return refCount;
+    return m_client.Release();
 }
 
 HRESULT WebDownloadDelegate::decideDestinationWithSuggestedFilename(_In_opt_ IWebDownload* download, _In_ BSTR filename)

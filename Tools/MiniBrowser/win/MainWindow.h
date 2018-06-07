@@ -25,13 +25,16 @@
 
 #pragma once
 
+#include "MiniBrowser.h"
 #include <memory>
 #include <string>
+#include <wtf/RefPtr.h>
 
-class MiniBrowser;
-
-class MainWindow {
+class MainWindow : public RefCounted<MainWindow> {
 public:
+    static Ref<MainWindow> create();
+
+    ~MainWindow();
     bool init(HINSTANCE hInstance, bool usesLayeredWebView = false, bool pageLoadTesting = false);
 
     void resizeSubViews();
@@ -46,7 +49,9 @@ private:
     static INT_PTR CALLBACK cachesDialogProc(HWND, UINT, WPARAM, LPARAM);
     static void registerClass(HINSTANCE hInstance);
     static std::wstring s_windowClass;
+    static size_t s_numInstances;
 
+    MainWindow();
     bool toggleMenuItem(UINT menuID);
     void onURLBarEnter();
 
@@ -55,5 +60,5 @@ private:
     HWND m_hBackButtonWnd { nullptr };
     HWND m_hForwardButtonWnd { nullptr };
     HWND m_hCacheWnd { nullptr };
-    std::unique_ptr<MiniBrowser> m_browserWindow;
+    RefPtr<MiniBrowser> m_browserWindow;
 };

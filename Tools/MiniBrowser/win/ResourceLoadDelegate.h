@@ -53,7 +53,6 @@ public:
 
 private:
     MiniBrowser* m_client;
-    int m_refCount { 1 };
 };
 
 #endif // ResourceLoadDelegate
