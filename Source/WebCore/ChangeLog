@@ -1,3 +1,25 @@
+2018-06-06  Per Arne Vollan  <pvollan@apple.com>
+
+        Display links are sometimes not notifying WebCore when fired.
+        https://bugs.webkit.org/show_bug.cgi?id=186367
+        <rdar://problem/40439109>
+
+        Reviewed by Brent Fulgham.
+
+        When the WebContent process is receiving an IPC message notifying about a screen update, all display refresh monitors
+        are notified by the manager in DisplayRefreshMonitorManager::displayWasUpdated(). The manager checks that the monitor
+        is scheduled before notifying. This is a problem, since the scheduled flag is always set to false in the
+        DisplayRefreshMonitor::displayDidRefresh() method, when the monitor is first notified about a screen update. This can
+        lead to display links running without notifying the monitors, causing extra CPU usage. It can also prevent them from
+        being deleted, since the monitors are not notified. Instead, we can check that the display refresh monitor is active
+        before notifying it. This matches the original display link implementation used when the WebContent process has
+        WindowServer access, where the monitors are always notified.
+
+        No new tests, since I have not been able to reproduce this in a test case yet.
+
+        * platform/graphics/DisplayRefreshMonitorManager.cpp:
+        (WebCore::DisplayRefreshMonitorManager::displayWasUpdated):
+
 2018-06-06  Antoine Quint  <graouts@apple.com>
 
         Rename color-filter to -apple-color-filter and do not expose it to Web content
