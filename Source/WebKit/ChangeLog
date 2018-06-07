@@ -1,3 +1,23 @@
+2018-06-06  Per Arne Vollan  <pvollan@apple.com>
+
+        Crash in lambda function WTF::Function<void ()>::CallableWrapper<WebKit::DisplayLink::displayLinkCallback
+        https://bugs.webkit.org/show_bug.cgi?id=186370
+        <rdar://problem/39791647>
+
+        Reviewed by Brent Fulgham.
+
+        When the display link is firing, the callback function is called on the display link thread, where a lambda function
+        is created to be executed on the main thread. The WebPageProxy object is captured as a RefPtr in the lambda. This
+        might crash when executing on the main thread, since the WebPageProxy object is possibly deleted then. Capturing
+        the WebPageProxy will not prevent the object from being deleted if the destruction of the WebPageProxy object already
+        has started on the main thread when the object is captured, which sometimes is the case. Instead, we can create a
+        weak pointer to the object, which will work as intended, even if the WebPageProxy object is in the process of being
+        deleted. This also matches the display link implementation used when the WebContent process has access to the
+        WindowServer. This is not a frequent crash. I have not been able to reproduce it.
+ 
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::displayLinkCallback):
+
 2018-06-06  Antoine Quint  <graouts@apple.com>
 
         Rename color-filter to -apple-color-filter and do not expose it to Web content
