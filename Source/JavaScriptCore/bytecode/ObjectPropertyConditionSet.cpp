@@ -409,9 +409,13 @@ ObjectPropertyConditionSet generateConditionsForInstanceOf(
                 didHit = true;
                 return true;
             }
+
+            Structure* structure = object->structure(vm);
+            if (structure->hasPolyProto())
+                return false;
             conditions.append(
                 ObjectPropertyCondition::hasPrototype(
-                    vm, owner, object, object->structure(vm)->storedPrototypeObject()));
+                    vm, owner, object, structure->storedPrototypeObject()));
             return true;
         });
     if (result.isValid()) {

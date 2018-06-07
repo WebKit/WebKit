@@ -1,3 +1,12 @@
+2018-06-06  Saam Barati  <sbarati@apple.com>
+
+        generateConditionsForInstanceOf needs to see if the object has a poly proto structure before assuming it has a constant prototype
+        https://bugs.webkit.org/show_bug.cgi?id=186363
+
+        Rubber-stamped by Filip Pizlo.
+
+        * stress/instance-of-on-poly-proto-opc-should-not-crash.js: Added.
+
 2018-06-05  David Fenton  <david_fenton@apple.com>
 
         Temporarily Skip JSC stress test failures that are consistently occurring.
