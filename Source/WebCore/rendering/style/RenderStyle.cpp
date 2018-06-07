@@ -905,7 +905,7 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
         || !m_backgroundData->isEquivalentForPainting(*other.m_backgroundData)
         || m_rareInheritedData->userModify != other.m_rareInheritedData->userModify
         || m_rareInheritedData->userSelect != other.m_rareInheritedData->userSelect
-        || m_rareInheritedData->colorFilter != other.m_rareInheritedData->colorFilter
+        || m_rareInheritedData->appleColorFilter != other.m_rareInheritedData->appleColorFilter
         || m_rareNonInheritedData->userDrag != other.m_rareNonInheritedData->userDrag
         || m_rareNonInheritedData->borderFit != other.m_rareNonInheritedData->borderFit
         || m_rareNonInheritedData->objectFit != other.m_rareNonInheritedData->objectFit
@@ -1848,7 +1848,7 @@ Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty) const
 
 Color RenderStyle::visitedDependentColorWithColorFilter(CSSPropertyID colorProperty) const
 {
-    if (!hasColorFilter())
+    if (!hasAppleColorFilter())
         return visitedDependentColor(colorProperty);
 
     return colorByApplyingColorFilter(visitedDependentColor(colorProperty));
@@ -1857,7 +1857,7 @@ Color RenderStyle::visitedDependentColorWithColorFilter(CSSPropertyID colorPrope
 Color RenderStyle::colorByApplyingColorFilter(const Color& color) const
 {
     Color transformedColor = color;
-    colorFilter().transformColor(transformedColor);
+    appleColorFilter().transformColor(transformedColor);
     return transformedColor;
 }
 

@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
 <html>
     <head>
-        <title>CSS Test: color-filter affects backgrounds and borders</title>
+        <title>CSS Test: -apple-color-filter affects backgrounds and borders</title>
         <link rel="author" title="Apple" href="http://www.apple.com/">
-        <link rel="match" href="color-filter-backgrounds-borders-expected.html">
+        <link rel="match" href="-apple-color-filter-backgrounds-borders-expected.html">
 
-        <meta name="assert" content="color-filter affects backgrounds and borders">
+        <meta name="assert" content="-apple-color-filter affects backgrounds and borders">
         <style type="text/css">
             .test
             {
@@ -13,7 +13,7 @@
                 height: 200px;
                 background-color: rgb(255, 128, 255);
                 border: 20px solid yellow;
-                color-filter: invert();
+                -apple-color-filter: invert();
             }
         </style>
     </head>

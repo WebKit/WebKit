@@ -1001,6 +1001,7 @@ static void setWebPreferencesForTestOptions(const TestOptions& options)
     preferences.inspectorAdditionsEnabled = options.enableInspectorAdditions;
     preferences.allowCrossOriginSubresourcesToAskForCredentials = options.allowCrossOriginSubresourcesToAskForCredentials;
     preferences.webAnimationsCSSIntegrationEnabled = options.enableWebAnimationsCSSIntegration;
+    preferences.colorFilterEnabled = options.enableColorFilter;
 }
 
 // Called once on DumpRenderTree startup.

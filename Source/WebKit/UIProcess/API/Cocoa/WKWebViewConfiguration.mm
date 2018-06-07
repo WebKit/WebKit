@@ -164,6 +164,8 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 
     RetainPtr<NSString> _overrideContentSecurityPolicy;
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
+
+    BOOL _colorFilterEnabled;
 }
 
 - (instancetype)init
@@ -242,6 +244,8 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 
     _mediaContentTypesRequiringHardwareSupport = Settings::defaultMediaContentTypesRequiringHardwareSupport();
     _allowMediaContentTypesRequiringHardwareSupportAsFallback = YES;
+
+    _colorFilterEnabled = NO;
 
     return self;
 }
@@ -397,6 +401,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_allowMediaContentTypesRequiringHardwareSupportAsFallback = self->_allowMediaContentTypesRequiringHardwareSupportAsFallback;
 
     configuration->_groupIdentifier = adoptNS([self->_groupIdentifier copyWithZone:zone]);
+    configuration->_colorFilterEnabled = self->_colorFilterEnabled;
 
     return configuration;
 }
@@ -735,6 +740,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setAttachmentElementEnabled:(BOOL)attachmentElementEnabled
 {
     _attachmentElementEnabled = attachmentElementEnabled;
+}
+
+- (BOOL)_colorFilterEnabled
+{
+    return _colorFilterEnabled;
+}
+
+- (void)_setColorFilterEnabled:(BOOL)colorFilterEnabled
+{
+    _colorFilterEnabled = colorFilterEnabled;
 }
 
 - (BOOL)_requiresUserActionForVideoPlayback

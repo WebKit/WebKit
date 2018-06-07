@@ -137,7 +137,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , hyphenationLimitBefore(-1)
     , hyphenationLimitAfter(-1)
     , hyphenationLimitLines(-1)
-    , colorFilter(StyleFilterData::create())
+    , appleColorFilter(StyleFilterData::create())
     , lineGrid(RenderStyle::initialLineGrid())
     , tabSize(RenderStyle::initialTabSize())
 #if ENABLE(TEXT_AUTOSIZING)
@@ -233,7 +233,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , hyphenationLimitAfter(o.hyphenationLimitAfter)
     , hyphenationLimitLines(o.hyphenationLimitLines)
     , textEmphasisCustomMark(o.textEmphasisCustomMark)
-    , colorFilter(o.colorFilter)
+    , appleColorFilter(o.appleColorFilter)
     , lineGrid(o.lineGrid)
     , tabSize(o.tabSize)
 #if ENABLE(TEXT_AUTOSIZING)
@@ -310,7 +310,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && hyphenationString == o.hyphenationString
         && textEmphasisCustomMark == o.textEmphasisCustomMark
         && arePointingToEqualData(quotes, o.quotes)
-        && colorFilter == o.colorFilter
+        && appleColorFilter == o.appleColorFilter
         && tabSize == o.tabSize
         && lineGrid == o.lineGrid
 #if ENABLE(CSS_IMAGE_ORIENTATION)
@@ -351,7 +351,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
 
 bool StyleRareInheritedData::hasColorFilters() const
 {
-    return !colorFilter->operations.isEmpty();
+    return !appleColorFilter->operations.isEmpty();
 }
 
 } // namespace WebCore

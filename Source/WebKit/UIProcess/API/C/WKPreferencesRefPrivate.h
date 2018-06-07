@@ -565,6 +565,10 @@ WK_EXPORT bool WKPreferencesGetAllowCrossOriginSubresourcesToAskForCredentials(W
 WK_EXPORT void WKPreferencesSetServerTimingEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetServerTimingEnabled(WKPreferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetColorFilterEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetColorFilterEnabled(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

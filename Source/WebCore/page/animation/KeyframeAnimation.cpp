@@ -497,8 +497,8 @@ void KeyframeAnimation::checkForMatchingBackdropFilterFunctionLists()
 
 void KeyframeAnimation::checkForMatchingColorFilterFunctionLists()
 {
-    m_colorFilterFunctionListsMatch = checkForMatchingFilterFunctionLists(CSSPropertyColorFilter, [] (const RenderStyle& style) -> const FilterOperations& {
-        return style.colorFilter();
+    m_colorFilterFunctionListsMatch = checkForMatchingFilterFunctionLists(CSSPropertyAppleColorFilter, [] (const RenderStyle& style) -> const FilterOperations& {
+        return style.appleColorFilter();
     });
 }
 

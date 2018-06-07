@@ -319,7 +319,7 @@ void ImplicitAnimation::checkForMatchingColorFilterFunctionLists()
     if (!m_fromStyle || !m_toStyle)
         return;
 
-    m_colorFilterFunctionListsMatch = filterOperationsMatch(&m_fromStyle->colorFilter(), m_toStyle->colorFilter());
+    m_colorFilterFunctionListsMatch = filterOperationsMatch(&m_fromStyle->appleColorFilter(), m_toStyle->appleColorFilter());
 }
 
 std::optional<Seconds> ImplicitAnimation::timeToNextService()

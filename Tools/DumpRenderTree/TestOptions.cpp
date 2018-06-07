@@ -101,6 +101,8 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             allowCrossOriginSubresourcesToAskForCredentials = parseBooleanTestHeaderValue(value);
         else if (key == "enableWebAnimationsCSSIntegration")
             enableWebAnimationsCSSIntegration = parseBooleanTestHeaderValue(value);
+        else if (key == "enableColorFilter")
+            enableColorFilter = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

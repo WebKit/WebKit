@@ -431,7 +431,7 @@ function getPropertyValue(property, elementId, iframeId)
                || property == "webkitMaskImage"
                || property == "webkitMaskBoxImage"
                || property == "filter"
-               || property == "colorFilter"
+               || property == "-apple-color-filter"
                || property == "webkitFilter"
                || property == "webkitBackdropFilter"
                || property == "webkitClipPath"
@@ -471,7 +471,7 @@ function comparePropertyValue(property, computedValue, expectedValue, tolerance)
                     break;
             }
         }
-    } else if (property == "webkitFilter" || property == "webkitBackdropFilter" || property == "filter" || property == "colorFilter") {
+    } else if (property == "webkitFilter" || property == "webkitBackdropFilter" || property == "filter" || property == "-apple-color-filter") {
         var filterParameters = parseFilterFunctionList(computedValue);
         var filter2Parameters = parseFilterFunctionList(expectedValue);
         result = compareFilterFunctions(filterParameters, filter2Parameters, tolerance);

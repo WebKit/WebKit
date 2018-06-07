@@ -2003,3 +2003,13 @@ bool WKPreferencesGetServerTimingEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->serverTimingEnabled();
 }
+
+void WKPreferencesSetColorFilterEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setColorFilterEnabled(flag);
+}
+
+bool WKPreferencesGetColorFilterEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->colorFilterEnabled();
+}

@@ -1,7 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
+<html>
+<head>
 <script src="../../resources/testharness.js"></script>
 <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
 <div id="test"></div>
-
 <script>
 
 var testDiv = document.querySelector('#test');
@@ -9,9 +13,9 @@ var testDiv = document.querySelector('#test');
 function testColorFilterParsing(value, expected, name)
 {
     test(() => {
-        testDiv.style.colorFilter = '';
-        testDiv.style.colorFilter = value;
-        var computedStyle = getComputedStyle(testDiv).colorFilter;
+        testDiv.style.setProperty("-apple-color-filter", "");
+        testDiv.style.setProperty("-apple-color-filter", value);
+        var computedStyle = getComputedStyle(testDiv).getPropertyValue("-apple-color-filter");
         assert_equals(computedStyle, expected);
     }, name);
 }
@@ -32,8 +36,8 @@ testColorFilterParsing("saturate()", "saturate(1)", "Parse saturate()");
 testColorFilterParsing("sepia()", "sepia(1)", "Parse sepia()");
 
 // Functions not allowed.
-testColorFilterParsing("drop-shadow(110px 110px 0 blue)", "none", "drop-shadow() is not allowed in color-filter");
-testColorFilterParsing("blur(10px)", "none", "blur() is not allowed in color-filter");
+testColorFilterParsing("drop-shadow(110px 110px 0 blue)", "none", "drop-shadow() is not allowed in -apple-color-filter");
+testColorFilterParsing("blur(10px)", "none", "blur() is not allowed in -apple-color-filter");
 
 // Argument canonicalization.
 testColorFilterParsing("grayscale(30%)", "grayscale(0.3)", "Canonicalize grayscale() argument");
@@ -64,3 +68,5 @@ testColorFilterParsing("grayscale(50%) hue-rotate(45deg) opacity(0.5)", "graysca
 testColorFilterParsing("grayscale(50%) blur(10px) opacity(0.5)", "none", "Filter list with blur is invalid");
 
 </script>
+</body>
+</html>
