@@ -1,3 +1,14 @@
+2018-06-07  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r232520): Crash under IPC::ArgumentCoder<WebCore::Credential>::encodePlatformData
+        https://bugs.webkit.org/show_bug.cgi?id=186385
+        <rdar://problem/40853796>
+
+        Reviewed by Daniel Bates.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<Credential>::encodePlatformData): Fixed an incorrect cast.
+
 2018-06-06  Per Arne Vollan  <pvollan@apple.com>
 
         Crash in lambda function WTF::Function<void ()>::CallableWrapper<WebKit::DisplayLink::displayLinkCallback

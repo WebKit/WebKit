@@ -479,7 +479,7 @@ void ArgumentCoder<Credential>::encodePlatformData(Encoder& encoder, const Crede
 
     auto archiver = secureArchiver();
     [archiver encodeObject:nsCredential forKey:@"credential"];
-    IPC::encode(encoder, (__bridge CFArrayRef)archiver.get().encodedData);
+    IPC::encode(encoder, (__bridge CFDataRef)archiver.get().encodedData);
 }
 
 bool ArgumentCoder<Credential>::decodePlatformData(Decoder& decoder, Credential& credential)
