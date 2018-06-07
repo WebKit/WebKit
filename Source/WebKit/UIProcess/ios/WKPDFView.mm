@@ -77,6 +77,15 @@
     return [_hostViewController gestureRecognizerShouldBegin:gestureRecognizer];
 }
 
+
+#pragma mark WKApplicationStateTrackingView
+
+- (UIView *)_contentView
+{
+    return _hostViewController ? [_hostViewController view] : self;
+}
+
+
 #pragma mark WKWebViewContentProvider
 
 - (instancetype)web_initWithFrame:(CGRect)frame webView:(WKWebView *)webView mimeType:(NSString *)mimeType
@@ -321,7 +330,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 
 - (UIView *)web_contentView
 {
-    return _hostViewController ? [_hostViewController view] : self;
+    return self._contentView;
 }
 
 - (void)web_scrollViewDidScroll:(UIScrollView *)scrollView
@@ -368,6 +377,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 {
     return self.isBackground;
 }
+
 
 #pragma mark PDFHostViewControllerDelegate
 
@@ -445,6 +455,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
     [self _showActionSheetForURL:[self _URLWithPageIndex:pageIndex] atLocation:location withAnnotationRect:annotationRect];
 }
 
+
 #pragma mark WKActionSheetAssistantDelegate
 
 - (std::optional<WebKit::InteractionInformationAtPosition>)positionInformationForActionSheetAssistant:(WKActionSheetAssistant *)assistant
@@ -497,6 +508,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 }
 
 @end
+
 
 #pragma mark _WKWebViewPrintProvider
 

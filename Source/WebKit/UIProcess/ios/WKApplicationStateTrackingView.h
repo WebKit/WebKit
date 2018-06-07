@@ -35,6 +35,7 @@
 - (void)_applicationDidCreateWindowContext;
 - (void)_applicationWillEnterForeground;
 @property (nonatomic, readonly) BOOL isBackground;
+@property (nonatomic, readonly) UIView *_contentView;
 
 @end
 

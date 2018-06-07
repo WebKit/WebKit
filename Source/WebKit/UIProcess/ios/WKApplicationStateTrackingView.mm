@@ -50,7 +50,7 @@
 
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
-    if (!self.window || newWindow)
+    if (!self._contentView.window || newWindow)
         return;
 
     ASSERT(_applicationStateTracker);
@@ -59,7 +59,7 @@
 
 - (void)didMoveToWindow
 {
-    if (!self.window)
+    if (!self._contentView.window)
         return;
 
     ASSERT(!_applicationStateTracker);
@@ -99,6 +99,11 @@
 - (BOOL)isBackground
 {
     return _applicationStateTracker ? _applicationStateTracker->isInBackground() : YES;
+}
+
+- (UIView *)_contentView
+{
+    return self;
 }
 
 @end

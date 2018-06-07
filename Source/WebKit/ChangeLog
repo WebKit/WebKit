@@ -1,3 +1,33 @@
+2018-06-07  Andy Estes  <aestes@apple.com>
+
+        [iOS] Unable to present the share sheet after saving a PDF to Files.app
+        https://bugs.webkit.org/show_bug.cgi?id=186413
+        <rdar://problem/39937488>
+
+        Reviewed by Tim Horton.
+
+        WKApplicationStateTrackingView (WKPDFView's superclass) keeps track of whether
+        it's in a window so that it can suspend and resume the web process accordingly.
+        However, in WKPDFView's case, PDFKit's host view is in the window instead of
+        WKPDFView itself when a PDF is being displayed (WKPDFView is only in a window as a
+        placeholder while the PDF loads). Since WKApplicationStateTrackingView doesn't
+        think its in a window, it suspends the web process, preventing messages necessary
+        to displaying the share sheet from being delivered.
+
+        Fix this by teaching WKApplicationStateTrackingView to consider the in-windowness
+        of the proper content view. For all cases other than WKPDFView, this is |self|.
+        For WKPDFView, it is the PDFHostViewController's root view if it exists, otherwise
+        it's |self|.
+
+        * UIProcess/ios/WKApplicationStateTrackingView.h:
+        * UIProcess/ios/WKApplicationStateTrackingView.mm:
+        (-[WKApplicationStateTrackingView willMoveToWindow:]):
+        (-[WKApplicationStateTrackingView didMoveToWindow]):
+        (-[WKApplicationStateTrackingView _contentView]):
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _contentView]):
+        (-[WKPDFView web_contentView]):
+
 2018-06-07  Dean Jackson  <dino@apple.com>
 
         Match HI spec for thumbnail view sizing and location
