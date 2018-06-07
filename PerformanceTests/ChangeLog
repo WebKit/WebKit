@@ -1,5 +1,29 @@
 2018-06-06  Jon Lee  <jonlee@apple.com>
 
+        Allow the ramp controller to run tests that take less time than the initial ramp-up phase
+        https://bugs.webkit.org/show_bug.cgi?id=186257
+
+        Reviewed by Said Abou-Hallawa.
+
+        * MotionMark/tests/resources/main.js: Extend the desired end timestamp when ramp-up occurs.
+        Previously the controller assumed that the duration of the test was always longer than the
+        time it took to figure out the order of magnitude of particles to render. When that range
+        is determined, the end timestamp is then extended. If the duration is too short, the controller
+        would throw an exception. The fix is to continue extending the timestamp every time the order of
+        magnitude tiers up.
+
+        In general testing with really short durations isn't practical, but sometimes it is
+        desired for debugging.
+
+        To avoid confusion of the private variables, I renamed Benchmark._startTimestamp to
+        Benchmark._benchmarkStartTimestamp, to disambiguate from Controller._startTimestamp.
+        Benchmark._startTimestamp is set once and never changed, after the initial 100ms warm-up.
+        Controller._startTimestamp is initialized to 0 (which means "not initialized"), and then after
+        the warm up is complete, set in Controller.start() to the same wall clock timestamp, and never
+        changed afterwards.
+
+2018-06-06  Jon Lee  <jonlee@apple.com>
+
         Remove unneeded data processing in MotionMark
         https://bugs.webkit.org/show_bug.cgi?id=186256
 

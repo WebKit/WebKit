@@ -314,6 +314,8 @@ RampController = Utilities.createSubclass(Controller,
         this._minimumComplexity = 1;
         this._maximumComplexity = 1;
 
+        this._testLength = options["test-interval"];
+
         // After the tier range is determined, figure out the number of ramp iterations
         var minimumRampLength = 3000;
         var totalRampIterations = Math.max(1, Math.floor(this._endTimestamp / minimumRampLength));
@@ -377,6 +379,7 @@ RampController = Utilities.createSubclass(Controller,
                 this._lastTierFrameLength = currentFrameLength;
 
                 this._tier += .5;
+                this._endTimestamp = timestamp + this._testLength;
                 var nextTierComplexity = Math.round(Math.pow(10, this._tier));
                 stage.tune(nextTierComplexity - currentComplexity);
 
@@ -394,7 +397,7 @@ RampController = Utilities.createSubclass(Controller,
             this.intervalSamplingLength = 120;
 
             // Extend the test length so that the full test length is made of the ramps
-            this._endTimestamp += timestamp;
+            this._endTimestamp = timestamp + this._testLength;
             this.mark(Strings.json.samplingStartTimeOffset, timestamp);
 
             this._minimumComplexity = 1;
@@ -823,7 +826,7 @@ Benchmark = Utilities.createClass(
 
     get timestamp()
     {
-        return this._currentTimestamp - this._startTimestamp;
+        return this._currentTimestamp - this._benchmarkStartTimestamp;
     },
 
     backgroundColor: function()
@@ -867,7 +870,7 @@ Benchmark = Utilities.createClass(
                 this._previousTimestamp = timestamp;
             else if (timestamp - this._previousTimestamp >= 100) {
                 this._didWarmUp = true;
-                this._startTimestamp = timestamp;
+                this._benchmarkStartTimestamp = timestamp;
                 this._controller.start(timestamp, this._stage);
                 this._previousTimestamp = timestamp;
             }
