@@ -1,4 +1,6 @@
 //@ skip if $hostOS == "windows" or $hostOS == "linux"
+//@ requireOptions("--useIntlPluralRules=true")
+
 description("This test checks the behavior of Intl.PluralRules as described in the ECMAScript Internationalization API Specification.");
 
 // https://tc39.github.io/ecma402/#pluralrules-objects

@@ -503,6 +503,7 @@ def pathToHelpers
 end
 
 $runCommandOptions = {}
+$testSpecificRequiredOptions = []
 
 $uniqueFilenameCounter = 0
 def uniqueFilename(extension)
@@ -572,8 +573,12 @@ def slow!
     $runCommandOptions[:isSlow] = true
 end
 
+def requireOptions(*options)
+    $testSpecificRequiredOptions += options
+end
+
 def runWithOutputHandler(kind, outputHandler, *options)
-    addRunCommand(kind, [pathToVM.to_s] + BASE_OPTIONS + options + [$benchmark.to_s], outputHandler, simpleErrorHandler)
+    addRunCommand(kind, [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + options + [$benchmark.to_s], outputHandler, simpleErrorHandler)
 end
 
 def run(kind, *options)
@@ -914,7 +919,7 @@ def runTest262(mode, exception, includeFiles, flags)
 
     prepareExtraRelativeFiles(includeFiles.map { |f| "../" + f }, $collection)
 
-    args = [pathToVM.to_s] + BASE_OPTIONS
+    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions
     args << "--exception=" + exception if failsWithException
     args << "--test262-async" if isAsync
     args += includeFiles
@@ -956,7 +961,7 @@ def prepareTest262Fixture
 end
 
 def runES6(mode)
-    args = [pathToVM.to_s] + BASE_OPTIONS + [$benchmark.to_s]
+    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + [$benchmark.to_s]
     case mode
     when :normal
         errorHandler = simpleErrorHandler
@@ -1087,7 +1092,7 @@ def runChakra(mode, exception, baselineFile, extraFiles)
     prepareExtraAbsoluteFiles(CHAKRATESTS_PATH, ["jsc-lib.js"])
     prepareExtraRelativeFiles(extraFiles.map { |f| "../" + f }, $collection)
 
-    args = [pathToVM.to_s] + BASE_OPTIONS
+    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions
     args += FTL_OPTIONS if $isFTLPlatform
     args += EAGER_OPTIONS
     args << "--exception=" + exception if failsWithException
@@ -1128,7 +1133,7 @@ def runLayoutTest(kind, *options)
     prepareExtraRelativeFiles(["../#{testName}-expected.txt"], $benchmarkDirectory)
     prepareExtraAbsoluteFiles(LAYOUTTESTS_PATH, ["resources/standalone-pre.js", "resources/standalone-post.js"])
 
-    args = [pathToVM.to_s] + BASE_OPTIONS + options +
+    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + options +
         [(Pathname.new("resources") + "standalone-pre.js").to_s,
          $benchmark.to_s,
          (Pathname.new("resources") + "standalone-post.js").to_s]
@@ -1268,7 +1273,7 @@ def runMozillaTest(kind, mode, extraFiles, *options)
         kind = "mozilla"
     end
     prepareExtraRelativeFiles(extraFiles.map{|v| (Pathname("..") + v).to_s}, $collection)
-    args = [pathToVM.to_s] + BASE_OPTIONS + options + extraFiles.map{|v| v.to_s} + [$benchmark.to_s]
+    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + options + extraFiles.map{|v| v.to_s} + [$benchmark.to_s]
     case mode
     when :normal
         errorHandler = mozillaErrorHandler
@@ -1338,7 +1343,7 @@ def defaultRunMozillaTest(mode, *extraFiles)
 end
 
 def runNoisyTestImpl(kind, options, additionalEnv)
-    addRunCommand(kind, [pathToVM.to_s] + BASE_OPTIONS + options + [$benchmark.to_s], noisyOutputHandler, noisyErrorHandler, *additionalEnv)
+    addRunCommand(kind, [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + options + [$benchmark.to_s], noisyOutputHandler, noisyErrorHandler, *additionalEnv)
 end
 
 def runNoisyTest(kind, *options)
@@ -1536,6 +1541,7 @@ def handleCollectionDirectory(collection)
             $benchmark = path.basename
             
             $runCommandOptions = {}
+            $testSpecificRequiredOptions = []
             defaultRun unless parseRunCommands
         }
     }
