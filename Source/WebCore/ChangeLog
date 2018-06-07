@@ -1,3 +1,45 @@
+2018-06-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Merge height and vertical margin computation
+        https://bugs.webkit.org/show_bug.cgi?id=186394
+
+        Reviewed by Antti Koivisto.
+
+        To match the spec (and the width/horizontal margin computation). -currently with default values.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeFloatingHeightAndMargin const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHeight const):
+        (WebCore::Layout::FormattingContext::computeFloatingHeight const): Deleted.
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin):
+        (WebCore::Layout::outOfFlowNonReplacedHeight): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHeight): Deleted.
+        (WebCore::Layout::floatingNonReplacedHeight): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedHeight): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowHeight): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::floatingHeight): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeight): Deleted.
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowHeightAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::computeHeight const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeInFlowHeight const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeight): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeight): Deleted.
+
 2018-06-07  Antti Koivisto  <antti@apple.com>
 
         Don't start service worker fetch when there is substitute data

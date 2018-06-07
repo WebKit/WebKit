@@ -64,7 +64,7 @@ static LayoutUnit shrinkToFitWidth(LayoutContext&, const Box&)
     return { };
 }
 
-static LayoutUnit outOfFlowNonReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::outOfFlowNonReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced());
 
@@ -125,7 +125,7 @@ static LayoutUnit outOfFlowNonReplacedHeight(LayoutContext& layoutContext, const
         ASSERT_NOT_REACHED();
     }
 
-    return computedHeightValue;
+    return { computedHeightValue, { } };
 }
 
 FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::outOfFlowNonReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
@@ -186,13 +186,13 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::outOfFl
     return WidthAndMargin { computedWidthValue, { } };
 }
 
-LayoutUnit FormattingContext::Geometry::outOfFlowReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::outOfFlowReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && layoutBox.replaced());
     // 10.6.5 Absolutely positioned, replaced elements
     //
     // The used value of 'height' is determined as for inline replaced elements.
-    return inlineReplacedHeight(layoutContext, layoutBox);
+    return inlineReplacedHeightAndMargin(layoutContext, layoutBox);
 }
 
 FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::outOfFlowReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
@@ -204,7 +204,7 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::outOfFl
     return inlineReplacedWidthAndMargin(layoutContext, layoutBox);
 }
 
-static LayoutUnit floatingNonReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floatingNonReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isFloatingPositioned() && !layoutBox.replaced());
     // 10.6.6 Complicated cases
@@ -213,7 +213,8 @@ static LayoutUnit floatingNonReplacedHeight(LayoutContext& layoutContext, const 
     //
     // If 'height' is 'auto', the height depends on the element's descendants per 10.6.7.
     auto height = layoutBox.style().logicalHeight();
-    return height.isAuto() ? contentHeightForFormattingContextRoot(layoutContext, layoutBox) : LayoutUnit(height.value());
+    auto computedHeightValue = height.isAuto() ? contentHeightForFormattingContextRoot(layoutContext, layoutBox) : LayoutUnit { height.value() };
+    return FormattingContext::Geometry::HeightAndMargin { computedHeightValue, { } };
 }
 
 FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatingNonReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
@@ -242,12 +243,12 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatin
     return FormattingContext::Geometry::WidthAndMargin { computedWidthValue, { computedMarginLeftValue, computedMarginRightValue } };
 }
 
-LayoutUnit FormattingContext::Geometry::floatingReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floatingReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isFloatingPositioned() && layoutBox.replaced());
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block'
     // replaced elements in normal flow and floating replaced elements
-    return inlineReplacedHeight(layoutContext, layoutBox);
+    return inlineReplacedHeightAndMargin(layoutContext, layoutBox);
 }
 
 FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatingReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
@@ -457,13 +458,13 @@ static LayoutPoint outOfFlowReplacedPosition(LayoutContext& layoutContext, const
     return { computedLeftValue, computedTopValue };
 }
 
-LayoutUnit FormattingContext::Geometry::outOfFlowHeight(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::outOfFlowHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
 
     if (!layoutBox.replaced())
-        return outOfFlowNonReplacedHeight(layoutContext, layoutBox);
-    return outOfFlowReplacedHeight(layoutContext, layoutBox);
+        return outOfFlowNonReplacedHeightAndMargin(layoutContext, layoutBox);
+    return outOfFlowReplacedHeightAndMargin(layoutContext, layoutBox);
 }
 
 FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::outOfFlowWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
@@ -475,13 +476,13 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::outOfFl
     return outOfFlowReplacedWidthAndMargin(layoutContext, layoutBox);
 }
 
-LayoutUnit FormattingContext::Geometry::floatingHeight(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floatingHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isFloatingPositioned());
 
     if (!layoutBox.replaced())
-        return floatingNonReplacedHeight(layoutContext, layoutBox);
-    return floatingReplacedHeight(layoutContext, layoutBox);
+        return floatingNonReplacedHeightAndMargin(layoutContext, layoutBox);
+    return floatingReplacedHeightAndMargin(layoutContext, layoutBox);
 }
 
 FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatingWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
@@ -502,7 +503,7 @@ LayoutPoint FormattingContext::Geometry::outOfFlowPosition(LayoutContext& layout
     return outOfFlowReplacedPosition(layoutContext, layoutBox);
 }
 
-LayoutUnit FormattingContext::Geometry::inlineReplacedHeight(LayoutContext&, const Box& layoutBox)
+FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(LayoutContext&, const Box& layoutBox)
 {
     ASSERT((layoutBox.isOutOfFlowPositioned() || layoutBox.isFloatingPositioned() || layoutBox.isInFlow()) && layoutBox.replaced());
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block' replaced elements in normal flow and floating replaced elements
@@ -541,7 +542,7 @@ LayoutUnit FormattingContext::Geometry::inlineReplacedHeight(LayoutContext&, con
     } else
         computedHeightValue = height.value();
 
-    return computedHeightValue;
+    return { computedHeightValue, { } };
 }
 
 FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox,

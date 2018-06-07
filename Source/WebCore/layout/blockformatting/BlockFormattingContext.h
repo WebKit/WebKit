@@ -52,24 +52,24 @@ public:
 
 private:
     void computeWidthAndMargin(LayoutContext&, const Box&, Display::Box&) const;
-    void computeHeight(LayoutContext&, const Box&, Display::Box&) const;
+    void computeHeightAndMargin(LayoutContext&, const Box&, Display::Box&) const;
 
     void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const override;
     void computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const override;
     void computeInFlowWidthAndMargin(LayoutContext&, const Box&, Display::Box&) const;
-    void computeInFlowHeight(LayoutContext&, const Box&, Display::Box&) const;
+    void computeInFlowHeightAndMargin(LayoutContext&, const Box&, Display::Box&) const;
 
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry {
     public:
-        static LayoutUnit inFlowHeight(LayoutContext&, const Box&);
+        static FormattingContext::Geometry::HeightAndMargin inFlowHeightAndMargin(LayoutContext&, const Box&);
         static FormattingContext::Geometry::WidthAndMargin inFlowWidthAndMargin(LayoutContext&, const Box&);
 
         static LayoutPoint staticPosition(LayoutContext&, const Box&);
         static LayoutPoint inFlowPositionedPosition(LayoutContext&, const Box&);
 
     private:
-        static LayoutUnit inFlowNonReplacedHeight(LayoutContext&, const Box&);
+        static FormattingContext::Geometry::HeightAndMargin inFlowNonReplacedHeightAndMargin(LayoutContext&, const Box&);
         static FormattingContext::Geometry::WidthAndMargin inFlowNonReplacedWidthAndMargin(LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = std::nullopt);
         static FormattingContext::Geometry::WidthAndMargin inFlowReplacedWidthAndMargin(LayoutContext&, const Box&);
     };

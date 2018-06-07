@@ -94,7 +94,7 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             auto& layoutBox = layoutPair->layoutBox;
             auto& displayBox = layoutPair->displayBox;
 
-            computeHeight(layoutContext, layoutBox, displayBox);
+            computeHeightAndMargin(layoutContext, layoutBox, displayBox);
             // Adjust position now that we have all the previous floats placed in this context -if needed.
             floatingContext.computePosition(layoutBox, displayBox);
             if (!is<Container>(layoutBox))
@@ -149,20 +149,22 @@ void BlockFormattingContext::computeWidthAndMargin(LayoutContext& layoutContext,
     ASSERT_NOT_REACHED();
 }
 
-void BlockFormattingContext::computeHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+void BlockFormattingContext::computeHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     if (layoutBox.isInFlow())
-        return computeInFlowHeight(layoutContext, layoutBox, displayBox);
+        return computeInFlowHeightAndMargin(layoutContext, layoutBox, displayBox);
 
     if (layoutBox.isFloatingPositioned())
-        return computeFloatingHeight(layoutContext, layoutBox, displayBox);
+        return computeFloatingHeightAndMargin(layoutContext, layoutBox, displayBox);
 
     ASSERT_NOT_REACHED();
 }
 
-void BlockFormattingContext::computeInFlowHeight(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+void BlockFormattingContext::computeInFlowHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    displayBox.setHeight(Geometry::inFlowHeight(layoutContext, layoutBox));
+    auto heightAndMargin = Geometry::inFlowHeightAndMargin(layoutContext, layoutBox);
+    displayBox.setHeight(heightAndMargin.height);
+    displayBox.setVerticalMargin(heightAndMargin.margin);
 }
 
 void BlockFormattingContext::computeInFlowWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const

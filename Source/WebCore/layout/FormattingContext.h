@@ -66,7 +66,7 @@ protected:
     virtual void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const = 0;
     virtual void computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const = 0;
 
-    void computeFloatingHeight(LayoutContext&, const Box&, Display::Box&) const;
+    void computeFloatingHeightAndMargin(LayoutContext&, const Box&, Display::Box&) const;
     void computeFloatingWidthAndMargin(LayoutContext&, const Box&, Display::Box&) const;
 
     void computeBorderAndPadding(LayoutContext&, const Box&, Display::Box&) const;
@@ -86,15 +86,20 @@ protected:
             Display::Box::HorizontalEdges margin;
         };
 
-        static LayoutUnit outOfFlowHeight(LayoutContext&, const Box&);
+        struct HeightAndMargin {
+            LayoutUnit height;
+            Display::Box::VerticalEdges margin;
+        };
+
+        static HeightAndMargin outOfFlowHeightAndMargin(LayoutContext&, const Box&);
         static WidthAndMargin outOfFlowWidthAndMargin(LayoutContext&, const Box&);
 
-        static LayoutUnit floatingHeight(LayoutContext&, const Box&);
+        static HeightAndMargin floatingHeightAndMargin(LayoutContext&, const Box&);
         static WidthAndMargin floatingWidthAndMargin(LayoutContext&, const Box&);
 
         static LayoutPoint outOfFlowPosition(LayoutContext&, const Box&);
 
-        static LayoutUnit inlineReplacedHeight(LayoutContext&, const Box&);
+        static HeightAndMargin inlineReplacedHeightAndMargin(LayoutContext&, const Box&);
         static WidthAndMargin inlineReplacedWidthAndMargin(LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedMarginLeft = { },
             std::optional<LayoutUnit> precomputedMarginRight = { });
 
@@ -102,14 +107,16 @@ protected:
         static std::optional<Display::Box::Edges> computedPadding(LayoutContext&, const Box&);
 
     private:
-        static LayoutUnit outOfFlowReplacedHeight(LayoutContext&, const Box&);
+        static HeightAndMargin outOfFlowReplacedHeightAndMargin(LayoutContext&, const Box&);
         static WidthAndMargin outOfFlowReplacedWidthAndMargin(LayoutContext&, const Box&);
 
+        static HeightAndMargin outOfFlowNonReplacedHeightAndMargin(LayoutContext&, const Box&);
         static WidthAndMargin outOfFlowNonReplacedWidthAndMargin(LayoutContext&, const Box&);
 
-        static LayoutUnit floatingReplacedHeight(LayoutContext&, const Box&);
+        static HeightAndMargin floatingReplacedHeightAndMargin(LayoutContext&, const Box&);
         static WidthAndMargin floatingReplacedWidthAndMargin(LayoutContext&, const Box&);
 
+        static HeightAndMargin floatingNonReplacedHeightAndMargin(LayoutContext&, const Box&);
         static WidthAndMargin floatingNonReplacedWidthAndMargin(LayoutContext&, const Box&);
     };
 

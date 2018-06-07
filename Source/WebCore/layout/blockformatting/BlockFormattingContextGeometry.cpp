@@ -54,7 +54,7 @@ static const Container& initialContainingBlock(const Box& layoutBox)
     return *containingBlock;
 }
 
-LayoutUnit BlockFormattingContext::Geometry::inFlowNonReplacedHeight(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isInFlow() && !layoutBox.replaced());
 
@@ -108,9 +108,9 @@ LayoutUnit BlockFormattingContext::Geometry::inFlowNonReplacedHeight(LayoutConte
 
     auto computedHeight = compute();
     if (!isStretchedToViewport(layoutContext, layoutBox))
-        return computedHeight;
+        return { computedHeight, { } };
     auto initialContainingBlockHeight = layoutContext.displayBoxForLayoutBox(initialContainingBlock(layoutBox))->contentBox().height();
-    return std::max(computedHeight, initialContainingBlockHeight);
+    return { std::max(computedHeight, initialContainingBlockHeight), { } };
 }
 
 FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox,
@@ -319,15 +319,15 @@ LayoutPoint BlockFormattingContext::Geometry::inFlowPositionedPosition(LayoutCon
     return { displayBox.left() + leftDelta, displayBox.top() + topDelta };
 }
 
-LayoutUnit BlockFormattingContext::Geometry::inFlowHeight(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isInFlow());
 
     if (!layoutBox.replaced())
-        return inFlowNonReplacedHeight(layoutContext, layoutBox);
+        return inFlowNonReplacedHeightAndMargin(layoutContext, layoutBox);
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block'
     // replaced elements in normal flow and floating replaced elements
-    return FormattingContext::Geometry::inlineReplacedHeight(layoutContext, layoutBox);
+    return FormattingContext::Geometry::inlineReplacedHeightAndMargin(layoutContext, layoutBox);
 }
 
 FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
