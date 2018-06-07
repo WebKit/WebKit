@@ -25,6 +25,9 @@
 
 #pragma once
 
+/* BCOMPILER() - the compiler being used to build the project */
+#define BCOMPILER(BFEATURE) (defined BCOMPILER_##BFEATURE && BCOMPILER_##BFEATURE)
+
 /* BCOMPILER_HAS_CLANG_FEATURE() - whether the compiler supports a particular language or library feature. */
 /* http://clang.llvm.org/docs/LanguageExtensions.html#has-feature-and-has-extension */
 #ifdef __has_feature
@@ -34,4 +37,20 @@
 #endif
 
 #define BASAN_ENABLED BCOMPILER_HAS_CLANG_FEATURE(address_sanitizer)
+
+/* BCOMPILER(GCC_OR_CLANG) - GNU Compiler Collection or Clang */
+
+#if defined(__GNUC__)
+#define BCOMPILER_GCC_OR_CLANG 1
+#endif
+
+/* BNO_RETURN */
+
+#if !defined(BNO_RETURN) && BCOMPILER(GCC_OR_CLANG)
+#define BNO_RETURN __attribute((__noreturn__))
+#endif
+
+#if !defined(BNO_RETURN)
+#define BNO_RETURN
+#endif
 

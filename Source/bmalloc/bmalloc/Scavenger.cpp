@@ -374,9 +374,7 @@ void Scavenger::threadRunLoop()
     // We require any state change while we are sleeping to signal to our
     // condition variable and wake us up.
     
-    auto truth = [] { return true; };
-    
-    while (truth()) {
+    while (true) {
         if (m_state == State::Sleep) {
             std::unique_lock<Mutex> lock(m_mutex);
             m_condition.wait(lock, [&]() { return m_state != State::Sleep; });

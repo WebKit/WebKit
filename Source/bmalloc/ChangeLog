@@ -1,3 +1,32 @@
+2018-06-07  David Kilzer  <ddkilzer@apple.com>
+
+        bmalloc: Fix 'noreturn' warnings when compiling with -std=gnu++17
+        <https://webkit.org/b/186400>
+
+        Reviewed by Saam Barati.
+
+        Fixes the following warnings when compiling with gnu++17:
+
+            Source/bmalloc/bmalloc/Scavenger.cpp:363:1: error: function 'threadRunLoop' could be declared with attribute 'noreturn' [-Werror,-Wmissing-noreturn]
+            {
+            ^
+            Source/bmalloc/bmalloc/Scavenger.cpp:358:1: error: function 'threadEntryPoint' could be declared with attribute 'noreturn' [-Werror,-Wmissing-noreturn]
+            {
+            ^
+
+        * bmalloc/BCompiler.h:
+        (BCOMPILER): Add support for the BCOMPILER() macro, then add
+        BCOMPILER(GCC_OR_CLANG).  Taken from Source/WTF/wtf/Compiler.h.
+        (BNO_RETURN): Implement 'norerturn' support using the new
+        BCOMPILER() macros.  Taken from Source/WTF/wtf/Compiler.h.
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::threadRunLoop): Remove the workaround that
+        tricked older compilers into thinking the while() loop wasn't
+        infinite.
+        * bmalloc/Scavenger.h:
+        (bmalloc::Scavenger::threadEntryPoint): Add BNO_RETURN attribute.
+        (bmalloc::Scavenger::threadRunLoop): Ditto.
+
 2018-05-29  Saam Barati  <sbarati@apple.com>
 
         JSC should put bmalloc's scavenger into mini mode
