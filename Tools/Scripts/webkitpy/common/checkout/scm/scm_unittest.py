@@ -52,6 +52,7 @@ from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.version import Version
 from .git import Git, AmbiguousCommitError
 from .detection import detect_scm_system
 from .scm import SCM, CheckoutNeedsUpdate, commit_error_handler, AuthenticationError
@@ -953,7 +954,7 @@ END
         self.assertFalse(os.path.exists(self.bogus_dir))
 
     def test_svn_lock(self):
-        if self.scm.svn_version() >= "1.7":
+        if self.scm.svn_version() >= Version(1, 7):
             # the following technique with .svn/lock then svn update doesn't work with subversion client 1.7 or later
             pass
         else:

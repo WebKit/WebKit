@@ -40,6 +40,7 @@ from webkitpy.common.config.urls import svn_server_host, svn_server_realm
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.webkit_finder import WebKitFinder
+from webkitpy.common.version import Version
 
 from .scm import AuthenticationError, SCM, commit_error_handler
 
@@ -139,7 +140,7 @@ class SVN(SCM, SVNRepository):
 
     @memoized
     def svn_version(self):
-        return self._run_svn(['--version', '--quiet'])
+        return Version.from_string(self._run_svn(['--version', '--quiet']))
 
     def has_working_directory_changes(self):
         # FIXME: What about files which are not committed yet?
@@ -183,7 +184,7 @@ class SVN(SCM, SVNRepository):
         return [self.executable_name, 'status']
 
     def _status_regexp(self, expected_types):
-        field_count = 6 if self.svn_version() > "1.6" else 5
+        field_count = 6 if self.svn_version() > Version(1, 6) else 5
         return "^(?P<status>[%s]).{%s} (?P<filename>.+)$" % (expected_types, field_count)
 
     def _add_parent_directories(self, path):
@@ -195,7 +196,7 @@ class SVN(SCM, SVNRepository):
     def add_list(self, paths):
         for path in paths:
             self._add_parent_directories(os.path.dirname(os.path.abspath(path)))
-        if self.svn_version() >= "1.7":
+        if self.svn_version() >= Version(1, 7):
             # For subversion client 1.7 and later, need to add '--parents' option to ensure intermediate directories
             # are added; in addition, 1.7 returns an exit code of 1 from svn add if one or more of the requested
             # adds are already under version control, including intermediate directories subject to addition
