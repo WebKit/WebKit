@@ -82,6 +82,7 @@ struct PrintInfo;
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;
 - (void)_layerTreeCommitComplete;
 
+- (void)_dynamicViewportUpdateChangedTargetToScale:(double)newScale position:(CGPoint)newScrollPosition nextValidLayerTreeTransactionID:(uint64_t)nextValidLayerTreeTransactionID;
 - (void)_couldNotRestorePageState;
 - (void)_restorePageScrollPosition:(std::optional<WebCore::FloatPoint>)scrollPosition scrollOrigin:(WebCore::FloatPoint)scrollOrigin previousObscuredInset:(WebCore::FloatBoxExtent)insets scale:(double)scale;
 - (void)_restorePageStateToUnobscuredCenter:(std::optional<WebCore::FloatPoint>)center scale:(double)scale; // FIXME: needs scroll origin?
@@ -103,8 +104,6 @@ struct PrintInfo;
 - (void)_didInvokeUIScrollViewDelegateCallback;
 
 - (void)_scheduleVisibleContentRectUpdate;
-
-- (void)_didCompleteAnimatedResize;
 
 - (void)_didStartProvisionalLoadForMainFrame;
 - (void)_didFinishLoadForMainFrame;
