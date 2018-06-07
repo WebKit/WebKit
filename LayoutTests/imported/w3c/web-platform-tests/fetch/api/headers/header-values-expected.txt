@@ -5,6 +5,6 @@ PASS XMLHttpRequest with value x%0Ax needs to throw
 PASS fetch() with value x%0Ax needs to throw 
 PASS XMLHttpRequest with value x%0Dx needs to throw 
 PASS fetch() with value x%0Dx needs to throw 
-FAIL XMLHttpRequest with all valid values The string did not match the expected pattern.
-FAIL fetch() with all valid values Header 'val0' has invalid value: 'xx'
+PASS XMLHttpRequest with all valid values 
+PASS fetch() with all valid values 
 

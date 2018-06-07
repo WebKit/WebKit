@@ -1,5 +1,17 @@
 2018-06-06  Youenn Fablet  <youenn@apple.com>
 
+        HTTP Header values validation is too strict
+        https://bugs.webkit.org/show_bug.cgi?id=167112
+
+        Reviewed by Alex Christensen.
+
+        Rebased from WPT repository.
+
+        * web-platform-tests/fetch/api/headers/header-values-normalize-exptected.txt: Added.
+        * web-platform-tests/fetch/api/headers/header-values-expected.txt: Added.
+
+2018-06-06  Youenn Fablet  <youenn@apple.com>
+
         Add Accept-Encoding: identity to Range requests
         https://bugs.webkit.org/show_bug.cgi?id=186335
         <rdar://problem/40837190>

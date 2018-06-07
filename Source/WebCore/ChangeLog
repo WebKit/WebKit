@@ -1,5 +1,21 @@
 2018-06-06  Youenn Fablet  <youenn@apple.com>
 
+        HTTP Header values validation is too strict
+        https://bugs.webkit.org/show_bug.cgi?id=167112
+
+        Reviewed by Alex Christensen.
+
+        Moving header values and names from DOMString to ByteString as per spec.
+        Updating WebCore::isValidHTTPHeaderValue as per https://fetch.spec.whatwg.org/#terminology-headers.
+
+        Covered by rebased and updated tests.
+        Updated test is now also passing in other browsers.
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::isValidHTTPHeaderValue):
+
+2018-06-06  Youenn Fablet  <youenn@apple.com>
+
         Add Accept-Encoding: identity to Range requests
         https://bugs.webkit.org/show_bug.cgi?id=186335
         <rdar://problem/40837190>
