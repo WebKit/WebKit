@@ -1,3 +1,17 @@
+2018-06-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Compare operations do not respect negative zeros
+        https://bugs.webkit.org/show_bug.cgi?id=183729
+
+        Reviewed by Saam Barati.
+
+        * stress/comparison-ignore-negative-zero.js: Added.
+        (shouldBe):
+        (zero):
+        (negativeZero):
+        (object.valueOf):
+        (test):
+
 2018-06-06  Saam Barati  <sbarati@apple.com>
 
         generateConditionsForInstanceOf needs to see if the object has a poly proto structure before assuming it has a constant prototype

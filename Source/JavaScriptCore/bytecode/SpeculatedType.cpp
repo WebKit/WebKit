@@ -567,8 +567,10 @@ SpeculatedType speculationFromJSType(JSType type)
 
 SpeculatedType leastUpperBoundOfStrictlyEquivalentSpeculations(SpeculatedType type)
 {
-    if (type & (SpecAnyInt | SpecAnyIntAsDouble))
-        type |= (SpecAnyInt | SpecAnyIntAsDouble);
+    // SpecNonIntAsDouble includes negative zero (-0.0), which can be equal to 0 and 0.0 in the context of == and ===.
+    if (type & (SpecAnyInt | SpecAnyIntAsDouble | SpecNonIntAsDouble))
+        type |= (SpecAnyInt | SpecAnyIntAsDouble | SpecNonIntAsDouble);
+
     if (type & SpecString)
         type |= SpecString;
     return type;
