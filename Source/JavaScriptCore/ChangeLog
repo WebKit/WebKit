@@ -1,3 +1,13 @@
+2018-06-06  Guillaume Emont  <guijemont@igalia.com>
+
+        ArityFixup should adjust SP first on 32-bit platforms too
+        https://bugs.webkit.org/show_bug.cgi?id=186351
+
+        Reviewed by Yusuke Suzuki.
+
+        * jit/ThunkGenerators.cpp:
+        (JSC::arityFixupGenerator):
+
 2018-06-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Compare operations do not respect negative zeros

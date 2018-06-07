@@ -500,7 +500,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM* vm)
 
     // Adjust call frame register and stack pointer to account for missing args.
     // We need to change the stack pointer first before performing copy/fill loops.
-    // This stack space below the stack pointer is considered unsed by OS. Therefore,
+    // This stack space below the stack pointer is considered unused by OS. Therefore,
     // OS may corrupt this space when constructing a signal stack.
     jit.move(JSInterfaceJIT::argumentGPR0, extraTemp);
     jit.lshift64(JSInterfaceJIT::TrustedImm32(3), extraTemp);
@@ -564,6 +564,17 @@ MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM* vm)
 
     jit.neg32(JSInterfaceJIT::argumentGPR0);
 
+    // Adjust call frame register and stack pointer to account for missing args.
+    // We need to change the stack pointer first before performing copy/fill loops.
+    // This stack space below the stack pointer is considered unused by OS. Therefore,
+    // OS may corrupt this space when constructing a signal stack.
+    jit.move(JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::regT5);
+    jit.lshift32(JSInterfaceJIT::TrustedImm32(3), JSInterfaceJIT::regT5);
+    jit.addPtr(JSInterfaceJIT::regT5, JSInterfaceJIT::callFrameRegister);
+    jit.untagReturnAddress();
+    jit.addPtr(JSInterfaceJIT::regT5, JSInterfaceJIT::stackPointerRegister);
+    jit.tagReturnAddress();
+
     // Move current frame down argumentGPR0 number of slots
     JSInterfaceJIT::Label copyLoop(jit.label());
     jit.load32(MacroAssembler::Address(JSInterfaceJIT::regT3, PayloadOffset), JSInterfaceJIT::regT5);
@@ -583,12 +594,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM* vm)
 
     jit.addPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::regT3);
     jit.branchAdd32(MacroAssembler::NonZero, JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::argumentGPR2).linkTo(fillUndefinedLoop, &jit);
-
-    // Adjust call frame register and stack pointer to account for missing args
-    jit.move(JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::regT5);
-    jit.lshift32(JSInterfaceJIT::TrustedImm32(3), JSInterfaceJIT::regT5);
-    jit.addPtr(JSInterfaceJIT::regT5, JSInterfaceJIT::callFrameRegister);
-    jit.addPtr(JSInterfaceJIT::regT5, JSInterfaceJIT::stackPointerRegister);
 
     done.link(&jit);
 
