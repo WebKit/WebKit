@@ -208,15 +208,19 @@ TEST(WebKit, OverrideLayoutSizeChangesDuringAnimatedResizeSucceed)
     [webView _endAnimatedResize];
 
     __block bool didReadLayoutSize = false;
-    [webView evaluateJavaScript:@"[window.innerWidth, window.innerHeight]" completionHandler:^(id value, NSError *error) {
-        CGFloat innerWidth = [[value objectAtIndex:0] floatValue];
-        CGFloat innerHeight = [[value objectAtIndex:1] floatValue];
 
-        EXPECT_EQ(innerWidth, 100);
-        EXPECT_EQ(innerHeight, 200);
+    [webView _doAfterNextPresentationUpdate:^{
+        [webView evaluateJavaScript:@"[window.innerWidth, window.innerHeight]" completionHandler:^(id value, NSError *error) {
+            CGFloat innerWidth = [[value objectAtIndex:0] floatValue];
+            CGFloat innerHeight = [[value objectAtIndex:1] floatValue];
 
-        didReadLayoutSize = true;
+            EXPECT_EQ(innerWidth, 100);
+            EXPECT_EQ(innerHeight, 200);
+
+            didReadLayoutSize = true;
+        }];
     }];
+    
     TestWebKitAPI::Util::run(&didReadLayoutSize);
 }
 

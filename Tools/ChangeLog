@@ -1,3 +1,15 @@
+2018-06-07  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r232544): [iOS] TestWebKitAPI.WebKit.OverrideLayoutSizeChangesDuringAnimatedResizeSucceed is failing
+        https://bugs.webkit.org/show_bug.cgi?id=186395
+        <rdar://problem/40902427>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AnimatedResize.mm:
+        (TEST):
+        endAnimatedResize no longer synchronizes, so we have to wait for the next presentation update.
+
 2018-06-07  Thibault Saunier  <tsaunier@igalia.com>
 
         [GTK][WPE] Start implementing MediaStream API
