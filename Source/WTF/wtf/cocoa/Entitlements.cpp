@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "Entitlements.h"
 
-#import <sys/types.h>
-#import <wtf/Forward.h>
-#import <wtf/spi/darwin/XPCSPI.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/spi/cocoa/SecuritySPI.h>
 
-namespace WebKit {
+namespace WTF {
 
-bool connectedProcessIsSandboxed(xpc_connection_t);
-bool currentProcessIsSandboxed();
-bool processHasContainer();
+bool processHasEntitlement(const char* entitlement)
+{
+    auto task = adoptCF(SecTaskCreateFromSelf(kCFAllocatorDefault));
+    if (!task)
+        return false;
 
-// Returns an empty string if the process is not in a container.
-String pathForProcessContainer();
+    auto cfEntitlement = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, entitlement, kCFStringEncodingUTF8, kCFAllocatorNull));
+    auto value = adoptCF(SecTaskCopyValueForEntitlement(task.get(), cfEntitlement.get(), nullptr));
+    if (!value)
+        return false;
 
-bool connectedProcessHasEntitlement(xpc_connection_t, const char *entitlement);
+    if (CFGetTypeID(value.get()) != CFBooleanGetTypeID())
+        return false;
 
+    return CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()));
 }
+
+} // namespace WTF

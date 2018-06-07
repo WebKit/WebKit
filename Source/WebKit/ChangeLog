@@ -1,3 +1,23 @@
+2018-06-07  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Don't try to allocate JIT memory if we don't have the JIT entitlement
+        https://bugs.webkit.org/show_bug.cgi?id=182605
+        <rdar://problem/38271229>
+
+        Reviewed by Mark Lam.
+
+        Remove processHasEntitlement, which was moved into WTF and update all call sites.
+
+        * Shared/mac/SandboxUtilities.h:
+        * Shared/mac/SandboxUtilities.mm:
+        (WebKit::processHasEntitlement): Deleted.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::applicationType):
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (applicationHasAppLinkEntitlements):
+
 2018-06-07  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r232544): Pages are blank after homing out and then resuming on iPad

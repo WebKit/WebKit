@@ -37,6 +37,8 @@
 
 #else
 
+#include <Security/SecBase.h>
+
 typedef uint32_t SecSignatureHashAlgorithm;
 enum {
     kSecSignatureHashAlgorithmUnknown = 0,
@@ -59,6 +61,7 @@ WTF_EXTERN_C_END
 #endif
 
 typedef struct __SecTask *SecTaskRef;
+typedef struct __SecTrust *SecTrustRef;
 
 WTF_EXTERN_C_BEGIN
 

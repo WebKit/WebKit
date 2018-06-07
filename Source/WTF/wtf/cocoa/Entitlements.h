@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#if PLATFORM(COCOA)
 
-#import <sys/types.h>
-#import <wtf/Forward.h>
-#import <wtf/spi/darwin/XPCSPI.h>
+namespace WTF {
 
-namespace WebKit {
+WTF_EXPORT bool processHasEntitlement(const char* entitlement);
 
-bool connectedProcessIsSandboxed(xpc_connection_t);
-bool currentProcessIsSandboxed();
-bool processHasContainer();
+} // namespace WTF
 
-// Returns an empty string if the process is not in a container.
-String pathForProcessContainer();
-
-bool connectedProcessHasEntitlement(xpc_connection_t, const char *entitlement);
-
-}
+#endif

@@ -46,7 +46,6 @@
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
-#import "SandboxUtilities.h"
 #import "UIDelegate.h"
 #import "UserMediaProcessManager.h"
 #import "VersionChecks.h"
@@ -151,6 +150,7 @@
 #import <WebCore/WebSQLiteDatabaseTrackerClient.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/cocoa/Entitlements.h>
 
 #define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(_page && _page->isAlwaysOnLoggingAllowed(), ViewState, __VA_ARGS__)
 
@@ -618,7 +618,7 @@ static void validate(WKWebViewConfiguration *configuration)
 #endif
 
 #if PLATFORM(IOS) && ENABLE(SERVICE_WORKER)
-    if (!WebKit::processHasEntitlement(@"com.apple.developer.WebKit.ServiceWorkers"))
+    if (!WTF::processHasEntitlement("com.apple.developer.WebKit.ServiceWorkers"))
         pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::serviceWorkersEnabledKey(), WebKit::WebPreferencesStore::Value(false));
 #endif
 

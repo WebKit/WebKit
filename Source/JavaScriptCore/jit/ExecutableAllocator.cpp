@@ -38,6 +38,10 @@
 #include <sys/mman.h>
 #endif
 
+#if PLATFORM(IOS)
+#include <wtf/cocoa/Entitlements.h>
+#endif
+
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
 
@@ -110,12 +114,24 @@ JS_EXPORT_PRIVATE JITWriteSeparateHeapsFunction jitWriteSeparateHeapsFunction;
 static uintptr_t startOfFixedWritableMemoryPool;
 #endif
 
+static bool allowJIT()
+{
+#if PLATFORM(IOS) && (CPU(ARM64) || CPU(ARM))
+    return processHasEntitlement("dynamic-codesigning");
+#else
+    return true;
+#endif
+}
+
 class FixedVMPoolExecutableAllocator : public MetaAllocator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FixedVMPoolExecutableAllocator()
         : MetaAllocator(jitAllocationGranule) // round up all allocations to 32 bytes
     {
+        if (!allowJIT())
+            return;
+
         size_t reservationSize;
         if (Options::jitMemoryReservationSize())
             reservationSize = Options::jitMemoryReservationSize();

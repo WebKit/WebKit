@@ -47,6 +47,7 @@
 		0F5651F71FCE4DDC00310FBC /* NoHistoryItemScrollToFragment.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F5651F61FCE4DDB00310FBC /* NoHistoryItemScrollToFragment.mm */; };
 		0F5651F91FCE513500310FBC /* scroll-to-anchor.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0F5651F81FCE50E800310FBC /* scroll-to-anchor.html */; };
 		115EB3431EE0BA03003C2C0A /* ViewportSizeForViewportUnits.mm in Sources */ = {isa = PBXBuildFile; fileRef = 115EB3421EE0B720003C2C0A /* ViewportSizeForViewportUnits.mm */; };
+		143DDE9820C9018B007F76FA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
 		1A02C870125D4CFD00E3F4BD /* find.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1A02C84B125D4A5E00E3F4BD /* find.html */; };
 		1A3524AE1D63A4FB0031729B /* Scope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3524AC1D63A4FB0031729B /* Scope.cpp */; };
 		1A4F81CF1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4F81CD1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm */; };
@@ -2020,6 +2021,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				93F56DA71E5F9174003EDE84 /* libicucore.dylib in Frameworks */,
+				143DDE9820C9018B007F76FA /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

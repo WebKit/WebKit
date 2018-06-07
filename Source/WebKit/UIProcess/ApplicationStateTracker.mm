@@ -32,6 +32,7 @@
 #import "SandboxUtilities.h"
 #import "UIKitSPI.h"
 #import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 
 @interface UIWindow (WKDetails)
@@ -54,7 +55,7 @@ static ApplicationType applicationType(UIWindow *window)
     if (_UIApplicationIsExtension())
         return ApplicationType::Extension;
 
-    if (processHasEntitlement(@"com.apple.UIKit.vends-view-services") && window._isHostedInAnotherProcess)
+    if (WTF::processHasEntitlement("com.apple.UIKit.vends-view-services") && window._isHostedInAnotherProcess)
         return ApplicationType::ViewService;
 
     return ApplicationType::Application;

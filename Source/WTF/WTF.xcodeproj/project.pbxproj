@@ -44,6 +44,7 @@
 		0FEC3C5E1F368A9700F59B6C /* ReadWriteLock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC3C5C1F368A9700F59B6C /* ReadWriteLock.cpp */; };
 		0FFF19DC1BB334EB00886D91 /* ParallelHelperPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFF19DA1BB334EB00886D91 /* ParallelHelperPool.cpp */; };
 		14022F4118F5C3FC007FF0EB /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14022F4018F5C3FC007FF0EB /* libbmalloc.a */; };
+		143DDE9620C8BC37007F76FA /* Entitlements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143DDE9520C8BC37007F76FA /* Entitlements.cpp */; };
 		143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143F611D1565F0F900DB514A /* RAMSize.cpp */; };
 		1447AEC618FCE57700B3D7FF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1447AEC518FCE57700B3D7FF /* Foundation.framework */; };
 		1447AEC718FCE58000B3D7FF /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D247B6214689B8600E78B76 /* libWTF.a */; };
@@ -268,6 +269,8 @@
 		0FFF19DB1BB334EB00886D91 /* ParallelHelperPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelHelperPool.h; sourceTree = "<group>"; };
 		132743924FC54E469F5A8E6E /* StdUnorderedSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdUnorderedSet.h; sourceTree = "<group>"; };
 		14022F4018F5C3FC007FF0EB /* libbmalloc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libbmalloc.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		143DDE9520C8BC37007F76FA /* Entitlements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Entitlements.cpp; sourceTree = "<group>"; };
+		143DDE9720C8BE99007F76FA /* Entitlements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entitlements.h; sourceTree = "<group>"; };
 		143F611D1565F0F900DB514A /* RAMSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RAMSize.cpp; sourceTree = "<group>"; };
 		143F611E1565F0F900DB514A /* RAMSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAMSize.h; sourceTree = "<group>"; };
 		1447AEBE18FCE56900B3D7FF /* libmbmalloc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmbmalloc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1315,6 +1318,8 @@
 			isa = PBXGroup;
 			children = (
 				E38C41241EB4E04C0042957D /* CPUTimeCocoa.mm */,
+				143DDE9520C8BC37007F76FA /* Entitlements.cpp */,
+				143DDE9720C8BE99007F76FA /* Entitlements.h */,
 				7A6EBA3320746C34004F9C44 /* MachSendRight.cpp */,
 				ADF2CE651E39F106006889DB /* MemoryFootprintCocoa.cpp */,
 				AD89B6B91E64150F0090707F /* MemoryPressureHandlerCocoa.mm */,
@@ -1465,6 +1470,7 @@
 				A8A473AE151A825B004123FF /* diy-fp.cc in Sources */,
 				A8A473B0151A825B004123FF /* double-conversion.cc in Sources */,
 				A8A473BA151A825B004123FF /* dtoa.cpp in Sources */,
+				143DDE9620C8BC37007F76FA /* Entitlements.cpp in Sources */,
 				A8A473B3151A825B004123FF /* fast-dtoa.cc in Sources */,
 				0F7C5FB61D885CF20044F5E2 /* FastBitVector.cpp in Sources */,
 				A8A473C3151A825B004123FF /* FastMalloc.cpp in Sources */,
