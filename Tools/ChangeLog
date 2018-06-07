@@ -1,3 +1,33 @@
+2018-06-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Remove gMainWindow global variable
+        https://bugs.webkit.org/show_bug.cgi?id=186378
+
+        Reviewed by Ryosuke Niwa.
+
+        I'm going to support multiple MainWindow in Bug 186263. It should
+        not be assumed that MainWindow has only one instance. gMainWindow
+        is used only in DisplayAuthDialog.
+
+        * MiniBrowser/win/Common.cpp:
+        (authDialogProc): Use DWLP_USER to store the dialog data.
+        (displayAuthDialog): Moved and renamed from
+        MainWindow::displayAuthDialog. Use DialogBoxParam instead of
+        DialogBox to pass a data pointer. Do not return S_OK if
+        DialogBoxParam returns -1. Take a HWND argument as the parent
+        window.
+        (DisplayAuthDialog): Deleted.
+        * MiniBrowser/win/Common.h:
+        * MiniBrowser/win/MainWindow.cpp:
+        (authDialogProc): Moved to Common.cpp.
+        (MainWindow::displayAuthDialog): Ditto.
+        * MiniBrowser/win/MainWindow.h:
+        * MiniBrowser/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::didReceiveAuthenticationChallenge):
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain): Added a local variable mainWindow instead of using
+        gMainWindow.
+
 2018-06-06  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Opt out of the New Build System

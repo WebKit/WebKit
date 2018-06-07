@@ -33,8 +33,8 @@ void computeFullDesktopFrame();
 bool getAppDataFolder(_bstr_t& directory);
 void parseCommandLine(bool& usesLayeredWebView, bool& useFullDesktop, bool& pageLoadTesting, _bstr_t& requestedURL);
 void createCrashReport(EXCEPTION_POINTERS*);
+HRESULT displayAuthDialog(HWND, std::wstring& username, std::wstring& password);
 
 extern HINSTANCE hInst;
-extern MainWindow* gMainWindow;
 extern POINT s_windowPosition;
 extern SIZE s_windowSize;

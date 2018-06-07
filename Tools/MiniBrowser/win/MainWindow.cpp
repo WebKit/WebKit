@@ -383,56 +383,6 @@ INT_PTR CALLBACK MainWindow::customUserAgentDialogProc(HWND hDlg, UINT message, 
     return (INT_PTR)FALSE;
 }
 
-static INT_PTR CALLBACK authDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch (message) {
-    case WM_INITDIALOG: {
-        HWND edit = ::GetDlgItem(hDlg, IDC_AUTH_USER);
-        ::SetWindowText(edit, static_cast<LPCTSTR>(L""));
-
-        edit = ::GetDlgItem(hDlg, IDC_AUTH_PASSWORD);
-        ::SetWindowText(edit, static_cast<LPCTSTR>(L""));
-        return (INT_PTR)TRUE;
-    }
-
-    case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
-            INT_PTR result { };
-
-            if (LOWORD(wParam) == IDOK) {
-                TCHAR user[256];
-                int strLen = ::GetWindowText(::GetDlgItem(hDlg, IDC_AUTH_USER), user, 256);
-                user[strLen] = 0;
-
-                TCHAR pass[256];
-                strLen = ::GetWindowText(::GetDlgItem(hDlg, IDC_AUTH_PASSWORD), pass, 256);
-                pass[strLen] = 0;
-
-                result = reinterpret_cast<INT_PTR>(new std::pair<std::wstring, std::wstring>(user, pass));
-            }
-
-            ::EndDialog(hDlg, result);
-            return (INT_PTR)TRUE;
-        }
-        break;
-    }
-    return (INT_PTR)FALSE;
-}
-
-HRESULT MainWindow::displayAuthDialog(std::wstring& username, std::wstring& password)
-{
-    auto result = DialogBox(hInst, MAKEINTRESOURCE(IDD_AUTH), hwnd(), authDialogProc);
-    if (!result)
-        return E_FAIL;
-
-    auto pair = reinterpret_cast<std::pair<std::wstring, std::wstring>*>(result);
-    username = pair->first;
-    password = pair->second;
-    delete pair;
-
-    return S_OK;
-}
-
 void MainWindow::loadURL(BSTR url)
 {
     if (FAILED(m_browserWindow->loadURL(url)))

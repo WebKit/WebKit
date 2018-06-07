@@ -29,13 +29,14 @@
 #include "stdafx.h"
 #include "Common.h"
 
+#include "MiniBrowserLibResource.h"
 #include "MiniBrowserReplace.h"
 #include <dbghelp.h>
 #include <shlobj.h>
+#include <wtf/StdLibExtras.h>
 
 // Global Variables:
 HINSTANCE hInst;
-MainWindow* gMainWindow = nullptr;
 
 // Support moving the transparent window
 POINT s_windowPosition = { 100, 100 };
@@ -118,9 +119,50 @@ void createCrashReport(EXCEPTION_POINTERS* exceptionPointers)
     }
 }
 
-HRESULT DisplayAuthDialog(std::wstring& username, std::wstring& password)
+struct AuthDialogData {
+    std::wstring& username;
+    std::wstring& password;
+};
+
+static INT_PTR CALLBACK authDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    return gMainWindow->displayAuthDialog(username, password);
+    AuthDialogData& data = *reinterpret_cast<AuthDialogData*>(GetWindowLongPtr(hDlg, DWLP_USER));
+    switch (message) {
+    case WM_INITDIALOG:
+        SetWindowLongPtr(hDlg, DWLP_USER, lParam);
+        return TRUE;
+
+    case WM_COMMAND: {
+        int wmId = LOWORD(wParam);
+        switch (wmId) {
+        case IDOK: {
+            TCHAR str[256];
+            int strLen = GetWindowText(GetDlgItem(hDlg, IDC_AUTH_USER), str, WTF_ARRAY_LENGTH(str)-1);
+            str[strLen] = 0;
+            data.username = str;
+
+            strLen = GetWindowText(GetDlgItem(hDlg, IDC_AUTH_PASSWORD), str, WTF_ARRAY_LENGTH(str)-1);
+            str[strLen] = 0;
+            data.password = str;
+
+            EndDialog(hDlg, true);
+            return TRUE;
+        }
+        case IDCANCEL:
+            EndDialog(hDlg, false);
+            return TRUE;
+        }
+        break;
+    }
+    }
+    return FALSE;
+}
+
+HRESULT displayAuthDialog(HWND hwnd, std::wstring& username, std::wstring& password)
+{
+    AuthDialogData data { username, password };
+    auto result = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_AUTH), hwnd, authDialogProc, reinterpret_cast<LPARAM>(&data));
+    return result > 0 ? S_OK : E_FAIL;
 }
 
 void parseCommandLine(bool& usesLayeredWebView, bool& useFullDesktop, bool& pageLoadTesting, _bstr_t& requestedURL)

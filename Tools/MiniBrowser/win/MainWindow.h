@@ -39,7 +39,6 @@ public:
     MiniBrowser* browserWindow() const { return m_browserWindow.get(); }
 
     void loadURL(BSTR url);
-    HRESULT displayAuthDialog(std::wstring& username, std::wstring& password);
     
 private:
     static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);

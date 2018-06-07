@@ -25,6 +25,7 @@
 #include "stdafx.h"
 #include "ResourceLoadDelegate.h"
 
+#include "Common.h"
 #include "MiniBrowser.h"
 #include "PageLoadTestClient.h"
 #include <WebCore/COMPtr.h>
@@ -36,8 +37,6 @@
 #include <shlwapi.h>
 #include <string>
 #include <wininet.h>
-
-extern HRESULT DisplayAuthDialog(std::wstring& username, std::wstring& password);
 
 HRESULT ResourceLoadDelegate::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
@@ -94,7 +93,7 @@ HRESULT ResourceLoadDelegate::didReceiveAuthenticationChallenge(_In_opt_ IWebVie
         return E_FAIL;
 
     std::wstring username, password;
-    if (DisplayAuthDialog(username, password) != S_OK)
+    if (displayAuthDialog(m_client->hwnd(), username, password) != S_OK)
         return E_FAIL;
 
     COMPtr<IWebURLCredential> credential;
