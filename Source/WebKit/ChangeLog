@@ -1,3 +1,19 @@
+2018-06-07  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r232544): Pages are blank after homing out and then resuming on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=186408
+        <rdar://problem/40907111>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _resizeWhileHidingContentWithUpdates:]):
+        Clients who use _resizeWhileHidingContentWithUpdates don't call
+        _endAnimatedResize; the former API is a one-shot. We can't wait for
+        _endAnimatedResize to complete the animation (and don't need to, since
+        the content is hidden), but instead should just finish it when the
+        commit with the resized tiles arrives.
+
 2018-06-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         Use the same overloaded addInputString in WKContentViewInteraction
