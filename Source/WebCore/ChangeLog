@@ -1,3 +1,24 @@
+2018-06-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Handle Storage Access API calls in the absence of an attached frame
+        https://bugs.webkit.org/show_bug.cgi?id=186373
+        <rdar://problem/40028265>
+
+        Reviewed by Daniel Bates.
+
+        Tests: http/tests/storageAccess/has-storage-access-crash.html
+               http/tests/storageAccess/request-storage-access-crash.html
+
+        The new frame-specific storage access checks were done without confirming a
+        frame was present, although the frame state was validated in other parts of
+        the same method.
+        
+        This patch checks for a non-null frame before making frame-specific calls.
+
+        * dom/Document.cpp:
+        (WebCore::Document::hasStorageAccess):
+        (WebCore::Document::requestStorageAccess):
+
 2018-06-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Merge height and vertical margin computation

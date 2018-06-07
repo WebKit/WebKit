@@ -1,3 +1,17 @@
+2018-06-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Handle Storage Access API calls in the absence of an attached frame
+        https://bugs.webkit.org/show_bug.cgi?id=186373
+        <rdar://problem/40028265>
+
+        Reviewed by Daniel Bates.
+
+        * http/tests/storageAccess/has-storage-access-crash-expected.txt: Added.
+        * http/tests/storageAccess/has-storage-access-crash.html: Added.
+        * http/tests/storageAccess/request-storage-access-crash-expected.txt: Added.
+        * http/tests/storageAccess/request-storage-access-crash.html: Added.
+        * platform/mac-wk2/TestExpectations: Add the two new tests for HighSierra+
+
 2018-06-06  Youenn Fablet  <youenn@apple.com>
 
         HTTP Header values validation is too strict
