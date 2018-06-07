@@ -267,8 +267,10 @@ void NetworkLoad::didReceiveChallenge(const AuthenticationChallenge& challenge, 
 
 void NetworkLoad::completeAuthenticationChallenge(ChallengeCompletionHandler&& completionHandler)
 {
-    bool isServerTrustEvaluation = m_challenge->protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
-    if (!isAllowedToAskUserForCredentials() && !isServerTrustEvaluation) {
+    auto scheme = m_challenge->protectionSpace().authenticationScheme();
+    bool isTLSHandshake = scheme == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested
+        || scheme == ProtectionSpaceAuthenticationSchemeClientCertificateRequested;
+    if (!isAllowedToAskUserForCredentials() && !isTLSHandshake) {
         m_client.get().didBlockAuthenticationChallenge();
         completionHandler(AuthenticationChallengeDisposition::UseCredential, { });
         return;
