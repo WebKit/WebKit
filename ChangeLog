@@ -1,5 +1,14 @@
 2018-06-06  Dan Bernstein  <mitz@apple.com>
 
+        [Xcode] Opt out of the New Build System
+        https://bugs.webkit.org/show_bug.cgi?id=186380
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKit.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings: Use the Legacy Build System.
+
+2018-06-06  Dan Bernstein  <mitz@apple.com>
+
         Check in a file created by the Xcode 10 beta.
 
         * WebKit.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist: Added.

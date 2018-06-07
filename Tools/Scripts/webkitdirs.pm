@@ -850,6 +850,7 @@ sub XcodeOptions
     determineXcodeSDK();
 
     my @options;
+    push @options, "-UseNewBuildSystem=NO";
     push @options, "-UseSanitizedBuildSystemEnvironment=YES";
     push @options, ("-configuration", $configuration);
     push @options, ("-xcconfig", sourceDir() . "/Tools/asan/asan.xcconfig", "ASAN_IGNORE=" . sourceDir() . "/Tools/asan/webkit-asan-ignore.txt") if $asanIsEnabled;

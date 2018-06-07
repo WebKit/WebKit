@@ -1,3 +1,13 @@
+2018-06-06  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] Opt out of the New Build System
+        https://bugs.webkit.org/show_bug.cgi?id=186380
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitdirs.pm:
+        (XcodeOptions): Have -UseNewBuildSystem=NO passed to xcodebuild.
+
 2018-06-06  Antoine Quint  <graouts@apple.com>
 
         Rename color-filter to -apple-color-filter and do not expose it to Web content
