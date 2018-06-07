@@ -1,3 +1,31 @@
+2018-06-07  Antti Koivisto  <antti@apple.com>
+
+        Don't start service worker fetch when there is substitute data
+        https://bugs.webkit.org/show_bug.cgi?id=186349
+        <rdar://problem/38881568>
+
+        Reviewed by Youenn Fablet.
+
+        Loading content via WKWebView.loadData may also end up starting a main resource service worker fetch.
+        This breaks DocumentWriter assumptions.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::tryLoadingRequestFromApplicationCache):
+        (WebCore::DocumentLoader::tryLoadingSubstituteData):
+
+        Factor substitute resource loading out from tryLoadingRequestFromApplicationCache.
+
+        (WebCore::DocumentLoader::startLoadingMainResource):
+
+        If we have substitute data already (typically from WKWebView.loadData), allow service worker registration
+        but load the main resource using the substitute data.
+
+        (WebCore::DocumentLoader::handleSubstituteDataLoadSoon): Deleted.
+
+        Merge to tryLoadingSubstituteData.
+
+        * loader/DocumentLoader.h:
+
 2018-06-07  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Fix the way GstStreamCollection is handled
