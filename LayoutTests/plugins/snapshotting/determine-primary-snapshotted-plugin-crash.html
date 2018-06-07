@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests determining the primary snapshotted plugin does not hit an assertion.</p>
+<div id="result">FAIL</div>
+<embed id="testPlugin" src="webkit-test-netscape" type="application/x-webkit-test-netscape"></embed>
+<script>
+if (!window.testRunner)
+    result.textContent = 'This test requires WebKitTestRunner.';
+else {
+    internals.settings.setPlugInSnapshottingEnabled(true);
+    internals.settings.setMaximumPlugInSnapshotAttempts(0);
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    setTimeout(() => {
+        const testPlugin = document.getElementById("testPlugin");
+        if (internals.isPluginSnapshotted(testPlugin))
+            result.textContent = 'PASS';
+        else
+            result.textContent = 'FAIL - not snapshot';
+        testRunner.notifyDone();
+    }, 500);
+}
+
+</script>

@@ -5371,44 +5371,49 @@ void WebPage::determinePrimarySnapshottedPlugIn()
 
     layoutIfNeeded();
 
-    auto& mainFrame = corePage()->mainFrame();
-    if (!mainFrame.view())
+    RefPtr<FrameView> mainFrameView = corePage()->mainFrame().view();
+    if (!mainFrameView)
         return;
-    if (!mainFrame.view()->renderView())
-        return;
-    RenderView& mainRenderView = *mainFrame.view()->renderView();
 
     IntRect searchRect = IntRect(IntPoint(), corePage()->mainFrame().view()->contentsSize());
     searchRect.intersect(IntRect(IntPoint(), IntSize(primarySnapshottedPlugInSearchLimit, primarySnapshottedPlugInSearchLimit)));
 
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowUserAgentShadowContent);
 
-    HTMLPlugInImageElement* candidatePlugIn = nullptr;
+    RefPtr<HTMLPlugInImageElement> candidatePlugIn;
     unsigned candidatePlugInArea = 0;
 
-    for (Frame* frame = &mainFrame; frame; frame = frame->tree().traverseNextRendered()) {
+    for (RefPtr<Frame> frame = &corePage()->mainFrame(); frame; frame = frame->tree().traverseNextRendered()) {
         if (!frame->loader().subframeLoader().containsPlugins())
             continue;
         if (!frame->document() || !frame->view())
             continue;
+
+        Vector<Ref<HTMLPlugInImageElement>> nonPlayingPlugInImageElements;
         for (auto& plugInImageElement : descendantsOfType<HTMLPlugInImageElement>(*frame->document())) {
             if (plugInImageElement.displayState() == HTMLPlugInElement::Playing)
                 continue;
+            nonPlayingPlugInImageElements.append(plugInImageElement);
+        }
 
-            auto pluginRenderer = plugInImageElement.renderer();
+        for (auto& plugInImageElement : nonPlayingPlugInImageElements) {
+            auto pluginRenderer = plugInImageElement->renderer();
             if (!pluginRenderer || !pluginRenderer->isBox())
                 continue;
             auto& pluginRenderBox = downcast<RenderBox>(*pluginRenderer);
-            if (!plugInIntersectsSearchRect(plugInImageElement))
+            if (!plugInIntersectsSearchRect(plugInImageElement.get()))
                 continue;
 
-            IntRect plugInRectRelativeToView = plugInImageElement.clientRect();
-            ScrollPosition scrollPosition = mainFrame.view()->documentScrollPositionRelativeToViewOrigin();
+            IntRect plugInRectRelativeToView = plugInImageElement->clientRect();
+            ScrollPosition scrollPosition = mainFrameView->documentScrollPositionRelativeToViewOrigin();
             IntRect plugInRectRelativeToTopDocument(plugInRectRelativeToView.location() + scrollPosition, plugInRectRelativeToView.size());
             HitTestResult hitTestResult(plugInRectRelativeToTopDocument.center());
-            mainRenderView.hitTest(request, hitTestResult);
 
-            Element* element = hitTestResult.targetElement();
+            if (!mainFrameView->renderView())
+                return;
+            mainFrameView->renderView()->hitTest(request, hitTestResult);
+
+            RefPtr<Element> element = hitTestResult.targetElement();
             if (!element)
                 continue;
 
@@ -5420,18 +5425,18 @@ void WebPage::determinePrimarySnapshottedPlugIn()
             inflatedPluginRect.inflateX(xOffset);
             inflatedPluginRect.inflateY(yOffset);
 
-            if (element != &plugInImageElement) {
+            if (element != plugInImageElement.ptr()) {
                 if (!(is<HTMLImageElement>(*element)
                     && inflatedPluginRect.contains(elementRectRelativeToTopDocument)
                     && elementRectRelativeToTopDocument.width() > pluginRenderBox.width() * minimumOverlappingImageToPluginDimensionScale
                     && elementRectRelativeToTopDocument.height() > pluginRenderBox.height() * minimumOverlappingImageToPluginDimensionScale))
                     continue;
                 LOG(Plugins, "Primary Plug-In Detection: Plug-in is hidden by an image that is roughly aligned with it, autoplaying regardless of whether or not it's actually the primary plug-in.");
-                plugInImageElement.restartSnapshottedPlugIn();
+                plugInImageElement->restartSnapshottedPlugIn();
             }
 
             if (plugInIsPrimarySize(plugInImageElement, candidatePlugInArea))
-                candidatePlugIn = &plugInImageElement;
+                candidatePlugIn = WTFMove(plugInImageElement);
         }
     }
     if (!candidatePlugIn) {
