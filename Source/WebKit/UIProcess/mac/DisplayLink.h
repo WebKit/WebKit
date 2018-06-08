@@ -32,6 +32,10 @@
 #include <WebCore/PlatformScreen.h>
 #include <wtf/HashSet.h>
 
+namespace IPC {
+class Connection;
+}
+
 namespace WebKit {
 
 class WebPageProxy;
@@ -53,6 +57,8 @@ private:
     
     CVDisplayLinkRef m_displayLink { nullptr };
     HashSet<unsigned> m_observers;
+    RefPtr<IPC::Connection> m_connection;
+    uint64_t m_pageID { 0 };
 };
 
 }

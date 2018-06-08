@@ -36,6 +36,8 @@
 namespace WebKit {
     
 DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID, WebPageProxy& webPageProxy)
+    : m_connection(webPageProxy.process().connection())
+    , m_pageID(webPageProxy.pageID())
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     CVReturn error = CVDisplayLinkCreateWithCGDisplay(displayID, &m_displayLink);
@@ -44,7 +46,7 @@ DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID, WebPageProxy& web
         return;
     }
     
-    error = CVDisplayLinkSetOutputCallback(m_displayLink, displayLinkCallback, &webPageProxy);
+    error = CVDisplayLinkSetOutputCallback(m_displayLink, displayLinkCallback, this);
     if (error) {
         WTFLogAlways("Could not set the display link output callback: %d", error);
         return;
@@ -97,11 +99,8 @@ void DisplayLink::resume()
 
 CVReturn DisplayLink::displayLinkCallback(CVDisplayLinkRef displayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data)
 {
-    WebPageProxy* webPageProxy = reinterpret_cast<WebPageProxy*>(data);
-    RunLoop::main().dispatch([weakPtr = makeWeakPtr(*webPageProxy)] {
-        if (auto* proxy = weakPtr.get())
-            proxy->process().send(Messages::DrawingArea::DisplayWasRefreshed(), proxy->pageID());
-    });
+    DisplayLink* displayLink = static_cast<DisplayLink*>(data);
+    displayLink->m_connection->send(Messages::DrawingArea::DisplayWasRefreshed(), displayLink->m_pageID);
     return kCVReturnSuccess;
 }
 

@@ -1,3 +1,20 @@
+2018-06-08  Per Arne Vollan  <pvollan@apple.com>
+
+        Send display link IPC message from display link thread.
+        https://bugs.webkit.org/show_bug.cgi?id=186429
+
+        Reviewed by Geoffrey Garen.
+
+        When the display link callback is firing on the display link thread in the UI process,
+        we schedule a function to be called on the main thread to send the IPC message to the
+        WebContent process. Since Connection::send is thread-safe, we can just send the message
+        from the display link thread, instead. This should be a small performance improvement.
+
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::DisplayLink):
+        (WebKit::DisplayLink::displayLinkCallback):
+        * UIProcess/mac/DisplayLink.h:
+
 2018-06-07  Chris Dumez  <cdumez@apple.com>
 
         Add base class to get WeakPtrFactory member and avoid some boilerplate code
