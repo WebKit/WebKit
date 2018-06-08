@@ -33,16 +33,19 @@ namespace bmalloc {
 
 bool gigacageEnabledForProcess()
 {
-    static NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
+    // Note that this function is only called once.
+    // If we wanted to make it efficient to call more than once, we could memoize the result in a global boolean.
+
+    NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
     if (appName) {
-        static bool isWebProcess = [appName isEqualToString:@"com.apple.WebKit.WebContent.Development"]
+        bool isWebProcess = [appName isEqualToString:@"com.apple.WebKit.WebContent.Development"]
             || [appName isEqualToString:@"com.apple.WebKit.WebContent"]
             || [appName isEqualToString:@"com.apple.WebProcess"];
         return isWebProcess;
     }
 
-    static NSString *processName = [[NSProcessInfo processInfo] processName];
-    static bool isOptInBinary = [processName isEqualToString:@"jsc"]
+    NSString *processName = [[NSProcessInfo processInfo] processName];
+    bool isOptInBinary = [processName isEqualToString:@"jsc"]
         || [processName isEqualToString:@"wasm"]
         || [processName hasPrefix:@"test"];
 

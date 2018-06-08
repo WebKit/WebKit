@@ -1,3 +1,16 @@
+2018-06-07  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Turn on ARC for the single Objective-C++ source file in bmalloc
+        https://bugs.webkit.org/show_bug.cgi?id=186398
+
+        Reviewed by Saam Barati.
+
+        * Configurations/Base.xcconfig: Turn on ARC.
+        * bmalloc/ProcessCheck.mm:
+        (bmalloc::gigacageEnabledForProcess): Removed the globals from this function,
+        since it's only called once. If it was called more than once, we could optimize
+        that with a single boolean global rather than two strings and two booleans.
+
 2018-06-07  David Kilzer  <ddkilzer@apple.com>
 
         bmalloc: Fix 'noreturn' warnings when compiling with -std=gnu++17
