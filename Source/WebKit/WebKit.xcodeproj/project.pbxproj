@@ -1324,8 +1324,6 @@
 		7AAD175F1EA6AF99003B0894 /* WebResourceLoadStatisticsStoreCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AAD175E1EA6AF37003B0894 /* WebResourceLoadStatisticsStoreCocoa.mm */; };
 		7AB6EA451EEAAE3800037B2B /* APIIconDatabaseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AB6EA441EEAAE2300037B2B /* APIIconDatabaseClient.h */; };
 		7AB6EA471EEAB6B800037B2B /* APIGeolocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AB6EA461EEAB6B000037B2B /* APIGeolocationProvider.h */; };
-		7ACFAAD920B88D5000C53203 /* process-webcontent-entitlements.sh in Resources */ = {isa = PBXBuildFile; fileRef = 7ACFAAD820B88D4F00C53203 /* process-webcontent-entitlements.sh */; };
-		7ACFAADA20B88D5000C53203 /* process-webcontent-entitlements.sh in Resources */ = {isa = PBXBuildFile; fileRef = 7ACFAAD820B88D4F00C53203 /* process-webcontent-entitlements.sh */; };
 		7AF236201E79A3E400438A05 /* WebErrors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF2361E1E79A3B400438A05 /* WebErrors.cpp */; };
 		7AF236211E79A40800438A05 /* WebErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF2361F1E79A3D800438A05 /* WebErrors.h */; };
 		7AF236231E79A44400438A05 /* WebErrorsCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AF236221E79A43100438A05 /* WebErrorsCocoa.mm */; };
@@ -10071,7 +10069,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7ACFAADA20B88D5000C53203 /* process-webcontent-entitlements.sh in Resources */,
 				372EBB412017E64300085064 /* WebContentProcess.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -10102,7 +10099,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7ACFAAD920B88D5000C53203 /* process-webcontent-entitlements.sh in Resources */,
 				E1D26A53175964D90095BFD1 /* WebContentProcess.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

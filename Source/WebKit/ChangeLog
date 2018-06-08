@@ -1,3 +1,9 @@
+2018-06-07  Dan Bernstein  <mitz@apple.com>
+
+        Don’t install process-webcontent-entitlements.sh into the built XPC services.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-06-07  Andy Estes  <aestes@apple.com>
 
         [iOS] Inform the client when PDFKit's extension process crashes
