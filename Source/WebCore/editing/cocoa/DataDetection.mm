@@ -249,7 +249,7 @@ static NSString *constructURLStringForResult(DDResultRef currentResult, NSString
 
 static void removeResultLinksFromAnchor(Element& element)
 {
-    // Perform a depth-first search for anchor nodes, which have the DDURLScheme attribute set to true,
+    // Perform a depth-first search for anchor nodes, which have the data detectors attribute set to true,
     // take their children and insert them before the anchor, and then remove the anchor.
 
     // Note that this is not using ElementChildIterator because we potentially prepend children as we iterate over them.

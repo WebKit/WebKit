@@ -1,3 +1,12 @@
+2018-06-08  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Make more of our soft linking ARC-compatible
+        https://bugs.webkit.org/show_bug.cgi?id=186437
+
+        Reviewed by Daniel Bates.
+
+        * pal/spi/cocoa/DataDetectorsCoreSPI.h: Removed unused DDURLScheme.
+
 2018-06-08  Jonathan Bedard  <jbedard@apple.com>
 
         [Mojave] Enable build

@@ -45,7 +45,6 @@
 #import <AVFoundation/AVCaptureInput.h>
 #import <AVFoundation/AVCaptureOutput.h>
 #import <AVFoundation/AVCaptureSession.h>
-#import <AVFoundation/AVCaptureVideoPreviewLayer.h>
 #import <objc/runtime.h>
 
 #if PLATFORM(IOS)
@@ -63,7 +62,6 @@ typedef AVCaptureDeviceInput AVCaptureDeviceInputType;
 typedef AVCaptureOutput AVCaptureOutputType;
 typedef AVCaptureVideoDataOutput AVCaptureVideoDataOutputType;
 typedef AVFrameRateRange AVFrameRateRangeType;
-typedef AVCaptureVideoPreviewLayer AVCaptureVideoPreviewLayerType;
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 
@@ -73,7 +71,6 @@ SOFT_LINK_CLASS(AVFoundation, AVCaptureDeviceFormat)
 SOFT_LINK_CLASS(AVFoundation, AVCaptureDeviceInput)
 SOFT_LINK_CLASS(AVFoundation, AVCaptureOutput)
 SOFT_LINK_CLASS(AVFoundation, AVCaptureVideoDataOutput)
-SOFT_LINK_CLASS(AVFoundation, AVCaptureVideoPreviewLayer)
 SOFT_LINK_CLASS(AVFoundation, AVFrameRateRange)
 
 #define AVCaptureConnection getAVCaptureConnectionClass()
@@ -82,23 +79,20 @@ SOFT_LINK_CLASS(AVFoundation, AVFrameRateRange)
 #define AVCaptureDeviceInput getAVCaptureDeviceInputClass()
 #define AVCaptureOutput getAVCaptureOutputClass()
 #define AVCaptureVideoDataOutput getAVCaptureVideoDataOutputClass()
-#define AVCaptureVideoPreviewLayer getAVCaptureVideoPreviewLayerClass()
 #define AVFrameRateRange getAVFrameRateRangeClass()
 
 SOFT_LINK_CONSTANT(AVFoundation, AVMediaTypeVideo, NSString *)
-SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionPreset1280x720, NSString *)
-SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionPreset960x540, NSString *)
-SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionPreset640x480, NSString *)
-SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionPreset352x288, NSString *)
-SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionPreset320x240, NSString *)
-SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionPresetLow, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVCaptureSessionPreset1280x720, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVCaptureSessionPreset960x540, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVCaptureSessionPreset640x480, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVCaptureSessionPreset352x288, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVCaptureSessionPreset320x240, NSString *)
 
 #define AVCaptureSessionPreset1280x720 getAVCaptureSessionPreset1280x720()
 #define AVCaptureSessionPreset960x540 getAVCaptureSessionPreset960x540()
 #define AVCaptureSessionPreset640x480 getAVCaptureSessionPreset640x480()
 #define AVCaptureSessionPreset352x288 getAVCaptureSessionPreset352x288()
 #define AVCaptureSessionPreset320x240 getAVCaptureSessionPreset320x240()
-#define AVCaptureSessionPresetLow getAVCaptureSessionPresetLow()
 
 using namespace WebCore;
 
@@ -175,27 +169,27 @@ void AVVideoCaptureSource::initializeCapabilities(RealtimeMediaSourceCapabilitie
             highestFrameRateRange = std::max<Float64>(highestFrameRateRange, range.maxFrameRate);
         }
 
-        if (AVCaptureSessionPreset1280x720 && [videoDevice supportsAVCaptureSessionPreset:AVCaptureSessionPreset1280x720]) {
+        if (canLoadAVCaptureSessionPreset1280x720() && [videoDevice supportsAVCaptureSessionPreset:AVCaptureSessionPreset1280x720]) {
             updateSizeMinMax(minimumWidth, maximumWidth, 1280);
             updateSizeMinMax(minimumHeight, maximumHeight, 720);
             updateAspectRatioMinMax(minimumAspectRatio, maximumAspectRatio, 1280.0 / 720);
         }
-        if (AVCaptureSessionPreset960x540 && [videoDevice supportsAVCaptureSessionPreset:AVCaptureSessionPreset960x540]) {
+        if (canLoadAVCaptureSessionPreset960x540() && [videoDevice supportsAVCaptureSessionPreset:AVCaptureSessionPreset960x540]) {
             updateSizeMinMax(minimumWidth, maximumWidth, 960);
             updateSizeMinMax(minimumHeight, maximumHeight, 540);
             updateAspectRatioMinMax(minimumAspectRatio, maximumAspectRatio, 960 / 540);
         }
-        if (AVCaptureSessionPreset640x480 && [videoDevice supportsAVCaptureSessionPreset:AVCaptureSessionPreset640x480]) {
+        if (canLoadAVCaptureSessionPreset640x480() && [videoDevice supportsAVCaptureSessionPreset:AVCaptureSessionPreset640x480]) {
             updateSizeMinMax(minimumWidth, maximumWidth, 640);
             updateSizeMinMax(minimumHeight, maximumHeight, 480);
             updateAspectRatioMinMax(minimumAspectRatio, maximumAspectRatio, 640 / 480);
         }
-        if (AVCaptureSessionPreset352x288 && [videoDevice supportsAVCaptureSessionPreset:AVCaptureSessionPreset352x288]) {
+        if (canLoadAVCaptureSessionPreset352x288() && [videoDevice supportsAVCaptureSessionPreset:AVCaptureSessionPreset352x288]) {
             updateSizeMinMax(minimumWidth, maximumWidth, 352);
             updateSizeMinMax(minimumHeight, maximumHeight, 288);
             updateAspectRatioMinMax(minimumAspectRatio, maximumAspectRatio, 352 / 288);
         }
-        if (AVCaptureSessionPreset320x240 && [videoDevice supportsAVCaptureSessionPreset:AVCaptureSessionPreset320x240]) {
+        if (canLoadAVCaptureSessionPreset320x240() && [videoDevice supportsAVCaptureSessionPreset:AVCaptureSessionPreset320x240]) {
             updateSizeMinMax(minimumWidth, maximumWidth, 320);
             updateSizeMinMax(minimumHeight, maximumHeight, 240);
             updateAspectRatioMinMax(minimumAspectRatio, maximumAspectRatio, 320 / 240);
@@ -252,19 +246,19 @@ static IntSize sizeForPreset(NSString* preset)
     if (!preset)
         return { };
 
-    if (AVCaptureSessionPreset1280x720 && [preset isEqualToString:AVCaptureSessionPreset1280x720])
+    if (canLoadAVCaptureSessionPreset1280x720() && [preset isEqualToString:AVCaptureSessionPreset1280x720])
         return { 1280, 720 };
 
-    if (AVCaptureSessionPreset960x540 && [preset isEqualToString:AVCaptureSessionPreset960x540])
+    if (canLoadAVCaptureSessionPreset960x540() && [preset isEqualToString:AVCaptureSessionPreset960x540])
         return { 960, 540 };
 
-    if (AVCaptureSessionPreset640x480 && [preset isEqualToString:AVCaptureSessionPreset640x480])
+    if (canLoadAVCaptureSessionPreset640x480() && [preset isEqualToString:AVCaptureSessionPreset640x480])
         return { 640, 480 };
 
-    if (AVCaptureSessionPreset352x288 && [preset isEqualToString:AVCaptureSessionPreset352x288])
+    if (canLoadAVCaptureSessionPreset352x288() && [preset isEqualToString:AVCaptureSessionPreset352x288])
         return { 352, 288 };
 
-    if (AVCaptureSessionPreset320x240 && [preset isEqualToString:AVCaptureSessionPreset320x240])
+    if (canLoadAVCaptureSessionPreset320x240() && [preset isEqualToString:AVCaptureSessionPreset320x240])
         return { 320, 240 };
     
     return { };
@@ -518,19 +512,19 @@ NSString* AVVideoCaptureSource::bestSessionPresetForVideoDimensions(std::optiona
         return nil;
 
     AVCaptureDeviceTypedef *videoDevice = device();
-    if ((!width || width.value() == 1280) && (!height || height.value() == 720) && AVCaptureSessionPreset1280x720)
+    if ((!width || width.value() == 1280) && (!height || height.value() == 720) && canLoadAVCaptureSessionPreset1280x720())
         return [videoDevice supportsAVCaptureSessionPreset:AVCaptureSessionPreset1280x720] ? AVCaptureSessionPreset1280x720 : nil;
 
-    if ((!width || width.value() == 960) && (!height || height.value() == 540) && AVCaptureSessionPreset960x540)
+    if ((!width || width.value() == 960) && (!height || height.value() == 540) && canLoadAVCaptureSessionPreset960x540())
         return [videoDevice supportsAVCaptureSessionPreset:AVCaptureSessionPreset960x540] ? AVCaptureSessionPreset960x540 : nil;
 
-    if ((!width || width.value() == 640) && (!height || height.value() == 480 ) && AVCaptureSessionPreset640x480)
+    if ((!width || width.value() == 640) && (!height || height.value() == 480 ) && canLoadAVCaptureSessionPreset640x480())
         return [videoDevice supportsAVCaptureSessionPreset:AVCaptureSessionPreset640x480] ? AVCaptureSessionPreset640x480 : nil;
 
-    if ((!width || width.value() == 352) && (!height || height.value() == 288 ) && AVCaptureSessionPreset352x288)
+    if ((!width || width.value() == 352) && (!height || height.value() == 288 ) && canLoadAVCaptureSessionPreset352x288())
         return [videoDevice supportsAVCaptureSessionPreset:AVCaptureSessionPreset352x288] ? AVCaptureSessionPreset352x288 : nil;
 
-    if ((!width || width.value() == 320) && (!height || height.value() == 240 ) && AVCaptureSessionPreset320x240)
+    if ((!width || width.value() == 320) && (!height || height.value() == 240 ) && canLoadAVCaptureSessionPreset320x240())
         return [videoDevice supportsAVCaptureSessionPreset:AVCaptureSessionPreset320x240] ? AVCaptureSessionPreset320x240 : nil;
 
     return nil;

@@ -95,7 +95,6 @@ extern CFStringRef const DDBinderTrackingNumberKey;
 extern CFStringRef const DDBinderFlightInformationKey;
 extern CFStringRef const DDBinderParsecSourceKey;
 extern CFStringRef const DDBinderSignatureBlockKey;
-extern NSString * const DDURLScheme;
 
 @interface DDScannerResult : NSObject <NSCoding, NSSecureCoding>
 + (NSArray *)resultsFromCoreResults:(CFArrayRef)coreResults;

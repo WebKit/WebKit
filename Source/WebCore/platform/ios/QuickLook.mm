@@ -100,7 +100,6 @@ RetainPtr<NSURLRequest> registerQLPreviewConverterIfNeeded(NSURL *url, NSString 
 
 bool isQuickLookPreviewURL(const URL& url)
 {
-    ASSERT([QLPreviewScheme isEqualToString:@(QLPreviewProtocol)]);
     return url.protocolIs(QLPreviewProtocol);
 }
 

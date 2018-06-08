@@ -60,7 +60,6 @@ SOFT_LINK_POINTER_FOR_SOURCE(WebCore, DataDetectorsCore, DDBinderEmailKey, CFStr
 SOFT_LINK_POINTER_FOR_SOURCE(WebCore, DataDetectorsCore, DDBinderTrackingNumberKey, CFStringRef)
 SOFT_LINK_POINTER_FOR_SOURCE(WebCore, DataDetectorsCore, DDBinderFlightInformationKey, CFStringRef)
 SOFT_LINK_POINTER_FOR_SOURCE(WebCore, DataDetectorsCore, DDBinderSignatureBlockKey, CFStringRef)
-SOFT_LINK_POINTER_FOR_SOURCE(WebCore, DataDetectorsCore, DDURLScheme, NSString *)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, DataDetectorsCore, DDScannerCopyResultsOptionsForPassiveUse, DDScannerCopyResultsOptions)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, DataDetectorsCore, DDScannerEnableOptionalSource, void, (DDScannerRef scanner, DDScannerSource source, Boolean enable), (scanner, source, enable))

@@ -36,6 +36,6 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, QuickLook, QLTypeCopyBestMimeTypeForFileN
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, QuickLook, QLTypeCopyBestMimeTypeForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, QuickLook, QLTypeCopyUTIForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
 
-SOFT_LINK_POINTER_FOR_SOURCE(WebCore, QuickLook, QLPreviewScheme, NSString *)
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, QuickLook, QLPreviewScheme, NSString *)
 
 #endif // USE(QUICK_LOOK)

@@ -1,3 +1,43 @@
+2018-06-08  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Make more of our soft linking ARC-compatible
+        https://bugs.webkit.org/show_bug.cgi?id=186437
+
+        Reviewed by Daniel Bates.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::removeResultLinksFromAnchor): Fix comment referring to unused constant DDURLScheme.
+
+        * platform/cocoa/DataDetectorsCoreSoftLink.h: Removed unused DDURLScheme.
+        * platform/cocoa/DataDetectorsCoreSoftLink.mm: Ditto.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        Use SOFT_LINK_CONSTANT_MAY_FAIL for NSString constants instead of using
+        SOFT_LINK_POINTER_OPTIONAL. Required moving iOS-specific items inside the
+        #if PLATFORM(IOS) section.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL): Use the
+        canLoad functions instead of checking for null to handle possibly-missing string constants.
+        (WebCore::metadataType): Ditto.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm: Removed unused
+        AVMediaTypeVideo, AVMediaTypeAudio, and AVMediaTypeText soft linking.
+
+        * platform/ios/QuickLook.mm:
+        (WebCore::isQuickLookPreviewURL): Removed unneeded assertion.
+
+        * platform/ios/QuickLookSoftLink.h: Removed unneeded QLPreviousScheme, which was used only
+        for an assertion, one we can do without.
+        * platform/ios/QuickLookSoftLink.mm: Ditto.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm: Removed unused soft linking of
+        AVCaptureVideoPreviewLayer class and AVCaptureSessionPresetLow string constant. Use
+        SOFT_LINK_CONSTANT_MAY_FAIL for NSString constants instead of using
+        SOFT_LINK_POINTER_OPTIONAL.
+        (WebCore::AVVideoCaptureSource::initializeCapabilities): Use the canLoad functions
+        instead of checking for null to handle possibly-missing string constants.
+        (WebCore::sizeForPreset): Ditto.
+        (WebCore::AVVideoCaptureSource::bestSessionPresetForVideoDimensions const): Ditto.
+
 2018-06-08  Aditya Keerthi  <akeerthi@apple.com>
 
         [Datalist] Allow TextFieldInputType to show and hide suggestions

@@ -76,19 +76,12 @@ SOFT_LINK_CLASS(AVFoundation, AVSampleBufferAudioRenderer)
 SOFT_LINK_CLASS(AVFoundation, AVSampleBufferDisplayLayer)
 SOFT_LINK_CLASS(AVFoundation, AVStreamSession)
 
-SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVMediaTypeVideo, NSString *)
-SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVMediaTypeAudio, NSString *)
-SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVMediaTypeText, NSString *)
-
 SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicVisual, NSString*)
 SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicAudible, NSString*)
 SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicLegible, NSString*)
 SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotification, NSString*)
 SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey, NSString*)
 
-#define AVMediaTypeVideo getAVMediaTypeVideo()
-#define AVMediaTypeAudio getAVMediaTypeAudio()
-#define AVMediaTypeText getAVMediaTypeText()
 #define AVSampleBufferDisplayLayerFailedToDecodeNotification getAVSampleBufferDisplayLayerFailedToDecodeNotification()
 #define AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey getAVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey()
 
