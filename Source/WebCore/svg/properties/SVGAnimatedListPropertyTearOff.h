@@ -51,7 +51,7 @@ public:
             return *static_cast<ListPropertyTearOff*>(m_baseVal.get());
 
         auto property = ListPropertyTearOff::create(*this, BaseValRole, m_values, m_wrappers);
-        m_baseVal = property->createWeakPtr();
+        m_baseVal = makeWeakPtr(property.get());
         return property;
     }
 
@@ -61,7 +61,7 @@ public:
             return *static_cast<ListPropertyTearOff*>(m_animVal.get());
 
         auto property = ListPropertyTearOff::create(*this, AnimValRole, m_values, m_wrappers);
-        m_animVal = property->createWeakPtr();
+        m_animVal = makeWeakPtr(property.get());
         return property;
     }
     

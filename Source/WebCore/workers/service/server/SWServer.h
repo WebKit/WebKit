@@ -65,7 +65,7 @@ class Timer;
 class SWServer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    class Connection {
+    class Connection : public CanMakeWeakPtr<Connection> {
         WTF_MAKE_FAST_ALLOCATED;
         friend class SWServer;
     public:
@@ -73,8 +73,6 @@ public:
 
         using Identifier = SWServerConnectionIdentifier;
         Identifier identifier() const { return m_identifier; }
-
-        auto& weakPtrFactory() { return m_weakFactory; }
 
         WEBCORE_EXPORT void didResolveRegistrationPromise(const ServiceWorkerRegistrationKey&);
         SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) { return m_server.doRegistrationMatching(topOrigin, clientURL); }
@@ -114,7 +112,6 @@ public:
 
         SWServer& m_server;
         Identifier m_identifier;
-        WeakPtrFactory<Connection> m_weakFactory;
         Vector<RegistrationReadyRequest> m_registrationReadyRequests;
     };
 

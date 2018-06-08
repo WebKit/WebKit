@@ -55,7 +55,7 @@ class WaylandCompositor {
 public:
     static WaylandCompositor& singleton();
 
-    class Buffer {
+    class Buffer : public CanMakeWeakPtr<Buffer> {
         WTF_MAKE_NONCOPYABLE(Buffer); WTF_MAKE_FAST_ALLOCATED;
     public:
         static Buffer* getOrCreate(struct wl_resource*);
@@ -67,8 +67,6 @@ public:
         EGLImageKHR createImage() const;
         WebCore::IntSize size() const;
 
-        WeakPtr<Buffer> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
-
     private:
         Buffer(struct wl_resource*);
         static void destroyListenerCallback(struct wl_listener*, void*);
@@ -76,7 +74,6 @@ public:
         struct wl_resource* m_resource { nullptr };
         struct wl_listener m_destroyListener;
         uint32_t m_busyCount { 0 };
-        WeakPtrFactory<Buffer> m_weakPtrFactory;
     };
 
     class Surface {

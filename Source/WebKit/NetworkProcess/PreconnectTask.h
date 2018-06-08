@@ -37,7 +37,7 @@ namespace WebKit {
 class NetworkLoad;
 class NetworkLoadParameters;
 
-class PreconnectTask final : public NetworkLoadClient {
+class PreconnectTask final : public NetworkLoadClient, public CanMakeWeakPtr<PreconnectTask> {
 public:
     explicit PreconnectTask(NetworkLoadParameters&&, WTF::CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler = { });
     ~PreconnectTask();
@@ -46,8 +46,6 @@ public:
     uint64_t pageID() const;
 
     void continueCanAuthenticateAgainstProtectionSpace(bool);
-
-    WeakPtr<PreconnectTask> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
 
 private:
     // NetworkLoadClient.
@@ -66,7 +64,6 @@ private:
     std::unique_ptr<NetworkLoad> m_networkLoad;
     WTF::CompletionHandler<void(const WebCore::ResourceError&)> m_completionHandler;
     WebCore::Timer m_timeoutTimer;
-    WeakPtrFactory<PreconnectTask> m_weakFactory;
 };
 
 } // namespace WebKit

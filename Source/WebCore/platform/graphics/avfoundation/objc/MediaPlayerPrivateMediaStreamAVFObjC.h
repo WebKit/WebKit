@@ -57,7 +57,7 @@ class PixelBufferConformerCV;
 class VideoFullscreenLayerManagerObjC;
 class VideoTrackPrivateMediaStream;
 
-class MediaPlayerPrivateMediaStreamAVFObjC final : public MediaPlayerPrivateInterface, private MediaStreamPrivate::Observer, private MediaStreamTrackPrivate::Observer
+class MediaPlayerPrivateMediaStreamAVFObjC final : public CanMakeWeakPtr<MediaPlayerPrivateMediaStreamAVFObjC>, public MediaPlayerPrivateInterface, private MediaStreamPrivate::Observer, private MediaStreamTrackPrivate::Observer
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
@@ -77,8 +77,6 @@ public:
     void setNetworkState(MediaPlayer::NetworkState);
     MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState);
-
-    WeakPtr<MediaPlayerPrivateMediaStreamAVFObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
     void ensureLayers();
     void destroyLayers();
@@ -232,7 +230,6 @@ private:
     void applicationDidBecomeActive() final;
 
     MediaPlayer* m_player { nullptr };
-    WeakPtrFactory<MediaPlayerPrivateMediaStreamAVFObjC> m_weakPtrFactory;
     RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;
     RefPtr<MediaStreamTrackPrivate> m_activeVideoTrack;
     RetainPtr<WebAVSampleBufferStatusChangeListener> m_statusChangeListener;

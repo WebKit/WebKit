@@ -59,7 +59,7 @@ enum class AuthenticationChallengeDisposition {
 };
 using ChallengeCompletionHandler = CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>;
 
-class AuthenticationManager : public NetworkProcessSupplement, public IPC::MessageReceiver {
+class AuthenticationManager : public NetworkProcessSupplement, public IPC::MessageReceiver, public CanMakeWeakPtr<AuthenticationManager> {
     WTF_MAKE_NONCOPYABLE(AuthenticationManager);
 public:
     explicit AuthenticationManager(ChildProcess&);
@@ -115,8 +115,6 @@ private:
     ChildProcess& m_process;
 
     HashMap<uint64_t, Challenge> m_challenges;
-
-    WeakPtrFactory<AuthenticationManager> m_weakPtrFactory;
 };
 
 } // namespace WebKit

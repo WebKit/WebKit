@@ -102,7 +102,7 @@ struct AnnotatedRegionValue {
 #endif
 
 // Base class for all rendering tree objects.
-class RenderObject : public CachedImageClient {
+class RenderObject : public CachedImageClient, public CanMakeWeakPtr<RenderObject> {
     WTF_MAKE_ISO_ALLOCATED(RenderObject);
     friend class RenderBlock;
     friend class RenderBlockFlow;
@@ -113,8 +113,6 @@ public:
     // marked as anonymous in the constructor.
     explicit RenderObject(Node&);
     virtual ~RenderObject();
-
-    auto& weakPtrFactory() const { return m_weakFactory; }
 
     RenderTheme& theme() const;
 
@@ -837,8 +835,6 @@ private:
     RenderElement* m_parent;
     RenderObject* m_previous;
     RenderObject* m_next;
-
-    WeakPtrFactory<RenderObject> m_weakFactory;
 
 #ifndef NDEBUG
     bool m_hasAXObject             : 1;

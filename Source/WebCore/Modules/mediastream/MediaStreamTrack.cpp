@@ -277,7 +277,7 @@ void MediaStreamTrack::applyConstraints(const std::optional<MediaTrackConstraint
 {
     m_promise = WTFMove(promise);
 
-    auto weakThis = createWeakPtr();
+    auto weakThis = makeWeakPtr(*this);
     auto failureHandler = [weakThis] (const String& failedConstraint, const String& message) {
         if (!weakThis || !weakThis->m_promise)
             return;

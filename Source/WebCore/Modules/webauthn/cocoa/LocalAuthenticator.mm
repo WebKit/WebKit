@@ -186,7 +186,7 @@ void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const Publi
 
     NSString *reason = [NSString stringWithFormat:@"Allow %@ to create a public key credential for %@", (id)options.rp.id, (id)options.user.name];
     // FIXME(183534): Optimize the following nested callbacks and threading.
-    [context evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:reason reply:BlockPtr<void(BOOL, NSError *)>::fromCallable([weakThis = m_weakFactory.createWeakPtr(*this), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), options = crossThreadCopy(options), hash] (BOOL success, NSError *error) mutable {
+    [context evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:reason reply:BlockPtr<void(BOOL, NSError *)>::fromCallable([weakThis = makeWeakPtr(*this), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), options = crossThreadCopy(options), hash] (BOOL success, NSError *error) mutable {
         ASSERT(!isMainThread());
         if (!success || error) {
             LOG_ERROR("Couldn't authenticate with biometrics: %@", error);

@@ -65,8 +65,6 @@ public:
     explicit MediaPlayerPrivateGStreamer(MediaPlayer*);
     virtual ~MediaPlayerPrivateGStreamer();
 
-    WeakPtr<MediaPlayerPrivateGStreamer> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
-
     static void registerMediaEngine(MediaEngineRegistrar);
     void handleMessage(GstMessage*);
     void handlePluginInstallerResult(GstInstallPluginsReturn);
@@ -237,7 +235,6 @@ protected:
 #endif
 
 private:
-    WeakPtrFactory<MediaPlayerPrivateGStreamer> m_weakPtrFactory;
 
 #if ENABLE(VIDEO_TRACK)
     GRefPtr<GstElement> m_textAppSink;

@@ -1,3 +1,70 @@
+2018-06-07  Chris Dumez  <cdumez@apple.com>
+
+        Add base class to get WeakPtrFactory member and avoid some boilerplate code
+        https://bugs.webkit.org/show_bug.cgi?id=186407
+
+        Reviewed by Brent Fulgham.
+
+        Add CanMakeWeakPtr base class to get WeakPtrFactory member and its getter, in
+        order to avoid some boilerplate code in every class needing a WeakPtrFactory.
+        This also gets rid of old-style createWeakPtr() methods in favor of the newer
+        makeWeakPtr().
+
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::canAuthenticateAgainstProtectionSpace):
+        * NetworkProcess/PreconnectTask.h:
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * Shared/Authentication/AuthenticationManager.h:
+        * UIProcess/API/APIAttachment.cpp:
+        (API::Attachment::Attachment):
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard):
+        (WebKit::WebPaymentCoordinatorProxy::openPaymentSetup):
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.h:
+        * UIProcess/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI):
+        * UIProcess/ApplicationStateTracker.h:
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+        * UIProcess/Cocoa/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::setAlternateBackForwardListSourcePage):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateWindowAndViewFrames):
+        (WebKit::WebViewImpl::setTopContentInset):
+        (WebKit::WebViewImpl::viewDidMoveToWindow):
+        (WebKit::WebViewImpl::prepareForMoveToWindow):
+        (WebKit::WebViewImpl::validateUserInterfaceItem):
+        (WebKit::WebViewImpl::requestCandidatesForSelectionIfNeeded):
+        (WebKit::WebViewImpl::interpretKeyEvent):
+        (WebKit::WebViewImpl::firstRectForCharacterRange):
+        (WebKit::WebViewImpl::performKeyEquivalent):
+        (WebKit::WebViewImpl::keyUp):
+        (WebKit::WebViewImpl::keyDown):
+        * UIProcess/CredentialManagement/WebCredentialsMessengerProxy.cpp:
+        (WebKit::WebCredentialsMessengerProxy::makeCredential):
+        (WebKit::WebCredentialsMessengerProxy::getAssertion):
+        * UIProcess/CredentialManagement/WebCredentialsMessengerProxy.h:
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::setOriginatingPage):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/ProcessAssertion.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        (WebKit::WaylandCompositor::Surface::attachBuffer):
+        * UIProcess/gtk/WaylandCompositor.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::displayLinkCallback):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm:
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::RemoteLayerTreeDisplayRefreshMonitor):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+
 2018-06-07  Dan Bernstein  <mitz@apple.com>
 
         Don’t install process-webcontent-entitlements.sh into the built XPC services.

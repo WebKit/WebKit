@@ -499,7 +499,7 @@ bool MediaPlayerPrivateMediaFoundation::endCreatedMediaSource(IMFAsyncResult* as
     hr = asyncResult->GetStatus();
     m_loadingProgress = SUCCEEDED(hr);
 
-    callOnMainThread([weakPtr = m_weakPtrFactory.createWeakPtr(*this)] {
+    callOnMainThread([weakPtr = makeWeakPtr(*this)] {
         if (!weakPtr)
             return;
         weakPtr->onCreatedMediaSource();
@@ -528,7 +528,7 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
 
     switch (mediaEventType) {
     case MESessionTopologySet: {
-        callOnMainThread([weakPtr = m_weakPtrFactory.createWeakPtr(*this)] {
+        callOnMainThread([weakPtr = makeWeakPtr(*this)] {
             if (!weakPtr)
                 return;
             weakPtr->onTopologySet();
@@ -537,7 +537,7 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
     }
 
     case MESessionStarted: {
-        callOnMainThread([weakPtr = m_weakPtrFactory.createWeakPtr(*this)] {
+        callOnMainThread([weakPtr = makeWeakPtr(*this)] {
             if (!weakPtr)
                 return;
             weakPtr->onSessionStarted();
@@ -546,7 +546,7 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
     }
 
     case MEBufferingStarted: {
-        callOnMainThread([weakPtr = m_weakPtrFactory.createWeakPtr(*this)] {
+        callOnMainThread([weakPtr = makeWeakPtr(*this)] {
             if (!weakPtr)
                 return;
             weakPtr->onBufferingStarted();
@@ -555,7 +555,7 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
     }
 
     case MEBufferingStopped: {
-        callOnMainThread([weakPtr = m_weakPtrFactory.createWeakPtr(*this)] {
+        callOnMainThread([weakPtr = makeWeakPtr(*this)] {
             if (!weakPtr)
                 return;
             weakPtr->onBufferingStopped();
@@ -564,7 +564,7 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
     }
 
     case MESessionEnded: {
-        callOnMainThread([weakPtr = m_weakPtrFactory.createWeakPtr(*this)] {
+        callOnMainThread([weakPtr = makeWeakPtr(*this)] {
             if (!weakPtr)
                 return;
             weakPtr->onSessionEnded();
@@ -1723,7 +1723,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::processInputNot
     
     // Invalidate the video area
     if (m_mediaPlayer) {
-        callOnMainThread([weakPtr = m_mediaPlayer->m_weakPtrFactory.createWeakPtr(*m_mediaPlayer)] {
+        callOnMainThread([weakPtr = m_mediaPlayer->makeWeakPtr(*m_mediaPlayer)] {
             if (weakPtr)
                 weakPtr->invalidateFrameView();
         });

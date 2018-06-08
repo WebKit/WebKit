@@ -44,7 +44,7 @@ namespace WebKit {
 class NetworkConnectionToWebProcess;
 class NetworkCORSPreflightChecker;
 
-class NetworkLoadChecker : public WebCore::ContentSecurityPolicyClient {
+class NetworkLoadChecker : public WebCore::ContentSecurityPolicyClient, public CanMakeWeakPtr<NetworkLoadChecker> {
 public:
     NetworkLoadChecker(NetworkConnectionToWebProcess&, uint64_t webPageID, uint64_t webFrameID, ResourceLoadIdentifier, WebCore::FetchOptions&&, PAL::SessionID, WebCore::HTTPHeaderMap&&, WebCore::URL&&, RefPtr<WebCore::SecurityOrigin>&&, WebCore::PreflightPolicy, String&& referrer);
     ~NetworkLoadChecker();
@@ -68,8 +68,6 @@ public:
 
     const WebCore::URL& url() const { return m_url; }
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const { return m_storedCredentialsPolicy; }
-
-    WeakPtrFactory<NetworkLoadChecker>& weakPtrFactory() { return m_weakFactory; }
 
 private:
     WebCore::ContentSecurityPolicy* contentSecurityPolicy();
@@ -134,7 +132,6 @@ private:
     WebCore::PreflightPolicy m_preflightPolicy;
     String m_dntHeaderValue;
     String m_referrer;
-    WeakPtrFactory<NetworkLoadChecker> m_weakFactory;
 };
 
 }

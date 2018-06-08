@@ -52,7 +52,7 @@ class MediaKeyStatusMap;
 class MediaKeys;
 class SharedBuffer;
 
-class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject, public CDMInstanceClient {
+class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject, public CanMakeWeakPtr<MediaKeySession>, public CDMInstanceClient {
 public:
     static Ref<MediaKeySession> create(ScriptExecutionContext&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstance>&&);
     virtual ~MediaKeySession();
@@ -117,7 +117,6 @@ private:
     double m_firstDecryptTime { 0 };
     double m_latestDecryptTime { 0 };
     Vector<std::pair<Ref<SharedBuffer>, MediaKeyStatus>> m_statuses;
-    WeakPtrFactory<MediaKeySession> m_weakPtrFactory;
 };
 
 } // namespace WebCore

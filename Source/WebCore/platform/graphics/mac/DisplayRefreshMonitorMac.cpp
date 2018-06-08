@@ -89,7 +89,7 @@ void DisplayRefreshMonitorMac::displayLinkFired()
 
     setIsPreviousFrameDone(false);
 
-    RunLoop::main().dispatch([weakPtr = m_weakFactory.createWeakPtr(*this)] {
+    RunLoop::main().dispatch([weakPtr = makeWeakPtr(*this)] {
         if (auto* monitor = weakPtr.get())
             handleDisplayRefreshedNotificationOnMainThread(monitor);
     });

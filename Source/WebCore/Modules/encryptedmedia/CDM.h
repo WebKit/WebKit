@@ -49,7 +49,7 @@ class Document;
 class ScriptExecutionContext;
 class SharedBuffer;
 
-class CDM : public RefCounted<CDM>, private ContextDestructionObserver {
+class CDM : public RefCounted<CDM>, public CanMakeWeakPtr<CDM>, private ContextDestructionObserver {
 public:
     static bool supportsKeySystem(const String&);
     static bool isPersistentType(MediaKeySessionType);
@@ -101,13 +101,10 @@ private:
     std::optional<MediaKeySystemConfiguration>  getSupportedConfiguration(const MediaKeySystemConfiguration& candidateConfiguration, MediaKeysRestrictions&);
     std::optional<Vector<MediaKeySystemMediaCapability>> getSupportedCapabilitiesForAudioVideoType(AudioVideoType, const Vector<MediaKeySystemMediaCapability>& requestedCapabilities, const MediaKeySystemConfiguration& partialConfiguration, MediaKeysRestrictions&);
 
-    WeakPtr<CDM> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
-
     using ConsentStatusCallback = WTF::Function<void(ConsentStatus, MediaKeySystemConfiguration&&, MediaKeysRestrictions&&)>;
     void getConsentStatus(MediaKeySystemConfiguration&& accumulatedConfiguration, MediaKeysRestrictions&&, ConsentStatusCallback&&);
     String m_keySystem;
     std::unique_ptr<CDMPrivate> m_private;
-    WeakPtrFactory<CDM> m_weakPtrFactory;
 };
 
 }

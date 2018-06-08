@@ -46,7 +46,7 @@ void Widget::setParent(ScrollView* view)
     ASSERT(!view || !m_parent);
     if (!view || !view->isVisible())
         setParentVisible(false);
-    m_parent = view ? makeWeakPtr(*view) : nullptr;
+    m_parent = makeWeakPtr(view);
     if (view && view->isVisible())
         setParentVisible(true);
 }

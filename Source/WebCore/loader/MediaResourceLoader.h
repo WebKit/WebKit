@@ -44,7 +44,7 @@ class Document;
 class HTMLMediaElement;
 class MediaResource;
 
-class MediaResourceLoader final : public PlatformMediaResourceLoader, public ContextDestructionObserver {
+class MediaResourceLoader final : public PlatformMediaResourceLoader, public CanMakeWeakPtr<MediaResourceLoader>, public ContextDestructionObserver {
 public:
     WEBCORE_EXPORT MediaResourceLoader(Document&, HTMLMediaElement&, const String& crossOriginMode);
     WEBCORE_EXPORT virtual ~MediaResourceLoader();
@@ -58,8 +58,6 @@ public:
     Vector<ResourceResponse> responsesForTesting() const { return m_responsesForTesting; }
     void addResponseForTesting(const ResourceResponse&);
 
-    WeakPtr<const MediaResourceLoader> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
-
 private:
     void contextDestroyed() override;
 
@@ -67,7 +65,6 @@ private:
     WeakPtr<HTMLMediaElement> m_mediaElement;
     String m_crossOriginMode;
     HashSet<MediaResource*> m_resources;
-    WeakPtrFactory<const MediaResourceLoader> m_weakFactory;
     Vector<ResourceResponse> m_responsesForTesting;
 };
 

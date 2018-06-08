@@ -495,8 +495,8 @@ void TextureMapperLayer::removeAllChildren()
 void TextureMapperLayer::setMaskLayer(TextureMapperLayer* maskLayer)
 {
     if (maskLayer) {
-        maskLayer->m_effectTarget = createWeakPtr();
-        m_state.maskLayer = maskLayer->createWeakPtr();
+        maskLayer->m_effectTarget = makeWeakPtr(*this);
+        m_state.maskLayer = makeWeakPtr(*maskLayer);
     } else
         m_state.maskLayer = nullptr;
 }
@@ -504,8 +504,8 @@ void TextureMapperLayer::setMaskLayer(TextureMapperLayer* maskLayer)
 void TextureMapperLayer::setReplicaLayer(TextureMapperLayer* replicaLayer)
 {
     if (replicaLayer) {
-        replicaLayer->m_effectTarget = createWeakPtr();
-        m_state.replicaLayer = replicaLayer->createWeakPtr();
+        replicaLayer->m_effectTarget = makeWeakPtr(*this);
+        m_state.replicaLayer = makeWeakPtr(*replicaLayer);
     } else
         m_state.replicaLayer = nullptr;
 }

@@ -110,7 +110,7 @@ MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, bool m
 
 MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, const Document& document, const RenderStyle* style)
     : m_mediaType(acceptedMediaType)
-    , m_document(const_cast<Document&>(document).createWeakPtr())
+    , m_document(makeWeakPtr(const_cast<Document&>(document)))
     , m_style(style)
 {
 }

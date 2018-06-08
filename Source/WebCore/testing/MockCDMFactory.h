@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-class MockCDMFactory : public RefCounted<MockCDMFactory>, private CDMFactory {
+class MockCDMFactory : public RefCounted<MockCDMFactory>, public CanMakeWeakPtr<MockCDMFactory>, private CDMFactory {
 public:
     static Ref<MockCDMFactory> create() { return adoptRef(*new MockCDMFactory); }
     ~MockCDMFactory();
@@ -90,11 +90,10 @@ private:
     bool m_canCreateInstances { true };
     bool m_supportsServerCertificates { true };
     bool m_supportsSessions { true };
-    WeakPtrFactory<MockCDMFactory> m_weakPtrFactory;
     HashMap<String, Vector<Ref<SharedBuffer>>> m_sessions;
 };
 
-class MockCDM : public CDMPrivate {
+class MockCDM : public CDMPrivate, public CanMakeWeakPtr<MockCDM> {
 public:
     MockCDM(WeakPtr<MockCDMFactory>);
 
@@ -120,7 +119,6 @@ private:
     std::optional<String> sanitizeSessionId(const String&) const final;
 
     WeakPtr<MockCDMFactory> m_factory;
-    WeakPtrFactory<MockCDM> m_weakPtrFactory;
 };
 
 class MockCDMInstance : public CDMInstance {

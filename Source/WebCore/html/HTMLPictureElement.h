@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class HTMLPictureElement final : public HTMLElement {
+class HTMLPictureElement final : public HTMLElement, public CanMakeWeakPtr<HTMLPictureElement> {
     WTF_MAKE_ISO_ALLOCATED(HTMLPictureElement);
 public:
     static Ref<HTMLPictureElement> create(const QualifiedName&, Document&);
@@ -44,8 +44,6 @@ public:
 
     bool viewportChangeAffectedPicture() const;
 
-    WeakPtr<HTMLPictureElement> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
-
 #if USE(SYSTEM_PREVIEW)
     WEBCORE_EXPORT bool isSystemPreviewImage() const;
 #endif
@@ -55,7 +53,6 @@ private:
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
-    WeakPtrFactory<HTMLPictureElement> m_weakFactory;
     Vector<MediaQueryResult> m_viewportDependentMediaQueryResults;
 };
 

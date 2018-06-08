@@ -73,7 +73,7 @@ struct PluginModuleInfo;
 
 enum class ShouldClearFirst { No, Yes };
 
-class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessLifetimeObserver, public Identified<WebsiteDataStore>  {
+class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessLifetimeObserver, public Identified<WebsiteDataStore>, public CanMakeWeakPtr<WebsiteDataStore>  {
 public:
     constexpr static uint64_t defaultCacheStoragePerOriginQuota = 50 * 1024 * 1024;
 
@@ -183,8 +183,6 @@ public:
     void addSecKeyProxyStore(Ref<SecKeyProxyStore>&&);
 #endif
 
-    auto& weakPtrFactory() const { return m_weakFactory; }
-
 private:
     explicit WebsiteDataStore(PAL::SessionID);
     explicit WebsiteDataStore(Configuration, PAL::SessionID);
@@ -215,7 +213,6 @@ private:
 
     void maybeRegisterWithSessionIDMap();
 
-    WeakPtrFactory<WebsiteDataStore> m_weakFactory;
     const PAL::SessionID m_sessionID;
 
     const Configuration m_configuration;

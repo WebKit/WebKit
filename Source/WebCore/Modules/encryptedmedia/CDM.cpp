@@ -106,7 +106,7 @@ void CDM::doSupportedConfigurationStep(MediaKeySystemConfiguration&& candidateCo
         return;
     }
 
-    auto consentCallback = [weakThis = createWeakPtr(), callback = WTFMove(callback)] (ConsentStatus status, MediaKeySystemConfiguration&& configuration, MediaKeysRestrictions&& restrictions) mutable {
+    auto consentCallback = [weakThis = makeWeakPtr(*this), callback = WTFMove(callback)] (ConsentStatus status, MediaKeySystemConfiguration&& configuration, MediaKeysRestrictions&& restrictions) mutable {
         if (!weakThis) {
             callback(std::nullopt);
             return;
@@ -511,7 +511,7 @@ void CDM::getConsentStatus(MediaKeySystemConfiguration&& accumulatedConfiguratio
     // NOTE: In the future, these checks belowe will involve asking the page client, possibly across a process boundary.
     // They will by necessity be asynchronous with callbacks. For now, imply this behavior by performing it in an async task.
 
-    m_scriptExecutionContext->postTask([this, weakThis = createWeakPtr(), accumulatedConfiguration = WTFMove(accumulatedConfiguration), restrictions = WTFMove(restrictions), callback = WTFMove(callback)] (ScriptExecutionContext&) mutable {
+    m_scriptExecutionContext->postTask([this, weakThis = makeWeakPtr(*this), accumulatedConfiguration = WTFMove(accumulatedConfiguration), restrictions = WTFMove(restrictions), callback = WTFMove(callback)] (ScriptExecutionContext&) mutable {
         if (!weakThis || !m_private) {
             callback(ConsentStatus::ConsentDenied, WTFMove(accumulatedConfiguration), WTFMove(restrictions));
             return;

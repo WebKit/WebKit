@@ -92,7 +92,7 @@ CSSFontFace::CSSFontFace(CSSFontSelector* fontSelector, StyleRuleFontFace* cssCo
     : m_timeoutTimer(*this, &CSSFontFace::timeoutFired)
     , m_fontSelector(fontSelector)
     , m_cssConnection(cssConnection)
-    , m_wrapper(wrapper ? wrapper->createWeakPtr() : WeakPtr<FontFace>())
+    , m_wrapper(makeWeakPtr(wrapper))
     , m_isLocalFallback(isLocalFallback)
     , m_mayBePurged(!wrapper)
 {
@@ -563,14 +563,14 @@ Ref<FontFace> CSSFontFace::wrapper()
         return *m_wrapper.get();
 
     auto wrapper = FontFace::create(*this);
-    m_wrapper = wrapper->createWeakPtr();
+    m_wrapper = makeWeakPtr(wrapper.get());
     initializeWrapper();
     return wrapper;
 }
 
 void CSSFontFace::setWrapper(FontFace& newWrapper)
 {
-    m_wrapper = newWrapper.createWeakPtr();
+    m_wrapper = makeWeakPtr(newWrapper);
     initializeWrapper();
 }
 

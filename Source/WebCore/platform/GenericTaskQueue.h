@@ -50,7 +50,7 @@ private:
 };
 
 template<>
-class TaskDispatcher<Timer> {
+class TaskDispatcher<Timer> : public CanMakeWeakPtr<TaskDispatcher<Timer>> {
 public:
     TaskDispatcher();
     void postTask(WTF::Function<void()>&&);
@@ -62,12 +62,11 @@ private:
 
     void dispatchOneTask();
 
-    WeakPtrFactory<TaskDispatcher> m_weakPtrFactory;
     Deque<WTF::Function<void()>> m_pendingTasks;
 };
 
 template <typename T>
-class GenericTaskQueue {
+class GenericTaskQueue : public CanMakeWeakPtr<GenericTaskQueue<T>> {
 public:
     GenericTaskQueue()
         : m_dispatcher()
@@ -87,8 +86,7 @@ public:
             return;
 
         ++m_pendingTasks;
-        auto weakThis = m_weakPtrFactory.createWeakPtr(*this);
-        m_dispatcher.postTask([weakThis, task = WTFMove(task)] {
+        m_dispatcher.postTask([weakThis = makeWeakPtr(*this), task = WTFMove(task)] {
             if (!weakThis)
                 return;
             ASSERT(weakThis->m_pendingTasks);
@@ -105,13 +103,12 @@ public:
 
     void cancelAllTasks()
     {
-        m_weakPtrFactory.revokeAll();
+        CanMakeWeakPtr<GenericTaskQueue<T>>::weakPtrFactory().revokeAll();
         m_pendingTasks = 0;
     }
     bool hasPendingTasks() const { return m_pendingTasks; }
 
 private:
-    WeakPtrFactory<GenericTaskQueue> m_weakPtrFactory;
     TaskDispatcher<T> m_dispatcher;
     unsigned m_pendingTasks { 0 };
     bool m_isClosed { false };

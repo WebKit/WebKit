@@ -46,7 +46,7 @@ class CDMInstance;
 class BufferSource;
 class MediaKeySession;
 
-class MediaKeys : public RefCounted<MediaKeys> {
+class MediaKeys : public RefCounted<MediaKeys>, public CanMakeWeakPtr<MediaKeys> {
 public:
     using KeySessionType = MediaKeySessionType;
 
@@ -77,7 +77,6 @@ protected:
     Ref<CDM> m_implementation;
     Ref<CDMInstance> m_instance;
 
-    WeakPtrFactory<MediaKeys> m_weakPtrFactory;
     Vector<Ref<MediaKeySession>> m_sessions;
     Vector<CDMClient*> m_cdmClients;
     GenericTaskQueue<Timer> m_taskQueue;

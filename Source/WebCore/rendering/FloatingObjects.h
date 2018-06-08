@@ -85,7 +85,7 @@ public:
     // FIXME: Callers of these methods are dangerous and should be whitelisted explicitly or removed.
     RootInlineBox* originatingLine() const { return m_originatingLine.get(); }
     void clearOriginatingLine() { m_originatingLine = nullptr; }
-    void setOriginatingLine(RootInlineBox& line) { m_originatingLine = line.createWeakPtr(); }
+    void setOriginatingLine(RootInlineBox& line) { m_originatingLine = makeWeakPtr(line); }
 
     LayoutSize locationOffsetOfBorderBox() const
     {

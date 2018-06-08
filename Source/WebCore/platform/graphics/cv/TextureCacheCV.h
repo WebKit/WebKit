@@ -43,7 +43,7 @@ namespace WebCore {
 
 class GraphicsContext3D;
 
-class TextureCacheCV {
+class TextureCacheCV : public CanMakeWeakPtr<TextureCacheCV> {
 public:
     static std::unique_ptr<TextureCacheCV> create(GraphicsContext3D&);
 
@@ -63,7 +63,6 @@ public:
 private:
     Ref<GraphicsContext3D> m_context;
     RetainPtr<TextureCacheType> m_cache;
-    WeakPtrFactory<TextureCacheCV> m_weakPtrFactory;
 };
 
 }

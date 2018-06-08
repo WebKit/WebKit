@@ -142,11 +142,6 @@ FontFace::~FontFace()
     m_backing->removeClient(*this);
 }
 
-WeakPtr<FontFace> FontFace::createWeakPtr()
-{
-    return m_weakPtrFactory.createWeakPtr(*this);
-}
-
 RefPtr<CSSValue> FontFace::parseString(const String& string, CSSPropertyID propertyID)
 {
     // FIXME: Should use the Document to get the right parsing mode.

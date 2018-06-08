@@ -6910,7 +6910,7 @@ RefPtr<PlatformMediaResourceLoader> HTMLMediaElement::mediaPlayerCreateResourceL
 {
     auto mediaResourceLoader = adoptRef(*new MediaResourceLoader(document(), *this, crossOrigin()));
 
-    m_lastMediaResourceLoaderForTesting = mediaResourceLoader->createWeakPtr();
+    m_lastMediaResourceLoaderForTesting = makeWeakPtr(mediaResourceLoader.get());
 
     return WTFMove(mediaResourceLoader);
 }

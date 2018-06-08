@@ -99,7 +99,7 @@ WebPageProxy* DownloadProxy::originatingPage() const
 
 void DownloadProxy::setOriginatingPage(WebPageProxy* page)
 {
-    m_originatingPage = page ? page->createWeakPtr() : nullptr;
+    m_originatingPage = makeWeakPtr(page);
 }
 
 void DownloadProxy::didStart(const ResourceRequest& request, const String& suggestedFilename)

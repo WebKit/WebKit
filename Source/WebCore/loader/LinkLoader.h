@@ -46,7 +46,7 @@ class LinkPreloadResourceClient;
 
 struct LinkRelAttribute;
 
-class LinkLoader : private CachedResourceClient {
+class LinkLoader : private CachedResourceClient, public CanMakeWeakPtr<LinkLoader> {
 public:
     explicit LinkLoader(LinkLoaderClient&);
     virtual ~LinkLoader();
@@ -58,7 +58,6 @@ public:
     static void loadLinksFromHeader(const String& headerValue, const URL& baseURL, Document&, MediaAttributeCheck);
     static bool isSupportedType(CachedResource::Type, const String& mimeType);
 
-    WeakPtr<LinkLoader> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
     void triggerEvents(const CachedResource&);
     void cancelLoad();
 
@@ -71,7 +70,6 @@ private:
     LinkLoaderClient& m_client;
     CachedResourceHandle<CachedResource> m_cachedLinkResource;
     std::unique_ptr<LinkPreloadResourceClient> m_preloadResourceClient;
-    WeakPtrFactory<LinkLoader> m_weakPtrFactory;
 };
 
 }

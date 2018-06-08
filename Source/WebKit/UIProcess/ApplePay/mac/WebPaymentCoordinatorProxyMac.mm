@@ -51,7 +51,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(const WebCore::URL& origi
     auto paymentRequest = toPKPaymentRequest(m_webPageProxy, originatingURL, linkIconURLStrings, request);
 
     auto showPaymentUIRequestSeed = m_showPaymentUIRequestSeed;
-    auto weakThis = m_weakPtrFactory.createWeakPtr(*this);
+    auto weakThis = makeWeakPtr(*this);
     [getPKPaymentAuthorizationViewControllerClass() requestViewControllerWithPaymentRequest:paymentRequest.get() completion:BlockPtr<void (PKPaymentAuthorizationViewController *, NSError *)>::fromCallable([paymentRequest, showPaymentUIRequestSeed, weakThis, completionHandler = WTFMove(completionHandler)](PKPaymentAuthorizationViewController *viewController, NSError *error) {
         auto paymentCoordinatorProxy = weakThis.get();
         if (!paymentCoordinatorProxy)

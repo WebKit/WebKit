@@ -25,7 +25,7 @@
 namespace WebCore {
 
 inline DOMParser::DOMParser(Document& contextDocument)
-    : m_contextDocument(contextDocument.createWeakPtr())
+    : m_contextDocument(makeWeakPtr(contextDocument))
 {
 }
 

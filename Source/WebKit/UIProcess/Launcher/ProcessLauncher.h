@@ -41,7 +41,7 @@
 
 namespace WebKit {
 
-class ProcessLauncher : public ThreadSafeRefCounted<ProcessLauncher> {
+class ProcessLauncher : public ThreadSafeRefCounted<ProcessLauncher>, public CanMakeWeakPtr<ProcessLauncher> {
 public:
     class Client {
     public:
@@ -101,7 +101,6 @@ private:
     WTF::Win32Handle m_hProcess;
 #endif
 
-    WeakPtrFactory<ProcessLauncher> m_weakPtrFactory;
     const LaunchOptions m_launchOptions;
     bool m_isLaunching;
     ProcessID m_processIdentifier;

@@ -43,7 +43,7 @@ namespace WebCore {
 MediaResourceLoader::MediaResourceLoader(Document& document, HTMLMediaElement& mediaElement, const String& crossOriginMode)
     : ContextDestructionObserver(&document)
     , m_document(&document)
-    , m_mediaElement(mediaElement.createWeakPtr())
+    , m_mediaElement(makeWeakPtr(mediaElement))
     , m_crossOriginMode(crossOriginMode)
 {
 }

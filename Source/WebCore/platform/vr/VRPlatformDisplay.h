@@ -157,15 +157,11 @@ struct VRPlatformTrackingInfo {
     double timestamp { 0 };
 };
 
-class VRPlatformDisplay {
+class VRPlatformDisplay : public CanMakeWeakPtr<VRPlatformDisplay> {
 public:
     virtual VRPlatformDisplayInfo getDisplayInfo() = 0;
     virtual VRPlatformTrackingInfo getTrackingInfo() = 0;
     virtual ~VRPlatformDisplay() = default;
-
-    WeakPtr<VRPlatformDisplay> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
-private:
-    WeakPtrFactory<VRPlatformDisplay> m_weakPtrFactory;
 };
 
 }; // namespace WebCore

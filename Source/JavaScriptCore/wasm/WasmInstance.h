@@ -40,7 +40,7 @@ namespace JSC { namespace Wasm {
 
 struct Context;
 
-class Instance : public ThreadSafeRefCounted<Instance> {
+class Instance : public ThreadSafeRefCounted<Instance>, public CanMakeWeakPtr<Instance> {
 public:
     using StoreTopCallFrameCallback = WTF::Function<void(void*)>;
 
@@ -69,7 +69,6 @@ public:
     void* cachedMemory() const { return m_cachedMemory; }
     size_t cachedMemorySize() const { return m_cachedMemorySize; }
 
-    WeakPtr<Instance> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
     void setMemory(Ref<Memory>&& memory)
     {
         m_memory = WTFMove(memory);
@@ -157,7 +156,6 @@ private:
     void** m_pointerToActualStackLimit { nullptr };
     void* m_cachedStackLimit { bitwise_cast<void*>(std::numeric_limits<uintptr_t>::max()) };
     StoreTopCallFrameCallback m_storeTopCallFrame;
-    WeakPtrFactory<Instance> m_weakPtrFactory;
     unsigned m_numImportFunctions { 0 };
 };
 

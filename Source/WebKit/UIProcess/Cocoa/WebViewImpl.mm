@@ -1574,7 +1574,7 @@ void WebViewImpl::updateWindowAndViewFrames()
 
     m_didScheduleWindowAndViewFrameUpdate = true;
 
-    auto weakThis = createWeakPtr();
+    auto weakThis = makeWeakPtr(*this);
     dispatch_async(dispatch_get_main_queue(), [weakThis] {
         if (!weakThis)
             return;
@@ -1706,7 +1706,7 @@ void WebViewImpl::setTopContentInset(CGFloat contentInset)
 
     m_didScheduleSetTopContentInset = true;
 
-    auto weakThis = createWeakPtr();
+    auto weakThis = makeWeakPtr(*this);
     dispatch_async(dispatch_get_main_queue(), [weakThis] {
         if (!weakThis)
             return;
@@ -2069,7 +2069,7 @@ void WebViewImpl::viewDidMoveToWindow()
         m_page->layerHostingModeDidChange();
 
         if (!m_flagsChangedEventMonitor) {
-            auto weakThis = createWeakPtr();
+            auto weakThis = makeWeakPtr(*this);
             m_flagsChangedEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskFlagsChanged handler:[weakThis] (NSEvent *flagsChangedEvent) {
                 if (weakThis)
                     weakThis->postFakeMouseMovedEventForFlagsChangedEvent(flagsChangedEvent);
@@ -2249,7 +2249,7 @@ void WebViewImpl::prepareForMoveToWindow(NSWindow *targetWindow, WTF::Function<v
 
     m_shouldDeferViewInWindowChanges = false;
 
-    auto weakThis = createWeakPtr();
+    auto weakThis = makeWeakPtr(*this);
     m_page->installActivityStateChangeCompletionHandler([weakThis, completionHandler = WTFMove(completionHandler)]() {
         completionHandler();
 
@@ -2786,7 +2786,7 @@ bool WebViewImpl::validateUserInterfaceItem(id <NSValidatedUserInterfaceItem> it
         // If we are not already awaiting validation for this command, start the asynchronous validation process.
         // FIXME: Theoretically, there is a race here; when we get the answer it might be old, from a previous time
         // we asked for the same command; there is no guarantee the answer is still valid.
-        auto weakThis = createWeakPtr();
+        auto weakThis = makeWeakPtr(*this);
         m_page->validateCommand(commandName, [weakThis](const String& commandName, bool isEnabled, int32_t state, WebKit::CallbackBase::Error error) {
             if (!weakThis)
                 return;
@@ -3036,7 +3036,7 @@ void WebViewImpl::requestCandidatesForSelectionIfNeeded()
 #if HAVE(ADVANCED_SPELL_CHECKING)
     NSRange selectedRange = NSMakeRange(postLayoutData.candidateRequestStartPosition, postLayoutData.selectedTextLength);
     NSTextCheckingTypes checkingTypes = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
-    auto weakThis = createWeakPtr();
+    auto weakThis = makeWeakPtr(*this);
     m_lastCandidateRequestSequenceNumber = [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:selectedRange inString:postLayoutData.paragraphContextForCandidateRequest types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakThis](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!weakThis)
@@ -4365,7 +4365,7 @@ void WebViewImpl::interpretKeyEvent(NSEvent *event, void(^completionHandler)(BOO
     }
 
     LOG(TextInput, "-> handleEventByInputMethod:%p %@", event, event);
-    [inputContext() handleEventByInputMethod:event completionHandler:[weakThis = createWeakPtr(), capturedEvent = retainPtr(event), capturedBlock = makeBlockPtr(completionHandler)](BOOL handled) {
+    [inputContext() handleEventByInputMethod:event completionHandler:[weakThis = makeWeakPtr(*this), capturedEvent = retainPtr(event), capturedBlock = makeBlockPtr(completionHandler)](BOOL handled) {
         if (!weakThis) {
             capturedBlock(NO, { });
             return;
@@ -4559,7 +4559,7 @@ void WebViewImpl::firstRectForCharacterRange(NSRange range, void(^completionHand
         return;
     }
 
-    auto weakThis = createWeakPtr();
+    auto weakThis = makeWeakPtr(*this);
     m_page->firstRectForCharacterRangeAsync(range, [weakThis, completionHandler](const WebCore::IntRect& rect, const EditingRange& actualRange, WebKit::CallbackBase::Error error) {
         auto completionHandlerBlock = (void (^)(NSRect, NSRange))completionHandler.get();
         if (!weakThis) {
@@ -4734,7 +4734,7 @@ bool WebViewImpl::performKeyEquivalent(NSEvent *event)
     // this event. This lets webpages have a crack at intercepting key-modified keypresses.
     // FIXME: Why is the firstResponder check needed?
     if (m_view.getAutoreleased() == [m_view window].firstResponder) {
-        interpretKeyEvent(event, [weakThis = createWeakPtr(), capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
+        interpretKeyEvent(event, [weakThis = makeWeakPtr(*this), capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
             if (weakThis)
                 weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent(capturedEvent.get(), handledByInputMethod, false, commands));
         });
@@ -4752,7 +4752,7 @@ void WebViewImpl::keyUp(NSEvent *event)
     LOG(TextInput, "keyUp:%p %@", event, event);
 
     m_isTextInsertionReplacingSoftSpace = false;
-    interpretKeyEvent(event, [weakThis = createWeakPtr(), capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
+    interpretKeyEvent(event, [weakThis = makeWeakPtr(*this), capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
         ASSERT(!handledByInputMethod || commands.isEmpty());
         if (weakThis)
             weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent(capturedEvent.get(), handledByInputMethod, weakThis->m_isTextInsertionReplacingSoftSpace, commands));
@@ -4781,7 +4781,7 @@ void WebViewImpl::keyDown(NSEvent *event)
     }
 
     m_isTextInsertionReplacingSoftSpace = false;
-    interpretKeyEvent(event, [weakThis = createWeakPtr(), capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
+    interpretKeyEvent(event, [weakThis = makeWeakPtr(*this), capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
         ASSERT(!handledByInputMethod || commands.isEmpty());
         if (weakThis)
             weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent(capturedEvent.get(), handledByInputMethod, weakThis->m_isTextInsertionReplacingSoftSpace, commands));
@@ -4810,7 +4810,7 @@ void WebViewImpl::flagsChanged(NSEvent *event)
         if (m_ignoresNonWheelEvents) \
             return; \
         if (NSTextInputContext *context = [m_view inputContext]) { \
-            auto weakThis = createWeakPtr(); \
+            auto weakThis = makeWeakPtr(*this); \
             RetainPtr<NSEvent> retainedEvent = event; \
             [context handleEvent:event completionHandler:[weakThis, retainedEvent] (BOOL handled) { \
                 if (!weakThis) \
@@ -4833,7 +4833,7 @@ void WebViewImpl::flagsChanged(NSEvent *event)
         if (m_ignoresNonWheelEvents) \
             return; \
         if (NSTextInputContext *context = [m_view inputContext]) { \
-            auto weakThis = createWeakPtr(); \
+            auto weakThis = makeWeakPtr(*this); \
             RetainPtr<NSEvent> retainedEvent = event; \
             [context handleEvent:event completionHandler:[weakThis, retainedEvent] (BOOL handled) { \
                 if (!weakThis) \

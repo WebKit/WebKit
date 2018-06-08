@@ -53,7 +53,7 @@ namespace WebCore {
 class MediaStream;
 class OrientationNotifier;
 
-class MediaStreamPrivate : public MediaStreamTrackPrivate::Observer, public RefCounted<MediaStreamPrivate> {
+class MediaStreamPrivate : public MediaStreamTrackPrivate::Observer, public RefCounted<MediaStreamPrivate>, public CanMakeWeakPtr<MediaStreamPrivate> {
 public:
     class Observer {
     public:
@@ -102,8 +102,6 @@ public:
 
     FloatSize intrinsicSize() const;
 
-    WeakPtr<MediaStreamPrivate> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
-
     void monitorOrientation(OrientationNotifier&);
 
 private:
@@ -121,7 +119,6 @@ private:
 
     void scheduleDeferredTask(Function<void ()>&&);
 
-    WeakPtrFactory<MediaStreamPrivate> m_weakPtrFactory;
     Vector<Observer*> m_observers;
     String m_id;
     MediaStreamTrackPrivate* m_activeVideoTrack { nullptr };

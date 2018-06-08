@@ -100,7 +100,6 @@ private:
     RetainPtr<CGDisplayStreamRef> m_displayStream;
     RetainPtr<CFMutableDictionaryRef> m_bufferAttributes;
     CGDisplayStreamFrameAvailableHandler m_frameAvailableBlock;
-    WeakPtrFactory<ScreenDisplayCaptureSourceMac> m_weakFactory;
     MediaTime m_presentationTimeStamp;
     MediaTime m_frameDuration;
 

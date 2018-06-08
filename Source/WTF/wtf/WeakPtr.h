@@ -123,6 +123,15 @@ private:
     mutable RefPtr<WeakReference<T>> m_ref;
 };
 
+template<typename T> class CanMakeWeakPtr {
+public:
+    const WeakPtrFactory<T>& weakPtrFactory() const { return m_weakFactory; }
+    WeakPtrFactory<T>& weakPtrFactory() { return m_weakFactory; }
+
+private:
+    WeakPtrFactory<T> m_weakFactory;
+};
+
 template<typename T, typename U> inline WeakReference<T>* weak_reference_upcast(WeakReference<U>* weakReference)
 {
     static_assert(std::is_convertible<U*, T*>::value, "U* must be convertible to T*");
@@ -201,6 +210,7 @@ template<typename T, typename U> inline bool operator!=(T* a, const WeakPtr<U>& 
 
 } // namespace WTF
 
+using WTF::CanMakeWeakPtr;
 using WTF::WeakPtr;
 using WTF::WeakPtrFactory;
 using WTF::WeakReference;

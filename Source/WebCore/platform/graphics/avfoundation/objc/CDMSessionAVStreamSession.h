@@ -40,7 +40,7 @@ namespace WebCore {
 
 class CDMPrivateMediaSourceAVFObjC;
 
-class CDMSessionAVStreamSession : public CDMSessionMediaSourceAVFObjC {
+class CDMSessionAVStreamSession : public CDMSessionMediaSourceAVFObjC, public CanMakeWeakPtr<CDMSessionAVStreamSession> {
 public:
     CDMSessionAVStreamSession(const Vector<int>& protocolVersions, CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient*);
     virtual ~CDMSessionAVStreamSession();
@@ -60,7 +60,6 @@ public:
 protected:
     RefPtr<Uint8Array> generateKeyReleaseMessage(unsigned short& errorCode, uint32_t& systemCode);
 
-    WeakPtrFactory<CDMSessionAVStreamSession> m_weakPtrFactory;
     RetainPtr<AVStreamSession> m_streamSession;
     RefPtr<Uint8Array> m_initData;
     RefPtr<Uint8Array> m_certificate;

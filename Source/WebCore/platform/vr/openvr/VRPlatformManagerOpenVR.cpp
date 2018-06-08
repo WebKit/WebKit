@@ -79,7 +79,7 @@ Vector<WeakPtr<VRPlatformDisplay>> VRPlatformManagerOpenVR::getVRDisplays()
     Vector<WeakPtr<VRPlatformDisplay>> displays;
     if (!m_display)
         m_display = std::make_unique<VRPlatformDisplayOpenVR>(m_system, chaperone, compositor);
-    displays.append(m_display->createWeakPtr());
+    displays.append(makeWeakPtr(*m_display));
     return displays;
 }
 

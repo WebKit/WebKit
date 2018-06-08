@@ -34,7 +34,7 @@ namespace WebKit {
 
 RemoteLayerTreeDisplayRefreshMonitor::RemoteLayerTreeDisplayRefreshMonitor(PlatformDisplayID displayID, RemoteLayerTreeDrawingArea& drawingArea)
     : DisplayRefreshMonitor(displayID)
-    , m_drawingArea(drawingArea.createWeakPtr())
+    , m_drawingArea(makeWeakPtr(drawingArea))
 {
 }
 

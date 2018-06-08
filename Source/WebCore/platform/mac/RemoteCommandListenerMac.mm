@@ -84,7 +84,7 @@ RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& 
 
     updateSupportedCommands();
 
-    auto weakThis = createWeakPtr();
+    auto weakThis = makeWeakPtr(*this);
     m_commandHandler = MRMediaRemoteAddAsyncCommandHandlerBlock(^(MRMediaRemoteCommand command, CFDictionaryRef options, void(^completion)(CFArrayRef)) {
 
         LOG(Media, "RemoteCommandListenerMac::RemoteCommandListenerMac - received command %u", command);

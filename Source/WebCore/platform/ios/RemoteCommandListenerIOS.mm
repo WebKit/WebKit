@@ -52,7 +52,7 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
     : RemoteCommandListener(client)
 {
     MPRemoteCommandCenter *center = [getMPRemoteCommandCenterClass() sharedCommandCenter];
-    auto weakThis = createWeakPtr();
+    auto weakThis = makeWeakPtr(*this);
     
     m_pauseTarget = [[center pauseCommand] addTargetWithHandler:^(MPRemoteCommandEvent *) {
         callOnMainThread([weakThis] {

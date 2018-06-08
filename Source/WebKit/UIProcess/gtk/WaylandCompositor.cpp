@@ -216,7 +216,7 @@ void WaylandCompositor::Surface::attachBuffer(struct wl_resource* buffer)
 
     if (buffer) {
         auto* compositorBuffer = WaylandCompositor::Buffer::getOrCreate(buffer);
-        m_pendingBuffer = compositorBuffer->createWeakPtr();
+        m_pendingBuffer = makeWeakPtr(*compositorBuffer);
     }
 }
 

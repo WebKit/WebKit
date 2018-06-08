@@ -61,7 +61,7 @@ public:
         detachListWrappers(0);
         
         RefPtr<SVGTransform> wrapper = m_values->consolidate();
-        m_wrappers->append(wrapper->createWeakPtr());
+        m_wrappers->append(makeWeakPtr(*wrapper));
 
         ASSERT(m_values->size() == m_wrappers->size());
         return WTFMove(wrapper);

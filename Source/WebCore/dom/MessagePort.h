@@ -44,12 +44,10 @@ namespace WebCore {
 
 class Frame;
 
-class MessagePort final : public ActiveDOMObject, public EventTargetWithInlineData {
+class MessagePort final : public ActiveDOMObject, public EventTargetWithInlineData, public CanMakeWeakPtr<MessagePort> {
 public:
     static Ref<MessagePort> create(ScriptExecutionContext&, const MessagePortIdentifier& local, const MessagePortIdentifier& remote);
     virtual ~MessagePort();
-
-    auto& weakPtrFactory() const { return m_weakFactory; }
 
     ExceptionOr<void> postMessage(JSC::ExecState&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
@@ -114,8 +112,6 @@ private:
     bool m_started { false };
     bool m_closed { false };
     bool m_entangled { true };
-
-    WeakPtrFactory<MessagePort> m_weakFactory;
 
     // Flags to manage querying the remote port for GC purposes
     mutable bool m_mightBeEligibleForGC { false };

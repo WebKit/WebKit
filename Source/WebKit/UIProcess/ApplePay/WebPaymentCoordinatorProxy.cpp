@@ -69,7 +69,7 @@ void WebPaymentCoordinatorProxy::canMakePayments(bool& reply)
 
 void WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, uint64_t requestID)
 {
-    auto weakThis = m_weakPtrFactory.createWeakPtr(*this);
+    auto weakThis = makeWeakPtr(*this);
     platformCanMakePaymentsWithActiveCard(merchantIdentifier, domainName, [weakThis, requestID](bool canMakePayments) {
         auto paymentCoordinatorProxy = weakThis.get();
         if (!paymentCoordinatorProxy)
@@ -81,7 +81,7 @@ void WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard(const String& mer
 
 void WebPaymentCoordinatorProxy::openPaymentSetup(const String& merchantIdentifier, const String& domainName, uint64_t requestID)
 {
-    auto weakThis = m_weakPtrFactory.createWeakPtr(*this);
+    auto weakThis = makeWeakPtr(*this);
     platformOpenPaymentSetup(merchantIdentifier, domainName, [weakThis, requestID](bool result) {
         auto paymentCoordinatorProxy = weakThis.get();
         if (!paymentCoordinatorProxy)

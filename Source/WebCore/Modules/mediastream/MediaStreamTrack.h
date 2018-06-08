@@ -50,6 +50,7 @@ class MediaStreamTrack :
     public RefCounted<MediaStreamTrack>,
     public ActiveDOMObject,
     public EventTargetWithInlineData,
+    public CanMakeWeakPtr<MediaStreamTrack>,
     private MediaProducer,
     private MediaStreamTrackPrivate::Observer {
 public:
@@ -169,14 +170,11 @@ private:
     void trackSettingsChanged(MediaStreamTrackPrivate&) final;
     void trackEnabledChanged(MediaStreamTrackPrivate&) final;
 
-    WeakPtr<MediaStreamTrack> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
-
     Vector<Observer*> m_observers;
     Ref<MediaStreamTrackPrivate> m_private;
 
     MediaTrackConstraints m_constraints;
     std::optional<DOMPromiseDeferred<void>> m_promise;
-    WeakPtrFactory<MediaStreamTrack> m_weakPtrFactory;
     GenericTaskQueue<ScriptExecutionContext> m_taskQueue;
 
     bool m_ended { false };

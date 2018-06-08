@@ -40,7 +40,7 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
 {
     ASSERT(isMainThread());
 
-    auto weakThis = m_weakPtrFactory.createWeakPtr(*this);
+    auto weakThis = makeWeakPtr(*this);
     // The following xpc event handler overwrites the boostrap event handler and is only used
     // to capture client certificate credential.
     xpc_connection_set_event_handler(connection->xpcConnection(), ^(xpc_object_t event) {

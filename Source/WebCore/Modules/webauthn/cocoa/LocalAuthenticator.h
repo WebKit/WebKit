@@ -44,7 +44,7 @@ using ExceptionCallback = Function<void(const WebCore::ExceptionData&)>;
 typedef void (^CompletionBlock)(SecKeyRef _Nullable referenceKey, NSArray * _Nullable certificates, NSError * _Nullable error);
 
 // FIXME(182769): LocalAuthenticator should belongs to WebKit. However, we need unit tests.
-class WEBCORE_EXPORT LocalAuthenticator {
+class WEBCORE_EXPORT LocalAuthenticator : public CanMakeWeakPtr<LocalAuthenticator> {
     WTF_MAKE_NONCOPYABLE(LocalAuthenticator);
 public:
     LocalAuthenticator();
@@ -57,8 +57,6 @@ public:
 protected:
     // Apple Attestation is moved into this virtual method such that it can be overrided by self attestation for testing.
     virtual void issueClientCertificate(const String& rpId, const String& username, const Vector<uint8_t>& hash, CompletionBlock _Nonnull) const;
-
-    WeakPtrFactory<LocalAuthenticator> m_weakFactory;
 };
 
 } // namespace WebCore

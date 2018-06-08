@@ -34,13 +34,12 @@ class Region;
 class TextureMapperPaintOptions;
 class TextureMapperPlatformLayer;
 
-class WEBCORE_EXPORT TextureMapperLayer {
+class WEBCORE_EXPORT TextureMapperLayer : public CanMakeWeakPtr<TextureMapperLayer> {
     WTF_MAKE_NONCOPYABLE(TextureMapperLayer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     TextureMapperLayer();
     virtual ~TextureMapperLayer();
-    WeakPtr<TextureMapperLayer> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
 
     void setID(uint32_t id) { m_id = id; }
     uint32_t id() { return m_id; }
@@ -141,7 +140,6 @@ private:
         return FloatRect(FloatPoint::zero(), m_state.size);
     }
 
-    WeakPtrFactory<TextureMapperLayer> m_weakFactory;
     Vector<TextureMapperLayer*> m_children;
     TextureMapperLayer* m_parent { nullptr };
     WeakPtr<TextureMapperLayer> m_effectTarget;

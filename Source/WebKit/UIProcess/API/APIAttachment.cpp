@@ -40,7 +40,7 @@ Ref<Attachment> Attachment::create(const WTF::String& identifier, WebKit::WebPag
 
 Attachment::Attachment(const WTF::String& identifier, WebKit::WebPageProxy& webPage)
     : m_identifier(identifier)
-    , m_webPage(webPage.createWeakPtr())
+    , m_webPage(makeWeakPtr(webPage))
 {
 }
 

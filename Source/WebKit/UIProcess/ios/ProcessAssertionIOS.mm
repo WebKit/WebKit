@@ -163,7 +163,7 @@ ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState, Fun
     : m_invalidationCallback(WTFMove(invalidationCallback))
     , m_assertionState(assertionState)
 {
-    auto weakThis = createWeakPtr();
+    auto weakThis = makeWeakPtr(*this);
     BKSProcessAssertionAcquisitionHandler handler = ^(BOOL acquired) {
         if (!acquired) {
             RELEASE_LOG_ERROR(ProcessSuspension, " %p - ProcessAssertion() Unable to acquire assertion for process with PID %d", this, pid);

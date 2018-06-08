@@ -74,6 +74,8 @@ public:
 
     virtual void notifyPageThatContentAreaWillPaint() const;
 
+    using Widget::weakPtrFactory;
+
     IntPoint locationOfContents() const;
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
@@ -372,8 +374,6 @@ public:
     void setAllowsUnclampedScrollPositionForTesting(bool allowsUnclampedScrollPosition) { m_allowsUnclampedScrollPosition = allowsUnclampedScrollPosition; }
     bool allowsUnclampedScrollPosition() const { return m_allowsUnclampedScrollPosition; }
 
-    auto& weakPtrFactory() const { return m_weakPtrFactory; }
-
 protected:
     ScrollView();
 
@@ -459,8 +459,6 @@ private:
     std::optional<std::pair<ScrollOffset, ScrollOffset>> m_deferredScrollOffsets; // Needed for platform widget scrolling
 
     IntPoint m_panScrollIconPoint;
-
-    WeakPtrFactory<ScrollView> m_weakPtrFactory;
 
     bool m_horizontalScrollbarLock { false };
     bool m_verticalScrollbarLock { false };

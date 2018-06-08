@@ -45,7 +45,7 @@ namespace WebKit {
 class RemoteLayerTreeContext;
 class RemoteLayerTreeDisplayRefreshMonitor;
 
-class RemoteLayerTreeDrawingArea : public DrawingArea, public WebCore::GraphicsLayerClient {
+class RemoteLayerTreeDrawingArea : public DrawingArea, public CanMakeWeakPtr<RemoteLayerTreeDrawingArea>, public WebCore::GraphicsLayerClient {
     friend class RemoteLayerTreeDisplayRefreshMonitor;
 public:
     RemoteLayerTreeDrawingArea(WebPage&, const WebPageCreationParameters&);
@@ -53,8 +53,6 @@ public:
 
     uint64_t nextTransactionID() const { return m_currentTransactionID + 1; }
     uint64_t lastCommittedTransactionID() const { return m_currentTransactionID; }
-
-    WeakPtr<RemoteLayerTreeDrawingArea> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
 private:
     // DrawingArea
@@ -170,8 +168,6 @@ private:
 
     WebCore::GraphicsLayer* m_contentLayer { nullptr };
     WebCore::GraphicsLayer* m_viewOverlayRootLayer { nullptr };
-    
-    WeakPtrFactory<RemoteLayerTreeDrawingArea> m_weakPtrFactory;
 };
 
 } // namespace WebKit

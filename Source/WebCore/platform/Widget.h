@@ -87,7 +87,7 @@ enum WidgetNotification { WillPaintFlattened, DidPaintFlattened };
 // Scrollbar - Mac, Gtk
 // Plugin - Mac, Windows (windowed only), Qt (windowed only, widget is an HWND on windows), Gtk (windowed only)
 //
-class Widget : public RefCounted<Widget> {
+class Widget : public RefCounted<Widget>, public CanMakeWeakPtr<Widget> {
 public:
     WEBCORE_EXPORT explicit Widget(PlatformWidget = nullptr);
     WEBCORE_EXPORT virtual ~Widget();
@@ -187,8 +187,6 @@ public:
     WEBCORE_EXPORT virtual IntPoint convertToContainingView(const IntPoint&) const;
     WEBCORE_EXPORT virtual IntPoint convertFromContainingView(const IntPoint&) const;
 
-    WeakPtr<Widget> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
-
 private:
     void init(PlatformWidget); // Must be called by all Widget constructors to initialize cross-platform data.
 
@@ -210,7 +208,6 @@ private:
 #else
     RetainPtr<NSView> m_widget;
 #endif
-    WeakPtrFactory<Widget> m_weakPtrFactory;
     bool m_selfVisible;
     bool m_parentVisible;
 

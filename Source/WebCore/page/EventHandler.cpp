@@ -2724,7 +2724,7 @@ static WeakPtr<Widget> widgetForElement(const Element& element)
     if (!is<RenderWidget>(target) || !downcast<RenderWidget>(*target).widget())
         return { };
 
-    return downcast<RenderWidget>(*target).widget()->createWeakPtr();
+    return makeWeakPtr(*downcast<RenderWidget>(*target).widget());
 }
 
 bool EventHandler::completeWidgetWheelEvent(const PlatformWheelEvent& event, const WeakPtr<Widget>& widget, const WeakPtr<ScrollableArea>& scrollableArea, ContainerNode* scrollableContainer)
@@ -3980,7 +3980,7 @@ void EventHandler::updateLastScrollbarUnderMouse(Scrollbar* scrollbar, SetOrClea
         // Send mouse entered if we're setting a new scrollbar.
         if (scrollbar && setOrClear == SetOrClearLastScrollbar::Set) {
             scrollbar->mouseEntered();
-            m_lastScrollbarUnderMouse = scrollbar->createWeakPtr();
+            m_lastScrollbarUnderMouse = makeWeakPtr(*scrollbar);
         } else
             m_lastScrollbarUnderMouse = nullptr;
     }

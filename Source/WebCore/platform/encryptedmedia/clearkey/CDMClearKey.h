@@ -74,7 +74,7 @@ public:
     std::optional<String> sanitizeSessionId(const String&) const override;
 };
 
-class CDMInstanceClearKey final : public CDMInstance {
+class CDMInstanceClearKey final : public CDMInstance, public CanMakeWeakPtr<CDMInstanceClearKey> {
 public:
     CDMInstanceClearKey();
     virtual ~CDMInstanceClearKey();
@@ -103,9 +103,6 @@ public:
     };
 
     const Vector<Key> keys() const;
-
-private:
-    WeakPtrFactory<CDMInstanceClearKey> m_weakPtrFactory;
 };
 
 } // namespace WebCore

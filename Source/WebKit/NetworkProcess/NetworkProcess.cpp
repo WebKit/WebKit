@@ -647,7 +647,7 @@ void NetworkProcess::canAuthenticateAgainstProtectionSpace(NetworkResourceLoader
 void NetworkProcess::canAuthenticateAgainstProtectionSpace(PreconnectTask& preconnectTask, const WebCore::ProtectionSpace& protectionSpace)
 {
     uint64_t loaderID = generateCanAuthenticateIdentifier();
-    m_waitingPreconnectTasks.set(loaderID, preconnectTask.createWeakPtr());
+    m_waitingPreconnectTasks.set(loaderID, makeWeakPtr(preconnectTask));
     parentProcessConnection()->send(Messages::NetworkProcessProxy::CanAuthenticateAgainstProtectionSpace(loaderID, preconnectTask.pageID(), preconnectTask.frameID(), protectionSpace), 0);
 }
 #endif

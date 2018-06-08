@@ -543,7 +543,7 @@ void SubtleCrypto::encrypt(JSC::ExecState& state, AlgorithmIdentifier&& algorith
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = m_weakPtrFactory.createWeakPtr(*this);
+    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
     auto callback = [index, subtleCryptoWeakPointer](const Vector<uint8_t>& cipherText) mutable {
         if (auto promise = getPromise(index, subtleCryptoWeakPointer))
             fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), cipherText.data(), cipherText.size());
@@ -581,7 +581,7 @@ void SubtleCrypto::decrypt(JSC::ExecState& state, AlgorithmIdentifier&& algorith
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = m_weakPtrFactory.createWeakPtr(*this);
+    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
     auto callback = [index, subtleCryptoWeakPointer](const Vector<uint8_t>& plainText) mutable {
         if (auto promise = getPromise(index, subtleCryptoWeakPointer))
             fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), plainText.data(), plainText.size());
@@ -619,7 +619,7 @@ void SubtleCrypto::sign(JSC::ExecState& state, AlgorithmIdentifier&& algorithmId
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = m_weakPtrFactory.createWeakPtr(*this);
+    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
     auto callback = [index, subtleCryptoWeakPointer](const Vector<uint8_t>& signature) mutable {
         if (auto promise = getPromise(index, subtleCryptoWeakPointer))
             fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), signature.data(), signature.size());
@@ -658,7 +658,7 @@ void SubtleCrypto::verify(JSC::ExecState& state, AlgorithmIdentifier&& algorithm
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = m_weakPtrFactory.createWeakPtr(*this);
+    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
     auto callback = [index, subtleCryptoWeakPointer](bool result) mutable {
         if (auto promise = getPromise(index, subtleCryptoWeakPointer))
             promise->resolve<IDLBoolean>(result);
@@ -686,7 +686,7 @@ void SubtleCrypto::digest(JSC::ExecState& state, AlgorithmIdentifier&& algorithm
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = m_weakPtrFactory.createWeakPtr(*this);
+    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
     auto callback = [index, subtleCryptoWeakPointer](const Vector<uint8_t>& digest) mutable {
         if (auto promise = getPromise(index, subtleCryptoWeakPointer))
             fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), digest.data(), digest.size());
@@ -714,7 +714,7 @@ void SubtleCrypto::generateKey(JSC::ExecState& state, AlgorithmIdentifier&& algo
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = m_weakPtrFactory.createWeakPtr(*this);
+    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
     auto callback = [index, subtleCryptoWeakPointer](KeyOrKeyPair&& keyOrKeyPair) mutable {
         if (auto promise = getPromise(index, subtleCryptoWeakPointer)) {
             WTF::switchOn(keyOrKeyPair,
@@ -795,7 +795,7 @@ void SubtleCrypto::deriveKey(JSC::ExecState& state, AlgorithmIdentifier&& algori
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = m_weakPtrFactory.createWeakPtr(*this);
+    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
     auto callback = [index, subtleCryptoWeakPointer, importAlgorithm, importParams = WTFMove(importParams), extractable, keyUsagesBitmap](const Vector<uint8_t>& derivedKey) mutable {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=169395
         KeyData data = derivedKey;
@@ -846,7 +846,7 @@ void SubtleCrypto::deriveBits(JSC::ExecState& state, AlgorithmIdentifier&& algor
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = m_weakPtrFactory.createWeakPtr(*this);
+    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
     auto callback = [index, subtleCryptoWeakPointer](const Vector<uint8_t>& derivedKey) mutable {
         if (auto promise = getPromise(index, subtleCryptoWeakPointer))
             fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), derivedKey.data(), derivedKey.size());
@@ -881,7 +881,7 @@ void SubtleCrypto::importKey(JSC::ExecState& state, KeyFormat format, KeyDataVar
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = m_weakPtrFactory.createWeakPtr(*this);
+    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
     auto callback = [index, subtleCryptoWeakPointer](CryptoKey& key) mutable {
         if (auto promise = getPromise(index, subtleCryptoWeakPointer)) {
             if ((key.type() == CryptoKeyType::Private || key.type() == CryptoKeyType::Secret) && !key.usagesBitmap()) {
@@ -918,7 +918,7 @@ void SubtleCrypto::exportKey(KeyFormat format, CryptoKey& key, Ref<DeferredPromi
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = m_weakPtrFactory.createWeakPtr(*this);
+    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
     auto callback = [index, subtleCryptoWeakPointer](SubtleCrypto::KeyFormat format, KeyData&& key) mutable {
         if (auto promise = getPromise(index, subtleCryptoWeakPointer)) {
             switch (format) {
@@ -992,7 +992,7 @@ void SubtleCrypto::wrapKey(JSC::ExecState& state, KeyFormat format, CryptoKey& k
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = m_weakPtrFactory.createWeakPtr(*this);
+    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
     auto callback = [index, subtleCryptoWeakPointer, wrapAlgorithm, wrappingKey = makeRef(wrappingKey), wrapParams = WTFMove(wrapParams), isEncryption, context, workQueue = m_workQueue.copyRef()](SubtleCrypto::KeyFormat format, KeyData&& key) mutable {
         if (subtleCryptoWeakPointer) {
             if (auto promise = subtleCryptoWeakPointer->m_pendingPromises.get(index)) {
@@ -1095,7 +1095,7 @@ void SubtleCrypto::unwrapKey(JSC::ExecState& state, KeyFormat format, BufferSour
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = m_weakPtrFactory.createWeakPtr(*this);
+    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
     auto callback = [index, subtleCryptoWeakPointer, format, importAlgorithm, unwrappedKeyAlgorithm = WTFMove(unwrappedKeyAlgorithm), extractable, keyUsagesBitmap](const Vector<uint8_t>& bytes) mutable {
         if (subtleCryptoWeakPointer) {
             if (auto promise = subtleCryptoWeakPointer->m_pendingPromises.get(index)) {

@@ -43,7 +43,7 @@ class StyleRuleBase;
 class StyleRuleImport;
 class StyleRuleNamespace;
 
-class StyleSheetContents final : public RefCounted<StyleSheetContents> {
+class StyleSheetContents final : public RefCounted<StyleSheetContents>, public CanMakeWeakPtr<StyleSheetContents> {
 public:
     static Ref<StyleSheetContents> create(const CSSParserContext& context = CSSParserContext(HTMLStandardMode))
     {
@@ -144,8 +144,6 @@ public:
 
     void shrinkToFit();
 
-    WeakPtr<StyleSheetContents> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
-
 private:
     WEBCORE_EXPORT StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext&);
     StyleSheetContents(const StyleSheetContents&);
@@ -175,8 +173,6 @@ private:
     CSSParserContext m_parserContext;
 
     Vector<CSSStyleSheet*> m_clients;
-    
-    WeakPtrFactory<StyleSheetContents> m_weakPtrFactory;
 };
 
 } // namespace WebCore

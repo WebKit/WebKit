@@ -55,7 +55,7 @@ struct InputElementClickState {
     RefPtr<HTMLInputElement> checkedRadioButton;
 };
 
-class HTMLInputElement : public HTMLTextFormControlElement {
+class HTMLInputElement : public HTMLTextFormControlElement, public CanMakeWeakPtr<HTMLInputElement> {
     WTF_MAKE_ISO_ALLOCATED(HTMLInputElement);
 public:
     static Ref<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
@@ -343,8 +343,6 @@ public:
 
     ExceptionOr<void> setSelectionRangeForBindings(int start, int end, const String& direction);
 
-    auto& weakPtrFactory() const { return m_weakFactory; }
-
 protected:
     HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
 
@@ -485,7 +483,6 @@ private:
 #if ENABLE(DATALIST_ELEMENT)
     std::unique_ptr<ListAttributeTargetObserver> m_listAttributeTargetObserver;
 #endif
-    WeakPtrFactory<HTMLInputElement> m_weakFactory;
 };
 
 }

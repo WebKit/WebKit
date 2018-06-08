@@ -45,12 +45,9 @@ Ref<AccessibilitySVGRoot> AccessibilitySVGRoot::create(RenderObject* renderer)
     return adoptRef(*new AccessibilitySVGRoot(renderer));
 }
 
-void AccessibilitySVGRoot::setParent(AccessibilityRenderObject *parent)
+void AccessibilitySVGRoot::setParent(AccessibilityRenderObject* parent)
 {
-    if (parent)
-        m_parent = parent->createWeakPtr();
-    else
-        m_parent = nullptr;
+    m_parent = makeWeakPtr(parent);
 }
     
 AccessibilityObject* AccessibilitySVGRoot::parentObject() const

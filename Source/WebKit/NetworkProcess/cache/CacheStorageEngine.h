@@ -53,7 +53,7 @@ namespace CacheStorage {
 using CacheIdentifier = uint64_t;
 using LockCount = uint64_t;
 
-class Engine : public RefCounted<Engine> {
+class Engine : public RefCounted<Engine>, public CanMakeWeakPtr<Engine> {
 public:
     ~Engine();
 
@@ -90,8 +90,6 @@ public:
     void clearAllCaches(WTF::CallbackAggregator&);
     void clearCachesForOrigin(const WebCore::SecurityOriginData&, WTF::CallbackAggregator&);
 
-    WeakPtrFactory<Engine>& weakPtrFactory() { return m_weakFactory; }
-
 private:
     static Engine& defaultEngine();
     explicit Engine(String&& rootPath);
@@ -119,7 +117,6 @@ private:
     std::optional<NetworkCache::Salt> m_salt;
     HashMap<CacheIdentifier, LockCount> m_cacheLocks;
     Vector<WebCore::DOMCacheEngine::CompletionCallback> m_initializationCallbacks;
-    WeakPtrFactory<Engine> m_weakFactory;
     HashMap<uint64_t, WebCore::DOMCacheEngine::CompletionCallback> m_pendingWriteCallbacks;
     HashMap<uint64_t, CompletionHandler<void(const NetworkCache::Data&, int error)>> m_pendingReadCallbacks;
     uint64_t m_pendingCallbacksCounter { 0 };

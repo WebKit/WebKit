@@ -62,7 +62,7 @@ class RealtimeMediaSourceSettings;
 
 struct CaptureSourceOrError;
 
-class WEBCORE_EXPORT RealtimeMediaSource : public ThreadSafeRefCounted<RealtimeMediaSource> {
+class WEBCORE_EXPORT RealtimeMediaSource : public ThreadSafeRefCounted<RealtimeMediaSource>, public CanMakeWeakPtr<RealtimeMediaSource> {
 public:
     class Observer {
     public:
@@ -249,15 +249,12 @@ protected:
     void videoSampleAvailable(MediaSample&);
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
 
-    WeakPtr<RealtimeMediaSource> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
-
 private:
     virtual void startProducingData() { }
     virtual void stopProducingData() { }
 
     bool m_muted { false };
 
-    WeakPtrFactory<RealtimeMediaSource> m_weakPtrFactory;
     String m_id;
     String m_persistentID;
     Type m_type;

@@ -125,7 +125,7 @@ AudioHardwareListenerMac::AudioHardwareListenerMac(Client& client)
     setHardwareActivity(isAudioHardwareProcessRunning());
     setOutputDeviceSupportsLowPowerMode(currentDeviceSupportsLowPowerBufferSize());
 
-    auto weakThis = m_weakFactory.createWeakPtr(*this);
+    auto weakThis = makeWeakPtr(*this);
     m_block = Block_copy(^(UInt32 count, const AudioObjectPropertyAddress properties[]) {
         if (weakThis)
             weakThis->propertyChanged(count, properties);

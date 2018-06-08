@@ -657,7 +657,7 @@ void MediaPlayerPrivateGStreamer::clearTracks()
 #define CREATE_TRACK(type, Type) \
     m_has##Type = true; \
     if (!useMediaSource) {\
-        RefPtr<Type##TrackPrivateGStreamer> track = Type##TrackPrivateGStreamer::create(createWeakPtr(), i, stream); \
+        RefPtr<Type##TrackPrivateGStreamer> track = Type##TrackPrivateGStreamer::create(makeWeakPtr(*this), i, stream); \
         m_##type##Tracks.add(track->id(), track); \
         m_player->add##Type##Track(*track);\
         if (gst_stream_get_stream_flags(stream.get()) & GST_STREAM_FLAG_SELECT) {                                    \
@@ -847,7 +847,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
             }
         }
 
-        RefPtr<VideoTrackPrivateGStreamer> track = VideoTrackPrivateGStreamer::create(createWeakPtr(), i, pad);
+        RefPtr<VideoTrackPrivateGStreamer> track = VideoTrackPrivateGStreamer::create(makeWeakPtr(*this), i, pad);
         ASSERT(streamId == track->id());
         m_videoTracks.add(streamId, track);
         m_player->addVideoTrack(*track);
@@ -921,7 +921,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
             }
         }
 
-        RefPtr<AudioTrackPrivateGStreamer> track = AudioTrackPrivateGStreamer::create(createWeakPtr(), i, pad);
+        RefPtr<AudioTrackPrivateGStreamer> track = AudioTrackPrivateGStreamer::create(makeWeakPtr(*this), i, pad);
         ASSERT(streamId == track->id());
         m_audioTracks.add(streamId, track);
         m_player->addAudioTrack(*track);
@@ -1249,7 +1249,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     case GST_MESSAGE_ELEMENT:
         if (gst_is_missing_plugin_message(message)) {
             if (gst_install_plugins_supported()) {
-                RefPtr<MediaPlayerRequestInstallMissingPluginsCallback> missingPluginCallback = MediaPlayerRequestInstallMissingPluginsCallback::create([weakThis = createWeakPtr()](uint32_t result, MediaPlayerRequestInstallMissingPluginsCallback& missingPluginCallback) {
+                RefPtr<MediaPlayerRequestInstallMissingPluginsCallback> missingPluginCallback = MediaPlayerRequestInstallMissingPluginsCallback::create([weakThis = makeWeakPtr(*this)](uint32_t result, MediaPlayerRequestInstallMissingPluginsCallback& missingPluginCallback) {
                     if (!weakThis) {
                         GST_INFO("got missing pluging installation callback in destroyed player with result %u", result);
                         return;

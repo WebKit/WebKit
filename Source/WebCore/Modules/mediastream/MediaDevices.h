@@ -49,7 +49,7 @@ class MediaStream;
 
 struct MediaTrackSupportedConstraints;
 
-class MediaDevices : public RefCounted<MediaDevices>, public ContextDestructionObserver, public EventTargetWithInlineData {
+class MediaDevices : public RefCounted<MediaDevices>, public ContextDestructionObserver, public EventTargetWithInlineData, public CanMakeWeakPtr<MediaDevices> {
 public:
     static Ref<MediaDevices> create(Document&);
 
@@ -90,11 +90,8 @@ private:
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 
-    WeakPtr<MediaDevices> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
-
     Timer m_scheduledEventTimer;
     std::optional<RealtimeMediaSourceCenter::DevicesChangedObserverToken> m_deviceChangedToken;
-    WeakPtrFactory<MediaDevices> m_weakPtrFactory;
 };
 
 } // namespace WebCore

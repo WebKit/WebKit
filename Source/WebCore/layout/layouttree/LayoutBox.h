@@ -39,7 +39,7 @@ namespace Layout {
 class Container;
 class TreeBuilder;
 
-class Box {
+class Box : public CanMakeWeakPtr<Box> {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
     friend class TreeBuilder;
@@ -94,7 +94,6 @@ public:
     bool isPaddingApplicable() const;
 
     const RenderStyle& style() const { return m_style; }
-    auto& weakPtrFactory() const { return m_weakFactory; }
 
     std::optional<const Replaced> replaced() const { return m_replaced; }
 
@@ -129,7 +128,6 @@ private:
     void setNextSibling(Box& nextSibling) { m_nextSibling = &nextSibling; }
     void setPreviousSibling(Box& previousSibling) { m_previousSibling = &previousSibling; }
 
-    WeakPtrFactory<Box> m_weakFactory;
     RenderStyle m_style;
     std::optional<ElementAttributes> m_elementAttributes;
 

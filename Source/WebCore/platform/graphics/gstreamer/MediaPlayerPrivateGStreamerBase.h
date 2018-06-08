@@ -61,7 +61,7 @@ class TextureMapperPlatformLayerProxy;
 
 void registerWebKitGStreamerElements();
 
-class MediaPlayerPrivateGStreamerBase : public MediaPlayerPrivateInterface
+class MediaPlayerPrivateGStreamerBase : public MediaPlayerPrivateInterface, public CanMakeWeakPtr<MediaPlayerPrivateGStreamerBase>
 #if USE(TEXTURE_MAPPER_GL)
     , public PlatformLayer
 #endif
@@ -217,7 +217,6 @@ protected:
 #endif
     };
 
-    WeakPtrFactory<MediaPlayerPrivateGStreamerBase> m_weakPtrFactory;
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     MediaPlayer* m_player;
     GRefPtr<GstElement> m_pipeline;

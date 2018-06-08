@@ -50,7 +50,7 @@ SOFT_LINK_CLASS(AVFoundation, AVAssetResourceLoadingRequest)
 namespace WebCore {
 
 CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, LegacyCDMSessionClient* client)
-    : m_parent(parent->createWeakPtr())
+    : m_parent(makeWeakPtr(*parent))
     , m_client(client)
     , m_sessionId(createCanonicalUUIDString())
 {

@@ -98,7 +98,7 @@ public:
     void operator()(TextLayout*) const;
 };
 
-class FontCascade {
+class FontCascade : public CanMakeWeakPtr<FontCascade> {
 public:
     WEBCORE_EXPORT FontCascade();
     WEBCORE_EXPORT FontCascade(FontCascadeDescription&&, float letterSpacing = 0, float wordSpacing = 0);
@@ -198,8 +198,6 @@ public:
     static CodePath characterRangeCodePath(const UChar*, unsigned len);
 
     bool primaryFontIsSystemFont() const;
-
-    WeakPtr<FontCascade> createWeakPtr() const { return m_weakPtrFactory.createWeakPtr(*const_cast<FontCascade*>(this)); }
 
     std::unique_ptr<DisplayList::DisplayList> displayListForTextRun(GraphicsContext&, const TextRun&, unsigned from = 0, std::optional<unsigned> to = { }, CustomFontNotReadyAction = CustomFontNotReadyAction::DoNotPaintIfFontNotReady) const;
     
@@ -313,7 +311,6 @@ private:
 
     FontCascadeDescription m_fontDescription;
     mutable RefPtr<FontCascadeFonts> m_fonts;
-    WeakPtrFactory<FontCascade> m_weakPtrFactory;
     float m_letterSpacing { 0 };
     float m_wordSpacing { 0 };
     mutable bool m_useBackslashAsYenSymbol { false };

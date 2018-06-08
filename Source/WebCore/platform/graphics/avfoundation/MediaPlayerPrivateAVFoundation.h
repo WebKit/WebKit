@@ -46,7 +46,7 @@ class InbandMetadataTextTrackPrivateAVF;
 class InbandTextTrackPrivateAVF;
 class GenericCueData;
 
-class MediaPlayerPrivateAVFoundation : public MediaPlayerPrivateInterface, public AVFInbandTrackParent
+class MediaPlayerPrivateAVFoundation : public CanMakeWeakPtr<MediaPlayerPrivateAVFoundation>, public MediaPlayerPrivateInterface, public AVFInbandTrackParent
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
@@ -158,8 +158,6 @@ public:
 protected:
     explicit MediaPlayerPrivateAVFoundation(MediaPlayer*);
     virtual ~MediaPlayerPrivateAVFoundation();
-
-    WeakPtr<MediaPlayerPrivateAVFoundation> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
     // MediaPlayerPrivatePrivateInterface overrides.
     void load(const String& url) override;
@@ -329,8 +327,6 @@ protected:
 
 private:
     MediaPlayer* m_player;
-
-    WeakPtrFactory<MediaPlayerPrivateAVFoundation> m_weakPtrFactory;
 
     WTF::Function<void()> m_pendingSeek;
 

@@ -43,7 +43,7 @@
 @class WebView;
 @class WebEditorUndoTarget;
 
-class WebEditorClient final : public WebCore::EditorClient, public WebCore::TextCheckerClient {
+class WebEditorClient final : public WebCore::EditorClient, public WebCore::TextCheckerClient, public CanMakeWeakPtr<WebEditorClient> {
 public:
     WebEditorClient(WebView *);
     virtual ~WebEditorClient();
@@ -193,8 +193,6 @@ private:
 
     enum class EditorStateIsContentEditable { No, Yes, Unset };
     EditorStateIsContentEditable m_lastEditorStateWasContentEditable { EditorStateIsContentEditable::Unset };
-
-    WeakPtrFactory<WebEditorClient> m_weakPtrFactory;
 };
 
 inline NSSelectionAffinity kit(WebCore::EAffinity affinity)

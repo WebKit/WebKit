@@ -38,7 +38,7 @@ TaskDispatcher<Timer>::TaskDispatcher()
 void TaskDispatcher<Timer>::postTask(Function<void()>&& function)
 {
     m_pendingTasks.append(WTFMove(function));
-    pendingDispatchers().append(m_weakPtrFactory.createWeakPtr(*this));
+    pendingDispatchers().append(makeWeakPtr(*this));
     if (!sharedTimer().isActive())
         sharedTimer().startOneShot(0_s);
 }

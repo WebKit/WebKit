@@ -55,7 +55,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebPaymentCoordinatorProxy : private IPC::MessageReceiver {
+class WebPaymentCoordinatorProxy : private IPC::MessageReceiver, public CanMakeWeakPtr<WebPaymentCoordinatorProxy> {
 public:
     explicit WebPaymentCoordinatorProxy(WebPageProxy&);
     ~WebPaymentCoordinatorProxy();
@@ -107,7 +107,6 @@ private:
     void platformCompletePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>&);
 
     WebPageProxy& m_webPageProxy;
-    WeakPtrFactory<WebPaymentCoordinatorProxy> m_weakPtrFactory;
 
     enum class State {
         // Idle - Nothing's happening.

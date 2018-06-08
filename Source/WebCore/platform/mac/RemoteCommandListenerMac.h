@@ -33,17 +33,14 @@
 
 namespace WebCore {
 
-class RemoteCommandListenerMac : public RemoteCommandListener {
+class RemoteCommandListenerMac : public RemoteCommandListener, public CanMakeWeakPtr<RemoteCommandListenerMac> {
 public:
     RemoteCommandListenerMac(RemoteCommandListenerClient&);
     virtual ~RemoteCommandListenerMac();
 
 protected:
-    WeakPtr<RemoteCommandListenerMac> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
-
     void updateSupportedCommands() override;
 
-    WeakPtrFactory<RemoteCommandListenerMac> m_weakPtrFactory;
     void* m_commandHandler { nullptr };
 };
     

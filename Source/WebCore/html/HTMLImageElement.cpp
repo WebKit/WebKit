@@ -371,7 +371,7 @@ void HTMLImageElement::setPictureElement(HTMLPictureElement* pictureElement)
     
     if (!gPictureOwnerMap)
         gPictureOwnerMap = new PictureOwnerMap();
-    gPictureOwnerMap->add(this, pictureElement->createWeakPtr());
+    gPictureOwnerMap->add(this, makeWeakPtr(*pictureElement));
 }
     
 unsigned HTMLImageElement::width(bool ignorePendingStylesheets)

@@ -53,7 +53,7 @@ class SVGPathSegCurvetoQuadraticSmoothRel;
 class SVGPathSegList;
 class SVGPoint;
 
-class SVGPathElement final : public SVGGeometryElement, public SVGExternalResourcesRequired {
+class SVGPathElement final : public SVGGeometryElement, public SVGExternalResourcesRequired, public CanMakeWeakPtr<SVGPathElement> {
     WTF_MAKE_ISO_ALLOCATED(SVGPathElement);
 public:
     static Ref<SVGPathElement> create(const QualifiedName&, Document&);
@@ -99,8 +99,6 @@ public:
 
     bool isAnimValObserved() const { return m_isAnimValObserved; }
 
-    WeakPtr<SVGPathElement> createWeakPtr() const { return m_weakPtrFactory.createWeakPtr(*const_cast<SVGPathElement*>(this)); }
-
     void animatedPropertyWillBeDeleted();
 
     size_t approximateMemoryCost() const final;
@@ -135,7 +133,6 @@ private:
     SVGPathByteStream m_pathByteStream;
     mutable std::optional<Path> m_cachedPath;
     mutable SVGSynchronizableAnimatedProperty<SVGPathSegListValues> m_pathSegList;
-    WeakPtrFactory<SVGPathElement> m_weakPtrFactory;
     bool m_isAnimValObserved;
 };
 

@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class DeprecatedCSSOMValue : public RefCounted<DeprecatedCSSOMValue> {
+class DeprecatedCSSOMValue : public RefCounted<DeprecatedCSSOMValue>, public CanMakeWeakPtr<DeprecatedCSSOMValue> {
 public:
     // Exactly match the IDL. No reason to add anything if it's not in the IDL.
     enum Type {
@@ -64,8 +64,6 @@ public:
     bool isValueList() const { return m_classType == DeprecatedValueListClass; }
 
     CSSStyleDeclaration& owner() const { return m_owner; }
-
-    WeakPtrFactory<DeprecatedCSSOMValue>& weakPtrFactory() { return m_weakPtrFactory; }
 
 protected:
     static const size_t ClassTypeBits = 2;
@@ -95,7 +93,6 @@ protected:
     unsigned m_classType : ClassTypeBits; // ClassType
     
     Ref<CSSStyleDeclaration> m_owner;
-    WeakPtrFactory<DeprecatedCSSOMValue> m_weakPtrFactory;
 };
 
 class DeprecatedCSSOMComplexValue : public DeprecatedCSSOMValue {

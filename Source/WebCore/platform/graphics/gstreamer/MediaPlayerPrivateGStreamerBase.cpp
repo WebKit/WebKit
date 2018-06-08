@@ -391,7 +391,7 @@ bool MediaPlayerPrivateGStreamerBase::handleSyncMessage(GstMessage* message)
         if (concatenatedInitDataChunksNumber > 1)
             eventKeySystemIdString = emptyString();
 
-        RunLoop::main().dispatch([weakThis = m_weakPtrFactory.createWeakPtr(*this), eventKeySystemIdString, initData = WTFMove(concatenatedInitDataChunks)] {
+        RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), eventKeySystemIdString, initData = WTFMove(concatenatedInitDataChunks)] {
             if (!weakThis)
                 return;
 
@@ -1250,7 +1250,7 @@ void MediaPlayerPrivateGStreamerBase::initializationDataEncountered(GstEvent* ev
     gst_buffer_unmap(data, &mapInfo);
 
     String eventKeySystemUUIDString = eventKeySystemUUID;
-    RunLoop::main().dispatch([weakThis = m_weakPtrFactory.createWeakPtr(*this), eventKeySystemUUID = eventKeySystemUUIDString, initData] {
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), eventKeySystemUUID = eventKeySystemUUIDString, initData] {
         if (!weakThis)
             return;
 

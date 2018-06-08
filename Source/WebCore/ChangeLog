@@ -1,5 +1,237 @@
 2018-06-07  Chris Dumez  <cdumez@apple.com>
 
+        Add base class to get WeakPtrFactory member and avoid some boilerplate code
+        https://bugs.webkit.org/show_bug.cgi?id=186407
+
+        Reviewed by Brent Fulgham.
+
+        Add CanMakeWeakPtr base class to get WeakPtrFactory member and its getter, in
+        order to avoid some boilerplate code in every class needing a WeakPtrFactory.
+        This also gets rid of old-style createWeakPtr() methods in favor of the newer
+        makeWeakPtr().
+
+        * Modules/credentialmanagement/CredentialsMessenger.h:
+        * Modules/credentialmanagement/NavigatorCredentials.cpp:
+        (WebCore::NavigatorCredentials::credentials):
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::doSupportedConfigurationStep):
+        (WebCore::CDM::getConsentStatus):
+        * Modules/encryptedmedia/CDM.h:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::generateRequest):
+        (WebCore::MediaKeySession::load):
+        (WebCore::MediaKeySession::update):
+        (WebCore::MediaKeySession::close):
+        (WebCore::MediaKeySession::remove):
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::createSession):
+        * Modules/encryptedmedia/MediaKeys.h:
+        * Modules/gamepad/GamepadManager.cpp:
+        (WebCore::GamepadManager::platformGamepadDisconnected):
+        (WebCore::GamepadManager::makeGamepadVisible):
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::MediaDevices):
+        * Modules/mediastream/MediaDevices.h:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::applyConstraints):
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/webauthn/cocoa/LocalAuthenticator.h:
+        * Modules/webauthn/cocoa/LocalAuthenticator.mm:
+        (WebCore::LocalAuthenticator::makeCredential):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilitySVGRoot.cpp:
+        (WebCore::AccessibilitySVGRoot::setParent):
+        * crypto/SubtleCrypto.cpp:
+        (WebCore::SubtleCrypto::encrypt):
+        (WebCore::SubtleCrypto::decrypt):
+        (WebCore::SubtleCrypto::sign):
+        (WebCore::SubtleCrypto::verify):
+        (WebCore::SubtleCrypto::digest):
+        (WebCore::SubtleCrypto::generateKey):
+        (WebCore::SubtleCrypto::deriveKey):
+        (WebCore::SubtleCrypto::deriveBits):
+        (WebCore::SubtleCrypto::importKey):
+        (WebCore::SubtleCrypto::exportKey):
+        (WebCore::SubtleCrypto::wrapKey):
+        (WebCore::SubtleCrypto::unwrapKey):
+        * crypto/SubtleCrypto.h:
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::CSSFontFace):
+        (WebCore::CSSFontFace::wrapper):
+        (WebCore::CSSFontFace::setWrapper):
+        * css/DeprecatedCSSOMValue.h:
+        * css/FontFace.cpp:
+        * css/FontFace.h:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::MediaQueryEvaluator):
+        * css/StyleSheetContents.h:
+        * css/parser/CSSDeferredParser.cpp:
+        (WebCore::CSSDeferredParser::CSSDeferredParser):
+        * dom/DataTransferItemList.cpp:
+        (WebCore::DataTransferItemList::add):
+        (WebCore::DataTransferItemList::ensureItems const):
+        (WebCore::DataTransferItemList::didSetStringData):
+        * dom/DataTransferItemList.h:
+        * dom/Document.cpp:
+        (WebCore::Document::postTask):
+        (WebCore::Document::hasStorageAccess):
+        (WebCore::Document::requestStorageAccess):
+        * dom/Document.h:
+        (WebCore::Document::setContextDocument):
+        * dom/MessagePort.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::setPictureElement):
+        * html/HTMLInputElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerCreateResourceLoader):
+        * html/HTMLMediaElement.h:
+        * html/HTMLPictureElement.h:
+        * html/parser/HTMLResourcePreloader.h:
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::style const):
+        * loader/FormState.h:
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::preconnectIfNeeded):
+        * loader/LinkLoader.h:
+        * loader/LinkPreloadResourceClients.cpp:
+        (WebCore::LinkPreloadResourceClient::LinkPreloadResourceClient):
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::MediaResourceLoader):
+        * loader/MediaResourceLoader.h:
+        * page/DOMWindow.h:
+        * page/EventHandler.cpp:
+        (WebCore::widgetForElement):
+        (WebCore::EventHandler::updateLastScrollbarUnderMouse):
+        * platform/GenericTaskQueue.cpp:
+        (WebCore::TaskDispatcher<Timer>::postTask):
+        * platform/GenericTaskQueue.h:
+        (WebCore::GenericTaskQueue::enqueueTask):
+        (WebCore::GenericTaskQueue::cancelAllTasks):
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.h:
+        * platform/Scrollbar.h:
+        * platform/Widget.cpp:
+        (WebCore::Widget::setParent):
+        * platform/Widget.h:
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        (WebCore::AudioFileReader::decodeAudioForBusCreation):
+        * platform/audio/mac/AudioHardwareListenerMac.cpp:
+        (WebCore::AudioHardwareListenerMac::AudioHardwareListenerMac):
+        * platform/audio/mac/AudioHardwareListenerMac.h:
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMInstanceClearKey::requestLicense):
+        (WebCore::CDMInstanceClearKey::updateLicense):
+        (WebCore::CDMInstanceClearKey::loadSession):
+        (WebCore::CDMInstanceClearKey::closeSession):
+        (WebCore::CDMInstanceClearKey::removeSessionData):
+        * platform/encryptedmedia/clearkey/CDMClearKey.h:
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification):
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::didProvideRequest):
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm:
+        (WebCore::CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC):
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::checkPlayability):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::beginLoadingMetadata):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::seekToTime):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createSession):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget):
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForVideoData):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::scheduleDeferredTask):
+        * platform/graphics/cv/TextureCacheCV.h:
+        * platform/graphics/cv/TextureCacheCV.mm:
+        (WebCore::TextureCacheCV::textureFromImage):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfAudio):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleSyncMessage):
+        (WebCore::MediaPlayerPrivateGStreamerBase::initializationDataEncountered):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsink):
+        * platform/graphics/mac/DisplayRefreshMonitorMac.cpp:
+        (WebCore::DisplayRefreshMonitorMac::displayLinkFired):
+        * platform/graphics/mac/DisplayRefreshMonitorMac.h:
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::setMaskLayer):
+        (WebCore::TextureMapperLayer::setReplicaLayer):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::endCreatedMediaSource):
+        (WebCore::MediaPlayerPrivateMediaFoundation::endGetEvent):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::processInputNotify):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+        * platform/ios/RemoteCommandListenerIOS.h:
+        * platform/ios/RemoteCommandListenerIOS.mm:
+        (WebCore::RemoteCommandListenerIOS::RemoteCommandListenerIOS):
+        * platform/mac/RemoteCommandListenerMac.h:
+        * platform/mac/RemoteCommandListenerMac.mm:
+        (WebCore::RemoteCommandListenerMac::RemoteCommandListenerMac):
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::scheduleDeferredTask):
+        * platform/mediastream/MediaStreamPrivate.h:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::scheduleDeferredTask):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.h:
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.mm:
+        (WebCore::ScreenDisplayCaptureSourceMac::createDisplayStream):
+        * platform/vr/VRPlatformDisplay.h:
+        * platform/vr/openvr/VRPlatformManagerOpenVR.cpp:
+        (WebCore::VRPlatformManagerOpenVR::getVRDisplays):
+        * rendering/FloatingObjects.h:
+        (WebCore::FloatingObject::setOriginatingLine):
+        * rendering/RenderObject.h:
+        * rendering/RootInlineBox.cpp:
+        * rendering/RootInlineBox.h:
+        * svg/SVGPathElement.h:
+        * svg/SVGPathSegWithContext.h:
+        (WebCore::SVGPathSegWithContext::SVGPathSegWithContext):
+        (WebCore::SVGPathSegWithContext::setContextAndRole):
+        * svg/SVGTransformList.h:
+        * svg/properties/SVGAnimatedListPropertyTearOff.h:
+        (WebCore::SVGAnimatedListPropertyTearOff::baseVal):
+        (WebCore::SVGAnimatedListPropertyTearOff::animVal):
+        * svg/properties/SVGAnimatedPathSegListPropertyTearOff.h:
+        * svg/properties/SVGAnimatedPropertyTearOff.h:
+        * svg/properties/SVGAnimatedTransformListPropertyTearOff.h:
+        * svg/properties/SVGListProperty.h:
+        (WebCore::SVGListProperty::initializeValuesAndWrappers):
+        (WebCore::SVGListProperty::getItemValuesAndWrappers):
+        (WebCore::SVGListProperty::insertItemBeforeValuesAndWrappers):
+        (WebCore::SVGListProperty::replaceItemValuesAndWrappers):
+        (WebCore::SVGListProperty::appendItemValuesAndWrappers):
+        * svg/properties/SVGMatrixTearOff.h:
+        * svg/properties/SVGPropertyTearOff.h:
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMFactory::createCDM):
+        (WebCore::MockCDM::createInstance):
+        * testing/MockCDMFactory.h:
+        * workers/service/ExtendableEvent.h:
+        * workers/service/FetchEvent.cpp:
+        (WebCore::FetchEvent::respondWith):
+        * workers/service/server/SWServer.h:
+        * xml/DOMParser.cpp:
+        (WebCore::DOMParser::DOMParser):
+
+2018-06-07  Chris Dumez  <cdumez@apple.com>
+
         PopStateEvent should not be cancelable by default
         https://bugs.webkit.org/show_bug.cgi?id=186420
 

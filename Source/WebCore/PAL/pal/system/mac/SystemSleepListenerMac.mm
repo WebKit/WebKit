@@ -46,7 +46,7 @@ SystemSleepListenerMac::SystemSleepListenerMac(Client& client)
     NSNotificationCenter *center = [[NSWorkspace sharedWorkspace] notificationCenter];
     NSOperationQueue *queue = [NSOperationQueue mainQueue];
 
-    auto weakThis = m_weakPtrFactory.createWeakPtr(*this);
+    auto weakThis = makeWeakPtr(*this);
 
     m_sleepObserver = [center addObserverForName:NSWorkspaceWillSleepNotification object:nil queue:queue usingBlock:^(NSNotification *) {
         callOnMainThread([weakThis] {

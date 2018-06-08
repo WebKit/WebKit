@@ -1,3 +1,19 @@
+2018-06-07  Chris Dumez  <cdumez@apple.com>
+
+        Add base class to get WeakPtrFactory member and avoid some boilerplate code
+        https://bugs.webkit.org/show_bug.cgi?id=186407
+
+        Reviewed by Brent Fulgham.
+
+        Add CanMakeWeakPtr base class to get WeakPtrFactory member and its getter, in
+        order to avoid some boilerplate code in every class needing a WeakPtrFactory.
+        This also gets rid of old-style createWeakPtr() methods in favor of the newer
+        makeWeakPtr().
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::requestCandidatesForSelection):
+
 2018-06-05  Chris Dumez  <cdumez@apple.com>
 
         Regression(r232082): Websites get loaded inside of Messages App chat transcript

@@ -66,7 +66,7 @@ ExceptionOr<void> FetchEvent::respondWith(Ref<DOMPromise>&& promise)
     m_respondPromise = WTFMove(promise);
     addExtendLifetimePromise(*m_respondPromise);
 
-    m_respondPromise->whenSettled([this, weakThis = createWeakPtr()] () {
+    m_respondPromise->whenSettled([this, weakThis = makeWeakPtr(*this)] () {
         if (!weakThis)
             return;
         promiseIsSettled();

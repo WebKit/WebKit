@@ -50,7 +50,7 @@ inline MediaDevices::MediaDevices(Document& document)
     : ContextDestructionObserver(&document)
     , m_scheduledEventTimer(*this, &MediaDevices::scheduledEventTimerFired)
 {
-    m_deviceChangedToken = RealtimeMediaSourceCenter::singleton().addDevicesChangedObserver([weakThis = createWeakPtr(), this]() {
+    m_deviceChangedToken = RealtimeMediaSourceCenter::singleton().addDevicesChangedObserver([weakThis = makeWeakPtr(*this), this]() {
 
         if (!weakThis)
             return;

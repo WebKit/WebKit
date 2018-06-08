@@ -70,7 +70,7 @@ using CreationCompletionHandler = CompletionHandler<void(ExceptionOr<CreationRet
 using RequestCompletionHandler = CompletionHandler<void(ExceptionOr<AssertionReturnBundle>&&)>;
 using QueryCompletionHandler = CompletionHandler<void(bool)>;
 
-class CredentialsMessenger {
+class CredentialsMessenger : public CanMakeWeakPtr<CredentialsMessenger> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CredentialsMessenger);
 public:
@@ -87,8 +87,6 @@ public:
     virtual void getAssertionReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle) = 0;
     virtual void isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool) = 0;
 
-    auto& weakPtrFactory() const { return m_weakFactory; }
-
 protected:
     virtual ~CredentialsMessenger() = default;
 
@@ -100,8 +98,6 @@ protected:
     WEBCORE_EXPORT QueryCompletionHandler takeQueryCompletionHandler(uint64_t);
 
 private:
-    WeakPtrFactory<CredentialsMessenger> m_weakFactory;
-
     enum CallBackClassifier : uint64_t {
         Creation = 0x01,
         Request = 0x02,

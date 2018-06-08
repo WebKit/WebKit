@@ -37,7 +37,7 @@ template<typename PropertyType>
 class SVGAnimatedListPropertyTearOff;
 
 template<typename PropertyType>
-class SVGListProperty : public SVGProperty {
+class SVGListProperty : public SVGProperty, public CanMakeWeakPtr<SVGListProperty<PropertyType>> {
 public:
     typedef SVGListProperty<PropertyType> Self;
 
@@ -162,7 +162,7 @@ public:
         m_values->clear();
 
         m_values->append(newItem->propertyReference());
-        m_wrappers->append(newItem->createWeakPtr());
+        m_wrappers->append(makeWeakPtr(newItem.get()));
 
         commitChange();
         return WTFMove(newItem);
@@ -206,7 +206,7 @@ public:
             // It is also associated with our animated property, so it can notify the SVG Element which holds the SVGAnimated*List
             // that it has been modified (and thus can call svgAttributeChanged(associatedAttributeName)).
             wrapper = ListItemTearOff::create(animatedList, UndefinedRole, m_values->at(index));
-            m_wrappers->at(index) = wrapper->createWeakPtr();
+            m_wrappers->at(index) = makeWeakPtr(*wrapper);
         }
 
         return wrapper.releaseNonNull();
@@ -264,7 +264,7 @@ public:
         m_values->insert(index, newItem->propertyReference());
 
         // Store new wrapper at position 'index', change its underlying value, so mutations of newItem, directly affect the item in the list.
-        m_wrappers->insert(index, newItem->createWeakPtr());
+        m_wrappers->insert(index, makeWeakPtr(newItem.get()));
 
         commitChange();
         return WTFMove(newItem);
@@ -341,7 +341,7 @@ public:
 
         // Update the value and the wrapper at the desired position 'index'. 
         m_values->at(index) = newItem->propertyReference();
-        m_wrappers->at(index) = newItem->createWeakPtr();
+        m_wrappers->at(index) = makeWeakPtr(newItem.get());
 
         commitChange();
         return WTFMove(newItem);
@@ -435,7 +435,7 @@ public:
 
         // Append the value and wrapper at the end of the list.
         m_values->append(newItem->propertyReference());
-        m_wrappers->append(newItem->createWeakPtr());
+        m_wrappers->append(makeWeakPtr(newItem.get()));
 
         commitChange(ListModificationAppend);
         return WTFMove(newItem);
@@ -451,11 +451,6 @@ public:
     {
         ASSERT(m_wrappers);
         return *m_wrappers;
-    }
-
-    WeakPtr<SVGListProperty> createWeakPtr() const
-    {
-        return m_weakPtrFactory.createWeakPtr(*const_cast<SVGListProperty*>(this));
     }
 
 protected:
@@ -486,7 +481,6 @@ protected:
     bool m_ownsValues;
     PropertyType* m_values;
     ListWrapperCache* m_wrappers;
-    WeakPtrFactory<SVGListProperty> m_weakPtrFactory;
 };
 
 }

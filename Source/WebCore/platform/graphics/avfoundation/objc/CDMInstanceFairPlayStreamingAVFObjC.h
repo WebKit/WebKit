@@ -42,7 +42,7 @@ OBJC_CLASS WebCoreFPSContentKeySessionDelegate;
 
 namespace WebCore {
 
-class CDMInstanceFairPlayStreamingAVFObjC final : public CDMInstance {
+class CDMInstanceFairPlayStreamingAVFObjC final : public CDMInstance, public CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC> {
 public:
     CDMInstanceFairPlayStreamingAVFObjC();
     virtual ~CDMInstanceFairPlayStreamingAVFObjC();
@@ -82,12 +82,10 @@ public:
     AVContentKeySession *contentKeySession() { return m_session.get(); }
 
 private:
-    WeakPtr<CDMInstanceFairPlayStreamingAVFObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
     bool isLicenseTypeSupported(LicenseType) const;
 
     Vector<Ref<SharedBuffer>> keyIDs();
 
-    WeakPtrFactory<CDMInstanceFairPlayStreamingAVFObjC> m_weakPtrFactory;
     RefPtr<SharedBuffer> m_serverCertificate;
     bool m_persistentStateAllowed { true };
     RetainPtr<NSURL> m_storageDirectory;

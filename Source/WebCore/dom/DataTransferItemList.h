@@ -44,7 +44,7 @@ namespace WebCore {
 class DataTransferItem;
 class File;
 
-class DataTransferItemList : public ScriptWrappable {
+class DataTransferItemList : public ScriptWrappable, public CanMakeWeakPtr<DataTransferItemList> {
     WTF_MAKE_NONCOPYABLE(DataTransferItemList); WTF_MAKE_FAST_ALLOCATED;
 public:
     DataTransferItemList(DataTransfer&);
@@ -75,7 +75,6 @@ public:
 private:
     Vector<Ref<DataTransferItem>>& ensureItems() const;
 
-    WeakPtrFactory<DataTransferItemList> m_weakPtrFactory;
     DataTransfer& m_dataTransfer;
     mutable std::optional<Vector<Ref<DataTransferItem>>> m_items;
 };

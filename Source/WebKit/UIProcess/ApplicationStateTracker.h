@@ -37,7 +37,7 @@ OBJC_CLASS UIView;
 
 namespace WebKit {
 
-class ApplicationStateTracker {
+class ApplicationStateTracker : public CanMakeWeakPtr<ApplicationStateTracker> {
 public:
     ApplicationStateTracker(UIView *, SEL didEnterBackgroundSelector, SEL didCreateWindowContextSelector, SEL didFinishSnapshottingAfterEnteringBackgroundSelector, SEL willEnterForegroundSelector);
     ~ApplicationStateTracker();
@@ -57,8 +57,6 @@ private:
     SEL m_willEnterForegroundSelector;
 
     bool m_isInBackground;
-
-    WeakPtrFactory<ApplicationStateTracker> m_weakPtrFactory;
 
     RetainPtr<BKSApplicationStateMonitor> m_applicationStateMonitor;
 

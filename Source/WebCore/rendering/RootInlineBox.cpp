@@ -45,9 +45,9 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RootInlineBox);
 
-struct SameSizeAsRootInlineBox : public InlineFlowBox {
+struct SameSizeAsRootInlineBox : public InlineFlowBox, public CanMakeWeakPtr<RootInlineBox> {
     unsigned variables[7];
-    void* pointers[4];
+    void* pointers[3];
 };
 
 COMPILE_ASSERT(sizeof(RootInlineBox) == sizeof(SameSizeAsRootInlineBox), RootInlineBox_should_stay_small);

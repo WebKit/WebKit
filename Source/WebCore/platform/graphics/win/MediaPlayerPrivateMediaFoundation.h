@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-class MediaPlayerPrivateMediaFoundation : public MediaPlayerPrivateInterface {
+class MediaPlayerPrivateMediaFoundation : public MediaPlayerPrivateInterface, public CanMakeWeakPtr<MediaPlayerPrivateMediaFoundation> {
 public:
     explicit MediaPlayerPrivateMediaFoundation(MediaPlayer*);
     ~MediaPlayerPrivateMediaFoundation();
@@ -124,7 +124,6 @@ private:
     FloatSize m_cachedNaturalSize;
     mutable Lock m_cachedNaturalSizeLock;
 
-    WeakPtrFactory<MediaPlayerPrivateMediaFoundation> m_weakPtrFactory;
     COMPtr<IMFMediaSession> m_mediaSession;
     COMPtr<IMFSourceResolver> m_sourceResolver;
     COMPtr<IMFMediaSource> m_mediaSource;

@@ -41,7 +41,7 @@ enum FormSubmissionTrigger { SubmittedByJavaScript, NotSubmittedByJavaScript };
 
 using StringPairVector = Vector<std::pair<String, String>>;
 
-class FormState : public RefCounted<FormState>, public FrameDestructionObserver {
+class FormState : public RefCounted<FormState>, public CanMakeWeakPtr<FormState>, public FrameDestructionObserver {
 public:
     static Ref<FormState> create(HTMLFormElement&, StringPairVector&& textFieldValues, Document&, FormSubmissionTrigger);
 
@@ -49,8 +49,6 @@ public:
     const StringPairVector& textFieldValues() const { return m_textFieldValues; }
     Document& sourceDocument() const { return m_sourceDocument; }
     FormSubmissionTrigger formSubmissionTrigger() const { return m_formSubmissionTrigger; }
-
-    auto& weakPtrFactory() const { return m_weakFactory; }
 
 private:
     FormState(HTMLFormElement&, StringPairVector&& textFieldValues, Document&, FormSubmissionTrigger);
@@ -60,7 +58,6 @@ private:
     StringPairVector m_textFieldValues;
     Ref<Document> m_sourceDocument;
     FormSubmissionTrigger m_formSubmissionTrigger;
-    WeakPtrFactory<FormState> m_weakFactory;
 };
 
 } // namespace WebCore

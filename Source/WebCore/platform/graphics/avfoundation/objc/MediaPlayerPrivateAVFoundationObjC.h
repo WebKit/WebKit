@@ -148,8 +148,6 @@ public:
     void attemptToDecryptWithInstance(CDMInstance&) final;
 #endif
 
-    WeakPtr<MediaPlayerPrivateAVFoundationObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
-
 private:
     // engine support
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types);
@@ -324,8 +322,6 @@ private:
 #endif
 
     AVPlayer *objCAVFoundationAVPlayer() const final { return m_avPlayer.get(); }
-
-    WeakPtrFactory<MediaPlayerPrivateAVFoundationObjC> m_weakPtrFactory;
 
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;

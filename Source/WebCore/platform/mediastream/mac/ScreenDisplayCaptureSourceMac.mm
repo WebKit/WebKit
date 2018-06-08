@@ -167,7 +167,7 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
         };
         auto streamOptions = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-        auto weakThis = m_weakFactory.createWeakPtr(*this);
+        auto weakThis = makeWeakPtr(*this);
         m_frameAvailableBlock = Block_copy(^(CGDisplayStreamFrameStatus status, uint64_t displayTime, IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef) {
             if (!weakThis)
                 return;

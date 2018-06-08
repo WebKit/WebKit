@@ -27,7 +27,7 @@ class SVGPathSegWithContext : public SVGPathSeg {
 public:
     SVGPathSegWithContext(const SVGPathElement& element, SVGPathSegRole role)
         : m_role(role)
-        , m_element(element.createWeakPtr())
+        , m_element(makeWeakPtr(const_cast<SVGPathElement&>(element)))
     {
     }
 
@@ -55,7 +55,7 @@ public:
     void setContextAndRole(SVGPathElement* element, SVGPathSegRole role)
     {
         m_role = role;
-        m_element = element ? element->createWeakPtr() : WeakPtr<SVGPathElement>();
+        m_element = makeWeakPtr(element);
     }
 
 protected:

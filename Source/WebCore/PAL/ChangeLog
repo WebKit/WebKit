@@ -1,3 +1,16 @@
+2018-06-07  Chris Dumez  <cdumez@apple.com>
+
+        Add base class to get WeakPtrFactory member and avoid some boilerplate code
+        https://bugs.webkit.org/show_bug.cgi?id=186407
+
+        Reviewed by Brent Fulgham.
+
+        186407_CanMakeWeakPtr
+
+        * pal/system/mac/SystemSleepListenerMac.h:
+        * pal/system/mac/SystemSleepListenerMac.mm:
+        (PAL::SystemSleepListenerMac::SystemSleepListenerMac):
+
 2018-06-06  Simon Fraser  <simon.fraser@apple.com>
 
         Logging macros are sensitive to pal/Logging.h vs Logging.h include order

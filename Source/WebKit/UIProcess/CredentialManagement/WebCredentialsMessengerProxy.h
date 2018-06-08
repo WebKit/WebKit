@@ -44,7 +44,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebCredentialsMessengerProxy : private IPC::MessageReceiver {
+class WebCredentialsMessengerProxy : private IPC::MessageReceiver, public CanMakeWeakPtr<WebCredentialsMessengerProxy> {
     WTF_MAKE_NONCOPYABLE(WebCredentialsMessengerProxy);
 public:
     explicit WebCredentialsMessengerProxy(WebPageProxy&);
@@ -67,7 +67,6 @@ private:
 
     WebPageProxy& m_webPageProxy;
     std::unique_ptr<WebCore::LocalAuthenticator> m_authenticator;
-    WeakPtrFactory<WebCredentialsMessengerProxy> m_weakFactory;
 };
 
 } // namespace WebKit

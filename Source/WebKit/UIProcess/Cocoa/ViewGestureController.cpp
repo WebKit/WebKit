@@ -108,10 +108,7 @@ void ViewGestureController::didEndGesture()
     
 void ViewGestureController::setAlternateBackForwardListSourcePage(WebPageProxy* page)
 {
-    if (page)
-        m_alternateBackForwardListSourcePage = page->createWeakPtr();
-    else
-        m_alternateBackForwardListSourcePage.clear();
+    m_alternateBackForwardListSourcePage = makeWeakPtr(page);
 }
     
 bool ViewGestureController::canSwipeInDirection(SwipeDirection direction) const

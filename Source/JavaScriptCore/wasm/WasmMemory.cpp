@@ -445,11 +445,11 @@ void Memory::registerInstance(Instance* instance)
     size_t count = m_instances.size();
     for (size_t index = 0; index < count; index++) {
         if (m_instances.at(index).get() == nullptr) {
-            m_instances.at(index) = instance->createWeakPtr();
+            m_instances.at(index) = makeWeakPtr(*instance);
             return;
         }
     }
-    m_instances.append(instance->createWeakPtr());
+    m_instances.append(makeWeakPtr(*instance));
 }
 
 void Memory::dump(PrintStream& out) const

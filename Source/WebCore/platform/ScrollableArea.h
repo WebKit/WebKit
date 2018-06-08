@@ -48,7 +48,7 @@ typedef IntPoint ScrollPosition;
 // scrollOffset() is the value used by scrollbars (min is 0,0), and should never have negative components.
 typedef IntPoint ScrollOffset;
 
-class ScrollableArea {
+class ScrollableArea : public CanMakeWeakPtr<ScrollableArea> {
 public:
     WEBCORE_EXPORT bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
     WEBCORE_EXPORT void scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
@@ -64,8 +64,6 @@ public:
     virtual bool requestScrollPositionUpdate(const ScrollPosition&) { return false; }
 
     WEBCORE_EXPORT bool handleWheelEvent(const PlatformWheelEvent&);
-
-    auto& weakPtrFactory() const { return m_weakPtrFactory; }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     WEBCORE_EXPORT const Vector<LayoutUnit>* horizontalSnapOffsets() const;
@@ -337,8 +335,6 @@ protected:
 #endif
 
     bool hasLayerForScrollCorner() const;
-
-    WeakPtrFactory<ScrollableArea> m_weakPtrFactory;
 
 private:
     WEBCORE_EXPORT virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const;

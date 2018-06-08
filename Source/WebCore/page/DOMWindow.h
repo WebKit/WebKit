@@ -92,6 +92,7 @@ enum class IncludeTargetOrigin { No, Yes };
 // FIXME: Rename DOMWindow to LocalWindow and AbstractDOMWindow to DOMWindow.
 class DOMWindow final
     : public AbstractDOMWindow
+    , public CanMakeWeakPtr<DOMWindow>
     , public ContextDestructionObserver
     , public FrameDestructionObserver
     , public Base64Utilities
@@ -335,8 +336,6 @@ public:
     void enableSuddenTermination();
     void disableSuddenTermination();
 
-    WeakPtr<DOMWindow> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
-
 private:
     explicit DOMWindow(Document&);
 
@@ -392,8 +391,6 @@ private:
 
     enum class PageStatus { None, Shown, Hidden };
     PageStatus m_lastPageStatus { PageStatus::None };
-
-    WeakPtrFactory<DOMWindow> m_weakPtrFactory;
 
 #if PLATFORM(IOS)
     unsigned m_scrollEventListenerCount { 0 };
