@@ -704,9 +704,9 @@ class AnalysisTaskPage extends PageWithHeading {
         this.renderReplace(this.content('related-tasks-list'), (task && relatedTasks ? relatedTasks : []).map((otherTask) => {
                 let suffix = '';
                 const taskLabel = otherTask.label();
-                if (otherTask.metric() != task.metric() && taskLabel.indexOf(otherTask.metric().label()) < 0)
+                if (otherTask.metric() && otherTask.metric() != task.metric() && taskLabel.indexOf(otherTask.metric().label()) < 0)
                     suffix += ` with "${otherTask.metric().label()}"`;
-                if (otherTask.platform() != task.platform() && taskLabel.indexOf(otherTask.platform().label()) < 0)
+                if (otherTask.platform() && otherTask.platform() != task.platform() && taskLabel.indexOf(otherTask.platform().label()) < 0)
                     suffix += ` on ${otherTask.platform().label()}`;
                 return element('li', [link(taskLabel, this.router().url(`analysis/task/${otherTask.id()}`)), suffix]);
             }));
