@@ -81,6 +81,8 @@ protected:
     bool isPreviousFrameDone() const { return m_previousFrameDone; }
     void setIsPreviousFrameDone(bool done) { m_previousFrameDone = done; }
 
+    virtual bool hasRequestedRefreshCallback() const { return false; }
+
 private:
     void displayDidRefresh();
 

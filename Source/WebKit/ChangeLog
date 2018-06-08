@@ -1,3 +1,18 @@
+2018-06-08  Per Arne Vollan  <pvollan@apple.com>
+
+        Only display refresh monitors having requested display refresh callback should get notified on screen updates.
+        https://bugs.webkit.org/show_bug.cgi?id=186397
+        <rdar://problem/40897835>
+
+        Reviewed by Brent Fulgham.
+
+        Since all display refresh monitors in the WebContent process share a single UI process display link,
+        we should make sure that only the monitors having requested callback are getting notified on screen
+        updates. I have not been able to reproduce a case where a monitor is being notified without having
+        requested updates, but we should safeguard the code for future code changes.
+
+        * WebProcess/WebPage/mac/DrawingAreaMac.cpp:
+
 2018-06-08  Aditya Keerthi  <akeerthi@apple.com>
 
         [Datalist] Allow TextFieldInputType to show and hide suggestions

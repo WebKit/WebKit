@@ -55,6 +55,8 @@ public:
 private:
     explicit DisplayRefreshMonitorMac(PlatformDisplayID, WebPage&);
     
+    bool hasRequestedRefreshCallback() const override { return m_hasSentMessage; }
+
     Ref<WebPage> m_webPage;
     bool m_hasSentMessage { false };
     unsigned m_observerID;

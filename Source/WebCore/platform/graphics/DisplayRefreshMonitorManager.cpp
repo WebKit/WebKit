@@ -128,7 +128,7 @@ void DisplayRefreshMonitorManager::windowScreenDidChange(PlatformDisplayID displ
 void DisplayRefreshMonitorManager::displayWasUpdated()
 {
     for (auto monitor : m_monitors) {
-        if (monitor->isActive())
+        if (monitor->hasRequestedRefreshCallback())
             monitor->displayLinkFired();
     }
 }
