@@ -5375,6 +5375,10 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::ResizingWithAnimation) {
         [_contentView setHidden:YES];
         _dynamicViewportUpdateMode = WebKit::DynamicViewportUpdateMode::ResizingWithDocumentHidden;
+        
+        // _resizeWhileHidingContentWithUpdates is used by itself; the client will
+        // not call endAnimatedResize, so we can't wait for it.
+        _waitingForEndAnimatedResize = NO;
     }
 }
 
