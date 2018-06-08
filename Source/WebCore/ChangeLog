@@ -1,3 +1,18 @@
+2018-06-08  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add vertical margin computation for inline, block-level, inline-block and floating replaced elements
+        https://bugs.webkit.org/show_bug.cgi?id=186432
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin): Use the computed non-auto values when margin is not auto.
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedHorizontalMarginValue):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue):
+
 2018-06-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Add WorkerPool

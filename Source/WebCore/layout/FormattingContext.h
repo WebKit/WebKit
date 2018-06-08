@@ -106,6 +106,9 @@ protected:
         static Display::Box::Edges computedBorder(LayoutContext&, const Box&);
         static std::optional<Display::Box::Edges> computedPadding(LayoutContext&, const Box&);
 
+        static Display::Box::HorizontalEdges computedNonCollapsedHorizontalMarginValue(const LayoutContext&, const Box&);
+        static Display::Box::VerticalEdges computedNonCollapsedVerticalMarginValue(const LayoutContext&, const Box&);
+
     private:
         static HeightAndMargin outOfFlowReplacedHeightAndMargin(LayoutContext&, const Box&);
         static WidthAndMargin outOfFlowReplacedWidthAndMargin(LayoutContext&, const Box&);

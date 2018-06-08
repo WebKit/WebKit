@@ -226,21 +226,11 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatin
     // 2. If 'width' is computed as 'auto', the used value is the "shrink-to-fit" width.
     auto& style = layoutBox.style();
     auto width = style.logicalWidth();
-    LayoutUnit computedMarginLeftValue;
-    LayoutUnit computedMarginRightValue;
-
-    {
-        auto marginLeft = style.marginLeft();
-        auto marginRight = style.marginRight();
-        auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
-        // #1
-        computedMarginLeftValue = marginLeft.isAuto() ? LayoutUnit(0) : valueForLength(marginLeft, containingBlockWidth);
-        computedMarginRightValue = marginRight.isAuto() ? LayoutUnit(0) : valueForLength(marginRight, containingBlockWidth);
-    }
-
+    // #1
+    auto computedNonCollapsedHorizontalMarginValues = computedNonCollapsedHorizontalMarginValue(layoutContext, layoutBox);
     // #2
     auto computedWidthValue = width.isAuto() ? shrinkToFitWidth(layoutContext, layoutBox) : LayoutUnit(width.value());
-    return FormattingContext::Geometry::WidthAndMargin { computedWidthValue, { computedMarginLeftValue, computedMarginRightValue } };
+    return FormattingContext::Geometry::WidthAndMargin { computedWidthValue, computedNonCollapsedHorizontalMarginValues };
 }
 
 FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floatingReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
@@ -258,16 +248,8 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatin
     //
     // 1. If 'margin-left' or 'margin-right' are computed as 'auto', their used value is '0'.
     // 2. The used value of 'width' is determined as for inline replaced elements.
-    auto& style = layoutBox.style();
-    std::optional<LayoutUnit> computedMarginLeftValue;
-    std::optional<LayoutUnit> computedMarginRightValue;
-
-    if (style.marginLeft().isAuto())
-        computedMarginLeftValue = LayoutUnit { 0 };
-    if (style.marginRight().isAuto())
-        computedMarginRightValue = LayoutUnit { 0 };
-
-    return inlineReplacedWidthAndMargin(layoutContext, layoutBox, computedMarginLeftValue, computedMarginRightValue);
+    auto computedNonCollapsedHorizontalMarginValues = computedNonCollapsedHorizontalMarginValue(layoutContext, layoutBox);
+    return inlineReplacedWidthAndMargin(layoutContext, layoutBox, computedNonCollapsedHorizontalMarginValues.left, computedNonCollapsedHorizontalMarginValues.right);
 }
 
 static LayoutPoint outOfFlowNonReplacedPosition(LayoutContext& layoutContext, const Box& layoutBox)
@@ -503,46 +485,46 @@ LayoutPoint FormattingContext::Geometry::outOfFlowPosition(LayoutContext& layout
     return outOfFlowReplacedPosition(layoutContext, layoutBox);
 }
 
-FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(LayoutContext&, const Box& layoutBox)
+FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT((layoutBox.isOutOfFlowPositioned() || layoutBox.isFloatingPositioned() || layoutBox.isInFlow()) && layoutBox.replaced());
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block' replaced elements in normal flow and floating replaced elements
     //
-    // 1. If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic height, then that intrinsic height is the used value of 'height'.
-    //
-    // 2. Otherwise, if 'height' has a computed value of 'auto', and the element has an intrinsic ratio then the used value of 'height' is:
+    // 1. If 'margin-top', or 'margin-bottom' are 'auto', their used value is 0.
+    // 2. If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic height, then that intrinsic height is the used value of 'height'.
+    // 3. Otherwise, if 'height' has a computed value of 'auto', and the element has an intrinsic ratio then the used value of 'height' is:
     //    (used width) / (intrinsic ratio)
-    //
-    // 3. Otherwise, if 'height' has a computed value of 'auto', and the element has an intrinsic height, then that intrinsic height is the used value of 'height'.
-    //
-    // 4. Otherwise, if 'height' has a computed value of 'auto', but none of the conditions above are met, then the used value of 'height' must be set to
+    // 4. Otherwise, if 'height' has a computed value of 'auto', and the element has an intrinsic height, then that intrinsic height is the used value of 'height'.
+    // 5. Otherwise, if 'height' has a computed value of 'auto', but none of the conditions above are met, then the used value of 'height' must be set to
     //    the height of the largest rectangle that has a 2:1 ratio, has a height not greater than 150px, and has a width not greater than the device width.
+
+    // #1
+    auto computedNonCollapsedVerticalMarginValues = computedNonCollapsedVerticalMarginValue(layoutContext, layoutBox);
+
     auto& style = layoutBox.style();
-    auto width = style.logicalWidth();
     auto height = style.logicalHeight();
-
     LayoutUnit computedHeightValue;
-    auto replaced = layoutBox.replaced();
-    ASSERT(replaced);
-
     if (height.isAuto()) {
+        auto width = style.logicalWidth();
+        auto replaced = layoutBox.replaced();
+
         if (width.isAuto() && replaced->hasIntrinsicHeight()) {
-            // #1
+            // #2
             computedHeightValue = replaced->intrinsicHeight();
         } else if (replaced->hasIntrinsicRatio()) {
-            // #2
+            // #3
             computedHeightValue = width.value() / replaced->intrinsicRatio();
         } else if (replaced->hasIntrinsicHeight()) {
-            // #3
+            // #4
             computedHeightValue = replaced->intrinsicHeight();
         } else {
-            // #4
+            // #5
             computedHeightValue = 150;
         }
     } else
         computedHeightValue = height.value();
 
-    return { computedHeightValue, { } };
+    return { computedHeightValue, computedNonCollapsedVerticalMarginValues };
 }
 
 FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox,
@@ -634,6 +616,32 @@ std::optional<Display::Box::Edges> FormattingContext::Geometry::computedPadding(
     return Display::Box::Edges {
         { valueForLength(style.paddingLeft(), containingBlockWidth), valueForLength(style.paddingRight(), containingBlockWidth) },
         { valueForLength(style.paddingTop(), containingBlockWidth), valueForLength(style.paddingBottom(), containingBlockWidth) }
+    };
+}
+
+Display::Box::HorizontalEdges FormattingContext::Geometry::computedNonCollapsedHorizontalMarginValue(const LayoutContext& layoutContext, const Box& layoutBox)
+{
+    auto& style = layoutBox.style();
+    auto marginLeft = style.marginLeft();
+    auto marginRight = style.marginRight();
+
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+    return Display::Box::HorizontalEdges {
+        marginLeft.isAuto() ? LayoutUnit { 0 } : valueForLength(marginLeft, containingBlockWidth),
+        marginRight.isAuto() ? LayoutUnit { 0 } : valueForLength(marginRight, containingBlockWidth)
+    };
+}
+
+Display::Box::VerticalEdges FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue(const LayoutContext& layoutContext, const Box& layoutBox)
+{
+    auto& style = layoutBox.style();
+    auto marginTop = style.marginTop();
+    auto marginBottom = style.marginBottom();
+
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+    return Display::Box::VerticalEdges {
+        marginTop.isAuto() ? LayoutUnit { 0 } : valueForLength(marginTop, containingBlockWidth),
+        marginBottom.isAuto() ? LayoutUnit { 0 } : valueForLength(marginBottom, containingBlockWidth)
     };
 }
 
