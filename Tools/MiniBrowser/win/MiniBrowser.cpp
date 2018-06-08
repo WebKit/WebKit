@@ -60,7 +60,7 @@ static const int maxHistorySize = 10;
 
 typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
 
-Ref<MiniBrowser> MiniBrowser::create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting)
+Ref<BrowserWindow> MiniBrowser::create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting)
 {
     return adoptRef(*new MiniBrowser(mainWnd, urlBarWnd, useLayeredWebView, pageLoadTesting));
 }
@@ -430,7 +430,7 @@ void MiniBrowser::launchInspector()
     m_inspector->show();
 }
 
-void MiniBrowser::navigateForwardOrBackward(HWND hWnd, UINT menuID)
+void MiniBrowser::navigateForwardOrBackward(UINT menuID)
 {
     if (!m_webView)
         return;
@@ -442,7 +442,7 @@ void MiniBrowser::navigateForwardOrBackward(HWND hWnd, UINT menuID)
         m_webView->goBack(&wentBackOrForward);
 }
 
-void MiniBrowser::navigateToHistory(HWND hWnd, UINT menuID)
+void MiniBrowser::navigateToHistory(UINT menuID)
 {
     if (!m_webView)
         return;

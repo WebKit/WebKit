@@ -29,9 +29,7 @@
 
 #include "Common.h"
 #include "MainWindow.h"
-#if USE(CF)
-#include <CoreFoundation/CoreFoundation.h>
-#endif
+#include "MiniBrowser.h"
 #include <WebCore/COMPtr.h>
 #include <WebKitLegacy/WebKitCOMAPI.h>
 #include <comip.h>
@@ -40,6 +38,10 @@
 #include <objbase.h>
 #include <shlwapi.h>
 #include <wininet.h>
+
+#if USE(CF)
+#include <CoreFoundation/CoreFoundation.h>
+#endif
 
 static const int MARGIN = 20;
 
@@ -69,7 +71,8 @@ HRESULT PrintWebUIDelegate::createWebViewWithRequest(_In_opt_ IWebView*, _In_opt
         return E_FAIL;
     ShowWindow(newWindow.hwnd(), SW_SHOW);
 
-    *newWebView = newWindow.browserWindow()->webView();
+    auto& newBrowserWindow = *static_cast<MiniBrowser*>(newWindow.browserWindow());
+    *newWebView = newBrowserWindow.webView();
     IWebFramePtr frame;
     HRESULT hr;
     hr = (*newWebView)->mainFrame(&frame.GetInterfacePtr());

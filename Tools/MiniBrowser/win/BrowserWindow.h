@@ -25,42 +25,34 @@
 
 #pragma once
 
-#include "MiniBrowser.h"
-#include <memory>
-#include <string>
-#include <wtf/RefPtr.h>
+#include <windows.h>
+#include <wtf/RefCounted.h>
 
-class MainWindow : public RefCounted<MainWindow> {
+class BrowserWindow : public RefCounted<BrowserWindow> {
 public:
-    static Ref<MainWindow> create();
+    virtual ~BrowserWindow() { };
 
-    ~MainWindow();
-    bool init(HINSTANCE hInstance, bool usesLayeredWebView = false, bool pageLoadTesting = false);
+    virtual HRESULT init() = 0;
+    virtual HWND hwnd() = 0;
 
-    void resizeSubViews();
-    HWND hwnd() const { return m_hMainWnd; }
-    BrowserWindow* browserWindow() const { return m_browserWindow.get(); }
+    virtual HRESULT loadHTMLString(const BSTR&) = 0;
+    virtual HRESULT loadURL(const BSTR& passedURL) = 0;
+    virtual void navigateForwardOrBackward(UINT menuID) = 0;
+    virtual void navigateToHistory(UINT menuID) = 0;
+    virtual void setPreference(UINT menuID, bool enable) = 0;
+    virtual bool usesLayeredWebView() const { return false; }
 
-    void loadURL(BSTR url);
-    
-private:
-    static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-    static INT_PTR CALLBACK customUserAgentDialogProc(HWND, UINT, WPARAM, LPARAM);
-    static INT_PTR CALLBACK cachesDialogProc(HWND, UINT, WPARAM, LPARAM);
-    static void registerClass(HINSTANCE hInstance);
-    static std::wstring s_windowClass;
-    static size_t s_numInstances;
+    virtual void print() = 0;
+    virtual void launchInspector() = 0;
 
-    MainWindow();
-    bool toggleMenuItem(UINT menuID);
-    void onURLBarEnter();
-    void updateDeviceScaleFactor();
+    virtual _bstr_t userAgent() = 0;
+    virtual void setUserAgent(UINT menuID) = 0;
+    virtual void setUserAgent(_bstr_t& customUAString) = 0;
 
-    HWND m_hMainWnd { nullptr };
-    HWND m_hURLBarWnd { nullptr };
-    HWND m_hBackButtonWnd { nullptr };
-    HWND m_hForwardButtonWnd { nullptr };
-    HWND m_hCacheWnd { nullptr };
-    HGDIOBJ m_hURLBarFont { nullptr };
-    RefPtr<BrowserWindow> m_browserWindow;
+    virtual void showLayerTree() = 0;
+    virtual void updateStatistics(HWND dialog) = 0;
+
+    virtual void resetZoom() = 0;
+    virtual void zoomIn() = 0;
+    virtual void zoomOut() = 0;
 };

@@ -1,5 +1,32 @@
 2018-06-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [Win][MiniBrowser] Add a new BrowserWindow interface to abstract WK1 and WK2 BrowserWindow
+        https://bugs.webkit.org/show_bug.cgi?id=186421
+
+        Reviewed by Ryosuke Niwa.
+
+        This is the core patch to make MiniBrowser to support WK1 and WK2
+        windows (Bug 184770).
+
+        I will rename MiniBrowser class to WK1BrowserWindow in a follow-up
+        patch (Bug 184770 Comment 12).
+
+        * MiniBrowser/win/BrowserWindow.h: Added.
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::WndProc):
+        * MiniBrowser/win/MainWindow.h:
+        (MainWindow::browserWindow const):
+        * MiniBrowser/win/MiniBrowser.cpp:
+        (MiniBrowser::create):
+        (MiniBrowser::navigateForwardOrBackward): Removed the unsed first argument hWnd.
+        (MiniBrowser::navigateToHistory): Ditto.
+        * MiniBrowser/win/MiniBrowser.h: Inherit BrowserWindow interface.
+        Make all other methods private and make delegates classes friends.
+        * MiniBrowser/win/PrintWebUIDelegate.cpp:
+        (PrintWebUIDelegate::createWebViewWithRequest):
+
+2018-06-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [Win][MiniBrowser] MiniBrowser::updateDeviceScaleFactor should be a MainWindow's method
         https://bugs.webkit.org/show_bug.cgi?id=186387
 

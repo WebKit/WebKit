@@ -163,7 +163,7 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
             return DefWindowProc(hWnd, message, wParam, lParam);
         }
         if (wmId >= IDM_HISTORY_LINK0 && wmId <= IDM_HISTORY_LINK9) {
-            thisWindow->browserWindow()->navigateToHistory(hWnd, wmId);
+            thisWindow->browserWindow()->navigateToHistory(wmId);
             break;
         }
         // Parse the menu selections:
@@ -191,7 +191,7 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
             break;
         case IDM_HISTORY_BACKWARD:
         case IDM_HISTORY_FORWARD:
-            thisWindow->browserWindow()->navigateForwardOrBackward(hWnd, wmId);
+            thisWindow->browserWindow()->navigateForwardOrBackward(wmId);
             break;
         case IDM_UA_OTHER:
             DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_USER_AGENT), hWnd, customUserAgentDialogProc, reinterpret_cast<LPARAM>(thisWindow.get()));

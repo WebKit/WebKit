@@ -24,12 +24,12 @@
  */
 
 #pragma once
+#include "BrowserWindow.h"
 #include "PageLoadTestClient.h"
 #include <WebKitLegacy/WebKit.h>
 #include <comip.h>
 #include <memory>
 #include <vector>
-#include <wtf/RefCounted.h>
 
 typedef _com_ptr_t<_com_IIID<IWebFrame, &__uuidof(IWebFrame)>> IWebFramePtr;
 typedef _com_ptr_t<_com_IIID<IWebView, &__uuidof(IWebView)>> IWebViewPtr;
@@ -48,9 +48,17 @@ typedef _com_ptr_t<_com_IIID<IWebResourceLoadDelegate, &__uuidof(IWebResourceLoa
 typedef _com_ptr_t<_com_IIID<IWebDownloadDelegate, &__uuidof(IWebDownloadDelegate)>> IWebDownloadDelegatePtr;
 typedef _com_ptr_t<_com_IIID<IWebFramePrivate, &__uuidof(IWebFramePrivate)>> IWebFramePrivatePtr;
 
-class MiniBrowser : public RefCounted<MiniBrowser> {
+class MiniBrowser : public BrowserWindow {
 public:
-    static Ref<MiniBrowser> create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false, bool pageLoadTesting = false);
+    static Ref<BrowserWindow> create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false, bool pageLoadTesting = false);
+
+private:
+    friend class AccessibilityDelegate;
+    friend class MiniBrowserWebHost;
+    friend class PrintWebUIDelegate;
+    friend class WebDownloadDelegate;
+    friend class ResourceLoadDelegate;
+    friend class PageLoadTestClient;
 
     ULONG AddRef();
     ULONG Release();
@@ -63,8 +71,8 @@ public:
 
     void showLastVisitedSites(IWebView&);
     void launchInspector();
-    void navigateForwardOrBackward(HWND hWnd, UINT menuID);
-    void navigateToHistory(HWND hWnd, UINT menuID);
+    void navigateForwardOrBackward(UINT menuID);
+    void navigateToHistory(UINT menuID);
     void exitProgram();
     bool seedInitialDefaultPreferences();
     bool setToDefaultPreferences();
@@ -106,7 +114,6 @@ public:
     void updateStatistics(HWND dialog);
     void setPreference(UINT menuID, bool enable);
 
-private:
     MiniBrowser(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting);
     void subclassForLayeredWindow();
     bool setCacheFolder();
