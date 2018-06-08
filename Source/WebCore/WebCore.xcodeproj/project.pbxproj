@@ -2078,6 +2078,8 @@
 		7A0E770F10C00A8800A0276E /* InspectorFrontendHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A0E770C10C00A8800A0276E /* InspectorFrontendHost.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7A0E771F10C00DB100A0276E /* JSInspectorFrontendHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A0E771D10C00DB100A0276E /* JSInspectorFrontendHost.h */; };
 		7A1D7FCB18F85F0F00C385AD /* mediaControlsLocalizedStrings.js in Resources */ = {isa = PBXBuildFile; fileRef = 7A1D7FC918F85F0F00C385AD /* mediaControlsLocalizedStrings.js */; };
+		7A22732020C9F9DA00DB1DEF /* WebKitNSImageExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A22731E20C9F9D900DB1DEF /* WebKitNSImageExtras.mm */; };
+		7A22732120C9FAFE00DB1DEF /* WebKitNSImageExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A22731F20C9F9DA00DB1DEF /* WebKitNSImageExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7A29F57218C69514004D0F81 /* OutOfBandTextTrackPrivateAVF.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A29F57118C69514004D0F81 /* OutOfBandTextTrackPrivateAVF.h */; };
 		7A45032F18DB717200377B34 /* BufferedLineReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A45032D18DB717200377B34 /* BufferedLineReader.cpp */; };
 		7A45033018DB717200377B34 /* BufferedLineReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A45032E18DB717200377B34 /* BufferedLineReader.h */; };
@@ -9308,6 +9310,8 @@
 		7A0E771D10C00DB100A0276E /* JSInspectorFrontendHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInspectorFrontendHost.h; sourceTree = "<group>"; };
 		7A1D7FCA18F85F0F00C385AD /* English */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = English; path = English.lproj/mediaControlsLocalizedStrings.js; sourceTree = SOURCE_ROOT; };
 		7A1F2B51126C61B20006A7E6 /* InspectorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorClient.cpp; sourceTree = "<group>"; };
+		7A22731E20C9F9D900DB1DEF /* WebKitNSImageExtras.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitNSImageExtras.mm; sourceTree = "<group>"; };
+		7A22731F20C9F9DA00DB1DEF /* WebKitNSImageExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitNSImageExtras.h; sourceTree = "<group>"; };
 		7A29BA67187B732200F29CEB /* TemporaryOpenGLSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryOpenGLSetting.h; sourceTree = "<group>"; };
 		7A29BA69187B781C00F29CEB /* TemporaryOpenGLSetting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporaryOpenGLSetting.cpp; sourceTree = "<group>"; };
 		7A29F57118C69514004D0F81 /* OutOfBandTextTrackPrivateAVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutOfBandTextTrackPrivateAVF.h; sourceTree = "<group>"; };
@@ -23446,6 +23450,8 @@
 				B27535510B053814002CE64F /* IntSizeMac.mm */,
 				2D6E468217D660F500ECF8BB /* PDFDocumentImageMac.mm */,
 				163E88F5118A39D200ED9231 /* SimpleFontDataCoreText.cpp */,
+				7A22731F20C9F9DA00DB1DEF /* WebKitNSImageExtras.h */,
+				7A22731E20C9F9D900DB1DEF /* WebKitNSImageExtras.mm */,
 				0FCF332B0F2B9A25004B6795 /* WebLayer.h */,
 				0FCF332A0F2B9A25004B6795 /* WebLayer.mm */,
 			);
@@ -30844,6 +30850,7 @@
 				2D06214E1DA63A8E00A7FB26 /* WebKitMediaKeys.h in Headers */,
 				2D0621501DA63A9400A7FB26 /* WebKitMediaKeySession.h in Headers */,
 				7C48A6D1191C9D6500026674 /* WebKitNamespace.h in Headers */,
+				7A22732120C9FAFE00DB1DEF /* WebKitNSImageExtras.h in Headers */,
 				A5DEBDA416FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.h in Headers */,
 				494BD7950F55C8EE00747828 /* WebKitPoint.h in Headers */,
 				31C0FF250E4CEB6E007D6FE5 /* WebKitTransitionEvent.h in Headers */,
@@ -32123,6 +32130,7 @@
 				2D06214D1DA63A8B00A7FB26 /* WebKitMediaKeys.cpp in Sources */,
 				2D06214F1DA63A9100A7FB26 /* WebKitMediaKeySession.cpp in Sources */,
 				7C48A6D0191C9D6500026674 /* WebKitNamespace.cpp in Sources */,
+				7A22732020C9F9DA00DB1DEF /* WebKitNSImageExtras.mm in Sources */,
 				0709D7921AE5557E004E42F8 /* WebMediaSessionManagerMac.cpp in Sources */,
 				1CAF34820A6C405200ABE06E /* WebScriptObject.mm in Sources */,
 				F12171F516A8CED2000053CA /* WebVTTElement.cpp in Sources */,

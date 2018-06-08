@@ -39,6 +39,7 @@
 #import "StringTruncator.h"
 #import "TextIndicator.h"
 #import "URL.h"
+#import "WebKitNSImageExtras.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/CoreTextSPI.h>
 #import <pal/spi/cocoa/URLFormattingSPI.h>
@@ -293,7 +294,7 @@ LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
     boundingRect.setHeight((static_cast<int>(boundingRect.height() / 2) * 2));
 }
 
-DragImageRef createDragImageForLink(Element&, URL& url, const String& title, TextIndicatorData&, FontRenderingMode, float)
+DragImageRef createDragImageForLink(Element&, URL& url, const String& title, TextIndicatorData&, FontRenderingMode, float deviceScaleFactor)
 {
     LinkImageLayout layout(url, title);
 
@@ -302,7 +303,7 @@ DragImageRef createDragImageForLink(Element&, URL& url, const String& title, Tex
     imageSize.expand(2 * linkImageShadowRadius, 2 * linkImageShadowRadius - linkImageShadowOffsetY);
 #endif
     RetainPtr<NSImage> dragImage = adoptNS([[NSImage alloc] initWithSize:imageSize]);
-    [dragImage lockFocus];
+    [dragImage _web_lockFocusWithDeviceScaleFactor:deviceScaleFactor];
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

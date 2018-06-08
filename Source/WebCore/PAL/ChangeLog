@@ -1,3 +1,16 @@
+2018-06-08  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r230930): Link drag image is very blurry
+        https://bugs.webkit.org/show_bug.cgi?id=186435
+        <rdar://problem/40797202>
+
+        Reviewed by Tim Horton.
+
+        Add the necessary NSImage SPI to our SPI headers.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/mac/NSImageSPI.h: Added.
+
 2018-06-07  Chris Dumez  <cdumez@apple.com>
 
         Add base class to get WeakPtrFactory member and avoid some boilerplate code

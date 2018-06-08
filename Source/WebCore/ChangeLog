@@ -1,3 +1,29 @@
+2018-06-08  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r230930): Link drag image is very blurry
+        https://bugs.webkit.org/show_bug.cgi?id=186435
+        <rdar://problem/40797202>
+
+        Reviewed by Tim Horton.
+
+        Tell NSImage the proper display scale factor it needs when performing a 'lockFocus' by passing
+        the correct scaling transform as an NSImageHintCTM.
+
+        I reviewed the other drag operations (selection, image, and attachment) and confirmed through
+        manual testing that these operations already properly scale the images. It appears that links
+        were the only place where we relied on NSImage to determine and use the relevant device scale
+        factor.
+
+        * SourcesCocoa.txt: Add new WebKitNSImageExtras.mm file.
+        * WebCore.xcodeproj/project.pbxproj: Update for new files.
+        * platform/graphics/mac/WebKitNSImageExtras.h: Added.
+        * platform/graphics/mac/WebKitNSImageExtras.mm: Added.
+        (-[NSImage _web_lockFocusWithTransform:]): Helper method that takes a device scale factor, creates the
+        relevant scaling NSAffineTransform and passes it to the internal NSImage 'lockFocusWithRect' as the
+        NSImageHintCTM hint.
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageForLink): Use the new helper function.
+
 2018-06-08  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add vertical margin computation for inline, block-level, inline-block and floating replaced elements

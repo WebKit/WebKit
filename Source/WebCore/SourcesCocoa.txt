@@ -357,6 +357,7 @@ platform/graphics/mac/IntSizeMac.mm
 platform/graphics/mac/PDFDocumentImageMac.mm
 platform/graphics/mac/SimpleFontDataCoreText.cpp
 platform/graphics/mac/WebLayer.mm
+platform/graphics/mac/WebKitNSImageExtras.mm
 
 platform/graphics/opengl/Extensions3DOpenGL.cpp
 platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
