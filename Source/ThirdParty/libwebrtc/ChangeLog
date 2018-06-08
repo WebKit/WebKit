@@ -1,3 +1,19 @@
+2018-06-07  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Minor ARC tidying of libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=186396
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig: Set CLANG_ENABLE_OBJC_ARC here as we will eventually be
+        doing in all the various Base.xcconfig files as we make progress on conversion.
+
+        * Configurations/libwebrtc.xcconfig: Removed override of CLANG_ENABLE_OBJC_ARC here and
+        also removed five other redundant settings that match Base.xcconfig.
+
+        * libwebrtc.xcodeproj/project.pbxproj: Removed explicit -fobjc-arc that was set on
+        one particular source file, since that's already the default for the project.
+
 2018-06-04  Youenn Fablet  <youenn@apple.com>
 
         [WK1] Add an option to restrict communication to localhost sockets

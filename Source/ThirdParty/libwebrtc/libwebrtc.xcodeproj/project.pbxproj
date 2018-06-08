@@ -2745,7 +2745,7 @@
 		5CFD537C1E4BA4F500482908 /* audio_device_ios.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53751E4BA4F500482908 /* audio_device_ios.h */; };
 		5CFD53801E4BA4F500482908 /* audio_session_observer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53791E4BA4F500482908 /* audio_session_observer.h */; };
 		5CFD53811E4BA4F500482908 /* voice_processing_audio_unit.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD537A1E4BA4F500482908 /* voice_processing_audio_unit.h */; };
-		5CFD53821E4BA4F500482908 /* voice_processing_audio_unit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD537B1E4BA4F500482908 /* voice_processing_audio_unit.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		5CFD53821E4BA4F500482908 /* voice_processing_audio_unit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD537B1E4BA4F500482908 /* voice_processing_audio_unit.mm */; };
 		5CFD538D1E4BD3A300482908 /* compare_neon.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53851E4BD3A300482908 /* compare_neon.cc */; };
 		5CFD538E1E4BD3A300482908 /* compare_neon64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53861E4BD3A300482908 /* compare_neon64.cc */; };
 		5CFD538F1E4BD3A300482908 /* rotate_neon.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53871E4BD3A300482908 /* rotate_neon.cc */; };
