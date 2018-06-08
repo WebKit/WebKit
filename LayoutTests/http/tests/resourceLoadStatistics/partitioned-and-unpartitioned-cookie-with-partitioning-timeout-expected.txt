@@ -28,10 +28,10 @@ Client-side document.cookie: thirdPartyCookie=value
 --------
 Frame: '<!--frame4-->'
 --------
-After first user interaction, should only receive un-partitioned cookie.
-Received cookie named 'firstPartyCookie'.
-Did not receive cookie named 'thirdPartyCookie'.
-Client-side document.cookie: firstPartyCookie=value
+After first user interaction, should still only receive a partitioned, third-party cookie.
+Did not receive cookie named 'firstPartyCookie'.
+Received cookie named 'thirdPartyCookie'.
+Client-side document.cookie: thirdPartyCookie=value
 
 --------
 Frame: '<!--frame5-->'
@@ -44,7 +44,7 @@ Client-side document.cookie: thirdPartyCookie=value
 --------
 Frame: '<!--frame6-->'
 --------
-After second user interaction, should only receive un-partitioned cookie.
-Received cookie named 'firstPartyCookie'.
-Did not receive cookie named 'thirdPartyCookie'.
-Client-side document.cookie: firstPartyCookie=value
+After second user interaction, should still only receive a partitioned, third-party cookie.
+Did not receive cookie named 'firstPartyCookie'.
+Received cookie named 'thirdPartyCookie'.
+Client-side document.cookie: thirdPartyCookie=value

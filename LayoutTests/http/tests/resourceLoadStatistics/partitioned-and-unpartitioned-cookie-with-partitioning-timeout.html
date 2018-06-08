@@ -83,7 +83,7 @@
             case "#step5":
                 // http://localhost:8000 now has user interaction, check that un-partitioned cookie is sent for third-party
                 document.location.hash = "step6";
-                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After first user interaction, should only receive un-partitioned cookie.",
+                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After first user interaction, should still only receive a partitioned, third-party cookie.",
                     setShortCookiePartitioningTimeOutPlusFireShouldPartitionCookiesHandlerAndContinue);
                 break;
             case "#step6":
@@ -94,7 +94,7 @@
                 break;
             case "#step7":
                 // http://localhost:8000 now has fresh user interaction, check that un-partitioned cookie is sent for third-party
-                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After second user interaction, should only receive un-partitioned cookie.",
+                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After second user interaction, should still only receive a partitioned, third-party cookie.",
                     finishTest);
                 break;
         }

@@ -28,7 +28,7 @@ Client-side document.cookie: partitionedCookie=value
 --------
 Frame: '<!--frame4-->'
 --------
-After user interaction, should receive one non-partitioned, first party cookie.
-Received cookie named 'firstPartyCookie'.
-Did not receive cookie named 'partitionedCookie'.
-Client-side document.cookie: firstPartyCookie=value
+After user interaction, should still only receive one partitioned, third party cookie.
+Did not receive cookie named 'firstPartyCookie'.
+Received cookie named 'partitionedCookie'.
+Client-side document.cookie: partitionedCookie=value

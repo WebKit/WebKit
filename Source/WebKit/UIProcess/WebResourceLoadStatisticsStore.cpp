@@ -556,12 +556,8 @@ void WebResourceLoadStatisticsStore::logUserInteraction(const URL& url)
         statistics.hadUserInteraction = true;
         statistics.mostRecentUserInteractionTime = WallTime::now();
 
-        if (m_debugModeEnabled) {
-            if (statistics.isMarkedForCookieBlocking)
-                updateCookiePartitioningForDomains({ primaryDomain }, { }, { }, ShouldClearFirst::No, []() { });
-        } else
-            if (statistics.isMarkedForCookiePartitioning || statistics.isMarkedForCookieBlocking)
-                updateCookiePartitioningForDomains({ }, { }, { primaryDomain }, ShouldClearFirst::No, []() { });
+        if (statistics.isMarkedForCookieBlocking)
+            updateCookiePartitioningForDomains({ primaryDomain }, { }, { }, ShouldClearFirst::No, []() { });
     });
 }
 
@@ -1057,10 +1053,7 @@ void WebResourceLoadStatisticsStore::mergeStatistics(Vector<ResourceLoadStatisti
 
 bool WebResourceLoadStatisticsStore::shouldPartitionCookies(const ResourceLoadStatistics& statistic) const
 {
-    if (m_debugModeEnabled)
-        return statistic.isPrevalentResource && statistic.hadUserInteraction;
-
-    return statistic.isPrevalentResource && statistic.hadUserInteraction && WallTime::now() > statistic.mostRecentUserInteractionTime + m_parameters.timeToLiveCookiePartitionFree;
+    return statistic.isPrevalentResource && statistic.hadUserInteraction;
 }
 
 bool WebResourceLoadStatisticsStore::shouldBlockCookies(const ResourceLoadStatistics& statistic) const
