@@ -46,14 +46,16 @@ public:
 
 private:
     // API::AutomationClient
-    bool allowsRemoteAutomation(WebProcessPool*) override { return remoteAutomationAllowed(); }
-    void didRequestAutomationSession(WebKit::WebProcessPool*, const String& sessionIdentifier) override;
+    bool allowsRemoteAutomation(WebProcessPool*) final { return remoteAutomationAllowed(); }
+    void didRequestAutomationSession(WebKit::WebProcessPool*, const String& sessionIdentifier) final;
 
-    void requestAutomationSessionWithCapabilities(NSString *sessionIdentifier, NSDictionary *forwardedCapabilities) override;
+    void requestAutomationSessionWithCapabilities(NSString *sessionIdentifier, NSDictionary *forwardedCapabilities) final;
 
     // RemoteInspector::Client
-    bool remoteAutomationAllowed() const override;
-    void requestAutomationSession(const String& sessionIdentifier) override;
+    bool remoteAutomationAllowed() const final;
+    void requestAutomationSession(const String& sessionIdentifier) final;
+    String browserName() const final;
+    String browserVersion() const final;
 
     WKProcessPool *m_processPool;
     WeakObjCPtr<id <_WKAutomationDelegate>> m_delegate;
@@ -61,6 +63,8 @@ private:
     struct {
         bool allowsRemoteAutomation : 1;
         bool requestAutomationSession : 1;
+        bool browserNameForAutomation : 1;
+        bool browserVersionForAutomation : 1;
     } m_delegateMethods;
 };
 

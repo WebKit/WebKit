@@ -1,3 +1,13 @@
+2018-06-08  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Web Automation: include browser name and version in listing for automation targets
+        https://bugs.webkit.org/show_bug.cgi?id=186204
+        <rdar://problem/36950423>
+
+        Reviewed by Darin Adler.
+
+        * wtf/spi/cf/CFBundleSPI.h: Add needed infoDictionary key values.
+
 2018-06-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Add WorkerPool

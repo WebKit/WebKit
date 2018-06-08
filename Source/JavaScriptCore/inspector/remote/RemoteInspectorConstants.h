@@ -84,6 +84,8 @@
 #define WIRAutomaticInspectionCandidateMessage     @"WIRAutomaticInspectionCandidateMessage"
 
 #define WIRAutomationTargetIsPairedKey             @"WIRAutomationTargetIsPairedKey"
+#define WIRAutomationTargetNameKey                 @"WIRAutomationTargetNameKey"
+#define WIRAutomationTargetVersionKey              @"WIRAutomationTargetVersionKey"
 #define WIRSessionIdentifierKey                    @"WIRSessionIdentifierKey"
 #define WIRSessionCapabilitiesKey                  @"WIRSessionCapabilitiesKey"
 #define WIRAutomationSessionRequestMessage         @"WIRAutomationSessionRequestMessage"

@@ -427,6 +427,10 @@ RetainPtr<NSDictionary> RemoteInspector::listingForAutomationTarget(const Remote
     [listing setObject:target.name() forKey:WIRSessionIdentifierKey];
     [listing setObject:WIRTypeAutomation forKey:WIRTypeKey];
     [listing setObject:@(target.isPaired()) forKey:WIRAutomationTargetIsPairedKey];
+    if (m_clientCapabilities) {
+        [listing setObject:m_clientCapabilities->browserName forKey:WIRAutomationTargetNameKey];
+        [listing setObject:m_clientCapabilities->browserVersion forKey:WIRAutomationTargetVersionKey];
+    }
 
     if (auto connectionToTarget = m_targetConnectionMap.get(target.targetIdentifier()))
         [listing setObject:connectionToTarget->connectionIdentifier() forKey:WIRConnectionIdentifierKey];

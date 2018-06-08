@@ -36,6 +36,9 @@
 
 WTF_EXTERN_C_BEGIN
 
+extern const CFStringRef _kCFBundleDisplayNameKey;
+extern const CFStringRef _kCFBundleShortVersionStringKey;
+
 void _CFBundleSetupXPCBootstrap(xpc_object_t bootstrap);
 
 CFBundleRef _CFBundleCreateUnique(CFAllocatorRef, CFURLRef bundleURL);

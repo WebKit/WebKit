@@ -1,3 +1,25 @@
+2018-06-08  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Web Automation: include browser name and version in listing for automation targets
+        https://bugs.webkit.org/show_bug.cgi?id=186204
+        <rdar://problem/36950423>
+
+        Reviewed by Darin Adler.
+
+        Add a new delegate method that allows the client to set the name and version
+        of the browser as returned in the 'browserName' and 'browserVersion' capabilities.
+        If the delegate methods are not implemented, try to get this information from
+        the main bundle.
+
+        In the RWI protocol, these fields are added to automation target listings.
+
+        * UIProcess/API/Cocoa/_WKAutomationDelegate.h:
+        * UIProcess/Cocoa/AutomationClient.h:
+        * UIProcess/Cocoa/AutomationClient.mm:
+        (WebKit::AutomationClient::AutomationClient):
+        (WebKit::AutomationClient::browserName const):
+        (WebKit::AutomationClient::browserVersion const):
+
 2018-06-08  Per Arne Vollan  <pvollan@apple.com>
 
         Run display links in the UI process when ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING) is true.
