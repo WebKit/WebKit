@@ -1,3 +1,15 @@
+2018-06-08  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Wrong result when calling ImageBufferCairo's getImageData()
+        https://bugs.webkit.org/show_bug.cgi?id=186384
+
+        Reviewed by Michael Catanzaro.
+
+        Fix calculations so the result is the expected one.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::getImageData):
+
 2018-06-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Add base class to get WeakPtrFactory member and avoid some boilerplate code

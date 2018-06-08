@@ -349,11 +349,28 @@ RefPtr<cairo_surface_t> copySurfaceToImageAndAdjustRect(cairo_surface_t* surface
 template <AlphaPremultiplication premultiplied>
 RefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const IntRect& logicalRect, const ImageBufferData& data, const IntSize& size, const IntSize& logicalSize, float resolutionScale)
 {
-    auto result = Uint8ClampedArray::createUninitialized(rect.width() * rect.height() * 4);
+    // The area can overflow if the rect is too big.
+    Checked<unsigned, RecordOverflow> area = 4;
+    area *= rect.width();
+    area *= rect.height();
+    if (area.hasOverflowed())
+        return nullptr;
+
+    auto result = Uint8ClampedArray::createUninitialized(area.unsafeGet());
     if (!result)
         return nullptr;
 
-    if (rect.x() < 0 || rect.y() < 0 || (rect.x() + rect.width()) > size.width() || (rect.y() + rect.height()) > size.height())
+    // Can overflow, as we are adding 2 ints.
+    int endx = 0;
+    if (!WTF::safeAdd(rect.x(), rect.width(), endx))
+        return nullptr;
+
+    // Can overflow, as we are adding 2 ints.
+    int endy = 0;
+    if (!WTF::safeAdd(rect.y(), rect.height(), endy))
+        return nullptr;
+
+    if (rect.x() < 0 || rect.y() < 0 || endx > size.width() || endy > size.height())
         result->zeroFill();
 
     int originx = rect.x();
@@ -362,7 +379,7 @@ RefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const IntRect& logic
         destx = -originx;
         originx = 0;
     }
-    int endx = rect.maxX();
+
     if (endx > size.width())
         endx = size.width();
     int numColumns = endx - originx;
@@ -373,10 +390,14 @@ RefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const IntRect& logic
         desty = -originy;
         originy = 0;
     }
-    int endy = rect.maxY();
+
     if (endy > size.height())
         endy = size.height();
     int numRows = endy - originy;
+
+    // Nothing will be copied, so just return the result.
+    if (numColumns <= 0 || numRows <= 0)
+        return result;
 
     // The size of the derived surface is in BackingStoreCoordinateSystem.
     // We need to set the device scale for the derived surface from this ImageBuffer.
