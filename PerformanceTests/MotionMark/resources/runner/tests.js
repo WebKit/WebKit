@@ -64,7 +64,7 @@ Suites.push(new Suite("MotionMark",
             name: "Design"
         },
         {
-            url: "master/svg-particles.html",
+            url: "master/suits.html",
             name: "Suits"
         },
     ]

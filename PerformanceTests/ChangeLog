@@ -1,5 +1,17 @@
 2018-06-08  Jon Lee  <jonlee@apple.com>
 
+        [MotionMark] Rename Suits test files
+        https://bugs.webkit.org/show_bug.cgi?id=186447
+
+        Reviewed by Said Abou-Hallawa.
+
+        * MotionMark/resources/runner/tests.js:
+        * MotionMark/tests/master/resources/suits.js: Renamed from PerformanceTests/MotionMark/tests/master/resources/svg-particles.js.
+        * MotionMark/tests/master/suits.html: Renamed from PerformanceTests/MotionMark/tests/master/svg-particles.html.
+        * MotionMark/tests/svg/suits.html:
+
+2018-06-08  Jon Lee  <jonlee@apple.com>
+
         Add sub-tests based on Suits
         https://bugs.webkit.org/show_bug.cgi?id=186260
 
