@@ -19,3 +19,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-sizeOverflow.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/transfer-worker.js

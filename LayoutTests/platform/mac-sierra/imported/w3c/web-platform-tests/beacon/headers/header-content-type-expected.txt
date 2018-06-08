@@ -1,8 +1,0 @@
-
-PASS Test content-type header for a body string 
-FAIL Test content-type header for a body ArrayBufferView assert_equals: Correct Content-Type header result expected "" but got "application/x-www-form-urlencoded"
-FAIL Test content-type header for a body ArrayBuffer assert_equals: Correct Content-Type header result expected "" but got "application/x-www-form-urlencoded"
-PASS Test content-type header for a body Blob 
-PASS Test content-type header for a body FormData 
-PASS Test content-type header for a body URLSearchParams 
-

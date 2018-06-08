@@ -5,5 +5,4 @@ PASS Type: Blob, identifier: size
 PASS Type: Blob, identifier: type 
 PASS Type: File, identifier: name 
 PASS Type: File, identifier: lastModified 
-FAIL Type: File, identifier: lastModifiedDate Provided data is inadequate.
 

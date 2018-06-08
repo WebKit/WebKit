@@ -18,5 +18,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/support/document-domain-setter.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/support/historical-serviceworker.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/support/incumbent.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/support/send-file-form-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/support/upload.txt
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/support/url-origin.html

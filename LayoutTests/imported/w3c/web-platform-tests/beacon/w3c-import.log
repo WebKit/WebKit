@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/beacon/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-blob.html
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-blobMax.html
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-buffersource.html

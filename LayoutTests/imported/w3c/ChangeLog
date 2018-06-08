@@ -1,3 +1,309 @@
+2018-06-08  Brendan McLoughlin  <brendan@bocoup.com>
+
+        Sync web-platform-tests repo to 197cdad
+        https://bugs.webkit.org/show_bug.cgi?id=186267
+
+        Reviewed by Youenn Fablet.
+
+        * resources/resource-files.json:
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer.html:
+        * web-platform-tests/2dcontext/imagebitmap/w3c-import.log:
+        * web-platform-tests/FileAPI/BlobURL/support/file_test2.txt: Added.
+        * web-platform-tests/FileAPI/BlobURL/support/w3c-import.log:
+        * web-platform-tests/FileAPI/FileReader/support/file_test1.txt: Added.
+        * web-platform-tests/FileAPI/FileReader/workers-expected.txt: Added.
+        * web-platform-tests/FileAPI/FileReader/workers.html: Added.
+        * web-platform-tests/FileAPI/blob/Blob-constructor-endings-expected.txt: Added.
+        * web-platform-tests/FileAPI/blob/Blob-constructor-endings.html: Added.
+        * web-platform-tests/FileAPI/blob/w3c-import.log:
+        * web-platform-tests/FileAPI/file/File-constructor-endings-expected.txt: Added.
+        * web-platform-tests/FileAPI/file/File-constructor-endings.html: Added.
+        * web-platform-tests/FileAPI/file/send-file-form-expected.txt: Added.
+        * web-platform-tests/FileAPI/file/send-file-form-iso-2022-jp.tentative-expected.txt: Added.
+        * web-platform-tests/FileAPI/file/send-file-form-iso-2022-jp.tentative.html: Added.
+        * web-platform-tests/FileAPI/file/send-file-form-utf-8-expected.txt: Added.
+        * web-platform-tests/FileAPI/file/send-file-form-utf-8.html: Added.
+        * web-platform-tests/FileAPI/file/send-file-form-windows-1252.tentative-expected.txt: Added.
+        * web-platform-tests/FileAPI/file/send-file-form-windows-1252.tentative.html: Added.
+        * web-platform-tests/FileAPI/file/send-file-form-x-user-defined.tentative-expected.txt: Added.
+        * web-platform-tests/FileAPI/file/send-file-form-x-user-defined.tentative.html: Added.
+        * web-platform-tests/FileAPI/file/send-file-form.html: Added.
+        * web-platform-tests/FileAPI/historical.https-expected.txt:
+        * web-platform-tests/FileAPI/historical.https.html:
+        * web-platform-tests/FileAPI/reading-data-section/FileReader-multiple-reads-expected.txt:
+        * web-platform-tests/FileAPI/reading-data-section/FileReader-multiple-reads.html:
+        * web-platform-tests/FileAPI/reading-data-section/filereader_readAsBinaryString-expected.txt: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_readAsBinaryString.html: Added.
+        * web-platform-tests/FileAPI/reading-data-section/w3c-import.log:
+        * web-platform-tests/FileAPI/support/send-file-form-helper.js: Added.
+        (const.formPostFileUploadTest):
+        * web-platform-tests/FileAPI/support/w3c-import.log:
+        * web-platform-tests/FileAPI/unicode-expected.txt: Added.
+        * web-platform-tests/FileAPI/unicode.html: Added.
+        * web-platform-tests/FileAPI/url/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/FileAPI/BlobURL/support/w3c-import.log.
+        * web-platform-tests/FileAPI/url/url-in-tags-revoke.window.js: Added.
+        (async_test.t.frame.onload.t.step_func_done):
+        (async_test.t.frame.onload.t.step_func):
+        (async_test.t.add_completion_callback):
+        (async_test.t.win.onload.t.step_func_done):
+        (receive_message_on_channel):
+        (async_test.t.const.blob.new.Blob.window_contents_for_channel):
+        (async_test.t.e.onload.t.step_func_done):
+        * web-platform-tests/FileAPI/url/url-in-tags.window.js:
+        (async_test.t.frame.contentWindow.onscroll.t.step_func_done):
+        * web-platform-tests/FileAPI/url/url-reload.window.js: Added.
+        (blob_url_reload_test):
+        * web-platform-tests/FileAPI/url/w3c-import.log:
+        * web-platform-tests/FileAPI/w3c-import.log:
+        * web-platform-tests/IndexedDB/bigint_value-expected.txt: Added.
+        * web-platform-tests/IndexedDB/bigint_value.htm: Added.
+        * web-platform-tests/IndexedDB/historical-expected.txt:
+        * web-platform-tests/IndexedDB/historical.html:
+        * web-platform-tests/IndexedDB/idbcursor-iterating-update-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbcursor-iterating-update.htm: Added.
+        * web-platform-tests/IndexedDB/interleaved-cursors-common.js: Added.
+        (objectKey):
+        (objectValue):
+        (writeCursorObjects):
+        (interleaveCursors):
+        * web-platform-tests/IndexedDB/interleaved-cursors-large-expected.txt: Added.
+        * web-platform-tests/IndexedDB/interleaved-cursors-large.html: Added.
+        * web-platform-tests/IndexedDB/interleaved-cursors-small-expected.txt: Added.
+        * web-platform-tests/IndexedDB/interleaved-cursors-small.html: Added.
+        * web-platform-tests/IndexedDB/keypath-special-identifiers-expected.txt:
+        * web-platform-tests/IndexedDB/keypath-special-identifiers.htm:
+        * web-platform-tests/IndexedDB/keypath.htm:
+        * web-platform-tests/IndexedDB/support.js:
+        (add_completion_callback):
+        (indexeddb_test):
+        * web-platform-tests/IndexedDB/w3c-import.log:
+        * web-platform-tests/IndexedDB/wasm-module-value-expected.txt: Added.
+        * web-platform-tests/IndexedDB/wasm-module-value.html: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.any-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.any.worker-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.https.any-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.https.any.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.https.any.worker-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.https.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.https.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.https.any-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.https.any.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.https.any.worker-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.https.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.https.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.https.any-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.https.any.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_HMAC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.https.any.worker-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.https.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-OAEP.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.https.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CTR.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_HMAC.https.any-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_HMAC.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_HMAC.https.any.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-GCM.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_HMAC.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_HMAC.https.any.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_HMAC.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_HMAC.https.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-KW.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_HMAC.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-OAEP.https.any-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-OAEP.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-OAEP.https.any.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-OAEP.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-OAEP.https.any.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-OAEP.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-OAEP.https.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-OAEP.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any-expected.txt: Copied from LayoutTests/platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_HMAC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any.worker-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.https.any-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.https.any.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.https.any.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.https.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.https.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes.js:
+        (run_test):
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CBC.https.any-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CBC.https.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CBC.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CBC.https.any.worker-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CBC.https.any.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CBC.https.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CBC.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CTR.https.any-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CTR.https.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CTR.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CTR.https.any.worker-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CTR.https.any.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CTR.https.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CTR.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-GCM.https.any-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-GCM.https.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-GCM.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-GCM.https.any.worker-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-GCM.https.any.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-GCM.https.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-GCM.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-KW.https.any-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-KW.https.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-KW.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-KW.https.any.worker-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-KW.https.any.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-KW.https.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-KW.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any.worker-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any.worker-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_HMAC.https.any-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_HMAC.https.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_HMAC.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_HMAC.https.any.worker-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_HMAC.https.any.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_HMAC.https.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_HMAC.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.worker-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.https.any-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.https.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.https.any.worker-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.https.any.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.https.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_aes-cbc.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_aes-cbc.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_aes-ctr-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_aes-ctr.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_aes-ctr.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_AES-CBC-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_AES-CBC.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_AES-CBC.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_AES-CTR-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_AES-CTR.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_AES-CTR.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_AES-GCM-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_AES-GCM.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_AES-GCM.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_AES-KW-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_AES-KW.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_AES-KW.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDH.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDH.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDSA-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDSA.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDSA.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_HMAC-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_HMAC.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_HMAC.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSA-OAEP.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSA-OAEP.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSA-PSS.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSA-PSS.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSASSA-PKCS1-v1_5.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSASSA-PKCS1-v1_5.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_AES-CBC-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_AES-CBC.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_AES-CBC.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_AES-CTR-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_AES-CTR.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_AES-CTR.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_AES-GCM.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_AES-GCM.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_AES-KW.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_AES-KW.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDH-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDH.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDH.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDSA.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDSA.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_HMAC.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_HMAC.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-OAEP.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-OAEP.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-PSS-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-PSS.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-PSS.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSASSA-PKCS1-v1_5.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSASSA-PKCS1-v1_5.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/w3c-import.log:
+        * web-platform-tests/WebIDL/ecmascript-binding/default-iterator-object-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/default-iterator-object.html: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/iterator-prototype-object-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/iterator-prototype-object.html: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/no-regexp-special-casing.any-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/no-regexp-special-casing.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebIDL/ecmascript-binding/no-regexp-special-casing.any.js: Added.
+        (test):
+        (test.regExp.Symbol.iterator):
+        (promise_test.async):
+        * web-platform-tests/WebIDL/ecmascript-binding/no-regexp-special-casing.any.worker-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/no-regexp-special-casing.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html.
+        * web-platform-tests/WebIDL/ecmascript-binding/w3c-import.log:
+        * web-platform-tests/background-fetch/interfaces.html:
+        * web-platform-tests/background-fetch/interfaces.worker.js:
+        (promise_test.async):
+        (promise_test): Deleted.
+        * web-platform-tests/beacon/OWNERS: Added.
+        * web-platform-tests/beacon/beacon-common.sub.js:
+        * web-platform-tests/beacon/beacon-cors.sub.window.js:
+        (runTests.self.buildId):
+        (runTests.self.buildBaseUrl):
+        (runTests.self.buildTargetUrl):
+        (runTests):
+        * web-platform-tests/beacon/beacon-error.window.js:
+        (promise_test.async):
+        * web-platform-tests/beacon/beacon-navigate-expected.txt:
+        * web-platform-tests/beacon/headers/header-content-type.html:
+        * web-platform-tests/beacon/resources/beacon.py:
+        (main):
+        * web-platform-tests/beacon/w3c-import.log:
+
 2018-06-07  Chris Dumez  <cdumez@apple.com>
 
         PopStateEvent should not be cancelable by default

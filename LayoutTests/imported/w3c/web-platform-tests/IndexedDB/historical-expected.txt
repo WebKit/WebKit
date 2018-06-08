@@ -11,4 +11,7 @@ PASS "PREV_NO_DUPLICATE" should not be supported on IDBCursor.
 PASS "READ_ONLY" should not be supported on IDBTransaction. 
 PASS "READ_WRITE" should not be supported on IDBTransaction. 
 PASS "VERSION_CHANGE" should not be supported on IDBTransaction. 
+PASS "IDBFileHandle" should not be supported 
+PASS "IDBFileRequest" should not be supported 
+PASS "IDBMutableFile" should not be supported 
 

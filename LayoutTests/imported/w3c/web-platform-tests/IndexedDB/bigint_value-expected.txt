@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 41: SyntaxError: No identifiers allowed directly after numeric literal
+
+FAIL IndexedDB: BigInt keys and values SyntaxError: No identifiers allowed directly after numeric literal
+

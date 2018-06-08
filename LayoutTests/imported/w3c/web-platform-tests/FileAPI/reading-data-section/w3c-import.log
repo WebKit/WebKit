@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_abort.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_error.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_readAsArrayBuffer.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_readAsBinaryString.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_readAsDataURL.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_readAsText.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_readystate.html

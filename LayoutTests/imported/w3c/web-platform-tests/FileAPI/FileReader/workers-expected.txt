@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 7: InvalidStateError: The object is in an invalid state.
+
+Harness Error (FAIL), message = InvalidStateError: The object is in an invalid state.
+
+TIMEOUT FileReader created after a worker self.close() Test timed out
+

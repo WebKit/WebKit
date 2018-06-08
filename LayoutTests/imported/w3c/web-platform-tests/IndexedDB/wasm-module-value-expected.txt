@@ -1,0 +1,5 @@
+
+FAIL WebAssembly module as an IndexedDB value Failed to store record in an IDBObjectStore: An object could not be cloned.
+FAIL WebAssembly module in a JavaScript object IndexedDB value Failed to store record in an IDBObjectStore: An object could not be cloned.
+FAIL WebAssembly module in an IndexedDB value with an inline key Failed to store record in an IDBObjectStore: An object could not be cloned.
+

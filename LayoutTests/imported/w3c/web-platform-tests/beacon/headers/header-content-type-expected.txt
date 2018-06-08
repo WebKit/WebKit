@@ -1,8 +1,10 @@
 
-PASS Test content-type header for a body string 
-PASS Test content-type header for a body ArrayBufferView 
-PASS Test content-type header for a body ArrayBuffer 
-PASS Test content-type header for a body Blob 
-PASS Test content-type header for a body FormData 
-PASS Test content-type header for a body URLSearchParams 
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Test content-type header for a body string Test timed out
+NOTRUN Test content-type header for a body ArrayBufferView 
+NOTRUN Test content-type header for a body ArrayBuffer 
+NOTRUN Test content-type header for a body Blob 
+NOTRUN Test content-type header for a body FormData 
+NOTRUN Test content-type header for a body URLSearchParams 
 

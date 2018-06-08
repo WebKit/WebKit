@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/README.md
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/abort-in-initial-upgradeneeded.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/bigint_value.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/bindings-inject-key.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/clone-before-keypath-eval.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/close-in-upgradeneeded.html
@@ -48,6 +49,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-direction-objectstore-keyrange.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-direction-objectstore.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-direction.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-iterating-update.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-key.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-primarykey.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-request-source.html
@@ -316,6 +318,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbworker.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/index_sort_order.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interfaces.any.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-common.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/key-conversion-exceptions.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/key_invalid.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/key_valid.html
@@ -364,4 +369,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/upgrade-transaction-lifecycle-user-aborted.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/value.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/value_recursive.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/wasm-module-value.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/writer-starvation.htm

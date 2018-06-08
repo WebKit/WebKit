@@ -8,20 +8,19 @@
 <script src="common.sub.js"></script>
 <div id=log></div>
 <script>
-let worker, tests = {};
+let worker, continuations = {};
 setup(function() {
     worker = new Worker("transfer-worker.js");
     worker.addEventListener("message", function(event) {
         let { name, bitmap } = event.data;
-        tests[name](bitmap);
+        if (continuations.hasOwnProperty(name)) {
+            continuations[name](bitmap);
+        }
     });
 });
 
 for (let { name, factory } of imageSourceTypes) {
     promise_test(function(t) {
-        let message_handler = new Promise(function(resolve) {
-            tests[t.name] = resolve;
-        });
         return factory().then(createImageBitmap).then(function(bitmap) {
             assert_equals(bitmap.width, 20);
             assert_equals(bitmap.height, 20);
@@ -31,7 +30,9 @@ for (let { name, factory } of imageSourceTypes) {
             assert_equals(bitmap.width, 0);
             assert_equals(bitmap.height, 0);
 
-            return message_handler;
+            return new Promise(function(resolve) {
+                continuations[t.name] = resolve;
+            });
         }).then(function(bitmap) {
             assert_class_string(bitmap, "ImageBitmap");
             assert_equals(bitmap.width, 20);

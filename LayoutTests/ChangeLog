@@ -1,3 +1,18 @@
+2018-06-08  Brendan McLoughlin  <brendan@bocoup.com>
+
+        Sync web-platform-tests repo to 197cdad
+        https://bugs.webkit.org/show_bug.cgi?id=186267
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        * platform/ios/imported/w3c/web-platform-tests/beacon/headers/header-content-type-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/beacon/headers/header-content-type-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.worker-expected.txt: Removed.
+        * platform/mac/imported/w3c/web-platform-tests/beacon/headers/header-content-type-expected.txt:
+
 2018-06-08  Chris Dumez  <cdumez@apple.com>
 
         http/tests/navigation/https-no-store-subframe-in-page-cache.html fails with PSON enabled

@@ -1423,14 +1423,10 @@ workers/wasm-long-compile.html [ Slow ]
 # Flaky WebCrypto API tests
 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.html [ Pass Failure Slow ]
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-OAEP.https.html [ Pass Failure ]
 
 # WebCryptoAPI tests that take too long to complete
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.worker.html [ Skip ]
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.https.worker.html [ Slow ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.html [ Slow ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Slow ]
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.worker.html [ Slow ]
 
 # Imported Beacon test that is flaky because its last check is very slow.
 webkit.org/b/175202 imported/w3c/web-platform-tests/beacon/beacon-basic-string.html [ Pass Failure ]
@@ -2012,3 +2008,6 @@ webkit.org/b/184800 http/tests/workers/worker-importScripts-banned-mimetype.html
 webkit.org/b/184802 http/tests/security/contentTypeOptions/nosniff-importScript-blocked.html [ Pass Timeout ]
 
 webkit.org/b/181100 inspector/worker/worker-recover-if-inspector-close.html [ Pass Failure ]
+
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html [ Failure ]
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Failure ]

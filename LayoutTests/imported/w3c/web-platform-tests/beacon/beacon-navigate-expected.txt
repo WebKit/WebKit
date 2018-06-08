@@ -7,4 +7,7 @@ PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallString
 PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallBlob-beacon-NAVIGATE 
 PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallBufferSource-beacon-NAVIGATE 
 PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallFormData-beacon-NAVIGATE 
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallSafeContentTypeEncoded-beacon-NAVIGATE 
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallSafeContentTypeForm-beacon-NAVIGATE 
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallSafeContentTypeText-beacon-NAVIGATE 
 
