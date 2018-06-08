@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -291,6 +291,31 @@ Suites.push(new Suite("Text suite",
         {
             url: "text/design-6.html?corpus=arabic",
             name: "Design: RTL and complex scripts only (6 items)"
+        },
+    ]
+));
+
+Suites.push(new Suite("Suits suite",
+    [
+        {
+            url: "svg/suits.html?style=clip",
+            name: "Suits: clip only"
+        },
+        {
+            url: "svg/suits.html?style=shape",
+            name: "Suits: shape only"
+        },
+        {
+            url: "svg/suits.html?style=rotation",
+            name: "Suits: clip, shape, rotation"
+        },
+        {
+            url: "svg/suits.html?style=gradient",
+            name: "Suits: clip, shape, gradient"
+        },
+        {
+            url: "svg/suits.html?style=static",
+            name: "Suits: static"
         },
     ]
 ));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,20 @@
  */
 (function() {
 
-SVGParticle = Utilities.createSubclass(Particle,
+window.SuitsParticle = Utilities.createSubclass(Particle,
     function(stage)
     {
+        this.isClipPath = stage.particleCounter % 2;
+        this.initialize(stage);
+    }, {
+
+    sizeMinimum: 30,
+    sizeRange: 40,
+    hasGradient: true,
+
+    initialize: function(stage)
+    {
         var shapeId = "#shape-" + Stage.randomInt(1, stage.particleTypeCount);
-        this.isClipPath = Stage.randomBool();
         if (this.isClipPath) {
             this.element = Utilities.createSVGElement("rect", {
                 x: 0,
@@ -41,16 +50,14 @@ SVGParticle = Utilities.createSubclass(Particle,
             stage.element.appendChild(this.element);
         }
 
-        this.gradient = document.getElementById("default-gradient").cloneNode(true);
-        this.gradient.id = "gradient-" + stage.gradientsCounter++;
-        stage.gradientsDefs.appendChild(this.gradient);
-        this.element.setAttribute("fill", "url(#" + this.gradient.id + ")");
-
+        if (this.hasGradient) {
+            this.gradient = document.getElementById("default-gradient").cloneNode(true);
+            this.gradient.id = "gradient-" + stage.gradientsCounter++;
+            stage.gradientsDefs.appendChild(this.gradient);
+            this.element.setAttribute("fill", "url(#" + this.gradient.id + ")");
+        }
         Particle.call(this, stage);
-    }, {
-
-    sizeMinimum: 30,
-    sizeRange: 40,
+    },
 
     reset: function()
     {
@@ -72,13 +79,16 @@ SVGParticle = Utilities.createSubclass(Particle,
 
         this.stage.colorOffset = (this.stage.colorOffset + .5) % 360;
 
-        var transform = this.stage.element.createSVGTransform();
-        transform.setRotate(Stage.randomInt(0, 359), 0, 0);
-        this.gradient.gradientTransform.baseVal.initialize(transform);
+        if (this.hasGradient) {
+            var transform = this.stage.element.createSVGTransform();
+            transform.setRotate(Stage.randomInt(0, 359), 0, 0);
+            this.gradient.gradientTransform.baseVal.initialize(transform);
 
-        var stops = this.gradient.querySelectorAll("stop");
-        stops[0].setAttribute("stop-color", "hsl(" + this.stage.colorOffset + ", 70%, 45%)");
-        stops[1].setAttribute("stop-color", "hsl(" + ((this.stage.colorOffset + Stage.randomInt(50,100)) % 360) + ", 70%, 65%)");
+            var stops = this.gradient.querySelectorAll("stop");
+            stops[0].setAttribute("stop-color", "hsl(" + this.stage.colorOffset + ", 70%, 45%)");
+            stops[1].setAttribute("stop-color", "hsl(" + ((this.stage.colorOffset + Stage.randomInt(50,100)) % 360) + ", 70%, 65%)");
+        } else
+            this.element.setAttribute("fill", "hsl(" + this.stage.colorOffset + ", 70%, 65%)");
     },
 
     move: function()
@@ -87,7 +97,7 @@ SVGParticle = Utilities.createSubclass(Particle,
     }
 });
 
-SVGParticleStage = Utilities.createSubclass(ParticlesStage,
+var SuitsStage = Utilities.createSubclass(ParticlesStage,
     function()
     {
         ParticlesStage.call(this);
@@ -108,11 +118,13 @@ SVGParticleStage = Utilities.createSubclass(ParticlesStage,
         this.particleTypeCount = document.querySelectorAll(".shape").length;
         this.gradientsDefs = document.getElementById("gradients");
         this.gradientsCounter = 0;
+        this.particleCounter = 0;
     },
 
     createParticle: function()
     {
-        return new SVGParticle(this);
+        this.particleCounter++;
+        return new SuitsParticle(this);
     },
 
     willRemoveParticle: function(particle)
@@ -123,13 +135,13 @@ SVGParticleStage = Utilities.createSubclass(ParticlesStage,
     }
 });
 
-SVGParticleBenchmark = Utilities.createSubclass(Benchmark,
+var SuitsBenchmark = Utilities.createSubclass(Benchmark,
     function(options)
     {
-        Benchmark.call(this, new SVGParticleStage(), options);
+        Benchmark.call(this, new SuitsStage(), options);
     }
 );
 
-window.benchmarkClass = SVGParticleBenchmark;
+window.benchmarkClass = SuitsBenchmark;
 
 })();

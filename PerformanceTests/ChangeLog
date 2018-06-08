@@ -1,3 +1,28 @@
+2018-06-08  Jon Lee  <jonlee@apple.com>
+
+        Add sub-tests based on Suits
+        https://bugs.webkit.org/show_bug.cgi?id=186260
+
+        Reviewed by Said Abou-Hallawa.
+
+        Add a new developer Suits suite with sub-tests that isolate parts of each particle.
+        The sub-tests are:
+            - Particles using only clip paths
+            - Particles using only shapes
+            - Particles that have no gradients
+            - Particles that have no rotation
+            - Particles that do not move around at all (but all of the physics calculations are
+            still performed)
+
+        * MotionMark/resources/debug-runner/tests.js:
+        * MotionMark/tests/master/resources/svg-particles.js: Rename the stage, particle, and
+        benchmark to "Suits" from "SVG". Change SuitsParticle so that we guarantee 50% clip and
+        shape paths rather than relying on random chance. Wrap a check around creation of the
+        gradient element, and use a simple fill color when we aren't using a gradient.
+        * MotionMark/tests/svg/suits.html: Added.
+        * MotionMark/tests/svg/suits.js: Added.
+        Look for the query string and set the particle based on what is selected.
+
 2018-06-06  Jon Lee  <jonlee@apple.com>
 
         Allow the ramp controller to run tests that take less time than the initial ramp-up phase
