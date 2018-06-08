@@ -681,7 +681,7 @@ _WKRemoteObjectRegistry *WebPageProxy::remoteObjectRegistry()
 }
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 void WebPageProxy::startDisplayLink(unsigned observerID)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));

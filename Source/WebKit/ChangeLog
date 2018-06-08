@@ -1,5 +1,24 @@
 2018-06-08  Per Arne Vollan  <pvollan@apple.com>
 
+        Run display links in the UI process when ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING) is true.
+        https://bugs.webkit.org/show_bug.cgi?id=186379
+
+        Reviewed by Brent Fulgham.
+
+        Replace __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 with ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/DisplayLink.cpp:
+        * UIProcess/mac/DisplayLink.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * WebProcess/WebPage/DrawingArea.cpp:
+        * WebProcess/WebPage/mac/DrawingAreaMac.cpp:
+
+2018-06-08  Per Arne Vollan  <pvollan@apple.com>
+
         Send display link IPC message from display link thread.
         https://bugs.webkit.org/show_bug.cgi?id=186429
 

@@ -1598,7 +1598,7 @@ void WebPageProxy::dispatchActivityStateChange()
     if (changed & ActivityState::IsVisible) {
         if (isViewVisible()) {
             m_visiblePageToken = m_process->visiblePageToken();
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
             if (m_displayLink)
                 m_displayLink->resume();
 #endif
@@ -1610,7 +1610,7 @@ void WebPageProxy::dispatchActivityStateChange()
             // state, it might not send back a reply (since it won't paint anything if the web page is hidden) so we
             // stop the unresponsiveness timer here.
             m_process->responsivenessTimer().stop();
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
             if (m_displayLink)
                 m_displayLink->pause();
 #endif
