@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>audio-session-category-track-change</title>
+    <script src="../../../media/video-test.js"></script>
+    <script src="../../../media/media-file.js"></script>
+    <script>
+    function go() {
+        audio = video = mediaElement = document.querySelector('audio');
+        run('internals.settings.setShouldManageAudioSessionCategory(true)');
+        run('audio.autoplay = true');
+        run('audio.src = findMediaFile("audio", "../../../media/content/test")');
+        waitForEvent('playing', playing);
+    }
+
+    function playing() {
+        testExpected('internals.audioSessionCategory()', 'MediaPlayback');
+        endTest();
+    }
+    </script>
+</head>
+<body onload="go()">
+    <audio controls></video>
+</body>
+</html>

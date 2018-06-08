@@ -1,3 +1,14 @@
+2018-06-07  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION:  Cannot listen to audio on Google Translate with side switch set to "vibrate"
+        https://bugs.webkit.org/show_bug.cgi?id=186415
+        <rdar://problem/40584651>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/media/audio-session-category-audio-autoplay-expected.txt: Added.
+        * platform/mac/media/audio-session-category-audio-autoplay.html: Added.
+
 2018-06-08  Brendan McLoughlin  <brendan@bocoup.com>
 
         Sync web-platform-tests repo to 197cdad

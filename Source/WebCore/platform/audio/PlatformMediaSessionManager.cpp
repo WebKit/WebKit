@@ -213,7 +213,6 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession&
             oneSession.pauseSession();
     });
 
-    updateSessionState();
     return true;
 }
     
@@ -247,6 +246,11 @@ void PlatformMediaSessionManager::sessionWillEndPlayback(PlatformMediaSession& s
     m_sessions.insert(lastPlayingSessionIndex, &session);
     
     LOG(Media, "PlatformMediaSessionManager::sessionWillEndPlayback - session moved from index %zu to %zu", pausingSessionIndex, lastPlayingSessionIndex);
+}
+
+void PlatformMediaSessionManager::sessionStateChanged(PlatformMediaSession&)
+{
+    updateSessionState();
 }
 
 void PlatformMediaSessionManager::setCurrentSession(PlatformMediaSession& session)

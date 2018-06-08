@@ -112,8 +112,12 @@ PlatformMediaSession::~PlatformMediaSession()
 
 void PlatformMediaSession::setState(State state)
 {
+    if (state == m_state)
+        return;
+
     INFO_LOG(LOGIDENTIFIER, state);
     m_state = state;
+    PlatformMediaSessionManager::sharedManager().sessionStateChanged(*this);
 }
 
 void PlatformMediaSession::beginInterruption(InterruptionType type)
