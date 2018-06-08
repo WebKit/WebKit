@@ -1,3 +1,46 @@
+2018-06-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(macOS Mojave): move-by-word-visually-inline-block-positioned-element.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=186424
+
+        Reviewed by Wenson Hsieh.
+
+        The test failure is ultimately caused by the change in ICU's behavior. With the CPU in the latest macOS Mojave,
+        ubrk_getRuleStatus returns 200 / UBRK_WORD_LETTER at the end of a buffer given to UBreakIterator. This caused
+        isWordTextBreak to return true instead of false in isLogicalStartOfWord at the end of the buffer.
+
+        This ICU behavior shouldn't have caused a problem in theory. However, WebKit had a bug in visualWordPosition which
+        caused UBreakIterator to not include the succeeding word when traversing words to the left (backwards in LTR text)
+        at the beginning of the last block element with exactly one line box after an non-statically positioned element.
+
+        In this case, visualWordPosition invokes wordBreakIteratorForMaxOffsetBoundary (because adjacentCharacterPosition
+        is now at the end of the last word in the non-statically positioned element) to setup UBreakIterator. Because
+        there are no line boxes left in the current line (in the last block element with exactly one line box),
+        logicallyNextBox enters the while loop and invoke nextRootInlineBoxCandidatePosition to find the next root line box.
+        However, the visible position given to this function is at the beginning of the first word in the block element.
+        As a result, nextRootInlineBoxCandidatePosition skips over this entire line and finds no line box after the one
+        we had in the non-statically positioned element.
+
+        Let us consider the following concrete example in which a position: static div is followed by another div, and each
+        div contains text nodes "hello" and "world" respectively:
+        - div position: static (1)
+            - "hello"
+        - div (2)
+            - "world"
+        Suppose we're at the offset 0 of "world", and trying to move to the left. In this case, adjacentCharacterPosition is
+        at offset 5 of "world". The next line box should be that of "world". However, because we invoke logicallyNextBox via
+        wordBreakIteratorForMaxOffsetBoundary with the visible position at offset 0 of "world", it skips this line and return
+        nullptr.
+
+        This patch addresses this test failure by fixing visualWordPosition by passing adjacentCharacterPosition (at offset 5
+        of "hello") as the visible position to find the next text box so that nextRootInlineBoxCandidatePosition invoked in
+        logicallyNextBox would not skip the line ("world") from which we started the traversal to find the next line box.
+
+        Tests: editing/selection/move-by-word-visually-inline-block-positioned-element.html
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::visualWordPosition):
+
 2018-06-08  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r230930): Link drag image is very blurry

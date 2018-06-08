@@ -384,9 +384,9 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
         bool movingIntoNewBox = previouslyVisitedBox != box;
 
         if (offsetInBox == box->caretMinOffset())
-            iter = wordBreakIteratorForMinOffsetBoundary(visiblePosition, &textBox, previousBoxLength, previousBoxInDifferentBlock, string, leafBoxes);
+            iter = wordBreakIteratorForMinOffsetBoundary(adjacentCharacterPosition, &textBox, previousBoxLength, previousBoxInDifferentBlock, string, leafBoxes);
         else if (offsetInBox == box->caretMaxOffset())
-            iter = wordBreakIteratorForMaxOffsetBoundary(visiblePosition, &textBox, nextBoxInDifferentBlock, string, leafBoxes);
+            iter = wordBreakIteratorForMaxOffsetBoundary(adjacentCharacterPosition, &textBox, nextBoxInDifferentBlock, string, leafBoxes);
         else if (movingIntoNewBox) {
             iter = wordBreakIterator(StringView(textBox.renderer().text()).substring(textBox.start(), textBox.len()));
             previouslyVisitedBox = box;
