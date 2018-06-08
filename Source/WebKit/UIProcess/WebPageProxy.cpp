@@ -5842,11 +5842,7 @@ void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
         m_webProcessLifetimeTracker.webPageLeavingWebProcess();
     else {
         navigationState().clearAllNavigations();
-
-        if (m_navigationClient)
-            m_navigationClient->processDidTerminate(*this, reason);
-        else if (reason != ProcessTerminationReason::RequestedByClient)
-            m_loaderClient->processDidCrash(*this);
+        dispatchProcessDidTerminate(reason);
     }
 
     if (m_controlledByAutomation) {
@@ -5855,6 +5851,14 @@ void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
     }
 
     stopAllURLSchemeTasks();
+}
+
+void WebPageProxy::dispatchProcessDidTerminate(ProcessTerminationReason reason)
+{
+    if (m_navigationClient)
+        m_navigationClient->processDidTerminate(*this, reason);
+    else if (reason != ProcessTerminationReason::RequestedByClient)
+        m_loaderClient->processDidCrash(*this);
 }
 
 void WebPageProxy::stopAllURLSchemeTasks()

@@ -1,5 +1,30 @@
 2018-06-07  Andy Estes  <aestes@apple.com>
 
+        [iOS] Inform the client when PDFKit's extension process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=186418
+        <rdar://problem/40175864>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::processDidTerminate):
+        (WebKit::WebPageProxy::dispatchProcessDidTerminate):
+
+        Separated the dispatching of delegate methods from the rest of the web
+        process-specific processDidTerminate logic.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_setContentProviderData:suggestedFilename:]):
+
+        Minor style fix.
+
+        (-[WKPDFView pdfHostViewControllerExtensionProcessDidCrash:]):
+
+        Called WebPageProxy::dispatchProcessDidTerminate on the main thread.
+
+2018-06-07  Andy Estes  <aestes@apple.com>
+
         [iOS] Unable to present the share sheet after saving a PDF to Files.app
         https://bugs.webkit.org/show_bug.cgi?id=186413
         <rdar://problem/39937488>

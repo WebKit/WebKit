@@ -105,8 +105,7 @@
     _data = adoptNS([data copy]);
     _suggestedFilename = adoptNS([filename copy]);
 
-    WeakObjCPtr<WKPDFView> weakSelf = self;
-    [PDFHostViewController createHostView:[self, weakSelf = WTFMove(weakSelf)](PDFHostViewController * _Nullable hostViewController) {
+    [PDFHostViewController createHostView:[self, weakSelf = WeakObjCPtr<WKPDFView>(self)](PDFHostViewController * _Nullable hostViewController) {
         ASSERT(isMainThread());
 
         WKPDFView *autoreleasedSelf = weakSelf.getAutoreleased();
@@ -453,6 +452,15 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 - (void)pdfHostViewController:(PDFHostViewController *)controller didLongPressPageIndex:(NSInteger)pageIndex atLocation:(CGPoint)location withAnnotationRect:(CGRect)annotationRect
 {
     [self _showActionSheetForURL:[self _URLWithPageIndex:pageIndex] atLocation:location withAnnotationRect:annotationRect];
+}
+
+- (void)pdfHostViewControllerExtensionProcessDidCrash:(PDFHostViewController *)controller
+{
+    // FIXME 40916725: PDFKit should dispatch this message to the main thread like it does for other delegate messages.
+    dispatch_async(dispatch_get_main_queue(), [webView = _webView] {
+        if (auto page = [webView _page])
+            page->dispatchProcessDidTerminate(WebKit::ProcessTerminationReason::Crash);
+    });
 }
 
 
