@@ -10,6 +10,7 @@ function main() {
     $author = remote_user_name($data);
     $name = array_get($data, 'name');
     $repetition_count = array_get($data, 'repetitionCount');
+    $needs_notification = array_get($data, 'needsNotification', False);
     $test_group_name = array_get($data, 'testGroupName');
     $revision_set_list = array_get($data, 'revisionSets');
 
@@ -84,7 +85,7 @@ function main() {
         $triggerable_id = $triggerable['id'];
         $test_id = $triggerable['test'];
         $commit_sets = commit_sets_from_revision_sets($db, $triggerable_id, $revision_set_list);
-        create_test_group_and_build_requests($db, $commit_sets, $task_id, $test_group_name, $author, $triggerable_id, $config['config_platform'], $test_id, $repetition_count);
+        create_test_group_and_build_requests($db, $commit_sets, $task_id, $test_group_name, $author, $triggerable_id, $config['config_platform'], $test_id, $repetition_count, $needs_notification);
     }
 
     $db->commit_transaction();

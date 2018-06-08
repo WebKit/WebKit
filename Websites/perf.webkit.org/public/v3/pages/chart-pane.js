@@ -119,7 +119,12 @@ class ChartPane extends ChartPaneBase {
         });
         const createWithTestGroupCheckbox = this.content('create-with-test-group');
         const repetitionCount = this.content('confirm-repetition');
-        createWithTestGroupCheckbox.onchange = () => repetitionCount.disabled = !createWithTestGroupCheckbox.checked;
+        const notifyOnCompletion = this.content('notify-on-completion');
+        createWithTestGroupCheckbox.onchange = () => {
+            const shouldDisable = !createWithTestGroupCheckbox.checked;
+            repetitionCount.disabled = shouldDisable;
+            notifyOnCompletion.disabled = shouldDisable;
+        }
     }
 
     serializeState()
@@ -237,10 +242,11 @@ class ChartPane extends ChartPaneBase {
         const name = this.content('task-name').value;
         const createWithTestGroup = this.content('create-with-test-group').checked;
         const repetitionCount = this.content('confirm-repetition').value;
+        const notifyOnCompletion = this.content('notify-on-completion').checked;
 
         try {
             const analysisTask = await (createWithTestGroup ?
-                AnalysisTask.create(name, startPoint, endPoint, 'Confirm', repetitionCount) : AnalysisTask.create(name, startPoint, endPoint));
+                AnalysisTask.create(name, startPoint, endPoint, 'Confirm', repetitionCount, notifyOnCompletion) : AnalysisTask.create(name, startPoint, endPoint));
             newWindow.location.href = router.url('analysis/task/' + analysisTask.id());
             this.fetchAnalysisTasks(true);
         } catch(error) {
@@ -583,6 +589,7 @@ class ChartPane extends ChartPaneBase {
                                     <option>10</option>
                                 </select>
                             <label>iterations</label>
+                            <label><input type="checkbox" id="notify-on-completion" checked> Notify on completion</label>
                         </li>
                     </form>
                     <ul class="chart-pane-filtering-options popover" style="display:none">

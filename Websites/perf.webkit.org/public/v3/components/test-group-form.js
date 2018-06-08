@@ -5,6 +5,7 @@ class TestGroupForm extends ComponentBase {
     {
         super(name || 'test-group-form');
         this._repetitionCount = 4;
+        this._notifyOnCompletion = true;
     }
 
     setRepetitionCount(count)
@@ -18,13 +19,15 @@ class TestGroupForm extends ComponentBase {
         const repetitionCountSelect = this.content('repetition-count');
         repetitionCountSelect.onchange = () => {
             this._repetitionCount = repetitionCountSelect.value;
-        }
+        };
+        const notifyOnCompletionCheckBox = this.content('notify-on-completion-checkbox');
+        notifyOnCompletionCheckBox.onchange = () => this._notifyOnCompletion = notifyOnCompletionCheckBox.checked;
         this.content('form').onsubmit = this.createEventHandler(() => this.startTesting());
     }
 
     startTesting()
     {
-        this.dispatchAction('startTesting', this._repetitionCount);
+        this.dispatchAction('startTesting', this._repetitionCount, this._notifyOnCompletion);
     }
 
     static htmlTemplate()
@@ -37,6 +40,11 @@ class TestGroupForm extends ComponentBase {
         return `
             :host {
                 display: block;
+            }
+
+            #notify-on-completion-checkbox {
+                margin-left: 0.5rem;
+                width: 1rem;
             }
         `;
     }
@@ -58,6 +66,7 @@ class TestGroupForm extends ComponentBase {
                 <option>10</option>
             </select>
             iterations per set
+            <input id="notify-on-completion-checkbox" type="checkbox" checked/>Notify on completion
         `;
     }
 

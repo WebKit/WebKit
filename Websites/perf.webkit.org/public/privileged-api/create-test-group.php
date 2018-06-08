@@ -18,6 +18,7 @@ function main()
     $task_id = array_get($arguments, 'task');
     $task_name = array_get($data, 'taskName');
     $repetition_count = $arguments['repetitionCount'];
+    $needs_notification = array_get($data, 'needsNotification', False);
     $platform_id = array_get($data, 'platform');
     $test_id = array_get($data, 'test');
     $revision_set_list = array_get($data, 'revisionSets');
@@ -85,7 +86,7 @@ function main()
     if ($task_name)
         $task_id = $db->insert_row('analysis_tasks', 'task', array('name' => $task_name, 'author' => $author));
 
-    $group_id = create_test_group_and_build_requests($db, $commit_sets, $task_id, $name, $author, $triggerable_id, $platform_id, $test_id, $repetition_count);
+    $group_id = create_test_group_and_build_requests($db, $commit_sets, $task_id, $name, $author, $triggerable_id, $platform_id, $test_id, $repetition_count, $needs_notification);
 
     $db->commit_transaction();
 

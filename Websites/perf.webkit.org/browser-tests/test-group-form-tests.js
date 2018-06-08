@@ -18,7 +18,7 @@ describe('TestGroupFormTests', () => {
             testGroupForm.listenToAction('startTesting', (...args) => calls.push(args));
             expect(calls).to.eql({});
             testGroupForm.content('start-button').click();
-            expect(calls).to.eql([[4]]);
+            expect(calls).to.eql([[4, true]]);
         });
     });
 
@@ -29,12 +29,31 @@ describe('TestGroupFormTests', () => {
             testGroupForm.listenToAction('startTesting', (...args) => calls.push(args));
             expect(calls).to.eql({});
             testGroupForm.content('start-button').click();
-            expect(calls).to.eql([[4]]);
+            expect(calls).to.eql([[4, true]]);
             const countForm = testGroupForm.content('repetition-count');
             countForm.value = '6';
-            countForm.dispatchEvent(new Event('change')); 
+            countForm.dispatchEvent(new Event('change'));
             testGroupForm.content('start-button').click();
-            expect(calls).to.eql([[4], [6]]);
+            expect(calls).to.eql([[4, true], [6, true]]);
+        });
+    });
+
+    it('must update "notify on completion" when it is unchecked', () => {
+        const context = new BrowsingContext();
+        return createTestGroupFormWithContext(context).then((testGroupForm) => {
+            const calls = [];
+            testGroupForm.listenToAction('startTesting', (...args) => calls.push(args));
+            expect(calls).to.eql({});
+            testGroupForm.content('start-button').click();
+            expect(calls).to.eql([[4, true]]);
+            const countForm = testGroupForm.content('repetition-count');
+            countForm.value = '6';
+            countForm.dispatchEvent(new Event('change'));
+            const notifyOnCompletionCheckbox = testGroupForm.content('notify-on-completion-checkbox');
+            notifyOnCompletionCheckbox.checked = false;
+            notifyOnCompletionCheckbox.dispatchEvent(new Event('change'));
+            testGroupForm.content('start-button').click();
+            expect(calls).to.eql([[4, true], [6, false]]);
         });
     });
 
@@ -57,10 +76,10 @@ describe('TestGroupFormTests', () => {
                 testGroupForm.listenToAction('startTesting', (...args) => calls.push(args));
                 expect(calls).to.eql({});
                 testGroupForm.content().querySelector('button').click();
-                expect(calls).to.eql([[4]]);
+                expect(calls).to.eql([[4, true]]);
                 testGroupForm.setRepetitionCount(8);
                 testGroupForm.content().querySelector('button').click();
-                expect(calls).to.eql([[4], [8]]);
+                expect(calls).to.eql([[4, true], [8, true]]);
             });
         });
     });

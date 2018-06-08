@@ -304,7 +304,7 @@ describe('AnalysisTask', () => {
 
         it('should create analysis task with confirming repetition count specified', async () => {
             const [startPoint, endPoint] = mockStartAndEndPoints();
-            AnalysisTask.create('confirm', startPoint, endPoint, 'Confirm', 4);
+            AnalysisTask.create('confirm', startPoint, endPoint, 'Confirm', 4, true);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '/privileged-api/generate-csrf-token');
             requests[0].resolve({
@@ -315,7 +315,29 @@ describe('AnalysisTask', () => {
             await MockRemoteAPI.waitForRequest();
             assert.equal(requests[1].url, '/privileged-api/create-analysis-task');
             assert.equal(requests.length, 2);
-            assert.deepEqual(requests[1].data, {name: 'confirm', repetitionCount: 4,
+            assert.deepEqual(requests[1].data, {name: 'confirm', repetitionCount: 4, needsNotification: true,
+                startRun: 1, endRun: 2, testGroupName: 'Confirm', token: 'abc', revisionSets: [
+                    {'11': {revision: 'webkit-revision-1', ownerRevision: null, patch: null},
+                        '22': {revision: 'ios-revision-1', ownerRevision: null, patch: null}},
+                    {'11': {revision: 'webkit-revision-2', ownerRevision: null, patch: null},
+                        '22': { revision: 'ios-revision-2', ownerRevision: null, patch: null}}]}
+            );
+        });
+
+        it('should create analysis task and test groups with "needsNotification" set to false if specified in creation', async () => {
+            const [startPoint, endPoint] = mockStartAndEndPoints();
+            AnalysisTask.create('confirm', startPoint, endPoint, 'Confirm', 4, false);
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '/privileged-api/generate-csrf-token');
+            requests[0].resolve({
+                token: 'abc',
+                expiration: Date.now() + 3600 * 1000,
+            });
+
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests[1].url, '/privileged-api/create-analysis-task');
+            assert.equal(requests.length, 2);
+            assert.deepEqual(requests[1].data, {name: 'confirm', repetitionCount: 4, needsNotification: false,
                 startRun: 1, endRun: 2, testGroupName: 'Confirm', token: 'abc', revisionSets: [
                     {'11': {revision: 'webkit-revision-1', ownerRevision: null, patch: null},
                         '22': {revision: 'ios-revision-1', ownerRevision: null, patch: null}},
@@ -326,7 +348,7 @@ describe('AnalysisTask', () => {
 
         it('should sync the new analysis task status once it is created', async () => {
             const [startPoint, endPoint] = mockStartAndEndPoints();
-            const creatingPromise = AnalysisTask.create('confirm', startPoint, endPoint, 'Confirm', 4);
+            const creatingPromise = AnalysisTask.create('confirm', startPoint, endPoint, 'Confirm', 4, true);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '/privileged-api/generate-csrf-token');
             requests[0].resolve({
@@ -337,7 +359,7 @@ describe('AnalysisTask', () => {
             await MockRemoteAPI.waitForRequest();
             assert.equal(requests[1].url, '/privileged-api/create-analysis-task');
             assert.equal(requests.length, 2);
-            assert.deepEqual(requests[1].data, {name: 'confirm', repetitionCount: 4,
+            assert.deepEqual(requests[1].data, {name: 'confirm', repetitionCount: 4, needsNotification: true,
                 startRun: 1, endRun: 2, testGroupName: 'Confirm', token: 'abc', revisionSets: [
                     {'11': {revision: 'webkit-revision-1', ownerRevision: null, patch: null},
                         '22': {revision: 'ios-revision-1', ownerRevision: null, patch: null}},
@@ -387,7 +409,7 @@ describe('AnalysisTask', () => {
 
         it('should return an rejected promise when analysis task creation failed', async () => {
             const [startPoint, endPoint] = mockStartAndEndPoints();
-            const creatingPromise = AnalysisTask.create('confirm', startPoint, endPoint, 'Confirm', 4);
+            const creatingPromise = AnalysisTask.create('confirm', startPoint, endPoint, 'Confirm', 4, true);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '/privileged-api/generate-csrf-token');
             requests[0].resolve({
@@ -398,7 +420,7 @@ describe('AnalysisTask', () => {
             await MockRemoteAPI.waitForRequest();
             assert.equal(requests[1].url, '/privileged-api/create-analysis-task');
             assert.equal(requests.length, 2);
-            assert.deepEqual(requests[1].data, {name: 'confirm', repetitionCount: 4,
+            assert.deepEqual(requests[1].data, {name: 'confirm', repetitionCount: 4, needsNotification: true,
                 startRun: 1, endRun: 2, testGroupName: 'Confirm', token: 'abc', revisionSets: [
                     {'11': {revision: 'webkit-revision-1', ownerRevision: null, patch: null},
                         '22': {revision: 'ios-revision-1', ownerRevision: null, patch: null}},
@@ -432,10 +454,10 @@ describe('AnalysisTask', () => {
 
         it('should create analysis task with confirming repetition count specified', () => {
             const [startPoint, endPoint] = mockStartAndEndPoints();
-            AnalysisTask.create('confirm', startPoint, endPoint, 'Confirm', 4);
+            AnalysisTask.create('confirm', startPoint, endPoint, 'Confirm', 4, true);
             assert.equal(requests[0].url, '/privileged-api/create-analysis-task');
             assert.equal(requests.length, 1);
-            assert.deepEqual(requests[0].data, {name: 'confirm', repetitionCount: 4,
+            assert.deepEqual(requests[0].data, {name: 'confirm', repetitionCount: 4, needsNotification: true,
                 startRun: 1, endRun: 2, slaveName: 'worker', slavePassword: 'password',
                 testGroupName: 'Confirm', revisionSets: [
                     {'11': {revision: 'webkit-revision-1', ownerRevision: null, patch: null},

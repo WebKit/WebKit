@@ -79,7 +79,7 @@ MockData = {
             db.insert('analysis_tasks', {id: 500, platform: 65, metric: 300, name: 'some task',
                 start_run: 801, start_run_time: '2015-10-27T12:05:27.1Z',
                 end_run: 801, end_run_time: '2015-10-27T12:05:27.1Z'}),
-            db.insert('analysis_test_groups', {id: 600, task: 500, name: 'some test group'}),
+            db.insert('analysis_test_groups', {id: 600, task: 500, name: 'some test group', needs_notification: true}),
             db.insert('build_requests', {id: 700, status: statusList[0], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 0, commit_set: 401}),
             db.insert('build_requests', {id: 701, status: statusList[1], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 1, commit_set: 402}),
             db.insert('build_requests', {id: 702, status: statusList[2], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 2, commit_set: 401}),

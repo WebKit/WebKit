@@ -3,10 +3,11 @@
 const assert = require('assert');
 require('../tools/js/v3-models.js');
 const BrowserPrivilegedAPI = require('../public/v3/privileged-api.js').PrivilegedAPI;
+const NodePrivilegedAPI = require('../tools/js/privileged-api.js').PrivilegedAPI;
 const MockModels = require('./resources/mock-v3-models.js').MockModels;
 const MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
 
-function sampleTestGroup() {
+function sampleTestGroup(needsNotification=true) {
     return {
         "testGroups": [{
             "id": "2128",
@@ -16,6 +17,7 @@ function sampleTestGroup() {
             "author": "rniwa",
             "createdAt": 1458688514000,
             "hidden": false,
+            "needsNotification": needsNotification,
             "buildRequests": ["16985", "16986", "16987", "16988", "16989", "16990", "16991", "16992"],
             "commitSets": ["4255", "4256"],
         }],
@@ -137,6 +139,41 @@ describe('TestGroup', function () {
         });
     });
 
+    describe('needsNotification', () => {
+        const requests = MockRemoteAPI.inject('https://perf.webkit.org', NodePrivilegedAPI);
+        beforeEach(() => {
+            PrivilegedAPI.configure('test', 'password');
+        });
+
+        it('should update notified author flag', async () => {
+            const fetchPromise = TestGroup.fetchForTask(1376);
+            requests[0].resolve(sampleTestGroup());
+            let testGroups = await fetchPromise;
+            assert(testGroups.length, 1);
+            let testGroup = testGroups[0];
+            assert.equal(testGroup.needsNotification(), true);
+
+            const updatePromise = testGroup.didSendNotification();
+            assert.equal(requests.length, 2);
+            assert.equal(requests[1].method, 'POST');
+            assert.equal(requests[1].url, '/privileged-api/update-test-group');
+            delete requests[1].data.notificationSentAt;
+            assert.deepEqual(requests[1].data, {group: '2128', needsNotification: false, slaveName: 'test', slavePassword: 'password'});
+            requests[1].resolve();
+
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 3);
+            assert.equal(requests[2].method, 'GET');
+            assert.equal(requests[2].url, '/api/test-groups/2128');
+            const updatedTestGroup = sampleTestGroup(false);
+            requests[2].resolve(updatedTestGroup);
+
+            testGroups = await updatePromise;
+            testGroup = testGroups[0];
+            assert.equal(testGroup.needsNotification(), false);
+        });
+    });
+
     describe('_createModelsFromFetchedTestGroups', function () {
         it('should create test groups', function () {
             var groups = TestGroup._createModelsFromFetchedTestGroups(sampleTestGroup());
@@ -147,6 +184,7 @@ describe('TestGroup', function () {
             assert.equal(group.id(), 2128);
             assert.ok(group.createdAt() instanceof Date);
             assert.equal(group.isHidden(), false);
+            assert.equal(group.needsNotification(), true);
             assert.equal(+group.createdAt(), 1458688514000);
             assert.equal(group.repetitionCount(), sampleTestGroup()['buildRequests'].length / 2);
             assert.ok(group.hasPending());
@@ -361,7 +399,7 @@ describe('TestGroup', function () {
             set2.setRevisionForRepository(MockModels.webkit, '191623');
             set2.setRevisionForRepository(MockModels.sharedRepository, '80229');
 
-            const promise = TestGroup.createWithTask('some-task', MockModels.somePlatform, MockModels.someTest, 'some-group', 4, [set1, set2]);
+            const promise = TestGroup.createWithTask('some-task', MockModels.somePlatform, MockModels.someTest, 'some-group', 4, [set1, set2], true);
             assert.equal(requests.length, 2);
             assert.equal(requests[1].url, '/privileged-api/generate-csrf-token');
             requests[1].resolve({
@@ -371,6 +409,10 @@ describe('TestGroup', function () {
             await MockRemoteAPI.waitForRequest();
             assert.equal(requests.length, 3);
             assert.equal(requests[2].method, 'POST');
+            assert.deepEqual(requests[2].data, {taskName: 'some-task', name: 'some-group', platform: 65, test: 1,
+                repetitionCount: 4, revisionSets: [{'11': {ownerRevision: null, patch: null, revision: "191622"},
+                    '16': {ownerRevision: null, patch: null, revision: "80229"}}, {'11': {ownerRevision: null, patch: null, revision: "191623"},
+                    '16': {ownerRevision: null, patch: null, revision: "80229"}}], needsNotification: true, token: 'abc'});
             assert.equal(requests[2].url, '/privileged-api/create-test-group');
             requests[2].resolve({
                 taskId: 123,

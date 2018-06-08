@@ -69,14 +69,14 @@ var MockRemoteAPI = {
             global.RemoteAPI = MockRemoteAPI;
             originalPrivilegedAPI = global.PrivilegedAPI;
             global.PrivilegedAPI = privilegedAPI;
-            if (privilegedAPI._token)
+            if (privilegedAPI && privilegedAPI._token)
                 privilegedAPI._token = null;
         });
 
         afterEach(() => {
             global.RemoteAPI = originalRemoteAPI;
             global.PrivilegedAPI = originalPrivilegedAPI;
-            if (privilegedAPI._token)
+            if (privilegedAPI && privilegedAPI._token)
                 privilegedAPI._token = null;
         });
 

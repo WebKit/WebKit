@@ -1,3 +1,128 @@
+2018-05-24  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Added sending notification feature when test group finishes.
+        https://bugs.webkit.org/show_bug.cgi?id=184340
+
+        Reviewed by Ryosuke Niwa.
+
+        Added 'testgroup_needs_notification' filed to 'analysis_test_group' table to indicate whether a test group
+        has a pending notification.
+        Added 'testgroup_notification_sent_at' to record the last notification sent time.
+        SQL queries to update existing database are:
+            'ALTER TABLE analysis_test_groups ADD COLUMN testgroup_needs_notification boolean NOT NULL DEFAULT FALSE;'
+            'ALTER TABLE analysis_test_groups ADD COLUMN testgroup_notification_sent_at timestamp DEFAULT NULL;'
+        Updated 'run-analysis' script to be able to send notification when test group finishes.
+        Added 'Notify on completion' checkbox while creating/retrying/bisecting a test group.
+
+        * browser-tests/test-group-form-tests.js: Updated existing tests and added a new test.
+        * browser-tests/test-group-result-page-tests.js: Added unit tests for TestGroupResultPage.
+        * init-database.sql: Added 'testgroup_needs_notification' filed to 'analysis_test_group' table.
+        * public/api/test-groups.php: Added '/api/test-groups/ready-for-notification' API to 'test-group' to show all
+        test groups that need to send notification. Only the ones with 'completed', 'failed' or 'cancelled' status and its
+        'testgroup_needs_notification' is true will be returned by this API.
+        * public/include/build-requests-fetcher.php: Added 'fetch_requests_for_groups' to return test groups with given ids.
+        * public/include/commit-sets-helpers.php: Updated the logic to support setting 'testgroup_needs_notification'
+        while create an analysis_test_groups.
+        * public/privileged-api/create-analysis-task.php: Updated the logic to support setting 'testgroup_needs_notification'.
+        * public/privileged-api/create-test-group.php: Updated the logic to support setting 'testgroup_needs_notification'.
+        * public/privileged-api/update-test-group.php: Updated the logic to support updating 'testgroup_needs_notification'.
+        Extended this API to allow authentication both from CSRF token and slave.
+        * public/v3/components/custom-configuration-test-group-form.js:
+        (CustomConfigurationTestGroupForm.prototype.startTesting): Pass 'notifyOnCompletion' information which represents
+        'testgroup_needs_notification' from API perspective.
+        * public/v3/components/customizable-test-group-form.js:
+        (CustomizableTestGroupForm.prototype.startTesting): Pass 'notifyOnCompletion' information which represents
+        'testgroup_needs_notification' from API perspective.
+        (CustomizableTestGroupForm.cssTemplate): Added space between 'Notify on completion' checkbox and test group iteration selection list.
+        * public/v3/components/test-group-form.js:
+        (TestGroupForm): Added '_notifyOnCompletion' instance variable.
+        (TestGroupForm.prototype.didConstructShadowTree): Added 'onchange' event for notify on completion checkbox.
+        (TestGroupForm.prototype.startTesting): Pass 'notifyOnCompletion' information which represents
+        'testgroup_needs_notification' from API perspective.
+        (TestGroupForm.cssTemplate): Added space between 'Notify on completion' checkbox and test group iteration selection list.
+        * public/v3/models/analysis-results.js: Export 'AnalysisResults'.
+        (AnalysisResults.fetch): Update API path to use absolute url.
+        (AnalysisResults):
+        * public/v3/models/analysis-task.js:
+        (AnalysisTask.async.create): Extend this function to take notifyOnCompletion as argument which will be used as
+        'needsNotification' to send to server.
+        (AnalysisTask):
+        * public/v3/models/test-group.js:
+        (TestGroup): Added '_needsNotification' field.
+        (TestGroup.prototype.updateSingleton): Added logic to update '_needsNotification' field.
+        (TestGroup.prototype.needsNotification): Returns '_needsNotification' field.
+        (TestGroup.prototype.author): Returns author information.
+        (TestGroup.prototype.async.didSendNotification): API that updates 'testgroup_needs_notification' to true.
+        (TestGroup.prototype.async.fetchTask): API to fetch the task when it has not been fetched.
+        (TestGroup.createWithTask): Updated this function to accept 'notifyOnCompletion' which will be used as
+        'needsNotification' to send to server.
+        (TestGroup.createWithCustomConfiguration): Updated this function to accept 'notifyOnCompletion' which will be used as
+        'needsNotification' to send to server.
+        (TestGroup.createAndRefetchTestGroups): Updated this function to accept 'notifyOnCompletion' which will be used as
+        'needsNotification' to send to server.
+        (TestGroup.fetchAllWithNotificationReady): New function that invokes '/api/test-groups/ready-for-notification'.
+        * public/v3/pages/analysis-task-page.js: Update logic to 'notifyOnCompletion' around
+        (AnalysisTaskChartPane.prototype.didConstructShadowTree):
+        (AnalysisTaskResultsPane.prototype.didConstructShadowTree):
+        (AnalysisTaskTestGroupPane.prototype.didConstructShadowTree):
+        (AnalysisTaskPage.prototype.didConstructShadowTree):
+        (AnalysisTaskPage.prototype._retryCurrentTestGroup):
+        (AnalysisTaskPage.prototype.async._bisectCurrentTestGroup):
+        (AnalysisTaskPage.prototype._createTestGroupAfterVerifyingCommitSetList.set const):
+        (AnalysisTaskPage.prototype._createTestGroupAfterVerifyingCommitSetList):
+        (AnalysisTaskPage.prototype._createCustomTestGroup):
+        * public/v3/pages/chart-pane.js: Added 'Notify on completion' checkbox.
+        (ChartPane.prototype.didConstructShadowTree):
+        (ChartPane.prototype.async._analyzeRange):
+        * public/v3/pages/create-analysis-task-page.js: Adapted API change.
+        (CreateAnalysisTaskPage.prototype._createAnalysisTaskWithGroup):
+        * server-tests/api-test-groups.js: Added tests for '/api/test-groups/ready-for-notification'.
+        * server-tests/privileged-api-create-analysis-task-tests.js: Updated tests to adapt this change.
+        Added new tests.
+        * server-tests/privileged-api-create-test-group-tests.js: Added new tests.
+        * server-tests/privileged-api-update-test-group-tests.js: Added unit test for 'update-test-group' API.
+        * server-tests/resources/mock-data.js: addMockData should set 'testgroup_needs_notification' to be true.
+        * server-tests/tools-sync-buildbot-integration-tests.js: Updated tests to adapt this change.
+        (async.createTestGroupWihPatch):
+        (createTestGroupWihOwnedCommit):
+        * tools/js/analysis-results-notifier.js: Added notifier to send notification for completed test groups.
+        (AnalysisResultsNotifier):
+        (AnalysisResultsNotifier.prototype.async.sendNotificationsForTestGroups):
+        (AnalysisResultsNotifier.prototype._sendNotification): Invoke remote API to send notification.
+        (AnalysisResultsNotifier.prototype._constructMessageByRules):
+        (AnalysisResultsNotifier._matchesRule):
+        (AnalysisResultsNotifier._applyUpdate):
+        (AnalysisResultsNotifier.async._messageForTestGroup): Build html as message body for a test group.
+        (AnalysisResultsNotifier._URLForAnalysisTask): Returns URL for an analysis task.
+        (AnalysisResultsNotifier._instantiateNotificationTemplate):
+        * tools/js/test-group-result-page.js: Added 'TestGroupResultPage' and 'BarGraph' to show test group result.
+        (TestGroupResultPage):
+        (TestGroupResultPage.prototype.async.setTestGroup):
+        (TestGroupResultPage._urlForAnalysisTask):
+        (TestGroupResultPage.prototype._URLForAnalysisTask):
+        (TestGroupResultPage.prototype.constructTables):
+        (TestGroupResultPage.prototype._constructTableForMetric):
+        (TestGroupResultPage.):
+        (TestGroupResultPage.prototype.get pageContent):
+        (TestGroupResultPage.prototype.get styleTemplate):
+        (BarGraph):
+        (BarGraph.prototype.setWidth):
+        (BarGraph.prototype._constructBarGraph):
+        (BarGraph.prototype.get pageContent):
+        (BarGraph.prototype.get styleTemplate):
+        * tools/js/measurement-set-analyzer.js: Adapted 'AnalysisTask.create' change.
+        (MeasurementSetAnalyzer.prototype.async._analyzeMeasurementSet):
+        (MeasurementSetAnalyzer):
+        * tools/js/v3-models.js:
+        * tools/run-analysis.js: Added the logic that sends notification for completed test groups.
+        (main):
+        (async.analysisLoop):
+        * unit-tests/analysis-task-tests.js:
+        * unit-tests/analysis-results-notifier-tests.js: Added a unit test for 'AnalysisResultsNotifier' and 'NotificationService'.
+        * unit-tests/measurement-set-analyzer-tests.js: Updated unit tests per this change.
+        * unit-tests/test-groups-tests.js: Added unit tests for 'TestGroup.needsNotification'.
+        * unit-tests/resources/mock-remote-api.js: Only set 'privilegedAPI' when it exits.
+
 2018-06-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add the basic support for writing components in node.js

@@ -30,6 +30,17 @@ class BuildRequestsFetcher {
             $row['task_id'] = $task_id;
     }
 
+    function fetch_requests_for_groups($test_groups) {
+        $test_group_id_list = array();
+        foreach($test_groups as $group)
+            array_push($test_group_id_list, intval($group['testgroup_id']));
+
+        $this->rows = $this->db->query_and_fetch_all('SELECT *, testgroup_task as task_id
+            FROM build_requests, analysis_test_groups
+            WHERE request_group = testgroup_id AND testgroup_id = ANY($1)
+            ORDER BY request_group, request_order', array('{' . implode(', ', $test_group_id_list) . '}'));
+    }
+
     function fetch_incomplete_requests_for_triggerable($triggerable_id) {
         $this->rows = $this->db->query_and_fetch_all('SELECT *, test_groups.testgroup_task as task_id FROM build_requests,
             (SELECT testgroup_id, testgroup_task, (case when testgroup_author is not null then 0 else 1 end) as author_order, testgroup_created_at

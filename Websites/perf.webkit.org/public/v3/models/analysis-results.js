@@ -84,7 +84,7 @@ class AnalysisResults {
     static fetch(taskId)
     {
         taskId = parseInt(taskId);
-        return RemoteAPI.getJSONWithStatus(`../api/measurement-set?analysisTask=${taskId}`).then(function (response) {
+        return RemoteAPI.getJSONWithStatus(`/api/measurement-set?analysisTask=${taskId}`).then(function (response) {
 
             Instrumentation.startMeasuringTime('AnalysisResults', 'fetch');
 
@@ -115,4 +115,9 @@ class AnalysisResultsView {
     {
         return this._results.findResult(buildRequest.buildId(), this._metric.id());
     }
+}
+
+
+if (typeof module !== 'undefined') {
+    module.exports.AnalysisResults = AnalysisResults;
 }

@@ -303,7 +303,7 @@ class AnalysisTask extends LabeledObject {
         return results;
     }
 
-    static async create(name, startPoint, endPoint, testGroupName=null, repetitionCount=0)
+    static async create(name, startPoint, endPoint, testGroupName=null, repetitionCount=0, notifyOnCompletion=false)
     {
         const parameters = {name, startRun: startPoint.id, endRun: endPoint.id};
         if (testGroupName) {
@@ -311,6 +311,7 @@ class AnalysisTask extends LabeledObject {
             parameters['revisionSets'] = CommitSet.revisionSetsFromCommitSets([startPoint.commitSet(), endPoint.commitSet()]);
             parameters['repetitionCount'] = repetitionCount;
             parameters['testGroupName'] = testGroupName;
+            parameters['needsNotification'] = notifyOnCompletion;
         }
         const response = await PrivilegedAPI.sendRequest('create-analysis-task', parameters);
         return AnalysisTask.fetchById(response.taskId, true);

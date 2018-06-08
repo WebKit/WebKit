@@ -11,6 +11,7 @@ importFromV3('models/data-model.js', 'DataModelObject');
 importFromV3('models/data-model.js', 'LabeledObject');
 
 importFromV3('models/analysis-task.js', 'AnalysisTask');
+importFromV3('models/analysis-results.js', 'AnalysisResults');
 importFromV3('models/bug.js', 'Bug');
 importFromV3('models/bug-tracker.js', 'BugTracker');
 importFromV3('models/build-request.js', 'BuildRequest');

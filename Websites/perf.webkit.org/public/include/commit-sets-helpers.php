@@ -4,12 +4,12 @@ require_once('repository-group-finder.php');
 require_once('commit-log-fetcher.php');
 
 # FIXME: Should create a helper class for below 3 helper functions to avoid passing long argument list.
-function create_test_group_and_build_requests($db, $commit_sets, $task_id, $name, $author, $triggerable_id, $platform_id, $test_id, $repetition_count) {
+function create_test_group_and_build_requests($db, $commit_sets, $task_id, $name, $author, $triggerable_id, $platform_id, $test_id, $repetition_count, $needs_notification) {
 
     list ($build_configuration_list, $test_configuration_list) = insert_commit_sets_and_construct_configuration_list($db, $commit_sets);
 
     $group_id = $db->insert_row('analysis_test_groups', 'testgroup',
-        array('task' => $task_id, 'name' => $name, 'author' => $author));
+        array('task' => $task_id, 'name' => $name, 'author' => $author, 'needs_notification' => $needs_notification));
 
     $build_count = count($build_configuration_list);
     $order = -$build_count;

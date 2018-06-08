@@ -6,6 +6,7 @@ let MockData = require('./resources/mock-data.js');
 let TestServer = require('./resources/test-server.js');
 const addBuilderForReport = require('./resources/common-operations.js').addBuilderForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
+const assertThrows = require('./resources/common-operations.js').assertThrows;
 
 const reportWithRevision = [{
     "buildNumber": "124",
@@ -353,17 +354,10 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
         const oneRevisionSet = {[webkitId]: {revision: '191622'}};
         const anotherRevisionSet = {[webkitId]: {revision: '191623'}};
 
-        let raiseException = false;
-
-        try {
-            await PrivilegedAPI.sendRequest('create-analysis-task', {name: 'confirm', repetitionCount: 1,
+        await assertThrows('TriggerableNotFoundForTask', () =>
+            PrivilegedAPI.sendRequest('create-analysis-task', {name: 'confirm', repetitionCount: 1,
                 revisionSets: [oneRevisionSet, anotherRevisionSet],
-                startRun: testRuns[0]['id'], endRun: testRuns[1]['id']});
-        } catch (error) {
-            assert.equal(error, 'TriggerableNotFoundForTask');
-            raiseException = true;
-        }
-        assert.ok(raiseException);
+                startRun: testRuns[0]['id'], endRun: testRuns[1]['id']}));
     });
 
     it('should create an analysis task with no test group when repetition count is 0', async () => {
@@ -456,6 +450,7 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
         assert.equal(testGroups.length, 1);
         const testGroup = testGroups[0];
         assert.equal(testGroup.name(), 'Confirm');
+        assert.ok(!testGroup.needsNotification());
         const buildRequests = testGroup.buildRequests();
         assert.equal(buildRequests.length, 2);
 
@@ -513,17 +508,10 @@ describe('/privileged-api/create-analysis-task with node privileged api', functi
         const oneRevisionSet = {[webkitId]: {revision: '191622'}};
         const anotherRevisionSet = {[webkitId]: {revision: '191623'}};
 
-        let raiseException = false;
-
-        try {
-            await PrivilegedAPI.sendRequest('create-analysis-task', {name: 'confirm', repetitionCount: 1,
+        await assertThrows('SlaveNotFound', () =>
+            PrivilegedAPI.sendRequest('create-analysis-task', {name: 'confirm', repetitionCount: 1,
                 revisionSets: [oneRevisionSet, anotherRevisionSet],
-                startRun: testRuns[0]['id'], endRun: testRuns[1]['id']});
-        } catch (error) {
-            assert.equal(error, 'SlaveNotFound');
-            raiseException = true;
-        }
-        assert.ok(raiseException);
+                startRun: testRuns[0]['id'], endRun: testRuns[1]['id']}));
 
         const allAnalysisTasks = await db.selectRows('analysis_tasks');
         assert.ok(!allAnalysisTasks.length);
@@ -584,6 +572,87 @@ describe('/privileged-api/create-analysis-task with node privileged api', functi
         assert.equal(testGroups.length, 1);
         const testGroup = testGroups[0];
         assert.equal(testGroup.name(), 'Confirm');
+        assert.ok(!testGroup.needsNotification());
+        const buildRequests = testGroup.buildRequests();
+        assert.equal(buildRequests.length, 2);
+
+        assert.equal(buildRequests[0].triggerable().id(), triggerableId);
+        assert.equal(buildRequests[0].triggerable().id(), triggerableId);
+
+        assert.equal(buildRequests[0].testGroup(), testGroup);
+        assert.equal(buildRequests[1].testGroup(), testGroup);
+
+        assert.equal(buildRequests[0].platform(), task.platform());
+        assert.equal(buildRequests[1].platform(), task.platform());
+
+        assert.equal(buildRequests[0].analysisTaskId(), task.id());
+        assert.equal(buildRequests[1].analysisTaskId(), task.id());
+
+        assert.equal(buildRequests[0].test(), test1);
+        assert.equal(buildRequests[1].test(), test1);
+
+        assert.ok(!buildRequests[0].isBuild());
+        assert.ok(!buildRequests[1].isBuild());
+        assert.ok(buildRequests[0].isTest());
+        assert.ok(buildRequests[1].isTest());
+
+        const firstCommitSet = buildRequests[0].commitSet();
+        const secondCommitSet = buildRequests[1].commitSet();
+        const webkitRepository = Repository.findById(webkitId);
+        assert.equal(firstCommitSet.commitForRepository(webkitRepository).revision(), '191622');
+        assert.equal(secondCommitSet.commitForRepository(webkitRepository).revision(), '191623');
+    });
+
+    it('should create an analysis task with test group and respect the "needsNotification" flag in the http request', async () => {
+        const webkitId = 1;
+        const platformId = 1;
+        const test1Id = 2;
+        const triggerableId = 1234;
+
+        const db = TestServer.database();
+        await db.insert('tests', {id: 1, name: 'Suite'});
+        await db.insert('tests', {id: test1Id, name: 'test1', parent: 1});
+        await db.insert('repositories', {id: webkitId, name: 'WebKit'});
+        await db.insert('platforms', {id: platformId, name: 'some platform'});
+        await db.insert('build_triggerables', {id: 1234, name: 'test-triggerable'});
+        await db.insert('triggerable_repository_groups', {id: 2345, name: 'webkit-only', triggerable: triggerableId});
+        await db.insert('triggerable_repositories', {repository: webkitId, group: 2345});
+        await db.insert('triggerable_configurations', {test: test1Id, platform: platformId, triggerable: triggerableId});
+        await addBuilderForReport(reportWithRevision[0]);
+
+        await TestServer.remoteAPI().postJSON('/api/report/', reportWithRevision);
+        await TestServer.remoteAPI().postJSON('/api/report/', anotherReportWithRevision);
+        await Manifest.fetch();
+
+        let test1 = Test.findById(test1Id);
+        let somePlatform = Platform.findById(platformId);
+        const configRow = await db.selectFirstRow('test_configurations', {metric: test1.metrics()[0].id(), platform: somePlatform.id()});
+        const testRuns = await db.selectRows('test_runs', {config: configRow['id']});
+        assert.equal(testRuns.length, 2);
+
+        const oneRevisionSet = {[webkitId]: {revision: '191622'}};
+        const anotherRevisionSet = {[webkitId]: {revision: '191623'}};
+
+        const content = await PrivilegedAPI.sendRequest('create-analysis-task', {name: 'confirm', repetitionCount: 1,
+            testGroupName: 'Confirm', revisionSets: [oneRevisionSet, anotherRevisionSet],
+            startRun: testRuns[0]['id'], endRun: testRuns[1]['id'], needsNotification: true});
+
+        const task = await AnalysisTask.fetchById(content['taskId']);
+        assert.equal(task.name(), 'confirm');
+        assert(!task.hasResults());
+        assert(task.hasPendingRequests());
+        assert.deepEqual(task.bugs(), []);
+        assert.deepEqual(task.causes(), []);
+        assert.deepEqual(task.fixes(), []);
+        assert.equal(task.changeType(), null);
+        assert.equal(task.platform().label(), 'some platform');
+        assert.equal(task.metric().test().label(), 'test1');
+
+        const testGroups = await TestGroup.fetchForTask(task.id());
+        assert.equal(testGroups.length, 1);
+        const testGroup = testGroups[0];
+        assert.equal(testGroup.name(), 'Confirm');
+        assert.ok(testGroup.needsNotification());
         const buildRequests = testGroup.buildRequests();
         assert.equal(buildRequests.length, 2);
 

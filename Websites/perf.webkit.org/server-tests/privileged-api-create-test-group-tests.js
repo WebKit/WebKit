@@ -401,6 +401,7 @@ describe('/privileged-api/create-test-group', function () {
             const group = testGroups[0];
             assert.equal(group.id(), groupId);
             assert.equal(group.repetitionCount(), 1);
+            assert.ok(!group.needsNotification());
             const requests = group.buildRequests();
             assert.equal(requests.length, 4);
             assert(requests[0].isBuild());
@@ -447,6 +448,7 @@ describe('/privileged-api/create-test-group', function () {
             const group = testGroups[0];
             assert.equal(group.id(), groupId);
             assert.equal(group.repetitionCount(), 1);
+            assert.ok(!group.needsNotification());
             const requests = group.buildRequests();
             assert.equal(requests.length, 4);
             assert(requests[0].isBuild());
@@ -484,6 +486,7 @@ describe('/privileged-api/create-test-group', function () {
                 const group = testGroups[0];
                 assert.equal(group.id(), insertedGroupId);
                 assert.equal(group.repetitionCount(), 1);
+                assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
                 assert.equal(requests.length, 2);
 
@@ -522,6 +525,7 @@ describe('/privileged-api/create-test-group', function () {
                 const group = testGroups[0];
                 assert.equal(group.id(), insertedGroupId);
                 assert.equal(group.repetitionCount(), 1);
+                assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
                 assert.equal(requests.length, 2);
 
@@ -553,6 +557,7 @@ describe('/privileged-api/create-test-group', function () {
                 const group = testGroups[0];
                 assert.equal(group.id(), insertedGroupId);
                 assert.equal(group.repetitionCount(), 2);
+                assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
                 assert.equal(requests.length, 4);
                 const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
@@ -599,6 +604,7 @@ describe('/privileged-api/create-test-group', function () {
                 const group = testGroups[0];
                 assert.equal(group.id(), insertedGroupId);
                 assert.equal(group.repetitionCount(), 2);
+                assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
                 assert.equal(requests.length, 4);
 
@@ -640,6 +646,7 @@ describe('/privileged-api/create-test-group', function () {
                 const group = testGroups[0];
                 assert.equal(group.id(), insertedGroupId);
                 assert.equal(group.repetitionCount(), 2);
+                assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
                 assert.equal(requests.length, 4);
 
@@ -688,6 +695,7 @@ describe('/privileged-api/create-test-group', function () {
                 const group = testGroups[0];
                 assert.equal(group.id(), insertedGroupId);
                 assert.equal(group.repetitionCount(), 2);
+                assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
                 assert.equal(requests.length, 4);
 
@@ -736,6 +744,7 @@ describe('/privileged-api/create-test-group', function () {
             const group = testGroups[0];
             assert.equal(group.id(), insertedGroupId);
             assert.equal(group.repetitionCount(), 2);
+            assert.ok(!group.needsNotification());
             assert.equal(group.test(), Test.findById(MockData.someTestId()));
             assert.equal(group.platform(), Platform.findById(MockData.somePlatformId()));
             const requests = group.buildRequests();
@@ -800,6 +809,7 @@ describe('/privileged-api/create-test-group', function () {
             const group = testGroups[0];
             assert.equal(group.id(), insertedGroupId);
             assert.equal(group.repetitionCount(), 2);
+            assert.ok(!group.needsNotification());
             assert.equal(group.test(), Test.findById(MockData.someTestId()));
             assert.equal(group.platform(), Platform.findById(MockData.somePlatformId()));
             const requests = group.buildRequests();
@@ -874,6 +884,7 @@ describe('/privileged-api/create-test-group', function () {
             const group = testGroups[0];
             assert.equal(group.id(), insertedGroupId);
             assert.equal(group.repetitionCount(), 2);
+            assert.ok(!group.needsNotification());
             assert.equal(group.test(), Test.findById(MockData.someTestId()));
             assert.equal(group.platform(), Platform.findById(MockData.somePlatformId()));
             const requests = group.buildRequests();
@@ -956,6 +967,7 @@ describe('/privileged-api/create-test-group', function () {
             const group = testGroups[0];
             assert.equal(group.id(), insertedGroupId);
             assert.equal(group.repetitionCount(), 2);
+            assert.ok(!group.needsNotification());
             assert.equal(group.test(), Test.findById(MockData.someTestId()));
             assert.equal(group.platform(), Platform.findById(MockData.somePlatformId()));
             const requests = group.buildRequests();
@@ -1050,6 +1062,7 @@ describe('/privileged-api/create-test-group', function () {
             assert.equal(group.id(), insertedGroupId);
             assert.equal(group.repetitionCount(), 2);
             assert.equal(group.test(), Test.findById(MockData.someTestId()));
+            assert.ok(!group.needsNotification());
             assert.equal(group.platform(), Platform.findById(MockData.somePlatformId()));
             const requests = group.buildRequests();
             assert.equal(requests.length, 6);
@@ -1145,6 +1158,7 @@ describe('/privileged-api/create-test-group', function () {
             const group = testGroups[0];
             assert.equal(group.id(), insertedGroupId);
             assert.equal(group.repetitionCount(), 2);
+            assert.ok(!group.needsNotification());
             assert.equal(group.test(), Test.findById(MockData.someTestId()));
             assert.equal(group.platform(), Platform.findById(MockData.somePlatformId()));
             const requests = group.buildRequests();
@@ -1207,38 +1221,62 @@ describe('/privileged-api/create-test-group', function () {
         });
     });
 
-    it('should create a test group with an analysis task', () => {
-        let insertedGroupId;
-        let webkit;
-        return addTriggerableAndCreateTask('some task').then(() => {
-            webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
-            const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
-            return PrivilegedAPI.sendRequest('create-test-group',
-                {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(), revisionSets});
-        }).then((result) => {
-            insertedGroupId = result['testGroupId'];
-            return Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchForTask(result['taskId'], true)]);
-        }).then((result) => {
-            const [analysisTask, testGroups] = result;
+    it('should create a test group with an analysis task with needs-notification flag set', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        let result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(), needsNotification: true, revisionSets});
+        const insertedGroupId = result['testGroupId'];
 
-            assert.equal(analysisTask.name(), 'other task');
+        const [analysisTask, testGroups] = await Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchForTask(result['taskId'], true)]);
+        assert.equal(analysisTask.name(), 'other task');
 
-            assert.equal(testGroups.length, 1);
-            const group = testGroups[0];
-            assert.equal(group.id(), insertedGroupId);
-            assert.equal(group.repetitionCount(), 1);
-            const requests = group.buildRequests();
-            assert.equal(requests.length, 2);
+        assert.equal(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.equal(group.id(), insertedGroupId);
+        assert.equal(group.repetitionCount(), 1);
+        assert.ok(group.needsNotification());
+        const requests = group.buildRequests();
+        assert.equal(requests.length, 2);
 
-            const set0 = requests[0].commitSet();
-            const set1 = requests[1].commitSet();
-            assert.deepEqual(set0.repositories(), [webkit]);
-            assert.deepEqual(set0.customRoots(), []);
-            assert.deepEqual(set1.repositories(), [webkit]);
-            assert.deepEqual(set1.customRoots(), []);
-            assert.equal(set0.revisionForRepository(webkit), '191622');
-            assert.equal(set1.revisionForRepository(webkit), '191623');
-        });
+        const set0 = requests[0].commitSet();
+        const set1 = requests[1].commitSet();
+        assert.deepEqual(set0.repositories(), [webkit]);
+        assert.deepEqual(set0.customRoots(), []);
+        assert.deepEqual(set1.repositories(), [webkit]);
+        assert.deepEqual(set1.customRoots(), []);
+        assert.equal(set0.revisionForRepository(webkit), '191622');
+        assert.equal(set1.revisionForRepository(webkit), '191623');
+    });
+
+    it('should be able to create a test group with needs-notification flag unset', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        let result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(), needsNotification: false, revisionSets});
+        const insertedGroupId = result['testGroupId'];
+
+        const [analysisTask, testGroups] = await Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchForTask(result['taskId'], true)]);
+        assert.equal(analysisTask.name(), 'other task');
+
+        assert.equal(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.equal(group.id(), insertedGroupId);
+        assert.equal(group.repetitionCount(), 1);
+        assert.ok(!group.needsNotification());
+        const requests = group.buildRequests();
+        assert.equal(requests.length, 2);
+
+        const set0 = requests[0].commitSet();
+        const set1 = requests[1].commitSet();
+        assert.deepEqual(set0.repositories(), [webkit]);
+        assert.deepEqual(set0.customRoots(), []);
+        assert.deepEqual(set1.repositories(), [webkit]);
+        assert.deepEqual(set1.customRoots(), []);
+        assert.equal(set0.revisionForRepository(webkit), '191622');
+        assert.equal(set1.revisionForRepository(webkit), '191623');
     });
 
     it('should create a custom test group for an existing custom analysis task', () => {

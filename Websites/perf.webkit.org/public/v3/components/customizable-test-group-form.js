@@ -25,7 +25,7 @@ class CustomizableTestGroupForm extends TestGroupForm {
 
     startTesting()
     {
-        this.dispatchAction('startTesting', this._repetitionCount, this._name, this._computeCommitSetMap());
+        this.dispatchAction('startTesting', this._repetitionCount, this._name, this._computeCommitSetMap(), this._notifyOnCompletion);
     }
 
     didConstructShadowTree()
@@ -286,6 +286,10 @@ class CustomizableTestGroupForm extends TestGroupForm {
                 color: #333;
             }
 
+            #customize-link-container {
+                margin-left: 0.4rem;
+            }
+
             #custom-table:not(:empty) {
                 margin: 1rem 0;
             }
@@ -319,6 +323,10 @@ class CustomizableTestGroupForm extends TestGroupForm {
             #custom-table thead td,
             #custom-table th {
                 text-align: center;
+            }
+
+            #notify-on-completion-checkbox {
+                margin-left: 0.4rem;
             }
             `;
     }

@@ -22,9 +22,9 @@ class CreateAnalysisTaskPage extends PageWithHeading {
         this.part('form').listenToAction('startTesting', this._createAnalysisTaskWithGroup.bind(this));
     }
 
-    _createAnalysisTaskWithGroup(repetitionCount, testGroupName, commitSets, platform, test, taskName)
+    _createAnalysisTaskWithGroup(repetitionCount, testGroupName, commitSets, platform, test, taskName, notifyOnCompletion)
     {
-        TestGroup.createWithTask(taskName, platform, test, testGroupName, repetitionCount, commitSets).then((task) => {
+        TestGroup.createWithTask(taskName, platform, test, testGroupName, repetitionCount, commitSets, notifyOnCompletion).then((task) => {
             const url = this.router().url(`analysis/task/${task.id()}`);
             location.href = this.router().url(`analysis/task/${task.id()}`);
         }, (error) => {

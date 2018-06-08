@@ -104,7 +104,7 @@ class MeasurementSetAnalyzer {
 
         // FIXME: The iteration count should be smarter than hard-coding.
         const analysisTask = await AnalysisTask.create(summary, rangeWithMostSignificantChange.startPoint,
-            rangeWithMostSignificantChange.endPoint, 'Confirm', 4);
+            rangeWithMostSignificantChange.endPoint, 'Confirm', 4, true);
 
         this._logger.info(`Created analysis task with id "${analysisTask.id()}" to confirm: "${summary}".`);
     }
