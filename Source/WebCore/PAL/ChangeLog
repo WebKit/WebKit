@@ -1,3 +1,15 @@
+2018-06-08  Jonathan Bedard  <jbedard@apple.com>
+
+        [Mojave] Enable build
+        https://bugs.webkit.org/show_bug.cgi?id=186401
+        <rdar://problem/39759031>
+
+        Reviewed by Dan Bernstein.
+
+        * pal/spi/cg/CoreGraphicsSPI.h: Declare CGSShutdownServerConnections().
+        * pal/spi/cocoa/QuartzCoreSPI.h: Declare [CAContext setAllowsCGSConnections] in Mojave + builds.
+        * pal/spi/mac/DataDetectorsSPI.h: Declare DDResultGetCFTypeID in Mojave+ builds.
+
 2018-06-08  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r230930): Link drag image is very blurry

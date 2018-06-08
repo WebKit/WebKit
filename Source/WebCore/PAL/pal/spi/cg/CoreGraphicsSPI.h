@@ -288,6 +288,8 @@ void CGFontCacheSetMaxSize(CGFontCache*, size_t);
 #endif
 
 #if PLATFORM(MAC)
+void CGSShutdownServerConnections(void);
+
 CGSConnectionID CGSMainConnectionID(void);
 CFArrayRef CGSHWCaptureWindowList(CGSConnectionID, CGSWindowIDList windowList, CGSWindowCount, CGSWindowCaptureOptions);
 CGError CGSSetConnectionProperty(CGSConnectionID, CGSConnectionID ownerCid, CFStringRef key, CFTypeRef value);

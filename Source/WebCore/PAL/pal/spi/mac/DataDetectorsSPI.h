@@ -89,6 +89,14 @@ enum {
 
 #endif // !USE(APPLE_INTERNAL_SDK)
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+
+WTF_EXTERN_C_BEGIN
+CFTypeID DDResultGetCFTypeID(void);
+WTF_EXTERN_C_END
+
+#endif
+
 typedef struct __DDHighlight *DDHighlightRef;
 typedef NSUInteger DDHighlightStyle;
 
