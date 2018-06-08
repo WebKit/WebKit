@@ -104,9 +104,10 @@ bool AutomaticThreadCondition::contains(const AbstractLocker&, AutomaticThread* 
     return m_threads.contains(thread);
 }
 
-AutomaticThread::AutomaticThread(const AbstractLocker& locker, Box<Lock> lock, RefPtr<AutomaticThreadCondition> condition)
+AutomaticThread::AutomaticThread(const AbstractLocker& locker, Box<Lock> lock, RefPtr<AutomaticThreadCondition> condition, Seconds timeout)
     : m_lock(lock)
     , m_condition(condition)
+    , m_timeout(timeout)
 {
     if (verbose)
         dataLog(RawPointer(this), ": Allocated AutomaticThread.\n");
@@ -204,10 +205,10 @@ void AutomaticThread::start(const AbstractLocker&)
                         // Shut the thread down after a timeout.
                         m_isWaiting = true;
                         bool awokenByNotify =
-                            m_waitCondition.waitFor(*m_lock, 10_s);
+                            m_waitCondition.waitFor(*m_lock, m_timeout);
                         if (verbose && !awokenByNotify && !m_isWaiting)
                             dataLog(RawPointer(this), ": waitFor timed out, but notified via m_isWaiting flag!\n");
-                        if (m_isWaiting) {
+                        if (m_isWaiting && shouldSleep(locker)) {
                             m_isWaiting = false;
                             if (verbose)
                                 dataLog(RawPointer(this), ": Going to sleep!\n");

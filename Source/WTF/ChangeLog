@@ -1,3 +1,31 @@
+2018-06-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add WorkerPool
+        https://bugs.webkit.org/show_bug.cgi?id=174569
+
+        Reviewed by Carlos Garcia Campos.
+
+        This patch adds WorkerPool, which is a thread pool that consists of AutomaticThread.
+        Since it is based on AutomaticThread, this WorkerPool can take `timeout`: once `timeout`
+        passes without any tasks, threads in WorkerPool will be destroyed.
+
+        We add shouldSleep handler to AutomaticThread to make destruction of threads in WorkerPool moderate.
+        Without this, all threads are destroyed at once after `timeout` passes.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThread::AutomaticThread):
+        (WTF::AutomaticThread::start):
+        * wtf/AutomaticThread.h:
+        * wtf/CMakeLists.txt:
+        * wtf/WorkerPool.cpp: Added.
+        (WTF::WorkerPool::WorkerPool):
+        (WTF::WorkerPool::~WorkerPool):
+        (WTF::WorkerPool::shouldSleep):
+        (WTF::WorkerPool::postTask):
+        * wtf/WorkerPool.h: Added.
+        (WTF::WorkerPool::create):
+
 2018-06-07  Chris Dumez  <cdumez@apple.com>
 
         Add base class to get WeakPtrFactory member and avoid some boilerplate code

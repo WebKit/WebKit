@@ -35,26 +35,9 @@
 #include "GraphicsLayer.h"
 #include "NicosiaBuffer.h"
 #include "NicosiaPaintingContext.h"
-#include <glib.h>
-#include <wtf/FastMalloc.h>
 
 namespace Nicosia {
 using namespace WebCore;
-
-struct TaskData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-
-    Ref<Buffer> buffer;
-    PaintingOperations paintingOperations;
-};
-
-void s_threadFunc(gpointer data, gpointer)
-{
-    std::unique_ptr<TaskData> taskData(static_cast<TaskData*>(data));
-
-    PaintingContext::replay(taskData->buffer, taskData->paintingOperations);
-    taskData->buffer->completePainting();
-}
 
 static void paintLayer(GraphicsContext& context, GraphicsLayer& layer, const IntRect& sourceRect, const IntRect& mappedSourceRect, const IntRect& targetRect, float contentsScale, bool supportsAlpha)
 {
@@ -77,14 +60,12 @@ static void paintLayer(GraphicsContext& context, GraphicsLayer& layer, const Int
 }
 
 PaintingEngineThreaded::PaintingEngineThreaded()
+    : m_workerPool(WorkerPool::create(4))
 {
-    // FIXME: these parameters should be fine-tuned, or maybe made configurable.
-    m_threadPool = g_thread_pool_new(s_threadFunc, nullptr, 4, TRUE, nullptr);
 }
 
 PaintingEngineThreaded::~PaintingEngineThreaded()
 {
-    g_thread_pool_free(m_threadPool, TRUE, FALSE);
 }
 
 bool PaintingEngineThreaded::paint(GraphicsLayer& layer, Ref<Buffer>&& buffer, const IntRect& sourceRect, const IntRect& mappedSourceRect, const IntRect& targetRect, float contentsScale)
@@ -98,7 +79,10 @@ bool PaintingEngineThreaded::paint(GraphicsLayer& layer, Ref<Buffer>&& buffer, c
             paintLayer(context, layer, sourceRect, mappedSourceRect, targetRect, contentsScale, buffer->supportsAlpha());
         });
 
-    g_thread_pool_push(m_threadPool, new TaskData { WTFMove(buffer), WTFMove(paintingOperations) }, nullptr);
+    m_workerPool->postTask([paintingOperations = WTFMove(paintingOperations), buffer = WTFMove(buffer)] {
+        PaintingContext::replay(buffer, paintingOperations);
+        buffer->completePainting();
+    });
 
     return true;
 }

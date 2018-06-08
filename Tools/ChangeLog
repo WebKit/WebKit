@@ -1,3 +1,15 @@
+2018-06-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add WorkerPool
+        https://bugs.webkit.org/show_bug.cgi?id=174569
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/WorkerPool.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2018-06-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MiniBrowser] Add a new BrowserWindow interface to abstract WK1 and WK2 BrowserWindow

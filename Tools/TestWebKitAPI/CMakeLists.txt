@@ -158,6 +158,7 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/WTFString.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/WeakPtr.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/WorkQueue.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/WorkerPool.cpp
 )
 
 # FIXME: Tests/WTF/RunLoop.cpp is missing because it doesn't work for Windows.
