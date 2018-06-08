@@ -16,18 +16,19 @@ class CommitSetRangeBisector {
         const commitRangeByRepository = new Map;
         const indexForAllTimelessCommitsWithOrderByRepository = new Map;
         const allCommitsWithCommitTime = [];
-        const topLevelRepositoriesWithOrderedCommits = firstCommitSet.topLevelRepositories()
-            .filter((repository) => {
-                const firstCommit = firstCommitSet.commitForRepository(repository);
-                const secondCommit = secondCommitSet.commitForRepository(repository);
-                return CommitLog.hasOrdering(firstCommit, secondCommit);
-            });
+        const repositoriesWithoutOrdering = [];
 
-        await Promise.all(topLevelRepositoriesWithOrderedCommits.map(async (repository) => {
+        await Promise.all(firstCommitSet.topLevelRepositories().map(async (repository) => {
             const firstCommit = firstCommitSet.commitForRepository(repository);
             const secondCommit = secondCommitSet.commitForRepository(repository);
-            const [startCommit, endCommit] = CommitLog.orderTwoCommits(firstCommit, secondCommit);
 
+            if (!CommitLog.hasOrdering(firstCommit, secondCommit)) {
+                repositoriesWithoutOrdering.push(repository);
+                commitRangeByRepository.set((repository), (commit) => commit === firstCommit || commit === secondCommit);
+                return;
+            }
+
+            const [startCommit, endCommit] = CommitLog.orderTwoCommits(firstCommit, secondCommit);
             const commits = startCommit === endCommit ? [startCommit] : await CommitLog.fetchBetweenRevisions(repository, startCommit.revision(), endCommit.revision());
 
             if (startCommit.hasCommitTime()) {
@@ -45,11 +46,11 @@ class CommitSetRangeBisector {
             }
         }));
 
-        if (!repositoriesWithCommitTime.size && !indexForAllTimelessCommitsWithOrderByRepository.size)
+        if (!repositoriesWithCommitTime.size && !indexForAllTimelessCommitsWithOrderByRepository.size && !repositoriesWithoutOrdering.size)
             return null;
 
         const commitSetsInRange = this._findCommitSetsWithinRange(firstCommitSet, secondCommitSet, availableCommitSets, commitRangeByRepository);
-        let sortedCommitSets = this._orderCommitSetsByTimeAndOrderThenDeduplicate(commitSetsInRange, repositoriesWithCommitTime, [...indexForAllTimelessCommitsWithOrderByRepository.keys()]);
+        let sortedCommitSets = this._orderCommitSetsByTimeAndOrderThenDeduplicate(commitSetsInRange, repositoriesWithCommitTime, [...indexForAllTimelessCommitsWithOrderByRepository.keys()], repositoriesWithoutOrdering);
         if (!sortedCommitSets.length)
             return null;
 
@@ -76,7 +77,7 @@ class CommitSetRangeBisector {
         });
     }
 
-    static _orderCommitSetsByTimeAndOrderThenDeduplicate(commitSets, repositoriesWithCommitTime, repositoriesWithCommitOrderOnly)
+    static _orderCommitSetsByTimeAndOrderThenDeduplicate(commitSets, repositoriesWithCommitTime, repositoriesWithCommitOrderOnly, repositoriesWithoutOrdering)
     {
         const sortedCommitSets = commitSets.sort((firstCommitSet, secondCommitSet) => {
             for (const repository of repositoriesWithCommitTime) {
@@ -94,6 +95,13 @@ class CommitSetRangeBisector {
                 if (!diff)
                     continue;
                 return diff;
+            }
+            for (const repository of repositoriesWithoutOrdering) {
+                const firstCommit = firstCommitSet.commitForRepository(repository);
+                const secondCommit = secondCommitSet.commitForRepository(repository);
+                if (firstCommit === secondCommit)
+                    continue;
+                return firstCommit.revision() < secondCommit.revision() ? -1 : 1;
             }
             return 0;
         });

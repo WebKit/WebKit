@@ -279,6 +279,42 @@ describe('CommitSetRangeBisector', () => {
         ];
     }
 
+    function commitSetWithOnlySomeCommitsHaveOrdering()
+    {
+        return [
+            CommitSet.ensureSingleton(23, {
+                revisionItems: [
+                    { commit: makeCommit(1, MockModels.webkit, 'webkit-commit-1', 10), requiresBuild: false },
+                    { commit: makeCommit(111, MockModels.osx, 'osx-commit-111', 0), requiresBuild: false }
+                ],
+                customRoots: []}),
+            CommitSet.ensureSingleton(24, {
+                revisionItems: [
+                    { commit: makeCommit(1, MockModels.webkit, 'webkit-commit-1', 10), requiresBuild: false },
+                    { commit: makeCommit(112, MockModels.osx, 'osx-commit-112', 0), requiresBuild: false }
+                ],
+                customRoots: []}),
+            CommitSet.ensureSingleton(25, {
+                revisionItems: [
+                    { commit: makeCommit(1, MockModels.webkit, 'webkit-commit-1', 10), requiresBuild: false },
+                    { commit: makeCommit(113, MockModels.osx, 'osx-commit-113', 0), requiresBuild: false }
+                ],
+                customRoots: []}),
+            CommitSet.ensureSingleton(26, {
+                revisionItems: [
+                    { commit: makeCommit(3, MockModels.webkit, 'webkit-commit-3', 30), requiresBuild: false },
+                    { commit: makeCommit(114, MockModels.osx, 'osx-commit-114', 0), requiresBuild: false }
+                ],
+                customRoots: []}),
+            CommitSet.ensureSingleton(27, {
+                revisionItems: [
+                    { commit: makeCommit(6, MockModels.webkit, 'webkit-commit-6', 60), requiresBuild: false },
+                    { commit: makeCommit(113, MockModels.osx, 'osx-commit-113', 0), requiresBuild: false }
+                ],
+                customRoots: []}),
+        ];
+    }
+
     function createRoot()
     {
         return UploadedFile.ensureSingleton(456, {'createdAt': new Date('2017-05-01T21:03:27Z'), 'filename': 'root.dat', 'extension': '.dat', 'author': 'some user',
@@ -832,6 +868,59 @@ describe('CommitSetRangeBisector', () => {
             assert.equal(await promise, allCommitSets[4]);
         });
 
+        it('should filter out commits those are not in any commit sets for commit without ordering', async () => {
+            const allCommitSets = commitSetWithOnlySomeCommitsHaveOrdering();
+            const startCommitSet = allCommitSets[0];
+            const endCommitSet = allCommitSets[allCommitSets.length - 1];
+            const promise = CommitSetRangeBisector.commitSetClosestToMiddleOfAllCommits([startCommitSet, endCommitSet], allCommitSets);
+            const webkitId = MockModels.webkit.id();
+            const osxId = MockModels.osx.id();
+
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '/api/commits/11/?precedingRevision=webkit-commit-1&lastRevision=webkit-commit-6');
+
+            requests[0].resolve({
+                'commits': [
+                    {
+                        repository: webkitId,
+                        id: 2,
+                        revision: 'webkit-commit-2',
+                        ownsCommits: false,
+                        time: 20
+                    },
+                    {
+                        repository: webkitId,
+                        id: 3,
+                        revision: 'webkit-commit-3',
+                        ownsCommits: false,
+                        time: 30
+                    },
+                    {
+                        repository: webkitId,
+                        id: 4,
+                        revision: 'webkit-commit-4',
+                        ownsCommits: false,
+                        time: 40
+                    },
+                    {
+                        repository: webkitId,
+                        id: 5,
+                        revision: 'webkit-commit-5',
+                        ownsCommits: false,
+                        time: 50
+                    },
+                    {
+                        repository: webkitId,
+                        id: 6,
+                        revision: 'webkit-commit-6',
+                        ownsCommits: false,
+                        time: 60
+                    },
+                ]
+            });
+            assert.equal(await promise, allCommitSets[2]);
+        });
+
         it('should still work even some commits do not monotonically increasing', async () => {
             const allCommitSets = commitSetsWithSomeCommitsNotMonotonicallyIncrease();
             const startCommitSet = allCommitSets[0];
@@ -899,4 +988,26 @@ describe('CommitSetRangeBisector', () => {
             assert.equal(await promise, allCommitSets[3]);
         });
     });
+
+    describe('_orderCommitSetsByTimeAndOrderThenDeduplicate', () => {
+        it('should sort by alphabetically for commits without ordering', () => {
+            const oneCommitSet = CommitSet.ensureSingleton(100, {
+                revisionItems: [
+                    { commit: makeCommit(1001, MockModels.webkit, 'webkit-commit-1001'), requiresBuild: false}
+                ],
+                customRoots: []
+            });
+
+            const anotherCommitSet = CommitSet.ensureSingleton(101, {
+                revisionItems: [
+                    { commit: makeCommit(1002, MockModels.webkit, 'webkit-commit-1002'), requiresBuild: false}
+                ],
+                customRoots: []
+            });
+
+            const [commitSet0, commitSet1] = CommitSetRangeBisector._orderCommitSetsByTimeAndOrderThenDeduplicate([anotherCommitSet, oneCommitSet], [], [], [MockModels.webkit]);
+            assert.equal(oneCommitSet, commitSet0);
+            assert.equal(anotherCommitSet, commitSet1);
+        })
+    })
 });
