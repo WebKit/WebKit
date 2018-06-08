@@ -40,7 +40,7 @@ PopStateEvent::PopStateEvent(const AtomicString& type, const Init& initializer, 
 }
 
 PopStateEvent::PopStateEvent(RefPtr<SerializedScriptValue>&& serializedState, History* history)
-    : Event(eventNames().popstateEvent, false, true)
+    : Event(eventNames().popstateEvent, false, false)
     , m_serializedState(WTFMove(serializedState))
     , m_history(history)
 {

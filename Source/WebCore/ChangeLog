@@ -1,3 +1,21 @@
+2018-06-07  Chris Dumez  <cdumez@apple.com>
+
+        PopStateEvent should not be cancelable by default
+        https://bugs.webkit.org/show_bug.cgi?id=186420
+
+        Reviewed by Darin Adler.
+
+        PopStateEvent should not be cancelable by default:
+        - https://github.com/web-platform-tests/wpt/pull/11355
+        - https://html.spec.whatwg.org/#history-traversal
+
+        All other browsers agree with the specification.
+
+        No new tests, updated existing tests.
+
+        * dom/PopStateEvent.cpp:
+        (WebCore::PopStateEvent::PopStateEvent):
+
 2018-06-07  Simon Fraser  <simon.fraser@apple.com>
 
         Remove a log that was left in by mistake.

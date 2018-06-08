@@ -1,3 +1,17 @@
+2018-06-07  Chris Dumez  <cdumez@apple.com>
+
+        PopStateEvent should not be cancelable by default
+        https://bugs.webkit.org/show_bug.cgi?id=186420
+
+        Reviewed by Darin Adler.
+
+        Resync web-platform-tests after:
+        https://github.com/web-platform-tests/wpt/pull/11355
+
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/hashchange_event-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/hashchange_event.html:
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/popstate_event.html:
+
 2018-06-07  Brendan McLoughlin  <brendan@bocoup.com>
 
         Update web-platform-tests github location in webkitpy.w3c.test_importer
