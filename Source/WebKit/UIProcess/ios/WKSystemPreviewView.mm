@@ -128,7 +128,13 @@ SOFT_LINK_CLASS(AssetViewer, ASVThumbnailView);
 {
     if (_thumbnailView) {
         UIEdgeInsets safeAreaInsets = _webView._computedUnobscuredSafeAreaInset;
-        CGRect layoutFrame = CGRectMake(0, 0, self.frame.size.width - safeAreaInsets.left - safeAreaInsets.right, self.frame.size.height - safeAreaInsets.top - safeAreaInsets.bottom);
+        UIEdgeInsets obscuredAreaInsets = _webView._computedObscuredInset;
+
+        CGRect layoutFrame = UIEdgeInsetsInsetRect(self.frame, safeAreaInsets);
+
+        layoutFrame.size.width -= obscuredAreaInsets.left + obscuredAreaInsets.right;
+        layoutFrame.size.height -= obscuredAreaInsets.top + obscuredAreaInsets.bottom;
+
         [_thumbnailView setFrame:layoutFrame];
         [_thumbnailView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
     }
