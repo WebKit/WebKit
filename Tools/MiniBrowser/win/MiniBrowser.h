@@ -100,10 +100,6 @@ public:
 
     void showLayerTree();
 
-    float deviceScaleFactor() { return m_deviceScaleFactor; }
-    void updateDeviceScaleFactor();
-
-    HGDIOBJ urlBarFont() { return m_hURLBarFont; }
     HWND hwnd() { return m_viewWnd; }
 
     void print();
@@ -113,7 +109,6 @@ public:
 private:
     MiniBrowser(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting);
     void subclassForLayeredWindow();
-    void generateFontForScaleFactor(float);
     bool setCacheFolder();
 
     std::vector<IWebHistoryItemPtr> m_historyItems;
@@ -139,9 +134,7 @@ private:
 
     HWND m_hMainWnd { nullptr };
     HWND m_hURLBarWnd { nullptr };
-    HGDIOBJ m_hURLBarFont { nullptr };
     HWND m_viewWnd { nullptr };
 
-    float m_deviceScaleFactor { 1.0f };
     bool m_useLayeredWebView;
 };

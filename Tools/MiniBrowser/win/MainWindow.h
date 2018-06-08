@@ -54,11 +54,13 @@ private:
     MainWindow();
     bool toggleMenuItem(UINT menuID);
     void onURLBarEnter();
+    void updateDeviceScaleFactor();
 
     HWND m_hMainWnd { nullptr };
     HWND m_hURLBarWnd { nullptr };
     HWND m_hBackButtonWnd { nullptr };
     HWND m_hForwardButtonWnd { nullptr };
     HWND m_hCacheWnd { nullptr };
+    HGDIOBJ m_hURLBarFont { nullptr };
     RefPtr<MiniBrowser> m_browserWindow;
 };

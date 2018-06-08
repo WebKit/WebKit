@@ -1,3 +1,29 @@
+2018-06-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] MiniBrowser::updateDeviceScaleFactor should be a MainWindow's method
+        https://bugs.webkit.org/show_bug.cgi?id=186387
+
+        Reviewed by Ryosuke Niwa.
+
+        MiniBrowser::updateDeviceScaleFactor does nothing for MiniBrowser.
+        It should be a MainWindow's method.
+
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::init): Call MainWindow::updateDeviceScaleFactor.
+        (MainWindow::resizeSubViews): Do not set a font every time window size is changed.
+        (MainWindow::WndProc): Call MainWindow::updateDeviceScaleFactor on WM_DPICHANGED.
+        (MainWindow::updateDeviceScaleFactor): Converted from
+        MiniBrowser::updateDeviceScaleFactor and
+        MiniBrowser::generateFontForScaleFactor. Set a URL bar's font if DPI is changed.
+        * MiniBrowser/win/MainWindow.h:
+        * MiniBrowser/win/MiniBrowser.cpp:
+        (MiniBrowser::init):
+        (MiniBrowser::generateFontForScaleFactor): Deleted.
+        (MiniBrowser::updateDeviceScaleFactor): Deleted.
+        * MiniBrowser/win/MiniBrowser.h:
+        (MiniBrowser::deviceScaleFactor): Deleted.
+        (MiniBrowser::urlBarFont): Deleted.
+
 2018-06-07  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Treat svn versions as Version objects

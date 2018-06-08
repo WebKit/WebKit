@@ -34,6 +34,7 @@ float deviceScaleFactorForWindow(HWND);
 }
 
 static constexpr int controlButtonWidth = 24;
+static constexpr int urlBarHeight = 24;
 
 static WNDPROC DefEditProc = nullptr;
 
@@ -119,6 +120,7 @@ bool MainWindow::init(HINSTANCE hInstance, bool usesLayeredWebView, bool pageLoa
     if (FAILED(hr))
         return false;
 
+    updateDeviceScaleFactor();
     resizeSubViews();
     SetFocus(m_hURLBarWnd);
     return true;
@@ -131,15 +133,12 @@ void MainWindow::resizeSubViews()
     RECT rcClient;
     GetClientRect(m_hMainWnd, &rcClient);
 
-    constexpr int urlBarHeight = 24;
     int height = scaleFactor * urlBarHeight;
     int width = scaleFactor * controlButtonWidth;
 
     MoveWindow(m_hBackButtonWnd, 0, 0, width, height, TRUE);
     MoveWindow(m_hForwardButtonWnd, width, 0, width, height, TRUE);
     MoveWindow(m_hURLBarWnd, width * 2, 0, rcClient.right, height, TRUE);
-
-    ::SendMessage(m_hURLBarWnd, static_cast<UINT>(WM_SETFONT), reinterpret_cast<WPARAM>(m_browserWindow->urlBarFont()), TRUE);
 
     if (m_browserWindow->usesLayeredWebView() || !m_browserWindow->hwnd())
         return;
@@ -229,7 +228,7 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
         thisWindow->resizeSubViews();
         break;
     case WM_DPICHANGED:
-        thisWindow->browserWindow()->updateDeviceScaleFactor();
+        thisWindow->updateDeviceScaleFactor();
         return DefWindowProc(hWnd, message, wParam, lParam);
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
@@ -417,4 +416,15 @@ void MainWindow::onURLBarEnter()
     strPtr[INTERNET_MAX_URL_LENGTH - 1] = 0;
     _bstr_t bstr(strPtr);
     loadURL(bstr.GetBSTR());
+}
+
+void MainWindow::updateDeviceScaleFactor()
+{
+    if (m_hURLBarFont)
+        ::DeleteObject(m_hURLBarFont);
+    auto scaleFactor = WebCore::deviceScaleFactorForWindow(m_hMainWnd);
+    int fontHeight = scaleFactor * urlBarHeight * 3 / 4;
+    m_hURLBarFont = ::CreateFont(fontHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+        OUT_TT_ONLY_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, L"Times New Roman");
+    ::SendMessage(m_hURLBarWnd, static_cast<UINT>(WM_SETFONT), reinterpret_cast<WPARAM>(m_hURLBarFont), TRUE);
 }

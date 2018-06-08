@@ -88,8 +88,6 @@ ULONG MiniBrowser::Release()
 
 HRESULT MiniBrowser::init()
 {
-    updateDeviceScaleFactor();
-
     HRESULT hr = WebKitCreateInstance(CLSID_WebView, 0, IID_IWebView, reinterpret_cast<void**>(&m_webView.GetInterfacePtr()));
     if (FAILED(hr))
         return hr;
@@ -625,22 +623,6 @@ void MiniBrowser::showLayerTree()
     else
         OutputDebugString(layerTreeBstr);
     OutputDebugString(L"\n\n");
-}
-
-void MiniBrowser::generateFontForScaleFactor(float scaleFactor)
-{
-    if (m_hURLBarFont)
-        ::DeleteObject(m_hURLBarFont);
-
-    m_hURLBarFont = ::CreateFont(scaleFactor * 18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
-        OUT_TT_ONLY_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, L"Times New Roman");
-}
-
-
-void MiniBrowser::updateDeviceScaleFactor()
-{
-    m_deviceScaleFactor = WebCore::deviceScaleFactorForWindow(m_hMainWnd);
-    generateFontForScaleFactor(m_deviceScaleFactor);
 }
 
 static BOOL CALLBACK AbortProc(HDC hDC, int Error)
