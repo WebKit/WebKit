@@ -519,6 +519,19 @@ describe('ComponentBase', function() {
             });
         });
 
+        it('should allow to create an element with attributes to be null or undefined', () => {
+            const context = new BrowsingContext();
+            return importComponentBase(context).then((ComponentBase) => {
+                const input = ComponentBase.createElement('input', {'title': null, 'required': undefined});
+                expect(input).to.be.a(context.global.HTMLInputElement);
+                expect(input.attributes.length).to.be(2);
+                expect(input.attributes[0].localName).to.be('title');
+                expect(input.attributes[0].value).to.be('null');
+                expect(input.attributes[1].localName).to.be('required');
+                expect(input.attributes[1].value).to.be('undefined');
+            });
+        });
+
         it('should create an element with the specified attributes', () => {
             const context = new BrowsingContext();
             return importComponentBase(context).then((ComponentBase) => {

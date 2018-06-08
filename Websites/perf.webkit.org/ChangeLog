@@ -1,3 +1,20 @@
+2018-06-07  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Fix browser test failed assertions and a bug in 'common-component-base'
+        https://bugs.webkit.org/show_bug.cgi?id=186423
+
+        Reviewed by Ryosuke Niwa.
+
+        Fixed serveral assertion failures in browser tests.
+        Fixed a bug in common-component-base that null/undefined as attribute value is not allowed.
+
+        * browser-tests/chart-revision-range-tests.js: Should not import 'lazily-evaluated-function.js' twice.
+        * browser-tests/chart-status-evaluator-tests.js: Should not import 'lazily-evaluated-function.js' twice.
+        * browser-tests/component-base-tests.js: Added a unit test for element attributes being null or undefined.
+        * browser-tests/index.html: Make mocked data from makeSampleCluster also contains commit_order.
+        * public/shared/common-component-base.js: Make it allow to take null as attribute value.
+        (CommonComponentBase.createElement):
+
 2018-05-24  Dewei Zhu  <dewei_zhu@apple.com>
 
         Added sending notification feature when test group finishes.

@@ -5,7 +5,7 @@ describe('ChartRevisionRange', () => {
     {
         return ChartTest.importChartScripts(context).then(() => {
             ChartTest.makeModelObjectsForSampleCluster(context);
-            return context.importScripts(['lazily-evaluated-function.js', 'components/chart-revision-range.js'], 'ChartRevisionRange');
+            return context.importScripts(['components/chart-revision-range.js'], 'ChartRevisionRange');
         });
     }
 

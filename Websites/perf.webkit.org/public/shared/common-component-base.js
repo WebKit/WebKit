@@ -112,7 +112,7 @@ class CommonComponentBase {
                 else if (attributes[name] === true)
                     element.setAttribute(name, '');
                 else if (attributes[name] !== false)
-                    element.setAttribute(name, attributes[name].toString());
+                    element.setAttribute(name, attributes[name]);
             }
         }
         

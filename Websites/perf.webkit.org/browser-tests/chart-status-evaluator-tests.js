@@ -3,9 +3,7 @@ describe('ChartStatusEvaluator', () => {
 
     function importEvaluator(context)
     {
-        const scripts = [
-            'lazily-evaluated-function.js',
-            'components/chart-status-evaluator.js'];
+        const scripts = ['components/chart-status-evaluator.js'];
 
         return ChartTest.importChartScripts(context).then(() => {
             return context.importScripts(scripts, 'Test', 'Metric', 'ChartStatusEvaluator');
