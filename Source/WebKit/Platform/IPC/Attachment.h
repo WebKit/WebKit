@@ -98,7 +98,7 @@ private:
     mach_port_name_t m_port;
     mach_msg_type_name_t m_disposition;
 #elif OS(WINDOWS)
-    HANDLE m_handle;
+    HANDLE m_handle { INVALID_HANDLE_VALUE };
 #endif
 };
 

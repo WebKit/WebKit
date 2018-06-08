@@ -67,7 +67,7 @@ static bool getDuplicatedHandle(HANDLE sourceHandle, DWORD sourcePID, HANDLE& du
 
 bool Attachment::decode(Decoder& decoder, Attachment& attachment)
 {
-    ASSERT_ARG(attachment, !attachment.m_handle);
+    ASSERT_ARG(attachment, attachment.m_handle == INVALID_HANDLE_VALUE);
 
     uint64_t sourceHandle;
     if (!decoder.decode(sourceHandle))
