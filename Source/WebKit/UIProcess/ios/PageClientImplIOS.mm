@@ -515,11 +515,6 @@ void PageClientImpl::layerTreeCommitComplete()
     [m_contentView _layerTreeCommitComplete];
 }
 
-void PageClientImpl::dynamicViewportUpdateChangedTarget(double newScale, const WebCore::FloatPoint& newScrollPosition, uint64_t nextValidLayerTreeTransactionID)
-{
-    [m_webView _dynamicViewportUpdateChangedTargetToScale:newScale position:newScrollPosition nextValidLayerTreeTransactionID:nextValidLayerTreeTransactionID];
-}
-
 void PageClientImpl::couldNotRestorePageState()
 {
     [m_webView _couldNotRestorePageState];

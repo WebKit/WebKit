@@ -677,6 +677,7 @@
 		2DA049B8180CCD0A00AAFA9E /* GraphicsLayerCARemote.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA049B6180CCD0A00AAFA9E /* GraphicsLayerCARemote.h */; };
 		2DA1E4FE18C02B6A00DBC929 /* WKLegacyPDFView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA1E4FC18C02B6A00DBC929 /* WKLegacyPDFView.h */; };
 		2DA1E4FF18C02B6A00DBC929 /* WKLegacyPDFView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1E4FD18C02B6A00DBC929 /* WKLegacyPDFView.mm */; };
+		2DA6731A20C754B1003CB401 /* DynamicViewportSizeUpdate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA6731920C754B1003CB401 /* DynamicViewportSizeUpdate.h */; };
 		2DA9449E1884E4F000ED86DB /* NativeWebKeyboardEventIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944971884E4F000ED86DB /* NativeWebKeyboardEventIOS.mm */; };
 		2DA9449F1884E4F000ED86DB /* NativeWebTouchEventIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944981884E4F000ED86DB /* NativeWebTouchEventIOS.mm */; };
 		2DA944A01884E4F000ED86DB /* WebIOSEventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA944991884E4F000ED86DB /* WebIOSEventFactory.h */; };
@@ -3055,6 +3056,7 @@
 		2DA049B6180CCD0A00AAFA9E /* GraphicsLayerCARemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerCARemote.h; sourceTree = "<group>"; };
 		2DA1E4FC18C02B6A00DBC929 /* WKLegacyPDFView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKLegacyPDFView.h; path = ios/WKLegacyPDFView.h; sourceTree = "<group>"; };
 		2DA1E4FD18C02B6A00DBC929 /* WKLegacyPDFView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKLegacyPDFView.mm; path = ios/WKLegacyPDFView.mm; sourceTree = "<group>"; };
+		2DA6731920C754B1003CB401 /* DynamicViewportSizeUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DynamicViewportSizeUpdate.h; path = ios/DynamicViewportSizeUpdate.h; sourceTree = "<group>"; };
 		2DA7FDCB18F88625008DDED0 /* FindIndicatorOverlayClientIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FindIndicatorOverlayClientIOS.h; path = ios/FindIndicatorOverlayClientIOS.h; sourceTree = "<group>"; };
 		2DA944971884E4F000ED86DB /* NativeWebKeyboardEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeWebKeyboardEventIOS.mm; path = ios/NativeWebKeyboardEventIOS.mm; sourceTree = "<group>"; };
 		2DA944981884E4F000ED86DB /* NativeWebTouchEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeWebTouchEventIOS.mm; path = ios/NativeWebTouchEventIOS.mm; sourceTree = "<group>"; };
@@ -5779,6 +5781,7 @@
 			isa = PBXGroup;
 			children = (
 				A7E93CEB192531AA00A1DC48 /* ChildProcessIOS.mm */,
+				2DA6731920C754B1003CB401 /* DynamicViewportSizeUpdate.h */,
 				2DA9449D1884E4F000ED86DB /* GestureTypes.h */,
 				C5BCE5DA1C50761D00CDE3FA /* InteractionInformationAtPosition.h */,
 				C5BCE5DB1C50761D00CDE3FA /* InteractionInformationAtPosition.mm */,
@@ -8941,6 +8944,7 @@
 				1A64229A12DD029200CAAE2C /* DrawingAreaMessages.h in Headers */,
 				BC2652171182608100243E12 /* DrawingAreaProxy.h in Headers */,
 				1A64230912DD09EB00CAAE2C /* DrawingAreaProxyMessages.h in Headers */,
+				2DA6731A20C754B1003CB401 /* DynamicViewportSizeUpdate.h in Headers */,
 				E105FE5418D7B9DE008F57A8 /* EditingRange.h in Headers */,
 				1AA41AB512C02EC4002BE67B /* EditorState.h in Headers */,
 				BC032DA810F437D10058C15A /* Encoder.h in Headers */,
