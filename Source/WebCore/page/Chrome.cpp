@@ -56,6 +56,10 @@
 #include "ColorChooser.h"
 #endif
 
+#if ENABLE(DATALIST_ELEMENT)
+#include "DataListSuggestionPicker.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -418,6 +422,16 @@ std::unique_ptr<ColorChooser> Chrome::createColorChooser(ColorChooserClient& cli
 {
     notifyPopupOpeningObservers();
     return m_client.createColorChooser(client, initialColor);
+}
+
+#endif
+
+#if ENABLE(DATALIST_ELEMENT)
+
+std::unique_ptr<DataListSuggestionPicker> Chrome::createDataListSuggestionPicker(DataListSuggestionsClient& client)
+{
+    notifyPopupOpeningObservers();
+    return m_client.createDataListSuggestionPicker(client);
 }
 
 #endif

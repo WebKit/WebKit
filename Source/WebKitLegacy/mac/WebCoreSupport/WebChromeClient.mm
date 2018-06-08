@@ -58,6 +58,7 @@
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/Cursor.h>
+#import <WebCore/DataListSuggestionPicker.h>
 #import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/Element.h>
 #import <WebCore/FileChooser.h>
@@ -721,6 +722,14 @@ std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserCl
     return nullptr;
 }
 
+#endif
+
+#if ENABLE(DATALIST_ELEMENT)
+std::unique_ptr<DataListSuggestionPicker> WebChromeClient::createDataListSuggestionPicker(DataListSuggestionsClient& client)
+{
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
 #endif
 
 #if ENABLE(POINTER_LOCK)

@@ -1,3 +1,35 @@
+2018-06-08  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Datalist] Allow TextFieldInputType to show and hide suggestions
+        https://bugs.webkit.org/show_bug.cgi?id=186151
+
+        Reviewed by Tim Horton.
+
+        Added WebDataListSuggestionPicker to send messages to the UIProcess in order to update the suggestions view.
+        This object is also responsible for forwarding messages from WebKit into the DataListSuggestionsClient, which
+        is the TextFieldInputType in this case. The client needs to know when the suggestions are hidden or if an
+        suggestion has been selected.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createDataListSuggestionPicker): Responsible for creating WebDataListSuggestionPicker to send/receive messages.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebDataListSuggestionPicker.cpp: Added. Responsible for sending messages to UIProcess and updating the DataListSuggestionsClient.
+        (WebKit::WebDataListSuggestionPicker::WebDataListSuggestionPicker):
+        (WebKit::WebDataListSuggestionPicker::~WebDataListSuggestionPicker):
+        (WebKit::WebDataListSuggestionPicker::handleKeydownWithIdentifier):
+        (WebKit::WebDataListSuggestionPicker::didSelectOption):
+        (WebKit::WebDataListSuggestionPicker::didCloseSuggestions):
+        (WebKit::WebDataListSuggestionPicker::close):
+        (WebKit::WebDataListSuggestionPicker::displayWithActivationType):
+        * WebProcess/WebCoreSupport/WebDataListSuggestionPicker.h: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setActiveDataListSuggestionPicker):
+        (WebKit::WebPage::didSelectDataListOption): Called by UIProcess when option selected.
+        (WebKit::WebPage::didCloseSuggestions): Called by UIProcess if the suggestions view is closed.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-06-08  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Win] Fix initial value of HANDLE to INVALID_HANDLE_VALUE

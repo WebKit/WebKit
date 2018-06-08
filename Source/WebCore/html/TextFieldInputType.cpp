@@ -58,6 +58,11 @@
 #include "TextNodeTraversal.h"
 #include "WheelEvent.h"
 
+#if ENABLE(DATALIST_ELEMENT)
+#include "HTMLDataListElement.h"
+#include "HTMLOptionElement.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -71,6 +76,9 @@ TextFieldInputType::~TextFieldInputType()
 {
     if (m_innerSpinButton)
         m_innerSpinButton->removeSpinButtonOwner();
+#if ENABLE(DATALIST_ELEMENT)
+    closeSuggestions();
+#endif
 }
 
 bool TextFieldInputType::isKeyboardFocusable(KeyboardEvent*) const
@@ -161,11 +169,24 @@ void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChange
         input->setTextAsOfLastFormControlChangeEvent(sanitizedValue);
 }
 
+#if ENABLE(DATALIST_ELEMENT)
+void TextFieldInputType::handleClickEvent(MouseEvent&)
+{
+    if (element()->focused() && element()->list())
+        displaySuggestions(DataListSuggestionActivationType::ControlClicked);
+}
+#endif
+
 void TextFieldInputType::handleKeydownEvent(KeyboardEvent& event)
 {
     ASSERT(element());
     if (!element()->focused())
         return;
+#if ENABLE(DATALIST_ELEMENT)
+    const String& key = event.keyIdentifier();
+    if (m_suggestionPicker && (key == "Enter" || key == "Up" || key == "Down"))
+        m_suggestionPicker->handleKeydownWithIdentifier(key);
+#endif
     RefPtr<Frame> frame = element()->document().frame();
     if (!frame || !frame->editor().doTextFieldCommandFromEvent(element(), &event))
         return;
@@ -223,6 +244,10 @@ void TextFieldInputType::elementDidBlur()
     bool isLeftToRightDirection = downcast<RenderTextControlSingleLine>(*renderer).style().isLeftToRightDirection();
     ScrollOffset scrollOffset(isLeftToRightDirection ? 0 : innerLayer->scrollWidth(), 0);
     innerLayer->scrollToOffset(scrollOffset);
+
+#if ENABLE(DATALIST_ELEMENT)
+    closeSuggestions();
+#endif
 }
 
 void TextFieldInputType::handleFocusEvent(Node* oldFocusedNode, FocusDirection)
@@ -536,7 +561,11 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& 
 
 bool TextFieldInputType::shouldRespectListAttribute()
 {
+#if ENABLE(DATALIST_ELEMENT)
+    return true;
+#else
     return InputType::themeSupportsDataListUI(this);
+#endif
 }
 
 void TextFieldInputType::updatePlaceholderText()
@@ -607,6 +636,10 @@ void TextFieldInputType::didSetValueByUserEdit()
         return;
     if (RefPtr<Frame> frame = element()->document().frame())
         frame->editor().textDidChangeInTextField(element());
+#if ENABLE(DATALIST_ELEMENT)
+    if (element()->list())
+        displaySuggestions(DataListSuggestionActivationType::TextChanged);
+#endif
 }
 
 void TextFieldInputType::spinButtonStepDown()
@@ -750,5 +783,68 @@ void TextFieldInputType::updateAutoFillButton()
     if (m_autoFillButton)
         m_autoFillButton->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);        
 }
+
+#if ENABLE(DATALIST_ELEMENT)
+
+IntRect TextFieldInputType::elementRectInRootViewCoordinates() const
+{
+    if (!element()->renderer())
+        return IntRect();
+    return element()->document().view()->contentsToRootView(element()->renderer()->absoluteBoundingBoxRect());
+}
+
+Vector<String> TextFieldInputType::suggestions() const
+{
+    Vector<String> suggestions;
+
+    if (auto dataList = element()->dataList()) {
+        Ref<HTMLCollection> options = dataList->options();
+        for (unsigned i = 0; auto* option = downcast<HTMLOptionElement>(options->item(i)); ++i) {
+            if (!element()->isValidValue(option->value()))
+                continue;
+
+            String value = sanitizeValue(option->value());
+            if (!suggestions.contains(value) && (element()->value().isEmpty() || value.containsIgnoringASCIICase(element()->value())))
+                suggestions.append(value);
+        }
+    }
+
+    return suggestions;
+}
+
+void TextFieldInputType::didSelectDataListOption(const String& selectedOption)
+{
+    element()->setValue(selectedOption, DispatchInputAndChangeEvent);
+}
+
+void TextFieldInputType::didCloseSuggestions()
+{
+    m_suggestionPicker = nullptr;
+}
+
+void TextFieldInputType::displaySuggestions(DataListSuggestionActivationType type)
+{
+    if (element()->isDisabledFormControl() || !element()->renderer())
+        return;
+
+    if (!UserGestureIndicator::processingUserGesture())
+        return;
+
+    if (!m_suggestionPicker && suggestions().size() > 0)
+        m_suggestionPicker = chrome()->createDataListSuggestionPicker(*this);
+
+    if (!m_suggestionPicker)
+        return;
+
+    m_suggestionPicker->displayWithActivationType(type);
+}
+
+void TextFieldInputType::closeSuggestions()
+{
+    if (m_suggestionPicker)
+        m_suggestionPicker->close();
+}
+
+#endif
 
 } // namespace WebCore

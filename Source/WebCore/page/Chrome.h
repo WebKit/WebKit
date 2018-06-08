@@ -37,6 +37,8 @@ namespace WebCore {
 class ChromeClient;
 class ColorChooser;
 class ColorChooserClient;
+class DataListSuggestionPicker;
+class DataListSuggestionsClient;
 class DateTimeChooser;
 class DateTimeChooserClient;
 class FileChooser;
@@ -150,6 +152,10 @@ public:
 
 #if ENABLE(INPUT_TYPE_COLOR)
     std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient&, const Color& initialColor);
+#endif
+
+#if ENABLE(DATALIST_ELEMENT)
+    std::unique_ptr<DataListSuggestionPicker> createDataListSuggestionPicker(DataListSuggestionsClient&);
 #endif
 
     void runOpenPanel(Frame&, FileChooser&);

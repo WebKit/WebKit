@@ -200,6 +200,7 @@ class VisibleContentRectUpdateInfo;
 class WebColorChooser;
 class WebContextMenu;
 class WebContextMenuItemData;
+class WebDataListSuggestionPicker;
 class WebDocumentLoader;
 class WebEvent;
 class WebFrame;
@@ -360,6 +361,12 @@ public:
     void setActiveColorChooser(WebColorChooser*);
     void didChooseColor(const WebCore::Color&);
     void didEndColorPicker();
+#endif
+
+#if ENABLE(DATALIST_ELEMENT)
+    void setActiveDataListSuggestionPicker(WebDataListSuggestionPicker*);
+    void didSelectDataListOption(const String&);
+    void didCloseSuggestions();
 #endif
 
     WebOpenPanelResultListener* activeOpenPanelResultListener() const { return m_activeOpenPanelResultListener.get(); }
@@ -1545,6 +1552,10 @@ private:
 
 #if ENABLE(INPUT_TYPE_COLOR)
     WebColorChooser* m_activeColorChooser { nullptr };
+#endif
+
+#if ENABLE(DATALIST_ELEMENT)
+    WebDataListSuggestionPicker* m_activeDataListSuggestionPicker { nullptr };
 #endif
 
     RefPtr<WebOpenPanelResultListener> m_activeOpenPanelResultListener;

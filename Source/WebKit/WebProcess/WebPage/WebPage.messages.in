@@ -126,6 +126,11 @@ messages -> WebPage LegacyReceiver {
     DidChooseColor(WebCore::Color color)
 #endif
 
+#if ENABLE(DATALIST_ELEMENT)
+    DidSelectDataListOption(String selectedOption);
+    DidCloseSuggestions();
+#endif
+
 #if ENABLE(CONTEXT_MENUS)
     ContextMenuHidden()
     ContextMenuForKeyEvent()

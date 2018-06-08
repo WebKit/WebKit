@@ -32,6 +32,8 @@
 #pragma once
 
 #include "AutoFillButtonElement.h"
+#include "DataListSuggestionPicker.h"
+#include "DataListSuggestionsClient.h"
 #include "InputType.h"
 #include "SpinButtonElement.h"
 
@@ -42,12 +44,19 @@ class TextControlInnerTextElement;
 
 // The class represents types of which UI contain text fields.
 // It supports not only the types for BaseTextInputType but also type=number.
-class TextFieldInputType : public InputType, protected SpinButtonElement::SpinButtonOwner, protected AutoFillButtonElement::AutoFillButtonOwner {
+class TextFieldInputType : public InputType, protected SpinButtonElement::SpinButtonOwner, protected AutoFillButtonElement::AutoFillButtonOwner
+#if ENABLE(DATALIST_ELEMENT)
+    , private DataListSuggestionsClient
+#endif
+{
 protected:
     explicit TextFieldInputType(HTMLInputElement&);
     virtual ~TextFieldInputType();
     void handleKeydownEvent(KeyboardEvent&) override;
     void handleKeydownEventForSpinButton(KeyboardEvent&);
+#if ENABLE(DATALIST_ELEMENT)
+    void handleClickEvent(MouseEvent&) final;
+#endif
 
     HTMLElement* containerElement() const final;
     HTMLElement* innerBlockElement() const final;
@@ -109,6 +118,19 @@ private:
 
     void createContainer();
     void createAutoFillButton(AutoFillButtonType);
+
+#if ENABLE(DATALIST_ELEMENT)
+    void displaySuggestions(DataListSuggestionActivationType);
+    void closeSuggestions();
+
+    // DataListSuggestionsClient
+    IntRect elementRectInRootViewCoordinates() const final;
+    Vector<String> suggestions() const final;
+    void didSelectDataListOption(const String&) final;
+    void didCloseSuggestions() final;
+
+    std::unique_ptr<DataListSuggestionPicker> m_suggestionPicker;
+#endif
 
     RefPtr<HTMLElement> m_container;
     RefPtr<HTMLElement> m_innerBlock;

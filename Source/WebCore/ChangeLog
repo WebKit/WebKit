@@ -1,3 +1,54 @@
+2018-06-08  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Datalist] Allow TextFieldInputType to show and hide suggestions
+        https://bugs.webkit.org/show_bug.cgi?id=186151
+
+        Reviewed by Tim Horton.
+
+        TextFieldInputTypes with a list attribute should be able to display suggestions as the user
+        interacts with the input field. In order to display suggestions for an input field with a list
+        attribute, we need provide certain information - including the items to suggest and the location
+        to present the suggestions. TextFieldInputType can now provide this information by conforming to
+        the DataListSuggestionsClient interface.
+
+        In this initial patch, the suggestions can be shown in two ways. The first is by clicking on the
+        input field. The other is by typing text in the field. In a later patch, we will add a third way
+        to display suggestions, using a button. These ways to activate the suggestions are enumerated in
+        DataListSuggestionInformation.
+
+        We hide the suggestions if there are no more to show, or if the input has blurred.
+
+        Tests to be added once work has been done in the UIProcess.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/DataListSuggestionInformation.h: Added. Contains the information necessary to display suggestions.
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::~TextFieldInputType):
+        (WebCore::TextFieldInputType::handleClickEvent): Show suggestions when the element is clicked.
+        (WebCore::TextFieldInputType::handleKeydownEvent): Allow users to interact with the suggestions using the keyboard.
+        (WebCore::TextFieldInputType::elementDidBlur): Hide the suggestions.
+        (WebCore::TextFieldInputType::shouldRespectListAttribute):
+        (WebCore::TextFieldInputType::didSetValueByUserEdit): Update the suggestions if the text has changed.
+        (WebCore::TextFieldInputType::elementRectRelativeToRootView const): Provide the location where the suggestions should be shown.
+        (WebCore::TextFieldInputType::suggestions const): Provide the list of suggestions.
+        (WebCore::TextFieldInputType::didSelectDataListOption): Update the text once an suggestion has been selected.
+        (WebCore::TextFieldInputType::didCloseSuggestions):
+        (WebCore::TextFieldInputType::displaySuggestions):
+        (WebCore::TextFieldInputType::closeSuggestions):
+        * html/TextFieldInputType.h:
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyChromeClient::createDataListSuggestionPicker):
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::createDataListSuggestionPicker):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/DataListSuggestionPicker.h: Added.
+        (WebCore::DataListSuggestionPicker::close):
+        (WebCore::DataListSuggestionPicker::handleKeydownWithIdentifier):
+        (WebCore::DataListSuggestionPicker::displayWithActivationType):
+        * platform/DataListSuggestionsClient.h: Added.
+
 2018-06-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(macOS Mojave): move-by-word-visually-inline-block-positioned-element.html fails

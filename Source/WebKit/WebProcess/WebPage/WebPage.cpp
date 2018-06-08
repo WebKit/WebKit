@@ -76,6 +76,7 @@
 #include "WebContextMenu.h"
 #include "WebContextMenuClient.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebDataListSuggestionPicker.h"
 #include "WebDatabaseProvider.h"
 #include "WebDiagnosticLoggingClient.h"
 #include "WebDocumentLoader.h"
@@ -3552,6 +3553,26 @@ void WebPage::didEndColorPicker()
 void WebPage::didChooseColor(const WebCore::Color& color)
 {
     m_activeColorChooser->didChooseColor(color);
+}
+
+#endif
+
+#if ENABLE(DATALIST_ELEMENT)
+
+void WebPage::setActiveDataListSuggestionPicker(WebDataListSuggestionPicker* dataListSuggestionPicker)
+{
+    m_activeDataListSuggestionPicker = dataListSuggestionPicker;
+}
+
+void WebPage::didSelectDataListOption(const String& selectedOption)
+{
+    m_activeDataListSuggestionPicker->didSelectOption(selectedOption);
+}
+
+void WebPage::didCloseSuggestions()
+{
+    m_activeDataListSuggestionPicker->didCloseSuggestions();
+    m_activeDataListSuggestionPicker = nullptr;
 }
 
 #endif
