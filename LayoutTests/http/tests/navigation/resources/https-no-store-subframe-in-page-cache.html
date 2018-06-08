@@ -13,6 +13,9 @@ window.onpageshow = function(evt)
 
 window.onload = function()
 {
+    if (window.testRunner)
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+
     if (window.sessionStorage.https_in_page_cache_started) {
         alert("FAIL: The page was reloaded on back. It should NOT have been.");
         if (window.testRunner)
