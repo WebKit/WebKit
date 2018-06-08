@@ -1,3 +1,17 @@
+2018-06-08  Dean Jackson  <dino@apple.com>
+
+        'setRenderPipelineState:' is unavailable: not available on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=186449
+        <rdar://problem/40880602>
+
+        Reviewed by Simon Fraser.
+
+        Be more explicit about the protocol type to avoid
+        the compiler getting confused by a similar signature.
+
+        * platform/graphics/cocoa/GPURenderCommandEncoderMetal.mm:
+        (WebCore::GPURenderCommandEncoder::setRenderPipelineState):
+
 2018-06-08  Darin Adler  <darin@apple.com>
 
         Fix iOS build.
