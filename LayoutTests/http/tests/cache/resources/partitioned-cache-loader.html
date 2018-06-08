@@ -2,6 +2,9 @@
 <head>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
+if (window.internals)
+    internals.settings.setStorageBlockingPolicy('BlockThirdParty');
+
 function setServerState(string)
 {
     var xhr = new XMLHttpRequest;
