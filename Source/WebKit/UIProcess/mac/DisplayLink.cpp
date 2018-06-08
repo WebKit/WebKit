@@ -98,8 +98,9 @@ void DisplayLink::resume()
 CVReturn DisplayLink::displayLinkCallback(CVDisplayLinkRef displayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data)
 {
     WebPageProxy* webPageProxy = reinterpret_cast<WebPageProxy*>(data);
-    callOnMainThread([webPageProxy = makeRefPtr(webPageProxy)] {
-        webPageProxy->process().send(Messages::DrawingArea::DisplayWasRefreshed(), webPageProxy->pageID());
+    RunLoop::main().dispatch([weakPtr = webPageProxy->createWeakPtr()] {
+        if (auto* proxy = weakPtr.get())
+            proxy->process().send(Messages::DrawingArea::DisplayWasRefreshed(), proxy->pageID());
     });
     return kCVReturnSuccess;
 }
