@@ -1,3 +1,18 @@
+2018-06-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Add base class to get WeakPtrFactory member and avoid some boilerplate code
+        https://bugs.webkit.org/show_bug.cgi?id=186407
+        <rdar://problem/40922716>
+
+        Unreviewed WinCairo build fix
+
+        MediaPlayerPrivateMediaFoundation.cpp(1726): error C2039: 'makeWeakPtr': is not a member of 'WebCore::MediaPlayerPrivateMediaFoundation'
+
+        No new tests (No behavior change).
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::processInputNotify):
+
 2018-06-07  Chris Dumez  <cdumez@apple.com>
 
         Add base class to get WeakPtrFactory member and avoid some boilerplate code

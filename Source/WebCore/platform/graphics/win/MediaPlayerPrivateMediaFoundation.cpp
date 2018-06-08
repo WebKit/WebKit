@@ -1723,7 +1723,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::processInputNot
     
     // Invalidate the video area
     if (m_mediaPlayer) {
-        callOnMainThread([weakPtr = m_mediaPlayer->makeWeakPtr(*m_mediaPlayer)] {
+        callOnMainThread([weakPtr = makeWeakPtr(*m_mediaPlayer)] {
             if (weakPtr)
                 weakPtr->invalidateFrameView();
         });
