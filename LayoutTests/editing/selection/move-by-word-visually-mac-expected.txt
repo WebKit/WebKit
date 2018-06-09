@@ -92,30 +92,35 @@ Move right by one word
 "AAA kj AAA mn opq AAA AAA"[25, 22, 18, 14, 11, 7, 4, 0], " abc def AAA AAA hij AAA AAA uvw xyz "[32, 29, 25, 21, 17, 13, 9, 4, 1]
 Test 19, LTR:
 Move right by one word
+"abc"[0, 3], " def"[4]
+Move left by one word
+" def"[4, 1], "abc"[0]
+Test 20, LTR:
+Move right by one word
 "abc def    hij opq"[0, 3, 7, 14, 18]
 Move left by one word
 "abc def    hij opq"[18, 15, 8, 4, 0]
-Test 20, LTR:
+Test 21, LTR:
 Move right by one word
 "    abc    def    hij    opq    "[4, 7, 14, 21, 28]
 Move left by one word
 "    abc    def    hij    opq    "[28, 22, 15, 8, 4]
-Test 21, RTL:
+Test 22, RTL:
 Move left by one word
 "    abc    def    hij    ABW    DSU    EJH    opq    rst    uvw    "[0, 18, 11, 21, 28, 35, 42, 60, 53, 63, 67]
 Move right by one word
 "    abc    def    hij    ABW    DSU    EJH    opq    rst    uvw    "[67, 49, 56, 46, 39, 32, 25, 7, 14, 4, 0]
-Test 22, RTL:
+Test 23, RTL:
 Move left by one word
 "    ABW    DSU    HJH    FUX    "[0, 7, 14, 21, 28, 32]
 Move right by one word
 "    ABW    DSU    HJH    FUX    "[32, 25, 18, 11, 4, 0]
-Test 23, RTL:
+Test 24, RTL:
 Move left by one word
 "abc def "[0], " rst uvw"[5, 1], "hij opq"[4], "abc def "[8, 4], " rst uvw"[8]
 Move right by one word
 " rst uvw"[8], "abc def "[3, 7], "hij opq"[3, 7], " rst uvw"[4], "abc def "[0]
-Test 24, RTL:
+Test 25, RTL:
 Move left by one word
 "ABD opq rst DSU "[0, 3, 8, 11, 15], "abc uvw AAA def lmn"[16, 12, 11, 4, 19], "ABW hij xyz FXX"[3, 8, 11, 15]    FAIL expected: ["ABD opq rst DSU "[ 0,  3,  8,  11,  15, ]"abc uvw AAA def lmn"[ 16,  12,  11,  4, ]"ABW hij xyz FXX"[ 3,  8,  11,  15]
 "abc uvw AAA def lmn"[4, 19]   FAIL expected "ABW hij xyz FXX"[ 3]

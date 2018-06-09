@@ -77,15 +77,20 @@ Move left by one word
 "opq rst uvw xyz"[15, 12, 8, 4, 0], "abc def ghi jkl mn "[16, 12, 8, 4, 0]
 Test 16, LTR:
 Move right by one word
+"abc"[0], " def"[1, 4]
+Move left by one word
+" def"[4, 1], "abc"[0]
+Test 17, LTR:
+Move right by one word
 "abc def "[0, 4, 8]
 Move left by one word
 " hij opq"[8, 5, 1]
-Test 17, LTR:
+Test 18, LTR:
 Move right by one word
 <DIV>[0]
 Move left by one word
 <DIV>[0]
-Test 18, LTR:
+Test 19, LTR:
 Move right by one word
 "\n00"[3]
 Move left by one word

@@ -1,3 +1,39 @@
+2018-06-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(macOS Mojave): move-by-word-visually-multi-line.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=186454
+
+        Reviewed by Darin Adler.
+
+        Like r232635, this patch fixes a selection test failure caused by the change in ICU's behavior in macOS Mojave,
+        which caused isWordTextBreak to return true in more cases.
+
+        In this particular failing test case, previousTextOrLineBreakBox and nextTextOrLineBreakBox were failing to find
+        an inline text box when it found an inline box for a BR, which was mentioned by an existing FIXME comment.
+        Consequently, visualWordPosition were erroneously detecting the end of a word followed by a blank line created by
+        a BR as a valid word boundary to move when the Windows editing behavior is enacted.
+
+        Addressed the FIXME comment by finding the next inline text box skipping all inline boxes for BRs. Renamed
+        misleadingly named previousBoxInDifferentBlock and nextBoxInDifferentBlock to previousBoxInDifferentLine and
+        nextBoxInDifferentLine respectively, and set them to true as they're really indicating whether line boxes
+        belong to a distinct line or not; whether an inline box belong to two (render) blocks or not is irrelevant.
+
+        Finally, this patch fixes a bug in visualWordPosition that it was failing to skip blank lines when a word break is
+        found as we traversed past a line break. In those cases, we must skip all line breaks before stopping.
+
+        Tests: editing/selection/move-by-word-visually-mac.html
+               editing/selection/move-by-word-visually-multi-line.htm
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::CachedLogicallyOrderedLeafBoxes::previousTextOrLineBreakBox):
+        (WebCore::CachedLogicallyOrderedLeafBoxes::nextTextOrLineBreakBox):
+        (WebCore::CachedLogicallyOrderedLeafBoxes::boxIndexInLeaves const):
+        (WebCore::logicallyPreviousBox):
+        (WebCore::logicallyNextBox):
+        (WebCore::wordBreakIteratorForMinOffsetBoundary):
+        (WebCore::wordBreakIteratorForMaxOffsetBoundary):
+        (WebCore::visualWordPosition):
+
 2018-06-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] MarginCollapse functions should be able to resolve non-fixed margin values
