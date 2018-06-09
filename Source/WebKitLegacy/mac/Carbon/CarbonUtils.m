@@ -29,13 +29,13 @@
 #ifndef __LP64__
 
 #include "CarbonUtils.h"
-#import <pal/spi/cocoa/FoundationSPI.h>
+#import <wtf/spi/cocoa/FoundationSPI.h>
 
 extern CGImageRef _NSCreateImageRef( unsigned char *const bitmapData[5], int pixelsWide, int pixelsHigh, int bitsPerSample, int samplesPerPixel, int bitsPerPixel, int bytesPerRow, BOOL isPlanar, BOOL hasAlpha, NSString *colorSpaceName, CGColorSpaceRef customColorSpace, id sourceObj);
 
 static void				PoolCleaner( EventLoopTimerRef inTimer, EventLoopIdleTimerMessage inState, void *inUserData );
 
-static NSAutoreleasePool*	sPool;
+static void* sPool;
 static unsigned numPools;
 static EventLoopRef poolLoop;
 
@@ -43,9 +43,9 @@ void                    HIWebViewRegisterClass( void );
 
 static unsigned getNSAutoreleasePoolCount(void)
 {
-    void* v = NSPushAutoreleasePool(0);
+    void* v = objc_autoreleasePoolPush();
     uintptr_t numPools = (uintptr_t)v;
-    NSPopAutoreleasePool(v);
+    objc_autoreleasePoolPop(v);
     return numPools;
 }
 
@@ -63,7 +63,7 @@ WebInitForCarbon()
         GetCurrentProcess( &process ); 
         NSApplicationLoad();
                 
-        sPool = [[NSAutoreleasePool allocWithZone:NULL] init];
+        sPool = objc_autoreleasePoolPush();
         numPools = getNSAutoreleasePoolCount();
         
         poolLoop = GetCurrentEventLoop ();
@@ -95,9 +95,8 @@ PoolCleaner( EventLoopTimerRef inTimer, EventLoopIdleTimerMessage inState, void 
         if ( CFEqual( mode, kCFRunLoopDefaultMode ) && thisLoop == poolLoop) {
             unsigned currentNumPools = getNSAutoreleasePoolCount()-1;            
             if (currentNumPools == numPools){
-                [sPool drain];
-                
-                sPool = [[NSAutoreleasePool allocWithZone:NULL] init];
+                objc_autoreleasePoolPop(sPool);
+                sPool = objc_autoreleasePoolPush();
                 numPools = getNSAutoreleasePoolCount();
             }
         }

@@ -62,10 +62,10 @@
 #include "SamplingProfiler.h"
 #include "ShadowChicken.h"
 #include "SpaceTimeMutatorScheduler.h"
-#include "SubspaceInlines.h"
-#include "SuperSampler.h"
 #include "StochasticSpaceTimeMutatorScheduler.h"
 #include "StopIfNecessaryTimer.h"
+#include "SubspaceInlines.h"
+#include "SuperSampler.h"
 #include "SweepingScope.h"
 #include "SynchronousStopTheWorldMutatorScheduler.h"
 #include "TypeProfiler.h"
@@ -77,9 +77,6 @@
 #include "WeakMapImplInlines.h"
 #include "WeakSetInlines.h"
 #include <algorithm>
-#if PLATFORM(IOS)
-#include <bmalloc/bmalloc.h>
-#endif
 #include <wtf/ListDump.h>
 #include <wtf/MainThread.h>
 #include <wtf/ParallelVectorIterator.h>
@@ -88,14 +85,13 @@
 #include <wtf/SimpleStats.h>
 #include <wtf/Threading.h>
 
-#if USE(FOUNDATION)
-#if __has_include(<objc/objc-internal.h>)
-#include <objc/objc-internal.h>
-#else
-extern "C" void* objc_autoreleasePoolPush(void);
-extern "C" void objc_autoreleasePoolPop(void *context);
+#if PLATFORM(IOS)
+#include <bmalloc/bmalloc.h>
 #endif
-#endif // USE(FOUNDATION)
+
+#if USE(FOUNDATION)
+#include <wtf/spi/cocoa/FoundationSPI.h>
+#endif
 
 #if USE(GLIB)
 #include "JSCGLibWrapperObject.h"

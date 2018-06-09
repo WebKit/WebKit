@@ -21,6 +21,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     spi/cf/CFBundleSPI.h
     spi/cf/CFStringSPI.h
 
+    spi/cocoa/FoundationSPI.h
     spi/cocoa/NSMapTableSPI.h
     spi/cocoa/SecuritySPI.h
 
@@ -32,7 +33,6 @@ list(APPEND WTF_PUBLIC_HEADERS
 )
 
 list(APPEND WTF_SOURCES
-    AutodrainedPoolMac.mm
     BlockObjCExceptions.mm
     RunLoopTimerCF.cpp
     SchedulePairCF.cpp
@@ -41,8 +41,7 @@ list(APPEND WTF_SOURCES
     cf/LanguageCF.cpp
     cf/RunLoopCF.cpp
 
-    text/mac/TextBreakIteratorInternalICUMac.mm
-
+    cocoa/AutodrainedPool.mm
     cocoa/CPUTimeCocoa.mm
     cocoa/Entitlements.cpp
     cocoa/MachSendRight.cpp
@@ -61,6 +60,7 @@ list(APPEND WTF_SOURCES
     text/mac/StringImplMac.mm
     text/mac/StringMac.mm
     text/mac/StringViewObjC.mm
+    text/mac/TextBreakIteratorInternalICUMac.mm
 )
 
 list(APPEND WTF_PRIVATE_INCLUDE_DIRECTORIES

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,15 +27,15 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#include <Foundation/NSPrivateDecls.h>
+#include <objc/objc-internal.h>
 
-#endif
-
-typedef void* NSAutoreleasePoolMark;
+#else
 
 WTF_EXTERN_C_BEGIN
 
-NSAutoreleasePoolMark NSPushAutoreleasePool(NSUInteger capacity);
-void NSPopAutoreleasePool(NSAutoreleasePoolMark);
+void* objc_autoreleasePoolPush(void);
+void objc_autoreleasePoolPop(void* context);
 
 WTF_EXTERN_C_END
+
+#endif

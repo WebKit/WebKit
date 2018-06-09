@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008-2009, 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ThreadSpecific.h>
+#import <wtf/spi/cocoa/FoundationSPI.h>
 
 #ifdef NDEBUG
 #define OBJC_LOG(formatAndArgs...) ((void)0)
@@ -100,9 +101,6 @@ void ObjcInstance::moveGlobalExceptionToExecState(ExecState* exec)
 ObjcInstance::ObjcInstance(id instance, RefPtr<RootObject>&& rootObject) 
     : Instance(WTFMove(rootObject))
     , _instance(instance)
-    , _class(0)
-    , _pool(0)
-    , _beginCount(0)
 {
 }
 
@@ -133,8 +131,8 @@ ObjcInstance::~ObjcInstance()
 
 void ObjcInstance::virtualBegin()
 {
-    if (!_pool)
-        _pool = [[NSAutoreleasePool alloc] init];
+    if (!m_autoreleasePool)
+        m_autoreleasePool = objc_autoreleasePoolPush();
     _beginCount++;
 }
 
@@ -143,8 +141,9 @@ void ObjcInstance::virtualEnd()
     _beginCount--;
     ASSERT(_beginCount >= 0);
     if (!_beginCount) {
-        [_pool drain];
-        _pool = 0;
+        ASSERT(m_autoreleasePool);
+        objc_autoreleasePoolPop(m_autoreleasePool);
+        m_autoreleasePool = nullptr;
     }
 }
 
@@ -507,13 +506,11 @@ JSC::JSValue ObjcInstance::stringValue(ExecState* exec) const
 
 JSC::JSValue ObjcInstance::numberValue(ExecState*) const
 {
-    // FIXME:  Implement something sensible
     return jsNumber(0);
 }
 
 JSC::JSValue ObjcInstance::booleanValue() const
 {
-    // FIXME:  Implement something sensible
     return jsBoolean(false);
 }
 

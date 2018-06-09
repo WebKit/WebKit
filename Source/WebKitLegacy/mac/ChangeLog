@@ -1,3 +1,23 @@
+2018-06-08  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Remove all uses of NSAutoreleasePool as part of preparation for ARC
+        https://bugs.webkit.org/show_bug.cgi?id=186436
+
+        Reviewed by Anders Carlsson.
+
+        * Carbon/CarbonUtils.m: Updated include location of FoundationSPI.h.
+        (getNSAutoreleasePoolCount): Use objc_autoreleasePoolPush/Pop.
+        (WebInitForCarbon): Use objc_autoreleasePoolPush/Pop instead of NSAutoreleasePool object.
+        (PoolCleaner): Ditto.
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate loadHistoryGutsFromURL:savedItemsCount:collectDiscardedItemsInto:error:]):
+        Use @autoreleasepool instead of NSAutoreleasePool object. No need to do the "drain pool only
+        every 50 times"; the -[WebHistory loadFromURL] family of methods were once used by Safari, and
+        now hardly used if at all.
+        * WebView/WebView.mm:
+        (-[WebView rectsForTextMatches]): Ditto.
+
 2018-06-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit on watchOS] Upstream watchOS source additions to OpenSource (Part 1)

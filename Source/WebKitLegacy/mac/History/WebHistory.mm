@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -591,41 +591,34 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
 
     int itemCountLimit = [self historyItemLimit];
     NSTimeInterval ageLimitDate = [[self ageLimitDate] timeIntervalSinceReferenceDate];
-    NSEnumerator *enumerator = [array objectEnumerator];
     BOOL ageLimitPassed = NO;
     BOOL itemLimitPassed = NO;
     ASSERT(*numberOfItemsLoaded == 0);
 
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NSDictionary *itemAsDictionary;
-    while ((itemAsDictionary = [enumerator nextObject]) != nil) {
-        WebHistoryItem *item = [[WebHistoryItem alloc] initFromDictionaryRepresentation:itemAsDictionary];
+    for (NSDictionary *itemAsDictionary in array) {
+        @autoreleasepool {
+            WebHistoryItem *item = [[WebHistoryItem alloc] initFromDictionaryRepresentation:itemAsDictionary];
 
-        // item without URL is useless; data on disk must have been bad; ignore
-        if ([item URLString]) {
-            // Test against date limit. Since the items are ordered newest to oldest, we can stop comparing
-            // once we've found the first item that's too old.
-            if (!ageLimitPassed && [item lastVisitedTimeInterval] <= ageLimitDate)
-                ageLimitPassed = YES;
+            // item without URL is useless; data on disk must have been bad; ignore
+            if ([item URLString]) {
+                // Test against date limit. Since the items are ordered newest to oldest, we can stop comparing
+                // once we've found the first item that's too old.
+                if (!ageLimitPassed && [item lastVisitedTimeInterval] <= ageLimitDate)
+                    ageLimitPassed = YES;
 
-            if (ageLimitPassed || itemLimitPassed)
-                [discardedItems addObject:item];
-            else {
-                if ([self addItem:item discardDuplicate:YES])
-                    ++(*numberOfItemsLoaded);
-                if (*numberOfItemsLoaded == itemCountLimit)
-                    itemLimitPassed = YES;
-
-                // Draining the autorelease pool every 50 iterations was found by experimentation to be optimal
-                if (*numberOfItemsLoaded % 50 == 0) {
-                    [pool drain];
-                    pool = [[NSAutoreleasePool alloc] init];
+                if (ageLimitPassed || itemLimitPassed)
+                    [discardedItems addObject:item];
+                else {
+                    if ([self addItem:item discardDuplicate:YES])
+                        ++(*numberOfItemsLoaded);
+                    if (*numberOfItemsLoaded == itemCountLimit)
+                        itemLimitPassed = YES;
                 }
             }
+
+            [item release];
         }
-        [item release];
     }
-    [pool drain];
 
     return YES;
 }

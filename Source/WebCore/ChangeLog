@@ -1,3 +1,34 @@
+2018-06-08  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Remove all uses of NSAutoreleasePool as part of preparation for ARC
+        https://bugs.webkit.org/show_bug.cgi?id=186436
+
+        Reviewed by Anders Carlsson.
+
+        * bridge/objc/objc_class.mm: Use import instead of include.
+
+        * bridge/objc/objc_instance.h: Replaced _pool member to hold an object with
+        m_autoreleasePool member to hold a token from objc_autoreleasePoolPush. Also
+        initialize all data members here in the class definition.
+
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::ObjcInstance): Moved most initialization to class definition.
+        (ObjcInstance::virtualBegin): Use objc_autoreleasePoolPush instead of
+        NSAutoreleasePool class.
+        (ObjcInstance::virtualEnd): Use objc_autoreleasePoolPop.
+
+        * bridge/objc/objc_runtime.mm: Use import instead of include.
+        * bridge/objc/objc_utility.mm: Ditto.
+
+        * platform/audio/mac/AudioBusMac.mm:
+        (WebCore::AudioBus::loadPlatformResource): Use @autoreleasepool.
+
+        * platform/ios/wak/WebCoreThread.mm: Re-sorted includes. Removed declaration of
+        autorelease pool SPI and use FoundationSPI.h instead.
+
+        * platform/network/cocoa/ResourceResponseCocoa.mm:
+        (WebCore::ResourceResponse::platformLazyInit): Use @autoreleasepool.
+
 2018-06-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit on watchOS] Upstream watchOS source additions to OpenSource (Part 1)

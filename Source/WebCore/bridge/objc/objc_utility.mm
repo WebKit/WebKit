@@ -23,16 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "objc_utility.h"
+#import "config.h"
+#import "objc_utility.h"
 
-#include "WebScriptObjectProtocol.h"
-#include "objc_instance.h"
-#include "runtime_array.h"
-#include "runtime_object.h"
-#include <JavaScriptCore/JSGlobalObject.h>
-#include <JavaScriptCore/JSLock.h>
-#include <wtf/Assertions.h>
+#import "WebScriptObjectProtocol.h"
+#import "objc_instance.h"
+#import "runtime_array.h"
+#import "runtime_object.h"
+#import <JavaScriptCore/JSGlobalObject.h>
+#import <JavaScriptCore/JSLock.h>
+#import <wtf/Assertions.h>
 
 #if !defined(_C_LNG_LNG)
 #define _C_LNG_LNG 'q'

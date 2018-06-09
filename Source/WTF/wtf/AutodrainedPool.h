@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,36 +26,38 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AutodrainedPool_h
-#define AutodrainedPool_h
+#pragma once
+
+#ifdef __OBJC__
+#error Please use @autoreleasepool instead of AutodrainedPool.
+#endif
 
 #include <wtf/Noncopyable.h>
 
-#if USE(FOUNDATION) && !defined(__OBJC__)
-typedef struct objc_object *id;
-#endif
-
 namespace WTF {
+
+// This class allows non-Objective-C C++ code to create an autorelease pool.
+// It cannot be used in Objective-C++ code, won't be compiled; instead @autoreleasepool should be used.
+// It can be used in cross-platform code; will compile down to nothing for non-Cocoa platforms.
 
 class AutodrainedPool {
     WTF_MAKE_NONCOPYABLE(AutodrainedPool);
+
 public:
 #if USE(FOUNDATION)
     WTF_EXPORT_PRIVATE AutodrainedPool();
     WTF_EXPORT_PRIVATE ~AutodrainedPool();
 #else
-    explicit AutodrainedPool() { }
+    AutodrainedPool() { }
     ~AutodrainedPool() { }
 #endif
-    
+
 private:
 #if USE(FOUNDATION)
-    id m_pool;
+    void* m_autoreleasePool;
 #endif
 };
 
 } // namespace WTF
 
 using WTF::AutodrainedPool;
-
-#endif

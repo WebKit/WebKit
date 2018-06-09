@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "objc_class.h"
+#import "config.h"
+#import "objc_class.h"
 
-#include "objc_instance.h"
-#include "WebScriptObject.h"
-#include "WebScriptObjectProtocol.h"
+#import "WebScriptObject.h"
+#import "WebScriptObjectProtocol.h"
+#import "objc_instance.h"
 
 namespace JSC {
 namespace Bindings {

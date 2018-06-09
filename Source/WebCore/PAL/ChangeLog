@@ -1,3 +1,14 @@
+2018-06-08  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Remove all uses of NSAutoreleasePool as part of preparation for ARC
+        https://bugs.webkit.org/show_bug.cgi?id=186436
+
+        Reviewed by Anders Carlsson.
+
+        * PAL.xcodeproj/project.pbxproj: Removed FoundationSPI.h.
+        * pal/PlatformMac.cmake: Ditto.
+        * pal/spi/cocoa/FoundationSPI.h: Moved into WTF project.
+
 2018-06-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit on watchOS] Upstream watchOS source additions to OpenSource (Part 1)

@@ -23,20 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "objc_runtime.h"
+#import "config.h"
+#import "objc_runtime.h"
 
-#include "JSDOMBinding.h"
-#include "ObjCRuntimeObject.h"
-#include "WebScriptObject.h"
-#include "WebScriptObjectProtocol.h"
-#include "objc_instance.h"
-#include "runtime_array.h"
-#include "runtime_object.h"
-#include <JavaScriptCore/Error.h>
-#include <JavaScriptCore/JSGlobalObject.h>
-#include <JavaScriptCore/JSLock.h>
-#include <wtf/RetainPtr.h>
+#import "JSDOMBinding.h"
+#import "ObjCRuntimeObject.h"
+#import "WebScriptObject.h"
+#import "WebScriptObjectProtocol.h"
+#import "objc_instance.h"
+#import "runtime_array.h"
+#import "runtime_object.h"
+#import <JavaScriptCore/Error.h>
+#import <JavaScriptCore/JSGlobalObject.h>
+#import <JavaScriptCore/JSLock.h>
+#import <wtf/RetainPtr.h>
 
 using namespace WebCore;
 

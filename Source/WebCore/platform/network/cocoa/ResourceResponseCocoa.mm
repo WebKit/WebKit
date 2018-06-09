@@ -33,7 +33,6 @@
 #import <Foundation/Foundation.h>
 #import <limits>
 #import <pal/spi/cf/CFNetworkSPI.h>
-#import <wtf/AutodrainedPool.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cf/TypeCastsCF.h>
@@ -175,26 +174,28 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
     if (m_isNull || !m_nsResponse)
         return;
     
-    AutodrainedPool pool;
+    @autoreleasepool {
 
-    NSHTTPURLResponse *httpResponse = [m_nsResponse.get() isKindOfClass:[NSHTTPURLResponse class]] ? (NSHTTPURLResponse *)m_nsResponse.get() : nullptr;
+        NSHTTPURLResponse *httpResponse = [m_nsResponse.get() isKindOfClass:[NSHTTPURLResponse class]] ? (NSHTTPURLResponse *)m_nsResponse.get() : nullptr;
 
-    if (m_initLevel < CommonFieldsOnly) {
-        m_url = [m_nsResponse.get() URL];
-        m_mimeType = [m_nsResponse.get() MIMEType];
-        m_expectedContentLength = [m_nsResponse.get() expectedContentLength];
-        // Stripping double quotes as a workaround for <rdar://problem/8757088>, can be removed once that is fixed.
-        m_textEncodingName = stripLeadingAndTrailingDoubleQuote([m_nsResponse.get() textEncodingName]);
-        m_httpStatusCode = httpResponse ? [httpResponse statusCode] : 0;
-    }
-    if (httpResponse) {
-        if (initLevel == AllFields) {
-            auto messageRef = CFURLResponseGetHTTPResponse([httpResponse _CFURLResponse]);
-            m_httpStatusText = extractHTTPStatusText(messageRef);
-            m_httpVersion = String(adoptCF(CFHTTPMessageCopyVersion(messageRef)).get()).convertToASCIIUppercase();
-            initializeHTTPHeaders(OnlyCommonHeaders::No, httpResponse, m_httpHeaderFields);
-        } else
-            initializeHTTPHeaders(OnlyCommonHeaders::Yes, httpResponse, m_httpHeaderFields);
+        if (m_initLevel < CommonFieldsOnly) {
+            m_url = [m_nsResponse.get() URL];
+            m_mimeType = [m_nsResponse.get() MIMEType];
+            m_expectedContentLength = [m_nsResponse.get() expectedContentLength];
+            // Stripping double quotes as a workaround for <rdar://problem/8757088>, can be removed once that is fixed.
+            m_textEncodingName = stripLeadingAndTrailingDoubleQuote([m_nsResponse.get() textEncodingName]);
+            m_httpStatusCode = httpResponse ? [httpResponse statusCode] : 0;
+        }
+        if (httpResponse) {
+            if (initLevel == AllFields) {
+                auto messageRef = CFURLResponseGetHTTPResponse([httpResponse _CFURLResponse]);
+                m_httpStatusText = extractHTTPStatusText(messageRef);
+                m_httpVersion = String(adoptCF(CFHTTPMessageCopyVersion(messageRef)).get()).convertToASCIIUppercase();
+                initializeHTTPHeaders(OnlyCommonHeaders::No, httpResponse, m_httpHeaderFields);
+            } else
+                initializeHTTPHeaders(OnlyCommonHeaders::Yes, httpResponse, m_httpHeaderFields);
+        }
+
     }
 
     m_initLevel = initLevel;

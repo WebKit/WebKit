@@ -24,12 +24,11 @@
  */
 
 #import "config.h"
+
 #import "PlatformUtilities.h"
-#import <wtf/AutodrainedPool.h>
 #import <wtf/RetainPtr.h>
 
-@interface StopLoadingFromDidFinishLoadingDelegate : NSObject <WebResourceLoadDelegate> {
-}
+@interface StopLoadingFromDidFinishLoadingDelegate : NSObject <WebResourceLoadDelegate>
 @end
 
 static bool finished = false;
@@ -48,12 +47,12 @@ namespace TestWebKitAPI {
 
 TEST(WebKitLegacy, StopLoadingFromDidFinishLoading)
 {
-    AutodrainedPool pool;
-    RetainPtr<WebView> webView = adoptNS([[WebView alloc] init]);
-    RetainPtr<StopLoadingFromDidFinishLoadingDelegate> delegate = adoptNS([[StopLoadingFromDidFinishLoadingDelegate alloc] init]);
-    webView.get().resourceLoadDelegate = delegate.get();
-    [webView.get().mainFrame loadHTMLString:@"Hello, World!" baseURL:[NSURL URLWithString:@""]];
-    Util::run(&finished);
+    @autoreleasepool {
+        auto webView = adoptNS([[WebView alloc] init]);
+        webView.get().resourceLoadDelegate = adoptNS([[StopLoadingFromDidFinishLoadingDelegate alloc] init]).get();
+        [webView.get().mainFrame loadHTMLString:@"Hello, World!" baseURL:[NSURL URLWithString:@""]];
+        Util::run(&finished);
+    }
     // No crash means the test passed.
 }
 

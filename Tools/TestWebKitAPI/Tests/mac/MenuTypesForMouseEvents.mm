@@ -29,7 +29,6 @@
 #import <Carbon/Carbon.h> // For GetCurrentEventTime
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <pal/spi/mac/NSMenuSPI.h>
-#import <wtf/AutodrainedPool.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
@@ -42,25 +41,26 @@ static bool canCallMenuTypeForEvent()
 
 static void buildAndPerformTest(NSEventType buttonEvent, NSEventModifierFlags modifierFlags, WebCore::MouseButton expectedButton, NSMenuType expectedMenu)
 {
-    AutodrainedPool pool;
-    RetainPtr<WebView> webView = adoptNS([[WebView alloc] init]);
-    NSEvent *event = [NSEvent mouseEventWithType:buttonEvent
-                                        location:NSMakePoint(100, 100)
-                                   modifierFlags:modifierFlags
-                                       timestamp:GetCurrentEventTime()
-                                    windowNumber:[[webView window] windowNumber]
-                                         context:[NSGraphicsContext currentContext]
-                                     eventNumber:0
-                                      clickCount:0
-                                        pressure:0];
-    
-    auto pme = WebCore::PlatformEventFactory::createPlatformMouseEvent(event, nil, webView.get());
-    
-    EXPECT_EQ(expectedButton, pme.button());
-    EXPECT_TRUE(!modifierFlags || pme.modifierFlags() & modifierFlags);
-    EXPECT_EQ(expectedMenu, pme.menuTypeForEvent());
-    if (canCallMenuTypeForEvent())
-        EXPECT_EQ(expectedMenu, [NSMenu menuTypeForEvent:event]);
+    @autoreleasepool {
+        auto webView = adoptNS([[WebView alloc] init]);
+        NSEvent *event = [NSEvent mouseEventWithType:buttonEvent
+                                            location:NSMakePoint(100, 100)
+                                       modifierFlags:modifierFlags
+                                           timestamp:GetCurrentEventTime()
+                                        windowNumber:[[webView window] windowNumber]
+                                             context:[NSGraphicsContext currentContext]
+                                         eventNumber:0
+                                          clickCount:0
+                                            pressure:0];
+
+        auto pme = WebCore::PlatformEventFactory::createPlatformMouseEvent(event, nil, webView.get());
+
+        EXPECT_EQ(expectedButton, pme.button());
+        EXPECT_TRUE(!modifierFlags || pme.modifierFlags() & modifierFlags);
+        EXPECT_EQ(expectedMenu, pme.menuTypeForEvent());
+        if (canCallMenuTypeForEvent())
+            EXPECT_EQ(expectedMenu, [NSMenu menuTypeForEvent:event]);
+    }
 }
 
 TEST(WebKitLegacy, MenuAndButtonForNormalLeftClick)

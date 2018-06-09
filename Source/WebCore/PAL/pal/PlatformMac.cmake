@@ -17,7 +17,6 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/CFNSURLConnectionSPI.h
     spi/cocoa/CoreTextSPI.h
     spi/cocoa/DataDetectorsCoreSPI.h
-    spi/cocoa/FoundationSPI.h
     spi/cocoa/IOPMLibSPI.h
     spi/cocoa/IOPSLibSPI.h
     spi/cocoa/IOReturnSPI.h

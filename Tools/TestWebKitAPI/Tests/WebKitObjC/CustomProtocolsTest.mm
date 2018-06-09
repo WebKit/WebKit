@@ -34,7 +34,6 @@
 #import "TestProtocol.h"
 #import <WebKit/WKContextPrivate.h>
 #import <WebKit/WKProcessGroupPrivate.h>
-#import <wtf/AutodrainedPool.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED && PLATFORM(MAC)
@@ -171,8 +170,7 @@ TEST(WebKit2CustomProtocolsTest, ProcessPoolDestroyedDuringLoading)
 {
     [ProcessPoolDestroyedDuringLoadingProtocol registerWithScheme:@"custom"];
 
-    {
-        AutodrainedPool pool;
+    @autoreleasepool {
         auto browsingContextGroup = adoptNS([[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"]);
         auto processGroup = adoptNS([[WKProcessGroup alloc] init]);
         auto wkView = adoptNS([[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup.get() browsingContextGroup:browsingContextGroup.get()]);

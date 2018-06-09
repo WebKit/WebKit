@@ -1,3 +1,18 @@
+2018-06-08  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Remove all uses of NSAutoreleasePool as part of preparation for ARC
+        https://bugs.webkit.org/show_bug.cgi?id=186436
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WebKitObjC/CustomProtocolsTest.mm:
+        (TestWebKitAPI::WebKit2CustomProtocolsTest_ProcessPoolDestroyedDuringLoading):
+        Use @autoreleasepool.
+        * TestWebKitAPI/Tests/mac/MenuTypesForMouseEvents.mm:
+        (TestWebKitAPI::buildAndPerformTest): Ditto.
+        * TestWebKitAPI/Tests/mac/StopLoadingFromDidFinishLoading.mm:
+        (TestWebKitAPI::WebKitLegacy_StopLoadingFromDidFinishLoading): Ditto.
+
 2018-06-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit on watchOS] Upstream watchOS source additions to OpenSource (Part 1)

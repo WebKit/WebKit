@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,18 +29,18 @@
 #import "config.h"
 #import "AutodrainedPool.h"
 
-#import <Foundation/Foundation.h>
+#import <wtf/spi/cocoa/FoundationSPI.h>
 
 namespace WTF {
 
 AutodrainedPool::AutodrainedPool()
-    : m_pool([[NSAutoreleasePool alloc] init])
+    : m_autoreleasePool { objc_autoreleasePoolPush() }
 { 
 }
 
 AutodrainedPool::~AutodrainedPool()
 {
-    [m_pool drain];
+    objc_autoreleasePoolPop(m_autoreleasePool);
 }
 
 } // namespace WTF
