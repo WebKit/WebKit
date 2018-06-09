@@ -32,11 +32,11 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/WeakObjCPtr.h>
 
-using namespace WebKit;
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKScrollViewAdditionsBefore.mm>
+#if PLATFORM(WATCHOS)
+#import <PepperUICore/UIScrollView+PUICAdditionsPrivate.h>
 #endif
+
+using namespace WebKit;
 
 @interface UIScrollView (UIScrollViewInternalHack)
 - (CGFloat)_rubberBandOffsetForOffset:(CGFloat)newOffset maxOffset:(CGFloat)maxOffset minOffset:(CGFloat)minOffset range:(CGFloat)range outside:(BOOL *)outside;
@@ -150,7 +150,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 #endif
     
 #if PLATFORM(WATCHOS)
-    [self _configureScrollingForExtraZoomMode];
+    [self _configureDigitalCrownScrolling];
 #endif
 
     return self;
@@ -330,18 +330,33 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
         [self _restoreContentOffsetWithRubberbandAmount:rubberbandAmount];
 }
 
+#if PLATFORM(WATCHOS)
+
 - (void)addGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
     [super addGestureRecognizer:gestureRecognizer];
 
-#if PLATFORM(WATCHOS)
     if (gestureRecognizer == self.pinchGestureRecognizer)
         gestureRecognizer.allowedTouchTypes = @[];
-#endif
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKScrollViewAdditionsAfter.mm>
+- (void)_configureDigitalCrownScrolling
+{
+    self.showsVerticalScrollIndicator = NO;
+    self.crownInputScrollDirection = PUICCrownInputScrollDirectionVertical;
+}
+
+- (CGPoint)_puic_contentOffsetForCrownInputSequencerOffset:(double)sequencerOffset
+{
+    CGPoint targetOffset = [super _puic_contentOffsetForCrownInputSequencerOffset:sequencerOffset];
+    auto scrollDirection = self.puic_crownInputScrollDirection;
+    if (scrollDirection == PUICCrownInputScrollDirectionVertical)
+        targetOffset.x = self.contentOffset.x;
+    else if (scrollDirection == PUICCrownInputScrollDirectionHorizontal)
+        targetOffset.y = self.contentOffset.y;
+    return targetOffset;
+}
+
 #endif
 
 @end

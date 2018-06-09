@@ -25,6 +25,51 @@
 
 #pragma once
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKFocusedFormControlViewAdditions.h>)
-#import <WebKitAdditions/WKFocusedFormControlViewAdditions.h>
+#if PLATFORM(WATCHOS)
+
+#import "UIKitSPI.h"
+
+@class WKFocusedFormControlView;
+
+@protocol WKFocusedFormControlViewDelegate <NSObject>
+
+- (void)focusedFormControlViewDidSubmit:(WKFocusedFormControlView *)view;
+- (void)focusedFormControlViewDidCancel:(WKFocusedFormControlView *)view;
+- (void)focusedFormControlViewDidBeginEditing:(WKFocusedFormControlView *)view;
+- (CGRect)rectForFocusedFormControlView:(WKFocusedFormControlView *)view;
+- (NSString *)actionNameForFocusedFormControlView:(WKFocusedFormControlView *)view;
+
+// Support for focusing upstream and downstream nodes.
+- (void)focusedFormControlViewDidRequestNextNode:(WKFocusedFormControlView *)view;
+- (void)focusedFormControlViewDidRequestPreviousNode:(WKFocusedFormControlView *)view;
+- (BOOL)hasNextNodeForFocusedFormControlView:(WKFocusedFormControlView *)view;
+- (BOOL)hasPreviousNodeForFocusedFormControlView:(WKFocusedFormControlView *)view;
+- (CGRect)nextRectForFocusedFormControlView:(WKFocusedFormControlView *)view;
+- (CGRect)previousRectForFocusedFormControlView:(WKFocusedFormControlView *)view;
+- (UIScrollView *)scrollViewForFocusedFormControlView:(WKFocusedFormControlView *)view;
+
+- (void)focusedFormControllerDidUpdateSuggestions:(WKFocusedFormControlView *)view;
+@end
+
+@interface WKFocusedFormControlView : UIView <UITextInputSuggestionDelegate>
+
+- (instancetype)initWithFrame:(CGRect)frame delegate:(id <WKFocusedFormControlViewDelegate>)delegate;
+- (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
+- (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
+
+- (void)reloadData:(BOOL)animated;
+- (void)show:(BOOL)animated;
+- (void)hide:(BOOL)animated;
+
+- (void)engageFocusedFormControlNavigation;
+- (void)disengageFocusedFormControlNavigation;
+
+- (BOOL)handleWheelEvent:(UIEvent *)event;
+
+@property (nonatomic, weak) id <WKFocusedFormControlViewDelegate> delegate;
+@property (nonatomic, readonly, getter=isVisible) BOOL visible;
+@property (nonatomic, copy) NSArray<UITextSuggestion *> *suggestions;
+
+@end
+
 #endif

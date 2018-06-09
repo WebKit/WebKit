@@ -5470,8 +5470,175 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 #endif
 
+#if PLATFORM(WATCHOS)
+
+- (void)dismissQuickboardViewControllerAndRevealFocusedFormOverlayIfNecessary:(PUICQuickboardViewController *)quickboard
+{
+    BOOL shouldRevealFocusOverlay = NO;
+    // In the case where there's nothing the user could potentially do besides dismiss the overlay, we can just automatically without asking the delegate.
+    if ([_webView._inputDelegate respondsToSelector:@selector(_webView:shouldRevealFocusOverlayForInputSession:)]
+        && ([self actionNameForFocusedFormControlView:_focusedFormControlView.get()] || _assistedNodeInformation.hasNextNode || _assistedNodeInformation.hasPreviousNode))
+        shouldRevealFocusOverlay = [_webView._inputDelegate _webView:_webView shouldRevealFocusOverlayForInputSession:_formInputSession.get()];
+
+    if (shouldRevealFocusOverlay) {
+        [_focusedFormControlView show:NO];
+        [self updateCurrentAssistedNodeInformation:[weakSelf = WeakObjCPtr<WKContentView>(self)] (bool didUpdate) {
+            if (!didUpdate)
+                return;
+
+            auto focusedFormController = weakSelf.get()->_focusedFormControlView;
+            [focusedFormController reloadData:YES];
+            [focusedFormController engageFocusedFormControlNavigation];
+        }];
+    } else
+        _page->blurAssistedNode();
+
+    // The Quickboard view controller passed into this delegate method is not necessarily the view controller we originally presented;
+    // this happens in the case when the user chooses an input method (e.g. scribble) and a new Quickboard view controller is presented.
+    if (quickboard != _presentedFullScreenInputViewController)
+        [quickboard dismissViewControllerAnimated:YES completion:nil];
+
+    [self dismissAllInputViewControllers:quickboard == _presentedFullScreenInputViewController];
+}
+
+#pragma mark - PUICQuickboardViewControllerDelegate
+
+- (void)quickboard:(PUICQuickboardViewController *)quickboard textEntered:(NSAttributedString *)attributedText
+{
+    if (attributedText)
+        _page->setTextAsync(attributedText.string);
+
+    [self dismissQuickboardViewControllerAndRevealFocusedFormOverlayIfNecessary:quickboard];
+}
+
+- (void)quickboardInputCancelled:(PUICQuickboardViewController *)quickboard
+{
+    [self dismissQuickboardViewControllerAndRevealFocusedFormOverlayIfNecessary:quickboard];
+}
+
+#pragma mark - WKQuickboardViewControllerDelegate
+
+- (CGFloat)viewController:(PUICQuickboardViewController *)controller inputContextViewHeightForSize:(CGSize)size
+{
+    id <_WKInputDelegate> delegate = _webView._inputDelegate;
+    if (![delegate respondsToSelector:@selector(_webView:focusedElementContextViewHeightForFittingSize:inputSession:)])
+        return 0;
+
+    return [delegate _webView:_webView focusedElementContextViewHeightForFittingSize:size inputSession:_formInputSession.get()];
+}
+
+- (BOOL)allowsLanguageSelectionMenuForListViewController:(PUICQuickboardViewController *)controller
+{
+    switch (_assistedNodeInformation.elementType) {
+    case InputType::ContentEditable:
+    case InputType::Text:
+    case InputType::TextArea:
+    case InputType::Search:
+    case InputType::Email:
+    case InputType::URL:
+        return YES;
+    default:
+        return NO;
+    }
+}
+
+- (UIView *)inputContextViewForViewController:(PUICQuickboardViewController *)controller
+{
+    id <_WKInputDelegate> delegate = _webView._inputDelegate;
+    if (![delegate respondsToSelector:@selector(_webView:focusedElementContextViewForInputSession:)])
+        return nil;
+
+    return [delegate _webView:_webView focusedElementContextViewForInputSession:_formInputSession.get()];
+}
+
+- (NSString *)inputLabelTextForViewController:(PUICQuickboardViewController *)controller
+{
+    if (!_assistedNodeInformation.label.isEmpty())
+        return _assistedNodeInformation.label;
+
+    if (!_assistedNodeInformation.ariaLabel.isEmpty())
+        return _assistedNodeInformation.ariaLabel;
+
+    if (!_assistedNodeInformation.title.isEmpty())
+        return _assistedNodeInformation.title;
+
+    return _assistedNodeInformation.placeholder;
+}
+
+- (NSString *)initialValueForViewController:(PUICQuickboardViewController *)controller
+{
+    return _assistedNodeInformation.value;
+}
+
+- (BOOL)shouldDisplayInputContextViewForListViewController:(PUICQuickboardViewController *)controller
+{
+    switch (_assistedNodeInformation.elementType) {
+    case InputType::ContentEditable:
+    case InputType::Text:
+    case InputType::Password:
+    case InputType::TextArea:
+    case InputType::Search:
+    case InputType::Email:
+    case InputType::URL:
+    case InputType::Phone:
+        return YES;
+    default:
+        return NO;
+    }
+}
+
+#pragma mark - WKTextInputListViewControllerDelegate
+
+- (WKNumberPadInputMode)numericInputModeForListViewController:(WKTextInputListViewController *)controller
+{
+    switch (_assistedNodeInformation.elementType) {
+    case InputType::Phone:
+        return WKNumberPadInputModeTelephone;
+    case InputType::Number:
+        return WKNumberPadInputModeNumbersAndSymbols;
+    case InputType::NumberPad:
+        return WKNumberPadInputModeNumbersOnly;
+    default:
+        return WKNumberPadInputModeNone;
+    }
+}
+
+- (NSString *)textContentTypeForListViewController:(WKTextInputListViewController *)controller
+{
+    switch (_assistedNodeInformation.elementType) {
+    case InputType::Password:
+        return UITextContentTypePassword;
+    case InputType::URL:
+        return UITextContentTypeURL;
+    case InputType::Email:
+        return UITextContentTypeEmailAddress;
+    case InputType::Phone:
+        return UITextContentTypeTelephoneNumber;
+    default:
+        // The element type alone is insufficient to infer content type; fall back to autofill data.
+        return contentTypeFromFieldName(_assistedNodeInformation.autofillFieldName);
+    }
+}
+
+- (NSArray<UITextSuggestion *> *)textSuggestionsForListViewController:(WKTextInputListViewController *)controller
+{
+    return [_focusedFormControlView suggestions];
+}
+
+- (void)listViewController:(WKTextInputListViewController *)controller didSelectTextSuggestion:(UITextSuggestion *)suggestion
+{
+    [self insertTextSuggestion:suggestion];
+    [self dismissQuickboardViewControllerAndRevealFocusedFormOverlayIfNecessary:controller];
+}
+
+- (BOOL)allowsDictationInputForListViewController:(PUICQuickboardViewController *)controller
+{
+    return _assistedNodeInformation.elementType != InputType::Password;
+}
+
+#endif // PLATFORM(WATCHOS)
+
 #if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKContentViewInteractionAdditions.mm>
 #import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.mm>
 #endif
 
