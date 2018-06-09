@@ -77,15 +77,21 @@ private:
     // This class implements margin collapsing for block formatting context.
     class MarginCollapse {
     public:
-        static LayoutUnit marginTop(const Box&);
-        static LayoutUnit marginBottom(const Box&);
+        static LayoutUnit marginTop(const LayoutContext&, const Box&);
+        static LayoutUnit marginBottom(const LayoutContext&, const Box&);
 
         static bool isMarginBottomCollapsedWithParent(const Box&);
         static bool isMarginTopCollapsedWithParentMarginBottom(const Box&);
     
     private:
-        static LayoutUnit collapsedMarginBottomFromLastChild(const Box&);
-        static LayoutUnit nonCollapsedMarginBottom(const Box&);
+        static LayoutUnit collapsedMarginBottomFromLastChild(const LayoutContext&, const Box&);
+        static LayoutUnit nonCollapsedMarginBottom(const LayoutContext&, const Box&);
+
+        static LayoutUnit computedNonCollapsedMarginTop(const LayoutContext&, const Box&);
+        static LayoutUnit computedNonCollapsedMarginBottom(const LayoutContext&, const Box&);
+
+        static LayoutUnit collapsedMarginTopFromFirstChild(const LayoutContext&, const Box&);
+        static LayoutUnit nonCollapsedMarginTop(const LayoutContext&, const Box&);
     };
 };
 

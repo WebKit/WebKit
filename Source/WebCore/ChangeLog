@@ -1,3 +1,25 @@
+2018-06-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] MarginCollapse functions should be able to resolve non-fixed margin values
+        https://bugs.webkit.org/show_bug.cgi?id=186461
+
+        Reviewed by Antti Koivisto.
+
+        We need the containing block's computed width to resolve vertical and horizontal margins.
+
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedMarginTopFromFirstChild):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::nonCollapsedMarginTop):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::computedNonCollapsedMarginTop):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::computedNonCollapsedMarginBottom):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginTop):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBottom):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedMarginBottomFromLastChild):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::nonCollapsedMarginBottom):
+        (WebCore::Layout::collapsedMarginTopFromFirstChild): Deleted.
+        (WebCore::Layout::nonCollapsedMarginTop): Deleted.
+
 2018-06-08  Darin Adler  <darin@apple.com>
 
         [Cocoa] Remove all uses of NSAutoreleasePool as part of preparation for ARC

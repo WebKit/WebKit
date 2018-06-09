@@ -111,7 +111,7 @@ static bool isMarginTopCollapsedWithParent(const Box& layoutBox)
     return true;
 }
 
-static LayoutUnit collapsedMarginTopFromFirstChild(const Box& layoutBox)
+LayoutUnit BlockFormattingContext::MarginCollapse::collapsedMarginTopFromFirstChild(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     // Check if the first child collapses its margin top.
     if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowChild())
@@ -122,13 +122,13 @@ static LayoutUnit collapsedMarginTopFromFirstChild(const Box& layoutBox)
         return 0;
 
     // Collect collapsed margin top recursively.
-    return marginValue(firstInFlowChild.style().marginTop().value(), collapsedMarginTopFromFirstChild(firstInFlowChild));
+    return marginValue(computedNonCollapsedMarginTop(layoutContext, firstInFlowChild), collapsedMarginTopFromFirstChild(layoutContext, firstInFlowChild));
 }
 
-static LayoutUnit nonCollapsedMarginTop(const Box& layoutBox)
+LayoutUnit BlockFormattingContext::MarginCollapse::nonCollapsedMarginTop(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     // Non collapsed margin top includes collapsed margin from inflow first child.
-    return marginValue(layoutBox.style().marginTop().value(), collapsedMarginTopFromFirstChild(layoutBox));
+    return marginValue(computedNonCollapsedMarginTop(layoutContext, layoutBox), collapsedMarginTopFromFirstChild(layoutContext, layoutBox));
 }
 
 /*static bool hasAdjoiningMarginTopAndBottom(const Box&)
@@ -145,8 +145,17 @@ static LayoutUnit nonCollapsedMarginTop(const Box& layoutBox)
     // A collapsed margin is considered adjoining to another margin if any of its component margins is adjoining to that margin.
     return false;
 }*/
+LayoutUnit BlockFormattingContext::MarginCollapse::computedNonCollapsedMarginTop(const LayoutContext& layoutContext, const Box& layoutBox)
+{
+    return FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue(layoutContext, layoutBox).top;
+}
 
-LayoutUnit BlockFormattingContext::MarginCollapse::marginTop(const Box& layoutBox)
+LayoutUnit BlockFormattingContext::MarginCollapse::computedNonCollapsedMarginBottom(const LayoutContext& layoutContext, const Box& layoutBox)
+{
+    return FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue(layoutContext, layoutBox).bottom;
+}
+
+LayoutUnit BlockFormattingContext::MarginCollapse::marginTop(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     if (layoutBox.isAnonymous())
         return 0;
@@ -157,20 +166,20 @@ LayoutUnit BlockFormattingContext::MarginCollapse::marginTop(const Box& layoutBo
 
     // Floats and out of flow positioned boxes do not collapse their margins.
     if (!isMarginTopCollapsedWithSibling(layoutBox))
-        return nonCollapsedMarginTop(layoutBox);
+        return nonCollapsedMarginTop(layoutContext, layoutBox);
 
     // The bottom margin of an in-flow block-level element always collapses with the top margin of its next in-flow block-level sibling,
     // unless that sibling has clearance.
     auto* previousInFlowSibling = layoutBox.previousInFlowSibling();
     if (!previousInFlowSibling)
-        return nonCollapsedMarginTop(layoutBox);
+        return nonCollapsedMarginTop(layoutContext, layoutBox);
 
-    auto previousSiblingMarginBottom = nonCollapsedMarginBottom(*previousInFlowSibling);
-    auto marginTop = nonCollapsedMarginTop(layoutBox);
+    auto previousSiblingMarginBottom = nonCollapsedMarginBottom(layoutContext, *previousInFlowSibling);
+    auto marginTop = nonCollapsedMarginTop(layoutContext, layoutBox);
     return marginValue(marginTop, previousSiblingMarginBottom);
 }
 
-LayoutUnit BlockFormattingContext::MarginCollapse::marginBottom(const Box& layoutBox)
+LayoutUnit BlockFormattingContext::MarginCollapse::marginBottom(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     if (layoutBox.isAnonymous())
         return 0;
@@ -181,13 +190,13 @@ LayoutUnit BlockFormattingContext::MarginCollapse::marginBottom(const Box& layou
 
     // Floats and out of flow positioned boxes do not collapse their margins.
     if (!isMarginBottomCollapsedWithSibling(layoutBox))
-        return nonCollapsedMarginBottom(layoutBox);
+        return nonCollapsedMarginBottom(layoutContext, layoutBox);
 
     // The bottom margin of an in-flow block-level element always collapses with the top margin of its next in-flow block-level sibling,
     // unless that sibling has clearance.
     if (layoutBox.nextInFlowSibling())
         return 0;
-    return nonCollapsedMarginBottom(layoutBox);
+    return nonCollapsedMarginBottom(layoutContext, layoutBox);
 }
 
 bool BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent(const Box& layoutBox)
@@ -231,7 +240,7 @@ bool BlockFormattingContext::MarginCollapse::isMarginTopCollapsedWithParentMargi
     return false;
 }
 
-LayoutUnit BlockFormattingContext::MarginCollapse::collapsedMarginBottomFromLastChild(const Box& layoutBox)
+LayoutUnit BlockFormattingContext::MarginCollapse::collapsedMarginBottomFromLastChild(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     // Check if the last child propagates its margin bottom.
     if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowChild())
@@ -242,13 +251,13 @@ LayoutUnit BlockFormattingContext::MarginCollapse::collapsedMarginBottomFromLast
         return 0;
 
     // Collect collapsed margin bottom recursively.
-    return marginValue(lastInFlowChild.style().marginBottom().value(), collapsedMarginBottomFromLastChild(lastInFlowChild));
+    return marginValue(computedNonCollapsedMarginBottom(layoutContext, lastInFlowChild), collapsedMarginBottomFromLastChild(layoutContext, lastInFlowChild));
 }
 
-LayoutUnit BlockFormattingContext::MarginCollapse::nonCollapsedMarginBottom(const Box& layoutBox)
+LayoutUnit BlockFormattingContext::MarginCollapse::nonCollapsedMarginBottom(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     // Non collapsed margin bottom includes collapsed margin from inflow last child.
-    return marginValue(layoutBox.style().marginBottom().value(), collapsedMarginBottomFromLastChild(layoutBox));
+    return marginValue(computedNonCollapsedMarginBottom(layoutContext, layoutBox), collapsedMarginBottomFromLastChild(layoutContext, layoutBox));
 }
 
 }
