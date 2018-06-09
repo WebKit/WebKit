@@ -1,3 +1,18 @@
+2018-06-08  Tadeu Zagallo  <tzagallo@apple.com>
+
+        jumpTrueOrFalse only takes the fast path for boolean false on 64bit LLInt 
+        https://bugs.webkit.org/show_bug.cgi?id=186446
+        <rdar://problem/40949995>
+
+        Reviewed by Mark Lam.
+
+        On 64bit LLInt, jumpTrueOrFalse did a mask check to take the fast path for
+        boolean literals, but it would only work for false. Change it so that it
+        takes the fast path for true, false, null and undefined.
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2018-06-08  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Web Automation: include browser name and version in listing for automation targets

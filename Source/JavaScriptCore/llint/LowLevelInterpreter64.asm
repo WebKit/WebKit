@@ -1821,8 +1821,7 @@ _llint_op_jmp:
 macro jumpTrueOrFalse(conditionOp, slow)
     loadisFromInstruction(1, t1)
     loadConstantOrVariable(t1, t0)
-    xorq ValueFalse, t0
-    btqnz t0, -1, .slow
+    btqnz t0, ~0xf, .slow
     conditionOp(t0, .target)
     dispatch(3)
 

@@ -1583,14 +1583,14 @@ _llint_op_define_accessor_property:
 _llint_op_jtrue:
     traceExecution()
     jumpTrueOrFalse(
-        macro (value, target) btinz value, target end,
+        macro (value, target) btinz value, 1, target end,
         _llint_slow_path_jtrue)
 
 
 _llint_op_jfalse:
     traceExecution()
     jumpTrueOrFalse(
-        macro (value, target) btiz value, target end,
+        macro (value, target) btiz value, 1, target end,
         _llint_slow_path_jfalse)
 
 
