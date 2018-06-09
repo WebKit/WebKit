@@ -54,7 +54,9 @@ void GPURenderCommandEncoder::setRenderPipelineState(GPURenderPipelineState* ren
     if (!m_renderCommandEncoder || !renderPipelineState)
         return;
 
-    [m_renderCommandEncoder setRenderPipelineState:static_cast<id<MTLRenderPipelineState>>(renderPipelineState->platformRenderPipelineState())];
+    // We need to cast to MTLRenderCommandEncoder explicitly because the compiler gets
+    // confused by a protocol with a similar signature.
+    [(id<MTLRenderCommandEncoder>)m_renderCommandEncoder.get() setRenderPipelineState:static_cast<id<MTLRenderPipelineState>>(renderPipelineState->platformRenderPipelineState())];
 }
 
 void GPURenderCommandEncoder::setDepthStencilState(GPUDepthStencilState* depthStencilState)
