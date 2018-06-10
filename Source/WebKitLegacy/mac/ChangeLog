@@ -1,3 +1,19 @@
+2018-06-09  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] Clean up and modernize some build setting definitions
+        https://bugs.webkit.org/show_bug.cgi?id=186463
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/Base.xcconfig: Removed definition for macOS 10.11.
+        * Configurations/DebugRelease.xcconfig: Ditto.
+        * Configurations/FeatureDefines.xcconfig: Simplified the definitions of ENABLE_APPLE_PAY and
+          ENABLE_VIDEO_PRESENTATION_MODE now macOS 10.12 is the earliest supported version.
+        * Configurations/Version.xcconfig: Removed definition for macOS 10.11.
+        * Configurations/WebKitLegacy.xcconfig: Simplified the definition of WK_PRIVATE_FRAMEWORKS_DIR
+          now that WK_XCODE_SUPPORTS_TEXT_BASED_STUBS is true for all supported Xcode versions.
+        * Configurations/WebKitTargetConditionals.xcconfig: Removed definitions for macOS 10.11.
+
 2018-06-08  Darin Adler  <darin@apple.com>
 
         [Cocoa] Remove all uses of NSAutoreleasePool as part of preparation for ARC

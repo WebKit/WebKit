@@ -55,7 +55,6 @@ WARNING_CFLAGS = -Wglobal-constructors -Wno-newline-eof -Wno-inconsistent-missin
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(TARGET_MAC_OS_X_VERSION_MAJOR$(MACOSX_DEPLOYMENT_TARGET:suffix:identifier));
-TARGET_MAC_OS_X_VERSION_MAJOR_11 = 101100;
 TARGET_MAC_OS_X_VERSION_MAJOR_12 = 101200;
 TARGET_MAC_OS_X_VERSION_MAJOR_13 = 101300;
 TARGET_MAC_OS_X_VERSION_MAJOR_14 = 101400;

@@ -20,7 +20,5 @@ GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64] = $(inherited) $(SSE4_FLAG);
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *_sse.c *_sse2.c;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(EXCLUDED_SOURCE_FILE_NAMES_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR));
 
-// El Capitan and iossimulator can't use SSE4 intrinsics, but Sierra and newer can.
-EXCLUDED_SOURCE_FILE_NAMES_macosx_101100 = NSQ_sse.c VAD_sse.c VQ_WMat_EC_sse.c NSQ_del_dec_sse.c;
-SSE4_FLAG[sdk=macosx*] = $(SSE4_FLAG$(WK_MACOS_1012));
-SSE4_FLAG_MACOS_SINCE_1012 = OPUS_X86_MAY_HAVE_SSE4_1;
+// The iOS Simulator can't use SSE4 intrinsics, but macOS can.
+SSE4_FLAG[sdk=macosx*] = OPUS_X86_MAY_HAVE_SSE4_1;
