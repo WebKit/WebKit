@@ -1,3 +1,9 @@
+2018-06-09  Dan Bernstein  <mitz@apple.com>
+
+        Added missing file references to the Configuration group.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2018-06-08  Darin Adler  <darin@apple.com>
 
         [Cocoa] Remove all uses of NSAutoreleasePool as part of preparation for ARC

@@ -2980,6 +2980,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		37119A8020CCB6DD002C6DC9 /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+		37119A8120CCB6DD002C6DC9 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
 		41109AA61E5FA19200C0955A /* i420_buffer_pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = i420_buffer_pool.h; path = include/i420_buffer_pool.h; sourceTree = "<group>"; };
 		41109AA71E5FA19200C0955A /* video_frame_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = video_frame_buffer.h; path = include/video_frame_buffer.h; sourceTree = "<group>"; };
 		41109AA81E5FA19200C0955A /* frame_callback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = frame_callback.h; path = include/frame_callback.h; sourceTree = "<group>"; };
@@ -10675,6 +10677,8 @@
 				5C08848A1E4A978C00403995 /* libyuv.xcconfig */,
 				5C4B4A8F1E42C431002651C8 /* opus.xcconfig */,
 				5C11A0331E4576A9004F0987 /* usrsctp.xcconfig */,
+				37119A8020CCB6DD002C6DC9 /* Version.xcconfig */,
+				37119A8120CCB6DD002C6DC9 /* WebKitTargetConditionals.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";

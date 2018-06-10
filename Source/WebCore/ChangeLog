@@ -1,3 +1,9 @@
+2018-06-09  Dan Bernstein  <mitz@apple.com>
+
+        Added missing file references to the Configuration group.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-06-09  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r230480): Cannot adjust photo position on LinkedIn's profile page

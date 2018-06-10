@@ -3193,6 +3193,9 @@
 		370F34A11829BE1E009027C8 /* WKNavigationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationData.h; sourceTree = "<group>"; };
 		370F34A41829BEA3009027C8 /* WKNavigationDataInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationDataInternal.h; sourceTree = "<group>"; };
 		370F34A61829CFF3009027C8 /* WKBrowsingContextHistoryDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextHistoryDelegate.h; sourceTree = "<group>"; };
+		37119A7C20CCB64E002C6DC9 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
+		37119A7D20CCB64E002C6DC9 /* Network-iOS-minimalsimulator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Network-iOS-minimalsimulator.entitlements"; sourceTree = "<group>"; };
+		37119A7E20CCB64E002C6DC9 /* WebContent-iOS-minimalsimulator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "WebContent-iOS-minimalsimulator.entitlements"; sourceTree = "<group>"; };
 		37183D54182F4E700080C811 /* WKNSURLExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSURLExtras.mm; sourceTree = "<group>"; };
 		37183D55182F4E700080C811 /* WKNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSURLExtras.h; sourceTree = "<group>"; };
 		371A193F1824D29300F32A5E /* WKNSDictionary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSDictionary.mm; sourceTree = "<group>"; };
@@ -5056,6 +5059,7 @@
 				A7BD9863194653D400D35698 /* Databases-iOS.entitlements */,
 				1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */,
 				1A4F976C100E7B6600637A18 /* FeatureDefines.xcconfig */,
+				37119A7D20CCB64E002C6DC9 /* Network-iOS-minimalsimulator.entitlements */,
 				7C0BB9A918DCDF5A0006C086 /* Network-iOS.entitlements */,
 				BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */,
 				A1EDD2DB1884B96400BBFE98 /* PluginProcessShim.xcconfig */,
@@ -5067,12 +5071,14 @@
 				5183B3931379F85C00E8754E /* Shim.xcconfig */,
 				51A60B29180CCD9000F3BF50 /* StorageService.xcconfig */,
 				1A4F976E100E7B6600637A18 /* Version.xcconfig */,
+				37119A7E20CCB64E002C6DC9 /* WebContent-iOS-minimalsimulator.entitlements */,
 				7C0BB9A818DCDE890006C086 /* WebContent-iOS.entitlements */,
 				37B418EB1C9624F20031E63B /* WebContent-OSX-restricted.entitlements */,
 				7AF66E1120C07CB6007828EA /* WebContent-OSX.entitlements */,
 				372EBB4A2017E76000085064 /* WebContentService.Development.xcconfig */,
 				BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */,
 				BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */,
+				37119A7C20CCB64E002C6DC9 /* WebKitTargetConditionals.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
