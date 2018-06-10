@@ -1,3 +1,20 @@
+2018-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Array.prototype.sort should rejects null comparator
+        https://bugs.webkit.org/show_bug.cgi?id=186458
+
+        Reviewed by Keith Miller.
+
+        This relaxed behavior is once introduced in r216169 to fix some pages by aligning
+        the behavior to Chrome and Firefox.
+
+        However, now Chrome, Firefox and Edge reject a null comparator. So only JavaScriptCore
+        accepts it. This patch reverts r216169 to align JSC to the other engines and fix
+        the spec issue.
+
+        * builtins/ArrayPrototype.js:
+        (sort):
+
 2018-06-09  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Clean up and modernize some build setting definitions
