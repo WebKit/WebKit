@@ -1,3 +1,13 @@
+2018-06-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] paypal.com requires user agent quirk
+        https://bugs.webkit.org/show_bug.cgi?id=186466
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/UserAgentQuirks.cpp:
+        (WebCore::urlRequiresMacintoshPlatform):
+
 2018-06-09  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Clean up and modernize some build setting definitions
