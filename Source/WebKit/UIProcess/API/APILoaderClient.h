@@ -87,7 +87,7 @@ public:
     // FIXME: These functions should not be part of this client.
     virtual void processDidBecomeUnresponsive(WebKit::WebPageProxy&) { }
     virtual void processDidBecomeResponsive(WebKit::WebPageProxy&) { }
-    virtual void processDidCrash(WebKit::WebPageProxy&) { }
+    virtual bool processDidCrash(WebKit::WebPageProxy&) { return false; }
 
     virtual void didChangeBackForwardList(WebKit::WebPageProxy&, WebKit::WebBackForwardListItem*, Vector<Ref<WebKit::WebBackForwardListItem>>&&) { }
     virtual bool shouldKeepCurrentBackForwardListItemInList(WebKit::WebPageProxy&, WebKit::WebBackForwardListItem&) { return true; }

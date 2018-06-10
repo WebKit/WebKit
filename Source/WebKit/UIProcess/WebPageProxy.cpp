@@ -227,6 +227,9 @@ using namespace WebCore;
 // Represents the number of wheel events we can hold in the queue before we start pushing them preemptively.
 static const unsigned wheelEventQueueSizeThreshold = 10;
 
+static const Seconds resetRecentCrashCountDelay = 30_s;
+static unsigned maximumWebProcessRelaunchAttempts = 1;
+
 namespace WebKit {
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageProxyCounter, ("WebPageProxy"));
@@ -408,6 +411,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 #endif
     , m_pageLoadState(*this)
     , m_configurationPreferenceValues(m_configuration->preferenceValues())
+    , m_resetRecentCrashCountTimer(RunLoop::main(), this, &WebPageProxy::resetRecentCrashCount)
 {
     m_webProcessLifetimeTracker.addObserver(m_visitedLinkStore);
     m_webProcessLifetimeTracker.addObserver(m_websiteDataStore);
@@ -3743,6 +3747,8 @@ void WebPageProxy::didFinishLoadForFrame(uint64_t frameID, uint64_t navigationID
     if (isMainFrame) {
         reportPageLoadResult();
         m_pageClient.didFinishLoadForMainFrame();
+
+        resetRecentCrashCountSoon();
     }
 
     m_isLoadingAlternateHTMLStringForFailingProvisionalLoad = false;
@@ -5853,12 +5859,53 @@ void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
     stopAllURLSchemeTasks();
 }
 
+static bool shouldReloadAfterProcessTermination(ProcessTerminationReason reason)
+{
+    switch (reason) {
+    case ProcessTerminationReason::ExceededMemoryLimit:
+    case ProcessTerminationReason::ExceededCPULimit:
+    case ProcessTerminationReason::Crash:
+        return true;
+    case ProcessTerminationReason::NavigationSwap:
+    case ProcessTerminationReason::RequestedByClient:
+        break;
+    }
+    return false;
+}
+
 void WebPageProxy::dispatchProcessDidTerminate(ProcessTerminationReason reason)
 {
+    bool handledByClient = false;
     if (m_navigationClient)
-        m_navigationClient->processDidTerminate(*this, reason);
+        handledByClient = m_navigationClient->processDidTerminate(*this, reason);
     else if (reason != ProcessTerminationReason::RequestedByClient)
-        m_loaderClient->processDidCrash(*this);
+        handledByClient = m_loaderClient->processDidCrash(*this);
+
+    if (!handledByClient && shouldReloadAfterProcessTermination(reason))
+        tryReloadAfterProcessTermination();
+}
+
+void WebPageProxy::tryReloadAfterProcessTermination()
+{
+    m_resetRecentCrashCountTimer.stop();
+
+    if (++m_recentCrashCount > maximumWebProcessRelaunchAttempts) {
+        RELEASE_LOG_IF_ALLOWED(Process, "%p - WebPageProxy's process crashed and the client did not handle it, not reloading the page because we reached the maximum number of attempts", this);
+        m_recentCrashCount = 0;
+        return;
+    }
+    RELEASE_LOG_IF_ALLOWED(Process, "%p - WebPageProxy's process crashed and the client did not handle it, reloading the page", this);
+    reload(ReloadOption::ExpiredOnly);
+}
+
+void WebPageProxy::resetRecentCrashCountSoon()
+{
+    m_resetRecentCrashCountTimer.startOneShot(resetRecentCrashCountDelay);
+}
+
+void WebPageProxy::resetRecentCrashCount()
+{
+    m_recentCrashCount = 0;
 }
 
 void WebPageProxy::stopAllURLSchemeTasks()

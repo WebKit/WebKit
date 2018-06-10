@@ -89,7 +89,7 @@ public:
     virtual void didReceiveAuthenticationChallenge(WebKit::WebPageProxy&, WebKit::AuthenticationChallengeProxy&) { }
 
     // FIXME: These function should not be part of this client.
-    virtual void processDidTerminate(WebKit::WebPageProxy&, WebKit::ProcessTerminationReason) { }
+    virtual bool processDidTerminate(WebKit::WebPageProxy&, WebKit::ProcessTerminationReason) { return false; }
     virtual void processDidBecomeResponsive(WebKit::WebPageProxy&) { }
     virtual void processDidBecomeUnresponsive(WebKit::WebPageProxy&) { }
 

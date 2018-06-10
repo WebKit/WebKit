@@ -1198,12 +1198,13 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             m_client.processDidBecomeResponsive(toAPI(&page), m_client.base.clientInfo);
         }
 
-        void processDidCrash(WebPageProxy& page) override
+        bool processDidCrash(WebPageProxy& page) override
         {
             if (!m_client.processDidCrash)
-                return;
+                return false;
 
             m_client.processDidCrash(toAPI(&page), m_client.base.clientInfo);
+            return true;
         }
 
         void didChangeBackForwardList(WebPageProxy& page, WebBackForwardListItem* addedItem, Vector<Ref<WebBackForwardListItem>>&& removedItems) override
@@ -2299,15 +2300,19 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             m_client.didReceiveAuthenticationChallenge(toAPI(&page), toAPI(&authenticationChallenge), m_client.base.clientInfo);
         }
 
-        void processDidTerminate(WebPageProxy& page, WebKit::ProcessTerminationReason reason) override
+        bool processDidTerminate(WebPageProxy& page, WebKit::ProcessTerminationReason reason) override
         {
             if (m_client.webProcessDidTerminate) {
                 m_client.webProcessDidTerminate(toAPI(&page), toAPI(reason), m_client.base.clientInfo);
-                return;
+                return true;
             }
 
-            if (m_client.webProcessDidCrash && reason != WebKit::ProcessTerminationReason::RequestedByClient)
+            if (m_client.webProcessDidCrash && reason != WebKit::ProcessTerminationReason::RequestedByClient) {
                 m_client.webProcessDidCrash(toAPI(&page), m_client.base.clientInfo);
+                return true;
+            }
+
+            return false;
         }
 
         RefPtr<API::Data> webCryptoMasterKey(WebPageProxy& page) override

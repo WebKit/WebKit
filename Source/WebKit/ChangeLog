@@ -1,3 +1,37 @@
+2018-06-10  Chris Dumez  <cdumez@apple.com>
+
+        Reload the Web view in case of crash if the client does not implement webViewWebContentProcessDidTerminate delegate
+        https://bugs.webkit.org/show_bug.cgi?id=186468
+
+        Reviewed by Geoffrey Garen.
+
+        We now attempt to reload the Web view if the web content process crashes and the client
+        does not implement the webViewWebContentProcessDidTerminate delegate (or any of the similar
+        delegates in our SPI).
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::processDidCrash):
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::processDidTerminate):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/glib/WebKitNavigationClient.cpp:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::processDidTerminate):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_resetRecentCrashCountTimer):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::shouldReloadAfterProcessTermination):
+        (WebKit::WebPageProxy::dispatchProcessDidTerminate):
+        (WebKit::WebPageProxy::tryReloadAfterProcessTermination):
+        (WebKit::WebPageProxy::resetRecentCrashCountSoon):
+        (WebKit::WebPageProxy::resetRecentCrashCount):
+        (WebKit::m_configurationPreferenceValues): Deleted.
+        * UIProcess/WebPageProxy.h:
+
 2018-06-09  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Clean up and modernize some build setting definitions

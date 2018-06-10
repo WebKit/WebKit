@@ -977,30 +977,31 @@ static _WKProcessTerminationReason wkProcessTerminationReason(ProcessTermination
     return _WKProcessTerminationReasonCrash;
 }
 
-void NavigationState::NavigationClient::processDidTerminate(WebPageProxy& page, ProcessTerminationReason reason)
+bool NavigationState::NavigationClient::processDidTerminate(WebPageProxy& page, ProcessTerminationReason reason)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewWebContentProcessDidTerminate
         && !m_navigationState.m_navigationDelegateMethods.webViewWebContentProcessDidTerminateWithReason
         && !m_navigationState.m_navigationDelegateMethods.webViewWebProcessDidCrash)
-        return;
+        return false;
 
     auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
     if (!navigationDelegate)
-        return;
+        return false;
 
     if (m_navigationState.m_navigationDelegateMethods.webViewWebContentProcessDidTerminateWithReason) {
         [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView webContentProcessDidTerminateWithReason:wkProcessTerminationReason(reason)];
-        return;
+        return true;
     }
 
     // We prefer webViewWebContentProcessDidTerminate: over _webViewWebProcessDidCrash:.
     if (m_navigationState.m_navigationDelegateMethods.webViewWebContentProcessDidTerminate) {
         [navigationDelegate webViewWebContentProcessDidTerminate:m_navigationState.m_webView];
-        return;
+        return true;
     }
 
     ASSERT(m_navigationState.m_navigationDelegateMethods.webViewWebProcessDidCrash);
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webViewWebProcessDidCrash:m_navigationState.m_webView];
+    return true;
 }
 
 void NavigationState::NavigationClient::processDidBecomeResponsive(WebPageProxy& page)

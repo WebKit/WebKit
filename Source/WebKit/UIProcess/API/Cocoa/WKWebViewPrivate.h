@@ -234,8 +234,6 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 - (void)_setOverlaidAccessoryViewsInset:(CGSize)inset;
 
-- (void)_killWebContentProcess;
-
 // Puts the view into a state where being taken out of the view hierarchy and resigning first responder
 // will not count as becoming inactive and unfocused. The returned block must be called to exit the state.
 - (void (^)(void))_retainActiveFocusedState WK_API_AVAILABLE(ios(9_0));
@@ -304,6 +302,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (WKNavigation *)_reloadWithoutContentBlockers WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 - (WKNavigation *)_reloadExpiredOnly WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
+- (void)_killWebContentProcess;
 - (void)_killWebContentProcessAndResetState;
 
 - (void)_getMainResourceDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler;

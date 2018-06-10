@@ -1,3 +1,17 @@
+2018-06-10  Chris Dumez  <cdumez@apple.com>
+
+        Reload the Web view in case of crash if the client does not implement webViewWebContentProcessDidTerminate delegate
+        https://bugs.webkit.org/show_bug.cgi?id=186468
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebContentProcessDidTerminate.mm:
+        (-[BasicNavigationDelegateWithoutCrashHandler webView:didStartProvisionalNavigation:]):
+        (-[BasicNavigationDelegateWithoutCrashHandler webView:didFinishNavigation:]):
+        (TEST):
+
 2018-06-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] paypal.com requires user agent quirk
