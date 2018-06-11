@@ -7496,7 +7496,7 @@ void Document::hasStorageAccess(Ref<DeferredPromise>&& promise)
     ASSERT(settings().storageAccessAPIEnabled());
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    if (hasFrameSpecificStorageAccess()) {
+    if (m_frame && hasFrameSpecificStorageAccess()) {
         promise->resolve<IDLBoolean>(true);
         return;
     }
@@ -7547,7 +7547,7 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& promise)
     ASSERT(settings().storageAccessAPIEnabled());
     
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    if (hasFrameSpecificStorageAccess()) {
+    if (m_frame && hasFrameSpecificStorageAccess()) {
         promise->resolve();
         return;
     }
