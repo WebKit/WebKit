@@ -1,3 +1,9 @@
+2018-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.20.3 release.
+
+        * gtk/NEWS: Add release notes for 2.20.3.
+
 2018-05-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ input method unit tests after r232049.

@@ -1,4 +1,20 @@
 ==================
+WebKitGTK+  2.20.3
+==================
+
+What's new in WebKitGTK+ 2.20.3?
+
+  - Fix installation directory of API documentation.
+  - Disable Gigacage if mmap fails to allocate in Linux.
+  - Add user agent quirk for paypal website.
+  - Properly detect compiler flags, needed libs, and fallbacks for usage of 64-bit atomic operations.
+  - Fix a network process crash when trying to get cookies of about:blank page.
+  - Fix UI process crash when closing the window under Wayland.
+  - Fix several crashes and rendering issues.
+  - Security fixes: CVE-2018-4190, CVE-2018-4199, CVE-2018-4218, CVE-2018-4222, CVE-2018-4232,
+    CVE-2018-4233, CVE-2018-4246, CVE-2018-11646.
+
+==================
 WebKitGTK+  2.20.2
 ==================
 
