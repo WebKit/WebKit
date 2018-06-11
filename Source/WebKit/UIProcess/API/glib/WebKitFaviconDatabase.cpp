@@ -192,6 +192,9 @@ static void webkitFaviconDatabaseSetIconURLForPageURL(WebKitFaviconDatabase* dat
     if (!priv->isURLImportCompleted)
         return;
 
+    if (pageURL.isEmpty())
+        return;
+
     const String& currentIconURL = priv->pageURLToIconURLMap.get(pageURL);
     if (iconURL == currentIconURL)
         return;
@@ -314,6 +317,9 @@ void webkitFaviconDatabaseGetLoadDecisionForIcon(WebKitFaviconDatabase* database
 void webkitFaviconDatabaseSetIconForPageURL(WebKitFaviconDatabase* database, const LinkIcon& icon, API::Data& iconData, const String& pageURL)
 {
     if (!webkitFaviconDatabaseIsOpen(database))
+        return;
+
+    if (pageURL.isEmpty())
         return;
 
     WebKitFaviconDatabasePrivate* priv = database->priv;

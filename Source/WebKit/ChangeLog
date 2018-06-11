@@ -1,3 +1,16 @@
+2018-06-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Crash in WebKitFaviconDatabase when pageURL is unset
+        https://bugs.webkit.org/show_bug.cgi?id=186164
+
+        Reviewed by Carlos Garcia Campos.
+
+        PageURL can legitimately be null here if JavaScript does something silly with window.open.
+
+        * UIProcess/API/glib/WebKitFaviconDatabase.cpp:
+        (webkitFaviconDatabaseSetIconURLForPageURL):
+        (webkitFaviconDatabaseSetIconForPageURL):
+
 2018-05-22  Alberto Garcia  <berto@igalia.com>
 
         [CMake] Properly detect compiler flags, needed libs, and fallbacks for usage of 64-bit atomic operations
