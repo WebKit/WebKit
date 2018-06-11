@@ -1,3 +1,20 @@
+2018-06-11  Tim Horton  <timothy_horton@apple.com>
+
+        Link drag image is inconsistently unreadable in dark mode
+        https://bugs.webkit.org/show_bug.cgi?id=186472
+
+        Reviewed by Timothy Hatcher.
+
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageForLink):
+        Use LocalDefaultSystemAppearance so that NSColors used inside
+        createDragImageForLink are interpreted correctly. This function
+        always follows the system appearance regardless of what the preference
+        is set to, because it's generating UI that isn't part of the page.
+
+        Use controlBackgroundColor to get a consistently contrasting background
+        for the link drag image.
+
 2018-06-11  Chris Dumez  <cdumez@apple.com>
 
         http/tests/security/cors-post-redirect-307.html fails with PSON enabled

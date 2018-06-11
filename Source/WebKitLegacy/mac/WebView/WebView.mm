@@ -5278,9 +5278,6 @@ static Vector<String> toStringVector(NSArray* patterns)
 - (bool)_defaultAppearance
 {
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    if (![self _useSystemAppearance])
-        return true;
-
     NSAppearanceName appearance = [[self effectiveAppearance] bestMatchFromAppearancesWithNames:@[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
     return [appearance isEqualToString:NSAppearanceNameAqua];
 #else
