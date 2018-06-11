@@ -485,6 +485,7 @@ public:
 
     WebCore::IntSize viewSize() const;
     bool isViewVisible() const { return m_activityState & WebCore::ActivityState::IsVisible; }
+    bool isViewFocused() const { return m_activityState & WebCore::ActivityState::IsFocused; }
     bool isViewWindowActive() const;
 
     void addMIMETypeWithCustomContentProvider(const String& mimeType);
