@@ -23,19 +23,19 @@ function loadTestMedia() {
     });
 }
 
-function logResponses(media, expextedSource)
+function logResponses(media, expectedSource)
 {
     let pass = true;
     const ranges = internals.mediaResponseContentRanges(media);
     const sources = internals.mediaResponseSources(media);
     for (i = 0; i < ranges.length; ++i) {
-        if (sources[i] != expextedSource) {
-            logdiv.innerHTML += `FAIL: Range ${ranges[i]} from ${sources[i]} expected ${expextedSource}<br>`;
+        if (sources[i] != expectedSource) {
+            logdiv.innerHTML += `FAIL: Range ${ranges[i]} from ${sources[i]} expected ${expectedSource}<br>`;
             pass = false;
         }
     }
     if (pass)
-        logdiv.innerHTML += `PASS: All response ranges from: ${expextedSource}<br>`;
+        logdiv.innerHTML += `PASS: All response ranges from: ${expectedSource}<br>`;
 }
 
 async function test() {

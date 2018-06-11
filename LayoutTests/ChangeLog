@@ -1,3 +1,9 @@
+2018-06-11  Antti Koivisto  <antti@apple.com>
+
+        Fix spelling.
+
+        * http/tests/cache/disk-cache/disk-cache-media-small.html:
+
 2018-06-11  Brady Eidson  <beidson@apple.com>
 
         http/tests/navigation/https-in-page-cache.html fails with process swapping on.
