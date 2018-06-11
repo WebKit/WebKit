@@ -186,7 +186,7 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
     return { *top, *bottom, *height, { *marginTop, *marginBottom} };
 }
 
-FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::outOfFlowNonReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced());
     
@@ -198,7 +198,15 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::outOfFl
     // If all three of 'left', 'width', and 'right' are 'auto': First set any 'auto' values for 'margin-left' and 'margin-right' to 0.
     // Then, if the 'direction' property of the element establishing the static-position containing block is 'ltr' set 'left' to the static
     // position and apply rule number three below; otherwise, set 'right' to the static position and apply rule number one below.
-
+    //
+    // If none of the three is 'auto': If both 'margin-left' and 'margin-right' are 'auto', solve the equation under the extra constraint that the two margins get equal values,
+    // unless this would make them negative, in which case when direction of the containing block is 'ltr' ('rtl'), set 'margin-left' ('margin-right') to zero and
+    // solve for 'margin-right' ('margin-left'). If one of 'margin-left' or 'margin-right' is 'auto', solve the equation for that value.
+    // If the values are over-constrained, ignore the value for 'left' (in case the 'direction' property of the containing block is 'rtl') or 'right'
+    // (in case 'direction' is 'ltr') and solve for that value.
+    //
+    // Otherwise, set 'auto' values for 'margin-left' and 'margin-right' to 0, and pick the one of the following six rules that applies.
+    //
     // 1. 'left' and 'width' are 'auto' and 'right' is not 'auto', then the width is shrink-to-fit. Then solve for 'left'
     // 2. 'left' and 'right' are 'auto' and 'width' is not 'auto', then if the 'direction' property of the element establishing the static-position 
     //    containing block is 'ltr' set 'left' to the static position, otherwise set 'right' to the static position.
@@ -207,41 +215,116 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::outOfFl
     // 4. 'left' is 'auto', 'width' and 'right' are not 'auto', then solve for 'left'
     // 5. 'width' is 'auto', 'left' and 'right' are not 'auto', then solve for 'width'
     // 6. 'right' is 'auto', 'left' and 'width' are not 'auto', then solve for 'right'
+
     auto& style = layoutBox.style();
-    auto left = style.logicalLeft();
-    auto right = style.logicalRight();
-    auto width = style.logicalWidth();
-
-    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
-    LayoutUnit computedWidthValue;
-
-    if (!width.isAuto())
-        computedWidthValue = valueForLength(width, containingBlockWidth);
-    else if ((left.isAuto() && right.isAuto())
-        || (left.isAuto() && !right.isAuto())
-        || (!left.isAuto() && right.isAuto())) {
-        // All auto (#1), #1 and #3
-        computedWidthValue = shrinkToFitWidth(layoutContext, layoutBox);
-    } else if (!left.isAuto() && !right.isAuto()) {
-        // #5
-        auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
-
-        auto marginLeft = displayBox.marginLeft();
-        auto marginRight = displayBox.marginRight();
+    auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
+    auto& containingBlock = *layoutBox.containingBlock();
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(containingBlock)->width();
+    auto isLeftToRightDirection = containingBlock.style().isLeftToRightDirection();
     
-        auto paddingLeft = displayBox.paddingLeft();
-        auto paddingRight = displayBox.paddingRight();
+    auto left = computedValueIfNotAuto(style.logicalLeft(), containingBlockWidth);
+    auto right = computedValueIfNotAuto(style.logicalRight(), containingBlockWidth);
+    auto width = computedValueIfNotAuto(style.logicalWidth(), containingBlockWidth);
+    auto marginLeft = computedValueIfNotAuto(style.marginLeft(), containingBlockWidth);
+    auto marginRight = computedValueIfNotAuto(style.marginRight(), containingBlockWidth);
+    auto paddingLeft = displayBox.paddingLeft();
+    auto paddingRight = displayBox.paddingRight();
+    auto borderLeft = displayBox.borderLeft();
+    auto borderRight = displayBox.borderRight();
 
-        auto borderLeft = displayBox.borderLeft();
-        auto borderRight = displayBox.borderRight();
+    if (!left && !width && !right) {
+        // If all three of 'left', 'width', and 'right' are 'auto': First set any 'auto' values for 'margin-left' and 'margin-right' to 0.
+        // Then, if the 'direction' property of the element establishing the static-position containing block is 'ltr' set 'left' to the static
+        // position and apply rule number three below; otherwise, set 'right' to the static position and apply rule number one below.
+        marginLeft = marginLeft.value_or(0);
+        marginRight = marginRight.value_or(0);
 
-        computedWidthValue = containingBlockWidth - (left.value() + marginLeft + borderLeft + paddingLeft + paddingRight + borderRight + marginRight + right.value());
+        if (isLeftToRightDirection)
+            left = displayBox.left();
+        else
+            right = displayBox.right();
+    } else if (left && width && right) {
+        // If none of the three is 'auto': If both 'margin-left' and 'margin-right' are 'auto', solve the equation under the extra constraint that the two margins get equal values,
+        // unless this would make them negative, in which case when direction of the containing block is 'ltr' ('rtl'), set 'margin-left' ('margin-right') to zero and
+        // solve for 'margin-right' ('margin-left'). If one of 'margin-left' or 'margin-right' is 'auto', solve the equation for that value.
+        // If the values are over-constrained, ignore the value for 'left' (in case the 'direction' property of the containing block is 'rtl') or 'right'
+        // (in case 'direction' is 'ltr') and solve for that value.
+        if (!marginLeft && !marginRight) {
+            auto marginLeftAndRight = containingBlockWidth - (*left + borderLeft + paddingLeft + *width + paddingRight + borderRight + *right);
+            if (marginLeftAndRight >= 0)
+                marginLeft = marginRight = marginLeftAndRight / 2;  
+            else {
+                if (isLeftToRightDirection) {
+                    marginLeft = LayoutUnit { 0 };
+                    marginRight = containingBlockWidth - (*left + *marginLeft + borderLeft + paddingLeft + *width + paddingRight + borderRight + *right);
+                } else {
+                    marginRight = LayoutUnit { 0 };
+                    marginLeft = containingBlockWidth - (*left + borderLeft + paddingLeft + *width + paddingRight + borderRight + *marginRight + *right);
+                }
+            }
+        } else if (!marginLeft) {
+            marginLeft = containingBlockWidth - (*left + borderLeft + paddingLeft + *width + paddingRight + borderRight + *marginRight + *right);
+            // Overconstrained? Ignore right (left).
+            if (*marginLeft < 0) {
+                if (isLeftToRightDirection)
+                    marginLeft = containingBlockWidth - (*left + borderLeft + paddingLeft + *width + paddingRight + borderRight + *marginRight);
+                else
+                    marginLeft = containingBlockWidth - (borderLeft + paddingLeft + *width + paddingRight + borderRight + *marginRight + *right);
+            }
+        } else if (!marginRight) {
+            marginRight = containingBlockWidth - (*left + *marginLeft + borderLeft + paddingLeft + *width + paddingRight + borderRight + *right);
+            // Overconstrained? Ignore right (left).
+            if (*marginRight < 0) {
+                if (isLeftToRightDirection)
+                    marginRight = containingBlockWidth - (*left + *marginLeft + borderLeft + paddingLeft + *width + paddingRight + borderRight);
+                else
+                    marginRight = containingBlockWidth - (*marginLeft + borderLeft + paddingLeft + *width + paddingRight + borderRight + *right);
+            }
+        }
     } else {
-        // #2 #4 #6 have width != auto
-        ASSERT_NOT_REACHED();
+        // Otherwise, set 'auto' values for 'margin-left' and 'margin-right' to 0, and pick the one of the following six rules that applies.
+        marginLeft = marginLeft.value_or(0);
+        marginRight = marginRight.value_or(0);
     }
 
-    return WidthAndMargin { computedWidthValue, { } };
+    ASSERT(marginLeft);
+    ASSERT(marginRight);
+
+    if (!left && !width && right) {
+        // #1
+        width = shrinkToFitWidth(layoutContext, layoutBox);
+        left = containingBlockWidth - (*marginLeft + borderLeft + paddingLeft + *width + paddingRight  + borderRight + *marginRight + *right);
+    } else if (!left && !right && width) {
+        // #2
+        if (isLeftToRightDirection) {
+            left = displayBox.left();
+            right = containingBlockWidth - (*left + *marginLeft + borderLeft + paddingLeft + *width + paddingRight + borderRight + *marginRight);
+        } else {
+            right = displayBox.right();
+            left = containingBlockWidth - (*marginLeft + borderLeft + paddingLeft + *width + paddingRight + borderRight + *marginRight + *right);
+        }
+    } else if (!width && !right && left) {
+        // #3
+        width = shrinkToFitWidth(layoutContext, layoutBox);
+        right = containingBlockWidth - (*left + *marginLeft + borderLeft + paddingLeft + *width + paddingRight + borderRight + *marginRight);
+    } else if (!left && width && right) {
+        // #4
+        left = containingBlockWidth - (*marginLeft + borderLeft + paddingLeft + *width + paddingRight + borderRight + *marginRight + *right);
+    } else if (!width && left && right) {
+        // #5
+        width = containingBlockWidth - (*left + *marginLeft + borderLeft + paddingLeft + paddingRight  + borderRight + *marginRight + *right);
+    } else if (!right && left && width) {
+        // #6
+        right = containingBlockWidth - (*left + *marginLeft + borderLeft + paddingLeft + *width + paddingRight + borderRight + *marginRight);
+    }
+
+    ASSERT(left);
+    ASSERT(right);
+    ASSERT(width);
+    ASSERT(marginLeft);
+    ASSERT(marginRight);
+
+    return HorizontalGeometry { *left, *right, *width, { *marginLeft, *marginRight } };
 }
 
 FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
@@ -254,13 +337,14 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
     return { { }, { }, heightAndMargin.height, heightAndMargin.margin };
 }
 
-FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::outOfFlowReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && layoutBox.replaced());
     // 10.3.8 Absolutely positioned, replaced elements
     //
     // The used value of 'width' is determined as for inline replaced elements.
-    return inlineReplacedWidthAndMargin(layoutContext, layoutBox);
+    auto widthAndMargin = inlineReplacedWidthAndMargin(layoutContext, layoutBox);
+    return { { }, { }, widthAndMargin.width, widthAndMargin.margin };
 }
 
 FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floatingNonReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
@@ -508,13 +592,13 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
     return outOfFlowReplacedVerticalGeometry(layoutContext, layoutBox);
 }
 
-FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::outOfFlowWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::outOfFlowHorizontalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
 
     if (!layoutBox.replaced())
-        return outOfFlowNonReplacedWidthAndMargin(layoutContext, layoutBox);
-    return outOfFlowReplacedWidthAndMargin(layoutContext, layoutBox);
+        return outOfFlowNonReplacedHorizontalGeometry(layoutContext, layoutBox);
+    return outOfFlowReplacedHorizontalGeometry(layoutContext, layoutBox);
 }
 
 FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floatingHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)

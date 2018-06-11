@@ -91,6 +91,13 @@ protected:
             Display::Box::VerticalEdges margin;
         };
 
+         struct HorizontalGeometry {
+             LayoutUnit left;
+             LayoutUnit right;
+             LayoutUnit width;
+             Display::Box::HorizontalEdges margin;
+         };
+
         struct VerticalGeometry {
             LayoutUnit top;
             LayoutUnit bottom;
@@ -99,7 +106,7 @@ protected:
         };
 
         static VerticalGeometry outOfFlowVerticalGeometry(LayoutContext&, const Box&);
-        static WidthAndMargin outOfFlowWidthAndMargin(LayoutContext&, const Box&);
+        static HorizontalGeometry outOfFlowHorizontalGeometry(LayoutContext&, const Box&);
 
         static HeightAndMargin floatingHeightAndMargin(LayoutContext&, const Box&);
         static WidthAndMargin floatingWidthAndMargin(LayoutContext&, const Box&);
@@ -118,10 +125,10 @@ protected:
 
     private:
         static VerticalGeometry outOfFlowReplacedVerticalGeometry(LayoutContext&, const Box&);
-        static WidthAndMargin outOfFlowReplacedWidthAndMargin(LayoutContext&, const Box&);
+        static HorizontalGeometry outOfFlowReplacedHorizontalGeometry(LayoutContext&, const Box&);
 
         static VerticalGeometry outOfFlowNonReplacedVerticalGeometry(LayoutContext&, const Box&);
-        static WidthAndMargin outOfFlowNonReplacedWidthAndMargin(LayoutContext&, const Box&);
+        static HorizontalGeometry outOfFlowNonReplacedHorizontalGeometry(LayoutContext&, const Box&);
 
         static HeightAndMargin floatingReplacedHeightAndMargin(LayoutContext&, const Box&);
         static WidthAndMargin floatingReplacedWidthAndMargin(LayoutContext&, const Box&);
@@ -133,7 +140,7 @@ protected:
 private:
     void computeOutOfFlowPosition(LayoutContext&, const Box&, Display::Box&) const;
     void computeOutOfFlowVerticalGeometry(LayoutContext&, const Box&, Display::Box&) const;
-    void computeOutOfFlowWidthAndMargin(LayoutContext&, const Box&, Display::Box&) const;
+    void computeOutOfFlowHorizontalGeometry(LayoutContext&, const Box&, Display::Box&) const;
 
     WeakPtr<Box> m_root;
 };
