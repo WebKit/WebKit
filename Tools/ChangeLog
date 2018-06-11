@@ -1,3 +1,13 @@
+2018-06-11  Philippe Normand  <pnormand@igalia.com>
+
+        [webkitpy] PHP7.2 support on Debian platforms
+        https://bugs.webkit.org/show_bug.cgi?id=186521
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._debian_php_version): Refactor and add PHP 7.2 version support.
+
 2018-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WPE API and layout tests after r232670.
