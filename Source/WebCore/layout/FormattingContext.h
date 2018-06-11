@@ -91,7 +91,14 @@ protected:
             Display::Box::VerticalEdges margin;
         };
 
-        static HeightAndMargin outOfFlowHeightAndMargin(LayoutContext&, const Box&);
+        struct VerticalGeometry {
+            LayoutUnit top;
+            LayoutUnit bottom;
+            LayoutUnit height;
+            Display::Box::VerticalEdges margin;
+        };
+
+        static VerticalGeometry outOfFlowVerticalGeometry(LayoutContext&, const Box&);
         static WidthAndMargin outOfFlowWidthAndMargin(LayoutContext&, const Box&);
 
         static HeightAndMargin floatingHeightAndMargin(LayoutContext&, const Box&);
@@ -110,10 +117,10 @@ protected:
         static Display::Box::VerticalEdges computedNonCollapsedVerticalMarginValue(const LayoutContext&, const Box&);
 
     private:
-        static HeightAndMargin outOfFlowReplacedHeightAndMargin(LayoutContext&, const Box&);
+        static VerticalGeometry outOfFlowReplacedVerticalGeometry(LayoutContext&, const Box&);
         static WidthAndMargin outOfFlowReplacedWidthAndMargin(LayoutContext&, const Box&);
 
-        static HeightAndMargin outOfFlowNonReplacedHeightAndMargin(LayoutContext&, const Box&);
+        static VerticalGeometry outOfFlowNonReplacedVerticalGeometry(LayoutContext&, const Box&);
         static WidthAndMargin outOfFlowNonReplacedWidthAndMargin(LayoutContext&, const Box&);
 
         static HeightAndMargin floatingReplacedHeightAndMargin(LayoutContext&, const Box&);
@@ -125,7 +132,7 @@ protected:
 
 private:
     void computeOutOfFlowPosition(LayoutContext&, const Box&, Display::Box&) const;
-    void computeOutOfFlowHeight(LayoutContext&, const Box&, Display::Box&) const;
+    void computeOutOfFlowVerticalGeometry(LayoutContext&, const Box&, Display::Box&) const;
     void computeOutOfFlowWidthAndMargin(LayoutContext&, const Box&, Display::Box&) const;
 
     WeakPtr<Box> m_root;

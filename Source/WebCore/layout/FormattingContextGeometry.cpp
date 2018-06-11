@@ -64,7 +64,14 @@ static LayoutUnit shrinkToFitWidth(LayoutContext&, const Box&)
     return { };
 }
 
-FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::outOfFlowNonReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
+static std::optional<LayoutUnit> computedValueIfNotAuto(const Length& geometryProperty, LayoutUnit containingBlockWidth)
+{
+    if (geometryProperty.isAuto())
+        return std::nullopt;
+    return valueForLength(geometryProperty, containingBlockWidth);
+}
+
+FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced());
 
@@ -91,41 +98,92 @@ FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::outOfF
     // 4. 'top' is 'auto', 'height' and 'bottom' are not 'auto', then set 'auto' values for 'margin-top' and 'margin-bottom' to 0, and solve for 'top'
     // 5. 'height' is 'auto', 'top' and 'bottom' are not 'auto', then 'auto' values for 'margin-top' and 'margin-bottom' are set to 0 and solve for 'height'
     // 6. 'bottom' is 'auto', 'top' and 'height' are not 'auto', then set 'auto' values for 'margin-top' and 'margin-bottom' to 0 and solve for 'bottom'
+
     auto& style = layoutBox.style();
-    auto top = style.logicalTop();
-    auto bottom = style.logicalBottom();
-    auto height = style.logicalHeight(); 
+    auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
+    auto& containingBlock = *layoutBox.containingBlock();
+    auto containingBlockHeight = layoutContext.displayBoxForLayoutBox(containingBlock)->height();
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(containingBlock)->width();
 
-    auto containingBlockHeight = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->height();
-    LayoutUnit computedHeightValue;
+    auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
+    auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
+    auto height = computedValueIfNotAuto(style.logicalHeight(), containingBlockWidth);
+    auto marginTop = computedValueIfNotAuto(style.marginTop(), containingBlockWidth);
+    auto marginBottom = computedValueIfNotAuto(style.marginBottom(), containingBlockWidth);
+    auto paddingTop = displayBox.paddingTop();
+    auto paddingBottom = displayBox.paddingBottom();
+    auto borderTop = displayBox.borderTop();
+    auto borderBottom = displayBox.borderBottom();
 
-    if (!height.isAuto())
-        computedHeightValue = valueForLength(height, containingBlockHeight);
-    else if ((top.isAuto() && bottom.isAuto())
-        || (top.isAuto() && !bottom.isAuto())
-        || (!top.isAuto() && bottom.isAuto())) {
-        // All auto (#3), #1 and #3
-        computedHeightValue = contentHeightForFormattingContextRoot(layoutContext, layoutBox);
-    } else if (!top.isAuto() && !bottom.isAuto()) {
-        // #5
-        auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
+    if (!top && !height && !bottom)
+        top = displayBox.top();
 
-        auto marginTop = displayBox.marginTop();
-        auto marginBottom = displayBox.marginBottom();
-    
-        auto paddingTop = displayBox.paddingTop();
-        auto paddingBottom = displayBox.paddingBottom();
-
-        auto borderTop = displayBox.borderTop();
-        auto borderBottom = displayBox.borderBottom();
-
-        computedHeightValue = containingBlockHeight - (top.value() + marginTop + borderTop + paddingTop + paddingBottom + borderBottom + marginBottom + bottom.value());
-    } else {
-        // #2 #4 #6 have height != auto
-        ASSERT_NOT_REACHED();
+    if (top && height && bottom) {
+        if (!marginTop && !marginBottom) {
+            auto marginTopAndBottom = containingBlockHeight - (*top + borderTop + paddingTop + *height + paddingBottom + borderBottom + *bottom);
+            marginTop = marginBottom = marginTopAndBottom / 2;
+        } else if (!marginTop)
+            marginTop = containingBlockHeight - (*top + borderTop + paddingTop + *height + paddingBottom + borderBottom + *marginBottom + *bottom);
+        else
+            marginBottom = containingBlockHeight - (*top + *marginTop + borderTop + paddingTop + *height + paddingBottom + borderBottom + *bottom);
+        // Over-constrained?
+        auto boxHeight = *top + *marginTop + borderTop + paddingTop + *height + paddingBottom + borderBottom + *marginBottom + *bottom;
+        if (boxHeight > containingBlockHeight)
+            bottom = containingBlockHeight - (*top + *marginTop + borderTop + paddingTop + *height + paddingBottom + borderBottom + *marginBottom); 
     }
 
-    return { computedHeightValue, { } };
+    if (!top && !height && bottom) {
+        // #1
+        height = contentHeightForFormattingContextRoot(layoutContext, layoutBox);
+        marginTop = marginTop.value_or(0);
+        marginBottom = marginBottom.value_or(0);
+        top = containingBlockHeight - (*marginTop + borderTop + paddingTop + *height + paddingBottom + borderBottom + *marginBottom + *bottom); 
+    }
+
+    if (!top && !bottom && height) {
+        // #2
+        top = displayBox.top();
+        marginTop = marginTop.value_or(0);
+        marginBottom = marginBottom.value_or(0);
+        bottom = containingBlockHeight - (*top + *marginTop + borderTop + paddingTop + *height + paddingBottom + borderBottom + *marginBottom); 
+    }
+
+    if (!height && !bottom && top) {
+        // #3
+        height = contentHeightForFormattingContextRoot(layoutContext, layoutBox);
+        marginTop = marginTop.value_or(0);
+        marginBottom = marginBottom.value_or(0);
+        bottom = containingBlockHeight - (*top + *marginTop + borderTop + paddingTop + *height + paddingBottom + borderBottom + *marginBottom); 
+    }
+
+    if (!top && height && bottom) {
+        // #4
+        marginTop = marginTop.value_or(0);
+        marginBottom = marginBottom.value_or(0);
+        top = containingBlockHeight - (*marginTop + borderTop + paddingTop + *height + paddingBottom + borderBottom + *marginBottom + *bottom); 
+    }
+
+    if (!height && top && bottom) {
+        // #5
+        marginTop = marginTop.value_or(0);
+        marginBottom = marginBottom.value_or(0);
+        height = containingBlockHeight - (*top + *marginTop + borderTop + paddingTop + paddingBottom + borderBottom + *marginBottom + *bottom); 
+    }
+
+    if (!bottom && top && height) {
+        // #6
+        marginTop = marginTop.value_or(0);
+        marginBottom = marginBottom.value_or(0);
+        bottom = containingBlockHeight - (*top + *marginTop + borderTop + paddingTop + *height + paddingBottom + borderBottom + *marginBottom); 
+    }
+
+    ASSERT(top);
+    ASSERT(bottom);
+    ASSERT(height);
+    ASSERT(marginTop);
+    ASSERT(marginBottom);
+
+    return { *top, *bottom, *height, { *marginTop, *marginBottom} };
 }
 
 FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::outOfFlowNonReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
@@ -186,13 +244,14 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::outOfFl
     return WidthAndMargin { computedWidthValue, { } };
 }
 
-FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::outOfFlowReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && layoutBox.replaced());
     // 10.6.5 Absolutely positioned, replaced elements
     //
     // The used value of 'height' is determined as for inline replaced elements.
-    return inlineReplacedHeightAndMargin(layoutContext, layoutBox);
+    auto heightAndMargin = inlineReplacedHeightAndMargin(layoutContext, layoutBox);
+    return { { }, { }, heightAndMargin.height, heightAndMargin.margin };
 }
 
 FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::outOfFlowReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
@@ -440,13 +499,13 @@ static LayoutPoint outOfFlowReplacedPosition(LayoutContext& layoutContext, const
     return { computedLeftValue, computedTopValue };
 }
 
-FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::outOfFlowHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOfFlowVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
 
     if (!layoutBox.replaced())
-        return outOfFlowNonReplacedHeightAndMargin(layoutContext, layoutBox);
-    return outOfFlowReplacedHeightAndMargin(layoutContext, layoutBox);
+        return outOfFlowNonReplacedVerticalGeometry(layoutContext, layoutBox);
+    return outOfFlowReplacedVerticalGeometry(layoutContext, layoutBox);
 }
 
 FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::outOfFlowWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)

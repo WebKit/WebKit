@@ -1,3 +1,27 @@
+2018-06-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Merge top, bottom, height and vertical margin computation for out-of-flow non-replaced elements
+        https://bugs.webkit.org/show_bug.cgi?id=186476
+
+        Reviewed by Antti Koivisto.
+
+        Implement https://www.w3.org/TR/CSS22/visudet.html#abs-non-replaced-height
+        (10.6.4 Absolutely positioned, non-replaced elements)
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHeight const): Deleted.
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::computedValueIfNotAuto):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHeightAndMargin): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHeightAndMargin): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowHeightAndMargin): Deleted.
+
 2018-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add API run run javascript from a WebKitWebView in an isolated world
