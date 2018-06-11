@@ -318,6 +318,9 @@ Vector<Cookie> NetworkStorageSession::getCookies(const URL& url)
 {
     Vector<Cookie> cookies;
     GUniquePtr<SoupURI> uri = url.createSoupURI();
+    if (!uri)
+        return cookies;
+
     GUniquePtr<GSList> cookiesList(soup_cookie_jar_get_cookie_list(cookieStorage(), uri.get(), TRUE));
     for (GSList* item = cookiesList.get(); item; item = g_slist_next(item)) {
         GUniquePtr<SoupCookie> soupCookie(static_cast<SoupCookie*>(item->data));
