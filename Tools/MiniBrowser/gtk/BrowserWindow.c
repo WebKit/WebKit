@@ -177,6 +177,9 @@ static void webViewLoadProgressChanged(WebKitWebView *webView, GParamSpec *pspec
     if (progress == 1.0) {
         window->resetEntryProgressTimeoutId = g_timeout_add(500, (GSourceFunc)resetEntryProgress, window);
         g_source_set_name_by_id(window->resetEntryProgressTimeoutId, "[WebKit] resetEntryProgress");
+    } else if (window->resetEntryProgressTimeoutId) {
+        g_source_remove(window->resetEntryProgressTimeoutId);
+        window->resetEntryProgressTimeoutId = 0;
     }
 }
 
