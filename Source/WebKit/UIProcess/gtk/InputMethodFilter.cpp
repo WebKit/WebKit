@@ -81,15 +81,31 @@ InputMethodFilter::~InputMethodFilter()
     g_signal_handlers_disconnect_matched(m_context.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 }
 
+bool InputMethodFilter::isViewFocused() const
+{
+#if ENABLE(API_TESTS)
+    ASSERT(m_page || m_testingMode);
+    if (m_testingMode)
+        return true;
+#else
+    ASSERT(m_page);
+#endif
+    return m_page->isViewFocused();
+}
+
 void InputMethodFilter::setEnabled(bool enabled)
 {
+#if ENABLE(API_TESTS)
+    ASSERT(m_page || m_testingMode);
+#else
     ASSERT(m_page);
+#endif
 
     // Notify focus out before changing the m_enabled.
     if (!enabled)
         notifyFocusedOut();
     m_enabled = enabled;
-    if (enabled && m_page->isViewFocused())
+    if (enabled && isViewFocused())
         notifyFocusedIn();
 }
 

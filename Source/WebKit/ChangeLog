@@ -1,3 +1,14 @@
+2018-05-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ input method unit tests after r232049.
+
+        Unit tests don't use a WebPageProxy.
+
+        * UIProcess/gtk/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::isViewFocused const):
+        (WebKit::InputMethodFilter::setEnabled):
+        * UIProcess/gtk/InputMethodFilter.h:
+
 2018-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][Wayland] UI process crash when closing the window

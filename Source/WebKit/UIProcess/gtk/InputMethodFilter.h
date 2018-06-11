@@ -93,6 +93,8 @@ private:
     void confirmCurrentComposition();
     void cancelContextComposition();
 
+    bool isViewFocused() const;
+
 #if ENABLE(API_TESTS)
     void logHandleKeyboardEventForTesting(GdkEventKey*, const String&, EventFakedForComposition);
     void logHandleKeyboardEventWithCompositionResultsForTesting(GdkEventKey*, ResultsToSend, EventFakedForComposition);
