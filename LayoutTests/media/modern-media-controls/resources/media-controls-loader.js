@@ -1,5 +1,8 @@
 
 (function() {
+    if (window.internals)
+        internals.settings.setUseAnonymousModeWhenFetchingMaskImages(false);
+
     const layoutTestsPath = window.location.href.substr(0, window.location.href.indexOf("/LayoutTests/"));
     const modulePath = layoutTestsPath ? layoutTestsPath + "/Source/WebCore/Modules/modern-media-controls" : "/modern-media-controls";
 
