@@ -1,4 +1,6 @@
 <script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 
 window.onpageshow = function(evt) {
 	if (!evt.persisted)

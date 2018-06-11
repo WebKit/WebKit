@@ -1,3 +1,14 @@
+2018-06-11  Brady Eidson  <beidson@apple.com>
+
+        http/tests/navigation/https-in-page-cache.html fails with process swapping on.
+        https://bugs.webkit.org/show_bug.cgi?id=186532
+
+        Reviewed by Geoffrey Garen.
+
+        * http/tests/navigation/resources/https-in-page-cache-1.php:
+        * http/tests/navigation/resources/https-in-page-cache-2.php:
+        * http/tests/navigation/resources/https-in-page-cache-3.html:
+
 2018-06-11  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (Mojave): LayoutTest http/tests/cache/disk-cache/disk-cache-media-small.html is failing
