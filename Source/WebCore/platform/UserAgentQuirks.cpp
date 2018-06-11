@@ -93,6 +93,10 @@ static bool urlRequiresMacintoshPlatform(const URL& url)
     if (baseDomain == "whatsapp.com")
         return true;
 
+    // paypal.com completely blocks users with WebKitGTK+'s standard user agent.
+    if (baseDomain == "paypal.com")
+        return true;
+
     // chase.com displays a huge "please update your browser" warning with
     // WebKitGTK+'s standard user agent.
     if (baseDomain == "chase.com")
