@@ -56,13 +56,19 @@ struct _WebKitScriptWorldClass {
 };
 
 WEBKIT_API GType
-webkit_script_world_get_type    (void);
+webkit_script_world_get_type      (void);
 
 WEBKIT_API WebKitScriptWorld *
-webkit_script_world_get_default (void);
+webkit_script_world_get_default   (void);
 
 WEBKIT_API WebKitScriptWorld *
-webkit_script_world_new         (void);
+webkit_script_world_new           (void);
+
+WEBKIT_API WebKitScriptWorld *
+webkit_script_world_new_with_name (const char        *name);
+
+WEBKIT_API const char *
+webkit_script_world_get_name      (WebKitScriptWorld *world);
 
 G_END_DECLS
 

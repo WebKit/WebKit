@@ -72,6 +72,15 @@ Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::getOrCreate(DOMWrapper
     return adoptRef(*new InjectedBundleScriptWorld(world, uniqueWorldName()));
 }
 
+InjectedBundleScriptWorld* InjectedBundleScriptWorld::find(const String& name)
+{
+    for (auto* world : allWorlds().values()) {
+        if (world->name() == name)
+            return world;
+    }
+    return nullptr;
+}
+
 InjectedBundleScriptWorld& InjectedBundleScriptWorld::normalWorld()
 {
     static InjectedBundleScriptWorld& world = adoptRef(*new InjectedBundleScriptWorld(mainThreadNormalWorld(), String())).leakRef();

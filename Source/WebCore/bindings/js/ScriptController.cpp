@@ -539,7 +539,7 @@ void ScriptController::clearScriptObjects()
 #endif
 }
 
-JSValue ScriptController::executeScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
+JSValue ScriptController::executeScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture, ExceptionDetails* exceptionDetails)
 {
     UserGestureIndicator gestureIndicator(forceUserGesture ? std::optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt);
     ScriptSourceCode sourceCode(script, m_frame.document()->url(), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset()));
@@ -547,7 +547,7 @@ JSValue ScriptController::executeScriptInWorld(DOMWrapperWorld& world, const Str
     if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
         return { };
 
-    return evaluateInWorld(sourceCode, world);
+    return evaluateInWorld(sourceCode, world, exceptionDetails);
 }
 
 bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reason)

@@ -1,5 +1,25 @@
 2018-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] Add API run run javascript from a WebKitWebView in an isolated world
+        https://bugs.webkit.org/show_bug.cgi?id=186192
+
+        Reviewed by Michael Catanzaro.
+
+        Add tests cases for the new API.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewRunJavaScript):
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        (methodCallCallback):
+        (webkit_web_extension_initialize_with_user_data):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+        (runJavaScriptInWorldReadyCallback):
+        (WebViewTest::runJavaScriptFromGResourceAndWaitUntilFinished):
+        (WebViewTest::runJavaScriptInWorldAndWaitUntilFinished):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.h:
+
+2018-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] Add a MiniBrowser and use it to run WebDriver tests
         https://bugs.webkit.org/show_bug.cgi?id=186345
 

@@ -42,6 +42,7 @@ public:
     static Ref<InjectedBundleScriptWorld> create();
     static Ref<InjectedBundleScriptWorld> create(const String&);
     static Ref<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld&);
+    static InjectedBundleScriptWorld* find(const String&);
     static InjectedBundleScriptWorld& normalWorld();
 
     virtual ~InjectedBundleScriptWorld();

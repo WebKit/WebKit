@@ -180,6 +180,7 @@ messages -> WebPage LegacyReceiver {
     GetSourceForFrame(uint64_t frameID, WebKit::CallbackID callbackID)
     GetWebArchiveOfFrame(uint64_t frameID, WebKit::CallbackID callbackID)
     RunJavaScriptInMainFrame(String script, bool forceUserGesture, WebKit::CallbackID callbackID)
+    RunJavaScriptInMainFrameScriptWorld(String script, bool forceUserGesture, String worldName, WebKit::CallbackID callbackID)
     ForceRepaint(WebKit::CallbackID callbackID)
 
 #if PLATFORM(COCOA)

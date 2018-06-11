@@ -3124,6 +3124,17 @@ void WebPageProxy::runJavaScriptInMainFrame(const String& script, bool forceUser
     m_process->send(Messages::WebPage::RunJavaScriptInMainFrame(script, forceUserGesture, callbackID), m_pageID);
 }
 
+void WebPageProxy::runJavaScriptInMainFrameScriptWorld(const String& script, bool forceUserGesture, const String& worldName, WTF::Function<void(API::SerializedScriptValue*, bool hadException, const ExceptionDetails&, CallbackBase::Error)>&& callbackFunction)
+{
+    if (!isValid()) {
+        callbackFunction(nullptr, false, { }, CallbackBase::Error::Unknown);
+        return;
+    }
+
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    m_process->send(Messages::WebPage::RunJavaScriptInMainFrameScriptWorld(script, forceUserGesture, worldName, callbackID), m_pageID);
+}
+
 void WebPageProxy::getRenderTreeExternalRepresentation(WTF::Function<void (const String&, CallbackBase::Error)>&& callbackFunction)
 {
     if (!isValid()) {

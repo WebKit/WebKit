@@ -3324,9 +3324,9 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
-    GTask* task = g_task_new(webView, cancellable, callback, userData);
-    getPage(webView).runJavaScriptInMainFrame(String::fromUTF8(script), true, [task](API::SerializedScriptValue* serializedScriptValue, bool, const ExceptionDetails& exceptionDetails, WebKit::CallbackBase::Error) {
-        webkitWebViewRunJavaScriptCallback(serializedScriptValue, exceptionDetails, adoptGRef(task).get());
+    GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
+    getPage(webView).runJavaScriptInMainFrame(String::fromUTF8(script), true, [task = WTFMove(task)](API::SerializedScriptValue* serializedScriptValue, bool, const ExceptionDetails& exceptionDetails, WebKit::CallbackBase::Error) {
+        webkitWebViewRunJavaScriptCallback(serializedScriptValue, exceptionDetails, task.get());
     });
 }
 
@@ -3393,8 +3393,58 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
  */
 WebKitJavascriptResult* webkit_web_view_run_javascript_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-    g_return_val_if_fail(g_task_is_valid(result, webView), 0);
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
+    g_return_val_if_fail(g_task_is_valid(result, webView), nullptr);
+
+    return static_cast<WebKitJavascriptResult*>(g_task_propagate_pointer(G_TASK(result), error));
+}
+
+/**
+ * webkit_web_view_run_javascript_in_world:
+ * @web_view: a #WebKitWebView
+ * @script: the script to run
+ * @world_name: the name of a #WebKitScriptWorld
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the script finished
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously run @script in the script world with name @world_name of the current page context in @web_view.
+ * If WebKitSettings:enable-javascript is FALSE, this method will do nothing.
+ *
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_web_view_run_javascript_in_world_finish() to get the result of the operation.
+ *
+ * Since: 2.22
+ */
+void webkit_web_view_run_javascript_in_world(WebKitWebView* webView, const gchar* script, const char* worldName, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(script);
+    g_return_if_fail(worldName);
+
+    GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
+    getPage(webView).runJavaScriptInMainFrameScriptWorld(String::fromUTF8(script), true, String::fromUTF8(worldName), [task = WTFMove(task)](API::SerializedScriptValue* serializedScriptValue, bool, const ExceptionDetails& exceptionDetails, WebKit::CallbackBase::Error) {
+        webkitWebViewRunJavaScriptCallback(serializedScriptValue, exceptionDetails, task.get());
+    });
+}
+
+/**
+ * webkit_web_view_run_javascript_in_world_finish:
+ * @web_view: a #WebKitWebView
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_web_view_run_javascript_in_world().
+ *
+ * Returns: (transfer full): a #WebKitJavascriptResult with the result of the last executed statement in @script
+ *    or %NULL in case of error
+ *
+ * Since: 2.22
+ */
+WebKitJavascriptResult* webkit_web_view_run_javascript_in_world_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
+    g_return_val_if_fail(g_task_is_valid(result, webView), nullptr);
 
     return static_cast<WebKitJavascriptResult*>(g_task_propagate_pointer(G_TASK(result), error));
 }

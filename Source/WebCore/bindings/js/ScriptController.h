@@ -90,7 +90,7 @@ public:
 
     JSC::JSValue executeScript(const ScriptSourceCode&, ExceptionDetails* = nullptr);
     WEBCORE_EXPORT JSC::JSValue executeScript(const String& script, bool forceUserGesture = false, ExceptionDetails* = nullptr);
-    WEBCORE_EXPORT JSC::JSValue executeScriptInWorld(DOMWrapperWorld&, const String& script, bool forceUserGesture = false);
+    WEBCORE_EXPORT JSC::JSValue executeScriptInWorld(DOMWrapperWorld&, const String& script, bool forceUserGesture = false, ExceptionDetails* = nullptr);
 
     // Returns true if argument is a JavaScript URL.
     bool executeIfJavaScriptURL(const URL&, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL);

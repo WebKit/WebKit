@@ -1,3 +1,14 @@
+2018-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add API run run javascript from a WebKitWebView in an isolated world
+        https://bugs.webkit.org/show_bug.cgi?id=186192
+
+        Reviewed by Michael Catanzaro.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeScriptInWorld): Add ExceptionDetails parameter.
+        * bindings/js/ScriptController.h:
+
 2018-06-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] paypal.com requires user agent quirk

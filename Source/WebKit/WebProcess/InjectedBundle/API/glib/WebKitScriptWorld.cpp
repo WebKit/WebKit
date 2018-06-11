@@ -50,6 +50,7 @@ struct _WebKitScriptWorldPrivate {
     }
 
     RefPtr<InjectedBundleScriptWorld> scriptWorld;
+    CString name;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -100,8 +101,9 @@ void webkitScriptWorldWindowObjectCleared(WebKitScriptWorld* world, WebKitWebPag
 
 static WebKitScriptWorld* webkitScriptWorldCreate(Ref<InjectedBundleScriptWorld>&& scriptWorld)
 {
-    WebKitScriptWorld* world = WEBKIT_SCRIPT_WORLD(g_object_new(WEBKIT_TYPE_SCRIPT_WORLD, NULL));
+    WebKitScriptWorld* world = WEBKIT_SCRIPT_WORLD(g_object_new(WEBKIT_TYPE_SCRIPT_WORLD, nullptr));
     world->priv->scriptWorld = WTFMove(scriptWorld);
+    world->priv->name = world->priv->scriptWorld->name().utf8();
 
     ASSERT(!scriptWorlds().contains(world->priv->scriptWorld.get()));
     scriptWorlds().add(world->priv->scriptWorld.get(), world);
@@ -138,6 +140,9 @@ WebKitScriptWorld* webkit_script_world_get_default(void)
  * Creates a new isolated #WebKitScriptWorld. Scripts executed in
  * isolated worlds have access to the DOM but not to other variable
  * or functions created by the page.
+ * The #WebKitScriptWorld is created with a generated unique name. Use
+ * webkit_script_world_new_with_name() if you want to create it with a
+ * custom name.
  * You can get the JavaScript execution context of a #WebKitScriptWorld
  * for a given #WebKitFrame with webkit_frame_get_javascript_context_for_script_world().
  *
@@ -148,4 +153,42 @@ WebKitScriptWorld* webkit_script_world_get_default(void)
 WebKitScriptWorld* webkit_script_world_new(void)
 {
     return webkitScriptWorldCreate(InjectedBundleScriptWorld::create());
+}
+
+/**
+ * webkit_script_world_new_with_name:
+ * @name: a name for the script world
+ *
+ * Creates a new isolated #WebKitScriptWorld with a name. Scripts executed in
+ * isolated worlds have access to the DOM but not to other variable
+ * or functions created by the page.
+ * You can get the JavaScript execution context of a #WebKitScriptWorld
+ * for a given #WebKitFrame with webkit_frame_get_javascript_context_for_script_world().
+ *
+ * Returns: (transfer full): a new isolated #WebKitScriptWorld
+ *
+ * Since: 2.22
+ */
+WebKitScriptWorld* webkit_script_world_new_with_name(const char* name)
+{
+    g_return_val_if_fail(name, nullptr);
+
+    return webkitScriptWorldCreate(InjectedBundleScriptWorld::create(String::fromUTF8(name)));
+}
+
+/**
+ * webkit_script_world_get_name:
+ * @world: a #WebKitScriptWorld
+ *
+ * Get the name of a #WebKitScriptWorld.
+ *
+ * Returns: the name of @world
+ *
+ * Since: 2.22
+ */
+const char* webkit_script_world_get_name(WebKitScriptWorld* world)
+{
+    g_return_val_if_fail(WEBKIT_IS_SCRIPT_WORLD(world), nullptr);
+
+    return world->priv->name.data();
 }

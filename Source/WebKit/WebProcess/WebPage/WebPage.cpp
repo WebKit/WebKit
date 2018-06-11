@@ -2936,7 +2936,7 @@ KeyboardUIMode WebPage::keyboardUIMode()
     return static_cast<KeyboardUIMode>((fullKeyboardAccessEnabled ? KeyboardAccessFull : KeyboardAccessDefault) | (m_tabToLinks ? KeyboardAccessTabsToLinks : 0));
 }
 
-void WebPage::runJavaScriptInMainFrame(const String& script, bool forceUserGesture, CallbackID callbackID)
+void WebPage::runJavaScript(const String& script, bool forceUserGesture, std::optional<String> worldName, CallbackID callbackID)
 {
     // NOTE: We need to be careful when running scripts that the objects we depend on don't
     // disappear during script execution.
@@ -2945,16 +2945,29 @@ void WebPage::runJavaScriptInMainFrame(const String& script, bool forceUserGestu
     JSLockHolder lock(commonVM());
     bool hadException = true;
     ExceptionDetails details;
-    if (JSValue resultValue = m_mainFrame->coreFrame()->script().executeScript(script, forceUserGesture, &details)) {
-        hadException = false;
-        serializedResultValue = SerializedScriptValue::create(m_mainFrame->jsContext(),
-            toRef(m_mainFrame->coreFrame()->script().globalObject(mainThreadNormalWorld())->globalExec(), resultValue), nullptr);
+    auto* world = worldName ? InjectedBundleScriptWorld::find(worldName.value()) : &InjectedBundleScriptWorld::normalWorld();
+    if (world) {
+        if (JSValue resultValue = m_mainFrame->coreFrame()->script().executeScriptInWorld(world->coreWorld(), script, forceUserGesture, &details)) {
+            hadException = false;
+            serializedResultValue = SerializedScriptValue::create(m_mainFrame->jsContextForWorld(world),
+                toRef(m_mainFrame->coreFrame()->script().globalObject(world->coreWorld())->globalExec(), resultValue), nullptr);
+        }
     }
 
     IPC::DataReference dataReference;
     if (serializedResultValue)
         dataReference = serializedResultValue->data();
     send(Messages::WebPageProxy::ScriptValueCallback(dataReference, hadException, details, callbackID));
+}
+
+void WebPage::runJavaScriptInMainFrame(const String& script, bool forceUserGesture, CallbackID callbackID)
+{
+    runJavaScript(script, forceUserGesture, std::nullopt, callbackID);
+}
+
+void WebPage::runJavaScriptInMainFrameScriptWorld(const String& script, bool forceUserGesture, const String& worldName, CallbackID callbackID)
+{
+    runJavaScript(script, forceUserGesture, worldName, callbackID);
 }
 
 void WebPage::getContentsAsString(CallbackID callbackID)

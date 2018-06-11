@@ -271,6 +271,12 @@ static void runJavaScriptFromGResourceReadyCallback(GObject*, GAsyncResult* resu
     g_main_loop_quit(test->m_mainLoop);
 }
 
+static void runJavaScriptInWorldReadyCallback(GObject*, GAsyncResult* result, WebViewTest* test)
+{
+    test->m_javascriptResult = webkit_web_view_run_javascript_in_world_finish(test->m_webView, result, test->m_javascriptError);
+    g_main_loop_quit(test->m_mainLoop);
+}
+
 WebKitJavascriptResult* WebViewTest::runJavaScriptAndWaitUntilFinished(const char* javascript, GError** error)
 {
     if (m_javascriptResult)
@@ -290,6 +296,18 @@ WebKitJavascriptResult* WebViewTest::runJavaScriptFromGResourceAndWaitUntilFinis
     m_javascriptResult = 0;
     m_javascriptError = error;
     webkit_web_view_run_javascript_from_gresource(m_webView, resource, 0, reinterpret_cast<GAsyncReadyCallback>(runJavaScriptFromGResourceReadyCallback), this);
+    g_main_loop_run(m_mainLoop);
+
+    return m_javascriptResult;
+}
+
+WebKitJavascriptResult* WebViewTest::runJavaScriptInWorldAndWaitUntilFinished(const char* javascript, const char* world, GError** error)
+{
+    if (m_javascriptResult)
+        webkit_javascript_result_unref(m_javascriptResult);
+    m_javascriptResult = 0;
+    m_javascriptError = error;
+    webkit_web_view_run_javascript_in_world(m_webView, javascript, world, nullptr, reinterpret_cast<GAsyncReadyCallback>(runJavaScriptInWorldReadyCallback), this);
     g_main_loop_run(m_mainLoop);
 
     return m_javascriptResult;

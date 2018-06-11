@@ -486,6 +486,7 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
 
         GRefPtr<WebKitScriptWorld> world = adoptGRef(webkit_script_world_new());
         g_assert(webkit_script_world_get_default() != world.get());
+        g_assert(g_str_has_prefix(webkit_script_world_get_name(world.get()), "UniqueWorld_"));
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
         GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context_for_script_world(frame, world.get()));
         GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate(jsContext.get(), script, -1));
@@ -568,8 +569,13 @@ static void registerGResource(void)
 
 extern "C" void webkit_web_extension_initialize_with_user_data(WebKitWebExtension* extension, GVariant* userData)
 {
+    WebKitScriptWorld* isolatedWorld = webkit_script_world_new_with_name("WebExtensionTestScriptWorld");
+    g_assert(WEBKIT_IS_SCRIPT_WORLD(isolatedWorld));
+    g_assert_cmpstr(webkit_script_world_get_name(isolatedWorld), ==, "WebExtensionTestScriptWorld");
+    g_object_set_data_full(G_OBJECT(extension), "wk-script-world", isolatedWorld, g_object_unref);
+
     g_signal_connect(extension, "page-created", G_CALLBACK(pageCreatedCallback), extension);
-    g_signal_connect(webkit_script_world_get_default(), "window-object-cleared", G_CALLBACK(windowObjectCleared), 0);
+    g_signal_connect(webkit_script_world_get_default(), "window-object-cleared", G_CALLBACK(windowObjectCleared), nullptr);
 
     registerGResource();
 

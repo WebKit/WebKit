@@ -1,3 +1,41 @@
+2018-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add API run run javascript from a WebKitWebView in an isolated world
+        https://bugs.webkit.org/show_bug.cgi?id=186192
+
+        Reviewed by Michael Catanzaro.
+
+        Add webkit_web_view_run_javascript_in_world() that receives a world name. Also add
+        webkit_script_world_new_with_name() to create an isolated world with a name and webkit_script_world_get_name()
+        to get the name of a WebKitScriptWorld.
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_run_javascript):
+        (webkit_web_view_run_javascript_finish):
+        (webkit_web_view_run_javascript_in_world):
+        (webkit_web_view_run_javascript_in_world_finish):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Add new symbols.
+        * UIProcess/API/wpe/WebKitWebView.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptInMainFrameScriptWorld): Send RunJavaScriptInMainFrameScriptWorld message to
+        the WebProcess.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/InjectedBundle/API/glib/WebKitScriptWorld.cpp:
+        (webkitScriptWorldCreate):
+        (webkit_script_world_new_with_name):
+        (webkit_script_world_get_name):
+        * WebProcess/InjectedBundle/API/gtk/WebKitScriptWorld.h:
+        * WebProcess/InjectedBundle/API/wpe/WebKitScriptWorld.h:
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp:
+        (WebKit::InjectedBundleScriptWorld::find): Find an InjectedBundleScriptWorld by its name.
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScriptInMainFrameScriptWorld): Find the InjectedBundleScriptWorld for the given name
+        and run the script in its js context.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Add RunJavaScriptInMainFrameScriptWorld message.
+
 2018-06-10  Chris Dumez  <cdumez@apple.com>
 
         Reload the Web view in case of crash if the client does not implement webViewWebContentProcessDidTerminate delegate

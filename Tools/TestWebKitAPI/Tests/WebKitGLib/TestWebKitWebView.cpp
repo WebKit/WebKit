@@ -373,6 +373,29 @@ static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("foo();", &error.outPtr());
     g_assert(!javascriptResult);
     g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+
+    // Values of the main world are not available in the isolated one.
+    javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("a", "WebExtensionTestScriptWorld", &error.outPtr());
+    g_assert(!javascriptResult);
+    g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+
+    javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("a = 50", "WebExtensionTestScriptWorld", &error.outPtr());
+    g_assert(javascriptResult);
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_javascript_result_get_js_value(javascriptResult)));
+    g_assert(!error.get());
+    g_assert_cmpfloat(WebViewTest::javascriptResultToNumber(javascriptResult), ==, 50);
+
+    // Values of the isolated world are not available in the normal one.
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("a", &error.outPtr());
+    g_assert(javascriptResult);
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_javascript_result_get_js_value(javascriptResult)));
+    g_assert(!error.get());
+    g_assert_cmpfloat(WebViewTest::javascriptResultToNumber(javascriptResult), ==, 25);
+
+    // Running a script in a world that doesn't exist should fail.
+    javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("a", "InvalidScriptWorld", &error.outPtr());
+    g_assert(!javascriptResult);
+    g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
 }
 
 class FullScreenClientTest: public WebViewTest {
