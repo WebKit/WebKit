@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,11 +103,14 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             enableWebAnimationsCSSIntegration = parseBooleanTestHeaderValue(value);
         else if (key == "enableColorFilter")
             enableColorFilter = parseBooleanTestHeaderValue(value);
+        else if (key == "jscOptions")
+            jscOptions = value;
         pairStart = pairEnd + 1;
     }
 }
 
 bool TestOptions::webViewIsCompatibleWithOptions(const TestOptions& other) const
 {
-    return other.layerBackedWebView == layerBackedWebView;
+    return other.layerBackedWebView == layerBackedWebView
+        && other.jscOptions == jscOptions;
 }

@@ -1,3 +1,45 @@
+2018-06-11  Mark Lam  <mark.lam@apple.com>
+
+        Add support for webkit-test-runner jscOptions in DumpRenderTree and WebKitTestRunner.
+        https://bugs.webkit.org/show_bug.cgi?id=186451
+        <rdar://problem/40875792>
+
+        Reviewed by Tim Horton.
+
+        This jscOptions option can be used by a layout test to specify some JSC runtime
+        options needed by the test e.g. by adding something like this to the top of the
+        html file after the DOCTYPE tag:
+            <!-- webkit-test-runner [ jscOptions=--useIntlPluralRules=true ] -->
+
+        If more than one option is needed, the options can be specified as a comma
+        separated string e.g.
+            <!-- webkit-test-runner [ jscOptions=--useIntlPluralRules=true,--useZombieMode=true ] -->
+
+        This only works with JSC options that can be changed at runtime.  Not all JSC
+        options can be changed this way as some options are only checked and set once at
+        VM / process initialization time: changing this type of options may have no
+        effect.  It's the test writer's responsibility to determine which options are
+        appropriate for with this webkit-test-runner jscOptions option.
+
+        This implementation is a workaround until we can change the run-webkit-tests
+        scripts to parse the option and apply it to a new launch of DRT or WKTR:
+        https://bugs.webkit.org/show_bug.cgi?id=186452
+
+        * DumpRenderTree/TestOptions.cpp:
+        (TestOptions::TestOptions):
+        (TestOptions::webViewIsCompatibleWithOptions const):
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setJSCOptions):
+        (resetWebViewToConsistentStateBeforeTesting):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+
 2018-06-11  Brady Eidson  <beidson@apple.com>
 
         Add a command line default to force WebKitTestRunner to turn on process swap on navigation.

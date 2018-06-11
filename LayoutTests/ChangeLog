@@ -1,3 +1,15 @@
+2018-06-11  Mark Lam  <mark.lam@apple.com>
+
+        Add support for webkit-test-runner jscOptions in DumpRenderTree and WebKitTestRunner.
+        https://bugs.webkit.org/show_bug.cgi?id=186451
+        <rdar://problem/40875792>
+
+        Reviewed by Tim Horton.
+
+        * js/intl-numberformat-format-to-parts.html:
+        * js/intl-pluralrules.html:
+        * js/script-tests/intl-numberformat-format-to-parts.js:
+
 2018-06-11  Chris Dumez  <cdumez@apple.com>
 
         http/tests/security/cors-post-redirect-307.html fails with PSON enabled
