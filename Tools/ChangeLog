@@ -1,3 +1,14 @@
+2018-06-11  Brady Eidson  <beidson@apple.com>
+
+        Followup to [Cocoa] Remove all uses of NSAutoreleasePool as part of preparation for ARC
+        https://bugs.webkit.org/show_bug.cgi?id=186436
+
+        Patch by Darin Adler
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/mac/StopLoadingFromDidFinishLoading.mm:
+        (TestWebKitAPI::TEST):
+
 2018-06-11  Mark Lam  <mark.lam@apple.com>
 
         Gardening: skip BigInt tests on iOS until the feature is stable.

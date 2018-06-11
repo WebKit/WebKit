@@ -49,7 +49,8 @@ TEST(WebKitLegacy, StopLoadingFromDidFinishLoading)
 {
     @autoreleasepool {
         auto webView = adoptNS([[WebView alloc] init]);
-        webView.get().resourceLoadDelegate = adoptNS([[StopLoadingFromDidFinishLoadingDelegate alloc] init]).get();
+        auto resourceLoadDelegate = adoptNS([[StopLoadingFromDidFinishLoadingDelegate alloc] init]);
+        webView.get().resourceLoadDelegate = resourceLoadDelegate.get();
         [webView.get().mainFrame loadHTMLString:@"Hello, World!" baseURL:[NSURL URLWithString:@""]];
         Util::run(&finished);
     }
