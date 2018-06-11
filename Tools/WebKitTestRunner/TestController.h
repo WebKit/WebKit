@@ -227,6 +227,7 @@ private:
     void platformDestroy();
     WKContextRef platformAdjustContext(WKContextRef, WKContextConfigurationRef);
     void platformInitializeContext();
+    void platformAddTestOptions(TestOptions&) const;
     void platformCreateWebView(WKPageConfigurationRef, const TestOptions&);
     static PlatformWebView* platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions&);
     void platformResetPreferencesToConsistentValues();

@@ -46,7 +46,6 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/_WKApplicationManifest.h>
-#import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserContentExtensionStore.h>
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
 #import <wtf/MainThread.h>
@@ -126,6 +125,14 @@ WKPreferencesRef TestController::platformPreferences()
 #else
     return nullptr;
 #endif
+}
+
+void TestController::platformAddTestOptions(TestOptions& options) const
+{
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"EnableProcessSwapOnNavigation"])
+        options.enableProcessSwapOnNavigation = true;
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"EnableProcessSwapOnWindowOpen"])
+        options.enableProcessSwapOnWindowOpen = true;
 }
 
 void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOptions& options)

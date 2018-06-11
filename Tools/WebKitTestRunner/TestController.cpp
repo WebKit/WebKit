@@ -1138,6 +1138,7 @@ TestOptions TestController::testOptionsForTest(const TestCommand& command) const
 
     updatePlatformSpecificTestOptionsForTest(options, command.pathOrURL);
     updateTestOptionsFromTestHeader(options, command.pathOrURL, command.absolutePath);
+    platformAddTestOptions(options);
 
     return options;
 }
@@ -2856,5 +2857,11 @@ void TestController::statisticsResetToConsistentState()
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
     WKWebsiteDataStoreStatisticsResetToConsistentState(dataStore);
 }
+
+#if !PLATFORM(COCOA)
+void TestController::platformAddTestOptions(TestOptions&) const
+{
+}
+#endif
 
 } // namespace WTR

@@ -1,3 +1,22 @@
+2018-06-11  Brady Eidson  <beidson@apple.com>
+
+        Add a command line default to force WebKitTestRunner to turn on process swap on navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=186534
+
+        Reviewed by Chris Dumez.
+
+        Right now Process Swap On Navigation is enabled on a per-test basis.
+        The future is to enable it by default.
+
+        Adding a 'defaults write' helps us get to that future.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::testOptionsForTest const):
+        (WTR::TestController::platformAddTestOptions const):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformAddTestOptions const):
+
 2018-06-11  Chris Dumez  <cdumez@apple.com>
 
         Allow enabling PSON in layout tests without window.open support
