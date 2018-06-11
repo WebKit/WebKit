@@ -49,11 +49,6 @@ FormattingContext::~FormattingContext()
 {
 }
 
-void FormattingContext::computeOutOfFlowPosition(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
-{
-    displayBox.setTopLeft(Geometry::outOfFlowPosition(layoutContext, layoutBox));
-}
-
 void FormattingContext::computeFloatingHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     auto heightAndMargin = Geometry::floatingHeightAndMargin(layoutContext, layoutBox);
@@ -126,7 +121,6 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext)
         formattingContext->layout(layoutContext, layoutContext.establishedFormattingState(layoutBox, *formattingContext));
 
         computeOutOfFlowVerticalGeometry(layoutContext, layoutBox, displayBox);
-        computeOutOfFlowPosition(layoutContext, layoutBox, displayBox);
     }
 }
 

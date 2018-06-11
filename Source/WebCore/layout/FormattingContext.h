@@ -111,8 +111,6 @@ protected:
         static HeightAndMargin floatingHeightAndMargin(LayoutContext&, const Box&);
         static WidthAndMargin floatingWidthAndMargin(LayoutContext&, const Box&);
 
-        static LayoutPoint outOfFlowPosition(LayoutContext&, const Box&);
-
         static HeightAndMargin inlineReplacedHeightAndMargin(LayoutContext&, const Box&);
         static WidthAndMargin inlineReplacedWidthAndMargin(LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedMarginLeft = { },
             std::optional<LayoutUnit> precomputedMarginRight = { });
@@ -138,7 +136,6 @@ protected:
     };
 
 private:
-    void computeOutOfFlowPosition(LayoutContext&, const Box&, Display::Box&) const;
     void computeOutOfFlowVerticalGeometry(LayoutContext&, const Box&, Display::Box&) const;
     void computeOutOfFlowHorizontalGeometry(LayoutContext&, const Box&, Display::Box&) const;
 

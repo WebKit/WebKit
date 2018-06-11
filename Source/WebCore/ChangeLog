@@ -1,5 +1,24 @@
 2018-06-11  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Remove redundant position functions for out-of-flow elements
+        https://bugs.webkit.org/show_bug.cgi?id=186525
+
+        Reviewed by Antti Koivisto.
+
+        Position is computed as part of the Horizontal/Vertical geometry computation.
+        (see outOfFlow(Non)ReplacedHorizontalGeometry/outOfFlow(Non)ReplacedVerticalGeometry functions)
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowPosition const): Deleted.
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::outOfFlowNonReplacedPosition): Deleted.
+        (WebCore::Layout::outOfFlowReplacedPosition): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowPosition): Deleted.
+
+2018-06-11  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Merge top, bottom, height and vertical margin computation for out-of-flow replaced elements
         https://bugs.webkit.org/show_bug.cgi?id=186524
 
