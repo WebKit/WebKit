@@ -1,3 +1,12 @@
+2018-06-11  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: skip BigInt tests on iOS until the feature is stable.
+        <rdar://problem/40331121>
+
+        Not reviewed.
+
+        * Scripts/run-jsc-stress-tests:
+
 2018-06-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MiniBrowser] Add WebKitBrowserWindow class for modern WebKit API

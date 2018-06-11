@@ -630,6 +630,12 @@ def runDefault(*optionalTestSpecificOptions)
 end
 
 def runBigIntEnabled(*optionalTestSpecificOptions)
+    # FIXME: <rdar://problem/40331121>
+    if $remote or ($architecture !~ /x86/i and $hostOS == "darwin")
+        skip
+        return
+    end
+
     run("big-int-enabled", "--useBigInt=true" , *(FTL_OPTIONS + optionalTestSpecificOptions))
 end
 
