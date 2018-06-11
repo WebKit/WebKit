@@ -82,6 +82,11 @@ private:
         return String::fromUTF8(m_session->priv->id.data());
     }
 
+    void didDisconnectFromRemote(WebAutomationSession&) override
+    {
+        webkitWebContextWillCloseAutomationSession(m_session->priv->webContext);
+    }
+
     WebPageProxy* didRequestNewWindow(WebAutomationSession&) override
     {
         WebKitWebView* webView = nullptr;
