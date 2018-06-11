@@ -1,3 +1,18 @@
+2018-06-11  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (Mojave): LayoutTest http/tests/cache/disk-cache/disk-cache-media-small.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=186482
+        <rdar://problem/40924056>
+
+        Reviewed by Zalan Bujtas.
+
+        The test was sensitive to which exact ranges the system media framework would request.
+
+        * http/tests/cache/disk-cache/disk-cache-media-small-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-media-small.html:
+
+        Don't print out the ranges, just check they are all coming from the right source.
+
 2018-06-11  Per Arne Vollan  <pvollan@apple.com>
 
         Some CSS animations tests are failing on Windows.

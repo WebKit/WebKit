@@ -23,20 +23,27 @@ function loadTestMedia() {
     });
 }
 
-function logResponses(media)
+function logResponses(media, expextedSource)
 {
+    let pass = true;
     const ranges = internals.mediaResponseContentRanges(media);
     const sources = internals.mediaResponseSources(media);
-    for (i = 0; i < Math.min(2, ranges.length); ++i)
-        logdiv.innerHTML += `Content range: ${ranges[i]}, Response source: ${sources[i]}<br>`;
+    for (i = 0; i < ranges.length; ++i) {
+        if (sources[i] != expextedSource) {
+            logdiv.innerHTML += `FAIL: Range ${ranges[i]} from ${sources[i]} expected ${expextedSource}<br>`;
+            pass = false;
+        }
+    }
+    if (pass)
+        logdiv.innerHTML += `PASS: All response ranges from: ${expextedSource}<br>`;
 }
 
 async function test() {
     logdiv.innerHTML += "First load<br>";
-    logResponses(await loadTestMedia());
+    logResponses(await loadTestMedia(), "Network");
 
     logdiv.innerHTML += "Second Load<br>";
-    logResponses(await loadTestMedia());
+    logResponses(await loadTestMedia(), "Disk cache");
 
     testRunner.notifyDone();
 }
