@@ -1944,7 +1944,6 @@ webkit.org/b/183841 imported/mozilla/css-transitions/test_element-get-animations
 webkit.org/b/183844 imported/mozilla/css-animations/test_element-get-animations.html [ Pass Failure Timeout ]
 webkit.org/b/183846 imported/mozilla/css-transitions/test_pseudoElement-get-animations.html [ Pass Failure Timeout ]
 webkit.org/b/183847 imported/mozilla/css-animations/test_event-order.html [ Pass Failure Timeout ]
-webkit.org/b/183850 imported/mozilla/css-transitions/test_setting-effect.html [ Pass Failure Timeout ]
 
 webkit.org/b/183848 imported/mozilla/css-animations/test_keyframeeffect-getkeyframes.html [ Skip ]
 
