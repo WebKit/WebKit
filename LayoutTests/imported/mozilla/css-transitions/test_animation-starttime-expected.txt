@@ -1,7 +1,7 @@
 
 PASS startTime of a newly created transition is unresolved 
 PASS Sanity test to check round-tripping assigning to new animation's startTime 
-FAIL Skipping forward through animation assert_equals: the computed value of margin-left should be unaffected by an animation with a delay on ready Promise resolve expected 100 but got 200
+PASS Skipping forward through animation 
 PASS Skipping backwards through transition 
 PASS Setting startTime to null 
 PASS Animation.startTime after paused 
