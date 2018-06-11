@@ -62,7 +62,7 @@ struct LoadParameters {
     String provisionalLoadErrorURLString;
 
     uint64_t shouldOpenExternalURLsPolicy;
-    bool shouldCheckNavigationPolicy { true };
+    bool shouldTreatAsContinuingLoad { false };
     UserData userData;
 
 #if PLATFORM(COCOA)

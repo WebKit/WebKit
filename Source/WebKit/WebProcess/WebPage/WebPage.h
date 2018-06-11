@@ -157,7 +157,7 @@ class URL;
 class VisiblePosition;
 
 enum SyntheticClickType : int8_t;
-enum class NavigationPolicyCheck;
+enum class ShouldTreatAsContinuingLoad;
 enum class TextIndicatorPresentationTransition : uint8_t;
 
 struct BackForwardItemIdentifier;
@@ -1160,7 +1160,7 @@ private:
     void loadAlternateHTMLString(const LoadParameters&);
     void navigateToPDFLinkWithSimulatedClick(const String& url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint);
     void reload(uint64_t navigationID, uint32_t reloadOptions, SandboxExtension::Handle&&);
-    void goToBackForwardItem(uint64_t navigationID, const WebCore::BackForwardItemIdentifier&, WebCore::FrameLoadType, WebCore::NavigationPolicyCheck);
+    void goToBackForwardItem(uint64_t navigationID, const WebCore::BackForwardItemIdentifier&, WebCore::FrameLoadType, WebCore::ShouldTreatAsContinuingLoad);
     void tryRestoreScrollPosition();
     void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&, CallbackID);
     void updateIsInWindow(bool isInitialState = false);

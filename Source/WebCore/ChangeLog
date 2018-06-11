@@ -1,3 +1,51 @@
+2018-06-11  Chris Dumez  <cdumez@apple.com>
+
+        http/tests/security/cors-post-redirect-307.html fails with PSON enabled
+        https://bugs.webkit.org/show_bug.cgi?id=186441
+
+        Reviewed by Brady Eidson.
+
+        When we are continuing a load in a new process, we currently bypass the navigation policy
+        check. We now also bypass the adding of headers such as the Origin one since the request
+        was already processed in the previous process. This is important because in the case of
+        a cross-origin redirect, the previous process has removed the Origin header from the
+        request and we do not want the new process to add it again.
+
+        Test: http/tests/security/cors-post-redirect-307-pson.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * history/BackForwardController.cpp:
+        (WebCore::BackForwardController::goBackOrForward):
+        (WebCore::BackForwardController::goBack):
+        (WebCore::BackForwardController::goForward):
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::setShouldTreatAsContinuingLoad):
+        (WebCore::FrameLoadRequest::shouldTreatAsContinuingLoad const):
+        (WebCore::FrameLoadRequest::setShouldCheckNavigationPolicy): Deleted.
+        (WebCore::FrameLoadRequest::shouldCheckNavigationPolicy const): Deleted.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithNavigationAction):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::reloadWithOverrideEncoding):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        (WebCore::FrameLoader::addHTTPOriginIfNeeded):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        (WebCore::FrameLoader::loadItem):
+        (WebCore::FrameLoader::retryAfterFailedCacheOnlyMainResourceLoad):
+        * loader/FrameLoader.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::goToItem):
+        (WebCore::HistoryController::setDefersLoading):
+        (WebCore::HistoryController::recursiveGoToItem):
+        * loader/HistoryController.h:
+        * loader/ShouldTreatAsContinuingLoad.h: Renamed from Source/WebCore/loader/NavigationPolicyCheck.h.
+        * page/Page.cpp:
+        (WebCore::Page::goToItem):
+        * page/Page.h:
+
 2018-06-11  Youenn Fablet  <youenn@apple.com>
 
         Accept request header values should be more tightly checked after r232572 in case of CORS load

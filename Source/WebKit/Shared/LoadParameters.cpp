@@ -48,7 +48,7 @@ void LoadParameters::encode(IPC::Encoder& encoder) const
     encoder << unreachableURLString;
     encoder << provisionalLoadErrorURLString;
     encoder << shouldOpenExternalURLsPolicy;
-    encoder << shouldCheckNavigationPolicy;
+    encoder << shouldTreatAsContinuingLoad;
     encoder << userData;
 
     platformEncode(encoder);
@@ -103,7 +103,7 @@ bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
     if (!decoder.decode(data.shouldOpenExternalURLsPolicy))
         return false;
 
-    if (!decoder.decode(data.shouldCheckNavigationPolicy))
+    if (!decoder.decode(data.shouldTreatAsContinuingLoad))
         return false;
 
     if (!decoder.decode(data.userData))

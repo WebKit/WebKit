@@ -29,20 +29,17 @@
 
 namespace WebCore {
 
-enum class NavigationPolicyCheck {
-    Require,
-    Bypass,
-};
+enum class ShouldTreatAsContinuingLoad { No, Yes };
 
 } // namespace WebCore
 
 namespace WTF {
 
-template<> struct EnumTraits<WebCore::NavigationPolicyCheck> {
+template<> struct EnumTraits<WebCore::ShouldTreatAsContinuingLoad> {
     using values = EnumValues<
-        WebCore::NavigationPolicyCheck,
-        WebCore::NavigationPolicyCheck::Require,
-        WebCore::NavigationPolicyCheck::Bypass
+        WebCore::ShouldTreatAsContinuingLoad,
+        WebCore::ShouldTreatAsContinuingLoad::No,
+        WebCore::ShouldTreatAsContinuingLoad::Yes
     >;
 };
 

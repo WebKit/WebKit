@@ -126,7 +126,6 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/MemoryRelease.h>
-#include <WebCore/NavigationPolicyCheck.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
@@ -157,6 +156,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/Settings.h>
+#include <WebCore/ShouldTreatAsContinuingLoad.h>
 #include <WebCore/SocketProvider.h>
 #include <WebCore/SubframeLoader.h>
 #include <WebCore/SystemInfo.h>
@@ -3438,7 +3438,7 @@ HRESULT WebView::goToBackForwardItem(_In_opt_ IWebHistoryItem* item, _Out_ BOOL*
     if (FAILED(hr))
         return hr;
 
-    m_page->goToItem(*webHistoryItem->historyItem(), FrameLoadType::IndexedBackForward, NavigationPolicyCheck::Require);
+    m_page->goToItem(*webHistoryItem->historyItem(), FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No);
     *succeeded = TRUE;
 
     return S_OK;
@@ -5975,7 +5975,7 @@ HRESULT WebView::loadBackForwardListFromOtherView(_In_opt_ IWebView* otherView)
     }
     
     ASSERT(newItemToGoTo);
-    m_page->goToItem(*newItemToGoTo, FrameLoadType::IndexedBackForward, NavigationPolicyCheck::Require);
+    m_page->goToItem(*newItemToGoTo, FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No);
     return S_OK;
 }
 
