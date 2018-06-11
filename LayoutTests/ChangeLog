@@ -1,3 +1,9 @@
+2018-06-11  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening; add a late endTest(), in case none of the other events fire in time.
+
+        * media/track/track-delete-during-setup.html:
+
 2018-06-11  Mark Lam  <mark.lam@apple.com>
 
         Add support for webkit-test-runner jscOptions in DumpRenderTree and WebKitTestRunner.
