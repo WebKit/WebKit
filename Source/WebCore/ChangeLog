@@ -1,5 +1,29 @@
 2018-06-11  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Merge left, right, width and horizontal margin computation for out-of-flow replaced elements
+        https://bugs.webkit.org/show_bug.cgi?id=186475
+
+        Reviewed by Antti Koivisto.
+
+        Implement https://www.w3.org/TR/CSS22/visudet.html#abs-replaced-width
+        (10.3.8 Absolutely positioned, replaced elements)
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry const):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowWidthAndMargin const): Deleted.
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::computedValueIfNotAuto):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedWidthAndMargin): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedWidthAndMargin): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowWidthAndMargin): Deleted.
+
+2018-06-11  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Merge left, right, width and horizontal margin computation for out-of-flow non-replaced elements
         https://bugs.webkit.org/show_bug.cgi?id=186474
 
