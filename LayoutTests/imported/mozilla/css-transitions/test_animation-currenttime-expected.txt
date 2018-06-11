@@ -1,7 +1,7 @@
 
 PASS currentTime of a newly created transition is zero 
 PASS Sanity test to check round-tripping assigning to new animation's currentTime 
-FAIL Skipping forward through transition assert_equals: the computed value of margin-left should be unaffected by an animation with a delay on ready Promise resolve expected 100 but got 200
+PASS Skipping forward through transition 
 PASS Skipping backwards through transition 
 PASS Setting currentTime to null 
 PASS Animation.currentTime after pausing 
