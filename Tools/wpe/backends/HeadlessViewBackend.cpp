@@ -28,12 +28,26 @@
 #include <cassert>
 #include <fcntl.h>
 #include <unistd.h>
+
+// This include order is necessary to enforce the GBM EGL platform.
+#include <gbm.h>
+#include <epoxy/egl.h>
 #include <wpe/fdo-egl.h>
 
-// Manually provide the EGL_CAST C++ definition in case eglplatform.h doesn't provide it.
-#ifndef EGL_CAST
-#define EGL_CAST(type, value) (static_cast<type>(value))
+#ifndef EGL_WL_bind_wayland_display
+#define EGL_WL_bind_wayland_display 1
+typedef EGLBoolean (EGLAPIENTRYP PFNEGLQUERYWAYLANDBUFFERWL) (EGLDisplay dpy, struct wl_resource* buffer, EGLint attribute, EGLint* value);
+
+#define EGL_WAYLAND_BUFFER_WL 0x31D5 // eglCreateImageKHR target
+#define EGL_WAYLAND_PLANE_WL  0x31D6 // eglCreateImageKHR target
 #endif
+
+namespace WPEToolingBackends {
+
+static PFNEGLCREATEIMAGEKHRPROC createImage;
+static PFNEGLDESTROYIMAGEKHRPROC destroyImage;
+static PFNEGLQUERYWAYLANDBUFFERWL queryBuffer;
+static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC imageTargetTexture2DOES;
 
 // Keep this in sync with wtf/glib/RunLoopSourcePriority.h.
 static int kRunLoopSourcePriorityDispatcher = -70;
@@ -46,64 +60,32 @@ static EGLDisplay getEGLDisplay()
         if (display == EGL_NO_DISPLAY)
             return EGL_NO_DISPLAY;
 
-        if (!eglInitialize(display, nullptr, nullptr))
-            return EGL_NO_DISPLAY;
-
-        if (!eglBindAPI(EGL_OPENGL_ES_API))
-            return EGL_NO_DISPLAY;
-
-        wpe_fdo_initialize_for_egl_display(display);
         s_display = display;
     }
 
     return s_display;
 }
 
-HeadlessViewBackend::HeadlessViewBackend()
+HeadlessViewBackend::HeadlessViewBackend(uint32_t width, uint32_t height)
+    : ViewBackend(width, height)
 {
-    m_egl.display = getEGLDisplay();
-
-    static const EGLint configAttributes[13] = {
-        EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-        EGL_RED_SIZE, 1,
-        EGL_GREEN_SIZE, 1,
-        EGL_BLUE_SIZE, 1,
-        EGL_ALPHA_SIZE, 1,
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-        EGL_NONE
-    };
-
-    EGLint numConfigs;
-    EGLBoolean ret = eglChooseConfig(m_egl.display, configAttributes, &m_egl.config, 1, &numConfigs);
-    if (!ret || !numConfigs)
+    m_eglDisplay = getEGLDisplay();
+    if (!initialize())
         return;
 
-    static const EGLint contextAttributes[3] = {
-        EGL_CONTEXT_CLIENT_VERSION, 2,
-        EGL_NONE
-    };
-
-    m_egl.context = eglCreateContext(m_egl.display, m_egl.config, EGL_NO_CONTEXT, contextAttributes);
-    if (m_egl.context == EGL_NO_CONTEXT)
+    if (!eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, m_eglContext))
         return;
 
-    if (!eglMakeCurrent(m_egl.display, EGL_NO_SURFACE, EGL_NO_SURFACE, m_egl.context))
-        return;
-
-    m_egl.createImage = reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(eglGetProcAddress("eglCreateImageKHR"));
-    m_egl.destroyImage = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImageKHR"));
-    m_egl.queryBuffer = reinterpret_cast<PFNEGLQUERYWAYLANDBUFFERWL>(eglGetProcAddress("eglQueryWaylandBufferWL"));
-    m_egl.imageTargetTexture2DOES = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
-
-    m_exportable = wpe_view_backend_exportable_fdo_create(&s_exportableClient, this, 800, 600);
+    createImage = reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(eglGetProcAddress("eglCreateImageKHR"));
+    destroyImage = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImageKHR"));
+    queryBuffer = reinterpret_cast<PFNEGLQUERYWAYLANDBUFFERWL>(eglGetProcAddress("eglQueryWaylandBufferWL"));
+    imageTargetTexture2DOES = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
 
     m_updateSource = g_timeout_source_new(m_frameRate / 1000);
-    g_source_set_callback(m_updateSource,
-        [](gpointer data) -> gboolean {
-            auto& backend = *static_cast<HeadlessViewBackend*>(data);
-            backend.performUpdate();
-            return TRUE;
-        }, this, nullptr);
+    g_source_set_callback(m_updateSource, [](gpointer data) -> gboolean {
+        static_cast<HeadlessViewBackend*>(data)->performUpdate();
+        return TRUE;
+    }, this, nullptr);
     g_source_set_priority(m_updateSource, kRunLoopSourcePriorityDispatcher);
     g_source_attach(m_updateSource, g_main_context_default());
 }
@@ -116,23 +98,16 @@ HeadlessViewBackend::~HeadlessViewBackend()
     }
 
     if (auto image = std::get<0>(m_pendingImage.second))
-        m_egl.destroyImage(m_egl.display, image);
+        destroyImage(m_eglDisplay, image);
     if (auto image = std::get<0>(m_lockedImage.second))
-        m_egl.destroyImage(m_egl.display, image);
-
-    if (m_egl.context)
-        eglDestroyContext(m_egl.display, m_egl.context);
-
-    wpe_view_backend_exportable_fdo_destroy(m_exportable);
-}
-
-struct wpe_view_backend* HeadlessViewBackend::backend() const
-{
-    return wpe_view_backend_exportable_fdo_get_view_backend(m_exportable);
+        destroyImage(m_eglDisplay, image);
 }
 
 cairo_surface_t* HeadlessViewBackend::createSnapshot()
 {
+    if (!m_eglContext)
+        return nullptr;
+
     performUpdate();
 
     EGLImageKHR image = std::get<0>(m_lockedImage.second);
@@ -145,7 +120,7 @@ cairo_surface_t* HeadlessViewBackend::createSnapshot()
     uint8_t* buffer = new uint8_t[4 * width * height];
     bool successfulSnapshot = false;
 
-    if (!eglMakeCurrent(m_egl.display, EGL_NO_SURFACE, EGL_NO_SURFACE, m_egl.context))
+    if (!eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, m_eglContext))
         return nullptr;
 
     GLuint imageTexture;
@@ -157,7 +132,7 @@ cairo_surface_t* HeadlessViewBackend::createSnapshot()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, width, height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, nullptr);
 
-    m_egl.imageTargetTexture2DOES(GL_TEXTURE_2D, image);
+    imageTargetTexture2DOES(GL_TEXTURE_2D, image);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     GLuint imageFramebuffer;
@@ -202,39 +177,30 @@ void HeadlessViewBackend::performUpdate()
     wpe_view_backend_exportable_fdo_dispatch_frame_complete(m_exportable);
     if (m_lockedImage.first) {
         wpe_view_backend_exportable_fdo_dispatch_release_buffer(m_exportable, m_lockedImage.first);
-        m_egl.destroyImage(m_egl.display, std::get<0>(m_lockedImage.second));
+        destroyImage(m_eglDisplay, std::get<0>(m_lockedImage.second));
     }
 
     m_lockedImage = m_pendingImage;
     m_pendingImage = std::pair<struct wl_resource*, std::tuple<EGLImageKHR, uint32_t, uint32_t>> { };
 }
 
-struct wpe_view_backend_exportable_fdo_client HeadlessViewBackend::s_exportableClient = {
-    // export_buffer_resource
-    [](void* data, struct wl_resource* bufferResource)
-    {
-        auto& backend = *static_cast<HeadlessViewBackend*>(data);
-        if (backend.m_pendingImage.first)
-            std::abort();
+void HeadlessViewBackend::displayBuffer(struct wl_resource* bufferResource)
+{
+    if (m_pendingImage.first)
+        std::abort();
 
-        auto& egl = backend.m_egl;
+    EGLint format = 0;
+    if (!queryBuffer(m_eglDisplay, bufferResource, EGL_TEXTURE_FORMAT, &format) || format != EGL_TEXTURE_RGBA)
+        return;
 
-        EGLint format = 0;
-        if (!egl.queryBuffer(egl.display, bufferResource, EGL_TEXTURE_FORMAT, &format) || format != EGL_TEXTURE_RGBA)
-            return;
+    EGLint width, height;
+    if (!queryBuffer(m_eglDisplay, bufferResource, EGL_WIDTH, &width)
+        || !queryBuffer(m_eglDisplay, bufferResource, EGL_HEIGHT, &height))
+        return;
 
-        EGLint width, height;
-        if (!egl.queryBuffer(egl.display, bufferResource, EGL_WIDTH, &width)
-            || !egl.queryBuffer(egl.display, bufferResource, EGL_HEIGHT, &height))
-            return;
+    EGLint attributes[] = { EGL_WAYLAND_PLANE_WL, 0, EGL_NONE };
+    EGLImageKHR image = createImage(m_eglDisplay, EGL_NO_CONTEXT, EGL_WAYLAND_BUFFER_WL, bufferResource, attributes);
+    m_pendingImage = { bufferResource, std::make_tuple(image, width, height) };
+}
 
-        EGLint attributes[] = { EGL_WAYLAND_PLANE_WL, 0, EGL_NONE };
-        EGLImageKHR image = egl.createImage(egl.display, EGL_NO_CONTEXT, EGL_WAYLAND_BUFFER_WL, bufferResource, attributes);
-        backend.m_pendingImage = { bufferResource, std::make_tuple(image, width, height) };
-    },
-    // padding
-    nullptr,
-    nullptr,
-    nullptr,
-    nullptr
-};
+} // namespace WPEToolingBackends

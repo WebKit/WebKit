@@ -44,7 +44,7 @@ my @jhbuildWrapper;
 prohibitUnknownPort();
 setConfiguration();
 
-if (isGtk()) {
+if (isGtk() || isWPE()) {
     # Check to see that all the frameworks are built.
     checkFrameworks();
 
@@ -53,17 +53,6 @@ if (isGtk()) {
     @jhbuildWrapper = wrapperPrefixIfNeeded();
     print "Starting MiniBrowser.\n";
     exec @jhbuildWrapper, $launcherPath, @ARGV or die;
-} elsif (isWPE()) {
-    # Check to see that all the frameworks are built.
-    checkFrameworks();
-
-    $launcherName = launcherName();
-    @jhbuildWrapper = wrapperPrefixIfNeeded();
-    $ENV{"WEBKIT_EXEC_PATH"} = catdir(productDir(), "bin");
-    $ENV{"WEBKIT_INJECTED_BUNDLE_PATH"} = catdir(productDir(), "lib");
-    $ENV{"LD_LIBRARY_PATH"} = catdir(productDir(), "lib") . (defined $ENV{"LD_LIBRARY_PATH"} ? ":" . $ENV{"LD_LIBRARY_PATH"} : "" );
-    print "Starting $launcherName \n";
-    exec @jhbuildWrapper, $launcherName, @ARGV or die;
 } elsif (isAppleCocoaWebKit()) {
     printHelpAndExitForRunAndDebugWebKitAppIfNeeded();
     exit exitStatus(runMiniBrowser());

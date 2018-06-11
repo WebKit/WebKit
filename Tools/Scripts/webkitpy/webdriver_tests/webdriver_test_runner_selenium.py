@@ -44,7 +44,7 @@ class WebDriverTestRunnerSelenium(object):
 
     def collect_tests(self, tests):
         if self._driver.selenium_name() is None:
-            return 0
+            return []
 
         skipped = [os.path.join(self._tests_dir, test) for test in self._expectations.skipped_tests()]
         relative_tests_dir = os.path.join('imported', 'selenium', 'py', 'test')

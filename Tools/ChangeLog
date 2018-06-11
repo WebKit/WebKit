@@ -1,3 +1,71 @@
+2018-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Add a MiniBrowser and use it to run WebDriver tests
+        https://bugs.webkit.org/show_bug.cgi?id=186345
+
+        Reviewed by Žan Doberšek.
+
+        Most of the code is based on dyz and gtk MiniBrowser. This patch adds a new internal library WPEToolingBackends,
+        including the headless view backend and a new window backend to be used by the MiniBrowser. MiniBrowser can also
+        run in headless mode, by using the headless backend instead of the window one, which will allow us to run the
+        WebDriver tests in the bots.
+
+        * CMakeLists.txt:
+        * MiniBrowser/wpe/CMakeLists.txt: Added.
+        * MiniBrowser/wpe/main.cpp: Added.
+        (automationStartedCallback):
+        (createViewBackend):
+        (main):
+        * Scripts/run-minibrowser: Remove WPE specific code.
+        * Scripts/run-webdriver-tests: Add headless display-server option.
+        * Scripts/webkitdirs.pm:
+        (launcherName): Remove WPE specific code.
+        * Scripts/webkitpy/webdriver_tests/webdriver_driver_wpe.py:
+        (WebDriverWPE.browser_name): Return MiniBrowser.
+        (WebDriverWPE.browser_path): Return the path to the MiniBrowser in build dir.
+        (WebDriverWPE.browser_args): Add --headless when running in headless mode.
+        (WebDriverWPE.capabilities): Use the full browser path.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_selenium.py:
+        (WebDriverTestRunnerSelenium.collect_tests): Fix early return value.
+        * TestWebKitAPI/PlatformWPE.cmake: Use WPEToolingBackends instead of HeadlessViewBackend.
+        * TestWebKitAPI/PlatformWebView.h: Ditto.
+        * TestWebKitAPI/glib/PlatformWPE.cmake: Ditto
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::createWebViewBackend): Ditto.
+        * TestWebKitAPI/wpe/PlatformWebViewWPE.cpp:
+        (TestWebKitAPI::PlatformWebView::initialize): Ditto.
+        * WebKitTestRunner/PlatformWPE.cmake: Ditto.
+        * WebKitTestRunner/PlatformWebView.h: Ditto.
+        * WebKitTestRunner/wpe/PlatformWebViewWPE.cpp:
+        (WTR::PlatformWebView::PlatformWebView): Ditto.
+        * wpe/HeadlessViewBackend/CMakeLists.txt: Removed.
+        * wpe/backends/CMakeLists.txt: Added.
+        * wpe/backends/HeadlessViewBackend.cpp: Renamed from Tools/wpe/HeadlessViewBackend/HeadlessViewBackend.cpp.
+        (WPEToolingBackends::getEGLDisplay):
+        (WPEToolingBackends::HeadlessViewBackend::HeadlessViewBackend):
+        (WPEToolingBackends::HeadlessViewBackend::~HeadlessViewBackend):
+        (WPEToolingBackends::HeadlessViewBackend::createSnapshot):
+        (WPEToolingBackends::HeadlessViewBackend::performUpdate):
+        (WPEToolingBackends::HeadlessViewBackend::displayBuffer):
+        * wpe/backends/HeadlessViewBackend.h: Renamed from Tools/wpe/HeadlessViewBackend/HeadlessViewBackend.h.
+        * wpe/backends/ViewBackend.cpp: Added.
+        (WPEToolingBackends::ViewBackend::ViewBackend):
+        (WPEToolingBackends::ViewBackend::~ViewBackend):
+        (WPEToolingBackends::ViewBackend::initialize):
+        (WPEToolingBackends::ViewBackend::setInputClient):
+        (WPEToolingBackends::ViewBackend::backend const):
+        (WPEToolingBackends::ViewBackend::dispatchInputPointerEvent):
+        (WPEToolingBackends::ViewBackend::dispatchInputAxisEvent):
+        (WPEToolingBackends::ViewBackend::dispatchInputKeyboardEvent):
+        * wpe/backends/ViewBackend.h: Added.
+        * wpe/backends/WindowViewBackend.cpp: Added.
+        (WPEToolingBackends::WindowViewBackend::WindowViewBackend):
+        (WPEToolingBackends::WindowViewBackend::~WindowViewBackend):
+        (WPEToolingBackends::WindowViewBackend::displayBuffer):
+        (WPEToolingBackends::WindowViewBackend::handleKeyEvent):
+        * wpe/backends/WindowViewBackend.h: Added.
+        * wpe/jhbuild.modules: Remove dyz and add wayland-protocols.
+
 2018-06-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MiniBrowser] MiniBrowser class should be renamed to WebKitLegacyBrowserWindow

@@ -23,7 +23,7 @@
       <dep package="libgpg-error"/>
       <dep package="libgcrypt"/>
       <dep package="libepoxy"/>
-      <dep package="dyz"/>
+      <dep package="wayland-protocols"/>
     </dependencies>
   </metamodule>
 
@@ -36,6 +36,8 @@
       href="http://cairographics.org"/>
   <repository type="tarball" name="freedesktop.org"
       href="http://www.freedesktop.org"/>
+  <repository type="tarball" name="wayland.freedesktop.org"
+      href="http://wayland.freedesktop.org"/>
   <repository type="git" name="github.com"
       href="https://github.com"/>
   <repository type="tarball" name="github-tarball"
@@ -202,8 +204,11 @@
             version="1.4.3" repo="github-tarball"/>
   </autotools>
 
-  <autotools id="dyz" supports-non-srcdir-builds="no">
-    <branch repo="github.com" module="Igalia/dyz" tag="4f196778c82ed72095e72c9d401cd2ff8ba36c60"/>
+  <autotools id="wayland-protocols" autogen-sh="configure">
+    <branch module="releases/wayland-protocols-${version}.tar.xz"
+            version="1.12"
+	    repo="wayland.freedesktop.org"
+	    hash="sha256:3b19e8a9e1e19474756a7069db23b90ca9b8ebb438448c6063b4a7fc89b7c8b2"/>
   </autotools>
 
   <meson id="graphene">

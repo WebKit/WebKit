@@ -142,9 +142,9 @@ public:
 #if PLATFORM(WPE)
     static WebKitWebViewBackend* createWebViewBackend()
     {
-        auto* headlessBackend = new HeadlessViewBackend;
+        auto* headlessBackend = new WPEToolingBackends::HeadlessViewBackend(800, 600);
         return webkit_web_view_backend_new(headlessBackend->backend(), [](gpointer userData) {
-            delete static_cast<HeadlessViewBackend*>(userData);
+            delete static_cast<WPEToolingBackends::HeadlessViewBackend*>(userData);
         }, headlessBackend);
     }
 #endif

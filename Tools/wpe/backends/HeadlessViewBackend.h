@@ -25,53 +25,32 @@
 
 #pragma once
 
-// This include order is necessary to enforce the GBM EGL platform.
-#include <gbm.h>
-#include <epoxy/egl.h>
-
+#include "ViewBackend.h"
 #include <cairo.h>
 #include <glib.h>
 #include <unordered_map>
-#include <wpe/fdo.h>
 
-#ifndef EGL_WL_bind_wayland_display
-#define EGL_WL_bind_wayland_display 1
-typedef EGLBoolean (EGLAPIENTRYP PFNEGLQUERYWAYLANDBUFFERWL) (EGLDisplay dpy, struct wl_resource *buffer, EGLint attribute, EGLint *value);
+typedef void* EGLImageKHR;
 
-#define EGL_WAYLAND_BUFFER_WL       0x31D5 /* eglCreateImageKHR target */
-#define EGL_WAYLAND_PLANE_WL        0x31D6 /* eglCreateImageKHR target */
-#endif
+namespace WPEToolingBackends {
 
-class HeadlessViewBackend {
+class HeadlessViewBackend final : public ViewBackend {
 public:
-    HeadlessViewBackend();
+    HeadlessViewBackend(uint32_t width, uint32_t height);
     ~HeadlessViewBackend();
-
-    struct wpe_view_backend* backend() const;
 
     cairo_surface_t* createSnapshot();
 
 private:
+    void displayBuffer(struct wl_resource*) override;
+
     void performUpdate();
-
-    static struct wpe_view_backend_exportable_fdo_client s_exportableClient;
-
-    struct {
-        EGLDisplay display;
-        EGLConfig config;
-        EGLContext context { nullptr };
-
-        PFNEGLCREATEIMAGEKHRPROC createImage;
-        PFNEGLDESTROYIMAGEKHRPROC destroyImage;
-        PFNEGLQUERYWAYLANDBUFFERWL queryBuffer;
-        PFNGLEGLIMAGETARGETTEXTURE2DOESPROC imageTargetTexture2DOES;
-    } m_egl;
-
-    struct wpe_view_backend_exportable_fdo* m_exportable;
 
     std::pair<struct wl_resource*, std::tuple<EGLImageKHR, uint32_t, uint32_t>> m_pendingImage { };
     std::pair<struct wl_resource*, std::tuple<EGLImageKHR, uint32_t, uint32_t>> m_lockedImage { };
 
-    GSource* m_updateSource;
+    GSource* m_updateSource { nullptr };
     gint64 m_frameRate { G_USEC_PER_SEC / 60 };
 };
+
+} // namespace WPEToolingBackends

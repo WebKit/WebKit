@@ -33,27 +33,21 @@ class WebDriverWPE(WebDriver):
         return self._port._build_path('bin', 'WPEWebDriver')
 
     def browser_name(self):
-        return 'dyz'
+        return 'MiniBrowser'
+
+    def browser_path(self):
+        return self._port._build_path('bin', 'MiniBrowser')
 
     def browser_args(self):
-        return ['--automation']
+        args = ['--automation']
+        if self._port._display_server == 'headless':
+            args.append('--headless')
+        return args
 
     def capabilities(self):
         return {'wpe:browserOptions': {
-            'binary': self.browser_name(),
+            'binary': self.browser_path(),
             'args': self.browser_args()}}
-
-    def browser_env(self):
-        env = {}
-        env['WEBKIT_EXEC_PATH'] = self._port._build_path('bin')
-        try:
-            ld_library_path = os.environ['LD_LIBRARY_PATH']
-        except KeyError:
-            ld_library_path = None
-        env['LD_LIBRARY_PATH'] = self._port._build_path('lib')
-        if ld_library_path:
-            env['LD_LIBRARY_PATH'] += ':' + ld_library_path
-        return env
 
 
 register_driver('wpe', WebDriverWPE)

@@ -66,7 +66,7 @@ PlatformWebView::~PlatformWebView()
 
 void PlatformWebView::initialize(WKPageConfigurationRef configuration)
 {
-    m_window = new HeadlessViewBackend;
+    m_window = new WPEToolingBackends::HeadlessViewBackend(800, 600);
     m_view = WKViewCreate(m_window->backend(), configuration);
 }
 

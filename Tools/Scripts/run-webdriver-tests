@@ -49,9 +49,10 @@ option_parser.add_option('--timeout', action='store', type='int', dest='timeout'
                          help='Time in seconds until a test times out (use 0 to disable)')
 option_parser.add_option('--json-output', action='store', metavar="FILE",
                          help='Write results to JSON file at the given path')
-option_parser.add_option('--display-server', choices=['xvfb', 'xorg', 'weston', 'wayland'], default='xvfb',
+option_parser.add_option('--display-server', choices=['xvfb', 'xorg', 'weston', 'wayland', 'headless'], default='xvfb',
                          help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
-                              '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.')
+                              '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.'
+                              '"headless": Headless mode in current session')
 
 options, args = option_parser.parse_args()
 

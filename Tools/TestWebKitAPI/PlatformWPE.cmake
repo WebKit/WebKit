@@ -17,7 +17,7 @@ include_directories(
     ${FORWARDING_HEADERS_DIR}/JavaScriptCore
     ${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib
     ${DERIVED_SOURCES_JAVASCRIPCOREWPE_DIR}
-    ${TOOLS_DIR}/wpe/HeadlessViewBackend
+    ${TOOLS_DIR}/wpe/backends
 )
 
 include_directories(SYSTEM
@@ -79,7 +79,7 @@ set_target_properties(TestWebCore PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBK
 # TestWebKit
 
 list(APPEND test_webkit_api_LIBRARIES
-    WPEHeadlessViewBackend
+    WPEToolingBackends
 )
 
 add_executable(TestWebKit ${test_webkit_api_SOURCES})

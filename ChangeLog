@@ -1,3 +1,15 @@
+2018-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Add a MiniBrowser and use it to run WebDriver tests
+        https://bugs.webkit.org/show_bug.cgi?id=186345
+
+        Reviewed by Žan Doberšek.
+
+        Add an option to enable building the MiniBrowser.
+
+        * Source/cmake/FindWaylandProtocols.cmake: Added.
+        * Source/cmake/OptionsWPE.cmake:
+
 2018-06-06  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Opt out of the New Build System
