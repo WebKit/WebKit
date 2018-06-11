@@ -547,6 +547,26 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
     }
 }
 
+#if !RELEASE_LOG_DISABLED
+void WTFReleaseLogStackTrace(WTFLogChannel* channel)
+{
+    auto stackTrace = WTF::StackTrace::captureStackTrace(30, 0);
+    if (stackTrace && stackTrace->stack()) {
+        auto stack = stackTrace->stack();
+        for (int frameNumber = 1; frameNumber < stackTrace->size(); ++frameNumber) {
+            auto stackFrame = stack[frameNumber];
+            auto demangled = WTF::StackTrace::demangle(stackFrame);
+            if (demangled && demangled->demangledName())
+                os_log(channel->osLogChannel, "%-3d %p %{public}s", frameNumber, stackFrame, demangled->demangledName());
+            else if (demangled && demangled->mangledName())
+                os_log(channel->osLogChannel, "%-3d %p %{public}s", frameNumber, stackFrame, demangled->mangledName());
+            else
+                os_log(channel->osLogChannel, "%-3d %p", frameNumber, stackFrame);
+        }
+    }
+}
+#endif
+
 } // extern "C"
 
 #if OS(DARWIN) && (CPU(X86_64) || CPU(ARM64))

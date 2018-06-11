@@ -29,6 +29,7 @@
 #include "WebErrors.h"
 
 #include "APIError.h"
+#include "Logging.h"
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -75,6 +76,9 @@ ResourceError pluginWillHandleLoadError(const ResourceResponse& response)
 
 ResourceError internalError(const URL& url)
 {
+    RELEASE_LOG_ERROR(Loading, "Internal error called");
+    RELEASE_LOG_STACKTRACE(Loading);
+
     return ResourceError(API::Error::webKitErrorDomain(), API::Error::General::Internal, url, WEB_UI_STRING("WebKit encountered an internal error", "WebKitErrorInternal description"));
 }
 

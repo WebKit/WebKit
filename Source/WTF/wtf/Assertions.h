@@ -200,6 +200,9 @@ WTF_EXPORT_PRIVATE bool WTFWillLogWithLevel(WTFLogChannel*, WTFLogLevel);
 WTF_EXPORT_PRIVATE void WTFGetBacktrace(void** stack, int* size);
 WTF_EXPORT_PRIVATE void WTFReportBacktrace(void);
 WTF_EXPORT_PRIVATE void WTFPrintBacktrace(void** stack, int size);
+#if !RELEASE_LOG_DISABLED
+WTF_EXPORT_PRIVATE void WTFReleaseLogStackTrace(WTFLogChannel*);
+#endif
 
 WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 
@@ -459,6 +462,8 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 
 #define RELEASE_LOG_WITH_LEVEL(channel, level, ...) ((void)0)
 #define RELEASE_LOG_WITH_LEVEL_IF(isAllowed, channel, level, ...) do { if (isAllowed) RELEASE_LOG_WITH_LEVEL(channel, level, __VA_ARGS__); } while (0)
+
+#define RELEASE_LOG_STACKTRACE(channel) ((void)0)
 #else
 #define RELEASE_LOG(channel, ...) os_log(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__)
 #define RELEASE_LOG_ERROR(channel, ...) os_log_error(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__)
@@ -478,6 +483,8 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
     if ((isAllowed) && LOG_CHANNEL(channel).level >= (logLevel)) \
         os_log(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__); \
 } while (0)
+
+#define RELEASE_LOG_STACKTRACE(channel) WTFReleaseLogStackTrace(&LOG_CHANNEL(channel))
 #endif
 
 
