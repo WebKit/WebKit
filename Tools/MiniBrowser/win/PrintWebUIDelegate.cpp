@@ -29,7 +29,7 @@
 
 #include "Common.h"
 #include "MainWindow.h"
-#include "MiniBrowser.h"
+#include "WebKitLegacyBrowserWindow.h"
 #include <WebCore/COMPtr.h>
 #include <WebKitLegacy/WebKitCOMAPI.h>
 #include <comip.h>
@@ -71,7 +71,7 @@ HRESULT PrintWebUIDelegate::createWebViewWithRequest(_In_opt_ IWebView*, _In_opt
         return E_FAIL;
     ShowWindow(newWindow.hwnd(), SW_SHOW);
 
-    auto& newBrowserWindow = *static_cast<MiniBrowser*>(newWindow.browserWindow());
+    auto& newBrowserWindow = *static_cast<WebKitLegacyBrowserWindow*>(newWindow.browserWindow());
     *newWebView = newBrowserWindow.webView();
     IWebFramePtr frame;
     HRESULT hr;

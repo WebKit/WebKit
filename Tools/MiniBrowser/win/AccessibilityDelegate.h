@@ -28,11 +28,11 @@
 
 #include <WebKitLegacy/WebKit.h>
 
-class MiniBrowser;
+class WebKitLegacyBrowserWindow;
 
 class AccessibilityDelegate : public IAccessibilityDelegate {
 public:
-    AccessibilityDelegate(MiniBrowser& client)
+    AccessibilityDelegate(WebKitLegacyBrowserWindow& client)
         : m_client(client) { }
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -41,7 +41,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE fireFrameLoadStartedEvents();
     virtual HRESULT STDMETHODCALLTYPE fireFrameLoadFinishedEvents();
 private:
-    MiniBrowser& m_client;
+    WebKitLegacyBrowserWindow& m_client;
 };
 
 #endif

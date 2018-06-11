@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "MiniBrowser.h"
+#include "WebKitLegacyBrowserWindow.h"
 #include <memory>
 #include <string>
 #include <wtf/RefPtr.h>

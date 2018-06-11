@@ -1,3 +1,37 @@
+2018-06-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] MiniBrowser class should be renamed to WebKitLegacyBrowserWindow
+        https://bugs.webkit.org/show_bug.cgi?id=186427
+
+        Reviewed by Ryosuke Niwa.
+
+        * MiniBrowser/win/AccessibilityDelegate.cpp:
+        * MiniBrowser/win/AccessibilityDelegate.h:
+        (AccessibilityDelegate::AccessibilityDelegate):
+        * MiniBrowser/win/CMakeLists.txt: Removed MiniBrowser.cpp. Added WebKitLegacyBrowserWindow.cpp.
+        * MiniBrowser/win/Common.h:
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::init):
+        * MiniBrowser/win/MainWindow.h:
+        * MiniBrowser/win/MiniBrowserWebHost.cpp:
+        * MiniBrowser/win/MiniBrowserWebHost.h:
+        (MiniBrowserWebHost::MiniBrowserWebHost):
+        * MiniBrowser/win/PageLoadTestClient.cpp:
+        (PageLoadTestClient::PageLoadTestClient):
+        * MiniBrowser/win/PageLoadTestClient.h:
+        * MiniBrowser/win/PrintWebUIDelegate.cpp:
+        (PrintWebUIDelegate::createWebViewWithRequest):
+        * MiniBrowser/win/PrintWebUIDelegate.h:
+        (PrintWebUIDelegate::PrintWebUIDelegate):
+        * MiniBrowser/win/ResourceLoadDelegate.cpp:
+        * MiniBrowser/win/ResourceLoadDelegate.h:
+        (ResourceLoadDelegate::ResourceLoadDelegate):
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.cpp: Renamed from Tools/MiniBrowser/win/MiniBrowser.cpp.
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.h: Renamed from Tools/MiniBrowser/win/MiniBrowser.h.
+        * MiniBrowser/win/WebDownloadDelegate.cpp:
+        (WebDownloadDelegate::WebDownloadDelegate):
+        * MiniBrowser/win/WebDownloadDelegate.h:
+
 2018-06-10  Chris Dumez  <cdumez@apple.com>
 
         Reload the Web view in case of crash if the client does not implement webViewWebContentProcessDidTerminate delegate

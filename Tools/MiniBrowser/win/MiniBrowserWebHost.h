@@ -29,11 +29,11 @@
 #include <WebKitLegacy/WebKit.h>
 #include <comutil.h>
 
-class MiniBrowser;
+class WebKitLegacyBrowserWindow;
 
 class MiniBrowserWebHost : public IWebFrameLoadDelegate, public IWebFrameLoadDelegatePrivate {
 public:
-    MiniBrowserWebHost(MiniBrowser* client, HWND urlBar)
+    MiniBrowserWebHost(WebKitLegacyBrowserWindow* client, HWND urlBar)
         : m_client(client), m_hURLBarWnd(urlBar) { }
 
     // IUnknown
@@ -80,5 +80,5 @@ private:
     HWND m_hURLBarWnd { 0 };
     HGDIOBJ m_URLBarFont { 0 };
     HGDIOBJ m_oldFont { 0 };
-    MiniBrowser* m_client { nullptr };
+    WebKitLegacyBrowserWindow* m_client { nullptr };
 };

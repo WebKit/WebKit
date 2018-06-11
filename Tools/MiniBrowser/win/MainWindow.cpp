@@ -113,7 +113,7 @@ bool MainWindow::init(HINSTANCE hInstance, bool usesLayeredWebView, bool pageLoa
     DefEditProc = reinterpret_cast<WNDPROC>(GetWindowLongPtr(m_hURLBarWnd, GWLP_WNDPROC));
     SetWindowLongPtr(m_hURLBarWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(EditProc));
 
-    m_browserWindow = MiniBrowser::create(m_hMainWnd, m_hURLBarWnd, usesLayeredWebView, pageLoadTesting);
+    m_browserWindow = WebKitLegacyBrowserWindow::create(m_hMainWnd, m_hURLBarWnd, usesLayeredWebView, pageLoadTesting);
     if (!m_browserWindow)
         return false;
     HRESULT hr = m_browserWindow->init();

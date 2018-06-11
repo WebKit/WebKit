@@ -48,7 +48,7 @@ typedef _com_ptr_t<_com_IIID<IWebResourceLoadDelegate, &__uuidof(IWebResourceLoa
 typedef _com_ptr_t<_com_IIID<IWebDownloadDelegate, &__uuidof(IWebDownloadDelegate)>> IWebDownloadDelegatePtr;
 typedef _com_ptr_t<_com_IIID<IWebFramePrivate, &__uuidof(IWebFramePrivate)>> IWebFramePrivatePtr;
 
-class MiniBrowser : public BrowserWindow {
+class WebKitLegacyBrowserWindow : public BrowserWindow {
 public:
     static Ref<BrowserWindow> create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false, bool pageLoadTesting = false);
 
@@ -114,7 +114,7 @@ private:
     void updateStatistics(HWND dialog);
     void setPreference(UINT menuID, bool enable);
 
-    MiniBrowser(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting);
+    WebKitLegacyBrowserWindow(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting);
     void subclassForLayeredWindow();
     bool setCacheFolder();
 

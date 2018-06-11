@@ -26,8 +26,8 @@
 #include "ResourceLoadDelegate.h"
 
 #include "Common.h"
-#include "MiniBrowser.h"
 #include "PageLoadTestClient.h"
+#include "WebKitLegacyBrowserWindow.h"
 #include <WebCore/COMPtr.h>
 #include <WebKitLegacy/WebKitCOMAPI.h>
 #include <comip.h>

@@ -31,7 +31,7 @@
 
 #include "DOMDefaultImpl.h"
 #include "PageLoadTestClient.h"
-#include "MiniBrowser.h"
+#include "WebKitLegacyBrowserWindow.h"
 #include <WebKitLegacy/WebKit.h>
 
 class SimpleEventListener : public DOMEventListener {

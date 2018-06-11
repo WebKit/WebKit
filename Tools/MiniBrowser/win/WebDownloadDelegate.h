@@ -29,11 +29,11 @@
 #include <WebKitLegacy/WebKit.h>
 #include <WebKitLegacy/WebKitCOMAPI.h>
 
-class MiniBrowser;
+class WebKitLegacyBrowserWindow;
 
 class WebDownloadDelegate : public IWebDownloadDelegate {
 public:
-    WebDownloadDelegate(MiniBrowser& client);
+    WebDownloadDelegate(WebKitLegacyBrowserWindow& client);
     virtual ~WebDownloadDelegate();
 
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
@@ -54,7 +54,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE didFinish(_In_opt_ IWebDownload*);
 
 private:
-    MiniBrowser& m_client;
+    WebKitLegacyBrowserWindow& m_client;
 };
 
 #endif

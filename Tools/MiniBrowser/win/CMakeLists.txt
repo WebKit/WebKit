@@ -14,9 +14,9 @@ set(MiniBrowser_SOURCES
     PrintWebUIDelegate.cpp
     ResourceLoadDelegate.cpp
     WebDownloadDelegate.cpp
-    MiniBrowser.cpp
     MiniBrowserLib.rc
     MiniBrowserWebHost.cpp
+    WebKitLegacyBrowserWindow.cpp
     WinMain.cpp
     stdafx.cpp
 )

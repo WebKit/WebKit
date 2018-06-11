@@ -27,7 +27,7 @@
  */
 
 #include "stdafx.h"
-#include "MiniBrowser.h"
+#include "WebKitLegacyBrowserWindow.h"
 
 #include "AccessibilityDelegate.h"
 #include "Common.h"
@@ -60,12 +60,12 @@ static const int maxHistorySize = 10;
 
 typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
 
-Ref<BrowserWindow> MiniBrowser::create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting)
+Ref<BrowserWindow> WebKitLegacyBrowserWindow::create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting)
 {
-    return adoptRef(*new MiniBrowser(mainWnd, urlBarWnd, useLayeredWebView, pageLoadTesting));
+    return adoptRef(*new WebKitLegacyBrowserWindow(mainWnd, urlBarWnd, useLayeredWebView, pageLoadTesting));
 }
 
-MiniBrowser::MiniBrowser(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting)
+WebKitLegacyBrowserWindow::WebKitLegacyBrowserWindow(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting)
     : m_hMainWnd(mainWnd)
     , m_hURLBarWnd(urlBarWnd)
     , m_useLayeredWebView(useLayeredWebView)
@@ -73,20 +73,20 @@ MiniBrowser::MiniBrowser(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, b
 {
 }
 
-ULONG MiniBrowser::AddRef()
+ULONG WebKitLegacyBrowserWindow::AddRef()
 {
     ref();
     return refCount();
 }
 
-ULONG MiniBrowser::Release()
+ULONG WebKitLegacyBrowserWindow::Release()
 {
     auto count = refCount();
     deref();
     return --count;
 }
 
-HRESULT MiniBrowser::init()
+HRESULT WebKitLegacyBrowserWindow::init()
 {
     HRESULT hr = WebKitCreateInstance(CLSID_WebView, 0, IID_IWebView, reinterpret_cast<void**>(&m_webView.GetInterfacePtr()));
     if (FAILED(hr))
@@ -160,7 +160,7 @@ HRESULT MiniBrowser::init()
     return hr;
 }
 
-bool MiniBrowser::setCacheFolder()
+bool WebKitLegacyBrowserWindow::setCacheFolder()
 {
     _bstr_t appDataFolder;
     if (!getAppDataFolder(appDataFolder))
@@ -172,7 +172,7 @@ bool MiniBrowser::setCacheFolder()
     return true;
 }
 
-HRESULT MiniBrowser::prepareViews(HWND mainWnd, const RECT& clientRect)
+HRESULT WebKitLegacyBrowserWindow::prepareViews(HWND mainWnd, const RECT& clientRect)
 {
     if (!m_webView)
         return E_FAIL;
@@ -198,7 +198,7 @@ HRESULT MiniBrowser::prepareViews(HWND mainWnd, const RECT& clientRect)
     return hr;
 }
 
-HRESULT MiniBrowser::loadHTMLString(const BSTR& str)
+HRESULT WebKitLegacyBrowserWindow::loadHTMLString(const BSTR& str)
 {
     IWebFramePtr frame;
     HRESULT hr = m_webView->mainFrame(&frame.GetInterfacePtr());
@@ -233,7 +233,7 @@ static LRESULT CALLBACK viewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
     return CallWindowProc(gDefWebKitProc, hWnd, message, wParam, lParam);
 }
 
-void MiniBrowser::subclassForLayeredWindow()
+void WebKitLegacyBrowserWindow::subclassForLayeredWindow()
 {
 #if defined _M_AMD64 || defined _WIN64
     gDefWebKitProc = reinterpret_cast<WNDPROC>(::GetWindowLongPtr(m_viewWnd, GWLP_WNDPROC));
@@ -244,49 +244,49 @@ void MiniBrowser::subclassForLayeredWindow()
 #endif
 }
 
-HRESULT MiniBrowser::setFrameLoadDelegate(IWebFrameLoadDelegate* frameLoadDelegate)
+HRESULT WebKitLegacyBrowserWindow::setFrameLoadDelegate(IWebFrameLoadDelegate* frameLoadDelegate)
 {
     m_frameLoadDelegate = frameLoadDelegate;
     return m_webView->setFrameLoadDelegate(frameLoadDelegate);
 }
 
-HRESULT MiniBrowser::setFrameLoadDelegatePrivate(IWebFrameLoadDelegatePrivate* frameLoadDelegatePrivate)
+HRESULT WebKitLegacyBrowserWindow::setFrameLoadDelegatePrivate(IWebFrameLoadDelegatePrivate* frameLoadDelegatePrivate)
 {
     return m_webViewPrivate->setFrameLoadDelegatePrivate(frameLoadDelegatePrivate);
 }
 
-HRESULT MiniBrowser::setUIDelegate(IWebUIDelegate* uiDelegate)
+HRESULT WebKitLegacyBrowserWindow::setUIDelegate(IWebUIDelegate* uiDelegate)
 {
     m_uiDelegate = uiDelegate;
     return m_webView->setUIDelegate(uiDelegate);
 }
 
-HRESULT MiniBrowser::setAccessibilityDelegate(IAccessibilityDelegate* accessibilityDelegate)
+HRESULT WebKitLegacyBrowserWindow::setAccessibilityDelegate(IAccessibilityDelegate* accessibilityDelegate)
 {
     m_accessibilityDelegate = accessibilityDelegate;
     return m_webView->setAccessibilityDelegate(accessibilityDelegate);
 }
 
-HRESULT MiniBrowser::setResourceLoadDelegate(IWebResourceLoadDelegate* resourceLoadDelegate)
+HRESULT WebKitLegacyBrowserWindow::setResourceLoadDelegate(IWebResourceLoadDelegate* resourceLoadDelegate)
 {
     m_resourceLoadDelegate = resourceLoadDelegate;
     return m_webView->setResourceLoadDelegate(resourceLoadDelegate);
 }
 
-HRESULT MiniBrowser::setDownloadDelegate(IWebDownloadDelegatePtr downloadDelegate)
+HRESULT WebKitLegacyBrowserWindow::setDownloadDelegate(IWebDownloadDelegatePtr downloadDelegate)
 {
     m_downloadDelegate = downloadDelegate;
     return m_webView->setDownloadDelegate(downloadDelegate);
 }
 
-IWebFramePtr MiniBrowser::mainFrame()
+IWebFramePtr WebKitLegacyBrowserWindow::mainFrame()
 {
     IWebFramePtr framePtr;
     m_webView->mainFrame(&framePtr.GetInterfacePtr());
     return framePtr;
 }
 
-bool MiniBrowser::seedInitialDefaultPreferences()
+bool WebKitLegacyBrowserWindow::seedInitialDefaultPreferences()
 {
     IWebPreferencesPtr tmpPreferences;
     if (FAILED(WebKitCreateInstance(CLSID_WebPreferences, 0, IID_IWebPreferences, reinterpret_cast<void**>(&tmpPreferences.GetInterfacePtr()))))
@@ -298,7 +298,7 @@ bool MiniBrowser::seedInitialDefaultPreferences()
     return true;
 }
 
-bool MiniBrowser::setToDefaultPreferences()
+bool WebKitLegacyBrowserWindow::setToDefaultPreferences()
 {
     HRESULT hr = m_standardPreferences->QueryInterface(IID_IWebPreferencesPrivate, reinterpret_cast<void**>(&m_prefsPrivate.GetInterfacePtr()));
     if (!SUCCEEDED(hr))
@@ -342,7 +342,7 @@ static void updateMenuItemForHistoryItem(HMENU menu, IWebHistoryItem& historyIte
     ::EnableMenuItem(menu, menuID, MF_BYCOMMAND | MF_ENABLED);
 }
 
-void MiniBrowser::showLastVisitedSites(IWebView& webView)
+void WebKitLegacyBrowserWindow::showLastVisitedSites(IWebView& webView)
 {
     HMENU menu = ::GetMenu(m_hMainWnd);
 
@@ -419,7 +419,7 @@ void MiniBrowser::showLastVisitedSites(IWebView& webView)
         ::EnableMenuItem(menu, IDM_HISTORY_LINK0 + i, MF_BYCOMMAND | MF_DISABLED);
 }
 
-void MiniBrowser::launchInspector()
+void WebKitLegacyBrowserWindow::launchInspector()
 {
     if (!m_webViewPrivate)
         return;
@@ -430,7 +430,7 @@ void MiniBrowser::launchInspector()
     m_inspector->show();
 }
 
-void MiniBrowser::navigateForwardOrBackward(UINT menuID)
+void WebKitLegacyBrowserWindow::navigateForwardOrBackward(UINT menuID)
 {
     if (!m_webView)
         return;
@@ -442,7 +442,7 @@ void MiniBrowser::navigateForwardOrBackward(UINT menuID)
         m_webView->goBack(&wentBackOrForward);
 }
 
-void MiniBrowser::navigateToHistory(UINT menuID)
+void WebKitLegacyBrowserWindow::navigateToHistory(UINT menuID)
 {
     if (!m_webView)
         return;
@@ -464,21 +464,21 @@ void MiniBrowser::navigateToHistory(UINT menuID)
     ::SendMessage(m_hURLBarWnd, (UINT)WM_SETTEXT, 0, (LPARAM)frameURL.GetBSTR());
 }
 
-bool MiniBrowser::goBack()
+bool WebKitLegacyBrowserWindow::goBack()
 {
     BOOL wentBack = FALSE;
     m_webView->goBack(&wentBack);
     return wentBack;
 }
 
-bool MiniBrowser::goForward()
+bool WebKitLegacyBrowserWindow::goForward()
 {
     BOOL wentForward = FALSE;
     m_webView->goForward(&wentForward);
     return wentForward;
 }
 
-HRESULT MiniBrowser::loadURL(const BSTR& passedURL)
+HRESULT WebKitLegacyBrowserWindow::loadURL(const BSTR& passedURL)
 {
     if (!passedURL)
         return E_INVALIDARG;
@@ -516,12 +516,12 @@ HRESULT MiniBrowser::loadURL(const BSTR& passedURL)
     return hr;
 }
 
-void MiniBrowser::exitProgram()
+void WebKitLegacyBrowserWindow::exitProgram()
 {
     ::PostMessage(m_hMainWnd, static_cast<UINT>(WM_COMMAND), MAKELPARAM(IDM_EXIT, 0), 0);
 }
 
-void MiniBrowser::setUserAgent(UINT menuID)
+void WebKitLegacyBrowserWindow::setUserAgent(UINT menuID)
 {
     if (!webView())
         return;
@@ -564,12 +564,12 @@ void MiniBrowser::setUserAgent(UINT menuID)
     setUserAgent(customUserAgent);
 }
 
-void MiniBrowser::setUserAgent(_bstr_t& customUserAgent)
+void WebKitLegacyBrowserWindow::setUserAgent(_bstr_t& customUserAgent)
 {
     webView()->setCustomUserAgent(customUserAgent.GetBSTR());
 }
 
-_bstr_t MiniBrowser::userAgent()
+_bstr_t WebKitLegacyBrowserWindow::userAgent()
 {
     _bstr_t userAgent;
     if (FAILED(webView()->customUserAgent(&userAgent.GetBSTR())))
@@ -580,7 +580,7 @@ _bstr_t MiniBrowser::userAgent()
 
 typedef _com_ptr_t<_com_IIID<IWebIBActions, &__uuidof(IWebIBActions)>> IWebIBActionsPtr;
 
-void MiniBrowser::resetZoom()
+void WebKitLegacyBrowserWindow::resetZoom()
 {
     IWebIBActionsPtr webActions;
     if (FAILED(m_webView->QueryInterface(IID_IWebIBActions, reinterpret_cast<void**>(&webActions.GetInterfacePtr()))))
@@ -589,7 +589,7 @@ void MiniBrowser::resetZoom()
     webActions->resetPageZoom(nullptr);
 }
 
-void MiniBrowser::zoomIn()
+void WebKitLegacyBrowserWindow::zoomIn()
 {
     IWebIBActionsPtr webActions;
     if (FAILED(m_webView->QueryInterface(IID_IWebIBActions, reinterpret_cast<void**>(&webActions.GetInterfacePtr()))))
@@ -598,7 +598,7 @@ void MiniBrowser::zoomIn()
     webActions->zoomPageIn(nullptr);
 }
 
-void MiniBrowser::zoomOut()
+void WebKitLegacyBrowserWindow::zoomOut()
 {
     IWebIBActionsPtr webActions;
     if (FAILED(m_webView->QueryInterface(IID_IWebIBActions, reinterpret_cast<void**>(&webActions.GetInterfacePtr()))))
@@ -609,7 +609,7 @@ void MiniBrowser::zoomOut()
 
 typedef _com_ptr_t<_com_IIID<IWebViewPrivate3, &__uuidof(IWebViewPrivate3)>> IWebViewPrivate3Ptr;
 
-void MiniBrowser::showLayerTree()
+void WebKitLegacyBrowserWindow::showLayerTree()
 {
     IWebViewPrivate3Ptr webViewPrivate;
     if (FAILED(m_webView->QueryInterface(IID_IWebViewPrivate3, reinterpret_cast<void**>(&webViewPrivate.GetInterfacePtr()))))
@@ -655,7 +655,7 @@ static void initDocStruct(DOCINFO* di, TCHAR* docname)
     di->lpszDocName = docname;
 }
 
-void MiniBrowser::print()
+void WebKitLegacyBrowserWindow::print()
 {
     HDC printDC = getPrinterDC();
     if (!printDC) {
@@ -739,7 +739,7 @@ static void setWindowText(HWND dialog, UINT field, CFDictionaryRef dictionary, C
     total += count;
 }
 
-void MiniBrowser::updateStatistics(HWND dialog)
+void WebKitLegacyBrowserWindow::updateStatistics(HWND dialog)
 {
     IWebCoreStatisticsPtr webCoreStatistics = statistics();
     if (!webCoreStatistics)
@@ -853,7 +853,7 @@ void MiniBrowser::updateStatistics(HWND dialog)
         setWindowText(dialog, IDC_SITE_ICONS_WITH_DATA, count);
 }
 
-void MiniBrowser::setPreference(UINT menuID, bool enable)
+void WebKitLegacyBrowserWindow::setPreference(UINT menuID, bool enable)
 {
     if (!standardPreferences() || !privatePreferences())
         return;

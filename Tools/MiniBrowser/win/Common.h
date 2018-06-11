@@ -27,7 +27,7 @@
 
 #include "stdafx.h"
 #include "MainWindow.h"
-#include "MiniBrowser.h"
+#include "WebKitLegacyBrowserWindow.h"
 
 void computeFullDesktopFrame();
 bool getAppDataFolder(_bstr_t& directory);
