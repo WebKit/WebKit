@@ -1,3 +1,19 @@
+2018-06-11  Chris Dumez  <cdumez@apple.com>
+
+        Allow enabling PSON in layout tests without window.open support
+        https://bugs.webkit.org/show_bug.cgi?id=186537
+
+        Reviewed by Geoffrey Garen.
+
+        Allow enabling PSON in layout tests without window.open support since window.open support
+        is far from being ready and we plan to enable PSON in layout tests soon.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+
 2018-06-11  Brady Eidson  <beidson@apple.com>
 
         Followup to [Cocoa] Remove all uses of NSAutoreleasePool as part of preparation for ARC

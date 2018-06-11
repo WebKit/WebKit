@@ -506,9 +506,10 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         WKArrayAppendItem(overrideLanguages.get(), adoptWK(WKStringCreateWithUTF8CString(language.utf8().data())).get());
     WKContextConfigurationSetOverrideLanguages(contextConfiguration.get(), overrideLanguages.get());
 
-    if (options.enableProcessSwapOnNavigation) {
+    if (options.enableProcessSwapOnNavigation || options.enableProcessSwapOnWindowOpen) {
         WKContextConfigurationSetProcessSwapsOnNavigation(contextConfiguration.get(), true);
-        WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(contextConfiguration.get(), true);
+        if (options.enableProcessSwapOnWindowOpen)
+            WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(contextConfiguration.get(), true);
     }
 
     auto configuration = generatePageConfiguration(contextConfiguration.get());
@@ -1120,6 +1121,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableWebAnimationsCSSIntegration = parseBooleanTestHeaderValue(value);
         if (key == "enableProcessSwapOnNavigation")
             testOptions.enableProcessSwapOnNavigation = parseBooleanTestHeaderValue(value);
+        if (key == "enableProcessSwapOnWindowOpen")
+            testOptions.enableProcessSwapOnWindowOpen = parseBooleanTestHeaderValue(value);
         if (key == "enableColorFilter")
             testOptions.enableColorFilter = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;

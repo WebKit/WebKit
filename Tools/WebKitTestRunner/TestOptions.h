@@ -57,6 +57,7 @@ struct TestOptions {
     bool allowCrossOriginSubresourcesToAskForCredentials { false };
     bool enableWebAnimationsCSSIntegration { false };
     bool enableProcessSwapOnNavigation { false };
+    bool enableProcessSwapOnWindowOpen { false };
     bool enableColorFilter { false };
 
     float deviceScaleFactor { 1 };
@@ -90,6 +91,7 @@ struct TestOptions {
             || allowCrossOriginSubresourcesToAskForCredentials != options.allowCrossOriginSubresourcesToAskForCredentials
             || enableWebAnimationsCSSIntegration != options.enableWebAnimationsCSSIntegration
             || enableProcessSwapOnNavigation != options.enableProcessSwapOnNavigation
+            || enableProcessSwapOnWindowOpen != options.enableProcessSwapOnWindowOpen
             || enableColorFilter != options.enableColorFilter)
             return false;
 
