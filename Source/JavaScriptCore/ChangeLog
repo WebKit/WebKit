@@ -1,5 +1,22 @@
 2018-06-11  Michael Saboff  <msaboff@apple.com>
 
+        JavaScriptCore: Disable 32-bit JIT on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=185989
+
+        Reviewed by Mark Lam.
+
+        Fixed the CLOOP so it can work when COMPUTED_GOTOs are not supported.
+
+        * llint/LLIntData.h:
+        (JSC::LLInt::getCodePtr): Used a reinterpret_cast since Opcode could be an int.
+        * llint/LowLevelInterpreter.cpp: Changed the definition of OFFLINE_ASM_GLOBAL_LABEL to not
+        have a case label because these aren't opcodes.
+        * runtime/Options.cpp: Made assembler related Windows conditional code also conditional
+        on the JIT being enabled.
+        (JSC::recomputeDependentOptions):
+
+2018-06-11  Michael Saboff  <msaboff@apple.com>
+
         Test js/regexp-zero-length-alternatives.html fails when RegExpJIT is disabled
         https://bugs.webkit.org/show_bug.cgi?id=186477
 

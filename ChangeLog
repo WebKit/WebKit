@@ -1,3 +1,12 @@
+2018-06-11  Michael Saboff  <msaboff@apple.com>
+
+        JavaScriptCore: Disable 32-bit JIT on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=185989
+
+        Reviewed by Mark Lam.
+
+        * Source/cmake/OptionsWin.cmake:
+
 2018-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Add a MiniBrowser and use it to run WebDriver tests

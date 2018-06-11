@@ -229,6 +229,7 @@ shouldBe('s3.match(re31)', '["aa"]');
 shouldBe('s4.match(re31)', '["abab"]');
 
 // Non-capturing two possibly empty non-greedy alternatives non-greedy '*'
+//var re32 = new RegExp(/(?:a*?|b*?)*/);
 var re32 = new RegExp(/(?:a*?|b*?)*/);
 shouldBe('emptyStr.match(re32)', '[""]');
 shouldBe('s1.match(re32)', '[""]');

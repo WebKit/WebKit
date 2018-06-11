@@ -48,7 +48,7 @@
 #include <crt_externs.h>
 #endif
 
-#if OS(WINDOWS)
+#if OS(WINDOWS) && ENABLE(JIT)
 #include "MacroAssembler.h"
 #endif
 
@@ -392,7 +392,7 @@ static void recomputeDependentOptions()
     Options::useConcurrentGC() = false;
 #endif
     
-#if OS(WINDOWS) && CPU(X86) 
+#if OS(WINDOWS) && ENABLE(JIT) && CPU(X86) 
     // Disable JIT on Windows if SSE2 is not present 
     if (!MacroAssemblerX86::supportsFloatingPoint())
         Options::useJIT() = false;

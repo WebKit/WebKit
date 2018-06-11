@@ -106,7 +106,7 @@ using namespace JSC::LLInt;
 
 #define OFFLINE_ASM_OPCODE_LABEL(opcode) DEFINE_OPCODE(opcode) USE_LABEL(opcode); TRACE_OPCODE(opcode);
 
-#define OFFLINE_ASM_GLOBAL_LABEL(label)  OFFLINE_ASM_GLUE_LABEL(label)
+#define OFFLINE_ASM_GLOBAL_LABEL(label)  label: USE_LABEL(label);
 
 #if ENABLE(COMPUTED_GOTO_OPCODES)
 #define OFFLINE_ASM_GLUE_LABEL(label)  label: USE_LABEL(label);
