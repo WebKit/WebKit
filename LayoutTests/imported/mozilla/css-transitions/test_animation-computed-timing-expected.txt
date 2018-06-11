@@ -3,7 +3,7 @@ PASS delay of a new tranisition
 PASS Positive delay of a new transition 
 PASS Negative delay of a new transition 
 PASS endDelay of a new transition 
-FAIL fill of a new transition assert_equals: Fill backwards expected "backwards" but got "none"
+PASS fill of a new transition 
 PASS iterationStart of a new transition 
 PASS iterations of a new transition 
 PASS duration of a new transition 
@@ -15,9 +15,9 @@ PASS localTime of a new transition
 PASS localTime is always equal to currentTime 
 PASS localTime reflects playbackRate immediately 
 PASS progress of a new transition 
-FAIL progress of a new transition with positive delay in before phase assert_equals: Initial value of progress expected (number) 0 but got (object) null
+PASS progress of a new transition with positive delay in before phase 
 PASS progress of a finished transition 
 PASS currentIteration of a new transition 
-FAIL currentIteration of a new transition with positive delay in before phase assert_equals: Initial value of currentIteration expected (number) 0 but got (object) null
+PASS currentIteration of a new transition with positive delay in before phase 
 PASS currentIteration of a finished transition 
 
