@@ -316,11 +316,13 @@ bool NetworkStorageSession::hasStorageAccess(const String& resourceDomain, const
         }
     }
 
-    auto pagesGrantedIterator = m_pagesGrantedStorageAccess.find(pageID);
-    if (pagesGrantedIterator != m_pagesGrantedStorageAccess.end()) {
-        auto it = pagesGrantedIterator->value.find(firstPartyDomain);
-        if (it != pagesGrantedIterator->value.end() && it->value == resourceDomain)
-            return true;
+    if (!firstPartyDomain.isEmpty()) {
+        auto pagesGrantedIterator = m_pagesGrantedStorageAccess.find(pageID);
+        if (pagesGrantedIterator != m_pagesGrantedStorageAccess.end()) {
+            auto it = pagesGrantedIterator->value.find(firstPartyDomain);
+            if (it != pagesGrantedIterator->value.end() && it->value == resourceDomain)
+                return true;
+        }
     }
 
     return false;
@@ -340,6 +342,8 @@ Vector<String> NetworkStorageSession::getAllStorageAccessEntries() const
 void NetworkStorageSession::grantStorageAccess(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID)
 {
     if (!frameID) {
+        if (firstPartyDomain.isEmpty())
+            return;
         auto pagesGrantedIterator = m_pagesGrantedStorageAccess.find(pageID);
         if (pagesGrantedIterator == m_pagesGrantedStorageAccess.end()) {
             HashMap<String, String> entry;

@@ -1,3 +1,18 @@
+2018-06-11  Chris Dumez  <cdumez@apple.com>
+
+        Crash under com.apple.WebKit.Networking at WebCore: WebCore::NetworkStorageSession::hasStorageAccess const
+        https://bugs.webkit.org/show_bug.cgi?id=186433
+        <rdar://problem/40750907>
+
+        Reviewed by Geoffrey Garen.
+
+        Do some hardening in NetworkStorageSession::hasStorageAccess() to make sure
+        we do not try and do a HashMap lookup with a null firstPartyDomain, as this
+        would crash.
+
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::hasStorageAccess const):
+
 2018-06-11  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Remove redundant position functions for out-of-flow elements
