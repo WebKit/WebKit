@@ -333,8 +333,65 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
     // 10.6.5 Absolutely positioned, replaced elements
     //
     // The used value of 'height' is determined as for inline replaced elements.
-    auto heightAndMargin = inlineReplacedHeightAndMargin(layoutContext, layoutBox);
-    return { { }, { }, heightAndMargin.height, heightAndMargin.margin };
+    // If 'margin-top' or 'margin-bottom' is specified as 'auto' its used value is determined by the rules below.
+    // 1. If both 'top' and 'bottom' have the value 'auto', replace 'top' with the element's static position.
+    // 2. If 'bottom' is 'auto', replace any 'auto' on 'margin-top' or 'margin-bottom' with '0'.
+    // 3. If at this point both 'margin-top' and 'margin-bottom' are still 'auto', solve the equation under the extra constraint that the two margins must get equal values.
+    // 4. If at this point there is only one 'auto' left, solve the equation for that value.
+    // 5. If at this point the values are over-constrained, ignore the value for 'bottom' and solve for that value.
+
+    auto& style = layoutBox.style();
+    auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
+    auto& containingBlock = *layoutBox.containingBlock();
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(containingBlock)->width();
+    auto containingBlockHeight = layoutContext.displayBoxForLayoutBox(containingBlock)->height();
+
+    auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
+    auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
+    auto height = inlineReplacedHeightAndMargin(layoutContext, layoutBox).height;
+    auto marginTop = computedValueIfNotAuto(style.marginTop(), containingBlockWidth);
+    auto marginBottom = computedValueIfNotAuto(style.marginBottom(), containingBlockWidth);
+    auto paddingTop = displayBox.paddingTop();
+    auto paddingBottom = displayBox.paddingBottom();
+    auto borderTop = displayBox.borderTop();
+    auto borderBottom = displayBox.borderBottom();
+
+    if (!top && !bottom) {
+        // #1
+        top = displayBox.top();
+    }
+
+    if (!bottom) {
+        // #2
+        marginTop = marginTop.value_or(0);
+        marginBottom = marginBottom.value_or(0);
+    }
+
+    if (!marginTop && !marginBottom) {
+        // #3
+        auto marginTopAndBottom = containingBlockHeight - (*top + borderTop + paddingTop + height + paddingBottom + borderBottom + *bottom);
+        marginTop = marginBottom = marginTopAndBottom / 2;
+    }
+
+    // #4
+    if (!top)
+        top = containingBlockHeight - (*marginTop + borderTop + paddingTop + height + paddingBottom + borderBottom + *marginBottom + *bottom);
+
+    if (!bottom)
+        bottom = containingBlockHeight - (*top + *marginTop + borderTop + paddingTop + height + paddingBottom + borderBottom + *marginBottom);
+
+    if (!marginTop)
+        marginTop = containingBlockHeight - (*top + borderTop + paddingTop + height + paddingBottom + borderBottom + *marginBottom + *bottom);
+
+    if (!marginBottom)
+        marginBottom = containingBlockHeight - (*top + *marginTop + borderTop + paddingTop + height + paddingBottom + borderBottom + *bottom);
+
+    // #5
+    auto boxHeight = *top + *marginTop + borderTop + paddingTop + height + paddingBottom + borderBottom + *marginBottom + *bottom;
+    if (boxHeight > containingBlockHeight)
+        bottom = containingBlockHeight - (*top + *marginTop + borderTop + paddingTop + height + paddingBottom + borderBottom + *marginBottom); 
+
+    return { *top, *bottom, height, { *marginTop, *marginBottom } };
 }
 
 FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
