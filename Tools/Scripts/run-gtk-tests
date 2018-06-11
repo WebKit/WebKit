@@ -109,7 +109,6 @@ class GtkTestRunner(TestRunner):
         if not self._start_accessibility_daemons():
             print "Could not start accessibility bus, so disabling TestWebKitAccessibility"
             self._disabled_tests.append("WebKit2APITests/TestWebKitAccessibility")
-        return True
 
     def _tear_down_testing_environment(self):
         if self._spi_registryd:

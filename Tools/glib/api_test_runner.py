@@ -95,8 +95,6 @@ class TestRunner(object):
         self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.library_build_path()
         self._test_env["WEBKIT_EXEC_PATH"] = self._programs_path
 
-        return True
-
     def _tear_down_testing_environment(self):
         if self._driver:
             self._driver.stop()
@@ -233,8 +231,7 @@ class TestRunner(object):
             sys.stderr.flush()
             return 1
 
-        if not self._setup_testing_environment():
-            return 1
+        self._setup_testing_environment()
 
         # Remove skipped tests now instead of when we find them, because
         # some tests might be skipped while setting up the test environment.

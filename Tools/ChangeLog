@@ -1,3 +1,21 @@
+2018-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WPE API and layout tests after r232670.
+
+        Now that dyz is not installed, there's not -default.so symlink for the WPE backend, so we need to use
+        WPE_BACKEND_LIBRARY environment variable to ensure tests are run with fdo backend.
+
+        * Scripts/run-wpe-tests:
+        (WPETestRunner.__init__):
+        (WPETestRunner):
+        (WPETestRunner.setup_testing_environment):
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.setup_environ_for_server):
+        * glib/api_test_runner.py:
+        (TestRunner.setup_testing_environment):
+        (TestRunner.run_tests):
+        (TestRunner._setup_testing_environment): Deleted.
+
 2018-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add API run run javascript from a WebKitWebView in an isolated world

@@ -70,6 +70,7 @@ class WPEPort(Port):
 
     def setup_environ_for_server(self, server_name=None):
         environment = super(WPEPort, self).setup_environ_for_server(server_name)
+        environment['WPE_BACKEND_LIBRARY'] = 'libWPEBackend-fdo-0.1.so'
         environment['G_DEBUG'] = 'fatal-criticals'
         environment['GSETTINGS_BACKEND'] = 'memory'
         environment['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('lib', 'libTestRunnerInjectedBundle.so')
