@@ -1939,7 +1939,6 @@ webkit.org/b/183831 imported/mozilla/css-transitions/test_animation-ready.html [
 webkit.org/b/183834 imported/mozilla/css-animations/test_animation-starttime.html [ Pass Failure Timeout ]
 webkit.org/b/183836 imported/mozilla/css-animations/test_animations-dynamic-changes.html [ Pass Failure Timeout ]
 webkit.org/b/183837 imported/mozilla/css-transitions/test_document-get-animations.html [ Pass Failure Timeout ]
-webkit.org/b/183838 imported/mozilla/css-animations/test_cssanimation-animationname.html [ Pass Failure Timeout ]
 webkit.org/b/183840 imported/mozilla/css-animations/test_document-get-animations.html [ Pass Failure Timeout ]
 webkit.org/b/183841 imported/mozilla/css-transitions/test_element-get-animations.html [ Pass Failure Timeout ]
 webkit.org/b/183844 imported/mozilla/css-animations/test_element-get-animations.html [ Pass Failure Timeout ]
