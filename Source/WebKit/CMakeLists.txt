@@ -779,7 +779,7 @@ else ()
 endif ()
 
 if (ATOMIC_INT64_REQUIRES_LIBATOMIC)
-    list(APPEND WebKit_LIBRARIES PRIVATE atomic)
+    list(APPEND WebKit_LIBRARIES atomic)
 endif ()
 
 if (UNIX)
