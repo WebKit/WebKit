@@ -38,6 +38,14 @@ if (USE_CF)
     )
 endif ()
 
+if (ENABLE_WEBKIT)
+    add_definitions(-DENABLE_WEBKIT)
+    list(APPEND MiniBrowser_SOURCES
+        WebKitBrowserWindow.cpp
+    )
+    list(APPEND MiniBrowser_LIBRARIES WebKit)
+endif ()
+
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${MSVC_RUNTIME_LINKER_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ENTRY:wWinMainCRTStartup")
 

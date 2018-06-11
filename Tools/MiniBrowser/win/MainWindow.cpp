@@ -28,6 +28,11 @@
 
 #include "Common.h"
 #include "MiniBrowserLibResource.h"
+#include "WebKitLegacyBrowserWindow.h"
+
+#if ENABLE(WEBKIT)
+#include "WebKitBrowserWindow.h"
+#endif
 
 namespace WebCore {
 float deviceScaleFactorForWindow(HWND);
@@ -78,7 +83,8 @@ void MainWindow::registerClass(HINSTANCE hInstance)
     RegisterClassEx(&wcex);
 }
 
-MainWindow::MainWindow()
+MainWindow::MainWindow(BrowserWindowType type)
+    : m_browserWindowType(type)
 {
     s_numInstances++;
 }
@@ -88,9 +94,9 @@ MainWindow::~MainWindow()
     s_numInstances--;
 }
 
-Ref<MainWindow> MainWindow::create()
+Ref<MainWindow> MainWindow::create(BrowserWindowType type)
 {
-    return adoptRef(*new MainWindow());
+    return adoptRef(*new MainWindow(type));
 }
 
 bool MainWindow::init(HINSTANCE hInstance, bool usesLayeredWebView, bool pageLoadTesting)
@@ -105,6 +111,10 @@ bool MainWindow::init(HINSTANCE hInstance, bool usesLayeredWebView, bool pageLoa
     if (!m_hMainWnd)
         return false;
 
+#if !ENABLE(WEBKIT)
+    EnableMenuItem(GetMenu(m_hMainWnd), IDM_NEW_WEBKIT_WINDOW, MF_GRAYED);
+#endif
+
     float scaleFactor = WebCore::deviceScaleFactorForWindow(nullptr);
     m_hBackButtonWnd = CreateWindow(L"BUTTON", L"<", WS_CHILD | WS_VISIBLE  | BS_TEXT, 0, 0, 0, 0, m_hMainWnd, reinterpret_cast<HMENU>(IDM_HISTORY_BACKWARD), hInstance, 0);
     m_hForwardButtonWnd = CreateWindow(L"BUTTON", L">", WS_CHILD | WS_VISIBLE | BS_TEXT, scaleFactor * controlButtonWidth, 0, 0, 0, m_hMainWnd, reinterpret_cast<HMENU>(IDM_HISTORY_FORWARD), hInstance, 0);
@@ -113,7 +123,12 @@ bool MainWindow::init(HINSTANCE hInstance, bool usesLayeredWebView, bool pageLoa
     DefEditProc = reinterpret_cast<WNDPROC>(GetWindowLongPtr(m_hURLBarWnd, GWLP_WNDPROC));
     SetWindowLongPtr(m_hURLBarWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(EditProc));
 
-    m_browserWindow = WebKitLegacyBrowserWindow::create(m_hMainWnd, m_hURLBarWnd, usesLayeredWebView, pageLoadTesting);
+    auto factory = WebKitLegacyBrowserWindow::create;
+#if ENABLE(WEBKIT)
+    if (m_browserWindowType == BrowserWindowType::WebKit)
+        factory = WebKitBrowserWindow::create;
+#endif
+    m_browserWindow = factory(m_hMainWnd, m_hURLBarWnd, usesLayeredWebView, pageLoadTesting);
     if (!m_browserWindow)
         return false;
     HRESULT hr = m_browserWindow->init();
@@ -171,6 +186,18 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
         case IDC_URL_BAR:
             thisWindow->onURLBarEnter();
             break;
+        case IDM_NEW_WEBKIT_WINDOW: {
+            auto& newWindow = MainWindow::create(BrowserWindowType::WebKit).leakRef();
+            newWindow.init(hInst);
+            ShowWindow(newWindow.hwnd(), SW_SHOW);
+            break;
+        }
+        case IDM_NEW_WEBKITLEGACY_WINDOW: {
+            auto& newWindow = MainWindow::create(BrowserWindowType::WebKitLegacy).leakRef();
+            newWindow.init(hInst);
+            ShowWindow(newWindow.hwnd(), SW_SHOW);
+            break;
+        }
         case IDM_ABOUT:
             DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
             break;

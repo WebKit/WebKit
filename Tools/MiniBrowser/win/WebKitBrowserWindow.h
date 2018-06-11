@@ -22,50 +22,46 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 #pragma once
 
 #include "BrowserWindow.h"
-#include <memory>
-#include <string>
-#include <wtf/RefPtr.h>
+#include <WebKit/WKRetainPtr.h>
+#include <WebKit/WebKit2_C.h>
 
-class MainWindow : public RefCounted<MainWindow> {
+class WebKitBrowserWindow : public BrowserWindow {
 public:
-    enum class BrowserWindowType {
-        WebKit,
-        WebKitLegacy
-    };
-    static Ref<MainWindow> create(BrowserWindowType);
+    static Ref<BrowserWindow> create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false, bool pageLoadTesting = false);
 
-    ~MainWindow();
-    bool init(HINSTANCE hInstance, bool usesLayeredWebView = false, bool pageLoadTesting = false);
-
-    void resizeSubViews();
-    HWND hwnd() const { return m_hMainWnd; }
-    BrowserWindow* browserWindow() const { return m_browserWindow.get(); }
-
-    void loadURL(BSTR url);
-    
 private:
-    static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-    static INT_PTR CALLBACK customUserAgentDialogProc(HWND, UINT, WPARAM, LPARAM);
-    static INT_PTR CALLBACK cachesDialogProc(HWND, UINT, WPARAM, LPARAM);
-    static void registerClass(HINSTANCE hInstance);
-    static std::wstring s_windowClass;
-    static size_t s_numInstances;
+    WebKitBrowserWindow(HWND mainWnd, HWND urlBarWnd);
 
-    MainWindow(BrowserWindowType);
-    bool toggleMenuItem(UINT menuID);
-    void onURLBarEnter();
-    void updateDeviceScaleFactor();
+    HRESULT init() override;
+    HWND hwnd() override;
 
+    HRESULT loadHTMLString(const BSTR&) override;
+    HRESULT loadURL(const BSTR& url) override;
+    void navigateForwardOrBackward(UINT menuID) override;
+    void navigateToHistory(UINT menuID) override;
+    void setPreference(UINT menuID, bool enable) override;
+
+    void print() override;
+    void launchInspector() override;
+
+    _bstr_t userAgent() override;
+    void setUserAgent(UINT menuID) override;
+    void setUserAgent(_bstr_t&) override;
+
+    void showLayerTree() override;
+    void updateStatistics(HWND dialog) override;
+
+    void resetZoom() override;
+    void zoomIn() override;
+    void zoomOut() override;
+
+    static void didReceiveTitleForFrame(WKPageRef, WKStringRef, WKFrameRef, WKTypeRef, const void *);
+    static void didCommitLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void *);
+
+    WKRetainPtr<WKViewRef> m_view;
     HWND m_hMainWnd { nullptr };
-    HWND m_hURLBarWnd { nullptr };
-    HWND m_hBackButtonWnd { nullptr };
-    HWND m_hForwardButtonWnd { nullptr };
-    HWND m_hCacheWnd { nullptr };
-    HGDIOBJ m_hURLBarFont { nullptr };
-    BrowserWindowType m_browserWindowType;
-    RefPtr<BrowserWindow> m_browserWindow;
+    HWND m_urlBarWnd { nullptr };
 };

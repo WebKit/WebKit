@@ -1,3 +1,56 @@
+2018-06-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Add WebKitBrowserWindow class for modern WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=186478
+
+        Reviewed by Alex Christensen.
+
+        Added "New WebKit Window" and "New WebKitLegacy Window" menu
+        items. Disabled the menu item "New WebKit Window" if
+        !ENABLE(WEBKIT).
+
+        * MiniBrowser/win/CMakeLists.txt: Added WebKitBrowserWindow.cpp
+        source file and ENABLE_WEBKIT macro if ENABLE_WEBKIT.
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::MainWindow):
+        (MainWindow::create):
+        (MainWindow::init):
+        (MainWindow::WndProc):
+        * MiniBrowser/win/MainWindow.h:
+        * MiniBrowser/win/MiniBrowserLib.rc:
+        * MiniBrowser/win/MiniBrowserLibResource.h:
+        * MiniBrowser/win/PrintWebUIDelegate.cpp:
+        (PrintWebUIDelegate::createWebViewWithRequest):
+        * MiniBrowser/win/WebKitBrowserWindow.cpp: Added.
+        (createString):
+        (toUtf8):
+        (createWKString):
+        (createWKURL):
+        (WebKitBrowserWindow::create):
+        (WebKitBrowserWindow::WebKitBrowserWindow):
+        (WebKitBrowserWindow::init):
+        (WebKitBrowserWindow::hwnd):
+        (WebKitBrowserWindow::loadURL):
+        (WebKitBrowserWindow::loadHTMLString):
+        (WebKitBrowserWindow::navigateForwardOrBackward):
+        (WebKitBrowserWindow::navigateToHistory):
+        (WebKitBrowserWindow::setPreference):
+        (WebKitBrowserWindow::print):
+        (WebKitBrowserWindow::launchInspector):
+        (WebKitBrowserWindow::setUserAgent):
+        (WebKitBrowserWindow::userAgent):
+        (WebKitBrowserWindow::showLayerTree):
+        (WebKitBrowserWindow::updateStatistics):
+        (WebKitBrowserWindow::resetZoom):
+        (WebKitBrowserWindow::zoomIn):
+        (WebKitBrowserWindow::zoomOut):
+        (toWebKitBrowserWindow):
+        (WebKitBrowserWindow::didReceiveTitleForFrame):
+        (WebKitBrowserWindow::didCommitLoadForFrame):
+        * MiniBrowser/win/WebKitBrowserWindow.h:
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain):
+
 2018-06-11  Keith Miller  <keith_miller@apple.com>
 
         Add missing whitespace to run-jsc command

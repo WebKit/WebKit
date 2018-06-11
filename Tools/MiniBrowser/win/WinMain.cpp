@@ -65,7 +65,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     ::SetProcessDPIAware();
 
-    auto& mainWindow = MainWindow::create().leakRef();
+    auto& mainWindow = MainWindow::create(MainWindow::BrowserWindowType::WebKitLegacy).leakRef();
     HRESULT hr = mainWindow.init(hInst, usesLayeredWebView, pageLoadTesting);
     if (FAILED(hr))
         goto exit;
