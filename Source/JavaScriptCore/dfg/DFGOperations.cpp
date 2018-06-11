@@ -1234,18 +1234,6 @@ EncodedJSValue JIT_OPERATION operationToNumber(ExecState* exec, EncodedJSValue v
     return JSValue::encode(jsNumber(JSValue::decode(value).toNumber(exec)));
 }
 
-EncodedJSValue JIT_OPERATION operationGetByIdWithThis(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedThis, UniquedStringImpl* impl)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-
-    JSValue baseValue = JSValue::decode(encodedBase);
-    JSValue thisVal = JSValue::decode(encodedThis);
-    PropertySlot slot(thisVal, PropertySlot::PropertySlot::InternalMethodType::Get);
-    JSValue result = baseValue.get(exec, Identifier::fromUid(exec, impl), slot);
-    return JSValue::encode(result);
-}
-
 EncodedJSValue JIT_OPERATION operationGetByValWithThis(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedSubscript)
 {
     VM& vm = exec->vm();

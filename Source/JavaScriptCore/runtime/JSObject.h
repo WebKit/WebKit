@@ -174,6 +174,7 @@ public:
 
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
+    bool getOwnPropertySlotInline(ExecState*, PropertyName, PropertySlot&);
 
     // The key difference between this and getOwnPropertySlot is that getOwnPropertySlot
     // currently returns incorrect results for the DOM window (with non-own properties)

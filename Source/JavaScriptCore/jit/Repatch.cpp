@@ -149,20 +149,34 @@ ALWAYS_INLINE static void fireWatchpointsAndClearStubIfNeeded(VM& vm, StructureS
 
 inline FunctionPtr appropriateOptimizingGetByIdFunction(GetByIDKind kind)
 {
-    if (kind == GetByIDKind::Normal)
+    switch (kind) {
+    case GetByIDKind::Normal:
         return operationGetByIdOptimize;
-    else if (kind == GetByIDKind::WithThis)
+    case GetByIDKind::WithThis:
         return operationGetByIdWithThisOptimize;
-    return operationTryGetByIdOptimize;
+    case GetByIDKind::Try:
+        return operationTryGetByIdOptimize;
+    case GetByIDKind::Direct:
+        return operationGetByIdDirectOptimize;
+    }
+    ASSERT_NOT_REACHED();
+    return operationGetById;
 }
 
-inline FunctionPtr appropriateGenericGetByIdFunction(GetByIDKind kind)
+inline FunctionPtr appropriateGetByIdFunction(GetByIDKind kind)
 {
-    if (kind == GetByIDKind::Normal)
+    switch (kind) {
+    case GetByIDKind::Normal:
         return operationGetById;
-    else if (kind == GetByIDKind::WithThis)
-        return operationGetByIdWithThisGeneric;
-    return operationTryGetById;
+    case GetByIDKind::WithThis:
+        return operationGetByIdWithThis;
+    case GetByIDKind::Try:
+        return operationTryGetById;
+    case GetByIDKind::Direct:
+        return operationGetByIdDirect;
+    }
+    ASSERT_NOT_REACHED();
+    return operationGetById;
 }
 
 static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo, GetByIDKind kind)
@@ -273,28 +287,32 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
                 if (slot.isUnset() && structure->typeInfo().getOwnPropertySlotIsImpureForPropertyAbsence())
                     return GiveUpOnCache;
 
-                bool usesPolyProto;
-                prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), baseCell, slot, usesPolyProto);
-                if (!prototypeAccessChain) {
-                    // It's invalid to access this prototype property.
-                    return GiveUpOnCache;
-                }
-
-                if (!usesPolyProto) {
-                    // We use ObjectPropertyConditionSet instead for faster accesses.
-                    prototypeAccessChain = nullptr;
-
-                    if (slot.isUnset()) {
-                        conditionSet = generateConditionsForPropertyMiss(
-                            vm, codeBlock, exec, structure, propertyName.impl());
-                    } else {
-                        conditionSet = generateConditionsForPrototypePropertyHit(
-                            vm, codeBlock, exec, structure, slot.slotBase(),
-                            propertyName.impl());
+                // If a kind is GetByIDKind::Direct, we do not need to investigate prototype chains further.
+                // Cacheability just depends on the head structure.
+                if (kind != GetByIDKind::Direct) {
+                    bool usesPolyProto;
+                    prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), baseCell, slot, usesPolyProto);
+                    if (!prototypeAccessChain) {
+                        // It's invalid to access this prototype property.
+                        return GiveUpOnCache;
                     }
 
-                    if (!conditionSet.isValid())
-                        return GiveUpOnCache;
+                    if (!usesPolyProto) {
+                        // We use ObjectPropertyConditionSet instead for faster accesses.
+                        prototypeAccessChain = nullptr;
+
+                        if (slot.isUnset()) {
+                            conditionSet = generateConditionsForPropertyMiss(
+                                vm, codeBlock, exec, structure, propertyName.impl());
+                        } else {
+                            conditionSet = generateConditionsForPrototypePropertyHit(
+                                vm, codeBlock, exec, structure, slot.slotBase(),
+                                propertyName.impl());
+                        }
+
+                        if (!conditionSet.isValid())
+                            return GiveUpOnCache;
+                    }
                 }
 
                 offset = slot.isUnset() ? invalidOffset : slot.cachedOffset();
@@ -368,8 +386,10 @@ void repatchGetByID(ExecState* exec, JSValue baseValue, const Identifier& proper
 {
     SuperSamplerScope superSamplerScope(false);
     
-    if (tryCacheGetByID(exec, baseValue, propertyName, slot, stubInfo, kind) == GiveUpOnCache)
-        ftlThunkAwareRepatchCall(exec->codeBlock(), stubInfo.slowPathCallLocation(), appropriateGenericGetByIdFunction(kind));
+    if (tryCacheGetByID(exec, baseValue, propertyName, slot, stubInfo, kind) == GiveUpOnCache) {
+        CodeBlock* codeBlock = exec->codeBlock();
+        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), FunctionPtr(appropriateGetByIdFunction(kind)));
+    }
 }
 
 static V_JITOperation_ESsiJJI appropriateGenericPutByIdFunction(const PutPropertySlot &slot, PutKind putKind)

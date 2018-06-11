@@ -195,6 +195,8 @@ inline CapabilityLevel canCompile(Node* node)
     case GetById:
     case GetByIdFlush:
     case GetByIdWithThis:
+    case GetByIdDirect:
+    case GetByIdDirectFlush:
     case ToThis:
     case MultiGetByOffset:
     case MultiPutByOffset:

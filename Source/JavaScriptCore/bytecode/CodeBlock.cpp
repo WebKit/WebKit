@@ -566,6 +566,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         case op_get_by_id:
         case op_get_by_id_with_this:
         case op_try_get_by_id:
+        case op_get_by_id_direct:
         case op_get_by_val_with_this:
         case op_get_from_arguments:
         case op_to_number:
@@ -1249,6 +1250,16 @@ void CodeBlock::finalizeLLIntInlineCaches()
             if (Options::verboseOSR())
                 dataLogF("Clearing LLInt property access.\n");
             clearLLIntGetByIdCache(curInstruction);
+            break;
+        }
+        case op_get_by_id_direct: {
+            StructureID oldStructureID = curInstruction[4].u.structureID;
+            if (!oldStructureID || Heap::isMarked(vm.heap.structureIDTable().get(oldStructureID)))
+                break;
+            if (Options::verboseOSR())
+                dataLogF("Clearing LLInt property access.\n");
+            curInstruction[4].u.pointer = nullptr;
+            curInstruction[5].u.pointer = nullptr;
             break;
         }
         case op_put_by_id: {

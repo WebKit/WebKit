@@ -29,6 +29,7 @@
 #include "CodeBlock.h"
 #include "ComplexGetStatus.h"
 #include "GetterSetterAccessCase.h"
+#include "InterpreterInlines.h"
 #include "IntrinsicGetterAccessCase.h"
 #include "JSCInlines.h"
 #include "JSScope.h"
@@ -76,40 +77,46 @@ bool GetByIdStatus::hasExitSite(CodeBlock* profiledBlock, unsigned bytecodeIndex
 
 GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned bytecodeIndex, UniquedStringImpl* uid)
 {
-    UNUSED_PARAM(profiledBlock);
-    UNUSED_PARAM(bytecodeIndex);
-    UNUSED_PARAM(uid);
-
     VM& vm = *profiledBlock->vm();
     
     Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
 
-    Opcode opcode = instruction[0].u.opcode;
+    switch (Interpreter::getOpcodeID(instruction[0].u.opcode)) {
+    case op_get_by_id:
+    case op_get_by_id_direct: {
+        StructureID structureID = instruction[4].u.structureID;
+        if (!structureID)
+            return GetByIdStatus(NoInformation, false);
 
-    ASSERT(opcode == LLInt::getOpcode(op_get_array_length) || opcode == LLInt::getOpcode(op_try_get_by_id) || opcode == LLInt::getOpcode(op_get_by_id_proto_load) || opcode == LLInt::getOpcode(op_get_by_id) || opcode == LLInt::getOpcode(op_get_by_id_unset));
+        Structure* structure = vm.heap.structureIDTable().get(structureID);
 
-    // FIXME: We should not just bail if we see a try_get_by_id or a get_by_id_proto_load.
-    // https://bugs.webkit.org/show_bug.cgi?id=158039
-    if (opcode != LLInt::getOpcode(op_get_by_id))
+        if (structure->takesSlowPathInDFGForImpureProperty())
+            return GetByIdStatus(NoInformation, false);
+
+        unsigned attributes;
+        PropertyOffset offset = structure->getConcurrently(uid, attributes);
+        if (!isValidOffset(offset))
+            return GetByIdStatus(NoInformation, false);
+        if (attributes & PropertyAttribute::CustomAccessor)
+            return GetByIdStatus(NoInformation, false);
+
+        return GetByIdStatus(Simple, false, GetByIdVariant(StructureSet(structure), offset));
+    }
+
+    case op_get_array_length:
+    case op_try_get_by_id:
+    case op_get_by_id_proto_load:
+    case op_get_by_id_unset: {
+        // FIXME: We should not just bail if we see a try_get_by_id or a get_by_id_proto_load.
+        // https://bugs.webkit.org/show_bug.cgi?id=158039
         return GetByIdStatus(NoInformation, false);
+    }
 
-    StructureID structureID = instruction[4].u.structureID;
-    if (!structureID)
+    default: {
+        ASSERT_NOT_REACHED();
         return GetByIdStatus(NoInformation, false);
-
-    Structure* structure = vm.heap.structureIDTable().get(structureID);
-
-    if (structure->takesSlowPathInDFGForImpureProperty())
-        return GetByIdStatus(NoInformation, false);
-
-    unsigned attributes;
-    PropertyOffset offset = structure->getConcurrently(uid, attributes);
-    if (!isValidOffset(offset))
-        return GetByIdStatus(NoInformation, false);
-    if (attributes & PropertyAttribute::CustomAccessor)
-        return GetByIdStatus(NoInformation, false);
-    
-    return GetByIdStatus(Simple, false, GetByIdVariant(StructureSet(structure), offset));
+    }
+    }
 }
 
 GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& map, unsigned bytecodeIndex, UniquedStringImpl* uid)
@@ -361,6 +368,10 @@ GetByIdStatus GetByIdStatus::computeFor(const StructureSet& set, UniquedStringIm
 {
     // For now we only handle the super simple self access case. We could handle the
     // prototype case in the future.
+    //
+    // Note that this code is also used for GetByIdDirect since this function only looks
+    // into direct properties. When supporting prototype chains, we should split this for
+    // GetById and GetByIdDirect.
     
     if (set.isEmpty())
         return GetByIdStatus();

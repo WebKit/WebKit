@@ -1259,6 +1259,26 @@ macro storePropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value
     storeq value, (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffsetAsInt, 8]
 end
 
+
+_llint_op_get_by_id_direct:
+    traceExecution()
+    loadisFromInstruction(2, t0)
+    loadConstantOrVariableCell(t0, t3, .opGetByIdDirectSlow)
+    loadi JSCell::m_structureID[t3], t1
+    loadisFromInstruction(4, t2)
+    bineq t2, t1, .opGetByIdDirectSlow
+    loadisFromInstruction(5, t1)
+    loadisFromInstruction(1, t2)
+    loadPropertyAtVariableOffset(t1, t3, t0)
+    storeq t0, [cfr, t2, 8]
+    valueProfile(t0, 6, t1)
+    dispatch(constexpr op_get_by_id_direct_length)
+
+.opGetByIdDirectSlow:
+    callSlowPath(_llint_slow_path_get_by_id_direct)
+    dispatch(constexpr op_get_by_id_direct_length)
+
+
 _llint_op_get_by_id:
     traceExecution()
     loadisFromInstruction(2, t0)

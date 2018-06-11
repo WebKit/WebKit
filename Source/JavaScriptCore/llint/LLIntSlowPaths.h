@@ -70,6 +70,7 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_regexp);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_instanceof);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_instanceof_custom);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_try_get_by_id);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_by_id_direct);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_by_id);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_arguments_length);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_by_id);

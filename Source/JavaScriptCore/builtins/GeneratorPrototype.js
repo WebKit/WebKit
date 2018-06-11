@@ -35,8 +35,8 @@ function generatorResume(generator, state, generatorThis, sentValue, value, resu
     if (!done) {
         try {
             generator.@generatorState = @GeneratorStateExecuting;
-            value = generator.@generatorNext.@call(generatorThis, generator, state, sentValue, resumeMode, generator.@generatorFrame);
-            if (generator.@generatorState === @GeneratorStateExecuting) {
+            value = @getByIdDirectPrivate(generator, "generatorNext").@call(generatorThis, generator, state, sentValue, resumeMode, @getByIdDirectPrivate(generator, "generatorFrame"));
+            if (@getByIdDirectPrivate(generator, "generatorState") === @GeneratorStateExecuting) {
                 generator.@generatorState = @GeneratorStateCompleted;
                 done = true;
             }
@@ -52,35 +52,35 @@ function next(value)
 {
     "use strict";
 
-    var state = this.@generatorState;
+    var state = @getByIdDirectPrivate(this, "generatorState");
     if (typeof state !== "number")
         @throwTypeError("|this| should be a generator");
 
     if (state === @GeneratorStateExecuting)
         @throwTypeError("Generator is executing");
 
-    return @generatorResume(this, state, this.@generatorThis, value, @undefined, @GeneratorResumeModeNormal);
+    return @generatorResume(this, state, @getByIdDirectPrivate(this, "generatorThis"), value, @undefined, @GeneratorResumeModeNormal);
 }
 
 function return(value)
 {
     "use strict";
 
-    var state = this.@generatorState;
+    var state = @getByIdDirectPrivate(this, "generatorState");
     if (typeof state !== "number")
         @throwTypeError("|this| should be a generator");
 
     if (state === @GeneratorStateExecuting)
         @throwTypeError("Generator is executing");
 
-    return @generatorResume(this, state, this.@generatorThis, value, value, @GeneratorResumeModeReturn);
+    return @generatorResume(this, state, @getByIdDirectPrivate(this, "generatorThis"), value, value, @GeneratorResumeModeReturn);
 }
 
 function throw(exception)
 {
     "use strict";
 
-    var state = this.@generatorState;
+    var state = @getByIdDirectPrivate(this, "generatorState");
     if (typeof state !== "number")
         @throwTypeError("|this| should be a generator");
 
@@ -90,5 +90,5 @@ function throw(exception)
     if (state === @GeneratorStateCompleted)
         throw exception;
 
-    return @generatorResume(this, state, this.@generatorThis, exception, @undefined, @GeneratorResumeModeThrow);
+    return @generatorResume(this, state, @getByIdDirectPrivate(this, "generatorThis"), exception, @undefined, @GeneratorResumeModeThrow);
 }

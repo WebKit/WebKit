@@ -288,6 +288,8 @@ public:
     template<typename CallbackWhenNoException> typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type getPropertySlot(ExecState*, PropertyName, CallbackWhenNoException) const;
     template<typename CallbackWhenNoException> typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type getPropertySlot(ExecState*, PropertyName, PropertySlot&, CallbackWhenNoException) const;
 
+    bool getOwnPropertySlot(ExecState*, PropertyName, PropertySlot&) const;
+
     bool put(ExecState*, PropertyName, JSValue, PutPropertySlot&);
     bool putInline(ExecState*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE bool putToPrimitive(ExecState*, PropertyName, JSValue, PutPropertySlot&);

@@ -620,6 +620,43 @@ void JIT::emitSlow_op_try_get_by_id(Instruction* currentInstruction, Vector<Slow
 }
 
 
+void JIT::emit_op_get_by_id_direct(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    int base = currentInstruction[2].u.operand;
+    const Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
+
+    emitLoad(base, regT1, regT0);
+    emitJumpSlowCaseIfNotJSCell(base, regT1);
+
+    JITGetByIdGenerator gen(
+        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(currentInstruction), RegisterSet::stubUnavailableRegisters(),
+        ident->impl(), JSValueRegs::payloadOnly(regT0), JSValueRegs(regT1, regT0), AccessType::GetDirect);
+    gen.generateFastPath(*this);
+    addSlowCase(gen.slowPathJump());
+    m_getByIds.append(gen);
+
+    emitValueProfilingSite();
+    emitStore(dst, regT1, regT0);
+}
+
+void JIT::emitSlow_op_get_by_id_direct(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    int resultVReg = currentInstruction[1].u.operand;
+    const Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
+
+    JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
+
+    Label coldPathBegin = label();
+
+    Call call = callOperation(WithProfile, operationGetByIdDirectOptimize, resultVReg, gen.stubInfo(), regT1, regT0, ident->impl());
+
+    gen.reportSlowPathCall(coldPathBegin, call);
+}
+
+
 void JIT::emit_op_get_by_id(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
