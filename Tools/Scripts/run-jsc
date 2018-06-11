@@ -50,9 +50,9 @@ setConfiguration();
 my $jsc;
 if ($debugger) {
     my $debuggerCmd = defined($ENV{"DEBUGGER"}) ? $ENV{"DEBUGGER"} : "lldb";
-    $jsc = $debuggerCmd . " " . File::Spec->catfile(jscProductDir(), "jsc -- --useDollarVM=1") . "@ARGV";
+    $jsc = $debuggerCmd . " " . File::Spec->catfile(jscProductDir(), "jsc -- --useDollarVM=1 ") . "@ARGV";
 } else {
-    $jsc = File::Spec->catfile(jscProductDir(), "jsc --useDollarVM=1") . "@ARGV";
+    $jsc = File::Spec->catfile(jscProductDir(), "jsc --useDollarVM=1 ") . "@ARGV";
 }
 
 my $dyld = jscProductDir();
