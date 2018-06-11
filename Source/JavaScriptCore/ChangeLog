@@ -1,3 +1,19 @@
+2018-06-11  Michael Saboff  <msaboff@apple.com>
+
+        Test js/regexp-zero-length-alternatives.html fails when RegExpJIT is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=186477
+
+        Reviewed by Filip Pizlo.
+
+        Fixed bug where we were using the wrong frame size for TypeParenthesesSubpatternTerminalBegin
+        YARR interpreter nodes.  This caused us to overwrite other frame information.
+
+        Added frame offset debugging code to YARR interpreter.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        (JSC::Yarr::ByteCompiler::dumpDisjunction):
+
 2018-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Array.prototype.sort should rejects null comparator

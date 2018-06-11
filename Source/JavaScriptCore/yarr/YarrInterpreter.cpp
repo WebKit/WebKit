@@ -2065,7 +2065,7 @@ public:
                     } else if (term.parentheses.isTerminal) {
                         ASSERT(currentCountAlreadyChecked >= term.inputPosition);
                         unsigned delegateEndInputOffset = currentCountAlreadyChecked - term.inputPosition;
-                        atomParenthesesTerminalBegin(term.parentheses.subpatternId, term.capture(), disjunctionAlreadyCheckedCount + delegateEndInputOffset, term.frameLocation, term.frameLocation + YarrStackSpaceForBackTrackInfoParenthesesOnce);
+                        atomParenthesesTerminalBegin(term.parentheses.subpatternId, term.capture(), disjunctionAlreadyCheckedCount + delegateEndInputOffset, term.frameLocation, term.frameLocation + YarrStackSpaceForBackTrackInfoParenthesesTerminal);
                         emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, disjunctionAlreadyCheckedCount);
                         atomParenthesesTerminalEnd(delegateEndInputOffset, term.frameLocation, term.quantityMinCount, term.quantityMaxCount, term.quantityType);
                     } else {
@@ -2162,6 +2162,10 @@ public:
             out.printf(" inputPosition %u", term.inputPosition);
         };
 
+        auto dumpFrameLocation = [&](ByteTerm& term) {
+            out.printf(" frameLocation %u", term.frameLocation);
+        };
+        
         auto dumpCharacter = [&](ByteTerm& term) {
             out.print(" ");
             dumpUChar32(out, term.atom.patternCharacter);
@@ -2183,26 +2187,32 @@ public:
                 out.print("BodyAlternativeBegin");
                 if (term.alternative.onceThrough)
                     out.print(" onceThrough");
+                dumpFrameLocation(term);
                 break;
             case ByteTerm::TypeBodyAlternativeDisjunction:
                 outputTermIndexAndNest(idx, nesting - 1);
                 out.print("BodyAlternativeDisjunction");
+                dumpFrameLocation(term);
                 break;
             case ByteTerm::TypeBodyAlternativeEnd:
                 outputTermIndexAndNest(idx, --nesting);
                 out.print("BodyAlternativeEnd");
+                dumpFrameLocation(term);
                 break;
             case ByteTerm::TypeAlternativeBegin:
                 outputTermIndexAndNest(idx, nesting++);
                 out.print("AlternativeBegin");
+                dumpFrameLocation(term);
                 break;
             case ByteTerm::TypeAlternativeDisjunction:
                 outputTermIndexAndNest(idx, nesting - 1);
                 out.print("AlternativeDisjunction");
+                dumpFrameLocation(term);
                 break;
             case ByteTerm::TypeAlternativeEnd:
                 outputTermIndexAndNest(idx, --nesting);
                 out.print("AlternativeEnd");
+                dumpFrameLocation(term);
                 break;
             case ByteTerm::TypeSubpatternBegin:
                 outputTermIndexAndNest(idx, nesting++);
@@ -2229,6 +2239,7 @@ public:
                 out.print("PatternCharacterOnce");
                 dumpInverted(term);
                 dumpInputPosition(term);
+                dumpFrameLocation(term);
                 dumpCharacter(term);
                 dumpQuantity(term);
                 break;
@@ -2237,6 +2248,7 @@ public:
                 out.print("PatternCharacterFixed");
                 dumpInverted(term);
                 dumpInputPosition(term);
+                dumpFrameLocation(term);
                 dumpCharacter(term);
                 out.print(" {", term.atom.quantityMinCount, "}");
                 break;
@@ -2245,6 +2257,7 @@ public:
                 out.print("PatternCharacterGreedy");
                 dumpInverted(term);
                 dumpInputPosition(term);
+                dumpFrameLocation(term);
                 dumpCharacter(term);
                 dumpQuantity(term);
                 break;
@@ -2253,6 +2266,7 @@ public:
                 out.print("PatternCharacterNonGreedy");
                 dumpInverted(term);
                 dumpInputPosition(term);
+                dumpFrameLocation(term);
                 dumpCharacter(term);
                 dumpQuantity(term);
                 break;
@@ -2277,6 +2291,7 @@ public:
                 out.print("CharacterClass");
                 dumpInverted(term);
                 dumpInputPosition(term);
+                dumpFrameLocation(term);
                 dumpCharClass(term);
                 dumpQuantity(term);
                 break;
@@ -2291,6 +2306,7 @@ public:
                 dumpCaptured(term);
                 dumpInverted(term);
                 dumpInputPosition(term);
+                dumpFrameLocation(term);
                 dumpQuantity(term);
                 out.print("\n");
                 outputNewline = false;
@@ -2302,30 +2318,36 @@ public:
                 dumpCaptured(term);
                 dumpInverted(term);
                 dumpInputPosition(term);
+                dumpFrameLocation(term);
                 break;
             case ByteTerm::TypeParenthesesSubpatternOnceEnd:
                 outputTermIndexAndNest(idx, --nesting);
                 out.print("ParenthesesSubpatternOnceEnd");
+                dumpFrameLocation(term);
                 break;
             case ByteTerm::TypeParenthesesSubpatternTerminalBegin:
                 outputTermIndexAndNest(idx, nesting++);
                 out.print("ParenthesesSubpatternTerminalBegin");
                 dumpInverted(term);
                 dumpInputPosition(term);
+                dumpFrameLocation(term);
                 break;
             case ByteTerm::TypeParenthesesSubpatternTerminalEnd:
                 outputTermIndexAndNest(idx, --nesting);
                 out.print("ParenthesesSubpatternTerminalEnd");
+                dumpFrameLocation(term);
                 break;
             case ByteTerm::TypeParentheticalAssertionBegin:
                 outputTermIndexAndNest(idx, nesting++);
                 out.print("ParentheticalAssertionBegin");
                 dumpInverted(term);
                 dumpInputPosition(term);
+                dumpFrameLocation(term);
                 break;
             case ByteTerm::TypeParentheticalAssertionEnd:
                 outputTermIndexAndNest(idx, --nesting);
                 out.print("ParentheticalAssertionEnd");
+                dumpFrameLocation(term);
                 break;
             case ByteTerm::TypeCheckInput:
                 outputTermIndexAndNest(idx, nesting);
