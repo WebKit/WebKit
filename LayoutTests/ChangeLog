@@ -1,3 +1,18 @@
+2018-06-11  Youenn Fablet  <youenn@apple.com>
+
+        Accept request header values should be more tightly checked after r232572 in case of CORS load
+        https://bugs.webkit.org/show_bug.cgi?id=186533
+        <rdar://problem/40933880>
+
+        Reviewed by Darin Adler.
+
+        Added test to check Accept header value preflight.
+        Updated test to check that a preflight really happens if expected.
+
+        * http/tests/xmlhttprequest/cors-non-standard-safelisted-headers-should-trigger-preflight-expected.txt:
+        * http/tests/xmlhttprequest/cors-non-standard-safelisted-headers-should-trigger-preflight.html:
+        * http/tests/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php:
+
 2018-06-11  Antti Koivisto  <antti@apple.com>
 
         Fix spelling.

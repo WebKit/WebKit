@@ -1,3 +1,18 @@
+2018-06-11  Youenn Fablet  <youenn@apple.com>
+
+        Accept request header values should be more tightly checked after r232572 in case of CORS load
+        https://bugs.webkit.org/show_bug.cgi?id=186533
+        <rdar://problem/40933880>
+
+        Reviewed by Darin Adler.
+
+        Covered by updated test.
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::isValidAcceptHeaderValue): Checking that Accept header value conforms with RFC7370.
+        If not, this will trigger preflighting for CORS cross origin loads.
+        Current checks for Accept-Language and Content-Language are sufficient to ensure values conform with RFC7370.
+
 2018-06-11  Chris Dumez  <cdumez@apple.com>
 
         Crash under com.apple.WebKit.Networking at WebCore: WebCore::NetworkStorageSession::hasStorageAccess const

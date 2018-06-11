@@ -142,9 +142,15 @@ bool isValidAcceptHeaderValue(const String& value)
 {
     for (unsigned i = 0; i < value.length(); ++i) {
         UChar c = value[i];
+
         // First check for alphanumeric for performance reasons then whitelist four delimiter characters.
         if (isASCIIAlphanumeric(c) || c == ',' || c == '/' || c == ';' || c == '=')
             continue;
+
+        ASSERT(c <= 0xFF);
+        if (c == 0x7F || (c < 0x20 && c != '\t'))
+            return false;
+
         if (isDelimiterCharacter(c))
             return false;
     }

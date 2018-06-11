@@ -16,19 +16,24 @@
     var xhr;
     var url = 'http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php';
 
-    function createReadyStateHandler (description, testNumber) {
+    function createOnLoadHandler (description, testNumber, isExpected) {
         return function handler (e) {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (isExpected)
                 testPassed(description);
-                nextStep(testNumber);
-            }
+            else
+                testFailed(description);
+            e.preventDefault();
+            nextStep(testNumber);
         }
     }
 
-    function createOnErrorHandler (description, testNumber) {
+    function createOnErrorHandler (description, testNumber, isExpected) {
         return function handler (e) {
+            if (isExpected)
+                testPassed(description);
+            else
+                testFailed(description);
             e.preventDefault();
-            testPassed(description);
             nextStep(testNumber);
         }
     }
@@ -36,7 +41,9 @@
     var abnormalSimpleCorsHeaderValue = "() { :;};"
     var allAllowedDelimiterCharactersForAcceptHeader = ",/;="
     var allDisallowedDelimiterCharactersForAcceptHeader = ['"', '(', ')', ':', '<', '>', '?', '@', '[', '\\', ']', '{', '}'];
-    var allAllowedNonAlphanumericCharactersForAcceptAndContentLanguageHeader = " *,-.;="
+    var allDisallowedCharactersForAcceptHeader = ['\x19', '\x0B', '\x08', '\x7F'];
+    var allAllowedNonAlphanumericCharactersForAcceptAndContentLanguageHeader = "\x20 *,-.;= ";
+    var allAllowedNonAlphanumericCharactersForAcceptHeader = "\x20 *,-.;= \x7E\x80";
     var testCases = [
         // Positive test cases with normal headers
         {
@@ -80,6 +87,12 @@
             explicitlyAllowHeaders: false,
             shouldCausePreflight: false,
             description: "Accept-Language header value 'zh-Latn-CN-variant1-a-extend1-x-wadegile-private1' SHOULD NOT cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept", value: allAllowedNonAlphanumericCharactersForAcceptHeader }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Accept header value with all allowed non-alphanumeric characters SHOULD NOT cause a preflight"
         }
         ,{
             headersToAdd: [{ name : "Accept-Language", value: allAllowedNonAlphanumericCharactersForAcceptAndContentLanguageHeader }],
@@ -175,18 +188,49 @@
             }
         );
     }
+    for (var i = 0; i < allDisallowedCharactersForAcceptHeader.length; i++) {
+        var disallowedCharacter = allDisallowedCharactersForAcceptHeader[i];
+        testCases.push(
+            {
+                headersToAdd: [{ name : "Accept", value: disallowedCharacter }],
+                explicitlyAllowHeaders: false,
+                shouldCausePreflight: true,
+                description: "Accept header with disallowed character '" + disallowedCharacter + "' SHOULD cause a preflight"
+            }
+        );
+        testCases.push(
+            {
+                headersToAdd: [{ name : "Accept-Language", value: disallowedCharacter }],
+                explicitlyAllowHeaders: false,
+                shouldCausePreflight: true,
+                description: "Accept-Language header with disallowed character '" + disallowedCharacter + "' SHOULD cause a preflight"
+            }
+        );
+        testCases.push(
+            {
+                headersToAdd: [{ name : "Content-Language", value: disallowedCharacter }],
+                explicitlyAllowHeaders: false,
+                shouldCausePreflight: true,
+                description: "Content-Language header with disallowed character '" + disallowedCharacter + "' SHOULD cause a preflight"
+            }
+        );
+    }
 
     function runTestCase(testNumber) {
         var testCase = testCases[testNumber];
         xhr = new XMLHttpRequest();
-        xhr.open('GET', url + (testCase.explicitlyAllowHeaders ? "/?explicitlyAllowHeaders=true" : ""), true);
+        let query = "/?";
+        if (testCase.explicitlyAllowHeaders)
+            query += "explicitlyAllowHeaders&";
+        if (testCase.shouldCausePreflight)
+            query += "shouldPreflight";
+        xhr.open('GET', url + query, true);
         for (var i = 0; i < testCase.headersToAdd.length; i++) {
             xhr.setRequestHeader(testCase.headersToAdd[i].name, testCase.headersToAdd[i].value);
         }
-        if (testCase.shouldCausePreflight && !testCase.explicitlyAllowHeaders)
-            xhr.onerror = createOnErrorHandler(testCase.description, testNumber);
-        else
-            xhr.onreadystatechange = createReadyStateHandler(testCase.description, testNumber);
+        let shouldFail = testCase.shouldCausePreflight && !testCase.explicitlyAllowHeaders;
+        xhr.onerror = createOnErrorHandler(testCase.description, testNumber, shouldFail);
+        xhr.onload = createOnLoadHandler(testCase.description, testNumber, !shouldFail);
         xhr.send();
     }
 
