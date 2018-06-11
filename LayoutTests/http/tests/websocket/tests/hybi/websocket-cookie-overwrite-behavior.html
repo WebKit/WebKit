@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+var cookieValue;
+
+function clearCookie()
+{
+    document.cookie = "foo=0; Max-Age=0"; // The key "foo" must match the key used in the WebSocket Set-Cookie header.
+}
+
+function setCookieFromHost(host)
+{
+    var promise = new Promise(resolve => {
+        var websocket = new WebSocket(`ws://${host}:8880/websocket/tests/hybi/cookie?set`);
+        websocket.onclose = () => resolve();
+    });
+    return promise;
+}
+
+function echoCookie()
+{
+    return document.cookie;
+}
+
+async function testSameOriginCookie()
+{
+    clearCookie();
+    document.cookie = "foo=should_be_overwritten_by_websocket_set_cookie";
+    await setCookieFromHost("127.0.0.1");
+    cookieValue = echoCookie();
+    shouldBeEqualToString("cookieValue", "foo=bar");
+}
+
+async function testCrossOriginCookie()
+{
+    clearCookie();
+    await setCookieFromHost("localhost");
+    cookieValue = echoCookie();
+    shouldBeEmptyString("cookieValue");
+}
+
+async function runTests()
+{
+    debug("Same origin WebSocket:");
+    await testSameOriginCookie();
+    debug("<br>Cross origin WebSocket:");
+    await testCrossOriginCookie();
+    finishJSTest();
+}
+</script>
+</head>
+<body>
+<script>
+description("Tests WebSocket Set-Cookie overwriting behavior with respect to a document cookie.");
+runTests();
+</script>
+</body>
+</html>
