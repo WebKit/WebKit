@@ -1,3 +1,21 @@
+2018-03-30  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: support DataView compilation
+        https://bugs.webkit.org/show_bug.cgi?id=183342
+
+        Reviewed by Mark Lam.
+
+        Compiling a module from a DataView was incorrectly dealing with
+        DataView's offset.
+
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parse):
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::getWasmBufferFromValue):
+        (JSC::createSourceBufferFromValue):
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::webAssemblyValidateFunc):
+
 2018-05-22  Alberto Garcia  <berto@igalia.com>
 
         [CMake] Properly detect compiler flags, needed libs, and fallbacks for usage of 64-bit atomic operations

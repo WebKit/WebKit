@@ -1,3 +1,15 @@
+2018-03-30  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: support DataView compilation
+        https://bugs.webkit.org/show_bug.cgi?id=183342
+
+        Reviewed by Mark Lam.
+
+        Test WebAssembly compilation using a DataView with offset.
+
+        * wasm/regress/183342.js: Added.
+        (attempt.catch):
+
 2018-05-01  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Add SetCallee as DFG-Operation
