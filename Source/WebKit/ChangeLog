@@ -1,3 +1,17 @@
+2018-06-11  Nan Wang  <n_wang@apple.com>
+
+        AX: [iOS] accessibility sometimes doesn't know process suspension is canceled
+        https://bugs.webkit.org/show_bug.cgi?id=186450
+
+        Reviewed by Chris Fleizach.
+
+        There's some early return condition in WebProcess::cancelPrepareToSuspend() which
+        could lead to accessibility failing to post process status notificaiton. Fixed it
+        by moving the accessibility notification before the early return condition.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::cancelPrepareToSuspend):
+
 2018-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add API run run javascript from a WebKitWebView in an isolated world

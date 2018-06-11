@@ -1412,16 +1412,16 @@ void WebProcess::cancelPrepareToSuspend()
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::cancelPrepareToSuspend()", this);
     setAllLayerTreeStatesFrozen(false);
 
+#if PLATFORM(IOS)
+    accessibilityProcessSuspendedNotification(false);
+#endif
+    
     // If we've already finished cleaning up and sent ProcessReadyToSuspend, we
     // shouldn't send DidCancelProcessSuspension; the UI process strictly expects one or the other.
     if (!m_pageMarkingLayersAsVolatileCounter)
         return;
 
     cancelMarkAllLayersVolatile();
-    
-#if PLATFORM(IOS)
-    accessibilityProcessSuspendedNotification(false);
-#endif
 
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::cancelPrepareToSuspend() Sending DidCancelProcessSuspension IPC message", this);
     parentProcessConnection()->send(Messages::WebProcessProxy::DidCancelProcessSuspension(), 0);
