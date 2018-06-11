@@ -1936,7 +1936,6 @@ webkit.org/b/183826 imported/mozilla/css-animations/test_animation-pausing.html 
 webkit.org/b/183828 imported/mozilla/css-animations/test_animation-playstate.html [ Pass Failure Timeout ]
 webkit.org/b/183830 imported/mozilla/css-animations/test_animation-ready.html [ Pass Failure Timeout ]
 webkit.org/b/183831 imported/mozilla/css-transitions/test_animation-ready.html [ Pass Failure Timeout ]
-webkit.org/b/183832 imported/mozilla/css-animations/test_animation-reverse.html [ Pass Failure Timeout ]
 webkit.org/b/183833 imported/mozilla/css-transitions/test_animation-starttime.html [ Pass Failure Timeout ]
 webkit.org/b/183834 imported/mozilla/css-animations/test_animation-starttime.html [ Pass Failure Timeout ]
 webkit.org/b/183835 imported/mozilla/css-transitions/test_csstransition-transitionproperty.html [ Pass Failure Timeout ]
