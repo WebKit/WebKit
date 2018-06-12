@@ -1,3 +1,15 @@
+2018-06-12  David Fenton  <david_fenton@apple.com>
+
+        Rebaseline WebCrypto API tests for High Sierra after r232641.
+        https://bugs.webkit.org/show_bug.cgi?id=186565
+
+        Unreviewed test gardening.
+
+        * platform/mac-sierra/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any-expected.txt: Added.
+        * platform/mac-sierra/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any.worker-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any.worker-expected.txt: Added.
+
 2018-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit on watchOS] Upstream watchOS source additions to OpenSource (Part 2)
