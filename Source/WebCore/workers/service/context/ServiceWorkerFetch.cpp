@@ -43,13 +43,13 @@ namespace WebCore {
 
 namespace ServiceWorkerFetch {
 
-static void processResponse(Ref<Client>&& client, FetchResponse* response)
+static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, ResourceError>&& result)
 {
-    if (!response) {
-        client->didFail(ResourceError { errorDomainWebKitInternal, 0, URL(), ASCIILiteral("Response is null") });
+    if (!result.has_value()) {
+        client->didFail(result.error());
         return;
     }
-    auto protectedResponse = makeRef(*response);
+    auto response = WTFMove(result.value());
 
     client->didReceiveResponse(response->resourceResponse());
 
@@ -61,7 +61,7 @@ static void processResponse(Ref<Client>&& client, FetchResponse* response)
     if (response->isBodyReceivedByChunk()) {
         response->consumeBodyReceivedByChunk([client = WTFMove(client)] (auto&& result) mutable {
             if (result.hasException()) {
-                client->didFail(ResourceError { errorDomainWebKitInternal, 0, URL(), result.exception().message() });
+                client->didFail(FetchEvent::createResponseError(URL { }, result.exception().message()));
                 return;
             }
 
@@ -122,8 +122,8 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     init.cancelable = true;
     auto event = FetchEvent::create(eventNames().fetchEvent, WTFMove(init), Event::IsTrusted::Yes);
 
-    event->onResponse([client = client.copyRef()] (FetchResponse* response) mutable {
-        processResponse(WTFMove(client), response);
+    event->onResponse([client = client.copyRef()] (auto&& result) mutable {
+        processResponse(WTFMove(client), WTFMove(result));
     });
 
     globalScope.dispatchEvent(event);

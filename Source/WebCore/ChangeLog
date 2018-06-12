@@ -1,3 +1,36 @@
+2018-06-11  Youenn Fablet  <youenn@apple.com>
+
+        Improve error messages in case FetchEvent.respondWith has a rejected promise
+        https://bugs.webkit.org/show_bug.cgi?id=186368
+
+        Reviewed by Chris Dumez.
+
+        Covered by rebased tests.
+
+        Introduce a new error domain for service worker ResourceError.
+        Used this domain to log in the console any such error.
+
+        Update FetchEvent implementation to get meaningful error messages for respondWith error cases.
+        In particular, convert the rejected promise JS value as a string to populate the error message.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFail):
+        * platform/network/ResourceErrorBase.cpp:
+        * platform/network/ResourceErrorBase.h:
+        * testing/ServiceWorkerInternals.cpp:
+        (WebCore::ServiceWorkerInternals::waitForFetchEventToFinish):
+        * workers/service/FetchEvent.cpp:
+        (WebCore::FetchEvent::~FetchEvent):
+        (WebCore::FetchEvent::createResponseError):
+        (WebCore::FetchEvent::onResponse):
+        (WebCore::FetchEvent::respondWithError):
+        (WebCore::FetchEvent::processResponse):
+        (WebCore::FetchEvent::promiseIsSettled):
+        * workers/service/FetchEvent.h:
+        * workers/service/context/ServiceWorkerFetch.cpp:
+        (WebCore::ServiceWorkerFetch::processResponse):
+        (WebCore::ServiceWorkerFetch::dispatchFetchEvent):
+
 2018-06-11  Chris Dumez  <cdumez@apple.com>
 
         http/tests/security/xss-DENIED-script-inject-into-inactive-window2.html times out with PSON enabled

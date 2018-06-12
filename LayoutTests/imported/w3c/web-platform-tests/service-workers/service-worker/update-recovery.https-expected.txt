@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: undefined
+CONSOLE MESSAGE: Cannot load https://localhost:9443/service-workers/service-worker/resources/simple.txt.
 
 PASS Recover from a bad service worker by updating after a failed navigation. 
 

@@ -51,11 +51,11 @@ void ServiceWorkerInternals::setOnline(bool isOnline)
 
 void ServiceWorkerInternals::waitForFetchEventToFinish(FetchEvent& event, DOMPromiseDeferred<IDLInterface<FetchResponse>>&& promise)
 {
-    event.onResponse([promise = WTFMove(promise), event = makeRef(event)] (FetchResponse* response) mutable {
-        if (response)
-            promise.resolve(*response);
+    event.onResponse([promise = WTFMove(promise), event = makeRef(event)] (auto&& result) mutable {
+        if (result.has_value())
+            promise.resolve(WTFMove(result.value()));
         else
-            promise.reject(TypeError, ASCIILiteral("fetch event responded with error"));
+            promise.reject(TypeError, result.error().localizedDescription());
     });
 }
 

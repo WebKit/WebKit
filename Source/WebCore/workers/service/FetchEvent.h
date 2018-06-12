@@ -30,10 +30,12 @@
 #include "ExtendableEvent.h"
 #include "FetchRequest.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/Expected.h>
 
 namespace WebCore {
 
 class FetchResponse;
+class ResourceError;
 
 class FetchEvent final : public ExtendableEvent {
 public:
@@ -56,7 +58,8 @@ public:
 
     ExceptionOr<void> respondWith(Ref<DOMPromise>&&);
 
-    WEBCORE_EXPORT void onResponse(CompletionHandler<void(FetchResponse*)>&&);
+    using ResponseCallback = CompletionHandler<void(Expected<Ref<FetchResponse>, ResourceError>&&)>;
+    WEBCORE_EXPORT void onResponse(ResponseCallback&&);
 
     FetchRequest& request() { return m_request.get(); }
     const String& clientId() const { return m_clientId; }
@@ -65,12 +68,14 @@ public:
 
     bool respondWithEntered() const { return m_respondWithEntered; }
 
+    static ResourceError createResponseError(const URL&, const String&);
+
 private:
     WEBCORE_EXPORT FetchEvent(const AtomicString&, Init&&, IsTrusted);
 
     void promiseIsSettled();
-    void processResponse(FetchResponse*);
-    void respondWithError();
+    void processResponse(Expected<Ref<FetchResponse>, ResourceError>&&);
+    void respondWithError(ResourceError&&);
 
     Ref<FetchRequest> m_request;
     String m_clientId;
@@ -82,7 +87,7 @@ private:
     bool m_respondWithError { false };
     RefPtr<DOMPromise> m_respondPromise;
 
-    CompletionHandler<void(FetchResponse*)> m_onResponse;
+    ResponseCallback m_onResponse;
 };
 
 } // namespace WebCore

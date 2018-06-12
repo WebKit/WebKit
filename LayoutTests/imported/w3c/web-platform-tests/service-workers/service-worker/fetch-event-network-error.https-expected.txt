@@ -1,4 +1,11 @@
+CONSOLE MESSAGE: Fetch event was canceled
 CONSOLE MESSAGE: XMLHttpRequest cannot load https://localhost:9443/service-workers/service-worker/resources/fetch-event-network-error-controllee-iframe.html?prevent-default.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: undefined
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://localhost:9443/service-workers/service-worker/resources/fetch-event-network-error-controllee-iframe.html?reject.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: Response is disturbed or locked.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://localhost:9443/service-workers/service-worker/resources/fetch-event-network-error-controllee-iframe.html?used-body.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: Response is disturbed or locked.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://localhost:9443/service-workers/service-worker/resources/fetch-event-network-error-controllee-iframe.html?used-fetched-body.
 
 PASS Rejecting the fetch event or using preventDefault() causes a network error 
 

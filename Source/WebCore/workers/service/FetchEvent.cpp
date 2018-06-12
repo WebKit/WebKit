@@ -52,7 +52,13 @@ FetchEvent::FetchEvent(const AtomicString& type, Init&& initializer, IsTrusted i
 FetchEvent::~FetchEvent()
 {
     if (auto callback = WTFMove(m_onResponse))
-        callback(nullptr);
+        callback(makeUnexpected(ResourceError { errorDomainWebKitServiceWorker, 0, m_request->url(), ASCIILiteral("Fetch event is destroyed."), ResourceError::Type::Cancellation }));
+}
+
+ResourceError FetchEvent::createResponseError(const URL& url, const String& errorMessage)
+{
+    return ResourceError { errorDomainWebKitServiceWorker, 0, url, makeString("FetchEvent.respondWith received an error: ", errorMessage), ResourceError::Type::General };
+
 }
 
 ExceptionOr<void> FetchEvent::respondWith(Ref<DOMPromise>&& promise)
@@ -81,46 +87,47 @@ ExceptionOr<void> FetchEvent::respondWith(Ref<DOMPromise>&& promise)
     return { };
 }
 
-void FetchEvent::onResponse(CompletionHandler<void(FetchResponse*)>&& callback)
+void FetchEvent::onResponse(ResponseCallback&& callback)
 {
     ASSERT(!m_onResponse);
     m_onResponse = WTFMove(callback);
 }
 
-void FetchEvent::respondWithError()
+void FetchEvent::respondWithError(ResourceError&& error)
 {
     m_respondWithError = true;
-    processResponse(nullptr);
+    processResponse(makeUnexpected(WTFMove(error)));
 }
 
-void FetchEvent::processResponse(FetchResponse* response)
+void FetchEvent::processResponse(Expected<Ref<FetchResponse>, ResourceError>&& result)
 {
     m_respondPromise = nullptr;
     m_waitToRespond = false;
     if (auto callback = WTFMove(m_onResponse))
-        callback(response);
+        callback(WTFMove(result));
 }
 
 void FetchEvent::promiseIsSettled()
 {
     if (m_respondPromise->status() == DOMPromise::Status::Rejected) {
-        respondWithError();
+        auto reason = m_respondPromise->result().toWTFString(m_respondPromise->globalObject()->globalExec());
+        respondWithError(createResponseError(m_request->url(), reason));
         return;
     }
 
     ASSERT(m_respondPromise->status() == DOMPromise::Status::Fulfilled);
     auto response = JSFetchResponse::toWrapped(m_respondPromise->globalObject()->globalExec()->vm(), m_respondPromise->result());
     if (!response) {
-        respondWithError();
+        respondWithError(createResponseError(m_request->url(), ASCIILiteral("Returned response is null.")));
         return;
     }
 
     if (response->isDisturbedOrLocked()) {
-        respondWithError();
+        respondWithError(createResponseError(m_request->url(), ASCIILiteral("Response is disturbed or locked.")));
         return;
     }
 
-    processResponse(response);
+    processResponse(makeRef(*response));
 }
 
 } // namespace WebCore

@@ -1,3 +1,22 @@
+2018-06-11  Youenn Fablet  <youenn@apple.com>
+
+        Improve error messages in case FetchEvent.respondWith has a rejected promise
+        https://bugs.webkit.org/show_bug.cgi?id=186368
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/service-workers/service-worker/fetch-event-network-error.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-argument.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-response-body-with-invalid-chunk.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-frame-resource.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-inscope.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-outscope.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-css-images.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-resources.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/invalid-header.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update-recovery.https-expected.txt:
+
 2018-06-08  Brendan McLoughlin  <brendan@bocoup.com>
 
         Sync web-platform-tests repo to 197cdad

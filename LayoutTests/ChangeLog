@@ -1,3 +1,13 @@
+2018-06-11  Youenn Fablet  <youenn@apple.com>
+
+        Improve error messages in case FetchEvent.respondWith has a rejected promise
+        https://bugs.webkit.org/show_bug.cgi?id=186368
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+        * http/tests/workers/service/basic-fetch.https-expected.txt:
+
 2018-06-11  Chris Dumez  <cdumez@apple.com>
 
         http/tests/security/xss-DENIED-script-inject-into-inactive-window2.html times out with PSON enabled
