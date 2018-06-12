@@ -1,3 +1,13 @@
+2018-06-12  Andy Estes  <aestes@apple.com>
+
+        [watchOS] Enable NetworkActivityTracker
+        https://bugs.webkit.org/show_bug.cgi?id=186568
+        <rdar://problem/41050624>
+
+        Reviewed by Tim Horton.
+
+        * NetworkProcess/NetworkActivityTracker.h:
+
 2018-06-12  Antti Koivisto  <antti@apple.com>
 
         Add performance logging for slow cache retrieves
