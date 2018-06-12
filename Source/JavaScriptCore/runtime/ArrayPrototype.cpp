@@ -1514,16 +1514,13 @@ ArrayPrototypeAdaptiveInferredPropertyWatchpoint::ArrayPrototypeAdaptiveInferred
 
 void ArrayPrototypeAdaptiveInferredPropertyWatchpoint::handleFire(const FireDetail& detail)
 {
-    StringPrintStream out;
-    out.print("ArrayPrototype adaption of ", key(), " failed: ", detail);
-
-    StringFireDetail stringDetail(out.toCString().data());
+    auto lazyDetail = createLazyFireDetail("ArrayPrototype adaption of ", key(), " failed: ", detail);
 
     if (ArrayPrototypeInternal::verbose)
-        WTF::dataLog(stringDetail, "\n");
+        WTF::dataLog(lazyDetail, "\n");
 
     JSGlobalObject* globalObject = m_arrayPrototype->globalObject();
-    globalObject->arraySpeciesWatchpoint().fireAll(globalObject->vm(), stringDetail);
+    globalObject->arraySpeciesWatchpoint().fireAll(globalObject->vm(), lazyDetail);
 }
 
 } // namespace JSC

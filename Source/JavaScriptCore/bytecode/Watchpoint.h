@@ -29,6 +29,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
+#include <wtf/ScopedLambda.h>
 #include <wtf/SentinelLinkedList.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -61,6 +62,28 @@ public:
 private:
     const char* m_string;
 };
+
+template<typename... Types>
+class LazyFireDetail : public FireDetail {
+public:
+    LazyFireDetail(const Types&... args)
+    {
+        m_lambda = scopedLambda<void(PrintStream&)>([&] (PrintStream& out) {
+            out.print(args...);
+        });
+    }
+
+    void dump(PrintStream& out) const override { m_lambda(out); }
+
+private:
+    ScopedLambda<void(PrintStream&)> m_lambda;
+};
+
+template<typename... Types>
+LazyFireDetail<Types...> createLazyFireDetail(const Types&... types)
+{
+    return LazyFireDetail<Types...>(types...);
+}
 
 class WatchpointSet;
 

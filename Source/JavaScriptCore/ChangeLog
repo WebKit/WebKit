@@ -1,3 +1,23 @@
+2018-06-11  Keith Miller  <keith_miller@apple.com>
+
+        Loading cnn.com in MiniBrowser hits Structure::dump() under DFG::AdaptiveInferredPropertyValueWatchpoint::handleFire  which churns 65KB of memory
+        https://bugs.webkit.org/show_bug.cgi?id=186467
+
+        Reviewed by Simon Fraser.
+
+        This patch adds a LazyFireDetail that wraps ScopedLambda so that
+        we don't actually malloc any strings for firing unless those
+        Strings are actually going to be printed.
+
+        * bytecode/Watchpoint.h:
+        (JSC::LazyFireDetail::LazyFireDetail):
+        * dfg/DFGAdaptiveInferredPropertyValueWatchpoint.cpp:
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::handleFire):
+        * dfg/DFGAdaptiveStructureWatchpoint.cpp:
+        (JSC::DFG::AdaptiveStructureWatchpoint::fireInternal):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototypeAdaptiveInferredPropertyWatchpoint::handleFire):
+
 2018-06-11  Mark Lam  <mark.lam@apple.com>
 
         Add support for webkit-test-runner jscOptions in DumpRenderTree and WebKitTestRunner.

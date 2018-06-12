@@ -61,14 +61,11 @@ void AdaptiveStructureWatchpoint::fireInternal(const FireDetail& detail)
         dataLog(
             "Firing watchpoint ", RawPointer(this), " (", m_key, ") on ", *m_codeBlock, "\n");
     }
-    
-    StringPrintStream out;
-    out.print("Adaptation of ", m_key, " failed: ", detail);
-    
-    StringFireDetail stringDetail(out.toCString().data());
-    
+
+    auto lazyDetail = createLazyFireDetail("Adaptation of ", m_key, " failed: ", detail);
+
     m_codeBlock->jettison(
-        Profiler::JettisonDueToUnprofiledWatchpoint, CountReoptimization, &stringDetail);
+        Profiler::JettisonDueToUnprofiledWatchpoint, CountReoptimization, &lazyDetail);
 }
 
 } } // namespace JSC::DFG
