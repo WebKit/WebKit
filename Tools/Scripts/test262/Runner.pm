@@ -78,7 +78,6 @@ my $max_process;
 my @cliTestDirs;
 my $verbose;
 my $JSC;
-my $test262Dir;
 my $harnessDir;
 my %filterFeatures;
 my $ignoreConfig;
@@ -91,23 +90,21 @@ my $latestImport;
 my $runningAllTests;
 my $timeout;
 
-my $expectationsFile = abs_path("$Bin/../../../JSTests/test262/expectations.yaml");
-my $configFile = abs_path("$Bin/../../../JSTests/test262/config.yaml");
+my $test262Dir;
+my $webkitTest262Dir = abs_path("$Bin/../../../JSTests/test262");
+my $expectationsFile = abs_path("$webkitTest262Dir/expectations.yaml");
+my $configFile = abs_path("$webkitTest262Dir/config.yaml");
 
 my $resultsDir = $ENV{PWD} . "/test262-results";
-mkpath($resultsDir);
-
-my $resultsFile = abs_path("$resultsDir/results.yaml");
-my $summaryTxtFile = abs_path("$resultsDir/summary.txt");
-my $summaryFile = abs_path("$resultsDir/summary.yaml");
+my $resultsFile;
+my $summaryTxtFile;
+my $summaryFile;
 
 my @results;
 my @files;
 
 my $tempdir = tempdir();
 my ($deffh, $deffile) = getTempFile();
-
-my @default_harnesses;
 
 my $startTime = time();
 
@@ -166,14 +163,25 @@ sub processCLI {
         }
     }
 
-    if ($stats) {
-        if (! -e $resultsFile) {
-            die "Error: cannot find results file to summarize," .
+    if ($stats || $failingOnly) {
+        # If not supplied, try to find the results file in expected directory
+        $resultsFile ||= abs_path("$resultsDir/results.yaml");
+
+        if ($failingOnly && ! -e $resultsFile) {
+            die "Error: cannot find results file to run failing tests," .
                 "please specify with --results.";
         }
-        summarizeResults();
-        exit;
+
+        if ($stats) {
+            if (! -e $resultsFile) {
+                die "Error: cannot find results file to summarize," .
+                    " please specify with --results.";
+            }
+            summarizeResults();
+            exit;
+        }
     }
+
 
     if ($JSC) {
         $JSC = abs_path($JSC);
@@ -195,11 +203,18 @@ sub processCLI {
     }
 
     if (! $test262Dir) {
-        $test262Dir = abs_path("$Bin/../../../JSTests/test262");
+        $test262Dir = $webkitTest262Dir;
     } else {
         $test262Dir = abs_path($test262Dir);
     }
+
     $harnessDir = "$test262Dir/harness";
+    if (! -e $harnessDir) {
+        # if the harness directory does not exist in the custom test262 path,
+        # then use the webkits harness directory.
+        $harnessDir = "$webkitTest262Dir/harness";
+    }
+
 
     if (! $ignoreConfig) {
         if ($configFile && ! -e $configFile) {
@@ -210,11 +225,6 @@ sub processCLI {
         if ($config->{skip} && $config->{skip}->{files}) {
             %configSkipHash = map { $_ => 1 } @{$config->{skip}->{files}};
         }
-    }
-
-    if ( $failingOnly && ! -e $resultsFile ) {
-        die "Error: cannot find results file to run failing tests," .
-            " please specify with --results.";
     }
 
     if ($specifiedExpectationsFile) {
@@ -256,16 +266,18 @@ sub processCLI {
     print "--------------------------------------------------------\n\n";
 }
 
+
 sub main {
     processCLI();
 
-    @default_harnesses = (
+    my @defaultHarnessFiles = (
         "$harnessDir/sta.js",
         "$harnessDir/assert.js",
         "$harnessDir/doneprintHandle.js",
         "$Bin/agent.js"
     );
-    print $deffh getHarness(<@default_harnesses>);
+
+    print $deffh getHarness(\@defaultHarnessFiles);
 
     # If not commandline test path supplied, use the root directory of all tests.
     push(@cliTestDirs, 'test') if not @cliTestDirs;
@@ -389,6 +401,11 @@ sub main {
     }
 
     if ($runningAllTests) {
+        if (! -e $resultsDir) {
+            mkpath($resultsDir);
+        }
+        $resultsFile = abs_path("$resultsDir/results.yaml");
+
         DumpFile($resultsFile, \@results);
         print "Saved all the results in $resultsFile\n";
         summarizeResults();
@@ -592,7 +609,8 @@ sub compileTest {
     my $includes = shift;
     my ($tfh, $tfname) = getTempFile();
 
-    my $includesContent = getHarness(map { "$harnessDir/$_" } @{ $includes });
+    my @includes = map { "$harnessDir/$_" } @{ $includes };
+    my $includesContent = getHarness(\@includes);
     print $tfh $includesContent;
 
     return ($tfh, $tfname);
@@ -664,10 +682,11 @@ sub processResult {
 
     if ($scenario ne 'skip' && $currentfailure) {
 
-        # We have a new failure if we have loaded an expectation file
-        # AND (there is no expected failure OR the failure has changed).
-        my $isnewfailure = $expect
-            && (!$expectedfailure || $expectedfailure ne $currentfailure);
+        # We have a new failure if we haven't loaded an expectation file
+        # (all fails are new) OR we have loaded an expectation fail and
+        # (there is no expected failure OR the failure has changed).
+        my $isnewfailure = ! $expect
+            || !$expectedfailure || $expectedfailure ne $currentfailure;
 
         # Print the failure if we haven't loaded an expectation file
         # or the failure is new.
@@ -747,9 +766,10 @@ sub parseData {
 }
 
 sub getHarness {
-    my @files = @_;
+    my ($filesref) = @_;
+
     my $content;
-    for (@files) {
+    for (@{$filesref}) {
         my $file = $_;
 
         open(my $harness_file, '<', $file)
@@ -760,7 +780,7 @@ sub getHarness {
         close $harness_file;
     };
 
-    return $content;
+    return $content || '';
 }
 
 sub summarizeResults {
@@ -770,6 +790,14 @@ sub summarizeResults {
         my @rawresults = LoadFile($resultsFile) or die $!;
         @results = @{$rawresults[0]};
     }
+
+    # Create test262-results folder if it does not exits
+    if (! -e $resultsDir) {
+        mkpath($resultsDir);
+    }
+    $summaryTxtFile = abs_path("$resultsDir/summary.txt");
+    $summaryFile = abs_path("$resultsDir/summary.yaml");
+
     my %byfeature;
     my %bypath;
 
