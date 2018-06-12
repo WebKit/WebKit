@@ -68,6 +68,7 @@ class DeprecatedPort(object):
             # FIXME: https://bugs.webkit.org/show_bug.cgi?id=169302
             "ios": IOSPort,
             "ios-simulator-wk2": IOSSimulatorWK2Port,
+            "jsc-only": JscOnlyPort,
             "mac": MacPort,
             "mac-wk2": MacWK2Port,
             "win": WinPort,
@@ -230,3 +231,11 @@ class WpePort(DeprecatedPort):
         command = super(WpePort, self).run_webkit_tests_command(build_style)
         command.append("--wpe")
         return command
+
+
+class JscOnlyPort(DeprecatedPort):
+    port_flag_name = "jsc-only"
+
+    def build_jsc_command(self, build_style=None):
+        command = self.script_shell_command("build-jsc")
+        return self._append_build_style_flag(command, build_style)

@@ -91,6 +91,7 @@ class PortFactory(object):
         'gtk.GtkPort',
         'ios_simulator.IOSSimulatorPort',
         'ios_device.IOSDevicePort',
+        'jsc_only.JscOnlyPort',
         'mac.MacPort',
         'mock_drt.MockDRTPort',
         'test.TestPort',
