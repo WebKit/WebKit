@@ -1,3 +1,19 @@
+2018-06-11  Philippe Normand  <philn@igalia.com>
+
+        [GStreamer] flush video sample upon DRAIN query
+        https://bugs.webkit.org/show_bug.cgi?id=186481
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Use the appsink sink pad pad probe for both event and drain query
+        management. This patch is partially based on
+        https://github.com/WebPlatformForEmbedded/WPEWebKit/commit/d3a336523d123119fe1dd53da5d9006c92cf078c
+        by Enrique Ocaña González <eocanha@igalia.com>.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::flushCurrentBuffer):
+        (WebCore::MediaPlayerPrivateGStreamerBase::createGLAppSink):
+
 2018-06-11  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Replace HorizontalGeometry::width and margin with WidthAndMargin (Vertical too)
