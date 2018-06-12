@@ -1,3 +1,19 @@
+2018-06-12  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Bump required version to 1.8.3
+        https://bugs.webkit.org/show_bug.cgi?id=186558
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/GStreamer.cmake: Remove useless file.
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcChangeState): Remove useless version check.
+        * platform/graphics/gstreamer/eme/GStreamerEMEUtilities.cpp:
+        Removed. createDecryptor() is dead code since the decryptors moved
+        to the MSE playback pipeline.
+        * platform/graphics/gstreamer/eme/GStreamerEMEUtilities.h:
+        (WebCore::GStreamerEMEUtilities::keySystemToUuid):
+
 2018-06-11  Philippe Normand  <philn@igalia.com>
 
         [GStreamer] flush video sample upon DRAIN query

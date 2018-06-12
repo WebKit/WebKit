@@ -1,3 +1,13 @@
+2018-06-12  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Bump required version to 1.8.3
+        https://bugs.webkit.org/show_bug.cgi?id=186558
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Source/cmake/GStreamerChecks.cmake: Bump to 1.8.3 which is the
+        version shipped in the current Ubuntu LTS we support (16.04).
+
 2018-06-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Add run-web-platform-tests script

@@ -10,7 +10,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         SET_AND_EXPOSE_TO_BUILD(USE_WEBAUDIO_GSTREAMER TRUE)
     endif ()
 
-    find_package(GStreamer 1.2.3 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
+    find_package(GStreamer 1.8.3 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
 
     if (ENABLE_WEB_AUDIO)
         if (NOT PC_GSTREAMER_AUDIO_FOUND OR NOT PC_GSTREAMER_FFT_FOUND)
@@ -29,12 +29,6 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     if (USE_GSTREAMER_MPEGTS)
         if (NOT PC_GSTREAMER_MPEGTS_FOUND)
             message(FATAL_ERROR "GStreamer MPEG-TS is needed for USE_GSTREAMER_MPEGTS.")
-        endif ()
-    endif ()
-
-    if (ENABLE_MEDIA_SOURCE)
-        if (PC_GSTREAMER_VERSION VERSION_LESS "1.8")
-            message(FATAL_ERROR "GStreamer 1.8 is needed for ENABLE_MEDIA_SOURCE.")
         endif ()
     endif ()
 

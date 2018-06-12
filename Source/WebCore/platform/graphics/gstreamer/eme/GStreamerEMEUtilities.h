@@ -36,8 +36,8 @@ using InitData = String;
 class GStreamerEMEUtilities {
 
 public:
-    static const char* s_ClearKeyUUID;
-    static const char* s_ClearKeyKeySystem;
+    static const char* s_ClearKeyUUID = WEBCORE_GSTREAMER_EME_UTILITIES_CLEARKEY_UUID;
+    static const char* s_ClearKeyKeySystem = "org.w3.clearkey";
 
     static bool isClearKeyKeySystem(const String& keySystem)
     {
@@ -52,8 +52,6 @@ public:
         ASSERT_NOT_REACHED();
         return { };
     }
-
-    static GstElement* createDecryptor(const char* protectionSystem);
 };
 
 }
