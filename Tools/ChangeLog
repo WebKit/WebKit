@@ -1,3 +1,17 @@
+2018-06-12  Tim Horton  <timothy_horton@apple.com>
+
+        Add a API test for r232601
+        https://bugs.webkit.org/show_bug.cgi?id=186417
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AnimatedResize.mm:
+        (immediateSubviewOfClass):
+        (TEST):
+        Ensure that we put the view hierarchy back together (move WKContentView
+        out of the animated resize view) and unhide WKContentView after a
+        resize-with-hidden-content.
+
 2018-06-12  Valerie R Young  <valerie@bocoup.com>
 
         test262/Runner.pm: add unit tests
