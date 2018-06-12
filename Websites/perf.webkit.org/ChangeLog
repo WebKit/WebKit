@@ -1,3 +1,18 @@
+2018-06-11  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Extend test group rule to support 'userInitiated' field.
+        https://bugs.webkit.org/show_bug.cgi?id=186544
+
+        Reviewed by Ryosuke Niwa.
+
+        Added support for rule specifying whether or not test group is user initiated.
+
+        * tools/js/analysis-results-notifier.js: Rule now support 'userInitiated' field.
+        (AnalysisResultsNotifier.prototype.async.sendNotificationsForTestGroups):
+        (AnalysisResultsNotifier.prototype._applyRules):
+        (AnalysisResultsNotifier._matchesRule):
+        * unit-tests/analysis-results-notifier-tests.js: Added unit tests for this change.
+
 2018-05-29  Dewei Zhu  <dewei_zhu@apple.com>
 
         CommitSet range bisector should use commits occur in commit sets which specify the range as valid commits for commits without ordering.

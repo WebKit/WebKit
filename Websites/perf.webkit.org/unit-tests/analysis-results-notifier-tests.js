@@ -21,36 +21,66 @@ describe('AnalysisResultsNotifier', () => {
 
         it('should return a group of matching function based on configuration', () => {
             const rule = {platforms: [trunkMacBook, trunkMacBookPro], tests: [speedometer, speedometer2]};
-            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, rule));
-            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, rule));
-            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, rule));
-            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, jetStream, rule));
-            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookAir, speedometer, rule));
-            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookAir, jetStream, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, true, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, true, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, jetStream, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookAir, speedometer, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookAir, jetStream, true, rule));
 
         });
 
         it('should match rule only contains tests correctly', () => {
             const rule = {tests: [jetStream]};
-            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer, rule));
-            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, rule));
-            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, rule));
-            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, rule));
-            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, jetStream, rule));
-            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, jetStream, rule));
-            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookAir, jetStream, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, true, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, jetStream, true, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, jetStream, true, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookAir, jetStream, true, rule));
         });
 
         it('should match rule only contains platforms correctly', () => {
             const rule = {platforms: [trunkMacBook]};
-            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer, rule));
-            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, rule));
-            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, jetStream, rule));
-            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, rule));
-            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, rule));
-            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, jetStream, rule));
-            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookAir, jetStream, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer, true, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, true, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, jetStream, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, jetStream, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookAir, jetStream, true, rule));
+        });
 
+        it('should match rule with "userInitiated" set to true', () => {
+            const rule = {platforms: [trunkMacBook, trunkMacBookPro], tests: [speedometer, speedometer2], userInitiated: true};
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, true, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, true, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, false, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, false, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, false, rule));
+        });
+
+        it('should match rule with "userInitiated" set to false', () => {
+            const rule = {platforms: [trunkMacBook, trunkMacBookPro], tests: [speedometer, speedometer2], userInitiated: false};
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, false, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, false, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, false, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, true, rule));
+            assert.ok(!AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, true, rule));
+
+        });
+
+        it('should match the rule regardless whether or not "userInitiated" is set if rule does not specify', () => {
+            const rule = {platforms: [trunkMacBook, trunkMacBookPro], tests: [speedometer, speedometer2]};
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, true, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, true, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, true, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBook, speedometer2, false, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer, false, rule));
+            assert.ok(AnalysisResultsNotifier._matchesRule(trunkMacBookPro, speedometer2, false, rule));
         });
     });
 

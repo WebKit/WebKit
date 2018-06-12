@@ -39,7 +39,7 @@ class AnalysisResultsNotifier {
             const title = `"${testGroup.task().name()}" - "${testGroup.name()}" has finished`;
             const message = await AnalysisResultsNotifier._messageForTestGroup(testGroup, title);
             let content = AnalysisResultsNotifier._instantiateNotificationTemplate(this._messageTemplate, title, message);
-            content = this._applyRules(testGroup.platform().name(), testGroup.test().path()[0].name(), content);
+            content = this._applyRules(testGroup.platform().name(), testGroup.test().path()[0].name(), !!testGroup.author(), content);
             const testGroupInfo = {author: testGroup.author()};
 
             const tempDir = fs.mkdtempSync(os.tmpdir());
@@ -77,21 +77,24 @@ class AnalysisResultsNotifier {
         return instance;
     }
 
-    _applyRules(platformName, testName, message)
+    _applyRules(platformName, testName, userInitiated, message)
     {
         for (const rule of this._messageConstructionRules) {
-            if (AnalysisResultsNotifier._matchesRule(platformName, testName, rule))
+            if (AnalysisResultsNotifier._matchesRule(platformName, testName, userInitiated, rule))
                 message = AnalysisResultsNotifier._applyUpdate(message, rule.parameters);
         }
         return message;
     }
 
-    static _matchesRule(platform, test, rule)
+    static _matchesRule(platform, test, userInitiated, rule)
     {
         if (rule.tests && !rule.tests.includes(test))
             return false;
 
         if (rule.platforms && !rule.platforms.includes(platform))
+            return false;
+
+        if ('userInitiated' in rule && userInitiated !== rule.userInitiated)
             return false;
 
         return true;
