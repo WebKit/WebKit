@@ -1,3 +1,14 @@
+2018-06-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Turn CSS Spring Animations and Link Preload off by default for production builds.
+        https://bugs.webkit.org/show_bug.cgi?id=186548
+        <rdar://problem/41023774>
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferences.yaml: Switch these features from 'on' to
+        DEFAULT_EXPERIMENTAL_FEATURES_ENABLED.
+
 2018-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit on watchOS] Upstream watchOS source additions to OpenSource (Part 2)

@@ -1100,7 +1100,7 @@ CrossOriginWindowPolicySupportEnabled:
 
 SpringTimingFunctionEnabled:
   type: bool
-  defaultValue: true
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
   humanReadableName: "CSS Spring Animations"
   humanReadableDescription: "CSS Spring Animation prototype"
   category: experimental
@@ -1115,7 +1115,7 @@ ImageBitmapOffscreenCanvasEnabled:
 
 LinkPreloadEnabled:
   type: bool
-  defaultValue: true
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
   humanReadableName: "Link Preload"
   humanReadableDescription: "Link preload support"
   category: experimental
