@@ -1,3 +1,16 @@
+2018-06-12  Jianjun Zhu  <jianjun.zhu@intel.com>
+
+        Hash deviceId and groupId of MediaTrackCapabilities.
+        https://bugs.webkit.org/show_bug.cgi?id=186471
+
+        Reviewed by Eric Carlson.
+
+        This change makes the identifier for the source of the MediaStreamTrack
+        has the same value returned by enumerateDevices(). It also prevents real
+        device ID being leaked.
+
+        * fast/mediastream/MediaStreamTrack-getCapabilities.html:
+
 2018-06-12  Per Arne Vollan  <pvollan@apple.com>
 
         A few layout tests are failing on Windows.

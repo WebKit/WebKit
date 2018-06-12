@@ -234,7 +234,7 @@ static Vector<bool> capabilityBooleanVector(RealtimeMediaSourceCapabilities::Ech
     return result;
 }
 
-MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
+MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities(Document& document) const
 {
     auto capabilities = m_private->capabilities();
     TrackCapabilities result;
@@ -257,9 +257,9 @@ MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
     if (capabilities.supportsEchoCancellation())
         result.echoCancellation = capabilityBooleanVector(capabilities.echoCancellation());
     if (capabilities.supportsDeviceId())
-        result.deviceId = capabilities.deviceId();
+        result.deviceId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(capabilities.deviceId(), document.deviceIDHashSalt());
     if (capabilities.supportsGroupId())
-        result.groupId = capabilities.groupId();
+        result.groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(capabilities.groupId(), document.deviceIDHashSalt());
     return result;
 }
 

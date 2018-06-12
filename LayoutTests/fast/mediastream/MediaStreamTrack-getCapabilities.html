@@ -5,6 +5,7 @@
         <script src="./resources/getUserMedia-helper.js"></script>
         <script>
             var mediaStream;
+            var devices;
 
             function limitPrecision(value, precision)
             {
@@ -41,13 +42,26 @@
                 return value + " }";
             }
 
+            function validateDeviceId(deviceId, trackKind)
+            {
+                if (trackKind !== 'audio' && trackKind !== 'video')
+                    return false;
+                var deviceKind = (trackKind === 'audio') ? 'audioinput' : 'videoinput';
+                for (var deviceInfo of devices) {
+                    if (deviceInfo.deviceId === deviceId && deviceInfo.kind === deviceKind) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
             function listTrackProperties(track)
             {
                 debug(`${track.kind} track capabilities:`);
                 capabilities = track.getCapabilities();
                 for (var property in capabilities) {
                     if (capabilities.hasOwnProperty(property) || capabilities.__proto__.hasOwnProperty(property))
-                        if (property == "deviceId")
+                        if (property === "deviceId" && validateDeviceId(capabilities[property], track.kind))
                             value = "&lt;UUID>";
                         else if (typeof capabilities[property] === "object")
                             value = capabilityRange(property, capabilities[property]);
@@ -69,7 +83,13 @@
             function start()
             {
                 description("Tests MediaStreamTrack.getCapabilities.");
-                getUserMedia("allow", {audio:true, video:true}, gotStream);
+                navigator.mediaDevices.enumerateDevices().then(deviceInfoArray => {
+                    devices = deviceInfoArray;
+                    getUserMedia("allow", {audio:true, video:true}, gotStream);
+                }, e => {
+                    testFailed('enumerateDevices failed:' + e);
+                    finishJSTest();
+                });
             }
 
             window.jsTestIsAsync = true;

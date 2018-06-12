@@ -116,7 +116,7 @@ public:
         String deviceId;
         String groupId;
     };
-    TrackCapabilities getCapabilities() const;
+    TrackCapabilities getCapabilities(Document&) const;
 
     const MediaTrackConstraints& getConstraints() const { return m_constraints; }
     void applyConstraints(const std::optional<MediaTrackConstraints>&, DOMPromiseDeferred<void>&&);
