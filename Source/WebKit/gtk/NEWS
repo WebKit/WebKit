@@ -1,4 +1,15 @@
 =================
+WebKitGTK+ 2.21.4
+=================
+
+What's new in WebKitGTK+ 2.21.4?
+
+  - Switch to use a popup window with a tree view instead of a menu for option menu default implementation.
+  - Add API to run javascript from a WebKitWebView in an isolated world.
+  - Fix UI process crash in WebKitFaviconDatabase when pageURL is unset.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.21.3
 =================
 

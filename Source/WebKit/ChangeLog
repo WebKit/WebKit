@@ -1,3 +1,9 @@
+2018-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.21.4 release.
+
+        * gtk/NEWS: Add release notes for 2.21.4.
+
 2018-06-11  Youenn Fablet  <youenn@apple.com>
 
         Improve error messages in case FetchEvent.respondWith has a rejected promise

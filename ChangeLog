@@ -1,3 +1,9 @@
+2018-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.21.4 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2018-06-11  Michael Saboff  <msaboff@apple.com>
 
         JavaScriptCore: Disable 32-bit JIT on Windows
