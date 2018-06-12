@@ -148,7 +148,8 @@ my $test262loc = "--t262 $mockTest262";
 my ($expectationsFH, $expectationsFile) = tempfile();
 my $expect = "--expectations $expectationsFile";
 my $test = "--test-only test/fail.js";
-my $cmd = qq($runner --save --ignore-expectations $test262loc $test $expect);
+my $jsc = "--jsc $mockTest262/mock-jsc-fail.pl";
+my $cmd = qq($runner --save --ignore-expectations $jsc $test262loc $test $expect);
 qx($cmd);
 
 my $expectedExpectationsFile = "$Bin/fixtures/expectations-compare.yaml";

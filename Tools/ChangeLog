@@ -1,3 +1,13 @@
+2018-06-12  Valerie R Young  <valerie@bocoup.com>
+
+        test262/Runner.pm: fix one test (can't find jsc)
+        https://bugs.webkit.org/show_bug.cgi?id=186573
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/webkitperl/test262_unittest/test262-runner-tests.pl:
+        fix subtest to use mock JSC
+
 2018-06-12  Tim Horton  <timothy_horton@apple.com>
 
         Add a API test for r232601
