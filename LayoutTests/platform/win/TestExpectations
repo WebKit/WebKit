@@ -4108,3 +4108,11 @@ webkit.org/b/186522 imported/mozilla/css-transitions/test_animation-pausing.html
 webkit.org/b/186522 imported/mozilla/css-transitions/test_animation-starttime.html [ Failure ]
 webkit.org/b/186522 imported/mozilla/css-transitions/test_csstransition-transitionproperty.html [ Failure ]
 webkit.org/b/186522 imported/mozilla/css-transitions/test_setting-effect.html [ Failure ]
+
+webkit.org/b/186562 accessibility/accessibility-node-memory-management.html [ Failure ]
+webkit.org/b/186562 fast/workers/worker-document-leak.html [ Failure ]
+webkit.org/b/186562 js/dom/line-column-numbers.html [ Failure ]
+webkit.org/b/186562 storage/indexeddb/modern/leak-1.html [ Failure ]
+webkit.org/b/186562 svg/animations/animation-leak-list-property-instances.html [ Failure ]
+webkit.org/b/186562 js/slow-stress/emscripten-memops.html [ Skip ]
+webkit.org/b/186562 workers/bomb.html [ Skip ]

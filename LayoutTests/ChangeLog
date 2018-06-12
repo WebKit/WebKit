@@ -1,3 +1,12 @@
+2018-06-12  Per Arne Vollan  <pvollan@apple.com>
+
+        A few layout tests are failing on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=186562
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-06-11  Youenn Fablet  <youenn@apple.com>
 
         Improve error messages in case FetchEvent.respondWith has a rejected promise
