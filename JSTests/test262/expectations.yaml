@@ -705,6 +705,9 @@ test/built-ins/Array/prototype/slice/target-array-with-non-writable-property.js:
 test/built-ins/Array/prototype/sort/S15.4.4.11_A4_T3.js:
   default: 'Test262Error: #3: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = "z"; obj[1] = "y"; obj[2] = "x"; obj.length = -4294967294; obj.sort(); obj[0] === "z". Actual: y'
   strict mode: 'Test262Error: #3: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = "z"; obj[1] = "y"; obj[2] = "x"; obj.length = -4294967294; obj.sort(); obj[0] === "z". Actual: y'
+test/built-ins/Array/prototype/sort/comparefn-nonfunction-call-throws.js:
+  default: 'Test262Error: sample.sort(null); Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: sample.sort(null); Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Array/prototype/splice/S15.4.4.12_A3_T1.js:
   default: 'Test262Error: #1: var obj = {}; obj.splice = Array.prototype.splice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.splice(4294967295,1); arr.length === 1. Actual: 0'
   strict mode: 'Test262Error: #1: var obj = {}; obj.splice = Array.prototype.splice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.splice(4294967295,1); arr.length === 1. Actual: 0'

@@ -1,3 +1,10 @@
+2018-06-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Update test262 for Array#sort
+        https://bugs.webkit.org/show_bug.cgi?id=186458
+
+        * test262/expectations.yaml:
+
 2018-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Array.prototype.sort should rejects null comparator
