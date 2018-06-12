@@ -1,3 +1,10 @@
+2018-06-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rebaseline RSA-PSS tests for High Sierra.
+
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any-expected.txt: Add missing whitespace.
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any.worker-expected.txt: Ditto.
+
 2018-06-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Unreviewed followup for r232736
