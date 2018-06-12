@@ -58,3 +58,9 @@ class MockPort(object):
 
     def run_bindings_tests_command(self):
         return ['mock-run-bindings-tests']
+
+    def wpt_metadata_directory(self):
+        return '/mock-path/mock-wpt-tests-metadata'
+
+    def wpt_manifest_file(self):
+        return '/mock-path/mock-wpt-manifest.json'

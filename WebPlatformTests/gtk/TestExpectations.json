@@ -1,0 +1,559 @@
+{
+    "2dcontext/building-paths/canvas_complexshapes_arcto_001.htm": {
+        "expected": "FAIL"
+    },
+    "2dcontext/building-paths/canvas_complexshapes_beziercurveto_001.htm": {
+        "expected": "FAIL"
+    },
+    "2dcontext/compositing/2d.composite.globalAlpha.canvascopy.html": {
+        "subtests": {
+            "Canvas test: 2d.composite.globalAlpha.canvascopy": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/compositing/2d.composite.operation.darker.html": {
+        "subtests": {
+            "Canvas test: 2d.composite.operation.darker": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/drawing-images-to-the-canvas/2d.drawImage.animated.apng.html": {
+        "subtests": {
+            "drawImage() of an APNG with no poster frame draws the first frame": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/drawing-images-to-the-canvas/2d.drawImage.animated.gif.html": {
+        "subtests": {
+            "drawImage() of an animated GIF draws the first frame": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/drawing-images-to-the-canvas/2d.drawImage.animated.poster.html": {
+        "subtests": {
+            "drawImage() of an APNG draws the poster frame": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/drawing-images-to-the-canvas/2d.drawImage.zerosource.html": {
+        "subtests": {
+            "drawImage with zero-sized source rectangle draws nothing without exception": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/drawing-images-to-the-canvas/2d.drawImage.zerosource.image.html": {
+        "subtests": {
+            "drawImage with zero-sized source rectangle from image throws INDEX_SIZE_ERR": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/drawing-images-to-the-canvas/drawimage_canvas.html": {
+        "subtests": {
+            "Test scenario 8: sx = 25, sy = 25, sw = 50, sh = 50, dx = 0, dy = 0, dw = 50, dh = 50 --- Pixel 0,20 should be blue.": { "expected": "FAIL" },
+            "Test scenario 8: sx = 25, sy = 25, sw = 50, sh = 50, dx = 0, dy = 0, dw = 50, dh = 50 --- Pixel 20,0 should be blue.": { "expected": "FAIL" },
+            "Test scenario 8: sx = 25, sy = 25, sw = 50, sh = 50, dx = 0, dy = 0, dw = 50, dh = 50 --- Pixel 20,20 should be blue.": { "expected": "FAIL" },
+            "Test scenario 8: sx = 25, sy = 25, sw = 50, sh = 50, dx = 0, dy = 0, dw = 50, dh = 50 --- Pixel 24,24 should be blue.": { "expected": "FAIL" },
+            "Test scenario 8: sx = 25, sy = 25, sw = 50, sh = 50, dx = 0, dy = 0, dw = 50, dh = 50 --- Pixel 0,0 should be black.": { "expected": "FAIL" },
+            "Test scenario 8: sx = 25, sy = 25, sw = 50, sh = 50, dx = 0, dy = 0, dw = 50, dh = 50 --- Pixel 0,19 should be black.": { "expected": "FAIL" },
+            "Test scenario 8: sx = 25, sy = 25, sw = 50, sh = 50, dx = 0, dy = 0, dw = 50, dh = 50 --- Pixel 19,0 should be black.": { "expected": "FAIL" },
+            "Test scenario 8: sx = 25, sy = 25, sw = 50, sh = 50, dx = 0, dy = 0, dw = 50, dh = 50 --- Pixel 19,19 should be black.": { "expected": "FAIL" },
+            "Test scenario 9: sx = 0, sy = 0, sw = 50, sh = 50, dx = 100, dy = 100, dw = -50, dh = -50 --- Pixel 50,50 should be blue.": { "expected": "FAIL" },
+            "Test scenario 9: sx = 0, sy = 0, sw = 50, sh = 50, dx = 100, dy = 100, dw = -50, dh = -50 --- Pixel 50,99 should be blue.": { "expected": "FAIL" },
+            "Test scenario 9: sx = 0, sy = 0, sw = 50, sh = 50, dx = 100, dy = 100, dw = -50, dh = -50 --- Pixel 99,50 should be blue.": { "expected": "FAIL" },
+            "Test scenario 9: sx = 0, sy = 0, sw = 50, sh = 50, dx = 100, dy = 100, dw = -50, dh = -50 --- Pixel 99,99 should be blue.": { "expected": "FAIL" },
+            "Test scenario 9: sx = 0, sy = 0, sw = 50, sh = 50, dx = 100, dy = 100, dw = -50, dh = -50 --- Pixel 55,55 should be black.": { "expected": "FAIL" },
+            "Test scenario 9: sx = 0, sy = 0, sw = 50, sh = 50, dx = 100, dy = 100, dw = -50, dh = -50 --- Pixel 55,94 should be black.": { "expected": "FAIL" },
+            "Test scenario 9: sx = 0, sy = 0, sw = 50, sh = 50, dx = 100, dy = 100, dw = -50, dh = -50 --- Pixel 94,55 should be black.": { "expected": "FAIL" },
+            "Test scenario 9: sx = 0, sy = 0, sw = 50, sh = 50, dx = 100, dy = 100, dw = -50, dh = -50 --- Pixel 94,94 should be black.": { "expected": "FAIL" },
+            "Test scenario 11: sx = 0, sy = 0, sw = 100, sh = 100, dx = 0, dy = 0, dw = 50, dh = 50 --- Pixel 0,0 should be blue.": { "expected": "FAIL" },
+            "Test scenario 11: sx = 0, sy = 0, sw = 100, sh = 100, dx = 0, dy = 0, dw = 50, dh = 50 --- Pixel 1,1 should be blue.": { "expected": "FAIL" },
+            "Test scenario 11: sx = 0, sy = 0, sw = 100, sh = 100, dx = 0, dy = 0, dw = 50, dh = 50 --- Pixel 23,23 should be blue.": { "expected": "FAIL" },
+            "Test scenario 11: sx = 0, sy = 0, sw = 100, sh = 100, dx = 0, dy = 0, dw = 50, dh = 50 --- Pixel 24,24 should be blue.": { "expected": "FAIL" },
+            "Test scenario 11: sx = 0, sy = 0, sw = 100, sh = 100, dx = 0, dy = 0, dw = 50, dh = 50 --- Pixel 3,3 should be black.": { "expected": "FAIL" },
+            "Test scenario 11: sx = 0, sy = 0, sw = 100, sh = 100, dx = 0, dy = 0, dw = 50, dh = 50 --- Pixel 3,21 should be black.": { "expected": "FAIL" },
+            "Test scenario 11: sx = 0, sy = 0, sw = 100, sh = 100, dx = 0, dy = 0, dw = 50, dh = 50 --- Pixel 21,3 should be black.": { "expected": "FAIL" },
+            "Test scenario 11: sx = 0, sy = 0, sw = 100, sh = 100, dx = 0, dy = 0, dw = 50, dh = 50 --- Pixel 21,21 should be black.": { "expected": "FAIL" },
+            "Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 70,70 should be blue.": { "expected": "FAIL" },
+            "Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 70,99 should be blue.": { "expected": "FAIL" },
+            "Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 99,70 should be blue.": { "expected": "FAIL" },
+            "Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 82,82 should be blue.": { "expected": "FAIL" },
+            "Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 84,84 should be black.": { "expected": "FAIL" },
+            "Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 84,99 should be black.": { "expected": "FAIL" },
+            "Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 99,84 should be black.": { "expected": "FAIL" },
+            "Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 99,99 should be black.": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/drawing-images-to-the-canvas/drawimage_html_image.html": {
+        "subtests": {
+            "Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 70,99 should be light purple.": { "expected": "FAIL" },
+            "Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 99,70 should be light purple.": { "expected": "FAIL" },
+            "Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 99,99 should be light purple.": { "expected": "FAIL" },
+            "Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 69,69 should be red.": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/drawing-images-to-the-canvas/drawimage_svg_image_1.html": {
+        "subtests": {
+            "Load a 100x100 image to a SVG image and draw it to a 100x100 canvas.": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/drawing-paths-to-the-canvas/canvas_focus_drawCustomFocusRing_001.html": {
+        "subtests": {
+            "drawCustomFocusRing must return false for an element that is not focused.": { "expected": "FAIL" },
+            "drawCustomFocusRing must return false for an element that is not a descendant of the canvas element.": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/drawing-text-to-the-canvas/2d.text.draw.fontface.notinpage.html": {
+        "subtests": {
+            "@font-face fonts should work even if they are not used in the page": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-1.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-1": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-2.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-2": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-3.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-3": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-4.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-4": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-5.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-5": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-6.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-6": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-7.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-7": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-8.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-8": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-9.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-9": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-1.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-1": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-2.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-2": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-3.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-3": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-4.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-4": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-5.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-5": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-6.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-6": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-7.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-7": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-8.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-8": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-9.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-9": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-1.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-rgb-1": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-2.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-rgb-2": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-3.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-rgb-3": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-4.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-rgb-4": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-5.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-rgb-5": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-6.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-rgb-6": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgba-1.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-rgba-1": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgba-3.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-rgba-3": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgba-4.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-rgba-4": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgba-5.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-rgba-5": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgba-6.html": {
+        "subtests": {
+            "Canvas test: 2d.fillStyle.parse.css-color-4-rgba-6": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.pattern.animated.gif.html": {
+        "subtests": {
+            "createPattern() of an animated GIF draws the first frame": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/fill-and-stroke-styles/2d.pattern.image.broken.html": {
+        "subtests": {
+            "Canvas test: 2d.pattern.image.broken": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/hit-regions/addHitRegions-NotSupportedError-01.html": {
+        "subtests": {
+            "fillRect should not affect current default path and NotSupportedError should be thrown.": { "expected": "FAIL" },
+            "strokeRect should not affect current default path and NotSupportedError should be thrown.": { "expected": "FAIL" },
+            "fillText should not affect current default path and NotSupportedError should be thrown.": { "expected": "FAIL" },
+            "strokeText should not affect current default path and NotSupportedError shuld be thrown.": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/hit-regions/hitregions-members-exist.html": {
+        "subtests": {
+            "context.addHitRegion Exists": { "expected": "FAIL" },
+            "context.removeHitRegion Exists": { "expected": "FAIL" },
+            "context.clearHitRegions Exists": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/image-smoothing/imagesmoothing.html": {
+        "subtests": {
+            "Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with fillRect and createPattern().": { "expected": "FAIL" },
+            "Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with fill() and createPattern().": { "expected": "FAIL" },
+            "Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with stroke() and createPattern().": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/imagebitmap/createImageBitmap-drawImage.html": {
+        "subtests": {
+            "createImageBitmap from an HTMLCanvasElement with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from an HTMLVideoElement with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from an HTMLVideoElement from a data URL with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from a bitmap HTMLImageElement with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from a vector HTMLImageElement with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from a bitmap SVGImageElement, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from a bitmap SVGImageElement scaled down, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from a bitmap SVGImageElement scaled up, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from a bitmap SVGImageElement resized, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from a bitmap SVGImageElement with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from a vector SVGImageElement, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from a vector SVGImageElement scaled down, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from a vector SVGImageElement scaled up, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from a vector SVGImageElement resized, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from a vector SVGImageElement with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from an OffscreenCanvas, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from an OffscreenCanvas scaled down, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from an OffscreenCanvas scaled up, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from an OffscreenCanvas resized, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from an OffscreenCanvas with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from an ImageData, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from an ImageData scaled down, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from an ImageData scaled up, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from an ImageData resized, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from an ImageData with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from an ImageBitmap with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from a Blob, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from a Blob scaled down, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from a Blob scaled up, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from a Blob resized, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
+            "createImageBitmap from a Blob with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/imagebitmap/createImageBitmap-invalid-args.html": {
+        "subtests": {
+            "createImageBitmap with a an HTMLCanvasElement source and oversized (unallocatable) crop region": { "expected": "FAIL" },
+            "createImageBitmap with a an HTMLVideoElement source and oversized (unallocatable) crop region": { "expected": "FAIL" },
+            "createImageBitmap with a an HTMLVideoElement from a data URL source and oversized (unallocatable) crop region": { "expected": "FAIL" },
+            "createImageBitmap with a a bitmap HTMLImageElement source and oversized (unallocatable) crop region": { "expected": "FAIL" },
+            "createImageBitmap with a a vector HTMLImageElement source and oversized (unallocatable) crop region": { "expected": "FAIL" },
+            "createImageBitmap with a a bitmap SVGImageElement source and sw set to 0": { "expected": "FAIL" },
+            "createImageBitmap with a a bitmap SVGImageElement source and sh set to 0": { "expected": "FAIL" },
+            "createImageBitmap with a a bitmap SVGImageElement source and oversized (unallocatable) crop region": { "expected": "FAIL" },
+            "createImageBitmap with a a vector SVGImageElement source and sw set to 0": { "expected": "FAIL" },
+            "createImageBitmap with a a vector SVGImageElement source and sh set to 0": { "expected": "FAIL" },
+            "createImageBitmap with a a vector SVGImageElement source and oversized (unallocatable) crop region": { "expected": "FAIL" },
+            "createImageBitmap with a an OffscreenCanvas source and sw set to 0": { "expected": "FAIL" },
+            "createImageBitmap with a an OffscreenCanvas source and sh set to 0": { "expected": "FAIL" },
+            "createImageBitmap with a an OffscreenCanvas source and oversized (unallocatable) crop region": { "expected": "FAIL" },
+            "createImageBitmap with a an ImageData source and oversized (unallocatable) crop region": { "expected": "FAIL" },
+            "createImageBitmap with a an ImageBitmap source and oversized (unallocatable) crop region": { "expected": "FAIL" },
+            "createImageBitmap with a a Blob source and oversized (unallocatable) crop region": { "expected": "FAIL" },
+            "createImageBitmap with an invalid OffscreenCanvas source.": { "expected": "FAIL" },
+            "createImageBitmap with an undecodable blob source.": { "expected": "FAIL" },
+            "createImageBitmap with an available but undecodable image source.": { "expected": "FAIL" },
+            "createImageBitmap with an available but zero height image source.": { "expected": "FAIL" },
+            "createImageBitmap with an available but zero width image source.": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/imagebitmap/createImageBitmap-origin.sub.html": {
+        "subtests": {
+            "cross-origin SVGImageElement": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/imagebitmap/createImageBitmap-sizeOverflow.html": {
+        "subtests": {
+            "createImageBitmap does not crash or reject the promise when passing very large sx": { "expected": "FAIL" },
+            "createImageBitmap does not crash or reject the promise when passing very large sy": { "expected": "FAIL" },
+            "createImageBitmap does not crash or reject the promise when passing very large sw": { "expected": "FAIL" },
+            "createImageBitmap does not crash or reject the promise when passing very large sh": { "expected": "FAIL" },
+            "createImageBitmap does not crash or reject the promise when passing very large sx, sy, sw and sh": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/pixel-manipulation/2d.imageData.create2.double.html": {
+        "subtests": {
+            "createImageData(w, h) double is converted to long": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/pixel-manipulation/2d.imageData.create2.zero.html": {
+        "subtests": {
+            "createImageData(sw, sh) throws INDEX_SIZE_ERR if size is zero": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/pixel-manipulation/2d.imageData.get.double.html": {
+        "subtests": {
+            "createImageData(w, h) double is converted to long": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/pixel-manipulation/2d.imageData.get.zero.html": {
+        "subtests": {
+            "getImageData() throws INDEX_SIZE_ERR if size is zero": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/pixel-manipulation/2d.imageData.object.ctor.array.html": {
+        "subtests": {
+            "ImageData has a usable constructor": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/text-styles/2d.text.draw.baseline.bottom.html": {
+        "subtests": {
+            "textBaseline bottom is the bottom of the em square (not the bounding box)": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/text-styles/2d.text.draw.baseline.hanging.html": {
+        "subtests": {
+            "Canvas test: 2d.text.draw.baseline.hanging": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/text-styles/2d.text.draw.baseline.ideographic.html": {
+        "subtests": {
+            "Canvas test: 2d.text.draw.baseline.ideographic": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/text-styles/2d.text.draw.baseline.middle.html": {
+        "subtests": {
+            "textBaseline middle is the middle of the em square (not the bounding box)": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/text-styles/2d.text.draw.baseline.top.html": {
+        "subtests": {
+            "textBaseline top is the top of the em square (not the bounding box)": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/text-styles/2d.text.draw.space.collapse.end.html": {
+        "subtests": {
+            "Space characters at the end of a line are collapsed (per CSS)": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/text-styles/2d.text.draw.space.collapse.other.html": {
+        "subtests": {
+            "Space characters are converted to U+0020, and collapsed (per CSS)": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/text-styles/2d.text.draw.space.collapse.space.html": {
+        "subtests": {
+            "Space characters are converted to U+0020, and collapsed (per CSS)": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/text-styles/2d.text.draw.space.collapse.start.html": {
+        "subtests": {
+            "Space characters at the start of a line are collapsed (per CSS)": { "expected": "FAIL" }
+        }
+    },
+    "2dcontext/text-styles/2d.text.measure.width.space.html": {
+        "subtests": {
+            "Space characters are converted to U+0020 and collapsed (per CSS)": { "expected": "FAIL" }
+        }
+    },
+
+    "WebCryptoAPI/derive_bits_keys/ecdh_bits.https.worker.js": {
+        "test_name": "ecdh_bits.https.worker.html",
+        "subtests": {
+            "P-256 non-multiple of 8 bits": { "expected": "FAIL" },
+            "P-384 non-multiple of 8 bits": { "expected": "FAIL" },
+            "P-521 non-multiple of 8 bits": { "expected": "FAIL" }
+        }
+    },
+    "WebCryptoAPI/derive_bits_keys/hkdf.https.worker.js": {
+        "test_name": "hkdf.https.worker.html",
+        "disabled": "Lousy HKDF support"
+    },
+    "WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.js": {
+        "test_name": "pbkdf2.https.worker.html",
+        "disabled": "Lousy PBKDF2 support"
+    },
+    "WebCryptoAPI/derive_bits_keys/test_ecdh_bits.https.html": {
+        "subtests": {
+            "P-256 non-multiple of 8 bits": { "expected": "FAIL" },
+            "P-384 non-multiple of 8 bits": { "expected": "FAIL" },
+            "P-521 non-multiple of 8 bits": { "expected": "FAIL" }
+        }
+    },
+    "WebCryptoAPI/derive_bits_keys/test_hkdf.https.html": {
+        "disabled": "Lousy HKDF support"
+    },
+    "WebCryptoAPI/derive_bits_keys/test_pbkdf2_empty_empty.https.html": {
+        "disabled": "Lousy PBKDF2 support"
+    },
+    "WebCryptoAPI/derive_bits_keys/test_pbkdf2_empty_long.https.html": {
+        "disabled": "Lousy PBKDF2 support"
+    },
+    "WebCryptoAPI/derive_bits_keys/test_pbkdf2_empty_short.https.html": {
+        "disabled": "Lousy PBKDF2 support"
+    },
+    "WebCryptoAPI/derive_bits_keys/test_pbkdf2_long_empty.https.html": {
+        "disabled": "Lousy PBKDF2 support"
+    },
+    "WebCryptoAPI/derive_bits_keys/test_pbkdf2_short_empty.https.html": {
+        "disabled": "Lousy PBKDF2 support"
+    },
+    "WebCryptoAPI/encrypt_decrypt/aes_gcm.https.worker.js": {
+        "test_name": "aes_gcm.https.worker.html",
+        "subtests": {
+            "AES-GCM 128-bit key, illegal tag length 256-bits": { "expected": "FAIL" },
+            "AES-GCM 192-bit key, illegal tag length 256-bits": { "expected": "FAIL" },
+            "AES-GCM 256-bit key, illegal tag length 256-bits": { "expected": "FAIL" },
+            "AES-GCM 128-bit key, illegal tag length 256-bits decryption": { "expected": "FAIL" },
+            "AES-GCM 192-bit key, illegal tag length 256-bits decryption": { "expected": "FAIL" },
+            "AES-GCM 256-bit key, illegal tag length 256-bits decryption": { "expected": "FAIL" }
+        }
+    },
+    "WebCryptoAPI/encrypt_decrypt/test_aes_gcm.https.html": {
+        "subtests": {
+            "AES-GCM 128-bit key, illegal tag length 256-bits": { "expected": "FAIL" },
+            "AES-GCM 192-bit key, illegal tag length 256-bits": { "expected": "FAIL" },
+            "AES-GCM 256-bit key, illegal tag length 256-bits": { "expected": "FAIL" },
+            "AES-GCM 128-bit key, illegal tag length 256-bits decryption": { "expected": "FAIL" },
+            "AES-GCM 192-bit key, illegal tag length 256-bits decryption": { "expected": "FAIL" },
+            "AES-GCM 256-bit key, illegal tag length 256-bits decryption": { "expected": "FAIL" }
+        }
+    },
+    "WebCryptoAPI/idlharness.https.worker.js": {
+        "test_name": "idlharness.https.worker.html",
+        "subtests": {
+            "ArrayBuffer interface: existence and properties of interface object": { "expected": "FAIL" }
+        }
+    },
+    "WebCryptoAPI/secure_context/crypto-subtle-non-secure-context-not-available.sub.html": {
+        "subtests": {
+            "Non-secure context window does not have access to crypto.subtle": { "expected": "FAIL" },
+            "Non-secure context worker does not have access to crypto.subtle": { "expected": "FAI:" }
+        }
+    },
+    "WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html": {
+        "subtests": {
+            "Can wrap and unwrap ECDSA public key keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap ECDSA private key keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap ECDSA private key keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap ECDH public key keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap ECDH private key keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap ECDH private key keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap AES-CTR keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap AES-CTR keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap AES-CBC keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap AES-CBC keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap AES-GCM keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap AES-GCM keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap AES-KW keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap AES-KW keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap HMAC keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap HMAC keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap RSASSA-PKCS1-v1_5 private key keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap RSASSA-PKCS1-v1_5 private key keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap RSA-PSS private key keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap RSA-PSS private key keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap RSA-OAEP private key keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap RSA-OAEP private key keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" }
+        }
+    },
+    "WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.js": {
+        "test_name": "wrapKey_unwrapKey.https.worker.html",
+        "subtests": {
+            "Can wrap and unwrap ECDSA public key keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap ECDSA private key keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap ECDSA private key keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap ECDH public key keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap ECDH private key keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap ECDH private key keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap AES-CTR keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap AES-CTR keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap AES-CBC keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap AES-CBC keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap AES-GCM keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap AES-GCM keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap AES-KW keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap AES-KW keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap HMAC keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap HMAC keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap RSASSA-PKCS1-v1_5 private key keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap RSASSA-PKCS1-v1_5 private key keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap RSA-PSS private key keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap RSA-PSS private key keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap RSA-OAEP private key keys using jwk and AES-KW": { "expected": "FAIL" },
+            "Can wrap and unwrap RSA-OAEP private key keys as non-extractable using jwk and AES-KW": { "expected": "FAIL" }
+        }
+    }
+}
+

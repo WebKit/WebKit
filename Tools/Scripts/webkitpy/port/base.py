@@ -871,6 +871,12 @@ class Port(object):
         # to have multiple copies of webkit checked out and built.
         return self._build_path('layout-test-results')
 
+    def wpt_metadata_directory(self):
+        return self._build_path('web-platform-tests-metadata')
+
+    def wpt_manifest_file(self):
+        return self._build_path('web-platform-tests-manifest.json')
+
     def setup_test_run(self, device_class=None):
         """Perform port-specific work at the beginning of a test run."""
         pass

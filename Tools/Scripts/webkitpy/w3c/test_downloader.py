@@ -219,7 +219,10 @@ class TestDownloader(object):
             rules.append('/'.join(path[:-1]) + '/.' + path[-1] + '.url')
         self._filesystem.write_text_file(self._filesystem.join(destination_directory, test_repository['name'], '.gitignore'), '\n'.join(rules))
 
-    def download_tests(self, destination_directory, test_paths=[], use_tip_of_tree=False):
+    def clone_tests(self, use_tip_of_tree=False):
         for test_repository in self.test_repositories:
             self.checkout_test_repository(test_repository['revision'] if not use_tip_of_tree else 'origin/master', test_repository['url'], self._filesystem.join(self.repository_directory, test_repository['name']))
+
+    def download_tests(self, destination_directory, test_paths=[], use_tip_of_tree=False):
+        self.clone_tests(use_tip_of_tree)
         self.copy_tests(destination_directory, test_paths)

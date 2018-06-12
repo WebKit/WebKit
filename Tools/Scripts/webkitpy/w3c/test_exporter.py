@@ -37,7 +37,7 @@ from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.w3c.wpt_github import WPTGitHub
 from webkitpy.w3c.wpt_linter import WPTLinter
-from webkitpy.w3c.common import WPT_GH_ORG, WPT_GH_REPO_NAME, WPT_GH_URL
+from webkitpy.w3c.common import WPT_GH_ORG, WPT_GH_REPO_NAME, WPT_GH_URL, WPTPaths
 from webkitpy.common.memoized import memoized
 
 _log = logging.getLogger(__name__)
@@ -69,7 +69,7 @@ class WebPlatformTestExporter(object):
 
         if not self._options.repository_directory:
             webkit_finder = WebKitFinder(self._filesystem)
-            self._options.repository_directory = webkit_finder.path_from_webkit_base('WebKitBuild', 'w3c-tests', 'web-platform-tests')
+            self._options.repository_directory = WPTPaths.wpt_checkout_path(webkit_finder)
 
         self._linter = WPTLinterClass(self._options.repository_directory, host.filesystem)
 

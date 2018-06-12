@@ -98,3 +98,16 @@ def is_file_exportable(path):
     assert path.startswith(CHROMIUM_WPT_DIR)
     basename = path[path.rfind('/') + 1:]
     return not is_basename_skipped(basename)
+
+
+class WPTPaths:
+    CHECKOUT_DIRECTORY = ["WebKitBuild", "w3c-tests"]
+    WPT_CHECKOUT_PATH = CHECKOUT_DIRECTORY + ["web-platform-tests"]
+
+    @staticmethod
+    def checkout_directory(finder):
+        return finder.path_from_webkit_base(*WPTPaths.CHECKOUT_DIRECTORY)
+
+    @staticmethod
+    def wpt_checkout_path(finder):
+        return finder.path_from_webkit_base(*WPTPaths.WPT_CHECKOUT_PATH)

@@ -1,3 +1,30 @@
+2018-06-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Add run-web-platform-tests script
+        https://bugs.webkit.org/show_bug.cgi?id=183356
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Store port-specific test expectations and test manifest files for the
+        web-platform-tests test runs under the top-level WebPlatformTests
+        directory.
+
+        TestExpectations.json file lists all the failing or disabled tests
+        or subtests that are to be expected in the test run. This information is
+        parsed in the run-web-platform-tests script and used to build
+        test-specific metadata files (ending with .ini) inside a temporary
+        directory that is then used during the test run. JSON format is used to
+        follow the WebDriver test suite in how it manages expectations, and to
+        avoid having to manually manage .ini files for every deviant test case.
+
+        TestManifest.ini file is used to fine-tune which tests are to be enabled
+        by default. For the GTK+ port, we currently disable all tests by default
+        but then specifically enable tests under the 2dcontext and WebCryptoAPI
+        directories. This will allow for gradual enabling of further tests.
+
+        * WebPlatformTests/gtk/TestExpectations.json: Added.
+        * WebPlatformTests/gtk/TestManifest.ini: Added.
+
 2018-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.21.4 release.

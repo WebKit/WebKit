@@ -1,3 +1,86 @@
+2018-06-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Add run-web-platform-tests script
+        https://bugs.webkit.org/show_bug.cgi?id=183356
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Add the run-web-platform-tests script that allows running WebKit builds
+        against the external web-platform-tests project.
+
+        The script sets up all the port-specific information, including the
+        display driver. If no web-platform-tests repository location is
+        specified, the TestDownloader utility is used to clone the repository,
+        and path to that clone is leveraged instead.
+
+        Port-specific TestManifest.ini and TestExpectations.json file paths are
+        then constructed, bailing if any of the files is missing. The JSON file
+        is then used to construct the metadata file tree, creating an .ini file
+        for each test that is disabled, has a certain expectation, or has
+        subtests that themselves have certain expectations. This metadata tree
+        is built under the build directory, and is purged and reconstructed for
+        each separate run.
+
+        Lastly, the WPT python module is imported from the web-platform-tests
+        source location, and wpt.main() is invoked along with all the necessary
+        arguments that set up a web-platform-tests suite run using the WebKit
+        product.
+
+        * Scripts/run-web-platform-tests: Added.
+        * Scripts/webkitpy/common/config/ports_mock.py:
+        (MockPort.run_bindings_tests_command):
+        (MockPort):
+        (MockPort.wpt_metadata_directory):
+        (MockPort.wpt_manifest_file):
+        * Scripts/webkitpy/port/base.py:
+        (Port.wpt_metadata_directory):
+        (Port):
+        (Port.wpt_manifest_file):
+        * Scripts/webkitpy/w3c/common.py:
+        (is_file_exportable):
+        (WPTPaths):
+        (WPTPaths.checkout_directory):
+        (WPTPaths.wpt_checkout_path):
+        * Scripts/webkitpy/w3c/test_downloader.py:
+        (TestDownloader.clone_tests):
+        (TestDownloader):
+        (TestDownloader.download_tests):
+        * Scripts/webkitpy/w3c/test_exporter.py:
+        (WebPlatformTestExporter.__init__):
+        * Scripts/webkitpy/w3c/wpt_runner.py: Added.
+        (main):
+        (parse_args):
+        (create_webdriver):
+        (spawn_wpt):
+        (WPTRunner):
+        (WPTRunner.__init__):
+        (WPTRunner._prepare_wpt_checkout):
+        (WPTRunner._generate_metadata_directory):
+        (WPTRunner.run):
+        * Scripts/webkitpy/w3c/wpt_runner_unittest.py: Added.
+        (WPTRunnerTest):
+        (WPTRunnerTest.MockTestDownloader):
+        (WPTRunnerTest.MockTestDownloader.default_options):
+        (WPTRunnerTest.MockTestDownloader.__init__):
+        (WPTRunnerTest.MockTestDownloader.clone_tests):
+        (WPTRunnerTest.MockWebDriver):
+        (WPTRunnerTest.MockWebDriver.create):
+        (WPTRunnerTest.MockWebDriver.binary_path):
+        (WPTRunnerTest.MockWebDriver.browser_path):
+        (WPTRunnerTest.MockWebDriver.browser_args):
+        (WPTRunnerTest.MockSpawnWPT):
+        (WPTRunnerTest.MockSpawnWPT.__init__):
+        (WPTRunnerTest.MockSpawnWPT.__call__):
+        (WPTRunnerTest.TestInstance):
+        (WPTRunnerTest.TestInstance.__init__):
+        (WPTRunnerTest.TestInstance.prepare_mock_files_for_run):
+        (WPTRunnerTest.test_prepare_wpt_checkout):
+        (WPTRunnerTest.test_prepare_wpt_checkout_specified_path):
+        (WPTRunnerTest.test_generate_metadata_directory):
+        (WPTRunnerTest.test_run):
+        (WPTRunnerTest.test_run_with_specified_options):
+        (WPTRunnerTest.test_run_with_args):
+
 2018-06-11  Mark Lam  <mark.lam@apple.com>
 
         Add support for webkit-test-runner jscOptions in DumpRenderTree and WebKitTestRunner.
