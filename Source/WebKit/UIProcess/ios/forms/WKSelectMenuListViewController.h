@@ -25,6 +25,36 @@
 
 #pragma once
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKSelectMenuListViewControllerAdditions.h>
+#if PLATFORM(WATCHOS)
+
+#import "WKQuickboardListViewController.h"
+
+@class WKSelectMenuListViewController;
+
+@protocol WKSelectMenuListViewControllerDelegate <WKQuickboardViewControllerDelegate>
+
+- (void)selectMenu:(WKSelectMenuListViewController *)selectMenu didSelectItemAtIndex:(NSUInteger)index;
+- (void)selectMenu:(WKSelectMenuListViewController *)selectMenu didCheckItemAtIndex:(NSUInteger)index checked:(BOOL)checked;
+
+- (BOOL)selectMenu:(WKSelectMenuListViewController *)selectMenu hasSelectedOptionAtIndex:(NSUInteger)index;
+- (NSUInteger)numberOfItemsInSelectMenu:(WKSelectMenuListViewController *)selectMenu;
+- (NSString *)selectMenu:(WKSelectMenuListViewController *)selectMenu displayTextForItemAtIndex:(NSUInteger)index;
+- (BOOL)selectMenuUsesMultipleSelection:(WKSelectMenuListViewController *)selectMenu;
+
+@end
+
+@interface WKSelectMenuListViewController : WKQuickboardListViewController
+
+- (instancetype)initWithDelegate:(id <WKSelectMenuListViewControllerDelegate>)delegate NS_DESIGNATED_INITIALIZER;
+
+@property (nonatomic, weak) id <WKSelectMenuListViewControllerDelegate> delegate;
+
+@end
+
+@interface WKSelectMenuListViewController (Testing)
+
+- (void)selectItemAtIndex:(NSInteger)index;
+
+@end
+
 #endif

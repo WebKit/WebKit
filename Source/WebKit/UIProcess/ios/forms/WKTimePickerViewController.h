@@ -25,6 +25,23 @@
 
 #pragma once
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKTimePickerViewControllerAdditions.h>)
-#import <WebKitAdditions/WKTimePickerViewControllerAdditions.h>
+#if PLATFORM(WATCHOS)
+
+#import "WKQuickboardListViewController.h"
+
+@interface WKTimePickerViewController : PUICQuickboardViewController
+
+- (instancetype)initWithDelegate:(id <WKQuickboardViewControllerDelegate>)delegate NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
+
+@property (nonatomic, weak) id <WKQuickboardViewControllerDelegate> delegate;
+
+@end
+
+@interface WKTimePickerViewController (Testing)
+
+- (void)setHour:(NSInteger)hour minute:(NSInteger)minute;
+
+@end
+
 #endif

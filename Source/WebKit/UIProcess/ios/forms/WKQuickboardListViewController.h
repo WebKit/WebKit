@@ -27,15 +27,39 @@
 
 #if PLATFORM(WATCHOS)
 
-#import "WKQuickboardListViewController.h"
+#import "UIKitSPI.h"
+#import <PepperUICore/PUICQuickboardListViewController.h>
+#import <PepperUICore/PUICQuickboardListViewControllerSubclass.h>
+#import <PepperUICore/PUICTableViewCell.h>
 
-@interface WKDatePickerViewController : PUICQuickboardViewController
+@interface WKQuickboardListItemCell : PUICQuickboardListItemCell
+@end
+
+@class WKQuickboardListViewController;
+
+@protocol WKQuickboardViewControllerDelegate <PUICQuickboardViewControllerDelegate>
+
+- (CGFloat)viewController:(PUICQuickboardViewController *)controller inputContextViewHeightForSize:(CGSize)size;
+- (UIView *)inputContextViewForViewController:(PUICQuickboardViewController *)controller;
+- (NSString *)inputLabelTextForViewController:(PUICQuickboardViewController *)controller;
+- (NSString *)initialValueForViewController:(PUICQuickboardViewController *)controller;
+- (BOOL)shouldDisplayInputContextViewForListViewController:(PUICQuickboardViewController *)controller;
+- (BOOL)allowsLanguageSelectionMenuForListViewController:(PUICQuickboardViewController *)controller;
+
+@end
+
+@interface WKQuickboardListViewController : PUICQuickboardListViewController
 
 - (instancetype)initWithDelegate:(id <WKQuickboardViewControllerDelegate>)delegate NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
+- (instancetype)initWithDelegate:(id<PUICQuickboardViewControllerDelegate>)delegate dictationMode:(PUICDictationMode)dictationMode NS_UNAVAILABLE;
+
+- (void)reloadContextView;
 
 @property (nonatomic, weak) id <WKQuickboardViewControllerDelegate> delegate;
 
 @end
+
+void configureStatusBarForController(PUICQuickboardViewController *, id <WKQuickboardViewControllerDelegate>);
 
 #endif

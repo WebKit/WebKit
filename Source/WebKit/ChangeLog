@@ -1,3 +1,133 @@
+2018-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WebKit on watchOS] Upstream watchOS source additions to OpenSource (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=186442
+        <rdar://problem/40879364>
+
+        Reviewed by Tim Horton.
+
+        Upstream most of the work around form controls on watchOS. Also, rename WKFormControlListViewController.* to
+        its intended name, WKQuickboardListViewController.*.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * UIProcess/ios/forms/WKDatePickerViewController.h:
+        * UIProcess/ios/forms/WKDatePickerViewController.mm:
+        (datePickerSetButtonHeight):
+        (datePickerVerticalMargin):
+        (-[WKDatePickerWheelLabel initWithFrame:]):
+        (-[WKDatePickerWheelLabel lastSelectedDate]):
+        (-[WKDatePickerWheelLabel setLastSelectedDate:]):
+        (-[WKDatePickerWheelLabel needsUpdateForIndex:selectedDate:]):
+        (-[WKDatePickerWheel initWithStyle:]):
+        (-[WKDatePickerWheel initWithController:style:]):
+        (-[WKDatePickerWheel gestureRecognized:]):
+        (-[WKDatePickerWheel setDrawsFocusOutline:]):
+        (-[WKDatePickerWheel drawsFocusOutline]):
+        (-[WKDatePickerWheel gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKDatePickerViewController initWithDelegate:]):
+        (-[WKDatePickerViewController viewDidLoad]):
+        (-[WKDatePickerViewController prefersStatusBarHidden]):
+        (-[WKDatePickerViewController viewWillAppear:]):
+        (-[WKDatePickerViewController viewDidAppear:]):
+        (-[WKDatePickerViewController viewDidDisappear:]):
+        (-[WKDatePickerViewController _handleStatusBarNavigation]):
+        (-[WKDatePickerViewController viewWillLayoutSubviews]):
+        (-[WKDatePickerViewController becomeFirstResponder]):
+        (-[WKDatePickerViewController defaultMinimumDate]):
+        (-[WKDatePickerViewController defaultMaximumDate]):
+        (-[WKDatePickerViewController _valueForInput]):
+        (-[WKDatePickerViewController _dateFromInitialText]):
+        (-[WKDatePickerViewController _setButtonPressed]):
+        (-[WKDatePickerViewController _updateSelectedPickerViewIndices]):
+        (-[WKDatePickerViewController _configurePickerView:]):
+        (-[WKDatePickerViewController setMinimumDate:]):
+        (-[WKDatePickerViewController minimumDate]):
+        (-[WKDatePickerViewController setMaximumDate:]):
+        (-[WKDatePickerViewController maximumDate]):
+        (-[WKDatePickerViewController setDate:]):
+        (-[WKDatePickerViewController setDateFromComponents:]):
+        (-[WKDatePickerViewController setDay:month:year:era:]):
+        (-[WKDatePickerViewController date]):
+        (-[WKDatePickerViewController _dateComponentForDay:month:year:era:]):
+        (-[WKDatePickerViewController _adjustDateToValidDateIfNecessary]):
+        (-[WKDatePickerViewController _createAndConfigureGranularityLabelWithText:]):
+        (-[WKDatePickerViewController _canonicalizeAndUpdateSelectedDate]):
+        (-[WKDatePickerViewController numberOfItemsInPickerView:]):
+        (-[WKDatePickerViewController pickerView:viewForItemAtIndex:]):
+        (-[WKDatePickerViewController didBeginInteractingWithDatePicker:]):
+        (-[WKDatePickerViewController pickerView:didSelectItemAtIndex:]):
+        (-[WKDatePickerViewController pickerViewWillBeginSelection:]):
+        (-[WKDatePickerViewController pickerViewDidEndSelection:]):
+        (-[WKDatePickerViewController _dayFromIndex:]):
+        (-[WKDatePickerViewController _eraAndYearFromIndex:]):
+        (-[WKDatePickerViewController _monthFromIndex:]):
+        (-[WKDatePickerViewController _indexFromDay:]):
+        (-[WKDatePickerViewController _indexFromYear:era:]):
+        (-[WKDatePickerViewController _indexFromMonth:]):
+        * UIProcess/ios/forms/WKFormControlListViewController.h: Removed.
+        * UIProcess/ios/forms/WKFormControlListViewController.mm: Removed.
+        * UIProcess/ios/forms/WKNumberPadViewController.h:
+        * UIProcess/ios/forms/WKNumberPadViewController.mm:
+        (inputLabelFontSize):
+        (-[WKNumberPadViewController initWithDelegate:initialText:inputMode:]):
+        (-[WKNumberPadViewController dealloc]):
+        (-[WKNumberPadViewController viewDidLoad]):
+        (-[WKNumberPadViewController viewWillDisappear:]):
+        (-[WKNumberPadViewController viewWillLayoutSubviews]):
+        (-[WKNumberPadViewController _reloadHeaderViewFromInputText]):
+        (-[WKNumberPadViewController didSelectKey:]):
+        (-[WKNumberPadViewController _handleKeyPress:]):
+        (-[WKNumberPadViewController _cancelInput]):
+        (-[WKNumberPadViewController _deleteLastInputCharacter]):
+        (-[WKNumberPadViewController _deleteButtonPressed]):
+        (-[WKNumberPadViewController _cancelDeletionTimers]):
+        (-[WKNumberPadViewController _startDeletionTimer]):
+        (-[WKNumberPadViewController _deletionTimerFired]):
+        (-[WKNumberPadViewController addContentViewAnimations:]):
+        * UIProcess/ios/forms/WKQuickboardListViewController.h: Added.
+        * UIProcess/ios/forms/WKQuickboardListViewController.mm: Added.
+        (-[WKQuickboardListItemCell topToLabelBaselineSpecValue]):
+        (-[WKQuickboardListItemCell baselineToBottomSpecValue]):
+        (-[WKQuickboardListViewController initWithDelegate:]):
+        (-[WKQuickboardListViewController updateContextViewIfNeeded]):
+        (-[WKQuickboardListViewController prefersStatusBarHidden]):
+        (-[WKQuickboardListViewController viewDidLoad]):
+        (-[WKQuickboardListViewController viewWillAppear:]):
+        (-[WKQuickboardListViewController viewDidDisappear:]):
+        (-[WKQuickboardListViewController _handleStatusBarNavigation]):
+        (-[WKQuickboardListViewController reloadContextView]):
+        (-[WKQuickboardListViewController actionController]):
+        (-[WKQuickboardListViewController languageControllerDidChangePrimaryLanguage:]):
+        (-[WKQuickboardListViewController headerContentViewHeight]):
+        (-[WKQuickboardListViewController headerContentView]):
+        (configureStatusBarForController):
+        * UIProcess/ios/forms/WKSelectMenuListViewController.h:
+        * UIProcess/ios/forms/WKSelectMenuListViewController.mm:
+        (-[WKSelectMenuItemCell initWithStyle:reuseIdentifier:]):
+        (-[WKSelectMenuItemCell imageView]):
+        (-[WKSelectMenuListViewController initWithDelegate:]):
+        (-[WKSelectMenuListViewController viewDidLoad]):
+        (-[WKSelectMenuListViewController acceptButtonTappedWithCompletion:]):
+        (-[WKSelectMenuListViewController shouldShowTrayView]):
+        (-[WKSelectMenuListViewController didSelectListItem:]):
+        (-[WKSelectMenuListViewController numberOfListItems]):
+        (-[WKSelectMenuListViewController heightForListItem:width:]):
+        (-[WKSelectMenuListViewController cellForListItem:]):
+        (-[WKSelectMenuListViewController selectItemAtIndex:]):
+        * UIProcess/ios/forms/WKTimePickerViewController.h:
+        * UIProcess/ios/forms/WKTimePickerViewController.mm:
+        (-[WKTimePickerViewController initWithDelegate:]):
+        (-[WKTimePickerViewController dateFormatter]):
+        (-[WKTimePickerViewController timeValueForFormControls]):
+        (-[WKTimePickerViewController dateComponentsFromInitialValue]):
+        (-[WKTimePickerViewController viewDidAppear:]):
+        (-[WKTimePickerViewController viewDidLoad]):
+        (-[WKTimePickerViewController becomeFirstResponder]):
+        (-[WKTimePickerViewController setHour:minute:]):
+        (-[WKTimePickerViewController leftButtonWOTAction]):
+        (-[WKTimePickerViewController rightButtonWOTAction]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-06-12  Jer Noble  <jer.noble@apple.com>
 
         Make Modern EME An Experimental Feature Again

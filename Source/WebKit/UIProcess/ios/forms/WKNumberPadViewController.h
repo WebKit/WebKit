@@ -25,6 +25,19 @@
 
 #pragma once
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKNumberPadViewControllerAdditions.h>
+#if PLATFORM(WATCHOS)
+
+#import "WKNumberPadView.h"
+#import "WKTextInputListViewController.h"
+#import <PepperUICore/PUICQuickboardViewController.h>
+
+@interface WKNumberPadViewController : PUICQuickboardViewController
+
+- (instancetype)initWithDelegate:(id <PUICQuickboardViewControllerDelegate>)delegate initialText:(NSString *)initialText inputMode:(WKNumberPadInputMode)inputMode;
+- (void)didSelectKey:(WKNumberPadKey)key;
+
+@property (nonatomic, readonly) WKNumberPadInputMode inputMode;
+
+@end
+
 #endif
