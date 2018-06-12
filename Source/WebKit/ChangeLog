@@ -1,3 +1,55 @@
+2018-06-12  Antti Koivisto  <antti@apple.com>
+
+        Add performance logging for slow cache retrieves
+        https://bugs.webkit.org/show_bug.cgi?id=186520
+        <rdar://problem/41002070>
+
+        Reviewed by Chris Dumez.
+
+        We sometimes see slow cache retrieves in logs. Add some more logging to better analyze these cases.
+
+        This patch adds timings to all cache storage retrieve operations and passes them up to the client.
+        We then log the timings on NetworkResourceLoader levels if needed. Items logged include
+
+        - total retrieve time
+        - dispatch delay and number of resources dispatched before this one
+        - record I/O time
+        - blob I/O time
+        - whether cache shrink was in progress
+        - whether cache synchronization was in progress
+        - cancellation
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::logSlowCacheRetrieveIfNeeded):
+
+        Log if the retrieve took more than 1s.
+
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::readRecord):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::retrieve):
+        (WebKit::NetworkCache::Cache::completeRetrieve):
+        (WebKit::NetworkCache::Cache::retrieveData):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieveEntryFromStorage):
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieveSubresourcesEntry):
+
+        SpeculativeLoadManager does not records specific timings yet but at least we do log when they occur.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::ReadOperation::cancel):
+        (WebKit::NetworkCache::Storage::ReadOperation::finish):
+
+        Record timing info in ReadOperations.
+
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+        (WebKit::NetworkCache::retrieveFromMemory):
+        (WebKit::NetworkCache::Storage::retrieve):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2018-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.21.4 release.

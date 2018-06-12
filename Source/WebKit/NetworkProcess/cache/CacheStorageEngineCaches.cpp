@@ -508,7 +508,7 @@ void Caches::readRecord(const NetworkCache::Key& key, WTF::Function<void(Expecte
         return;
     }
 
-    m_storage->retrieve(key, 4, [protectedStorage = makeRef(*m_storage), callback = WTFMove(callback)](std::unique_ptr<Storage::Record> storage) mutable {
+    m_storage->retrieve(key, 4, [protectedStorage = makeRef(*m_storage), callback = WTFMove(callback)](std::unique_ptr<Storage::Record> storage, const Storage::Timings&) mutable {
         if (!storage) {
             callback(makeUnexpected(Error::ReadDisk));
             return false;

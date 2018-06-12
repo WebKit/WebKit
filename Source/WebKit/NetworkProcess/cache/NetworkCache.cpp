@@ -309,7 +309,7 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     return StoreDecision::Yes;
 }
 
-void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameID& frameID, Function<void (std::unique_ptr<Entry>)>&& completionHandler)
+void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameID& frameID, RetrieveCompletionHandler&& completionHandler)
 {
     ASSERT(request.url().protocolIsInHTTPFamily());
 
@@ -319,6 +319,11 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
         m_statistics->recordRetrievalRequest(frameID.first);
 
     Key storageKey = makeCacheKey(request);
+    auto priority = static_cast<unsigned>(request.priority());
+
+    RetrieveInfo info;
+    info.startTime = MonotonicTime::now();
+    info.priority = priority;
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     bool canUseSpeculativeRevalidation = m_speculativeLoadManager && !request.isConditional() && !cachePolicyAllowsExpired(request.cachePolicy());
@@ -331,33 +336,33 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
         if (m_statistics)
             m_statistics->recordNotUsingCacheForRequest(frameID.first, storageKey, request, retrieveDecision);
 
-        completionHandler(nullptr);
+        completeRetrieve(WTFMove(completionHandler), nullptr, info);
         return;
     }
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     if (canUseSpeculativeRevalidation && m_speculativeLoadManager->canRetrieve(storageKey, request, frameID)) {
-        m_speculativeLoadManager->retrieve(storageKey, [request, completionHandler = WTFMove(completionHandler)](std::unique_ptr<Entry> entry) {
+        m_speculativeLoadManager->retrieve(storageKey, [request, completionHandler = WTFMove(completionHandler), info = WTFMove(info)](std::unique_ptr<Entry> entry) mutable {
+            info.wasSpeculativeLoad = true;
             if (entry && WebCore::verifyVaryingRequestHeaders(entry->varyingRequestHeaders(), request))
-                completionHandler(WTFMove(entry));
+                completeRetrieve(WTFMove(completionHandler), WTFMove(entry), info);
             else
-                completionHandler(nullptr);
+                completeRetrieve(WTFMove(completionHandler), nullptr, info);
         });
         return;
     }
 #endif
 
-    auto startTime = WallTime::now();
-    auto priority = static_cast<unsigned>(request.priority());
+    m_storage->retrieve(storageKey, priority, [this, protectedThis = makeRef(*this), request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), storageKey, frameID](auto record, auto timings) mutable {
+        info.storageTimings = timings;
 
-    m_storage->retrieve(storageKey, priority, [this, protectedThis = makeRef(*this), request, completionHandler = WTFMove(completionHandler), startTime, storageKey, frameID](auto record) {
         if (!record) {
             LOG(NetworkCache, "(NetworkProcess) not found in storage");
 
             if (m_statistics)
                 m_statistics->recordRetrievalFailure(frameID.first, storageKey, request);
 
-            completionHandler(nullptr);
+            completeRetrieve(WTFMove(completionHandler), nullptr, info);
             return false;
         }
 
@@ -377,12 +382,10 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
         };
 
 #if !LOG_DISABLED
-        auto elapsed = WallTime::now() - startTime;
+        auto elapsed = MonotonicTime::now() - info.startTime;
         LOG(NetworkCache, "(NetworkProcess) retrieve complete useDecision=%d priority=%d time=%" PRIi64 "ms", static_cast<int>(useDecision), static_cast<int>(request.priority()), elapsed.millisecondsAs<int64_t>());
-#else
-        UNUSED_PARAM(startTime);
 #endif
-        completionHandler(WTFMove(entry));
+        completeRetrieve(WTFMove(completionHandler), WTFMove(entry), info);
 
         if (m_statistics)
             m_statistics->recordRetrievedCachedEntry(frameID.first, storageKey, request, useDecision);
@@ -390,6 +393,11 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
     });
 }
 
+void Cache::completeRetrieve(RetrieveCompletionHandler&& handler, std::unique_ptr<Entry> entry, RetrieveInfo& info)
+{
+    info.completionTime = MonotonicTime::now();
+    handler(WTFMove(entry), info);
+}
     
 std::unique_ptr<Entry> Cache::makeEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData)
 {
@@ -621,7 +629,7 @@ String Cache::recordsPath() const
 void Cache::retrieveData(const DataKey& dataKey, Function<void (const uint8_t* data, size_t size)> completionHandler)
 {
     Key key { dataKey, m_storage->salt() };
-    m_storage->retrieve(key, 4, [completionHandler = WTFMove(completionHandler)] (auto record) {
+    m_storage->retrieve(key, 4, [completionHandler = WTFMove(completionHandler)] (auto record, auto) {
         if (!record || !record->body.size()) {
             completionHandler(nullptr, 0);
             return true;

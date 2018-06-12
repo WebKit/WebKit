@@ -71,6 +71,7 @@ public:
     BlobStorage::Blob resultBodyBlob;
     std::atomic<unsigned> activeCount { 0 };
     bool isCanceled { false };
+    Timings timings;
 };
 
 void Storage::ReadOperation::cancel()
@@ -79,8 +80,10 @@ void Storage::ReadOperation::cancel()
 
     if (isCanceled)
         return;
+    timings.completionTime = MonotonicTime::now();
+    timings.wasCanceled = true;
     isCanceled = true;
-    completionHandler(nullptr);
+    completionHandler(nullptr, timings);
 }
 
 bool Storage::ReadOperation::finish()
@@ -95,7 +98,8 @@ bool Storage::ReadOperation::finish()
         else
             resultRecord = nullptr;
     }
-    return completionHandler(WTFMove(resultRecord));
+    timings.completionTime = MonotonicTime::now();
+    return completionHandler(WTFMove(resultRecord), timings);
 }
 
 struct Storage::WriteOperation {
@@ -644,6 +648,13 @@ void Storage::dispatchReadOperation(std::unique_ptr<ReadOperation> readOperation
     auto& readOperation = *readOperationPtr;
     m_activeReadOperations.add(WTFMove(readOperationPtr));
 
+    readOperation.timings.dispatchTime = MonotonicTime::now();
+    readOperation.timings.synchronizationInProgressAtDispatch = m_synchronizationInProgress;
+    readOperation.timings.shrinkInProgressAtDispatch = m_shrinkInProgress;
+    readOperation.timings.dispatchCountAtDispatch = m_readOperationDispatchCount;
+
+    ++m_readOperationDispatchCount;
+
     // Avoid randomness during testing.
     if (m_mode != Mode::Testing) {
         // I/O pressure may make disk operations slow. If they start taking very long time we rather go to network.
@@ -660,8 +671,11 @@ void Storage::dispatchReadOperation(std::unique_ptr<ReadOperation> readOperation
         if (shouldGetBodyBlob)
             ++readOperation.activeCount;
 
+        readOperation.timings.recordIOStartTime = MonotonicTime::now();
+
         auto channel = IOChannel::open(recordPath, IOChannel::Type::Read);
         channel->read(0, std::numeric_limits<size_t>::max(), &ioQueue(), [this, &readOperation](const Data& fileData, int error) {
+            readOperation.timings.recordIOEndTime = MonotonicTime::now();
             if (!error)
                 readRecord(readOperation, fileData);
             finishReadOperation(readOperation);
@@ -669,8 +683,13 @@ void Storage::dispatchReadOperation(std::unique_ptr<ReadOperation> readOperation
 
         if (shouldGetBodyBlob) {
             // Read the blob in parallel with the record read.
+            readOperation.timings.blobIOStartTime = MonotonicTime::now();
+
             auto blobPath = blobPathForKey(readOperation.key);
             readOperation.resultBodyBlob = m_blobStorage.get(blobPath);
+
+            readOperation.timings.blobIOEndTime = MonotonicTime::now();
+
             finishReadOperation(readOperation);
         }
     });
@@ -747,7 +766,7 @@ template <class T> bool retrieveFromMemory(const T& operations, const Key& key, 
         if (operation->record.key == key) {
             LOG(NetworkCacheStorage, "(NetworkProcess) found write operation in progress");
             RunLoop::main().dispatch([record = operation->record, completionHandler = WTFMove(completionHandler)] {
-                completionHandler(std::make_unique<Storage::Record>(record));
+                completionHandler(std::make_unique<Storage::Record>(record), { });
             });
             return true;
         }
@@ -839,12 +858,12 @@ void Storage::retrieve(const Key& key, unsigned priority, RetrieveCompletionHand
     ASSERT(!key.isNull());
 
     if (!m_capacity) {
-        completionHandler(nullptr);
+        completionHandler(nullptr, { });
         return;
     }
 
     if (!mayContain(key)) {
-        completionHandler(nullptr);
+        completionHandler(nullptr, { });
         return;
     }
 
@@ -854,6 +873,10 @@ void Storage::retrieve(const Key& key, unsigned priority, RetrieveCompletionHand
         return;
 
     auto readOperation = std::make_unique<ReadOperation>(*this, key, WTFMove(completionHandler));
+
+    readOperation->timings.startTime = MonotonicTime::now();
+    readOperation->timings.dispatchCountAtStart = m_readOperationDispatchCount;
+
     m_pendingReadOperationsByPriority[priority].prepend(WTFMove(readOperation));
     dispatchPendingReadOperations();
 }

@@ -177,6 +177,8 @@ private:
     void sendCSPViolationReport(WebCore::URL&&, Ref<WebCore::FormData>&&) final;
     void enqueueSecurityPolicyViolationEvent(WebCore::SecurityPolicyViolationEvent::Init&&) final;
 
+    void logSlowCacheRetrieveIfNeeded(const NetworkCache::Cache::RetrieveInfo&);
+
     const NetworkResourceLoadParameters m_parameters;
 
     Ref<NetworkConnectionToWebProcess> m_connection;
