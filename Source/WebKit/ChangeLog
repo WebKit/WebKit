@@ -1,3 +1,13 @@
+2018-06-12  Jer Noble  <jer.noble@apple.com>
+
+        Make Modern EME An Experimental Feature Again
+        https://bugs.webkit.org/show_bug.cgi?id=186569
+        <rdar://problem/41054402>
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferences.yaml:
+
 2018-06-12  Andy Estes  <aestes@apple.com>
 
         [watchOS] Enable NetworkActivityTracker

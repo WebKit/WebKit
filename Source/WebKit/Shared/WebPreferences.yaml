@@ -665,6 +665,7 @@ EncryptedMediaAPIEnabled:
   humanReadableName: "Modern Encrypted Media API"
   humanReadableDescription: "Modern Encrypted Media API"
   webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
   condition: ENABLE(ENCRYPTED_MEDIA)
 
 MediaPreloadingEnabled:
