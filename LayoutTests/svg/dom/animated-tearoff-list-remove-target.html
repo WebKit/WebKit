@@ -3,10 +3,10 @@
     <div>Removing the target of an animate element should detach the wrappers of the attributes from their animated properties.</div>
     <svg>
         <text x="15" y="40">
-            <tspan id="first-tspan">First tspan.</tspan> 
+            <tspan id="first-tspan" x="0">First tspan.</tspan> 
         </text>
         <text x="15" y="60">
-            <tspan id="second-tspan">Second tspan</tspan> 
+            <tspan id="second-tspan" x="0">Second tspan</tspan> 
         </text>
         <animate id="animate" xlink:href="#first-tspan" attributeType="XML" attributeName="x" from="0" to="100" dur="10s" repeatCount="indefinite"/>
     </svg>
@@ -26,7 +26,7 @@
                 testRunner.waitUntilDone();
             }
 
-            setTimeout(() => {
+            window.requestAnimationFrame(() => {
                 // The target of the <animate> element is the "first-tspan".
                 var tspanElement = document.getElementById("first-tspan");
 
@@ -41,14 +41,16 @@
                 // By now animItem should be detached from the animated animList and has its own copy
                 // of an SVGLength. animItem should not be affected if garbage collection is forced.
                 gc();
-                if (animItem.valueAsString == "0") {
-                    document.querySelector("div").innerHTML += "<br><br>PASS."
-                    document.querySelector("svg").remove();
-                }
+                window.requestAnimationFrame(() => {
+                    if (animItem.valueAsString == "0") {
+                        document.querySelector("div").innerHTML += "<br><br>PASS."
+                        document.querySelector("svg").remove();
+                    }
 
-                if (window.testRunner)
-                    testRunner.notifyDone();
-            }, 0);
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                });
+            });
         })();
     </script>
 </body>

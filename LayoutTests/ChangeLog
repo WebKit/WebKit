@@ -1,3 +1,28 @@
+2018-06-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Layout Test svg/dom/animated-tearoff-list-remove-target.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=185698
+        <rdar://problem/40341200>
+
+        Reviewed by Daniel Bates.
+
+        The test is flaky because we get the animVal.getItem(0) of the 'x' attribute
+        from the target element without initializing this attribute with a base value.
+
+        The test assumes the animator would set the animVal of the 'x' attribute
+        from the 'from' attribute of the <animate> element before animVal.getItem(0)
+        is executed. But this may not always happen. Therefore the test will get 
+        the 'IndexSizeError' exception and it will time out.
+
+        The fix is:
+        -- Initialize the attribute of the target element by a base value.
+        -- Use requestAnimationFrame() instead of using setTimeout() to make the
+           test deterministic.
+        -- Allow the animation to advance one more step after kicking off the GC
+           to ensure the variable 'animItem' is detached from animVal.getItem(0).
+
+        * svg/dom/animated-tearoff-list-remove-target.html:
+
 2018-06-11  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed gardening; add a late endTest(), in case none of the other events fire in time.
