@@ -1,5 +1,28 @@
 2018-06-12  Valerie R Young  <valerie@bocoup.com>
 
+        test262/Runner.pm: add unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=185783
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/webkitperl/test262_unittest/README: Added.
+        * Scripts/webkitperl/test262_unittest/fixtures/expectations-compare.yaml: Added.
+        * Scripts/webkitperl/test262_unittest/fixtures/expectations.yaml: Added.
+        * Scripts/webkitperl/test262_unittest/fixtures/mock-jsc-fail-new-error.pl: Added.
+        * Scripts/webkitperl/test262_unittest/fixtures/mock-jsc-fail.pl: Added.
+        * Scripts/webkitperl/test262_unittest/fixtures/mock-jsc-pass.pl: Added.
+        * Scripts/webkitperl/test262_unittest/fixtures/test/expected-to-fail-now-failing-with-new-error.js: Added.
+        * Scripts/webkitperl/test262_unittest/fixtures/test/expected-to-fail-now-failing.js: Added.
+        * Scripts/webkitperl/test262_unittest/fixtures/test/expected-to-fail-now-passing.js: Added.
+        (f):
+        * Scripts/webkitperl/test262_unittest/fixtures/test/expected-to-pass-now-failing.js: Added.
+        * Scripts/webkitperl/test262_unittest/fixtures/test/fail.js: Added.
+        * Scripts/webkitperl/test262_unittest/fixtures/test/pass.js: Added.
+        (f):
+        * Scripts/webkitperl/test262_unittest/test262-runner-tests.pl: Added.
+
+2018-06-12  Valerie R Young  <valerie@bocoup.com>
+
         test262/Runner.pm: minor updates
         https://bugs.webkit.org/show_bug.cgi?id=186399
 
