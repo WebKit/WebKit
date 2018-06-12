@@ -1,5 +1,60 @@
 2018-06-11  Saam Barati  <sbarati@apple.com>
 
+        Reduce graph size by replacing terminal nodes in blocks that have a ForceOSRExit with Unreachable
+        https://bugs.webkit.org/show_bug.cgi?id=181409
+        <rdar://problem/36383749>
+
+        Reviewed by Keith Miller.
+
+        This patch is me redoing r226655. This is a patch I wrote when
+        profiling Speedometer. Fil rolled this change out in r230928. He
+        showed this slowed down a sunspider tests by ~2x. This sunspider
+        regression revealed a real performance bug in the original change:
+        we would kill blocks that reached OSR entry targets, sometimes leading
+        us to not do OSR entry into the DFG, since we could end up deleting
+        entire loops from the CFG. The reason for this is that code that has run
+        ~once and that reaches loops often has ForceOSRExits inside of it. The
+        solution to this is to not perform this optimization on blocks that can
+        reach OSR entry targets.
+        
+        The reason I'm redoing this patch is that it turns out Fil rolling
+        out the change was a Speedometer 2 regression.
+        
+        This is a modified version of the original ChangeLog I wrote in r226655:
+        
+        When I was looking at profiler data for Speedometer, I noticed that one of
+        the hottest functions in Speedometer is around 1100 bytecode operations long.
+        Only about 100 of those bytecode ops ever execute. However, we ended up
+        spending a lot of time compiling basic blocks that never executed. We often
+        plant ForceOSRExit nodes when we parse bytecodes that have a null value profile.
+        This is the case when such a node never executes.
+        
+        This patch makes it so that anytime a block has a ForceOSRExit, and that block
+        can not reach an OSR entry target, we replace its terminal node with an Unreachable
+        node, and remove all nodes after the ForceOSRExit. This cuts down the graph
+        size since it removes control flow edges from the CFG. This allows us to get
+        rid of huge chunks of the CFG in certain programs. When doing this transformation,
+        we also insert Flushes/PhantomLocals to ensure we can recover values that are bytecode
+        live-in to the ForceOSRExit.
+        
+        Using ForceOSRExit as the signal for this is a bit of a hack. It definitely
+        does not get rid of all the CFG that it could. If we decide it's worth
+        it, we could use additional inputs into this mechanism. For example, we could
+        profile if a basic block ever executes inside the LLInt/Baseline, and
+        remove parts of the CFG based on that.
+        
+        When running Speedometer with the concurrent JIT turned off, this patch
+        improves DFG/FTL compile times by around 5%.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::blocksInPostOrder):
+
+2018-06-11  Saam Barati  <sbarati@apple.com>
+
         The NaturalLoops algorithm only works when the list of blocks in a loop is de-duplicated
         https://bugs.webkit.org/show_bug.cgi?id=184829
 

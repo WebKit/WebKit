@@ -912,7 +912,7 @@ BlockList Graph::blocksInPreOrder()
     return result;
 }
 
-BlockList Graph::blocksInPostOrder()
+BlockList Graph::blocksInPostOrder(bool isSafeToValidate)
 {
     BlockList result;
     PostOrderBlockWorklist worklist;
@@ -931,7 +931,7 @@ BlockList Graph::blocksInPostOrder()
         }
     }
 
-    if (validationEnabled()) {
+    if (isSafeToValidate && validationEnabled()) { // There are users of this where we haven't yet built of the CFG enough to be able to run dominators.
         auto validateResults = [&] (auto& dominators) {
             // When iterating over reverse post order, we should see dominators
             // before things they dominate.

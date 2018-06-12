@@ -627,7 +627,7 @@ public:
     void initializeNodeOwners();
     
     BlockList blocksInPreOrder();
-    BlockList blocksInPostOrder();
+    BlockList blocksInPostOrder(bool isSafeToValidate = true);
     
     class NaturalBlockIterable {
     public:
