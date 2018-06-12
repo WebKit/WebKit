@@ -92,17 +92,15 @@ protected:
         };
 
          struct HorizontalGeometry {
-             LayoutUnit left;
-             LayoutUnit right;
-             LayoutUnit width;
-             Display::Box::HorizontalEdges margin;
+            LayoutUnit left;
+            LayoutUnit right;
+            WidthAndMargin widthAndMargin;
          };
 
         struct VerticalGeometry {
             LayoutUnit top;
             LayoutUnit bottom;
-            LayoutUnit height;
-            Display::Box::VerticalEdges margin;
+            HeightAndMargin heightAndMargin;
         };
 
         static VerticalGeometry outOfFlowVerticalGeometry(LayoutContext&, const Box&);

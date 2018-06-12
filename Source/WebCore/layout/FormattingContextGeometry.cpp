@@ -183,7 +183,7 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
     ASSERT(marginTop);
     ASSERT(marginBottom);
 
-    return { *top, *bottom, *height, { *marginTop, *marginBottom} };
+    return { *top, *bottom, { *height, { *marginTop, *marginBottom} } };
 }
 
 FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
@@ -324,7 +324,7 @@ FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::out
     ASSERT(marginLeft);
     ASSERT(marginRight);
 
-    return HorizontalGeometry { *left, *right, *width, { *marginLeft, *marginRight } };
+    return { *left, *right, { *width, { *marginLeft, *marginRight } } };
 }
 
 FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
@@ -391,7 +391,7 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
     if (boxHeight > containingBlockHeight)
         bottom = containingBlockHeight - (*top + *marginTop + borderTop + paddingTop + height + paddingBottom + borderBottom + *marginBottom); 
 
-    return { *top, *bottom, height, { *marginTop, *marginBottom } };
+    return { *top, *bottom, { height, { *marginTop, *marginBottom } } };
 }
 
 FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
@@ -484,7 +484,7 @@ FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::out
     ASSERT(marginLeft);
     ASSERT(marginRight);
 
-    return { *left, *right, width, { *marginLeft, *marginRight } };
+    return { *left, *right, { width, { *marginLeft, *marginRight } } };
 }
 
 FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floatingNonReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
@@ -680,7 +680,7 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::inlineR
         computedWidthValue = 300;
     }
 
-    return WidthAndMargin { computedWidthValue, { computedMarginLeftValue, computedMarginRightValue } };
+    return { computedWidthValue, { computedMarginLeftValue, computedMarginRightValue } };
 }
 
 Display::Box::Edges FormattingContext::Geometry::computedBorder(LayoutContext&, const Box& layoutBox)
@@ -712,7 +712,7 @@ Display::Box::HorizontalEdges FormattingContext::Geometry::computedNonCollapsedH
     auto marginRight = style.marginRight();
 
     auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
-    return Display::Box::HorizontalEdges {
+    return {
         marginLeft.isAuto() ? LayoutUnit { 0 } : valueForLength(marginLeft, containingBlockWidth),
         marginRight.isAuto() ? LayoutUnit { 0 } : valueForLength(marginRight, containingBlockWidth)
     };
@@ -725,7 +725,7 @@ Display::Box::VerticalEdges FormattingContext::Geometry::computedNonCollapsedVer
     auto marginBottom = style.marginBottom();
 
     auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
-    return Display::Box::VerticalEdges {
+    return {
         marginTop.isAuto() ? LayoutUnit { 0 } : valueForLength(marginTop, containingBlockWidth),
         marginBottom.isAuto() ? LayoutUnit { 0 } : valueForLength(marginBottom, containingBlockWidth)
     };

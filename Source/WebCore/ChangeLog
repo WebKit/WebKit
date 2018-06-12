@@ -1,3 +1,26 @@
+2018-06-11  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Replace HorizontalGeometry::width and margin with WidthAndMargin (Vertical too)
+        https://bugs.webkit.org/show_bug.cgi?id=186556
+
+        Reviewed by Sam Weinig.
+
+        HorizontalGeometry::width and margin -> WidthAndMargin
+        VerticalGeometry::height and margin -> HeightAndMargin
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry const):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedHorizontalMarginValue):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue):
+
 2018-06-11  Youenn Fablet  <youenn@apple.com>
 
         Improve error messages in case FetchEvent.respondWith has a rejected promise

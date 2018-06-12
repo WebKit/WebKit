@@ -67,18 +67,18 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(LayoutContext& layout
 {
     auto horizontalGeometry = Geometry::outOfFlowHorizontalGeometry(layoutContext, layoutBox);
     displayBox.setLeft(horizontalGeometry.left);
-    displayBox.setWidth(horizontalGeometry.width);
-    ASSERT(horizontalGeometry.left + horizontalGeometry.width == horizontalGeometry.right);
-    displayBox.setHorizontalMargin(horizontalGeometry.margin);
+    displayBox.setWidth(horizontalGeometry.widthAndMargin.width);
+    ASSERT(horizontalGeometry.left + horizontalGeometry.widthAndMargin.width == horizontalGeometry.right);
+    displayBox.setHorizontalMargin(horizontalGeometry.widthAndMargin.margin);
 }
 
 void FormattingContext::computeOutOfFlowVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     auto verticalGeometry = Geometry::outOfFlowVerticalGeometry(layoutContext, layoutBox);
     displayBox.setTop(verticalGeometry.top);
-    displayBox.setHeight(verticalGeometry.height);
-    ASSERT(verticalGeometry.top + verticalGeometry.height == verticalGeometry.bottom);
-    displayBox.setVerticalMargin(verticalGeometry.margin);
+    displayBox.setHeight(verticalGeometry.heightAndMargin.height);
+    ASSERT(verticalGeometry.top + verticalGeometry.heightAndMargin.height == verticalGeometry.bottom);
+    displayBox.setVerticalMargin(verticalGeometry.heightAndMargin.margin);
 }
 
 void FormattingContext::computeBorderAndPadding(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
