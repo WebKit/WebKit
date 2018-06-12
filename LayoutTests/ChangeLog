@@ -1,3 +1,14 @@
+2018-06-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Unreviewed followup for r232736
+        https://bugs.webkit.org/show_bug.cgi?id=185698
+
+        Consider the case when the SVG animation starts before requestAnimationFrame()
+        is called. Store the value of animItem and compare it later with the value
+        of animItem after detaching it from the animated animList.
+
+        * svg/dom/animated-tearoff-list-remove-target.html:
+
 2018-06-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark inspector/console/webcore-logging.html as flaky on mac-wk2 debug.

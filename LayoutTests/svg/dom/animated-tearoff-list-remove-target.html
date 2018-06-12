@@ -33,6 +33,7 @@
                 // animItem is a reference (not a copy) to the first item in the x animated list.
                 var animList = tspanElement.x.animVal;
                 var animItem = animList.getItem(0);
+                var originalValue = animItem.valueAsString;
 
                 // Now change the target of the <animate> element to be the "second-tspan".
                 var animateElement = document.getElementById("animate");
@@ -42,7 +43,7 @@
                 // of an SVGLength. animItem should not be affected if garbage collection is forced.
                 gc();
                 window.requestAnimationFrame(() => {
-                    if (animItem.valueAsString == "0") {
+                    if (animItem.valueAsString == originalValue) {
                         document.querySelector("div").innerHTML += "<br><br>PASS."
                         document.querySelector("svg").remove();
                     }
