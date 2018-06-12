@@ -1,3 +1,28 @@
+2018-06-11  Chris Dumez  <cdumez@apple.com>
+
+        http/tests/security/xss-DENIED-script-inject-into-inactive-window2.html times out with PSON enabled
+        https://bugs.webkit.org/show_bug.cgi?id=186546
+
+        Reviewed by Brady Eidson.
+
+        Disable process swap on navigation in frames that have opened other frames via
+        window.open(). These new windows may have a WindowProxy to their opener, and it
+        would therefore be unsafe to process swap at this point.
+
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode const):
+        (WebKit::NavigationActionData::decode):
+        * Shared/NavigationActionData.h:
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::setHasOpenedFrames):
+        (API::Navigation::hasOpenedFrames const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2018-06-11  Keith Rollin  <krollin@apple.com>
 
         Add logging around internalError(const URL&)

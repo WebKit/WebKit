@@ -1,3 +1,21 @@
+2018-06-11  Chris Dumez  <cdumez@apple.com>
+
+        http/tests/security/xss-DENIED-script-inject-into-inactive-window2.html times out with PSON enabled
+        https://bugs.webkit.org/show_bug.cgi?id=186546
+
+        Reviewed by Brady Eidson.
+
+        Add a hasOpenedFrames flag to NavigationAction, which we'll use in the UIProcess when deciding
+        to process swap on navigation or not.
+
+        Test: http/tests/security/xss-DENIED-script-inject-into-inactive-window2-pson.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::hasOpenedFrames const):
+        (WebCore::NavigationAction::setHasOpenedFrames):
+
 2018-06-11  Tim Horton  <timothy_horton@apple.com>
 
         Link drag image is inconsistently unreadable in dark mode

@@ -49,6 +49,7 @@ void NavigationActionData::encode(IPC::Encoder& encoder) const
     encoder << isRedirect;
     encoder << treatAsSameOriginNavigation;
     encoder << isCrossOriginWindowOpenNavigation;
+    encoder << hasOpenedFrames;
     encoder << opener;
     encoder << targetBackForwardItemIdentifier;
 }
@@ -109,6 +110,11 @@ std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& d
     if (!isCrossOriginWindowOpenNavigation)
         return std::nullopt;
 
+    std::optional<bool> hasOpenedFrames;
+    decoder >> hasOpenedFrames;
+    if (!hasOpenedFrames)
+        return std::nullopt;
+
     std::optional<std::optional<std::pair<uint64_t, uint64_t>>> opener;
     decoder >> opener;
     if (!opener)
@@ -121,7 +127,7 @@ std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& d
         
     return {{ WTFMove(navigationType), WTFMove(modifiers), WTFMove(mouseButton), WTFMove(syntheticClickType), WTFMove(*userGestureTokenIdentifier),
         WTFMove(*canHandleRequest), WTFMove(shouldOpenExternalURLsPolicy), WTFMove(*downloadAttribute), WTFMove(clickLocationInRootViewCoordinates),
-        WTFMove(*isRedirect), *treatAsSameOriginNavigation, *isCrossOriginWindowOpenNavigation, WTFMove(*opener), WTFMove(*targetBackForwardItemIdentifier) }};
+        WTFMove(*isRedirect), *treatAsSameOriginNavigation, *isCrossOriginWindowOpenNavigation, *hasOpenedFrames, WTFMove(*opener), WTFMove(*targetBackForwardItemIdentifier) }};
 }
 
 } // namespace WebKit

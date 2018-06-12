@@ -53,6 +53,7 @@ struct NavigationActionData {
     bool isRedirect { false };
     bool treatAsSameOriginNavigation { false };
     bool isCrossOriginWindowOpenNavigation { false };
+    bool hasOpenedFrames { false };
     std::optional<std::pair<uint64_t, uint64_t>> opener;
     std::optional<WebCore::BackForwardItemIdentifier> targetBackForwardItemIdentifier;
 };

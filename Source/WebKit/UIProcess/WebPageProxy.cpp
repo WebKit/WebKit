@@ -4025,6 +4025,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
     navigation->setCurrentRequestIsRedirect(navigationActionData.isRedirect);
     navigation->setTreatAsSameOriginNavigation(navigationActionData.treatAsSameOriginNavigation);
     navigation->setIsCrossOriginWindowOpenNavigation(navigationActionData.isCrossOriginWindowOpenNavigation);
+    navigation->setHasOpenedFrames(navigationActionData.hasOpenedFrames);
     navigation->setOpener(navigationActionData.opener);
 
     auto listener = makeRef(frame->setUpPolicyListenerProxy(listenerID, PolicyListenerType::NavigationAction));

@@ -1350,6 +1350,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
 
     NavigationAction action { frameLoadRequest.requester(), request, frameLoadRequest.initiatedByMainFrame(), newLoadType, isFormSubmission, event, frameLoadRequest.shouldOpenExternalURLsPolicy(), frameLoadRequest.downloadAttribute() };
     action.setIsCrossOriginWindowOpenNavigation(frameLoadRequest.isCrossOriginWindowOpenNavigation());
+    action.setHasOpenedFrames(!m_openedFrames.isEmpty());
     if (auto* opener = this->opener()) {
         auto pageID = opener->loader().client().pageID();
         auto frameID = opener->loader().client().frameID();
