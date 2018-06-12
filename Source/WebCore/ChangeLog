@@ -1,3 +1,16 @@
+2018-06-12  Zalan Bujtas  <zalan@apple.com>
+
+        Complex text handling should opt out of bounded text layout.
+        https://bugs.webkit.org/show_bug.cgi?id=186571
+        <rdar://problem/40801429>
+
+        Reviewed by Tim Horton.
+
+        Test: fast/text/complex-long-text-crash.html
+
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+
 2018-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the Windows build after r232757
