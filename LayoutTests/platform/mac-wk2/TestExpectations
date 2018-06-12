@@ -884,3 +884,5 @@ webkit.org/b/177380 http/tests/cache-storage/cache-records-persistency.https.htm
 webkit.org/b/184937 transitions/opacity-transition-zindex.html [ Skip ]
 
 webkit.org/b/186362 [ Release ] http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction.html [ Skip ]
+
+webkit.org/b/186425 [ Debug ] inspector/console/webcore-logging.html [ Pass Failure ]
