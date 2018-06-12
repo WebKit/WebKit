@@ -1,3 +1,28 @@
+2018-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION(r228724): Occasional crash when executing ReplaceSelectionCommand at the end of the document
+        https://bugs.webkit.org/show_bug.cgi?id=186555
+        <rdar://problem/39703004>
+
+        Reviewed by Ryosuke Niwa.
+
+        r228724 removed a null check for m_lastNodeInserted in InsertedNodes::pastLastLeaf(). This null check was
+        guarding against the case where m_firstNodeInserted might exist, but m_lastNodeInserted is null, which may
+        happen when inserting content at the end of the document, since InsertedNodes::willRemoveNodePreservingChildren
+        may cause m_lastNodeInserted to be null. This is because the removed node may be at the very end of the document
+        _and also_ not have any children, which means that both `node->lastChild()` as well as
+        `NodeTraversal::nextSkippingChildren(*node)` will be null.
+
+        After getting into this state, we subsequently crash when attempting to compute InsertedNodes::pastLastLeaf().
+        To fix this, avoid accidentally clearing out m_lastNodeInserted; if the last inserted node has neither a child
+        nor a next node, seek backwards to the previous node in the DOM instead, and clamp to the first inserted node,
+        such that the last inserted node's document position is at or after the first inserted node's position.
+
+        Test: editing/execCommand/insert-apple-style-span-at-document-end.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::InsertedNodes::willRemoveNodePreservingChildren):
+
 2018-06-12  Jianjun Zhu  <jianjun.zhu@intel.com>
 
         Hash deviceId and groupId of MediaTrackCapabilities.

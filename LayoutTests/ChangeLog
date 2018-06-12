@@ -1,3 +1,17 @@
+2018-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION(r228724): Occasional crash when executing ReplaceSelectionCommand at the end of the document
+        https://bugs.webkit.org/show_bug.cgi?id=186555
+        <rdar://problem/39703004>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a new layout test demonstrating the crash. The test passes if the right text is inserted into the DOM, and
+        we don't hit a crash.
+
+        * editing/execCommand/insert-apple-style-span-at-document-end-expected.txt: Added.
+        * editing/execCommand/insert-apple-style-span-at-document-end.html: Added.
+
 2018-06-12  Jianjun Zhu  <jianjun.zhu@intel.com>
 
         Hash deviceId and groupId of MediaTrackCapabilities.
