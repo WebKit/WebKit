@@ -656,7 +656,8 @@ void Graph::handleSuccessor(Vector<BasicBlock*, 16>& worklist, BasicBlock* block
         worklist.append(successor);
     }
     
-    successor->predecessors.append(block);
+    if (!successor->predecessors.contains(block))
+        successor->predecessors.append(block);
 }
 
 void Graph::determineReachability()

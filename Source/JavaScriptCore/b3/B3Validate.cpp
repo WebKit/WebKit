@@ -536,6 +536,14 @@ public:
 
         for (Variable* variable : m_procedure.variables())
             VALIDATE(variable->type() != Void, ("At ", *variable));
+
+        for (BasicBlock* block : m_procedure) {
+            // We expect the predecessor list to be de-duplicated.
+            HashSet<BasicBlock*> predecessors;
+            for (BasicBlock* predecessor : block->predecessors())
+                predecessors.add(predecessor);
+            VALIDATE(block->numPredecessors() == predecessors.size(), ("At ", *block));
+        }
     }
 
 private:

@@ -1,3 +1,22 @@
+2018-06-11  Saam Barati  <sbarati@apple.com>
+
+        The NaturalLoops algorithm only works when the list of blocks in a loop is de-duplicated
+        https://bugs.webkit.org/show_bug.cgi?id=184829
+
+        Reviewed by Michael Saboff.
+
+        This patch switches NaturalLoops to walking over a block's predecessors
+        instead of successors when building the initial list of loops and their
+        headers. The algorithm broke down when we had a footer block with multiple
+        control flow edges pointing to the same header. This made the loop data
+        structure contain multiple entries for the same basic block. The algorithm
+        breaks down when we end up in this state, since it means our way of detecting
+        what loop is more inner is broken, since that check uses a loop's size.
+
+        * wtf/NaturalLoops.h:
+        (WTF::NaturalLoop::addBlock):
+        (WTF::NaturalLoops::NaturalLoops):
+
 2018-06-11  Keith Rollin  <krollin@apple.com>
 
         Add logging around internalError(const URL&)

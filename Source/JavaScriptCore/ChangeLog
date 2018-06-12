@@ -1,3 +1,24 @@
+2018-06-11  Saam Barati  <sbarati@apple.com>
+
+        The NaturalLoops algorithm only works when the list of blocks in a loop is de-duplicated
+        https://bugs.webkit.org/show_bug.cgi?id=184829
+
+        Reviewed by Michael Saboff.
+
+        This patch codifies that a BasicBlock's list of predecessors is de-duplicated.
+        In B3/Air, this just meant writing a validation rule. In DFG, this meant
+        ensuring this property when building up the predecessors list, and also adding
+        a validation rule. The NaturalLoops algorithm relies on this property.
+
+        * b3/B3Validate.cpp:
+        * b3/air/AirValidate.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testLoopWithMultipleHeaderEdges):
+        (JSC::B3::run):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::handleSuccessor):
+        * dfg/DFGValidate.cpp:
+
 2018-06-11  Keith Miller  <keith_miller@apple.com>
 
         Loading cnn.com in MiniBrowser hits Structure::dump() under DFG::AdaptiveInferredPropertyValueWatchpoint::handleFire  which churns 65KB of memory

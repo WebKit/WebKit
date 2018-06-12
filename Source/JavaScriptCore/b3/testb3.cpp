@@ -10830,6 +10830,49 @@ void testChillModImms32(int32_t numerator, int32_t denominator)
     CHECK(compileAndRun<int32_t>(proc, numerator, denominator) == chillMod(numerator, denominator));
 }
 
+void testLoopWithMultipleHeaderEdges()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* innerHeader = proc.addBlock();
+    BasicBlock* innerEnd = proc.addBlock();
+    BasicBlock* outerHeader = proc.addBlock();
+    BasicBlock* outerEnd = proc.addBlock();
+    BasicBlock* end = proc.addBlock();
+
+    auto* ne42 = outerHeader->appendNew<Value>(
+        proc, NotEqual, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        root->appendNew<ConstPtrValue>(proc, Origin(), 42));
+    outerHeader->appendNewControlValue(
+        proc, Branch, Origin(),
+        ne42,
+        FrequentedBlock(innerHeader), FrequentedBlock(outerEnd));
+    outerEnd->appendNewControlValue(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        FrequentedBlock(outerHeader), FrequentedBlock(end));
+
+    SwitchValue* switchValue = innerHeader->appendNew<SwitchValue>(
+        proc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    switchValue->setFallThrough(FrequentedBlock(innerEnd));
+    for (unsigned i = 0; i < 20; ++i) {
+        switchValue->appendCase(SwitchCase(i, FrequentedBlock(innerHeader)));
+    }
+
+    root->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(outerHeader));
+
+    innerEnd->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(outerEnd));
+    end->appendNewControlValue(
+        proc, Return, Origin(),
+        end->appendNew<Const32Value>(proc, Origin(), 5678));
+
+    auto code = compileProc(proc); // This shouldn't crash in computing NaturalLoops.
+    CHECK(invoke<int32_t>(*code, 0, 12345) == 5678);
+}
+
 void testSwitch(unsigned degree, unsigned gap = 1)
 {
     Procedure proc;
@@ -17802,6 +17845,8 @@ void run(const char* filter)
     
     RUN(testShuffleDoesntTrashCalleeSaves());
     RUN(testDemotePatchpointTerminal());
+
+    RUN(testLoopWithMultipleHeaderEdges());
 
     if (isX86()) {
         RUN(testBranchBitAndImmFusion(Identity, Int64, 1, Air::BranchTest32, Air::Arg::Tmp));

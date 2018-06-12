@@ -112,6 +112,14 @@ public:
             for (BasicBlock* successor : block->successorBlocks())
                 VALIDATE(validBlocks.contains(successor), ("In ", *block));
         }
+
+        for (BasicBlock* block : m_code) {
+            // We expect the predecessor list to be de-duplicated.
+            HashSet<BasicBlock*> predecessors;
+            for (BasicBlock* predecessor : block->predecessors())
+                predecessors.add(predecessor);
+            VALIDATE(block->numPredecessors() == predecessors.size(), ("At ", *block));
+        }
     }
 
 private:
