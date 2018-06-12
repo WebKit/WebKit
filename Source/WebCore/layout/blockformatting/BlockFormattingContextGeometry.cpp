@@ -59,7 +59,9 @@ FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::i
     ASSERT(layoutBox.isInFlow() && !layoutBox.replaced());
 
     auto compute = [&]() -> LayoutUnit {
-        // https://www.w3.org/TR/CSS22/visudet.html
+        // 10.6.3 Block-level non-replaced elements in normal flow when 'overflow' computes to 'visible'
+        //
+        // If 'margin-top', or 'margin-bottom' are 'auto', their used value is 0.
         // If 'height' is 'auto', the height depends on whether the element has any block-level children and whether it has padding or borders:
         // The element's height is the distance from its top content edge to the first applicable of the following:
         // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
@@ -86,7 +88,7 @@ FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::i
         // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin...
         auto* lastInFlowChild = downcast<Container>(layoutBox).lastInFlowChild();
         ASSERT(lastInFlowChild);
-        if (!BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent(*lastInFlowChild)) {
+        if (!MarginCollapse::isMarginBottomCollapsedWithParent(*lastInFlowChild)) {
             auto* lastInFlowDisplayBox = layoutContext.displayBoxForLayoutBox(*lastInFlowChild);
             ASSERT(lastInFlowDisplayBox);
             return lastInFlowDisplayBox->bottom() + lastInFlowDisplayBox->marginBottom();
@@ -94,7 +96,7 @@ FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::i
 
         // 3. the bottom border edge of the last in-flow child whose top margin doesn't collapse with the element's bottom margin
         auto* inFlowChild = lastInFlowChild;
-        while (inFlowChild && BlockFormattingContext::MarginCollapse::isMarginTopCollapsedWithParentMarginBottom(*inFlowChild))
+        while (inFlowChild && MarginCollapse::isMarginTopCollapsedWithParentMarginBottom(*inFlowChild))
             inFlowChild = inFlowChild->previousInFlowSibling();
         if (inFlowChild) {
             auto* inFlowDisplayBox = layoutContext.displayBoxForLayoutBox(*inFlowChild);
@@ -106,11 +108,14 @@ FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::i
         return 0;
     };
 
-    auto computedHeight = compute();
+    auto height = compute();
+    auto marginTop = MarginCollapse::marginTop(layoutContext, layoutBox);
+    auto marginBottom =  MarginCollapse::marginBottom(layoutContext, layoutBox);
+
     if (!isStretchedToViewport(layoutContext, layoutBox))
-        return { computedHeight, { } };
+        return { height, { marginTop, marginBottom } };
     auto initialContainingBlockHeight = layoutContext.displayBoxForLayoutBox(initialContainingBlock(layoutBox))->contentBox().height();
-    return { std::max(computedHeight, initialContainingBlockHeight), { } };
+    return { std::max(height, initialContainingBlockHeight), { marginTop, marginBottom } };
 }
 
 FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox,

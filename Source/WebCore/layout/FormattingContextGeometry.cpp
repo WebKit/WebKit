@@ -101,13 +101,13 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
 
     auto& style = layoutBox.style();
     auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
-    auto& containingBlock = *layoutBox.containingBlock();
-    auto containingBlockHeight = layoutContext.displayBoxForLayoutBox(containingBlock)->height();
-    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(containingBlock)->width();
+    auto& containingBlockDisplayBox = *layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock());
+    auto containingBlockHeight = containingBlockDisplayBox.height();
+    auto containingBlockWidth = containingBlockDisplayBox.width();
 
     auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
     auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
-    auto height = computedValueIfNotAuto(style.logicalHeight(), containingBlockWidth);
+    auto height = computedValueIfNotAuto(style.logicalHeight(), containingBlockHeight);
     auto marginTop = computedValueIfNotAuto(style.marginTop(), containingBlockWidth);
     auto marginBottom = computedValueIfNotAuto(style.marginBottom(), containingBlockWidth);
     auto paddingTop = displayBox.paddingTop();
@@ -490,23 +490,42 @@ FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::out
 FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floatingNonReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isFloatingPositioned() && !layoutBox.replaced());
+
     // 10.6.6 Complicated cases
     //
+    // Block-level, non-replaced elements in normal flow when 'overflow' does not compute to 'visible' (except if the 'overflow' property's value has been propagated to the viewport).
+    // 'Inline-block', non-replaced elements.
     // Floating, non-replaced elements.
     //
-    // If 'height' is 'auto', the height depends on the element's descendants per 10.6.7.
-    auto height = layoutBox.style().logicalHeight();
-    auto computedHeightValue = height.isAuto() ? contentHeightForFormattingContextRoot(layoutContext, layoutBox) : LayoutUnit { height.value() };
-    return FormattingContext::Geometry::HeightAndMargin { computedHeightValue, { } };
+    // 1. If 'margin-top', or 'margin-bottom' are 'auto', their used value is 0.
+    // 2. If 'height' is 'auto', the height depends on the element's descendants per 10.6.7.
+
+    auto& style = layoutBox.style();
+    auto& containingBlock = *layoutBox.containingBlock();
+    auto& containingBlockDisplayBox = *layoutContext.displayBoxForLayoutBox(containingBlock);
+
+    auto height = computedValueIfNotAuto(style.logicalHeight(), containingBlockDisplayBox.height());
+    auto marginTop = computedValueIfNotAuto(style.marginTop(), containingBlockDisplayBox.width());
+    auto marginBottom = computedValueIfNotAuto(style.marginBottom(), containingBlockDisplayBox.width());
+
+    // #1
+    marginTop = marginTop.value_or(0);
+    marginBottom = marginBottom.value_or(0);
+    // #2
+    if (!height)
+        height = contentHeightForFormattingContextRoot(layoutContext, layoutBox);
+    return FormattingContext::Geometry::HeightAndMargin { *height, { *marginTop, *marginBottom } };
 }
 
 FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatingNonReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isFloatingPositioned() && !layoutBox.replaced());
+
     // 10.3.5 Floating, non-replaced elements
     //
     // 1. If 'margin-left', or 'margin-right' are computed as 'auto', their used value is '0'.
     // 2. If 'width' is computed as 'auto', the used value is the "shrink-to-fit" width.
+
     auto& style = layoutBox.style();
     auto width = style.logicalWidth();
     // #1

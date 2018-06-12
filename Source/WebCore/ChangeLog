@@ -1,3 +1,17 @@
+2018-06-12  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add vertical margin computation for inflow non-replaced box and for the (10.6.6) complicated cases.
+        https://bugs.webkit.org/show_bug.cgi?id=186469
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+
 2018-06-12  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Bump required version to 1.8.3
