@@ -36,8 +36,8 @@ using InitData = String;
 class GStreamerEMEUtilities {
 
 public:
-    static const char* s_ClearKeyUUID = WEBCORE_GSTREAMER_EME_UTILITIES_CLEARKEY_UUID;
-    static const char* s_ClearKeyKeySystem = "org.w3.clearkey";
+    static constexpr char const* s_ClearKeyUUID = WEBCORE_GSTREAMER_EME_UTILITIES_CLEARKEY_UUID;
+    static constexpr char const* s_ClearKeyKeySystem = "org.w3.clearkey";
 
     static bool isClearKeyKeySystem(const String& keySystem)
     {
