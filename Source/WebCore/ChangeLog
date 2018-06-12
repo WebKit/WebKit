@@ -1,3 +1,20 @@
+2018-06-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS WK1: Occasional crash in FrameView::setScrollPosition
+        https://bugs.webkit.org/show_bug.cgi?id=186575
+
+        Reviewed by David Kilzer.
+
+        The bug was caused by ScrollView::platformSetScrollPosition releasing the web thread lock
+        and DumpRenderTree requesting a new page load thereby destroying FrameView.
+
+        Fixed the crash by keeping FrameView alive while scrollToFocusedElementTimerFired is getting called.
+
+        No new tests since the bug is caught by existing layout tests under guard malloc.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToFocusedElementTimerFired):
+
 2018-06-12  Zalan Bujtas  <zalan@apple.com>
 
         Complex text handling should opt out of bounded text layout.

@@ -2295,6 +2295,7 @@ void FrameView::scrollToFocusedElementImmediatelyIfNeeded()
 
 void FrameView::scrollToFocusedElementTimerFired()
 {
+    auto protectedThis = makeRef(*this);
     scrollToFocusedElementInternal();
 }
 
