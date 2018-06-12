@@ -478,14 +478,6 @@ void DocumentLoader::startDataLoadTimer()
 #endif
 }
 
-void DocumentLoader::handleSubstituteDataLoadSoon()
-{
-    if (!m_deferMainResourceDataLoad || frameLoader()->loadsSynchronously())
-        handleSubstituteDataLoadNow();
-    else
-        startDataLoadTimer();
-}
-
 #if ENABLE(SERVICE_WORKER)
 void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::RegistrationCallback&& callback)
 {
@@ -671,15 +663,24 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
 bool DocumentLoader::tryLoadingRequestFromApplicationCache()
 {
     m_applicationCacheHost->maybeLoadMainResource(m_request, m_substituteData);
+    return tryLoadingSubstituteData();
+}
 
+bool DocumentLoader::tryLoadingSubstituteData()
+{
     if (!m_substituteData.isValid() || !m_frame->page())
         return false;
 
-    RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Returning cached main resource (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
+    RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Returning substitute data (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
     m_identifierForLoadWithoutResourceLoader = m_frame->page()->progress().createUniqueIdentifier();
     frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, this, m_request);
     frameLoader()->notifier().dispatchWillSendRequest(this, m_identifierForLoadWithoutResourceLoader, m_request, ResourceResponse());
-    handleSubstituteDataLoadSoon();
+
+    if (!m_deferMainResourceDataLoad || frameLoader()->loadsSynchronously())
+        handleSubstituteDataLoadNow();
+    else
+        startDataLoadTimer();
+
     return true;
 }
 
@@ -1728,6 +1729,11 @@ void DocumentLoader::startLoadingMainResource(ShouldContinue shouldContinue)
                 return;
 
             m_serviceWorkerRegistrationData = WTFMove(registrationData);
+
+            // Prefer existing substitute data (from WKWebView.loadData etc) over service worker fetch.
+            if (this->tryLoadingSubstituteData())
+                return;
+            // Try app cache only if there is no service worker.
             if (!m_serviceWorkerRegistrationData && this->tryLoadingRequestFromApplicationCache())
                 return;
             this->loadMainResource(WTFMove(request));

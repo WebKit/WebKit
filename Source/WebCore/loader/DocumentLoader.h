@@ -377,6 +377,7 @@ private:
     bool isPostOrRedirectAfterPost(const ResourceRequest&, const ResourceResponse&);
 
     bool tryLoadingRequestFromApplicationCache();
+    bool tryLoadingSubstituteData();
     bool tryLoadingRedirectRequestFromApplicationCache(const ResourceRequest&);
 #if ENABLE(SERVICE_WORKER)
     void restartLoadingDueToServiceWorkerRegistrationChange(ResourceRequest&&, std::optional<ServiceWorkerRegistrationData>&&);
@@ -391,7 +392,6 @@ private:
 #else
     typedef Timer DocumentLoaderTimer;
 #endif
-    void handleSubstituteDataLoadSoon();
     void handleSubstituteDataLoadNow();
     void startDataLoadTimer();
 
