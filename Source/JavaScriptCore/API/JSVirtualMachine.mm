@@ -268,13 +268,6 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
     return m_externalRememberedSet;
 }
 
-- (void)shrinkFootprint
-{
-    JSC::VM* vm = toJS(m_group);
-    JSC::JSLockHolder locker(vm);
-    vm->shrinkFootprintWhenIdle();
-}
-
 - (void)shrinkFootprintWhenIdle
 {
     JSC::VM* vm = toJS(m_group);

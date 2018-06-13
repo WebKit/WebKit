@@ -31,8 +31,6 @@
 
 @interface JSVirtualMachine(JSPrivate)
 
-- (void)shrinkFootprint; // FIXME: Remove this SPI when clients move to shrinkFootprintWhenIdle: https://bugs.webkit.org/show_bug.cgi?id=186071
-
 /*!
 @method
 @discussion Shrinks the memory footprint of the VM by deleting various internal caches,
