@@ -1,3 +1,21 @@
+2018-06-13  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Web Automation: wrong modifiers sent for 'Help' virtual key
+        https://bugs.webkit.org/show_bug.cgi?id=186600
+        <rdar://problem/41088912>
+
+        Reviewed by Timothy Hatcher.
+
+        This fixes a hang when running W3C test:
+
+            special_keys.py::test_webdriver_special_key_sends_keydown[HELP-expected2]
+
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::eventModifierFlagsForVirtualKey):
+        The help modifier doesn't seem to be used when pressing the Help key.
+        I verified this using the Help key on the Keyboard Viewer, since no
+        keyboards from the past decade actually have this physical button.
+
 2018-06-13  Thibault Saunier  <tsaunier@igalia.com>
 
         [WPE] Build getUserMedia support

@@ -372,8 +372,6 @@ static NSEventModifierFlags eventModifierFlagsForVirtualKey(VirtualKey key)
         return NSEventModifierFlagCommand;
 
     case VirtualKey::Help:
-        return NSEventModifierFlagHelp | NSEventModifierFlagFunction;
-
     case VirtualKey::PageUp:
     case VirtualKey::PageDown:
     case VirtualKey::End:
