@@ -1,3 +1,12 @@
+2018-06-13  Per Arne Vollan  <pvollan@apple.com>
+
+        A few layout tests are failing on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=186562
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-06-12  Zalan Bujtas  <zalan@apple.com>
 
         Complex text handling should opt out of bounded text layout.
