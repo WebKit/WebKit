@@ -447,10 +447,8 @@ void WebProcessPool::screenPropertiesStateChanged()
 NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* withWebsiteDataStore)
 {
     if (m_networkProcess) {
-        if (withWebsiteDataStore) {
+        if (withWebsiteDataStore)
             m_networkProcess->send(Messages::NetworkProcess::AddWebsiteDataStore(withWebsiteDataStore->parameters()), 0);
-            withWebsiteDataStore->clearPendingCookies();
-        }
         return *m_networkProcess;
     }
 
@@ -536,15 +534,8 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
             m_websiteDataStore->websiteDataStore().networkProcessDidCrash();
     }
 
-    if (m_websiteDataStore) {
-        m_networkProcess->send(Messages::NetworkProcess::AddWebsiteDataStore(m_websiteDataStore->websiteDataStore().parameters()), 0);
-        m_websiteDataStore->websiteDataStore().clearPendingCookies();
-    }
-    
-    if (withWebsiteDataStore) {
+    if (withWebsiteDataStore)
         m_networkProcess->send(Messages::NetworkProcess::AddWebsiteDataStore(withWebsiteDataStore->parameters()), 0);
-        withWebsiteDataStore->clearPendingCookies();
-    }
 
     return *m_networkProcess;
 }
@@ -1199,11 +1190,9 @@ void WebProcessPool::pageBeginUsingWebsiteDataStore(WebPageProxy& page)
         ASSERT(page.websiteDataStore().parameters().networkSessionParameters.sessionID == sessionID);
         sendToNetworkingProcess(Messages::NetworkProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()));
         page.process().send(Messages::WebProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::privateSessionParameters(sessionID)), 0);
-        page.websiteDataStore().clearPendingCookies();
     } else if (sessionID != PAL::SessionID::defaultSessionID()) {
         sendToNetworkingProcess(Messages::NetworkProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()));
         page.process().send(Messages::WebProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()), 0);
-        page.websiteDataStore().clearPendingCookies();
 
 #if ENABLE(INDEXED_DATABASE)
         if (!page.websiteDataStore().resolvedIndexedDatabaseDirectory().isEmpty())

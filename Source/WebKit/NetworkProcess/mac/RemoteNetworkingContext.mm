@@ -36,7 +36,6 @@
 #import "WebsiteDataStoreParameters.h"
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/ResourceError.h>
-#import <pal/SessionID.h>
 #import <wtf/MainThread.h>
 
 using namespace WebCore;
@@ -46,12 +45,8 @@ namespace WebKit {
 void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
 {
     auto sessionID = parameters.networkSessionParameters.sessionID;
-    if (auto* session = NetworkStorageSession::storageSession(sessionID)) {
-        ASSERT(parameters.pendingCookies.isEmpty() || sessionID == PAL::SessionID::defaultSessionID());
-        for (const auto& cookie : parameters.pendingCookies)
-            session->setCookie(cookie);
+    if (NetworkStorageSession::storageSession(sessionID))
         return;
-    }
 
     String base;
     if (SessionTracker::getIdentifierBase().isNull())

@@ -54,14 +54,15 @@ HTTPCookieStore::~HTTPCookieStore()
     unregisterForNewProcessPoolNotifications();
 }
 
-void HTTPCookieStore::cookies(Function<void(const Vector<WebCore::Cookie>&)>&& completionHandler)
+void HTTPCookieStore::cookies(Function<void (const Vector<WebCore::Cookie>&)>&& completionHandler)
 {
     auto* pool = m_owningDataStore->processPoolForCookieStorageOperations();
     if (!pool) {
         Vector<WebCore::Cookie> allCookies;
         if (m_owningDataStore->sessionID() == PAL::SessionID::defaultSessionID())
             allCookies = WebCore::NetworkStorageSession::defaultStorageSession().getAllCookies();
-        allCookies.appendVector(m_owningDataStore->pendingCookies());
+        else
+            allCookies = m_owningDataStore->pendingCookies();
 
         callOnMainThread([completionHandler = WTFMove(completionHandler), allCookies]() {
             completionHandler(allCookies);
@@ -79,8 +80,7 @@ void HTTPCookieStore::setCookie(const WebCore::Cookie& cookie, Function<void ()>
 {
     auto* pool = m_owningDataStore->processPoolForCookieStorageOperations();
     if (!pool) {
-        // FIXME: pendingCookies used for defaultSession because session cookies cannot be propagated to Network Process with uiProcessCookieStorageIdentifier.
-        if (m_owningDataStore->sessionID() == PAL::SessionID::defaultSessionID() && !cookie.session)
+        if (m_owningDataStore->sessionID() == PAL::SessionID::defaultSessionID())
             WebCore::NetworkStorageSession::defaultStorageSession().setCookie(cookie);
         else
             m_owningDataStore->addPendingCookie(cookie);
@@ -101,11 +101,10 @@ void HTTPCookieStore::deleteCookie(const WebCore::Cookie& cookie, Function<void 
 {
     auto* pool = m_owningDataStore->processPoolForCookieStorageOperations();
     if (!pool) {
-        if (m_owningDataStore->sessionID() == PAL::SessionID::defaultSessionID() && !cookie.session)
+        if (m_owningDataStore->sessionID() == PAL::SessionID::defaultSessionID())
             WebCore::NetworkStorageSession::defaultStorageSession().deleteCookie(cookie);
         else
             m_owningDataStore->removePendingCookie(cookie);
-
         callOnMainThread([completionHandler = WTFMove(completionHandler)]() {
             completionHandler();
         });

@@ -162,7 +162,6 @@ public:
     Vector<WebCore::Cookie> pendingCookies() const;
     void addPendingCookie(const WebCore::Cookie&);
     void removePendingCookie(const WebCore::Cookie&);
-    void clearPendingCookies();
 
     void enableResourceLoadStatisticsAndSetTestingCallback(Function<void (const String&)>&& callback);
 
