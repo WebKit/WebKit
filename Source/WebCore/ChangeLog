@@ -1,3 +1,31 @@
+2018-06-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        CSS "background-color" style no longer affects natively rendered text fields
+        https://bugs.webkit.org/show_bug.cgi?id=186597
+        <rdar://problem/41050528>
+
+        Reviewed by Tim Horton.
+
+        AppKit currently does not support rendering background color to the edges of a text field cell. This means that
+        in WebCore, when natively rendering text inputs with background color, we need to only draw the bezels of a text
+        field, such that the background color we paint behind the text field will be shown. Currently, the way we
+        accomplish this is by intercepting an internal NSTextField method that computes drawing options for CoreUI, and
+        inserting a `"borders only" => true` entry.
+
+        However, in a recent build of macOS Mojave, AppKit tweaked -_coreUIDrawOptionsWithFrame:inView:includeFocus: to
+        add an extra argument (such that it's now -_coreUIDrawOptionsWithFrame:inView:includeFocus:maskOnly:), which
+        negates the above workaround. To fix this in the short term, augment the workaround to apply to the latest macOS
+        Mojave as well. A longer-term fix is already tracked in <rdar://problem/11385461>, which would allow WebKit to
+        simply specify a background color on the text field cell, and have AppKit render it properly to the edges of the
+        bezels.
+
+        Covered by a test that is currently failing on Mojave: fast/forms/hidpi-textfield-background-bleeding.html
+
+        * rendering/RenderThemeMac.mm:
+        (-[WebCoreTextFieldCell _adjustedCoreUIDrawOptionsForDrawingBordersOnly:]):
+        (-[WebCoreTextFieldCell _coreUIDrawOptionsWithFrame:inView:includeFocus:]):
+        (-[WebCoreTextFieldCell _coreUIDrawOptionsWithFrame:inView:includeFocus:maskOnly:]):
+
 2018-06-13  Thibault Saunier  <tsaunier@igalia.com>
 
         [WPE] Build getUserMedia support
