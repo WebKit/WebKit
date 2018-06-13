@@ -1,3 +1,15 @@
+2018-06-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [JSCOnly] Add a MIPS32el JSCOnly EWS (follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=186523
+
+        Unreviewed follow-up fix after r232748
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (JscOnlyPort.build_jsc_command): It is needed to pass a --jsc-only argument to the build-jsc script.
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+        (DeprecatedPortTest.test_jsconly_port):
+
 2018-06-12  Thibault Saunier  <tsaunier@igalia.com>
 
         webkitpy: Implement coredumpctl support on linux

@@ -238,4 +238,5 @@ class JscOnlyPort(DeprecatedPort):
 
     def build_jsc_command(self, build_style=None):
         command = self.script_shell_command("build-jsc")
+        command.append("--jsc-only")
         return self._append_build_style_flag(command, build_style)
