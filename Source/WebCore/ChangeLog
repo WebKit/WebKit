@@ -1,5 +1,26 @@
 2018-06-13  Philippe Normand  <pnormand@igalia.com>
 
+        [GStreamer] fast/canvas/webgl crashes
+        https://bugs.webkit.org/show_bug.cgi?id=186590
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        After r232747 the sample managed by the player can be empty,
+        without buffer. So we need to check for this before mapping video
+        frames. Also use the GstVideoFrameHolder in more places to reduce
+        copy-paste churn.
+
+        * platform/graphics/gstreamer/ImageGStreamer.h:
+        * platform/graphics/gstreamer/ImageGStreamerCairo.cpp:
+        (ImageGStreamer::ImageGStreamer):
+        (ImageGStreamer::~ImageGStreamer):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::GstVideoFrameHolder::GstVideoFrameHolder):
+        (WebCore::MediaPlayerPrivateGStreamerBase::copyVideoTextureToPlatformTexture):
+        (WebCore::MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime):
+
+2018-06-13  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed GTK build fix for --cmakeargs=-DUSE_GSTREAMER_GL=OFF
 
         * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:

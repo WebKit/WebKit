@@ -43,7 +43,11 @@ ImageGStreamer::ImageGStreamer(GstSample* sample)
     ASSERT(GST_VIDEO_INFO_N_PLANES(&videoInfo) == 1);
 
     GstBuffer* buffer = gst_sample_get_buffer(sample);
-    if (!gst_video_frame_map(&m_videoFrame, &videoInfo, buffer, GST_MAP_READ))
+    if (UNLIKELY(!GST_IS_BUFFER(buffer)))
+        return;
+
+    m_frameMapped = gst_video_frame_map(&m_videoFrame, &videoInfo, buffer, GST_MAP_READ);
+    if (!m_frameMapped)
         return;
 
     unsigned char* bufferData = reinterpret_cast<unsigned char*>(GST_VIDEO_FRAME_PLANE_DATA(&m_videoFrame, 0));
@@ -110,6 +114,7 @@ ImageGStreamer::~ImageGStreamer()
 
     // We keep the buffer memory mapped until the image is destroyed because the internal
     // cairo_surface_t was created using cairo_image_surface_create_for_data().
-    gst_video_frame_unmap(&m_videoFrame);
+    if (m_frameMapped)
+        gst_video_frame_unmap(&m_videoFrame);
 }
 #endif // USE(GSTREAMER)
