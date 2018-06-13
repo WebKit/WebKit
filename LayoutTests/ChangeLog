@@ -1,3 +1,15 @@
+2018-06-13  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: Layout Test js/error-should-not-strong-reference-global-object.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=186372
+
+        Not reviewed.
+
+        Speculative fix to green the bots plus improved the error message logging to get
+        more info if this fails again. 
+
+        * js/error-should-not-strong-reference-global-object.html:
+
 2018-06-13  Timothy Hatcher  <timothy@apple.com>
 
         Input form controls have a white background in dark mode, when they should not.

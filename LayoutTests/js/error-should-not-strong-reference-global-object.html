@@ -40,10 +40,13 @@ function run() {
 for (let i = 0; i < 50; i++)
     run();
 
-$vm.gc();
-// We shouldn't have more than 10% of the global objects we allocated.
-if ($vm.globalObjectCount() >= 51)
-    throw new Error("There are more global objects than there should be");
+setTimeout(() => {
+    $vm.gc();
+    // We shouldn't have more than 10% of the global objects we allocated.
+    var globalObjectCount = $vm.globalObjectCount();
+    if (globalObjectCount >= 51)
+        throw new Error("There are more global objects than there should be: actual count = " + globalObjectCount);
+}, 1);
 
 </script>
 <script src="../resources/js-test-post.js"></script>
