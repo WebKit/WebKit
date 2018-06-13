@@ -1,0 +1,52 @@
+<style>
+    .container {
+        position: relative;
+        width: 400px;
+        height: 400px;
+        background-color: #ff0000;
+    }
+    .composited {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-repeat: no-repeat;
+        z-index: 0;
+    }
+    body {
+        opacity: 0;
+        background: rgba(0, 0, 0, 0);
+    }
+    body.background-loaded {
+        opacity: 1;
+    }
+</style>
+<body>
+    <div class="container">
+        <div class="composited"></div>
+    </div>
+    <script>
+        if (window.testRunner) {
+            internals.clearMemoryCache();
+            internals.settings.setLargeImageAsyncDecodingEnabled(true);
+            testRunner.waitUntilDone();
+        }
+
+        var image = new Image();
+        image.onload = function() {
+            // Force very long async image decoding for this image.
+            if (window.internals)
+                internals.setImageFrameDecodingDuration(image, 5000);
+
+            // Change the background of the element.
+            let element = document.querySelector(".composited");
+            element.style.backgroundImage = 'url(' + image.src + ')';
+
+            // Show the body element and end the test.
+            document.body.classList.add("background-loaded");
+            testRunner.notifyDone();
+        };
+        image.src = "resources/green-400x400.png";
+    </script>
+</body>

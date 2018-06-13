@@ -102,8 +102,8 @@ public:
     ImageOrientation orientationForCurrentFrame() const { return frameOrientationAtIndex(currentFrame()); }
     bool canAnimate() const;
 
-    bool shouldUseAsyncDecodingForAnimatedImagesForTesting() const { return m_frameDecodingDurationForTesting > 0_s; }
-    void setFrameDecodingDurationForTesting(Seconds duration) { m_frameDecodingDurationForTesting = duration; }
+    bool shouldUseAsyncDecodingForTesting() const { return m_source->frameDecodingDurationForTesting() > 0_s; }
+    void setFrameDecodingDurationForTesting(Seconds duration) { m_source->setFrameDecodingDurationForTesting(duration); }
     bool canUseAsyncDecodingForLargeImages() const;
     bool shouldUseAsyncDecodingForAnimatedImages() const;
     void setClearDecoderAfterAsyncFrameRequestForTesting(bool value) { m_clearDecoderAfterAsyncFrameRequestForTesting = value; }
@@ -216,8 +216,6 @@ private:
     MonotonicTime m_desiredFrameStartTime; // The system time at which we hope to see the next call to startAnimation().
 
     std::unique_ptr<Vector<Function<void()>, 1>> m_decodingCallbacks;
-    Seconds m_frameDecodingDurationForTesting;
-    MonotonicTime m_desiredFrameDecodeTimeForTesting;
 
     bool m_animationFinished { false };
 

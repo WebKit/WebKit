@@ -1,3 +1,14 @@
+2018-06-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        TileFirstPaint strategy for async image decoding should be disabled for non root RenderLayers
+        https://bugs.webkit.org/show_bug.cgi?id=186336
+        <rdar://problem/40808099>
+
+        Reviewed by Simon Fraser.
+
+        * fast/images/async-image-composited-show-expected.html: Added.
+        * fast/images/async-image-composited-show.html: Added.
+
 2018-06-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Mark some flaky tests and expected failures.

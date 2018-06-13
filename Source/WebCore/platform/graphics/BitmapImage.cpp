@@ -340,7 +340,7 @@ bool BitmapImage::canUseAsyncDecodingForLargeImages() const
 
 bool BitmapImage::shouldUseAsyncDecodingForAnimatedImages() const
 {
-    return canAnimate() && m_allowAnimatedImageAsyncDecoding && (shouldUseAsyncDecodingForAnimatedImagesForTesting() || m_source->canUseAsyncDecoding());
+    return canAnimate() && m_allowAnimatedImageAsyncDecoding && (shouldUseAsyncDecodingForTesting() || m_source->canUseAsyncDecoding());
 }
 
 void BitmapImage::clearTimer()
@@ -449,7 +449,6 @@ BitmapImage::StartAnimationStatus BitmapImage::internalStartAnimation()
             LOG(Images, "BitmapImage::%s - %p - url: %s [requesting async decoding for nextFrame = %ld]", __FUNCTION__, this, sourceURL().string().utf8().data(), nextFrame);
         }
 
-        m_desiredFrameDecodeTimeForTesting = time + std::max(m_frameDecodingDurationForTesting, 0_s);
         if (m_clearDecoderAfterAsyncFrameRequestForTesting)
             m_source->resetData(data());
     }
@@ -462,17 +461,6 @@ BitmapImage::StartAnimationStatus BitmapImage::internalStartAnimation()
 void BitmapImage::advanceAnimation()
 {
     clearTimer();
-
-    // Pretend as if decoding nextFrame has taken m_frameDecodingDurationForTesting from
-    // the time this decoding was requested.
-    if (shouldUseAsyncDecodingForAnimatedImagesForTesting()) {
-        MonotonicTime time = MonotonicTime::now();
-        // Start a timer with the remaining time from now till the m_desiredFrameDecodeTime.
-        if (m_desiredFrameDecodeTimeForTesting > std::max(time, m_desiredFrameStartTime)) {
-            startTimer(m_desiredFrameDecodeTimeForTesting - time);
-            return;
-        }
-    }
 
     // Don't advance to nextFrame unless its decoding has finished or was not required.
     size_t nextFrame = (m_currentFrame + 1) % frameCount();

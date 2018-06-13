@@ -4350,7 +4350,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         if (paintingInfo.paintBehavior & PaintBehaviorSnapshotting)
             paintBehavior |= PaintBehaviorSnapshotting;
         
-        if (paintingInfo.paintBehavior & PaintBehaviorTileFirstPaint)
+        if ((paintingInfo.paintBehavior & PaintBehaviorTileFirstPaint) && isRenderViewLayer())
             paintBehavior |= PaintBehaviorTileFirstPaint;
 
         if (paintingInfo.paintBehavior & PaintBehaviorExcludeSelection)

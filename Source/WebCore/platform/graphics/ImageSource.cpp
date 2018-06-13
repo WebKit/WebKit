@@ -325,9 +325,14 @@ void ImageSource::startAsyncDecodingQueue()
     // We need to protect this, m_decodingQueue and m_decoder from being deleted while we are in the decoding loop.
     decodingQueue().dispatch([protectedThis = makeRef(*this), protectedDecodingQueue = makeRef(decodingQueue()), protectedFrameRequestQueue = makeRef(frameRequestQueue()), protectedDecoder = makeRef(*m_decoder), sourceURL = sourceURL().string().isolatedCopy()] {
         ImageFrameRequest frameRequest;
+        Seconds minDecodingDuration = protectedThis->frameDecodingDurationForTesting();
 
         while (protectedFrameRequestQueue->dequeue(frameRequest)) {
             TraceScope tracingScope(AsyncImageDecodeStart, AsyncImageDecodeEnd);
+
+            MonotonicTime startingTime;
+            if (minDecodingDuration > 0_s)
+                startingTime = MonotonicTime::now();
 
             // Get the frame NativeImage on the decoding thread.
             NativeImagePtr nativeImage = protectedDecoder->createFrameImageAtIndex(frameRequest.index, frameRequest.subsamplingLevel, frameRequest.decodingOptions);
@@ -337,6 +342,10 @@ void ImageSource::startAsyncDecodingQueue()
                 LOG(Images, "ImageSource::%s - %p - url: %s [decoding for frame %ld has failed]", __FUNCTION__, protectedThis.ptr(), sourceURL.utf8().data(), frameRequest.index);
                 continue;
             }
+
+            // Pretend as if the decoding takes minDecodingDuration.
+            if (minDecodingDuration > 0_s)
+                sleep(minDecodingDuration - (MonotonicTime::now() - startingTime));
 
             // Update the cached frames on the main thread to avoid updating the MemoryCache from a different thread.
             callOnMainThread([protectedThis = protectedThis.copyRef(), protectedQueue = protectedDecodingQueue.copyRef(), protectedDecoder = protectedDecoder.copyRef(), sourceURL = sourceURL.isolatedCopy(), nativeImage = WTFMove(nativeImage), frameRequest] () mutable {
