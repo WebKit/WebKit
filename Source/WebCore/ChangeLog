@@ -1,3 +1,26 @@
+2018-06-13  Timothy Hatcher  <timothy@apple.com>
+
+        Input form controls have a white background in dark mode, when they should not.
+
+        https://bugs.webkit.org/show_bug.cgi?id=186577
+        rdar://problem/39258325
+
+        Reviewed by Tim Horton.
+
+        * DerivedSources.make: Allow WTF_PLATFORM_MAC ifdefs to preprocess in html.css.
+        * css/CSSValueKeywords.in: Added -apple-system-control-background.
+        * css/MediaQueryExpression.cpp:
+        (WebCore::featureWithValidIdent): Allow dark mode media query in user agent stylesheets.
+        (WebCore::isFeatureValidWithoutValue): Ditto.
+        * css/MediaQueryParserContext.cpp:
+        (WebCore::MediaQueryParserContext::MediaQueryParserContext): Transfer the CSSParserMode from CSSParserContext.
+        * css/MediaQueryParserContext.h:
+        * css/html.css: Set color and background-color to semantic colors for input, textarea, and select.
+        Make input background-color transparent in dark mode to match AppKit.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor const): Added -apple-system-control-background.
+        (WebCore::RenderThemeMac::paintTextField): Adjust the drawing rect to match new artwork in macOS 10.14.
+
 2018-06-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         TileFirstPaint strategy for async image decoding should be disabled for non root RenderLayers

@@ -224,6 +224,7 @@ windowframe
 windowtext
 -apple-system-header-text
 -apple-system-text-background
+-apple-system-control-background
 -apple-system-alternate-selected-text
 -apple-system-label
 -apple-system-secondary-label

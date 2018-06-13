@@ -1023,6 +1023,12 @@ else
     WTF_PLATFORM_IOS = 0
 endif
 
+ifeq ($(shell $(CC) -std=gnu++17 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_MAC ' | cut -d' ' -f3), 1)
+    WTF_PLATFORM_MAC = 1
+else
+    WTF_PLATFORM_MAC = 0
+endif
+
 ifeq ($(shell $(CC) -std=gnu++17 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep USE_APPLE_INTERNAL_SDK | cut -d' ' -f3), 1)
     USE_APPLE_INTERNAL_SDK = 1
 else
@@ -1035,6 +1041,8 @@ endif
 
 ifeq ($(WTF_PLATFORM_IOS), 1)
 FEATURE_AND_PLATFORM_DEFINES = $(FEATURE_DEFINES) WTF_PLATFORM_IOS
+else ifeq ($(WTF_PLATFORM_MAC), 1)
+FEATURE_AND_PLATFORM_DEFINES = $(FEATURE_DEFINES) WTF_PLATFORM_MAC
 else
 FEATURE_AND_PLATFORM_DEFINES = $(FEATURE_DEFINES)
 endif

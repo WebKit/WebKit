@@ -54,7 +54,7 @@ static inline bool featureWithValidIdent(const AtomicString& mediaFeature, const
     || mediaFeature == MediaFeatureNames::displayMode
 #endif
     || mediaFeature == MediaFeatureNames::prefersReducedMotion
-    || (mediaFeature == MediaFeatureNames::prefersDarkInterface && context.useSystemAppearance);
+    || (mediaFeature == MediaFeatureNames::prefersDarkInterface && (context.useSystemAppearance || isUASheetBehavior(context.mode)));
 }
 
 static inline bool featureWithValidDensity(const String& mediaFeature, const CSSPrimitiveValue& value)
@@ -162,7 +162,7 @@ static inline bool isFeatureValidWithoutValue(const AtomicString& mediaFeature, 
         || mediaFeature == MediaFeatureNames::invertedColors
         || mediaFeature == MediaFeatureNames::pointer
         || mediaFeature == MediaFeatureNames::prefersReducedMotion
-        || (mediaFeature == MediaFeatureNames::prefersDarkInterface && context.useSystemAppearance)
+        || (mediaFeature == MediaFeatureNames::prefersDarkInterface && (context.useSystemAppearance || isUASheetBehavior(context.mode)))
         || mediaFeature == MediaFeatureNames::devicePixelRatio
         || mediaFeature == MediaFeatureNames::resolution
 #if ENABLE(APPLICATION_MANIFEST)

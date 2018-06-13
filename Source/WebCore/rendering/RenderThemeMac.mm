@@ -570,6 +570,8 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
                 return @selector(headerTextColor);
             case CSSValueAppleSystemTextBackground:
                 return @selector(textBackgroundColor);
+            case CSSValueAppleSystemControlBackground:
+                return @selector(controlBackgroundColor);
             case CSSValueAppleSystemAlternateSelectedText:
                 return @selector(alternateSelectedControlTextColor);
             case CSSValueAppleSystemLabel:
@@ -867,7 +869,12 @@ bool RenderThemeMac::paintTextField(const RenderObject& o, const PaintInfo& pain
     AffineTransform transform = paintInfo.context().getCTM();
     if (transform.xScale() > 1 || transform.yScale() > 1) {
         adjustedPaintRect.inflateX(1 / transform.xScale());
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+        adjustedPaintRect.inflateY(2 / transform.yScale());
+        adjustedPaintRect.move(0, -1 / transform.yScale());
+#else
         adjustedPaintRect.inflateY(1 / transform.yScale());
+#endif
     }
     NSTextFieldCell *textField = this->textField();
 

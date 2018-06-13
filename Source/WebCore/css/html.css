@@ -384,7 +384,12 @@ input[type="range"],
 input,
 input:matches([type="password"], [type="search"]) {
     -webkit-appearance: textfield;
+#if defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC
+    color: text;
+    background-color: -apple-system-control-background;
+#else
     background-color: white;
+#endif
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
     border-radius: 5px;
     font: 11px Helvetica, -webkit-pictograph;
@@ -398,6 +403,15 @@ input:matches([type="password"], [type="search"]) {
     -webkit-user-select: text;
     cursor: auto;
 }
+
+#if defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC
+@media (prefers-dark-interface) {
+    input,
+    input:matches([type="password"], [type="search"]) {
+        background-color: transparent;
+    }
+}
+#endif
 
 input[type="search"] {
     -webkit-appearance: searchfield;
@@ -613,7 +627,12 @@ keygen::-webkit-keygen-select {
 textarea {
     -webkit-appearance: textarea;
 #if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
+#if defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC
+    color: text;
+    background-color: -apple-system-control-background;
+#else
     background-color: white;
+#endif
     border: 1px solid;
     -webkit-rtl-ordering: logical;
     -webkit-user-select: text;
@@ -899,8 +918,13 @@ select {
 #else
     -webkit-appearance: menulist;
     border: 1px solid;
+#if defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC
+    color: text;
+    background-color: -apple-system-control-background;
+#else
     color: black;
     background-color: white;
+#endif
 #endif
     align-items: center;
     white-space: pre;

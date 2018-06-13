@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "CSSParserMode.h"
+
 namespace WebCore {
     
 class Document;
@@ -35,8 +37,9 @@ public:
     MediaQueryParserContext() { }
     MediaQueryParserContext(const CSSParserContext&);
     WEBCORE_EXPORT MediaQueryParserContext(const Document&);
-    
+
     bool useSystemAppearance { false };
+    CSSParserMode mode { HTMLStandardMode };
 };
     
 } // namespace WebCore
