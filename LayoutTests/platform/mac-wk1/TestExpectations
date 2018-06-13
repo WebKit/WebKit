@@ -556,3 +556,5 @@ webkit.org/b/184569 [ Debug ] animations/missing-from-to.html [ Skip ]
 webkit.org/b/184458 media/remote-control-command-is-user-gesture.html [ Pass Timeout ]
 
 webkit.org/b/185404 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html [ Pass Failure ]
+
+webkit.org/b/186581 [ Debug ] fast/parser/xml-error-adopted.xml [ Timeout Pass ]
