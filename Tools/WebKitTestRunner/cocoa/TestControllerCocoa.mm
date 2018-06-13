@@ -92,6 +92,10 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
 #endif
     globalWebViewConfiguration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
 #endif
+
+#if USE(SYSTEM_PREVIEW)
+    globalWebViewConfiguration._systemPreviewEnabled = YES;
+#endif
 }
 
 void TestController::cocoaPlatformInitialize()

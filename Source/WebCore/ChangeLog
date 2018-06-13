@@ -1,3 +1,30 @@
+2018-06-13  Dean Jackson  <dino@apple.com>
+
+        Disable AR support in WKWebView clients
+        https://bugs.webkit.org/show_bug.cgi?id=186611
+        <rdar://problem/39544684>
+
+        Reviewed by Jon Lee.
+
+        Since it hasn't been adequately tested, System Preview (AR) should
+        be disabled by default for WKWebViews.
+
+        Add a new RuntimeEnabledFeature to control this, and guard for
+        this case everywhere we use system previews.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isSystemPreviewLink const):
+        (WebCore::HTMLAnchorElement::handleClick):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::isSystemPreviewImage const):
+        * html/HTMLPictureElement.cpp:
+        (WebCore::HTMLPictureElement::isSystemPreviewImage const):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setSystemPreviewEnabled):
+        (WebCore::RuntimeEnabledFeatures::systemPreviewEnabled const):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect):
+
 2018-06-13  Youenn Fablet  <youenn@apple.com>
 
         Supported plugin check should be based on plugin identifier

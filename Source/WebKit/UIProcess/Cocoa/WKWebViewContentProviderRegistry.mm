@@ -33,6 +33,7 @@
 #import "WKLegacyPDFView.h"
 #import "WKPDFView.h"
 #import "WKSystemPreviewView.h"
+#import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <WebCore/MIMETypeRegistry.h>
@@ -52,7 +53,7 @@ using namespace WebKit;
     HashCountedSet<WebPageProxy*> _pages;
 }
 
-- (instancetype)init
+- (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration
 {
     if (!(self = [super init]))
         return nil;
@@ -66,8 +67,10 @@ using namespace WebKit;
 #endif
 
 #if USE(SYSTEM_PREVIEW) && USE(APPLE_INTERNAL_SDK)
-    for (auto& mimeType : getSystemPreviewMIMETypes())
-        [self registerProvider:[WKSystemPreviewView class] forMIMEType:mimeType];
+    if (configuration._systemPreviewEnabled) {
+        for (auto& mimeType : getSystemPreviewMIMETypes())
+            [self registerProvider:[WKSystemPreviewView class] forMIMEType:mimeType];
+    }
 #endif
 
     return self;

@@ -1,3 +1,35 @@
+2018-06-13  Dean Jackson  <dino@apple.com>
+
+        Disable AR support in WKWebView clients
+        https://bugs.webkit.org/show_bug.cgi?id=186611
+        <rdar://problem/39544684>
+
+        Reviewed by Jon Lee.
+
+        Since it hasn't been adequately tested, System Preview (AR) should
+        be disabled by default for WKWebViews.
+
+        Add a new WebPreference, and SPI into WKWebViewConfiguration. Also
+        don't register the WebViewContentProvider if the feature is
+        disabled.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration encodeWithCoder:]):
+        (-[WKWebViewConfiguration initWithCoder:]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _contentProviderRegistry]):
+        (-[WKWebViewConfiguration _systemPreviewEnabled]):
+        (-[WKWebViewConfiguration _setSystemPreviewEnabled:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.h:
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm:
+        (-[WKWebViewContentProviderRegistry initWithConfiguration:]):
+        (-[WKWebViewContentProviderRegistry init]): Deleted.
+
 2018-06-13  Youenn Fablet  <youenn@apple.com>
 
         Supported plugin check should be based on plugin identifier

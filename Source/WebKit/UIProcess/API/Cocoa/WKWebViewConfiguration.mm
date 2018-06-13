@@ -132,6 +132,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     _WKDragLiftDelay _dragLiftDelay;
     BOOL _textInteractionGesturesEnabled;
     BOOL _longPressActionsEnabled;
+    BOOL _systemPreviewEnabled;
 #endif
 
     BOOL _invisibleAutoplayNotPermitted;
@@ -240,6 +241,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     _textInteractionGesturesEnabled = YES;
     _longPressActionsEnabled = YES;
 #endif
+    _systemPreviewEnabled = NO;
 #endif // PLATFORM(IOS)
 
     _mediaContentTypesRequiringHardwareSupport = Settings::defaultMediaContentTypesRequiringHardwareSupport();
@@ -284,6 +286,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     [coder encodeInteger:self._dragLiftDelay forKey:@"dragLiftDelay"];
     [coder encodeBool:self._textInteractionGesturesEnabled forKey:@"textInteractionGesturesEnabled"];
     [coder encodeBool:self._longPressActionsEnabled forKey:@"longPressActionsEnabled"];
+    [coder encodeBool:self._systemPreviewEnabled forKey:@"systemPreviewEnabled"];
 #else
     [coder encodeInteger:self.userInterfaceDirectionPolicy forKey:@"userInterfaceDirectionPolicy"];
 #endif
@@ -314,6 +317,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     self._dragLiftDelay = toDragLiftDelay([coder decodeIntegerForKey:@"dragLiftDelay"]);
     self._textInteractionGesturesEnabled = [coder decodeBoolForKey:@"textInteractionGesturesEnabled"];
     self._longPressActionsEnabled = [coder decodeBoolForKey:@"longPressActionsEnabled"];
+    self._systemPreviewEnabled = [coder decodeBoolForKey:@"systemPreviewEnabled"];
 #else
     auto userInterfaceDirectionPolicyCandidate = static_cast<WKUserInterfaceDirectionPolicy>([coder decodeIntegerForKey:@"userInterfaceDirectionPolicy"]);
     if (userInterfaceDirectionPolicyCandidate == WKUserInterfaceDirectionPolicyContent || userInterfaceDirectionPolicyCandidate == WKUserInterfaceDirectionPolicySystem)
@@ -370,6 +374,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_dragLiftDelay = self->_dragLiftDelay;
     configuration->_textInteractionGesturesEnabled = self->_textInteractionGesturesEnabled;
     configuration->_longPressActionsEnabled = self->_longPressActionsEnabled;
+    configuration->_systemPreviewEnabled = self->_systemPreviewEnabled;
 #endif
 #if PLATFORM(MAC)
     configuration->_cpuLimit = self->_cpuLimit;
@@ -525,7 +530,7 @@ static NSString *defaultApplicationNameForUserAgent()
 #if PLATFORM(IOS)
 - (WKWebViewContentProviderRegistry *)_contentProviderRegistry
 {
-    return _contentProviderRegistry.get([] { return adoptNS([[WKWebViewContentProviderRegistry alloc] init]); });
+    return _contentProviderRegistry.get([self] { return adoptNS([[WKWebViewContentProviderRegistry alloc] initWithConfiguration:self]); });
 }
 
 - (void)_setContentProviderRegistry:(WKWebViewContentProviderRegistry *)registry
@@ -709,6 +714,15 @@ static NSString *defaultApplicationNameForUserAgent()
     _longPressActionsEnabled = enabled;
 }
 
+- (BOOL)_systemPreviewEnabled
+{
+    return _systemPreviewEnabled;
+}
+
+- (void)_setSystemPreviewEnabled:(BOOL)enabled
+{
+    _systemPreviewEnabled = enabled;
+}
 
 #endif // PLATFORM(IOS)
 

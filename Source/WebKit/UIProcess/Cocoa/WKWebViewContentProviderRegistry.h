@@ -35,9 +35,12 @@ namespace WebKit {
 class WebPageProxy;
 }
 
+@class WKWebViewConfiguration;
 @protocol WKWebViewContentProvider;
 
 @interface WKWebViewContentProviderRegistry : NSObject
+
+- (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration;
 
 - (void)addPage:(WebKit::WebPageProxy&)page;
 - (void)removePage:(WebKit::WebPageProxy&)page;

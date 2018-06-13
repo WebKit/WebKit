@@ -265,6 +265,11 @@ public:
     void setDisabledAdaptationsMetaTagEnabled(bool isEnabled) { m_disabledAdaptationsMetaTagEnabled = isEnabled; }
     bool disabledAdaptationsMetaTagEnabled() const { return m_disabledAdaptationsMetaTagEnabled; }
 
+#if USE(SYSTEM_PREVIEW)
+    void setSystemPreviewEnabled(bool isEnabled) { m_systemPreviewEnabled = isEnabled; }
+    bool systemPreviewEnabled() const { return m_systemPreviewEnabled; }
+#endif
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -280,7 +285,6 @@ private:
     bool m_isInteractiveFormValidationEnabled { false };
     bool m_isWebAuthenticationEnabled { false };
     bool m_isSecureContextAttributeEnabled { false };
-
     bool m_isDisplayContentsEnabled { true };
     bool m_isShadowDOMEnabled { true };
     bool m_areCustomElementsEnabled { true };
@@ -363,7 +367,6 @@ private:
 #endif
 
     bool m_isImageBitmapOffscreenCanvasEnabled { true };
-
     bool m_isCacheAPIEnabled { false };
     bool m_isFetchAPIEnabled { true };
 
@@ -386,28 +389,23 @@ private:
 #if ENABLE(SERVICE_WORKER)
     bool m_serviceWorkerEnabled { false };
 #endif
-    bool m_fetchAPIKeepAliveEnabled { false };
 
+    bool m_fetchAPIKeepAliveEnabled { false };
     bool m_inspectorAdditionsEnabled { false };
     bool m_webVREnabled { false };
-
     bool m_accessibilityObjectModelEnabled { false };
-
     bool m_mediaCapabilitiesEnabled { false };
-
     bool m_resourceLoadStatisticsDebugMode { false };
-
     bool m_isRestrictedHTTPResponseAccess { true };
-
     bool m_crossOriginResourcePolicyEnabled { true };
-
     bool m_isWebGLCompressedTextureASTCSupportEnabled { false };
-
     bool m_promptForStorageAccessAPIEnabled { false };
-
     bool m_isServerTimingEnabled { false };
-
     bool m_disabledAdaptationsMetaTagEnabled { false };
+
+#if USE(SYSTEM_PREVIEW)
+    bool m_systemPreviewEnabled { false };
+#endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

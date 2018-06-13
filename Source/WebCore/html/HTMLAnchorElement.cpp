@@ -380,6 +380,9 @@ void HTMLAnchorElement::sendPings(const URL& destinationURL)
 #if USE(SYSTEM_PREVIEW)
 bool HTMLAnchorElement::isSystemPreviewLink() const
 {
+    if (!RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled())
+        return false;
+
 #if USE(APPLE_INTERNAL_SDK)
     auto systemPreviewRelValue = getSystemPreviewRelValue();
 #else
@@ -428,7 +431,7 @@ void HTMLAnchorElement::handleClick(Event& event)
 
     SystemPreviewInfo systemPreviewInfo;
 #if USE(SYSTEM_PREVIEW)
-    systemPreviewInfo.isSystemPreview = isSystemPreviewLink();
+    systemPreviewInfo.isSystemPreview = isSystemPreviewLink() && RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled();
 
     if (systemPreviewInfo.isSystemPreview) {
         if (auto* child = firstElementChild())

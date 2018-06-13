@@ -1060,6 +1060,12 @@ MediaCapabilitiesEnabled:
     defaultValue: false
     webcoreBinding: RuntimeEnabledFeatures
 
+SystemPreviewEnabled:
+    type: bool
+    defaultValue: false
+    webcoreBinding: RuntimeEnabledFeatures
+    condition: USE(SYSTEM_PREVIEW)
+
 # For experimental features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableName for all experimental features. They

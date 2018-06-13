@@ -42,6 +42,7 @@
 #include "NodeTraversal.h"
 #include "RenderImage.h"
 #include "RenderView.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SizesAttributeParser.h"
@@ -686,6 +687,9 @@ bool HTMLImageElement::willRespondToMouseClickEvents()
 #if USE(SYSTEM_PREVIEW)
 bool HTMLImageElement::isSystemPreviewImage() const
 {
+    if (!RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled())
+        return false;
+
     const auto* parent = parentElement();
     if (is<HTMLAnchorElement>(parent))
         return downcast<HTMLAnchorElement>(parent)->isSystemPreviewLink();

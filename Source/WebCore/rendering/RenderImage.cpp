@@ -51,6 +51,7 @@
 #include "RenderImageResourceStyleImage.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SVGImage.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
@@ -594,7 +595,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         imageResource().cachedImage()->addPendingImageDrawingClient(*this);
 
 #if USE(SYSTEM_PREVIEW)
-    if (imageElement && imageElement->isSystemPreviewImage() && drawResult == ImageDrawResult::DidDraw)
+    if (imageElement && imageElement->isSystemPreviewImage() && drawResult == ImageDrawResult::DidDraw && RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled())
         theme().paintSystemPreviewBadge(*img, paintInfo, rect);
 #endif
 
