@@ -47,7 +47,6 @@ template<typename T> static inline String primaryDomain(const T& value)
     return ResourceLoadStatistics::primaryDomain(value);
 }
 
-static Seconds timestampResolution { 5_s };
 static const Seconds minimumNotificationInterval { 5_s };
 
 ResourceLoadObserver& ResourceLoadObserver::shared()
@@ -69,36 +68,9 @@ static bool shouldEnableSiteSpecificQuirks(Page* page)
 #endif
 }
 
-// FIXME: Temporary fix for <rdar://problem/32343256> until content can be updated.
 static bool areDomainsAssociated(Page* page, const String& firstDomain, const String& secondDomain)
 {
-    static NeverDestroyed<HashMap<String, unsigned>> metaDomainIdentifiers = [] {
-        HashMap<String, unsigned> map;
-
-        // Domains owned by Dow Jones & Company, Inc.
-        const unsigned dowJonesIdentifier = 1;
-        map.add(ASCIILiteral("dowjones.com"), dowJonesIdentifier);
-        map.add(ASCIILiteral("wsj.com"), dowJonesIdentifier);
-        map.add(ASCIILiteral("barrons.com"), dowJonesIdentifier);
-        map.add(ASCIILiteral("marketwatch.com"), dowJonesIdentifier);
-        map.add(ASCIILiteral("wsjplus.com"), dowJonesIdentifier);
-
-        return map;
-    }();
-
-    if (firstDomain == secondDomain)
-        return true;
-
-    ASSERT(!equalIgnoringASCIICase(firstDomain, secondDomain));
-
-    if (!shouldEnableSiteSpecificQuirks(page))
-        return false;
-
-    unsigned firstMetaDomainIdentifier = metaDomainIdentifiers.get().get(firstDomain);
-    if (!firstMetaDomainIdentifier)
-        return false;
-
-    return firstMetaDomainIdentifier == metaDomainIdentifiers.get().get(secondDomain);
+    return ResourceLoadStatistics::areDomainsAssociated(shouldEnableSiteSpecificQuirks(page), firstDomain, secondDomain);
 }
 
 void ResourceLoadObserver::setNotificationCallback(WTF::Function<void (Vector<ResourceLoadStatistics>&&)>&& notificationCallback)
@@ -130,75 +102,6 @@ bool ResourceLoadObserver::shouldLog(Page* page) const
         return false;
 
     return DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() && !page->usesEphemeralSession() && m_notificationCallback;
-}
-
-static WallTime reduceTimeResolution(WallTime time)
-{
-    return WallTime::fromRawSeconds(std::floor(time.secondsSinceEpoch() / timestampResolution) * timestampResolution.seconds());
-}
-
-void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& topFrame, const ResourceRequest& newRequest, const URL& redirectUrl)
-{
-    ASSERT(frame.document());
-    ASSERT(topFrame.document());
-    ASSERT(topFrame.page());
-
-    auto* page = topFrame.page();
-    if (!shouldLog(page))
-        return;
-
-    auto sourceURL = redirectUrl;
-    bool isRedirect = !redirectUrl.isNull();
-    if (!isRedirect)
-        sourceURL = nonNullOwnerURL(*frame.document());
-
-    auto& targetURL = newRequest.url();
-    auto& mainFrameURL = topFrame.document()->url();
-    
-    if (!targetURL.isValid() || !mainFrameURL.isValid())
-        return;
-
-    auto targetHost = targetURL.host();
-    auto mainFrameHost = mainFrameURL.host();
-
-    if (targetHost.isEmpty() || mainFrameHost.isEmpty() || targetHost == sourceURL.host())
-        return;
-
-    auto targetPrimaryDomain = primaryDomain(targetURL);
-    auto mainFramePrimaryDomain = primaryDomain(mainFrameURL);
-    auto sourcePrimaryDomain = primaryDomain(sourceURL);
-    bool shouldCallNotificationCallback = false;
-
-    if (targetHost != mainFrameHost
-        && !(areDomainsAssociated(page, targetPrimaryDomain, mainFramePrimaryDomain) || areDomainsAssociated(page, targetPrimaryDomain, sourcePrimaryDomain))) {
-        auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
-        targetStatistics.lastSeen = reduceTimeResolution(WallTime::now());
-        if (targetStatistics.subframeUnderTopFrameOrigins.add(mainFramePrimaryDomain).isNewEntry)
-            shouldCallNotificationCallback = true;
-    }
-
-    if (isRedirect
-        && !areDomainsAssociated(page, sourcePrimaryDomain, targetPrimaryDomain)) {
-        bool isNewRedirectToEntry = false;
-        bool isNewRedirectFromEntry = false;
-        if (frame.isMainFrame()) {
-            auto& redirectingOriginStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
-            isNewRedirectToEntry = redirectingOriginStatistics.topFrameUniqueRedirectsTo.add(targetPrimaryDomain).isNewEntry;
-            auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
-            isNewRedirectFromEntry = targetStatistics.topFrameUniqueRedirectsFrom.add(sourcePrimaryDomain).isNewEntry;
-        } else {
-            auto& redirectingOriginStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
-            isNewRedirectToEntry = redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetPrimaryDomain).isNewEntry;
-            auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
-            isNewRedirectFromEntry = targetStatistics.subresourceUniqueRedirectsFrom.add(sourcePrimaryDomain).isNewEntry;
-        }
-
-        if (isNewRedirectToEntry || isNewRedirectFromEntry)
-            shouldCallNotificationCallback = true;
-    }
-
-    if (shouldCallNotificationCallback)
-        scheduleNotificationIfNeeded();
 }
 
 // FIXME: This quirk was added to address <rdar://problem/33325881> and should be removed once content is fixed.
@@ -242,7 +145,7 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     bool shouldCallNotificationCallback = false;
     {
         auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
-        targetStatistics.lastSeen = reduceTimeResolution(WallTime::now());
+        targetStatistics.lastSeen = ResourceLoadStatistics::reduceTimeResolution(WallTime::now());
         if (targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain).isNewEntry)
             shouldCallNotificationCallback = true;
     }
@@ -287,7 +190,7 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
         return;
 
     auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
-    targetStatistics.lastSeen = reduceTimeResolution(WallTime::now());
+    targetStatistics.lastSeen = ResourceLoadStatistics::reduceTimeResolution(WallTime::now());
     if (targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain).isNewEntry)
         scheduleNotificationIfNeeded();
 }
@@ -304,7 +207,7 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
         return;
 
     auto domain = primaryDomain(url);
-    auto newTime = reduceTimeResolution(WallTime::now());
+    auto newTime = ResourceLoadStatistics::reduceTimeResolution(WallTime::now());
     auto lastReportedUserInteraction = m_lastReportedUserInteractionMap.get(domain);
     if (newTime == lastReportedUserInteraction)
         return;

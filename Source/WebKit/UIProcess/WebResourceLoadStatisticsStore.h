@@ -48,6 +48,7 @@ class WorkQueue;
 namespace WebCore {
 class KeyedDecoder;
 class KeyedEncoder;
+class ResourceRequest;
 class URL;
 struct ResourceLoadStatistics;
 }
@@ -55,6 +56,7 @@ struct ResourceLoadStatistics;
 namespace WebKit {
 
 class OperatingDate;
+class WebFrameProxy;
 class WebProcessProxy;
 
 enum class ShouldClearFirst;
@@ -99,6 +101,7 @@ public:
     void processDidCloseConnection(WebProcessProxy&, IPC::Connection&);
     void applicationWillTerminate();
 
+    void logFrameNavigation(const WebFrameProxy&, const WebCore::URL& pageURL, const WebCore::ResourceRequest&, const WebCore::URL& redirectURL);
     void logUserInteraction(const WebCore::URL&);
     void logNonRecentUserInteraction(const WebCore::URL&);
     void clearUserInteraction(const WebCore::URL&);
@@ -185,6 +188,9 @@ private:
     void setPrevalentResource(WebCore::ResourceLoadStatistics&, ResourceLoadPrevalence);
     void processStatisticsAndDataRecords();
 
+    void scheduleStatisticsProcessingRequestIfNecessary();
+    void cancelPendingStatisticsProcessingRequest();
+
     void resetCookiePartitioningState();
     StorageAccessStatus storageAccessStatus(const String& subFramePrimaryDomain, const String& topFramePrimaryDomain);
     void grantStorageAccessInternal(String&& subFrameHost, String&& topFrameHost, std::optional<uint64_t> frameID, uint64_t pageID, bool userWasPromptedNowOrEarlier, CompletionHandler<void(bool)>&&);
@@ -241,8 +247,12 @@ private:
     bool m_debugModeEnabled { false };
     bool m_debugLoggingEnabled { false };
     bool m_storageAccessPromptsEnabled { false };
+    bool m_hasScheduledProcessStats { false };
 
     Function<void (const String&)> m_statisticsTestingCallback;
+
+    uint64_t m_lastStatisticsProcessingRequestIdentifier { 0 };
+    std::optional<uint64_t> m_pendingStatisticsProcessingRequestIdentifier;
 };
 
 } // namespace WebKit

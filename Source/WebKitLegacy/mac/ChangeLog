@@ -1,3 +1,16 @@
+2018-06-13  Chris Dumez  <cdumez@apple.com>
+
+        PSON: http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html ASSERTS with process swap enabled
+        https://bugs.webkit.org/show_bug.cgi?id=186545
+
+        Reviewed by Brady Eidson.
+
+        Update client delegate now that parameter type has changed.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2018-06-11  Tim Horton  <timothy_horton@apple.com>
 
         Link drag image is inconsistently unreadable in dark mode

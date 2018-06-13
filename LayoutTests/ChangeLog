@@ -1,3 +1,15 @@
+2018-06-13  Chris Dumez  <cdumez@apple.com>
+
+        PSON: http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html ASSERTS with process swap enabled
+        https://bugs.webkit.org/show_bug.cgi?id=186545
+
+        Reviewed by Brady Eidson.
+
+        Attempt to mark the test as non-flaky now that it no longer relies on sync'ing from the WebProcess
+        to the UIProcess.
+
+        * platform/wk2/TestExpectations:
+
 2018-06-13  David Fenton  <david_fenton@apple.com>
 
         [macOS Debug WK1] LayoutTest fast/parser/xml-error-adopted.xml is a flaky timeout.

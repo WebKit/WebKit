@@ -53,7 +53,6 @@ class ResourceLoadObserver {
 public:
     WEBCORE_EXPORT static ResourceLoadObserver& shared();
 
-    void logFrameNavigation(const Frame&, const Frame& topFrame, const ResourceRequest& newRequest, const URL& redirectUrl);
     void logSubresourceLoading(const Frame*, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
     void logWebSocketLoading(const Frame*, const URL&);
     void logUserInteractionWithReducedTimeResolution(const Document&);

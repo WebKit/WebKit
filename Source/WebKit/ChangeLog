@@ -1,3 +1,67 @@
+2018-06-13  Chris Dumez  <cdumez@apple.com>
+
+        PSON: http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html ASSERTS with process swap enabled
+        https://bugs.webkit.org/show_bug.cgi?id=186545
+
+        Reviewed by Brady Eidson.
+
+        Move frame navigation logging for ITP purposes from the WebProcess to the UIProcess.
+        This information was previously logged in DocumentLoader::willSendRequest() and was getting
+        sync'd to the UIProcess at regular intervals or when the layout tests call testRunner's
+        statisticsNotifyObserver(). We now do the logging directly in the UIProcess, in
+        WebPageProxy::decidePolicyForNavigationAction (which was getting called via IPC from
+        DocumentLoader::willSendRequest()).
+
+        This is more efficient and will also be needed soon due to the way process swap on navigation 
+        deals with cross-origin redirects. On cross-origin redirect of the main frame, PSON cancels
+        the load and started a new load to the redirected to URL in the new WebProcess. As a result,
+        the new WebProcess is not aware that the load is a redirect, which is information that ITP
+        requires. By moving the ITP logging to the UIProcess, we still have access to this
+        information.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSync):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        - We now pass the full redirect response the the delegate method instead of a simple
+        isRedirect boolean.
+        - Log the navigation in the WebResourceLoadStatisticsStore for ITP purposes.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::areDomainsAssociated):
+        Equivalent of ResourceLoadObserver's areDomainsAssociated(). Most of the logic was moved
+        to ResourceLoadStatistics::areDomainsAssociated() to avoid code duplication.
+
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+        This is called whenever a WebProcess sends new resource load statistics to the UIProcess.
+        Whenever this happens, we call processStatisticsAndDataRecords() right away, which is
+        sometimes the tests currently rely on. As a result, we can cancels any pending statistics
+        processing request that was scheduled by logFrameNavigation().
+
+        (WebKit::WebResourceLoadStatisticsStore::scheduleStatisticsProcessingRequestIfNecessary):
+        (WebKit::WebResourceLoadStatisticsStore::cancelPendingStatisticsProcessingRequest):
+        Whenever a navigation is logged and statistics have been updated, we need to make sure we
+        schedule a "timer" to process the new data. We do this at most every 5 seconds for performance
+        reasons. This 5 second interval matches what the ResourceLoadObserver is using in the WebProcess
+        to notify the UIProcess of new data.
+
+        (WebKit::WebResourceLoadStatisticsStore::logFrameNavigation):
+        This code was moved from ResourceLoadObserver to WebResourceLoadStatisticsStore now that we
+        do this logging in the UIProcess instead of the WebProcess. One difference with WebCore is
+        that we use WebPageProxy::pageLoadState().url() as mainFrameURL instead of
+        WebPageProxy::mainFrame().url(). The reason for that is that WebPageProxy::mainFrame().url()
+        becomes empty in case of process swap but ITP still needs the actual main frame URL when the
+        navigation was triggered. WebPageProxy::pageLoadState().url() gives us this information.
+
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        We now pass the full redirect response the the delegate method instead of a simple
+        isRedirect boolean.
+
 2018-06-13  Brent Fulgham  <bfulgham@apple.com>
 
         Crash during interrupted process termination

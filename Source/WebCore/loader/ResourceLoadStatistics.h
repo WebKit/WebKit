@@ -53,6 +53,9 @@ struct ResourceLoadStatistics {
     WEBCORE_EXPORT static String primaryDomain(const URL&);
     WEBCORE_EXPORT static String primaryDomain(StringView host);
 
+    WEBCORE_EXPORT static bool areDomainsAssociated(bool needsSiteSpecificQuirks, const String&, const String&);
+    WEBCORE_EXPORT static WallTime reduceTimeResolution(WallTime);
+
     WEBCORE_EXPORT void encode(KeyedEncoder&) const;
     WEBCORE_EXPORT bool decode(KeyedDecoder&, unsigned modelVersion);
 

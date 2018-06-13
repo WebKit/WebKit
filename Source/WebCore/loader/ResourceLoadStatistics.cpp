@@ -28,10 +28,13 @@
 
 #include "KeyedCoding.h"
 #include "PublicSuffix.h"
+#include <wtf/MainThread.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
+
+static Seconds timestampResolution { 5_s };
 
 typedef WTF::HashMap<String, unsigned, StringHash, HashTraits<String>, HashTraits<unsigned>>::KeyValuePairType ResourceLoadStatisticsValue;
 
@@ -350,6 +353,45 @@ String ResourceLoadStatistics::primaryDomain(StringView host)
 #endif
 
     return hostString;
+}
+
+// FIXME: Temporary fix for <rdar://problem/32343256> until content can be updated.
+bool ResourceLoadStatistics::areDomainsAssociated(bool needsSiteSpecificQuirks, const String& firstDomain, const String& secondDomain)
+{
+    ASSERT(isMainThread());
+
+    static NeverDestroyed<HashMap<String, unsigned>> metaDomainIdentifiers = [] {
+        HashMap<String, unsigned> map;
+
+        // Domains owned by Dow Jones & Company, Inc.
+        const unsigned dowJonesIdentifier = 1;
+        map.add(ASCIILiteral("dowjones.com"), dowJonesIdentifier);
+        map.add(ASCIILiteral("wsj.com"), dowJonesIdentifier);
+        map.add(ASCIILiteral("barrons.com"), dowJonesIdentifier);
+        map.add(ASCIILiteral("marketwatch.com"), dowJonesIdentifier);
+        map.add(ASCIILiteral("wsjplus.com"), dowJonesIdentifier);
+
+        return map;
+    }();
+
+    if (firstDomain == secondDomain)
+        return true;
+
+    ASSERT(!equalIgnoringASCIICase(firstDomain, secondDomain));
+
+    if (!needsSiteSpecificQuirks)
+        return false;
+
+    unsigned firstMetaDomainIdentifier = metaDomainIdentifiers.get().get(firstDomain);
+    if (!firstMetaDomainIdentifier)
+        return false;
+
+    return firstMetaDomainIdentifier == metaDomainIdentifiers.get().get(secondDomain);
+}
+
+WallTime ResourceLoadStatistics::reduceTimeResolution(WallTime time)
+{
+    return WallTime::fromRawSeconds(std::floor(time.secondsSinceEpoch() / timestampResolution) * timestampResolution.seconds());
 }
 
 }

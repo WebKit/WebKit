@@ -1,3 +1,56 @@
+2018-06-13  Chris Dumez  <cdumez@apple.com>
+
+        PSON: http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html ASSERTS with process swap enabled
+        https://bugs.webkit.org/show_bug.cgi?id=186545
+
+        Reviewed by Brady Eidson.
+
+        Move frame navigation logging for ITP purposes from the WebProcess to the UIProcess.
+        This information was previously logged in DocumentLoader::willSendRequest() and was getting
+        sync'd to the UIProcess at regular intervals or when the layout tests call testRunner's
+        statisticsNotifyObserver(). We now do the logging directly in the UIProcess, in
+        WebPageProxy::decidePolicyForNavigationAction (which was getting called via IPC from
+        DocumentLoader::willSendRequest()).
+
+        This is more efficient and will also be needed soon due to the way process swap on navigation
+        deals with cross-origin redirects. On cross-origin redirect of the main frame, PSON cancels
+        the load and started a new load to the redirected to URL in the new WebProcess. As a result,
+        the new WebProcess is not aware that the load is a redirect, which is information that ITP
+        requires. By moving the ITP logging to the UIProcess, we still have access to this
+        information. 
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        Stop logging the navigation now that it is logged in the UIProcess.
+
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        * loader/FrameLoaderClient.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        * loader/PolicyChecker.h:
+        We now pass the full redirect request to the decidePolicyForNavigationAction
+        delegate instead of a simple isRedirect boolean, so that we have the redirect
+        response URL in the UIProcess for ITP logging.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::areDomainsAssociated):
+        (WebCore::ResourceLoadObserver::logSubresourceLoading):
+        (WebCore::ResourceLoadObserver::logWebSocketLoading):
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        * loader/ResourceLoadObserver.h:
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::ResourceLoadStatistics::areDomainsAssociated):
+        (WebCore::ResourceLoadStatistics::reduceTimeResolution):
+        * loader/ResourceLoadStatistics.h:
+        - Remove ResourceLoadObserver::logFrameNavigation() now that it is on the WebResourceLoadStatisticsStore.
+        - Move some code from ResourceLoadObserver to ResourceLoadStatistics so that it can
+          be called from the UIProcess and to avoid code duplication.
+
 2018-06-13  Mark Lam  <mark.lam@apple.com>
 
         FloatingPointEnvironment is only needed for ARM CPUs.

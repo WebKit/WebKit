@@ -29,6 +29,8 @@
 #include "Logging.h"
 #include "PluginProcessManager.h"
 #include "PluginProcessProxy.h"
+#include "WebFrameProxy.h"
+#include "WebPageProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 #include "WebResourceLoadStatisticsStoreMessages.h"
@@ -52,10 +54,17 @@ constexpr unsigned operatingDatesWindow { 30 };
 constexpr unsigned statisticsModelVersion { 12 };
 constexpr unsigned maxImportance { 3 };
 constexpr unsigned maxNumberOfRecursiveCallsInRedirectTraceBack { 50 };
+constexpr Seconds minimumStatisticsProcessingInterval { 5_s };
 
 template<typename T> static inline String isolatedPrimaryDomain(const T& value)
 {
     return ResourceLoadStatistics::primaryDomain(value).isolatedCopy();
+}
+
+static bool areDomainsAssociated(WebPageProxy* page, const String& firstDomain, const String& secondDomain)
+{
+    bool needsSiteSpecificQuirks = page && page->preferences().needsSiteSpecificQuirks();
+    return ResourceLoadStatistics::areDomainsAssociated(needsSiteSpecificQuirks, firstDomain, secondDomain);
 }
 
 const OptionSet<WebsiteDataType>& WebResourceLoadStatisticsStore::monitoredDataTypes()
@@ -328,6 +337,10 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<WebCor
     ASSERT(!RunLoop::isMain());
 
     mergeStatistics(WTFMove(origins));
+
+    // We can cancel any pending request to process statistics since we're doing it synchronously below.
+    cancelPendingStatisticsProcessingRequest();
+
     // Fire before processing statistics to propagate user interaction as fast as possible to the network process.
     updateCookiePartitioning([]() { });
     processStatisticsAndDataRecords();
@@ -544,6 +557,92 @@ void WebResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode(bool ena
 #if !RELEASE_LOG_DISABLED
     RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "ITP Debug Mode %{public}s.", (m_debugModeEnabled ? "enabled" : "disabled"));
 #endif
+}
+
+void WebResourceLoadStatisticsStore::scheduleStatisticsProcessingRequestIfNecessary()
+{
+    ASSERT(!RunLoop::isMain());
+
+    m_pendingStatisticsProcessingRequestIdentifier = ++m_lastStatisticsProcessingRequestIdentifier;
+    m_statisticsQueue->dispatchAfter(minimumStatisticsProcessingInterval, [this, protectedThis = makeRef(*this), statisticsProcessingRequestIdentifier = *m_pendingStatisticsProcessingRequestIdentifier] {
+        if (!m_pendingStatisticsProcessingRequestIdentifier || *m_pendingStatisticsProcessingRequestIdentifier != statisticsProcessingRequestIdentifier) {
+            // This request has been canceled.
+            return;
+        }
+
+        updateCookiePartitioning([]() { });
+        processStatisticsAndDataRecords();
+    });
+}
+
+void WebResourceLoadStatisticsStore::cancelPendingStatisticsProcessingRequest()
+{
+    ASSERT(!RunLoop::isMain());
+
+    m_pendingStatisticsProcessingRequestIdentifier = std::nullopt;
+}
+
+void WebResourceLoadStatisticsStore::logFrameNavigation(const WebFrameProxy& frame, const URL& pageURL, const WebCore::ResourceRequest& request, const WebCore::URL& redirectURL)
+{
+    ASSERT(RunLoop::isMain());
+
+    auto sourceURL = redirectURL;
+    bool isRedirect = !redirectURL.isNull();
+    if (!isRedirect) {
+        sourceURL = frame.url();
+        if (sourceURL.isNull())
+            sourceURL = pageURL;
+    }
+
+    auto& targetURL = request.url();
+
+    if (!targetURL.isValid() || !pageURL.isValid())
+        return;
+
+    auto targetHost = targetURL.host();
+    auto mainFrameHost = pageURL.host();
+
+    if (targetHost.isEmpty() || mainFrameHost.isEmpty() || targetHost == sourceURL.host())
+        return;
+
+    auto* page = frame.page();
+    auto targetPrimaryDomain = ResourceLoadStatistics::primaryDomain(targetURL);
+    auto mainFramePrimaryDomain = ResourceLoadStatistics::primaryDomain(pageURL);
+    auto sourcePrimaryDomain = ResourceLoadStatistics::primaryDomain(sourceURL);
+
+    bool areTargetAndMainFrameDomainsAssociated = areDomainsAssociated(page, targetPrimaryDomain, mainFramePrimaryDomain);
+    bool areTargetAndSourceDomainsAssociated = areDomainsAssociated(page, targetPrimaryDomain, sourcePrimaryDomain);
+
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), sourcePrimaryDomain = sourcePrimaryDomain.isolatedCopy(), targetHost = targetHost.toString().isolatedCopy(), mainFrameHost = mainFrameHost.toString().isolatedCopy(), areTargetAndMainFrameDomainsAssociated, areTargetAndSourceDomainsAssociated, isRedirect, isMainFrame = frame.isMainFrame()] {
+        bool statisticsWereUpdated = false;
+        if (targetHost != mainFrameHost && !(areTargetAndMainFrameDomainsAssociated || areTargetAndSourceDomainsAssociated)) {
+            auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+            targetStatistics.lastSeen = ResourceLoadStatistics::reduceTimeResolution(WallTime::now());
+            if (targetStatistics.subframeUnderTopFrameOrigins.add(mainFramePrimaryDomain).isNewEntry)
+                statisticsWereUpdated = true;
+        }
+
+        if (isRedirect && !areTargetAndSourceDomainsAssociated) {
+            if (isMainFrame) {
+                auto& redirectingOriginStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
+                if (redirectingOriginStatistics.topFrameUniqueRedirectsTo.add(targetPrimaryDomain).isNewEntry)
+                    statisticsWereUpdated = true;
+                auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+                if (targetStatistics.topFrameUniqueRedirectsFrom.add(sourcePrimaryDomain).isNewEntry)
+                    statisticsWereUpdated = true;
+            } else {
+                auto& redirectingOriginStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
+                if (redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetPrimaryDomain).isNewEntry)
+                    statisticsWereUpdated = true;
+                auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+                if (targetStatistics.subresourceUniqueRedirectsFrom.add(sourcePrimaryDomain).isNewEntry)
+                    statisticsWereUpdated = true;
+            }
+        }
+
+        if (statisticsWereUpdated)
+            scheduleStatisticsProcessingRequestIfNecessary();
+    });
 }
 
 void WebResourceLoadStatisticsStore::logUserInteraction(const URL& url)

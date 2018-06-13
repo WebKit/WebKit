@@ -591,8 +591,6 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
 
     ASSERT(m_frame->document());
     ASSERT(topFrame.document());
-
-    ResourceLoadObserver::shared().logFrameNavigation(*m_frame, topFrame, newRequest, redirectResponse.url());
     
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
@@ -657,7 +655,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         return;
     }
 
-    frameLoader()->policyChecker().checkNavigationPolicy(WTFMove(newRequest), didReceiveRedirectResponse, WTFMove(navigationPolicyCompletionHandler));
+    frameLoader()->policyChecker().checkNavigationPolicy(WTFMove(newRequest), redirectResponse, WTFMove(navigationPolicyCompletionHandler));
 }
 
 bool DocumentLoader::tryLoadingRequestFromApplicationCache()
