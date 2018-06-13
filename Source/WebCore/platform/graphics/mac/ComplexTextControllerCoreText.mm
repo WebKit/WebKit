@@ -142,11 +142,17 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
     RetainPtr<CTLineRef> line;
 
     if (!m_mayUseNaturalWritingDirection || m_run.directionalOverride()) {
-        static const void* optionKeys[] = { kCTTypesetterOptionForcedEmbeddingLevel };
         const short ltrForcedEmbeddingLevelValue = 0;
         const short rtlForcedEmbeddingLevelValue = 1;
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED == 120000)
+        static const void* optionKeys[] = { kCTTypesetterOptionForcedEmbeddingLevel, kCTTypesetterOptionAllowUnboundedLayout };
+        static const void* ltrOptionValues[] = { CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &ltrForcedEmbeddingLevelValue), kCFBooleanTrue };
+        static const void* rtlOptionValues[] = { CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &rtlForcedEmbeddingLevelValue), kCFBooleanTrue };
+#else
+        static const void* optionKeys[] = { kCTTypesetterOptionForcedEmbeddingLevel };
         static const void* ltrOptionValues[] = { CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &ltrForcedEmbeddingLevelValue) };
         static const void* rtlOptionValues[] = { CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &rtlForcedEmbeddingLevelValue) };
+#endif
         static CFDictionaryRef ltrTypesetterOptions = CFDictionaryCreate(kCFAllocatorDefault, optionKeys, ltrOptionValues, WTF_ARRAY_LENGTH(optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
         static CFDictionaryRef rtlTypesetterOptions = CFDictionaryCreate(kCFAllocatorDefault, optionKeys, rtlOptionValues, WTF_ARRAY_LENGTH(optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 
