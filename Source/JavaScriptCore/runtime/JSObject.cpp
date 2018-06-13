@@ -1344,7 +1344,9 @@ ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm, NonPropertyTrans
             newStorage->m_numValuesInVector++;
     }
     
-    Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), transition);
+    StructureID oldStructureID = this->structureID();
+    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
 
     // This has a crazy race with the garbage collector. When changing the butterfly and structure,
     // the mutator always sets the structure last. The collector will always read the structure
@@ -1357,18 +1359,12 @@ ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm, NonPropertyTrans
     // because it will fail to decode two consecutive int32s as if it was a JSValue.
     //
     // Fortunately, we have the JSCell lock for this purpose!
-    
-    if (vm.heap.mutatorShouldBeFenced()) {
-        auto locker = holdLock(cellLock());
-        setStructureIDDirectly(nuke(structureID()));
-        WTF::storeStoreFence();
-        m_butterfly.set(vm, this, newStorage->butterfly());
-        WTF::storeStoreFence();
-        setStructure(vm, newStructure);
-    } else {
-        m_butterfly.set(vm, this, newStorage->butterfly());
-        setStructure(vm, newStructure);
-    }
+
+    Locker<JSCellLock> locker(NoLockingNecessary);
+    if (vm.heap.mutatorShouldBeFenced())
+        locker = holdLock(cellLock());
+    nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly());
+    setStructure(vm, newStructure);
     
     return newStorage;
 }

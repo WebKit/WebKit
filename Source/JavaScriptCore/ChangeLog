@@ -1,3 +1,17 @@
+2018-06-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Always use Nuke & Set procedure for x86
+        https://bugs.webkit.org/show_bug.cgi?id=186592
+
+        Reviewed by Keith Miller.
+
+        We always use nukeStructureAndStoreButterfly for Contiguous -> ArrayStorage conversion if the architecture is x86.
+        By doing so, we can concurrently load structure and butterfly at least in x86 environment even in non-collector
+        threads.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::convertContiguousToArrayStorage):
+
 2018-06-12  Saam Barati  <sbarati@apple.com>
 
         Remove JSVirtualMachine shrinkFootprint when clients move to shrinkFootprintWhenIdle
