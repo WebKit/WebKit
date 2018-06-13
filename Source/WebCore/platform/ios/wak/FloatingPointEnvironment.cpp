@@ -29,8 +29,6 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
-#if PLATFORM(IOS)
-
 namespace WebCore {
 
 FloatingPointEnvironment& FloatingPointEnvironment::singleton()
@@ -38,6 +36,8 @@ FloatingPointEnvironment& FloatingPointEnvironment::singleton()
     static NeverDestroyed<FloatingPointEnvironment> floatingPointEnvironment;
     return floatingPointEnvironment;
 }
+
+#if PLATFORM(IOS) && (CPU(ARM) || CPU(ARM64))
 
 FloatingPointEnvironment::FloatingPointEnvironment()
     : m_isInitialized(false)
@@ -48,7 +48,7 @@ void FloatingPointEnvironment::enableDenormalSupport()
 {
     RELEASE_ASSERT(isUIThread());
 #if defined _ARM_ARCH_7
-    fenv_t env; 
+    fenv_t env;
     fegetenv(&env); 
     env.__fpscr &= ~0x01000000U;
     fesetenv(&env); 
@@ -71,6 +71,6 @@ void FloatingPointEnvironment::propagateMainThreadEnvironment()
     fesetenv(&m_mainThreadEnvironment);
 }
 
-} // namespace WebCore
+#endif // PLATFORM(IOS) && (CPU(ARM) || CPU(ARM64))
 
-#endif // PLATFORM(IOS)
+} // namespace WebCore

@@ -1,3 +1,20 @@
+2018-06-13  Mark Lam  <mark.lam@apple.com>
+
+        FloatingPointEnvironment is only needed for ARM CPUs.
+        https://bugs.webkit.org/show_bug.cgi?id=186567
+        <rdar://problem/40929441>
+
+        Reviewed by Michael Saboff.
+
+        No new tests.  This behavior is already covered by existing tests.
+
+        * platform/ios/wak/FloatingPointEnvironment.cpp:
+        * platform/ios/wak/FloatingPointEnvironment.h:
+        (WebCore::FloatingPointEnvironment::enableDenormalSupport):
+        (WebCore::FloatingPointEnvironment::saveMainThreadEnvironment):
+        (WebCore::FloatingPointEnvironment::propagateMainThreadEnvironment):
+        (WebCore::FloatingPointEnvironment::singleton):
+
 2018-06-13  Timothy Hatcher  <timothy@apple.com>
 
         Input form controls have a white background in dark mode, when they should not.

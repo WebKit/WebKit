@@ -26,11 +26,11 @@
 #ifndef FloatingPointEnvironment_h
 #define FloatingPointEnvironment_h
 
-#if TARGET_OS_IPHONE
-
 #import <fenv.h>
 
 namespace WebCore {
+
+#if PLATFORM(IOS) && (CPU(ARM) || CPU(ARM64))
 
 class FloatingPointEnvironment {
 public:
@@ -48,11 +48,22 @@ private:
     bool m_isInitialized;
 };
 
+#else // not PLATFORM(IOS) && (CPU(ARM) || CPU(ARM64))
+
+class FloatingPointEnvironment {
+public:
+    FloatingPointEnvironment() = default;
+    void enableDenormalSupport() { }
+    void saveMainThreadEnvironment() { }
+    void propagateMainThreadEnvironment() { }
+    WEBCORE_EXPORT static FloatingPointEnvironment& singleton();
+};
+
+#endif // PLATFORM(IOS) && (CPU(ARM) || CPU(ARM64))
+
 } // namespace WebCore
 
 using WebCore::FloatingPointEnvironment;
-
-#endif // TARGET_OS_IPHONE
 
 #endif // FloatingPointEnvironment_h
 
