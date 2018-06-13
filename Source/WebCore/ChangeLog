@@ -1,3 +1,26 @@
+2018-06-12  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Video freezes when GStreamerGL is not installed
+        https://bugs.webkit.org/show_bug.cgi?id=184925
+
+        Reviewed by Žan Doberšek.
+
+        At runtime when the GStreamer opengl plugin isn't available the
+        player will fallback to the internal WebKit video sink. The
+        VideoFrameHolder was refactored to handle both cases (opengl,
+        non-opengl).
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::GstVideoFrameHolder::GstVideoFrameHolder):
+        (WebCore::GstVideoFrameHolder::~GstVideoFrameHolder):
+        (WebCore::GstVideoFrameHolder::frame const):
+        (WebCore::GstVideoFrameHolder::updateTexture):
+        (WebCore::MediaPlayerPrivateGStreamerBase::pushTextureToCompositor):
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        (WebCore::GstVideoFrameHolder::isValid const): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamerBase::updateTexture): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+
 2018-06-12  Zalan Bujtas  <zalan@apple.com>
 
         Complex text handling should opt out of bounded text layout.

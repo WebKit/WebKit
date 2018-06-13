@@ -175,7 +175,6 @@ protected:
 #endif
 
 #if USE(TEXTURE_MAPPER_GL)
-    void updateTexture(BitmapTextureGL&, GstVideoInfo&);
     RefPtr<TextureMapperPlatformLayerProxy> proxy() const override;
     void swapBuffersIfNeeded() override;
     void pushTextureToCompositor();
