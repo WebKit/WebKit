@@ -182,7 +182,7 @@ public:
                         
                         Vector<BasicBlock*, 1> jettisonedBlocks;
                         for (BasicBlock* successor : terminal->successors()) {
-                            if (successor != targetBlock)
+                            if (successor != targetBlock && !jettisonedBlocks.contains(successor))
                                 jettisonedBlocks.append(successor);
                         }
                         

@@ -1,3 +1,20 @@
+2018-06-13  Saam Barati  <sbarati@apple.com>
+
+        CFGSimplificationPhase should de-dupe jettisonedBlocks
+        https://bugs.webkit.org/show_bug.cgi?id=186583
+
+        Reviewed by Filip Pizlo.
+
+        When making the predecessors list unique in r232741, it revealed a bug inside
+        of CFG simplification, where we try to remove the same predecessor more than
+        once from a blocks predecessors list. We built the list of blocks to remove
+        from the list of successors, which is not unique, causing us to try to remove
+        the same predecessor more than once. The solution here is to just add to this
+        list of blocks to remove only if the block is not already in the list.
+
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+
 2018-06-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Always use Nuke & Set procedure for x86
