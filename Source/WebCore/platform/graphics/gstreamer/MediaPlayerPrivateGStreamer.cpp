@@ -306,7 +306,9 @@ void MediaPlayerPrivateGStreamer::load(MediaStreamPrivate& stream)
 #if GST_CHECK_VERSION(1, 10, 0)
     m_streamPrivate = &stream;
     loadFull(String("mediastream://") + stream.id(), "playbin3");
+#if USE(GSTREAMER_GL)
     ensureGLVideoSinkContext();
+#endif
     m_player->play();
 #else
     // Properly fail so the global MediaPlayer tries to fallback to the next MediaPlayerPrivate.

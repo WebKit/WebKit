@@ -1,3 +1,12 @@
+2018-06-13  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed GTK build fix for --cmakeargs=-DUSE_GSTREAMER_GL=OFF
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::pushTextureToCompositor):
+
 2018-06-12  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Video freezes when GStreamerGL is not installed

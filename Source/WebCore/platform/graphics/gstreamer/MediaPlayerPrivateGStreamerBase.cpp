@@ -53,6 +53,10 @@
 #include "WebKitClearKeyDecryptorGStreamer.h"
 #endif
 
+#if ENABLE(MEDIA_STREAM) && GST_CHECK_VERSION(1, 10, 0)
+#include "GStreamerMediaStreamSource.h"
+#endif
+
 #if USE(GSTREAMER_GL)
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
 #define GST_GL_CAPS_FORMAT "{ BGRx, BGRA }"
@@ -80,10 +84,6 @@
 #endif
 #endif // !GST_CHECK_VERSION(1, 14, 0)
 #endif // USE(LIBEPOXY)
-
-#if ENABLE(MEDIA_STREAM) && GST_CHECK_VERSION(1, 10, 0)
-#include "GStreamerMediaStreamSource.h"
-#endif
 
 #define GST_USE_UNSTABLE_API
 #include <gst/gl/gl.h>
@@ -756,12 +756,15 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
 
     std::unique_ptr<GstVideoFrameHolder> frameHolder = std::make_unique<GstVideoFrameHolder>(m_sample.get(), texMapFlagFromOrientation(m_videoSourceOrientation), !m_usingFallbackVideoSink);
 
+#if USE(GSTREAMER_GL)
     GLuint textureID = frameHolder->textureID();
     if (textureID) {
         std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = std::make_unique<TextureMapperPlatformLayerBuffer>(textureID, frameHolder->size(), frameHolder->flags(), GraphicsContext3D::RGBA);
         layerBuffer->setUnmanagedBufferDataHolder(WTFMove(frameHolder));
         m_platformLayerProxy->pushNextBuffer(WTFMove(layerBuffer));
-    } else {
+    } else
+#endif
+    {
         std::unique_ptr<TextureMapperPlatformLayerBuffer> buffer = m_platformLayerProxy->getAvailableBuffer(frameHolder->size(), GL_DONT_CARE);
         if (UNLIKELY(!buffer)) {
             auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get());
