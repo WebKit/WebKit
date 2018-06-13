@@ -1,3 +1,11 @@
+2018-06-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Mark some flaky tests and expected failures.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2018-06-13  Thibault Saunier  <tsaunier@igalia.com>
 
         [WPE] Build getUserMedia support

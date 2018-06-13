@@ -1163,6 +1163,8 @@ http/tests/media/now-playing-info.html [ Skip ]
 # Font collections
 webkit.org/b/186086 fast/text/font-collection.html [ ImageOnlyFailure ]
 
+webkit.org/b/186601 fullscreen/full-screen-layer-dump.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -1920,6 +1922,9 @@ webkit.org/b/186143 imported/mozilla/css-animations/test_event-dispatch.html [ T
 
 webkit.org/b/184569 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
 
+webkit.org/b/186598 http/tests/media/hls/hls-audio-tracks.html [ Timeout Pass ]
+webkit.org/b/186598 http/tests/media/hls/hls-audio-tracks-has-audio.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2254,7 +2259,7 @@ webkit.org/b/186253 http/tests/media/remove-while-loading.html [ Timeout ]
 webkit.org/b/186253 http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Timeout ]
 
 webkit.org/b/186341 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Timeout Failure ]
-webkit.org/b/186252 legacy-animation-engine/css3/filters/backdrop/animation.html [ Failure ]
+webkit.org/b/186252 legacy-animation-engine/css3/filters/backdrop/animation.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
