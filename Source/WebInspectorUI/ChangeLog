@@ -1,3 +1,232 @@
+2018-06-13  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: open source Dark Mode
+        https://bugs.webkit.org/show_bug.cgi?id=186606
+
+        Reviewed by Timothy Hatcher.
+
+        The dark mode is currently only available on macOS Mojave via prefers-dark-interface CSS media query.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/DarkMode.css: Added.
+        (@media (prefers-dark-interface)):
+        (:root):
+        (body.window-inactive):
+        (body.window-inactive *):
+        (#main):
+        (.tree-outline.dom li.selected .selection-area):
+        (.tab-bar > .item > .icon):
+        (.go-to-arrow):
+        (.resource-link,):
+        (.expand-list-button):
+        (:matches(img, canvas).show-grid):
+        (.formatted-object,):
+        (.formatted-null,):
+        (.editing):
+        (.editing, .editing *):
+        (.text-editor > .CodeMirror .execution-line):
+        (.text-editor > .CodeMirror .execution-range-highlight:not(.CodeMirror-selectedtext),):
+        (.details-section > .header):
+        (.details-section > .header > label):
+        (.details-section .details-section,):
+        (.details-section .details-section:not(.collapsed) > .header):
+        (.details-section > .content > .group > .row.simple > .label):
+        (.details-section > .content > .group:nth-child(even)):
+        (.details-section > .content > .group > .row:matches(.empty, .text)):
+        (.data-grid th):
+        (.data-grid td .subtitle):
+        (.data-grid:matches(:focus, .force-focus) tr.selected td .subtitle):
+        (body:not(.window-inactive, .window-docked-inactive) .data-grid:matches(:focus, .force-focus) tr.editable.selected .cell-content > input):
+        (.data-grid tr.editable .cell-content > input):
+        (.data-grid td.spanning):
+        (.object-tree,):
+        (.object-preview .name):
+        (.object-preview > .size):
+        (.tab-bar):
+        (.tab-bar > .item):
+        (.tab-bar > .item > .title):
+        (.tab-bar > .item:not(.disabled).selected):
+        (.tab-bar:not(.animating) > .item:not(.selected):hover):
+        (.tab-bar > .item > .close):
+        (body.window-inactive .tab-bar):
+        (body.window-inactive .tab-bar > .item):
+        (body.window-inactive .tab-bar > .item.selected):
+        (body.window-inactive .tab-bar > .item > .title):
+        (body .toolbar):
+        (body.window-inactive .toolbar):
+        (body.latest-mac .toolbar .item.button,):
+        (body.latest-mac .toolbar .search-bar > input[type="search"]):
+        (body.latest-mac .toolbar .search-bar > input[type="search"]:focus):
+        (body.latest-mac .toolbar .search-bar > input[type="search"]::placeholder):
+        (body.latest-mac.window-inactive .toolbar .search-bar > input[type="search"]::placeholder):
+        (body.latest-mac.window-inactive .toolbar .search-bar > input[type="search"]::-webkit-search-results-button):
+        (body.latest-mac .toolbar .dashboard-container):
+        (body.latest-mac .toolbar .item.button:active):
+        (body.latest-mac.window-inactive .toolbar .item.button,):
+        (.navigation-bar .item.divider):
+        (.toolbar .item.button):
+        (.toolbar .item.button:not(.disabled):active):
+        (.toolbar .item.button:not(.disabled):matches(:focus, .activate.activated)):
+        (.toolbar .item.button:not(.disabled):active:matches(:focus, .activate.activated)):
+        (.toolbar .dashboard.default > .item > div):
+        (.toolbar .dashboard.default > .item.enabled > div):
+        (.toolbar .dashboard.default > .item.enabled:hover):
+        (.toolbar .dashboard.default > .item.enabled:hover > div):
+        (.toolbar .dashboard.default > .resourcesCount > img,):
+        (body.latest-mac .toolbar .dashboard .item.button):
+        (.dashboard-container .advance-arrow):
+        (.toolbar .dashboard.debugger):
+        (.dashboard.debugger .navigation-bar .item.button > .glyph):
+        (.dashboard.debugger > .location .function-name):
+        (.dashboard.debugger > .location .go-to-link):
+        (.dashboard.debugger > .divider):
+        (.popover .edit-breakpoint-popover-content > label.toggle):
+        (.popover .edit-breakpoint-popover-content > table > tr > th):
+        (.breakpoint-action-block-body):
+        (.breakpoint-action-block-body > .description):
+        (.breakpoint-action-append-button,):
+        (.popover .xhr-breakpoint-content > .editor-wrapper > .editor):
+        (.navigation-bar .item.button):
+        (.spreadsheet-style-declaration-editor .property:not(.disabled) .value):
+        (.spreadsheet-css-declaration):
+        (.spreadsheet-css-declaration .selector:focus,):
+        (.spreadsheet-css-declaration.locked .origin::after):
+        (.spreadsheet-css-declaration .origin .go-to-link,):
+        (.spreadsheet-style-declaration-editor :matches(.name, .value).editing):
+        (.spreadsheet-style-declaration-editor .property.has-warning):
+        (.spreadsheet-style-declaration-editor .property.has-warning .warning):
+        (.spreadsheet-css-declaration .media-label):
+        (.quick-console):
+        (.syntax-highlighted,):
+        (.cm-s-default,):
+        (.CodeMirror .jump-to-symbol-highlight,):
+        (.console-prompt):
+        (.completion-suggestions):
+        (.completion-suggestions-container > .item):
+        (.CodeMirror-cursor):
+        (.CodeMirror .CodeMirror-gutters):
+        (.cm-s-default .cm-link):
+        (.cm-s-default .cm-m-xml.cm-attribute,):
+        (.cm-s-default .cm-meta):
+        (.cm-s-default .cm-variable-3):
+        (.cm-s-default .cm-builtin):
+        (.tree-outline .item .subtitle):
+        (.object-tree-property .getter,):
+        (.item.object-tree-property.prototype-property):
+        (.object-tree-property.prototype-property:hover,):
+        (.object-tree-property .value.error):
+        (.tree-outline.dom):
+        (.tree-outline.dom li.selected + ol.children.expanded):
+        (.tree-outline.dom .shadow):
+        (.tree-outline.dom li.parent.shadow + ol.children.expanded,):
+        (.showing-find-banner .tree-outline.dom .search-highlight):
+        (.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter:hover):
+        (.sidebar > .panel.details.css-style > .content > .pseudo-classes > .group > label):
+        (.spreadsheet-css-declaration.locked):
+        (.spreadsheet-css-declaration .selector.style-attribute):
+        (.spreadsheet-style-declaration-editor .property:matches(.invalid-name, .other-vendor, .overridden):not(.disabled) .content > *):
+        (.inline-swatch):
+        (.spreadsheet-style-panel .section-header):
+        (.spreadsheet-style-panel .section-header .node-link:hover):
+        (.computed-style-properties.details-section):
+        (.details-section.style-box-model:not(.collapsed) > :matches(.header, .content)):
+        (.table,):
+        (.table > .header > .sortable:active):
+        (.table > .header > :matches(.sort-ascending, .sort-descending)):
+        (.table > .header > :matches(.sort-ascending, .sort-descending)::after):
+        (.scope-bar > li):
+        (.timeline-overview > .navigation-bar.timelines):
+        (.timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:nth-child(even)):
+        (.timeline-overview.edit-instruments > .tree-outline.timelines .item:not(:first-child),):
+        (.time-icon .icon):
+        (.data-grid th:matches(.sort-ascending, .sort-descending)):
+        (.content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple):
+        (.content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple .arrows):
+        (.content-view.settings .navigation-bar):
+        (.content-view.settings .navigation-bar .item.radio.button.text-only.selected):
+        (.new-tab.tab.content-view):
+        (.filter-bar > input[type="search"]):
+        (.filter-bar > input[type="search"]::placeholder):
+        (.filter-bar > input[type="search"]:focus):
+        (.content-view.resource.image):
+        (.console-messages):
+        (.console-item):
+        (.console-messages:focus .console-item.selected):
+        (.console-messages:focus .console-item.selected + .console-item):
+        (.console-session:first-of-type .console-session-header):
+        (.console-session:not(:first-of-type) .console-session-header):
+        (.console-messages a):
+        (.console-messages a:hover):
+        (.console-messages:focus .console-item.selected::after):
+        (.console-error-level):
+        (.console-error-level:not(.filtered-out, .filtered-out-by-search), .console-error-level:not(.filtered-out, .filtered-out-by-search) + .console-item):
+        (.console-warning-level):
+        (.console-warning-level:not(.filtered-out, .filtered-out-by-search), .console-warning-level:not(.filtered-out, .filtered-out-by-search) + .console-item):
+        (.search-in-progress .console-item:not(.filtered-out-by-search) .highlighted):
+        (.search-in-progress .console-item:not(.filtered-out-by-search) .highlighted.selected):
+        (.source-code.text-editor > .CodeMirror .error):
+        (.source-code.text-editor > .CodeMirror .warning):
+        (.source-code.text-editor > .CodeMirror .issue-widget):
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline.warning):
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline.warning > .arrow):
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline.error):
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline.error > .arrow):
+        (.console-message .syntax-highlighted):
+        (.console-warning-level .console-message-text):
+        (.console-error-level .console-message-text):
+        (.console-user-command > .console-message-text):
+        (.console-message .repeat-count):
+        (.call-frame .subtitle,):
+        (.call-frame:hover .subtitle .source-link,):
+        (.call-frame .separator):
+        (.quick-console.showing-log):
+        (.find-banner.console-find-banner > input[type=search]:not(:placeholder-shown)):
+        (.network-resource-detail):
+        (.network-resource-detail .item.close > .glyph):
+        (.network .network-resource-detail .navigation-bar .item.radio.button.text-only.selected):
+        (.resource-headers .value):
+        (.network-table .cell.domain > .lock):
+        (.resource-sizes > .content .label):
+        (.popover.waterfall-popover):
+        (.resource-timing-breakdown > table > tr.header:not(.total-row) > td):
+        (.resource-timing-breakdown > table > tr > td.label,):
+        (.resource-timing-breakdown > table hr):
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule):
+        (.content-view.tab.canvas .navigation-bar > .item .canvas-overview .icon):
+        (.web-socket.content-view .data-grid table.data tr.revealed):
+        (.web-socket.content-view .data-grid.variable-height-rows table.data tr.outgoing):
+        (.web-socket.content-view .data-grid.variable-height-rows table.data tr.non-text-frame):
+        (.item.action:not(.initial-state)::before):
+        (.tree-outline .item.action.visual:not(.selected, .invalid)):
+        (.item.action:not(.initial-state) > .icon):
+        (.tree-outline:not(.hide-disclosure-buttons) .item.action:not(.initial-state, .parent) > .icon):
+        (.content-view.tab.canvas .navigation-bar > .item .canvas-overview .icon,):
+        (.content-view.canvas > .preview > img,):
+        (.content-view.canvas-overview):
+        (.content-view.canvas-overview .content-view.canvas):
+        (.content-view.canvas-overview .content-view.canvas.is-recording):
+        (.content-view.canvas-overview .content-view.canvas.is-recording > header):
+        (.content-view.canvas-overview .content-view.canvas > header > .titles > .title):
+        (.content-view.canvas-overview .content-view.canvas > header > .titles > .subtitle,):
+        (.content-view.canvas-overview .content-view.canvas > footer > .recordings::before):
+        (.content-view.canvas-overview .content-view.canvas.is-recording > header > .titles > .subtitle):
+        (.content-view.canvas:not(.tab)):
+        (.content-view:not(.tab).recording):
+        (.content-view:not(.tab).recording > header > .slider-container):
+        (.content-view:not(.tab).recording > header > .slider-container > input[type=range]):
+        (.sidebar > .panel.details.recording-state > .content > .data-grid tr.modified):
+        (.progress-view > .titles > .title):
+        (.progress-view > .titles > .subtitle):
+        (.indeterminate-progress-spinner):
+        (.content-view.shader-program > .text-editor.shader):
+        (.content-view.shader-program > .text-editor.shader > .type-title):
+        (.item.shader-program .status > img):
+        (.open-resource-dialog):
+        (.open-resource-dialog > .field > input):
+        (.open-resource-dialog > .field > input::placeholder):
+        (.open-resource-dialog > .tree-outline .item.selected):
+        (.open-resource-dialog > .field::before):
+
 2018-06-09  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Clean up and modernize some build setting definitions
