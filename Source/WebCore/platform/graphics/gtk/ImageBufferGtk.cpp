@@ -87,16 +87,6 @@ String ImageBuffer::toDataURL(const String& mimeType, std::optional<double> qual
     return "data:" + mimeType + ";base64," + base64Data;
 }
 
-Vector<uint8_t> ImageBuffer::toBGRAData() const
-{
-    auto pixbuf = adoptGRef(cairoSurfaceToGdkPixbuf(m_data.m_surface.get()));
-    auto pixels = gdk_pixbuf_get_pixels(pixbuf.get());
-
-    Vector<uint8_t> imageData;
-    imageData.append(pixels, gdk_pixbuf_get_byte_length(pixbuf.get()));
-    return imageData;
-}
-
 Vector<uint8_t> ImageBuffer::toData(const String& mimeType, std::optional<double> quality) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));

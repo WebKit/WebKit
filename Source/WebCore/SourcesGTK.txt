@@ -92,14 +92,6 @@ platform/gtk/PasteboardGtk.cpp
 platform/gtk/ScrollAnimatorGtk.cpp
 platform/gtk/SelectionData.cpp
 
-platform/mediastream/gstreamer/RealtimeIncomingAudioSourceLibWebRTC.cpp
-platform/mediastream/gstreamer/RealtimeIncomingVideoSourceLibWebRTC.cpp
-platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp
-platform/mediastream/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.cpp
-
-platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp
-platform/mediastream/libwebrtc/LibWebRTCProviderGlib.cpp
-
 platform/text/Hyphenation.cpp
 platform/text/LocaleICU.cpp
 

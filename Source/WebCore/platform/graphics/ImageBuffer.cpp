@@ -102,7 +102,7 @@ FloatRect ImageBuffer::clampedRect(const FloatRect& rect)
     return FloatRect(rect.location(), clampedSize(rect.size()));
 }
 
-#if !USE(CG) && !PLATFORM(GTK)
+#if !USE(CG) && !USE(CAIRO)
 Vector<uint8_t> ImageBuffer::toBGRAData() const
 {
     // FIXME: Implement this for other backends.

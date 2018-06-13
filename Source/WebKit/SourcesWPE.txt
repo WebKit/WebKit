@@ -37,6 +37,11 @@ NetworkProcess/soup/NetworkProcessSoup.cpp
 NetworkProcess/soup/NetworkSessionSoup.cpp
 NetworkProcess/soup/RemoteNetworkingContextSoup.cpp
 
+NetworkProcess/webrtc/LibWebRTCSocketClient.cpp
+NetworkProcess/webrtc/NetworkRTCMonitor.cpp
+NetworkProcess/webrtc/NetworkRTCProvider.cpp
+NetworkProcess/webrtc/NetworkRTCSocket.cpp
+
 Platform/IPC/glib/GSocketMonitor.cpp
 
 Platform/IPC/unix/AttachmentUnix.cpp

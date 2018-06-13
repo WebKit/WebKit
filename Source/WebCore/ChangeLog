@@ -1,3 +1,31 @@
+2018-06-13  Thibault Saunier  <tsaunier@igalia.com>
+
+        [WPE] Build getUserMedia support
+        https://bugs.webkit.org/show_bug.cgi?id=186547
+
+        Reviewed by Alejandro G. Castro.
+
+        Enable mediastream tests.
+
+        * PlatformWPE.cmake: Build MediaStream support.
+        * SourcesGTK.txt: Moved GStreamer related files to GStreamer.cmake.
+        * SourcesWPE.txt: Removed `platform/mediastream/libwebrtc/LibWebRTCProviderGlib.cpp`
+        which is now in GStreamer.cmake.
+        * platform/GStreamer.cmake: Build more MediaStream/webrtc related files.
+        * platform/graphics/ImageBuffer.cpp: Handle the fact that toBGRAData is
+        now built directly into the Cairo backend and not GTK anymore.
+        * platform/graphics/cairo/ImageBufferCairo.cpp: Implement `toBGRAData`
+        * platform/graphics/gtk/ImageBufferGtk.cpp: Removed `toBGRAData` as it is
+        now implemented in the Cairo backend itself.
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp: Switch an
+        ASSERT to RELEASE_ASSERT when adding the GhostPad to itself. This was making
+        test fail when built in RELEASE mode.
+        (WebCore::webkitMediaStreamSrcChain): Minor variable name change to make it
+        more accurate.
+        (WebCore::webkitMediaStreamSrcAddPad): Now add the ghost pad to the element
+        before setting its chain function, making things clearer.
+        (WebCore::webkitMediaStreamSrcSetupSrc): Remove extra new line.
+
 2018-06-13  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] fast/canvas/webgl crashes

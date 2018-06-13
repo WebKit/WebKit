@@ -33,6 +33,9 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp
         platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
 
+        platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp
+        platform/mediastream/libwebrtc/LibWebRTCProviderGlib.cpp
+
         platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp
         platform/mediastream/gstreamer/GStreamerAudioCapturer.cpp
         platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.cpp
@@ -42,7 +45,11 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp
         platform/mediastream/gstreamer/MockGStreamerAudioCaptureSource.cpp
         platform/mediastream/gstreamer/MockGStreamerVideoCaptureSource.cpp
+        platform/mediastream/gstreamer/RealtimeIncomingAudioSourceLibWebRTC.cpp
+        platform/mediastream/gstreamer/RealtimeIncomingVideoSourceLibWebRTC.cpp
         platform/mediastream/gstreamer/RealtimeMediaSourceCenterLibWebRTC.cpp
+        platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp
+        platform/mediastream/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.cpp
     )
 
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES

@@ -139,6 +139,7 @@ function installDependenciesWithApt {
 function installDependenciesWithPacman {
     # These are dependencies necessary for building WPE.
     packages=" \
+        alsa-lib \
         autoconf \
         automake \
         bison \
@@ -237,6 +238,7 @@ function installDependenciesWithDnf {
     packages=" \
         autoconf \
         automake \
+        alsa-lib-devel \
         bison \
         cmake \
         flex \
