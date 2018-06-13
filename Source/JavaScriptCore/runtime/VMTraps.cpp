@@ -220,6 +220,11 @@ public:
         });
     }
 
+    const char* name() const override
+    {
+        return "JSC VMTraps Signal Sender Thread";
+    }
+
     VMTraps& traps() { return m_vm.traps(); }
 
 protected:

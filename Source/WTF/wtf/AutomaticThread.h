@@ -125,7 +125,9 @@ public:
     bool notify(const AbstractLocker&);
 
     void join();
-    
+
+    virtual const char* name() const { return "WTF::AutomaticThread"; }
+
 protected:
     // This logically creates the thread, but in reality the thread won't be created until someone
     // calls AutomaticThreadCondition::notifyOne() or notifyAll().

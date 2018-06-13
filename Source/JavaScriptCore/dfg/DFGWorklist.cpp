@@ -46,7 +46,12 @@ public:
         , m_relativePriority(relativePriority)
     {
     }
-    
+
+    const char* name() const override
+    {
+        return m_worklist.m_threadName.data();
+    }
+
 protected:
     PollResult poll(const AbstractLocker& locker) override
     {
@@ -160,7 +165,7 @@ protected:
         m_compilationScope = nullptr;
         m_plan = nullptr;
     }
-    
+
 private:
     Worklist& m_worklist;
     ThreadData& m_data;

@@ -105,6 +105,11 @@ public:
     {
         m_worklist.m_numAvailableThreads++;
     }
+
+    const char* name() const override
+    {
+        return "JIT Worklist Helper Thread";
+    }
     
 protected:
     PollResult poll(const AbstractLocker&) override

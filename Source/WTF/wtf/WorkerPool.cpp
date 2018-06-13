@@ -73,6 +73,11 @@ public:
         return m_pool.shouldSleep(locker);
     }
 
+    const char* name() const override
+    {
+        return "Worker Pool";
+    }
+
 private:
     WorkerPool& m_pool;
     Function<void()> m_task;

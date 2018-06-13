@@ -238,6 +238,11 @@ public:
         , m_heap(heap)
     {
     }
+
+    const char* name() const override
+    {
+        return "JSC Heap Collector Thread";
+    }
     
 protected:
     PollResult poll(const AbstractLocker& locker) override

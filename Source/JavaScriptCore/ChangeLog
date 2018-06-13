@@ -1,3 +1,18 @@
+2018-06-13  Keith Miller  <keith_miller@apple.com>
+
+        AutomaticThread should have a way to provide a thread name
+        https://bugs.webkit.org/show_bug.cgi?id=186604
+
+        Reviewed by Filip Pizlo.
+
+        Add names for JSC's automatic threads.
+
+        * dfg/DFGWorklist.cpp:
+        * heap/Heap.cpp:
+        * jit/JITWorklist.cpp:
+        * runtime/VMTraps.cpp:
+        * wasm/WasmWorklist.cpp:
+
 2018-06-13  Saam Barati  <sbarati@apple.com>
 
         CFGSimplificationPhase should de-dupe jettisonedBlocks

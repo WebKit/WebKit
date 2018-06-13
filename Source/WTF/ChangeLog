@@ -1,3 +1,18 @@
+2018-06-13  Keith Miller  <keith_miller@apple.com>
+
+        AutomaticThread should have a way to provide a thread name
+        https://bugs.webkit.org/show_bug.cgi?id=186604
+
+        Reviewed by Filip Pizlo.
+
+        AutomaticThread now has a virtual method to get a name, which can be
+        overridden to provide a custom name to the thread.
+
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThread::start):
+        * wtf/AutomaticThread.h:
+        * wtf/WorkerPool.cpp:
+
 2018-06-11  Saam Barati  <sbarati@apple.com>
 
         The NaturalLoops algorithm only works when the list of blocks in a loop is de-duplicated
