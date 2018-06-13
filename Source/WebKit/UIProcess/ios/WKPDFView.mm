@@ -352,13 +352,10 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
     [_hostViewController updatePDFViewLayout];
 }
 
-- (void)web_beginAnimatedResize
+- (void)web_beginAnimatedResizeWithUpdates:(void (^)(void))updateBlock
 {
     [_hostViewController beginPDFViewRotation];
-}
-
-- (void)web_endAnimatedResize
-{
+    updateBlock();
     [_hostViewController endPDFViewRotation];
 }
 

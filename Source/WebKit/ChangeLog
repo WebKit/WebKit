@@ -1,3 +1,24 @@
+2018-06-13  Andy Estes  <aestes@apple.com>
+
+        [iOS] Synchronize PDF resizing with device rotation
+        https://bugs.webkit.org/show_bug.cgi?id=186587
+        <rdar://problem/40922462>
+
+        Reviewed by Darin Adler.
+
+        Both -beginPDFViewRotation and -endPDFViewRotation need to be called as part of
+        the transition coordinator's -animateAlongsideTransition: block to be synchronized
+        with rotation. Additionally, updateBlock needs to be invoked between the two calls
+        so that PDFKit can capture the frame geometry before and after the update.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        * UIProcess/Cocoa/WKWebViewContentProvider.h:
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_beginAnimatedResizeWithUpdates:]):
+        (-[WKPDFView web_beginAnimatedResize]): Renamed to web_beginAnimatedResizeWithUpdates:.
+        (-[WKPDFView web_endAnimatedResize]): Deleted.
+
 2018-06-12  Brent Fulgham  <bfulgham@apple.com>
 
         Turn CSS Spring Animations and Link Preload off by default for production builds.

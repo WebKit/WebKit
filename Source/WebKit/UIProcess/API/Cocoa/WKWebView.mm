@@ -5235,9 +5235,10 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     WebCore::FloatRect oldUnobscuredContentRect = _page->unobscuredContentRect();
 
     if (![self usesStandardContentView] || !_hasCommittedLoadForMainFrame || CGRectIsEmpty(oldBounds) || oldUnobscuredContentRect.isEmpty()) {
-        updateBlock();
-        if ([_customContentView respondsToSelector:@selector(web_beginAnimatedResize)])
-            [_customContentView web_beginAnimatedResize];
+        if ([_customContentView respondsToSelector:@selector(web_beginAnimatedResizeWithUpdates:)])
+            [_customContentView web_beginAnimatedResizeWithUpdates:updateBlock];
+        else
+            updateBlock();
         return;
     }
 
@@ -5357,9 +5358,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (void)_endAnimatedResize
 {
     LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView " << _page->pageID() << " _endAnimatedResize:] " << " _dynamicViewportUpdateMode " << (int)_dynamicViewportUpdateMode);
-
-    if ([_customContentView respondsToSelector:@selector(web_endAnimatedResize)])
-        [_customContentView web_endAnimatedResize];
 
     // If we already have an up-to-date layer tree, immediately complete
     // the resize. Otherwise, we will defer completion until we do.
