@@ -560,12 +560,12 @@ void WebProcessProxy::updateBackForwardItem(const BackForwardListItemState& item
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-void WebProcessProxy::getPlugins(bool refresh, Vector<PluginInfo>& plugins, Vector<PluginInfo>& applicationPlugins, std::optional<Vector<WebCore::SupportedPluginName>>& supportedPluginNames)
+void WebProcessProxy::getPlugins(bool refresh, Vector<PluginInfo>& plugins, Vector<PluginInfo>& applicationPlugins, std::optional<Vector<WebCore::SupportedPluginIdentifier>>& supportedPluginIdentifiers)
 {
     if (refresh)
         m_processPool->pluginInfoStore().refresh();
 
-    supportedPluginNames = m_processPool->pluginInfoStore().supportedPluginNames();
+    supportedPluginIdentifiers = m_processPool->pluginInfoStore().supportedPluginIdentifiers();
 
     Vector<PluginModuleInfo> pluginModules = m_processPool->pluginInfoStore().plugins();
     for (size_t i = 0; i < pluginModules.size(); ++i)

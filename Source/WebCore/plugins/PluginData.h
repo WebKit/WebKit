@@ -73,27 +73,27 @@ struct PluginInfo {
 
     PluginLoadClientPolicy clientLoadPolicy;
 
-#if PLATFORM(MAC)
     String bundleIdentifier;
+#if PLATFORM(MAC)
     String versionString;
 #endif
 };
 
 inline bool operator==(PluginInfo& a, PluginInfo& b)
 {
-    bool result = a.name == b.name && a.file == b.file && a.desc == b.desc && a.mimes == b.mimes && a.isApplicationPlugin == b.isApplicationPlugin && a.clientLoadPolicy == b.clientLoadPolicy;
+    bool result = a.name == b.name && a.file == b.file && a.desc == b.desc && a.mimes == b.mimes && a.isApplicationPlugin == b.isApplicationPlugin && a.clientLoadPolicy == b.clientLoadPolicy && a.bundleIdentifier == b.bundleIdentifier;
 #if PLATFORM(MAC)
-    result = result && a.bundleIdentifier == b.bundleIdentifier && a.versionString == b.versionString;
+    result = result && a.versionString == b.versionString;
 #endif
     return result;
 }
 
-struct SupportedPluginName {
+struct SupportedPluginIdentifier {
     String matchingDomain;
-    String pluginName;
+    String pluginIdentifier;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<SupportedPluginName> decode(Decoder&);
+    template<class Decoder> static std::optional<SupportedPluginIdentifier> decode(Decoder&);
 };
 
 // FIXME: merge with PluginDatabase in the future
@@ -128,7 +128,7 @@ private:
 protected:
     Page& m_page;
     Vector<PluginInfo> m_plugins;
-    std::optional<Vector<SupportedPluginName>> m_supportedPluginNames;
+    std::optional<Vector<SupportedPluginIdentifier>> m_supportedPluginIdentifiers;
 
     struct CachedVisiblePlugins {
         URL pageURL;
@@ -137,32 +137,32 @@ protected:
     mutable CachedVisiblePlugins m_cachedVisiblePlugins;
 };
 
-inline bool isSupportedPlugin(const Vector<SupportedPluginName>& pluginNames, const URL& pageURL, const String& pluginName)
+inline bool isSupportedPlugin(const Vector<SupportedPluginIdentifier>& pluginIdentifiers, const URL& pageURL, const String& pluginIdentifier)
 {
-    return pluginNames.findMatching([&] (auto&& plugin) {
-        return pageURL.isMatchingDomain(plugin.matchingDomain) && plugin.pluginName == pluginName;
+    return pluginIdentifiers.findMatching([&] (auto&& plugin) {
+        return pageURL.isMatchingDomain(plugin.matchingDomain) && plugin.pluginIdentifier == pluginIdentifier;
     }) != notFound;
 }
 
-template<class Decoder> inline std::optional<SupportedPluginName> SupportedPluginName::decode(Decoder& decoder)
+template<class Decoder> inline std::optional<SupportedPluginIdentifier> SupportedPluginIdentifier::decode(Decoder& decoder)
 {
     std::optional<String> matchingDomain;
     decoder >> matchingDomain;
     if (!matchingDomain)
         return std::nullopt;
 
-    std::optional<String> pluginName;
-    decoder >> pluginName;
-    if (!pluginName)
+    std::optional<String> pluginIdentifier;
+    decoder >> pluginIdentifier;
+    if (!pluginIdentifier)
         return std::nullopt;
 
-    return SupportedPluginName { WTFMove(matchingDomain.value()), WTFMove(pluginName.value()) };
+    return SupportedPluginIdentifier { WTFMove(matchingDomain.value()), WTFMove(pluginIdentifier.value()) };
 }
 
-template<class Encoder> inline void SupportedPluginName::encode(Encoder& encoder) const
+template<class Encoder> inline void SupportedPluginIdentifier::encode(Encoder& encoder) const
 {
     encoder << matchingDomain;
-    encoder << pluginName;
+    encoder << pluginIdentifier;
 }
 
 } // namespace WebCore

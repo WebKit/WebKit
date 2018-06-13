@@ -1,3 +1,36 @@
+2018-06-13  Youenn Fablet  <youenn@apple.com>
+
+        Supported plugin check should be based on plugin identifier
+        https://bugs.webkit.org/show_bug.cgi?id=186578
+        <rdar://problem/40523828>
+
+        Reviewed by Darin Adler.
+
+        Refactoring to move from Plugin name to Plugin identifier.
+        Set built-in pdf plugin identifier.
+        This allows making sure that the PDF plug-in check might not change according localization.
+
+        * Scripts/webkit/messages.py:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<PluginInfo>::encode):
+        (IPC::ArgumentCoder<PluginInfo>::decode):
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::supportedPluginIdentifiers):
+        (WebKit::PluginInfoStore::addSupportedPlugin):
+        (WebKit::PluginInfoStore::supportedPluginNames): Deleted.
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPlugins):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::pluginInfo):
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp:
+        (WebKit::WebPluginInfoProvider::pluginInfo):
+        (WebKit::WebPluginInfoProvider::webVisiblePluginInfo):
+        (WebKit::WebPluginInfoProvider::populatePluginCache):
+        * WebProcess/Plugins/WebPluginInfoProvider.h:
+
 2018-06-13  Chris Dumez  <cdumez@apple.com>
 
         PSON: http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html ASSERTS with process swap enabled

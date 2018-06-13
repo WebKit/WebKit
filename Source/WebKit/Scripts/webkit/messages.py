@@ -409,7 +409,7 @@ def headers_for_type(type):
         'WebCore::ShippingMethodUpdate': ['<WebCore/ApplePaySessionPaymentRequest.h>'],
         'WebCore::ShouldNotifyWhenResolved': ['<WebCore/ServiceWorkerTypes.h>'],
         'WebCore::ShouldSample': ['<WebCore/DiagnosticLoggingClient.h>'],
-        'WebCore::SupportedPluginName': ['<WebCore/PluginData.h>'],
+        'WebCore::SupportedPluginIdentifier': ['<WebCore/PluginData.h>'],
         'WebCore::TextCheckingRequestData': ['<WebCore/TextChecking.h>'],
         'WebCore::TextCheckingResult': ['<WebCore/TextCheckerClient.h>'],
         'WebCore::TextIndicatorData': ['<WebCore/TextIndicator.h>'],

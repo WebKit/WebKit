@@ -1,3 +1,16 @@
+2018-06-13  Youenn Fablet  <youenn@apple.com>
+
+        Supported plugin check should be based on plugin identifier
+        https://bugs.webkit.org/show_bug.cgi?id=186578
+        <rdar://problem/40523828>
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebPluginInfoProvider.h:
+        * WebCoreSupport/WebPluginInfoProvider.mm:
+        (WebPluginInfoProvider::pluginInfo):
+        (WebPluginInfoProvider::webVisiblePluginInfo):
+
 2018-06-13  Chris Dumez  <cdumez@apple.com>
 
         PSON: http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html ASSERTS with process swap enabled

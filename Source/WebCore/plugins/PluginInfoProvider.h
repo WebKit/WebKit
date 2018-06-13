@@ -39,7 +39,7 @@ public:
     void addPage(Page&);
     void removePage(Page&);
 
-    virtual Vector<PluginInfo> pluginInfo(Page&, std::optional<Vector<SupportedPluginName>>&) = 0;
+    virtual Vector<PluginInfo> pluginInfo(Page&, std::optional<Vector<SupportedPluginIdentifier>>&) = 0;
     virtual Vector<PluginInfo> webVisiblePluginInfo(Page&, const URL&) = 0;
 
 private:

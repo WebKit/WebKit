@@ -267,7 +267,7 @@ private:
 
     // Plugins
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    void getPlugins(bool refresh, Vector<WebCore::PluginInfo>& plugins, Vector<WebCore::PluginInfo>& applicationPlugins, std::optional<Vector<WebCore::SupportedPluginName>>&);
+    void getPlugins(bool refresh, Vector<WebCore::PluginInfo>& plugins, Vector<WebCore::PluginInfo>& applicationPlugins, std::optional<Vector<WebCore::SupportedPluginIdentifier>>&);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void getPluginProcessConnection(uint64_t pluginProcessToken, Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply&&);

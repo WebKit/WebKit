@@ -651,6 +651,7 @@ PluginInfo PDFPlugin::pluginInfo()
     info.name = builtInPDFPluginName();
     info.isApplicationPlugin = true;
     info.clientLoadPolicy = PluginLoadClientPolicyUndefined;
+    info.bundleIdentifier = ASCIILiteral("com.apple.webkit.builtinpdfplugin");
 
     MimeClassInfo pdfMimeClassInfo;
     pdfMimeClassInfo.type = "application/pdf";

@@ -1,3 +1,30 @@
+2018-06-13  Youenn Fablet  <youenn@apple.com>
+
+        Supported plugin check should be based on plugin identifier
+        https://bugs.webkit.org/show_bug.cgi?id=186578
+        <rdar://problem/40523828>
+
+        Reviewed by Darin Adler.
+
+        Rename SupportedPluginName in SupportedPluginIdentifier.
+        Add cross-platform support for plug-in identifier.
+
+        Update built-in PDF plug-in to check its identifier instead of its name.
+        This is stronger as the name may change according localization.
+
+        * loader/EmptyClients.cpp:
+        * plugins/PluginData.cpp:
+        (WebCore::isBuiltInPDFPlugIn):
+        (WebCore::PluginData::initPlugins):
+        * plugins/PluginData.h:
+        (WebCore::operator==):
+        (WebCore::isSupportedPlugin):
+        (WebCore::SupportedPluginIdentifier::decode):
+        (WebCore::SupportedPluginIdentifier::encode const):
+        (WebCore::SupportedPluginName::decode): Deleted.
+        (WebCore::SupportedPluginName::encode const): Deleted.
+        * plugins/PluginInfoProvider.h:
+
 2018-06-13  Chris Dumez  <cdumez@apple.com>
 
         PSON: http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html ASSERTS with process swap enabled

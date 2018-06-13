@@ -97,29 +97,29 @@ void WebPluginInfoProvider::refreshPlugins()
 #endif
 }
 
-Vector<PluginInfo> WebPluginInfoProvider::pluginInfo(Page& page, std::optional<Vector<SupportedPluginName>>& supportedPluginNames)
+Vector<PluginInfo> WebPluginInfoProvider::pluginInfo(Page& page, std::optional<Vector<SupportedPluginIdentifier>>& supportedPluginIdentifiers)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     populatePluginCache(page);
 
-    if (m_cachedSupportedPluginNames)
-        supportedPluginNames = *m_cachedSupportedPluginNames;
+    if (m_cachedSupportedPluginIdentifiers)
+        supportedPluginIdentifiers = *m_cachedSupportedPluginIdentifiers;
 
     return page.mainFrame().loader().subframeLoader().allowPlugins() ? m_cachedPlugins : m_cachedApplicationPlugins;
 #else
     UNUSED_PARAM(page);
-    UNUSED_PARAM(supportedPluginNames);
+    UNUSED_PARAM(supportedPluginIdentifiers);
     return { };
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
 
 Vector<WebCore::PluginInfo> WebPluginInfoProvider::webVisiblePluginInfo(Page& page, const WebCore::URL& url)
 {
-    std::optional<Vector<WebCore::SupportedPluginName>> supportedPluginNames;
-    auto plugins = pluginInfo(page, supportedPluginNames);
+    std::optional<Vector<WebCore::SupportedPluginIdentifier>> supportedPluginIdentifiers;
+    auto plugins = pluginInfo(page, supportedPluginIdentifiers);
 
     plugins.removeAllMatching([&] (auto& plugin) {
-        return supportedPluginNames && !isSupportedPlugin(*supportedPluginNames, url, plugin.name);
+        return supportedPluginIdentifiers && !isSupportedPlugin(*supportedPluginIdentifiers, url, plugin.bundleIdentifier);
     });
 
 #if PLATFORM(MAC)
@@ -147,7 +147,7 @@ void WebPluginInfoProvider::populatePluginCache(const WebCore::Page& page)
         HangDetectionDisabler hangDetectionDisabler;
 
         if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetPlugins(m_shouldRefreshPlugins),
-            Messages::WebProcessProxy::GetPlugins::Reply(m_cachedPlugins, m_cachedApplicationPlugins, m_cachedSupportedPluginNames), 0,
+            Messages::WebProcessProxy::GetPlugins::Reply(m_cachedPlugins, m_cachedApplicationPlugins, m_cachedSupportedPluginIdentifiers), 0,
             Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply))
             return;
 

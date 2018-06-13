@@ -224,22 +224,22 @@ bool PluginInfoStore::isSupportedPlugin(const String& mimeType, const URL& plugi
     }) != notFound;
 }
 
-std::optional<Vector<SupportedPluginName>> PluginInfoStore::supportedPluginNames()
+std::optional<Vector<SupportedPluginIdentifier>> PluginInfoStore::supportedPluginIdentifiers()
 {
     if (!m_supportedPlugins)
         return std::nullopt;
 
     return WTF::map(*m_supportedPlugins, [] (auto&& item) {
-        return SupportedPluginName { item.matchingDomain, item.name };
+        return SupportedPluginIdentifier { item.matchingDomain, item.identifier };
     });
 }
 
-void PluginInfoStore::addSupportedPlugin(String&& domainName, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions)
+void PluginInfoStore::addSupportedPlugin(String&& domainName, String&& identifier, HashSet<String>&& mimeTypes, HashSet<String> extensions)
 {
     if (!m_supportedPlugins)
         m_supportedPlugins = Vector<SupportedPlugin> { };
 
-    m_supportedPlugins->append(SupportedPlugin { WTFMove(domainName), WTFMove(name), WTFMove(mimeTypes), WTFMove(extensions) });
+    m_supportedPlugins->append(SupportedPlugin { WTFMove(domainName), WTFMove(identifier), WTFMove(mimeTypes), WTFMove(extensions) });
 }
 
 PluginModuleInfo PluginInfoStore::infoForPluginWithPath(const String& pluginPath) const

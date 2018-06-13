@@ -64,8 +64,8 @@ public:
     static PluginModuleLoadPolicy defaultLoadPolicyForPlugin(const PluginModuleInfo&);
 
     bool isSupportedPlugin(const String& mimeType, const WebCore::URL& pluginURL, const String& frameURLString, const WebCore::URL& pageURL);
-    std::optional<Vector<WebCore::SupportedPluginName>> supportedPluginNames();
-    void addSupportedPlugin(String&& matchingDomain, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions);
+    std::optional<Vector<WebCore::SupportedPluginIdentifier>> supportedPluginIdentifiers();
+    void addSupportedPlugin(String&& matchingDomain, String&& identifier, HashSet<String>&& mimeTypes, HashSet<String> extensions);
     void clearSupportedPlugins() { m_supportedPlugins = std::nullopt; }
 
 private:
@@ -98,7 +98,7 @@ private:
 
     struct SupportedPlugin {
         String matchingDomain;
-        String name;
+        String identifier;
         HashSet<String> mimeTypes;
         HashSet<String> extensions;
     };
