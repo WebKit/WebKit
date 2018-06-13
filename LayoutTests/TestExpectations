@@ -1465,10 +1465,6 @@ crypto/subtle/rsa-pss-import-spki-key.html [ Skip ]
 crypto/workers/subtle/rsa-pss-import-key-sign.html [ Skip ]
 crypto/workers/subtle/rsa-pss-import-key-verify.html [ Skip ]
 
-# WebCryptoAPI superset tests
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes.worker.html [ Skip ]
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures.worker.html [ Skip ]
-
 editing/deleting/delete-emoji.html [ Slow ]
 
 # New emoji requires system support.

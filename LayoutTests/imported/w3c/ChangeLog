@@ -1,3 +1,34 @@
+2018-06-13  Ms2ger  <Ms2ger@igalia.com>
+
+        Update expectations for WebCryptoAPI generateKey tests
+        https://bugs.webkit.org/show_bug.cgi?id=186591
+
+        Unreviewed test gardening.
+
+        These tests were split and moved around several times, and expectation
+        files for old names stuck around.
+
+        This also removes the placeholder failures.worker.html and
+        successes.worker.html files, because the tests were removed.
+
+        * web-platform-tests/WebCryptoAPI/generateKey/failures.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures.worker.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes.worker.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_aes-cbc-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDH-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSA-OAEP-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSA-PSS-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSASSA-PKCS1-v1_5-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_AES-GCM-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_AES-KW-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDSA-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_HMAC-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-OAEP-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSASSA-PKCS1-v1_5-expected.txt: Removed.
+
 2018-06-11  Youenn Fablet  <youenn@apple.com>
 
         Improve error messages in case FetchEvent.respondWith has a rejected promise

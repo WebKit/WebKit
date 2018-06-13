@@ -1,3 +1,53 @@
+2018-06-13  Ms2ger  <Ms2ger@igalia.com>
+
+        Update expectations for WebCryptoAPI generateKey tests
+        https://bugs.webkit.org/show_bug.cgi?id=186591
+
+        Unreviewed test gardening.
+
+        These tests were split and moved around several times, and expectation
+        files for old names stuck around.
+
+        * TestExpectations: Remove reference to long-removed test.
+        * platform/gtk/TestExpectations: Remove reference to long-removed test.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures.worker-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any-expected.txt: Copied from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.worker-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.worker-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any-expected.txt: Copied from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.worker-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.worker-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any-expected.txt: Copied from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.worker-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.worker-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes.worker-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.worker-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.worker-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.worker-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures.https-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDH.https-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDSA.https-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSA-PSS.https-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDH.https-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDSA.https-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-PSS.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures.https.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.worker-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.worker-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.worker-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.worker-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.worker-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.worker-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes.https.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDH.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDSA.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSA-PSS.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDH.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDSA.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-PSS.https-expected.txt: Removed.
+
 2018-06-13  Per Arne Vollan  <pvollan@apple.com>
 
         A few layout tests are failing on Windows.

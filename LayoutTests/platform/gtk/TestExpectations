@@ -3201,8 +3201,6 @@ webkit.org/b/175421 printing/width-overflow.html [ Failure ]
 
 webkit.org/b/175422 http/tests/blink/sendbeacon/beacon-same-origin.html [ Failure ]
 
-webkit.org/b/175582 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes.worker.html [ Failure ]
-
 webkit.org/b/175931 fast/canvas/webgl/no-info-log-for-simple-shaders.html [ Failure ]
 
 webkit.org/b/176021 fast/events/overflow-viewport-renderer-deleted.html [ Missing ]
@@ -3314,8 +3312,6 @@ webkit.org/b/184080 animations/transform-non-accelerated.html [ Failure ]
 
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html [ Failure ]
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ Failure ]
-
-webkit.org/b/184501 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures.worker.html [ Failure ]
 
 webkit.org/b/184503 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.html [ Failure ]
 webkit.org/b/184503 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-worker.html [ Failure ]
