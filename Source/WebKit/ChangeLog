@@ -1,3 +1,23 @@
+2018-06-13  Brent Fulgham  <bfulgham@apple.com>
+
+        Crash during interrupted process termination
+        https://bugs.webkit.org/show_bug.cgi?id=185373
+        <rdar://problem/40019480>
+
+        Reviewed by Alex Christensen.
+
+        It's possible to encounter a crash if a user agent feature (such as Safari's responsiveness timer) decides
+        to kill a Web Process around the same time that a user decides to trigger a new page load. One of the two
+        termination operations may attempt to call methods on a nulled process pointer.
+
+        We can avoid this by holding our own reference to the terminating process until the termination steps have
+        been completed.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageTerminate): Ref<> the active process while the termination call is performed.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        ([WKWebView _killWebContentProcessAndResetState]): Ditto.
+
 2018-06-13  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Web Automation: wrong modifiers sent for 'Help' virtual key

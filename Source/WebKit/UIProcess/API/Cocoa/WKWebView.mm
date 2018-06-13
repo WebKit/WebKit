@@ -4300,7 +4300,8 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (void)_killWebContentProcessAndResetState
 {
-    _page->process().requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
+    Ref<WebKit::WebProcessProxy> protectedProcessProxy(_page->process());
+    protectedProcessProxy->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
 }
 
 #if PLATFORM(MAC)
