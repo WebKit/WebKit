@@ -1,3 +1,20 @@
+2018-06-12  Thibault Saunier  <tsaunier@igalia.com>
+
+        webkitpy: Implement coredumpctl support on linux
+        https://bugs.webkit.org/show_bug.cgi?id=184039
+
+        Reviewed by Daniel Bates.
+
+        And start using an Executive to run subprocesses
+        in GDBCrashLogGenerator.
+
+        Unit tests adapted to the new API and still passing.
+
+        * Scripts/webkitpy/port/linux_get_crash_log.py:
+        (GDBCrashLogGenerator):
+        (GDBCrashLogGenerator._get_trace_from_systemd):
+        (GDBCrashLogGenerator.generate_crash_log):
+
 2018-06-12  Valerie R Young  <valerie@bocoup.com>
 
         test262/Runner.pm: fix one test (can't find jsc)

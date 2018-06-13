@@ -31,8 +31,10 @@ import os
 import sys
 import unittest
 
-from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
+from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.system.executive_mock import MockProcess
 from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
 
 
 class GDBCrashLogGeneratorTest(unittest.TestCase):
@@ -41,7 +43,10 @@ class GDBCrashLogGeneratorTest(unittest.TestCase):
         if sys.platform.startswith('win'):
             return
 
-        generator = GDBCrashLogGenerator('DumpRenderTree', 28529, newer_than=None, filesystem=MockFileSystem({'/path/to/coredumps': ''}), path_to_driver=None)
+        executive = MockExecutive()
+        executive._proc = MockProcess()
+        executive._proc.stdout = 'STDERR: <empty>'
+        generator = GDBCrashLogGenerator(executive, 'DumpRenderTree', 28529, newer_than=None, filesystem=MockFileSystem({'/path/to/coredumps': ''}), path_to_driver=None)
 
         core_directory = os.environ.get('WEBKIT_CORE_DUMPS_DIRECTORY', '/path/to/coredumps')
         core_pattern = generator._filesystem.join(core_directory, "core-pid_%p.dump")

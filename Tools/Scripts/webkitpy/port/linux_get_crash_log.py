@@ -27,27 +27,69 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import subprocess
+import datetime
 import os
+import re
+import shutil
+import subprocess
+import tempfile
+import time
+
+from webkitpy.common.system.executive import ScriptError
 
 
 class GDBCrashLogGenerator(object):
-    def __init__(self, name, pid, newer_than, filesystem, path_to_driver):
+
+    def __init__(self, executive, name, pid, newer_than, filesystem, path_to_driver):
         self.name = name
         self.pid = pid
         self.newer_than = newer_than
         self._filesystem = filesystem
         self._path_to_driver = path_to_driver
+        self._executive = executive
 
     def _get_gdb_output(self, coredump_path):
         process_name = self._filesystem.join(os.path.dirname(str(self._path_to_driver())), self.name)
         cmd = ['gdb', '-ex', 'thread apply all bt 1024', '--batch', process_name, coredump_path]
-        proc = subprocess.Popen(cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = self._executive.popen(cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
         errors = [stderr_line.strip().decode('utf8', 'ignore') for stderr_line in stderr.splitlines()]
         if proc.returncode != 0:
             stdout = ('ERROR: The gdb process exited with non-zero return code %s\n\n' % proc.returncode) + stdout
         return (stdout.decode('utf8', 'ignore'), errors)
+
+    def _get_trace_from_systemd(self, pid):
+        # Letting up to 5 seconds for the backtrace to be generated on the systemd side
+        for try_number in range(5):
+            if try_number != 0:
+                # Looping, it means we consider the logs might not be ready yet.
+                time.sleep(1)
+
+            try:
+                info = self._executive.run_command(['coredumpctl', 'info', str(pid)], return_stderr=True)
+            except ScriptError, OSError:
+                continue
+
+            if self.newer_than:
+                found_newer = False
+                # Coredumpctl will use the latest core dump with the specified PID
+                # assume it is the right one.
+                for timestamp in re.findall(r'Timestamp:.*(\d{4}-\d+-\d+ \d+:\d+:\d+)', info):
+                    date = time.mktime(datetime.datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S").timetuple())
+                    if date > self.newer_than:
+                        found_newer = True
+                        break
+
+                if not found_newer:
+                    continue
+
+            temp_file = tempfile.NamedTemporaryFile()
+            if self._executive.run_command(['coredumpctl', 'dump', pid, '--output', temp_file.name], return_exit_code=True):
+                continue
+
+            return self._get_gdb_output(temp_file.name)
+
+        return '', []
 
     def generate_crash_log(self, stdout, stderr):
         pid_representation = str(self.pid or '<unknown>')
@@ -62,17 +104,27 @@ class GDBCrashLogGenerator(object):
                 return filename == expected_crash_dump_filename
             return filename.find(self.name) > -1
 
+        # Poor man which, ignore any failure.
+        try:
+            coredumpctl = not self._executive.run_command(['coredumpctl', '--version'], return_exit_code=True)
+        except:
+            coredumpctl = False
+
         if log_directory:
-            dumps = self._filesystem.files_under(log_directory, file_filter=match_filename)
+            dumps = self._filesystem.files_under(
+                log_directory, file_filter=match_filename)
             if dumps:
                 # Get the most recent coredump matching the pid and/or process name.
                 coredump_path = list(reversed(sorted(dumps)))[0]
                 if not self.newer_than or self._filesystem.mtime(coredump_path) > self.newer_than:
                     crash_log, errors = self._get_gdb_output(coredump_path)
+        elif coredumpctl:
+            crash_log, errors = self._get_trace_from_systemd(pid_representation)
 
         stderr_lines = errors + str(stderr or '<empty>').decode('utf8', 'ignore').splitlines()
         errors_str = '\n'.join(('STDERR: ' + stderr_line) for stderr_line in stderr_lines)
-        cppfilt_proc = subprocess.Popen(['c++filt', ], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cppfilt_proc = self._executive.popen(
+            ['c++filt'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         errors_str = cppfilt_proc.communicate(errors_str)[0]
 
         if not crash_log:

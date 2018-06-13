@@ -227,7 +227,8 @@ class GtkPort(Port):
         return super(GtkPort, self).check_sys_deps(needs_http) and self._driver_class().check_driver(self)
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than, target_host=None):
-        return GDBCrashLogGenerator(name, pid, newer_than, self._filesystem, self._path_to_driver).generate_crash_log(stdout, stderr)
+        return GDBCrashLogGenerator(self._executive, name, pid, newer_than,
+            self._filesystem, self._path_to_driver).generate_crash_log(stdout, stderr)
 
     def test_expectations_file_position(self):
         # GTK port baseline search path is gtk -> wk2 -> generic (as gtk-wk2 and gtk baselines are merged), so port test expectations file is at third to last position.
