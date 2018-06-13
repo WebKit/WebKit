@@ -55,10 +55,10 @@ if sys.version < '2.6':
 
 GLOBAL_OPTIONS = {
   # version use. Tests at or below this will be included.
-  "version": "1.0.3",
+  "version": "2.0.0",
 
   # version used for unlabled tests
-  "default-version": "1.0",
+  "default-version": "2.0",
 
   # If set, the version we require. Tests below this will be ignored.
   "min-version": "1.0.3",
@@ -141,6 +141,8 @@ def GreaterThanOrEqualToVersion(have, want):
       have_num = int(have[ndx])
     if have_num < want_num:
       return False
+    if have_num >= want_num:
+      return True
   return True
 
 

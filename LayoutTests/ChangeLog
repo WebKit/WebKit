@@ -1,3 +1,129 @@
+2018-06-07  Justin Fan  <justin_fan@apple.com>
+
+        Import the 2.0.0 version of Khronos WebGL conformance suite
+        https://bugs.webkit.org/show_bug.cgi?id=181293
+        <rdar://problem/40654103>
+
+        Reviewed by Dean Jackson.
+
+        Original description and patch by Zan Dobersek <zdobersek@igalia.com>. 
+        Retrying patch with up-to-date revision of conformance suite:
+
+        "Import the 2.0.0 version of the WebGL conformance suite that's
+        maintained under the Khronos organization on GitHub:
+        https://github.com/KhronosGroup/WebGL.git
+
+        The following revision of this repository has been used for importing:
+        8ea92581353d18f50d25159489897ae634eb23b1
+
+        For importing purposes, the generate-webgl-tests.py script is modified
+        to import tests at version 2.0.0 or below. 2.0 is now used as the
+        default version for importing purposes. Additionally, the
+        GreaterThanOrEqualToVersion function is fixed to correctly compare 2.x
+        versions against 1.x.
+
+        The following generate-webgl-tests.py invocation was used:
+        $ python generate-webgl-tests.py -e -w ~/WebGL/conformance-suites/2.0.0
+
+        The 2.0.0 version of the conformance suite is composed of three parts:
+        - tests under conformance/ cover WebGL1 functionality,
+        - tests under conformance2/ cover WebGL2 functionality,
+        - tests under deqp/ are a port of the dEQP suite.
+        webkit-webgl-test-harness.js file is added under webgl/2.0.0/resources/
+        to properly integrate the imported tests with the WebKit testing
+        facilities.
+
+        The complete suite is for now skipped on all platforms. WebGL1 tests
+        should be passing in majority, with failures in that part of the suite
+        mirroring the ones experienced in the current 1.0.2 and 1.0.3 suites.
+        The WebGL2 support is still incomplete, and the conformance2/ pass rate
+        will reflect that. dEQP in majority utilizes WebGL2, so the pass rate
+        is similarly poor.
+
+        List of imported conformance suite files is omitted for brevity."
+
+        * TestExpectations: Skip the WebGL 1 (conformance) and WebGL 2 (conformance2) tests
+        * webgl/2.0.0/conformance: Added.
+        * webgl/2.0.0/conformance2: Added.
+        * webgl/2.0.0/deqp: Added.
+        * webgl/2.0.0/resources: Added.
+        * webgl/2.0.0/resources/webkit-webgl-test-harness.js:
+        (window.layoutTestController.window.console.log):
+        (window.layoutTestController.window.console.error):
+        (log):
+        (window.webglTestHarness.reportResults):
+        (window.webglTestHarness.notifyFinished):
+        * webgl/generate-webgl-tests.py:
+        (GreaterThanOrEqualToVersion):
+        * webgl/resources/js-test-pre.js:
+        (window.console.log):
+        (window.console.error):
+        (initNonKhronosFramework):
+        (this.initTestingHarness):
+        (nonKhronosFrameworkNotifyDone):
+        (reportTestResultsToHarness):
+        (notifyFinishedToHarness):
+        (_logToConsole):
+        (enableJSTestPreVerboseLogging):
+        (description):
+        (_addSpan):
+        (debug):
+        (escapeHTML):
+        (testPassed):
+        (testFailed):
+        (areArraysEqual):
+        (isMinusZero):
+        (isResultCorrect):
+        (stringify):
+        (evalAndLog):
+        (shouldBe):
+        (shouldNotBe):
+        (shouldBeTrue):
+        (shouldBeFalse):
+        (shouldBeNaN):
+        (shouldBeNull):
+        (shouldBeEqualToString):
+        (shouldEvaluateTo):
+        (shouldBeNonZero):
+        (shouldBeNonNull):
+        (shouldBeUndefined):
+        (shouldBeDefined):
+        (shouldBeGreaterThanOrEqual):
+        (expectTrue):
+        (shouldThrow):
+        (assertMsg):
+        (gc.gcRec):
+        (gc):
+        (finishTest):
+        * webgl/resources/webgl-test-harness.js:
+        (log):
+        (try.request.onreadystatechange):
+        (loadTextFileAsynchronous):
+        (getMajorVersion):
+        (getURLWithOptions):
+        (greaterThanOrEqualToVersion):
+        (copyObject):
+        (toCamelCase):
+        (getFileListImpl):
+        (getFileList):
+        (FilterURL):
+        (TestFile):
+        (Test):
+        (TestHarness):
+        (TestHarness.prototype.addFiles_):
+        (TestHarness.prototype.runTests):
+        (TestHarness.prototype.setTimeout):
+        (TestHarness.prototype.clearTimeout):
+        (TestHarness.prototype.startNextTest):
+        (TestHarness.prototype.startTest):
+        (TestHarness.prototype.getTest):
+        (TestHarness.prototype.reportResults):
+        (TestHarness.prototype.dequeTest):
+        (TestHarness.prototype.notifyFinished):
+        (TestHarness.prototype.timeout):
+        (TestHarness.prototype.setTimeoutDelay):
+        (WebGLTestHarnessModule):
+
 2018-06-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rebaseline RSA-PSS tests for High Sierra.

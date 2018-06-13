@@ -2003,3 +2003,8 @@ webkit.org/b/181100 inspector/worker/worker-recover-if-inspector-close.html [ Pa
 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Failure ]
 
 webkit.org/b/186574 media/video-buffering-allowed.html [ Pass Failure ]
+
+### WebL Conformance Suite 2.0.0 tests that do not yet have support as of 6/7/2018. Enable as support is implemented. ###
+
+# All WebGL 1 and 2 tests for now
+webgl/2.0.0 [ Skip ]
