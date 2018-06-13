@@ -1,3 +1,30 @@
+2018-06-13  Caitlin Potter  <caitp@igalia.com>
+
+        [LLInt] use loadp consistently for get_from_scope/put_to_scope
+        https://bugs.webkit.org/show_bug.cgi?id=132333
+
+        Reviewed by Mark Lam.
+
+        Using `loadis` for register indexes and `loadp` for constant scopes /
+        symboltables makes sense, but is problematic for big-endian
+        architectures.
+
+        Consistently treating the operand as a pointer simplifies determining
+        how to access the operand, and helps avoid bad accesses and crashes on
+        big-endian ports.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/Instruction.h:
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::tryCachePutToScopeGlobal):
+        (JSC::CommonSlowPaths::tryCacheGetFromScopeGlobal):
+
 2018-06-13  Keith Miller  <keith_miller@apple.com>
 
         AutomaticThread should have a way to provide a thread name

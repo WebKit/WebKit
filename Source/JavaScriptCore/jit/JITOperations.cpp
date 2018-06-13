@@ -2381,7 +2381,7 @@ void JIT_OPERATION operationPutToScope(ExecState* exec, Instruction* bytecodePC)
 
     if (getPutInfo.resolveType() == LocalClosureVar) {
         JSLexicalEnvironment* environment = jsCast<JSLexicalEnvironment*>(scope);
-        environment->variableAt(ScopeOffset(pc[6].u.operand)).set(vm, environment, value);
+        environment->variableAt(ScopeOffset(pc[6].u.operandPointer)).set(vm, environment, value);
         if (WatchpointSet* set = pc[5].u.watchpointSet)
             set->touch(vm, "Executed op_put_scope<LocalClosureVar>");
         return;

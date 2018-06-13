@@ -1729,7 +1729,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
     GetPutInfo getPutInfo = GetPutInfo(pc[4].u.operand);
     if (getPutInfo.resolveType() == LocalClosureVar) {
         JSLexicalEnvironment* environment = jsCast<JSLexicalEnvironment*>(scope);
-        environment->variableAt(ScopeOffset(pc[6].u.operand)).set(vm, environment, value);
+        environment->variableAt(ScopeOffset(pc[6].u.operandPointer)).set(vm, environment, value);
         
         // Have to do this *after* the write, because if this puts the set into IsWatched, then we need
         // to have already changed the value of the variable. Otherwise we might watch and constant-fold
