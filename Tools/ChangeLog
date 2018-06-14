@@ -1,3 +1,17 @@
+2018-06-14  Valerie R Young  <valerie@bocoup.com>
+
+        [test262-runner] Test output should summarize tests that are
+        unexpectedly passing/failing.
+        https://bugs.webkit.org/show_bug.cgi?id=186527
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/test262/Runner.pm:
+        (main):
+          In verbose mode, a summary of all new failing tests
+          and all new passing tests are printed at the end of
+          the script output.
+
 2018-06-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] MiniBrowsers should be able to ignore TLS errors

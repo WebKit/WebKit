@@ -358,6 +358,8 @@ sub main {
     my $newfailcount = 0;
     my $newpasscount = 0;
     my $skipfilecount = 0;
+    my $newfailurereport = '';
+    my $newpassreport = '';
 
     # Create expectation file and calculate results
     foreach my $test (@results) {
@@ -381,16 +383,47 @@ sub main {
             }
 
             # If an unexpected failure
-            $newfailcount++ if !$expectedFailure || ($expectedFailure ne $test->{error});
+            if (!$expectedFailure || ($expectedFailure ne $test->{error})) {
+                $newfailcount++;
+
+                if ($verbose) {
+                    my $path = $test->{path};
+                    my $mode = $test->{mode};
+                    my $err = $test->{error};
+                    $newfailurereport .= "FAIL $path ($mode)\n$err\n\n";
+                }
+            }
 
         }
         elsif ($test->{result} eq 'PASS') {
             # If this is an newly passing test
-            $newpasscount++ if $expectedFailure;
+            if ($expectedFailure) {
+                $newpasscount++;
+
+                if ($verbose) {
+                    my $path = $test->{path};
+                    my $mode = $test->{mode};
+                    $newpassreport .= "PASS $path ($mode)\n";
+                }
+            }
         }
         elsif ($test->{result} eq 'SKIP') {
             $skipfilecount++;
         }
+    }
+
+    # In verbose mode, the result of every test is printed, so summarize useful results
+    if ($verbose && $expect && ($newfailurereport || $newpassreport)) {
+        print "\n";
+        if ($newfailurereport) {
+            print "---------------NEW FAILING TESTS SUMMARY---------------\n\n";
+            print "$newfailurereport";
+        }
+        if ($newpassreport) {
+            print "---------------NEW PASSING TESTS SUMMARY---------------\n\n";
+            print "$newpassreport\n";
+        }
+        print "---------------------------------------------------------\n";
     }
 
     if ($saveExpectations) {
