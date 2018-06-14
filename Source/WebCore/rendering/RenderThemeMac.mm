@@ -574,6 +574,48 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
                 return @selector(controlBackgroundColor);
             case CSSValueAppleSystemAlternateSelectedText:
                 return @selector(alternateSelectedControlTextColor);
+            case CSSValueAppleSystemControlAccent:
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+                return @selector(controlAccentColor);
+#else
+                return @selector(alternateSelectedControlColor);
+#endif
+            case CSSValueAppleSystemSelectedContentBackground:
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+                return @selector(selectedContentBackgroundColor);
+#else
+                return @selector(alternateSelectedControlColor);
+#endif
+            case CSSValueAppleSystemUnemphasizedSelectedContentBackground:
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+                return @selector(unemphasizedSelectedContentBackgroundColor);
+#else
+                return @selector(secondarySelectedControlColor);
+#endif
+            case CSSValueAppleSystemSelectedText:
+                return @selector(selectedTextColor);
+            case CSSValueAppleSystemUnemphasizedSelectedText:
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+                return @selector(unemphasizedSelectedTextColor);
+#else
+                return @selector(textColor);
+#endif
+            case CSSValueAppleSystemSelectedTextBackground:
+                return @selector(selectedTextBackgroundColor);
+            case CSSValueAppleSystemUnemphasizedSelectedTextBackground:
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+                return @selector(unemphasizedSelectedTextBackgroundColor);
+#else
+                return @selector(secondarySelectedControlColor);
+#endif
+            case CSSValueAppleSystemPlaceholderText:
+                return @selector(placeholderTextColor);
+            case CSSValueAppleSystemFindHighlightBackground:
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+                return @selector(findHighlightColor);
+#else
+                return @selector(systemYellowColor);
+#endif
             case CSSValueAppleSystemLabel:
                 return @selector(labelColor);
             case CSSValueAppleSystemSecondaryLabel:
@@ -584,6 +626,12 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
                 return @selector(quaternaryLabelColor);
             case CSSValueAppleSystemGrid:
                 return @selector(gridColor);
+            case CSSValueAppleSystemSeparator:
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+                return @selector(separatorColor);
+#else
+                return @selector(gridColor);
+#endif
             case CSSValueAppleWirelessPlaybackTargetActive:
                 return @selector(systemBlueColor);
             case CSSValueAppleSystemBlue:
@@ -618,19 +666,44 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
         case CSSValueActivebuttontext:
             // No corresponding NSColor for this so we use a hard coded value.
             return Color::white;
+
         case CSSValueButtonface:
         case CSSValueThreedface:
             // We selected this value instead of [NSColor controlColor] to avoid website incompatibilities.
             // We may want to consider changing to [NSColor controlColor] some day.
             return 0xFFC0C0C0;
+
         case CSSValueInfobackground:
             // No corresponding NSColor for this so we use a hard coded value.
             return 0xFFFBFCC5;
+
         case CSSValueMenu:
             return menuBackgroundColor();
+
+        case CSSValueAppleSystemEvenAlternatingContentBackground: {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+            NSArray<NSColor *> *alternateColors = [NSColor alternatingContentBackgroundColors];
+#else
+            NSArray<NSColor *> *alternateColors = [NSColor controlAlternatingRowBackgroundColors];
+#endif
+            ASSERT(alternateColors.count >= 2);
+            return colorFromNSColor(alternateColors[0]);
+        }
+
+        case CSSValueAppleSystemOddAlternatingContentBackground: {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+            NSArray<NSColor *> *alternateColors = [NSColor alternatingContentBackgroundColors];
+#else
+            NSArray<NSColor *> *alternateColors = [NSColor controlAlternatingRowBackgroundColors];
+#endif
+            ASSERT(alternateColors.count >= 2);
+            return colorFromNSColor(alternateColors[1]);
+        }
+
         case CSSValueBackground:
             // Use platform-independent value returned by base class.
             FALLTHROUGH;
+
         default:
             return RenderTheme::systemColor(cssValueID, options);
         }

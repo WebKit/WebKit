@@ -1,3 +1,30 @@
+2018-06-14  Timothy Hatcher  <timothy@apple.com>
+
+        Expose more semantic system colors.
+
+        https://bugs.webkit.org/show_bug.cgi?id=186609
+        rdar://problem/39287277
+
+        Reviewed by Tim Horton.
+
+        Add the following semantic colors:
+         -apple-system-control-accent
+         -apple-system-even-alternating-content-background
+         -apple-system-odd-alternating-content-background
+         -apple-system-selected-content-background
+         -apple-system-unemphasized-selected-content-background
+         -apple-system-selected-text
+         -apple-system-unemphasized-selected-text
+         -apple-system-selected-text-background
+         -apple-system-unemphasized-selected-text-background
+         -apple-system-placeholder-text
+         -apple-system-find-highlight-background
+         -apple-system-separator
+
+        * css/CSSValueKeywords.in:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor const):
+
 2018-06-14  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] WebAVPlayerController isPlayingOnSecondScreen should be declared read-write

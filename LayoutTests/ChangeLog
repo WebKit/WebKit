@@ -1,3 +1,15 @@
+2018-06-14  Timothy Hatcher  <timothy@apple.com>
+
+        Expose more semantic system colors.
+
+        https://bugs.webkit.org/show_bug.cgi?id=186609
+        rdar://problem/39287277
+
+        Reviewed by Tim Horton.
+
+        * fast/css/apple-system-control-colors.html: Updated for new colors.
+        * fast/css/apple-system-control-colors-expected.txt: Ditto.
+
 2018-06-14  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening after r232834.

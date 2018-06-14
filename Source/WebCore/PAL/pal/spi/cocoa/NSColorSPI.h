@@ -42,6 +42,8 @@
 + (NSColor *)systemPurpleColor;
 + (NSColor *)systemGrayColor;
 + (NSColor *)linkColor;
++ (NSColor *)findHighlightColor;
++ (NSColor *)placeholderTextColor;
 @end
 
 #endif
