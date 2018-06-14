@@ -1,3 +1,15 @@
+2018-06-14  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Win] Fix build break after r232815 (SupportedPluginIdentifier)
+        https://bugs.webkit.org/show_bug.cgi?id=186623
+
+        Reviewed by Youenn Fablet.
+
+        * WebCoreSupport/WebPluginInfoProvider.cpp:
+        (WebPluginInfoProvider::pluginInfo):
+        (WebPluginInfoProvider::webVisiblePluginInfo):
+        * WebCoreSupport/WebPluginInfoProvider.h:
+
 2018-06-13  Chris Dumez  <cdumez@apple.com>
 
         PSON: http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html ASSERTS with process swap enabled
