@@ -1,3 +1,16 @@
+2018-06-13  Youenn Fablet  <youenn@apple.com>
+
+        Eliminate static initializers in libwebrtc.dylib
+        https://bugs.webkit.org/show_bug.cgi?id=186570
+
+        Reviewed by Darin Adler.
+
+        * Source/webrtc/rtc_base/flags.h: Changed macro to create the static into a function.
+        * Source/webrtc/rtc_base/logging.cc: Ditto.
+        Made sure that the scope is created on instantiation of the first Log instance that might use it.
+        * Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCVideoCodec.mm:
+        * Source/webrtc/system_wrappers/source/runtime_enabled_features_default.cc:
+
 2018-06-09  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Clean up and modernize some build setting definitions
