@@ -829,7 +829,9 @@ class RunBenchmarkTests(shell.Test):
     # The current maximum timeout for a benchmark plan is also 1200.
     # So raise the buildbot timeout to avoid aborting this whole step when a test timeouts.
     timeout = 1500
-    command = ["python", "./Tools/Scripts/run-benchmark", "--allplans"]
+    command = ["python", "./Tools/Scripts/browserperfdash-benchmark", "--allplans",
+               "--config-file", "../../browserperfdash-benchmark-config.txt",
+               "--browser-version", WithProperties("r%(got_revision)s")]
 
     def start(self):
         platform = self.getProperty("platform")
