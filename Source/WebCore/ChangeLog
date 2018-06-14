@@ -1,3 +1,25 @@
+2018-06-13  Zalan Bujtas  <zalan@apple.com>
+
+        [Mail] Use the Mail Viewer width as the base for resolving horizontal viewport units
+        https://bugs.webkit.org/show_bug.cgi?id=186585
+        <rdar://problem/30685325>
+
+        Reviewed by Tim Horton.
+
+        Use the existing "override viewport size for viewport units" mechanism to compute the preferred
+        viewport unit values for the Mail Viewer html content. 
+
+        Test: fast/dynamic/mail-autosize-viewport-unit.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::enableAutoSizeMode):
+        (WebCore::FrameView::clearViewportSizeOverrideForCSSViewportUnits):
+        (WebCore::FrameView::setViewportSizeForCSSViewportUnits):
+        (WebCore::FrameView::overrideViewportSizeForCSSViewportUnits):
+        (WebCore::FrameView::viewportSizeForCSSViewportUnits const):
+        * page/FrameView.h:
+
 2018-06-13  Dean Jackson  <dino@apple.com>
 
         Disable AR support in WKWebView clients

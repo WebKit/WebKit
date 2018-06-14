@@ -211,8 +211,9 @@ public:
     WEBCORE_EXPORT void adjustViewSize();
 
     WEBCORE_EXPORT void setViewportSizeForCSSViewportUnits(IntSize);
+    void clearViewportSizeOverrideForCSSViewportUnits();
     IntSize viewportSizeForCSSViewportUnits() const;
-    
+
     IntRect windowClipRect() const final;
     WEBCORE_EXPORT IntRect windowClipRectForFrameOwner(const HTMLFrameOwnerElement*, bool clipToLayerContents) const;
 
@@ -782,6 +783,14 @@ private:
     void willDoLayout(WeakPtr<RenderElement> layoutRoot);
     void didLayout(WeakPtr<RenderElement> layoutRoot);
 
+    struct OverrideViewportSize {
+        std::optional<int> width;
+        std::optional<int> height;
+
+        bool operator==(const OverrideViewportSize& rhs) const { return rhs.width == width && rhs.height == height; }
+    };
+    void overrideViewportSizeForCSSViewportUnits(OverrideViewportSize);
+
     HashSet<Widget*> m_widgetsInRenderTree;
 
     static MonotonicTime sCurrentPaintTimeStamp; // used for detecting decoded resource thrash in the cache
@@ -867,8 +876,7 @@ private:
     IntSize m_customSizeForResizeEvent;
 #endif
 
-    IntSize m_overrideViewportSize;
-    bool m_hasOverrideViewportSize;
+    std::optional<OverrideViewportSize> m_overrideViewportSize;
 
     // If true, automatically resize the frame view around its content.
     bool m_shouldAutoSize;
