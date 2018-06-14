@@ -271,7 +271,7 @@ void SessionHost::startAutomationSession(Function<void (bool, std::optional<Stri
         INSPECTOR_DBUS_OBJECT_PATH,
         INSPECTOR_DBUS_INTERFACE,
         "StartAutomationSession",
-        g_variant_new("(s)", m_sessionID.utf8().data()),
+        g_variant_new("(sb)", m_sessionID.utf8().data(), m_capabilities.acceptInsecureCerts.value_or(false)),
         nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START,
         -1, m_cancellable.get(), [](GObject* source, GAsyncResult* result, gpointer userData) {
             GUniqueOutPtr<GError> error;
@@ -282,7 +282,7 @@ void SessionHost::startAutomationSession(Function<void (bool, std::optional<Stri
             auto sessionHost = static_cast<SessionHost*>(userData);
             if (!resultVariant) {
                 auto completionHandler = std::exchange(sessionHost->m_startSessionCompletionHandler, nullptr);
-                completionHandler(false, String("Failed to start automation session"));
+                completionHandler(false, makeString("Failed to start automation session: ", String::fromUTF8(error->message)));
                 return;
             }
 

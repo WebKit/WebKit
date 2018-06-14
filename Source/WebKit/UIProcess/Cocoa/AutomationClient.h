@@ -49,11 +49,9 @@ private:
     bool allowsRemoteAutomation(WebProcessPool*) final { return remoteAutomationAllowed(); }
     void didRequestAutomationSession(WebKit::WebProcessPool*, const String& sessionIdentifier) final;
 
-    void requestAutomationSessionWithCapabilities(NSString *sessionIdentifier, NSDictionary *forwardedCapabilities) final;
-
     // RemoteInspector::Client
     bool remoteAutomationAllowed() const final;
-    void requestAutomationSession(const String& sessionIdentifier) final;
+    void requestAutomationSession(const String& sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities&) final;
     String browserName() const final;
     String browserVersion() const final;
 

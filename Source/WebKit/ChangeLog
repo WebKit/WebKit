@@ -1,3 +1,20 @@
+2018-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] WebDriver: handle acceptInsecureCertificates capability
+        https://bugs.webkit.org/show_bug.cgi?id=186560
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/API/glib/WebKitAutomationSession.cpp:
+        (webkitAutomationSessionCreate): Check the acceptInsecureCertificates capability and set the TLS error policy in
+        the WebContext accordingly if needed.
+        * UIProcess/API/glib/WebKitAutomationSessionPrivate.h:
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        * UIProcess/Cocoa/AutomationClient.h:
+        * UIProcess/Cocoa/AutomationClient.mm:
+        (WebKit::AutomationClient::requestAutomationSession): Use SessionCapabilities to fill the session configuration.
+        (WebKit::AutomationClient::requestAutomationSessionWithCapabilities): Deleted.
+
 2018-06-13  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Trying to access the remote inspector hits an assertion in the UIProcess

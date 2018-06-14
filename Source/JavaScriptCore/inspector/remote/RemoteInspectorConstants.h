@@ -90,7 +90,6 @@
 #define WIRSessionCapabilitiesKey                  @"WIRSessionCapabilitiesKey"
 #define WIRAutomationSessionRequestMessage         @"WIRAutomationSessionRequestMessage"
 
-// These definitions are shared between WebDriver.framework and WebKit.
 // The value for WIRSessionCapabilitiesKey is a dictionary that holds these capability key-value pairs.
 
 #define WIRAllowInsecureMediaCaptureCapabilityKey      @"org.webkit.webdriver.webrtc.allow-insecure-media-capture"

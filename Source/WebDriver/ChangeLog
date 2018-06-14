@@ -1,3 +1,21 @@
+2018-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] WebDriver: handle acceptInsecureCertificates capability
+        https://bugs.webkit.org/show_bug.cgi?id=186560
+
+        Reviewed by Brian Burg.
+
+        Send session capabilities as part of the StartAutomationSession message. For now only acceptInsecureCerts
+        capability is sent.
+
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::startAutomationSession):
+        * gtk/WebDriverServiceGtk.cpp:
+        (WebDriver::WebDriverService::platformCapabilities): Remove default value of acceptInsecureCerts, since that's
+        now handled by the browser.
+        * wpe/WebDriverServiceWPE.cpp:
+        (WebDriver::WebDriverService::platformCapabilities): Ditto.
+
 2018-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Add a MiniBrowser and use it to run WebDriver tests

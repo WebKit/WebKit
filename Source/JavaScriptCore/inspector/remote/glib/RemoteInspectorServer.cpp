@@ -28,7 +28,6 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include "RemoteInspector.h"
 #include "RemoteInspectorUtils.h"
 #include <gio/gio.h>
 #include <wtf/Vector.h>
@@ -80,6 +79,7 @@ static const char introspectionXML[] =
     "    </method>"
     "    <method name='StartAutomationSession'>"
     "      <arg type='s' name='sessionID' direction='in'/>"
+    "      <arg type='b' name='acceptInsecureCertificates' direction='in'/>"
     "      <arg type='s' name='browserName' direction='out'/>"
     "      <arg type='s' name='browserVersion' direction='out'/>"
     "    </method>"
@@ -123,12 +123,15 @@ const GDBusInterfaceVTable RemoteInspectorServer::s_interfaceVTable = {
             g_dbus_method_invocation_return_value(invocation, nullptr);
         } else if (!g_strcmp0(methodName, "StartAutomationSession")) {
             const char* sessionID;
-            g_variant_get(parameters, "(&s)", &sessionID);
-            inspectorServer->startAutomationSession(connection, sessionID);
-            auto capabilities = RemoteInspector::singleton().clientCapabilities();
+            gboolean acceptInsecureCertificates;
+            g_variant_get(parameters, "(&sb)", &sessionID, &acceptInsecureCertificates);
+            RemoteInspector::Client::SessionCapabilities capabilities;
+            capabilities.acceptInsecureCertificates = acceptInsecureCertificates;
+            inspectorServer->startAutomationSession(connection, sessionID, capabilities);
+            auto clientCapabilities = RemoteInspector::singleton().clientCapabilities();
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(ss)",
-                capabilities ? capabilities->browserName.utf8().data() : "",
-                capabilities ? capabilities->browserVersion.utf8().data() : ""));
+                clientCapabilities ? clientCapabilities->browserName.utf8().data() : "",
+                clientCapabilities ? clientCapabilities->browserVersion.utf8().data() : ""));
         } else
             g_dbus_method_invocation_return_value(invocation, nullptr);
     },
@@ -391,13 +394,13 @@ void RemoteInspectorServer::sendMessageToFrontend(GDBusConnection* remoteInspect
         -1, m_cancellable.get(), RemoteInspectorServerInternal::dbusConnectionCallAsyncReadyCallback, nullptr);
 }
 
-void RemoteInspectorServer::startAutomationSession(GDBusConnection* automationConnection, const char* sessionID)
+void RemoteInspectorServer::startAutomationSession(GDBusConnection* automationConnection, const char* sessionID, const RemoteInspector::Client::SessionCapabilities& capabilities)
 {
     if (!m_automationConnection)
         m_automationConnection = automationConnection;
     ASSERT(m_automationConnection.get() == automationConnection);
 
-    RemoteInspector::singleton().requestAutomationSession(sessionID);
+    RemoteInspector::singleton().requestAutomationSession(sessionID, capabilities);
 }
 
 } // namespace Inspector

@@ -34,7 +34,6 @@
 #import "_WKAutomationDelegate.h"
 #import "_WKAutomationSessionConfiguration.h"
 #import <JavaScriptCore/RemoteInspector.h>
-#import <JavaScriptCore/RemoteInspectorConstants.h>
 #import <wtf/spi/cf/CFBundleSPI.h>
 #import <wtf/text/WTFString.h>
 
@@ -63,7 +62,7 @@ AutomationClient::~AutomationClient()
 
 void AutomationClient::didRequestAutomationSession(WebKit::WebProcessPool*, const String& sessionIdentifier)
 {
-    requestAutomationSession(sessionIdentifier);
+    requestAutomationSession(sessionIdentifier, { });
 }
 
 // MARK: RemoteInspector::Client
@@ -76,10 +75,22 @@ bool AutomationClient::remoteAutomationAllowed() const
     return false;
 }
 
-void AutomationClient::requestAutomationSession(const String& sessionIdentifier)
+void AutomationClient::requestAutomationSession(const String& sessionIdentifier, const RemoteInspector::Client::SessionCapabilities& sessionCapabilities)
 {
-    NSString *retainedIdentifier = sessionIdentifier;
-    requestAutomationSessionWithCapabilities(retainedIdentifier, nil);
+    _WKAutomationSessionConfiguration *configuration = [[[_WKAutomationSessionConfiguration alloc] init] autorelease];
+    if (sessionCapabilities.allowInsecureMediaCapture)
+        configuration.allowsInsecureMediaCapture = sessionCapabilities.allowInsecureMediaCapture.value();
+    if (sessionCapabilities.suppressICECandidateFiltering)
+        configuration.suppressesICECandidateFiltering = sessionCapabilities.suppressICECandidateFiltering.value();
+
+    // Force clients to create and register a session asynchronously. Otherwise,
+    // RemoteInspector will try to acquire its lock to register the new session and
+    // deadlock because it's already taken while handling XPC messages.
+    NSString *requestedSessionIdentifier = sessionIdentifier;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (m_delegateMethods.requestAutomationSession)
+            [m_delegate.get() _processPool:m_processPool didRequestAutomationSessionWithIdentifier:requestedSessionIdentifier configuration:configuration];
+    });
 }
 
 String AutomationClient::browserName() const
@@ -102,28 +113,6 @@ String AutomationClient::browserVersion() const
     // Fall back to using the app short version (i.e., '11.1.1').
     NSBundle *appBundle = [NSBundle mainBundle];
     return appBundle.infoDictionary[(__bridge NSString *)_kCFBundleShortVersionStringKey];
-}
-
-void AutomationClient::requestAutomationSessionWithCapabilities(NSString *sessionIdentifier, NSDictionary *forwardedCapabilities)
-{
-    _WKAutomationSessionConfiguration *configuration = [[[_WKAutomationSessionConfiguration alloc] init] autorelease];
-    if (NSNumber *value = forwardedCapabilities[WIRAllowInsecureMediaCaptureCapabilityKey]) {
-        if ([value isKindOfClass:[NSNumber class]])
-            configuration.allowsInsecureMediaCapture = value.boolValue;
-    }
-
-    if (NSNumber *value = forwardedCapabilities[WIRSuppressICECandidateFilteringCapabilityKey]) {
-        if ([value isKindOfClass:[NSNumber class]])
-            configuration.suppressesICECandidateFiltering = value.boolValue;
-    }
-
-    // Force clients to create and register a session asynchronously. Otherwise,
-    // RemoteInspector will try to acquire its lock to register the new session and
-    // deadlock because it's already taken while handling XPC messages.
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (m_delegateMethods.requestAutomationSession)
-            [m_delegate.get() _processPool:m_processPool didRequestAutomationSessionWithIdentifier:sessionIdentifier configuration:configuration];
-    });
 }
 
 } // namespace WebKit

@@ -36,7 +36,6 @@ Capabilities WebDriverService::platformCapabilities()
 {
     Capabilities capabilities;
     capabilities.platformName = String("linux");
-    capabilities.acceptInsecureCerts = false;
     capabilities.setWindowRect = true;
     return capabilities;
 }

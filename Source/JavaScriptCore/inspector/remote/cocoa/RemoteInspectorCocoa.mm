@@ -690,13 +690,24 @@ void RemoteInspector::receivedAutomationSessionRequestMessage(NSDictionary *user
     NSDictionary *forwardedCapabilities = userInfo[WIRSessionCapabilitiesKey];
     BAIL_IF_UNEXPECTED_TYPE_ALLOWING_NIL(forwardedCapabilities, [NSDictionary class]);
 
+    Client::SessionCapabilities sessionCapabilities;
+    if (NSNumber *value = forwardedCapabilities[WIRAllowInsecureMediaCaptureCapabilityKey]) {
+        if ([value isKindOfClass:[NSNumber class]])
+            sessionCapabilities.allowInsecureMediaCapture = value.boolValue;
+    }
+
+    if (NSNumber *value = forwardedCapabilities[WIRSuppressICECandidateFilteringCapabilityKey]) {
+        if ([value isKindOfClass:[NSNumber class]])
+            sessionCapabilities.suppressICECandidateFiltering = value.boolValue;
+    }
+
     if (!m_client)
         return;
 
     if (!m_clientCapabilities || !m_clientCapabilities->remoteAutomationAllowed)
         return;
 
-    m_client->requestAutomationSessionWithCapabilities(suggestedSessionIdentifier, forwardedCapabilities);
+    m_client->requestAutomationSession(suggestedSessionIdentifier, sessionCapabilities);
 }
 
 } // namespace Inspector

@@ -1,3 +1,24 @@
+2018-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] WebDriver: handle acceptInsecureCertificates capability
+        https://bugs.webkit.org/show_bug.cgi?id=186560
+
+        Reviewed by Brian Burg.
+
+        Add SessionCapabilities struct to Client class and unify requestAutomationSession() methods into a single one
+        that always receives the session capabilities.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspectorConstants.h:
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::receivedAutomationSessionRequestMessage): Move the parsing of mac capabilities from
+        WebKit here and fill the SessionCapabilities instead.
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        (Inspector::RemoteInspector::requestAutomationSession): Pass SessionCapabilities to the client.
+        * inspector/remote/glib/RemoteInspectorServer.cpp:
+        (Inspector::RemoteInspectorServer::startAutomationSession): Process SessionCapabilities.
+        * inspector/remote/glib/RemoteInspectorServer.h:
+
 2018-06-13  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Trying to access the remote inspector hits an assertion in the UIProcess

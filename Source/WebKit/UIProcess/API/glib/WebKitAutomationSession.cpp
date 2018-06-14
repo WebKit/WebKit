@@ -288,10 +288,12 @@ static void webkit_automation_session_class_init(WebKitAutomationSessionClass* s
         G_TYPE_NONE);
 }
 
-WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webContext, const char* sessionID)
+WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webContext, const char* sessionID, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
 {
     auto* session = WEBKIT_AUTOMATION_SESSION(g_object_new(WEBKIT_TYPE_AUTOMATION_SESSION, "id", sessionID, nullptr));
     session->priv->webContext = webContext;
+    if (capabilities.acceptInsecureCertificates)
+        webkit_web_context_set_tls_errors_policy(webContext, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
     return session;
 }
 

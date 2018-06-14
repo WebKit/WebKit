@@ -349,7 +349,7 @@ void RemoteInspector::sendMessageToTarget(unsigned targetIdentifier, const char*
         connectionToTarget->sendMessageToTarget(String::fromUTF8(message));
 }
 
-void RemoteInspector::requestAutomationSession(const char* sessionID)
+void RemoteInspector::requestAutomationSession(const char* sessionID, const Client::SessionCapabilities& capabilities)
 {
     if (!m_client)
         return;
@@ -360,7 +360,7 @@ void RemoteInspector::requestAutomationSession(const char* sessionID)
     if (!sessionID || !sessionID[0])
         return;
 
-    m_client->requestAutomationSession(String::fromUTF8(sessionID));
+    m_client->requestAutomationSession(String::fromUTF8(sessionID), capabilities);
     updateClientCapabilities();
 }
 
