@@ -1589,9 +1589,10 @@ static void sizeWebViewForCurrentTest()
 
     // W3C SVG tests expect to be 480x360
     bool isSVGW3CTest = (gTestRunner->testURL().find("svg/W3C-SVG-1.1") != string::npos);
-    NSSize frameSize = isSVGW3CTest ? NSMakeSize(TestRunner::w3cSVGViewWidth, TestRunner::w3cSVGViewHeight) : NSMakeSize(TestRunner::viewWidth, TestRunner::viewHeight);
-    [[mainFrame webView] setFrameSize:frameSize];
-    [[mainFrame frameView] setFrame:NSMakeRect(0, 0, frameSize.width, frameSize.height)];
+    if (isSVGW3CTest)
+        [[mainFrame webView] setFrameSize:NSMakeSize(TestRunner::w3cSVGViewWidth, TestRunner::w3cSVGViewHeight)];
+    else
+        [[mainFrame webView] setFrameSize:NSMakeSize(TestRunner::viewWidth, TestRunner::viewHeight)];
 }
 
 static const char *methodNameStringForFailedTest()

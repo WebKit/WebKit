@@ -1,3 +1,16 @@
+2018-06-14  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r232823.
+
+        This caused both test timeouts and api failures.
+
+        Reverted changeset:
+
+        "[Mail] Use the Mail Viewer width as the base for resolving
+        horizontal viewport units"
+        https://bugs.webkit.org/show_bug.cgi?id=186585
+        https://trac.webkit.org/changeset/232823
+
 2018-06-14  Nan Wang  <n_wang@apple.com>
 
         AX: Crash in AccessibilityNodeObject::textUnderElement(WebCore::AccessibilityTextUnderElementMode) const + 536
