@@ -841,7 +841,7 @@ sub summarizeResults {
             foreach my $feature (@{$test->{features}}) {
 
                 if (not exists $byfeature{$feature}) {
-                    $byfeature{$feature} = [0, 0, 0]
+                    $byfeature{$feature} = [0, 0, 0, 0];
                 }
 
                 if ($result eq 'PASS') {
@@ -853,6 +853,10 @@ sub summarizeResults {
                 if ($result eq 'SKIP') {
                     $byfeature{$feature}->[2]++;
                 }
+
+                if ($test->{time}) {
+                    $byfeature{$feature}->[3] += $test->{time};
+                }
             }
         }
         my @paths = split('/', $test->{path});
@@ -861,7 +865,7 @@ sub summarizeResults {
             my $partialpath = join("/", @paths[0...$i]);
 
             if (not exists $bypath{$partialpath}) {
-                $bypath{$partialpath} = [0, 0, 0];
+                $bypath{$partialpath} = [0, 0, 0, 0];
             }
 
             if ($result eq 'PASS') {
@@ -873,42 +877,72 @@ sub summarizeResults {
             if ($result eq 'SKIP') {
                 $bypath{$partialpath}->[2]++;
             }
+
+            if ($test->{time}) {
+                $bypath{$partialpath}->[3] += $test->{time};
+            }
         }
 
     }
 
     open(my $sfh, '>', $summaryTxtFile) or die $!;
 
-    print $sfh sprintf("%-6s %-6s %-6s %-6s %s\n", '%PASS', 'PASS', 'FAIL', 'SKIP', 'FOLDER');
+    print $sfh sprintf("%-6s %-6s %-6s %-6s %-6s %-6s %-7s %-6s %s\n", 'TOTAL', 'RAN', 'PASS-%', 'PASS', 'FAIL', 'SKIP', 'TIME', 'AVG', 'FOLDER');
     foreach my $key (sort keys %bypath) {
-        my $per = ($bypath{$key}->[0] / (
-            $bypath{$key}->[0]
-            + $bypath{$key}->[1]
-            + $bypath{$key}->[2])) * 100;
+        my $totalFilesRan = $bypath{$key}->[0] + $bypath{$key}->[1];
+        my $totalFiles = $totalFilesRan + $bypath{$key}->[2];
 
-        $per = sprintf("%.0f", $per) . "%";
+        my $per = sprintf("%.0f", ($bypath{$key}->[0] / $totalFiles) * 100) . "%";
 
-        print $sfh sprintf("%-6s %-6d %-6d %-6d %s \n", $per,
+        my $time = sprintf("%.1f", $bypath{$key}->[3]) . "s";
+        my $avgTime;
+
+        if ($totalFilesRan) {
+            $avgTime = sprintf("%.2f", $bypath{$key}->[3] / $totalFilesRan) . "s";
+        } else {
+            $avgTime = "0s";
+        }
+
+        print $sfh sprintf("%-6s %-6s %-6s %-6d %-6d %-6d %-7s %-6s %s\n",
+                           $totalFiles,
+                           $totalFilesRan,
+                           $per,
                            $bypath{$key}->[0],
                            $bypath{$key}->[1],
-                           $bypath{$key}->[2], $key,);
+                           $bypath{$key}->[2],
+                           $time,
+                           $avgTime,
+                           $key);
     }
 
     print $sfh "\n\n";
-    print $sfh sprintf("%-6s %-6s %-6s %-6s %s\n", '%PASS', 'PASS', 'FAIL', 'SKIP', 'FEATURE');
+    print $sfh sprintf("%-6s %-6s %-6s %-6s %-6s %-6s %-7s %-6s %s\n", 'TOTAL', 'RAN', 'PASS-%', 'PASS', 'FAIL', 'SKIP', 'TIME', 'AVG', 'FEATURE');
 
     foreach my $key (sort keys %byfeature) {
-        my $per = ($byfeature{$key}->[0] / (
-            $byfeature{$key}->[0]
-            + $byfeature{$key}->[1]
-            + $byfeature{$key}->[2])) * 100;
+        my $totalFilesRan = $byfeature{$key}->[0] + $byfeature{$key}->[1];
+        my $totalFiles = $totalFilesRan + $byfeature{$key}->[2];
 
-        $per = sprintf("%.0f", $per) . "%";
+        my $per = sprintf("%.0f", ($byfeature{$key}->[0] / $totalFiles) * 100) . "%";
 
-        print $sfh sprintf("%-6s %-6d %-6d %-6d %s\n", $per,
+        my $time = sprintf("%.1f", $byfeature{$key}->[3]) . "s";
+        my $avgTime;
+
+        if ($totalFilesRan) {
+            $avgTime = sprintf("%.2f", $byfeature{$key}->[3] / $totalFilesRan) . "s";
+        } else {
+            $avgTime = "0s";
+        }
+
+        print $sfh sprintf("%-6s %-6s %-6s %-6d %-6d %-6d %-7s %-6s %s\n",
+                           $totalFiles,
+                           $totalFilesRan,
+                           $per,
                            $byfeature{$key}->[0],
                            $byfeature{$key}->[1],
-                           $byfeature{$key}->[2], $key);
+                           $byfeature{$key}->[2],
+                           $time,
+                           $avgTime,
+                           $key);
     }
 
     close($sfh);

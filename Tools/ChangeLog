@@ -1,3 +1,15 @@
+2018-06-14  Leo Balter  <leonardo.balter@gmail.com>
+
+        Test262-Runner: Add more information in the summarized stats
+        https://bugs.webkit.org/show_bug.cgi?id=185749
+
+        Reviewed by Michael Saboff.
+
+        This patch adds extra information in the summarized stats for the given results for each run.
+        This includes a total of files, a total of executed files and a time information per path and feature.
+        * Scripts/test262/Runner.pm:
+        (summarizeResults):
+
 2018-06-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Enable tests on the GTK EWS queue
