@@ -73,9 +73,9 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             auto& layoutBox = layoutPair.layoutBox;
             auto& displayBox = layoutPair.displayBox;
             
+            computeStaticPosition(layoutContext, layoutBox, displayBox);
             computeBorderAndPadding(layoutContext, layoutBox, displayBox);
             computeWidthAndMargin(layoutContext, layoutBox, displayBox);
-            computeStaticPosition(layoutContext, layoutBox, displayBox);
             if (layoutBox.establishesFormattingContext()) {
                 auto formattingContext = layoutContext.formattingContext(layoutBox);
                 formattingContext->layout(layoutContext, layoutContext.establishedFormattingState(layoutBox, *formattingContext));
@@ -164,6 +164,7 @@ void BlockFormattingContext::computeInFlowHeightAndMargin(LayoutContext& layoutC
 {
     auto heightAndMargin = Geometry::inFlowHeightAndMargin(layoutContext, layoutBox);
     displayBox.setHeight(heightAndMargin.height);
+    displayBox.moveVertically(heightAndMargin.margin.top);
     displayBox.setVerticalMargin(heightAndMargin.margin);
 }
 
@@ -171,6 +172,7 @@ void BlockFormattingContext::computeInFlowWidthAndMargin(LayoutContext& layoutCo
 {
     auto widthAndMargin = Geometry::inFlowWidthAndMargin(layoutContext, layoutBox);
     displayBox.setWidth(widthAndMargin.width);
+    displayBox.moveHorizontally(widthAndMargin.margin.left);
     displayBox.setHorizontalMargin(widthAndMargin.margin);
 }
 

@@ -106,7 +106,8 @@ protected:
         TableColumnGroup,
         TableRowGroup,
         TableHeaderGroup,
-        TableFooterGroup 
+        TableFooterGroup,
+        GenericElement
     };
 
     struct ElementAttributes {

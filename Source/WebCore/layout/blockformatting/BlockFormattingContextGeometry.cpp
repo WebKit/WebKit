@@ -40,7 +40,7 @@ static bool isStretchedToViewport(const LayoutContext& layoutContext, const Box&
     if (!layoutContext.inQuirksMode())
         return false;
 
-    if (!layoutBox.isDocumentBox() || !layoutBox.isBodyBox())
+    if (!layoutBox.isDocumentBox() && !layoutBox.isBodyBox())
         return false;
 
     return layoutBox.style().logicalHeight().isAuto();
@@ -114,8 +114,13 @@ FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::i
 
     if (!isStretchedToViewport(layoutContext, layoutBox))
         return { height, { marginTop, marginBottom } };
+
     auto initialContainingBlockHeight = layoutContext.displayBoxForLayoutBox(initialContainingBlock(layoutBox))->contentBox().height();
-    return { std::max(height, initialContainingBlockHeight), { marginTop, marginBottom } };
+    // Stretch but never overstretch with the margins.
+    if (height + marginTop + marginBottom < initialContainingBlockHeight)
+        height = initialContainingBlockHeight - marginTop - marginBottom;
+
+    return { height, { marginTop, marginBottom } };
 }
 
 FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox,
@@ -220,8 +225,14 @@ FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::in
     auto computedWidthAndMarginValue = compute();
     if (!isStretchedToViewport(layoutContext, layoutBox))
         return computedWidthAndMarginValue;
+
     auto initialContainingBlockWidth = layoutContext.displayBoxForLayoutBox(initialContainingBlock(layoutBox))->contentBox().width();
-    return FormattingContext::Geometry::WidthAndMargin { std::max(computedWidthAndMarginValue.width, initialContainingBlockWidth), { computedWidthAndMarginValue.margin } };
+    auto horizontalMargins = computedWidthAndMarginValue.margin.left + computedWidthAndMarginValue.margin.right;
+    // Stretch but never overstretch with the margins.
+    if (computedWidthAndMarginValue.width + horizontalMargins < initialContainingBlockWidth)
+        computedWidthAndMarginValue.width = initialContainingBlockWidth - horizontalMargins;
+
+    return { computedWidthAndMarginValue.width, computedWidthAndMarginValue.margin };
 }
 
 FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
@@ -256,10 +267,7 @@ LayoutPoint BlockFormattingContext::Geometry::staticPosition(LayoutContext& layo
         auto& previousInFlowDisplayBox = *layoutContext.displayBoxForLayoutBox(*previousInFlowSibling);
         top = previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.marginBottom();
     }
-    auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
-    LayoutPoint topLeft = { top, left };
-    topLeft.moveBy({ displayBox.marginLeft(), displayBox.marginTop() });
-    return topLeft;
+    return { top, left };
 }
 
 LayoutPoint BlockFormattingContext::Geometry::inFlowPositionedPosition(LayoutContext& layoutContext, const Box& layoutBox)

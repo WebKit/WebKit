@@ -80,6 +80,9 @@ public:
         void shiftTopTo(LayoutUnit);
         void shiftBottomTo(LayoutUnit);
 
+        void moveHorizontally(LayoutUnit);
+        void moveVertically(LayoutUnit);
+
         void expand(LayoutUnit, LayoutUnit);
 
         Rect clone() const;
@@ -156,6 +159,8 @@ private:
     void setTopLeft(const LayoutPoint& topLeft) { m_rect.setTopLeft(topLeft); }
     void setTop(LayoutUnit top) { m_rect.setTop(top); }
     void setLeft(LayoutUnit left) { m_rect.setLeft(left); }
+    void moveHorizontally(LayoutUnit offset) { m_rect.moveHorizontally(offset); }
+    void moveVertically(LayoutUnit offset) { m_rect.moveVertically(offset); }
     void setWidth(LayoutUnit width) { m_rect.setWidth(width); }
     void setHeight(LayoutUnit height) { m_rect.setHeight(height); }
     void setSize(const LayoutSize& size) { m_rect.setSize(size); }
@@ -317,7 +322,6 @@ inline void Box::Rect::setWidth(LayoutUnit width)
 #if !ASSERT_DISABLED
     m_hasValidWidth = true;
 #endif
-    ASSERT(m_hasValidLeft);
     m_rect.setWidth(width);
 }
 
@@ -326,7 +330,6 @@ inline void Box::Rect::setHeight(LayoutUnit height)
 #if !ASSERT_DISABLED
     m_hasValidHeight = true;
 #endif
-    ASSERT(m_hasValidTop);
     m_rect.setHeight(height);
 }
 
@@ -360,6 +363,18 @@ inline void Box::Rect::shiftBottomTo(LayoutUnit bottom)
 {
     ASSERT(m_hasValidTop && m_hasValidHeight);
     m_rect.shiftMaxYEdgeTo(bottom);
+}
+
+inline void Box::Rect::moveHorizontally(LayoutUnit offset)
+{
+    ASSERT(m_hasValidLeft);
+    m_rect.move(offset, { });
+}
+
+inline void Box::Rect::moveVertically(LayoutUnit offset)
+{
+    ASSERT(m_hasValidTop);
+    m_rect.move({ }, offset);
 }
 
 inline void Box::Rect::expand(LayoutUnit width, LayoutUnit height)

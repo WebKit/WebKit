@@ -53,6 +53,7 @@ void FormattingContext::computeFloatingHeightAndMargin(LayoutContext& layoutCont
 {
     auto heightAndMargin = Geometry::floatingHeightAndMargin(layoutContext, layoutBox);
     displayBox.setHeight(heightAndMargin.height);
+    displayBox.moveVertically(heightAndMargin.margin.top);
     displayBox.setVerticalMargin(heightAndMargin.margin);
 }
 
@@ -60,6 +61,7 @@ void FormattingContext::computeFloatingWidthAndMargin(LayoutContext& layoutConte
 {
     auto widthAndMargin = Geometry::floatingWidthAndMargin(layoutContext, layoutBox);
     displayBox.setWidth(widthAndMargin.width);
+    displayBox.moveHorizontally(widthAndMargin.margin.left);
     displayBox.setHorizontalMargin(widthAndMargin.margin);
 }
 

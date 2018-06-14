@@ -1,3 +1,42 @@
+2018-06-13  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Miscellaneous fixes to be able to layout <div> with fixed width/height
+        https://bugs.webkit.org/show_bug.cgi?id=186616
+
+        Reviewed by Antti Koivisto.
+
+        1. Move box horizontally/vertically when relevant margin is computed.
+        2. Fix isStretchedToViewport() logic and make sure that the width/height is adjusted with the margin when the box is stretchy.
+        3. Fix isPaddingApplicable() and add "GenericElement" for elements that don't need special handling.
+
+        With this patch LFC produces the correct geometry for the following content:
+        <html><body><div style="width: 100px; height: 100px;"></div></body></html>
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeFloatingHeightAndMargin const):
+        (WebCore::Layout::FormattingContext::computeFloatingWidthAndMargin const):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowHeightAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowWidthAndMargin const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::isStretchedToViewport):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticPosition):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::moveHorizontally):
+        (WebCore::Display::Box::moveVertically):
+        (WebCore::Display::Box::Rect::setWidth):
+        (WebCore::Display::Box::Rect::setHeight):
+        (WebCore::Display::Box::Rect::moveHorizontally):
+        (WebCore::Display::Box::Rect::moveVertically):
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isPaddingApplicable const):
+        * layout/layouttree/LayoutBox.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createSubTree):
+
 2018-06-13  Chris Dumez  <cdumez@apple.com>
 
         Crash under SWServer::unregisterConnection(Connection&)
