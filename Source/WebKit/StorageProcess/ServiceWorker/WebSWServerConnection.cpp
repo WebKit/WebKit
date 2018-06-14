@@ -76,11 +76,6 @@ WebSWServerConnection::~WebSWServerConnection()
         server().unregisterServiceWorkerClient(keyValue.value, keyValue.key);
 }
 
-void WebSWServerConnection::disconnectedFromWebProcess()
-{
-    notImplemented();
-}
-
 void WebSWServerConnection::rejectJobInClient(ServiceWorkerJobIdentifier jobIdentifier, const ExceptionData& exceptionData)
 {
     send(Messages::WebSWClientConnection::JobRejectedInServer(jobIdentifier, exceptionData));

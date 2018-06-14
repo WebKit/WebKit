@@ -69,7 +69,7 @@ public:
         WTF_MAKE_FAST_ALLOCATED;
         friend class SWServer;
     public:
-        WEBCORE_EXPORT virtual ~Connection();
+        WEBCORE_EXPORT virtual ~Connection() { }
 
         using Identifier = SWServerConnectionIdentifier;
         Identifier identifier() const { return m_identifier; }
@@ -87,9 +87,10 @@ public:
         virtual void notifyClientsOfControllerChange(const HashSet<DocumentIdentifier>& contextIdentifiers, const ServiceWorkerData& newController) = 0;
         virtual void registrationReady(uint64_t registrationReadyRequestIdentifier, ServiceWorkerRegistrationData&&) = 0;
 
+        SWServer& server() { return m_server; }
+
     protected:
         WEBCORE_EXPORT explicit Connection(SWServer&);
-        SWServer& server() { return m_server; }
 
         WEBCORE_EXPORT void finishFetchingScriptInServer(const ServiceWorkerFetchResult&);
         WEBCORE_EXPORT void addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier);
@@ -144,7 +145,10 @@ public:
 
     WEBCORE_EXPORT void markAllWorkersForOriginAsTerminated(const SecurityOriginData&);
     
-    Connection* getConnection(SWServerConnectionIdentifier identifier) { return m_connections.get(identifier); }
+    WEBCORE_EXPORT void addConnection(std::unique_ptr<Connection>&&);
+    WEBCORE_EXPORT void removeConnection(SWServerConnectionIdentifier);
+    Connection* connection(SWServerConnectionIdentifier identifier) const { return m_connections.get(identifier); }
+
     SWOriginStore& originStore() { return m_originStore; }
 
     void scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>&, SWServerWorker&, const String& message);
@@ -179,9 +183,6 @@ public:
     void disableServiceWorkerProcessTerminationDelay() { m_shouldDisableServiceWorkerProcessTerminationDelay = true; }
 
 private:
-    void registerConnection(Connection&);
-    void unregisterConnection(Connection&);
-
     void scriptFetchFinished(Connection&, const ServiceWorkerFetchResult&);
 
     void didResolveRegistrationPromise(Connection&, const ServiceWorkerRegistrationKey&);
@@ -208,7 +209,7 @@ private:
     };
     void terminateWorkerInternal(SWServerWorker&, TerminationMode);
 
-    HashMap<SWServerConnectionIdentifier, Connection*> m_connections;
+    HashMap<SWServerConnectionIdentifier, std::unique_ptr<Connection>> m_connections;
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerRegistration>> m_registrations;
     HashMap<ServiceWorkerRegistrationIdentifier, SWServerRegistration*> m_registrationsByID;
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerJobQueue>> m_jobQueues;

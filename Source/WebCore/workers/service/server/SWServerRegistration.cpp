@@ -136,7 +136,7 @@ void SWServerRegistration::fireUpdateFoundEvent()
 void SWServerRegistration::forEachConnection(const WTF::Function<void(SWServer::Connection&)>& apply)
 {
     for (auto connectionIdentifierWithClients : m_connectionsWithClientRegistrations.values()) {
-        if (auto* connection = m_server.getConnection(connectionIdentifierWithClients))
+        if (auto* connection = m_server.connection(connectionIdentifierWithClients))
             apply(*connection);
     }
 }
@@ -198,7 +198,7 @@ void SWServerRegistration::notifyClientsOfControllerChange()
     ASSERT(activeWorker());
 
     for (auto& item : m_clientsUsingRegistration) {
-        if (auto* connection = m_server.getConnection(item.key))
+        if (auto* connection = m_server.connection(item.key))
             connection->notifyClientsOfControllerChange(item.value, activeWorker()->data());
     }
 }
@@ -346,7 +346,7 @@ void SWServerRegistration::controlClient(ServiceWorkerClientIdentifier identifie
 
     HashSet<DocumentIdentifier> identifiers;
     identifiers.add(identifier.contextIdentifier);
-    m_server.getConnection(identifier.serverConnectionIdentifier)->notifyClientsOfControllerChange(identifiers, activeWorker()->data());
+    m_server.connection(identifier.serverConnectionIdentifier)->notifyClientsOfControllerChange(identifiers, activeWorker()->data());
 }
 
 void SWServerRegistration::setIsUninstalling(bool value)

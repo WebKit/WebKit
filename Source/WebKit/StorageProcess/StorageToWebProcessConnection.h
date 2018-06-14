@@ -70,7 +70,9 @@ private:
 
 #if ENABLE(SERVICE_WORKER)
     void establishSWServerConnection(PAL::SessionID, WebCore::SWServerConnectionIdentifier&);
-    HashMap<WebCore::SWServerConnectionIdentifier, std::unique_ptr<WebSWServerConnection>> m_swConnections;
+    void unregisterSWConnections();
+
+    HashMap<WebCore::SWServerConnectionIdentifier, WeakPtr<WebSWServerConnection>> m_swConnections;
 #endif
 
     Ref<IPC::Connection> m_connection;

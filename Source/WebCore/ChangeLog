@@ -1,3 +1,37 @@
+2018-06-13  Chris Dumez  <cdumez@apple.com>
+
+        Crash under SWServer::unregisterConnection(Connection&)
+        https://bugs.webkit.org/show_bug.cgi?id=186584
+        <rdar://problem/40931680>
+
+        Reviewed by Youenn Fablet.
+
+        The crash was due to SWServer::Connection objects outliving their SWServer, even
+        though SWServer::Connection::m_server is a C++ reference. This was possible because
+        SWServer does not own the connections, StorageToWebProcessConnection does. This
+        started crashing recently, after r232423, because SWServer can get destroyed now.
+        The SWServer might get destroyed before the StorageToWebProcessConnection, in which
+        case the SWServer::Connection objects will get destroyed later. We were crashing
+        because the SWServer::Connection destructor tries to unregister the connection from
+        the SWServer (which is dead).
+
+        To address the issue, the SWServer now owns the connections. StorageToWebProcessConnection
+        merely has weak pointers to the connections.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::Connection::Connection):
+        (WebCore::SWServer::addConnection):
+        (WebCore::SWServer::removeConnection):
+        (WebCore::SWServer::resolveRegistrationReadyRequests):
+        * workers/service/server/SWServer.h:
+        (WebCore::SWServer::Connection::~Connection):
+        (WebCore::SWServer::Connection::server):
+        (WebCore::SWServer::connection):
+        * workers/service/server/SWServerRegistration.cpp:
+        (WebCore::SWServerRegistration::forEachConnection):
+        (WebCore::SWServerRegistration::notifyClientsOfControllerChange):
+        (WebCore::SWServerRegistration::controlClient):
+
 2018-06-13  Zalan Bujtas  <zalan@apple.com>
 
         [Mail] Use the Mail Viewer width as the base for resolving horizontal viewport units

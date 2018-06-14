@@ -56,7 +56,6 @@ public:
 
     IPC::Connection& ipcConnection() const { return m_contentConnection.get(); }
 
-    void disconnectedFromWebProcess();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 

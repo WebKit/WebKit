@@ -1,3 +1,22 @@
+2018-06-13  Chris Dumez  <cdumez@apple.com>
+
+        Crash under SWServer::unregisterConnection(Connection&)
+        https://bugs.webkit.org/show_bug.cgi?id=186584
+        <rdar://problem/40931680>
+
+        Reviewed by Youenn Fablet.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/StorageToWebProcessConnection.cpp:
+        (WebKit::StorageToWebProcessConnection::~StorageToWebProcessConnection):
+        (WebKit::StorageToWebProcessConnection::didReceiveMessage):
+        (WebKit::StorageToWebProcessConnection::didReceiveSyncMessage):
+        (WebKit::StorageToWebProcessConnection::didClose):
+        (WebKit::StorageToWebProcessConnection::unregisterSWConnections):
+        (WebKit::StorageToWebProcessConnection::establishSWServerConnection):
+        * StorageProcess/StorageToWebProcessConnection.h:
+
 2018-06-13  Dean Jackson  <dino@apple.com>
 
         Disable AR support in WKWebView clients

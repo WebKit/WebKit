@@ -54,12 +54,6 @@ SWServer::Connection::Connection(SWServer& server)
     : m_server(server)
     , m_identifier(generateObjectIdentifier<SWServerConnectionIdentifierType>())
 {
-    m_server.registerConnection(*this);
-}
-
-SWServer::Connection::~Connection()
-{
-    m_server.unregisterConnection(*this);
 }
 
 HashSet<SWServer*>& SWServer::allServers()
@@ -692,23 +686,23 @@ void SWServer::fireActivateEvent(SWServerWorker& worker)
     contextConnection->fireActivateEvent(worker.identifier());
 }
 
-void SWServer::registerConnection(Connection& connection)
+void SWServer::addConnection(std::unique_ptr<Connection>&& connection)
 {
-    auto result = m_connections.add(connection.identifier(), nullptr);
-    ASSERT(result.isNewEntry);
-    result.iterator->value = &connection;
+    auto identifier = connection->identifier();
+    ASSERT(!m_connections.contains(identifier));
+    m_connections.add(identifier, WTFMove(connection));
 }
 
-void SWServer::unregisterConnection(Connection& connection)
+void SWServer::removeConnection(SWServerConnectionIdentifier connectionIdentifier)
 {
-    ASSERT(m_connections.get(connection.identifier()) == &connection);
-    m_connections.remove(connection.identifier());
+    ASSERT(m_connections.contains(connectionIdentifier));
+    m_connections.remove(connectionIdentifier);
 
     for (auto& registration : m_registrations.values())
-        registration->unregisterServerConnection(connection.identifier());
+        registration->unregisterServerConnection(connectionIdentifier);
 
     for (auto& jobQueue : m_jobQueues.values())
-        jobQueue->cancelJobsFromConnection(connection.identifier());
+        jobQueue->cancelJobsFromConnection(connectionIdentifier);
 }
 
 SWServerRegistration* SWServer::doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL)
@@ -817,7 +811,7 @@ bool SWServer::needsServerToContextConnectionForOrigin(const SecurityOriginData&
 
 void SWServer::resolveRegistrationReadyRequests(SWServerRegistration& registration)
 {
-    for (auto* connection : m_connections.values())
+    for (auto& connection : m_connections.values())
         connection->resolveRegistrationReadyRequests(registration);
 }
 
