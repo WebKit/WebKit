@@ -1,3 +1,15 @@
+2018-06-14  Youenn Fablet  <youenn@apple.com>
+
+        Apply CSP checks before Content blocker checks in NetworkLoadChecker as done by CachedResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=186550
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/contentextensions/fetch-redirect-blocked-expected.txt: Added.
+        * http/tests/contentextensions/fetch-redirect-blocked.html: Added.
+        * http/tests/contentextensions/fetch-redirect-blocked.html.json: Added.
+        * http/tests/contentextensions/resources/subresource-redirect.php:
+
 2018-06-14  Timothy Hatcher  <timothy@apple.com>
 
         Expose more semantic system colors.

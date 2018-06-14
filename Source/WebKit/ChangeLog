@@ -1,3 +1,16 @@
+2018-06-14  Youenn Fablet  <youenn@apple.com>
+
+        Apply CSP checks before Content blocker checks in NetworkLoadChecker as done by CachedResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=186550
+
+        Reviewed by Alex Christensen.
+
+        Do CSP checks and URL upgrade before content blocker checks.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::checkRequest):
+        (WebKit::NetworkLoadChecker::continueCheckingRequest):
+
 2018-06-14  Brent Fulgham  <bfulgham@apple.com>
 
         Plug-in Process crashing on Mojave (affects Flash, others)

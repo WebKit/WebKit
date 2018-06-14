@@ -193,6 +193,17 @@ auto NetworkLoadChecker::accessControlErrorForValidationHandler(String&& message
 
 void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ValidationHandler&& handler)
 {
+    if (auto* contentSecurityPolicy = this->contentSecurityPolicy()) {
+        if (isRedirected()) {
+            auto type = m_options.mode == FetchOptions::Mode::Navigate ? ContentSecurityPolicy::InsecureRequestType::Navigation : ContentSecurityPolicy::InsecureRequestType::Load;
+            contentSecurityPolicy->upgradeInsecureRequestIfNeeded(request, type);
+        }
+        if (!isAllowedByContentSecurityPolicy(request)) {
+            handler(accessControlErrorForValidationHandler(ASCIILiteral { "Blocked by Content Security Policy." }));
+            return;
+        }
+    }
+
 #if ENABLE(CONTENT_EXTENSIONS)
     processContentExtensionRulesForLoad(WTFMove(request), [this, handler = WTFMove(handler)](auto result) mutable {
         if (!result.has_value()) {
@@ -248,20 +259,6 @@ bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest&
 
 void NetworkLoadChecker::continueCheckingRequest(ResourceRequest&& request, ValidationHandler&& handler)
 {
-    if (auto* contentSecurityPolicy = this->contentSecurityPolicy()) {
-        if (isRedirected()) {
-            URL url = request.url();
-            auto type = m_options.mode == FetchOptions::Mode::Navigate ? ContentSecurityPolicy::InsecureRequestType::Navigation : ContentSecurityPolicy::InsecureRequestType::Load;
-            contentSecurityPolicy->upgradeInsecureRequestIfNeeded(url, type);
-            if (url != request.url())
-                request.setURL(url);
-        }
-        if (!isAllowedByContentSecurityPolicy(request)) {
-            handler(accessControlErrorForValidationHandler(ASCIILiteral { "Blocked by Content Security Policy." }));
-            return;
-        }
-    }
-
     if (m_options.credentials == FetchOptions::Credentials::SameOrigin)
         m_storedCredentialsPolicy = m_isSameOriginRequest && m_origin->canRequest(request.url()) ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
 
