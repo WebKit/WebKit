@@ -135,7 +135,7 @@ inline void tryCachePutToScopeGlobal(
             ASSERT(!entry.isNull());
             ConcurrentJSLocker locker(codeBlock->m_lock);
             pc[5].u.watchpointSet = entry.watchpointSet();
-            pc[6].u.pointer = static_cast<void*>(globalLexicalEnvironment->variableAt(entry.scopeOffset()).slot());
+            pc[6].u.pointer = globalLexicalEnvironment->variableAt(entry.scopeOffset()).slot();
         }
     }
     
@@ -158,8 +158,8 @@ inline void tryCachePutToScopeGlobal(
         scope->structure()->didCachePropertyReplacement(vm, slot.cachedOffset());
 
         ConcurrentJSLocker locker(codeBlock->m_lock);
-        pc[5].u.structure.set(vm, codeBlock, scope->structure());
-        pc[6].u.operand = slot.cachedOffset();
+        pc[5].u.structure.set(vm, codeBlock, scope->structure(vm));
+        pc[6].u.operandPointer = slot.cachedOffset();
     }
 }
 
@@ -183,7 +183,7 @@ inline void tryCacheGetFromScopeGlobal(
             ConcurrentJSLocker locker(exec->codeBlock()->m_lock);
             pc[4].u.operand = GetPutInfo(getPutInfo.resolveMode(), newResolveType, getPutInfo.initializationMode()).operand();
             pc[5].u.watchpointSet = entry.watchpointSet();
-            pc[6].u.pointer = static_cast<void*>(globalLexicalEnvironment->variableAt(entry.scopeOffset()).slot());
+            pc[6].u.pointer = globalLexicalEnvironment->variableAt(entry.scopeOffset()).slot();
         }
     }
 
@@ -197,7 +197,7 @@ inline void tryCacheGetFromScopeGlobal(
             {
                 ConcurrentJSLocker locker(codeBlock->m_lock);
                 pc[5].u.structure.set(vm, codeBlock, structure);
-                pc[6].u.operand = slot.cachedOffset();
+                pc[6].u.operandPointer = slot.cachedOffset();
             }
             structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
         }
