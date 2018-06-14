@@ -1,3 +1,14 @@
+2018-06-14  Youenn Fablet  <youenn@apple.com>
+
+        Eliminate static initializers in libwebrtc.dylib
+        https://bugs.webkit.org/show_bug.cgi?id=186570
+        <rdar://problem/41054874>
+
+        Reviewed by Darin Adler.
+
+        * Source/webrtc/rtc_base/flags.h:
+        Fix memory corruption error by having the actual flag value be static.
+
 2018-06-13  Youenn Fablet  <youenn@apple.com>
 
         Eliminate static initializers in libwebrtc.dylib

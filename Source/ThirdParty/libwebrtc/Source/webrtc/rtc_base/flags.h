@@ -155,7 +155,7 @@ class Flag {
 #define DEFINE_FLAG(type, c_type, name, default, comment)    \
   static std::pair<std::reference_wrapper<c_type>, std::reference_wrapper<rtc::Flag>> name() { \
     /* define and initialize the flag */                     \
-    c_type FLAG_##name = (default);                          \
+    static c_type FLAG_##name = (default);                   \
     /* register the flag */                                  \
     static rtc::Flag Flag_##name(__FILE__, #name, (comment), \
       rtc::Flag::type, &FLAG_##name,                         \
