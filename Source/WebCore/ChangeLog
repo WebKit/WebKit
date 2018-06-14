@@ -1,3 +1,18 @@
+2018-06-14  Nan Wang  <n_wang@apple.com>
+
+        AX: Crash in AccessibilityNodeObject::textUnderElement(WebCore::AccessibilityTextUnderElementMode) const + 536
+        https://bugs.webkit.org/show_bug.cgi?id=186629
+
+        Reviewed by Chris Fleizach.
+
+        This crashed when we passed a null node to ancestorsOfType. Fixed it
+        by adding a null check.
+
+        Test: accessibility/hidden-object-text-value-crash.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::textUnderElement const):
+
 2018-06-14  Timothy Hatcher  <timothy@apple.com>
 
         Expose more semantic system colors.
