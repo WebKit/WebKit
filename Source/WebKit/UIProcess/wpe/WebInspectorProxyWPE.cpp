@@ -83,17 +83,17 @@ void WebInspectorProxy::platformInspectedURLChanged(const String&)
 
 String WebInspectorProxy::inspectorPageURL()
 {
-    return String("resource:///org/wpe/inspector/UserInterface/Main.html");
+    return String("resource:///org/webkit/inspector/UserInterface/Main.html");
 }
 
 String WebInspectorProxy::inspectorTestPageURL()
 {
-    return String("resource:///org/wpe/inspector/UserInterface/Test.html");
+    return String("resource:///org/webkit/inspector/UserInterface/Test.html");
 }
 
 String WebInspectorProxy::inspectorBaseURL()
 {
-    return String("resource:///org/wpe/inspector/UserInterface/");
+    return String("resource:///org/webkit/inspector/UserInterface/");
 }
 
 unsigned WebInspectorProxy::platformInspectedWindowHeight()

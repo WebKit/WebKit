@@ -67,7 +67,7 @@ if __name__ == "__main__":
     args.output.write(\
     """<?xml version=1.0 encoding=UTF-8?>
     <gresources>
-        <gresource prefix="/org/webkitgtk/inspector">
+        <gresource prefix="/org/webkit/inspector">
 """)
 
     for filename in get_filenames(args.input):

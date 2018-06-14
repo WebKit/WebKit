@@ -1,3 +1,26 @@
+2018-06-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Trying to access the remote inspector hits an assertion in the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=186588
+
+        Reviewed by Carlos Garcia Campos.
+
+        Make both the WPE and GTK+ ports use /org/webkit/inspector as base prefix
+        for resource paths, which avoids needing a switcheroo depending on the port.
+
+        * UIProcess/API/wpe/WebKit2InspectorGResourceBundle.xml:
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::inspectorPageURL):
+        (WebKit::WebInspectorProxy::inspectorTestPageURL):
+        (WebKit::WebInspectorProxy::inspectorBaseURL):
+        * UIProcess/wpe/WebInspectorProxyWPE.cpp:
+        (WebKit::WebInspectorProxy::inspectorPageURL):
+        (WebKit::WebInspectorProxy::inspectorTestPageURL):
+        (WebKit::WebInspectorProxy::inspectorBaseURL):
+        * WebProcess/WebPage/gtk/WebInspectorUIGtk.cpp:
+        (WebKit::WebInspectorUI::localizedStringsURL):
+        (WebKit::RemoteWebInspectorUI::localizedStringsURL):
+
 2018-06-13  Chris Dumez  <cdumez@apple.com>
 
         Crash under SWServer::unregisterConnection(Connection&)

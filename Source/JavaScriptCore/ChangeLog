@@ -1,3 +1,15 @@
+2018-06-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Trying to access the remote inspector hits an assertion in the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=186588
+
+        Reviewed by Carlos Garcia Campos.
+
+        Make both the WPE and GTK+ ports use /org/webkit/inspector as base prefix
+        for resource paths, which avoids needing a switcheroo depending on the port.
+
+        * inspector/remote/glib/RemoteInspectorUtils.cpp:
+
 2018-06-13  Caitlin Potter  <caitp@igalia.com>
 
         [LLInt] use loadp consistently for get_from_scope/put_to_scope
