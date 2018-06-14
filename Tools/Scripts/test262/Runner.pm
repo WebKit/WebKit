@@ -246,24 +246,24 @@ sub processCLI {
 
     $max_process ||= getProcesses();
 
-    print "\n-------------------------Settings------------------------\n"
-        . "Test262 Dir: $test262Dir\n"
-        . "JSC: $JSC\n"
+    print "\nSettings:\n"
+        . "Test262 Dir: " . abs2rel($test262Dir) . "\n"
+        . "JSC: " . abs2rel($JSC) . "\n"
         . "Child Processes: $max_process\n";
 
     print "Test timeout: $timeout\n" if $timeout;
     print "DYLD_FRAMEWORK_PATH: $DYLD_FRAMEWORK_PATH\n" if $DYLD_FRAMEWORK_PATH;
     print "Features to include: " . join(', ', @features) . "\n" if @features;
     print "Paths: " . join(', ', @cliTestDirs) . "\n" if @cliTestDirs;
-    print "Config file: $configFile\n" if $config;
-    print "Expectations file: $expectationsFile\n" if $expect;
-    print "Results file: $resultsFile\n" if $stats || $failingOnly;
+    print "Config file: " . abs2rel($configFile) . "\n" if $config;
+    print "Expectations file: " . abs2rel($expectationsFile) . "\n" if $expect;
+    print "Results file: ". abs2rel($resultsFile) . "\n" if $stats || $failingOnly;
 
     print "Running only the latest imported files\n" if $latestImport;
 
     print "Verbose mode\n" if $verbose;
 
-    print "--------------------------------------------------------\n\n";
+    print "---\n\n";
 }
 
 
@@ -529,8 +529,8 @@ sub getBuildPath {
         $jsc = $jscDir . '/JavaScriptCore.framework/Resources/jsc' if (! -e $jsc);
         $jsc = $jscDir . '/bin/jsc' if (! -e $jsc);
 
-        # Sets the Env DYLD_FRAMEWORK_PATH
-        $DYLD_FRAMEWORK_PATH = dirname($jsc) if (-e $jsc);
+        # Sets the Env DYLD_FRAMEWORK_PATH, abs_path will remove any extra '/' character
+        $DYLD_FRAMEWORK_PATH = abs_path(dirname($jsc)) if (-e $jsc);
     }
 
     if (! $jsc || ! -e $jsc) {

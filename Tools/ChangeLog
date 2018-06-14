@@ -1,5 +1,17 @@
 2018-06-14  Leo Balter  <leonardo.balter@gmail.com>
 
+        [test262-runner] Improve displayed settings, use rel paths
+        https://bugs.webkit.org/show_bug.cgi?id=186626
+
+        Reviewed by Michael Saboff.
+
+        Use relative paths for the information printed in the settings summary after calling the Test262 Runner. This provides a cleaner summary that is easier to read and consume.
+        * Scripts/test262/Runner.pm:
+        (processCLI):
+        (getBuildPath):
+
+2018-06-14  Leo Balter  <leonardo.balter@gmail.com>
+
         Test262-Runner: Add more information in the summarized stats
         https://bugs.webkit.org/show_bug.cgi?id=185749
 
