@@ -1,3 +1,24 @@
+2018-06-14  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Shortcut classification for redirect to prevalent resource
+        https://bugs.webkit.org/show_bug.cgi?id=186627
+        <rdar://problem/41132308>
+
+        Reviewed by Brent Fulgham.
+
+        This patch shortcuts classification of redirect collusion so that we more seldom
+        have to rely on the recursive backtrace of the redirect graph. The initial
+        implementation of Resource Load Statistics actually had this classification method.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::markAsPrevalentIfHasRedirectedToPrevalent):
+            Iterates through a non-classified resource's data for where it has redirected
+            and classifies it as prevalent if has redirected to 
+        (WebKit::WebResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+            Now calls WebResourceLoadStatisticsStore::markAsPrevalentIfHasRedirectedToPrevalent()
+            before regular classification steps. 
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2018-06-14  Youenn Fablet  <youenn@apple.com>
 
         Apply CSP checks before Content blocker checks in NetworkLoadChecker as done by CachedResourceLoader

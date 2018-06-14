@@ -185,6 +185,7 @@ private:
     void mergeStatistics(Vector<WebCore::ResourceLoadStatistics>&&);
     WebCore::ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
     unsigned recursivelyGetAllDomainsThatHaveRedirectedToThisDomain(const WebCore::ResourceLoadStatistics&, HashSet<String>& domainsThatHaveRedirectedTo, unsigned numberOfRecursiveCalls);
+    void markAsPrevalentIfHasRedirectedToPrevalent(WebCore::ResourceLoadStatistics&);
     void setPrevalentResource(WebCore::ResourceLoadStatistics&, ResourceLoadPrevalence);
     void processStatisticsAndDataRecords();
 

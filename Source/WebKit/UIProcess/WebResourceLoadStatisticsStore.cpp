@@ -296,6 +296,30 @@ unsigned WebResourceLoadStatisticsStore::recursivelyGetAllDomainsThatHaveRedirec
     return numberOfRecursiveCalls;
 }
 
+void WebResourceLoadStatisticsStore::markAsPrevalentIfHasRedirectedToPrevalent(WebCore::ResourceLoadStatistics& resourceStatistic)
+{
+    ASSERT(!RunLoop::isMain());
+
+    if (resourceStatistic.isPrevalentResource)
+        return;
+    
+    for (auto& subresourceDomainRedirectedTo : resourceStatistic.subresourceUniqueRedirectsTo.values()) {
+        auto mapEntry = m_resourceStatisticsMap.find(subresourceDomainRedirectedTo);
+        if (mapEntry != m_resourceStatisticsMap.end() && mapEntry->value.isPrevalentResource) {
+            setPrevalentResource(resourceStatistic, ResourceLoadPrevalence::High);
+            return;
+        }
+    }
+
+    for (auto& topFrameDomainRedirectedTo : resourceStatistic.topFrameUniqueRedirectsTo.values()) {
+        auto mapEntry = m_resourceStatisticsMap.find(topFrameDomainRedirectedTo);
+        if (mapEntry != m_resourceStatisticsMap.end() && mapEntry->value.isPrevalentResource) {
+            setPrevalentResource(resourceStatistic, ResourceLoadPrevalence::High);
+            return;
+        }
+    }
+}
+
 void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
 {
     ASSERT(!RunLoop::isMain());
@@ -303,6 +327,7 @@ void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
     if (m_parameters.shouldClassifyResourcesBeforeDataRecordsRemoval) {
         for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
             if (!resourceStatistic.isVeryPrevalentResource) {
+                markAsPrevalentIfHasRedirectedToPrevalent(resourceStatistic);
                 auto currentPrevalence = resourceStatistic.isPrevalentResource ? ResourceLoadPrevalence::High : ResourceLoadPrevalence::Low;
                 auto newPrevalence = m_resourceLoadStatisticsClassifier.calculateResourcePrevalence(resourceStatistic, currentPrevalence);
                 if (newPrevalence != currentPrevalence)

@@ -1,3 +1,18 @@
+2018-06-14  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Shortcut classification for redirect to prevalent resource
+        https://bugs.webkit.org/show_bug.cgi?id=186627
+        <rdar://problem/41132308>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-to-prevalent-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-to-prevalent.html: Added.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-to-prevalent-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-to-prevalent.html: Added.
+        * platform/wk2/TestExpectations:
+            New tests marked as [ Pass ].
+
 2018-06-14  Youenn Fablet  <youenn@apple.com>
 
         Apply CSP checks before Content blocker checks in NetworkLoadChecker as done by CachedResourceLoader
