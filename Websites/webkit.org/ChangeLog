@@ -1,3 +1,71 @@
+2018-06-14  Roy Reapor  <rreapor@apple.com>
+
+        jQuery UI image assets are missing on webkit.org website.
+        https://bugs.webkit.org/show_bug.cgi?id=185949
+
+        Reviewed by Aakash Jain.
+
+        * ajax/libs/jqueryui/1.8.15/themes/base/images/ui-bg_flat_0_aaaaaa_40x100.png: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/images/ui-bg_flat_75_ffffff_40x100.png: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/images/ui-bg_glass_55_fbf9ee_1x400.png: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/images/ui-bg_glass_65_ffffff_1x400.png: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/images/ui-bg_glass_75_dadada_1x400.png: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/images/ui-bg_glass_75_e6e6e6_1x400.png: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/images/ui-bg_glass_95_fef1ec_1x400.png: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/images/ui-bg_highlight-soft_75_cccccc_1x100.png: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/images/ui-icons_222222_256x240.png: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/images/ui-icons_2e83ff_256x240.png: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/images/ui-icons_454545_256x240.png: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/images/ui-icons_888888_256x240.png: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/images/ui-icons_cd0a0a_256x240.png: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/jquery-ui.min.css: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/jquery.ui.accordion.min.css: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/jquery.ui.all.min.css: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/jquery.ui.autocomplete.min.css: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/jquery.ui.base.min.css: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/jquery.ui.button.min.css: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/jquery.ui.core.min.css: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/jquery.ui.datepicker.min.css: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/jquery.ui.dialog.min.css: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/jquery.ui.progressbar.min.css: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/jquery.ui.resizable.min.css: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/jquery.ui.selectable.min.css: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/jquery.ui.slider.min.css: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/jquery.ui.tabs.min.css: Added.
+        * ajax/libs/jqueryui/1.8.15/themes/base/jquery.ui.theme.min.css: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery-ui.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.effects.blind.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.effects.bounce.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.effects.clip.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.effects.core.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.effects.drop.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.effects.explode.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.effects.fade.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.effects.fold.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.effects.highlight.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.effects.pulsate.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.effects.scale.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.effects.shake.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.effects.slide.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.effects.transfer.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.ui.accordion.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.ui.autocomplete.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.ui.button.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.ui.core.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.ui.datepicker.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.ui.dialog.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.ui.draggable.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.ui.droppable.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.ui.mouse.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.ui.position.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.ui.progressbar.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.ui.resizable.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.ui.selectable.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.ui.slider.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.ui.sortable.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.ui.tabs.min.js: Added.
+        * ajax/libs/jqueryui/1.8.15/ui/jquery.ui.widget.min.js: Added.
+
 2018-06-05  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Only expose CSSAnimation and CSSTransition if the WebAnimationsCSSIntegration runtime flag is enabled
