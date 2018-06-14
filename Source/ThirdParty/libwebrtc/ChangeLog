@@ -1,5 +1,29 @@
 2018-06-14  Youenn Fablet  <youenn@apple.com>
 
+        Activate -Wexit-time-destructors -and Wglobal-constructors in libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=186615
+
+        Reviewed by Darin Adler.
+
+        Update xcconfig files to activate these compile flags.
+        Also enable -Wthread-safety since libwebrtc code is using some related attributes.
+        Update libwebrtc code base to accomodate these flags.
+
+        * Configurations/libwebrtc.xcconfig:
+        * Configurations/opus.xcconfig:
+        * Configurations/usrsctp.xcconfig:
+        * Source/webrtc/modules/audio_processing/beamformer/array_util.h:
+        (webrtc::DegreesToRadians): Make function constexpr.
+        * Source/webrtc/modules/rtp_rtcp/source/rtp_utility.cc:
+        Make sure the destructor is never called.
+        * Source/webrtc/rtc_base/logging.cc:
+        Update code to move streams_ from a static class member to a regular static function variable.
+        * Source/webrtc/rtc_base/logging.h:
+        * Source/webrtc/system_wrappers/source/clock.cc:
+        Make sure the destructor is never called.
+
+2018-06-14  Youenn Fablet  <youenn@apple.com>
+
         Eliminate static initializers in libwebrtc.dylib
         https://bugs.webkit.org/show_bug.cgi?id=186570
         <rdar://problem/41054874>

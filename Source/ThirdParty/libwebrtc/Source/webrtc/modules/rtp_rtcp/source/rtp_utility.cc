@@ -19,8 +19,9 @@
 namespace webrtc {
 
 RtpFeedback* NullObjectRtpFeedback() {
-  static NullRtpFeedback null_rtp_feedback;
-  return &null_rtp_feedback;
+  static std::aligned_storage<sizeof(NullRtpFeedback), std::alignment_of<NullRtpFeedback>::value>::type null_rtp_feedback_storage;
+  static NullRtpFeedback* null_rtp_feedback = new (&null_rtp_feedback_storage) NullRtpFeedback;
+  return null_rtp_feedback;
 }
 
 namespace RtpUtility {

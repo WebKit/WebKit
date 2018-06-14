@@ -207,9 +207,6 @@ class LogMessage {
   static void ConfigureLogging(const char* params);
 
  private:
-  typedef std::pair<LogSink*, LoggingSeverity> StreamAndSeverity;
-  typedef std::list<StreamAndSeverity> StreamList;
-
   // Updates min_sev_ appropriately when debug sinks change.
   static void UpdateMinLogSeverity();
 
@@ -237,9 +234,6 @@ class LogMessage {
   //  be logged.
   // ctx_sev_ is the minimum level at which file context is displayed
   static LoggingSeverity min_sev_, dbg_sev_, ctx_sev_;
-
-  // The output streams and their associated severities
-  static StreamList streams_;
 
   // Flags for formatting options
   static bool thread_, timestamp_;

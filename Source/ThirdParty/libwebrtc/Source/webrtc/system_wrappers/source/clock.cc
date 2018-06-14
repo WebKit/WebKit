@@ -221,8 +221,9 @@ Clock* Clock::GetRealTimeClock() {
   }
   return g_shared_clock;
 #elif defined(WEBRTC_POSIX)
-  static UnixRealTimeClock clock;
-  return &clock;
+  static std::aligned_storage<sizeof(UnixRealTimeClock), std::alignment_of<UnixRealTimeClock>::value>::type clock_storage;
+  static UnixRealTimeClock* clock = new (&clock_storage) UnixRealTimeClock;
+  return clock;
 #else  // defined(WEBRTC_POSIX)
   return nullptr;
 #endif  // !defined(WEBRTC_WIN) || defined(WEBRTC_POSIX)

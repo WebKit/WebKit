@@ -10,6 +10,6 @@ HEADER_SEARCH_PATHS = Source/ Source/third_party/usrsctp/usrsctplib/usrsctplib/n
 INSTALL_PATH = /usr/local/lib;
 PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/libwebrtc;
 USE_HEADERMAP = NO;
-WARNING_CFLAGS = -Wno-deprecated-declarations;
+WARNING_CFLAGS = -Wno-deprecated-declarations $(inherited);
 GCC_PREPROCESSOR_DEFINITIONS = SCTP_PROCESS_LEVEL_LOCKS SCTP_SIMPLE_ALLOCATOR SCTP_USE_OPENSSL_SHA1 __Userspace__ HAVE_SA_LEN HAVE_SCONN_LEN __APPLE_USE_RFC_2292 __Userspace_os_Darwin $(inherited);
 OTHER_CFLAGS = -UINET -UINET6 -U__APPLE__;
