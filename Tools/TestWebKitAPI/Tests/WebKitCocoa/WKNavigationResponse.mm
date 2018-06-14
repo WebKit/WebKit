@@ -135,7 +135,7 @@ TEST(WebKit, WKNavigationResponsePDFType)
     auto navigationDelegate = adoptNS([[WKNavigationResponseTestNavigationDelegate alloc] init]);
     webView.get().navigationDelegate = navigationDelegate.get();
 
-    [[[webView configuration] processPool] _addSupportedPlugin: @"" named: @"WebKit built-in PDF" withMimeTypes: [NSSet setWithArray: @[ @"application/pdf" ]] withExtensions: [NSSet setWithArray: @[ ]]];
+    [[[webView configuration] processPool] _addSupportedPlugin: @"" named: @"com.apple.webkit.builtinpdfplugin" withMimeTypes: [NSSet setWithArray: @[ @"application/pdf" ]] withExtensions: [NSSet setWithArray: @[ ]]];
 
     schemeHandler.get().mimeType = @"application/pdf";
     navigationDelegate.get().expectation = YES;

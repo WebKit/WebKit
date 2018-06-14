@@ -1,3 +1,13 @@
+2018-06-14  Youenn Fablet  <youenn@apple.com>
+
+        TestWebKitAPI.WebKit.WKNavigationResponsePDFType fails after r232815
+        https://bugs.webkit.org/show_bug.cgi?id=186631
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKNavigationResponse.mm:
+        (TEST): Update PDF plug-in identifier.
+
 2018-06-14  Leo Balter  <leonardo.balter@gmail.com>
 
         [test262-runner] Improve displayed settings, use rel paths
