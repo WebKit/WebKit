@@ -45,6 +45,7 @@ static char *geometry;
 static gboolean privateMode;
 static gboolean automationMode;
 static gboolean fullScreen;
+static gboolean ignoreTLSErrors;
 static const char *cookiesFile;
 static const char *cookiesPolicy;
 static const char *proxy;
@@ -108,6 +109,7 @@ static const GOptionEntry commandLineOptions[] =
     { "cookies-policy", 0, 0, G_OPTION_ARG_STRING, &cookiesPolicy, "Cookies accept policy (always, never, no-third-party). Default: no-third-party", "POLICY" },
     { "proxy", 0, 0, G_OPTION_ARG_STRING, &proxy, "Set proxy", "PROXY" },
     { "ignore-host", 0, 0, G_OPTION_ARG_STRING_ARRAY, &ignoreHosts, "Set proxy ignore hosts", "HOSTS" },
+    { "ignore-tls-errors", 0, 0, G_OPTION_ARG_NONE, &ignoreTLSErrors, "Ignore TLS errors", NULL },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
     { 0, 0, 0, 0, 0, 0, 0 }
 };
@@ -534,6 +536,9 @@ int main(int argc, char *argv[])
 
     webkit_web_context_set_automation_allowed(webContext, automationMode);
     g_signal_connect(webContext, "automation-started", G_CALLBACK(automationStartedCallback), NULL);
+
+    if (ignoreTLSErrors)
+        webkit_web_context_set_tls_errors_policy(webContext, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 
     BrowserWindow *mainWindow = BROWSER_WINDOW(browser_window_new(NULL, webContext));
     if (fullScreen)

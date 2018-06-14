@@ -1,3 +1,20 @@
+2018-06-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] MiniBrowsers should be able to ignore TLS errors
+        https://bugs.webkit.org/show_bug.cgi?id=186557
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add the --ignore-tls-errors flags to the GTK and WPE MiniBrowsers.
+        Enabling the flag enforces ignoring of TLS errors that occur during
+        load. This is primarily useful for loading test cases from the wpt or
+        run-webkit-httpd servers where testing-purpose certificates are used.
+
+        * MiniBrowser/gtk/main.c:
+        (main):
+        * MiniBrowser/wpe/main.cpp:
+        (main):
+
 2018-06-13  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Trying to access the remote inspector hits an assertion in the UIProcess
