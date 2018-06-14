@@ -582,21 +582,18 @@ webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ 
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-dtmf.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Failure Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Pass Failure Crash ]
-webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
+webkit.org/b/79203 fast/mediastream/MediaStream-video-element.html [ Pass Crash ]
 # Crash is webkit.org/b/184292
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Failure Pass Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Failure Timeout ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-ice.html [ Failure Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-answer.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-legacy-stream-based-api.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-callbacks-single-dialog.html [ Pass Crash Failure ]
 webkit.org/b/79203 webaudio/mediastreamaudiosourcenode.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Timeout Failure ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
-webkit.org/b/79203 http/tests/media/media-stream/getusermedia-with-canvas.html [ Crash ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout ]
+webkit.org/b/79203 http/tests/media/media-stream/getusermedia-with-canvas.html [ Timeout ]
 webkit.org/b/79203 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none.https.html [ Failure ]
 webkit.org/b/79203 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-end-manual.https.html [ Failure ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout ]
@@ -1280,6 +1277,30 @@ webkit.org/b/180253 [ Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-
 webkit.org/b/180253 [ Debug ] fast/events/media-focus-in-standalone-media-document.html [ Crash ]
 webkit.org/b/180253 [ Debug ] fullscreen/video-controls-timeline.html [ Crash ]
 webkit.org/b/180253 [ Debug ] http/tests/appcache/video.html [ Crash ]
+
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-AddRemoveStream.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-add-removeTrack.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-addTrack-reuse-sender.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-addTransceiver.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-createAnswer.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-createOffer.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-datachannel.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-have-local-offer.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-have-local-pranswer.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-have-remote-offer.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-ice.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-localDescription.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-overloaded-operations.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-remoteDescription.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-stable.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-have-remote-pranswer.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-stats.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCPeerConnection-statsSelector.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCRtpSender-replaceTrack.html [ Crash ]
+webkit.org/b/186619 fast/mediastream/RTCTrackEvent-constructor.html [ Crash ]
+webkit.org/b/186619 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -3391,6 +3412,8 @@ webkit.org/b/186144 transitions/transition-end-event-rendering.html [ Timeout ]
 webkit.org/b/186252 legacy-animation-engine/css3/filters/composited-during-transition-layertree.html [ Failure ]
 
 webkit.org/b/186340 transitions/zero-duration-with-non-zero-delay-start.html [ Timeout Failure ]
+
+webkit.org/b/186618 imported/w3c/web-platform-tests/fetch/api/headers/header-values.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

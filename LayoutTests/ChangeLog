@@ -1,3 +1,9 @@
+2018-06-14  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening after r232834.
+
+        * platform/gtk/TestExpectations:
+
 2018-06-13  Zalan Bujtas  <zalan@apple.com>
 
         [Mail] Use the Mail Viewer width as the base for resolving horizontal viewport units
