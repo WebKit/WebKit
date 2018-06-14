@@ -1,3 +1,17 @@
+2018-06-14  Leo Balter  <leonardo.balter@gmail.com>
+
+        Test262-Runner: Update config list with some failing tests
+        https://bugs.webkit.org/show_bug.cgi?id=185628
+
+        Reviewed by Michael Saboff.
+
+        The config list is updated to match some slow / hanging tests that are currenctly failing
+        due to the length used in Array or Array like objects.
+
+        This also adds matching bugs for known features that are still in progress and not enabled
+        yet.
+        * test262/config.yaml:
+
 2018-06-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Update test262 for Array#sort

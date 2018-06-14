@@ -7,7 +7,28 @@ skip:
   features:
     - SharedArrayBuffer
     - Atomics
-    - BigInt
+    - BigInt # https://bugs.webkit.org/show_bug.cgi?id=179001
+    - async-iteration # https://bugs.webkit.org/show_bug.cgi?id=166693
   files:
     - test/built-ins/Array/prototype/reverse/length-exceeding-integer-limit-with-object.js
     - test/built-ins/Array/prototype/unshift/length-near-integer-limit.js
+
+    # https://bugs.webkit.org/show_bug.cgi?id=185495
+    - test/built-ins/Array/prototype/slice/S15.4.4.10_A3_T1.js
+    - test/built-ins/Array/prototype/slice/S15.4.4.10_A3_T2.js
+    - test/built-ins/Array/prototype/slice/create-non-array-invalid-len.js
+    - test/built-ins/Array/prototype/slice/create-proxied-array-invalid-len.js
+    - test/built-ins/Array/prototype/splice/create-species-undef-invalid-len.js
+    - test/built-ins/Array/prototype/splice/create-non-array-invalid-len.js
+    - test/built-ins/Array/prototype/splice/create-species-undef-invalid-len.js
+    - test/built-ins/Array/prototype/splice/length-near-integer-limit-grow-array.js
+
+    # https://bugs.webkit.org/show_bug.cgi?id=185625
+    - test/built-ins/Array/prototype/indexOf/15.4.4.14-3-28.js
+    - test/built-ins/Array/prototype/indexOf/15.4.4.14-3-29.js
+
+    # https://bugs.webkit.org/show_bug.cgi?id=164456
+    - test/built-ins/Array/prototype/lastIndexOf/15.4.4.15-3-28.js
+    - test/built-ins/Array/prototype/pop/S15.4.4.6_A3_T2.js
+    - test/built-ins/Array/prototype/push/S15.4.4.7_A4_T1.js
+    - test/built-ins/Array/prototype/push/length-near-integer-limit.js
