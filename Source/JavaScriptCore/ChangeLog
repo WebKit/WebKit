@@ -1,3 +1,19 @@
+2018-06-14  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(232741): Crash running ARES-6
+        https://bugs.webkit.org/show_bug.cgi?id=186630
+
+        Reviewed by Saam Barati.
+
+        The de-duplicating work in r232741 caused a bug in breakCriticalEdge() where it
+        treated edges between identical predecessor->successor pairs independently.
+        This fixes the issue by handling such edges once, using the added intermediate
+        pad for all instances of the edges between the same pairs.
+
+        * dfg/DFGCriticalEdgeBreakingPhase.cpp:
+        (JSC::DFG::CriticalEdgeBreakingPhase::run):
+        (JSC::DFG::CriticalEdgeBreakingPhase::breakCriticalEdge): Deleted.
+
 2018-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] WebDriver: handle acceptInsecureCertificates capability

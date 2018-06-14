@@ -56,13 +56,30 @@ public:
             
             if (block->numSuccessors() <= 1)
                 continue;
-            
+
+            // Break critical edges by inserting a "Jump" pad block in place of each
+            // unique A->B critical edge.
+            HashMap<BasicBlock*, BasicBlock*> successorPads;
+
             for (unsigned i = block->numSuccessors(); i--;) {
                 BasicBlock** successor = &block->successor(i);
                 if ((*successor)->predecessors.size() <= 1)
                     continue;
-                
-                breakCriticalEdge(block, successor); 
+
+                BasicBlock* pad = nullptr;
+                auto iter = successorPads.find(*successor);
+
+                if (iter == successorPads.end()) {
+                    pad = m_insertionSet.insertBefore(*successor, (*successor)->executionCount);
+                    pad->appendNode(
+                        m_graph, SpecNone, Jump, (*successor)->at(0)->origin, OpInfo(*successor));
+                    pad->predecessors.append(block);
+                    (*successor)->replacePredecessor(block, pad);
+                    successorPads.set(*successor, pad);
+                } else
+                    pad = iter->value;
+
+                *successor = pad;
             }
         }
         
@@ -70,17 +87,6 @@ public:
     }
 
 private:
-    void breakCriticalEdge(BasicBlock* predecessor, BasicBlock** successor)
-    {
-        BasicBlock* pad = m_insertionSet.insertBefore(*successor, (*successor)->executionCount);
-        pad->appendNode(
-            m_graph, SpecNone, Jump, (*successor)->at(0)->origin, OpInfo(*successor));
-        pad->predecessors.append(predecessor);
-        (*successor)->replacePredecessor(predecessor, pad);
-        
-        *successor = pad;
-    }
-    
     BlockInsertionSet m_insertionSet;
 };
 
