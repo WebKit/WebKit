@@ -1,3 +1,16 @@
+2018-06-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Plug-in Process crashing on Mojave (affects Flash, others)
+        https://bugs.webkit.org/show_bug.cgi?id=186628
+        <rdar://problem/41120462>
+
+        Reviewed by Eric Carlson.
+
+        Add the missing “com.apple.security.cs.allow-unsigned-executable-memory” entitlement. Also alphabetize
+        the entitlements file to make it easier to read.
+
+        * Configurations/PluginService.entitlements:
+
 2018-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] WebDriver: handle acceptInsecureCertificates capability
