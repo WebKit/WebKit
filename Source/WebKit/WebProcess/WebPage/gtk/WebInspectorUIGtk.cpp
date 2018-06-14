@@ -41,12 +41,12 @@ bool WebInspectorUI::canSave()
 
 String WebInspectorUI::localizedStringsURL()
 {
-    return String("resource:///org/webkitgtk/inspector/Localizations/en.lproj/localizedStrings.js");
+    return String("resource:///org/webkit/inspector/Localizations/en.lproj/localizedStrings.js");
 }
 
 String RemoteWebInspectorUI::localizedStringsURL()
 {
-    return String("resource:///org/webkitgtk/inspector/Localizations/en.lproj/localizedStrings.js");
+    return String("resource:///org/webkit/inspector/Localizations/en.lproj/localizedStrings.js");
 }
 
 } // namespace WebKit

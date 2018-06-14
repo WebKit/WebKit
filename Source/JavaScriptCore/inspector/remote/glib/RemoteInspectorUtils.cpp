@@ -32,11 +32,7 @@
 #include <mutex>
 #include <wtf/SHA1.h>
 
-#if PLATFORM(GTK)
-#define INSPECTOR_BACKEND_COMMANDS_PATH "/org/webkitgtk/inspector/UserInterface/Protocol/InspectorBackendCommands.js"
-#elif PLATFORM(WPE)
-#define INSPECTOR_BACKEND_COMMANDS_PATH "/org/wpe/inspector/UserInterface/Protocol/InspectorBackendCommands.js"
-#endif
+#define INSPECTOR_BACKEND_COMMANDS_PATH "/org/webkit/inspector/UserInterface/Protocol/InspectorBackendCommands.js"
 
 namespace Inspector {
 

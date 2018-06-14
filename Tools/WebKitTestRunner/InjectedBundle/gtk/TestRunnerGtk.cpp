@@ -69,7 +69,7 @@ JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
 
 JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
 {
-    return JSStringCreateWithUTF8CString("resource:///org/webkitgtk/inspector/UserInterface/TestStub.html");
+    return JSStringCreateWithUTF8CString("resource:///org/webkit/inspector/UserInterface/TestStub.html");
 }
 
 void TestRunner::installFakeHelvetica(JSStringRef configuration)

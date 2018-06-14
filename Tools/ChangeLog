@@ -1,3 +1,17 @@
+2018-06-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Trying to access the remote inspector hits an assertion in the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=186588
+
+        Reviewed by Carlos Garcia Campos.
+
+        Make both the WPE and GTK+ ports use /org/webkit/inspector as base prefix
+        for resource paths, which avoids needing a switcheroo depending on the port.
+
+        * WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp:
+        (WTR::TestRunner::inspectorTestStubURL):
+        * glib/generate-inspector-gresource-manifest.py:
+
 2018-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] MiniBrowser crashes when loading twice quickly
