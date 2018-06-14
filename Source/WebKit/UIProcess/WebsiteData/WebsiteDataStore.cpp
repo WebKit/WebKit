@@ -1534,11 +1534,6 @@ void WebsiteDataStore::removePendingCookie(const WebCore::Cookie& cookie)
 {
     m_pendingCookies.remove(cookie);
 }
-    
-void WebsiteDataStore::clearPendingCookies()
-{
-    m_pendingCookies.clear();
-}
 
 #if !PLATFORM(COCOA)
 WebsiteDataStoreParameters WebsiteDataStore::parameters()
