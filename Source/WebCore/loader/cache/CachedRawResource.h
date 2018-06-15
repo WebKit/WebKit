@@ -89,7 +89,7 @@ private:
         const ResourceResponse m_redirectResponse;
     };
 
-    Vector<RedirectPair> m_redirectChain;
+    Vector<RedirectPair, 0, CrashOnOverflow, 0> m_redirectChain;
 
     struct DelayedFinishLoading {
         RefPtr<SharedBuffer> buffer;
