@@ -1,3 +1,14 @@
+2018-06-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, temporarily(?) revert some GTK crash expectations
+
+        These tests are not crashing on the GTK release bot, only on EWS. I want to see backtraces
+        and make sure they weren't just victims of our memory pressure handler. We can restore
+        these expectations again if they continue to crash on the EWS, in which case we need to
+        acquire backtraces for them.
+
+        * platform/gtk/TestExpectations:
+
 2018-06-15  Antti Koivisto  <antti@apple.com>
 
         Semantic colors should not be transformed by color-filter
