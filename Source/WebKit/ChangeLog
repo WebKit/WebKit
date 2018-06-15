@@ -1,3 +1,15 @@
+2018-06-14  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Win] Add IPC error case for broken pipe
+        https://bugs.webkit.org/show_bug.cgi?id=186445
+
+        Add error handling for ERROR_BROKEN_PIPE on IPC::Connection::readEventHandler.
+
+        Reviewed by Ryosuke Niwa.
+
+        * Platform/IPC/win/ConnectionWin.cpp:
+        (IPC::Connection::readEventHandler):
+
 2018-06-14  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Shortcut classification for redirect to prevalent resource
