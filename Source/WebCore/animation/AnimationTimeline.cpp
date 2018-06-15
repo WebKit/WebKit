@@ -135,13 +135,13 @@ void AnimationTimeline::animationWasRemovedFromElement(WebAnimation& animation, 
 Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& element) const
 {
     Vector<RefPtr<WebAnimation>> animations;
-    if (m_elementToCSSAnimationsMap.contains(&element)) {
-        const auto& cssAnimations = m_elementToCSSAnimationsMap.get(&element);
-        animations.appendRange(cssAnimations.begin(), cssAnimations.end());
-    }
     if (m_elementToCSSTransitionsMap.contains(&element)) {
         const auto& cssTransitions = m_elementToCSSTransitionsMap.get(&element);
         animations.appendRange(cssTransitions.begin(), cssTransitions.end());
+    }
+    if (m_elementToCSSAnimationsMap.contains(&element)) {
+        const auto& cssAnimations = m_elementToCSSAnimationsMap.get(&element);
+        animations.appendRange(cssAnimations.begin(), cssAnimations.end());
     }
     if (m_elementToAnimationsMap.contains(&element)) {
         const auto& webAnimations = m_elementToAnimationsMap.get(&element);

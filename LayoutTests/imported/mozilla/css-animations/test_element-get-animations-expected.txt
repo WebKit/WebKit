@@ -3,7 +3,7 @@ PASS getAnimations for non-animated content
 PASS getAnimations for CSS Animations 
 PASS getAnimations returns CSSAnimation objects for CSS Animations 
 PASS getAnimations for multi-property animations 
-FAIL getAnimations for both CSS Animations and CSS Transitions at once assert_equals: getAnimations returns Animations for both animations and transitions that run simultaneously expected 2 but got 1
+PASS getAnimations for both CSS Animations and CSS Transitions at once 
 PASS getAnimations for CSS Animations that have finished 
 PASS getAnimations for CSS Animations that have finished but are forwards filling 
 FAIL getAnimations for CSS Animations with animation-name: none assert_equals: getAnimations returns an empty sequence for an element with animation-name: none expected 0 but got 1

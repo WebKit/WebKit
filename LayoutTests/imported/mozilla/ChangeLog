@@ -1,3 +1,15 @@
+2018-06-15  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] CSS Animations should take precedence over CSS Transitions
+        https://bugs.webkit.org/show_bug.cgi?id=186651
+
+        Reviewed by Dean Jackson.
+
+        Mark some progressions in the Mozilla CSS Animations and CSS Transitions tests.
+
+        * css-animations/test_element-get-animations-expected.txt:
+        * css-transitions/test_document-get-animations-expected.txt:
+
 2018-06-11  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make imported/mozilla/css-transitions/test_setting-effect.html pass reliably

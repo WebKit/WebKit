@@ -1,3 +1,15 @@
+2018-06-15  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] CSS Animations should take precedence over CSS Transitions
+        https://bugs.webkit.org/show_bug.cgi?id=186651
+
+        Reviewed by Dean Jackson.
+
+        Ensure CSS Animations override CSS Transitions by modifying the order in which animations are returned by animationsForElement().
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::animationsForElement const):
+
 2018-06-14  Youenn Fablet  <youenn@apple.com>
 
         Make NetworkProcess get cache storage parameters at creation of the CacheStorage engine
