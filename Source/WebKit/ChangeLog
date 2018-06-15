@@ -1,3 +1,15 @@
+2018-06-15  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GTK][WPE]: Avoid using uninitialized launchOptions in getLaunchOptions
+        https://bugs.webkit.org/show_bug.cgi?id=185611
+
+        Reviewed by Chris Dumez.
+
+        Otherwise we might segfault.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::getLaunchOptions):
+
 2018-06-14  Youenn Fablet  <youenn@apple.com>
 
         Make NetworkProcess get cache storage parameters at creation of the CacheStorage engine

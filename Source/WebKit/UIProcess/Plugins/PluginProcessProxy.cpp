@@ -88,8 +88,8 @@ PluginProcessProxy::~PluginProcessProxy()
 
 void PluginProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
-    ChildProcessProxy::getLaunchOptions(launchOptions);
     platformGetLaunchOptions(launchOptions, m_pluginProcessAttributes);
+    ChildProcessProxy::getLaunchOptions(launchOptions);
 }
 
 void PluginProcessProxy::processWillShutDown(IPC::Connection& connection)
