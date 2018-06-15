@@ -81,6 +81,13 @@ protected:
     // This class implements generic positioning and sizing.
     class Geometry {
     public:
+        struct Position {
+            // FIXME: Use LayoutUnit<Horizontal> to avoid top/left vs. x/y confusion.
+            LayoutUnit x; // left
+            LayoutUnit y; // top
+            operator LayoutPoint() const { return { x, y }; }
+        };
+
         struct WidthAndMargin {
             LayoutUnit width;
             Display::Box::HorizontalEdges margin;

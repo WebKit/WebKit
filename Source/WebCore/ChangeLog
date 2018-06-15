@@ -1,3 +1,19 @@
+2018-06-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Fix static position left/top
+        https://bugs.webkit.org/show_bug.cgi?id=186640
+
+        Reviewed by Antti Koivisto.
+
+        In visual formatting model, we normally go like [top, left] while LayoutPoint takes [x, y]. Let's make this less error prone.
+
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::Geometry::Position::operator LayoutPoint const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticPosition):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowPositionedPosition):
+
 2018-06-15  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebCore::SWServer::registrationStoreImportComplete()

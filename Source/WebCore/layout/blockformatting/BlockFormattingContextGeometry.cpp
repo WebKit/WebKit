@@ -262,7 +262,7 @@ FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::in
     return { width, margin };
 }
 
-LayoutPoint BlockFormattingContext::Geometry::staticPosition(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::Position BlockFormattingContext::Geometry::staticPosition(LayoutContext& layoutContext, const Box& layoutBox)
 {
     // https://www.w3.org/TR/CSS22/visuren.html#block-formatting
     // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
@@ -279,10 +279,10 @@ LayoutPoint BlockFormattingContext::Geometry::staticPosition(LayoutContext& layo
         top = previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.marginBottom();
     }
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position] -> static -> top(" << top << "px) left(" << left << "px) layoutBox(" << &layoutBox << ")");
-    return { top, left };
+    return { left, top };
 }
 
-LayoutPoint BlockFormattingContext::Geometry::inFlowPositionedPosition(LayoutContext& layoutContext, const Box& layoutBox)
+FormattingContext::Geometry::Position BlockFormattingContext::Geometry::inFlowPositionedPosition(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isInFlowPositioned());
 
@@ -357,7 +357,7 @@ LayoutPoint BlockFormattingContext::Geometry::inFlowPositionedPosition(LayoutCon
     auto newLeftPosition = displayBox.left() + left.value_or(-*right);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position] -> positioned inflow -> top(" << newTopPosition << "px) left(" << newLeftPosition << "px) layoutBox(" << &layoutBox << ")");
-    return { newTopPosition, newLeftPosition };
+    return { newLeftPosition, newTopPosition };
 }
 
 FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)

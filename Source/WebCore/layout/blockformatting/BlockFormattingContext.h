@@ -65,8 +65,8 @@ private:
         static FormattingContext::Geometry::HeightAndMargin inFlowHeightAndMargin(LayoutContext&, const Box&);
         static FormattingContext::Geometry::WidthAndMargin inFlowWidthAndMargin(LayoutContext&, const Box&);
 
-        static LayoutPoint staticPosition(LayoutContext&, const Box&);
-        static LayoutPoint inFlowPositionedPosition(LayoutContext&, const Box&);
+        static FormattingContext::Geometry::Position staticPosition(LayoutContext&, const Box&);
+        static FormattingContext::Geometry::Position inFlowPositionedPosition(LayoutContext&, const Box&);
 
     private:
         static FormattingContext::Geometry::HeightAndMargin inFlowNonReplacedHeightAndMargin(LayoutContext&, const Box&);
