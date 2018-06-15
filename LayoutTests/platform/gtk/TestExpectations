@@ -1162,6 +1162,21 @@ webkit.org/b/186086 fast/text/font-collection.html [ ImageOnlyFailure ]
 
 webkit.org/b/186601 fullscreen/full-screen-layer-dump.html [ Failure ]
 
+# Tests that fail on the EWS queue since we enabled tests there
+webkit.org/b/186638 printing/print-close-crash.html [ Timeout ]
+webkit.org/b/186638 fast/media/print-restores-previous-mediatype.html [ Timeout ]
+webkit.org/b/186638 fast/hidpi/broken-image-icon-very-hidpi.html [ Crash ]
+webkit.org/b/186638 editing/execCommand/print.html [ Timeout ]
+webkit.org/b/186638 animations/play-state-paused.html [ Failure ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/streams/piping/error-propagation-forward.html [ Failure Pass ]
+webkit.org/b/186638 http/tests/misc/cached-scripts.html [ Crash Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/FileAPI/FileReader/workers.html [ Crash Pass ]
+webkit.org/b/186638 imported/mozilla/svg/dynamic-stroke-opacity-01.svg [ Crash Pass ]
+webkit.org/b/186638 imported/mozilla/css-transitions/test_animation-finished.html [ Timeout Pass ]
+webkit.org/b/186638 imported/blink/fast/text/international/complex-text-space-in-second-font.html [ Crash Pass ]
+webkit.org/b/186638 fast/mediastream/change-tracks-media-stream-being-played.html [ Crash Pass ]
+webkit.org/b/186638 compositing/repaint/repaint-on-layer-grouping-change.html [ Failure  Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #

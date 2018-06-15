@@ -1,3 +1,11 @@
+2018-06-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Mark tests that are failing on the EWS test queue
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations:
+
 2018-06-14  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r232823.
