@@ -1,3 +1,13 @@
+2018-06-15  Jonathan Bedard  <jbedard@apple.com>
+
+        Complex text handling should opt out of bounded text layout (follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=186571
+        <rdar://problem/40801429>
+
+        Reviewed by Zalan Bujtas.
+
+        * pal/spi/cocoa/CoreTextSPI.h: Add declaration for OpenSource Mojave builds.
+
 2018-06-14  Timothy Hatcher  <timothy@apple.com>
 
         Expose more semantic system colors.
