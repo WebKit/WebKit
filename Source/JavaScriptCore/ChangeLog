@@ -1,3 +1,20 @@
+2018-06-15  Saam Barati  <sbarati@apple.com>
+
+        Make ForceOSRExit CFG pruning in bytecode parser more aggressive by making the original block to ignore be the plan's osrEntryBytecodeIndex
+        https://bugs.webkit.org/show_bug.cgi?id=186648
+
+        Reviewed by Michael Saboff.
+
+        This patch is neutral on SunSpider/bitops-bitwise-and. That test originally
+        regressed with my first version of ForceOSRExit CFG pruning. This patch makes
+        ForceOSRExit CFG pruning more aggressive by not ignoring everything that
+        can reach any loop_hint, but only ignoring blocks that can reach a loop_hint
+        if it's the plan's osr entry bytecode target. The goal is to get a speedometer
+        2 speedup with this change on iOS.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parse):
+
 2018-06-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r232816.

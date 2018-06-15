@@ -6839,8 +6839,10 @@ void ByteCodeParser::parse()
     if (m_hasAnyForceOSRExits) {
         BlockSet blocksToIgnore;
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
-            if (block->isOSRTarget)
+            if (block->isOSRTarget && block->bytecodeBegin == m_graph.m_plan.osrEntryBytecodeIndex) {
                 blocksToIgnore.add(block);
+                break;
+            }
         }
 
         {
