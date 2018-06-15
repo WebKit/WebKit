@@ -242,23 +242,23 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
 
         if (o.parent()) {
             Color color = o.style().visitedDependentColor(CSSPropertyColor);
-            if (o.parent()->style().visitedDependentColor(CSSPropertyColor) != color)
+            if (o.parent()->style().visitedDependentColor(CSSPropertyColor).rgb() != color.rgb())
                 ts << " [color=" << color.nameForRenderTreeAsText() << "]";
 
             // Do not dump invalid or transparent backgrounds, since that is the default.
             Color backgroundColor = o.style().visitedDependentColor(CSSPropertyBackgroundColor);
-            if (o.parent()->style().visitedDependentColor(CSSPropertyBackgroundColor) != backgroundColor
+            if (o.parent()->style().visitedDependentColor(CSSPropertyBackgroundColor).rgb() != backgroundColor.rgb()
                 && backgroundColor.isValid() && backgroundColor.rgb())
                 ts << " [bgcolor=" << backgroundColor.nameForRenderTreeAsText() << "]";
             
             Color textFillColor = o.style().visitedDependentColor(CSSPropertyWebkitTextFillColor);
-            if (o.parent()->style().visitedDependentColor(CSSPropertyWebkitTextFillColor) != textFillColor
-                && textFillColor.isValid() && textFillColor != color && textFillColor.rgb())
+            if (o.parent()->style().visitedDependentColor(CSSPropertyWebkitTextFillColor).rgb() != textFillColor.rgb()  
+                && textFillColor.isValid() && textFillColor.rgb() != color.rgb() && textFillColor.rgb())
                 ts << " [textFillColor=" << textFillColor.nameForRenderTreeAsText() << "]";
 
             Color textStrokeColor = o.style().visitedDependentColor(CSSPropertyWebkitTextStrokeColor);
-            if (o.parent()->style().visitedDependentColor(CSSPropertyWebkitTextStrokeColor) != textStrokeColor
-                && textStrokeColor.isValid() && textStrokeColor != color && textStrokeColor.rgb())
+            if (o.parent()->style().visitedDependentColor(CSSPropertyWebkitTextStrokeColor).rgb() != textStrokeColor.rgb()
+                && textStrokeColor.isValid() && textStrokeColor.rgb() != color.rgb() && textStrokeColor.rgb())
                 ts << " [textStrokeColor=" << textStrokeColor.nameForRenderTreeAsText() << "]";
 
             if (o.parent()->style().textStrokeWidth() != o.style().textStrokeWidth() && o.style().textStrokeWidth() > 0)

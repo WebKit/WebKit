@@ -1049,6 +1049,9 @@ fast/css/caret-color.html [ Skip ]
 fast/history/visited-link-caret-color.html [ Skip ]
 css3/color-filters/color-filter-caret-color.html [ Skip ]
 
+# Not relevant for iOS.
+css3/color-filters/color-filter-ignore-semantic.html [ Skip ]
+
 # Run webrtc tests on iOS 11
 imported/w3c/web-platform-tests/webrtc [ Pass ]
 fast/events/constructors/media-stream-event-constructor.html [ Pass ]

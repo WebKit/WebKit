@@ -505,7 +505,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
         // Only use NSColor when the system appearance is desired, otherwise use RenderTheme's default.
         if (useSystemAppearance) {
             if (!m_systemVisitedLinkColor.isValid())
-                m_systemVisitedLinkColor = colorFromNSColor([NSColor systemPurpleColor]);
+                m_systemVisitedLinkColor = semanticColorFromNSColor([NSColor systemPurpleColor]);
             return m_systemVisitedLinkColor;
         }
 
@@ -667,7 +667,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 
         if (auto selector = selectCocoaColor()) {
             if (auto color = wtfObjcMsgSend<NSColor *>([NSColor class], selector))
-                return colorFromNSColor(color);
+                return semanticColorFromNSColor(color);
         }
 
         switch (cssValueID) {
@@ -695,7 +695,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
             NSArray<NSColor *> *alternateColors = [NSColor controlAlternatingRowBackgroundColors];
 #endif
             ASSERT(alternateColors.count >= 2);
-            return colorFromNSColor(alternateColors[0]);
+            return semanticColorFromNSColor(alternateColors[0]);
         }
 
         case CSSValueAppleSystemOddAlternatingContentBackground: {
@@ -705,7 +705,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
             NSArray<NSColor *> *alternateColors = [NSColor controlAlternatingRowBackgroundColors];
 #endif
             ASSERT(alternateColors.count >= 2);
-            return colorFromNSColor(alternateColors[1]);
+            return semanticColorFromNSColor(alternateColors[1]);
         }
 
         case CSSValueBackground:

@@ -119,6 +119,14 @@ public:
             setRGB(color);
     }
 
+    enum SemanticTag { Semantic };
+
+    Color(RGBA32 color, SemanticTag)
+    {
+        setRGB(color);
+        setIsSemantic();
+    }
+
     Color(int r, int g, int b)
     {
         setRGB(r, g, b);
@@ -240,6 +248,9 @@ public:
     Color colorWithAlpha(float) const;
     Color opaqueColor() const { return colorWithAlpha(1.0f); }
 
+    // True if the color originated from a CSS semantic color name.
+    bool isSemantic() const { return !isExtended() && (m_colorData.rgbaAndFlags & isSemanticRBGAColorBit); }
+
 #if PLATFORM(GTK)
     Color(const GdkColor&);
     // We can't sensibly go back to GdkColor without losing the alpha value
@@ -296,6 +307,7 @@ public:
 private:
     void setRGB(int r, int g, int b) { setRGB(makeRGB(r, g, b)); }
     void setRGB(RGBA32);
+    void setIsSemantic() { m_colorData.rgbaAndFlags |= isSemanticRBGAColorBit; }
 
     // 0x_______00 is an ExtendedColor pointer.
     // 0x_______01 is an invalid RGBA32.
@@ -304,6 +316,7 @@ private:
     static const uint64_t invalidRGBAColor = 0x1;
     static const uint64_t validRGBAColorBit = 0x2;
     static const uint64_t validRGBAColor = 0x3;
+    static const uint64_t isSemanticRBGAColorBit = 0x4;
 
     static const uint64_t deletedHashValue = 0xFFFFFFFFFFFFFFFD;
     static const uint64_t emptyHashValue = 0xFFFFFFFFFFFFFFFB;

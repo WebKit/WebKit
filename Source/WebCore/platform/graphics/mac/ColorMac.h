@@ -37,6 +37,7 @@ OBJC_CLASS NSColor;
 namespace WebCore {
 
 WEBCORE_EXPORT Color colorFromNSColor(NSColor *);
+Color semanticColorFromNSColor(NSColor *);
 WEBCORE_EXPORT NSColor *nsColor(const Color&);
 
 WEBCORE_EXPORT bool usesTestModeFocusRingColor();

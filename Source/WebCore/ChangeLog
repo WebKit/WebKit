@@ -1,3 +1,36 @@
+2018-06-15  Antti Koivisto  <antti@apple.com>
+
+        Semantic colors should not be transformed by color-filter
+        https://bugs.webkit.org/show_bug.cgi?id=186566
+        <rdar://problem/40705739>
+
+        Reviewed by Simon Fraser.
+
+        Test: css3/color-filters/color-filter-ignore-semantic.html
+
+        * platform/graphics/Color.h:
+        (WebCore::Color::Color):
+        (WebCore::Color::isSemantic const):
+        (WebCore::Color::setIsSemantic):
+
+        Add a bit to Color to indicate it originated from a semantic color name.
+        Note that a color compares unequal to the semantic version of the same color.
+
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::transformColor const):
+        * platform/graphics/mac/ColorMac.h:
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::semanticColorFromNSColor):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor const):
+
+        Set the bit for semantic system colors.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+
+        Fix up the output to avoid unneccary render tree dump changes.
+
 2018-06-15  Chris Dumez  <cdumez@apple.com>
 
         Add API test coverage for SW RegistrationDatabase destruction and fix issues found by the test

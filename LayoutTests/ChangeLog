@@ -1,3 +1,14 @@
+2018-06-15  Antti Koivisto  <antti@apple.com>
+
+        Semantic colors should not be transformed by color-filter
+        https://bugs.webkit.org/show_bug.cgi?id=186566
+        <rdar://problem/40705739>
+
+        Reviewed by Simon Fraser.
+
+        * css3/color-filters/color-filter-ignore-semantic-expected.html: Added.
+        * css3/color-filters/color-filter-ignore-semantic.html: Added.
+
 2018-06-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Mark tests that are failing on the EWS test queue (v3)

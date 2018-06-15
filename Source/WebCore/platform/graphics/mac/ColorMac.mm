@@ -95,6 +95,11 @@ Color colorFromNSColor(NSColor *color)
     return Color(makeRGBAFromNSColor(color));
 }
 
+Color semanticColorFromNSColor(NSColor *color)
+{
+    return Color(makeRGBAFromNSColor(color), Color::Semantic);
+}
+
 NSColor *nsColor(const Color& color)
 {
     if (!color.isValid()) {
