@@ -1,3 +1,20 @@
+2018-06-15  Per Arne Vollan  <pvollan@apple.com>
+
+        DisplayRefreshMonitorMac should hold a weak pointer to WebPage.
+        https://bugs.webkit.org/show_bug.cgi?id=186683
+
+        Reviewed by Brent Fulgham.
+
+        Instead of DisplayRefreshMonitorMac having a RefPtr to WebPage, it should have a weak pointer.
+        Having a RefPtr could in theory create reference cycles. This potential problem has not been
+        observed in practice, but it is safer to use a weak pointer.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/DrawingAreaMac.cpp:
+        (WebKit::DisplayRefreshMonitorMac::DisplayRefreshMonitorMac):
+        (WebKit::DisplayRefreshMonitorMac::~DisplayRefreshMonitorMac):
+        (WebKit::DisplayRefreshMonitorMac::requestRefreshCallback):
+
 2018-06-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WKE] Disable memory pressure handling when running layout tests (WTR)
