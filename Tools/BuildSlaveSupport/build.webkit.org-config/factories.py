@@ -200,7 +200,7 @@ class BuildAndPerfTestFactory(Factory):
         self.addStep(CompileWebKit())
         self.addStep(RunAndUploadPerfTests())
         if platform == "gtk":
-            self.addStep(RunBenchmarkTests())
+            self.addStep(RunBenchmarkTests(timeout=2000))
 
 
 class DownloadAndPerfTestFactory(Factory):
@@ -210,4 +210,4 @@ class DownloadAndPerfTestFactory(Factory):
         self.addStep(ExtractBuiltProduct())
         self.addStep(RunAndUploadPerfTests())
         if platform == "gtk":
-            self.addStep(RunBenchmarkTests())
+            self.addStep(RunBenchmarkTests(timeout=2000))

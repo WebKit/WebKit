@@ -1,3 +1,31 @@
+2018-06-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][buildbot] Raise timeouts for the step benchmark-test on the GTK perf bot
+        https://bugs.webkit.org/show_bug.cgi?id=186635
+
+        Reviewed by Michael Catanzaro.
+
+        The current maximum timeout for a run-benchmark test is 1800 (Motionmark plan),
+        but the buildbot default timeout for the whole step without text output is 1200.
+        That means that a timeout on a single test can cause a whole step abort because
+        the buildbot one will trigger first.
+
+        Set the benchmark-test step timeout to 2000 to avoid this.
+
+        When this benchmark-test was added in r197505 it was already added with a higher
+        timeout than default (1500) due to the above problem, but it seems this has been
+        ignored so far because buildbot won't accept the timeout to be set on the class
+        definition (not even on the class constructor).
+        The new timeout has to be defined in the addStep call itself.
+        I have double-checked that by testing locally with the script run-buildbot-test.py
+        And this upstream issue confirms that https://github.com/buildbot/buildbot/issues/3887
+
+        * BuildSlaveSupport/build.webkit.org-config/factories.py:
+        (BuildAndPerfTestFactory.__init__):
+        (DownloadAndPerfTestFactory.__init__):
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (RunBenchmarkTests):
+
 2018-06-14  Roy Reapor  <rreapor@apple.com>
 
         Use new jQuery file layout
