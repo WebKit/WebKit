@@ -1,3 +1,20 @@
+2018-06-15  Chris Dumez  <cdumez@apple.com>
+
+        Add API test coverage for SW RegistrationDatabase destruction and fix issues found by the test
+        https://bugs.webkit.org/show_bug.cgi?id=186681
+
+        Reviewed by Brady Eidson.
+
+        Make sure StorageProcess::unregisterSWServerConnection() does not unnecessarily
+        create a SWServer. Otherwise, we were in quick session destroying the SWServer
+        and then re-constructing it for the same sessionID, merely to try ot unregister
+        a SWServerConnection.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::existingSWOriginStoreForSession const):
+        (WebKit::StorageProcess::unregisterSWServerConnection):
+        * StorageProcess/StorageProcess.h:
+
 2018-06-15  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [WinCairo] Move unrelated features of WorkQueueWin into IPC::Connection

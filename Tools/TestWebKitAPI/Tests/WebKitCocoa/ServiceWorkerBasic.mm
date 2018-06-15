@@ -1418,4 +1418,75 @@ TEST(ServiceWorkers, LoadData)
     done = false;
 }
 
+TEST(ServiceWorkers, RestoreFromDiskNonDefaultStore)
+{
+    ASSERT(mainRegisteringWorkerBytes);
+    ASSERT(scriptBytes);
+    ASSERT(mainRegisteringAlreadyExistingWorkerBytes);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    NSURL *swDBPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/ServiceWorkers/" stringByExpandingTildeInPath]];
+    [[NSFileManager defaultManager] removeItemAtURL:swDBPath error:nil];
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:swDBPath.path]);
+    [[NSFileManager defaultManager] createDirectoryAtURL:swDBPath withIntermediateDirectories:YES attributes:nil error:nil];
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:swDBPath.path]);
+
+    // We protect the process pool so that it outlives the WebsiteDataStore.
+    RetainPtr<WKProcessPool> protectedProcessPool;
+
+    @autoreleasepool {
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+        auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+        websiteDataStoreConfiguration.get()._serviceWorkerRegistrationDirectory = swDBPath;
+        auto nonDefaultDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+        configuration.get().websiteDataStore = nonDefaultDataStore.get();
+
+        auto messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"PASS: Registration was successful and service worker was activated"]);
+        [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+        auto handler = adoptNS([[SWSchemes alloc] init]);
+        handler->resources.set("sw://host/main.html", ResourceInfo { @"text/html", mainRegisteringWorkerBytes });
+        handler->resources.set("sw://host/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
+        [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+        [webView.get().configuration.processPool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
+        protectedProcessPool = webView.get().configuration.processPool;
+
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]]];
+
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+
+        [webView.get().configuration.processPool _terminateServiceWorkerProcesses];
+    }
+
+    @autoreleasepool {
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+        auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+        websiteDataStoreConfiguration.get()._serviceWorkerRegistrationDirectory = swDBPath;
+        auto nonDefaultDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+        configuration.get().websiteDataStore = nonDefaultDataStore.get();
+
+        auto messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"PASS: Registration already has an active worker"]);
+        [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+        auto handler = adoptNS([[SWSchemes alloc] init]);
+        handler->resources.set("sw://host/main.html", ResourceInfo { @"text/html", mainRegisteringAlreadyExistingWorkerBytes });
+        handler->resources.set("sw://host/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
+        [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+        [webView.get().configuration.processPool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
+
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]]];
+
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+    }
+}
+
 #endif // WK_API_ENABLED

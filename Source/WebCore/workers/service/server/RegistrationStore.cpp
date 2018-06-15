@@ -41,7 +41,6 @@ RegistrationStore::RegistrationStore(SWServer& server, String&& databaseDirector
 
 RegistrationStore::~RegistrationStore()
 {
-    ASSERT(m_database->isClosed());
 }
 
 void RegistrationStore::scheduleDatabasePushIfNecessary()
