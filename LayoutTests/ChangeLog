@@ -1,3 +1,14 @@
+2018-06-15  Timothy Hatcher  <timothy@apple.com>
+
+        Update results for fast/css/apple-system-control-colors.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=186668
+
+        Unreviewed test gardening.
+
+        * fast/css/apple-system-control-colors-expected.txt: Updated for 10.13.
+        * platform/mac-sierra/fast/css/apple-system-control-colors-expected.txt: Copied from LayoutTests/fast/css/apple-system-control-colors-expected.txt.
+
 2018-06-15  Youenn Fablet  <youenn@apple.com>
 
         Layout Test platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html is flaky
