@@ -98,4 +98,6 @@ messages -> NetworkProcess LegacyReceiver {
     RegisterURLSchemeAsDisplayIsolated(String scheme)
     RegisterURLSchemeAsCORSEnabled(String scheme)
     RegisterURLSchemeAsCanDisplayOnlyIfCanRequest(String scheme)
+
+    SetCacheStorageParameters(PAL::SessionID sessionID, uint64_t quota, String cacheStorageDirectory, WebKit::SandboxExtension::Handle handle);
 }

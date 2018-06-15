@@ -143,8 +143,9 @@ public:
 #endif
 
     Seconds loadThrottleLatency() const { return m_loadThrottleLatency; }
-    String cacheStorageDirectory(PAL::SessionID) const;
-    uint64_t cacheStoragePerOriginQuota() const;
+
+    using CacheStorageParametersCallback = CompletionHandler<void(const String&, uint64_t quota)>;
+    void cacheStorageParameters(PAL::SessionID, CacheStorageParametersCallback&&);
 
     void preconnectTo(const WebCore::URL&, WebCore::StoredCredentialsPolicy);
 
@@ -206,6 +207,8 @@ private:
 
     void clearCachedCredentials();
 
+    void setCacheStorageParameters(PAL::SessionID, uint64_t quota, String&& cacheStorageDirectory, SandboxExtension::Handle&&);
+
     // FIXME: This should take a session ID so we can identify which disk cache to delete.
     void clearDiskCache(WallTime modifiedSince, Function<void ()>&& completionHandler);
 
@@ -253,8 +256,6 @@ private:
     // Connections to WebProcesses.
     Vector<RefPtr<NetworkConnectionToWebProcess>> m_webProcessConnections;
 
-    String m_cacheStorageDirectory;
-    uint64_t m_cacheStoragePerOriginQuota { 0 };
     String m_diskCacheDirectory;
     bool m_hasSetCacheModel;
     CacheModel m_cacheModel;
@@ -278,6 +279,8 @@ private:
     HashMap<uint64_t, WeakPtr<PreconnectTask>> m_waitingPreconnectTasks;
 #endif
     HashSet<PAL::SessionID> m_sessionsControlledByAutomation;
+
+    HashMap<PAL::SessionID, Vector<CacheStorageParametersCallback>> m_cacheStorageParametersCallbacks;
 
 #if PLATFORM(COCOA)
     void platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters&);

@@ -54,9 +54,6 @@ struct WebsiteDataStoreParameters {
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
     SandboxExtension::Handle cookieStoragePathExtensionHandle;
     Vector<WebCore::Cookie> pendingCookies;
-    String cacheStorageDirectory;
-    uint64_t cacheStoragePerOriginQuota { 0 };
-    SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
     NetworkSessionCreationParameters networkSessionParameters;
 };
 

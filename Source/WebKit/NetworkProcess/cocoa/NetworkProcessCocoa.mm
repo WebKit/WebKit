@@ -110,12 +110,6 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 
     ASSERT(!m_diskCacheIsDisabledForTesting);
 
-    if (!parameters.cacheStorageDirectory.isNull()) {
-        m_cacheStorageDirectory = parameters.cacheStorageDirectory;
-        m_cacheStoragePerOriginQuota = parameters.cacheStoragePerOriginQuota;
-        SandboxExtension::consumePermanently(parameters.cacheStorageDirectoryExtensionHandle);
-    }
-
 #if ENABLE(WIFI_ASSERTIONS)
     initializeWiFiAssertions(parameters);
 #endif

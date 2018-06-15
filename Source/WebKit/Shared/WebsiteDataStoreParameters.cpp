@@ -41,9 +41,6 @@ void WebsiteDataStoreParameters::encode(IPC::Encoder& encoder) const
     encoder << uiProcessCookieStorageIdentifier;
     encoder << cookieStoragePathExtensionHandle;
     encoder << pendingCookies;
-    encoder << cacheStorageDirectory;
-    encoder << cacheStoragePerOriginQuota;
-    encoder << cacheStorageDirectoryExtensionHandle;
 }
 
 std::optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC::Decoder& decoder)
@@ -67,29 +64,13 @@ std::optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC
     decoder >> pendingCookies;
     if (!pendingCookies)
         return std::nullopt;
-
-    std::optional<String> cacheStorageDirectory;
-    decoder >> cacheStorageDirectory;
-    if (!cacheStorageDirectory)
-        return std::nullopt;
-
-    std::optional<uint64_t> cacheStoragePerOriginQuota;
-    decoder >> cacheStoragePerOriginQuota;
-    if (!cacheStoragePerOriginQuota)
-        return std::nullopt;
-
-    std::optional<SandboxExtension::Handle> cacheStorageDirectoryExtensionHandle;
-    decoder >> cacheStorageDirectoryExtensionHandle;
-    if (!cacheStorageDirectoryExtensionHandle)
-        return std::nullopt;
-    
-    return {{ WTFMove(*uiProcessCookieStorageIdentifier), WTFMove(*cookieStoragePathExtensionHandle), WTFMove(*pendingCookies), WTFMove(*cacheStorageDirectory), WTFMove(*cacheStoragePerOriginQuota), WTFMove(*cacheStorageDirectoryExtensionHandle), WTFMove(*networkSessionParameters)}};
+    return {{ WTFMove(*uiProcessCookieStorageIdentifier), WTFMove(*cookieStoragePathExtensionHandle), WTFMove(*pendingCookies), WTFMove(*networkSessionParameters)}};
 }
 
 WebsiteDataStoreParameters WebsiteDataStoreParameters::privateSessionParameters(PAL::SessionID sessionID)
 {
     ASSERT(sessionID.isEphemeral());
-    return { { }, { }, { }, { }, WebsiteDataStore::defaultCacheStoragePerOriginQuota, { }, { sessionID, { }, AllowsCellularAccess::Yes
+    return { { }, { }, { }, { sessionID, { }, AllowsCellularAccess::Yes
 #if PLATFORM(COCOA)
         , nullptr
 #endif

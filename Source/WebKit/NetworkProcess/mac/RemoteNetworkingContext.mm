@@ -72,12 +72,6 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePara
     for (const auto& cookie : parameters.pendingCookies)
         session->setCookie(cookie);
 
-    if (!sessionID.isEphemeral() && !parameters.cacheStorageDirectory.isNull()) {
-        SandboxExtension::consumePermanently(parameters.cacheStorageDirectoryExtensionHandle);
-        session->setCacheStorageDirectory(WTFMove(parameters.cacheStorageDirectory));
-        session->setCacheStoragePerOriginQuota(parameters.cacheStoragePerOriginQuota);
-    }
-
     SessionTracker::setSession(sessionID, NetworkSession::create(WTFMove(parameters.networkSessionParameters)));
 }
 

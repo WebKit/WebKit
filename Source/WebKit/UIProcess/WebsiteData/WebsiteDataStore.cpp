@@ -118,8 +118,9 @@ WebsiteDataStore::~WebsiteDataStore()
         ASSERT(nonDefaultDataStores().get(m_sessionID) == this);
         nonDefaultDataStores().remove(m_sessionID);
         for (auto& processPool : WebProcessPool::allProcessPools()) {
-            processPool->sendToNetworkingProcess(Messages::NetworkProcess::DestroySession(m_sessionID));
             processPool->sendToStorageProcess(Messages::StorageProcess::DestroySession(m_sessionID));
+            if (auto* networkProcess = processPool->networkProcess())
+                networkProcess->removeSession(m_sessionID);
         }
     }
 }

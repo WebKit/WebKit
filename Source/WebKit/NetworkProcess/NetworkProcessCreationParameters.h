@@ -56,9 +56,6 @@ struct NetworkProcessCreationParameters {
     int64_t diskCacheSizeOverride { -1 };
     bool canHandleHTTPSServerTrustEvaluation { true };
 
-    String cacheStorageDirectory;
-    uint64_t cacheStoragePerOriginQuota;
-    SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
     String diskCacheDirectory;
     SandboxExtension::Handle diskCacheDirectoryExtensionHandle;
     bool shouldEnableNetworkCacheEfficacyLogging { false };

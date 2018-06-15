@@ -26,6 +26,7 @@
 #ifndef NetworkProcessProxy_h
 #define NetworkProcessProxy_h
 
+#include "APIWebsiteDataStore.h"
 #include "ChildProcessProxy.h"
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
 #include "LegacyCustomProtocolManagerProxy.h"
@@ -99,6 +100,9 @@ public:
     void didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy&);
 #endif
 
+    void addSession(Ref<WebsiteDataStore>&&);
+    void removeSession(PAL::SessionID);
+
 private:
     NetworkProcessProxy(WebProcessPool&);
 
@@ -143,6 +147,7 @@ private:
     void storageAccessRequestResult(bool wasGranted, uint64_t contextId);
     void allStorageAccessEntriesResult(Vector<String>&& domains, uint64_t contextId);
 #endif
+    void retrieveCacheStorageParameters(PAL::SessionID);
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void contentExtensionRules(UserContentControllerIdentifier);
@@ -177,6 +182,8 @@ private:
 #if ENABLE(CONTENT_EXTENSIONS)
     HashSet<WebUserContentControllerProxy*> m_webUserContentControllerProxies;
 #endif
+
+    HashMap<PAL::SessionID, RefPtr<WebsiteDataStore>> m_websiteDataStores;
 };
 
 } // namespace WebKit

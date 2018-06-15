@@ -574,6 +574,41 @@ void NetworkProcessProxy::didSyncAllCookies()
     }
 }
 
+void NetworkProcessProxy::addSession(Ref<WebsiteDataStore>&& store)
+{
+    if (canSendMessage())
+        send(Messages::NetworkProcess::AddWebsiteDataStore { store->parameters() }, 0);
+    auto sessionID = store->sessionID();
+    if (!sessionID.isEphemeral())
+        m_websiteDataStores.set(sessionID, WTFMove(store));
+}
+
+void NetworkProcessProxy::removeSession(PAL::SessionID sessionID)
+{
+    if (canSendMessage())
+        send(Messages::NetworkProcess::DestroySession { sessionID }, 0);
+    if (!sessionID.isEphemeral())
+        m_websiteDataStores.remove(sessionID);
+}
+
+void NetworkProcessProxy::retrieveCacheStorageParameters(PAL::SessionID sessionID)
+{
+    auto iterator = m_websiteDataStores.find(sessionID);
+    if (iterator == m_websiteDataStores.end()) {
+        auto quota = m_processPool.websiteDataStore() ? m_processPool.websiteDataStore()->websiteDataStore().cacheStoragePerOriginQuota() : WebsiteDataStore::defaultCacheStoragePerOriginQuota;
+        send(Messages::NetworkProcess::SetCacheStorageParameters { sessionID, quota, { }, { } }, 0);
+        return;
+    }
+
+    auto& store = *iterator->value;
+    auto& cacheStorageDirectory = store.cacheStorageDirectory();
+    SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
+    if (!cacheStorageDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(cacheStorageDirectory, cacheStorageDirectoryExtensionHandle);
+
+    send(Messages::NetworkProcess::SetCacheStorageParameters { sessionID, store.cacheStoragePerOriginQuota(), cacheStorageDirectory, cacheStorageDirectoryExtensionHandle }, 0);
+}
+
 #if ENABLE(CONTENT_EXTENSIONS)
 void NetworkProcessProxy::contentExtensionRules(UserContentControllerIdentifier identifier)
 {

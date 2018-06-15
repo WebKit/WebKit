@@ -46,9 +46,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder.encodeEnum(cacheModel);
     encoder << diskCacheSizeOverride;
     encoder << canHandleHTTPSServerTrustEvaluation;
-    encoder << cacheStorageDirectory;
-    encoder << cacheStoragePerOriginQuota;
-    encoder << cacheStorageDirectoryExtensionHandle;
     encoder << diskCacheDirectory;
     encoder << diskCacheDirectoryExtensionHandle;
     encoder << shouldEnableNetworkCacheEfficacyLogging;
@@ -130,16 +127,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
     if (!decoder.decode(result.canHandleHTTPSServerTrustEvaluation))
         return false;
-    if (!decoder.decode(result.cacheStorageDirectory))
-        return false;
-    if (!decoder.decode(result.cacheStoragePerOriginQuota))
-        return false;
-    
-    std::optional<SandboxExtension::Handle> cacheStorageDirectoryExtensionHandle;
-    decoder >> cacheStorageDirectoryExtensionHandle;
-    if (!cacheStorageDirectoryExtensionHandle)
-        return false;
-    result.cacheStorageDirectoryExtensionHandle = WTFMove(*cacheStorageDirectoryExtensionHandle);
 
     if (!decoder.decode(result.diskCacheDirectory))
         return false;

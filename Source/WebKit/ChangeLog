@@ -1,3 +1,92 @@
+2018-06-14  Youenn Fablet  <youenn@apple.com>
+
+        Make NetworkProcess get cache storage parameters at creation of the CacheStorage engine
+        https://bugs.webkit.org/show_bug.cgi?id=186166
+
+        Reviewed by Alex Christensen.
+
+        Make CacheStorage::Engine creation asynchronous.
+        Update Engine public methods be static methods taking a SessionID, which will be used to create the engine.
+
+        Add IPC methods to retrieve cache storage parameters from NetworkProcess to UIProcess.
+
+        Add NetworkProcessProxy ability to compute the cache storage parameters based on the SessionID.
+        For that purpose, make NetworkProcessProxy store a map of SessionID-to-WebsiteDataStore.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::cacheStorageParameters):
+        (WebKit::NetworkProcess::setCacheStorageParameters):
+        (WebKit::NetworkProcess::cacheStorageDirectory const): Deleted.
+        (WebKit::NetworkProcess::cacheStoragePerOriginQuota const): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::from):
+        (WebKit::CacheStorage::Engine::fetchEntries):
+        (WebKit::CacheStorage::Engine::open):
+        (WebKit::CacheStorage::Engine::remove):
+        (WebKit::CacheStorage::Engine::retrieveCaches):
+        (WebKit::CacheStorage::Engine::retrieveRecords):
+        (WebKit::CacheStorage::Engine::putRecords):
+        (WebKit::CacheStorage::Engine::deleteMatchingRecords):
+        (WebKit::CacheStorage::Engine::lock):
+        (WebKit::CacheStorage::Engine::unlock):
+        (WebKit::CacheStorage::Engine::clearMemoryRepresentation):
+        (WebKit::CacheStorage::Engine::representation):
+        (WebKit::CacheStorage::Engine::clearAllCaches):
+        (WebKit::CacheStorage::Engine::clearCachesForOrigin):
+        (WebKit::CacheStorage::Engine::Engine):
+        (WebKit::CacheStorage::Engine::readCachesFromDisk):
+        (WebKit::CacheStorage::Engine::defaultEngine): Deleted.
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        (WebKit::CacheStorage::Engine::shouldPersist const):
+        (WebKit::CacheStorage::Engine::weakPtrFactory):
+        (WebKit::CacheStorage::Engine::create): Deleted.
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::~CacheStorageEngineConnection):
+        (WebKit::CacheStorageEngineConnection::open):
+        (WebKit::CacheStorageEngineConnection::remove):
+        (WebKit::CacheStorageEngineConnection::caches):
+        (WebKit::CacheStorageEngineConnection::retrieveRecords):
+        (WebKit::CacheStorageEngineConnection::deleteMatchingRecords):
+        (WebKit::CacheStorageEngineConnection::putRecords):
+        (WebKit::CacheStorageEngineConnection::reference):
+        (WebKit::CacheStorageEngineConnection::dereference):
+        (WebKit::CacheStorageEngineConnection::clearMemoryRepresentation):
+        (WebKit::CacheStorageEngineConnection::engineRepresentation):
+        * NetworkProcess/cache/CacheStorageEngineConnection.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::encode const):
+        (WebKit::WebsiteDataStoreParameters::decode):
+        (WebKit::WebsiteDataStoreParameters::privateSessionParameters):
+        * Shared/WebsiteDataStoreParameters.h:
+        (): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::addSession):
+        (WebKit::NetworkProcessProxy::removeSession):
+        (WebKit::NetworkProcessProxy::retrieveCacheStorageParameters):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled):
+        (WebKit::WebProcessPool::pageBeginUsingWebsiteDataStore):
+        (WebKit::WebProcessPool::pageEndUsingWebsiteDataStore):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::~WebsiteDataStore):
+
 2018-06-14  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Win] Add IPC error case for broken pipe

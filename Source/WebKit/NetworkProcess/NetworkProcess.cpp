@@ -132,6 +132,10 @@ NetworkProcess::NetworkProcess()
 
 NetworkProcess::~NetworkProcess()
 {
+    for (auto& callbacks : m_cacheStorageParametersCallbacks.values()) {
+        for (auto& callback : callbacks)
+            callback(String { }, 0);
+    }
 }
 
 AuthenticationManager& NetworkProcess::authenticationManager()
@@ -563,7 +567,7 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     });
 
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache))
-        CacheStorage::Engine::from(sessionID).clearAllCaches(clearTasksHandler);
+        CacheStorage::Engine::clearAllCaches(sessionID, clearTasksHandler.copyRef());
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
         clearDiskCache(modifiedSince, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
@@ -607,7 +611,7 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
 
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache)) {
         for (auto& originData : originDatas)
-            CacheStorage::Engine::from(sessionID).clearCachesForOrigin(originData, clearTasksHandler);
+            CacheStorage::Engine::clearCachesForOrigin(sessionID, SecurityOriginData { originData }, clearTasksHandler.copyRef());
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
@@ -848,19 +852,25 @@ void NetworkProcess::prefetchDNS(const String& hostname)
     WebCore::prefetchDNS(hostname);
 }
 
-String NetworkProcess::cacheStorageDirectory(PAL::SessionID sessionID) const
+void NetworkProcess::cacheStorageParameters(PAL::SessionID sessionID, CacheStorageParametersCallback&& callback)
 {
-    if (sessionID.isEphemeral())
-        return { };
+    m_cacheStorageParametersCallbacks.ensure(sessionID, [&] {
+        parentProcessConnection()->send(Messages::NetworkProcessProxy::RetrieveCacheStorageParameters { sessionID }, 0);
+        return Vector<CacheStorageParametersCallback> { };
+    }).iterator->value.append(WTFMove(callback));
+}
 
-    if (sessionID == PAL::SessionID::defaultSessionID())
-        return m_cacheStorageDirectory;
+void NetworkProcess::setCacheStorageParameters(PAL::SessionID sessionID, uint64_t quota, String&& cacheStorageDirectory, SandboxExtension::Handle&& handle)
+{
+    auto iterator = m_cacheStorageParametersCallbacks.find(sessionID);
+    if (iterator == m_cacheStorageParametersCallbacks.end())
+        return;
 
-    auto* session = NetworkStorageSession::storageSession(sessionID);
-    if (!session)
-        return { };
-
-    return session->cacheStorageDirectory();
+    SandboxExtension::consumePermanently(handle);
+    auto callbacks = WTFMove(iterator->value);
+    m_cacheStorageParametersCallbacks.remove(iterator);
+    for (auto& callback : callbacks)
+        callback(String { cacheStorageDirectory }, quota);
 }
 
 void NetworkProcess::preconnectTo(const WebCore::URL& url, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
@@ -877,11 +887,6 @@ void NetworkProcess::preconnectTo(const WebCore::URL& url, WebCore::StoredCreden
     UNUSED_PARAM(url);
     UNUSED_PARAM(storedCredentialsPolicy);
 #endif
-}
-
-uint64_t NetworkProcess::cacheStoragePerOriginQuota() const
-{
-    return m_cacheStoragePerOriginQuota;
 }
 
 void NetworkProcess::registerURLSchemeAsSecure(const String& scheme) const

@@ -448,14 +448,11 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 {
     if (m_networkProcess) {
         if (withWebsiteDataStore) {
-            m_networkProcess->send(Messages::NetworkProcess::AddWebsiteDataStore(withWebsiteDataStore->parameters()), 0);
+            m_networkProcess->addSession(makeRef(*withWebsiteDataStore));
             withWebsiteDataStore->clearPendingCookies();
         }
         return *m_networkProcess;
     }
-
-    if (m_websiteDataStore)
-        m_websiteDataStore->websiteDataStore().resolveDirectoriesIfNecessary();
 
     m_networkProcess = NetworkProcessProxy::create(*this);
 
@@ -463,7 +460,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 
     if (withWebsiteDataStore) {
         auto websiteDataStoreParameters = withWebsiteDataStore->parameters();
-        parameters.defaultSessionParameters = websiteDataStoreParameters.networkSessionParameters;
+        parameters.defaultSessionParameters = WTFMove(websiteDataStoreParameters.networkSessionParameters);
 
         // FIXME: This isn't conceptually correct, but it's needed to preserve behavior introduced in r213241.
         // We should separate the concept of the default session from the currently used persistent session.
@@ -481,11 +478,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 
     for (auto& scheme : m_urlSchemesRegisteredForCustomProtocols)
         parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
-
-    parameters.cacheStorageDirectory = m_websiteDataStore ? m_websiteDataStore->websiteDataStore().cacheStorageDirectory() : API::WebsiteDataStore::defaultCacheStorageDirectory();
-    if (!parameters.cacheStorageDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.cacheStorageDirectory, parameters.cacheStorageDirectoryExtensionHandle);
-    parameters.cacheStoragePerOriginQuota = m_websiteDataStore ? m_websiteDataStore->websiteDataStore().cacheStoragePerOriginQuota() : WebsiteDataStore::defaultCacheStoragePerOriginQuota;
 
     parameters.diskCacheDirectory = m_configuration->diskCacheDirectory();
     if (!parameters.diskCacheDirectory.isEmpty())
@@ -537,12 +529,12 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     }
 
     if (m_websiteDataStore) {
-        m_networkProcess->send(Messages::NetworkProcess::AddWebsiteDataStore(m_websiteDataStore->websiteDataStore().parameters()), 0);
+        m_networkProcess->addSession(makeRef(m_websiteDataStore->websiteDataStore()));
         m_websiteDataStore->websiteDataStore().clearPendingCookies();
     }
     
     if (withWebsiteDataStore) {
-        m_networkProcess->send(Messages::NetworkProcess::AddWebsiteDataStore(withWebsiteDataStore->parameters()), 0);
+        m_networkProcess->addSession(makeRef(*withWebsiteDataStore));
         withWebsiteDataStore->clearPendingCookies();
     }
 
@@ -723,7 +715,7 @@ void WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool private
         sendToNetworkingProcess(Messages::NetworkProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters()));
         sendToAllProcesses(Messages::WebProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters()));
     } else {
-        sendToNetworkingProcess(Messages::NetworkProcess::DestroySession(PAL::SessionID::legacyPrivateSessionID()));
+        networkProcess()->removeSession(PAL::SessionID::legacyPrivateSessionID());
         sendToStorageProcess(Messages::StorageProcess::DestroySession(PAL::SessionID::legacyPrivateSessionID()));
         sendToAllProcesses(Messages::WebProcess::DestroySession(PAL::SessionID::legacyPrivateSessionID()));
     }
@@ -1197,11 +1189,13 @@ void WebProcessPool::pageBeginUsingWebsiteDataStore(WebPageProxy& page)
     auto sessionID = page.sessionID();
     if (sessionID.isEphemeral()) {
         ASSERT(page.websiteDataStore().parameters().networkSessionParameters.sessionID == sessionID);
-        sendToNetworkingProcess(Messages::NetworkProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()));
+        if (m_networkProcess)
+            m_networkProcess->addSession(makeRef(page.websiteDataStore()));
         page.process().send(Messages::WebProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::privateSessionParameters(sessionID)), 0);
         page.websiteDataStore().clearPendingCookies();
     } else if (sessionID != PAL::SessionID::defaultSessionID()) {
-        sendToNetworkingProcess(Messages::NetworkProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()));
+        if (m_networkProcess)
+            m_networkProcess->addSession(makeRef(page.websiteDataStore()));
         page.process().send(Messages::WebProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()), 0);
         page.websiteDataStore().clearPendingCookies();
 
@@ -1237,7 +1231,7 @@ void WebProcessPool::pageEndUsingWebsiteDataStore(WebPageProxy& page)
 
         // The last user of this non-default PAL::SessionID is gone, so clean it up in the child processes.
         if (networkProcess())
-            networkProcess()->send(Messages::NetworkProcess::DestroySession(sessionID), 0);
+            networkProcess()->removeSession(sessionID);
         page.process().send(Messages::WebProcess::DestroySession(sessionID), 0);
     }
 }

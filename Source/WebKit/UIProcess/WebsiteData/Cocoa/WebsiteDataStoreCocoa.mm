@@ -78,11 +78,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     if (!cookieFile.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(WebCore::FileSystem::directoryName(cookieFile), parameters.cookieStoragePathExtensionHandle);
 
-    if (!m_configuration.cacheStorageDirectory.isNull()) {
-        parameters.cacheStorageDirectory = m_configuration.cacheStorageDirectory;
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.cacheStorageDirectory, parameters.cacheStorageDirectoryExtensionHandle);
-    }
-
     return parameters;
 }
 

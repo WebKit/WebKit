@@ -50,9 +50,9 @@ public:
 private:
     explicit CacheStorageEngineConnection(NetworkConnectionToWebProcess&);
 
-    void open(PAL::SessionID, uint64_t openRequestIdentifier, const WebCore::ClientOrigin&, const String& cacheName);
+    void open(PAL::SessionID, uint64_t openRequestIdentifier, WebCore::ClientOrigin&&, String&& cacheName);
     void remove(PAL::SessionID, uint64_t removeRequestIdentifier, uint64_t cacheIdentifier);
-    void caches(PAL::SessionID, uint64_t retrieveCachesIdentifier, const WebCore::ClientOrigin&, uint64_t updateCounter);
+    void caches(PAL::SessionID, uint64_t retrieveCachesIdentifier, WebCore::ClientOrigin&&, uint64_t updateCounter);
 
     void retrieveRecords(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, WebCore::URL&&);
     void deleteMatchingRecords(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&);
@@ -61,7 +61,7 @@ private:
     void reference(PAL::SessionID, uint64_t cacheIdentifier);
     void dereference(PAL::SessionID, uint64_t cacheIdentifier);
 
-    void clearMemoryRepresentation(PAL::SessionID, uint64_t requestIdentifier, const WebCore::ClientOrigin&);
+    void clearMemoryRepresentation(PAL::SessionID, uint64_t requestIdentifier, WebCore::ClientOrigin&&);
     void engineRepresentation(PAL::SessionID, uint64_t requestIdentifier);
 
     NetworkConnectionToWebProcess& m_connection;
