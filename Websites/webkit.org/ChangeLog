@@ -1,3 +1,13 @@
+2018-06-14  Roy Reapor  <rreapor@apple.com>
+
+        Use new jQuery file layout
+        https://bugs.webkit.org/show_bug.cgi?id=186636
+
+        Reviewed by Aakash Jain.
+
+        * ajax/libs/jqueryui/jquery-ui-1.8.15.css: Removed.
+        * ajax/libs/jqueryui/jquery-ui-1.8.15.min.js: Removed.
+
 2018-06-14  Jon Davis  <jond@apple.com>
 
         Minor layout fix for WebKit Feature Status Page
