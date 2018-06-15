@@ -93,6 +93,11 @@ WTF::String WebProcessPool::legacyPlatformDefaultMediaCacheDirectory()
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     parameters.memoryCacheDisabled = m_memoryCacheDisabled || cacheModel() == CacheModelDocumentViewer;
+
+    const char* disableMemoryPressureMonitor = getenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR");
+    if (disableMemoryPressureMonitor && !strcmp(disableMemoryPressureMonitor, "1"))
+        parameters.shouldSuppressMemoryPressureHandler = true;
+
 #if USE(GSTREAMER)
     parameters.gstreamerOptions = WebCore::extractGStreamerOptionsFromCommandLine();
 #endif

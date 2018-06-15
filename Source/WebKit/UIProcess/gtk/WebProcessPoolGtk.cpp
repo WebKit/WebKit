@@ -97,6 +97,10 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     if (forceComplexText && !strcmp(forceComplexText, "0"))
         parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
 
+    const char* disableMemoryPressureMonitor = getenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR");
+    if (disableMemoryPressureMonitor && !strcmp(disableMemoryPressureMonitor, "1"))
+        parameters.shouldSuppressMemoryPressureHandler = true;
+
 #if USE(GSTREAMER)
     parameters.gstreamerOptions = WebCore::extractGStreamerOptionsFromCommandLine();
 #endif

@@ -1,3 +1,18 @@
+2018-06-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WKE] Disable memory pressure handling when running layout tests (WTR)
+        https://bugs.webkit.org/show_bug.cgi?id=186663
+
+        Reviewed by Michael Catanzaro.
+
+        Disable memory pressure handling when running tests via WTR by
+        setting WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR=1 on the environment.
+
+        * WebKitTestRunner/gtk/main.cpp:
+        (main):
+        * WebKitTestRunner/wpe/main.cpp:
+        (main):
+
 2018-06-15  Jonathan Bedard  <jbedard@apple.com>
 
         Add iOS 12 and watchOS 5 to webkitpy

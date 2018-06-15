@@ -1,3 +1,22 @@
+2018-06-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WKE] Disable memory pressure handling when running layout tests (WTR)
+        https://bugs.webkit.org/show_bug.cgi?id=186663
+
+        Reviewed by Michael Catanzaro.
+
+        r196943 added a mechanism to disable the memory pressure handling
+        on Mac. This patch enables using that mechanism also for GTK/WPE.
+        To do that the environment variable WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR
+        should bet set to 1.
+        We want to use this on the layout tests to avoid flaky tests caused
+        by accumulated leaks on the WebProcess by different tests.
+
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/wpe/WebProcessPoolWPE.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
 2018-06-15  Per Arne Vollan  <pvollan@apple.com>
 
         Rollout r231818, as it introduced regression on tickets.com.
