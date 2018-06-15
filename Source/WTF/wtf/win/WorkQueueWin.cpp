@@ -29,43 +29,8 @@
 
 #include <wtf/MathExtras.h>
 #include <wtf/Threading.h>
-#include <wtf/win/WorkItemContext.h>
 
 namespace WTF {
-
-void WorkQueue::handleCallback(void* data, BOOLEAN timerOrWaitFired)
-{
-    ASSERT_ARG(data, data);
-    ASSERT_ARG(timerOrWaitFired, !timerOrWaitFired);
-
-    WorkItemContext* context = static_cast<WorkItemContext*>(data);
-    WorkQueue* queue = context->queue();
-
-    RefPtr<WorkItemContext> protector(context);
-    queue->dispatch([protector] {
-        protector->function()();
-    });
-}
-
-void WorkQueue::registerHandle(HANDLE handle, Function<void()>&& function)
-{
-    Ref<WorkItemContext> context = WorkItemContext::create(handle, nullptr, WTFMove(function), this);
-
-    if (!::RegisterWaitForSingleObject(&context->waitHandle().m_handle, handle, handleCallback, context.ptr(), INFINITE, WT_EXECUTEDEFAULT))
-        ASSERT_WITH_MESSAGE(m_timerQueue, "::RegisterWaitForSingleObject %lu", ::GetLastError());
-
-    auto locker = holdLock(m_itemsMapLock);
-    ASSERT_ARG(handle, !m_itemsMap.contains(handle));
-    m_itemsMap.set(handle, WTFMove(context));
-}
-
-void WorkQueue::unregisterAndCloseHandle(HANDLE handle)
-{
-    auto locker = holdLock(m_itemsMapLock);
-    ASSERT_ARG(handle, m_itemsMap.contains(handle));
-
-    unregisterWaitAndDestroyItemSoon(m_itemsMap.take(handle).value());
-}
 
 DWORD WorkQueue::workThreadCallback(void* context)
 {
@@ -220,28 +185,6 @@ void WorkQueue::dispatchAfter(Seconds duration, Function<void()>&& function)
 
     // The timer callback will handle destroying context.
     context.leakRef();
-}
-
-void WorkQueue::unregisterWaitAndDestroyItemSoon(Ref<WorkItemContext>&& workItem)
-{
-    // We're going to make a blocking call to ::UnregisterWaitEx before closing the handle. (The
-    // blocking version of ::UnregisterWaitEx is much simpler than the non-blocking version.) If we
-    // do this on the current thread, we'll deadlock if we're currently in a callback function for
-    // the wait we're unregistering. So instead we do it asynchronously on some other worker thread.
-    ::QueueUserWorkItem(unregisterWaitAndDestroyItemCallback, workItem.ptr(), WT_EXECUTEDEFAULT);
-}
-
-DWORD WINAPI WorkQueue::unregisterWaitAndDestroyItemCallback(void* data)
-{
-    ASSERT_ARG(data, data);
-    WorkItemContext* context = static_cast<WorkItemContext*>(data);
-
-    // Now that we know we're not in a callback function for the wait we're unregistering, we can
-    // make a blocking call to ::UnregisterWaitEx.
-    if (!::UnregisterWaitEx(context->waitHandle().get(), INVALID_HANDLE_VALUE))
-        ASSERT_WITH_MESSAGE(false, "::UnregisterWaitEx failed with '%s'", ::GetLastError());
-
-    return 0;
 }
 
 } // namespace WTF

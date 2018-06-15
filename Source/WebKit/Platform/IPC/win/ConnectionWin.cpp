@@ -72,12 +72,6 @@ bool Connection::createServerAndClientIdentifiers(HANDLE& serverIdentifier, HAND
 
 void Connection::platformInitialize(Identifier identifier)
 {
-    memset(&m_readState, 0, sizeof(m_readState));
-    m_readState.hEvent = ::CreateEventW(0, FALSE, FALSE, 0);
-
-    memset(&m_writeState, 0, sizeof(m_writeState));
-    m_writeState.hEvent = ::CreateEventW(0, FALSE, FALSE, 0);
-
     m_connectionPipe = identifier;
 }
 
@@ -88,11 +82,8 @@ void Connection::platformInvalidate()
 
     m_isConnected = false;
 
-    m_connectionQueue->unregisterAndCloseHandle(m_readState.hEvent);
-    m_readState.hEvent = 0;
-
-    m_connectionQueue->unregisterAndCloseHandle(m_writeState.hEvent);
-    m_writeState.hEvent = 0;
+    m_readListener.close();
+    m_writeListener.close();
 
     ::CloseHandle(m_connectionPipe);
     m_connectionPipe = INVALID_HANDLE_VALUE;
@@ -106,7 +97,7 @@ void Connection::readEventHandler()
     while (true) {
         // Check if we got some data.
         DWORD numberOfBytesRead = 0;
-        if (!::GetOverlappedResult(m_connectionPipe, &m_readState, &numberOfBytesRead, FALSE)) {
+        if (!::GetOverlappedResult(m_connectionPipe, &m_readListener.state(), &numberOfBytesRead, FALSE)) {
             DWORD error = ::GetLastError();
             switch (error) {
             case ERROR_BROKEN_PIPE:
@@ -133,7 +124,7 @@ void Connection::readEventHandler()
                     break;
 
                 m_readBuffer.grow(m_readBuffer.size() + bytesToRead);
-                if (!::ReadFile(m_connectionPipe, m_readBuffer.data() + numberOfBytesRead, bytesToRead, 0, &m_readState)) {
+                if (!::ReadFile(m_connectionPipe, m_readBuffer.data() + numberOfBytesRead, bytesToRead, 0, &m_readListener.state())) {
                     DWORD error = ::GetLastError();
                     ASSERT_NOT_REACHED();
                     return;
@@ -182,7 +173,7 @@ void Connection::readEventHandler()
 
         // Either read the next available message (which should occur synchronously), or start an
         // asynchronous read of the next message that becomes available.
-        BOOL result = ::ReadFile(m_connectionPipe, m_readBuffer.data(), m_readBuffer.size(), 0, &m_readState);
+        BOOL result = ::ReadFile(m_connectionPipe, m_readBuffer.data(), m_readBuffer.size(), 0, &m_readListener.state());
         if (result) {
             // There was already a message waiting in the pipe, and we read it synchronously.
             // Process it.
@@ -218,7 +209,7 @@ void Connection::writeEventHandler()
         return;
 
     DWORD numberOfBytesWritten = 0;
-    if (!::GetOverlappedResult(m_connectionPipe, &m_writeState, &numberOfBytesWritten, FALSE)) {
+    if (!::GetOverlappedResult(m_connectionPipe, &m_writeListener.state(), &numberOfBytesWritten, FALSE)) {
         DWORD error = ::GetLastError();
 
         if (error == ERROR_IO_INCOMPLETE) {
@@ -240,26 +231,36 @@ void Connection::writeEventHandler()
     sendOutgoingMessages();
 }
 
+void Connection::invokeReadEventHandler()
+{
+    m_connectionQueue->dispatch([this, protectedThis = makeRef(*this)] {
+        readEventHandler();
+    });
+}
+
+void Connection::invokeWriteEventHandler()
+{
+    m_connectionQueue->dispatch([this, protectedThis = makeRef(*this)] {
+        writeEventHandler();
+    });
+}
+
 bool Connection::open()
 {
     // We connected the two ends of the pipe in createServerAndClientIdentifiers.
     m_isConnected = true;
 
-    RefPtr<Connection> protectedThis(this);
-
     // Start listening for read and write state events.
-    m_connectionQueue->registerHandle(m_readState.hEvent, [protectedThis] {
-        protectedThis->readEventHandler();
+    m_readListener.open([this] {
+        invokeReadEventHandler();
     });
 
-    m_connectionQueue->registerHandle(m_writeState.hEvent, [protectedThis] {
-        protectedThis->writeEventHandler();
+    m_writeListener.open([this] {
+        invokeWriteEventHandler();
     });
 
     // Schedule a read.
-    m_connectionQueue->dispatch([protectedThis] {
-        protectedThis->readEventHandler();
-    });
+    invokeReadEventHandler();
     return true;
 }
 
@@ -284,7 +285,7 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
 
     // Write the outgoing message.
 
-    if (::WriteFile(m_connectionPipe, encoder->buffer(), encoder->bufferSize(), 0, &m_writeState)) {
+    if (::WriteFile(m_connectionPipe, encoder->buffer(), encoder->bufferSize(), 0, &m_writeListener.state())) {
         // We successfully sent this message.
         return true;
     }
@@ -316,6 +317,47 @@ void Connection::willSendSyncMessage(OptionSet<SendSyncOption>)
 
 void Connection::didReceiveSyncReply(OptionSet<SendSyncOption>)
 {
+}
+
+void Connection::EventListener::open(Function<void()>&& handler)
+{
+    m_handler = WTFMove(handler);
+
+    memset(&m_state, 0, sizeof(m_state));
+    m_state.hEvent = ::CreateEventW(0, FALSE, FALSE, 0);
+
+    BOOL result;
+    result = ::RegisterWaitForSingleObject(&m_waitHandle, m_state.hEvent, callback, this, INFINITE, WT_EXECUTEDEFAULT);
+    ASSERT(result);
+}
+
+void Connection::EventListener::callback(void* data, BOOLEAN timerOrWaitFired)
+{
+    ASSERT_ARG(data, data);
+    ASSERT_ARG(timerOrWaitFired, !timerOrWaitFired);
+
+    auto* listener = static_cast<Connection::EventListener*>(data);
+    listener->m_handler();
+}
+
+void Connection::EventListener::close()
+{
+    // We call ::UnregisterWaitEx directly here. Since ::UnregisterWaitEx drains all the remaining tasks here,
+    // it would cause deadlock if this function itself is executed in Windows callback functions. But this call
+    // is safe since our callbacks immediately dispatch a task to WorkQueue. And no Windows callbacks call this
+    // Connection::EventListener::close().
+    // https://msdn.microsoft.com/en-us/library/windows/desktop/ms685061(v=vs.85).aspx
+    //
+    // And do not ::CloseHandle(m_waitHandle).
+    // > Note that a wait handle cannot be used in functions that require an object handle, such as CloseHandle.
+    // https://msdn.microsoft.com/en-us/library/windows/desktop/ms685061(v=vs.85).aspx
+    ::UnregisterWaitEx(m_waitHandle, INVALID_HANDLE_VALUE);
+    m_waitHandle = INVALID_HANDLE_VALUE;
+
+    ::CloseHandle(m_state.hEvent);
+    m_state.hEvent = 0;
+
+    m_handler = Function<void()>();
 }
 
 } // namespace IPC

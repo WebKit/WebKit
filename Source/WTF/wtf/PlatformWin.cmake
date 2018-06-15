@@ -4,7 +4,6 @@ list(APPEND WTF_PUBLIC_HEADERS
     win/GDIObject.h
     win/SoftLinking.h
     win/Win32Handle.h
-    win/WorkItemContext.h
 )
 
 list(APPEND WTF_SOURCES
@@ -16,7 +15,6 @@ list(APPEND WTF_SOURCES
     win/MemoryFootprintWin.cpp
     win/MemoryPressureHandlerWin.cpp
     win/RunLoopWin.cpp
-    win/WorkItemContext.cpp
     win/WorkQueueWin.cpp
 )
 

@@ -38,10 +38,6 @@
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(WINDOWS_EVENT_LOOP)
-#include <wtf/win/WorkItemContext.h>
-#endif
-
 namespace WTF {
 
 Ref<WorkQueue> WorkQueue::create(const char* name, Type type, QOS qos)

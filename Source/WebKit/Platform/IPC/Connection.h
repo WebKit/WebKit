@@ -343,12 +343,29 @@ private:
     // Called on the connection queue.
     void readEventHandler();
     void writeEventHandler();
+    void invokeReadEventHandler();
+    void invokeWriteEventHandler();
+
+    class EventListener {
+    public:
+        void open(Function<void()>&&);
+        void close();
+
+        OVERLAPPED& state() { return m_state; }
+
+    private:
+        static void callback(void*, BOOLEAN);
+
+        OVERLAPPED m_state;
+        HANDLE m_waitHandle { INVALID_HANDLE_VALUE };
+        Function<void()> m_handler;
+    };
 
     Vector<uint8_t> m_readBuffer;
-    OVERLAPPED m_readState;
+    EventListener m_readListener;
     std::unique_ptr<Encoder> m_pendingWriteEncoder;
-    OVERLAPPED m_writeState;
-    HANDLE m_connectionPipe;
+    EventListener m_writeListener;
+    HANDLE m_connectionPipe { INVALID_HANDLE_VALUE };
 #endif
 };
 

@@ -1,3 +1,30 @@
+2018-06-15  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Move unrelated features of WorkQueueWin into IPC::Connection
+        https://bugs.webkit.org/show_bug.cgi?id=186582
+
+        Add EventListener private class to handle signaled tasks for I/O.
+        Originally they were in WTF::WorkQueueWin, but those features were not related
+        to WorkQueue and only used in IPC::ConnectionWin. Moved logic is more specialized
+        than old generalized logic. That was unneeded generalization.
+
+        Reviewed by Brent Fulgham.
+
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::EventListener::state):
+        * Platform/IPC/win/ConnectionWin.cpp:
+        (IPC::Connection::platformInitialize):
+        (IPC::Connection::platformInvalidate):
+        (IPC::Connection::readEventHandler):
+        (IPC::Connection::writeEventHandler):
+        (IPC::Connection::invokeReadEventHandler):
+        (IPC::Connection::invokeWriteEventHandler):
+        (IPC::Connection::open):
+        (IPC::Connection::sendOutgoingMessage):
+        (IPC::Connection::EventListener::open):
+        (IPC::Connection::EventListener::callback):
+        (IPC::Connection::EventListener::close):
+
 2018-06-15  Brady Eidson  <beidson@apple.com>
 
         Crash in both StorageProcess and UIProcess when using custom WKWebsiteDataStores for data management.

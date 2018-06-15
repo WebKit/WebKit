@@ -1,3 +1,25 @@
+2018-06-15  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Move unrelated features of WorkQueueWin into IPC::Connection
+        https://bugs.webkit.org/show_bug.cgi?id=186582
+
+        Remove unrelated feature from WorkQueueWin.
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/PlatformWin.cmake: Remove WorkItemContext.*
+        * wtf/WorkQueue.cpp:
+        * wtf/WorkQueue.h:
+        * wtf/win/Win32Handle.h:
+        * wtf/win/WorkItemContext.cpp: Removed.
+        * wtf/win/WorkItemContext.h: Removed.
+        * wtf/win/WorkQueueWin.cpp:
+        (WTF::WorkQueue::handleCallback): Deleted.
+        (WTF::WorkQueue::registerHandle): Deleted.
+        (WTF::WorkQueue::unregisterAndCloseHandle): Deleted.
+        (WTF::WorkQueue::unregisterWaitAndDestroyItemSoon): Deleted.
+        (WTF::WorkQueue::unregisterWaitAndDestroyItemCallback): Deleted.
+
 2018-06-13  Keith Miller  <keith_miller@apple.com>
 
         AutomaticThread should have a way to provide a thread name

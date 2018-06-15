@@ -50,10 +50,6 @@
 
 namespace WTF {
 
-#if USE(WINDOWS_EVENT_LOOP)
-class WorkItemContext;
-#endif
-
 class WorkQueue final : public FunctionDispatcher {
 
 public:
@@ -81,9 +77,6 @@ public:
     dispatch_queue_t dispatchQueue() const { return m_dispatchQueue; }
 #elif USE(GLIB_EVENT_LOOP) || USE(GENERIC_EVENT_LOOP)
     RunLoop& runLoop() const { return *m_runLoop; }
-#elif USE(WINDOWS_EVENT_LOOP)
-    WTF_EXPORT_PRIVATE void registerHandle(HANDLE, Function<void()>&&);
-    WTF_EXPORT_PRIVATE void unregisterAndCloseHandle(HANDLE);
 #endif
 
 private:
@@ -93,16 +86,12 @@ private:
     void platformInvalidate();
 
 #if USE(WINDOWS_EVENT_LOOP)
-    static void CALLBACK handleCallback(void* context, BOOLEAN timerOrWaitFired);
     static void CALLBACK timerCallback(void* context, BOOLEAN timerOrWaitFired);
     static DWORD WINAPI workThreadCallback(void* context);
 
     bool tryRegisterAsWorkThread();
     void unregisterAsWorkThread();
     void performWorkOnRegisteredWorkThread();
-
-    static void unregisterWaitAndDestroyItemSoon(Ref<WorkItemContext>&&);
-    static DWORD WINAPI unregisterWaitAndDestroyItemCallback(void* context);
 #endif
 
 #if USE(COCOA_EVENT_LOOP)
@@ -112,9 +101,7 @@ private:
     volatile LONG m_isWorkThreadRegistered;
 
     Lock m_functionQueueLock;
-    Lock m_itemsMapLock;
     Vector<Function<void()>> m_functionQueue;
-    HashMap<HANDLE, Ref<WorkItemContext>> m_itemsMap;
 
     HANDLE m_timerQueue;
 #elif USE(GLIB_EVENT_LOOP) || USE(GENERIC_EVENT_LOOP)
