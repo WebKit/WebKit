@@ -1198,6 +1198,9 @@ webkit.org/b/186638 fast/mediastream/media-stream-track-source-failure.html [ Ti
 webkit.org/b/186638 imported/mozilla/svg/as-image/img-widthAndHeight-slice-1.html [ Crash ]
 webkit.org/b/186638 media/video-currentTime-delay.html [ Crash Pass ]
 
+# Test does not make sense for our platform
+webkit.org/b/181659 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -3328,8 +3331,6 @@ webkit.org/b/180802 imported/w3c/web-platform-tests/html/webappapis/system-state
 webkit.org/b/180803 imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html [ Failure ]
 
 webkit.org/b/180805 inspector/canvas/requestContent-bitmaprenderer.html [ Failure ]
-
-webkit.org/b/181659 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Failure ]
 
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-auto-fill-button.html [ Missing Failure ]
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button.html [ Missing Failure ]

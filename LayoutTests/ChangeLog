@@ -1,3 +1,13 @@
+2018-06-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK][WebGL] Layout test fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=181659
+        <rdar://problem/39175593>
+
+        Unreviewed. Miguel has verified that it's OK for this test to fail, so skip it.
+
+        * platform/gtk/TestExpectations:
+
 2018-06-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Mark tests that are failing on the EWS test queue (v2)
