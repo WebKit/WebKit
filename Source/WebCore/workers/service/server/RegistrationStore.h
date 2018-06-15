@@ -34,6 +34,7 @@
 #include "Timer.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,10 +42,10 @@ namespace WebCore {
 class SWServer;
 class SWServerRegistration;
 
-class RegistrationStore {
+class RegistrationStore : public CanMakeWeakPtr<RegistrationStore> {
 WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit RegistrationStore(SWServer&, const String& databaseDirectory);
+    explicit RegistrationStore(SWServer&, String&& databaseDirectory);
     ~RegistrationStore();
 
     void clearAll(WTF::CompletionHandler<void()>&&);
@@ -67,7 +68,7 @@ private:
     void pushChangesToDatabase() { pushChangesToDatabase({ }); }
 
     SWServer& m_server;
-    RegistrationDatabase m_database;
+    Ref<RegistrationDatabase> m_database;
 
     HashMap<ServiceWorkerRegistrationKey, ServiceWorkerContextData> m_updatedRegistrations;
     Timer m_databasePushTimer;

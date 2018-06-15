@@ -32,16 +32,16 @@
 
 namespace WebCore {
 
-RegistrationStore::RegistrationStore(SWServer& server, const String& databaseDirectory)
+RegistrationStore::RegistrationStore(SWServer& server, String&& databaseDirectory)
     : m_server(server)
-    , m_database(*this, databaseDirectory)
+    , m_database(RegistrationDatabase::create(*this, WTFMove(databaseDirectory)))
     , m_databasePushTimer(*this, &RegistrationStore::pushChangesToDatabase)
 {
 }
 
 RegistrationStore::~RegistrationStore()
 {
-    ASSERT(m_database.isClosed());
+    ASSERT(m_database->isClosed());
 }
 
 void RegistrationStore::scheduleDatabasePushIfNecessary()
@@ -59,14 +59,14 @@ void RegistrationStore::pushChangesToDatabase(WTF::CompletionHandler<void()>&& c
         changesToPush.uncheckedAppend(WTFMove(value));
 
     m_updatedRegistrations.clear();
-    m_database.pushChanges(WTFMove(changesToPush), WTFMove(completionHandler));
+    m_database->pushChanges(WTFMove(changesToPush), WTFMove(completionHandler));
 }
 
 void RegistrationStore::clearAll(WTF::CompletionHandler<void()>&& completionHandler)
 {
     m_updatedRegistrations.clear();
     m_databasePushTimer.stop();
-    m_database.clearAll(WTFMove(completionHandler));
+    m_database->clearAll(WTFMove(completionHandler));
 }
 
 void RegistrationStore::flushChanges(WTF::CompletionHandler<void()>&& completionHandler)

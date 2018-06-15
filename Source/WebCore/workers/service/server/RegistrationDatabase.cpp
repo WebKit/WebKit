@@ -38,6 +38,7 @@
 #include "SWServer.h"
 #include "SecurityOrigin.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
@@ -91,23 +92,34 @@ static inline void cleanOldDatabases(const String& databaseDirectory)
         SQLiteFileSystem::deleteDatabaseFile(FileSystem::pathByAppendingComponent(databaseDirectory, databaseFilenameFromVersion(version)));
 }
 
-RegistrationDatabase::RegistrationDatabase(RegistrationStore& store, const String& databaseDirectory)
-    : CrossThreadTaskHandler("ServiceWorker I/O Thread")
-    , m_store(store)
-    , m_databaseDirectory(databaseDirectory)
+RegistrationDatabase::RegistrationDatabase(RegistrationStore& store, String&& databaseDirectory)
+    : m_workQueue(WorkQueue::create("ServiceWorker I/O Thread", WorkQueue::Type::Serial))
+    , m_store(makeWeakPtr(store))
+    , m_session(m_store->server().sessionID())
+    , m_databaseDirectory(WTFMove(databaseDirectory))
     , m_databaseFilePath(FileSystem::pathByAppendingComponent(m_databaseDirectory, databaseFilename()))
 {
     ASSERT(isMainThread());
 
-    postTask(CrossThreadTask([this] {
+    postTaskToWorkQueue([this] {
         importRecordsIfNecessary();
-    }));
+    });
 }
 
 RegistrationDatabase::~RegistrationDatabase()
 {
-    ASSERT(!m_database);
     ASSERT(isMainThread());
+
+    // The database needs to be destroyed on the background thread.
+    if (m_database)
+        m_workQueue->dispatch([database = WTFMove(m_database)] { });
+}
+
+void RegistrationDatabase::postTaskToWorkQueue(Function<void()>&& task)
+{
+    m_workQueue->dispatch([protectedThis = makeRef(*this), task = WTFMove(task)]() mutable {
+        task();
+    });
 }
 
 void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
@@ -130,7 +142,9 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
 #endif
 
         m_database = nullptr;
-        postTaskReply(createCrossThreadTask(*this, &RegistrationDatabase::databaseFailedToOpen));
+        callOnMainThread([protectedThis = makeRef(*this)] {
+            protectedThis->databaseFailedToOpen();
+        });
     });
 
     SQLiteFileSystem::ensureDatabaseDirectoryExists(m_databaseDirectory);
@@ -140,6 +154,11 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
         errorMessage = "Failed to open registration database";
         return;
     }
+
+    // Disable threading checks. We always access the database from our serial WorkQueue. Such accesses
+    // are safe since work queue tasks are guaranteed to run one after another. However, tasks will not
+    // necessary run on the same thread every time (as per GCD documentation).
+    m_database->disableThreadingChecks();
     
     errorMessage = ensureValidRecordsTable();
     if (!errorMessage.isNull())
@@ -159,7 +178,9 @@ void RegistrationDatabase::importRecordsIfNecessary()
     if (FileSystem::fileExists(m_databaseFilePath))
         openSQLiteDatabase(m_databaseFilePath);
 
-    postTaskReply(createCrossThreadTask(*this, &RegistrationDatabase::databaseOpenedAndRecordsImported));
+    callOnMainThread([protectedThis = makeRef(*this)] {
+        protectedThis->databaseOpenedAndRecordsImported();
+    });
 }
 
 String RegistrationDatabase::ensureValidRecordsTable()
@@ -249,32 +270,32 @@ static std::optional<WorkerType> stringToWorkerType(const String& type)
     return std::nullopt;
 }
 
-void RegistrationDatabase::pushChanges(Vector<ServiceWorkerContextData>&& datas, WTF::CompletionHandler<void()>&& completionHandler)
+void RegistrationDatabase::pushChanges(Vector<ServiceWorkerContextData>&& datas, CompletionHandler<void()>&& completionHandler)
 {
-    postTask(CrossThreadTask([this, datas = crossThreadCopy(datas), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTaskToWorkQueue([this, datas = crossThreadCopy(datas), completionHandler = WTFMove(completionHandler)]() mutable {
         doPushChanges(WTFMove(datas));
 
         if (!completionHandler)
             return;
 
-        postTaskReply(CrossThreadTask([completionHandler = WTFMove(completionHandler)] {
+        callOnMainThread([completionHandler = WTFMove(completionHandler)] {
             completionHandler();
-        }));
-    }));
+        });
+    });
 }
 
-void RegistrationDatabase::clearAll(WTF::CompletionHandler<void()>&& completionHandler)
+void RegistrationDatabase::clearAll(CompletionHandler<void()>&& completionHandler)
 {
-    postTask(CrossThreadTask([this, completionHandler = WTFMove(completionHandler)]() mutable {
+    postTaskToWorkQueue([this, completionHandler = WTFMove(completionHandler)]() mutable {
         m_database = nullptr;
 
         SQLiteFileSystem::deleteDatabaseFile(m_databaseFilePath);
         SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_databaseDirectory);
 
-        postTaskReply(CrossThreadTask([completionHandler = WTFMove(completionHandler)] {
+        callOnMainThread([completionHandler = WTFMove(completionHandler)] {
             completionHandler();
-        }));
-    }));
+        });
+    });
 }
 
 void RegistrationDatabase::doPushChanges(Vector<ServiceWorkerContextData>&& datas)
@@ -383,9 +404,11 @@ String RegistrationDatabase::importRecords()
         auto registrationIdentifier = generateObjectIdentifier<ServiceWorkerRegistrationIdentifierType>();
         auto serviceWorkerData = ServiceWorkerData { workerIdentifier, scriptURL, ServiceWorkerState::Activated, *workerType, registrationIdentifier };
         auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, URL(originURL, scopePath), *updateViaCache, lastUpdateCheckTime, std::nullopt, std::nullopt, WTFMove(serviceWorkerData) };
-        auto contextData = ServiceWorkerContextData { std::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(scriptURL), *workerType, m_store.server().sessionID(), true, WTFMove(scriptResourceMap) };
+        auto contextData = ServiceWorkerContextData { std::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(scriptURL), *workerType, m_session, true, WTFMove(scriptResourceMap) };
 
-        postTaskReply(createCrossThreadTask(*this, &RegistrationDatabase::addRegistrationToStore, WTFMove(contextData)));
+        callOnMainThread([protectedThis = makeRef(*this), contextData = contextData.isolatedCopy()]() mutable {
+            protectedThis->addRegistrationToStore(WTFMove(contextData));
+        });
     }
 
     if (result != SQLITE_DONE)
@@ -396,17 +419,20 @@ String RegistrationDatabase::importRecords()
 
 void RegistrationDatabase::addRegistrationToStore(ServiceWorkerContextData&& context)
 {
-    m_store.addRegistrationFromDatabase(WTFMove(context));
+    if (m_store)
+        m_store->addRegistrationFromDatabase(WTFMove(context));
 }
 
 void RegistrationDatabase::databaseFailedToOpen()
 {
-    m_store.databaseFailedToOpen();
+    if (m_store)
+        m_store->databaseFailedToOpen();
 }
 
 void RegistrationDatabase::databaseOpenedAndRecordsImported()
 {
-    m_store.databaseOpenedAndRecordsImported();
+    if (m_store)
+        m_store->databaseOpenedAndRecordsImported();
 }
 
 } // namespace WebCore

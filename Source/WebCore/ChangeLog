@@ -1,3 +1,45 @@
+2018-06-15  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebCore::SWServer::registrationStoreImportComplete()
+        https://bugs.webkit.org/show_bug.cgi?id=186644
+        <rdar://problem/40982257>
+
+        Reviewed by Brady Eidson.
+
+        Fix lifetime management issues with RegistrationDatabase. RegistrationDatabase
+        was previously subclassing CrossThreadTaskHandler. CrossThreadTaskHandler
+        currently is not safe for objects that can get destroyed (such as
+        RegistrationDatabase). This is because it does not keep the object alive
+        when going to the background thread or back to the main thread. This would
+        cause crashes such as the one in the radar.
+
+        To address the issue, stop subclassing CrossThreadTaskHandler and use a
+        simple WorkQueue instead. RegistrationDatabase is now ThreadSafeRefCounted
+        and we take care of ref'ing it whenever we dispatch a task to the work queue
+        or back to the main thread. Because the RegistrationDatabase can now outlive
+        the RegistrationStore, m_store is now a WeakPtr.
+
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::RegistrationDatabase):
+        (WebCore::RegistrationDatabase::~RegistrationDatabase):
+        (WebCore::RegistrationDatabase::postTaskToWorkQueue):
+        (WebCore::RegistrationDatabase::openSQLiteDatabase):
+        (WebCore::RegistrationDatabase::importRecordsIfNecessary):
+        (WebCore::RegistrationDatabase::pushChanges):
+        (WebCore::RegistrationDatabase::clearAll):
+        (WebCore::RegistrationDatabase::importRecords):
+        (WebCore::RegistrationDatabase::addRegistrationToStore):
+        (WebCore::RegistrationDatabase::databaseFailedToOpen):
+        (WebCore::RegistrationDatabase::databaseOpenedAndRecordsImported):
+        * workers/service/server/RegistrationDatabase.h:
+        (WebCore::RegistrationDatabase::create):
+        * workers/service/server/RegistrationStore.cpp:
+        (WebCore::RegistrationStore::RegistrationStore):
+        (WebCore::RegistrationStore::~RegistrationStore):
+        (WebCore::RegistrationStore::pushChangesToDatabase):
+        (WebCore::RegistrationStore::clearAll):
+        * workers/service/server/RegistrationStore.h:
+
 2018-06-15  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Align compute functions styles.
