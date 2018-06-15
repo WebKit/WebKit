@@ -31,6 +31,7 @@
 #include "DisplayBox.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
+#include "LayoutTreeBuilder.h"
 #include "RenderBox.h"
 #include "RenderView.h"
 #include <wtf/text/TextStream.h>
@@ -38,7 +39,7 @@
 namespace WebCore {
 namespace Layout {
 
-static void outputMismatchingBoxInformationIfNeeded(TextStream& stream, const LayoutContext& context, const RenderBox& renderer, const Box& layoutBox)
+static bool outputMismatchingBoxInformationIfNeeded(TextStream& stream, const LayoutContext& context, const RenderBox& renderer, const Box& layoutBox)
 {
     bool firstMismatchingRect = true;
     auto outputRect = [&] (const String& prefix, const LayoutRect& rendererRect, const LayoutRect& layoutRect) {
@@ -56,30 +57,40 @@ static void outputMismatchingBoxInformationIfNeeded(TextStream& stream, const La
     auto* displayBox = context.displayBoxForLayoutBox(layoutBox);
     ASSERT(displayBox);
 
-    if (renderer.frameRect() != displayBox->rect())
+    if (renderer.frameRect() != displayBox->rect())  {
         outputRect("frameBox", renderer.frameRect(), displayBox->rect());
+        return true;
+    }
 
-    if (renderer.marginBoxRect() != displayBox->marginBox())
+    if (renderer.marginBoxRect() != displayBox->marginBox()) {
         outputRect("marginBox", renderer.marginBoxRect(), displayBox->marginBox());
+        return true;
+    }
 
-    if (renderer.borderBoxRect() != displayBox->borderBox())
+    if (renderer.borderBoxRect() != displayBox->borderBox()) {
         outputRect("borderBox", renderer.borderBoxRect(), displayBox->borderBox());
+        return true;
+    }
 
-    if (renderer.paddingBoxRect() != displayBox->paddingBox())
+    if (renderer.paddingBoxRect() != displayBox->paddingBox()) {
         outputRect("paddingBox", renderer.paddingBoxRect(), displayBox->paddingBox());
+        return true;
+    }
 
-    if (renderer.contentBoxRect() != displayBox->contentBox())
+    if (renderer.contentBoxRect() != displayBox->contentBox()) {
         outputRect("contentBox", renderer.contentBoxRect(), displayBox->contentBox());
+        return true;
+    }
 
-    stream.nextLine();
+    return false;
 }
 
-static void verifyAndOutputSubtree(TextStream& stream, const LayoutContext& context, const RenderBox& renderer, const Box& layoutBox)
+static bool verifyAndOutputSubtree(TextStream& stream, const LayoutContext& context, const RenderBox& renderer, const Box& layoutBox)
 {
-    outputMismatchingBoxInformationIfNeeded(stream, context, renderer, layoutBox);
+    auto mismtachingGeometry = outputMismatchingBoxInformationIfNeeded(stream, context, renderer, layoutBox);
 
     if (!is<Container>(layoutBox))
-        return;
+        return mismtachingGeometry;
 
     auto& container = downcast<Container>(layoutBox);
     auto* childBox = container.firstChild();
@@ -91,19 +102,25 @@ static void verifyAndOutputSubtree(TextStream& stream, const LayoutContext& cont
             continue;
         }
 
-        verifyAndOutputSubtree(stream, context, downcast<RenderBox>(*childRenderer), *childBox);
+        auto mismatchingSubtreeGeometry = verifyAndOutputSubtree(stream, context, downcast<RenderBox>(*childRenderer), *childBox);
+        mismtachingGeometry |= mismatchingSubtreeGeometry;
+
         childBox = childBox->nextSibling();
         childRenderer = childRenderer->nextSibling();
     }
+    return mismtachingGeometry;
 }
 
 void LayoutContext::verifyAndOutputMismatchingLayoutTree(const RenderView& renderView) const
 {
     TextStream stream;
+    auto mismatchingGeometry = verifyAndOutputSubtree(stream, *this, renderView, *m_root.get());
 #if ENABLE(TREE_DEBUGGING)
-    showRenderTree(&renderView);
+    if (mismatchingGeometry) {
+        showRenderTree(&renderView);
+        TreeBuilder::showLayoutTree(*this, *m_root.get());
+    }
 #endif
-    verifyAndOutputSubtree(stream, *this, renderView, *m_root.get());
     WTFLogAlways("%s", stream.release().utf8().data());
 }
 

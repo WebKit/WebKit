@@ -33,7 +33,9 @@
 #include "LayoutContainer.h"
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
+#include "Logging.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Layout {
@@ -96,17 +98,22 @@ void FormattingContext::placeInFlowPositionedChildren(LayoutContext& layoutConte
     if (container.establishesFormattingContext() && &container != &root())
         return;
 
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: move in-flow positioned children -> context: " << &layoutContext << " parent: " << &container);
     for (auto& layoutBox : childrenOfType<Box>(container)) {
         if (!layoutBox.isInFlowPositioned())
             continue;
         computeInFlowPositionedPosition(layoutContext, layoutBox, *layoutContext.displayBoxForLayoutBox(layoutBox));
     }
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "End: move in-flow positioned children -> context: " << &layoutContext << " parent: " << &container);
 }
 
 void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext) const
 {
     if (!is<Container>(m_root.get()))
         return;
+
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: layout out-of-flow descendants -> context: " << &layoutContext << " root: " << &root());
+
     for (auto& outOfFlowBox : downcast<Container>(*m_root).outOfFlowDescendants()) {
         auto& layoutBox = *outOfFlowBox;
         auto& displayBox = layoutContext.createDisplayBox(layoutBox);
@@ -124,6 +131,7 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext)
 
         computeOutOfFlowVerticalGeometry(layoutContext, layoutBox, displayBox);
     }
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow descendants -> context: " << &layoutContext << " root: " << &root());
 }
 
 #ifndef NDEBUG

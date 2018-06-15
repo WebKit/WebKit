@@ -56,11 +56,14 @@ static LayoutUnit contentHeightForFormattingContextRoot(LayoutContext& layoutCon
     auto top = firstDisplayBox->marginBox().top();
     auto bottom = lastDisplayBox->marginBox().bottom();
     // FIXME: add floating support.
-    return bottom - top;
+    auto computedHeight = bottom - top;
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height] -> content height for formatting context root -> height(" << computedHeight << "px) layoutBox("<< &layoutBox << ")");
+    return computedHeight;
 }
 
-static LayoutUnit shrinkToFitWidth(LayoutContext&, const Box&)
+static LayoutUnit shrinkToFitWidth(LayoutContext&, const Box& layoutBox)
 {
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width] -> shrink to fit -> unsupported -> width(" << LayoutUnit { } << "px) layoutBox: " << &layoutBox << ")");
     return { };
 }
 
@@ -183,6 +186,7 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
     ASSERT(marginTop);
     ASSERT(marginBottom);
 
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Height][Margin] -> out-of-flow non-replaced -> top(" << *top << "px) bottom("  << *bottom << "px) height(" << *height << "px) margin(" << *marginTop << "px, "  << *marginBottom << "px) layoutBox(" << &layoutBox << ")");
     return { *top, *bottom, { *height, { *marginTop, *marginBottom} } };
 }
 
@@ -324,6 +328,7 @@ FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::out
     ASSERT(marginLeft);
     ASSERT(marginRight);
 
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Width][Margin] -> out-of-flow non-replaced -> left(" << *left << "px) right("  << *right << "px) width(" << *width << "px) margin(" << *marginLeft << "px, "  << *marginRight << "px) layoutBox(" << &layoutBox << ")");
     return { *left, *right, { *width, { *marginLeft, *marginRight } } };
 }
 
@@ -391,6 +396,7 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
     if (boxHeight > containingBlockHeight)
         bottom = containingBlockHeight - (*top + *marginTop + borderTop + paddingTop + height + paddingBottom + borderBottom + *marginBottom); 
 
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Height][Margin] -> out-of-flow replaced -> top(" << *top << "px) bottom("  << *bottom << "px) height(" << height << "px) margin(" << *marginTop << "px, "  << *marginBottom << "px) layoutBox(" << &layoutBox << ")");
     return { *top, *bottom, { height, { *marginTop, *marginBottom } } };
 }
 
@@ -484,6 +490,7 @@ FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::out
     ASSERT(marginLeft);
     ASSERT(marginRight);
 
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Width][Margin] -> out-of-flow replaced -> left(" << *left << "px) right("  << *right << "px) width(" << width << "px) margin(" << *marginLeft << "px, "  << *marginRight << "px) layoutBox(" << &layoutBox << ")");
     return { *left, *right, { width, { *marginLeft, *marginRight } } };
 }
 
@@ -514,6 +521,8 @@ FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floati
     // #2
     if (!height)
         height = contentHeightForFormattingContextRoot(layoutContext, layoutBox);
+
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> floating non-replaced -> height(" << *height << "px) margin(" << *marginTop << "px, " << *marginBottom << "px) -> layoutBox(" << &layoutBox << ")");
     return FormattingContext::Geometry::HeightAndMargin { *height, { *marginTop, *marginBottom } };
 }
 
@@ -532,6 +541,7 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatin
     auto computedNonCollapsedHorizontalMarginValues = computedNonCollapsedHorizontalMarginValue(layoutContext, layoutBox);
     // #2
     auto computedWidthValue = width.isAuto() ? shrinkToFitWidth(layoutContext, layoutBox) : LayoutUnit(width.value());
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> floating non-replaced -> width(" << computedWidthValue << "px) margin(" << computedNonCollapsedHorizontalMarginValues.left << "px, " << computedNonCollapsedHorizontalMarginValues.right << "px) -> layoutBox(" << &layoutBox << ")");
     return FormattingContext::Geometry::WidthAndMargin { computedWidthValue, computedNonCollapsedHorizontalMarginValues };
 }
 
@@ -540,6 +550,7 @@ FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floati
     ASSERT(layoutBox.isFloatingPositioned() && layoutBox.replaced());
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block'
     // replaced elements in normal flow and floating replaced elements
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> floating replaced -> redirected to inline replaced");
     return inlineReplacedHeightAndMargin(layoutContext, layoutBox);
 }
 
@@ -551,6 +562,7 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatin
     // 1. If 'margin-left' or 'margin-right' are computed as 'auto', their used value is '0'.
     // 2. The used value of 'width' is determined as for inline replaced elements.
     auto computedNonCollapsedHorizontalMarginValues = computedNonCollapsedHorizontalMarginValue(layoutContext, layoutBox);
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> floating replaced -> redirected to inline replaced");
     return inlineReplacedWidthAndMargin(layoutContext, layoutBox, computedNonCollapsedHorizontalMarginValues.left, computedNonCollapsedHorizontalMarginValues.right);
 }
 
@@ -629,6 +641,7 @@ FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::inline
     } else
         computedHeightValue = height.value();
 
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow replaced -> height(" << computedHeightValue << "px) margin(" << computedNonCollapsedVerticalMarginValues.top << "px, " << computedNonCollapsedVerticalMarginValues.bottom << "px) -> layoutBox(" << &layoutBox << ")");
     return { computedHeightValue, computedNonCollapsedVerticalMarginValues };
 }
 
@@ -699,12 +712,14 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::inlineR
         computedWidthValue = 300;
     }
 
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> inflow replaced -> width(" << computedWidthValue << "px) margin(" << computedMarginLeftValue << "px, " << computedMarginRightValue << "px) -> layoutBox(" << &layoutBox << ")");
     return { computedWidthValue, { computedMarginLeftValue, computedMarginRightValue } };
 }
 
 Display::Box::Edges FormattingContext::Geometry::computedBorder(LayoutContext&, const Box& layoutBox)
 {
     auto& style = layoutBox.style();
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Border] -> layoutBox: " << &layoutBox);
     return {
         { style.borderLeft().boxModelWidth(), style.borderRight().boxModelWidth() },
         { style.borderTop().boxModelWidth(), style.borderBottom().boxModelWidth() }
@@ -718,6 +733,7 @@ std::optional<Display::Box::Edges> FormattingContext::Geometry::computedPadding(
 
     auto& style = layoutBox.style();
     auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Padding] -> layoutBox: " << &layoutBox);
     return Display::Box::Edges {
         { valueForLength(style.paddingLeft(), containingBlockWidth), valueForLength(style.paddingRight(), containingBlockWidth) },
         { valueForLength(style.paddingTop(), containingBlockWidth), valueForLength(style.paddingBottom(), containingBlockWidth) }
@@ -731,6 +747,7 @@ Display::Box::HorizontalEdges FormattingContext::Geometry::computedNonCollapsedH
     auto marginRight = style.marginRight();
 
     auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Margin] -> non collapsed horizontal -> layoutBox: " << &layoutBox);
     return {
         marginLeft.isAuto() ? LayoutUnit { 0 } : valueForLength(marginLeft, containingBlockWidth),
         marginRight.isAuto() ? LayoutUnit { 0 } : valueForLength(marginRight, containingBlockWidth)
@@ -744,6 +761,7 @@ Display::Box::VerticalEdges FormattingContext::Geometry::computedNonCollapsedVer
     auto marginBottom = style.marginBottom();
 
     auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Margin] -> non collapsed vertical -> layoutBox: " << &layoutBox);
     return {
         marginTop.isAuto() ? LayoutUnit { 0 } : valueForLength(marginTop, containingBlockWidth),
         marginBottom.isAuto() ? LayoutUnit { 0 } : valueForLength(marginBottom, containingBlockWidth)

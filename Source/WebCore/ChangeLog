@@ -1,3 +1,52 @@
+2018-06-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add FormattingContextLayout logging channel
+        https://bugs.webkit.org/show_bug.cgi?id=186637
+
+        Reviewed by Antti Koivisto.
+
+        Add some basic layout logging (-WebCoreLogging "FormattingContextLayout").
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::placeInFlowPositionedChildren const):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::contentHeightForFormattingContextRoot):
+        (WebCore::Layout::shrinkToFitWidth):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::computedBorder):
+        (WebCore::Layout::FormattingContext::Geometry::computedPadding):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedHorizontalMarginValue):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue):
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingBoxInformationIfNeeded):
+        (WebCore::Layout::verifyAndOutputSubtree):
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree const):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticPosition):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowPositionedPosition):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputLayoutBox):
+        (WebCore::Layout::outputLayoutTree):
+        (WebCore::Layout::TreeBuilder::showLayoutTree):
+        (WebCore::Layout::printLayoutTreeForLiveDocuments):
+        * layout/layouttree/LayoutTreeBuilder.h:
+        * platform/Logging.h:
+
 2018-06-15  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] CSS Animations should take precedence over CSS Transitions

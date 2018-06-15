@@ -29,6 +29,8 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingContext.h"
+#include "Logging.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Layout {
@@ -112,14 +114,17 @@ FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::i
     auto marginTop = MarginCollapse::marginTop(layoutContext, layoutBox);
     auto marginBottom =  MarginCollapse::marginBottom(layoutContext, layoutBox);
 
-    if (!isStretchedToViewport(layoutContext, layoutBox))
+    if (!isStretchedToViewport(layoutContext, layoutBox)) {
+        LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> height(" << height << "px) margin(" << marginTop << "px, " << marginBottom << "px) -> layoutBox(" << &layoutBox << ")");
         return { height, { marginTop, marginBottom } };
+    }
 
     auto initialContainingBlockHeight = layoutContext.displayBoxForLayoutBox(initialContainingBlock(layoutBox))->contentBox().height();
     // Stretch but never overstretch with the margins.
     if (height + marginTop + marginBottom < initialContainingBlockHeight)
         height = initialContainingBlockHeight - marginTop - marginBottom;
 
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> streched to viewport -> height(" << height << "px) margin(" << marginTop << "px, " << marginBottom << "px) -> layoutBox(" << &layoutBox << ")");
     return { height, { marginTop, marginBottom } };
 }
 
@@ -223,8 +228,10 @@ FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::in
     };
 
     auto computedWidthAndMarginValue = compute();
-    if (!isStretchedToViewport(layoutContext, layoutBox))
+    if (!isStretchedToViewport(layoutContext, layoutBox)) {
+        LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> inflow non-replaced -> width(" << computedWidthAndMarginValue.width << "px) margin(" << computedWidthAndMarginValue.margin.left << "px, " << computedWidthAndMarginValue.margin.right << "px) -> layoutBox(" << &layoutBox << ")");
         return computedWidthAndMarginValue;
+    }
 
     auto initialContainingBlockWidth = layoutContext.displayBoxForLayoutBox(initialContainingBlock(layoutBox))->contentBox().width();
     auto horizontalMargins = computedWidthAndMarginValue.margin.left + computedWidthAndMarginValue.margin.right;
@@ -232,6 +239,7 @@ FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::in
     if (computedWidthAndMarginValue.width + horizontalMargins < initialContainingBlockWidth)
         computedWidthAndMarginValue.width = initialContainingBlockWidth - horizontalMargins;
 
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> inflow non-replaced -> streched to viewport-> width(" << computedWidthAndMarginValue.width << "px) margin(" << computedWidthAndMarginValue.margin.left << "px, " << computedWidthAndMarginValue.margin.right << "px) -> layoutBox(" << &layoutBox << ")");
     return { computedWidthAndMarginValue.width, computedWidthAndMarginValue.margin };
 }
 
@@ -249,6 +257,7 @@ FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::in
     // #2
     auto inlineReplacedWidthAndBlockNonReplacedMargin = inFlowNonReplacedWidthAndMargin(layoutContext, layoutBox, inlineReplacedWidthAndMargin.width);
     ASSERT(inlineReplacedWidthAndMargin.width == inlineReplacedWidthAndBlockNonReplacedMargin.width);
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> inflow replaced -> width(" << inlineReplacedWidthAndBlockNonReplacedMargin.width << "px) margin(" << inlineReplacedWidthAndBlockNonReplacedMargin.margin.left << "px, " << inlineReplacedWidthAndBlockNonReplacedMargin.margin.left << "px) -> layoutBox(" << &layoutBox << ")");
     return inlineReplacedWidthAndBlockNonReplacedMargin;
 }
 
@@ -267,6 +276,7 @@ LayoutPoint BlockFormattingContext::Geometry::staticPosition(LayoutContext& layo
         auto& previousInFlowDisplayBox = *layoutContext.displayBoxForLayoutBox(*previousInFlowSibling);
         top = previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.marginBottom();
     }
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position] -> static -> top(" << top << "px) left(" << left << "px) layoutBox(" << &layoutBox << ")");
     return { top, left };
 }
 
@@ -329,7 +339,10 @@ LayoutPoint BlockFormattingContext::Geometry::inFlowPositionedPosition(LayoutCon
         leftDelta = left.value();
     }
 
-    return { displayBox.left() + leftDelta, displayBox.top() + topDelta };
+    auto computedLeft = displayBox.left() + leftDelta;
+    auto computedTop = displayBox.top() + topDelta;
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position] -> positioned inflow -> top(" << top << "px) left(" << left << "px) layoutBox(" << &layoutBox << ")");
+    return { computedLeft, computedTop };
 }
 
 FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
