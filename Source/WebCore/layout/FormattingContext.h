@@ -119,6 +119,8 @@ protected:
         static Display::Box::HorizontalEdges computedNonCollapsedHorizontalMarginValue(const LayoutContext&, const Box&);
         static Display::Box::VerticalEdges computedNonCollapsedVerticalMarginValue(const LayoutContext&, const Box&);
 
+        static std::optional<LayoutUnit> computedValueIfNotAuto(const Length& geometryProperty, LayoutUnit containingBlockWidth);
+
     private:
         static VerticalGeometry outOfFlowReplacedVerticalGeometry(LayoutContext&, const Box&);
         static HorizontalGeometry outOfFlowReplacedHorizontalGeometry(LayoutContext&, const Box&);
