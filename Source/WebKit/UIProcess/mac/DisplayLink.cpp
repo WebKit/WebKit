@@ -83,20 +83,6 @@ bool DisplayLink::hasObservers() const
     return !m_observers.isEmpty();
 }
 
-void DisplayLink::pause()
-{
-    if (!CVDisplayLinkIsRunning(m_displayLink))
-        return;
-    CVDisplayLinkStop(m_displayLink);
-}
-
-void DisplayLink::resume()
-{
-    if (CVDisplayLinkIsRunning(m_displayLink))
-        return;
-    CVDisplayLinkStart(m_displayLink);
-}
-
 CVReturn DisplayLink::displayLinkCallback(CVDisplayLinkRef displayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data)
 {
     DisplayLink* displayLink = static_cast<DisplayLink*>(data);

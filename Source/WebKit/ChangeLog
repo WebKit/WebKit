@@ -1,3 +1,17 @@
+2018-06-15  Per Arne Vollan  <pvollan@apple.com>
+
+        Rollout r231818, as it introduced regression on tickets.com.
+        https://bugs.webkit.org/show_bug.cgi?id=186675
+
+        Unreviewed, rolling out.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::pause): Deleted.
+        (WebKit::DisplayLink::resume): Deleted.
+        * UIProcess/mac/DisplayLink.h:
+
 2018-06-15  Thibault Saunier  <tsaunier@igalia.com>
 
         [GTK][WPE]: Avoid using uninitialized launchOptions in getLaunchOptions
