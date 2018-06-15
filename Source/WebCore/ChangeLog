@@ -1,3 +1,17 @@
+2018-06-15  Timothy Hatcher  <timothy@apple.com>
+
+        REGRESSION (r232799): Form controls are blank in dark mode.
+
+        https://bugs.webkit.org/show_bug.cgi?id=186677
+        rdar://problem/41162899
+
+        Reviewed by Wenson Hsieh.
+
+        * rendering/RenderThemeMac.mm:
+        (-[WebCoreTextFieldCell _adjustedCoreUIDrawOptionsForDrawingBordersOnly:]):
+        Dark mode controls don't have borders, just a semi-transparent background of shadows.
+        In the dark mode case we can't disable borders, or we will not paint anything for the control.
+
 2018-06-15  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Fix static position left/top
