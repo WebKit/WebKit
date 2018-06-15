@@ -156,7 +156,7 @@ class BrowserPerfDashRunner(object):
 
         iteration_count = 0
         for plan in sorted(planlist):
-            iteration_count = +1
+            iteration_count += 1
             if plan in skipped:
                 _log.info('Skipping benchmark plan: {plan_name} because is listed on the Skipped file [benchmark {iteration} of {total}]'.format(plan_name=plan, iteration=iteration_count, total=len(planlist)))
                 continue

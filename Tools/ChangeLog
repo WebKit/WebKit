@@ -1,5 +1,14 @@
 2018-06-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK] Fix adding error in browserperfdash_runner.
+
+        Unreviewed follow-up fix after r232820.
+
+        * Scripts/webkitpy/browserperfdash/browserperfdash_runner.py:
+        (BrowserPerfDashRunner.run):
+
+2018-06-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [GTK][WKE] Disable memory pressure handling when running layout tests (WTR)
         https://bugs.webkit.org/show_bug.cgi?id=186663
 
