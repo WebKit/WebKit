@@ -817,6 +817,15 @@
       ],
       "status" : "committer"
    },
+   "Basuke Suzuki" : {
+      "emails" : [
+         "basuke.suzuki@sony.com"
+      ],
+      "nicks" : [
+         "basuke"
+      ],
+      "status" : "committer"
+   },
    "Bear Travis" : {
       "emails" : [
          "betravis@adobe.com"

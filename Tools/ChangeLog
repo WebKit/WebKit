@@ -1,3 +1,9 @@
+2018-05-18  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Unreviewed, add myself as a WebKit committer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-06-15  Chris Dumez  <cdumez@apple.com>
 
         Add API test coverage for SW RegistrationDatabase destruction and fix issues found by the test
