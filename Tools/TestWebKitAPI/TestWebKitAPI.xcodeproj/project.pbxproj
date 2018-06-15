@@ -179,6 +179,9 @@
 		5120C83E1E67678F0025B250 /* WebsiteDataStoreCustomPaths.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5120C83B1E674E350025B250 /* WebsiteDataStoreCustomPaths.html */; };
 		51393E221523952D005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51393E1D1523944A005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp */; };
 		5142B2731517C8C800C32B19 /* ContextMenuCanCopyURL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5142B2721517C89100C32B19 /* ContextMenuCanCopyURL.html */; };
+		51460E1220D421F2005345F2 /* SimpleServiceWorkerRegistrations-2.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51460E0F20D4216E005345F2 /* SimpleServiceWorkerRegistrations-2.sqlite3 */; };
+		51460E1320D421F2005345F2 /* SimpleServiceWorkerRegistrations-2.sqlite3-shm in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51460E1020D4216E005345F2 /* SimpleServiceWorkerRegistrations-2.sqlite3-shm */; };
+		51460E1420D421F2005345F2 /* SimpleServiceWorkerRegistrations-2.sqlite3-wal in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51460E1120D4216E005345F2 /* SimpleServiceWorkerRegistrations-2.sqlite3-wal */; };
 		514958BE1F7427AC00E87BAD /* WKWebViewAutofillTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514958BD1F7427AC00E87BAD /* WKWebViewAutofillTests.mm */; };
 		515BE16F1D428BB100DD7C68 /* StoreBlobToBeDeleted.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 515BE16E1D4288FF00DD7C68 /* StoreBlobToBeDeleted.html */; };
 		515BE1711D428E4B00DD7C68 /* StoreBlobThenDelete.mm in Sources */ = {isa = PBXBuildFile; fileRef = 515BE1701D428BD100DD7C68 /* StoreBlobThenDelete.mm */; };
@@ -884,6 +887,9 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				51460E1220D421F2005345F2 /* SimpleServiceWorkerRegistrations-2.sqlite3 in Copy Resources */,
+				51460E1320D421F2005345F2 /* SimpleServiceWorkerRegistrations-2.sqlite3-shm in Copy Resources */,
+				51460E1420D421F2005345F2 /* SimpleServiceWorkerRegistrations-2.sqlite3-wal in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */,
 				1C2B81871C8925A000A5529F /* Ahem.ttf in Copy Resources */,
@@ -1391,6 +1397,9 @@
 		51393E1E1523944A005F39C5 /* DOMWindowExtensionBasic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionBasic.cpp; sourceTree = "<group>"; };
 		5142B2701517C88B00C32B19 /* ContextMenuCanCopyURL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuCanCopyURL.mm; sourceTree = "<group>"; };
 		5142B2721517C89100C32B19 /* ContextMenuCanCopyURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ContextMenuCanCopyURL.html; sourceTree = "<group>"; };
+		51460E0F20D4216E005345F2 /* SimpleServiceWorkerRegistrations-2.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SimpleServiceWorkerRegistrations-2.sqlite3"; sourceTree = "<group>"; };
+		51460E1020D4216E005345F2 /* SimpleServiceWorkerRegistrations-2.sqlite3-shm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SimpleServiceWorkerRegistrations-2.sqlite3-shm"; sourceTree = "<group>"; };
+		51460E1120D4216E005345F2 /* SimpleServiceWorkerRegistrations-2.sqlite3-wal */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SimpleServiceWorkerRegistrations-2.sqlite3-wal"; sourceTree = "<group>"; };
 		514958BD1F7427AC00E87BAD /* WKWebViewAutofillTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewAutofillTests.mm; sourceTree = "<group>"; };
 		515BE16E1D4288FF00DD7C68 /* StoreBlobToBeDeleted.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = StoreBlobToBeDeleted.html; sourceTree = "<group>"; };
 		515BE1701D428BD100DD7C68 /* StoreBlobThenDelete.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StoreBlobThenDelete.mm; sourceTree = "<group>"; };
@@ -2469,6 +2478,9 @@
 		A16F66B81C40E9E100BD4D24 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				51460E0F20D4216E005345F2 /* SimpleServiceWorkerRegistrations-2.sqlite3 */,
+				51460E1020D4216E005345F2 /* SimpleServiceWorkerRegistrations-2.sqlite3-shm */,
+				51460E1120D4216E005345F2 /* SimpleServiceWorkerRegistrations-2.sqlite3-wal */,
 				C25CCA0C1E5140E50026CB8A /* AllAhem.svg */,
 				F4A9202E1FEE34C800F59590 /* apple-data-url.html */,
 				F47D30EB1ED28619000482E1 /* apple.gif */,

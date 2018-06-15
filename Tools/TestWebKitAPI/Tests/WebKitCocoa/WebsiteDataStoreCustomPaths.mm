@@ -225,6 +225,66 @@ TEST(WebKit, WebsiteDataStoreCustomPaths)
     EXPECT_FALSE([WKWebsiteDataStore _defaultDataStoreExists]);
 }
 
+TEST(WebKit, CustomDataStorePathsVersusCompletionHandlers)
+{
+    // Copy the baked database files to the database directory
+    NSURL *url1 = [[NSBundle mainBundle] URLForResource:@"SimpleServiceWorkerRegistrations-2" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url2 = [[NSBundle mainBundle] URLForResource:@"SimpleServiceWorkerRegistrations-2" withExtension:@"sqlite3-shm" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url3 = [[NSBundle mainBundle] URLForResource:@"SimpleServiceWorkerRegistrations-2" withExtension:@"sqlite3-wal" subdirectory:@"TestWebKitAPI.resources"];
+
+    NSURL *swPath = [NSURL fileURLWithPath:[@"~/Library/Caches/TestWebKitAPI/WebKit/ServiceWorkers/" stringByExpandingTildeInPath]];
+    [[NSFileManager defaultManager] removeItemAtURL:swPath error:nil];
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:swPath.path]);
+
+    [[NSFileManager defaultManager] createDirectoryAtURL:swPath withIntermediateDirectories:YES attributes:nil error:nil];
+    [[NSFileManager defaultManager] copyItemAtURL:url1 toURL:[swPath URLByAppendingPathComponent:@"ServiceWorkerRegistrations-2.sqlite3"] error:nil];
+    [[NSFileManager defaultManager] copyItemAtURL:url2 toURL:[swPath URLByAppendingPathComponent:@"ServiceWorkerRegistrations-2.sqlite3-shm"] error:nil];
+    [[NSFileManager defaultManager] copyItemAtURL:url3 toURL:[swPath URLByAppendingPathComponent:@"ServiceWorkerRegistrations-2.sqlite3-wal"] error:nil];
+
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get()._serviceWorkerRegistrationDirectory = swPath;
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+
+    // Fetch SW records
+    auto websiteDataTypes = adoptNS([[NSSet alloc] initWithArray:@[WKWebsiteDataTypeServiceWorkerRegistrations]]);
+    static bool readyToContinue;
+    [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        EXPECT_EQ((int)dataRecords.count, 1);
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+    readyToContinue = false;
+
+    // Fetch records again, this time releasing our reference to the data store while the request is in flight.
+    // Without a bug fix, this would crash the StorageProcess and the UI process wouldn't get the info back.
+    [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        EXPECT_EQ((int)dataRecords.count, 1);
+        readyToContinue = true;
+    }];
+    dataStore = nil;
+    TestWebKitAPI::Util::run(&readyToContinue);
+    readyToContinue = false;
+
+    // Delete all SW records, releasing our reference to the data store while the request is in flight.
+    // Same as above - We used to crash the storage process and the records weren't actually deleted.
+    dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    [dataStore removeDataOfTypes:websiteDataTypes.get() modifiedSince:[NSDate distantPast] completionHandler:^() {
+        readyToContinue = true;
+    }];
+    dataStore = nil;
+    TestWebKitAPI::Util::run(&readyToContinue);
+    readyToContinue = false;
+
+    // The StorageProcess should not have crashed, the records should have been deleted, and the callback should have been made.
+    // Now refetch the records to verify they are gone.
+    dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        EXPECT_EQ((int)dataRecords.count, 0);
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+}
+
 TEST(WebKit, WebsiteDataStoreEphemeral)
 {
     RetainPtr<WebsiteDataStoreCustomPathsMessageHandler> handler = adoptNS([[WebsiteDataStoreCustomPathsMessageHandler alloc] init]);

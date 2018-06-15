@@ -1,3 +1,14 @@
+2018-06-15  Brady Eidson  <beidson@apple.com>
+
+        Crash in both StorageProcess and UIProcess when using custom WKWebsiteDataStores for data management.
+        <rdar://problem/41019893> and https://bugs.webkit.org/show_bug.cgi?id=186682
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2018-06-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Fix adding error in browserperfdash_runner.

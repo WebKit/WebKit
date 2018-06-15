@@ -135,6 +135,8 @@ void StorageProcessProxy::getStorageProcessConnection(WebProcessProxy& webProces
 
 void StorageProcessProxy::didClose(IPC::Connection&)
 {
+    auto protectedProcessPool = makeRef(m_processPool);
+
     // The storage process must have crashed or exited, so send any pending sync replies we might have.
     while (!m_pendingConnectionReplies.isEmpty()) {
         auto reply = m_pendingConnectionReplies.takeFirst();
@@ -148,17 +150,14 @@ void StorageProcessProxy::didClose(IPC::Connection&)
 #endif
     }
 
-    for (const auto& callback : m_pendingFetchWebsiteDataCallbacks.values())
-        callback(WebsiteData());
-    m_pendingFetchWebsiteDataCallbacks.clear();
+    while (!m_pendingFetchWebsiteDataCallbacks.isEmpty())
+        m_pendingFetchWebsiteDataCallbacks.take(m_pendingFetchWebsiteDataCallbacks.begin()->key)(WebsiteData { });
 
-    for (const auto& callback : m_pendingDeleteWebsiteDataCallbacks.values())
-        callback();
-    m_pendingDeleteWebsiteDataCallbacks.clear();
+    while (!m_pendingDeleteWebsiteDataCallbacks.isEmpty())
+        m_pendingDeleteWebsiteDataCallbacks.take(m_pendingDeleteWebsiteDataCallbacks.begin()->key)();
 
-    for (const auto& callback : m_pendingDeleteWebsiteDataForOriginsCallbacks.values())
-        callback();
-    m_pendingDeleteWebsiteDataForOriginsCallbacks.clear();
+    while (!m_pendingDeleteWebsiteDataForOriginsCallbacks.isEmpty())
+        m_pendingDeleteWebsiteDataForOriginsCallbacks.take(m_pendingDeleteWebsiteDataForOriginsCallbacks.begin()->key)();
 
     // Tell ProcessPool to forget about this storage process. This may cause us to be deleted.
     m_processPool.storageProcessCrashed(this);
