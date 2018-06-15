@@ -1,5 +1,18 @@
 2018-06-15  Youenn Fablet  <youenn@apple.com>
 
+        Layout Test platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=180171
+
+        Unreviewed.
+
+        As per dashboard, test is no longer flaky.
+        There might be a need to update it when bots have VCP support enabled.
+
+        * platform/mac/TestExpectations:
+        Removed flaky expectation.
+
+2018-06-15  Youenn Fablet  <youenn@apple.com>
+
         imported/w3c/web-platform-tests/service-workers/service-worker/fetch-frame-resource.https.html is flaky due to the order of some console log messages
         https://bugs.webkit.org/show_bug.cgi?id=186661
 
