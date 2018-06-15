@@ -165,29 +165,30 @@ HRESULT displayAuthDialog(HWND hwnd, std::wstring& username, std::wstring& passw
     return result > 0 ? S_OK : E_FAIL;
 }
 
-void parseCommandLine(bool& usesLayeredWebView, bool& useFullDesktop, bool& pageLoadTesting, _bstr_t& requestedURL)
+CommandLineOptions parseCommandLine()
 {
-    usesLayeredWebView = false;
-    useFullDesktop = false;
-    pageLoadTesting = false;
+    CommandLineOptions options;
 
     int argc = 0;
     WCHAR** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
     for (int i = 1; i < argc; ++i) {
         if (!wcsicmp(argv[i], L"--transparent"))
-            usesLayeredWebView = true;
+            options.usesLayeredWebView = true;
         else if (!wcsicmp(argv[i], L"--desktop"))
-            useFullDesktop = true;
+            options.useFullDesktop = true;
         else if (!wcsicmp(argv[i], L"--performance"))
-            pageLoadTesting = true;
+            options.pageLoadTesting = true;
         else if (!wcsicmp(argv[i], L"--highDPI"))
             continue; // ignore
-        else if (!requestedURL)
-            requestedURL = argv[i];
+        else if (!wcsicmp(argv[i], L"--wk1") || !wcsicmp(argv[i], L"--legacy"))
+            options.windowType = MainWindow::BrowserWindowType::WebKitLegacy;
+#if ENABLE(WEBKIT)
+        else if (!wcsicmp(argv[i], L"--wk2") || !wcsicmp(argv[i], L"--webkit"))
+            options.windowType = MainWindow::BrowserWindowType::WebKit;
+#endif
+        else if (!options.requestedURL)
+            options.requestedURL = argv[i];
     }
-}
 
-extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpstrCmdLine, int nCmdShow)
-{
-    return wWinMain(hInstance, hPrevInstance, lpstrCmdLine, nCmdShow);
+    return options;
 }

@@ -29,9 +29,26 @@
 #include "MainWindow.h"
 #include "WebKitLegacyBrowserWindow.h"
 
+struct CommandLineOptions {
+    bool usesLayeredWebView { };
+    bool useFullDesktop { };
+    bool pageLoadTesting { };
+    MainWindow::BrowserWindowType windowType;
+    _bstr_t requestedURL;
+
+    CommandLineOptions()
+#if ENABLE(WEBKIT)
+        : windowType(MainWindow::BrowserWindowType::WebKit)
+#else
+        : windowType(MainWindow::BrowserWindowType::WebKitLegacy)
+#endif
+    {
+    }
+};
+
 void computeFullDesktopFrame();
 bool getAppDataFolder(_bstr_t& directory);
-void parseCommandLine(bool& usesLayeredWebView, bool& useFullDesktop, bool& pageLoadTesting, _bstr_t& requestedURL);
+CommandLineOptions parseCommandLine();
 void createCrashReport(EXCEPTION_POINTERS*);
 HRESULT displayAuthDialog(HWND, std::wstring& username, std::wstring& password);
 

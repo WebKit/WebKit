@@ -1,3 +1,21 @@
+2018-06-14  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Win][MiniBrowser] Change to use WebKit by default if it's available
+        https://bugs.webkit.org/show_bug.cgi?id=186633
+
+        When MiniBrowser is built with WebKit, use it by default. Also add command
+        line switch for WebKitLegacy.
+
+        Reviewed by Youenn Fablet.
+
+        * MiniBrowser/win/Common.cpp:
+        (parseCommandLine):
+        (dllLauncherEntryPoint): Deleted.
+        * MiniBrowser/win/Common.h:
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain):
+        (dllLauncherEntryPoint):
+
 2018-06-14  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r232823.

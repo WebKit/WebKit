@@ -50,14 +50,9 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     InitCtrlEx.dwICC  = 0x00004000; // ICC_STANDARD_CLASSES;
     InitCommonControlsEx(&InitCtrlEx);
 
-    bool usesLayeredWebView = false;
-    bool useFullDesktop = false;
-    bool pageLoadTesting = false;
-    _bstr_t requestedURL;
+    auto options = parseCommandLine();
 
-    parseCommandLine(usesLayeredWebView, useFullDesktop, pageLoadTesting, requestedURL);
-
-    if (useFullDesktop)
+    if (options.useFullDesktop)
         computeFullDesktopFrame();
 
     // Init COM
@@ -65,8 +60,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     ::SetProcessDPIAware();
 
-    auto& mainWindow = MainWindow::create(MainWindow::BrowserWindowType::WebKitLegacy).leakRef();
-    HRESULT hr = mainWindow.init(hInst, usesLayeredWebView, pageLoadTesting);
+    auto& mainWindow = MainWindow::create(options.windowType).leakRef();
+    HRESULT hr = mainWindow.init(hInst, options.usesLayeredWebView, options.pageLoadTesting);
     if (FAILED(hr))
         goto exit;
 
@@ -74,8 +69,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     hAccelTable = LoadAccelerators(hInst, MAKEINTRESOURCE(IDC_MINIBROWSER));
 
-    if (requestedURL.length())
-        mainWindow.loadURL(requestedURL.GetBSTR());
+    if (options.requestedURL.length())
+        mainWindow.loadURL(options.requestedURL.GetBSTR());
     else
         mainWindow.browserWindow()->loadHTMLString(_bstr_t(defaultHTML).GetBSTR());
 
@@ -103,4 +98,9 @@ exit:
     OleUninitialize();
 
     return static_cast<int>(msg.wParam);
+}
+
+extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpstrCmdLine, int nCmdShow)
+{
+    return wWinMain(hInstance, hPrevInstance, lpstrCmdLine, nCmdShow);
 }
