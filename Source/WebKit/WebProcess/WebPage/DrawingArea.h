@@ -147,7 +147,7 @@ public:
     virtual void deviceOrPageScaleFactorChanged() = 0;
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     void displayWasRefreshed();
 #endif
 
