@@ -1,3 +1,12 @@
+2018-06-15  Youenn Fablet  <youenn@apple.com>
+
+        imported/w3c/web-platform-tests/service-workers/service-worker/fetch-frame-resource.https.html is flaky due to the order of some console log messages
+        https://bugs.webkit.org/show_bug.cgi?id=186661
+
+        Unreviewed.
+
+        * TestExpectations: Stop outputting console log lines.
+
 2018-06-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK][WebGL] Layout test fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html is failing
