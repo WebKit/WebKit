@@ -66,6 +66,7 @@ class VersionMapTestCase(unittest.TestCase):
 
     def test_ios_name_by_version(self):
         map = VersionNameMap()
+        self.assertEqual('iOS 12', map.to_name(version=Version(12), platform='ios'))
         self.assertEqual('iOS 11', map.to_name(version=Version(11), platform='ios'))
         self.assertEqual('iOS 10', map.to_name(version=Version(10), platform='ios'))
         self.assertEqual('iOS 10', map.to_name(version=Version(10, 3), platform='ios'))

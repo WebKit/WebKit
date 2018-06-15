@@ -1,3 +1,22 @@
+2018-06-15  Jonathan Bedard  <jbedard@apple.com>
+
+        Add iOS 12 and watchOS 5 to webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=186285
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild.py:
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild_unittest.py:
+        Trigger the right build queues for iOS 12 on check-in.
+        * Scripts/webkitpy/common/version_name_map.py:
+        (VersionNameMap.__init__): Add iOS 12, tvOS 12 and watchOS 5.
+        * Scripts/webkitpy/common/version_name_map_unittest.py:
+        (VersionMapTestCase.test_ios_name_by_version): Test iOS 12 version-name mapping.
+        * Scripts/webkitpy/port/ios_device_unittest.py:
+        (IOSDeviceTest.test_layout_test_searchpath_without_apple_additions):
+        * Scripts/webkitpy/port/ios_simulator_unittest.py:
+        (IOSSimulatorTest.test_layout_test_searchpath_without_apple_additions):
+
 2018-06-14  Saam Barati  <sbarati@apple.com>
 
         sun spider compile time benchmark fails in run-jsc-benchmarks with JSC_validateOptions=1
