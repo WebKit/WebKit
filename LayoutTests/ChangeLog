@@ -1,3 +1,11 @@
+2018-06-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Mark tests that are failing on the EWS test queue (v3)
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations:
+
 2018-06-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed GTK test gardening

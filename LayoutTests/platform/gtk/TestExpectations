@@ -578,7 +578,7 @@ http/tests/webrtc [ Skip ]
 # The MediaStream implementation is also still not completed
 webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ Timeout ]
+webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ Timeout Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-dtmf.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Failure Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Pass Failure Crash ]
@@ -1947,6 +1947,23 @@ webkit.org/b/186638 compositing/patterns/direct-pattern-compositing-contain-no-r
 webkit.org/b/186638 compositing/patterns/direct-pattern-compositing-load.html [ ImageOnlyFailure Pass ]
 webkit.org/b/186638 compositing/patterns/direct-pattern-compositing-padding.html [ ImageOnlyFailure Pass ]
 webkit.org/b/186638 fast/mediastream/media-stream-track-source-failure.html [ Timeout Pass ]
+webkit.org/b/186638 http/tests/misc/cached-scripts.html [ Crash Pass ]
+webkit.org/b/186638 fast/hidpi/broken-image-icon-very-hidpi.html [ Crash Pass ]
+webkit.org/b/186638 editing/selection/select-bidi-run.html [ Timeout Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Failure Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/XMLHttpRequest/send-timeout-events.htm [ Failure Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html [ Failure Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.https.worker.html [ Failure Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure Pass ]
+webkit.org/b/186638 media/video-ended-seek-crash.html [ Crash Pass  ]
+webkit.org/b/186638 fast/selectors/hover-invalidation-descendant-dynamic.html [ Failure Pass ]
+webkit.org/b/186638 fast/selectors/hover-quirks.html [ Failure Pass ]
+webkit.org/b/186638 fast/selectors/hover-strict.html [ Failure Pass ]
+webkit.org/b/186638 fast/selectors/unqualified-hover-strict.html [ Failure Pass ]
+webkit.org/b/186638 compositing/patterns/direct-pattern-compositing.html [ ImageOnlyFailure Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/relations/html5-tree/color-attributes-1.html [ Timeout Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/media-source/mediasource-sourcebufferlist.html [ Crash Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.https.worker.html [ Failure Pass ]
 webkit.org/b/186664 media/video-playsinline.html [ Failure Pass ]
 
 # Warning: this test is expected to fail in the global expectations file, but
@@ -2139,7 +2156,7 @@ webkit.org/b/132266 js/slow-stress/emscripten-memops.html [ Timeout Pass ]
 
 webkit.org/b/133148 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Timeout ]
 
-webkit.org/b/133151 js/cached-window-properties.html [ Slow ]
+webkit.org/b/133151 js/cached-window-properties.html [ Timeout Pass ]
 
 webkit.org/b/133808 media/video-trackmenu-selection.html [ Timeout ]
 
