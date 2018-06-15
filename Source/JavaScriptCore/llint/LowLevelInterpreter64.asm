@@ -1500,7 +1500,7 @@ _llint_op_put_by_id:
     bineq t1, JSCell::m_structureID[t3], .opPutByIdSlow
 
 .opPutByIdDoneCheckingTypes:
-    loadpFromInstruction(6, t1)
+    loadisFromInstruction(6, t1)
     
     btiz t1, .opPutByIdNotTransition
 
@@ -1530,7 +1530,7 @@ _llint_op_put_by_id:
 
 .opPutByIdTransitionChainDone:
     # Reload the new structure, since we clobbered it above.
-    loadpFromInstruction(6, t1)
+    loadisFromInstruction(6, t1)
 
 .opPutByIdTransitionDirect:
     storei t1, JSCell::m_structureID[t0]
@@ -2355,7 +2355,7 @@ macro loadWithStructureCheck(operand, slowPath)
 end
 
 macro getProperty()
-    loadpFromInstruction(6, t1)
+    loadisFromInstruction(6, t1)
     loadPropertyAtVariableOffset(t1, t0, t2)
     valueProfile(t2, 7, t0)
     loadisFromInstruction(1, t0)
@@ -2372,7 +2372,7 @@ macro getGlobalVar(tdzCheckIfNecessary)
 end
 
 macro getClosureVar()
-    loadpFromInstruction(6, t1)
+    loadisFromInstruction(6, t1)
     loadq JSLexicalEnvironment_variables[t0, t1, 8], t0
     valueProfile(t0, 7, t1)
     loadisFromInstruction(1, t1)
@@ -2445,7 +2445,7 @@ _llint_op_get_from_scope:
 macro putProperty()
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2)
-    loadpFromInstruction(6, t1)
+    loadisFromInstruction(6, t1)
     storePropertyAtVariableOffset(t1, t0, t2)
 end
 
@@ -2461,7 +2461,7 @@ end
 macro putClosureVar()
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2)
-    loadpFromInstruction(6, t1)
+    loadisFromInstruction(6, t1)
     storeq t2, JSLexicalEnvironment_variables[t0, t1, 8]
 end
 
@@ -2472,7 +2472,7 @@ macro putLocalClosureVar()
     btpz t3, .noVariableWatchpointSet
     notifyWrite(t3, .pDynamic)
 .noVariableWatchpointSet:
-    loadpFromInstruction(6, t1)
+    loadisFromInstruction(6, t1)
     storeq t2, JSLexicalEnvironment_variables[t0, t1, 8]
 end
 

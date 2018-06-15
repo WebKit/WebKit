@@ -694,7 +694,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 instructions[i + 5].u.watchpointSet = op.watchpointSet;
             else if (op.structure)
                 instructions[i + 5].u.structure.set(vm, this, op.structure);
-            instructions[i + 6].u.operandPointer = op.operand;
+            instructions[i + 6].u.pointer = reinterpret_cast<void*>(op.operand);
             break;
         }
 
@@ -731,7 +731,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                     op.watchpointSet->invalidate(vm, PutToScopeFireDetail(this, ident));
             } else if (op.structure)
                 instructions[i + 5].u.structure.set(vm, this, op.structure);
-            instructions[i + 6].u.operandPointer = op.operand;
+            instructions[i + 6].u.pointer = reinterpret_cast<void*>(op.operand);
 
             break;
         }

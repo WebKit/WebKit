@@ -1,3 +1,18 @@
+2018-06-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, rolling out r232816.
+
+        Suggested by Caitlin:
+        "this patch clearly does get some things wrong, and it's not
+        easy to find what those things are"
+
+        Reverted changeset:
+
+        "[LLInt] use loadp consistently for
+        get_from_scope/put_to_scope"
+        https://bugs.webkit.org/show_bug.cgi?id=132333
+        https://trac.webkit.org/changeset/232816
+
 2018-06-14  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(232741): Crash running ARES-6
