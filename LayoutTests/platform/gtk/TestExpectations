@@ -1164,47 +1164,13 @@ http/tests/media/now-playing-info.html [ Skip ]
 # Font collections
 webkit.org/b/186086 fast/text/font-collection.html [ ImageOnlyFailure ]
 
-webkit.org/b/186601 fullscreen/full-screen-layer-dump.html [ Failure ]
-
-# Tests that fail on the EWS queue since we enabled tests there
-webkit.org/b/186638 printing/print-close-crash.html [ Timeout ]
-webkit.org/b/186638 fast/media/print-restores-previous-mediatype.html [ Timeout ]
-webkit.org/b/186638 fast/hidpi/broken-image-icon-very-hidpi.html [ Crash ]
-webkit.org/b/186638 editing/execCommand/print.html [ Timeout ]
-webkit.org/b/186638 animations/play-state-paused.html [ Failure ]
-webkit.org/b/186638 imported/w3c/web-platform-tests/streams/piping/error-propagation-forward.html [ Failure Pass ]
-webkit.org/b/186638 http/tests/misc/cached-scripts.html [ Crash Pass ]
-webkit.org/b/186638 imported/w3c/web-platform-tests/FileAPI/FileReader/workers.html [ Crash Pass ]
-webkit.org/b/186638 imported/mozilla/svg/dynamic-stroke-opacity-01.svg [ Crash Pass ]
-webkit.org/b/186638 imported/mozilla/css-transitions/test_animation-finished.html [ Timeout Pass ]
-webkit.org/b/186638 imported/blink/fast/text/international/complex-text-space-in-second-font.html [ Crash Pass ]
-webkit.org/b/186638 fast/mediastream/change-tracks-media-stream-being-played.html [ Crash Pass ]
-webkit.org/b/186638 compositing/repaint/repaint-on-layer-grouping-change.html [ Failure  Pass ]
-webkit.org/b/186638 fast/events/touch/touch-stale-node-crash.html [ Timeout Pass ]
-webkit.org/b/186638 http/tests/misc/canvas-pattern-from-incremental-image.html [ Crash Pass ]
-webkit.org/b/186638 imported/blink/http/tests/security/shape-image-cors-disallow-origin.html [ Crash Pass ]
-webkit.org/b/186638 imported/blink/svg/css/replaced-intrinsic-ratio-min-width-min-content.html [ Crash Pass ]
-webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/presentation-markup/spaces/space-2.html [ Timeout Pass ]
-webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/relations/html5-tree/class-1.html [ Timeout Pass ]
-webkit.org/b/186638 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.html [ Crash Pass ]
-webkit.org/b/186638 media/video-remote-control-playpause.html [ Timeout Pass ]
-webkit.org/b/186638 media/video-zoom.html [ Failure Pass ]
-webkit.org/b/186638 workers/wasm-hashset-many.html [ Timeout Pass ]
-webkit.org/b/186638 compositing/patterns/direct-pattern-compositing-add-text.html [ ImageOnlyFailure Pass ]
-webkit.org/b/186638 compositing/patterns/direct-pattern-compositing-contain-no-repeat.html [ ImageOnlyFailure Pass ]
-webkit.org/b/186638 compositing/patterns/direct-pattern-compositing-load.html [ ImageOnlyFailure Pass ]
-webkit.org/b/186638 compositing/patterns/direct-pattern-compositing-padding.html [ ImageOnlyFailure Pass ]
-webkit.org/b/186638 fast/mediastream/media-stream-track-source-failure.html [ Timeout Pass ]
-webkit.org/b/186638 imported/mozilla/svg/as-image/img-widthAndHeight-slice-1.html [ Crash ]
-webkit.org/b/186638 media/video-currentTime-delay.html [ Crash Pass ]
-
 # Test does not make sense for our platform
 webkit.org/b/181659 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
-# Don't add anything above here without a comment explaining why the test should fail.
+# Don't add anything above here without a comment explaining why the test SHOULD fail.
 #////////////////////////////////////////////////////////////////////////////////////////
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1316,26 +1282,6 @@ webkit.org/b/180253 [ Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-
 webkit.org/b/180253 [ Debug ] fast/events/media-focus-in-standalone-media-document.html [ Crash ]
 webkit.org/b/180253 [ Debug ] fullscreen/video-controls-timeline.html [ Crash ]
 webkit.org/b/180253 [ Debug ] http/tests/appcache/video.html [ Crash ]
-
-webkit.org/b/186619 fast/mediastream/RTCPeerConnection-AddRemoveStream.html [ Crash ]
-webkit.org/b/186619 fast/mediastream/RTCPeerConnection-add-removeTrack.html [ Crash ]
-webkit.org/b/186619 fast/mediastream/RTCPeerConnection-addTrack-reuse-sender.html [ Crash ]
-webkit.org/b/186619 fast/mediastream/RTCPeerConnection-addTransceiver.html [ Crash ]
-webkit.org/b/186619 fast/mediastream/RTCPeerConnection-createAnswer.html [ Crash ]
-webkit.org/b/186619 fast/mediastream/RTCPeerConnection-createOffer.html [ Crash ]
-webkit.org/b/186619 fast/mediastream/RTCPeerConnection-datachannel.html [ Crash ]
-webkit.org/b/186619 fast/mediastream/RTCPeerConnection-have-local-offer.html [ Crash ]
-webkit.org/b/186619 fast/mediastream/RTCPeerConnection-have-local-pranswer.html [ Crash ]
-webkit.org/b/186619 fast/mediastream/RTCPeerConnection-have-remote-offer.html [ Crash ]
-webkit.org/b/186619 fast/mediastream/RTCPeerConnection-localDescription.html [ Crash ]
-webkit.org/b/186619 fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Crash ]
-webkit.org/b/186619 fast/mediastream/RTCPeerConnection-overloaded-operations.html [ Crash ]
-webkit.org/b/186619 fast/mediastream/RTCPeerConnection-remoteDescription.html [ Crash ]
-webkit.org/b/186619 fast/mediastream/RTCPeerConnection-stable.html [ Crash ]
-webkit.org/b/186619 fast/mediastream/RTCPeerConnection-have-remote-pranswer.html [ Crash ]
-webkit.org/b/186619 fast/mediastream/RTCPeerConnection-statsSelector.html [ Crash ]
-webkit.org/b/186619 fast/mediastream/RTCTrackEvent-constructor.html [ Crash ]
-webkit.org/b/186619 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1897,11 +1843,12 @@ webkit.org/b/176174 media/event-queue-crash.html [ Pass Failure ]
 webkit.org/b/176757 fast/hidpi/filters-invert.html [ Pass ImageOnlyFailure ]
 webkit.org/b/176757 fast/hidpi/filters-multiple.html [ Pass ImageOnlyFailure ]
 
-
 webkit.org/b/176759 crypto/subtle/rsa-oaep-import-key-wrap-jwk-oct-key.html [ Pass Failure ]
+webkit.org/b/176759 crypto/workers/subtle/rsa-oaep-import-key-encrypt.html [ Pass Failure ]
+webkit.org/b/176759 crypto/subtle/rsa-oaep-import-key-encrypt-label.html [ Pass Failure ]
 
 webkit.org/b/177527 [ Release ] fast/hidpi/filters-blur.html [ Pass ImageOnlyFailure ]
-webkit.org/b/177529 crypto/workers/subtle/rsa-oaep-import-key-encrypt.html [ Pass Failure ]
+
 webkit.org/b/177530 imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-header-allowed.htm [ Pass Failure ]
 
 webkit.org/b/177940 workers/wasm-hashset.html [ Crash Timeout Pass ]
@@ -1980,6 +1927,48 @@ webkit.org/b/184569 storage/indexeddb/modern/transactions-stop-on-navigation.htm
 
 webkit.org/b/186598 http/tests/media/hls/hls-audio-tracks.html [ Timeout Pass ]
 webkit.org/b/186598 http/tests/media/hls/hls-audio-tracks-has-audio.html [ Timeout Pass ]
+
+# Tests that fail on the EWS queue since we enabled tests there
+webkit.org/b/186638 printing/print-close-crash.html [ Timeout Pass ]
+webkit.org/b/186638 fast/media/print-restores-previous-mediatype.html [ Timeout Pass ]
+webkit.org/b/186638 editing/execCommand/print.html [ Timeout Pass ]
+webkit.org/b/186638 animations/play-state-paused.html [ Failure Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/streams/piping/error-propagation-forward.html [ Failure Pass ]
+webkit.org/b/186638 imported/mozilla/css-transitions/test_animation-finished.html [ Timeout Pass ]
+webkit.org/b/186638 compositing/repaint/repaint-on-layer-grouping-change.html [ Failure  Pass ]
+webkit.org/b/186638 fast/events/touch/touch-stale-node-crash.html [ Timeout Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/presentation-markup/spaces/space-2.html [ Timeout Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/relations/html5-tree/class-1.html [ Timeout Pass ]
+webkit.org/b/186638 media/video-remote-control-playpause.html [ Timeout Pass ]
+webkit.org/b/186638 media/video-zoom.html [ Failure Pass ]
+webkit.org/b/186638 workers/wasm-hashset-many.html [ Timeout Pass ]
+webkit.org/b/186638 compositing/patterns/direct-pattern-compositing-add-text.html [ ImageOnlyFailure Pass ]
+webkit.org/b/186638 compositing/patterns/direct-pattern-compositing-contain-no-repeat.html [ ImageOnlyFailure Pass ]
+webkit.org/b/186638 compositing/patterns/direct-pattern-compositing-load.html [ ImageOnlyFailure Pass ]
+webkit.org/b/186638 compositing/patterns/direct-pattern-compositing-padding.html [ ImageOnlyFailure Pass ]
+webkit.org/b/186638 fast/mediastream/media-stream-track-source-failure.html [ Timeout Pass ]
+webkit.org/b/186664 media/video-playsinline.html [ Failure Pass ]
+
+# Warning: this test is expected to fail in the global expectations file, but
+# we expect it to Pass because we support RTL scrollbars. When fixed, it should
+# not be removed, but moved to the expected passes section of this file.
+webkit.org/b/186665 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/186666 media/W3C/video/events/event_progress_manual.html [ Failure Pass ]
+
+webkit.org/b/186667 compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Failure Pass ]
+
+webkit.org/b/186670 fast/scrolling/iframe-scrollable-after-back.html [ Failure Pass ]
+
+webkit.org/b/186671 webanimations/opacity-animation-no-longer-composited-upon-completion.html [ Failure Pass ]
+
+webkit.org/b/186672 imported/w3c/web-platform-tests/mathml/relations/text-and-math/use-typo-metrics-1.html [ Timeout Pass ]
+
+webkit.org/b/186673 editing/spelling/spellcheck-async-mutation.html [ Failure Pass ]
+
+webkit.org/b/186678 fast/mediastream/change-tracks-media-stream-being-played.html [ Crash Pass ]
+
+webkit.org/b/186679 media/video-currentTime-delay.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -2081,8 +2070,8 @@ Bug(GTK) http/tests/misc/large-js-program.php [ Pass Slow ]
 [ Debug ] editing/selection/move-by-word-visually-multi-line.html [ Pass Timeout ]
 [ Debug ] editing/selection/move-by-word-visually-multi-space.html [ Failure Timeout ]
 
-webkit.org/b/159754 [ Release ] workers/bomb.html [ Slow ]
-webkit.org/b/159754 [ Debug ] workers/bomb.html [ Skip ]
+# This test is so slow that a Slow expectation is not enough to avoid flakiness.
+webkit.org/b/159754 workers/bomb.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_007.htm [ Slow ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_010.htm [ Slow ]
@@ -3206,8 +3195,6 @@ webkit.org/b/172272 fast/visual-viewport/client-coordinates-relative-to-layout-v
 
 webkit.org/b/172273 fast/visual-viewport/client-rects-relative-to-layout-viewport.html [ Failure ]
 
-webkit.org/b/172274 http/tests/cache/disk-cache/disk-cache-media-small.html [ Failure ]
-
 webkit.org/b/172275 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screeny.html [ Failure ]
 
 webkit.org/b/172278 fast/html/marquee-child-wrap.html [ ImageOnlyFailure ]
@@ -3335,7 +3322,7 @@ webkit.org/b/180805 inspector/canvas/requestContent-bitmaprenderer.html [ Failur
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-auto-fill-button.html [ Missing Failure ]
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button.html [ Missing Failure ]
 
-webkit.org/b/182050 http/wpt/fetch/response-opaque-clone.html [ Failure Crash ]
+webkit.org/b/182050 http/wpt/fetch/response-opaque-clone.html [ Pass Crash ]
 
 webkit.org/b/182103 fast/forms/textarea-scrolled-type.html [ Failure ]
 webkit.org/b/182103 fast/forms/focus-selection-textarea.html [ Failure ]
@@ -3448,6 +3435,10 @@ webkit.org/b/186340 transitions/zero-duration-with-non-zero-delay-start.html [ T
 
 webkit.org/b/186618 imported/w3c/web-platform-tests/fetch/api/headers/header-values.html [ Failure ]
 
+webkit.org/b/186601 fullscreen/full-screen-layer-dump.html [ Failure ]
+
+webkit.org/b/186662 animations/transition-and-animation-3.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3503,7 +3494,6 @@ fast/scrolling/rtl-scrollbars-listbox-simple.html [ Pass ]
 fast/scrolling/rtl-scrollbars-positioned-intersect-scrollbars.html [ Pass ]
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
-fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
 webkit.org/b/156437 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ ImageOnlyFailure Pass ]
 
 transitions/svg-text-shadow-transition.html [ Pass ]
