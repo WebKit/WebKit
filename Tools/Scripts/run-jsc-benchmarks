@@ -1506,7 +1506,7 @@ class VM
     $script.puts "}"
     plan.environment.keys.each {
         | key |
-        $script.puts "export #{Shellwords.shellescape(key)}="
+        $script.puts "unset #{Shellwords.shellescape(key)}"
     }
   end
 end

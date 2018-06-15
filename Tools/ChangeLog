@@ -1,3 +1,15 @@
+2018-06-14  Saam Barati  <sbarati@apple.com>
+
+        sun spider compile time benchmark fails in run-jsc-benchmarks with JSC_validateOptions=1
+        https://bugs.webkit.org/show_bug.cgi?id=186647
+
+        Reviewed by Yusuke Suzuki.
+
+        Let's use `unset JSC_useBlah` instead of `export JSC_useBlah=` to clear environment
+        variables. The latter was causing crashes with when JSC_validateOptions was true.
+
+        * Scripts/run-jsc-benchmarks:
+
 2018-06-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][buildbot] Raise timeouts for the step benchmark-test on the GTK perf bot
