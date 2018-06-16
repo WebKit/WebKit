@@ -66,7 +66,14 @@ private:
     friend class Handle;
 public:
     static constexpr size_t atomSize = 16; // bytes
+
+    // Block size must be at least as large as the system page size.
+#if CPU(PPC64) || CPU(PPC64LE) || CPU(PPC) || CPU(UNKNOWN)
+    static constexpr size_t blockSize = 64 * KB;
+#else
     static constexpr size_t blockSize = 16 * KB;
+#endif
+
     static constexpr size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
 
     static constexpr size_t atomsPerBlock = blockSize / atomSize;

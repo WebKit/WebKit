@@ -1,3 +1,15 @@
+2018-06-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r227717): Hardcoded page size causing JSC crashes on platforms with page size bigger than 16 KB
+        https://bugs.webkit.org/show_bug.cgi?id=182923
+
+        Reviewed by Mark Lam.
+
+        The blockSize used by MarkedBlock is incorrect on platforms with pages larger than 16 KB.
+        Upstream Fedora's patch to use a safer 64 KB default. This fixes PowerPC and s390x.
+
+        * heap/MarkedBlock.h:
+
 2018-06-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Inline JSArray::pushInline and Structure::nonPropertyTransition
