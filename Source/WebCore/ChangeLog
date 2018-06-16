@@ -1,3 +1,14 @@
+2018-06-16  Chris Dumez  <cdumez@apple.com>
+
+        Better pack ResourceResponse
+        https://bugs.webkit.org/show_bug.cgi?id=186718
+
+        Reviewed by Simon Fraser.
+
+        Better pack ResourceResponse to reduce its size on Mac from 632 to 616 bytes.
+
+        * platform/network/ResourceResponseBase.h:
+
 2018-06-15  Chris Dumez  <cdumez@apple.com>
 
         Better pack MediaQuery

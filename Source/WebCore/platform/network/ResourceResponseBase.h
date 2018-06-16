@@ -206,10 +206,9 @@ private:
     void sanitizeHTTPHeaderFieldsAccordingToTainting();
 
 protected:
-    bool m_isNull;
     URL m_url;
     AtomicString m_mimeType;
-    long long m_expectedContentLength;
+    long long m_expectedContentLength { 0 };
     AtomicString m_textEncodingName;
     AtomicString m_httpStatusText;
     AtomicString m_httpVersion;
@@ -218,8 +217,6 @@ protected:
 
     mutable std::optional<CertificateInfo> m_certificateInfo;
 
-    int m_httpStatusCode;
-
 private:
     mutable std::optional<Seconds> m_age;
     mutable std::optional<WallTime> m_date;
@@ -227,21 +224,24 @@ private:
     mutable std::optional<WallTime> m_lastModified;
     mutable ParsedContentRange m_contentRange;
     mutable CacheControlDirectives m_cacheControlDirectives;
+    std::optional<SHA1::Digest> m_cacheBodyKey;
 
+    Source m_source { Source::Unknown };
+    Type m_type { Type::Default };
+    Tainting m_tainting { Tainting::Basic };
+
+protected:
+    int m_httpStatusCode { 0 };
+    bool m_isNull { true };
+
+private:
     mutable bool m_haveParsedCacheControlHeader { false };
     mutable bool m_haveParsedAgeHeader { false };
     mutable bool m_haveParsedDateHeader { false };
     mutable bool m_haveParsedExpiresHeader { false };
     mutable bool m_haveParsedLastModifiedHeader { false };
     mutable bool m_haveParsedContentRangeHeader { false };
-
-    Source m_source { Source::Unknown };
-
-    std::optional<SHA1::Digest> m_cacheBodyKey;
-
-    Type m_type { Type::Default };
     bool m_isRedirected { false };
-    Tainting m_tainting { Tainting::Basic };
 };
 
 inline bool operator==(const ResourceResponse& a, const ResourceResponse& b) { return ResourceResponseBase::compare(a, b); }
