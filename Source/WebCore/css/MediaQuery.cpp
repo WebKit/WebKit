@@ -70,9 +70,9 @@ String MediaQuery::serialize() const
 }
 
 MediaQuery::MediaQuery(Restrictor restrictor, const String& mediaType, Vector<MediaQueryExpression>&& expressions)
-    : m_restrictor(restrictor)
-    , m_mediaType(mediaType.convertToASCIILowercase())
+    : m_mediaType(mediaType.convertToASCIILowercase())
     , m_expressions(WTFMove(expressions))
+    , m_restrictor(restrictor)
 {
     std::sort(m_expressions.begin(), m_expressions.end(), [](auto& a, auto& b) {
         return codePointCompare(a.serialize(), b.serialize()) < 0;

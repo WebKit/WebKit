@@ -1,5 +1,19 @@
 2018-06-15  Chris Dumez  <cdumez@apple.com>
 
+        Better pack MediaQuery
+        https://bugs.webkit.org/show_bug.cgi?id=186716
+
+        Reviewed by Simon Fraser.
+
+        Better pack MediaQuery to reduce its size from 48 bytes to 40 and save
+        some memory.
+
+        * css/MediaQuery.cpp:
+        (WebCore::MediaQuery::MediaQuery):
+        * css/MediaQuery.h:
+
+2018-06-15  Chris Dumez  <cdumez@apple.com>
+
         StyleRuleMedia wastes 158KB of Vector capacity on cnn.com
         https://bugs.webkit.org/show_bug.cgi?id=186705
         <rdar://problem/41173637>
