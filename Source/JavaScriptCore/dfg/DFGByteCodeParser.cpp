@@ -2303,6 +2303,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
                 structureSet.add(globalObject->originalArrayStructureForIndexingType(ArrayWithInt32));
                 structureSet.add(globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous));
                 structureSet.add(globalObject->originalArrayStructureForIndexingType(ArrayWithDouble));
+                structureSet.add(globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithInt32));
+                structureSet.add(globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous));
+                structureSet.add(globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithDouble));
                 addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(structureSet)), array);
 
                 addVarArgChild(array);

@@ -1,3 +1,16 @@
+2018-06-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Reduce OSRExit for Kraken/crypto-aes due to CoW array
+        https://bugs.webkit.org/show_bug.cgi?id=186721
+
+        Reviewed by Keith Miller.
+
+        * stress/array-slice-cow.js: Added.
+        (shouldBe):
+        (testInt32):
+        (testDouble):
+        (testContiguous):
+
 2018-06-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL] Spread onto PhantomNewArrayBuffer assumes JSFixedArray, but JSImmutableButterfly is returned

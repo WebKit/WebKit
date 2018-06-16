@@ -28,7 +28,9 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "BytecodeStructs.h"
 #include "ClonedArguments.h"
+#include "CommonSlowPaths.h"
 #include "DirectArguments.h"
 #include "FTLJITCode.h"
 #include "FTLLazySlowPath.h"
@@ -459,24 +461,47 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
     }
 
     case PhantomNewArrayBuffer: {
-        JSImmutableButterfly* array = nullptr;
+        JSImmutableButterfly* immutableButterfly = nullptr;
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location().kind() == NewArrayBufferPLoc) {
-                array = jsCast<JSImmutableButterfly*>(JSValue::decode(values[i]));
+                immutableButterfly = jsCast<JSImmutableButterfly*>(JSValue::decode(values[i]));
                 break;
             }
         }
-        RELEASE_ASSERT(array);
+        RELEASE_ASSERT(immutableButterfly);
 
         // For now, we use array allocation profile in the actual CodeBlock. It is OK since current NewArrayBuffer
         // and PhantomNewArrayBuffer are always bound to a specific op_new_array_buffer.
         CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), exec->codeBlock());
         Instruction* currentInstruction = &codeBlock->instructions()[materialization->origin().bytecodeIndex];
         RELEASE_ASSERT(Interpreter::getOpcodeID(currentInstruction[0].u.opcode) == op_new_array_buffer);
-        Structure* structure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(currentInstruction[3].u.arrayAllocationProfile->selectIndexingType());
+        auto* newArrayBuffer = bitwise_cast<OpNewArrayBuffer*>(currentInstruction);
+        ArrayAllocationProfile* profile = currentInstruction[3].u.arrayAllocationProfile;
+
+        // FIXME: Share the code with CommonSlowPaths. Currently, codeBlock etc. are slightly different.
+        IndexingType indexingMode = profile->selectIndexingType();
+        Structure* structure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(indexingMode);
+        ASSERT(isCopyOnWrite(indexingMode));
         ASSERT(!structure->outOfLineCapacity());
-        return JSArray::createWithButterfly(vm, nullptr, structure, array->toButterfly());
+
+        if (UNLIKELY(immutableButterfly->indexingMode() != indexingMode)) {
+            auto* newButterfly = JSImmutableButterfly::create(vm, indexingMode, immutableButterfly->length());
+            for (unsigned i = 0; i < immutableButterfly->length(); ++i)
+                newButterfly->setIndex(vm, i, immutableButterfly->get(i));
+            immutableButterfly = newButterfly;
+
+            // FIXME: This is kinda gross and only works because we can't inline new_array_bufffer in the baseline.
+            // We also cannot allocate a new butterfly from compilation threads since it's invalid to allocate cells from
+            // a compilation thread.
+            WTF::storeStoreFence();
+            codeBlock->constantRegister(newArrayBuffer->immutableButterfly()).set(vm, codeBlock, immutableButterfly);
+            WTF::storeStoreFence();
+        }
+
+        JSArray* result = CommonSlowPaths::allocateNewArrayBuffer(vm, structure, immutableButterfly);
+        ArrayAllocationProfile::updateLastAllocationFor(profile, result);
+        return result;
     }
 
     case PhantomNewArrayWithSpread: {

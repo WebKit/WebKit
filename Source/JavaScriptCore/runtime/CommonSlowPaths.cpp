@@ -1163,6 +1163,7 @@ SLOW_PATH_DECL(slow_path_new_array_buffer)
 
     JSArray* result = CommonSlowPaths::allocateNewArrayBuffer(vm, structure, immutableButterfly);
     ASSERT(isCopyOnWrite(result->indexingMode()) || exec->lexicalGlobalObject()->isHavingABadTime());
+    ArrayAllocationProfile::updateLastAllocationFor(profile, result);
     RETURN(result);
 }
 
