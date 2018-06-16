@@ -1,3 +1,14 @@
+2018-06-16  Leo Balter  <leonardo.balter@gmail.com>
+
+        [test262-runner] Handle items from the config list with inline comments
+        https://bugs.webkit.org/show_bug.cgi?id=186707
+
+        Reviewed by Michael Saboff.
+
+        This is a workaround for the Yaml parser that bundles inline comments together with any items.
+        * Scripts/test262/Runner.pm:
+        (shouldSkip):
+
 2018-06-16  Valerie R Young  <valerie@bocoup.com>
 
         test262/Runner.pm: option to run test skipped in config file

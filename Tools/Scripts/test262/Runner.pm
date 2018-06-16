@@ -619,7 +619,10 @@ sub shouldSkip {
         return 1 if (grep {$filename =~ $_} @skipPaths);
 
         my @skipFeatures;
-        @skipFeatures = @{ $config->{skip}->{features} } if defined $config->{skip}->{features};
+        @skipFeatures = map {
+            # Remove inline comments from the yaml parsed config
+            $_ =~ /(\S*)/;
+        } @{ $config->{skip}->{features} } if defined $config->{skip}->{features};
 
         my $skip = 0;
         my $keep = 0;
