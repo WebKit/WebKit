@@ -13,7 +13,8 @@ info: |
     2. If ? IsRegExp(R) is true, then
       [...]
     3. Else,
-      a. Let R be RegExpCreate(R, "g").
+      a. Let flags be "g".
+      b. Let matcher be ? RegExpCreate(R, flags).
 features: [Symbol.matchAll]
 ---*/
 

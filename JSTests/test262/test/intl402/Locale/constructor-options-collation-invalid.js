@@ -18,9 +18,10 @@ features: [Intl.Locale]
 
 /*
  alphanum = (ALPHA / DIGIT)     ; letters and numbers
- collation = [(3*8alphanum) *("-" (3*8alphanum))]
+ collation = (3*8alphanum) *("-" (3*8alphanum))
 */
 const invalidCollationOptions = [
+  "",
   "a",
   "ab",
   "abcdefghi",

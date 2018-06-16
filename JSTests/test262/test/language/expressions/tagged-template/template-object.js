@@ -1,18 +1,20 @@
 // Copyright (C) 2014 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 12.3.7
+esid: sec-gettemplateobject
 description: Properties of the template object
 info: |
     The first argument to a tagged template should be a template object as
     defined by the GetTemplateObject abstract operation.
 includes: [propertyHelper.js]
 ---*/
-var templateObject;
+var templateObject
 
-(function(parameter) {
+function tag(parameter) {
   templateObject = parameter;
-})`${1}`;
+}
+
+tag`${1}`;
 
 assert(Array.isArray(templateObject.raw), 'The template object is an array');
 

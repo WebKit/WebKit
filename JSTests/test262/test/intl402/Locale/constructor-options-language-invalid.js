@@ -50,7 +50,8 @@ const invalidLanguageOptions = [
   "i-klingon",
 
   // Regular grandfathered language tag.
-  "zh-Hant",
+  "zh-min",
+  "zh-min-nan",
 
   // Reserved with extended language subtag
   "abcd-US",

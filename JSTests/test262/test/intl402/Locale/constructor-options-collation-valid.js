@@ -37,7 +37,6 @@ features: [Intl.Locale]
 ---*/
 
 const validCollationOptions = [
-  ["", "en-u-co"],
   ["abc", "en-u-co-abc"],
   ["abcd", "en-u-co-abcd"],
   ["abcde", "en-u-co-abcde"],

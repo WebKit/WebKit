@@ -10,8 +10,6 @@ info: |
 
     Unless specified otherwise in this document, the objects, functions, and constructors described in this standard are subject to the generic requirements and restrictions specified for standard built-in ECMAScript objects in the ECMAScript 2019 script Specification, 10th edition, clause 17, or successor.
 
-    Functions that are specified as get or set accessor functions of built-in properties have "get " or "set " prepended to the property name string.
-
     Every accessor property described in clauses 18 through 26 and in Annex B.2 has the attributes { [[Enumerable]]: false, [[Configurable]]: true } unless otherwise specified. If only a get accessor function is described, the set accessor function is the default value, undefined.
 includes: [propertyHelper.js]
 features: [Intl.Locale]
@@ -20,7 +18,6 @@ features: [Intl.Locale]
 const propdesc = Object.getOwnPropertyDescriptor(Intl.Locale.prototype, "script");
 assert.sameValue(propdesc.set, undefined);
 assert.sameValue(typeof propdesc.get, "function");
-assert.sameValue(propdesc.get.name, "get script");
 
 verifyProperty(Intl.Locale.prototype, "script", {
   enumerable: false,

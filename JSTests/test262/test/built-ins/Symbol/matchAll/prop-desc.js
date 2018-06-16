@@ -8,7 +8,7 @@ info: |
     This property has the attributes { [[Writable]]: false, [[Enumerable]]:
     false, [[Configurable]]: false }.
 includes: [propertyHelper.js]
-features: [Symbol.match]
+features: [Symbol.matchAll]
 ---*/
 
 assert.sameValue(typeof Symbol.matchAll, 'symbol');

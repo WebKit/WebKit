@@ -20,7 +20,7 @@ info: |
     e E
 
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 
 features: [numeric-separator-literal]

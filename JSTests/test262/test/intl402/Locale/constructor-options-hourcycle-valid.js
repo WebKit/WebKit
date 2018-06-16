@@ -68,6 +68,6 @@ for (const hourCycle of validHourCycleOptions) {
   assert.sameValue(
     new Intl.Locale('en-u-hc-h00', options).hourCycle,
     expected,
-    `new Intl.Locale('en-u-hc-h00', options).hourCycle equals the value of ${expect}`
+    `new Intl.Locale('en-u-hc-h00', options).hourCycle equals the value of ${expected}`
   );
 }

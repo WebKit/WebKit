@@ -627,18 +627,9 @@ test/built-ins/Array/proto-from-ctor-realm.js:
 test/built-ins/Array/prototype/filter/target-array-with-non-writable-property.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
-test/built-ins/Array/prototype/indexOf/15.4.4.14-3-28.js:
-  default: 'Test262Error: Array.prototype.indexOf.call(obj, targetObj) Expected SameValue(Â«-1Â», Â«0Â») to be true'
-  strict mode: 'Test262Error: Array.prototype.indexOf.call(obj, targetObj) Expected SameValue(Â«-1Â», Â«0Â») to be true'
-test/built-ins/Array/prototype/indexOf/15.4.4.14-3-29.js:
-  default: 'Test262Error: Array.prototype.indexOf.call(obj, 4294967297) Expected SameValue(Â«-1Â», Â«1Â») to be true'
-  strict mode: 'Test262Error: Array.prototype.indexOf.call(obj, 4294967297) Expected SameValue(Â«-1Â», Â«1Â») to be true'
 test/built-ins/Array/prototype/indexOf/calls-only-has-on-prototype-after-length-zeroed.js:
   default: 'Test262Error: [[GetPrototypeOf]] trap called'
   strict mode: 'Test262Error: [[GetPrototypeOf]] trap called'
-test/built-ins/Array/prototype/lastIndexOf/15.4.4.15-3-28.js:
-  default: 'Test262Error: verify length is 4294967296 finally Expected SameValue(Â«-1Â», Â«4294967295Â») to be true'
-  strict mode: 'Test262Error: verify length is 4294967296 finally Expected SameValue(Â«-1Â», Â«4294967295Â») to be true'
 test/built-ins/Array/prototype/lastIndexOf/calls-only-has-on-prototype-after-length-zeroed.js:
   default: 'Test262Error: [[GetPrototypeOf]] trap called'
   strict mode: 'Test262Error: [[GetPrototypeOf]] trap called'
@@ -651,9 +642,6 @@ test/built-ins/Array/prototype/pop/S15.4.4.6_A2_T2.js:
 test/built-ins/Array/prototype/pop/S15.4.4.6_A3_T1.js:
   default: 'Test262Error: #1: var obj = {}; obj.pop = Array.prototype.pop; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; obj.pop() === "y". Actual: undefined'
   strict mode: 'Test262Error: #1: var obj = {}; obj.pop = Array.prototype.pop; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; obj.pop() === "y". Actual: undefined'
-test/built-ins/Array/prototype/pop/S15.4.4.6_A3_T2.js:
-  default: 'Test262Error: #1: var obj = {}; obj.pop = Array.prototype.pop; obj[0] = "x"; obj[4294967296] = "y"; obj.length = 4294967297; obj.pop() === "y". Actual: x'
-  strict mode: 'Test262Error: #1: var obj = {}; obj.pop = Array.prototype.pop; obj[0] = "x"; obj[4294967296] = "y"; obj.length = 4294967297; obj.pop() === "y". Actual: x'
 test/built-ins/Array/prototype/pop/clamps-to-integer-limit.js:
   default: 'Test262Error: Length is 2**53 - 1 Expected SameValue(Â«4294967294Â», Â«9007199254740990Â») to be true'
   strict mode: 'Test262Error: Length is 2**53 - 1 Expected SameValue(Â«4294967294Â», Â«9007199254740990Â») to be true'
@@ -663,36 +651,18 @@ test/built-ins/Array/prototype/pop/length-near-integer-limit.js:
 test/built-ins/Array/prototype/push/S15.4.4.7_A2_T2.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Array/prototype/push/S15.4.4.7_A4_T1.js:
-  default: 'Test262Error: #1: var obj = {}; obj.push = Array.prototype.push; obj.length = 4294967296; obj.push("x", "y", "z") === 4294967299. Actual: 3'
-  strict mode: 'Test262Error: #1: var obj = {}; obj.push = Array.prototype.push; obj.length = 4294967296; obj.push("x", "y", "z") === 4294967299. Actual: 3'
 test/built-ins/Array/prototype/push/clamps-to-integer-limit.js:
   default: 'Test262Error: Length is 2**53 - 1 Expected SameValue(Â«4294967295Â», Â«9007199254740991Â») to be true'
   strict mode: 'Test262Error: Length is 2**53 - 1 Expected SameValue(Â«4294967295Â», Â«9007199254740991Â») to be true'
-test/built-ins/Array/prototype/push/length-near-integer-limit.js:
-  default: 'Test262Error: New arrayLike.length is 2**53 - 1 Expected SameValue(Â«4294967295Â», Â«9007199254740991Â») to be true'
-  strict mode: 'Test262Error: New arrayLike.length is 2**53 - 1 Expected SameValue(Â«4294967295Â», Â«9007199254740991Â») to be true'
 test/built-ins/Array/prototype/push/throws-if-integer-limit-exceeded.js:
   default: 'Test262Error: Length is 2**53 - 1 Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Length is 2**53 - 1 Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Array/prototype/reverse/length-exceeding-integer-limit-with-proxy.js:
   default: 'Test262Error: Expected a StopReverse but got a Test262Error'
   strict mode: 'Test262Error: Expected a StopReverse but got a Test262Error'
-test/built-ins/Array/prototype/slice/S15.4.4.10_A3_T1.js:
-  default: 'Test262Error: #1.1: var obj = {}; obj.slice = Array.prototype.slice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.slice(0,4294967296); lead to throwing exception. Exception is instance of RangeError. Actual: exception is Test262Error: #1: var obj = {}; obj.slice = Array.prototype.slice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.slice(0,4294967296); lead to throwing exception.'
-  strict mode: 'Test262Error: #1.1: var obj = {}; obj.slice = Array.prototype.slice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.slice(0,4294967296); lead to throwing exception. Exception is instance of RangeError. Actual: exception is Test262Error: #1: var obj = {}; obj.slice = Array.prototype.slice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.slice(0,4294967296); lead to throwing exception.'
-test/built-ins/Array/prototype/slice/S15.4.4.10_A3_T2.js:
-  default: 'Test262Error: #1.1: var obj = {}; obj.slice = Array.prototype.slice; obj[0] = "x"; obj[4294967296] = "y"; obj.length = 4294967297; var arr = obj.slice(0,4294967297); lead to throwing exception. Exception is instance of RangeError. Actual: exception is Test262Error: #1: var obj = {}; obj.slice = Array.prototype.slice; obj[0] = "x"; obj[4294967296] = "y"; obj.length = 4294967297; var arr = obj.slice(0,4294967297); lead to throwing exception.'
-  strict mode: 'Test262Error: #1.1: var obj = {}; obj.slice = Array.prototype.slice; obj[0] = "x"; obj[4294967296] = "y"; obj.length = 4294967297; var arr = obj.slice(0,4294967297); lead to throwing exception. Exception is instance of RangeError. Actual: exception is Test262Error: #1: var obj = {}; obj.slice = Array.prototype.slice; obj[0] = "x"; obj[4294967296] = "y"; obj.length = 4294967297; var arr = obj.slice(0,4294967297); lead to throwing exception.'
-test/built-ins/Array/prototype/slice/create-non-array-invalid-len.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Array/prototype/slice/create-proto-from-ctor-realm-non-array.js:
   default: 'Test262Error: Expected SameValue(Â«Â», Â«[object Object]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«Â», Â«[object Object]Â») to be true'
-test/built-ins/Array/prototype/slice/create-proxied-array-invalid-len.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Array/prototype/slice/length-exceeding-integer-limit-proxied-array.js:
   default: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
   strict mode: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
@@ -714,9 +684,6 @@ test/built-ins/Array/prototype/splice/S15.4.4.12_A3_T1.js:
 test/built-ins/Array/prototype/splice/clamps-length-to-integer-limit.js:
   default: 'Test262Error: Length is 2**53 - 1 Expected SameValue(Â«4294967295Â», Â«9007199254740991Â») to be true'
   strict mode: 'Test262Error: Length is 2**53 - 1 Expected SameValue(Â«4294967295Â», Â«9007199254740991Â») to be true'
-test/built-ins/Array/prototype/splice/create-non-array-invalid-len.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Array/prototype/splice/create-proto-from-ctor-realm-non-array.js:
   default: 'Test262Error: Expected SameValue(Â«Â», Â«[object Object]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«Â», Â«[object Object]Â») to be true'
@@ -726,18 +693,12 @@ test/built-ins/Array/prototype/splice/create-proxy.js:
 test/built-ins/Array/prototype/splice/create-species-length-exceeding-integer-limit.js:
   default: 'Test262Error: Expected a StopSplice but got a Test262Error'
   strict mode: 'Test262Error: Expected a StopSplice but got a Test262Error'
-test/built-ins/Array/prototype/splice/create-species-undef-invalid-len.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Array/prototype/splice/length-and-deleteCount-exceeding-integer-limit.js:
   default: "Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. arrayLike['9007199254740989'] and arrayLike['9007199254740990'] are removed"
   strict mode: "Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. arrayLike['9007199254740989'] and arrayLike['9007199254740990'] are removed"
 test/built-ins/Array/prototype/splice/length-exceeding-integer-limit-shrink-array.js:
   default: "Test262Error: Expected [] and [9007199254740987] to have the same contents. arrayLike['9007199254740987'] is removed"
   strict mode: "Test262Error: Expected [] and [9007199254740987] to have the same contents. arrayLike['9007199254740987'] is removed"
-test/built-ins/Array/prototype/splice/length-near-integer-limit-grow-array.js:
-  default: 'Test262Error: New length is 2**53 - 1 Expected SameValue(Â«4294967295Â», Â«9007199254740991Â») to be true'
-  strict mode: 'Test262Error: New length is 2**53 - 1 Expected SameValue(Â«4294967295Â», Â«9007199254740991Â») to be true'
 test/built-ins/Array/prototype/splice/property-traps-order-with-species.js:
   default: 'Test262Error: Expected [defineProperty, defineProperty, set, getOwnPropertyDescriptor, defineProperty] and [defineProperty, defineProperty] to have the same contents. undefined'
   strict mode: 'Test262Error: Expected [defineProperty, defineProperty, set, getOwnPropertyDescriptor, defineProperty] and [defineProperty, defineProperty] to have the same contents. undefined'
@@ -786,39 +747,6 @@ test/built-ins/ArrayBuffer/prototype/slice/start-exceeds-length.js:
 test/built-ins/ArrayIteratorPrototype/next/detach-typedarray-in-progress.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/AsyncGeneratorFunction/has-instance.js:
-  default: 'SyntaxError: Unexpected end of script'
-  strict mode: 'SyntaxError: Unexpected end of script'
-test/built-ins/AsyncGeneratorFunction/instance-await-expr-in-param.js:
-  default: "SyntaxError: Unexpected token '*'. Expected a parenthesis for argument list."
-  strict mode: "SyntaxError: Unexpected token '*'. Expected a parenthesis for argument list."
-test/built-ins/AsyncGeneratorFunction/instance-construct-throws.js:
-  default: 'SyntaxError: Unexpected end of script'
-  strict mode: 'SyntaxError: Unexpected end of script'
-test/built-ins/AsyncGeneratorFunction/instance-length.js:
-  default: 'SyntaxError: Unexpected end of script'
-  strict mode: 'SyntaxError: Unexpected end of script'
-test/built-ins/AsyncGeneratorFunction/instance-name.js:
-  default: 'SyntaxError: Unexpected end of script'
-  strict mode: 'SyntaxError: Unexpected end of script'
-test/built-ins/AsyncGeneratorFunction/instance-prototype.js:
-  default: 'SyntaxError: Unexpected end of script'
-  strict mode: 'SyntaxError: Unexpected end of script'
-test/built-ins/AsyncGeneratorFunction/instance-yield-expr-in-param.js:
-  default: "SyntaxError: Unexpected token '*'. Expected a parenthesis for argument list."
-  strict mode: "SyntaxError: Unexpected token '*'. Expected a parenthesis for argument list."
-test/built-ins/AsyncGeneratorFunction/invoked-as-constructor-no-arguments.js:
-  default: 'SyntaxError: Unexpected end of script'
-  strict mode: 'SyntaxError: Unexpected end of script'
-test/built-ins/AsyncGeneratorFunction/invoked-as-function-multiple-arguments.js:
-  default: "SyntaxError: Unexpected token '*'. Expected a parenthesis for argument list."
-  strict mode: "SyntaxError: Unexpected token '*'. Expected a parenthesis for argument list."
-test/built-ins/AsyncGeneratorFunction/invoked-as-function-no-arguments.js:
-  default: 'SyntaxError: Unexpected end of script'
-  strict mode: 'SyntaxError: Unexpected end of script'
-test/built-ins/AsyncGeneratorFunction/invoked-as-function-single-argument.js:
-  default: "SyntaxError: Unexpected token '*'. Expected a parenthesis for argument list."
-  strict mode: "SyntaxError: Unexpected token '*'. Expected a parenthesis for argument list."
 test/built-ins/Boolean/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«falseÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«falseÂ», Â«falseÂ») to be true'
@@ -989,9 +917,6 @@ test/built-ins/Function/prototype/restricted-property-caller.js:
 test/built-ins/Function/prototype/toString/AsyncFunction.js:
   default: "SyntaxError: Unexpected token '}'. Expected a ')' or a ',' after a parameter declaration."
   strict mode: "SyntaxError: Unexpected token '}'. Expected a ')' or a ',' after a parameter declaration."
-test/built-ins/Function/prototype/toString/AsyncGenerator.js:
-  default: "SyntaxError: Unexpected token '*'. Expected a parenthesis for argument list."
-  strict mode: "SyntaxError: Unexpected token '*'. Expected a parenthesis for argument list."
 test/built-ins/Function/prototype/toString/Function.js:
   default: "SyntaxError: Unexpected token '}'. Expected a ')' or a ',' after a parameter declaration."
   strict mode: "SyntaxError: Unexpected token '}'. Expected a ')' or a ',' after a parameter declaration."
@@ -1007,27 +932,6 @@ test/built-ins/Function/prototype/toString/async-function-declaration.js:
 test/built-ins/Function/prototype/toString/async-function-expression.js:
   default: "Test262Error: Conforms to NativeFunction Syntax: 'async function F( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ }'.(async function /* a */ F /* b */ ( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ })"
   strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'async function F( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ }'.(async function /* a */ F /* b */ ( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ })"
-test/built-ins/Function/prototype/toString/async-generator-declaration.js:
-  default: "Test262Error: Conforms to NativeFunction Syntax: 'function f( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ }'.(async /* a */ function /* b */ * /* c */ f /* d */ ( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ })"
-  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function f( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ }'.(async /* a */ function /* b */ * /* c */ f /* d */ ( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ })"
-test/built-ins/Function/prototype/toString/async-generator-expression.js:
-  default: "Test262Error: Conforms to NativeFunction Syntax: 'function F( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ }'.(async /* a */ function /* b */ * /* c */ F /* d */ ( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ })"
-  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function F( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ }'.(async /* a */ function /* b */ * /* c */ F /* d */ ( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ })"
-test/built-ins/Function/prototype/toString/async-generator-method-class-expression-static.js:
-  default: "Test262Error: Conforms to NativeFunction Syntax: 'function f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
-  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
-test/built-ins/Function/prototype/toString/async-generator-method-class-expression.js:
-  default: "Test262Error: Conforms to NativeFunction Syntax: 'function f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
-  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
-test/built-ins/Function/prototype/toString/async-generator-method-class-statement-static.js:
-  default: "Test262Error: Conforms to NativeFunction Syntax: 'function f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
-  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
-test/built-ins/Function/prototype/toString/async-generator-method-class-statement.js:
-  default: "Test262Error: Conforms to NativeFunction Syntax: 'function f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
-  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
-test/built-ins/Function/prototype/toString/async-generator-method-object.js:
-  default: "Test262Error: Conforms to NativeFunction Syntax: 'function f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
-  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
 test/built-ins/Function/prototype/toString/async-method-class-expression-static.js:
   default: "Test262Error: Conforms to NativeFunction Syntax: 'async function f( /* b */ ) /* c */ { /* d */ }'.(async f /* a */ ( /* b */ ) /* c */ { /* d */ })"
   strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'async function f( /* b */ ) /* c */ { /* d */ }'.(async f /* a */ ( /* b */ ) /* c */ { /* d */ })"
@@ -1314,81 +1218,12 @@ test/built-ins/RegExp/named-groups/unicode-property-names.js:
 test/built-ins/RegExp/named-groups/unicode-references.js:
   default: 'SyntaxError: Invalid regular expression: invalid backreference for unicode pattern'
   strict mode: 'SyntaxError: Invalid regular expression: invalid backreference for unicode pattern'
-test/built-ins/RegExp/property-escapes/character-class.js:
-  default: 'Test262Error: Function: /[\p{Hex}-\uFFFF]/u Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Function: /[\p{Hex}-\uFFFF]/u Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/built-ins/RegExp/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«/(?:)/Â», Â«/(?:)/Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«/(?:)/Â», Â«/(?:)/Â») to be true'
 test/built-ins/RegExp/prototype/Symbol.match/builtin-infer-unicode.js:
   default: 'Test262Error: Expected SameValue(Â«í¼Â», Â«nullÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«í¼Â», Â«nullÂ») to be true'
-test/built-ins/RegExp/prototype/Symbol.matchAll/isregexp-internal-regexp-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/RegExp/prototype/Symbol.matchAll/isregexp-this-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/RegExp/prototype/Symbol.matchAll/length.js:
-  default: "TypeError: undefined is not an object (evaluating 'RegExp.prototype[Symbol.matchAll].length')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'RegExp.prototype[Symbol.matchAll].length')"
-test/built-ins/RegExp/prototype/Symbol.matchAll/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'RegExp.prototype[Symbol.matchAll].name')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'RegExp.prototype[Symbol.matchAll].name')"
-test/built-ins/RegExp/prototype/Symbol.matchAll/prop-desc.js:
-  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-test/built-ins/RegExp/prototype/Symbol.matchAll/regexpcreate-this-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor-get-constructor-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor-get-species-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor-is-undefined.js:
-  default: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor-species-is-null-or-undefined.js:
-  default: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor-species-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor.js:
-  default: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExp/prototype/Symbol.matchAll/species-regexp-get-global-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/RegExp/prototype/Symbol.matchAll/species-regexp-get-unicode-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/RegExp/prototype/Symbol.matchAll/string-tostring-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/RegExp/prototype/Symbol.matchAll/string-tostring.js:
-  default: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](obj)', 'regexp[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](obj)', 'regexp[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExp/prototype/Symbol.matchAll/this-get-flags-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/RegExp/prototype/Symbol.matchAll/this-get-flags.js:
-  default: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExp/prototype/Symbol.matchAll/this-lastindex-cached.js:
-  default: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExp/prototype/Symbol.matchAll/this-tolength-lastindex-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/RegExp/prototype/Symbol.matchAll/this-tostring-flags-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/RegExp/prototype/Symbol.matchAll/this-tostring-flags.js:
-  default: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
 test/built-ins/RegExp/prototype/Symbol.replace/result-coerce-capture.js:
   default: 'Test262Error: Expected SameValue(Â«Â», Â«foo[toString value]barÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«Â», Â«foo[toString value]barÂ») to be true'
@@ -1452,108 +1287,15 @@ test/built-ins/RegExp/unicode_restricted_octal_escape.js:
 test/built-ins/RegExp/unicode_restricted_quantifiable_assertion.js:
   default: 'Test262Error: RegExp("(?=.)*", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: RegExp("(?=.)*", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/built-ins/RegExpStringIteratorPrototype/Symbol.toStringTag.js:
-  default: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('')', '/./[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('')', '/./[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExpStringIteratorPrototype/ancestry.js:
-  default: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('a')', '/./[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('a')', '/./[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-call-throws.js:
-  default: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('')', '/./[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('')', '/./[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-get-throws.js:
-  default: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('')', '/./[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('')', '/./[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-match-get-0-throws.js:
-  default: "TypeError: /./g[Symbol.matchAll] is not a function. (In '/./g[Symbol.matchAll]('')', '/./g[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: /./g[Symbol.matchAll] is not a function. (In '/./g[Symbol.matchAll]('')', '/./g[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-match-get-0-tostring-throws.js:
-  default: "TypeError: /./g[Symbol.matchAll] is not a function. (In '/./g[Symbol.matchAll]('')', '/./g[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: /./g[Symbol.matchAll] is not a function. (In '/./g[Symbol.matchAll]('')', '/./g[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-match-get-0-tostring.js:
-  default: "TypeError: /./g[Symbol.matchAll] is not a function. (In '/./g[Symbol.matchAll]('')', '/./g[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: /./g[Symbol.matchAll] is not a function. (In '/./g[Symbol.matchAll]('')', '/./g[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-not-callable.js:
-  default: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec.js:
-  default: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExpStringIteratorPrototype/next/length.js:
-  default: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('')', '/./[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('')', '/./[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExpStringIteratorPrototype/next/name.js:
-  default: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('')', '/./[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('')', '/./[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExpStringIteratorPrototype/next/next-iteration-global.js:
-  default: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExpStringIteratorPrototype/next/next-iteration.js:
-  default: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: regexp[Symbol.matchAll] is not a function. (In 'regexp[Symbol.matchAll](str)', 'regexp[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExpStringIteratorPrototype/next/next-missing-internal-slots.js:
-  default: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('')', '/./[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('')', '/./[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExpStringIteratorPrototype/next/prop-desc.js:
-  default: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('')', '/./[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('')', '/./[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExpStringIteratorPrototype/next/regexp-tolength-lastindex-throws.js:
-  default: "TypeError: /./g[Symbol.matchAll] is not a function. (In '/./g[Symbol.matchAll]('')', '/./g[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: /./g[Symbol.matchAll] is not a function. (In '/./g[Symbol.matchAll]('')', '/./g[Symbol.matchAll]' is undefined)"
-test/built-ins/RegExpStringIteratorPrototype/next/this-is-not-object-throws.js:
-  default: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('')', '/./[Symbol.matchAll]' is undefined)"
-  strict mode: "TypeError: /./[Symbol.matchAll] is not a function. (In '/./[Symbol.matchAll]('')', '/./[Symbol.matchAll]' is undefined)"
 test/built-ins/Set/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object Set]Â», Â«[object Set]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Set]Â», Â«[object Set]Â») to be true'
 test/built-ins/String/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«Â», Â«Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«Â», Â«Â») to be true'
-test/built-ins/String/prototype/matchAll/length.js:
-  default: "TypeError: undefined is not an object (evaluating 'String.prototype.matchAll.length')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'String.prototype.matchAll.length')"
-test/built-ins/String/prototype/matchAll/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'String.prototype.matchAll.name')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'String.prototype.matchAll.name')"
-test/built-ins/String/prototype/matchAll/prop-desc.js:
-  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-test/built-ins/String/prototype/matchAll/regexp-get-matchAll-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/String/prototype/matchAll/regexp-is-null.js:
-  default: "TypeError: str.matchAll is not a function. (In 'str.matchAll(null)', 'str.matchAll' is undefined)"
-  strict mode: "TypeError: str.matchAll is not a function. (In 'str.matchAll(null)', 'str.matchAll' is undefined)"
-test/built-ins/String/prototype/matchAll/regexp-is-undefined.js:
-  default: "TypeError: str.matchAll is not a function. (In 'str.matchAll(undefined)', 'str.matchAll' is undefined)"
-  strict mode: "TypeError: str.matchAll is not a function. (In 'str.matchAll(undefined)', 'str.matchAll' is undefined)"
-test/built-ins/String/prototype/matchAll/regexp-matchAll-invocation.js:
-  default: "TypeError: str.matchAll is not a function. (In 'str.matchAll(obj)', 'str.matchAll' is undefined)"
-  strict mode: "TypeError: str.matchAll is not a function. (In 'str.matchAll(obj)', 'str.matchAll' is undefined)"
-test/built-ins/String/prototype/matchAll/regexp-matchAll-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/String/prototype/matchAll/regexp-prototype-get-matchAll-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/String/prototype/matchAll/regexp-prototype-has-no-matchAll.js:
-  default: "TypeError: str.matchAll is not a function. (In 'str.matchAll(/\\w/g)', 'str.matchAll' is undefined)"
-  strict mode: "TypeError: str.matchAll is not a function. (In 'str.matchAll(/\\w/g)', 'str.matchAll' is undefined)"
-test/built-ins/String/prototype/matchAll/regexp-prototype-matchAll-invocation.js:
-  default: "TypeError: str.matchAll is not a function. (In 'str.matchAll(regexp)', 'str.matchAll' is undefined)"
-  strict mode: "TypeError: str.matchAll is not a function. (In 'str.matchAll(regexp)', 'str.matchAll' is undefined)"
-test/built-ins/String/prototype/matchAll/regexp-prototype-matchAll-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/String/prototype/matchAll/this-val-non-obj-coercible.js:
-  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
 test/built-ins/String/prototype/trim/u180e.js:
   default: 'Test262Error: Expected SameValue(Â«_Â», Â«_á Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«_Â», Â«_á Â») to be true'
-test/built-ins/Symbol/matchAll/prop-desc.js:
-  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«symbolÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«symbolÂ») to be true'
 test/built-ins/ThrowTypeError/extensible.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
@@ -1852,6 +1594,9 @@ test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle.js:
 test/intl402/DateTimeFormat/prototype/resolvedOptions/resolved-locale-with-hc-unicode.js:
   default: 'Test262Error: Only hc Unicode extension value is present. (With hour option.) Expected SameValue(Â«en-USÂ», Â«en-US-u-hc-h11Â») to be true'
   strict mode: 'Test262Error: Only hc Unicode extension value is present. (With hour option.) Expected SameValue(Â«en-USÂ», Â«en-US-u-hc-h11Â») to be true'
+test/intl402/Intl/getCanonicalLocales/Locale-object.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"en-gb-oed\")')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"en-gb-oed\")')"
 test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js:
   default: 'Test262Error: Expected SameValue(Â«sgn-GRÂ», Â«gssÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«sgn-GRÂ», Â«gssÂ») to be true'
@@ -1886,8 +1631,8 @@ test/intl402/Locale/constructor-options-casefirst-valid.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
 test/intl402/Locale/constructor-options-collation-invalid.js:
-  default: 'Test262Error: a is an invalid collation option value Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: a is an invalid collation option value Expected a RangeError but got a TypeError'
+  default: 'Test262Error:  is an invalid collation option value Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error:  is an invalid collation option value Expected a RangeError but got a TypeError'
 test/intl402/Locale/constructor-options-collation-valid.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
@@ -1907,8 +1652,8 @@ test/intl402/Locale/constructor-options-language-valid.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
 test/intl402/Locale/constructor-options-numberingsystem-invalid.js:
-  default: 'Test262Error: a is an invalid numberingSystem option value Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: a is an invalid numberingSystem option value Expected a RangeError but got a TypeError'
+  default: 'Test262Error:  is an invalid numberingSystem option value Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error:  is an invalid numberingSystem option value Expected a RangeError but got a TypeError'
 test/intl402/Locale/constructor-options-numberingsystem-valid.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
@@ -1933,6 +1678,9 @@ test/intl402/Locale/constructor-parse-twice.js:
 test/intl402/Locale/constructor-tag-tostring.js:
   default: 'Test262Error: Expected a CustomError but got a TypeError'
   strict mode: 'Test262Error: Expected a CustomError but got a TypeError'
+test/intl402/Locale/constructor-tag.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(canonical)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(canonical)')"
 test/intl402/Locale/constructor-unicode-ext-invalid.js:
   default: 'Test262Error: Expected a RangeError but got a TypeError'
   strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
@@ -1975,19 +1723,46 @@ test/intl402/Locale/length.js:
 test/intl402/Locale/likely-subtags-grandfathered.js:
   default: 'Test262Error: Expected SameValue(Â«en-GB-oedÂ», Â«en-GB-oxendictÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«en-GB-oedÂ», Â«en-GB-oxendictÂ») to be true'
+test/intl402/Locale/likely-subtags.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(maximal)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(maximal)')"
 test/intl402/Locale/name.js:
   default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
 test/intl402/Locale/prop-desc.js:
   default: 'Test262Error: obj should have an own property Locale'
   strict mode: 'Test262Error: obj should have an own property Locale'
+test/intl402/Locale/prototype/baseName/branding.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/baseName/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
 test/intl402/Locale/prototype/baseName/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/calendar/branding.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/calendar/name.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
 test/intl402/Locale/prototype/calendar/prop-desc.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/caseFirst/branding.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/caseFirst/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
 test/intl402/Locale/prototype/caseFirst/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/collation/branding.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/collation/name.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
 test/intl402/Locale/prototype/collation/prop-desc.js:
@@ -1996,10 +1771,25 @@ test/intl402/Locale/prototype/collation/prop-desc.js:
 test/intl402/Locale/prototype/constructor/prop-desc.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/hourCycle/branding.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/hourCycle/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
 test/intl402/Locale/prototype/hourCycle/prop-desc.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/language/branding.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/language/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
 test/intl402/Locale/prototype/language/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/maximize/branding.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
 test/intl402/Locale/prototype/maximize/length.js:
@@ -2011,6 +1801,9 @@ test/intl402/Locale/prototype/maximize/name.js:
 test/intl402/Locale/prototype/maximize/prop-desc.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/minimize/branding.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
 test/intl402/Locale/prototype/minimize/length.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
@@ -2020,7 +1813,19 @@ test/intl402/Locale/prototype/minimize/name.js:
 test/intl402/Locale/prototype/minimize/prop-desc.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/numberingSystem/branding.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/numberingSystem/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
 test/intl402/Locale/prototype/numberingSystem/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/numeric/branding.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/numeric/name.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
 test/intl402/Locale/prototype/numeric/prop-desc.js:
@@ -2029,10 +1834,25 @@ test/intl402/Locale/prototype/numeric/prop-desc.js:
 test/intl402/Locale/prototype/prop-desc.js:
   default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/intl402/Locale/prototype/region/branding.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/region/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
 test/intl402/Locale/prototype/region/prop-desc.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/script/branding.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/script/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
 test/intl402/Locale/prototype/script/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
+test/intl402/Locale/prototype/toString/branding.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
 test/intl402/Locale/prototype/toString/prop-desc.js:
@@ -2045,8 +1865,8 @@ test/intl402/Number/prototype/toLocaleString/returns-same-results-as-NumberForma
   default: 'Error: Failed to format a number.'
   strict mode: 'Error: Failed to format a number.'
 test/intl402/NumberFormat/length.js:
-  default: 'Test262Error: Expected obj[length] to have configurable:true.'
-  strict mode: 'Test262Error: Expected obj[length] to have configurable:true.'
+  default: 'Test262Error: descriptor should be configurable'
+  strict mode: 'Test262Error: descriptor should be configurable'
 test/intl402/NumberFormat/prototype/format/bound-to-numberformat-instance.js:
   default: 'Error: Failed to format a number.'
   strict mode: 'Error: Failed to format a number.'
@@ -2086,6 +1906,9 @@ test/intl402/PluralRules/default-options-object-prototype.js:
 test/intl402/PluralRules/length.js:
   default: 'Test262Error: descriptor should be configurable'
   strict mode: 'Test262Error: descriptor should be configurable'
+test/intl402/PluralRules/prototype/resolvedOptions/pluralCategories.js:
+  default: 'Test262Error: Should have different arrays Expected SameValue(Â«undefinedÂ», Â«undefinedÂ») to be false'
+  strict mode: 'Test262Error: Should have different arrays Expected SameValue(Â«undefinedÂ», Â«undefinedÂ») to be false'
 test/intl402/TypedArray/prototype/toLocaleString/calls-toLocaleString-number-elements.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«à¹.à¹à¹à¹Â») to be true (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«à¹.à¹à¹à¹Â») to be true (Testing with Float64Array.)'
@@ -2110,8 +1933,6 @@ test/language/asi/S7.9_A5.7_T1.js:
   strict mode: 'SyntaxError: The prefix-increment operator requires a reference expression.'
 test/language/block-scope/syntax/redeclaration/async-function-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/async-function-declaration-attempt-to-redeclare-with-async-generator-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-function-declaration-attempt-to-redeclare-with-class-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-function-declaration-attempt-to-redeclare-with-const-declaration.js:
@@ -2125,26 +1946,7 @@ test/language/block-scope/syntax/redeclaration/async-function-declaration-attemp
 test/language/block-scope/syntax/redeclaration/async-function-declaration-attempt-to-redeclare-with-var-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/async-generator-declaration-attempt-to-redeclare-with-async-function-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/async-generator-declaration-attempt-to-redeclare-with-async-generator-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/async-generator-declaration-attempt-to-redeclare-with-class-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/async-generator-declaration-attempt-to-redeclare-with-const-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/async-generator-declaration-attempt-to-redeclare-with-function-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/async-generator-declaration-attempt-to-redeclare-with-generator-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/async-generator-declaration-attempt-to-redeclare-with-let-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/async-generator-declaration-attempt-to-redeclare-with-var-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/class-declaration-attempt-to-redeclare-with-async-function-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/class-declaration-attempt-to-redeclare-with-async-generator-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/class-declaration-attempt-to-redeclare-with-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
@@ -2155,8 +1957,6 @@ test/language/block-scope/syntax/redeclaration/class-declaration-attempt-to-rede
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/const-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/const-declaration-attempt-to-redeclare-with-async-generator-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/const-declaration-attempt-to-redeclare-with-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/const-declaration-attempt-to-redeclare-with-generator-declaration.js:
@@ -2165,8 +1965,6 @@ test/language/block-scope/syntax/redeclaration/const-declaration-attempt-to-rede
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/function-declaration-attempt-to-redeclare-with-async-function-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/function-declaration-attempt-to-redeclare-with-async-generator-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/function-declaration-attempt-to-redeclare-with-class-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
@@ -2184,8 +1982,6 @@ test/language/block-scope/syntax/redeclaration/function-declaration-attempt-to-r
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/generator-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/generator-declaration-attempt-to-redeclare-with-async-generator-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/generator-declaration-attempt-to-redeclare-with-class-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/generator-declaration-attempt-to-redeclare-with-const-declaration.js:
@@ -2201,8 +1997,6 @@ test/language/block-scope/syntax/redeclaration/generator-declaration-attempt-to-
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/let-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/let-declaration-attempt-to-redeclare-with-async-generator-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/let-declaration-attempt-to-redeclare-with-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/let-declaration-attempt-to-redeclare-with-generator-declaration.js:
@@ -2211,9 +2005,6 @@ test/language/block-scope/syntax/redeclaration/let-declaration-attempt-to-redecl
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-async-function-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-async-generator-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-class-declaration.js:
@@ -2419,14 +2210,6 @@ test/language/expressions/async-arrow-function/await-as-param-nested-arrow-body-
 test/language/expressions/async-function/early-errors-expression-not-simple-assignment-target.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/expressions/async-generator/early-errors-expression-not-simple-assignment-target.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/expressions/async-generator/early-errors-expression-yield-as-function-binding-identifier.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/expressions/async-generator/generator-created-after-decl-inst.js:
-  default: 'Test262Error: Expected SameValue(Â«[object AsyncGenerator]Â», Â«[object AsyncGenerator]Â») to be false'
-  strict mode: 'Test262Error: Expected SameValue(Â«[object AsyncGenerator]Â», Â«[object AsyncGenerator]Â») to be false'
 test/language/expressions/await/early-errors-await-not-simple-assignment-target.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
@@ -2502,21 +2285,6 @@ test/language/expressions/class/fields-after-same-line-method-private-names.js:
   default: "SyntaxError: Invalid character: '#'"
   strict mode: "SyntaxError: Invalid character: '#'"
 test/language/expressions/class/fields-after-same-line-method-string-literal-names.js:
-  default: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/fields-after-same-line-static-async-gen-computed-names.js:
-  default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-  strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/fields-after-same-line-static-async-gen-computed-symbol-names.js:
-  default: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/fields-after-same-line-static-async-gen-literal-names.js:
-  default: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/fields-after-same-line-static-async-gen-private-names.js:
-  default: "SyntaxError: Invalid character: '#'"
-  strict mode: "SyntaxError: Invalid character: '#'"
-test/language/expressions/class/fields-after-same-line-static-async-gen-string-literal-names.js:
   default: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
 test/language/expressions/class/fields-after-same-line-static-async-method-computed-names.js:
@@ -2750,21 +2518,6 @@ test/language/expressions/class/fields-regular-definitions-string-literal-names.
 test/language/expressions/class/fields-run-once-on-double-super.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/fields-same-line-async-gen-computed-names.js:
-  default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-  strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/fields-same-line-async-gen-computed-symbol-names.js:
-  default: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/fields-same-line-async-gen-literal-names.js:
-  default: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/fields-same-line-async-gen-private-names.js:
-  default: "SyntaxError: Invalid character: '#'"
-  strict mode: "SyntaxError: Invalid character: '#'"
-test/language/expressions/class/fields-same-line-async-gen-string-literal-names.js:
-  default: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
 test/language/expressions/class/fields-same-line-async-method-computed-names.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
@@ -3422,9 +3175,6 @@ test/language/module-code/parse-err-reference.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/module-code/privatename-valid-no-earlyerr.js:
   module: "SyntaxError: Invalid character: '#'"
-test/language/statements/async-generator/generator-created-after-decl-inst.js:
-  default: 'Test262Error: Expected SameValue(Â«[object AsyncGenerator]Â», Â«[object AsyncGenerator]Â») to be false'
-  strict mode: 'Test262Error: Expected SameValue(Â«[object AsyncGenerator]Â», Â«[object AsyncGenerator]Â») to be false'
 test/language/statements/class/class-name-ident-await-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
@@ -3487,21 +3237,6 @@ test/language/statements/class/fields-after-same-line-method-private-names.js:
   default: "SyntaxError: Invalid character: '#'"
   strict mode: "SyntaxError: Invalid character: '#'"
 test/language/statements/class/fields-after-same-line-method-string-literal-names.js:
-  default: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/fields-after-same-line-static-async-gen-computed-names.js:
-  default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-  strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/fields-after-same-line-static-async-gen-computed-symbol-names.js:
-  default: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/fields-after-same-line-static-async-gen-literal-names.js:
-  default: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/fields-after-same-line-static-async-gen-private-names.js:
-  default: "SyntaxError: Invalid character: '#'"
-  strict mode: "SyntaxError: Invalid character: '#'"
-test/language/statements/class/fields-after-same-line-static-async-gen-string-literal-names.js:
   default: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
 test/language/statements/class/fields-after-same-line-static-async-method-computed-names.js:
@@ -3732,21 +3467,6 @@ test/language/statements/class/fields-regular-definitions-private-names.js:
 test/language/statements/class/fields-regular-definitions-string-literal-names.js:
   default: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/fields-same-line-async-gen-computed-names.js:
-  default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-  strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/fields-same-line-async-gen-computed-symbol-names.js:
-  default: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/fields-same-line-async-gen-literal-names.js:
-  default: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/fields-same-line-async-gen-private-names.js:
-  default: "SyntaxError: Invalid character: '#'"
-  strict mode: "SyntaxError: Invalid character: '#'"
-test/language/statements/class/fields-same-line-async-gen-string-literal-names.js:
-  default: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected an opening '(' before a method's parameter list."
 test/language/statements/class/fields-same-line-async-method-computed-names.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
@@ -3885,8 +3605,6 @@ test/language/statements/class/super-fielddefinition-initializer-abrupt-completi
 test/language/statements/const/redeclaration-error-from-within-strict-mode-function-const.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/do-while/let-array-with-newline.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-await-of/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-in/12.6.4-2.js:
   default: 'Test262Error: accessedProp Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
@@ -4140,12 +3858,6 @@ test/language/statements/if/if-async-fun-else-stmt.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/if/if-async-fun-no-else.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/if/if-async-gen-else-async-gen.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/if/if-async-gen-else-stmt.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/if/if-async-gen-no-else.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/if/if-gen-else-gen.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/if/if-gen-else-stmt.js:
@@ -4154,16 +3866,11 @@ test/language/statements/if/if-gen-no-else.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/if/if-stmt-else-async-fun.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/if/if-stmt-else-async-gen.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/if/if-stmt-else-gen.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/if/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/labeled/decl-async-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/labeled/decl-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/labeled/decl-gen.js:
@@ -4193,8 +3900,6 @@ test/language/statements/let/syntax/escaped-let.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'l\\u0065t'"
 test/language/statements/switch/syntax/redeclaration/async-function-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/async-function-declaration-attempt-to-redeclare-with-async-generator-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/async-function-declaration-attempt-to-redeclare-with-class-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/async-function-declaration-attempt-to-redeclare-with-const-declaration.js:
@@ -4208,26 +3913,7 @@ test/language/statements/switch/syntax/redeclaration/async-function-declaration-
 test/language/statements/switch/syntax/redeclaration/async-function-declaration-attempt-to-redeclare-with-var-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/async-generator-declaration-attempt-to-redeclare-with-async-function-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/async-generator-declaration-attempt-to-redeclare-with-async-generator-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/async-generator-declaration-attempt-to-redeclare-with-class-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/async-generator-declaration-attempt-to-redeclare-with-const-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/async-generator-declaration-attempt-to-redeclare-with-function-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/async-generator-declaration-attempt-to-redeclare-with-generator-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/async-generator-declaration-attempt-to-redeclare-with-let-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/async-generator-declaration-attempt-to-redeclare-with-var-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/class-declaration-attempt-to-redeclare-with-async-function-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/class-declaration-attempt-to-redeclare-with-async-generator-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/class-declaration-attempt-to-redeclare-with-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
@@ -4238,8 +3924,6 @@ test/language/statements/switch/syntax/redeclaration/class-declaration-attempt-t
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/const-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/const-declaration-attempt-to-redeclare-with-async-generator-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/const-declaration-attempt-to-redeclare-with-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/const-declaration-attempt-to-redeclare-with-generator-declaration.js:
@@ -4248,8 +3932,6 @@ test/language/statements/switch/syntax/redeclaration/const-declaration-attempt-t
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/function-declaration-attempt-to-redeclare-with-async-function-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/function-declaration-attempt-to-redeclare-with-async-generator-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/function-declaration-attempt-to-redeclare-with-class-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
@@ -4263,8 +3945,6 @@ test/language/statements/switch/syntax/redeclaration/function-declaration-attemp
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/generator-declaration-attempt-to-redeclare-with-async-function-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/generator-declaration-attempt-to-redeclare-with-async-generator-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/generator-declaration-attempt-to-redeclare-with-class-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
@@ -4281,8 +3961,6 @@ test/language/statements/switch/syntax/redeclaration/generator-declaration-attem
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/let-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/let-declaration-attempt-to-redeclare-with-async-generator-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/let-declaration-attempt-to-redeclare-with-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/let-declaration-attempt-to-redeclare-with-generator-declaration.js:
@@ -4291,9 +3969,6 @@ test/language/statements/switch/syntax/redeclaration/let-declaration-attempt-to-
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-async-function-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-async-generator-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-class-declaration.js:
