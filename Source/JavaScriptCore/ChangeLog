@@ -1,3 +1,20 @@
+2018-06-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Spread onto PhantomNewArrayBuffer assumes JSFixedArray, but JSImmutableButterfly is returned
+        https://bugs.webkit.org/show_bug.cgi?id=186460
+
+        Reviewed by Saam Barati.
+
+        Spread(PhantomNewArrayBuffer) returns JSImmutableButterfly. But it is wrong.
+        We should return JSFixedArray for Spread. This patch adds a code generating
+        a JSFixedArray from JSImmutableButterfly.
+
+        Merging JSFixedArray into JSImmutableButterfly is possible future extension.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileSpread):
+        * runtime/JSFixedArray.h:
+
 2018-06-15  Saam Barati  <sbarati@apple.com>
 
         Annotate shrinkFootprintWhenIdle with NS_AVAILABLE

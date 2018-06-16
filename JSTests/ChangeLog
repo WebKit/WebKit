@@ -1,3 +1,16 @@
+2018-06-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Spread onto PhantomNewArrayBuffer assumes JSFixedArray, but JSImmutableButterfly is returned
+        https://bugs.webkit.org/show_bug.cgi?id=186460
+
+        Reviewed by Saam Barati.
+
+        * stress/spread-escapes-but-new-array-buffer-does-not-double.js: Added.
+        (assert):
+        (getProperties):
+        (theFunc):
+        (let.obj.valueOf):
+
 2018-06-14  Leo Balter  <leonardo.balter@gmail.com>
 
         Test262-Runner: Update config list with some failing tests
