@@ -1,5 +1,19 @@
 2018-06-15  Chris Dumez  <cdumez@apple.com>
 
+        MediaQuerySet wastes a lot of vector capacity
+        https://bugs.webkit.org/show_bug.cgi?id=186696
+        <rdar://problem/41172850>
+
+        Reviewed by Simon Fraser.
+
+        Call shrinkToFit() on the MediaQuerySet after we're done parsing it
+        to avoid wasting memory.
+
+        * css/parser/MediaQueryParser.cpp:
+        (WebCore::MediaQueryParser::parseInternal):
+
+2018-06-15  Chris Dumez  <cdumez@apple.com>
+
         CachedRawResource wastes 57K of Vector capacity
         https://bugs.webkit.org/show_bug.cgi?id=186703
         <rdar://problem/41173515>

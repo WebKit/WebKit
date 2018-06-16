@@ -272,6 +272,8 @@ RefPtr<MediaQuerySet> MediaQueryParser::parseInternal(CSSParserTokenRange range)
     } else if (m_mediaQueryData.currentMediaQueryChanged())
         commitMediaQuery();
 
+    m_querySet->shrinkToFit();
+
     return m_querySet;
 }
 
