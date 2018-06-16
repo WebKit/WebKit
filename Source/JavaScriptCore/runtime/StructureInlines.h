@@ -523,5 +523,24 @@ ALWAYS_INLINE bool Structure::shouldConvertToPolyProto(const Structure* a, const
 
     return !aObj && !bObj;
 }
-    
+
+inline Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, NonPropertyTransition transitionKind)
+{
+    IndexingType indexingModeIncludingHistory = newIndexingType(structure->indexingModeIncludingHistory(), transitionKind);
+
+    if (changesIndexingType(transitionKind)) {
+        if (JSGlobalObject* globalObject = structure->m_globalObject.get()) {
+            if (globalObject->isOriginalArrayStructure(structure)) {
+                Structure* result = globalObject->originalArrayStructureForIndexingType(indexingModeIncludingHistory);
+                if (result->indexingModeIncludingHistory() == indexingModeIncludingHistory) {
+                    structure->didTransitionFromThisStructure();
+                    return result;
+                }
+            }
+        }
+    }
+
+    return nonPropertyTransitionSlow(vm, structure, transitionKind);
+}
+
 } // namespace JSC

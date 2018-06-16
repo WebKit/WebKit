@@ -83,11 +83,12 @@ ALWAYS_INLINE double toLength(ExecState* exec, JSObject* obj)
     return lengthValue.toLength(exec);
 }
 
-inline void JSArray::pushInline(ExecState* exec, JSValue value)
+ALWAYS_INLINE void JSArray::pushInline(ExecState* exec, JSValue value)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+reloop:
     Butterfly* butterfly = this->butterfly();
 
     switch (indexingMode()) {
@@ -230,9 +231,7 @@ inline void JSArray::pushInline(ExecState* exec, JSValue value)
     default: {
         RELEASE_ASSERT(isCopyOnWrite(indexingMode()));
         convertFromCopyOnWrite(vm);
-        scope.release();
-        // Reloop.
-        return pushInline(exec, value);
+        goto reloop;
     }
     }
 }
