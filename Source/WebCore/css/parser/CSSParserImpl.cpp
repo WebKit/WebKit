@@ -185,6 +185,7 @@ void CSSParserImpl::parseDeferredRuleList(CSSParserTokenRange tokenRange, CSSDef
     parser.consumeRuleList(tokenRange, RegularRuleList, [&childRules](const RefPtr<StyleRuleBase>& rule) {
         childRules.append(rule);
     });
+    childRules.shrinkToFit();
 }
 
 void CSSParserImpl::parseDeferredKeyframeList(CSSParserTokenRange tokenRange, CSSDeferredParser& deferredParser, StyleRuleKeyframes& keyframeRule)
@@ -551,6 +552,7 @@ RefPtr<StyleRuleMedia> CSSParserImpl::consumeMediaRule(CSSParserTokenRange prelu
     consumeRuleList(block, RegularRuleList, [&rules](RefPtr<StyleRuleBase> rule) {
         rules.append(rule);
     });
+    rules.shrinkToFit();
 
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
@@ -577,6 +579,7 @@ RefPtr<StyleRuleSupports> CSSParserImpl::consumeSupportsRule(CSSParserTokenRange
     consumeRuleList(block, RegularRuleList, [&rules](RefPtr<StyleRuleBase> rule) {
         rules.append(rule);
     });
+    rules.shrinkToFit();
 
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));

@@ -1,5 +1,22 @@
 2018-06-15  Chris Dumez  <cdumez@apple.com>
 
+        StyleRuleMedia wastes 158KB of Vector capacity on cnn.com
+        https://bugs.webkit.org/show_bug.cgi?id=186705
+        <rdar://problem/41173637>
+
+        Reviewed by Simon Fraser.
+
+        Call shrinkToFit on RefPtr<StyleRuleBase> vectors in CSSParserImpl, after we're
+        done parsing and before constructing StyleRuleMedia, StyleRuleSupports and
+        deferred rules in StyleRuleGroup.
+
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::parseDeferredRuleList):
+        (WebCore::CSSParserImpl::consumeMediaRule):
+        (WebCore::CSSParserImpl::consumeSupportsRule):
+
+2018-06-15  Chris Dumez  <cdumez@apple.com>
+
         MediaQuerySet wastes a lot of vector capacity
         https://bugs.webkit.org/show_bug.cgi?id=186696
         <rdar://problem/41172850>
