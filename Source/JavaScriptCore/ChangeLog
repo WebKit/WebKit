@@ -1,5 +1,15 @@
 2018-06-15  Saam Barati  <sbarati@apple.com>
 
+        Annotate shrinkFootprintWhenIdle with NS_AVAILABLE
+        https://bugs.webkit.org/show_bug.cgi?id=186687
+        <rdar://problem/40071332>
+
+        Reviewed by Keith Miller.
+
+        * API/JSVirtualMachinePrivate.h:
+
+2018-06-15  Saam Barati  <sbarati@apple.com>
+
         Make ForceOSRExit CFG pruning in bytecode parser more aggressive by making the original block to ignore be the plan's osrEntryBytecodeIndex
         https://bugs.webkit.org/show_bug.cgi?id=186648
 

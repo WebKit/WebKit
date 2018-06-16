@@ -42,7 +42,7 @@
  API may not synchronously free memory.
 */
 
-- (void)shrinkFootprintWhenIdle; // FIXME: Annotate this with NS_AVAILABLE: <rdar://problem/40071332>.
+- (void)shrinkFootprintWhenIdle NS_AVAILABLE(10_14, 12_0);
 
 @end
 
