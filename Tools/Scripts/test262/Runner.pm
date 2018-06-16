@@ -89,6 +89,7 @@ my $failingOnly;
 my $latestImport;
 my $runningAllTests;
 my $timeout;
+my $skippedOnly;
 
 my $test262Dir;
 my $webkitTest262Dir = abs_path("$Bin/../../../JSTests/test262");
@@ -140,6 +141,7 @@ sub processCLI {
         'stats' => \$stats,
         'r|results=s' => \$specifiedResultsFile,
         'timeout=i' => \$timeout,
+        'S|skipped-files' => \$skippedOnly,
     );
 
     if ($help) {
@@ -219,7 +221,7 @@ sub processCLI {
     if (! $ignoreConfig) {
         if ($configFile && ! -e $configFile) {
             die "Error: Config file $configFile does not exist!\n" .
-                "Run without config file with -i or supply with --config.\n"
+                "Run without config file with -i or supply with --config.\n";
         }
         $config = LoadFile($configFile) or die $!;
         if ($config->{skip} && $config->{skip}->{files}) {
@@ -236,8 +238,17 @@ sub processCLI {
     }
 
     # If the expectation file doesn't exist and is not specified, run all tests.
-    if (! $ignoreExpectations && -e $expectationsFile) {
+    # If we are running only skipped files, then ignore the expectation file.
+    if (! $ignoreExpectations && -e $expectationsFile && !$skippedOnly) {
         $expect = LoadFile($expectationsFile) or die $!;
+    }
+
+    # If running only the skipped files from the config list
+    if ($skippedOnly) {
+        if (! -e $configFile) {
+            die "Error: Config file $configFile does not exist!\n" .
+                "Cannot run skipped tests from config. Supply file with --config.\n";
+        }
     }
 
     if (@features) {
@@ -259,8 +270,9 @@ sub processCLI {
     print "Expectations file: " . abs2rel($expectationsFile) . "\n" if $expect;
     print "Results file: ". abs2rel($resultsFile) . "\n" if $stats || $failingOnly;
 
+    print "Running only the failing files in expectations.yaml\n" if $failingOnly;
     print "Running only the latest imported files\n" if $latestImport;
-
+    print "Running only the skipped files in config.yaml\n" if $skippedOnly;
     print "Verbose mode\n" if $verbose;
 
     print "---\n\n";
@@ -397,10 +409,10 @@ sub main {
         }
         elsif ($test->{result} eq 'PASS') {
             # If this is an newly passing test
-            if ($expectedFailure) {
+            if ($expectedFailure || $skippedOnly) {
                 $newpasscount++;
 
-                if ($verbose) {
+                if ($verbose || $skippedOnly) {
                     my $path = $test->{path};
                     my $mode = $test->{mode};
                     $newpassreport .= "PASS $path ($mode)\n";
@@ -423,16 +435,22 @@ sub main {
             print "---------------NEW PASSING TESTS SUMMARY---------------\n\n";
             print "$newpassreport\n";
         }
+        print "---------------------------------------------------------\n\n";
+    }
+
+    # If we are running only skipped tests, report all the new passing tests
+    if ($skippedOnly && $newpassreport) {
+        print "---------------NEW PASSING TESTS SUMMARY---------------\n";
+        print "\n$newpassreport\n";
         print "---------------------------------------------------------\n";
     }
 
+    print("\n");
+
     if ($saveExpectations) {
         DumpFile($expectationsFile, \%failed);
-        print "\nSaved results in: $expectationsFile\n";
-    } else {
-        print "\nRun with --save to save a new expectations file\n";
+        print "Saved expectation file in: $expectationsFile\n";
     }
-
     if ($runningAllTests) {
         if (! -e $resultsDir) {
             mkpath($resultsDir);
@@ -449,6 +467,7 @@ sub main {
 
     if ( !$expect ) {
         print $failcount . " tests failed\n";
+        print $newpasscount . " tests newly pass\n" if $skippedOnly;
     } else {
         print $failcount . " tests failed in total\n";
         print $newfailcount . " tests newly fail\n";
@@ -521,8 +540,8 @@ sub getBuildPath {
     my $jsc;
 
     if ($webkitdirIsAvailable) {
-        my $config = $release ? 'Release' : 'Debug';
-        setConfiguration($config);
+        my $webkit_config = $release ? 'Release' : 'Debug';
+        setConfiguration($webkit_config);
         my $jscDir = executableProductDir();
 
         $jsc = $jscDir . '/jsc';
@@ -554,27 +573,35 @@ sub processFile {
 
     # Check test against filters in config file
     my $file = abs2rel( $filename, $test262Dir );
-    if (shouldSkip($file, $data)) {
-        $resultsdata = processResult($filename, $data, "skip");
-        DumpFile($resultsfh, $resultsdata);
+    my $skipTest = shouldSkip($file, $data);
+
+    # If we only want to run skipped tests, invert filter
+    $skipTest = !$skipTest if $skippedOnly;
+
+    if ($skipTest) {
+        if (! $skippedOnly) {
+            $resultsdata = processResult($filename, $data, "skip");
+            DumpFile($resultsfh, $resultsdata);
+        }
         return;
     }
+    else {
+        my @scenarios = getScenarios(@{ $data->{flags} });
 
-    my @scenarios = getScenarios(@{ $data->{flags} });
+        my $includes = $data->{includes};
+        my ($includesfh, $includesfile);
 
-    my $includes = $data->{includes};
-    my ($includesfh, $includesfile);
+        ($includesfh, $includesfile) = compileTest($includes) if defined $includes;
 
-    ($includesfh, $includesfile) = compileTest($includes) if defined $includes;
+        foreach my $scenario (@scenarios) {
+            my ($result, $execTime) = runTest($includesfile, $filename, $scenario, $data);
 
-    foreach my $scenario (@scenarios) {
-        my ($result, $execTime) = runTest($includesfile, $filename, $scenario, $data);
+            $resultsdata = processResult($filename, $data, $scenario, $result, $execTime);
+            DumpFile($resultsfh, $resultsdata);
+        }
 
-        $resultsdata = processResult($filename, $data, $scenario, $result, $execTime);
-        DumpFile($resultsfh, $resultsdata);
+        close $includesfh if defined $includesfh;
     }
-
-    close $includesfh if defined $includesfh;
 }
 
 sub shouldSkip {
@@ -723,12 +750,12 @@ sub processResult {
 
         # Print the failure if we haven't loaded an expectation file
         # or the failure is new.
-        my $printFailure = !$expect || $isnewfailure;
+        my $printFailure = (!$expect || $isnewfailure) && !$skippedOnly;
 
         my $newFail = '';
         $newFail = '! NEW ' if $isnewfailure;
         my $failMsg = '';
-        $failMsg = "FAIL $file ($scenario)\n" if ($printFailure or $verbose);
+        $failMsg = "FAIL $file ($scenario)\n";
 
         my $suffixMsg = '';
 
@@ -738,7 +765,7 @@ sub processResult {
             $suffixMsg = "$result$featuresList\n";
         }
 
-        print "$newFail$failMsg$suffixMsg";
+        print "$newFail$failMsg$suffixMsg" if ($printFailure || $verbose);
 
         $resultdata{result} = 'FAIL';
         $resultdata{error} = $currentfailure;
@@ -1058,6 +1085,10 @@ Runs all test files that failed in a given results file (specifc with --results)
 =item B<--latest-import, -l>
 
 Runs the test files listed in the last import (./JSTests/test262/latest-changes-summary.txt).
+
+=item B<--skipped-files, -S>
+
+Runs all test files that are skipped according to the config.yaml file.
 
 =item B<--stats>
 

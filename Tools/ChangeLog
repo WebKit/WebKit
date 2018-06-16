@@ -1,3 +1,20 @@
+2018-06-16  Valerie R Young  <valerie@bocoup.com>
+
+        test262/Runner.pm: option to run test skipped in config file
+        https://bugs.webkit.org/show_bug.cgi?id=186660
+
+        Reviewed by Michael Saboff.
+
+        Adds option --skipped-files, -S, to run all files skipped in the
+        config.yaml file.
+
+        * Scripts/test262/Runner.pm:
+        (processCLI):
+        (main):
+        (getBuildPath):
+        (processFile):
+        (processResult):
+
 2018-05-18  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Unreviewed, add myself as a WebKit committer.
