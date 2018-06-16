@@ -21,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cors/resources/cors-cookie.py
 /LayoutTests/imported/w3c/web-platform-tests/cors/resources/cors-headers.asis
 /LayoutTests/imported/w3c/web-platform-tests/cors/resources/cors-makeheader.py
+/LayoutTests/imported/w3c/web-platform-tests/cors/resources/image-tainting-checker.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/cors/resources/preflight.py
 /LayoutTests/imported/w3c/web-platform-tests/cors/resources/remote-xhrer.html
 /LayoutTests/imported/w3c/web-platform-tests/cors/resources/status.py

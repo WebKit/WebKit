@@ -20,6 +20,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/display-inline-grid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-box-sizing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-computed-value-display-floated-items-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-ignores-first-letter-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-ignores-first-line-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-display-grid-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-display-grid-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-display-inline-grid-001-expected.xht
@@ -62,6 +64,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-inline-multicol-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-inline-vertical-align-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-inline-vertical-align-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-item-accepts-first-letter-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-item-accepts-first-line-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-margins-no-collapse-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-margins-no-collapse-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-multicol-001-expected.xht

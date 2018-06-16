@@ -1,0 +1,60 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/README
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-015.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-016.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-021.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-022.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-024.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-025.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-026.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-027.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-028.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-029.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-030.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-031.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-032.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-034.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-035.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-036.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-041.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-042.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-044.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-045.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-046.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-047.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-048.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-049.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-050.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-051.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-052.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-054.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-055.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-056.html

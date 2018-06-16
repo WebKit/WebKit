@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/available-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/available-002.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-002-expected.xht
@@ -46,6 +47,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/datatypes-invalid-base128-002.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/datatypes-invalid-base128-003-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/datatypes-invalid-base128-003.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/directory-knowntags-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/directory-knowntags-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/directory-mismatched-tables-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/directory-mismatched-tables-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/header-length-001-expected.xht
@@ -68,8 +71,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadata-noeffect-002.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-authoritative-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-authoritative-001.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-compression-001-expected.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-compression-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-encoding-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-encoding-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-encoding-002-expected.xht
@@ -82,10 +83,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-encoding-005.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-encoding-006-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-encoding-006.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-metaOrigLength-001-expected.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-metaOrigLength-001.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-metaOrigLength-002-expected.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-metaOrigLength-002.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-copyright-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-copyright-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-copyright-002-expected.xht
@@ -510,8 +507,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-uniqueid-002.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-uniqueid-003-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-uniqueid-003.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-uniqueid-004-expected.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-uniqueid-004.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-uniqueid-005-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-uniqueid-005.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-uniqueid-006-expected.xht
@@ -526,8 +521,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-vendor-003.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-vendor-004-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-vendor-004.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-vendor-005-expected.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-vendor-005.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-vendor-006-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-vendor-006.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/metadatadisplay-schema-vendor-007-expected.xht
@@ -586,6 +579,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-origlength-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-origlength-002-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-origlength-002.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-origlength-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-origlength-003.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/tabledata-non-zero-loca-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/tabledata-non-zero-loca-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/tabledata-recontruct-loca-001-expected.xht

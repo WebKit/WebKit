@@ -30,6 +30,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-function-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-resolving-hsl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-resolving-keywords.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-resolving.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/currentcolor-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/currentcolor-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/currentcolor-002-expected.html
@@ -121,6 +125,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/rgb-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/rgb-008-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/rgb-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/rgb-rounding-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/rgba-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/rgba-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/rgba-002-expected.html
@@ -143,6 +148,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t31-color-text-a.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-basic-0.0-a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-basic-0.0-a.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-basic-0.6-a.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-basic-1.0-a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-basic-1.0-a.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-clamping-0.0-b-expected.html
@@ -157,6 +163,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-offscreen-multiple-boxes-2-c.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-offscreen-with-alpha-c-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-offscreen-with-alpha-c.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-zorder-c.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t41-html4-keywords-a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t41-html4-keywords-a.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t421-rgb-clip-outside-gamut-b-expected.html
@@ -173,12 +180,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t421-rgb-hex-parsing-f.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t421-rgb-hex3-a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t421-rgb-hex3-a.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t421-rgb-hex3-expand-b.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t421-rgb-hex6-a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t421-rgb-hex6-a.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t421-rgb-values-meaning-b-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t421-rgb-values-meaning-b.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-a0.0-a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-a0.0-a.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-a0.6-a.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-a1.0-a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-a1.0-a.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-clamping-a0.0-b-expected.html
@@ -243,6 +252,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t424-hsl-values-b-8.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t424-hsl-values-b-9-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t424-hsl-values-b-9.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-basic-a.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-clip-outside-device-gamut-b-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-clip-outside-device-gamut-b.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-h-rotating-b-expected.html

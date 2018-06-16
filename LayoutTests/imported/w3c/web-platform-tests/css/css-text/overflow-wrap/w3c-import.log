@@ -32,6 +32,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-fit-content-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-fit-content-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/word-wrap-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/word-wrap-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/word-wrap-002-expected.html

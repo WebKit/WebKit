@@ -1,0 +1,28 @@
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print,
+CONSOLE MESSAGE: line 26: CORS-preflight request was blocked
+CONSOLE MESSAGE: line 26: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print, due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print
+CONSOLE MESSAGE: line 46: CORS-preflight request was blocked
+CONSOLE MESSAGE: line 46: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print
+CONSOLE MESSAGE: line 53: CORS-preflight request was blocked
+CONSOLE MESSAGE: line 53: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print
+CONSOLE MESSAGE: line 60: CORS-preflight request was blocked
+CONSOLE MESSAGE: line 60: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print
+CONSOLE MESSAGE: line 67: CORS-preflight request was blocked
+CONSOLE MESSAGE: line 67: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print
+CONSOLE MESSAGE: line 74: CORS-preflight request was blocked
+CONSOLE MESSAGE: line 74: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
+Request headers
+
+
+FAIL Client hint headers are simple headers  A network error occurred.
+PASS Unspecified request headers are disallowed 
+PASS Unextractable device-memory client hint header is disallowed 
+PASS Unextractable DPR client hint header is disallowed 
+PASS Unextractable width client hint header is disallowed 
+PASS Unextractable viewport-width client hint header is disallowed 
+

@@ -15,7 +15,12 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-count-used-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-count-used-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/extremely-tall-multicol-with-extremely-tall-child-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/float-and-block-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/float-and-block.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/going-out-of-flow-after-spanner.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-002-expected.html
@@ -42,6 +47,22 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-break-000.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-break-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-break-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-000-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-000-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-clip-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-clip-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-clip-002-expected.xht
@@ -290,3 +311,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-width-small-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-zero-height-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-zero-height-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/orthogonal-writing-mode-shrink-to-fit-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/orthogonal-writing-mode-shrink-to-fit.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/zero-column-width-computed-style.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/zero-column-width-layout-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/zero-column-width-layout.html

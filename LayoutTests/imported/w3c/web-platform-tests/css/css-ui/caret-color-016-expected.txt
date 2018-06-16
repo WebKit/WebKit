@@ -1,7 +1,0 @@
-Before running this test, this link must have been visited. It will have yellow text if this is not the case. If it its text is yellow, you need to navigate to this link first.
-
-link
-
-
-PASS The computed value of a visited link should be the same than a non-visited link 
-

@@ -1,0 +1,9 @@
+If the user-agent does not claim to support the :focus-visible pseudo-class then SKIP this test.
+Click the button below that says "Click me."
+If the element that says "I will be focused programmatically." does not have a green background, then the test result is FAILURE. If the element has a green background, then the test result is SUCCESS.
+
+Click me.
+I will be focused programmatically.
+
+FAIL Programmatic focus should always match :focus-visible assert_equals: expected "rgb(128, 196, 128)" but got "rgba(0, 0, 0, 0)"
+

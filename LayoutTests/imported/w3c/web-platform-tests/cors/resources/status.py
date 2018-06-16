@@ -1,5 +1,5 @@
 def main(request, response):
-    response.headers.set("Access-Control-Allow-Origin", request.headers.get("origin") )
+    response.headers.set("Access-Control-Allow-Origin", request.headers.get("origin"))
     response.headers.set("Access-Control-Expose-Headers", "X-Request-Method")
 
     if request.method == 'OPTIONS':
@@ -10,7 +10,7 @@ def main(request, response):
 
     response.headers.set("X-Request-Method", request.method)
 
-    response.headers.set("X-A-C-Request-Method", request.headers.get("Access-Control-Request-Method", ""));
+    response.headers.set("X-A-C-Request-Method", request.headers.get("Access-Control-Request-Method", ""))
 
 
     #This should reasonably work for most response codes.
@@ -24,7 +24,7 @@ def main(request, response):
     if request.method == "OPTIONS" and "preflight" in request.GET:
         try:
             code = int(request.GET.first('preflight'))
-        except KeyError, ValueError:
+        except KeyError:
             pass
 
     status = code, text

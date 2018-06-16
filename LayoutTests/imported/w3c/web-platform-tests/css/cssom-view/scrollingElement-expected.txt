@@ -1,0 +1,5 @@
+ 
+
+FAIL scrollingElement in quirks mode assert_equals: scrollingElement in quirks mode should be null if overflow of body and root element isn't visible. expected null but got Element node <body style="overflow: scroll;"></body>
+FAIL scrollingElement in no-quirks mode assert_equals: scrollingElement in standards mode should be the document element. expected Element node <html><head></head><body></body></html> but got Element node <body></body>
+

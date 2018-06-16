@@ -1,0 +1,4 @@
+This link should be green.
+
+FAIL Check that we match :link and not :visited for slotted anchor. assert_equals: Unvisited link should be green. expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

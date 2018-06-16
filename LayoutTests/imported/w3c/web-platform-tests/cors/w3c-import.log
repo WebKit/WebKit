@@ -20,7 +20,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cors/access-control-expose-headers-parsing.window.js
 /LayoutTests/imported/w3c/web-platform-tests/cors/allow-headers.htm
 /LayoutTests/imported/w3c/web-platform-tests/cors/basic.htm
+/LayoutTests/imported/w3c/web-platform-tests/cors/client-hint-request-headers.htm
 /LayoutTests/imported/w3c/web-platform-tests/cors/credentials-flag.htm
+/LayoutTests/imported/w3c/web-platform-tests/cors/image-tainting-in-cross-origin-iframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/cors/late-upload-events.htm
 /LayoutTests/imported/w3c/web-platform-tests/cors/origin.htm
 /LayoutTests/imported/w3c/web-platform-tests/cors/preflight-cache.htm

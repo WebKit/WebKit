@@ -27,10 +27,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/MediaList2.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/StyleSheetList.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/at-namespace.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-set-property.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/css-style-attr-decl-block.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/css-style-attribute-modifications.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/css-style-declaration-modifications.html

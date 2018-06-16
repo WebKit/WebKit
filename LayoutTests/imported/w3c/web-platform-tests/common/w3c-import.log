@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/PrefixedLocalStorage.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/common/PrefixedPostMessage.js
 /LayoutTests/imported/w3c/web-platform-tests/common/PrefixedPostMessage.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/common/arrays.js
 /LayoutTests/imported/w3c/web-platform-tests/common/blank.html
 /LayoutTests/imported/w3c/web-platform-tests/common/canvas-frame.css
 /LayoutTests/imported/w3c/web-platform-tests/common/canvas-frame.css.headers
@@ -30,7 +31,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/canvas-tests.css.headers
 /LayoutTests/imported/w3c/web-platform-tests/common/canvas-tests.js
 /LayoutTests/imported/w3c/web-platform-tests/common/canvas-tests.js.headers
-/LayoutTests/imported/w3c/web-platform-tests/common/css-paint-tests.js
 /LayoutTests/imported/w3c/web-platform-tests/common/css-paint-tests.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/common/css-red.txt
 /LayoutTests/imported/w3c/web-platform-tests/common/domain-setter.sub.html
@@ -54,9 +54,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/reftest-wait.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/common/stringifiers.js
 /LayoutTests/imported/w3c/web-platform-tests/common/stringifiers.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/common/subset-tests.js
 /LayoutTests/imported/w3c/web-platform-tests/common/test-setting-immutable-prototype.js
 /LayoutTests/imported/w3c/web-platform-tests/common/test-setting-immutable-prototype.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/common/text-plain.txt
 /LayoutTests/imported/w3c/web-platform-tests/common/utils.js
 /LayoutTests/imported/w3c/web-platform-tests/common/utils.js.headers
-/LayoutTests/imported/w3c/web-platform-tests/common/vendor-prefix.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/common/worklet-reftest.js

@@ -1,7 +1,0 @@
-Attempt to resize the orange box both horizontally and vertically, then press the “done” button (Resizing vertically is not expected to be possible but should still be attempted).
-
-done
-
-Harness Error (TIMEOUT), message = null
-
-

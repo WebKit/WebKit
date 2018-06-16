@@ -1,0 +1,12 @@
+
+FAIL e.style['shape-outside'] = "circle(at center left 1px)" should not set the property value assert_equals: expected "" but got "circle(at 1px 50%)"
+FAIL e.style['shape-outside'] = "circle(at center top 2px)" should not set the property value assert_equals: expected "" but got "circle(at 50% 2px)"
+FAIL e.style['shape-outside'] = "circle(at right 3% center)" should not set the property value assert_equals: expected "" but got "circle(at 97% 50%)"
+FAIL e.style['shape-outside'] = "circle(at left 4px top)" should not set the property value assert_equals: expected "" but got "circle(at 4px 0%)"
+FAIL e.style['shape-outside'] = "circle(at right 5px top)" should not set the property value assert_equals: expected "" but got "circle(at right 5px top 0%)"
+FAIL e.style['shape-outside'] = "ellipse(at right top 5px)" should not set the property value assert_equals: expected "" but got "ellipse(at 100% 5px)"
+FAIL e.style['shape-outside'] = "ellipse(at bottom 6% center)" should not set the property value assert_equals: expected "" but got "ellipse(at 50% 94%)"
+FAIL e.style['shape-outside'] = "ellipse(at bottom 7% left)" should not set the property value assert_equals: expected "" but got "ellipse(at 0% 93%)"
+FAIL e.style['shape-outside'] = "ellipse(at bottom right 8%)" should not set the property value assert_equals: expected "" but got "ellipse(at 92% 100%)"
+FAIL e.style['shape-outside'] = "ellipse(at right 10px top)" should not set the property value assert_equals: expected "" but got "ellipse(at right 10px top 0%)"
+

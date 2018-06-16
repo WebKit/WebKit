@@ -1,0 +1,66 @@
+auto-sized rows - horizonal grid and verticalLR item - column-axis baseline
+É
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ min-content-sized rows - horizonal grid and verticalLR item - column-axis baseline
+É
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ max-content-sized rows - horizonal grid and verticalLR item - column-axis baseline
+É
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ fit-content-sized rows - horizonal grid and verticalLR item - column-axis baseline
+É
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ auto-sized columns - horizontal grid item - row-axis baseline
+É
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ min-content-sized columns - horizontal grid item - row-axis baseline
+É
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ max-content-sized columns - horizontal grid item - row-axis baseline
+É
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ fit-content-sized columns - horizontal grid item - row-axis baseline
+É
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ auto-sized rows - verticalLR grid and horizontal item - column-axis baseline
+É
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ min-content-sized rows - verticalLR grid and horizontal item - column-axis baseline
+É
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ max-content-sized rows - verticalLR grid and horizontal item - column-axis baseline
+É
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ fit-content-sized rows - verticalLR grid and horizontal item - column-axis baseline
+É
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ auto-sized rows - verticalRL grid and horizontal item - column-axis baseline
+É
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ min-content-sized rows - verticalRL grid and horizontal item - column-axis baseline
+É
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ max-content-sized rows - verticalRL grid and horizontal item - column-axis baseline
+É
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ fit-content-sized rows - verticalRL grid and horizontal item - column-axis baseline
+É
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+
+PASS .inline-grid 1 
+PASS .inline-grid 2 
+PASS .inline-grid 3 
+PASS .inline-grid 4 
+PASS .inline-grid 5 
+PASS .inline-grid 6 
+PASS .inline-grid 7 
+PASS .inline-grid 8 
+PASS .inline-grid 9 
+PASS .inline-grid 10 
+PASS .inline-grid 11 
+PASS .inline-grid 12 
+PASS .inline-grid 13 
+PASS .inline-grid 14 
+PASS .inline-grid 15 
+PASS .inline-grid 16 
+

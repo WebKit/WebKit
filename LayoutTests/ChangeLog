@@ -1,3 +1,27 @@
+2018-06-16  Brendan McLoughlin  <brendan@bocoup.com>
+
+        Sync additional web-platform-tests directories up to 197cdad
+        https://bugs.webkit.org/show_bug.cgi?id=186356
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.worker-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom-view/Screen-pixelDepth-Screen-colorDepth001-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom-view/elementFromPoint-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-smooth-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom-view/scrolling-quirks-vs-nonquirks-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/cors/client-hint-request-headers-expected.txt: Added.
+        * tests-options.json:
+
 2018-06-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, temporarily(?) revert some GTK crash expectations

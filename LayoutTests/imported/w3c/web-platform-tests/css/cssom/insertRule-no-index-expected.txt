@@ -1,4 +1,4 @@
 
-PASS inserRule with omitted index argument 
+PASS insertRule with omitted index argument 
 PASS insertRule with undefined index argument 
 

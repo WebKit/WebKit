@@ -1,0 +1,83 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/CaretPosition-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/DOMRectList.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/GetBoundingRect.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/HTMLBody-ScrollArea_quirksmode.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/MediaQueryList-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/MediaQueryList-with-empty-string.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/Screen-pixelDepth-Screen-colorDepth001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/cssom-getBoxQuads-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/cssom-getClientRects-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/cssom-getClientRects.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/cssom-view-img-attributes-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/cssom-view-window-screen-interface.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/elementFromPoint-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/elementFromPoint-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/elementFromPoint-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/elementFromPoint-dynamic-anon-box.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/elementFromPoint-parameters.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/elementFromPoint.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/elementFromPosition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/elementScroll-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/elementScroll.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/elementsFromPoint-iframes.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/elementsFromPoint-invalid-cases.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/elementsFromPoint-shadowroot.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/elementsFromPoint-simple.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/elementsFromPoint-svg-text.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/elementsFromPoint-svg.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/elementsFromPoint-table.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/elementsFromPoint.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/historical.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/htmlelement-offset-width-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/interfaces.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/matchMedia.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/matchMediaAddListener.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/media-query-list-interface.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/mouseEvent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/negativeMargins.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/offsetParent_element_test.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeftInScrollableParent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scroll-no-layout-box.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-scrollMargin.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-scrollPadding.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-smooth.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scrollTop-display-change-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scrollTop-display-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scrollWidthHeight.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scrollWidthHeightWhenNotScrollable.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scrolling-no-browsing-context.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scrolling-quirks-vs-nonquirks.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scrollingElement.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scrollintoview.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/ttwf-js-cssomview-getclientrects-length.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/window-interface.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/window-screen-height-immutable.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/window-screen-height.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/window-screen-width-immutable.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/window-screen-width.html

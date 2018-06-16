@@ -18,8 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/SFNT-CFF-Reference.otf
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/SFNT-TTF-Fallback.ttf
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/SFNT-TTF-Reference.ttf
-/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/available-001a.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/available-001b.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/available-002.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/blocks-extraneous-data-001.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/blocks-extraneous-data-002.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/blocks-extraneous-data-003.woff2
@@ -35,6 +34,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/datatypes-invalid-base128-001.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/datatypes-invalid-base128-002.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/datatypes-invalid-base128-003.woff2
+/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/directory-knowntags-001.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/directory-mismatched-tables-001.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/header-length-001.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/header-length-002.woff2
@@ -47,15 +47,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadata-noeffect-001.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadata-noeffect-002.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-authoritative-001.woff2
-/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-compression-001.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-encoding-001.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-encoding-002.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-encoding-003.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-encoding-004.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-encoding-005.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-encoding-006.woff2
-/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-metaOrigLength-001.woff2
-/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-metaOrigLength-002.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-schema-copyright-001.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-schema-copyright-002.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-schema-copyright-003.woff2
@@ -268,7 +265,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-schema-uniqueid-001.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-schema-uniqueid-002.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-schema-uniqueid-003.woff2
-/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-schema-uniqueid-004.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-schema-uniqueid-005.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-schema-uniqueid-006.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-schema-uniqueid-007.woff2
@@ -276,7 +272,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-schema-vendor-002.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-schema-vendor-003.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-schema-vendor-004.woff2
-/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-schema-vendor-005.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-schema-vendor-006.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-schema-vendor-007.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/metadatadisplay-schema-vendor-008.woff2
@@ -306,6 +301,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/tabledata-glyf-bbox-003.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/tabledata-glyf-origlength-001.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/tabledata-glyf-origlength-002.woff2
+/LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/tabledata-glyf-origlength-003.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/tabledata-non-zero-loca-001.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/tabledata-recontruct-loca-001.woff2
 /LayoutTests/imported/w3c/web-platform-tests/css/WOFF2/support/tabledata-transform-bad-flag-001.woff2

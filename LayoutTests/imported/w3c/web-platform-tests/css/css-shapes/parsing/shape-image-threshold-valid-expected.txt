@@ -1,0 +1,4 @@
+
+PASS e.style['shape-image-threshold'] = "12.5" should set the property value 
+PASS e.style['shape-image-threshold'] = "-7" should set the property value 
+

@@ -23,6 +23,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-property-whitelist.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-and-placeholder-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-and-placeholder.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/marker-and-other-pseudo-elements-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/marker-and-other-pseudo-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/marker-color-expected.html
@@ -31,3 +34,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/marker-font-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/marker-inherit-values-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/marker-inherit-values.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/placeholder-input-number-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/placeholder-input-number-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/placeholder-input-number.html

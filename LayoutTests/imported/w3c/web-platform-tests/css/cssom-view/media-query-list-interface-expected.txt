@@ -1,0 +1,7 @@
+
+PASS window_exposes_matchmedia 
+PASS mediaquerylist_inherited_functions 
+PASS mediaquerylist_functions 
+PASS mediaquerylist_properties 
+PASS mediaquerylist_properties_readonly 
+

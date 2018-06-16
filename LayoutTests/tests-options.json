@@ -35,6 +35,12 @@
     "imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getKey.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors.html": [
         "slow"
     ],
@@ -69,6 +75,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/request-event-ordering.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/IndexedDB/wasm-module-value.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/writer-starvation.htm": [
@@ -371,6 +380,9 @@
     "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-twice.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/acid/acid3/numbered-tests.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/audio-output/setSinkId-manual.https.html": [
         "slow"
     ],
@@ -405,6 +417,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/css/css-animations/animationevent-types.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-color/color-resolving-hsl.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/dom/nodes/Document-characterSet-normalization.html": [
@@ -507,6 +522,84 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/encoding/api-invalid-label.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-decode-cseucpkdfmtjapanese.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-decode-errors.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-decode-x-euc-jp.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-decode.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-cseucpkdfmtjapanese.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-errors-han.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-errors-hangul.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-errors-misc.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-x-euc-jp.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href-errors-han.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href-errors-hangul.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href-errors-misc.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-decode-csiso2022jp.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-decode-errors.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-decode.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-form-csiso2022jp.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-form-errors-han.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-form-errors-hangul.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-form-errors-misc.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-form.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-href-errors-han.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-href-errors-hangul.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-href-errors-misc.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-href.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-csshiftjis.html": [
@@ -1112,6 +1205,9 @@
     "imported/w3c/web-platform-tests/html/dom/interfaces.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/dom/interfaces.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/dom/reflection-embedded.html": [
         "slow"
     ],
@@ -1403,10 +1499,16 @@
     "imported/w3c/web-platform-tests/payment-request/payment-request-constructor-crash.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/quirks/hashless-hex-color.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/resource-timing/single-entry-per-resource.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/service-workers/cache-storage/common.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-abort.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-add.https.html": [
@@ -1434,6 +1536,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-abort.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-add.https.html": [
@@ -1464,6 +1569,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/service-workers/cache-storage/window/sandboxed-iframes.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-abort.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-add.https.html": [
@@ -1517,6 +1625,9 @@
     "imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/local-url-inherit-controller.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html": [
         "slow"
     ],
@@ -1524,6 +1635,54 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonechange-long.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/xhr/progress-events-response-data-gzip.htm": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/xhr/send-redirect-bogus.htm": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-aborted.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-abortedonmain.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-overrides.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-overridesexpires.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-reused.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-simple.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-synconmain.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-twice.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overrides.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-simple.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-synconworker.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-twice.html": [
         "slow"
     ]
 }

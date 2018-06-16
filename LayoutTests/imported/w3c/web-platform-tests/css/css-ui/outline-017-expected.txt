@@ -1,5 +1,5 @@
 
-PASS outline-color is animated as a color 
+FAIL outline-color is animated as a color assert_equals: expected "rgba(2, 0, 0, 0.5)" but got "rgba(5, 0, 0, 0.498039)"
 PASS outline-width is animated as a length 
 PASS outline-offset is animated as a length 
 

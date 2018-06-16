@@ -14,5 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/credential-management/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/credential-management/credentialscontainer-create-basics.https.html
+/LayoutTests/imported/w3c/web-platform-tests/credential-management/federatedcredential-framed-get.sub.https.html
 /LayoutTests/imported/w3c/web-platform-tests/credential-management/idl.https.html
+/LayoutTests/imported/w3c/web-platform-tests/credential-management/passwordcredential-framed-get.sub.https.html
+/LayoutTests/imported/w3c/web-platform-tests/credential-management/require_securecontext.html

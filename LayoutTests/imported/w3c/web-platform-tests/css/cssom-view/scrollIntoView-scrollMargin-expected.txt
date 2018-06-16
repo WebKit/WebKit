@@ -1,0 +1,5 @@
+
+FAIL scrollIntoView({block: "center", inline: "center"}) assert_approx_equals: scrollX expected 153.5 +/- 0.5 but got 115
+FAIL scrollIntoView({block: "start", inline: "start"}) assert_approx_equals: scrollX expected 184 +/- 0.5 but got 115
+FAIL scrollIntoView({block: "end", inline: "end"}) assert_approx_equals: scrollX expected 123 +/- 0.5 but got 115
+

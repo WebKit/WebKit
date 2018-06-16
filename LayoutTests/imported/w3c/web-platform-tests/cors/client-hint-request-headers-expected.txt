@@ -1,0 +1,16 @@
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print,
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print
+Request headers
+
+
+FAIL Client hint headers are simple headers  A network error occurred.
+PASS Unspecified request headers are disallowed 
+PASS Unextractable device-memory client hint header is disallowed 
+PASS Unextractable DPR client hint header is disallowed 
+PASS Unextractable width client hint header is disallowed 
+PASS Unextractable viewport-width client hint header is disallowed 
+

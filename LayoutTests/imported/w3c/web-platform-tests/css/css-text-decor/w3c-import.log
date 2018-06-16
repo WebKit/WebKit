@@ -1,0 +1,99 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+text-decoration-line
+text-decoration-color
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/line-through-vertical-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/line-through-vertical.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-recalc-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-recalc.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-010-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-010.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-011-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-011.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-012-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-012.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-013-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-013.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-recalc-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-recalc.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-serialization.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-skip-ink.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-style-multiple-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-style-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-style-recalc-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-style-recalc.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-visibility-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-visibility-002.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-visibility-003.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-visibility-004.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-visibility-005.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-visibility-006.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-visibility-007.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-visibility-008.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-visibility-009.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-visibility-010.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-visibility-011.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-visibility-012.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-color-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-color-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-above-left-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-above-left-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-above-left-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-above-left-002.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-above-right-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-above-right-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-above-right-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-above-right-002.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-below-left-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-below-left-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-below-left-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-below-left-002.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-below-right-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-below-right-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-below-right-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-below-right-002.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-012-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-016.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-021-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-021.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-filled-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-filled-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-none-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-none-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-open-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-open-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-shape-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-shape-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-string-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-string-001.xht

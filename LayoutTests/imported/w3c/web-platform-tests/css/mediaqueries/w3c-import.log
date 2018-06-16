@@ -35,6 +35,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-006-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/media-queries-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/media-queries-002.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/media-queries-003.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/min-width-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/min-width-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/min-width-tables-001-expected.xht
@@ -66,3 +69,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/relative-units-004-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/relative-units-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/viewport-script-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/viewport-script-dynamic.html
