@@ -4551,11 +4551,6 @@ bool Internals::isSystemPreviewImage(Element& element) const
 #endif
 }
 
-String Internals::extraZoomModeAdaptationName() const
-{
-    return WebCore::extraZoomModeAdaptationName();
-}
-
 bool Internals::usingAppleInternalSDK() const
 {
 #if USE(APPLE_INTERNAL_SDK)

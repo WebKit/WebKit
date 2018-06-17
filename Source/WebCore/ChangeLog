@@ -1,3 +1,27 @@
+2018-06-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WebKit on watchOS] Upstream watchOS source additions to OpenSource (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=186442
+        <rdar://problem/40879364>
+
+        Reviewed by Darin Adler.
+
+        Rename references to "Extra zoom mode". No change in behavior.
+
+        * page/DisabledAdaptations.cpp:
+        (WebCore::watchAdaptationName):
+        (WebCore::extraZoomModeAdaptationName): Deleted.
+        * page/DisabledAdaptations.h:
+        * page/ViewportConfiguration.cpp:
+        (WebCore::needsUpdateAfterChangingDisabledAdaptations):
+        (WebCore::ViewportConfiguration::shouldOverrideDeviceWidthAndShrinkToFit const):
+        * page/WindowFeatures.cpp:
+        (WebCore::parseDisabledAdaptations):
+        * testing/Internals.cpp:
+        (WebCore::Internals::extraZoomModeAdaptationName const): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-06-17  Youenn Fablet  <youenn@apple.com>
 
         Rename Document::hasHadActiveMediaStreamTrack to Document::hasHadCaptureMediaStreamTrack

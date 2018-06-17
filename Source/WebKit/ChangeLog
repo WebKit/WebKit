@@ -1,3 +1,15 @@
+2018-06-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WebKit on watchOS] Upstream watchOS source additions to OpenSource (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=186442
+        <rdar://problem/40879364>
+
+        Reviewed by Darin Adler.
+
+        Rename a category referencing "Extra zoom mode".
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
 2018-06-12  Darin Adler  <darin@apple.com>
 
         [Cocoa] Make some RetainPtr refinements to get more ready for ARC

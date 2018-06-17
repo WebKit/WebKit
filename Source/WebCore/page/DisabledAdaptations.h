@@ -29,10 +29,10 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT String extraZoomModeAdaptationName();
+WEBCORE_EXPORT String watchAdaptationName();
 
 enum class DisabledAdaptations {
-    ExtraZoomMode = 1 << 0,
+    Watch = 1 << 0,
 };
 
 } // namespace WebCore

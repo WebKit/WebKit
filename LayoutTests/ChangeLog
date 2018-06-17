@@ -1,3 +1,39 @@
+2018-06-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WebKit on watchOS] Upstream watchOS source additions to OpenSource (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=186442
+        <rdar://problem/40879364>
+
+        Reviewed by Darin Adler.
+
+        Rename extrazoom layout test directories to watchos.
+
+        * TestExpectations:
+        * fast/css/watchos/viewport-units-shrink-to-fit-expected.txt: Renamed from LayoutTests/fast/css/extrazoom/viewport-units-shrink-to-fit-expected.txt.
+        * fast/css/watchos/viewport-units-shrink-to-fit.html: Renamed from LayoutTests/fast/css/extrazoom/viewport-units-shrink-to-fit.html.
+        * fast/dom/Window/watchos/window-get-real-screen-dimensions-expected.txt: Renamed from LayoutTests/fast/dom/Window/extrazoom/window-get-real-screen-dimensions-expected.txt.
+        * fast/dom/Window/watchos/window-get-real-screen-dimensions.html: Renamed from LayoutTests/fast/dom/Window/extrazoom/window-get-real-screen-dimensions.html.
+        * fast/events/watchos/change-focus-during-change-event-expected.txt: Renamed from LayoutTests/fast/events/extrazoom/change-focus-during-change-event-expected.txt.
+        * fast/events/watchos/change-focus-during-change-event.html: Renamed from LayoutTests/fast/events/extrazoom/change-focus-during-change-event.html.
+        * fast/events/watchos/double-tap-to-zoom-on-full-width-text-expected.txt: Renamed from LayoutTests/fast/events/extrazoom/double-tap-to-zoom-on-full-width-text-expected.txt.
+        * fast/events/watchos/double-tap-to-zoom-on-full-width-text.html: Renamed from LayoutTests/fast/events/extrazoom/double-tap-to-zoom-on-full-width-text.html.
+        * fast/events/watchos/double-tap-to-zoom-with-large-text-expected.txt: Renamed from LayoutTests/fast/events/extrazoom/double-tap-to-zoom-with-large-text-expected.txt.
+        * fast/events/watchos/double-tap-to-zoom-with-large-text.html: Renamed from LayoutTests/fast/events/extrazoom/double-tap-to-zoom-with-large-text.html.
+        * fast/forms/watchos/delete-content-in-text-field-expected.txt: Renamed from LayoutTests/fast/forms/extrazoom/delete-content-in-text-field-expected.txt.
+        * fast/forms/watchos/delete-content-in-text-field.html: Renamed from LayoutTests/fast/forms/extrazoom/delete-content-in-text-field.html.
+        * fast/forms/watchos/edit-text-field-calls-injected-bundle-expected.txt: Renamed from LayoutTests/fast/forms/extrazoom/edit-text-field-calls-injected-bundle-expected.txt.
+        * fast/forms/watchos/edit-text-field-calls-injected-bundle.html: Renamed from LayoutTests/fast/forms/extrazoom/edit-text-field-calls-injected-bundle.html.
+        * fast/forms/watchos/form-control-label-text-expected.txt: Renamed from LayoutTests/fast/forms/extrazoom/form-control-label-text-expected.txt.
+        * fast/forms/watchos/form-control-label-text.html: Renamed from LayoutTests/fast/forms/extrazoom/form-control-label-text.html.
+        * fast/forms/watchos/time-picker-value-change-expected.txt: Renamed from LayoutTests/fast/forms/extrazoom/time-picker-value-change-expected.txt.
+        * fast/forms/watchos/time-picker-value-change.html: Renamed from LayoutTests/fast/forms/extrazoom/time-picker-value-change.html.
+        * fast/viewport/watchos/viewport-adaptations-after-navigation-expected.txt: Renamed from LayoutTests/fast/viewport/extrazoom/viewport-adaptations-after-navigation-expected.txt.
+        * fast/viewport/watchos/viewport-adaptations-after-navigation.html: Renamed from LayoutTests/fast/viewport/extrazoom/viewport-adaptations-after-navigation.html.
+        * fast/viewport/watchos/viewport-disable-extra-zoom-adaptations-expected.txt: Renamed from LayoutTests/fast/viewport/extrazoom/viewport-disable-extra-zoom-adaptations-expected.txt.
+        * fast/viewport/watchos/viewport-disable-extra-zoom-adaptations.html: Renamed from LayoutTests/fast/viewport/extrazoom/viewport-disable-extra-zoom-adaptations.html.
+        * fast/visual-viewport/watchos/layout-viewport-after-scrolling-and-resizing-expected.txt: Renamed from LayoutTests/fast/visual-viewport/extrazoom/layout-viewport-after-scrolling-and-resizing-expected.txt.
+        * fast/visual-viewport/watchos/layout-viewport-after-scrolling-and-resizing.html: Renamed from LayoutTests/fast/visual-viewport/extrazoom/layout-viewport-after-scrolling-and-resizing.html.
+
 2018-06-17  Youenn Fablet  <youenn@apple.com>
 
         Rename Document::hasHadActiveMediaStreamTrack to Document::hasHadCaptureMediaStreamTrack

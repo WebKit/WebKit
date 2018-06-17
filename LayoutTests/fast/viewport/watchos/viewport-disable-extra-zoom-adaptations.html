@@ -65,16 +65,16 @@
             appendOutput("2. extra zoom mode adaptations disabled");
             await logWindowDimensionsAfterSettingMetaContent({
                 "viewport" : "width=150",
-                "disabled-adaptations" : `one,\t${internals.extraZoomModeAdaptationName()}   ,two`
+                "disabled-adaptations" : `one,\twatch   ,two`
             });
             await logWindowDimensionsAfterSettingMetaContent({
                 "viewport" : "width=device-width",
-                "disabled-adaptations" : `${internals.extraZoomModeAdaptationName()}, three, four, ${internals.extraZoomModeAdaptationName()}`
+                "disabled-adaptations" : `watch, three, four, watch`
             });
             scaleAtDeviceWidthWithAdaptationDisabled = parseFloat(await UIHelper.zoomScale()).toFixed(3);
             await logWindowDimensionsAfterSettingMetaContent({
                 "viewport" : "width=600",
-                "disabled-adaptations" : `five, ${internals.extraZoomModeAdaptationName()}`
+                "disabled-adaptations" : `five, watch`
             });
 
             appendOutput();

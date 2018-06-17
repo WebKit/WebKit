@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-String extraZoomModeAdaptationName()
+String watchAdaptationName()
 {
     return ASCIILiteral("watch");
 }

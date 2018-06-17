@@ -121,8 +121,8 @@ OptionSet<DisabledAdaptations> parseDisabledAdaptations(const String& disabledAd
     disabledAdaptationsString.split(',', false, disabledAdaptationNames);
     for (auto& name : disabledAdaptationNames) {
         auto normalizedName = name.stripWhiteSpace().convertToASCIILowercase();
-        if (normalizedName == extraZoomModeAdaptationName())
-            disabledAdaptations |= DisabledAdaptations::ExtraZoomMode;
+        if (normalizedName == watchAdaptationName())
+            disabledAdaptations |= DisabledAdaptations::Watch;
     }
     return disabledAdaptations;
 }

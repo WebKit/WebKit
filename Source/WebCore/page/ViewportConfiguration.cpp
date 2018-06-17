@@ -69,7 +69,7 @@ static bool needsUpdateAfterChangingDisabledAdaptations(const OptionSet<Disabled
         return false;
 
 #if PLATFORM(WATCHOS)
-    if (oldDisabledAdaptations.contains(DisabledAdaptations::ExtraZoomMode) != newDisabledAdaptations.contains(DisabledAdaptations::ExtraZoomMode))
+    if (oldDisabledAdaptations.contains(DisabledAdaptations::Watch) != newDisabledAdaptations.contains(DisabledAdaptations::Watch))
         return true;
 #endif
 
@@ -169,7 +169,7 @@ IntSize ViewportConfiguration::layoutSize() const
 
 bool ViewportConfiguration::shouldOverrideDeviceWidthAndShrinkToFit() const
 {
-    if (m_disabledAdaptations.contains(DisabledAdaptations::ExtraZoomMode))
+    if (m_disabledAdaptations.contains(DisabledAdaptations::Watch))
         return false;
 
     auto viewWidth = m_viewLayoutSize.width();

@@ -618,8 +618,6 @@ enum EventThrottlingBehavior {
     boolean isSystemPreviewLink(Element element);
     boolean isSystemPreviewImage(Element element);
 
-    DOMString extraZoomModeAdaptationName();
-
     boolean usingAppleInternalSDK();
 
     [Conditional=VIDEO, MayThrowException] readonly attribute NowPlayingState nowPlayingState;
