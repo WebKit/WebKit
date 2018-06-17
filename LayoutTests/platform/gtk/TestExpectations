@@ -1167,6 +1167,12 @@ webkit.org/b/186086 fast/text/font-collection.html [ ImageOnlyFailure ]
 # Test does not make sense for our platform
 webkit.org/b/181659 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]
 
+# When text input colors are set we do not style with GTK, so these reftests will fail
+webkit.org/b/186219 fast/forms/input-placeholder-text-indent.html [ ImageOnlyFailure ]
+webkit.org/b/186219 fast/forms/password-placeholder-text-security.html [ ImageOnlyFailure ]
+webkit.org/b/186219 fast/forms/placeholder-with-positioned-element.html [ ImageOnlyFailure ]
+webkit.org/b/186219 fast/forms/textarea-placeholder-wrapping.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #

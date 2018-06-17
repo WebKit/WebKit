@@ -1,3 +1,19 @@
+2018-06-17  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
+        [GTK] Correct behavior for dark themes
+        https://bugs.webkit.org/show_bug.cgi?id=186219
+
+        Reviewed by Michael Catanzaro.
+
+        Override RenderThemeGtk::isControlStyled() to not style
+        text inputs if color is set different than default.
+
+        No new tests. Manual theme test and existing layout tests already cover it.
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::isControlStyled const):
+        * rendering/RenderThemeGtk.h:
+
 2018-06-12  Darin Adler  <darin@apple.com>
 
         [Cocoa] Make some RetainPtr refinements to get more ready for ARC

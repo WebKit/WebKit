@@ -168,6 +168,8 @@ private:
 #endif
 #endif
 
+    bool isControlStyled(const RenderStyle&, const BorderData&, const FillLayer&, const Color&) const override;
+
     Seconds animationRepeatIntervalForProgressBar(RenderProgress&) const override;
     Seconds animationDurationForProgressBar(RenderProgress&) const override;
     void adjustProgressBarStyle(StyleResolver&, RenderStyle&, const Element*) const override;

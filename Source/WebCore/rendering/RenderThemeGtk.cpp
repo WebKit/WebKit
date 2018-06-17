@@ -924,6 +924,15 @@ bool RenderThemeGtk::paintMenuListButtonDecorations(const RenderBox& object, con
     return paintMenuList(object, info, rect);
 }
 
+bool RenderThemeGtk::isControlStyled(const RenderStyle& style, const BorderData& border, const FillLayer& background, const Color& backgroundColor) const
+{
+    // To avoid rendering issues with dark themes, if text input elements have color styling, we don't style them with GTK.
+    if ((style.appearance() == TextFieldPart || style.appearance() == TextAreaPart || style.appearance() == SearchFieldPart) && style.color() != RenderStyle::initialColor())
+        return true;
+
+    return RenderTheme::isControlStyled(style, border, background, backgroundColor);
+}
+
 #if GTK_CHECK_VERSION(3, 20, 0)
 
 static IntSize spinButtonSize()

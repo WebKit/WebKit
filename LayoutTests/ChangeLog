@@ -1,3 +1,15 @@
+2018-06-17  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
+        [GTK] Correct behavior for dark themes
+        https://bugs.webkit.org/show_bug.cgi?id=186219
+
+        Update expectations in reftests expected to fail due to not
+        styling text inputs with GTK when color is different than default color.
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/gtk/TestExpectations:
+
 2018-06-16  Brendan McLoughlin  <brendan@bocoup.com>
 
         Sync additional web-platform-tests directories up to 197cdad
