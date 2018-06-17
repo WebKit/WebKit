@@ -1,4 +1,4 @@
-//@ runDefault
+//@ skip
 
 (function thingy() {
     function bar()

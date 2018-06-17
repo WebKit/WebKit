@@ -1,3 +1,10 @@
+2018-06-17  Mark Lam  <mark.lam@apple.com>
+
+        Skipping test for disabled feature on branch.
+        rdar://problem/40564243
+
+        * stress/function-caller-async-generator-body.js:
+
 2018-05-31  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r232313. rdar://problem/40050814
