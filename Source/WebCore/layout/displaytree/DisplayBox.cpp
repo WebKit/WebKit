@@ -52,63 +52,45 @@ Box::Style::Style(const RenderStyle& style)
 
 Box::Rect Box::marginBox() const
 {
-    ASSERT(m_hasValidHorizontalMargin);
-    ASSERT(m_hasValidVerticalMargin);
-    auto marginBox = borderBox();
+    auto borderBox = this->borderBox();
 
-    marginBox.shiftLeftTo(marginBox.left() - m_margin.horizontal.left);
-    marginBox.shiftTopTo(marginBox.top() - m_margin.vertical.top);
-    marginBox.shiftRightTo(marginBox.right() + m_margin.horizontal.right);
-    marginBox.shiftBottomTo(marginBox.bottom() + m_margin.vertical.bottom);
-
+    Rect marginBox;
+    marginBox.setTop(borderBox.top() - marginTop());
+    marginBox.setLeft(borderBox.left() - marginLeft());
+    marginBox.setHeight(borderBox.height() + marginTop() + marginBottom());
+    marginBox.setWidth(borderBox.width() + marginLeft() + marginRight());
     return marginBox;
 }
 
 Box::Rect Box::borderBox() const
 {
-    auto rect = m_rect.clone();
-    rect.setTopLeft({ });
-
-    if (m_style.boxSizing == BoxSizing::BorderBox)
-        return rect;
-
-    // Width is content box.
-    ASSERT(m_hasValidBorder);
-    ASSERT(m_hasValidPadding);
-    rect.expand(borderLeft() + paddingLeft() + paddingRight() + borderRight(), borderTop() + paddingTop() + paddingBottom() + borderBottom());
-    return rect;
+    Rect borderBox;
+    borderBox.setTopLeft({ });
+    borderBox.setSize({ width(), height() });
+    return borderBox;
 }
 
 Box::Rect Box::paddingBox() const
 {
-    ASSERT(m_hasValidBorder);
-    auto paddingBox = borderBox();
+    auto borderBox = this->borderBox();
 
-    paddingBox.shiftLeftTo(paddingBox.left() + m_border.horizontal.left);
-    paddingBox.shiftTopTo(paddingBox.top() + m_border.vertical.top);
-    paddingBox.shiftRightTo(paddingBox.right() - m_border.horizontal.right);
-    paddingBox.shiftBottomTo(paddingBox.bottom() - m_border.vertical.bottom);
-
+    Rect paddingBox;
+    paddingBox.setTop(borderBox.top() + borderTop());
+    paddingBox.setLeft(borderBox.left() + borderLeft());
+    paddingBox.setHeight(borderBox.bottom() - borderTop() - borderBottom());
+    paddingBox.setWidth(borderBox.width() - borderLeft() - borderRight());
     return paddingBox;
 }
 
 Box::Rect Box::contentBox() const
 {
-    if (m_style.boxSizing == BoxSizing::ContentBox) {
-        auto rect = m_rect.clone();
-        rect.setTopLeft({ });
-        return rect;
-    }
+    auto paddingBox = this->paddingBox();
 
-    // Width is border box.
-    ASSERT(m_hasValidPadding);
-    auto contentBox = paddingBox();
-
-    contentBox.shiftLeftTo(contentBox.left() + m_padding.horizontal.left);
-    contentBox.shiftTopTo(contentBox.top() + m_padding.vertical.top);
-    contentBox.shiftRightTo(contentBox.right() - m_padding.horizontal.right);
-    contentBox.shiftBottomTo(contentBox.bottom() - m_padding.vertical.bottom);
-
+    Rect contentBox;
+    contentBox.setTop(paddingBox.top() + paddingTop());
+    contentBox.setLeft(paddingBox.left() + paddingLeft());
+    contentBox.setWidth(m_contentWidth);
+    contentBox.setHeight(m_contentHeight);
     return contentBox;
 }
 

@@ -1,3 +1,76 @@
+2018-06-17  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] DisplayBox API should be more clear about height/width vs. contentBoxHeight/width
+        https://bugs.webkit.org/show_bug.cgi?id=186744
+
+        Reviewed by Antti Koivisto.
+
+        Display::Box::height/width -> border box size.
+        Display::Box::contentBoxHeight/width -> content box size.
+        Display::Box::top/left/bottom/right -> border box position in the containing box's coordinate system.
+        Display::Box::marginBox/borderBox/paddingBox/contentBox -> relative to border box (border box is { 0, 0 })
+ 
+        (This patch also removes the box-sizing logic from Display::Box. FormattingContext::Geometry should set the
+        correct contentBoxSize/borderBoxSize based on the CSS property.)
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeFloatingHeightAndMargin const):
+        (WebCore::Layout::FormattingContext::computeFloatingWidthAndMargin const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::validateGeometryConstraintsAfterLayout const):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::computedPadding):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedHorizontalMarginValue):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue):
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::initializeRoot):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeInFlowHeightAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowWidthAndMargin const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticPosition):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowPositionedPosition):
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::marginBox const):
+        (WebCore::Display::Box::borderBox const):
+        (WebCore::Display::Box::paddingBox const):
+        (WebCore::Display::Box::contentBox const):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::top const):
+        (WebCore::Display::Box::left const):
+        (WebCore::Display::Box::bottom const):
+        (WebCore::Display::Box::right const):
+        (WebCore::Display::Box::topLeft const):
+        (WebCore::Display::Box::bottomRight const):
+        (WebCore::Display::Box::size const):
+        (WebCore::Display::Box::width const):
+        (WebCore::Display::Box::height const):
+        (WebCore::Display::Box::rect const):
+        (WebCore::Display::Box::setTopLeft):
+        (WebCore::Display::Box::setTop):
+        (WebCore::Display::Box::setLeft):
+        (WebCore::Display::Box::moveHorizontally):
+        (WebCore::Display::Box::moveVertically):
+        (WebCore::Display::Box::setHasValidContentHeight):
+        (WebCore::Display::Box::setHasValidContentWidth):
+        (WebCore::Display::Box::setContentBoxHeight):
+        (WebCore::Display::Box::setContentBoxWidth):
+        (WebCore::Display::Box::contentBoxHeight const):
+        (WebCore::Display::Box::contentBoxWidth const):
+        (WebCore::Display::Box::setWidth): Deleted.
+        (WebCore::Display::Box::setHeight): Deleted.
+        (WebCore::Display::Box::setSize): Deleted.
+
 2018-06-17  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
 
         [GTK] Correct behavior for dark themes

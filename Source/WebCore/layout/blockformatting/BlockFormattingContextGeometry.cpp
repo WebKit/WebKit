@@ -120,7 +120,7 @@ FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::i
         return { height, { marginTop, marginBottom } };
     }
 
-    auto initialContainingBlockHeight = layoutContext.displayBoxForLayoutBox(initialContainingBlock(layoutBox))->contentBox().height();
+    auto initialContainingBlockHeight = layoutContext.displayBoxForLayoutBox(initialContainingBlock(layoutBox))->contentBoxHeight();
     // Stretch but never overstretch with the margins.
     if (height + marginTop + marginBottom < initialContainingBlockHeight)
         height = initialContainingBlockHeight - marginTop - marginBottom;
@@ -158,7 +158,7 @@ FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::in
         auto& style = layoutBox.style();
         auto width = precomputedWidth ? Length { precomputedWidth.value(), Fixed } : style.logicalWidth();
         auto* containingBlock = layoutBox.containingBlock();
-        auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*containingBlock)->width();
+        auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*containingBlock)->contentBoxWidth();
         auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
 
         LayoutUnit computedWidthValue;
@@ -234,7 +234,7 @@ FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::in
         return widthAndMargin;
     }
 
-    auto initialContainingBlockWidth = layoutContext.displayBoxForLayoutBox(initialContainingBlock(layoutBox))->contentBox().width();
+    auto initialContainingBlockWidth = layoutContext.displayBoxForLayoutBox(initialContainingBlock(layoutBox))->contentBoxWidth();
     auto horizontalMargins = widthAndMargin.margin.left + widthAndMargin.margin.right;
     // Stretch but never overstretch with the margins.
     if (widthAndMargin.width + horizontalMargins < initialContainingBlockWidth)
@@ -270,10 +270,9 @@ FormattingContext::Geometry::Position BlockFormattingContext::Geometry::staticPo
     // Vertical margins between adjacent block-level boxes in a block formatting context collapse.
     // In a block formatting context, each box's left outer edge touches the left edge of the containing block (for right-to-left formatting, right edges touch).
 
-    auto containingBlockContentBox = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->contentBox();
     // Start from the top of the container's content box.
-    auto top = containingBlockContentBox.top();
-    auto left = containingBlockContentBox.left();
+    LayoutUnit top = { };
+    LayoutUnit left = { };
     if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
         auto& previousInFlowDisplayBox = *layoutContext.displayBoxForLayoutBox(*previousInFlowSibling);
         top = previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.marginBottom();
@@ -298,8 +297,7 @@ FormattingContext::Geometry::Position BlockFormattingContext::Geometry::inFlowPo
     auto& style = layoutBox.style();
     auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
     auto& containingBlock = *layoutBox.containingBlock();
-    auto& containingBlockDisplayBox = *layoutContext.displayBoxForLayoutBox(containingBlock);
-    auto containingBlockWidth = containingBlockDisplayBox.width();
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(containingBlock)->contentBoxWidth();
 
     auto top = FormattingContext::Geometry::computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
     auto bottom = FormattingContext::Geometry::computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);

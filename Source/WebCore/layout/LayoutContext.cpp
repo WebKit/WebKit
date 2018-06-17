@@ -55,23 +55,15 @@ void LayoutContext::initializeRoot(const Container& root, const LayoutSize& cont
 
     m_root = makeWeakPtr(const_cast<Container&>(root));
     auto& displayBox = createDisplayBox(root);
-    // Root is always at 0 0 with no margin 
-    displayBox.setTopLeft({ });
-    displayBox.setSize(containerSize);
+
+    // FIXME: m_root could very well be a formatting context root with ancestors and resolvable border and padding (as opposed to the topmost root)
     displayBox.setHorizontalMargin({ });
     displayBox.setVerticalMargin({ });
-
-    auto& style = root.style();
-    // FIXME: m_root could very well be a formatting context root with ancestors and resolvable border and padding (as opposed to the topmost root)
-    displayBox.setBorder({
-        { style.borderLeft().boxModelWidth(), style.borderRight().boxModelWidth() },
-        { style.borderTop().boxModelWidth(), style.borderBottom().boxModelWidth() }
-    });
-
-    displayBox.setPadding({
-        { valueForLength(style.paddingLeft(), containerSize.width()), valueForLength(style.paddingRight(), containerSize.width()) },
-        { valueForLength(style.paddingTop(), containerSize.width()), valueForLength(style.paddingBottom(), containerSize.width()) }
-    });
+    displayBox.setBorder({ });
+    displayBox.setPadding({ });
+    displayBox.setContentBoxHeight(containerSize.height());
+    displayBox.setContentBoxWidth(containerSize.width());
+    displayBox.setTopLeft({ });
 
     m_formattingContextRootListForLayout.add(&root);
 }

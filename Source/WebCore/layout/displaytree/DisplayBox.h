@@ -113,19 +113,18 @@ public:
 
     ~Box();
 
-    Rect rect() const { return m_rect; }
+    LayoutUnit top() const { return m_topLeft.y(); }
+    LayoutUnit left() const { return m_topLeft.x(); }
+    LayoutUnit bottom() const { return top() + height(); }
+    LayoutUnit right() const { return left() + width(); }
 
-    LayoutUnit top() const { return m_rect.top(); }
-    LayoutUnit left() const { return m_rect.left(); }
-    LayoutUnit bottom() const { return m_rect.bottom(); }
-    LayoutUnit right() const { return m_rect.right(); }
+    LayoutPoint topLeft() const { return m_topLeft; }
+    LayoutPoint bottomRight() const { return { right(), bottom() }; }
 
-    LayoutPoint topLeft() const { return m_rect.topLeft(); }
-    LayoutPoint bottomRight() const { return m_rect.bottomRight(); }
-
-    LayoutSize size() const { return m_rect.size(); }
-    LayoutUnit width() const { return m_rect.width(); }
-    LayoutUnit height() const { return m_rect.height(); }
+    LayoutSize size() const { return { width(), height() }; }
+    LayoutUnit width() const { return borderLeft() + paddingLeft() + contentBoxWidth() + paddingRight() + borderRight(); }
+    LayoutUnit height() const { return borderTop() + paddingTop() + contentBoxHeight() + paddingBottom() + borderBottom(); }
+    LayoutRect rect() const { return { left(), top(), width(), height() }; }
 
     LayoutUnit marginTop() const;
     LayoutUnit marginLeft() const;
@@ -142,6 +141,9 @@ public:
     LayoutUnit paddingBottom() const;
     LayoutUnit paddingRight() const;
 
+    LayoutUnit contentBoxHeight() const;
+    LayoutUnit contentBoxWidth() const;
+
     Rect marginBox() const;
     Rect borderBox() const;
     Rect paddingBox() const;
@@ -156,14 +158,14 @@ private:
         BoxSizing boxSizing { BoxSizing::ContentBox };
     };
 
-    void setTopLeft(const LayoutPoint& topLeft) { m_rect.setTopLeft(topLeft); }
-    void setTop(LayoutUnit top) { m_rect.setTop(top); }
-    void setLeft(LayoutUnit left) { m_rect.setLeft(left); }
-    void moveHorizontally(LayoutUnit offset) { m_rect.moveHorizontally(offset); }
-    void moveVertically(LayoutUnit offset) { m_rect.moveVertically(offset); }
-    void setWidth(LayoutUnit width) { m_rect.setWidth(width); }
-    void setHeight(LayoutUnit height) { m_rect.setHeight(height); }
-    void setSize(const LayoutSize& size) { m_rect.setSize(size); }
+    void setTopLeft(const LayoutPoint& topLeft) { m_topLeft = topLeft; }
+    void setTop(LayoutUnit top) { m_topLeft.setY(top); }
+    void setLeft(LayoutUnit left) { m_topLeft.setX(left); }
+    void moveHorizontally(LayoutUnit offset) { m_topLeft.move(offset, { }); }
+    void moveVertically(LayoutUnit offset) { m_topLeft.move({ }, offset); }
+
+    void setContentBoxHeight(LayoutUnit);
+    void setContentBoxWidth(LayoutUnit);
 
     struct HorizontalEdges {
         LayoutUnit left;
@@ -195,11 +197,16 @@ private:
 
     void setHasValidBorder() { m_hasValidBorder = true; }
     void setHasValidPadding() { m_hasValidPadding = true; }
+
+    void setHasValidContentHeight() { m_hasValidContentHeight = true; }
+    void setHasValidContentWidth() { m_hasValidContentWidth = true; }
 #endif
 
     const Style m_style;
 
-    Rect m_rect;
+    LayoutPoint m_topLeft;
+    LayoutUnit m_contentWidth;
+    LayoutUnit m_contentHeight;
 
     Edges m_margin;
     Edges m_border;
@@ -210,6 +217,8 @@ private:
     bool m_hasValidVerticalMargin { false };
     bool m_hasValidBorder { false };
     bool m_hasValidPadding { false };
+    bool m_hasValidContentHeight { false };
+    bool m_hasValidContentWidth { false };
 #endif
 };
 
@@ -400,6 +409,34 @@ inline Box::Rect::operator LayoutRect() const
 {
     ASSERT(hasValidGeometry()); 
     return m_rect;
+}
+
+inline void Box::setContentBoxHeight(LayoutUnit height)
+{ 
+#if !ASSERT_DISABLED
+    setHasValidContentHeight();
+#endif
+    m_contentHeight = height;
+}
+
+inline void Box::setContentBoxWidth(LayoutUnit width)
+{ 
+#if !ASSERT_DISABLED
+    setHasValidContentWidth();
+#endif
+    m_contentWidth = width;
+}
+
+inline LayoutUnit Box::contentBoxHeight() const
+{
+    ASSERT(m_hasValidContentHeight);
+    return m_contentHeight;
+}
+
+inline LayoutUnit Box::contentBoxWidth() const
+{
+    ASSERT(m_hasValidContentWidth);
+    return m_contentWidth;
 }
 
 inline void Box::setHorizontalMargin(HorizontalEdges margin)

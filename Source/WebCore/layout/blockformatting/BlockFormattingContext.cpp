@@ -171,7 +171,7 @@ void BlockFormattingContext::computeHeightAndMargin(LayoutContext& layoutContext
 void BlockFormattingContext::computeInFlowHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     auto heightAndMargin = Geometry::inFlowHeightAndMargin(layoutContext, layoutBox);
-    displayBox.setHeight(heightAndMargin.height);
+    displayBox.setContentBoxHeight(heightAndMargin.height);
     displayBox.moveVertically(heightAndMargin.margin.top);
     displayBox.setVerticalMargin(heightAndMargin.margin);
 }
@@ -179,7 +179,7 @@ void BlockFormattingContext::computeInFlowHeightAndMargin(LayoutContext& layoutC
 void BlockFormattingContext::computeInFlowWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     auto widthAndMargin = Geometry::inFlowWidthAndMargin(layoutContext, layoutBox);
-    displayBox.setWidth(widthAndMargin.width);
+    displayBox.setContentBoxWidth(widthAndMargin.width);
     displayBox.moveHorizontally(widthAndMargin.margin.left);
     displayBox.setHorizontalMargin(widthAndMargin.margin);
 }

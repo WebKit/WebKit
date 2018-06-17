@@ -224,7 +224,7 @@ FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::out
     auto& style = layoutBox.style();
     auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
     auto& containingBlock = *layoutBox.containingBlock();
-    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(containingBlock)->width();
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(containingBlock)->contentBoxWidth();
     auto isLeftToRightDirection = containingBlock.style().isLeftToRightDirection();
     
     auto left = computedValueIfNotAuto(style.logicalLeft(), containingBlockWidth);
@@ -349,9 +349,9 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
 
     auto& style = layoutBox.style();
     auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
-    auto& containingBlock = *layoutBox.containingBlock();
-    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(containingBlock)->width();
-    auto containingBlockHeight = layoutContext.displayBoxForLayoutBox(containingBlock)->height();
+    auto& containingBlockDisplayBox = *layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock());
+    auto containingBlockHeight = containingBlockDisplayBox.height();
+    auto containingBlockWidth = containingBlockDisplayBox.width();
 
     auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
     auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
@@ -423,7 +423,7 @@ FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::out
     auto& style = layoutBox.style();
     auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
     auto& containingBlock = *layoutBox.containingBlock();
-    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(containingBlock)->width();
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(containingBlock)->contentBoxWidth();
     auto isLeftToRightDirection = containingBlock.style().isLeftToRightDirection();
 
     auto left = computedValueIfNotAuto(style.logicalLeft(), containingBlockWidth);
@@ -513,10 +513,12 @@ FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floati
     auto& style = layoutBox.style();
     auto& containingBlock = *layoutBox.containingBlock();
     auto& containingBlockDisplayBox = *layoutContext.displayBoxForLayoutBox(containingBlock);
+    auto containingBlockHeight = containingBlockDisplayBox.contentBoxHeight();
+    auto containingBlockWidth = containingBlockDisplayBox.contentBoxWidth();
 
-    auto height = computedValueIfNotAuto(style.logicalHeight(), containingBlockDisplayBox.height());
-    auto marginTop = computedValueIfNotAuto(style.marginTop(), containingBlockDisplayBox.width());
-    auto marginBottom = computedValueIfNotAuto(style.marginBottom(), containingBlockDisplayBox.width());
+    auto height = computedValueIfNotAuto(style.logicalHeight(), containingBlockHeight);
+    auto marginTop = computedValueIfNotAuto(style.marginTop(), containingBlockWidth);
+    auto marginBottom = computedValueIfNotAuto(style.marginBottom(), containingBlockWidth);
 
     // #1
     marginTop = marginTop.value_or(0);
@@ -539,12 +541,12 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatin
     // 2. If 'width' is computed as 'auto', the used value is the "shrink-to-fit" width.
 
     auto& containingBlock = *layoutBox.containingBlock();
-    auto& containingBlockDisplayBox = *layoutContext.displayBoxForLayoutBox(containingBlock);
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(containingBlock)->contentBoxWidth();
 
     // #1
     auto margin = computedNonCollapsedHorizontalMarginValue(layoutContext, layoutBox);
       // #2
-    auto width = computedValueIfNotAuto(layoutBox.style().logicalWidth(), containingBlockDisplayBox.width());
+    auto width = computedValueIfNotAuto(layoutBox.style().logicalWidth(), containingBlockWidth);
     if (!width)
         width = shrinkToFitWidth(layoutContext, layoutBox);
 
@@ -631,10 +633,12 @@ FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::inline
 
     auto& style = layoutBox.style();
     auto replaced = layoutBox.replaced();
-    auto& containingBlock = *layoutBox.containingBlock();
-    auto& containingBlockDisplayBox = *layoutContext.displayBoxForLayoutBox(containingBlock);
-    auto height = computedValueIfNotAuto(style.logicalHeight(), containingBlockDisplayBox.height());
-    auto width = computedValueIfNotAuto(style.logicalWidth(), containingBlockDisplayBox.width());
+    auto& containingBlockDisplayBox = *layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock());
+    auto containingBlockHeight = containingBlockDisplayBox.height();
+    auto containingBlockWidth = containingBlockDisplayBox.width();
+
+    auto height = computedValueIfNotAuto(style.logicalHeight(), containingBlockHeight);
+    auto width = computedValueIfNotAuto(style.logicalWidth(), containingBlockWidth);
 
     if (!height && !width && replaced->hasIntrinsicHeight()) {
         // #2
@@ -681,20 +685,21 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::inlineR
     //    If 300px is too wide to fit the device, UAs should use the width of the largest rectangle that has a 2:1 ratio and fits the device instead.
 
     auto& style = layoutBox.style();
-    auto& containingBlock = *layoutBox.containingBlock();
-    auto& containingBlockDisplayBox = *layoutContext.displayBoxForLayoutBox(containingBlock);
+    auto& containingBlockDisplayBox = *layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock());
+    auto containingBlockHeight = containingBlockDisplayBox.height();
+    auto containingBlockWidth = containingBlockDisplayBox.width();
 
     auto computeMarginRight = [&]() {
         if (precomputedMarginRight)
             return precomputedMarginRight.value();
-        auto marginRight = computedValueIfNotAuto(style.marginRight(), containingBlockDisplayBox.width());
+        auto marginRight = computedValueIfNotAuto(style.marginRight(), containingBlockWidth);
         return marginRight.value_or(LayoutUnit { 0 });
     };
 
     auto computeMarginLeft = [&]() {
         if (precomputedMarginLeft)
             return precomputedMarginLeft.value();
-        auto marginLeft = computedValueIfNotAuto(style.marginLeft(), containingBlockDisplayBox.width());
+        auto marginLeft = computedValueIfNotAuto(style.marginLeft(), containingBlockWidth);
         return marginLeft.value_or(LayoutUnit { 0 });
     };
 
@@ -702,8 +707,8 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::inlineR
     LayoutUnit marginRight = computeMarginRight();
 
     auto replaced = layoutBox.replaced();
-    auto height = computedValueIfNotAuto(style.logicalHeight(), containingBlockDisplayBox.height());
-    auto width = computedValueIfNotAuto(style.logicalWidth(), containingBlockDisplayBox.width());
+    auto height = computedValueIfNotAuto(style.logicalHeight(), containingBlockHeight);
+    auto width = computedValueIfNotAuto(style.logicalWidth(), containingBlockWidth);
 
     ASSERT(replaced);
 
@@ -747,7 +752,7 @@ std::optional<Display::Box::Edges> FormattingContext::Geometry::computedPadding(
         return std::nullopt;
 
     auto& style = layoutBox.style();
-    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->contentBoxWidth();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Padding] -> layoutBox: " << &layoutBox);
     return Display::Box::Edges {
         { valueForLength(style.paddingLeft(), containingBlockWidth), valueForLength(style.paddingRight(), containingBlockWidth) },
@@ -758,7 +763,7 @@ std::optional<Display::Box::Edges> FormattingContext::Geometry::computedPadding(
 Display::Box::HorizontalEdges FormattingContext::Geometry::computedNonCollapsedHorizontalMarginValue(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     auto& style = layoutBox.style();
-    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->contentBoxWidth();
 
     auto marginLeft = computedValueIfNotAuto(style.marginLeft(), containingBlockWidth).value_or(LayoutUnit { 0 });
     auto marginRight = computedValueIfNotAuto(style.marginRight(), containingBlockWidth).value_or(LayoutUnit { 0 });
@@ -770,7 +775,7 @@ Display::Box::HorizontalEdges FormattingContext::Geometry::computedNonCollapsedH
 Display::Box::VerticalEdges FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     auto& style = layoutBox.style();
-    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->width();
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->contentBoxWidth();
 
     auto marginTop = computedValueIfNotAuto(style.marginTop(), containingBlockWidth).value_or(LayoutUnit { 0 });
     auto marginBottom = computedValueIfNotAuto(style.marginBottom(), containingBlockWidth).value_or(LayoutUnit { 0 });
