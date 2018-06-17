@@ -1994,6 +1994,9 @@ webkit.org/b/186678 fast/mediastream/change-tracks-media-stream-being-played.htm
 
 webkit.org/b/186679 media/video-currentTime-delay.html [ Crash Pass ]
 
+webkit.org/b/186750 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https.html [ Pass Failure ]
+webkit.org/b/186750 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_short_long.https.html [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2288,8 +2291,6 @@ webkit.org/b/172284 svg/animations/animated-svg-image-outside-viewport-paused.ht
 webkit.org/b/172816 media/media-source/media-source-paint-to-canvas.html [ Timeout ]
 
 webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Skip ]
-
-webkit.org/b/174243 fast/images/low-memory-decode.html [ Timeout ]
 
 webkit.org/b/174459 fast/images/async-image-background-image-repeated.html [ Timeout ]
 webkit.org/b/174459 fast/images/async-image-body-background-image.html [ Timeout ]
@@ -2893,9 +2894,7 @@ webkit.org/b/135530 accessibility/parent-delete.html [ Failure ]
 
 webkit.org/b/135533 editing/pasteboard/img-srcset-copy-paste-canonicalization.html [ Failure ]
 
-# Various failures from the W3C CSS Shapes test suite import
 webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-027.html [ ImageOnlyFailure ]
-webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/shape-outside-circle-027.html [ ImageOnlyFailure ]
 
 # The backing store is cleared when page cached in GTK
 webkit.org/b/135348 compositing/iframes/page-cache-layer-tree.html [ Skip ]
@@ -3414,7 +3413,6 @@ webkit.org/b/185254 http/tests/xmlhttprequest/connection-error-sync.html [ Failu
 webkit.org/b/185548 accessibility/scroll-to-make-visible-iframe-offscreen.html [ Failure ]
 
 webkit.org/b/185714 js/intl-numberformat-format-to-parts.html [ Failure ]
-webkit.org/b/185714 js/intl-pluralrules.html [ Failure ]
 
 # Imported css-text test suite from WPT
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-control-chars-001.html [ ImageOnlyFailure ]
@@ -3534,6 +3532,8 @@ webkit.org/b/172337 imported/w3c/web-platform-tests/url/failure.html [ Pass ]
 webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
 
 webkit.org/b/139282 imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-display/run-in/quotes-applies-to-011.xht [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.

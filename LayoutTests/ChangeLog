@@ -1,5 +1,11 @@
 2018-06-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        More unreviewed GTK test gardening.
+
+        * platform/gtk/TestExpectations:
+
+2018-06-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed GTK test gardening.
 
         This primarily adds new expected results after the last WPT import.
