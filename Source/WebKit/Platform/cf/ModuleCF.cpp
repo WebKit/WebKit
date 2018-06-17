@@ -41,7 +41,7 @@ bool Module::load()
     if (!CFBundleLoadExecutable(bundle.get()))
         return false;
 
-    m_bundle = adoptCF(bundle.leakRef());
+    m_bundle = WTFMove(bundle);
     return true;
 }
 

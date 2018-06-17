@@ -1,3 +1,27 @@
+2018-06-12  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Make some RetainPtr refinements to get more ready for ARC
+        https://bugs.webkit.org/show_bug.cgi?id=186526
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/cf/ModuleCF.cpp:
+        (WebKit::Module::load): Use move assignment instead of adoptCF/leakRef.
+
+        * Shared/Cocoa/WKNSURLExtras.mm:
+        (+[NSURL _web_URLWithWTFString:]): Cast to NSURL * instead of doing the autorelease
+        here, since the NSURL * operator already does what we want.
+        (+[NSURL _web_URLWithWTFString:relativeToURL:]): Ditto.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _wk_printedDocument]): Get rid of incorrect use of
+        RetainPtr::autorelease. We don't want to null out _printedDocument each time this
+        function is called.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (collectIcons): Get rid of unnecessary use of RetainPtr::autorelease in a function
+        that returns a RetainPtr.
+
 2018-06-15  Chris Dumez  <cdumez@apple.com>
 
         Add API test coverage for SW RegistrationDatabase destruction and fix issues found by the test

@@ -3714,7 +3714,7 @@ static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const Con
 
     NSArray *delegateSuppliedItems = CallUIDelegate(webView, selector, element.get(), defaultMenuItems.get());
 
-    return fixMenusReceivedFromOldClients(delegateSuppliedItems, savedItems.get()).autorelease();
+    return fixMenusReceivedFromOldClients(delegateSuppliedItems, savedItems.get());
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)event

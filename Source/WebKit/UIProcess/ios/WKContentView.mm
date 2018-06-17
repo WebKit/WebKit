@@ -700,7 +700,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         ASSERT(!_isPrintingToPDF);
     }
 
-    return _printedDocument.autorelease();
+    return _printedDocument.get();
 }
 
 @end

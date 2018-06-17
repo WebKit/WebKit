@@ -70,13 +70,13 @@ static inline NSString *deviceNameForUserAgent()
         return @"iPhone";
     }
 
-    auto name = retainPtr((NSString *)deviceName());
+    NSString *name = deviceName();
 #if PLATFORM(IOS_SIMULATOR)
     NSUInteger location = [name rangeOfString:@" Simulator" options:NSBackwardsSearch].location;
     if (location != NSNotFound && location > 0)
         return [name substringToIndex:location];
 #endif
-    return name.autorelease();
+    return name;
 }
 
 String standardUserAgentWithApplicationName(const String& applicationName)

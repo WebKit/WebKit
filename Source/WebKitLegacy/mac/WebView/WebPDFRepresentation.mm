@@ -106,7 +106,7 @@
     // Error handled by detecting zero-length 'result' in caller
     CGPSConverterConvert(converter.get(), provider.get(), consumer.get(), 0);
 
-    return (NSData *)result.autorelease();
+    return result.bridgingAutorelease();
 }
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource

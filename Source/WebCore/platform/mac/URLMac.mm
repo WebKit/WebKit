@@ -56,7 +56,7 @@ URL::operator NSURL *() const
 {
     // Creating a toll-free bridged CFURL because creation with NSURL methods would not preserve the original string.
     // We'll need fidelity when round-tripping via CFURLGetBytes().
-    return (NSURL *)createCFURL().autorelease();
+    return createCFURL().bridgingAutorelease();
 }
 
 RetainPtr<CFURLRef> URL::createCFURL() const

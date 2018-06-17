@@ -84,6 +84,9 @@ public:
     void clear();
     PtrType leakRef() WARN_UNUSED_RETURN;
     PtrType autorelease();
+#ifdef __OBJC__
+    id bridgingAutorelease();
+#endif
 
     PtrType get() const { return fromStorageType(m_ptr); }
     PtrType operator->() const { return fromStorageType(m_ptr); }
@@ -115,7 +118,7 @@ private:
 
     static PtrType hashTableDeletedValue() { return reinterpret_cast<PtrType>(-1); }
 
-#if defined (__OBJC__) && __has_feature(objc_arc)
+#ifdef __OBJC__
     template<typename U>
     typename std::enable_if<std::is_convertible<U, id>::value, PtrType>::type
     fromStorageTypeHelper(StorageType ptr) const
@@ -141,17 +144,22 @@ private:
     StorageType toStorageType(PtrType ptr) const { return (StorageType)ptr; }
 #endif
 
+#ifdef __OBJC__
+    template<typename U> std::enable_if_t<std::is_convertible<U, id>::value, PtrType> autoreleaseHelper();
+    template<typename U> std::enable_if_t<!std::is_convertible<U, id>::value, PtrType> autoreleaseHelper();
+#endif
+
     StorageType m_ptr;
 };
+
+// Helper function for creating a RetainPtr using template argument deduction.
+template<typename T> RetainPtr<T> retainPtr(T) WARN_UNUSED_RETURN;
 
 template<typename T> inline RetainPtr<T>::~RetainPtr()
 {
     if (StorageType ptr = std::exchange(m_ptr, nullptr))
         CFRelease(ptr);
 }
-
-// Helper function for creating a RetainPtr using template argument deduction.
-template<typename T> inline RetainPtr<T> retainPtr(T) WARN_UNUSED_RETURN;
 
 template<typename T> template<typename U> inline RetainPtr<T>::RetainPtr(const RetainPtr<U>& o)
     : m_ptr(toStorageType(o.get()))
@@ -166,16 +174,46 @@ template<typename T> inline void RetainPtr<T>::clear()
         CFRelease(ptr);
 }
 
-template<typename T> inline typename RetainPtr<T>::PtrType RetainPtr<T>::leakRef()
+template<typename T> inline auto RetainPtr<T>::leakRef() -> PtrType
 {
     return fromStorageType(std::exchange(m_ptr, nullptr));
 }
 
-#ifdef __OBJC__
+#ifndef __OBJC__
+
 template<typename T> inline auto RetainPtr<T>::autorelease() -> PtrType
 {
-    return (__bridge PtrType)CFBridgingRelease(leakRef());
+    if (m_ptr)
+        CFAutorelease(m_ptr);
+    return leakRef();
 }
+
+#else
+
+template<typename T> template<typename U> inline auto RetainPtr<T>::autoreleaseHelper() -> std::enable_if_t<std::is_convertible<U, id>::value, PtrType>
+{
+    return CFBridgingRelease(std::exchange(m_ptr, nullptr));
+}
+
+template<typename T> template<typename U> inline auto RetainPtr<T>::autoreleaseHelper() -> std::enable_if_t<!std::is_convertible<U, id>::value, PtrType>
+{
+    if (m_ptr)
+        CFAutorelease(m_ptr);
+    return leakRef();
+}
+
+template<typename T> inline auto RetainPtr<T>::autorelease() -> PtrType
+{
+    return autoreleaseHelper<PtrType>();
+}
+
+// FIXME: It would be nice if we could base the return type on the type that is toll-free bridged with T rather than using id.
+template<typename T> inline id RetainPtr<T>::bridgingAutorelease()
+{
+    static_assert((!std::is_convertible<PtrType, id>::value), "Don't use bridgingAutorelease for Objective-C pointer types.");
+    return CFBridgingRelease(leakRef());
+}
+
 #endif
 
 template<typename T> inline RetainPtr<T>& RetainPtr<T>::operator=(const RetainPtr& o)

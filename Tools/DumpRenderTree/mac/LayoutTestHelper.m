@@ -95,7 +95,7 @@ static NSURL *colorProfileURLForDisplay(NSString *displayUUIDString)
         return nil;
     }
 
-    NSURL *url = (NSURL *)CFAutorelease(CFRetain(profileURL));
+    NSURL *url = CFBridgingRelease(CFRetain(profileURL));
     CFRelease(deviceInfo);
     return url;
 }

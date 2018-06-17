@@ -1,3 +1,31 @@
+2018-06-12  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Make some RetainPtr refinements to get more ready for ARC
+        https://bugs.webkit.org/show_bug.cgi?id=186526
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::preferredBundleLocalizationName): Use bridgingAutorelease.
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPluginLayer]): Use move
+        assignment rather than adoptNS/leakRef.
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView createPlugin]): Ditto.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::contextMenuForEvent): Get rid of unnecessary use of
+        RetainPtr::autorelease; no need to autorelease just to pass something as a function
+        argument, so use RetainPtr::get instead.
+
+        * WebView/WebHTMLView.mm:
+        (customMenuFromDefaultItems): Get rid of of unnecessary use of RetainPtr::autorelease.
+        No need to autorelease the result when the return type is RetainPtr.
+
+        * WebView/WebPDFRepresentation.mm:
+        (-[WebPDFRepresentation convertPostScriptDataSourceToPDF:]): Use bridgingAutorelease.
+
 2018-06-13  Youenn Fablet  <youenn@apple.com>
 
         Supported plugin check should be based on plugin identifier

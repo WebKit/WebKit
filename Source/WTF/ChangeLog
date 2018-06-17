@@ -1,3 +1,22 @@
+2018-06-12  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Make some RetainPtr refinements to get more ready for ARC
+        https://bugs.webkit.org/show_bug.cgi?id=186526
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/RetainPtr.h: Improved the definition of autorelease so it does
+        the right thing for both Objective-C types and non-Objective-C types.
+        Also added bridgingAutorelease for when we want to autorelease as
+        part of converting from a CF type to an Objective-C type. The two
+        advantages of bridgingAutorelease are that it does not require an
+        additional explicit __bridge cast and that it does not prevent the
+        ARC objc_autoreleaseReturnValue optimization the way that doing an
+        autorelease on the CF type would.
+
+        * wtf/text/mac/StringImplMac.mm:
+        (WTF::StringImpl::operator NSString *): Use bridgingAutorelease.
+
 2018-06-15  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [WinCairo] Move unrelated features of WorkQueueWin into IPC::Connection

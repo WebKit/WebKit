@@ -124,7 +124,7 @@ static RetainPtr<NSArray> collectIcons(WebCore::Frame* frame, OptionSet<WebCore:
         }
     }
 
-    return result.autorelease();
+    return WTFMove(result);
 }
 
 - (NSArray *)appleTouchIconURLs
