@@ -1,3 +1,21 @@
+2018-06-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK test gardening.
+
+        This primarily adds new expected results after the last WPT import.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/woff2/directory-knowntags-001-expected.png: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/woff2/tabledata-glyf-origlength-003-expected.png: Added.
+
 2018-06-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit on watchOS] Upstream watchOS source additions to OpenSource (Part 3)

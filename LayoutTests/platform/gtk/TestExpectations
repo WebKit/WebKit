@@ -578,7 +578,8 @@ http/tests/webrtc [ Skip ]
 # The MediaStream implementation is also still not completed
 webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ Timeout ]
+# Crash is bug #186678
+webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ Timeout Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-dtmf.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Failure Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Pass Failure Crash ]
@@ -1172,6 +1173,9 @@ webkit.org/b/186219 fast/forms/input-placeholder-text-indent.html [ ImageOnlyFai
 webkit.org/b/186219 fast/forms/password-placeholder-text-security.html [ ImageOnlyFailure ]
 webkit.org/b/186219 fast/forms/placeholder-with-positioned-element.html [ ImageOnlyFailure ]
 webkit.org/b/186219 fast/forms/textarea-placeholder-wrapping.html [ ImageOnlyFailure ]
+
+# This seems to be testing Apple-specific behavior?
+css3/color-filters/color-filter-ignore-semantic.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
