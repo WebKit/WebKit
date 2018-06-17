@@ -734,13 +734,16 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& child)
     if (is<RenderTableRow>(destroyRoot))
         tableBuilder().collapseAndDestroyAnonymousSiblingRows(downcast<RenderTableRow>(destroyRoot));
 
-    auto& destroyRootParent = *destroyRoot.parent();
+    // FIXME: Do not try to collapse/cleanup the anonymous wrappers inside destroy (see webkit.org/b/186746).
+    auto destroyRootParent = makeWeakPtr(*destroyRoot.parent());
     destroy(destroyRoot);
-    removeAnonymousWrappersForInlineChildrenIfNeeded(destroyRootParent);
+    if (!destroyRootParent)
+        return;
+    removeAnonymousWrappersForInlineChildrenIfNeeded(*destroyRootParent);
 
     // Anonymous parent might have become empty, try to delete it too.
-    if (isAnonymousAndSafeToDelete(destroyRootParent) && !destroyRootParent.firstChild())
-        destroyAndCleanUpAnonymousWrappers(destroyRootParent);
+    if (isAnonymousAndSafeToDelete(*destroyRootParent) && !destroyRootParent->firstChild())
+        destroyAndCleanUpAnonymousWrappers(*destroyRootParent);
     // WARNING: child is deleted here.
 }
 

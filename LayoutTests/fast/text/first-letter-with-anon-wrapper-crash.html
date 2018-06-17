@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<head>
+<style>
+.classUl {
+    column-count: 2;
+}
+ul::first-letter {
+    column-count: 2;
+    float: left;
+}
+</style>
+</head>
+<body>
+<menu>Pass if no crash</menu>
+<ul id=foobar class=classUl>f
+    <table id=table></table>
+</ul>
+<script>
+document.body.offsetWidth;
+
+let selection = document.getSelection();
+selection.setPosition(foobar); 
+selection.focusNode.className = "foo";
+table.align = "right";
+document.execCommand("selectAll", false);
+window.getSelection().deleteFromDocument();
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</body>
+</html>

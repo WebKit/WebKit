@@ -1,3 +1,14 @@
+2018-06-17  Zalan Bujtas  <zalan@apple.com>
+
+        Anonymous block collapsing can destroy the renderer's parent.
+        https://bugs.webkit.org/show_bug.cgi?id=186655
+        <rdar://problem/41157554>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/first-letter-with-anon-wrapper-crash-expected.txt: Added.
+        * fast/text/first-letter-with-anon-wrapper-crash.html: Added.
+
 2018-06-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         More unreviewed GTK test gardening.

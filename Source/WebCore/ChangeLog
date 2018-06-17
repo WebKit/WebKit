@@ -1,3 +1,19 @@
+2018-06-17  Zalan Bujtas  <zalan@apple.com>
+
+        Anonymous block collapsing can destroy the renderer's parent.
+        https://bugs.webkit.org/show_bug.cgi?id=186655
+        <rdar://problem/41157554>
+
+        Reviewed by Antti Koivisto.
+
+        While destroying a chain of renderers (text renderer -> first letter renderer), we need to
+        check if the anonymous block collapsing destroyed the parent renderer (see webkit.org/b/186746).
+
+        Test: fast/text/first-letter-with-anon-wrapper-crash.html
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers):
+
 2018-06-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit on watchOS] Upstream watchOS source additions to OpenSource (Part 3)
