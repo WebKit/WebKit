@@ -353,6 +353,7 @@ void UserMediaRequest::PendingActivationMediaStream::characteristicsChanged()
 
 void UserMediaRequest::mediaStreamIsReady(Ref<MediaStream>&& stream)
 {
+    stream->document()->setHasCaptureMediaStreamTrack();
     m_promise.resolve(WTFMove(stream));
     // We are in an observer iterator loop, we do not want to change the observers within this loop.
     callOnMainThread([stream = WTFMove(m_pendingActivationMediaStream)] { });

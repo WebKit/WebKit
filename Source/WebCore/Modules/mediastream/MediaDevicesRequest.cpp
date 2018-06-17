@@ -123,7 +123,7 @@ void MediaDevicesRequest::start()
         Vector<Ref<MediaDeviceInfo>> devices;
         for (auto& deviceInfo : captureDevices) {
             auto label = emptyString();
-            if (originHasPersistentAccess || document.hasHadActiveMediaStreamTrack())
+            if (originHasPersistentAccess || document.hasHadCaptureMediaStreamTrack())
                 label = deviceInfo.label();
 
             auto id = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(deviceInfo.persistentId(), deviceIdentifierHashSalt);
@@ -135,7 +135,7 @@ void MediaDevicesRequest::start()
             devices.append(MediaDeviceInfo::create(scriptExecutionContext(), label, id, groupId, deviceType));
         }
 
-        if (!originHasPersistentAccess && !document.hasHadActiveMediaStreamTrack())
+        if (!originHasPersistentAccess && !document.hasHadCaptureMediaStreamTrack())
             filterDeviceList(devices);
 
         callOnMainThread([protectedThis = makeRef(*this), devices = WTFMove(devices)]() mutable {

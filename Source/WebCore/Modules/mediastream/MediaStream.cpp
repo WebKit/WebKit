@@ -336,7 +336,6 @@ void MediaStream::statusDidChange()
     if (Document* document = this->document()) {
         if (!m_isActive)
             return;
-        document->setHasActiveMediaStreamTrack();
         document->updateIsPlayingMedia();
     }
 }

@@ -1332,8 +1332,8 @@ public:
     void removeViewportDependentPicture(HTMLPictureElement&);
 
 #if ENABLE(MEDIA_STREAM)
-    void setHasActiveMediaStreamTrack() { m_hasHadActiveMediaStreamTrack = true; }
-    bool hasHadActiveMediaStreamTrack() const { return m_hasHadActiveMediaStreamTrack; }
+    void setHasCaptureMediaStreamTrack() { m_hasHadCaptureMediaStreamTrack = true; }
+    bool hasHadCaptureMediaStreamTrack() const { return m_hasHadCaptureMediaStreamTrack; }
     void setDeviceIDHashSalt(const String& salt) { m_idHashSalt = salt; }
     String deviceIDHashSalt() const { return m_idHashSalt; }
     void stopMediaCapture();
@@ -1895,7 +1895,7 @@ private:
 #if ENABLE(MEDIA_STREAM)
     HashSet<HTMLMediaElement*> m_mediaStreamStateChangeElements;
     String m_idHashSalt;
-    bool m_hasHadActiveMediaStreamTrack { false };
+    bool m_hasHadCaptureMediaStreamTrack { false };
 #endif
 
 #ifndef NDEBUG

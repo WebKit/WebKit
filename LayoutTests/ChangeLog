@@ -1,3 +1,13 @@
+2018-06-17  Youenn Fablet  <youenn@apple.com>
+
+        Rename Document::hasHadActiveMediaStreamTrack to Document::hasHadCaptureMediaStreamTrack
+        https://bugs.webkit.org/show_bug.cgi?id=186743
+        rdar://problem/41151193
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/media-devices-enumerate-devices.html:
+
 2018-06-17  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
 
         [GTK] Correct behavior for dark themes

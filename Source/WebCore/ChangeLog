@@ -1,3 +1,28 @@
+2018-06-17  Youenn Fablet  <youenn@apple.com>
+
+        Rename Document::hasHadActiveMediaStreamTrack to Document::hasHadCaptureMediaStreamTrack
+        https://bugs.webkit.org/show_bug.cgi?id=186743
+        rdar://problem/41151193
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+
+        Rename setter and getter to be more accurate.
+        Move the place to call the setter to when creating a capture stream.
+
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::start):
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::statusDidChange):
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::mediaStreamIsReady):
+        * dom/Document.h:
+        (WebCore::Document::setHasCaptureMediaStreamTrack):
+        (WebCore::Document::hasHadCaptureMediaStreamTrack const):
+        (WebCore::Document::setHasActiveMediaStreamTrack): Deleted.
+        (WebCore::Document::hasHadActiveMediaStreamTrack const): Deleted.
+
 2018-06-17  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] DisplayBox API should be more clear about height/width vs. contentBoxHeight/width
