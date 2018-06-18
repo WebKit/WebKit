@@ -37,9 +37,9 @@ JSArray* createEmptyRegExpMatchesArray(JSGlobalObject* globalObject, JSString* i
     // https://bugs.webkit.org/show_bug.cgi?id=155144
     
     GCDeferralContext deferralContext(vm.heap);
-    
+    ObjectInitializationScope scope(vm);
+
     if (UNLIKELY(globalObject->isHavingABadTime())) {
-        ObjectInitializationScope scope(vm);
         array = JSArray::tryCreateUninitializedRestricted(scope, &deferralContext, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
         // FIXME: we should probably throw an out of memory error here, but
         // when making this change we should check that all clients of this

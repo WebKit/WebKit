@@ -43,20 +43,6 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSArray);
 
 const ClassInfo JSArray::s_info = {"Array", &JSNonFinalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSArray)};
 
-Butterfly* createArrayButterflyInDictionaryIndexingMode(
-    VM& vm, JSCell* intendedOwner, unsigned initialLength)
-{
-    Butterfly* butterfly = Butterfly::create(
-        vm, intendedOwner, 0, 0, true, IndexingHeader(), ArrayStorage::sizeFor(0));
-    ArrayStorage* storage = butterfly->arrayStorage();
-    storage->setLength(initialLength);
-    storage->setVectorLength(0);
-    storage->m_indexBias = 0;
-    storage->m_sparseMap.clear();
-    storage->m_numValuesInVector = 0;
-    return butterfly;
-}
-
 JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& scope, GCDeferralContext* deferralContext, Structure* structure, unsigned initialLength)
 {
     VM& vm = scope.vm();
@@ -64,9 +50,9 @@ JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& sc
     if (UNLIKELY(initialLength > MAX_STORAGE_VECTOR_LENGTH))
         return 0;
 
-    JSGlobalObject* globalObject = structure->globalObject();
-    bool createUninitialized = globalObject->isOriginalArrayStructure(structure);
     unsigned outOfLineStorage = structure->outOfLineCapacity();
+    JSGlobalObject* globalObject = structure->globalObject();
+    ASSERT_UNUSED(globalObject, globalObject->isOriginalArrayStructure(structure) || structure == globalObject->regExpMatchesArrayStructure() || structure == globalObject->regExpMatchesArrayWithGroupsStructure());
 
     Butterfly* butterfly;
     IndexingType indexingType = structure->indexingType();
@@ -87,12 +73,11 @@ JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& sc
         butterfly = Butterfly::fromBase(temp, 0, outOfLineStorage);
         butterfly->setVectorLength(vectorLength);
         butterfly->setPublicLength(initialLength);
-        unsigned i = (createUninitialized ? initialLength : 0);
         if (hasDouble(indexingType)) {
-            for (; i < vectorLength; ++i)
+            for (unsigned i = initialLength; i < vectorLength; ++i)
                 butterfly->contiguousDouble().atUnsafe(i) = PNaN;
         } else {
-            for (; i < vectorLength; ++i)
+            for (unsigned i = initialLength; i < vectorLength; ++i)
                 butterfly->contiguous().atUnsafe(i).clear();
         }
     } else {
@@ -110,12 +95,13 @@ JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& sc
         storage->m_indexBias = indexBias;
         storage->m_sparseMap.clear();
         storage->m_numValuesInVector = initialLength;
-        unsigned i = (createUninitialized ? initialLength : 0);
-        for (; i < vectorLength; ++i)
+        for (unsigned i = initialLength; i < vectorLength; ++i)
             storage->m_vector[i].clear();
     }
 
     JSArray* result = createWithButterfly(vm, deferralContext, structure, butterfly);
+
+    const bool createUninitialized = true;
     scope.notifyAllocated(result, createUninitialized);
     return result;
 }

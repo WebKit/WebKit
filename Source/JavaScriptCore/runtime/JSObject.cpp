@@ -1089,7 +1089,7 @@ ContiguousJSValues JSObject::createInitialContiguous(VM& vm, unsigned length)
     return newButterfly->contiguous();
 }
 
-Butterfly* JSObject::createArrayStorageButterfly(VM& vm, JSCell* intendedOwner, Structure* structure, unsigned length, unsigned vectorLength, Butterfly* oldButterfly)
+Butterfly* JSObject::createArrayStorageButterfly(VM& vm, JSObject* intendedOwner, Structure* structure, unsigned length, unsigned vectorLength, Butterfly* oldButterfly)
 {
     Butterfly* newButterfly = Butterfly::createOrGrowArrayRight(
         oldButterfly, vm, intendedOwner, structure, structure->outOfLineCapacity(), false, 0,
@@ -1172,16 +1172,14 @@ ArrayStorage* JSObject::constructConvertedArrayStorageWithoutCopyingElements(VM&
     Structure* structure = this->structure(vm);
     unsigned publicLength = m_butterfly->publicLength();
     unsigned propertyCapacity = structure->outOfLineCapacity();
-    unsigned propertySize = structure->outOfLineSize();
-    
-    Butterfly* newButterfly = Butterfly::createUninitialized(
-        vm, this, 0, propertyCapacity, true, ArrayStorage::sizeFor(neededLength));
+
+    Butterfly* newButterfly = Butterfly::createUninitialized(vm, this, 0, propertyCapacity, true, ArrayStorage::sizeFor(neededLength));
     
     memcpy(
-        newButterfly->propertyStorage() - propertySize,
-        m_butterfly->propertyStorage() - propertySize,
-        propertySize * sizeof(EncodedJSValue));
-    
+        newButterfly->base(0, propertyCapacity),
+        m_butterfly->base(0, propertyCapacity),
+        propertyCapacity * sizeof(EncodedJSValue));
+
     ArrayStorage* newStorage = newButterfly->arrayStorage();
     newStorage->setVectorLength(neededLength);
     newStorage->setLength(publicLength);
@@ -1912,7 +1910,7 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
             thisObject->setStructure(vm, Structure::removePropertyTransition(vm, structure, propertyName, offset));
 
         if (offset != invalidOffset)
-            thisObject->putDirectUndefined(offset);
+            thisObject->locationForOffset(offset)->clear();
     }
 
     return true;
@@ -3629,7 +3627,7 @@ void JSObject::shiftButterflyAfterFlattening(const GCSafeConcurrentJSLocker&, VM
     // This could interleave visitChildren because some old structure could have been a non
     // dictionary structure. We have to be crazy careful. But, we are guaranteed to be holding
     // the structure's lock right now, and that helps a bit.
-    
+
     Butterfly* oldButterfly = this->butterfly();
     size_t preCapacity;
     size_t indexingPayloadSizeInBytes;

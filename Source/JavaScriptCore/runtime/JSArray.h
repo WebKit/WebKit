@@ -203,7 +203,7 @@ private:
     void setLengthWritable(ExecState*, bool writable);
 };
 
-inline Butterfly* tryCreateArrayButterfly(VM& vm, JSCell* intendedOwner, unsigned initialLength)
+inline Butterfly* tryCreateArrayButterfly(VM& vm, JSObject* intendedOwner, unsigned initialLength)
 {
     Butterfly* butterfly = Butterfly::tryCreate(
         vm, intendedOwner, 0, 0, true, baseIndexingHeaderForArrayStorage(initialLength),
@@ -216,9 +216,6 @@ inline Butterfly* tryCreateArrayButterfly(VM& vm, JSCell* intendedOwner, unsigne
     storage->m_numValuesInVector = 0;
     return butterfly;
 }
-
-Butterfly* createArrayButterflyInDictionaryIndexingMode(
-    VM&, JSCell* intendedOwner, unsigned initialLength);
 
 inline JSArray* JSArray::tryCreate(VM& vm, Structure* structure, unsigned initialLength, unsigned vectorLengthHint)
 {

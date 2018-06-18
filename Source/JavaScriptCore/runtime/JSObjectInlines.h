@@ -203,6 +203,7 @@ ALWAYS_INLINE PropertyOffset JSObject::prepareToPutDirectWithoutTransition(VM& v
                 setStructureIDDirectly(structureID);
             } else
                 structure->setLastOffset(newLastOffset);
+            ASSERT(!getDirect(offset));
             result = offset;
         });
     return result;

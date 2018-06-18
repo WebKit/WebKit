@@ -1,3 +1,93 @@
+2018-06-18  Keith Miller  <keith_miller@apple.com>
+
+        Properly zero unused property storage offsets
+        https://bugs.webkit.org/show_bug.cgi?id=186692
+
+        Reviewed by Filip Pizlo.
+
+        Since the concurrent GC might see a property slot before the mutator has actually
+        stored the value there, we need to ensure that slot doesn't have garbage in it.
+
+        Right now when calling constructConvertedArrayStorageWithoutCopyingElements
+        or creating a RegExp matches array, we never cleared the unused
+        property storage. ObjectIntializationScope has also been upgraded
+        to look for our invariants around property storage. Additionally,
+        a new assertion has been added to check for JSValue() when adding
+        a new property.
+
+        We used to put undefined into deleted property offsets. To
+        make things simpler, this patch causes us to store JSValue() there
+        instead.
+
+        Lastly, this patch fixes an issue where we would initialize the
+        array storage of RegExpMatchesArray twice. First with 0 and
+        secondly with the actual result. Now we only zero memory between
+        vector length and public length.
+
+        * runtime/Butterfly.h:
+        (JSC::Butterfly::offsetOfVectorLength):
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::tryCreateUninitialized):
+        (JSC::Butterfly::createUninitialized):
+        (JSC::Butterfly::tryCreate):
+        (JSC::Butterfly::create):
+        (JSC::Butterfly::createOrGrowPropertyStorage):
+        (JSC::Butterfly::createOrGrowArrayRight):
+        (JSC::Butterfly::growArrayRight):
+        (JSC::Butterfly::resizeArray):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+        (JSC::createArrayButterflyInDictionaryIndexingMode): Deleted.
+        * runtime/JSArray.h:
+        (JSC::tryCreateArrayButterfly):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::createArrayStorageButterfly):
+        (JSC::JSObject::constructConvertedArrayStorageWithoutCopyingElements):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::shiftButterflyAfterFlattening):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::prepareToPutDirectWithoutTransition):
+        * runtime/ObjectInitializationScope.cpp:
+        (JSC::ObjectInitializationScope::verifyPropertiesAreInitialized):
+        * runtime/ObjectInitializationScope.h:
+        (JSC::ObjectInitializationScope::release):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::tryCreateUninitializedRegExpMatchesArray):
+        (JSC::createRegExpMatchesArray):
+
+        * runtime/Butterfly.h:
+        (JSC::Butterfly::offsetOfVectorLength):
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::tryCreateUninitialized):
+        (JSC::Butterfly::createUninitialized):
+        (JSC::Butterfly::tryCreate):
+        (JSC::Butterfly::create):
+        (JSC::Butterfly::createOrGrowPropertyStorage):
+        (JSC::Butterfly::createOrGrowArrayRight):
+        (JSC::Butterfly::growArrayRight):
+        (JSC::Butterfly::resizeArray):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+        (JSC::createArrayButterflyInDictionaryIndexingMode): Deleted.
+        * runtime/JSArray.h:
+        (JSC::tryCreateArrayButterfly):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::createArrayStorageButterfly):
+        (JSC::JSObject::constructConvertedArrayStorageWithoutCopyingElements):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::shiftButterflyAfterFlattening):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::prepareToPutDirectWithoutTransition):
+        * runtime/ObjectInitializationScope.cpp:
+        (JSC::ObjectInitializationScope::verifyPropertiesAreInitialized):
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::createEmptyRegExpMatchesArray):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::tryCreateUninitializedRegExpMatchesArray):
+        (JSC::createRegExpMatchesArray):
+
 2018-06-18  Tadeu Zagallo  <tzagallo@apple.com>
 
         Share structure across instances of classes exported through the ObjC API

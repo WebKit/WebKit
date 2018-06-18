@@ -1,3 +1,12 @@
+2018-06-18  Keith Miller  <keith_miller@apple.com>
+
+        Properly zero unused property storage offsets
+        https://bugs.webkit.org/show_bug.cgi?id=186692
+
+        Reviewed by Filip Pizlo.
+
+        * stress/butterfly-zero-unused-butterfly-properties.js: Added.
+
 2018-06-18  Michael Saboff  <msaboff@apple.com>
 
         Support Unicode 11 in RegExp
