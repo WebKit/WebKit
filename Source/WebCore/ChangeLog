@@ -1,3 +1,15 @@
+2018-06-18  Chris Dumez  <cdumez@apple.com>
+
+        Better pack ResourceRequest
+        https://bugs.webkit.org/show_bug.cgi?id=186717
+
+        Reviewed by Darin Adler.
+
+        Better pack ResourceRequest to reduce its size from 240 to 232 bytes
+        on Mac.
+
+        * platform/network/ResourceRequestBase.h:
+
 2018-06-18  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement "Starting of transitions" section from CSS Transitions

@@ -223,22 +223,22 @@ protected:
     double m_timeoutInterval; // 0 is a magic value for platform default on platforms that have one.
     URL m_firstPartyForCookies;
     String m_httpMethod;
+    String m_initiatorIdentifier;
+    String m_cachePartition { emptyString() };
     HTTPHeaderMap m_httpHeaderFields;
     Vector<String> m_responseContentDispositionEncodingFallbackArray;
     RefPtr<FormData> m_httpBody;
     ResourceRequestCachePolicy m_cachePolicy { UseProtocolCachePolicy };
+    SameSiteDisposition m_sameSiteDisposition { SameSiteDisposition::Unspecified };
+    ResourceLoadPriority m_priority { ResourceLoadPriority::Low };
+    Requester m_requester { Requester::Unspecified };
     bool m_allowCookies { false };
     mutable bool m_resourceRequestUpdated { false };
     mutable bool m_platformRequestUpdated { false };
     mutable bool m_resourceRequestBodyUpdated { false };
     mutable bool m_platformRequestBodyUpdated { false };
     bool m_hiddenFromInspector { false };
-    SameSiteDisposition m_sameSiteDisposition { SameSiteDisposition::Unspecified };
     bool m_isTopSite { false };
-    ResourceLoadPriority m_priority { ResourceLoadPriority::Low };
-    Requester m_requester { Requester::Unspecified };
-    String m_initiatorIdentifier;
-    String m_cachePartition { emptyString() };
 #if USE(SYSTEM_PREVIEW)
     bool m_isSystemPreview { false };
     IntRect m_systemPreviewRect;
