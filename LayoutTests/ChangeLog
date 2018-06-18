@@ -1,3 +1,16 @@
+2018-06-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        fast/forms/button-set-display-flex-justifyContent-center.html is failing on macOS Mojave
+        https://bugs.webkit.org/show_bug.cgi?id=186776
+        <rdar://problem/41104962>
+
+        Fix a failing layout test by making the reference markup robust for changes to system button text color. This
+        system color is different in macOS Mojave, which causes this layout test to fail.
+
+        Reviewed by Beth Dakin.
+
+        * fast/forms/button-set-display-flex-justifyContent-center-expected.html:
+
 2018-06-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed GTK test gardening
