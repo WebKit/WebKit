@@ -352,11 +352,11 @@ void PeerConnectionBackend::addIceCandidateFailed(Exception&& exception)
         endOfIceCandidates(WTFMove(*m_endOfIceCandidatePromise));
 }
 
-void PeerConnectionBackend::fireICECandidateEvent(RefPtr<RTCIceCandidate>&& candidate)
+void PeerConnectionBackend::fireICECandidateEvent(RefPtr<RTCIceCandidate>&& candidate, String&& serverURL)
 {
     ASSERT(isMainThread());
 
-    m_peerConnection.fireEvent(RTCPeerConnectionIceEvent::create(false, false, WTFMove(candidate)));
+    m_peerConnection.fireEvent(RTCPeerConnectionIceEvent::create(false, false, WTFMove(candidate), WTFMove(serverURL)));
 }
 
 void PeerConnectionBackend::enableICECandidateFiltering()
@@ -368,7 +368,7 @@ void PeerConnectionBackend::disableICECandidateFiltering()
 {
     m_shouldFilterICECandidates = false;
     for (auto& pendingICECandidate : m_pendingICECandidates)
-        fireICECandidateEvent(RTCIceCandidate::create(WTFMove(pendingICECandidate.sdp), WTFMove(pendingICECandidate.mid), pendingICECandidate.sdpMLineIndex));
+        fireICECandidateEvent(RTCIceCandidate::create(WTFMove(pendingICECandidate.sdp), WTFMove(pendingICECandidate.mid), pendingICECandidate.sdpMLineIndex), WTFMove(pendingICECandidate.serverURL));
     m_pendingICECandidates.clear();
 }
 
@@ -424,18 +424,18 @@ String PeerConnectionBackend::filterSDP(String&& sdp) const
     return filteredSDP.toString();
 }
 
-void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned short sdpMLineIndex)
+void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned short sdpMLineIndex, String&& serverURL)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "Gathered ice candidate:", sdp);
     m_finishedGatheringCandidates = false;
 
     if (!m_shouldFilterICECandidates) {
-        fireICECandidateEvent(RTCIceCandidate::create(WTFMove(sdp), WTFMove(mid), sdpMLineIndex));
+        fireICECandidateEvent(RTCIceCandidate::create(WTFMove(sdp), WTFMove(mid), sdpMLineIndex), WTFMove(serverURL));
         return;
     }
     if (sdp.find(" host ", 0) != notFound) {
         // FIXME: We might need to clear all pending candidates when setting again local description.
-        m_pendingICECandidates.append(PendingICECandidate { String { sdp }, WTFMove(mid), sdpMLineIndex});
+        m_pendingICECandidates.append(PendingICECandidate { String { sdp }, WTFMove(mid), sdpMLineIndex, WTFMove(serverURL) });
         if (RuntimeEnabledFeatures::sharedFeatures().mdnsICECandidatesEnabled()) {
             auto ipAddress = extractIPAddres(sdp);
             // We restrict to IPv4 candidates for now.
@@ -444,7 +444,7 @@ void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned
         }
         return;
     }
-    fireICECandidateEvent(RTCIceCandidate::create(filterICECandidate(WTFMove(sdp)), WTFMove(mid), sdpMLineIndex));
+    fireICECandidateEvent(RTCIceCandidate::create(filterICECandidate(WTFMove(sdp)), WTFMove(mid), sdpMLineIndex), WTFMove(serverURL));
 }
 
 void PeerConnectionBackend::doneGatheringCandidates()
@@ -456,7 +456,7 @@ void PeerConnectionBackend::doneGatheringCandidates()
     if (m_waitingForMDNSRegistration)
         return;
 
-    m_peerConnection.fireEvent(RTCPeerConnectionIceEvent::create(false, false, nullptr));
+    m_peerConnection.fireEvent(RTCPeerConnectionIceEvent::create(false, false, nullptr, { }));
     m_peerConnection.updateIceGatheringState(RTCIceGatheringState::Complete);
     m_pendingICECandidates.clear();
 }
@@ -487,7 +487,7 @@ void PeerConnectionBackend::finishedRegisteringMDNSName(const String& ipAddress,
         if (candidate.sdp.find(ipAddress) != notFound) {
             auto sdp = candidate.sdp;
             sdp.replace(ipAddress, name);
-            fireICECandidateEvent(RTCIceCandidate::create(String(sdp), String(candidate.mid), candidate.sdpMLineIndex));
+            fireICECandidateEvent(RTCIceCandidate::create(WTFMove(sdp), WTFMove(candidate.mid), candidate.sdpMLineIndex), WTFMove(candidate.serverURL));
             candidates.append(&candidate);
         }
     }

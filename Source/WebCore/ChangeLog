@@ -1,3 +1,35 @@
+2018-06-18  Youenn Fablet  <youenn@apple.com>
+
+        Expose RTCPeerConnectionIceEventInit constructor
+        https://bugs.webkit.org/show_bug.cgi?id=186770
+
+        Reviewed by Alex Christensen.
+
+        Add event constructor as per specification.
+        Add support for the url attribute.
+        For that purpose, we need to pipe that information from LibWebRTCMediaEndpoint
+        up to RTCPeerConnectionIceEvent.
+
+        Covered by rebased test.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::fireICECandidateEvent):
+        (WebCore::PeerConnectionBackend::disableICECandidateFiltering):
+        (WebCore::PeerConnectionBackend::newICECandidate):
+        (WebCore::PeerConnectionBackend::doneGatheringCandidates):
+        (WebCore::PeerConnectionBackend::finishedRegisteringMDNSName):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnectionIceEvent.cpp:
+        (WebCore::RTCPeerConnectionIceEvent::create):
+        (WebCore::RTCPeerConnectionIceEvent::RTCPeerConnectionIceEvent):
+        * Modules/mediastream/RTCPeerConnectionIceEvent.h:
+        (WebCore::RTCPeerConnectionIceEvent::url const):
+        * Modules/mediastream/RTCPeerConnectionIceEvent.idl:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::OnIceCandidate):
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/EventNames.in:
+
 2018-06-18  Simon Fraser  <simon.fraser@apple.com>
 
         SVGTransformListValues wastes 127KB of Vector capacity on nytimes.com

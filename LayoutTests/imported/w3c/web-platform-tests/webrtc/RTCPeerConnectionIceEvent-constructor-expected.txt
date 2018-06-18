@@ -1,12 +1,10 @@
 
-FAIL RTCPeerConnectionIceEvent with no arguments throws TypeError assert_throws: function "() => {
-    new RTCPeerConnectionIceEvent();
-  }" threw object "ReferenceError: Can't find variable: RTCPeerConnectionIceEvent" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL RTCPeerConnectionIceEvent with no eventInitDict (default) Can't find variable: RTCPeerConnectionIceEvent
-FAIL RTCPeerConnectionIceEvent with empty object as eventInitDict (default) Can't find variable: RTCPeerConnectionIceEvent
-FAIL RTCPeerConnectionIceEvent.candidate is null when constructed with { candidate: null } Can't find variable: RTCPeerConnectionIceEvent
-FAIL RTCPeerConnectionIceEvent.candidate is null when constructed with { candidate: undefined } Can't find variable: RTCPeerConnectionIceEvent
-FAIL RTCPeerConnectionIceEvent with RTCIceCandidate Can't find variable: RTCPeerConnectionIceEvent
-FAIL RTCPeerConnectionIceEvent with non RTCIceCandidate object throws assert_throws: function "() => new RTCPeerConnectionIceEvent("type", { candidate: plain })" threw object "ReferenceError: Can't find variable: RTCPeerConnectionIceEvent" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL RTCPeerConnectionIceEvent bubbles and cancelable Can't find variable: RTCPeerConnectionIceEvent
+PASS RTCPeerConnectionIceEvent with no arguments throws TypeError 
+PASS RTCPeerConnectionIceEvent with no eventInitDict (default) 
+PASS RTCPeerConnectionIceEvent with empty object as eventInitDict (default) 
+PASS RTCPeerConnectionIceEvent.candidate is null when constructed with { candidate: null } 
+PASS RTCPeerConnectionIceEvent.candidate is null when constructed with { candidate: undefined } 
+PASS RTCPeerConnectionIceEvent with RTCIceCandidate 
+PASS RTCPeerConnectionIceEvent with non RTCIceCandidate object throws 
+PASS RTCPeerConnectionIceEvent bubbles and cancelable 
 

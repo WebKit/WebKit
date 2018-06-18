@@ -127,6 +127,7 @@ namespace WebCore {
     macro(RTCIceCandidate) \
     macro(RTCIceTransport) \
     macro(RTCPeerConnection) \
+    macro(RTCPeerConnectionIceEvent) \
     macro(RTCRtpReceiver) \
     macro(RTCRtpSender) \
     macro(RTCRtpTransceiver) \

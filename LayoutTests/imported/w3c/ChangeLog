@@ -1,3 +1,15 @@
+2018-06-18  Youenn Fablet  <youenn@apple.com>
+
+        Expose RTCPeerConnectionIceEventInit constructor
+        https://bugs.webkit.org/show_bug.cgi?id=186770
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/webrtc/RTCPeerConnectionIceEvent-constructor-expected.txt:
+        Updated expectation as per patch.
+        * web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl-expected.txt:
+        Rebasing this file, changes are unrelated but test is marked as flaky.
+
 2018-06-16  Brendan McLoughlin  <brendan@bocoup.com>
 
         Sync additional web-platform-tests directories up to 197cdad
