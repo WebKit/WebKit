@@ -1,3 +1,12 @@
+2018-06-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK test gardening
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/css/WOFF2/directory-knowntags-001-expected.png: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/woff2/directory-knowntags-001-expected.png.
+        * platform/gtk/imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-origlength-003-expected.png: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/woff2/tabledata-glyf-origlength-003-expected.png.
+
 2018-06-18  Youenn Fablet  <youenn@apple.com>
 
         Validate Cross-Origin-Resource-Policy for resources cached in the MemoryCache
