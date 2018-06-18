@@ -1,3 +1,19 @@
+2018-06-17  Chris Dumez  <cdumez@apple.com>
+
+        Crash under SuspendedPageProxy::~SuspendedPageProxy()
+        https://bugs.webkit.org/show_bug.cgi?id=186688
+        <rdar://problem/41060769>
+
+        Reviewed by Darin Adler.
+
+        Ref the WebProcessProxy before calling suspendedPageWasDestroyed() on it as this
+        might cause the WebProcessProxy / WebProcessPool to get destroyed otherwise, and
+        we would crash trying to call unregisterSuspendedPageProxy() on the WebProcessPool
+        on the next line.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::~SuspendedPageProxy):
+
 2018-06-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit on watchOS] Upstream watchOS source additions to OpenSource (Part 3)

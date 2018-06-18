@@ -87,9 +87,9 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, WebProcessProxy& proc
 
 SuspendedPageProxy::~SuspendedPageProxy()
 {
-    if (m_process) {
-        m_process->suspendedPageWasDestroyed(*this);
-        m_process->processPool().unregisterSuspendedPageProxy(*this);
+    if (auto process = makeRefPtr(m_process)) {
+        process->suspendedPageWasDestroyed(*this);
+        process->processPool().unregisterSuspendedPageProxy(*this);
     }
 
     m_backForwardListItem->setSuspendedPage(nullptr);
