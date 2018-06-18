@@ -1314,7 +1314,7 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderStyle& style, const Element*) c
     if (part != SliderThumbHorizontalPart && part != SliderThumbVerticalPart)
         return;
 
-    auto& sliderWidget = static_cast<RenderThemeSlider&>(RenderThemeWidget::getOrCreate(part == SliderHorizontalPart ? RenderThemeWidget::Type::HorizontalSlider : RenderThemeWidget::Type::VerticalSlider));
+    auto& sliderWidget = static_cast<RenderThemeSlider&>(RenderThemeWidget::getOrCreate(part == SliderThumbHorizontalPart ? RenderThemeWidget::Type::HorizontalSlider : RenderThemeWidget::Type::VerticalSlider));
     sliderWidget.scale().setState(GTK_STATE_FLAG_NORMAL);
     sliderWidget.trough().setState(GTK_STATE_FLAG_NORMAL);
 
