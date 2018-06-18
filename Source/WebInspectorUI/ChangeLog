@@ -1,3 +1,14 @@
+2018-06-18  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: TypeError: Array.prototype.sort passed bad value in NetworkTableContentView _updateSortAndFilteredEntries
+        https://bugs.webkit.org/show_bug.cgi?id=186787
+        <rdar://problem/41175680>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._updateSortAndFilteredEntries):
+
 2018-06-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: open source Dark Mode

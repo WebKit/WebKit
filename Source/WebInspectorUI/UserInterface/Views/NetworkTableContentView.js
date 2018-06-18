@@ -1243,7 +1243,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _updateSortAndFilteredEntries()
     {
-        this._entries = this._entries.sort(this._entriesSortComparator);
+        if (this._entriesSortComparator)
+            this._entries = this._entries.sort(this._entriesSortComparator);
+
         this._updateFilteredEntries();
     }
 
