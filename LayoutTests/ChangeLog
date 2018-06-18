@@ -1,3 +1,17 @@
+2018-06-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Adding platform-specific baselines for
+        WebCrypto tests whose baselines were changed in r232903.
+
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.worker-expected.txt: Added.
+
 2018-06-17  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Manage the 8 crashing tests that are failing
