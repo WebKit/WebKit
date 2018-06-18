@@ -95,101 +95,6 @@
             "drawCustomFocusRing must return false for an element that is not a descendant of the canvas element.": { "expected": "FAIL" }
         }
     },
-    "2dcontext/drawing-text-to-the-canvas/2d.text.draw.fontface.notinpage.html": {
-        "subtests": {
-            "@font-face fonts should work even if they are not used in the page": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-1.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-1": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-2.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-2": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-3.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-3": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-4.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-4": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-5.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-5": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-6.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-6": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-7.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-7": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-8.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-8": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-9.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsl-9": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-1.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-1": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-2.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-2": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-3.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-3": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-4.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-4": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-5.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-5": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-6.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-6": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-7.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-7": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-8.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-8": { "expected": "FAIL" }
-        }
-    },
-    "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-9.html": {
-        "subtests": {
-            "Canvas test: 2d.fillStyle.parse.css-color-4-hsla-9": { "expected": "FAIL" }
-        }
-    },
     "2dcontext/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-1.html": {
         "subtests": {
             "Canvas test: 2d.fillStyle.parse.css-color-4-rgb-1": { "expected": "FAIL" }
@@ -279,11 +184,6 @@
     },
     "2dcontext/imagebitmap/createImageBitmap-drawImage.html": {
         "subtests": {
-            "createImageBitmap from an HTMLCanvasElement with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
-            "createImageBitmap from an HTMLVideoElement with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
-            "createImageBitmap from an HTMLVideoElement from a data URL with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
-            "createImageBitmap from a bitmap HTMLImageElement with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
-            "createImageBitmap from a vector HTMLImageElement with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
             "createImageBitmap from a bitmap SVGImageElement, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
             "createImageBitmap from a bitmap SVGImageElement scaled down, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
             "createImageBitmap from a bitmap SVGImageElement scaled up, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
@@ -303,13 +203,7 @@
             "createImageBitmap from an ImageData scaled down, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
             "createImageBitmap from an ImageData scaled up, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
             "createImageBitmap from an ImageData resized, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
-            "createImageBitmap from an ImageData with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
-            "createImageBitmap from an ImageBitmap with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
-            "createImageBitmap from a Blob, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
-            "createImageBitmap from a Blob scaled down, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
-            "createImageBitmap from a Blob scaled up, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
-            "createImageBitmap from a Blob resized, and drawImage on the created ImageBitmap": { "expected": "FAIL" },
-            "createImageBitmap from a Blob with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" }
+            "createImageBitmap from an ImageData with negative sw/sh, and drawImage on the created ImageBitmap": { "expected": "FAIL" }
         }
     },
     "2dcontext/imagebitmap/createImageBitmap-invalid-args.html": {
@@ -332,7 +226,6 @@
             "createImageBitmap with a an ImageBitmap source and oversized (unallocatable) crop region": { "expected": "FAIL" },
             "createImageBitmap with a a Blob source and oversized (unallocatable) crop region": { "expected": "FAIL" },
             "createImageBitmap with an invalid OffscreenCanvas source.": { "expected": "FAIL" },
-            "createImageBitmap with an undecodable blob source.": { "expected": "FAIL" },
             "createImageBitmap with an available but undecodable image source.": { "expected": "FAIL" },
             "createImageBitmap with an available but zero height image source.": { "expected": "FAIL" },
             "createImageBitmap with an available but zero width image source.": { "expected": "FAIL" }

@@ -1,3 +1,11 @@
+2018-06-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ gardening. Updating the WPT expectations by removing
+        failure expectations for 2dcontext tests covering CSS HSL/HSLA color
+        parsing and createImageBitmap() API that are nowadays passing.
+
+        * WebPlatformTests/gtk/TestExpectations.json:
+
 2018-06-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Automatically disable JIT and enable USE_SYSTEM_MALLOC on unfamiliar architectures
