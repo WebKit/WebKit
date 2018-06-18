@@ -762,6 +762,7 @@
 		1442566215EDE98D0066A49B /* JSWithScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 1442566015EDE98D0066A49B /* JSWithScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		144836E7132DA7BE005BE785 /* ConservativeRoots.h in Headers */ = {isa = PBXBuildFile; fileRef = 149DAAF212EB559D0083B12B /* ConservativeRoots.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		145722861437E140005FDE26 /* StrongInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 145722851437E140005FDE26 /* StrongInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1471483020D323D30090E630 /* JSWrapperMapTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1471482F20D323650090E630 /* JSWrapperMapTests.mm */; };
 		147341CC1DC02D7200AA29BA /* ExecutableBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 147341CB1DC02D7200AA29BA /* ExecutableBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		147341CE1DC02D7900AA29BA /* ScriptExecutable.h in Headers */ = {isa = PBXBuildFile; fileRef = 147341CD1DC02D7900AA29BA /* ScriptExecutable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		147341D01DC02DB400AA29BA /* NativeExecutable.h in Headers */ = {isa = PBXBuildFile; fileRef = 147341CF1DC02DB400AA29BA /* NativeExecutable.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3083,6 +3084,8 @@
 		146B14DB12EB5B12001BEC1B /* ConservativeRoots.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConservativeRoots.cpp; sourceTree = "<group>"; };
 		146FA5A81378F6B0003627A3 /* HandleTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandleTypes.h; sourceTree = "<group>"; };
 		146FE51111A710430087AE66 /* JITCall32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITCall32_64.cpp; sourceTree = "<group>"; };
+		1471482E20D323640090E630 /* JSWrapperMapTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWrapperMapTests.h; path = API/tests/JSWrapperMapTests.h; sourceTree = "<group>"; };
+		1471482F20D323650090E630 /* JSWrapperMapTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = JSWrapperMapTests.mm; path = API/tests/JSWrapperMapTests.mm; sourceTree = "<group>"; };
 		147341CB1DC02D7200AA29BA /* ExecutableBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutableBase.h; sourceTree = "<group>"; };
 		147341CD1DC02D7900AA29BA /* ScriptExecutable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptExecutable.h; sourceTree = "<group>"; };
 		147341CF1DC02DB400AA29BA /* NativeExecutable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeExecutable.h; sourceTree = "<group>"; };
@@ -5432,6 +5435,8 @@
 				0FF47C591EBFE83500F280B7 /* JSObjectGetProxyTargetTest.h */,
 				5C4E8E941DBEBDA20036F1FC /* JSONParseTest.cpp */,
 				5C4E8E951DBEBDA20036F1FC /* JSONParseTest.h */,
+				1471482E20D323640090E630 /* JSWrapperMapTests.h */,
+				1471482F20D323650090E630 /* JSWrapperMapTests.mm */,
 				144005170A531CB50005F061 /* minidom */,
 				FEF49AA91EB947FE00653BDB /* MultithreadedMultiVMExecutionTest.cpp */,
 				FEF49AAA1EB947FE00653BDB /* MultithreadedMultiVMExecutionTest.h */,
@@ -10154,6 +10159,7 @@
 				C2181FC218A948FB0025A235 /* JSExportTests.mm in Sources */,
 				0FF47C5A1EBFE84600F280B7 /* JSObjectGetProxyTargetTest.cpp in Sources */,
 				5C4E8E961DBEBE620036F1FC /* JSONParseTest.cpp in Sources */,
+				1471483020D323D30090E630 /* JSWrapperMapTests.mm in Sources */,
 				FEF49AAB1EB9484B00653BDB /* MultithreadedMultiVMExecutionTest.cpp in Sources */,
 				FE7C41961B97FC4B00F4D598 /* PingPongStackOverflowTest.cpp in Sources */,
 				65570F5A1AA4C3EA009B3C23 /* Regress141275.mm in Sources */,

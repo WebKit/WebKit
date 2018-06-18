@@ -367,6 +367,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
     JSClassRef m_classRef;
     JSC::Weak<JSC::JSObject> m_prototype;
     JSC::Weak<JSC::JSObject> m_constructor;
+    JSC::Weak<JSC::Structure> m_structure;
 }
 
 - (instancetype)initForClass:(Class)cls;
@@ -517,10 +518,14 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
         }
     }
 
-    JSC::JSObject* prototype = [self prototypeInContext:context];
+    JSC::Structure* structure = [self structureInContext:context];
 
-    JSC::JSObject* wrapper = makeWrapper([context JSGlobalContextRef], m_classRef, object);
-    JSObjectSetPrototype([context JSGlobalContextRef], toRef(wrapper), toRef(prototype));
+    JSC::ExecState* exec = toJS([context JSGlobalContextRef]);
+    JSC::VM& vm = exec->vm();
+    JSC::JSLockHolder locker(vm);
+
+    JSC::JSCallbackObject<JSC::JSAPIWrapperObject>* wrapper = JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::create(exec, exec->lexicalGlobalObject(), structure, m_classRef, 0);
+    wrapper->setWrappedObject(object);
     return wrapper;
 }
 
@@ -540,6 +545,20 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
         prototype = [self allocateConstructorAndPrototypeInContext:context].second;
     ASSERT(!!prototype);
     return prototype;
+}
+
+- (JSC::Structure*)structureInContext:(JSContext *)context
+{
+    JSC::Structure* structure = m_structure.get();
+    if (structure)
+        return structure;
+
+    JSC::ExecState* exec = toJS([context JSGlobalContextRef]);
+    JSC::JSGlobalObject* globalObject = toJSGlobalObject([context JSGlobalContextRef]);
+    JSC::JSObject* prototype = [self prototypeInContext:context];
+    m_structure = JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::createStructure(exec->vm(), globalObject, prototype);
+
+    return m_structure.get();
 }
 
 @end

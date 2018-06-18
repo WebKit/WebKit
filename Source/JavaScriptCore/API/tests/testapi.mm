@@ -29,6 +29,7 @@
 #import "DateTests.h"
 #import "JSExportTests.h"
 #import "JSVirtualMachinePrivate.h"
+#import "JSWrapperMapTests.h"
 #import "Regress141275.h"
 #import "Regress141809.h"
 
@@ -1475,6 +1476,7 @@ static void testObjectiveCAPIMain()
     currentThisInsideBlockGetterTest();
     runDateTests();
     runJSExportTests();
+    runJSWrapperMapTests();
     runRegress141275();
     runRegress141809();
 }

@@ -1,3 +1,27 @@
+2018-06-18  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Share structure across instances of classes exported through the ObjC API
+        https://bugs.webkit.org/show_bug.cgi?id=186579
+        <rdar://problem/40969212>
+
+        Reviewed by Saam Barati.
+
+        A new structure was being created for each instance of exported ObjC
+        classes due to setting the prototype in the structure for every object,
+        since prototype transitions are not cached by the structure. Cache the
+        Structure in the JSObjcClassInfo to avoid the transition.
+
+        * API/JSWrapperMap.mm:
+        (-[JSObjCClassInfo wrapperForObject:inContext:]):
+        (-[JSObjCClassInfo structureInContext:]):
+        * API/tests/JSWrapperMapTests.h: Added.
+        * API/tests/JSWrapperMapTests.mm: Added.
+        (+[JSWrapperMapTests testStructureIdentity]):
+        (runJSWrapperMapTests):
+        * API/tests/testapi.mm:
+        (testObjectiveCAPIMain):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2018-06-18  Michael Saboff  <msaboff@apple.com>
 
         Support Unicode 11 in RegExp
