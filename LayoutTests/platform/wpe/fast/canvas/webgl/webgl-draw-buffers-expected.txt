@@ -19,9 +19,11 @@ PASS getError was expected value: NO_ERROR : there should be no errors
 
 test shaders disabled
 vertex shader
-fragement shaderPASS GL_EXT_draw_buffers should not be defined in GLSL
+fragement shader
+PASS GL_EXT_draw_buffers should not be defined in GLSL
 vertex shader
-fragement shaderPASS #extension GL_EXT_draw_buffers should not be allowed in GLSL
+fragement shader
+PASS #extension GL_EXT_draw_buffers should not be allowed in GLSL
 PASS getError was expected value: NO_ERROR : there should be no errors
 
 test attachment disabled

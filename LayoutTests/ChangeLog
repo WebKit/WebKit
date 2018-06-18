@@ -1,5 +1,15 @@
 2018-06-18  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed WPE gardening. Updating or adding baselines for a quadruple
+        of tests that are otherwise failing with a text-only failure.
+
+        * platform/wpe/fast/canvas/webgl/index-validation-with-subsequent-draws-expected.txt: Added.
+        * platform/wpe/fast/canvas/webgl/webgl-draw-buffers-expected.txt:
+        * platform/wpe/fullscreen/full-screen-layer-dump-expected.txt: Added.
+        * platform/wpe/js/dom/constructor-length-expected.txt:
+
+2018-06-18  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed WPE gardening. Adding platform-specific baselines for
         WebCrypto tests whose baselines were changed in r232903.
 

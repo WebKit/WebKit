@@ -27,7 +27,7 @@ PASS Int32Array.length is 3
 PASS Int8Array.length is 3
 FAIL Intent.length should be 3. Threw exception ReferenceError: Can't find variable: Intent
 PASS MediaController.length is 0
-FAIL MediaStream.length should be 0. Threw exception ReferenceError: Can't find variable: MediaStream
+PASS MediaStream.length is 0
 PASS MessageChannel.length is 0
 PASS MessageEvent.length is 1
 PASS OverflowEvent.length is 1
