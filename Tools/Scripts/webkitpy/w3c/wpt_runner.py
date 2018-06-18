@@ -146,6 +146,8 @@ class WPTRunner(object):
         with self._host.filesystem.open_text_file_for_reading(expectations_file) as fd:
             expectations = json.load(fd)
 
+        self._host.filesystem.rmtree(metadata_path)
+
         for test_name, test_data in expectations.iteritems():
             ini_file = self._host.filesystem.join(metadata_path, test_name + ".ini")
             self._host.filesystem.maybe_make_directory(self._host.filesystem.dirname(ini_file))

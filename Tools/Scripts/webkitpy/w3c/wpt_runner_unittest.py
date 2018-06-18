@@ -191,7 +191,16 @@ class WPTRunnerTest(unittest.TestCase):
             "/mock-checkout/WebPlatformTests/MockPort/TestExpectations.json",
             TEST_EXPECTATIONS_JSON_CONTENT)
 
+        # Specify a stale metadata file that should be removed before generation.
+        stale_metadata_file = "/mock-metadata/test/stale_metadata_file.html.ini"
+        instance.host.filesystem.write_text_file(
+            stale_metadata_file, "[This file should be removed during generation]")
+
         self.assertTrue(instance.runner._generate_metadata_directory(metadata_path))
+
+        # Check that the stale metadata file was indeed removed.
+        self.assertFalse(instance.host.filesystem.exists(stale_metadata_file))
+
         for path, content in EXPECTED_TEST_MANIFESTS.items():
             manifest_path = instance.host.filesystem.join(metadata_path, path)
             self.assertTrue(instance.host.filesystem.isfile(manifest_path))

@@ -1,3 +1,26 @@
+2018-06-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        [webkitpy] WPTRunner should remove any metadata content before (re)generating it
+        https://bugs.webkit.org/show_bug.cgi?id=186755
+
+        Reviewed by Carlos Garcia Campos.
+
+        WPTRunner generates the WPT-compliant metadata content before each test
+        run. Before it does so, it should remove the complete target directory
+        for this metadata, allowing any change in the expectations JSON to be
+        immediately reflected.
+
+        For example, if a test failure expectation is removed, the related .ini
+        metadata file is not generated anymore, but the stale .ini file isn't
+        removed from the current metadata directory. To avoid this, purging
+        the metadata directory and regenerating it from scratch should be done
+        for each test run.
+
+        * Scripts/webkitpy/w3c/wpt_runner.py:
+        (WPTRunner._generate_metadata_directory):
+        * Scripts/webkitpy/w3c/wpt_runner_unittest.py:
+        (WPTRunnerTest.test_generate_metadata_directory):
+
 2018-06-12  Darin Adler  <darin@apple.com>
 
         [Cocoa] Make some RetainPtr refinements to get more ready for ARC
