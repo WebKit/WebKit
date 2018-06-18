@@ -293,8 +293,10 @@ void WKWebsiteDataStoreStatisticsProcessStatisticsAndDataRecords(WKWebsiteDataSt
 void WKWebsiteDataStoreStatisticsUpdateCookiePartitioning(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsUpdateCookiePartitioningFunction callback)
 {
     auto* store = WebKit::toImpl(dataStoreRef)->websiteDataStore().resourceLoadStatistics();
-    if (!store)
+    if (!store) {
+        callback(context);
         return;
+    }
 
     store->scheduleCookiePartitioningUpdate([context, callback]() {
         callback(context);
@@ -304,8 +306,10 @@ void WKWebsiteDataStoreStatisticsUpdateCookiePartitioning(WKWebsiteDataStoreRef 
 void WKWebsiteDataStoreSetStatisticsShouldPartitionCookiesForHost(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, bool value, void* context, WKWebsiteDataStoreSetStatisticsShouldPartitionCookiesForHostFunction callback)
 {
     auto* store = WebKit::toImpl(dataStoreRef)->websiteDataStore().resourceLoadStatistics();
-    if (!store)
+    if (!store) {
+        callback(context);
         return;
+    }
 
     if (value)
         store->scheduleCookiePartitioningUpdateForDomains({ WebKit::toImpl(host)->string() }, { }, { }, WebKit::ShouldClearFirst::No, [context, callback]() {
@@ -388,8 +392,10 @@ void WKWebsiteDataStoreSetStatisticsPruneEntriesDownTo(WKWebsiteDataStoreRef dat
 void WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStore(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreFunction callback)
 {
     auto* store = WebKit::toImpl(dataStoreRef)->websiteDataStore().resourceLoadStatistics();
-    if (!store)
+    if (!store) {
+        callback(context);
         return;
+    }
 
     store->scheduleClearInMemoryAndPersistent(WebKit::WebResourceLoadStatisticsStore::ShouldGrandfather::Yes, [context, callback]() {
         callback(context);
@@ -399,8 +405,10 @@ void WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStore(WKWebsiteDataSt
 void WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours(WKWebsiteDataStoreRef dataStoreRef, unsigned hours, void* context, WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreModifiedSinceHoursFunction callback)
 {
     auto* store = WebKit::toImpl(dataStoreRef)->websiteDataStore().resourceLoadStatistics();
-    if (!store)
+    if (!store) {
+        callback(context);
         return;
+    }
 
     store->scheduleClearInMemoryAndPersistent(WallTime::now() - Seconds::fromHours(hours), WebKit::WebResourceLoadStatisticsStore::ShouldGrandfather::Yes, [context, callback]() {
         callback(context);

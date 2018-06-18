@@ -1,3 +1,17 @@
+2018-06-18  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Make sure to call callbacks even if there is no store (test infrastructure)
+        https://bugs.webkit.org/show_bug.cgi?id=186777
+        <rdar://problem/41216181>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreStatisticsUpdateCookiePartitioning):
+        (WKWebsiteDataStoreSetStatisticsShouldPartitionCookiesForHost):
+        (WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStore):
+        (WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours):
+
 2018-06-18  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebProcessPool::networkProcessFailedToLaunch():
