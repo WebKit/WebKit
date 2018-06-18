@@ -31,7 +31,7 @@ class SVGListPropertyTearOff;
 
 class SVGTransformList;
 
-class SVGTransformListValues final : public Vector<SVGTransformValue, 1> {
+class SVGTransformListValues final : public Vector<SVGTransformValue, 0, CrashOnOverflow, 2> {
 public:
     Ref<SVGTransform> createSVGTransformFromMatrix(SVGMatrix&) const;
     Ref<SVGTransform> consolidate();

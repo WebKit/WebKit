@@ -1,3 +1,20 @@
+2018-06-18  Simon Fraser  <simon.fraser@apple.com>
+
+        SVGTransformListValues wastes 127KB of Vector capacity on nytimes.com
+        https://bugs.webkit.org/show_bug.cgi?id=186704
+
+        Reviewed by Said Abou-Hallawa.
+
+        SVGTransformListValues has inline capacity 1, and every SVGGraphicsElement has
+        a SVGSynchronizableAnimatedProperty<WebCore::SVGTransformListValues>, so the inline
+        capacity wastes space for every SVGGraphicsElement that doesn't have a transform (i.e.
+        most of them).
+        
+        So make SVGTransformListValues have zero inline capacity, and set its min capacity to
+        2, rather than the default 16, since most transform lists are short.
+
+        * svg/SVGTransformListValues.h:
+
 2018-06-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Document should not be mutated under SMILTimeContainer::updateAnimations()
