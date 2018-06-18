@@ -1,3 +1,13 @@
+2018-06-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Document should not be mutated under SMILTimeContainer::updateAnimations()
+        https://bugs.webkit.org/show_bug.cgi?id=186658
+
+        Reviewed by Simon Fraser.
+
+        * svg/dom/css-animate-input-foucs-crash-expected.txt: Added.
+        * svg/dom/css-animate-input-foucs-crash.html: Added.
+
 2018-06-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         fast/forms/button-set-display-flex-justifyContent-center.html is failing on macOS Mojave

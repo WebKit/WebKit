@@ -1,0 +1,23 @@
+<body>
+    <p>This test passes if it doesn't crash.</p>
+    <svg id="svgRoot">
+        <animate attributeName="fill" />
+    </svg>
+    <div id="inputParent" onfocusin="onFoucsIn()">
+        <keygen id="input">
+    </div>
+    <details ontoggle="onToggle()" open="true"></details>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function onFoucsIn() {
+            svgRoot.remove();
+        }
+
+        function onToggle() {
+            input.autofocus = true;
+            inputParent.after(inputParent);
+        }
+    </script>
+</body>

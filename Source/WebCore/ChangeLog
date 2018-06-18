@@ -1,3 +1,29 @@
+2018-06-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Document should not be mutated under SMILTimeContainer::updateAnimations()
+        https://bugs.webkit.org/show_bug.cgi?id=186658
+
+        Reviewed by Simon Fraser.
+
+        To update the animation of an SVG <animate> element, we call
+        SVGAnimateElementBase::resetAnimatedType(). It ensures the pointer m_animator
+        is valid. If it animates a css property, it calls computeCSSPropertyValue()
+        which calls resolveStyle() via other calls. resolveStyle() may call delayed
+        callbacks through the destructor of PostResolutionCallbackDisabler. These
+        callbacks may fire events. These events may execute JS event handlers.
+        If one of these event handlers deletes the same SVG <animate> we animate,
+        we will end up calling SVGAnimateElementBase::resetAnimatedPropertyType()
+        of the same <animate> element. This function  will delete the same m_animator
+        which resetAnimatedType() still holds and will use later. This code
+        re-entrance is unexpected and unwanted.
+
+        The fix is to disable mutating the DOM while updating the SVG animations.
+
+        Test: svg/dom/css-animate-input-foucs-crash.html
+
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::updateAnimations):
+
 2018-06-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r232935.

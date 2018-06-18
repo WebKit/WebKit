@@ -31,6 +31,7 @@
 #include "Page.h"
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
+#include "ScopedEventQueue.h"
 
 namespace WebCore {
 
@@ -254,6 +255,9 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
 {
     SMILTime earliestFireTime = SMILTime::unresolved();
 
+    // Don't mutate the DOM while updating the animations.
+    EventQueueScope scope;
+    
 #ifndef NDEBUG
     // This boolean will catch any attempts to schedule/unschedule scheduledAnimations during this critical section.
     // Similarly, any elements removed will unschedule themselves, so this will catch modification of animationsToApply.
