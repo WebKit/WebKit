@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class HTTPHeaderMap;
+class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
 class SecurityOrigin;
@@ -55,5 +56,7 @@ WEBCORE_EXPORT void cleanHTTPRequestHeadersForAccessControl(ResourceRequest&, co
 
 WEBCORE_EXPORT bool passesAccessControlCheck(const ResourceResponse&, StoredCredentialsPolicy, SecurityOrigin&, String& errorDescription);
 WEBCORE_EXPORT bool validatePreflightResponse(const ResourceRequest&, const ResourceResponse&, StoredCredentialsPolicy, SecurityOrigin&, String& errorDescription);
+
+WEBCORE_EXPORT std::optional<ResourceError> validateCrossOriginResourcePolicy(const SecurityOrigin&, const URL&, const ResourceResponse&);
 
 } // namespace WebCore

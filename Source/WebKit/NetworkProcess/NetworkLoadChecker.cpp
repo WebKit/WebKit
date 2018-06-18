@@ -131,29 +131,6 @@ void NetworkLoadChecker::checkRedirection(ResourceResponse& redirectResponse, Re
     checkRequest(WTFMove(request), WTFMove(handler));
 }
 
-bool NetworkLoadChecker::shouldCrossOriginResourcePolicyPolicyCancelLoad(const ResourceResponse& response)
-{
-    if (m_origin->canRequest(response.url()))
-        return false;
-
-    auto policy = parseCrossOriginResourcePolicyHeader(response.httpHeaderField(HTTPHeaderName::CrossOriginResourcePolicy));
-    switch (policy) {
-    case CrossOriginResourcePolicy::None:
-    case CrossOriginResourcePolicy::Invalid:
-        return false;
-    case CrossOriginResourcePolicy::SameOrigin:
-        return true;
-    case CrossOriginResourcePolicy::SameSite: {
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-        return m_origin->isUnique() || !registrableDomainsAreEqual(response.url(), ResourceRequest::partitionName(m_origin->host()));
-#else
-        return true;
-#endif
-    }}
-
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 ResourceError NetworkLoadChecker::validateResponse(ResourceResponse& response)
 {
     if (m_redirectCount)
@@ -170,8 +147,9 @@ ResourceError NetworkLoadChecker::validateResponse(ResourceResponse& response)
     }
 
     if (m_options.mode == FetchOptions::Mode::NoCors) {
-        if (shouldCrossOriginResourcePolicyPolicyCancelLoad(response))
-            return ResourceError { errorDomainWebKitInternal, 0, m_url, makeString("Cancelled load to ", response.url().stringCenterEllipsizedToLength(), " because it violates the resource's Cross-Origin-Resource-Policy response header."), ResourceError::Type::AccessControl };
+        if (auto error = validateCrossOriginResourcePolicy(*m_origin, m_url, response))
+            return WTFMove(*error);
+
         response.setTainting(ResourceResponse::Tainting::Opaque);
         return { };
     }

@@ -1,3 +1,17 @@
+2018-06-18  Youenn Fablet  <youenn@apple.com>
+
+        Validate Cross-Origin-Resource-Policy for resources cached in the MemoryCache
+        https://bugs.webkit.org/show_bug.cgi?id=186639
+        <rdar://problem/41106984>
+
+        Reviewed by Geoffrey Garen.
+
+        Make use of WebCore method to check CORP.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::validateResponse):
+        * NetworkProcess/NetworkLoadChecker.h:
+
 2018-06-18  Karl Leplat  <karl.leplat_ext@softathome.com>
 
         [Threaded paintingEngine] Fix rendering glitches

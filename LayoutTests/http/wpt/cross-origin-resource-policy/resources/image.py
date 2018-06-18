@@ -8,6 +8,9 @@ def main(request, response):
     response.add_required_headers = False
     response.writer.write_status(200)
 
+    if 'cached' in request.GET:
+        response.writer.write_header("Cache-Control", "max-age=600000")
+
     if 'corp' in request.GET:
         response.writer.write_header("cross-origin-resource-policy", request.GET['corp'])
     if 'acao' in request.GET:

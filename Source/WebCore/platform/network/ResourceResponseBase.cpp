@@ -333,6 +333,7 @@ static bool isSafeRedirectionResponseHeader(HTTPHeaderName name)
         || name == HTTPHeaderName::AccessControlAllowOrigin
         || name == HTTPHeaderName::AccessControlExposeHeaders
         || name == HTTPHeaderName::AccessControlMaxAge
+        || name == HTTPHeaderName::CrossOriginResourcePolicy
         || name == HTTPHeaderName::TimingAllowOrigin;
 }
 
@@ -358,6 +359,7 @@ static bool isSafeCrossOriginResponseHeader(HTTPHeaderName name)
         || name == HTTPHeaderName::ContentSecurityPolicy
         || name == HTTPHeaderName::ContentSecurityPolicyReportOnly
         || name == HTTPHeaderName::ContentType
+        || name == HTTPHeaderName::CrossOriginResourcePolicy
         || name == HTTPHeaderName::Date
         || name == HTTPHeaderName::ETag
         || name == HTTPHeaderName::Expires

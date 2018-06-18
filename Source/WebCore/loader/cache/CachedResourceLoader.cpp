@@ -893,6 +893,10 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         break;
     case Use:
         ASSERT(resource);
+        if (request.options().mode == FetchOptions::Mode::NoCors) {
+            if (auto error = validateCrossOriginResourcePolicy(*request.origin(), request.resourceRequest().url(), resource->response()))
+                return makeUnexpected(WTFMove(*error));
+        }
         if (shouldUpdateCachedResourceWithCurrentRequest(*resource, request)) {
             resource = updateCachedResourceWithCurrentRequest(*resource, WTFMove(request));
             if (resource->status() != CachedResource::Status::Cached)

@@ -208,4 +208,34 @@ bool validatePreflightResponse(const ResourceRequest& request, const ResourceRes
     return true;
 }
 
+static inline bool shouldCrossOriginResourcePolicyCancelLoad(const SecurityOrigin& origin, const ResourceResponse& response)
+{
+    if (origin.canRequest(response.url()))
+        return false;
+
+    auto policy = parseCrossOriginResourcePolicyHeader(response.httpHeaderField(HTTPHeaderName::CrossOriginResourcePolicy));
+    switch (policy) {
+    case CrossOriginResourcePolicy::None:
+    case CrossOriginResourcePolicy::Invalid:
+        return false;
+    case CrossOriginResourcePolicy::SameOrigin:
+        return true;
+    case CrossOriginResourcePolicy::SameSite: {
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+        return origin.isUnique() || !registrableDomainsAreEqual(response.url(), ResourceRequest::partitionName(origin.host()));
+#else
+        return true;
+#endif
+    }}
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+std::optional<ResourceError> validateCrossOriginResourcePolicy(const SecurityOrigin& origin, const URL& requestURL, const ResourceResponse& response)
+{
+    if (shouldCrossOriginResourcePolicyCancelLoad(origin, response))
+        return ResourceError { errorDomainWebKitInternal, 0, requestURL, makeString("Cancelled load to ", response.url().stringCenterEllipsizedToLength(), " because it violates the resource's Cross-Origin-Resource-Policy response header."), ResourceError::Type::AccessControl };
+    return std::nullopt;
+}
+
 } // namespace WebCore
