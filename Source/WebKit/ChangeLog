@@ -1,3 +1,17 @@
+2018-06-18  Karl Leplat  <karl.leplat_ext@softathome.com>
+
+        [Threaded paintingEngine] Fix rendering glitches
+        https://bugs.webkit.org/show_bug.cgi?id=186764
+
+        Reviewed by Žan Doberšek.
+
+        * Shared/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        (WebKit::CoordinatedBackingStoreTile::swapBuffers):
+        We call Nicosia::Buffer function waitUntilPaintingComplete()
+        in order to synchronize of using Nicosia:buffer between MainThread
+        and ThreadedCompositor.
+
+
 2018-06-17  Chris Dumez  <cdumez@apple.com>
 
         Crash under SuspendedPageProxy::~SuspendedPageProxy()

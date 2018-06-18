@@ -1,3 +1,16 @@
+2018-06-18  Karl Leplat  <karl.leplat_ext@softathome.com>
+
+        [Threaded paintingEngine] Fix rendering glitches
+        https://bugs.webkit.org/show_bug.cgi?id=186764
+
+        Reviewed by Žan Doberšek.
+
+        * platform/graphics/nicosia/NicosiaPaintingEngineBasic.cpp:
+        (Nicosia::PaintingEngineBasic::paint):
+        To keep backwards compatibility with no multi-threaded,
+        we call Nicosia::Buffer functions beginPainting() and completePainting().
+
+
 2018-06-18  Tomas Popela  <tpopela@redhat.com>
 
         Properly check the sscanf return valua

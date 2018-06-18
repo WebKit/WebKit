@@ -43,6 +43,8 @@ PaintingEngineBasic::~PaintingEngineBasic() = default;
 
 bool PaintingEngineBasic::paint(GraphicsLayer& layer, Ref<Buffer>&& buffer, const IntRect& sourceRect, const IntRect& mappedSourceRect, const IntRect& targetRect, float contentsScale)
 {
+    buffer->beginPainting();
+
     bool supportsAlpha = buffer->supportsAlpha();
     PaintingContext::paint(buffer,
         [&layer, sourceRect, mappedSourceRect, targetRect, contentsScale, supportsAlpha]
@@ -65,6 +67,9 @@ bool PaintingEngineBasic::paint(GraphicsLayer& layer, Ref<Buffer>&& buffer, cons
 
             context.restore();
         });
+
+    buffer->completePainting();
+
     return true;
 }
 
