@@ -1,3 +1,17 @@
+2018-06-18  Nan Wang  <n_wang@apple.com>
+
+        AX: [macOS] When zoom is enabled, focus doesn't follow text cursor
+        https://bugs.webkit.org/show_bug.cgi?id=186697
+
+        Reviewed by Darin Adler.
+
+        Now that web process doesn't have access to NSScreen. The conversion of the 
+        rects is wrong. Fixed this by using the right function that's available in
+        WebCore to get the rects.
+
+        * editing/mac/FrameSelectionMac.mm:
+        (WebCore::accessibilityConvertScreenRect):
+
 2018-06-18  Youenn Fablet  <youenn@apple.com>
 
         Expose RTCPeerConnectionIceEventInit constructor

@@ -32,21 +32,6 @@
 
 namespace WebCore {
 
-#if !PLATFORM(IOS)
-static CGRect accessibilityConvertScreenRect(CGRect bounds)
-{
-    NSArray *screens = [NSScreen screens];
-    if ([screens count]) {
-        CGFloat screenHeight = NSHeight([(NSScreen *)[screens objectAtIndex:0] frame]);
-        bounds.origin.y = (screenHeight - (bounds.origin.y + bounds.size.height));
-    } else
-        bounds = CGRectZero;    
-    
-    return bounds;
-}
-#endif // !PLATFORM(IOS)
-    
-    
 void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChangeIntent& intent)
 {
     Document* document = m_frame->document();
@@ -73,10 +58,12 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
 
     selectionRect = frameView->contentsToScreen(selectionRect);
     viewRect = frameView->contentsToScreen(viewRect);
-    CGRect cgCaretRect = CGRectMake(selectionRect.x(), selectionRect.y(), selectionRect.width(), selectionRect.height());
-    CGRect cgViewRect = CGRectMake(viewRect.x(), viewRect.y(), viewRect.width(), viewRect.height());
-    cgCaretRect = accessibilityConvertScreenRect(cgCaretRect);
-    cgViewRect = accessibilityConvertScreenRect(cgViewRect);
+    NSRect nsCaretRect = NSMakeRect(selectionRect.x(), selectionRect.y(), selectionRect.width(), selectionRect.height());
+    NSRect nsViewRect = NSMakeRect(viewRect.x(), viewRect.y(), viewRect.width(), viewRect.height());
+    nsCaretRect = toUserSpaceForPrimaryScreen(nsCaretRect);
+    nsViewRect = toUserSpaceForPrimaryScreen(nsViewRect);
+    CGRect cgCaretRect = NSRectToCGRect(nsCaretRect);
+    CGRect cgViewRect = NSRectToCGRect(nsViewRect);
 
     UAZoomChangeFocus(&cgViewRect, &cgCaretRect, kUAZoomFocusTypeInsertionPoint);
 #endif // !PLATFORM(IOS)
