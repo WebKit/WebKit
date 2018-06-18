@@ -1,3 +1,10 @@
+2018-06-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Manage the 8 crashing tests that are failing
+        due to improper std::optional handling.
+
+        * platform/wpe/TestExpectations:
+
 2018-06-17  Zalan Bujtas  <zalan@apple.com>
 
         Anonymous block collapsing can destroy the renderer's parent.
