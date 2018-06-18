@@ -1,6 +1,6 @@
-# DerivedBinaryProperties-10.0.0.txt
-# Date: 2017-02-14, 04:26:02 GMT
-# © 2017 Unicode®, Inc.
+# DerivedBinaryProperties-11.0.0.txt
+# Date: 2018-05-08, 06:52:27 GMT
+# © 2018 Unicode®, Inc.
 # Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
 # For terms of use, see http://www.unicode.org/terms_of_use.html
 #
@@ -123,7 +123,8 @@
 2996          ; Bidi_Mirrored # Pe       DOUBLE RIGHT ARC LESS-THAN BRACKET
 2997          ; Bidi_Mirrored # Ps       LEFT BLACK TORTOISE SHELL BRACKET
 2998          ; Bidi_Mirrored # Pe       RIGHT BLACK TORTOISE SHELL BRACKET
-299B..29AF    ; Bidi_Mirrored # Sm  [21] MEASURED ANGLE OPENING LEFT..MEASURED ANGLE WITH OPEN ARM ENDING IN ARROW POINTING LEFT AND DOWN
+299B..29A0    ; Bidi_Mirrored # Sm   [6] MEASURED ANGLE OPENING LEFT..SPHERICAL ANGLE OPENING LEFT
+29A2..29AF    ; Bidi_Mirrored # Sm  [14] TURNED ANGLE..MEASURED ANGLE WITH OPEN ARM ENDING IN ARROW POINTING LEFT AND DOWN
 29B8          ; Bidi_Mirrored # Sm       CIRCLED REVERSE SOLIDUS
 29C0..29C5    ; Bidi_Mirrored # Sm   [6] CIRCLED LESS-THAN..SQUARED FALLING DIAGONAL SLASH
 29C9          ; Bidi_Mirrored # Sm       TWO JOINED SQUARES
@@ -163,6 +164,7 @@
 2AF3          ; Bidi_Mirrored # Sm       PARALLEL WITH TILDE OPERATOR
 2AF7..2AFB    ; Bidi_Mirrored # Sm   [5] TRIPLE NESTED LESS-THAN..TRIPLE SOLIDUS BINARY RELATION
 2AFD          ; Bidi_Mirrored # Sm       DOUBLE SOLIDUS OPERATOR
+2BFE          ; Bidi_Mirrored # So       REVERSED RIGHT ANGLE
 2E02          ; Bidi_Mirrored # Pi       LEFT SUBSTITUTION BRACKET
 2E03          ; Bidi_Mirrored # Pf       RIGHT SUBSTITUTION BRACKET
 2E04          ; Bidi_Mirrored # Pi       LEFT DOTTED SUBSTITUTION BRACKET

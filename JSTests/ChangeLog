@@ -1,3 +1,17 @@
+2018-06-18  Michael Saboff  <msaboff@apple.com>
+
+        Support Unicode 11 in RegExp
+        https://bugs.webkit.org/show_bug.cgi?id=186685
+
+        Reviewed by Mark Lam.
+
+        * test262/config.yaml: Removed from skip list Unicode 11 property tests as they
+        are now supported.  Added new bug reference for still failing
+        test/built-ins/RegExp/property-escapes/character-class.js test.
+
+        * test262/test/built-ins/RegExp/property-escapes/unsupported-binary-properties.js:
+        Removed "Extended_Pictographic" from unsupported properties since Unicode 11 now supports them.
+
 2018-06-16  Leo Balter  <leonardo.balter@gmail.com>
 
         Update Test262 2018-06-15

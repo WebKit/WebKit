@@ -1,6 +1,6 @@
-# PropertyAliases-10.0.0.txt
-# Date: 2017-02-14, 04:26:16 GMT
-# © 2017 Unicode®, Inc.
+# PropertyAliases-11.0.0.txt
+# Date: 2018-02-06, 06:59:47 GMT
+# © 2018 Unicode®, Inc.
 # Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
 # For terms of use, see http://www.unicode.org/terms_of_use.html
 #
@@ -87,6 +87,7 @@ cjkIRG_TSource           ; kIRG_TSource
 cjkIRG_USource           ; kIRG_USource
 cjkIRG_VSource           ; kIRG_VSource
 cjkRSUnicode             ; kRSUnicode                  ; Unicode_Radical_Stroke; URS
+EqUIdeo                  ; Equivalent_Unified_Ideograph
 isc                      ; ISO_Comment
 JSN                      ; Jamo_Short_Name
 na                       ; Name
@@ -192,6 +193,6 @@ XO_NFKC                  ; Expands_On_NFKC
 XO_NFKD                  ; Expands_On_NFKD
 
 # ================================================
-# Total:    120
+# Total:    121
 
 # EOF

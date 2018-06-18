@@ -20,8 +20,6 @@ assert.throws.early(SyntaxError, "/\\p{Expands_On_NFKC}/u");
 assert.throws.early(SyntaxError, "/\\P{Expands_On_NFKC}/u");
 assert.throws.early(SyntaxError, "/\\p{Expands_On_NFKD}/u");
 assert.throws.early(SyntaxError, "/\\P{Expands_On_NFKD}/u");
-assert.throws.early(SyntaxError, "/\\p{Extended_Pictographic}/u");
-assert.throws.early(SyntaxError, "/\\P{Extended_Pictographic}/u");
 assert.throws.early(SyntaxError, "/\\p{FC_NFKC_Closure}/u");
 assert.throws.early(SyntaxError, "/\\P{FC_NFKC_Closure}/u");
 assert.throws.early(SyntaxError, "/\\p{Full_Composition_Exclusion}/u");

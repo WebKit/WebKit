@@ -1,3 +1,25 @@
+2018-06-18  Michael Saboff  <msaboff@apple.com>
+
+        Support Unicode 11 in RegExp
+        https://bugs.webkit.org/show_bug.cgi?id=186685
+
+        Reviewed by Mark Lam.
+
+        Updated the UCD tables used to generate RegExp property tables to version 11.0.
+
+        * Scripts/generateYarrUnicodePropertyTables.py:
+        * ucd/CaseFolding.txt:
+        * ucd/DerivedBinaryProperties.txt:
+        * ucd/DerivedCoreProperties.txt:
+        * ucd/DerivedNormalizationProps.txt:
+        * ucd/PropList.txt:
+        * ucd/PropertyAliases.txt:
+        * ucd/PropertyValueAliases.txt:
+        * ucd/ScriptExtensions.txt:
+        * ucd/Scripts.txt:
+        * ucd/UnicodeData.txt:
+        * ucd/emoji-data.txt:
+
 2018-06-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WTF] Remove workarounds needed to support libstdc++-4
