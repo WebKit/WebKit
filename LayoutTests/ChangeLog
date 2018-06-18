@@ -1,5 +1,17 @@
 2018-06-18  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed WPE gardening. Manage the current set of CSS3 Filters and
+        legacy animation engine failures. Add the necessary failure expectations
+        and missing layout test baselines.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/legacy-animation-engine/css3/filters/composited-during-animation-layertree-expected.txt: Added.
+        * platform/wpe/legacy-animation-engine/css3/filters/composited-during-transition-layertree-expected.txt: Added.
+        * platform/wpe/legacy-animation-engine/fast/text/crash-complex-text-surrogate-expected.txt: Added.
+        * platform/wpe/legacy-animation-engine/media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition-expected.txt: Added.
+
+2018-06-18  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed WPE gardening. Updating or adding baselines for a quadruple
         of tests that are otherwise failing with a text-only failure.
 
