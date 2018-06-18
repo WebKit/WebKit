@@ -1,3 +1,16 @@
+2018-06-18  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebProcessPool::networkProcessFailedToLaunch():
+        https://bugs.webkit.org/show_bug.cgi?id=186784
+        <rdar://problem/33535377>
+
+        Reviewed by Brady Eidson.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2018-06-18  Zan Dobersek  <zdobersek@igalia.com>
 
         [webkitpy] WPTRunner should remove any metadata content before (re)generating it

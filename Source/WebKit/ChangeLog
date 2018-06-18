@@ -1,5 +1,28 @@
 2018-06-18  Chris Dumez  <cdumez@apple.com>
 
+        Crash under WebProcessPool::networkProcessFailedToLaunch():
+        https://bugs.webkit.org/show_bug.cgi?id=186784
+        <rdar://problem/33535377>
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (+[WKProcessPool _allProcessPoolsForTesting]):
+        Add SPI to retrieve all WebProcessPool for testing purposes.
+
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::clearCallbackStates):
+        Make iteration over completion handlers robust against completion handlers
+        getting removed while we iterate.
+
+        (WebKit::NetworkProcessProxy::didClose):
+        Ref the WebProcessPool (which keeps the NetworkProcessProxy alive too)
+        as several calls within this method might cause the WebProcessPool /
+        NetworkProcessProxy to get destroyed.
+
+2018-06-18  Chris Dumez  <cdumez@apple.com>
+
         Implement IPC throttling to keep the main thread responsive when a process misbehaves
         https://bugs.webkit.org/show_bug.cgi?id=186607
 

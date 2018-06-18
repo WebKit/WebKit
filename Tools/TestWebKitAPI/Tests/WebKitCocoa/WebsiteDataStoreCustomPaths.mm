@@ -285,6 +285,60 @@ TEST(WebKit, CustomDataStorePathsVersusCompletionHandlers)
     TestWebKitAPI::Util::run(&readyToContinue);
 }
 
+TEST(WebKit, CustomDataStoreDestroyWhileFetchingNetworkProcessData)
+{
+    NSURL *cookieStorageFile = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/CookieStorage/Cookie.File" stringByExpandingTildeInPath] isDirectory:NO];
+    [[NSFileManager defaultManager] removeItemAtURL:cookieStorageFile error:nil];
+
+    auto websiteDataTypes = adoptNS([[NSSet alloc] initWithArray:@[WKWebsiteDataTypeCookies]]);
+    static bool readyToContinue;
+
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get()._cookieStorageFile = cookieStorageFile;
+
+    @autoreleasepool {
+        auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+
+        // Fetch records
+        [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+            EXPECT_EQ((int)dataRecords.count, 0);
+            readyToContinue = true;
+        }];
+        TestWebKitAPI::Util::run(&readyToContinue);
+        readyToContinue = false;
+
+        // Fetch records again, this time releasing our reference to the data store while the request is in flight.
+        [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+            EXPECT_EQ((int)dataRecords.count, 0);
+            readyToContinue = true;
+        }];
+        dataStore = nil;
+    }
+    TestWebKitAPI::Util::run(&readyToContinue);
+    readyToContinue = false;
+
+    @autoreleasepool {
+        auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+        [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+            EXPECT_EQ((int)dataRecords.count, 0);
+            readyToContinue = true;
+        }];
+
+        // Terminate the network process while a query is pending.
+        auto* allProcessPools = [WKProcessPool _allProcessPoolsForTesting];
+        ASSERT_EQ(1U, [allProcessPools count]);
+        auto* processPool = allProcessPools[0];
+        while (![processPool _networkProcessIdentifier])
+            TestWebKitAPI::Util::sleep(0.01);
+        kill([processPool _networkProcessIdentifier], SIGKILL);
+        allProcessPools = nil;
+        dataStore = nil;
+    }
+
+    TestWebKitAPI::Util::run(&readyToContinue);
+    readyToContinue = false;
+}
+
 TEST(WebKit, WebsiteDataStoreEphemeral)
 {
     RetainPtr<WebsiteDataStoreCustomPathsMessageHandler> handler = adoptNS([[WebsiteDataStoreCustomPathsMessageHandler alloc] init]);
