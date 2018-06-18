@@ -1,3 +1,38 @@
+2018-06-18  Chris Dumez  <cdumez@apple.com>
+
+        Implement IPC throttling to keep the main thread responsive when a process misbehaves
+        https://bugs.webkit.org/show_bug.cgi?id=186607
+
+        Reviewed by Geoffrey Garen.
+
+        Implement IPC throttling to keep the main thread responsive when a process misbehaves.
+        Instead of doing one main runloop dispatch per incoming message, we now do a single
+        runloop dispatch and process incoming messages in batch. We put a limit on the number
+        of messages to be processed in a batch (600). If the queue is larger that this limit,
+        we'll schedule a 0-timer to process remaining messages, giving the main runloop a chance
+        to process other events. Additionally, if an IPC connection keeps hitting this maximum
+        batch size limit, we implement back off and we'll further decrease the number of messages
+        we process in each batch (going as low as 60). This keeps Safari responsive enough to
+        allow the user to close the bad tab (even on older devices such as iPhone 5s).
+
+        Finally, if the incoming message queue becomes too large (50000), we go one step further
+        and kill the IPC connection in order to maintain performance / battery life.
+
+        Every time we apply throttling or terminate a connection due to throttling, we do a
+        RELEASE_LOG_ERROR() with useful information in order to help diagnose potential issues
+        in the future.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::Connection):
+        (IPC::Connection::enqueueIncomingMessage):
+        (IPC::Connection::MessagesThrottler::MessagesThrottler):
+        (IPC::Connection::MessagesThrottler::scheduleMessagesDispatch):
+        (IPC::Connection::MessagesThrottler::numberOfMessagesToProcess):
+        (IPC::Connection::dispatchIncomingMessages):
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::kill):
+
 2018-06-18  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add a graceful exit for AuthenticationManager::initializeConnection
