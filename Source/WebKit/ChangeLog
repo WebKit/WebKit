@@ -1,3 +1,17 @@
+2018-06-18  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Add a graceful exit for AuthenticationManager::initializeConnection
+        https://bugs.webkit.org/show_bug.cgi?id=186632
+        <rdar://problem/41041033>
+
+        Reviewed by Brent Fulgham.
+
+        Add a graceful exit for AuthenticationManager::initializeConnection when the provided IPC connection
+        is null or the underlying xpc connection is null.
+
+        * Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm:
+        (WebKit::AuthenticationManager::initializeConnection):
+
 2018-06-18  Youenn Fablet  <youenn@apple.com>
 
         Validate Cross-Origin-Resource-Policy for resources cached in the MemoryCache

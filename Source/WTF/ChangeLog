@@ -1,3 +1,13 @@
+2018-06-18  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Add a graceful exit for AuthenticationManager::initializeConnection
+        https://bugs.webkit.org/show_bug.cgi?id=186632
+        <rdar://problem/41041033>
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/spi/darwin/XPCSPI.h:
+
 2018-06-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WTF] Remove workarounds needed to support libstdc++-4

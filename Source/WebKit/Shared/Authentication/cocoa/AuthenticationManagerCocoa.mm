@@ -40,6 +40,11 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
 {
     ASSERT(isMainThread());
 
+    if (!connection || xpc_get_type(connection->xpcConnection()) != XPC_TYPE_CONNECTION) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     auto weakThis = makeWeakPtr(*this);
     // The following xpc event handler overwrites the boostrap event handler and is only used
     // to capture client certificate credential.

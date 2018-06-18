@@ -72,6 +72,7 @@ typedef void (*xpc_connection_handler_t)(xpc_connection_t connection);
 #define XPC_ERROR_TERMINATION_IMMINENT XPC_GLOBAL_OBJECT(_xpc_error_termination_imminent)
 #define XPC_TYPE_ARRAY (&_xpc_type_array)
 #define XPC_TYPE_BOOL (&_xpc_type_bool)
+#define XPC_TYPE_CONNECTION (&_xpc_type_connection)
 #define XPC_TYPE_DICTIONARY (&_xpc_type_dictionary)
 #define XPC_TYPE_ERROR (&_xpc_type_error)
 #define XPC_TYPE_STRING (&_xpc_type_string)
