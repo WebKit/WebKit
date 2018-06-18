@@ -700,6 +700,7 @@ void MediaPlayerPrivateGStreamer::updateTracks()
     bool oldHasVideo = m_hasVideo;
     // New stream collections override previous ones.
     clearTracks();
+    unsigned textTrackIndex = 0;
     for (unsigned i = 0; i < length; i++) {
         GRefPtr<GstStream> stream = gst_stream_collection_get_stream(m_streamCollection.get(), i);
         String streamId(gst_stream_get_stream_id(stream.get()));
@@ -712,7 +713,7 @@ void MediaPlayerPrivateGStreamer::updateTracks()
             CREATE_TRACK(video, Video)
         } else if (type & GST_STREAM_TYPE_TEXT && !useMediaSource) {
 #if ENABLE(VIDEO_TRACK)
-            RefPtr<InbandTextTrackPrivateGStreamer> track = InbandTextTrackPrivateGStreamer::create(i, stream);
+            RefPtr<InbandTextTrackPrivateGStreamer> track = InbandTextTrackPrivateGStreamer::create(textTrackIndex++, stream);
             m_textTracks.add(streamId, track);
             m_player->addTextTrack(*track);
 #endif

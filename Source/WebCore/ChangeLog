@@ -1,3 +1,18 @@
+2018-06-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Crash when adding in-band text track with playbin3 enabled
+        https://bugs.webkit.org/show_bug.cgi?id=186654
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Text track indexes should be relative to the total amount of
+        in-band text tracks. The previous code would induce the creation
+        of in-band text tracks with indexes relative to the total amount
+        of all in-band (audio, video, text) tracks.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::updateTracks):
+
 2018-06-17  Zalan Bujtas  <zalan@apple.com>
 
         Anonymous block collapsing can destroy the renderer's parent.
